@@ -32,7 +32,23 @@
             </div>
           </div>
           <div class="ibox-content">
-            <table id="auditLogsList" class="table table-striped table-hover"></table>
+            <div class="row m-b-md">
+              <div class="col-md-5">
+                <label for="auditLogTypeFilter">Filter by audit type</label>
+                <select id="auditLogTypeFilter" class="form-control">
+                  <option value="">All audit types</option>
+                </select>
+              </div>
+              <div class="col-md-7">
+                <p class="help-block m-t-lg">
+                  Search by user name, user or audit ID, email address, date/time, or audit type.
+                  Search and sorting apply within the selected audit type.
+                </p>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table id="auditLogsList" class="table table-striped table-hover"></table>
+            </div>
           </div>
         </div>
       </div>

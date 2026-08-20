@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -60,7 +60,8 @@ namespace Resgrid.Tests.Services
 				new Mock<IUserProfileService>().Object,
 				new Mock<IUnitNotificationProvider>().Object,
 				_novuProvider.Object,
-				_departmentSettingsService.Object);
+				_departmentSettingsService.Object,
+				new Mock<IUnitsService>().Object);
 		}
 
 		[TearDown]

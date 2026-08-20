@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Chat;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
@@ -26,6 +28,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
+	[Authorize(Policy = ResgridResources.Messages_View)]
 	public class ChatModerationController : V4AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors
@@ -100,7 +103,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new GetChatFlagsResult();
-			var flags = await _chatModerationService.GetFlagsAsync(DepartmentId, (ChatFlagStatus)status, page, pageSize);
+			var flags = await _chatModerationService.GetFlagsAsync(DepartmentId, UserId, (ChatFlagStatus)status, page, pageSize);
 
 			if (flags != null && flags.Any())
 			{
@@ -130,6 +133,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Resolution status and note</param>
 		/// <returns>ChatActionResult indicating whether the flag was resolved</returns>
 		[HttpPut("ResolveFlag")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -182,6 +186,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="reason">Reason for the deletion</param>
 		/// <returns>ChatActionResult indicating whether the message was deleted</returns>
 		[HttpDelete("DeleteMessage")]
+		[Authorize(Policy = ResgridResources.Messages_Delete)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -205,7 +210,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				result.Success = await _chatModerationService.ModeratorDeleteMessageAsync(messageId, UserId, reason, cancellationToken, BuildModerationContext("ChannelModerator"));
+				result.Success = await _chatModerationService.ModeratorDeleteMessageAsync(DepartmentId, messageId, UserId, reason, cancellationToken, BuildModerationContext("ChannelModerator"));
 			}
 			catch (UnauthorizedAccessException)
 			{
@@ -229,6 +234,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Target user and mute expiration (null MutedUntil = unmute)</param>
 		/// <returns>ChatActionResult indicating whether the mute was applied</returns>
 		[HttpPost("MuteUser")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -255,7 +261,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				result.Success = await _chatModerationService.SetUserMutedAsync(channelId, input.TargetUserId, input.MutedUntil, UserId, null, cancellationToken, BuildModerationContext("ChannelModerator"));
+				result.Success = await _chatModerationService.SetUserMutedAsync(DepartmentId, channelId, input.TargetUserId, input.MutedUntil, UserId, null, cancellationToken, BuildModerationContext("ChannelModerator"));
 			}
 			catch (UnauthorizedAccessException)
 			{
@@ -279,6 +285,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Target user and whether they are banned</param>
 		/// <returns>ChatActionResult indicating whether the ban was applied</returns>
 		[HttpPost("BanUser")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -305,7 +312,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				result.Success = await _chatModerationService.SetUserBannedAsync(channelId, input.TargetUserId, input.Banned, UserId, null, cancellationToken, BuildModerationContext("ChannelModerator"));
+				result.Success = await _chatModerationService.SetUserBannedAsync(DepartmentId, channelId, input.TargetUserId, input.Banned, UserId, null, cancellationToken, BuildModerationContext("ChannelModerator"));
 			}
 			catch (UnauthorizedAccessException)
 			{
@@ -329,6 +336,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Whether to lock and the reason</param>
 		/// <returns>ChatActionResult indicating whether the lock state was changed</returns>
 		[HttpPost("LockChannel")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -355,7 +363,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				result.Success = await _chatModerationService.SetChannelLockedAsync(channelId, input.Locked, UserId, input.Reason, cancellationToken, BuildModerationContext("ChannelModerator"));
+				result.Success = await _chatModerationService.SetChannelLockedAsync(DepartmentId, channelId, input.Locked, UserId, input.Reason, cancellationToken, BuildModerationContext("ChannelModerator"));
 			}
 			catch (UnauthorizedAccessException)
 			{
@@ -393,7 +401,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new GetChatModerationActionsResult();
-			var actions = await _chatModerationService.GetModerationActionsAsync(DepartmentId, channelId, page, pageSize);
+			var actions = await _chatModerationService.GetModerationActionsAsync(DepartmentId, UserId, channelId, page, pageSize);
 
 			if (actions != null && actions.Any())
 			{
@@ -461,6 +469,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">New settings values</param>
 		/// <returns>GetChatSettingsResult with the saved settings</returns>
 		[HttpPut("UpdateSettings")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -492,7 +501,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			settings.ChatbotEnabled = input.ChatbotEnabled;
 
 			var result = new GetChatSettingsResult();
-			var saved = await _chatChannelService.SaveDepartmentSettingsAsync(settings, cancellationToken);
+			var saved = await _chatChannelService.SaveDepartmentSettingsAsync(DepartmentId, UserId, settings, cancellationToken);
 
 			if (saved != null)
 			{
@@ -705,7 +714,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new GetChatExportsResult();
-			var exports = await _chatModerationService.GetExportsAsync(DepartmentId);
+			var exports = await _chatModerationService.GetExportsAsync(DepartmentId, UserId);
 
 			if (exports != null && exports.Any())
 			{
@@ -775,9 +784,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		#region Private Helpers
 
-		private Task<bool> ChatEnabledAsync()
+		private async Task<bool> ChatEnabledAsync()
 		{
-			return _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
+			return await _authorizationService.IsUserValidWithinLimitsAsync(UserId, DepartmentId) &&
+				await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
 		}
 
 		/// <summary>

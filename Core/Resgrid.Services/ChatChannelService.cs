@@ -22,6 +22,7 @@ namespace Resgrid.Services
 	public class ChatChannelService : IChatChannelService
 	{
 		private static readonly TimeSpan ChannelListCacheLength = TimeSpan.FromSeconds(45);
+		private const int MaxDerivedGroupNameLength = 100;
 
 		/// <summary>How long a completed incident-channel backfill suppresses the next sweep for that command.</summary>
 		private static readonly TimeSpan IncidentBackfillCacheLength = TimeSpan.FromMinutes(30);
@@ -87,6 +88,10 @@ namespace Resgrid.Services
 
 		public async Task<List<ChatChannel>> GetChannelsForUserAsync(int departmentId, string userId, int? activeUnitId, bool includeArchived = false)
 		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId) ||
+				!await IsActiveDepartmentUserAsync(departmentId, userId))
+				return new List<ChatChannel>();
+
 			async Task<List<ChatChannel>> getChannels()
 			{
 				var results = new Dictionary<string, ChatChannel>(StringComparer.OrdinalIgnoreCase);
@@ -99,11 +104,12 @@ namespace Resgrid.Services
 				// implicit-audience pass further down.
 				var allChannels = await _chatChannelRepository.GetAllByDepartmentIdAsync(departmentId, includeArchived);
 
-				// Department admins get every group's default channel; everyone else gets only the group
-				// they belong to. Existing channels come from the bulk load above — only groups with no
-				// channel yet hit the provisioning path, and a failure there is contained per group so one
-				// bad group can never blank the admin's whole channel list.
-				if (await _chatPermissionService.IsDepartmentAdminAsync(departmentId, userId))
+				// Department admins and dispatchers get every group's default channel; everyone else gets
+				// only the group they belong to. Existing channels come from the bulk load above — only
+				// groups with no channel yet hit provisioning, and one bad group cannot blank the list.
+				var canSeeAllOperationalChannels = await _chatPermissionService.IsDepartmentAdminAsync(departmentId, userId) ||
+					await _chatPermissionService.CanAccessDepartmentOperationalChannelsAsync(departmentId, userId);
+				if (canSeeAllOperationalChannels)
 				{
 					var allGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId);
 					if (allGroups != null && allGroups.Count > 0)
@@ -160,7 +166,13 @@ namespace Resgrid.Services
 					var channels = await _chatChannelRepository.GetByIdsAsync(membershipIds);
 					if (channels != null)
 						foreach (var channel in channels)
-							results[channel.ChatChannelId] = channel;
+						{
+							// Incident/default membership rows are only read-state. They can outlive the
+							// assignment that originally granted access, so every row must be re-evaluated.
+							if (channel.DepartmentId == departmentId &&
+								await _chatPermissionService.CanAccessChannelAsync(channel, userId, activeUnitId))
+								results[channel.ChatChannelId] = channel;
+						}
 				}
 
 				// Channels where the active unit is the participant (Dispatch/IC ↔ unit DMs, units
@@ -194,7 +206,11 @@ namespace Resgrid.Services
 						var channels = await _chatChannelRepository.GetByIdsAsync(unitChannelIds);
 						if (channels != null)
 							foreach (var channel in channels)
-								results[channel.ChatChannelId] = channel;
+							{
+								if (channel.DepartmentId == departmentId &&
+									await _chatPermissionService.CanAccessChannelAsync(channel, userId, activeUnitId))
+									results[channel.ChatChannelId] = channel;
+							}
 					}
 				}
 
@@ -221,7 +237,7 @@ namespace Resgrid.Services
 				}
 
 				return results.Values
-					.Where(c => includeArchived || !c.IsArchived)
+					.Where(c => c.DepartmentId == departmentId && (includeArchived || !c.IsArchived))
 					.OrderByDescending(c => c.LastMessageOn ?? c.CreatedOn)
 					.ToList();
 			}
@@ -239,19 +255,17 @@ namespace Resgrid.Services
 
 		public async Task<ChatChannel> GetOrCreateDirectMessageChannelAsync(int departmentId, string creatorUserId, string targetUserId, int? targetUnitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			if (string.IsNullOrWhiteSpace(targetUserId) && !targetUnitId.HasValue)
+			var hasTargetUser = !string.IsNullOrWhiteSpace(targetUserId);
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(creatorUserId) || hasTargetUser == targetUnitId.HasValue)
 				return null;
+
+			if (!await IsActiveDepartmentUserAsync(departmentId, creatorUserId))
+				throw new UnauthorizedAccessException("The creator does not belong to this department.");
 
 			// A DM with yourself would put the same user in the member list twice and violate
 			// the unique (ChatChannelId, UserId) member index; the clients never offer it.
 			if (!targetUnitId.HasValue && string.Equals(creatorUserId, targetUserId, StringComparison.OrdinalIgnoreCase))
 				return null;
-
-			var dmKey = BuildDmKey(creatorUserId, targetUserId, targetUnitId);
-
-			var existing = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
-			if (existing != null)
-				return existing;
 
 			Unit targetUnit = null;
 			if (targetUnitId.HasValue)
@@ -260,10 +274,16 @@ namespace Resgrid.Services
 				if (targetUnit == null || targetUnit.DepartmentId != departmentId)
 					throw new UnauthorizedAccessException("The target unit does not belong to this department.");
 			}
-			else if (!await _departmentsService.IsUserInDepartmentAsync(departmentId, targetUserId))
+			else if (!await IsActiveDepartmentUserAsync(departmentId, targetUserId))
 			{
 				throw new UnauthorizedAccessException("The target user does not belong to this department.");
 			}
+
+			var dmKey = BuildDmKey(creatorUserId, targetUserId, targetUnitId);
+
+			var existing = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
+			if (existing != null)
+				return existing.DepartmentId == departmentId ? existing : null;
 
 			var channel = new ChatChannel
 			{
@@ -316,6 +336,10 @@ namespace Resgrid.Services
 
 		public async Task<ChatChannel> CreateAdHocGroupChannelAsync(int departmentId, string creatorUserId, string name, List<string> memberUserIds, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(creatorUserId) ||
+				!await IsActiveDepartmentUserAsync(departmentId, creatorUserId))
+				throw new UnauthorizedAccessException("The creator does not belong to this department.");
+
 			// Validate all member memberships before any write, so an invalid member never leaves an
 			// orphaned channel or partial member rows to roll back.
 			var validatedMemberIds = memberUserIds == null
@@ -326,6 +350,15 @@ namespace Resgrid.Services
 			var membersInDepartment = await _departmentsService.GetMemberUserIdsInDepartmentAsync(departmentId, validatedMemberIds);
 			if (validatedMemberIds.Any(id => !membersInDepartment.Contains(id)))
 				throw new UnauthorizedAccessException("Every member must belong to this department.");
+
+			foreach (var memberId in validatedMemberIds)
+			{
+				if (await _departmentsService.IsUserDisabledAsync(memberId, departmentId))
+					throw new UnauthorizedAccessException("Every member must be active in this department.");
+			}
+
+			if (string.IsNullOrWhiteSpace(name))
+				name = await BuildAdHocGroupNameAsync(validatedMemberIds);
 
 			var channel = new ChatChannel
 			{
@@ -352,8 +385,56 @@ namespace Resgrid.Services
 			return channel;
 		}
 
+		private async Task<string> BuildAdHocGroupNameAsync(List<string> memberUserIds)
+		{
+			var names = new List<string>();
+			if (memberUserIds != null && memberUserIds.Count > 0)
+			{
+				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(memberUserIds);
+				foreach (var profile in profiles ?? new List<UserProfile>())
+				{
+					var displayName = profile?.FullName?.AsFirstNameLastName;
+					if (!string.IsNullOrWhiteSpace(displayName))
+						names.Add(displayName);
+				}
+			}
+
+			if (names.Count == 0)
+				return "New group";
+
+			names.Sort(StringComparer.OrdinalIgnoreCase);
+			var joined = string.Join(", ", names);
+			if (joined.Length <= MaxDerivedGroupNameLength)
+				return joined;
+
+			var kept = new List<string>();
+			var length = 0;
+			foreach (var displayName in names)
+			{
+				var addition = (kept.Count == 0 ? 0 : 2) + displayName.Length;
+				if (length + addition + 6 > MaxDerivedGroupNameLength)
+					break;
+
+				kept.Add(displayName);
+				length += addition;
+			}
+
+			if (kept.Count == 0)
+				kept.Add(names[0].Length > MaxDerivedGroupNameLength - 6
+					? names[0].Substring(0, MaxDerivedGroupNameLength - 6)
+					: names[0]);
+
+			var remaining = names.Count - kept.Count;
+			return remaining > 0 ? $"{string.Join(", ", kept)} +{remaining}" : string.Join(", ", kept);
+		}
+
 		public async Task<ChatChannel> CreateCustomChannelAsync(int departmentId, string creatorUserId, string name, string topic, List<ChatChannelAccessRule> accessRules, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(creatorUserId) ||
+				!await IsActiveDepartmentUserAsync(departmentId, creatorUserId) ||
+				!await _chatPermissionService.IsDepartmentAdminAsync(departmentId, creatorUserId))
+				throw new UnauthorizedAccessException("Only an administrator in this department can create a custom channel.");
+
 			var channel = new ChatChannel
 			{
 				ChatChannelId = Guid.NewGuid().ToString(),
@@ -389,10 +470,11 @@ namespace Resgrid.Services
 			return channel;
 		}
 
-		public async Task<ChatChannel> UpdateChannelAsync(string chatChannelId, string name, string topic, string byUserId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<ChatChannel> UpdateChannelAsync(int departmentId, string chatChannelId, string name, string topic, string byUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
-			if (channel == null)
+			if (channel == null || channel.DepartmentId != departmentId ||
+				!await _chatPermissionService.CanModerateChannelAsync(channel, byUserId))
 				return null;
 
 			// Targeted update: a full-row write here would rewind LastMessageSeq/LastMessageOn over the
@@ -409,10 +491,11 @@ namespace Resgrid.Services
 			return channel;
 		}
 
-		public async Task<bool> SetChannelArchivedAsync(string chatChannelId, bool archived, string byUserId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> SetChannelArchivedAsync(int departmentId, string chatChannelId, bool archived, string byUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
-			if (channel == null)
+			if (channel == null || channel.DepartmentId != departmentId ||
+				!await _chatPermissionService.CanModerateChannelAsync(channel, byUserId))
 				return false;
 
 			var archivedOn = archived ? DateTime.UtcNow : (DateTime?)null;
@@ -431,8 +514,12 @@ namespace Resgrid.Services
 
 		public async Task<List<ChatChannelMember>> GetMembersAsync(string chatChannelId)
 		{
+			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
+			if (channel == null)
+				return new List<ChatChannelMember>();
+
 			var members = await _chatChannelMemberRepository.GetByChannelIdAsync(chatChannelId);
-			return members?.ToList() ?? new List<ChatChannelMember>();
+			return members?.Where(m => m.DepartmentId == channel.DepartmentId).ToList() ?? new List<ChatChannelMember>();
 		}
 
 		public async Task<List<ChatChannelMember>> GetActiveMembershipsForUserAsync(int departmentId, string userId)
@@ -466,18 +553,25 @@ namespace Resgrid.Services
 			return await _chatChannelMemberRepository.GetUnitMemberAsync(chatChannelId, unitId);
 		}
 
-		public async Task<List<ChatChannelMember>> AddMembersAsync(string chatChannelId, List<string> userIds, string addedByUserId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<List<ChatChannelMember>> AddMembersAsync(int departmentId, string chatChannelId, List<string> userIds, string addedByUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
-			if (channel == null)
+			if (channel == null || channel.DepartmentId != departmentId)
 				return new List<ChatChannelMember>();
 
 			if (channel.ChannelType == (int)ChatChannelType.DirectMessage)
 				throw new InvalidOperationException("Direct message channels have a fixed membership.");
 
-			if (channel.ChannelType == (int)ChatChannelType.CustomLocked &&
-				!await _chatPermissionService.CanModerateChannelAsync(channel, addedByUserId))
-				throw new UnauthorizedAccessException("Only channel moderators can add members to this channel.");
+			if (channel.ChannelType != (int)ChatChannelType.AdHocGroup && channel.ChannelType != (int)ChatChannelType.CustomLocked)
+				throw new InvalidOperationException("Members cannot be added to this channel type.");
+
+			var canModerate = await _chatPermissionService.CanModerateChannelAsync(channel, addedByUserId);
+			var actorMember = await _chatChannelMemberRepository.GetUserMemberAsync(chatChannelId, addedByUserId);
+			var isActiveMember = actorMember != null && actorMember.DepartmentId == departmentId && !actorMember.RemovedOn.HasValue &&
+				await IsActiveDepartmentUserAsync(departmentId, addedByUserId);
+
+			if ((channel.ChannelType == (int)ChatChannelType.CustomLocked && !canModerate) || (!isActiveMember && !canModerate))
+				throw new UnauthorizedAccessException("The actor cannot add members to this channel.");
 
 			var added = new List<ChatChannelMember>();
 
@@ -485,7 +579,7 @@ namespace Resgrid.Services
 			{
 				foreach (var userId in userIds.Where(u => !string.IsNullOrWhiteSpace(u)).Distinct())
 				{
-					if (!await _departmentsService.IsUserInDepartmentAsync(channel.DepartmentId, userId))
+					if (!await IsActiveDepartmentUserAsync(channel.DepartmentId, userId))
 						throw new UnauthorizedAccessException("Every member must belong to this department.");
 
 					var existing = await _chatChannelMemberRepository.GetUserMemberAsync(chatChannelId, userId);
@@ -517,26 +611,34 @@ namespace Resgrid.Services
 			return added;
 		}
 
-		public async Task<bool> RemoveMemberAsync(string chatChannelId, string userId, string removedByUserId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> RemoveMemberAsync(int departmentId, string chatChannelId, string userId, string removedByUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
+			if (channel == null || channel.DepartmentId != departmentId ||
+				!await IsActiveDepartmentUserAsync(departmentId, removedByUserId))
+				return false;
+
+			if (!string.Equals(userId, removedByUserId, StringComparison.OrdinalIgnoreCase) &&
+				!await _chatPermissionService.CanModerateChannelAsync(channel, removedByUserId))
+				return false;
+
 			var member = await _chatChannelMemberRepository.GetUserMemberAsync(chatChannelId, userId);
-			if (member == null || member.RemovedOn.HasValue)
+			if (member == null || member.DepartmentId != departmentId || member.RemovedOn.HasValue)
 				return false;
 
 			await _chatChannelMemberRepository.SetMemberActiveAsync(member.ChatChannelMemberId, false, cancellationToken);
 			await _chatPermissionService.InvalidateChannelCacheAsync(chatChannelId);
 
-			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
-			if (channel != null)
-				PublishChannelEvent(channel, ChatEventKinds.ChannelUpdated);
+			PublishChannelEvent(channel, ChatEventKinds.ChannelUpdated);
 
 			return true;
 		}
 
-		public async Task<bool> ReplaceAccessRulesAsync(string chatChannelId, List<ChatChannelAccessRule> accessRules, string byUserId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> ReplaceAccessRulesAsync(int departmentId, string chatChannelId, List<ChatChannelAccessRule> accessRules, string byUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
-			if (channel == null || channel.ChannelType != (int)ChatChannelType.CustomLocked)
+			if (channel == null || channel.DepartmentId != departmentId || channel.ChannelType != (int)ChatChannelType.CustomLocked ||
+				!await _chatPermissionService.CanModerateChannelAsync(channel, byUserId))
 				return false;
 
 			// Open a shared connection/transaction so the delete and re-inserts commit atomically.
@@ -577,7 +679,8 @@ namespace Resgrid.Services
 		public async Task<ChatChannelMember> EnsureMemberStateAsync(string chatChannelId, int departmentId, string userId, int? unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
-			if (channel == null)
+			if (channel == null || channel.DepartmentId != departmentId || string.IsNullOrWhiteSpace(userId) ||
+				!await _chatPermissionService.CanAccessChannelAsync(channel, userId, unitId))
 				return null;
 
 			// Invite-only channel types never self-grant membership: an existing row is reactivated,
@@ -605,6 +708,8 @@ namespace Resgrid.Services
 					throw new UnauthorizedAccessException("Membership in this channel is by invitation only.");
 
 				var unit = await _unitsService.GetUnitByIdAsync(unitId.Value);
+				if (unit == null || unit.DepartmentId != channel.DepartmentId)
+					throw new UnauthorizedAccessException("The unit does not belong to this channel's department.");
 
 				return await _chatChannelMemberRepository.InsertAsync(new ChatChannelMember
 				{
@@ -955,9 +1060,17 @@ namespace Resgrid.Services
 			// EnsureIncidentChannelsAsync, a closed command provisions nothing, and reopening a reused
 			// line here would lift the archive freeze the close put on it.
 			var command = await _incidentCommandService.GetCommandForCallAsync(departmentId, callId);
-			if (command == null || command.Status != (int)IncidentCommandStatus.Active ||
+			if (command == null || command.DepartmentId != departmentId || command.CallId != callId ||
+				command.Status != (int)IncidentCommandStatus.Active ||
 			    string.IsNullOrWhiteSpace(command.CurrentCommanderUserId))
 				return null;
+
+			if (!await _chatPermissionService.CanAccessIncidentAsync(departmentId, callId, requesterUserId, requesterUnitId))
+				throw new UnauthorizedAccessException("The requester is not assigned to this incident.");
+
+			if (requesterUnitId.HasValue &&
+				!await _chatPermissionService.CanSendAsUnitAsync(requesterUserId, requesterUnitId.Value, departmentId))
+				throw new UnauthorizedAccessException("The requester cannot act as this unit.");
 
 			Unit requesterUnit = null;
 			if (requesterUnitId.HasValue)
@@ -1115,9 +1228,15 @@ namespace Resgrid.Services
 
 		public async Task<ChatChannel> EnsureChatbotChannelAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId) ||
+				!await IsActiveDepartmentUserAsync(departmentId, userId))
+				return null;
+
 			var existing = await _chatChannelRepository.GetChatbotChannelAsync(departmentId, userId);
 			if (existing != null)
-				return existing;
+				return existing.DepartmentId == departmentId && string.Equals(existing.OwnerUserId, userId, StringComparison.OrdinalIgnoreCase)
+					? existing
+					: null;
 
 			var channel = await InsertProvisionedChannelAsync(new ChatChannel
 			{
@@ -1148,6 +1267,13 @@ namespace Resgrid.Services
 			}
 
 			return channel;
+		}
+
+		private async Task<bool> IsActiveDepartmentUserAsync(int departmentId, string userId)
+		{
+			return departmentId > 0 && !string.IsNullOrWhiteSpace(userId) &&
+				await _departmentsService.IsUserInDepartmentAsync(departmentId, userId) &&
+				!await _departmentsService.IsUserDisabledAsync(userId, departmentId);
 		}
 
 		public async Task<bool> SetIncidentChannelsArchivedAsync(int callId, bool archived, CancellationToken cancellationToken = default(CancellationToken))
@@ -1209,8 +1335,12 @@ namespace Resgrid.Services
 			};
 		}
 
-		public async Task<ChatDepartmentSetting> SaveDepartmentSettingsAsync(ChatDepartmentSetting settings, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<ChatDepartmentSetting> SaveDepartmentSettingsAsync(int departmentId, string byUserId, ChatDepartmentSetting settings, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (settings == null || settings.DepartmentId != departmentId ||
+				!await _chatPermissionService.IsDepartmentAdminAsync(departmentId, byUserId))
+				return null;
+
 			var existing = await _chatDepartmentSettingRepository.GetByDepartmentIdAsync(settings.DepartmentId);
 			if (existing == null)
 			{

@@ -57,8 +57,8 @@ namespace Resgrid.Services
 			try
 			{
 				var cached = await _cacheProvider.GetStringAsync(cacheKey);
-				if (cached == "1")
-					return true;
+				// Permission rows and department/group/role membership can be revoked independently of
+				// this cache. A negative verdict is safe to reuse; a positive one must be evaluated live.
 				if (cached == "0")
 					return false;
 			}
@@ -72,7 +72,8 @@ namespace Resgrid.Services
 
 			try
 			{
-				await _cacheProvider.SetStringAsync(cacheKey, allowed ? "1" : "0", CacheLength);
+				if (!allowed)
+					await _cacheProvider.SetStringAsync(cacheKey, "0", CacheLength);
 			}
 			catch (Exception ex)
 			{

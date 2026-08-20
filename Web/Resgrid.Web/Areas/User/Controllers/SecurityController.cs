@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -450,23 +451,62 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		public async Task<IActionResult> GetAuditLogsList()
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			var auditLogsJson = new List<AuditLogJson>();
 			var auditLogs = await _auditService.GetAllAuditLogsForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId, true);
+			var personnelNamesByUserId = personnelNames
+				.Where(x => x != null && !String.IsNullOrWhiteSpace(x.UserId))
+				.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase);
+			var usersByUserId = users
+				.Where(x => x != null && !String.IsNullOrWhiteSpace(x.UserId))
+				.GroupBy(x => x.UserId, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase);
 
 			foreach (var auditLog in auditLogs)
 			{
 				var auditJson = new AuditLogJson();
 				auditJson.AuditLogId = auditLog.AuditLogId;
-				//auditJson.Name = UserHelper.GetFullNameForUser(null, auditLog.UserId);
+				personnelNamesByUserId.TryGetValue(auditLog.UserId ?? String.Empty, out var personName);
+				usersByUserId.TryGetValue(auditLog.UserId ?? String.Empty, out var user);
+				auditJson.Name = personName != null && !String.IsNullOrWhiteSpace(personName.Name)
+					? personName.Name
+					: (!String.IsNullOrWhiteSpace(auditLog.UserId) ? auditLog.UserId : "System");
 				auditJson.Message = auditLog.Message;
+				auditJson.Successful = auditLog.Successful;
 
 				if (auditLog.LoggedOn.HasValue)
+				{
 					auditJson.Timestamp = auditLog.LoggedOn.Value.TimeConverterToString(department);
+					auditJson.TimestampSort = auditLog.LoggedOn.Value.Ticks / TimeSpan.TicksPerMillisecond;
+				}
 				else
 					auditJson.Timestamp = "Unknown";
 
 				auditJson.Type = _auditService.GetAuditLogTypeString((AuditLogTypes)auditLog.LogType);
+				auditJson.SearchTerms = String.Join(" ", new[]
+				{
+					auditJson.Name,
+					auditLog.UserId,
+					user?.UserName,
+					user?.Email,
+					auditLog.AuditLogId.ToString(CultureInfo.InvariantCulture),
+					auditLog.DepartmentId.ToString(CultureInfo.InvariantCulture),
+					auditLog.LogType.ToString(CultureInfo.InvariantCulture),
+					auditLog.ObjectId,
+					auditLog.ObjectDepartmentId.ToString(CultureInfo.InvariantCulture),
+					auditLog.IpAddress,
+					auditLog.ServerName,
+					auditJson.Timestamp,
+					auditLog.LoggedOn?.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture),
+					auditJson.Type,
+					((AuditLogTypes)auditLog.LogType).ToString()
+				}.Where(x => !String.IsNullOrWhiteSpace(x)));
 
 				auditLogsJson.Add(auditJson);
 			}
@@ -479,14 +519,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
 
-			var model = new ViewAuditLogView();
-			model.AuditLog = await _auditService.GetAuditLogByIdAsync(auditLogId);
-			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			model.Type = (AuditLogTypes)model.AuditLog.LogType;
+			var auditLog = await _auditService.GetAuditLogByIdAsync(auditLogId);
+			if (auditLog == null)
+				return NotFound();
 
-			if (model.AuditLog.DepartmentId != DepartmentId)
+			if (auditLog.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			var model = new ViewAuditLogView
+			{
+				AuditLog = auditLog,
+				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId),
+				Type = (AuditLogTypes)auditLog.LogType,
+				TypeName = _auditService.GetAuditLogTypeString((AuditLogTypes)auditLog.LogType)
+			};
 
 			return View(model);
 		}

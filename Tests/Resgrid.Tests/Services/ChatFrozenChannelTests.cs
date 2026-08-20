@@ -29,6 +29,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IChatMessageRepository> _messageRepository;
 		private Mock<IChatMessageReactionRepository> _reactionRepository;
 		private Mock<IChatMessageEditRepository> _editRepository;
+		private Mock<IChatPermissionService> _permissionService;
 		private ChatMessage _message;
 
 		[SetUp]
@@ -47,6 +48,9 @@ namespace Resgrid.Tests.Services
 			_messageRepository = new Mock<IChatMessageRepository>();
 			_reactionRepository = new Mock<IChatMessageReactionRepository>();
 			_editRepository = new Mock<IChatMessageEditRepository>();
+			_permissionService = new Mock<IChatPermissionService>();
+			_permissionService.Setup(x => x.CanAccessChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<string>(), It.IsAny<int?>())).ReturnsAsync(true);
+			_permissionService.Setup(x => x.CanModerateChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<string>())).ReturnsAsync(true);
 
 			_messageRepository.Setup(x => x.GetByIdAsync(MessageId)).ReturnsAsync(_message);
 			_messageRepository
@@ -75,7 +79,7 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IChatMessageAckRepository>(),
 				Mock.Of<IChatChannelMemberRepository>(),
 				Mock.Of<IChatChannelService>(),
-				Mock.Of<IChatPermissionService>(),
+				_permissionService.Object,
 				Mock.Of<IUserProfileService>(),
 				Mock.Of<IUnitsService>(),
 				Mock.Of<IEventAggregator>());
@@ -85,7 +89,7 @@ namespace Resgrid.Tests.Services
 		{
 			GivenChannelArchived(true);
 
-			var result = await BuildService().EditMessageAsync(MessageId, SenderId, "rewritten after the fact");
+			var result = await BuildService().EditMessageAsync(1, MessageId, SenderId, "rewritten after the fact");
 
 			result.Should().BeNull();
 			_message.Body.Should().Be("original body");
@@ -97,7 +101,7 @@ namespace Resgrid.Tests.Services
 		{
 			GivenChannelArchived(false);
 
-			var result = await BuildService().EditMessageAsync(MessageId, SenderId, "corrected");
+			var result = await BuildService().EditMessageAsync(1, MessageId, SenderId, "corrected");
 
 			result.Should().NotBeNull();
 			result.Body.Should().Be("corrected");
@@ -108,7 +112,7 @@ namespace Resgrid.Tests.Services
 		{
 			GivenChannelArchived(true);
 
-			var result = await BuildService().DeleteMessageAsync(MessageId, SenderId, asModerator: false, reason: null);
+			var result = await BuildService().DeleteMessageAsync(1, MessageId, SenderId, asModerator: false, reason: null);
 
 			result.Should().BeFalse();
 			_messageRepository.Verify(x => x.TombstoneAsync(MessageId, It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -121,7 +125,7 @@ namespace Resgrid.Tests.Services
 
 			// Moderation has to keep working on a closed incident — that is the whole point of leaving
 			// flagging available on a frozen record.
-			var result = await BuildService().DeleteMessageAsync(MessageId, "moderator", asModerator: true, reason: "policy");
+			var result = await BuildService().DeleteMessageAsync(1, MessageId, "moderator", asModerator: true, reason: "policy");
 
 			result.Should().BeTrue();
 			_message.IsModerated.Should().BeTrue();
@@ -134,8 +138,8 @@ namespace Resgrid.Tests.Services
 			GivenChannelArchived(true);
 			var service = BuildService();
 
-			(await service.AddReactionAsync(MessageId, SenderId, null, "👍")).Should().BeFalse();
-			(await service.RemoveReactionAsync(MessageId, SenderId, null, "👍")).Should().BeFalse();
+			(await service.AddReactionAsync(1, MessageId, SenderId, null, "👍")).Should().BeFalse();
+			(await service.RemoveReactionAsync(1, MessageId, SenderId, null, "👍")).Should().BeFalse();
 
 			_reactionRepository.Verify(x => x.InsertAsync(It.IsAny<ChatMessageReaction>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
 			_reactionRepository.Verify(
@@ -148,7 +152,7 @@ namespace Resgrid.Tests.Services
 		{
 			_channelRepository.Setup(x => x.GetByIdAsync(ChannelId)).ReturnsAsync((ChatChannel)null);
 
-			var result = await BuildService().EditMessageAsync(MessageId, SenderId, "rewritten");
+			var result = await BuildService().EditMessageAsync(1, MessageId, SenderId, "rewritten");
 
 			result.Should().BeNull();
 		}

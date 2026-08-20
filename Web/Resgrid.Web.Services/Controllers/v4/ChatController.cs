@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Config;
@@ -15,6 +16,7 @@ using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4;
 using Resgrid.Web.Services.Models.v4.Chat;
@@ -28,6 +30,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
+	[Authorize(Policy = ResgridResources.Messages_View)]
 	public class ChatController : V4AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors
@@ -219,6 +222,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Target user or unit for the direct message</param>
 		/// <returns>ChatChannelCreatedResult with the existing or newly created channel</returns>
 		[HttpPost("CreateDirectMessage")]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -279,6 +283,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">The call to reach command on, and optionally the unit to speak as</param>
 		/// <returns>ChatChannelCreatedResult with the existing or newly created commander line</returns>
 		[HttpPost("CreateIncidentCommanderLine")]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -342,6 +347,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Name and initial members of the channel</param>
 		/// <returns>ChatChannelCreatedResult with the newly created channel</returns>
 		[HttpPost("CreateAdHocChannel")]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -356,13 +362,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null || input.MemberUserIds == null || input.MemberUserIds.Count <= 0)
 				return BadRequest();
 
-			// No name supplied: name the group after its members (Slack-style), capped to the column length.
+			// The service derives an unnamed group only after it validates every supplied member belongs to
+			// this department, so profile lookups cannot be driven across the tenant boundary.
 			var name = input.Name?.Trim();
-			if (String.IsNullOrWhiteSpace(name))
-				name = await BuildGroupNameFromMembersAsync(input.MemberUserIds);
 
 			var result = new ChatChannelCreatedResult();
-			var channel = await _chatChannelService.CreateAdHocGroupChannelAsync(DepartmentId, UserId, name, input.MemberUserIds, cancellationToken);
+			ChatChannel channel;
+			try
+			{
+				channel = await _chatChannelService.CreateAdHocGroupChannelAsync(DepartmentId, UserId, name, input.MemberUserIds, cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
 
 			if (channel != null)
 			{
@@ -386,6 +399,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Name, topic and OR-evaluated access rules for the channel</param>
 		/// <returns>ChatChannelCreatedResult with the newly created channel</returns>
 		[HttpPost("CreateCustomChannel")]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -420,7 +434,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			var result = new ChatChannelCreatedResult();
-			var channel = await _chatChannelService.CreateCustomChannelAsync(DepartmentId, UserId, input.Name, input.Topic, rules, cancellationToken);
+			ChatChannel channel;
+			try
+			{
+				channel = await _chatChannelService.CreateCustomChannelAsync(DepartmentId, UserId, input.Name, input.Topic, rules, cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
 
 			if (channel != null)
 			{
@@ -445,6 +467,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">New name and topic</param>
 		/// <returns>GetChatChannelResult with the updated channel</returns>
 		[HttpPut("UpdateChannel")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -464,7 +487,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new GetChatChannelResult();
-			var updated = await _chatChannelService.UpdateChannelAsync(channelId, input?.Name, input?.Topic, UserId, cancellationToken);
+			var updated = await _chatChannelService.UpdateChannelAsync(DepartmentId, channelId, input?.Name, input?.Topic, UserId, cancellationToken);
 
 			if (updated != null)
 			{
@@ -488,6 +511,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="channelId">Chat channel identifier</param>
 		/// <returns>ChatActionResult indicating whether the channel was archived</returns>
 		[HttpDelete("ArchiveChannel")]
+		[Authorize(Policy = ResgridResources.Messages_Delete)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -504,7 +528,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new ChatActionResult();
-			result.Success = await _chatChannelService.SetChannelArchivedAsync(channelId, true, UserId, cancellationToken);
+			result.Success = await _chatChannelService.SetChannelArchivedAsync(DepartmentId, channelId, true, UserId, cancellationToken);
 			result.Status = result.Success ? ResponseHelper.Success : ResponseHelper.Failure;
 
 			if (result.Success)
@@ -583,6 +607,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">UserIds to add</param>
 		/// <returns>Array of ChatMemberResultData objects for the added members</returns>
 		[HttpPost("AddMembers")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -624,7 +649,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				added = await _chatChannelService.AddMembersAsync(channelId, input.UserIds, UserId, cancellationToken);
+				added = await _chatChannelService.AddMembersAsync(DepartmentId, channelId, input.UserIds, UserId, cancellationToken);
 			}
 			catch (UnauthorizedAccessException)
 			{
@@ -663,6 +688,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="userId">UserId of the member to remove</param>
 		/// <returns>ChatActionResult indicating whether the member was removed</returns>
 		[HttpDelete("RemoveMember")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -684,7 +710,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new ChatActionResult();
-			result.Success = await _chatChannelService.RemoveMemberAsync(channelId, userId, UserId, cancellationToken);
+			result.Success = await _chatChannelService.RemoveMemberAsync(DepartmentId, channelId, userId, UserId, cancellationToken);
 			result.Status = result.Success ? ResponseHelper.Deleted : ResponseHelper.Failure;
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -698,6 +724,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Notification preference to apply</param>
 		/// <returns>ChatActionResult indicating whether the preference was saved</returns>
 		[HttpPut("SetNotificationPreference")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -880,6 +907,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Message content and options</param>
 		/// <returns>ChatMessageSentResult with the persisted message</returns>
 		[HttpPost("SendMessage")]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -900,6 +928,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Assistant conversations are plain text only: no threads, no attachments/GIFs, no urgent
 			// priority. Enforced here so every client (web and mobile) gets the same behavior.
 			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
+			if (channel == null || channel.DepartmentId != DepartmentId)
+				return NotFound();
+
 			var isChatbotChannel = channel != null && channel.ChannelType == (int)ChatChannelType.Chatbot;
 			if (isChatbotChannel && ((ChatMessageType)input.MessageType != ChatMessageType.Text || !String.IsNullOrWhiteSpace(input.ThreadRootMessageId)))
 				return BadRequest("Assistant conversations only support plain text messages.");
@@ -944,7 +975,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				message = await _chatMessageService.SendMessageAsync(UserId, request, cancellationToken);
+				message = await _chatMessageService.SendMessageAsync(DepartmentId, UserId, request, cancellationToken);
 			}
 			catch (UnauthorizedAccessException)
 			{
@@ -1012,6 +1043,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">New message body</param>
 		/// <returns>GetChatMessageResult with the updated message</returns>
 		[HttpPut("EditMessage")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -1026,10 +1058,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null || String.IsNullOrWhiteSpace(input.Body))
 				return BadRequest();
 
+			var accessCheck = await CheckMessageChannelAccessAsync(messageId);
+			if (accessCheck != null)
+				return accessCheck;
+
 			if (await IsChatbotMessageChannelAsync(messageId))
 				return BadRequest("Messages can't be edited in assistant conversations.");
 
-			var message = await _chatMessageService.EditMessageAsync(messageId, UserId, input.Body, cancellationToken);
+			var message = await _chatMessageService.EditMessageAsync(DepartmentId, messageId, UserId, input.Body, cancellationToken);
 
 			if (message == null)
 				return BadRequest();
@@ -1049,6 +1085,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="messageId">Chat message identifier</param>
 		/// <returns>ChatActionResult indicating whether the message was deleted</returns>
 		[HttpDelete("DeleteMessage")]
+		[Authorize(Policy = ResgridResources.Messages_Delete)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<ChatActionResult>> DeleteMessage(string messageId, CancellationToken cancellationToken)
@@ -1056,11 +1093,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			var accessCheck = await CheckMessageChannelAccessAsync(messageId);
+			if (accessCheck != null)
+				return accessCheck;
+
 			if (await IsChatbotMessageChannelAsync(messageId))
 				return BadRequest("Messages can't be deleted in assistant conversations.");
 
 			var result = new ChatActionResult();
-			result.Success = await _chatMessageService.DeleteMessageAsync(messageId, UserId, false, null, cancellationToken);
+			result.Success = await _chatMessageService.DeleteMessageAsync(DepartmentId, messageId, UserId, false, null, cancellationToken);
 			result.Status = result.Success ? ResponseHelper.Deleted : ResponseHelper.Failure;
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -1078,6 +1119,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Emoji to react with</param>
 		/// <returns>ChatActionResult indicating whether the reaction was added</returns>
 		[HttpPost("AddReaction")]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -1104,7 +1146,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest("Reactions aren't available in assistant conversations.");
 
 			var result = new ChatActionResult();
-			result.Success = await _chatMessageService.AddReactionAsync(messageId, UserId, null, input.Emoji, cancellationToken);
+			result.Success = await _chatMessageService.AddReactionAsync(DepartmentId, messageId, UserId, null, input.Emoji, cancellationToken);
 			result.Status = result.Success ? ResponseHelper.Created : ResponseHelper.Failure;
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -1118,6 +1160,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="emoji">Emoji to remove</param>
 		/// <returns>ChatActionResult indicating whether the reaction was removed</returns>
 		[HttpDelete("RemoveReaction")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -1138,7 +1181,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest("Reactions aren't available in assistant conversations.");
 
 			var result = new ChatActionResult();
-			result.Success = await _chatMessageService.RemoveReactionAsync(messageId, UserId, null, emoji, cancellationToken);
+			result.Success = await _chatMessageService.RemoveReactionAsync(DepartmentId, messageId, UserId, null, emoji, cancellationToken);
 			result.Status = result.Success ? ResponseHelper.Deleted : ResponseHelper.Failure;
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -1151,6 +1194,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="messageId">Chat message identifier</param>
 		/// <returns>ChatActionResult; Success is true when a pending acknowledgment was stamped</returns>
 		[HttpPost("Ack")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -1164,7 +1208,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return accessCheck;
 
 			var result = new ChatActionResult();
-			var acknowledged = await _chatMessageService.AcknowledgeMessageAsync(messageId, UserId, cancellationToken);
+			var acknowledged = await _chatMessageService.AcknowledgeMessageAsync(DepartmentId, messageId, UserId, cancellationToken);
 
 			result.Success = acknowledged > 0;
 			result.Status = result.Success ? ResponseHelper.Success : ResponseHelper.NotFound;
@@ -1192,12 +1236,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (message == null || message.DepartmentId != DepartmentId)
 				return NotFound();
 
-			if (!String.Equals(message.SenderUserId, UserId, StringComparison.OrdinalIgnoreCase))
-			{
-				var channel = await _chatChannelService.GetChannelByIdAsync(message.ChatChannelId);
-				if (channel == null || !await _chatPermissionService.CanModerateChannelAsync(channel, UserId))
-					return Unauthorized();
-			}
+			var channel = await _chatChannelService.GetChannelByIdAsync(message.ChatChannelId);
+			if (channel == null || channel.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var canModerate = await _chatPermissionService.CanModerateChannelAsync(channel, UserId);
+			var canAccess = await _chatPermissionService.CanAccessChannelAsync(channel, UserId, null);
+			if (!canAccess && !canModerate)
+				return Unauthorized();
+
+			if (!String.Equals(message.SenderUserId, UserId, StringComparison.OrdinalIgnoreCase) && !canModerate)
+				return Unauthorized();
 
 			var result = new GetChatAcksResult();
 			var acks = await _chatMessageService.GetAcksForMessageAsync(messageId);
@@ -1273,6 +1322,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Sequence read and optional unit identity</param>
 		/// <returns>ChatActionResult indicating whether the pointer advanced</returns>
 		[HttpPut("MarkRead")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -1309,6 +1359,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="messageId">Chat message identifier</param>
 		/// <returns>ChatActionResult indicating whether the message was pinned</returns>
 		[HttpPost("PinMessage")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -1323,6 +1374,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="messageId">Chat message identifier</param>
 		/// <returns>ChatActionResult indicating whether the message was unpinned</returns>
 		[HttpDelete("UnpinMessage")]
+		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -1374,6 +1426,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="file">The file being uploaded</param>
 		/// <returns>ChatAttachmentUploadedResult with the new attachment identifier</returns>
 		[HttpPost("UploadAttachment")]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[Consumes("multipart/form-data")]
 		[RequestSizeLimit(MaxAttachmentRequestBytes)]
 		[RequestFormLimits(MultipartBodyLengthLimit = MaxAttachmentRequestBytes)]
@@ -1419,7 +1472,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var message = await _chatMessageService.GetMessageByIdAsync(messageId);
-			if (message == null || message.ChatChannelId != channelId || !String.Equals(message.SenderUserId, UserId, StringComparison.OrdinalIgnoreCase))
+			if (message == null || message.DepartmentId != DepartmentId || message.ChatChannelId != channelId ||
+				message.DeletedOn.HasValue || !String.Equals(message.SenderUserId, UserId, StringComparison.OrdinalIgnoreCase))
 				return BadRequest();
 
 			byte[] data;
@@ -1483,7 +1537,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			var message = await _chatMessageService.GetMessageByIdAsync(attachment.ChatMessageId);
-			if (message == null || message.DeletedOn.HasValue)
+			if (message == null || message.DepartmentId != DepartmentId || message.ChatChannelId != attachment.ChatChannelId || message.DeletedOn.HasValue)
 				return NotFound();
 
 			var channel = await _chatChannelService.GetChannelByIdAsync(attachment.ChatChannelId);
@@ -1515,7 +1569,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			var message = await _chatMessageService.GetMessageByIdAsync(attachment.ChatMessageId);
-			if (message == null || message.DeletedOn.HasValue)
+			if (message == null || message.DepartmentId != DepartmentId || message.ChatChannelId != attachment.ChatChannelId || message.DeletedOn.HasValue)
 				return NotFound();
 
 			var channel = await _chatChannelService.GetChannelByIdAsync(attachment.ChatChannelId);
@@ -1657,6 +1711,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Reason and optional note for the flag</param>
 		/// <returns>ChatActionResult indicating whether the flag was recorded</returns>
 		[HttpPost("FlagMessage")]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -1692,9 +1747,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		#region Private Helpers
 
-		private Task<bool> ChatEnabledAsync()
+		private async Task<bool> ChatEnabledAsync()
 		{
-			return _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
+			return await _authorizationService.IsUserValidWithinLimitsAsync(UserId, DepartmentId) &&
+				await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
 		}
 
 		/// <summary>
@@ -1744,11 +1800,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private async Task<bool> IsChatbotMessageChannelAsync(string messageId)
 		{
 			var message = await _chatMessageService.GetMessageByIdAsync(messageId);
-			if (message == null)
+			if (message == null || message.DepartmentId != DepartmentId)
 				return false;
 
 			var channel = await _chatChannelService.GetChannelByIdAsync(message.ChatChannelId);
-			return channel != null && channel.ChannelType == (int)ChatChannelType.Chatbot;
+			return channel != null && channel.DepartmentId == DepartmentId &&
+				await _chatPermissionService.CanAccessChannelAsync(channel, UserId, null) &&
+				channel.ChannelType == (int)ChatChannelType.Chatbot;
 		}
 
 		/// <summary>
@@ -1788,7 +1846,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new ChatActionResult();
-			result.Success = await _chatMessageService.SetMessagePinnedAsync(messageId, UserId, pinned, cancellationToken);
+			result.Success = await _chatMessageService.SetMessagePinnedAsync(DepartmentId, messageId, UserId, pinned, cancellationToken);
 			result.Status = result.Success ? ResponseHelper.Updated : ResponseHelper.Failure;
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -1913,58 +1971,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			return data;
-		}
-
-		private const int MaxDerivedGroupNameLength = 100;
-
-		// "Alice Smith, Bob Jones" from the invited members (creator excluded — matches how Slack labels
-		// unnamed group DMs). Falls back to "New group" only if no profile resolves.
-		private async Task<string> BuildGroupNameFromMembersAsync(List<string> memberUserIds)
-		{
-			var ids = memberUserIds?
-				.Where(id => !String.IsNullOrWhiteSpace(id) && !String.Equals(id, UserId, StringComparison.OrdinalIgnoreCase))
-				.Distinct(StringComparer.OrdinalIgnoreCase)
-				.ToList() ?? new List<string>();
-
-			var names = new List<string>();
-			if (ids.Count > 0)
-			{
-				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(ids);
-				foreach (var profile in profiles ?? new List<UserProfile>())
-				{
-					var name = profile?.FullName?.AsFirstNameLastName;
-					if (!String.IsNullOrWhiteSpace(name))
-						names.Add(name);
-				}
-			}
-
-			if (names.Count == 0)
-				return "New group";
-
-			names.Sort(StringComparer.OrdinalIgnoreCase);
-
-			var joined = String.Join(", ", names);
-			if (joined.Length <= MaxDerivedGroupNameLength)
-				return joined;
-
-			// Too long: keep whole names and count the rest ("Alice Smith, Bob Jones +3").
-			var kept = new List<string>();
-			var length = 0;
-			foreach (var name in names)
-			{
-				var addition = (kept.Count == 0 ? 0 : 2) + name.Length;
-				if (length + addition + 6 > MaxDerivedGroupNameLength)
-					break;
-
-				kept.Add(name);
-				length += addition;
-			}
-
-			if (kept.Count == 0)
-				kept.Add(names[0].Length > MaxDerivedGroupNameLength - 6 ? names[0].Substring(0, MaxDerivedGroupNameLength - 6) : names[0]);
-
-			var remaining = names.Count - kept.Count;
-			return remaining > 0 ? $"{String.Join(", ", kept)} +{remaining}" : String.Join(", ", kept);
 		}
 
 		// DM channels have no stored Name; label each with the counterpart participant so multiple

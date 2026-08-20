@@ -49,10 +49,15 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 		}
 
-		public async Task<ChatMessageFlag> FlagMessageAsync(string chatMessageId, string flaggedByUserId, ChatFlagReason reason, string note, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<ChatMessageFlag> FlagMessageAsync(int departmentId, string chatMessageId, string flaggedByUserId, ChatFlagReason reason, string note, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
-			if (message == null)
+			if (message == null || message.DepartmentId != departmentId)
+				return null;
+
+			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
+			if (channel == null || channel.DepartmentId != departmentId ||
+				!await _chatPermissionService.CanAccessChannelAsync(channel, flaggedByUserId, null))
 				return null;
 
 			// Dedupe: an open flag by the same user on the same message is returned, not duplicated.
@@ -78,14 +83,20 @@ namespace Resgrid.Services
 			return flag;
 		}
 
-		public async Task<List<ChatMessageFlag>> GetFlagsAsync(int departmentId, ChatFlagStatus status, int page, int pageSize)
+		public async Task<List<ChatMessageFlag>> GetFlagsAsync(int departmentId, string byUserId, ChatFlagStatus status, int page, int pageSize)
 		{
+			if (!await _chatPermissionService.IsDepartmentAdminAsync(departmentId, byUserId))
+				return new List<ChatMessageFlag>();
+
 			var flags = await _chatMessageFlagRepository.GetByStatusAsync(departmentId, (int)status, Math.Max(page, 1), pageSize <= 0 ? 25 : Math.Min(pageSize, 100));
 			return flags?.ToList() ?? new List<ChatMessageFlag>();
 		}
 
 		public async Task<ChatMessageFlag> ResolveFlagAsync(string chatMessageFlagId, int departmentId, string byUserId, ChatFlagStatus resolution, string resolutionNote, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
 		{
+			if (!await _chatPermissionService.IsDepartmentAdminAsync(departmentId, byUserId))
+				return null;
+
 			var flag = await _chatMessageFlagRepository.GetByIdAsync(chatMessageFlagId);
 			if (flag == null || flag.DepartmentId != departmentId)
 				return null;
@@ -109,13 +120,14 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<bool> ModeratorDeleteMessageAsync(string chatMessageId, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
+		public async Task<bool> ModeratorDeleteMessageAsync(int departmentId, string chatMessageId, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
 		{
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
-			if (message == null)
+			if (message == null || message.DepartmentId != departmentId ||
+				await ResolveModeratedChannelAsync(departmentId, message.ChatChannelId, byUserId) == null)
 				return false;
 
-			var deleted = await _chatMessageService.DeleteMessageAsync(chatMessageId, byUserId, asModerator: true, reason, cancellationToken);
+			var deleted = await _chatMessageService.DeleteMessageAsync(departmentId, chatMessageId, byUserId, asModerator: true, reason, cancellationToken);
 			if (!deleted)
 				return false;
 
@@ -125,13 +137,13 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SetUserMutedAsync(string chatChannelId, string targetUserId, DateTime? mutedUntil, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
+		public async Task<bool> SetUserMutedAsync(int departmentId, string chatChannelId, string targetUserId, DateTime? mutedUntil, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
 		{
-			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
+			var channel = await ResolveModeratedChannelAsync(departmentId, chatChannelId, byUserId);
 			if (channel == null)
 				return false;
 
-			var member = await _chatChannelService.EnsureMemberStateAsync(chatChannelId, channel.DepartmentId, targetUserId, null, cancellationToken);
+			var member = await _chatChannelService.EnsureMemberStateAsync(chatChannelId, departmentId, targetUserId, null, cancellationToken);
 			if (member == null)
 				return false;
 
@@ -148,13 +160,13 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SetUserBannedAsync(string chatChannelId, string targetUserId, bool banned, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
+		public async Task<bool> SetUserBannedAsync(int departmentId, string chatChannelId, string targetUserId, bool banned, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
 		{
-			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
+			var channel = await ResolveModeratedChannelAsync(departmentId, chatChannelId, byUserId);
 			if (channel == null)
 				return false;
 
-			var member = await _chatChannelService.EnsureMemberStateAsync(chatChannelId, channel.DepartmentId, targetUserId, null, cancellationToken);
+			var member = await _chatChannelService.EnsureMemberStateAsync(chatChannelId, departmentId, targetUserId, null, cancellationToken);
 			if (member == null)
 				return false;
 
@@ -169,9 +181,9 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SetChannelLockedAsync(string chatChannelId, bool locked, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
+		public async Task<bool> SetChannelLockedAsync(int departmentId, string chatChannelId, bool locked, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
 		{
-			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
+			var channel = await ResolveModeratedChannelAsync(departmentId, chatChannelId, byUserId);
 			if (channel == null)
 				return false;
 
@@ -189,14 +201,34 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<List<ChatModerationAction>> GetModerationActionsAsync(int departmentId, string chatChannelId, int page, int pageSize)
+		public async Task<List<ChatModerationAction>> GetModerationActionsAsync(int departmentId, string byUserId, string chatChannelId, int page, int pageSize)
 		{
+			if (!await _chatPermissionService.IsDepartmentAdminAsync(departmentId, byUserId))
+				return new List<ChatModerationAction>();
+
+			if (!string.IsNullOrWhiteSpace(chatChannelId))
+			{
+				var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
+				if (channel == null || channel.DepartmentId != departmentId)
+					return new List<ChatModerationAction>();
+			}
+
 			var actions = await _chatModerationActionRepository.GetByDepartmentAsync(departmentId, chatChannelId, Math.Max(page, 1), pageSize <= 0 ? 25 : Math.Min(pageSize, 100));
 			return actions?.ToList() ?? new List<ChatModerationAction>();
 		}
 
 		public async Task<ChatExport> RequestExportAsync(int departmentId, string byUserId, string chatChannelId, DateTime? startDate, DateTime? endDate, ChatExportFormat format, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
 		{
+			if (!await _chatPermissionService.IsDepartmentAdminAsync(departmentId, byUserId))
+				return null;
+
+			if (!string.IsNullOrWhiteSpace(chatChannelId))
+			{
+				var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
+				if (channel == null || channel.DepartmentId != departmentId)
+					return null;
+			}
+
 			var export = await _chatExportRepository.InsertAsync(new ChatExport
 			{
 				ChatExportId = Guid.NewGuid().ToString(),
@@ -218,14 +250,20 @@ namespace Resgrid.Services
 			return export;
 		}
 
-		public async Task<List<ChatExport>> GetExportsAsync(int departmentId)
+		public async Task<List<ChatExport>> GetExportsAsync(int departmentId, string byUserId)
 		{
+			if (!await _chatPermissionService.IsDepartmentAdminAsync(departmentId, byUserId))
+				return new List<ChatExport>();
+
 			var exports = await _chatExportRepository.GetMetadataByDepartmentIdAsync(departmentId);
 			return exports?.ToList() ?? new List<ChatExport>();
 		}
 
 		public async Task<ChatExport> GetExportForDownloadAsync(string chatExportId, int departmentId, string byUserId, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null)
 		{
+			if (!await _chatPermissionService.IsDepartmentAdminAsync(departmentId, byUserId))
+				return null;
+
 			var export = await _chatExportRepository.GetByIdAsync(chatExportId);
 			if (export == null || export.DepartmentId != departmentId || export.Status != (int)ChatExportStatus.Complete)
 				return null;
@@ -236,6 +274,19 @@ namespace Resgrid.Services
 				AuditLogTypes.ChatExportDownloaded, cancellationToken, context);
 
 			return export;
+		}
+
+		private async Task<ChatChannel> ResolveModeratedChannelAsync(int departmentId, string chatChannelId, string byUserId)
+		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(chatChannelId) || string.IsNullOrWhiteSpace(byUserId))
+				return null;
+
+			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
+			if (channel == null || channel.DepartmentId != departmentId ||
+				!await _chatPermissionService.CanModerateChannelAsync(channel, byUserId))
+				return null;
+
+			return channel;
 		}
 
 		private async Task RecordActionAsync(int departmentId, string chatChannelId, string chatMessageId, string targetUserId, int? targetUnitId,

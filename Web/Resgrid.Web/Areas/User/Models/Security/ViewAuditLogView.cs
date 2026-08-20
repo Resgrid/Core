@@ -7,5 +7,6 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public AuditLog AuditLog {get;set;}
 		public Department Department {get;set;}
 		public AuditLogTypes Type {get;set;}
+		public string TypeName { get; set; }
 	}
 }

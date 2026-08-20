@@ -1625,7 +1625,7 @@ namespace Resgrid.Services
 				var chatChannelService = ServiceLocator.Current.GetInstance<IChatChannelService>();
 				var laneChannel = (await ServiceLocator.Current.GetInstance<Resgrid.Model.Repositories.IChatChannelRepository>().GetByCommandStructureNodeIdAsync(commandStructureNodeId));
 				if (laneChannel != null && !laneChannel.IsArchived)
-					await chatChannelService.SetChannelArchivedAsync(laneChannel.ChatChannelId, true, userId, cancellationToken);
+					await chatChannelService.SetChannelArchivedAsync(laneChannel.DepartmentId, laneChannel.ChatChannelId, true, userId, cancellationToken);
 			}
 			catch (Exception ex)
 			{

@@ -56,19 +56,35 @@ namespace Resgrid.Services
 
 		public async Task<bool> CanAccessChannelAsync(ChatChannel channel, string userId, int? activeUnitId)
 		{
-			if (channel == null || string.IsNullOrWhiteSpace(userId))
+			if (channel == null || string.IsNullOrWhiteSpace(userId) ||
+				!await IsActiveDepartmentUserAsync(channel.DepartmentId, userId))
 				return false;
+
+			// A channel ban overrides implicit access (department, incident, dispatch, group/rule or
+			// command role). Checking only explicit-membership branches would let a banned responder
+			// re-enter the same channel through their incident/resource assignment.
+			var userMember = await _chatChannelMemberRepository.GetUserMemberAsync(channel.ChatChannelId, userId);
+			if (userMember != null && userMember.DepartmentId == channel.DepartmentId && userMember.IsBanned)
+				return false;
+
+			var channelType = (ChatChannelType)channel.ChannelType;
+			// Operational access is derived from live dispatch, incident, lane, command and unit-role state.
+			// Never return a cached allow after a resource release, lane move, command transfer or dispatch
+			// revocation; those changes are authorization boundaries, not eventual-consistency hints.
+			if (IsDispatchVisibleChannel(channelType) || channelType == ChatChannelType.IncidentCommanderLine)
+				return await EvaluateAccessAsync(channel, userId, activeUnitId);
 
 			var cacheKey = await GetPermCacheKeyAsync(channel.ChatChannelId, "access", userId, activeUnitId);
 			var cached = await _cacheProvider.GetStringAsync(cacheKey);
-			if (cached == "1")
-				return true;
+			// A cached denial is safe; a cached allow is not an authorization boundary. Membership,
+			// role and rule revocations may originate outside chat, so positive access is re-evaluated.
 			if (cached == "0")
 				return false;
 
 			var result = await EvaluateAccessAsync(channel, userId, activeUnitId);
 
-			await _cacheProvider.SetStringAsync(cacheKey, result ? "1" : "0", CacheLength);
+			if (!result)
+				await _cacheProvider.SetStringAsync(cacheKey, "0", CacheLength);
 
 			return result;
 		}
@@ -117,25 +133,19 @@ namespace Resgrid.Services
 
 		public async Task<bool> CanModerateChannelAsync(ChatChannel channel, string userId)
 		{
-			if (channel == null || string.IsNullOrWhiteSpace(userId))
+			if (channel == null || string.IsNullOrWhiteSpace(userId) ||
+				!await IsActiveDepartmentUserAsync(channel.DepartmentId, userId))
 				return false;
 
-			var cacheKey = await GetPermCacheKeyAsync(channel.ChatChannelId, "mod", userId, null);
-			var cached = await _cacheProvider.GetStringAsync(cacheKey);
-			if (cached == "1")
-				return true;
-			if (cached == "0")
-				return false;
-
-			var result = await EvaluateModerateAsync(channel, userId);
-
-			await _cacheProvider.SetStringAsync(cacheKey, result ? "1" : "0", CacheLength);
-
-			return result;
+			// Moderation is low-volume and role changes must take effect immediately (especially IC transfer).
+			return await EvaluateModerateAsync(channel, userId);
 		}
 
 		public async Task<bool> CanSendAsUnitAsync(string userId, int unitId, int departmentId)
 		{
+			if (!await IsActiveDepartmentUserAsync(departmentId, userId))
+				return false;
+
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 			if (unit == null || unit.DepartmentId != departmentId)
 				return false;
@@ -147,8 +157,11 @@ namespace Resgrid.Services
 
 		public async Task<bool> CanSendAsIcAsync(string userId, int callId, int departmentId)
 		{
+			if (!await IsActiveDepartmentUserAsync(departmentId, userId))
+				return false;
+
 			var command = await _incidentCommandService.GetCommandForCallAsync(departmentId, callId);
-			if (command == null)
+			if (command == null || command.DepartmentId != departmentId || command.CallId != callId)
 				return false;
 
 			if (command.CurrentCommanderUserId == userId || command.EstablishedByUserId == userId)
@@ -158,11 +171,34 @@ namespace Resgrid.Services
 			return roles != null && roles.Any(r => r.UserId == userId && !r.RemovedOn.HasValue);
 		}
 
+		public async Task<bool> CanAccessIncidentAsync(int departmentId, int callId, string userId, int? activeUnitId)
+		{
+			if (callId <= 0 || !await IsActiveDepartmentUserAsync(departmentId, userId))
+				return false;
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != departmentId)
+				return false;
+
+			return await IsInIncidentAudienceAsync(new ChatChannel
+			{
+				DepartmentId = departmentId,
+				CallId = callId,
+				ChannelType = (int)ChatChannelType.Incident
+			}, userId, activeUnitId);
+		}
+
+		public async Task<bool> CanAccessDepartmentOperationalChannelsAsync(int departmentId, string userId)
+		{
+			return await IsActiveDepartmentUserAsync(departmentId, userId) &&
+				await _dispatchAccessService.CanUseDispatchAsync(departmentId, userId);
+		}
+
 		public async Task<List<string>> ResolveChannelAudienceUserIdsAsync(ChatChannel channel)
 		{
 			var userIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-			if (channel == null)
+			if (channel == null || !await HasValidDepartmentScopeAsync(channel))
 				return userIds.ToList();
 
 			switch ((ChatChannelType)channel.ChannelType)
@@ -183,7 +219,7 @@ namespace Resgrid.Services
 					{
 						var groupMembers = await _departmentGroupsService.GetAllMembersForGroupAsync(channel.GroupId.Value);
 						if (groupMembers != null)
-							foreach (var m in groupMembers)
+							foreach (var m in groupMembers.Where(m => m.DepartmentId == channel.DepartmentId))
 								AddIfSet(userIds, m.UserId);
 					}
 					break;
@@ -195,9 +231,6 @@ namespace Resgrid.Services
 
 				case ChatChannelType.Incident:
 					await AddIncidentAudienceAsync(channel, userIds);
-					// The desk follows the incident's shared conversation, not just its own dispatch line.
-					foreach (var dispatcherId in await _dispatchAccessService.GetDispatchUserIdsAsync(channel.DepartmentId))
-						AddIfSet(userIds, dispatcherId);
 					break;
 
 				case ChatChannelType.IncidentLane:
@@ -214,23 +247,20 @@ namespace Resgrid.Services
 
 				case ChatChannelType.IncidentDispatch:
 					await AddIncidentAudienceAsync(channel, userIds);
-					foreach (var dispatcherId in await _dispatchAccessService.GetDispatchUserIdsAsync(channel.DepartmentId))
-						AddIfSet(userIds, dispatcherId);
 					break;
 
 				case ChatChannelType.UnitDispatch:
-					// The unit's member row resolves to its active crew; the desk side is every dispatcher.
+					// The unit's member row resolves to its active crew.
 					await AddExplicitMemberAudienceAsync(channel, userIds);
-					foreach (var dispatcherId in await _dispatchAccessService.GetDispatchUserIdsAsync(channel.DepartmentId))
-						AddIfSet(userIds, dispatcherId);
 					break;
 
 				case ChatChannelType.IncidentCommanderLine:
 					// Requester side is an explicit member row; the commander side is resolved live from the
-					// call so a command transfer moves the conversation rather than copying it. Only the
+					// call. The requester row is also filtered through current incident assignment so a
+					// release or lane removal immediately removes history and notification access. Only the
 					// CURRENT commander — deliberately not EstablishedByUserId or the wider command staff,
 					// which is what separates this from the IncidentCommand channel.
-					await AddExplicitMemberAudienceAsync(channel, userIds);
+					await AddIncidentCommanderLineRequesterAudienceAsync(channel, userIds);
 					AddIfSet(userIds, await GetCurrentCommanderUserIdAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault()));
 					break;
 
@@ -239,7 +269,25 @@ namespace Resgrid.Services
 					break;
 			}
 
-			return userIds.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+			if (IsDispatchVisibleChannel((ChatChannelType)channel.ChannelType))
+			{
+				foreach (var dispatcherId in await _dispatchAccessService.GetDispatchUserIdsAsync(channel.DepartmentId))
+					AddIfSet(userIds, dispatcherId);
+			}
+
+			// Audience resolution feeds push notifications and urgent acknowledgements. Never let a stale
+			// member/rule/assignment row send department chat content to a user outside the channel tenant.
+			var departmentUserIds = new HashSet<string>(
+				await _departmentsService.GetMemberUserIdsInDepartmentAsync(channel.DepartmentId, userIds) ?? new HashSet<string>(),
+				StringComparer.OrdinalIgnoreCase);
+			var activeUserIds = new List<string>();
+			foreach (var userId in userIds.Where(x => !string.IsNullOrWhiteSpace(x) && departmentUserIds.Contains(x)))
+			{
+				if (await _authorizationService.IsUserValidWithinLimitsAsync(userId, channel.DepartmentId))
+					activeUserIds.Add(userId);
+			}
+
+			return activeUserIds;
 		}
 
 		public async Task InvalidateChannelCacheAsync(string chatChannelId)
@@ -253,23 +301,48 @@ namespace Resgrid.Services
 			await _cacheProvider.IncrementAsync(ChannelListVersionCacheKey, VersionCacheLength);
 		}
 
+		public async Task<string> GetChannelAccessVersionAsync(string chatChannelId)
+		{
+			if (string.IsNullOrWhiteSpace(chatChannelId))
+				return null;
+
+			try
+			{
+				return await _cacheProvider.GetStringAsync(GetVersionKey(chatChannelId)) ?? "0";
+			}
+			catch (Exception ex)
+			{
+				// A missing authorization epoch must stop realtime fan-out. Falling back to the old
+				// group during a cache outage could reconnect a user whose access was just revoked.
+				Resgrid.Framework.Logging.LogException(ex);
+				return null;
+			}
+		}
+
 		private async Task<bool> EvaluateAccessAsync(ChatChannel channel, string userId, int? activeUnitId)
 		{
-			switch ((ChatChannelType)channel.ChannelType)
+			if (!await HasValidDepartmentScopeAsync(channel))
+				return false;
+
+			var channelType = (ChatChannelType)channel.ChannelType;
+			if (IsDispatchVisibleChannel(channelType) && await _dispatchAccessService.CanUseDispatchAsync(channel.DepartmentId, userId))
+				return true;
+
+			switch (channelType)
 			{
 				case ChatChannelType.Chatbot:
 					return string.Equals(channel.OwnerUserId, userId, StringComparison.OrdinalIgnoreCase);
 
 				case ChatChannelType.DirectMessage:
 				case ChatChannelType.AdHocGroup:
-					if (await HasActiveMembershipAsync(channel.ChatChannelId, userId, null))
+					if (await HasActiveMembershipAsync(channel.ChatChannelId, channel.DepartmentId, userId, null))
 						return true;
 
 					// The unit's member row only grants access when the caller actually crews the claimed
 					// unit — a caller-supplied activeUnitId alone must not open another unit's channels.
 					return activeUnitId.HasValue
 						&& await CanSendAsUnitAsync(userId, activeUnitId.Value, channel.DepartmentId)
-						&& await HasActiveMembershipAsync(channel.ChatChannelId, userId, activeUnitId);
+						&& await HasActiveMembershipAsync(channel.ChatChannelId, channel.DepartmentId, userId, activeUnitId);
 
 				case ChatChannelType.DepartmentDefault:
 					return await _departmentsService.IsUserInDepartmentAsync(channel.DepartmentId, userId);
@@ -282,66 +355,35 @@ namespace Resgrid.Services
 						return false;
 
 					var groupMembers = await _departmentGroupsService.GetAllMembersForGroupAsync(channel.GroupId.Value);
-					return groupMembers != null && groupMembers.Any(m => string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase));
+					return groupMembers != null && groupMembers.Any(m => m.DepartmentId == channel.DepartmentId &&
+						string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase));
 
 				case ChatChannelType.CustomLocked:
 					if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
 						return true;
 
-					if (await HasActiveMembershipAsync(channel.ChatChannelId, userId, null))
+					if (await HasActiveMembershipAsync(channel.ChatChannelId, channel.DepartmentId, userId, null))
 						return true;
 
 					return await MatchesAccessRulesAsync(channel, userId);
 
 				case ChatChannelType.Incident:
-					if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
-						return true;
-
-					// Authorized dispatchers see every call's shared incident conversation — that is the
-					// desk's job. The private command channel stays closed to them.
-					if (await _dispatchAccessService.CanUseDispatchAsync(channel.DepartmentId, userId))
-						return true;
-
 					return await IsInIncidentAudienceAsync(channel, userId, activeUnitId);
 
 				case ChatChannelType.IncidentLane:
-					if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
-						return true;
-
 					return await IsInLaneAudienceAsync(channel, userId, activeUnitId);
 
 				case ChatChannelType.IncidentCommand:
-					if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
-						return true;
-
-					// Command staff ONLY — deliberately not widened to dispatch. Dispatch reaches command
-					// through the incident's dispatch channel; this one stays internal to the people running
-					// the incident so command can talk candidly.
 					return await IsCommandStaffAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userId);
 
 				case ChatChannelType.IncidentLeads:
-					if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
-						return true;
-
 					return await IsLaneLeadOrCommanderAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userId);
 
 				case ChatChannelType.IncidentDispatch:
-					// Deliberately NOT widened to department admins the way the other incident channels are.
-					// The whole point of the DispatchAppLogin permission is that an admin the department has
-					// not authorized for dispatch stays out of dispatch traffic; they still get in if they
-					// are actually working the incident.
-					if (await _dispatchAccessService.CanUseDispatchAsync(channel.DepartmentId, userId))
-						return true;
-
 					return await IsInIncidentAudienceAsync(channel, userId, activeUnitId);
 
 				case ChatChannelType.UnitDispatch:
 				{
-					// Same stance as IncidentDispatch: dispatch authorization, not admin standing, opens
-					// dispatch traffic.
-					if (await _dispatchAccessService.CanUseDispatchAsync(channel.DepartmentId, userId))
-						return true;
-
 					// The unit side is proven against the channel's OWN unit, never the caller-supplied
 					// activeUnitId or a leftover user member row (lazy read-pointer rows outlive access) —
 					// crewing some other unit must not open this unit's dispatch line.
@@ -360,12 +402,14 @@ namespace Resgrid.Services
 
 					// Requester side, proven the same way DMs are — a unit's row only counts when the caller
 					// actually crews that unit.
-					if (await HasActiveMembershipAsync(channel.ChatChannelId, userId, null))
+					if (await HasActiveMembershipAsync(channel.ChatChannelId, channel.DepartmentId, userId, null) &&
+						await IsInIncidentAudienceAsync(channel, userId, null))
 						return true;
 
 					return activeUnitId.HasValue
 						&& await CanSendAsUnitAsync(userId, activeUnitId.Value, channel.DepartmentId)
-						&& await HasActiveMembershipAsync(channel.ChatChannelId, userId, activeUnitId);
+						&& await HasActiveMembershipAsync(channel.ChatChannelId, channel.DepartmentId, userId, activeUnitId)
+						&& await IsInIncidentAudienceAsync(channel, userId, activeUnitId);
 				}
 
 				default:
@@ -390,12 +434,15 @@ namespace Resgrid.Services
 
 		private async Task<bool> EvaluateModerateAsync(ChatChannel channel, string userId)
 		{
+			if (!await HasValidDepartmentScopeAsync(channel))
+				return false;
+
 			// Department admins moderate every channel type (including DMs, for flagged-content handling).
 			if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
 				return true;
 
 			var member = await _chatChannelMemberRepository.GetUserMemberAsync(channel.ChatChannelId, userId);
-			if (member != null && member.IsModerator && !member.RemovedOn.HasValue)
+			if (member != null && member.DepartmentId == channel.DepartmentId && member.IsModerator && !member.RemovedOn.HasValue)
 				return true;
 
 			switch ((ChatChannelType)channel.ChannelType)
@@ -405,7 +452,8 @@ namespace Resgrid.Services
 						return false;
 
 					var groupMembers = await _departmentGroupsService.GetAllMembersForGroupAsync(channel.GroupId.Value);
-					return groupMembers != null && groupMembers.Any(m => string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase) && m.IsAdmin.GetValueOrDefault());
+					return groupMembers != null && groupMembers.Any(m => m.DepartmentId == channel.DepartmentId &&
+						string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase) && m.IsAdmin.GetValueOrDefault());
 
 				case ChatChannelType.Incident:
 				case ChatChannelType.IncidentLane:
@@ -441,19 +489,20 @@ namespace Resgrid.Services
 				return unitId;
 
 			var members = await _chatChannelMemberRepository.GetByChannelIdAsync(channel.ChatChannelId);
-			return members?.FirstOrDefault(m => m.ParticipantType == (int)ChatParticipantType.Unit && !m.RemovedOn.HasValue && m.UnitId.HasValue)?.UnitId;
+			return members?.FirstOrDefault(m => m.DepartmentId == channel.DepartmentId &&
+				m.ParticipantType == (int)ChatParticipantType.Unit && !m.RemovedOn.HasValue && m.UnitId.HasValue)?.UnitId;
 		}
 
-		private async Task<bool> HasActiveMembershipAsync(string chatChannelId, string userId, int? activeUnitId)
+		private async Task<bool> HasActiveMembershipAsync(string chatChannelId, int departmentId, string userId, int? activeUnitId)
 		{
 			var member = await _chatChannelMemberRepository.GetUserMemberAsync(chatChannelId, userId);
-			if (member != null && !member.RemovedOn.HasValue && !member.IsBanned)
+			if (member != null && member.DepartmentId == departmentId && !member.RemovedOn.HasValue && !member.IsBanned)
 				return true;
 
 			if (activeUnitId.HasValue)
 			{
 				var unitMember = await _chatChannelMemberRepository.GetUnitMemberAsync(chatChannelId, activeUnitId.Value);
-				if (unitMember != null && !unitMember.RemovedOn.HasValue && !unitMember.IsBanned)
+				if (unitMember != null && unitMember.DepartmentId == departmentId && !unitMember.RemovedOn.HasValue && !unitMember.IsBanned)
 					return true;
 			}
 
@@ -466,7 +515,7 @@ namespace Resgrid.Services
 			if (rules == null)
 				return false;
 
-			var ruleList = rules.ToList();
+			var ruleList = rules.Where(r => r.DepartmentId == channel.DepartmentId).ToList();
 			if (ruleList.Count == 0)
 				return false;
 
@@ -483,7 +532,7 @@ namespace Resgrid.Services
 
 			foreach (var groupRule in ruleList.Where(r => r.RuleType == (int)ChatAccessRuleType.GroupMembership && r.GroupId.HasValue))
 			{
-				var memberUserIds = await GetGroupRosterUserIdsAsync(groupRule.GroupId.Value);
+				var memberUserIds = await GetGroupRosterUserIdsAsync(groupRule.GroupId.Value, channel.DepartmentId);
 				if (memberUserIds != null && memberUserIds.Any(id => string.Equals(id, userId, StringComparison.OrdinalIgnoreCase)))
 					return true;
 			}
@@ -492,20 +541,24 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>Group roster lookup cached briefly: access-rule evaluation walks every group rule per user, which would otherwise N+1 the group-membership table.</summary>
-		private async Task<List<string>> GetGroupRosterUserIdsAsync(int groupId)
+		private async Task<List<string>> GetGroupRosterUserIdsAsync(int groupId, int departmentId)
 		{
 			async Task<GroupRosterCache> getRoster()
 			{
+				var group = await _departmentGroupsService.GetGroupByIdAsync(groupId, false);
+				if (group == null || group.DepartmentId != departmentId)
+					return new GroupRosterCache();
+
 				var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
 				return new GroupRosterCache
 				{
-					UserIds = members?.Where(m => !string.IsNullOrWhiteSpace(m.UserId)).Select(m => m.UserId).ToList() ?? new List<string>()
+					UserIds = members?.Where(m => m.DepartmentId == departmentId && !string.IsNullOrWhiteSpace(m.UserId)).Select(m => m.UserId).ToList() ?? new List<string>()
 				};
 			}
 
 			if (SystemBehaviorConfig.CacheEnabled)
 			{
-				var cached = await _cacheProvider.RetrieveAsync($"chatperm:grouproster:{groupId}", getRoster, CacheLength);
+				var cached = await _cacheProvider.RetrieveAsync($"chatperm:grouproster:{departmentId}:{groupId}", getRoster, CacheLength);
 				return cached?.UserIds;
 			}
 
@@ -530,7 +583,7 @@ namespace Resgrid.Services
 				return true;
 
 			var call = await _callsService.GetCallByIdAsync(callId);
-			if (call != null)
+			if (call != null && call.DepartmentId == channel.DepartmentId)
 			{
 				if (call.Dispatches != null && call.Dispatches.Any(d => string.Equals(d.UserId, userId, StringComparison.OrdinalIgnoreCase)))
 					return true;
@@ -544,8 +597,13 @@ namespace Resgrid.Services
 				{
 					foreach (var groupDispatch in call.GroupDispatches)
 					{
+						var group = await _departmentGroupsService.GetGroupByIdAsync(groupDispatch.DepartmentGroupId, false);
+						if (group == null || group.DepartmentId != channel.DepartmentId)
+							continue;
+
 						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupDispatch.DepartmentGroupId);
-						if (members != null && members.Any(m => string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase)))
+						if (members != null && members.Any(m => m.DepartmentId == channel.DepartmentId &&
+							string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase)))
 							return true;
 					}
 				}
@@ -562,7 +620,8 @@ namespace Resgrid.Services
 			var assignments = await _incidentCommandService.GetAssignmentsForCallAsync(channel.DepartmentId, callId);
 			if (assignments != null)
 			{
-				foreach (var assignment in assignments.Where(a => !a.ReleasedOn.HasValue))
+				foreach (var assignment in assignments.Where(a => !a.ReleasedOn.HasValue &&
+					a.DepartmentId == channel.DepartmentId && a.CallId == callId))
 				{
 					if (await MatchesResourceForIncidentAccessAsync(assignment, userId, activeUnitId, channel.DepartmentId))
 						return true;
@@ -611,9 +670,10 @@ namespace Resgrid.Services
 			var assignments = await _incidentCommandService.GetAssignmentsForCallAsync(channel.DepartmentId, callId);
 			if (assignments != null)
 			{
-				foreach (var assignment in assignments.Where(a => !a.ReleasedOn.HasValue && a.CommandStructureNodeId == channel.CommandStructureNodeId))
+				foreach (var assignment in assignments.Where(a => !a.ReleasedOn.HasValue && a.DepartmentId == channel.DepartmentId &&
+					a.CallId == callId && a.CommandStructureNodeId == channel.CommandStructureNodeId))
 				{
-					if (MatchesResource(assignment, userId, activeUnitId))
+					if (await MatchesResourceForIncidentAccessAsync(assignment, userId, activeUnitId, channel.DepartmentId))
 						return true;
 				}
 			}
@@ -684,29 +744,18 @@ namespace Resgrid.Services
 			return roles != null && roles.Any(r => string.Equals(r.UserId, userId, StringComparison.OrdinalIgnoreCase) && !r.RemovedOn.HasValue);
 		}
 
-		private static bool MatchesResource(ResourceAssignment assignment, string userId, int? activeUnitId)
-		{
-			if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealPersonnel || assignment.ResourceKind == (int)ResourceAssignmentKind.LinkedDeptPersonnel)
-				return string.Equals(assignment.ResourceId, userId, StringComparison.OrdinalIgnoreCase);
-
-			if (activeUnitId.HasValue && (assignment.ResourceKind == (int)ResourceAssignmentKind.RealUnit || assignment.ResourceKind == (int)ResourceAssignmentKind.LinkedDeptUnit))
-				return assignment.ResourceId == activeUnitId.Value.ToString();
-
-			return false;
-		}
-
 		private async Task AddExplicitMemberAudienceAsync(ChatChannel channel, HashSet<string> userIds)
 		{
 			var members = await _chatChannelMemberRepository.GetByChannelIdAsync(channel.ChatChannelId);
 			if (members == null)
 				return;
 
-			foreach (var member in members.Where(m => !m.RemovedOn.HasValue && !m.IsBanned))
+			foreach (var member in members.Where(m => m.DepartmentId == channel.DepartmentId && !m.RemovedOn.HasValue && !m.IsBanned))
 			{
 				if (member.ParticipantType == (int)ChatParticipantType.User)
 					AddIfSet(userIds, member.UserId);
 				else if (member.ParticipantType == (int)ChatParticipantType.Unit && member.UnitId.HasValue)
-					await AddUnitCrewAsync(member.UnitId.Value, userIds);
+					await AddUnitCrewAsync(member.UnitId.Value, channel.DepartmentId, userIds);
 			}
 		}
 
@@ -716,7 +765,7 @@ namespace Resgrid.Services
 			if (rules == null)
 				return;
 
-			foreach (var rule in rules)
+			foreach (var rule in rules.Where(r => r.DepartmentId == channel.DepartmentId))
 			{
 				switch ((ChatAccessRuleType)rule.RuleType)
 				{
@@ -727,9 +776,13 @@ namespace Resgrid.Services
 					case ChatAccessRuleType.GroupMembership:
 						if (rule.GroupId.HasValue)
 						{
+							var group = await _departmentGroupsService.GetGroupByIdAsync(rule.GroupId.Value, false);
+							if (group == null || group.DepartmentId != channel.DepartmentId)
+								break;
+
 							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(rule.GroupId.Value);
 							if (members != null)
-								foreach (var m in members)
+								foreach (var m in members.Where(m => m.DepartmentId == channel.DepartmentId))
 									AddIfSet(userIds, m.UserId);
 						}
 						break;
@@ -739,7 +792,7 @@ namespace Resgrid.Services
 						{
 							var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(rule.PersonnelRoleId.Value);
 							if (roleMembers != null)
-								foreach (var m in roleMembers)
+								foreach (var m in roleMembers.Where(m => m.DepartmentId == channel.DepartmentId))
 									AddIfSet(userIds, m.UserId);
 						}
 						break;
@@ -757,7 +810,7 @@ namespace Resgrid.Services
 			await AddCommandStaffAsync(channel.DepartmentId, callId, userIds);
 
 			var call = await _callsService.GetCallByIdAsync(callId);
-			if (call != null)
+			if (call != null && call.DepartmentId == channel.DepartmentId)
 			{
 				if (call.Dispatches != null)
 					foreach (var dispatch in call.Dispatches)
@@ -767,9 +820,13 @@ namespace Resgrid.Services
 				{
 					foreach (var groupDispatch in call.GroupDispatches)
 					{
+						var group = await _departmentGroupsService.GetGroupByIdAsync(groupDispatch.DepartmentGroupId, false);
+						if (group == null || group.DepartmentId != channel.DepartmentId)
+							continue;
+
 						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupDispatch.DepartmentGroupId);
 						if (members != null)
-							foreach (var m in members)
+							foreach (var m in members.Where(m => m.DepartmentId == channel.DepartmentId))
 								AddIfSet(userIds, m.UserId);
 					}
 				}
@@ -780,20 +837,21 @@ namespace Resgrid.Services
 					{
 						var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(roleDispatch.RoleId);
 						if (roleMembers != null)
-							foreach (var m in roleMembers)
+							foreach (var m in roleMembers.Where(m => m.DepartmentId == channel.DepartmentId))
 								AddIfSet(userIds, m.UserId);
 					}
 				}
 
 				if (call.UnitDispatches != null)
 					foreach (var unitDispatch in call.UnitDispatches)
-						await AddUnitCrewAsync(unitDispatch.UnitId, userIds);
+						await AddUnitCrewAsync(unitDispatch.UnitId, channel.DepartmentId, userIds);
 			}
 
 			var assignments = await _incidentCommandService.GetAssignmentsForCallAsync(channel.DepartmentId, callId);
 			if (assignments != null)
-				foreach (var assignment in assignments.Where(a => !a.ReleasedOn.HasValue))
-					await AddResourceAsync(assignment, userIds);
+				foreach (var assignment in assignments.Where(a => !a.ReleasedOn.HasValue &&
+					a.DepartmentId == channel.DepartmentId && a.CallId == callId))
+					await AddResourceAsync(assignment, channel.DepartmentId, userIds);
 		}
 
 		private async Task AddLaneAudienceAsync(ChatChannel channel, HashSet<string> userIds)
@@ -816,8 +874,9 @@ namespace Resgrid.Services
 
 			var assignments = await _incidentCommandService.GetAssignmentsForCallAsync(channel.DepartmentId, callId);
 			if (assignments != null)
-				foreach (var assignment in assignments.Where(a => !a.ReleasedOn.HasValue && a.CommandStructureNodeId == channel.CommandStructureNodeId))
-					await AddResourceAsync(assignment, userIds);
+				foreach (var assignment in assignments.Where(a => !a.ReleasedOn.HasValue && a.DepartmentId == channel.DepartmentId &&
+					a.CallId == callId && a.CommandStructureNodeId == channel.CommandStructureNodeId))
+					await AddResourceAsync(assignment, channel.DepartmentId, userIds);
 		}
 
 		private async Task AddCommandStaffAsync(int departmentId, int callId, HashSet<string> userIds)
@@ -838,7 +897,7 @@ namespace Resgrid.Services
 					AddIfSet(userIds, role.UserId);
 		}
 
-		private async Task AddResourceAsync(ResourceAssignment assignment, HashSet<string> userIds)
+		private async Task AddResourceAsync(ResourceAssignment assignment, int departmentId, HashSet<string> userIds)
 		{
 			if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealPersonnel || assignment.ResourceKind == (int)ResourceAssignmentKind.LinkedDeptPersonnel)
 			{
@@ -847,12 +906,48 @@ namespace Resgrid.Services
 			else if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealUnit || assignment.ResourceKind == (int)ResourceAssignmentKind.LinkedDeptUnit)
 			{
 				if (int.TryParse(assignment.ResourceId, out var unitId))
-					await AddUnitCrewAsync(unitId, userIds);
+					await AddUnitCrewAsync(unitId, departmentId, userIds);
 			}
 		}
 
-		private async Task AddUnitCrewAsync(int unitId, HashSet<string> userIds)
+		private async Task AddIncidentCommanderLineRequesterAudienceAsync(ChatChannel channel, HashSet<string> userIds)
 		{
+			var members = await _chatChannelMemberRepository.GetByChannelIdAsync(channel.ChatChannelId);
+			if (members == null)
+				return;
+
+			foreach (var member in members.Where(m => m.DepartmentId == channel.DepartmentId && !m.RemovedOn.HasValue && !m.IsBanned))
+			{
+				if (member.ParticipantType == (int)ChatParticipantType.User && !string.IsNullOrWhiteSpace(member.UserId))
+				{
+					if (await IsInIncidentAudienceAsync(channel, member.UserId, null))
+						AddIfSet(userIds, member.UserId);
+				}
+				else if (member.ParticipantType == (int)ChatParticipantType.Unit && member.UnitId.HasValue)
+				{
+					var unit = await _unitsService.GetUnitByIdAsync(member.UnitId.Value);
+					if (unit == null || unit.DepartmentId != channel.DepartmentId)
+						continue;
+
+					var activeRoles = await _unitsService.GetActiveRolesForUnitAsync(member.UnitId.Value);
+					if (activeRoles == null)
+						continue;
+
+					foreach (var role in activeRoles.Where(r => !string.IsNullOrWhiteSpace(r.UserId)))
+					{
+						if (await IsInIncidentAudienceAsync(channel, role.UserId, member.UnitId.Value))
+							AddIfSet(userIds, role.UserId);
+					}
+				}
+			}
+		}
+
+		private async Task AddUnitCrewAsync(int unitId, int departmentId, HashSet<string> userIds)
+		{
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+			if (unit == null || unit.DepartmentId != departmentId)
+				return;
+
 			var activeRoles = await _unitsService.GetActiveRolesForUnitAsync(unitId);
 			if (activeRoles != null)
 				foreach (var role in activeRoles)
@@ -861,7 +956,80 @@ namespace Resgrid.Services
 
 		public async Task<bool> IsDepartmentAdminAsync(int departmentId, string userId)
 		{
-			return await _authorizationService.CanUserModifyDepartmentAsync(userId, departmentId);
+			return await IsActiveDepartmentUserAsync(departmentId, userId) &&
+				await _authorizationService.CanUserModifyDepartmentAsync(userId, departmentId);
+		}
+
+		public async Task<bool> IsActiveDepartmentUserAsync(int departmentId, string userId)
+		{
+			return departmentId > 0 && !string.IsNullOrWhiteSpace(userId) &&
+				await _departmentsService.IsUserInDepartmentAsync(departmentId, userId) &&
+				await _authorizationService.IsUserValidWithinLimitsAsync(userId, departmentId);
+		}
+
+		private async Task<bool> HasValidDepartmentScopeAsync(ChatChannel channel)
+		{
+			if (channel.DepartmentId <= 0)
+				return false;
+
+			var channelType = (ChatChannelType)channel.ChannelType;
+			if (channelType == ChatChannelType.GroupDefault)
+			{
+				if (!channel.GroupId.HasValue)
+					return false;
+
+				var group = await _departmentGroupsService.GetGroupByIdAsync(channel.GroupId.Value, false);
+				return group != null && group.DepartmentId == channel.DepartmentId;
+			}
+
+			if (IsIncidentChannel(channelType))
+			{
+				if (!channel.CallId.HasValue)
+					return false;
+
+				var call = await _callsService.GetCallByIdAsync(channel.CallId.Value);
+				if (call == null || call.DepartmentId != channel.DepartmentId)
+					return false;
+
+				if (channelType == ChatChannelType.IncidentLane)
+				{
+					if (string.IsNullOrWhiteSpace(channel.CommandStructureNodeId))
+						return false;
+
+					var nodes = await _incidentCommandService.GetNodesForCallAsync(channel.DepartmentId, channel.CallId.Value);
+					return nodes != null && nodes.Any(n => n.DepartmentId == channel.DepartmentId && n.CallId == channel.CallId.Value &&
+						string.Equals(n.CommandStructureNodeId, channel.CommandStructureNodeId, StringComparison.OrdinalIgnoreCase));
+				}
+
+				return true;
+			}
+
+			if (channelType == ChatChannelType.UnitDispatch)
+			{
+				var unitId = await GetUnitDispatchChannelUnitIdAsync(channel);
+				if (!unitId.HasValue)
+					return false;
+
+				var unit = await _unitsService.GetUnitByIdAsync(unitId.Value);
+				return unit != null && unit.DepartmentId == channel.DepartmentId;
+			}
+
+			return true;
+		}
+
+		private static bool IsIncidentChannel(ChatChannelType channelType)
+		{
+			return channelType == ChatChannelType.Incident || channelType == ChatChannelType.IncidentLane ||
+				channelType == ChatChannelType.IncidentCommand || channelType == ChatChannelType.IncidentLeads ||
+				channelType == ChatChannelType.IncidentDispatch || channelType == ChatChannelType.IncidentCommanderLine;
+		}
+
+		private static bool IsDispatchVisibleChannel(ChatChannelType channelType)
+		{
+			return channelType == ChatChannelType.DepartmentDefault || channelType == ChatChannelType.GroupDefault ||
+				channelType == ChatChannelType.Incident || channelType == ChatChannelType.IncidentLane ||
+				channelType == ChatChannelType.IncidentCommand || channelType == ChatChannelType.IncidentLeads ||
+				channelType == ChatChannelType.IncidentDispatch || channelType == ChatChannelType.UnitDispatch;
 		}
 
 		private static void AddIfSet(HashSet<string> set, string userId)

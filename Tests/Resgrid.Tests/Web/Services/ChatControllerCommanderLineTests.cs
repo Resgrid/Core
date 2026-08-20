@@ -48,6 +48,8 @@ namespace Resgrid.Tests.Web.Services
 			featureToggleService
 				.Setup(x => x.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>()))
 				.ReturnsAsync(true);
+			var authorizationService = new Mock<IAuthorizationService>();
+			authorizationService.Setup(x => x.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(true);
 
 			_chatPermissionService.Setup(x => x.CanSendAsUnitAsync(UserId, UnitId, DepartmentId)).ReturnsAsync(true);
 
@@ -101,7 +103,7 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IChatAttachmentRepository>(),
 				Mock.Of<IGifProvider>(),
 				featureToggleService.Object,
-				Mock.Of<IAuthorizationService>(),
+				authorizationService.Object,
 				Mock.Of<ICacheProvider>(),
 				Mock.Of<IEventAggregator>(),
 				Mock.Of<IQueueService>(),

@@ -17,10 +17,12 @@ namespace Resgrid.Services
 		private readonly IUserProfileService _userProfileService;
 		private readonly INovuProvider _novuProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IUnitsService _unitsService;
 
 		public PushService(IPushLogsService pushLogsService, INotificationProvider notificationProvider,
 			IUserProfileService userProfileService, IUnitNotificationProvider unitNotificationProvider,
-			INovuProvider novuProvider, IDepartmentSettingsService departmentSettingsService)
+			INovuProvider novuProvider, IDepartmentSettingsService departmentSettingsService,
+			IUnitsService unitsService)
 		{
 			_pushLogsService = pushLogsService;
 			_notificationProvider = notificationProvider;
@@ -28,6 +30,7 @@ namespace Resgrid.Services
 			_unitNotificationProvider = unitNotificationProvider;
 			_novuProvider = novuProvider;
 			_departmentSettingsService = departmentSettingsService;
+			_unitsService = unitsService;
 		}
 
 		public async Task<bool> Register(PushUri pushUri)
@@ -100,22 +103,67 @@ namespace Resgrid.Services
 
 		public async Task<bool> RegisterUnit(PushUri pushUri)
 		{
+			// Same reasoning as Register: a unit whose token never lands on its Novu subscriber gets no
+			// dispatch pushes at all, and every bare `false` below used to leave nothing behind to find.
 			if (pushUri == null || !pushUri.UnitId.HasValue || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
+			{
+				Framework.Logging.LogWarning($"PushService.RegisterUnit: incomplete registration (unitId {pushUri?.UnitId}, platform {pushUri?.PlatformType}, hasToken {!string.IsNullOrWhiteSpace(pushUri?.DeviceId)}, prefix '{pushUri?.PushLocation}'), skipped.");
 				return false;
+			}
 
 			var unitId = pushUri.UnitId.Value;
 			var code = pushUri.PushLocation;
 
+			// The user path creates its subscriber before writing credentials; the unit path never did, so a
+			// unit that had not been through some other Novu call had its credential write rejected against
+			// a subscriber that did not exist.
+			await EnsureUnitSubscriber(unitId, code, pushUri.DeviceId);
+
+			bool registered;
+
 			// 1) iOS -> APNS
 			if (pushUri.PlatformType == (int)Platforms.iOS)
-				return await _novuProvider.UpdateUnitSubscriberApns(unitId, code, pushUri.DeviceId);
-
+			{
+				registered = await _novuProvider.UpdateUnitSubscriberApns(unitId, code, pushUri.DeviceId);
+			}
 			// 2) Android -> FCM
-			if (pushUri.PlatformType == (int)Platforms.Android)
-				return await _novuProvider.UpdateUnitSubscriberFcm(unitId, code, pushUri.DeviceId);
-
+			else if (pushUri.PlatformType == (int)Platforms.Android)
+			{
+				registered = await _novuProvider.UpdateUnitSubscriberFcm(unitId, code, pushUri.DeviceId);
+			}
 			// 3) TODO: Web Push (other platforms)
-			return false;
+			else
+			{
+				Framework.Logging.LogWarning($"PushService.RegisterUnit: unsupported platform {pushUri.PlatformType} for unit {unitId} (prefix '{code}'), no push channel registered.");
+				return false;
+			}
+
+			if (!registered)
+				Framework.Logging.LogError($"PushService.RegisterUnit: Novu rejected the credential write for unit {unitId} (platform {pushUri.PlatformType}, prefix '{code}'); subscriber will have no configured push channel.");
+
+			return registered;
+		}
+
+		private async Task EnsureUnitSubscriber(int unitId, string code, string deviceId)
+		{
+			try
+			{
+				// The unit's own record is the authority on its name and department; the PushUri carries a
+				// DepartmentId that is unmapped and set by whoever built the message.
+				var unit = await _unitsService.GetUnitByIdAsync(unitId);
+
+				if (unit == null)
+				{
+					Framework.Logging.LogWarning($"PushService.RegisterUnit: unit {unitId} (prefix '{code}') was not found, its Novu subscriber could not be created.");
+					return;
+				}
+
+				await _novuProvider.CreateUnitSubscriber(unitId, code, unit.DepartmentId, unit.Name, deviceId);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
 		}
 
 		public async Task<bool> UnRegisterUnit(PushUri pushUri)

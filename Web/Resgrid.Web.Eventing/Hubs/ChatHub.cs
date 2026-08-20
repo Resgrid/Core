@@ -3,21 +3,24 @@ using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Claims;
 
 namespace Resgrid.Web.Eventing.Hubs
 {
 	/// <summary>
 	/// Realtime chat hub. Carries only ephemeral traffic (channel group membership, typing, presence,
 	/// read/delivered pointers) — message writes go through the REST API and fan back out via the
-	/// RabbitMQ eventing topic and this host's Worker. Group naming: chat:{channelId} per channel,
+	/// RabbitMQ eventing topic and this host's Worker. Group naming: chat:{channelId}:{accessVersion}
+	/// per channel (the version rotates on authorization changes),
 	/// chatuser:{deptId}:{userId} for personal events, chatdept:{deptId} for channel-list updates.
 	/// </summary>
-	[Authorize(AuthenticationSchemes = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = ResgridResources.Messages_View)]
 	public class ChatHub : Hub
 	{
 		private readonly IChatChannelService _chatChannelService;
@@ -70,12 +73,17 @@ namespace Resgrid.Web.Eventing.Hubs
 			var departmentId = GetDepartmentId();
 			var userId = GetUserId();
 
-			if (departmentId > 0 && !string.IsNullOrWhiteSpace(userId))
+			if (departmentId > 0 && !string.IsNullOrWhiteSpace(userId) &&
+				await _chatPermissionService.IsActiveDepartmentUserAsync(departmentId, userId))
 			{
 				Context.Items[DepartmentIdContextKey] = departmentId;
 				Context.Items[UserIdContextKey] = userId;
 
 				AddUserConnection(userId, Context.ConnectionId);
+			}
+			else
+			{
+				Context.Abort();
 			}
 
 			await base.OnConnectedAsync();
@@ -150,7 +158,8 @@ namespace Resgrid.Web.Eventing.Hubs
 			var departmentId = GetDepartmentId();
 			var userId = GetUserId();
 
-			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId) ||
+				!await _chatPermissionService.IsActiveDepartmentUserAsync(departmentId, userId))
 				return;
 
 			await Groups.AddToGroupAsync(Context.ConnectionId, $"chatuser:{departmentId}:{userId.ToLowerInvariant()}");
@@ -165,16 +174,21 @@ namespace Resgrid.Web.Eventing.Hubs
 
 		public async Task JoinChannel(string channelId, int? asUnitId = null)
 		{
-			await ResolveAccessibleChannelOrThrowAsync(channelId, asUnitId);
+			var channel = await ResolveAccessibleChannelOrThrowAsync(channelId, asUnitId);
+			var groupName = await GetCurrentChannelGroupNameAsync(channel.ChatChannelId);
+			if (groupName == null)
+				throw new HubException("Chat authorization is temporarily unavailable.");
 
-			await Groups.AddToGroupAsync(Context.ConnectionId, $"chat:{channelId}");
+			await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
 			await Clients.Caller.SendAsync("onChatChannelJoined", channelId);
 		}
 
 		public async Task LeaveChannel(string channelId)
 		{
-			await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"chat:{channelId}");
+			var groupName = await GetCurrentChannelGroupNameAsync(channelId);
+			if (groupName != null)
+				await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
 		}
 
 		public async Task Typing(string channelId, string displayName = null, bool isTyping = true, int? asUnitId = null)
@@ -199,7 +213,11 @@ namespace Resgrid.Web.Eventing.Hubs
 				LastTypingTimestamps[throttleKey] = now;
 			}
 
-			await Clients.OthersInGroup($"chat:{channelId}").SendAsync("chatTyping", new
+			var groupName = await GetCurrentChannelGroupNameAsync(channelId);
+			if (groupName == null)
+				return;
+
+			await Clients.OthersInGroup(groupName).SendAsync("chatTyping", new
 			{
 				ChannelId = channelId,
 				UserId = userId,
@@ -285,13 +303,32 @@ namespace Resgrid.Web.Eventing.Hubs
 			return access.Value.Channel;
 		}
 
+		public static string BuildChannelGroupName(string channelId, string accessVersion)
+		{
+			return string.IsNullOrWhiteSpace(channelId) || string.IsNullOrWhiteSpace(accessVersion)
+				? null
+				: $"chat:{channelId}:{accessVersion}";
+		}
+
+		private async Task<string> GetCurrentChannelGroupNameAsync(string channelId)
+		{
+			return BuildChannelGroupName(channelId,
+				await _chatPermissionService.GetChannelAccessVersionAsync(channelId));
+		}
+
 		public async Task Heartbeat()
 		{
 			var departmentId = GetDepartmentId();
 			var userId = GetUserId();
 
-			if (departmentId > 0 && !string.IsNullOrWhiteSpace(userId))
-				await _chatPresenceService.TouchAsync(departmentId, userId);
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId) ||
+				!await _chatPermissionService.IsActiveDepartmentUserAsync(departmentId, userId))
+			{
+				Context.Abort();
+				return;
+			}
+
+			await _chatPresenceService.TouchAsync(departmentId, userId);
 		}
 
 		/// <summary>

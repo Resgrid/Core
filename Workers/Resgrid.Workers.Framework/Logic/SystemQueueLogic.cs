@@ -82,6 +82,9 @@ namespace Resgrid.Workers.Framework.Logic
 								await pushService.UnRegisterUnit(pushUri);
 								var unitResult = await pushService.RegisterUnit(pushUri);
 
+								if (!unitResult)
+									Logging.LogError($"UnitPushRegistration failed for unit {unitData.UnitId} (platform {unitData.PlatformType}, prefix '{unitData.PushLocation}').");
+
 								pushService = null;
 							}
 						}

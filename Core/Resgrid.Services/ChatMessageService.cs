@@ -61,13 +61,13 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 		}
 
-		public async Task<ChatMessage> SendMessageAsync(string senderUserId, ChatMessageSendRequest request, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<ChatMessage> SendMessageAsync(int departmentId, string senderUserId, ChatMessageSendRequest request, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			if (request == null || string.IsNullOrWhiteSpace(request.ChatChannelId) || string.IsNullOrWhiteSpace(senderUserId))
+			if (departmentId <= 0 || request == null || string.IsNullOrWhiteSpace(request.ChatChannelId) || string.IsNullOrWhiteSpace(senderUserId))
 				return null;
 
 			var channel = await _chatChannelRepository.GetByIdAsync(request.ChatChannelId);
-			if (channel == null || channel.DepartmentId != request.DepartmentId)
+			if (channel == null || channel.DepartmentId != departmentId)
 				return null;
 
 			// Idempotent resend from the mobile offline outbox.
@@ -262,31 +262,42 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// True when the channel is archived, i.e. frozen as a point-in-time record: a closed incident
-		/// command's channel and its lane channels, or a closed call's channel. Posting is already blocked
-		/// by <c>IChatPermissionService.CanPostAsync</c>; this is the matching gate for mutating what is
-		/// already there. Moderation (flagging, moderator delete) deliberately does NOT consult it.
-		/// A missing channel reads as frozen — fail closed rather than allow an unanchored edit.
+		/// Resolves a message's persisted channel inside the authenticated tenant and re-evaluates the
+		/// actor's current access. Message/channel disagreement fails closed. Moderator mode never trusts
+		/// a caller-provided role flag: current moderator authority is loaded from the permission service.
 		/// </summary>
-		private async Task<bool> IsChannelFrozenAsync(string chatChannelId)
+		private async Task<ChatChannel> GetAuthorizedMessageChannelAsync(ChatMessage message, int departmentId,
+			string userId, int? unitId, bool requireModerator = false)
 		{
-			if (string.IsNullOrWhiteSpace(chatChannelId))
-				return true;
+			if (message == null || departmentId <= 0 || message.DepartmentId != departmentId ||
+				string.IsNullOrWhiteSpace(message.ChatChannelId) || string.IsNullOrWhiteSpace(userId))
+				return null;
 
-			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
-			return channel == null || channel.IsArchived;
+			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
+			if (channel == null || channel.DepartmentId != departmentId)
+				return null;
+
+			var authorized = requireModerator
+				? await _chatPermissionService.CanModerateChannelAsync(channel, userId)
+				: await _chatPermissionService.CanAccessChannelAsync(channel, userId, unitId);
+
+			return authorized ? channel : null;
 		}
 
-		public async Task<ChatMessage> EditMessageAsync(string chatMessageId, string editorUserId, string newBody, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<ChatMessage> EditMessageAsync(int departmentId, string chatMessageId, string editorUserId, string newBody, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
-			if (message == null || message.DeletedOn.HasValue)
+			if (message == null || message.DeletedOn.HasValue || message.DepartmentId != departmentId)
+				return null;
+
+			var channel = await GetAuthorizedMessageChannelAsync(message, departmentId, editorUserId, null);
+			if (channel == null)
 				return null;
 
 			// An archived channel is a point-in-time record (a closed incident command/lane chat, a closed
 			// call). CanPostAsync already refuses new messages there; the history has to be just as
 			// immutable, or the record could still be rewritten after the fact.
-			if (await IsChannelFrozenAsync(message.ChatChannelId))
+			if (channel.IsArchived)
 				return null;
 
 			if (!string.Equals(message.SenderUserId, editorUserId, StringComparison.OrdinalIgnoreCase))
@@ -306,16 +317,15 @@ namespace Resgrid.Services
 			message.Body = newBody;
 			message.EditedOn = editedOn;
 
-			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
 			PublishEvent(channel, ChatEventKinds.MessageEdited, BuildMessageDto(message));
 
 			return message;
 		}
 
-		public async Task<bool> DeleteMessageAsync(string chatMessageId, string byUserId, bool asModerator, string reason, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> DeleteMessageAsync(int departmentId, string chatMessageId, string byUserId, bool asModerator, string reason, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
-			if (message == null || message.DeletedOn.HasValue)
+			if (message == null || message.DeletedOn.HasValue || message.DepartmentId != departmentId)
 				return false;
 
 			var isSender = string.Equals(message.SenderUserId, byUserId, StringComparison.OrdinalIgnoreCase);
@@ -323,10 +333,13 @@ namespace Resgrid.Services
 				return false;
 
 			var isModeratorDelete = asModerator && !isSender;
+			var channel = await GetAuthorizedMessageChannelAsync(message, departmentId, byUserId, null, isModeratorDelete);
+			if (channel == null)
+				return false;
 
 			// Frozen channel: the author can no longer retract what they said, but moderation still has to
 			// work — flagged content on a closed incident must remain removable.
-			if (!isModeratorDelete && await IsChannelFrozenAsync(message.ChatChannelId))
+			if (!isModeratorDelete && channel.IsArchived)
 				return false;
 
 			await SaveEditHistoryAsync(message, isModeratorDelete ? ChatMessageEditType.ModeratorDelete : ChatMessageEditType.SenderDelete, byUserId, cancellationToken);
@@ -341,7 +354,6 @@ namespace Resgrid.Services
 			message.DeletedByUserId = byUserId;
 			message.IsModerated = isModeratorDelete;
 
-			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
 			PublishEvent(channel, ChatEventKinds.MessageDeleted, new
 			{
 				message.ChatMessageId,
@@ -355,16 +367,18 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> AddReactionAsync(string chatMessageId, string userId, int? unitId, string emoji, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> AddReactionAsync(int departmentId, string chatMessageId, string userId, int? unitId, string emoji, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (string.IsNullOrWhiteSpace(emoji) || emoji.Length > 64)
 				return false;
 
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
-			if (message == null || message.DeletedOn.HasValue)
+			if (message == null || message.DeletedOn.HasValue || message.DepartmentId != departmentId)
 				return false;
 
-			if (await IsChannelFrozenAsync(message.ChatChannelId))
+			var channel = await GetAuthorizedMessageChannelAsync(message, departmentId, userId, unitId);
+			if (channel == null || channel.IsArchived ||
+				(unitId.HasValue && !await _chatPermissionService.CanSendAsUnitAsync(userId, unitId.Value, departmentId)))
 				return false;
 
 			// Banned or currently-muted participants can't react; silently skip.
@@ -408,19 +422,20 @@ namespace Resgrid.Services
 				return true;
 			}
 
-			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
 			PublishEvent(channel, ChatEventKinds.ReactionUpdated, new { message.ChatMessageId, message.ChatChannelId, Emoji = emoji, UserId = userId, UnitId = unitId, Added = true });
 
 			return true;
 		}
 
-		public async Task<bool> RemoveReactionAsync(string chatMessageId, string userId, int? unitId, string emoji, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> RemoveReactionAsync(int departmentId, string chatMessageId, string userId, int? unitId, string emoji, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
-			if (message == null)
+			if (message == null || message.DepartmentId != departmentId)
 				return false;
 
-			if (await IsChannelFrozenAsync(message.ChatChannelId))
+			var channel = await GetAuthorizedMessageChannelAsync(message, departmentId, userId, unitId);
+			if (channel == null || channel.IsArchived ||
+				(unitId.HasValue && !await _chatPermissionService.CanSendAsUnitAsync(userId, unitId.Value, departmentId)))
 				return false;
 
 			var participantType = unitId.HasValue ? (int)ChatParticipantType.Unit : (int)ChatParticipantType.User;
@@ -428,7 +443,6 @@ namespace Resgrid.Services
 
 			if (removed)
 			{
-				var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
 				PublishEvent(channel, ChatEventKinds.ReactionUpdated, new { message.ChatMessageId, message.ChatChannelId, Emoji = emoji, UserId = userId, UnitId = unitId, Added = false });
 			}
 
@@ -447,10 +461,14 @@ namespace Resgrid.Services
 			return attachments?.ToList() ?? new List<ChatAttachment>();
 		}
 
-		public async Task<bool> SetMessagePinnedAsync(string chatMessageId, string byUserId, bool pinned, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> SetMessagePinnedAsync(int departmentId, string chatMessageId, string byUserId, bool pinned, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
-			if (message == null || message.DeletedOn.HasValue)
+			if (message == null || message.DeletedOn.HasValue || message.DepartmentId != departmentId)
+				return false;
+
+			var channel = await GetAuthorizedMessageChannelAsync(message, departmentId, byUserId, null, requireModerator: true);
+			if (channel == null)
 				return false;
 
 			var pinnedOn = pinned ? DateTime.UtcNow : (DateTime?)null;
@@ -460,7 +478,6 @@ namespace Resgrid.Services
 			message.PinnedOn = pinnedOn;
 			message.PinnedByUserId = pinned ? byUserId : null;
 
-			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
 			PublishEvent(channel, ChatEventKinds.ChannelUpdated, new { message.ChatChannelId, PinnedMessageId = message.ChatMessageId, Pinned = pinned });
 
 			return true;
@@ -472,19 +489,20 @@ namespace Resgrid.Services
 			return pinned?.ToList() ?? new List<ChatMessage>();
 		}
 
-		public async Task<int> AcknowledgeMessageAsync(string chatMessageId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<int> AcknowledgeMessageAsync(int departmentId, string chatMessageId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
+			if (message == null || message.DepartmentId != departmentId)
+				return 0;
+
+			var channel = await GetAuthorizedMessageChannelAsync(message, departmentId, userId, null);
+			if (channel == null)
+				return 0;
+
 			var stamped = await _chatMessageAckRepository.AcknowledgeAsync(chatMessageId, userId, DateTime.UtcNow);
 
 			if (stamped > 0)
-			{
-				var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
-				if (message != null)
-				{
-					var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
-					PublishEvent(channel, ChatEventKinds.ReceiptUpdated, new { message.ChatMessageId, message.ChatChannelId, Type = "ack", UserId = userId });
-				}
-			}
+				PublishEvent(channel, ChatEventKinds.ReceiptUpdated, new { message.ChatMessageId, message.ChatChannelId, Type = "ack", UserId = userId });
 
 			return stamped;
 		}
@@ -498,7 +516,25 @@ namespace Resgrid.Services
 		public async Task<List<ChatMessageAck>> GetPendingAcksForUserAsync(int departmentId, string userId)
 		{
 			var acks = await _chatMessageAckRepository.GetPendingByUserIdAsync(departmentId, userId);
-			return acks?.ToList() ?? new List<ChatMessageAck>();
+			var candidates = acks?.Where(a => a.DepartmentId == departmentId && !string.IsNullOrWhiteSpace(a.ChatChannelId)).ToList()
+				?? new List<ChatMessageAck>();
+			if (candidates.Count == 0)
+				return candidates;
+
+			var channels = await _chatChannelService.GetChannelsByIdsAsync(candidates.Select(a => a.ChatChannelId));
+			var channelsById = channels
+				.Where(c => c.DepartmentId == departmentId)
+				.GroupBy(c => c.ChatChannelId, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+			var authorizedChannelIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var channel in channelsById.Values)
+			{
+				if (await _chatPermissionService.CanAccessChannelAsync(channel, userId, null))
+					authorizedChannelIds.Add(channel.ChatChannelId);
+			}
+
+			return candidates.Where(a => authorizedChannelIds.Contains(a.ChatChannelId)).ToList();
 		}
 
 		public async Task<bool> MarkReadAsync(string chatChannelId, int departmentId, string userId, int? unitId, long seq, CancellationToken cancellationToken = default(CancellationToken))
@@ -536,7 +572,8 @@ namespace Resgrid.Services
 			if (!string.IsNullOrWhiteSpace(chatChannelId))
 			{
 				var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
-				if (channel == null || !await _chatPermissionService.CanAccessChannelAsync(channel, userId, activeUnitId))
+				if (channel == null || channel.DepartmentId != departmentId ||
+					!await _chatPermissionService.CanAccessChannelAsync(channel, userId, activeUnitId))
 					return new List<ChatMessage>();
 
 				channelIds = new List<string> { chatChannelId };

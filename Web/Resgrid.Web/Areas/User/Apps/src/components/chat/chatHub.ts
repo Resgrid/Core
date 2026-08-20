@@ -80,6 +80,7 @@ class ChatHub {
   private joinedChannels = new Map<string, number | undefined>();
   private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
   private channelsRefreshHandlers = new Set<() => void>();
+  private authorizationRefreshPromise: Promise<void> | null = null;
 
   public subscribeChannelsRefresh(handler: () => void): () => void {
     this.channelsRefreshHandlers.add(handler);
@@ -207,13 +208,13 @@ class ChatHub {
       }
     });
     connection.on(CHAT_HUB_EVENTS.ChannelUpdated, () => {
-      this.notifyChannelsRefresh();
+      void this.refreshChannelAuthorizations();
     });
     connection.on(CHAT_HUB_EVENTS.ChannelProvisioned, () => {
-      this.notifyChannelsRefresh();
+      void this.refreshChannelAuthorizations();
     });
     connection.on(CHAT_HUB_EVENTS.ModerationApplied, () => {
-      this.notifyChannelsRefresh();
+      void this.refreshChannelAuthorizations();
     });
     connection.on(CHAT_HUB_EVENTS.AccessRevoked, (arg: unknown) => {
       const payload = parsePayload<HubAccessRevokedPayload>(arg);
@@ -279,6 +280,31 @@ class ChatHub {
       this.notifyChannelsRefresh();
     } catch (error) {
       console.error('Chat hub reconnect sync failed.', error);
+    }
+  }
+
+  // Channel SignalR groups are authorization-epoch scoped. Membership/rule/moderation and
+  // incident-board changes rotate the epoch server-side before the refresh hint is broadcast;
+  // rejoining here performs a fresh server authorization check and moves eligible connections
+  // into the new group. A forged/stale client that ignores the hint stays in an obsolete group.
+  private async refreshChannelAuthorizations(): Promise<void> {
+    if (this.authorizationRefreshPromise) {
+      return this.authorizationRefreshPromise;
+    }
+
+    this.authorizationRefreshPromise = (async () => {
+      if (this.connection && this.connection.state === HubConnectionState.Connected) {
+        for (const [channelId, asUnitId] of this.joinedChannels.entries()) {
+          await this.invokeJoin(channelId, asUnitId);
+        }
+      }
+      this.notifyChannelsRefresh();
+    })();
+
+    try {
+      await this.authorizationRefreshPromise;
+    } finally {
+      this.authorizationRefreshPromise = null;
     }
   }
 

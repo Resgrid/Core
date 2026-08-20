@@ -440,7 +440,13 @@ namespace Resgrid.Services
 					var attachmentMetadata = await _chatAttachmentRepository.GetMetadataByMessageIdsAsync(new[] { itemId });
 					var firstAttachment = attachmentMetadata?.FirstOrDefault();
 					if (firstAttachment != null)
-						attachment = await _chatAttachmentRepository.GetByIdAsync(firstAttachment.ChatAttachmentId);
+					{
+						var candidate = await _chatAttachmentRepository.GetByIdAsync(firstAttachment.ChatAttachmentId);
+						if (candidate != null && candidate.DepartmentId == departmentId &&
+							string.Equals(candidate.ChatMessageId, message.ChatMessageId, StringComparison.OrdinalIgnoreCase) &&
+							string.Equals(candidate.ChatChannelId, message.ChatChannelId, StringComparison.OrdinalIgnoreCase))
+							attachment = candidate;
+					}
 
 					return new ModerationEvidence
 					{
@@ -566,7 +572,7 @@ namespace Resgrid.Services
 			switch ((ModerationItemType)request.ItemType)
 			{
 				case ModerationItemType.ChatMessage:
-					return await _chatMessageService.DeleteMessageAsync(request.ItemId, byUserId, true,
+					return await _chatMessageService.DeleteMessageAsync(request.DepartmentId, request.ItemId, byUserId, true,
 						ModeratedChatMessage, cancellationToken);
 
 				case ModerationItemType.Message:

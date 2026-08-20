@@ -45,7 +45,11 @@ namespace Resgrid.Services
 			"New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania",
 			"Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont",
 			"Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming", "District of Columbia",
-			"Puerto Rico", "Guam"
+			"Puerto Rico", "Guam",
+			// Canadian provinces/territories
+			"Alberta", "British Columbia", "Manitoba", "New Brunswick", "Newfoundland and Labrador",
+			"Nova Scotia", "Ontario", "Prince Edward Island", "Quebec", "Saskatchewan",
+			"Northwest Territories", "Nunavut", "Yukon"
 		};
 
 		// Two-letter state codes match case-sensitively: CAD feeds emit them upper-case,
@@ -55,7 +59,9 @@ namespace Resgrid.Services
 			"AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA",
 			"KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
 			"NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT",
-			"VA", "WA", "WV", "WI", "WY", "DC", "PR", "GU"
+			"VA", "WA", "WV", "WI", "WY", "DC", "PR", "GU",
+			// Canadian provinces/territories
+			"AB", "BC", "MB", "NB", "NL", "NS", "ON", "PE", "QC", "SK", "NT", "NU", "YT"
 		};
 
 		private static readonly Regex PostalCodeRegex = new(@"^(\d{5}(-\d{4})?|[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);

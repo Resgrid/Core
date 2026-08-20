@@ -147,6 +147,24 @@ namespace Resgrid.Tests.Web.Tts
 		}
 
 		[Test]
+		public async Task should_dispose_a_worker_whose_synthesis_finishes_during_shutdown()
+		{
+			// The pool drained its idle bag before this synthesis completed; returning
+			// the worker to the bag unconditionally would leak its Piper process.
+			PiperProcessPool pool = null;
+			var worker = new FakeWorker(async () =>
+			{
+				await pool.DisposeAsync();
+			});
+			var factory = new FakeWorkerFactory(worker);
+			pool = CreatePool(factory);
+
+			await pool.SynthesizeAsync(Profile, "text", "/tmp/out.wav", CancellationToken.None);
+
+			worker.Disposed.Should().BeTrue();
+		}
+
+		[Test]
 		public async Task should_keep_separate_workers_per_synthesis_profile()
 		{
 			var factory = new FakeWorkerFactory();

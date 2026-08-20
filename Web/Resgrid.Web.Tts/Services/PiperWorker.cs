@@ -44,12 +44,14 @@ namespace Resgrid.Web.Tts.Services
 
 		private readonly TtsOptions _options;
 		private readonly ILoggerFactory _loggerFactory;
+		private readonly ILogger<PiperWorkerFactory> _logger;
 		private readonly string _workerRoot;
 
 		public PiperWorkerFactory(IOptions<TtsOptions> options, ILoggerFactory loggerFactory)
 		{
 			_options = options.Value;
 			_loggerFactory = loggerFactory;
+			_logger = loggerFactory.CreateLogger<PiperWorkerFactory>();
 
 			var tempRoot = Path.GetFullPath(string.IsNullOrWhiteSpace(_options.TempDirectory)
 				? Path.GetTempPath()
@@ -65,7 +67,15 @@ namespace Resgrid.Web.Tts.Services
 			}
 			catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
 			{
-				// Stale files just take space until the next start; not fatal.
+				// Not fatal — synthesis still works and the stale entries only take
+				// space until the next start. Logged because the temp volume is a
+				// fixed-size emptyDir: repeated failures here are the leading
+				// indicator of the disk filling up, and the sweep service
+				// deliberately skips this directory.
+				_logger.LogWarning(
+					ex,
+					"Failed to delete the stale Piper worker root {WorkerRoot} during startup; orphaned worker directories will remain.",
+					_workerRoot);
 			}
 
 			Directory.CreateDirectory(_workerRoot);
@@ -128,7 +138,20 @@ namespace Resgrid.Web.Tts.Services
 
 			// Drain stderr continuously — an undrained pipe buffer eventually blocks
 			// Piper mid-synthesis. The tail is kept for failure diagnostics.
-			_ = Task.Run(DrainStandardErrorAsync);
+			// Fire-and-forget, so the delegate must never let an exception escape
+			// unobserved: expected stream teardown is handled inside the loop, and
+			// anything else is logged here.
+			_ = Task.Run(async () =>
+			{
+				try
+				{
+					await DrainStandardErrorAsync();
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Failed draining Piper worker stderr.");
+				}
+			});
 		}
 
 		public async Task SynthesizeAsync(string text, string outputFilePath, CancellationToken cancellationToken)
@@ -177,9 +200,11 @@ namespace Resgrid.Web.Tts.Services
 					_logger.LogDebug("piper: {StderrLine}", line);
 				}
 			}
-			catch (Exception)
+			catch (Exception ex) when (ex is IOException or ObjectDisposedException or InvalidOperationException or OperationCanceledException)
 			{
-				// The stream closes when the process dies or is disposed; nothing to do.
+				// Expected: the stream closes when the process dies or is disposed.
+				// Anything outside this set is a real fault and reaches the call-site
+				// handler in the constructor rather than being swallowed here.
 			}
 		}
 
@@ -207,6 +232,10 @@ namespace Resgrid.Web.Tts.Services
 			}
 			catch (Exception ex) when (ex is InvalidOperationException or NotSupportedException)
 			{
+				// The process exited between the HasExited check and the Kill call, so
+				// there is nothing left to kill. Expected on normal worker recycling —
+				// logged at debug so it stays diagnosable without adding routine noise.
+				_logger.LogDebug(ex, "Piper worker process had already exited when disposal tried to kill it.");
 			}
 
 			_process.Dispose();

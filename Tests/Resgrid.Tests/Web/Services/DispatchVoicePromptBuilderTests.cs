@@ -69,6 +69,10 @@ namespace Resgrid.Tests.Web.Services
 		[TestCase("123 Main St, Springfield, WA", "123 Main St, Springfield")]
 		[TestCase("450 Elk Run Rd, Victor, Idaho, United States", "450 Elk Run Rd, Victor")]
 		[TestCase("1 Front St, Toronto, M5J 2X5, Canada", "1 Front St, Toronto")]
+		[TestCase("1 Front St, Toronto, ON, Canada", "1 Front St, Toronto")]
+		[TestCase("100 Main St, Whitehorse, Yukon", "100 Main St, Whitehorse")]
+		[TestCase("20 Water St, Charlottetown, Prince Edward Island", "20 Water St, Charlottetown")]
+		[TestCase("300 Portage Ave, Winnipeg, MB, Canada", "300 Portage Ave, Winnipeg")]
 		public void trim_address_should_drop_trailing_state_zip_and_country(string input, string expected)
 		{
 			DispatchVoicePromptBuilder.TrimAddressForSpeech(input).Should().Be(expected);
@@ -87,6 +91,17 @@ namespace Resgrid.Tests.Web.Services
 		public void trim_address_should_always_keep_at_least_one_segment()
 		{
 			DispatchVoicePromptBuilder.TrimAddressForSpeech("WA 98111").Should().Be("WA 98111");
+		}
+
+		// A rural/unincorporated address carries no city segment, so trimming has to
+		// run down to the street alone — guarding the loop at two segments instead of
+		// one would leave the zip and state being read aloud.
+		[TestCase("123 Main St, WA 98111, USA", "123 Main St")]
+		[TestCase("450 Elk Run Rd, Idaho", "450 Elk Run Rd")]
+		[TestCase("1 Front St, Canada", "1 Front St")]
+		public void trim_address_should_trim_down_to_the_street_when_no_city_segment_exists(string input, string expected)
+		{
+			DispatchVoicePromptBuilder.TrimAddressForSpeech(input).Should().Be(expected);
 		}
 	}
 }

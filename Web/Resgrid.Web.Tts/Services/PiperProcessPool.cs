@@ -67,7 +67,18 @@ namespace Resgrid.Web.Tts.Services
 					{
 						worker = state.Idle.TryTake(out var idleWorker) ? idleWorker : _workerFactory.Create(profile);
 						await worker.SynthesizeAsync(text, outputFilePath, cancellationToken);
+
+						// Publish first, then re-check disposal: a shutdown that drained the
+						// bag while this synthesis was in flight would otherwise never see
+						// this worker, leaking its Piper process for the pod's lifetime.
+						// Draining again here is idempotent and catches our own add.
 						state.Idle.Add(worker);
+
+						if (_disposed)
+						{
+							DisposeIdleWorkers(state);
+						}
+
 						return;
 					}
 					catch (OperationCanceledException)
@@ -101,26 +112,33 @@ namespace Resgrid.Web.Tts.Services
 
 		public ValueTask DisposeAsync()
 		{
+			// Set before draining so a synthesis finishing concurrently sees the flag
+			// and drains its own worker (see SynthesizeAsync).
 			_disposed = true;
 
 			// Idle workers are killed here; a worker still serving a request is disposed
 			// by that request's cancellation path when the host stops.
 			foreach (var state in _profiles.Values)
 			{
-				while (state.Idle.TryTake(out var worker))
-				{
-					try
-					{
-						worker.Dispose();
-					}
-					catch (Exception ex)
-					{
-						_logger.LogWarning(ex, "Failed to dispose a pooled Piper worker during shutdown.");
-					}
-				}
+				DisposeIdleWorkers(state);
 			}
 
 			return ValueTask.CompletedTask;
+		}
+
+		private void DisposeIdleWorkers(ProfileState state)
+		{
+			while (state.Idle.TryTake(out var worker))
+			{
+				try
+				{
+					worker.Dispose();
+				}
+				catch (Exception ex)
+				{
+					_logger.LogWarning(ex, "Failed to dispose a pooled Piper worker during shutdown.");
+				}
+			}
 		}
 	}
 }

@@ -437,6 +437,30 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async System.Threading.Tasks.Task should_not_redirect_the_listing_when_tts_fails_outright()
+		{
+			var department = new Department { DepartmentId = 7, Name = "Dept 1" };
+			var profile = new UserProfile { UserId = "user1", FirstName = "Pat" };
+			var listingPrompt = "There are no units for department Dept 1.";
+
+			_departmentsServiceMock.Setup(x => x.GetDepartmentByUserIdAsync("user1", false)).ReturnsAsync(department);
+			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user1", false)).ReturnsAsync(profile);
+			_unitsServiceMock.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(7)).ReturnsAsync(new List<Unit>());
+			_unitsServiceMock.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(7)).ReturnsAsync(new List<UnitState>());
+			// A hard TTS fault must not fail the webhook or start a redirect loop —
+			// the readiness probe reports ready and the normal append path degrades.
+			_twilioVoiceResponseServiceMock
+				.Setup(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), listingPrompt, It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.ThrowsAsync(new InvalidOperationException("tts service unavailable"));
+
+			var result = await BuildController().InboundVoiceAction("user1", new VoiceRequest { Digits = "3" });
+
+			var content = ((ContentResult)result).Content;
+			content.Should().NotContain("Redirect");
+			content.Should().Contain("<Gather");
+		}
+
+		[Test]
 		public async System.Threading.Tasks.Task should_read_the_listing_without_redirecting_when_audio_is_ready()
 		{
 			var department = new Department { DepartmentId = 7, Name = "Dept 1" };

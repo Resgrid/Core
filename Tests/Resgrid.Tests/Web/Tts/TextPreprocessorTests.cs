@@ -39,6 +39,23 @@ namespace Resgrid.Tests.Web.Tts
 		}
 
 		[Test]
+		public void Preprocess_DoesNotReachAcrossACommaForStreetSuffixes()
+		{
+			// A street suffix belongs to the street phrase, so the match must not
+			// bridge a comma into the next clause and rewrite an unrelated word.
+			_preprocessor.Preprocess("Fall at 100 Center St, Dr Jones on scene", EnglishVoice)
+				.Should().Be("Fall at 100 Center Street, Dr Jones on scene.");
+		}
+
+		[Test]
+		public void Preprocess_ExpandsUnitDesignatorWrittenAfterAComma()
+		{
+			// Sub-unit designators are routinely comma-separated in CAD address fields.
+			_preprocessor.Preprocess("123 Main St, Apt 4", EnglishVoice)
+				.Should().Be("123 Main Street, Apartment 4.");
+		}
+
+		[Test]
 		public void Preprocess_DoesNotExpandAddressSuffixWithoutLeadingNumber()
 		{
 			// "St" with no house number ahead of it is left alone.

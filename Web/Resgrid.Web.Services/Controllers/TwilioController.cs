@@ -1386,6 +1386,16 @@ namespace Resgrid.Web.Services.Controllers
 			{
 				return false;
 			}
+			catch (Exception ex) when (ex is not OperationCanceledException)
+			{
+				// TwilioVoiceResponseService already degrades TTS faults to <Say>/skip, so
+				// nothing should reach here. Enforce the documented contract locally anyway:
+				// a readiness probe must never fail the webhook, and redirecting on a hard
+				// failure would just loop. Caller-abort cancellation is deliberately not
+				// caught — it is control flow, and the next append rethrows it regardless.
+				Logging.LogException(ex);
+				return true;
+			}
 		}
 
 		[HttpGet("InboundVoiceActionStatus")]

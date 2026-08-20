@@ -366,6 +366,18 @@ namespace Resgrid.Web.Tts.Services
 		};
 
 		/// <summary>
+		/// The subset of <see cref="AddressSuffixes"/> naming a sub-unit rather than a
+		/// street. CAD address fields routinely comma-separate these ("123 Main St,
+		/// Apt 4"), so their match may bridge a comma; a street suffix may not, or the
+		/// house number reaches across the comma into the next clause and rewrites an
+		/// unrelated word ("100 Center St, Dr Jones" → "Drive Jones").
+		/// </summary>
+		public static readonly IReadOnlySet<string> UnitDesignators = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			"Apt", "Ste",
+		};
+
+		/// <summary>
 		/// Street-suffix abbreviations, expanded only when they follow a house or
 		/// building number ("123 Main St" → "123 Main Street"). Case-insensitive.
 		/// </summary>

@@ -62,12 +62,21 @@ namespace Resgrid.Web.Tts.Services
 		// (e.g. "123 Main St" → "123 Main Street"). The pattern anchors to a leading
 		// digit (\b\d+\b), then lazily skips over the street name before matching the
 		// suffix; the house number and street name are captured and re-emitted.
+		// A street suffix belongs to the street phrase, so its bridge stops at a comma
+		// — otherwise the house number reaches into the following clause and rewrites
+		// an unrelated word ("100 Center St, Dr Jones" → "Drive Jones"). Sub-unit
+		// designators are exempt: CAD writes them after a comma ("123 Main St, Apt 4").
 		private static IReadOnlyList<(Regex, string)> CompileAddressSuffixRules(IReadOnlyDictionary<string, string> map)
 		{
 			return map.OrderByDescending(entry => entry.Key.Length)
-				.Select(entry => (
-					new Regex($@"(\b\d+\b[\s\w,]*?)\b{Regex.Escape(entry.Key)}\b", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant),
-					"${1}" + entry.Value))
+				.Select(entry =>
+				{
+					var bridge = TtsShorthandCatalog.UnitDesignators.Contains(entry.Key) ? @"[\s\w,]" : @"[\s\w]";
+
+					return (
+						new Regex($@"(\b\d+\b{bridge}*?)\b{Regex.Escape(entry.Key)}\b", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant),
+						"${1}" + entry.Value);
+				})
 				.ToList();
 		}
 

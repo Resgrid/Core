@@ -51,9 +51,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("en_US-ryan-high.onnx", 165));
+				.Returns(("en_US-ryan-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-high.onnx", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-medium.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -84,9 +84,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("en_US-ryan-high.onnx", 165));
+				.Returns(("en_US-ryan-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-high.onnx", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-medium.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.SetupSequence(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -150,9 +150,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("en_US-ryan-high.onnx", 165));
+				.Returns(("en_US-ryan-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-high.onnx", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-medium.onnx", 165))
 				.Returns(cacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
@@ -189,9 +189,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("en_US-ryan-high.onnx", 165));
+				.Returns(("en_US-ryan-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-high.onnx", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-medium.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -249,7 +249,7 @@ namespace Resgrid.Tests.Web.Tts
 			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
 				"--model",
-				Path.Combine("/usr/local/share/piper-voices", "en_US-ryan-high.onnx"),
+				Path.Combine("/usr/local/share/piper-voices", "en_US-ryan-medium.onnx"),
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
@@ -274,7 +274,7 @@ namespace Resgrid.Tests.Web.Tts
 			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
 				"--model",
-				Path.Combine("/usr/local/share/piper-voices", "en_US-ryan-high.onnx"),
+				Path.Combine("/usr/local/share/piper-voices", "en_US-ryan-medium.onnx"),
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
@@ -298,7 +298,7 @@ namespace Resgrid.Tests.Web.Tts
 			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
 				"--model",
-				Path.Combine("/usr/local/share/piper-voices", "en_US-ryan-high.onnx"),
+				Path.Combine("/usr/local/share/piper-voices", "en_US-ryan-medium.onnx"),
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",

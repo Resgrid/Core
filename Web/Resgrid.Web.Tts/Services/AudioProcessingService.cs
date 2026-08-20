@@ -12,7 +12,10 @@ namespace Resgrid.Web.Tts.Services
 		private const float SpeedReferenceWpm = 175f;
 		private const float MinLengthScale = 0.25f;
 		private const float MaxLengthScale = 3.0f;
-		private const string DefaultEnglishModel = "en_US-ryan-high.onnx";
+		// ryan-medium over ryan-high: near-identical intelligibility on the 8kHz mulaw
+		// telephony output, at a fraction of the model-load and synthesis cost. The
+		// model name feeds the TTS cache key, so this swap self-invalidates the cache.
+		private const string DefaultEnglishModel = "en_US-ryan-medium.onnx";
 		// Lowpass sits at 3400 Hz (the telephony band edge) rather than 3000 so
 		// sibilants survive the mulaw encode; loudnorm keeps clips at a consistent
 		// perceived level over the phone.
@@ -60,15 +63,18 @@ namespace Resgrid.Web.Tts.Services
 		private readonly TtsOptions _options;
 		private readonly ILogger<AudioProcessingService> _logger;
 		private readonly ITextPreprocessor _textPreprocessor;
+		private readonly IPiperProcessPool _piperProcessPool;
 
 		public AudioProcessingService(
 			IOptions<TtsOptions> options,
 			ILogger<AudioProcessingService> logger,
-			ITextPreprocessor textPreprocessor)
+			ITextPreprocessor textPreprocessor,
+			IPiperProcessPool piperProcessPool = null)
 		{
 			_options = options.Value;
 			_logger = logger;
 			_textPreprocessor = textPreprocessor;
+			_piperProcessPool = piperProcessPool;
 		}
 
 		public async Task<byte[]> GenerateNormalizedWavAsync(string text, string voice, int speed, CancellationToken cancellationToken)
@@ -189,6 +195,17 @@ namespace Resgrid.Web.Tts.Services
 
 		private async Task RunPiperAsync(string text, string voice, int speed, string outputFilePath, CancellationToken cancellationToken)
 		{
+			if (_options.PiperPersistentProcessEnabled && _piperProcessPool is not null)
+			{
+				var invocation = GetPiperInvocation(voice, speed);
+				var profile = new PiperSynthesisProfile(
+					Path.Combine(_options.PiperModelDirectory, invocation.ModelName),
+					invocation.LengthScale.ToString("0.00", CultureInfo.InvariantCulture));
+
+				await _piperProcessPool.SynthesizeAsync(profile, text, outputFilePath, cancellationToken);
+				return;
+			}
+
 			var startInfo = CreatePiperStartInfo(voice, speed, outputFilePath);
 			await RunProcessAsync(startInfo, text, "Piper TTS", cancellationToken);
 		}
@@ -203,18 +220,7 @@ namespace Resgrid.Web.Tts.Services
 			startInfo.ArgumentList.Add(modelPath);
 			startInfo.ArgumentList.Add("--output_file");
 			startInfo.ArgumentList.Add(outputFilePath);
-			startInfo.ArgumentList.Add("--length-scale");
-			startInfo.ArgumentList.Add(invocation.LengthScale.ToString("0.00", CultureInfo.InvariantCulture));
-			// 0.35s of silence between sentences — dispatch messages are strings of
-			// short sentences and need audible boundaries to stay intelligible.
-			startInfo.ArgumentList.Add("--sentence-silence");
-			startInfo.ArgumentList.Add("0.35");
-			// Lower generation noise than the Piper defaults (0.667/0.8): reduces
-			// prosody jitter that makes digits and short words sound mumbled.
-			startInfo.ArgumentList.Add("--noise-scale");
-			startInfo.ArgumentList.Add("0.333");
-			startInfo.ArgumentList.Add("--noise-w");
-			startInfo.ArgumentList.Add("0.4");
+			PiperTuning.AppendCommonArguments(startInfo, invocation.LengthScale.ToString("0.00", CultureInfo.InvariantCulture));
 
 			return startInfo;
 		}

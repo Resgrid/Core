@@ -81,6 +81,14 @@ namespace Resgrid.Web.Tts.Services
 
 			foreach (var entry in entries)
 			{
+				// The persistent Piper workers' output root lives under the temp root for
+				// the pod's whole lifetime; sweeping it would break live workers. The
+				// worker factory clears it wholesale at startup instead.
+				if (string.Equals(entry.Name, PiperWorkerFactory.WorkerRootDirectoryName, StringComparison.OrdinalIgnoreCase))
+				{
+					continue;
+				}
+
 				if (entry.LastWriteTimeUtc >= cutoff)
 				{
 					continue;

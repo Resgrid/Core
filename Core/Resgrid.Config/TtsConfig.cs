@@ -45,6 +45,19 @@ namespace Resgrid.Config
 		public static int GenerationTimeoutSeconds = 300;
 		public static string PiperExecutable = "piper";
 		public static string PiperModelDirectory = "/usr/local/share/piper-voices";
+
+		/// <summary>
+		/// When true, synthesis goes through a pool of long-lived Piper processes (one
+		/// model load per process lifetime) instead of spawning a fresh process per
+		/// request. A failed or wedged worker is killed and respawned automatically.
+		/// </summary>
+		public static bool PiperPersistentProcessEnabled = true;
+
+		/// <summary>
+		/// Maximum concurrent persistent Piper workers kept per (model, speed) profile.
+		/// Each worker holds its model in memory.
+		/// </summary>
+		public static int PiperMaxWorkersPerVoice = 2;
 		public static string FfmpegExecutable = "ffmpeg";
 		public static string TempDirectory = "";
 
@@ -94,7 +107,8 @@ namespace Resgrid.Config
 			"Invalid staffing selection. Returning to the main menu.",
 			"No staffing selection made. Returning to the main menu.",
 			"Thank you. Your response has been recorded.",
-			"Please wait while we prepare your dispatch information."
+			"Please wait while we prepare your dispatch information.",
+			"Please wait while we gather that information."
 		});
 
 		public static int RateLimitPermitLimit = 600;

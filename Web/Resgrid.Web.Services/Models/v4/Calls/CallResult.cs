@@ -187,9 +187,11 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public int? ActiveRunCardId { get; set; }
 
 		/// <summary>
-		/// When was the call Logged On in UTC time
+		/// When was the call Logged On in UTC time. Temporarily serialised WITHOUT the "Z" so app
+		/// builds in the field keep showing correct call times; see LegacyZonelessUtcDateTimeConverter
+		/// for when to switch this back to UtcDateTimeConverter.
 		/// </summary>
-		[JsonConverter(typeof(UtcDateTimeConverter))]
+		[JsonConverter(typeof(LegacyZonelessUtcDateTimeConverter))]
 		public DateTime LoggedOnUtc { get; set; }
 
 		/// <summary>

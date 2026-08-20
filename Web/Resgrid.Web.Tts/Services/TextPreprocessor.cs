@@ -19,176 +19,81 @@ namespace Resgrid.Web.Tts.Services
 	/// </summary>
 	public sealed partial class TextPreprocessor : ITextPreprocessor
 	{
-		// ---------------------------------------------------------------
-		//  Fire / EMS / Police dispatch abbreviations
-		//  Ordered longest-first so "HAZMAT" matches before "MAT".
-		// ---------------------------------------------------------------
-		private static readonly Dictionary<string, string> AbbreviationMap = new(StringComparer.Ordinal)
+		// The shorthand data lives in TtsShorthandCatalog; this class owns the
+		// matching mechanics. Rules are compiled once, ordered longest-key-first so
+		// "ALSEMS" matches before "ALS" and "W/M" before "W/".
+		private static readonly IReadOnlyList<(Regex Pattern, string Replacement)> AbbreviationRules =
+			CompileWordRules(TtsShorthandCatalog.Abbreviations);
+
+		private static readonly IReadOnlyList<(Regex Pattern, string Replacement)> DispatchShorthandRules =
+			CompileWordRules(TtsShorthandCatalog.DispatchShorthand);
+
+		private static readonly IReadOnlyList<(Regex Pattern, string Replacement)> SlashNotationRules =
+			CompileSymbolRules(TtsShorthandCatalog.SlashNotation);
+
+		private static readonly IReadOnlyList<(Regex Pattern, string Replacement)> AddressSuffixRules =
+			CompileAddressSuffixRules(TtsShorthandCatalog.AddressSuffixes);
+
+		private static readonly IReadOnlyList<(Regex Pattern, string Replacement)> SpellOutRules =
+			CompileWordRules(TtsShorthandCatalog.SpellOut);
+
+		private static IReadOnlyList<(Regex, string)> CompileWordRules(IReadOnlyDictionary<string, string> map)
 		{
-			// Patient / incident descriptors
-			{ "SFD",   "Single Family Dwelling" },
-			{ "MFD",   "Multi-Family Dwelling" },
-			{ "MCI",   "Mass Casualty Incident" },
-			{ "MVC",   "Motor Vehicle Collision" },
-			{ "MVA",   "Motor Vehicle Accident" },
-			{ "PI",    "Personal Injury" },
-			{ "GSW",   "Gunshot Wound" },
-			{ "DOA",   "Dead on Arrival" },
-			{ "CPR",   "Cardio Pulmonary Resuscitation" },
-			{ "AED",   "Automated External Defibrillator" },
-			{ "CO",    "Carbon Monoxide" },
-			{ "UTL",   "Unable to Locate" },
-			{ "ETA",   "Estimated Time of Arrival" },
+			return map.OrderByDescending(entry => entry.Key.Length)
+				.Select(entry => (
+					new Regex($@"\b{Regex.Escape(entry.Key)}\b", RegexOptions.Compiled | RegexOptions.CultureInvariant),
+					entry.Value))
+				.ToList();
+		}
 
-			// Service types
-			{ "ALS",   "Advanced Life Support" },
-			{ "BLS",   "Basic Life Support" },
-			{ "EMS",   "Emergency Medical Services" },
-			{ "ALSEMS","Advanced Life Support Emergency Medical Services" },
-
-			// Agencies
-			{ "HAZMAT","Hazardous Materials" },
-			{ "HazMat","Hazardous Materials" },
-			{ "WMD",   "Weapons of Mass Destruction" },
-			{ "PD",    "Police Department" },
-			{ "FD",    "Fire Department" },
-			{ "SO",    "Sheriff's Office" },
-			{ "SAR",   "Search and Rescue" },
-
-			// Incident command
-			{ "IC",    "Incident Command" },
-			{ "PIO",   "Public Information Officer" },
-			{ "POV",   "Personally Owned Vehicle" },
-
-			// Firefighting equipment / tactics
-			{ "SCBA",  "Self-Contained Breathing Apparatus" },
-			{ "PASS",  "Personal Alert Safety System" },
-			{ "RIT",   "Rapid Intervention Team" },
-			{ "PPE",   "Personal Protective Equipment" },
-			{ "PAR",   "Personnel Accountability Report" },
-
-			// Medical
-			{ "DNR",   "Do Not Resuscitate" },
-			{ "CPAP",  "Continuous Positive Airway Pressure" },
-			{ "BVM",   "Bag Valve Mask" },
-
-			// Command / operations
-			{ "SOP",   "Standard Operating Procedure" },
-			{ "SME",   "Subject Matter Expert" },
-
-			// Miscellaneous
-			{ "FAQ",   "Frequently Asked Questions" },
-		};
-
-		// ---------------------------------------------------------------
-		//  CAD / dispatch shorthand that the engine reads letter-by-letter
-		//  or mispronounces as garbled words.  These are the raw tokens
-		//  that appear in CAD-to-email or CAD-to-API dispatch feeds.
-		//  Ordered longest-first.
-		// ---------------------------------------------------------------
-		private static readonly Dictionary<string, string> DispatchShorthandMap = new(StringComparer.Ordinal)
+		// Keys like "W/" and "Y/O" contain non-word characters that defeat the
+		// standard \b anchor. Use lookaround boundaries instead: (?<!\w) ensures no
+		// word character precedes, and (?!\w) ensures no word character follows.
+		private static IReadOnlyList<(Regex, string)> CompileSymbolRules(IReadOnlyDictionary<string, string> map)
 		{
-			// Transport & entrapment
-			{ "XPORT", "Transport" },
-			{ "ENTRP", "Entrapment" },
+			return map.OrderByDescending(entry => entry.Key.Length)
+				.Select(entry => (
+					new Regex($@"(?<!\w){Regex.Escape(entry.Key)}(?!\w)", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant),
+					entry.Value))
+				.ToList();
+		}
 
-			// Structures
-			{ "BLDG",  "Building" },
-			{ "APT",   "Apartment" },
-			{ "RM",    "Room" },
-
-			// Address references
-			{ "ADDR",  "Address" },
-			{ "BLK",   "Block" },
-			{ "CS",    "Cross Street" },
-			{ "LOC",   "Location" },
-
-			// Patient / person descriptors
-			{ "YOM",   "Year Old Male" },
-			{ "YOF",   "Year Old Female" },
-			{ "PTS",   "Patients" },
-			{ "PT",    "Patient" },
-			{ "UNC",   "Unconscious" },
-			{ "UNK",   "Unknown" },
-			{ "INJ",   "Injuries" },
-			{ "RP",    "Reporting Party" },
-
-			// Vehicles
-			{ "VEH",   "Vehicle" },
-			{ "VEC",   "Vehicle" },
-
-			// Status / actions
-			{ "ENR",   "En Route" },
-			{ "ADV",   "Advised" },
-			{ "NEG",   "Negative" },
-			{ "RPT",   "Report" },
-
-			// Communications
-			{ "PX",    "Phone Extension" },
-			// All casings of "etc" are safe to expand (no English-word collision),
-			// so list each explicitly for the case-sensitive matcher — same pattern
-			// as HAZMAT/HazMat in AbbreviationMap.
-			{ "etc",   "et cetera" },
-			{ "ETC",   "et cetera" },
-			{ "Etc",   "et cetera" },
-
-			// Geographical
-			{ "NH",    "Northbound" },
-			{ "SH",    "Southbound" },
-			{ "EH",    "Eastbound" },
-			{ "WH",    "Westbound" },
-		};
-
-		// ---------------------------------------------------------------
-		//  Address abbreviations (standalone words, only after a digit).
-		// ---------------------------------------------------------------
-		private static readonly Dictionary<string, string> AddressAbbreviationMap = new(StringComparer.OrdinalIgnoreCase)
+		// Address suffixes are only expanded after a house/building number
+		// (e.g. "123 Main St" → "123 Main Street"). The pattern anchors to a leading
+		// digit (\b\d+\b), then lazily skips over the street name before matching the
+		// suffix; the house number and street name are captured and re-emitted.
+		// A street suffix belongs to the street phrase, so its bridge stops at a comma
+		// — otherwise the house number reaches into the following clause and rewrites
+		// an unrelated word ("100 Center St, Dr Jones" → "Drive Jones"). Sub-unit
+		// designators are exempt: CAD writes them after a comma ("123 Main St, Apt 4").
+		private static IReadOnlyList<(Regex, string)> CompileAddressSuffixRules(IReadOnlyDictionary<string, string> map)
 		{
-			{ "St",   "Street" },
-			{ "Ave",  "Avenue" },
-			{ "Blvd", "Boulevard" },
-			{ "Apt",  "Apartment" },
-			{ "Ste",  "Suite" },
-			{ "Rd",   "Road" },
-			{ "Dr",   "Drive" },
-			{ "Ct",   "Court" },
-			{ "Ln",   "Lane" },
-			{ "Cir",  "Circle" },
-			{ "Pl",   "Place" },
-			{ "Pkwy", "Parkway" },
-			{ "Hwy",  "Highway" },
-			{ "Fwy",  "Freeway" },
-			{ "Tpke", "Turnpike" },
-			{ "Xing", "Crossing" },
-		};
+			return map.OrderByDescending(entry => entry.Key.Length)
+				.Select(entry =>
+				{
+					var bridge = TtsShorthandCatalog.UnitDesignators.Contains(entry.Key) ? @"[\s\w,]" : @"[\s\w]";
+
+					return (
+						new Regex($@"(\b\d+\b{bridge}*?)\b{Regex.Escape(entry.Key)}\b", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant),
+						"${1}" + entry.Value);
+				})
+				.ToList();
+		}
 
 		// ---------------------------------------------------------------
-		//  Slash-notation expansions commonly used in dispatch text.
-		//  The engine reads "Y/O" as "Y slash O" — we want "year old".
+		//  10-codes are never translated (meanings vary by agency); the
+		//  ExpandTenCodes pass below only drops the dash so "10-4" is spoken
+		//  as a paced "ten four". See TtsShorthandCatalog's ground rules.
 		// ---------------------------------------------------------------
-		private static readonly Dictionary<string, string> SlashNotationMap = new(StringComparer.OrdinalIgnoreCase)
-		{
-			{ "Y/O", "Year Old" },
-			{ "W/",  "With" },
-			{ "W/O", "Without" },
-		};
-
-		// ---------------------------------------------------------------
-		//  10-codes — the engine reads "10-4" as "ten dash four", which is
-		//  actually fine for most listeners.  We keep them as-is for now.
-		//  Uncomment the map and the handler below if you prefer expansion.
-		// ---------------------------------------------------------------
-		// private static readonly Dictionary<string, string> TenCodeMap = new(StringComparer.Ordinal)
-		// {
-		// 	{ "10-4",  "acknowledged" },
-		// 	{ "10-50", "traffic accident" },
-		// 	...
-		// };
 
 		private static readonly Regex LongNumberRegex = LongNumberExpandoRegex();
 		private static readonly Regex WhitespaceRegex = WhitespaceExpandoRegex();
 		private static readonly Regex UnitIdentifierRegex = UnitIdentifierExpandoRegex();
 		private static readonly Regex NumberToWordRegexField = NumberToWordRegex();
+		private static readonly Regex AgeYoSexRegexField = AgeYoSexRegex();
+		private static readonly Regex AgeSlashSexRegexField = AgeSlashSexRegex();
+		private static readonly Regex AgeJoinedSexRegexField = AgeJoinedSexRegex();
+		private static readonly Regex TenCodeRegexField = TenCodeRegex();
 		private readonly ILogger<TextPreprocessor> _logger;
 
 		public TextPreprocessor(ILogger<TextPreprocessor> logger)
@@ -215,8 +120,15 @@ namespace Resgrid.Web.Tts.Services
 				// passes operate on natural-language words rather than codes.
 				result = ExpandAbbreviations(result);
 				result = ExpandDispatchShorthand(result);
+				// Age/sex before slash notation so "35/F" is consumed as a patient
+				// descriptor rather than reaching the generic slash handling.
+				result = ExpandAgeSexShorthand(result);
 				result = ExpandSlashNotation(result);
 				result = ExpandAddressAbbreviations(result);
+				// After every expansion map, so a mapped meaning always beats
+				// letter-spelling; before the number passes, which never touch letters.
+				result = ExpandSpellOutCodes(result);
+				result = ExpandTenCodes(result);
 				result = ExpandUnitIdentifiers(result);
 				result = ExpandLongNumbers(result);
 				result = NormalizeSmallNumbers(result);
@@ -250,15 +162,13 @@ namespace Resgrid.Web.Tts.Services
 
 		private static string ExpandAbbreviations(string text)
 		{
-			// Sort keys longest-first so "ALSEMS" is matched before "ALS".
 			// Matching is case-sensitive: short tokens like "SO", "PASS", "CO" and "PI"
 			// collide with ordinary English words when lowercased, and CAD feeds emit
-			// these codes in upper case (the map carries explicit casing variants such
-			// as "HAZMAT"/"HazMat" where more than one form is expected).
-			foreach (var kvp in AbbreviationMap.OrderByDescending(k => k.Key.Length))
+			// these codes in upper case (the catalog carries explicit casing variants
+			// such as "HAZMAT"/"HazMat" where more than one form is expected).
+			foreach (var (pattern, replacement) in AbbreviationRules)
 			{
-				var pattern = $@"\b{Regex.Escape(kvp.Key)}\b";
-				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.CultureInvariant);
+				text = pattern.Replace(text, replacement);
 			}
 
 			return text;
@@ -275,13 +185,46 @@ namespace Resgrid.Web.Tts.Services
 			// Case-sensitive for the same reason as ExpandAbbreviations: "APT", "PT",
 			// "RM" and "ADV" lowercased are (parts of) ordinary words, and CAD systems
 			// emit shorthand in upper case.
-			foreach (var kvp in DispatchShorthandMap.OrderByDescending(k => k.Key.Length))
+			foreach (var (pattern, replacement) in DispatchShorthandRules)
 			{
-				var pattern = $@"\b{Regex.Escape(kvp.Key)}\b";
-				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.CultureInvariant);
+				text = pattern.Replace(text, replacement);
 			}
 
 			return text;
+		}
+
+		/// <summary>
+		/// Expands CAD patient age/sex shorthand into spoken English:
+		/// <br/>
+		///   "35/F", "35/f"        → "35 Year Old Female"
+		///   "35F", "35f"          → "35 Year Old Female" (two/three digit ages only)
+		///   "35YOM", "35 yof"     → "35 Year Old Male" / "35 Year Old Female"
+		///   "35yo", "35 YO"       → "35 Year Old"
+		/// <br/>
+		/// The joined digits+letter form requires a 2-3 digit age: single-digit
+		/// tokens like "Apt 5F" or grid references collide too easily. The negative
+		/// lookbehind keeps highway ("I-35F"), decimal and fraction contexts out.
+		/// A trailing Fahrenheit reading ("101F") is misread as an age — patient
+		/// descriptors vastly outnumber temperatures in dispatch text.
+		/// </summary>
+		private static string ExpandAgeSexShorthand(string text)
+		{
+			text = AgeYoSexRegexField.Replace(text, match =>
+				$"{match.Groups["age"].Value} Year Old{SexWord(match.Groups["sex"].Value)}");
+			text = AgeSlashSexRegexField.Replace(text, match =>
+				$"{match.Groups["age"].Value} Year Old{SexWord(match.Groups["sex"].Value)}");
+			text = AgeJoinedSexRegexField.Replace(text, match =>
+				$"{match.Groups["age"].Value} Year Old{SexWord(match.Groups["sex"].Value)}");
+
+			return text;
+		}
+
+		private static string SexWord(string sexToken)
+		{
+			if (string.IsNullOrEmpty(sexToken))
+				return string.Empty;
+
+			return char.ToUpperInvariant(sexToken[0]) == 'M' ? " Male" : " Female";
 		}
 
 		/// <summary>
@@ -292,15 +235,9 @@ namespace Resgrid.Web.Tts.Services
 		/// </summary>
 		private static string ExpandSlashNotation(string text)
 		{
-			// Sort longest-first so "W/O" is matched before "W/".
-			foreach (var kvp in SlashNotationMap.OrderByDescending(k => k.Key.Length))
+			foreach (var (pattern, replacement) in SlashNotationRules)
 			{
-				// Keys like "W/" and "Y/O" contain non-word characters that
-				// defeat the standard \b anchor.  Use lookaround boundaries
-				// instead: (?<!\w) ensures no word character precedes, and
-				// (?!\w) ensures no word character follows.
-				var pattern = $@"(?<!\w){Regex.Escape(kvp.Key)}(?!\w)";
-				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+				text = pattern.Replace(text, replacement);
 			}
 
 			return text;
@@ -344,20 +281,35 @@ namespace Resgrid.Web.Tts.Services
 
 		private static string ExpandAddressAbbreviations(string text)
 		{
-			// Address abbreviations should only be expanded when they appear
-			// after a house/building number (e.g. "123 Main St" → "123 Main Street").
-			// The pattern anchors to a leading digit (\b\d+\b), then lazily skips
-			// over the street name (one or more words) before matching the suffix.
-			// The house number and street name are captured and re-emitted — only
-			// the suffix itself is rewritten.
-
-			foreach (var kvp in AddressAbbreviationMap.OrderByDescending(k => k.Key.Length))
+			foreach (var (pattern, replacement) in AddressSuffixRules)
 			{
-				var pattern = $@"(\b\d+\b[\s\w,]*?)\b{Regex.Escape(kvp.Key)}\b";
-				text = Regex.Replace(text, pattern, "${1}" + kvp.Value, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+				text = pattern.Replace(text, replacement);
 			}
 
 			return text;
+		}
+
+		/// <summary>
+		/// Reads codes with no safe expansion as spaced letters ("MI" → "M I") so
+		/// each letter is spoken distinctly instead of running together as a word.
+		/// </summary>
+		private static string ExpandSpellOutCodes(string text)
+		{
+			foreach (var (pattern, replacement) in SpellOutRules)
+			{
+				text = pattern.Replace(text, replacement);
+			}
+
+			return text;
+		}
+
+		/// <summary>
+		/// Paces radio ten-codes: "10-4" → "10 4", spoken "ten four" instead of a
+		/// hurried "ten dash four". The numbers are kept (meanings vary by agency).
+		/// </summary>
+		private static string ExpandTenCodes(string text)
+		{
+			return TenCodeRegexField.Replace(text, "${prefix} ${code}");
 		}
 
 		private static string ExpandUnitIdentifiers(string text)
@@ -442,5 +394,21 @@ namespace Resgrid.Web.Tts.Services
 		/// <summary>Collapses multiple whitespace characters into a single space.</summary>
 		[GeneratedRegex(@"\s+")]
 		private static partial Regex WhitespaceExpandoRegex();
+
+		/// <summary>Matches "35YO", "35 yo", "35YOM"/"35 yof" — age + YO + optional sex.</summary>
+		[GeneratedRegex(@"(?<![\w\-./])(?<age>\d{1,3})\s*YO(?<sex>[MF])?\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+		private static partial Regex AgeYoSexRegex();
+
+		/// <summary>Matches "35/F", "9/m" — age, slash, sex letter.</summary>
+		[GeneratedRegex(@"(?<![\w\-./])(?<age>\d{1,3})\s*/\s*(?<sex>[MF])\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+		private static partial Regex AgeSlashSexRegex();
+
+		/// <summary>Matches "35F", "104m" — joined age + sex letter, 2-3 digit ages only.</summary>
+		[GeneratedRegex(@"(?<![\w\-./])(?<age>\d{2,3})(?<sex>[MF])\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
+		private static partial Regex AgeJoinedSexRegex();
+
+		/// <summary>Matches radio ten-codes and eleven-codes: "10-4", "11-99".</summary>
+		[GeneratedRegex(@"\b(?<prefix>1[01])-(?<code>\d{1,3})\b", RegexOptions.CultureInvariant)]
+		private static partial Regex TenCodeRegex();
 	}
 }

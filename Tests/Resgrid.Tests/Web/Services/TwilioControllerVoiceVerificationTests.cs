@@ -288,7 +288,7 @@ namespace Resgrid.Tests.Web.Services
 			var result = await BuildController().VoiceCall("user1", 42);
 
 			var content = ((ContentResult)result).Content;
-			var dispatchPrompt = Uri.EscapeDataString("Call 42, Priority High. Address 123 Main St. Nature Structure fire.");
+			var dispatchPrompt = Uri.EscapeDataString("New call, Call 42. Nature, Structure fire. Address, 123 Main St. Priority, High.");
 			var menuPrompt = Uri.EscapeDataString(TwilioVoicePromptCatalog.OutboundDispatchMenu);
 
 			content.Should().Contain(dispatchPrompt);
@@ -308,9 +308,9 @@ namespace Resgrid.Tests.Web.Services
 			};
 
 			InvokeBuildDispatchPrompt(typeof(TwilioController), call, "123 Main St")
-				.Should().Be("Call 42, Priority High. Address 123 Main St. Nature Structure fire.");
+				.Should().Be("New call, Call 42. Nature, Structure fire. Address, 123 Main St. Priority, High.");
 			InvokeBuildDispatchPrompt(typeof(TwilioController), call, null)
-				.Should().Be("Call 42, Priority High. Nature Structure fire.");
+				.Should().Be("New call, Call 42. Nature, Structure fire. Priority, High.");
 		}
 
 		[TestCase("1", "https://resgridapi.local/api/Twilio/VoiceCall?userId=user1&amp;callId=42")]
@@ -386,6 +386,99 @@ namespace Resgrid.Tests.Web.Services
 			content.Should().Contain(Uri.EscapeDataString(TwilioVoicePromptCatalog.StatusSelectionIntro));
 			content.Should().Contain(Uri.EscapeDataString("For Status 12, enter 12 and press pound."));
 			content.Should().Contain(Uri.EscapeDataString(TwilioVoicePromptCatalog.GoBackToMainMenuWithPound));
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task should_play_please_wait_and_redirect_when_listing_audio_is_not_ready()
+		{
+			var department = new Department { DepartmentId = 7, Name = "Dept 1" };
+			var profile = new UserProfile { UserId = "user1", FirstName = "Pat" };
+			var listingPrompt = "There are no units for department Dept 1.";
+
+			_departmentsServiceMock.Setup(x => x.GetDepartmentByUserIdAsync("user1", false)).ReturnsAsync(department);
+			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user1", false)).ReturnsAsync(profile);
+			_unitsServiceMock.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(7)).ReturnsAsync(new List<Unit>());
+			_unitsServiceMock.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(7)).ReturnsAsync(new List<UnitState>());
+			// Cold TTS generation: the readiness probe's append only completes when its
+			// timeout token fires, mirroring audio that isn't cached yet.
+			_twilioVoiceResponseServiceMock
+				.Setup(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), listingPrompt, It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Returns<VoiceResponse, string, CancellationToken, string>((_, _, token, _) => System.Threading.Tasks.Task.Delay(Timeout.Infinite, token));
+
+			var result = await BuildController().InboundVoiceAction("user1", new VoiceRequest { Digits = "3" });
+
+			var content = ((ContentResult)result).Content;
+			content.Should().Contain(Uri.EscapeDataString(TwilioVoicePromptCatalog.PleaseWaitForInformation));
+			content.Should().Contain("https://resgridapi.local/api/Twilio/InboundVoiceAction?userId=user1&amp;Digits=3&amp;retry=1");
+			content.Should().NotContain("<Gather");
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task should_stop_redirecting_listings_after_the_retry_budget_is_spent()
+		{
+			var department = new Department { DepartmentId = 7, Name = "Dept 1" };
+			var profile = new UserProfile { UserId = "user1", FirstName = "Pat" };
+			var listingPrompt = "There are no units for department Dept 1.";
+
+			_departmentsServiceMock.Setup(x => x.GetDepartmentByUserIdAsync("user1", false)).ReturnsAsync(department);
+			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user1", false)).ReturnsAsync(profile);
+			_unitsServiceMock.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(7)).ReturnsAsync(new List<Unit>());
+			_unitsServiceMock.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(7)).ReturnsAsync(new List<UnitState>());
+			_twilioVoiceResponseServiceMock
+				.Setup(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), listingPrompt, It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Returns<VoiceResponse, string, CancellationToken, string>((_, _, token, _) => System.Threading.Tasks.Task.Delay(Timeout.Infinite, token));
+
+			var result = await BuildController().InboundVoiceAction("user1", new VoiceRequest { Digits = "3" }, retry: "3");
+
+			var content = ((ContentResult)result).Content;
+			content.Should().NotContain("Redirect");
+			content.Should().Contain("<Gather");
+			content.Should().Contain("<Hangup");
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task should_not_redirect_the_listing_when_tts_fails_outright()
+		{
+			var department = new Department { DepartmentId = 7, Name = "Dept 1" };
+			var profile = new UserProfile { UserId = "user1", FirstName = "Pat" };
+			var listingPrompt = "There are no units for department Dept 1.";
+
+			_departmentsServiceMock.Setup(x => x.GetDepartmentByUserIdAsync("user1", false)).ReturnsAsync(department);
+			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user1", false)).ReturnsAsync(profile);
+			_unitsServiceMock.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(7)).ReturnsAsync(new List<Unit>());
+			_unitsServiceMock.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(7)).ReturnsAsync(new List<UnitState>());
+			// A hard TTS fault must not fail the webhook or start a redirect loop —
+			// the readiness probe reports ready and the normal append path degrades.
+			_twilioVoiceResponseServiceMock
+				.Setup(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), listingPrompt, It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.ThrowsAsync(new InvalidOperationException("tts service unavailable"));
+
+			var result = await BuildController().InboundVoiceAction("user1", new VoiceRequest { Digits = "3" });
+
+			var content = ((ContentResult)result).Content;
+			content.Should().NotContain("Redirect");
+			content.Should().Contain("<Gather");
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task should_read_the_listing_without_redirecting_when_audio_is_ready()
+		{
+			var department = new Department { DepartmentId = 7, Name = "Dept 1" };
+			var profile = new UserProfile { UserId = "user1", FirstName = "Pat" };
+
+			_departmentsServiceMock.Setup(x => x.GetDepartmentByUserIdAsync("user1", false)).ReturnsAsync(department);
+			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user1", false)).ReturnsAsync(profile);
+			_unitsServiceMock.Setup(x => x.GetUnitsForDepartmentUnlimitedAsync(7)).ReturnsAsync(new List<Unit>());
+			_unitsServiceMock.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(7)).ReturnsAsync(new List<UnitState>());
+
+			var result = await BuildController().InboundVoiceAction("user1", new VoiceRequest { Digits = "3" });
+
+			var content = ((ContentResult)result).Content;
+			content.Should().NotContain("Redirect");
+			content.Should().Contain("<Gather");
+			_twilioVoiceResponseServiceMock.Verify(
+				x => x.AppendPromptAsync(It.IsAny<Gather>(), "There are no units for department Dept 1.", It.IsAny<CancellationToken>(), It.IsAny<string>()),
+				Times.Exactly(2));
 		}
 
 		[Test]

@@ -45,6 +45,15 @@
             the Twilio middleware's BaseUrlOverride behind the reverse proxy).
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.IsPromptAudioReadyAsync(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Waits up to <see cref="F:Resgrid.Web.Services.Controllers.TwilioController.ListingReadinessTimeout"/> for the TTS audio of the
+            given text to resolve (cache hit or fast generation). On timeout the
+            generation continues in TwilioVoiceResponseService's URL cache, so a
+            redirect re-entry gets an instant hit. TTS hard failures return true — the
+            normal append path already degrades those to &lt;Say&gt; or a skip.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AutofillsController">
             <summary>
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
@@ -5394,6 +5403,20 @@
             part of the shallow /health liveness endpoint.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Helpers.LegacyZonelessUtcDateTimeConverter">
+             <summary>
+             TEMPORARY (RG-T132): serialises a UTC instant WITHOUT the trailing "Z".
+            
+             Deployed app builds compute "time ago" for <c>CallResult.LoggedOnUtc</c> by parsing the value
+             as device-local time and shifting "now" by the device's UTC offset -- math that is only
+             correct when the value is zone-less. The "Z" added by <see cref="T:Resgrid.Web.Services.Helpers.UtcDateTimeConverter"/> made
+             those builds show call times off by the device's UTC offset. Updated app builds handle both
+             formats, so once the fixed apps are rolled out, delete this class and restore
+             <see cref="T:Resgrid.Web.Services.Helpers.UtcDateTimeConverter"/> on the properties using it.
+            
+             Reads are inherited from <see cref="T:Resgrid.Web.Services.Helpers.UtcDateTimeConverter"/> and accept both formats.
+             </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Helpers.UtcDateTimeConverter">
              <summary>
              Serialises a <see cref="T:System.DateTime"/> that is known to hold a UTC instant with an explicit "Z".
@@ -6553,7 +6576,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.LoggedOnUtc">
             <summary>
-            When was the call Logged On in UTC time
+            When was the call Logged On in UTC time. Temporarily serialised WITHOUT the "Z" so app
+            builds in the field keep showing correct call times; see LegacyZonelessUtcDateTimeConverter
+            for when to switch this back to UtcDateTimeConverter.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DispatchedOn">
@@ -13435,6 +13460,18 @@
             <summary>
             Id used to connect to the session
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.WeatherAlerts.WeatherAlertResultData.EffectiveOnUtc">
+            <summary>Actual UTC instant the alert became effective, serialised with an explicit "Z".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.WeatherAlerts.WeatherAlertResultData.ExpiresOnUtc">
+            <summary>Actual UTC instant the alert expires, serialised with an explicit "Z".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.WeatherAlerts.WeatherAlertResultData.OnsetOnUtc">
+            <summary>Actual UTC onset instant, serialised with an explicit "Z".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.WeatherAlerts.WeatherAlertResultData.SentOnUtc">
+            <summary>Actual UTC instant the alert was sent, serialised with an explicit "Z".</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Workflows.SaveCredentialInput.PlaintextCredentialJson">
             <summary>Plaintext credential JSON — will be AES-encrypted server-side before storage.</summary>

@@ -98,6 +98,15 @@ namespace Resgrid.Web.Services.Controllers
 
 		private const int MAX_DISPATCH_RETRY = 3;
 
+		// Retry budget for the inbound-menu dynamic listings (active calls, statuses,
+		// calendar). Same please-wait-and-redirect pattern as dispatch playback.
+		private const int MAX_LISTING_RETRY = 3;
+
+		// How long a webhook waits for listing audio to come out of the TTS cache
+		// before redirecting. Generation keeps running server-side after the timeout,
+		// so a redirect re-entry finds the audio cached.
+		private static readonly TimeSpan ListingReadinessTimeout = TimeSpan.FromSeconds(3);
+
 		// Shared time budget for ALL TTS prompt playback within a single webhook request.
 		// A TTS service that is down fails fast and degrades to <Say> inside
 		// TwilioVoiceResponseService, but a HUNG service eats the full RestClient
@@ -1136,7 +1145,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("InboundVoiceAction")]
 		[Produces("application/xml")]
-		public async Task<ActionResult> InboundVoiceAction(string userId, [FromQuery] VoiceRequest twilioRequest)
+		public async Task<ActionResult> InboundVoiceAction(string userId, [FromQuery] VoiceRequest twilioRequest, [FromQuery] string retry = null)
 		{
 			var response = new VoiceResponse();
 
@@ -1144,6 +1153,7 @@ namespace Resgrid.Web.Services.Controllers
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			var prompts = new List<string>();
+			var isDynamicListing = false;
 			Uri gatherAction = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}");
 			string gatherFinishOnKey = null;
 			int? gatherNumDigits = 1;
@@ -1155,6 +1165,7 @@ namespace Resgrid.Web.Services.Controllers
 			}
 			else if (twilioRequest.Digits == "1")
 			{
+				isDynamicListing = true;
 				var calls = await _callsService.GetActiveCallsByDepartmentAsync(department.DepartmentId);
 
 				if (calls != null && calls.Any())
@@ -1182,6 +1193,7 @@ namespace Resgrid.Web.Services.Controllers
 			}
 			else if (twilioRequest.Digits == "2")
 			{
+				isDynamicListing = true;
 				var allUsers = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(department.DepartmentId, false, false, false);
 				var lastUserActionlogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(department.DepartmentId);
 				var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(department.DepartmentId);
@@ -1210,6 +1222,7 @@ namespace Resgrid.Web.Services.Controllers
 			}
 			else if (twilioRequest.Digits == "3")
 			{
+				isDynamicListing = true;
 				var units = await _unitsService.GetUnitsForDepartmentUnlimitedAsync(department.DepartmentId);
 				var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(department.DepartmentId);
 				var unitStatuses = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(department.DepartmentId);
@@ -1239,6 +1252,7 @@ namespace Resgrid.Web.Services.Controllers
 			}
 			else if (twilioRequest.Digits == "4")
 			{
+				isDynamicListing = true;
 				var upcomingItems = await _calendarService.GetUpcomingCalendarItemsAsync(department.DepartmentId, DateTime.UtcNow);
 
 				if (upcomingItems != null && upcomingItems.Any())
@@ -1306,6 +1320,30 @@ namespace Resgrid.Web.Services.Controllers
 				goBackPrompt = TwilioVoicePromptCatalog.GoBackToMainMenuWithPound;
 			}
 
+			// Dynamic listings are unique text and therefore almost always a TTS cache
+			// miss; cold generation routinely outlives the shared prompt budget, which
+			// used to skip the prompt entirely (silence, then hangup). Same pattern as
+			// dispatch playback in VoiceCall: wait briefly for the audio, and if it
+			// isn't ready, play a pre-warmed "please wait" and redirect back — the
+			// generation keeps running server-side, so the re-entry finds it cached.
+			if (isDynamicListing && prompts.Count > 0 && !await IsPromptAudioReadyAsync(prompts[0], department.DepartmentId))
+			{
+				if (!int.TryParse(retry, out var retryCount))
+					retryCount = 0;
+
+				if (retryCount < MAX_LISTING_RETRY)
+				{
+					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.PleaseWaitForInformation, department.DepartmentId);
+					response.Redirect(
+						new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}&Digits={twilioRequest.Digits}&retry={retryCount + 1}"),
+						"GET");
+					return CreateVoiceContentResult(response);
+				}
+
+				// Retry budget exhausted — fall through to the normal budgeted append,
+				// which degrades to <Say> (when enabled) or skips the prompt.
+			}
+
 			for (int repeat = 0; repeat < 2; repeat++)
 			{
 				var gather = new Gather(action: gatherAction, method: "GET", finishOnKey: gatherFinishOnKey, numDigits: gatherNumDigits)
@@ -1320,6 +1358,44 @@ namespace Resgrid.Web.Services.Controllers
 			response.Hangup();
 
 			return CreateVoiceContentResult(response);
+		}
+
+		/// <summary>
+		/// Waits up to <see cref="ListingReadinessTimeout"/> for the TTS audio of the
+		/// given text to resolve (cache hit or fast generation). On timeout the
+		/// generation continues in TwilioVoiceResponseService's URL cache, so a
+		/// redirect re-entry gets an instant hit. TTS hard failures return true — the
+		/// normal append path already degrades those to &lt;Say&gt; or a skip.
+		/// </summary>
+		private async Task<bool> IsPromptAudioReadyAsync(string text, int? departmentId)
+		{
+			var ttsLanguage = await GetDepartmentTtsLanguageAsync(departmentId);
+
+			using var timeoutCts = new CancellationTokenSource(ListingReadinessTimeout);
+			using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
+				timeoutCts.Token,
+				HttpContext?.RequestAborted ?? CancellationToken.None);
+
+			try
+			{
+				var scratch = new VoiceResponse();
+				await _twilioVoiceResponseService.AppendPromptAsync(scratch, text, linkedCts.Token, ttsLanguage);
+				return true;
+			}
+			catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
+			{
+				return false;
+			}
+			catch (Exception ex) when (ex is not OperationCanceledException)
+			{
+				// TwilioVoiceResponseService already degrades TTS faults to <Say>/skip, so
+				// nothing should reach here. Enforce the documented contract locally anyway:
+				// a readiness probe must never fail the webhook, and redirecting on a hard
+				// failure would just loop. Caller-abort cancellation is deliberately not
+				// caught — it is control flow, and the next append rethrows it regardless.
+				Logging.LogException(ex);
+				return true;
+			}
 		}
 
 		[HttpGet("InboundVoiceActionStatus")]

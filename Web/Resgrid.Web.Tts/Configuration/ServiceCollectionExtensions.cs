@@ -56,6 +56,8 @@ namespace Resgrid.Web.Tts.Configuration
 			options.GenerationTimeoutSeconds = TtsConfig.GenerationTimeoutSeconds;
 			options.PiperExecutable = string.IsNullOrWhiteSpace(TtsConfig.PiperExecutable) ? options.PiperExecutable : TtsConfig.PiperExecutable;
 			options.PiperModelDirectory = string.IsNullOrWhiteSpace(TtsConfig.PiperModelDirectory) ? options.PiperModelDirectory : TtsConfig.PiperModelDirectory;
+			options.PiperPersistentProcessEnabled = TtsConfig.PiperPersistentProcessEnabled;
+			options.PiperMaxWorkersPerVoice = TtsConfig.PiperMaxWorkersPerVoice;
 			options.FfmpegExecutable = string.IsNullOrWhiteSpace(TtsConfig.FfmpegExecutable) ? options.FfmpegExecutable : TtsConfig.FfmpegExecutable;
 			options.TempDirectory = string.IsNullOrWhiteSpace(TtsConfig.TempDirectory) ? options.TempDirectory : TtsConfig.TempDirectory;
 			options.TempDirectorySweepHours = TtsConfig.TempDirectorySweepHours;

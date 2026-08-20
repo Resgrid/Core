@@ -718,7 +718,6 @@
 /// <reference path="js/app/public/mailer/resgrid.public.mailer.js" />
 /// <reference path="js/app/public/resgrid.public.js" />
 /// <reference path="js/app/register/resgrid.affiliate.register.js" />
-/// <reference path="js/app/register/resgrid.register.js" />
 /// <reference path="js/app/resgrid.js" />
 /// <reference path="js/site.js" />
 /// <reference path="lib/angular/angular.js" />

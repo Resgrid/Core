@@ -1,3 +1,8 @@
+using System;
+
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.WeatherAlerts
 {
 	public class WeatherAlertResultData
@@ -20,10 +25,29 @@ namespace Resgrid.Web.Services.Models.v4.WeatherAlerts
 		public string Polygon { get; set; }
 		public string Geocodes { get; set; }
 		public string CenterGeoLocation { get; set; }
+		// Despite the names, these string fields carry the department-local DISPLAY format
+		// ("MM/dd/yyyy h:mm:ss tt"). Deployed app builds render them verbatim, so the format cannot
+		// change. Clients doing date math must use the *OnUtc instants below instead.
 		public string OnsetUtc { get; set; }
 		public string ExpiresUtc { get; set; }
 		public string EffectiveUtc { get; set; }
 		public string SentUtc { get; set; }
+
+		/// <summary>Actual UTC instant the alert became effective, serialised with an explicit "Z".</summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
+		public DateTime EffectiveOnUtc { get; set; }
+
+		/// <summary>Actual UTC instant the alert expires, serialised with an explicit "Z".</summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
+		public DateTime? ExpiresOnUtc { get; set; }
+
+		/// <summary>Actual UTC onset instant, serialised with an explicit "Z".</summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
+		public DateTime? OnsetOnUtc { get; set; }
+
+		/// <summary>Actual UTC instant the alert was sent, serialised with an explicit "Z".</summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
+		public DateTime? SentOnUtc { get; set; }
 		public string FirstSeenUtc { get; set; }
 		public string LastUpdatedUtc { get; set; }
 		public string ReferencesExternalId { get; set; }

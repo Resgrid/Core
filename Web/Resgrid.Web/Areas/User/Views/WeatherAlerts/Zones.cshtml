@@ -162,16 +162,8 @@
 			failedToDeleteZone: '@localizer["FailedToDeleteZone"]'
 		};
 
-		function getAuthToken() {
-			try {
-				for (var i = 0; i < localStorage.length; i++) {
-					var val = localStorage.getItem(localStorage.key(i));
-					if (!val || val.charAt(0) !== '{') continue;
-					var obj = JSON.parse(val);
-					if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) return obj.access_token;
-				}
-			} catch (e) {}
-			return '';
+		function getAntiForgeryToken() {
+			return document.querySelector('meta[name="request-verification-token"]').content;
 		}
 
 		function resetForm() {
@@ -209,10 +201,10 @@
 			};
 
 			$.ajax({
-				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveZone',
+				url: '/api/web-bff/api/v4/WeatherAlerts/SaveZone',
 				type: 'POST',
 				contentType: 'application/json',
-				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				headers: { 'RequestVerificationToken': getAntiForgeryToken() },
 				data: JSON.stringify(data),
 				success: function() {
 					location.reload();
@@ -245,10 +237,10 @@
 			}
 
 			$.ajax({
-				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveZone',
+				url: '/api/web-bff/api/v4/WeatherAlerts/SaveZone',
 				type: 'POST',
 				contentType: 'application/json',
-				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				headers: { 'RequestVerificationToken': getAntiForgeryToken() },
 				data: JSON.stringify(data),
 				success: function() {
 					location.reload();
@@ -262,9 +254,9 @@
 		function deleteZone(zoneId) {
 			if (confirm(loc.deleteZoneConfirm)) {
 				$.ajax({
-					url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/DeleteZone/' + zoneId,
+					url: '/api/web-bff/api/v4/WeatherAlerts/DeleteZone/' + zoneId,
 					type: 'DELETE',
-					headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+					headers: { 'RequestVerificationToken': getAntiForgeryToken() },
 					success: function() {
 						location.reload();
 					},

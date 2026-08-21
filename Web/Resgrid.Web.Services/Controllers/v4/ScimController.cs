@@ -33,19 +33,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUserProfileService _userProfileService;
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly UserManager<Model.Identity.IdentityUser> _userManager;
+		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
+		private readonly IUserSessionService _userSessionService;
 
 		public ScimController(
 			IDepartmentSsoService ssoService,
 			IDepartmentsService departmentsService,
 			IUserProfileService userProfileService,
 			ISystemAuditsService systemAuditsService,
-			UserManager<Model.Identity.IdentityUser> userManager)
+			UserManager<Model.Identity.IdentityUser> userManager,
+			IExternalIdentityLinkService externalIdentityLinkService,
+			IUserSessionService userSessionService)
 		{
 			_ssoService = ssoService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
 			_systemAuditsService = systemAuditsService;
 			_userManager = userManager;
+			_externalIdentityLinkService = externalIdentityLinkService;
+			_userSessionService = userSessionService;
 		}
 
 		// -- GET /scim/v2/Users ------------------------------------------------
@@ -179,6 +185,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 			};
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
+			var member = await _departmentsService.GetDepartmentMemberAsync(newUser.Id, departmentId);
+			var ssoConfig = (await _ssoService.GetSsoConfigsForDepartmentAsync(departmentId, cancellationToken))
+				?.FirstOrDefault(config => config.ScimEnabled);
+			if (member != null && ssoConfig != null)
+			{
+				await _externalIdentityLinkService.SaveAsync(new UserExternalIdentityLink
+				{
+					UserId = newUser.Id,
+					DepartmentId = departmentId,
+					DepartmentMemberId = member.DepartmentMemberId,
+					DepartmentSsoConfigId = ssoConfig.DepartmentSsoConfigId,
+					ProviderType = ssoConfig.SsoProviderType,
+					Issuer = $"scim:{ssoConfig.DepartmentSsoConfigId}",
+					ExternalSubject = resource.ExternalId ?? newUser.Id,
+					EmailAtLink = email,
+					LinkMethod = (int)ExternalIdentityLinkMethod.Scim,
+					IsEmailExternallyManaged = true,
+					LinkedOn = DateTime.UtcNow
+				}, cancellationToken);
+			}
+
 			await SaveScimAuditAsync(departmentId, newUser.Id, AuditLogTypes.ScimUserCreated,
 				successful: true,
 				data: $"userName={resource.UserName} email={email} externalId={resource.ExternalId}");
@@ -218,6 +245,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					member.IsDisabled = true;
 					await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+					await _userSessionService.RevokeDepartmentSessionsAsync(id, departmentId,
+						UserSessionRevocationReason.MembershipDisabled, cancellationToken);
 					await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeactivated,
 						successful: true, data: "active=false via PUT");
 				}
@@ -284,6 +313,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 						member.IsDisabled = !active;
 						if (!active) member.IsDeleted = false; // deactivate without hard-delete
 						await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+						if (!active)
+							await _userSessionService.RevokeDepartmentSessionsAsync(id, departmentId,
+								UserSessionRevocationReason.MembershipDisabled, cancellationToken);
 
 						var activeAuditType = active ? AuditLogTypes.ScimUserReactivated : AuditLogTypes.ScimUserDeactivated;
 						await SaveScimAuditAsync(departmentId, id, activeAuditType,
@@ -331,6 +363,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				member.IsDisabled = true;
 				member.IsDeleted = true;
 				await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+				await _userSessionService.RevokeDepartmentSessionsAsync(id, departmentId,
+					UserSessionRevocationReason.MembershipDisabled, cancellationToken);
 			}
 
 			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeactivated,

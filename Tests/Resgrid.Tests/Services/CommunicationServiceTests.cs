@@ -59,6 +59,66 @@ namespace Resgrid.Tests.Services
 		[TestFixture]
 		public class when_sending_a_communication : with_the_communication_service
 		{
+			[Test]
+			public async Task weather_alerts_use_email_and_push_only()
+			{
+				var message = new Message
+				{
+					MessageId = 42,
+					Type = (int)MessageTypes.WeatherAlert,
+					Subject = "Tornado Warning",
+					Body = "Take shelter immediately.",
+					ReceivingUserId = TestData.Users.TestUser1Id,
+					SystemGenerated = true
+				};
+				var profile = new UserProfile
+				{
+					UserId = TestData.Users.TestUser1Id,
+					SendNotificationSms = true,
+					SendNotificationEmail = true,
+					SendNotificationPush = true,
+					MobileNumberVerified = true,
+					EmailVerified = true
+				};
+
+				await _communicationService.SendMessageAsync(message, "Weather Alert System", null, 1, profile);
+
+				_smsServiceMock.Verify(m => m.SendMessageAsync(
+					It.IsAny<Message>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<Payment>()), Times.Never());
+				_emailServiceMock.Verify(m => m.SendMessageAsync(
+					message, "Weather Alert System", 1, profile, message.ReceivingUser), Times.Once());
+				_pushServiceMock.Verify(m => m.PushMessage(
+					It.IsAny<StandardPushMessage>(), TestData.Users.TestUser1Id, profile), Times.Once());
+				_chatbotOutboundServiceMock.Verify(m => m.SendToUserAsync(
+					It.IsAny<string>(), It.IsAny<int>(), It.IsAny<ChatbotOutboundMessage>()), Times.Never());
+			}
+
+			[Test]
+			public async Task normal_messages_are_still_sent_to_chatbot()
+			{
+				var message = new Message
+				{
+					MessageId = 43,
+					Type = (int)MessageTypes.Normal,
+					Subject = "Station update",
+					Body = "Briefing starts at 18:00.",
+					ReceivingUserId = TestData.Users.TestUser1Id,
+					SystemGenerated = true
+				};
+				var profile = new UserProfile { UserId = TestData.Users.TestUser1Id };
+
+				await _communicationService.SendMessageAsync(message, "System", null, 1, profile);
+
+				_chatbotOutboundServiceMock.Verify(m => m.SendToUserAsync(
+					TestData.Users.TestUser1Id,
+					1,
+					It.Is<ChatbotOutboundMessage>(outbound =>
+						outbound.Type == ChatbotOutboundType.Message &&
+						outbound.Title == message.Subject &&
+						outbound.Body == message.Body &&
+						outbound.ReferenceId == message.MessageId.ToString())), Times.Once());
+			}
+
 			//[Test]
 			public async Task should_be_able_to_send_message()
 			{

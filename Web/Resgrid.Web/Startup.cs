@@ -67,9 +67,11 @@ namespace Resgrid.Web
 		public ILifetimeScope AutofacContainer { get; private set; }
 		public AutofacServiceLocator Locator { get; private set; }
 		public IServiceCollection Services { get; private set; }
+		private readonly IHostingEnvironment _environment;
 
 		public Startup(IHostingEnvironment env)
 		{
+			_environment = env;
 			var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
 					.SetBasePath(env.ContentRootPath)
 					.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -109,6 +111,9 @@ namespace Resgrid.Web
 			Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForWebsite);
 
 
+			if (Config.ApiConfig.BypassSslChecks && !(_environment.IsDevelopment() || _environment.IsStaging()))
+				throw new InvalidOperationException("ApiConfig.BypassSslChecks cannot be enabled outside development or staging.");
+
 			if (Config.ApiConfig.BypassSslChecks)
 			{
 				services.AddHttpClient("ByPassSSLHttpClient")
@@ -129,6 +134,17 @@ namespace Resgrid.Web
 			{
 				services.AddHttpClient("ByPassSSLHttpClient");
 			}
+
+			services.AddMemoryCache();
+			services.AddHttpClient("ResgridWebBff")
+				.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+				{
+					AllowAutoRedirect = false,
+					AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+					ServerCertificateCustomValidationCallback = Config.ApiConfig.BypassSslChecks
+						? HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+						: null
+				});
 
 			services.AddScoped<IUserStore<Model.Identity.IdentityUser>, IdentityUserStore>();
 			services.AddScoped<IRoleStore<Model.Identity.IdentityRole>, IdentityRoleStore>();
@@ -167,8 +183,11 @@ namespace Resgrid.Web
 					options.LogoutPath = new PathString("/Account/LogOff");
 					options.LoginPath = new PathString("/Account/LogOn/");
 					options.AccessDeniedPath = new PathString("/Public/Forbidden/");
-					options.Cookie.SecurePolicy = CookieSecurePolicy.None;//.SameAsRequest;
+					options.Cookie.SecurePolicy = _environment.IsDevelopment()
+						? CookieSecurePolicy.SameAsRequest
+						: CookieSecurePolicy.Always;
 					options.Cookie.SameSite = SameSiteMode.Lax;//.None;
+					options.Cookie.HttpOnly = true;
 					options.Cookie.Name = "RGSITEAUTHCOOKIE";
 					options.ExpireTimeSpan = new TimeSpan(48, 0, 0);
 				});
@@ -527,11 +546,8 @@ namespace Resgrid.Web
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
-			var forwardOpts = new ForwardedHeadersOptions
-			{
-				ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
-			};
-			app.UseForwardedHeaders(forwardOpts);
+			// Preserve the trusted KnownNetworks configured through DI.
+			app.UseForwardedHeaders();
 
 			if (env.IsDevelopment())
 			{
@@ -583,7 +599,7 @@ namespace Resgrid.Web
 
 			var cookiePolicyOptions = new CookiePolicyOptions
 			{
-				Secure = CookieSecurePolicy.None,//.SameAsRequest,
+				Secure = env.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always,
 				MinimumSameSitePolicy = SameSiteMode.Strict//.None,
 
 			};
@@ -615,6 +631,7 @@ namespace Resgrid.Web
 			app.UseRouting();
 
 			app.UseAuthentication();
+			app.UseMiddleware<Resgrid.Web.Middleware.SessionValidationMiddleware>();
 			app.UseAuthorization();
 			app.UseWhen(
 				context => !string.Equals(context.Request.Path.Value, "/health/getcurrent", StringComparison.OrdinalIgnoreCase),

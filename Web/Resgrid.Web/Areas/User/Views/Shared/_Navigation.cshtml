@@ -32,7 +32,12 @@
 						<li><a asp-controller="Profile" asp-action="YourDepartments" asp-route-area="User">@commonLocalizer["YourDepartments"]</a></li>
 						<li><a asp-controller="TwoFactor" asp-action="Index" asp-route-area="User"><i class="fa fa-shield"></i> Two-Factor Authentication</a></li>
 						<li class="divider"></li>
-						<li><a asp-controller="Account" asp-action="LogOff" asp-route-area="">@commonLocalizer["Logout"]</a></li>
+						<li>
+							<form asp-controller="Account" asp-action="LogOff" asp-route-area="" method="post">
+								@Html.AntiForgeryToken()
+								<button type="submit" class="btn btn-link">@commonLocalizer["Logout"]</button>
+							</form>
+						</li>
 					</ul>
 				</div>
 			</li>

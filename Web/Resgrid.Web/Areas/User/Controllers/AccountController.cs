@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
@@ -65,6 +67,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Roles = SystemRoles.Users)]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteAccount(DeleteAccountModel model, CancellationToken cancellationToken)
 		{
 			if (model.AreYouSure == false)
@@ -87,7 +90,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}, cancellationToken);
 
 				await _deleteService.DeleteUserAccountAsync(DepartmentId, UserId, UserId, IpAddressHelper.GetRequestIP(Request, true), $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
-				return RedirectToAction("LogOff", "Account", new { area = "" });
+				await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+				return RedirectToAction("LogOn", "Account", new { area = "" });
 			}
 
 			return View(model);

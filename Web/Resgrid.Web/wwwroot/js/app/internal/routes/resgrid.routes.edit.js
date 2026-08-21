@@ -5,16 +5,6 @@ $(document).ready(function () {
     var antiForgeryToken = $('input[name="__RequestVerificationToken"]').first().val();
 
     function getAuthToken() {
-        try {
-            for (var i = 0; i < localStorage.length; i++) {
-                var val = localStorage.getItem(localStorage.key(i));
-                if (!val || val.charAt(0) !== '{') continue;
-                var obj = JSON.parse(val);
-                if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) {
-                    return obj.access_token;
-                }
-            }
-        } catch (e) {}
         return '';
     }
 
@@ -89,7 +79,7 @@ $(document).ready(function () {
     }
 
     function reverseGeocodeStop(lat, lng) {
-        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng, { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
+		fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng)
             .then(function (r) { return r.json(); })
             .then(function (result) {
                 if (result && result.Data && result.Data.Address) {
@@ -204,7 +194,7 @@ $(document).ready(function () {
         evt.preventDefault();
         var where = $.trim($('#startAddress').val());
         if (!where) return;
-        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
+		fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
             .then(function (r) { return r.json(); })
             .then(function (result) {
                 if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
@@ -241,7 +231,7 @@ $(document).ready(function () {
         evt.preventDefault();
         var where = $.trim($('#endAddress').val());
         if (!where) return;
-        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
+		fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
             .then(function (r) { return r.json(); })
             .then(function (result) {
                 if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
@@ -361,7 +351,7 @@ $(document).ready(function () {
         evt.preventDefault();
         var where = $.trim($('#stopAddress').val());
         if (!where) return;
-        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
+		fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
             .then(function (r) { return r.json(); })
             .then(function (result) {
                 if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {

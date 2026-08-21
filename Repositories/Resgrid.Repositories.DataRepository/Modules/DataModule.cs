@@ -259,6 +259,8 @@ namespace Resgrid.Repositories.DataRepository
 			// SSO Repositories
 			builder.RegisterType<DepartmentSsoConfigRepository>().As<IDepartmentSsoConfigRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentSecurityPolicyRepository>().As<IDepartmentSecurityPolicyRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UserSessionsRepository>().As<IUserSessionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UserExternalIdentityLinksRepository>().As<IUserExternalIdentityLinksRepository>().InstancePerLifetimeScope();
 
 			// Workflow Repositories
 			builder.RegisterType<WorkflowRepository>().As<IWorkflowRepository>().InstancePerLifetimeScope();

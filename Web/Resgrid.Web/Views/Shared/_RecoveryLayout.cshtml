@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="robots" content="noindex,nofollow" />
+	<title>@ViewData["Title"] - Resgrid</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/css/pub-bundle.css" asp-append-version="true" />
+	@RenderSection("Styles", required: false)
+</head>
+<body class="landing-page">
+	<main class="container" style="max-width: 900px; padding-top: 40px;">
+		@RenderBody()
+	</main>
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+	@RenderSection("Scripts", required: false)
+</body>
+</html>

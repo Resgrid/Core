@@ -191,6 +191,8 @@
 		ModerationReportSubmitted,
 		ModerationRequestReopened,
 		ModerationRequestCompleted,
-		ModerationEvidenceDownloaded
+		ModerationEvidenceDownloaded,
+		PasswordResetByAdministrator,
+		UserAuthenticationSessionsRevoked
 	}
 }

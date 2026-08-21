@@ -57,22 +57,10 @@
 			severityUnknown: '@localizer["SeverityUnknown"]'
 		};
 
-		function getAuthToken() {
-			try {
-				for (var i = 0; i < localStorage.length; i++) {
-					var val = localStorage.getItem(localStorage.key(i));
-					if (!val || val.charAt(0) !== '{') continue;
-					var obj = JSON.parse(val);
-					if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) return obj.access_token;
-				}
-			} catch (e) {}
-			return '';
-		}
 		$(document).ready(function() {
 			$.ajax({
-				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/GetActiveAlerts',
+				url: '/api/web-bff/api/v4/WeatherAlerts/GetActiveAlerts',
 				type: 'GET',
-				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
 				success: function(data) {
 					var container = $('#weatherAlertsContainer');
 					container.empty();

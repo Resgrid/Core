@@ -1,15 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Resgrid.Framework;
+
 namespace Resgrid.Web.Models.AccountViewModels
 {
     public class ResetPasswordViewModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+		[StringLength(100, ErrorMessage = "The {0} must be at least 8 characters long.", MinimumLength = 8)]
+		[PasswordComplexity(MinLength = 8, RequireUppercase = true, RequireLowercase = true, RequireDigit = true, RequireSpecialChar = false)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
@@ -18,6 +17,7 @@ namespace Resgrid.Web.Models.AccountViewModels
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        public string Code { get; set; }
+		public int MinPasswordLength { get; set; } = 8;
+		public bool InvalidOrExpired { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace Resgrid.Web.Areas.User.Models
 {
 	public class PersonnelModel: BaseUserModel
 	{
+		public bool RequirePasswordResetViaEmail { get; set; }
 		public Department Department { get; set; }
 		public IdentityUser User { get; set; }
 		public List<IdentityUser> Users { get; set; }

@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Resgrid.Framework;
@@ -11,6 +14,9 @@ namespace Resgrid.Providers.Bus
 	public class SignalrProvider : ISignalrProvider
 	{
 		private static HubConnection _hubConnection;
+		private static readonly SemaphoreSlim TokenLock = new SemaphoreSlim(1, 1);
+		private static string _accessToken;
+		private static DateTime _accessTokenRefreshOn;
 		//private static IHubProxy _eventingHubProxy;
 
 		public SignalrProvider()
@@ -90,14 +96,13 @@ namespace Resgrid.Providers.Bus
 		{
 			_hubConnection = new HubConnectionBuilder()
 				.WithUrl($"{Config.SystemBehaviorConfig.ResgridEventingBaseUrl}/eventingHub", options => {
-					//options.UseDefaultCredentials = true;
+					options.AccessTokenProvider = GetAccessTokenAsync;
 					options.HttpMessageHandlerFactory = (msg) =>
 					{
-						if (msg is HttpClientHandler clientHandler)
+						if (Config.ApiConfig.BypassSslChecks && msg is HttpClientHandler clientHandler)
 						{
-							// bypass SSL certificate validation
-							clientHandler.ServerCertificateCustomValidationCallback +=
-								(sender, certificate, chain, sslPolicyErrors) => { return true; };
+							clientHandler.ServerCertificateCustomValidationCallback =
+								HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
 						}
 
 						return msg;
@@ -111,6 +116,53 @@ namespace Resgrid.Providers.Bus
 			//	await Task.Delay(new Random().Next(0,5) * 1000);
 			//	await _hubConnection.StartAsync();
 			//};
+		}
+
+		private static async Task<string> GetAccessTokenAsync()
+		{
+			if (!string.IsNullOrWhiteSpace(_accessToken) && _accessTokenRefreshOn > DateTime.UtcNow)
+				return _accessToken;
+			if (string.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+				return null;
+
+			await TokenLock.WaitAsync();
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(_accessToken) && _accessTokenRefreshOn > DateTime.UtcNow)
+					return _accessToken;
+
+				using var handler = new HttpClientHandler();
+				if (Config.ApiConfig.BypassSslChecks)
+					handler.ServerCertificateCustomValidationCallback =
+						HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+				using var client = new HttpClient(handler);
+				using var request = new HttpRequestMessage(HttpMethod.Post,
+					$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl.TrimEnd('/')}/api/v4/connect/token")
+				{
+					Content = new FormUrlEncodedContent(new Dictionary<string, string>
+					{
+						["grant_type"] = "client_credentials",
+						["client_id"] = "resgrid_eventing",
+						["client_secret"] = Config.ApiConfig.BackendInternalApikey
+					})
+				};
+				using var response = await client.SendAsync(request);
+				if (!response.IsSuccessStatusCode)
+					return null;
+
+				await using var stream = await response.Content.ReadAsStreamAsync();
+				using var json = await JsonDocument.ParseAsync(stream);
+				if (!json.RootElement.TryGetProperty("access_token", out var tokenElement))
+					return null;
+
+				_accessToken = tokenElement.GetString();
+				_accessTokenRefreshOn = DateTime.UtcNow.AddMinutes(4);
+				return _accessToken;
+			}
+			finally
+			{
+				TokenLock.Release();
+			}
 		}
 
 		private async Task Connect()

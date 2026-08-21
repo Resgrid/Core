@@ -7,13 +7,18 @@ using Resgrid.Model.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Resgrid.Console.Models;
+using Resgrid.Model;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Console.Commands
 {
 	public sealed class ResetPasswordCommand(
 		IConfiguration configuration,
 		ILogger<ResetPasswordCommand> logger,
-		UserManager<Resgrid.Model.Identity.IdentityUser> userManager) : ICommandService
+		UserManager<Resgrid.Model.Identity.IdentityUser> userManager,
+		IUserSessionService userSessionService,
+		IExternalIdentityLinkService externalIdentityLinkService,
+		ISystemAuditsService systemAuditsService) : ICommandService
 	{
 		private string UserId => GetConfigurationValue("UserId");
 
@@ -37,11 +42,37 @@ namespace Resgrid.Console.Commands
 					return ExitCode.Failed;
 				}
 
+				var managementState = await externalIdentityLinkService.GetSsoManagementStateAsync(user.Id, cancellationToken);
+				if (managementState.IsSsoManaged)
+				{
+					logger.LogError("The account is SSO-managed. Unlink it through the audited administrative process before resetting a local password.");
+					return ExitCode.Failed;
+				}
+
+				var changedOn = DateTime.UtcNow;
+				user.AuthenticationGeneration++;
+				user.CredentialsValidAfterUtc = changedOn;
+				user.AuthenticationStateChangedOn = changedOn;
 				var token = await userManager.GeneratePasswordResetTokenAsync(user);
 				var result = await userManager.ResetPasswordAsync(user, token, Password);
 
 				if (result.Succeeded)
+				{
+					await userSessionService.RevokeAllAfterCredentialChangeAsync(user.Id, user.Id,
+						UserSessionRevocationReason.PasswordReset, changedOn, cancellationToken);
+					await systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+					{
+						System = (int)SystemAuditSystems.Console,
+						Type = (int)SystemAuditTypes.PasswordResetByAdministrator,
+						UserId = user.Id,
+						TargetUserId = user.Id,
+						Successful = true,
+						ServerName = Environment.MachineName,
+						LoggedOn = changedOn,
+						Data = "Console password reset completed; all authentication sessions and tokens revoked."
+					}, cancellationToken);
 					logger.LogInformation("Successfully Reset the Password");
+				}
 				else
 				{
 					logger.LogError("Failed to reset the Password: " + result.Errors.FirstOrDefault()?.Description);

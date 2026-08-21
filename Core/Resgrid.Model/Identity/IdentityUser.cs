@@ -131,6 +131,21 @@ namespace Resgrid.Model.Identity
 		//[ProtoMember(15)]
 		public override int AccessFailedCount { get; set; }
 
+		/// <summary>
+		/// Monotonically increases whenever all credentials for this account must be invalidated.
+		/// Existing accounts begin at zero so installing the session schema does not sign them out.
+		/// </summary>
+		public long AuthenticationGeneration { get; set; }
+
+		/// <summary>
+		/// Credentials issued at or before this UTC instant are invalid. This is also the
+		/// compatibility boundary for cookies and tokens issued before session tracking existed.
+		/// </summary>
+		public DateTime? CredentialsValidAfterUtc { get; set; }
+
+		/// <summary>UTC timestamp of the latest account-wide authentication state change.</summary>
+		public DateTime? AuthenticationStateChangedOn { get; set; }
+
 		[System.ComponentModel.DataAnnotations.Schema.NotMapped]
 		public string UserId
 		{

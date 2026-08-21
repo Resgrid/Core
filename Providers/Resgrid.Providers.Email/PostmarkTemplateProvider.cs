@@ -307,31 +307,33 @@ namespace Resgrid.Providers.EmailProvider
 			return false;
 		}
 
-		public async Task<bool> SendPasswordResetMail(string name, string password, string userName, string email, string departmentName)
+		public async Task<bool> SendPasswordRecoveryMail(string name, string email,
+			string departmentName, string resetUrl, string ipAddress, string userAgent, string requestedOn,
+			bool isSsoManaged)
 		{
 			var templateModel = new Dictionary<string, object>
 			{
-				{ "name", name },
-				{ "department_Name", departmentName },
-				{ "login_url", LOGIN_URL },
-				{ "username", userName },
-				{ "password", password },
+				{ "name", System.Net.WebUtility.HtmlEncode(name) },
+				{ "department_name", System.Net.WebUtility.HtmlEncode(departmentName) },
 				{ "support_url", LIVECHAT_URL },
-				{ "action_url", LOGIN_URL },
-				{ "operating_system", "" },
-				{ "browser_name", "" },
+				{ "reset_url", System.Net.WebUtility.HtmlEncode(resetUrl) },
+				{ "ip_address", System.Net.WebUtility.HtmlEncode(ipAddress) },
+				{ "user_agent", System.Net.WebUtility.HtmlEncode(userAgent) },
+				{ "requested_on", System.Net.WebUtility.HtmlEncode(requestedOn) },
+				{ "has_reset_link", !isSsoManaged },
+				{ "is_sso_managed", isSsoManaged },
 			};
 
 			try
 			{
-				var template = Mustachio.Parser.Parse(GetTempate("PasswordReset.html"));
+				var template = Mustachio.Parser.Parse(GetTempate("PasswordRecovery.html"));
 				var content = template(templateModel);
 
 				Email newEmail = new Email();
 				newEmail.HtmlBody = content;
 				newEmail.Sender = FROM_EMAIL;
 				newEmail.From = FROM_EMAIL;
-				newEmail.Subject = $"Resgrid Password Reset";
+				newEmail.Subject = "Resgrid password reset request";
 				newEmail.To.Add(email);
 
 				return await _emailSender.Send(newEmail);
@@ -341,6 +343,38 @@ namespace Resgrid.Providers.EmailProvider
 			}
 
 			return false;
+		}
+
+		public async Task<bool> SendPasswordChangedByAdministratorMail(string name, string userName,
+			string email, string departmentName)
+		{
+			var templateModel = new Dictionary<string, object>
+			{
+				{ "name", System.Net.WebUtility.HtmlEncode(name) },
+				{ "department_name", System.Net.WebUtility.HtmlEncode(departmentName) },
+				{ "username", System.Net.WebUtility.HtmlEncode(userName) },
+				{ "login_url", LOGIN_URL },
+				{ "support_url", LIVECHAT_URL }
+			};
+
+			try
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("PasswordChangedByAdministrator.html"));
+				var content = template(templateModel);
+				var newEmail = new Email
+				{
+					HtmlBody = content,
+					Sender = FROM_EMAIL,
+					From = FROM_EMAIL,
+					Subject = "Your Resgrid password was changed"
+				};
+				newEmail.To.Add(email);
+				return await _emailSender.Send(newEmail);
+			}
+			catch (Exception)
+			{
+				return false;
+			}
 		}
 
 		public async Task<bool> SendPaymentReciept(string departmentName, string name, string processDate, string amount, string email, string processor, string transactionId,
@@ -410,7 +444,7 @@ namespace Resgrid.Providers.EmailProvider
 			throw new NotImplementedException();
 		}
 
-		public async Task<bool> SendWelcomeMail(string name, string departmentName, string userName, string password, string email, int departmentId)
+		public async Task<bool> SendWelcomeMail(string name, string departmentName, string userName, string email, int departmentId)
 		{
 			var templateModel = new Dictionary<string, object>
 			{

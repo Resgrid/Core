@@ -2551,6 +2551,9 @@
             </summary>
             <returns>DepartmentRightsResult object with the department rights and group memberships</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.SessionsController">
+            <summary>User authentication session inventory and revocation.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ShiftsController">
             <summary>
             Unit roles
@@ -5463,6 +5466,16 @@
             </summary>
             <param name="context">The context.</param>
             <returns>Task.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Middleware.SessionValidationHubFilter">
+            <summary>Revalidates user session state for every invocation on an open API SignalR connection.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Middleware.SessionValidationMiddleware">
+            <summary>
+            Enforces account-wide credential cutoffs and per-session revocation on every
+            authenticated user API request. Pre-feature tokens without a session claim remain
+            valid until their natural expiry unless the account has subsequently been revoked.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Middleware.SystemApiKeyAuthHandler">
             <summary>

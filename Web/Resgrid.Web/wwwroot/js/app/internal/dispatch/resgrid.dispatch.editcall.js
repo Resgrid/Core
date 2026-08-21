@@ -132,7 +132,7 @@ var resgrid;
                     if (where.length < 1)
                         return;
 
-                    fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
+					fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
                         .then(function(r) { return r.json(); })
                         .then(function(result) {
                             if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
@@ -345,20 +345,10 @@ var resgrid;
             });
 
             function getAuthToken() {
-                try {
-                    for (var i = 0; i < localStorage.length; i++) {
-                        var val = localStorage.getItem(localStorage.key(i));
-                        if (!val || val.charAt(0) !== '{') continue;
-                        var obj = JSON.parse(val);
-                        if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) {
-                            return obj.access_token;
-                        }
-                    }
-                } catch (e) {}
                 return '';
             }
             function findLocation(pos) {
-                fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ReverseGeocode?lat=' + pos.lat + '&lon=' + pos.lng, { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
+				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + pos.lat + '&lon=' + pos.lng)
                     .then(function(r) { return r.json(); })
                     .then(function(result) {
                         if (result && result.Data && result.Data.Address) {
@@ -391,7 +381,7 @@ var resgrid;
             }
             editcall.setMarkerLocation = setMarkerLocation;
             function geocodeCoordinates(lat, lng) {
-                fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng, { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
+				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng)
                     .then(function(r) { return r.json(); })
                     .then(function(result) {
                         if (result && result.Data && result.Data.Address) {

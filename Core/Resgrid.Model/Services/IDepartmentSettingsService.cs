@@ -375,6 +375,12 @@ namespace Resgrid.Model.Services
 		Task<bool> GetModernNotificationsEnabledAsync(int departmentId, bool bypassCache = false);
 
 		/// <summary>
+		/// True when administrator-initiated password resets must send the member a single-use email
+		/// link instead of allowing the administrator to choose the new password.
+		/// </summary>
+		Task<bool> GetRequirePasswordResetViaEmailAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>
 		/// True when the department forces every member to use their security PIN for dangerous
 		/// chatbot/SMS actions (overrides the per-user opt-in).
 		/// </summary>

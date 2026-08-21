@@ -34,10 +34,17 @@
                 @if (Model.IsOwnProfile)
                 {
                     <a id="reportingButton" class="btn btn-primary top-button" title="Your Reporting" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">@localizer["ReportDelivery"]</a>
+                    <a class="btn btn-primary top-button" asp-controller="AccountSecurity" asp-action="Sessions" asp-route-area="User">Active Sessions</a>
+                    @if (Model.CanManageLocalCredentials)
+                    {
+                        <a class="btn btn-primary top-button" asp-controller="AccountSecurity" asp-action="ChangeUsername" asp-route-area="User">Change Username</a>
+                        <a class="btn btn-primary top-button" asp-controller="AccountSecurity" asp-action="ChangePassword" asp-route-area="User">Change Password</a>
+                    }
                 }
-                else
+                else if (Model.CanResetPassword && !Model.IsSsoManaged)
                 {
-                    <a id="changePassword" class="btn btn-primary top-button" title="Change Users Password" asp-controller="Profile" asp-action="ResetPasswordForUser" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["ChangeUserPassword"]</a>
+                    var passwordActionLabel = Model.RequirePasswordResetViaEmail ? "Send Password Reset Email" : localizer["ChangeUserPassword"].Value;
+                    <a id="changePassword" class="btn btn-primary top-button" title="@passwordActionLabel" asp-controller="Profile" asp-action="ResetPasswordForUser" asp-route-area="User" asp-route-userId="@Model.UserId">@passwordActionLabel</a>
                 }
                 <a id="staffingScheduleButton" class="btn btn-primary top-button" title="Edit Staffing Schedule" asp-controller="Profile" asp-action="ViewSchedules" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["StaffingSchedule"]</a>
                 <a id="certificationsButton" class="btn btn-primary top-button" title="Edit Certifications" asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@Model.UserId">@localizer["Certifications"]</a>
@@ -94,7 +101,11 @@
                             <label class="col-sm-2 control-label">@localizer["EmailAddressLabel"]</label>
                             <div class="col-sm-10">
                                 <div class="input-group">
-                                    <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Email" required="">
+                                    <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Email" required="" readonly="@Model.IsEmailExternallyManaged">
+                                    @if (Model.IsEmailExternallyManaged)
+                                    {
+                                        <span class="help-block">This email address is managed by the linked SSO provider.</span>
+                                    }
                                     @if (!string.IsNullOrWhiteSpace(Model.Email))
                                     {
                                         @if (Model.EmailVerified == true)
@@ -443,42 +454,18 @@
                             <h3>
                                 @localizer["AccountInfoHeader"]
                             </h3>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">@localizer["NewUsernameLabel"]</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" asp-for="NewUsername" autocomplete="off">
-                                    <span class="help-block m-b-none">@localizer["NewUsernameHelp"]</span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">@localizer["NewPasswordLabel"]</label>
-                                <div class="col-sm-10">
-                                    <input type="password" class="form-control" asp-for="NewPassword" autocomplete="off">
-                                    <span class="help-block m-b-none">@localizer["NewPasswordHelp"]</span>
-                                    <div class="well well-sm m-t-xs">
-                                        <strong><i class="fa fa-lock"></i> @localizer["PasswordRequirementsHeader"]:</strong>
-                                        <ul class="m-t-xs m-b-none small">
-                                            <li>@string.Format(localizer["PasswordRequirementsLength"], Model.MinPasswordLength)</li>
-                                            <li>@localizer["PasswordRequirementsDigit"]</li>
-                                            <li>@localizer["PasswordRequirementsCase"]</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">@localizer["ConfirmPasswordLabel"]</label>
-                                <div class="col-sm-10">
-                                    <input type="password" class="form-control" asp-for="ConfirmPassword" autocomplete="off">
-                                    <span class="help-block m-b-none">@localizer["ConfirmPasswordHelp"]</span>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">@localizer["CurrentPasswordLabel"]</label>
-                                <div class="col-sm-10">
-                                    <input type="password" class="form-control" asp-for="OldPassword" autocomplete="off">
-                                    <span class="help-block m-b-none">@localizer["CurrentPasswordHelp"]</span>
-                                </div>
-                            </div>
+                            @if (Model.CanManageLocalCredentials)
+                            {
+                                <div class="form-group"><div class="col-sm-10 col-sm-offset-2">
+                                    <a class="btn btn-primary" asp-controller="AccountSecurity" asp-action="ChangeUsername" asp-route-area="User">Change Username</a>
+                                    <a class="btn btn-primary" asp-controller="AccountSecurity" asp-action="ChangePassword" asp-route-area="User">Change Password</a>
+                                    <a class="btn btn-default" asp-controller="AccountSecurity" asp-action="Sessions" asp-route-area="User">Active Sessions</a>
+                                </div></div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">Username and password are managed by your SSO provider. Use Active Sessions to review or revoke signed-in devices.</div>
+                            }
                         }
 
                         @if (!string.IsNullOrEmpty(Model.UdfFormHtml))

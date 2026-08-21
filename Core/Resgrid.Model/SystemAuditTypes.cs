@@ -15,6 +15,17 @@
 		ScimOperation = 10,
 		AccountDeletionRequested = 11,
 		GdprDataExportRequested = 12,
-		GdprDataExportDownloaded = 13
+		GdprDataExportDownloaded = 13,
+		PasswordChanged = 14,
+		PasswordResetByAdministrator = 15,
+		PublicPasswordResetCompleted = 16,
+		UsernameChanged = 17,
+		EmailChanged = 18,
+		SessionRevoked = 19,
+		OtherSessionsRevoked = 20,
+		AllSessionsRevoked = 21,
+		ExternalIdentityLinked = 22,
+		ExternalIdentityUnlinked = 23,
+		PasswordResetLinkSentByAdministrator = 24
 	}
 }

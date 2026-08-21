@@ -211,28 +211,6 @@ namespace Resgrid.Services
 			_identityRepository.InitUserExtInfo(userId);
 		}
 
-		public async Task<IdentityUser> UpdateUsername(string oldUsername, string newUsername)
-		{
-			if (String.IsNullOrEmpty(oldUsername) || String.IsNullOrEmpty(newUsername))
-				return null;
-
-			_identityRepository.UpdateUsername(oldUsername, newUsername);
-			var user = await _identityRepository.GetUserByUserNameAsync(newUsername);
-
-			return user;
-		}
-
-		public IdentityUser UpdateEmail(string userId, string newEmail)
-		{
-			if (String.IsNullOrEmpty(userId) || String.IsNullOrEmpty(newEmail))
-				return null;
-
-			_identityRepository.UpdateEmail(userId, newEmail);
-			var user = _identityRepository.GetUserById(userId);
-
-			return user;
-		}
-
 		public IdentityUser SaveUser(IdentityUser user)
 		{
 			_identityRepository.Update(user);

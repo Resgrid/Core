@@ -10,7 +10,6 @@ export interface BrowserConfig {
   apiBaseUrl: string;
   googleMapsKey: string;
   channelUrl: string;
-  tokenStorageKey: string;
 }
 
 function trimTrailingSlash(value: string): string {
@@ -19,9 +18,8 @@ function trimTrailingSlash(value: string): string {
 
 export function getBrowserConfig(): BrowserConfig {
   return {
-    apiBaseUrl: trimTrailingSlash(window.rgApiBaseUrl?.trim() || 'https://api.resgrid.com'),
+    apiBaseUrl: `${window.location.origin}/api/web-bff`,
     googleMapsKey: window.rgGoogleMapsKey?.trim() || '',
     channelUrl: trimTrailingSlash(window.rgChannelUrl?.trim() || 'https://events.resgrid.com'),
-    tokenStorageKey: 'RgWebApp.auth-tokens',
   };
 }

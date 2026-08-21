@@ -72,4 +72,7 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>على الأقل {0} أحرف</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>رقم واحد على الأقل</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>حرف كبير وحرف صغير على الأقل</value></data>
+  <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>إرسال بريد إلكتروني لإعادة تعيين كلمة المرور</value></data>
+  <data name="SendPasswordResetEmail" xml:space="preserve"><value>إرسال بريد إلكتروني لإعادة تعيين كلمة المرور</value></data>
+  <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>سيرسل Resgrid إلى هذا المستخدم رابطًا قصير الصلاحية يُستخدم مرة واحدة إلى عنوان بريده الإلكتروني المؤكد. لن يختار المسؤول كلمة المرور الجديدة ولن يراها.</value></data>
 </root>

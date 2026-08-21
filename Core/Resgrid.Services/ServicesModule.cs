@@ -156,6 +156,11 @@ namespace Resgrid.Services
 
 			// SSO / Security Policy
 			builder.RegisterType<DepartmentSsoService>().As<IDepartmentSsoService>().InstancePerLifetimeScope();
+			builder.RegisterType<UserSessionService>().As<IUserSessionService>().InstancePerLifetimeScope();
+			builder.RegisterType<ClientSessionMetadataParser>().As<IClientSessionMetadataParser>().SingleInstance();
+			builder.RegisterType<LocalIpLocationProvider>().As<IIpLocationProvider>().SingleInstance();
+			builder.RegisterType<ExternalIdentityLinkService>().As<IExternalIdentityLinkService>().InstancePerLifetimeScope();
+			builder.RegisterType<PasswordRecoveryService>().As<IPasswordRecoveryService>().InstancePerLifetimeScope();
 
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();

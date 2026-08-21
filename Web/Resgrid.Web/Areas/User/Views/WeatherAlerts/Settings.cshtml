@@ -300,16 +300,8 @@
 			failedToLoadSettings: '@localizer["FailedToLoadSettings"]'
 		};
 
-		function getAuthToken() {
-			try {
-				for (var i = 0; i < localStorage.length; i++) {
-					var val = localStorage.getItem(localStorage.key(i));
-					if (!val || val.charAt(0) !== '{') continue;
-					var obj = JSON.parse(val);
-					if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) return obj.access_token;
-				}
-			} catch (e) {}
-			return '';
+		function getAntiForgeryToken() {
+			return document.querySelector('meta[name="request-verification-token"]').content;
 		}
 
 		// --- Settings ---
@@ -319,9 +311,8 @@
 
 		function loadSettings() {
 			$.ajax({
-				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/GetSettings',
+				url: '/api/web-bff/api/v4/WeatherAlerts/GetSettings',
 				type: 'GET',
-				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
 				success: function (data) {
 					if (data && data.Data) {
 						$('#settingEnabled').prop('checked', data.Data.WeatherAlertsEnabled);
@@ -398,10 +389,10 @@
 			};
 
 			$.ajax({
-				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveSettings',
+				url: '/api/web-bff/api/v4/WeatherAlerts/SaveSettings',
 				type: 'POST',
 				contentType: 'application/json',
-				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				headers: { 'RequestVerificationToken': getAntiForgeryToken() },
 				data: JSON.stringify(data),
 				success: function () {
 					$('#settingsSavedMsg').fadeIn().delay(3000).fadeOut();
@@ -446,10 +437,10 @@
 			};
 
 			$.ajax({
-				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveSource',
+				url: '/api/web-bff/api/v4/WeatherAlerts/SaveSource',
 				type: 'POST',
 				contentType: 'application/json',
-				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				headers: { 'RequestVerificationToken': getAntiForgeryToken() },
 				data: JSON.stringify(data),
 				success: function () { location.reload(); },
 				error: function () { alert(loc.failedToToggleSource); }
@@ -460,9 +451,9 @@
 			var sourceId = $(this).data('sourceid');
 			if (confirm(loc.deleteSourceConfirm)) {
 				$.ajax({
-					url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/DeleteSource/' + encodeURIComponent(sourceId),
+					url: '/api/web-bff/api/v4/WeatherAlerts/DeleteSource/' + encodeURIComponent(sourceId),
 					type: 'DELETE',
-					headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+					headers: { 'RequestVerificationToken': getAntiForgeryToken() },
 					success: function () { location.reload(); },
 					error: function () { alert(loc.failedToDeleteSource); }
 				});
@@ -503,10 +494,10 @@
 			}
 
 			$.ajax({
-				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveSource',
+				url: '/api/web-bff/api/v4/WeatherAlerts/SaveSource',
 				type: 'POST',
 				contentType: 'application/json',
-				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				headers: { 'RequestVerificationToken': getAntiForgeryToken() },
 				data: JSON.stringify(data),
 				success: function () { location.reload(); },
 				error: function () { alert(loc.failedToSaveSource); }

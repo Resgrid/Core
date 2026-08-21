@@ -28,6 +28,12 @@ namespace Resgrid.Model
 
 		public DateTime LoggedOn { get; set; }
 
+		public string TargetUserId { get; set; }
+
+		public string SessionId { get; set; }
+
+		public string CorrelationId { get; set; }
+
 		public object IdValue
 		{
 			get { return SystemAuditId; }

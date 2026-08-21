@@ -1,5 +1,5 @@
 import { HubConnectionBuilder, LogLevel, type HubConnection } from '@microsoft/signalr';
-import { getAccessToken } from './auth';
+import { getEventingToken } from './eventingToken';
 import { getBrowserConfig } from './browserConfig';
 
 export interface PersonnelLocationUpdate {
@@ -22,15 +22,9 @@ export interface GeolocationHandlers {
 }
 
 export async function connectGeolocationHub(handlers: GeolocationHandlers): Promise<HubConnection | null> {
-  const accessToken = getAccessToken();
-
-  if (accessToken.length === 0) {
-    return null;
-  }
-
   const { channelUrl } = getBrowserConfig();
   const connection = new HubConnectionBuilder()
-    .withUrl(`${channelUrl}/geolocationHub?access_token=${encodeURIComponent(accessToken)}`)
+	.withUrl(`${channelUrl}/geolocationHub`, { accessTokenFactory: getEventingToken })
     .withAutomaticReconnect()
     .configureLogging(LogLevel.Information)
     .build();

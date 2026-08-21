@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Resgrid.Model.Identity;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Model.Security;
 using IdentityRole = Resgrid.Model.Identity.IdentityRole;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
@@ -62,6 +63,8 @@ namespace Resgrid.Providers.Claims
 
 			id.AddClaim(new Claim(Options.ClaimsIdentity.UserIdClaimType, userId));
 			id.AddClaim(new Claim(Options.ClaimsIdentity.UserNameClaimType, userName));
+			id.AddClaim(new Claim(SessionClaimTypes.AuthenticationGeneration,
+				user.AuthenticationGeneration.ToString(System.Globalization.CultureInfo.InvariantCulture)));
 
 			if (UserManager.SupportsUserSecurityStamp)
 			{

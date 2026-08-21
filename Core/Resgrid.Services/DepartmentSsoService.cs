@@ -41,6 +41,7 @@ namespace Resgrid.Services
 		private readonly IUserProfileService _userProfileService;
 		private readonly IEncryptionService _encryptionService;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 
 		public DepartmentSsoService(
 			IDepartmentSsoConfigRepository ssoConfigRepository,
@@ -49,7 +50,8 @@ namespace Resgrid.Services
 			IDepartmentsService departmentsService,
 			IUserProfileService userProfileService,
 			IEncryptionService encryptionService,
-			ICacheProvider cacheProvider)
+			ICacheProvider cacheProvider,
+			IExternalIdentityLinkService externalIdentityLinkService)
 		{
 			_ssoConfigRepository = ssoConfigRepository;
 			_securityPolicyRepository = securityPolicyRepository;
@@ -58,6 +60,7 @@ namespace Resgrid.Services
 			_userProfileService = userProfileService;
 			_encryptionService = encryptionService;
 			_cacheProvider = cacheProvider;
+			_externalIdentityLinkService = externalIdentityLinkService;
 		}
 
 		// ── SSO Config CRUD ───────────────────────────────────────────────────
@@ -167,12 +170,10 @@ namespace Resgrid.Services
 
 		public async Task<IdentityUser> ProvisionOrLinkUserAsync(int departmentId, ClaimsPrincipal externalClaims, DepartmentSsoConfig config, string departmentCode, CancellationToken cancellationToken = default)
 		{
-			if (externalClaims == null || config == null)
+			if (externalClaims == null || config == null || config.DepartmentId != departmentId)
 				return null;
 
-			// Resolve attribute mapping
 			var mapping = ResolveAttributeMapping(config.AttributeMappingJson);
-
 			var email = GetMappedClaim(externalClaims, mapping, "email",
 				ClaimTypes.Email, "email", "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress");
 			var externalSubject = GetMappedClaim(externalClaims, mapping, "subject",
@@ -182,50 +183,116 @@ namespace Resgrid.Services
 			var lastName = GetMappedClaim(externalClaims, mapping, "lastName",
 				ClaimTypes.Surname, "family_name", "surname");
 
-			if (string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(externalSubject))
+			// A mutable email address is never accepted as the durable external identifier.
+			if (string.IsNullOrWhiteSpace(externalSubject))
 				return null;
 
-			// Try to find existing member by ExternalSsoId first, then by email
-			DepartmentMember existingMember = null;
-			var departmentMembers = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId);
+			var now = DateTime.UtcNow;
+			var members = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId);
+			var link = await _externalIdentityLinkService.GetBySubjectAsync(config.DepartmentSsoConfigId,
+				externalSubject, cancellationToken);
+			DepartmentMember member = null;
+			var linkMethod = ExternalIdentityLinkMethod.Subject;
 
-			if (!string.IsNullOrWhiteSpace(externalSubject))
-				existingMember = departmentMembers?.FirstOrDefault(m => m.ExternalSsoId == externalSubject);
-
-			if (existingMember == null && !string.IsNullOrWhiteSpace(email))
+			if (link != null)
 			{
-				// Attempt to find by email via department users
-				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
-				var users = await _departmentsService.GetAllUsersForDepartment(departmentId, false, true);
-				var matchedUser = users?.FirstOrDefault(u => string.Equals(u.Email, email, StringComparison.OrdinalIgnoreCase));
-
-				if (matchedUser != null)
-					existingMember = departmentMembers?.FirstOrDefault(m => m.UserId == matchedUser.Id);
+				if (link.DepartmentId != departmentId)
+					return null;
+				member = members?.FirstOrDefault(candidate => candidate.UserId == link.UserId);
 			}
 
-			if (existingMember != null)
+			// Compatibility for accounts linked before the durable binding table existed.
+			member ??= members?.FirstOrDefault(candidate => candidate.ExternalSsoId == externalSubject);
+
+			// Bootstrap-by-email is permitted only when the signed IdP assertion explicitly
+			// marks the email as verified. SAML deployments without such a claim require an
+			// administrator-created/SCIM link instead of silently taking over an email match.
+			if (member == null && !string.IsNullOrWhiteSpace(email) && IsVerifiedEmail(externalClaims))
 			{
-				// Link / update the existing member
-				if (string.IsNullOrWhiteSpace(existingMember.ExternalSsoId) && !string.IsNullOrWhiteSpace(externalSubject))
+				var users = await _departmentsService.GetAllUsersForDepartment(departmentId, false, true);
+				var matchedUser = users?.FirstOrDefault(candidate =>
+					string.Equals(candidate.Email, email, StringComparison.OrdinalIgnoreCase));
+				if (matchedUser != null)
 				{
-					existingMember.ExternalSsoId = externalSubject;
-					existingMember.SsoLinkedOn = DateTime.UtcNow;
+					member = members?.FirstOrDefault(candidate => candidate.UserId == matchedUser.Id);
+					linkMethod = ExternalIdentityLinkMethod.VerifiedEmail;
+				}
+			}
+
+			if (member != null)
+			{
+				if (string.IsNullOrWhiteSpace(member.ExternalSsoId))
+				{
+					member.ExternalSsoId = externalSubject;
+					member.SsoLinkedOn = now;
+				}
+				else if (!string.Equals(member.ExternalSsoId, externalSubject, StringComparison.Ordinal))
+				{
+					return null;
 				}
 
-				existingMember.LastSsoLoginOn = DateTime.UtcNow;
-				await _departmentMembersRepository.SaveOrUpdateAsync(existingMember, cancellationToken);
+				member.LastSsoLoginOn = now;
+				await _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+				await SaveExternalLinkAsync(link, member, config, externalClaims, externalSubject, email,
+					linkMethod, linkMethod == ExternalIdentityLinkMethod.VerifiedEmail, now, cancellationToken);
 
 				var users = await _departmentsService.GetAllUsersForDepartment(departmentId, false, true);
-				return users?.FirstOrDefault(u => u.Id == existingMember.UserId);
+				return users?.FirstOrDefault(candidate => candidate.Id == member.UserId);
 			}
 
-			// Auto-provision if enabled
-			if (!config.AutoProvisionUsers)
+			if (!config.AutoProvisionUsers || string.IsNullOrWhiteSpace(email))
 				return null;
 
-			var provisionedUser = await ProvisionNewUserAsync(departmentId, email, firstName, lastName, externalSubject, config, departmentCode, cancellationToken);
+			var provisionedUser = await ProvisionNewUserAsync(departmentId, email, firstName, lastName,
+				externalSubject, config, departmentCode, cancellationToken);
+			if (provisionedUser != null)
+			{
+				var provisionedMember = await _departmentsService.GetDepartmentMemberAsync(provisionedUser.Id, departmentId);
+				if (provisionedMember != null)
+					await SaveExternalLinkAsync(null, provisionedMember, config, externalClaims, externalSubject,
+						email, ExternalIdentityLinkMethod.Subject, true, now, cancellationToken);
+			}
+
 			return provisionedUser;
 		}
+
+		private async Task SaveExternalLinkAsync(UserExternalIdentityLink link, DepartmentMember member,
+			DepartmentSsoConfig config, ClaimsPrincipal externalClaims, string externalSubject, string email,
+			ExternalIdentityLinkMethod linkMethod, bool emailExternallyManaged, DateTime now,
+			CancellationToken cancellationToken)
+		{
+			link ??= new UserExternalIdentityLink
+			{
+				UserId = member.UserId,
+				DepartmentId = config.DepartmentId,
+				DepartmentMemberId = member.DepartmentMemberId,
+				DepartmentSsoConfigId = config.DepartmentSsoConfigId,
+				ProviderType = config.SsoProviderType,
+				Issuer = GetExternalIssuer(externalClaims, config),
+				ExternalSubject = externalSubject,
+				EmailAtLink = email,
+				LinkMethod = (int)linkMethod,
+				IsEmailExternallyManaged = emailExternallyManaged,
+				LinkedOn = now
+			};
+
+			link.LastLoginOn = now;
+			await _externalIdentityLinkService.SaveAsync(link, cancellationToken);
+		}
+
+		private static bool IsVerifiedEmail(ClaimsPrincipal principal)
+		{
+			var value = principal.Claims.FirstOrDefault(claim =>
+				string.Equals(claim.Type, "email_verified", StringComparison.OrdinalIgnoreCase) ||
+				string.Equals(claim.Type, "http://schemas.openid.net/claim/email_verified", StringComparison.OrdinalIgnoreCase))?.Value;
+			return bool.TryParse(value, out var verified) && verified;
+		}
+
+		private static string GetExternalIssuer(ClaimsPrincipal principal, DepartmentSsoConfig config) =>
+			principal.Claims.FirstOrDefault(claim => string.Equals(claim.Type, "iss", StringComparison.OrdinalIgnoreCase))?.Value
+			?? config.Authority
+			?? config.EntityId
+			?? $"department-sso:{config.DepartmentSsoConfigId}";
 
 		// ── Policy Enforcement ────────────────────────────────────────────────
 
@@ -282,7 +349,7 @@ namespace Resgrid.Services
 					return false;
 
 				var storedToken = _encryptionService.DecryptForDepartment(scimConfig.EncryptedScimBearerToken, departmentId, departmentCode);
-				return string.Equals(storedToken, bearerToken, StringComparison.Ordinal);
+				return FixedTimeSecretEquals(storedToken, bearerToken);
 			}
 			catch (Exception ex)
 			{
@@ -315,7 +382,7 @@ namespace Resgrid.Services
 				var storedToken = _encryptionService.DecryptForDepartment(
 					scimConfig.EncryptedScimBearerToken, claimedDepartmentId, departmentCode);
 
-				if (!string.Equals(storedToken, bearerToken, StringComparison.Ordinal))
+				if (!FixedTimeSecretEquals(storedToken, bearerToken))
 					return null;
 
 				// Double-check: the config's own DepartmentId must equal the claimed ID.
@@ -847,6 +914,17 @@ namespace Resgrid.Services
 				Logging.LogException(ex);
 				return null;
 			}
+		}
+
+		private static bool FixedTimeSecretEquals(string stored, string provided)
+		{
+			if (stored == null || provided == null)
+				return false;
+
+			var storedBytes = Encoding.UTF8.GetBytes(stored);
+			var providedBytes = Encoding.UTF8.GetBytes(provided);
+			return storedBytes.Length == providedBytes.Length &&
+				CryptographicOperations.FixedTimeEquals(storedBytes, providedBytes);
 		}
 
 		private static bool IsIpAddressAllowed(string clientIp, string allowedRangesCsv)

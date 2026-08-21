@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -53,9 +54,11 @@ namespace Resgrid.Web.Eventing
 		public ILifetimeScope AutofacContainer { get; private set; }
 		public AutofacServiceLocator Locator { get; private set; }
 		public IServiceCollection Services { get; private set; }
+		private readonly IHostingEnvironment _environment;
 
 		public Startup(IHostingEnvironment env)
 		{
+			_environment = env;
 			var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
 				.SetBasePath(env.ContentRootPath)
 				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -69,7 +72,7 @@ namespace Resgrid.Web.Eventing
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			IdentityModelEventSource.ShowPII = true;
+			IdentityModelEventSource.ShowPII = _environment.IsDevelopment();
 
 			bool configResult = ConfigProcessor.LoadAndProcessConfig(Configuration["AppOptions:ConfigPath"]);
 			bool envConfigResult = ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
@@ -92,6 +95,9 @@ namespace Resgrid.Web.Eventing
 			element.SetValue(settings, true);
 
 			Framework.Logging.Initialize(ExternalErrorConfig.ExternalErrorServiceUrlForEventing);
+
+			if (Config.ApiConfig.BypassSslChecks && !(_environment.IsDevelopment() || _environment.IsStaging()))
+				throw new InvalidOperationException("ApiConfig.BypassSslChecks cannot be enabled outside development or staging.");
 
 			if (Config.ApiConfig.BypassSslChecks)
 			{
@@ -126,6 +132,7 @@ namespace Resgrid.Web.Eventing
 				hubOptions.EnableDetailedErrors = true;
 				hubOptions.KeepAliveInterval = TimeSpan.FromSeconds(10);
 				hubOptions.HandshakeTimeout = TimeSpan.FromSeconds(5);
+				hubOptions.AddFilter<Resgrid.Web.Eventing.Middleware.SessionValidationHubFilter>();
 
 			}).AddStackExchangeRedis(CacheConfig.RedisConnectionString, options =>
 			{
@@ -360,11 +367,7 @@ namespace Resgrid.Web.Eventing
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
-			var forwardOpts = new ForwardedHeadersOptions
-			{
-				ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
-			};
-			app.UseForwardedHeaders(forwardOpts);
+			app.UseForwardedHeaders();
 
 			this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 			var eventAggregator = this.AutofacContainer.Resolve<IEventAggregator>();
@@ -390,6 +393,7 @@ namespace Resgrid.Web.Eventing
 			app.UseAuthentication();
 
 			app.UseRouting();
+			app.UseMiddleware<Resgrid.Web.Eventing.Middleware.SessionValidationMiddleware>();
 
 			app.UseAuthorization();
 
@@ -402,8 +406,8 @@ namespace Resgrid.Web.Eventing
 			{
 				endpoints.MapControllers();
 
-				endpoints.MapHub<EventingHub>("/eventingHub");
-				endpoints.MapHub<GeolocationHub>("/geolocationHub");
+				endpoints.MapHub<EventingHub>("/eventingHub", options => options.CloseOnAuthenticationExpiration = true);
+				endpoints.MapHub<GeolocationHub>("/geolocationHub", options => options.CloseOnAuthenticationExpiration = true);
 				endpoints.MapHub<ChatHub>("/chatHub", options => options.CloseOnAuthenticationExpiration = true);
 			});
 		}

@@ -74,5 +74,11 @@
 		/// before the board highlights it.
 		/// </summary>
 		UnitStatusThresholds = 62,
+
+		/// <summary>
+		/// When enabled, department and group administrators cannot choose a member's new password.
+		/// Their reset action sends the member the hardened, single-use password recovery link instead.
+		/// </summary>
+		RequirePasswordResetViaEmail = 63,
 	}
 }

@@ -33,6 +33,8 @@ namespace Resgrid.Web.Areas.User.Models.Personnel
 		public string UserId { get; set; }
 		public bool CanRemoveUser { get; set; }
 		public bool CanEditUser { get; set; }
+		public bool CanResetPassword { get; set; }
+		public bool IsSsoManaged { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public int GroupId { get; set; }

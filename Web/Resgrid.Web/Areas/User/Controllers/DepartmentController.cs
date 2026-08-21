@@ -255,6 +255,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var activeCallRssKey = await _departmentSettingsService.GetRssKeyForDepartmentAsync(DepartmentId);
 			model.DisableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(DepartmentId);
 			model.EnableModernNotifications = await _departmentSettingsService.GetModernNotificationsEnabledAsync(DepartmentId);
+			model.RequirePasswordResetViaEmail = await _departmentSettingsService.GetRequirePasswordResetViaEmailAsync(DepartmentId);
 			model.ForceChatbotSecurityPin = await _departmentSettingsService.GetForceChatbotSecurityPinAsync(DepartmentId);
 			model.TtsLanguage = await _departmentSettingsService.GetTtsLanguageForDepartmentAsync(DepartmentId);
 			model.TtsLanguages = BuildTtsLanguageSelectList(model.TtsLanguage);
@@ -553,6 +554,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.EnableModernNotifications.ToString(), DepartmentSettingTypes.EnableModernNotifications,
 					cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.RequirePasswordResetViaEmail.ToString(),
+					DepartmentSettingTypes.RequirePasswordResetViaEmail, cancellationToken);
 
 				var forcePinWasEnabled = await _departmentSettingsService.GetForceChatbotSecurityPinAsync(DepartmentId, bypassCache: true);
 

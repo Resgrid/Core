@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Quidjibo.Handlers;
 using Quidjibo.Misc;
+using Resgrid.Config;
 using Resgrid.Model.Repositories;
 using Resgrid.Workers.Framework;
 using System;
@@ -29,6 +30,9 @@ namespace Resgrid.Workers.Console.Tasks
 
 				var identityRepository = Bootstrapper.GetKernel().Resolve<IIdentityRepository>();
 				var result = await identityRepository.CleanUpOIDCTokensAsync(DateTime.UtcNow);
+				var sessionsRepository = Bootstrapper.GetKernel().Resolve<IUserSessionsRepository>();
+				var retentionDays = Math.Max(1, SessionSecurityConfig.RevokedSessionRetentionDays);
+				await sessionsRepository.PurgeInactiveBeforeAsync(DateTime.UtcNow.AddDays(-retentionDays), cancellationToken);
 
 				progress.Report(100, $"Finishing the {Name} Task");
 			}

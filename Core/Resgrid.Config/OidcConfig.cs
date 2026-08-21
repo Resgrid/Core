@@ -13,13 +13,19 @@ namespace Resgrid.Config
 
 		public static string Key = "";
 
-		public static string ConnectionString = "Server=rgdevserver;Database=ResgridOIDC;User Id=resgrid_odic;Password=resgrid123;MultipleActiveResultSets=True;TrustServerCertificate=True;";
+		public static string ConnectionString = "";
 
 		public static int AccessTokenExpiryMinutes = 1440;
 
 		public static int RefreshTokenExpiryDays = 365;
 
 		public static int NonMobileRefreshTokenExpiryDays = 2;
+
+		/// <summary>
+		/// Comma-separated, registered client IDs allowed to receive the longer mobile
+		/// refresh-token lifetime. Anonymous requests and caller-supplied scopes never qualify.
+		/// </summary>
+		public static string TrustedLongLivedClientIds = "";
 
 		public static string EncryptionCert = "";
 

@@ -133,7 +133,10 @@ var resgrid;
                         return;
 
 					fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
-                        .then(function(r) { return r.json(); })
+                        .then(function(r) {
+                            if (!r.ok) throw new Error('ForwardGeocode failed with HTTP status ' + r.status);
+                            return r.json();
+                        })
                         .then(function(result) {
                             if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                                 var lat = result.Data.Latitude;
@@ -349,7 +352,10 @@ var resgrid;
             }
             function findLocation(pos) {
 				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + pos.lat + '&lon=' + pos.lng)
-                    .then(function(r) { return r.json(); })
+                    .then(function(r) {
+                        if (!r.ok) throw new Error('ReverseGeocode failed with HTTP status ' + r.status);
+                        return r.json();
+                    })
                     .then(function(result) {
                         if (result && result.Data && result.Data.Address) {
                             $("#Call_Address").val(result.Data.Address);
@@ -382,7 +388,10 @@ var resgrid;
             editcall.setMarkerLocation = setMarkerLocation;
             function geocodeCoordinates(lat, lng) {
 				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng)
-                    .then(function(r) { return r.json(); })
+                    .then(function(r) {
+                        if (!r.ok) throw new Error('ReverseGeocode failed with HTTP status ' + r.status);
+                        return r.json();
+                    })
                     .then(function(result) {
                         if (result && result.Data && result.Data.Address) {
                             $("#Call_Address").val(result.Data.Address);

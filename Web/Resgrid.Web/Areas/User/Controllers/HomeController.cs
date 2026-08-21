@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -892,6 +892,60 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _departmentsService.SaveDepartmentMemberAsync(depMember, cancellationToken);
 				}
 
+				// Save UDF field values for personnel.
+				// Detect whether the UDF section was included in this POST via the hidden "_exists" sentinel
+				// keys emitted by UdfRenderingService (one per rendered field). Using the sentinel rather
+				// than value-keys alone ensures we still call SaveFieldValuesForEntityAsync even when every
+				// visible field was cleared to an empty string (so the service can delete existing values).
+				bool udfSectionWasPosted = form.Keys.Any(k => k.StartsWith("udf_") && k.EndsWith("_exists"));
+
+				if (udfSectionWasPosted)
+				{
+					var udfValues = form.Keys
+						.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+						.Select(k => new UdfFieldValue
+						{
+							UdfFieldId = k.Substring(4),
+							Value = form[k]
+						}).ToList();
+
+					bool isDeptAdmin = callerIsDepartmentAdmin;
+					bool isGroupAdmin = callerIsGroupAdmin;
+					var udfValidationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId, udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+
+					if (udfValidationErrors != null && udfValidationErrors.Count > 0)
+					{
+						foreach (var kvp in udfValidationErrors)
+						{
+							foreach (var errorMessage in kvp.Value)
+								ModelState.AddModelError(kvp.Key, errorMessage);
+						}
+					}
+				}
+
+				// Re-displays the form with the late-validation errors already in ModelState.
+				async Task<IActionResult> RedisplayWithLateErrorsAsync()
+				{
+					var udfDefinitionOnUdfError = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
+					if (udfDefinitionOnUdfError != null)
+					{
+						bool isDeptAdminOnUdfError = callerIsDepartmentAdmin;
+						bool isGroupAdminOnUdfError = callerIsGroupAdmin;
+						var udfFieldsOnUdfError = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdminOnUdfError, isGroupAdminOnUdfError);
+						var udfValuesOnUdfError = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId);
+						var visibleFieldIdsOnUdfError = udfFieldsOnUdfError.Select(f => f.UdfFieldId).ToHashSet();
+						var filteredValuesOnUdfError = (udfValuesOnUdfError ?? new List<UdfFieldValue>()).Where(v => visibleFieldIdsOnUdfError.Contains(v.UdfFieldId)).ToList();
+						model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionOnUdfError, udfFieldsOnUdfError, filteredValuesOnUdfError);
+					}
+
+					return View(model);
+				}
+
+				// The email change must not run until every late validation has passed: it revokes all
+				// sessions and cannot be undone by returning the form with errors.
+				if (!ModelState.IsValid)
+					return await RedisplayWithLateErrorsAsync();
+
 				var signedOutByEmailChange = false;
 				// Email is a login/recovery identifier. Persist it through UserManager and revoke every
 				// credential immediately; SSO-managed email was rejected before entering this block.
@@ -932,54 +986,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				// Save UDF field values for personnel.
-				// Detect whether the UDF section was included in this POST via the hidden "_exists" sentinel
-				// keys emitted by UdfRenderingService (one per rendered field). Using the sentinel rather
-				// than value-keys alone ensures we still call SaveFieldValuesForEntityAsync even when every
-				// visible field was cleared to an empty string (so the service can delete existing values).
-				bool udfSectionWasPosted = form.Keys.Any(k => k.StartsWith("udf_") && k.EndsWith("_exists"));
-
-				if (udfSectionWasPosted)
-				{
-					var udfValues = form.Keys
-						.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
-						.Select(k => new UdfFieldValue
-						{
-							UdfFieldId = k.Substring(4),
-							Value = form[k]
-						}).ToList();
-
-					bool isDeptAdmin = callerIsDepartmentAdmin;
-					bool isGroupAdmin = callerIsGroupAdmin;
-					var udfValidationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId, udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
-
-					if (udfValidationErrors != null && udfValidationErrors.Count > 0)
-					{
-						foreach (var kvp in udfValidationErrors)
-						{
-							foreach (var errorMessage in kvp.Value)
-								ModelState.AddModelError(kvp.Key, errorMessage);
-						}
-					}
-				}
-
 				if (!ModelState.IsValid)
-				{
-					// UDF (or other late) validation failed — re-display the form with errors.
-					var udfDefinitionOnUdfError = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
-					if (udfDefinitionOnUdfError != null)
-					{
-						bool isDeptAdminOnUdfError = callerIsDepartmentAdmin;
-						bool isGroupAdminOnUdfError = callerIsGroupAdmin;
-						var udfFieldsOnUdfError = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdminOnUdfError, isGroupAdminOnUdfError);
-						var udfValuesOnUdfError = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId);
-						var visibleFieldIdsOnUdfError = udfFieldsOnUdfError.Select(f => f.UdfFieldId).ToHashSet();
-						var filteredValuesOnUdfError = (udfValuesOnUdfError ?? new List<UdfFieldValue>()).Where(v => visibleFieldIdsOnUdfError.Contains(v.UdfFieldId)).ToList();
-						model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionOnUdfError, udfFieldsOnUdfError, filteredValuesOnUdfError);
-					}
+					return await RedisplayWithLateErrorsAsync();
 
-					return View(model);
-				}
 
 				_userProfileService.ClearUserProfileFromCache(model.UserId);
 				_userProfileService.ClearAllUserProfilesFromCache(model.Department.DepartmentId);

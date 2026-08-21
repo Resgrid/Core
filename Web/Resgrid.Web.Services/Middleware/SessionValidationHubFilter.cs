@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -69,14 +69,18 @@ namespace Resgrid.Web.Services.Middleware
 				if (!validation.IsValid)
 					return false;
 
-				if (validation.Session != null)
+				// Skip the write when the recorded activity is still inside the write interval: without this
+				// every hub invocation pays a location lookup and a database round trip to update no rows.
+				// It also collapses the duplicate touch a connection makes through the middleware as well.
+				var occurredOn = DateTime.UtcNow;
+				if (validation.Session != null && _userSessionService.ShouldRecordActivity(validation.Session, occurredOn))
 				{
 					var httpContext = context.GetHttpContext();
 					try
 					{
 						await _userSessionService.TouchAsync(validation.Session.UserSessionId, new RequestActivity
 						{
-							OccurredOn = DateTime.UtcNow,
+							OccurredOn = occurredOn,
 							IpAddress = httpContext?.Connection.RemoteIpAddress?.ToString(),
 							UserAgent = httpContext?.Request.Headers.UserAgent
 						}, context.ConnectionAborted);

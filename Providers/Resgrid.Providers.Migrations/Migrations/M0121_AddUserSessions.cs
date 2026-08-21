@@ -1,12 +1,11 @@
-using FluentMigrator;
-using FluentMigrator.SqlServer;
+﻿using FluentMigrator;
 
 namespace Resgrid.Providers.Migrations.Migrations
 {
 	// ONLINE index operations should not be wrapped in a long migration transaction because their
 	// final schema locks can otherwise be retained until commit. Every statement is guarded for retry.
-	// ONLINE is not supported by every SQL Server edition; unsupported deployments must schedule a
-	// maintenance window and use an explicitly reviewed offline variant rather than silently blocking.
+	// SqlServerOnlineIndex resolves ONLINE support per edition at execution time, so an edition without
+	// online builds gets the same indexes offline instead of failing the migration part-way through.
 	[Migration(121, TransactionBehavior.None)]
 	public class M0121_AddUserSessions : Migration
 	{
@@ -45,38 +44,43 @@ namespace Resgrid.Providers.Migrations.Migrations
 				.WithColumn("RevokedByUserId").AsString(128).Nullable()
 				.WithColumn("RevocationReason").AsInt32().Nullable();
 
-			if (!Schema.Table("UserSessions").Index("IX_UserSessions_User_State_Expiry_Activity").Exists())
-				Create.Index("IX_UserSessions_User_State_Expiry_Activity")
-				.OnTable("UserSessions")
-				.OnColumn("UserId").Ascending()
-				.OnColumn("State").Ascending()
-				.OnColumn("ExpiresOn").Ascending()
-				.OnColumn("LastActiveOn").Descending()
-				.WithOptions().Online();
+			Execute.Sql(SqlServerOnlineIndex.Create("IX_UserSessions_User_State_Expiry_Activity", "UserSessions",
+				new[] { "[UserId] ASC", "[State] ASC", "[ExpiresOn] ASC", "[LastActiveOn] DESC" }));
 
-			if (!Schema.Table("UserSessions").Index("IX_UserSessions_Department_User_State").Exists())
-				Create.Index("IX_UserSessions_Department_User_State")
-				.OnTable("UserSessions")
-				.OnColumn("DepartmentId").Ascending()
-				.OnColumn("UserId").Ascending()
-				.OnColumn("State").Ascending()
-				.WithOptions().Online();
+			Execute.Sql(SqlServerOnlineIndex.Create("IX_UserSessions_Department_User_State", "UserSessions",
+				new[] { "[DepartmentId] ASC", "[UserId] ASC", "[State] ASC" }));
 
-			if (!Schema.Table("UserSessions").Index("IX_UserSessions_Revoked_Expiry").Exists())
-				Create.Index("IX_UserSessions_Revoked_Expiry")
-				.OnTable("UserSessions")
-				.OnColumn("RevokedOn").Ascending()
-				.OnColumn("ExpiresOn").Ascending()
-				.WithOptions().Online();
+			Execute.Sql(SqlServerOnlineIndex.Create("IX_UserSessions_Revoked_Expiry", "UserSessions",
+				new[] { "[RevokedOn] ASC", "[ExpiresOn] ASC" }));
 
-			if (!Schema.Table("UserSessions").Index("UX_UserSessions_OpenIddictAuthorizationId").Exists())
-				Execute.Sql("CREATE UNIQUE INDEX [UX_UserSessions_OpenIddictAuthorizationId] ON [UserSessions] ([OpenIddictAuthorizationId]) WHERE [OpenIddictAuthorizationId] IS NOT NULL WITH (ONLINE = ON);");
+			// Rollout / failure / rollback characteristics of this index, made explicit:
+			//   * ONLINE = ON where the edition supports it: the table stays readable and writable for the
+			//     duration of the build, and the only blocking window is the short SCH-M lock taken at the
+			//     start and end. Editions without online builds get the same index offline, which holds its
+			//     lock for the whole build - see SqlServerOnlineIndex.
+			//   * SORT_IN_TEMPDB = ON: the intermediate sort runs in tempdb instead of the user database,
+			//     so the build does not grow the primary filegroup or spike its log. Cost: tempdb needs
+			//     free space roughly equal to the finished index size.
+			//   * Failure handling: this runs outside a migration transaction (TransactionBehavior.None),
+			//     so a failure is contained to this one statement - SQL Server discards the partially built
+			//     index itself and the migration aborts without recording version 121. Re-running the
+			//     migration is safe: every step above is existence-guarded, so already-created objects are
+			//     skipped and only this index is retried.
+			//   * Rollback: dropping the index is metadata-only and needs no data movement -
+			//     DROP INDEX [UX_UserSessions_OpenIddictAuthorizationId] ON [UserSessions];
+			//     Full rollback is Down(), which drops the table - see the note there.
+			Execute.Sql(SqlServerOnlineIndex.Create("UX_UserSessions_OpenIddictAuthorizationId", "UserSessions",
+				new[] { "[OpenIddictAuthorizationId]" }, unique: true,
+				filter: "[OpenIddictAuthorizationId] IS NOT NULL", sortInTempDb: true));
 		}
 
 		public override void Down()
 		{
 			// SQL Server has no online DROP TABLE. Rollback requires a schema-modification lock;
 			// schedule it during maintenance on editions or workloads where that lock is unsafe.
+			// If only the filtered unique index needs to be backed out (for example a duplicate
+			// OpenIddictAuthorizationId blocks the build), drop that index on its own instead of running
+			// this Down() - the drop is metadata-only and leaves session data intact.
 			if (Schema.Table("UserSessions").Exists())
 				Delete.Table("UserSessions");
 		}

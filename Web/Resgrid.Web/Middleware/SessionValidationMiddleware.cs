@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -120,13 +120,18 @@ namespace Resgrid.Web.Middleware
 				}
 			}
 
-			if (session != null)
+			// Skip the write when the recorded activity is still inside the write interval: without this
+			// every authenticated request pays a location lookup and a database round trip to update no
+			// rows. It also collapses the duplicate touch a SignalR connection would otherwise make
+			// through both this path and the hub filter.
+			var occurredOn = DateTime.UtcNow;
+			if (session != null && userSessionService.ShouldRecordActivity(session, occurredOn))
 			{
 				try
 				{
 					await userSessionService.TouchAsync(session.UserSessionId, new RequestActivity
 					{
-						OccurredOn = DateTime.UtcNow,
+						OccurredOn = occurredOn,
 						IpAddress = IpAddressHelper.GetRequestIP(context.Request, true),
 						UserAgent = context.Request.Headers.UserAgent
 					}, context.RequestAborted);

@@ -35,6 +35,9 @@ namespace Resgrid.Services
 		private static string NewCallFieldPolicyCacheKey = "DSetNewCallFieldPolicy_{0}";
 		private static string UnitStatusThresholdsCacheKey = "DSetUnitStatusThresholds_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
+		// Security-relevant settings ride the standard department-data window instead, so a missed
+		// invalidation cannot keep an old policy in force for two weeks.
+		private static TimeSpan SecuritySettingCacheLength = TimeSpan.FromDays(1);
 		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
 		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
 
@@ -1250,7 +1253,7 @@ namespace Resgrid.Services
 				? await _cacheProvider.RetrieveAsync(
 					string.Format(RequirePasswordResetViaEmailCacheKey, departmentId),
 					getSetting,
-					LongCacheLength)
+					SecuritySettingCacheLength)
 				: await getSetting();
 
 			return bool.TryParse(value, out var enabled) && enabled;

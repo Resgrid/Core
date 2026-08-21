@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -687,7 +687,7 @@ namespace Resgrid.Web.Controllers
 					var issue = await _passwordRecoveryService.IssueAsync(isSsoManaged ? null : user.Id,
 						model.Email, ipAddress, user.AuthenticationGeneration, user.SecurityStamp, cancellationToken);
 
-					if (!issue.RateLimited)
+					if (!issue.RateLimited && (issue.Issued || isSsoManaged))
 					{
 						// Put the opaque grant in the URL fragment. Browsers do not send fragments to
 						// Resgrid, reverse proxies, or access logs; self-hosted page JavaScript posts it
@@ -727,28 +727,14 @@ namespace Resgrid.Web.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<IActionResult> ResetPassword(string token, CancellationToken cancellationToken)
+		public async Task<IActionResult> ResetPassword(CancellationToken cancellationToken)
 		{
 			SetPasswordRecoveryResponseHeaders();
-			if (!string.IsNullOrWhiteSpace(token))
-			{
-				var initialLookup = await _passwordRecoveryService.GetAsync(token, cancellationToken);
-				if (!initialLookup.Found)
-					return View(new ResetPasswordViewModel { InvalidOrExpired = true });
 
-				Response.Cookies.Append(RecoveryGrantCookie, token, new CookieOptions
-				{
-					HttpOnly = true,
-					Secure = Request.IsHttps,
-					SameSite = SameSiteMode.Strict,
-					Expires = DateTimeOffset.UtcNow.AddMinutes(Math.Max(5, SessionSecurityConfig.PublicResetLinkLifetimeMinutes)),
-					IsEssential = true,
-					Path = "/Account/ResetPassword"
-				});
-				return RedirectToAction(nameof(ResetPassword));
-			}
-
-			token = Request.Cookies[RecoveryGrantCookie];
+			// No query-string grant is accepted: that form writes a single-use secret into access logs,
+			// proxy logs and browser history. The emailed link carries the grant in the URL fragment and
+			// the page posts it to BeginPasswordReset, which establishes this cookie.
+			var token = Request.Cookies[RecoveryGrantCookie];
 			var lookup = await _passwordRecoveryService.GetAsync(token, cancellationToken);
 			var request = lookup.Request;
 			if (!lookup.Found || request == null)
@@ -794,7 +780,8 @@ namespace Resgrid.Web.Controllers
 			Response.Cookies.Append(RecoveryGrantCookie, token, new CookieOptions
 			{
 				HttpOnly = true,
-				Secure = Request.IsHttps,
+				// Never conditional on the per-request scheme: a recovery grant must not travel in clear.
+				Secure = true,
 				SameSite = SameSiteMode.Strict,
 				Expires = DateTimeOffset.UtcNow.AddMinutes(Math.Max(5, SessionSecurityConfig.PublicResetLinkLifetimeMinutes)),
 				IsEssential = true,
@@ -855,6 +842,9 @@ namespace Resgrid.Web.Controllers
 			var result = await _userManager.ResetPasswordAsync(user, identityToken, model.Password);
 			if (!result.Succeeded)
 			{
+				// The grant was consumed before the reset ran. Nothing changed, so hand it back rather
+				// than forcing the user to request a new recovery email.
+				await _passwordRecoveryService.ReleaseAsync(token, cancellationToken);
 				foreach (var error in result.Errors)
 					ModelState.AddModelError(string.Empty, error.Description);
 				return View(model);

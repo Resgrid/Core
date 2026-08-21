@@ -365,7 +365,7 @@ namespace Resgrid.Services
 		/// confirm the token genuinely belongs to that department.
 		/// Returns null when the token is missing, invalid, or belongs to a different department.
 		/// </summary>
-		public async Task<int?> ValidateScimBearerTokenAndGetDepartmentAsync(string bearerToken, int claimedDepartmentId, string departmentCode, CancellationToken cancellationToken = default)
+		public async Task<DepartmentSsoConfig> ValidateScimBearerTokenAndGetConfigAsync(string bearerToken, int claimedDepartmentId, string departmentCode, CancellationToken cancellationToken = default)
 		{
 			try
 			{
@@ -373,24 +373,41 @@ namespace Resgrid.Services
 					return null;
 
 				var configs = await _ssoConfigRepository.GetAllByDepartmentIdAsync(claimedDepartmentId);
-				var scimConfig = configs?.FirstOrDefault(c => c.ScimEnabled && !string.IsNullOrWhiteSpace(c.EncryptedScimBearerToken));
-				if (scimConfig == null)
+				var scimConfigs = configs?
+					.Where(c => c.ScimEnabled && !string.IsNullOrWhiteSpace(c.EncryptedScimBearerToken))
+					.ToList();
+				if (scimConfigs == null || scimConfigs.Count == 0)
 					return null;
 
-				// The config was loaded specifically for claimedDepartmentId, so if
-				// the decrypted token matches we know it belongs to that department.
-				var storedToken = _encryptionService.DecryptForDepartment(
-					scimConfig.EncryptedScimBearerToken, claimedDepartmentId, departmentCode);
+				// Every SCIM-enabled configuration is a candidate, not just the first one: a department can
+				// provision more than one, and the caller needs to know which token actually authorized the
+				// request. The loop does not exit early, so the work does not vary with the match position.
+				DepartmentSsoConfig matched = null;
+				foreach (var scimConfig in scimConfigs)
+				{
+					string storedToken;
+					try
+					{
+						// The config was loaded specifically for claimedDepartmentId, so if
+						// the decrypted token matches we know it belongs to that department.
+						storedToken = _encryptionService.DecryptForDepartment(
+							scimConfig.EncryptedScimBearerToken, claimedDepartmentId, departmentCode);
+					}
+					catch (Exception ex)
+					{
+						// One unreadable blob must not disable SCIM for the department's other configurations.
+						Logging.LogException(ex,
+							$"Unable to decrypt the SCIM bearer token for config {scimConfig.DepartmentSsoConfigId}.");
+						continue;
+					}
 
-				if (!FixedTimeSecretEquals(storedToken, bearerToken))
-					return null;
+					// Double-check: the config's own DepartmentId must equal the claimed ID.
+					// This guards against any accidental data inconsistency.
+					if (FixedTimeSecretEquals(storedToken, bearerToken) && scimConfig.DepartmentId == claimedDepartmentId)
+						matched = scimConfig;
+				}
 
-				// Double-check: the config's own DepartmentId must equal the claimed ID.
-				// This guards against any accidental data inconsistency.
-				if (scimConfig.DepartmentId != claimedDepartmentId)
-					return null;
-
-				return scimConfig.DepartmentId;
+				return matched;
 			}
 			catch (Exception ex)
 			{

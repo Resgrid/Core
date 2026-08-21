@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +12,13 @@ namespace Resgrid.Model.Services
 		Task<SessionValidationResult> ValidateAsync(SessionPrincipalContext context, CancellationToken cancellationToken = default);
 		Task<UserSession> AdoptLegacyAsync(LegacySessionContext context, CancellationToken cancellationToken = default);
 		Task TouchAsync(string sessionId, RequestActivity activity, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Whether the session's recorded activity is stale enough to be worth writing. Callers that already
+		/// hold the session should gate <see cref="TouchAsync"/> on this: the write itself is guarded by the
+		/// same interval server-side, so calling through on a fresh session costs a location lookup and a
+		/// database round trip to update no rows.
+		/// </summary>
+		bool ShouldRecordActivity(UserSession session, DateTime occurredOn);
 		Task<bool> MoveSessionToDepartmentAsync(string userId, string sessionId, int departmentId,
 			CancellationToken cancellationToken = default);
 		Task<IReadOnlyList<UserSessionSummary>> GetActiveForUserAsync(string userId, CancellationToken cancellationToken = default);

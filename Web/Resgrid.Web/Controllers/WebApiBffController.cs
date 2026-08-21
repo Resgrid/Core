@@ -1,5 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,6 +11,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -68,12 +71,27 @@ namespace Resgrid.Web.Controllers
 
 			if (!HttpMethods.IsGet(Request.Method))
 			{
+				// A form-carried antiforgery token makes validation read the body. Without buffering the
+				// proxy would then forward an already-consumed stream and the upstream API would see an
+				// empty request. A header-carried token never reaches this path.
+				if (Request.HasFormContentType)
+					Request.EnableBuffering(bufferThreshold: 64 * 1024, bufferLimit: MaxRequestBodyBytes);
+
 				try { await _antiforgery.ValidateRequestAsync(HttpContext); }
 				catch (AntiforgeryValidationException)
 				{
 					Response.StatusCode = StatusCodes.Status400BadRequest;
 					return;
 				}
+				catch (IOException)
+				{
+					// The buffering limit tripped while the form was read.
+					Response.StatusCode = StatusCodes.Status413PayloadTooLarge;
+					return;
+				}
+
+				if (Request.Body.CanSeek)
+					Request.Body.Position = 0;
 			}
 
 			if (Request.ContentLength > MaxRequestBodyBytes)
@@ -196,6 +214,9 @@ namespace Resgrid.Web.Controllers
 			if (_memoryCache.TryGetValue(cacheKey, out CachedBffToken cachedToken) && cachedToken != null)
 				return cachedToken;
 
+			var authentication = await HttpContext.AuthenticateAsync();
+			var credentialIssuedOn = authentication?.Properties?.IssuedUtc;
+
 			var tokenUri = new Uri(new Uri(SystemBehaviorConfig.ResgridApiBaseUrl.TrimEnd('/') + "/"),
 				"api/v4/connect/token");
 			using var request = new HttpRequestMessage(HttpMethod.Post, tokenUri);
@@ -207,7 +228,10 @@ namespace Resgrid.Web.Controllers
 				["session_id"] = sessionId,
 				["auth_ver"] = generation,
 				["department_id"] = departmentId,
-				["token_use"] = eventingOnly ? "eventing" : "api"
+				["token_use"] = eventingOnly ? "eventing" : "api",
+				["credential_issued_on"] = credentialIssuedOn.HasValue
+					? credentialIssuedOn.Value.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture)
+					: string.Empty
 			});
 
 			using var response = await _httpClientFactory.CreateClient("ResgridWebBff")

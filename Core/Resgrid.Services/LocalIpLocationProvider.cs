@@ -1,13 +1,15 @@
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Config;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Security;
 using Resgrid.Model.Services;
 
@@ -19,28 +21,55 @@ namespace Resgrid.Services
 	/// </summary>
 	public class LocalIpLocationProvider : IIpLocationProvider
 	{
+		private static readonly TimeSpan CacheLength = TimeSpan.FromDays(1);
+
+		// The rule-set stamp is part of the key so an edited database file starts a fresh keyspace.
+		// That replaces the wholesale eviction the old process-local dictionary did on reload, which
+		// a shared cache cannot do without scanning by prefix. The address is hashed so client IPs are
+		// not written to the shared keyspace in the clear.
+		private const string LocationCacheKey = "IpLocation_{0}_{1}";
+
+		private readonly ICacheProvider _cacheProvider;
 		private readonly object _reloadLock = new object();
-		private readonly ConcurrentDictionary<string, IpLocationResult> _cache = new();
 		private IReadOnlyList<LocationRule> _rules = Array.Empty<LocationRule>();
 		private string _loadedPath;
 		private DateTime _loadedWriteTimeUtc;
 
-		public Task<IpLocationResult> GetApproximateLocationAsync(string ipAddress,
+		public LocalIpLocationProvider(ICacheProvider cacheProvider)
+		{
+			_cacheProvider = cacheProvider;
+		}
+
+		public async Task<IpLocationResult> GetApproximateLocationAsync(string ipAddress,
 			CancellationToken cancellationToken = default)
 		{
 			if (!IPAddress.TryParse(ipAddress, out var address) ||
 				string.IsNullOrWhiteSpace(SessionSecurityConfig.IpLocationDatabasePath))
-				return Task.FromResult<IpLocationResult>(null);
+				return null;
 
 			EnsureLoaded();
-			if (_cache.TryGetValue(address.ToString(), out var cached))
-				return Task.FromResult(cached.IsKnown ? cached : null);
 
-			var result = _rules.FirstOrDefault(rule => rule.Contains(address))?.Location ??
-				new IpLocationResult();
-			_cache[address.ToString()] = result;
-			return Task.FromResult(result.IsKnown ? result : null);
+			Task<IpLocationResult> resolve() => Task.FromResult(
+				_rules.FirstOrDefault(rule => rule.Contains(address))?.Location ?? new IpLocationResult());
+
+			IpLocationResult result;
+			if (SystemBehaviorConfig.CacheEnabled)
+			{
+				var cacheKey = string.Format(LocationCacheKey, _loadedWriteTimeUtc.Ticks, Hash(address.ToString()));
+				result = await _cacheProvider.RetrieveAsync(cacheKey, resolve, CacheLength);
+			}
+			else
+			{
+				result = await resolve();
+			}
+
+			// A cached "no rule matched" entry and an empty payload both deserialize to a blank
+			// instance, and here they mean the same thing, so IsKnown covers both.
+			return result != null && result.IsKnown ? result : null;
 		}
+
+		private static string Hash(string value) =>
+			Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value))).ToLowerInvariant();
 
 		private void EnsureLoaded()
 		{
@@ -76,7 +105,6 @@ namespace Resgrid.Services
 				_rules = rules.OrderByDescending(rule => rule.PrefixLength).ToList();
 				_loadedPath = path;
 				_loadedWriteTimeUtc = writeTime;
-				_cache.Clear();
 			}
 		}
 

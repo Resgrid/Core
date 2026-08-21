@@ -412,7 +412,10 @@ var resgrid;
             }
             function geocodeCoordinates(lat, lng) {
 				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng)
-                    .then(function(r) { return r.json(); })
+                    .then(function(r) {
+                        if (!r.ok) throw new Error('ReverseGeocode failed with HTTP status ' + r.status);
+                        return r.json();
+                    })
                     .then(function(result) {
                         if (result && result.Data && result.Data.Address && !userSuppliedAddress) {
                             $("#Call_Address").val(result.Data.Address);
@@ -423,7 +426,10 @@ var resgrid;
             newcall.geocodeCoordinates = geocodeCoordinates;
             function findLocation(pos) {
 				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + pos.lat + '&lon=' + pos.lng)
-                    .then(function(r) { return r.json(); })
+                    .then(function(r) {
+                        if (!r.ok) throw new Error('ReverseGeocode failed with HTTP status ' + r.status);
+                        return r.json();
+                    })
                     .then(function(result) {
                         if (result && result.Data && result.Data.Address) {
                             $("#Call_Address").val(result.Data.Address);

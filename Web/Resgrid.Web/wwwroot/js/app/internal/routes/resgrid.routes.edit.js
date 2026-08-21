@@ -372,7 +372,7 @@ $(document).ready(function () {
 				return r.json();
 			})
             .then(function (result) {
-                if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
+                if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                     setPickerLocation(result.Data.Latitude, result.Data.Longitude, false);
                 } else {
                     alert('Address not found.');

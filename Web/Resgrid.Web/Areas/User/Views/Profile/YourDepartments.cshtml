@@ -167,4 +167,17 @@
 @section Scripts
   {
   <script src="~/js/app/internal/profile/resgrid.profile.yourdepartments.js"></script>
+  <script>
+    // _UserLayout does not load jquery-ujs, so the data-confirm attributes on this page would
+    // otherwise be inert and these forms would post without asking.
+    (function () {
+      document.addEventListener('click', function (event) {
+        var element = event.target.closest('[data-confirm]');
+        if (element && !window.confirm(element.getAttribute('data-confirm'))) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+    }());
+  </script>
 }

@@ -16,6 +16,7 @@ using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Sso;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -349,6 +350,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var departmentValue = request.GetParameter("department_id").ToString();
 				var eventingOnly = string.Equals(request.GetParameter("token_use").ToString(),
 					"eventing", StringComparison.Ordinal);
+				var credentialIssuedOn = ParseUnixSeconds(request.GetParameter("credential_issued_on").ToString());
 
 				if (string.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey) ||
 					!FixedTimeSecretEquals(ApiConfig.BackendInternalApikey, suppliedKey) ||
@@ -363,7 +365,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					SessionId = sessionId,
 					AuthenticationGeneration = generation,
 					DepartmentId = departmentId,
-					CredentialIssuedOn = DateTime.UtcNow
+					// The caller's web authentication cookie is the credential here. Null when the caller
+					// did not supply its issue time, so the session service applies its own policy rather
+					// than being handed a value that trivially passes the freshness comparison.
+					CredentialIssuedOn = credentialIssuedOn
 				}, CancellationToken.None);
 				if (!validation.IsValid || validation.Session == null)
 					return InvalidGrant("The Web session could not be validated.");
@@ -406,6 +411,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					!string.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey) &&
 					FixedTimeSecretEquals(ApiConfig.BackendInternalApikey, request.ClientSecret))
 				{
+					audit.Successful = true;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+
 					var identity = new ClaimsIdentity(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
 						Claims.Name, Claims.Role);
 					identity.AddClaim(new Claim(Claims.Subject, "system_eventing")
@@ -1103,7 +1111,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				catch (ArgumentOutOfRangeException) { return null; }
 			}
 
-			return DateTime.TryParse(value, out var timestamp) ? timestamp.ToUniversalTime() : null;
+			return DateTime.TryParse(value, CultureInfo.InvariantCulture,
+				DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var timestamp)
+				? timestamp
+				: null;
+		}
+
+		private static DateTime? ParseUnixSeconds(string value)
+		{
+			if (!long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var seconds))
+				return null;
+
+			try { return DateTimeOffset.FromUnixTimeSeconds(seconds).UtcDateTime; }
+			catch (ArgumentOutOfRangeException) { return null; }
 		}
 
 		private async Task<UserSession> CreateApiSessionAsync(Model.Identity.IdentityUser user, int? departmentId,

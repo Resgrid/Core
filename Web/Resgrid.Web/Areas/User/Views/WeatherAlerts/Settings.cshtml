@@ -1,4 +1,4 @@
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @using System.Text.Json
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WeatherAlerts.WeatherAlerts> localizer
 @{
@@ -301,7 +301,8 @@
 		};
 
 		function getAntiForgeryToken() {
-			return document.querySelector('meta[name="request-verification-token"]').content;
+			var meta = document.querySelector('meta[name="request-verification-token"]');
+			return meta ? meta.content : '';
 		}
 
 		// --- Settings ---

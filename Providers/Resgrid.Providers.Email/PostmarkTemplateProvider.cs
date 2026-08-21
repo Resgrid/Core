@@ -371,8 +371,9 @@ namespace Resgrid.Providers.EmailProvider
 				newEmail.To.Add(email);
 				return await _emailSender.Send(newEmail);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				Logging.LogException(ex);
 				return false;
 			}
 		}

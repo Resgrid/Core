@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,19 +88,40 @@ namespace Resgrid.Services
 		public async Task<bool> IsLocalLoginAllowedAsync(string userId, CancellationToken cancellationToken = default)
 		{
 			var links = (await _linksRepository.GetActiveByUserAsync(userId)).ToList();
-			if (links.Count == 0)
+
+			// Legacy memberships carry their SSO link on the member row rather than in the links table.
+			// Ignoring them here would let a user whose only link is legacy pass this gate, because
+			// AccountController consults the user-scoped check before the department-scoped one.
+			var legacyDepartmentIds = (await _departmentMembersRepository.GetAllDepartmentMemberByUserIdAsync(userId))?
+				.Where(member => !member.IsDeleted &&
+					(!string.IsNullOrWhiteSpace(member.ExternalSsoId) || member.SsoLinkedOn.HasValue))
+				.Select(member => member.DepartmentId)
+				.ToHashSet() ?? new System.Collections.Generic.HashSet<int>();
+
+			if (links.Count == 0 && legacyDepartmentIds.Count == 0)
 				return true;
 
-			foreach (var departmentLinks in links.GroupBy(link => link.DepartmentId))
-			{
-				var configs = (await _ssoConfigRepository.GetAllByDepartmentIdAsync(departmentLinks.Key))?.ToList()
-					?? new System.Collections.Generic.List<DepartmentSsoConfig>();
-				var linkedConfigIds = departmentLinks.Select(link => link.DepartmentSsoConfigId)
-					.ToHashSet(StringComparer.Ordinal);
-				var applicable = configs.Where(config => config.IsEnabled &&
-					linkedConfigIds.Contains(config.DepartmentSsoConfigId)).ToList();
+			var departmentIds = links.Select(link => link.DepartmentId)
+				.Concat(legacyDepartmentIds)
+				.Distinct()
+				.ToList();
 
-				if (applicable.Count != linkedConfigIds.Count || applicable.Any(config => !config.AllowLocalLogin))
+			foreach (var departmentId in departmentIds)
+			{
+				var configs = (await _ssoConfigRepository.GetAllByDepartmentIdAsync(departmentId))?.ToList()
+					?? new System.Collections.Generic.List<DepartmentSsoConfig>();
+				var linkedConfigIds = links.Where(link => link.DepartmentId == departmentId)
+					.Select(link => link.DepartmentSsoConfigId)
+					.ToHashSet(StringComparer.Ordinal);
+				var hasLegacyLink = legacyDepartmentIds.Contains(departmentId);
+				var applicable = configs.Where(config => config.IsEnabled &&
+					(hasLegacyLink || linkedConfigIds.Contains(config.DepartmentSsoConfigId))).ToList();
+
+				// Deny by default: a link whose config is missing or disabled is an administrative
+				// repair, not a reason to silently re-enable the local password.
+				if (applicable.Count == 0 || applicable.Any(config => !config.AllowLocalLogin))
+					return false;
+				if (applicable.Count(config => linkedConfigIds.Contains(config.DepartmentSsoConfigId)) != linkedConfigIds.Count)
 					return false;
 			}
 

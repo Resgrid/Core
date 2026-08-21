@@ -1,12 +1,11 @@
-using FluentMigrator;
-using FluentMigrator.SqlServer;
+﻿using FluentMigrator;
 
 namespace Resgrid.Providers.Migrations.Migrations
 {
 	// ONLINE index operations should not be wrapped in a long migration transaction because their
 	// final schema locks can otherwise be retained until commit. Every statement is guarded for retry.
-	// ONLINE is not supported by every SQL Server edition; unsupported deployments must schedule a
-	// maintenance window and use an explicitly reviewed offline variant rather than silently blocking.
+	// SqlServerOnlineIndex resolves ONLINE support per edition at execution time, so an edition without
+	// online builds gets the same indexes offline instead of failing the migration part-way through.
 	[Migration(122, TransactionBehavior.None)]
 	public class M0122_AddUserExternalIdentityLinks : Migration
 	{
@@ -31,28 +30,18 @@ namespace Resgrid.Providers.Migrations.Migrations
 				.WithColumn("UnlinkedOn").AsDateTime2().Nullable()
 				.WithColumn("UnlinkedByUserId").AsString(128).Nullable();
 
-			if (!Schema.Table("UserExternalIdentityLinks").Index("UX_UserExternalIdentityLinks_Config_Subject").Exists())
-				Create.Index("UX_UserExternalIdentityLinks_Config_Subject")
-				.OnTable("UserExternalIdentityLinks")
-				.OnColumn("DepartmentSsoConfigId").Ascending()
-				.OnColumn("ExternalSubject").Ascending()
-				.WithOptions().Unique()
-				.WithOptions().Online();
+			// Both unique indexes are scoped to live links so a soft-unlinked row cannot permanently
+			// reserve the subject, matching the isactive predicate every read in the repository uses.
+			Execute.Sql(SqlServerOnlineIndex.Create("UX_UserExternalIdentityLinks_Config_Subject", "UserExternalIdentityLinks",
+				new[] { "[DepartmentSsoConfigId] ASC", "[ExternalSubject] ASC" }, unique: true,
+				filter: "[IsActive] = 1"));
 
-			if (!Schema.Table("UserExternalIdentityLinks").Index("UX_UserExternalIdentityLinks_User_Config").Exists())
-				Create.Index("UX_UserExternalIdentityLinks_User_Config")
-				.OnTable("UserExternalIdentityLinks")
-				.OnColumn("UserId").Ascending()
-				.OnColumn("DepartmentSsoConfigId").Ascending()
-				.WithOptions().Unique()
-				.WithOptions().Online();
+			Execute.Sql(SqlServerOnlineIndex.Create("UX_UserExternalIdentityLinks_User_Config", "UserExternalIdentityLinks",
+				new[] { "[UserId] ASC", "[DepartmentSsoConfigId] ASC" }, unique: true,
+				filter: "[IsActive] = 1"));
 
-			if (!Schema.Table("UserExternalIdentityLinks").Index("IX_UserExternalIdentityLinks_Department_Member").Exists())
-				Create.Index("IX_UserExternalIdentityLinks_Department_Member")
-				.OnTable("UserExternalIdentityLinks")
-				.OnColumn("DepartmentId").Ascending()
-				.OnColumn("DepartmentMemberId").Ascending()
-				.WithOptions().Online();
+			Execute.Sql(SqlServerOnlineIndex.Create("IX_UserExternalIdentityLinks_Department_Member", "UserExternalIdentityLinks",
+				new[] { "[DepartmentId] ASC", "[DepartmentMemberId] ASC" }));
 		}
 
 		public override void Down()

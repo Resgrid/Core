@@ -87,7 +87,12 @@ namespace Resgrid.Model.Services
 		/// to the department ID supplied in the request header (preventing token reuse
 		/// across departments). Returns null when validation fails.
 		/// </summary>
-		Task<int?> ValidateScimBearerTokenAndGetDepartmentAsync(string bearerToken, int claimedDepartmentId, string departmentCode, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Returns the SCIM-enabled configuration whose bearer token matches, or null when no token in the
+		/// claimed department matches. Callers that record which configuration authorized a request must
+		/// use the returned instance rather than re-selecting a configuration for themselves.
+		/// </summary>
+		Task<DepartmentSsoConfig> ValidateScimBearerTokenAndGetConfigAsync(string bearerToken, int claimedDepartmentId, string departmentCode, CancellationToken cancellationToken = default);
 
 		// ── Optional-feature guards ────────────────────────────────────────────
 

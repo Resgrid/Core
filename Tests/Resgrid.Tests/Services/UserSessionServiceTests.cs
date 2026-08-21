@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -142,6 +142,48 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void activity_is_not_rewritten_while_the_recorded_activity_is_still_fresh()
+		{
+			var originalInterval = SessionSecurityConfig.LastActivityWriteIntervalMinutes;
+			try
+			{
+				SessionSecurityConfig.LastActivityWriteIntervalMinutes = 5;
+				var now = DateTime.UtcNow;
+
+				Assert.That(_service.ShouldRecordActivity(
+					new UserSession { LastActiveOn = now.AddMinutes(-1) }, now), Is.False);
+				Assert.That(_service.ShouldRecordActivity(
+					new UserSession { LastActiveOn = now.AddMinutes(-6) }, now), Is.True);
+				Assert.That(_service.ShouldRecordActivity(null, now), Is.False);
+			}
+			finally
+			{
+				SessionSecurityConfig.LastActivityWriteIntervalMinutes = originalInterval;
+			}
+		}
+
+		[Test]
+		public void the_activity_write_interval_never_drops_below_a_minute()
+		{
+			var originalInterval = SessionSecurityConfig.LastActivityWriteIntervalMinutes;
+			try
+			{
+				// A zero or negative setting would otherwise make every request write.
+				SessionSecurityConfig.LastActivityWriteIntervalMinutes = 0;
+				var now = DateTime.UtcNow;
+
+				Assert.That(_service.ShouldRecordActivity(
+					new UserSession { LastActiveOn = now.AddSeconds(-30) }, now), Is.False);
+				Assert.That(_service.ShouldRecordActivity(
+					new UserSession { LastActiveOn = now.AddSeconds(-90) }, now), Is.True);
+			}
+			finally
+			{
+				SessionSecurityConfig.LastActivityWriteIntervalMinutes = originalInterval;
+			}
+		}
+
+		[Test]
 		public void policy_gate_denies_a_new_session_at_the_department_limit()
 		{
 			var gate = DateTime.UtcNow.AddMinutes(-5);
@@ -150,11 +192,9 @@ namespace Resgrid.Tests.Services
 				.ReturnsAsync(new DepartmentMember {UserId = "user-1", DepartmentId = 22});
 			_departmentSso.Setup(x => x.GetSecurityPolicyForDepartmentAsync(22, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new DepartmentSecurityPolicy {DepartmentId = 22, MaxConcurrentSessions = 1});
-			_sessions.Setup(x => x.GetActiveByUserAsync("user-1", It.IsAny<DateTime>()))
-				.ReturnsAsync(new[]
-				{
-					new UserSession {UserId = "user-1", DepartmentId = 22, CreatedOn = gate.AddMinutes(1)}
-				});
+			_sessions.Setup(x => x.TryInsertWithinDepartmentSessionLimitAsync(It.IsAny<UserSession>(), 22,
+					It.IsAny<DateTime>(), 1, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(false);
 
 			Assert.ThrowsAsync<SessionCreationDeniedException>(() => _service.CreateSessionAsync(new SessionIssueContext
 			{
@@ -162,6 +202,36 @@ namespace Resgrid.Tests.Services
 				DepartmentId = 22,
 				ExpiresOn = DateTime.UtcNow.AddHours(1)
 			}));
+
+			// The limit is enforced by the insert, not by a separate count that could go stale.
+			_sessions.Verify(x => x.InsertAsync(It.IsAny<UserSession>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()),
+				Times.Never);
+		}
+
+		[Test]
+		public async Task policy_gate_admits_a_new_session_when_the_atomic_insert_succeeds()
+		{
+			var gate = DateTime.UtcNow.AddMinutes(-5);
+			SessionSecurityConfig.DepartmentSessionPolicyEnforcementAfterUtc = gate.ToString("O");
+			_departments.Setup(x => x.GetDepartmentMemberAsync("user-1", 22, true))
+				.ReturnsAsync(new DepartmentMember {UserId = "user-1", DepartmentId = 22});
+			_departmentSso.Setup(x => x.GetSecurityPolicyForDepartmentAsync(22, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new DepartmentSecurityPolicy {DepartmentId = 22, MaxConcurrentSessions = 2});
+			_sessions.Setup(x => x.TryInsertWithinDepartmentSessionLimitAsync(It.IsAny<UserSession>(), 22,
+					It.IsAny<DateTime>(), 2, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(true);
+
+			var session = await _service.CreateSessionAsync(new SessionIssueContext
+			{
+				UserId = "user-1",
+				DepartmentId = 22,
+				ExpiresOn = DateTime.UtcNow.AddHours(1)
+			});
+
+			Assert.That(session, Is.Not.Null);
+			Assert.That(session.DepartmentId, Is.EqualTo(22));
+			_sessions.Verify(x => x.TryInsertWithinDepartmentSessionLimitAsync(It.IsAny<UserSession>(), 22,
+				It.IsAny<DateTime>(), 2, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]

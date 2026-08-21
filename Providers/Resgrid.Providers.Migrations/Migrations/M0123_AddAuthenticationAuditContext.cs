@@ -1,9 +1,10 @@
-using FluentMigrator;
+﻿using FluentMigrator;
 
 namespace Resgrid.Providers.Migrations.Migrations
 {
 	// Keep the SQL Server audit investigation path aligned with PostgreSQL. ONLINE index creation
-	// avoids blocking audit writes, but requires a SQL Server edition that supports online builds.
+	// avoids blocking audit writes; SqlServerOnlineIndex resolves whether this edition supports it at
+	// execution time and falls back to the same index built offline where it does not.
 	[Migration(123, TransactionBehavior.None)]
 	public class M0123_AddAuthenticationAuditContext : Migration
 	{
@@ -16,11 +17,9 @@ namespace Resgrid.Providers.Migrations.Migrations
 			if (!Schema.Table("SystemAudits").Column("CorrelationId").Exists())
 				Alter.Table("SystemAudits").AddColumn("CorrelationId").AsString(128).Nullable();
 
-			if (!Schema.Table("SystemAudits").Index("IX_SystemAudits_TargetUserId_LoggedOn").Exists())
-				Execute.Sql(@"CREATE INDEX IX_SystemAudits_TargetUserId_LoggedOn
-					ON SystemAudits (TargetUserId ASC, LoggedOn DESC, SystemAuditId DESC)
-					WHERE TargetUserId IS NOT NULL
-					WITH (ONLINE = ON);");
+			Execute.Sql(SqlServerOnlineIndex.Create("IX_SystemAudits_TargetUserId_LoggedOn", "SystemAudits",
+				new[] { "[TargetUserId] ASC", "[LoggedOn] DESC", "[SystemAuditId] DESC" },
+				filter: "[TargetUserId] IS NOT NULL"));
 		}
 
 		public override void Down()

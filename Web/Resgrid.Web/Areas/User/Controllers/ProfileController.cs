@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -1290,7 +1290,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private async Task<bool> IsSsoManagedAsync(string userId, DepartmentMember member = null)
 		{
 			var state = await _externalIdentityLinkService.GetSsoManagementStateAsync(userId);
-			if (state.IsSsoManaged)
+			if (state == null || state.IsSsoManaged)
 				return true;
 
 			member ??= await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
@@ -1432,7 +1432,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					user, cancellationToken);
 				if (canKeepCurrentSession &&
 					!await RenewPrincipalForDepartmentAsync(user, remainingDepartment.DepartmentId, cancellationToken))
+				{
+					// The active department has already moved but this principal still describes the old
+					// one. Sign out rather than leave the two disagreeing; the next sign-in rebuilds both.
+					await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 					return Unauthorized();
+				}
 			}
 
 			if (departmentToRemove.IsDefault)

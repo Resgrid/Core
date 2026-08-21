@@ -1,4 +1,4 @@
-using FluentMigrator;
+﻿using FluentMigrator;
 
 namespace Resgrid.Providers.MigrationsPg.Migrations
 {
@@ -34,8 +34,9 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 
 			// Use raw IF NOT EXISTS statements so they execute after invalid-index cleanup. FluentMigrator
 			// evaluates Schema.Index.Exists while collecting expressions, before the cleanup SQL runs.
-			Execute.Sql("CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS ux_userexternalidentitylinks_config_subject ON userexternalidentitylinks (departmentssoconfigid, externalsubject);");
-			Execute.Sql("CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS ux_userexternalidentitylinks_user_config ON userexternalidentitylinks (userid, departmentssoconfigid);");
+			// Partial, matching the SQL Server filtered indexes and the isactive predicate every read uses.
+			Execute.Sql("CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS ux_userexternalidentitylinks_config_subject ON userexternalidentitylinks (departmentssoconfigid, externalsubject) WHERE isactive;");
+			Execute.Sql("CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS ux_userexternalidentitylinks_user_config ON userexternalidentitylinks (userid, departmentssoconfigid) WHERE isactive;");
 			Execute.Sql("CREATE INDEX CONCURRENTLY IF NOT EXISTS ix_userexternalidentitylinks_department_member ON userexternalidentitylinks (departmentid, departmentmemberid);");
 		}
 

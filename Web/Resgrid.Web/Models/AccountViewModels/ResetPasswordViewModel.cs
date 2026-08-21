@@ -7,7 +7,7 @@ namespace Resgrid.Web.Models.AccountViewModels
     public class ResetPasswordViewModel
     {
         [Required]
-		[StringLength(100, ErrorMessage = "The {0} must be at least 8 characters long.", MinimumLength = 8)]
+		[StringLength(100, MinimumLength = 8)]
 		[PasswordComplexity(MinLength = 8, RequireUppercase = true, RequireLowercase = true, RequireDigit = true, RequireSpecialChar = false)]
         [DataType(DataType.Password)]
         public string Password { get; set; }

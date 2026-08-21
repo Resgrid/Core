@@ -83,9 +83,8 @@ namespace Resgrid.Services
 		{
 			try
 			{
-				await _emailProvider.SendPasswordRecoveryMail(name, emailAddress, departmentName,
+				return await _emailProvider.SendPasswordRecoveryMail(name, emailAddress, departmentName,
 					resetUrl, ipAddress, userAgent, requestedOn.ToString("u"), isSsoManaged);
-				return true;
 			}
 			catch (Exception ex)
 			{
@@ -100,8 +99,7 @@ namespace Resgrid.Services
 		{
 			try
 			{
-				await _emailProvider.SendPasswordChangedByAdministratorMail(name, userName, emailAddress, departmentName);
-				return true;
+				return await _emailProvider.SendPasswordChangedByAdministratorMail(name, userName, emailAddress, departmentName);
 			}
 			catch (Exception ex)
 			{

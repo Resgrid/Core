@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Resgrid.Framework;
@@ -14,13 +13,18 @@ namespace Resgrid.Providers.Bus
 	public class SignalrProvider : ISignalrProvider
 	{
 		private static HubConnection _hubConnection;
-		private static readonly SemaphoreSlim TokenLock = new SemaphoreSlim(1, 1);
-		private static string _accessToken;
-		private static DateTime _accessTokenRefreshOn;
+
+		// One minute short of the five-minute lifetime the token endpoint mints for this client, so a
+		// token handed out at the end of the window still has usable life left on it.
+		private static readonly TimeSpan AccessTokenCacheLength = TimeSpan.FromMinutes(4);
+		private const string AccessTokenCacheKey = "SignalrEventingAccessToken";
 		//private static IHubProxy _eventingHubProxy;
 
-		public SignalrProvider()
+		private readonly ICacheProvider _cacheProvider;
+
+		public SignalrProvider(ICacheProvider cacheProvider)
 		{
+			_cacheProvider = cacheProvider;
 			Create();
 		}
 
@@ -118,51 +122,48 @@ namespace Resgrid.Providers.Bus
 			//};
 		}
 
-		private static async Task<string> GetAccessTokenAsync()
+		private async Task<string> GetAccessTokenAsync()
 		{
-			if (!string.IsNullOrWhiteSpace(_accessToken) && _accessTokenRefreshOn > DateTime.UtcNow)
-				return _accessToken;
 			if (string.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 				return null;
 
-			await TokenLock.WaitAsync();
-			try
-			{
-				if (!string.IsNullOrWhiteSpace(_accessToken) && _accessTokenRefreshOn > DateTime.UtcNow)
-					return _accessToken;
+			// Cache-aside through the shared provider, so every process works from the same token
+			// instead of each one minting its own. A failed request returns null, which the provider
+			// does not write back, so the next caller retries immediately.
+			var accessToken = await _cacheProvider.RetrieveAsync(AccessTokenCacheKey,
+				RequestAccessTokenAsync, AccessTokenCacheLength);
 
-				using var handler = new HttpClientHandler();
-				if (Config.ApiConfig.BypassSslChecks)
-					handler.ServerCertificateCustomValidationCallback =
-						HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-				using var client = new HttpClient(handler);
-				using var request = new HttpRequestMessage(HttpMethod.Post,
-					$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl.TrimEnd('/')}/api/v4/connect/token")
+			return string.IsNullOrWhiteSpace(accessToken) ? null : accessToken;
+		}
+
+		private static async Task<string> RequestAccessTokenAsync()
+		{
+			using var handler = new HttpClientHandler();
+			if (Config.ApiConfig.BypassSslChecks)
+				handler.ServerCertificateCustomValidationCallback =
+					HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+			// The SignalR handshake waits on this call, so the 100-second default would hold a
+			// connection attempt open against an unresponsive token endpoint.
+			using var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(15) };
+			using var request = new HttpRequestMessage(HttpMethod.Post,
+				$"{Config.SystemBehaviorConfig.ResgridApiBaseUrl.TrimEnd('/')}/api/v4/connect/token")
+			{
+				Content = new FormUrlEncodedContent(new Dictionary<string, string>
 				{
-					Content = new FormUrlEncodedContent(new Dictionary<string, string>
-					{
-						["grant_type"] = "client_credentials",
-						["client_id"] = "resgrid_eventing",
-						["client_secret"] = Config.ApiConfig.BackendInternalApikey
-					})
-				};
-				using var response = await client.SendAsync(request);
-				if (!response.IsSuccessStatusCode)
-					return null;
+					["grant_type"] = "client_credentials",
+					["client_id"] = "resgrid_eventing",
+					["client_secret"] = Config.ApiConfig.BackendInternalApikey
+				})
+			};
+			using var response = await client.SendAsync(request);
+			if (!response.IsSuccessStatusCode)
+				return null;
 
-				await using var stream = await response.Content.ReadAsStreamAsync();
-				using var json = await JsonDocument.ParseAsync(stream);
-				if (!json.RootElement.TryGetProperty("access_token", out var tokenElement))
-					return null;
-
-				_accessToken = tokenElement.GetString();
-				_accessTokenRefreshOn = DateTime.UtcNow.AddMinutes(4);
-				return _accessToken;
-			}
-			finally
-			{
-				TokenLock.Release();
-			}
+			await using var stream = await response.Content.ReadAsStreamAsync();
+			using var json = await JsonDocument.ParseAsync(stream);
+			return json.RootElement.TryGetProperty("access_token", out var tokenElement)
+				? tokenElement.GetString()
+				: null;
 		}
 
 		private async Task Connect()

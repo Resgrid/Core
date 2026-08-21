@@ -1,4 +1,4 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model.Security;
 
@@ -15,6 +15,11 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<PasswordRecoveryLookupResult> GetAsync(string token, CancellationToken cancellationToken = default);
 		Task<bool> TryConsumeAsync(string token, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Clears the single-use marker set by <see cref="TryConsumeAsync"/> so the grant can be presented
+		/// again within its original lifetime. Used when the work the grant authorized did not complete.
+		/// </summary>
+		Task ReleaseAsync(string token, CancellationToken cancellationToken = default);
 		Task RemoveAsync(string token, CancellationToken cancellationToken = default);
 	}
 }

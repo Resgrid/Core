@@ -8,9 +8,13 @@
             window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
 
             if (/^[A-Za-z0-9_-]{40,64}$/.test(token)) {
-                document.getElementById('recovery-fragment-token').value = token;
-                document.getElementById('recovery-fragment-form').submit();
-                return;
+                var tokenInput = document.getElementById('recovery-fragment-token');
+                var tokenForm = document.getElementById('recovery-fragment-form');
+                if (tokenInput && tokenForm) {
+                    tokenInput.value = token;
+                    tokenForm.submit();
+                    return;
+                }
             }
         }
 

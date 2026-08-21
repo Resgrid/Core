@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -94,6 +94,11 @@ namespace Resgrid.Services
 
 			var lifetime = TimeSpan.FromMinutes(Math.Max(5, SessionSecurityConfig.PublicResetLinkLifetimeMinutes));
 			return await _cacheProvider.IncrementAsync(GetUsedKey(token), lifetime) == 1;
+		}
+
+		public async Task ReleaseAsync(string token, CancellationToken cancellationToken = default)
+		{
+			await _cacheProvider.RemoveAsync(GetUsedKey(token));
 		}
 
 		public async Task RemoveAsync(string token, CancellationToken cancellationToken = default)

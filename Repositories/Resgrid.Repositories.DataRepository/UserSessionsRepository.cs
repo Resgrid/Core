@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -51,6 +51,131 @@ namespace Resgrid.Repositories.DataRepository
 				: $"SELECT * FROM {_table} WHERE [OpenIddictAuthorizationId] = @AuthorizationId";
 			return WithConnectionAsync(connection => connection.QueryFirstOrDefaultAsync<UserSession>(
 				sql, new { AuthorizationId = authorizationId }, _unitOfWork?.Transaction));
+		}
+
+		/// <summary>
+		/// Enforces the department's MaxConcurrentSessions limit and inserts the session as one serialized
+		/// unit of work, closing the check-then-insert race two simultaneous logins would otherwise win.
+		/// SQL Server holds a range lock on the counted key range (UPDLOCK, HOLDLOCK); PostgreSQL serializes
+		/// on a transaction-scoped advisory lock keyed to the user and department.
+		/// </summary>
+		public async Task<bool> TryInsertWithinDepartmentSessionLimitAsync(UserSession session, int departmentId,
+			DateTime policyGateOn, int maxConcurrentSessions, DateTime utcNow, CancellationToken cancellationToken)
+		{
+			if (session == null)
+				throw new ArgumentNullException(nameof(session));
+			if (maxConcurrentSessions <= 0)
+				throw new ArgumentOutOfRangeException(nameof(maxConcurrentSessions));
+
+			Utf8WriteGuard.Sanitize(session);
+
+			var parameters = new DynamicParameters(session);
+			parameters.Add("LimitDepartmentId", departmentId);
+			parameters.Add("PolicyGateOn", policyGateOn);
+			parameters.Add("MaxConcurrentSessions", maxConcurrentSessions);
+			parameters.Add("UtcNow", utcNow);
+			parameters.Add("ActiveState", (int)UserSessionState.Active);
+
+			// The lock key must be stable across processes, so it cannot use string.GetHashCode (randomized
+			// per process). PostgreSQL stores userid as citext, so the key is folded to lower case to keep
+			// two differently-cased spellings of the same user on the same lock.
+			var lockKey = StableLockKey($"usersessions:{session.UserId?.ToLowerInvariant()}:{departmentId}");
+
+			if (_unitOfWork?.Connection != null)
+			{
+				var ambient = _unitOfWork.CreateOrGetConnection();
+
+				// An ambient transaction already provides the scope the locks need; joining it also keeps the
+				// caller's rollback semantics. Without one, a short local transaction is opened instead, because
+				// the PostgreSQL advisory lock is released the moment its transaction ends.
+				if (_unitOfWork.Transaction != null)
+					return await GuardedInsertAsync(ambient, _unitOfWork.Transaction, parameters, lockKey, cancellationToken);
+
+				using var ambientScope = await ambient.BeginTransactionAsync(cancellationToken);
+				var ambientInserted = await GuardedInsertAsync(ambient, ambientScope, parameters, lockKey, cancellationToken);
+				await ambientScope.CommitAsync(cancellationToken);
+				return ambientInserted;
+			}
+
+			using var connection = _connectionProvider.Create();
+			await connection.OpenAsync(cancellationToken);
+
+			// Own transaction so the count and the insert cannot be interleaved by another login. Disposing
+			// without a commit rolls back, so a failure between the two statements leaves no partial state.
+			using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+			var inserted = await GuardedInsertAsync(connection, transaction, parameters, lockKey, cancellationToken);
+			await transaction.CommitAsync(cancellationToken);
+			return inserted;
+		}
+
+		private async Task<bool> GuardedInsertAsync(DbConnection connection, DbTransaction transaction,
+			DynamicParameters parameters, long lockKey, CancellationToken cancellationToken)
+		{
+			if (_isPostgres)
+			{
+				// Advisory lock is released when the enclosing transaction ends; it only serializes logins
+				// for this user and department and never blocks reads of the table.
+				await connection.ExecuteAsync(new Dapper.CommandDefinition("SELECT pg_advisory_xact_lock(@LockKey);",
+					new { LockKey = lockKey }, transaction, cancellationToken: cancellationToken));
+			}
+
+			var columns = _isPostgres
+				? @"usersessionid, userid, departmentid, authenticationgeneration, state, stateversion,
+					clientapplication, clientinstanceidhash, devicename, devicetype, operatingsystem, browser,
+					applicationversion, authenticationmethod, departmentssoconfigid, openiddictauthorizationid,
+					webcookieticketkey, createdon, lastactiveon, expireson, firstipaddress, lastipaddress,
+					lastcountry, lastregion, lastcity, useragent, islegacyadopted, revokedon, revokedbyuserid,
+					revocationreason"
+				: @"[UserSessionId], [UserId], [DepartmentId], [AuthenticationGeneration], [State], [StateVersion],
+					[ClientApplication], [ClientInstanceIdHash], [DeviceName], [DeviceType], [OperatingSystem], [Browser],
+					[ApplicationVersion], [AuthenticationMethod], [DepartmentSsoConfigId], [OpenIddictAuthorizationId],
+					[WebCookieTicketKey], [CreatedOn], [LastActiveOn], [ExpiresOn], [FirstIpAddress], [LastIpAddress],
+					[LastCountry], [LastRegion], [LastCity], [UserAgent], [IsLegacyAdopted], [RevokedOn], [RevokedByUserId],
+					[RevocationReason]";
+
+			const string values = @"@UserSessionId, @UserId, @DepartmentId, @AuthenticationGeneration, @State, @StateVersion,
+					@ClientApplication, @ClientInstanceIdHash, @DeviceName, @DeviceType, @OperatingSystem, @Browser,
+					@ApplicationVersion, @AuthenticationMethod, @DepartmentSsoConfigId, @OpenIddictAuthorizationId,
+					@WebCookieTicketKey, @CreatedOn, @LastActiveOn, @ExpiresOn, @FirstIpAddress, @LastIpAddress,
+					@LastCountry, @LastRegion, @LastCity, @UserAgent, @IsLegacyAdopted, @RevokedOn, @RevokedByUserId,
+					@RevocationReason";
+
+			// The counted set mirrors the policy rule exactly: active, unexpired sessions this user holds in
+			// the department that were created on or after the policy gate.
+			var countSql = _isPostgres
+				? $@"SELECT COUNT(*) FROM {_table}
+					WHERE userid = @UserId AND departmentid = @LimitDepartmentId AND state = @ActiveState
+						AND expireson > @UtcNow AND createdon >= @PolicyGateOn"
+				: $@"SELECT COUNT(*) FROM {_table} WITH (UPDLOCK, HOLDLOCK)
+					WHERE [UserId] = @UserId AND [DepartmentId] = @LimitDepartmentId AND [State] = @ActiveState
+						AND [ExpiresOn] > @UtcNow AND [CreatedOn] >= @PolicyGateOn";
+
+			var sql = $@"INSERT INTO {_table} ({columns})
+				SELECT {values}
+				WHERE ({countSql}) < @MaxConcurrentSessions;";
+
+			var rows = await connection.ExecuteAsync(new Dapper.CommandDefinition(sql, parameters, transaction,
+				cancellationToken: cancellationToken));
+			return rows > 0;
+		}
+
+		private static long StableLockKey(string value)
+		{
+			// FNV-1a 64-bit: deterministic across processes and runtime versions.
+			unchecked
+			{
+				const ulong offsetBasis = 14695981039346656037;
+				const ulong prime = 1099511628211;
+
+				var hash = offsetBasis;
+				foreach (var character in value ?? string.Empty)
+				{
+					hash ^= character;
+					hash *= prime;
+				}
+
+				return (long)hash;
+			}
 		}
 
 		public Task<int> TouchAsync(string sessionId, DateTime occurredOn, DateTime writeBefore, string ipAddress,

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -45,6 +45,8 @@ namespace Resgrid.Services
 				throw new ArgumentException("A user is required to create a session.", nameof(context));
 
 			var now = DateTime.UtcNow;
+			var concurrentSessionLimit = 0;
+			var concurrencyGateOn = DateTime.MinValue;
 			if (context.DepartmentId.HasValue)
 			{
 				var member = await _departmentsService.GetDepartmentMemberAsync(context.UserId,
@@ -58,11 +60,10 @@ namespace Resgrid.Services
 						context.DepartmentId.Value, cancellationToken);
 					if (policy?.MaxConcurrentSessions > 0)
 					{
-						var activeSessions = await _sessionsRepository.GetActiveByUserAsync(context.UserId, now);
-						var managedCount = activeSessions.Count(session =>
-							session.DepartmentId == context.DepartmentId && session.CreatedOn >= policyGate);
-						if (managedCount >= policy.MaxConcurrentSessions)
-							throw new SessionCreationDeniedException("maximum_sessions");
+						// Deliberately not checked here: counting now and inserting later lets two concurrent
+						// logins both see room and both insert. The limit is enforced by the insert itself below.
+						concurrentSessionLimit = policy.MaxConcurrentSessions;
+						concurrencyGateOn = policyGate;
 					}
 				}
 			}
@@ -102,8 +103,34 @@ namespace Resgrid.Services
 				IsLegacyAdopted = context.IsLegacyAdopted
 			};
 
+			if (concurrentSessionLimit > 0)
+			{
+				// Single atomic operation: the department's managed active sessions are counted and the row is
+				// inserted under one lock, so the limit cannot be exceeded by simultaneous logins.
+				var inserted = await _sessionsRepository.TryInsertWithinDepartmentSessionLimitAsync(session,
+					context.DepartmentId.Value, concurrencyGateOn, concurrentSessionLimit, now, cancellationToken);
+				if (!inserted)
+					throw new SessionCreationDeniedException("maximum_sessions");
+
+				return session;
+			}
+
 			return await _sessionsRepository.InsertAsync(session, cancellationToken, true);
 		}
+
+		public bool ShouldRecordActivity(UserSession session, DateTime occurredOn)
+		{
+			if (session == null)
+				return false;
+
+			// Exactly the predicate the UPDATE carries, so a caller that skips here would only have
+			// issued a statement that matched no rows.
+			return session.LastActiveOn <= ActivityWriteBefore(
+				occurredOn == default ? DateTime.UtcNow : occurredOn);
+		}
+
+		private static DateTime ActivityWriteBefore(DateTime occurredOn) =>
+			occurredOn.AddMinutes(-Math.Max(1, SessionSecurityConfig.LastActivityWriteIntervalMinutes));
 
 		public async Task<SessionValidationResult> ValidateAsync(SessionPrincipalContext context, CancellationToken cancellationToken = default)
 		{
@@ -190,7 +217,7 @@ namespace Resgrid.Services
 				return;
 
 			var occurredOn = activity.OccurredOn == default ? DateTime.UtcNow : activity.OccurredOn;
-			var writeBefore = occurredOn.AddMinutes(-Math.Max(1, SessionSecurityConfig.LastActivityWriteIntervalMinutes));
+			var writeBefore = ActivityWriteBefore(occurredOn);
 			var location = await ResolveLocationAsync(activity.IpAddress, activity.Country, activity.Region,
 				activity.City, cancellationToken);
 			await _sessionsRepository.TouchAsync(sessionId, occurredOn, writeBefore,

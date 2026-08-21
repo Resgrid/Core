@@ -41,7 +41,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<ICacheProvider> _cacheProvider;
 		private ChatController _controller;
 		private Activity _activity;
-		private string _chatEnabledCacheValue;
+		private bool? _chatEnabledCacheValue;
 
 		[SetUp]
 		public void SetUp()
@@ -57,11 +57,16 @@ namespace Resgrid.Tests.Web.Services
 			_authorizationService = new Mock<IAuthorizationService>();
 			_authorizationService.Setup(x => x.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(true);
 			_cacheProvider = new Mock<ICacheProvider>();
-			_cacheProvider.Setup(x => x.GetStringAsync(It.IsAny<string>())).ReturnsAsync(() => _chatEnabledCacheValue);
 			_cacheProvider
-				.Setup(x => x.SetStringAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<TimeSpan>()))
-				.Callback<string, string, TimeSpan>((key, value, expiration) => _chatEnabledCacheValue = value)
-				.ReturnsAsync(true);
+				.Setup(x => x.RetrieveAsync<bool>(It.IsAny<string>(), It.IsAny<Func<Task<bool>>>(), It.IsAny<TimeSpan>()))
+				.Returns(async (string key, Func<Task<bool>> fallback, TimeSpan expiration) =>
+				{
+					if (_chatEnabledCacheValue.HasValue)
+						return _chatEnabledCacheValue.Value;
+
+					_chatEnabledCacheValue = await fallback();
+					return _chatEnabledCacheValue.Value;
+				});
 
 			_chatPermissionService.Setup(x => x.CanSendAsUnitAsync(UserId, UnitId, DepartmentId)).ReturnsAsync(true);
 
@@ -188,8 +193,25 @@ namespace Resgrid.Tests.Web.Services
 				x => x.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>()),
 				Times.Once);
 			_cacheProvider.Verify(
-				x => x.SetStringAsync("chat:enabled:10:requester-user", "1", TimeSpan.FromSeconds(30)),
-				Times.Once);
+				x => x.RetrieveAsync<bool>("chat:enabled:10:requester-user", It.IsAny<Func<Task<bool>>>(), TimeSpan.FromSeconds(30)),
+				Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task CreateIncidentCommanderLine_ReusesTheShortLivedChatDisabledResult()
+		{
+			_authorizationService.Setup(x => x.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(false);
+			var input = new CreateIncidentCommanderLineInput { CallId = CallId, AsUnitId = UnitId };
+
+			var first = await _controller.CreateIncidentCommanderLine(input, CancellationToken.None);
+			var second = await _controller.CreateIncidentCommanderLine(input, CancellationToken.None);
+
+			first.Result.Should().BeOfType<NotFoundResult>();
+			second.Result.Should().BeOfType<NotFoundResult>();
+			_authorizationService.Verify(x => x.IsUserValidWithinLimitsAsync(UserId, DepartmentId), Times.Once);
+			_featureToggleService.Verify(
+				x => x.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>()),
+				Times.Never);
 		}
 	}
 }

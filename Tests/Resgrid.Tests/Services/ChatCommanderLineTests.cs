@@ -74,6 +74,15 @@ namespace Resgrid.Tests.Services
 					.ReturnsAsync((int _, IEnumerable<string> ids) => ids == null
 						? new HashSet<string>()
 						: new HashSet<string>(ids, StringComparer.OrdinalIgnoreCase));
+				departmentsServiceMock
+					.Setup(x => x.GetAllMembersForDepartmentUnlimitedAsync(DepartmentId, It.IsAny<bool>()))
+					.ReturnsAsync(new List<DepartmentMember>
+					{
+						new DepartmentMember { DepartmentId = DepartmentId, UserId = TestData.Users.TestUser1Id },
+						new DepartmentMember { DepartmentId = DepartmentId, UserId = TestData.Users.TestUser2Id },
+						new DepartmentMember { DepartmentId = DepartmentId, UserId = TestData.Users.TestUser3Id },
+						new DepartmentMember { DepartmentId = DepartmentId, UserId = TestData.Users.TestUser4Id }
+					});
 
 				_authorizationServiceMock.Setup(x => x.CanUserModifyDepartmentAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(false);
 				_authorizationServiceMock.Setup(x => x.IsUserValidWithinLimitsAsync(It.IsAny<string>(), DepartmentId)).ReturnsAsync(true);

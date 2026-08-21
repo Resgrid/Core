@@ -109,9 +109,9 @@ namespace Resgrid.Providers.Cache
 
 
 		public async Task<T> RetrieveAsync<T>(string cacheKey, Func<Task<T>> fallbackFunction, TimeSpan expiration)
-			where T : class
 		{
-			T data = null;
+			T data = default;
+			var hasCachedData = false;
 			IDatabase cache = null;
 
 			try
@@ -125,16 +125,20 @@ namespace Resgrid.Providers.Cache
 					try
 					{
 						if (cacheValue.HasValue)
+						{
 							data = ObjectSerialization.Deserialize<T>(cacheValue);
+							hasCachedData = data is not null;
+						}
 					}
 					catch (Exception deserializeEx)
 					{
 						Logging.LogException(deserializeEx);
 						await RemoveAsync(cacheKey);
-						data = null;
+						data = default;
+						hasCachedData = false;
 					}
 
-					if (data != null)
+					if (hasCachedData)
 						return data;
 				}
 			}
@@ -154,7 +158,7 @@ namespace Resgrid.Providers.Cache
 
 			if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
 			{
-				if (data != null && cache != null)
+				if (data is not null && cache != null)
 				{
 					try
 					{

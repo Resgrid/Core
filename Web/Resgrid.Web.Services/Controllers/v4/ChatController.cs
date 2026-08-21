@@ -1755,18 +1755,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return false;
 
 			var cacheKey = $"chat:enabled:{departmentId}:{userId.ToLowerInvariant()}";
-			var cached = await _cacheProvider.GetStringAsync(cacheKey);
 
-			if (String.Equals(cached, "1", StringComparison.Ordinal))
-				return true;
-			if (String.Equals(cached, "0", StringComparison.Ordinal))
-				return false;
+			async Task<bool> isChatEnabled()
+			{
+				return await _authorizationService.IsUserValidWithinLimitsAsync(userId, departmentId) &&
+					await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, departmentId);
+			}
 
-			var enabled = await _authorizationService.IsUserValidWithinLimitsAsync(userId, departmentId) &&
-				await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, departmentId);
-
-			await _cacheProvider.SetStringAsync(cacheKey, enabled ? "1" : "0", ChatEnabledCacheLength);
-			return enabled;
+			return await _cacheProvider.RetrieveAsync<bool>(cacheKey, isChatEnabled, ChatEnabledCacheLength);
 		}
 
 		/// <summary>

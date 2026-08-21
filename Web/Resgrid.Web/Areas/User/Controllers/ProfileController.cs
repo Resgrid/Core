@@ -1088,7 +1088,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Successful = true,
 					Data = auditData
 				}, cancellationToken);
-				PublishPasswordResetAudit(auditData, true);
+				PublishPasswordResetAudit(model.UserId, auditData, true);
 
 				if (model.EmailUser)
 					await _emailService.SendPasswordChangedByAdministratorEmail(model.Email, model.Name,
@@ -1116,7 +1116,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Successful = false,
 				Data = auditData
 			}, cancellationToken);
-			PublishPasswordResetAudit(auditData, false);
+			PublishPasswordResetAudit(model.UserId, auditData, false);
 
 			return View(model);
 		}
@@ -1211,7 +1211,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Successful = successful,
 				Data = auditData
 			}, cancellationToken);
-			PublishPasswordResetAudit(auditData, successful);
+			PublishPasswordResetAudit(user.Id, auditData, successful);
 
 			if (!issued || !emailSent)
 			{
@@ -1251,12 +1251,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			});
 		}
 
-		private void PublishPasswordResetAudit(string auditData, bool successful)
+		private void PublishPasswordResetAudit(string targetUserId, string auditData, bool successful)
 		{
 			_eventAggregator.SendMessage(new AuditEvent
 			{
 				DepartmentId = DepartmentId,
 				UserId = UserId,
+				TargetUserId = targetUserId,
 				Type = AuditLogTypes.PasswordResetByAdministrator,
 				After = auditData,
 				IpAddress = IpAddressHelper.GetRequestIP(Request, true),

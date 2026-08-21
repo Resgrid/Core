@@ -39,6 +39,13 @@ namespace Resgrid.Model.Events
 		[ProtoMember(11)]
 		public bool Successful { get; set; }
 
+		/// <summary>
+		/// The user the action was performed on, when that differs from the actor. Recorded on the audit
+		/// row as ObjectId so a privileged action can be queried by its subject and not just its actor.
+		/// </summary>
+		[ProtoMember(12)]
+		public string TargetUserId { get; set; }
+
 		public AuditEvent()
 		{
 			EventId = Guid.NewGuid().ToString();

@@ -26,6 +26,7 @@
 		AllSessionsRevoked = 21,
 		ExternalIdentityLinked = 22,
 		ExternalIdentityUnlinked = 23,
-		PasswordResetLinkSentByAdministrator = 24
+		PasswordResetLinkSentByAdministrator = 24,
+		SessionHistoryPurged = 25
 	}
 }

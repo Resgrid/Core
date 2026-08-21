@@ -162,6 +162,11 @@ namespace Resgrid.Repositories.DataRepository
 		private static long StableLockKey(string value)
 		{
 			// FNV-1a 64-bit: deterministic across processes and runtime versions.
+			// The unchecked block is load-bearing, not an oversight. Wrapping multiplication IS the FNV
+			// algorithm, and the final cast reinterprets the full 64-bit width rather than converting a
+			// magnitude - roughly half of all hashes have the high bit set and exceed long.MaxValue.
+			// pg_advisory_xact_lock takes a bigint, so every one of those bit patterns is a valid key.
+			// Making either operation checked would throw on ordinary input.
 			unchecked
 			{
 				const ulong offsetBasis = 14695981039346656037;

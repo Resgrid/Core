@@ -161,9 +161,14 @@ namespace Resgrid.Providers.Bus
 
 			await using var stream = await response.Content.ReadAsStreamAsync();
 			using var json = await JsonDocument.ParseAsync(stream);
-			return json.RootElement.TryGetProperty("access_token", out var tokenElement)
+			var accessToken = json.RootElement.TryGetProperty("access_token", out var tokenElement)
 				? tokenElement.GetString()
 				: null;
+
+			// An empty or whitespace token is still a non-null value, which the cache provider would
+			// write back and then hand to every caller for the full duration. Normalize it to null so
+			// nothing is cached and the next caller retries instead.
+			return string.IsNullOrWhiteSpace(accessToken) ? null : accessToken;
 		}
 
 		private async Task Connect()

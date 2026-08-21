@@ -70,6 +70,15 @@ namespace Resgrid.Tests.Services
 					.ReturnsAsync((int _, IEnumerable<string> ids) => ids == null
 						? new HashSet<string>()
 						: new HashSet<string>(ids, StringComparer.OrdinalIgnoreCase));
+				_departmentsServiceMock
+					.Setup(x => x.GetAllMembersForDepartmentUnlimitedAsync(1, It.IsAny<bool>()))
+					.ReturnsAsync(new List<DepartmentMember>
+					{
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser1Id },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser2Id },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser3Id },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser4Id }
+					});
 				_departmentGroupsServiceMock.Setup(x => x.GetGroupByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
 					.ReturnsAsync((int groupId, bool _) => new DepartmentGroup { DepartmentGroupId = groupId, DepartmentId = 1 });
 				_callsServiceMock.Setup(x => x.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
@@ -115,6 +124,18 @@ namespace Resgrid.Tests.Services
 					UserId = userId,
 					JoinedOn = DateTime.UtcNow
 				};
+			}
+		}
+
+		[TestFixture]
+		public class when_resolving_the_channel_access_version : with_the_chat_permission_service
+		{
+			[Test]
+			public async Task a_missing_cache_epoch_should_remain_null()
+			{
+				var version = await _chatPermissionService.GetChannelAccessVersionAsync("channel-1");
+
+				version.Should().BeNull();
 			}
 		}
 
@@ -1255,6 +1276,35 @@ namespace Resgrid.Tests.Services
 				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(channel);
 
 				audience.Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id, TestData.Users.TestUser4Id });
+			}
+
+			[Test]
+			public async Task audience_should_bulk_filter_disabled_and_deleted_members_case_insensitively()
+			{
+				var channel = CreateChannel(ChatChannelType.AdHocGroup);
+				var upperCaseUserId = TestData.Users.TestUser4Id.ToUpperInvariant();
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId))
+					.ReturnsAsync(new List<ChatChannelMember>
+					{
+						CreateUserMember(channel, TestData.Users.TestUser1Id),
+						CreateUserMember(channel, TestData.Users.TestUser2Id),
+						CreateUserMember(channel, TestData.Users.TestUser3Id),
+						CreateUserMember(channel, upperCaseUserId)
+					});
+				_departmentsServiceMock.Setup(x => x.GetAllMembersForDepartmentUnlimitedAsync(1, It.IsAny<bool>()))
+					.ReturnsAsync(new List<DepartmentMember>
+					{
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser1Id },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser2Id, IsDisabled = true },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser3Id, IsDeleted = true },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser4Id }
+					});
+
+				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(channel);
+
+				audience.Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id, upperCaseUserId });
+				_departmentsServiceMock.Verify(x => x.GetAllMembersForDepartmentUnlimitedAsync(1, It.IsAny<bool>()), Times.Once);
+				_authorizationServiceMock.Verify(x => x.IsUserValidWithinLimitsAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
 			}
 
 			[Test]

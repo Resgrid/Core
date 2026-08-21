@@ -1272,8 +1272,7 @@ namespace Resgrid.Services
 		private async Task<bool> IsActiveDepartmentUserAsync(int departmentId, string userId)
 		{
 			return departmentId > 0 && !string.IsNullOrWhiteSpace(userId) &&
-				await _departmentsService.IsUserInDepartmentAsync(departmentId, userId) &&
-				!await _departmentsService.IsUserDisabledAsync(userId, departmentId);
+				await _chatPermissionService.IsActiveDepartmentUserAsync(departmentId, userId);
 		}
 
 		public async Task<bool> SetIncidentChannelsArchivedAsync(int callId, bool archived, CancellationToken cancellationToken = default(CancellationToken))

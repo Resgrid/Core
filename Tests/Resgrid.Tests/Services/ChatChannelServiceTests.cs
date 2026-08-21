@@ -81,6 +81,7 @@ namespace Resgrid.Tests.Services
 
 				// Cross-tenant validation passes by default; negative tests override this.
 				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(true);
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(true);
 				_chatPermissionServiceMock.Setup(x => x.CanModerateChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<string>())).ReturnsAsync(true);
 				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(true);
 
@@ -208,7 +209,7 @@ namespace Resgrid.Tests.Services
 			[Test]
 			public async Task disabled_department_member_should_not_get_a_chatbot_channel()
 			{
-				_departmentsServiceMock.Setup(x => x.IsUserDisabledAsync("user-a", 1)).ReturnsAsync(true);
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(1, "user-a")).ReturnsAsync(false);
 
 				var result = await _chatChannelService.EnsureChatbotChannelAsync(1, "user-a");
 
@@ -269,7 +270,7 @@ namespace Resgrid.Tests.Services
 			[Test]
 			public void disabled_target_user_should_be_rejected()
 			{
-				_departmentsServiceMock.Setup(x => x.IsUserDisabledAsync("user-b", 1)).ReturnsAsync(true);
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(1, "user-b")).ReturnsAsync(false);
 
 				Func<Task> act = async () => await _chatChannelService.GetOrCreateDirectMessageChannelAsync(1, "user-a", "user-b", null);
 
@@ -361,7 +362,7 @@ namespace Resgrid.Tests.Services
 			public void cross_department_target_user_should_be_rejected()
 			{
 				_chatChannelRepositoryMock.Setup(x => x.GetByDmKeyAsync(1, It.IsAny<string>())).ReturnsAsync((ChatChannel)null);
-				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(1, "outsider")).ReturnsAsync(false);
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(1, "outsider")).ReturnsAsync(false);
 
 				Func<Task> act = async () => await _chatChannelService.GetOrCreateDirectMessageChannelAsync(1, "user-a", "outsider", null);
 
@@ -499,7 +500,7 @@ namespace Resgrid.Tests.Services
 			{
 				var channel = CreateChannel("adhoc-1", ChatChannelType.AdHocGroup);
 				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("adhoc-1")).ReturnsAsync(channel);
-				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(1, "outsider")).ReturnsAsync(false);
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(1, "outsider")).ReturnsAsync(false);
 
 				Func<Task> act = async () => await _chatChannelService.AddMembersAsync(1, "adhoc-1", new List<string> { "outsider" }, "user-a");
 

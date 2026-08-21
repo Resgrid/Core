@@ -28,7 +28,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
-	[Authorize(Policy = ResgridResources.Messages_View)]
+	[Authorize(Policy = ResgridResources.Chat_View)]
 	public class ChatModerationController : V4AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors

@@ -117,7 +117,8 @@ namespace Resgrid.Services
 			// The user path creates its subscriber before writing credentials; the unit path never did, so a
 			// unit that had not been through some other Novu call had its credential write rejected against
 			// a subscriber that did not exist.
-			await EnsureUnitSubscriber(unitId, code, pushUri.DeviceId);
+			if (!await EnsureUnitSubscriber(unitId, code, pushUri.DeviceId))
+				return false;
 
 			bool registered;
 
@@ -144,7 +145,7 @@ namespace Resgrid.Services
 			return registered;
 		}
 
-		private async Task EnsureUnitSubscriber(int unitId, string code, string deviceId)
+		private async Task<bool> EnsureUnitSubscriber(int unitId, string code, string deviceId)
 		{
 			try
 			{
@@ -155,14 +156,15 @@ namespace Resgrid.Services
 				if (unit == null)
 				{
 					Framework.Logging.LogWarning($"PushService.RegisterUnit: unit {unitId} (prefix '{code}') was not found, its Novu subscriber could not be created.");
-					return;
+					return false;
 				}
 
-				await _novuProvider.CreateUnitSubscriber(unitId, code, unit.DepartmentId, unit.Name, deviceId);
+				return await _novuProvider.CreateUnitSubscriber(unitId, code, unit.DepartmentId, unit.Name, deviceId);
 			}
 			catch (Exception ex)
 			{
 				Resgrid.Framework.Logging.LogException(ex);
+				return false;
 			}
 		}
 

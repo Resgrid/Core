@@ -45,31 +45,64 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
-		public void chat_controller_requires_messages_view_claim()
+		public async Task messages_view_policy_allows_client_credentials_department_zero()
 		{
-			var authorize = typeof(ChatController).GetCustomAttributes<AuthorizeAttribute>()
-				.Single(x => x.Policy == ResgridResources.Messages_View);
+			var principal = new ClaimsPrincipal(new ClaimsIdentity(new[]
+				{
+					new Claim(ClaimTypes.PrimaryGroupSid, "0"),
+					new Claim(ResgridClaimTypes.Resources.Messages, ResgridClaimTypes.Actions.View)
+				}, "Test"));
+			var policy = new AuthorizationPolicyBuilder()
+				.RequireClaim(ResgridClaimTypes.Resources.Messages, ResgridClaimTypes.Actions.View)
+				.Build();
+			var services = new ServiceCollection().AddLogging().AddAuthorization().BuildServiceProvider();
+			var authorizationService = services.GetRequiredService<IAuthorizationService>();
 
-			authorize.Policy.Should().Be(ResgridResources.Messages_View);
+			var result = await authorizationService.AuthorizeAsync(principal, null, policy);
+
+			result.Succeeded.Should().BeTrue();
+		}
+
+		[TestCase(nameof(MessagesController.GetInboxMessages))]
+		[TestCase(nameof(MessagesController.GetOutboxMessages))]
+		[TestCase(nameof(MessagesController.GetMessage))]
+		[TestCase(nameof(MessagesController.GetRecipients))]
+		[TestCase(nameof(MessagesController.RespondToMessage))]
+		public void messaging_actions_preserve_messages_view_policy(string methodName)
+		{
+			var method = typeof(MessagesController).GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
+
+			method.Should().NotBeNull();
+			method.GetCustomAttributes<AuthorizeAttribute>().Should()
+				.ContainSingle(x => x.Policy == ResgridResources.Messages_View);
 		}
 
 		[Test]
-		public void chat_moderation_controller_requires_messages_view_claim()
+		public void chat_controller_requires_chat_view_policy()
 		{
-			var authorize = typeof(ChatModerationController).GetCustomAttributes<AuthorizeAttribute>()
-				.Single(x => x.Policy == ResgridResources.Messages_View);
+			var authorize = typeof(ChatController).GetCustomAttributes<AuthorizeAttribute>()
+				.Single(x => x.Policy == ResgridResources.Chat_View);
 
-			authorize.Policy.Should().Be(ResgridResources.Messages_View);
+			authorize.Policy.Should().Be(ResgridResources.Chat_View);
 		}
 
-		[TestCase(nameof(ChatbotController.GetChatChannel), ResgridResources.Messages_View)]
-		[TestCase(nameof(ChatbotController.SendChatMessage), ResgridResources.Messages_View)]
+		[Test]
+		public void chat_moderation_controller_requires_chat_view_policy()
+		{
+			var authorize = typeof(ChatModerationController).GetCustomAttributes<AuthorizeAttribute>()
+				.Single(x => x.Policy == ResgridResources.Chat_View);
+
+			authorize.Policy.Should().Be(ResgridResources.Chat_View);
+		}
+
+		[TestCase(nameof(ChatbotController.GetChatChannel), ResgridResources.Chat_View)]
+		[TestCase(nameof(ChatbotController.SendChatMessage), ResgridResources.Chat_View)]
 		[TestCase(nameof(ChatbotController.SendChatMessage), ResgridResources.Messages_Create)]
-		[TestCase(nameof(ChatbotController.NewChatSession), ResgridResources.Messages_View)]
+		[TestCase(nameof(ChatbotController.NewChatSession), ResgridResources.Chat_View)]
 		[TestCase(nameof(ChatbotController.NewChatSession), ResgridResources.Messages_Create)]
-		[TestCase(nameof(ChatbotController.AskIncident), ResgridResources.Messages_View)]
+		[TestCase(nameof(ChatbotController.AskIncident), ResgridResources.Chat_View)]
 		[TestCase(nameof(ChatbotController.AskIncident), ResgridResources.Messages_Create)]
-		[TestCase(nameof(ChatbotController.IncidentSuggestions), ResgridResources.Messages_View)]
+		[TestCase(nameof(ChatbotController.IncidentSuggestions), ResgridResources.Chat_View)]
 		public void chatbot_chat_actions_require_message_claims(string methodName, string policy)
 		{
 			var method = typeof(ChatbotController).GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
@@ -92,8 +125,6 @@ namespace Resgrid.Tests.Web.Services
 		[TestCase(nameof(ChatController.SetNotificationPreference), ResgridResources.Messages_Update)]
 		[TestCase(nameof(ChatController.EditMessage), ResgridResources.Messages_Update)]
 		[TestCase(nameof(ChatController.RemoveReaction), ResgridResources.Messages_Update)]
-		[TestCase(nameof(ChatController.Ack), ResgridResources.Messages_Update)]
-		[TestCase(nameof(ChatController.MarkRead), ResgridResources.Messages_Update)]
 		[TestCase(nameof(ChatController.PinMessage), ResgridResources.Messages_Update)]
 		[TestCase(nameof(ChatController.UnpinMessage), ResgridResources.Messages_Update)]
 		[TestCase(nameof(ChatController.ArchiveChannel), ResgridResources.Messages_Delete)]
@@ -104,6 +135,16 @@ namespace Resgrid.Tests.Web.Services
 
 			method.Should().NotBeNull();
 			method.GetCustomAttributes<AuthorizeAttribute>().Should().ContainSingle(x => x.Policy == policy);
+		}
+
+		[TestCase(nameof(ChatController.Ack))]
+		[TestCase(nameof(ChatController.MarkRead))]
+		public void read_state_chat_actions_use_the_controller_chat_view_policy(string methodName)
+		{
+			var method = typeof(ChatController).GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public);
+
+			method.Should().NotBeNull();
+			method.GetCustomAttributes<AuthorizeAttribute>().Should().BeEmpty();
 		}
 
 		[TestCase(nameof(ChatModerationController.ResolveFlag), ResgridResources.Messages_Update)]

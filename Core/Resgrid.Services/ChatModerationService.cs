@@ -143,7 +143,7 @@ namespace Resgrid.Services
 			if (channel == null)
 				return false;
 
-			var member = await _chatChannelService.EnsureMemberStateAsync(chatChannelId, departmentId, targetUserId, null, cancellationToken);
+			var member = await GetModerationTargetMemberAsync(channel, targetUserId, cancellationToken);
 			if (member == null)
 				return false;
 
@@ -166,7 +166,7 @@ namespace Resgrid.Services
 			if (channel == null)
 				return false;
 
-			var member = await _chatChannelService.EnsureMemberStateAsync(chatChannelId, departmentId, targetUserId, null, cancellationToken);
+			var member = await GetModerationTargetMemberAsync(channel, targetUserId, cancellationToken);
 			if (member == null)
 				return false;
 
@@ -287,6 +287,25 @@ namespace Resgrid.Services
 				return null;
 
 			return channel;
+		}
+
+		private async Task<ChatChannelMember> GetModerationTargetMemberAsync(ChatChannel channel, string targetUserId,
+			CancellationToken cancellationToken)
+		{
+			if (channel == null || string.IsNullOrWhiteSpace(targetUserId))
+				return null;
+
+			var member = await _chatChannelMemberRepository.GetUserMemberAsync(channel.ChatChannelId, targetUserId);
+			if (member != null)
+				return member.DepartmentId == channel.DepartmentId ? member : null;
+
+			if (!await _chatPermissionService.CanAccessChannelAsync(channel, targetUserId, null))
+				return null;
+
+			member = await _chatChannelService.EnsureMemberStateAsync(channel.ChatChannelId, channel.DepartmentId,
+				targetUserId, null, cancellationToken);
+
+			return member != null && member.DepartmentId == channel.DepartmentId ? member : null;
 		}
 
 		private async Task RecordActionAsync(int departmentId, string chatChannelId, string chatMessageId, string targetUserId, int? targetUnitId,

@@ -20,7 +20,7 @@ namespace Resgrid.Web.Eventing.Hubs
 	/// per channel (the version rotates on authorization changes),
 	/// chatuser:{deptId}:{userId} for personal events, chatdept:{deptId} for channel-list updates.
 	/// </summary>
-	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = ResgridResources.Messages_View)]
+	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = ResgridResources.Chat_View)]
 	public class ChatHub : Hub
 	{
 		private readonly IChatChannelService _chatChannelService;
@@ -30,6 +30,9 @@ namespace Resgrid.Web.Eventing.Hubs
 
 		private const string UserIdContextKey = "chatUserId";
 		private const string DepartmentIdContextKey = "chatDepartmentId";
+		private const string LastMembershipValidationContextKey = "chatLastMembershipValidation";
+		private const string JoinedChannelGroupContextKeyPrefix = "chatJoinedChannelGroup:";
+		private static readonly TimeSpan MembershipValidationInterval = TimeSpan.FromMinutes(2);
 
 		/// <summary>userId -> connectionIds on this host; used by the Worker to evict revoked users from channel groups.</summary>
 		public static readonly ConcurrentDictionary<string, ConcurrentDictionary<string, byte>> UserConnections =
@@ -78,6 +81,7 @@ namespace Resgrid.Web.Eventing.Hubs
 			{
 				Context.Items[DepartmentIdContextKey] = departmentId;
 				Context.Items[UserIdContextKey] = userId;
+				Context.Items[LastMembershipValidationContextKey] = Environment.TickCount64;
 
 				AddUserConnection(userId, Context.ConnectionId);
 			}
@@ -180,15 +184,22 @@ namespace Resgrid.Web.Eventing.Hubs
 				throw new HubException("Chat authorization is temporarily unavailable.");
 
 			await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+			Context.Items[GetJoinedChannelGroupContextKey(channel.ChatChannelId)] = groupName;
 
 			await Clients.Caller.SendAsync("onChatChannelJoined", channelId);
 		}
 
 		public async Task LeaveChannel(string channelId)
 		{
-			var groupName = await GetCurrentChannelGroupNameAsync(channelId);
+			var contextKey = GetJoinedChannelGroupContextKey(channelId);
+			var groupName = Context.Items.TryGetValue(contextKey, out var trackedGroupName)
+				? trackedGroupName as string
+				: await GetCurrentChannelGroupNameAsync(channelId);
 			if (groupName != null)
+			{
 				await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+				Context.Items.Remove(contextKey);
+			}
 		}
 
 		public async Task Typing(string channelId, string displayName = null, bool isTyping = true, int? asUnitId = null)
@@ -310,6 +321,11 @@ namespace Resgrid.Web.Eventing.Hubs
 				: $"chat:{channelId}:{accessVersion}";
 		}
 
+		private static string GetJoinedChannelGroupContextKey(string channelId)
+		{
+			return $"{JoinedChannelGroupContextKeyPrefix}{channelId?.ToLowerInvariant()}";
+		}
+
 		private async Task<string> GetCurrentChannelGroupNameAsync(string channelId)
 		{
 			return BuildChannelGroupName(channelId,
@@ -321,11 +337,26 @@ namespace Resgrid.Web.Eventing.Hubs
 			var departmentId = GetDepartmentId();
 			var userId = GetUserId();
 
-			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId) ||
-				!await _chatPermissionService.IsActiveDepartmentUserAsync(departmentId, userId))
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
 			{
 				Context.Abort();
 				return;
+			}
+
+			var membershipValidationDue =
+				!Context.Items.TryGetValue(LastMembershipValidationContextKey, out var lastValidationValue) ||
+				lastValidationValue is not long lastValidation ||
+				Environment.TickCount64 - lastValidation >= MembershipValidationInterval.TotalMilliseconds;
+
+			if (membershipValidationDue)
+			{
+				if (!await _chatPermissionService.IsActiveDepartmentUserAsync(departmentId, userId))
+				{
+					Context.Abort();
+					return;
+				}
+
+				Context.Items[LastMembershipValidationContextKey] = Environment.TickCount64;
 			}
 
 			await _chatPresenceService.TouchAsync(departmentId, userId);

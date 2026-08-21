@@ -313,7 +313,7 @@ namespace Resgrid.Web.Eventing
 
 			services.AddAuthorization(options =>
 			{
-				options.AddPolicy(ResgridResources.Messages_View, policy => policy
+				options.AddPolicy(ResgridResources.Chat_View, policy => policy
 					.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
 					.RequireChatAccessClaims());
 			});

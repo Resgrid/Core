@@ -280,14 +280,18 @@ namespace Resgrid.Services
 			var departmentUserIds = new HashSet<string>(
 				await _departmentsService.GetMemberUserIdsInDepartmentAsync(channel.DepartmentId, userIds) ?? new HashSet<string>(),
 				StringComparer.OrdinalIgnoreCase);
-			var activeUserIds = new List<string>();
-			foreach (var userId in userIds.Where(x => !string.IsNullOrWhiteSpace(x) && departmentUserIds.Contains(x)))
-			{
-				if (await _authorizationService.IsUserValidWithinLimitsAsync(userId, channel.DepartmentId))
-					activeUserIds.Add(userId);
-			}
+			var activeDepartmentMembers = await _departmentsService.GetAllMembersForDepartmentUnlimitedAsync(channel.DepartmentId);
+			var activeDepartmentUserIds = new HashSet<string>(
+				activeDepartmentMembers?
+					.Where(member => member != null && !member.IsDeleted && !member.IsDisabled.GetValueOrDefault() &&
+						!string.IsNullOrWhiteSpace(member.UserId))
+					.Select(member => member.UserId) ?? Enumerable.Empty<string>(),
+				StringComparer.OrdinalIgnoreCase);
 
-			return activeUserIds;
+			return userIds
+				.Where(userId => !string.IsNullOrWhiteSpace(userId) && departmentUserIds.Contains(userId) &&
+					activeDepartmentUserIds.Contains(userId))
+				.ToList();
 		}
 
 		public async Task InvalidateChannelCacheAsync(string chatChannelId)
@@ -308,7 +312,7 @@ namespace Resgrid.Services
 
 			try
 			{
-				return await _cacheProvider.GetStringAsync(GetVersionKey(chatChannelId)) ?? "0";
+				return await _cacheProvider.GetStringAsync(GetVersionKey(chatChannelId));
 			}
 			catch (Exception ex)
 			{
@@ -434,7 +438,8 @@ namespace Resgrid.Services
 
 		private async Task<bool> EvaluateModerateAsync(ChatChannel channel, string userId)
 		{
-			if (!await HasValidDepartmentScopeAsync(channel))
+			if (channel == null || string.IsNullOrWhiteSpace(userId) ||
+				!await HasValidDepartmentScopeAsync(channel))
 				return false;
 
 			// Department admins moderate every channel type (including DMs, for flagged-content handling).
@@ -442,8 +447,11 @@ namespace Resgrid.Services
 				return true;
 
 			var member = await _chatChannelMemberRepository.GetUserMemberAsync(channel.ChatChannelId, userId);
-			if (member != null && member.DepartmentId == channel.DepartmentId && member.IsModerator && !member.RemovedOn.HasValue)
-				return true;
+			if (member != null)
+			{
+				if (member.DepartmentId == channel.DepartmentId && member.IsModerator && !member.RemovedOn.HasValue)
+					return true;
+			}
 
 			switch ((ChatChannelType)channel.ChannelType)
 			{
@@ -969,7 +977,7 @@ namespace Resgrid.Services
 
 		private async Task<bool> HasValidDepartmentScopeAsync(ChatChannel channel)
 		{
-			if (channel.DepartmentId <= 0)
+			if (channel == null || channel.DepartmentId <= 0)
 				return false;
 
 			var channelType = (ChatChannelType)channel.ChannelType;

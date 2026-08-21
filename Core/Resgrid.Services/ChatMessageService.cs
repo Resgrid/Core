@@ -273,7 +273,18 @@ namespace Resgrid.Services
 				string.IsNullOrWhiteSpace(message.ChatChannelId) || string.IsNullOrWhiteSpace(userId))
 				return null;
 
-			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
+			ChatChannel channel;
+			try
+			{
+				channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogError(ex,
+					$"Operation:{nameof(GetAuthorizedMessageChannelAsync)}; DepartmentId:{departmentId}; ChatChannelId:{message.ChatChannelId}; UserId:{userId}");
+				throw;
+			}
+
 			if (channel == null || channel.DepartmentId != departmentId)
 				return null;
 

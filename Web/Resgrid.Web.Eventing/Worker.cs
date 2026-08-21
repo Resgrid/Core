@@ -177,7 +177,17 @@ namespace Resgrid.Web.Eventing
 			// receive incident chat. Rotate every call-scoped SignalR group before notifying clients;
 			// old connections remain in an obsolete group that receives no future message payloads.
 			if (int.TryParse(id, out var callId))
-				await InvalidateIncidentChatAccessAsync(departmentId, callId);
+			{
+				try
+				{
+					await InvalidateIncidentChatAccessAsync(departmentId, callId);
+				}
+				catch (Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex,
+						$"Failed to invalidate incident chat access for department {departmentId} and call {callId}.");
+				}
+			}
 
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 

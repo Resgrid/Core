@@ -39,12 +39,9 @@ namespace Resgrid.Services
 			_eventAggregator.AddAsyncListener<IncidentClosedEvent>(OnIncidentClosedAsync);
 			_eventAggregator.AddAsyncListener<LaneLeadChangedEvent>(OnLaneLeadChangedAsync);
 			_eventAggregator.AddAsyncListener<IncidentReopenedEvent>(OnIncidentReopenedAsync);
-			// These two are published through SendMessage (the synchronous event path), so register
-			// synchronous bridges and wait for the fail-safe RunAsync handler to finish. Authorization
-			// epochs must rotate before the mutation returns; fire-and-forget would leave a payload leak
-			// window for already-joined SignalR clients.
+			// Security refresh is published through SendMessage (the synchronous event path), so register
+			// a synchronous bridge and wait for the fail-safe RunAsync handler to finish.
 			_eventAggregator.AddListener<SecurityRefreshEvent>(message => OnDepartmentSecurityChangedAsync(message).GetAwaiter().GetResult());
-			_eventAggregator.AddListener<IncidentCommandUpdatedEvent>(message => OnIncidentAuthorizationChangedAsync(message).GetAwaiter().GetResult());
 		}
 
 		private Task OnCallAddedAsync(CallAddedEvent message)
@@ -198,37 +195,6 @@ namespace Resgrid.Services
 					PayloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(new
 					{
 						DepartmentId = message.DepartmentId,
-						AuthorizationChanged = true
-					})
-				});
-			});
-		}
-
-		private Task OnIncidentAuthorizationChangedAsync(IncidentCommandUpdatedEvent message)
-		{
-			if (message == null || message.DepartmentId <= 0 || message.CallId <= 0)
-				return Task.CompletedTask;
-
-			return RunAsync(async scope =>
-			{
-				var channelRepository = scope.Resolve<IChatChannelRepository>();
-				var permissionService = scope.Resolve<IChatPermissionService>();
-				var channels = await channelRepository.GetByCallIdAsync(message.CallId);
-
-				if (channels != null)
-				{
-					foreach (var channel in channels.Where(c => c != null && c.DepartmentId == message.DepartmentId))
-						await permissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
-				}
-
-				_eventAggregator.SendMessage<ChatEventRaised>(new ChatEventRaised
-				{
-					DepartmentId = message.DepartmentId,
-					Kind = ChatEventKinds.ChannelUpdated,
-					PayloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(new
-					{
-						DepartmentId = message.DepartmentId,
-						CallId = message.CallId,
 						AuthorizationChanged = true
 					})
 				});

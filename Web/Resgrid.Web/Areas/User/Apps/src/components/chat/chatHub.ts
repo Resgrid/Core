@@ -207,14 +207,14 @@ class ChatHub {
         addPendingAck(payload.ChatMessageId);
       }
     });
-    connection.on(CHAT_HUB_EVENTS.ChannelUpdated, () => {
-      void this.refreshChannelAuthorizations();
+    connection.on(CHAT_HUB_EVENTS.ChannelUpdated, (arg: unknown) => {
+      this.refreshChannelAuthorizationFromPayload(arg);
     });
-    connection.on(CHAT_HUB_EVENTS.ChannelProvisioned, () => {
-      void this.refreshChannelAuthorizations();
+    connection.on(CHAT_HUB_EVENTS.ChannelProvisioned, (arg: unknown) => {
+      this.refreshChannelAuthorizationFromPayload(arg);
     });
-    connection.on(CHAT_HUB_EVENTS.ModerationApplied, () => {
-      void this.refreshChannelAuthorizations();
+    connection.on(CHAT_HUB_EVENTS.ModerationApplied, (arg: unknown) => {
+      this.refreshChannelAuthorizationFromPayload(arg);
     });
     connection.on(CHAT_HUB_EVENTS.AccessRevoked, (arg: unknown) => {
       const payload = parsePayload<HubAccessRevokedPayload>(arg);
@@ -283,6 +283,25 @@ class ChatHub {
     }
   }
 
+  private refreshChannelAuthorizationFromPayload(arg: unknown): void {
+    const source = parsePayload<Record<string, unknown>>(arg);
+    const channelId = source ? pick<string>(source, 'chatChannelId', 'ChatChannelId')?.trim() : undefined;
+
+    if (channelId) {
+      void this.refreshChannelAuthorization(channelId);
+      return;
+    }
+
+    void this.refreshChannelAuthorizations();
+  }
+
+  private async refreshChannelAuthorization(channelId: string): Promise<void> {
+    if (this.joinedChannels.has(channelId)) {
+      await this.joinChannel(channelId, this.joinedChannels.get(channelId));
+    }
+    this.notifyChannelsRefresh();
+  }
+
   // Channel SignalR groups are authorization-epoch scoped. Membership/rule/moderation and
   // incident-board changes rotate the epoch server-side before the refresh hint is broadcast;
   // rejoining here performs a fresh server authorization check and moves eligible connections
@@ -295,7 +314,17 @@ class ChatHub {
     this.authorizationRefreshPromise = (async () => {
       if (this.connection && this.connection.state === HubConnectionState.Connected) {
         for (const [channelId, asUnitId] of this.joinedChannels.entries()) {
-          await this.invokeJoin(channelId, asUnitId);
+          try {
+            await this.invokeJoin(channelId, asUnitId, true);
+          } catch (err) {
+            console.error('invokeJoin failed during authorization refresh', {
+              op: 'refreshChannelAuthorizations',
+              channelId,
+              asUnitId,
+              err,
+            });
+            throw err;
+          }
         }
       }
       this.notifyChannelsRefresh();
@@ -347,7 +376,11 @@ class ChatHub {
     }, HEARTBEAT_INTERVAL_MS);
   }
 
-  private async invokeJoin(channelId: string, asUnitId: number | undefined): Promise<void> {
+  private async invokeJoin(
+    channelId: string,
+    asUnitId: number | undefined,
+    throwOnError = false,
+  ): Promise<void> {
     if (!this.connection || this.connection.state !== HubConnectionState.Connected) {
       return;
     }
@@ -355,6 +388,9 @@ class ChatHub {
       await this.connection.invoke(CHAT_HUB_METHODS.JoinChannel, channelId, asUnitId ?? null);
     } catch (error) {
       console.error('Chat join channel failed.', error);
+      if (throwOnError) {
+        throw error;
+      }
     }
   }
 

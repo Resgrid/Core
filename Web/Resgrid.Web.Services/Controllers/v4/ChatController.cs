@@ -30,12 +30,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
-	[Authorize(Policy = ResgridResources.Messages_View)]
+	[Authorize(Policy = ResgridResources.Chat_View)]
 	public class ChatController : V4AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors
 
 		private const long MaxAttachmentRequestBytes = 26_214_400;
+		private static readonly TimeSpan ChatEnabledCacheLength = TimeSpan.FromSeconds(30);
 
 		private static readonly string[] AllowedAttachmentContentTypes = new[]
 		{
@@ -1194,7 +1195,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="messageId">Chat message identifier</param>
 		/// <returns>ChatActionResult; Success is true when a pending acknowledgment was stamped</returns>
 		[HttpPost("Ack")]
-		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -1322,7 +1322,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="input">Sequence read and optional unit identity</param>
 		/// <returns>ChatActionResult indicating whether the pointer advanced</returns>
 		[HttpPut("MarkRead")]
-		[Authorize(Policy = ResgridResources.Messages_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -1749,8 +1748,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<bool> ChatEnabledAsync()
 		{
-			return await _authorizationService.IsUserValidWithinLimitsAsync(UserId, DepartmentId) &&
-				await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
+			var userId = UserId;
+			var departmentId = DepartmentId;
+
+			if (departmentId <= 0 || String.IsNullOrWhiteSpace(userId))
+				return false;
+
+			var cacheKey = $"chat:enabled:{departmentId}:{userId.ToLowerInvariant()}";
+			var cached = await _cacheProvider.GetStringAsync(cacheKey);
+
+			if (String.Equals(cached, "1", StringComparison.Ordinal))
+				return true;
+			if (String.Equals(cached, "0", StringComparison.Ordinal))
+				return false;
+
+			var enabled = await _authorizationService.IsUserValidWithinLimitsAsync(userId, departmentId) &&
+				await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, departmentId);
+
+			await _cacheProvider.SetStringAsync(cacheKey, enabled ? "1" : "0", ChatEnabledCacheLength);
+			return enabled;
 		}
 
 		/// <summary>

@@ -1,4 +1,5 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using ProtoBuf;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,29 +12,36 @@ namespace Resgrid.Model
 	/// N dispatches only level N's requirements.
 	/// </summary>
 	[Table("RunCardAlarmLevels")]
+	[ProtoContract]
 	public class RunCardAlarmLevel : IEntity
 	{
 		[Key]
 		[Required]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[ProtoMember(1)]
 		public int RunCardAlarmLevelId { get; set; }
 
 		[Required]
 		[ForeignKey("RunCard"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+		[ProtoMember(2)]
 		public int RunCardId { get; set; }
 
 		public virtual RunCard RunCard { get; set; }
 
 		/// <summary>1-based alarm level number.</summary>
 		[Required]
+		[ProtoMember(3)]
 		public int AlarmLevel { get; set; }
 
 		/// <summary>Optional display name, e.g. "Working Fire".</summary>
 		[MaxLength(100)]
+		[ProtoMember(4)]
 		public string Name { get; set; }
 
+		[ProtoMember(5)]
 		public virtual ICollection<RunCardUnitRequirement> UnitRequirements { get; set; }
 
+		[ProtoMember(6)]
 		public virtual ICollection<RunCardRoleRequirement> RoleRequirements { get; set; }
 
 		[NotMapped]

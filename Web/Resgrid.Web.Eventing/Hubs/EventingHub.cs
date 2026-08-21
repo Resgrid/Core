@@ -72,11 +72,17 @@ namespace Resgrid.Web.Eventing.Hubs
 			if (call == null || call.DepartmentId != GetDepartmentId())
 				throw new HubException("Not authorized for this call.");
 
-			await Groups.AddToGroupAsync(Context.ConnectionId, $"CallUpdated:${callId}");
+			await Groups.AddToGroupAsync(Context.ConnectionId, GetCallGroupName(callId));
 		}
 
 		public Task UnsubscribeToCall(int callId) =>
-			Groups.RemoveFromGroupAsync(Context.ConnectionId, $"CallUpdated:${callId}");
+			Groups.RemoveFromGroupAsync(Context.ConnectionId, GetCallGroupName(callId));
+
+		/// <summary>
+		/// Single source of truth for the per-call group name, so a publisher added later cannot drift from
+		/// what subscribers actually joined.
+		/// </summary>
+		public static string GetCallGroupName(int callId) => $"CallUpdated:{callId}";
 
 		public Task PersonnelStatusUpdated(int departmentId, int id) =>
 			PublishAsync("PersonnelStatusUpdated", departmentId, id);

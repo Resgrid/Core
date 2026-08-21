@@ -43,6 +43,12 @@ namespace Resgrid.Console.Commands
 				}
 
 				var managementState = await externalIdentityLinkService.GetSsoManagementStateAsync(user.Id, cancellationToken);
+				if (managementState == null)
+				{
+					logger.LogError("Unable to determine whether the account is SSO-managed; refusing to reset the password.");
+					return ExitCode.Failed;
+				}
+
 				if (managementState.IsSsoManaged)
 				{
 					logger.LogError("The account is SSO-managed. Unlink it through the audited administrative process before resetting a local password.");

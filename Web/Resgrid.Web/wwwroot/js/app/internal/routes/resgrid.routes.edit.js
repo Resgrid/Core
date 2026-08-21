@@ -80,13 +80,18 @@ $(document).ready(function () {
 
     function reverseGeocodeStop(lat, lng) {
 		fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng)
-            .then(function (r) { return r.json(); })
+			.then(function (r) {
+				if (!r.ok) throw new Error('ReverseGeocode failed with HTTP status ' + r.status);
+				return r.json();
+			})
             .then(function (result) {
                 if (result && result.Data && result.Data.Address) {
                     $('#stopAddress').val(result.Data.Address);
                 }
             })
-            .catch(function (err) { console.error('Stop reverse geocode error:', err); });
+			.catch(function (err) {
+				console.error('ReverseGeocode failed', { operation: 'ReverseGeocode', latitude: lat, longitude: lng, error: err });
+			});
     }
 
     // ── Start/End location pickers ────────────────────────────────────────────
@@ -195,13 +200,18 @@ $(document).ready(function () {
         var where = $.trim($('#startAddress').val());
         if (!where) return;
 		fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
-            .then(function (r) { return r.json(); })
+			.then(function (r) {
+				if (!r.ok) throw new Error('ForwardGeocode failed with HTTP status ' + r.status);
+				return r.json();
+			})
             .then(function (result) {
                 if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                     setStartLocation(result.Data.Latitude, result.Data.Longitude);
                 } else { alert('Address not found.'); }
             })
-            .catch(function (err) { console.error('Geocode error:', err); });
+			.catch(function (err) {
+				console.error('ForwardGeocode failed', { operation: 'ForwardGeocode', address: where, error: err });
+			});
     });
 
     // Start – What3Words
@@ -232,13 +242,18 @@ $(document).ready(function () {
         var where = $.trim($('#endAddress').val());
         if (!where) return;
 		fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
-            .then(function (r) { return r.json(); })
+			.then(function (r) {
+				if (!r.ok) throw new Error('ForwardGeocode failed with HTTP status ' + r.status);
+				return r.json();
+			})
             .then(function (result) {
                 if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                     setEndLocation(result.Data.Latitude, result.Data.Longitude);
                 } else { alert('Address not found.'); }
             })
-            .catch(function (err) { console.error('Geocode error:', err); });
+			.catch(function (err) {
+				console.error('ForwardGeocode failed', { operation: 'ForwardGeocode', address: where, error: err });
+			});
     });
 
     // End – What3Words
@@ -352,7 +367,10 @@ $(document).ready(function () {
         var where = $.trim($('#stopAddress').val());
         if (!where) return;
 		fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
-            .then(function (r) { return r.json(); })
+			.then(function (r) {
+				if (!r.ok) throw new Error('ForwardGeocode failed with HTTP status ' + r.status);
+				return r.json();
+			})
             .then(function (result) {
                 if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
                     setPickerLocation(result.Data.Latitude, result.Data.Longitude, false);
@@ -360,7 +378,9 @@ $(document).ready(function () {
                     alert('Address not found.');
                 }
             })
-            .catch(function (err) { console.error('Geocode error:', err); });
+			.catch(function (err) {
+				console.error('ForwardGeocode failed', { operation: 'ForwardGeocode', address: where, error: err });
+			});
     });
 
     // ── What3Words ────────────────────────────────────────────────────────────

@@ -1,18 +1,35 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProtoBuf;
 
 namespace Resgrid.Model.Providers
 {
-	/// <summary>A GIF search hit returned to chat clients; urls point at the GIF CDN, never at Resgrid.</summary>
+	/// <summary>
+	/// A GIF search hit returned to chat clients; urls point at the GIF CDN, never at Resgrid.
+	/// Search results are cached, and the cache provider serializes with protobuf-net, so this type needs a
+	/// contract — without one every cache write throws and the per-query cache silently never populates.
+	/// </summary>
+	[ProtoContract]
 	public class GifSearchResult
 	{
+		[ProtoMember(1)]
 		public string Id { get; set; }
+
+		[ProtoMember(2)]
 		public string Title { get; set; }
+
 		/// <summary>Small preview/thumbnail url for the picker grid.</summary>
+		[ProtoMember(3)]
 		public string PreviewUrl { get; set; }
+
 		/// <summary>Full GIF url embedded in the message metadata.</summary>
+		[ProtoMember(4)]
 		public string GifUrl { get; set; }
+
+		[ProtoMember(5)]
 		public int Width { get; set; }
+
+		[ProtoMember(6)]
 		public int Height { get; set; }
 	}
 

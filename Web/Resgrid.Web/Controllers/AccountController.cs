@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -424,7 +424,8 @@ namespace Resgrid.Web.Controllers
 				}
 
 				// Stamp the step-up session key immediately after login 2FA
-				HttpContext.Session.SetString("Resgrid2FAVerifiedAt", DateTime.UtcNow.ToString("O"));
+				HttpContext.Session.SetString(RequiresRecentTwoFactorAttribute.StepUpSessionKey,
+					$"{user.Id}|{DateTime.UtcNow:O}");
 
 				// Prefer the query-string returnUrl, fall back to the hidden-field value in the model
 				var redirect = !string.IsNullOrWhiteSpace(returnUrl) ? returnUrl : model.ReturnUrl;
@@ -498,7 +499,8 @@ namespace Resgrid.Web.Controllers
 					return View(model);
 				}
 
-				HttpContext.Session.SetString("Resgrid2FAVerifiedAt", DateTime.UtcNow.ToString("O"));
+				HttpContext.Session.SetString(RequiresRecentTwoFactorAttribute.StepUpSessionKey,
+					$"{user.Id}|{DateTime.UtcNow:O}");
 
 				var redirect = !string.IsNullOrWhiteSpace(returnUrl) ? returnUrl : model.ReturnUrl;
 				if (!string.IsNullOrWhiteSpace(redirect) && Url.IsLocalUrl(redirect))
@@ -730,8 +732,8 @@ namespace Resgrid.Web.Controllers
 			SetPasswordRecoveryResponseHeaders();
 			if (!string.IsNullOrWhiteSpace(token))
 			{
-				var initialRequest = await _passwordRecoveryService.GetAsync(token, cancellationToken);
-				if (initialRequest == null)
+				var initialLookup = await _passwordRecoveryService.GetAsync(token, cancellationToken);
+				if (!initialLookup.Found)
 					return View(new ResetPasswordViewModel { InvalidOrExpired = true });
 
 				Response.Cookies.Append(RecoveryGrantCookie, token, new CookieOptions
@@ -747,8 +749,9 @@ namespace Resgrid.Web.Controllers
 			}
 
 			token = Request.Cookies[RecoveryGrantCookie];
-			var request = await _passwordRecoveryService.GetAsync(token, cancellationToken);
-			if (request == null)
+			var lookup = await _passwordRecoveryService.GetAsync(token, cancellationToken);
+			var request = lookup.Request;
+			if (!lookup.Found || request == null)
 			{
 				Response.Cookies.Delete(RecoveryGrantCookie, new CookieOptions { Path = "/Account/ResetPassword" });
 				return View(new ResetPasswordViewModel { InvalidOrExpired = true });
@@ -779,7 +782,7 @@ namespace Resgrid.Web.Controllers
 			try
 			{
 				if (!IsPlausibleRecoveryToken(token) ||
-					await _passwordRecoveryService.GetAsync(token, cancellationToken) == null)
+					!(await _passwordRecoveryService.GetAsync(token, cancellationToken)).Found)
 					return RedirectToAction(nameof(ResetPassword));
 			}
 			catch (Exception ex)
@@ -807,14 +810,17 @@ namespace Resgrid.Web.Controllers
 		{
 			SetPasswordRecoveryResponseHeaders();
 			var token = Request.Cookies[RecoveryGrantCookie];
-			var request = await _passwordRecoveryService.GetAsync(token, cancellationToken);
-			var user = request == null ? null : await _userManager.FindByIdAsync(request.UserId);
+			var lookup = await _passwordRecoveryService.GetAsync(token, cancellationToken);
+			var request = lookup.Request;
+			var user = !lookup.Found || request == null
+				? null
+				: await _userManager.FindByIdAsync(request.UserId);
 			var department = user == null ? null : await _departmentsService.GetDepartmentForUserAsync(user.UserName);
 			model.MinPasswordLength = department == null
 				? 8
 				: await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(department.DepartmentId, cancellationToken);
 
-			if (request == null || user == null || !IsCurrentRecoveryGrant(request, user) ||
+			if (!lookup.Found || request == null || user == null || !IsCurrentRecoveryGrant(request, user) ||
 				await IsSsoManagedAsync(user.Id, department?.DepartmentId))
 			{
 				model.InvalidOrExpired = true;
@@ -883,7 +889,7 @@ namespace Resgrid.Web.Controllers
 		private async Task<bool> IsSsoManagedAsync(string userId, int? departmentId)
 		{
 			var state = await _externalIdentityLinkService.GetSsoManagementStateAsync(userId);
-			if (state.IsSsoManaged)
+			if (state == null || state.IsSsoManaged)
 				return true;
 
 			if (!departmentId.HasValue)

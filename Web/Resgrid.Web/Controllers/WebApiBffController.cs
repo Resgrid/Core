@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Resgrid.Config;
@@ -22,6 +23,8 @@ namespace Resgrid.Web.Controllers
 	[Route("api/web-bff")]
 	public class WebApiBffController : ControllerBase
 	{
+		private const long MaxRequestBodyBytes = 25L * 1024L * 1024L;
+
 		private static readonly string[] AllowedPrefixes =
 		{
 			"api/v4/WeatherAlerts/",
@@ -49,6 +52,13 @@ namespace Resgrid.Web.Controllers
 		[Route("{**path}")]
 		public async Task Proxy(string path, CancellationToken cancellationToken)
 		{
+			// Per-user authenticated payloads on the app's own origin: never let a browser, CDN or any
+			// intermediary retain them, and never let a sniffed content type turn a proxied body into
+			// script on this origin. Set before any early return so error responses carry them too.
+			Response.Headers.CacheControl = "no-store, no-cache, max-age=0";
+			Response.Headers.Pragma = "no-cache";
+			Response.Headers["X-Content-Type-Options"] = "nosniff";
+
 			var normalizedPath = (path ?? string.Empty).TrimStart('/');
 			if (!IsAllowed(normalizedPath))
 			{
@@ -56,7 +66,7 @@ namespace Resgrid.Web.Controllers
 				return;
 			}
 
-			if (!HttpMethods.IsGet(Request.Method) && !HttpMethods.IsHead(Request.Method))
+			if (!HttpMethods.IsGet(Request.Method))
 			{
 				try { await _antiforgery.ValidateRequestAsync(HttpContext); }
 				catch (AntiforgeryValidationException)
@@ -66,20 +76,32 @@ namespace Resgrid.Web.Controllers
 				}
 			}
 
-			if (Request.ContentLength > 25L * 1024L * 1024L)
+			if (Request.ContentLength > MaxRequestBodyBytes)
 			{
 				Response.StatusCode = StatusCodes.Status413PayloadTooLarge;
 				return;
 			}
 
+			// A chunked request has no Content-Length, so the check above cannot see it. Lower Kestrel's
+			// per-request limit instead: it is enforced as the body is read, whatever the framing.
+			var maxBodySize = HttpContext.Features.Get<IHttpMaxRequestBodySizeFeature>();
+			if (maxBodySize is { IsReadOnly: false })
+				maxBodySize.MaxRequestBodySize = MaxRequestBodyBytes;
+
 			try
 			{
-				var bearer = await GetServerTokenAsync(false, cancellationToken);
-				if (string.IsNullOrWhiteSpace(bearer))
+				var token = await GetServerTokenAsync(false, cancellationToken);
+				if (token == null)
 				{
-					Response.StatusCode = StatusCodes.Status401Unauthorized;
+					// No usable session claims means this caller can never get a token; an upstream failure
+					// is transient. Collapsing both to 401 makes the client sign the user out over a blip.
+					Response.StatusCode = HasSessionClaims()
+						? StatusCodes.Status503ServiceUnavailable
+						: StatusCodes.Status401Unauthorized;
 					return;
 				}
+
+				var bearer = token.AccessToken;
 
 				var apiBase = new Uri(SystemBehaviorConfig.ResgridApiBaseUrl.TrimEnd('/') + "/", UriKind.Absolute);
 				var target = new Uri(apiBase, normalizedPath + Request.QueryString);
@@ -94,6 +116,12 @@ namespace Resgrid.Web.Controllers
 				outbound.Headers.TryAddWithoutValidation("Accept", Request.Headers.Accept.ToArray());
 				outbound.Headers.TryAddWithoutValidation("Accept-Language", Request.Headers.AcceptLanguage.ToArray());
 				outbound.Headers.TryAddWithoutValidation("X-Resgrid-Client", "web");
+
+				// Without this every proxied call reaches the API as the web pod's address, so audit rows
+				// and any per-IP policy upstream record the proxy rather than the person who acted.
+				var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+				if (!string.IsNullOrWhiteSpace(clientIp))
+					outbound.Headers.TryAddWithoutValidation("X-Forwarded-For", clientIp);
 
 				if (Request.ContentLength.GetValueOrDefault() > 0 || HttpMethods.IsPost(Request.Method) ||
 					HttpMethods.IsPut(Request.Method) || HttpMethods.IsPatch(Request.Method))
@@ -120,7 +148,9 @@ namespace Resgrid.Web.Controllers
 			}
 			catch (Exception ex)
 			{
-				Resgrid.Framework.Logging.LogException(ex, "Web API facade request failed.");
+				// An upstream timeout, reset or client disconnect is a handled dependency failure surfaced as
+				// 503, not a process-fatal condition -- Fatal here buries real incidents under proxy noise.
+				Resgrid.Framework.Logging.LogError(ex, $"Web API facade request failed for {normalizedPath}.");
 				if (!Response.HasStarted)
 					Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
 			}
@@ -130,13 +160,28 @@ namespace Resgrid.Web.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> EventingToken(CancellationToken cancellationToken)
 		{
+			Response.Headers.CacheControl = "no-store, no-cache, max-age=0";
+			Response.Headers["X-Content-Type-Options"] = "nosniff";
+
 			var token = await GetServerTokenAsync(true, cancellationToken);
-			return string.IsNullOrWhiteSpace(token)
-				? Unauthorized()
-				: Ok(new { accessToken = token, expiresIn = 120 });
+			if (token == null)
+				return HasSessionClaims() ? StatusCode(StatusCodes.Status503ServiceUnavailable) : Unauthorized();
+
+			// Report what is actually left on this token, not its full minted lifetime: the same token is
+			// served from cache for most of its life, so a fixed number tells later callers they have far
+			// more time than they do and they reconnect with an already-expired token.
+			var remaining = (int)Math.Floor((token.ExpiresOnUtc - DateTimeOffset.UtcNow).TotalSeconds);
+			return Ok(new { accessToken = token.AccessToken, expiresIn = Math.Max(0, remaining) });
 		}
 
-		private async Task<string> GetServerTokenAsync(bool eventingOnly, CancellationToken cancellationToken)
+		private bool HasSessionClaims() =>
+			!string.IsNullOrWhiteSpace(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue(ClaimTypes.PrimarySid)) &&
+			!string.IsNullOrWhiteSpace(User.FindFirstValue(SessionClaimTypes.SessionId)) &&
+			!string.IsNullOrWhiteSpace(User.FindFirstValue(SessionClaimTypes.AuthenticationGeneration)) &&
+			!string.IsNullOrWhiteSpace(User.FindFirstValue(ClaimTypes.PrimaryGroupSid)) &&
+			!string.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey);
+
+		private async Task<CachedBffToken> GetServerTokenAsync(bool eventingOnly, CancellationToken cancellationToken)
 		{
 			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue(ClaimTypes.PrimarySid);
 			var sessionId = User.FindFirstValue(SessionClaimTypes.SessionId);
@@ -148,7 +193,7 @@ namespace Resgrid.Web.Controllers
 				return null;
 
 			var cacheKey = $"web-bff:{(eventingOnly ? "eventing" : "api")}:{sessionId}:{generation}:{departmentId}";
-			if (_memoryCache.TryGetValue(cacheKey, out string cachedToken))
+			if (_memoryCache.TryGetValue(cacheKey, out CachedBffToken cachedToken) && cachedToken != null)
 				return cachedToken;
 
 			var tokenUri = new Uri(new Uri(SystemBehaviorConfig.ResgridApiBaseUrl.TrimEnd('/') + "/"),
@@ -176,10 +221,22 @@ namespace Resgrid.Web.Controllers
 			if (string.IsNullOrWhiteSpace(token?.AccessToken))
 				return null;
 
-			_memoryCache.Set(cacheKey, token.AccessToken, eventingOnly
-				? TimeSpan.FromSeconds(90)
-				: TimeSpan.FromMinutes(Math.Max(1, SessionSecurityConfig.WebBffAccessTokenLifetimeMinutes - 1)));
-			return token.AccessToken;
+			// The token endpoint is the authority on lifetime; the config values are only a fallback for a
+			// response that omits expires_in.
+			var lifetime = token.ExpiresIn > 0
+				? TimeSpan.FromSeconds(token.ExpiresIn)
+				: TimeSpan.FromMinutes(eventingOnly ? 2 : Math.Max(1, SessionSecurityConfig.WebBffAccessTokenLifetimeMinutes));
+
+			var cached = new CachedBffToken(token.AccessToken, DateTimeOffset.UtcNow.Add(lifetime));
+
+			// Retire the cached copy early so a token handed out at the end of its cache window still has
+			// usable life left on it.
+			var margin = eventingOnly ? TimeSpan.FromSeconds(30) : TimeSpan.FromMinutes(1);
+			var cacheFor = lifetime - margin;
+			if (cacheFor > TimeSpan.Zero)
+				_memoryCache.Set(cacheKey, cached, cacheFor);
+
+			return cached;
 		}
 
 		private static bool IsAllowed(string path)
@@ -193,6 +250,11 @@ namespace Resgrid.Web.Controllers
 		{
 			[JsonPropertyName("access_token")]
 			public string AccessToken { get; set; }
+
+			[JsonPropertyName("expires_in")]
+			public int ExpiresIn { get; set; }
 		}
+
+		private sealed record CachedBffToken(string AccessToken, DateTimeOffset ExpiresOnUtc);
 	}
 }

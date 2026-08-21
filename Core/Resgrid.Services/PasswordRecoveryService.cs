@@ -61,14 +61,14 @@ namespace Resgrid.Services
 			return new PasswordRecoveryIssueResult { Issued = saved, Token = saved ? token : null };
 		}
 
-		public async Task<PasswordRecoveryRequest> GetAsync(string token, CancellationToken cancellationToken = default)
+		public async Task<PasswordRecoveryLookupResult> GetAsync(string token, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(token))
-				return null;
+				return PasswordRecoveryLookupResult.NotFound();
 
 			var json = await _cacheProvider.GetStringAsync(GetRequestKey(token));
 			if (string.IsNullOrWhiteSpace(json))
-				return null;
+				return PasswordRecoveryLookupResult.NotFound();
 
 			PasswordRecoveryRequest request;
 			try
@@ -77,23 +77,29 @@ namespace Resgrid.Services
 			}
 			catch (JsonException)
 			{
-				return null;
+				// A token whose stored payload no longer parses is spent as far as this flow is concerned;
+				// it is reported the same as a missing one so callers cannot leak the difference.
+				return PasswordRecoveryLookupResult.NotFound();
 			}
 
-			return request?.ExpiresOn > DateTime.UtcNow ? request : null;
+			return request?.ExpiresOn > DateTime.UtcNow
+				? PasswordRecoveryLookupResult.ForRequest(request)
+				: PasswordRecoveryLookupResult.NotFound();
 		}
 
 		public async Task<bool> TryConsumeAsync(string token, CancellationToken cancellationToken = default)
 		{
-			if (await GetAsync(token, cancellationToken) == null)
+			if (!(await GetAsync(token, cancellationToken)).Found)
 				return false;
 
 			var lifetime = TimeSpan.FromMinutes(Math.Max(5, SessionSecurityConfig.PublicResetLinkLifetimeMinutes));
 			return await _cacheProvider.IncrementAsync(GetUsedKey(token), lifetime) == 1;
 		}
 
-		public Task RemoveAsync(string token, CancellationToken cancellationToken = default) =>
-			_cacheProvider.RemoveAsync(GetRequestKey(token));
+		public async Task RemoveAsync(string token, CancellationToken cancellationToken = default)
+		{
+			await _cacheProvider.RemoveAsync(GetRequestKey(token));
+		}
 
 		private static string GetRequestKey(string token) => $"{CachePrefix}request:{Hash(token)}";
 		private static string GetUsedKey(string token) => $"{CachePrefix}used:{Hash(token)}";

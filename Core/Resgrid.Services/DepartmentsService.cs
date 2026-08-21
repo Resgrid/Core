@@ -111,7 +111,22 @@ namespace Resgrid.Services
 			}
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
-				return await _cacheProvider.RetrieveAsync<Department>(string.Format(CacheKey, departmentId), getDepartment, CacheLength);
+			{
+				var cached = await _cacheProvider.RetrieveAsync<Department>(string.Format(CacheKey, departmentId), getDepartment, CacheLength);
+
+				// Identity check: anything that comes back as a different department is a poisoned entry, not
+				// this department. Billing writes payment rows straight off this object (DepartmentId and
+				// ManagingUserId), so a blank record would be persisted as real data. Drop it and re-read.
+				if (cached != null && cached.DepartmentId != departmentId)
+				{
+					Logging.LogWarning($"GetDepartmentById(): cached entry for id {departmentId} came back as id {cached.DepartmentId}; discarding it and re-reading from the database.");
+					await _cacheProvider.RemoveAsync(string.Format(CacheKey, departmentId));
+
+					return await getDepartment();
+				}
+
+				return cached;
+			}
 			else
 				return await getDepartment();
 		}

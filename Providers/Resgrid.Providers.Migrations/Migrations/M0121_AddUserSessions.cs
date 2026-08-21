@@ -1,16 +1,19 @@
 using FluentMigrator;
+using FluentMigrator.SqlServer;
 
 namespace Resgrid.Providers.Migrations.Migrations
 {
-	[Migration(121)]
+	// ONLINE index operations should not be wrapped in a long migration transaction because their
+	// final schema locks can otherwise be retained until commit. Every statement is guarded for retry.
+	// ONLINE is not supported by every SQL Server edition; unsupported deployments must schedule a
+	// maintenance window and use an explicitly reviewed offline variant rather than silently blocking.
+	[Migration(121, TransactionBehavior.None)]
 	public class M0121_AddUserSessions : Migration
 	{
 		public override void Up()
 		{
-			if (Schema.Table("UserSessions").Exists())
-				return;
-
-			Create.Table("UserSessions")
+			if (!Schema.Table("UserSessions").Exists())
+				Create.Table("UserSessions")
 				.WithColumn("UserSessionId").AsString(128).NotNullable().PrimaryKey()
 				.WithColumn("UserId").AsString(128).NotNullable()
 				.WithColumn("DepartmentId").AsInt32().Nullable()
@@ -42,26 +45,38 @@ namespace Resgrid.Providers.Migrations.Migrations
 				.WithColumn("RevokedByUserId").AsString(128).Nullable()
 				.WithColumn("RevocationReason").AsInt32().Nullable();
 
-			Create.Index("IX_UserSessions_User_State_Expiry_Activity")
+			if (!Schema.Table("UserSessions").Index("IX_UserSessions_User_State_Expiry_Activity").Exists())
+				Create.Index("IX_UserSessions_User_State_Expiry_Activity")
 				.OnTable("UserSessions")
 				.OnColumn("UserId").Ascending()
 				.OnColumn("State").Ascending()
 				.OnColumn("ExpiresOn").Ascending()
-				.OnColumn("LastActiveOn").Descending();
-			Create.Index("IX_UserSessions_Department_User_State")
+				.OnColumn("LastActiveOn").Descending()
+				.WithOptions().Online();
+
+			if (!Schema.Table("UserSessions").Index("IX_UserSessions_Department_User_State").Exists())
+				Create.Index("IX_UserSessions_Department_User_State")
 				.OnTable("UserSessions")
 				.OnColumn("DepartmentId").Ascending()
 				.OnColumn("UserId").Ascending()
-				.OnColumn("State").Ascending();
-			Create.Index("IX_UserSessions_Revoked_Expiry")
+				.OnColumn("State").Ascending()
+				.WithOptions().Online();
+
+			if (!Schema.Table("UserSessions").Index("IX_UserSessions_Revoked_Expiry").Exists())
+				Create.Index("IX_UserSessions_Revoked_Expiry")
 				.OnTable("UserSessions")
 				.OnColumn("RevokedOn").Ascending()
-				.OnColumn("ExpiresOn").Ascending();
-			Execute.Sql("CREATE UNIQUE INDEX [UX_UserSessions_OpenIddictAuthorizationId] ON [UserSessions] ([OpenIddictAuthorizationId]) WHERE [OpenIddictAuthorizationId] IS NOT NULL;");
+				.OnColumn("ExpiresOn").Ascending()
+				.WithOptions().Online();
+
+			if (!Schema.Table("UserSessions").Index("UX_UserSessions_OpenIddictAuthorizationId").Exists())
+				Execute.Sql("CREATE UNIQUE INDEX [UX_UserSessions_OpenIddictAuthorizationId] ON [UserSessions] ([OpenIddictAuthorizationId]) WHERE [OpenIddictAuthorizationId] IS NOT NULL WITH (ONLINE = ON);");
 		}
 
 		public override void Down()
 		{
+			// SQL Server has no online DROP TABLE. Rollback requires a schema-modification lock;
+			// schedule it during maintenance on editions or workloads where that lock is unsafe.
 			if (Schema.Table("UserSessions").Exists())
 				Delete.Table("UserSessions");
 		}

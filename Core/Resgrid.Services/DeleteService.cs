@@ -119,8 +119,19 @@ namespace Resgrid.Services
 			// Soft-delete the membership last (this also writes the audit event and clears caches).
 			var member = await _departmentsService.DeleteUserAsync(departmentId, userId, revokingUserId, cancellationToken);
 			if (member != null && member.IsDeleted)
-				await _userSessionService.RevokeDepartmentSessionsAsync(userId, departmentId,
-					UserSessionRevocationReason.MembershipDisabled, cancellationToken);
+			{
+				try
+				{
+					await _userSessionService.RevokeDepartmentSessionsAsync(userId, departmentId,
+						UserSessionRevocationReason.MembershipDisabled, cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex,
+						$"Operation=RevokeDepartmentSessionsAsync; UserId={userId}; DepartmentId={departmentId}");
+					throw;
+				}
+			}
 
 			return member != null && member.IsDeleted;
 		}

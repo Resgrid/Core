@@ -39,14 +39,17 @@ namespace Resgrid.Tests.Web
 				int scope,
 				bool isAdmin = false,
 				bool isGroupAdmin = false,
-				DateTime? lastVerified = null) =>
+				DateTime? lastVerified = null,
+				bool requireForOperation = false,
+				int windowMinutes = WindowMinutes) =>
 				new TwoFactorEnforcementContext(
 					UserHas2FaEnabled: userHas2Fa,
 					DepartmentScope: scope,
 					IsAdminOrManagingUser: isAdmin,
 					IsGroupAdmin: isGroupAdmin,
 					LastStepUpVerifiedAtUtc: lastVerified,
-					StepUpWindowMinutes: WindowMinutes);
+					StepUpWindowMinutes: windowMinutes,
+					RequireStepUpForOperation: requireForOperation);
 		}
 
 		// ── Scope 0 ──────────────────────────────────────────────────────────────────
@@ -288,6 +291,68 @@ namespace Resgrid.Tests.Web
 
 				result.Outcome.Should().Be(TwoFactorEnforcementOutcome.NotRequired,
 					because: "scope 1 only covers dept admins and managing user, not group admins");
+			}
+		}
+
+		// ── Operation-specific enforcement ─────────────────────────────────────────────
+
+		[TestFixture]
+		public class when_operation_requires_step_up
+		{
+			[Test]
+			public void and_user_has_no_2fa_should_require_enrollment_even_when_department_scope_is_disabled()
+			{
+				var ctx = Contexts.Build(userHas2Fa: false, scope: 0, requireForOperation: true,
+					windowMinutes: 5);
+
+				var result = TwoFactorEnforcementEvaluator.Evaluate(ctx, Clock.Now);
+
+				result.Outcome.Should().Be(TwoFactorEnforcementOutcome.EnrollmentRequired);
+			}
+
+			[Test]
+			public void and_user_has_no_recent_proof_should_require_step_up()
+			{
+				var ctx = Contexts.Build(userHas2Fa: true, scope: 0, requireForOperation: true,
+					windowMinutes: 5);
+
+				var result = TwoFactorEnforcementEvaluator.Evaluate(ctx, Clock.Now);
+
+				result.Outcome.Should().Be(TwoFactorEnforcementOutcome.StepUpRequired);
+			}
+
+			[Test]
+			public void and_proof_is_exactly_five_minutes_old_should_pass()
+			{
+				var ctx = Contexts.Build(userHas2Fa: true, scope: 0,
+					lastVerified: Clock.Now.AddMinutes(-5), requireForOperation: true, windowMinutes: 5);
+
+				var result = TwoFactorEnforcementEvaluator.Evaluate(ctx, Clock.Now);
+
+				result.Outcome.Should().Be(TwoFactorEnforcementOutcome.NotRequired);
+			}
+
+			[Test]
+			public void and_proof_is_older_than_five_minutes_should_require_step_up()
+			{
+				var ctx = Contexts.Build(userHas2Fa: true, scope: 0,
+					lastVerified: Clock.Now.AddMinutes(-5).AddSeconds(-1), requireForOperation: true,
+					windowMinutes: 5);
+
+				var result = TwoFactorEnforcementEvaluator.Evaluate(ctx, Clock.Now);
+
+				result.Outcome.Should().Be(TwoFactorEnforcementOutcome.StepUpRequired);
+			}
+
+			[Test]
+			public void and_proof_timestamp_is_in_the_future_should_require_step_up()
+			{
+				var ctx = Contexts.Build(userHas2Fa: true, scope: 0,
+					lastVerified: Clock.Now.AddSeconds(1), requireForOperation: true, windowMinutes: 5);
+
+				var result = TwoFactorEnforcementEvaluator.Evaluate(ctx, Clock.Now);
+
+				result.Outcome.Should().Be(TwoFactorEnforcementOutcome.StepUpRequired);
 			}
 		}
 

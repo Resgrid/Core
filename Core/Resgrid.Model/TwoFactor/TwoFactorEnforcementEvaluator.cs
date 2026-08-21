@@ -30,21 +30,21 @@ namespace Resgrid.Model.TwoFactor
 		/// </param>
 		public static TwoFactorEnforcementDecision Evaluate(TwoFactorEnforcementContext context, DateTime nowUtc)
 		{
-			bool departmentCoversUser = IsCoveredByDepartmentScope(context);
+			bool enforcementCoversUser = context.RequireStepUpForOperation || IsCoveredByDepartmentScope(context);
 
-			// User has no 2FA and is not covered by the department mandate — nothing to enforce
-			if (!context.UserHas2FaEnabled && !departmentCoversUser)
+			// User has no 2FA and is not covered by an operation or department mandate — nothing to enforce
+			if (!context.UserHas2FaEnabled && !enforcementCoversUser)
 				return new TwoFactorEnforcementDecision(TwoFactorEnforcementOutcome.NotRequired);
 
-			// User is covered by the department mandate but has not yet enrolled
-			if (!context.UserHas2FaEnabled && departmentCoversUser)
+			// User is covered by an operation or department mandate but has not yet enrolled
+			if (!context.UserHas2FaEnabled && enforcementCoversUser)
 				return new TwoFactorEnforcementDecision(TwoFactorEnforcementOutcome.EnrollmentRequired);
 
 			// User has 2FA enrolled — check whether the step-up proof is still valid
 			if (context.LastStepUpVerifiedAtUtc.HasValue)
 			{
 				var windowExpiry = context.LastStepUpVerifiedAtUtc.Value.AddMinutes(context.StepUpWindowMinutes);
-				if (nowUtc <= windowExpiry)
+				if (context.LastStepUpVerifiedAtUtc.Value <= nowUtc && nowUtc <= windowExpiry)
 					return new TwoFactorEnforcementDecision(TwoFactorEnforcementOutcome.NotRequired);
 			}
 

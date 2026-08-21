@@ -124,7 +124,10 @@
                         return;
 
 					fetch('/api/web-bff/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where))
-                        .then(function(r) { return r.json(); })
+						.then(function(r) {
+							if (!r.ok) throw new Error('ForwardGeocode failed with HTTP status ' + r.status);
+							return r.json();
+						})
                         .then(function(result) {
                             if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
                                 var lat = result.Data.Latitude;
@@ -137,7 +140,9 @@
                                 console.log("Geocode returned no results for: " + where);
                             }
                         })
-                        .catch(function(err) { console.error("Geocode error:", err); });
+						.catch(function(err) {
+							console.error('ForwardGeocode failed', { operation: 'ForwardGeocode', address: where, error: err });
+						});
                     evt.preventDefault();
                 });
                 $("#setPinButton").click(function (evt) {
@@ -372,25 +377,35 @@
             }
             function geocodeCoordinates(lat, lng) {
 				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng)
-                    .then(function(r) { return r.json(); })
+					.then(function(r) {
+						if (!r.ok) throw new Error('ReverseGeocode failed with HTTP status ' + r.status);
+						return r.json();
+					})
                     .then(function(result) {
                         if (result && result.Data && result.Data.Address) {
                             $("#Call_Address").val(result.Data.Address);
                         }
                     })
-                    .catch(function(err) { console.error("Reverse geocode error:", err); });
+					.catch(function(err) {
+						console.error('ReverseGeocode failed', { operation: 'ReverseGeocode', latitude: lat, longitude: lng, error: err });
+					});
             }
             addArchivedCall.geocodeCoordinates = geocodeCoordinates;
 
             function findLocation(pos) {
 				fetch('/api/web-bff/api/v4/Geocoding/ReverseGeocode?lat=' + pos.lat + '&lon=' + pos.lng)
-                    .then(function(r) { return r.json(); })
+					.then(function(r) {
+						if (!r.ok) throw new Error('ReverseGeocode failed with HTTP status ' + r.status);
+						return r.json();
+					})
                     .then(function(result) {
                         if (result && result.Data && result.Data.Address) {
                             $("#Call_Address").val(result.Data.Address);
                         }
                     })
-                    .catch(function(err) { console.error("Reverse geocode error:", err); });
+					.catch(function(err) {
+						console.error('ReverseGeocode failed', { operation: 'ReverseGeocode', latitude: pos.lat, longitude: pos.lng, error: err });
+					});
                 $("#Latitude").val(pos.lat.toString());
                 $("#Longitude").val(pos.lng.toString());
             }

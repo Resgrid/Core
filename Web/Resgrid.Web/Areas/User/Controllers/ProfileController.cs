@@ -31,6 +31,10 @@ using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 using SixLabors.ImageSharp.Formats;
 using Microsoft.Extensions.Localization;
 using Resgrid.Model.Security;
+using Newtonsoft.Json;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
+using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -59,6 +63,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IPasswordRecoveryService _passwordRecoveryService;
+		private readonly IEventAggregator _eventAggregator;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, ICertificationService certificationService,
@@ -68,7 +73,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer, IDeleteService deleteService,
 			IExternalIdentityLinkService externalIdentityLinkService, IUserSessionService userSessionService,
 			ISystemAuditsService systemAuditsService, IDepartmentGroupsService departmentGroupsService,
-			IDepartmentSettingsService departmentSettingsService, IPasswordRecoveryService passwordRecoveryService)
+			IDepartmentSettingsService departmentSettingsService, IPasswordRecoveryService passwordRecoveryService,
+			IEventAggregator eventAggregator)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -91,6 +97,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentGroupsService = departmentGroupsService;
 			_departmentSettingsService = departmentSettingsService;
 			_passwordRecoveryService = passwordRecoveryService;
+			_eventAggregator = eventAggregator;
 		}
 		#endregion Private Members and Constructors
 
@@ -968,6 +975,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5)]
 		public async Task<IActionResult> ResetPasswordForUser(string userId)
 		{
 			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
@@ -996,6 +1004,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_View)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5)]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ResetPasswordForUser(ResetPasswordForUserView model, CancellationToken cancellationToken)
 		{
@@ -1011,6 +1020,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			await PopulatePasswordResetModelAsync(model, user, member);
 			if (model.IsSsoManaged)
+				return Forbid();
+			if (!TryGetMfaVerifiedAtUtc(out var mfaVerifiedAtUtc))
 				return Forbid();
 
 			if (model.UseEmailResetLink)
@@ -1029,7 +1040,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return View(model);
 				}
 
-				return await SendAdministratorPasswordResetLinkAsync(model, user, cancellationToken);
+				return await SendAdministratorPasswordResetLinkAsync(model, user, mfaVerifiedAtUtc, cancellationToken);
 			}
 
 			if (!ModelState.IsValid)
@@ -1049,6 +1060,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			user.AuthenticationStateChangedOn = now;
 			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 			var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+			var auditData = BuildPasswordResetAuditData(model.UserId, "direct", mfaVerifiedAtUtc,
+				result.Succeeded, result.Succeeded, model.MustChangePasswordOnLogin);
 
 			if (result.Succeeded)
 			{
@@ -1073,8 +1086,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					CorrelationId = HttpContext.TraceIdentifier,
 					ServerName = Environment.MachineName,
 					Successful = true,
-					Data = $"Administrator reset the password and revoked all authentication sessions. MustChangePassword={model.MustChangePasswordOnLogin}."
+					Data = auditData
 				}, cancellationToken);
+				PublishPasswordResetAudit(auditData, true);
 
 				if (model.EmailUser)
 					await _emailService.SendPasswordChangedByAdministratorEmail(model.Email, model.Name,
@@ -1087,6 +1101,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				model.Message += error.Description + " ";
 			}
+
+			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.PasswordResetByAdministrator,
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				TargetUserId = model.UserId,
+				Username = User.Identity?.Name,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				CorrelationId = HttpContext.TraceIdentifier,
+				ServerName = Environment.MachineName,
+				Successful = false,
+				Data = auditData
+			}, cancellationToken);
+			PublishPasswordResetAudit(auditData, false);
 
 			return View(model);
 		}
@@ -1124,7 +1154,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		private async Task<IActionResult> SendAdministratorPasswordResetLinkAsync(ResetPasswordForUserView model,
-			IdentityUser user, CancellationToken cancellationToken)
+			IdentityUser user, DateTime mfaVerifiedAtUtc, CancellationToken cancellationToken)
 		{
 			var requestedOn = DateTime.UtcNow;
 			var ipAddress = IpAddressHelper.GetRequestIP(Request, true);
@@ -1164,6 +1194,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await TryRemovePasswordRecoveryTokenAsync(issuedToken, cancellationToken);
 			}
 
+			var successful = issued && emailSent;
+			var auditData = BuildPasswordResetAuditData(user.Id, "email_link", mfaVerifiedAtUtc,
+				successful, false, null);
 			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
 			{
 				System = (int)SystemAuditSystems.Website,
@@ -1175,11 +1208,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				IpAddress = ipAddress,
 				CorrelationId = HttpContext.TraceIdentifier,
 				ServerName = Environment.MachineName,
-				Successful = issued && emailSent,
-				Data = issued && emailSent
-					? "Administrator sent a short-lived, single-use password reset link. Existing sessions remain valid until the user completes the reset."
-					: "Administrator password reset link request was denied by rate limiting or could not be delivered."
+				Successful = successful,
+				Data = auditData
 			}, cancellationToken);
+			PublishPasswordResetAudit(auditData, successful);
 
 			if (!issued || !emailSent)
 			{
@@ -1191,6 +1223,47 @@ namespace Resgrid.Web.Areas.User.Controllers
 			TempData["PasswordResetMessage"] =
 				"A short-lived, single-use password reset link was sent to the user's confirmed email address.";
 			return RedirectToAction(nameof(ResetPasswordForUser), new { userId = user.Id });
+		}
+
+		private bool TryGetMfaVerifiedAtUtc(out DateTime verifiedAtUtc)
+		{
+			verifiedAtUtc = default;
+			if (!HttpContext.Items.TryGetValue(RequiresRecentTwoFactorAttribute.MfaVerifiedAtHttpContextItemKey,
+				out var rawValue) || rawValue is not DateTime value)
+				return false;
+
+			verifiedAtUtc = value.Kind == DateTimeKind.Utc ? value : value.ToUniversalTime();
+			var age = DateTime.UtcNow - verifiedAtUtc;
+			return age >= TimeSpan.Zero && age <= TimeSpan.FromMinutes(5);
+		}
+
+		private static string BuildPasswordResetAuditData(string targetUserId, string resetMode,
+			DateTime mfaVerifiedAtUtc, bool successful, bool sessionsRevoked, bool? mustChangePasswordOnLogin)
+		{
+			return JsonConvert.SerializeObject(new
+			{
+				target_user_id = targetUserId,
+				reset_mode = resetMode,
+				mfa_verified_at = mfaVerifiedAtUtc.ToString("O"),
+				successful,
+				sessions_revoked = sessionsRevoked,
+				must_change_password_on_login = mustChangePasswordOnLogin
+			});
+		}
+
+		private void PublishPasswordResetAudit(string auditData, bool successful)
+		{
+			_eventAggregator.SendMessage(new AuditEvent
+			{
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Type = AuditLogTypes.PasswordResetByAdministrator,
+				After = auditData,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				UserAgent = BoundSecurityContext(Request.Headers.UserAgent.ToString(), 512),
+				ServerName = Environment.MachineName,
+				Successful = successful
+			});
 		}
 
 		private async Task TryRemovePasswordRecoveryTokenAsync(string token, CancellationToken cancellationToken)

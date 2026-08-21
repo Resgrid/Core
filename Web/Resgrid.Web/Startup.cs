@@ -136,7 +136,12 @@ namespace Resgrid.Web
 			}
 
 			services.AddMemoryCache();
-			services.AddHttpClient("ResgridWebBff")
+			services.AddHttpClient("ResgridWebBff", client =>
+				{
+					// Default is 100s. A hung API would otherwise pin a Kestrel request (and the browser
+					// connection behind it) for that long, so cap it well under any sane client timeout.
+					client.Timeout = TimeSpan.FromSeconds(30);
+				})
 				.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
 				{
 					AllowAutoRedirect = false,

@@ -115,6 +115,8 @@ namespace Resgrid.Services
 					return "Two-Factor Recovery Code Used";
 				case AuditLogTypes.TwoFactorStepUpVerified:
 					return "Two-Factor Step-Up Verified";
+				case AuditLogTypes.PasswordResetByAdministrator:
+					return "Password Reset by Administrator";
 				// SSO / SAML / OIDC
 				case AuditLogTypes.SsoConfigCreated:
 					return "SSO Config Created";

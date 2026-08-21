@@ -36,6 +36,12 @@ namespace Resgrid.Model.TwoFactor
 		/// The number of minutes a step-up proof remains valid.
 		/// Sourced from <c>TwoFactorConfig.StepUpVerificationWindowMinutes</c>.
 		/// </summary>
-		int StepUpWindowMinutes);
+		int StepUpWindowMinutes,
+
+		/// <summary>
+		/// Whether this specific privileged operation requires MFA regardless of the
+		/// department's general administrator-enforcement setting.
+		/// </summary>
+		bool RequireStepUpForOperation = false);
 }
 

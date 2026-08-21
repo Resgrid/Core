@@ -39,6 +39,10 @@ namespace Resgrid.Workers.Framework.Logic
 
 					switch (auditEvent.Type)
 					{
+						case AuditLogTypes.PasswordResetByAdministrator:
+							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} performed a privileged password reset action";
+							auditLog.Data = String.IsNullOrWhiteSpace(auditEvent.After) ? "No Data" : auditEvent.After;
+							break;
 						case AuditLogTypes.DepartmentSettingsChanged:
 							auditLog.Message = string.Format("{0} updated the department settings", profile.FullName.AsFirstNameLastName);
 							var compareLogic = new CompareLogic();

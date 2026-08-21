@@ -30,7 +30,11 @@ namespace Resgrid.Tests.Services
 			protected Mock<IChatbotOutboundService> _chatbotOutboundServiceMock;
 			protected ICommunicationService _communicationService;
 
-			protected with_the_communication_service()
+			// NUnit builds one fixture instance for the whole class, so mocks created in a constructor are
+			// shared by every test in it and calls recorded by one test leak into another's Times.Never()
+			// assertions. Build them per test instead.
+			[SetUp]
+			public void SetUpCommunicationService()
 			{
 				_smsServiceMock = new Mock<ISmsService>();
 				_emailServiceMock = new Mock<IEmailService>();

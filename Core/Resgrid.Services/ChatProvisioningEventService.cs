@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Resgrid.Framework;
@@ -38,6 +39,9 @@ namespace Resgrid.Services
 			_eventAggregator.AddAsyncListener<IncidentClosedEvent>(OnIncidentClosedAsync);
 			_eventAggregator.AddAsyncListener<LaneLeadChangedEvent>(OnLaneLeadChangedAsync);
 			_eventAggregator.AddAsyncListener<IncidentReopenedEvent>(OnIncidentReopenedAsync);
+			// Security refresh is published through SendMessage (the synchronous event path), so register
+			// a synchronous bridge and wait for the fail-safe RunAsync handler to finish.
+			_eventAggregator.AddListener<SecurityRefreshEvent>(message => OnDepartmentSecurityChangedAsync(message).GetAwaiter().GetResult());
 		}
 
 		private Task OnCallAddedAsync(CallAddedEvent message)
@@ -161,6 +165,39 @@ namespace Resgrid.Services
 				var call = await scope.Resolve<ICallsService>().GetCallByIdAsync(message.CallId);
 				if (call != null && !call.ClosedOn.HasValue)
 					await chatChannelService.SetIncidentChannelsArchivedAsync(message.CallId, false);
+			});
+		}
+
+		private Task OnDepartmentSecurityChangedAsync(SecurityRefreshEvent message)
+		{
+			// DepartmentsService emits this once per membership/admin/visibility refresh (alongside
+			// the other visibility matrices). Handle one type only so a single change does not rotate
+			// every chat group four times.
+			if (message == null || message.DepartmentId <= 0 || message.Type != SecurityCacheTypes.WhoCanViewPersonnel)
+				return Task.CompletedTask;
+
+			return RunAsync(async scope =>
+			{
+				var channelRepository = scope.Resolve<IChatChannelRepository>();
+				var permissionService = scope.Resolve<IChatPermissionService>();
+				var channels = await channelRepository.GetAllByDepartmentIdAsync(message.DepartmentId, true);
+
+				if (channels != null)
+				{
+					foreach (var channel in channels.Where(c => c != null))
+						await permissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
+				}
+
+				_eventAggregator.SendMessage<ChatEventRaised>(new ChatEventRaised
+				{
+					DepartmentId = message.DepartmentId,
+					Kind = ChatEventKinds.ChannelUpdated,
+					PayloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(new
+					{
+						DepartmentId = message.DepartmentId,
+						AuthorizationChanged = true
+					})
+				});
 			});
 		}
 

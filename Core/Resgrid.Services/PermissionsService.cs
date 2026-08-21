@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CommonServiceLocator;
+using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -49,7 +53,53 @@ namespace Resgrid.Services
 			permission.UpdatedBy = userId;
 			permission.UpdatedOn = DateTime.UtcNow;
 
-			return await _permissionsRepository.SaveOrUpdateAsync(permission, cancellationToken);
+			var saved = await _permissionsRepository.SaveOrUpdateAsync(permission, cancellationToken);
+
+			if (saved != null && type == PermissionTypes.DispatchAppLogin)
+				await RotateDispatchChatAccessAsync(departmentId);
+
+			return saved;
+		}
+
+		private static async Task RotateDispatchChatAccessAsync(int departmentId)
+		{
+			if (departmentId <= 0 || !ServiceLocator.IsLocationProviderSet)
+				return;
+
+			try
+			{
+				var channelRepository = ServiceLocator.Current.GetInstance<IChatChannelRepository>();
+				var permissionService = ServiceLocator.Current.GetInstance<IChatPermissionService>();
+				var channels = await channelRepository.GetAllByDepartmentIdAsync(departmentId, true);
+
+				if (channels != null)
+				{
+					foreach (var channel in channels.Where(c => c != null && IsDispatchVisibleChannel((ChatChannelType)c.ChannelType)))
+						await permissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
+				}
+
+				ServiceLocator.Current.GetInstance<IEventAggregator>().SendMessage<ChatEventRaised>(new ChatEventRaised
+				{
+					DepartmentId = departmentId,
+					Kind = ChatEventKinds.ChannelUpdated,
+					PayloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(new { DepartmentId = departmentId, AuthorizationChanged = true })
+				});
+			}
+			catch (Exception ex)
+			{
+				// The permission write is authoritative and must not be rolled back by a realtime refresh
+				// failure. REST authorization already evaluates the new row live; log and let clients
+				// reconnect if eventing/cache infrastructure is unavailable.
+				Logging.LogException(ex);
+			}
+		}
+
+		private static bool IsDispatchVisibleChannel(ChatChannelType channelType)
+		{
+			return channelType == ChatChannelType.DepartmentDefault || channelType == ChatChannelType.GroupDefault ||
+				channelType == ChatChannelType.Incident || channelType == ChatChannelType.IncidentLane ||
+				channelType == ChatChannelType.IncidentCommand || channelType == ChatChannelType.IncidentLeads ||
+				channelType == ChatChannelType.IncidentDispatch || channelType == ChatChannelType.UnitDispatch;
 		}
 
 		public bool IsUserAllowed(Permission permission, bool isUserDepartmentAdmin, bool isUserGroupAdmin,

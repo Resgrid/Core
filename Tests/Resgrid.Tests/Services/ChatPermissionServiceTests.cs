@@ -63,6 +63,26 @@ namespace Resgrid.Tests.Services
 
 				// Default: nobody is a department admin unless a test says otherwise.
 				_authorizationServiceMock.Setup(x => x.CanUserModifyDepartmentAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(false);
+				_authorizationServiceMock.Setup(x => x.IsUserValidWithinLimitsAsync(It.IsAny<string>(), 1)).ReturnsAsync(true);
+				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(1, It.IsAny<string>())).ReturnsAsync(true);
+				_departmentsServiceMock
+					.Setup(x => x.GetMemberUserIdsInDepartmentAsync(1, It.IsAny<IEnumerable<string>>()))
+					.ReturnsAsync((int _, IEnumerable<string> ids) => ids == null
+						? new HashSet<string>()
+						: new HashSet<string>(ids, StringComparer.OrdinalIgnoreCase));
+				_departmentsServiceMock
+					.Setup(x => x.GetAllMembersForDepartmentUnlimitedAsync(1, It.IsAny<bool>()))
+					.ReturnsAsync(new List<DepartmentMember>
+					{
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser1Id },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser2Id },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser3Id },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser4Id }
+					});
+				_departmentGroupsServiceMock.Setup(x => x.GetGroupByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
+					.ReturnsAsync((int groupId, bool _) => new DepartmentGroup { DepartmentGroupId = groupId, DepartmentId = 1 });
+				_callsServiceMock.Setup(x => x.GetCallByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
+					.ReturnsAsync((int callId, bool _) => new Call { CallId = callId, DepartmentId = 1 });
 
 				// Default: nobody is authorized for dispatch unless a test opts in.
 				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(false);
@@ -108,8 +128,56 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		public class when_resolving_the_channel_access_version : with_the_chat_permission_service
+		{
+			[Test]
+			public async Task a_missing_cache_epoch_should_remain_null()
+			{
+				var version = await _chatPermissionService.GetChannelAccessVersionAsync("channel-1");
+
+				version.Should().BeNull();
+			}
+		}
+
+		[TestFixture]
 		public class when_evaluating_channel_access : with_the_chat_permission_service
 		{
+			[Test]
+			public async Task inactive_department_member_should_not_have_access()
+			{
+				var channel = CreateChannel(ChatChannelType.DepartmentDefault);
+				_authorizationServiceMock.Setup(x => x.IsUserValidWithinLimitsAsync(TestData.Users.TestUser1Id, 1)).ReturnsAsync(false);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task cached_access_should_not_outlive_active_department_membership()
+			{
+				var channel = CreateChannel(ChatChannelType.DepartmentDefault);
+				_authorizationServiceMock.Setup(x => x.IsUserValidWithinLimitsAsync(TestData.Users.TestUser1Id, 1)).ReturnsAsync(false);
+				_cacheProviderMock.Setup(x => x.GetStringAsync(It.Is<string>(key => key.Contains(":access:")))).ReturnsAsync("1");
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task cached_allow_should_not_outlive_channel_membership()
+			{
+				var channel = CreateChannel(ChatChannelType.DirectMessage);
+				_cacheProviderMock.Setup(x => x.GetStringAsync(It.Is<string>(key => key.Contains(":access:")))).ReturnsAsync("1");
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync(channel.ChatChannelId, TestData.Users.TestUser1Id))
+					.ReturnsAsync((ChatChannelMember)null);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
 			[Test]
 			public async Task chatbot_owner_should_have_access()
 			{
@@ -175,6 +243,32 @@ namespace Resgrid.Tests.Services
 			{
 				var channel = CreateChannel(ChatChannelType.DirectMessage);
 				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync(channel.ChatChannelId, TestData.Users.TestUser1Id)).ReturnsAsync((ChatChannelMember)null);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task dm_member_from_another_department_should_not_have_access()
+			{
+				var channel = CreateChannel(ChatChannelType.DirectMessage);
+				var member = CreateUserMember(channel, TestData.Users.TestUser1Id);
+				member.DepartmentId = 2;
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync(channel.ChatChannelId, TestData.Users.TestUser1Id)).ReturnsAsync(member);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task user_outside_the_channel_department_should_not_have_access_even_with_a_member_row()
+			{
+				var channel = CreateChannel(ChatChannelType.DirectMessage);
+				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(false);
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync(channel.ChatChannelId, TestData.Users.TestUser1Id))
+					.ReturnsAsync(CreateUserMember(channel, TestData.Users.TestUser1Id));
 
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
 
@@ -261,7 +355,7 @@ namespace Resgrid.Tests.Services
 				channel.GroupId = 9;
 				_departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(9)).ReturnsAsync(new List<DepartmentGroupMember>
 				{
-					new DepartmentGroupMember { DepartmentGroupId = 9, UserId = TestData.Users.TestUser1Id }
+					new DepartmentGroupMember { DepartmentGroupId = 9, DepartmentId = 1, UserId = TestData.Users.TestUser1Id }
 				});
 
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
@@ -276,7 +370,7 @@ namespace Resgrid.Tests.Services
 				channel.GroupId = 9;
 				_departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(9)).ReturnsAsync(new List<DepartmentGroupMember>
 				{
-					new DepartmentGroupMember { DepartmentGroupId = 9, UserId = TestData.Users.TestUser2Id }
+					new DepartmentGroupMember { DepartmentGroupId = 9, DepartmentId = 1, UserId = TestData.Users.TestUser2Id }
 				});
 
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
@@ -298,12 +392,56 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
+			public async Task group_default_dispatcher_should_have_access()
+			{
+				var channel = CreateChannel(ChatChannelType.GroupDefault);
+				channel.GroupId = 9;
+				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(true);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task group_default_from_another_department_should_not_be_accessible()
+			{
+				var channel = CreateChannel(ChatChannelType.GroupDefault);
+				channel.GroupId = 9;
+				_departmentGroupsServiceMock.Setup(x => x.GetGroupByIdAsync(9, It.IsAny<bool>())).ReturnsAsync(new DepartmentGroup
+				{
+					DepartmentGroupId = 9,
+					DepartmentId = 2
+				});
+				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(true);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task group_member_row_from_another_department_should_not_grant_access()
+			{
+				var channel = CreateChannel(ChatChannelType.GroupDefault);
+				channel.GroupId = 9;
+				_departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(9)).ReturnsAsync(new List<DepartmentGroupMember>
+				{
+					new DepartmentGroupMember { DepartmentGroupId = 9, DepartmentId = 2, UserId = TestData.Users.TestUser1Id }
+				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
 			public async Task custom_locked_matching_user_rule_should_have_access()
 			{
 				var channel = CreateChannel(ChatChannelType.CustomLocked);
 				_chatChannelAccessRuleRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId)).ReturnsAsync(new List<ChatChannelAccessRule>
 				{
-					new ChatChannelAccessRule { RuleType = (int)ChatAccessRuleType.User, UserId = TestData.Users.TestUser1Id }
+					new ChatChannelAccessRule { DepartmentId = 1, RuleType = (int)ChatAccessRuleType.User, UserId = TestData.Users.TestUser1Id }
 				});
 
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
@@ -317,7 +455,7 @@ namespace Resgrid.Tests.Services
 				var channel = CreateChannel(ChatChannelType.CustomLocked);
 				_chatChannelAccessRuleRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId)).ReturnsAsync(new List<ChatChannelAccessRule>
 				{
-					new ChatChannelAccessRule { RuleType = (int)ChatAccessRuleType.Role, PersonnelRoleId = 5 }
+					new ChatChannelAccessRule { DepartmentId = 1, RuleType = (int)ChatAccessRuleType.Role, PersonnelRoleId = 5 }
 				});
 				_personnelRolesServiceMock.Setup(x => x.GetRolesForUserAsync(TestData.Users.TestUser1Id, 1)).ReturnsAsync(new List<PersonnelRole>
 				{
@@ -335,11 +473,11 @@ namespace Resgrid.Tests.Services
 				var channel = CreateChannel(ChatChannelType.CustomLocked);
 				_chatChannelAccessRuleRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId)).ReturnsAsync(new List<ChatChannelAccessRule>
 				{
-					new ChatChannelAccessRule { RuleType = (int)ChatAccessRuleType.GroupMembership, GroupId = 9 }
+					new ChatChannelAccessRule { DepartmentId = 1, RuleType = (int)ChatAccessRuleType.GroupMembership, GroupId = 9 }
 				});
 				_departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(9)).ReturnsAsync(new List<DepartmentGroupMember>
 				{
-					new DepartmentGroupMember { DepartmentGroupId = 9, UserId = TestData.Users.TestUser1Id }
+					new DepartmentGroupMember { DepartmentGroupId = 9, DepartmentId = 1, UserId = TestData.Users.TestUser1Id }
 				});
 
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
@@ -354,9 +492,9 @@ namespace Resgrid.Tests.Services
 				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync(channel.ChatChannelId, TestData.Users.TestUser1Id)).ReturnsAsync((ChatChannelMember)null);
 				_chatChannelAccessRuleRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId)).ReturnsAsync(new List<ChatChannelAccessRule>
 				{
-					new ChatChannelAccessRule { RuleType = (int)ChatAccessRuleType.User, UserId = TestData.Users.TestUser2Id },
-					new ChatChannelAccessRule { RuleType = (int)ChatAccessRuleType.Role, PersonnelRoleId = 5 },
-					new ChatChannelAccessRule { RuleType = (int)ChatAccessRuleType.GroupMembership, GroupId = 9 }
+					new ChatChannelAccessRule { DepartmentId = 1, RuleType = (int)ChatAccessRuleType.User, UserId = TestData.Users.TestUser2Id },
+					new ChatChannelAccessRule { DepartmentId = 1, RuleType = (int)ChatAccessRuleType.Role, PersonnelRoleId = 5 },
+					new ChatChannelAccessRule { DepartmentId = 1, RuleType = (int)ChatAccessRuleType.GroupMembership, GroupId = 9 }
 				});
 				_personnelRolesServiceMock.Setup(x => x.GetRolesForUserAsync(TestData.Users.TestUser1Id, 1)).ReturnsAsync(new List<PersonnelRole>
 				{
@@ -364,7 +502,7 @@ namespace Resgrid.Tests.Services
 				});
 				_departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(9)).ReturnsAsync(new List<DepartmentGroupMember>
 				{
-					new DepartmentGroupMember { DepartmentGroupId = 9, UserId = TestData.Users.TestUser2Id }
+					new DepartmentGroupMember { DepartmentGroupId = 9, DepartmentId = 1, UserId = TestData.Users.TestUser2Id }
 				});
 
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
@@ -376,6 +514,61 @@ namespace Resgrid.Tests.Services
 		[TestFixture]
 		public class when_evaluating_incident_channel_access : with_the_chat_permission_service
 		{
+			[Test]
+			public async Task department_dispatch_standing_alone_should_not_count_as_incident_assignment()
+			{
+				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(true);
+				_incidentCommandServiceMock.Setup(x => x.GetAssignmentsForCallAsync(1, 42)).ReturnsAsync(new List<ResourceAssignment>());
+
+				var result = await _chatPermissionService.CanAccessIncidentAsync(1, 42, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task cached_access_should_not_outlive_incident_assignment()
+			{
+				var channel = CreateChannel(ChatChannelType.Incident);
+				channel.CallId = 42;
+				_cacheProviderMock.Setup(x => x.GetStringAsync(It.Is<string>(key => key.Contains(":access:")))).ReturnsAsync("1");
+				_incidentCommandServiceMock.Setup(x => x.GetAssignmentsForCallAsync(1, 42)).ReturnsAsync(new List<ResourceAssignment>());
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+				_cacheProviderMock.Verify(x => x.GetStringAsync(It.Is<string>(key => key.Contains(":access:"))), Times.Never);
+			}
+
+			[Test]
+			public async Task incident_from_another_department_should_be_denied_before_dispatch_override()
+			{
+				var channel = CreateChannel(ChatChannelType.Incident);
+				channel.CallId = 42;
+				_callsServiceMock.Setup(x => x.GetCallByIdAsync(42, It.IsAny<bool>())).ReturnsAsync(new Call
+				{
+					CallId = 42,
+					DepartmentId = 2
+				});
+				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(true);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task department_admin_not_assigned_to_the_incident_should_be_denied()
+			{
+				var channel = CreateChannel(ChatChannelType.Incident);
+				channel.CallId = 42;
+				_authorizationServiceMock.Setup(x => x.CanUserModifyDepartmentAsync(TestData.Users.TestUser1Id, 1)).ReturnsAsync(true);
+				_incidentCommandServiceMock.Setup(x => x.GetAssignmentsForCallAsync(1, 42)).ReturnsAsync(new List<ResourceAssignment>());
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
 			[Test]
 			public async Task dispatched_user_should_have_access_to_incident_channel()
 			{
@@ -476,6 +669,34 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
+			public async Task foreign_department_group_dispatch_should_not_grant_access_to_incident_channel()
+			{
+				var channel = CreateChannel(ChatChannelType.Incident);
+				channel.CallId = 42;
+				_callsServiceMock.Setup(x => x.GetCallByIdAsync(42, It.IsAny<bool>())).ReturnsAsync(new Call
+				{
+					CallId = 42,
+					DepartmentId = 1,
+					GroupDispatches = new List<CallDispatchGroup>
+					{
+						new CallDispatchGroup { CallId = 42, DepartmentGroupId = 77 }
+					}
+				});
+				_departmentGroupsServiceMock.Setup(x => x.GetGroupByIdAsync(77, It.IsAny<bool>()))
+					.ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 77, DepartmentId = 2 });
+				_departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(77)).ReturnsAsync(new List<DepartmentGroupMember>
+				{
+					new DepartmentGroupMember { DepartmentGroupId = 77, DepartmentId = 2, UserId = TestData.Users.TestUser1Id }
+				});
+				_incidentCommandServiceMock.Setup(x => x.GetAssignmentsForCallAsync(1, 42)).ReturnsAsync(new List<ResourceAssignment>());
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+				_departmentGroupsServiceMock.Verify(x => x.GetAllMembersForGroupAsync(77), Times.Never);
+			}
+
+			[Test]
 			public async Task lane_assigned_personnel_should_have_access_to_lane_channel()
 			{
 				var channel = CreateChannel(ChatChannelType.IncidentLane);
@@ -489,6 +710,8 @@ namespace Resgrid.Tests.Services
 				{
 					new ResourceAssignment
 					{
+						DepartmentId = 1,
+						CallId = 42,
 						CommandStructureNodeId = "node-1",
 						ResourceKind = (int)ResourceAssignmentKind.RealPersonnel,
 						ResourceId = TestData.Users.TestUser1Id
@@ -498,6 +721,63 @@ namespace Resgrid.Tests.Services
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
 
 				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task banned_dispatched_user_should_not_have_access_to_incident_channel()
+			{
+				var channel = CreateChannel(ChatChannelType.Incident);
+				channel.CallId = 42;
+				_callsServiceMock.Setup(x => x.GetCallByIdAsync(42, It.IsAny<bool>())).ReturnsAsync(new Call
+				{
+					CallId = 42,
+					DepartmentId = 1,
+					Dispatches = new List<CallDispatch> { new CallDispatch { CallId = 42, UserId = TestData.Users.TestUser1Id } }
+				});
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync(channel.ChatChannelId, TestData.Users.TestUser1Id))
+					.ReturnsAsync(new ChatChannelMember
+					{
+						ChatChannelId = channel.ChatChannelId,
+						DepartmentId = 1,
+						UserId = TestData.Users.TestUser1Id,
+						IsBanned = true
+					});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task lane_assigned_unit_should_not_grant_access_to_a_user_who_does_not_crew_it()
+			{
+				var channel = CreateChannel(ChatChannelType.IncidentLane);
+				channel.CallId = 42;
+				channel.CommandStructureNodeId = "node-1";
+				_incidentCommandServiceMock.Setup(x => x.GetNodesForCallAsync(1, 42)).ReturnsAsync(new List<CommandStructureNode>
+				{
+					new CommandStructureNode { CommandStructureNodeId = "node-1", DepartmentId = 1, CallId = 42 }
+				});
+				_incidentCommandServiceMock.Setup(x => x.GetAssignmentsForCallAsync(1, 42)).ReturnsAsync(new List<ResourceAssignment>
+				{
+					new ResourceAssignment
+					{
+						DepartmentId = 1,
+						CallId = 42,
+						CommandStructureNodeId = "node-1",
+						ResourceKind = (int)ResourceAssignmentKind.RealUnit,
+						ResourceId = "7"
+					}
+				});
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1 });
+				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(7)).ReturnsAsync(new List<UnitActiveRole>
+				{
+					new UnitActiveRole { UnitId = 7, UserId = TestData.Users.TestUser2Id }
+				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, 7);
+
+				result.Should().BeFalse();
 			}
 
 			[Test]
@@ -538,6 +818,8 @@ namespace Resgrid.Tests.Services
 				{
 					new ResourceAssignment
 					{
+						DepartmentId = 1,
+						CallId = 42,
 						CommandStructureNodeId = "node-1",
 						ResourceKind = (int)ResourceAssignmentKind.RealPersonnel,
 						ResourceId = TestData.Users.TestUser2Id
@@ -555,6 +837,10 @@ namespace Resgrid.Tests.Services
 				var channel = CreateChannel(ChatChannelType.IncidentLane);
 				channel.CallId = 42;
 				channel.CommandStructureNodeId = "node-1";
+				_incidentCommandServiceMock.Setup(x => x.GetNodesForCallAsync(1, 42)).ReturnsAsync(new List<CommandStructureNode>
+				{
+					new CommandStructureNode { CommandStructureNodeId = "node-1", DepartmentId = 1, CallId = 42 }
+				});
 				_incidentCommandServiceMock.Setup(x => x.GetIncidentRolesAsync(1, 42)).ReturnsAsync(new List<IncidentRoleAssignment>
 				{
 					new IncidentRoleAssignment { CallId = 42, UserId = TestData.Users.TestUser1Id }
@@ -606,10 +892,8 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
-			public async Task an_authorized_dispatcher_should_not_have_access_to_command_channel()
+			public async Task an_authorized_dispatcher_should_have_access_to_command_channel()
 			{
-				// The command channel stays internal to the people running the incident so they can talk
-				// candidly. Dispatch reaches command through the incident's dispatch channel instead.
 				var channel = CreateChannel(ChatChannelType.IncidentCommand);
 				channel.CallId = 42;
 				_incidentCommandServiceMock.Setup(x => x.GetCommandForCallAsync(1, 42)).ReturnsAsync((IncidentCommand)null);
@@ -618,7 +902,7 @@ namespace Resgrid.Tests.Services
 
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
 
-				result.Should().BeFalse();
+				result.Should().BeTrue();
 			}
 
 			[Test]
@@ -767,7 +1051,7 @@ namespace Resgrid.Tests.Services
 				channel.GroupId = 9;
 				_departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(9)).ReturnsAsync(new List<DepartmentGroupMember>
 				{
-					new DepartmentGroupMember { DepartmentGroupId = 9, UserId = TestData.Users.TestUser1Id, IsAdmin = true }
+					new DepartmentGroupMember { DepartmentGroupId = 9, DepartmentId = 1, UserId = TestData.Users.TestUser1Id, IsAdmin = true }
 				});
 
 				var result = await _chatPermissionService.CanModerateChannelAsync(channel, TestData.Users.TestUser1Id);
@@ -782,7 +1066,7 @@ namespace Resgrid.Tests.Services
 				channel.GroupId = 9;
 				_departmentGroupsServiceMock.Setup(x => x.GetAllMembersForGroupAsync(9)).ReturnsAsync(new List<DepartmentGroupMember>
 				{
-					new DepartmentGroupMember { DepartmentGroupId = 9, UserId = TestData.Users.TestUser1Id, IsAdmin = false }
+					new DepartmentGroupMember { DepartmentGroupId = 9, DepartmentId = 1, UserId = TestData.Users.TestUser1Id, IsAdmin = false }
 				});
 
 				var result = await _chatPermissionService.CanModerateChannelAsync(channel, TestData.Users.TestUser1Id);
@@ -951,6 +1235,7 @@ namespace Resgrid.Tests.Services
 					JoinedOn = DateTime.UtcNow
 				};
 				_chatChannelMemberRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId)).ReturnsAsync(new List<ChatChannelMember> { userMember, unitMember });
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
 				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(7)).ReturnsAsync(new List<UnitActiveRole>
 				{
 					new UnitActiveRole { UnitId = 7, UserId = TestData.Users.TestUser2Id },
@@ -960,6 +1245,20 @@ namespace Resgrid.Tests.Services
 				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(channel);
 
 				audience.Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id, TestData.Users.TestUser2Id, TestData.Users.TestUser3Id });
+			}
+
+			[Test]
+			public async Task member_rows_from_another_department_should_not_enter_the_audience()
+			{
+				var channel = CreateChannel(ChatChannelType.AdHocGroup);
+				var member = CreateUserMember(channel, TestData.Users.TestUser1Id);
+				member.DepartmentId = 2;
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId))
+					.ReturnsAsync(new List<ChatChannelMember> { member });
+
+				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(channel);
+
+				audience.Should().BeEmpty();
 			}
 
 			[Test]
@@ -977,6 +1276,35 @@ namespace Resgrid.Tests.Services
 				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(channel);
 
 				audience.Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id, TestData.Users.TestUser4Id });
+			}
+
+			[Test]
+			public async Task audience_should_bulk_filter_disabled_and_deleted_members_case_insensitively()
+			{
+				var channel = CreateChannel(ChatChannelType.AdHocGroup);
+				var upperCaseUserId = TestData.Users.TestUser4Id.ToUpperInvariant();
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId))
+					.ReturnsAsync(new List<ChatChannelMember>
+					{
+						CreateUserMember(channel, TestData.Users.TestUser1Id),
+						CreateUserMember(channel, TestData.Users.TestUser2Id),
+						CreateUserMember(channel, TestData.Users.TestUser3Id),
+						CreateUserMember(channel, upperCaseUserId)
+					});
+				_departmentsServiceMock.Setup(x => x.GetAllMembersForDepartmentUnlimitedAsync(1, It.IsAny<bool>()))
+					.ReturnsAsync(new List<DepartmentMember>
+					{
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser1Id },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser2Id, IsDisabled = true },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser3Id, IsDeleted = true },
+						new DepartmentMember { DepartmentId = 1, UserId = TestData.Users.TestUser4Id }
+					});
+
+				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(channel);
+
+				audience.Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id, upperCaseUserId });
+				_departmentsServiceMock.Verify(x => x.GetAllMembersForDepartmentUnlimitedAsync(1, It.IsAny<bool>()), Times.Once);
+				_authorizationServiceMock.Verify(x => x.IsUserValidWithinLimitsAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
 			}
 
 			[Test]
@@ -1233,6 +1561,7 @@ namespace Resgrid.Tests.Services
 		{
 			private ChatChannel BuildUnitDispatchChannel()
 			{
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
 				var channel = CreateChannel(ChatChannelType.UnitDispatch);
 				channel.Name = "Engine 6 Dispatch";
 				channel.DmKey = "unitdispatch:7";

@@ -57,6 +57,7 @@
 		public const string Messages_Update = "Messages_Update";
 		public const string Messages_Create = "Messages_Create";
 		public const string Messages_Delete = "Messages_Delete";
+		public const string Chat_View = "Chat_View";
 
 		public const string Profile_View = "Profile_View";
 		public const string Profile_Update = "Profile_Update";

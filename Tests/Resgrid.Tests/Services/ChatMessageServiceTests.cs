@@ -34,6 +34,7 @@ namespace Resgrid.Tests.Services
 			var channelRepository = new Mock<IChatChannelRepository>();
 			var messageRepository = new Mock<IChatMessageRepository>();
 			var editRepository = new Mock<IChatMessageEditRepository>();
+			var permissionService = new Mock<IChatPermissionService>();
 			var eventAggregator = new Mock<IEventAggregator>();
 			ChatEventRaised deleteEvent = null;
 
@@ -42,6 +43,8 @@ namespace Resgrid.Tests.Services
 				.Setup(x => x.TombstoneAsync(message.ChatMessageId, It.IsAny<DateTime>(), deletingUserId, expectedModerated, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(true);
 			channelRepository.Setup(x => x.GetByIdAsync(channel.ChatChannelId)).ReturnsAsync(channel);
+			permissionService.Setup(x => x.CanAccessChannelAsync(channel, deletingUserId, null)).ReturnsAsync(true);
+			permissionService.Setup(x => x.CanModerateChannelAsync(channel, deletingUserId)).ReturnsAsync(true);
 			eventAggregator
 				.Setup(x => x.SendMessage<ChatEventRaised>(It.IsAny<ChatEventRaised>()))
 				.Callback<ChatEventRaised>(raised => deleteEvent = raised);
@@ -56,12 +59,12 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IChatMessageAckRepository>(),
 				Mock.Of<IChatChannelMemberRepository>(),
 				Mock.Of<IChatChannelService>(),
-				Mock.Of<IChatPermissionService>(),
+				permissionService.Object,
 				Mock.Of<IUserProfileService>(),
 				Mock.Of<IUnitsService>(),
 				eventAggregator.Object);
 
-			var result = await service.DeleteMessageAsync(message.ChatMessageId, deletingUserId, true, null);
+			var result = await service.DeleteMessageAsync(message.DepartmentId, message.ChatMessageId, deletingUserId, true, null);
 
 			result.Should().BeTrue();
 			message.IsModerated.Should().Be(expectedModerated);
@@ -93,9 +96,11 @@ namespace Resgrid.Tests.Services
 			var channelRepository = new Mock<IChatChannelRepository>();
 			var messageRepository = new Mock<IChatMessageRepository>();
 			var reactionRepository = new Mock<IChatMessageReactionRepository>();
+			var permissionService = new Mock<IChatPermissionService>();
 
 			messageRepository.Setup(x => x.GetByIdAsync(message.ChatMessageId)).ReturnsAsync(message);
 			channelRepository.Setup(x => x.GetByIdAsync(channel.ChatChannelId)).ReturnsAsync(channel);
+			permissionService.Setup(x => x.CanAccessChannelAsync(channel, "user-1", null)).ReturnsAsync(true);
 			reactionRepository
 				.Setup(x => x.GetByMessageIdsAsync(It.IsAny<System.Collections.Generic.IEnumerable<string>>()))
 				.ReturnsAsync(new[]
@@ -122,19 +127,104 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IChatMessageAckRepository>(),
 				Mock.Of<IChatChannelMemberRepository>(),
 				Mock.Of<IChatChannelService>(),
-				Mock.Of<IChatPermissionService>(),
+				permissionService.Object,
 				Mock.Of<IUserProfileService>(),
 				Mock.Of<IUnitsService>(),
 				Mock.Of<IEventAggregator>());
 
 			// Case-insensitive user match: stored UserId is "USER-1", caller sends "user-1".
-			var result = await service.AddReactionAsync(message.ChatMessageId, "user-1", null, emoji);
+			var result = await service.AddReactionAsync(message.DepartmentId, message.ChatMessageId, "user-1", null, emoji);
 
 			result.Should().Be(expectedResult);
 			reactionRepository.Verify(
 				x => x.InsertAsync(It.IsAny<ChatMessageReaction>(), It.IsAny<CancellationToken>(), false),
 				expectInsert ? Times.Once() : Times.Never());
 		}
+
+		[Test]
+		public async Task SendMessageAsync_should_not_trust_the_department_in_the_client_request()
+		{
+			var channel = new ChatChannel { ChatChannelId = "channel-2", DepartmentId = 2 };
+			var channelRepository = new Mock<IChatChannelRepository>();
+			var permissionService = new Mock<IChatPermissionService>();
+			channelRepository.Setup(x => x.GetByIdAsync(channel.ChatChannelId)).ReturnsAsync(channel);
+
+			var service = new ChatMessageService(
+				channelRepository.Object, Mock.Of<IChatMessageRepository>(), Mock.Of<IChatMessageEditRepository>(),
+				Mock.Of<IChatAttachmentRepository>(), Mock.Of<IChatMessageReactionRepository>(), Mock.Of<IChatMessageMentionRepository>(),
+				Mock.Of<IChatMessageAckRepository>(), Mock.Of<IChatChannelMemberRepository>(), Mock.Of<IChatChannelService>(),
+				permissionService.Object, Mock.Of<IUserProfileService>(), Mock.Of<IUnitsService>(), Mock.Of<IEventAggregator>());
+
+			var result = await service.SendMessageAsync(1, "user-1", new ChatMessageSendRequest
+			{
+				ChatChannelId = channel.ChatChannelId,
+				DepartmentId = 2,
+				Body = "forged cross-tenant send",
+				MessageType = ChatMessageType.Text
+			});
+
+			result.Should().BeNull();
+			permissionService.Verify(x => x.CanPostAsync(It.IsAny<ChatChannel>(), It.IsAny<string>(), It.IsAny<int?>()), Times.Never);
+		}
+
+		[Test]
+		public async Task EditMessageAsync_should_reject_an_owned_message_outside_the_authenticated_department()
+		{
+			var message = new ChatMessage
+			{
+				ChatMessageId = "message-2",
+				ChatChannelId = "channel-2",
+				DepartmentId = 2,
+				SenderUserId = "user-1",
+				Body = "department two"
+			};
+			var messageRepository = new Mock<IChatMessageRepository>();
+			var permissionService = new Mock<IChatPermissionService>();
+			messageRepository.Setup(x => x.GetByIdAsync(message.ChatMessageId)).ReturnsAsync(message);
+
+			var service = new ChatMessageService(
+				Mock.Of<IChatChannelRepository>(), messageRepository.Object, Mock.Of<IChatMessageEditRepository>(),
+				Mock.Of<IChatAttachmentRepository>(), Mock.Of<IChatMessageReactionRepository>(), Mock.Of<IChatMessageMentionRepository>(),
+				Mock.Of<IChatMessageAckRepository>(), Mock.Of<IChatChannelMemberRepository>(), Mock.Of<IChatChannelService>(),
+				permissionService.Object, Mock.Of<IUserProfileService>(), Mock.Of<IUnitsService>(), Mock.Of<IEventAggregator>());
+
+			var result = await service.EditMessageAsync(1, message.ChatMessageId, message.SenderUserId, "forged edit");
+
+			result.Should().BeNull();
+			messageRepository.Verify(x => x.UpdateBodyAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+			permissionService.Verify(x => x.CanAccessChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<string>(), It.IsAny<int?>()), Times.Never);
+		}
+
+		[Test]
+		public async Task DeleteMessageAsync_should_revalidate_requested_moderator_authority()
+		{
+			var message = new ChatMessage
+			{
+				ChatMessageId = "message-1",
+				ChatChannelId = "channel-1",
+				DepartmentId = 1,
+				SenderUserId = "sender"
+			};
+			var channel = new ChatChannel { ChatChannelId = message.ChatChannelId, DepartmentId = 1 };
+			var channelRepository = new Mock<IChatChannelRepository>();
+			var messageRepository = new Mock<IChatMessageRepository>();
+			var permissionService = new Mock<IChatPermissionService>();
+			messageRepository.Setup(x => x.GetByIdAsync(message.ChatMessageId)).ReturnsAsync(message);
+			channelRepository.Setup(x => x.GetByIdAsync(channel.ChatChannelId)).ReturnsAsync(channel);
+			permissionService.Setup(x => x.CanModerateChannelAsync(channel, "not-a-moderator")).ReturnsAsync(false);
+
+			var service = new ChatMessageService(
+				channelRepository.Object, messageRepository.Object, Mock.Of<IChatMessageEditRepository>(),
+				Mock.Of<IChatAttachmentRepository>(), Mock.Of<IChatMessageReactionRepository>(), Mock.Of<IChatMessageMentionRepository>(),
+				Mock.Of<IChatMessageAckRepository>(), Mock.Of<IChatChannelMemberRepository>(), Mock.Of<IChatChannelService>(),
+				permissionService.Object, Mock.Of<IUserProfileService>(), Mock.Of<IUnitsService>(), Mock.Of<IEventAggregator>());
+
+			var result = await service.DeleteMessageAsync(1, message.ChatMessageId, "not-a-moderator", true, "forged role");
+
+			result.Should().BeFalse();
+			messageRepository.Verify(x => x.TombstoneAsync(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
 		/// <summary>
 		/// Metadata url validation is a pure static helper on the service, so it is exercised directly
 		/// rather than through the full SendMessageAsync dependency graph.

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading;
@@ -35,19 +36,37 @@ namespace Resgrid.Tests.Web.Services
 
 		private Mock<IChatChannelService> _chatChannelService;
 		private Mock<IChatPermissionService> _chatPermissionService;
+		private Mock<IFeatureToggleService> _featureToggleService;
+		private Mock<IAuthorizationService> _authorizationService;
+		private Mock<ICacheProvider> _cacheProvider;
 		private ChatController _controller;
 		private Activity _activity;
+		private bool? _chatEnabledCacheValue;
 
 		[SetUp]
 		public void SetUp()
 		{
+			_chatEnabledCacheValue = null;
 			_chatChannelService = new Mock<IChatChannelService>();
 			_chatPermissionService = new Mock<IChatPermissionService>();
 
-			var featureToggleService = new Mock<IFeatureToggleService>();
-			featureToggleService
+			_featureToggleService = new Mock<IFeatureToggleService>();
+			_featureToggleService
 				.Setup(x => x.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>()))
 				.ReturnsAsync(true);
+			_authorizationService = new Mock<IAuthorizationService>();
+			_authorizationService.Setup(x => x.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(true);
+			_cacheProvider = new Mock<ICacheProvider>();
+			_cacheProvider
+				.Setup(x => x.RetrieveAsync<bool>(It.IsAny<string>(), It.IsAny<Func<Task<bool>>>(), It.IsAny<TimeSpan>()))
+				.Returns(async (string key, Func<Task<bool>> fallback, TimeSpan expiration) =>
+				{
+					if (_chatEnabledCacheValue.HasValue)
+						return _chatEnabledCacheValue.Value;
+
+					_chatEnabledCacheValue = await fallback();
+					return _chatEnabledCacheValue.Value;
+				});
 
 			_chatPermissionService.Setup(x => x.CanSendAsUnitAsync(UserId, UnitId, DepartmentId)).ReturnsAsync(true);
 
@@ -100,9 +119,9 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IChatPresenceService>(),
 				Mock.Of<IChatAttachmentRepository>(),
 				Mock.Of<IGifProvider>(),
-				featureToggleService.Object,
-				Mock.Of<IAuthorizationService>(),
-				Mock.Of<ICacheProvider>(),
+				_featureToggleService.Object,
+				_authorizationService.Object,
+				_cacheProvider.Object,
 				Mock.Of<IEventAggregator>(),
 				Mock.Of<IQueueService>(),
 				Mock.Of<IUserProfileService>(),
@@ -159,6 +178,40 @@ namespace Resgrid.Tests.Web.Services
 			response.Value.Data.NotificationPreference.Should().Be(1);
 
 			_chatChannelService.Verify(x => x.GetUnitMembershipAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task CreateIncidentCommanderLine_ReusesTheShortLivedChatEnabledResult()
+		{
+			var input = new CreateIncidentCommanderLineInput { CallId = CallId, AsUnitId = UnitId };
+
+			await _controller.CreateIncidentCommanderLine(input, CancellationToken.None);
+			await _controller.CreateIncidentCommanderLine(input, CancellationToken.None);
+
+			_authorizationService.Verify(x => x.IsUserValidWithinLimitsAsync(UserId, DepartmentId), Times.Once);
+			_featureToggleService.Verify(
+				x => x.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>()),
+				Times.Once);
+			_cacheProvider.Verify(
+				x => x.RetrieveAsync<bool>("chat:enabled:10:requester-user", It.IsAny<Func<Task<bool>>>(), TimeSpan.FromSeconds(30)),
+				Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task CreateIncidentCommanderLine_ReusesTheShortLivedChatDisabledResult()
+		{
+			_authorizationService.Setup(x => x.IsUserValidWithinLimitsAsync(UserId, DepartmentId)).ReturnsAsync(false);
+			var input = new CreateIncidentCommanderLineInput { CallId = CallId, AsUnitId = UnitId };
+
+			var first = await _controller.CreateIncidentCommanderLine(input, CancellationToken.None);
+			var second = await _controller.CreateIncidentCommanderLine(input, CancellationToken.None);
+
+			first.Result.Should().BeOfType<NotFoundResult>();
+			second.Result.Should().BeOfType<NotFoundResult>();
+			_authorizationService.Verify(x => x.IsUserValidWithinLimitsAsync(UserId, DepartmentId), Times.Once);
+			_featureToggleService.Verify(
+				x => x.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>()),
+				Times.Never);
 		}
 	}
 }

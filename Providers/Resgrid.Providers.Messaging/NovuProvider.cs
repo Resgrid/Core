@@ -8,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus.Models;
 using SharpCompress.Common;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -132,7 +133,22 @@ namespace Resgrid.Providers.Messaging
 
 					var response = await httpClient.PostAsync(requestUrl, content);
 
-					return response.IsSuccessStatusCode;
+					// A rejected create left the subscriber missing entirely, and every later credential
+					// write and trigger against it fails for a reason that looks unrelated. Only the 409 is
+					// expected: re-registering a device re-runs this, and Novu answers an already-present
+					// subscriber with a conflict, which is the steady state rather than a fault.
+					if (!response.IsSuccessStatusCode)
+					{
+						if (response.StatusCode == HttpStatusCode.Conflict)
+							return true;
+
+						var error = await response.Content.ReadAsStringAsync();
+						Logging.LogError($"Novu subscriber create failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' department {departmentId}: {DescribeErrorBody(error)}");
+
+						return false;
+					}
+
+					return true;
 				}
 			}
 			catch (Exception e)

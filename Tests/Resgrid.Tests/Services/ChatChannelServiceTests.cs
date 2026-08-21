@@ -81,6 +81,9 @@ namespace Resgrid.Tests.Services
 
 				// Cross-tenant validation passes by default; negative tests override this.
 				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(true);
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(true);
+				_chatPermissionServiceMock.Setup(x => x.CanModerateChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<string>())).ReturnsAsync(true);
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(true);
 
 				// Batch membership check (ad-hoc group creation): by default every queried id is a member.
 				_departmentsServiceMock
@@ -149,6 +152,34 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		public class when_saving_department_chat_settings : with_the_chat_channel_service
+		{
+			[Test]
+			public async Task forged_settings_department_should_be_rejected_before_repository_access()
+			{
+				var settings = new ChatDepartmentSetting { DepartmentId = 2 };
+
+				var result = await _chatChannelService.SaveDepartmentSettingsAsync(1, "user-a", settings);
+
+				result.Should().BeNull();
+				_chatPermissionServiceMock.Verify(x => x.IsDepartmentAdminAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+				_chatDepartmentSettingRepositoryMock.Verify(x => x.GetByDepartmentIdAsync(It.IsAny<int>()), Times.Never);
+			}
+
+			[Test]
+			public async Task non_admin_should_not_save_settings()
+			{
+				var settings = new ChatDepartmentSetting { DepartmentId = 1 };
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+
+				var result = await _chatChannelService.SaveDepartmentSettingsAsync(1, "user-a", settings);
+
+				result.Should().BeNull();
+				_chatDepartmentSettingRepositoryMock.Verify(x => x.GetByDepartmentIdAsync(It.IsAny<int>()), Times.Never);
+			}
+		}
+
+		[TestFixture]
 		public class when_ensuring_group_channels : with_the_chat_channel_service
 		{
 			[Test]
@@ -175,6 +206,17 @@ namespace Resgrid.Tests.Services
 		[TestFixture]
 		public class when_ensuring_chatbot_channels : with_the_chat_channel_service
 		{
+			[Test]
+			public async Task disabled_department_member_should_not_get_a_chatbot_channel()
+			{
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(1, "user-a")).ReturnsAsync(false);
+
+				var result = await _chatChannelService.EnsureChatbotChannelAsync(1, "user-a");
+
+				result.Should().BeNull();
+				_chatChannelRepositoryMock.Verify(x => x.GetChatbotChannelAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+			}
+
 			[Test]
 			public async Task missing_chatbot_channel_should_create_channel_with_owner_and_bot_members()
 			{
@@ -225,6 +267,17 @@ namespace Resgrid.Tests.Services
 		[TestFixture]
 		public class when_getting_or_creating_direct_message_channels : with_the_chat_channel_service
 		{
+			[Test]
+			public void disabled_target_user_should_be_rejected()
+			{
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(1, "user-b")).ReturnsAsync(false);
+
+				Func<Task> act = async () => await _chatChannelService.GetOrCreateDirectMessageChannelAsync(1, "user-a", "user-b", null);
+
+				act.Should().ThrowAsync<UnauthorizedAccessException>();
+				_chatChannelRepositoryMock.Verify(x => x.GetByDmKeyAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+			}
+
 			[Test]
 			public async Task existing_dm_key_should_return_existing_channel_without_insert()
 			{
@@ -309,7 +362,7 @@ namespace Resgrid.Tests.Services
 			public void cross_department_target_user_should_be_rejected()
 			{
 				_chatChannelRepositoryMock.Setup(x => x.GetByDmKeyAsync(1, It.IsAny<string>())).ReturnsAsync((ChatChannel)null);
-				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(1, "outsider")).ReturnsAsync(false);
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(1, "outsider")).ReturnsAsync(false);
 
 				Func<Task> act = async () => await _chatChannelService.GetOrCreateDirectMessageChannelAsync(1, "user-a", "outsider", null);
 
@@ -367,12 +420,14 @@ namespace Resgrid.Tests.Services
 			[Test]
 			public async Task missing_member_row_should_be_created_then_preference_updated()
 			{
-				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("channel-1")).ReturnsAsync(new ChatChannel
+				var channel = new ChatChannel
 				{
 					ChatChannelId = "channel-1",
 					DepartmentId = 1,
 					ChannelType = (int)ChatChannelType.DepartmentDefault
-				});
+				};
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("channel-1")).ReturnsAsync(channel);
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(channel, "user-a", null)).ReturnsAsync(true);
 				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync("channel-1", "user-a")).ReturnsAsync((ChatChannelMember)null);
 				_chatChannelMemberRepositoryMock.Setup(x => x.SetMemberNotificationPreferenceAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
@@ -407,7 +462,7 @@ namespace Resgrid.Tests.Services
 			{
 				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("dm-1")).ReturnsAsync(CreateChannel("dm-1", ChatChannelType.DirectMessage));
 
-				Func<Task> act = async () => await _chatChannelService.AddMembersAsync("dm-1", new List<string> { "user-b" }, "user-a");
+				Func<Task> act = async () => await _chatChannelService.AddMembersAsync(1, "dm-1", new List<string> { "user-b" }, "user-a");
 
 				act.Should().ThrowAsync<InvalidOperationException>();
 			}
@@ -419,7 +474,7 @@ namespace Resgrid.Tests.Services
 				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("custom-1")).ReturnsAsync(channel);
 				_chatPermissionServiceMock.Setup(x => x.CanModerateChannelAsync(channel, "user-a")).ReturnsAsync(false);
 
-				Func<Task> act = async () => await _chatChannelService.AddMembersAsync("custom-1", new List<string> { "user-b" }, "user-a");
+				Func<Task> act = async () => await _chatChannelService.AddMembersAsync(1, "custom-1", new List<string> { "user-b" }, "user-a");
 
 				act.Should().ThrowAsync<UnauthorizedAccessException>();
 			}
@@ -432,7 +487,7 @@ namespace Resgrid.Tests.Services
 				_chatPermissionServiceMock.Setup(x => x.CanModerateChannelAsync(channel, "user-a")).ReturnsAsync(true);
 				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync("custom-1", "user-b")).ReturnsAsync((ChatChannelMember)null);
 
-				var result = await _chatChannelService.AddMembersAsync("custom-1", new List<string> { "user-b" }, "user-a");
+				var result = await _chatChannelService.AddMembersAsync(1, "custom-1", new List<string> { "user-b" }, "user-a");
 
 				result.Should().HaveCount(1);
 				_chatChannelMemberRepositoryMock.Verify(x => x.InsertAsync(It.Is<ChatChannelMember>(m =>
@@ -445,9 +500,9 @@ namespace Resgrid.Tests.Services
 			{
 				var channel = CreateChannel("adhoc-1", ChatChannelType.AdHocGroup);
 				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("adhoc-1")).ReturnsAsync(channel);
-				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(1, "outsider")).ReturnsAsync(false);
+				_chatPermissionServiceMock.Setup(x => x.IsActiveDepartmentUserAsync(1, "outsider")).ReturnsAsync(false);
 
-				Func<Task> act = async () => await _chatChannelService.AddMembersAsync("adhoc-1", new List<string> { "outsider" }, "user-a");
+				Func<Task> act = async () => await _chatChannelService.AddMembersAsync(1, "adhoc-1", new List<string> { "outsider" }, "user-a");
 
 				act.Should().ThrowAsync<UnauthorizedAccessException>();
 			}
@@ -468,7 +523,7 @@ namespace Resgrid.Tests.Services
 				});
 				_chatChannelMemberRepositoryMock.Setup(x => x.SetMemberActiveAsync("member-1", true, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
-				var result = await _chatChannelService.AddMembersAsync("adhoc-1", new List<string> { "user-b" }, "user-a");
+				var result = await _chatChannelService.AddMembersAsync(1, "adhoc-1", new List<string> { "user-b" }, "user-a");
 
 				result.Should().HaveCount(1);
 				_chatChannelMemberRepositoryMock.Verify(x => x.SetMemberActiveAsync("member-1", true, It.IsAny<CancellationToken>()), Times.Once);
@@ -477,17 +532,78 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		public class when_mutating_channels : with_the_chat_channel_service
+		{
+			[Test]
+			public async Task authenticated_department_should_override_a_forged_channel_identifier()
+			{
+				var foreignChannel = new ChatChannel
+				{
+					ChatChannelId = "department-2-channel",
+					DepartmentId = 2,
+					ChannelType = (int)ChatChannelType.AdHocGroup
+				};
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync(foreignChannel.ChatChannelId)).ReturnsAsync(foreignChannel);
+
+				var result = await _chatChannelService.UpdateChannelAsync(1, foreignChannel.ChatChannelId, "forged", null, "user-a");
+
+				result.Should().BeNull();
+				_chatPermissionServiceMock.Verify(x => x.CanModerateChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<string>()), Times.Never);
+				_chatChannelRepositoryMock.Verify(x => x.UpdateChannelInfoAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+			}
+		}
+
+		[TestFixture]
 		public class when_ensuring_member_state : with_the_chat_channel_service
 		{
 			[Test]
+			public async Task department_membership_alone_should_not_self_grant_an_inaccessible_channel()
+			{
+				var channel = new ChatChannel
+				{
+					ChatChannelId = "incident-1",
+					DepartmentId = 1,
+					ChannelType = (int)ChatChannelType.Incident,
+					CallId = 10
+				};
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync(channel.ChatChannelId)).ReturnsAsync(channel);
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(channel, "user-a", null)).ReturnsAsync(false);
+
+				var result = await _chatChannelService.EnsureMemberStateAsync(channel.ChatChannelId, 1, "user-a", null);
+
+				result.Should().BeNull();
+				_chatChannelMemberRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<ChatChannelMember>(),
+					It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			}
+
+			[Test]
+			public async Task channel_from_another_department_should_not_create_member_state()
+			{
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("dept-2")).ReturnsAsync(new ChatChannel
+				{
+					ChatChannelId = "dept-2",
+					DepartmentId = 2,
+					ChannelType = (int)ChatChannelType.DepartmentDefault
+				});
+
+				var result = await _chatChannelService.EnsureMemberStateAsync("dept-2", 1, "user-a", null);
+
+				result.Should().BeNull();
+				_chatChannelMemberRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<ChatChannelMember>(),
+					It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			}
+
+			[Test]
 			public void invite_only_channel_without_membership_should_throw()
 			{
-				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("dm-1")).ReturnsAsync(new ChatChannel
+				var channel = new ChatChannel
 				{
 					ChatChannelId = "dm-1",
 					DepartmentId = 1,
 					ChannelType = (int)ChatChannelType.DirectMessage
-				});
+				};
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("dm-1")).ReturnsAsync(channel);
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(channel, "user-a", null)).ReturnsAsync(true);
 				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync("dm-1", "user-a")).ReturnsAsync((ChatChannelMember)null);
 
 				Func<Task> act = async () => await _chatChannelService.EnsureMemberStateAsync("dm-1", 1, "user-a", null);
@@ -499,12 +615,14 @@ namespace Resgrid.Tests.Services
 			[Test]
 			public async Task invite_only_channel_with_removed_membership_should_reactivate()
 			{
-				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("dm-1")).ReturnsAsync(new ChatChannel
+				var channel = new ChatChannel
 				{
 					ChatChannelId = "dm-1",
 					DepartmentId = 1,
 					ChannelType = (int)ChatChannelType.DirectMessage
-				});
+				};
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("dm-1")).ReturnsAsync(channel);
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(channel, "user-a", null)).ReturnsAsync(true);
 				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync("dm-1", "user-a")).ReturnsAsync(new ChatChannelMember
 				{
 					ChatChannelMemberId = "member-1",
@@ -527,12 +645,14 @@ namespace Resgrid.Tests.Services
 			[Test]
 			public async Task implicit_channel_without_membership_should_create_row()
 			{
-				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("dept-1")).ReturnsAsync(new ChatChannel
+				var channel = new ChatChannel
 				{
 					ChatChannelId = "dept-1",
 					DepartmentId = 1,
 					ChannelType = (int)ChatChannelType.DepartmentDefault
-				});
+				};
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("dept-1")).ReturnsAsync(channel);
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(channel, "user-a", null)).ReturnsAsync(true);
 				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync("dept-1", "user-a")).ReturnsAsync((ChatChannelMember)null);
 
 				var result = await _chatChannelService.EnsureMemberStateAsync("dept-1", 1, "user-a", null);
@@ -541,6 +661,29 @@ namespace Resgrid.Tests.Services
 				_chatChannelMemberRepositoryMock.Verify(x => x.InsertAsync(It.Is<ChatChannelMember>(m =>
 					m.ChatChannelId == "dept-1" && m.UserId == "user-a"),
 					It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+			}
+		}
+
+		[TestFixture]
+		public class when_listing_channel_members : with_the_chat_channel_service
+		{
+			[Test]
+			public async Task member_rows_from_another_department_should_be_filtered_out()
+			{
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdAsync("channel-1")).ReturnsAsync(new ChatChannel
+				{
+					ChatChannelId = "channel-1",
+					DepartmentId = 1
+				});
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetByChannelIdAsync("channel-1")).ReturnsAsync(new List<ChatChannelMember>
+				{
+					new ChatChannelMember { ChatChannelMemberId = "member-1", ChatChannelId = "channel-1", DepartmentId = 1, UserId = "user-a" },
+					new ChatChannelMember { ChatChannelMemberId = "member-2", ChatChannelId = "channel-1", DepartmentId = 2, UserId = "user-b" }
+				});
+
+				var result = await _chatChannelService.GetMembersAsync("channel-1");
+
+				result.Should().ContainSingle().Which.ChatChannelMemberId.Should().Be("member-1");
 			}
 		}
 
@@ -580,6 +723,25 @@ namespace Resgrid.Tests.Services
 				_chatChannelRepositoryMock.Verify(x => x.InsertAsync(It.Is<ChatChannel>(c => c.ChannelType == (int)ChatChannelType.GroupDefault),
 					It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Exactly(2));
 				_departmentGroupsServiceMock.Verify(x => x.GetGroupForUserAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+			}
+
+			[Test]
+			public async Task dispatcher_should_get_every_department_group_channel_provisioned()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "dispatcher-a")).ReturnsAsync(false);
+				_chatPermissionServiceMock.Setup(x => x.CanAccessDepartmentOperationalChannelsAsync(1, "dispatcher-a")).ReturnsAsync(true);
+				_departmentGroupsServiceMock.Setup(x => x.GetAllGroupsForDepartmentAsync(1)).ReturnsAsync(new List<DepartmentGroup>
+				{
+					new DepartmentGroup { DepartmentGroupId = 9, DepartmentId = 1, Name = "Station 1" },
+					new DepartmentGroup { DepartmentGroupId = 10, DepartmentId = 1, Name = "Station 2" }
+				});
+				_chatChannelRepositoryMock.Setup(x => x.GetByGroupIdAsync(It.IsAny<int>())).ReturnsAsync((ChatChannel)null);
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "dispatcher-a", null);
+
+				result.Should().Contain(c => c.ChannelType == (int)ChatChannelType.GroupDefault && c.GroupId == 9);
+				result.Should().Contain(c => c.ChannelType == (int)ChatChannelType.GroupDefault && c.GroupId == 10);
 			}
 
 			[Test]
@@ -657,10 +819,67 @@ namespace Resgrid.Tests.Services
 					new ChatChannelMember { ChatChannelMemberId = "m1", ChatChannelId = "dm-unit-7", DepartmentId = 1, ParticipantType = (int)ChatParticipantType.Unit, UnitId = 7 }
 				});
 				_chatChannelRepositoryMock.Setup(x => x.GetByIdsAsync(It.Is<IEnumerable<string>>(ids => ids.Contains("dm-unit-7")))).ReturnsAsync(new List<ChatChannel> { unitDm });
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(unitDm, "user-a", 7)).ReturnsAsync(true);
 
 				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", 7);
 
 				result.Should().Contain(c => c.ChatChannelId == "dm-unit-7");
+			}
+
+			[Test]
+			public async Task stale_incident_member_row_should_not_keep_the_channel_visible_after_unassignment()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+
+				var incident = new ChatChannel
+				{
+					ChatChannelId = "incident-42",
+					DepartmentId = 1,
+					ChannelType = (int)ChatChannelType.Incident,
+					CallId = 42
+				};
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetActiveByUserIdAsync(1, "user-a")).ReturnsAsync(new List<ChatChannelMember>
+				{
+					new ChatChannelMember
+					{
+						ChatChannelMemberId = "read-state-1",
+						ChatChannelId = incident.ChatChannelId,
+						DepartmentId = 1,
+						ParticipantType = (int)ChatParticipantType.User,
+						UserId = "user-a"
+					}
+				});
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(new List<ChatChannel> { incident });
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(incident, "user-a", null)).ReturnsAsync(false);
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", null);
+
+				result.Should().NotContain(c => c.ChatChannelId == incident.ChatChannelId);
+			}
+
+			[Test]
+			public async Task cross_department_channel_from_a_member_row_should_not_be_listed()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+
+				var foreignChannel = new ChatChannel
+				{
+					ChatChannelId = "foreign-dm",
+					DepartmentId = 2,
+					ChannelType = (int)ChatChannelType.DirectMessage
+				};
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetActiveByUserIdAsync(1, "user-a")).ReturnsAsync(new List<ChatChannelMember>
+				{
+					new ChatChannelMember { ChatChannelId = foreignChannel.ChatChannelId, DepartmentId = 1, UserId = "user-a" }
+				});
+				_chatChannelRepositoryMock.Setup(x => x.GetByIdsAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(new List<ChatChannel> { foreignChannel });
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", null);
+
+				result.Should().NotContain(c => c.ChatChannelId == foreignChannel.ChatChannelId);
+				_chatPermissionServiceMock.Verify(x => x.CanAccessChannelAsync(foreignChannel, It.IsAny<string>(), It.IsAny<int?>()), Times.Never);
 			}
 
 			[Test]
@@ -819,6 +1038,17 @@ namespace Resgrid.Tests.Services
 		[TestFixture]
 		public class when_creating_ad_hoc_group_channels : with_the_chat_channel_service
 		{
+			[Test]
+			public void disabled_member_should_be_rejected_before_channel_creation()
+			{
+				_departmentsServiceMock.Setup(x => x.IsUserDisabledAsync("user-b", 1)).ReturnsAsync(true);
+
+				Func<Task> act = async () => await _chatChannelService.CreateAdHocGroupChannelAsync(1, "user-a", "Strike Team", new List<string> { "user-b" });
+
+				act.Should().ThrowAsync<UnauthorizedAccessException>();
+				_chatChannelRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<ChatChannel>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			}
+
 			[Test]
 			public async Task creator_should_be_inserted_as_moderator()
 			{

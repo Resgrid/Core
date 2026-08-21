@@ -247,7 +247,7 @@ namespace Resgrid.Web.Eventing
 				//IssuerSigningKey = signingKey,
 
 				// Validate the JWT Issuer (iss) claim
-				ValidateIssuer = false,
+				ValidateIssuer = true,
 				ValidIssuer = JwtConfig.Issuer,
 
 				// Validate the JWT Audience (aud) claim
@@ -309,6 +309,13 @@ namespace Resgrid.Web.Eventing
 						return Task.CompletedTask;
 					}
 				};
+			});
+
+			services.AddAuthorization(options =>
+			{
+				options.AddPolicy(ResgridResources.Chat_View, policy => policy
+					.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+					.RequireChatAccessClaims());
 			});
 
 			//services.AddHostedService<Worker>();
@@ -397,7 +404,7 @@ namespace Resgrid.Web.Eventing
 
 				endpoints.MapHub<EventingHub>("/eventingHub");
 				endpoints.MapHub<GeolocationHub>("/geolocationHub");
-				endpoints.MapHub<ChatHub>("/chatHub");
+				endpoints.MapHub<ChatHub>("/chatHub", options => options.CloseOnAuthenticationExpiration = true);
 			});
 		}
 

@@ -84,6 +84,19 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task cached_allow_should_not_outlive_dispatch_permission()
+		{
+			var permission = new Permission { DepartmentId = DepartmentId, Action = (int)PermissionActions.DepartmentAdminsOnly };
+			GivenPermission(permission);
+			_cacheProvider.Setup(x => x.GetStringAsync(It.IsAny<string>())).ReturnsAsync("1");
+			_permissionsService.Setup(x => x.IsUserAllowed(permission, false, false, It.IsAny<List<PersonnelRole>>())).Returns(false);
+
+			var result = await BuildService().CanUseDispatchAsync(DepartmentId, UserId);
+
+			result.Should().BeFalse();
+		}
+
+		[Test]
 		public async Task the_departments_managing_user_counts_as_an_admin()
 		{
 			var permission = new Permission { DepartmentId = DepartmentId, Action = (int)PermissionActions.DepartmentAdminsOnly };

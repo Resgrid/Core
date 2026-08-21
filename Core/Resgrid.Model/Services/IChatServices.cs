@@ -8,7 +8,7 @@ namespace Resgrid.Model.Services
 	/// <summary>
 	/// Channel lifecycle: creation, membership, preferences and the idempotent Ensure* provisioning for
 	/// default (department/group), incident (call/lane/command) and chatbot channels.
-	/// AUTHORIZATION: unless a method documents its own enforcement (AddMembersAsync, EnsureMemberStateAsync),
+	/// AUTHORIZATION: unless a method documents its own enforcement,
 	/// the CALLER must verify access via IChatPermissionService before invoking these methods — the service
 	/// executes, it does not gate reads.
 	/// </summary>
@@ -30,25 +30,25 @@ namespace Resgrid.Model.Services
 
 		/// <summary>
 		/// Finds or creates the 1:1 channel between the creator and a user or unit (DmKey dedup).
-		/// Enforces cross-tenant rules: the target user/unit must belong to the department
+		/// Enforces cross-tenant rules: the creator and target user/unit must belong to the department
 		/// (UnauthorizedAccessException otherwise). The CALLER must verify the creator may open DMs.
 		/// </summary>
 		Task<ChatChannel> GetOrCreateDirectMessageChannelAsync(int departmentId, string creatorUserId, string targetUserId, int? targetUnitId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Creates an ad-hoc group channel. Enforces that every memberUserId belongs to the department
+		/// Creates an ad-hoc group channel. Enforces that the creator and every memberUserId belong to the department
 		/// (UnauthorizedAccessException otherwise). The CALLER must verify the creator may create groups.
 		/// </summary>
 		Task<ChatChannel> CreateAdHocGroupChannelAsync(int departmentId, string creatorUserId, string name, List<string> memberUserIds, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Creates a permission-locked custom channel; rules are OR-evaluated (groups/roles/users). The CALLER must verify the creator may create custom channels.</summary>
+		/// <summary>Creates a permission-locked custom channel; rules are OR-evaluated (groups/roles/users). Enforces department membership and department-admin authority for the creator.</summary>
 		Task<ChatChannel> CreateCustomChannelAsync(int departmentId, string creatorUserId, string name, string topic, List<ChatChannelAccessRule> accessRules, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Name/topic update; the CALLER must verify moderator rights (CanModerateChannelAsync) first.</summary>
-		Task<ChatChannel> UpdateChannelAsync(string chatChannelId, string name, string topic, string byUserId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Name/topic update; enforces the supplied department boundary and moderator rights internally.</summary>
+		Task<ChatChannel> UpdateChannelAsync(int departmentId, string chatChannelId, string name, string topic, string byUserId, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Archive/unarchive; the CALLER must verify moderator rights first.</summary>
-		Task<bool> SetChannelArchivedAsync(string chatChannelId, bool archived, string byUserId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Archive/unarchive; enforces the supplied department boundary and moderator rights internally.</summary>
+		Task<bool> SetChannelArchivedAsync(int departmentId, string chatChannelId, bool archived, string byUserId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>Raw member list; the CALLER must verify the user can access the channel first.</summary>
 		Task<List<ChatChannelMember>> GetMembersAsync(string chatChannelId);
@@ -69,18 +69,16 @@ namespace Resgrid.Model.Services
 		Task<ChatChannelMember> GetUnitMembershipAsync(string chatChannelId, int unitId);
 
 		/// <summary>
-		/// Adds members. Enforcement inside: DirectMessage channels reject adds (InvalidOperationException),
-		/// CustomLocked channels require the actor to be a moderator (UnauthorizedAccessException), and every
-		/// userId must belong to the channel's department (UnauthorizedAccessException). Other channel types
-		/// rely on the CALLER to authorize the actor first.
+		/// Adds members. Enforces the supplied department boundary, supported channel types, actor membership
+		/// or moderator authority, and that every userId belongs to the channel's department.
 		/// </summary>
-		Task<List<ChatChannelMember>> AddMembersAsync(string chatChannelId, List<string> userIds, string addedByUserId, CancellationToken cancellationToken = default(CancellationToken));
+		Task<List<ChatChannelMember>> AddMembersAsync(int departmentId, string chatChannelId, List<string> userIds, string addedByUserId, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Marks the member removed (leave or kick); history row kept. The CALLER must verify the actor is the member themselves or a moderator.</summary>
-		Task<bool> RemoveMemberAsync(string chatChannelId, string userId, string removedByUserId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Marks the member removed (leave or kick); enforces department scope and self-or-moderator authority internally.</summary>
+		Task<bool> RemoveMemberAsync(int departmentId, string chatChannelId, string userId, string removedByUserId, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Replaces all access rules atomically; the CALLER must verify moderator rights first.</summary>
-		Task<bool> ReplaceAccessRulesAsync(string chatChannelId, List<ChatChannelAccessRule> accessRules, string byUserId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Replaces all access rules atomically; enforces department scope and moderator rights internally.</summary>
+		Task<bool> ReplaceAccessRulesAsync(int departmentId, string chatChannelId, List<ChatChannelAccessRule> accessRules, string byUserId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Returns the participant's member row for the channel, lazily creating one for implicit-audience
@@ -165,8 +163,8 @@ namespace Resgrid.Model.Services
 		/// <summary>Department chat settings (config defaults when no row exists); no authorization — safe for any department-scoped caller.</summary>
 		Task<ChatDepartmentSetting> GetDepartmentSettingsAsync(int departmentId);
 
-		/// <summary>Persists department chat settings; the CALLER must verify department-admin rights first.</summary>
-		Task<ChatDepartmentSetting> SaveDepartmentSettingsAsync(ChatDepartmentSetting settings, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Persists department chat settings after enforcing authenticated department-admin rights.</summary>
+		Task<ChatDepartmentSetting> SaveDepartmentSettingsAsync(int departmentId, string byUserId, ChatDepartmentSetting settings, CancellationToken cancellationToken = default(CancellationToken));
 	}
 
 	/// <summary>
@@ -183,6 +181,9 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface IChatPermissionService
 	{
+		/// <summary>True only when the user is a current, active member of the authenticated department.</summary>
+		Task<bool> IsActiveDepartmentUserAsync(int departmentId, string userId);
+
 		/// <summary>Can the user (optionally acting for a unit) read/join this channel.</summary>
 		Task<bool> CanAccessChannelAsync(ChatChannel channel, string userId, int? activeUnitId);
 
@@ -195,8 +196,14 @@ namespace Resgrid.Model.Services
 		/// <summary>True when the unit belongs to the department AND the user actively crews it (active unit role).</summary>
 		Task<bool> CanSendAsUnitAsync(string userId, int unitId, int departmentId);
 
+		/// <summary>True when the user has dispatch access in this department and may see its shared operational channels.</summary>
+		Task<bool> CanAccessDepartmentOperationalChannelsAsync(int departmentId, string userId);
+
 		/// <summary>True when the user holds an active incident-command role (or is the current IC) on the call.</summary>
 		Task<bool> CanSendAsIcAsync(string userId, int callId, int departmentId);
+
+		/// <summary>True when the active user/unit is currently assigned or dispatched to this same-department incident. Department-wide dispatch visibility is deliberately excluded.</summary>
+		Task<bool> CanAccessIncidentAsync(int departmentId, int callId, string userId, int? activeUnitId);
 
 		/// <summary>
 		/// Resolves the full user audience of a channel (for push notifications and urgent-ack provisioning).
@@ -209,6 +216,9 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Drops cached permission evaluations for a channel (membership/roles changed) and bumps the channel-list cache version.</summary>
 		Task InvalidateChannelCacheAsync(string chatChannelId);
+
+		/// <summary>Current distributed authorization epoch used to isolate realtime channel groups after access changes.</summary>
+		Task<string> GetChannelAccessVersionAsync(string chatChannelId);
 	}
 
 	/// <summary>
@@ -245,42 +255,42 @@ namespace Resgrid.Model.Services
 
 	/// <summary>
 	/// Moderation: user flags, moderator actions (delete/mute/ban/lock), the immutable moderation audit
-	/// trail (mirrored to the department AuditLog) and records-request exports. Permission checks
-	/// (CanModerateChannelAsync) are the CALLER's responsibility — controllers gate, this executes.
+	/// trail (mirrored to the department AuditLog) and records-request exports. Mutations accept the
+	/// authenticated department/user separately and re-evaluate tenant and moderator authority internally.
 	/// </summary>
 	public interface IChatModerationService
 	{
-		/// <summary>Flags a message for review; dedupes an existing open flag by the same user. The CALLER must verify the user can access the channel.</summary>
-		Task<ChatMessageFlag> FlagMessageAsync(string chatMessageId, string flaggedByUserId, ChatFlagReason reason, string note, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Flags a message for review; enforces department scope and current channel access, then dedupes an existing open flag by the same user.</summary>
+		Task<ChatMessageFlag> FlagMessageAsync(int departmentId, string chatMessageId, string flaggedByUserId, ChatFlagReason reason, string note, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Flag queue for moderators; the CALLER must verify department-moderator rights first.</summary>
-		Task<List<ChatMessageFlag>> GetFlagsAsync(int departmentId, ChatFlagStatus status, int page, int pageSize);
+		/// <summary>Flag queue for current department administrators.</summary>
+		Task<List<ChatMessageFlag>> GetFlagsAsync(int departmentId, string byUserId, ChatFlagStatus status, int page, int pageSize);
 
-		/// <summary>Resolves a flag; departmentId must match the flag's department (cross-department ids are rejected) and only Open flags transition. The CALLER must verify moderator rights.</summary>
+		/// <summary>Resolves a flag for a current department administrator; cross-department ids are rejected and only Open flags transition.</summary>
 		Task<ChatMessageFlag> ResolveFlagAsync(string chatMessageFlagId, int departmentId, string byUserId, ChatFlagStatus resolution, string resolutionNote, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
 
-		/// <summary>Moderator tombstone-delete; wraps IChatMessageService.DeleteMessageAsync with audit. The CALLER must verify moderator rights.</summary>
-		Task<bool> ModeratorDeleteMessageAsync(string chatMessageId, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
+		/// <summary>Moderator tombstone-delete; enforces department scope and current channel moderator rights before audit.</summary>
+		Task<bool> ModeratorDeleteMessageAsync(int departmentId, string chatMessageId, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
 
-		/// <summary>Mute/unmute a participant; the CALLER must verify moderator rights first.</summary>
-		Task<bool> SetUserMutedAsync(string chatChannelId, string targetUserId, DateTime? mutedUntil, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
+		/// <summary>Mute/unmute a participant; enforces department scope and current channel moderator rights.</summary>
+		Task<bool> SetUserMutedAsync(int departmentId, string chatChannelId, string targetUserId, DateTime? mutedUntil, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
 
-		/// <summary>Ban/unban a participant; the CALLER must verify moderator rights first.</summary>
-		Task<bool> SetUserBannedAsync(string chatChannelId, string targetUserId, bool banned, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
+		/// <summary>Ban/unban a participant; enforces department scope and current channel moderator rights.</summary>
+		Task<bool> SetUserBannedAsync(int departmentId, string chatChannelId, string targetUserId, bool banned, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
 
-		/// <summary>Lock/unlock a channel; the CALLER must verify moderator rights first.</summary>
-		Task<bool> SetChannelLockedAsync(string chatChannelId, bool locked, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
+		/// <summary>Lock/unlock a channel; enforces department scope and current channel moderator rights.</summary>
+		Task<bool> SetChannelLockedAsync(int departmentId, string chatChannelId, bool locked, string byUserId, string reason, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
 
-		/// <summary>Moderation audit trail; the CALLER must verify moderator rights first.</summary>
-		Task<List<ChatModerationAction>> GetModerationActionsAsync(int departmentId, string chatChannelId, int page, int pageSize);
+		/// <summary>Moderation audit trail for current department administrators.</summary>
+		Task<List<ChatModerationAction>> GetModerationActionsAsync(int departmentId, string byUserId, string chatChannelId, int page, int pageSize);
 
-		/// <summary>Queues a transcript export; the CALLER must verify moderator rights first.</summary>
+		/// <summary>Queues a transcript export after enforcing current department-admin and channel scope.</summary>
 		Task<ChatExport> RequestExportAsync(int departmentId, string byUserId, string chatChannelId, DateTime? startDate, DateTime? endDate, ChatExportFormat format, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
 
-		/// <summary>Export list without result blobs; the CALLER must verify moderator rights first.</summary>
-		Task<List<ChatExport>> GetExportsAsync(int departmentId);
+		/// <summary>Export list without result blobs for current department administrators.</summary>
+		Task<List<ChatExport>> GetExportsAsync(int departmentId, string byUserId);
 
-		/// <summary>Full export row including result data; audits the download. The CALLER must verify moderator rights first.</summary>
+		/// <summary>Full export row including result data; enforces current department-admin rights and audits the download.</summary>
 		Task<ChatExport> GetExportForDownloadAsync(string chatExportId, int departmentId, string byUserId, CancellationToken cancellationToken = default(CancellationToken), ChatModerationContext context = null);
 	}
 
@@ -349,17 +359,17 @@ namespace Resgrid.Model.Services
 	/// <summary>
 	/// Message pipeline: validation, sequence allocation, mentions, urgent acks, edits/deletes with audit
 	/// history, reactions, pins, read pointers, paging/delta-sync, search. Publishes ChatEventRaised
-	/// envelopes for realtime fan-out. SendMessageAsync enforces posting permissions internally; every
-	/// other method requires the CALLER to authorize via IChatPermissionService first.
+	/// envelopes for realtime fan-out. Every mutation takes the authenticated department and user identity
+	/// separately from client DTOs and re-evaluates tenant scope and channel permissions internally.
 	/// </summary>
 	public interface IChatMessageService
 	{
 		/// <summary>
 		/// Sends a message as the authenticated user. Enforces CanPostAsync (access, mute/ban, lock) and
-		/// AsUnitId/AsIncidentCommander identity checks internally; <paramref name="senderUserId"/> MUST be
-		/// the authenticated user, supplied by the caller — never client input.
+		/// AsUnitId/AsIncidentCommander identity checks internally; <paramref name="departmentId"/> and
+		/// <paramref name="senderUserId"/> MUST come from the authenticated principal — never client input.
 		/// </summary>
-		Task<ChatMessage> SendMessageAsync(string senderUserId, ChatMessageSendRequest request, CancellationToken cancellationToken = default(CancellationToken));
+		Task<ChatMessage> SendMessageAsync(int departmentId, string senderUserId, ChatMessageSendRequest request, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Internal bot send (chatbot pipeline): skips user permission checks, records no SenderUserId,
@@ -379,17 +389,17 @@ namespace Resgrid.Model.Services
 		/// <summary>Thread page; the CALLER must verify channel access first.</summary>
 		Task<List<ChatMessage>> GetThreadPageAsync(string threadRootMessageId, long? beforeSeq, int limit);
 
-		/// <summary>Sender edit (enforced inside: only the original sender); prior body preserved in ChatMessageEdits.</summary>
-		Task<ChatMessage> EditMessageAsync(string chatMessageId, string editorUserId, string newBody, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Sender edit; enforces department scope, channel access and original-sender identity internally.</summary>
+		Task<ChatMessage> EditMessageAsync(int departmentId, string chatMessageId, string editorUserId, string newBody, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Tombstone delete; sender self-delete or moderator (asModerator) enforced inside — asModerator must only be set after the caller verified CanModerateChannelAsync. Body preserved in ChatMessageEdits until retention purge.</summary>
-		Task<bool> DeleteMessageAsync(string chatMessageId, string byUserId, bool asModerator, string reason, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Tombstone delete; enforces department scope and channel access. A requested moderator delete is independently verified against current channel permissions.</summary>
+		Task<bool> DeleteMessageAsync(int departmentId, string chatMessageId, string byUserId, bool asModerator, string reason, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Adds a reaction; banned/muted participants are silently skipped. The CALLER must verify channel access first.</summary>
-		Task<bool> AddReactionAsync(string chatMessageId, string userId, int? unitId, string emoji, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Adds a reaction; enforces department scope, current channel access, unit authority and mute/ban state internally.</summary>
+		Task<bool> AddReactionAsync(int departmentId, string chatMessageId, string userId, int? unitId, string emoji, CancellationToken cancellationToken = default(CancellationToken));
 
-		/// <summary>Removes a reaction; the CALLER must verify channel access first.</summary>
-		Task<bool> RemoveReactionAsync(string chatMessageId, string userId, int? unitId, string emoji, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Removes a reaction; enforces department scope, current channel access and unit authority internally.</summary>
+		Task<bool> RemoveReactionAsync(int departmentId, string chatMessageId, string userId, int? unitId, string emoji, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>Reaction rows for rendering; the CALLER must verify channel access first.</summary>
 		Task<List<ChatMessageReaction>> GetReactionsForMessagesAsync(List<string> chatMessageIds);
@@ -397,14 +407,14 @@ namespace Resgrid.Model.Services
 		/// <summary>Attachment metadata for rendering; the CALLER must verify channel access first.</summary>
 		Task<List<ChatAttachment>> GetAttachmentMetadataForMessagesAsync(List<string> chatMessageIds);
 
-		/// <summary>Pin/unpin; the CALLER must verify moderator rights first.</summary>
-		Task<bool> SetMessagePinnedAsync(string chatMessageId, string byUserId, bool pinned, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Pin/unpin; enforces department scope and moderator rights internally.</summary>
+		Task<bool> SetMessagePinnedAsync(int departmentId, string chatMessageId, string byUserId, bool pinned, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>Pinned messages; the CALLER must verify channel access first.</summary>
 		Task<List<ChatMessage>> GetPinnedMessagesAsync(string chatChannelId);
 
-		/// <summary>Acknowledges an urgent message for the user; returns rows stamped (0 = nothing pending).</summary>
-		Task<int> AcknowledgeMessageAsync(string chatMessageId, string userId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>Acknowledges an urgent message; enforces department scope and current channel access before stamping the caller's row.</summary>
+		Task<int> AcknowledgeMessageAsync(int departmentId, string chatMessageId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>Ack rows for a message; the CALLER must verify channel access first.</summary>
 		Task<List<ChatMessageAck>> GetAcksForMessageAsync(string chatMessageId);

@@ -1,10 +1,30 @@
 @model Resgrid.Web.Areas.User.Models.Security.ViewAuditLogView
+@functions {
+  public string DisplayValue(string value)
+  {
+    return String.IsNullOrWhiteSpace(value) ? "Not recorded" : value;
+  }
+}
 @{
   ViewBag.Title = "Resgrid | View Audit Log";
+  var loggedBy = await UserHelper.GetFullNameForUser(Model.AuditLog.UserId);
+  if (String.IsNullOrWhiteSpace(loggedBy))
+  {
+    loggedBy = "Not recorded";
+  }
 }
 @section Styles
 {
-
+  <style>
+    .audit-log-value {
+      margin: 0;
+      max-height: 24rem;
+      overflow: auto;
+      padding: 0.75rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+  </style>
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -38,53 +58,142 @@
         </div>
         <div class="ibox-content">
           <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Audit Log ID:</dt>
+                <dd>@Model.AuditLog.AuditLogId</dd>
+              </dl>
+            </div>
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Department ID:</dt>
+                <dd>@Model.AuditLog.DepartmentId</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
               <dl class="dl-horizontal">
                 <dt>Audit Type:</dt>
                 <dd>@Model.Type.ToString()</dd>
               </dl>
             </div>
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Log Type ID:</dt>
+                <dd>@Model.AuditLog.LogType</dd>
+              </dl>
+            </div>
           </div>
           <div class="row">
-            <div class="col-lg-12">
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Type Description:</dt>
+                <dd>@DisplayValue(Model.TypeName)</dd>
+              </dl>
+            </div>
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Result:</dt>
+                <dd>
+                  @if (Model.AuditLog.Successful)
+                  {
+                    <span class="label label-success">Successful</span>
+                  }
+                  else
+                  {
+                    <span class="label label-danger">Failed</span>
+                  }
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
               <dl class="dl-horizontal">
                 <dt>Logged By:</dt>
-                <dd>@(await UserHelper.GetFullNameForUser(Model.AuditLog.UserId))</dd>
+                <dd>@loggedBy</dd>
+              </dl>
+            </div>
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>User ID:</dt>
+                <dd>@DisplayValue(Model.AuditLog.UserId)</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Logged On (Local):</dt>
+                <dd>@(Model.AuditLog.LoggedOn.HasValue ? Model.AuditLog.LoggedOn.Value.TimeConverterToString(Model.Department) : "Unknown")</dd>
+              </dl>
+            </div>
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Logged On (UTC):</dt>
+                <dd>
+                  @if (Model.AuditLog.LoggedOn.HasValue)
+                  {
+                    @DateTime.SpecifyKind(Model.AuditLog.LoggedOn.Value, DateTimeKind.Utc).ToString("yyyy-MM-dd HH:mm:ss.fffffff 'UTC'")
+                  }
+                  else
+                  {
+                    @:Unknown
+                  }
+                </dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>IP Address:</dt>
+                <dd>@DisplayValue(Model.AuditLog.IpAddress)</dd>
+              </dl>
+            </div>
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Server Name:</dt>
+                <dd>@DisplayValue(Model.AuditLog.ServerName)</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Object ID:</dt>
+                <dd>@DisplayValue(Model.AuditLog.ObjectId)</dd>
+              </dl>
+            </div>
+            <div class="col-lg-6">
+              <dl class="dl-horizontal">
+                <dt>Object Department ID:</dt>
+                <dd>@Model.AuditLog.ObjectDepartmentId</dd>
               </dl>
             </div>
           </div>
           <div class="row">
             <div class="col-lg-12">
               <dl class="dl-horizontal">
-                <dt>Logged On:</dt>
-                @if (Model.AuditLog.LoggedOn.HasValue)
-                {
-                  <dd>@Model.AuditLog.LoggedOn.Value.TimeConverterToString(Model.Department)</dd>
-                }
-                else
-                {
-                  <dd>Unknown</dd>
-                }
+                <dt>User Agent:</dt>
+                <dd>@DisplayValue(Model.AuditLog.UserAgent)</dd>
               </dl>
             </div>
           </div>
           <div class="row">
             <div class="col-lg-12">
-              <dl class="dl-horizontal">
+              <dl>
                 <dt>Message:</dt>
-                <dd>
-                  @Model.AuditLog.Message
-                </dd>
+                <dd><pre class="audit-log-value">@DisplayValue(Model.AuditLog.Message)</pre></dd>
               </dl>
             </div>
           </div>
           <div class="row">
             <div class="col-lg-12">
-              <dl class="dl-horizontal">
+              <dl>
                 <dt>Data:</dt>
-                <dd>
-                  @Model.AuditLog.Data
-                </dd>
+                <dd><pre class="audit-log-value">@DisplayValue(Model.AuditLog.Data)</pre></dd>
               </dl>
             </div>
           </div>

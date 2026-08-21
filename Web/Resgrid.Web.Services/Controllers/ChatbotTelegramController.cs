@@ -48,15 +48,15 @@ namespace Resgrid.Web.Services.Controllers
 		public async Task<IActionResult> Webhook()
 		{
 			// Verify the secret token Telegram echoes back in the X-Telegram-Bot-Api-Secret-Token
-			// header (configured via setWebhook). When a secret is configured, requests without a
-			// matching token are rejected so the webhook cannot be driven by arbitrary callers.
+			// header (configured via setWebhook). Fail closed when the secret is missing: otherwise an
+			// arbitrary caller could forge a linked Telegram user id and drive authenticated chatbot work.
 			var configuredSecret = ChatbotConfig.TelegramWebhookSecretToken;
-			if (!string.IsNullOrEmpty(configuredSecret))
-			{
-				var providedSecret = Request.Headers["X-Telegram-Bot-Api-Secret-Token"].ToString();
-				if (!SecretMatches(providedSecret, configuredSecret))
-					return Unauthorized();
-			}
+			if (string.IsNullOrWhiteSpace(configuredSecret))
+				return StatusCode(StatusCodes.Status503ServiceUnavailable);
+
+			var providedSecret = Request.Headers["X-Telegram-Bot-Api-Secret-Token"].ToString();
+			if (!SecretMatches(providedSecret, configuredSecret))
+				return Unauthorized();
 
 			try
 			{

@@ -12,6 +12,7 @@ using Resgrid.Chatbot.Services;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Chat;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
@@ -327,6 +328,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Gets (creating if needed) the caller's chatbot conversation channel.
 		/// </summary>
 		[HttpGet("GetChatChannel")]
+		[Authorize(Policy = ResgridResources.Chat_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<ChatbotChannelResult>> GetChatChannel()
 		{
@@ -360,6 +362,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// SignalR (chatMessageReceived). Idempotent via clientMessageId.
 		/// </summary>
 		[HttpPost("SendChatMessage")]
+		[Authorize(Policy = ResgridResources.Chat_View)]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<ChatbotMessageSentResult>> SendChatMessage([FromBody] ChatbotChatMessageRequest request)
 		{
@@ -375,7 +379,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (channel == null)
 					return NotFound();
 
-				var message = await _chatMessageService.SendMessageAsync(UserId, new ChatMessageSendRequest
+				var message = await _chatMessageService.SendMessageAsync(DepartmentId, UserId, new ChatMessageSendRequest
 				{
 					ChatChannelId = channel.ChatChannelId,
 					DepartmentId = DepartmentId,
@@ -445,6 +449,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Resets the chatbot conversational session (context/pending intents). Message history remains.
 		/// </summary>
 		[HttpPost("NewChatSession")]
+		[Authorize(Policy = ResgridResources.Chat_View)]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<ChatbotSessionResetResult>> NewChatSession()
 		{
@@ -453,17 +459,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
+				var channel = await _chatChannelService.EnsureChatbotChannelAsync(DepartmentId, UserId);
+				if (channel == null)
+					return NotFound();
+
 				var session = await _chatbotSessionManager.GetOrCreateSessionAsync(UserId, DepartmentId, Resgrid.Chatbot.Models.ChatbotPlatform.WebChat, UserId);
 				if (session != null)
 					await _chatbotSessionManager.EndSessionAsync(session.SessionId);
 
 				// Visible confirmation in the conversation (fans out over SignalR to every client);
 				// without it the reset is silent and looks like the button did nothing.
-				var channel = await _chatChannelService.EnsureChatbotChannelAsync(DepartmentId, UserId);
-				if (channel != null)
-					await _chatMessageService.SendBotMessageAsync(channel.ChatChannelId,
-						DepartmentId.ToString(System.Globalization.CultureInfo.InvariantCulture),
-						"Starting a new conversation — your previous context has been cleared.", "Resgrid Assistant");
+				await _chatMessageService.SendBotMessageAsync(channel.ChatChannelId,
+					DepartmentId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+					"Starting a new conversation — your previous context has been cleared.", "Resgrid Assistant");
 
 				var result = new ChatbotSessionResetResult
 				{
@@ -494,6 +502,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// not a bypass of it.
 		/// </summary>
 		[HttpPost("AskIncident")]
+		[Authorize(Policy = ResgridResources.Chat_View)]
+		[Authorize(Policy = ResgridResources.Messages_Create)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<IncidentAssistantAnswerResult>> AskIncident([FromBody] AskIncidentAssistantInput input)
@@ -550,6 +560,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// can build these offline; this endpoint keeps a server-side department in sync with them.
 		/// </summary>
 		[HttpGet("IncidentSuggestions")]
+		[Authorize(Policy = ResgridResources.Chat_View)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<IncidentAssistantSuggestionsResult>> IncidentSuggestions([FromQuery] int callId)
 		{
@@ -598,6 +609,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<bool> ChatbotChatEnabledAsync()
 		{
+			if (!await _authorizationService.IsUserValidWithinLimitsAsync(UserId, DepartmentId))
+				return false;
+
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId))
 				return false;
 

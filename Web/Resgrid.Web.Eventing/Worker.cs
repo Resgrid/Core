@@ -11,6 +11,8 @@ using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Web.Eventing.Hubs.Models;
 using Resgrid.Model.Events;
+using Resgrid.Model.Repositories;
+using Resgrid.Model.Services;
 using Microsoft.AspNetCore.SignalR;
 using Resgrid.Web.Eventing.Hubs;
 
@@ -171,10 +173,30 @@ namespace Resgrid.Web.Eventing
 		{
 			Console.WriteLine($"Processing RabbitMQ IncidentCommandUpdated Event For {departmentId}");
 
+			// Resource releases, lane moves, lead changes and command transfers all change who may
+			// receive incident chat. Rotate every call-scoped SignalR group before notifying clients;
+			// old connections remain in an obsolete group that receives no future message payloads.
+			if (int.TryParse(id, out var callId))
+			{
+				try
+				{
+					await InvalidateIncidentChatAccessAsync(departmentId, callId);
+				}
+				catch (Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex,
+						$"Failed to invalidate incident chat access for department {departmentId} and call {callId}.");
+				}
+			}
+
 			var group = _eventingHub.Clients.Group(departmentId.ToString());
 
 			if (group != null)
 				await group.SendAsync("incidentCommandUpdated", id);
+
+			await _chatHub.Clients.Group($"chatdept:{departmentId}").SendAsync(
+				ChatEventKinds.ChannelUpdated,
+				Newtonsoft.Json.JsonConvert.SerializeObject(new { DepartmentId = departmentId, CallId = id, AuthorizationChanged = true }));
 		}
 
 		public async Task DepartmentUpdated(int departmentId)
@@ -252,7 +274,8 @@ namespace Resgrid.Web.Eventing
 					return;
 
 				var chatEvent = Newtonsoft.Json.JsonConvert.DeserializeObject<ChatEventRaised>(payloadJson);
-				if (chatEvent == null || string.IsNullOrWhiteSpace(chatEvent.Kind))
+				if (chatEvent == null || string.IsNullOrWhiteSpace(chatEvent.Kind) || departmentId <= 0 ||
+					chatEvent.DepartmentId != departmentId)
 					return;
 
 				if (chatEvent.Kind == ChatEventKinds.AccessRevoked)
@@ -268,7 +291,8 @@ namespace Resgrid.Web.Eventing
 					return;
 				}
 
-				if (chatEvent.Kind == ChatEventKinds.ChannelUpdated || chatEvent.Kind == ChatEventKinds.ChannelProvisioned)
+				if (chatEvent.Kind == ChatEventKinds.ChannelUpdated || chatEvent.Kind == ChatEventKinds.ChannelProvisioned ||
+					chatEvent.Kind == ChatEventKinds.ModerationApplied)
 				{
 					var hint = Newtonsoft.Json.JsonConvert.SerializeObject(new
 					{
@@ -282,8 +306,10 @@ namespace Resgrid.Web.Eventing
 
 					if (!string.IsNullOrWhiteSpace(chatEvent.ChatChannelId))
 					{
-						await _chatHub.Clients.Group($"chat:{chatEvent.ChatChannelId}")
-							.SendAsync(chatEvent.Kind, GuardChatPayloadSize(chatEvent));
+						var channelGroupName = await GetCurrentChannelGroupNameAsync(chatEvent.ChatChannelId);
+						if (channelGroupName != null)
+							await _chatHub.Clients.Group(channelGroupName)
+								.SendAsync(chatEvent.Kind, GuardChatPayloadSize(chatEvent));
 					}
 
 					return;
@@ -291,8 +317,10 @@ namespace Resgrid.Web.Eventing
 
 				if (!string.IsNullOrWhiteSpace(chatEvent.ChatChannelId))
 				{
-					await _chatHub.Clients.Group($"chat:{chatEvent.ChatChannelId}")
-						.SendAsync(chatEvent.Kind, GuardChatPayloadSize(chatEvent));
+					var channelGroupName = await GetCurrentChannelGroupNameAsync(chatEvent.ChatChannelId);
+					if (channelGroupName != null)
+						await _chatHub.Clients.Group(channelGroupName)
+							.SendAsync(chatEvent.Kind, GuardChatPayloadSize(chatEvent));
 				}
 			}
 			catch (Exception ex)
@@ -326,13 +354,14 @@ namespace Resgrid.Web.Eventing
 			if (string.IsNullOrWhiteSpace(userId))
 				return;
 
-			if (!string.IsNullOrWhiteSpace(channelId) && ChatHub.UserConnections.TryGetValue(userId, out var connections))
+			var channelGroupName = await GetCurrentChannelGroupNameAsync(channelId);
+			if (channelGroupName != null && ChatHub.UserConnections.TryGetValue(userId, out var connections))
 			{
 				foreach (var connectionId in connections.Keys)
 				{
 					try
 					{
-						await _chatHub.Groups.RemoveFromGroupAsync(connectionId, $"chat:{channelId}");
+						await _chatHub.Groups.RemoveFromGroupAsync(connectionId, channelGroupName);
 					}
 					catch (Exception ex)
 					{
@@ -343,6 +372,37 @@ namespace Resgrid.Web.Eventing
 
 			await _chatHub.Clients.Group($"chatuser:{chatEvent.DepartmentId}:{userId.ToLowerInvariant()}")
 				.SendAsync(chatEvent.Kind, chatEvent.PayloadJson);
+		}
+
+		private async Task<string> GetCurrentChannelGroupNameAsync(string channelId)
+		{
+			if (string.IsNullOrWhiteSpace(channelId))
+				return null;
+
+			using var scope = _serviceProvider.CreateScope();
+			var permissionService = scope.ServiceProvider.GetRequiredService<IChatPermissionService>();
+			var version = await permissionService.GetChannelAccessVersionAsync(channelId);
+			return ChatHub.BuildChannelGroupName(channelId, version);
+		}
+
+		private async Task InvalidateIncidentChatAccessAsync(int departmentId, int callId)
+		{
+			if (departmentId <= 0 || callId <= 0)
+				return;
+
+			using var scope = _serviceProvider.CreateScope();
+			var channelRepository = scope.ServiceProvider.GetRequiredService<IChatChannelRepository>();
+			var permissionService = scope.ServiceProvider.GetRequiredService<IChatPermissionService>();
+			var channels = await channelRepository.GetByCallIdAsync(callId);
+
+			if (channels == null)
+				return;
+
+			foreach (var channel in channels)
+			{
+				if (channel != null && channel.DepartmentId == departmentId)
+					await permissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
+			}
 		}
 
 		/// <summary>

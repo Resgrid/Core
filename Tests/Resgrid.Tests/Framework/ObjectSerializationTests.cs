@@ -39,5 +39,14 @@ namespace Resgrid.Tests.Framework
             testObj.Id.Should().Be(500);
             testObj.Data.Should().Be("This is just a test object. TestStringToSearchOn");
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void BooleanRoundTrips(bool value)
+        {
+            var serialized = ObjectSerialization.Serialize(value);
+
+            ObjectSerialization.Deserialize<bool>(serialized).Should().Be(value);
+        }
     }
 }

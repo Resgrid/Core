@@ -1,4 +1,4 @@
-var resgrid;
+﻿var resgrid;
 (function (resgrid) {
     var common;
     (function (common) {
@@ -23,12 +23,28 @@ var resgrid;
                 var options = {
                     //transport: signalR.HttpTransportType.ServerSentEvents,
                     transport: signalR.HttpTransportType.None,
-                    logging: signalR.LogLevel.Trace
+                    logging: signalR.LogLevel.Trace,
+                    // The eventing hub authenticates every connection. The page itself never holds an
+                    // API token any more, so mint a short-lived one through the same BFF endpoint the
+                    // React surfaces use. Automatic reconnect re-runs this, which is what keeps the
+                    // connection alive past the token's short lifetime.
+                    accessTokenFactory: getEventingToken
                 };
 
-                eventHub = new signalR.HubConnectionBuilder().withUrl(resgrid.absoluteEventingBaseUrl + '/eventingHub', options).build();
+                eventHub = new signalR.HubConnectionBuilder()
+                    .withUrl(resgrid.absoluteEventingBaseUrl + '/eventingHub', options)
+                    .withAutomaticReconnect()
+                    .build();
                 eventHub.serverTimeoutInMilliseconds = 9999999999999;
                 eventHub.keepAliveIntervalInMilliseconds = 1000;
+
+                eventHub.onreconnected(function () {
+                    if (departmentId && departmentId > 0) {
+                        eventHub.invoke("Connect", Number(departmentId)).catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    }
+                });
 
                 registerClientMethods();
                 startConnection();
@@ -41,6 +57,26 @@ var resgrid;
                 //}
             }
             signalr.init = init;
+            function getEventingToken() {
+                var meta = document.querySelector('meta[name="request-verification-token"]');
+                var headers = { 'Accept': 'application/json' };
+
+                if (meta && meta.content) {
+                    headers['RequestVerificationToken'] = meta.content;
+                }
+
+                return fetch('/api/web-bff/eventing-token', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: headers
+                }).then(function (response) {
+                    return response.ok ? response.json() : null;
+                }).then(function (body) {
+                    return body && typeof body.accessToken === 'string' ? body.accessToken : '';
+                }).catch(function () {
+                    return '';
+                });
+            }
             function startConnection() {
                 if (departmentId && departmentId > 0) {
                     Object.defineProperty(WebSocket, 'OPEN', { value: 1 });

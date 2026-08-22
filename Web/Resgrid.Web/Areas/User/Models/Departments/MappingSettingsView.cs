@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Resgrid.Web.Areas.User.Models.Departments
 {
@@ -6,6 +7,12 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 	{
 		public bool? SaveSuccess { get; set; }
 		public string Message { get; set; }
+
+		/// <summary>
+		/// Time-in-status thresholds driving Big Board highlighting, one row per canonical status
+		/// meaning. Entered in minutes because that is how dispatchers talk about them.
+		/// </summary>
+		public List<UnitStatusThresholdRow> UnitStatusThresholds { get; set; } = new List<UnitStatusThresholdRow>();
 
 		public int PersonnelLocationTTL { get; set; }
 		public int UnitLocationTTL { get; set; }

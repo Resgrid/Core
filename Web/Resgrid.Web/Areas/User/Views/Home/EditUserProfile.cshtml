@@ -35,11 +35,6 @@
                 {
                     <a id="reportingButton" class="btn btn-primary top-button" title="Your Reporting" asp-controller="Profile" asp-action="Reporting" asp-route-area="User">@localizer["ReportDelivery"]</a>
                     <a class="btn btn-primary top-button" asp-controller="AccountSecurity" asp-action="Sessions" asp-route-area="User">Active Sessions</a>
-                    @if (Model.CanManageLocalCredentials)
-                    {
-                        <a class="btn btn-primary top-button" asp-controller="AccountSecurity" asp-action="ChangeUsername" asp-route-area="User">Change Username</a>
-                        <a class="btn btn-primary top-button" asp-controller="AccountSecurity" asp-action="ChangePassword" asp-route-area="User">Change Password</a>
-                    }
                 }
                 else if (Model.CanResetPassword && !Model.IsSsoManaged)
                 {
@@ -459,7 +454,6 @@
                                 <div class="form-group"><div class="col-sm-10 col-sm-offset-2">
                                     <a class="btn btn-primary" asp-controller="AccountSecurity" asp-action="ChangeUsername" asp-route-area="User">Change Username</a>
                                     <a class="btn btn-primary" asp-controller="AccountSecurity" asp-action="ChangePassword" asp-route-area="User">Change Password</a>
-                                    <a class="btn btn-default" asp-controller="AccountSecurity" asp-action="Sessions" asp-route-area="User">Active Sessions</a>
                                 </div></div>
                             }
                             else

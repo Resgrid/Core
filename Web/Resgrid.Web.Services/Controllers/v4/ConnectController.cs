@@ -384,8 +384,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					eventingIdentity.AddClaim(new Claim(SessionClaimTypes.WebEventingOnly, "true"));
 				foreach (var claim in principal.Claims)
 					claim.SetDestinations(GetDestinations(claim, principal));
-				principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(eventingOnly ? 2 :
-					Math.Max(1, SessionSecurityConfig.WebBffAccessTokenLifetimeMinutes)));
+				principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(eventingOnly
+					? Math.Max(1, SessionSecurityConfig.WebEventingAccessTokenLifetimeMinutes)
+					: Math.Max(1, SessionSecurityConfig.WebBffAccessTokenLifetimeMinutes)));
 				principal.SetResources(JwtConfig.EventsClientId);
 
 				return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);

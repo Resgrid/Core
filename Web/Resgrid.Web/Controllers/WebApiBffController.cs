@@ -36,7 +36,12 @@ namespace Resgrid.Web.Controllers
 			"api/v4/Chat/",
 			"api/v4/ChatModeration/",
 			"api/v4/Chatbot/",
-			"api/v4/Moderation/"
+			"api/v4/Moderation/",
+			// Avatars back every participant image the chat and personnel surfaces render, and
+			// GetRecipients backs the message composer. Both are called by the app through this
+			// facade, so leaving them off the list 404s them.
+			"api/v4/Avatars/",
+			"api/v4/Messages/"
 		};
 
 		private readonly IHttpClientFactory _httpClientFactory;
@@ -249,13 +254,16 @@ namespace Resgrid.Web.Controllers
 			// response that omits expires_in.
 			var lifetime = token.ExpiresIn > 0
 				? TimeSpan.FromSeconds(token.ExpiresIn)
-				: TimeSpan.FromMinutes(eventingOnly ? 2 : Math.Max(1, SessionSecurityConfig.WebBffAccessTokenLifetimeMinutes));
+				: TimeSpan.FromMinutes(eventingOnly
+					? Math.Max(1, SessionSecurityConfig.WebEventingAccessTokenLifetimeMinutes)
+					: Math.Max(1, SessionSecurityConfig.WebBffAccessTokenLifetimeMinutes));
 
 			var cached = new CachedBffToken(token.AccessToken, DateTimeOffset.UtcNow.Add(lifetime));
 
 			// Retire the cached copy early so a token handed out at the end of its cache window still has
-			// usable life left on it.
-			var margin = eventingOnly ? TimeSpan.FromSeconds(30) : TimeSpan.FromMinutes(1);
+			// usable life left on it. Scaled to the token's own lifetime rather than fixed: a flat margin
+			// is most of a short token and a rounding error on a long one.
+			var margin = TimeSpan.FromSeconds(Math.Clamp(lifetime.TotalSeconds * 0.2, 30, 120));
 			var cacheFor = lifetime - margin;
 			if (cacheFor > TimeSpan.Zero)
 				_memoryCache.Set(cacheKey, cached, cacheFor);

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 
@@ -6,6 +6,12 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 {
 	public class DispatchSettingsView
 	{
+		/// <summary>
+		/// New-call field policy, one row per configurable built-in field. Bound as a list so the screen
+		/// can render a Visible/Required grid without a per-field property explosion.
+		/// </summary>
+		public List<NewCallFieldPolicyRow> NewCallFields { get; set; } = new List<NewCallFieldPolicyRow>();
+
 		public SelectList StatusLevels { get; set; }
 		public SelectList UnitStatusLevels { get; set; }
 		public int ShiftDispatchStatus { get; set; }

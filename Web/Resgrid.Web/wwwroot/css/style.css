@@ -9987,3 +9987,19 @@ left: 0;
 bottom: 0;
 }
 }
+
+/* Under the desktop breakpoint the theme stops pinning the sidebar and paints it as a
+   plain block that sizes to its own content: position:absolute normally, position:fixed
+   under .fixed-sidebar. Fixed plus content height is the broken one -- a module list
+   taller than the screen runs off the bottom of the viewport with nothing to scroll it
+   back. Re-assert the flex column (the theme's .body-small.mini-navbar rules outrank the
+   bare nav selector above) and cap the nav to the viewport, so .sidebar-collapse takes
+   the scroll and keeps its footer gutter exactly as it does on desktop. */
+@media (max-width: 768px) {
+body.body-small.mini-navbar nav.navbar-static-side,
+body.fixed-sidebar.body-small.mini-navbar nav.navbar-static-side {
+display: flex;
+max-height: 100vh;
+max-height: 100dvh;
+}
+}

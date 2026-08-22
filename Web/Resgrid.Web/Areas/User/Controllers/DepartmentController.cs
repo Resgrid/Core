@@ -2467,9 +2467,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						{
 							BaseType = x.BaseType,
 							// Entered in minutes, stored in seconds — the board works in seconds and a
-							// dispatcher should never have to think in them.
-							WarnSeconds = Math.Max(0, x.WarnMinutes) * 60,
-							AlertSeconds = Math.Max(0, x.AlertMinutes) * 60
+							// dispatcher should never have to think in them. Clamped to the largest minute
+							// count that still converts: the form binds a raw int, and without the ceiling a
+							// posted value over int.MaxValue / 60 wraps negative and silently reads as 0.
+							WarnSeconds = Math.Min(Math.Max(0, x.WarnMinutes), int.MaxValue / 60) * 60,
+							AlertSeconds = Math.Min(Math.Max(0, x.AlertMinutes), int.MaxValue / 60) * 60
 						})
 						.ToList()
 				}, cancellationToken);

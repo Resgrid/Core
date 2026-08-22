@@ -46,6 +46,18 @@
                     }
                 });
 
+                // withAutomaticReconnect() only covers drops after a connection is up, and it stops
+                // after its own short schedule. Nothing was listening for that, so an exhausted
+                // reconnect left the board silently stale until someone reloaded the page.
+                eventHub.onclose(function (err) {
+                    if (err) {
+                        console.error(err.toString());
+                    }
+
+                    console.log('disconnected');
+                    scheduleReconnect();
+                });
+
                 registerClientMethods();
                 startConnection();
 
@@ -77,17 +89,36 @@
                     return '';
                 });
             }
+            // A failed initial start() is not covered by withAutomaticReconnect at all, so retry it
+            // here. Bounded and backed off: a down eventing server should not be hammered, and a
+            // page left open overnight should not retry forever.
+            var MAX_START_ATTEMPTS = 10;
+            var startAttempts = 0;
+
+            function scheduleReconnect() {
+                if (startAttempts >= MAX_START_ATTEMPTS) {
+                    console.error('Eventing hub gave up after ' + startAttempts + ' connection attempts, reload the page to retry.');
+                    return;
+                }
+
+                startAttempts++;
+                var delay = Math.min(30000, 2000 * startAttempts);
+                console.log('Retrying eventing hub connection in ' + delay + 'ms (attempt ' + startAttempts + ' of ' + MAX_START_ATTEMPTS + ')');
+                setTimeout(startConnection, delay);
+            }
             function startConnection() {
                 if (departmentId && departmentId > 0) {
                     Object.defineProperty(WebSocket, 'OPEN', { value: 1 });
                     eventHub.start().then(function () {
                         console.log('connected');
+                        startAttempts = 0;
                         eventHub.invoke("Connect", Number(departmentId)).catch(function (err) {
                             return console.error(err.toString());
                         });
                     }).catch(function (err) {
                         console.log('Could not connect');
-                        return console.error(err.toString());
+                        console.error(err.toString());
+                        scheduleReconnect();
                     });
 
 

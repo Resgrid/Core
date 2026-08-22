@@ -675,4 +675,10 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>Returning</value>
   </data>
+  <data name="RequirePasswordResetViaEmail" xml:space="preserve">
+    <value>Require password resets by email</value>
+  </data>
+  <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
+    <value>Prevents department and group administrators from choosing or seeing a member's new password. Reset actions send the member a short-lived, single-use email link instead. Existing sessions are revoked after the member successfully changes the password.</value>
+  </data>
 </root>

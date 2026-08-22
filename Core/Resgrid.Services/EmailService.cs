@@ -62,11 +62,11 @@ namespace Resgrid.Services
 		}
 		#endregion Private Members and Constructors
 
-		public async Task<bool> SendWelcomeEmail(string departmentName, string name, string emailAddress, string userName, string password, int departmentId)
+		public async Task<bool> SendWelcomeEmail(string departmentName, string name, string emailAddress, string userName, int departmentId)
 		{
 			try
 			{
-				await _emailProvider.SendWelcomeMail(name, departmentName, userName, password, emailAddress, departmentId);
+				await _emailProvider.SendWelcomeMail(name, departmentName, userName, emailAddress, departmentId);
 				return true;
 			}
 			catch (Exception ex)
@@ -77,12 +77,29 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public async Task<bool> SendPasswordResetEmail(string emailAddress, string name, string userName, string password, string departmentName)
+		public async Task<bool> SendPasswordRecoveryEmail(string emailAddress, string name,
+			string departmentName, string resetUrl, string ipAddress, string userAgent, DateTime requestedOn,
+			bool isSsoManaged)
 		{
 			try
 			{
-				await _emailProvider.SendPasswordResetMail(name, password, userName, emailAddress, departmentName);
-				return true;
+				return await _emailProvider.SendPasswordRecoveryMail(name, emailAddress, departmentName,
+					resetUrl, ipAddress, userAgent, requestedOn.ToString("u"), isSsoManaged);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return false;
+		}
+
+		public async Task<bool> SendPasswordChangedByAdministratorEmail(string emailAddress, string name,
+			string userName, string departmentName)
+		{
+			try
+			{
+				return await _emailProvider.SendPasswordChangedByAdministratorMail(name, userName, emailAddress, departmentName);
 			}
 			catch (Exception ex)
 			{

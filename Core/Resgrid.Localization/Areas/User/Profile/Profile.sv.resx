@@ -251,4 +251,7 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>Minst {0} tecken</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Minst en siffra</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>Minst en stor och en liten bokstav</value></data>
+  <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>Skicka e-post för lösenordsåterställning</value></data>
+  <data name="SendPasswordResetEmail" xml:space="preserve"><value>Skicka e-post för lösenordsåterställning</value></data>
+  <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>Resgrid skickar en kortlivad engångslänk till användarens bekräftade e-postadress. Administratören väljer eller ser inte det nya lösenordet.</value></data>
 </root>

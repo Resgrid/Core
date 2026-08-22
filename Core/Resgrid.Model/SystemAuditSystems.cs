@@ -4,6 +4,7 @@
 	{
 		Website = 0,
 		Api = 1,
-		Worker = 2
+		Worker = 2,
+		Console = 3
 	}
 }

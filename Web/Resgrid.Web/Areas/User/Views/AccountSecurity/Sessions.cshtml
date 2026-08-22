@@ -1,0 +1,85 @@
+@model Resgrid.Web.Areas.User.Models.Security.ActiveSessionsView
+@using Resgrid.Model
+@{
+    ViewBag.Title = "Active Sessions";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-10">
+        <h2>Active Sessions</h2>
+        <ol class="breadcrumb">
+            <li><a asp-area="User" asp-controller="Home" asp-action="EditUserProfile">Edit Profile</a></li>
+            <li class="active"><strong>Active Sessions</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>Where your account is signed in</h5></div>
+                <div class="ibox-content">
+                    <p>Review the application, device, approximate network location, and last authenticated activity. Last active is not an online indicator and may lag by about five minutes. If you do not recognize a session, revoke it immediately and change your password.</p>
+                    @if (TempData["SessionMessage"] != null)
+                    {
+                        <div class="alert alert-info">@TempData["SessionMessage"]</div>
+                    }
+
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead><tr><th>Application / device</th><th>Last active</th><th>Network location</th><th>Started / expires</th><th></th></tr></thead>
+                            <tbody>
+                            @foreach (var session in Model.Sessions)
+                            {
+                                var current = string.Equals(session.UserSessionId, Model.CurrentSessionId, StringComparison.Ordinal);
+                                <tr>
+                                    <td>
+                                        <strong>@session.ClientApplication</strong>
+                                        @if (current) { <span class="label label-primary">This session</span> }
+                                        <br />
+                                        <span>@(session.DeviceName ?? session.DeviceType ?? "Unknown device")</span>
+										<small class="text-muted"><br />Signed in with @session.AuthenticationMethod</small>
+										@if (!string.IsNullOrWhiteSpace(session.ApplicationVersion))
+										{ <small class="text-muted"><br />App version @session.ApplicationVersion</small> }
+                                        @if (!string.IsNullOrWhiteSpace(session.OperatingSystem) || !string.IsNullOrWhiteSpace(session.Browser))
+                                        { <small class="text-muted"><br />@session.OperatingSystem @session.Browser</small> }
+                                        @if (session.IsLegacyAdopted)
+                                        { <small class="text-warning"><br />Existing session — some device details were unavailable.</small> }
+                                        else if (!string.IsNullOrWhiteSpace(session.UserAgent))
+                                        { <small class="text-muted"><br />@session.UserAgent</small> }
+                                    </td>
+                                    <td>@session.LastActiveOn.ToUniversalTime().ToString("u")<small class="text-muted"><br />UTC</small></td>
+                                    <td>
+                                        @(session.LastIpAddress ?? "Unknown IP")
+                                        @if (!string.IsNullOrWhiteSpace(session.LastCity) || !string.IsNullOrWhiteSpace(session.LastRegion) || !string.IsNullOrWhiteSpace(session.LastCountry))
+                                        { <small class="text-muted"><br />Approx. @string.Join(", ", new[] { session.LastCity, session.LastRegion, session.LastCountry }.Where(x => !string.IsNullOrWhiteSpace(x)))</small> }
+                                    </td>
+                                    <td>@session.CreatedOn.ToUniversalTime().ToString("u")<small class="text-muted"><br />Expires @session.ExpiresOn.ToUniversalTime().ToString("u") UTC</small></td>
+                                    <td>
+                                        <form asp-area="User" asp-controller="AccountSecurity" asp-action="RevokeSession" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@session.UserSessionId" />
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Sign this session out?');">Revoke</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <form asp-area="User" asp-controller="AccountSecurity" asp-action="RevokeOtherSessions" method="post" class="m-r-sm" style="display:inline-block">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-warning" onclick="return confirm('Sign out every session except this one?');">Sign out all other sessions</button>
+                    </form>
+                    <form asp-area="User" asp-controller="AccountSecurity" asp-action="RevokeAllSessions" method="post" style="display:inline-block">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Sign out every session, including this one? You will need to log in again.');">Sign out everywhere</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

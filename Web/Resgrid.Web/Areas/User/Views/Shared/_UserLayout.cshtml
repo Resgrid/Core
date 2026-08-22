@@ -2,11 +2,13 @@
 @using System.Web
 @inject IHttpContextAccessor HttpContextAccessor
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> moderationLocalizer
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="request-verification-token" content="@Antiforgery.GetAndStoreTokens(Context).RequestToken" />
     <title>@ViewData["Title"]</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -18,7 +20,7 @@
 
     <link rel="stylesheet" href="/css/int-bundle.css" />
 
-    <link rel="stylesheet" href="~/js/ng/react-elements.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/js/ng/react-elements.css" asp-append-version="true" />
 
     <link rel="shortcut icon" href="~/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="~/images/apple-touch-icon.png">
@@ -136,10 +138,10 @@
         resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
         resgrid.absoluteEventingBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
 
-        localStorage.setItem("RgWebApp.auth-tokens", '@Html.Raw(await JavasriptHelpers.GetApiToken())');
+		localStorage.removeItem("RgWebApp.auth-tokens");
     </script>
 
-    <script type="module" src="~/js/ng/react-elements.js" asp-append-version="true"></script>
+	<script type="module" src="~/js/ng/react-elements.js" asp-append-version="true"></script>
 
     @if (IsSectionDefined("Scripts"))
     {

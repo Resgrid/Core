@@ -39,6 +39,7 @@ namespace Resgrid.Services
 		private readonly IDeleteRepository _deleteRepository;
 		private readonly IAuditLogsRepository _auditLogsRepository;
 		private readonly IScheduledTasksService _scheduledTasksService;
+		private readonly IUserSessionService _userSessionService;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -47,7 +48,8 @@ namespace Resgrid.Services
 			IDistributionListsService distributionListsService, IShiftsService shiftsService, IUnitsService unitsService,
 			ICertificationService certificationService, ILogService logService, IInventoryService inventoryService,
 			IEventAggregator eventAggregator, IAddressService addressService, IQueueService queueService, IEmailService emailService,
-			IDeleteRepository deleteRepository, IAuditLogsRepository auditLogsRepository, IScheduledTasksService scheduledTasksService)
+			IDeleteRepository deleteRepository, IAuditLogsRepository auditLogsRepository,
+			IScheduledTasksService scheduledTasksService, IUserSessionService userSessionService)
 		{
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
@@ -73,6 +75,7 @@ namespace Resgrid.Services
 			_deleteRepository = deleteRepository;
 			_auditLogsRepository = auditLogsRepository;
 			_scheduledTasksService = scheduledTasksService;
+			_userSessionService = userSessionService;
 		}
 
 		public async Task<DeleteUserResults> DeleteUserAsync(int departmentId, string authorizingUserId, string userIdToDelete, CancellationToken cancellationToken = default(CancellationToken))
@@ -115,6 +118,20 @@ namespace Resgrid.Services
 
 			// Soft-delete the membership last (this also writes the audit event and clears caches).
 			var member = await _departmentsService.DeleteUserAsync(departmentId, userId, revokingUserId, cancellationToken);
+			if (member != null && member.IsDeleted)
+			{
+				try
+				{
+					await _userSessionService.RevokeDepartmentSessionsAsync(userId, departmentId,
+						UserSessionRevocationReason.MembershipDisabled, cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex,
+						$"Operation=RevokeDepartmentSessionsAsync; UserId={userId}; DepartmentId={departmentId}");
+					throw;
+				}
+			}
 
 			return member != null && member.IsDeleted;
 		}
@@ -229,6 +246,8 @@ namespace Resgrid.Services
 				await _userProfileService.SaveProfileAsync(departmentId, userProfile, cancellationToken);
 			}
 
+			await _userSessionService.RevokeAllAsync(userIdToDelete, userIdToDelete,
+				UserSessionRevocationReason.AccountDeactivated, System.DateTime.UtcNow, cancellationToken);
 			await _usersService.ClearOutUserLoginAsync(userIdToDelete);
 
 			return DeleteUserResults.NoFailure;

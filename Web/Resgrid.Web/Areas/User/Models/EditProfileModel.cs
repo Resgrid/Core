@@ -27,6 +27,11 @@ namespace Resgrid.Web.Areas.User.Models
 		public List<PersonnelRole> UsersRoles { get; set; }
 		public bool IsOwnProfile { get; set; }
 		public bool IsFreePlan { get; set; }
+		public bool CanManageLocalCredentials { get; set; }
+		public bool CanResetPassword { get; set; }
+		public bool IsSsoManaged { get; set; }
+		public bool IsEmailExternallyManaged { get; set; }
+		public bool RequirePasswordResetViaEmail { get; set; }
 
 		[Required]
 		[MaxLength(50)]
@@ -46,30 +51,9 @@ namespace Resgrid.Web.Areas.User.Models
 		[Display(Name = "Is Department Admin")]
 		public bool IsDepartmentAdmin { get; set; }
 
-		[Display(Name = "New Username")]
-		public string NewUsername { get; set; }
-
-		[StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
-		[DataType(DataType.Password)]
-		[Display(Name = "New password")]
-		public string NewPassword { get; set; }
-
-		[DataType(DataType.Password)]
-		[Display(Name = "Confirm new password")]
-		[System.ComponentModel.DataAnnotations.Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
-		public string ConfirmPassword { get; set; }
-
-		[DataType(DataType.Password)]
-		[Display(Name = "Current password")]
-		public string OldPassword { get; set; }
-
 		public bool IsDisabled { get; set; }
 		public bool IsHidden { get; set; }
 		public bool AreYouSure { get; set; }
-
-		/// <summary>Effective minimum password length for the department (≥ 8). Shown as a hint on password-change fields.</summary>
-		public int MinPasswordLength { get; set; } = 8;
-
 
 		[StringLength(500, ErrorMessage = "Street address cannot exceed 500 characters.")]
 		public string PhysicalAddress1 { get; set; }

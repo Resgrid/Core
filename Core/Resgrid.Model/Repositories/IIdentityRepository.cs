@@ -38,13 +38,6 @@ namespace Resgrid.Model.Repositories
 		IdentityUser Update(IdentityUser user);
 
 		/// <summary>
-		/// Updates the username.
-		/// </summary>
-		/// <param name="oldUsername">The old username.</param>
-		/// <param name="newUsername">The new username.</param>
-		void UpdateUsername(string oldUsername, string newUsername);
-
-		/// <summary>
 		/// Adds the user to role.
 		/// </summary>
 		/// <param name="userId">The user identifier.</param>
@@ -110,13 +103,6 @@ namespace Resgrid.Model.Repositories
 		/// <param name="retrieveDeleted">if set to <c>true</c> [retrieve deleted].</param>
 		/// <returns>List&lt;UserGroupRole&gt;.</returns>
 		Task<List<UserGroupRole>> GetAllUsersGroupsAndRolesAsync(int departmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted);
-
-		/// <summary>
-		/// Updates the email.
-		/// </summary>
-		/// <param name="userId">The user identifier.</param>
-		/// <param name="newEmail">The new email.</param>
-		void UpdateEmail(string userId, string newEmail);
 
 		/// <summary>
 		/// Gets the user by user name asynchronous.

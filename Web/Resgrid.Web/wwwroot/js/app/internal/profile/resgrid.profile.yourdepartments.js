@@ -47,9 +47,16 @@ var resgrid;
                     data: JSON.stringify({
                         DepartmentId: departmentId
                     }),
-                    contentType: 'application/json',
+					contentType: 'application/json',
+					headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').first().val() },
                     type: 'POST'
-                });
+                }).done(function () {
+					window.location.href = resgrid.absoluteBaseUrl + '/User/Home/Dashboard';
+				}).fail(function (xhr) {
+					if (xhr.status === 403) {
+						window.alert('This department requires its own SSO sign-in. Sign out, then sign in through that department\'s identity provider.');
+					}
+				});
             }
             yourDepartments.switchActiveDepartment = switchActiveDepartment;
         })(yourDepartments = profile.yourDepartments || (profile.yourDepartments = {}));

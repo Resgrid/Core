@@ -1,4 +1,5 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using ProtoBuf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,28 +14,36 @@ namespace Resgrid.Model
 	/// resolved from Call.Type's name at match time.
 	/// </summary>
 	[Table("RunCardTriggers")]
+	[ProtoContract]
 	public class RunCardTrigger : IEntity
 	{
 		[Key]
 		[Required]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		[ProtoMember(1)]
 		public int RunCardTriggerId { get; set; }
 
 		[Required]
 		[ForeignKey("RunCard"), DatabaseGenerated(DatabaseGeneratedOption.None)]
+		[ProtoMember(2)]
 		public int RunCardId { get; set; }
 
 		public virtual RunCard RunCard { get; set; }
 
 		/// <summary>RunCardTriggerTypes value.</summary>
+		[ProtoMember(3)]
 		public int TriggerType { get; set; }
 
+		[ProtoMember(4)]
 		public int? Priority { get; set; }
 
+		[ProtoMember(5)]
 		public int? CallTypeId { get; set; }
 
+		[ProtoMember(6)]
 		public DateTime? StartsOn { get; set; }
 
+		[ProtoMember(7)]
 		public DateTime? EndsOn { get; set; }
 
 		[NotMapped]

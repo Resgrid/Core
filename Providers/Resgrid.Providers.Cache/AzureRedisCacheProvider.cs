@@ -33,8 +33,17 @@ namespace Resgrid.Providers.Cache
 
 					try
 					{
-						if (cacheValue.HasValue)
+						// See RetrieveAsync: a zero-byte payload deserializes into a blank-but-non-null
+						// instance, so it must be treated as a miss rather than a hit.
+						if (cacheValue.HasValue && !cacheValue.IsNullOrEmpty)
+						{
 							data = ObjectSerialization.Deserialize<T>(cacheValue);
+						}
+						else if (cacheValue.HasValue)
+						{
+							Logging.LogWarning($"Retrieve(): empty cached payload for key {cacheKey}; treating as a miss and removing the key.");
+							Remove(cacheKey);
+						}
 					}
 					catch (Exception deserializeEx)
 					{
@@ -77,7 +86,8 @@ namespace Resgrid.Providers.Cache
 					}
 					catch (Exception ex)
 					{
-						Logging.LogException(ex);
+						// See RetrieveAsync: a failed write-back only costs the cache entry, never the request.
+						Logging.LogError(ex, $"Cache write failed for key {cacheKey} (type {typeof(T).FullName}).");
 					}
 				}
 			}
@@ -124,10 +134,19 @@ namespace Resgrid.Providers.Cache
 
 					try
 					{
-						if (cacheValue.HasValue)
+						// An empty payload is not a hit: protobuf-net turns zero bytes into a fully-default
+						// instance (non-null, every field null/0) that reads downstream as a real record -- e.g.
+						// a Department with DepartmentId 0 and a null ManagingUserId. Treat it as a miss and drop
+						// the key so the fallback result replaces it.
+						if (cacheValue.HasValue && !cacheValue.IsNullOrEmpty)
 						{
 							data = ObjectSerialization.Deserialize<T>(cacheValue);
 							hasCachedData = data is not null;
+						}
+						else if (cacheValue.HasValue)
+						{
+							Logging.LogWarning($"RetrieveAsync(): empty cached payload for key {cacheKey}; treating as a miss and removing the key.");
+							await RemoveAsync(cacheKey);
 						}
 					}
 					catch (Exception deserializeEx)
@@ -172,7 +191,11 @@ namespace Resgrid.Providers.Cache
 					}
 					catch (Exception ex)
 					{
-						Logging.LogException(ex);
+						// The caller already has its data, so a failed write-back is never fatal -- it just means
+						// this key silently never caches. Error, not Fatal, and name the type: the usual cause is
+						// a cached type missing [ProtoContract], which is otherwise only visible deep in a
+						// protobuf-net stack trace.
+						Logging.LogError(ex, $"Cache write failed for key {cacheKey} (type {typeof(T).FullName}).");
 					}
 				}
 			}

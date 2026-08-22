@@ -36,9 +36,21 @@ namespace Resgrid.Workers.Framework.Logic
 					auditLog.UserAgent = auditEvent.UserAgent;
 					auditLog.ServerName = auditEvent.ServerName;
 					auditLog.Successful = auditEvent.Successful;
+					// The subject of the action, so a privileged event can be found by who it was done to
+					// and not only by who did it. Null for events that act on the department as a whole.
+					auditLog.ObjectId = auditEvent.TargetUserId;
 
 					switch (auditEvent.Type)
 					{
+						case AuditLogTypes.PasswordResetByAdministrator:
+							var passwordResetTarget = String.IsNullOrWhiteSpace(auditEvent.TargetUserId)
+								? null
+								: await userProfileService.GetProfileByUserIdAsync(auditEvent.TargetUserId);
+							auditLog.Message = passwordResetTarget == null
+								? $"{profile.FullName.AsFirstNameLastName} performed a privileged password reset action"
+								: $"{profile.FullName.AsFirstNameLastName} performed a privileged password reset action on {passwordResetTarget.FullName.AsFirstNameLastName}";
+							auditLog.Data = String.IsNullOrWhiteSpace(auditEvent.After) ? "No Data" : auditEvent.After;
+							break;
 						case AuditLogTypes.DepartmentSettingsChanged:
 							auditLog.Message = string.Format("{0} updated the department settings", profile.FullName.AsFirstNameLastName);
 							var compareLogic = new CompareLogic();

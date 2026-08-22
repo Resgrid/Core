@@ -251,4 +251,7 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>Co najmniej {0} znaków</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Co najmniej jedna cyfra</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>Co najmniej jedna wielka i jedna mała litera</value></data>
+  <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>Wyślij wiadomość e-mail do resetowania hasła</value></data>
+  <data name="SendPasswordResetEmail" xml:space="preserve"><value>Wyślij wiadomość e-mail do resetowania hasła</value></data>
+  <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>Resgrid wyśle temu użytkownikowi krótkotrwały, jednorazowy link na potwierdzony adres e-mail. Administrator nie wybierze ani nie zobaczy nowego hasła.</value></data>
 </root>

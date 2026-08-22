@@ -11,10 +11,12 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
+using Resgrid.Model.Security;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Sso;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -50,6 +52,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSsoService _departmentSsoService;
 		private readonly IEncryptionService _encryptionService;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IUserSessionService _userSessionService;
+		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 
 		public ConnectController(
 			IUsersService usersService,
@@ -60,7 +64,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ISystemAuditsService systemAuditsService,
 			IDepartmentSsoService departmentSsoService,
 			IEncryptionService encryptionService,
-			ICacheProvider cacheProvider
+			ICacheProvider cacheProvider,
+			IUserSessionService userSessionService,
+			IExternalIdentityLinkService externalIdentityLinkService
 			)
 		{
 			_usersService = usersService;
@@ -72,6 +78,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSsoService = departmentSsoService;
 			_encryptionService = encryptionService;
 			_cacheProvider = cacheProvider;
+			_userSessionService = userSessionService;
+			_externalIdentityLinkService = externalIdentityLinkService;
 		}
 
 		/// <summary>
@@ -113,6 +121,48 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 				}
 
+				var userDepartment = await _departmentsService.GetDepartmentByUserIdAsync(user.Id);
+				if (userDepartment == null)
+				{
+					audit.UserId = user.Id;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return InvalidGrant("The username or password is invalid.");
+				}
+				var activeMembership = await _departmentsService.GetDepartmentMemberAsync(user.Id,
+					userDepartment.DepartmentId, bypassCache: true);
+				if (activeMembership == null || activeMembership.IsDeleted || activeMembership.IsDisabled == true)
+				{
+					audit.UserId = user.Id;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return InvalidGrant("The username or password is invalid.");
+				}
+
+				var localLoginAllowed = await _externalIdentityLinkService.IsLocalLoginAllowedAsync(
+					user.Id, CancellationToken.None);
+				if (localLoginAllowed && userDepartment != null)
+				{
+					localLoginAllowed = await _externalIdentityLinkService.IsLocalLoginAllowedAsync(
+						user.Id, userDepartment.DepartmentId, CancellationToken.None);
+					var requiresSso = await _departmentSsoService.IsRequireSsoPolicyActiveAsync(
+						userDepartment.DepartmentId, CancellationToken.None);
+					if (requiresSso && await _departmentSsoService.IsSsoEnabledForDepartmentAsync(
+							userDepartment.DepartmentId, CancellationToken.None))
+						localLoginAllowed = false;
+				}
+
+				if (!localLoginAllowed)
+				{
+					audit.UserId = user.Id;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					var properties = new AuthenticationProperties(new Dictionary<string, string>
+					{
+						[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+						[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+							"The username or password is invalid."
+					});
+					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+				}
+
 				// Validate the username/password parameters and ensure the account is not locked out.
 				var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, lockoutOnFailure: true);
 
@@ -132,26 +182,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 				}
 
-				// SSO-only guard — only enforced when the user's department has explicitly
-				// configured RequireSso=true AND has at least one active SSO configuration.
-				// Departments that have NOT configured SSO are completely unaffected.
-				var userDepartment = await _departmentsService.GetDepartmentByUserIdAsync(user.Id);
-				if (userDepartment != null)
-				{
-					var requiresSso = await _departmentSsoService.IsRequireSsoPolicyActiveAsync(userDepartment.DepartmentId, CancellationToken.None);
-					var hasSso = requiresSso && await _departmentSsoService.IsSsoEnabledForDepartmentAsync(userDepartment.DepartmentId, CancellationToken.None);
-					if (requiresSso && hasSso)
-					{
-						var ssoProps = new AuthenticationProperties(new Dictionary<string, string>
-						{
-							[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
-							[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
-								"This department requires SSO login. Password-based login is disabled."
-						});
-						return Forbid(ssoProps, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
-					}
-				}
-
 				// Create a new ClaimsPrincipal containing the claims that
 				// will be used to create an id_token, a token or a code.
 				var principal = await _signInManager.CreateUserPrincipalAsync(user);
@@ -168,21 +198,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 					Scopes.Roles
 				}.Intersect(request.GetScopes()));
 
+				var refreshTokenLifetime = GetRefreshTokenLifetime(request);
+				if (SessionSecurityConfig.TrackingEnabled)
+				{
+					try
+					{
+						var session = await CreateApiSessionAsync(user, userDepartment?.DepartmentId,
+							UserSessionAuthenticationMethod.LocalPassword, refreshTokenLifetime, CancellationToken.None);
+						AddSessionClaims(principal, session);
+					}
+					catch (SessionCreationDeniedException ex)
+					{
+						return InvalidGrant(ex.FailureCode == "maximum_sessions"
+							? "The department's maximum number of active sessions has been reached."
+							: "The user is no longer allowed to sign in to this department.");
+					}
+				}
+
 				foreach (var claim in principal.Claims)
 				{
 					claim.SetDestinations(GetDestinations(claim, principal));
 				}
 
-				if (request.GetScopes() != null && request.GetScopes().Contains("mobile"))
-				{
-					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
-					principal.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays));
-				}
-				else
-				{
-					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
-					principal.SetRefreshTokenLifetime(TimeSpan.FromDays(OidcConfig.NonMobileRefreshTokenExpiryDays));
-				}
+				principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+				principal.SetRefreshTokenLifetime(refreshTokenLifetime);
 
 				principal.SetResources(JwtConfig.EventsClientId);
 
@@ -193,12 +232,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				// Retrieve the claims principal stored in the refresh token.
 				var info = await HttpContext.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
-
-				// Retrieve the user profile corresponding to the refresh token.
-				// Note: if you want to automatically invalidate the refresh token
-				// when the user password/roles change, use the following line instead:
-				// var user = _signInManager.ValidateSecurityStampAsync(info.Principal);
-				var user = await _userManager.GetUserAsync(info.Principal);
+				var user = info.Principal == null ? null : await _signInManager.ValidateSecurityStampAsync(info.Principal);
 				if (user == null)
 				{
 					var properties = new AuthenticationProperties(new Dictionary<string, string>
@@ -207,6 +241,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 						[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The refresh token is no longer valid."
 					});
 
+					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+				}
+
+				int? departmentId = null;
+				if (int.TryParse(info.Principal.FindFirstValue(ClaimTypes.PrimaryGroupSid), out var parsedDepartmentId))
+					departmentId = parsedDepartmentId;
+
+				long? authenticationGeneration = null;
+				if (long.TryParse(info.Principal.FindFirstValue(SessionClaimTypes.AuthenticationGeneration), out var parsedGeneration))
+					authenticationGeneration = parsedGeneration;
+
+				var validation = await _userSessionService.ValidateAsync(new SessionPrincipalContext
+				{
+					UserId = user.Id,
+					SessionId = info.Principal.FindFirstValue(SessionClaimTypes.SessionId),
+					AuthenticationGeneration = authenticationGeneration,
+					DepartmentId = departmentId,
+					CredentialIssuedOn = GetCredentialIssuedOn(info.Principal)
+				}, CancellationToken.None);
+
+				if (!validation.IsValid)
+				{
+					var properties = new AuthenticationProperties(new Dictionary<string, string>
+					{
+						[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+						[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = "The refresh token is no longer valid."
+					});
 					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 				}
 
@@ -225,11 +286,107 @@ namespace Resgrid.Web.Services.Controllers.v4
 				// Create a new ClaimsPrincipal containing the claims that
 				// will be used to create an id_token, a token or a code.
 				var principal = await _signInManager.CreateUserPrincipalAsync(user);
+				principal.SetScopes(info.Principal.GetScopes());
+
+				var refreshTokenLifetime = GetRefreshTokenLifetime(request);
+				var session = validation.Session;
+				if (session == null && SessionSecurityConfig.TrackingEnabled)
+				{
+					try
+					{
+						session = await _userSessionService.AdoptLegacyAsync(new LegacySessionContext
+						{
+							UserId = user.Id,
+							DepartmentId = departmentId,
+							AuthenticationGeneration = user.AuthenticationGeneration,
+							ClientApplication = ResolveClientApplication(Request.Headers["X-Resgrid-Client"]),
+							DeviceName = Request.Headers["X-Resgrid-Device-Name"],
+							DeviceType = Request.Headers["X-Resgrid-Device-Type"],
+							OperatingSystem = Request.Headers["X-Resgrid-Operating-System"],
+							Browser = Request.Headers["X-Resgrid-Browser"],
+							ApplicationVersion = Request.Headers["X-Resgrid-App-Version"],
+							ExpiresOn = DateTime.UtcNow.Add(refreshTokenLifetime),
+							IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+							UserAgent = Request.Headers["User-Agent"]
+						}, CancellationToken.None);
+					}
+					catch (SessionCreationDeniedException ex)
+					{
+						return InvalidGrant(ex.FailureCode == "maximum_sessions"
+							? "The department's maximum number of active sessions has been reached."
+							: "The user is no longer allowed to sign in to this department.");
+					}
+				}
+
+				if (session != null)
+				{
+					AddSessionClaims(principal, session);
+					await _userSessionService.TouchAsync(session.UserSessionId, new RequestActivity
+					{
+						OccurredOn = DateTime.UtcNow,
+						IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+						UserAgent = Request.Headers["User-Agent"]
+					}, CancellationToken.None);
+				}
 
 				foreach (var claim in principal.Claims)
 				{
 					claim.SetDestinations(GetDestinations(claim, principal));
 				}
+
+				principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+				principal.SetRefreshTokenLifetime(refreshTokenLifetime);
+				principal.SetResources(JwtConfig.EventsClientId);
+
+				return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+			}
+
+			else if (request != null && string.Equals(request.GrantType, "web_session", StringComparison.Ordinal))
+			{
+				var suppliedKey = Request.Headers["X-Resgrid-Internal-Key"].ToString();
+				var userId = request.GetParameter("user_id").ToString();
+				var sessionId = request.GetParameter("session_id").ToString();
+				var generationValue = request.GetParameter("auth_ver").ToString();
+				var departmentValue = request.GetParameter("department_id").ToString();
+				var eventingOnly = string.Equals(request.GetParameter("token_use").ToString(),
+					"eventing", StringComparison.Ordinal);
+				var credentialIssuedOn = ParseUnixSeconds(request.GetParameter("credential_issued_on").ToString());
+
+				if (string.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey) ||
+					!FixedTimeSecretEquals(ApiConfig.BackendInternalApikey, suppliedKey) ||
+					string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(sessionId) ||
+					!long.TryParse(generationValue, out var generation) ||
+					!int.TryParse(departmentValue, out var departmentId))
+					return InvalidGrant("The Web session could not be validated.");
+
+				var validation = await _userSessionService.ValidateAsync(new SessionPrincipalContext
+				{
+					UserId = userId,
+					SessionId = sessionId,
+					AuthenticationGeneration = generation,
+					DepartmentId = departmentId,
+					// The caller's web authentication cookie is the credential here. Null when the caller
+					// did not supply its issue time, so the session service applies its own policy rather
+					// than being handed a value that trivially passes the freshness comparison.
+					CredentialIssuedOn = credentialIssuedOn
+				}, CancellationToken.None);
+				if (!validation.IsValid || validation.Session == null)
+					return InvalidGrant("The Web session could not be validated.");
+
+				var user = await _userManager.FindByIdAsync(userId);
+				if (user == null || !await _signInManager.CanSignInAsync(user))
+					return InvalidGrant("The Web session could not be validated.");
+
+				var principal = await _signInManager.CreateUserPrincipalAsync(user);
+				principal.SetScopes(Scopes.OpenId, Scopes.Email, Scopes.Profile, Scopes.Roles);
+				AddSessionClaims(principal, validation.Session);
+				if (eventingOnly && principal.Identity is ClaimsIdentity eventingIdentity)
+					eventingIdentity.AddClaim(new Claim(SessionClaimTypes.WebEventingOnly, "true"));
+				foreach (var claim in principal.Claims)
+					claim.SetDestinations(GetDestinations(claim, principal));
+				principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(eventingOnly ? 2 :
+					Math.Max(1, SessionSecurityConfig.WebBffAccessTokenLifetimeMinutes)));
+				principal.SetResources(JwtConfig.EventsClientId);
 
 				return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 			}
@@ -247,6 +404,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 				audit.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
 				audit.ServerName = Environment.MachineName;
 				audit.Data = $"V4 Token (client_credentials), {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+
+				// Dedicated server-to-server credential for the legacy direct eventing publisher.
+				// It can publish to SignalR but is explicitly excluded from user-session handling.
+				if (string.Equals(request.ClientId, "resgrid_eventing", StringComparison.Ordinal) &&
+					!string.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey) &&
+					FixedTimeSecretEquals(ApiConfig.BackendInternalApikey, request.ClientSecret))
+				{
+					audit.Successful = true;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+					var identity = new ClaimsIdentity(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+						Claims.Name, Claims.Role);
+					identity.AddClaim(new Claim(Claims.Subject, "system_eventing")
+						.SetDestinations(Destinations.AccessToken));
+					identity.AddClaim(new Claim(ClaimTypes.PrimarySid, "system_eventing")
+						.SetDestinations(Destinations.AccessToken));
+					identity.AddClaim(new Claim(Claims.Name, "Resgrid Eventing Publisher")
+						.SetDestinations(Destinations.AccessToken));
+					var principal = new ClaimsPrincipal(identity);
+					principal.SetScopes(Scopes.OpenId, Scopes.Profile);
+					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(5));
+					principal.SetResources(JwtConfig.EventsClientId);
+					return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+				}
 
 				if (string.IsNullOrWhiteSpace(request.ClientId) || string.IsNullOrWhiteSpace(request.ClientSecret))
 				{
@@ -385,6 +566,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			throw new NotImplementedException("The specified grant type is not implemented.");
+		}
+
+		private IActionResult InvalidGrant(string description)
+		{
+			var properties = new AuthenticationProperties(new Dictionary<string, string>
+			{
+				[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+				[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] = description
+			});
+			return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 		}
 
 		/// <summary>
@@ -746,17 +937,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Scopes.Roles
 			});
 
+			var refreshTokenLifetime = GetRefreshTokenLifetime(null);
+			if (SessionSecurityConfig.TrackingEnabled)
+			{
+				try
+				{
+					var session = await CreateApiSessionAsync(user, department.DepartmentId,
+						providerType == SsoProviderType.Oidc ? UserSessionAuthenticationMethod.OidcSso : UserSessionAuthenticationMethod.SamlSso,
+						refreshTokenLifetime, cancellationToken, ssoConfig?.DepartmentSsoConfigId);
+					AddSessionClaims(principal, session);
+				}
+				catch (SessionCreationDeniedException ex)
+				{
+					return Unauthorized(new
+					{
+						error = ex.FailureCode,
+						error_description = ex.FailureCode == "maximum_sessions"
+							? "The department's maximum number of active sessions has been reached."
+							: "The user is no longer allowed to sign in to this department."
+					});
+				}
+			}
+
 			foreach (var claim in principal.Claims)
 				claim.SetDestinations(GetDestinations(claim, principal));
 
-			// Mirror the mobile-scope lifetime logic from the password-grant Token endpoint
-			var isMobile = !string.IsNullOrWhiteSpace(scope) &&
-				scope.Split(' ').Any(s => string.Equals(s, "mobile", StringComparison.OrdinalIgnoreCase));
-
 			principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
-			principal.SetRefreshTokenLifetime(isMobile
-				? TimeSpan.FromDays(OidcConfig.RefreshTokenExpiryDays)
-				: TimeSpan.FromDays(OidcConfig.NonMobileRefreshTokenExpiryDays));
+			principal.SetRefreshTokenLifetime(refreshTokenLifetime);
 
 			principal.SetResources(JwtConfig.EventsClientId);
 
@@ -880,6 +1087,101 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private static string GetSamlRelayCacheKey(string relayId) => $"Sso:SamlRelay:{relayId}";
 
 		private static string GetSamlRelayUseCacheKey(string relayId) => $"Sso:SamlRelayUse:{relayId}";
+
+		private TimeSpan GetRefreshTokenLifetime(OpenIddictRequest request)
+		{
+			var clientId = request?.ClientId;
+			var isTrustedLongLivedClient = !string.IsNullOrWhiteSpace(clientId) &&
+				(OidcConfig.TrustedLongLivedClientIds ?? string.Empty)
+					.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+					.Select(value => value.Trim())
+					.Any(value => string.Equals(value, clientId, StringComparison.Ordinal));
+
+			return TimeSpan.FromDays(isTrustedLongLivedClient
+				? OidcConfig.RefreshTokenExpiryDays
+				: OidcConfig.NonMobileRefreshTokenExpiryDays);
+		}
+
+		private static DateTime? GetCredentialIssuedOn(ClaimsPrincipal principal)
+		{
+			var value = principal?.FindFirstValue(Claims.IssuedAt);
+			if (long.TryParse(value, out var unixSeconds))
+			{
+				try { return DateTimeOffset.FromUnixTimeSeconds(unixSeconds).UtcDateTime; }
+				catch (ArgumentOutOfRangeException) { return null; }
+			}
+
+			return DateTime.TryParse(value, CultureInfo.InvariantCulture,
+				DateTimeStyles.AdjustToUniversal | DateTimeStyles.AssumeUniversal, out var timestamp)
+				? timestamp
+				: null;
+		}
+
+		private static DateTime? ParseUnixSeconds(string value)
+		{
+			if (!long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var seconds))
+				return null;
+
+			try { return DateTimeOffset.FromUnixTimeSeconds(seconds).UtcDateTime; }
+			catch (ArgumentOutOfRangeException) { return null; }
+		}
+
+		private async Task<UserSession> CreateApiSessionAsync(Model.Identity.IdentityUser user, int? departmentId,
+			UserSessionAuthenticationMethod authenticationMethod, TimeSpan refreshTokenLifetime,
+			CancellationToken cancellationToken, string departmentSsoConfigId = null)
+		{
+			return await _userSessionService.CreateSessionAsync(new SessionIssueContext
+			{
+				UserId = user.Id,
+				DepartmentId = departmentId,
+				AuthenticationGeneration = user.AuthenticationGeneration,
+				ClientApplication = ResolveClientApplication(Request.Headers["X-Resgrid-Client"]),
+				DeviceName = Request.Headers["X-Resgrid-Device-Name"],
+				DeviceType = Request.Headers["X-Resgrid-Device-Type"],
+				OperatingSystem = Request.Headers["X-Resgrid-Operating-System"],
+				Browser = Request.Headers["X-Resgrid-Browser"],
+				ApplicationVersion = Request.Headers["X-Resgrid-App-Version"],
+				AuthenticationMethod = authenticationMethod,
+				DepartmentSsoConfigId = departmentSsoConfigId,
+				ExpiresOn = DateTime.UtcNow.Add(refreshTokenLifetime),
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				UserAgent = Request.Headers["User-Agent"]
+			}, cancellationToken);
+		}
+
+		private static UserSessionClientApplication ResolveClientApplication(string value)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				return UserSessionClientApplication.Api;
+
+			return value.Trim().ToLowerInvariant() switch
+			{
+				"web" => UserSessionClientApplication.Web,
+				"responder" => UserSessionClientApplication.Responder,
+				"unit" => UserSessionClientApplication.Unit,
+				"dispatch" => UserSessionClientApplication.Dispatch,
+				"bigboard" => UserSessionClientApplication.BigBoard,
+				"command" => UserSessionClientApplication.Command,
+				"ic" => UserSessionClientApplication.Command,
+				"mcp" => UserSessionClientApplication.Mcp,
+				_ => UserSessionClientApplication.Api
+			};
+		}
+
+		private static void AddSessionClaims(ClaimsPrincipal principal, UserSession session)
+		{
+			if (principal?.Identity is not ClaimsIdentity identity || session == null)
+				return;
+
+			foreach (var existing in identity.FindAll(SessionClaimTypes.SessionId).ToList())
+				identity.RemoveClaim(existing);
+			foreach (var existing in identity.FindAll(SessionClaimTypes.AuthenticationGeneration).ToList())
+				identity.RemoveClaim(existing);
+
+			identity.AddClaim(new Claim(SessionClaimTypes.SessionId, session.UserSessionId));
+			identity.AddClaim(new Claim(SessionClaimTypes.AuthenticationGeneration,
+				session.AuthenticationGeneration.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+		}
 
 		private IEnumerable<string> GetDestinations(Claim claim, ClaimsPrincipal principal)		{
 			// Note: by default, claims are NOT automatically included in the access and identity tokens.

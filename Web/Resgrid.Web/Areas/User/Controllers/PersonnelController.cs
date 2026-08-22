@@ -61,6 +61,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
+		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
@@ -68,7 +69,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
 			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
 			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
-			IStringLocalizer<Resgrid.Localization.Common> localizer, IPhoneNumberProcesserProvider phoneNumberProcesser)
+			IStringLocalizer<Resgrid.Localization.Common> localizer, IPhoneNumberProcesserProvider phoneNumberProcesser,
+			IExternalIdentityLinkService externalIdentityLinkService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -95,6 +97,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_udfRenderingService = udfRenderingService;
 			_localizer = localizer;
 			_phoneNumberProcesser = phoneNumberProcesser;
+			_externalIdentityLinkService = externalIdentityLinkService;
 		}
 		#endregion Private Members and Constructors
 
@@ -108,6 +111,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.CanAddNewUser = await _limitsService.CanDepartmentAddNewUserAsync(DepartmentId);
 			model.CanGroupAdminsAdd = await _authorizationService.CanGroupAdminsAddUsersAsync(DepartmentId);
+			model.RequirePasswordResetViaEmail = await _departmentSettingsService.GetRequirePasswordResetViaEmailAsync(DepartmentId);
 
 			var personnelStates = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 			var personnelStaffing = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
@@ -149,6 +153,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				person.UserId = user.UserId.ToString();
 
 				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
+				var externalState = await _externalIdentityLinkService.GetSsoManagementStateAsync(user.UserId);
+				person.IsSsoManaged = externalState.IsSsoManaged ||
+					(member != null && (!string.IsNullOrWhiteSpace(member.ExternalSsoId) || member.SsoLinkedOn.HasValue));
 
 				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
 				if (member != null && ((member.IsDisabled.HasValue && member.IsDisabled.Value) || (member.IsHidden.HasValue && member.IsHidden.Value)))
@@ -202,6 +209,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						person.CanEditUser = true;
 					}
 				}
+
+				person.CanResetPassword = user.UserId != UserId &&
+					user.UserId != department.ManagingUserId &&
+					(department.IsUserAnAdmin(UserId) ||
+					 (group != null && group.IsUserGroupAdmin(UserId) && !department.IsUserAnAdmin(user.UserId)));
 
 				var userGroupRole = userGroupRoles.FirstOrDefault(x => x.UserId == user.UserId);
 				if (userGroupRole != null)
@@ -603,7 +615,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					_usersService.ClearCacheForDepartment(DepartmentId);
 
 					if (model.SendAccountCreationNotification)
-						await _emailService.SendWelcomeEmail(model.Department.Name, model.FirstName + " " + model.LastName, user.Email, user.UserName, model.ConfirmPassword, DepartmentId);
+						await _emailService.SendWelcomeEmail(model.Department.Name, model.FirstName + " " + model.LastName, user.Email, user.UserName, DepartmentId);
 
 					await _emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
@@ -966,6 +978,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var person = new PersonnelForListJson();
 				person.UserId = user.UserId.ToString();
+				var externalState = await _externalIdentityLinkService.GetSsoManagementStateAsync(user.UserId);
+				person.IsSsoManaged = externalState.IsSsoManaged ||
+					(member != null && (!string.IsNullOrWhiteSpace(member.ExternalSsoId) || member.SsoLinkedOn.HasValue));
 
 				//var actionLog = actionLogs.FirstOrDefault(x => x.UserId == user.UserId);
 				//var userProfile = await _userProfileService.GetProfileByUserId(user.UserId);
@@ -1008,6 +1023,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						person.CanEditUser = true;
 					}
 				}
+
+				person.CanResetPassword = user.UserId != UserId &&
+					user.UserId != department.ManagingUserId &&
+					(department.IsUserAnAdmin(UserId) ||
+					 (group != null && group.IsUserGroupAdmin(UserId) && !department.IsUserAnAdmin(user.UserId)));
 
 				//var roles = await _personnelRolesService.GetRolesForUser(user.UserId);
 				//foreach (var role in roles)
@@ -1111,6 +1131,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var person = new PersonnelForListJson();
 				person.UserId = user.UserId.ToString();
+				var externalState = await _externalIdentityLinkService.GetSsoManagementStateAsync(user.UserId);
+				person.IsSsoManaged = externalState.IsSsoManaged ||
+					(member != null && (!string.IsNullOrWhiteSpace(member.ExternalSsoId) || member.SsoLinkedOn.HasValue));
 
 				//var actionLog = actionLogs.FirstOrDefault(x => x.UserId == user.UserId);
 				//var userProfile = await _userProfileService.GetProfileByUserId(user.UserId);
@@ -1151,6 +1174,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						person.CanEditUser = true;
 					}
 				}
+
+				person.CanResetPassword = user.UserId != UserId &&
+					user.UserId != department.ManagingUserId &&
+					(department.IsUserAnAdmin(UserId) ||
+					 (group != null && group.IsUserGroupAdmin(UserId) && !department.IsUserAnAdmin(user.UserId)));
 
 				//var roles = await _personnelRolesService.GetRolesForUser(user.UserId);
 				//foreach (var role in roles)

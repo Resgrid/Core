@@ -300,4 +300,7 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>Τουλάχιστον {0} χαρακτήρες</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Τουλάχιστον ένα ψηφίο (αριθμός)</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>Τουλάχιστον ένα κεφαλαίο και ένα πεζό γράμμα</value></data>
+  <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>Αποστολή email επαναφοράς κωδικού πρόσβασης</value></data>
+  <data name="SendPasswordResetEmail" xml:space="preserve"><value>Αποστολή email επαναφοράς κωδικού πρόσβασης</value></data>
+  <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>Το Resgrid θα στείλει σε αυτόν τον χρήστη έναν σύνδεσμο σύντομης διάρκειας και μίας χρήσης στην επιβεβαιωμένη διεύθυνση email του. Ο διαχειριστής δεν θα επιλέξει ούτε θα δει τον νέο κωδικό πρόσβασης.</value></data>
 </root>

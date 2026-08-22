@@ -251,4 +251,7 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>Щонайменше {0} символів</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Щонайменше одна цифра</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>Щонайменше одна велика та одна мала літера</value></data>
+  <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>Надіслати електронний лист для скидання пароля</value></data>
+  <data name="SendPasswordResetEmail" xml:space="preserve"><value>Надіслати електронний лист для скидання пароля</value></data>
+  <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>Resgrid надішле цьому користувачеві короткочасне одноразове посилання на підтверджену електронну адресу. Адміністратор не вибиратиме й не бачитиме новий пароль.</value></data>
 </root>

@@ -106,45 +106,6 @@ namespace Resgrid.Repositories.DataRepository
 			return null;
 		}
 
-		public void UpdateUsername(string oldUsername, string newUsername)
-		{
-			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
-			{
-				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
-				{
-					// username is citext, so equality is already case-insensitive and index-friendly.
-					db.Execute($"UPDATE public.aspnetusers SET username = @newUsername, normalizedusername = @newUsernameUpper WHERE username = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpperInvariant(), oldUsername = oldUsername });
-				}
-			}
-			else
-			{
-				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
-				{
-					db.Execute($"UPDATE [AspNetUsers] SET [UserName] = @newUsername, [NormalizedUserName] = @newUsernameUpper WHERE UserName = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpperInvariant(), oldUsername = oldUsername });
-				}
-			}
-		}
-
-		public void UpdateEmail(string userId, string newEmail)
-		{
-			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
-			{
-				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
-				{
-					// Keep normalizedemail in sync (ASP.NET Identity's FindByEmailAsync looks up by it); the
-					// SQL Server branch already does this. Without it, email lookups go stale after a change.
-					db.Execute($"UPDATE public.aspnetusers SET email = @newEmail, normalizedemail = @newEmailUpper WHERE id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail?.ToUpperInvariant() });
-				}
-			}
-			else
-			{
-				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
-				{
-					db.Execute($"UPDATE [AspNetUsers] SET [Email] = @newEmail, [NormalizedEmail] = @newEmailUpper WHERE Id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail?.ToUpperInvariant() });
-				}
-			}
-		}
-
 		public void AddUserToRole(string userId, string roleId)
 		{
 			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
@@ -568,13 +529,14 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<bool> CleanUpOIDCTokensByUserAsync(string userId)
 		{
+			var affectedRows = 0;
 			if (OidcConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
 				using (IDbConnection db = new NpgsqlConnection(OidcConfig.ConnectionString))
 				{
-					var result = await db.ExecuteAsync(@"DELETE FROM ""OpenIddictTokens"" WHERE ""Subject"" = @userId",
+					affectedRows += await db.ExecuteAsync(@"DELETE FROM ""OpenIddictTokens"" WHERE ""Subject"" = @userId",
 									new { userId = userId });
-					await db.ExecuteAsync(@"DELETE FROM ""OpenIddictAuthorizations"" WHERE ""Subject"" = @userId",
+					affectedRows += await db.ExecuteAsync(@"DELETE FROM ""OpenIddictAuthorizations"" WHERE ""Subject"" = @userId",
 									new { userId = userId });
 				}
 			}
@@ -582,16 +544,16 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
 				{
-					var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
+					affectedRows += await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
 													 WHERE Subject = @userId",
 									new { userId = userId });
-					await db.ExecuteAsync(@"DELETE FROM OpenIddictAuthorizations
+					affectedRows += await db.ExecuteAsync(@"DELETE FROM OpenIddictAuthorizations
 													 WHERE Subject = @userId",
 									new { userId = userId });
 				}
 			}
 
-			return false;
+			return affectedRows > 0;
 		}
 	}
 }

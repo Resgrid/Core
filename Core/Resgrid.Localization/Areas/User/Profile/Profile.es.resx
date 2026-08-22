@@ -300,4 +300,7 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>Al menos {0} caracteres</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Al menos un dígito (número)</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>Al menos una letra mayúscula y una minúscula</value></data>
+  <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>Enviar correo de restablecimiento de contraseña</value></data>
+  <data name="SendPasswordResetEmail" xml:space="preserve"><value>Enviar correo de restablecimiento de contraseña</value></data>
+  <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>Resgrid enviará a este usuario un enlace de corta duración y de un solo uso a su dirección de correo confirmada. El administrador no elegirá ni verá la nueva contraseña.</value></data>
 </root>

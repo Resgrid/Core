@@ -8,7 +8,7 @@ import {
   type IRetryPolicy,
   type RetryContext,
 } from '@microsoft/signalr';
-import { getAccessToken } from '../../runtime/auth';
+import { getEventingToken } from '../../runtime/eventingToken';
 import { getBrowserConfig } from '../../runtime/browserConfig';
 import { getMessagesAfter } from './chatApi';
 import {
@@ -112,13 +112,9 @@ class ChatHub {
       return this.startPromise;
     }
 
-    if (getAccessToken().length === 0) {
-      return;
-    }
-
     const { channelUrl } = getBrowserConfig();
     const connection = new HubConnectionBuilder()
-      .withUrl(`${channelUrl}/chatHub`, { accessTokenFactory: () => getAccessToken() })
+	  .withUrl(`${channelUrl}/chatHub`, { accessTokenFactory: getEventingToken })
       .withAutomaticReconnect(new CappedRetryPolicy())
       .configureLogging(LogLevel.Warning)
       .build();

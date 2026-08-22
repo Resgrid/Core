@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -67,10 +68,12 @@ namespace Resgrid.Web.ServicesCore
 		public ILifetimeScope AutofacContainer { get; private set; }
 		public AutofacServiceLocator Locator { get; private set; }
 		public IServiceCollection Services { get; private set; }
+		private readonly IHostingEnvironment _environment;
 		//private MeterProvider meterProvider;
 
 		public Startup(IHostingEnvironment env)
 		{
+			_environment = env;
 			var builder = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
 					.SetBasePath(env.ContentRootPath)
 					.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -115,6 +118,9 @@ namespace Resgrid.Web.ServicesCore
 
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
+
+			if (Config.ApiConfig.BypassSslChecks && !(_environment.IsDevelopment() || _environment.IsStaging()))
+				throw new InvalidOperationException("ApiConfig.BypassSslChecks cannot be enabled outside development or staging.");
 
 			if (Config.ApiConfig.BypassSslChecks)
 			{
@@ -247,6 +253,7 @@ namespace Resgrid.Web.ServicesCore
 			services.AddSignalR(hubOptions =>
 			{
 				hubOptions.EnableDetailedErrors = true;
+				hubOptions.AddFilter<Resgrid.Web.Services.Middleware.SessionValidationHubFilter>();
 			}).AddStackExchangeRedis(CacheConfig.RedisConnectionString, options =>
 			{
 				options.Configuration.ChannelPrefix = $"{Config.SystemBehaviorConfig.GetEnvPrefix()}resgrid-evt-sr";
@@ -545,7 +552,8 @@ namespace Resgrid.Web.ServicesCore
 						   //.AllowHybridFlow()
 					   .AllowClientCredentialsFlow()
 					   .AllowPasswordFlow()
-					   .AllowRefreshTokenFlow();
+					   .AllowRefreshTokenFlow()
+					   .AllowCustomFlow("web_session");
 
 					// Accept anonymous clients (i.e clients that don't send a client_id).
 					options.AcceptAnonymousClients();
@@ -679,11 +687,7 @@ namespace Resgrid.Web.ServicesCore
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
-			var forwardOpts = new ForwardedHeadersOptions
-			{
-				ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
-			};
-			app.UseForwardedHeaders(forwardOpts);
+			app.UseForwardedHeaders();
 			app.UseMiddleware<CapabilityPathRedactionMiddleware>();
 
 			//loggerFactory.AddConsole(Configuration.GetSection("Logging"));
@@ -724,6 +728,7 @@ namespace Resgrid.Web.ServicesCore
 			app.UseStaticFiles();
 
 			app.UseAuthentication();
+			app.UseMiddleware<Resgrid.Web.Services.Middleware.SessionValidationMiddleware>();
 			app.UseAuthorization();
 
 			app.UseSwagger();
@@ -758,7 +763,7 @@ namespace Resgrid.Web.ServicesCore
 			{
 				endpoints.MapControllers();
 
-				endpoints.MapHub<EventingHub>("/eventingHub");
+				endpoints.MapHub<EventingHub>("/eventingHub", options => options.CloseOnAuthenticationExpiration = true);
 
 				// Shallow liveness: process is up and serving requests, no external calls.
 				// Point k8s liveness probes here.

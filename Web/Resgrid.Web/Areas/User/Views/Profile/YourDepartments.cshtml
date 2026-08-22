@@ -92,12 +92,20 @@
 
                       @if (!m.IsDefault)
 					  {
-                        <a asp-controller="Profile" asp-action="SetDefaultDepartment" asp-route-area="User" asp-route-departmentId="@m.DepartmentId"  class="btn btn-xs btn-info" data-confirm="@localizer["SetAsDefaultWarning"]" rel="nofollow">@localizer["SetAsDefault"]</a>
+						<form asp-controller="Profile" asp-action="SetDefaultDepartment" asp-route-area="User" method="post" style="display:inline">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="departmentId" value="@m.DepartmentId" />
+							<button type="submit" class="btn btn-xs btn-info" data-confirm="@localizer["SetAsDefaultWarning"]">@localizer["SetAsDefault"]</button>
+						</form>
 					  }
 
                       @if (m.Department.ManagingUserId != Model.UserId && Model.Members.Count > 1)
 					  {
-                        <a asp-controller="Profile" asp-action="DeleteDepartmentLink" asp-route-area="User" asp-route-departmentId="@m.DepartmentId" class="btn btn-xs btn-danger" data-confirm="@localizer["RemoveFromDepartmentWarning"]" rel="nofollow">@localizer["RemoveYourself"]</a>
+						<form asp-controller="Profile" asp-action="DeleteDepartmentLink" asp-route-area="User" method="post" style="display:inline">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="departmentId" value="@m.DepartmentId" />
+							<button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["RemoveFromDepartmentWarning"]">@localizer["RemoveYourself"]</button>
+						</form>
 					  }
                     </td>
                   </tr>
@@ -120,6 +128,7 @@
       </div>
       @using (Html.BeginForm("JoinDepartment", "Profile", FormMethod.Post, new { area = "User", id = "joinDepartmentForm", @class = "form-horizontal" }))
 	  {
+		@Html.AntiForgeryToken()
         <div class="modal-body">
           <span>
             @localizer["JoinDepartmentInfo"]
@@ -158,4 +167,17 @@
 @section Scripts
   {
   <script src="~/js/app/internal/profile/resgrid.profile.yourdepartments.js"></script>
+  <script>
+    // _UserLayout does not load jquery-ujs, so the data-confirm attributes on this page would
+    // otherwise be inert and these forms would post without asking.
+    (function () {
+      document.addEventListener('click', function (event) {
+        var element = event.target.closest('[data-confirm]');
+        if (element && !window.confirm(element.getAttribute('data-confirm'))) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+    }());
+  </script>
 }

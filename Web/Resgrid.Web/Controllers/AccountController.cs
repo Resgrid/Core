@@ -22,11 +22,14 @@ using Resgrid.Web.Helpers;
 using Resgrid.WebCore.Helpers;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Localization;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using Microsoft.Extensions.DependencyInjection;
 using Resgrid.Web.Attributes;
 using Microsoft.Extensions.Localization;
+using Resgrid.Model.Security;
 
 namespace Resgrid.Web.Controllers
 {
@@ -35,6 +38,7 @@ namespace Resgrid.Web.Controllers
 #endif
 	public class AccountController : Controller
 	{
+		private const string RecoveryGrantCookie = ".Resgrid.PasswordRecovery";
 		#region Private Members and Constructors
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly SignInManager<IdentityUser> _signInManager;
@@ -48,18 +52,22 @@ namespace Resgrid.Web.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IEmailMarketingProvider _emailMarketingProvider;
 		private readonly ISystemAuditsService _systemAuditsService;
-		private readonly ICacheProvider _cacheProvider;
 		private readonly IServiceProvider _serviceProvider;
 		private readonly IDepartmentSsoService _departmentSsoService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
+		private readonly IUserSessionService _userSessionService;
+		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
+		private readonly IPasswordRecoveryService _passwordRecoveryService;
 
 		public AccountController(
 						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 						IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService, IInvitesService invitesService, IUserProfileService userProfileService,
 						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider,
-						ISystemAuditsService systemAuditsService, ICacheProvider cacheProvider, IServiceProvider serviceProvider,
+						ISystemAuditsService systemAuditsService, IServiceProvider serviceProvider,
 						IDepartmentSsoService departmentSsoService,
-						IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer)
+						IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer,
+						IUserSessionService userSessionService, IExternalIdentityLinkService externalIdentityLinkService,
+						IPasswordRecoveryService passwordRecoveryService)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
@@ -73,10 +81,12 @@ namespace Resgrid.Web.Controllers
 			_eventAggregator = eventAggregator;
 			_emailMarketingProvider = emailMarketingProvider;
 			_systemAuditsService = systemAuditsService;
-			_cacheProvider = cacheProvider;
 			_serviceProvider = serviceProvider;
 			_departmentSsoService = departmentSsoService;
 			_secLocalizer = secLocalizer;
+			_userSessionService = userSessionService;
+			_externalIdentityLinkService = externalIdentityLinkService;
+			_passwordRecoveryService = passwordRecoveryService;
 		}
 		#endregion Private Members and Constructors
 
@@ -120,6 +130,24 @@ namespace Resgrid.Web.Controllers
 			{
 				try
 				{
+					var passwordUser = await _userManager.FindByNameAsync(model.Username);
+					if (passwordUser != null && !await IsPasswordLoginAllowedAsync(passwordUser, cancellationToken))
+					{
+						await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+						{
+							System = (int)SystemAuditSystems.Website,
+							Type = (int)SystemAuditTypes.Login,
+							UserId = passwordUser.Id,
+							Username = model.Username,
+							Successful = false,
+							IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+							ServerName = Environment.MachineName,
+							Data = $"Web LogOn blocked by SSO policy {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+						}, cancellationToken);
+						ModelState.AddModelError(string.Empty, "Invalid username or password, please check them and try again.");
+						return View(model);
+					}
+
 					var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: true);
 
 					SystemAudit audit = new SystemAudit();
@@ -134,24 +162,20 @@ namespace Resgrid.Web.Controllers
 
 					if (result != null && result.RequiresTwoFactor)
 					{
-						// Persist credentials in session so the 2FA completion step can finish setting up the session
-						HttpContext.Session.SetString("Resgrid2FAPendingUsername", model.Username);
-						HttpContext.Session.SetString("Resgrid2FAPendingPassword", model.Password);
 						return RedirectToAction(nameof(LoginWith2fa), new { returnUrl });
 					}
 					if (result != null && result.Succeeded)
 					{
 						if (await _usersService.DoesUserHaveAnyActiveDepartments(model.Username))
 						{
-							await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, User,
-								new AuthenticationProperties
-								{
-									ExpiresUtc = DateTime.UtcNow.AddHours(8),
-									IsPersistent = false,
-									AllowRefresh = false
-								});
-
-							await SetupUserSessionAsync(model.Username, model.Password);
+							var signedInUser = await _userManager.FindByNameAsync(model.Username);
+							if (!await SignInTrackedWebSessionAsync(signedInUser,
+								UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken))
+							{
+								ModelState.AddModelError(string.Empty,
+									"Your department's maximum number of active sessions has been reached. Revoke an existing session or contact your administrator.");
+								return View(model);
+							}
 
 							// Check whether the department's password expiration policy has been exceeded.
 							// Only check for password-based logins (SSO users are unaffected).
@@ -306,17 +330,18 @@ namespace Resgrid.Web.Controllers
 					_departmentsService.InvalidateDepartmentMembers();
 
 					await _emailMarketingProvider.SubscribeUserToAdminList(model.FirstName, model.LastName, model.Email);
-					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.Username, model.Password, department.DepartmentId);
+					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.Username, department.DepartmentId);
 
 					var loginResult = await _signInManager.PasswordSignInAsync(model.Username, model.Password, true, lockoutOnFailure: false);
 					if (loginResult.Succeeded)
 					{
-						await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, HttpContext.User, new AuthenticationProperties
+						if (!await SignInTrackedWebSessionAsync(user,
+							UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(24), cancellationToken))
 						{
-							ExpiresUtc = DateTime.UtcNow.AddHours(24),
-							IsPersistent = false,
-							AllowRefresh = false
-						});
+							ModelState.AddModelError(string.Empty,
+								"Your department's maximum number of active sessions has been reached.");
+							return View(model);
+						}
 
 						if (!String.IsNullOrWhiteSpace(returnUrl))
 							return RedirectToLocal(returnUrl);
@@ -390,27 +415,17 @@ namespace Resgrid.Web.Controllers
 				}
 
 				// Build the full claims principal and sign into the app's cookie scheme
-				var principal = await _signInManager.CreateUserPrincipalAsync(user);
-				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
-					new AuthenticationProperties
-					{
-						ExpiresUtc = DateTime.UtcNow.AddHours(8),
-						IsPersistent = false,
-						AllowRefresh = false
-					});
+				if (!await SignInTrackedWebSessionAsync(user,
+					UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken))
+				{
+					ModelState.AddModelError(string.Empty,
+						"Your department's maximum number of active sessions has been reached. Revoke an existing session or contact your administrator.");
+					return View(model);
+				}
 
 				// Stamp the step-up session key immediately after login 2FA
-				HttpContext.Session.SetString("Resgrid2FAVerifiedAt", DateTime.UtcNow.ToString("O"));
-
-				var pendingUsername = HttpContext.Session.GetString("Resgrid2FAPendingUsername");
-				var pendingPassword = HttpContext.Session.GetString("Resgrid2FAPendingPassword");
-
-				if (!string.IsNullOrWhiteSpace(pendingUsername) && !string.IsNullOrWhiteSpace(pendingPassword))
-				{
-					await SetupUserSessionAsync(pendingUsername, pendingPassword);
-					HttpContext.Session.Remove("Resgrid2FAPendingUsername");
-					HttpContext.Session.Remove("Resgrid2FAPendingPassword");
-				}
+				HttpContext.Session.SetString(RequiresRecentTwoFactorAttribute.StepUpSessionKey,
+					$"{user.Id}|{DateTime.UtcNow:O}");
 
 				// Prefer the query-string returnUrl, fall back to the hidden-field value in the model
 				var redirect = !string.IsNullOrWhiteSpace(returnUrl) ? returnUrl : model.ReturnUrl;
@@ -476,26 +491,16 @@ namespace Resgrid.Web.Controllers
 				}
 
 				// Build the full claims principal and sign into the app's cookie scheme
-				var principal = await _signInManager.CreateUserPrincipalAsync(user);
-				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
-					new AuthenticationProperties
-					{
-						ExpiresUtc = DateTime.UtcNow.AddHours(8),
-						IsPersistent = false,
-						AllowRefresh = false
-					});
-
-				HttpContext.Session.SetString("Resgrid2FAVerifiedAt", DateTime.UtcNow.ToString("O"));
-
-				var pendingUsername = HttpContext.Session.GetString("Resgrid2FAPendingUsername");
-				var pendingPassword = HttpContext.Session.GetString("Resgrid2FAPendingPassword");
-
-				if (!string.IsNullOrWhiteSpace(pendingUsername) && !string.IsNullOrWhiteSpace(pendingPassword))
+				if (!await SignInTrackedWebSessionAsync(user,
+					UserSessionAuthenticationMethod.Recovery, TimeSpan.FromHours(8), cancellationToken))
 				{
-					await SetupUserSessionAsync(pendingUsername, pendingPassword);
-					HttpContext.Session.Remove("Resgrid2FAPendingUsername");
-					HttpContext.Session.Remove("Resgrid2FAPendingPassword");
+					ModelState.AddModelError(string.Empty,
+						"Your department's maximum number of active sessions has been reached. Revoke an existing session or contact your administrator.");
+					return View(model);
 				}
+
+				HttpContext.Session.SetString(RequiresRecentTwoFactorAttribute.StepUpSessionKey,
+					$"{user.Id}|{DateTime.UtcNow:O}");
 
 				var redirect = !string.IsNullOrWhiteSpace(returnUrl) ? returnUrl : model.ReturnUrl;
 				if (!string.IsNullOrWhiteSpace(redirect) && Url.IsLocalUrl(redirect))
@@ -513,6 +518,7 @@ namespace Resgrid.Web.Controllers
 		// ── Forced Password Change (expired password) ─────────────────────────
 
 		[HttpGet]
+		[Authorize]
 		public async Task<IActionResult> ForcePasswordChange(CancellationToken cancellationToken)
 		{
 			var userId = HttpContext.Session.GetString("ForcePasswordChangeUserId");
@@ -527,6 +533,7 @@ namespace Resgrid.Web.Controllers
 		}
 
 		[HttpPost]
+		[Authorize]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ForcePasswordChange(ForcePasswordChangeViewModel model, CancellationToken cancellationToken)
 		{
@@ -553,6 +560,14 @@ namespace Resgrid.Web.Controllers
 			if (user == null)
 				return RedirectToAction("LogOn");
 
+			if (!string.Equals(user.Id, User.FindFirstValue(ClaimTypes.NameIdentifier), StringComparison.Ordinal) ||
+				await IsSsoManagedAsync(user.Id, deptId))
+				return Forbid();
+
+			var now = DateTime.UtcNow;
+			user.AuthenticationGeneration++;
+			user.CredentialsValidAfterUtc = now;
+			user.AuthenticationStateChangedOn = now;
 			var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
 			if (!result.Succeeded)
 			{
@@ -575,20 +590,60 @@ namespace Resgrid.Web.Controllers
 			HttpContext.Session.Remove("ForcePasswordChangeUserId");
 			HttpContext.Session.Remove("ForcePasswordChangeDeptId");
 
-			return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+			await _userSessionService.RevokeAllAfterCredentialChangeAsync(userId, userId,
+				UserSessionRevocationReason.PasswordChanged, now, cancellationToken);
+			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.PasswordChanged,
+				DepartmentId = deptId,
+				UserId = userId,
+				TargetUserId = userId,
+				Username = user.UserName,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				CorrelationId = HttpContext.TraceIdentifier,
+				ServerName = Environment.MachineName,
+				Successful = true,
+				Data = "Forced password change completed; all authentication sessions and tokens revoked."
+			}, cancellationToken);
+			await _signInManager.SignOutAsync();
+			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+			return RedirectToAction("LogOn", new { reason = "password-changed" });
 		}
 
 		//
 		// POST: /Account/LogOff
-		[HttpGet]
-		public async Task<IActionResult> LogOff()
+		[HttpPost]
+		[Authorize]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> LogOff(CancellationToken cancellationToken)
 		{
 			// Explicitly clear the step-up 2FA proof so it cannot be inherited by any subsequent session.
 			HttpContext.Session.Remove(RequiresRecentTwoFactorAttribute.StepUpSessionKey);
+			var sessionId = User.FindFirstValue(SessionClaimTypes.SessionId);
+			if (!string.IsNullOrWhiteSpace(sessionId))
+			{
+				var revoked = await _userSessionService.RevokeSessionAsync(
+					User.FindFirstValue(ClaimTypes.NameIdentifier), User.FindFirstValue(ClaimTypes.NameIdentifier),
+					sessionId, UserSessionRevocationReason.LoggedOut, cancellationToken);
+				await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+				{
+					System = (int)SystemAuditSystems.Website,
+					Type = (int)SystemAuditTypes.SessionRevoked,
+					UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+					TargetUserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+					SessionId = sessionId,
+					Successful = revoked.RevokedSessionCount > 0,
+					IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+					ServerName = Environment.MachineName,
+					CorrelationId = HttpContext.TraceIdentifier,
+					Data = "Web session logged out."
+				}, cancellationToken);
+			}
 
 			await _signInManager.SignOutAsync();
 			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-			RemoveCookies();
 			return RedirectToAction("LogOn", "Account", new { Area = "" });
 		}
 
@@ -614,35 +669,47 @@ namespace Resgrid.Web.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var user = await _userManager.FindByEmailAsync(model.Email);
-				if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+				try
 				{
-					// Don't reveal that the user does not exist or is not confirmed
-					return View("ForgotPasswordConfirmation");
+					var requestedOn = DateTime.UtcNow;
+					var ipAddress = IpAddressHelper.GetRequestIP(Request, true);
+					var user = await _userManager.FindByEmailAsync(model.Email);
+					if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+					{
+						// Count unknown-account requests too. The response is deliberately indistinguishable.
+						await _passwordRecoveryService.IssueAsync(null, model.Email, ipAddress, 0, null, cancellationToken);
+						return View("ForgotPasswordConfirmation");
+					}
+
+					var profile = await _userProfileService.GetProfileByUserIdAsync(user.Id);
+					var department = await _departmentsService.GetDepartmentForUserAsync(user.UserName);
+					var isSsoManaged = await IsSsoManagedAsync(user.Id, department?.DepartmentId);
+					var issue = await _passwordRecoveryService.IssueAsync(isSsoManaged ? null : user.Id,
+						model.Email, ipAddress, user.AuthenticationGeneration, user.SecurityStamp, cancellationToken);
+
+					if (!issue.RateLimited && (issue.Issued || isSsoManaged))
+					{
+						// Put the opaque grant in the URL fragment. Browsers do not send fragments to
+						// Resgrid, reverse proxies, or access logs; self-hosted page JavaScript posts it
+						// once to establish the HttpOnly recovery cookie.
+						var resetPageUrl = Url.Action(nameof(ResetPassword), "Account", null, Request.Scheme);
+						var resetUrl = issue.Issued
+							? $"{resetPageUrl}#token={Uri.EscapeDataString(issue.Token)}"
+							: null;
+						await _emailService.SendPasswordRecoveryEmail(user.Email,
+							profile?.FullName.AsFirstNameLastName ?? "Resgrid user",
+							department?.Name ?? "Resgrid", resetUrl, ipAddress,
+							BoundSecurityContext(Request.Headers.UserAgent.ToString(), 512), requestedOn, isSsoManaged);
+					}
 				}
-
-				var profile = await _userProfileService.GetProfileByUserIdAsync(user.Id);
-				var department = await _departmentsService.GetDepartmentForUserAsync(user.UserName);
-
-				var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-				var newPassword = RandomGenerator.GenerateRandomString(8, 10, false, false, false, true, false, true, null);
-				var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
-
-				if (result.Succeeded)
+				catch (Exception ex)
 				{
-					await _departmentSsoService.RecordPasswordChangedAsync(department.DepartmentId, user.Id, cancellationToken);
-					await _emailService.SendPasswordResetEmail(user.Email, profile.FullName.AsFirstNameLastName, user.UserName, newPassword, department.Name);
+					// Recovery is fail-closed, but the public response stays generic to avoid
+					// account enumeration and infrastructure-state disclosure.
+					Logging.LogException(ex, "Public password recovery request processing failed.");
 				}
 
 				return View("ForgotPasswordConfirmation");
-
-				// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-				// Send an email with this link
-				//var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-				//var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-				//await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-				//   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
-				//return View("ForgotPasswordConfirmation");
 			}
 
 			// If we got this far, something failed, redisplay form
@@ -656,6 +723,222 @@ namespace Resgrid.Web.Controllers
 		public IActionResult ForgotPasswordConfirmation()
 		{
 			return View();
+		}
+
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<IActionResult> ResetPassword(CancellationToken cancellationToken)
+		{
+			SetPasswordRecoveryResponseHeaders();
+
+			// No query-string grant is accepted: that form writes a single-use secret into access logs,
+			// proxy logs and browser history. The emailed link carries the grant in the URL fragment and
+			// the page posts it to BeginPasswordReset, which establishes this cookie.
+			var token = Request.Cookies[RecoveryGrantCookie];
+			var lookup = await _passwordRecoveryService.GetAsync(token, cancellationToken);
+			var request = lookup.Request;
+			if (!lookup.Found || request == null)
+			{
+				Response.Cookies.Delete(RecoveryGrantCookie, new CookieOptions { Path = "/Account/ResetPassword" });
+				return View(new ResetPasswordViewModel { InvalidOrExpired = true });
+			}
+
+			var user = await _userManager.FindByIdAsync(request.UserId);
+			var department = user == null ? null : await _departmentsService.GetDepartmentForUserAsync(user.UserName);
+			if (user == null || !IsCurrentRecoveryGrant(request, user) ||
+				await IsSsoManagedAsync(user.Id, department?.DepartmentId))
+			{
+				return View(new ResetPasswordViewModel { InvalidOrExpired = true });
+			}
+
+			return View(new ResetPasswordViewModel
+			{
+				MinPasswordLength = department == null
+					? 8
+					: await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(department.DepartmentId, cancellationToken)
+			});
+		}
+
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> BeginPasswordReset(string token, CancellationToken cancellationToken)
+		{
+			SetPasswordRecoveryResponseHeaders();
+			try
+			{
+				if (!IsPlausibleRecoveryToken(token) ||
+					!(await _passwordRecoveryService.GetAsync(token, cancellationToken)).Found)
+					return RedirectToAction(nameof(ResetPassword));
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Password recovery grant validation unavailable.");
+				return RedirectToAction(nameof(ResetPassword));
+			}
+
+			Response.Cookies.Append(RecoveryGrantCookie, token, new CookieOptions
+			{
+				HttpOnly = true,
+				// Never conditional on the per-request scheme: a recovery grant must not travel in clear.
+				Secure = true,
+				SameSite = SameSiteMode.Strict,
+				Expires = DateTimeOffset.UtcNow.AddMinutes(Math.Max(5, SessionSecurityConfig.PublicResetLinkLifetimeMinutes)),
+				IsEssential = true,
+				Path = "/Account/ResetPassword"
+			});
+			return RedirectToAction(nameof(ResetPassword));
+		}
+
+		[HttpPost]
+		[AllowAnonymous]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model, CancellationToken cancellationToken)
+		{
+			SetPasswordRecoveryResponseHeaders();
+			var token = Request.Cookies[RecoveryGrantCookie];
+			var lookup = await _passwordRecoveryService.GetAsync(token, cancellationToken);
+			var request = lookup.Request;
+			var user = !lookup.Found || request == null
+				? null
+				: await _userManager.FindByIdAsync(request.UserId);
+			var department = user == null ? null : await _departmentsService.GetDepartmentForUserAsync(user.UserName);
+			model.MinPasswordLength = department == null
+				? 8
+				: await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(department.DepartmentId, cancellationToken);
+
+			if (!lookup.Found || request == null || user == null || !IsCurrentRecoveryGrant(request, user) ||
+				await IsSsoManagedAsync(user.Id, department?.DepartmentId))
+			{
+				model.InvalidOrExpired = true;
+				return View(model);
+			}
+
+			if (!ModelState.IsValid)
+				return View(model);
+
+			if (department != null)
+			{
+				var policyError = await _departmentSsoService.ValidatePasswordAgainstPolicyAsync(
+					department.DepartmentId, model.Password, cancellationToken);
+				if (policyError != null)
+				{
+					ModelState.AddModelError(nameof(model.Password), ResolvePwdError(policyError));
+					return View(model);
+				}
+			}
+
+			if (!await _passwordRecoveryService.TryConsumeAsync(token, cancellationToken))
+			{
+				model.InvalidOrExpired = true;
+				return View(model);
+			}
+
+			var now = DateTime.UtcNow;
+			user.AuthenticationGeneration++;
+			user.CredentialsValidAfterUtc = now;
+			user.AuthenticationStateChangedOn = now;
+			var identityToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+			var result = await _userManager.ResetPasswordAsync(user, identityToken, model.Password);
+			if (!result.Succeeded)
+			{
+				// The grant was consumed before the reset ran. Nothing changed, so hand it back rather
+				// than forcing the user to request a new recovery email.
+				await _passwordRecoveryService.ReleaseAsync(token, cancellationToken);
+				foreach (var error in result.Errors)
+					ModelState.AddModelError(string.Empty, error.Description);
+				return View(model);
+			}
+
+			if (department != null)
+				await _departmentSsoService.RecordPasswordChangedAsync(department.DepartmentId, user.Id, cancellationToken);
+
+			await _userSessionService.RevokeAllAfterCredentialChangeAsync(user.Id, user.Id, UserSessionRevocationReason.PasswordReset,
+				now, cancellationToken);
+			await _passwordRecoveryService.RemoveAsync(token, cancellationToken);
+			Response.Cookies.Delete(RecoveryGrantCookie, new CookieOptions { Path = "/Account/ResetPassword" });
+
+			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.PublicPasswordResetCompleted,
+				DepartmentId = department?.DepartmentId,
+				UserId = user.Id,
+				TargetUserId = user.Id,
+				Username = user.UserName,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				CorrelationId = HttpContext.TraceIdentifier,
+				ServerName = Environment.MachineName,
+				Successful = true,
+				Data = "Public password recovery completed; all authentication sessions and tokens revoked."
+			}, cancellationToken);
+
+			return View("ResetPasswordConfirmation");
+		}
+
+		private async Task<bool> IsSsoManagedAsync(string userId, int? departmentId)
+		{
+			var state = await _externalIdentityLinkService.GetSsoManagementStateAsync(userId);
+			if (state == null || state.IsSsoManaged)
+				return true;
+
+			if (!departmentId.HasValue)
+				return false;
+
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId.Value);
+			return member != null && (!string.IsNullOrWhiteSpace(member.ExternalSsoId) || member.SsoLinkedOn.HasValue);
+		}
+
+		private void SetPasswordRecoveryResponseHeaders()
+		{
+			Response.Headers.CacheControl = "no-store, no-cache, max-age=0";
+			Response.Headers.Pragma = "no-cache";
+			Response.Headers["Referrer-Policy"] = "no-referrer";
+			Response.Headers["X-Content-Type-Options"] = "nosniff";
+			Response.Headers["X-Robots-Tag"] = "noindex, nofollow";
+			Response.Headers["Content-Security-Policy"] =
+				"default-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:";
+		}
+
+		private static bool IsCurrentRecoveryGrant(PasswordRecoveryRequest request, IdentityUser user)
+		{
+			if (request == null || user == null ||
+				!user.EmailConfirmed ||
+				!string.Equals(user.Email, request.Email, StringComparison.OrdinalIgnoreCase) ||
+				request.AuthenticationGeneration != user.AuthenticationGeneration)
+				return false;
+
+			var expected = Encoding.UTF8.GetBytes(request.SecurityStampHash ?? string.Empty);
+			var actual = Encoding.UTF8.GetBytes(Convert.ToHexString(
+				SHA256.HashData(Encoding.UTF8.GetBytes(user.SecurityStamp ?? string.Empty))).ToLowerInvariant());
+			return expected.Length == actual.Length && CryptographicOperations.FixedTimeEquals(expected, actual);
+		}
+
+		private static bool IsPlausibleRecoveryToken(string token)
+		{
+			if (string.IsNullOrWhiteSpace(token) || token.Length < 40 || token.Length > 64)
+				return false;
+
+			return token.All(character => char.IsLetterOrDigit(character) || character == '-' || character == '_');
+		}
+
+		private async Task<bool> IsPasswordLoginAllowedAsync(IdentityUser user, CancellationToken cancellationToken)
+		{
+			if (!await _externalIdentityLinkService.IsLocalLoginAllowedAsync(user.Id, cancellationToken))
+				return false;
+
+			var department = await _departmentsService.GetDepartmentForUserAsync(user.UserName);
+			if (department == null)
+				return true;
+
+			if (!await _externalIdentityLinkService.IsLocalLoginAllowedAsync(
+					user.Id, department.DepartmentId, cancellationToken))
+				return false;
+
+			var requiresSso = await _departmentSsoService.IsRequireSsoPolicyActiveAsync(
+				department.DepartmentId, cancellationToken);
+			return !requiresSso ||
+				!await _departmentSsoService.IsSsoEnabledForDepartmentAsync(department.DepartmentId, cancellationToken);
 		}
 
 		[AllowAnonymous]
@@ -754,9 +1037,15 @@ namespace Resgrid.Web.Controllers
 					await _invitesService.CompleteInviteAsync(model.Invite.Code, user.UserId, cancellationToken);
 					await _emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
 
-					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Password, model.Invite.DepartmentId);
+					await _emailService.SendWelcomeEmail(department.Name, $"{model.FirstName} {model.LastName}", model.Email, model.UserName, model.Invite.DepartmentId);
 
-					await _signInManager.SignInAsync(user, isPersistent: false);
+					if (!await SignInTrackedWebSessionAsync(user,
+						UserSessionAuthenticationMethod.LocalPassword, TimeSpan.FromHours(8), cancellationToken))
+					{
+						ModelState.AddModelError(string.Empty,
+							"Your department's maximum number of active sessions has been reached.");
+						return View(model);
+					}
 
 					return RedirectToAction("Dashboard", "Home", new { area = "User" });
 				}
@@ -805,33 +1094,66 @@ namespace Resgrid.Web.Controllers
 		}
 
 		#region Helpers
-		private void RemoveCookies()
+		private static string BoundSecurityContext(string value, int maximumLength)
 		{
-			var myCookies = Request.Cookies.Select(x => x.Key).ToList();
-			foreach (string cookie in myCookies)
-			{
-				var requestCookie = Request.Cookies[cookie];
-				Response.Cookies.Append(cookie, requestCookie, new Microsoft.AspNetCore.Http.CookieOptions { Expires = DateTime.Now.AddDays(-1) });
-			}
+			if (string.IsNullOrWhiteSpace(value))
+				return "Unknown";
+
+			var sanitized = value.Replace("\r", " ").Replace("\n", " ").Trim();
+			return sanitized.Length <= maximumLength ? sanitized : sanitized.Substring(0, maximumLength);
 		}
 
-		private async Task SetupUserSessionAsync(string username, string password)
+		private async Task<bool> SignInTrackedWebSessionAsync(IdentityUser user,
+			UserSessionAuthenticationMethod authenticationMethod, TimeSpan lifetime, CancellationToken cancellationToken)
 		{
-			try
-			{
-				var userId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimarySid)?.Value;
+			if (user == null)
+				throw new InvalidOperationException("The authenticated user could not be loaded.");
 
-				if (!string.IsNullOrWhiteSpace(userId))
+			var principal = await _signInManager.CreateUserPrincipalAsync(user);
+			if (SessionSecurityConfig.TrackingEnabled)
+			{
+				var department = await _departmentsService.GetDepartmentByUserIdAsync(user.Id);
+				UserSession session;
+				try
 				{
-					var token = await ApiAuthHelper.GetBearerApiTokenAsync(username, password);
-					await _cacheProvider.SetStringAsync(CacheConfig.ApiBearerTokenKeyName + $"_${userId}", token, new TimeSpan(48, 0, 0));
+					session = await _userSessionService.CreateSessionAsync(new SessionIssueContext
+					{
+						UserId = user.Id,
+						DepartmentId = department?.DepartmentId,
+						AuthenticationGeneration = user.AuthenticationGeneration,
+						ClientApplication = UserSessionClientApplication.Web,
+						DeviceName = Request.Headers["X-Resgrid-Device-Name"],
+						DeviceType = Request.Headers["X-Resgrid-Device-Type"],
+						OperatingSystem = Request.Headers["X-Resgrid-Operating-System"],
+						Browser = Request.Headers["X-Resgrid-Browser"],
+						AuthenticationMethod = authenticationMethod,
+						ExpiresOn = DateTime.UtcNow.Add(lifetime),
+						IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+						UserAgent = Request.Headers["User-Agent"]
+					}, cancellationToken);
+				}
+				catch (SessionCreationDeniedException)
+				{
+					await _signInManager.SignOutAsync();
+					await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+					return false;
+				}
 
-					}
+				if (principal.Identity is ClaimsIdentity identity)
+				{
+					identity.AddClaim(new Claim(SessionClaimTypes.SessionId, session.UserSessionId));
+				}
 			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
-			}
+
+			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal,
+				new AuthenticationProperties
+				{
+					IssuedUtc = DateTimeOffset.UtcNow,
+					ExpiresUtc = DateTimeOffset.UtcNow.Add(lifetime),
+					IsPersistent = false,
+					AllowRefresh = false
+				});
+			return true;
 		}
 
 		private void AddErrors(IdentityResult result)

@@ -2521,9 +2521,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.AuthorizeScimRequestAsync(System.Int32,System.String,System.Threading.CancellationToken)">
             <summary>
-            Validates the SCIM bearer token and confirms it is bound to the department
-            supplied in the request header. Any mismatch is rejected and recorded as
-            <see cref="F:Resgrid.Model.AuditLogTypes.ScimAuthFailed"/> before returning false.
+            Validates the SCIM bearer token and confirms it is bound to the department supplied in the
+            request header. Returns the configuration that authorized the request, or null when the request
+            is rejected; every rejection is recorded as <see cref="F:Resgrid.Model.AuditLogTypes.ScimAuthFailed"/> first.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.SaveScimAuditAsync(System.Int32,System.String,Resgrid.Model.AuditLogTypes,System.Boolean,System.String)">
@@ -2550,6 +2550,9 @@
             Gets the current users department rights
             </summary>
             <returns>DepartmentRightsResult object with the department rights and group memberships</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.SessionsController">
+            <summary>User authentication session inventory and revocation.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ShiftsController">
             <summary>
@@ -5463,6 +5466,16 @@
             </summary>
             <param name="context">The context.</param>
             <returns>Task.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Middleware.SessionValidationHubFilter">
+            <summary>Revalidates user session state for every invocation on an open API SignalR connection.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Middleware.SessionValidationMiddleware">
+            <summary>
+            Enforces account-wide credential cutoffs and per-session revocation on every
+            authenticated user API request. Pre-feature tokens without a session claim remain
+            valid until their natural expiry unless the account has subsequently been revoked.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Middleware.SystemApiKeyAuthHandler">
             <summary>

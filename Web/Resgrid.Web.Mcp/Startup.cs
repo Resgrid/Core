@@ -107,6 +107,9 @@ namespace Resgrid.Web.Mcp
 			{
 				client.BaseAddress = new Uri(SystemBehaviorConfig.ResgridApiBaseUrl);
 				client.DefaultRequestHeaders.Add("Accept", "application/json");
+				client.DefaultRequestHeaders.Add("X-Resgrid-Client", "mcp");
+				client.DefaultRequestHeaders.Add("X-Resgrid-Device-Name", "Resgrid MCP gateway");
+				client.DefaultRequestHeaders.Add("X-Resgrid-App-Version", McpConfig.ServerVersion);
 				client.Timeout = TimeSpan.FromSeconds(30);
 			})
 			.ConfigurePrimaryHttpMessageHandler(() => new System.Net.Http.SocketsHttpHandler

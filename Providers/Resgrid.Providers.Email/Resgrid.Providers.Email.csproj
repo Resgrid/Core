@@ -11,7 +11,8 @@
     <None Remove="Template\DepartmentLinkCreated.html" />
     <None Remove="Template\Invitation.html" />
     <None Remove="Template\Message.html" />
-    <None Remove="Template\PasswordReset.html" />
+	<None Remove="Template\PasswordRecovery.html" />
+	<None Remove="Template\PasswordChangedByAdministrator.html" />
     <None Remove="Template\Receipt.html" />
     <None Remove="Template\ReportDelivery.html" />
     <None Remove="Template\TroubleAlert.html" />
@@ -28,7 +29,8 @@
     <EmbeddedResource Include="Template\Receipt.html" />
     <EmbeddedResource Include="Template\ReportDelivery.html" />
     <EmbeddedResource Include="Template\Message.html" />
-    <EmbeddedResource Include="Template\PasswordReset.html" />
+	<EmbeddedResource Include="Template\PasswordRecovery.html" />
+	<EmbeddedResource Include="Template\PasswordChangedByAdministrator.html" />
     <EmbeddedResource Include="Template\TroubleAlert.html" />
     <EmbeddedResource Include="Template\Welcome.html" />
   </ItemGroup>

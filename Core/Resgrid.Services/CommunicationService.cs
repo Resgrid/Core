@@ -55,7 +55,9 @@ namespace Resgrid.Services
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
 				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
-			if (profile == null || (message.SystemGenerated ? profile.SendNotificationSms : profile.SendMessageSms))
+			// Weather Alert Notifications are intentionally email/push-only.
+			if (message.Type != (int)MessageTypes.WeatherAlert &&
+				(profile == null || (message.SystemGenerated ? profile.SendNotificationSms : profile.SendMessageSms)))
 			{
 				if (profile == null || profile.MobileNumberVerified.IsContactMethodAllowedForSending())
 				{
@@ -126,21 +128,26 @@ namespace Resgrid.Services
 
 			}
 
-			// Outbound chat platforms (Discord/Slack/etc.) as a sibling channel; failures are isolated.
-			try
+			// Weather alerts already use the user's notification channels; mirroring them here also
+			// persists them as unsolicited messages in the Resgrid Assistant conversation.
+			if (message.Type != (int)MessageTypes.WeatherAlert)
 			{
-				await _chatbotOutboundService.SendToUserAsync(message.ReceivingUserId, departmentId,
-					new ChatbotOutboundMessage
-					{
-						Type = ChatbotOutboundType.Message,
-						Title = message.Subject,
-						Body = message.Body,
-						ReferenceId = message.MessageId.ToString()
-					});
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex);
+				// Outbound chat platforms (Discord/Slack/etc.) as a sibling channel; failures are isolated.
+				try
+				{
+					await _chatbotOutboundService.SendToUserAsync(message.ReceivingUserId, departmentId,
+						new ChatbotOutboundMessage
+						{
+							Type = ChatbotOutboundType.Message,
+							Title = message.Subject,
+							Body = message.Body,
+							ReferenceId = message.MessageId.ToString()
+						});
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
 			}
 
 			return true;

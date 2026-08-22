@@ -15,7 +15,6 @@ namespace Resgrid.Model.Services
 		IdentityUser GetUserById(string userId, bool bypassCache = true);
 		Dictionary<string, int> GetNewUsersCountForLast5Days();
 		int GetUsersCount();
-		Task<IdentityUser> UpdateUsername(string oldUsername, string newUsername);
 		IdentityUser GetUserByEmail(string emailAddress);
 		IdentityUser GetMembershipByUserId(string userId);
 		void AddUserToAffiliteRole(string userId);
@@ -23,7 +22,6 @@ namespace Resgrid.Model.Services
 		IdentityUser SaveUser(IdentityUser user);
 		void InitUserExtInfo(string userId);
 		Task<List<UserGroupRole>> GetUserGroupAndRolesByDepartmentIdAsync(int deparmentId, bool retrieveHidden, bool retrieveDisabled, bool retrieveDeleted);
-		IdentityUser UpdateEmail(string userId, string newEmail);
 		Task<bool> DoesUserHaveAnyActiveDepartments(string userName);
 		void ClearCacheForDepartment(int departmentId);
 		Task<IdentityUser> GetUserByNameAsync(string userName);

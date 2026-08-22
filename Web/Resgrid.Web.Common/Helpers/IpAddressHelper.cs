@@ -4,13 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Resgrid.Web.Services.Helpers
+namespace Resgrid.Web.Helpers
 {
+	/// <summary>
+	/// Shared by every ASP.NET host so the recorded caller IP cannot drift between them. Lives in
+	/// Resgrid.Web.Common rather than Resgrid.Framework because it takes an <see cref="HttpRequest"/>,
+	/// and Framework is referenced by the console and worker hosts that must not pull in ASP.NET Core.
+	/// </summary>
 	public static class IpAddressHelper
 	{
 		public static string GetRequestIP(HttpRequest request, bool tryUseXForwardHeader = true)
 		{
-			string ip = null;
+			// ForwardedHeadersMiddleware rewrites this only when the immediate sender is a
+			// configured trusted proxy. Raw forwarding headers are attacker-controlled.
+			string ip = request.HttpContext?.Connection?.RemoteIpAddress?.ToString();
 
 			// todo support new "Forwarded" header (2014) https://en.wikipedia.org/wiki/X-Forwarded-For
 
@@ -19,12 +26,7 @@ namespace Resgrid.Web.Services.Helpers
 			// approach might be to read each IP from right to left and use the first public IP.
 			// http://stackoverflow.com/a/43554000/538763
 			//
-			if (tryUseXForwardHeader)
-				ip = GetHeaderValueAs<string>(request, "X-Forwarded-For").SplitCsv().FirstOrDefault();
-
-			// RemoteIpAddress is always null in DNX RC1 Update1 (bug).
-			if (ip.IsNullOrWhitespace() && request.HttpContext?.Connection?.RemoteIpAddress != null)
-				ip = request.HttpContext.Connection.RemoteIpAddress.ToString();
+			// Do not read X-Forwarded-For directly here.
 
 			if (ip.IsNullOrWhitespace())
 				ip = GetHeaderValueAs<string>(request, "REMOTE_ADDR");

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -33,6 +33,9 @@ using System.Reflection;
 using Resgrid.Localization;
 using Microsoft.AspNetCore.Localization;
 using System.Web;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Resgrid.Model.Security;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -73,6 +76,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 		private readonly ISecurityPinService _securityPinService;
 		private readonly IEncryptionService _encryptionService;
+		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
+		private readonly IUserSessionService _userSessionService;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
@@ -83,7 +88,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IDepartmentSsoService departmentSsoService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer, IGdprDataExportService gdprDataExportService,
 			ISystemAuditsService systemAuditsService, IPhoneNumberProcesserProvider phoneNumberProcesser,
-			ISecurityPinService securityPinService, IEncryptionService encryptionService)
+			ISecurityPinService securityPinService, IEncryptionService encryptionService,
+			IExternalIdentityLinkService externalIdentityLinkService, IUserSessionService userSessionService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -115,6 +121,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_phoneNumberProcesser = phoneNumberProcesser;
 			_securityPinService = securityPinService;
 			_encryptionService = encryptionService;
+			_externalIdentityLinkService = externalIdentityLinkService;
+			_userSessionService = userSessionService;
 
 			_localizer = factory.Create("Home.Dashboard", new AssemblyName(typeof(SupportedLocales).GetTypeInfo().Assembly.FullName).Name);
 		}
@@ -502,8 +510,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, filteredValues);
 			}
 
-			if (model.IsOwnProfile)
-				model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
+			var externalIdentityState = await _externalIdentityLinkService.GetSsoManagementStateAsync(userId);
+			var isLegacySsoLinked = departmentMember != null &&
+				(!string.IsNullOrWhiteSpace(departmentMember.ExternalSsoId) || departmentMember.SsoLinkedOn.HasValue);
+			model.CanManageLocalCredentials = model.IsOwnProfile && !externalIdentityState.IsSsoManaged && !isLegacySsoLinked;
+			model.IsSsoManaged = externalIdentityState.IsSsoManaged || isLegacySsoLinked;
+			model.IsEmailExternallyManaged = externalIdentityState.IsEmailExternallyManaged || isLegacySsoLinked;
+			model.CanResetPassword = !model.IsOwnProfile && userId != model.Department.ManagingUserId &&
+				(model.Department.IsUserAnAdmin(UserId) ||
+				 (group != null && group.IsUserGroupAdmin(UserId) && !model.Department.IsUserAnAdmin(userId)));
+			model.RequirePasswordResetViaEmail = await _departmentSettingsService.GetRequirePasswordResetViaEmailAsync(DepartmentId);
 
 			if (model.IsOwnProfile)
 				model.ActiveDataExportRequest = await _gdprDataExportService.GetActiveRequestByUserIdAsync(userId);
@@ -534,8 +550,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			bool callerIsGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
 
 			model.User = _usersService.GetUserById(model.UserId);
-			//model.PushUris = await _pushUriService.GetPushUrisByUserId(model.UserId);
+			if (model.User == null)
+				return NotFound();
+
+			var targetDepartmentMember = await _departmentsService.GetDepartmentMemberAsync(model.UserId, DepartmentId);
+			var targetExternalIdentityState = await _externalIdentityLinkService.GetSsoManagementStateAsync(model.UserId, cancellationToken);
+			var isLegacySsoLinkedOnPost = targetDepartmentMember != null &&
+				(!string.IsNullOrWhiteSpace(targetDepartmentMember.ExternalSsoId) || targetDepartmentMember.SsoLinkedOn.HasValue);
+			model.CanManageLocalCredentials = model.IsOwnProfile && !targetExternalIdentityState.IsSsoManaged && !isLegacySsoLinkedOnPost;
+			model.IsSsoManaged = targetExternalIdentityState.IsSsoManaged || isLegacySsoLinkedOnPost;
+			model.IsEmailExternallyManaged = targetExternalIdentityState.IsEmailExternallyManaged || isLegacySsoLinkedOnPost;
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var targetGroupForPasswordReset = await _departmentGroupsService.GetGroupForUserAsync(model.UserId, DepartmentId);
+			model.CanResetPassword = !model.IsOwnProfile && model.UserId != model.Department?.ManagingUserId &&
+				(model.Department?.IsUserAnAdmin(UserId) == true ||
+				 (targetGroupForPasswordReset != null && targetGroupForPasswordReset.IsUserGroupAdmin(UserId) &&
+				  model.Department?.IsUserAnAdmin(model.UserId) != true));
+			model.RequirePasswordResetViaEmail = await _departmentSettingsService.GetRequirePasswordResetViaEmailAsync(DepartmentId);
+			var emailChanged = !string.Equals(model.User.Email, model.Email, StringComparison.OrdinalIgnoreCase);
+			//model.PushUris = await _pushUriService.GetPushUrisByUserId(model.UserId);
 			model.CanEnableVoice = await _limitsService.CanDepartmentUseVoiceAsync(DepartmentId);
 
 			var groups = new List<DepartmentGroup>();
@@ -629,12 +662,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 					ModelState.AddModelError("State", string.Format("The Mailing State/Provence field is required"));
 			}
 
-			if (model.User.Email != model.Email)
+			if (emailChanged)
 			{
+				if (model.IsEmailExternallyManaged)
+				{
+					ModelState.AddModelError("Email", "This email address is managed by the linked SSO provider and cannot be changed in Resgrid.");
+				}
 				// SECURITY: Email changes are high-privilege — only the account owner or a department
 				// admin may change an email address.  A group admin must NOT be able to change a
 				// member's email because that enables account-takeover via the password-reset flow.
-				if (!model.IsOwnProfile && !callerIsDepartmentAdmin)
+				else if (!model.IsOwnProfile && !callerIsDepartmentAdmin)
 				{
 					ModelState.AddModelError("Email", "You do not have permission to change this user's email address.");
 				}
@@ -661,39 +698,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.IsOwnProfile)
 			{
-				bool checkPasswordSuccess = false;
-				if (string.IsNullOrEmpty(model.OldPassword) == false && string.IsNullOrEmpty(model.NewPassword) == false)
-				{
-					try
-					{
-						checkPasswordSuccess = await _userManager.CheckPasswordAsync(model.User, model.OldPassword);
-					}
-					catch (Exception)
-					{
-						checkPasswordSuccess = false;
-					}
-
-					if (!checkPasswordSuccess)
-					{
-						ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
-					}
-					else
-					{
-						// Validate new password against system-enforced complexity and department min-length policy
-						var policyError = await _departmentSsoService.ValidatePasswordAgainstPolicyAsync(DepartmentId, model.NewPassword);
-						if (policyError != null)
-							ModelState.AddModelError("NewPassword", ResolvePwdError(policyError));
-					}
-				}
-
-				if (!String.IsNullOrWhiteSpace(model.NewUsername))
-				{
-					var newUser = await _userManager.FindByNameAsync(model.NewUsername);
-
-					if (newUser != null)
-						ModelState.AddModelError("", "The NEW username you have supplied is already in use, please try another one. If you didn't mean to update your username please leave that field blank.");
-				}
-
 				if (!String.IsNullOrWhiteSpace(model.SecurityPin))
 				{
 					// Normalize once so validation sees the same value that gets encrypted on save.
@@ -888,27 +892,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _departmentsService.SaveDepartmentMemberAsync(depMember, cancellationToken);
 				}
 
-				// SECURITY: Only the account owner or a department admin may update the email address.
-				if (model.IsOwnProfile || callerIsDepartmentAdmin)
-					_usersService.UpdateEmail(model.User.Id, model.Email);
-
-				if (model.IsOwnProfile)
-				{
-					// Change Password
-					if (!string.IsNullOrEmpty(model.OldPassword) && !string.IsNullOrEmpty(model.NewPassword))
-					{
-						var identityUser = await _userManager.FindByIdAsync(model.User.Id);
-						var result = await _userManager.ChangePasswordAsync(identityUser, model.OldPassword, model.NewPassword);
-						if (result.Succeeded)
-							await _departmentSsoService.RecordPasswordChangedAsync(DepartmentId, model.User.Id, cancellationToken);
-					}
-
-					if (!string.IsNullOrWhiteSpace(model.NewUsername))
-					{
-						await _usersService.UpdateUsername(model.User.UserName, model.NewUsername);
-					}
-				}
-
 				// Save UDF field values for personnel.
 				// Detect whether the UDF section was included in this POST via the hidden "_exists" sentinel
 				// keys emitted by UdfRenderingService (one per rendered field). Using the sentinel rather
@@ -940,9 +923,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				if (!ModelState.IsValid)
+				// Re-displays the form with the late-validation errors already in ModelState.
+				async Task<IActionResult> RedisplayWithLateErrorsAsync()
 				{
-					// UDF (or other late) validation failed — re-display the form with errors.
 					var udfDefinitionOnUdfError = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
 					if (udfDefinitionOnUdfError != null)
 					{
@@ -955,11 +938,57 @@ namespace Resgrid.Web.Areas.User.Controllers
 						model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionOnUdfError, udfFieldsOnUdfError, filteredValuesOnUdfError);
 					}
 
-					if (model.IsOwnProfile)
-						model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
-
 					return View(model);
 				}
+
+				// The email change must not run until every late validation has passed: it revokes all
+				// sessions and cannot be undone by returning the form with errors.
+				if (!ModelState.IsValid)
+					return await RedisplayWithLateErrorsAsync();
+
+				var signedOutByEmailChange = false;
+				// Email is a login/recovery identifier. Persist it through UserManager and revoke every
+				// credential immediately; SSO-managed email was rejected before entering this block.
+				if (emailChanged && !model.IsEmailExternallyManaged && (model.IsOwnProfile || callerIsDepartmentAdmin))
+				{
+					var identityUser = await _userManager.FindByIdAsync(model.User.Id);
+					if (identityUser != null)
+					{
+						var now = DateTime.UtcNow;
+						identityUser.AuthenticationGeneration++;
+						identityUser.CredentialsValidAfterUtc = now;
+						identityUser.AuthenticationStateChangedOn = now;
+						var changeEmailResult = await _userManager.SetEmailAsync(identityUser, model.Email);
+						if (changeEmailResult.Succeeded)
+						{
+							await _userSessionService.RevokeAllAfterCredentialChangeAsync(UserId, model.UserId,
+								UserSessionRevocationReason.EmailChanged, now, cancellationToken);
+							await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+							{
+								System = (int)SystemAuditSystems.Website,
+								Type = (int)SystemAuditTypes.EmailChanged,
+								UserId = UserId,
+								TargetUserId = model.UserId,
+								Successful = true,
+								IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+								ServerName = Environment.MachineName,
+								CorrelationId = HttpContext.TraceIdentifier,
+								Data = "Account email changed; all sessions and tokens revoked.",
+								LoggedOn = now
+							}, cancellationToken);
+							signedOutByEmailChange = model.IsOwnProfile;
+						}
+						else
+						{
+							foreach (var error in changeEmailResult.Errors)
+								ModelState.AddModelError("Email", error.Description);
+						}
+					}
+				}
+
+				if (!ModelState.IsValid)
+					return await RedisplayWithLateErrorsAsync();
+
 
 				_userProfileService.ClearUserProfileFromCache(model.UserId);
 				_userProfileService.ClearAllUserProfilesFromCache(model.Department.DepartmentId);
@@ -974,6 +1003,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					// This guy I think is causing issues with like DateTime rendering mm/dd/yy vs dd/mm/yy, so need to look into that more. -SJ
 					//Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo(savedProfile.Language);
 					Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo(savedProfile.Language);
+				}
+
+				if (signedOutByEmailChange)
+				{
+					await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+					return RedirectToAction("LogOn", "Account", new { area = "", reason = "email-changed" });
 				}
 
 				return RedirectToAction("Index", "Personnel", new { area = "User" });
@@ -992,9 +1027,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var filteredValuesOnFailure = (udfValuesOnFailure ?? new List<UdfFieldValue>()).Where(v => visibleFieldIdsOnFailure.Contains(v.UdfFieldId)).ToList();
 				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionOnFailure, udfFieldsOnFailure, filteredValuesOnFailure);
 			}
-
-			if (model.IsOwnProfile)
-				model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
 
 			return View(model);
 		}

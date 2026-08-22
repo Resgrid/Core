@@ -31,8 +31,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly UrlEncoder _urlEncoder;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> _localizer;
 
-		private const string StepUpSessionKey = "Resgrid2FAVerifiedAt";
-
 		public TwoFactorController(
 			UserManager<IdentityUser> userManager,
 			SignInManager<IdentityUser> signInManager,
@@ -268,7 +266,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// Stamp session with the verified user id and time so the step-up proof
 			// is bound to this specific user and cannot be inherited by another user.
-			HttpContext.Session.SetString(StepUpSessionKey, $"{user.Id}|{DateTime.UtcNow:O}");
+			HttpContext.Session.SetString(RequiresRecentTwoFactorAttribute.StepUpSessionKey,
+				$"{user.Id}|{DateTime.UtcNow:O}");
 
 			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
 			{

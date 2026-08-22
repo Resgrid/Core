@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -33,19 +33,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUserProfileService _userProfileService;
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly UserManager<Model.Identity.IdentityUser> _userManager;
+		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
+		private readonly IUserSessionService _userSessionService;
 
 		public ScimController(
 			IDepartmentSsoService ssoService,
 			IDepartmentsService departmentsService,
 			IUserProfileService userProfileService,
 			ISystemAuditsService systemAuditsService,
-			UserManager<Model.Identity.IdentityUser> userManager)
+			UserManager<Model.Identity.IdentityUser> userManager,
+			IExternalIdentityLinkService externalIdentityLinkService,
+			IUserSessionService userSessionService)
 		{
 			_ssoService = ssoService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
 			_systemAuditsService = systemAuditsService;
 			_userManager = userManager;
+			_externalIdentityLinkService = externalIdentityLinkService;
+			_userSessionService = userSessionService;
 		}
 
 		// -- GET /scim/v2/Users ------------------------------------------------
@@ -60,7 +66,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromQuery] int count = 100,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, null, cancellationToken))
+			if (await AuthorizeScimRequestAsync(departmentId, null, cancellationToken) == null)
 				return ScimUnauthorized();
 
 			var users = await _departmentsService.GetAllUsersForDepartment(departmentId, false, true);
@@ -100,7 +106,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, id, cancellationToken))
+			if (await AuthorizeScimRequestAsync(departmentId, id, cancellationToken) == null)
 				return ScimUnauthorized();
 
 			var user = await _userManager.FindByIdAsync(id);
@@ -131,7 +137,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromBody] ScimUserResource resource,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, null, cancellationToken))
+			var authorizingConfig = await AuthorizeScimRequestAsync(departmentId, null, cancellationToken);
+			if (authorizingConfig == null)
 				return ScimUnauthorized();
 
 			if (resource == null || string.IsNullOrWhiteSpace(resource.UserName))
@@ -179,6 +186,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 			};
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
+			var member = await _departmentsService.GetDepartmentMemberAsync(newUser.Id, departmentId);
+
+			// Without an externalId there is no subject a later assertion could match. Substituting the
+			// Resgrid user id would mark the account externally managed behind a subject that can never
+			// be presented, permanently blocking local email and credential management.
+			if (member != null && !string.IsNullOrWhiteSpace(resource.ExternalId))
+			{
+				await _externalIdentityLinkService.SaveAsync(new UserExternalIdentityLink
+				{
+					UserId = newUser.Id,
+					DepartmentId = departmentId,
+					DepartmentMemberId = member.DepartmentMemberId,
+					DepartmentSsoConfigId = authorizingConfig.DepartmentSsoConfigId,
+					ProviderType = authorizingConfig.SsoProviderType,
+					Issuer = $"scim:{authorizingConfig.DepartmentSsoConfigId}",
+					ExternalSubject = resource.ExternalId,
+					EmailAtLink = email,
+					LinkMethod = (int)ExternalIdentityLinkMethod.Scim,
+					IsEmailExternallyManaged = true,
+					LinkedOn = DateTime.UtcNow
+				}, cancellationToken);
+			}
+
 			await SaveScimAuditAsync(departmentId, newUser.Id, AuditLogTypes.ScimUserCreated,
 				successful: true,
 				data: $"userName={resource.UserName} email={email} externalId={resource.ExternalId}");
@@ -199,7 +229,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromBody] ScimUserResource resource,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, id, cancellationToken))
+			if (await AuthorizeScimRequestAsync(departmentId, id, cancellationToken) == null)
 				return ScimUnauthorized();
 
 			var user = await _userManager.FindByIdAsync(id);
@@ -218,6 +248,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					member.IsDisabled = true;
 					await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+					await _userSessionService.RevokeDepartmentSessionsAsync(id, departmentId,
+						UserSessionRevocationReason.MembershipDisabled, cancellationToken);
 					await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeactivated,
 						successful: true, data: "active=false via PUT");
 				}
@@ -260,7 +292,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromBody] ScimPatchRequest patchRequest,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, id, cancellationToken))
+			if (await AuthorizeScimRequestAsync(departmentId, id, cancellationToken) == null)
 				return ScimUnauthorized();
 
 			var user = await _userManager.FindByIdAsync(id);
@@ -284,6 +316,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 						member.IsDisabled = !active;
 						if (!active) member.IsDeleted = false; // deactivate without hard-delete
 						await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+						if (!active)
+							await _userSessionService.RevokeDepartmentSessionsAsync(id, departmentId,
+								UserSessionRevocationReason.MembershipDisabled, cancellationToken);
 
 						var activeAuditType = active ? AuditLogTypes.ScimUserReactivated : AuditLogTypes.ScimUserDeactivated;
 						await SaveScimAuditAsync(departmentId, id, activeAuditType,
@@ -314,7 +349,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, id, cancellationToken))
+			if (await AuthorizeScimRequestAsync(departmentId, id, cancellationToken) == null)
 				return ScimUnauthorized();
 
 			var user = await _userManager.FindByIdAsync(id);
@@ -331,6 +366,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				member.IsDisabled = true;
 				member.IsDeleted = true;
 				await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+				await _userSessionService.RevokeDepartmentSessionsAsync(id, departmentId,
+					UserSessionRevocationReason.MembershipDisabled, cancellationToken);
 			}
 
 			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeactivated,
@@ -351,7 +388,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, null, cancellationToken))
+			if (await AuthorizeScimRequestAsync(departmentId, null, cancellationToken) == null)
 				return ScimUnauthorized();
 
 			await SaveScimAuditAsync(departmentId, null, AuditLogTypes.ScimGroupListed, successful: true);
@@ -370,11 +407,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		// -- Private helpers ---------------------------------------------------
 
 		/// <summary>
-		/// Validates the SCIM bearer token and confirms it is bound to the department
-		/// supplied in the request header. Any mismatch is rejected and recorded as
-		/// <see cref="AuditLogTypes.ScimAuthFailed"/> before returning false.
+		/// Validates the SCIM bearer token and confirms it is bound to the department supplied in the
+		/// request header. Returns the configuration that authorized the request, or null when the request
+		/// is rejected; every rejection is recorded as <see cref="AuditLogTypes.ScimAuthFailed"/> first.
 		/// </summary>
-		private async Task<bool> AuthorizeScimRequestAsync(int departmentId, string targetUserId, CancellationToken cancellationToken)
+		private async Task<DepartmentSsoConfig> AuthorizeScimRequestAsync(int departmentId, string targetUserId, CancellationToken cancellationToken)
 		{
 			var authHeader = Request.Headers["Authorization"].FirstOrDefault();
 
@@ -383,7 +420,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
 					successful: false, data: "Missing or malformed Authorization header");
-				return false;
+				return null;
 			}
 
 			var token = authHeader.Substring("Bearer ".Length).Trim();
@@ -394,28 +431,28 @@ namespace Resgrid.Web.Services.Controllers.v4
 				// Do not reveal whether the department exists to the caller.
 				await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
 					successful: false, data: $"Department {departmentId} not found");
-				return false;
+				return null;
 			}
 
 			// Validate the token AND confirm it belongs to the claimed department.
 			// Returns null on any failure (invalid token, wrong department, decryption error).
-			var tokenDepartmentId = await _ssoService.ValidateScimBearerTokenAndGetDepartmentAsync(
+			var authorizingConfig = await _ssoService.ValidateScimBearerTokenAndGetConfigAsync(
 				token, departmentId, department.Code, cancellationToken);
 
-			if (tokenDepartmentId == null)
+			if (authorizingConfig == null)
 			{
 				await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
 					successful: false, data: "Bearer token invalid or not configured for this department");
-				return false;
+				return null;
 			}
 
 			// Explicit defence-in-depth check: the token's owning department must equal the header value.
-			if (tokenDepartmentId.Value != departmentId)
+			if (authorizingConfig.DepartmentId != departmentId)
 			{
 				await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
 					successful: false,
-					data: $"Token department mismatch: token belongs to dept={tokenDepartmentId.Value}, header claims dept={departmentId}");
-				return false;
+					data: $"Token department mismatch: token belongs to dept={authorizingConfig.DepartmentId}, header claims dept={departmentId}");
+				return null;
 			}
 
 			// If the request targets a specific user, confirm that user is a member of the department.
@@ -427,11 +464,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
 						successful: false,
 						data: $"targetUserId={targetUserId} is not a member of dept={departmentId} or does not exist");
-					return false;
+					return null;
 				}
 			}
 
-			return true;
+			return authorizingConfig;
 		}
 
 		private static object BuildScimUser(Model.Identity.IdentityUser user, UserProfile profile)

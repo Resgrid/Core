@@ -37,6 +37,19 @@ namespace Resgrid.Web.Attributes
 		/// within a shared session store.
 		/// </summary>
 		internal const string StepUpSessionKey = "Resgrid2FAVerifiedAt";
+		internal const string MfaVerifiedAtHttpContextItemKey = "mfa_verified_at";
+
+		/// <summary>
+		/// Requires MFA for the decorated operation even when the department-wide administrator
+		/// 2FA setting is disabled.
+		/// </summary>
+		public bool RequireForOperation { get; set; }
+
+		/// <summary>
+		/// Optional operation-specific verification window. Values less than one use the configured
+		/// default window.
+		/// </summary>
+		public int VerificationWindowMinutes { get; set; }
 
 		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -54,8 +67,15 @@ namespace Resgrid.Web.Attributes
 			var departmentSettingsService = services.GetService<IDepartmentSettingsService>();
 			var departmentGroupsService = services.GetService<IDepartmentGroupsService>();
 
-			if (userManager == null || departmentsService == null || departmentSettingsService == null)
+			if (userManager == null ||
+				(!RequireForOperation && (departmentsService == null || departmentSettingsService == null)))
 			{
+				if (RequireForOperation)
+				{
+					context.Result = new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
+					return;
+				}
+
 				await next();
 				return;
 			}
@@ -63,13 +83,18 @@ namespace Resgrid.Web.Attributes
 			var identityUser = await userManager.GetUserAsync(claimsPrincipal);
 			if (identityUser == null)
 			{
+				if (RequireForOperation)
+				{
+					context.Result = new ChallengeResult();
+					return;
+				}
+
 				await next();
 				return;
 			}
 
 			// ── Gather plain-value inputs ────────────────────────────────────────────
 
-			var currentUserId = claimsPrincipal.FindFirstValue(ClaimTypes.PrimarySid);
 			bool userHas2Fa = await userManager.GetTwoFactorEnabledAsync(identityUser);
 
 			int departmentScope = 0;
@@ -78,7 +103,9 @@ namespace Resgrid.Web.Attributes
 
 			try
 			{
-				var department = await departmentsService.GetDepartmentByUserIdAsync(identityUser.Id);
+				var department = RequireForOperation || departmentsService == null
+					? null
+					: await departmentsService.GetDepartmentByUserIdAsync(identityUser.Id);
 				if (department != null)
 				{
 					departmentScope = await departmentSettingsService.GetRequire2FAForAdminsAsync(department.DepartmentId);
@@ -97,7 +124,10 @@ namespace Resgrid.Web.Attributes
 				// Fail open on department lookup errors
 			}
 
-			DateTime? lastStepUpVerifiedAtUtc = ParseStepUpSession(context.HttpContext.Session, currentUserId);
+			DateTime? lastStepUpVerifiedAtUtc = ParseStepUpSession(context.HttpContext.Session, identityUser.Id);
+			var verificationWindowMinutes = VerificationWindowMinutes > 0
+				? VerificationWindowMinutes
+				: TwoFactorConfig.StepUpVerificationWindowMinutes;
 
 			// ── Delegate the decision ────────────────────────────────────────────────
 
@@ -107,7 +137,8 @@ namespace Resgrid.Web.Attributes
 				IsAdminOrManagingUser: isAdminOrManagingUser,
 				IsGroupAdmin: isGroupAdmin,
 				LastStepUpVerifiedAtUtc: lastStepUpVerifiedAtUtc,
-				StepUpWindowMinutes: TwoFactorConfig.StepUpVerificationWindowMinutes);
+				StepUpWindowMinutes: verificationWindowMinutes,
+				RequireStepUpForOperation: RequireForOperation);
 
 			var decision = TwoFactorEnforcementEvaluator.Evaluate(enforcementContext, DateTime.UtcNow);
 
@@ -116,6 +147,9 @@ namespace Resgrid.Web.Attributes
 			switch (decision.Outcome)
 			{
 				case TwoFactorEnforcementOutcome.NotRequired:
+					if (RequireForOperation && lastStepUpVerifiedAtUtc.HasValue)
+						context.HttpContext.Items[MfaVerifiedAtHttpContextItemKey] = lastStepUpVerifiedAtUtc.Value;
+
 					await next();
 					return;
 

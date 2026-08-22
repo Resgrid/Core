@@ -494,7 +494,13 @@
             @Html.Raw("<span class='sr-only'>Toggle Dropdown</span>")
             @Html.Raw("</button>")
             @Html.Raw("<ul class='dropdown-menu'>")
-            @Html.Raw($"<li><a href='{@Url.Action("ResetPasswordForUser", "Profile", new { area = "User" })}?userId={p.UserId}'>{@localizer["ChangePassword"]}</a></li>")
+			@if (p.CanResetPassword && !p.IsSsoManaged)
+			{
+				var passwordActionLabel = Model.RequirePasswordResetViaEmail
+					? "Send Password Reset Email"
+					: localizer["ChangePassword"].Value;
+				@Html.Raw($"<li><a href='{@Url.Action("ResetPasswordForUser", "Profile", new { area = "User" })}?userId={p.UserId}'>{passwordActionLabel}</a></li>")
+			}
             @Html.Raw("</ul>")
             @Html.Raw("</div>&nbsp;")
         }

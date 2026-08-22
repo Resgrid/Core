@@ -50,7 +50,9 @@ namespace Resgrid.Tests.Web.Services
 				_systemAuditsService.Object,
 				_ssoService.Object,
 				_encryptionService.Object,
-				_cacheProvider.Object)
+				_cacheProvider.Object,
+				Mock.Of<IUserSessionService>(),
+				Mock.Of<IExternalIdentityLinkService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

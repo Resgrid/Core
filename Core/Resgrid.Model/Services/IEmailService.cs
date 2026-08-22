@@ -19,20 +19,18 @@ namespace Resgrid.Model.Services
 		/// <param name="name">The name.</param>
 		/// <param name="emailAddress">The email address.</param>
 		/// <param name="userName">Name of the user.</param>
-		/// <param name="password">The password.</param>
 		/// <param name="departmentId">The department identifier.</param>
-		Task<bool> SendWelcomeEmail(string departmentName, string name, string emailAddress, string userName, string password,
+		Task<bool> SendWelcomeEmail(string departmentName, string name, string emailAddress, string userName,
 			int departmentId);
 
 		/// <summary>
-		/// Sends the password reset email.
+		/// Sends a public password recovery email. SSO-managed accounts receive the request details but no link.
 		/// </summary>
-		/// <param name="emailAddress">The email address.</param>
-		/// <param name="name">The name.</param>
-		/// <param name="userName">Name of the user.</param>
-		/// <param name="password">The password.</param>
-		/// <param name="departmentName">Name of the department.</param>
-		Task<bool> SendPasswordResetEmail(string emailAddress, string name, string userName, string password,
+		Task<bool> SendPasswordRecoveryEmail(string emailAddress, string name, string departmentName,
+			string resetUrl, string ipAddress, string userAgent, DateTime requestedOn, bool isSsoManaged);
+
+		/// <summary>Notifies a user that a department administrator changed their password.</summary>
+		Task<bool> SendPasswordChangedByAdministratorEmail(string emailAddress, string name, string userName,
 			string departmentName);
 
 		/// <summary>

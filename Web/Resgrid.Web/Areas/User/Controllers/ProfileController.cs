@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,12 +23,18 @@ using Microsoft.Extensions.Options;
 using Resgrid.Web.Options;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Resgrid.Web.Areas.User.Models.Personnel;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 using SixLabors.ImageSharp.Formats;
 using Microsoft.Extensions.Localization;
+using Resgrid.Model.Security;
+using Newtonsoft.Json;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
+using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -51,13 +57,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentSsoService _departmentSsoService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
 		private readonly IDeleteService _deleteService;
+		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
+		private readonly IUserSessionService _userSessionService;
+		private readonly ISystemAuditsService _systemAuditsService;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IPasswordRecoveryService _passwordRecoveryService;
+		private readonly IEventAggregator _eventAggregator;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, ICertificationService certificationService,
 			ICustomStateService customStateService, IImageService imageService, IOptions<AppOptions> appOptionsAccessor,
 			IEmailService emailService, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 			IDepartmentSsoService departmentSsoService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer, IDeleteService deleteService)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer, IDeleteService deleteService,
+			IExternalIdentityLinkService externalIdentityLinkService, IUserSessionService userSessionService,
+			ISystemAuditsService systemAuditsService, IDepartmentGroupsService departmentGroupsService,
+			IDepartmentSettingsService departmentSettingsService, IPasswordRecoveryService passwordRecoveryService,
+			IEventAggregator eventAggregator)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -74,6 +91,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentSsoService = departmentSsoService;
 			_secLocalizer = secLocalizer;
 			_deleteService = deleteService;
+			_externalIdentityLinkService = externalIdentityLinkService;
+			_userSessionService = userSessionService;
+			_systemAuditsService = systemAuditsService;
+			_departmentGroupsService = departmentGroupsService;
+			_departmentSettingsService = departmentSettingsService;
+			_passwordRecoveryService = passwordRecoveryService;
+			_eventAggregator = eventAggregator;
 		}
 		#endregion Private Members and Constructors
 
@@ -951,45 +975,76 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public async Task<IActionResult>  ResetPasswordForUser(string userId)
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5)]
+		public async Task<IActionResult> ResetPasswordForUser(string userId)
 		{
-			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+			if (member == null)
+				return NotFound();
+			if (!await CanAdministratorResetPasswordAsync(userId, member))
 				return Unauthorized();
 
-			var model = new ResetPasswordForUserView();
-			model.UserId = userId;
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user == null)
+				return NotFound();
 
-			var user = _usersService.GetUserById(userId);
-			model.Name = await UserHelper.GetFullNameForUser(userId);
-			model.Email = user.Email;
-			model.Username = user.UserName;
-			model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
-			model.MustChangePasswordOnLogin = true;
+			var model = new ResetPasswordForUserView
+			{
+				UserId = userId,
+				MustChangePasswordOnLogin = true
+			};
+			await PopulatePasswordResetModelAsync(model, user, member);
+			model.Message = TempData["PasswordResetMessage"] as string;
+
+			if (model.IsSsoManaged)
+				return Forbid();
 
 			return View(model);
 		}
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_View)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, VerificationWindowMinutes = 5)]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult>  ResetPasswordForUser(ResetPasswordForUserView model)
+		public async Task<IActionResult> ResetPasswordForUser(ResetPasswordForUserView model, CancellationToken cancellationToken)
 		{
-			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-				return Unauthorized();
-
-			var department= await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-
-			if (model.UserId == department.ManagingUserId)
-				return Unauthorized();
-
-			var userDepartment = await _departmentsService.GetDepartmentByUserIdAsync(model.UserId);
-
-			if (department.DepartmentId != userDepartment.DepartmentId)
-				return Unauthorized();
-
 			var user = await _userManager.FindByIdAsync(model.UserId);
-			model.Name = await UserHelper.GetFullNameForUser(model.UserId);
-			model.Email = user.Email;
+			if (user == null)
+				return NotFound();
+
+			var member = await _departmentsService.GetDepartmentMemberAsync(model.UserId, DepartmentId);
+			if (member == null)
+				return NotFound();
+			if (!await CanAdministratorResetPasswordAsync(model.UserId, member))
+				return Unauthorized();
+
+			await PopulatePasswordResetModelAsync(model, user, member);
+			if (model.IsSsoManaged)
+				return Forbid();
+			if (!TryGetMfaVerifiedAtUtc(out var mfaVerifiedAtUtc))
+				return Forbid();
+
+			if (model.UseEmailResetLink)
+			{
+				// The mode is derived from durable department policy. Ignore any password fields or
+				// mode value supplied by the browser so a direct POST cannot bypass the setting.
+				ModelState.Remove(nameof(model.Password));
+				ModelState.Remove(nameof(model.ConfirmPassword));
+				model.Password = null;
+				model.ConfirmPassword = null;
+
+				if (string.IsNullOrWhiteSpace(user.Email) || !await _userManager.IsEmailConfirmedAsync(user))
+				{
+					ModelState.AddModelError(string.Empty,
+						"A reset link cannot be sent until this user has a confirmed email address.");
+					return View(model);
+				}
+
+				return await SendAdministratorPasswordResetLinkAsync(model, user, mfaVerifiedAtUtc, cancellationToken);
+			}
+
+			if (!ModelState.IsValid)
+				return View(model);
 
 			// Validate new password against system-enforced complexity and department min-length policy
 			var policyError = await _departmentSsoService.ValidatePasswordAgainstPolicyAsync(DepartmentId, model.Password);
@@ -999,22 +1054,45 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
+			var now = DateTime.UtcNow;
+			user.AuthenticationGeneration++;
+			user.CredentialsValidAfterUtc = now;
+			user.AuthenticationStateChangedOn = now;
 			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 			var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
+			var auditData = BuildPasswordResetAuditData(model.UserId, "direct", mfaVerifiedAtUtc,
+				result.Succeeded, result.Succeeded, model.MustChangePasswordOnLogin);
 
 			if (result.Succeeded)
 			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 				await _departmentSsoService.RecordPasswordChangedAsync(DepartmentId, model.UserId);
 
-				var member = await _departmentsService.GetDepartmentMemberAsync(model.UserId, DepartmentId);
-				if (member != null)
+				member.MustChangePassword = model.MustChangePasswordOnLogin;
+				await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+
+				await _userSessionService.RevokeAllAfterCredentialChangeAsync(UserId, model.UserId,
+					UserSessionRevocationReason.PasswordReset, now, cancellationToken);
+
+				await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
 				{
-					member.MustChangePassword = model.MustChangePasswordOnLogin;
-					await _departmentsService.SaveDepartmentMemberAsync(member);
-				}
+					System = (int)SystemAuditSystems.Website,
+					Type = (int)SystemAuditTypes.PasswordResetByAdministrator,
+					DepartmentId = DepartmentId,
+					UserId = UserId,
+					TargetUserId = model.UserId,
+					Username = User.Identity?.Name,
+					IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+					CorrelationId = HttpContext.TraceIdentifier,
+					ServerName = Environment.MachineName,
+					Successful = true,
+					Data = auditData
+				}, cancellationToken);
+				PublishPasswordResetAudit(model.UserId, auditData, true);
 
 				if (model.EmailUser)
-					await _emailService.SendPasswordResetEmail(model.Email, model.Name, user.UserName, model.Password, userDepartment.Name);
+					await _emailService.SendPasswordChangedByAdministratorEmail(model.Email, model.Name,
+						user.UserName, department?.Name ?? "Resgrid");
 
 				return RedirectToAction("Index", "Personnel", new { Area = "User" });
 			}
@@ -1024,7 +1102,200 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Message += error.Description + " ";
 			}
 
+			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.PasswordResetByAdministrator,
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				TargetUserId = model.UserId,
+				Username = User.Identity?.Name,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				CorrelationId = HttpContext.TraceIdentifier,
+				ServerName = Environment.MachineName,
+				Successful = false,
+				Data = auditData
+			}, cancellationToken);
+			PublishPasswordResetAudit(model.UserId, auditData, false);
+
 			return View(model);
+		}
+
+		private async Task PopulatePasswordResetModelAsync(ResetPasswordForUserView model, IdentityUser user,
+			DepartmentMember member)
+		{
+			model.Name = await UserHelper.GetFullNameForUser(user.Id);
+			model.Email = user.Email;
+			model.Username = user.UserName;
+			model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
+			model.IsSsoManaged = await IsSsoManagedAsync(user.Id, member);
+			model.UseEmailResetLink = await _departmentSettingsService.GetRequirePasswordResetViaEmailAsync(DepartmentId);
+		}
+
+		private async Task<bool> CanAdministratorResetPasswordAsync(string targetUserId, DepartmentMember targetMember)
+		{
+			if (string.IsNullOrWhiteSpace(targetUserId) || targetUserId == UserId || targetMember == null)
+				return false;
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			if (department == null || targetUserId == department.ManagingUserId)
+				return false;
+
+			if (department.IsUserAnAdmin(UserId))
+				return true;
+
+			// Group administrators may manage only non-department-admin users in the group they
+			// administer. Target group membership is resolved server-side on every request.
+			if (department.IsUserAnAdmin(targetUserId))
+				return false;
+
+			var targetGroup = await _departmentGroupsService.GetGroupForUserAsync(targetUserId, DepartmentId);
+			return targetGroup != null && targetGroup.IsUserGroupAdmin(UserId);
+		}
+
+		private async Task<IActionResult> SendAdministratorPasswordResetLinkAsync(ResetPasswordForUserView model,
+			IdentityUser user, DateTime mfaVerifiedAtUtc, CancellationToken cancellationToken)
+		{
+			var requestedOn = DateTime.UtcNow;
+			var ipAddress = IpAddressHelper.GetRequestIP(Request, true);
+			var issued = false;
+			var emailSent = false;
+			string issuedToken = null;
+
+			try
+			{
+				var issue = await _passwordRecoveryService.IssueAsync(user.Id, user.Email, ipAddress,
+					user.AuthenticationGeneration, user.SecurityStamp, cancellationToken);
+				issued = issue.Issued && !issue.RateLimited;
+				issuedToken = issue.Token;
+
+				if (issued)
+				{
+					var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+					var profile = await _userProfileService.GetProfileByUserIdAsync(user.Id);
+					var resetPageUrl = Url.Action("ResetPassword", "Account", new { area = "" }, Request.Scheme);
+					if (string.IsNullOrWhiteSpace(resetPageUrl))
+						throw new InvalidOperationException("The password reset URL could not be generated.");
+
+					var resetUrl = $"{resetPageUrl}#token={Uri.EscapeDataString(issue.Token)}";
+					emailSent = await _emailService.SendPasswordRecoveryEmail(user.Email,
+						profile?.FullName.AsFirstNameLastName ?? model.Name ?? "Resgrid user",
+						department?.Name ?? "Resgrid", resetUrl, ipAddress,
+						BoundSecurityContext(Request.Headers.UserAgent.ToString(), 512), requestedOn, false);
+
+					if (!emailSent)
+						await TryRemovePasswordRecoveryTokenAsync(issue.Token, cancellationToken);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Administrator password reset link processing failed.");
+				if (!string.IsNullOrWhiteSpace(issuedToken))
+					await TryRemovePasswordRecoveryTokenAsync(issuedToken, cancellationToken);
+			}
+
+			var successful = issued && emailSent;
+			var auditData = BuildPasswordResetAuditData(user.Id, "email_link", mfaVerifiedAtUtc,
+				successful, false, null);
+			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.PasswordResetLinkSentByAdministrator,
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				TargetUserId = user.Id,
+				Username = User.Identity?.Name,
+				IpAddress = ipAddress,
+				CorrelationId = HttpContext.TraceIdentifier,
+				ServerName = Environment.MachineName,
+				Successful = successful,
+				Data = auditData
+			}, cancellationToken);
+			PublishPasswordResetAudit(user.Id, auditData, successful);
+
+			if (!issued || !emailSent)
+			{
+				ModelState.AddModelError(string.Empty,
+					"The password reset email could not be sent. Wait before trying again or verify the user's email configuration.");
+				return View(model);
+			}
+
+			TempData["PasswordResetMessage"] =
+				"A short-lived, single-use password reset link was sent to the user's confirmed email address.";
+			return RedirectToAction(nameof(ResetPasswordForUser), new { userId = user.Id });
+		}
+
+		private bool TryGetMfaVerifiedAtUtc(out DateTime verifiedAtUtc)
+		{
+			verifiedAtUtc = default;
+			if (!HttpContext.Items.TryGetValue(RequiresRecentTwoFactorAttribute.MfaVerifiedAtHttpContextItemKey,
+				out var rawValue) || rawValue is not DateTime value)
+				return false;
+
+			verifiedAtUtc = value.Kind == DateTimeKind.Utc ? value : value.ToUniversalTime();
+			var age = DateTime.UtcNow - verifiedAtUtc;
+			return age >= TimeSpan.Zero && age <= TimeSpan.FromMinutes(5);
+		}
+
+		private static string BuildPasswordResetAuditData(string targetUserId, string resetMode,
+			DateTime mfaVerifiedAtUtc, bool successful, bool sessionsRevoked, bool? mustChangePasswordOnLogin)
+		{
+			return JsonConvert.SerializeObject(new
+			{
+				target_user_id = targetUserId,
+				reset_mode = resetMode,
+				mfa_verified_at = mfaVerifiedAtUtc.ToString("O"),
+				successful,
+				sessions_revoked = sessionsRevoked,
+				must_change_password_on_login = mustChangePasswordOnLogin
+			});
+		}
+
+		private void PublishPasswordResetAudit(string targetUserId, string auditData, bool successful)
+		{
+			_eventAggregator.SendMessage(new AuditEvent
+			{
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				TargetUserId = targetUserId,
+				Type = AuditLogTypes.PasswordResetByAdministrator,
+				After = auditData,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				UserAgent = BoundSecurityContext(Request.Headers.UserAgent.ToString(), 512),
+				ServerName = Environment.MachineName,
+				Successful = successful
+			});
+		}
+
+		private async Task TryRemovePasswordRecoveryTokenAsync(string token, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await _passwordRecoveryService.RemoveAsync(token, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Unable to remove an undelivered administrator password recovery token.");
+			}
+		}
+
+		private static string BoundSecurityContext(string value, int maximumLength)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				return "unknown";
+
+			var normalized = value.Replace('\r', ' ').Replace('\n', ' ').Trim();
+			return normalized.Length <= maximumLength ? normalized : normalized.Substring(0, maximumLength);
+		}
+
+		private async Task<bool> IsSsoManagedAsync(string userId, DepartmentMember member = null)
+		{
+			var state = await _externalIdentityLinkService.GetSsoManagementStateAsync(userId);
+			if (state == null || state.IsSsoManaged)
+				return true;
+
+			member ??= await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+			return member != null && (!string.IsNullOrWhiteSpace(member.ExternalSsoId) || member.SsoLinkedOn.HasValue);
 		}
 
 		#region Your Departments
@@ -1065,6 +1336,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult>  JoinDepartment(IFormCollection form)
 		{
 			var departmentId = form["deparmentId"];
@@ -1086,27 +1358,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public async Task<IActionResult>  SetActiveDepartment([FromBody]ChangeActiveDepartmentModel model)
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult>  SetActiveDepartment([FromBody]ChangeActiveDepartmentModel model,
+			CancellationToken cancellationToken)
 		{
 			if (await _departmentsService.IsMemberOfDepartmentAsync(model.DepartmentId, UserId))
 			{
+				if (!await CanContinueCurrentAuthenticationInDepartmentAsync(model.DepartmentId, cancellationToken))
+					return Forbid();
+
 				var user = await _userManager.FindByIdAsync(UserId);
-
-				await _departmentsService.SetActiveDepartmentForUserAsync(UserId, model.DepartmentId, user);
-
-				await _signInManager.SignOutAsync();
-
-
-				await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-				await _signInManager.SignInAsync(user, true);
-
-				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, HttpContext.User, new AuthenticationProperties
-				{
-					ExpiresUtc = DateTime.UtcNow.AddHours(4),
-					IsPersistent = false,
-					AllowRefresh = false
-				});
+				await _departmentsService.SetActiveDepartmentForUserAsync(UserId, model.DepartmentId, user,
+					cancellationToken);
+				if (!await RenewPrincipalForDepartmentAsync(user, model.DepartmentId, cancellationToken))
+					return Unauthorized();
 
 				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
 			}
@@ -1114,29 +1379,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("YourDepartments");
 		}
 
-		[HttpGet]
+		[HttpPost]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult>  SetDefaultDepartment(int departmentId, CancellationToken cancellationToken)
 		{
 			if (await _departmentsService.IsMemberOfDepartmentAsync(departmentId, UserId))
 			{
+				if (!await CanContinueCurrentAuthenticationInDepartmentAsync(departmentId, cancellationToken))
+					return Forbid();
+
 				var user = await _userManager.FindByIdAsync(UserId);
 
 				await _departmentsService.SetActiveDepartmentForUserAsync(UserId, departmentId, user, cancellationToken);
 				await _departmentsService.SetDefaultDepartmentForUserAsync(UserId, departmentId, user, cancellationToken);
 
-				await _signInManager.SignOutAsync();
-
-				await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-				await _signInManager.SignInAsync(user, true);
-
-				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, HttpContext.User, new AuthenticationProperties
-				{
-					ExpiresUtc = DateTime.UtcNow.AddHours(4),
-					IsPersistent = false,
-					AllowRefresh = false
-				});
+				if (!await RenewPrincipalForDepartmentAsync(user, departmentId, cancellationToken))
+					return Unauthorized();
 
 				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
 			}
@@ -1144,112 +1403,112 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("YourDepartments");
 		}
 
-		[HttpGet]
+		[HttpPost]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteDepartmentLink(int departmentId, CancellationToken cancellationToken)
 		{
-			if (await _departmentsService.IsMemberOfDepartmentAsync(departmentId, UserId))
+			if (!await _departmentsService.IsMemberOfDepartmentAsync(departmentId, UserId))
+				return RedirectToAction("YourDepartments");
+
+			var departmentLinks = await _departmentsService.GetAllDepartmentsForUserAsync(UserId);
+			var departmentToRemove = departmentLinks.FirstOrDefault(x => x.DepartmentId == departmentId);
+			if (departmentToRemove == null || departmentLinks.Count <= 1 ||
+				departmentToRemove.Department?.ManagingUserId == UserId)
+				return RedirectToAction("YourDepartments");
+
+			var user = await _userManager.FindByIdAsync(UserId);
+			var remainingDepartment = departmentLinks
+				.Where(x => x.DepartmentId != departmentToRemove.DepartmentId)
+				.OrderByDescending(x => x.IsDefault)
+				.FirstOrDefault();
+			var switchesDepartment = departmentToRemove.IsActive;
+			var canKeepCurrentSession = !switchesDepartment ||
+				await CanContinueCurrentAuthenticationInDepartmentAsync(remainingDepartment.DepartmentId,
+					cancellationToken);
+
+			if (switchesDepartment)
 			{
-				var departmentLinks= await _departmentsService.GetAllDepartmentsForUserAsync(UserId);
-				var departmentToRemove = departmentLinks.FirstOrDefault(x => x.DepartmentId == departmentId);
-				var user = await _userManager.FindByIdAsync(UserId);
-
-				if (departmentToRemove != null && departmentLinks.Count > 1)
+				await _departmentsService.SetActiveDepartmentForUserAsync(UserId, remainingDepartment.DepartmentId,
+					user, cancellationToken);
+				if (canKeepCurrentSession &&
+					!await RenewPrincipalForDepartmentAsync(user, remainingDepartment.DepartmentId, cancellationToken))
 				{
-					var defaultDepartment = departmentLinks.FirstOrDefault(x => x.IsDefault);
-
-					if (departmentToRemove.IsActive)
-					{
-						if (defaultDepartment != null &&
-						    departmentToRemove.DepartmentId != defaultDepartment.DepartmentId)
-						{
-							await _departmentsService.SetActiveDepartmentForUserAsync(UserId, defaultDepartment.DepartmentId,
-								user, cancellationToken);
-							var revoked = await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
-
-							if (!revoked)
-							{
-								Resgrid.Framework.Logging.LogError($"DeleteDepartmentLink: failed to revoke department {departmentToRemove.DepartmentId} access for user {UserId}");
-								return RedirectToAction("YourDepartments");
-							}
-
-							await _signInManager.SignOutAsync();
-
-							await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-							await _signInManager.SignInAsync(user, true);
-
-							await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-								HttpContext.User, new AuthenticationProperties
-								{
-									ExpiresUtc = DateTime.UtcNow.AddHours(4),
-									IsPersistent = false,
-									AllowRefresh = false
-								});
-
-							return RedirectToAction("Dashboard", "Home", new {Area = "User"});
-						}
-						else if (defaultDepartment != null &&
-						         departmentToRemove.DepartmentId == defaultDepartment.DepartmentId)
-						{
-							var nextDepartmentUp =
-								departmentLinks.FirstOrDefault(x => x.DepartmentId != departmentToRemove.DepartmentId);
-
-							if (nextDepartmentUp != null)
-							{
-								await _departmentsService.SetActiveDepartmentForUserAsync(UserId, nextDepartmentUp.DepartmentId,
-									user, cancellationToken);
-								var revoked = await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
-
-								if (!revoked)
-								{
-									Resgrid.Framework.Logging.LogError($"DeleteDepartmentLink: failed to revoke department {departmentToRemove.DepartmentId} access for user {UserId}");
-									return RedirectToAction("YourDepartments");
-								}
-
-								await _signInManager.SignOutAsync();
-
-								await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-								await _signInManager.SignInAsync(user, true);
-
-								await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-									HttpContext.User, new AuthenticationProperties
-									{
-										ExpiresUtc = DateTime.UtcNow.AddHours(4),
-										IsPersistent = false,
-										AllowRefresh = false
-									});
-
-								return RedirectToAction("Dashboard", "Home", new {Area = "User"});
-							}
-						}
-					}
-					else if (defaultDepartment != null)
-					{
-						if (departmentToRemove.DepartmentId != defaultDepartment.DepartmentId)
-						{
-							var revoked = await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
-
-							if (!revoked)
-								Resgrid.Framework.Logging.LogError($"DeleteDepartmentLink: failed to revoke department {departmentToRemove.DepartmentId} access for user {UserId}");
-						}
-						else
-						{
-							var nextDepartmentUp =
-								departmentLinks.FirstOrDefault(x => x.DepartmentId != departmentToRemove.DepartmentId);
-
-							if (nextDepartmentUp != null)
-							{
-								await _departmentsService.SetDefaultDepartmentForUserAsync(UserId, nextDepartmentUp.DepartmentId,
-									user, cancellationToken);
-							}
-						}
-					}
+					// The active department has already moved but this principal still describes the old
+					// one. Sign out rather than leave the two disagreeing; the next sign-in rebuilds both.
+					await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+					return Unauthorized();
 				}
 			}
 
-			return RedirectToAction("YourDepartments");
+			if (departmentToRemove.IsDefault)
+				await _departmentsService.SetDefaultDepartmentForUserAsync(UserId, remainingDepartment.DepartmentId,
+					user, cancellationToken);
+
+			var revoked = await _deleteService.RevokeDepartmentAccessAsync(UserId,
+				departmentToRemove.DepartmentId, UserId, cancellationToken);
+			if (!revoked)
+			{
+				Resgrid.Framework.Logging.LogError($"DeleteDepartmentLink: failed to revoke department {departmentToRemove.DepartmentId} access for user {UserId}");
+				return RedirectToAction("YourDepartments");
+			}
+
+			if (switchesDepartment && !canKeepCurrentSession)
+			{
+				await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+				return RedirectToAction("LogOn", "Account", new {Area = ""});
+			}
+
+			return switchesDepartment
+				? RedirectToAction("Dashboard", "Home", new {Area = "User"})
+				: RedirectToAction("YourDepartments");
+		}
+
+		private async Task<bool> CanContinueCurrentAuthenticationInDepartmentAsync(int departmentId,
+			CancellationToken cancellationToken)
+		{
+			var requiresSso = await _departmentSsoService.IsRequireSsoPolicyActiveAsync(departmentId,
+				cancellationToken) && await _departmentSsoService.IsSsoEnabledForDepartmentAsync(departmentId,
+				cancellationToken);
+			var localLoginAllowed = await _externalIdentityLinkService.IsLocalLoginAllowedAsync(UserId,
+				departmentId, cancellationToken);
+			if (!requiresSso && localLoginAllowed)
+				return true;
+
+			// An authentication established for another department cannot be used to enter a
+			// department that requires its own SSO policy. The user must authenticate at that IdP.
+			var currentSessionId = User.FindFirstValue(SessionClaimTypes.SessionId);
+			var current = (await _userSessionService.GetActiveForUserAsync(UserId, cancellationToken))
+				.FirstOrDefault(session => session.UserSessionId == currentSessionId);
+			return current?.DepartmentId == departmentId &&
+				(current.AuthenticationMethod == UserSessionAuthenticationMethod.OidcSso ||
+				 current.AuthenticationMethod == UserSessionAuthenticationMethod.SamlSso);
+		}
+
+		private async Task<bool> RenewPrincipalForDepartmentAsync(IdentityUser user, int departmentId,
+			CancellationToken cancellationToken)
+		{
+			var authentication = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+			var currentSessionId = User.FindFirstValue(SessionClaimTypes.SessionId);
+			if (!string.IsNullOrWhiteSpace(currentSessionId) &&
+				!await _userSessionService.MoveSessionToDepartmentAsync(UserId, currentSessionId, departmentId,
+					cancellationToken))
+				return false;
+
+			var principal = await _signInManager.CreateUserPrincipalAsync(user);
+			if (!string.IsNullOrWhiteSpace(currentSessionId) && principal.Identity is ClaimsIdentity identity)
+				identity.AddClaim(new Claim(SessionClaimTypes.SessionId, currentSessionId));
+
+			var properties = authentication.Properties ?? new AuthenticationProperties
+			{
+				IssuedUtc = DateTimeOffset.UtcNow,
+				ExpiresUtc = DateTimeOffset.UtcNow.AddHours(4),
+				IsPersistent = false,
+				AllowRefresh = false
+			};
+			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);
+			HttpContext.User = principal;
+			return true;
 		}
 
 		#endregion Your Departments

@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
-using CommonServiceLocator;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using OpenIddict.Validation.AspNetCore;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Eventing.Hubs
@@ -9,167 +10,117 @@ namespace Resgrid.Web.Eventing.Hubs
 	public interface IEventingHub
 	{
 		Task Connect(int departmentId);
-
 		Task SubscribeToDepartmentLink(int linkId);
-
 		Task UnsubscribeToDepartmentLink(int linkId);
-
-		Task PersonnelStatusUpdated(int departmentId, int id);
-
-		Task PersonnelStaffingUpdated(int departmentId, int id);
-
-		Task UnitStatusUpdated(int departmentId, int id);
-
-		Task CallsUpdated(int departmentId, int id);
-
-		Task DepartmentUpdated(int departmentId);
-
 		Task SubscribeToCall(int callId);
-
 		Task UnsubscribeToCall(int callId);
-
-		Task CallDataUpdated(int callId);
-
-		Task CallAdded(int departmentId, int id);
-
-		Task CallClosed(int departmentId, int id);
-
-		Task WeatherAlertReceived(int departmentId, string alertId);
-
-		Task WeatherAlertExpired(int departmentId, string alertId);
-
-		Task WeatherAlertUpdated(int departmentId, string alertId);
 	}
 
-	[AllowAnonymous]
+	/// <summary>
+	/// Authenticated subscription-only hub for general department events. Events are published
+	/// by the server-side worker through IHubContext; callers cannot manufacture broadcasts.
+	/// </summary>
+	[Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
 	public class EventingHub : Hub
 	{
 		private readonly IDepartmentLinksService _departmentLinksService;
+		private readonly ICallsService _callsService;
 
-		public EventingHub()
+		public EventingHub(IDepartmentLinksService departmentLinksService, ICallsService callsService)
 		{
-			_departmentLinksService = ServiceLocator.Current.GetInstance<IDepartmentLinksService>();
+			_departmentLinksService = departmentLinksService;
+			_callsService = callsService;
+		}
+
+		private int GetDepartmentId()
+		{
+			var claim = Context.User?.FindFirst(ClaimTypes.PrimaryGroupSid);
+			return claim != null && int.TryParse(claim.Value, out var departmentId) ? departmentId : 0;
 		}
 
 		public async Task Connect(int departmentId)
 		{
-			await Groups.AddToGroupAsync(Context.ConnectionId, departmentId.ToString());
+			var authenticatedDepartmentId = GetDepartmentId();
+			if (authenticatedDepartmentId <= 0 || departmentId != authenticatedDepartmentId)
+				throw new HubException("Not authorized for this department.");
 
+			await Groups.AddToGroupAsync(Context.ConnectionId, authenticatedDepartmentId.ToString());
 			await Clients.Caller.SendAsync("onConnected", Context.ConnectionId);
 		}
 
 		public async Task SubscribeToDepartmentLink(int linkId)
 		{
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
+			var linkedDepartmentId = GetLinkedDepartmentForCaller(link);
+			if (link == null || !link.LinkEnabled || !linkedDepartmentId.HasValue)
+				throw new HubException("Not authorized for this department link.");
 
-			if (link != null && link.LinkEnabled)
-				await Groups.AddToGroupAsync(Context.ConnectionId, link.DepartmentId.ToString());
+			await Groups.AddToGroupAsync(Context.ConnectionId, linkedDepartmentId.Value.ToString());
 		}
 
 		public async Task UnsubscribeToDepartmentLink(int linkId)
 		{
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
-
-			if (link != null)
-				await Groups.RemoveFromGroupAsync(Context.ConnectionId, link.DepartmentId.ToString());
-		}
-
-		public async Task PersonnelStatusUpdated(int departmentId, int id)
-		{
-			var group = Clients.Group(departmentId.ToString());
-
-			if (group != null)
-				await group.SendAsync("PersonnelStatusUpdated", id);
-		}
-
-		public async Task PersonnelStaffingUpdated(int departmentId, int id)
-		{
-			var group = Clients.Group(departmentId.ToString());
-
-			if (group != null)
-				await group.SendAsync("PersonnelStaffingUpdated", id);
-		}
-
-		public async Task UnitStatusUpdated(int departmentId, int id)
-		{
-			var group = Clients.Group(departmentId.ToString());
-
-			if (group != null)
-				await group.SendAsync("UnitStatusUpdated", id);
-		}
-
-		public async Task CallsUpdated(int departmentId, int id)
-		{
-			var group = Clients.Group(departmentId.ToString());
-
-			if (group != null)
-				await group.SendAsync("CallsUpdated", id);
-		}
-
-		public async Task DepartmentUpdated(int departmentId)
-		{
-			var group = Clients.Group(departmentId.ToString());
-
-			if (group != null)
-				await group.SendAsync("DepartmentUpdated");
+			var linkedDepartmentId = GetLinkedDepartmentForCaller(link);
+			if (linkedDepartmentId.HasValue)
+				await Groups.RemoveFromGroupAsync(Context.ConnectionId, linkedDepartmentId.Value.ToString());
 		}
 
 		public async Task SubscribeToCall(int callId)
 		{
-			await Groups.AddToGroupAsync(Context.ConnectionId, $"CallUpdated:${callId}");
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != GetDepartmentId())
+				throw new HubException("Not authorized for this call.");
+
+			await Groups.AddToGroupAsync(Context.ConnectionId, GetCallGroupName(callId));
 		}
 
-		public async Task UnsubscribeToCall(int callId)
+		public Task UnsubscribeToCall(int callId) =>
+			Groups.RemoveFromGroupAsync(Context.ConnectionId, GetCallGroupName(callId));
+
+		/// <summary>
+		/// Single source of truth for the per-call group name, so a publisher added later cannot drift from
+		/// what subscribers actually joined.
+		/// </summary>
+		public static string GetCallGroupName(int callId) => $"CallUpdated:{callId}";
+
+		public Task PersonnelStatusUpdated(int departmentId, int id) =>
+			PublishAsync("PersonnelStatusUpdated", departmentId, id);
+
+		public Task PersonnelStaffingUpdated(int departmentId, int id) =>
+			PublishAsync("PersonnelStaffingUpdated", departmentId, id);
+
+		public Task UnitStatusUpdated(int departmentId, int id) =>
+			PublishAsync("UnitStatusUpdated", departmentId, id);
+
+		public Task CallsUpdated(int departmentId, int id) =>
+			PublishAsync("CallsUpdated", departmentId, id);
+
+		private Task PublishAsync(string method, int departmentId, int id)
 		{
-			await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"CallUpdated:${callId}");
+			DemandInternalPublisher();
+			return Clients.Group(departmentId.ToString()).SendAsync(method, id);
 		}
 
-		public async Task CallDataUpdated(int callId)
+		private void DemandInternalPublisher()
 		{
-			var group = Clients.Group($"CallUpdated:${callId}");
-
-			if (group != null)
-				await group.SendAsync("CallDataUpdated", callId);
+			var subject = Context.User?.FindFirst("sub")?.Value ??
+				Context.User?.FindFirst(ClaimTypes.PrimarySid)?.Value;
+			if (!string.Equals(subject, "system_eventing", System.StringComparison.Ordinal))
+				throw new HubException("This operation is reserved for the eventing publisher.");
 		}
 
-		public async Task CallAdded(int departmentId, int id)
+		private int? GetLinkedDepartmentForCaller(Resgrid.Model.DepartmentLink link)
 		{
-			var group = Clients.Group(departmentId.ToString());
+			if (link == null)
+				return null;
 
-			if (group != null)
-				await group.SendAsync("CallAdded", id);
-		}
-
-		public async Task CallClosed(int departmentId, int id)
-		{
-			var group = Clients.Group(departmentId.ToString());
-
-			if (group != null)
-				await group.SendAsync("CallClosed", id);
-		}
-
-		public async Task WeatherAlertReceived(int departmentId, string alertId)
-		{
-			var group = Clients.Group(departmentId.ToString());
-
-			if (group != null)
-				await group.SendAsync("WeatherAlertReceived", alertId);
-		}
-
-		public async Task WeatherAlertExpired(int departmentId, string alertId)
-		{
-			var group = Clients.Group(departmentId.ToString());
-
-			if (group != null)
-				await group.SendAsync("WeatherAlertExpired", alertId);
-		}
-
-		public async Task WeatherAlertUpdated(int departmentId, string alertId)
-		{
-			var group = Clients.Group(departmentId.ToString());
-
-			if (group != null)
-				await group.SendAsync("WeatherAlertUpdated", alertId);
+			var departmentId = GetDepartmentId();
+			if (link.DepartmentId == departmentId)
+				return link.LinkedDepartmentId;
+			if (link.LinkedDepartmentId == departmentId)
+				return link.DepartmentId;
+			return null;
 		}
 	}
 }

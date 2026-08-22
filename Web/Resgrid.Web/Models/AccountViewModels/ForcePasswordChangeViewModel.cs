@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+using Resgrid.Framework;
+
 namespace Resgrid.Web.Models.AccountViewModels
 {
 	/// <summary>
@@ -13,6 +15,8 @@ namespace Resgrid.Web.Models.AccountViewModels
 		public string CurrentPassword { get; set; }
 
 		[Required]
+		[StringLength(100, MinimumLength = 8)]
+		[PasswordComplexity(MinLength = 8, RequireUppercase = true, RequireLowercase = true, RequireDigit = true, RequireSpecialChar = false)]
 		[DataType(DataType.Password)]
 		[Display(Name = "New password")]
 		public string NewPassword { get; set; }

@@ -1,4 +1,3 @@
-import { getAccessToken } from './auth';
 import { getBrowserConfig } from './browserConfig';
 
 export class ApiError extends Error {
@@ -15,7 +14,7 @@ export type ApiQuery = Record<string, string | number | boolean | null | undefin
 
 export function buildApiUrl(path: string, query?: ApiQuery): string {
   const { apiBaseUrl } = getBrowserConfig();
-  const url = new URL(path, `${apiBaseUrl}/`);
+  const url = new URL(`${apiBaseUrl}/${path.replace(/^\/+/, '')}`);
   if (query) {
     for (const [key, value] of Object.entries(query)) {
       if (value !== null && value !== undefined && value !== '') {
@@ -29,17 +28,20 @@ export function buildApiUrl(path: string, query?: ApiQuery): string {
 export function apiAuthHeaders(extra?: HeadersInit): Headers {
   const headers = new Headers(extra);
   headers.set('Accept', 'application/json');
-  const accessToken = getAccessToken();
-  if (accessToken.length > 0) {
-    headers.set('Authorization', `Bearer ${accessToken}`);
-  }
   return headers;
 }
 
 export async function apiFetchJson<TResponse>(path: string, init?: RequestInit, query?: ApiQuery): Promise<TResponse> {
+  const headers = apiAuthHeaders(init?.headers);
+  const method = (init?.method ?? 'GET').toUpperCase();
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    const token = document.querySelector<HTMLMetaElement>('meta[name="request-verification-token"]')?.content;
+    if (token) headers.set('RequestVerificationToken', token);
+  }
   const response = await fetch(buildApiUrl(path, query), {
     ...init,
-    headers: apiAuthHeaders(init?.headers),
+    credentials: 'same-origin',
+    headers,
   });
 
   if (!response.ok) {

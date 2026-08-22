@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Shared web-layer helpers for the Resgrid ASP.NET hosts</Description>
+    <VersionPrefix>3.0.0</VersionPrefix>
+    <Authors>Resgrid, LLC.</Authors>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>Resgrid.Web.Common</AssemblyName>
+    <RootNamespace>Resgrid.Web.Common</RootNamespace>
+    <Configurations>Debug;Release;Docker</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+</Project>

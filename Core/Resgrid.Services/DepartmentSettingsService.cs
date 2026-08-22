@@ -24,6 +24,7 @@ namespace Resgrid.Services
 		private static string TtsLanguageCacheKey = "DSetTtsLanguage_{0}";
 		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
 		private static string ModernNotificationsCacheKey = "DSetModernNotifications_{0}";
+		private static string RequirePasswordResetViaEmailCacheKey = "DSetRequirePasswordResetViaEmail_{0}";
 		private static string ForceChatbotSecurityPinCacheKey = "DSetForceChatbotSecurityPin_{0}";
 		private static string HardwareTrackingStaleAfterSecondsCacheKey = "DSetHardwareTrackingStale_{0}";
 		private static string HardwareTrackingMobileFallbackCacheKey = "DSetHardwareTrackingFallback_{0}";
@@ -34,6 +35,9 @@ namespace Resgrid.Services
 		private static string NewCallFieldPolicyCacheKey = "DSetNewCallFieldPolicy_{0}";
 		private static string UnitStatusThresholdsCacheKey = "DSetUnitStatusThresholds_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
+		// Security-relevant settings ride the standard department-data window instead, so a missed
+		// invalidation cannot keep an old policy in force for two weeks.
+		private static TimeSpan SecuritySettingCacheLength = TimeSpan.FromDays(1);
 		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
 		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
 
@@ -1236,6 +1240,25 @@ namespace Resgrid.Services
 			return bool.Parse(await getSetting());
 		}
 
+		public async Task<bool> GetRequirePasswordResetViaEmailAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(
+					departmentId, DepartmentSettingTypes.RequirePasswordResetViaEmail);
+				return setting?.Setting ?? "false";
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync(
+					string.Format(RequirePasswordResetViaEmailCacheKey, departmentId),
+					getSetting,
+					SecuritySettingCacheLength)
+				: await getSetting();
+
+			return bool.TryParse(value, out var enabled) && enabled;
+		}
+
 		public async Task<bool> GetForceChatbotSecurityPinAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1345,6 +1368,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.EnableModernNotifications:
 					cacheKey = string.Format(ModernNotificationsCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.RequirePasswordResetViaEmail:
+					cacheKey = string.Format(RequirePasswordResetViaEmailCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.ForceChatbotSecurityPin:
 					cacheKey = string.Format(ForceChatbotSecurityPinCacheKey, departmentId);

@@ -6,6 +6,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -17,16 +18,18 @@ namespace Resgrid.Services
 		private readonly IDepartmentMembersRepository _departmentMemberRepository;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public PersonnelRolesService(IPersonnelRolesRepository personnelRolesRepository, IPersonnelRoleUsersRepository personnelRoleUsersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentMembersRepository departmentMemberRepository,
-			IEventAggregator eventAggregator)
+			IEventAggregator eventAggregator, IUnitOfWork unitOfWork)
 		{
 			_personnelRolesRepository = personnelRolesRepository;
 			_personnelRoleUsersRepository = personnelRoleUsersRepository;
 			_subscriptionsService = subscriptionsService;
 			_departmentMemberRepository = departmentMemberRepository;
 			_eventAggregator = eventAggregator;
+			_unitOfWork = unitOfWork;
 		}
 
 		/// <summary>
@@ -94,10 +97,25 @@ namespace Resgrid.Services
 
 			// Call dispatches, shift group requirements, run cards and the rest all point back at the
 			// role row; CallDispatchRoles has a non-cascading FK, so the delete below fails outright for
-			// any role that has ever been dispatched unless those rows go first.
-			await _personnelRolesRepository.DeleteRoleDependenciesAsync(roleId, cancellationToken);
+			// any role that has ever been dispatched unless those rows go first. Both steps share one
+			// connection and transaction, otherwise a failure on the role delete leaves the dependent
+			// rows already committed and the role stripped of its dispatches, requirements and members.
+			bool result;
+			_unitOfWork.CreateOrGetConnection();
+			try
+			{
+				await _personnelRolesRepository.DeleteRoleDependenciesAsync(roleId, cancellationToken);
 
-			var result = await _personnelRolesRepository.DeleteAsync(role, cancellationToken);
+				result = await _personnelRolesRepository.DeleteAsync(role, cancellationToken);
+
+				_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
+
 			SendRoleVisibilityRefresh(role.DepartmentId);
 
 			return result;

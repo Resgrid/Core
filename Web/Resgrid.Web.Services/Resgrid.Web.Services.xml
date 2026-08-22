@@ -45,6 +45,16 @@
             the Twilio middleware's BaseUrlOverride behind the reverse proxy).
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.SignalWireController.BuildTextToCallAsync(Resgrid.Model.Department,Resgrid.Model.TextMessage,System.Collections.Generic.List{Resgrid.Model.Identity.IdentityUser})">
+            <summary>
+            Builds the call for an inbound Text-To-Call message. When the department has a
+            Text-To-Call import format configured the message is run through that call
+            template, which is what lets the text supply values like the Call Type and Call
+            Priority. Without a configured format, or when the template can't make a call out
+            of the message, the text is imported as the nature of the call the way
+            Text-To-Call has always done it.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.TwilioController.IsPromptAudioReadyAsync(System.String,System.Nullable{System.Int32})">
             <summary>
             Waits up to <see cref="F:Resgrid.Web.Services.Controllers.TwilioController.ListingReadinessTimeout"/> for the TTS audio of the
@@ -52,6 +62,16 @@
             generation continues in TwilioVoiceResponseService's URL cache, so a
             redirect re-entry gets an instant hit. TTS hard failures return true — the
             normal append path already degrades those to &lt;Say&gt; or a skip.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.TwilioController.BuildTextToCallAsync(Resgrid.Model.Department,Resgrid.Model.TextMessage,System.Collections.Generic.List{Resgrid.Model.Identity.IdentityUser})">
+            <summary>
+            Builds the call for an inbound Text-To-Call message. When the department has a
+            Text-To-Call import format configured the message is run through that call
+            template, which is what lets the text supply values like the Call Type and Call
+            Priority. Without a configured format, or when the template can't make a call out
+            of the message, the text is imported as the nature of the call the way
+            Text-To-Call has always done it.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.AutofillsController">

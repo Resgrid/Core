@@ -550,5 +550,218 @@ namespace Resgrid.Tests.Services
 				//return true;
 			}
 		}
+
+		[TestFixture]
+		public class when_importing_a_resgrid_template_call : with_the_calls_email_factory
+		{
+			//ID | TYPE | PRIORITY | ADDRESS | MAPPAGE | NATURE | NOTES
+
+			private List<DepartmentCallPriority> SystemPriorities()
+			{
+				return new List<DepartmentCallPriority>
+				{
+					new DepartmentCallPriority { DepartmentCallPriorityId = 0, Name = "Low" },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 1, Name = "Medium" },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 2, Name = "High", IsDefault = true },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 3, Name = "Emergency" }
+				};
+			}
+
+			private List<DepartmentCallPriority> CustomPriorities()
+			{
+				return new List<DepartmentCallPriority>
+				{
+					new DepartmentCallPriority { DepartmentCallPriorityId = 500, Name = "MVA" },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 501, Name = "Medical" },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 502, Name = "Structure Fire" },
+					new DepartmentCallPriority { DepartmentCallPriorityId = 503, Name = "Retired", IsDeleted = true }
+				};
+			}
+
+			private CallEmail BuildEmail(string body)
+			{
+				return new CallEmail
+				{
+					MessageId = "100",
+					Subject = "Dispatch",
+					Body = body,
+					TextBody = body
+				};
+			}
+
+			[Test]
+			public async Task should_import_every_documented_value()
+			{
+				var email = BuildEmail("2020-1234 | MEDICAL | 3 | 155 Main St. Carson City, NV 89701 | 12B | 55 Y/O Male, Chest Pain | Caller is on scene");
+				var mmId = Guid.NewGuid().ToString();
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, mmId, _dispatchUsers,
+					null, null, null, (int)CallPriority.High, SystemPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.ReportingUserId.Should().Be(mmId);
+				call.SourceIdentifier.Should().Be("100");
+				call.CallSource.Should().Be((int)CallSources.EmailImport);
+				call.IncidentNumber.Should().Be("2020-1234");
+				call.Type.Should().Be("MEDICAL");
+				call.Priority.Should().Be((int)CallPriority.Emergency);
+				call.Address.Should().Be("155 Main St. Carson City, NV 89701");
+				call.MapPage.Should().Be("12B");
+				call.NatureOfCall.Should().Be("55 Y/O Male, Chest Pain");
+				call.Notes.Should().Be("Caller is on scene");
+				call.Name.Should().Be("Email Call Emergency MEDICAL 2020-1234 ");
+				call.Dispatches.Count.Should().Be(_dispatchUsers.Count);
+			}
+
+			[Test]
+			public async Task should_import_the_documented_empty_value_example()
+			{
+				var body = " | MEDICAL | 3 | 155 Main St. Carson City, NV 89701 |  | 55 Y/O Male, Chest Pain, Diaphoretic, Conscious and abnormal breathing | ";
+				var email = BuildEmail(body);
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, (int)CallPriority.High, SystemPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.IncidentNumber.Should().BeNull();
+				call.MapPage.Should().BeNull();
+				call.Type.Should().Be("MEDICAL");
+				call.Priority.Should().Be((int)CallPriority.Emergency);
+				call.NatureOfCall.Should().Be("55 Y/O Male, Chest Pain, Diaphoretic, Conscious and abnormal breathing");
+
+				// NOTES was not supplied, so the raw body stays in the notes like it always has.
+				call.Notes.Should().Be(body);
+			}
+
+			[Test]
+			public async Task should_use_the_department_default_when_the_priority_is_empty()
+			{
+				var email = BuildEmail("2020-1234 | MEDICAL |  | 155 Main St. Carson City, NV 89701 |  | Chest Pain | ");
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, (int)CallPriority.Medium, SystemPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.Priority.Should().Be((int)CallPriority.Medium);
+				call.Name.Should().Be("Email Call Medium MEDICAL 2020-1234 ");
+			}
+
+			[Test]
+			public async Task should_match_a_custom_call_priority_by_name()
+			{
+				var email = BuildEmail("2020-1234 | MEDICAL | structure fire | 155 Main St. Carson City, NV 89701 |  | Smoke showing | ");
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, 501, CustomPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.Priority.Should().Be(502);
+				call.Name.Should().Be("Email Call Structure Fire MEDICAL 2020-1234 ");
+			}
+
+			[Test]
+			public async Task should_match_a_custom_call_priority_by_identifier()
+			{
+				var email = BuildEmail("2020-1234 | MEDICAL | 500 | 155 Main St. Carson City, NV 89701 |  | Two vehicles | ");
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, 501, CustomPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.Priority.Should().Be(500);
+			}
+
+			[Test]
+			public async Task should_fall_back_to_the_default_for_a_priority_the_department_does_not_own()
+			{
+				// 3 is the system Emergency identifier, but this department runs custom
+				// priorities and has no priority 3 for dispatch to resolve against.
+				var email = BuildEmail("2020-1234 | MEDICAL | 3 | 155 Main St. Carson City, NV 89701 |  | Chest Pain | ");
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, 501, CustomPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.Priority.Should().Be(501);
+			}
+
+			[Test]
+			public async Task should_not_match_a_deleted_custom_call_priority()
+			{
+				var email = BuildEmail("2020-1234 | MEDICAL | Retired | 155 Main St. Carson City, NV 89701 |  | Chest Pain | ");
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, 501, CustomPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.Priority.Should().Be(501);
+			}
+
+			[Test]
+			public async Task should_normalize_the_type_to_a_custom_call_type()
+			{
+				var email = BuildEmail("2020-1234 | medical | 3 | 155 Main St. Carson City, NV 89701 |  | Chest Pain | ");
+
+				var callTypes = new List<CallType>
+				{
+					new CallType { CallTypeId = 10, Type = "Medical" },
+					new CallType { CallTypeId = 11, Type = "Structure Fire" }
+				};
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, (int)CallPriority.High, SystemPriorities(), callTypes, null);
+
+				call.Should().NotBeNull();
+				call.Type.Should().Be("Medical");
+			}
+
+			[Test]
+			public async Task should_keep_a_type_that_is_not_a_configured_call_type()
+			{
+				var email = BuildEmail("2020-1234 | WILDLAND | 3 | 155 Main St. Carson City, NV 89701 |  | Chest Pain | ");
+
+				var callTypes = new List<CallType>
+				{
+					new CallType { CallTypeId = 10, Type = "Medical" }
+				};
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, (int)CallPriority.High, SystemPriorities(), callTypes, null);
+
+				call.Should().NotBeNull();
+				call.Type.Should().Be("WILDLAND");
+			}
+
+			[Test]
+			public async Task should_keep_pipes_that_are_part_of_the_notes()
+			{
+				var email = BuildEmail("2020-1234 | MEDICAL | 3 | 155 Main St. Carson City, NV 89701 |  | Chest Pain | Unit 1 | Unit 2");
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, (int)CallPriority.High, SystemPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.NatureOfCall.Should().Be("Chest Pain");
+				call.Notes.Should().Be("Unit 1 | Unit 2");
+			}
+
+			[Test]
+			public async Task should_fall_back_when_the_body_is_not_the_resgrid_format()
+			{
+				var email = BuildEmail("Structure fire at 155 Main St.");
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, 501, CustomPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.Name.Should().Be("Dispatch");
+				call.NatureOfCall.Should().Be("Structure fire at 155 Main St.");
+				call.Notes.Should().Contain("WARNING: FALLBACK RESGRID EMAIL IMPORT!");
+
+				// The fallback still has to land on a priority the department owns.
+				call.Priority.Should().Be(501);
+			}
+		}
+
 	}
 }

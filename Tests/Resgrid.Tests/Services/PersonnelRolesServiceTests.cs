@@ -1,4 +1,6 @@
+﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -6,8 +8,10 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Framework.Testing;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -24,6 +28,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<ISubscriptionsService> _subscriptionsServiceMock;
 			protected Mock<IDepartmentMembersRepository> _departmentMembersRepositoryMock;
 			protected Mock<IEventAggregator> _eventAggregatorMock;
+			protected Mock<IUnitOfWork> _unitOfWorkMock;
 
 			protected readonly List<string> _repositoryCallOrder = new List<string>();
 
@@ -48,6 +53,17 @@ namespace Resgrid.Tests.Services
 				_subscriptionsServiceMock = new Mock<ISubscriptionsService>();
 				_departmentMembersRepositoryMock = new Mock<IDepartmentMembersRepository>();
 				_eventAggregatorMock = new Mock<IEventAggregator>();
+				_unitOfWorkMock = new Mock<IUnitOfWork>();
+
+				_unitOfWorkMock.Setup(x => x.CreateOrGetConnection())
+					.Callback(() => _repositoryCallOrder.Add("connection"))
+					.Returns((DbConnection)null);
+
+				_unitOfWorkMock.Setup(x => x.CommitChanges())
+					.Callback(() => _repositoryCallOrder.Add("commit"));
+
+				_unitOfWorkMock.Setup(x => x.DiscardChanges())
+					.Callback(() => _repositoryCallOrder.Add("rollback"));
 
 				_personnelRolesRepositoryMock
 					.Setup(x => x.DeleteRoleDependenciesAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
@@ -64,7 +80,8 @@ namespace Resgrid.Tests.Services
 					_personnelRoleUsersRepositoryMock.Object,
 					_subscriptionsServiceMock.Object,
 					_departmentMembersRepositoryMock.Object,
-					_eventAggregatorMock.Object);
+					_eventAggregatorMock.Object,
+					_unitOfWorkMock.Object);
 			}
 		}
 
@@ -82,7 +99,40 @@ namespace Resgrid.Tests.Services
 				result.Should().BeTrue();
 				// CallDispatchRoles has a non-cascading FK on the role, so the cleanup has to land first
 				// or the role delete throws a constraint violation.
-				_repositoryCallOrder.Should().Equal("dependencies", "role");
+				_repositoryCallOrder.Should().Equal("connection", "dependencies", "role", "commit");
+			}
+
+			[Test]
+			public async Task both_deletes_should_share_one_transaction_that_commits_once()
+			{
+				_personnelRolesRepositoryMock.Setup(x => x.GetRoleByRoleIdAsync(6787))
+					.ReturnsAsync(new PersonnelRole { PersonnelRoleId = 6787, DepartmentId = 1, Name = "Paramedic" });
+
+				await _personnelRolesService.DeleteRoleByIdAsync(6787);
+
+				// The dependency cleanup and the role delete have to land on the same connection, or a
+				// failure on the second one leaves the first one already committed.
+				_unitOfWorkMock.Verify(x => x.CreateOrGetConnection(), Times.Once);
+				_unitOfWorkMock.Verify(x => x.CommitChanges(), Times.Once);
+				_unitOfWorkMock.Verify(x => x.DiscardChanges(), Times.Never);
+			}
+
+			[Test]
+			public void a_failed_role_delete_should_roll_back_the_dependency_cleanup()
+			{
+				_personnelRolesRepositoryMock.Setup(x => x.GetRoleByRoleIdAsync(6787))
+					.ReturnsAsync(new PersonnelRole { PersonnelRoleId = 6787, DepartmentId = 1, Name = "Paramedic" });
+
+				_personnelRolesRepositoryMock
+					.Setup(x => x.DeleteAsync(It.IsAny<PersonnelRole>(), It.IsAny<CancellationToken>()))
+					.ThrowsAsync(new Exception("constraint violation"));
+
+				Assert.ThrowsAsync<Exception>(async () => await _personnelRolesService.DeleteRoleByIdAsync(6787));
+
+				_unitOfWorkMock.Verify(x => x.DiscardChanges(), Times.Once);
+				_unitOfWorkMock.Verify(x => x.CommitChanges(), Times.Never);
+				// A rolled back delete never happened, so the visibility matrices must not be rebuilt.
+				_eventAggregatorMock.Verify(x => x.SendMessage<SecurityRefreshEvent>(It.IsAny<SecurityRefreshEvent>()), Times.Never);
 			}
 
 			[Test]

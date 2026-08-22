@@ -110,9 +110,9 @@
                             <dt>ID</dt>
                             <dd>Incident Identifier from the CAD system. This field can be empty or set to 0000.</dd>
                             <dt>TYPE</dt>
-                            <dd>Type of incident, can be anything, i.e. MEDICAL, FIRE, WILDLAND, HAZMAT, etc. This value can also be empty.</dd>
+                            <dd>Type of incident, can be anything, i.e. MEDICAL, FIRE, WILDLAND, HAZMAT, etc. When your department has Call Types set up and this value matches one of them, casing aside, the call is tagged with that Call Type. This value can also be empty.</dd>
                             <dt>PRIORITY</dt>
-                            <dd>Priority integer value of the Incident. Low = 0, Medium = 1, High = 2, Emergency = 3. This value can be empty.</dd>
+                            <dd>Priority of the Incident, either the priority name or its integer value. On the built in priorities that is Low = 0, Medium = 1, High = 2, Emergency = 3. When your department has Custom Call Priorities set up send the priority name instead, i.e. Structure Fire, casing aside. This value can be empty, and a value that does not match one of your priorities uses your department default priority.</dd>
                             <dt>ADDRESS</dt>
                             <dd>Full Address of incident (Address, City, State, Zip). This value is required.</dd>
                             <dt>MAPPAGE</dt>

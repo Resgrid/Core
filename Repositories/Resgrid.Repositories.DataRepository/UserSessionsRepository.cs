@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
@@ -81,31 +82,51 @@ namespace Resgrid.Repositories.DataRepository
 			// two differently-cased spellings of the same user on the same lock.
 			var lockKey = StableLockKey($"usersessions:{session.UserId?.ToLowerInvariant()}:{departmentId}");
 
-			if (_unitOfWork?.Connection != null)
+			try
 			{
-				var ambient = _unitOfWork.CreateOrGetConnection();
+				if (_unitOfWork?.Connection != null)
+				{
+					var ambient = _unitOfWork.CreateOrGetConnection();
 
-				// An ambient transaction already provides the scope the locks need; joining it also keeps the
-				// caller's rollback semantics. Without one, a short local transaction is opened instead, because
-				// the PostgreSQL advisory lock is released the moment its transaction ends.
-				if (_unitOfWork.Transaction != null)
-					return await GuardedInsertAsync(ambient, _unitOfWork.Transaction, parameters, lockKey, cancellationToken);
+					// An ambient transaction already provides the scope the locks need; joining it also keeps
+					// the caller's rollback semantics. Without one, a short local transaction is opened instead,
+					// because the PostgreSQL advisory lock is released the moment its transaction ends.
+					if (_unitOfWork.Transaction != null)
+						return await GuardedInsertAsync(ambient, _unitOfWork.Transaction, parameters, lockKey, cancellationToken);
 
-				using var ambientScope = await ambient.BeginTransactionAsync(cancellationToken);
-				var ambientInserted = await GuardedInsertAsync(ambient, ambientScope, parameters, lockKey, cancellationToken);
-				await ambientScope.CommitAsync(cancellationToken);
-				return ambientInserted;
+					using var ambientScope = await ambient.BeginTransactionAsync(cancellationToken);
+					var ambientInserted = await GuardedInsertAsync(ambient, ambientScope, parameters, lockKey, cancellationToken);
+					await ambientScope.CommitAsync(cancellationToken);
+					return ambientInserted;
+				}
+
+				using var connection = _connectionProvider.Create();
+				await connection.OpenAsync(cancellationToken);
+
+				// Own transaction so the count and the insert cannot be interleaved by another login. Disposing
+				// without a commit rolls back, so a failure between the two statements leaves no partial state.
+				using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+				var inserted = await GuardedInsertAsync(connection, transaction, parameters, lockKey, cancellationToken);
+				await transaction.CommitAsync(cancellationToken);
+				return inserted;
 			}
-
-			using var connection = _connectionProvider.Create();
-			await connection.OpenAsync(cancellationToken);
-
-			// Own transaction so the count and the insert cannot be interleaved by another login. Disposing
-			// without a commit rolls back, so a failure between the two statements leaves no partial state.
-			using var transaction = await connection.BeginTransactionAsync(cancellationToken);
-			var inserted = await GuardedInsertAsync(connection, transaction, parameters, lockKey, cancellationToken);
-			await transaction.CommitAsync(cancellationToken);
-			return inserted;
+			catch (OperationCanceledException)
+			{
+				// A caller giving up is not a database fault, and the using scopes have already rolled the
+				// transaction back. Logging it would only add noise to every abandoned sign-in.
+				throw;
+			}
+			catch (Exception ex)
+			{
+				// Same contract as RepositoryBase: log where the session context is still known, then let the
+				// caller decide. Deliberately not narrowed to DbException - opening a transaction on a closed
+				// or already-enlisted connection throws InvalidOperationException, which is the likelier fault
+				// here and would otherwise reach the caller with no record of which login it belonged to.
+				Logging.LogException(ex,
+					$"Operation=TryInsertWithinDepartmentSessionLimitAsync; UserId={session.UserId}; " +
+					$"DepartmentId={departmentId}; Postgres={_isPostgres}");
+				throw;
+			}
 		}
 
 		private async Task<bool> GuardedInsertAsync(DbConnection connection, DbTransaction transaction,

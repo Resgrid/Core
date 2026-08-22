@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 using Resgrid.Providers.Migrations;
 
@@ -35,6 +36,32 @@ namespace Resgrid.Tests.Migrations
 
 			// SORT_IN_TEMPDB is not an Enterprise-only option, so it survives the fallback.
 			Assert.That(sql, Does.Contain("THEN N'ONLINE = ON, SORT_IN_TEMPDB = ON' ELSE N'SORT_IN_TEMPDB = ON'"));
+		}
+
+		[Test]
+		public void a_predicate_containing_a_quote_survives_being_nested_in_the_literal()
+		{
+			var sql = SqlServerOnlineIndex.Create("IX_Foo_Status", "Foo", new[] { "[Status]" },
+				filter: "[Status] = 'Active'");
+
+			// Doubled inside the outer N'...', so sp_executesql sees [Status] = 'Active' again.
+			Assert.That(sql, Does.Contain("WHERE [Status] = ''Active''"));
+			Assert.That(sql, Does.Not.Contain("WHERE [Status] = 'Active'"));
+		}
+
+		[Test]
+		public void names_and_columns_that_are_not_plain_identifiers_are_rejected_at_build_time()
+		{
+			// A quote or bracket in a name would break the surrounding literal rather than inject, but it
+			// would only surface when the migration ran. Fail while the statement is being built instead.
+			Assert.Throws<ArgumentException>(() =>
+				SqlServerOnlineIndex.Create("IX_Foo'; DROP TABLE Foo --", "Foo", new[] { "[Bar]" }));
+			Assert.Throws<ArgumentException>(() =>
+				SqlServerOnlineIndex.Create("IX_Foo", "Foo]; DROP TABLE Foo --", new[] { "[Bar]" }));
+			Assert.Throws<ArgumentException>(() =>
+				SqlServerOnlineIndex.Create("IX_Foo", "Foo", new[] { "[Bar]) WITH (ONLINE = OFF) --" }));
+			Assert.Throws<ArgumentException>(() =>
+				SqlServerOnlineIndex.Create("IX_Foo", "Foo", new string[0]));
 		}
 	}
 }

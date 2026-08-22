@@ -3,14 +3,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.WebCore.Areas.User.Models.Files;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
+	// Uploads attach to the caller's own calls and the per-call authorization check reads the UserId
+	// claim, so every action here needs an authenticated caller.
 	[Area("User")]
+	[Authorize]
 	public class FilesController : SecureBaseController
 	{
 		private readonly IAuthorizationService _authorizationService;

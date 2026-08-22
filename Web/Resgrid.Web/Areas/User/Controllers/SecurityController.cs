@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -24,7 +25,11 @@ using Microsoft.Extensions.Localization;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
+	// Department security settings, SSO/SCIM configuration and audit logs. Individual actions still
+	// check IsUserDepartmentAdmin; this sends an anonymous caller to sign-in rather than leaving the
+	// controller reachable with no identity at all.
 	[Area("User")]
+	[Authorize]
 	public class SecurityController : SecureBaseController
 	{
 		private readonly IDepartmentsService _departmentsService;

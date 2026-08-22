@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Resgrid.Model;
@@ -15,7 +16,11 @@ using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
+	// Every action here acts on the signed-in user's own credentials and sessions, and reads that
+	// identity from the auth cookie's claims. Without this an anonymous request reaches the action with
+	// an empty UserId and blows up in the Identity store instead of being sent to the sign-in page.
 	[Area("User")]
+	[Authorize]
 	public class AccountSecurityController : SecureBaseController
 	{
 		private readonly IUserSessionService _userSessionService;

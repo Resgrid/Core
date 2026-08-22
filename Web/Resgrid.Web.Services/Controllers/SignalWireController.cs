@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
 using Resgrid.Model;
@@ -236,26 +236,8 @@ namespace Resgrid.Web.Services.Controllers
 
 						if (isDispatchSource && textToCallEnabled)
 						{
-							var c = new Call();
-							c.Notes = textMessage.Text;
-							c.NatureOfCall = textMessage.Text;
-							c.LoggedOn = DateTime.UtcNow;
-							c.Name = string.Format("TTC {0}", c.LoggedOn.TimeConverter(department).ToString("g"));
-							c.Priority = (int)CallPriority.High;
-							c.ReportingUserId = department.ManagingUserId;
-							c.Dispatches = new Collection<CallDispatch>();
-							c.CallSource = (int)CallSources.EmailImport;
-							c.SourceIdentifier = textMessage.MessageId;
-							c.DepartmentId = departmentId.Value;
-
 							var users = await _departmentsService.GetAllUsersForDepartmentAsync(departmentId.Value, true);
-							foreach (var u in users)
-							{
-								var cd = new CallDispatch();
-								cd.UserId = u.UserId;
-
-								c.Dispatches.Add(cd);
-							}
+							var c = await BuildTextToCallAsync(department, textMessage, users);
 
 							var savedCall = await _callsService.SaveCallAsync(c, cancellationToken);
 
@@ -411,6 +393,84 @@ namespace Resgrid.Web.Services.Controllers
 
 
 			return Ok();
+		}
+
+
+		/// <summary>
+		/// Builds the call for an inbound Text-To-Call message. When the department has a
+		/// Text-To-Call import format configured the message is run through that call
+		/// template, which is what lets the text supply values like the Call Type and Call
+		/// Priority. Without a configured format, or when the template can't make a call out
+		/// of the message, the text is imported as the nature of the call the way
+		/// Text-To-Call has always done it.
+		/// </summary>
+		private async Task<Call> BuildTextToCallAsync(Department department, TextMessage textMessage,
+			List<Resgrid.Model.Identity.IdentityUser> users)
+		{
+			var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(department.DepartmentId);
+
+			// The department default, not a hardcoded High. High is priority identifier 2,
+			// which for a department running Custom Call Priorities is either the wrong
+			// priority or one the department doesn't own at all, and dispatch then has no
+			// priority to resolve for tones, colors and the notify-all flags.
+			int defaultPriority = (int)CallPriority.High;
+
+			if (priorities != null && priorities.Any())
+			{
+				var defaultPrio = priorities.FirstOrDefault(x => x.IsDefault && x.IsDeleted == false);
+
+				if (defaultPrio != null)
+					defaultPriority = defaultPrio.DepartmentCallPriorityId;
+			}
+
+			Call call = null;
+			var formatType = await _departmentSettingsService.GetTextToCallImportFormatForDepartmentAsync(department.DepartmentId);
+
+			if (formatType.HasValue && Enum.IsDefined(typeof(CallEmailTypes), formatType.Value))
+			{
+				var callEmail = new CallEmail();
+				callEmail.MessageId = textMessage.MessageId;
+				callEmail.Subject = String.Format("TTC {0}", DateTime.UtcNow.TimeConverter(department).ToString("g"));
+				callEmail.Body = textMessage.Text;
+				callEmail.TextBody = textMessage.Text;
+
+				var activeCalls = await _callsService.GetLatest10ActiveCallsByDepartmentAsync(department.DepartmentId);
+				var units = await _unitsService.GetUnitsForDepartmentAsync(department.DepartmentId);
+				var callTypes = await _callsService.GetCallTypesForDepartmentAsync(department.DepartmentId);
+
+				call = await _callsService.GenerateCallFromEmail(formatType.Value, callEmail, department.ManagingUserId, users,
+					department, activeCalls, units, defaultPriority, priorities, callTypes);
+			}
+
+			if (call == null)
+			{
+				call = new Call();
+				call.Notes = textMessage.Text;
+				call.NatureOfCall = textMessage.Text;
+				call.ReportingUserId = department.ManagingUserId;
+				call.SourceIdentifier = textMessage.MessageId;
+				call.Priority = defaultPriority;
+				call.Dispatches = new Collection<CallDispatch>();
+
+				foreach (var u in users)
+				{
+					var cd = new CallDispatch();
+					cd.UserId = u.UserId;
+
+					call.Dispatches.Add(cd);
+				}
+			}
+
+			if (call.LoggedOn == DateTime.MinValue)
+				call.LoggedOn = DateTime.UtcNow;
+
+			if (String.IsNullOrWhiteSpace(call.Name))
+				call.Name = String.Format("TTC {0}", call.LoggedOn.TimeConverter(department).ToString("g"));
+
+			call.CallSource = (int)CallSources.EmailImport;
+			call.DepartmentId = department.DepartmentId;
+
+			return call;
 		}
 
 	}

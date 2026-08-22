@@ -10,6 +10,7 @@ using GeoJSON.Net.Feature;
 using GeoJSON.Net.Geometry;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using Resgrid.Framework;
@@ -25,7 +26,9 @@ using SharpKml.Dom;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
+	// Map data, POIs and routing are all built from the caller's department and user claims.
 	[Area("User")]
+	[Authorize]
 	public class MappingController : SecureBaseController
 	{
 		private readonly IDepartmentSettingsService _departmentSettingsService;

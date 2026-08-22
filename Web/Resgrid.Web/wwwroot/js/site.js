@@ -231,23 +231,28 @@ function localStorageSupport() {
 }
 
 function SmoothlyMenu() {
+	// The profile block lives outside #side-menu (so its dropdown escapes the module
+	// list's scroll box), so fade it alongside the list to keep the collapse animation
+	// looking like one piece.
+	var menu = $('#side-menu').add('nav.navbar-static-side > .nav-header');
+
 	if (!$('body').hasClass('mini-navbar') || $('body').hasClass('body-small')) {
 		// Hide menu in order to smoothly turn on when maximize menu
-		$('#side-menu').hide();
+		menu.hide();
 		// For smoothly turn on menu
 		setTimeout(
 				function () {
-					$('#side-menu').fadeIn(400);
+					menu.fadeIn(400);
 				}, 200);
 	} else if ($('body').hasClass('fixed-sidebar')) {
-		$('#side-menu').hide();
+		menu.hide();
 		setTimeout(
 				function () {
-					$('#side-menu').fadeIn(400);
+					menu.fadeIn(400);
 				}, 100);
 	} else {
 		// Remove all inline style from jquery fadeIn function to reset menu state
-		$('#side-menu').removeAttr('style');
+		menu.removeAttr('style');
 	}
 }
 

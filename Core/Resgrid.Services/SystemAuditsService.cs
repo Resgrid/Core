@@ -23,6 +23,16 @@ namespace Resgrid.Services
 			if (auditLog.Data == null)
 				auditLog.Data = "";
 
+			// IpAddress and ServerName are NOT NULL on both the SQL Server and PostgreSQL SystemAudits
+			// tables. Worker- and scheduler-originated audits have no client request behind them and so
+			// have no IP to record, and leaving the field unset threw the whole audit away on insert.
+			// Empty means "no client", which is what the ServerName beside it already says.
+			if (auditLog.IpAddress == null)
+				auditLog.IpAddress = "";
+
+			if (auditLog.ServerName == null)
+				auditLog.ServerName = "";
+
 			// Several fields carry caller-controlled values (route ids, X-Forwarded-For). Clamp to
 			// the SystemAudits column sizes so a hostile over-length value degrades to a truncated
 			// audit row instead of a SqlException that loses the audit entirely.

@@ -78,7 +78,7 @@
     <value>Your department has a currently pending deletion request. If you want this request to proceed there is nothing you need to do after the timestamp below (during our nightly process) your department and all of it’s data will be removed. If you wish to cancel the request and not delete the department press the “Cancel Department Deletion” button below. Please note, any changes to admins and owners will cause the process to not complete, it’s recommended that you only use the system in a read only mode to download data you wish to save.</value>
   </data>
   <data name="MappingSettingsHeader" xml:space="preserve">
-    <value>Mapping Settings</value>
+    <value>Mapping and BigBoard Settings</value>
   </data>
   <data name="SavedMappingSettings" xml:space="preserve">
     <value>Successfully saved Mapping Settings.</value>

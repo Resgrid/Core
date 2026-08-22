@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using OpenIddict.Validation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Resgrid.Config;
@@ -20,7 +20,11 @@ namespace Resgrid.Web.Eventing.Hubs
 	/// per channel (the version rotates on authorization changes),
 	/// chatuser:{deptId}:{userId} for personal events, chatdept:{deptId} for channel-list updates.
 	/// </summary>
-	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = ResgridResources.Chat_View)]
+	// Validated through OpenIddict, not the JwtBearer handler: the API registers an encryption
+	// certificate, so every access token it issues is an encrypted JWE. The JwtBearer handler here
+	// has no decryption key (and validates against resgrid.local issuer/audience defaults), so it
+	// rejects every one of them. The other two hubs already validate through introspection.
+	[Authorize(AuthenticationSchemes = OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme, Policy = ResgridResources.Chat_View)]
 	public class ChatHub : Hub
 	{
 		private readonly IChatChannelService _chatChannelService;

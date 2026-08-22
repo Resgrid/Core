@@ -19,18 +19,6 @@ namespace Resgrid.Web.Areas.User.Models
 		public string MapZoomLevel { get; set; }
 		public string RefreshTime { get; set; }
 
-		/// <summary>
-		/// New-call field policy, one row per configurable built-in field. Bound as a list so the admin
-		/// screen can render a Visible/Required grid without a per-field property explosion.
-		/// </summary>
-		public List<NewCallFieldPolicyRow> NewCallFields { get; set; } = new List<NewCallFieldPolicyRow>();
-
-		/// <summary>
-		/// Time-in-status thresholds, one row per canonical status meaning. Entered in minutes because
-		/// that is how dispatchers talk about them ("four minutes without reporting departed").
-		/// </summary>
-		public List<UnitStatusThresholdRow> UnitStatusThresholds { get; set; } = new List<UnitStatusThresholdRow>();
-
 		[StringLength(500, ErrorMessage = "Street address cannot exceed 500 characters.")]
 		public string MapCenterPointAddressAddress1 { get; set; }
 
@@ -100,7 +88,7 @@ namespace Resgrid.Web.Areas.User.Models
 			}
 		}
 	}
-	/// <summary>One configurable built-in new-call field on the department settings screen.</summary>
+	/// <summary>One configurable built-in new-call field on the call and dispatch settings screen.</summary>
 	public class NewCallFieldPolicyRow
 	{
 		/// <summary>Stable key from Resgrid.Model.NewCallFieldKeys.</summary>
@@ -110,7 +98,7 @@ namespace Resgrid.Web.Areas.User.Models
 
 		public bool Required { get; set; }
 	}
-	/// <summary>One time-in-status threshold row on the department settings screen.</summary>
+	/// <summary>One time-in-status threshold row on the mapping and big board settings screen.</summary>
 	public class UnitStatusThresholdRow
 	{
 		/// <summary>The ActionBaseTypes value this row configures.</summary>

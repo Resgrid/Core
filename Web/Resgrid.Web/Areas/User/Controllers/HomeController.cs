@@ -378,6 +378,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> EditUserProfile(string userId)
 		{
+			// No userId means "my profile" -- links that come back here from a sub-page (Active
+			// Sessions, Change Password) have no user to name. Without this the authorization
+			// check below is handed a null target and answers 401 for the user's own profile.
+			if (string.IsNullOrWhiteSpace(userId))
+				userId = UserId;
+
 			var model = new EditProfileModel();
 			model.ApiUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +35,7 @@ using Resgrid.Providers.PdfProvider;
 using Resgrid.Repositories.DataRepository;
 using Resgrid.Services;
 using Resgrid.Web.Eventing.Hubs;
+using OpenIddict.Validation.AspNetCore;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.Security.Cryptography.X509Certificates;
 using Resgrid.Web.Services.Models;
@@ -321,7 +322,7 @@ namespace Resgrid.Web.Eventing
 			services.AddAuthorization(options =>
 			{
 				options.AddPolicy(ResgridResources.Chat_View, policy => policy
-					.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+					.AddAuthenticationSchemes(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)
 					.RequireChatAccessClaims());
 			});
 

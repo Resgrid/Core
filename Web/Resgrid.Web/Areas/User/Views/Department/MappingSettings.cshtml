@@ -113,6 +113,35 @@
 								</div>
 							</div>
  
+							<h3>@localizer["UnitStatusThresholdsLabel"]</h3>
+							<div class="form-group">
+								<div class="col-sm-9 col-sm-offset-3">
+									<span class="help-block">@localizer["UnitStatusThresholdsHelp"]</span>
+									<table class="table table-condensed">
+										<thead>
+											<tr>
+												<th>@localizer["UnitStatusThresholdsStatusColumn"]</th>
+												<th style="width: 140px;">@localizer["UnitStatusThresholdsWarnColumn"]</th>
+												<th style="width: 140px;">@localizer["UnitStatusThresholdsAlertColumn"]</th>
+											</tr>
+										</thead>
+										<tbody>
+											@for (var i = 0; i < Model.UnitStatusThresholds.Count; i++)
+											{
+												<tr>
+													<td>
+														@localizer["UnitStatusBaseType_" + Model.UnitStatusThresholds[i].BaseType]
+														<input type="hidden" asp-for="UnitStatusThresholds[i].BaseType" />
+													</td>
+													<td><input type="number" min="0" class="form-control" asp-for="UnitStatusThresholds[i].WarnMinutes" /></td>
+													<td><input type="number" min="0" class="form-control" asp-for="UnitStatusThresholds[i].AlertMinutes" /></td>
+												</tr>
+											}
+										</tbody>
+									</table>
+								</div>
+							</div>
+
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
                                     <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>

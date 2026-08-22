@@ -244,9 +244,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.Use24HourTime = false;
 
-			model.NewCallFields = await BuildNewCallFieldRowsAsync();
-			model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
-
 			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
 			var zoomLevel = await _departmentSettingsService.GetBigBoardMapZoomLevelForDepartmentAsync(DepartmentId);
 			var refreshTimer = await _departmentSettingsService.GetBigBoardRefreshTimeForDepartmentAsync(DepartmentId);
@@ -575,27 +572,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitsSort.ToString(), DepartmentSettingTypes.UnitsSortOrder, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.CallsSort.ToString(), DepartmentSettingTypes.CallsSortOrder, cancellationToken);
-
-				await _departmentSettingsService.SaveUnitStatusThresholdsAsync(DepartmentId, new UnitStatusThresholds
-				{
-					Thresholds = (model.UnitStatusThresholds ?? new List<UnitStatusThresholdRow>())
-						.Select(x => new UnitStatusThreshold
-						{
-							BaseType = x.BaseType,
-							// Entered in minutes, stored in seconds — the board works in seconds and a
-							// dispatcher should never have to think in them.
-							WarnSeconds = Math.Max(0, x.WarnMinutes) * 60,
-							AlertSeconds = Math.Max(0, x.AlertMinutes) * 60
-						})
-						.ToList()
-				}, cancellationToken);
-
-				await _departmentSettingsService.SaveNewCallFieldPolicyAsync(DepartmentId, new NewCallFieldPolicy
-				{
-					Rules = (model.NewCallFields ?? new List<NewCallFieldPolicyRow>())
-						.Select(x => new NewCallFieldRule { Key = x.Key, Visible = x.Visible, Required = x.Required })
-						.ToList()
-				}, cancellationToken);
 
 				// Coordinates the operator typed are stored verbatim. Leaving both blank means "work it
 				// out from our address" -- the service geocodes it and stores the result, so a department
@@ -1874,6 +1850,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitClearStatus = await _departmentSettingsService.GetUnitCallReleaseStatusToSetAsync(DepartmentId);
 			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 			model.AutoEnableCheckInTimers = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
+			model.NewCallFields = await BuildNewCallFieldRowsAsync();
 
 			await PopulateDispatchSettingsSupportingDataAsync(model);
 			await PopulateDispatchSettingsUnitTypeOverridesAsync(model,
@@ -1927,6 +1904,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AutoEnableCheckInTimers.ToString(),
 					DepartmentSettingTypes.CheckInTimersAutoEnableForNewCalls, cancellationToken);
 
+				await _departmentSettingsService.SaveNewCallFieldPolicyAsync(DepartmentId, new NewCallFieldPolicy
+				{
+					Rules = (model.NewCallFields ?? new List<NewCallFieldPolicyRow>())
+						.Select(x => new NewCallFieldRule { Key = x.Key, Visible = x.Visible, Required = x.Required })
+						.ToList()
+				}, cancellationToken);
+
 				if (await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
 				{
 					var mode = Enum.IsDefined(typeof(DispatchRecommendationModes), model.DispatchRecommendationMode)
@@ -1959,6 +1943,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			await PopulateDispatchSettingsUnitTypeOverridesAsync(model);
 			await PopulateRunCardRecommendationSettingsAsync(model, false);
+
+			// A rejected post redisplays the operator's own ticks -- they round-trip through model
+			// binding. Only rebuild from storage when nothing came back at all.
+			if (model.NewCallFields == null || model.NewCallFields.Count == 0)
+				model.NewCallFields = await BuildNewCallFieldRowsAsync();
+
 			model.SaveSuccess = false;
 			return View(model);
 		}
@@ -2443,6 +2433,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UseMapboxOverride = await _departmentSettingsService.GetMappingUseMapboxOverrideAsync(DepartmentId);
 			model.MapboxStyleUrl = await _departmentSettingsService.GetMappingMapboxStyleUrlAsync(DepartmentId);
 			model.MapboxAccessToken = await _departmentSettingsService.GetMappingMapboxAccessTokenAsync(DepartmentId);
+			model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
 
 			return View(model);
 		}
@@ -2469,6 +2460,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				await _departmentSettingsService.SaveUnitStatusThresholdsAsync(DepartmentId, new UnitStatusThresholds
+				{
+					Thresholds = (model.UnitStatusThresholds ?? new List<UnitStatusThresholdRow>())
+						.Select(x => new UnitStatusThreshold
+						{
+							BaseType = x.BaseType,
+							// Entered in minutes, stored in seconds — the board works in seconds and a
+							// dispatcher should never have to think in them. Clamped to the largest minute
+							// count that still converts: the form binds a raw int, and without the ceiling a
+							// posted value over int.MaxValue / 60 wraps negative and silently reads as 0.
+							WarnSeconds = Math.Min(Math.Max(0, x.WarnMinutes), int.MaxValue / 60) * 60,
+							AlertSeconds = Math.Min(Math.Max(0, x.AlertMinutes), int.MaxValue / 60) * 60
+						})
+						.ToList()
+				}, cancellationToken);
+
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelLocationTTL.ToString(),
 					DepartmentSettingTypes.MappingPersonnelLocationTTL, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitLocationTTL.ToString(),
@@ -2496,6 +2503,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.SaveSuccess = true;
 				return View(model);
 			}
+
+			// A rejected post redisplays the operator's own numbers -- they round-trip through model
+			// binding. Only rebuild from storage when nothing came back at all.
+			if (model.UnitStatusThresholds == null || model.UnitStatusThresholds.Count == 0)
+				model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
 
 			model.SaveSuccess = false;
 			return View(model);

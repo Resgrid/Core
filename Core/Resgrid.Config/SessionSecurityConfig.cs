@@ -1,4 +1,4 @@
-namespace Resgrid.Config
+﻿namespace Resgrid.Config
 {
 	public static class SessionSecurityConfig
 	{
@@ -16,6 +16,13 @@ namespace Resgrid.Config
 		public static int PublicResetAccountLimitPerHour = 3;
 		public static int PublicResetIpLimitPerHour = 10;
 		public static int WebBffAccessTokenLifetimeMinutes = 5;
+		// Eventing tokens are deliberately longer-lived than API tokens. Every hub sets
+		// CloseOnAuthenticationExpiration, so this value is how often each connected client tears the
+		// connection down and renegotiates -- a token mint plus an introspection round trip per client,
+		// per expiry. SessionValidationHubFilter revalidates the session on every hub invocation, so a
+		// revoked session is cut off well before its token expires; this lifetime only bounds how long a
+		// purely passive connection can keep receiving broadcasts after revocation.
+		public static int WebEventingAccessTokenLifetimeMinutes = 30;
 		public static int ClientMetadataMaximumLength = 256;
 		public static int UserAgentMaximumLength = 1024;
 		// Optional local JSON CIDR database. Leave blank to display location as unavailable.

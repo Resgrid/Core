@@ -28,10 +28,29 @@
   z-index: 2002;
 }
 
+/* The scroll lives on .sidebar-collapse (the module list), never on the <nav> itself.
+   An overflow container clips its descendants on both axes, and the profile dropdown is
+   wider than the 220px sidebar, so scrolling the <nav> chopped that menu off at the
+   sidebar edge and it read as painting behind the page content. The profile block sits
+   outside .sidebar-collapse in _Navigation.cshtml so its dropdown escapes the scroll box. */
 nav.navbar-static-side {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+nav.navbar-static-side .nav-header {
+  flex: 0 0 auto;
+}
+
+nav.navbar-static-side .sidebar-collapse {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  /* Gutter so the last module can be scrolled clear of the fixed footer bar. */
+  padding-bottom: 60px;
 }
 
 @media (min-width: 768px) {
@@ -43,7 +62,18 @@ nav.navbar-static-side {
   }
 }
 
-/* Gutter so the last module can be scrolled clear of the fixed footer bar. */
-nav.navbar-static-side .sidebar-collapse {
-  padding-bottom: 60px;
+/* Under the desktop breakpoint the theme stops pinning the sidebar and paints it as a
+   plain block that sizes to its own content: position:absolute normally, position:fixed
+   under .fixed-sidebar. Fixed plus content height is the broken one -- a module list
+   taller than the screen runs off the bottom of the viewport with nothing to scroll it
+   back. Re-assert the flex column (the theme's .body-small.mini-navbar rules outrank the
+   bare nav selector above) and cap the nav to the viewport, so .sidebar-collapse takes
+   the scroll and keeps its footer gutter exactly as it does on desktop. */
+@media (max-width: 768px) {
+  body.body-small.mini-navbar nav.navbar-static-side,
+  body.fixed-sidebar.body-small.mini-navbar nav.navbar-static-side {
+    display: flex;
+    max-height: 100vh;
+    max-height: 100dvh;
+  }
 }

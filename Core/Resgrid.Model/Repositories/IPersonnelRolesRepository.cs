@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -39,5 +40,16 @@ namespace Resgrid.Model.Repositories
 		/// <param name="personnelRoleId">The personnel role identifier.</param>
 		/// <returns>Task&lt;PersonnelRole&gt;.</returns>
 		Task<PersonnelRole> GetRoleByRoleIdAsync(int personnelRoleId);
+
+		/// <summary>
+		/// Removes every row in other tables that points at a personnel role, so the role row itself can
+		/// be deleted without tripping a foreign key (CallDispatchRoles has a non-cascading FK on RoleId).
+		/// Rows that merely reference the role as an optional qualification (UnitRoles) are nulled out
+		/// instead of deleted.
+		/// </summary>
+		/// <param name="personnelRoleId">The personnel role identifier.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		/// <returns>Task&lt;bool&gt;.</returns>
+		Task<bool> DeleteRoleDependenciesAsync(int personnelRoleId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

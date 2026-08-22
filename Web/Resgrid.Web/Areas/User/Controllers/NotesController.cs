@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -13,10 +14,13 @@ using Resgrid.Web.Helpers;
 using AuditEvent = Resgrid.Model.Events.AuditEvent;
 using IndexView = Resgrid.Web.Areas.User.Models.Notes.IndexView;
 using Note = Resgrid.Model.Note;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
+	// Notes are scoped to the caller's department, and the per-note checks read the UserId claim.
 	[Area("User")]
+	[Authorize]
 	public class NotesController : SecureBaseController
 	{
 		private readonly INotesService _notesService;

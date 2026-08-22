@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.CustomMaps;
@@ -15,7 +16,10 @@ using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
+	// Every action reads or writes maps scoped to the caller's department claim, so an anonymous
+	// request would run with a DepartmentId of 0 instead of being sent to sign-in.
 	[Area("User")]
+	[Authorize]
 	public class CustomMapsController : SecureBaseController
 	{
 		private readonly ICustomMapService _customMapService;

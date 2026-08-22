@@ -2004,6 +2004,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			await _personnelRolesService.DeleteRoleByIdAsync(roleId, cancellationToken);
 
+			// Deleting the role also drops its membership rows, so anything caching who is in what role
+			// has to be dumped or the role keeps showing up on personnel until the cache ages out.
+			_userProfileService.ClearAllUserProfilesFromCache(DepartmentId);
+			_departmentsService.InvalidateDepartmentUsersInCache(DepartmentId);
+			_departmentsService.InvalidatePersonnelNamesInCache(DepartmentId);
+			_departmentsService.InvalidateDepartmentMembers();
+			_usersService.ClearCacheForDepartment(DepartmentId);
+
 			return RedirectToAction("Roles");
 		}
 

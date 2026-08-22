@@ -2,12 +2,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
+	// Every action is scoped to the caller's department claim, and the redirects land on CustomMaps
+	// actions that are department scoped themselves.
 	[Area("User")]
+	[Authorize]
 	public class IndoorMapsController : SecureBaseController
 	{
 		private readonly IIndoorMapService _indoorMapService;

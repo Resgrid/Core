@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Localization;
 using Resgrid.Model;
 using Resgrid.Model.Services;
@@ -15,7 +16,9 @@ using Resgrid.Web.Areas.User.Models.Units;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
+	// Department links are scoped to the caller's department claim on every action.
 	[Area("User")]
+	[Authorize]
 	public class LinksController : SecureBaseController
 	{
 		#region Private Members and Constructors

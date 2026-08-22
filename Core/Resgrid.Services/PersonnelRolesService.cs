@@ -89,8 +89,16 @@ namespace Resgrid.Services
 		{
 			var role = await GetRoleByIdAsync(roleId);
 
+			if (role == null)
+				return false;
+
+			// Call dispatches, shift group requirements, run cards and the rest all point back at the
+			// role row; CallDispatchRoles has a non-cascading FK, so the delete below fails outright for
+			// any role that has ever been dispatched unless those rows go first.
+			await _personnelRolesRepository.DeleteRoleDependenciesAsync(roleId, cancellationToken);
+
 			var result = await _personnelRolesRepository.DeleteAsync(role, cancellationToken);
-			SendRoleVisibilityRefresh(role?.DepartmentId ?? 0);
+			SendRoleVisibilityRefresh(role.DepartmentId);
 
 			return result;
 		}

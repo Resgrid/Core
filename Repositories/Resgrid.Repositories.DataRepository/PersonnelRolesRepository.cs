@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -208,6 +210,65 @@ namespace Resgrid.Repositories.DataRepository
 				Logging.LogException(ex);
 
 				return null;
+			}
+		}
+
+		public async Task<bool> DeleteRoleDependenciesAsync(int personnelRoleId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			try
+			{
+				var dynamicParameters = new DynamicParametersExtension();
+				dynamicParameters.Add("RoleId", personnelRoleId);
+
+				var notation = _sqlConfiguration.ParameterNotation;
+				var schema = _sqlConfiguration.SchemaName;
+
+				// Every table below points at PersonnelRoles. CallDispatchRoles is the one with a
+				// non-cascading FK, so leaving any of these behind blocks the role delete outright.
+				// UnitRoles only names the role as an optional qualification for a seat, so the
+				// requirement is cleared rather than the seat being deleted.
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $@"DELETE FROM {schema}.personnelroleusers WHERE personnelroleid = {notation}RoleId;
+						 DELETE FROM {schema}.calldispatchroles WHERE roleid = {notation}RoleId;
+						 DELETE FROM {schema}.shiftgrouproles WHERE personnelroleid = {notation}RoleId;
+						 DELETE FROM {schema}.commanddefinitionrolepersonnelroles WHERE personnelroleid = {notation}RoleId;
+						 DELETE FROM {schema}.runcardrolerequirements WHERE personnelroleid = {notation}RoleId;
+						 DELETE FROM {schema}.stationcoveragerequirements WHERE personnelroleid = {notation}RoleId;
+						 DELETE FROM {schema}.chatchannelaccessrules WHERE personnelroleid = {notation}RoleId;
+						 UPDATE {schema}.unitroles SET personnelroleid = NULL, personnelrolerequired = false WHERE personnelroleid = {notation}RoleId;"
+					: $@"DELETE FROM {schema}.[PersonnelRoleUsers] WHERE [PersonnelRoleId] = {notation}RoleId;
+						 DELETE FROM {schema}.[CallDispatchRoles] WHERE [RoleId] = {notation}RoleId;
+						 DELETE FROM {schema}.[ShiftGroupRoles] WHERE [PersonnelRoleId] = {notation}RoleId;
+						 DELETE FROM {schema}.[CommandDefinitionRolePersonnelRoles] WHERE [PersonnelRoleId] = {notation}RoleId;
+						 DELETE FROM {schema}.[RunCardRoleRequirements] WHERE [PersonnelRoleId] = {notation}RoleId;
+						 DELETE FROM {schema}.[StationCoverageRequirements] WHERE [PersonnelRoleId] = {notation}RoleId;
+						 DELETE FROM {schema}.[ChatChannelAccessRules] WHERE [PersonnelRoleId] = {notation}RoleId;
+						 UPDATE {schema}.[UnitRoles] SET [PersonnelRoleId] = NULL, [PersonnelRoleRequired] = 0 WHERE [PersonnelRoleId] = {notation}RoleId;";
+
+				var executeFunction = new Func<DbConnection, Task<bool>>(async x =>
+				{
+					await x.ExecuteAsync(sql, dynamicParameters, _unitOfWork.Transaction);
+
+					return true;
+				});
+
+				if (_unitOfWork?.Connection == null)
+				{
+					using (var conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+
+						return await executeFunction(conn);
+					}
+				}
+
+				return await executeFunction(_unitOfWork.CreateOrGetConnection());
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				throw;
 			}
 		}
 

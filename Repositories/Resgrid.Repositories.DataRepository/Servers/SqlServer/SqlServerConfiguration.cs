@@ -47,7 +47,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							SELECT al.*, u.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% al
 							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.[Id] = al.[UserId]
-							INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON dm.[UserId] = al.[UserId]
+							INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON dm.[UserId] = al.[UserId] AND dm.[DepartmentId] = al.[DepartmentId]
 							WHERE al.DepartmentId = %DID% AND dm.IsDeleted = 0 AND
 							(%DAA% = 1 OR al.Timestamp >= %TS%) AND
 							dm.IsDisabled = 0 AND dm.IsHidden = 0 AND al.Timestamp >= %LTS%";
@@ -55,7 +55,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							SELECT al.*, u.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% al
 							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.[Id] = al.[UserId]
-							INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON dm.[UserId] = al.[UserId]
+							INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSTABLE% dm ON dm.[UserId] = al.[UserId] AND dm.[DepartmentId] = al.[DepartmentId]
 							WHERE al.DepartmentId = %DID% AND dm.IsDeleted = 0 AND
 							(%DAA% = 1 OR al.Timestamp >= %TS%) AND
 							al.Timestamp >= %LTS%";

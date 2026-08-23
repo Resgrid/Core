@@ -14,9 +14,18 @@ namespace Resgrid.Model.Repositories
 		/// <summary>
 		/// Gets the last action logs for department asynchronous.
 		/// </summary>
+		/// <remarks>
+		/// BREAKING CHANGE: the <paramref name="includeHiddenAndDisabled"/> parameter was added to this
+		/// signature. The default value keeps ordinary call sites source compatible, but implementers of
+		/// this interface must add the parameter, precompiled assemblies bound to the three parameter
+		/// overload must be rebuilt, and expression tree call sites (Moq Setup/Verify, LINQ expressions)
+		/// must pass the argument explicitly because C# rejects omitted optional arguments there (CS0854).
+		/// See Documentation/breaking-changes.md.
+		/// </remarks>
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="disableAutoAvailable">if set to <c>true</c> [disable automatic available].</param>
 		/// <param name="timeStamp">The time stamp.</param>
+		/// <param name="includeHiddenAndDisabled">if set to <c>true</c> include logs for hidden and disabled department members.</param>
 		/// <returns>Task&lt;IEnumerable&lt;ActionLog&gt;&gt;.</returns>
 		Task<IEnumerable<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool disableAutoAvailable, DateTime timeStamp, bool includeHiddenAndDisabled = false);
 

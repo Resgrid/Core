@@ -201,12 +201,38 @@ namespace Resgrid.Console.Commands
 		private async Task<List<Candidate>> BuildCandidatesAsync(List<UserProfile> profiles, Department department)
 		{
 			// Resolved once per department rather than per profile: it is the same lookup for everyone.
-			var departmentRegion = await CountryIsoAsync(department.AddressId);
+			// Both region lookups rethrow: the region decides how a number parses, so swallowing a
+			// failed lookup here would let an --Apply run rewrite numbers against the wrong region or
+			// report them as unparseable. The outer handler turns this into a non-zero exit.
+			string departmentRegion;
+
+			try
+			{
+				departmentRegion = await CountryIsoAsync(department.AddressId);
+			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex, "Failed to resolve the region for department {DepartmentId} (AddressId {AddressId}).",
+					department.DepartmentId, department.AddressId);
+				throw;
+			}
+
 			var candidates = new List<Candidate>();
 
 			foreach (var profile in profiles)
 			{
-				var region = await ResolveRegionAsync(profile, departmentRegion);
+				string region;
+
+				try
+				{
+					region = await ResolveRegionAsync(profile, departmentRegion);
+				}
+				catch (Exception ex)
+				{
+					logger.LogError(ex, "Failed to resolve the region for user {UserId} in department {DepartmentId}.",
+						profile.UserId, department.DepartmentId);
+					throw;
+				}
 
 				foreach (var field in new[] { MobileField, HomeField })
 				{

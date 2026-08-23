@@ -174,8 +174,15 @@ namespace Resgrid.Services
 
 		public async Task<UserProfile> GetProfileByMobileNumberAsync(string number)
 		{
-			string numberToTest =
-				number.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
+			// A blank inbound number must never match: the stored column can also be blank and an
+			// empty-to-empty compare would hand back an arbitrary profile.
+			if (string.IsNullOrWhiteSpace(number))
+				return null;
+
+			string numberToTest = NormalizePhoneNumber(number);
+
+			if (string.IsNullOrWhiteSpace(numberToTest))
+				return null;
 
 			var profile = await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
 
@@ -194,10 +201,15 @@ namespace Resgrid.Services
 
 		public async Task<UserProfile> GetProfileByHomeNumberAsync(string number)
 		{
-			string numberToTest =
-				number.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
+			if (string.IsNullOrWhiteSpace(number))
+				return null;
 
-			var profile = await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
+			string numberToTest = NormalizePhoneNumber(number);
+
+			if (string.IsNullOrWhiteSpace(numberToTest))
+				return null;
+
+			var profile = await _userProfileRepository.GetProfileByHomeNumberAsync(numberToTest);
 
 			if (profile != null)
 				return profile;
@@ -206,11 +218,20 @@ namespace Resgrid.Services
 			{
 				numberToTest = numberToTest.Remove(0, 1);
 
-				return await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
+				return await _userProfileRepository.GetProfileByHomeNumberAsync(numberToTest);
 			}
 
 			return null;
 		}
+
+		/// <summary>
+		/// Strips formatting (and the E.164 plus) so the value lines up with the digits-only
+		/// comparison the profile-by-number queries run against the stored column. Profiles are
+		/// saved in E.164 (+12248304555), inbound SMS/voice arrives in assorted formats, so both
+		/// sides have to be reduced to bare digits before they can be compared.
+		/// </summary>
+		private static string NormalizePhoneNumber(string number)
+			=> number?.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
 
 		public async Task<List<UserProfile>> GetSelectedUserProfilesAsync(List<string> userIds)
 		{

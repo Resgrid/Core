@@ -21,11 +21,13 @@ namespace Resgrid.Repositories.DataRepository.Queries.Departments
 					_sqlConfiguration.ParameterNotation,
 					new string[] {
 						"%DID%",
-						"%USERID%"
+						"%USERID%",
+						"%CURRENTDATE%"
 					},
 					new string[] {
 						"DepartmentId",
-						"UserId"
+						"UserId",
+						"CurrentDate"
 					},
 					new string[] {
 						"%MESSAGESTABLE%",

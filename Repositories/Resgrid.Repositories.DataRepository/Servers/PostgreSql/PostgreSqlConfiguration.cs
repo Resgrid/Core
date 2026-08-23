@@ -1,4 +1,4 @@
-using Resgrid.Config;
+﻿using Resgrid.Config;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Queries.Calendar;
 using Resgrid.Repositories.DataRepository.Queries.Calls;
@@ -283,7 +283,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT
 					(SELECT COUNT(*) FROM %SCHEMA%.%MESSAGESTABLE% m
 					LEFT OUTER JOIN %SCHEMA%.%MESSAGERECIPIENTSTABLE% mr ON m.MessageId = mr.MessageId
-					WHERE mr.UserId = %USERID% AND mr.IsDeleted = false AND m.IsDeleted = false) AS UnreadMessageCount,
+					WHERE mr.UserId = %USERID% AND mr.IsDeleted = false AND mr.ReadOn IS NULL
+					AND m.IsDeleted = false AND (m.ExpireOn IS NULL OR m.ExpireOn > %CURRENTDATE%)) AS UnreadMessageCount,
 
 					(SELECT COUNT(*) FROM %SCHEMA%.%CALLTABLENAME% c WHERE c.DepartmentId = %DID% AND c.IsDeleted = false AND c.State = 0) AS OpenCallsCount";
 
@@ -547,12 +548,16 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT %SCHEMA%.%USERPROFILESTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as MembershipEmail, %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%USERPROFILESTABLE%
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%USERPROFILESTABLE%.UserId
-					WHERE MobileNumber = %MOBILENUMBER%";
+					WHERE MobileNumber IS NOT NULL AND MobileNumber <> ''
+						AND REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(MobileNumber, '+', ''), '-', ''), ' ', ''), '(', ''), ')', ''), '.', '')
+							IN (%MOBILENUMBER%, '1' || %MOBILENUMBER%)";
 			SelectProfileByHomeQuery = @"
 					SELECT %SCHEMA%.%USERPROFILESTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as MembershipEmail, %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%USERPROFILESTABLE%
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%USERPROFILESTABLE%.UserId
-					WHERE HomeNumber = %HOMENUMBER%";
+					WHERE HomeNumber IS NOT NULL AND HomeNumber <> ''
+						AND REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(HomeNumber, '+', ''), '-', ''), ' ', ''), '(', ''), ')', ''), '.', '')
+							IN (%HOMENUMBER%, '1' || %HOMENUMBER%)";
 			SelectProfilesByIdsQuery = @"
 					SELECT %SCHEMA%.%USERPROFILESTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as MembershipEmail, %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%USERPROFILESTABLE%

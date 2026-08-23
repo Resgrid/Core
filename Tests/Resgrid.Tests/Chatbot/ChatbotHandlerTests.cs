@@ -998,7 +998,7 @@ namespace Resgrid.Tests.Chatbot
 				});
 
 			var actionLogs = new Mock<IActionLogsService>();
-			actionLogs.Setup(a => a.GetLastActionLogsForDepartmentAsync(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync(new List<ActionLog>());
+			actionLogs.Setup(a => a.GetLastActionLogsForDepartmentAsync(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>())).ReturnsAsync(new List<ActionLog>());
 			var userStates = new Mock<IUserStateService>();
 			userStates.Setup(u => u.GetLatestStatesForDepartmentAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new List<UserState>());
 

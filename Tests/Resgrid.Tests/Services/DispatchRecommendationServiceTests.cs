@@ -104,7 +104,7 @@ namespace Resgrid.Tests.Services
 					{ "user-1", new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = FirefighterRoleId, Name = "Firefighter" } } },
 					{ "user-2", new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = FirefighterRoleId, Name = "Firefighter" } } }
 				});
-			_actionLogsService.Setup(x => x.GetLastActionLogsForDepartmentAsync(DepartmentId, It.IsAny<bool>(), It.IsAny<bool>()))
+			_actionLogsService.Setup(x => x.GetLastActionLogsForDepartmentAsync(DepartmentId, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
 				.ReturnsAsync(new List<ActionLog>());
 			_userStateService.Setup(x => x.GetLatestStatesForDepartmentAsync(DepartmentId, It.IsAny<bool>()))
 				.ReturnsAsync(new List<UserState>());

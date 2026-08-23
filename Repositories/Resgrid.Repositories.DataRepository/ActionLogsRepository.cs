@@ -31,7 +31,7 @@ namespace Resgrid.Repositories.DataRepository
 			_unitOfWork = unitOfWork;
 		}
 
-		public async Task<IEnumerable<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool disableAutoAvailable, DateTime timeStamp)
+		public async Task<IEnumerable<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool disableAutoAvailable, DateTime timeStamp, bool includeHiddenAndDisabled = false)
 		{
 			try
 			{
@@ -45,7 +45,9 @@ namespace Resgrid.Repositories.DataRepository
 					dynamicParameters.Add("Timestamp", timeStamp);
 					dynamicParameters.Add("LatestTimestamp", latestTimestamp);
 
-					var query = _queryFactory.GetQuery<SelectLastActionLogsForDepartmentQuery>();
+					var query = includeHiddenAndDisabled
+						? _queryFactory.GetQuery<SelectLastActionLogsForDepartmentIncHiddenQuery>()
+						: _queryFactory.GetQuery<SelectLastActionLogsForDepartmentQuery>();
 
 					return await x.QueryAsync<ActionLog, IdentityUser, ActionLog>(sql: query,
 						param: dynamicParameters,

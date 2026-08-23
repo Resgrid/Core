@@ -28,6 +28,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string ActionLogsTable { get; set; }
 
 		public string SelectLastActionLogsForDepartmentQuery { get; set; }
+		public string SelectLastActionLogsForDepartmentIncHiddenQuery { get; set; }
 		public string SelectActionLogsByUserIdQuery { get; set; }
 		public string SelectALogsByUserInDateRangQuery { get; set; }
 		public string SelectALogsByDateRangeQuery { get; set; }

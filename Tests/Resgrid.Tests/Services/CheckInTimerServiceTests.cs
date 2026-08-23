@@ -551,7 +551,7 @@ namespace Resgrid.Tests.Services
 			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
 			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
 			// User is Responding (2), not On Scene (3)
-			_actionLogsService.Setup(x => x.GetLastActionLogsForDepartmentAsync(10, It.IsAny<bool>(), It.IsAny<bool>()))
+			_actionLogsService.Setup(x => x.GetLastActionLogsForDepartmentAsync(10, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
 				.ReturnsAsync(new List<ActionLog> { new ActionLog { UserId = "user1", ActionTypeId = (int)ActionTypes.Responding } });
 
 			var result = await _service.GetActiveTimerStatusesForCallAsync(call);
@@ -577,7 +577,7 @@ namespace Resgrid.Tests.Services
 			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
 			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
 			// User is On Scene (3) - matches
-			_actionLogsService.Setup(x => x.GetLastActionLogsForDepartmentAsync(10, It.IsAny<bool>(), It.IsAny<bool>()))
+			_actionLogsService.Setup(x => x.GetLastActionLogsForDepartmentAsync(10, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
 				.ReturnsAsync(new List<ActionLog> { new ActionLog { UserId = "user1", ActionTypeId = (int)ActionTypes.OnScene } });
 
 			var result = await _service.GetActiveTimerStatusesForCallAsync(call);

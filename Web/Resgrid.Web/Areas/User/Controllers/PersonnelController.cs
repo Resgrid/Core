@@ -136,7 +136,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedAsync(DepartmentId);
 			var departmentMembers = await _departmentsService.GetAllMembersForDepartmentUnlimitedAsync(DepartmentId);
-			var actionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
+			List<ActionLog> actionLogs;
+
+			try
+			{
+				actionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId, includeHiddenAndDisabled: true);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Failed to get the last action logs for the personnel list. DepartmentId: {DepartmentId}");
+				throw;
+			}
+
 			var staffings = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
 			var canGroupAdminsDelete = await _authorizationService.CanGroupAdminsRemoveUsersAsync(DepartmentId);
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentIncDisabledDeletedAsync(DepartmentId);

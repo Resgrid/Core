@@ -1,0 +1,62 @@
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resgrid.Localization.Account.Login> localizer
+@inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resgrid | @commonLocalizer["Logout"]</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+          asp-fallback-test-class="sr-only"
+          asp-fallback-test-property="position"
+          asp-fallback-test-value="absolute" />
+
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/lib/metisMenu/dist/metisMenu.min.css" />
+    <link rel="stylesheet" href="~/css/animate.css" />
+    <link rel="stylesheet" href="~/css/pub-bundle.css" asp-append-version="true" />
+</head>
+<body class="gray-bg">
+
+    <div class="middle-box text-center animated fadeInDown">
+        <h1></h1>
+        <h2>@commonLocalizer["Logout"]</h2>
+
+        <div class="error-desc">
+            <ul class="list-inline">
+                <li>
+                    <form asp-controller="Account" asp-action="LogOff" asp-route-area="" method="post" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary m-t">@commonLocalizer["Logout"]</button>
+                    </form>
+                </li>
+                <li>
+
+                </li>
+                <li>
+                    <a class="btn btn-white m-t" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                </li>
+                <li>
+
+                </li>
+                <li>
+                    <a class="btn btn-white m-t" href="@Resgrid.Config.UrlsConfig.HomeUrl">@localizer["Home"]</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

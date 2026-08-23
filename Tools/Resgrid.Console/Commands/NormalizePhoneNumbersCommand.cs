@@ -19,7 +19,7 @@ namespace Resgrid.Console.Commands
 	///     save flow already produces (+12015550123).
 	///     <para>
 	///     Most existing rows were written before the phone validation in EditUserProfile/AddPerson
-	///     existed, so they hold whatever the user typed - "(270) 555-0101", "270-555-0102". Inbound SMS
+	///     existed, so they hold whatever the user typed - "(270) 555-0101", "0740 055 5012". Inbound SMS
 	///     and voice resolve the sender by comparing against the stored number, and those formats match
 	///     nothing, so those users cannot be identified by a text or a call. Every current write path
 	///     validates and stores E.164, so this only has to run once.
@@ -37,9 +37,24 @@ namespace Resgrid.Console.Commands
 		IAddressService addressService,
 		IPhoneNumberProcesserProvider phoneNumberProcesser) : ICommandService
 	{
+		private const string MobileField = "MobileNumber";
+		private const string HomeField = "HomeNumber";
+
 		private sealed record Change(int DepartmentId, string UserId, string Field, string From, string To);
 
 		private sealed record Skip(int DepartmentId, string UserId, string Field, string Value, string Reason);
+
+		/// <summary>One stored number in flight: what it was, and what it parsed to (if anything).</summary>
+		private sealed class Candidate
+		{
+			public UserProfile Profile { get; init; }
+			public string Field { get; init; }
+			public string Original { get; init; }
+			public PhoneNumberResult Result { get; set; }
+
+			public bool Parsed => Result != null && Result.IsValid &&
+								  !string.IsNullOrWhiteSpace(Result.InternationalNumber);
+		}
 
 		public async Task<ExitCode> ExecuteMainAsync(string[] args, CancellationToken cancellationToken)
 		{
@@ -74,6 +89,12 @@ namespace Resgrid.Console.Commands
 
 				var changes = new List<Change>();
 				var skips = new List<Skip>();
+
+				// A profile belongs to a user, not a department, so the same row comes back under every
+				// department the user belongs to. Track what has been handled so it is not re-parsed and
+				// re-written once per membership, and so a profile is not reported as a failure under one
+				// department when it already resolved under another.
+				var handled = new HashSet<int>();
 				var scanned = 0;
 
 				foreach (var department in departments)
@@ -88,35 +109,52 @@ namespace Resgrid.Console.Commands
 					if (profiles == null)
 						continue;
 
-					// Resolved once per department rather than per profile: it is the same lookup for
-					// everyone in it.
-					var departmentRegion = await CountryIsoAsync(department.AddressId);
+					var fresh = profiles.Where(p => p != null && !handled.Contains(p.UserProfileId)).ToList();
+
+					if (fresh.Count == 0)
+						continue;
+
+					scanned += fresh.Count;
+
+					var candidates = await BuildCandidatesAsync(fresh, department);
+					var inferred = InferRegion(candidates);
+
+					if (inferred != null)
+						RetryFailuresWithRegion(candidates, inferred);
 
 					var pending = new List<UserProfile>();
 
-					foreach (var profile in profiles)
+					foreach (var profile in fresh)
 					{
-						scanned++;
+						var changed = false;
 
-						var region = await ResolveRegionAsync(profile, departmentRegion);
+						foreach (var candidate in candidates.Where(c => c.Profile.UserProfileId == profile.UserProfileId))
+						{
+							if (!candidate.Parsed)
+							{
+								skips.Add(new Skip(department.DepartmentId, profile.UserId, candidate.Field,
+									candidate.Original, ClassifySkip(candidate.Original)));
+								continue;
+							}
 
-						var mobile = Normalize(profile.MobileNumber, "MobileNumber", region, department.DepartmentId, profile.UserId, skips);
-						var home = Normalize(profile.HomeNumber, "HomeNumber", region, department.DepartmentId, profile.UserId, skips);
+							if (string.Equals(candidate.Result.InternationalNumber, candidate.Original, StringComparison.Ordinal))
+								continue;
 
-						if (mobile == null && home == null)
+							changes.Add(new Change(department.DepartmentId, profile.UserId, candidate.Field,
+								candidate.Original, candidate.Result.InternationalNumber));
+
+							if (candidate.Field == MobileField)
+								profile.MobileNumber = candidate.Result.InternationalNumber;
+							else
+								profile.HomeNumber = candidate.Result.InternationalNumber;
+
+							changed = true;
+						}
+
+						handled.Add(profile.UserProfileId);
+
+						if (!changed)
 							continue;
-
-						if (mobile != null)
-						{
-							changes.Add(new Change(department.DepartmentId, profile.UserId, "MobileNumber", profile.MobileNumber, mobile));
-							profile.MobileNumber = mobile;
-						}
-
-						if (home != null)
-						{
-							changes.Add(new Change(department.DepartmentId, profile.UserId, "HomeNumber", profile.HomeNumber, home));
-							profile.HomeNumber = home;
-						}
 
 						profile.LastUpdated = DateTime.UtcNow;
 						pending.Add(profile);
@@ -137,8 +175,10 @@ namespace Resgrid.Console.Commands
 						userProfileService.ClearAllUserProfilesFromCache(department.DepartmentId);
 					}
 
-					logger.LogInformation("Department {DepartmentId} ({Name}): {Count} profile(s) {Action}.",
-						department.DepartmentId, department.Name, pending.Count, apply ? "updated" : "would be updated");
+					logger.LogInformation("Department {DepartmentId} ({Name}){Region}: {Count} profile(s) {Action}.",
+						department.DepartmentId, department.Name,
+						inferred == null ? string.Empty : $" [region {inferred}]",
+						pending.Count, apply ? "updated" : "would be updated");
 				}
 
 				Report(scanned, changes, skips, apply);
@@ -158,36 +198,134 @@ namespace Resgrid.Console.Commands
 			return ExitCode.Success;
 		}
 
-		/// <summary>
-		///     Returns the canonical form when the stored value should be rewritten, or null to leave it
-		///     alone (blank, already canonical, or not parseable as a real number).
-		/// </summary>
-		private string Normalize(string number, string field, string region, int departmentId, string userId,
-			List<Skip> skips)
+		private async Task<List<Candidate>> BuildCandidatesAsync(List<UserProfile> profiles, Department department)
 		{
-			if (string.IsNullOrWhiteSpace(number))
-				return null;
+			// Resolved once per department rather than per profile: it is the same lookup for everyone.
+			// Both region lookups rethrow: the region decides how a number parses, so swallowing a
+			// failed lookup here would let an --Apply run rewrite numbers against the wrong region or
+			// report them as unparseable. The outer handler turns this into a non-zero exit.
+			string departmentRegion;
 
-			var result = phoneNumberProcesser.Process(number, region);
-
-			if (result == null || !result.IsValid || string.IsNullOrWhiteSpace(result.InternationalNumber))
+			try
 			{
-				// Never guess. A number that does not parse to a real one - a truncated entry, or a
-				// national format whose country cannot be resolved from the profile's address - is
-				// reported for a human to look at rather than rewritten into something that would
-				// dial somewhere else.
-				skips.Add(new Skip(departmentId, userId, field, number, "does not parse to a valid number"));
-				return null;
+				departmentRegion = await CountryIsoAsync(department.AddressId);
+			}
+			catch (Exception ex)
+			{
+				logger.LogError(ex, "Failed to resolve the region for department {DepartmentId} (AddressId {AddressId}).",
+					department.DepartmentId, department.AddressId);
+				throw;
 			}
 
-			return string.Equals(result.InternationalNumber, number, StringComparison.Ordinal)
-				? null
-				: result.InternationalNumber;
+			var candidates = new List<Candidate>();
+
+			foreach (var profile in profiles)
+			{
+				string region;
+
+				try
+				{
+					region = await ResolveRegionAsync(profile, departmentRegion);
+				}
+				catch (Exception ex)
+				{
+					logger.LogError(ex, "Failed to resolve the region for user {UserId} in department {DepartmentId}.",
+						profile.UserId, department.DepartmentId);
+					throw;
+				}
+
+				foreach (var field in new[] { MobileField, HomeField })
+				{
+					var number = field == MobileField ? profile.MobileNumber : profile.HomeNumber;
+
+					if (string.IsNullOrWhiteSpace(number))
+						continue;
+
+					candidates.Add(new Candidate
+					{
+						Profile = profile,
+						Field = field,
+						Original = number,
+						Result = phoneNumberProcesser.Process(number, region)
+					});
+				}
+			}
+
+			return candidates;
+		}
+
+		/// <summary>
+		///     The country a department's numbers actually belong to, learned from the ones that already
+		///     parsed.
+		///     <para>
+		///     A national-format number ("07400555012", "0491570156") cannot be read without knowing its
+		///     country, and most departments have no address on file to supply one - which is why the
+		///     bulk of the skipped rows are perfectly good non-US numbers. Members of a department
+		///     overwhelmingly share a country, and rows already stored in E.164 state theirs explicitly,
+		///     so the numbers that did parse tell us how to read the ones that did not.
+		///     </para>
+		///     <para>
+		///     Requires a clear majority, so a handful of foreign numbers cannot relabel a department and
+		///     turn a bad parse into a confidently wrong number.
+		///     </para>
+		/// </summary>
+		private static string InferRegion(List<Candidate> candidates)
+		{
+			var regions = candidates
+				.Where(c => c.Parsed && !string.IsNullOrWhiteSpace(c.Result.Region))
+				.Select(c => c.Result.Region)
+				.ToList();
+
+			if (regions.Count == 0)
+				return null;
+
+			var top = regions.GroupBy(r => r).OrderByDescending(g => g.Count()).First();
+
+			return top.Count() * 2 > regions.Count ? top.Key : null;
+		}
+
+		private void RetryFailuresWithRegion(List<Candidate> candidates, string region)
+		{
+			foreach (var candidate in candidates.Where(c => !c.Parsed))
+			{
+				var retry = phoneNumberProcesser.Process(candidate.Original, region);
+
+				if (retry != null && retry.IsValid && !string.IsNullOrWhiteSpace(retry.InternationalNumber))
+					candidate.Result = retry;
+			}
+		}
+
+		/// <summary>
+		///     Why a value could not be used, so the report can be triaged in groups rather than read row
+		///     by row. Most of what lands here is not a mistyped number at all - it is a name, an email
+		///     address, "N/A", or a placeholder - and those want clearing, not fixing.
+		/// </summary>
+		private static string ClassifySkip(string value)
+		{
+			var trimmed = (value ?? string.Empty).Trim();
+			var digits = trimmed.Count(char.IsDigit);
+
+			if (digits == 0)
+				return "not a phone number (no digits)";
+
+			if (trimmed.Contains('@') || trimmed.Any(char.IsLetter))
+				return "contains letters";
+
+			if (trimmed.Contains(';') || trimmed.Contains(','))
+				return "more than one number in the field";
+
+			if (digits < 7)
+				return "too short";
+
+			if (trimmed.Where(char.IsDigit).Distinct().Count() <= 2)
+				return "placeholder";
+
+			return "does not parse to a valid number";
 		}
 
 		/// <summary>
 		///     The country to interpret a national-format number against. Without one, a stored
-		///     "270-555-0102" cannot be resolved to a country code at all.
+		///     "0740 055 5012" cannot be resolved to a country code at all.
 		///     <para>
 		///     Follows EditUserProfile - the home (physical) address country, then the mailing address -
 		///     and falls back to the department's own address when the profile has neither, or when the
@@ -235,11 +373,14 @@ namespace Resgrid.Console.Commands
 			logger.LogInformation("Numbers {Action}: {Count}", apply ? "rewritten" : "to rewrite", changes.Count);
 			logger.LogInformation("Numbers skipped:   {Count}", skips.Count);
 
-			// After normalization two profiles can land on the same number - the production data
-			// already holds the same number in two formats on different rows. The inbound lookup
-			// prefers a verified profile, but these are worth a human look.
+			foreach (var reason in skips.GroupBy(s => s.Reason).OrderByDescending(g => g.Count()))
+				logger.LogInformation("  {Count,6}  {Reason}", reason.Count(), reason.Key);
+
+			// After normalization two profiles can land on the same number - production already holds
+			// the same number in two formats on different rows. The inbound lookup prefers a verified
+			// profile, but these are worth a human look.
 			var collisions = changes
-				.Where(c => c.Field == "MobileNumber")
+				.Where(c => c.Field == MobileField)
 				.GroupBy(c => c.To)
 				.Where(g => g.Select(c => c.UserId).Distinct().Count() > 1)
 				.ToList();

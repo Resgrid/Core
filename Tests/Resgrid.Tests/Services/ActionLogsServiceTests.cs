@@ -97,8 +97,8 @@ namespace Resgrid.Tests.Services
 					.Callback((ActionLog al, CancellationToken ct) => _savedLogs.Remove(al));
 
 				// Mock GetLastActionLogsForDepartmentAsync (used by GetAllActionLogsForDepartmentAsync indirectly)
-				_actionLogsRepositoryMock.Setup(m => m.GetLastActionLogsForDepartmentAsync(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<DateTime>()))
-					.ReturnsAsync((int deptId, bool disableAuto, DateTime time) => _savedLogs.Where(l => l.DepartmentId == deptId).ToList());
+				_actionLogsRepositoryMock.Setup(m => m.GetLastActionLogsForDepartmentAsync(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<DateTime>(), It.IsAny<bool>()))
+					.ReturnsAsync((int deptId, bool disableAuto, DateTime time, bool includeHidden) => _savedLogs.Where(l => l.DepartmentId == deptId).ToList());
 
 				// Mock department members repository
 				_departmentMembersRepositoryMock.Setup(m => m.GetAllAsync())

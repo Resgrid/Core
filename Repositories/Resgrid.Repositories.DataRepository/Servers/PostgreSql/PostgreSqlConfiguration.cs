@@ -549,15 +549,29 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%USERPROFILESTABLE%
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%USERPROFILESTABLE%.UserId
 					WHERE MobileNumber IS NOT NULL AND MobileNumber <> ''
-						AND REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(MobileNumber, '+', ''), '-', ''), ' ', ''), '(', ''), ')', ''), '.', '')
-							IN (%MOBILENUMBER%, '1' || %MOBILENUMBER%)";
+						AND MobileNumber IN (%MOBILENUMBER%, '+' || %MOBILENUMBER%)
+					ORDER BY
+						CASE
+							WHEN %SCHEMA%.%USERPROFILESTABLE%.MobileNumberVerified = true THEN 0
+							WHEN %SCHEMA%.%USERPROFILESTABLE%.MobileNumberVerified IS NULL THEN 1
+							ELSE 2
+						END,
+						%SCHEMA%.%USERPROFILESTABLE%.LastUpdated DESC NULLS LAST,
+						%SCHEMA%.%USERPROFILESTABLE%.UserProfileId DESC";
 			SelectProfileByHomeQuery = @"
 					SELECT %SCHEMA%.%USERPROFILESTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as MembershipEmail, %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%USERPROFILESTABLE%
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%USERPROFILESTABLE%.UserId
 					WHERE HomeNumber IS NOT NULL AND HomeNumber <> ''
-						AND REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(HomeNumber, '+', ''), '-', ''), ' ', ''), '(', ''), ')', ''), '.', '')
-							IN (%HOMENUMBER%, '1' || %HOMENUMBER%)";
+						AND HomeNumber IN (%HOMENUMBER%, '+' || %HOMENUMBER%)
+					ORDER BY
+						CASE
+							WHEN %SCHEMA%.%USERPROFILESTABLE%.HomeNumberVerified = true THEN 0
+							WHEN %SCHEMA%.%USERPROFILESTABLE%.HomeNumberVerified IS NULL THEN 1
+							ELSE 2
+						END,
+						%SCHEMA%.%USERPROFILESTABLE%.LastUpdated DESC NULLS LAST,
+						%SCHEMA%.%USERPROFILESTABLE%.UserProfileId DESC";
 			SelectProfilesByIdsQuery = @"
 					SELECT %SCHEMA%.%USERPROFILESTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as MembershipEmail, %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%USERPROFILESTABLE%

@@ -5,6 +5,7 @@ using Resgrid.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -174,64 +175,106 @@ namespace Resgrid.Services
 
 		public async Task<UserProfile> GetProfileByMobileNumberAsync(string number)
 		{
-			// A blank inbound number must never match: the stored column can also be blank and an
-			// empty-to-empty compare would hand back an arbitrary profile.
-			if (string.IsNullOrWhiteSpace(number))
-				return null;
-
-			string numberToTest = NormalizePhoneNumber(number);
-
-			if (string.IsNullOrWhiteSpace(numberToTest))
-				return null;
-
-			var profile = await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
-
-			if (profile != null)
-				return profile;
-
-			if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
-			{
-				numberToTest = numberToTest.Remove(0, 1);
-
-				return await _userProfileRepository.GetProfileByMobileNumberAsync(numberToTest);
-			}
-
-			return null;
+			return await FindProfileByPhoneAsync(number,
+				_userProfileRepository.GetProfileByMobileNumberAsync,
+				profile => profile.MobileNumberVerified);
 		}
 
 		public async Task<UserProfile> GetProfileByHomeNumberAsync(string number)
 		{
-			if (string.IsNullOrWhiteSpace(number))
-				return null;
-
-			string numberToTest = NormalizePhoneNumber(number);
-
-			if (string.IsNullOrWhiteSpace(numberToTest))
-				return null;
-
-			var profile = await _userProfileRepository.GetProfileByHomeNumberAsync(numberToTest);
-
-			if (profile != null)
-				return profile;
-
-			if (numberToTest.Length == 11 && numberToTest[0] == char.Parse("1"))
-			{
-				numberToTest = numberToTest.Remove(0, 1);
-
-				return await _userProfileRepository.GetProfileByHomeNumberAsync(numberToTest);
-			}
-
-			return null;
+			return await FindProfileByPhoneAsync(number,
+				_userProfileRepository.GetProfileByHomeNumberAsync,
+				profile => profile.HomeNumberVerified);
 		}
 
 		/// <summary>
-		/// Strips formatting (and the E.164 plus) so the value lines up with the digits-only
-		/// comparison the profile-by-number queries run against the stored column. Profiles are
-		/// saved in E.164 (+12248304555), inbound SMS/voice arrives in assorted formats, so both
-		/// sides have to be reduced to bare digits before they can be compared.
+		/// Resolves the profile that owns a phone number, preferring one that has actually proven it.
+		/// <para>
+		/// The same number can sit on more than one profile - a stale or secondary account, or someone
+		/// who mistyped it and never completed verification. A profile that verified the number is the
+		/// only one that has demonstrated possession, so it wins outright, even over a closer match on
+		/// the number's shape. Everything else falls back to candidate order (the number exactly as
+		/// dialled before its country-code variant).
+		/// </para>
+		/// <para>
+		/// Within a single candidate the query does the same ranking, so this only has to arbitrate
+		/// between candidates.
+		/// </para>
+		/// </summary>
+		private static async Task<UserProfile> FindProfileByPhoneAsync(string number,
+			Func<string, Task<UserProfile>> lookup, Func<UserProfile, bool?> isVerified)
+		{
+			UserProfile unverifiedMatch = null;
+
+			foreach (var candidate in PhoneLookupCandidates(number))
+			{
+				var profile = await lookup(candidate);
+
+				if (profile == null)
+					continue;
+
+				if (isVerified(profile) == true)
+					return profile;
+
+				// Keep the first one found so a candidate that matches nothing verified still resolves,
+				// but keep looking in case a later candidate did verify the number.
+				unverifiedMatch ??= profile;
+			}
+
+			return unverifiedMatch;
+		}
+
+		/// <summary>
+		/// The stored numbers a lookup should be tried against, most-specific first.
+		/// <para>
+		/// Profiles are saved in E.164 (+12248304555) while inbound SMS and voice hand us the number in
+		/// whatever shape the carrier used, so a lookup has to cover the country code being present on
+		/// one side but not the other. The leading "+" is covered by the query itself, which matches the
+		/// stored value both bare and plus-prefixed.
+		/// </para>
+		/// <para>
+		/// The order matters and the candidates are tried one at a time rather than matched together:
+		/// 2248304555 and 12248304555 can be two different profiles, and the repository takes
+		/// FirstOrDefault() with no ORDER BY. Asking for the number exactly as dialled first means the
+		/// country-code variant is only ever reached as a fallback.
+		/// </para>
+		/// </summary>
+		private static IEnumerable<string> PhoneLookupCandidates(string number)
+		{
+			var digits = NormalizePhoneNumber(number);
+
+			// A blank inbound number must never match: the stored column can also be blank and an
+			// empty-to-empty compare would hand back an arbitrary profile.
+			if (string.IsNullOrWhiteSpace(digits))
+				yield break;
+
+			yield return digits;
+
+			if (digits.Length == 11 && digits[0] == '1')
+				yield return digits.Substring(1);
+			else if (digits.Length == 10)
+				yield return "1" + digits;
+		}
+
+		/// <summary>
+		/// Reduces a number to bare digits. Inbound numbers arrive formatted in assorted ways
+		/// ("+1 (224) 830-4555"), and only the digits are comparable against a stored number.
 		/// </summary>
 		private static string NormalizePhoneNumber(string number)
-			=> number?.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
+		{
+			if (string.IsNullOrWhiteSpace(number))
+				return null;
+
+			var digits = new StringBuilder(number.Length);
+
+			foreach (var character in number)
+			{
+				if (character >= '0' && character <= '9')
+					digits.Append(character);
+			}
+
+			return digits.ToString();
+		}
 
 		public async Task<List<UserProfile>> GetSelectedUserProfilesAsync(List<string> userIds)
 		{

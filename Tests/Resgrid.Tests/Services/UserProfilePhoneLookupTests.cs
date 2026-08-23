@@ -11,8 +11,9 @@ namespace Resgrid.Tests.Services
 {
 	/// <summary>
 	/// Profiles are persisted in E.164 (+12248304555) by the profile save flow, while inbound SMS and
-	/// voice hand us the number in whatever shape the carrier used. Both sides have to be reduced to
-	/// bare digits before the repository compare, otherwise a verified user can't be identified.
+	/// voice hand us the number in whatever shape the carrier used. The query matches the stored value
+	/// with and without the leading "+"; the service covers the country code being present on one side
+	/// but not the other, and strips the formatting off the inbound number.
 	/// </summary>
 	[TestFixture]
 	public class UserProfilePhoneLookupTests
@@ -45,7 +46,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task GetProfileByMobileNumberAsync_retries_without_the_us_country_code()
+		public async Task GetProfileByMobileNumberAsync_falls_back_to_the_number_without_the_country_code()
 		{
 			var profile = new UserProfile { UserId = "user-1" };
 			_repository.Setup(x => x.GetProfileByMobileNumberAsync("12248304555")).ReturnsAsync((UserProfile)null);
@@ -56,9 +57,108 @@ namespace Resgrid.Tests.Services
 			result.Should().BeSameAs(profile);
 		}
 
+		[Test]
+		public async Task GetProfileByMobileNumberAsync_falls_back_to_the_number_with_the_country_code()
+		{
+			var profile = new UserProfile { UserId = "user-1" };
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("2248304555")).ReturnsAsync((UserProfile)null);
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("12248304555")).ReturnsAsync(profile);
+
+			var result = await _service.GetProfileByMobileNumberAsync("(224) 830-4555");
+
+			result.Should().BeSameAs(profile);
+		}
+
+		[Test]
+		public async Task GetProfileByMobileNumberAsync_prefers_the_number_exactly_as_dialled()
+		{
+			// 2248304555 and 12248304555 can be two different profiles, so with nothing to separate
+			// them on verification the country-code variant stays a fallback rather than being matched
+			// alongside the number that was actually dialled.
+			var exact = new UserProfile { UserId = "exact", MobileNumberVerified = true };
+			var variant = new UserProfile { UserId = "variant", MobileNumberVerified = true };
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("12248304555")).ReturnsAsync(exact);
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("2248304555")).ReturnsAsync(variant);
+
+			var result = await _service.GetProfileByMobileNumberAsync("+12248304555");
+
+			result.Should().BeSameAs(exact);
+			_repository.Verify(x => x.GetProfileByMobileNumberAsync("2248304555"), Times.Never);
+		}
+
+		// ── Verified profiles win ─────────────────────────────────────────────────────
+		// The same number can sit on a stale account, a secondary account, or one where it was
+		// mistyped and never verified. Only a verified profile has proven possession of the number.
+
+		[Test]
+		public async Task GetProfileByMobileNumberAsync_prefers_a_verified_profile_over_a_closer_number_match()
+		{
+			var mistyped = new UserProfile { UserId = "mistyped", MobileNumberVerified = false };
+			var owner = new UserProfile { UserId = "owner", MobileNumberVerified = true };
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("12248304555")).ReturnsAsync(mistyped);
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("2248304555")).ReturnsAsync(owner);
+
+			var result = await _service.GetProfileByMobileNumberAsync("+12248304555");
+
+			result.Should().BeSameAs(owner);
+		}
+
+		[Test]
+		public async Task GetProfileByMobileNumberAsync_prefers_a_verified_profile_over_a_grandfathered_one()
+		{
+			// NULL is the grandfathered pre-verification state, not a verified one.
+			var grandfathered = new UserProfile { UserId = "grandfathered", MobileNumberVerified = null };
+			var owner = new UserProfile { UserId = "owner", MobileNumberVerified = true };
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("12248304555")).ReturnsAsync(grandfathered);
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("2248304555")).ReturnsAsync(owner);
+
+			var result = await _service.GetProfileByMobileNumberAsync("+12248304555");
+
+			result.Should().BeSameAs(owner);
+		}
+
+		[Test]
+		public async Task GetProfileByMobileNumberAsync_still_resolves_when_nothing_is_verified()
+		{
+			var mistyped = new UserProfile { UserId = "mistyped", MobileNumberVerified = false };
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("12248304555")).ReturnsAsync(mistyped);
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("2248304555")).ReturnsAsync((UserProfile)null);
+
+			var result = await _service.GetProfileByMobileNumberAsync("+12248304555");
+
+			// Callers apply their own verification gate; resolving the profile is not the same as
+			// trusting it, so an unverified match is still returned rather than swallowed.
+			result.Should().BeSameAs(mistyped);
+		}
+
+		[Test]
+		public async Task GetProfileByMobileNumberAsync_stops_at_the_first_verified_profile()
+		{
+			var owner = new UserProfile { UserId = "owner", MobileNumberVerified = true };
+			_repository.Setup(x => x.GetProfileByMobileNumberAsync("12248304555")).ReturnsAsync(owner);
+
+			await _service.GetProfileByMobileNumberAsync("+12248304555");
+
+			_repository.Verify(x => x.GetProfileByMobileNumberAsync("2248304555"), Times.Never);
+		}
+
+		[Test]
+		public async Task GetProfileByHomeNumberAsync_prefers_a_verified_profile()
+		{
+			var secondary = new UserProfile { UserId = "secondary", HomeNumberVerified = false };
+			var owner = new UserProfile { UserId = "owner", HomeNumberVerified = true };
+			_repository.Setup(x => x.GetProfileByHomeNumberAsync("12248304555")).ReturnsAsync(secondary);
+			_repository.Setup(x => x.GetProfileByHomeNumberAsync("2248304555")).ReturnsAsync(owner);
+
+			var result = await _service.GetProfileByHomeNumberAsync("+12248304555");
+
+			result.Should().BeSameAs(owner);
+		}
+
 		[TestCase(null)]
 		[TestCase("")]
 		[TestCase("   ")]
+		[TestCase("+-() .")]
 		public async Task GetProfileByMobileNumberAsync_never_matches_on_a_blank_number(string inbound)
 		{
 			var result = await _service.GetProfileByMobileNumberAsync(inbound);
@@ -77,6 +177,18 @@ namespace Resgrid.Tests.Services
 
 			result.Should().BeSameAs(profile);
 			_repository.Verify(x => x.GetProfileByMobileNumberAsync(It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public async Task GetProfileByHomeNumberAsync_falls_back_to_the_number_without_the_country_code()
+		{
+			var profile = new UserProfile { UserId = "user-1" };
+			_repository.Setup(x => x.GetProfileByHomeNumberAsync("12248304555")).ReturnsAsync((UserProfile)null);
+			_repository.Setup(x => x.GetProfileByHomeNumberAsync("2248304555")).ReturnsAsync(profile);
+
+			var result = await _service.GetProfileByHomeNumberAsync("+12248304555");
+
+			result.Should().BeSameAs(profile);
 		}
 
 		[TestCase(null)]

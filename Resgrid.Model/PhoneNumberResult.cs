@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Model
+namespace Resgrid.Model
 {
 	public class PhoneNumberResult
 	{

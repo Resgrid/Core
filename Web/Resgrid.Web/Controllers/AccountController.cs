@@ -613,6 +613,22 @@ namespace Resgrid.Web.Controllers
 		}
 
 		//
+		// GET: /Account/LogOff
+		// Sign out itself stays POST + antiforgery (see below). Bookmarks, legacy links and the
+		// cookie handler's configured LogoutPath still issue a GET here, which would otherwise 404,
+		// so render a confirmation the user can submit.
+		[HttpGet]
+		[ActionName("LogOff")]
+		[AllowAnonymous]
+		public IActionResult LogOffConfirmation()
+		{
+			if (User?.Identity == null || !User.Identity.IsAuthenticated)
+				return RedirectToAction("LogOn", "Account", new { Area = "" });
+
+			return View();
+		}
+
+		//
 		// POST: /Account/LogOff
 		[HttpPost]
 		[Authorize]

@@ -71,7 +71,7 @@ namespace Resgrid.Services
 			_cacheProvider.Remove(string.Format(CacheKey, departmentId));
 		}
 
-		public async Task<List<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool forceDisableAutoAvailable = false, bool bypassCache = false)
+		public async Task<List<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool forceDisableAutoAvailable = false, bool bypassCache = false, bool includeHiddenAndDisabled = false)
 		{
 			async Task<List<ActionLog>> getActionLogs()
 			{
@@ -83,7 +83,7 @@ namespace Resgrid.Services
 				else
 					disableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(departmentId, false);
 
-				var statuses = await _actionLogsRepository.GetLastActionLogsForDepartmentAsync(departmentId, disableAutoAvailable, time);
+				var statuses = await _actionLogsRepository.GetLastActionLogsForDepartmentAsync(departmentId, disableAutoAvailable, time, includeHiddenAndDisabled);
 
 				var values = statuses.GroupBy(l => l.UserId)
 					.Select(g => g.OrderByDescending(l => l.ActionLogId).First())
@@ -110,7 +110,7 @@ namespace Resgrid.Services
 
 			if (!bypassCache)
 			{
-				return await _cacheProvider.RetrieveAsync(string.Format(CacheKey, departmentId), (Func<Task<List<ActionLog>>>) getActionLogs, CacheLength);
+				return await _cacheProvider.RetrieveAsync(string.Format(CacheKey, departmentId) + (includeHiddenAndDisabled ? "_IncHidden" : ""), (Func<Task<List<ActionLog>>>) getActionLogs, CacheLength);
 			}
 
 			return await getActionLogs();

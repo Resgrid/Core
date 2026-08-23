@@ -155,7 +155,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			var filters = await GetFilterOptions();
-			var actionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
+			var actionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId, includeHiddenAndDisabled: true);
 			var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(DepartmentId);
 			var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			Department department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);

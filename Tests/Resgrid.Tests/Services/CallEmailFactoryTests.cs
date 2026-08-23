@@ -761,6 +761,48 @@ namespace Resgrid.Tests.Services
 				// The fallback still has to land on a priority the department owns.
 				call.Priority.Should().Be(501);
 			}
+
+			[Test]
+			public async Task should_fall_back_to_the_type_when_the_nature_segment_is_empty()
+			{
+				// NatureOfCall is non-nullable on the Calls table, a CAD sending the segment blank
+				// used to produce a null and fail the insert.
+				var email = BuildEmail("2020-1234 | MEDICAL | 3 | 155 Main St. Carson City, NV 89701 | 12B |  | Caller is on scene");
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, (int)CallPriority.High, SystemPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.NatureOfCall.Should().Be("MEDICAL");
+			}
+
+			[Test]
+			public async Task should_fall_back_to_the_subject_when_the_nature_and_type_segments_are_empty()
+			{
+				var email = BuildEmail("2020-1234 |  | 3 | 155 Main St. Carson City, NV 89701 | 12B |  | Caller is on scene");
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, (int)CallPriority.High, SystemPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.NatureOfCall.Should().Be("Dispatch");
+			}
+
+			[Test]
+			public async Task should_never_return_a_null_nature_or_name()
+			{
+				// Every segment blank and no subject to fall back on, the factory still has to hand
+				// back values the Calls table will accept.
+				var body = " |  |  |  |  |  | ";
+				var email = new CallEmail { MessageId = "100", Subject = null, Body = body, TextBody = body };
+
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.Resgrid, email, Guid.NewGuid().ToString(), _dispatchUsers,
+					null, null, null, (int)CallPriority.High, SystemPriorities(), null, null);
+
+				call.Should().NotBeNull();
+				call.NatureOfCall.Should().NotBeNull();
+				call.Name.Should().NotBeNull();
+			}
 		}
 
 	}

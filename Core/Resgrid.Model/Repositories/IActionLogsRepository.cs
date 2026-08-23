@@ -18,7 +18,7 @@ namespace Resgrid.Model.Repositories
 		/// <param name="disableAutoAvailable">if set to <c>true</c> [disable automatic available].</param>
 		/// <param name="timeStamp">The time stamp.</param>
 		/// <returns>Task&lt;IEnumerable&lt;ActionLog&gt;&gt;.</returns>
-		Task<IEnumerable<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool disableAutoAvailable, DateTime timeStamp);
+		Task<IEnumerable<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool disableAutoAvailable, DateTime timeStamp, bool includeHiddenAndDisabled = false);
 
 		/// <summary>
 		/// Gets all action logs for user.

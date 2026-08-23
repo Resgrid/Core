@@ -41,7 +41,7 @@ namespace Resgrid.Tests.Chatbot
 					DestinationId = 42
 				}
 			});
-			actionLogs.Setup(x => x.GetLastActionLogsForDepartmentAsync(1, false, false)).ReturnsAsync(new List<ActionLog>
+			actionLogs.Setup(x => x.GetLastActionLogsForDepartmentAsync(1, false, false, false)).ReturnsAsync(new List<ActionLog>
 			{
 				new ActionLog
 				{
@@ -113,7 +113,7 @@ namespace Resgrid.Tests.Chatbot
 			response.Text.Should().Contain("No personnel or units");
 			response.Text.Should().NotContain("Alex Responder");
 			response.Text.Should().NotContain("Engine 1");
-			actionLogs.Verify(x => x.GetLastActionLogsForDepartmentAsync(1, false, false), Times.Once);
+			actionLogs.Verify(x => x.GetLastActionLogsForDepartmentAsync(1, false, false, false), Times.Once);
 			units.Verify(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(1), Times.Once);
 		}
 
@@ -156,7 +156,7 @@ namespace Resgrid.Tests.Chatbot
 			};
 			var actionLogs = new Mock<IActionLogsService>();
 			actionLogs.Setup(x => x.GetActionLogsForCallAsync(1, 42)).ReturnsAsync(currentLogs);
-			actionLogs.Setup(x => x.GetLastActionLogsForDepartmentAsync(1, false, false)).ReturnsAsync(currentLogs);
+			actionLogs.Setup(x => x.GetLastActionLogsForDepartmentAsync(1, false, false, false)).ReturnsAsync(currentLogs);
 
 			var units = new Mock<IUnitsService>();
 			units.Setup(x => x.GetUnitStatesForCallAsync(1, 42)).ReturnsAsync(new List<UnitState>());

@@ -5,6 +5,7 @@ using Resgrid.Model.Services;
 using Resgrid.Model.Identity;
 using System.Threading.Tasks;
 using Resgrid.Model.Providers;
+using Resgrid.Framework;
 
 namespace Resgrid.Services.CallEmailTemplates
 {
@@ -48,6 +49,8 @@ namespace Resgrid.Services.CallEmailTemplates
 			try
 			{
 				call = await _templates[(int)type].GenerateCall(email, managingUser, users, department, activeCalls, units, priority, activePriorities, callTypes, geolocationProvider);
+
+				EnsureRequiredValues(call, email);
 			}
 			catch (Exception ex)
 			{
@@ -55,6 +58,34 @@ namespace Resgrid.Services.CallEmailTemplates
 			}
 
 			return call;
+		}
+
+		/// <summary>
+		/// Name and NatureOfCall are non-nullable on the Calls table. A template that can't find a value
+		/// for either, a CAD sending a blank segment or a body that didn't match the format, would hand
+		/// back a null and lose the dispatch on the insert. Fall back to the email itself instead.
+		/// </summary>
+		private static void EnsureRequiredValues(Call call, CallEmail email)
+		{
+			if (call == null)
+				return;
+
+			if (String.IsNullOrWhiteSpace(call.NatureOfCall))
+				call.NatureOfCall = FirstWithValue(email?.Subject, email?.Body, email?.TextBody);
+
+			if (String.IsNullOrWhiteSpace(call.Name))
+				call.Name = FirstWithValue(email?.Subject, call.NatureOfCall);
+		}
+
+		private static string FirstWithValue(params string[] values)
+		{
+			foreach (var value in values)
+			{
+				if (!String.IsNullOrWhiteSpace(value))
+					return value.Trim().Truncate(4000);
+			}
+
+			return String.Empty;
 		}
 	}
 }

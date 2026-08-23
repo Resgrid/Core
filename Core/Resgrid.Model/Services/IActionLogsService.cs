@@ -29,8 +29,9 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier.</param>
 		/// <param name="forceDisableAutoAvailable">if set to <c>true</c> [force disable automatic available].</param>
 		/// <param name="bypassCache">if set to <c>true</c> [bypass cache].</param>
+		/// <param name="includeHiddenAndDisabled">if set to <c>true</c> include logs for hidden and disabled members.</param>
 		/// <returns>Task&lt;List&lt;ActionLog&gt;&gt;.</returns>
-		Task<List<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool forceDisableAutoAvailable = false, bool bypassCache = false);
+		Task<List<ActionLog>> GetLastActionLogsForDepartmentAsync(int departmentId, bool forceDisableAutoAvailable = false, bool bypassCache = false, bool includeHiddenAndDisabled = false);
 
 		/// <summary>
 		/// Gets all action logs for user.

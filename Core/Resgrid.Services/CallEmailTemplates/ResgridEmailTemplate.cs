@@ -41,7 +41,11 @@ namespace Resgrid.Services.CallEmailTemplates
 				c.Type = ParseCallType(GetValue(data, 1), callTypes);
 				c.Priority = ParseCallPriority(GetValue(data, 2), priority, activePriorities);
 				c.MapPage = GetValue(data, 4);
-				c.NatureOfCall = GetValue(data, 5);
+
+				// NATURE is a non-nullable column but CADs do send the segment empty. Fall back to
+				// the call type and then the subject so the dispatch still lands, GetValue hands
+				// back a null for a blank segment and that used to fail the insert.
+				c.NatureOfCall = GetValue(data, 5) ?? GetValue(data, 1) ?? email.Subject;
 
 				// Re-join everything from index 6 on, a pipe inside the notes text shouldn't
 				// truncate them. When NOTES isn't supplied the raw body stays in Notes, which

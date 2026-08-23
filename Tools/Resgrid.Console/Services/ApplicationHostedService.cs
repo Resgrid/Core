@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +31,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
     private ICommandService _genOidcCertsCommand;
     private ICommandService _migrateDocsDbCommand;
     private ICommandService _cleanUtf8Command;
+    private ICommandService _normalizePhoneNumbersCommand;
     private ICommandService _oidcUpdateCommand;
     private ICommandService _securityRefreshCommand;
     private ICommandService _helpCommand;
@@ -57,6 +58,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         [FromKeyedServices("GenOidcCertsCommand")] ICommandService genOidcCertsCommand,
         [FromKeyedServices("MigrateDocsDbCommand")] ICommandService migrateDocsDbCommand,
         [FromKeyedServices("CleanUtf8Command")] ICommandService cleanUtf8Command,
+        [FromKeyedServices("NormalizePhoneNumbersCommand")] ICommandService normalizePhoneNumbersCommand,
         [FromKeyedServices("OidcUpdateCommand")] ICommandService oidcUpdateCommand,
         [FromKeyedServices("SecurityRefreshCommand")] ICommandService securityRefreshCommand,
         [FromKeyedServices("HelpCommand")] ICommandService helpCommand)
@@ -70,6 +72,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         _genOidcCertsCommand = genOidcCertsCommand;
         _migrateDocsDbCommand = migrateDocsDbCommand;
         _cleanUtf8Command = cleanUtf8Command;
+        _normalizePhoneNumbersCommand = normalizePhoneNumbersCommand;
         _oidcUpdateCommand = oidcUpdateCommand;
         _securityRefreshCommand = securityRefreshCommand;
         _helpCommand = helpCommand;
@@ -197,6 +200,8 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
 		        return await _migrateDocsDbCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--CleanUtf8"))
 		        return await _cleanUtf8Command.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
+	        else if (args.Contains("--NormalizePhoneNumbers"))
+		        return await _normalizePhoneNumbersCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--OidcUpdate"))
 		        return await _oidcUpdateCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--SecurityRefresh"))

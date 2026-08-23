@@ -19,10 +19,12 @@ namespace Resgrid.Services
 		private readonly IEmailSender _emailSender;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 
 		public SmsService(IUserProfileService userProfileService, IGeoLocationProvider geoLocationProvider,
 			ITextMessageProvider textMessageProvider, IDepartmentSettingsService departmentSettingsService,
-			IEmailSender emailSender, ISubscriptionsService subscriptionsService, ICacheProvider cacheProvider)
+			IEmailSender emailSender, ISubscriptionsService subscriptionsService, ICacheProvider cacheProvider,
+			IPhoneNumberProcesserProvider phoneNumberProcesser)
 		{
 			_userProfileService = userProfileService;
 			_geoLocationProvider = geoLocationProvider;
@@ -31,6 +33,50 @@ namespace Resgrid.Services
 			_emailSender = emailSender;
 			_subscriptionsService = subscriptionsService;
 			_cacheProvider = cacheProvider;
+			_phoneNumberProcesser = phoneNumberProcesser;
+		}
+
+
+		/// <summary>
+		/// The number to hand a direct provider send (Twilio/SignalWire), in E.164.
+		/// <para>
+		/// Not <see cref="UserProfile.GetPhoneNumber"/>: that returns the display form, which strips the
+		/// leading "+" while keeping the country code. Twilio receives the value verbatim, so the result
+		/// is not a valid 'To' - fatal for any non-US number, which has no meaning at all without its
+		/// "+". CommunicationTestService already normalizes off the raw profile number for the same
+		/// reason; this is the same treatment for the dispatch path.
+		/// </para>
+		/// </summary>
+		private string ResolveDirectSendNumber(UserProfile profile)
+		{
+			var processed = _phoneNumberProcesser?.Process(profile?.MobileNumber);
+
+			if (processed != null && processed.IsValid && !string.IsNullOrWhiteSpace(processed.InternationalNumber))
+				return processed.InternationalNumber;
+
+			// Unparseable: fall back to the previous behaviour rather than dropping the message. The
+			// provider logs and swallows an invalid 'To', which is what happened before this too.
+			return profile?.GetPhoneNumber();
+		}
+
+		/// <summary>
+		/// The number to embed in a carrier SMS-gateway address, in national form.
+		/// <para>
+		/// The CarriersMap templates ("{0}@vtext.com", "{0}@txt.att.net") are US carrier gateways and
+		/// expect the bare 10-digit number. A stored E.164 value run through
+		/// <see cref="UserProfile.GetPhoneNumber"/> yields 11 digits with the leading country code, which
+		/// addresses a mailbox that does not exist. Every non-US carrier in the map is a direct-send
+		/// carrier, so the national form is the right one here.
+		/// </para>
+		/// </summary>
+		private string ResolveGatewayNumber(UserProfile profile)
+		{
+			var processed = _phoneNumberProcesser?.Process(profile?.MobileNumber);
+
+			if (processed != null && processed.IsValid && !string.IsNullOrWhiteSpace(processed.LocalNumber))
+				return processed.LocalNumber;
+
+			return profile?.GetPhoneNumber();
 		}
 
 		public async Task<bool> SendMessageAsync(Message message, string departmentNumber, int departmentId, UserProfile profile = null, Payment payment = null)
@@ -55,17 +101,17 @@ namespace Resgrid.Services
 			{
 				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
 				{
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, message.Body, ShouldDiscloseOptOut(profile.UserId)),
+					await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage(message.Subject, message.Body, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, message.Body, ShouldDiscloseOptOut(profile.UserId)),
+					await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage(message.Subject, message.Body, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
 				{
-					email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
+					email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], ResolveGatewayNumber(profile)));
 
 					email.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "RGMsg");
 					email.Subject = message.Subject;
@@ -158,7 +204,7 @@ namespace Resgrid.Services
 				//	//	text = text + " " + call.ShortenedCallUrl;
 				//	//}
 
-				//	await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, true);
+				//	await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage(call.Name, text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, true);
 
 				//	if (Config.SystemBehaviorConfig.SendCallsToSmsEmailGatewayAdditionally)
 				//		SendCallViaEmailSmsGateway(call, address, profile);
@@ -197,7 +243,7 @@ namespace Resgrid.Services
 					//	text = text + " " + call.ShortenedCallUrl;
 					//}
 
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
+					await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage(call.Name, text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
 				}
 				else
 				{
@@ -268,7 +314,7 @@ namespace Resgrid.Services
 							text = text + " (" + protocols + ")";
 					}
 
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
+					await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage(call.Name, text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
 				}
 				else
 				{
@@ -282,7 +328,7 @@ namespace Resgrid.Services
 		private async Task SendCancelCallViaEmailSmsGatewayAsync(Call call, string address, UserProfile profile)
 		{
 			MailMessage email = new MailMessage();
-			email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
+			email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], ResolveGatewayNumber(profile)));
 
 			email.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "RGCall");
 			email.Subject = "CANCELLED: " + call.Name;
@@ -307,7 +353,7 @@ namespace Resgrid.Services
 		private void SendCallViaEmailSmsGateway(Call call, string address, UserProfile profile)
 		{
 			MailMessage email = new MailMessage();
-			email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
+			email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], ResolveGatewayNumber(profile)));
 
 			email.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "RGCall");
 			email.Subject = call.Name;
@@ -345,16 +391,16 @@ namespace Resgrid.Services
 
 				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
 				{
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
+					_textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
+					_textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
 				{
 					MailMessage email = new MailMessage();
-					email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
+					email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], ResolveGatewayNumber(profile)));
 
 					email.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "RGCall");
 					email.Subject = text;
@@ -381,11 +427,11 @@ namespace Resgrid.Services
 				if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					//string departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(departmentId);
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(title, message, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
+					await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatTextForMessage(title, message, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
 				{
-					email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
+					email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], ResolveGatewayNumber(profile)));
 
 					email.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "RGNot");
 
@@ -417,18 +463,18 @@ namespace Resgrid.Services
 			{
 				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
 				{
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatNotificationForMessage(message, ShouldDiscloseOptOut(profile.UserId)),
+					await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatNotificationForMessage(message, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					//string departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(departmentId);
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatNotificationForMessage(message, ShouldDiscloseOptOut(profile.UserId)),
+					await _textMessageProvider.SendTextMessage(ResolveDirectSendNumber(profile), FormatNotificationForMessage(message, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
 				{
-					email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
+					email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], ResolveGatewayNumber(profile)));
 
 					email.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
 					email.Subject = "Notification";

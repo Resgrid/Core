@@ -1,4 +1,4 @@
-using Resgrid.Repositories.DataRepository.Configs;
+﻿using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Queries.Calendar;
 using Resgrid.Repositories.DataRepository.Queries.Calls;
 using Resgrid.Repositories.DataRepository.Queries.DepartmentGroups;
@@ -281,7 +281,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT
 					(SELECT COUNT(*) FROM %SCHEMA%.%MESSAGESTABLE% m
 					LEFT OUTER JOIN %SCHEMA%.%MESSAGERECIPIENTSTABLE% mr ON m.MessageId = mr.MessageId
-					WHERE mr.[UserId] = %USERID% AND mr.[IsDeleted] = 0 AND m.[IsDeleted] = 0) AS [UnreadMessageCount],
+					WHERE mr.[UserId] = %USERID% AND mr.[IsDeleted] = 0 AND mr.[ReadOn] IS NULL
+					AND m.[IsDeleted] = 0 AND (m.[ExpireOn] IS NULL OR m.[ExpireOn] > %CURRENTDATE%)) AS [UnreadMessageCount],
 
 					(SELECT COUNT(*) FROM %SCHEMA%.%CALLTABLENAME% c WHERE c.[DepartmentId] = %DID% AND c.[IsDeleted] = 0 AND c.[State] = 0) AS [OpenCallsCount]";
 
@@ -545,12 +546,30 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT %SCHEMA%.%USERPROFILESTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as 'MembershipEmail', %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%USERPROFILESTABLE%
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%USERPROFILESTABLE%.UserId
-					WHERE [MobileNumber] = %MOBILENUMBER%";
+					WHERE [MobileNumber] IS NOT NULL AND [MobileNumber] <> ''
+						AND [MobileNumber] IN (%MOBILENUMBER%, '+' + %MOBILENUMBER%)
+					ORDER BY
+						CASE
+							WHEN %SCHEMA%.%USERPROFILESTABLE%.[MobileNumberVerified] = 1 THEN 0
+							WHEN %SCHEMA%.%USERPROFILESTABLE%.[MobileNumberVerified] IS NULL THEN 1
+							ELSE 2
+						END,
+						%SCHEMA%.%USERPROFILESTABLE%.[LastUpdated] DESC,
+						%SCHEMA%.%USERPROFILESTABLE%.[UserProfileId] DESC";
 			SelectProfileByHomeQuery = @"
 					SELECT %SCHEMA%.%USERPROFILESTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as 'MembershipEmail', %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%USERPROFILESTABLE%
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%USERPROFILESTABLE%.UserId
-					WHERE [HomeNumber] = %HOMENUMBER%";
+					WHERE [HomeNumber] IS NOT NULL AND [HomeNumber] <> ''
+						AND [HomeNumber] IN (%HOMENUMBER%, '+' + %HOMENUMBER%)
+					ORDER BY
+						CASE
+							WHEN %SCHEMA%.%USERPROFILESTABLE%.[HomeNumberVerified] = 1 THEN 0
+							WHEN %SCHEMA%.%USERPROFILESTABLE%.[HomeNumberVerified] IS NULL THEN 1
+							ELSE 2
+						END,
+						%SCHEMA%.%USERPROFILESTABLE%.[LastUpdated] DESC,
+						%SCHEMA%.%USERPROFILESTABLE%.[UserProfileId] DESC";
 			SelectProfilesByIdsQuery = @"
 					SELECT %SCHEMA%.%USERPROFILESTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.Email as 'MembershipEmail', %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%USERPROFILESTABLE%

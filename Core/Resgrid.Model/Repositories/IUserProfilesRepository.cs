@@ -61,5 +61,20 @@ namespace Resgrid.Model.Repositories
 		/// <param name="profiles">Profiles with SecurityPin and LastUpdated already set.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		Task UpdateSecurityPinsAsync(IEnumerable<UserProfile> profiles, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Updates only the MobileNumber/HomeNumber (and LastUpdated) columns for the supplied profiles
+		/// as a single batched command. Used by the one-off phone-number normalization sweep.
+		/// <para>
+		/// Deliberately bypasses UserProfileService.SaveProfileAsync: that treats any change to a
+		/// number as the user entering a new one and resets the verification state, clears the
+		/// verification codes and deletes the SMS chatbot identity links. Rewriting a number into its
+		/// canonical form is not a change of number, so none of that may fire.
+		/// </para>
+		/// Callers are responsible for profile cache eviction.
+		/// </summary>
+		/// <param name="profiles">Profiles with MobileNumber, HomeNumber and LastUpdated already set.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task UpdatePhoneNumbersAsync(IEnumerable<UserProfile> profiles, CancellationToken cancellationToken = default);
 	}
 }

@@ -314,6 +314,55 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task UpdatePhoneNumbersAsync(IEnumerable<UserProfile> profiles, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var items = profiles?
+					.Where(p => p != null)
+					.Select(p => new { p.MobileNumber, p.HomeNumber, p.LastUpdated, p.UserProfileId })
+					.ToList();
+
+				if (items == null || items.Count == 0)
+					return;
+
+				var pn = _sqlConfiguration.ParameterNotation;
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $"UPDATE {_sqlConfiguration.SchemaName}.userprofiles SET mobilenumber = {pn}MobileNumber, homenumber = {pn}HomeNumber, lastupdated = {pn}LastUpdated WHERE userprofileid = {pn}UserProfileId"
+					: $"UPDATE {_sqlConfiguration.SchemaName}.[UserProfiles] SET [MobileNumber] = {pn}MobileNumber, [HomeNumber] = {pn}HomeNumber, [LastUpdated] = {pn}LastUpdated WHERE [UserProfileId] = {pn}UserProfileId";
+
+				// Dapper executes the statement once per item over a single prepared command/connection.
+				if (_unitOfWork?.Connection == null)
+				{
+					using (var conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+
+						// No ambient unit-of-work: run the batch atomically so a mid-batch failure rolls
+						// back rather than leaving the sweep half-applied.
+						using (var transaction = await conn.BeginTransactionAsync(cancellationToken))
+						{
+							await conn.ExecuteAsync(sql, items, transaction);
+							await transaction.CommitAsync(cancellationToken);
+						}
+					}
+				}
+				else
+				{
+					// Ambient unit-of-work: participate in the caller's transaction.
+					var connection = _unitOfWork.CreateOrGetConnection();
+					await connection.ExecuteAsync(sql, items, _unitOfWork.Transaction);
+				}
+			}
+			catch (Exception ex)
+			{
+				// Rethrow (unlike the read paths): the sweep reports what it wrote, so a silent failure
+				// would be reported as a successful normalization.
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
 		public async Task UpdateSecurityPinsAsync(IEnumerable<UserProfile> profiles, CancellationToken cancellationToken = default)
 		{
 			try

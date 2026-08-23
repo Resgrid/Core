@@ -449,6 +449,7 @@ namespace Resgrid.Repositories.DataRepository
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
 					dynamicParameters.Add("UserId", userId);
+					dynamicParameters.Add("CurrentDate", DateTime.UtcNow);
 
 					var query = _queryFactory.GetQuery<SelectDepartmentStatsByUserDidQuery>();
 

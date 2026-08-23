@@ -227,14 +227,14 @@ namespace Resgrid.Services
 		/// <summary>
 		/// The stored numbers a lookup should be tried against, most-specific first.
 		/// <para>
-		/// Profiles are saved in E.164 (+12248304555) while inbound SMS and voice hand us the number in
+		/// Profiles are saved in E.164 (+12015550123) while inbound SMS and voice hand us the number in
 		/// whatever shape the carrier used, so a lookup has to cover the country code being present on
 		/// one side but not the other. The leading "+" is covered by the query itself, which matches the
 		/// stored value both bare and plus-prefixed.
 		/// </para>
 		/// <para>
 		/// The order matters and the candidates are tried one at a time rather than matched together:
-		/// 2248304555 and 12248304555 can be two different profiles, and the repository takes
+		/// 2015550123 and 12015550123 can be two different profiles, and the repository takes
 		/// FirstOrDefault() with no ORDER BY. Asking for the number exactly as dialled first means the
 		/// country-code variant is only ever reached as a fallback.
 		/// </para>
@@ -258,7 +258,7 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// Reduces a number to bare digits. Inbound numbers arrive formatted in assorted ways
-		/// ("+1 (224) 830-4555"), and only the digits are comparable against a stored number.
+		/// ("+1 (201) 555-0123"), and only the digits are comparable against a stored number.
 		/// </summary>
 		private static string NormalizePhoneNumber(string number)
 		{

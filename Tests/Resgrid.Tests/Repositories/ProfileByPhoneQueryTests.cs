@@ -6,13 +6,13 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Profiles are saved in E.164 (+12248304555) while older rows hold the bare digits, so the lookup
+	/// Profiles are saved in E.164 (+12015550123) while older rows hold the bare digits, so the lookup
 	/// has to match the stored value with and without the leading "+". Matching the column directly
 	/// keeps the predicate sargable - wrapping MobileNumber/HomeNumber in REPLACE() to normalize it
 	/// would push this hot inbound-webhook lookup toward a scan of UserProfiles.
 	///
 	/// Only the "+" belongs here. The country-code variant is a separate candidate that
-	/// UserProfileService tries as an ordered second pass, because 2248304555 and 12248304555 can be
+	/// UserProfileService tries as an ordered second pass, because 2015550123 and 12015550123 can be
 	/// two different profiles and UserProfilesRepository takes FirstOrDefault() with no ORDER BY.
 	/// </summary>
 	[TestFixture]

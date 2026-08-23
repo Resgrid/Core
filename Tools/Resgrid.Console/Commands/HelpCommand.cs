@@ -25,6 +25,7 @@ namespace Resgrid.Console.Commands
 			logger.LogInformation("--DbUpdate || --UpdateDb :: Updates the Resgrid Database");
 			logger.LogInformation("--GenOidcCerts :: Generates the OIDC Certificates");
 			logger.LogInformation("--MigrateDocsDb :: Migrates the Resgrid Docs Database");
+			logger.LogInformation("--NormalizePhoneNumbers [--Apply] [--DepartmentId=1] :: Rewrites stored profile phone numbers to E.164. Dry run unless --Apply is passed");
 			logger.LogInformation("--OidcUpdate :: Updates the Resgrid OIDC Database");
 			logger.LogInformation("--ResetPassword -- --UserId=[GUID] --Password=[PASSWORD] :: Resets the password for a user");
 			logger.LogInformation("--SecurityRefresh :: Refreshes the Resgrid Security Matrix Cache");

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Security;
 using Resgrid.Model;
-using Resgrid.Model.Providers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -24,21 +23,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPermissionsService _permissionsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IUserProfileService _userProfileService;
-		private readonly INovuProvider _novuProvider;
 
 		/// <summary>
 		/// Operations to perform against the security sub-system
 		/// </summary>
 		public SecurityController(IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
-			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService, IUserProfileService userProfileService,
-			INovuProvider novuProvider)
+			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService, IUserProfileService userProfileService)
 		{
 			_departmentsService = departmentsService;
 			_departmentGroupsService = departmentGroupsService;
 			_permissionsService = permissionsService;
 			_personnelRolesService = personnelRolesService;
 			_userProfileService = userProfileService;
-			_novuProvider = novuProvider;
 		}
 		#endregion Members and Constructors
 
@@ -109,8 +105,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.CanViewWorkflowRuns = _permissionsService.IsUserAllowed(viewWorkflowRunsPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanLoginToDispatchApp = _permissionsService.IsUserAllowed(dispatchAppLoginPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanLoginToCommandApp = _permissionsService.IsUserAllowed(commandAppLoginPermission, result.Data.IsAdmin, isGroupAdmin, roles);
-
-			var novuSuccess = await _novuProvider.CreateUserSubscriber(UserId, department.Code, DepartmentId, profile.MembershipEmail, profile.FirstName, profile.LastName);
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;

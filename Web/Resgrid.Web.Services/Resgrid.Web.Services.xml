@@ -2560,7 +2560,7 @@
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.SecurityController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IPersonnelRolesService,Resgrid.Model.Services.IUserProfileService,Resgrid.Model.Providers.INovuProvider)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SecurityController.#ctor(Resgrid.Model.Services.IDepartmentsService,Resgrid.Model.Services.IDepartmentGroupsService,Resgrid.Model.Services.IPermissionsService,Resgrid.Model.Services.IPersonnelRolesService,Resgrid.Model.Services.IUserProfileService)">
             <summary>
             Operations to perform against the security sub-system
             </summary>

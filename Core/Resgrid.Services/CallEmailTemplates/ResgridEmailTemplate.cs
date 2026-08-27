@@ -80,8 +80,6 @@ namespace Resgrid.Services.CallEmailTemplates
 				}
 				StringBuilder title = new StringBuilder();
 
-				title.Append("Email Call ");
-
 				var priorityName = GetCallPriorityName(c.Priority, activePriorities);
 
 				if (!String.IsNullOrEmpty(priorityName))

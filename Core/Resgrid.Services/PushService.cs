@@ -48,8 +48,10 @@ namespace Resgrid.Services
 			// IC app registrations target the IC-specific Novu subscriber, keeping its inbox/push separate from the Responder app.
 			var isICApp = string.Equals(pushUri.Source, "IC", StringComparison.OrdinalIgnoreCase);
 
-			if (isICApp)
-				await EnsureICUserSubscriber(pushUri, code);
+			// The credential write below lands on nothing unless the subscriber already exists. The
+			// Responder path used to lean on the security-rights endpoint creating it on every app
+			// launch; registration is the only place that actually needs it, so both apps ensure here.
+			await EnsureUserSubscriber(pushUri, code, isICApp);
 
 			bool registered;
 
@@ -87,13 +89,23 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		private async Task EnsureICUserSubscriber(PushUri pushUri, string code)
+		/// <summary>
+		/// Best-effort by design, unlike the unit path's hard stop: an already-present subscriber is the
+		/// common case (Novu answers it with a conflict the provider reports as success), and a failed
+		/// create surfaces immediately after as a logged credential-write rejection.
+		/// </summary>
+		private async Task EnsureUserSubscriber(PushUri pushUri, string code, bool isICApp)
 		{
 			try
 			{
 				var profile = await _userProfileService.GetProfileByUserIdAsync(pushUri.UserId);
-				await _novuProvider.CreateICUserSubscriber(pushUri.UserId, code, pushUri.DepartmentId,
-					profile?.MembershipEmail, profile?.FirstName, profile?.LastName);
+
+				if (isICApp)
+					await _novuProvider.CreateICUserSubscriber(pushUri.UserId, code, pushUri.DepartmentId,
+						profile?.MembershipEmail, profile?.FirstName, profile?.LastName);
+				else
+					await _novuProvider.CreateUserSubscriber(pushUri.UserId, code, pushUri.DepartmentId,
+						profile?.MembershipEmail, profile?.FirstName, profile?.LastName);
 			}
 			catch (Exception ex)
 			{

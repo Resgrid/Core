@@ -609,7 +609,7 @@ namespace Resgrid.Tests.Services
 				call.MapPage.Should().Be("12B");
 				call.NatureOfCall.Should().Be("55 Y/O Male, Chest Pain");
 				call.Notes.Should().Be("Caller is on scene");
-				call.Name.Should().Be("Email Call Emergency MEDICAL 2020-1234 ");
+				call.Name.Should().Be("Emergency MEDICAL 2020-1234 ");
 				call.Dispatches.Count.Should().Be(_dispatchUsers.Count);
 			}
 
@@ -643,7 +643,7 @@ namespace Resgrid.Tests.Services
 
 				call.Should().NotBeNull();
 				call.Priority.Should().Be((int)CallPriority.Medium);
-				call.Name.Should().Be("Email Call Medium MEDICAL 2020-1234 ");
+				call.Name.Should().Be("Medium MEDICAL 2020-1234 ");
 			}
 
 			[Test]
@@ -656,7 +656,7 @@ namespace Resgrid.Tests.Services
 
 				call.Should().NotBeNull();
 				call.Priority.Should().Be(502);
-				call.Name.Should().Be("Email Call Structure Fire MEDICAL 2020-1234 ");
+				call.Name.Should().Be("Structure Fire MEDICAL 2020-1234 ");
 			}
 
 			[Test]

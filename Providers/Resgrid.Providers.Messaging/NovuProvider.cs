@@ -86,6 +86,14 @@ namespace Resgrid.Providers.Messaging
 					}
 				}
 
+				var errors = parsed.SelectToken("errors");
+				if (errors != null)
+				{
+					var described = DescribeValidationErrors(errors);
+					if (!string.IsNullOrWhiteSpace(described))
+						parts.Add($"errors={described}");
+				}
+
 				return string.Join(" ", parts);
 			}
 			catch (JsonException)
@@ -93,6 +101,75 @@ namespace Resgrid.Providers.Messaging
 				return null;
 			}
 		}
+
+		/// <summary>
+		/// Both validation-error shapes Novu emits are handled: class-validator entries
+		/// ({ property, constraints }) and zod issues ({ path, message }), plus the v2 keyed form
+		/// ({ field: { messages: [...] } }). Only field names and rule messages are read out --
+		/// the rejected values themselves are never pulled into the log.
+		/// </summary>
+		private static string DescribeValidationErrors(JToken errors)
+		{
+			var items = new List<string>();
+
+			if (errors.Type == JTokenType.Object)
+			{
+				foreach (var prop in ((JObject)errors).Properties())
+				{
+					var messages = ExtractErrorMessages(prop.Value);
+					items.Add(messages.Count > 0 ? $"{prop.Name}: {string.Join("; ", messages)}" : prop.Name);
+				}
+			}
+			else if (errors.Type == JTokenType.Array)
+			{
+				foreach (var err in errors.Children())
+				{
+					if (err.Type != JTokenType.Object)
+						continue;
+
+					var label = err.SelectToken("property")?.ToString();
+					if (label == null)
+					{
+						var path = err.SelectToken("path");
+						if (path != null)
+							label = path.Type == JTokenType.Array
+								? string.Join(".", path.Children().Select(p => p.ToString()))
+								: path.ToString();
+					}
+
+					var messages = new List<string>();
+					var message = err.SelectToken("message");
+					if (message != null && message.Type == JTokenType.String)
+						messages.Add(message.ToString());
+
+					if (err.SelectToken("constraints") is JObject constraints)
+						messages.AddRange(constraints.Properties().Select(p => p.Value.ToString()));
+
+					if (label == null && messages.Count == 0)
+						continue;
+
+					items.Add(messages.Count > 0 ? $"{label ?? "?"}: {string.Join("; ", messages)}" : label);
+				}
+			}
+
+			return string.Join(" | ", items);
+		}
+
+		private static List<string> ExtractErrorMessages(JToken value)
+		{
+			var result = new List<string>();
+
+			if (value.Type == JTokenType.String)
+				result.Add(value.ToString());
+			else if (value.Type == JTokenType.Array)
+				result.AddRange(value.Children().Where(x => x.Type == JTokenType.String).Select(x => x.ToString()));
+			else if (value.Type == JTokenType.Object && value.SelectToken("messages") is JToken messages && messages.Type == JTokenType.Array)
+				result.AddRange(messages.Children().Where(x => x.Type == JTokenType.String).Select(x => x.ToString()));
+
+			return result;
+		}
+
+		private static string NullIfWhiteSpace(string value) => string.IsNullOrWhiteSpace(value) ? null : value;
 
 		private async Task<bool> CreateSubscriber(string id, int departmentId, string email, string firstName, string lastName, List<AdditionalData> data)
 		{
@@ -104,16 +181,16 @@ namespace Resgrid.Providers.Messaging
 					httpClient.DefaultRequestHeaders.Add("idempotency-key", Guid.NewGuid().ToString());
 					httpClient.DefaultRequestHeaders.Add("Authorization", $"ApiKey {ChatConfig.NovuSecretKey}");
 
+					// The v2 endpoint validates optional fields (@IsEmail, @IsTimeZone, @IsLocale) whenever
+					// they are present -- @IsOptional only skips null/undefined, so an empty string is a 422,
+					// not an omission. Empty values must therefore be null (dropped by NullValueHandling.Ignore)
+					// and the always-empty phone/avatar/timezone/locale keys are not sent at all.
 					var payload = new
 					{
 						subscriberId = id,
-						firstName = firstName,
-						lastName = lastName,
-						email = email,
-						phone = "",
-						avatar = "",
-						timezone = "",
-						locale = "",
+						firstName = NullIfWhiteSpace(firstName),
+						lastName = NullIfWhiteSpace(lastName),
+						email = NullIfWhiteSpace(email),
 						data = new Dictionary<string, object>()
 					};
 

@@ -416,7 +416,7 @@ namespace Resgrid.Providers.EmailProvider
 				newEmail.HtmlBody = content;
 				newEmail.Sender = FROM_EMAIL;
 				newEmail.From = FROM_EMAIL;
-				newEmail.Subject = $"Resgrid Password Reset";
+				newEmail.Subject = "Resgrid Receipt";
 				newEmail.To.Add(email);
 
 				return await _emailSender.Send(newEmail);

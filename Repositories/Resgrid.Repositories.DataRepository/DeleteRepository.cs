@@ -53,6 +53,9 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[LogUnits] WHERE LogId IN (SELECT LogId FROM [dbo].[Logs] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[LogUsers] WHERE LogId IN (SELECT LogId FROM [dbo].[Logs] WHERE DepartmentId = @DepartmentId)
 
+								-- PushUris has no DepartmentId column; delete by membership while DepartmentMembers rows still exist
+								DELETE FROM [dbo].[PushUris] WHERE UserId IN (SELECT UserId FROM [dbo].[DepartmentMembers] WHERE DepartmentId = @DepartmentId)
+
 								OPEN db_cursor
 								FETCH NEXT FROM db_cursor INTO @UserId
 
@@ -183,8 +186,8 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[POITypes] WHERE DepartmentId = @DepartmentId
 
 								-- Resource orders (ResourceOrders row deleted further down)
-								DELETE FROM [dbo].[ResourceOrderFillUnits] WHERE ResourceOrderFillId IN (SELECT ResourceOrderFillId FROM [dbo].[ResourceOrderFills] WHERE DepartmentId = @DepartmentId OR ResourceOrderId IN (SELECT ResourceOrderId FROM [dbo].[ResourceOrders] WHERE DepartmentId = @DepartmentId))
-								DELETE FROM [dbo].[ResourceOrderFills] WHERE DepartmentId = @DepartmentId OR ResourceOrderId IN (SELECT ResourceOrderId FROM [dbo].[ResourceOrders] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[ResourceOrderFillUnits] WHERE ResourceOrderFillId IN (SELECT ResourceOrderFillId FROM [dbo].[ResourceOrderFills] WHERE DepartmentId = @DepartmentId OR ResourceOrderItemId IN (SELECT ResourceOrderItemId FROM [dbo].[ResourceOrderItems] WHERE ResourceOrderId IN (SELECT ResourceOrderId FROM [dbo].[ResourceOrders] WHERE DepartmentId = @DepartmentId)))
+								DELETE FROM [dbo].[ResourceOrderFills] WHERE DepartmentId = @DepartmentId OR ResourceOrderItemId IN (SELECT ResourceOrderItemId FROM [dbo].[ResourceOrderItems] WHERE ResourceOrderId IN (SELECT ResourceOrderId FROM [dbo].[ResourceOrders] WHERE DepartmentId = @DepartmentId))
 								DELETE FROM [dbo].[ResourceOrderItems] WHERE ResourceOrderId IN (SELECT ResourceOrderId FROM [dbo].[ResourceOrders] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[ResourceOrderSettings] WHERE DepartmentId = @DepartmentId
 
@@ -240,7 +243,6 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[UserStates] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PersonnelCertifications] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PersonnelRoleUsers] WHERE DepartmentId = @DepartmentId
-								DELETE FROM [dbo].[PushUris] WHERE DepartmentId = @DepartmentId
 
 								DELETE FROM [dbo].[Invites] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Payments] WHERE DepartmentId = @DepartmentId

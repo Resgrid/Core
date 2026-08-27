@@ -18,6 +18,19 @@ namespace Resgrid.Workers.Framework.Logic
 
 			try
 			{
+				// ADP department operation lock: workflow executions can mutate department data, so a
+				// locked department's items are requeued unchanged (same attempt number — deferral is
+				// not a retry) rather than executed or dead-lettered (plan section 20.2). The short
+				// pause keeps the small pre-lock backlog from hot-cycling the bus for the whole
+				// window; new triggers barely arrive while the lock blocks mutations upstream.
+				if (await DepartmentLockGuard.IsDepartmentLockedAsync(item.DepartmentId))
+				{
+					await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+					var deferralQueue = Bootstrapper.GetKernel().Resolve<Resgrid.Model.Providers.IOutboundQueueProvider>();
+					await deferralQueue.EnqueueWorkflow(item);
+					return true;
+				}
+
 				var workflowService = Bootstrapper.GetKernel().Resolve<IWorkflowService>();
 				var departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 

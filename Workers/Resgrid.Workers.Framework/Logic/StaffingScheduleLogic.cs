@@ -29,6 +29,12 @@ namespace Resgrid.Workers.Framework.Logic
 
 			if (item != null && item.ScheduledTask != null)
 			{
+				// ADP department operation lock: staffing mutations are deferred, not dropped — the
+				// occurrence is skipped WITHOUT a completion log so the scheduler re-picks it after
+				// the lock releases (plan section 20.2).
+				if (await DepartmentLockGuard.IsDepartmentLockedAsync(item.ScheduledTask.DepartmentId))
+					return new Tuple<bool, string>(true, $"deferred: department {item.ScheduledTask.DepartmentId} is locked");
+
 				try
 				{
 					if (item.ScheduledTask.TaskType == (int)TaskTypes.UserStaffingLevel)

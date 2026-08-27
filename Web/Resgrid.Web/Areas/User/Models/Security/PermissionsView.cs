@@ -100,6 +100,35 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int CommandAppLogin { get; set; }
 		public SelectList CommandAppLoginPermissions { get; set; }
 
+		// Advanced Data Protection (ADP) permissions. Defaults come from
+		// Resgrid.Model.AdpPermissionDefaults — deliberately NOT the wide-open no-row convention.
+		public int ManageDataProtection { get; set; }
+		public SelectList ManageDataProtectionPermissions { get; set; }
+
+		public int ViewProtectedCallData { get; set; }
+		public SelectList ViewProtectedCallDataPermissions { get; set; }
+
+		public int EditProtectedCallData { get; set; }
+		public SelectList EditProtectedCallDataPermissions { get; set; }
+
+		public int ViewProtectedPersonnelData { get; set; }
+		public SelectList ViewProtectedPersonnelDataPermissions { get; set; }
+
+		public int ViewProtectedContactData { get; set; }
+		public SelectList ViewProtectedContactDataPermissions { get; set; }
+
+		public int ViewProtectedOperationalData { get; set; }
+		public SelectList ViewProtectedOperationalDataPermissions { get; set; }
+
+		public int ExportProtectedData { get; set; }
+		public SelectList ExportProtectedDataPermissions { get; set; }
+
+		public int ConfigureProtectedDataEgress { get; set; }
+		public SelectList ConfigureProtectedDataEgressPermissions { get; set; }
+
+		public int BreakGlassProtectedData { get; set; }
+		public SelectList BreakGlassProtectedDataPermissions { get; set; }
+
 		// Two-Factor Authentication enforcement
 		public int Require2FAForAdmins { get; set; }
 		public SelectList Require2FAForAdminsOptions { get; set; }

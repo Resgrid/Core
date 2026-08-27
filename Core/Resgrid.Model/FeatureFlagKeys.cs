@@ -24,5 +24,15 @@ namespace Resgrid.Model
 		/// response, move-up recommendations) across the web UI and API. Seeded by M0116.
 		/// </summary>
 		public const string DispatchRunCards = "Dispatch.RunCards";
+
+		/// <summary>
+		/// Global admission gate for Advanced Data Protection (ADP) enrollment. When true, any department
+		/// with an active paid ADP addon may enroll via the Enrollment Wizard; when false, no new enrollment
+		/// commits anywhere (operator platform-wide pause). This flag gates NEW enrollment only — it is never
+		/// consulted for runtime encrypt/decrypt behavior, grant issuance, rotation, or opt-out of a
+		/// department whose durable DepartmentDataProtectionPolicies.State is already active. Operator-managed,
+		/// seeded off and permanent by M0126; ordinary department administrators cannot see or change it.
+		/// </summary>
+		public const string DepartmentProtectedDataEnrollment = "Security.DepartmentProtectedDataEnrollment";
 	}
 }

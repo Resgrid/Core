@@ -436,6 +436,9 @@ namespace Resgrid.Web
 			{
 				options.EnableEndpointRouting = false;
 				options.Filters.Add(new Microsoft.AspNetCore.Mvc.ServiceFilterAttribute(typeof(Filters.RequireActivePlanFilter)));
+				// ADP department operation lock: refuses department-scoped mutations with 423 Locked
+				// while a migration window holds the department's lock; reads pass through untouched.
+				options.Filters.Add<Filters.DepartmentLockActionFilter>();
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;

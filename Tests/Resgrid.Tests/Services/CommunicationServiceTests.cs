@@ -28,6 +28,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IUserStateService> _userStateServiceMock;
 			protected Mock<IDepartmentsService> _departmentsServiceMock;
 			protected Mock<IChatbotOutboundService> _chatbotOutboundServiceMock;
+			protected Mock<IProtectedProjectionService> _protectedProjectionServiceMock;
 			protected ICommunicationService _communicationService;
 
 			// NUnit builds one fixture instance for the whole class, so mocks created in a constructor are
@@ -53,10 +54,18 @@ namespace Resgrid.Tests.Services
 					.ReturnsAsync(new DepartmentMember());
 
 				_chatbotOutboundServiceMock = new Mock<IChatbotOutboundService>();
+
+				// Pass-through by default: these tests exercise unprotected departments, where the
+				// notification-safe view is the original call.
+				_protectedProjectionServiceMock = new Mock<IProtectedProjectionService>();
+				_protectedProjectionServiceMock
+					.Setup(x => x.BuildNotificationSafeCallAsync(It.IsAny<int>(), It.IsAny<Call>(), It.IsAny<ProtectedDataEgressChannel>()))
+					.Returns<int, Call, ProtectedDataEgressChannel>((d, c, ch) => Task.FromResult(c));
+
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
 					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object,
-					_departmentsServiceMock.Object);
+					_departmentsServiceMock.Object, _protectedProjectionServiceMock.Object);
 			}
 		}
 

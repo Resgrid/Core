@@ -262,6 +262,15 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<UserSessionsRepository>().As<IUserSessionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UserExternalIdentityLinksRepository>().As<IUserExternalIdentityLinksRepository>().InstancePerLifetimeScope();
 
+			// Advanced Data Protection (ADP) Repositories
+			builder.RegisterType<DepartmentDataProtectionPolicyRepository>().As<IDepartmentDataProtectionPolicyRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentDataProtectionKeyRepository>().As<IDepartmentDataProtectionKeyRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentDataProtectionMigrationRepository>().As<IDepartmentDataProtectionMigrationRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentProtectedDataEgressPolicyRepository>().As<IDepartmentProtectedDataEgressPolicyRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentMemberSensitiveDataRepository>().As<IDepartmentMemberSensitiveDataRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentOperationLockRepository>().As<IDepartmentOperationLockRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentDataProtectionBulkRepository>().As<IDepartmentDataProtectionBulkRepository>().InstancePerLifetimeScope();
+
 			// Workflow Repositories
 			builder.RegisterType<WorkflowRepository>().As<IWorkflowRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowStepRepository>().As<IWorkflowStepRepository>().InstancePerLifetimeScope();

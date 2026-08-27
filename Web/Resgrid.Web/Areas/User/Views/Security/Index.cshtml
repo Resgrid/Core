@@ -343,6 +343,99 @@
                                             <div id="commandAppLoginRolesDiv" style="display: none;"><select id="commandAppLoginRoles" name="commandAppLoginRoles"></select></div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td colspan="5"><strong>@localizer["PermAdpSectionHeader"]</strong><br /><small>@localizer["PermAdpSectionNote"]</small></td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAdpManageLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdpManageNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ManageDataProtection, Model.ManageDataProtectionPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="adpManageNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adpManageRolesDiv" style="display: none;"><select id="adpManageRoles" name="adpManageRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAdpViewCallLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdpViewCallNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewProtectedCallData, Model.ViewProtectedCallDataPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="adpViewCallNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adpViewCallRolesDiv" style="display: none;"><select id="adpViewCallRoles" name="adpViewCallRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAdpEditCallLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdpEditCallNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.EditProtectedCallData, Model.EditProtectedCallDataPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="adpEditCallNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adpEditCallRolesDiv" style="display: none;"><select id="adpEditCallRoles" name="adpEditCallRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAdpViewPersonnelLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdpViewPersonnelNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewProtectedPersonnelData, Model.ViewProtectedPersonnelDataPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="adpViewPersonnelNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adpViewPersonnelRolesDiv" style="display: none;"><select id="adpViewPersonnelRoles" name="adpViewPersonnelRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAdpViewContactLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdpViewContactNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewProtectedContactData, Model.ViewProtectedContactDataPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="adpViewContactNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adpViewContactRolesDiv" style="display: none;"><select id="adpViewContactRoles" name="adpViewContactRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAdpViewOperationalLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdpViewOperationalNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ViewProtectedOperationalData, Model.ViewProtectedOperationalDataPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="adpViewOperationalNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adpViewOperationalRolesDiv" style="display: none;"><select id="adpViewOperationalRoles" name="adpViewOperationalRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAdpExportLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdpExportNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ExportProtectedData, Model.ExportProtectedDataPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="adpExportNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adpExportRolesDiv" style="display: none;"><select id="adpExportRoles" name="adpExportRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAdpEgressLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdpEgressNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ConfigureProtectedDataEgress, Model.ConfigureProtectedDataEgressPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="adpEgressNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adpEgressRolesDiv" style="display: none;"><select id="adpEgressRoles" name="adpEgressRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAdpBreakGlassLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAdpBreakGlassNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.BreakGlassProtectedData, Model.BreakGlassProtectedDataPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="adpBreakGlassNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="adpBreakGlassRolesDiv" style="display: none;"><select id="adpBreakGlassRoles" name="adpBreakGlassRoles"></select></div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

@@ -7,7 +7,7 @@
 		<li>
 			<a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@call.CallId">
 				<div>
-					@call.Name
+					@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(call.Name)
 					<span class="pull-right text-muted small">@call.LoggedOn.TimeConverterToString(Model.Department)</span>
 				</div>
 			</a>

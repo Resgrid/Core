@@ -31,11 +31,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly ICallsService _callsService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IProtectedReadService _protectedCallReadService;
+		private readonly IProtectedWriteService _protectedWriteService;
 
-		public CallFilesController(ICallsService callsService, IDepartmentsService departmentsService)
+		public CallFilesController(ICallsService callsService, IDepartmentsService departmentsService,
+			IProtectedReadService protectedCallReadService, IProtectedWriteService protectedWriteService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
+			_protectedCallReadService = protectedCallReadService;
+			_protectedWriteService = protectedWriteService;
 		}
 		#endregion Members and Constructors
 
@@ -66,14 +71,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false, false);
 
+			// Attended protected read (plan 7.1): attachment names/coordinates decrypt with a valid
+			// grant or read as REDACTED/null. includeData additionally decrypts the binary payload
+			// through the broker; a concealed payload serializes as null, never ciphertext bytes.
+			var protectedRead = await _protectedCallReadService.ResolveAttachmentsForReadAsync(DepartmentId,
+				call.Attachments?.ToList(), Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId,
+				includeData: includeData);
+
 			if (call.Attachments != null && call.Attachments.Any())
 			{
 				foreach (var attachment in call.Attachments)
 				{
+					CallFileResultData fileData = null;
 					if (type == 0)
-						result.Data.Add(ConvertCallFileData(attachment, department, includeData));
+						fileData = ConvertCallFileData(attachment, department, includeData);
 					else if (type == attachment.CallAttachmentType)
-						result.Data.Add(ConvertCallFileData(attachment, department, includeData));
+						fileData = ConvertCallFileData(attachment, department, includeData);
+
+					if (fileData != null)
+					{
+						fileData.IsProtected = protectedRead.IsProtected;
+						fileData.ProtectedReason = protectedRead.ProtectedReason;
+						result.Data.Add(fileData);
+					}
 				}
 
 				result.PageSize = result.Data.Count;
@@ -104,19 +124,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (String.IsNullOrWhiteSpace(query))
 				return NotFound();
 
-			var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query));
+			string decryptedQuery;
+			try
+			{
+				var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query));
+				decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			}
+			catch (Exception)
+			{
+				// Malformed/foreign query: value-free not-found, never a 500.
+				return NotFound();
+			}
 
-			var decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
-
-			var items = decryptedQuery.Split(char.Parse("|"));
-
-			if (String.IsNullOrWhiteSpace(items[0]) || items[0] == "0" || String.IsNullOrWhiteSpace(items[1]))
+			// Expiry-aware signed link (legacy no-expiry links honored only while the transition
+			// flag allows them).
+			if (!TryValidateSignedFileQuery(decryptedQuery, out int departmentId, out int attachmentId))
 				return NotFound();
 
-			int departmentId = int.Parse(items[0].Trim());
-			string id = items[1].Trim();
-
-			var attachment = await _callsService.GetCallAttachmentAsync(int.Parse(id));
+			var attachment = await _callsService.GetCallAttachmentAsync(attachmentId);
 
 			if (attachment == null)
 				return NotFound();
@@ -126,6 +151,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			if (String.IsNullOrWhiteSpace(attachment.FileName) || attachment.Data == null || attachment.Data.Length == 0)
+				return NotFound();
+
+			// ADP: this is an ANONYMOUS signed-link route — it can never carry a grant, so a
+			// protected department's enveloped attachment is simply not available here (and
+			// ciphertext bytes are never served). Attended clients fetch through GetFilesForCall
+			// with their grant instead.
+			if (Resgrid.Services.ProtectedReadService.IsBinaryEnveloped(attachment.Data) ||
+				ProtectedDataEnvelope.HasEnvelopePrefix(attachment.FileName))
 				return NotFound();
 
 			var extension = Path.GetExtension(attachment.FileName).ToLowerInvariant();
@@ -151,24 +184,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (String.IsNullOrWhiteSpace(query))
 				return NotFound();
 
-			var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query));
+			string decryptedQuery;
+			try
+			{
+				var decodedQuery = Encoding.UTF8.GetString(Convert.FromBase64String(query));
+				decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			}
+			catch (Exception)
+			{
+				// Malformed/foreign query: value-free not-found, never a 500.
+				return NotFound();
+			}
 
-			var decryptedQuery = SymmetricEncryption.Decrypt(decodedQuery, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
-
-			var items = decryptedQuery.Split(char.Parse("|"));
-
-			if (String.IsNullOrWhiteSpace(items[0]) || items[0] == "0" || String.IsNullOrWhiteSpace(items[1]))
+			if (!TryValidateSignedFileQuery(decryptedQuery, out int departmentId, out int attachmentId))
 				return NotFound();
 
-			int departmentId = int.Parse(items[0].Trim());
-			string id = items[1].Trim();
-
-			var attachment = await _callsService.GetCallAttachmentAsync(int.Parse(id));
+			var attachment = await _callsService.GetCallAttachmentAsync(attachmentId);
 
 			if (attachment == null)
 				return NotFound();
 
 			if (String.IsNullOrWhiteSpace(attachment.FileName) || attachment.Data == null || attachment.Data.Length == 0)
+				return NotFound();
+
+			// Same ADP rule as the GET route: anonymous links never see protected attachments.
+			if (Resgrid.Services.ProtectedReadService.IsBinaryEnveloped(attachment.Data) ||
+				ProtectedDataEnvelope.HasEnvelopePrefix(attachment.FileName))
 				return NotFound();
 
 			var call = await _callsService.GetCallByIdAsync(attachment.CallId);
@@ -247,7 +288,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 				callAttachment.Longitude = decimal.Parse(input.Longitude);
 			}
 
+			// ADP write preflight (plan 3.3): refuse BEFORE inserting the transient plaintext row.
+			var writePreflight = await _protectedWriteService.PreflightWriteAsync(call.DepartmentId,
+				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, IsSystemApiKeyRequest, cancellationToken);
+			if (!writePreflight.Success)
+				return Problem(type: writePreflight.Reason,
+					title: "Recent multi-factor verification is required to modify protected data.",
+					statusCode: StatusCodes.Status403Forbidden);
+
 			var saved = await _callsService.SaveCallAttachmentAsync(callAttachment, cancellationToken);
+
+			// ADP two-phase write (plan 19.2): encrypt names/coordinates AND the rgdpb binary
+			// payload now that the identity pk (an AAD component) exists, then persist the
+			// enveloped row.
+			var protectedWrite = await _protectedWriteService.PrepareCallAttachmentWriteAsync(call.DepartmentId, saved,
+				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, IsSystemApiKeyRequest, cancellationToken);
+			if (!protectedWrite.Success)
+			{
+				Resgrid.Framework.Logging.LogError($"ADP protected write failed AFTER insert for call attachment {saved.CallAttachmentId} in department {call.DepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
+				return Problem(type: protectedWrite.Reason,
+					title: "Protected storage is temporarily unavailable; the change was not saved.",
+					statusCode: StatusCodes.Status503ServiceUnavailable);
+			}
+			if (protectedWrite.IsProtected)
+				saved = await _callsService.SaveCallAttachmentAsync(saved, cancellationToken);
 
 
 			result.Id = saved.CallAttachmentId.ToString();
@@ -258,6 +322,42 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return CreatedAtAction(nameof(GetFile), new { departmentId = call.DepartmentId, id = saved.CallAttachmentId }, result);
 		}
 
+		/// <summary>
+		/// Validates the decrypted signed-link payload: "dept|attachmentId" (legacy, accepted only
+		/// while SecurityConfig.AllowLegacySignedFileLinks) or "dept|attachmentId|expiresUtcTicks"
+		/// (current). An expired or malformed link reads as not-found — value-free.
+		/// </summary>
+		public static bool TryValidateSignedFileQuery(string decryptedQuery, out int departmentId, out int attachmentId)
+		{
+			departmentId = 0;
+			attachmentId = 0;
+
+			if (String.IsNullOrWhiteSpace(decryptedQuery))
+				return false;
+
+			var items = decryptedQuery.Split(char.Parse("|"));
+			if (items.Length < 2 || String.IsNullOrWhiteSpace(items[0]) || items[0].Trim() == "0" || String.IsNullOrWhiteSpace(items[1]))
+				return false;
+
+			if (!int.TryParse(items[0].Trim(), out departmentId) || !int.TryParse(items[1].Trim(), out attachmentId))
+				return false;
+
+			if (items.Length >= 3)
+			{
+				if (!long.TryParse(items[2].Trim(), out var expiresTicks))
+					return false;
+
+				if (DateTime.UtcNow.Ticks > expiresTicks)
+					return false;
+			}
+			else if (!Config.SecurityConfig.AllowLegacySignedFileLinks)
+			{
+				return false;
+			}
+
+			return true;
+		}
+
 		public static CallFileResultData ConvertCallFileData(CallAttachment attachment, Department department, bool includeData)
 		{
 			var file = new CallFileResultData();
@@ -266,7 +366,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			file.FileName = attachment.FileName;
 			file.Type = attachment.CallAttachmentType;
 
-			var query = SymmetricEncryption.Encrypt($"{department.DepartmentId}|{attachment.CallAttachmentId}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+			// Signed anonymous link WITH EXPIRY (third segment, UTC ticks): links regenerate on
+			// every authenticated list call, so a leaked URL stops working after the TTL.
+			var expiresTicks = DateTime.UtcNow.AddMinutes(Math.Max(5, Config.SecurityConfig.SignedFileLinkTtlMinutes)).Ticks;
+			var query = SymmetricEncryption.Encrypt($"{department.DepartmentId}|{attachment.CallAttachmentId}|{expiresTicks}", Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
 			file.Url = Config.SystemBehaviorConfig.ResgridApiBaseUrl + "/api/v4/CallFiles/GetFile?query=" + Convert.ToBase64String(Encoding.UTF8.GetBytes(query));
 			file.Name = attachment.Name;
@@ -281,7 +384,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!String.IsNullOrWhiteSpace(attachment.UserId))
 				file.UserId = attachment.UserId;
 
-			if (includeData)
+			// Null after a protected-read redaction (or when metadata-only resolution stripped the
+			// ciphertext) — a concealed payload is simply absent.
+			if (includeData && attachment.Data != null)
 				file.Data = Convert.ToBase64String(attachment.Data);
 
 			return file;

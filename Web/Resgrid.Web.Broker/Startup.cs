@@ -96,6 +96,10 @@ namespace Resgrid.Web.Broker
 			builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 
+			// The broker also registers the CLIENT (pointing at itself) so ServicesModule-resolved
+			// services with the write safety net resolve; local engine writes bypass it entirely.
+			builder.RegisterModule(new ProtectedDataBrokerClientModule());
+
 			// ...plus the ONE registration no other host may load: the real KMS adapter. Last wins
 			// over ServicesModule's fail-closed NotConfigured placeholder.
 			builder.RegisterModule(new ProtectedDataProviderModule());

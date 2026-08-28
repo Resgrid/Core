@@ -20,10 +20,12 @@ namespace Resgrid.Services
 		private readonly IContactNoteTypesRepository _contactNoteTypesRepository;
 		private readonly IContactAssociationsRepository _contactAssociationsRepository;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 
 		public ContactsService(IContactsRepository contactsRepository, IContactNotesRepository contactNotesRepository,
 			IContactCategoryRepository contactCategoryRepository,  IContactNoteTypesRepository contactNoteTypesRepository,
-			IContactAssociationsRepository contactAssociationsRepository, IEventAggregator eventAggregator)
+			IContactAssociationsRepository contactAssociationsRepository, IEventAggregator eventAggregator,
+			Lazy<IProtectedWriteService> protectedWriteService)
 		{
 			_contactsRepository = contactsRepository;
 			_contactCategoryRepository = contactCategoryRepository;
@@ -31,6 +33,7 @@ namespace Resgrid.Services
 			_contactNoteTypesRepository = contactNoteTypesRepository;
 			_contactAssociationsRepository = contactAssociationsRepository;
 			_eventAggregator = eventAggregator;
+			_protectedWriteService = protectedWriteService;
 		}
 
 		public async Task<List<Contact>> GetAllContactsForDepartmentAsync(int departmentId)
@@ -73,7 +76,27 @@ namespace Resgrid.Services
 
 		public async Task<Contact> SaveContactAsync(Contact contact, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _contactsRepository.SaveOrUpdateAsync(contact, cancellationToken);
+			// Round-tripped REDACTED placeholder on an edit means "unchanged" — fetch the stored row
+			// before it is overwritten so the safety net can restore the stored envelopes.
+			Contact existingContactForRestore = null;
+			if (!string.IsNullOrWhiteSpace(contact.ContactId) &&
+				ProtectedReadService.ContactFieldAccessors.Any(a => a.Value.Get(contact) == ProtectedDataEnvelope.RedactionValue))
+				existingContactForRestore = await _contactsRepository.GetByIdAsync(contact.ContactId);
+
+			var savedContact = await _contactsRepository.SaveOrUpdateAsync(contact, cancellationToken);
+
+			// ADP write safety net (plan 4.2/19.2): mirrors CallsService — post-save so the row's id
+			// (a repository-assigned guid on creates) is a valid AAD rowKey; already-enveloped and
+			// REDACTED-sentinel values were handled by the caller/Prepare, so this is a no-op for
+			// edge-encrypted saves. Fails closed by throwing.
+			var protectedWrite = await _protectedWriteService.Value.PrepareContactWriteAsync(savedContact.DepartmentId,
+				savedContact, existingContactForRestore, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); contact {savedContact.ContactId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed || (existingContactForRestore != null && protectedWrite.Success))
+				savedContact = await _contactsRepository.SaveOrUpdateAsync(savedContact, cancellationToken);
+
+			return savedContact;
 		}
 
 		public async Task<List<Contact>> GetContactsByCategoryIdAsync(int departmentId, string categoryId)
@@ -165,7 +188,16 @@ namespace Resgrid.Services
 
 		public async Task<ContactNote> SaveContactNoteAsync(ContactNote note, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _contactNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
+			var savedNote = await _contactNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
+
+			var protectedWrite = await _protectedWriteService.Value.PrepareContactNoteWriteAsync(savedNote.DepartmentId,
+				savedNote, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); contact note {savedNote.ContactNoteId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed)
+				savedNote = await _contactNotesRepository.SaveOrUpdateAsync(savedNote, cancellationToken);
+
+			return savedNote;
 		}
 
 		public async Task<bool> DeleteContactAsync(string contactId, string userId, int departmentId, string ipAddress, string userAgent, CancellationToken cancellationToken = default(CancellationToken))

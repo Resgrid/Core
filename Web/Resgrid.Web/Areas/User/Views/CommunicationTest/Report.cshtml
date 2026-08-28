@@ -25,6 +25,15 @@
     int totalVerified = verifiableResults.Count(r => r.VerificationStatus == (int)ContactVerificationStatus.Verified);
     int totalUnverified = verifiableResults.Count(r => r.VerificationStatus == (int)ContactVerificationStatus.Pending);
     int totalGrandfathered = verifiableResults.Count(r => r.VerificationStatus == (int)ContactVerificationStatus.Grandfathered);
+
+    // Counted over users, not rows: one muted member produces a suppressed row per tested channel,
+    // and "12 suppressed" meaning three people would be a worse number than no number.
+    int suppressedUserCount = userResults.Count(g => g.Value.Any(r => r.Suppressed));
+
+    // Pulled out of the markup: a localizer indexer inside an HTML attribute ends the attribute on
+    // its own quotes.
+    var suppressedHelpText = localizer["SuppressedHelp"].Value;
+    var suppressedNoticeText = string.Format(localizer["SuppressedNotice"].Value, suppressedUserCount);
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -50,6 +59,16 @@
             <div class="col-lg-12">
                 <div class="alert alert-info">
                     @localizer["RunInProgressNotice"]
+                </div>
+            </div>
+        </div>
+    }
+    @if (suppressedUserCount > 0)
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="alert alert-warning">
+                    @suppressedNoticeText
                 </div>
             </div>
         </div>
@@ -157,6 +176,8 @@
                             <thead>
                                 <tr>
                                     <th>@localizer["User"]</th>
+                                    <th>@localizer["StaffingLevel"]</th>
+                                    <th>@localizer["Suppressed"]</th>
                                     <th>@localizer["SmsEnabled"]</th>
                                     <th>@localizer["SMS"]</th>
                                     <th>@localizer["SmsContact"]</th>
@@ -194,6 +215,9 @@
                                     string GetStatusClass(CommunicationTestResult r)
                                     {
                                         if (r == null) return "";
+                                        // Muted by the department, not a fault and not a non-response:
+                                        // its own colour so it cannot be read as either.
+                                        if (r.Suppressed) return "background-color:#d9edf7;";
                                         if (!r.SendAttempted) return "background-color:#e0e0e0;";
                                         if (r.Responded) return "background-color:#dff0d8;";
                                         // A send that failed is a fault to chase; a delivered message with no
@@ -208,6 +232,12 @@
 
                                         if (!r.SendAttempted)
                                         {
+                                            // The department muted this member's staffing level. Said first,
+                                            // because otherwise this reads as the member having switched the
+                                            // channel off themselves.
+                                            if (r.Suppressed)
+                                                return localizer["NotSentSuppressed"].Value;
+
                                             // Say WHY nothing was sent, so the verification column and this one
                                             // read as one story instead of two unrelated facts.
                                             if (r.HasVerifiableContactMethod() && r.VerificationStatus == (int)ContactVerificationStatus.Pending)
@@ -262,16 +292,33 @@
                                         return enabled ? "color:green;" : "color:red;";
                                     }
 
-                                    // Mirror the predicate CommunicationTestService uses to decide whether to
-                                    // attempt a channel. Reading a single flag here would show "Enabled: No"
-                                    // next to a message the run actually sent, which reads as a broken report.
-                                    var smsEnabled = profile != null && (profile.SendSms || profile.SendMessageSms || profile.SendNotificationSms);
-                                    var emailEnabled = profile != null && (profile.SendEmail || profile.SendMessageEmail || profile.SendNotificationEmail);
-                                    var voiceEnabled = profile != null && profile.VoiceForCall;
-                                    var pushEnabled = profile != null && profile.SendNotificationPush;
+                                    // The run recorded each member's election when it was built, so the report
+                                    // describes the run rather than today's profile. The fallbacks mirror the
+                                    // predicates CommunicationTestService uses, and only apply to runs built
+                                    // before the election was recorded.
+                                    var smsEnabled = smsResult.GetChannelElection(profile != null && (profile.SendSms || profile.SendMessageSms || profile.SendNotificationSms));
+                                    var emailEnabled = emailResult.GetChannelElection(profile != null && (profile.SendEmail || profile.SendMessageEmail || profile.SendNotificationEmail));
+                                    var voiceEnabled = voiceResult.GetChannelElection(profile != null && profile.VoiceForCall);
+                                    var pushEnabled = pushResult.GetChannelElection(profile != null && profile.SendNotificationPush);
+
+                                    // Every row for a member carries the same staffing snapshot, so any one of
+                                    // them answers for the member.
+                                    var staffingText = results.FirstOrDefault().GetStaffingLevelDisplayText();
+                                    var userSuppressed = results.Any(r => r.Suppressed);
 
                                     <tr>
                                         <td>@userName</td>
+                                        <td>@staffingText</td>
+                                        <td>
+                                            @if (userSuppressed)
+                                            {
+                                                <span class="label label-danger" title="@suppressedHelpText">@GetEnabledText(true)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-default">@GetEnabledText(false)</span>
+                                            }
+                                        </td>
                                         <td style="@GetEnabledClass(smsEnabled)">@GetEnabledText(smsEnabled)</td>
                                         <td style="@GetStatusClass(smsResult)">@GetStatusText(smsResult)</td>
                                         <td>@(smsResult?.ContactValue ?? "-")</td>

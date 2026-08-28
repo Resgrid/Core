@@ -43,6 +43,10 @@ namespace Resgrid.Workers.Framework
 				builder.RegisterModule(new AddressVerificationModule());
 				builder.RegisterModule(new NumbersProviderModule());
 				builder.RegisterModule(new CacheProviderModule());
+				// ADP broker CLIENT (no key material): the CallsService write safety net encrypts
+				// worker-originated protected writes through it. The real KMS adapter module stays
+				// broker-host-only.
+				builder.RegisterModule(new Resgrid.Providers.ProtectedData.ProtectedDataBrokerClientModule());
 				builder.RegisterModule(new MarketingModule());
 				builder.RegisterModule(new PdfProviderModule());
 				builder.RegisterModule(new VoipProviderModule());

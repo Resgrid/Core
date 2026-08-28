@@ -29,11 +29,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly ICallsService _callsService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IProtectedReadService _protectedCallReadService;
+		private readonly IProtectedWriteService _protectedWriteService;
 
-		public CallNotesController(ICallsService callsService, IDepartmentsService departmentsService)
+		public CallNotesController(ICallsService callsService, IDepartmentsService departmentsService,
+			IProtectedReadService protectedCallReadService, IProtectedWriteService protectedWriteService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
+			_protectedCallReadService = protectedCallReadService;
+			_protectedWriteService = protectedWriteService;
 		}
 		#endregion Members and Constructors
 
@@ -67,6 +72,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false, false);
 
+			// Attended protected read (plan 7.1): note text and companion coordinates decrypt with a
+			// valid grant or read as REDACTED/null — never an envelope.
+			var protectedRead = await _protectedCallReadService.ResolveNotesForReadAsync(DepartmentId,
+				call.CallNotes?.ToList(), Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId);
+
 			if (call.CallNotes != null && call.CallNotes.Any())
 			{
 				foreach (var note in call.CallNotes)
@@ -74,7 +84,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					var fullName = await UserHelper.GetFullNameForUser(note.UserId);
 
-					result.Data.Add(ConvertCallNote(note, fullName, department));
+					var noteData = ConvertCallNote(note, fullName, department);
+					noteData.IsProtected = protectedRead.IsProtected;
+					noteData.ProtectedReason = protectedRead.ProtectedReason;
+					result.Data.Add(noteData);
 				}
 
 				result.PageSize = result.Data.Count;
@@ -130,7 +143,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 				note.Longitude = decimal.Parse(input.Longitude);
 			}
 
+			// ADP write preflight (plan 3.3): refuse BEFORE inserting the transient plaintext row.
+			var writePreflight = await _protectedWriteService.PreflightWriteAsync(DepartmentId,
+				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, workloadCaller: false, cancellationToken);
+			if (!writePreflight.Success)
+				return Problem(type: writePreflight.Reason,
+					title: "Recent multi-factor verification is required to modify protected data.",
+					statusCode: StatusCodes.Status403Forbidden);
+
 			var saved = await _callsService.SaveCallNoteAsync(note, cancellationToken);
+
+			// ADP two-phase write (plan 19.2): the identity pk is an AAD component — encrypt now
+			// that the id exists, then persist the enveloped row (companion coordinates move into
+			// their envelope columns).
+			var protectedWrite = await _protectedWriteService.PrepareCallNoteWriteAsync(DepartmentId, saved,
+				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, workloadCaller: false, cancellationToken);
+			if (!protectedWrite.Success)
+			{
+				Resgrid.Framework.Logging.LogError($"ADP protected write failed AFTER insert for call note {saved.CallNoteId} in department {DepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
+				return Problem(type: protectedWrite.Reason,
+					title: "Protected storage is temporarily unavailable; the change was not saved.",
+					statusCode: StatusCodes.Status503ServiceUnavailable);
+			}
+			if (protectedWrite.IsProtected)
+				saved = await _callsService.SaveCallNoteAsync(saved, cancellationToken);
 
 			result.Id = saved.CallNoteId.ToString();
 			result.PageSize = 0;

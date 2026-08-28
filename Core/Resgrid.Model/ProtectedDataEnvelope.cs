@@ -30,6 +30,16 @@ namespace Resgrid.Model
 		/// </summary>
 		public const string RedactionValue = "REDACTED";
 
+		/// <summary>
+		/// Display form for surfaces with no reveal pipeline (server-rendered lists, exports,
+		/// projections): an enveloped value renders as the REDACTED placeholder, anything else
+		/// passes through. Ciphertext must never reach a page, grid payload, or document.
+		/// </summary>
+		public static string SafeDisplay(string value)
+		{
+			return HasEnvelopePrefix(value) ? RedactionValue : value;
+		}
+
 		/// <summary>True when the value starts with either envelope prefix (cheap pre-check).</summary>
 		public static bool HasEnvelopePrefix(string value)
 		{

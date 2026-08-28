@@ -242,6 +242,13 @@
             <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallFilesController.TryValidateSignedFileQuery(System.String,System.Int32@,System.Int32@)">
+            <summary>
+            Validates the decrypted signed-link payload: "dept|attachmentId" (legacy, accepted only
+            while SecurityConfig.AllowLegacySignedFileLinks) or "dept|attachmentId|expiresUtcTicks"
+            (current). An expired or malformed link reads as not-found — value-free.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallNotesController">
             <summary>
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
@@ -316,6 +323,20 @@
             notes, identity, exact address/location and reference identifiers do not. Egress policy
             can never relax this.
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.CallsController.ProtectedGrantToken">
+            <summary>The caller's Protected Data Grant, when presented (plan section 3.1 step 6).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ResolveProtectedReadsAsync(System.Collections.Generic.IReadOnlyList{Resgrid.Model.Call})">
+            <summary>
+            Attended protected-read resolution (plan section 7.1), run BEFORE ConvertCall so the DTO
+            carries broker-decrypted plaintext (valid grant) or the exact REDACTED placeholder —
+            never ciphertext. One broker round trip per request. BigBoard sessions still get the
+            safe shell afterwards, which strips everything regardless.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ProtectedWriteProblem(Resgrid.Model.ProtectedWriteResult)">
+            <summary>Maps a blocked protected write to its value-free problem response (plan 3.3/19.2).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetActiveCalls">
             <summary>
@@ -6210,6 +6231,18 @@
             Object representing a file for a call in the Resgrid system
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallFiles.CallFileResultData.IsProtected">
+            <summary>
+            ADP: true when this row belongs to a protection-enforced department (shield indicator).
+            Protected values here are broker-decrypted plaintext or the exact "REDACTED" placeholder
+            — never ciphertext.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallFiles.CallFileResultData.ProtectedReason">
+            <summary>ADP: machine-readable reason when values are redacted (step_up_required,
+            grant_expired, grant_revoked, protected_access_denied, broker_unavailable); null when
+            nothing is redacted.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CallFiles.CallFileResultData.Id">
             <summary>
             Id of the call file
@@ -6335,6 +6368,18 @@
              <summary>
             
              </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallNotes.CallNoteResultData.IsProtected">
+            <summary>
+            ADP: true when this row belongs to a protection-enforced department (shield indicator).
+            Protected values here are broker-decrypted plaintext or the exact "REDACTED" placeholder
+            — never ciphertext.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallNotes.CallNoteResultData.ProtectedReason">
+            <summary>ADP: machine-readable reason when values are redacted (step_up_required,
+            grant_expired, grant_revoked, protected_access_denied, broker_unavailable); null when
+            nothing is redacted.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CallNotes.CallNoteResultData.CallId">
             <summary>
@@ -6549,6 +6594,24 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.CallId">
             <summary>
             Id of the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.IsProtected">
+            <summary>
+            ADP: true when this call belongs to a protection-enforced department (clients render the
+            protected-field shield). Values in this DTO are then broker-decrypted plaintext or the
+            exact "REDACTED" placeholder — never ciphertext.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.RedactedFields">
+            <summary>ADP: stable catalog field ids ("calls.natureofcall") whose values are REDACTED.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.ProtectedReason">
+            <summary>
+            ADP: machine-readable reason when fields are redacted — step_up_required, grant_expired,
+            grant_revoked, protected_access_denied, or broker_unavailable. Clients map
+            step_up_required/grant_expired onto the step-up (VerifyStepUp) flow. Null when nothing is
+            redacted.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.Priority">
@@ -7387,6 +7450,21 @@
             <summary>
             A contact
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.IsProtected">
+            <summary>
+            ADP: true when this row belongs to a protection-enforced department (shield indicator).
+            Protected values here are broker-decrypted plaintext or the exact "REDACTED" placeholder
+            — never ciphertext.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.ProtectedReason">
+            <summary>ADP: machine-readable reason when values are redacted (step_up_required,
+            grant_expired, grant_revoked, protected_access_denied, broker_unavailable); null when
+            nothing is redacted.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.RedactedFields">
+            <summary>ADP: stable catalog field ids ("contacts.email") whose values are REDACTED.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.UdfValues">
             <summary>
@@ -9030,6 +9108,30 @@
             "Grandfathered", or "N/A" for push. Supplied so every client shows the same wording.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.ChannelEnabled">
+            <summary>
+            Whether the member had this channel switched on in their own notification settings when the
+            run was built. Null for runs built before the election was recorded — read the member's
+            current profile there rather than treating null as off.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.StaffingLevel">
+            <summary>
+            The member's staffing level when the run was built, or null when they had never set one.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.StaffingLevelText">
+            <summary>
+            Display name for <see cref="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.StaffingLevel"/> as the department had it configured at run time,
+            or the raw level when it is no longer configured. Empty when no level was recorded.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.Suppressed">
+            <summary>
+            Whether the department's Suppress (Mute) Staffing Levels setting muted this member for this
+            run. A suppressed result was deliberately never sent, so it is not a delivery failure.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetTestRunsResult">
             <summary>
             Result of getting test runs
@@ -9371,6 +9473,18 @@
             <summary>
             A contact note
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactNoteResultData.IsProtected">
+            <summary>
+            ADP: true when this row belongs to a protection-enforced department (shield indicator).
+            Protected values here are broker-decrypted plaintext or the exact "REDACTED" placeholder
+            — never ciphertext.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactNoteResultData.ProtectedReason">
+            <summary>ADP: machine-readable reason when values are redacted (step_up_required,
+            grant_expired, grant_revoked, protected_access_denied, broker_unavailable); null when
+            nothing is redacted.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactsCategoriesResult">
             <summary>

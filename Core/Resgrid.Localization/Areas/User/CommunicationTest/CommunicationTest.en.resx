@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -75,6 +75,21 @@
   </data>
   <data name="DeleteTestWarning" xml:space="preserve">
     <value>Are you sure you want to delete this test?</value>
+  </data>
+  <data name="NotSentSuppressed" xml:space="preserve">
+    <value>Not Sent (Suppressed)</value>
+  </data>
+  <data name="StaffingLevel" xml:space="preserve">
+    <value>Staffing Level</value>
+  </data>
+  <data name="Suppressed" xml:space="preserve">
+    <value>Suppressed</value>
+  </data>
+  <data name="SuppressedHelp" xml:space="preserve">
+    <value>This member's staffing level is muted in your department settings, so nothing was sent to them.</value>
+  </data>
+  <data name="SuppressedNotice" xml:space="preserve">
+    <value>{0} member(s) were not contacted: their staffing level is muted in your department settings, so a real dispatch would not have reached them either.</value>
   </data>
   <data name="TestDefinitions" xml:space="preserve">
     <value>Test Definitions</value>

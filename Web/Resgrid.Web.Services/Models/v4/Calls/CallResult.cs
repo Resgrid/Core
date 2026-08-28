@@ -29,6 +29,24 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// </summary>
 		public string CallId { get; set; }
 
+		/// <summary>
+		/// ADP: true when this call belongs to a protection-enforced department (clients render the
+		/// protected-field shield). Values in this DTO are then broker-decrypted plaintext or the
+		/// exact "REDACTED" placeholder — never ciphertext.
+		/// </summary>
+		public bool IsProtected { get; set; }
+
+		/// <summary>ADP: stable catalog field ids ("calls.natureofcall") whose values are REDACTED.</summary>
+		public List<string> RedactedFields { get; set; } = new List<string>();
+
+		/// <summary>
+		/// ADP: machine-readable reason when fields are redacted — step_up_required, grant_expired,
+		/// grant_revoked, protected_access_denied, or broker_unavailable. Clients map
+		/// step_up_required/grant_expired onto the step-up (VerifyStepUp) flow. Null when nothing is
+		/// redacted.
+		/// </summary>
+		public string ProtectedReason { get; set; }
+
 		//public string Unm { get; set; }
 
 		/// <summary>

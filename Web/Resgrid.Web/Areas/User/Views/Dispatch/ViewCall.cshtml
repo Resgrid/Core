@@ -56,6 +56,20 @@
     </div>
 </div>
 
+@if (Model.IsProtectedCall)
+{
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert alert-info" id="adpProtectedBanner">
+                <i class="fa fa-shield"></i>
+                <strong>Protected call</strong> &mdash; encrypted at rest for this department. Authorized users and approved channels may still disclose it.
+                <button type="button" class="btn btn-primary btn-xs pull-right" id="adpRevealButton">Verify &amp; Reveal</button>
+                <button type="button" class="btn btn-default btn-xs pull-right" id="adpConcealButton" style="margin-right: 6px;">Conceal</button>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="row">
     <div class="col-lg-8">
         <div class="wrapper wrapper-content animated fadeInUp">
@@ -65,7 +79,7 @@
                         <div class="col-lg-12">
                             <div class="m-b-md">
                                 <a asp-controller="Dispatch" asp-action="CallExport" asp-route-area="User" asp-route-callId="@Model.Call.CallId" class="btn btn-info btn-xs pull-right">@localizer["PrintExportView"]</a>
-                                <h2>@Model.Call.Name</h2>
+                                <h2><span data-adp-field="calls.name">@Model.Call.Name</span></h2>
                             </div>
                             <dl class="dl-horizontal" style="margin-bottom: 0px;">
                                 <dt>@commonLocalizer["Status"]:</dt>
@@ -109,7 +123,7 @@
                                 <dt>@commonLocalizer["Priority"]:</dt>
                                  <dd><span style="display: block;">@(await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(Model.Department.DepartmentId, Model.Call.Priority, localizer))</span></dd>
                                  <dt>@localizer["LocationLabel"]:</dt>
-                                 <dd>@Model.Call.Address</dd>
+                                 <dd><span data-adp-field="calls.address">@Model.Call.Address</span></dd>
                                  @if (!String.IsNullOrWhiteSpace(Model.DestinationName))
                                  {
                                      <dt>@localizer["Destination"]:</dt>
@@ -130,11 +144,11 @@
                         <div class="col-lg-7" id="cluster_info">
                             <dl class="dl-horizontal">
                                 <dt>@localizer["IncidentIdLabel"]:</dt>
-                                <dd>@Model.Call.IncidentNumber</dd>
+                                <dd><span data-adp-field="calls.incidentnumber">@Model.Call.IncidentNumber</span></dd>
                                 <dt>@localizer["CallIdentifierLabel"]:</dt>
-                                <dd>@Model.Call.ExternalIdentifier</dd>
+                                <dd><span data-adp-field="calls.externalidentifier">@Model.Call.ExternalIdentifier</span></dd>
                                 <dt>@localizer["ReferenceIdLabel"]:</dt>
-                                <dd>@Model.Call.ReferenceNumber</dd>
+                                <dd><span data-adp-field="calls.referencenumber">@Model.Call.ReferenceNumber</span></dd>
                                 <dt>@localizer["LoggedByLabel"]:</dt>
                                 <dd>@(await UserHelper.GetFullNameForUser(Model.Call.ReportingUserId))</dd>
                                 <dt>@localizer["LoggedOnLabel"]:</dt>
@@ -161,7 +175,7 @@
                             <dl class="dl-horizontal">
                                 <dt>@localizer["CallNatureLabel"]:</dt>
                                 <dd>
-                                    @Html.Raw(Model.Call.NatureOfCall)
+                                    <span data-adp-field="calls.natureofcall">@Html.Raw(Model.Call.NatureOfCall)</span>
                                 </dd>
                             </dl>
                         </div>
@@ -171,7 +185,7 @@
                             <dl class="dl-horizontal">
                                 <dt>@localizer["NotesLabel"]:</dt>
                                 <dd>
-                                    @Html.Raw(Model.Call.Notes)
+                                    <span data-adp-field="calls.notes">@Html.Raw(Model.Call.Notes)</span>
                                 </dd>
                             </dl>
                         </div>
@@ -181,7 +195,7 @@
                             <dl class="dl-horizontal">
                                 <dt>@localizer["CompletedNotesLabel"]:</dt>
                                 <dd>
-                                    @Html.Raw(Model.Call.CompletedNotes)
+                                    <span data-adp-field="calls.completednotes">@Html.Raw(Model.Call.CompletedNotes)</span>
                                 </dd>
                             </dl>
                         </div>
@@ -910,6 +924,32 @@
     </div>
 </div>
 
+@if (Model.IsProtectedCall)
+{
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="adpStepUpModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-shield"></i> Verify to view protected data</h4>
+            </div>
+            <div class="modal-body">
+                <p>Enter the 6-digit code from your authenticator app. Revealed values stay visible only for this department's step-up window and are never stored in your browser.</p>
+                <div class="alert alert-danger" id="adpStepUpError" style="display: none;"></div>
+                <div class="form-group">
+                    <label for="adpStepUpCode">Verification code</label>
+                    <input type="text" class="form-control" id="adpStepUpCode" maxlength="8" autocomplete="one-time-code" inputmode="numeric" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="adpStepUpSubmit">Verify</button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="protocolTextWindow">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -956,6 +996,21 @@
 
 @section Scripts
     {
+    @if (Model.IsProtectedCall)
+    {
+        <form id="adpAntiForgeryForm">@Html.AntiForgeryToken()</form>
+        <script src="~/js/app/internal/dataprotection/resgrid.adp.reveal.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(function () {
+                resgridAdpReveal.init({
+                    verifyUrl: '@Url.Action("VerifyStepUp", "DataProtection", new { area = "User" })',
+                    revealUrl: '@Url.Action("RevealCall", "Dispatch", new { area = "User" })',
+                    revealData: { callId: @(Model.Call.CallId) },
+                    antiForgeryToken: $('#adpAntiForgeryForm input[name="__RequestVerificationToken"]').val()
+                });
+            });
+        </script>
+    }
     @if (Model.Call.ActiveRunCardId.HasValue)
     {
         <script type="text/javascript">

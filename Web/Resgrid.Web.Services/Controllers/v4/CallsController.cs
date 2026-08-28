@@ -60,6 +60,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
+		private readonly IProtectedReadService _protectedCallReadService;
+		private readonly IProtectedWriteService _protectedWriteService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -85,10 +87,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICallDispatchStatusService callDispatchStatusService,
 			IDispatchRecommendationService dispatchRecommendationService,
 			IFeatureToggleService featureToggleService,
-			IDepartmentDataProtectionService dataProtectionService
+			IDepartmentDataProtectionService dataProtectionService,
+			IProtectedReadService protectedCallReadService,
+			IProtectedWriteService protectedWriteService
 			)
 		{
 			_dataProtectionService = dataProtectionService;
+			_protectedCallReadService = protectedCallReadService;
+			_protectedWriteService = protectedWriteService;
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
@@ -171,6 +177,47 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return true;
 		}
 
+		/// <summary>The caller's Protected Data Grant, when presented (plan section 3.1 step 6).</summary>
+		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
+
+		/// <summary>
+		/// Attended protected-read resolution (plan section 7.1), run BEFORE ConvertCall so the DTO
+		/// carries broker-decrypted plaintext (valid grant) or the exact REDACTED placeholder —
+		/// never ciphertext. One broker round trip per request. BigBoard sessions still get the
+		/// safe shell afterwards, which strips everything regardless.
+		/// </summary>
+		private async Task<Dictionary<int, ProtectedReadResult>> ResolveProtectedReadsAsync(IReadOnlyList<Call> calls)
+		{
+			var results = await _protectedCallReadService.ResolveForReadAsync(DepartmentId, calls, ProtectedGrantToken, UserId);
+
+			var map = new Dictionary<int, ProtectedReadResult>();
+			foreach (var read in results)
+			{
+				if (read.Call != null)
+					map[read.Call.CallId] = read;
+			}
+
+			return map;
+		}
+
+		/// <summary>Maps a blocked protected write to its value-free problem response (plan 3.3/19.2).</summary>
+		private ObjectResult ProtectedWriteProblem(ProtectedWriteResult write) =>
+			Problem(type: write.Reason,
+				title: write.Reason == "broker_unavailable"
+					? "Protected storage is temporarily unavailable; the change was not saved."
+					: "Recent multi-factor verification is required to modify protected data.",
+				statusCode: write.Reason == "broker_unavailable" ? StatusCodes.Status503ServiceUnavailable : StatusCodes.Status403Forbidden);
+
+		private static void ApplyProtectedReadMetadata(CallResultData data, ProtectedReadResult read)
+		{
+			if (data == null || read == null)
+				return;
+
+			data.IsProtected = read.IsProtected;
+			data.RedactedFields = read.RedactedFields ?? new List<string>();
+			data.ProtectedReason = read.ProtectedReason;
+		}
+
 		/// <summary>
 		/// Returns all the active calls for the department
 		/// </summary>
@@ -182,12 +229,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new ActiveCallsResult();
 
-			var calls = (await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)).OrderByDescending(x => x.LoggedOn);
+			var calls = (await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)).OrderByDescending(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
 
 			if (calls != null && calls.Any())
 			{
+				// Resolve BEFORE per-call processing so geocoding and templates see plaintext (or
+				// REDACTED), never envelopes.
+				var protectedReads = await ResolveProtectedReadsAsync(calls);
+
 				foreach (var c in calls)
 				{
 					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
@@ -204,7 +255,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 						address = c.Address;
 
 					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone, destinationPoi));
+					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi);
+					if (protectedReads.TryGetValue(callWithData.CallId, out var protectedRead))
+						ApplyProtectedReadMetadata(callData, protectedRead);
+					result.Data.Add(callData);
 				}
 
 				await ApplyBigBoardSafeShellAsync(result.Data);
@@ -252,6 +306,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
+
+			// Attended protected read (plan 7.1), AFTER populate so loaded notes/attachments resolve
+			// in the same batch, and BEFORE geocoding, protocols and conversion. A system API key
+			// carries no grant, so protected values stay REDACTED for it by construction (plan 3.4).
+			var protectedRead = await _protectedCallReadService.ResolveForReadAsync(effectiveDepartmentId, c,
+				ProtectedGrantToken, UserId);
+
 			var destinationPoi = await GetValidatedDestinationPoiAsync(c.DestinationPoiId, effectiveDepartmentId);
 
 			string address = "";
@@ -277,6 +338,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi);
+			ApplyProtectedReadMetadata(result.Data, protectedRead);
 
 			// BigBoard shells also suppress UDF submissions — user-authored free text defaults to
 			// sensitive in a protected department (plan section 5.2).
@@ -337,6 +399,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+
+			// Attended protected read (plan 7.1): CallFormData is a cataloged field — decrypt with a
+			// valid grant or hand back REDACTED, never an envelope.
+			await _protectedCallReadService.ResolveForReadAsync(DepartmentId, call, ProtectedGrantToken, UserId);
 
 			// BigBoard step-down: dispatched unit/personnel state below is allowlisted resource
 			// state, but submitted call form data is protected content (plan section 7.3).
@@ -907,6 +973,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (shouldDispatchNow && await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, effectiveDepartmentId))
 				recommendationResult = await _dispatchRecommendationService.EnrichCallForDispatchAsync(call, 1, true, cancellationToken);
 
+			// ADP write preflight (plan 3.3): refuse BEFORE inserting — attended callers need a
+			// current grant; system-key/workload callers pass (broker encrypt-only lane).
+			var writePreflight = await _protectedWriteService.PreflightWriteAsync(effectiveDepartmentId,
+				ProtectedGrantToken, UserId, IsSystemApiKeyRequest, cancellationToken);
+			if (!writePreflight.Success)
+				return ProtectedWriteProblem(writePreflight);
+
 			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
 			if (recommendationResult != null && recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
@@ -914,6 +987,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			// Attach weather alerts as call notes if enabled
 			await _weatherAlertService.AttachWeatherAlertsToCallAsync(savedCall, cancellationToken);
+
+			// ADP two-phase write (plan 19.2): the identity pk is an AAD component, so encryption
+			// runs after the insert assigned it, then the enveloped row is persisted. A failure here
+			// leaves a LOGGED transient-plaintext row and fails the request (the next migration
+			// sweep also envelopes it); downstream broadcast uses the enveloped call, which the
+			// notification safe-projections turn into generic content.
+			var protectedWrite = await _protectedWriteService.PrepareCallWriteAsync(effectiveDepartmentId, savedCall,
+				null, ProtectedGrantToken, UserId, IsSystemApiKeyRequest, cancellationToken);
+			if (!protectedWrite.Success)
+			{
+				Logging.LogError($"ADP protected write failed AFTER insert for call {savedCall.CallId} in department {effectiveDepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
+				return ProtectedWriteProblem(protectedWrite);
+			}
+			if (protectedWrite.IsProtected)
+				savedCall = await _callsService.SaveCallAsync(savedCall, cancellationToken);
 
 			//OutboundEventProvider handler = new OutboundEventProvider.CallAddedTopicHandler();
 			//OutboundEventProvider..Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
@@ -1043,6 +1131,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (editCallInput.DestinationPoiId.HasValue && editCallInput.DestinationPoiId.Value > 0 && destinationPoi == null)
 				return BadRequest();
+
+			// ADP: snapshot the stored cataloged values BEFORE the input overwrites them, so a
+			// round-tripped REDACTED sentinel restores the stored envelope instead of persisting
+			// the literal placeholder.
+			var storedCatalogedValues = Resgrid.Services.ProtectedReadService.SnapshotCatalogedCallFields(call);
 
 			call.Priority = editCallInput.Priority;
 			call.Name = editCallInput.Name;
@@ -1271,6 +1364,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Call is in the past or is now, were dispatching now (at the end of this func)
 			if (call.DispatchOn.HasValue && call.DispatchOn.Value <= DateTime.UtcNow)
 				call.HasBeenDispatched = true;
+
+			// ADP protected write (plan 19.2): cataloged plaintext encrypts in place before
+			// persistence; a blocked write persists nothing.
+			var protectedWrite = await _protectedWriteService.PrepareCallWriteAsync(DepartmentId, call,
+				storedCatalogedValues, ProtectedGrantToken, UserId, IsSystemApiKeyRequest, cancellationToken);
+			if (!protectedWrite.Success)
+				return ProtectedWriteProblem(protectedWrite);
 
 			await _callsService.SaveCallAsync(call, cancellationToken);
 
@@ -1681,6 +1781,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			call.CompletedNotes = closeCallInput.Notes;
 			call.State = closeCallInput.Type;
 
+			// ADP protected write (plan 19.2): CompletedNotes is cataloged; encrypt before persisting.
+			var protectedWrite = await _protectedWriteService.PrepareCallWriteAsync(DepartmentId, call,
+				null, ProtectedGrantToken, UserId, IsSystemApiKeyRequest, cancellationToken);
+			if (!protectedWrite.Success)
+				return ProtectedWriteProblem(protectedWrite);
+
 			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
 			_eventAggregator.SendMessage<CallClosedEvent>(new CallClosedEvent() { DepartmentId = DepartmentId, Call = savedCall });
@@ -1710,13 +1816,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new ScheduledCallsResult();
 
-			var calls = (await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId)).OrderBy(x => x.DispatchOn);
+			var calls = (await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId)).OrderBy(x => x.DispatchOn).ToList();
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
 
 			if (calls != null && calls.Any())
 			{
+				var protectedReads = await ResolveProtectedReadsAsync(calls);
+
 				foreach (var c in calls)
 				{
 					string address = "";
@@ -1731,7 +1839,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 						address = c.Address;
 
 					destinationPoiLookup.TryGetValue(c.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					result.Data.Add(ConvertCall(c, null, address, TimeZone, destinationPoi));
+					var callData = ConvertCall(c, null, address, TimeZone, destinationPoi);
+					if (protectedReads.TryGetValue(c.CallId, out var protectedRead))
+						ApplyProtectedReadMetadata(callData, protectedRead);
+					result.Data.Add(callData);
 				}
 
 				await ApplyBigBoardSafeShellAsync(result.Data);
@@ -1771,6 +1882,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+
+			// Attended protected read (plan 7.1): the history entries below embed note text —
+			// decrypt with a valid grant or embed REDACTED, never an envelope.
+			await _protectedCallReadService.ResolveForReadAsync(DepartmentId, call, ProtectedGrantToken, UserId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			result.Data.Add(new CallHistoryResultData()
@@ -1982,12 +2097,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var result = new ActiveCallsResult();
 
-			var calls = (await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)).OrderByDescending(x => x.LoggedOn);
+			var calls = (await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)).OrderByDescending(x => x.LoggedOn).ToList();
 			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
 
 			if (calls != null && calls.Any())
 			{
+				var protectedReads = await ResolveProtectedReadsAsync(calls);
+
 				foreach (var c in calls)
 				{
 					var callWithData = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
@@ -2010,7 +2127,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 						address = c.Address;
 
 					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
-					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone, destinationPoi));
+					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi);
+					if (protectedReads.TryGetValue(callWithData.CallId, out var protectedRead))
+						ApplyProtectedReadMetadata(callData, protectedRead);
+					result.Data.Add(callData);
 				}
 
 				await ApplyBigBoardSafeShellAsync(result.Data);

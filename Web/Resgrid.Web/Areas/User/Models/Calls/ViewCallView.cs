@@ -32,6 +32,11 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string DestinationAddress { get; set; }
 		public string DestinationTypeName { get; set; }
 
+		/// <summary>ADP: true when this call carries protected fields rendered as REDACTED (plan 7.2).</summary>
+		public bool IsProtectedCall { get; set; }
+		public string ProtectedReason { get; set; }
+		public List<string> RedactedFields { get; set; } = new List<string>();
+
 		public string IsMapTabActive()
 		{
 			if (!String.IsNullOrEmpty(Call.Address) || !String.IsNullOrEmpty(Call.GeoLocationData))

@@ -6,9 +6,18 @@
 }
 
 <div class="wrapper wrapper-content animated fadeInRight">
+    @if (Model.IsProtectedContact)
+    {
+        <div class="alert alert-info" id="adpProtectedBanner">
+            <i class="fa fa-shield"></i>
+            <strong>Protected contact</strong> &mdash; encrypted at rest for this department. Authorized users and approved channels may still disclose it.
+            <button type="button" class="btn btn-primary btn-xs pull-right" id="adpRevealButton">Verify &amp; Reveal</button>
+            <button type="button" class="btn btn-default btn-xs pull-right" id="adpConcealButton" style="margin-right: 6px;">Conceal</button>
+        </div>
+    }
     <div class="ibox">
         <div class="ibox-title">
-            <h5>@Model.Contact.GetName()</h5>
+            <h5><span data-adp-name>@Model.Contact.GetName()</span></h5>
         </div>
         <div class="ibox-content">
             <!-- Tabs Navigation -->
@@ -60,7 +69,7 @@
                                 <div class="col-md-4">
                                     <strong>@localizer["Name"]:</strong>
                                 </div>
-                                <div class="col-md-8">@Model.Contact.GetName()</div>
+                                <div class="col-md-8"><span data-adp-name>@Model.Contact.GetName()</span></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
@@ -72,19 +81,19 @@
                                 <div class="col-md-4">
                                     <strong>@localizer["Email"]:</strong>
                                 </div>
-                                <div class="col-md-8">@Model.Contact.Email</div>
+                                <div class="col-md-8"><span data-adp-field="contacts.email">@Model.Contact.Email</span></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
                                     <strong>@localizer["CellPhoneLabel"]:</strong>
                                 </div>
-                                <div class="col-md-8">@Model.Contact.CellPhoneNumber</div>
+                                <div class="col-md-8"><span data-adp-field="contacts.cellphonenumber">@Model.Contact.CellPhoneNumber</span></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
                                     <strong>@localizer["HomePhoneLabel"]:</strong>
                                 </div>
-                                <div class="col-md-8">@Model.Contact.HomePhoneNumber</div>
+                                <div class="col-md-8"><span data-adp-field="contacts.homephonenumber">@Model.Contact.HomePhoneNumber</span></div>
                             </div>
                         </div>
                     </div>
@@ -160,19 +169,19 @@
                                                 <div class="col-md-4">
                                                     <strong>@localizer["LocationGpsLabel"]:</strong>
                                                 </div>
-                                                <div class="col-md-8">@Model.Contact.LocationGpsCoordinates</div>
+                                                <div class="col-md-8"><span data-adp-field="contacts.locationgpscoordinates">@Model.Contact.LocationGpsCoordinates</span></div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <strong>@localizer["EntranceGpsLabel"]:</strong>
                                                 </div>
-                                                <div class="col-md-8">@Model.Contact.EntranceGpsCoordinates</div>
+                                                <div class="col-md-8"><span data-adp-field="contacts.entrancegpscoordinates">@Model.Contact.EntranceGpsCoordinates</span></div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4">
                                                     <strong>@localizer["ExitGpsLabel"]:</strong>
                                                 </div>
-                                                <div class="col-md-8">@Model.Contact.ExitGpsCoordinates</div>
+                                                <div class="col-md-8"><span data-adp-field="contacts.exitgpscoordinates">@Model.Contact.ExitGpsCoordinates</span></div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4">
@@ -314,7 +323,7 @@
                                         <div class="panel-body">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    @Html.Raw(Model.Contact.Description)
+                                                    <span data-adp-field="contacts.description">@Html.Raw(Model.Contact.Description)</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -332,7 +341,7 @@
                                         <div class="panel-body">
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    @Html.Raw(Model.Contact.OtherInfo)
+                                                    <span data-adp-field="contacts.otherinfo">@Html.Raw(Model.Contact.OtherInfo)</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -598,8 +607,49 @@
 </div>
 
 
+@if (Model.IsProtectedContact)
+{
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="adpStepUpModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-shield"></i> Verify to view protected data</h4>
+            </div>
+            <div class="modal-body">
+                <p>Enter the 6-digit code from your authenticator app. Revealed values stay visible only for this department's step-up window and are never stored in your browser.</p>
+                <div class="alert alert-danger" id="adpStepUpError" style="display: none;"></div>
+                <div class="form-group">
+                    <label for="adpStepUpCode">Verification code</label>
+                    <input type="text" class="form-control" id="adpStepUpCode" maxlength="8" autocomplete="one-time-code" inputmode="numeric" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="adpStepUpSubmit">Verify</button>
+            </div>
+        </div>
+    </div>
+</div>
+}
+
 @section Scripts
 {
+    @if (Model.IsProtectedContact)
+    {
+        <form id="adpAntiForgeryForm">@Html.AntiForgeryToken()</form>
+        <script src="~/js/app/internal/dataprotection/resgrid.adp.reveal.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $(function () {
+                resgridAdpReveal.init({
+                    verifyUrl: '@Url.Action("VerifyStepUp", "DataProtection", new { area = "User" })',
+                    revealUrl: '@Url.Action("RevealContact", "Contacts", new { area = "User" })',
+                    revealData: { contactId: '@Model.Contact.ContactId' },
+                    antiForgeryToken: $('#adpAntiForgeryForm input[name="__RequestVerificationToken"]').val()
+                });
+            });
+        </script>
+    }
     <script>
         const contactId = '@Model.Contact.ContactId';
 

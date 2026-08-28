@@ -76,11 +76,21 @@ namespace Resgrid.Web.Broker.Services
 			var policy = await policyRepository.GetByDepartmentIdAsync(request.DepartmentId);
 			var currentEpoch = policy?.PolicyEpoch ?? 0;
 
-			var requiredScope = decrypt ? ProtectedDataGrantScopes.Read : ProtectedDataGrantScopes.Write;
-			var outcome = _grantService.ValidateGrant(request.GrantToken, request.DepartmentId, currentEpoch,
-				requiredScope, out var grant);
-			if (outcome != ProtectedDataGrantValidationOutcome.Valid)
-				return Fail(MapGrantOutcome(outcome));
+			// DECRYPT always requires a valid attended grant. ENCRYPT has a workload lane (plan 3.4
+			// "required protected submissions"): a request WITHOUT a grant — already past the
+			// workload-key middleware — may encrypt, because encryption discloses nothing; system
+			// integrations, text-to-call and workers must never be blocked from writing safely. A
+			// grant that IS presented is still fully validated, so a stolen/stale token cannot be
+			// laundered through the encrypt path either.
+			ProtectedDataGrant grant = null;
+			if (decrypt || !string.IsNullOrWhiteSpace(request.GrantToken))
+			{
+				var requiredScope = decrypt ? ProtectedDataGrantScopes.Read : ProtectedDataGrantScopes.Write;
+				var outcome = _grantService.ValidateGrant(request.GrantToken, request.DepartmentId, currentEpoch,
+					requiredScope, out grant);
+				if (outcome != ProtectedDataGrantValidationOutcome.Valid)
+					return Fail(MapGrantOutcome(outcome));
+			}
 
 			var result = new ProtectedDataBrokerResult { Success = true };
 			var unwrappedKeys = new Dictionary<int, byte[]>();
@@ -120,6 +130,49 @@ namespace Resgrid.Web.Broker.Services
 				if (item == null || string.IsNullOrWhiteSpace(item.FieldId) || string.IsNullOrWhiteSpace(item.RowKey))
 				{
 					itemResult.ErrorCode = "invalid_item";
+					continue;
+				}
+
+				if (item.IsBinary)
+				{
+					// rgdpb binary field: Value is base64 of the enveloped blob; the plaintext bytes
+					// go back as base64 too.
+					byte[] blob;
+					try
+					{
+						blob = Convert.FromBase64String(item.Value ?? string.Empty);
+					}
+					catch (FormatException)
+					{
+						itemResult.ErrorCode = "invalid_item";
+						continue;
+					}
+
+					if (!_cryptoService.TryGetBinaryEnvelopeKeyVersion(blob, out var binaryKeyVersion))
+					{
+						itemResult.ErrorCode = _cryptoService.IsBinaryEnveloped(blob)
+							? "envelope_malformed"
+							: "not_enveloped";
+						continue;
+					}
+
+					var binaryDek = await ResolveKeyAsync(request.DepartmentId, binaryKeyVersion, keyService, unwrappedKeys, cancellationToken);
+					if (binaryDek == null)
+					{
+						itemResult.ErrorCode = "key_unknown";
+						continue;
+					}
+
+					try
+					{
+						itemResult.Value = Convert.ToBase64String(_cryptoService.DecryptBinary(binaryDek, blob,
+							request.DepartmentId, item.FieldId, item.RowKey, item.CatalogVersion));
+					}
+					catch (Exception ex) when (ex is CryptographicException || ex is FormatException || ex is ArgumentException)
+					{
+						itemResult.ErrorCode = "decrypt_failed";
+					}
+
 					continue;
 				}
 
@@ -177,6 +230,45 @@ namespace Resgrid.Web.Broker.Services
 					item.Value == null)
 				{
 					itemResult.ErrorCode = "invalid_item";
+					continue;
+				}
+
+				if (item.IsBinary)
+				{
+					byte[] plaintextBytes;
+					try
+					{
+						plaintextBytes = Convert.FromBase64String(item.Value);
+					}
+					catch (FormatException)
+					{
+						itemResult.ErrorCode = "invalid_item";
+						continue;
+					}
+
+					if (_cryptoService.IsBinaryEnveloped(plaintextBytes))
+					{
+						itemResult.ErrorCode = "already_enveloped";
+						continue;
+					}
+
+					var binaryDek = await ResolveKeyAsync(request.DepartmentId, activeKey.Version, keyService, unwrappedKeys, cancellationToken);
+					if (binaryDek == null)
+					{
+						itemResult.ErrorCode = "key_unknown";
+						continue;
+					}
+
+					try
+					{
+						itemResult.Value = Convert.ToBase64String(_cryptoService.EncryptBinary(binaryDek, activeKey.Version,
+							plaintextBytes, request.DepartmentId, item.FieldId, item.RowKey, item.CatalogVersion));
+					}
+					catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException || ex is InvalidOperationException)
+					{
+						itemResult.ErrorCode = "encrypt_failed";
+					}
+
 					continue;
 				}
 
@@ -260,7 +352,8 @@ namespace Resgrid.Web.Broker.Services
 		{
 			var failed = result.Items.Count(i => i.ErrorCode != null);
 			var fields = string.Join(",", request.Items.Where(i => i?.FieldId != null).Select(i => i.FieldId).Distinct());
-			Logging.LogInfo($"ADP broker {operation}: department {request.DepartmentId}, user {grant.UserId}, grant {grant.GrantId}, request {request.RequestId}, items {result.Items.Count}, failed {failed}, fields [{fields}]");
+			var identity = grant == null ? "workload" : $"user {grant.UserId}, grant {grant.GrantId}";
+			Logging.LogInfo($"ADP broker {operation}: department {request.DepartmentId}, {identity}, request {request.RequestId}, items {result.Items.Count}, failed {failed}, fields [{fields}]");
 		}
 	}
 }

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -75,6 +75,21 @@
   </data>
   <data name="DeleteTestWarning" xml:space="preserve">
     <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή τη δοκιμή;</value>
+  </data>
+  <data name="NotSentSuppressed" xml:space="preserve">
+    <value>Δεν στάλθηκε (σε σίγαση)</value>
+  </data>
+  <data name="StaffingLevel" xml:space="preserve">
+    <value>Επίπεδο στελέχωσης</value>
+  </data>
+  <data name="Suppressed" xml:space="preserve">
+    <value>Σε σίγαση</value>
+  </data>
+  <data name="SuppressedHelp" xml:space="preserve">
+    <value>Το επίπεδο στελέχωσης αυτού του μέλους είναι σε σίγαση στις ρυθμίσεις του τμήματος, επομένως δεν του στάλθηκε τίποτα.</value>
+  </data>
+  <data name="SuppressedNotice" xml:space="preserve">
+    <value>{0} μέλος/μέλη δεν ειδοποιήθηκαν: το επίπεδο στελέχωσής τους είναι σε σίγαση στις ρυθμίσεις του τμήματος, οπότε ούτε μια πραγματική κλήση θα τους έφτανε.</value>
   </data>
   <data name="TestDefinitions" xml:space="preserve">
     <value>Ορισμοί Δοκιμών</value>

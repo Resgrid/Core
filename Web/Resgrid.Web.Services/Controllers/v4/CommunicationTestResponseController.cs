@@ -73,6 +73,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpGet("VoiceCall")]
 		[AllowAnonymous]
+		// Twilio is the ONLY caller of this URL (it is only ever handed to the Twilio Calls API as
+		// the call Url), so its signature is required — that stops response-token probing by
+		// anything that is not Twilio.
+		[ValidateRequest]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ContentResult> VoiceCall(string token)
 		{

@@ -25,6 +25,13 @@ namespace Resgrid.Services
 		/// </summary>
 		private static readonly TimeSpan RecoveryGracePeriod = TimeSpan.FromMinutes(30);
 
+		/// <summary>
+		/// Width of CommunicationTestResults.StaffingLevelText. A department can name a custom
+		/// staffing level anything it likes, so the snapshot is trimmed rather than left to fail the
+		/// insert and take the whole run down with it.
+		/// </summary>
+		private const int StaffingLevelTextMaxLength = 50;
+
 		private readonly ICommunicationTestRepository _communicationTestRepository;
 		private readonly ICommunicationTestRunRepository _communicationTestRunRepository;
 		private readonly ICommunicationTestResultRepository _communicationTestResultRepository;
@@ -34,6 +41,8 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IUserStateService _userStateService;
+		private readonly ICustomStateService _customStateService;
 		private readonly ISmsService _smsService;
 		private readonly IEmailService _emailService;
 		private readonly IPushService _pushService;
@@ -52,6 +61,8 @@ namespace Resgrid.Services
 			IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentSettingsService departmentSettingsService,
+			IUserStateService userStateService,
+			ICustomStateService customStateService,
 			ISmsService smsService,
 			IEmailService emailService,
 			IPushService pushService,
@@ -69,6 +80,8 @@ namespace Resgrid.Services
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
 			_departmentSettingsService = departmentSettingsService;
+			_userStateService = userStateService;
+			_customStateService = customStateService;
 			_smsService = smsService;
 			_emailService = emailService;
 			_pushService = pushService;
@@ -416,6 +429,14 @@ namespace Resgrid.Services
 			if (targetedUserIds != null)
 				members = members.Where(m => targetedUserIds.Contains(m.UserId)).ToList();
 
+			// A communication test only proves something if it behaves like the real thing. The
+			// department's Suppress (Mute) Staffing Levels setting is what keeps a dispatch away from
+			// someone who is off duty, so a test that ignored it would both report a delivery rate no
+			// real dispatch could reach and page every off-duty member of the department to do it.
+			var suppressInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(departmentId);
+			var latestStates = BuildLatestStateLookup(await _userStateService.GetLatestStatesForDepartmentAsync(departmentId));
+			var staffingNames = await BuildStaffingNameLookupAsync(departmentId);
+
 			int totalUsersTested = 0;
 
 			foreach (var member in members)
@@ -423,9 +444,18 @@ namespace Resgrid.Services
 				profiles.TryGetValue(member.UserId, out var profile);
 				bool userHasResults = false;
 
+				// Snapshotted onto every row this member gets: read back off the live profile and
+				// department settings, a report opened next month would describe today's configuration
+				// instead of the run it is supposed to be a record of.
+				latestStates.TryGetValue(member.UserId, out var memberState);
+				int? staffingLevel = memberState?.State;
+				var staffingLevelText = ResolveStaffingLevelText(staffingLevel, staffingNames);
+				var suppressed = IsStaffingSuppressed(suppressInfo, staffingLevel);
+
 				if (test.TestEmail)
 				{
 					var emailVerified = profile?.EmailVerified;
+					var emailEnabled = IsEmailEnabled(profile);
 					var result = new CommunicationTestResult
 					{
 						CommunicationTestRunId = run.CommunicationTestRunId,
@@ -434,9 +464,14 @@ namespace Resgrid.Services
 						Channel = (int)CommunicationTestChannel.Email,
 						ContactValue = profile?.MembershipEmail,
 						VerificationStatus = (int)emailVerified.ToVerificationStatus(),
-						SendAttempted = emailVerified.IsContactMethodAllowedForSending()
+						ChannelEnabled = emailEnabled,
+						StaffingLevel = staffingLevel,
+						StaffingLevelText = staffingLevelText,
+						Suppressed = suppressed,
+						SendAttempted = !suppressed
+							&& emailVerified.IsContactMethodAllowedForSending()
 							&& !string.IsNullOrWhiteSpace(profile?.MembershipEmail)
-							&& IsEmailEnabled(profile),
+							&& emailEnabled,
 						SendSucceeded = false,
 						Responded = false,
 						ResponseToken = Guid.NewGuid().ToString("N")
@@ -453,6 +488,7 @@ namespace Resgrid.Services
 					if (profile != null && profile.MobileCarrier > 0)
 						carrierName = ((MobileCarriers)profile.MobileCarrier).GetDescription();
 
+					var smsEnabled = IsSmsEnabled(profile);
 					var result = new CommunicationTestResult
 					{
 						CommunicationTestRunId = run.CommunicationTestRunId,
@@ -462,9 +498,14 @@ namespace Resgrid.Services
 						ContactValue = profile?.GetPhoneNumber(),
 						ContactCarrier = carrierName,
 						VerificationStatus = (int)mobileVerified.ToVerificationStatus(),
-						SendAttempted = mobileVerified.IsContactMethodAllowedForSending()
+						ChannelEnabled = smsEnabled,
+						StaffingLevel = staffingLevel,
+						StaffingLevelText = staffingLevelText,
+						Suppressed = suppressed,
+						SendAttempted = !suppressed
+							&& mobileVerified.IsContactMethodAllowedForSending()
 							&& !string.IsNullOrWhiteSpace(profile?.GetPhoneNumber())
-							&& IsSmsEnabled(profile),
+							&& smsEnabled,
 						SendSucceeded = false,
 						Responded = false,
 						ResponseToken = Guid.NewGuid().ToString("N")
@@ -482,6 +523,7 @@ namespace Resgrid.Services
 
 					var voiceNumber = useHome ? profile?.GetHomePhoneNumber() : profile?.GetPhoneNumber();
 					var voiceVerified = useHome ? profile?.HomeNumberVerified : profile?.MobileNumberVerified;
+					var voiceEnabled = IsVoiceEnabled(profile);
 
 					var result = new CommunicationTestResult
 					{
@@ -491,9 +533,14 @@ namespace Resgrid.Services
 						Channel = (int)CommunicationTestChannel.Voice,
 						ContactValue = voiceNumber,
 						VerificationStatus = (int)voiceVerified.ToVerificationStatus(),
-						SendAttempted = voiceVerified.IsContactMethodAllowedForSending()
+						ChannelEnabled = voiceEnabled,
+						StaffingLevel = staffingLevel,
+						StaffingLevelText = staffingLevelText,
+						Suppressed = suppressed,
+						SendAttempted = !suppressed
+							&& voiceVerified.IsContactMethodAllowedForSending()
 							&& !string.IsNullOrWhiteSpace(voiceNumber)
-							&& profile != null && profile.VoiceForCall,
+							&& voiceEnabled,
 						SendSucceeded = false,
 						Responded = false,
 						ResponseToken = Guid.NewGuid().ToString("N")
@@ -505,6 +552,7 @@ namespace Resgrid.Services
 
 				if (test.TestPush)
 				{
+					var pushEnabled = IsPushEnabled(profile);
 					var result = new CommunicationTestResult
 					{
 						CommunicationTestRunId = run.CommunicationTestRunId,
@@ -512,9 +560,13 @@ namespace Resgrid.Services
 						UserId = member.UserId,
 						Channel = (int)CommunicationTestChannel.Push,
 						VerificationStatus = (int)ContactVerificationStatus.Verified,
+						ChannelEnabled = pushEnabled,
+						StaffingLevel = staffingLevel,
+						StaffingLevelText = staffingLevelText,
+						Suppressed = suppressed,
 						// The push service silently drops a notification when this opt-in is off, so
 						// gate here rather than reporting an attempt that never leaves the process.
-						SendAttempted = profile != null && profile.SendNotificationPush,
+						SendAttempted = !suppressed && pushEnabled,
 						SendSucceeded = false,
 						Responded = false,
 						ResponseToken = Guid.NewGuid().ToString("N")
@@ -573,7 +625,10 @@ namespace Resgrid.Services
 
 			foreach (var result in results)
 			{
-				if (!result.SendAttempted || result.SentOn.HasValue)
+				// Suppressed is checked as well as SendAttempted: the builder already clears
+				// SendAttempted for a muted member, and messaging someone the department has muted is
+				// the one failure this feature must not have, so it is gated on both.
+				if (!result.SendAttempted || result.Suppressed || result.SentOn.HasValue)
 					continue;
 
 				profiles.TryGetValue(result.UserId, out var profile);
@@ -777,6 +832,90 @@ namespace Resgrid.Services
 
 		private static bool IsEmailEnabled(UserProfile profile)
 			=> profile != null && (profile.SendEmail || profile.SendMessageEmail || profile.SendNotificationEmail);
+
+		private static bool IsVoiceEnabled(UserProfile profile)
+			=> profile != null && profile.VoiceForCall;
+
+		private static bool IsPushEnabled(UserProfile profile)
+			=> profile != null && profile.SendNotificationPush;
+
+		/// <summary>
+		/// Newest staffing state per member. Folds on the timestamp rather than trusting the list to
+		/// already hold one row per user, so a department that comes back with more than one still
+		/// resolves to the level the run should see.
+		/// </summary>
+		private static Dictionary<string, UserState> BuildLatestStateLookup(List<UserState> states)
+		{
+			var lookup = new Dictionary<string, UserState>(StringComparer.OrdinalIgnoreCase);
+
+			if (states == null)
+				return lookup;
+
+			foreach (var state in states)
+			{
+				if (state == null || string.IsNullOrWhiteSpace(state.UserId))
+					continue;
+
+				if (!lookup.TryGetValue(state.UserId, out var existing) || state.Timestamp > existing.Timestamp)
+					lookup[state.UserId] = state;
+			}
+
+			return lookup;
+		}
+
+		/// <summary>
+		/// Staffing level id to display name for a department, using its configured staffing levels
+		/// and falling back to the Resgrid defaults. Built once per run: resolving per member would be
+		/// a lookup per person, and a level renamed mid-run would make two rows of the same report
+		/// disagree about what the same number means.
+		/// </summary>
+		private async Task<Dictionary<int, string>> BuildStaffingNameLookupAsync(int departmentId)
+		{
+			var names = new Dictionary<int, string>();
+
+			var details = await _customStateService.GetCustomPersonnelStaffingsOrDefaultsAsync(departmentId);
+			if (details == null)
+				return names;
+
+			foreach (var detail in details)
+			{
+				if (detail == null || string.IsNullOrWhiteSpace(detail.ButtonText))
+					continue;
+
+				names[detail.CustomStateDetailId] = detail.ButtonText;
+			}
+
+			return names;
+		}
+
+		/// <summary>
+		/// Display name to record for a staffing level. A level the department has since deleted --
+		/// or one that was never in its configured set -- still has to say something, and the raw
+		/// number is the only honest thing left to show.
+		/// </summary>
+		private static string ResolveStaffingLevelText(int? staffingLevel, Dictionary<int, string> staffingNames)
+		{
+			if (!staffingLevel.HasValue)
+				return null;
+
+			if (staffingNames != null && staffingNames.TryGetValue(staffingLevel.Value, out var name) && !string.IsNullOrWhiteSpace(name))
+				return name.Length > StaffingLevelTextMaxLength ? name.Substring(0, StaffingLevelTextMaxLength) : name;
+
+			return staffingLevel.Value.ToString();
+		}
+
+		/// <summary>
+		/// Whether the department's Suppress (Mute) Staffing Levels setting mutes a member sitting on
+		/// this staffing level. Mirrors CommunicationService.CanSendToUser, including its treatment of
+		/// a member with no recorded state: there is no level to match against, so they are not muted.
+		/// </summary>
+		private static bool IsStaffingSuppressed(DepartmentSuppressStaffingInfo suppressInfo, int? staffingLevel)
+		{
+			if (suppressInfo == null || !suppressInfo.EnableSupressStaffing || suppressInfo.StaffingLevelsToSupress == null)
+				return false;
+
+			return staffingLevel.HasValue && suppressInfo.StaffingLevelsToSupress.Contains(staffingLevel.Value);
+		}
 
 		#endregion Delivery
 

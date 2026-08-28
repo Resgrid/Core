@@ -39,11 +39,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IRouteService _routeService;
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public ContactsController(IContactsService contactsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
 			IAddressService addressService, IEventAggregator eventAggregator, ICallsService callsService, IAuthorizationService authorizationService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
-			IDepartmentGroupsService departmentGroupsService, IRouteService routeService, IPhoneNumberProcesserProvider phoneNumberProcesser)
+			IDepartmentGroupsService departmentGroupsService, IRouteService routeService, IPhoneNumberProcesserProvider phoneNumberProcesser,
+			IProtectedReadService protectedReadService)
 		{
 			_contactsService = contactsService;
 			_departmentsService = departmentsService;
@@ -57,6 +59,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentGroupsService = departmentGroupsService;
 			_routeService = routeService;
 			_phoneNumberProcesser = phoneNumberProcesser;
+			_protectedReadService = protectedReadService;
 		}
 
 		#endregion Private Members and Constructors
@@ -68,6 +71,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ContactCategories = await _contactsService.GetContactCategoriesForDepartmentAsync(DepartmentId);
 			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			// ADP: server-rendered lists show REDACTED for protected values (no grant server-side).
+			await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, model.Contacts, null, UserId);
+
+			// The categories tree carries its own Contact collections (separate instances).
+			if (model.ContactCategories != null)
+			{
+				foreach (var category in model.ContactCategories)
+				{
+					if (category.Contacts != null && category.Contacts.Any())
+						await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, category.Contacts.ToList(), null, UserId);
+				}
+			}
 
 			List<BSTreeModel> trees = new List<BSTreeModel>();
 			var tree0 = new BSTreeModel();
@@ -131,6 +147,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.MailingAddress = await _addressService.GetAddressByIdAsync(model.Contact.MailingAddressId.Value);
 
 			model.Notes = await _contactsService.GetContactNotesByContactIdAsync(contactId, DepartmentId);
+
+			// ADP: render REDACTED; the reveal is client-side (step-up modal then RevealContact).
+			var protectedRead = await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
+				new List<Contact> { model.Contact }, null, UserId);
+			await _protectedReadService.ResolveContactNotesForReadAsync(DepartmentId, model.Notes, null, UserId);
+			model.IsProtectedContact = protectedRead.IsProtected;
 
 			model.RouteStops = await _routeService.GetRouteStopsForContactAsync(contactId, DepartmentId) ?? new List<RouteStop>();
 			if (model.RouteStops.Count > 0)
@@ -389,21 +411,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Contact.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			if (!String.IsNullOrWhiteSpace(model.Contact.EntranceGpsCoordinates))
+			// ADP: the edit form renders protected values as the REDACTED sentinel; unchanged
+			// fields posted back are restored to their stored envelopes by the write safety net.
+			await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
+				new List<Contact> { model.Contact }, null, UserId);
+
+			if (!String.IsNullOrWhiteSpace(model.Contact.EntranceGpsCoordinates) &&
+				model.Contact.EntranceGpsCoordinates.Contains(','))
 			{
 				var entranceGpsCoordinates = model.Contact.EntranceGpsCoordinates.Split(',');
 				model.LocationGpsLatitude = entranceGpsCoordinates[0];
 				model.LocationGpsLongitude = entranceGpsCoordinates[1];
 			}
 
-			if (!String.IsNullOrWhiteSpace(model.Contact.LocationGpsCoordinates))
+			if (!String.IsNullOrWhiteSpace(model.Contact.LocationGpsCoordinates) &&
+				model.Contact.LocationGpsCoordinates.Contains(','))
 			{
 				var locationGpsCoordinates = model.Contact.LocationGpsCoordinates.Split(',');
 				model.LocationGpsLatitude = locationGpsCoordinates[0];
 				model.LocationGpsLongitude = locationGpsCoordinates[1];
 			}
 
-			if (!String.IsNullOrWhiteSpace(model.Contact.ExitGpsCoordinates))
+			if (!String.IsNullOrWhiteSpace(model.Contact.ExitGpsCoordinates) &&
+				model.Contact.ExitGpsCoordinates.Contains(','))
 			{
 				var exitGpsCoordinates = model.Contact.ExitGpsCoordinates.Split(',');
 				model.ExitGpsLatitude = exitGpsCoordinates[0];
@@ -787,6 +817,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Category.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			if (model.Category.Contacts != null && model.Category.Contacts.Any())
+				await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, model.Category.Contacts.ToList(), null, UserId);
+
 			return View(model);
 		}
 
@@ -886,6 +919,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Categories", "Contacts", new { Area = "User" });
 		}
 
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2): decrypted cataloged fields of one contact for a
+		/// caller holding a currently-valid Protected Data Grant, presented via the
+		/// X-Resgrid-Protected-Grant header and held in JS memory only.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<IActionResult> RevealContact([FromForm] string contactId)
+		{
+			if (String.IsNullOrWhiteSpace(contactId))
+				return BadRequest();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.DepartmentId != DepartmentId)
+				return NotFound();
+
+			string grantToken = Request.Headers["X-Resgrid-Protected-Grant"];
+			var resolved = await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
+				new List<Contact> { contact }, grantToken, UserId);
+
+			if (resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			var fields = Resgrid.Services.ProtectedReadService.ContactFieldAccessors
+				.ToDictionary(a => a.Key, a => a.Value.Get(contact));
+
+			return Json(new { success = true, fields });
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Contacts_View)]
 		public async Task<IActionResult> GetNotesJson(string contactId)
@@ -910,7 +973,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var noteJson = new ContactNoteJson();
 					noteJson.ContactNoteId = note.ContactNoteId;
-					noteJson.Note = note.Note;
+					noteJson.Note = ProtectedDataEnvelope.SafeDisplay(note.Note);
 
 					if (note.ExpiresOn.HasValue)
 						noteJson.ExpiresOn = note.ExpiresOn.Value.FormatForDepartment(department);
@@ -965,8 +1028,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var callJson = new CallJson();
 					callJson.CallId = call.CallId;
 					callJson.CallNumber = call.Number;
-					callJson.CallName = call.Name;
-					callJson.CallNature = call.NatureOfCall;
+					callJson.CallName = ProtectedDataEnvelope.SafeDisplay(call.Name);
+					callJson.CallNature = ProtectedDataEnvelope.SafeDisplay(call.NatureOfCall);
 					callJson.LoggedOn = call.LoggedOn.FormatForDepartment(department);
 					callJson.Priority = call.Priority;
 

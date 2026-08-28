@@ -92,9 +92,11 @@ namespace Resgrid.Tests.Workers
 			DepartmentId = DeptId,
 			State = (int)state,
 			ActiveMigrationKind = kind.HasValue ? (int?)kind.Value : null,
-			// UTC + full-day window keeps the tests independent of when they run.
+			// Window ends are exclusive (time < end), so a "23:59" end leaves a one-minute daily
+			// hole that fails any CI run landing in it. "1.00:00" (24h) is open at every instant;
+			// equal start/end is closed at every instant.
 			MigrationWindowStartLocal = windowAlwaysOpen ? "00:00" : "03:00",
-			MigrationWindowEndLocal = windowAlwaysOpen ? "23:59" : "03:01",
+			MigrationWindowEndLocal = windowAlwaysOpen ? "1.00:00" : "03:00",
 			MigrationWindowTimeZone = "UTC",
 			CreatedOn = DateTime.UtcNow.AddDays(-1)
 		};
@@ -359,6 +361,24 @@ namespace Resgrid.Tests.Workers
 
 			AdpMigrationLogic.TryGetOpenWindow(policy, new DateTime(2026, 8, 27, 12, 0, 0, DateTimeKind.Utc), out _)
 				.Should().BeFalse();
+		}
+
+		[Test]
+		public void Twenty_four_hour_window_has_no_hole_at_day_end()
+		{
+			// Regression: the fixture's always-open window used a "23:59" end, and the exclusive
+			// end check closed it for the last minute of the UTC day — CI runs landing in that
+			// minute failed every night-execution test.
+			var policy = Policy(DepartmentDataProtectionState.EnrollmentQueued);
+
+			AdpMigrationLogic.TryGetOpenWindow(policy, new DateTime(2026, 8, 27, 23, 59, 30, DateTimeKind.Utc), out _)
+				.Should().BeTrue();
+			AdpMigrationLogic.TryGetOpenWindow(policy, new DateTime(2026, 8, 28, 0, 0, 0, DateTimeKind.Utc), out _)
+				.Should().BeTrue();
+
+			var closed = Policy(DepartmentDataProtectionState.EnrollmentQueued, windowAlwaysOpen: false);
+			AdpMigrationLogic.TryGetOpenWindow(closed, new DateTime(2026, 8, 27, 3, 0, 30, DateTimeKind.Utc), out _)
+				.Should().BeFalse("an equal start and end must be closed even inside its own minute");
 		}
 
 		[Test]

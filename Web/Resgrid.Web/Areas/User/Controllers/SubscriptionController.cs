@@ -27,6 +27,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 {
 	[Area("User")]
 	[ClaimsResource(ResgridClaimTypes.Resources.Department)]
+	// Billing must stay available while an ADP migration window holds the department operation
+	// lock: the managing member manages the addon (and can revoke a scheduled offboarding) here,
+	// and billing state is not department operational data (plan sections 17, 20.2).
+	[Resgrid.Web.Filters.AllowDuringDepartmentLock]
 	public class SubscriptionController : SecureBaseController
 	{
 		#region Private Members and Constructors

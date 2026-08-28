@@ -63,6 +63,18 @@ namespace Resgrid.Model
 
 		public DateTime? DeletedOn { get; set; }
 
+		/// <summary>ADP: true when this row's cataloged values carry rgdp envelopes (M0128).</summary>
+		[ProtoMember(10)]
+		public bool IsProtected { get; set; }
+
+		/// <summary>ADP companion column: envelope for Latitude while protected; typed column is nulled.</summary>
+		[ProtoMember(11)]
+		public string ProtectedLatitudeEnvelope { get; set; }
+
+		/// <summary>ADP companion column: envelope for Longitude while protected; typed column is nulled.</summary>
+		[ProtoMember(12)]
+		public string ProtectedLongitudeEnvelope { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

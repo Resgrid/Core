@@ -63,6 +63,30 @@ namespace Resgrid.Model
 		[DecimalPrecision(5, 2)]
 		public decimal? Heading { get; set; }
 
+		/// <summary>ADP: true when this row's cataloged values carry rgdp envelopes (M0129; inert until catalog v2).</summary>
+		public bool IsProtected { get; set; }
+
+		/// <summary>ADP companion column: envelope for Latitude while protected; typed column is nulled (plan 22.3).</summary>
+		public string ProtectedLatitudeEnvelope { get; set; }
+
+		/// <summary>ADP companion column: envelope for Longitude while protected; typed column is nulled.</summary>
+		public string ProtectedLongitudeEnvelope { get; set; }
+
+		/// <summary>ADP companion column: envelope for Accuracy while protected; typed column is nulled.</summary>
+		public string ProtectedAccuracyEnvelope { get; set; }
+
+		/// <summary>ADP companion column: envelope for Altitude while protected; typed column is nulled.</summary>
+		public string ProtectedAltitudeEnvelope { get; set; }
+
+		/// <summary>ADP companion column: envelope for AltitudeAccuracy while protected; typed column is nulled.</summary>
+		public string ProtectedAltitudeAccuracyEnvelope { get; set; }
+
+		/// <summary>ADP companion column: envelope for Speed while protected; typed column is nulled.</summary>
+		public string ProtectedSpeedEnvelope { get; set; }
+
+		/// <summary>ADP companion column: envelope for Heading while protected; typed column is nulled.</summary>
+		public string ProtectedHeadingEnvelope { get; set; }
+
 		[ForeignKey("UnitId")]
 		public virtual Unit Unit { get; set; }
 

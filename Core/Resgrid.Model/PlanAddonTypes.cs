@@ -2,6 +2,7 @@
 {
 	public enum PlanAddonTypes
 	{
-		PTT = 1
+		PTT = 1,
+		ADP = 2
 	}
 }

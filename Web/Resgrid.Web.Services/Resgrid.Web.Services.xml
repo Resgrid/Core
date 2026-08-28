@@ -302,6 +302,21 @@
             Calls, also referred to as Dispatches.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.CallsController.IsBigBoardSession">
+            <summary>
+            True when the caller authenticated as the BigBoard client application (numeric
+            UserSessionClientApplication claim; tokens predating the claim read as ordinary Api).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ApplyBigBoardSafeShellAsync(System.Collections.Generic.IEnumerable{Resgrid.Web.Services.Models.v4.Calls.CallResultData})">
+            <summary>
+            ADP plan section 7.3: BigBoard is an unattended display and is structurally stepped down.
+            For a protection-enforced department it receives only a safe shell — system-generated call
+            number, priority/status/state and safe timestamps survive; user-authored nature/name,
+            notes, identity, exact address/location and reference identifiers do not. Egress policy
+            can never relax this.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetActiveCalls">
             <summary>
             Returns all the active calls for the department
@@ -1355,6 +1370,65 @@
             Gets the active states that units can currently set for the department
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.DataProtectionController">
+            <summary>
+            Advanced Data Protection capability and enrollment API (ADP plan sections 7.1, 12, 18).
+            The capability report is value-free and advisory; every command is re-validated server-side —
+            managing member only (ordinary admins, including ManageDepartmentDataProtection holders, are
+            denied), active paid ADP addon, a fresh authoritative global-gate evaluation performed by the
+            service immediately before commit, and (where grant key material is deployed) a
+            currently-valid Protected Data Grant in X-Resgrid-Protected-Grant proving recent MFA
+            (RequireRecentMfaAsync).
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.DataProtectionController.GrantHeader">
+            <summary>Header carrying the caller's Protected Data Grant on MFA-gated commands.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.Capabilities">
+            <summary>
+            Value-free ADP capability report for the caller's department: durable state, catalog and
+            policy versions, step-up window, egress summary, and lock state. Never returns protected
+            values, ciphertext, or key material.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.VerifyStepUp(Resgrid.Web.Services.Models.v4.DataProtection.VerifyStepUpInput)">
+            <summary>
+            Verifies the caller's authenticator (TOTP) code for the ADP step-up (plan section 3).
+            Success returns the absolute expiry of the step-up window — clients hold it in memory
+            only, conceal protected values at expiry, and prompt again on the next reveal/edit.
+            Refreshing an access token never refreshes this window. Allowed during a department lock:
+            step-up is a read-side control and reads continue while locked. Attempts are rate limited
+            per user; the code is never logged.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.QueueEnrollment(Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput)">
+            <summary>
+            Queues enrollment (Disabled -> EnrollmentQueued). Managing member only; requires an active
+            paid ADP addon and an open global admission gate, both re-verified server-side.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.CancelQueuedEnrollment">
+            <summary>Dequeues a not-yet-started enrollment (EnrollmentQueued -> Disabled). Managing member only.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.RevokeOffboarding">
+            <summary>
+            Revokes a scheduled offboarding (OffboardingScheduled -> Enabled) before the first
+            offboarding window opens. Managing member only. Allowed during a department lock: the
+            revoke window closes when offboarding execution starts, and this command must not be
+            blocked by an unrelated migration window.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.RequireRecentMfaAsync">
+            <summary>
+            MFA-recency gate for enrollment/offboarding commands (plan sections 3.5 and 18): the
+            caller must present a currently-valid Protected Data Grant — minted by VerifyStepUp after
+            fresh TOTP, absolute lifetime = the department step-up window — in the
+            X-Resgrid-Protected-Grant header, bound to THIS user and department at the CURRENT policy
+            epoch. On deployments without grant key material (CanValidateGrants false) the gate is
+            inactive and the pre-Phase-2 gates (managing member, addon, global flag) stand alone.
+            Returns null when the command may proceed.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.DepartmentsController">
             <summary>
@@ -5358,6 +5432,31 @@
             <summary>
             The Timestamp of the status
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.AllowDuringDepartmentLockAttribute">
+            <summary>
+            Exempts an endpoint (or a whole controller) from <see cref="T:Resgrid.Web.Services.Filters.DepartmentLockActionFilter"/>
+            mutation blocking. Use ONLY for operations that must stay available while a department
+            operation lock is active: authentication/session flows, capability/status reads that happen
+            to use POST, and the ADP lock-abort path itself (dispatch beats migration — the abort can
+            never be blocked by the very lock it releases).
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.DepartmentLockActionFilter">
+             <summary>
+             Global department-operation-lock mutation gate (ADP plan section 20.2). While a department's
+             lock is active, every authenticated mutating request (POST/PUT/PATCH/DELETE) for that
+             department is refused with 423 Locked and problem type "department_locked"; reads always
+             continue. Department identity comes from the signed authentication state
+             (ClaimTypes.PrimaryGroupSid), never from the request body, so a caller cannot dodge the gate
+             by naming another department. Endpoints that must work during a lock (auth/session flows,
+             status reads over POST, the lock-abort path) opt out with
+             <see cref="T:Resgrid.Web.Services.Filters.AllowDuringDepartmentLockAttribute"/>.
+            
+             Failure posture matches IDepartmentLockService: a lock-store outage fails OPEN — the lock
+             protects a migration, but dispatch availability beats migration progress, and the migration
+             worker separately refuses to proceed when it cannot verify its own lock.
+             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Filters.RequiresIncidentCapabilityAttribute">
              <summary>
@@ -9397,6 +9496,114 @@
             <summary>
             Is this custom status deleted (only should be used for display)
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DataProtection.VerifyStepUpInput">
+            <summary>
+            Step-up verification payload: the user's current authenticator (TOTP) code. Never logged.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput">
+            <summary>
+            Enrollment Wizard final-confirmation payload (ADP plan section 18.1 step 8). Everything here is
+            re-validated server-side: caller must be the managing member, addon and global gate are
+            re-checked, and the durable state must be Disabled.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput.AcknowledgementsJson">
+            <summary>Versioned acknowledgement record from the wizard (section 12 disclosure items).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput.WindowStartLocal">
+            <summary>Department-local overnight window start, "HH:mm" (default 22:00).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput.WindowEndLocal">
+            <summary>Department-local overnight window end, "HH:mm" (default 06:00).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput.WindowTimeZone">
+            <summary>Time zone id the window is evaluated in.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData">
+            <summary>
+            ADP capability report for the calling department (ADP plan sections 7.1 and 12). Contains NO
+            protected values. Flag/addon eligibility here is ADVISORY — every enrollment command re-checks
+            server-side; the durable state and the admission gate are never collapsed into one boolean.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.State">
+            <summary>DepartmentDataProtectionState numeric value.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.StateName">
+            <summary>DepartmentDataProtectionState name for display/debugging.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.IsProtectionEnabled">
+            <summary>True when protection is enforced for reads (Enabled/Rotating/OffboardingScheduled).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.IsEnrollmentAvailable">
+            <summary>Advisory: global admission gate currently open AND the department could start enrollment.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.CanEnable">
+            <summary>Advisory: caller is the managing member and state permits an enroll command.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.CanDisable">
+            <summary>Advisory: caller is the managing member and state permits cancel/offboarding control.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.ReenableRequiresFeatureFlag">
+            <summary>Re-enabling after a completed opt-out always requires a fresh purchase and open gate.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.CatalogVersion">
+            <summary>Catalog version this department's migration has verified (0 = none).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.CurrentCatalogVersion">
+            <summary>Current platform catalog version.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.PolicyEpoch">
+            <summary>Department policy epoch; clients discard grants/state from older epochs.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.StepUpWindowMinutes">
+            <summary>Effective Protected Data Grant lifetime in minutes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.OffboardingEffectiveOn">
+            <summary>Scheduled offboarding instant (ISO 8601), when state is OffboardingScheduled.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.PushEgressMode">
+            <summary>Per-channel egress modes (ProtectedDataEgressMode numeric values).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.IsDepartmentLocked">
+            <summary>True while a department operation lock is active (mutations refused with 423).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.LockReason">
+            <summary>Value-free lock banner reason, when locked.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.DataProtectionCapabilitiesData.LockProjectedEndUtc">
+            <summary>Projected lock end (ISO 8601), when locked and known.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.EnrollmentCommandResult.Outcome">
+            <summary>DepartmentDataProtectionEnrollmentResult name.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.EnrollmentCommandResult.State">
+            <summary>Resulting DepartmentDataProtectionState numeric value.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult">
+            <summary>
+            Result of a successful step-up verification. The window is ABSOLUTE (never sliding): clients
+            conceal protected values at StepUpExpiresOnUtc and prompt again on the next reveal/edit.
+            When grant signing is configured on this deployment, GrantId/GrantToken carry a signed
+            Protected Data Grant the client presents alongside its access token on protected operations;
+            clients hold the token in MEMORY ONLY (never persisted) and discard it at expiry. On
+            deployments without signing key material both stay null and the verification itself remains
+            the capability (pre-broker behavior).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult.GrantId">
+            <summary>Unique grant id (jti) for display/audit correlation; null when grants are not configured.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult.GrantToken">
+            <summary>Signed Protected Data Grant token; null when grants are not configured. MEMORY ONLY.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult.StepUpExpiresOnUtc">
+            <summary>Absolute UTC expiry of this step-up window (ISO 8601).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.DataProtection.StepUpResult.StepUpWindowMinutes">
+            <summary>The department's effective step-up window in minutes.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Departments.DepartmentResult">
             <summary>

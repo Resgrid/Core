@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -378,6 +378,26 @@
   <data name="PermDispatchAppLoginNote" xml:space="preserve"><value>Ελέγχει ποιος μπορεί να συνδέεται στην εφαρμογή Dispatch. Το Dispatch εμφανίζει ιδιωτικές επικοινωνίες διοίκησης, μονάδων και ανταποκριτών για κάθε περιστατικό, οπότε περιορίστε το αν τα μέλη σας δεν είναι όλα διαβιβαστές.</value></data>
   <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Σύνδεση στην Εφαρμογή Command</value></data>
   <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Ελέγχει ποιος μπορεί να ενεργεί ως διοικητής: να συνδέεται στην εφαρμογή IC, να εγκαθιστά διοίκηση περιστατικού σε μια κλήση και να βλέπει πίνακες διοίκησης. Ο περιορισμός αυτού πέρα από το «Όλοι» επιτρέπει επίσης στα άτομα που επιλέγετε να βοηθούν στη λειτουργία οποιουδήποτε πίνακα διοίκησης (ανάθεση και μετακίνηση πόρων, εκτέλεση χρονομέτρων και λογοδοσίας) χωρίς να κατέχουν θέση ICS σε αυτόν &amp;#8212; χρήσιμο για να βοηθούν οι διαβιβαστές στην εφαρμογή Dispatch. Όσο είναι ορισμένο σε «Όλοι», οι ενέργειες στον πίνακα παραμένουν περιορισμένες στον διοικητή περιστατικού και στους ανατεθειμένους ρόλους ICS.</value></data>
+  <data name="PermAdpSectionHeader" xml:space="preserve"><value>Advanced Data Protection</value></data>
+  <data name="PermAdpSectionNote" xml:space="preserve"><value>These permissions control who may work with encrypted (protected) data when the Advanced Data Protection addon is active. Every reveal or edit additionally requires a recent two-factor verification; these settings choose who may even attempt it. Unlike most Resgrid permissions, unset values default to the restrictive selection shown.</value></data>
+  <data name="PermAdpManageLabel" xml:space="preserve"><value>Manage Data Protection Settings</value></data>
+  <data name="PermAdpManageNote" xml:space="preserve"><value>Who can change Advanced Data Protection settings such as the verification window and notification content options. Purchasing, enrollment and cancellation always remain restricted to the department managing member.</value></data>
+  <data name="PermAdpViewCallLabel" xml:space="preserve"><value>View Protected Call Data</value></data>
+  <data name="PermAdpViewCallNote" xml:space="preserve"><value>Who can reveal protected call fields (nature, address, contact info, notes) after two-factor verification. Defaults to Everyone because responding personnel must be able to read a dispatch.</value></data>
+  <data name="PermAdpEditCallLabel" xml:space="preserve"><value>Edit Protected Call Data</value></data>
+  <data name="PermAdpEditCallNote" xml:space="preserve"><value>Who can edit protected call fields after two-factor verification. Defaults to Everyone to match the normal call workflow.</value></data>
+  <data name="PermAdpViewPersonnelLabel" xml:space="preserve"><value>View Protected Personnel Data</value></data>
+  <data name="PermAdpViewPersonnelNote" xml:space="preserve"><value>Who can reveal protected personnel information (employee IDs, emergency contacts) after two-factor verification. Defaults to Department Admins.</value></data>
+  <data name="PermAdpViewContactLabel" xml:space="preserve"><value>View Protected Contact Data</value></data>
+  <data name="PermAdpViewContactNote" xml:space="preserve"><value>Who can reveal protected contact information (names, phone numbers, government IDs, locations) after two-factor verification. Defaults to Department Admins.</value></data>
+  <data name="PermAdpViewOperationalLabel" xml:space="preserve"><value>View Protected Operational Data</value></data>
+  <data name="PermAdpViewOperationalNote" xml:space="preserve"><value>Who can reveal protected operational content (logs, form submissions, incident command notes and attachments) after two-factor verification. Defaults to Department and Group Admins.</value></data>
+  <data name="PermAdpExportLabel" xml:space="preserve"><value>Export Protected Data</value></data>
+  <data name="PermAdpExportNote" xml:space="preserve"><value>Who can export data containing protected fields. Exports leave the protection of Resgrid, so every export is separately audited. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermAdpEgressLabel" xml:space="preserve"><value>Configure Protected Data Delivery</value></data>
+  <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
+  <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
 </root>
 
 

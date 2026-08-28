@@ -25,6 +25,7 @@ namespace Resgrid.Providers.Bus
 		private static IWorkflowRunRepository _runRepository;
 		private static IDepartmentsService _departmentsService;
 		private static ISubscriptionsService _subscriptionsService;
+		private static IProtectedProjectionService _protectedProjectionService;
 
 		// Per-minute rate limit tracker: departmentId → (window start, count)
 		private static readonly System.Collections.Concurrent.ConcurrentDictionary<int, (DateTime Window, int Count)> _rateLimitTracker
@@ -52,7 +53,8 @@ namespace Resgrid.Providers.Bus
 			IWorkflowRepository workflowRepository,
 			IWorkflowRunRepository runRepository,
 			IDepartmentsService departmentsService,
-			ISubscriptionsService subscriptionsService)
+			ISubscriptionsService subscriptionsService,
+			IProtectedProjectionService protectedProjectionService)
 		{
 			_eventAggregator        = eventAggregator;
 			_outboundQueueProvider  = outboundQueueProvider;
@@ -60,6 +62,7 @@ namespace Resgrid.Providers.Bus
 			_runRepository          = runRepository;
 			_departmentsService     = departmentsService;
 			_subscriptionsService   = subscriptionsService;
+			_protectedProjectionService = protectedProjectionService;
 
 			RegisterListeners();
 		}
@@ -156,7 +159,10 @@ namespace Resgrid.Providers.Bus
 
 				if (workflows == null) return;
 
-				var payloadJson = JsonConvert.SerializeObject(eventObj);
+				// ADP safe projection (plan section 8): for protected departments the payload is
+				// redacted HERE, before it reaches WorkflowRun.InputPayload, the queue, retries,
+				// dead letters, history, or designer previews.
+				var payloadJson = await _protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
 				var department  = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 				var deptCode    = department?.Code ?? string.Empty;
 

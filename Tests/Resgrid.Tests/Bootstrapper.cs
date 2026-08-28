@@ -66,6 +66,30 @@ namespace Resgrid.Tests
 				builder.RegisterInstance(new Moq.Mock<IChatChannelRepository>().Object)
 					.As<IChatChannelRepository>();
 
+				// ADP repositories are not part of the testing data module; loose mocks keep the
+				// protection/projection/lock services resolvable. Un-setup members return null, which
+				// reads as "no policy row" = Disabled — every safe view is then the original value.
+				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionPolicyRepository>().Object)
+					.As<IDepartmentDataProtectionPolicyRepository>();
+				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionKeyRepository>().Object)
+					.As<IDepartmentDataProtectionKeyRepository>();
+				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionMigrationRepository>().Object)
+					.As<IDepartmentDataProtectionMigrationRepository>();
+				builder.RegisterInstance(new Moq.Mock<IDepartmentProtectedDataEgressPolicyRepository>().Object)
+					.As<IDepartmentProtectedDataEgressPolicyRepository>();
+				builder.RegisterInstance(new Moq.Mock<IDepartmentMemberSensitiveDataRepository>().Object)
+					.As<IDepartmentMemberSensitiveDataRepository>();
+				builder.RegisterInstance(new Moq.Mock<IDepartmentOperationLockRepository>().Object)
+					.As<IDepartmentOperationLockRepository>();
+				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionBulkRepository>().Object)
+					.As<IDepartmentDataProtectionBulkRepository>();
+
+				// The real FeatureToggleService's repository graph is not in the testing data module;
+				// the protection service consumes it only for the enrollment admission gate, which no
+				// container-driven test exercises. Loose mock: every flag reads as absent (fail closed).
+				builder.RegisterInstance(new Moq.Mock<Resgrid.Model.Services.IFeatureToggleService>().Object)
+					.As<Resgrid.Model.Services.IFeatureToggleService>();
+
 				// UDF mock repositories
 				builder.RegisterType<MockUdfDefinitionRepository>()
 					.As<IUdfDefinitionRepository>()

@@ -54,6 +54,18 @@ namespace Resgrid.Model
 		[DecimalPrecision(10, 7)]
 		public decimal? Longitude { get; set; }
 
+		/// <summary>ADP: true when this row's cataloged values carry rgdp envelopes (M0129; inert until catalog v2).</summary>
+		[ProtoMember(11)]
+		public bool IsProtected { get; set; }
+
+		/// <summary>ADP companion column: envelope for Latitude while protected; typed column is nulled.</summary>
+		[ProtoMember(12)]
+		public string ProtectedLatitudeEnvelope { get; set; }
+
+		/// <summary>ADP companion column: envelope for Longitude while protected; typed column is nulled.</summary>
+		[ProtoMember(13)]
+		public string ProtectedLongitudeEnvelope { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

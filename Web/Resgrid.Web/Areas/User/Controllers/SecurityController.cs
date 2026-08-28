@@ -426,6 +426,54 @@ namespace Resgrid.Web.Areas.User.Controllers
 			commandAppLoginPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
 			model.CommandAppLoginPermissions = new SelectList(commandAppLoginPermissions, "Id", "Name");
 
+			// ── Advanced Data Protection (ADP) permissions ─────────────────────────────
+			// Missing rows resolve through AdpPermissionDefaults, NOT the wide-open no-row
+			// convention — the preselected value here is exactly what enforcement will use.
+			int AdpValue(PermissionTypes type) =>
+				permissions.Any(x => x.PermissionType == (int)type)
+					? permissions.First(x => x.PermissionType == (int)type).Action
+					: (int)AdpPermissionDefaults.For(type);
+
+			SelectList AdpOptions(bool includeEveryone)
+			{
+				var options = new List<dynamic>();
+				if (includeEveryone)
+					options.Add(new { Id = 3, Name = "Everyone" });
+				options.Add(new { Id = 0, Name = "Department Admins" });
+				options.Add(new { Id = 1, Name = "Department and Group Admins" });
+				options.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+				return new SelectList(options, "Id", "Name");
+			}
+
+			model.ManageDataProtection = AdpValue(PermissionTypes.ManageDepartmentDataProtection);
+			model.ManageDataProtectionPermissions = AdpOptions(includeEveryone: false);
+
+			model.ViewProtectedCallData = AdpValue(PermissionTypes.ViewProtectedCallData);
+			model.ViewProtectedCallDataPermissions = AdpOptions(includeEveryone: true);
+
+			model.EditProtectedCallData = AdpValue(PermissionTypes.EditProtectedCallData);
+			model.EditProtectedCallDataPermissions = AdpOptions(includeEveryone: true);
+
+			model.ViewProtectedPersonnelData = AdpValue(PermissionTypes.ViewProtectedPersonnelData);
+			model.ViewProtectedPersonnelDataPermissions = AdpOptions(includeEveryone: true);
+
+			model.ViewProtectedContactData = AdpValue(PermissionTypes.ViewProtectedContactData);
+			model.ViewProtectedContactDataPermissions = AdpOptions(includeEveryone: true);
+
+			model.ViewProtectedOperationalData = AdpValue(PermissionTypes.ViewProtectedOperationalData);
+			model.ViewProtectedOperationalDataPermissions = AdpOptions(includeEveryone: true);
+
+			// Export, egress and break-glass never offer "Everyone": exports leave the system,
+			// egress reconfiguration widens disclosure, and break-glass is an audited emergency
+			// path that additionally requires the department policy to enable it at all.
+			model.ExportProtectedData = AdpValue(PermissionTypes.ExportProtectedData);
+			model.ExportProtectedDataPermissions = AdpOptions(includeEveryone: false);
+
+			model.ConfigureProtectedDataEgress = AdpValue(PermissionTypes.ConfigureProtectedDataEgress);
+			model.ConfigureProtectedDataEgressPermissions = AdpOptions(includeEveryone: false);
+
+			model.BreakGlassProtectedData = AdpValue(PermissionTypes.BreakGlassProtectedData);
+			model.BreakGlassProtectedDataPermissions = AdpOptions(includeEveryone: false);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.IsManagingUser = department.ManagingUserId == UserId;
@@ -548,7 +596,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// Sets the department-level 2FA enforcement scope. Only the managing user (owner) may change this.
 		/// scope: 0=disabled, 1=dept admins+managing user, 2=also group admins
 		/// </summary>
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> Set2FARequirement(int scope, CancellationToken cancellationToken)
 		{
@@ -589,7 +638,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.OK);
 		}
 
-		[HttpGet]
+		// POST + antiforgery: permission changes are state-changing and must never be reachable by a
+		// cross-site top-level GET navigation riding the SameSite=Lax auth cookie.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> SetPermission(int type, int perm, bool? lockToGroup)
 		{
@@ -644,7 +696,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return new StatusCodeResult((int)HttpStatusCode.NotModified);
 		}
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> SetPermissionData(int type, string data, bool? lockToGroup)
 		{
 			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -699,6 +752,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.NotModified);
 		}
 
+		[HttpGet]
 		public async Task<IActionResult> GetRolesForPermission(int type)
 		{
 			var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type);

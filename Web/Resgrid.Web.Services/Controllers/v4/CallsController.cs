@@ -59,6 +59,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IDepartmentDataProtectionService _dataProtectionService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -83,9 +84,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IWeatherAlertService weatherAlertService,
 			ICallDispatchStatusService callDispatchStatusService,
 			IDispatchRecommendationService dispatchRecommendationService,
-			IFeatureToggleService featureToggleService
+			IFeatureToggleService featureToggleService,
+			IDepartmentDataProtectionService dataProtectionService
 			)
 		{
+			_dataProtectionService = dataProtectionService;
 			_callsService = callsService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
@@ -111,6 +114,62 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_featureToggleService = featureToggleService;
 		}
 		#endregion Members and Constructors
+
+		/// <summary>
+		/// True when the caller authenticated as the BigBoard client application (numeric
+		/// UserSessionClientApplication claim; tokens predating the claim read as ordinary Api).
+		/// </summary>
+		private bool IsBigBoardSession =>
+			string.Equals(User?.FindFirst(Resgrid.Model.Security.SessionClaimTypes.ClientApp)?.Value,
+				((int)UserSessionClientApplication.BigBoard).ToString(CultureInfo.InvariantCulture),
+				StringComparison.Ordinal);
+
+		/// <summary>
+		/// ADP plan section 7.3: BigBoard is an unattended display and is structurally stepped down.
+		/// For a protection-enforced department it receives only a safe shell — system-generated call
+		/// number, priority/status/state and safe timestamps survive; user-authored nature/name,
+		/// notes, identity, exact address/location and reference identifiers do not. Egress policy
+		/// can never relax this.
+		/// </summary>
+		private async Task<bool> ApplyBigBoardSafeShellAsync(IEnumerable<CallResultData> calls)
+		{
+			if (calls == null || !IsBigBoardSession)
+				return false;
+
+			if (!await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId))
+				return false;
+
+			foreach (var call in calls)
+			{
+				if (call == null)
+					continue;
+
+				call.Name = "Protected incident — open Resgrid to view details.";
+				call.Nature = null;
+				call.Note = null;
+				call.Address = null;
+				call.DestinationName = null;
+				call.DestinationAddress = null;
+				call.DestinationTypeName = null;
+				call.DestinationPoiId = null;
+				call.DestinationPoiTypeId = null;
+				call.DestinationLatitude = null;
+				call.DestinationLongitude = null;
+				call.Geolocation = null;
+				call.What3Words = null;
+				call.ContactName = null;
+				call.ContactInfo = null;
+				call.ReferenceId = null;
+				call.ExternalId = null;
+				call.IncidentId = null;
+				call.AudioFileId = null;
+				call.Type = null;
+				call.Latitude = null;
+				call.Longitude = null;
+			}
+
+			return true;
+		}
 
 		/// <summary>
 		/// Returns all the active calls for the department
@@ -147,6 +206,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
 					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone, destinationPoi));
 				}
+
+				await ApplyBigBoardSafeShellAsync(result.Data);
 				result.PageSize = result.Data.Count();
 				result.Status = ResponseHelper.Success;
 			}
@@ -217,6 +278,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi);
 
+			// BigBoard shells also suppress UDF submissions — user-authored free text defaults to
+			// sensitive in a protected department (plan section 5.2).
+			if (await ApplyBigBoardSafeShellAsync(new[] { result.Data }))
+			{
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return Ok(result);
+			}
+
 			// Populate UDF values
 			var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(effectiveDepartmentId, (int)UdfEntityType.Call, c.CallId.ToString());
 			if (udfValues != null && udfValues.Any())
@@ -267,7 +338,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 
-			result.Data.CallFormData = call.CallFormData;
+			// BigBoard step-down: dispatched unit/personnel state below is allowlisted resource
+			// state, but submitted call form data is protected content (plan section 7.3).
+			if (IsBigBoardSession && await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId))
+				result.Data.CallFormData = null;
+			else
+				result.Data.CallFormData = call.CallFormData;
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(call.DepartmentId);
@@ -1657,6 +1733,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					destinationPoiLookup.TryGetValue(c.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
 					result.Data.Add(ConvertCall(c, null, address, TimeZone, destinationPoi));
 				}
+
+				await ApplyBigBoardSafeShellAsync(result.Data);
 				result.PageSize = result.Data.Count();
 				result.Status = ResponseHelper.Success;
 			}
@@ -1934,6 +2012,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
 					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone, destinationPoi));
 				}
+
+				await ApplyBigBoardSafeShellAsync(result.Data);
 				result.PageSize = result.Data.Count();
 				result.Status = ResponseHelper.Success;
 			}

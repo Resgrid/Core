@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Description>Resgrid Protected Data Broker: validates Protected Data Grants, performs ADP field crypto against the KMS, and hosts the ADP migration engine. The ONLY host with a KMS route.</Description>
+    <AssemblyName>Resgrid.Web.Broker</AssemblyName>
+    <RootNamespace>Resgrid.Web.Broker</RootNamespace>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+    <Configurations>Debug;Release;Docker</Configurations>
+    <StartupObject>Resgrid.Web.Broker.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Docker|AnyCPU'">
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.1.0" />
+    <PackageReference Include="Sentry.AspNetCore" Version="5.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.ProtectedData\Resgrid.Providers.ProtectedData.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Messaging\Resgrid.Providers.Messaging.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Weather\Resgrid.Providers.Weather.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Workflow\Resgrid.Providers.Workflow.csproj" />
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
+    <ProjectReference Include="..\..\Workers\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj" />
+  </ItemGroup>
+</Project>

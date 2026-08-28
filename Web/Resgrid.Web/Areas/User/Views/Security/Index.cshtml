@@ -7,6 +7,11 @@
     ViewBag.Title = "Resgrid | " + localizer["SecurityPermissionsHeader"];
 }
 
+@* Antiforgery token for the permission POSTs in resgrid.security.permissions.js and the
+   2FA-enforcement script below — SetPermission/SetPermissionData/Set2FARequirement are
+   state-changing and require it. *@
+@Html.AntiForgeryToken()
+
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
         <h2>@localizer["SecurityPermissionsHeader"]</h2>
@@ -527,7 +532,11 @@
         $(function () {
             $('#require2FADropdown').change(function () {
                 var scope = $(this).val();
-                $.get('@Url.Action("Set2FARequirement", "Security", new { area = "User" })?scope=' + scope, function (data) {
+                $.ajax({
+                    url: '@Url.Action("Set2FARequirement", "Security", new { area = "User" })?scope=' + scope,
+                    type: 'POST',
+                    headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').first().val() }
+                }).done(function (data) {
                     toastr.success('@localizer["Require2FASettingSaved"]');
                 }).fail(function (xhr) {
                     if (xhr.status === 412) {

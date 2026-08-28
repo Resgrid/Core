@@ -44,8 +44,10 @@ namespace Resgrid.Providers.Migrations.Migrations
 
 		public override void Down()
 		{
-			Delete.FromTable("PlanAddons").Row(new { PlanAddonId = AdpPlanAddonId });
-			Delete.FromTable("FeatureFlags").Row(new { FlagKey = FlagKey });
+			// Deliberate no-op. Up() tolerates pre-existing rows (WHERE NOT EXISTS), so this
+			// migration cannot prove it inserted them — deleting by key on rollback could destroy an
+			// operator-created enrollment gate or a live, billed addon row. The flag is also seeded
+			// IsPermanent: nothing may delete it. Re-applying Up() after a rollback is a no-op.
 		}
 	}
 }

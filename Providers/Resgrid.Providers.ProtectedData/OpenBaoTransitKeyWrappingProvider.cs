@@ -51,9 +51,16 @@ namespace Resgrid.Providers.ProtectedData
 			if (string.IsNullOrWhiteSpace(DataProtectionConfig.OpenBaoAddress))
 				throw new InvalidOperationException("DataProtectionConfig.OpenBaoAddress is not configured.");
 
+			var baseAddress = new Uri(DataProtectionConfig.OpenBaoAddress.TrimEnd('/') + "/");
+
+			// A plaintext endpoint would carry the cert-auth token AND the unwrapped DEK unencrypted
+			// (plan A.14 prohibited configurations) — refuse it outright.
+			if (!string.Equals(baseAddress.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException("DataProtectionConfig.OpenBaoAddress must use HTTPS; plaintext KMS transport is prohibited.");
+
 			_httpClient = new HttpClient(handler, disposeHandler: true)
 			{
-				BaseAddress = new Uri(DataProtectionConfig.OpenBaoAddress.TrimEnd('/') + "/"),
+				BaseAddress = baseAddress,
 				Timeout = TimeSpan.FromMilliseconds(DataProtectionConfig.OpenBaoTimeoutMs > 0
 					? DataProtectionConfig.OpenBaoTimeoutMs
 					: 10000)

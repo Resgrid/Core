@@ -5,6 +5,11 @@ var resgrid;
     (function (security) {
         var permissions;
         (function (permissions) {
+            // Every SetPermission/SetPermissionData call is a state-changing POST carrying the
+            // page's antiforgery token (rendered by the Security Index view). Reads stay GET.
+            function antiForgeryToken() {
+                return $('input[name="__RequestVerificationToken"]').first().val();
+            }
             function initPermRoles(selector, permType) {
                 $(selector).select2({
                     placeholder: "Select roles...",
@@ -21,7 +26,8 @@ var resgrid;
                 $(selector).on('change', function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=' + permType + '&data=' + encodeURIComponent(($(selector).val() || []).join(',')),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     });
                 });
                 $.ajax({
@@ -42,7 +48,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=0&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -50,7 +57,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=1&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -66,7 +74,8 @@ var resgrid;
                     }
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=2&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -83,7 +92,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=3&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#CreateTraining").val() === "2") {
@@ -108,7 +118,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=4&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#CreateDocument").val() === "2") {
@@ -133,7 +144,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=5&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#CreateCalendarEntry").val() === "2") {
@@ -158,7 +170,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=6&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#CreateNote").val() === "2") {
@@ -183,7 +196,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=7&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#CreateLog").val() === "2") {
@@ -211,7 +225,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=27&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#DeleteLog").val() === "2") {
@@ -238,7 +253,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=8&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#CreateShift").val() === "2") {
@@ -263,7 +279,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=9&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#ViewPersonalInfo").val() === "2") {
@@ -288,7 +305,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=10&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#AdjustInventory").val() === "2") {
@@ -313,7 +331,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=11&perm=' + val + '&lockToGroup=' + $('#LockViewPersonneLocationToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#ViewPersonnelLocation").val() === "2") {
@@ -337,7 +356,8 @@ var resgrid;
                 $('#LockViewPersonneLocationToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=11&perm=' + $('#ViewPersonnelLocation').val() + '&lockToGroup=' + $('#LockViewPersonneLocationToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -347,7 +367,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=12&perm=' + val + '&lockToGroup=' + $('#LockViewPersonneLocationToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#ViewUnitLocation").val() === "2") {
@@ -371,7 +392,8 @@ var resgrid;
                 $('#LockViewUnitLocationToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=12&perm=' + $('#ViewUnitLocation').val() + '&lockToGroup=' + $('#LockViewUnitLocationToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -382,7 +404,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=13&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#CreateMessage").val() === "2") {
@@ -412,7 +435,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=14&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#ViewGroupsUsers").val() === "2") {
@@ -435,7 +459,8 @@ var resgrid;
                 $('#LockViewGroupsUsersToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=14&perm=' + $('#LockViewGroupsUsersToGroup').val() + '&lockToGroup=' + $('#LockViewGroupsUsersToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -449,7 +474,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=15&perm=' + val + '&lockToGroup=' + $('#LockDeleteCallToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#DeleteCall").val() === "2") {
@@ -473,7 +499,8 @@ var resgrid;
                 $('#LockDeleteCallToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=15&perm=' + $('#DeleteCall').val() + '&lockToGroup=' + $('#LockDeleteCallToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -485,7 +512,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=16&perm=' + val + '&lockToGroup=' + $('#LockCloseCallToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#CloseCall").val() === "2") {
@@ -509,7 +537,8 @@ var resgrid;
                 $('#LockCloseCallToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=16&perm=' + $('#CloseCall').val() + '&lockToGroup=' + $('#LockCloseCallToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -521,7 +550,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=17&perm=' + val + '&lockToGroup=' + $('#LockAddCallDataToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#AddCallData").val() === "2") {
@@ -545,7 +575,8 @@ var resgrid;
                 $('#LockAddCallDataToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=17&perm=' + $('#AddCallData').val() + '&lockToGroup=' + $('#LockAddCallDataToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -557,7 +588,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=18&perm=' + val + '&lockToGroup=' + $('#LockViewGroupsUnitsToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#ViewGroupsUnits").val() === "2") {
@@ -581,7 +613,8 @@ var resgrid;
                 $('#LockViewGroupsUnitsToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=18&perm=' + $('#ViewGroupsUnits').val() + '&lockToGroup=' + $('#LockViewGroupsUnitsToGroup').is(':checked'),
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                 });
@@ -594,7 +627,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=20&perm=' + val + '&lockToGroup=false',
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#ViewContacts").val() === "2") {
@@ -624,7 +658,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=19&perm=' + val + '&lockToGroup=false',
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#EditContacts").val() === "2") {
@@ -654,7 +689,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=21&perm=' + val + '&lockToGroup=false',
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#DeleteContacts").val() === "2") {
@@ -683,7 +719,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=22&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) { });
                     if (val === "2") {
                         $('#workflowCreateNoRolesSpan').hide();
@@ -709,7 +746,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=23&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) { });
                     if (val === "2") {
                         $('#workflowCredentialsNoRolesSpan').hide();
@@ -735,7 +773,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=24&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) { });
                     if (val === "2") {
                         $('#workflowRunsNoRolesSpan').hide();
@@ -761,7 +800,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=28&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#UseCalendarSync").val() === "2") {
@@ -788,7 +828,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=29&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#DispatchAppLogin").val() === "2") {
@@ -815,7 +856,8 @@ var resgrid;
                     var val = this.value;
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=30&perm=' + val,
-                        type: 'GET'
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
                     }).done(function (results) {
                     });
                     if ($("#CommandAppLogin").val() === "2") {
@@ -862,7 +904,8 @@ var resgrid;
                     $(p.sel).change(function () {
                         $.ajax({
                             url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=' + p.type + '&perm=' + this.value,
-                            type: 'GET'
+                            type: 'POST',
+                            headers: { 'RequestVerificationToken': antiForgeryToken() }
                         }).done(function (results) {
                         });
                         toggleRoles();

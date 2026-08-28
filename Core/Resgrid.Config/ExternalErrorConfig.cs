@@ -23,6 +23,7 @@
 		public static string ExternalErrorServiceUrlForInternalWorker = "";
 		public static string ExternalErrorServiceUrlForMcp = "";
 		public static string ExternalErrorServiceUrlForTts = "";
+		public static string ExternalErrorServiceUrlForBroker = "";
 		public static double SentryPerfSampleRate = 0.4;
 		public static double SentryProfilingSampleRate = 0;
 		#endregion Sentry Settings

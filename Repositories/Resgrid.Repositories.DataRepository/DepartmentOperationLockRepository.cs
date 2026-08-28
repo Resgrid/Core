@@ -56,9 +56,11 @@ namespace Resgrid.Repositories.DataRepository
 		/// <summary>
 		/// The INSERT is guarded twice: a NOT EXISTS predicate loses gracefully in the common case, and
 		/// the filtered/partial unique index on (DepartmentId) WHERE ReleasedUtc IS NULL closes the race
-		/// two concurrent acquirers could otherwise win under snapshot isolation. A unique-index
-		/// violation is mapped to false by re-reading the active lock rather than by parsing
-		/// provider-specific error codes.
+		/// two concurrent acquirers could otherwise win under snapshot isolation. On PostgreSQL the
+		/// index race is absorbed in-statement with ON CONFLICT DO NOTHING — an exception there would
+		/// poison an enclosing transaction (25P02) and make the recovery re-read impossible. On SQL
+		/// Server a unique-index violation is mapped to false by re-reading the active lock rather than
+		/// by parsing provider-specific error codes.
 		/// </summary>
 		public async Task<bool> TryAcquireAsync(DepartmentOperationLock departmentLock, CancellationToken cancellationToken)
 		{
@@ -71,6 +73,7 @@ namespace Resgrid.Repositories.DataRepository
 				? $@"INSERT INTO {_table} (departmentid, locktype, reason, correlationid, appliedutc, appliedbyidentity, heartbeatutc, expiresutc, projectedendutc)
 					SELECT @DepartmentId, @LockType, @Reason, @CorrelationId, @AppliedUtc, @AppliedByIdentity, @HeartbeatUtc, @ExpiresUtc, @ProjectedEndUtc
 					WHERE NOT EXISTS (SELECT 1 FROM {_table} WHERE departmentid = @DepartmentId AND releasedutc IS NULL)
+					ON CONFLICT (departmentid) WHERE releasedutc IS NULL DO NOTHING
 					RETURNING departmentoperationlockid"
 				: $@"INSERT INTO {_table} ([DepartmentId], [LockType], [Reason], [CorrelationId], [AppliedUtc], [AppliedByIdentity], [HeartbeatUtc], [ExpiresUtc], [ProjectedEndUtc])
 					OUTPUT INSERTED.[DepartmentOperationLockId]
@@ -99,10 +102,12 @@ namespace Resgrid.Repositories.DataRepository
 				departmentLock.DepartmentOperationLockId = id.Value;
 				return true;
 			}
-			catch (DbException)
+			catch (DbException) when (!_isPostgres)
 			{
-				// A concurrent acquirer beat this one through the unique index. If an active lock now
-				// exists this is the expected lost race; anything else is a real fault.
+				// SQL Server only: a concurrent acquirer beat this one through the unique index. If an
+				// active lock now exists this is the expected lost race; anything else is a real fault.
+				// PostgreSQL never takes this path — ON CONFLICT absorbs the race in-statement, and a
+				// re-read inside a now-failed transaction would only raise 25P02.
 				var active = await GetActiveByDepartmentIdAsync(departmentLock.DepartmentId);
 				if (active != null)
 					return false;

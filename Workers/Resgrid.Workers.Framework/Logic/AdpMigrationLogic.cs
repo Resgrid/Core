@@ -18,8 +18,9 @@ namespace Resgrid.Workers.Framework.Logic
 	/// DisableRequested; then picks up to MigrationNightlyConcurrency departments (FIFO) whose
 	/// department-local overnight window is open and drives one night of the durable state machine —
 	/// lock, provision, engine run, checkpoint/verify, notify. All bulk data movement lives behind
-	/// IDepartmentDataMigrationEngine; until the broker-backed engine ships the Null engine fails
-	/// every run closed with "engine_unavailable".
+	/// IDepartmentDataMigrationEngine, and nights run only where IDepartmentDataMigrationEngine
+	/// reports available (a host with a real KMS adapter — the Protected Data Broker). Elsewhere the
+	/// sweep does liveness/offboarding work and leaves queued departments queued.
 	///
 	/// Deliberately NOT here: gate/addon re-checks. A committed enrollment must never be aborted by
 	/// flag removal (plan section 3.5), and addon lapses reach the state machine through billing
@@ -113,6 +114,16 @@ namespace Resgrid.Workers.Framework.Logic
 					.Where(p => IsWorkableState((DepartmentDataProtectionState)p.State))
 					.OrderBy(p => p.AcknowledgedOn ?? p.CreatedOn)
 					.ToList();
+
+				// Nights run only where the engine can actually move data (a real KMS adapter — the
+				// Protected Data Broker host). On app/worker hosts the sweep still does the liveness
+				// and offboarding work above, but queued departments are left QUEUED for the broker
+				// instead of being marked Failed by a host that can never succeed.
+				if (workable.Count > 0 && !_engine.IsAvailable)
+				{
+					summary.Add($"{workable.Count} department(s) queued; engine unavailable on this host, nights skipped");
+					return new Tuple<bool, string>(true, Summarize(summary));
+				}
 
 				var concurrency = Math.Max(1, DataProtectionConfig.MigrationNightlyConcurrency);
 				var executed = 0;
@@ -208,8 +219,23 @@ namespace Resgrid.Workers.Framework.Logic
 				if (!open)
 					return false;
 
-				windowEndUtc = TimeZoneInfo.ConvertTimeToUtc(DateTime.SpecifyKind(localEnd, DateTimeKind.Unspecified), timeZone);
+				var unspecifiedEnd = DateTime.SpecifyKind(localEnd, DateTimeKind.Unspecified);
+				if (timeZone.IsInvalidTime(unspecifiedEnd))
+				{
+					// Spring-forward gap: the configured window end does not exist as a local time
+					// today. Treat the window as closed rather than letting ConvertTimeToUtc throw
+					// and abort the whole sweep (liveness releases included).
+					Logging.LogError($"ADP migration: department {policy.DepartmentId} window end falls in a DST gap for '{policy.MigrationWindowTimeZone}' today; treating window as closed.");
+					return false;
+				}
+
+				windowEndUtc = TimeZoneInfo.ConvertTimeToUtc(unspecifiedEnd, timeZone);
 				return true;
+			}
+			catch (ArgumentException ex)
+			{
+				Logging.LogException(ex, $"ADP migration: department {policy.DepartmentId} window end is not a valid local time in '{policy.MigrationWindowTimeZone}'; treating window as closed.");
+				return false;
 			}
 			catch (TimeZoneNotFoundException)
 			{
@@ -401,6 +427,13 @@ namespace Resgrid.Workers.Framework.Logic
 				}
 
 				return $"department {departmentId}: no work for state {(DepartmentDataProtectionState)policy.State}";
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				// Worker shutdown/redeploy is NOT a migration failure: leave the durable state
+				// untouched (the next sweep resumes from the cursor) and release the lock as a
+				// checkpoint, mirroring how Process propagates cancellation.
+				throw;
 			}
 			catch (Exception ex)
 			{

@@ -14,14 +14,15 @@ namespace Resgrid.Model.Repositories
 	public interface IDepartmentDataProtectionBulkRepository
 	{
 		/// <summary>Total department-owned rows in the bound table (sizing and progress).</summary>
-		Task<long> CountRowsAsync(AdpTableBinding binding, int departmentId);
+		Task<long> CountRowsAsync(AdpTableBinding binding, int departmentId,
+			CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// The next batch of department-owned rows strictly after the cursor, ordered by primary key.
 		/// Selects the bound columns plus companion/marker columns.
 		/// </summary>
 		Task<IReadOnlyList<AdpBulkFieldRow>> GetBatchAsync(AdpTableBinding binding, int departmentId,
-			string afterCursor, int batchSize);
+			string afterCursor, int batchSize, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Applies the row updates and advances the migration row's cursor and counters in one
@@ -37,15 +38,18 @@ namespace Resgrid.Model.Repositories
 		/// bound text column (enrollment verification must find zero); enveloped=true counts rows
 		/// still holding an rgdp: envelope (offboarding verification must find zero).
 		/// </summary>
-		Task<long> CountTextResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped);
+		Task<long> CountTextResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped,
+			CancellationToken cancellationToken = default);
 
 		/// <summary>Residue scan for binary columns (rgdpb header prefix compare).</summary>
-		Task<long> CountBinaryResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped);
+		Task<long> CountBinaryResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped,
+			CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Residue scan for companion-column fields: enrollment residue = typed column still non-null;
 		/// offboarding residue = companion envelope column still non-null.
 		/// </summary>
-		Task<long> CountCompanionResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped);
+		Task<long> CountCompanionResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped,
+			CancellationToken cancellationToken = default);
 	}
 }

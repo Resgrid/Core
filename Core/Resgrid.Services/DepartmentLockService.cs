@@ -111,6 +111,17 @@ namespace Resgrid.Services
 		{
 			var rows = await _departmentOperationLockRepository.HeartbeatAsync(departmentOperationLockId,
 				DateTime.UtcNow, newExpiresUtc, cancellationToken);
+
+			// Drop the cached row so readers see the extended expiry: with a short operator-tuned
+			// LockExpirySeconds a stale cached ExpiresUtc could otherwise read as "unlocked" while
+			// migration batches are still running.
+			if (rows > 0 && newExpiresUtc.HasValue)
+			{
+				var lockRow = await _departmentOperationLockRepository.GetByIdAsync(departmentOperationLockId);
+				if (lockRow != null)
+					await InvalidateLockCacheAsync(lockRow.DepartmentId);
+			}
+
 			return rows > 0;
 		}
 

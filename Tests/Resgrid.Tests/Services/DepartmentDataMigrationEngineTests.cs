@@ -147,6 +147,49 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Fresh_run_after_a_reprovision_validates_old_version_envelopes_with_their_own_key()
+		{
+			// Enrollment encrypted everything under key v1; a failed-run recovery then minted key v2.
+			// The new run's double-encryption guard must validate v1 envelopes with the v1 DEK — with
+			// the v2 DEK every such row would read as a foreign envelope and no retry could clear it.
+			await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
+			await _engine.VerifyAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
+			var snapshot = _bulk.Snapshot("Calls");
+
+			var wrappedV2 = await _keyProvider.GenerateWrappedDataKeyAsync(DeptId);
+			var keyRowV2 = new DepartmentDataProtectionKey
+			{
+				DepartmentId = DeptId,
+				Version = 2,
+				WrappedKey = wrappedV2.WrappedKeyBase64,
+				Status = (int)DepartmentDataProtectionKeyStatus.Active
+			};
+			_keyService.Setup(x => x.GetKeyByVersionAsync(DeptId, 2)).ReturnsAsync(keyRowV2);
+			_keyService.Setup(x => x.GetActiveKeyAsync(DeptId)).ReturnsAsync(keyRowV2);
+
+			var context = Context(DepartmentDataProtectionMigrationKind.Enrollment);
+			context.TargetKeyVersion = 2;
+			var result = await _engine.RunEncryptionNightAsync(context, CancellationToken.None);
+
+			result.Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables,
+				"v1 envelopes validate with the v1 DEK instead of halting as foreign");
+			_bulk.Snapshot("Calls").Should().BeEquivalentTo(snapshot,
+				"old-version envelopes are counted already-protected, never re-encrypted");
+		}
+
+		[Test]
+		public async Task Envelope_referencing_an_unknown_key_version_halts_the_run()
+		{
+			_bulk.Table("Calls")[0]["Name"] = "rgdp:1:9:AAAA";
+
+			var result = await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
+
+			result.Outcome.Should().Be(AdpMigrationNightOutcome.Failed);
+			result.ErrorCode.Should().Be("foreign_envelope");
+			_bulk.Table("Calls")[0]["Name"].Should().Be("rgdp:1:9:AAAA", "an unresolvable envelope is halted on, never re-encrypted");
+		}
+
+		[Test]
 		public async Task Offboarding_restores_plaintext_and_second_decrypt_pass_counts_anomalies_only()
 		{
 			await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
@@ -255,11 +298,11 @@ namespace Resgrid.Tests.Services
 			public List<Dictionary<string, object>> Snapshot(string table) =>
 				_tables[table].Rows.Select(r => new Dictionary<string, object>(r)).ToList();
 
-			public Task<long> CountRowsAsync(AdpTableBinding binding, int departmentId) =>
+			public Task<long> CountRowsAsync(AdpTableBinding binding, int departmentId, CancellationToken cancellationToken = default) =>
 				Task.FromResult<long>(_tables.TryGetValue(binding.TableName, out var t) ? t.Rows.Count : 0);
 
 			public Task<IReadOnlyList<AdpBulkFieldRow>> GetBatchAsync(AdpTableBinding binding, int departmentId,
-				string afterCursor, int batchSize)
+				string afterCursor, int batchSize, CancellationToken cancellationToken = default)
 			{
 				if (!_tables.TryGetValue(binding.TableName, out var table))
 					return Task.FromResult<IReadOnlyList<AdpBulkFieldRow>>(Array.Empty<AdpBulkFieldRow>());
@@ -306,7 +349,7 @@ namespace Resgrid.Tests.Services
 				return Task.CompletedTask;
 			}
 
-			public Task<long> CountTextResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped)
+			public Task<long> CountTextResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped, CancellationToken cancellationToken = default)
 			{
 				if (!_tables.TryGetValue(binding.TableName, out var table))
 					return Task.FromResult(0L);
@@ -323,7 +366,7 @@ namespace Resgrid.Tests.Services
 				return Task.FromResult((long)count);
 			}
 
-			public Task<long> CountBinaryResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped)
+			public Task<long> CountBinaryResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped, CancellationToken cancellationToken = default)
 			{
 				if (!_tables.TryGetValue(binding.TableName, out var table))
 					return Task.FromResult(0L);
@@ -341,7 +384,7 @@ namespace Resgrid.Tests.Services
 				return Task.FromResult((long)count);
 			}
 
-			public Task<long> CountCompanionResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped)
+			public Task<long> CountCompanionResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped, CancellationToken cancellationToken = default)
 			{
 				if (!_tables.TryGetValue(binding.TableName, out var table))
 					return Task.FromResult(0L);

@@ -596,7 +596,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// Sets the department-level 2FA enforcement scope. Only the managing user (owner) may change this.
 		/// scope: 0=disabled, 1=dept admins+managing user, 2=also group admins
 		/// </summary>
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> Set2FARequirement(int scope, CancellationToken cancellationToken)
 		{
@@ -637,7 +638,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.OK);
 		}
 
-		[HttpGet]
+		// POST + antiforgery: permission changes are state-changing and must never be reachable by a
+		// cross-site top-level GET navigation riding the SameSite=Lax auth cookie.
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> SetPermission(int type, int perm, bool? lockToGroup)
 		{
@@ -692,7 +696,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return new StatusCodeResult((int)HttpStatusCode.NotModified);
 		}
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> SetPermissionData(int type, string data, bool? lockToGroup)
 		{
 			if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -747,6 +752,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.NotModified);
 		}
 
+		[HttpGet]
 		public async Task<IActionResult> GetRolesForPermission(int type)
 		{
 			var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type);

@@ -25,6 +25,13 @@ namespace Resgrid.Model
 		PlanRequired = 6,
 
 		/// <summary>Transient/internal failure; the command may be retried.</summary>
-		Failed = 7
+		Failed = 7,
+
+		/// <summary>
+		/// The migration window is unusable — no resolvable time zone was supplied and the
+		/// department has none. Queuing anyway would stall forever: the worker reads an
+		/// unresolvable window time zone as permanently closed (invalid_window).
+		/// </summary>
+		InvalidWindow = 8
 	}
 }

@@ -59,7 +59,9 @@ namespace Resgrid.Model
 			if (parts.Length != 4)
 				return false;
 
-			if (!int.TryParse(parts[1], out formatVersion) || formatVersion <= 0)
+			// Unknown/future format versions are NOT parseable (the documented contract): a caller
+			// must treat a prefixed value it cannot parse as corrupt, never as a valid envelope.
+			if (!int.TryParse(parts[1], out formatVersion) || formatVersion <= 0 || formatVersion > CurrentVersion)
 				return false;
 
 			if (!int.TryParse(parts[2], out departmentKeyVersion) || departmentKeyVersion <= 0)
@@ -75,7 +77,7 @@ namespace Resgrid.Model
 		/// <summary>True when the value is a well-formed text envelope of a known format version.</summary>
 		public static bool IsEnveloped(string value)
 		{
-			return TryParse(value, out var formatVersion, out _, out _) && formatVersion <= CurrentVersion;
+			return TryParse(value, out _, out _, out _);
 		}
 
 		/// <summary>Composes a text envelope from an already-encrypted payload.</summary>

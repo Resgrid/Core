@@ -32,7 +32,8 @@ namespace Resgrid.Services
 			var plainBytes = Encoding.UTF8.GetBytes(plaintext);
 			try
 			{
-				var payload = Seal(dek, plainBytes, Aad(departmentId, catalogFieldId, rowKey, catalogVersion));
+				var payload = Seal(dek, plainBytes,
+					Aad(departmentId, catalogFieldId, rowKey, ProtectedDataEnvelope.CurrentVersion, catalogVersion));
 				return ProtectedDataEnvelope.Format(departmentKeyVersion, Convert.ToBase64String(payload));
 			}
 			finally
@@ -44,12 +45,13 @@ namespace Resgrid.Services
 		public string DecryptText(byte[] dek, string envelope,
 			int departmentId, string catalogFieldId, string rowKey, int catalogVersion)
 		{
-			if (!ProtectedDataEnvelope.TryParse(envelope, out var formatVersion, out _, out var payloadBase64) ||
-				formatVersion > ProtectedDataEnvelope.CurrentVersion)
+			if (!ProtectedDataEnvelope.TryParse(envelope, out var formatVersion, out _, out var payloadBase64))
 				throw new CryptographicException("Value is not a parseable ADP envelope of a supported version.");
 
 			var payload = Convert.FromBase64String(payloadBase64);
-			var plainBytes = Open(dek, payload, Aad(departmentId, catalogFieldId, rowKey, catalogVersion));
+			// AAD binds the format version the envelope was WRITTEN with — a later CurrentVersion
+			// bump must not make existing envelopes fail authentication.
+			var plainBytes = Open(dek, payload, Aad(departmentId, catalogFieldId, rowKey, formatVersion, catalogVersion));
 			try
 			{
 				return Encoding.UTF8.GetString(plainBytes);
@@ -70,7 +72,8 @@ namespace Resgrid.Services
 					"Refusing to encrypt a blob that already carries the rgdpb envelope header; the double-encryption guard must run before field crypto.");
 
 			var header = Encoding.ASCII.GetBytes($"{ProtectedDataEnvelope.BinaryPrefix}{ProtectedDataEnvelope.CurrentVersion}:{departmentKeyVersion}:");
-			var payload = Seal(dek, plaintext, Aad(departmentId, catalogFieldId, rowKey, catalogVersion));
+			var payload = Seal(dek, plaintext,
+				Aad(departmentId, catalogFieldId, rowKey, ProtectedDataEnvelope.CurrentVersion, catalogVersion));
 
 			var result = new byte[header.Length + payload.Length];
 			Buffer.BlockCopy(header, 0, result, 0, header.Length);
@@ -81,18 +84,19 @@ namespace Resgrid.Services
 		public byte[] DecryptBinary(byte[] dek, byte[] envelope,
 			int departmentId, string catalogFieldId, string rowKey, int catalogVersion)
 		{
-			if (!TryParseBinaryHeader(envelope, out var payloadOffset))
+			if (!TryParseBinaryHeader(envelope, out var payloadOffset, out var formatVersion))
 				throw new CryptographicException("Blob is not a parseable rgdpb envelope of a supported version.");
 
 			var payload = new byte[envelope.Length - payloadOffset];
 			Buffer.BlockCopy(envelope, payloadOffset, payload, 0, payload.Length);
-			return Open(dek, payload, Aad(departmentId, catalogFieldId, rowKey, catalogVersion));
+			// AAD binds the format version the envelope was WRITTEN with (see DecryptText).
+			return Open(dek, payload, Aad(departmentId, catalogFieldId, rowKey, formatVersion, catalogVersion));
 		}
 
 		public bool TryGetBinaryEnvelopeKeyVersion(byte[] value, out int departmentKeyVersion)
 		{
 			departmentKeyVersion = 0;
-			if (!TryParseBinaryHeader(value, out var payloadOffset))
+			if (!TryParseBinaryHeader(value, out var payloadOffset, out _))
 				return false;
 
 			var headerText = Encoding.ASCII.GetString(value, 0, payloadOffset);
@@ -116,10 +120,13 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// AAD binding per plan section 4.1: department, stable catalog field id, stable per-row key,
-		/// and envelope+catalog versions. The pipe separator is safe because every component is either
-		/// numeric or a catalog/PK identifier that cannot contain '|'.
+		/// and envelope+catalog versions. The envelope format version is the one carried by the
+		/// envelope being read (or CurrentVersion when writing) — never blindly CurrentVersion, or a
+		/// format bump would make every existing envelope fail authentication. The pipe separator is
+		/// safe because every component is either numeric or a catalog/PK identifier that cannot
+		/// contain '|'.
 		/// </summary>
-		private static byte[] Aad(int departmentId, string catalogFieldId, string rowKey, int catalogVersion)
+		private static byte[] Aad(int departmentId, string catalogFieldId, string rowKey, int envelopeFormatVersion, int catalogVersion)
 		{
 			if (string.IsNullOrWhiteSpace(catalogFieldId))
 				throw new ArgumentException("Catalog field id is required for AAD binding.", nameof(catalogFieldId));
@@ -127,7 +134,7 @@ namespace Resgrid.Services
 				throw new ArgumentException("Row key is required for AAD binding.", nameof(rowKey));
 
 			return Encoding.UTF8.GetBytes(string.Create(CultureInfo.InvariantCulture,
-				$"rgdp|{departmentId}|{catalogFieldId}|{rowKey}|{ProtectedDataEnvelope.CurrentVersion}|{catalogVersion}"));
+				$"rgdp|{departmentId}|{catalogFieldId}|{rowKey}|{envelopeFormatVersion}|{catalogVersion}"));
 		}
 
 		private static byte[] Seal(byte[] dek, byte[] plaintext, byte[] aad)
@@ -171,10 +178,11 @@ namespace Resgrid.Services
 			return plaintext;
 		}
 
-		/// <summary>Parses "rgdpb:{format}:{keyVersion}:" and returns the payload offset.</summary>
-		private static bool TryParseBinaryHeader(byte[] value, out int payloadOffset)
+		/// <summary>Parses "rgdpb:{format}:{keyVersion}:" and returns the payload offset and format version.</summary>
+		private static bool TryParseBinaryHeader(byte[] value, out int payloadOffset, out int formatVersion)
 		{
 			payloadOffset = 0;
+			formatVersion = 0;
 			if (value == null || value.Length < ProtectedDataEnvelope.BinaryPrefix.Length + 4)
 				return false;
 
@@ -198,7 +206,7 @@ namespace Resgrid.Services
 						var headerText = Encoding.ASCII.GetString(value, 0, i + 1);
 						var parts = headerText.Split(':');
 						return parts.Length == 4 &&
-							   int.TryParse(parts[1], out var formatVersion) && formatVersion > 0 &&
+							   int.TryParse(parts[1], out formatVersion) && formatVersion > 0 &&
 							   formatVersion <= ProtectedDataEnvelope.CurrentVersion &&
 							   int.TryParse(parts[2], out var keyVersion) && keyVersion > 0;
 					}

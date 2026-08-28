@@ -150,6 +150,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				call.Address = null;
 				call.DestinationName = null;
 				call.DestinationAddress = null;
+				call.DestinationTypeName = null;
+				call.DestinationPoiId = null;
+				call.DestinationPoiTypeId = null;
+				call.DestinationLatitude = null;
+				call.DestinationLongitude = null;
 				call.Geolocation = null;
 				call.What3Words = null;
 				call.ContactName = null;
@@ -1728,6 +1733,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					destinationPoiLookup.TryGetValue(c.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
 					result.Data.Add(ConvertCall(c, null, address, TimeZone, destinationPoi));
 				}
+
+				await ApplyBigBoardSafeShellAsync(result.Data);
 				result.PageSize = result.Data.Count();
 				result.Status = ResponseHelper.Success;
 			}

@@ -281,7 +281,10 @@ namespace Resgrid.Services
 				if (profile == null || profile.MobileNumberVerified.IsContactMethodAllowedForSending())
 				{
 					var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
-					await _smsService.SendCallAsync(smsCall, dispatch, departmentNumber, departmentId, profile, smsCall.Address, payment);
+					// Caller-resolved address wins for an unsanitized channel (same precedence as the
+					// cancellation path); a sanitized channel gets no address at all.
+					await _smsService.SendCallAsync(smsCall, dispatch, departmentNumber, departmentId, profile,
+						ReferenceEquals(smsCall, call) ? (address ?? smsCall.Address) : null, payment);
 				}
 			}
 
@@ -813,13 +816,21 @@ namespace Resgrid.Services
 			// ADP egress (plan section 9): trouble alerts carry call fields, member names and
 			// locations. Per-channel safe views; a sanitized channel keeps the unit name (asset
 			// identifier, plaintext in catalog v1) so the alert stays actionable, but loses call
-			// content, addresses, coordinates and the personnel roster.
+			// content, addresses, coordinates and the personnel roster. The channel decision is
+			// made even when there is NO call — a call-less trouble alert still carries the unit
+			// location and the personnel roster.
 			var pushCall = call != null ? await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push) : null;
 			var smsCall = call != null ? await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms) : null;
 			var emailCall = call != null ? await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Email) : null;
-			var pushSanitized = call != null && !ReferenceEquals(pushCall, call);
-			var smsSanitized = call != null && !ReferenceEquals(smsCall, call);
-			var emailSanitized = call != null && !ReferenceEquals(emailCall, call);
+			var pushSanitized = call != null
+				? !ReferenceEquals(pushCall, call)
+				: await _protectedProjectionService.IsChannelSanitizedAsync(departmentId, ProtectedDataEgressChannel.Push);
+			var smsSanitized = call != null
+				? !ReferenceEquals(smsCall, call)
+				: await _protectedProjectionService.IsChannelSanitizedAsync(departmentId, ProtectedDataEgressChannel.Sms);
+			var emailSanitized = call != null
+				? !ReferenceEquals(emailCall, call)
+				: await _protectedProjectionService.IsChannelSanitizedAsync(departmentId, ProtectedDataEgressChannel.Email);
 
 			var emailEvent = troubleAlertEvent;
 			if (emailSanitized)

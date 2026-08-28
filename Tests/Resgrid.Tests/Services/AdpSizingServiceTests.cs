@@ -46,7 +46,7 @@ namespace Resgrid.Tests.Services
 			DataProtectionConfig.MigrationEstimateP90Multiplier = 2.0;
 
 			var bulk = new Mock<IDepartmentDataProtectionBulkRepository>();
-			bulk.Setup(x => x.CountRowsAsync(It.IsAny<AdpTableBinding>(), 7)).ReturnsAsync(10000);
+			bulk.Setup(x => x.CountRowsAsync(It.IsAny<AdpTableBinding>(), 7, It.IsAny<CancellationToken>())).ReturnsAsync(10000);
 
 			var service = new AdpSizingService(bulk.Object);
 			var result = await service.RunSizingScanAsync(7, windowMinutes: 480);
@@ -72,8 +72,8 @@ namespace Resgrid.Tests.Services
 
 			var bulk = new Mock<IDepartmentDataProtectionBulkRepository>();
 			// Only Calls has rows: 6,000,000 rows / 100 rps = 60,000s = 1000 min P50, 2000 min P90.
-			bulk.Setup(x => x.CountRowsAsync(It.IsAny<AdpTableBinding>(), 7)).ReturnsAsync(0);
-			bulk.Setup(x => x.CountRowsAsync(It.Is<AdpTableBinding>(b => b.TableName == "Calls"), 7))
+			bulk.Setup(x => x.CountRowsAsync(It.IsAny<AdpTableBinding>(), 7, It.IsAny<CancellationToken>())).ReturnsAsync(0);
+			bulk.Setup(x => x.CountRowsAsync(It.Is<AdpTableBinding>(b => b.TableName == "Calls"), 7, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(6_000_000);
 
 			var service = new AdpSizingService(bulk.Object);
@@ -87,7 +87,7 @@ namespace Resgrid.Tests.Services
 		public async Task Empty_department_still_projects_one_night()
 		{
 			var bulk = new Mock<IDepartmentDataProtectionBulkRepository>();
-			bulk.Setup(x => x.CountRowsAsync(It.IsAny<AdpTableBinding>(), It.IsAny<int>())).ReturnsAsync(0);
+			bulk.Setup(x => x.CountRowsAsync(It.IsAny<AdpTableBinding>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(0);
 
 			var service = new AdpSizingService(bulk.Object);
 			var result = await service.RunSizingScanAsync(7, windowMinutes: 480);

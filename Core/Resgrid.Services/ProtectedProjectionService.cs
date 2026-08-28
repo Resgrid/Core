@@ -141,6 +141,26 @@ namespace Resgrid.Services
 			};
 		}
 
+		public async Task<bool> IsChannelSanitizedAsync(int departmentId, ProtectedDataEgressChannel channel)
+		{
+			bool enforced;
+			try
+			{
+				enforced = await _dataProtectionService.IsProtectionEnforcedAsync(departmentId);
+			}
+			catch (Exception ex)
+			{
+				// Unknown protection state must not leak plaintext to a carrier or provider.
+				Logging.LogException(ex, $"Protection-state lookup failed for department {departmentId}; treating the {channel} channel as sanitized defensively.");
+				return true;
+			}
+
+			if (!enforced)
+				return false;
+
+			return !await ChannelAllowsProtectedContentAsync(departmentId, channel);
+		}
+
 		private async Task<bool> ChannelAllowsProtectedContentAsync(int departmentId, ProtectedDataEgressChannel channel)
 		{
 			// Third-party chat platforms have no policy column and are always generic when enforced.

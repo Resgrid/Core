@@ -208,6 +208,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 						_userManager.Options.Tokens.AuthenticatorTokenProvider, totpCode.Trim());
 					if (!totpValid)
 					{
+						// A caller who already holds the password must not get unlimited code
+						// guesses: count the failure against the same Identity lockout the
+						// password check uses.
+						await _userManager.AccessFailedAsync(user);
+
 						audit.Successful = false;
 						audit.Data += " (invalid_totp)";
 						await _systemAuditsService.SaveSystemAuditAsync(audit);

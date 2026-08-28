@@ -63,12 +63,14 @@ namespace Resgrid.Services
 			};
 
 			// The unique (DepartmentId, Version) index turns a concurrent double-provision into a
-			// database error on one side; that caller re-reads and resumes idempotently.
+			// database error on one side; that caller re-reads and resumes idempotently. Only
+			// database exceptions enter the re-read path — anything else (KMS faults, cancellation)
+			// propagates with its original cause intact.
 			try
 			{
 				await _keyRepository.InsertAsync(keyRow, cancellationToken);
 			}
-			catch (Exception ex)
+			catch (System.Data.Common.DbException ex)
 			{
 				Logging.LogException(ex, $"ADP key provisioning insert collided for department {departmentId} version {nextVersion}; re-reading");
 				var reread = await _keyRepository.GetByDepartmentAndVersionAsync(departmentId, nextVersion);
@@ -96,20 +98,22 @@ namespace Resgrid.Services
 			System.Collections.Generic.IEnumerable<DepartmentDataProtectionKey> olderVersions,
 			CancellationToken cancellationToken)
 		{
-			// Older Active versions move to Retiring first, so at every instant there is at most one
-			// Active version; reads resolve older envelopes through Retiring versions until rotation
+			// The NEW version becomes Active first so a concurrent GetActiveKeyAsync never observes
+			// zero Active rows mid-activation (the lookup takes the highest Active version, so the
+			// brief two-Active overlap resolves to the new key). Older versions then move to
+			// Retiring; reads resolve older envelopes through Retiring versions until rotation
 			// re-encryption retires them.
-			foreach (var older in olderVersions.Where(k => k.Status == (int)DepartmentDataProtectionKeyStatus.Active))
-			{
-				older.Status = (int)DepartmentDataProtectionKeyStatus.Retiring;
-				await _keyRepository.SaveOrUpdateAsync(older, cancellationToken);
-			}
-
 			if (keyRow.Status != (int)DepartmentDataProtectionKeyStatus.Active)
 			{
 				keyRow.Status = (int)DepartmentDataProtectionKeyStatus.Active;
 				keyRow.ActivatedOn = DateTime.UtcNow;
 				await _keyRepository.SaveOrUpdateAsync(keyRow, cancellationToken);
+			}
+
+			foreach (var older in olderVersions.Where(k => k.Status == (int)DepartmentDataProtectionKeyStatus.Active))
+			{
+				older.Status = (int)DepartmentDataProtectionKeyStatus.Retiring;
+				await _keyRepository.SaveOrUpdateAsync(older, cancellationToken);
 			}
 
 			return keyRow;

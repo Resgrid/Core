@@ -38,13 +38,13 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public void Unknown_future_format_version_parses_but_is_not_enveloped_for_current_code()
+		public void Unknown_future_format_version_is_not_parseable_and_reads_as_corrupt()
 		{
-			// A future-version envelope must not read as plaintext (HasEnvelopePrefix still true), and
-			// current code must not claim it can handle it (IsEnveloped false) — fail closed upstream.
+			// A future-version envelope is NOT parseable (documented TryParse contract) and must not
+			// read as plaintext either (HasEnvelopePrefix still true) — a prefixed value the current
+			// code cannot parse is corrupt, handled fail closed upstream.
 			var future = "rgdp:99:1:payload";
-			ProtectedDataEnvelope.TryParse(future, out var formatVersion, out _, out _).Should().BeTrue();
-			formatVersion.Should().Be(99);
+			ProtectedDataEnvelope.TryParse(future, out _, out _, out _).Should().BeFalse();
 			ProtectedDataEnvelope.IsEnveloped(future).Should().BeFalse();
 			ProtectedDataEnvelope.HasEnvelopePrefix(future).Should().BeTrue();
 		}

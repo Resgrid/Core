@@ -36,19 +36,21 @@ namespace Resgrid.Repositories.DataRepository
 			_isPostgres = DataConfig.DatabaseType == DatabaseTypes.Postgres;
 		}
 
-		public async Task<long> CountRowsAsync(AdpTableBinding binding, int departmentId)
+		public async Task<long> CountRowsAsync(AdpTableBinding binding, int departmentId,
+			CancellationToken cancellationToken = default)
 		{
 			var sql = $"SELECT COUNT_BIG(*) FROM {Table(binding.TableName)} WHERE {Scope(binding)}";
 			if (_isPostgres)
 				sql = sql.Replace("COUNT_BIG", "COUNT");
 
 			using var connection = _connectionProvider.Create();
-			await connection.OpenAsync();
-			return await connection.ExecuteScalarAsync<long>(sql, new { DepartmentId = departmentId });
+			await connection.OpenAsync(cancellationToken);
+			return await connection.ExecuteScalarAsync<long>(new Dapper.CommandDefinition(sql,
+				new { DepartmentId = departmentId }, cancellationToken: cancellationToken));
 		}
 
 		public async Task<IReadOnlyList<AdpBulkFieldRow>> GetBatchAsync(AdpTableBinding binding, int departmentId,
-			string afterCursor, int batchSize)
+			string afterCursor, int batchSize, CancellationToken cancellationToken = default)
 		{
 			var columns = SelectColumns(binding);
 			var columnList = string.Join(", ", columns.Select(Ident));
@@ -70,8 +72,8 @@ namespace Resgrid.Repositories.DataRepository
 			}
 
 			using var connection = _connectionProvider.Create();
-			await connection.OpenAsync();
-			var rows = await connection.QueryAsync(sql, parameters);
+			await connection.OpenAsync(cancellationToken);
+			var rows = await connection.QueryAsync(new Dapper.CommandDefinition(sql, parameters, cancellationToken: cancellationToken));
 
 			var result = new List<AdpBulkFieldRow>();
 			foreach (IDictionary<string, object> raw in rows)
@@ -147,7 +149,8 @@ namespace Resgrid.Repositories.DataRepository
 			await transaction.CommitAsync(cancellationToken);
 		}
 
-		public async Task<long> CountTextResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped)
+		public async Task<long> CountTextResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped,
+			CancellationToken cancellationToken = default)
 		{
 			var textColumns = binding.Columns.Where(c => c.StorageKind == ProtectedFieldStorageKind.Text).ToList();
 			if (textColumns.Count == 0)
@@ -161,10 +164,11 @@ namespace Resgrid.Repositories.DataRepository
 				? $"({Ident(c.ColumnName)} LIKE 'rgdp:%')"
 				: $"({Ident(c.ColumnName)} IS NOT NULL AND {Ident(c.ColumnName)} <> '' AND {Ident(c.ColumnName)} NOT LIKE 'rgdp:%')");
 
-			return await CountWhereAsync(binding, departmentId, string.Join(" OR ", predicates));
+			return await CountWhereAsync(binding, departmentId, string.Join(" OR ", predicates), cancellationToken);
 		}
 
-		public async Task<long> CountBinaryResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped)
+		public async Task<long> CountBinaryResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped,
+			CancellationToken cancellationToken = default)
 		{
 			var binaryColumns = binding.Columns.Where(c => c.StorageKind == ProtectedFieldStorageKind.Binary).ToList();
 			if (binaryColumns.Count == 0)
@@ -182,10 +186,11 @@ namespace Resgrid.Repositories.DataRepository
 					: $"({Ident(c.ColumnName)} IS NOT NULL AND NOT ({prefixMatch}))";
 			});
 
-			return await CountWhereAsync(binding, departmentId, string.Join(" OR ", predicates));
+			return await CountWhereAsync(binding, departmentId, string.Join(" OR ", predicates), cancellationToken);
 		}
 
-		public async Task<long> CountCompanionResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped)
+		public async Task<long> CountCompanionResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped,
+			CancellationToken cancellationToken = default)
 		{
 			var companionColumns = binding.Columns.Where(c => c.StorageKind == ProtectedFieldStorageKind.CompanionColumn).ToList();
 			if (companionColumns.Count == 0)
@@ -197,17 +202,19 @@ namespace Resgrid.Repositories.DataRepository
 				? $"({Ident(c.CompanionColumn)} IS NOT NULL)"
 				: $"({Ident(c.ColumnName)} IS NOT NULL)");
 
-			return await CountWhereAsync(binding, departmentId, string.Join(" OR ", predicates));
+			return await CountWhereAsync(binding, departmentId, string.Join(" OR ", predicates), cancellationToken);
 		}
 
-		private async Task<long> CountWhereAsync(AdpTableBinding binding, int departmentId, string predicate)
+		private async Task<long> CountWhereAsync(AdpTableBinding binding, int departmentId, string predicate,
+			CancellationToken cancellationToken)
 		{
 			var count = _isPostgres ? "COUNT(*)" : "COUNT_BIG(*)";
 			var sql = $"SELECT {count} FROM {Table(binding.TableName)} WHERE {Scope(binding)} AND ({predicate})";
 
 			using var connection = _connectionProvider.Create();
-			await connection.OpenAsync();
-			return await connection.ExecuteScalarAsync<long>(sql, new { DepartmentId = departmentId });
+			await connection.OpenAsync(cancellationToken);
+			return await connection.ExecuteScalarAsync<long>(new Dapper.CommandDefinition(sql,
+				new { DepartmentId = departmentId }, cancellationToken: cancellationToken));
 		}
 
 		private List<string> SelectColumns(AdpTableBinding binding)

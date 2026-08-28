@@ -48,6 +48,9 @@ namespace Resgrid.Tests.Workers
 
 			_lockService.Setup(x => x.ReleaseExpiredLocksAsync(It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new List<DepartmentOperationLock>());
+
+			// The mocked engine is a "real" one; availability gating has its own tests below.
+			_engine.SetupGet(x => x.IsAvailable).Returns(true);
 			_lockService.Setup(x => x.ApplyLockAsync(It.IsAny<int>(), It.IsAny<DepartmentOperationLockType>(),
 					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(),
 					It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()))
@@ -263,8 +266,10 @@ namespace Resgrid.Tests.Workers
 		}
 
 		[Test]
-		public async Task Null_engine_fails_the_run_closed()
+		public async Task Unavailable_engine_skips_nights_and_never_fails_queued_departments()
 		{
+			// A host without a real KMS adapter (Null engine / NotConfigured provider) must leave
+			// queued work QUEUED for the broker — never open a window destined to fail.
 			SetupPolicies(Policy(DepartmentDataProtectionState.Encrypting, DepartmentDataProtectionMigrationKind.Enrollment));
 			_keyService.Setup(x => x.GetActiveKeyAsync(DeptId))
 				.ReturnsAsync(new DepartmentDataProtectionKey { Version = 1 });
@@ -275,10 +280,33 @@ namespace Resgrid.Tests.Workers
 
 			var result = await logic.Process(CancellationToken.None);
 
-			result.Item2.Should().Contain(NullDepartmentDataMigrationEngine.EngineUnavailableErrorCode);
-			_policyRepo.Verify(x => x.TryTransitionStateAsync(DeptId, DepartmentDataProtectionState.Encrypting,
+			result.Item1.Should().BeTrue();
+			result.Item2.Should().Contain("engine unavailable");
+			_policyRepo.Verify(x => x.TryTransitionStateAsync(It.IsAny<int>(), It.IsAny<DepartmentDataProtectionState>(),
 				DepartmentDataProtectionState.Failed, It.IsAny<int?>(), It.IsAny<string>(),
-				It.IsAny<CancellationToken>()), Times.Once);
+				It.IsAny<CancellationToken>()), Times.Never);
+			_lockService.Verify(x => x.ApplyLockAsync(It.IsAny<int>(), It.IsAny<DepartmentOperationLockType>(),
+				It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(),
+				It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Unavailable_engine_still_runs_liveness_and_offboarding_flips()
+		{
+			var offboarding = Policy(DepartmentDataProtectionState.OffboardingScheduled, windowAlwaysOpen: false);
+			offboarding.OffboardingEffectiveOn = DateTime.UtcNow.AddDays(-1);
+			SetupPolicies(offboarding);
+
+			var logic = new AdpMigrationLogic(_lockService.Object, _policyRepo.Object, _protectionService.Object,
+				_keyService.Object, new NullDepartmentDataMigrationEngine(), new ProtectedFieldCatalog(),
+				_departmentsService.Object, _emailService.Object);
+
+			var result = await logic.Process(CancellationToken.None);
+
+			result.Item1.Should().BeTrue();
+			_policyRepo.Verify(x => x.TryTransitionStateAsync(DeptId, DepartmentDataProtectionState.OffboardingScheduled,
+				DepartmentDataProtectionState.DisableRequested, (int)DepartmentDataProtectionMigrationKind.Offboarding,
+				It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]

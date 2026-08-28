@@ -36,7 +36,7 @@ namespace Resgrid.Services
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 
-				var rows = await _bulkRepository.CountRowsAsync(binding, departmentId);
+				var rows = await _bulkRepository.CountRowsAsync(binding, departmentId, cancellationToken);
 				result.TableRowCounts[binding.TableName] = rows;
 				result.TotalRows += rows;
 			}

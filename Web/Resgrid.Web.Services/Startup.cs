@@ -672,6 +672,9 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterModule(new Resgrid.Chatbot.ChatbotModule());
 			builder.RegisterModule(new Resgrid.Chatbot.NLU.NLUModule());
 			builder.RegisterModule(new Resgrid.Providers.Chatbot.ChatbotProviderModule());
+			// ADP broker CLIENT only (no key material, no KMS route) — the app tier asks the broker
+			// to act on a caller's grant. The real KMS adapter module is broker-host-only.
+			builder.RegisterModule(new Resgrid.Providers.ProtectedData.ProtectedDataBrokerClientModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();

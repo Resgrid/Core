@@ -61,6 +61,9 @@ namespace Resgrid.Tests.Services
 				_protectedProjectionServiceMock
 					.Setup(x => x.BuildNotificationSafeCallAsync(It.IsAny<int>(), It.IsAny<Call>(), It.IsAny<ProtectedDataEgressChannel>()))
 					.Returns<int, Call, ProtectedDataEgressChannel>((d, c, ch) => Task.FromResult(c));
+				_protectedProjectionServiceMock
+					.Setup(x => x.IsChannelSanitizedAsync(It.IsAny<int>(), It.IsAny<ProtectedDataEgressChannel>()))
+					.ReturnsAsync(false);
 
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,

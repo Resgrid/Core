@@ -172,8 +172,41 @@ namespace Resgrid.Tests.Services
 					DepartmentDataProtectionState.EnrollmentQueued, It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(0);
 
-			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, "{}", null, null, null))
+			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, "{}", null, null, "UTC"))
 				.Should().Be(DepartmentDataProtectionEnrollmentResult.InvalidState);
+		}
+
+		[Test]
+		public async Task Unresolvable_window_time_zone_rejects_enrollment_instead_of_queuing_a_stall()
+		{
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync((DepartmentDataProtectionPolicy)null);
+
+			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, "{}", "22:00", "06:00", "Not/A_Zone"))
+				.Should().Be(DepartmentDataProtectionEnrollmentResult.InvalidWindow);
+			_policyRepo.Verify(x => x.InsertAsync(It.IsAny<DepartmentDataProtectionPolicy>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Missing_window_time_zone_falls_back_to_the_department_time_zone()
+		{
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync((DepartmentDataProtectionPolicy)null);
+			_departmentsService.Setup(x => x.GetDepartmentByIdAsync(DeptId, It.IsAny<bool>()))
+				.ReturnsAsync(new Department { DepartmentId = DeptId, ManagingUserId = ManagingUserId, TimeZone = "UTC" });
+
+			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, "{}", null, null, null))
+				.Should().Be(DepartmentDataProtectionEnrollmentResult.Queued);
+			_policyRepo.Verify(x => x.InsertAsync(It.Is<DepartmentDataProtectionPolicy>(p =>
+				p.MigrationWindowTimeZone == "UTC"), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Missing_window_time_zone_with_no_department_fallback_rejects_enrollment()
+		{
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync((DepartmentDataProtectionPolicy)null);
+
+			// Fixture department has no TimeZone set.
+			(await _service.QueueEnrollmentAsync(DeptId, ManagingUserId, "{}", null, null, null))
+				.Should().Be(DepartmentDataProtectionEnrollmentResult.InvalidWindow);
 		}
 
 		#endregion
@@ -258,6 +291,41 @@ namespace Resgrid.Tests.Services
 
 			var act = async () => await _service.SaveEgressPolicyAsync(policy, "admin-user");
 			act.Should().ThrowAsync<ArgumentException>();
+		}
+
+		[Test]
+		public async Task Protected_content_egress_without_a_recorded_acknowledgement_is_rejected()
+		{
+			var policy = new DepartmentProtectedDataEgressPolicy
+			{
+				DepartmentId = DeptId,
+				SmsMode = (int)ProtectedDataEgressMode.AllowProtectedContent
+			};
+
+			var act = async () => await _service.SaveEgressPolicyAsync(policy, "admin-user");
+			await act.Should().ThrowAsync<ArgumentException>();
+			_egressRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<DepartmentProtectedDataEgressPolicy>(),
+				It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Protected_content_egress_with_a_recorded_acknowledgement_saves()
+		{
+			var policy = new DepartmentProtectedDataEgressPolicy
+			{
+				DepartmentId = DeptId,
+				SmsMode = (int)ProtectedDataEgressMode.AllowProtectedContent,
+				AcknowledgementVersion = "v1",
+				AcknowledgedByUserId = "admin-user"
+			};
+			_egressRepo.Setup(x => x.SaveOrUpdateAsync(policy, It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync(policy);
+			_policyRepo.Setup(x => x.IncrementPolicyEpochAsync(DeptId, It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(2);
+
+			var saved = await _service.SaveEgressPolicyAsync(policy, "admin-user");
+
+			saved.Should().BeSameAs(policy);
 		}
 
 		#endregion

@@ -145,6 +145,27 @@ namespace Resgrid.Services
 				if (gate == null || gate.IsArchived || !gate.IsEnabledGlobally)
 					return DepartmentDataProtectionEnrollmentResult.FeatureNotAvailable;
 
+				var policy = await _policyRepository.GetByDepartmentIdAsync(departmentId);
+				if (policy != null && (DepartmentDataProtectionState)policy.State != DepartmentDataProtectionState.Disabled)
+					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+				// A queued migration whose window time zone never resolves would wait forever (the
+				// worker reads an unresolvable zone as closed). Resolve NOW and persist the
+				// canonical id: the explicit wizard selection first, then the department's own time
+				// zone; neither resolvable = reject rather than queue a permanent stall.
+				string resolvedWindowTimeZone;
+				if (!string.IsNullOrWhiteSpace(windowTimeZone))
+				{
+					if (!TryResolveWindowTimeZone(windowTimeZone, out resolvedWindowTimeZone))
+						return DepartmentDataProtectionEnrollmentResult.InvalidWindow;
+				}
+				else
+				{
+					var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+					if (!TryResolveWindowTimeZone(department?.TimeZone, out resolvedWindowTimeZone))
+						return DepartmentDataProtectionEnrollmentResult.InvalidWindow;
+				}
+
 				var utcNow = DateTime.UtcNow;
 				var evaluationRecord = JsonConvert.SerializeObject(new
 				{
@@ -156,7 +177,6 @@ namespace Resgrid.Services
 					correlationId = Guid.NewGuid().ToString("N")
 				});
 
-				var policy = await _policyRepository.GetByDepartmentIdAsync(departmentId);
 				if (policy == null)
 				{
 					policy = new DepartmentDataProtectionPolicy
@@ -171,7 +191,7 @@ namespace Resgrid.Services
 						EnrollmentFlagEvaluationJson = evaluationRecord,
 						MigrationWindowStartLocal = string.IsNullOrWhiteSpace(windowStartLocal) ? Config.DataProtectionConfig.MigrationWindowDefaultStartLocal : windowStartLocal,
 						MigrationWindowEndLocal = string.IsNullOrWhiteSpace(windowEndLocal) ? Config.DataProtectionConfig.MigrationWindowDefaultEndLocal : windowEndLocal,
-						MigrationWindowTimeZone = windowTimeZone,
+						MigrationWindowTimeZone = resolvedWindowTimeZone,
 						CreatedOn = utcNow,
 						CreatedByUserId = requestingUserId
 					};
@@ -182,18 +202,19 @@ namespace Resgrid.Services
 					{
 						await _policyRepository.InsertAsync(policy, cancellationToken);
 					}
-					catch (Exception)
+					catch (Exception ex)
 					{
+						// Logged so operators can tell a lost enroll race from a real fault
+						// (connectivity, mapping) that also lands here.
+						Logging.LogException(ex, $"ADP enrollment insert failed for department {departmentId}; reporting InvalidState");
 						await InvalidateProtectionCacheAsync(departmentId);
 						return DepartmentDataProtectionEnrollmentResult.InvalidState;
 					}
 				}
 				else
 				{
-					if ((DepartmentDataProtectionState)policy.State != DepartmentDataProtectionState.Disabled)
-						return DepartmentDataProtectionEnrollmentResult.InvalidState;
-
-					// CAS transition so two concurrent enroll commands cannot both commit.
+					// State already verified Disabled above; the CAS transition still closes the race
+					// against a concurrent enroll command that committed since that read.
 					var rows = await _policyRepository.TryTransitionStateAsync(departmentId,
 						DepartmentDataProtectionState.Disabled, DepartmentDataProtectionState.EnrollmentQueued,
 						(int)DepartmentDataProtectionMigrationKind.Enrollment, requestingUserId, cancellationToken);
@@ -208,7 +229,7 @@ namespace Resgrid.Services
 					policy.EnrollmentFlagEvaluationJson = evaluationRecord;
 					policy.MigrationWindowStartLocal = string.IsNullOrWhiteSpace(windowStartLocal) ? Config.DataProtectionConfig.MigrationWindowDefaultStartLocal : windowStartLocal;
 					policy.MigrationWindowEndLocal = string.IsNullOrWhiteSpace(windowEndLocal) ? Config.DataProtectionConfig.MigrationWindowDefaultEndLocal : windowEndLocal;
-					policy.MigrationWindowTimeZone = windowTimeZone;
+					policy.MigrationWindowTimeZone = resolvedWindowTimeZone;
 					policy.UpdatedOn = utcNow;
 					policy.UpdatedByUserId = requestingUserId;
 					await _policyRepository.SaveOrUpdateAsync(policy, cancellationToken);
@@ -364,6 +385,22 @@ namespace Resgrid.Services
 				policy.EmailMode == (int)ProtectedDataEgressMode.ProtectedAfterPin)
 				throw new ArgumentException("ProtectedAfterPin is only valid for the SMS and voice channels.", nameof(policy));
 
+			// Any mode that can emit protected content off-app (plan sections 9.1 and 12) requires
+			// the versioned administrator acknowledgement to be recorded on the policy — otherwise
+			// an unacknowledged save silently enables protected egress.
+			var emitsProtectedContent =
+				policy.PushMode == (int)ProtectedDataEgressMode.AllowProtectedContent ||
+				policy.EmailMode == (int)ProtectedDataEgressMode.AllowProtectedContent ||
+				policy.SmsMode == (int)ProtectedDataEgressMode.AllowProtectedContent ||
+				policy.VoiceMode == (int)ProtectedDataEgressMode.AllowProtectedContent ||
+				policy.SmsMode == (int)ProtectedDataEgressMode.ProtectedAfterPin ||
+				policy.VoiceMode == (int)ProtectedDataEgressMode.ProtectedAfterPin;
+			if (emitsProtectedContent &&
+				(string.IsNullOrWhiteSpace(policy.AcknowledgementVersion) || string.IsNullOrWhiteSpace(policy.AcknowledgedByUserId)))
+				throw new ArgumentException(
+					"Egress modes that emit protected content require a recorded, versioned administrator acknowledgement.",
+					nameof(policy));
+
 			var utcNow = DateTime.UtcNow;
 			if (policy.DepartmentProtectedDataEgressPolicyId <= 0)
 				policy.CreatedOn = utcNow;
@@ -390,6 +427,32 @@ namespace Resgrid.Services
 		{
 			await _cacheProvider.RemoveAsync(string.Format(PolicyCacheKey, departmentId));
 			await _cacheProvider.RemoveAsync(string.Format(EgressCacheKey, departmentId));
+		}
+
+		/// <summary>
+		/// Resolves a wizard-supplied or department time zone to its canonical system id. The worker
+		/// evaluates windows with TimeZoneInfo.FindSystemTimeZoneById, so only ids that resolve
+		/// there may ever be persisted on the policy row.
+		/// </summary>
+		private static bool TryResolveWindowTimeZone(string timeZoneId, out string resolvedId)
+		{
+			resolvedId = null;
+			if (string.IsNullOrWhiteSpace(timeZoneId))
+				return false;
+
+			try
+			{
+				resolvedId = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId.Trim()).Id;
+				return true;
+			}
+			catch (TimeZoneNotFoundException)
+			{
+				return false;
+			}
+			catch (InvalidTimeZoneException)
+			{
+				return false;
+			}
 		}
 
 		private async Task<DepartmentDataProtectionEnrollmentResult?> VerifyManagingMemberAsync(int departmentId, string requestingUserId)

@@ -29,5 +29,14 @@ namespace Resgrid.Model.Services
 		/// ProtectedAfterPin behaves as GenericOnly until the PIN-release flow ships.
 		/// </summary>
 		Task<Call> BuildNotificationSafeCallAsync(int departmentId, Call call, ProtectedDataEgressChannel channel);
+
+		/// <summary>
+		/// True when this channel must receive only sanitized (generic) content for the department:
+		/// protection is enforced and the channel's egress mode does not allow protected content.
+		/// Exists for notifications that carry protected data WITHOUT a call (trouble alerts, unit
+		/// locations, personnel rosters) — the channel decision must never depend on a call object
+		/// being present. Fails closed: an unknown protection state reads as sanitized.
+		/// </summary>
+		Task<bool> IsChannelSanitizedAsync(int departmentId, ProtectedDataEgressChannel channel);
 	}
 }

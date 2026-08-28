@@ -169,6 +169,7 @@ namespace Resgrid.Services
 			builder.RegisterType<ProtectedFieldCatalog>().As<IProtectedFieldCatalog>().SingleInstance();
 			builder.RegisterType<DepartmentKeyService>().As<IDepartmentKeyService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtectedFieldCryptoService>().As<IProtectedFieldCryptoService>().SingleInstance();
+			builder.RegisterType<ProtectedDataGrantService>().As<IProtectedDataGrantService>().SingleInstance();
 
 			// The real engine is registered everywhere but only functions where a real key wrapping
 			// provider resolves (LocalDev for synthetic testing; the broker host in production). On
@@ -185,7 +186,10 @@ namespace Resgrid.Services
 			if (string.Equals(Config.DataProtectionConfig.KeyWrappingProviderType, "LocalDev", StringComparison.OrdinalIgnoreCase))
 				builder.RegisterType<LocalDevKeyWrappingProvider>().As<IKeyWrappingProvider>().SingleInstance();
 			else
-				builder.RegisterType<NotConfiguredKeyWrappingProvider>().As<IKeyWrappingProvider>().SingleInstance();
+				// PreserveExistingDefaults: if a composition root loaded a REAL adapter module before
+				// this one (module order is host code, not a guarantee), the fail-closed placeholder
+				// must not silently win the last-registration race and break the broker.
+				builder.RegisterType<NotConfiguredKeyWrappingProvider>().As<IKeyWrappingProvider>().SingleInstance().PreserveExistingDefaults();
 
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();

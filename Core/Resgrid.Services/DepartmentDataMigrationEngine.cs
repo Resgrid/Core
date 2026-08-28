@@ -46,7 +46,13 @@ namespace Resgrid.Services
 			_cryptoService = cryptoService;
 		}
 
-		public bool IsAvailable => true;
+		/// <summary>
+		/// False where the key wrapping provider is the fail-closed placeholder (Web/API/worker
+		/// hosts): the coordinator then SKIPS nights instead of opening a window that can only fail
+		/// with kms_unavailable — queued departments wait for a host with a real KMS adapter (the
+		/// Protected Data Broker) rather than being marked Failed by a host that can never succeed.
+		/// </summary>
+		public bool IsAvailable => !(_keyWrappingProvider is NotConfiguredKeyWrappingProvider);
 
 		public async Task<AdpMigrationNightResult> RunEncryptionNightAsync(AdpMigrationNightContext context, CancellationToken cancellationToken)
 		{
@@ -57,10 +63,30 @@ namespace Resgrid.Services
 			if (keyRow == null)
 				return AdpMigrationNightResult.Failed("key_unavailable");
 
-			byte[] dek;
+			// Rows already enveloped may reference an EARLIER key version (a run that failed after
+			// encrypting part of the table, followed by a re-provision that minted a new version).
+			// Validation of those envelopes must use the version that wrote them — validating with
+			// the target DEK would read every such row as a foreign envelope and halt the run with
+			// no retry able to clear it.
+			var deks = new Dictionary<int, byte[]>();
+
+			async Task<byte[]> ResolveDekAsync(int version)
+			{
+				if (deks.TryGetValue(version, out var cached))
+					return cached;
+
+				var versionRow = await _keyService.GetKeyByVersionAsync(context.DepartmentId, version);
+				if (versionRow == null)
+					return null;
+
+				var unwrapped = await _keyWrappingProvider.UnwrapDataKeyAsync(context.DepartmentId, versionRow.WrappedKey, cancellationToken);
+				deks[version] = unwrapped;
+				return unwrapped;
+			}
+
 			try
 			{
-				dek = await _keyWrappingProvider.UnwrapDataKeyAsync(context.DepartmentId, keyRow.WrappedKey, cancellationToken);
+				deks[keyRow.Version] = await _keyWrappingProvider.UnwrapDataKeyAsync(context.DepartmentId, keyRow.WrappedKey, cancellationToken);
 			}
 			catch (Exception ex)
 			{
@@ -70,13 +96,15 @@ namespace Resgrid.Services
 
 			try
 			{
+				var targetDek = deks[keyRow.Version];
 				return await RunNightAsync(context, isEncrypting: true,
-					(spec, row, updates) => EncryptRowColumn(dek, keyRow.Version, context, spec, row, updates),
+					(spec, row, updates) => EncryptRowColumnAsync(ResolveDekAsync, targetDek, keyRow.Version, context, spec, row, updates),
 					cancellationToken);
 			}
 			finally
 			{
-				CryptographicOperations.ZeroMemory(dek);
+				foreach (var dek in deks.Values)
+					CryptographicOperations.ZeroMemory(dek);
 			}
 		}
 
@@ -126,9 +154,9 @@ namespace Resgrid.Services
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 
-				var textResidue = await _bulkRepository.CountTextResidueAsync(binding, context.DepartmentId, enveloped);
-				var binaryResidue = await _bulkRepository.CountBinaryResidueAsync(binding, context.DepartmentId, enveloped);
-				var companionResidue = await _bulkRepository.CountCompanionResidueAsync(binding, context.DepartmentId, enveloped);
+				var textResidue = await _bulkRepository.CountTextResidueAsync(binding, context.DepartmentId, enveloped, cancellationToken);
+				var binaryResidue = await _bulkRepository.CountBinaryResidueAsync(binding, context.DepartmentId, enveloped, cancellationToken);
+				var companionResidue = await _bulkRepository.CountCompanionResidueAsync(binding, context.DepartmentId, enveloped, cancellationToken);
 
 				if (textResidue > 0 || binaryResidue > 0 || companionResidue > 0)
 				{
@@ -163,7 +191,7 @@ namespace Resgrid.Services
 						CatalogVersion = context.CatalogVersion,
 						TargetKeyVersion = context.TargetKeyVersion,
 						TargetTable = binding.TableName,
-						RowsTotal = await _bulkRepository.CountRowsAsync(binding, context.DepartmentId),
+						RowsTotal = await _bulkRepository.CountRowsAsync(binding, context.DepartmentId, cancellationToken),
 						CorrelationId = context.CorrelationId,
 						CreatedOn = DateTime.UtcNow,
 						StartedOn = DateTime.UtcNow
@@ -179,7 +207,7 @@ namespace Resgrid.Services
 					if (DateTime.UtcNow >= context.WindowEndUtc)
 						return AdpMigrationNightResult.WindowClosed(nightProcessed, await ComputePercentCompleteAsync(context));
 
-					var batch = await _bulkRepository.GetBatchAsync(binding, context.DepartmentId, cursor, batchSize);
+					var batch = await _bulkRepository.GetBatchAsync(binding, context.DepartmentId, cursor, batchSize, cancellationToken);
 					if (batch.Count == 0)
 						break;
 
@@ -249,44 +277,68 @@ namespace Resgrid.Services
 			Anomalous = 3
 		}
 
-		private Task<ColumnOutcome> EncryptRowColumn(byte[] dek, int keyVersion, AdpMigrationNightContext context,
+		private async Task<ColumnOutcome> EncryptRowColumnAsync(Func<int, Task<byte[]>> resolveDekAsync,
+			byte[] targetDek, int keyVersion, AdpMigrationNightContext context,
 			AdpColumnSpec spec, AdpBulkFieldRow row, Dictionary<string, object> setValues)
 		{
+			// Resolves the DEK for the key version an EXISTING envelope references; an unparseable
+			// header or an unknown version reads as corrupt/foreign and halts the run (fail closed).
+			async Task<byte[]> ValidationDekForTextAsync(string envelope)
+			{
+				if (!ProtectedDataEnvelope.TryParse(envelope, out _, out var envelopeKeyVersion, out _))
+					throw new CryptographicException("Prefixed value is not a parseable ADP envelope; treating as corrupt.");
+
+				var validationDek = envelopeKeyVersion == keyVersion ? targetDek : await resolveDekAsync(envelopeKeyVersion);
+				if (validationDek == null)
+					throw new CryptographicException("Envelope references an unknown department key version.");
+
+				return validationDek;
+			}
+
 			switch (spec.StorageKind)
 			{
 				case ProtectedFieldStorageKind.Text:
 				{
 					var value = row.Values.TryGetValue(spec.ColumnName, out var raw) ? raw as string : null;
 					if (string.IsNullOrEmpty(value))
-						return Task.FromResult(ColumnOutcome.Skipped);
+						return ColumnOutcome.Skipped;
 
 					if (ProtectedDataEnvelope.HasEnvelopePrefix(value))
 					{
-						// Validate against THIS department's AAD; a mismatch throws (foreign envelope).
-						_cryptoService.DecryptText(dek, value, context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
-						return Task.FromResult(ColumnOutcome.AlreadyInTargetState);
+						// Validate against THIS department's AAD with the key version that wrote the
+						// envelope; a mismatch throws (foreign envelope).
+						var validationDek = await ValidationDekForTextAsync(value);
+						_cryptoService.DecryptText(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						return ColumnOutcome.AlreadyInTargetState;
 					}
 
-					setValues[spec.ColumnName] = _cryptoService.EncryptText(dek, keyVersion, value,
+					setValues[spec.ColumnName] = _cryptoService.EncryptText(targetDek, keyVersion, value,
 						context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
-					return Task.FromResult(ColumnOutcome.Changed);
+					return ColumnOutcome.Changed;
 				}
 
 				case ProtectedFieldStorageKind.Binary:
 				{
 					var value = row.Values.TryGetValue(spec.ColumnName, out var raw) ? raw as byte[] : null;
 					if (value == null || value.Length == 0)
-						return Task.FromResult(ColumnOutcome.Skipped);
+						return ColumnOutcome.Skipped;
 
 					if (_cryptoService.IsBinaryEnveloped(value))
 					{
-						_cryptoService.DecryptBinary(dek, value, context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
-						return Task.FromResult(ColumnOutcome.AlreadyInTargetState);
+						if (!_cryptoService.TryGetBinaryEnvelopeKeyVersion(value, out var envelopeKeyVersion))
+							throw new CryptographicException("Prefixed blob is not a parseable rgdpb envelope; treating as corrupt.");
+
+						var validationDek = envelopeKeyVersion == keyVersion ? targetDek : await resolveDekAsync(envelopeKeyVersion);
+						if (validationDek == null)
+							throw new CryptographicException("Envelope references an unknown department key version.");
+
+						_cryptoService.DecryptBinary(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						return ColumnOutcome.AlreadyInTargetState;
 					}
 
-					setValues[spec.ColumnName] = _cryptoService.EncryptBinary(dek, keyVersion, value,
+					setValues[spec.ColumnName] = _cryptoService.EncryptBinary(targetDek, keyVersion, value,
 						context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
-					return Task.FromResult(ColumnOutcome.Changed);
+					return ColumnOutcome.Changed;
 				}
 
 				case ProtectedFieldStorageKind.CompanionColumn:
@@ -297,23 +349,24 @@ namespace Resgrid.Services
 					if (typed != null)
 					{
 						var invariant = Convert.ToString(typed, CultureInfo.InvariantCulture);
-						setValues[spec.CompanionColumn] = _cryptoService.EncryptText(dek, keyVersion, invariant,
+						setValues[spec.CompanionColumn] = _cryptoService.EncryptText(targetDek, keyVersion, invariant,
 							context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
 						setValues[spec.ColumnName] = null;
-						return Task.FromResult(ColumnOutcome.Changed);
+						return ColumnOutcome.Changed;
 					}
 
 					if (!string.IsNullOrEmpty(companion))
 					{
-						_cryptoService.DecryptText(dek, companion, context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
-						return Task.FromResult(ColumnOutcome.AlreadyInTargetState);
+						var validationDek = await ValidationDekForTextAsync(companion);
+						_cryptoService.DecryptText(validationDek, companion, context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						return ColumnOutcome.AlreadyInTargetState;
 					}
 
-					return Task.FromResult(ColumnOutcome.Skipped);
+					return ColumnOutcome.Skipped;
 				}
 
 				default:
-					return Task.FromResult(ColumnOutcome.Skipped);
+					return ColumnOutcome.Skipped;
 			}
 		}
 
@@ -418,8 +471,10 @@ namespace Resgrid.Services
 				var done = rows.Sum(r => r.RowsProcessed + r.RowsAlreadyProtected);
 				return (int)Math.Min(100, done * 100 / total);
 			}
-			catch
+			catch (Exception ex)
 			{
+				// Progress is advisory; the night result stands either way — but leave a trace.
+				Logging.LogException(ex, $"ADP engine could not compute percent complete for department {context.DepartmentId}.");
 				return null;
 			}
 		}

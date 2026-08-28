@@ -181,5 +181,16 @@ namespace Resgrid.Tests.Providers
 			var act = () => new OpenBaoTransitKeyWrappingProvider(new ScriptedHandler());
 			act.Should().Throw<InvalidOperationException>();
 		}
+
+		[Test]
+		public void Plaintext_http_address_refuses_to_construct()
+		{
+			// An http endpoint would carry the cert-auth token and unwrapped DEKs unencrypted
+			// (plan A.14 prohibited configurations).
+			DataProtectionConfig.OpenBaoAddress = "http://bao.test:8200";
+
+			var act = () => new OpenBaoTransitKeyWrappingProvider(new ScriptedHandler());
+			act.Should().Throw<InvalidOperationException>().WithMessage("*HTTPS*");
+		}
 	}
 }

@@ -38,11 +38,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly UserManager<Model.Identity.IdentityUser> _userManager;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IProtectedDataGrantService _grantService;
 
 		public DataProtectionController(IDepartmentDataProtectionService dataProtectionService,
 			IDepartmentLockService departmentLockService, IProtectedFieldCatalog protectedFieldCatalog,
 			IDepartmentsService departmentsService, IFeatureToggleService featureToggleService,
-			UserManager<Model.Identity.IdentityUser> userManager, ICacheProvider cacheProvider)
+			UserManager<Model.Identity.IdentityUser> userManager, ICacheProvider cacheProvider,
+			IProtectedDataGrantService grantService)
 		{
 			_dataProtectionService = dataProtectionService;
 			_departmentLockService = departmentLockService;
@@ -51,6 +53,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_featureToggleService = featureToggleService;
 			_userManager = userManager;
 			_cacheProvider = cacheProvider;
+			_grantService = grantService;
 		}
 
 		/// <summary>
@@ -174,6 +177,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 				StepUpExpiresOnUtc = DateTime.UtcNow.AddMinutes(windowMinutes).ToString("O"),
 				StepUpWindowMinutes = windowMinutes
 			};
+
+			// When signing key material is configured (identity tier), the verification mints a real
+			// Protected Data Grant bound to user, department, session, client app, policy epoch and
+			// this moment's MFA. Without it, the response keeps the pre-broker shape (null grant).
+			if (_grantService.CanIssueGrants)
+			{
+				var issued = _grantService.IssueGrant(new ProtectedDataGrantIssueRequest
+				{
+					UserId = UserId,
+					DepartmentId = DepartmentId,
+					SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
+					ClientApp = int.TryParse(User.FindFirst(Model.Security.SessionClaimTypes.ClientApp)?.Value, out var clientApp)
+						? clientApp
+						: (int)UserSessionClientApplication.Api,
+					PolicyEpoch = policy?.PolicyEpoch ?? 0,
+					WindowMinutes = windowMinutes,
+					Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
+					MfaAtUtc = DateTime.UtcNow
+				});
+
+				result.GrantId = issued.GrantId;
+				result.GrantToken = issued.Token;
+				result.StepUpExpiresOnUtc = issued.ExpiresOnUtc.ToString("O");
+			}
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -260,6 +287,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return Problem(type: "invalid_state",
 						title: "The department's protection state does not permit this command.",
 						statusCode: StatusCodes.Status409Conflict);
+
+				case DepartmentDataProtectionEnrollmentResult.InvalidWindow:
+					return Problem(type: "invalid_window",
+						title: "A valid migration window time zone is required (select one in the wizard, or set the department time zone).",
+						statusCode: StatusCodes.Status400BadRequest);
 
 				default:
 					return Problem(type: "command_failed",

@@ -76,13 +76,19 @@ namespace Resgrid.Web.Services.Models.v4.DataProtection
 	/// <summary>
 	/// Result of a successful step-up verification. The window is ABSOLUTE (never sliding): clients
 	/// conceal protected values at StepUpExpiresOnUtc and prompt again on the next reveal/edit.
-	/// GrantId is reserved for the Phase 2 Protected Data Grant service; until it ships the
-	/// verification itself is the capability and GrantId is null.
+	/// When grant signing is configured on this deployment, GrantId/GrantToken carry a signed
+	/// Protected Data Grant the client presents alongside its access token on protected operations;
+	/// clients hold the token in MEMORY ONLY (never persisted) and discard it at expiry. On
+	/// deployments without signing key material both stay null and the verification itself remains
+	/// the capability (pre-broker behavior).
 	/// </summary>
 	public class StepUpResult : StandardApiResponseV4Base
 	{
-		/// <summary>Reserved for the Phase 2 grant service; null today.</summary>
+		/// <summary>Unique grant id (jti) for display/audit correlation; null when grants are not configured.</summary>
 		public string GrantId { get; set; }
+
+		/// <summary>Signed Protected Data Grant token; null when grants are not configured. MEMORY ONLY.</summary>
+		public string GrantToken { get; set; }
 
 		/// <summary>Absolute UTC expiry of this step-up window (ISO 8601).</summary>
 		public string StepUpExpiresOnUtc { get; set; }

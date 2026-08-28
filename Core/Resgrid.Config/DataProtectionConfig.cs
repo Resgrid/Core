@@ -20,6 +20,51 @@ namespace Resgrid.Config
 		public static int BrokerTimeoutMs = 10000;
 
 		/// <summary>
+		/// Shared workload secret the application tier presents to the broker (X-Resgrid-Broker-Key).
+		/// Supplied through the environment/secret store only; an empty value on the broker refuses
+		/// every request (fail closed). This is defense-in-depth UNDER network isolation and mTLS —
+		/// never the only control.
+		/// </summary>
+		public static string BrokerApiKey = "";
+
+		/// <summary>Maximum field items one broker request may carry; larger requests are refused.</summary>
+		public static int BrokerMaxItemsPerRequest = 200;
+
+		/// <summary>True on the broker host to run the ADP migration coordinator sweep there (the only
+		/// host with a real KMS adapter). Workers.Console keeps its sweep for liveness/offboarding
+		/// flips but never runs nights — its engine reports unavailable.</summary>
+		public static bool BrokerRunsMigrations = true;
+
+		/// <summary>Broker-hosted migration sweep interval in seconds (matches worker command 27).</summary>
+		public static int BrokerMigrationSweepSeconds = 300;
+
+		/// <summary>Issuer (iss) on Protected Data Grants — the identity tier's logical name.</summary>
+		public static string GrantIssuer = "resgrid-identity";
+
+		/// <summary>Audience (aud) on Protected Data Grants, pinned by the broker and API validators.</summary>
+		public static string GrantAudience = "resgrid-protected-data";
+
+		/// <summary>
+		/// Filesystem path to the grant SIGNING certificate (PFX with an ECDSA P-256 private key).
+		/// Present ONLY on identity-tier hosts (the step-up endpoint); the broker gets the public
+		/// validation certificate instead. The path is configuration; the file is a mounted secret.
+		/// </summary>
+		public static string GrantSigningCertificatePath = "";
+
+		/// <summary>PFX password for the signing certificate, supplied through the environment only.</summary>
+		public static string GrantSigningCertificatePassword = "";
+
+		/// <summary>
+		/// Filesystem path to the grant VALIDATION certificate (public key only, CER/PEM/PFX). Set on
+		/// broker and API hosts. When empty, validation falls back to the signing certificate's
+		/// public part where that is configured (single-host development).
+		/// </summary>
+		public static string GrantValidationCertificatePath = "";
+
+		/// <summary>Bounded clock skew allowed when validating grant lifetimes, in seconds.</summary>
+		public static int GrantClockSkewSeconds = 30;
+
+		/// <summary>
 		/// Key-wrapping provider the broker uses: "OpenBaoTransit" (production default), or "LocalDev"
 		/// for synthetic/non-PHI testing only — production startup must reject LocalDev.
 		/// </summary>
@@ -59,7 +104,11 @@ namespace Resgrid.Config
 		/// <summary>Operator ceiling on StepUpWindowMinutes; departments cannot exceed it.</summary>
 		public static int StepUpMaximumMinutes = 480;
 
-		/// <summary>ADP migration worker: departments migrated concurrently per night (BackOffice-adjustable).</summary>
+		/// <summary>
+		/// ADP migration worker: maximum departments whose night runs in one sweep
+		/// (BackOffice-adjustable). Executions are SEQUENTIAL within the sweep — this caps how many
+		/// departments a sweep picks up, it does not parallelize them.
+		/// </summary>
 		public static int MigrationNightlyConcurrency = 1;
 
 		/// <summary>

@@ -464,6 +464,16 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
+				// Frequent on purpose: most sweeps are cheap no-ops (no queued ADP departments, or
+				// overnight windows closed) and the lock-expiry liveness release should follow a dead
+				// worker's safety valve promptly. All heavy work runs only inside a department's
+				// selected overnight window under its operation lock.
+				_logger.Log(LogLevel.Information, "Scheduling ADP Migration");
+				await Client.ScheduleAsync("ADP Migration",
+					new Commands.AdpMigrationCommand(27),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

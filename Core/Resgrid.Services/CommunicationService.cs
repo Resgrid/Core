@@ -25,12 +25,14 @@ namespace Resgrid.Services
 		private readonly IUserStateService _userStateService;
 		private readonly IChatbotOutboundService _chatbotOutboundService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IProtectedProjectionService _protectedProjectionService;
 
 		public CommunicationService(ISmsService smsService, IEmailService emailService, IPushService pushService, IGeoLocationProvider geoLocationProvider,
 			IOutboundVoiceProvider outboundVoiceProvider, IUserProfileService userProfileService, IDepartmentSettingsService departmentSettingsService,
 			ISubscriptionsService subscriptionsService, IUserStateService userStateService, IChatbotOutboundService chatbotOutboundService,
-			IDepartmentsService departmentsService)
+			IDepartmentsService departmentsService, IProtectedProjectionService protectedProjectionService)
 		{
+			_protectedProjectionService = protectedProjectionService;
 			_smsService = smsService;
 			_emailService = emailService;
 			_pushService = pushService;
@@ -164,6 +166,20 @@ namespace Resgrid.Services
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
 
+			// ADP egress (plan section 9): per-channel notification-safe views, resolved BEFORE any
+			// template, provider DTO, or TTS prompt is built. For unprotected departments every one
+			// of these is the original call; for protected departments each channel gets the
+			// sanitized clone unless its egress mode explicitly allows protected content.
+			var chatCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.ChatPlatform);
+			var pushCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push);
+			var smsCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms);
+			var emailCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Email);
+			var voiceCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Voice);
+
+			// The pre-resolved address parameter is protected location data; it only survives for a
+			// channel whose safe view is the original call.
+			var pushAddress = ReferenceEquals(pushCall, call) ? address : null;
+
 			// Outbound chat platforms as a sibling channel for call dispatches; failures are isolated.
 			try
 			{
@@ -171,9 +187,9 @@ namespace Resgrid.Services
 					new ChatbotOutboundMessage
 					{
 						Type = ChatbotOutboundType.Dispatch,
-						Title = string.Format("Call {0}", call.Name),
-						Body = string.IsNullOrWhiteSpace(call.Address) ? call.NatureOfCall : call.Address,
-						ReferenceId = call.CallId.ToString()
+						Title = string.Format("Call {0}", chatCall.Name),
+						Body = string.IsNullOrWhiteSpace(chatCall.Address) ? chatCall.NatureOfCall : chatCall.Address,
+						ReferenceId = chatCall.CallId.ToString()
 					});
 			}
 			catch (Exception ex)
@@ -187,16 +203,16 @@ namespace Resgrid.Services
 				try
 				{
 					var spc = new StandardPushCall();
-					spc.CallId = call.CallId;
-					spc.Title = string.Format("Call {0}", call.Name);
-					spc.Priority = call.Priority;
+					spc.CallId = pushCall.CallId;
+					spc.Title = string.Format("Call {0}", pushCall.Name);
+					spc.Priority = pushCall.Priority;
 					spc.ActiveCallCount = 1;
 					spc.DepartmentId = departmentId;
-					spc.DepartmentCode = call.Department?.Code;
+					spc.DepartmentCode = pushCall.Department?.Code;
 
-					if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
+					if (pushCall.CallPriority != null && !String.IsNullOrWhiteSpace(pushCall.CallPriority.Color))
 					{
-						spc.Color = call.CallPriority.Color;
+						spc.Color = pushCall.CallPriority.Color;
 					}
 					else
 					{
@@ -205,19 +221,19 @@ namespace Resgrid.Services
 
 					string subTitle = String.Empty;
 
-					if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
+					if (String.IsNullOrWhiteSpace(pushAddress) && !String.IsNullOrWhiteSpace(pushCall.Address))
 					{
-						subTitle = call.Address;
+						subTitle = pushCall.Address;
 					}
-					else if (!String.IsNullOrWhiteSpace(address))
+					else if (!String.IsNullOrWhiteSpace(pushAddress))
 					{
-						subTitle = address;
+						subTitle = pushAddress;
 					}
-					else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+					else if (!string.IsNullOrEmpty(pushCall.GeoLocationData) && pushCall.GeoLocationData.Length > 1)
 					{
 						try
 						{
-							string[] points = call.GeoLocationData.Split(char.Parse(","));
+							string[] points = pushCall.GeoLocationData.Split(char.Parse(","));
 
 							if (points != null && points.Length == 2)
 							{
@@ -234,8 +250,8 @@ namespace Resgrid.Services
 					}
 					else
 					{
-						if (!string.IsNullOrEmpty(call.NatureOfCall))
-							spc.SubTitle = call.NatureOfCall.Truncate(200);
+						if (!string.IsNullOrEmpty(pushCall.NatureOfCall))
+							spc.SubTitle = pushCall.NatureOfCall.Truncate(200);
 					}
 
 					if (String.IsNullOrWhiteSpace(spc.SubTitle))
@@ -251,7 +267,7 @@ namespace Resgrid.Services
 					spc.Title = spc.Title.Replace(char.Parse("/"), char.Parse(" "));
 					spc.SubTitle = spc.SubTitle.Replace(char.Parse("/"), char.Parse(" "));
 
-					await _pushService.PushCall(spc, dispatch.UserId, profile, call.CallPriority);
+					await _pushService.PushCall(spc, dispatch.UserId, profile, pushCall.CallPriority);
 				}
 				catch (Exception ex)
 				{
@@ -265,7 +281,7 @@ namespace Resgrid.Services
 				if (profile == null || profile.MobileNumberVerified.IsContactMethodAllowedForSending())
 				{
 					var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
-					await _smsService.SendCallAsync(call, dispatch, departmentNumber, departmentId, profile, call.Address, payment);
+					await _smsService.SendCallAsync(smsCall, dispatch, departmentNumber, departmentId, profile, smsCall.Address, payment);
 				}
 			}
 
@@ -274,7 +290,7 @@ namespace Resgrid.Services
 			{
 				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
 				{
-					await _emailService.SendCallAsync(call, dispatch, profile);
+					await _emailService.SendCallAsync(emailCall, dispatch, profile);
 				}
 			}
 
@@ -292,7 +308,7 @@ namespace Resgrid.Services
 					{
 
 						if (!Config.SystemBehaviorConfig.DoNotBroadcast || Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
-							await _outboundVoiceProvider.CommunicateCallAsync(departmentNumber, profile, call);
+							await _outboundVoiceProvider.CommunicateCallAsync(departmentNumber, profile, voiceCall);
 					}
 					catch (Exception ex)
 					{
@@ -306,6 +322,13 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendUnitCallAsync(Call call, CallDispatchUnit dispatch, string departmentNumber, string address = null)
 		{
+			// ADP egress: unit push uses the notification-safe view; the pre-resolved address is
+			// protected location data and is dropped whenever the view is sanitized.
+			var safeUnitCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(call.DepartmentId, call, ProtectedDataEgressChannel.Push);
+			if (!ReferenceEquals(safeUnitCall, call))
+				address = null;
+			call = safeUnitCall;
+
 			var spc = new StandardPushCall();
 			spc.CallId = call.CallId;
 			spc.Title = string.Format("Call {0}", call.Name);
@@ -386,22 +409,29 @@ namespace Resgrid.Services
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
 
+			// ADP egress: per-channel notification-safe views for the cancellation, resolved before
+			// any template or provider DTO — same contract as the original dispatch.
+			var pushCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push);
+			var smsCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms);
+			var emailCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Email);
+			var pushAddress = ReferenceEquals(pushCall, call) ? address : null;
+
 			// Send a Push Notification
 			if (profile == null || profile.SendPush)
 			{
 				try
 				{
 					var spc = new StandardPushCall();
-					spc.CallId = call.CallId;
-					spc.Title = string.Format("Dispatch Cancelled - {0}", call.Name);
-					spc.Priority = call.Priority;
+					spc.CallId = pushCall.CallId;
+					spc.Title = string.Format("Dispatch Cancelled - {0}", pushCall.Name);
+					spc.Priority = pushCall.Priority;
 					spc.ActiveCallCount = 1;
 					spc.DepartmentId = departmentId;
-					spc.DepartmentCode = call.Department?.Code;
+					spc.DepartmentCode = pushCall.Department?.Code;
 
-					if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
+					if (pushCall.CallPriority != null && !String.IsNullOrWhiteSpace(pushCall.CallPriority.Color))
 					{
-						spc.Color = call.CallPriority.Color;
+						spc.Color = pushCall.CallPriority.Color;
 					}
 					else
 					{
@@ -410,19 +440,19 @@ namespace Resgrid.Services
 
 					string subTitle = String.Empty;
 
-					if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
+					if (String.IsNullOrWhiteSpace(pushAddress) && !String.IsNullOrWhiteSpace(pushCall.Address))
 					{
-						subTitle = call.Address;
+						subTitle = pushCall.Address;
 					}
-					else if (!String.IsNullOrWhiteSpace(address))
+					else if (!String.IsNullOrWhiteSpace(pushAddress))
 					{
-						subTitle = address;
+						subTitle = pushAddress;
 					}
-					else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+					else if (!string.IsNullOrEmpty(pushCall.GeoLocationData) && pushCall.GeoLocationData.Length > 1)
 					{
 						try
 						{
-							string[] points = call.GeoLocationData.Split(char.Parse(","));
+							string[] points = pushCall.GeoLocationData.Split(char.Parse(","));
 
 							if (points != null && points.Length == 2)
 							{
@@ -439,8 +469,8 @@ namespace Resgrid.Services
 					}
 					else
 					{
-						if (!string.IsNullOrEmpty(call.NatureOfCall))
-							spc.SubTitle = call.NatureOfCall.Truncate(200);
+						if (!string.IsNullOrEmpty(pushCall.NatureOfCall))
+							spc.SubTitle = pushCall.NatureOfCall.Truncate(200);
 					}
 
 					if (String.IsNullOrWhiteSpace(spc.SubTitle))
@@ -456,7 +486,7 @@ namespace Resgrid.Services
 					spc.Title = spc.Title.Replace(char.Parse("/"), char.Parse(" "));
 					spc.SubTitle = spc.SubTitle.Replace(char.Parse("/"), char.Parse(" "));
 
-					await _pushService.PushCall(spc, dispatch.UserId, profile, call.CallPriority);
+					await _pushService.PushCall(spc, dispatch.UserId, profile, pushCall.CallPriority);
 				}
 				catch (Exception ex)
 				{
@@ -472,7 +502,8 @@ namespace Resgrid.Services
 					try
 					{
 						var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
-						await _smsService.SendCancelCallAsync(call, dispatch, departmentNumber, departmentId, profile, address ?? call.Address, payment);
+						await _smsService.SendCancelCallAsync(smsCall, dispatch, departmentNumber, departmentId, profile,
+							ReferenceEquals(smsCall, call) ? (address ?? smsCall.Address) : null, payment);
 					}
 					catch (Exception ex)
 					{
@@ -488,7 +519,7 @@ namespace Resgrid.Services
 				{
 					try
 					{
-						await _emailService.SendCancelCallAsync(call, dispatch, profile);
+						await _emailService.SendCancelCallAsync(emailCall, dispatch, profile);
 					}
 					catch (Exception ex)
 					{
@@ -504,6 +535,12 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendCancelUnitCallAsync(Call call, CallDispatchUnit dispatch, string departmentNumber, string address = null)
 		{
+			// ADP egress: cancellation pushes are sanitized the same way as the original dispatch.
+			var safeCancelCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(call.DepartmentId, call, ProtectedDataEgressChannel.Push);
+			if (!ReferenceEquals(safeCancelCall, call))
+				address = null;
+			call = safeCancelCall;
+
 			var spc = new StandardPushCall();
 			spc.CallId = call.CallId;
 			spc.Title = string.Format("Dispatch Cancelled - {0}", call.Name);
@@ -773,6 +810,30 @@ namespace Resgrid.Services
 				}
 			}
 
+			// ADP egress (plan section 9): trouble alerts carry call fields, member names and
+			// locations. Per-channel safe views; a sanitized channel keeps the unit name (asset
+			// identifier, plaintext in catalog v1) so the alert stays actionable, but loses call
+			// content, addresses, coordinates and the personnel roster.
+			var pushCall = call != null ? await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push) : null;
+			var smsCall = call != null ? await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms) : null;
+			var emailCall = call != null ? await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Email) : null;
+			var pushSanitized = call != null && !ReferenceEquals(pushCall, call);
+			var smsSanitized = call != null && !ReferenceEquals(smsCall, call);
+			var emailSanitized = call != null && !ReferenceEquals(emailCall, call);
+
+			var emailEvent = troubleAlertEvent;
+			if (emailSanitized)
+			{
+				emailEvent = new TroubleAlertEvent
+				{
+					UnitId = troubleAlertEvent.UnitId,
+					CallId = troubleAlertEvent.CallId,
+					UserId = troubleAlertEvent.UserId,
+					DepartmentId = troubleAlertEvent.DepartmentId,
+					TimeStamp = troubleAlertEvent.TimeStamp
+				};
+			}
+
 			foreach (var recipient in recipients)
 			{
 				if (!await CanSendToUser(recipient.UserId, departmentId))
@@ -783,17 +844,17 @@ namespace Resgrid.Services
 				{
 					var spc = new StandardPushCall();
 
-					if (call != null)
-						spc.CallId = call.CallId;
+					if (pushCall != null)
+						spc.CallId = pushCall.CallId;
 
 					spc.Title = string.Format("TROUBLE ALERT for {0}", unit.Name);
 					spc.Priority = (int)CallPriority.Emergency;
 					spc.ActiveCallCount = 1;
 					spc.DepartmentId = departmentId;
-					spc.DepartmentCode = call.Department?.Code;
+					spc.DepartmentCode = pushCall?.Department?.Code;
 
 					string subTitle = String.Empty;
-					if (!String.IsNullOrWhiteSpace(unitAddress))
+					if (!pushSanitized && !String.IsNullOrWhiteSpace(unitAddress))
 					{
 						spc.Title = string.Format("TROUBLE ALERT for {0} at {1}", unit.Name, unitAddress);
 					}
@@ -817,7 +878,7 @@ namespace Resgrid.Services
 					{
 						try
 						{
-							_smsService.SendTroubleAlert(unit, call, unitAddress, departmentNumber, departmentId, recipient);
+							_smsService.SendTroubleAlert(unit, smsCall, smsSanitized ? null : unitAddress, departmentNumber, departmentId, recipient);
 						}
 						catch (Exception ex)
 						{
@@ -833,7 +894,9 @@ namespace Resgrid.Services
 					{
 						try
 						{
-							await _emailService.SendTroubleAlert(troubleAlertEvent, unit, call, callAddress, unitAddress, personnelNames, recipient);
+							await _emailService.SendTroubleAlert(emailEvent, unit, emailCall,
+								emailSanitized ? null : callAddress, emailSanitized ? null : unitAddress,
+								emailSanitized ? "Protected — sign in to Resgrid" : personnelNames, recipient);
 						}
 						catch (Exception ex)
 						{

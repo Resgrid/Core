@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Services.CallEmailTemplates;
 using RestSharp;
@@ -161,6 +162,30 @@ namespace Resgrid.Services
 			builder.RegisterType<LocalIpLocationProvider>().As<IIpLocationProvider>().SingleInstance();
 			builder.RegisterType<ExternalIdentityLinkService>().As<IExternalIdentityLinkService>().InstancePerLifetimeScope();
 			builder.RegisterType<PasswordRecoveryService>().As<IPasswordRecoveryService>().InstancePerLifetimeScope();
+
+			// Advanced Data Protection (ADP)
+			builder.RegisterType<DepartmentDataProtectionService>().As<IDepartmentDataProtectionService>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentLockService>().As<IDepartmentLockService>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtectedFieldCatalog>().As<IProtectedFieldCatalog>().SingleInstance();
+			builder.RegisterType<DepartmentKeyService>().As<IDepartmentKeyService>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtectedFieldCryptoService>().As<IProtectedFieldCryptoService>().SingleInstance();
+
+			// The real engine is registered everywhere but only functions where a real key wrapping
+			// provider resolves (LocalDev for synthetic testing; the broker host in production). On
+			// the app tier the NotConfigured provider makes every run fail closed with
+			// kms_unavailable, which the coordinator treats like any other unrecoverable error.
+			builder.RegisterType<DepartmentDataMigrationEngine>().As<IDepartmentDataMigrationEngine>().InstancePerLifetimeScope();
+			builder.RegisterType<AdpSizingService>().As<IAdpSizingService>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtectedProjectionService>().As<IProtectedProjectionService>().InstancePerLifetimeScope();
+
+			// Key wrapping: only the LocalDev provider (synthetic/non-PHI testing; refuses to run in
+			// production) is resolvable in-process. Any other configured provider registers the
+			// fail-closed placeholder — real KMS adapters live with the Protected Data Broker, which
+			// Web/API/worker hosts deliberately cannot reach (ADP plan section 2.2).
+			if (string.Equals(Config.DataProtectionConfig.KeyWrappingProviderType, "LocalDev", StringComparison.OrdinalIgnoreCase))
+				builder.RegisterType<LocalDevKeyWrappingProvider>().As<IKeyWrappingProvider>().SingleInstance();
+			else
+				builder.RegisterType<NotConfiguredKeyWrappingProvider>().As<IKeyWrappingProvider>().SingleInstance();
 
 			//builder.RegisterType<InternalCacheService>().As<IInternalCacheService>().SingleInstance();
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();

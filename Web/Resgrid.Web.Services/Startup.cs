@@ -166,7 +166,12 @@ namespace Resgrid.Web.ServicesCore
 
 			services.AddCors();
 
-			services.AddControllers().AddNewtonsoftJson(options =>
+			services.AddControllers(options =>
+			{
+				// ADP department operation lock: refuses department-scoped mutations with 423 Locked
+				// while a migration window holds the department's lock; reads pass through untouched.
+				options.Filters.Add<Resgrid.Web.Services.Filters.DepartmentLockActionFilter>();
+			}).AddNewtonsoftJson(options =>
 			{
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 			});

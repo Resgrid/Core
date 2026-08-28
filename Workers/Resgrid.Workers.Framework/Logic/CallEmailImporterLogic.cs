@@ -31,6 +31,13 @@ namespace Resgrid.Workers.Framework.Logic
 
 			if (!String.IsNullOrWhiteSpace(item?.EmailSettings?.Hostname))
 			{
+				// ADP department operation lock: email-call ingestion is deferred while the department
+				// is locked (plan section 20.2). The check MUST run before touching the mail server —
+				// the POP fetch removes messages from the mailbox, so deferring here leaves them
+				// queued server-side to be ingested after the lock releases.
+				if (await DepartmentLockGuard.IsDepartmentLockedAsync(item.EmailSettings.DepartmentId))
+					return new Tuple<bool, string>(true, $"deferred: department {item.EmailSettings.DepartmentId} is locked");
+
 				CallEmailsResult emailResult = _callEmailProvider.GetAllCallEmailsFromServer(item.EmailSettings);
 
 				if (emailResult?.Emails != null && emailResult.Emails.Count > 0)

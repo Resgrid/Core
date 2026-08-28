@@ -31,6 +31,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<ICallsService> _callsService;
 		private Mock<IAuthorizationService> _authorizationService;
 		private Mock<IProtocolsService> _protocolsService;
+		private Mock<IDepartmentDataProtectionService> _dataProtectionService;
 		private CallsController _controller;
 		private Activity _activity;
 
@@ -40,6 +41,7 @@ namespace Resgrid.Tests.Web.Services
 			_callsService = new Mock<ICallsService>();
 			_authorizationService = new Mock<IAuthorizationService>();
 			_protocolsService = new Mock<IProtocolsService>();
+			_dataProtectionService = new Mock<IDepartmentDataProtectionService>();
 
 			var httpContext = new DefaultHttpContext
 			{
@@ -75,7 +77,8 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IWeatherAlertService>(),
 				Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(),
-				Mock.Of<IFeatureToggleService>())
+				Mock.Of<IFeatureToggleService>(),
+				_dataProtectionService.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -150,6 +153,94 @@ namespace Resgrid.Tests.Web.Services
 
 			_protocolsService.Verify(service => service.GetProtocolByIdAsync(5), Times.Once);
 			_protocolsService.Verify(service => service.GetProtocolByIdAsync(999), Times.Never);
+		}
+
+		private void UseBigBoardSession()
+		{
+			var httpContext = new DefaultHttpContext
+			{
+				User = new ClaimsPrincipal(new ClaimsIdentity(new[]
+				{
+					new Claim(ClaimTypes.PrimarySid, UserId),
+					new Claim(ClaimTypes.PrimaryGroupSid, DepartmentId.ToString()),
+					new Claim(Resgrid.Model.Security.SessionClaimTypes.ClientApp,
+						((int)UserSessionClientApplication.BigBoard).ToString())
+				}, "test"))
+			};
+			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = httpContext };
+			_controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
+		}
+
+		private Call SetupProtectedCall()
+		{
+			var call = new Call
+			{
+				CallId = 42,
+				DepartmentId = DepartmentId,
+				Number = "2026-134",
+				Name = "Cardiac Arrest - Smith Residence",
+				NatureOfCall = "62yo male, CPR in progress",
+				Address = "123 Main St",
+				LoggedOn = DateTime.UtcNow
+			};
+
+			_callsService.Setup(service => service.GetCallByIdAsync(42, It.IsAny<bool>())).ReturnsAsync(call);
+			_callsService
+				.Setup(service => service.PopulateCallData(call, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync(call);
+			_authorizationService.Setup(service => service.CanUserViewCallAsync(UserId, 42)).ReturnsAsync(true);
+
+			return call;
+		}
+
+		[Test]
+		public async Task GetCall_ReturnsSafeShell_ForBigBoardSessionOfProtectedDepartment()
+		{
+			SetupProtectedCall();
+			_dataProtectionService.Setup(x => x.IsProtectionEnforcedAsync(DepartmentId)).ReturnsAsync(true);
+			UseBigBoardSession();
+
+			var response = await _controller.GetCall("42");
+
+			var result = response.Result.Should().BeOfType<OkObjectResult>().Subject.Value
+				.Should().BeOfType<CallResult>().Subject;
+			result.Data.Name.Should().Be("Protected incident — open Resgrid to view details.");
+			result.Data.Nature.Should().BeNull();
+			result.Data.Address.Should().BeNull();
+			result.Data.ContactName.Should().BeNull();
+			result.Data.Number.Should().Be("2026-134", "the system-generated call number is allowlisted");
+			result.Data.UdfValues.Should().BeNullOrEmpty("submitted UDF free text is suppressed for the shell");
+		}
+
+		[Test]
+		public async Task GetCall_IsUnchangedForBigBoard_WhenDepartmentIsNotProtected()
+		{
+			SetupProtectedCall();
+			_dataProtectionService.Setup(x => x.IsProtectionEnforcedAsync(DepartmentId)).ReturnsAsync(false);
+			UseBigBoardSession();
+
+			var response = await _controller.GetCall("42");
+
+			var result = response.Result.Should().BeOfType<OkObjectResult>().Subject.Value
+				.Should().BeOfType<CallResult>().Subject;
+			result.Data.Name.Should().Be("Cardiac Arrest - Smith Residence");
+			result.Data.Address.Should().Be("123 Main St");
+		}
+
+		[Test]
+		public async Task GetCall_IsUnchangedForAttendedClients_EvenWhenProtected()
+		{
+			SetupProtectedCall();
+			_dataProtectionService.Setup(x => x.IsProtectionEnforcedAsync(DepartmentId)).ReturnsAsync(true);
+
+			var response = await _controller.GetCall("42");
+
+			var result = response.Result.Should().BeOfType<OkObjectResult>().Subject.Value
+				.Should().BeOfType<CallResult>().Subject;
+			result.Data.Name.Should().Be("Cardiac Arrest - Smith Residence",
+				"attended clients are gated by grants in a later phase, never by the BigBoard shell");
 		}
 
 		[TestCase(null)]

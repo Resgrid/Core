@@ -98,6 +98,8 @@ namespace Resgrid.Model
 			{
 				case PlanAddonTypes.PTT:
 					return "Push-To-Talk";
+				case PlanAddonTypes.ADP:
+					return "Advanced Data Protection";
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

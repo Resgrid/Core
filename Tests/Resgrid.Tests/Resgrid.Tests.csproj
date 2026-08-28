@@ -63,6 +63,8 @@
     <ProjectReference Include="..\..\Workers\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Workflow\Resgrid.Providers.Workflow.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Weather\Resgrid.Providers.Weather.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.ProtectedData\Resgrid.Providers.ProtectedData.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.MigrationsPg\Resgrid.Providers.MigrationsPg.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Data\TestCall.json">

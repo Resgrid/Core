@@ -36,6 +36,12 @@ namespace Resgrid.Config
 		public static string PaddleTestBillingWebhookSigningKey = "";
 		public static string PaddlePTT10UserAddonPackage = "";
 		public static string PaddlePTT10UserAddonPackageTest = "";
+
+		// Advanced Data Protection yearly addon (Paddle product pro_01m11vjn9cjmgmwzgv2kt8wndk).
+		// The Stripe side lives on the PlanAddons row (M0126); Paddle price ids follow the PTT
+		// precedent and live here.
+		public static string PaddleAdpAddon = "pri_01m11vm50c17z0rxcgy4fppf80";
+		public static string PaddleAdpAddonTest = "";
 		public static string PaddleProductionEnvironment = "production";
 		public static string PaddleTestEnvironment = "sandbox";
 		public static string PaddleProductionClientToken = "";
@@ -137,6 +143,14 @@ namespace Resgrid.Config
 				return PaddlePTT10UserAddonPackageTest;
 			else
 				return PaddlePTT10UserAddonPackage;
+		}
+
+		public static string GetPaddleAdpAddonPriceId()
+		{
+			if (IsTestMode)
+				return PaddleAdpAddonTest;
+			else
+				return PaddleAdpAddon;
 		}
 
 		public static string GetPaddleEnvironment()

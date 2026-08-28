@@ -182,6 +182,45 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 				}
 
+				// ── Resgrid 2FA challenge ────────────────────────────────────────────────
+				// A password alone is insufficient for an account with Two-Factor enabled: the
+				// current authenticator code must accompany the request as totp_code. This closes
+				// the gap where only the SSO exchange enforced 2FA. The code is checked AFTER the
+				// password so this endpoint never becomes a TOTP oracle for unauthenticated callers.
+				if (await _userManager.GetTwoFactorEnabledAsync(user))
+				{
+					var totpCode = (string)request.GetParameter("totp_code");
+					if (string.IsNullOrWhiteSpace(totpCode))
+					{
+						audit.Successful = false;
+						audit.Data += " (mfa_required)";
+						await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+						return Forbid(new AuthenticationProperties(new Dictionary<string, string>
+						{
+							[OpenIddictServerAspNetCoreConstants.Properties.Error] = "mfa_required",
+							[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+								"Two-factor authentication is enabled for this account. Include your current totp_code with this request."
+						}), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+					}
+
+					var totpValid = await _userManager.VerifyTwoFactorTokenAsync(user,
+						_userManager.Options.Tokens.AuthenticatorTokenProvider, totpCode.Trim());
+					if (!totpValid)
+					{
+						audit.Successful = false;
+						audit.Data += " (invalid_totp)";
+						await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+						return Forbid(new AuthenticationProperties(new Dictionary<string, string>
+						{
+							[OpenIddictServerAspNetCoreConstants.Properties.Error] = "invalid_totp",
+							[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+								"The two-factor authentication code is invalid or has expired."
+						}), OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+					}
+				}
+
 				// Create a new ClaimsPrincipal containing the claims that
 				// will be used to create an id_token, a token or a code.
 				var principal = await _signInManager.CreateUserPrincipalAsync(user);
@@ -1178,10 +1217,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				identity.RemoveClaim(existing);
 			foreach (var existing in identity.FindAll(SessionClaimTypes.AuthenticationGeneration).ToList())
 				identity.RemoveClaim(existing);
+			foreach (var existing in identity.FindAll(SessionClaimTypes.ClientApp).ToList())
+				identity.RemoveClaim(existing);
 
 			identity.AddClaim(new Claim(SessionClaimTypes.SessionId, session.UserSessionId));
 			identity.AddClaim(new Claim(SessionClaimTypes.AuthenticationGeneration,
 				session.AuthenticationGeneration.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+			identity.AddClaim(new Claim(SessionClaimTypes.ClientApp,
+				session.ClientApplication.ToString(System.Globalization.CultureInfo.InvariantCulture)));
 		}
 
 		private IEnumerable<string> GetDestinations(Claim claim, ClaimsPrincipal principal)		{

@@ -836,6 +836,42 @@ var resgrid;
                 initPermRoles("#commandAppLoginRoles", 30);
                 ////////////////////////////////////////////////////////
 
+                // Advanced Data Protection permissions (PermissionTypes 31-39)
+                ////////////////////////////////////////////////////////
+                var adpPermissions = [
+                    { sel: '#ManageDataProtection', type: 31, roles: '#adpManageRoles', span: '#adpManageNoRolesSpan', div: '#adpManageRolesDiv' },
+                    { sel: '#ViewProtectedCallData', type: 32, roles: '#adpViewCallRoles', span: '#adpViewCallNoRolesSpan', div: '#adpViewCallRolesDiv' },
+                    { sel: '#EditProtectedCallData', type: 33, roles: '#adpEditCallRoles', span: '#adpEditCallNoRolesSpan', div: '#adpEditCallRolesDiv' },
+                    { sel: '#ViewProtectedPersonnelData', type: 34, roles: '#adpViewPersonnelRoles', span: '#adpViewPersonnelNoRolesSpan', div: '#adpViewPersonnelRolesDiv' },
+                    { sel: '#ViewProtectedContactData', type: 35, roles: '#adpViewContactRoles', span: '#adpViewContactNoRolesSpan', div: '#adpViewContactRolesDiv' },
+                    { sel: '#ViewProtectedOperationalData', type: 36, roles: '#adpViewOperationalRoles', span: '#adpViewOperationalNoRolesSpan', div: '#adpViewOperationalRolesDiv' },
+                    { sel: '#ExportProtectedData', type: 37, roles: '#adpExportRoles', span: '#adpExportNoRolesSpan', div: '#adpExportRolesDiv' },
+                    { sel: '#ConfigureProtectedDataEgress', type: 38, roles: '#adpEgressRoles', span: '#adpEgressNoRolesSpan', div: '#adpEgressRolesDiv' },
+                    { sel: '#BreakGlassProtectedData', type: 39, roles: '#adpBreakGlassRoles', span: '#adpBreakGlassNoRolesSpan', div: '#adpBreakGlassRolesDiv' }
+                ];
+                adpPermissions.forEach(function (p) {
+                    var toggleRoles = function () {
+                        if ($(p.sel).val() === "2") {
+                            $(p.span).hide();
+                            $(p.div).show();
+                        } else {
+                            $(p.span).show();
+                            $(p.div).hide();
+                        }
+                    };
+                    $(p.sel).change(function () {
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=' + p.type + '&perm=' + this.value,
+                            type: 'GET'
+                        }).done(function (results) {
+                        });
+                        toggleRoles();
+                    });
+                    toggleRoles();
+                    initPermRoles(p.roles, p.type);
+                });
+                ////////////////////////////////////////////////////////
+
             });
         })(permissions = security.permissions || (security.permissions = {}));
     })(security = resgrid.security || (resgrid.security = {}));

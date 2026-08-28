@@ -67,6 +67,11 @@ namespace Resgrid.Services
 		{
 			if (plaintext == null)
 				throw new ArgumentNullException(nameof(plaintext));
+			// Same invariant ProtectedDataEnvelope.Format enforces on the text path: a non-positive
+			// key version would produce a blob TryParseBinaryHeader (and so DecryptBinary) always
+			// rejects — an undecryptable write must fail at write time.
+			if (departmentKeyVersion <= 0)
+				throw new ArgumentOutOfRangeException(nameof(departmentKeyVersion));
 			if (IsBinaryEnveloped(plaintext))
 				throw new InvalidOperationException(
 					"Refusing to encrypt a blob that already carries the rgdpb envelope header; the double-encryption guard must run before field crypto.");

@@ -17,6 +17,25 @@ namespace Resgrid.Workers.Framework.Logic
 	/// </summary>
 	public class ChatbotMessageLogic
 	{
+		/// <summary>
+		/// True when the message is the SMS opt-out command. Uses the same TextCommandTypes.Stop
+		/// classification as the webhook so every STOP variant it honors is honored here; a resolver
+		/// fault falls back to a literal "STOP" compare rather than blocking an opt-out.
+		/// </summary>
+		private static bool IsStopCommand(string body)
+		{
+			try
+			{
+				var textCommandService = Bootstrapper.GetKernel().Resolve<Model.Services.ITextCommandService>();
+				return textCommandService.DetermineType(body).Type == Model.TextCommandTypes.Stop;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Chatbot STOP classification failed; falling back to literal compare.");
+				return string.Equals(body?.Trim(), "STOP", StringComparison.OrdinalIgnoreCase);
+			}
+		}
+
 		public static async Task<bool> ProcessChatbotMessageQueueItem(ChatbotMessageQueueItem item)
 		{
 			if (item == null || string.IsNullOrWhiteSpace(item.From) || string.IsNullOrWhiteSpace(item.Body))
@@ -45,6 +64,54 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 				}
 
+				async Task SendReplyAsync(string text)
+				{
+					if ((ChatbotPlatform)item.Platform == ChatbotPlatform.WebChat)
+					{
+						// WebChat replies go back through the user's chatbot chat channel (persisted +
+						// SignalR fan-out), never over SMS — From is a Resgrid user id here, not a phone
+						// number. The ingress-resolved DepartmentId is passed through so the reply lands
+						// in the department the message actually came from.
+						var notifier = Bootstrapper.GetKernel().Resolve<IChatbotWebChatNotifier>();
+						if (notifier != null)
+							await notifier.PushToUserAsync(item.From, text, item.DepartmentId);
+					}
+					else
+					{
+						// Reply from the department's text number (To) back to the sender (From). Twilio is the
+						// primary transport; carrier only governs gateway fallback, so the default is fine here.
+						// Chatbot replies are interactive (help/command lists the user acts on over SMS), so they
+						// use the higher chatbot length cap instead of the notification default.
+						await textMessageProvider.SendTextMessage(item.From, text, item.To, default(MobileCarriers), item.DepartmentId,
+							maxLengthOverride: Resgrid.Config.ChatbotConfig.SmsReplyMaxLength);
+					}
+
+					if (idempotencyKey != null && cacheProvider != null)
+					{
+						try
+						{
+							await cacheProvider.SetStringAsync(idempotencyKey, "1", TimeSpan.FromHours(24));
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex, "Chatbot idempotency marker write failed.");
+						}
+					}
+				}
+
+				// ADP department operation lock (plan section 20.2): while a migration window is open,
+				// the chatbot pipeline must not run — its intents mutate cataloged department data
+				// (create call, respond, close) below the API lock filter. Unlike other consumers this
+				// one answers NOW with the paused banner instead of deferring: an SMS command replayed
+				// half an hour later would act on stale intent. Value-free text; fail-open guard.
+				// EXCEPTION: STOP always works — opting out of messages is not a department-data
+				// mutation and must never be blocked by a migration lock.
+				if (await DepartmentLockGuard.IsDepartmentLockedAsync(item.DepartmentId) && !IsStopCommand(item.Body))
+				{
+					await SendReplyAsync("Resgrid is briefly paused for scheduled maintenance in your department. Please try again shortly.");
+					return true;
+				}
+
 				var message = new ChatbotMessage
 				{
 					MessageId = item.MessageId,
@@ -63,39 +130,7 @@ namespace Resgrid.Workers.Framework.Logic
 				var response = await chatbotIngressService.ProcessMessageAsync(message);
 
 				if (response != null && !string.IsNullOrWhiteSpace(response.Text))
-				{
-					if ((ChatbotPlatform)item.Platform == ChatbotPlatform.WebChat)
-					{
-						// WebChat replies go back through the user's chatbot chat channel (persisted +
-						// SignalR fan-out), never over SMS — From is a Resgrid user id here, not a phone
-						// number. The ingress-resolved DepartmentId is passed through so the reply lands
-						// in the department the message actually came from.
-						var notifier = Bootstrapper.GetKernel().Resolve<IChatbotWebChatNotifier>();
-						if (notifier != null)
-							await notifier.PushToUserAsync(item.From, response.Text, item.DepartmentId);
-					}
-					else
-					{
-						// Reply from the department's text number (To) back to the sender (From). Twilio is the
-						// primary transport; carrier only governs gateway fallback, so the default is fine here.
-						// Chatbot replies are interactive (help/command lists the user acts on over SMS), so they
-						// use the higher chatbot length cap instead of the notification default.
-						await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId,
-							maxLengthOverride: Resgrid.Config.ChatbotConfig.SmsReplyMaxLength);
-					}
-
-					if (idempotencyKey != null && cacheProvider != null)
-					{
-						try
-						{
-							await cacheProvider.SetStringAsync(idempotencyKey, "1", TimeSpan.FromHours(24));
-						}
-						catch (Exception ex)
-						{
-							Logging.LogException(ex, "Chatbot idempotency marker write failed.");
-						}
-					}
-				}
+					await SendReplyAsync(response.Text);
 			}
 			catch (Exception ex)
 			{

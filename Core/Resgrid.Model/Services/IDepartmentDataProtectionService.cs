@@ -83,6 +83,15 @@ namespace Resgrid.Model.Services
 		Task<DepartmentProtectedDataEgressPolicy> SaveEgressPolicyAsync(DepartmentProtectedDataEgressPolicy policy,
 			string updatedByUserId, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Advisory readiness report for the Enrollment Wizard preflight (plan section 18.1 step 4):
+		/// managing member, paid plan, active addon, fresh global-gate evaluation, and Disabled
+		/// state. Every check is re-verified inside QueueEnrollmentAsync at commit — this never
+		/// substitutes for the command gates.
+		/// </summary>
+		Task<AdpEnrollmentPreflight> GetEnrollmentPreflightAsync(int departmentId, string requestingUserId,
+			CancellationToken cancellationToken = default);
+
 		/// <summary>Atomically bumps the department policy epoch (grant revocation); returns the new epoch.</summary>
 		Task<long> IncrementPolicyEpochAsync(int departmentId, string updatedByUserId, CancellationToken cancellationToken = default);
 

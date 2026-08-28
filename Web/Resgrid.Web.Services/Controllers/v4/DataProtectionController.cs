@@ -17,10 +17,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 	/// Advanced Data Protection capability and enrollment API (ADP plan sections 7.1, 12, 18).
 	/// The capability report is value-free and advisory; every command is re-validated server-side —
 	/// managing member only (ordinary admins, including ManageDepartmentDataProtection holders, are
-	/// denied), active paid ADP addon, and a fresh authoritative global-gate evaluation performed by
-	/// the service immediately before commit. MFA-recency enforcement joins these commands when the
-	/// Protected Data Grant service ships (Phase 2); until then the wizard flow gates purchase in
-	/// Core Web.
+	/// denied), active paid ADP addon, a fresh authoritative global-gate evaluation performed by the
+	/// service immediately before commit, and (where grant key material is deployed) a
+	/// currently-valid Protected Data Grant in X-Resgrid-Protected-Grant proving recent MFA
+	/// (RequireRecentMfaAsync).
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -30,6 +30,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		// TOTP step-up brute-force limiter: attempts per user inside the window before 429.
 		private const int StepUpMaxAttempts = 5;
 		private static readonly TimeSpan StepUpAttemptWindow = TimeSpan.FromMinutes(5);
+
+		/// <summary>Header carrying the caller's Protected Data Grant on MFA-gated commands.</summary>
+		public const string GrantHeader = "X-Resgrid-Protected-Grant";
 
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IDepartmentLockService _departmentLockService;
@@ -171,6 +174,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				? policy.StepUpWindowMinutes
 				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
 
+			// Same clamp IssueGrant applies: the advertised window must never exceed the grant's
+			// actual lifetime, or clients would keep protected values visible past expiry.
+			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
+
 			var result = new StepUpResult
 			{
 				GrantId = null,
@@ -216,6 +223,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize]
 		public async Task<ActionResult<EnrollmentCommandResult>> QueueEnrollment([FromBody] QueueEnrollmentInput input)
 		{
+			var mfaProblem = await RequireRecentMfaAsync();
+			if (mfaProblem != null)
+				return mfaProblem;
+
 			var outcome = await _dataProtectionService.QueueEnrollmentAsync(DepartmentId, UserId,
 				input?.AcknowledgementsJson, input?.WindowStartLocal, input?.WindowEndLocal, input?.WindowTimeZone);
 			return await MapCommandOutcomeAsync(outcome);
@@ -227,6 +238,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize]
 		public async Task<ActionResult<EnrollmentCommandResult>> CancelQueuedEnrollment()
 		{
+			var mfaProblem = await RequireRecentMfaAsync();
+			if (mfaProblem != null)
+				return mfaProblem;
+
 			var outcome = await _dataProtectionService.CancelQueuedEnrollmentAsync(DepartmentId, UserId);
 			return await MapCommandOutcomeAsync(outcome);
 		}
@@ -243,8 +258,40 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize]
 		public async Task<ActionResult<EnrollmentCommandResult>> RevokeOffboarding()
 		{
+			var mfaProblem = await RequireRecentMfaAsync();
+			if (mfaProblem != null)
+				return mfaProblem;
+
 			var outcome = await _dataProtectionService.RevokeOffboardingAsync(DepartmentId, UserId);
 			return await MapCommandOutcomeAsync(outcome);
+		}
+
+		/// <summary>
+		/// MFA-recency gate for enrollment/offboarding commands (plan sections 3.5 and 18): the
+		/// caller must present a currently-valid Protected Data Grant — minted by VerifyStepUp after
+		/// fresh TOTP, absolute lifetime = the department step-up window — in the
+		/// X-Resgrid-Protected-Grant header, bound to THIS user and department at the CURRENT policy
+		/// epoch. On deployments without grant key material (CanValidateGrants false) the gate is
+		/// inactive and the pre-Phase-2 gates (managing member, addon, global flag) stand alone.
+		/// Returns null when the command may proceed.
+		/// </summary>
+		private async Task<ActionResult> RequireRecentMfaAsync()
+		{
+			if (!_grantService.CanValidateGrants)
+				return null;
+
+			var token = Request.Headers[GrantHeader].ToString();
+			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
+			var outcome = _grantService.ValidateGrant(token, DepartmentId, policy?.PolicyEpoch ?? 0,
+				requiredScope: null, out var grant);
+
+			if (outcome != ProtectedDataGrantValidationOutcome.Valid ||
+				!string.Equals(grant.UserId, UserId, StringComparison.OrdinalIgnoreCase))
+				return Problem(type: "step_up_required",
+					title: "Recent multi-factor verification is required for this command. Verify your authenticator code and retry with the issued grant.",
+					statusCode: StatusCodes.Status403Forbidden);
+
+			return null;
 		}
 
 		private async Task<ActionResult<EnrollmentCommandResult>> MapCommandOutcomeAsync(DepartmentDataProtectionEnrollmentResult outcome)

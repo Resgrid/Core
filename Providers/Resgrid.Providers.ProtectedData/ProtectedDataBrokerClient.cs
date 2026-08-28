@@ -43,7 +43,56 @@ namespace Resgrid.Providers.ProtectedData
 			};
 		}
 
-		public bool IsConfigured => !string.IsNullOrWhiteSpace(DataProtectionConfig.BrokerBaseUrl);
+		public bool IsConfigured => TryGetHttpsBaseUri(out _);
+
+		/// <summary>
+		/// The broker base URI, HTTPS only: requests carry the workload key, the caller's grant and
+		/// protected field values — a plaintext http endpoint would expose all three, so it reads as
+		/// "no broker configured" (fail closed) with a value-free log.
+		/// </summary>
+		private static bool TryGetHttpsBaseUri(out Uri baseUri)
+		{
+			baseUri = null;
+			var configured = DataProtectionConfig.BrokerBaseUrl;
+			if (string.IsNullOrWhiteSpace(configured))
+				return false;
+
+			if (!Uri.TryCreate(configured.TrimEnd('/') + "/", UriKind.Absolute, out baseUri))
+			{
+				Logging.LogError("DataProtectionConfig.BrokerBaseUrl is not a valid absolute URI; treating the broker as unconfigured.");
+				baseUri = null;
+				return false;
+			}
+
+			if (!string.Equals(baseUri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+			{
+				Logging.LogError("DataProtectionConfig.BrokerBaseUrl must use HTTPS; plaintext broker transport is prohibited. Treating the broker as unconfigured.");
+				baseUri = null;
+				return false;
+			}
+
+			return true;
+		}
+
+		public async Task<bool> IsHealthyAsync(CancellationToken cancellationToken = default)
+		{
+			if (!TryGetHttpsBaseUri(out var baseUri))
+				return false;
+
+			try
+			{
+				using var response = await _httpClient.GetAsync(new Uri(baseUri, "health"), cancellationToken);
+				return response.IsSuccessStatusCode;
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException || ex is UriFormatException)
+			{
+				return false;
+			}
+		}
 
 		public Task<ProtectedDataBrokerResult> DecryptAsync(int departmentId, string grantToken, string requestId,
 			IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken = default) =>
@@ -56,7 +105,9 @@ namespace Resgrid.Providers.ProtectedData
 		private async Task<ProtectedDataBrokerResult> SendAsync(string path, int departmentId, string grantToken,
 			string requestId, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken)
 		{
-			if (!IsConfigured)
+			// HTTPS-only, enforced per request: the payload carries the workload key, the grant and
+			// protected field values. A non-HTTPS configuration fails closed here.
+			if (!TryGetHttpsBaseUri(out var baseUri))
 				return Failed(BrokerUnavailableErrorCode);
 
 			try
@@ -69,8 +120,7 @@ namespace Resgrid.Providers.ProtectedData
 					items
 				});
 
-				using var request = new HttpRequestMessage(HttpMethod.Post,
-					new Uri(new Uri(DataProtectionConfig.BrokerBaseUrl.TrimEnd('/') + "/"), path))
+				using var request = new HttpRequestMessage(HttpMethod.Post, new Uri(baseUri, path))
 				{
 					Content = new StringContent(payload, Encoding.UTF8, "application/json")
 				};

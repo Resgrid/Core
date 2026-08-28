@@ -294,6 +294,55 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Preflight_reports_every_gate_green_on_the_happy_path()
+		{
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync((DepartmentDataProtectionPolicy)null);
+
+			var preflight = await _service.GetEnrollmentPreflightAsync(DeptId, ManagingUserId);
+
+			preflight.IsManagingMember.Should().BeTrue();
+			preflight.HasPaidPlan.Should().BeTrue();
+			preflight.HasActiveAddon.Should().BeTrue();
+			preflight.GateOpen.Should().BeTrue();
+			preflight.StateAllowsEnrollment.Should().BeTrue();
+			preflight.Passed.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task Preflight_is_advisory_and_value_free_on_denials()
+		{
+			// Non-managing caller + non-Disabled state: individual flags flip, nothing throws.
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync(new DepartmentDataProtectionPolicy
+			{
+				DepartmentDataProtectionPolicyId = 1,
+				DepartmentId = DeptId,
+				State = (int)DepartmentDataProtectionState.Enabled
+			});
+
+			var preflight = await _service.GetEnrollmentPreflightAsync(DeptId, "someone-else");
+
+			preflight.IsManagingMember.Should().BeFalse();
+			preflight.StateAllowsEnrollment.Should().BeFalse();
+			preflight.Passed.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task Preflight_reads_a_billing_fault_as_no_addon_and_no_plan()
+		{
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync((DepartmentDataProtectionPolicy)null);
+			_subscriptionsService.Setup(x => x.GetCurrentPlanForDepartmentAsync(DeptId, It.IsAny<bool>()))
+				.ThrowsAsync(new InvalidOperationException("billing down"));
+			_subscriptionsService.Setup(x => x.GetCurrentPlanAddonsForDepartmentFromStripeAsync(DeptId))
+				.ThrowsAsync(new InvalidOperationException("billing down"));
+
+			var preflight = await _service.GetEnrollmentPreflightAsync(DeptId, ManagingUserId);
+
+			preflight.HasPaidPlan.Should().BeFalse();
+			preflight.HasActiveAddon.Should().BeFalse();
+			preflight.Passed.Should().BeFalse();
+		}
+
+		[Test]
 		public async Task Protected_content_egress_without_a_recorded_acknowledgement_is_rejected()
 		{
 			var policy = new DepartmentProtectedDataEgressPolicy

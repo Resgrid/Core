@@ -17,6 +17,12 @@ namespace Resgrid.Model.Providers
 		/// <summary>True when a broker base URL is configured for this deployment.</summary>
 		bool IsConfigured { get; }
 
+		/// <summary>
+		/// Shallow broker liveness probe (GET /health) for the wizard preflight. False when the
+		/// broker is unconfigured, unreachable, or unhealthy — never throws.
+		/// </summary>
+		Task<bool> IsHealthyAsync(CancellationToken cancellationToken = default);
+
 		/// <summary>Decrypts envelopes for an attended, granted caller. Items carry envelopes in Value.</summary>
 		Task<ProtectedDataBrokerResult> DecryptAsync(int departmentId, string grantToken, string requestId,
 			IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken = default);

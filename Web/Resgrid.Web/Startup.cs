@@ -531,6 +531,9 @@ namespace Resgrid.Web
 			builder.RegisterModule(new MessagingProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
+			// ADP broker CLIENT only (no key material, no KMS route) — the wizard preflight probes
+			// broker health through it. The real KMS adapter module is broker-host-only.
+			builder.RegisterModule(new Resgrid.Providers.ProtectedData.ProtectedDataBrokerClientModule());
 
 			// Chatbot per-department configuration service (its repository, cache and encryption deps
 			// are provided by DataModule / CacheProviderModule / ServicesModule above).

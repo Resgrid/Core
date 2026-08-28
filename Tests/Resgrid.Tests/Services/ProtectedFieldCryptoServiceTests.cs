@@ -102,6 +102,22 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void Binary_encrypt_refuses_a_non_positive_key_version()
+		{
+			// A zero/negative version would produce a blob TryParseBinaryHeader always rejects —
+			// an undecryptable write must fail at write time (same invariant as the text path).
+			var blob = new byte[16];
+			RandomNumberGenerator.Fill(blob);
+			blob[0] = 0x00;
+
+			var zero = () => _crypto.EncryptBinary(_dek, 0, blob, 42, "contacts.image", "c-1", 1);
+			zero.Should().Throw<ArgumentOutOfRangeException>();
+
+			var negative = () => _crypto.EncryptBinary(_dek, -3, blob, 42, "contacts.image", "c-1", 1);
+			negative.Should().Throw<ArgumentOutOfRangeException>();
+		}
+
+		[Test]
 		public void Binary_aad_mismatch_fails_authentication()
 		{
 			var blob = new byte[16];

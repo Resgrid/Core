@@ -1376,11 +1376,14 @@
             Advanced Data Protection capability and enrollment API (ADP plan sections 7.1, 12, 18).
             The capability report is value-free and advisory; every command is re-validated server-side —
             managing member only (ordinary admins, including ManageDepartmentDataProtection holders, are
-            denied), active paid ADP addon, and a fresh authoritative global-gate evaluation performed by
-            the service immediately before commit. MFA-recency enforcement joins these commands when the
-            Protected Data Grant service ships (Phase 2); until then the wizard flow gates purchase in
-            Core Web.
+            denied), active paid ADP addon, a fresh authoritative global-gate evaluation performed by the
+            service immediately before commit, and (where grant key material is deployed) a
+            currently-valid Protected Data Grant in X-Resgrid-Protected-Grant proving recent MFA
+            (RequireRecentMfaAsync).
             </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.DataProtectionController.GrantHeader">
+            <summary>Header carrying the caller's Protected Data Grant on MFA-gated commands.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.Capabilities">
             <summary>
@@ -1414,6 +1417,17 @@
             offboarding window opens. Managing member only. Allowed during a department lock: the
             revoke window closes when offboarding execution starts, and this command must not be
             blocked by an unrelated migration window.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.RequireRecentMfaAsync">
+            <summary>
+            MFA-recency gate for enrollment/offboarding commands (plan sections 3.5 and 18): the
+            caller must present a currently-valid Protected Data Grant — minted by VerifyStepUp after
+            fresh TOTP, absolute lifetime = the department step-up window — in the
+            X-Resgrid-Protected-Grant header, bound to THIS user and department at the CURRENT policy
+            epoch. On deployments without grant key material (CanValidateGrants false) the gate is
+            inactive and the pre-Phase-2 gates (managing member, addon, global flag) stand alone.
+            Returns null when the command may proceed.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.DepartmentsController">

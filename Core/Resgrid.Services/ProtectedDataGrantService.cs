@@ -31,14 +31,13 @@ namespace Resgrid.Services
 
 		private static readonly JwtSecurityTokenHandler TokenHandler = new JwtSecurityTokenHandler();
 
-		private readonly Func<X509Certificate2> _signingCertificateLoader;
-		private readonly Func<X509Certificate2> _validationCertificateLoader;
-
-		private readonly object _certSync = new object();
-		private X509Certificate2 _signingCertificate;
-		private bool _signingLoadAttempted;
-		private X509Certificate2 _validationCertificate;
-		private bool _validationLoadAttempted;
+		// Lazy<T> with ExecutionAndPublication provides the safe publication a hand-rolled
+		// flag+lock does not: a thread that observes the initialized state is guaranteed to observe
+		// the certificate write too (the flag/field pattern could transiently read null on weakly
+		// ordered CPUs and mis-report NotConfigured). Load failures log once and cache null — the
+		// factories never throw, so no exception is cached either.
+		private readonly Lazy<X509Certificate2> _signingCertificate;
+		private readonly Lazy<X509Certificate2> _validationCertificate;
 
 		public ProtectedDataGrantService()
 			: this(LoadSigningCertificateFromConfig, LoadValidationCertificateFromConfig)
@@ -49,8 +48,17 @@ namespace Resgrid.Services
 		public ProtectedDataGrantService(Func<X509Certificate2> signingCertificateLoader,
 			Func<X509Certificate2> validationCertificateLoader)
 		{
-			_signingCertificateLoader = signingCertificateLoader ?? throw new ArgumentNullException(nameof(signingCertificateLoader));
-			_validationCertificateLoader = validationCertificateLoader ?? throw new ArgumentNullException(nameof(validationCertificateLoader));
+			if (signingCertificateLoader == null)
+				throw new ArgumentNullException(nameof(signingCertificateLoader));
+			if (validationCertificateLoader == null)
+				throw new ArgumentNullException(nameof(validationCertificateLoader));
+
+			_signingCertificate = new Lazy<X509Certificate2>(
+				() => LoadSigningCertificateSafe(signingCertificateLoader),
+				System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
+			_validationCertificate = new Lazy<X509Certificate2>(
+				() => LoadValidationCertificateSafe(validationCertificateLoader),
+				System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
 		}
 
 		public bool CanIssueGrants => GetSigningCertificate() != null;
@@ -217,58 +225,40 @@ namespace Resgrid.Services
 			return ProtectedDataGrantValidationOutcome.Valid;
 		}
 
-		private X509Certificate2 GetSigningCertificate()
+		private X509Certificate2 GetSigningCertificate() => _signingCertificate.Value;
+
+		private X509Certificate2 GetValidationCertificate() => _validationCertificate.Value;
+
+		private static X509Certificate2 LoadSigningCertificateSafe(Func<X509Certificate2> loader)
 		{
-			if (_signingLoadAttempted)
-				return _signingCertificate;
-
-			lock (_certSync)
+			try
 			{
-				if (_signingLoadAttempted)
-					return _signingCertificate;
-
-				try
+				var certificate = loader();
+				if (certificate != null && certificate.GetECDsaPrivateKey() == null)
 				{
-					_signingCertificate = _signingCertificateLoader();
-					if (_signingCertificate != null && _signingCertificate.GetECDsaPrivateKey() == null)
-					{
-						Logging.LogError("Protected Data Grant signing certificate has no ECDSA private key; grant issuance is disabled on this host.");
-						_signingCertificate = null;
-					}
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex, "Protected Data Grant signing certificate failed to load; grant issuance is disabled on this host.");
-					_signingCertificate = null;
+					Logging.LogError("Protected Data Grant signing certificate has no ECDSA private key; grant issuance is disabled on this host.");
+					return null;
 				}
 
-				_signingLoadAttempted = true;
-				return _signingCertificate;
+				return certificate;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Protected Data Grant signing certificate failed to load; grant issuance is disabled on this host.");
+				return null;
 			}
 		}
 
-		private X509Certificate2 GetValidationCertificate()
+		private static X509Certificate2 LoadValidationCertificateSafe(Func<X509Certificate2> loader)
 		{
-			if (_validationLoadAttempted)
-				return _validationCertificate;
-
-			lock (_certSync)
+			try
 			{
-				if (_validationLoadAttempted)
-					return _validationCertificate;
-
-				try
-				{
-					_validationCertificate = _validationCertificateLoader();
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex, "Protected Data Grant validation certificate failed to load; grant validation is disabled on this host.");
-					_validationCertificate = null;
-				}
-
-				_validationLoadAttempted = true;
-				return _validationCertificate;
+				return loader();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Protected Data Grant validation certificate failed to load; grant validation is disabled on this host.");
+				return null;
 			}
 		}
 

@@ -416,6 +416,42 @@ namespace Resgrid.Services
 			return saved;
 		}
 
+		public async Task<AdpEnrollmentPreflight> GetEnrollmentPreflightAsync(int departmentId, string requestingUserId,
+			CancellationToken cancellationToken = default)
+		{
+			var preflight = new AdpEnrollmentPreflight();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+			preflight.IsManagingMember = department != null && !string.IsNullOrWhiteSpace(requestingUserId) &&
+				string.Equals(department.ManagingUserId, requestingUserId, StringComparison.OrdinalIgnoreCase);
+
+			try
+			{
+				var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId, byPassCache: true);
+				preflight.HasPaidPlan = plan != null && plan.Cost > 0;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"ADP preflight plan lookup failed for department {departmentId}; reporting no paid plan");
+			}
+
+			preflight.HasActiveAddon = await HasActiveAdpAddonAsync(departmentId);
+
+			try
+			{
+				var gate = await _featureToggleService.GetFlagByKeyAsync(FeatureFlagKeys.DepartmentProtectedDataEnrollment, bypassCache: true);
+				preflight.GateOpen = gate != null && !gate.IsArchived && gate.IsEnabledGlobally;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"ADP preflight gate evaluation failed for department {departmentId}; reporting closed");
+			}
+
+			preflight.StateAllowsEnrollment = await GetStateAsync(departmentId, bypassCache: true) == DepartmentDataProtectionState.Disabled;
+
+			return preflight;
+		}
+
 		public async Task<long> IncrementPolicyEpochAsync(int departmentId, string updatedByUserId, CancellationToken cancellationToken = default)
 		{
 			var epoch = await _policyRepository.IncrementPolicyEpochAsync(departmentId, updatedByUserId, cancellationToken);

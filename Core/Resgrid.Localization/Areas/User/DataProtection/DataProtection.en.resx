@@ -1,0 +1,391 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Advanced Data Protection</value>
+  </data>
+  <data name="BreadcrumbHome" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="BreadcrumbSecurity" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="MigrationWindowActive" xml:space="preserve">
+    <value>Migration window active.</value>
+  </data>
+  <data name="DataEntryPaused" xml:space="preserve">
+    <value>Data entry is paused until the window closes; viewing is unaffected.</value>
+  </data>
+  <data name="ProtectionStatusHeader" xml:space="preserve">
+    <value>Protection Status</value>
+  </data>
+  <data name="CurrentState" xml:space="preserve">
+    <value>Current state:</value>
+  </data>
+  <data name="EnrollmentUnavailable" xml:space="preserve">
+    <value>Advanced Data Protection enrollment is temporarily unavailable. If your department has already purchased the addon, it remains valid — check back soon.</value>
+  </data>
+  <data name="AddonRequiredIntro" xml:space="preserve">
+    <value>Advanced Data Protection encrypts your department's sensitive dispatch, personnel and contact data with keys owned by your department. It requires the yearly ADP addon.</value>
+  </data>
+  <data name="PurchaseAddon" xml:space="preserve">
+    <value>Purchase the ADP addon</value>
+  </data>
+  <data name="ManagingMemberOnlyPurchase" xml:space="preserve">
+    <value>Only your department's managing member can purchase the addon and enroll.</value>
+  </data>
+  <data name="AddonActiveManagingMemberOnly" xml:space="preserve">
+    <value>The ADP addon is active. Only your department's managing member can complete enrollment.</value>
+  </data>
+  <data name="EnrollmentQueuedNotice" xml:space="preserve">
+    <value>Enrollment is queued. Migration runs during your selected overnight window ({0}–{1}, {2}). You will receive an email when each night's window opens and closes.</value>
+  </data>
+  <data name="CancelQueuedEnrollment" xml:space="preserve">
+    <value>Cancel queued enrollment</value>
+  </data>
+  <data name="MigrationInProgress" xml:space="preserve">
+    <value>Migration is in progress. Work happens only inside your overnight window ({0}–{1}, {2}); your department is in full service outside it.</value>
+  </data>
+  <data name="ProtectionActiveHeader" xml:space="preserve">
+    <value>Advanced Data Protection is active.</value>
+  </data>
+  <data name="ProtectionActiveDetail" xml:space="preserve">
+    <value>Protected fields are encrypted with your department's keys; viewing them requires a signed-in member with a fresh authenticator verification.</value>
+  </data>
+  <data name="TurnOffInstructions" xml:space="preserve">
+    <value>To turn ADP off, cancel the addon on the subscription page. Protection stays active until the end of your current billing period. After your data is decrypted, turning it back on requires purchasing the addon again and completing a new enrollment.</value>
+  </data>
+  <data name="SubscriptionPage" xml:space="preserve">
+    <value>subscription page</value>
+  </data>
+  <data name="OffboardingScheduledHeader" xml:space="preserve">
+    <value>Offboarding is scheduled.</value>
+  </data>
+  <data name="OffboardingScheduledDetail" xml:space="preserve">
+    <value>Protection remains fully active until {0}, when your data is decrypted back to standard storage over one or more overnight windows.</value>
+  </data>
+  <data name="EndOfBillingPeriod" xml:space="preserve">
+    <value>the end of your billing period</value>
+  </data>
+  <data name="RevokeOffboarding" xml:space="preserve">
+    <value>Keep Advanced Data Protection (revoke offboarding)</value>
+  </data>
+  <data name="OffboardingInProgress" xml:space="preserve">
+    <value>Offboarding is in progress. Protection remains in effect until your data is fully restored to standard storage.</value>
+  </data>
+  <data name="MigrationFailed" xml:space="preserve">
+    <value>The last migration run could not complete and will resume after review. Your department is in full service and your data remains safe. Support has been alerted; no action is needed.</value>
+  </data>
+  <data name="WizardHeader" xml:space="preserve">
+    <value>Enrollment Wizard</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Step1Header" xml:space="preserve">
+    <value>Step 1 of 6 — What Advanced Data Protection covers</value>
+  </data>
+  <data name="Step1Intro" xml:space="preserve">
+    <value>ADP encrypts the sensitive content of your department's data with keys owned by your department and held in a hardened key service:</value>
+  </data>
+  <data name="Step1ProtectedLabel" xml:space="preserve">
+    <value>Protected:</value>
+  </data>
+  <data name="Step1ProtectedList" xml:space="preserve">
+    <value>call names, natures, notes and addresses; call notes and attachments; contact details and notes; member sensitive data.</value>
+  </data>
+  <data name="Step1PlaintextLabel" xml:space="preserve">
+    <value>Stays plaintext:</value>
+  </data>
+  <data name="Step1PlaintextList" xml:space="preserve">
+    <value>system identifiers, call numbers, priorities, statuses, timestamps, unit names and department structure — the platform needs these to route and display work.</value>
+  </data>
+  <data name="Step1WhileProtected" xml:space="preserve">
+    <value>While protected:</value>
+  </data>
+  <data name="Step1LimitSearch" xml:space="preserve">
+    <value>Search, reporting, exports and third-party integrations cannot see protected content.</value>
+  </data>
+  <data name="Step1LimitBigBoard" xml:space="preserve">
+    <value>Big Board displays show a reduced "protected incident" shell instead of call details.</value>
+  </data>
+  <data name="Step1LimitWorkflow" xml:space="preserve">
+    <value>Workflows receive redacted payloads (protected values replaced with REDACTED).</value>
+  </data>
+  <data name="Step1LimitNotifications" xml:space="preserve">
+    <value>Text, email, push and voice notifications send generic content by default ("A protected dispatch is available — sign in to Resgrid").</value>
+  </data>
+  <data name="Step1NotCompliance" xml:space="preserve">
+    <value>Advanced Data Protection alone is not HIPAA or ePCR compliance. It is one control inside a compliance program your agency still owns.</value>
+  </data>
+  <data name="Step2Header" xml:space="preserve">
+    <value>Step 2 of 6 — Acknowledgements</value>
+  </data>
+  <data name="Step2Intro" xml:space="preserve">
+    <value>Each item below must be acknowledged by the managing member. Your acknowledgements are recorded with a version stamp.</value>
+  </data>
+  <data name="AckCatalogScope" xml:space="preserve">
+    <value>I understand which data families are protected (calls, call notes/attachments, contacts, member sensitive data) and that the protected-field catalog is versioned.</value>
+  </data>
+  <data name="AckPlaintextMetadata" xml:space="preserve">
+    <value>I understand system metadata (call numbers, priorities, statuses, timestamps, unit and department structure) stays plaintext.</value>
+  </data>
+  <data name="AckAuthorizedServerAccess" xml:space="preserve">
+    <value>I understand Resgrid's servers process protected values in memory when an authorized member views or edits them.</value>
+  </data>
+  <data name="AckStepUpWindow" xml:space="preserve">
+    <value>I understand members need a fresh authenticator (MFA) verification to view protected values, on a window my department configures (default 15 minutes; values over 60 require a recorded reason).</value>
+  </data>
+  <data name="AckBigBoardReduction" xml:space="preserve">
+    <value>I understand Big Board displays show reduced, protected-incident shells.</value>
+  </data>
+  <data name="AckWorkflowRedaction" xml:space="preserve">
+    <value>I understand workflows receive redacted payloads and cannot act on protected content.</value>
+  </data>
+  <data name="AckDefaultEgress" xml:space="preserve">
+    <value>I understand text/email/push/voice notifications send generic content by default, and relaxing a channel requires a separate acknowledged policy change.</value>
+  </data>
+  <data name="AckSearchReportLimitations" xml:space="preserve">
+    <value>I understand search, reporting, exports, integrations and offline access cannot see protected content.</value>
+  </data>
+  <data name="AckMigrationDisable" xml:space="preserve">
+    <value>I understand enabling runs an overnight migration, and disabling later decrypts my data over overnight windows at the end of the billing period.</value>
+  </data>
+  <data name="AckKeyLossSupport" xml:space="preserve">
+    <value>I understand Resgrid support cannot read protected values without an explicit, audited, department-approved support grant, and that key loss is recoverable only through the documented recovery process.</value>
+  </data>
+  <data name="AckNotHipaaCompliance" xml:space="preserve">
+    <value>I understand Advanced Data Protection alone is not HIPAA/ePCR compliance.</value>
+  </data>
+  <data name="Step3Header" xml:space="preserve">
+    <value>Step 3 of 6 — Preflight checks</value>
+  </data>
+  <data name="CheckManagingMember" xml:space="preserve">
+    <value>Managing member</value>
+  </data>
+  <data name="CheckPaidPlan" xml:space="preserve">
+    <value>Paid plan</value>
+  </data>
+  <data name="CheckActiveAddon" xml:space="preserve">
+    <value>Active ADP addon</value>
+  </data>
+  <data name="CheckGateOpen" xml:space="preserve">
+    <value>Enrollment availability (platform gate)</value>
+  </data>
+  <data name="CheckStateAllows" xml:space="preserve">
+    <value>Department state permits enrollment</value>
+  </data>
+  <data name="CheckBrokerHealthy" xml:space="preserve">
+    <value>Protection service reachable</value>
+  </data>
+  <data name="CheckManagingMemberMfa" xml:space="preserve">
+    <value>Managing member has an authenticator enrolled</value>
+  </data>
+  <data name="PreflightFailed" xml:space="preserve">
+    <value>A preflight check failed. Resolve the items marked ✖ and reload this page — enrollment cannot be queued until every check passes.</value>
+  </data>
+  <data name="Step4Header" xml:space="preserve">
+    <value>Step 4 of 6 — Migration size estimate</value>
+  </data>
+  <data name="Step4Intro" xml:space="preserve">
+    <value>A read-only scan counts your department's rows and estimates how many overnight windows the migration needs. Nothing is changed by this scan.</value>
+  </data>
+  <data name="RunSizingScan" xml:space="preserve">
+    <value>Run sizing scan</value>
+  </data>
+  <data name="Step5Header" xml:space="preserve">
+    <value>Step 5 of 6 — Overnight migration window</value>
+  </data>
+  <data name="Step5Intro" xml:space="preserve">
+    <value>Migration runs only inside this department-local window and pauses data entry while running. Pick your quietest hours; the default is {0}–{1}.</value>
+  </data>
+  <data name="WindowStartLabel" xml:space="preserve">
+    <value>Window start (local)</value>
+  </data>
+  <data name="WindowEndLabel" xml:space="preserve">
+    <value>Window end (local)</value>
+  </data>
+  <data name="TimeZoneLabel" xml:space="preserve">
+    <value>Time zone</value>
+  </data>
+  <data name="OperationPauseHeader" xml:space="preserve">
+    <value>Department operation pause.</value>
+  </data>
+  <data name="OperationPauseDetail" xml:space="preserve">
+    <value>While a migration window is running, no new calls, status changes, staffing changes or scheduled tasks run for your department. Viewing continues. You can abort an active window at any time and the department returns to full service immediately.</value>
+  </data>
+  <data name="LockConsent" xml:space="preserve">
+    <value>I understand and consent to the overnight operation pause during migration windows.</value>
+  </data>
+  <data name="Step6Header" xml:space="preserve">
+    <value>Step 6 of 6 — Confirm and queue</value>
+  </data>
+  <data name="Step6Intro" xml:space="preserve">
+    <value>Queueing enrollment re-verifies every requirement server-side and places your department in the migration queue. Departments migrate one at a time; you'll receive an email with your schedule.</value>
+  </data>
+  <data name="QueueEnrollment" xml:space="preserve">
+    <value>Queue enrollment</value>
+  </data>
+  <data name="ErrAcknowledgementsIncomplete" xml:space="preserve">
+    <value>Every acknowledgement must be checked before enrollment can be queued.</value>
+  </data>
+  <data name="ErrLockConsentRequired" xml:space="preserve">
+    <value>The overnight operation pause must be consented to before enrollment can be queued.</value>
+  </data>
+  <data name="ErrProtectedAccessDenied" xml:space="preserve">
+    <value>Only the department's managing member may run this command.</value>
+  </data>
+  <data name="ErrAddonRequired" xml:space="preserve">
+    <value>An active Advanced Data Protection addon is required.</value>
+  </data>
+  <data name="ErrPlanRequired" xml:space="preserve">
+    <value>Advanced Data Protection requires a paid plan.</value>
+  </data>
+  <data name="ErrFeatureNotAvailable" xml:space="preserve">
+    <value>Advanced Data Protection enrollment is temporarily unavailable.</value>
+  </data>
+  <data name="ErrInvalidState" xml:space="preserve">
+    <value>The department's protection state does not permit this command. Reload the page for current status.</value>
+  </data>
+  <data name="ErrInvalidWindow" xml:space="preserve">
+    <value>A valid migration window time zone is required.</value>
+  </data>
+  <data name="ErrCommandFailed" xml:space="preserve">
+    <value>The command could not be completed; it may be retried.</value>
+  </data>
+  <data name="ConfirmCancelQueued" xml:space="preserve">
+    <value>Cancel the queued enrollment? Nothing has been migrated yet; you can enroll again later while the addon is active.</value>
+  </data>
+  <data name="ConfirmRevokeOffboarding" xml:space="preserve">
+    <value>Keep Advanced Data Protection active? The scheduled offboarding will be cancelled.</value>
+  </data>
+  <data name="EmergencyContactsHeader" xml:space="preserve">
+    <value>Emergency Contacts</value>
+  </data>
+  <data name="EmergencyContactsIntro" xml:space="preserve">
+    <value>Emergency contacts are specific to this department and are stored with your department's data protection settings. You can add more than one.</value>
+  </data>
+  <data name="AddEmergencyContact" xml:space="preserve">
+    <value>Add Emergency Contact</value>
+  </data>
+  <data name="EditEmergencyContact" xml:space="preserve">
+    <value>Edit Emergency Contact</value>
+  </data>
+  <data name="EmergencyContactTitle" xml:space="preserve">
+    <value>Emergency Contact</value>
+  </data>
+  <data name="NoEmergencyContacts" xml:space="preserve">
+    <value>No emergency contacts have been added.</value>
+  </data>
+  <data name="ContactNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RelationshipLabel" xml:space="preserve">
+    <value>Relationship</value>
+  </data>
+  <data name="PhoneNumberLabel" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
+  <data name="AlternatePhoneLabel" xml:space="preserve">
+    <value>Alternate phone number</value>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="NotesLabel" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="PrimaryContactLabel" xml:space="preserve">
+    <value>Primary contact</value>
+  </data>
+  <data name="PrimaryColumn" xml:space="preserve">
+    <value>Primary</value>
+  </data>
+  <data name="AlternateColumn" xml:space="preserve">
+    <value>Alternate</value>
+  </data>
+  <data name="YesLabel" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="EditAction" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="DeleteAction" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="SaveAction" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="CancelAction" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>A name is required.</value>
+  </data>
+  <data name="ContactSaveFailed" xml:space="preserve">
+    <value>The contact could not be saved.</value>
+  </data>
+  <data name="ConfirmRemoveContact" xml:space="preserve">
+    <value>Remove this emergency contact?</value>
+  </data>
+</root>

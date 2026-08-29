@@ -78,6 +78,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEncryptionService _encryptionService;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IUserSessionService _userSessionService;
+		private readonly IDepartmentMemberEmergencyContactService _emergencyContactService;
+		private readonly IProtectedReadService _protectedReadService;
+		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
+		private readonly IDepartmentDataProtectionService _dataProtectionService;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
@@ -89,7 +93,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer, IGdprDataExportService gdprDataExportService,
 			ISystemAuditsService systemAuditsService, IPhoneNumberProcesserProvider phoneNumberProcesser,
 			ISecurityPinService securityPinService, IEncryptionService encryptionService,
-			IExternalIdentityLinkService externalIdentityLinkService, IUserSessionService userSessionService)
+			IExternalIdentityLinkService externalIdentityLinkService, IUserSessionService userSessionService,
+			IDepartmentMemberEmergencyContactService emergencyContactService, IProtectedReadService protectedReadService,
+			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
+			IDepartmentDataProtectionService dataProtectionService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -123,6 +130,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_encryptionService = encryptionService;
 			_externalIdentityLinkService = externalIdentityLinkService;
 			_userSessionService = userSessionService;
+			_emergencyContactService = emergencyContactService;
+			_protectedReadService = protectedReadService;
+			_memberSensitiveDataService = memberSensitiveDataService;
+			_dataProtectionService = dataProtectionService;
 
 			_localizer = factory.Create("Home.Dashboard", new AssemblyName(typeof(SupportedLocales).GetTypeInfo().Assembly.FullName).Name);
 		}
@@ -426,6 +437,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Email = model.User.Email;
 
 			model.Profile = await _userProfileService.GetProfileByUserIdAsync(userId, true);
+			await HydrateMemberIdentificationNumberAsync(model, userId);
 
 			if (model.Profile == null)
 				model.Profile = new UserProfile();
@@ -443,7 +455,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.HasCustomIamge = true;
 
-			if (model.Profile != null && model.Profile.HomeAddressId.HasValue)
+			// The department-scoped address is authoritative once the member has one (plan 5.1) —
+			// an address can differ per department, and only this copy is protected. The legacy
+			// shared-Addresses link is read only until the contract migration clears it.
+			var memberAddresses = await _memberSensitiveDataService.GetByDepartmentAndUserAsync(DepartmentId, userId);
+			if (memberAddresses != null)
+				await _protectedReadService.ResolveMemberSensitiveDataForReadAsync(DepartmentId, new[] { memberAddresses },
+					Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+
+			// The legacy shared-Addresses link is read ONLY while the department is unprotected and
+			// relocation has not reached this member yet. Once protection is enforced that link is a
+			// plaintext copy of data this department has already encrypted, and rendering it would
+			// walk straight around the reveal pipeline.
+			var legacyAddressFallbackAllowed = !await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId);
+
+			if (memberAddresses != null && !string.IsNullOrWhiteSpace(memberAddresses.HomeAddress1))
+			{
+				model.PhysicalAddress1 = memberAddresses.HomeAddress1;
+				model.PhysicalCity = memberAddresses.HomeCity;
+				model.PhysicalCountry = memberAddresses.HomeCountry;
+				model.PhysicalPostalCode = memberAddresses.HomePostalCode;
+				model.PhysicalState = memberAddresses.HomeState;
+			}
+			else if (legacyAddressFallbackAllowed && model.Profile != null && model.Profile.HomeAddressId.HasValue)
 			{
 				var homeAddress = await _addressService.GetAddressByIdAsync(model.Profile.HomeAddressId.Value);
 				model.PhysicalAddress1 = homeAddress.Address1;
@@ -453,19 +487,39 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.PhysicalState = homeAddress.State;
 			}
 
-			if (model.Profile != null && model.Profile.MailingAddressId.HasValue && model.Profile.HomeAddressId.HasValue &&
-				(model.Profile.MailingAddressId.Value == model.Profile.HomeAddressId.Value))
+			if (memberAddresses != null && !string.IsNullOrWhiteSpace(memberAddresses.MailingAddress1))
 			{
-				model.MailingAddressSameAsPhysical = true;
+				model.MailingAddress1 = memberAddresses.MailingAddress1;
+				model.MailingCity = memberAddresses.MailingCity;
+				model.MailingCountry = memberAddresses.MailingCountry;
+				model.MailingPostalCode = memberAddresses.MailingPostalCode;
+				model.MailingState = memberAddresses.MailingState;
+
+				// The department-scoped copies are independent rows, so "same as physical" is a value
+				// comparison rather than the legacy shared-address-id check.
+				model.MailingAddressSameAsPhysical =
+					string.Equals(memberAddresses.MailingAddress1, memberAddresses.HomeAddress1, StringComparison.OrdinalIgnoreCase) &&
+					string.Equals(memberAddresses.MailingCity ?? string.Empty, memberAddresses.HomeCity ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
+					string.Equals(memberAddresses.MailingState ?? string.Empty, memberAddresses.HomeState ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
+					string.Equals(memberAddresses.MailingPostalCode ?? string.Empty, memberAddresses.HomePostalCode ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
+					string.Equals(memberAddresses.MailingCountry ?? string.Empty, memberAddresses.HomeCountry ?? string.Empty, StringComparison.OrdinalIgnoreCase);
 			}
-			else if (model.Profile != null && model.Profile.MailingAddressId.HasValue)
+			else if (legacyAddressFallbackAllowed && model.Profile != null && model.Profile.MailingAddressId.HasValue)
 			{
-				var mailingAddress = await _addressService.GetAddressByIdAsync(model.Profile.MailingAddressId.Value);
-				model.MailingAddress1 = mailingAddress.Address1;
-				model.MailingCity = mailingAddress.City;
-				model.MailingCountry = mailingAddress.Country;
-				model.MailingPostalCode = mailingAddress.PostalCode;
-				model.MailingState = mailingAddress.State;
+				if (model.Profile.HomeAddressId.HasValue &&
+					model.Profile.MailingAddressId.Value == model.Profile.HomeAddressId.Value)
+				{
+					model.MailingAddressSameAsPhysical = true;
+				}
+				else
+				{
+					var mailingAddress = await _addressService.GetAddressByIdAsync(model.Profile.MailingAddressId.Value);
+					model.MailingAddress1 = mailingAddress.Address1;
+					model.MailingCity = mailingAddress.City;
+					model.MailingCountry = mailingAddress.Country;
+					model.MailingPostalCode = mailingAddress.PostalCode;
+					model.MailingState = mailingAddress.State;
+				}
 			}
 
 			if (model.Profile != null)
@@ -718,9 +772,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				Address homeAddress = null;
-				Address mailingAddress = null;
-
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
@@ -758,7 +809,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				savedProfile.HomeNumber = (homeResult != null && homeResult.IsValid && !string.IsNullOrWhiteSpace(homeResult.InternationalNumber))
 					? homeResult.InternationalNumber
 					: model.Profile.HomeNumber;
-				savedProfile.IdentificationNumber = model.Profile.IdentificationNumber;
+				// The identification number is DEPARTMENT-SCOPED (ADP plan 5.1): a profile row is
+				// global to the user, so it can neither be encrypted with one department's key nor
+				// hold the different numbers different departments issue the same person. The
+				// profile column is left untouched here — it is dropped in the contract migration
+				// once this is deployed.
+				await SaveMemberIdentificationNumberAsync(model.UserId, model.Profile.IdentificationNumber, cancellationToken);
+				await SaveMemberAddressesAsync(model, cancellationToken);
 				savedProfile.TimeZone = model.Profile.TimeZone;
 				savedProfile.Language = model.Profile.Language;
 
@@ -823,48 +880,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 						await _personnelRolesService.SetRolesForUserAsync(DepartmentId, model.UserId, roles, cancellationToken);
 				}
 
-				if (savedProfile.HomeAddressId.HasValue)
-					homeAddress = await _addressService.GetAddressByIdAsync(savedProfile.HomeAddressId.Value);
-
-				if (savedProfile.MailingAddressId.HasValue)
-					mailingAddress = await _addressService.GetAddressByIdAsync(savedProfile.MailingAddressId.Value);
-
-				if (!model.MailingAddressSameAsPhysical && homeAddress != null && mailingAddress != null &&
-					(homeAddress.AddressId == mailingAddress.AddressId))
-					mailingAddress = new Address();
-
-				if (!String.IsNullOrWhiteSpace(model.PhysicalAddress1))
-				{
-					if (homeAddress == null)
-						homeAddress = new Address();
-
-					homeAddress.Address1 = model.PhysicalAddress1;
-					homeAddress.City = model.PhysicalCity;
-					homeAddress.Country = model.PhysicalCountry;
-					homeAddress.PostalCode = model.PhysicalPostalCode;
-					homeAddress.State = model.PhysicalState;
-
-					homeAddress = await _addressService.SaveAddressAsync(homeAddress, cancellationToken);
-					savedProfile.HomeAddressId = homeAddress.AddressId;
-
-					if (model.MailingAddressSameAsPhysical)
-						savedProfile.MailingAddressId = homeAddress.AddressId;
-				}
-
-				if (!String.IsNullOrWhiteSpace(model.MailingAddress1) && !model.MailingAddressSameAsPhysical)
-				{
-					if (mailingAddress == null)
-						mailingAddress = new Address();
-
-					mailingAddress.Address1 = model.MailingAddress1;
-					mailingAddress.City = model.MailingCity;
-					mailingAddress.Country = model.MailingCountry;
-					mailingAddress.PostalCode = model.MailingPostalCode;
-					mailingAddress.State = model.MailingState;
-
-					mailingAddress = await _addressService.SaveAddressAsync(mailingAddress, cancellationToken);
-					savedProfile.MailingAddressId = mailingAddress.AddressId;
-				}
+				// Addresses are NOT written back to the shared Addresses table or relinked on the
+				// profile. SaveMemberAddressesAsync above is the only writer now (plan 5.1): the
+				// department-scoped copy is the one that can be encrypted, and keeping a second
+				// plaintext copy in sync would recreate exactly the leak this move exists to close.
+				// The legacy link is left as it stands for members relocation has not reached yet;
+				// the contract migration clears it.
 
 				if (model.IsFreePlan)
 				{
@@ -1344,6 +1365,220 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion GDPR Data Export
+
+		#region Emergency contacts
+
+		/// <summary>
+		/// A member's department-scoped emergency contacts. Authorization reuses
+		/// CanUserEditProfileAsync — the same rule the rest of this page runs on: a member manages
+		/// their own, a department admin (or a group admin over that member) manages anyone's.
+		/// Protected departments resolve through the read pipeline, so values arrive as plaintext
+		/// with a valid grant and as the REDACTED placeholder without one — never as ciphertext.
+		/// </summary>
+		[HttpGet]
+		public async Task<IActionResult> GetEmergencyContacts(string userId)
+		{
+			if (string.IsNullOrWhiteSpace(userId))
+				userId = UserId;
+
+			if (!await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, userId))
+				return Unauthorized();
+
+			var contacts = await _emergencyContactService.GetAllForMemberAsync(DepartmentId, userId);
+
+			await _protectedReadService.ResolveMemberEmergencyContactsForReadAsync(DepartmentId, contacts,
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+
+			return Json(contacts.Select(c => new
+			{
+				id = c.DepartmentMemberEmergencyContactId,
+				name = c.Name,
+				relationship = c.Relationship,
+				phoneNumber = c.PhoneNumber,
+				alternatePhoneNumber = c.AlternatePhoneNumber,
+				email = c.Email,
+				notes = c.Notes,
+				isPrimary = c.IsPrimary,
+				sortOrder = c.SortOrder
+			}));
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SaveEmergencyContact([FromForm] EmergencyContactInput input, CancellationToken cancellationToken)
+		{
+			if (input == null)
+				return BadRequest();
+
+			var targetUserId = string.IsNullOrWhiteSpace(input.UserId) ? UserId : input.UserId;
+
+			if (!await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, targetUserId))
+				return Unauthorized();
+
+			if (string.IsNullOrWhiteSpace(input.Name))
+				return Json(new { success = false, error = "name_required" });
+
+			DepartmentMemberEmergencyContact contact;
+			if (input.Id > 0)
+			{
+				// Load through the member-scoped accessor so an id from another member (or another
+				// department) can never be edited by guessing it.
+				var existing = await _emergencyContactService.GetAllForMemberAsync(DepartmentId, targetUserId);
+				contact = existing.FirstOrDefault(x => x.DepartmentMemberEmergencyContactId == input.Id);
+
+				if (contact == null)
+					return Json(new { success = false, error = "not_found" });
+			}
+			else
+			{
+				contact = new DepartmentMemberEmergencyContact
+				{
+					DepartmentId = DepartmentId,
+					UserId = targetUserId,
+					CreatedByUserId = UserId
+				};
+			}
+
+			contact.Name = input.Name;
+			contact.Relationship = input.Relationship;
+			contact.PhoneNumber = input.PhoneNumber;
+			contact.AlternatePhoneNumber = input.AlternatePhoneNumber;
+			contact.Email = input.Email;
+			contact.Notes = input.Notes;
+			contact.IsPrimary = input.IsPrimary;
+			contact.SortOrder = input.SortOrder;
+			contact.UpdatedByUserId = UserId;
+
+			var saved = await _emergencyContactService.SaveAsync(contact, cancellationToken);
+
+			return Json(new { success = true, id = saved.DepartmentMemberEmergencyContactId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteEmergencyContact([FromForm] int id, [FromForm] string userId,
+			CancellationToken cancellationToken)
+		{
+			var targetUserId = string.IsNullOrWhiteSpace(userId) ? UserId : userId;
+
+			if (!await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, targetUserId))
+				return Unauthorized();
+
+			// The service scopes the delete by department AND user, so a stray id cannot reach
+			// another member's row even past the check above.
+			var deleted = await _emergencyContactService.DeleteAsync(id, DepartmentId, targetUserId, UserId, cancellationToken);
+
+			return Json(new { success = deleted });
+		}
+
+		public class EmergencyContactInput
+		{
+			public int Id { get; set; }
+			public string UserId { get; set; }
+			public string Name { get; set; }
+			public string Relationship { get; set; }
+			public string PhoneNumber { get; set; }
+			public string AlternatePhoneNumber { get; set; }
+			public string Email { get; set; }
+			public string Notes { get; set; }
+			public bool IsPrimary { get; set; }
+			public int SortOrder { get; set; }
+		}
+
+		#endregion Emergency contacts
+
+
+		/// <summary>
+		/// Loads the member's department-scoped identification number onto the profile view model.
+		/// Protected departments resolve it through the read pipeline, so it arrives as plaintext
+		/// with a valid grant and as the REDACTED placeholder without one — never as ciphertext.
+		/// </summary>
+		private async Task HydrateMemberIdentificationNumberAsync(EditProfileModel model, string userId)
+		{
+			if (model?.Profile == null)
+				return;
+
+			var sensitive = await _memberSensitiveDataService.GetByDepartmentAndUserAsync(DepartmentId, userId);
+			if (sensitive == null)
+			{
+				model.Profile.IdentificationNumber = null;
+				return;
+			}
+
+			await _protectedReadService.ResolveMemberSensitiveDataForReadAsync(DepartmentId, new[] { sensitive },
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+
+			model.Profile.IdentificationNumber = sensitive.IdentificationNumber;
+		}
+
+		/// <summary>
+		/// Persists the member's department-scoped home and mailing addresses (plan 5.1). Values
+		/// still showing the REDACTED placeholder were never revealed to this user and are skipped
+		/// rather than written back over the stored address.
+		/// </summary>
+		private async Task SaveMemberAddressesAsync(EditProfileModel model, CancellationToken cancellationToken)
+		{
+			if (model == null)
+				return;
+
+			string Submitted(string value) => value == ProtectedDataEnvelope.RedactionValue ? null : value;
+
+			var home1 = Submitted(model.PhysicalAddress1);
+			var mailing1 = Submitted(model.MailingAddressSameAsPhysical ? model.PhysicalAddress1 : model.MailingAddress1);
+
+			var sensitive = await _memberSensitiveDataService.GetByDepartmentAndUserAsync(DepartmentId, model.UserId);
+			if (sensitive == null)
+			{
+				if (string.IsNullOrWhiteSpace(home1) && string.IsNullOrWhiteSpace(mailing1))
+					return;
+
+				sensitive = new DepartmentMemberSensitiveData { DepartmentId = DepartmentId, UserId = model.UserId };
+			}
+
+			sensitive.HomeAddress1 = home1;
+			sensitive.HomeCity = Submitted(model.PhysicalCity);
+			sensitive.HomeState = Submitted(model.PhysicalState);
+			sensitive.HomePostalCode = Submitted(model.PhysicalPostalCode);
+			sensitive.HomeCountry = Submitted(model.PhysicalCountry);
+
+			// "Same as physical" stores a copy rather than a shared reference: these columns are
+			// encrypted per row, so there is nothing to share and a later edit to one must not
+			// silently rewrite the other.
+			sensitive.MailingAddress1 = mailing1;
+			sensitive.MailingCity = Submitted(model.MailingAddressSameAsPhysical ? model.PhysicalCity : model.MailingCity);
+			sensitive.MailingState = Submitted(model.MailingAddressSameAsPhysical ? model.PhysicalState : model.MailingState);
+			sensitive.MailingPostalCode = Submitted(model.MailingAddressSameAsPhysical ? model.PhysicalPostalCode : model.MailingPostalCode);
+			sensitive.MailingCountry = Submitted(model.MailingAddressSameAsPhysical ? model.PhysicalCountry : model.MailingCountry);
+
+			await _memberSensitiveDataService.SaveAsync(sensitive, cancellationToken);
+		}
+
+		/// <summary>
+		/// Persists the member's department-scoped identification number, creating the row on first
+		/// use. A value still showing the REDACTED placeholder was never revealed to this user, so it
+		/// is ignored rather than written back over the stored value.
+		/// </summary>
+		private async Task SaveMemberIdentificationNumberAsync(string userId, string identificationNumber,
+			CancellationToken cancellationToken)
+		{
+			if (identificationNumber == ProtectedDataEnvelope.RedactionValue)
+				return;
+
+			var sensitive = await _memberSensitiveDataService.GetByDepartmentAndUserAsync(DepartmentId, userId);
+
+			if (sensitive == null)
+			{
+				if (string.IsNullOrWhiteSpace(identificationNumber))
+					return;
+
+				sensitive = new DepartmentMemberSensitiveData { DepartmentId = DepartmentId, UserId = userId };
+			}
+
+			sensitive.IdentificationNumber = identificationNumber;
+
+			await _memberSensitiveDataService.SaveAsync(sensitive, cancellationToken);
+		}
+
 	}
 
 	/// <summary>Request body for sending a contact verification code.</summary>

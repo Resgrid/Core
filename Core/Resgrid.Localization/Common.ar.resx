@@ -199,4 +199,64 @@
   <data name="Calls" xml:space="preserve"><value>البلاغات</value></data>
   <data name="Stations" xml:space="preserve"><value>المحطات</value></data>
   <data name="Pois" xml:space="preserve"><value>نقاط الاهتمام</value></data>
+  <data name="AdpProtectedCall" xml:space="preserve">
+    <value>بلاغ محمي</value>
+  </data>
+  <data name="AdpProtectedCertifications" xml:space="preserve">
+    <value>الشهادات المحمية</value>
+  </data>
+  <data name="AdpProtectedContact" xml:space="preserve">
+    <value>جهة اتصال محمية</value>
+  </data>
+  <data name="AdpProtectedBannerDescription" xml:space="preserve">
+    <value>مشفّر أثناء التخزين لهذه الإدارة. لا يزال بإمكان المستخدمين المصرح لهم والقنوات المعتمدة الكشف عنه.</value>
+  </data>
+  <data name="AdpVerifyAndReveal" xml:space="preserve">
+    <value>التحقق والكشف</value>
+  </data>
+  <data name="AdpConceal" xml:space="preserve">
+    <value>إخفاء</value>
+  </data>
+  <data name="AdpStepUpTitle" xml:space="preserve">
+    <value>تحقق لعرض البيانات المحمية</value>
+  </data>
+  <data name="AdpStepUpInstructions" xml:space="preserve">
+    <value>أدخل الرمز المكوّن من 6 أرقام من تطبيق المصادقة. تبقى القيم المعروضة ظاهرة فقط خلال نافذة التحقق الخاصة بهذه الإدارة ولا يتم تخزينها أبدًا في متصفحك.</value>
+  </data>
+  <data name="AdpVerificationCode" xml:space="preserve">
+    <value>رمز التحقق</value>
+  </data>
+  <data name="AdpVerify" xml:space="preserve">
+    <value>تحقق</value>
+  </data>
+  <data name="AdpErrorInvalidCode" xml:space="preserve">
+    <value>رمز التحقق غير صالح أو انتهت صلاحيته.</value>
+  </data>
+  <data name="AdpErrorTooManyAttempts" xml:space="preserve">
+    <value>عدد كبير جدًا من محاولات التحقق. انتظر بضع دقائق ثم حاول مرة أخرى.</value>
+  </data>
+  <data name="AdpErrorMfaNotEnrolled" xml:space="preserve">
+    <value>لم يتم تفعيل المصادقة الثنائية لهذا الحساب. فعّل تطبيق مصادقة من إعدادات أمان الحساب أولاً.</value>
+  </data>
+  <data name="AdpErrorGrantsNotConfigured" xml:space="preserve">
+    <value>لم يتم تكوين الوصول إلى البيانات المحمية على هذا الخادم.</value>
+  </data>
+  <data name="AdpErrorStepUpRequired" xml:space="preserve">
+    <value>مطلوب التحقق مرة أخرى.</value>
+  </data>
+  <data name="AdpErrorGrantExpired" xml:space="preserve">
+    <value>انتهت نافذة التحقق. تحقق مرة أخرى.</value>
+  </data>
+  <data name="AdpErrorGrantRevoked" xml:space="preserve">
+    <value>تم إلغاء الوصول بسبب تغيير في السياسة. تحقق مرة أخرى.</value>
+  </data>
+  <data name="AdpErrorAccessDenied" xml:space="preserve">
+    <value>ليست لديك صلاحية عرض هذه البيانات المحمية.</value>
+  </data>
+  <data name="AdpErrorBrokerUnavailable" xml:space="preserve">
+    <value>خدمة البيانات المحمية غير متاحة. حاول مرة أخرى بعد قليل.</value>
+  </data>
+  <data name="AdpErrorGeneric" xml:space="preserve">
+    <value>فشل الطلب. حاول مرة أخرى.</value>
+  </data>
 </root>

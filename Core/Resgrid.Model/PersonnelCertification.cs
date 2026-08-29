@@ -47,6 +47,13 @@ namespace Resgrid.Model
 
 		public byte[] Data { get; set; }
 
+		/// <summary>
+		/// True when this row's cataloged values carry rgdp envelopes (ADP plan 5.1 Personnel family:
+		/// certification numbers and documents). Drives the migration cursor and the
+		/// double-encryption guard.
+		/// </summary>
+		public bool IsProtected { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

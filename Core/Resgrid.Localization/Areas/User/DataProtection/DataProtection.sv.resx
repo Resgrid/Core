@@ -1,0 +1,391 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Avancerat dataskydd</value>
+  </data>
+  <data name="BreadcrumbHome" xml:space="preserve">
+    <value>Hem</value>
+  </data>
+  <data name="BreadcrumbSecurity" xml:space="preserve">
+    <value>Säkerhet</value>
+  </data>
+  <data name="MigrationWindowActive" xml:space="preserve">
+    <value>Migreringsfönstret är aktivt.</value>
+  </data>
+  <data name="DataEntryPaused" xml:space="preserve">
+    <value>Datainmatning är pausad tills fönstret stängs; visning påverkas inte.</value>
+  </data>
+  <data name="ProtectionStatusHeader" xml:space="preserve">
+    <value>Skyddsstatus</value>
+  </data>
+  <data name="CurrentState" xml:space="preserve">
+    <value>Aktuellt tillstånd:</value>
+  </data>
+  <data name="EnrollmentUnavailable" xml:space="preserve">
+    <value>Registrering för avancerat dataskydd är tillfälligt otillgänglig. Om din organisation redan har köpt tillägget är det fortfarande giltigt — återkom snart.</value>
+  </data>
+  <data name="AddonRequiredIntro" xml:space="preserve">
+    <value>Avancerat dataskydd krypterar organisationens känsliga larm-, personal- och kontaktuppgifter med nycklar som organisationen äger. Det kräver det årliga ADP-tillägget.</value>
+  </data>
+  <data name="PurchaseAddon" xml:space="preserve">
+    <value>Köp ADP-tillägget</value>
+  </data>
+  <data name="ManagingMemberOnlyPurchase" xml:space="preserve">
+    <value>Endast organisationens ansvariga medlem kan köpa tillägget och registrera.</value>
+  </data>
+  <data name="AddonActiveManagingMemberOnly" xml:space="preserve">
+    <value>ADP-tillägget är aktivt. Endast organisationens ansvariga medlem kan slutföra registreringen.</value>
+  </data>
+  <data name="EnrollmentQueuedNotice" xml:space="preserve">
+    <value>Registreringen är köad. Migreringen körs under det valda nattfönstret ({0}–{1}, {2}). Du får ett e-postmeddelande när varje natts fönster öppnas och stängs.</value>
+  </data>
+  <data name="CancelQueuedEnrollment" xml:space="preserve">
+    <value>Avbryt köad registrering</value>
+  </data>
+  <data name="MigrationInProgress" xml:space="preserve">
+    <value>Migreringen pågår. Arbetet sker endast inom nattfönstret ({0}–{1}, {2}); utanför det är organisationen i full drift.</value>
+  </data>
+  <data name="ProtectionActiveHeader" xml:space="preserve">
+    <value>Avancerat dataskydd är aktivt.</value>
+  </data>
+  <data name="ProtectionActiveDetail" xml:space="preserve">
+    <value>Skyddade fält krypteras med organisationens nycklar; för att visa dem krävs en inloggad medlem med en färsk autentiseringsverifiering.</value>
+  </data>
+  <data name="TurnOffInstructions" xml:space="preserve">
+    <value>För att stänga av ADP, avbryt tillägget på prenumerationssidan. Skyddet är aktivt till slutet av innevarande faktureringsperiod. När dina uppgifter har dekrypterats krävs ett nytt köp av tillägget och en ny registrering för att slå på det igen.</value>
+  </data>
+  <data name="SubscriptionPage" xml:space="preserve">
+    <value>prenumerationssidan</value>
+  </data>
+  <data name="OffboardingScheduledHeader" xml:space="preserve">
+    <value>Avregistrering är schemalagd.</value>
+  </data>
+  <data name="OffboardingScheduledDetail" xml:space="preserve">
+    <value>Skyddet är fullt aktivt till {0}, då dina uppgifter dekrypteras tillbaka till standardlagring under ett eller flera nattfönster.</value>
+  </data>
+  <data name="EndOfBillingPeriod" xml:space="preserve">
+    <value>slutet av din faktureringsperiod</value>
+  </data>
+  <data name="RevokeOffboarding" xml:space="preserve">
+    <value>Behåll avancerat dataskydd (återkalla avregistrering)</value>
+  </data>
+  <data name="OffboardingInProgress" xml:space="preserve">
+    <value>Avregistreringen pågår. Skyddet gäller tills dina uppgifter är helt återställda till standardlagring.</value>
+  </data>
+  <data name="MigrationFailed" xml:space="preserve">
+    <value>Den senaste migreringen kunde inte slutföras och återupptas efter granskning. Din organisation är i full drift och dina uppgifter är säkra. Supporten är underrättad; ingen åtgärd behövs.</value>
+  </data>
+  <data name="WizardHeader" xml:space="preserve">
+    <value>Registreringsguide</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Fortsätt</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Tillbaka</value>
+  </data>
+  <data name="Step1Header" xml:space="preserve">
+    <value>Steg 1 av 6 — Vad avancerat dataskydd omfattar</value>
+  </data>
+  <data name="Step1Intro" xml:space="preserve">
+    <value>ADP krypterar det känsliga innehållet i organisationens data med nycklar som organisationen äger och som förvaras i en härdad nyckeltjänst:</value>
+  </data>
+  <data name="Step1ProtectedLabel" xml:space="preserve">
+    <value>Skyddat:</value>
+  </data>
+  <data name="Step1ProtectedList" xml:space="preserve">
+    <value>larmnamn, larmtyper, anteckningar och adresser; larmanteckningar och bilagor; kontaktuppgifter och anteckningar; medlemmars känsliga uppgifter.</value>
+  </data>
+  <data name="Step1PlaintextLabel" xml:space="preserve">
+    <value>Förblir i klartext:</value>
+  </data>
+  <data name="Step1PlaintextList" xml:space="preserve">
+    <value>systemidentifierare, larmnummer, prioriteter, statusar, tidsstämplar, enhetsnamn och organisationsstruktur — plattformen behöver dessa för att dirigera och visa arbetet.</value>
+  </data>
+  <data name="Step1WhileProtected" xml:space="preserve">
+    <value>Medan skyddet är aktivt:</value>
+  </data>
+  <data name="Step1LimitSearch" xml:space="preserve">
+    <value>Sökning, rapporter, exporter och tredjepartsintegrationer kan inte se skyddat innehåll.</value>
+  </data>
+  <data name="Step1LimitBigBoard" xml:space="preserve">
+    <value>Big Board-skärmar visar ett reducerat skal med ”skyddad händelse” i stället för larmdetaljer.</value>
+  </data>
+  <data name="Step1LimitWorkflow" xml:space="preserve">
+    <value>Arbetsflöden får maskerade nyttolaster (skyddade värden ersätts med REDACTED).</value>
+  </data>
+  <data name="Step1LimitNotifications" xml:space="preserve">
+    <value>Sms-, e-post-, push- och röstnotiser skickar som standard generiskt innehåll (”Ett skyddat larm finns tillgängligt — logga in på Resgrid”).</value>
+  </data>
+  <data name="Step1NotCompliance" xml:space="preserve">
+    <value>Avancerat dataskydd innebär i sig inte HIPAA- eller ePCR-efterlevnad. Det är en kontroll inom ett efterlevnadsprogram som din organisation fortfarande ansvarar för.</value>
+  </data>
+  <data name="Step2Header" xml:space="preserve">
+    <value>Steg 2 av 6 — Bekräftelser</value>
+  </data>
+  <data name="Step2Intro" xml:space="preserve">
+    <value>Varje punkt nedan måste bekräftas av den ansvariga medlemmen. Dina bekräftelser registreras med en versionsstämpel.</value>
+  </data>
+  <data name="AckCatalogScope" xml:space="preserve">
+    <value>Jag förstår vilka datafamiljer som skyddas (larm, larmanteckningar/bilagor, kontakter, medlemmars känsliga uppgifter) och att katalogen över skyddade fält är versionshanterad.</value>
+  </data>
+  <data name="AckPlaintextMetadata" xml:space="preserve">
+    <value>Jag förstår att systemmetadata (larmnummer, prioriteter, statusar, tidsstämplar, enhets- och organisationsstruktur) förblir i klartext.</value>
+  </data>
+  <data name="AckAuthorizedServerAccess" xml:space="preserve">
+    <value>Jag förstår att Resgrids servrar behandlar skyddade värden i minnet när en behörig medlem visar eller redigerar dem.</value>
+  </data>
+  <data name="AckStepUpWindow" xml:space="preserve">
+    <value>Jag förstår att medlemmar behöver en färsk autentiseringsverifiering (MFA) för att visa skyddade värden, inom ett fönster som min organisation konfigurerar (standard 15 minuter; värden över 60 kräver en registrerad motivering).</value>
+  </data>
+  <data name="AckBigBoardReduction" xml:space="preserve">
+    <value>Jag förstår att Big Board-skärmar visar reducerade skal för skyddade händelser.</value>
+  </data>
+  <data name="AckWorkflowRedaction" xml:space="preserve">
+    <value>Jag förstår att arbetsflöden får maskerade nyttolaster och inte kan agera på skyddat innehåll.</value>
+  </data>
+  <data name="AckDefaultEgress" xml:space="preserve">
+    <value>Jag förstår att sms-/e-post-/push-/röstnotiser skickar generiskt innehåll som standard, och att lätta på en kanal kräver en separat bekräftad policyändring.</value>
+  </data>
+  <data name="AckSearchReportLimitations" xml:space="preserve">
+    <value>Jag förstår att sökning, rapporter, exporter, integrationer och offlineåtkomst inte kan se skyddat innehåll.</value>
+  </data>
+  <data name="AckMigrationDisable" xml:space="preserve">
+    <value>Jag förstår att aktivering kör en nattlig migrering och att senare avaktivering dekrypterar mina uppgifter under nattfönster vid faktureringsperiodens slut.</value>
+  </data>
+  <data name="AckKeyLossSupport" xml:space="preserve">
+    <value>Jag förstår att Resgrids support inte kan läsa skyddade värden utan ett uttryckligt, granskat och organisationsgodkänt supportmedgivande, och att nyckelförlust endast kan återställas via den dokumenterade återställningsprocessen.</value>
+  </data>
+  <data name="AckNotHipaaCompliance" xml:space="preserve">
+    <value>Jag förstår att avancerat dataskydd i sig inte innebär HIPAA/ePCR-efterlevnad.</value>
+  </data>
+  <data name="Step3Header" xml:space="preserve">
+    <value>Steg 3 av 6 — Förkontroller</value>
+  </data>
+  <data name="CheckManagingMember" xml:space="preserve">
+    <value>Ansvarig medlem</value>
+  </data>
+  <data name="CheckPaidPlan" xml:space="preserve">
+    <value>Betald plan</value>
+  </data>
+  <data name="CheckActiveAddon" xml:space="preserve">
+    <value>Aktivt ADP-tillägg</value>
+  </data>
+  <data name="CheckGateOpen" xml:space="preserve">
+    <value>Registreringstillgänglighet (plattformsspärr)</value>
+  </data>
+  <data name="CheckStateAllows" xml:space="preserve">
+    <value>Organisationens tillstånd tillåter registrering</value>
+  </data>
+  <data name="CheckBrokerHealthy" xml:space="preserve">
+    <value>Skyddstjänsten är nåbar</value>
+  </data>
+  <data name="CheckManagingMemberMfa" xml:space="preserve">
+    <value>Ansvarig medlem har en autentiseringsapp registrerad</value>
+  </data>
+  <data name="PreflightFailed" xml:space="preserve">
+    <value>En förkontroll misslyckades. Åtgärda punkterna märkta ✖ och läs om sidan — registreringen kan inte köas förrän alla kontroller godkänns.</value>
+  </data>
+  <data name="Step4Header" xml:space="preserve">
+    <value>Steg 4 av 6 — Uppskattning av migreringens storlek</value>
+  </data>
+  <data name="Step4Intro" xml:space="preserve">
+    <value>En skrivskyddad genomsökning räknar organisationens rader och uppskattar hur många nattfönster migreringen behöver. Genomsökningen ändrar ingenting.</value>
+  </data>
+  <data name="RunSizingScan" xml:space="preserve">
+    <value>Kör storleksgenomsökning</value>
+  </data>
+  <data name="Step5Header" xml:space="preserve">
+    <value>Steg 5 av 6 — Nattligt migreringsfönster</value>
+  </data>
+  <data name="Step5Intro" xml:space="preserve">
+    <value>Migreringen körs endast inom detta organisationslokala fönster och pausar datainmatning under tiden. Välj era lugnaste timmar; standard är {0}–{1}.</value>
+  </data>
+  <data name="WindowStartLabel" xml:space="preserve">
+    <value>Fönstrets start (lokal tid)</value>
+  </data>
+  <data name="WindowEndLabel" xml:space="preserve">
+    <value>Fönstrets slut (lokal tid)</value>
+  </data>
+  <data name="TimeZoneLabel" xml:space="preserve">
+    <value>Tidszon</value>
+  </data>
+  <data name="OperationPauseHeader" xml:space="preserve">
+    <value>Paus i organisationens drift.</value>
+  </data>
+  <data name="OperationPauseDetail" xml:space="preserve">
+    <value>Medan ett migreringsfönster körs behandlas inga nya larm, statusändringar, bemanningsändringar eller schemalagda uppgifter för din organisation. Visning fortsätter. Du kan avbryta ett aktivt fönster när som helst och organisationen återgår omedelbart till full drift.</value>
+  </data>
+  <data name="LockConsent" xml:space="preserve">
+    <value>Jag förstår och samtycker till den nattliga driftpausen under migreringsfönstren.</value>
+  </data>
+  <data name="Step6Header" xml:space="preserve">
+    <value>Steg 6 av 6 — Bekräfta och köa</value>
+  </data>
+  <data name="Step6Intro" xml:space="preserve">
+    <value>Att köa registreringen verifierar alla krav på serversidan igen och placerar din organisation i migreringskön. Organisationer migrerar en i taget; du får ett e-postmeddelande med ditt schema.</value>
+  </data>
+  <data name="QueueEnrollment" xml:space="preserve">
+    <value>Köa registrering</value>
+  </data>
+  <data name="ErrAcknowledgementsIncomplete" xml:space="preserve">
+    <value>Alla bekräftelser måste kryssas i innan registreringen kan köas.</value>
+  </data>
+  <data name="ErrLockConsentRequired" xml:space="preserve">
+    <value>Den nattliga driftpausen måste godkännas innan registreringen kan köas.</value>
+  </data>
+  <data name="ErrProtectedAccessDenied" xml:space="preserve">
+    <value>Endast organisationens ansvariga medlem får köra detta kommando.</value>
+  </data>
+  <data name="ErrAddonRequired" xml:space="preserve">
+    <value>Ett aktivt tillägg för avancerat dataskydd krävs.</value>
+  </data>
+  <data name="ErrPlanRequired" xml:space="preserve">
+    <value>Avancerat dataskydd kräver en betald plan.</value>
+  </data>
+  <data name="ErrFeatureNotAvailable" xml:space="preserve">
+    <value>Registrering för avancerat dataskydd är tillfälligt otillgänglig.</value>
+  </data>
+  <data name="ErrInvalidState" xml:space="preserve">
+    <value>Organisationens skyddstillstånd tillåter inte detta kommando. Läs om sidan för aktuell status.</value>
+  </data>
+  <data name="ErrInvalidWindow" xml:space="preserve">
+    <value>En giltig tidszon för migreringsfönstret krävs.</value>
+  </data>
+  <data name="ErrCommandFailed" xml:space="preserve">
+    <value>Kommandot kunde inte slutföras; det kan försökas igen.</value>
+  </data>
+  <data name="ConfirmCancelQueued" xml:space="preserve">
+    <value>Avbryta den köade registreringen? Inget har migrerats ännu; du kan registrera dig igen senare medan tillägget är aktivt.</value>
+  </data>
+  <data name="ConfirmRevokeOffboarding" xml:space="preserve">
+    <value>Behålla avancerat dataskydd aktivt? Den schemalagda avregistreringen avbryts.</value>
+  </data>
+  <data name="EmergencyContactsHeader" xml:space="preserve">
+    <value>Nödkontakter</value>
+  </data>
+  <data name="EmergencyContactsIntro" xml:space="preserve">
+    <value>Nödkontakter är specifika för denna organisation och lagras enligt organisationens dataskyddsinställningar. Du kan lägga till fler än en.</value>
+  </data>
+  <data name="AddEmergencyContact" xml:space="preserve">
+    <value>Lägg till nödkontakt</value>
+  </data>
+  <data name="EditEmergencyContact" xml:space="preserve">
+    <value>Redigera nödkontakt</value>
+  </data>
+  <data name="EmergencyContactTitle" xml:space="preserve">
+    <value>Nödkontakt</value>
+  </data>
+  <data name="NoEmergencyContacts" xml:space="preserve">
+    <value>Inga nödkontakter har lagts till.</value>
+  </data>
+  <data name="ContactNameLabel" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="RelationshipLabel" xml:space="preserve">
+    <value>Relation</value>
+  </data>
+  <data name="PhoneNumberLabel" xml:space="preserve">
+    <value>Telefonnummer</value>
+  </data>
+  <data name="AlternatePhoneLabel" xml:space="preserve">
+    <value>Alternativt telefonnummer</value>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>E-post</value>
+  </data>
+  <data name="NotesLabel" xml:space="preserve">
+    <value>Anteckningar</value>
+  </data>
+  <data name="PrimaryContactLabel" xml:space="preserve">
+    <value>Primär kontakt</value>
+  </data>
+  <data name="PrimaryColumn" xml:space="preserve">
+    <value>Primär</value>
+  </data>
+  <data name="AlternateColumn" xml:space="preserve">
+    <value>Alternativ</value>
+  </data>
+  <data name="YesLabel" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="EditAction" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="DeleteAction" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="SaveAction" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="CancelAction" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Ett namn krävs.</value>
+  </data>
+  <data name="ContactSaveFailed" xml:space="preserve">
+    <value>Kontakten kunde inte sparas.</value>
+  </data>
+  <data name="ConfirmRemoveContact" xml:space="preserve">
+    <value>Ta bort denna nödkontakt?</value>
+  </data>
+</root>

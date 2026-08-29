@@ -1,50 +1,3 @@
-<!-- dgc-policy-v1 -->
-# Dual-Graph Context Policy
-
-This project uses a local dual-graph MCP server (graperoot-pro) for efficient,
-budget-aware context retrieval. Always prefer it over native file exploration.
-
-## MANDATORY: Always follow this order
-
-1. **Call `graph_continue` first** -- before any file exploration, grep, or code reading.
-
-2. **If `graph_continue` returns `needs_project=true`**: call `graph_scan` with the
-   current project directory (`pwd`). Do NOT ask the user.
-
-3. **If `graph_continue` returns `skip=true`**: project is too small for the graph to
-   help. Skip all graph tools and explore normally.
-
-4. **Read `recommended_files`** using `graph_read` -- one call per file.
-   - `recommended_files` may contain `file::symbol` entries (e.g. `src/auth.ts::handleLogin`).
-     Pass them verbatim to `graph_read(file: "src/auth.ts::handleLogin")` -- it reads only
-     that symbol's lines, not the full file.
-
-5. **Check `confidence` and obey the caps strictly:**
-   - `confidence=high` -> Stop. Do NOT grep or explore further.
-   - `confidence=medium` -> If recommended files are insufficient, call `fallback_rg`
-     at most `max_supplementary_greps` time(s) with specific terms, then `graph_read`
-     at most `max_supplementary_files` additional file(s). Then stop.
-   - `confidence=low` -> Call `fallback_rg` at most `max_supplementary_greps` time(s),
-     then `graph_read` at most `max_supplementary_files` file(s). Then stop.
-
-## Exhaustive enumeration tasks
-
-Some tasks require scanning **every file** -- e.g. "find all dead exports", "list every
-.find() without a limit", "audit all test files". Use these tools first:
-
-- **`graph_dead_exports()`** -- pre-computed at scan time. Use for any dead-export task.
-- **`graph_grep_all(pattern, file_glob?, max_hits?)`** -- exhaustive grep, no call cap.
-
-## Rules
-
-- Do NOT use `rg`, `grep`, or bash file exploration before calling `graph_continue`.
-- Do NOT do broad/recursive exploration at any confidence level.
-- After edits, call `graph_register_edit(files: ["path/to/file"])`. The parameter is
-  `files` (plural, always an array). Use `file::symbol` notation when the edit targets
-  a specific function, class, or hook.
-<!-- /dgc-policy-v1 -->
-
----
 
 # Resgrid Project Guide
 
@@ -126,14 +79,41 @@ Each layer depends only on the layer(s) to its left:
 - **Providers** (`Resgrid.Providers.*`): External integrations — depends on Model
 - **Web/Workers**: Entry points — depend on everything
 
-### Dependency Injection (Autofac + Service Locator)
+### Dependency Injection (Autofac)
 
-This codebase uses **Service Locator** pattern, NOT constructor injection:
+**Constructor injection is the convention.** Services, repositories, providers, controllers
+(MVC and v4 API), and hubs all declare their dependencies as constructor parameters and let
+Autofac supply them. When a type needs a new dependency, add a constructor parameter — do NOT
+reach for the service locator. Existing constructors are large (e.g. `CommunicationTestService`
+takes 18 parameters, `DispatchController` 30); that is deliberate and expected, and it is what
+keeps these types unit-testable with mocks.
 
 ```csharp
-// How services are resolved throughout the codebase:
-var service = Bootstrapper.GetKernel().Resolve<ISomeService>();
+// The convention — constructor injection:
+public class SomethingService : ISomethingService
+{
+    private readonly IDepartmentsService _departmentsService;
+
+    public SomethingService(IDepartmentsService departmentsService)
+    {
+        _departmentsService = departmentsService;
+    }
+}
 ```
+
+**Service Locator is the exception, not the rule.** `Bootstrapper.GetKernel().Resolve<T>()` is
+reserved for the specific places where no DI container is available at the call site or where a
+container-managed constructor cannot be used:
+
+- Worker logic under `Workers/Resgrid.Workers.Framework/Logic/` (queue consumers constructed by
+  the job host, not by Autofac).
+- Static helpers and extension methods that have no constructor to inject into.
+- Deliberate lazy escapes from a construction-time dependency cycle — and even then prefer
+  `Lazy<T>` as a constructor parameter (see `CallsService`'s `Lazy<IProtectedWriteService>`)
+  over a service-locator call.
+
+If you find yourself adding `Bootstrapper.GetKernel().Resolve<T>()` anywhere else, use a
+constructor parameter instead.
 
 The `Bootstrapper` class (in `Resgrid.Workers.Framework/Bootstrapper.cs`) initializes Autofac with module-based registration:
 ```csharp
@@ -241,9 +221,9 @@ Task type discrimination uses `(int)TaskTypes.SomeEnum`.
 
 When Billing API is configured but returns a response where `Data.Data` is null, `GetCurrentPlanForDepartmentAsync` returns null instead of the free plan fallback. Callers that access `plan.PlanId` or `plan.GetLimitForTypeAsInt()` will NRE.
 
-### 3. Service Locator in Constructors
+### 3. Injected Dependencies Are Never Null
 
-Unlike modern DI, this codebase resolves dependencies explicitly in constructors via `Bootstrapper.GetKernel().Resolve<T>()`. When examining stack traces, dependencies are never null due to constructor injection failures — the Bootstrapper would fail at app start. If a NullReferenceException occurs on a service call, the issue is typically in the return value of the called method, not the service reference itself.
+Dependencies come from Autofac constructor injection, so they are never null at a call site — a missing registration fails at container build (app start), not at the point of use. If a NullReferenceException occurs on a service call, the issue is almost always in the **return value** of the called method, not the service reference itself. The same holds for the worker paths that use `Bootstrapper.GetKernel().Resolve<T>()`: an unregistered type throws a resolution exception rather than handing back null.
 
 ### 4. Async State Machine Line Numbers
 

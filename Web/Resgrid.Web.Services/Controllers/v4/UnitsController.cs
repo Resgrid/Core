@@ -33,10 +33,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICustomStateService _customStateService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public UnitsController(IUnitsService unitsService, IDepartmentGroupsService departmentGroupsService,
 			ICustomStateService customStateService, Model.Services.IAuthorizationService authorizationService,
-			IDepartmentsService departmentsService, IUserDefinedFieldsService userDefinedFieldsService)
+			IDepartmentsService departmentsService, IUserDefinedFieldsService userDefinedFieldsService,
+			IProtectedReadService protectedReadService)
 		{
 			_unitsService = unitsService;
 			_departmentGroupsService = departmentGroupsService;
@@ -44,6 +46,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
 			_userDefinedFieldsService = userDefinedFieldsService;
+			_protectedReadService = protectedReadService;
+		}
+
+		/// <summary>The caller's Protected Data Grant, when presented (plan section 3.1 step 6).</summary>
+		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
+
+		/// <summary>
+		/// Resolves the catalog-v2 operational fields these endpoints return — unit-state note and
+		/// position, plus UDF values — through the attended read pipeline. With a valid grant the
+		/// values come back as plaintext; without one every enveloped value becomes the exact
+		/// REDACTED placeholder. Either way the DTO converters never see ciphertext.
+		/// </summary>
+		private async Task ResolveOperationalReadsAsync(IReadOnlyList<UnitState> states, IReadOnlyList<UdfFieldValue> udfValues)
+		{
+			if (states != null && states.Count > 0)
+				await _protectedReadService.ResolveUnitStatesForReadAsync(DepartmentId, states, ProtectedGrantToken, UserId);
+
+			if (udfValues != null && udfValues.Count > 0)
+				await _protectedReadService.ResolveUdfFieldValuesForReadAsync(DepartmentId, udfValues, ProtectedGrantToken, UserId);
 		}
 		#endregion Members and Constructors
 
@@ -72,6 +93,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var udfValuesByEntityId = allUdfValues
 					.GroupBy(v => v.EntityId)
 					.ToDictionary(g => g.Key, g => g.ToList());
+
+				await ResolveOperationalReadsAsync(unitStatuses?.ToList(), allUdfValues?.ToList());
 
 				foreach (var unit in units)
 				{
@@ -310,7 +333,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				data.CurrentStatusId = state.State.ToString();
 
 				data.CurrentStatusTimestamp = state.Timestamp.TimeConverter(new Department() { TimeZone = timeZone });
-				data.Note = state.Note;
+
+				// Resolved upstream by ResolveOperationalReadsAsync: plaintext with a valid grant,
+				// the REDACTED placeholder without one. SafeDisplay stays as a belt-and-braces guard
+				// for any caller that reaches the converter without resolving first.
+				data.Note = ProtectedDataEnvelope.SafeDisplay(state.Note);
 
 				if (state.DestinationId.HasValue)
 					data.CurrentDestinationId = state.DestinationId.Value.ToString();
@@ -360,7 +387,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				data.CurrentStatusTimestamp = state.Timestamp.TimeConverter(new Department() { TimeZone = timeZone });
 
 				data.CurrentStatusTimestampUtc = state.Timestamp;
-				data.Note = state.Note;
+				data.Note = ProtectedDataEnvelope.SafeDisplay(state.Note);
 
 				if (state.DestinationId.HasValue)
 					data.CurrentDestinationId = state.DestinationId.Value.ToString();

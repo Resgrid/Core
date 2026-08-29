@@ -21,7 +21,7 @@ namespace Resgrid.Services
 		private const int TagSize = 16;
 
 		public string EncryptText(byte[] dek, int departmentKeyVersion, string plaintext,
-			int departmentId, string catalogFieldId, string rowKey, int catalogVersion)
+			int departmentId, string catalogFieldId, string rowKey)
 		{
 			if (plaintext == null)
 				throw new ArgumentNullException(nameof(plaintext));
@@ -33,7 +33,7 @@ namespace Resgrid.Services
 			try
 			{
 				var payload = Seal(dek, plainBytes,
-					Aad(departmentId, catalogFieldId, rowKey, ProtectedDataEnvelope.CurrentVersion, catalogVersion));
+					Aad(departmentId, catalogFieldId, rowKey, ProtectedDataEnvelope.CurrentVersion));
 				return ProtectedDataEnvelope.Format(departmentKeyVersion, Convert.ToBase64String(payload));
 			}
 			finally
@@ -43,7 +43,7 @@ namespace Resgrid.Services
 		}
 
 		public string DecryptText(byte[] dek, string envelope,
-			int departmentId, string catalogFieldId, string rowKey, int catalogVersion)
+			int departmentId, string catalogFieldId, string rowKey)
 		{
 			if (!ProtectedDataEnvelope.TryParse(envelope, out var formatVersion, out _, out var payloadBase64))
 				throw new CryptographicException("Value is not a parseable ADP envelope of a supported version.");
@@ -51,7 +51,7 @@ namespace Resgrid.Services
 			var payload = Convert.FromBase64String(payloadBase64);
 			// AAD binds the format version the envelope was WRITTEN with — a later CurrentVersion
 			// bump must not make existing envelopes fail authentication.
-			var plainBytes = Open(dek, payload, Aad(departmentId, catalogFieldId, rowKey, formatVersion, catalogVersion));
+			var plainBytes = Open(dek, payload, Aad(departmentId, catalogFieldId, rowKey, formatVersion));
 			try
 			{
 				return Encoding.UTF8.GetString(plainBytes);
@@ -63,7 +63,7 @@ namespace Resgrid.Services
 		}
 
 		public byte[] EncryptBinary(byte[] dek, int departmentKeyVersion, byte[] plaintext,
-			int departmentId, string catalogFieldId, string rowKey, int catalogVersion)
+			int departmentId, string catalogFieldId, string rowKey)
 		{
 			if (plaintext == null)
 				throw new ArgumentNullException(nameof(plaintext));
@@ -78,7 +78,7 @@ namespace Resgrid.Services
 
 			var header = Encoding.ASCII.GetBytes($"{ProtectedDataEnvelope.BinaryPrefix}{ProtectedDataEnvelope.CurrentVersion}:{departmentKeyVersion}:");
 			var payload = Seal(dek, plaintext,
-				Aad(departmentId, catalogFieldId, rowKey, ProtectedDataEnvelope.CurrentVersion, catalogVersion));
+				Aad(departmentId, catalogFieldId, rowKey, ProtectedDataEnvelope.CurrentVersion));
 
 			var result = new byte[header.Length + payload.Length];
 			Buffer.BlockCopy(header, 0, result, 0, header.Length);
@@ -87,7 +87,7 @@ namespace Resgrid.Services
 		}
 
 		public byte[] DecryptBinary(byte[] dek, byte[] envelope,
-			int departmentId, string catalogFieldId, string rowKey, int catalogVersion)
+			int departmentId, string catalogFieldId, string rowKey)
 		{
 			if (!TryParseBinaryHeader(envelope, out var payloadOffset, out var formatVersion))
 				throw new CryptographicException("Blob is not a parseable rgdpb envelope of a supported version.");
@@ -95,7 +95,7 @@ namespace Resgrid.Services
 			var payload = new byte[envelope.Length - payloadOffset];
 			Buffer.BlockCopy(envelope, payloadOffset, payload, 0, payload.Length);
 			// AAD binds the format version the envelope was WRITTEN with (see DecryptText).
-			return Open(dek, payload, Aad(departmentId, catalogFieldId, rowKey, formatVersion, catalogVersion));
+			return Open(dek, payload, Aad(departmentId, catalogFieldId, rowKey, formatVersion));
 		}
 
 		public bool TryGetBinaryEnvelopeKeyVersion(byte[] value, out int departmentKeyVersion)
@@ -125,13 +125,15 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// AAD binding per plan section 4.1: department, stable catalog field id, stable per-row key,
-		/// and envelope+catalog versions. The envelope format version is the one carried by the
-		/// envelope being read (or CurrentVersion when writing) — never blindly CurrentVersion, or a
-		/// format bump would make every existing envelope fail authentication. The pipe separator is
-		/// safe because every component is either numeric or a catalog/PK identifier that cannot
-		/// contain '|'.
+		/// and the envelope format version. The format version is the one carried by the envelope
+		/// being read (or CurrentVersion when writing) — never blindly CurrentVersion, or a format
+		/// bump would make every existing envelope fail authentication. The CATALOG version is
+		/// deliberately absent: field ids are stable forever, so it adds no binding, and including it
+		/// would break every stored envelope the moment a department's pinned catalog advanced. The
+		/// pipe separator is safe because every component is either numeric or a catalog/PK
+		/// identifier that cannot contain '|'.
 		/// </summary>
-		private static byte[] Aad(int departmentId, string catalogFieldId, string rowKey, int envelopeFormatVersion, int catalogVersion)
+		private static byte[] Aad(int departmentId, string catalogFieldId, string rowKey, int envelopeFormatVersion)
 		{
 			if (string.IsNullOrWhiteSpace(catalogFieldId))
 				throw new ArgumentException("Catalog field id is required for AAD binding.", nameof(catalogFieldId));
@@ -139,7 +141,7 @@ namespace Resgrid.Services
 				throw new ArgumentException("Row key is required for AAD binding.", nameof(rowKey));
 
 			return Encoding.UTF8.GetBytes(string.Create(CultureInfo.InvariantCulture,
-				$"rgdp|{departmentId}|{catalogFieldId}|{rowKey}|{envelopeFormatVersion}|{catalogVersion}"));
+				$"rgdp|{departmentId}|{catalogFieldId}|{rowKey}|{envelopeFormatVersion}"));
 		}
 
 		private static byte[] Seal(byte[] dek, byte[] plaintext, byte[] aad)

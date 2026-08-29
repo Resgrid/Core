@@ -23,11 +23,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		private readonly IRouteService _routeService;
 		private readonly IContactsService _contactsService;
+		private readonly IProtectedReadService _protectedReadService;
 
-		public RoutesController(IRouteService routeService, IContactsService contactsService)
+		public RoutesController(IRouteService routeService, IContactsService contactsService,
+			IProtectedReadService protectedReadService)
 		{
 			_routeService = routeService;
 			_contactsService = contactsService;
+			_protectedReadService = protectedReadService;
 		}
 
 		/// <summary>
@@ -675,6 +678,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (contact == null || contact.DepartmentId != DepartmentId)
 				return NotFound();
 
+			// A route stop's contact carries names, phone numbers, email, coordinates and geofence —
+			// twelve cataloged fields. Without this the endpoint serializes rgdp ciphertext for a
+			// protected department (plan 7.1).
+			await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, new List<Contact> { contact },
+				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId);
+
 			var result = new GetStopContactResult
 			{
 				Data = MapContactToResult(contact, stop.RouteStopId, stop.Name)
@@ -701,6 +710,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new GetRouteContactsResult();
 
 			var seenContactIds = new HashSet<string>();
+			var resolved = new List<(Contact Contact, string RouteStopId, string StopName)>();
 			foreach (var stop in stops.Where(s => !string.IsNullOrWhiteSpace(s.ContactId)))
 			{
 				if (!seenContactIds.Add(stop.ContactId))
@@ -708,8 +718,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				var contact = await _contactsService.GetContactByIdAsync(stop.ContactId);
 				if (contact != null && contact.DepartmentId == DepartmentId)
-					result.Data.Add(MapContactToResult(contact, stop.RouteStopId, stop.Name));
+					resolved.Add((contact, stop.RouteStopId, stop.Name));
 			}
+
+			// One batched resolution for the whole route rather than one broker round trip per stop.
+			await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
+				resolved.Select(r => r.Contact).ToList(),
+				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId);
+
+			foreach (var entry in resolved)
+				result.Data.Add(MapContactToResult(entry.Contact, entry.RouteStopId, entry.StopName));
 
 			result.PageSize = result.Data.Count;
 			ResponseHelper.PopulateV4ResponseData(result);

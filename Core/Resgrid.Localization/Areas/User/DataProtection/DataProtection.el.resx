@@ -1,0 +1,391 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Προηγμένη προστασία δεδομένων</value>
+  </data>
+  <data name="BreadcrumbHome" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="BreadcrumbSecurity" xml:space="preserve">
+    <value>Ασφάλεια</value>
+  </data>
+  <data name="MigrationWindowActive" xml:space="preserve">
+    <value>Το παράθυρο μετεγκατάστασης είναι ενεργό.</value>
+  </data>
+  <data name="DataEntryPaused" xml:space="preserve">
+    <value>Η καταχώριση δεδομένων είναι σε παύση μέχρι να κλείσει το παράθυρο· η προβολή δεν επηρεάζεται.</value>
+  </data>
+  <data name="ProtectionStatusHeader" xml:space="preserve">
+    <value>Κατάσταση προστασίας</value>
+  </data>
+  <data name="CurrentState" xml:space="preserve">
+    <value>Τρέχουσα κατάσταση:</value>
+  </data>
+  <data name="EnrollmentUnavailable" xml:space="preserve">
+    <value>Η εγγραφή στην προηγμένη προστασία δεδομένων δεν είναι προσωρινά διαθέσιμη. Εάν το τμήμα σας έχει ήδη αγοράσει το πρόσθετο, παραμένει έγκυρο — ελέγξτε ξανά σύντομα.</value>
+  </data>
+  <data name="AddonRequiredIntro" xml:space="preserve">
+    <value>Η προηγμένη προστασία δεδομένων κρυπτογραφεί τα ευαίσθητα δεδομένα αποστολής, προσωπικού και επαφών του τμήματός σας με κλειδιά που ανήκουν στο τμήμα. Απαιτεί το ετήσιο πρόσθετο ADP.</value>
+  </data>
+  <data name="PurchaseAddon" xml:space="preserve">
+    <value>Αγορά του πρόσθετου ADP</value>
+  </data>
+  <data name="ManagingMemberOnlyPurchase" xml:space="preserve">
+    <value>Μόνο το διαχειριστικό μέλος του τμήματός σας μπορεί να αγοράσει το πρόσθετο και να κάνει εγγραφή.</value>
+  </data>
+  <data name="AddonActiveManagingMemberOnly" xml:space="preserve">
+    <value>Το πρόσθετο ADP είναι ενεργό. Μόνο το διαχειριστικό μέλος του τμήματός σας μπορεί να ολοκληρώσει την εγγραφή.</value>
+  </data>
+  <data name="EnrollmentQueuedNotice" xml:space="preserve">
+    <value>Η εγγραφή είναι σε ουρά. Η μετεγκατάσταση εκτελείται στο επιλεγμένο νυχτερινό παράθυρο ({0}–{1}, {2}). Θα λάβετε email όταν το παράθυρο κάθε νύχτας ανοίγει και κλείνει.</value>
+  </data>
+  <data name="CancelQueuedEnrollment" xml:space="preserve">
+    <value>Ακύρωση εγγραφής σε ουρά</value>
+  </data>
+  <data name="MigrationInProgress" xml:space="preserve">
+    <value>Η μετεγκατάσταση βρίσκεται σε εξέλιξη. Η εργασία γίνεται μόνο εντός του νυχτερινού παραθύρου ({0}–{1}, {2})· εκτός αυτού το τμήμα σας λειτουργεί πλήρως.</value>
+  </data>
+  <data name="ProtectionActiveHeader" xml:space="preserve">
+    <value>Η προηγμένη προστασία δεδομένων είναι ενεργή.</value>
+  </data>
+  <data name="ProtectionActiveDetail" xml:space="preserve">
+    <value>Τα προστατευμένα πεδία κρυπτογραφούνται με τα κλειδιά του τμήματός σας· η προβολή τους απαιτεί συνδεδεμένο μέλος με πρόσφατη επαλήθευση ελέγχου ταυτότητας.</value>
+  </data>
+  <data name="TurnOffInstructions" xml:space="preserve">
+    <value>Για να απενεργοποιήσετε το ADP, ακυρώστε το πρόσθετο στη σελίδα συνδρομής. Η προστασία παραμένει ενεργή έως το τέλος της τρέχουσας περιόδου χρέωσης. Μετά την αποκρυπτογράφηση των δεδομένων σας, η εκ νέου ενεργοποίηση απαιτεί νέα αγορά του πρόσθετου και νέα εγγραφή.</value>
+  </data>
+  <data name="SubscriptionPage" xml:space="preserve">
+    <value>σελίδα συνδρομής</value>
+  </data>
+  <data name="OffboardingScheduledHeader" xml:space="preserve">
+    <value>Η απενεργοποίηση έχει προγραμματιστεί.</value>
+  </data>
+  <data name="OffboardingScheduledDetail" xml:space="preserve">
+    <value>Η προστασία παραμένει πλήρως ενεργή έως {0}, οπότε τα δεδομένα σας αποκρυπτογραφούνται πίσω σε τυπική αποθήκευση σε ένα ή περισσότερα νυχτερινά παράθυρα.</value>
+  </data>
+  <data name="EndOfBillingPeriod" xml:space="preserve">
+    <value>το τέλος της περιόδου χρέωσής σας</value>
+  </data>
+  <data name="RevokeOffboarding" xml:space="preserve">
+    <value>Διατήρηση προηγμένης προστασίας δεδομένων (ανάκληση απενεργοποίησης)</value>
+  </data>
+  <data name="OffboardingInProgress" xml:space="preserve">
+    <value>Η απενεργοποίηση βρίσκεται σε εξέλιξη. Η προστασία παραμένει σε ισχύ μέχρι τα δεδομένα σας να αποκατασταθούν πλήρως σε τυπική αποθήκευση.</value>
+  </data>
+  <data name="MigrationFailed" xml:space="preserve">
+    <value>Η τελευταία εκτέλεση μετεγκατάστασης δεν ολοκληρώθηκε και θα συνεχιστεί μετά από έλεγχο. Το τμήμα σας λειτουργεί πλήρως και τα δεδομένα σας παραμένουν ασφαλή. Η υποστήριξη ειδοποιήθηκε· δεν απαιτείται καμία ενέργεια.</value>
+  </data>
+  <data name="WizardHeader" xml:space="preserve">
+    <value>Οδηγός εγγραφής</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Συνέχεια</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Πίσω</value>
+  </data>
+  <data name="Step1Header" xml:space="preserve">
+    <value>Βήμα 1 από 6 — Τι καλύπτει η προηγμένη προστασία δεδομένων</value>
+  </data>
+  <data name="Step1Intro" xml:space="preserve">
+    <value>Το ADP κρυπτογραφεί το ευαίσθητο περιεχόμενο των δεδομένων του τμήματός σας με κλειδιά που ανήκουν στο τμήμα και φυλάσσονται σε θωρακισμένη υπηρεσία κλειδιών:</value>
+  </data>
+  <data name="Step1ProtectedLabel" xml:space="preserve">
+    <value>Προστατευμένα:</value>
+  </data>
+  <data name="Step1ProtectedList" xml:space="preserve">
+    <value>ονόματα, φύση, σημειώσεις και διευθύνσεις κλήσεων· σημειώσεις και συνημμένα κλήσεων· στοιχεία και σημειώσεις επαφών· ευαίσθητα δεδομένα μελών.</value>
+  </data>
+  <data name="Step1PlaintextLabel" xml:space="preserve">
+    <value>Παραμένει σε απλό κείμενο:</value>
+  </data>
+  <data name="Step1PlaintextList" xml:space="preserve">
+    <value>αναγνωριστικά συστήματος, αριθμοί κλήσεων, προτεραιότητες, καταστάσεις, χρονοσημάνσεις, ονόματα μονάδων και δομή τμήματος — η πλατφόρμα τα χρειάζεται για δρομολόγηση και εμφάνιση.</value>
+  </data>
+  <data name="Step1WhileProtected" xml:space="preserve">
+    <value>Ενώ προστατεύεται:</value>
+  </data>
+  <data name="Step1LimitSearch" xml:space="preserve">
+    <value>Η αναζήτηση, οι αναφορές, οι εξαγωγές και οι ενσωματώσεις τρίτων δεν βλέπουν προστατευμένο περιεχόμενο.</value>
+  </data>
+  <data name="Step1LimitBigBoard" xml:space="preserve">
+    <value>Οι οθόνες Big Board εμφανίζουν μειωμένο κέλυφος «προστατευμένο συμβάν» αντί για λεπτομέρειες κλήσης.</value>
+  </data>
+  <data name="Step1LimitWorkflow" xml:space="preserve">
+    <value>Οι ροές εργασίας λαμβάνουν λογοκριμένα δεδομένα (οι προστατευμένες τιμές αντικαθίστανται με REDACTED).</value>
+  </data>
+  <data name="Step1LimitNotifications" xml:space="preserve">
+    <value>Οι ειδοποιήσεις SMS, email, push και φωνής στέλνουν εξ ορισμού γενικό περιεχόμενο («Υπάρχει προστατευμένη αποστολή — συνδεθείτε στο Resgrid»).</value>
+  </data>
+  <data name="Step1NotCompliance" xml:space="preserve">
+    <value>Η προηγμένη προστασία δεδομένων από μόνη της δεν αποτελεί συμμόρφωση HIPAA ή ePCR. Είναι ένα μέτρο εντός ενός προγράμματος συμμόρφωσης που παραμένει ευθύνη του φορέα σας.</value>
+  </data>
+  <data name="Step2Header" xml:space="preserve">
+    <value>Βήμα 2 από 6 — Αποδοχές</value>
+  </data>
+  <data name="Step2Intro" xml:space="preserve">
+    <value>Κάθε στοιχείο παρακάτω πρέπει να γίνει αποδεκτό από το διαχειριστικό μέλος. Οι αποδοχές καταγράφονται με σφραγίδα έκδοσης.</value>
+  </data>
+  <data name="AckCatalogScope" xml:space="preserve">
+    <value>Κατανοώ ποιες οικογένειες δεδομένων προστατεύονται (κλήσεις, σημειώσεις/συνημμένα κλήσεων, επαφές, ευαίσθητα δεδομένα μελών) και ότι ο κατάλογος προστατευμένων πεδίων είναι εκδοσιοποιημένος.</value>
+  </data>
+  <data name="AckPlaintextMetadata" xml:space="preserve">
+    <value>Κατανοώ ότι τα μεταδεδομένα συστήματος (αριθμοί κλήσεων, προτεραιότητες, καταστάσεις, χρονοσημάνσεις, δομή μονάδων και τμήματος) παραμένουν σε απλό κείμενο.</value>
+  </data>
+  <data name="AckAuthorizedServerAccess" xml:space="preserve">
+    <value>Κατανοώ ότι οι διακομιστές της Resgrid επεξεργάζονται τις προστατευμένες τιμές στη μνήμη όταν ένα εξουσιοδοτημένο μέλος τις προβάλλει ή τις επεξεργάζεται.</value>
+  </data>
+  <data name="AckStepUpWindow" xml:space="preserve">
+    <value>Κατανοώ ότι τα μέλη χρειάζονται πρόσφατη επαλήθευση authenticator (MFA) για να δουν προστατευμένες τιμές, εντός παραθύρου που ρυθμίζει το τμήμα μου (προεπιλογή 15 λεπτά· τιμές άνω των 60 απαιτούν καταγεγραμμένη αιτιολογία).</value>
+  </data>
+  <data name="AckBigBoardReduction" xml:space="preserve">
+    <value>Κατανοώ ότι οι οθόνες Big Board εμφανίζουν μειωμένα κελύφη προστατευμένων συμβάντων.</value>
+  </data>
+  <data name="AckWorkflowRedaction" xml:space="preserve">
+    <value>Κατανοώ ότι οι ροές εργασίας λαμβάνουν λογοκριμένα δεδομένα και δεν μπορούν να ενεργήσουν σε προστατευμένο περιεχόμενο.</value>
+  </data>
+  <data name="AckDefaultEgress" xml:space="preserve">
+    <value>Κατανοώ ότι οι ειδοποιήσεις SMS/email/push/φωνής στέλνουν εξ ορισμού γενικό περιεχόμενο και ότι η χαλάρωση ενός καναλιού απαιτεί ξεχωριστή αποδεκτή αλλαγή πολιτικής.</value>
+  </data>
+  <data name="AckSearchReportLimitations" xml:space="preserve">
+    <value>Κατανοώ ότι η αναζήτηση, οι αναφορές, οι εξαγωγές, οι ενσωματώσεις και η εκτός σύνδεσης πρόσβαση δεν βλέπουν προστατευμένο περιεχόμενο.</value>
+  </data>
+  <data name="AckMigrationDisable" xml:space="preserve">
+    <value>Κατανοώ ότι η ενεργοποίηση εκτελεί νυχτερινή μετεγκατάσταση και ότι η μετέπειτα απενεργοποίηση αποκρυπτογραφεί τα δεδομένα μου σε νυχτερινά παράθυρα στο τέλος της περιόδου χρέωσης.</value>
+  </data>
+  <data name="AckKeyLossSupport" xml:space="preserve">
+    <value>Κατανοώ ότι η υποστήριξη της Resgrid δεν μπορεί να διαβάσει προστατευμένες τιμές χωρίς ρητή, ελεγμένη και εγκεκριμένη από το τμήμα άδεια υποστήριξης, και ότι η απώλεια κλειδιών ανακτάται μόνο μέσω της τεκμηριωμένης διαδικασίας.</value>
+  </data>
+  <data name="AckNotHipaaCompliance" xml:space="preserve">
+    <value>Κατανοώ ότι η προηγμένη προστασία δεδομένων από μόνη της δεν αποτελεί συμμόρφωση HIPAA/ePCR.</value>
+  </data>
+  <data name="Step3Header" xml:space="preserve">
+    <value>Βήμα 3 από 6 — Προκαταρκτικοί έλεγχοι</value>
+  </data>
+  <data name="CheckManagingMember" xml:space="preserve">
+    <value>Διαχειριστικό μέλος</value>
+  </data>
+  <data name="CheckPaidPlan" xml:space="preserve">
+    <value>Επί πληρωμή πρόγραμμα</value>
+  </data>
+  <data name="CheckActiveAddon" xml:space="preserve">
+    <value>Ενεργό πρόσθετο ADP</value>
+  </data>
+  <data name="CheckGateOpen" xml:space="preserve">
+    <value>Διαθεσιμότητα εγγραφής (πύλη πλατφόρμας)</value>
+  </data>
+  <data name="CheckStateAllows" xml:space="preserve">
+    <value>Η κατάσταση τμήματος επιτρέπει την εγγραφή</value>
+  </data>
+  <data name="CheckBrokerHealthy" xml:space="preserve">
+    <value>Η υπηρεσία προστασίας είναι προσβάσιμη</value>
+  </data>
+  <data name="CheckManagingMemberMfa" xml:space="preserve">
+    <value>Το διαχειριστικό μέλος έχει καταχωρημένο authenticator</value>
+  </data>
+  <data name="PreflightFailed" xml:space="preserve">
+    <value>Ένας προκαταρκτικός έλεγχος απέτυχε. Επιλύστε τα στοιχεία με ✖ και φορτώστε ξανά τη σελίδα — η εγγραφή δεν μπορεί να μπει σε ουρά μέχρι να περάσουν όλοι οι έλεγχοι.</value>
+  </data>
+  <data name="Step4Header" xml:space="preserve">
+    <value>Βήμα 4 από 6 — Εκτίμηση μεγέθους μετεγκατάστασης</value>
+  </data>
+  <data name="Step4Intro" xml:space="preserve">
+    <value>Μια σάρωση μόνο για ανάγνωση μετρά τις γραμμές του τμήματός σας και εκτιμά πόσα νυχτερινά παράθυρα χρειάζεται η μετεγκατάσταση. Η σάρωση δεν αλλάζει τίποτα.</value>
+  </data>
+  <data name="RunSizingScan" xml:space="preserve">
+    <value>Εκτέλεση σάρωσης μεγέθους</value>
+  </data>
+  <data name="Step5Header" xml:space="preserve">
+    <value>Βήμα 5 από 6 — Νυχτερινό παράθυρο μετεγκατάστασης</value>
+  </data>
+  <data name="Step5Intro" xml:space="preserve">
+    <value>Η μετεγκατάσταση εκτελείται μόνο σε αυτό το τοπικό παράθυρο του τμήματος και θέτει σε παύση την καταχώριση δεδομένων. Επιλέξτε τις πιο ήσυχες ώρες· η προεπιλογή είναι {0}–{1}.</value>
+  </data>
+  <data name="WindowStartLabel" xml:space="preserve">
+    <value>Έναρξη παραθύρου (τοπική)</value>
+  </data>
+  <data name="WindowEndLabel" xml:space="preserve">
+    <value>Λήξη παραθύρου (τοπική)</value>
+  </data>
+  <data name="TimeZoneLabel" xml:space="preserve">
+    <value>Ζώνη ώρας</value>
+  </data>
+  <data name="OperationPauseHeader" xml:space="preserve">
+    <value>Παύση λειτουργίας τμήματος.</value>
+  </data>
+  <data name="OperationPauseDetail" xml:space="preserve">
+    <value>Ενώ εκτελείται παράθυρο μετεγκατάστασης, δεν εκτελούνται νέες κλήσεις, αλλαγές κατάστασης, αλλαγές στελέχωσης ή προγραμματισμένες εργασίες για το τμήμα σας. Η προβολή συνεχίζεται. Μπορείτε να διακόψετε ένα ενεργό παράθυρο ανά πάσα στιγμή και το τμήμα επιστρέφει αμέσως σε πλήρη λειτουργία.</value>
+  </data>
+  <data name="LockConsent" xml:space="preserve">
+    <value>Κατανοώ και συναινώ στη νυχτερινή παύση λειτουργίας κατά τα παράθυρα μετεγκατάστασης.</value>
+  </data>
+  <data name="Step6Header" xml:space="preserve">
+    <value>Βήμα 6 από 6 — Επιβεβαίωση και ουρά</value>
+  </data>
+  <data name="Step6Intro" xml:space="preserve">
+    <value>Η τοποθέτηση της εγγραφής σε ουρά επαληθεύει ξανά κάθε απαίτηση στον διακομιστή και τοποθετεί το τμήμα σας στην ουρά μετεγκατάστασης. Τα τμήματα μετεγκαθίστανται ένα κάθε φορά· θα λάβετε email με το πρόγραμμά σας.</value>
+  </data>
+  <data name="QueueEnrollment" xml:space="preserve">
+    <value>Εγγραφή σε ουρά</value>
+  </data>
+  <data name="ErrAcknowledgementsIncomplete" xml:space="preserve">
+    <value>Όλες οι αποδοχές πρέπει να επιλεγούν πριν μπει η εγγραφή σε ουρά.</value>
+  </data>
+  <data name="ErrLockConsentRequired" xml:space="preserve">
+    <value>Πρέπει να συναινέσετε στη νυχτερινή παύση λειτουργίας πριν μπει η εγγραφή σε ουρά.</value>
+  </data>
+  <data name="ErrProtectedAccessDenied" xml:space="preserve">
+    <value>Μόνο το διαχειριστικό μέλος του τμήματος μπορεί να εκτελέσει αυτή την εντολή.</value>
+  </data>
+  <data name="ErrAddonRequired" xml:space="preserve">
+    <value>Απαιτείται ενεργό πρόσθετο προηγμένης προστασίας δεδομένων.</value>
+  </data>
+  <data name="ErrPlanRequired" xml:space="preserve">
+    <value>Η προηγμένη προστασία δεδομένων απαιτεί επί πληρωμή πρόγραμμα.</value>
+  </data>
+  <data name="ErrFeatureNotAvailable" xml:space="preserve">
+    <value>Η εγγραφή στην προηγμένη προστασία δεδομένων δεν είναι προσωρινά διαθέσιμη.</value>
+  </data>
+  <data name="ErrInvalidState" xml:space="preserve">
+    <value>Η κατάσταση προστασίας του τμήματος δεν επιτρέπει αυτή την εντολή. Φορτώστε ξανά τη σελίδα για την τρέχουσα κατάσταση.</value>
+  </data>
+  <data name="ErrInvalidWindow" xml:space="preserve">
+    <value>Απαιτείται έγκυρη ζώνη ώρας για το παράθυρο μετεγκατάστασης.</value>
+  </data>
+  <data name="ErrCommandFailed" xml:space="preserve">
+    <value>Η εντολή δεν ολοκληρώθηκε· μπορείτε να δοκιμάσετε ξανά.</value>
+  </data>
+  <data name="ConfirmCancelQueued" xml:space="preserve">
+    <value>Ακύρωση της εγγραφής σε ουρά; Δεν έχει μετεγκατασταθεί τίποτα ακόμη· μπορείτε να εγγραφείτε ξανά αργότερα όσο το πρόσθετο είναι ενεργό.</value>
+  </data>
+  <data name="ConfirmRevokeOffboarding" xml:space="preserve">
+    <value>Διατήρηση της προηγμένης προστασίας δεδομένων ενεργής; Η προγραμματισμένη απενεργοποίηση θα ακυρωθεί.</value>
+  </data>
+  <data name="EmergencyContactsHeader" xml:space="preserve">
+    <value>Επαφές έκτακτης ανάγκης</value>
+  </data>
+  <data name="EmergencyContactsIntro" xml:space="preserve">
+    <value>Οι επαφές έκτακτης ανάγκης αφορούν αυτό το τμήμα και αποθηκεύονται με τις ρυθμίσεις προστασίας δεδομένων του τμήματος. Μπορείτε να προσθέσετε περισσότερες από μία.</value>
+  </data>
+  <data name="AddEmergencyContact" xml:space="preserve">
+    <value>Προσθήκη επαφής έκτακτης ανάγκης</value>
+  </data>
+  <data name="EditEmergencyContact" xml:space="preserve">
+    <value>Επεξεργασία επαφής έκτακτης ανάγκης</value>
+  </data>
+  <data name="EmergencyContactTitle" xml:space="preserve">
+    <value>Επαφή έκτακτης ανάγκης</value>
+  </data>
+  <data name="NoEmergencyContacts" xml:space="preserve">
+    <value>Δεν έχουν προστεθεί επαφές έκτακτης ανάγκης.</value>
+  </data>
+  <data name="ContactNameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="RelationshipLabel" xml:space="preserve">
+    <value>Σχέση</value>
+  </data>
+  <data name="PhoneNumberLabel" xml:space="preserve">
+    <value>Αριθμός τηλεφώνου</value>
+  </data>
+  <data name="AlternatePhoneLabel" xml:space="preserve">
+    <value>Εναλλακτικός αριθμός τηλεφώνου</value>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="NotesLabel" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="PrimaryContactLabel" xml:space="preserve">
+    <value>Κύρια επαφή</value>
+  </data>
+  <data name="PrimaryColumn" xml:space="preserve">
+    <value>Κύρια</value>
+  </data>
+  <data name="AlternateColumn" xml:space="preserve">
+    <value>Εναλλακτικό</value>
+  </data>
+  <data name="YesLabel" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="EditAction" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="DeleteAction" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="SaveAction" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="CancelAction" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Απαιτείται όνομα.</value>
+  </data>
+  <data name="ContactSaveFailed" xml:space="preserve">
+    <value>Η επαφή δεν μπόρεσε να αποθηκευτεί.</value>
+  </data>
+  <data name="ConfirmRemoveContact" xml:space="preserve">
+    <value>Κατάργηση αυτής της επαφής έκτακτης ανάγκης;</value>
+  </data>
+</root>

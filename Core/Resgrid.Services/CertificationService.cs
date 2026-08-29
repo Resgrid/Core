@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,10 +15,16 @@ namespace Resgrid.Services
 		private readonly IDepartmentCertificationTypeRepository _departmentCertificationTypeRepository;
 		private readonly IPersonnelCertificationRepository _personnelCertificationRepository;
 
-		public CertificationService(IDepartmentCertificationTypeRepository departmentCertificationTypeRepository, IPersonnelCertificationRepository personnelCertificationRepository)
+		// Lazy: defers the protected graph (broker client) until a save actually needs it.
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
+
+		public CertificationService(IDepartmentCertificationTypeRepository departmentCertificationTypeRepository,
+			IPersonnelCertificationRepository personnelCertificationRepository,
+			Lazy<IProtectedWriteService> protectedWriteService)
 		{
 			_departmentCertificationTypeRepository = departmentCertificationTypeRepository;
 			_personnelCertificationRepository = personnelCertificationRepository;
+			_protectedWriteService = protectedWriteService;
 		}
 
 		public async Task<List<DepartmentCertificationType>> GetAllCertificationTypesByDepartmentAsync(int departmentId)
@@ -84,7 +91,27 @@ namespace Resgrid.Services
 
 		public async Task<PersonnelCertification> SaveCertificationAsync(PersonnelCertification certification, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _personnelCertificationRepository.SaveOrUpdateAsync(certification, cancellationToken);
+			// The stored row backs REDACTED-sentinel restoration: an admin who edits a member's
+			// certification without a grant posts back placeholders, and those must not be written
+			// over the real values. Fetched before the save, while the id still identifies the
+			// stored row rather than the incoming one.
+			PersonnelCertification existing = null;
+			if (certification != null && certification.PersonnelCertificationId > 0)
+				existing = await _personnelCertificationRepository.GetByIdAsync(certification.PersonnelCertificationId);
+
+			var saved = await _personnelCertificationRepository.SaveOrUpdateAsync(certification, cancellationToken);
+
+			// ADP write safety net (plan 4.2/19.2). Runs AFTER the save so the identity pk exists —
+			// it is the AAD row key — then re-persists the enveloped row. Fails closed by throwing
+			// rather than leaving a member's certification number and document in plaintext.
+			var protectedWrite = await _protectedWriteService.Value.PrepareCertificationWriteAsync(
+				saved.DepartmentId, saved, existing, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); certification {saved.PersonnelCertificationId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed)
+				saved = await _personnelCertificationRepository.SaveOrUpdateAsync(saved, cancellationToken);
+
+			return saved;
 		}
 
 		public async Task<PersonnelCertification> GetCertificationByIdAsync(int certificationId)

@@ -632,4 +632,64 @@
   <data name="Pois" xml:space="preserve">
     <value>POIs</value>
   </data>
+  <data name="AdpProtectedCall" xml:space="preserve">
+    <value>Geschützter Einsatz</value>
+  </data>
+  <data name="AdpProtectedCertifications" xml:space="preserve">
+    <value>Geschützte Zertifikate</value>
+  </data>
+  <data name="AdpProtectedContact" xml:space="preserve">
+    <value>Geschützter Kontakt</value>
+  </data>
+  <data name="AdpProtectedBannerDescription" xml:space="preserve">
+    <value>für diese Abteilung im Ruhezustand verschlüsselt. Berechtigte Benutzer und freigegebene Kanäle können sie dennoch offenlegen.</value>
+  </data>
+  <data name="AdpVerifyAndReveal" xml:space="preserve">
+    <value>Bestätigen &amp; anzeigen</value>
+  </data>
+  <data name="AdpConceal" xml:space="preserve">
+    <value>Verbergen</value>
+  </data>
+  <data name="AdpStepUpTitle" xml:space="preserve">
+    <value>Bestätigen, um geschützte Daten anzuzeigen</value>
+  </data>
+  <data name="AdpStepUpInstructions" xml:space="preserve">
+    <value>Geben Sie den 6-stelligen Code aus Ihrer Authenticator-App ein. Angezeigte Werte bleiben nur während des Bestätigungszeitfensters dieser Abteilung sichtbar und werden niemals in Ihrem Browser gespeichert.</value>
+  </data>
+  <data name="AdpVerificationCode" xml:space="preserve">
+    <value>Bestätigungscode</value>
+  </data>
+  <data name="AdpVerify" xml:space="preserve">
+    <value>Bestätigen</value>
+  </data>
+  <data name="AdpErrorInvalidCode" xml:space="preserve">
+    <value>Der Bestätigungscode ist ungültig oder abgelaufen.</value>
+  </data>
+  <data name="AdpErrorTooManyAttempts" xml:space="preserve">
+    <value>Zu viele Bestätigungsversuche. Warten Sie einige Minuten und versuchen Sie es erneut.</value>
+  </data>
+  <data name="AdpErrorMfaNotEnrolled" xml:space="preserve">
+    <value>Für dieses Konto ist keine Zwei-Faktor-Authentifizierung eingerichtet. Richten Sie zuerst eine Authenticator-App in den Sicherheitseinstellungen des Kontos ein.</value>
+  </data>
+  <data name="AdpErrorGrantsNotConfigured" xml:space="preserve">
+    <value>Der Zugriff auf geschützte Daten ist auf diesem Server nicht konfiguriert.</value>
+  </data>
+  <data name="AdpErrorStepUpRequired" xml:space="preserve">
+    <value>Eine erneute Bestätigung ist erforderlich.</value>
+  </data>
+  <data name="AdpErrorGrantExpired" xml:space="preserve">
+    <value>Das Bestätigungszeitfenster ist abgelaufen. Bitte erneut bestätigen.</value>
+  </data>
+  <data name="AdpErrorGrantRevoked" xml:space="preserve">
+    <value>Der Zugriff wurde durch eine Richtlinienänderung widerrufen. Bitte erneut bestätigen.</value>
+  </data>
+  <data name="AdpErrorAccessDenied" xml:space="preserve">
+    <value>Sie sind nicht berechtigt, diese geschützten Daten anzuzeigen.</value>
+  </data>
+  <data name="AdpErrorBrokerUnavailable" xml:space="preserve">
+    <value>Der Dienst für geschützte Daten ist nicht verfügbar. Versuchen Sie es in Kürze erneut.</value>
+  </data>
+  <data name="AdpErrorGeneric" xml:space="preserve">
+    <value>Die Anfrage ist fehlgeschlagen. Bitte erneut versuchen.</value>
+  </data>
 </root>

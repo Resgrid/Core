@@ -37,6 +37,21 @@ namespace Resgrid.Model.Services
 		Task<bool> IsProtectionEnforcedAsync(int departmentId);
 
 		/// <summary>
+		/// The catalog version this department is PINNED at — the version its envelopes were written
+		/// under and the one its AAD is computed from. Zero when the department has no policy row.
+		/// Never assume the code's current catalog version: a department that enrolled earlier owns
+		/// only the fields that existed then, until a catalog upgrade sweeps it.
+		/// </summary>
+		Task<int> GetPinnedCatalogVersionAsync(int departmentId);
+
+		/// <summary>
+		/// True when the code's catalog has advanced past what this protected department was migrated
+		/// to, so newly cataloged fields are still landing in plaintext and an upgrade sweep is owed.
+		/// False for unprotected departments (nothing to upgrade) and for departments already current.
+		/// </summary>
+		Task<bool> IsCatalogUpgradePendingAsync(int departmentId);
+
+		/// <summary>
 		/// Queues enrollment (Disabled -> EnrollmentQueued) after enforcing, server-side: caller is
 		/// Department.ManagingUserId; department is on a paid plan with an active paid ADP addon; a
 		/// fresh authoritative (bypass-cache) evaluation of the global admission gate is true; and the

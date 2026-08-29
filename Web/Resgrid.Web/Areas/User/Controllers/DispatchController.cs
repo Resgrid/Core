@@ -2207,6 +2207,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new CallExportView();
 			model.Call = await _callsService.GetCallByIdAsync(callId);
 			model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(callId);
+
+			// calllogs.narrative is cataloged; without this the export renders rgdp ciphertext for a
+			// protected department.
+			await _protectedReadService.ResolveCallLogsForReadAsync(DepartmentId, model.CallLogs,
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(model.Call.DepartmentId, false);
 			model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, callId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
 			model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(model.Call.DepartmentId, callId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
@@ -2272,6 +2277,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.DestinationAddress = destinationInfo.Address;
 				model.DestinationTypeName = destinationInfo.TypeName;
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
+				await _protectedReadService.ResolveCallLogsForReadAsync(call.DepartmentId, model.CallLogs,
+					Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
 				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();
@@ -2309,6 +2316,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.DestinationAddress = destinationInfo.Address;
 				model.DestinationTypeName = destinationInfo.TypeName;
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
+				await _protectedReadService.ResolveCallLogsForReadAsync(call.DepartmentId, model.CallLogs,
+					Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
 				model.ActionLogs = (await _actionLogsService.GetActionLogsForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UserId).OrderBy(y => y.Timestamp).ToList();

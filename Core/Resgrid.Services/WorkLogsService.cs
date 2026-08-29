@@ -20,9 +20,13 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly ICallsService _callsService;
 
+		// Lazy: defers the protected-write graph (broker client) until a log save actually needs it.
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
+
 		public WorkLogsService(ILogsRepository logsRepository, ICallLogsRepository callLogsRepository, ILogUsersRepository logUsersRepository,
 			ILogAttachmentRepository logAttachmentRepository, ILogUnitsRepository logUnitsRepository, IDepartmentsService departmentsService,
-			IDepartmentGroupsService departmentGroupsService, ICallsService callsService)
+			IDepartmentGroupsService departmentGroupsService, ICallsService callsService,
+			Lazy<IProtectedWriteService> protectedWriteService)
 		{
 			_logsRepository = logsRepository;
 			_callLogsRepository = callLogsRepository;
@@ -31,6 +35,7 @@ namespace Resgrid.Services
 			_logUnitsRepository = logUnitsRepository;
 			_departmentsService = departmentsService;
 			_departmentGroupsService = departmentGroupsService;
+			_protectedWriteService = protectedWriteService;
 			_callsService = callsService;
 		}
 
@@ -116,6 +121,17 @@ namespace Resgrid.Services
 				var savedLogUser = _logUsersRepository.SaveOrUpdateAsync(user, cancellationToken, true);
 			}
 
+			// ADP write safety net (plan 4.2/19.2), catalog v3: the incident log's narrative, initial
+			// report, cause, contact details, location and body/deceased fields are cataloged. Runs
+			// AFTER the save so the identity pk exists (it is the AAD row key), then re-persists the
+			// enveloped row. Fails closed by throwing rather than leaving plaintext at rest.
+			var protectedWrite = await _protectedWriteService.Value.PrepareLogWriteAsync(savedLog.DepartmentId,
+				savedLog, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); log {savedLog.LogId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed)
+				savedLog = await _logsRepository.SaveOrUpdateAsync(savedLog, cancellationToken, true);
+
 			return savedLog;
 		}
 
@@ -163,7 +179,19 @@ namespace Resgrid.Services
 		{
 			log.LoggedOn = DateTime.UtcNow;
 
-			return await _callLogsRepository.SaveOrUpdateAsync(log, cancellationToken);
+			var savedLog = await _callLogsRepository.SaveOrUpdateAsync(log, cancellationToken);
+
+			// ADP write safety net (plan 4.2/19.2): calllogs.narrative is cataloged. Runs AFTER the
+			// save so the identity pk exists (it is the AAD row key), then re-persists the enveloped
+			// row. Fails closed by throwing rather than leaving plaintext at rest.
+			var protectedWrite = await _protectedWriteService.Value.PrepareCallLogWriteAsync(savedLog.DepartmentId,
+				savedLog, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); call log {savedLog.CallLogId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed)
+				savedLog = await _callLogsRepository.SaveOrUpdateAsync(savedLog, cancellationToken);
+
+			return savedLog;
 		}
 
 		public async Task<bool> DeleteCallLogAsync(int callLogId, CancellationToken cancellationToken = default(CancellationToken))

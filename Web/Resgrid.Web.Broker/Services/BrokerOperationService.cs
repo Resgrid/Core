@@ -166,7 +166,7 @@ namespace Resgrid.Web.Broker.Services
 					try
 					{
 						itemResult.Value = Convert.ToBase64String(_cryptoService.DecryptBinary(binaryDek, blob,
-							request.DepartmentId, item.FieldId, item.RowKey, item.CatalogVersion));
+							request.DepartmentId, item.FieldId, item.RowKey));
 					}
 					catch (Exception ex) when (ex is CryptographicException || ex is FormatException || ex is ArgumentException)
 					{
@@ -197,7 +197,7 @@ namespace Resgrid.Web.Broker.Services
 				try
 				{
 					itemResult.Value = _cryptoService.DecryptText(dek, item.Value, request.DepartmentId,
-						item.FieldId, item.RowKey, item.CatalogVersion);
+						item.FieldId, item.RowKey);
 				}
 				catch (Exception ex) when (ex is CryptographicException || ex is FormatException || ex is ArgumentException)
 				{
@@ -262,7 +262,7 @@ namespace Resgrid.Web.Broker.Services
 					try
 					{
 						itemResult.Value = Convert.ToBase64String(_cryptoService.EncryptBinary(binaryDek, activeKey.Version,
-							plaintextBytes, request.DepartmentId, item.FieldId, item.RowKey, item.CatalogVersion));
+							plaintextBytes, request.DepartmentId, item.FieldId, item.RowKey));
 					}
 					catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException || ex is InvalidOperationException)
 					{
@@ -290,7 +290,7 @@ namespace Resgrid.Web.Broker.Services
 				try
 				{
 					itemResult.Value = _cryptoService.EncryptText(dek, activeKey.Version, item.Value,
-						request.DepartmentId, item.FieldId, item.RowKey, item.CatalogVersion);
+						request.DepartmentId, item.FieldId, item.RowKey);
 				}
 				catch (Exception ex) when (ex is CryptographicException || ex is ArgumentException || ex is InvalidOperationException)
 				{

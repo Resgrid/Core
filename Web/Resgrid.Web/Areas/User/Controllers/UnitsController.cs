@@ -1624,7 +1624,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				sb.Append("<optgroup label='Calls'>");
 				foreach (var call in activeCalls)
 				{
-					sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{HttpUtility.HtmlEncode(call.Name)}</option>");
+					sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{HttpUtility.HtmlEncode(ProtectedDataEnvelope.SafeDisplay(call.Name))}</option>");
 				}
 				sb.Append("</optgroup>");
 			}
@@ -1738,7 +1738,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				foreach (var call in activeCalls)
 				{
 					var callHref = BuildUnitStateHref(actionWithDestination, unitId, unitIds, state.CustomStateDetailId, (int)DestinationEntityTypes.Call, call.CallId);
-					var callText = HttpUtility.HtmlEncode($"{call.GetIdentifier()}:{call.Name}");
+					var callText = HttpUtility.HtmlEncode($"{call.GetIdentifier()}:{ProtectedDataEnvelope.SafeDisplay(call.Name)}");
 					sb.Append($"<li><a href='{callHref}'>{callText}</a></li>");
 				}
 			}

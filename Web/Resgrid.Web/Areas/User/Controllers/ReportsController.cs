@@ -42,6 +42,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
+		private readonly IProtectedReadService _protectedReadService;
 		private readonly IAddressService _addressService;
 		private readonly IUserStateService _userStateService;
 		private readonly IScheduledTasksService _scheduledTasksService;
@@ -66,7 +68,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICallsService callsService, IWorkLogsService workLogsService,
 			ICustomStateService customStateService, IAuthorizationService authorizationService,
 			IUnitsService unitsService, IUnitStatesService unitStatesService,
-			ICalendarService calendarService)
+			ICalendarService calendarService, IDepartmentMemberSensitiveDataService memberSensitiveDataService,
+			IProtectedReadService protectedReadService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -74,6 +77,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
 			_userProfileService = userProfileService;
+			_memberSensitiveDataService = memberSensitiveDataService;
+			_protectedReadService = protectedReadService;
 			_addressService = addressService;
 			_userStateService = userStateService;
 			_scheduledTasksService = scheduledTasksService;
@@ -304,6 +309,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
 
 			var users = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			await ApplyMemberIdentificationNumbersAsync(DepartmentId, users?.Values);
 			foreach (var u in users)
 			{
 				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.Key, UserId, DepartmentId))
@@ -346,6 +352,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
 
 			var users = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			await ApplyMemberIdentificationNumbersAsync(DepartmentId, users?.Values);
 			foreach (var u in users)
 			{
 				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.Key, UserId, DepartmentId))
@@ -445,6 +452,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				profiles.Add(new UserProfile() { UserId = String.Empty, FirstName = "All", LastName = "Users" });
 
 			var users = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			await ApplyMemberIdentificationNumbersAsync(DepartmentId, users?.Values);
 			foreach (var u in users)
 			{
 				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.Key, UserId, DepartmentId))
@@ -716,6 +724,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(departmentId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 
+			// Identification number and mailing address are department-scoped and protected (plan
+			// 5.1). Reading them from the global profile would show another department's badge number
+			// and would hand out an address this department has encrypted; resolved here so a
+			// protected department renders the REDACTED placeholder instead.
+			var sensitiveByUser = await _memberSensitiveDataService.GetResolvedForDepartmentAsync(departmentId, null, UserId);
+
 			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
 
 			foreach (var user in users)
@@ -757,24 +771,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (savedProfile != null)
 					{
+						sensitiveByUser.TryGetValue(user.UserId, out var sensitive);
+
 						person.Name = savedProfile.FullName.AsFirstNameLastName;
-						person.ID = savedProfile.IdentificationNumber;
+						person.ID = sensitive?.IdentificationNumber;
 						person.MobilePhoneNumber = savedProfile.MobileNumber;
 
-						if (savedProfile.MailingAddressId.HasValue)
+						if (sensitive != null && !string.IsNullOrWhiteSpace(sensitive.MailingAddress1))
 						{
-							var mailingAddress =
-								await _addressService.GetAddressByIdAsync(savedProfile.MailingAddressId.Value);
-
 							StringBuilder address = new StringBuilder();
 							address.Append("<address>");
-							address.Append(mailingAddress.Address1);
+							address.Append(sensitive.MailingAddress1);
 							address.Append("&nbsp<br>");
-							address.Append(mailingAddress.City);
-							address.Append(mailingAddress.State);
-							address.Append(mailingAddress.PostalCode);
+							address.Append(sensitive.MailingCity);
+							address.Append(sensitive.MailingState);
+							address.Append(sensitive.MailingPostalCode);
 							address.Append("&nbsp<br>");
-							address.Append(mailingAddress.Country);
+							address.Append(sensitive.MailingCountry);
 							address.Append("&nbsp<br>");
 							address.Append("</address>");
 
@@ -802,6 +815,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var users = await _departmentsService.GetAllUsersForDepartmentUnlimitedMinusDisabledAsync(departmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
 
+			// Department-scoped, protected identification number (plan 5.1) — never the global column.
+			var sensitiveByUser = await _memberSensitiveDataService.GetResolvedForDepartmentAsync(departmentId, null, UserId);
+
 			model.RunOn = DateTime.UtcNow.TimeConverter(department);
 
 			foreach (var user in users)
@@ -821,7 +837,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (savedProfile != null)
 					{
 						person.Name = savedProfile.FullName.AsFirstNameLastName;
-						person.ID = savedProfile.IdentificationNumber;
+						person.ID = sensitiveByUser.TryGetValue(user.UserId, out var sensitive)
+							? sensitive.IdentificationNumber
+							: null;
 					}
 					else
 					{
@@ -829,18 +847,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 						person.Name = userProfile.FullName.AsFirstNameLastName;
 					}
 
+					// Reports have no reveal step, so a protected department's certification values
+					// render as the placeholder rather than as ciphertext (plan 5.1, catalog v6).
 					foreach (var certification in certifications)
 					{
 						var subRow = new CertificationsReportSubRow();
-						subRow.Name = certification.Name;
-						subRow.Number = certification.Number;
-						subRow.Type = certification.Type;
-						subRow.IssuedBy = certification.IssuedBy;
+						subRow.Name = ProtectedDataEnvelope.SafeDisplay(certification.Name);
+						subRow.Number = ProtectedDataEnvelope.SafeDisplay(certification.Number);
+						subRow.Type = ProtectedDataEnvelope.SafeDisplay(certification.Type);
+						subRow.IssuedBy = ProtectedDataEnvelope.SafeDisplay(certification.IssuedBy);
 
 						if (certification.ExpiresOn.HasValue)
 							subRow.ExpiresOn = certification.ExpiresOn.Value.ToShortDateString();
 
-						subRow.Area = certification.Area;
+						subRow.Area = ProtectedDataEnvelope.SafeDisplay(certification.Area);
 
 						person.SubRows.Add(subRow);
 					}
@@ -857,6 +877,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new LogReportView();
 			model.Log = await _logService.GetWorkLogByIdAsync(logId);
+
+			// The report template writes the narrative, initial report and cause with Html.Raw.
+			// Resolved rather than SafeDisplayed field by field: one call covers every cataloged log
+			// field, including any added by a later catalog version, and a caller holding a grant
+			// still gets the real report.
+			await _protectedReadService.ResolveLogsForReadAsync(model.Log.DepartmentId, new List<Log> { model.Log },
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(model.Log.DepartmentId);
 			model.RunOn = DateTime.UtcNow.TimeConverter(department);
@@ -1040,6 +1067,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Responses = new List<PersonnelResponse>();
 			var personnel = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			await ApplyMemberIdentificationNumbersAsync(DepartmentId, profiles?.Values);
 
 			CultureInfo culture = new CultureInfo("en-us");
 			Calendar calendar = culture.Calendar;
@@ -1181,6 +1209,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var personnel = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			await ApplyMemberIdentificationNumbersAsync(DepartmentId, profiles?.Values);
 
 			foreach (var person in personnel)
 			{
@@ -1305,6 +1334,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.TrainingDetails = new List<TrainingDetail>();
 
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+			await ApplyMemberIdentificationNumbersAsync(DepartmentId, new[] { profile });
 			model.ID = profile.IdentificationNumber;
 			model.Name = profile.FullName.AsFirstNameLastName;
 
@@ -1414,6 +1444,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
+			await ApplyMemberIdentificationNumbersAsync(departmentId, profiles?.Values);
 			var allStates =
 				await _userStateService.GetAllStatesForDepartmentInDateRangeAsync(departmentId, model.Start, model.End);
 			var groups = await _departmentGroupsService.GetAllDepartmentGroupsForDepartmentAsync(departmentId);
@@ -1476,7 +1507,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						var detail = new PersonnelStaffingDetail();
 						detail.Timestamp = state.Timestamp.TimeConverterToString(model.Department);
-						detail.Note = state.Note;
+						detail.Note = ProtectedDataEnvelope.SafeDisplay(state.Note);
 
 						var customState = await CustomStatesHelper.GetCustomPersonnelStaffing(departmentId, state);
 						detail.State = customState.ButtonText;
@@ -1544,10 +1575,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var summary = new CallSummary();
 				summary.Number = call.Number;
-				summary.Name = call.Name;
+				summary.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				summary.LoggedOn = call.LoggedOn;
 				summary.ClosedOn = call.ClosedOn;
-				summary.Type = call.Type;
+				summary.Type = ProtectedDataEnvelope.SafeDisplay(call.Type);
 
 				DateTime? onSceneTime = null;
 				var callLogs = logs.Where(x => x.CallId == call.CallId);
@@ -1609,6 +1640,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
+			await ApplyMemberIdentificationNumbersAsync(departmentId, profiles?.Values);
 			var groups = await _departmentGroupsService.GetAllDepartmentGroupsForDepartmentAsync(departmentId);
 
 			var statuses = new List<ActionLog>();
@@ -1666,7 +1698,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						var detail = new PersonnelStatusDetail();
 						detail.Timestamp = state.Timestamp.TimeConverterToString(model.Department);
-						detail.Note = state.Note;
+						detail.Note = ProtectedDataEnvelope.SafeDisplay(state.Note);
 
 						var customState = await CustomStatesHelper.GetCustomPersonnelStatus(departmentId, state);
 
@@ -1711,6 +1743,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
+			await ApplyMemberIdentificationNumbersAsync(departmentId, profiles?.Values);
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(departmentId);
 
@@ -1774,7 +1807,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var detail = new UnitStateDetail();
 					detail.Timestamp = state.Timestamp.TimeConverterToString(model.Department);
-					detail.Note = state.Note;
+					detail.Note = ProtectedDataEnvelope.SafeDisplay(state.Note);
 
 					var customState = await CustomStatesHelper.GetCustomUnitState(state);
 
@@ -1814,9 +1847,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var summary = new OpenCallResource();
 				summary.Number = call.Number;
-				summary.Name = call.Name;
+				summary.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				summary.LoggedOn = call.LoggedOn.TimeConverter(model.Department);
-				summary.Type = call.Type;
+				summary.Type = ProtectedDataEnvelope.SafeDisplay(call.Type);
 
 				var callData = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false, false);
 
@@ -1938,6 +1971,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
+			await ApplyMemberIdentificationNumbersAsync(departmentId, profiles?.Values);
 
 			foreach (var note in flaggedNotes)
 			{
@@ -1946,14 +1980,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (calls.TryGetValue(note.CallId, out var call))
 				{
 					row.CallNumber = call.Number;
-					row.CallName = call.Name;
-					row.CallType = string.IsNullOrWhiteSpace(call.Type) ? "None" : call.Type;
-					row.CallAddress = call.Address;
+					row.CallName = ProtectedDataEnvelope.SafeDisplay(call.Name);
+					row.CallType = string.IsNullOrWhiteSpace(call.Type) ? "None" : ProtectedDataEnvelope.SafeDisplay(call.Type);
+					row.CallAddress = ProtectedDataEnvelope.SafeDisplay(call.Address);
 					row.CallLoggedOn = call.LoggedOn.TimeConverter(model.Department);
 				}
 
 				row.CallNoteId = note.CallNoteId;
-				row.NoteText = note.Note;
+				row.NoteText = ProtectedDataEnvelope.SafeDisplay(note.Note);
 				row.NoteTimestamp = note.Timestamp.TimeConverter(model.Department);
 
 				if (!string.IsNullOrWhiteSpace(note.UserId) && profiles.TryGetValue(note.UserId, out var authorProfile))
@@ -1964,7 +1998,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				row.FlaggedOn = note.FlaggedOn.HasValue
 					? note.FlaggedOn.Value.TimeConverter(model.Department)
 					: null;
-				row.FlaggedReason = note.FlaggedReason;
+				row.FlaggedReason = ProtectedDataEnvelope.SafeDisplay(note.FlaggedReason);
 
 				if (!string.IsNullOrWhiteSpace(note.FlaggedByUserId) && profiles.TryGetValue(note.FlaggedByUserId, out var flaggedByProfile))
 					row.FlaggedByName = flaggedByProfile.FullName.AsFirstNameLastName;
@@ -1981,14 +2015,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (calls.TryGetValue(image.CallId, out var call))
 				{
 					row.CallNumber = call.Number;
-					row.CallName = call.Name;
-					row.CallType = string.IsNullOrWhiteSpace(call.Type) ? "None" : call.Type;
-					row.CallAddress = call.Address;
+					row.CallName = ProtectedDataEnvelope.SafeDisplay(call.Name);
+					row.CallType = string.IsNullOrWhiteSpace(call.Type) ? "None" : ProtectedDataEnvelope.SafeDisplay(call.Type);
+					row.CallAddress = ProtectedDataEnvelope.SafeDisplay(call.Address);
 					row.CallLoggedOn = call.LoggedOn.TimeConverter(model.Department);
 				}
 
 				row.CallAttachmentId = image.CallAttachmentId;
-				row.FileName = image.FileName;
+				row.FileName = ProtectedDataEnvelope.SafeDisplay(image.FileName);
 				row.ImageTimestamp = image.Timestamp.HasValue
 					? image.Timestamp.Value.TimeConverter(model.Department)
 					: null;
@@ -2001,7 +2035,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				row.FlaggedOn = image.FlaggedOn.HasValue
 					? image.FlaggedOn.Value.TimeConverter(model.Department)
 					: null;
-				row.FlaggedReason = image.FlaggedReason;
+				row.FlaggedReason = ProtectedDataEnvelope.SafeDisplay(image.FlaggedReason);
 
 				if (!string.IsNullOrWhiteSpace(image.FlaggedByUserId) && profiles.TryGetValue(image.FlaggedByUserId, out var flaggedByProfile))
 					row.FlaggedByName = flaggedByProfile.FullName.AsFirstNameLastName;
@@ -2018,14 +2052,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (calls.TryGetValue(file.CallId, out var call))
 				{
 					row.CallNumber = call.Number;
-					row.CallName = call.Name;
-					row.CallType = string.IsNullOrWhiteSpace(call.Type) ? "None" : call.Type;
-					row.CallAddress = call.Address;
+					row.CallName = ProtectedDataEnvelope.SafeDisplay(call.Name);
+					row.CallType = string.IsNullOrWhiteSpace(call.Type) ? "None" : ProtectedDataEnvelope.SafeDisplay(call.Type);
+					row.CallAddress = ProtectedDataEnvelope.SafeDisplay(call.Address);
 					row.CallLoggedOn = call.LoggedOn.TimeConverter(model.Department);
 				}
 
 				row.CallAttachmentId = file.CallAttachmentId;
-				row.FileName = file.FileName;
+				row.FileName = ProtectedDataEnvelope.SafeDisplay(file.FileName);
 				row.FileTypeName = file.CallAttachmentType switch
 				{
 					1 => "Dispatch Audio",
@@ -2045,7 +2079,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				row.FlaggedOn = file.FlaggedOn.HasValue
 					? file.FlaggedOn.Value.TimeConverter(model.Department)
 					: null;
-				row.FlaggedReason = file.FlaggedReason;
+				row.FlaggedReason = ProtectedDataEnvelope.SafeDisplay(file.FlaggedReason);
 
 				if (!string.IsNullOrWhiteSpace(file.FlaggedByUserId) && profiles.TryGetValue(file.FlaggedByUserId, out var flaggedByFileProfile))
 					row.FlaggedByName = flaggedByFileProfile.FullName.AsFirstNameLastName;
@@ -2269,5 +2303,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion Event Attendance Report
+
+		/// <summary>
+		/// Stamps the DEPARTMENT-SCOPED identification number onto the profiles a report renders
+		/// (ADP plan 5.1) — a badge number is department-issued and differs between departments, and
+		/// the global profile column can no longer answer for any one of them. Reports have no
+		/// step-up flow, so a protected department's number renders as the REDACTED placeholder.
+		/// </summary>
+		private async Task ApplyMemberIdentificationNumbersAsync(int departmentId, IEnumerable<UserProfile> profiles)
+		{
+			if (profiles == null)
+				return;
+
+			await _memberSensitiveDataService.ApplyIdentificationNumbersAsync(departmentId, profiles, null, UserId);
+		}
+
 	}
 }

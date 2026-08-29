@@ -632,4 +632,64 @@
   <data name="Pois" xml:space="preserve">
     <value>POI</value>
   </data>
+  <data name="AdpProtectedCall" xml:space="preserve">
+    <value>Appel protégé</value>
+  </data>
+  <data name="AdpProtectedCertifications" xml:space="preserve">
+    <value>Certifications protégées</value>
+  </data>
+  <data name="AdpProtectedContact" xml:space="preserve">
+    <value>Contact protégé</value>
+  </data>
+  <data name="AdpProtectedBannerDescription" xml:space="preserve">
+    <value>chiffré au repos pour ce département. Les utilisateurs autorisés et les canaux approuvés peuvent tout de même le divulguer.</value>
+  </data>
+  <data name="AdpVerifyAndReveal" xml:space="preserve">
+    <value>Vérifier et afficher</value>
+  </data>
+  <data name="AdpConceal" xml:space="preserve">
+    <value>Masquer</value>
+  </data>
+  <data name="AdpStepUpTitle" xml:space="preserve">
+    <value>Vérifiez pour afficher les données protégées</value>
+  </data>
+  <data name="AdpStepUpInstructions" xml:space="preserve">
+    <value>Saisissez le code à 6 chiffres de votre application d'authentification. Les valeurs affichées ne restent visibles que pendant la fenêtre de vérification de ce département et ne sont jamais stockées dans votre navigateur.</value>
+  </data>
+  <data name="AdpVerificationCode" xml:space="preserve">
+    <value>Code de vérification</value>
+  </data>
+  <data name="AdpVerify" xml:space="preserve">
+    <value>Vérifier</value>
+  </data>
+  <data name="AdpErrorInvalidCode" xml:space="preserve">
+    <value>Le code de vérification est invalide ou a expiré.</value>
+  </data>
+  <data name="AdpErrorTooManyAttempts" xml:space="preserve">
+    <value>Trop de tentatives de vérification. Attendez quelques minutes et réessayez.</value>
+  </data>
+  <data name="AdpErrorMfaNotEnrolled" xml:space="preserve">
+    <value>L'authentification à deux facteurs n'est pas configurée pour ce compte. Configurez d'abord une application d'authentification dans les paramètres de sécurité du compte.</value>
+  </data>
+  <data name="AdpErrorGrantsNotConfigured" xml:space="preserve">
+    <value>L'accès aux données protégées n'est pas configuré sur ce serveur.</value>
+  </data>
+  <data name="AdpErrorStepUpRequired" xml:space="preserve">
+    <value>Une nouvelle vérification est requise.</value>
+  </data>
+  <data name="AdpErrorGrantExpired" xml:space="preserve">
+    <value>La fenêtre de vérification a expiré. Vérifiez à nouveau.</value>
+  </data>
+  <data name="AdpErrorGrantRevoked" xml:space="preserve">
+    <value>L'accès a été révoqué par un changement de politique. Vérifiez à nouveau.</value>
+  </data>
+  <data name="AdpErrorAccessDenied" xml:space="preserve">
+    <value>Vous n'êtes pas autorisé à consulter ces données protégées.</value>
+  </data>
+  <data name="AdpErrorBrokerUnavailable" xml:space="preserve">
+    <value>Le service de données protégées est indisponible. Réessayez dans quelques instants.</value>
+  </data>
+  <data name="AdpErrorGeneric" xml:space="preserve">
+    <value>La requête a échoué. Réessayez.</value>
+  </data>
 </root>

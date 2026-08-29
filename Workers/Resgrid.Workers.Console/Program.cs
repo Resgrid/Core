@@ -474,6 +474,14 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
+				// Hourly is plenty: the backlog only grows when someone joins a department carrying
+				// legacy profile data, and it drains to a single indexed query once the move is done.
+				_logger.Log(LogLevel.Information, "Scheduling Member Profile Relocation");
+				await Client.ScheduleAsync("Member Profile Relocation",
+					new Commands.MemberProfileRelocationCommand(28),
+					Cron.MinuteIntervals(60),
+					stoppingToken);
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

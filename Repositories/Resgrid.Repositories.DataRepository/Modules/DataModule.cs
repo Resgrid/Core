@@ -268,6 +268,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentDataProtectionMigrationRepository>().As<IDepartmentDataProtectionMigrationRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentProtectedDataEgressPolicyRepository>().As<IDepartmentProtectedDataEgressPolicyRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentMemberSensitiveDataRepository>().As<IDepartmentMemberSensitiveDataRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentMemberEmergencyContactRepository>().As<IDepartmentMemberEmergencyContactRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentOperationLockRepository>().As<IDepartmentOperationLockRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentDataProtectionBulkRepository>().As<IDepartmentDataProtectionBulkRepository>().InstancePerLifetimeScope();
 

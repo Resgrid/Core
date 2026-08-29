@@ -62,17 +62,33 @@
     <value>Kalender</value>
   </data>
   <data name="GdprExportReadyBody" xml:space="preserve">
-    <value>Hallo {0},
-
-Ihr Export personenbezogener Daten steht zum Download bereit.
-
-Download-Link: {1}
-
-Dieser Link läuft am {2:f} UTC ab. Danach sind die Daten nicht mehr verfügbar.
-
-Falls Sie dies nicht angefordert haben, wenden Sie sich bitte an den Support.
-
+    <value>Hallo {0},
+
+
+
+Ihr Export personenbezogener Daten steht zum Download bereit.
+
+
+
+Download-Link: {1}
+
+
+
+Dieser Link läuft am {2:f} UTC ab. Danach sind die Daten nicht mehr verfügbar.
+
+
+
+Falls Sie dies nicht angefordert haben, wenden Sie sich bitte an den Support.
+
+
+
 Ihr Resgrid-Team</value>
+  </data>
+  <data name="GdprExportWithheldNotice" xml:space="preserve">
+    <value>Ihre Abteilung verwendet den erweiterten Datenschutz. Daher sind einige Werte in diesem Export verschlüsselt und werden als REDACTED angezeigt. Sie gehören weiterhin zu Ihren Daten und wurden nicht gelöscht.</value>
+  </data>
+  <data name="GdprExportWithheldHowTo" xml:space="preserve">
+    <value>Um diese Werte zu sehen, melden Sie sich bei Resgrid an und öffnen Sie die zugehörige Seite. Dort können Sie sie nach einer Identitätsbestätigung anzeigen. Ihre Abteilungsadministration kann sie Ihnen ebenfalls zur Verfügung stellen.</value>
   </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>Ihr Resgrid-Datenexport ist bereit</value>
@@ -81,12 +97,18 @@ Ihr Resgrid-Team</value>
     <value>Benachrichtigung</value>
   </data>
   <data name="VerificationCodeEmailBody" xml:space="preserve">
-    <value>Hallo {0},
-
-Ihr Resgrid-Bestätigungscode lautet: {1}
-
-Dieser Code läuft in {2} Minuten ab. Falls Sie dies nicht angefordert haben, ignorieren Sie diese E-Mail bitte.
-
+    <value>Hallo {0},
+
+
+
+Ihr Resgrid-Bestätigungscode lautet: {1}
+
+
+
+Dieser Code läuft in {2} Minuten ab. Falls Sie dies nicht angefordert haben, ignorieren Sie diese E-Mail bitte.
+
+
+
 Ihr Resgrid-Team</value>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">

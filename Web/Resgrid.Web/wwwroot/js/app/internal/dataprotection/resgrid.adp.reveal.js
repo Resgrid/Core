@@ -8,7 +8,7 @@
 
 	var REDACTED = 'REDACTED';
 
-	var settings = null;   // { verifyUrl, revealUrl, revealData, antiForgeryToken }
+	var settings = null;   // { verifyUrl, revealUrl, revealData, antiForgeryToken, messages }
 	var grantToken = null;
 	var expiryTimer = null;
 	var revealed = false;
@@ -99,19 +99,27 @@
 		$('#adpConcealButton').show();
 	}
 
+	// English fallbacks: the host view supplies localized text through settings.messages, keyed by
+	// the same value-free reason codes the server returns. A missing key still renders something
+	// readable rather than an empty alert.
+	var DEFAULT_MESSAGES = {
+		invalid_totp: 'The verification code is invalid or has expired.',
+		too_many_attempts: 'Too many verification attempts. Wait a few minutes and try again.',
+		mfa_not_enrolled: 'Two-factor authentication is not enrolled for this account. Enroll an authenticator app in account security settings first.',
+		grants_not_configured: 'Protected data access is not configured on this server.',
+		step_up_required: 'Verification is required again.',
+		grant_expired: 'The verification window expired. Verify again.',
+		grant_revoked: 'Access was revoked by a policy change. Verify again.',
+		protected_access_denied: 'You are not authorized to view this protected data.',
+		broker_unavailable: 'The protected data service is unavailable. Try again shortly.',
+		generic: 'The request failed. Try again.'
+	};
+
 	function errorText(code) {
-		switch (code) {
-			case 'invalid_totp': return 'The verification code is invalid or has expired.';
-			case 'too_many_attempts': return 'Too many verification attempts. Wait a few minutes and try again.';
-			case 'mfa_not_enrolled': return 'Two-factor authentication is not enrolled for this account. Enroll an authenticator app in account security settings first.';
-			case 'grants_not_configured': return 'Protected data access is not configured on this server.';
-			case 'step_up_required': return 'Verification is required again.';
-			case 'grant_expired': return 'The verification window expired. Verify again.';
-			case 'grant_revoked': return 'Access was revoked by a policy change. Verify again.';
-			case 'protected_access_denied': return 'You are not authorized to view this protected data.';
-			case 'broker_unavailable': return 'The protected data service is unavailable. Try again shortly.';
-			default: return 'The request failed. Try again.';
-		}
+		var messages = (settings && settings.messages) || {};
+		var key = code && Object.prototype.hasOwnProperty.call(DEFAULT_MESSAGES, code) ? code : 'generic';
+
+		return messages[key] || DEFAULT_MESSAGES[key];
 	}
 
 	function doReveal() {
@@ -172,7 +180,49 @@
 		});
 	}
 
+	// Downloads a protected binary payload (a certification document, an attachment) with the
+	// grant on the request. A plain <a href> cannot carry the grant header, so without this a
+	// protected file would be unreachable from a server-rendered page — the encryption would have
+	// made the member's own document permanently undownloadable rather than merely concealed.
+	// The blob is revoked immediately after the save so decrypted bytes do not linger.
+	function downloadProtected(url, fileName, onError) {
+		if (!grantToken) {
+			if (onError)
+				onError(errorText('step_up_required'));
+			return;
+		}
+
+		var headers = new window.Headers();
+		headers.append('X-Resgrid-Protected-Grant', grantToken);
+
+		window.fetch(url, { headers: headers, credentials: 'same-origin' })
+			.then(function (response) {
+				if (!response.ok)
+					throw new Error(response.status === 403 || response.status === 404
+						? 'protected_access_denied'
+						: 'generic');
+
+				return response.blob();
+			})
+			.then(function (blob) {
+				var objectUrl = window.URL.createObjectURL(blob);
+				var link = window.document.createElement('a');
+				link.href = objectUrl;
+				link.download = fileName || 'download';
+				window.document.body.appendChild(link);
+				link.click();
+				window.document.body.removeChild(link);
+				window.URL.revokeObjectURL(objectUrl);
+			})
+			.catch(function (error) {
+				if (onError)
+					onError(errorText(error && error.message ? error.message : 'generic'));
+			});
+	}
+
 	window.resgridAdpReveal = {
+		download: downloadProtected,
+
 		init: function (options) {
 			settings = options;
 

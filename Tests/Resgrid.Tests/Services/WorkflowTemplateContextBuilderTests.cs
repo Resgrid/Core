@@ -25,6 +25,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IDepartmentGroupsService> DepartmentGroupsServiceMock;
 			protected Mock<IPersonnelRolesService> PersonnelRolesServiceMock;
 			protected Mock<IUnitsService> UnitsServiceMock;
+			protected Mock<IDepartmentMemberSensitiveDataService> MemberSensitiveDataServiceMock;
 
 			protected Department TestDepartment;
 			protected UserProfile TestProfile;
@@ -78,13 +79,24 @@ namespace Resgrid.Tests.Services
 					.Setup(s => s.GetUnitByIdAsync(It.IsAny<int>()))
 					.ReturnsAsync((Unit)null);
 
+				// Department-scoped member data: no rows by default, so identification numbers render
+				// empty rather than falling back to the global profile column.
+				MemberSensitiveDataServiceMock = new Mock<IDepartmentMemberSensitiveDataService>();
+				MemberSensitiveDataServiceMock
+					.Setup(s => s.GetByDepartmentAndUserAsync(It.IsAny<int>(), It.IsAny<string>()))
+					.ReturnsAsync((DepartmentMemberSensitiveData)null);
+				MemberSensitiveDataServiceMock
+					.Setup(s => s.GetResolvedForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+					.ReturnsAsync(new System.Collections.Generic.Dictionary<string, DepartmentMemberSensitiveData>());
+
 				Sut = new WorkflowTemplateContextBuilder(
 					DepartmentsServiceMock.Object,
 					DepartmentSettingsServiceMock.Object,
 					UserProfileServiceMock.Object,
 					DepartmentGroupsServiceMock.Object,
 					PersonnelRolesServiceMock.Object,
-					UnitsServiceMock.Object);
+					UnitsServiceMock.Object,
+					MemberSensitiveDataServiceMock.Object);
 			}
 
 			protected async Task<ScriptObject> BuildContext(WorkflowTriggerEventType eventType, object payload)

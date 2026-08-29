@@ -42,12 +42,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IKmlProvider _kmlProvider;
 		private readonly IPermissionsService _permissionsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public MappingController(IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider, ICallsService callsService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
 			IActionLogsService actionLogsService, IUnitsService unitsService, IMappingService mappingService,
-			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService)
+			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
+			IProtectedReadService protectedReadService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
@@ -60,6 +62,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_kmlProvider = kmlProvider;
 			_permissionsService = permissionsService;
 			_personnelRolesService = personnelRolesService;
+			_protectedReadService = protectedReadService;
 		}
 
 		public async Task<IActionResult> Index()
@@ -648,6 +651,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				foreach (var call in calls)
 				{
+					// ADP (plan sections 7.1, 7.3): this map payload is built server-side with no
+					// grant in play, so a protected call contributes NO marker — neither its
+					// user-authored label nor its exact position may leave here, and ciphertext
+					// must never reach a map client.
+					if (ProtectedDataEnvelope.HasEnvelopePrefix(call.Name) ||
+						ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall) ||
+						ProtectedDataEnvelope.HasEnvelopePrefix(call.GeoLocationData) ||
+						ProtectedDataEnvelope.HasEnvelopePrefix(call.Address))
+						continue;
+
 					MapMakerInfo info = new MapMakerInfo();
 					info.ImagePath = "Call";
 					info.Title = call.Name;
@@ -842,17 +855,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			string endLat = "";
-			string endLon = "";
+			var liveCoordinates = await TryResolveCallCoordinatesAsync(call);
+			if (!liveCoordinates.Resolved)
+				return NotFound();
 
-			var callCocationParts = call.GeoLocationData.Split(char.Parse(","));
-			endLat = callCocationParts[0];
-			endLon = callCocationParts[1];
-
-			model.EndLat = endLat;
-			model.EndLon = endLon;
+			model.EndLat = liveCoordinates.Latitude;
+			model.EndLon = liveCoordinates.Longitude;
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// Resolves a call's coordinates for routing. Calls.GeoLocationData is cataloged, so for a
+		/// protected department it arrives as an rgdp envelope, which contains no comma — the old
+		/// unguarded Split(",")[1] threw IndexOutOfRange and took the whole page down. A caller
+		/// without a grant simply cannot route to a concealed location, which is the point, so this
+		/// reports "no coordinates" rather than failing.
+		/// </summary>
+		private async Task<(bool Resolved, string Latitude, string Longitude)> TryResolveCallCoordinatesAsync(Call call)
+		{
+			await _protectedReadService.ResolveForReadAsync(call.DepartmentId, new List<Call> { call },
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+
+			var coordinates = call.GeoLocationData;
+			if (String.IsNullOrWhiteSpace(coordinates) || coordinates == ProtectedDataEnvelope.RedactionValue ||
+				ProtectedDataEnvelope.HasEnvelopePrefix(coordinates))
+				return (false, null, null);
+
+			var parts = coordinates.Split(char.Parse(","));
+			if (parts.Length < 2)
+				return (false, null, null);
+
+			return (true, parts[0], parts[1]);
 		}
 
 		[HttpGet]
@@ -894,17 +928,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
-			string endLat = "";
-			string endLon = "";
-
-			var callCocationParts = call.GeoLocationData.Split(char.Parse(","));
-			endLat = callCocationParts[0];
-			endLon = callCocationParts[1];
+			var callCoordinates = await TryResolveCallCoordinatesAsync(call);
+			if (!callCoordinates.Resolved)
+				return NotFound();
 
 			model.StartLat = startLat;
 			model.StartLon = startLon;
-			model.EndLat = endLat;
-			model.EndLon = endLon;
+			model.EndLat = callCoordinates.Latitude;
+			model.EndLon = callCoordinates.Longitude;
 
 			return View(model);
 		}

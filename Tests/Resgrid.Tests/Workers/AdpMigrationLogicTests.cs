@@ -27,6 +27,7 @@ namespace Resgrid.Tests.Workers
 		private Mock<IDepartmentDataMigrationEngine> _engine;
 		private Mock<IDepartmentsService> _departmentsService;
 		private Mock<IEmailService> _emailService;
+		private Mock<IMemberProfileRelocationService> _relocationService;
 		private AdpMigrationLogic _logic;
 
 		private bool _originalPaused;
@@ -76,9 +77,15 @@ namespace Resgrid.Tests.Workers
 			_departmentsService.Setup(x => x.GetAllAdminsForDepartmentAsync(It.IsAny<int>()))
 				.ReturnsAsync(new List<IdentityUser>());
 
+			// Relocation of legacy member-profile data runs as the first step of an encryption night;
+			// a no-op stub keeps these tests about the state machine.
+			_relocationService = new Mock<IMemberProfileRelocationService>();
+			_relocationService.Setup(x => x.RelocateDepartmentAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, CancellationToken ct) => new MemberProfileRelocationResult { DepartmentId = d });
+
 			_logic = new AdpMigrationLogic(_lockService.Object, _policyRepo.Object, _protectionService.Object,
 				_keyService.Object, _engine.Object, new ProtectedFieldCatalog(), _departmentsService.Object,
-				_emailService.Object);
+				_emailService.Object, _relocationService.Object);
 		}
 
 		[TearDown]
@@ -228,6 +235,27 @@ namespace Resgrid.Tests.Workers
 		}
 
 		[Test]
+		public async Task Enrollment_relocates_legacy_member_profile_data_before_the_sweep()
+		{
+			// Otherwise the night encrypts an incomplete corpus and the member's identification
+			// number and address stay behind in the legacy global location, in the clear.
+			var order = new List<string>();
+			_relocationService.Setup(x => x.RelocateDepartmentAsync(DeptId, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new MemberProfileRelocationResult { DepartmentId = DeptId })
+				.Callback(() => order.Add("relocate"));
+			_engine.Setup(x => x.RunEncryptionNightAsync(It.IsAny<AdpMigrationNightContext>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(AdpMigrationNightResult.Completed(100))
+				.Callback(() => order.Add("encrypt"));
+			_engine.Setup(x => x.VerifyAsync(It.IsAny<AdpMigrationNightContext>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(true);
+			SetupPolicies(Policy(DepartmentDataProtectionState.EnrollmentQueued));
+
+			await _logic.Process(CancellationToken.None);
+
+			order.Should().Equal("relocate", "encrypt");
+		}
+
+		[Test]
 		public async Task Window_close_checkpoints_and_releases_the_lock()
 		{
 			SetupPolicies(Policy(DepartmentDataProtectionState.Encrypting, DepartmentDataProtectionMigrationKind.Enrollment));
@@ -276,7 +304,7 @@ namespace Resgrid.Tests.Workers
 
 			var logic = new AdpMigrationLogic(_lockService.Object, _policyRepo.Object, _protectionService.Object,
 				_keyService.Object, new NullDepartmentDataMigrationEngine(), new ProtectedFieldCatalog(),
-				_departmentsService.Object, _emailService.Object);
+				_departmentsService.Object, _emailService.Object, _relocationService.Object);
 
 			var result = await logic.Process(CancellationToken.None);
 
@@ -299,7 +327,7 @@ namespace Resgrid.Tests.Workers
 
 			var logic = new AdpMigrationLogic(_lockService.Object, _policyRepo.Object, _protectionService.Object,
 				_keyService.Object, new NullDepartmentDataMigrationEngine(), new ProtectedFieldCatalog(),
-				_departmentsService.Object, _emailService.Object);
+				_departmentsService.Object, _emailService.Object, _relocationService.Object);
 
 			var result = await logic.Process(CancellationToken.None);
 
@@ -432,5 +460,79 @@ namespace Resgrid.Tests.Workers
 		}
 
 		#endregion
-	}
+	
+		#region Catalog upgrades
+
+		[Test]
+		public async Task Enabled_department_behind_the_catalog_is_queued_for_an_upgrade()
+		{
+			var catalog = new ProtectedFieldCatalog();
+			var policy = Policy(DepartmentDataProtectionState.Enabled);
+			policy.CatalogVersion = catalog.Version - 1;
+			SetupPolicies(policy);
+
+			await _logic.Process(CancellationToken.None);
+
+			_policyRepo.Verify(x => x.TryTransitionStateAsync(DeptId, DepartmentDataProtectionState.Enabled,
+				DepartmentDataProtectionState.Encrypting,
+				(int)DepartmentDataProtectionMigrationKind.CatalogUpgrade, It.IsAny<string>(), It.IsAny<CancellationToken>()),
+				Times.Once, "a department behind the code's catalog is owed an upgrade sweep");
+		}
+
+		[Test]
+		public async Task Enabled_department_at_the_current_catalog_is_left_alone()
+		{
+			var policy = Policy(DepartmentDataProtectionState.Enabled);
+			policy.CatalogVersion = new ProtectedFieldCatalog().Version;
+			SetupPolicies(policy);
+
+			await _logic.Process(CancellationToken.None);
+
+			_policyRepo.Verify(x => x.TryTransitionStateAsync(It.IsAny<int>(), DepartmentDataProtectionState.Enabled,
+				It.IsAny<DepartmentDataProtectionState>(), It.IsAny<int?>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+				Times.Never, "an up-to-date department must not be locked for a pointless sweep");
+		}
+
+		[Test]
+		public async Task Catalog_upgrade_night_sweeps_from_the_departments_pinned_version()
+		{
+			var catalog = new ProtectedFieldCatalog();
+			var policy = Policy(DepartmentDataProtectionState.Encrypting, DepartmentDataProtectionMigrationKind.CatalogUpgrade);
+			policy.CatalogVersion = catalog.Version - 1;
+			SetupPolicies(policy);
+
+			AdpMigrationNightContext captured = null;
+			_engine.Setup(x => x.RunEncryptionNightAsync(It.IsAny<AdpMigrationNightContext>(), It.IsAny<CancellationToken>()))
+				.Callback<AdpMigrationNightContext, CancellationToken>((c, ct) => captured = c)
+				.ReturnsAsync(AdpMigrationNightResult.Completed(10));
+
+			await _logic.Process(CancellationToken.None);
+
+			captured.Should().NotBeNull();
+			captured.Kind.Should().Be(DepartmentDataProtectionMigrationKind.CatalogUpgrade);
+			captured.FromCatalogVersion.Should().Be(catalog.Version - 1,
+				"the pinned version stays on the policy until the upgrade verifies, which is what makes a resumed run sweep the same range");
+			captured.CatalogVersion.Should().Be(catalog.Version);
+		}
+
+		[Test]
+		public async Task Catalog_upgrade_keeps_its_kind_when_moving_to_verification()
+		{
+			var policy = Policy(DepartmentDataProtectionState.Encrypting, DepartmentDataProtectionMigrationKind.CatalogUpgrade);
+			policy.CatalogVersion = new ProtectedFieldCatalog().Version - 1;
+			SetupPolicies(policy);
+
+			_engine.Setup(x => x.RunEncryptionNightAsync(It.IsAny<AdpMigrationNightContext>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(AdpMigrationNightResult.Completed(10));
+
+			await _logic.Process(CancellationToken.None);
+
+			_policyRepo.Verify(x => x.TryTransitionStateAsync(DeptId, DepartmentDataProtectionState.Encrypting,
+				DepartmentDataProtectionState.Verifying,
+				(int)DepartmentDataProtectionMigrationKind.CatalogUpgrade, It.IsAny<string>(), It.IsAny<CancellationToken>()),
+				Times.Once, "the run's kind must survive the verify transition, not be rewritten to Enrollment");
+		}
+
+		#endregion
+}
 }

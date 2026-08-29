@@ -34,6 +34,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
 		private readonly IUserStateService _userStateService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
@@ -47,6 +48,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IActionLogsService actionLogsService,
 			IDepartmentsService departmentsService,
 			IUserProfileService userProfileService,
+			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
 			IUserStateService userStateService,
 			IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService,
@@ -60,6 +62,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_actionLogsService = actionLogsService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
+			_memberSensitiveDataService = memberSensitiveDataService;
 			_userStateService = userStateService;
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
@@ -109,6 +112,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			var profile = await _userProfileService.GetProfileByUserIdAsync(user.UserId);
+			await ApplyMemberIdentificationNumberAsync(profile);
 			var group = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
 			var roles = await _personnelRolesService.GetRolesForUserAsync(user.UserId, DepartmentId);
 			var action = await _actionLogsService.GetLastActionLogForUserAsync(user.UserId, DepartmentId);
@@ -195,6 +199,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var group = await _departmentGroupsService.GetGroupForUserAsync(u.UserId, DepartmentId);
 				var roles = await _personnelRolesService.GetRolesForUserAsync(u.UserId, DepartmentId);
 				var profile = await _userProfileService.GetProfileByUserIdAsync(u.UserId);
+				await ApplyMemberIdentificationNumberAsync(profile);
 
 				var s = await ConvertPersonnelInfo(u, department, profile, group, roles, log, state, canViewPII);
 
@@ -624,5 +629,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			return filters.Where(x => x.Id == filter).Select(y => y.Name).FirstOrDefault();
 		}
+
+		/// <summary>
+		/// Replaces the profile's legacy global identification number with the DEPARTMENT-SCOPED one
+		/// (ADP plan 5.1): a badge number is department-issued, so the value a caller sees must be
+		/// the one THIS department holds. Resolved through the protected pipeline — plaintext with a
+		/// valid grant, the REDACTED placeholder without one.
+		/// </summary>
+		private async Task ApplyMemberIdentificationNumberAsync(UserProfile profile)
+		{
+			if (profile == null)
+				return;
+
+			await _memberSensitiveDataService.ApplyIdentificationNumbersAsync(DepartmentId, new[] { profile },
+				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId);
+		}
+
 	}
 }

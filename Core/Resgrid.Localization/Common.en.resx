@@ -684,4 +684,64 @@
   <data name="YourDepartments" xml:space="preserve">
     <value>Your Departments</value>
   </data>
+  <data name="AdpProtectedCall" xml:space="preserve">
+    <value>Protected call</value>
+  </data>
+  <data name="AdpProtectedCertifications" xml:space="preserve">
+    <value>Protected certifications</value>
+  </data>
+  <data name="AdpProtectedContact" xml:space="preserve">
+    <value>Protected contact</value>
+  </data>
+  <data name="AdpProtectedBannerDescription" xml:space="preserve">
+    <value>encrypted at rest for this department. Authorized users and approved channels may still disclose it.</value>
+  </data>
+  <data name="AdpVerifyAndReveal" xml:space="preserve">
+    <value>Verify &amp; Reveal</value>
+  </data>
+  <data name="AdpConceal" xml:space="preserve">
+    <value>Conceal</value>
+  </data>
+  <data name="AdpStepUpTitle" xml:space="preserve">
+    <value>Verify to view protected data</value>
+  </data>
+  <data name="AdpStepUpInstructions" xml:space="preserve">
+    <value>Enter the 6-digit code from your authenticator app. Revealed values stay visible only for this department's step-up window and are never stored in your browser.</value>
+  </data>
+  <data name="AdpVerificationCode" xml:space="preserve">
+    <value>Verification code</value>
+  </data>
+  <data name="AdpVerify" xml:space="preserve">
+    <value>Verify</value>
+  </data>
+  <data name="AdpErrorInvalidCode" xml:space="preserve">
+    <value>The verification code is invalid or has expired.</value>
+  </data>
+  <data name="AdpErrorTooManyAttempts" xml:space="preserve">
+    <value>Too many verification attempts. Wait a few minutes and try again.</value>
+  </data>
+  <data name="AdpErrorMfaNotEnrolled" xml:space="preserve">
+    <value>Two-factor authentication is not enrolled for this account. Enroll an authenticator app in account security settings first.</value>
+  </data>
+  <data name="AdpErrorGrantsNotConfigured" xml:space="preserve">
+    <value>Protected data access is not configured on this server.</value>
+  </data>
+  <data name="AdpErrorStepUpRequired" xml:space="preserve">
+    <value>Verification is required again.</value>
+  </data>
+  <data name="AdpErrorGrantExpired" xml:space="preserve">
+    <value>The verification window expired. Verify again.</value>
+  </data>
+  <data name="AdpErrorGrantRevoked" xml:space="preserve">
+    <value>Access was revoked by a policy change. Verify again.</value>
+  </data>
+  <data name="AdpErrorAccessDenied" xml:space="preserve">
+    <value>You are not authorized to view this protected data.</value>
+  </data>
+  <data name="AdpErrorBrokerUnavailable" xml:space="preserve">
+    <value>The protected data service is unavailable. Try again shortly.</value>
+  </data>
+  <data name="AdpErrorGeneric" xml:space="preserve">
+    <value>The request failed. Try again.</value>
+  </data>
 </root>

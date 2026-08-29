@@ -657,7 +657,7 @@ namespace Resgrid.Services
 					summaries.Add(new UserCallCheckInSummary
 					{
 						CallId = call.CallId,
-						CallName = call.Name,
+						CallName = ProtectedDataEnvelope.SafeDisplay(call.Name),
 						CallNumber = call.Number,
 						CallStartedOn = call.LoggedOn,
 						HasPersonnelTimer = false,
@@ -693,7 +693,7 @@ namespace Resgrid.Services
 				summaries.Add(new UserCallCheckInSummary
 				{
 					CallId = call.CallId,
-					CallName = call.Name,
+					CallName = ProtectedDataEnvelope.SafeDisplay(call.Name),
 					CallNumber = call.Number,
 					CallStartedOn = call.LoggedOn,
 					HasPersonnelTimer = true,

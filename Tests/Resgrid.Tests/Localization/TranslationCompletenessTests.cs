@@ -30,6 +30,9 @@ namespace Resgrid.Tests.Localization
 		{
 			"Areas/User/CommunicationTest/CommunicationTest",
 			"Areas/User/SystemMessages/SystemMessages",
+			// ADP screens (enrollment wizard, protection status, emergency contacts) shipped fully
+			// translated; guarding them stops English placeholders creeping back in.
+			"Areas/User/DataProtection/DataProtection",
 		};
 
 		private static string LocalizationRoot()
@@ -62,6 +65,14 @@ namespace Resgrid.Tests.Localization
 		/// </summary>
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)
 		{
+			// ADP screens: these five genuinely are the same word in the target language, checked
+			// by reading the pair side by side rather than inferred from length or casing.
+			"DataProtection|de|ContactNameLabel",   // "Name" is the German word too.
+			"DataProtection|fr|NotesLabel",         // "Notes" is French as well.
+			"DataProtection|it|BreadcrumbHome",     // Italian UIs use the English "Home".
+			"DataProtection|it|EmailLabel",         // "Email" is standard Italian usage.
+			"DataProtection|el|EmailLabel",         // Greek UIs use the Latin-script "Email".
+
 			// Brand and protocol names carry across every language.
 			"CommunicationTest|de|Push", "CommunicationTest|de|SMS",
 			"CommunicationTest|es|Push", "CommunicationTest|es|SMS",

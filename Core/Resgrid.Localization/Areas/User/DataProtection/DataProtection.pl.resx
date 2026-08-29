@@ -1,0 +1,391 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Zaawansowana ochrona danych</value>
+  </data>
+  <data name="BreadcrumbHome" xml:space="preserve">
+    <value>Strona główna</value>
+  </data>
+  <data name="BreadcrumbSecurity" xml:space="preserve">
+    <value>Zabezpieczenia</value>
+  </data>
+  <data name="MigrationWindowActive" xml:space="preserve">
+    <value>Okno migracji aktywne.</value>
+  </data>
+  <data name="DataEntryPaused" xml:space="preserve">
+    <value>Wprowadzanie danych jest wstrzymane do zamknięcia okna; przeglądanie działa normalnie.</value>
+  </data>
+  <data name="ProtectionStatusHeader" xml:space="preserve">
+    <value>Stan ochrony</value>
+  </data>
+  <data name="CurrentState" xml:space="preserve">
+    <value>Bieżący stan:</value>
+  </data>
+  <data name="EnrollmentUnavailable" xml:space="preserve">
+    <value>Rejestracja w zaawansowanej ochronie danych jest chwilowo niedostępna. Jeśli Twój departament już kupił dodatek, pozostaje on ważny — sprawdź ponownie wkrótce.</value>
+  </data>
+  <data name="AddonRequiredIntro" xml:space="preserve">
+    <value>Zaawansowana ochrona danych szyfruje wrażliwe dane dysponowania, personelu i kontaktów Twojego departamentu kluczami należącymi do departamentu. Wymaga rocznego dodatku ADP.</value>
+  </data>
+  <data name="PurchaseAddon" xml:space="preserve">
+    <value>Kup dodatek ADP</value>
+  </data>
+  <data name="ManagingMemberOnlyPurchase" xml:space="preserve">
+    <value>Tylko członek zarządzający Twoim departamentem może kupić dodatek i dokonać rejestracji.</value>
+  </data>
+  <data name="AddonActiveManagingMemberOnly" xml:space="preserve">
+    <value>Dodatek ADP jest aktywny. Tylko członek zarządzający Twoim departamentem może dokończyć rejestrację.</value>
+  </data>
+  <data name="EnrollmentQueuedNotice" xml:space="preserve">
+    <value>Rejestracja jest w kolejce. Migracja działa w wybranym oknie nocnym ({0}–{1}, {2}). Otrzymasz e-mail, gdy okno każdej nocy się otworzy i zamknie.</value>
+  </data>
+  <data name="CancelQueuedEnrollment" xml:space="preserve">
+    <value>Anuluj rejestrację w kolejce</value>
+  </data>
+  <data name="MigrationInProgress" xml:space="preserve">
+    <value>Migracja jest w toku. Prace odbywają się tylko w oknie nocnym ({0}–{1}, {2}); poza nim departament działa w pełni.</value>
+  </data>
+  <data name="ProtectionActiveHeader" xml:space="preserve">
+    <value>Zaawansowana ochrona danych jest aktywna.</value>
+  </data>
+  <data name="ProtectionActiveDetail" xml:space="preserve">
+    <value>Chronione pola są szyfrowane kluczami Twojego departamentu; ich wyświetlenie wymaga zalogowanego członka ze świeżą weryfikacją aplikacji uwierzytelniającej.</value>
+  </data>
+  <data name="TurnOffInstructions" xml:space="preserve">
+    <value>Aby wyłączyć ADP, anuluj dodatek na stronie subskrypcji. Ochrona pozostaje aktywna do końca bieżącego okresu rozliczeniowego. Po odszyfrowaniu danych ponowne włączenie wymaga ponownego zakupu dodatku i nowej rejestracji.</value>
+  </data>
+  <data name="SubscriptionPage" xml:space="preserve">
+    <value>strona subskrypcji</value>
+  </data>
+  <data name="OffboardingScheduledHeader" xml:space="preserve">
+    <value>Wyłączenie jest zaplanowane.</value>
+  </data>
+  <data name="OffboardingScheduledDetail" xml:space="preserve">
+    <value>Ochrona pozostaje w pełni aktywna do {0}, kiedy Twoje dane zostaną odszyfrowane do standardowego magazynu w jednym lub kilku oknach nocnych.</value>
+  </data>
+  <data name="EndOfBillingPeriod" xml:space="preserve">
+    <value>koniec okresu rozliczeniowego</value>
+  </data>
+  <data name="RevokeOffboarding" xml:space="preserve">
+    <value>Zachowaj zaawansowaną ochronę danych (cofnij wyłączenie)</value>
+  </data>
+  <data name="OffboardingInProgress" xml:space="preserve">
+    <value>Wyłączanie jest w toku. Ochrona obowiązuje, dopóki Twoje dane nie zostaną w pełni przywrócone do standardowego magazynu.</value>
+  </data>
+  <data name="MigrationFailed" xml:space="preserve">
+    <value>Ostatnia migracja nie mogła się zakończyć i zostanie wznowiona po przeglądzie. Twój departament działa w pełni, a dane pozostają bezpieczne. Powiadomiono wsparcie; nie są potrzebne żadne działania.</value>
+  </data>
+  <data name="WizardHeader" xml:space="preserve">
+    <value>Kreator rejestracji</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Dalej</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Wstecz</value>
+  </data>
+  <data name="Step1Header" xml:space="preserve">
+    <value>Krok 1 z 6 — co obejmuje zaawansowana ochrona danych</value>
+  </data>
+  <data name="Step1Intro" xml:space="preserve">
+    <value>ADP szyfruje wrażliwą treść danych Twojego departamentu kluczami należącymi do departamentu, przechowywanymi w utwardzonej usłudze kluczy:</value>
+  </data>
+  <data name="Step1ProtectedLabel" xml:space="preserve">
+    <value>Chronione:</value>
+  </data>
+  <data name="Step1ProtectedList" xml:space="preserve">
+    <value>nazwy, charaktery, notatki i adresy zgłoszeń; notatki i załączniki zgłoszeń; dane i notatki kontaktów; wrażliwe dane członków.</value>
+  </data>
+  <data name="Step1PlaintextLabel" xml:space="preserve">
+    <value>Pozostaje jawne:</value>
+  </data>
+  <data name="Step1PlaintextList" xml:space="preserve">
+    <value>identyfikatory systemowe, numery zgłoszeń, priorytety, statusy, znaczniki czasu, nazwy jednostek i struktura departamentu — platforma potrzebuje ich do kierowania i wyświetlania pracy.</value>
+  </data>
+  <data name="Step1WhileProtected" xml:space="preserve">
+    <value>Gdy ochrona jest włączona:</value>
+  </data>
+  <data name="Step1LimitSearch" xml:space="preserve">
+    <value>Wyszukiwanie, raporty, eksporty i integracje zewnętrzne nie widzą chronionej treści.</value>
+  </data>
+  <data name="Step1LimitBigBoard" xml:space="preserve">
+    <value>Ekrany Big Board pokazują uproszczoną informację „zdarzenie chronione” zamiast szczegółów zgłoszenia.</value>
+  </data>
+  <data name="Step1LimitWorkflow" xml:space="preserve">
+    <value>Przepływy pracy otrzymują zredagowane dane (chronione wartości zastąpione przez REDACTED).</value>
+  </data>
+  <data name="Step1LimitNotifications" xml:space="preserve">
+    <value>Powiadomienia SMS, e-mail, push i głosowe domyślnie wysyłają treść ogólną („Dostępne jest chronione zgłoszenie — zaloguj się do Resgrid”).</value>
+  </data>
+  <data name="Step1NotCompliance" xml:space="preserve">
+    <value>Sama zaawansowana ochrona danych nie oznacza zgodności z HIPAA ani ePCR. To jeden element programu zgodności, za który nadal odpowiada Twoja organizacja.</value>
+  </data>
+  <data name="Step2Header" xml:space="preserve">
+    <value>Krok 2 z 6 — potwierdzenia</value>
+  </data>
+  <data name="Step2Intro" xml:space="preserve">
+    <value>Każdy poniższy punkt musi zostać potwierdzony przez członka zarządzającego. Potwierdzenia są zapisywane ze znacznikiem wersji.</value>
+  </data>
+  <data name="AckCatalogScope" xml:space="preserve">
+    <value>Rozumiem, które rodziny danych są chronione (zgłoszenia, notatki/załączniki zgłoszeń, kontakty, wrażliwe dane członków) i że katalog chronionych pól jest wersjonowany.</value>
+  </data>
+  <data name="AckPlaintextMetadata" xml:space="preserve">
+    <value>Rozumiem, że metadane systemowe (numery zgłoszeń, priorytety, statusy, znaczniki czasu, struktura jednostek i departamentu) pozostają jawne.</value>
+  </data>
+  <data name="AckAuthorizedServerAccess" xml:space="preserve">
+    <value>Rozumiem, że serwery Resgrid przetwarzają chronione wartości w pamięci, gdy uprawniony członek je wyświetla lub edytuje.</value>
+  </data>
+  <data name="AckStepUpWindow" xml:space="preserve">
+    <value>Rozumiem, że członkowie potrzebują świeżej weryfikacji uwierzytelniacza (MFA), aby zobaczyć chronione wartości, w oknie konfigurowanym przez mój departament (domyślnie 15 minut; wartości powyżej 60 wymagają zapisanego uzasadnienia).</value>
+  </data>
+  <data name="AckBigBoardReduction" xml:space="preserve">
+    <value>Rozumiem, że ekrany Big Board pokazują uproszczone informacje o chronionych zdarzeniach.</value>
+  </data>
+  <data name="AckWorkflowRedaction" xml:space="preserve">
+    <value>Rozumiem, że przepływy pracy otrzymują zredagowane dane i nie mogą działać na chronionej treści.</value>
+  </data>
+  <data name="AckDefaultEgress" xml:space="preserve">
+    <value>Rozumiem, że powiadomienia SMS/e-mail/push/głosowe domyślnie wysyłają treść ogólną, a poluzowanie kanału wymaga odrębnie potwierdzonej zmiany zasad.</value>
+  </data>
+  <data name="AckSearchReportLimitations" xml:space="preserve">
+    <value>Rozumiem, że wyszukiwanie, raporty, eksporty, integracje i dostęp offline nie widzą chronionej treści.</value>
+  </data>
+  <data name="AckMigrationDisable" xml:space="preserve">
+    <value>Rozumiem, że włączenie uruchamia nocną migrację, a późniejsze wyłączenie odszyfrowuje moje dane w oknach nocnych na koniec okresu rozliczeniowego.</value>
+  </data>
+  <data name="AckKeyLossSupport" xml:space="preserve">
+    <value>Rozumiem, że wsparcie Resgrid nie może odczytać chronionych wartości bez wyraźnego, audytowanego i zatwierdzonego przez departament zezwolenia, a utrata kluczy jest odwracalna tylko przez udokumentowany proces odzyskiwania.</value>
+  </data>
+  <data name="AckNotHipaaCompliance" xml:space="preserve">
+    <value>Rozumiem, że sama zaawansowana ochrona danych nie oznacza zgodności z HIPAA/ePCR.</value>
+  </data>
+  <data name="Step3Header" xml:space="preserve">
+    <value>Krok 3 z 6 — kontrole wstępne</value>
+  </data>
+  <data name="CheckManagingMember" xml:space="preserve">
+    <value>Członek zarządzający</value>
+  </data>
+  <data name="CheckPaidPlan" xml:space="preserve">
+    <value>Płatny plan</value>
+  </data>
+  <data name="CheckActiveAddon" xml:space="preserve">
+    <value>Aktywny dodatek ADP</value>
+  </data>
+  <data name="CheckGateOpen" xml:space="preserve">
+    <value>Dostępność rejestracji (bramka platformy)</value>
+  </data>
+  <data name="CheckStateAllows" xml:space="preserve">
+    <value>Stan departamentu zezwala na rejestrację</value>
+  </data>
+  <data name="CheckBrokerHealthy" xml:space="preserve">
+    <value>Usługa ochrony osiągalna</value>
+  </data>
+  <data name="CheckManagingMemberMfa" xml:space="preserve">
+    <value>Członek zarządzający ma skonfigurowany uwierzytelniacz</value>
+  </data>
+  <data name="PreflightFailed" xml:space="preserve">
+    <value>Kontrola wstępna nie powiodła się. Rozwiąż pozycje oznaczone ✖ i odśwież stronę — rejestracji nie można zakolejkować, dopóki wszystkie kontrole nie przejdą.</value>
+  </data>
+  <data name="Step4Header" xml:space="preserve">
+    <value>Krok 4 z 6 — szacunek rozmiaru migracji</value>
+  </data>
+  <data name="Step4Intro" xml:space="preserve">
+    <value>Skan tylko do odczytu liczy wiersze Twojego departamentu i szacuje, ile okien nocnych potrzebuje migracja. Ten skan niczego nie zmienia.</value>
+  </data>
+  <data name="RunSizingScan" xml:space="preserve">
+    <value>Uruchom skan rozmiaru</value>
+  </data>
+  <data name="Step5Header" xml:space="preserve">
+    <value>Krok 5 z 6 — nocne okno migracji</value>
+  </data>
+  <data name="Step5Intro" xml:space="preserve">
+    <value>Migracja działa tylko w tym lokalnym oknie departamentu i wstrzymuje wprowadzanie danych. Wybierz najspokojniejsze godziny; domyślnie {0}–{1}.</value>
+  </data>
+  <data name="WindowStartLabel" xml:space="preserve">
+    <value>Początek okna (lokalnie)</value>
+  </data>
+  <data name="WindowEndLabel" xml:space="preserve">
+    <value>Koniec okna (lokalnie)</value>
+  </data>
+  <data name="TimeZoneLabel" xml:space="preserve">
+    <value>Strefa czasowa</value>
+  </data>
+  <data name="OperationPauseHeader" xml:space="preserve">
+    <value>Wstrzymanie działania departamentu.</value>
+  </data>
+  <data name="OperationPauseDetail" xml:space="preserve">
+    <value>Gdy trwa okno migracji, dla Twojego departamentu nie są realizowane nowe zgłoszenia, zmiany statusu, zmiany obsady ani zadania zaplanowane. Przeglądanie działa. Aktywne okno możesz przerwać w dowolnej chwili, a departament natychmiast wraca do pełnej służby.</value>
+  </data>
+  <data name="LockConsent" xml:space="preserve">
+    <value>Rozumiem i zgadzam się na nocne wstrzymanie działania podczas okien migracji.</value>
+  </data>
+  <data name="Step6Header" xml:space="preserve">
+    <value>Krok 6 z 6 — potwierdź i zakolejkuj</value>
+  </data>
+  <data name="Step6Intro" xml:space="preserve">
+    <value>Zakolejkowanie rejestracji ponownie weryfikuje każdy wymóg po stronie serwera i umieszcza departament w kolejce migracji. Departamenty migrują pojedynczo; otrzymasz e-mail z harmonogramem.</value>
+  </data>
+  <data name="QueueEnrollment" xml:space="preserve">
+    <value>Zakolejkuj rejestrację</value>
+  </data>
+  <data name="ErrAcknowledgementsIncomplete" xml:space="preserve">
+    <value>Przed zakolejkowaniem rejestracji należy zaznaczyć wszystkie potwierdzenia.</value>
+  </data>
+  <data name="ErrLockConsentRequired" xml:space="preserve">
+    <value>Przed zakolejkowaniem rejestracji trzeba wyrazić zgodę na nocne wstrzymanie działania.</value>
+  </data>
+  <data name="ErrProtectedAccessDenied" xml:space="preserve">
+    <value>Tylko członek zarządzający departamentem może wykonać to polecenie.</value>
+  </data>
+  <data name="ErrAddonRequired" xml:space="preserve">
+    <value>Wymagany jest aktywny dodatek zaawansowanej ochrony danych.</value>
+  </data>
+  <data name="ErrPlanRequired" xml:space="preserve">
+    <value>Zaawansowana ochrona danych wymaga płatnego planu.</value>
+  </data>
+  <data name="ErrFeatureNotAvailable" xml:space="preserve">
+    <value>Rejestracja w zaawansowanej ochronie danych jest chwilowo niedostępna.</value>
+  </data>
+  <data name="ErrInvalidState" xml:space="preserve">
+    <value>Stan ochrony departamentu nie zezwala na to polecenie. Odśwież stronę, aby zobaczyć bieżący status.</value>
+  </data>
+  <data name="ErrInvalidWindow" xml:space="preserve">
+    <value>Wymagana jest prawidłowa strefa czasowa okna migracji.</value>
+  </data>
+  <data name="ErrCommandFailed" xml:space="preserve">
+    <value>Nie udało się wykonać polecenia; można spróbować ponownie.</value>
+  </data>
+  <data name="ConfirmCancelQueued" xml:space="preserve">
+    <value>Anulować rejestrację w kolejce? Nic jeszcze nie zostało zmigrowane; możesz zarejestrować się ponownie później, gdy dodatek jest aktywny.</value>
+  </data>
+  <data name="ConfirmRevokeOffboarding" xml:space="preserve">
+    <value>Zachować aktywną zaawansowaną ochronę danych? Zaplanowane wyłączenie zostanie anulowane.</value>
+  </data>
+  <data name="EmergencyContactsHeader" xml:space="preserve">
+    <value>Kontakty alarmowe</value>
+  </data>
+  <data name="EmergencyContactsIntro" xml:space="preserve">
+    <value>Kontakty alarmowe dotyczą tego departamentu i są przechowywane zgodnie z jego ustawieniami ochrony danych. Możesz dodać więcej niż jeden.</value>
+  </data>
+  <data name="AddEmergencyContact" xml:space="preserve">
+    <value>Dodaj kontakt alarmowy</value>
+  </data>
+  <data name="EditEmergencyContact" xml:space="preserve">
+    <value>Edytuj kontakt alarmowy</value>
+  </data>
+  <data name="EmergencyContactTitle" xml:space="preserve">
+    <value>Kontakt alarmowy</value>
+  </data>
+  <data name="NoEmergencyContacts" xml:space="preserve">
+    <value>Nie dodano kontaktów alarmowych.</value>
+  </data>
+  <data name="ContactNameLabel" xml:space="preserve">
+    <value>Imię i nazwisko</value>
+  </data>
+  <data name="RelationshipLabel" xml:space="preserve">
+    <value>Pokrewieństwo</value>
+  </data>
+  <data name="PhoneNumberLabel" xml:space="preserve">
+    <value>Numer telefonu</value>
+  </data>
+  <data name="AlternatePhoneLabel" xml:space="preserve">
+    <value>Alternatywny numer telefonu</value>
+  </data>
+  <data name="EmailLabel" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="NotesLabel" xml:space="preserve">
+    <value>Notatki</value>
+  </data>
+  <data name="PrimaryContactLabel" xml:space="preserve">
+    <value>Główny kontakt</value>
+  </data>
+  <data name="PrimaryColumn" xml:space="preserve">
+    <value>Główny</value>
+  </data>
+  <data name="AlternateColumn" xml:space="preserve">
+    <value>Alternatywny</value>
+  </data>
+  <data name="YesLabel" xml:space="preserve">
+    <value>Tak</value>
+  </data>
+  <data name="EditAction" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="DeleteAction" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="SaveAction" xml:space="preserve">
+    <value>Zapisz</value>
+  </data>
+  <data name="CancelAction" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Wymagane jest imię i nazwisko.</value>
+  </data>
+  <data name="ContactSaveFailed" xml:space="preserve">
+    <value>Nie udało się zapisać kontaktu.</value>
+  </data>
+  <data name="ConfirmRemoveContact" xml:space="preserve">
+    <value>Usunąć ten kontakt alarmowy?</value>
+  </data>
+</root>

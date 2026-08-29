@@ -25,11 +25,11 @@ var resgrid;
                 // the server returns. English fallbacks keep the UI readable if a key is missing.
                 'acknowledgements_incomplete': 'Every acknowledgement must be checked before enrollment can be queued.',
                 'lock_consent_required': 'The overnight operation pause must be consented to before enrollment can be queued.',
-                'protected_access_denied': 'Only the department's managing member may run this command.',
+                'protected_access_denied': "Only the department's managing member may run this command.",
                 'addon_required': 'An active Advanced Data Protection addon is required.',
                 'plan_required': 'Advanced Data Protection requires a paid plan.',
                 'feature_not_available': 'Advanced Data Protection enrollment is temporarily unavailable.',
-                'invalid_state': 'The department's protection state does not permit this command. Reload the page for current status.',
+                'invalid_state': "The department's protection state does not permit this command. Reload the page for current status.",
                 'invalid_window': 'A valid migration window time zone is required.',
                 'command_failed': 'The command could not be completed; it may be retried.'
             };

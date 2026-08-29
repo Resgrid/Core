@@ -269,6 +269,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				: new List<UdfFieldValue>();
 			var values = allValues.Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
 
+			// Resolved like GetFieldValues above. The renderer SafeDisplays whatever it is handed, so
+			// without this a caller holding a grant still gets placeholders on mobile while the
+			// values endpoint gives them the real thing — same data, two answers.
+			await _protectedReadService.ResolveUdfFieldValuesForReadAsync(DepartmentId, values,
+				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, cancellationToken);
+
 			var schema = _renderingService.GenerateReactNativeSchema(definition, fields, values);
 			return Ok(new UdfSchemaResult { Data = schema });
 		}

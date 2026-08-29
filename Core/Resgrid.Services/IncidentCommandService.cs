@@ -857,7 +857,9 @@ namespace Resgrid.Services
 					Name = command.Name,
 					CallName = ProtectedDataEnvelope.SafeDisplay(call?.Name),
 					CallNumber = call?.Number,
-					CallAddress = call?.Address,
+					// calls.address is cataloged PII like calls.name — the number is the one field
+					// deliberately left in the clear (plan 5.1).
+					CallAddress = ProtectedDataEnvelope.SafeDisplay(call?.Address),
 					Status = command.Status,
 					EstablishedOn = command.EstablishedOn,
 					ClosedOn = command.ClosedOn,

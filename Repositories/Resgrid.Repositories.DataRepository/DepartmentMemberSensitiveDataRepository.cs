@@ -18,6 +18,7 @@ namespace Resgrid.Repositories.DataRepository
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly string _table;
 		private readonly bool _isPostgres;
+		private readonly string _schema;
 
 		public DepartmentMemberSensitiveDataRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration,
 			IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -26,6 +27,7 @@ namespace Resgrid.Repositories.DataRepository
 			_connectionProvider = connectionProvider;
 			_unitOfWork = unitOfWork;
 			_isPostgres = DataConfig.DatabaseType == DatabaseTypes.Postgres;
+			_schema = sqlConfiguration.SchemaName;
 			_table = _isPostgres
 				? $"{sqlConfiguration.SchemaName}.departmentmembersensitivedata"
 				: $"{sqlConfiguration.SchemaName}.[DepartmentMemberSensitiveData]";
@@ -52,21 +54,25 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<IEnumerable<int>> GetDepartmentIdsWithOutstandingLegacyProfileDataAsync()
 		{
+			// Every table is schema-qualified: _table already carries the configured schema, so
+			// leaving the joins bare would only work while the connection's default schema happens
+			// to match.
+			//
 			// "Outstanding" is the ABSENCE of the relocation marker, not an empty target column: a
 			// member who cleared their department identification number has an empty target and must
 			// not be swept forever. A member with no row at all is outstanding by definition.
 			var sql = _isPostgres
 				? $@"SELECT DISTINCT dm.departmentid
-FROM departmentmembers dm
-INNER JOIN userprofiles up ON up.userid = dm.userid
+FROM {_schema}.departmentmembers dm
+INNER JOIN {_schema}.userprofiles up ON up.userid = dm.userid
 LEFT JOIN {_table} s ON s.departmentid = dm.departmentid AND s.userid = dm.userid
 WHERE dm.isdeleted = false
   AND s.legacyprofilerelocatedon IS NULL
   AND (up.homeaddressid IS NOT NULL OR up.mailingaddressid IS NOT NULL
        OR (up.identificationnumber IS NOT NULL AND btrim(up.identificationnumber) <> ''))"
 				: $@"SELECT DISTINCT dm.[DepartmentId]
-FROM [DepartmentMembers] dm
-INNER JOIN [UserProfiles] up ON up.[UserId] = dm.[UserId]
+FROM {_schema}.[DepartmentMembers] dm
+INNER JOIN {_schema}.[UserProfiles] up ON up.[UserId] = dm.[UserId]
 LEFT JOIN {_table} s ON s.[DepartmentId] = dm.[DepartmentId] AND s.[UserId] = dm.[UserId]
 WHERE dm.[IsDeleted] = 0
   AND s.[LegacyProfileRelocatedOn] IS NULL

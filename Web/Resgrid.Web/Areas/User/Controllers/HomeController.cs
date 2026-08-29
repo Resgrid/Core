@@ -497,12 +497,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				// The department-scoped copies are independent rows, so "same as physical" is a value
 				// comparison rather than the legacy shared-address-id check.
+				//
+				// It can only be computed from values that were actually revealed. Without a grant
+				// every protected component reads as the SAME placeholder, so two different
+				// addresses compare equal, the checkbox comes back ticked, and a later save copies
+				// the physical address over the member's real mailing address — losing a value the
+				// editor was never allowed to see. Two placeholders prove nothing about equality.
+				bool Revealed(string value) =>
+					!string.IsNullOrEmpty(value) && value != ProtectedDataEnvelope.RedactionValue;
+
+				bool SameComponent(string mailing, string home) =>
+					string.Equals(mailing ?? string.Empty, home ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
+					(Revealed(mailing) || string.IsNullOrEmpty(mailing));
+
 				model.MailingAddressSameAsPhysical =
+					Revealed(memberAddresses.MailingAddress1) &&
 					string.Equals(memberAddresses.MailingAddress1, memberAddresses.HomeAddress1, StringComparison.OrdinalIgnoreCase) &&
-					string.Equals(memberAddresses.MailingCity ?? string.Empty, memberAddresses.HomeCity ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
-					string.Equals(memberAddresses.MailingState ?? string.Empty, memberAddresses.HomeState ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
-					string.Equals(memberAddresses.MailingPostalCode ?? string.Empty, memberAddresses.HomePostalCode ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
-					string.Equals(memberAddresses.MailingCountry ?? string.Empty, memberAddresses.HomeCountry ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+					SameComponent(memberAddresses.MailingCity, memberAddresses.HomeCity) &&
+					SameComponent(memberAddresses.MailingState, memberAddresses.HomeState) &&
+					SameComponent(memberAddresses.MailingPostalCode, memberAddresses.HomePostalCode) &&
+					SameComponent(memberAddresses.MailingCountry, memberAddresses.HomeCountry);
 			}
 			else if (legacyAddressFallbackAllowed && model.Profile != null && model.Profile.MailingAddressId.HasValue)
 			{

@@ -741,6 +741,42 @@ namespace Resgrid.Tests.Services
 			log.Narrative.Should().StartWith("rgdp:");
 		}
 
+		[Test]
+		public async Task Certification_sentinel_restore_reports_changed_so_the_caller_re_persists()
+		{
+			// The restore mutates the entity without producing a broker slot, so nothing else would
+			// set Changed. CertificationService re-saves only on Changed, so without this the row
+			// keeps the literal REDACTED placeholder and the member's licence number is gone.
+			SetupWriteEnforced();
+			SetupEncryptEcho();
+			SetupCurrentCatalogVersion();
+
+			var stored = new PersonnelCertification
+			{
+				PersonnelCertificationId = 21,
+				DepartmentId = DeptId,
+				Name = "rgdp:1:1:stored-name==",
+				Number = "rgdp:1:1:stored-number=="
+			};
+
+			// Every cataloged field comes back as the sentinel, so there is nothing left to encrypt.
+			var edited = new PersonnelCertification
+			{
+				PersonnelCertificationId = 21,
+				DepartmentId = DeptId,
+				Name = ProtectedDataEnvelope.RedactionValue,
+				Number = ProtectedDataEnvelope.RedactionValue
+			};
+
+			var result = await _service.PrepareCertificationWriteAsync(DeptId, edited, stored, IssueGrant(), UserId,
+				workloadCaller: false);
+
+			result.Success.Should().BeTrue();
+			result.Changed.Should().BeTrue("a restore with no encryption still has to be persisted");
+			edited.Name.Should().Be("rgdp:1:1:stored-name==");
+			edited.Number.Should().Be("rgdp:1:1:stored-number==");
+		}
+
 		private void SetupCurrentCatalogVersion()
 		{
 			_dataProtectionService.Setup(x => x.GetPolicyByDepartmentIdAsync(DeptId, It.IsAny<bool>()))

@@ -455,6 +455,37 @@ namespace Resgrid.Tests.Services
 			}
 		}
 
+		/// <summary>
+		/// Every failure leaves envelopes at rest — enrollment and catalog upgrade stop part-way
+		/// through a sweep, rotation fails over an already-enveloped corpus, and offboarding fails
+		/// with the decrypt pass incomplete. ShouldEncryptNewWritesAsync keeps encrypting in this
+		/// state for everything but offboarding, so reads must enforce or the two disagree: writes
+		/// producing envelopes that reads hand straight to clients.
+		/// </summary>
+		[Test]
+		public async Task Enforcement_stays_on_after_any_failed_run()
+		{
+			foreach (var kind in new[]
+			{
+				DepartmentDataProtectionMigrationKind.Enrollment,
+				DepartmentDataProtectionMigrationKind.CatalogUpgrade,
+				DepartmentDataProtectionMigrationKind.Rotation,
+				DepartmentDataProtectionMigrationKind.Offboarding
+			})
+			{
+				_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync(new DepartmentDataProtectionPolicy
+				{
+					DepartmentDataProtectionPolicyId = 1,
+					DepartmentId = DeptId,
+					State = (int)DepartmentDataProtectionState.Failed,
+					ActiveMigrationKind = (int)kind
+				});
+
+				(await _service.IsProtectionEnforcedAsync(DeptId)).Should().BeTrue(
+					$"a failed {kind} run can leave envelopes at rest, and serving those is unrecoverable");
+			}
+		}
+
 		#endregion
 }
 }

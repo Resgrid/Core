@@ -53,10 +53,23 @@ namespace Resgrid.Providers.Migrations.Migrations
 				Delete.Column("EmergencyContactPhone").FromTable("DepartmentMemberSensitiveData");
 		}
 
+		/// <summary>
+		/// Refuses the rollback when any row is already protected. These columns hold the ONLY copy
+		/// of an enrolled department's emergency contacts — the plaintext was never kept elsewhere —
+		/// so dropping the table would destroy them with no way back. A comment saying "only safe
+		/// while every department is Disabled" is not a control; this is.
+		/// </summary>
+		private const string RefuseIfProtected = @"
+IF EXISTS (SELECT 1 FROM [DepartmentMemberEmergencyContacts] WHERE [IsProtected] = 1)
+	THROW 51000, 'M0131 rollback refused: protected emergency-contact data exists and this table holds the only copy. Offboard the affected departments first.', 1;";
+
 		public override void Down()
 		{
-			// Only safe while every department is Disabled: dropping this table on a protected
-			// department destroys emergency-contact ciphertext that cannot be recovered.
+			// Refuses rather than relying on the operator having read the comment: dropping this
+			// table on a protected department destroys emergency-contact ciphertext for good.
+			if (Schema.Table("DepartmentMemberEmergencyContacts").Exists())
+				Execute.Sql(RefuseIfProtected);
+
 			if (Schema.Table("DepartmentMemberEmergencyContacts").Exists())
 				Delete.Table("DepartmentMemberEmergencyContacts");
 

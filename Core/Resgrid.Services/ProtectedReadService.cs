@@ -834,6 +834,7 @@ namespace Resgrid.Services
 				return ProtectedWriteResult.Allowed();
 
 			var slots = new List<WriteSlot>();
+			var restored = false;
 			var rowKey = certification.PersonnelCertificationId.ToString(CultureInfo.InvariantCulture);
 			foreach (var accessor in CertificationFieldAccessors)
 			{
@@ -844,7 +845,11 @@ namespace Resgrid.Services
 				if (value == ProtectedDataEnvelope.RedactionValue)
 				{
 					if (existingCertification != null)
+					{
 						accessor.Value.Set(certification, accessor.Value.Get(existingCertification));
+						restored = true;
+					}
+
 					continue;
 				}
 
@@ -870,8 +875,18 @@ namespace Resgrid.Services
 					Apply = envelopeBase64 => certification.Data = Convert.FromBase64String(envelopeBase64)
 				});
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
 				() => certification.IsProtected = true, cancellationToken);
+
+			// A restore mutates the entity without producing a broker slot, so EncryptSlotsAsync has
+			// nothing to report and Changed stays false. The caller re-persists only on Changed, so
+			// without this the transiently-saved row keeps the literal REDACTED placeholder and the
+			// member's certification number and file name are gone. Reported through the result
+			// rather than left to each caller to special-case, the way calls and contacts do.
+			if (restored && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedWriteResult> PrepareContactWriteAsync(int departmentId, Contact contact, Contact existingContact,

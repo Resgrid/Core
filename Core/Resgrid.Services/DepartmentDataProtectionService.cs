@@ -141,6 +141,19 @@ namespace Resgrid.Services
 				return policy?.ActiveMigrationKind == (int)DepartmentDataProtectionMigrationKind.CatalogUpgrade;
 			}
 
+			// A FAILED run always enforces, whatever it was doing when it stopped. Every failure
+			// leaves envelopes at rest: enrollment and catalog upgrade fail part-way through a
+			// sweep, rotation fails over an already-enveloped corpus, and offboarding fails with
+			// the decrypt pass incomplete. ShouldEncryptNewWritesAsync already keeps encrypting in
+			// this state for everything but offboarding, so the two would otherwise disagree —
+			// writes producing envelopes that reads hand straight to clients.
+			//
+			// The cost of being wrong in the other direction is a department seeing REDACTED for
+			// values that happen to still be plaintext, which is recoverable; serving ciphertext,
+			// or worse the plaintext behind it, is not.
+			if (state == DepartmentDataProtectionState.Failed)
+				return true;
+
 			return false;
 		}
 

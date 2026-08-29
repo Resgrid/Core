@@ -32,6 +32,13 @@ namespace Resgrid.Providers.Migrations.Migrations
 				Alter.Table("DepartmentMemberSensitiveData")
 					.AddColumn("LegacyProfileRelocatedOn").AsDateTime2().Nullable();
 
+			// The gate is the DEPARTMENT's protection state, not the row's IsProtected flag. Step 1
+			// creates rows with that flag clear, so gating on it would let an enrolled department's
+			// members be filled with cleartext and then stamped as relocated — leaving plaintext PII
+			// at rest under a department that is supposed to be encrypted, and marking it done so
+			// MemberProfileRelocationService skips those members permanently. Enrolled departments
+			// are left entirely to that service, which moves the values through the ADP write path.
+			//
 			// 1) Rows for members whose legacy profile holds an address but no identification number
 			//    (M0132 skipped them) or who joined a department after M0132 ran.
 			Execute.Sql(@"
@@ -44,7 +51,10 @@ WHERE dm.[IsDeleted] = 0
        OR (up.[IdentificationNumber] IS NOT NULL AND LTRIM(RTRIM(up.[IdentificationNumber])) <> ''))
   AND NOT EXISTS (
       SELECT 1 FROM [DepartmentMemberSensitiveData] s
-      WHERE s.[DepartmentId] = dm.[DepartmentId] AND s.[UserId] = dm.[UserId]);");
+      WHERE s.[DepartmentId] = dm.[DepartmentId] AND s.[UserId] = dm.[UserId])
+  AND NOT EXISTS (
+      SELECT 1 FROM [DepartmentDataProtectionPolicies] p
+      WHERE p.[DepartmentId] = dm.[DepartmentId] AND p.[State] <> 0);");
 
 			// 2) Fill the three families into any still-empty, still-plaintext target. Re-runnable:
 			//    a department-specific value someone has already entered is never overwritten.
@@ -54,7 +64,10 @@ SET s.[IdentificationNumber] = up.[IdentificationNumber]
 FROM [DepartmentMemberSensitiveData] s
 INNER JOIN [UserProfiles] up ON up.[UserId] = s.[UserId]
 WHERE s.[IdentificationNumber] IS NULL AND s.[IsProtected] = 0 AND s.[LegacyProfileRelocatedOn] IS NULL
-  AND up.[IdentificationNumber] IS NOT NULL AND LTRIM(RTRIM(up.[IdentificationNumber])) <> '';");
+  AND up.[IdentificationNumber] IS NOT NULL AND LTRIM(RTRIM(up.[IdentificationNumber])) <> ''
+  AND NOT EXISTS (
+      SELECT 1 FROM [DepartmentDataProtectionPolicies] p
+      WHERE p.[DepartmentId] = s.[DepartmentId] AND p.[State] <> 0);");
 
 			Execute.Sql(@"
 UPDATE s
@@ -63,7 +76,10 @@ SET s.[HomeAddress1] = ha.[Address1], s.[HomeCity] = ha.[City], s.[HomeState] = 
 FROM [DepartmentMemberSensitiveData] s
 INNER JOIN [UserProfiles] up ON up.[UserId] = s.[UserId]
 INNER JOIN [Addresses] ha ON ha.[AddressId] = up.[HomeAddressId]
-WHERE s.[HomeAddress1] IS NULL AND s.[IsProtected] = 0 AND s.[LegacyProfileRelocatedOn] IS NULL;");
+WHERE s.[HomeAddress1] IS NULL AND s.[IsProtected] = 0 AND s.[LegacyProfileRelocatedOn] IS NULL
+  AND NOT EXISTS (
+      SELECT 1 FROM [DepartmentDataProtectionPolicies] p
+      WHERE p.[DepartmentId] = s.[DepartmentId] AND p.[State] <> 0);");
 
 			Execute.Sql(@"
 UPDATE s
@@ -72,15 +88,23 @@ SET s.[MailingAddress1] = ma.[Address1], s.[MailingCity] = ma.[City], s.[Mailing
 FROM [DepartmentMemberSensitiveData] s
 INNER JOIN [UserProfiles] up ON up.[UserId] = s.[UserId]
 INNER JOIN [Addresses] ma ON ma.[AddressId] = up.[MailingAddressId]
-WHERE s.[MailingAddress1] IS NULL AND s.[IsProtected] = 0 AND s.[LegacyProfileRelocatedOn] IS NULL;");
+WHERE s.[MailingAddress1] IS NULL AND s.[IsProtected] = 0 AND s.[LegacyProfileRelocatedOn] IS NULL
+  AND NOT EXISTS (
+      SELECT 1 FROM [DepartmentDataProtectionPolicies] p
+      WHERE p.[DepartmentId] = s.[DepartmentId] AND p.[State] <> 0);");
 
-			// 3) Stamp what moved. Every plaintext row is now relocated — including rows whose member
-			//    simply had nothing to move, which are relocated by definition and must not be
-			//    revisited by the worker on every pass.
+			// 3) Stamp what moved, in unprotected departments only. Every plaintext row there is now
+			//    relocated — including rows whose member simply had nothing to move, which are
+			//    relocated by definition and must not be revisited by the worker on every pass. An
+			//    enrolled department's rows stay unstamped so the relocation service still owns them.
 			Execute.Sql(@"
-UPDATE [DepartmentMemberSensitiveData]
-SET [LegacyProfileRelocatedOn] = GETUTCDATE()
-WHERE [LegacyProfileRelocatedOn] IS NULL AND [IsProtected] = 0;");
+UPDATE s
+SET s.[LegacyProfileRelocatedOn] = GETUTCDATE()
+FROM [DepartmentMemberSensitiveData] s
+WHERE s.[LegacyProfileRelocatedOn] IS NULL AND s.[IsProtected] = 0
+  AND NOT EXISTS (
+      SELECT 1 FROM [DepartmentDataProtectionPolicies] p
+      WHERE p.[DepartmentId] = s.[DepartmentId] AND p.[State] <> 0);");
 		}
 
 		public override void Down()

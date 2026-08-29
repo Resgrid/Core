@@ -122,6 +122,14 @@ namespace Resgrid.Services
 			await _distributionListsService.RemoveUserFromAllListsInDepartmentAsync(userId, departmentId, cancellationToken);
 			await _scheduledTasksService.DeleteAllTasksForUserInDepartmentAsync(userId, departmentId, cancellationToken);
 
+			// Department-scoped personal data goes with the membership (ADP plan 5.1). Before the
+			// relocation these values lived on the global profile and a revoked member simply stopped
+			// being reachable; now the department holds the only copy of their identification number,
+			// address and next-of-kin details, so leaving the rows behind would retain a former
+			// member's personal data under a department that no longer has any relationship with them.
+			await _memberSensitiveDataService.DeleteForMemberAsync(departmentId, userId, cancellationToken);
+			await _emergencyContactService.DeleteAllForMemberAsync(departmentId, userId, cancellationToken);
+
 			// Soft-delete the membership last (this also writes the audit event and clears caches).
 			var member = await _departmentsService.DeleteUserAsync(departmentId, userId, revokingUserId, cancellationToken);
 			if (member != null && member.IsDeleted)

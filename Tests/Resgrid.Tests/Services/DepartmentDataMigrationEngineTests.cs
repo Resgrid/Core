@@ -57,7 +57,7 @@ namespace Resgrid.Tests.Services
 			_keyService.Setup(x => x.GetKeyByVersionAsync(DeptId, 1)).ReturnsAsync(keyRow);
 			_keyService.Setup(x => x.GetActiveKeyAsync(DeptId)).ReturnsAsync(keyRow);
 
-			_engine = new DepartmentDataMigrationEngine(_bulk, _migrations, _keyService.Object, _keyProvider, _crypto);
+			_engine = new DepartmentDataMigrationEngine(_bulk, _migrations, _keyService.Object, _keyProvider, _crypto, new ProtectedFieldCatalog());
 
 			// Three call rows: one rich, one sparse, one with empty strings only.
 			_bulk.Seed("Calls", "CallId",
@@ -105,7 +105,7 @@ namespace Resgrid.Tests.Services
 			migrationRow.Cursor.Should().Be("3");
 			migrationRow.RowsProcessed.Should().Be(2);
 
-			_crypto.DecryptText(_dek, (string)calls[0]["NatureOfCall"], DeptId, "calls.natureofcall", "1", 1)
+			_crypto.DecryptText(_dek, (string)calls[0]["NatureOfCall"], DeptId, "calls.natureofcall", "1")
 				.Should().Be("Smoke showing");
 		}
 
@@ -221,7 +221,7 @@ namespace Resgrid.Tests.Services
 		public async Task Foreign_envelope_halts_the_run_and_is_never_re_encrypted()
 		{
 			// An envelope bound to another department's AAD, planted in this department's data.
-			var foreign = _crypto.EncryptText(_dek, 1, "someone else's data", 43, "calls.name", "1", 1);
+			var foreign = _crypto.EncryptText(_dek, 1, "someone else's data", 43, "calls.name", "1");
 			_bulk.Table("Calls")[0]["Name"] = foreign;
 
 			var result = await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
@@ -250,7 +250,7 @@ namespace Resgrid.Tests.Services
 		public async Task Missing_kms_fails_the_run_closed()
 		{
 			var engine = new DepartmentDataMigrationEngine(_bulk, _migrations, _keyService.Object,
-				new NotConfiguredKeyWrappingProvider(), _crypto);
+				new NotConfiguredKeyWrappingProvider(), _crypto, new ProtectedFieldCatalog());
 
 			var result = await engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
 

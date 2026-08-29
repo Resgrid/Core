@@ -82,6 +82,32 @@ namespace Resgrid.Services
 		/// <summary>The rgdpb binary attachment payload field id.</summary>
 		public const string AttachmentDataFieldId = "callattachments.data";
 
+		/// <summary>
+		/// CallLogs text columns (parity-pinned). CallLogs is the per-call running log, a different
+		/// table and entity from the Log family's incident work logs — both happen to call their
+		/// text column Narrative.
+		/// </summary>
+		public static readonly IReadOnlyDictionary<string, (Func<CallLog, string> Get, Action<CallLog, string> Set)> CallLogFieldAccessors =
+			new Dictionary<string, (Func<CallLog, string>, Action<CallLog, string>)>
+			{
+				["calllogs.narrative"] = (l => l.Narrative, (l, v) => l.Narrative = v)
+			};
+
+		/// <summary>PersonnelCertifications text columns (parity-pinned; Data is the binary field).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<PersonnelCertification, string> Get, Action<PersonnelCertification, string> Set)> CertificationFieldAccessors =
+			new Dictionary<string, (Func<PersonnelCertification, string>, Action<PersonnelCertification, string>)>
+			{
+				["personnelcertifications.name"] = (c => c.Name, (c, v) => c.Name = v),
+				["personnelcertifications.number"] = (c => c.Number, (c, v) => c.Number = v),
+				["personnelcertifications.type"] = (c => c.Type, (c, v) => c.Type = v),
+				["personnelcertifications.area"] = (c => c.Area, (c, v) => c.Area = v),
+				["personnelcertifications.issuedby"] = (c => c.IssuedBy, (c, v) => c.IssuedBy = v),
+				["personnelcertifications.filename"] = (c => c.Filename, (c, v) => c.Filename = v)
+			};
+
+		/// <summary>The rgdpb binary certification document field id.</summary>
+		public const string CertificationDataFieldId = "personnelcertifications.data";
+
 		/// <summary>Contacts text columns (parity-pinned; Image is the separate binary field).</summary>
 		public static readonly IReadOnlyDictionary<string, (Func<Contact, string> Get, Action<Contact, string> Set)> ContactFieldAccessors =
 			new Dictionary<string, (Func<Contact, string>, Action<Contact, string>)>
@@ -119,6 +145,74 @@ namespace Resgrid.Services
 				["contactnotes.note"] = (n => n.Note, (n, v) => n.Note = v)
 			};
 
+		/// <summary>UnitStates text columns (catalog v2 operational family; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<UnitState, string> Get, Action<UnitState, string> Set)> UnitStateFieldAccessors =
+			new Dictionary<string, (Func<UnitState, string>, Action<UnitState, string>)>
+			{
+				["unitstates.note"] = (s => s.Note, (s, v) => s.Note = v),
+				["unitstates.geolocationdata"] = (s => s.GeoLocationData, (s, v) => s.GeoLocationData = v)
+			};
+
+		/// <summary>UnitStates companion columns (parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<UnitState, string> GetEnvelope, Action<UnitState, decimal?> SetTyped)> UnitStateCompanionAccessors =
+			new Dictionary<string, (Func<UnitState, string>, Action<UnitState, decimal?>)>
+			{
+				["unitstates.latitude"] = (s => s.ProtectedLatitudeEnvelope, (s, v) => s.Latitude = v),
+				["unitstates.longitude"] = (s => s.ProtectedLongitudeEnvelope, (s, v) => s.Longitude = v)
+			};
+
+		/// <summary>DepartmentMemberSensitiveData text columns (catalog v1 personnel family; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<DepartmentMemberSensitiveData, string> Get, Action<DepartmentMemberSensitiveData, string> Set)> MemberSensitiveDataAccessors =
+			new Dictionary<string, (Func<DepartmentMemberSensitiveData, string>, Action<DepartmentMemberSensitiveData, string>)>
+			{
+				["departmentmembersensitivedata.identificationnumber"] = (d => d.IdentificationNumber, (d, v) => d.IdentificationNumber = v),
+				["departmentmembersensitivedata.notes"] = (d => d.Notes, (d, v) => d.Notes = v),
+				["departmentmembersensitivedata.homeaddress1"] = (d => d.HomeAddress1, (d, v) => d.HomeAddress1 = v),
+				["departmentmembersensitivedata.homecity"] = (d => d.HomeCity, (d, v) => d.HomeCity = v),
+				["departmentmembersensitivedata.homestate"] = (d => d.HomeState, (d, v) => d.HomeState = v),
+				["departmentmembersensitivedata.homepostalcode"] = (d => d.HomePostalCode, (d, v) => d.HomePostalCode = v),
+				["departmentmembersensitivedata.homecountry"] = (d => d.HomeCountry, (d, v) => d.HomeCountry = v),
+				["departmentmembersensitivedata.mailingaddress1"] = (d => d.MailingAddress1, (d, v) => d.MailingAddress1 = v),
+				["departmentmembersensitivedata.mailingcity"] = (d => d.MailingCity, (d, v) => d.MailingCity = v),
+				["departmentmembersensitivedata.mailingstate"] = (d => d.MailingState, (d, v) => d.MailingState = v),
+				["departmentmembersensitivedata.mailingpostalcode"] = (d => d.MailingPostalCode, (d, v) => d.MailingPostalCode = v),
+				["departmentmembersensitivedata.mailingcountry"] = (d => d.MailingCountry, (d, v) => d.MailingCountry = v)
+			};
+
+		/// <summary>DepartmentMemberEmergencyContacts text columns (catalog v4; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<DepartmentMemberEmergencyContact, string> Get, Action<DepartmentMemberEmergencyContact, string> Set)> MemberEmergencyContactAccessors =
+			new Dictionary<string, (Func<DepartmentMemberEmergencyContact, string>, Action<DepartmentMemberEmergencyContact, string>)>
+			{
+				["departmentmemberemergencycontacts.name"] = (c => c.Name, (c, v) => c.Name = v),
+				["departmentmemberemergencycontacts.relationship"] = (c => c.Relationship, (c, v) => c.Relationship = v),
+				["departmentmemberemergencycontacts.phonenumber"] = (c => c.PhoneNumber, (c, v) => c.PhoneNumber = v),
+				["departmentmemberemergencycontacts.alternatephonenumber"] = (c => c.AlternatePhoneNumber, (c, v) => c.AlternatePhoneNumber = v),
+				["departmentmemberemergencycontacts.email"] = (c => c.Email, (c, v) => c.Email = v),
+				["departmentmemberemergencycontacts.notes"] = (c => c.Notes, (c, v) => c.Notes = v)
+			};
+
+		/// <summary>Logs text columns (catalog v3; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<Log, string> Get, Action<Log, string> Set)> LogFieldAccessors =
+			new Dictionary<string, (Func<Log, string>, Action<Log, string>)>
+			{
+				["logs.narrative"] = (l => l.Narrative, (l, v) => l.Narrative = v),
+				["logs.initialreport"] = (l => l.InitialReport, (l, v) => l.InitialReport = v),
+				["logs.cause"] = (l => l.Cause, (l, v) => l.Cause = v),
+				["logs.contactname"] = (l => l.ContactName, (l, v) => l.ContactName = v),
+				["logs.contactnumber"] = (l => l.ContactNumber, (l, v) => l.ContactNumber = v),
+				["logs.otherpersonnel"] = (l => l.OtherPersonnel, (l, v) => l.OtherPersonnel = v),
+				["logs.location"] = (l => l.Location, (l, v) => l.Location = v),
+				["logs.bodylocation"] = (l => l.BodyLocation, (l, v) => l.BodyLocation = v),
+				["logs.pronounceddeceasedby"] = (l => l.PronouncedDeceasedBy, (l, v) => l.PronouncedDeceasedBy = v)
+			};
+
+		/// <summary>UdfFieldValues text column (catalog v2 operational family; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<UdfFieldValue, string> Get, Action<UdfFieldValue, string> Set)> UdfFieldValueAccessors =
+			new Dictionary<string, (Func<UdfFieldValue, string>, Action<UdfFieldValue, string>)>
+			{
+				["udffieldvalues.value"] = (v => v.Value, (v, x) => v.Value = x)
+			};
+
 		private static readonly byte[] BinaryPrefixBytes = Encoding.ASCII.GetBytes(ProtectedDataEnvelope.BinaryPrefix);
 
 		/// <summary>One protected value wired to its reveal/redact actions on the owning entity.</summary>
@@ -136,13 +230,16 @@ namespace Resgrid.Services
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IProtectedDataGrantService _grantService;
 		private readonly IProtectedDataBrokerClient _brokerClient;
+		private readonly IProtectedFieldCatalog _fieldCatalog;
 
 		public ProtectedReadService(IDepartmentDataProtectionService dataProtectionService,
-			IProtectedDataGrantService grantService, IProtectedDataBrokerClient brokerClient)
+			IProtectedDataGrantService grantService, IProtectedDataBrokerClient brokerClient,
+			IProtectedFieldCatalog fieldCatalog)
 		{
 			_dataProtectionService = dataProtectionService;
 			_grantService = grantService;
 			_brokerClient = brokerClient;
+			_fieldCatalog = fieldCatalog;
 		}
 
 		public async Task<ProtectedReadResult> ResolveForReadAsync(int departmentId, Call call,
@@ -207,6 +304,19 @@ namespace Resgrid.Services
 			return result;
 		}
 
+		public async Task<ProtectedReadResult> ResolveCertificationsForReadAsync(int departmentId,
+			IReadOnlyList<PersonnelCertification> certifications, string grantToken, string userId,
+			bool includeData = false, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var certification in (certifications ?? Array.Empty<PersonnelCertification>()).Where(c => c != null))
+				CollectCertificationSlots(result, certification, slots, includeData);
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
 		public async Task<ProtectedReadResult> ResolveContactsForReadAsync(int departmentId,
 			IReadOnlyList<Contact> contacts, string grantToken, string userId, CancellationToken cancellationToken = default)
 		{
@@ -214,6 +324,249 @@ namespace Resgrid.Services
 			var slots = new List<Slot>();
 			foreach (var contact in (contacts ?? Array.Empty<Contact>()).Where(c => c != null))
 				CollectContactSlots(result, contact, slots);
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveMemberEmergencyContactsForReadAsync(int departmentId,
+			IReadOnlyList<DepartmentMemberEmergencyContact> contacts, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var contact in (contacts ?? Array.Empty<DepartmentMemberEmergencyContact>()).Where(c => c != null))
+			{
+				var rowKey = contact.DepartmentMemberEmergencyContactId.ToString(CultureInfo.InvariantCulture);
+				foreach (var accessor in MemberEmergencyContactAccessors)
+				{
+					var value = accessor.Value.Get(contact);
+					if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+						continue;
+
+					var set = accessor.Value.Set;
+					slots.Add(new Slot
+					{
+						FieldId = accessor.Key,
+						RowKey = rowKey,
+						WireValue = value,
+						Owner = result,
+						Reveal = plaintext => set(contact, plaintext),
+						Redact = () => set(contact, ProtectedDataEnvelope.RedactionValue)
+					});
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareMemberEmergencyContactWriteAsync(int departmentId,
+			DepartmentMemberEmergencyContact contact, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (contact == null)
+				return ProtectedWriteResult.Allowed();
+
+			var slots = new List<WriteSlot>();
+			var rowKey = contact.DepartmentMemberEmergencyContactId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in MemberEmergencyContactAccessors)
+			{
+				var value = accessor.Value.Get(contact);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(contact, envelope) });
+			}
+
+			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => contact.IsProtected = true, cancellationToken);
+		}
+
+		public async Task<ProtectedReadResult> ResolveMemberSensitiveDataForReadAsync(int departmentId,
+			IReadOnlyList<DepartmentMemberSensitiveData> rows, string grantToken, string userId, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var row in (rows ?? Array.Empty<DepartmentMemberSensitiveData>()).Where(r => r != null))
+			{
+				var rowKey = row.DepartmentMemberSensitiveDataId.ToString(CultureInfo.InvariantCulture);
+				foreach (var accessor in MemberSensitiveDataAccessors)
+				{
+					var value = accessor.Value.Get(row);
+					if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+						continue;
+
+					var set = accessor.Value.Set;
+					slots.Add(new Slot
+					{
+						FieldId = accessor.Key,
+						RowKey = rowKey,
+						WireValue = value,
+						Owner = result,
+						Reveal = plaintext => set(row, plaintext),
+						Redact = () => set(row, ProtectedDataEnvelope.RedactionValue)
+					});
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareMemberSensitiveDataWriteAsync(int departmentId,
+			DepartmentMemberSensitiveData data, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (data == null)
+				return ProtectedWriteResult.Allowed();
+
+			var slots = new List<WriteSlot>();
+			var rowKey = data.DepartmentMemberSensitiveDataId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in MemberSensitiveDataAccessors)
+			{
+				var value = accessor.Value.Get(data);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(data, envelope) });
+			}
+
+			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => data.IsProtected = true, cancellationToken);
+		}
+
+		public async Task<ProtectedReadResult> ResolveCallLogsForReadAsync(int departmentId,
+			IReadOnlyList<CallLog> logs, string grantToken, string userId, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var log in (logs ?? Array.Empty<CallLog>()).Where(l => l != null))
+			{
+				var rowKey = log.CallLogId.ToString(CultureInfo.InvariantCulture);
+				foreach (var accessor in CallLogFieldAccessors)
+				{
+					var value = accessor.Value.Get(log);
+					if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+						continue;
+
+					var set = accessor.Value.Set;
+					slots.Add(new Slot
+					{
+						FieldId = accessor.Key,
+						RowKey = rowKey,
+						WireValue = value,
+						Owner = result,
+						Reveal = plaintext => set(log, plaintext),
+						Redact = () => set(log, ProtectedDataEnvelope.RedactionValue)
+					});
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveLogsForReadAsync(int departmentId,
+			IReadOnlyList<Log> logs, string grantToken, string userId, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var log in (logs ?? Array.Empty<Log>()).Where(l => l != null))
+			{
+				var rowKey = log.LogId.ToString(CultureInfo.InvariantCulture);
+				foreach (var accessor in LogFieldAccessors)
+				{
+					var value = accessor.Value.Get(log);
+					if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+						continue;
+
+					var set = accessor.Value.Set;
+					slots.Add(new Slot
+					{
+						FieldId = accessor.Key,
+						RowKey = rowKey,
+						WireValue = value,
+						Owner = result,
+						Reveal = plaintext => set(log, plaintext),
+						Redact = () => set(log, ProtectedDataEnvelope.RedactionValue)
+					});
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareCallLogWriteAsync(int departmentId, CallLog log,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (log == null)
+				return ProtectedWriteResult.Allowed();
+
+			var slots = new List<WriteSlot>();
+			var rowKey = log.CallLogId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in CallLogFieldAccessors)
+			{
+				var value = accessor.Value.Get(log);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(log, envelope) });
+			}
+
+			// No marker column on CallLogs, so nothing to flag — the sweep and the residue counts
+			// work off envelope detection on the column itself.
+			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareLogWriteAsync(int departmentId, Log log,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (log == null)
+				return ProtectedWriteResult.Allowed();
+
+			var slots = new List<WriteSlot>();
+			var rowKey = log.LogId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in LogFieldAccessors)
+			{
+				var value = accessor.Value.Get(log);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(log, envelope) });
+			}
+
+			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+		}
+
+		public async Task<ProtectedReadResult> ResolveUnitStatesForReadAsync(int departmentId,
+			IReadOnlyList<UnitState> states, string grantToken, string userId, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var state in (states ?? Array.Empty<UnitState>()).Where(s => s != null))
+				CollectUnitStateSlots(result, state, slots);
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveUdfFieldValuesForReadAsync(int departmentId,
+			IReadOnlyList<UdfFieldValue> values, string grantToken, string userId, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var value in (values ?? Array.Empty<UdfFieldValue>()).Where(v => v != null))
+				CollectUdfFieldValueSlots(result, value, slots);
 
 			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
 			return result;
@@ -473,6 +826,54 @@ namespace Resgrid.Services
 				() => attachment.IsProtected = true, cancellationToken);
 		}
 
+		public async Task<ProtectedWriteResult> PrepareCertificationWriteAsync(int departmentId,
+			PersonnelCertification certification, PersonnelCertification existingCertification,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (certification == null)
+				return ProtectedWriteResult.Allowed();
+
+			var slots = new List<WriteSlot>();
+			var rowKey = certification.PersonnelCertificationId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in CertificationFieldAccessors)
+			{
+				var value = accessor.Value.Get(certification);
+
+				// The sentinel is what an unrevealed form posts back. Restore the stored value rather
+				// than encrypting the literal "REDACTED" over the member's real certification data.
+				if (value == ProtectedDataEnvelope.RedactionValue)
+				{
+					if (existingCertification != null)
+						accessor.Value.Set(certification, accessor.Value.Get(existingCertification));
+					continue;
+				}
+
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value))
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(certification, envelope) });
+			}
+
+			// A null document on an edit means "no new file was uploaded", not "delete the file" —
+			// keep whatever is stored, which for a protected department is already an envelope.
+			if ((certification.Data == null || certification.Data.Length == 0) && existingCertification != null)
+				certification.Data = existingCertification.Data;
+
+			if (certification.Data != null && certification.Data.Length > 0 && !IsBinaryEnveloped(certification.Data))
+				slots.Add(new WriteSlot
+				{
+					FieldId = CertificationDataFieldId,
+					RowKey = rowKey,
+					IsBinary = true,
+					WireValue = Convert.ToBase64String(certification.Data),
+					Apply = envelopeBase64 => certification.Data = Convert.FromBase64String(envelopeBase64)
+				});
+
+			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => certification.IsProtected = true, cancellationToken);
+		}
+
 		public async Task<ProtectedWriteResult> PrepareContactWriteAsync(int departmentId, Contact contact, Contact existingContact,
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
 		{
@@ -529,6 +930,75 @@ namespace Resgrid.Services
 
 				var set = accessor.Value.Set;
 				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(note, envelope) });
+			}
+
+			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareUnitStateWriteAsync(int departmentId, UnitState state,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (state == null)
+				return ProtectedWriteResult.Allowed();
+
+			var slots = new List<WriteSlot>();
+			var rowKey = state.UnitStateId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in UnitStateFieldAccessors)
+			{
+				var value = accessor.Value.Get(state);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(state, envelope) });
+			}
+
+			// Companion columns: the typed coordinate moves into its envelope column and the typed
+			// column is nulled — the migration engine's exact write shape (plan 22.3).
+			if (state.Latitude.HasValue)
+				slots.Add(new WriteSlot
+				{
+					FieldId = "unitstates.latitude",
+					RowKey = rowKey,
+					WireValue = state.Latitude.Value.ToString(CultureInfo.InvariantCulture),
+					Apply = envelope => { state.ProtectedLatitudeEnvelope = envelope; state.Latitude = null; }
+				});
+			if (state.Longitude.HasValue)
+				slots.Add(new WriteSlot
+				{
+					FieldId = "unitstates.longitude",
+					RowKey = rowKey,
+					WireValue = state.Longitude.Value.ToString(CultureInfo.InvariantCulture),
+					Apply = envelope => { state.ProtectedLongitudeEnvelope = envelope; state.Longitude = null; }
+				});
+
+			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => state.IsProtected = true, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareUdfFieldValueWriteAsync(int departmentId, UdfFieldValue value,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (value == null)
+				return ProtectedWriteResult.Allowed();
+
+			var slots = new List<WriteSlot>();
+			foreach (var accessor in UdfFieldValueAccessors)
+			{
+				var stored = accessor.Value.Get(value);
+				if (string.IsNullOrEmpty(stored) || ProtectedDataEnvelope.HasEnvelopePrefix(stored) ||
+					stored == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot
+				{
+					FieldId = accessor.Key,
+					RowKey = value.UdfFieldValueId,
+					WireValue = stored,
+					Apply = envelope => set(value, envelope)
+				});
 			}
 
 			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
@@ -598,6 +1068,26 @@ namespace Resgrid.Services
 
 			var policyRow = await _dataProtectionService.GetPolicyByDepartmentIdAsync(departmentId);
 			var catalogVersion = policyRow?.CatalogVersion ?? 0;
+
+			// The department's PINNED catalog version decides what it owns. A field added in a later
+			// catalog is not encrypted until a catalog upgrade sweeps that department: encrypting it
+			// early would write an envelope no migration ever accounted for, under this department's
+			// older AAD. Skipped fields stay plaintext and are picked up by the upgrade.
+			var ownedFieldIds = new HashSet<string>(
+				_fieldCatalog.GetAllForVersion(catalogVersion).Select(e => e.FieldId),
+				StringComparer.OrdinalIgnoreCase);
+			var skipped = slots.Where(x => !ownedFieldIds.Contains(x.FieldId)).ToList();
+			if (skipped.Count > 0)
+			{
+				Logging.LogInfo($"ADP: department {departmentId} is pinned at catalog v{catalogVersion}; skipping {skipped.Count} field(s) added in a later catalog until an upgrade runs.");
+				slots = slots.Where(x => ownedFieldIds.Contains(x.FieldId)).ToList();
+
+				if (slots.Count == 0)
+				{
+					markProtected?.Invoke();
+					return ProtectedWriteResult.Allowed(isProtected: true);
+				}
+			}
 
 			var items = slots.Select(s => new ProtectedFieldOperationItem
 			{
@@ -689,6 +1179,69 @@ namespace Resgrid.Services
 					Owner = owner,
 					Reveal = plaintext => set(call, plaintext),
 					Redact = () => set(call, ProtectedDataEnvelope.RedactionValue)
+				});
+			}
+		}
+
+		private static void CollectUnitStateSlots(ProtectedReadResult owner, UnitState state, List<Slot> slots)
+		{
+			var rowKey = state.UnitStateId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in UnitStateFieldAccessors)
+			{
+				var value = accessor.Value.Get(state);
+				if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new Slot
+				{
+					FieldId = accessor.Key,
+					RowKey = rowKey,
+					WireValue = value,
+					Owner = owner,
+					Reveal = plaintext => set(state, plaintext),
+					Redact = () => set(state, ProtectedDataEnvelope.RedactionValue)
+				});
+			}
+
+			foreach (var accessor in UnitStateCompanionAccessors)
+			{
+				var envelope = accessor.Value.GetEnvelope(state);
+				if (!ProtectedDataEnvelope.HasEnvelopePrefix(envelope))
+					continue;
+
+				var setTyped = accessor.Value.SetTyped;
+				slots.Add(new Slot
+				{
+					FieldId = accessor.Key,
+					RowKey = rowKey,
+					WireValue = envelope,
+					Owner = owner,
+					Reveal = plaintext => setTyped(state,
+						decimal.TryParse(plaintext, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : null),
+					Redact = () => setTyped(state, null)
+				});
+			}
+		}
+
+		private static void CollectUdfFieldValueSlots(ProtectedReadResult owner, UdfFieldValue value, List<Slot> slots)
+		{
+			var rowKey = value.UdfFieldValueId;
+			foreach (var accessor in UdfFieldValueAccessors)
+			{
+				var stored = accessor.Value.Get(value);
+				if (!ProtectedDataEnvelope.HasEnvelopePrefix(stored))
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new Slot
+				{
+					FieldId = accessor.Key,
+					RowKey = rowKey,
+					WireValue = stored,
+					Owner = owner,
+					Reveal = plaintext => set(value, plaintext),
+					Redact = () => set(value, ProtectedDataEnvelope.RedactionValue)
 				});
 			}
 		}
@@ -796,6 +1349,50 @@ namespace Resgrid.Services
 				// Metadata-only resolution: strip the ciphertext bytes so a serializer can never
 				// carry them out; the file endpoints re-fetch and opt into decryption.
 				attachment.Data = null;
+			}
+		}
+
+		private static void CollectCertificationSlots(ProtectedReadResult owner, PersonnelCertification certification,
+			List<Slot> slots, bool includeData)
+		{
+			var rowKey = certification.PersonnelCertificationId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in CertificationFieldAccessors)
+			{
+				var value = accessor.Value.Get(certification);
+				if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new Slot
+				{
+					FieldId = accessor.Key,
+					RowKey = rowKey,
+					WireValue = value,
+					Owner = owner,
+					Reveal = plaintext => set(certification, plaintext),
+					Redact = () => set(certification, ProtectedDataEnvelope.RedactionValue)
+				});
+			}
+
+			if (includeData && IsBinaryEnveloped(certification.Data))
+			{
+				slots.Add(new Slot
+				{
+					FieldId = CertificationDataFieldId,
+					RowKey = rowKey,
+					IsBinary = true,
+					WireValue = Convert.ToBase64String(certification.Data),
+					Owner = owner,
+					Reveal = base64 => certification.Data = Convert.FromBase64String(base64),
+					// A concealed document is NULL — ciphertext bytes are never served.
+					Redact = () => certification.Data = null
+				});
+			}
+			else if (!includeData && IsBinaryEnveloped(certification.Data))
+			{
+				// Metadata-only resolution: strip the ciphertext so a serializer cannot carry it out;
+				// the download endpoint re-fetches and opts into decryption.
+				certification.Data = null;
 			}
 		}
 

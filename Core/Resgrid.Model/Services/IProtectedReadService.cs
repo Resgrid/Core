@@ -55,8 +55,54 @@ namespace Resgrid.Model.Services
 		Task<ProtectedReadResult> ResolveContactsForReadAsync(int departmentId,
 			IReadOnlyList<Contact> contacts, string grantToken, string userId, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Resolves personnel certification batches (plan 5.1 Personnel family). includeData
+		/// additionally decrypts the rgdpb document payload — only the file-serving endpoint opts in;
+		/// everywhere else the bytes are stripped to null rather than carried out as ciphertext.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveCertificationsForReadAsync(int departmentId,
+			IReadOnlyList<PersonnelCertification> certifications, string grantToken, string userId,
+			bool includeData = false, CancellationToken cancellationToken = default);
+
 		/// <summary>Resolves standalone contact-note lists (contactnotes.note).</summary>
 		Task<ProtectedReadResult> ResolveContactNotesForReadAsync(int departmentId,
 			IReadOnlyList<ContactNote> notes, string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>Resolves a member's department-scoped emergency contacts (catalog v4).</summary>
+		Task<ProtectedReadResult> ResolveMemberEmergencyContactsForReadAsync(int departmentId,
+			IReadOnlyList<DepartmentMemberEmergencyContact> contacts, string grantToken, string userId,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Resolves department-scoped sensitive personnel rows (catalog v1 personnel family).</summary>
+		Task<ProtectedReadResult> ResolveMemberSensitiveDataForReadAsync(int departmentId,
+			IReadOnlyList<DepartmentMemberSensitiveData> rows, string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves incident logs (catalog v3): narrative, initial report, cause, contact details,
+		/// other personnel, location, and the body/pronounced-deceased fields.
+		/// </summary>
+		/// <summary>
+		/// Resolves call-log narratives (calllogs.narrative). A separate table and entity from the
+		/// Log family: these are the per-call running log entries, not incident work logs.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveCallLogsForReadAsync(int departmentId,
+			IReadOnlyList<CallLog> logs, string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		Task<ProtectedReadResult> ResolveLogsForReadAsync(int departmentId,
+			IReadOnlyList<Log> logs, string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves unit states (catalog v2 operational family): the crew's note, the position the
+		/// state was filed from, and the latitude/longitude companion envelopes.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveUnitStatesForReadAsync(int departmentId,
+			IReadOnlyList<UnitState> states, string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves user-defined field values (catalog v2 operational family). UDF values are
+		/// free text on any entity, so a protected department treats them all as sensitive.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveUdfFieldValuesForReadAsync(int departmentId,
+			IReadOnlyList<UdfFieldValue> values, string grantToken, string userId, CancellationToken cancellationToken = default);
 	}
 }

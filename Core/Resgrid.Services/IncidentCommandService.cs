@@ -855,7 +855,7 @@ namespace Resgrid.Services
 					DepartmentId = command.DepartmentId,
 					CallId = command.CallId,
 					Name = command.Name,
-					CallName = call?.Name,
+					CallName = ProtectedDataEnvelope.SafeDisplay(call?.Name),
 					CallNumber = call?.Number,
 					CallAddress = call?.Address,
 					Status = command.Status,

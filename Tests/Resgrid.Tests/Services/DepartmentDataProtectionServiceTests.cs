@@ -61,7 +61,7 @@ namespace Resgrid.Tests.Services
 
 			_service = new DepartmentDataProtectionService(_policyRepo.Object, _egressRepo.Object,
 				_departmentsService.Object, _featureToggleService.Object, _subscriptionsService.Object,
-				_cacheProvider.Object);
+				_cacheProvider.Object, new ProtectedFieldCatalog());
 		}
 
 		#region QueueEnrollment gates
@@ -411,5 +411,50 @@ namespace Resgrid.Tests.Services
 		}
 
 		#endregion
-	}
+	
+		#region Enforcement during a catalog upgrade
+
+		/// <summary>
+		/// Enrollment's Encrypting state correctly reads as "not enforced" — nothing is encrypted
+		/// yet. A CATALOG UPGRADE passes through the same state on a department whose corpus is
+		/// ALREADY fully enveloped, so enforcement must stay on: without it the read pipeline would
+		/// pass rgdp ciphertext straight through to clients for the whole upgrade window.
+		/// </summary>
+		[Test]
+		public async Task Enforcement_stays_on_while_a_catalog_upgrade_sweeps()
+		{
+			foreach (var state in new[] { DepartmentDataProtectionState.Encrypting, DepartmentDataProtectionState.Verifying })
+			{
+				_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync(new DepartmentDataProtectionPolicy
+				{
+					DepartmentDataProtectionPolicyId = 1,
+					DepartmentId = DeptId,
+					State = (int)state,
+					ActiveMigrationKind = (int)DepartmentDataProtectionMigrationKind.CatalogUpgrade
+				});
+
+				(await _service.IsProtectionEnforcedAsync(DeptId)).Should().BeTrue($"a catalog upgrade in {state} must keep enforcing");
+			}
+		}
+
+		[Test]
+		public async Task Enforcement_stays_off_while_enrollment_encrypts()
+		{
+			foreach (var state in new[] { DepartmentDataProtectionState.Encrypting, DepartmentDataProtectionState.Verifying })
+			{
+				_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync(new DepartmentDataProtectionPolicy
+				{
+					DepartmentDataProtectionPolicyId = 1,
+					DepartmentId = DeptId,
+					State = (int)state,
+					ActiveMigrationKind = (int)DepartmentDataProtectionMigrationKind.Enrollment
+				});
+
+				(await _service.IsProtectionEnforcedAsync(DeptId)).Should().BeFalse(
+					"nothing is encrypted during a first enrollment, so there is nothing to enforce");
+			}
+		}
+
+		#endregion
+}
 }

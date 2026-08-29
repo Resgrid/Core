@@ -69,5 +69,32 @@ namespace Resgrid.Tests.Services
 		{
 			ProtectedDataEnvelope.RedactionValue.Should().Be("REDACTED");
 		}
+
+		/// <summary>
+		/// SafeDisplay is the shared guard for every surface that has no reveal pipeline —
+		/// server-rendered lists, reports and exports, grid JSON, search terms. Ciphertext of
+		/// either envelope kind must become the placeholder; everything else passes through
+		/// untouched (an unprotected department's values must not be altered).
+		/// </summary>
+		[Test]
+		public void Safe_display_replaces_ciphertext_and_passes_everything_else_through()
+		{
+			ProtectedDataEnvelope.SafeDisplay("rgdp:1:1:abc==").Should().Be(ProtectedDataEnvelope.RedactionValue);
+			ProtectedDataEnvelope.SafeDisplay("rgdpb:1:1:abc==").Should().Be(ProtectedDataEnvelope.RedactionValue);
+
+			ProtectedDataEnvelope.SafeDisplay("Structure Fire").Should().Be("Structure Fire");
+			ProtectedDataEnvelope.SafeDisplay(ProtectedDataEnvelope.RedactionValue).Should().Be(ProtectedDataEnvelope.RedactionValue);
+			ProtectedDataEnvelope.SafeDisplay("").Should().BeEmpty();
+			ProtectedDataEnvelope.SafeDisplay(null).Should().BeNull();
+		}
+
+		[Test]
+		public void Safe_display_does_not_match_a_value_that_merely_mentions_the_prefix()
+		{
+			// The check is a PREFIX test, not a contains test: a note that quotes the format must
+			// still render normally.
+			ProtectedDataEnvelope.SafeDisplay("caller said rgdp:1:1:looks-like-this")
+				.Should().Be("caller said rgdp:1:1:looks-like-this");
+		}
 	}
 }

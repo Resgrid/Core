@@ -30,11 +30,12 @@ namespace Resgrid.Services
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IProtectedFieldCatalog _fieldCatalog;
 
 		public DepartmentDataProtectionService(IDepartmentDataProtectionPolicyRepository policyRepository,
 			IDepartmentProtectedDataEgressPolicyRepository egressPolicyRepository, IDepartmentsService departmentsService,
 			IFeatureToggleService featureToggleService, ISubscriptionsService subscriptionsService,
-			ICacheProvider cacheProvider)
+			ICacheProvider cacheProvider, IProtectedFieldCatalog fieldCatalog)
 		{
 			_policyRepository = policyRepository;
 			_egressPolicyRepository = egressPolicyRepository;
@@ -42,6 +43,25 @@ namespace Resgrid.Services
 			_featureToggleService = featureToggleService;
 			_subscriptionsService = subscriptionsService;
 			_cacheProvider = cacheProvider;
+			_fieldCatalog = fieldCatalog;
+		}
+
+		public async Task<int> GetPinnedCatalogVersionAsync(int departmentId)
+		{
+			var policy = await GetPolicyByDepartmentIdAsync(departmentId);
+			return policy?.CatalogVersion ?? 0;
+		}
+
+		public async Task<bool> IsCatalogUpgradePendingAsync(int departmentId)
+		{
+			if (!await ShouldEncryptNewWritesAsync(departmentId))
+				return false;
+
+			var pinned = await GetPinnedCatalogVersionAsync(departmentId);
+
+			// A pinned version of zero on an encrypting department means the policy row lost its
+			// catalog stamp — treat it as owed an upgrade rather than silently current.
+			return pinned < _fieldCatalog.Version;
 		}
 
 		public async Task<DepartmentDataProtectionPolicy> GetPolicyByDepartmentIdAsync(int departmentId, bool bypassCache = false)
@@ -105,9 +125,23 @@ namespace Resgrid.Services
 		public async Task<bool> IsProtectionEnforcedAsync(int departmentId)
 		{
 			var state = await GetStateAsync(departmentId);
-			return state == DepartmentDataProtectionState.Enabled
+			if (state == DepartmentDataProtectionState.Enabled
 				|| state == DepartmentDataProtectionState.Rotating
-				|| state == DepartmentDataProtectionState.OffboardingScheduled;
+				|| state == DepartmentDataProtectionState.OffboardingScheduled)
+				return true;
+
+			// A CATALOG UPGRADE runs through the Encrypting state on a department that is ALREADY
+			// protected: its corpus is fully enveloped and only the newly cataloged fields are being
+			// swept. Enforcement must stay on for the duration — dropping it would hand rgdp
+			// ciphertext straight to clients through the unenforced read path. (Enrollment's
+			// Encrypting is different: nothing is encrypted yet, so there is nothing to enforce.)
+			if (state == DepartmentDataProtectionState.Encrypting || state == DepartmentDataProtectionState.Verifying)
+			{
+				var policy = await GetPolicyByDepartmentIdAsync(departmentId);
+				return policy?.ActiveMigrationKind == (int)DepartmentDataProtectionMigrationKind.CatalogUpgrade;
+			}
+
+			return false;
 		}
 
 		public async Task<DepartmentDataProtectionEnrollmentResult> QueueEnrollmentAsync(int departmentId, string requestingUserId,

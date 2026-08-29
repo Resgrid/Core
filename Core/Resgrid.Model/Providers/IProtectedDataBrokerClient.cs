@@ -50,7 +50,12 @@ namespace Resgrid.Model.Providers
 		/// <summary>True for rgdpb binary fields — Value is base64 in both directions.</summary>
 		public bool IsBinary { get; set; }
 
-		/// <summary>Catalog version the envelope's AAD was bound with.</summary>
+		/// <summary>
+		/// The department's pinned catalog version at the time of the operation. Metadata and
+		/// forensics ONLY — it is deliberately NOT an AAD component (see
+		/// IProtectedFieldCryptoService). Binding it would make a department's whole stored corpus
+		/// undecryptable the moment its catalog version advanced. Do not feed it into AAD.
+		/// </summary>
 		public int CatalogVersion { get; set; }
 	}
 

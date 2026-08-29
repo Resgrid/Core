@@ -307,7 +307,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				Resgrid.Framework.Logging.LogError($"ADP protected write failed AFTER insert for call attachment {saved.CallAttachmentId} in department {call.DepartmentId} ({protectedWrite.Reason}); transient plaintext row pending re-encryption.");
 				return Problem(type: protectedWrite.Reason,
-					title: "Protected storage is temporarily unavailable; the change was not saved.",
+					title: "The attachment was saved but could not be protected; protected storage is temporarily unavailable. Do not resubmit — the attachment will be encrypted automatically.",
 					statusCode: StatusCodes.Status503ServiceUnavailable);
 			}
 			if (protectedWrite.IsProtected)

@@ -40,6 +40,8 @@ namespace Resgrid.Services
 		private readonly IAuditLogsRepository _auditLogsRepository;
 		private readonly IScheduledTasksService _scheduledTasksService;
 		private readonly IUserSessionService _userSessionService;
+		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
+		private readonly IDepartmentMemberEmergencyContactService _emergencyContactService;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -49,7 +51,9 @@ namespace Resgrid.Services
 			ICertificationService certificationService, ILogService logService, IInventoryService inventoryService,
 			IEventAggregator eventAggregator, IAddressService addressService, IQueueService queueService, IEmailService emailService,
 			IDeleteRepository deleteRepository, IAuditLogsRepository auditLogsRepository,
-			IScheduledTasksService scheduledTasksService, IUserSessionService userSessionService)
+			IScheduledTasksService scheduledTasksService, IUserSessionService userSessionService,
+			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
+			IDepartmentMemberEmergencyContactService emergencyContactService)
 		{
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
@@ -76,6 +80,8 @@ namespace Resgrid.Services
 			_auditLogsRepository = auditLogsRepository;
 			_scheduledTasksService = scheduledTasksService;
 			_userSessionService = userSessionService;
+			_memberSensitiveDataService = memberSensitiveDataService;
+			_emergencyContactService = emergencyContactService;
 		}
 
 		public async Task<DeleteUserResults> DeleteUserAsync(int departmentId, string authorizingUserId, string userIdToDelete, CancellationToken cancellationToken = default(CancellationToken))
@@ -168,6 +174,13 @@ namespace Resgrid.Services
 				{
 					await _personnelRolesService.RemoveUserFromAllRolesAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
 					await _departmentGroupsService.DeleteUserFromGroupsAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
+
+					// Department-scoped personal data (ADP plan 5.1). Since the identification number
+					// and addresses moved off the global profile, these rows are the only copy — the
+					// profile scrub below no longer reaches them, and neither does deleting the
+					// legacy Addresses rows.
+					await _memberSensitiveDataService.DeleteForMemberAsync(dm.DepartmentId, userIdToDelete, cancellationToken);
+					await _emergencyContactService.DeleteAllForMemberAsync(dm.DepartmentId, userIdToDelete, cancellationToken);
 				}
 			}
 

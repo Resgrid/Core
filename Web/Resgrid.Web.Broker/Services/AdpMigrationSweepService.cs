@@ -54,7 +54,8 @@ namespace Resgrid.Web.Broker.Services
 						scope.Resolve<IDepartmentDataMigrationEngine>(),
 						scope.Resolve<IProtectedFieldCatalog>(),
 						scope.Resolve<IDepartmentsService>(),
-						scope.Resolve<IEmailService>());
+						scope.Resolve<IEmailService>(),
+						scope.Resolve<IMemberProfileRelocationService>());
 
 					var result = await logic.Process(stoppingToken);
 					Logging.LogInfo($"ADP broker migration sweep: {result.Item2}");

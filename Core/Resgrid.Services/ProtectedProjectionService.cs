@@ -121,11 +121,11 @@ namespace Resgrid.Services
 			// AllowProtectedContent lets the original call through — but only while its fields are
 			// actually plaintext. Post-migration the entity carries rgdp envelopes and notification
 			// hosts cannot decrypt (no broker/grant), so an enveloped call degrades to the sanitized
-			// clone: a carrier must never receive ciphertext as message content.
-			if (await ChannelAllowsProtectedContentAsync(departmentId, channel) &&
-				!ProtectedDataEnvelope.HasEnvelopePrefix(call.Name) &&
-				!ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall) &&
-				!ProtectedDataEnvelope.HasEnvelopePrefix(call.Address))
+			// clone: a carrier must never receive ciphertext as message content. EVERY cataloged
+			// field is checked, not a sample: a partially-migrated row can carry an envelope in
+			// Notes or ContactNumber while Name/Address are still plaintext, and templates, provider
+			// DTOs and TTS prompts read those fields too.
+			if (await ChannelAllowsProtectedContentAsync(departmentId, channel) && !HasAnyEnvelopedCallField(call))
 				return call;
 
 			// Sanitized clone: only the allowlisted system-generated call number, priority/color,
@@ -146,6 +146,21 @@ namespace Resgrid.Services
 				Name = string.IsNullOrWhiteSpace(call.Number) ? "Protected dispatch" : call.Number,
 				NatureOfCall = GenericDispatchText
 			};
+		}
+
+		/// <summary>
+		/// True when any cataloged Calls field carries an envelope prefix. Driven by the parity-pinned
+		/// accessor map so a catalog addition is covered without touching this guard.
+		/// </summary>
+		private static bool HasAnyEnvelopedCallField(Call call)
+		{
+			foreach (var accessor in ProtectedReadService.CallFieldAccessors)
+			{
+				if (ProtectedDataEnvelope.HasEnvelopePrefix(accessor.Value.Get(call)))
+					return true;
+			}
+
+			return false;
 		}
 
 		public async Task<bool> IsChannelSanitizedAsync(int departmentId, ProtectedDataEgressChannel channel)

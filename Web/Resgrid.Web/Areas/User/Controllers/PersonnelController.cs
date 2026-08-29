@@ -1373,7 +1373,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					sb.Append($"<optgroup label='{callsLabel}'>");
 					foreach (var call in activeCalls)
 					{
-						var callText = HttpUtility.HtmlEncode($"{callPrefix} {call.GetIdentifier()}:{call.Name}");
+						var callText = HttpUtility.HtmlEncode($"{callPrefix} {call.GetIdentifier()}:{ProtectedDataEnvelope.SafeDisplay(call.Name)}");
 						sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>{callText}</option>");
 					}
 					sb.Append("</optgroup>");

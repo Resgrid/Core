@@ -84,5 +84,30 @@ namespace Resgrid.Tests.Models
 		{
 			new Call().GetDisplayName().Should().BeEmpty();
 		}
+
+		[Test]
+		public void GetDisplayName_FallsBackToTheNumber_WhenTheNameIsStillEnveloped()
+		{
+			// Every caller of this helper names a chat channel, and that name is persisted and shown
+			// to the whole department. Calls.Name is cataloged; Calls.Number deliberately is not.
+			var call = new Call { Number = "26-45", Name = "rgdp:1:2:c3RydWN0dXJlLWZpcmU=" };
+
+			call.GetDisplayName().Should().Be("26-45");
+		}
+
+		[Test]
+		public void GetDisplayName_FallsBackToTheNumber_WhenTheNameIsRedacted()
+		{
+			// A durable label reading "26-45 REDACTED" would be worse than one reading "26-45".
+			var call = new Call { Number = "26-45", Name = ProtectedDataEnvelope.RedactionValue };
+
+			call.GetDisplayName().Should().Be("26-45");
+		}
+
+		[Test]
+		public void GetDisplayName_IsEmpty_WhenAProtectedCallHasNoNumber()
+		{
+			new Call { Name = "rgdp:1:2:c3RydWN0dXJlLWZpcmU=" }.GetDisplayName().Should().BeEmpty();
+		}
 	}
 }

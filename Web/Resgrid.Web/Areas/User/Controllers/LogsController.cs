@@ -39,11 +39,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IWorkLogsService _workLogsService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUnitsService _unitsService;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public LogsController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
 			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IEventAggregator eventAggregator,
-			IUnitsService unitsService)
+			IUnitsService unitsService, IProtectedReadService protectedReadService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -55,6 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_workLogsService = workLogsService;
 			_eventAggregator = eventAggregator;
 			_unitsService = unitsService;
+			_protectedReadService = protectedReadService;
 		}
 		#endregion Private Members and Constructors
 
@@ -63,6 +65,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			LogsIndexView model = new LogsIndexView();
 			model.CallLogs = await _workLogsService.GetAllCallLogsForUserAsync(UserId);
+
+			// The index lists narratives across every call the member logged; cataloged, so resolved
+			// rather than rendered as ciphertext.
+			await _protectedReadService.ResolveCallLogsForReadAsync(DepartmentId, model.CallLogs,
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 			model.WorkLogs = await _workLogsService.GetAllLogsForUserAsync(UserId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
@@ -389,7 +396,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				logJson.LoggedBy = await UserHelper.GetFullNameForUser(personnelNames, null, log.LoggedByUserId);
 				logJson.LoggedOn = log.LoggedOn.TimeConverterToString(department);
-				logJson.Narrative = log.Narrative ?? "";
+				logJson.Narrative = ProtectedDataEnvelope.SafeDisplay(log.Narrative) ?? "";
 
 				// Build search terms from related data
 				var terms = new List<string>();
@@ -426,12 +433,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (call != null)
 					{
-						if (!String.IsNullOrWhiteSpace(call.Name))
+						// ADP: a protected value must never become a searchable term — an envelope
+						// here would both leak ciphertext to the client filter and let a caller
+						// match rows by the "rgdp:" prefix. The system-generated number and id stay.
+						if (!String.IsNullOrWhiteSpace(call.Name) && !ProtectedDataEnvelope.HasEnvelopePrefix(call.Name))
 							terms.Add(call.Name);
 						if (!String.IsNullOrWhiteSpace(call.Number))
 							terms.Add(call.Number);
 						terms.Add(call.CallId.ToString());
-						if (!String.IsNullOrWhiteSpace(call.IncidentNumber))
+						if (!String.IsNullOrWhiteSpace(call.IncidentNumber) && !ProtectedDataEnvelope.HasEnvelopePrefix(call.IncidentNumber))
 							terms.Add(call.IncidentNumber);
 					}
 				}
@@ -519,6 +529,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 
+			// The log narrative, initial report, cause, contact details and location are cataloged
+			// (plan 5.2, catalog v3) and this view writes them out with Html.Raw. Without this the
+			// page would render rgdp ciphertext straight into the document for a protected
+			// department; resolved here so it is either the real value or the REDACTED placeholder.
+			await _protectedReadService.ResolveLogsForReadAsync(DepartmentId, new List<Log> { model.WorkLog },
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+
 			if (model.WorkLog.Users != null)
 			{
 				foreach (var logUser in model.WorkLog.Users)
@@ -558,6 +575,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Attachments = await _workLogsService.GetAttachmentsForLogAsync(logId);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+
+			// Same as the view above: this export renders the cataloged log fields with Html.Raw, so
+			// it must never receive ciphertext (plan 5.2, catalog v3).
+			await _protectedReadService.ResolveLogsForReadAsync(DepartmentId, new List<Log> { model.WorkLog },
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 
 			if (model.WorkLog.Users != null)
 			{

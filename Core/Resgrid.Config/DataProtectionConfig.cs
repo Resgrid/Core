@@ -95,6 +95,21 @@ namespace Resgrid.Config
 		/// <summary>OpenBao HTTP request timeout in milliseconds; unwrap/wrap fail closed on expiry.</summary>
 		public static int OpenBaoTimeoutMs = 10000;
 
+		/// <summary>
+		/// Response-boundary net (plan section 7.5): scan outgoing models of a PROTECTED department
+		/// for values that still carry an envelope and redact them. Defence in depth behind the
+		/// per-surface resolve calls, not a replacement for them. Costs one cached protection lookup
+		/// for every other department. Operator kill switch if the walk ever proves too expensive on
+		/// a hot path.
+		/// </summary>
+		public static bool EgressScanEnabled = true;
+
+		/// <summary>
+		/// Node ceiling for one response scan. A graph larger than this is reported as truncated
+		/// rather than walked to the end — a silent cap would read as "nothing found".
+		/// </summary>
+		public static int EgressScanMaxNodes = 20000;
+
 		/// <summary>Default Protected Data Grant lifetime in minutes when a department has no policy value.</summary>
 		public static int StepUpWindowDefaultMinutes = 15;
 

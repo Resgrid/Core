@@ -31,15 +31,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUserDefinedFieldsService _udfService;
 		private readonly IUdfRenderingService _renderingService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public UserDefinedFieldsController(
 			IUserDefinedFieldsService udfService,
 			IUdfRenderingService renderingService,
-			IEventAggregator eventAggregator)
+			IEventAggregator eventAggregator,
+			IProtectedReadService protectedReadService)
 		{
 			_udfService = udfService;
 			_renderingService = renderingService;
 			_eventAggregator = eventAggregator;
+			_protectedReadService = protectedReadService;
 		}
 
 		/// <summary>Gets the active UDF definition and fields for the given entity type, filtered by the caller's role.</summary>
@@ -131,6 +134,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var visibleFieldIds = visibleFields.Select(f => f.UdfFieldId).ToHashSet();
 
 			var values = await _udfService.GetFieldValuesForEntityAsync(DepartmentId, entityType, entityId);
+
+			// udffieldvalues.value is cataloged (catalog v2). Submitted UDF values are free text and
+			// default to sensitive in a protected department (plan 5.2), so they resolve with a grant
+			// and read as the placeholder without one — never as ciphertext.
+			await _protectedReadService.ResolveUdfFieldValuesForReadAsync(DepartmentId, values,
+				Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId, cancellationToken);
 
 			return Ok(new UdfFieldValuesResult
 			{

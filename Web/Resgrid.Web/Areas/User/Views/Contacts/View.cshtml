@@ -1,5 +1,6 @@
 @model Resgrid.Web.Areas.User.Models.Contacts.ViewContactView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
 @using System.Linq
 @{
     ViewBag.Title = "Resgrid | " + @localizer["ViewContactHeader"];
@@ -10,9 +11,9 @@
     {
         <div class="alert alert-info" id="adpProtectedBanner">
             <i class="fa fa-shield"></i>
-            <strong>Protected contact</strong> &mdash; encrypted at rest for this department. Authorized users and approved channels may still disclose it.
-            <button type="button" class="btn btn-primary btn-xs pull-right" id="adpRevealButton">Verify &amp; Reveal</button>
-            <button type="button" class="btn btn-default btn-xs pull-right" id="adpConcealButton" style="margin-right: 6px;">Conceal</button>
+            <strong>@commonLocalizer["AdpProtectedContact"]</strong> &mdash; @commonLocalizer["AdpProtectedBannerDescription"]
+            <button type="button" class="btn btn-primary btn-xs pull-right" id="adpRevealButton">@commonLocalizer["AdpVerifyAndReveal"]</button>
+            <button type="button" class="btn btn-default btn-xs pull-right" id="adpConcealButton" style="margin-right: 6px;">@commonLocalizer["AdpConceal"]</button>
         </div>
     }
     <div class="ibox">
@@ -614,19 +615,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title"><i class="fa fa-shield"></i> Verify to view protected data</h4>
+                <h4 class="modal-title"><i class="fa fa-shield"></i> @commonLocalizer["AdpStepUpTitle"]</h4>
             </div>
             <div class="modal-body">
-                <p>Enter the 6-digit code from your authenticator app. Revealed values stay visible only for this department's step-up window and are never stored in your browser.</p>
+                <p>@commonLocalizer["AdpStepUpInstructions"]</p>
                 <div class="alert alert-danger" id="adpStepUpError" style="display: none;"></div>
                 <div class="form-group">
-                    <label for="adpStepUpCode">Verification code</label>
+                    <label for="adpStepUpCode">@commonLocalizer["AdpVerificationCode"]</label>
                     <input type="text" class="form-control" id="adpStepUpCode" maxlength="8" autocomplete="one-time-code" inputmode="numeric" />
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="adpStepUpSubmit">Verify</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@commonLocalizer["Cancel"]</button>
+                <button type="button" class="btn btn-primary" id="adpStepUpSubmit">@commonLocalizer["AdpVerify"]</button>
             </div>
         </div>
     </div>
@@ -645,6 +646,18 @@
                     verifyUrl: '@Url.Action("VerifyStepUp", "DataProtection", new { area = "User" })',
                     revealUrl: '@Url.Action("RevealContact", "Contacts", new { area = "User" })',
                     revealData: { contactId: '@Model.Contact.ContactId' },
+                    messages: {
+                        invalid_totp: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorInvalidCode"].Value)),
+                        too_many_attempts: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorTooManyAttempts"].Value)),
+                        mfa_not_enrolled: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorMfaNotEnrolled"].Value)),
+                        grants_not_configured: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantsNotConfigured"].Value)),
+                        step_up_required: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorStepUpRequired"].Value)),
+                        grant_expired: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantExpired"].Value)),
+                        grant_revoked: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantRevoked"].Value)),
+                        protected_access_denied: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorAccessDenied"].Value)),
+                        broker_unavailable: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorBrokerUnavailable"].Value)),
+                        generic: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGeneric"].Value))
+                    },
                     antiForgeryToken: $('#adpAntiForgeryForm input[name="__RequestVerificationToken"]').val()
                 });
             });

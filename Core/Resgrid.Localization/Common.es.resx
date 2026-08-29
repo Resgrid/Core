@@ -672,4 +672,64 @@
   <data name="Pois" xml:space="preserve">
     <value>PDI</value>
   </data>
+  <data name="AdpProtectedCall" xml:space="preserve">
+    <value>Llamada protegida</value>
+  </data>
+  <data name="AdpProtectedCertifications" xml:space="preserve">
+    <value>Certificaciones protegidas</value>
+  </data>
+  <data name="AdpProtectedContact" xml:space="preserve">
+    <value>Contacto protegido</value>
+  </data>
+  <data name="AdpProtectedBannerDescription" xml:space="preserve">
+    <value>cifrado en reposo para este departamento. Los usuarios autorizados y los canales aprobados aún pueden divulgarlo.</value>
+  </data>
+  <data name="AdpVerifyAndReveal" xml:space="preserve">
+    <value>Verificar y mostrar</value>
+  </data>
+  <data name="AdpConceal" xml:space="preserve">
+    <value>Ocultar</value>
+  </data>
+  <data name="AdpStepUpTitle" xml:space="preserve">
+    <value>Verifique para ver los datos protegidos</value>
+  </data>
+  <data name="AdpStepUpInstructions" xml:space="preserve">
+    <value>Introduzca el código de 6 dígitos de su aplicación de autenticación. Los valores mostrados permanecen visibles solo durante la ventana de verificación de este departamento y nunca se almacenan en su navegador.</value>
+  </data>
+  <data name="AdpVerificationCode" xml:space="preserve">
+    <value>Código de verificación</value>
+  </data>
+  <data name="AdpVerify" xml:space="preserve">
+    <value>Verificar</value>
+  </data>
+  <data name="AdpErrorInvalidCode" xml:space="preserve">
+    <value>El código de verificación no es válido o ha caducado.</value>
+  </data>
+  <data name="AdpErrorTooManyAttempts" xml:space="preserve">
+    <value>Demasiados intentos de verificación. Espere unos minutos e inténtelo de nuevo.</value>
+  </data>
+  <data name="AdpErrorMfaNotEnrolled" xml:space="preserve">
+    <value>Esta cuenta no tiene configurada la autenticación de dos factores. Configure primero una aplicación de autenticación en los ajustes de seguridad de la cuenta.</value>
+  </data>
+  <data name="AdpErrorGrantsNotConfigured" xml:space="preserve">
+    <value>El acceso a datos protegidos no está configurado en este servidor.</value>
+  </data>
+  <data name="AdpErrorStepUpRequired" xml:space="preserve">
+    <value>Se requiere verificar de nuevo.</value>
+  </data>
+  <data name="AdpErrorGrantExpired" xml:space="preserve">
+    <value>La ventana de verificación ha caducado. Verifique de nuevo.</value>
+  </data>
+  <data name="AdpErrorGrantRevoked" xml:space="preserve">
+    <value>El acceso fue revocado por un cambio de política. Verifique de nuevo.</value>
+  </data>
+  <data name="AdpErrorAccessDenied" xml:space="preserve">
+    <value>No está autorizado para ver estos datos protegidos.</value>
+  </data>
+  <data name="AdpErrorBrokerUnavailable" xml:space="preserve">
+    <value>El servicio de datos protegidos no está disponible. Inténtelo de nuevo en breve.</value>
+  </data>
+  <data name="AdpErrorGeneric" xml:space="preserve">
+    <value>La solicitud falló. Inténtelo de nuevo.</value>
+  </data>
 </root>

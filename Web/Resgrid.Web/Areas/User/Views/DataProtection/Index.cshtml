@@ -1,24 +1,25 @@
 @using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.DataProtection.DataProtectionIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> localizer
 @{
-    ViewBag.Title = "Resgrid | Advanced Data Protection";
+    ViewBag.Title = "Resgrid | " + @localizer["PageTitle"];
 }
 
 @Html.AntiForgeryToken()
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-8">
-        <h2>Advanced Data Protection</h2>
+        <h2>@localizer["PageTitle"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["BreadcrumbHome"]</a>
             </li>
             <li>
-                <a asp-controller="Security" asp-action="Index" asp-route-area="User">Security</a>
+                <a asp-controller="Security" asp-action="Index" asp-route-area="User">@localizer["BreadcrumbSecurity"]</a>
             </li>
             <li class="active">
-                <strong>Advanced Data Protection</strong>
+                <strong>@localizer["PageTitle"]</strong>
             </li>
         </ol>
     </div>
@@ -29,7 +30,7 @@
     @if (Model.IsDepartmentLocked)
     {
         <div class="alert alert-warning">
-            <strong>Migration window active.</strong> @(string.IsNullOrWhiteSpace(Model.LockReason) ? "Data entry is paused until the window closes; viewing is unaffected." : Model.LockReason)
+            <strong>@localizer["MigrationWindowActive"]</strong> @(string.IsNullOrWhiteSpace(Model.LockReason) ? @localizer["DataEntryPaused"].Value : Model.LockReason)
         </div>
     }
 
@@ -38,11 +39,11 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Protection Status</h5>
+                    <h5>@localizer["ProtectionStatusHeader"]</h5>
                 </div>
                 <div class="ibox-content">
                     <p>
-                        Current state:
+                        @localizer["CurrentState"]
                         <span class="label @(Model.State == DepartmentDataProtectionState.Enabled || Model.State == DepartmentDataProtectionState.Rotating || Model.State == DepartmentDataProtectionState.OffboardingScheduled ? "label-primary" : Model.State == DepartmentDataProtectionState.Failed ? "label-danger" : "label-default")">
                             @Model.StateName
                         </span>
@@ -54,29 +55,29 @@
                             if (!Model.Preflight.GateOpen)
                             {
                                 <div class="alert alert-info">
-                                    Advanced Data Protection enrollment is temporarily unavailable. If your department has already purchased the addon, it remains valid — check back soon.
+                                    @localizer["EnrollmentUnavailable"]
                                 </div>
                             }
                             else if (!Model.Preflight.HasActiveAddon)
                             {
                                 <div class="alert alert-info">
                                     <p>
-                                        Advanced Data Protection encrypts your department's sensitive dispatch, personnel and contact data with keys owned by your department. It requires the yearly ADP addon.
+                                        @localizer["AddonRequiredIntro"]
                                     </p>
                                     @if (Model.IsManagingMember)
                                     {
-                                        <a class="btn btn-primary" asp-controller="Subscription" asp-action="Index" asp-route-area="User">Purchase the ADP addon</a>
+                                        <a class="btn btn-primary" asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["PurchaseAddon"]</a>
                                     }
                                     else
                                     {
-                                        <p><em>Only your department's managing member can purchase the addon and enroll.</em></p>
+                                        <p><em>@localizer["ManagingMemberOnlyPurchase"]</em></p>
                                     }
                                 </div>
                             }
                             else if (!Model.IsManagingMember)
                             {
                                 <div class="alert alert-info">
-                                    The ADP addon is active. Only your department's managing member can complete enrollment.
+                                    @localizer["AddonActiveManagingMemberOnly"]
                                 </div>
                             }
                             break;
@@ -84,13 +85,11 @@
                         case DepartmentDataProtectionState.EnrollmentQueued:
                             <div class="alert alert-info">
                                 <p>
-                                    Enrollment is queued. Migration runs during your selected overnight window
-                                    (@Model.MigrationWindowStartLocal&ndash;@Model.MigrationWindowEndLocal, @Model.MigrationWindowTimeZone).
-                                    You will receive an email when each night's window opens and closes.
+                                    @localizer["EnrollmentQueuedNotice", Model.MigrationWindowStartLocal, Model.MigrationWindowEndLocal, Model.MigrationWindowTimeZone]
                                 </p>
                                 @if (Model.IsManagingMember)
                                 {
-                                    <button id="btnCancelQueued" class="btn btn-warning">Cancel queued enrollment</button>
+                                    <button id="btnCancelQueued" class="btn btn-warning">@localizer["CancelQueuedEnrollment"]</button>
                                 }
                             </div>
                             break;
@@ -100,19 +99,16 @@
                         case DepartmentDataProtectionState.Verifying:
                         case DepartmentDataProtectionState.Rotating:
                             <div class="alert alert-info">
-                                Migration is in progress. Work happens only inside your overnight window
-                                (@Model.MigrationWindowStartLocal&ndash;@Model.MigrationWindowEndLocal, @Model.MigrationWindowTimeZone);
-                                your department is in full service outside it.
+                                @localizer["MigrationInProgress", Model.MigrationWindowStartLocal, Model.MigrationWindowEndLocal, Model.MigrationWindowTimeZone]
                             </div>
                             break;
 
                         case DepartmentDataProtectionState.Enabled:
                             <div class="alert alert-success">
-                                <p><strong>Advanced Data Protection is active.</strong> Protected fields are encrypted with your department's keys; viewing them requires a signed-in member with a fresh authenticator verification.</p>
+                                <p><strong>@localizer["ProtectionActiveHeader"]</strong> @localizer["ProtectionActiveDetail"]</p>
                                 <p>
-                                    To turn ADP off, cancel the addon on the
-                                    <a asp-controller="Subscription" asp-action="Index" asp-route-area="User">subscription page</a>.
-                                    Protection stays active until the end of your current billing period. After your data is decrypted, turning it back on requires purchasing the addon again and completing a new enrollment.
+                                    @localizer["TurnOffInstructions"]
+                                    <a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["SubscriptionPage"]</a>
                                 </p>
                             </div>
                             break;
@@ -120,16 +116,13 @@
                         case DepartmentDataProtectionState.OffboardingScheduled:
                             <div class="alert alert-warning">
                                 <p>
-                                    <strong>Offboarding is scheduled.</strong> Protection remains fully active until
-                                    @(string.IsNullOrWhiteSpace(Model.OffboardingEffectiveOn) ? "the end of your billing period" : Model.OffboardingEffectiveOn),
-                                    when your data is decrypted back to standard storage over one or more overnight windows.
+                                    <strong>@localizer["OffboardingScheduledHeader"]</strong>
+                                    @localizer["OffboardingScheduledDetail", string.IsNullOrWhiteSpace(Model.OffboardingEffectiveOn) ? @localizer["EndOfBillingPeriod"].Value : Model.OffboardingEffectiveOn]
                                 </p>
-                                <p>
-                                    Advanced Data Protection stays active until the end of your current billing period. After your data is decrypted, turning it back on requires purchasing the addon again and completing a new enrollment.
-                                </p>
+                                <p>@localizer["TurnOffInstructions"]</p>
                                 @if (Model.IsManagingMember)
                                 {
-                                    <button id="btnRevokeOffboarding" class="btn btn-primary">Keep Advanced Data Protection (revoke offboarding)</button>
+                                    <button id="btnRevokeOffboarding" class="btn btn-primary">@localizer["RevokeOffboarding"]</button>
                                 }
                             </div>
                             break;
@@ -137,13 +130,13 @@
                         case DepartmentDataProtectionState.DisableRequested:
                         case DepartmentDataProtectionState.Decrypting:
                             <div class="alert alert-info">
-                                Offboarding is in progress. Protection remains in effect until your data is fully restored to standard storage.
+                                @localizer["OffboardingInProgress"]
                             </div>
                             break;
 
                         case DepartmentDataProtectionState.Failed:
                             <div class="alert alert-danger">
-                                The last migration run could not complete and will resume after review. Your department is in full service and your data remains safe. Support has been alerted; no action is needed.
+                                @localizer["MigrationFailed"]
                             </div>
                             break;
                     }
@@ -160,115 +153,115 @@
         <div class="row" id="adpWizard">
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
-                    <div class="ibox-title"><h5>Enrollment Wizard</h5></div>
+                    <div class="ibox-title"><h5>@localizer["WizardHeader"]</h5></div>
                     <div class="ibox-content">
 
                         @* Step 1: Introduction and scope *@
                         <div class="adp-step" data-step="1">
-                            <h3>Step 1 of 6 — What Advanced Data Protection covers</h3>
-                            <p>ADP encrypts the sensitive content of your department's data with keys owned by your department and held in a hardened key service:</p>
+                            <h3>@localizer["Step1Header"]</h3>
+                            <p>@localizer["Step1Intro"]</p>
                             <ul>
-                                <li><strong>Protected:</strong> call names, natures, notes and addresses; call notes and attachments; contact details and notes; member sensitive data.</li>
-                                <li><strong>Stays plaintext:</strong> system identifiers, call numbers, priorities, statuses, timestamps, unit names and department structure — the platform needs these to route and display work.</li>
+                                <li><strong>@localizer["Step1ProtectedLabel"]</strong> @localizer["Step1ProtectedList"]</li>
+                                <li><strong>@localizer["Step1PlaintextLabel"]</strong> @localizer["Step1PlaintextList"]</li>
                             </ul>
-                            <p>While protected:</p>
+                            <p>@localizer["Step1WhileProtected"]</p>
                             <ul>
-                                <li>Search, reporting, exports and third-party integrations cannot see protected content.</li>
-                                <li>Big Board displays show a reduced "protected incident" shell instead of call details.</li>
-                                <li>Workflows receive redacted payloads (protected values replaced with REDACTED).</li>
-                                <li>Text, email, push and voice notifications send generic content by default ("A protected dispatch is available — sign in to Resgrid").</li>
+                                <li>@localizer["Step1LimitSearch"]</li>
+                                <li>@localizer["Step1LimitBigBoard"]</li>
+                                <li>@localizer["Step1LimitWorkflow"]</li>
+                                <li>@localizer["Step1LimitNotifications"]</li>
                             </ul>
                             <div class="alert alert-warning">
-                                Advanced Data Protection alone is <strong>not</strong> HIPAA or ePCR compliance. It is one control inside a compliance program your agency still owns.
+                                @localizer["Step1NotCompliance"]
                             </div>
-                            <button class="btn btn-primary adp-next">Continue</button>
+                            <button class="btn btn-primary adp-next">@localizer["Continue"]</button>
                         </div>
 
                         @* Step 2: Acknowledgements *@
                         <div class="adp-step" data-step="2" style="display:none;">
-                            <h3>Step 2 of 6 — Acknowledgements</h3>
-                            <p>Each item below must be acknowledged by the managing member. Your acknowledgements are recorded with a version stamp.</p>
+                            <h3>@localizer["Step2Header"]</h3>
+                            <p>@localizer["Step2Intro"]</p>
                             <div id="adpAcks">
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="catalog_scope" /> I understand which data families are protected (calls, call notes/attachments, contacts, member sensitive data) and that the protected-field catalog is versioned.</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="plaintext_metadata" /> I understand system metadata (call numbers, priorities, statuses, timestamps, unit and department structure) stays plaintext.</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="authorized_server_access" /> I understand Resgrid's servers process protected values in memory when an authorized member views or edits them.</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="step_up_window" /> I understand members need a fresh authenticator (MFA) verification to view protected values, on a window my department configures (default 15 minutes; values over 60 require a recorded reason).</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="bigboard_reduction" /> I understand Big Board displays show reduced, protected-incident shells.</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="workflow_redaction" /> I understand workflows receive redacted payloads and cannot act on protected content.</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="default_egress" /> I understand text/email/push/voice notifications send generic content by default, and relaxing a channel requires a separate acknowledged policy change.</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="search_report_limitations" /> I understand search, reporting, exports, integrations and offline access cannot see protected content.</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="migration_disable" /> I understand enabling runs an overnight migration, and disabling later decrypts my data over overnight windows at the end of the billing period.</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="key_loss_support" /> I understand Resgrid support cannot read protected values without an explicit, audited, department-approved support grant, and that key loss is recoverable only through the documented recovery process.</label></div>
-                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="not_hipaa_compliance" /> I understand Advanced Data Protection alone is not HIPAA/ePCR compliance.</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="catalog_scope" /> @localizer["AckCatalogScope"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="plaintext_metadata" /> @localizer["AckPlaintextMetadata"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="authorized_server_access" /> @localizer["AckAuthorizedServerAccess"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="step_up_window" /> @localizer["AckStepUpWindow"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="bigboard_reduction" /> @localizer["AckBigBoardReduction"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="workflow_redaction" /> @localizer["AckWorkflowRedaction"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="default_egress" /> @localizer["AckDefaultEgress"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="search_report_limitations" /> @localizer["AckSearchReportLimitations"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="migration_disable" /> @localizer["AckMigrationDisable"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="key_loss_support" /> @localizer["AckKeyLossSupport"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" class="adp-ack" value="not_hipaa_compliance" /> @localizer["AckNotHipaaCompliance"]</label></div>
                             </div>
-                            <button class="btn btn-default adp-prev">Back</button>
-                            <button class="btn btn-primary adp-next" id="adpAckNext" disabled>Continue</button>
+                            <button class="btn btn-default adp-prev">@localizer["Back"]</button>
+                            <button class="btn btn-primary adp-next" id="adpAckNext" disabled>@localizer["Continue"]</button>
                         </div>
 
                         @* Step 3: Preflight *@
                         <div class="adp-step" data-step="3" style="display:none;">
-                            <h3>Step 3 of 6 — Preflight checks</h3>
+                            <h3>@localizer["Step3Header"]</h3>
                             <table class="table">
                                 <tbody>
-                                    <tr><td>Managing member</td><td>@(Model.Preflight.IsManagingMember ? "✔" : "✖")</td></tr>
-                                    <tr><td>Paid plan</td><td>@(Model.Preflight.HasPaidPlan ? "✔" : "✖")</td></tr>
-                                    <tr><td>Active ADP addon</td><td>@(Model.Preflight.HasActiveAddon ? "✔" : "✖")</td></tr>
-                                    <tr><td>Enrollment availability (platform gate)</td><td>@(Model.Preflight.GateOpen ? "✔" : "✖")</td></tr>
-                                    <tr><td>Department state permits enrollment</td><td>@(Model.Preflight.StateAllowsEnrollment ? "✔" : "✖")</td></tr>
-                                    <tr><td>Protection service reachable</td><td>@(Model.BrokerHealthy ? "✔" : "✖")</td></tr>
-                                    <tr><td>Managing member has an authenticator enrolled</td><td>@(Model.ManagingMemberHasMfa ? "✔" : "✖")</td></tr>
+                                    <tr><td>@localizer["CheckManagingMember"]</td><td>@(Model.Preflight.IsManagingMember ? "✔" : "✖")</td></tr>
+                                    <tr><td>@localizer["CheckPaidPlan"]</td><td>@(Model.Preflight.HasPaidPlan ? "✔" : "✖")</td></tr>
+                                    <tr><td>@localizer["CheckActiveAddon"]</td><td>@(Model.Preflight.HasActiveAddon ? "✔" : "✖")</td></tr>
+                                    <tr><td>@localizer["CheckGateOpen"]</td><td>@(Model.Preflight.GateOpen ? "✔" : "✖")</td></tr>
+                                    <tr><td>@localizer["CheckStateAllows"]</td><td>@(Model.Preflight.StateAllowsEnrollment ? "✔" : "✖")</td></tr>
+                                    <tr><td>@localizer["CheckBrokerHealthy"]</td><td>@(Model.BrokerHealthy ? "✔" : "✖")</td></tr>
+                                    <tr><td>@localizer["CheckManagingMemberMfa"]</td><td>@(Model.ManagingMemberHasMfa ? "✔" : "✖")</td></tr>
                                 </tbody>
                             </table>
                             @if (!(Model.Preflight.Passed && Model.BrokerHealthy && Model.ManagingMemberHasMfa))
                             {
-                                <div class="alert alert-danger">A preflight check failed. Resolve the items marked ✖ and reload this page — enrollment cannot be queued until every check passes.</div>
+                                <div class="alert alert-danger">@localizer["PreflightFailed"]</div>
                             }
-                            <button class="btn btn-default adp-prev">Back</button>
-                            <button class="btn btn-primary adp-next" @(Model.Preflight.Passed && Model.BrokerHealthy && Model.ManagingMemberHasMfa ? "" : "disabled")>Continue</button>
+                            <button class="btn btn-default adp-prev">@localizer["Back"]</button>
+                            <button class="btn btn-primary adp-next" @(Model.Preflight.Passed && Model.BrokerHealthy && Model.ManagingMemberHasMfa ? "" : "disabled")>@localizer["Continue"]</button>
                         </div>
 
                         @* Step 4: Sizing scan *@
                         <div class="adp-step" data-step="4" style="display:none;">
-                            <h3>Step 4 of 6 — Migration size estimate</h3>
-                            <p>A read-only scan counts your department's rows and estimates how many overnight windows the migration needs. Nothing is changed by this scan.</p>
-                            <button class="btn btn-info" id="adpRunSizing">Run sizing scan</button>
+                            <h3>@localizer["Step4Header"]</h3>
+                            <p>@localizer["Step4Intro"]</p>
+                            <button class="btn btn-info" id="adpRunSizing">@localizer["RunSizingScan"]</button>
                             <div id="adpSizingResult" style="margin-top:12px;"></div>
                             <hr />
-                            <button class="btn btn-default adp-prev">Back</button>
-                            <button class="btn btn-primary adp-next">Continue</button>
+                            <button class="btn btn-default adp-prev">@localizer["Back"]</button>
+                            <button class="btn btn-primary adp-next">@localizer["Continue"]</button>
                         </div>
 
                         @* Step 5: Window selection + lock consent *@
                         <div class="adp-step" data-step="5" style="display:none;">
-                            <h3>Step 5 of 6 — Overnight migration window</h3>
-                            <p>Migration runs only inside this department-local window and pauses data entry while running. Pick your quietest hours; the default is @Model.DefaultWindowStart&ndash;@Model.DefaultWindowEnd.</p>
+                            <h3>@localizer["Step5Header"]</h3>
+                            <p>@localizer["Step5Intro", Model.DefaultWindowStart, Model.DefaultWindowEnd]</p>
                             <div class="form-group">
-                                <label>Window start (local)</label>
+                                <label>@localizer["WindowStartLabel"]</label>
                                 <input type="time" id="adpWindowStart" class="form-control" style="max-width:200px" value="@Model.DefaultWindowStart" />
                             </div>
                             <div class="form-group">
-                                <label>Window end (local)</label>
+                                <label>@localizer["WindowEndLabel"]</label>
                                 <input type="time" id="adpWindowEnd" class="form-control" style="max-width:200px" value="@Model.DefaultWindowEnd" />
                             </div>
                             <div class="form-group">
-                                <label>Time zone</label>
+                                <label>@localizer["TimeZoneLabel"]</label>
                                 <select id="adpWindowTimeZone" class="form-control" style="max-width:420px" asp-items="Model.TimeZones"></select>
                             </div>
                             <div class="alert alert-warning">
-                                <strong>Department operation pause.</strong> While a migration window is running, no new calls, status changes, staffing changes or scheduled tasks run for your department. Viewing continues. You can abort an active window at any time and the department returns to full service immediately.
+                                <strong>@localizer["OperationPauseHeader"]</strong> @localizer["OperationPauseDetail"]
                             </div>
-                            <div class="checkbox"><label><input type="checkbox" id="adpLockConsent" /> I understand and consent to the overnight operation pause during migration windows.</label></div>
-                            <button class="btn btn-default adp-prev">Back</button>
-                            <button class="btn btn-primary adp-next" id="adpLockNext" disabled>Continue</button>
+                            <div class="checkbox"><label><input type="checkbox" id="adpLockConsent" /> @localizer["LockConsent"]</label></div>
+                            <button class="btn btn-default adp-prev">@localizer["Back"]</button>
+                            <button class="btn btn-primary adp-next" id="adpLockNext" disabled>@localizer["Continue"]</button>
                         </div>
 
                         @* Step 6: Confirm and queue *@
                         <div class="adp-step" data-step="6" style="display:none;">
-                            <h3>Step 6 of 6 — Confirm and queue</h3>
-                            <p>Queueing enrollment re-verifies every requirement server-side and places your department in the migration queue. Departments migrate one at a time; you'll receive an email with your schedule.</p>
+                            <h3>@localizer["Step6Header"]</h3>
+                            <p>@localizer["Step6Intro"]</p>
                             <div id="adpQueueError"></div>
-                            <button class="btn btn-default adp-prev">Back</button>
-                            <button class="btn btn-primary" id="adpQueueEnrollment">Queue enrollment</button>
+                            <button class="btn btn-default adp-prev">@localizer["Back"]</button>
+                            <button class="btn btn-primary" id="adpQueueEnrollment">@localizer["QueueEnrollment"]</button>
                         </div>
 
                     </div>
@@ -280,5 +273,22 @@
 
 @section Scripts
 {
+    <script type="text/javascript">
+        // The wizard's error text and confirmations are localized here and handed to the script,
+        // keyed by the value-free codes the server returns.
+        var adpWizardMessages = {
+            acknowledgements_incomplete: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ErrAcknowledgementsIncomplete"].Value)),
+            lock_consent_required: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ErrLockConsentRequired"].Value)),
+            protected_access_denied: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ErrProtectedAccessDenied"].Value)),
+            addon_required: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ErrAddonRequired"].Value)),
+            plan_required: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ErrPlanRequired"].Value)),
+            feature_not_available: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ErrFeatureNotAvailable"].Value)),
+            invalid_state: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ErrInvalidState"].Value)),
+            invalid_window: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ErrInvalidWindow"].Value)),
+            command_failed: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ErrCommandFailed"].Value)),
+            confirm_cancel_queued: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ConfirmCancelQueued"].Value)),
+            confirm_revoke_offboarding: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["ConfirmRevokeOffboarding"].Value))
+        };
+    </script>
     <script src="~/js/app/internal/dataprotection/resgrid.dataprotection.wizard.js" type="text/javascript"></script>
 }

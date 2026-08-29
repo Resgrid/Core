@@ -684,4 +684,64 @@
   <data name="YourDepartments" xml:space="preserve">
     <value>Τα Τμήματά Σας</value>
   </data>
+  <data name="AdpProtectedCall" xml:space="preserve">
+    <value>Προστατευμένη κλήση</value>
+  </data>
+  <data name="AdpProtectedCertifications" xml:space="preserve">
+    <value>Προστατευμένες πιστοποιήσεις</value>
+  </data>
+  <data name="AdpProtectedContact" xml:space="preserve">
+    <value>Προστατευμένη επαφή</value>
+  </data>
+  <data name="AdpProtectedBannerDescription" xml:space="preserve">
+    <value>κρυπτογραφημένο σε ηρεμία για αυτό το τμήμα. Οι εξουσιοδοτημένοι χρήστες και τα εγκεκριμένα κανάλια μπορούν παρ’ όλα αυτά να το αποκαλύψουν.</value>
+  </data>
+  <data name="AdpVerifyAndReveal" xml:space="preserve">
+    <value>Επαλήθευση &amp; εμφάνιση</value>
+  </data>
+  <data name="AdpConceal" xml:space="preserve">
+    <value>Απόκρυψη</value>
+  </data>
+  <data name="AdpStepUpTitle" xml:space="preserve">
+    <value>Επαληθεύστε για να δείτε τα προστατευμένα δεδομένα</value>
+  </data>
+  <data name="AdpStepUpInstructions" xml:space="preserve">
+    <value>Εισαγάγετε τον 6ψήφιο κωδικό από την εφαρμογή ελέγχου ταυτότητας. Οι τιμές που εμφανίζονται παραμένουν ορατές μόνο για το παράθυρο επαλήθευσης αυτού του τμήματος και δεν αποθηκεύονται ποτέ στο πρόγραμμα περιήγησής σας.</value>
+  </data>
+  <data name="AdpVerificationCode" xml:space="preserve">
+    <value>Κωδικός επαλήθευσης</value>
+  </data>
+  <data name="AdpVerify" xml:space="preserve">
+    <value>Επαλήθευση</value>
+  </data>
+  <data name="AdpErrorInvalidCode" xml:space="preserve">
+    <value>Ο κωδικός επαλήθευσης δεν είναι έγκυρος ή έχει λήξει.</value>
+  </data>
+  <data name="AdpErrorTooManyAttempts" xml:space="preserve">
+    <value>Πάρα πολλές προσπάθειες επαλήθευσης. Περιμένετε λίγα λεπτά και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="AdpErrorMfaNotEnrolled" xml:space="preserve">
+    <value>Ο έλεγχος ταυτότητας δύο παραγόντων δεν έχει ρυθμιστεί για αυτόν τον λογαριασμό. Ρυθμίστε πρώτα μια εφαρμογή ελέγχου ταυτότητας στις ρυθμίσεις ασφαλείας του λογαριασμού.</value>
+  </data>
+  <data name="AdpErrorGrantsNotConfigured" xml:space="preserve">
+    <value>Η πρόσβαση σε προστατευμένα δεδομένα δεν έχει ρυθμιστεί σε αυτόν τον διακομιστή.</value>
+  </data>
+  <data name="AdpErrorStepUpRequired" xml:space="preserve">
+    <value>Απαιτείται εκ νέου επαλήθευση.</value>
+  </data>
+  <data name="AdpErrorGrantExpired" xml:space="preserve">
+    <value>Το παράθυρο επαλήθευσης έληξε. Επαληθεύστε ξανά.</value>
+  </data>
+  <data name="AdpErrorGrantRevoked" xml:space="preserve">
+    <value>Η πρόσβαση ανακλήθηκε λόγω αλλαγής πολιτικής. Επαληθεύστε ξανά.</value>
+  </data>
+  <data name="AdpErrorAccessDenied" xml:space="preserve">
+    <value>Δεν έχετε εξουσιοδότηση να δείτε αυτά τα προστατευμένα δεδομένα.</value>
+  </data>
+  <data name="AdpErrorBrokerUnavailable" xml:space="preserve">
+    <value>Η υπηρεσία προστατευμένων δεδομένων δεν είναι διαθέσιμη. Δοκιμάστε ξανά σύντομα.</value>
+  </data>
+  <data name="AdpErrorGeneric" xml:space="preserve">
+    <value>Το αίτημα απέτυχε. Δοκιμάστε ξανά.</value>
+  </data>
 </root>

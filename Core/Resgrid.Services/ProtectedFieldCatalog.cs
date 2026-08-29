@@ -7,7 +7,7 @@ using Resgrid.Model.Services;
 namespace Resgrid.Services
 {
 	/// <summary>
-	/// Catalog v1 (draft until the Phase 0 catalog freeze): the P0 families from ADP plan section 5.1
+	/// Catalog v2 (draft until the Phase 0 catalog freeze): the P0 families from ADP plan section 5.1
 	/// — calls, call children, department-scoped personnel data, and contacts. FieldIds are stable
 	/// forever (they are AAD components); entries are only ever ADDED, with the catalog version
 	/// incremented. Section 5.2/5.3 operational, moderation, and section 22.1 audit families land in
@@ -19,6 +19,22 @@ namespace Resgrid.Services
 		private const string CallsFamily = "Calls";
 		private const string PersonnelFamily = "Personnel";
 		private const string ContactsFamily = "Contacts";
+		private const string OperationalFamily = "Operational";
+
+		/// <summary>Catalog version the section 5.2 operational entries were added in.</summary>
+		private const int OperationalCatalogVersion = 2;
+
+		/// <summary>Catalog version the section 5.2 Log (incident report) family was added in.</summary>
+		private const int LogCatalogVersion = 3;
+
+		/// <summary>Catalog version the department-scoped emergency-contact family was added in.</summary>
+		private const int EmergencyContactCatalogVersion = 4;
+
+		/// <summary>Catalog version the department-scoped member address columns were added in.</summary>
+		private const int MemberAddressCatalogVersion = 5;
+
+		/// <summary>Catalog version the personnel certification family was added in.</summary>
+		private const int CertificationCatalogVersion = 6;
 
 		private static readonly IReadOnlyList<ProtectedFieldDefinition> Entries = BuildV1();
 		private static readonly Dictionary<string, ProtectedFieldDefinition> ById =
@@ -27,9 +43,22 @@ namespace Resgrid.Services
 			Entries.GroupBy(e => e.TableName, StringComparer.OrdinalIgnoreCase)
 				.ToDictionary(g => g.Key, g => (IReadOnlyList<ProtectedFieldDefinition>)g.ToList(), StringComparer.OrdinalIgnoreCase);
 
-		public int Version => 1;
+		/// <summary>
+		/// Current catalog version. MUST equal the highest AddedInCatalogVersion in the entries —
+		/// version-scoped queries and the upgrade work list are meaningless if the constant lags the
+		/// data, so it is derived rather than hand-maintained.
+		/// </summary>
+		public int Version { get; } = Entries.Max(e => e.AddedInCatalogVersion);
 
 		public IReadOnlyList<ProtectedFieldDefinition> GetAll() => Entries;
+
+		public IReadOnlyList<ProtectedFieldDefinition> GetAllForVersion(int catalogVersion)
+		{
+			if (catalogVersion <= 0)
+				return Array.Empty<ProtectedFieldDefinition>();
+
+			return Entries.Where(e => e.AddedInCatalogVersion <= catalogVersion).ToList();
+		}
 
 		public IReadOnlyList<ProtectedFieldDefinition> GetForTable(string tableName)
 		{
@@ -37,6 +66,24 @@ namespace Resgrid.Services
 				return Array.Empty<ProtectedFieldDefinition>();
 
 			return ByTable.TryGetValue(tableName, out var entries) ? entries : Array.Empty<ProtectedFieldDefinition>();
+		}
+
+		public IReadOnlyList<ProtectedFieldDefinition> GetForTableAndVersion(string tableName, int catalogVersion)
+		{
+			if (catalogVersion <= 0)
+				return Array.Empty<ProtectedFieldDefinition>();
+
+			return GetForTable(tableName).Where(e => e.AddedInCatalogVersion <= catalogVersion).ToList();
+		}
+
+		public IReadOnlyList<ProtectedFieldDefinition> GetAddedBetween(int fromCatalogVersion, int toCatalogVersion)
+		{
+			if (toCatalogVersion <= fromCatalogVersion)
+				return Array.Empty<ProtectedFieldDefinition>();
+
+			return Entries
+				.Where(e => e.AddedInCatalogVersion > fromCatalogVersion && e.AddedInCatalogVersion <= toCatalogVersion)
+				.ToList();
 		}
 
 		public ProtectedFieldDefinition GetById(string fieldId)
@@ -109,8 +156,6 @@ namespace Resgrid.Services
 					PermissionTypes.ViewProtectedPersonnelData));
 
 			Member("IdentificationNumber", ProtectedFieldClassification.Pii);
-			Member("EmergencyContactName", ProtectedFieldClassification.Pii);
-			Member("EmergencyContactPhone", ProtectedFieldClassification.Pii);
 			Member("Notes", ProtectedFieldClassification.Sensitive);
 
 			// ---- Contacts (section 5.1: all name parts, email, government IDs, phone fields,
@@ -142,6 +187,100 @@ namespace Resgrid.Services
 			Contact("EntranceGpsCoordinates", ProtectedFieldClassification.Pii);
 			Contact("ExitGpsCoordinates", ProtectedFieldClassification.Pii);
 			Contact("LocationGeofence", ProtectedFieldClassification.Pii);
+
+			// ---- Operational free-form data (section 5.2), catalog v2 -------------------------
+			// UdfFieldValues.Value is user-authored free text on any entity; the plan defaults free
+			// text to sensitive in a protected department. UnitStates carry the crew's own note and
+			// the position it was filed from — protected location data rides the companion columns.
+			void Operational(string table, string column, ProtectedFieldClassification classification,
+				ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
+					OperationalFamily, table, column, kind, classification,
+					PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData,
+					OperationalCatalogVersion));
+
+			// ---- Personnel certifications (section 5.1: "license/certification numbers and
+			// documents"), catalog v6. The document itself is the binary field — a certificate scan
+			// carries the member's name, licence number and often their signature, so protecting the
+			// metadata while serving the file in the clear would protect nothing.
+			void Certification(string column, ProtectedFieldClassification classification,
+				ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
+				list.Add(new ProtectedFieldDefinition($"personnelcertifications.{column.ToLowerInvariant()}",
+					PersonnelFamily, "PersonnelCertifications", column, kind, classification,
+					PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData,
+					CertificationCatalogVersion));
+
+			Certification("Name", ProtectedFieldClassification.Pii);
+			Certification("Number", ProtectedFieldClassification.Pii);
+			Certification("Type", ProtectedFieldClassification.Sensitive);
+			Certification("Area", ProtectedFieldClassification.Sensitive);
+			Certification("IssuedBy", ProtectedFieldClassification.Sensitive);
+			Certification("Filename", ProtectedFieldClassification.Sensitive);
+			Certification("Data", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.Binary);
+
+			// ---- Member addresses (section 5.1), catalog v5 -----------------------------------
+			// An address is protected as a UNIT: leaving the city, state or postal code in the clear
+			// while encrypting the street line still re-identifies the member in a small department.
+			void MemberAddress(string column) =>
+				list.Add(new ProtectedFieldDefinition($"departmentmembersensitivedata.{column.ToLowerInvariant()}",
+					PersonnelFamily, "DepartmentMemberSensitiveData", column, ProtectedFieldStorageKind.Text,
+					ProtectedFieldClassification.Pii, PermissionTypes.ViewProtectedPersonnelData,
+					PermissionTypes.ViewProtectedPersonnelData, MemberAddressCatalogVersion));
+
+			MemberAddress("HomeAddress1");
+			MemberAddress("HomeCity");
+			MemberAddress("HomeState");
+			MemberAddress("HomePostalCode");
+			MemberAddress("HomeCountry");
+			MemberAddress("MailingAddress1");
+			MemberAddress("MailingCity");
+			MemberAddress("MailingState");
+			MemberAddress("MailingPostalCode");
+			MemberAddress("MailingCountry");
+
+			// ---- Member emergency contacts (section 5.1), catalog v4 ---------------------------
+			// A member may have several per department, and the values may differ per department.
+			// These numbers ARE encrypted: they are next-of-kin reference data an authorized human
+			// reads, never an outbound channel handed to an SMS or voice provider (the rule that
+			// member NOTIFICATION numbers stay plaintext does not reach them).
+			void EmergencyContact(string column, ProtectedFieldClassification classification) =>
+				list.Add(new ProtectedFieldDefinition($"departmentmemberemergencycontacts.{column.ToLowerInvariant()}",
+					PersonnelFamily, "DepartmentMemberEmergencyContacts", column, ProtectedFieldStorageKind.Text,
+					classification, PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData,
+					EmergencyContactCatalogVersion));
+
+			EmergencyContact("Name", ProtectedFieldClassification.Pii);
+			EmergencyContact("Relationship", ProtectedFieldClassification.Pii);
+			EmergencyContact("PhoneNumber", ProtectedFieldClassification.Pii);
+			EmergencyContact("AlternatePhoneNumber", ProtectedFieldClassification.Pii);
+			EmergencyContact("Email", ProtectedFieldClassification.Pii);
+			EmergencyContact("Notes", ProtectedFieldClassification.Sensitive);
+
+			// ---- Logs (section 5.2), catalog v3 -----------------------------------------------
+			// The incident/NFIRS-style log. NOTE: the separate CallLogs.Narrative entry above covers a
+			// DIFFERENT table (call activity logs); both carry a Narrative column and both are
+			// user-authored, so both are cataloged independently.
+			void LogField(string column, ProtectedFieldClassification classification) =>
+				list.Add(new ProtectedFieldDefinition($"logs.{column.ToLowerInvariant()}", OperationalFamily, "Logs",
+					column, ProtectedFieldStorageKind.Text, classification,
+					PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData,
+					LogCatalogVersion));
+
+			LogField("Narrative", ProtectedFieldClassification.Phi);
+			LogField("InitialReport", ProtectedFieldClassification.Phi);
+			LogField("Cause", ProtectedFieldClassification.Sensitive);
+			LogField("ContactName", ProtectedFieldClassification.Sensitive);
+			LogField("ContactNumber", ProtectedFieldClassification.Sensitive);
+			LogField("OtherPersonnel", ProtectedFieldClassification.Sensitive);
+			LogField("Location", ProtectedFieldClassification.Sensitive);
+			LogField("BodyLocation", ProtectedFieldClassification.Phi);
+			LogField("PronouncedDeceasedBy", ProtectedFieldClassification.Phi);
+
+			Operational("UdfFieldValues", "Value", ProtectedFieldClassification.Sensitive);
+			Operational("UnitStates", "Note", ProtectedFieldClassification.Sensitive);
+			Operational("UnitStates", "GeoLocationData", ProtectedFieldClassification.Sensitive);
+			Operational("UnitStates", "Latitude", ProtectedFieldClassification.Sensitive, ProtectedFieldStorageKind.CompanionColumn);
+			Operational("UnitStates", "Longitude", ProtectedFieldClassification.Sensitive, ProtectedFieldStorageKind.CompanionColumn);
 
 			list.Add(new ProtectedFieldDefinition("contactnotes.note", ContactsFamily, "ContactNotes", "Note",
 				ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedContactData));

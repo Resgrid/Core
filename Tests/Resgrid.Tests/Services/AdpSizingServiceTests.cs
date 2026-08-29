@@ -55,10 +55,10 @@ namespace Resgrid.Tests.Services
 				"every catalog binding is counted");
 			result.TotalRows.Should().Be(10000L * AdpTableBindings.V1.Count);
 
-			// 80,000 rows / 100 rps = 800s + 8×30s overhead = 1040s; ×1.25 = 1300s → 22 min P50.
-			result.EstimatedP50Minutes.Should().Be(22);
-			result.EstimatedP90Minutes.Should().Be(44);
-			result.ProjectedNights.Should().Be(1, "44 minutes fits one 480-minute window");
+			// 130,000 rows / 100 rps = 1300s + 13×30s overhead = 1690s; ×1.25 = 2112.5s → 36 min P50.
+			result.EstimatedP50Minutes.Should().Be(36);
+			result.EstimatedP90Minutes.Should().Be(71);
+			result.ProjectedNights.Should().Be(1, "the P90 estimate still fits one 480-minute window");
 			result.BenchmarkRowsPerSecond.Should().Be(100);
 		}
 

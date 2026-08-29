@@ -1,4 +1,5 @@
 ﻿@model Resgrid.Web.Areas.User.Models.EditProfileModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> adpLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> localizer
 @{
     ViewData["Title"] = "Resgrid | Edit User Profile";
@@ -353,6 +354,31 @@
                             </div>
                             <div class="hr-line-dashed"></div>
                         }
+
+                        <h3>@adpLocalizer["EmergencyContactsHeader"]</h3>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <p class="text-muted">
+                                    @adpLocalizer["EmergencyContactsIntro"]
+                                </p>
+                                <table class="table table-striped" id="emergencyContactsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>@adpLocalizer["ContactNameLabel"]</th>
+                                            <th>@adpLocalizer["RelationshipLabel"]</th>
+                                            <th>@adpLocalizer["PhoneNumberLabel"]</th>
+                                            <th>@adpLocalizer["AlternateColumn"]</th>
+                                            <th>@adpLocalizer["EmailLabel"]</th>
+                                            <th>@adpLocalizer["PrimaryColumn"]</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="emergencyContactsBody"></tbody>
+                                </table>
+                                <button type="button" class="btn btn-sm btn-primary" id="addEmergencyContactBtn">@adpLocalizer["AddEmergencyContact"]</button>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
 
                         <h3>
                             @localizer["PhysicalAddressHeader"]
@@ -848,9 +874,79 @@
 
 
 
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="emergencyContactModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="emergencyContactModalTitle">@adpLocalizer["EmergencyContactTitle"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" id="emergencyContactError" style="display: none;"></div>
+                <input type="hidden" id="ecId" value="0" />
+                <div class="form-group">
+                    <label for="ecName">@adpLocalizer["ContactNameLabel"]</label>
+                    <input type="text" class="form-control" id="ecName" maxlength="250" />
+                </div>
+                <div class="form-group">
+                    <label for="ecRelationship">@adpLocalizer["RelationshipLabel"]</label>
+                    <input type="text" class="form-control" id="ecRelationship" maxlength="100" />
+                </div>
+                <div class="form-group">
+                    <label for="ecPhone">@adpLocalizer["PhoneNumberLabel"]</label>
+                    <input type="text" class="form-control" id="ecPhone" maxlength="50" />
+                </div>
+                <div class="form-group">
+                    <label for="ecAltPhone">@adpLocalizer["AlternatePhoneLabel"]</label>
+                    <input type="text" class="form-control" id="ecAltPhone" maxlength="50" />
+                </div>
+                <div class="form-group">
+                    <label for="ecEmail">@adpLocalizer["EmailLabel"]</label>
+                    <input type="text" class="form-control" id="ecEmail" maxlength="250" />
+                </div>
+                <div class="form-group">
+                    <label for="ecNotes">@adpLocalizer["NotesLabel"]</label>
+                    <textarea class="form-control" id="ecNotes" rows="2"></textarea>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" id="ecIsPrimary" /> @adpLocalizer["PrimaryContactLabel"]</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@adpLocalizer["CancelAction"]</button>
+                <button type="button" class="btn btn-primary" id="ecSaveBtn">@adpLocalizer["SaveAction"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts
 {
     <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/js/app/internal/profile/resgrid.emergencycontacts.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            resgridEmergencyContacts.init({
+                listUrl: '@Url.Action("GetEmergencyContacts", "Home", new { area = "User" })',
+                saveUrl: '@Url.Action("SaveEmergencyContact", "Home", new { area = "User" })',
+                deleteUrl: '@Url.Action("DeleteEmergencyContact", "Home", new { area = "User" })',
+                userId: '@Model.UserId',
+                messages: {
+                    addTitle: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["AddEmergencyContact"].Value)),
+                    editTitle: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["EditEmergencyContact"].Value)),
+                    none: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["NoEmergencyContacts"].Value)),
+                    yes: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["YesLabel"].Value)),
+                    edit: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["EditAction"].Value)),
+                    remove: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["DeleteAction"].Value)),
+                    nameRequired: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["NameRequired"].Value)),
+                    saveFailed: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["ContactSaveFailed"].Value)),
+                    confirmRemove: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["ConfirmRemoveContact"].Value))
+                },
+                antiForgeryToken: $('input[name="__RequestVerificationToken"]').first().val()
+            });
+        });
+    </script>
 
     <script src="~/js/app/resgrid.phonevalidate.js"></script>
 

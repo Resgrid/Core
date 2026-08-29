@@ -62,17 +62,33 @@
     <value>Calendario</value>
   </data>
   <data name="GdprExportReadyBody" xml:space="preserve">
-    <value>Hola {0}:
-
-Su exportación de datos personales está lista para descargar.
-
-Enlace de descarga: {1}
-
-Este enlace caduca el {2:f} UTC. Después de esa fecha los datos dejarán de estar disponibles.
-
-Si no solicitó esto, contacte con el soporte.
-
+    <value>Hola {0}:
+
+
+
+Su exportación de datos personales está lista para descargar.
+
+
+
+Enlace de descarga: {1}
+
+
+
+Este enlace caduca el {2:f} UTC. Después de esa fecha los datos dejarán de estar disponibles.
+
+
+
+Si no solicitó esto, contacte con el soporte.
+
+
+
 El equipo de Resgrid</value>
+  </data>
+  <data name="GdprExportWithheldNotice" xml:space="preserve">
+    <value>Su departamento utiliza la Protección de Datos Avanzada, por lo que algunos valores de esta exportación están cifrados y aparecen como REDACTED. Siguen formando parte de su expediente y no se han eliminado.</value>
+  </data>
+  <data name="GdprExportWithheldHowTo" xml:space="preserve">
+    <value>Para ver estos valores, inicie sesión en Resgrid y abra la página a la que pertenecen, donde podrá mostrarlos tras confirmar su identidad. La administración de su departamento también puede facilitárselos.</value>
   </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>Su exportación de datos de Resgrid está lista</value>
@@ -81,12 +97,18 @@ El equipo de Resgrid</value>
     <value>Notificación</value>
   </data>
   <data name="VerificationCodeEmailBody" xml:space="preserve">
-    <value>Hola {0}:
-
-Su código de verificación de Resgrid es: {1}
-
-Este código caduca en {2} minutos. Si no lo solicitó, ignore este correo.
-
+    <value>Hola {0}:
+
+
+
+Su código de verificación de Resgrid es: {1}
+
+
+
+Este código caduca en {2} minutos. Si no lo solicitó, ignore este correo.
+
+
+
 El equipo de Resgrid</value>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">

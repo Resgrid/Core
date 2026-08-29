@@ -10,6 +10,14 @@ namespace Resgrid.Model
 	{
 		Enrollment = 0,
 		Offboarding = 1,
-		Rotation = 2
+		Rotation = 2,
+
+		/// <summary>
+		/// A catalog upgrade: the code's protected-field catalog has advanced past the version this
+		/// department was migrated to, so the fields added since are still plaintext. The sweep
+		/// encrypts ONLY those fields and then stamps the department's new catalog version.
+		/// Existing envelopes are untouched — the catalog version is not an AAD component.
+		/// </summary>
+		CatalogUpgrade = 3
 	}
 }

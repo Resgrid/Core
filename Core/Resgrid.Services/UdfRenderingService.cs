@@ -16,7 +16,7 @@ namespace Resgrid.Services
 				return string.Empty;
 
 			var valueMap = (existingValues ?? new List<UdfFieldValue>())
-				.ToDictionary(v => v.UdfFieldId, v => v.Value ?? string.Empty);
+				.ToDictionary(v => v.UdfFieldId, v => ProtectedDataEnvelope.SafeDisplay(v.Value) ?? string.Empty);
 
 			var sb = new StringBuilder();
 			sb.AppendLine($"<div class=\"udf-section\" data-definition-id=\"{definition.UdfDefinitionId}\" data-entity-type=\"{definition.EntityType}\">");
@@ -57,7 +57,7 @@ namespace Resgrid.Services
 				return JsonConvert.SerializeObject(new { definitionId = (string)null, entityType = 0, fields = new object[0] });
 
 			var valueMap = (existingValues ?? new List<UdfFieldValue>())
-				.ToDictionary(v => v.UdfFieldId, v => v.Value);
+				.ToDictionary(v => v.UdfFieldId, v => ProtectedDataEnvelope.SafeDisplay(v.Value));
 
 			var schemaFields = fields
 				.Where(f => f.IsEnabled && f.IsVisibleOnMobile)
@@ -119,7 +119,7 @@ namespace Resgrid.Services
 				return string.Empty;
 
 			var valueMap = (values ?? new List<UdfFieldValue>())
-				.ToDictionary(v => v.UdfFieldId, v => v.Value ?? string.Empty);
+				.ToDictionary(v => v.UdfFieldId, v => ProtectedDataEnvelope.SafeDisplay(v.Value) ?? string.Empty);
 
 			var sb = new StringBuilder();
 			sb.AppendLine($"<div class=\"udf-readonly-section\" data-definition-id=\"{definition.UdfDefinitionId}\">");

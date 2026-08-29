@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -75,6 +75,21 @@
   </data>
   <data name="DeleteTestWarning" xml:space="preserve">
     <value>Vuoi davvero eliminare questo test?</value>
+  </data>
+  <data name="NotSentSuppressed" xml:space="preserve">
+    <value>Non inviato (soppresso)</value>
+  </data>
+  <data name="StaffingLevel" xml:space="preserve">
+    <value>Livello di personale</value>
+  </data>
+  <data name="Suppressed" xml:space="preserve">
+    <value>Soppresso</value>
+  </data>
+  <data name="SuppressedHelp" xml:space="preserve">
+    <value>Il livello di personale di questo membro è silenziato nelle impostazioni del dipartimento, quindi non gli è stato inviato nulla.</value>
+  </data>
+  <data name="SuppressedNotice" xml:space="preserve">
+    <value>{0} membro/i non sono stati contattati: il loro livello di personale è silenziato nelle impostazioni del dipartimento, quindi nemmeno un invio reale li avrebbe raggiunti.</value>
   </data>
   <data name="TestDefinitions" xml:space="preserve">
     <value>Definizioni dei test</value>

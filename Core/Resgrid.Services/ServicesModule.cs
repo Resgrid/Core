@@ -170,6 +170,11 @@ namespace Resgrid.Services
 			builder.RegisterType<DepartmentKeyService>().As<IDepartmentKeyService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtectedFieldCryptoService>().As<IProtectedFieldCryptoService>().SingleInstance();
 			builder.RegisterType<ProtectedDataGrantService>().As<IProtectedDataGrantService>().SingleInstance();
+			// Attended protected reads + the write safety net. Requires IProtectedDataBrokerClient,
+			// so every composition root that loads this module must also load
+			// ProtectedDataBrokerClientModule (client only — no key material).
+			builder.RegisterType<ProtectedReadService>()
+				.As<IProtectedReadService>().As<IProtectedWriteService>().InstancePerLifetimeScope();
 
 			// The real engine is registered everywhere but only functions where a real key wrapping
 			// provider resolves (LocalDev for synthetic testing; the broker host in production). On

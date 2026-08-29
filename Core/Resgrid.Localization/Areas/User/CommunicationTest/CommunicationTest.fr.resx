@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -75,6 +75,21 @@
   </data>
   <data name="DeleteTestWarning" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer ce test ?</value>
+  </data>
+  <data name="NotSentSuppressed" xml:space="preserve">
+    <value>Non envoyé (supprimé)</value>
+  </data>
+  <data name="StaffingLevel" xml:space="preserve">
+    <value>Niveau d'effectif</value>
+  </data>
+  <data name="Suppressed" xml:space="preserve">
+    <value>Supprimé</value>
+  </data>
+  <data name="SuppressedHelp" xml:space="preserve">
+    <value>Le niveau d'effectif de ce membre est désactivé dans les paramètres de votre département, aucun message ne lui a donc été envoyé.</value>
+  </data>
+  <data name="SuppressedNotice" xml:space="preserve">
+    <value>{0} membre(s) n'ont pas été contactés : leur niveau d'effectif est désactivé dans les paramètres de votre département, une véritable alerte ne les aurait pas atteints non plus.</value>
   </data>
   <data name="TestDefinitions" xml:space="preserve">
     <value>Définitions des tests</value>

@@ -32,6 +32,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public ContactsController(
 			IContactsService contactsService,
@@ -39,9 +40,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IUserProfileService userProfileService,
 			Model.Services.IAuthorizationService authorizationService,
 			IEventAggregator eventAggregator,
-			IUserDefinedFieldsService userDefinedFieldsService
+			IUserDefinedFieldsService userDefinedFieldsService,
+			IProtectedReadService protectedReadService
 			)
 		{
+			_protectedReadService = protectedReadService;
 			_contactsService = contactsService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
@@ -108,6 +111,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (contacts != null && contacts.Any())
 			{
+				// Attended protected read (plan 7.1): one broker round trip for the whole list;
+				// without a valid grant, cataloged fields read as REDACTED — never envelopes.
+				var protectedRead = await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
+					contacts.ToList(), Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId);
+
 				foreach (var contact in contacts)
 				{
 					var addedOnPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
@@ -116,7 +124,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (!String.IsNullOrWhiteSpace(contact.EditedByUserId))
 						editedPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
 
-					result.Data.Add(ConvertContactData(contact, department, addedOnPerson, editedPerson));
+					var contactData = ConvertContactData(contact, department, addedOnPerson, editedPerson);
+					contactData.IsProtected = protectedRead.IsProtected;
+					contactData.ProtectedReason = protectedRead.ProtectedReason;
+					result.Data.Add(contactData);
 				}
 
 				result.PageSize = result.Data.Count;
@@ -149,6 +160,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (contact != null && contact.DepartmentId == DepartmentId)
 			{
+				// Attended protected read (plan 7.1): decrypt-or-redact before conversion.
+				var protectedRead = await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
+					new[] { contact }, Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId);
+
 				var addedOnPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
 				UserProfile editedPerson = null;
 
@@ -156,6 +171,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					editedPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
 
 				result.Data = ConvertContactData(contact, department, addedOnPerson, editedPerson);
+				result.Data.IsProtected = protectedRead.IsProtected;
+				result.Data.ProtectedReason = protectedRead.ProtectedReason;
+				result.Data.RedactedFields = protectedRead.RedactedFields;
 
 				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, contactId);
 				if (udfValues != null && udfValues.Any())
@@ -210,6 +228,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var contactNotes = await _contactsService.GetContactNotesByContactIdAsync(contactId, Int32.MaxValue, false);
 
+				// Attended protected read (plan 7.1): note text decrypts with a valid grant or reads
+				// as REDACTED — never an envelope.
+				var protectedRead = await _protectedReadService.ResolveContactNotesForReadAsync(DepartmentId,
+					contactNotes?.ToList(), Request.Headers[DataProtectionController.GrantHeader].ToString(), UserId);
+
 				foreach (var contactNote in contactNotes)
 				{
 					var addedOnPerson = await _userProfileService.GetProfileByUserIdAsync(contactNote.AddedByUserId);
@@ -222,7 +245,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (!String.IsNullOrWhiteSpace(contactNote.ContactNoteTypeId))
 						noteType = await _contactsService.GetContactNoteTypeByIdAsync(contactNote.ContactNoteTypeId);
 
-					result.Data.Add(ConvertContactNoteData(contactNote, noteType, department, addedOnPerson, editedPerson));
+					var noteData = ConvertContactNoteData(contactNote, noteType, department, addedOnPerson, editedPerson);
+					noteData.IsProtected = protectedRead.IsProtected;
+					noteData.ProtectedReason = protectedRead.ProtectedReason;
+					result.Data.Add(noteData);
 				}
 
 				result.PageSize = contactNotes.Count;

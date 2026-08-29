@@ -351,6 +351,8 @@ namespace Resgrid.Web.Eventing
 			// IncidentCommandService -> IncidentVoiceService) needs the weather and voip providers.
 			builder.RegisterModule(new Resgrid.Providers.Voip.VoipProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
+			// ADP broker CLIENT (no key material) — CallsService's write safety net resolves it.
+			builder.RegisterModule(new Resgrid.Providers.ProtectedData.ProtectedDataBrokerClientModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();

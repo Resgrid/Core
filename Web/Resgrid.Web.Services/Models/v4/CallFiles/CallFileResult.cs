@@ -17,6 +17,18 @@
 	public class CallFileResultData
 	{
 		/// <summary>
+		/// ADP: true when this row belongs to a protection-enforced department (shield indicator).
+		/// Protected values here are broker-decrypted plaintext or the exact "REDACTED" placeholder
+		/// — never ciphertext.
+		/// </summary>
+		public bool IsProtected { get; set; }
+
+		/// <summary>ADP: machine-readable reason when values are redacted (step_up_required,
+		/// grant_expired, grant_revoked, protected_access_denied, broker_unavailable); null when
+		/// nothing is redacted.</summary>
+		public string ProtectedReason { get; set; }
+
+		/// <summary>
 		/// Id of the call file
 		/// </summary>
 		public string Id { get; set; }

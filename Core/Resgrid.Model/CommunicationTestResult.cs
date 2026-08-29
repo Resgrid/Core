@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -36,6 +36,36 @@ namespace Resgrid.Model
 		public string ContactCarrier { get; set; }
 
 		public int VerificationStatus { get; set; }
+
+		/// <summary>
+		/// Whether the member had this channel switched on in their own notification settings when
+		/// the run was built. Recorded on the row rather than read back off the live profile so the
+		/// report describes the run as it happened -- a member who turns SMS on the day after a test
+		/// must not make that run look like it should have texted them. NULL on runs built before
+		/// this was recorded; the report falls back to the current profile for those.
+		/// </summary>
+		public bool? ChannelEnabled { get; set; }
+
+		/// <summary>
+		/// The member's staffing level (their last UserState) when the run was built, or NULL when
+		/// they had never set one. Stored with <see cref="StaffingLevelText"/> so a report read
+		/// months later still shows the level the run actually saw.
+		/// </summary>
+		public int? StaffingLevel { get; set; }
+
+		/// <summary>
+		/// Display name of <see cref="StaffingLevel"/> as the department had it configured at run
+		/// time. Snapshotted because a department can rename or delete a custom staffing level.
+		/// </summary>
+		[MaxLength(50)]
+		public string StaffingLevelText { get; set; }
+
+		/// <summary>
+		/// Whether the department's Suppress (Mute) Staffing Levels setting muted this member for
+		/// this run. Suppressed rows are still written and still reported -- the point of the report
+		/// is to show who a real dispatch would and would not reach -- but nothing is sent to them.
+		/// </summary>
+		public bool Suppressed { get; set; }
 
 		public bool SendAttempted { get; set; }
 

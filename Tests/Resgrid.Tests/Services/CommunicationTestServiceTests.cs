@@ -32,6 +32,8 @@ namespace Resgrid.Tests.Services
 			protected Mock<IDepartmentGroupsService> _departmentGroupsServiceMock;
 			protected Mock<IPersonnelRolesService> _personnelRolesServiceMock;
 			protected Mock<IDepartmentSettingsService> _departmentSettingsServiceMock;
+			protected Mock<IUserStateService> _userStateServiceMock;
+			protected Mock<ICustomStateService> _customStateServiceMock;
 			protected Mock<ISmsService> _smsServiceMock;
 			protected Mock<IEmailService> _emailServiceMock;
 			protected Mock<IPushService> _pushServiceMock;
@@ -85,6 +87,47 @@ namespace Resgrid.Tests.Services
 			}
 
 			/// <summary>
+			/// Points the department at a staffing suppression setting and gives each named member a
+			/// current staffing level, the way the real services would for a department that has
+			/// configured "Supress (Mute) For These Staffing Levels".
+			/// </summary>
+			protected void SetupStaffing(int departmentId, bool enabled, int[] suppressedLevels, Dictionary<string, int> levelsByUser)
+			{
+				_departmentSettingsServiceMock
+					.Setup(x => x.GetDepartmentStaffingSuppressInfoAsync(departmentId, It.IsAny<bool>()))
+					.ReturnsAsync(new DepartmentSuppressStaffingInfo
+					{
+						EnableSupressStaffing = enabled,
+						StaffingLevelsToSupress = (suppressedLevels ?? new int[0]).ToList()
+					});
+
+				var states = (levelsByUser ?? new Dictionary<string, int>())
+					.Select(kvp => new UserState
+					{
+						UserId = kvp.Key,
+						DepartmentId = departmentId,
+						State = kvp.Value,
+						Timestamp = DateTime.UtcNow.AddMinutes(-5)
+					})
+					.ToList();
+
+				_userStateServiceMock
+					.Setup(x => x.GetLatestStatesForDepartmentAsync(departmentId, It.IsAny<bool>()))
+					.ReturnsAsync(states);
+
+				_customStateServiceMock
+					.Setup(x => x.GetCustomPersonnelStaffingsOrDefaultsAsync(departmentId))
+					.ReturnsAsync(new List<CustomStateDetail>
+					{
+						new CustomStateDetail { CustomStateDetailId = (int)UserStateTypes.Available, ButtonText = "Available" },
+						new CustomStateDetail { CustomStateDetailId = (int)UserStateTypes.Delayed, ButtonText = "Delayed" },
+						new CustomStateDetail { CustomStateDetailId = (int)UserStateTypes.Unavailable, ButtonText = "Off Duty" },
+						new CustomStateDetail { CustomStateDetailId = (int)UserStateTypes.Committed, ButtonText = "Committed" },
+						new CustomStateDetail { CustomStateDetailId = (int)UserStateTypes.OnShift, ButtonText = "On Shift" }
+					});
+			}
+
+			/// <summary>
 			/// Starts a run the way a caller does, then runs the worker-side build step, and returns the
 			/// built run. Delivery is deliberately left out so audience tests stay off the send path.
 			/// </summary>
@@ -110,6 +153,8 @@ namespace Resgrid.Tests.Services
 				_departmentGroupsServiceMock = new Mock<IDepartmentGroupsService>();
 				_personnelRolesServiceMock = new Mock<IPersonnelRolesService>();
 				_departmentSettingsServiceMock = new Mock<IDepartmentSettingsService>();
+				_userStateServiceMock = new Mock<IUserStateService>();
+				_customStateServiceMock = new Mock<ICustomStateService>();
 				_smsServiceMock = new Mock<ISmsService>();
 				_emailServiceMock = new Mock<IEmailService>();
 				_pushServiceMock = new Mock<IPushService>();
@@ -137,6 +182,8 @@ namespace Resgrid.Tests.Services
 					_departmentGroupsServiceMock.Object,
 					_personnelRolesServiceMock.Object,
 					_departmentSettingsServiceMock.Object,
+					_userStateServiceMock.Object,
+					_customStateServiceMock.Object,
 					_smsServiceMock.Object,
 					_emailServiceMock.Object,
 					_pushServiceMock.Object,
@@ -1366,6 +1413,243 @@ namespace Resgrid.Tests.Services
 				_communicationTestRunRepoMock.Verify(
 					x => x.SaveOrUpdateAsync(It.IsAny<CommunicationTestRun>(), It.IsAny<CancellationToken>(), true),
 					Times.AtLeastOnce);
+			}
+		}
+
+		/// <summary>
+		/// A communication test has to behave like a real dispatch: it must obey the member's own
+		/// channel settings and the department's Suppress (Mute) Staffing Levels setting. Otherwise it
+		/// reports a reachability figure no real call could hit -- and pages every off-duty member of
+		/// the department to produce it.
+		/// </summary>
+		[TestFixture]
+		public class when_building_a_run_against_user_and_department_settings : with_the_communication_test_service
+		{
+			private const int DepartmentId = 1;
+
+			private Guid SetupTest(bool sms = true, bool email = false, bool voice = false, bool push = false)
+			{
+				var testId = Guid.NewGuid();
+
+				_communicationTestRepoMock.Setup(x => x.GetByIdAsync(testId)).ReturnsAsync(new CommunicationTest
+				{
+					CommunicationTestId = testId,
+					DepartmentId = DepartmentId,
+					TestSms = sms,
+					TestEmail = email,
+					TestVoice = voice,
+					TestPush = push,
+					ResponseWindowMinutes = 60,
+					Active = true
+				});
+
+				return testId;
+			}
+
+			private void SetupMembers(params UserProfile[] profiles)
+			{
+				_departmentsServiceMock
+					.Setup(x => x.GetAllMembersForDepartmentAsync(DepartmentId))
+					.ReturnsAsync(profiles.Select(p => new DepartmentMember { UserId = p.UserId, DepartmentId = DepartmentId }).ToList());
+
+				_userProfileServiceMock
+					.Setup(x => x.GetAllProfilesForDepartmentAsync(DepartmentId, false))
+					.ReturnsAsync(profiles.ToDictionary(p => p.UserId, p => p));
+			}
+
+			private static UserProfile Reachable(string userId, bool sms = true, bool email = true, bool voice = true, bool push = true)
+			{
+				return new UserProfile
+				{
+					UserId = userId,
+					MembershipEmail = userId + "@test.com",
+					EmailVerified = true,
+					MobileNumber = "+15551234567",
+					MobileNumberVerified = true,
+					MobileCarrier = (int)MobileCarriers.Att,
+					SendSms = sms,
+					SendEmail = email,
+					VoiceForCall = voice,
+					VoiceCallMobile = true,
+					SendNotificationPush = push
+				};
+			}
+
+			private CommunicationTestResult ResultFor(string userId, CommunicationTestChannel channel)
+			{
+				return _savedResults.FirstOrDefault(r => r.UserId == userId && r.Channel == (int)channel);
+			}
+
+			[Test]
+			public async Task should_not_attempt_a_send_to_a_member_on_a_suppressed_staffing_level()
+			{
+				var testId = SetupTest(sms: true, email: true, voice: true, push: true);
+				SetupMembers(Reachable(TestData.Users.TestUser1Id), Reachable(TestData.Users.TestUser2Id));
+
+				SetupStaffing(DepartmentId, true, new[] { (int)UserStateTypes.Unavailable }, new Dictionary<string, int>
+				{
+					{ TestData.Users.TestUser1Id, (int)UserStateTypes.Unavailable },
+					{ TestData.Users.TestUser2Id, (int)UserStateTypes.Available }
+				});
+
+				SetupRunAndResultPersistence();
+
+				await StartAndBuildAsync(testId, DepartmentId, TestData.Users.TestUser1Id);
+
+				_savedResults.Where(r => r.UserId == TestData.Users.TestUser1Id)
+					.Should().OnlyContain(r => r.Suppressed && !r.SendAttempted);
+
+				// The member who is not on a muted level is untouched by any of this.
+				_savedResults.Where(r => r.UserId == TestData.Users.TestUser2Id)
+					.Should().OnlyContain(r => !r.Suppressed && r.SendAttempted);
+			}
+
+			[Test]
+			public async Task should_record_the_staffing_level_the_run_saw_so_the_report_can_explain_itself()
+			{
+				var testId = SetupTest(sms: true);
+				SetupMembers(Reachable(TestData.Users.TestUser1Id));
+
+				SetupStaffing(DepartmentId, true, new[] { (int)UserStateTypes.Unavailable }, new Dictionary<string, int>
+				{
+					{ TestData.Users.TestUser1Id, (int)UserStateTypes.Unavailable }
+				});
+
+				SetupRunAndResultPersistence();
+
+				await StartAndBuildAsync(testId, DepartmentId, TestData.Users.TestUser1Id);
+
+				var result = ResultFor(TestData.Users.TestUser1Id, CommunicationTestChannel.Sms);
+
+				result.Should().NotBeNull();
+				result.StaffingLevel.Should().Be((int)UserStateTypes.Unavailable);
+				// The department's own name for the level, not the built-in one, and not the number.
+				result.StaffingLevelText.Should().Be("Off Duty");
+				result.Suppressed.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task should_leave_everyone_reachable_when_staffing_suppression_is_switched_off()
+			{
+				var testId = SetupTest(sms: true);
+				SetupMembers(Reachable(TestData.Users.TestUser1Id));
+
+				// The level IS on the muted list, but the feature itself is off, so it means nothing.
+				SetupStaffing(DepartmentId, false, new[] { (int)UserStateTypes.Unavailable }, new Dictionary<string, int>
+				{
+					{ TestData.Users.TestUser1Id, (int)UserStateTypes.Unavailable }
+				});
+
+				SetupRunAndResultPersistence();
+
+				await StartAndBuildAsync(testId, DepartmentId, TestData.Users.TestUser1Id);
+
+				var result = ResultFor(TestData.Users.TestUser1Id, CommunicationTestChannel.Sms);
+
+				result.Suppressed.Should().BeFalse();
+				result.SendAttempted.Should().BeTrue();
+				// Still recorded: the report shows the level whether or not it changed the outcome.
+				result.StaffingLevelText.Should().Be("Off Duty");
+			}
+
+			[Test]
+			public async Task should_not_suppress_a_member_who_has_never_set_a_staffing_level()
+			{
+				var testId = SetupTest(sms: true);
+				SetupMembers(Reachable(TestData.Users.TestUser1Id));
+
+				SetupStaffing(DepartmentId, true, new[] { (int)UserStateTypes.Available }, new Dictionary<string, int>());
+
+				SetupRunAndResultPersistence();
+
+				await StartAndBuildAsync(testId, DepartmentId, TestData.Users.TestUser1Id);
+
+				var result = ResultFor(TestData.Users.TestUser1Id, CommunicationTestChannel.Sms);
+
+				result.Suppressed.Should().BeFalse();
+				result.SendAttempted.Should().BeTrue();
+				result.StaffingLevel.Should().BeNull();
+				result.StaffingLevelText.Should().BeNull();
+			}
+
+			[Test]
+			public async Task should_record_each_members_own_election_per_channel()
+			{
+				var testId = SetupTest(sms: true, email: true, voice: true, push: true);
+
+				// Everything on for user 1; user 2 has turned every channel off in their profile.
+				SetupMembers(
+					Reachable(TestData.Users.TestUser1Id),
+					Reachable(TestData.Users.TestUser2Id, sms: false, email: false, voice: false, push: false));
+
+				SetupStaffing(DepartmentId, false, new int[0], new Dictionary<string, int>());
+				SetupRunAndResultPersistence();
+
+				await StartAndBuildAsync(testId, DepartmentId, TestData.Users.TestUser1Id);
+
+				_savedResults.Where(r => r.UserId == TestData.Users.TestUser1Id)
+					.Should().OnlyContain(r => r.ChannelEnabled == true && r.SendAttempted);
+
+				// An election of "off" is not a send failure, so it is recorded as the election it is.
+				_savedResults.Where(r => r.UserId == TestData.Users.TestUser2Id)
+					.Should().OnlyContain(r => r.ChannelEnabled == false && !r.SendAttempted && !r.Suppressed);
+			}
+
+			[Test]
+			public async Task should_record_an_election_of_on_even_when_the_contact_method_is_unverified()
+			{
+				var testId = SetupTest(sms: true);
+
+				var profile = Reachable(TestData.Users.TestUser1Id);
+				profile.MobileNumberVerified = false;
+				SetupMembers(profile);
+
+				SetupStaffing(DepartmentId, false, new int[0], new Dictionary<string, int>());
+				SetupRunAndResultPersistence();
+
+				await StartAndBuildAsync(testId, DepartmentId, TestData.Users.TestUser1Id);
+
+				var result = ResultFor(TestData.Users.TestUser1Id, CommunicationTestChannel.Sms);
+
+				// The member wants SMS; the number is what is blocking. The report has to be able to
+				// tell those two apart, so the election is recorded independently of the outcome.
+				result.ChannelEnabled.Should().BeTrue();
+				result.SendAttempted.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task should_send_nothing_to_a_suppressed_member_when_the_run_is_delivered()
+			{
+				var testId = SetupTest(sms: true, email: true, voice: true, push: true);
+				SetupMembers(Reachable(TestData.Users.TestUser1Id));
+
+				SetupStaffing(DepartmentId, true, new[] { (int)UserStateTypes.Unavailable }, new Dictionary<string, int>
+				{
+					{ TestData.Users.TestUser1Id, (int)UserStateTypes.Unavailable }
+				});
+
+				_departmentsServiceMock.Setup(x => x.GetDepartmentByIdAsync(DepartmentId, It.IsAny<bool>()))
+					.ReturnsAsync(new Department { DepartmentId = DepartmentId, Name = "Test Dept" });
+				_departmentSettingsServiceMock.Setup(x => x.GetTextToCallNumberForDepartmentAsync(DepartmentId))
+					.ReturnsAsync("15550001111");
+
+				SetupRunAndResultPersistence();
+
+				var run = await StartAndBuildAsync(testId, DepartmentId, TestData.Users.TestUser1Id);
+				await _communicationTestService.DeliverRunAsync(run.CommunicationTestRunId);
+
+				_smsServiceMock.Verify(
+					x => x.SendCommunicationTestAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MobileCarriers>(), It.IsAny<int>()),
+					Times.Never);
+				_emailServiceMock.Verify(
+					x => x.SendCommunicationTestEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
+					Times.Never);
+				_outboundVoiceProviderMock.Verify(
+					x => x.SendCommunicationTestCallAsync(It.IsAny<string>(), It.IsAny<string>()),
+					Times.Never);
+				_pushServiceMock.Verify(
+					x => x.PushNotification(It.IsAny<StandardPushMessage>(), It.IsAny<string>(), It.IsAny<UserProfile>()),
+					Times.Never);
 			}
 		}
 	}

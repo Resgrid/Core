@@ -55,17 +55,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			"not_hipaa_compliance"
 		};
 
+		private const int StepUpMaxAttempts = 5;
+		private static readonly TimeSpan StepUpAttemptWindow = TimeSpan.FromMinutes(5);
+
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IDepartmentLockService _departmentLockService;
 		private readonly IAdpSizingService _sizingService;
 		private readonly IProtectedDataBrokerClient _brokerClient;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly UserManager<IdentityUser> _userManager;
+		private readonly IProtectedDataGrantService _grantService;
+		private readonly ICacheProvider _cacheProvider;
 
 		public DataProtectionController(IDepartmentDataProtectionService dataProtectionService,
 			IDepartmentLockService departmentLockService, IAdpSizingService sizingService,
 			IProtectedDataBrokerClient brokerClient, IDepartmentsService departmentsService,
-			UserManager<IdentityUser> userManager)
+			UserManager<IdentityUser> userManager, IProtectedDataGrantService grantService,
+			ICacheProvider cacheProvider)
 		{
 			_dataProtectionService = dataProtectionService;
 			_departmentLockService = departmentLockService;
@@ -73,6 +79,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_brokerClient = brokerClient;
 			_departmentsService = departmentsService;
 			_userManager = userManager;
+			_grantService = grantService;
+			_cacheProvider = cacheProvider;
 		}
 
 		public async Task<IActionResult> Index()
@@ -205,6 +213,68 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var outcome = await _dataProtectionService.RevokeOffboardingAsync(DepartmentId, UserId, cancellationToken);
 			return MapOutcome(outcome);
+		}
+
+		/// <summary>
+		/// Verifies the caller's authenticator (TOTP) code for the ADP step-up (plan section 3) and,
+		/// with signing key material configured, mints a Protected Data Grant. Mirrors the v4 endpoint:
+		/// the web client holds the token in JS MEMORY ONLY (never a cookie, localStorage, or the URL),
+		/// conceals values at expiry, and prompts again on the next reveal. Rate limited per user; the
+		/// code is never logged. Allowed during a department lock — step-up is a read-side control.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[AllowDuringDepartmentLock]
+		public async Task<IActionResult> VerifyStepUp([FromForm] string code)
+		{
+			if (string.IsNullOrWhiteSpace(code))
+				return Json(new { success = false, error = "invalid_totp" });
+
+			var attempts = await _cacheProvider.IncrementAsync($"AdpStepUpAttempts_{UserId}", StepUpAttemptWindow);
+			if (attempts > StepUpMaxAttempts)
+				return Json(new { success = false, error = "too_many_attempts" });
+
+			var user = await _userManager.FindByIdAsync(UserId);
+			if (user == null)
+				return Json(new { success = false, error = "protected_access_denied" });
+
+			if (!await _userManager.GetTwoFactorEnabledAsync(user))
+				return Json(new { success = false, error = "mfa_not_enrolled" });
+
+			var valid = await _userManager.VerifyTwoFactorTokenAsync(user,
+				_userManager.Options.Tokens.AuthenticatorTokenProvider, code.Trim());
+			if (!valid)
+				return Json(new { success = false, error = "invalid_totp" });
+
+			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
+			var windowMinutes = policy?.StepUpWindowMinutes > 0
+				? policy.StepUpWindowMinutes
+				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
+			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
+
+			if (!_grantService.CanIssueGrants)
+				return Json(new { success = false, error = "grants_not_configured" });
+
+			var issued = _grantService.IssueGrant(new ProtectedDataGrantIssueRequest
+			{
+				UserId = UserId,
+				DepartmentId = DepartmentId,
+				SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
+				ClientApp = (int)UserSessionClientApplication.Web,
+				PolicyEpoch = policy?.PolicyEpoch ?? 0,
+				WindowMinutes = windowMinutes,
+				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
+				MfaAtUtc = DateTime.UtcNow
+			});
+
+			return Json(new
+			{
+				success = true,
+				grantToken = issued.Token,
+				grantId = issued.GrantId,
+				expiresOnUtc = issued.ExpiresOnUtc.ToString("O"),
+				windowMinutes
+			});
 		}
 
 		private IActionResult MapOutcome(DepartmentDataProtectionEnrollmentResult outcome)

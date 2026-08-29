@@ -75,6 +75,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -87,7 +88,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICheckInTimerService checkInTimerService, IWeatherAlertService weatherAlertService,
 			ICallDispatchStatusService callDispatchStatusService, IModerationService moderationService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer,
-			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService)
+			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
+			IProtectedReadService protectedReadService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -121,6 +123,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_commonLocalizer = commonLocalizer;
 			_dispatchRecommendationService = dispatchRecommendationService;
 			_featureToggleService = featureToggleService;
+			_protectedReadService = protectedReadService;
 		}
 		#endregion Private Members and Constructors
 
@@ -748,6 +751,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
+
+			// ADP: the edit form renders protected values as the REDACTED sentinel; a field posted
+			// back unchanged is restored to its stored envelope by the write safety net.
+			model.Call = (await _protectedReadService.ResolveForReadAsync(DepartmentId, model.Call, null, UserId)).Call;
 			model.CallPriority = model.Call.Priority;
 			model = await FillUpdateCallView(model);
 
@@ -756,7 +763,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ScheduleDispatchDate = model.Call.DispatchOn.Value.TimeConverter(model.Department);
 			}
 
-			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
+			if (!String.IsNullOrEmpty(model.Call.GeoLocationData) &&
+				model.Call.GeoLocationData != ProtectedDataEnvelope.RedactionValue)
 			{
 				string[] loc = model.Call.GeoLocationData.Split(char.Parse(","));
 				model.Latitude = loc[0];
@@ -1309,6 +1317,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true, true);
+
+			// ADP (plan 7.2): server-rendered pages always render protected values as REDACTED — a
+			// grant lives only in the browser's memory, so the reveal is client-side (step-up modal
+			// then RevealCall). Resolution with no grant redacts and strips child ciphertext.
+			var protectedRead = await _protectedReadService.ResolveForReadAsync(DepartmentId, model.Call, null, UserId);
+			model.Call = protectedRead.Call;
+			model.IsProtectedCall = protectedRead.IsProtected;
+			model.ProtectedReason = protectedRead.ProtectedReason;
+			model.RedactedFields = protectedRead.RedactedFields?.ToList() ?? new List<string>();
+
 			var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call.DestinationPoiId);
 			var destinationInfo = BuildDestinationInfo(destinationPoi);
 			model.DestinationName = destinationInfo.Name;
@@ -1322,13 +1340,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				? model.Call.VideoFeeds.Where(f => !f.IsDeleted).ToList()
 				: new List<CallVideoFeed>();
 
-			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
+			// Redacted coordinates/address never reach the map or the geocoder (a REDACTED
+			// placeholder is not splittable and must not leave the server as a lookup).
+			if (!String.IsNullOrEmpty(model.Call.GeoLocationData) &&
+				model.Call.GeoLocationData != ProtectedDataEnvelope.RedactionValue)
 			{
 				string[] loc = model.Call.GeoLocationData.Split(char.Parse(","));
 				model.Latitude = loc[0];
 				model.Longitude = loc[1];
 			}
-			else if (!String.IsNullOrEmpty(model.Call.Address))
+			else if (!String.IsNullOrEmpty(model.Call.Address) &&
+				model.Call.Address != ProtectedDataEnvelope.RedactionValue)
 			{
 				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(model.Call.Address);
 
@@ -1340,6 +1362,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2): returns the decrypted cataloged fields of one call for
+		/// a caller holding a currently-valid Protected Data Grant (issued by
+		/// DataProtection/VerifyStepUp, presented via the X-Resgrid-Protected-Grant header, held in
+		/// JS memory only). Redaction outcomes return the machine-readable reason instead of values.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> RevealCall([FromForm] int callId)
+		{
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != DepartmentId)
+				return NotFound();
+
+			string grantToken = Request.Headers["X-Resgrid-Protected-Grant"];
+			var resolved = await _protectedReadService.ResolveForReadAsync(DepartmentId, call, grantToken, UserId);
+
+			if (resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			var fields = Resgrid.Services.ProtectedReadService.CallFieldAccessors
+				.ToDictionary(a => a.Key, a => a.Value.Get(resolved.Call));
+
+			return Json(new { success = true, fields });
 		}
 
 		[HttpGet]
@@ -1583,14 +1635,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Call = await _callsService.GetCallByIdAsync(callId);
 			model.CallPriority = (CallPriority)model.Call.Priority;
 			model = await FillViewCallView(model);
+			model.Call = (await _protectedReadService.ResolveForReadAsync(DepartmentId, model.Call, null, UserId)).Call;
 
-			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
+			if (!String.IsNullOrEmpty(model.Call.GeoLocationData) &&
+				model.Call.GeoLocationData != ProtectedDataEnvelope.RedactionValue)
 			{
 				string[] loc = model.Call.GeoLocationData.Split(char.Parse(","));
 				model.Latitude = loc[0];
 				model.Longitude = loc[1];
 			}
-			else if (!String.IsNullOrEmpty(model.Call.Address))
+			else if (!String.IsNullOrEmpty(model.Call.Address) &&
+				model.Call.Address != ProtectedDataEnvelope.RedactionValue)
 			{
 				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(model.Call.Address);
 
@@ -1683,7 +1738,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			FlagCallNoteView model = new FlagCallNoteView();
 			model.CallId = call.CallId;
 			model.CallNoteId = note.CallNoteId;
-			model.CallNote = note.Note;
+			model.CallNote = ProtectedDataEnvelope.SafeDisplay(note.Note);
 			var moderationRequest = await _moderationService.GetReporterRequestAsync(DepartmentId, UserId,
 				ModerationItemType.CallNote, note.CallNoteId.ToString(CultureInfo.InvariantCulture));
 			var ownReport = moderationRequest?.Reports?.FirstOrDefault();
@@ -1768,7 +1823,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new FlagCallImageView();
 			model.CallId = call.CallId;
 			model.CallAttachmentId = attachment.CallAttachmentId;
-			model.FileName = attachment.FileName;
+			model.FileName = ProtectedDataEnvelope.SafeDisplay(attachment.FileName);
 			var moderationRequest = await _moderationService.GetReporterRequestAsync(DepartmentId, UserId,
 				ModerationItemType.CallImage, attachment.CallAttachmentId.ToString(CultureInfo.InvariantCulture));
 			var ownReport = moderationRequest?.Reports?.FirstOrDefault();
@@ -1853,7 +1908,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new FlagCallFileView();
 			model.CallId = call.CallId;
 			model.CallAttachmentId = attachment.CallAttachmentId;
-			model.FileName = attachment.FileName;
+			model.FileName = ProtectedDataEnvelope.SafeDisplay(attachment.FileName);
 			model.FileType = attachment.CallAttachmentType;
 			model.IsFlagged = attachment.IsFlagged;
 			model.FlagNote = attachment.FlaggedReason;
@@ -1988,7 +2043,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					note.IsFlagged = flaggedCallNoteIds.Contains(callNote.CallNoteId.ToString(CultureInfo.InvariantCulture));
 					note.Name = name.Name;
 					note.Timestamp = callNote.Timestamp.TimeConverter(call.Department).FormatForDepartment(call.Department);
-					note.Note = callNote.Note;
+					note.Note = ProtectedDataEnvelope.SafeDisplay(callNote.Note);
 					note.UserId = callNote.UserId;
 
 					if (callNote.Latitude.HasValue && callNote.Longitude.HasValue)
@@ -2158,6 +2213,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
+			model.Call = (await _protectedReadService.ResolveForReadAsync(DepartmentId, model.Call, null, UserId)).Call;
 			var callDestination = await GetValidatedDestinationPoiAsync(model.Call.DestinationPoiId);
 			var callDestinationInfo = BuildDestinationInfo(callDestination);
 			model.DestinationName = callDestinationInfo.Name;
@@ -2209,6 +2265,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var model = new CallExportView();
 				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+				model.Call = (await _protectedReadService.ResolveForReadAsync(call.DepartmentId, model.Call, null, UserId)).Call;
 				var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call.DestinationPoiId);
 				var destinationInfo = BuildDestinationInfo(destinationPoi);
 				model.DestinationName = destinationInfo.Name;
@@ -2245,6 +2302,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var model = new CallExportView();
 				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+				model.Call = (await _protectedReadService.ResolveForReadAsync(call.DepartmentId, model.Call, null, UserId)).Call;
 				var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call.DestinationPoiId);
 				var destinationInfo = BuildDestinationInfo(destinationPoi);
 				model.DestinationName = destinationInfo.Name;
@@ -2289,9 +2347,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 					string endLat = "";
 					string endLon = "";
 
-					var callCocationParts = call.GeoLocationData.Split(char.Parse(","));
-					endLat = callCocationParts[0];
-					endLon = callCocationParts[1];
+					if (!String.IsNullOrWhiteSpace(call.GeoLocationData) &&
+						!ProtectedDataEnvelope.HasEnvelopePrefix(call.GeoLocationData))
+					{
+						var callCocationParts = call.GeoLocationData.Split(char.Parse(","));
+						if (callCocationParts.Length == 2)
+						{
+							endLat = callCocationParts[0];
+							endLon = callCocationParts[1];
+						}
+					}
 
 					model.StartLat = startLat;
 					model.StartLon = startLon;
@@ -2360,7 +2425,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (call.Attachments != null && call.Attachments.Count > 0)
 			{
-				return File(call.Attachments.First().Data, "audio/mpeg");
+				var audio = call.Attachments.First().Data;
+
+				// An enveloped payload (protected department) is ciphertext, not audio.
+				if (audio != null && !Resgrid.Services.ProtectedReadService.IsBinaryEnveloped(audio))
+					return File(audio, "audio/mpeg");
 			}
 
 			return RedirectToAction("Dashboard");
@@ -2390,7 +2459,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				jsonCall.CallId = call.CallId;
 				jsonCall.DispatchTime = call.LoggedOn;
 				jsonCall.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(DepartmentId, call.Priority, _dispatchLocalizer);
-				jsonCall.Name = call.Name;
+				jsonCall.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 
 				calls.Add(jsonCall);
 			}
@@ -2412,7 +2481,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				jsonCall.CallId = call.CallId;
 				jsonCall.DispatchTime = call.LoggedOn;
 				jsonCall.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(DepartmentId, call.Priority, _dispatchLocalizer);
-				jsonCall.Name = call.Name;
+				jsonCall.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				jsonCall.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 
 				calls.Add(jsonCall);
@@ -2447,10 +2516,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			call.DispatchTime = savedCall.LoggedOn.TimeConverter(savedCall.Department);
 			call.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(savedCall.DepartmentId, savedCall.Priority, _dispatchLocalizer);
 			call.PriorityEnum = (CallPriority)savedCall.Priority;
-			call.Name = savedCall.Name;
+			call.Name = ProtectedDataEnvelope.SafeDisplay(savedCall.Name);
 			call.State = DispatchDisplayHelper.GetLocalizedCallState(savedCall.State, _dispatchLocalizer, _commonLocalizer);
-			call.Nature = savedCall.NatureOfCall;
-			call.Address = savedCall.Address;
+			call.Nature = ProtectedDataEnvelope.SafeDisplay(savedCall.NatureOfCall);
+			call.Address = ProtectedDataEnvelope.SafeDisplay(savedCall.Address);
 
 			return Json(call);
 		}
@@ -2556,7 +2625,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CenterLat = coordiantes.Latitude.Value;
 			model.CenterLon = coordiantes.Longitude.Value;
 
-			if (!String.IsNullOrWhiteSpace(call.GeoLocationData))
+			if (!String.IsNullOrWhiteSpace(call.GeoLocationData) &&
+				!ProtectedDataEnvelope.HasEnvelopePrefix(call.GeoLocationData))
 			{
 				string[] coordinates = call.GeoLocationData.Split(char.Parse(","));
 
@@ -2574,7 +2644,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var markerInfo = new MapMakerInfo();
 				markerInfo.Latitude = model.CenterLat;
 				markerInfo.Longitude = model.CenterLon;
-				markerInfo.Title = call.Name;
+				markerInfo.Title = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				model.MapMakerInfos.Add(markerInfo);
 			}
 
@@ -2636,7 +2706,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					string key = _dispatchLocalizer["NoType"].Value;
 					if (!String.IsNullOrWhiteSpace(grouppedCall.Key))
-						key = grouppedCall.Key;
+						key = ProtectedDataEnvelope.SafeDisplay(grouppedCall.Key);
 
 					callTypes.Add(new CallTypesJson() { Count = grouppedCall.ToList().Count, Type = key });
 				}
@@ -2689,7 +2759,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var callJson = new CallListJson();
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
-				callJson.Name = call.Name;
+				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
 				callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
@@ -2730,7 +2800,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var callJson = new CallListJson();
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
-				callJson.Name = call.Name;
+				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
 				callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
@@ -2764,7 +2834,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var callJson = new CallListJson();
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
-				callJson.Name = call.Name;
+				callJson.Name = ProtectedDataEnvelope.SafeDisplay(call.Name);
 				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
 				callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
@@ -2840,6 +2910,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (attachment.Call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			// ADP: an enveloped payload/name is ciphertext — the MVC surface has no per-download
+			// grant flow yet, so a protected file is simply not served here.
+			if ((attachment.Data != null && Resgrid.Services.ProtectedReadService.IsBinaryEnveloped(attachment.Data)) ||
+				ProtectedDataEnvelope.HasEnvelopePrefix(attachment.FileName))
+				return NotFound();
+
 			return new FileContentResult(attachment.Data, FileHelper.GetContentTypeByExtension(Path.GetExtension(attachment.FileName)))
 			{
 				FileDownloadName = attachment.FileName
@@ -2884,6 +2960,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!isAuthorized)
 				return Unauthorized();
+
+			// ADP: never serve an enveloped (ciphertext) image payload.
+			if (Resgrid.Services.ProtectedReadService.IsBinaryEnveloped(callAttachment.Data))
+				return NotFound();
 
 			return File(callAttachment.Data, "image/jpeg");
 		}

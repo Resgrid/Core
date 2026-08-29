@@ -41,8 +41,14 @@ namespace Resgrid.Model.Providers
 		/// <summary>Stable per-row key used in the envelope AAD (typically the primary key value).</summary>
 		public string RowKey { get; set; }
 
-		/// <summary>Envelope (decrypt) or plaintext (encrypt). Text fields only in v1.</summary>
+		/// <summary>
+		/// Envelope (decrypt) or plaintext (encrypt). Text fields carry the value directly; binary
+		/// fields (IsBinary) carry base64 of the rgdpb envelope / raw bytes in both directions.
+		/// </summary>
 		public string Value { get; set; }
+
+		/// <summary>True for rgdpb binary fields — Value is base64 in both directions.</summary>
+		public bool IsBinary { get; set; }
 
 		/// <summary>Catalog version the envelope's AAD was bound with.</summary>
 		public int CatalogVersion { get; set; }

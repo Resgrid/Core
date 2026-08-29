@@ -142,6 +142,89 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Workload_lane_encrypts_without_a_grant_but_decrypt_still_requires_one()
+		{
+			// Encrypt-only workload lane (plan 3.4): no grant, past the workload-key middleware —
+			// allowed, because encryption discloses nothing. Decrypt without a grant stays refused.
+			var encrypted = await _service.EncryptAsync(Request(null, "req-w1", Item("dispatch note")), CancellationToken.None);
+			encrypted.Success.Should().BeTrue();
+			encrypted.Items[0].ErrorCode.Should().BeNull();
+			ProtectedDataEnvelope.IsEnveloped(encrypted.Items[0].Value).Should().BeTrue();
+
+			var decrypted = await _service.DecryptAsync(Request(null, "req-w2", Item(encrypted.Items[0].Value)), CancellationToken.None);
+			decrypted.Success.Should().BeFalse();
+			decrypted.ErrorCode.Should().Be("grant_invalid");
+			decrypted.Items.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Workload_lane_still_validates_a_presented_grant()
+		{
+			// A stale grant cannot be laundered through the encrypt path just because the lane
+			// would have allowed no grant at all.
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId))
+				.ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = DeptId, PolicyEpoch = Epoch + 1 });
+
+			var result = await _service.EncryptAsync(Request(IssueGrantToken(), "req-w3", Item("value")), CancellationToken.None);
+
+			result.Success.Should().BeFalse();
+			result.ErrorCode.Should().Be("grant_revoked");
+		}
+
+		[Test]
+		public async Task Binary_encrypt_then_decrypt_roundtrips_over_base64()
+		{
+			var token = IssueGrantToken();
+			var plaintext = new byte[] { 1, 2, 3, 4, 5 };
+
+			var encrypted = await _service.EncryptAsync(Request(token, "req-b1", new ProtectedFieldOperationItem
+			{
+				FieldId = "callattachments.data",
+				RowKey = "9",
+				Value = Convert.ToBase64String(plaintext),
+				IsBinary = true,
+				CatalogVersion = 1
+			}), CancellationToken.None);
+
+			encrypted.Success.Should().BeTrue();
+			encrypted.Items[0].ErrorCode.Should().BeNull();
+			var envelopeBytes = Convert.FromBase64String(encrypted.Items[0].Value);
+			System.Text.Encoding.ASCII.GetString(envelopeBytes, 0, 6).Should().Be("rgdpb:");
+
+			var decrypted = await _service.DecryptAsync(Request(token, "req-b2", new ProtectedFieldOperationItem
+			{
+				FieldId = "callattachments.data",
+				RowKey = "9",
+				Value = encrypted.Items[0].Value,
+				IsBinary = true,
+				CatalogVersion = 1
+			}), CancellationToken.None);
+
+			decrypted.Success.Should().BeTrue();
+			decrypted.Items[0].ErrorCode.Should().BeNull();
+			Convert.FromBase64String(decrypted.Items[0].Value).Should().BeEquivalentTo(plaintext);
+		}
+
+		[Test]
+		public async Task Binary_decrypt_of_a_non_enveloped_blob_reports_not_enveloped()
+		{
+			var token = IssueGrantToken();
+
+			var result = await _service.DecryptAsync(Request(token, "req-b3", new ProtectedFieldOperationItem
+			{
+				FieldId = "callattachments.data",
+				RowKey = "9",
+				Value = Convert.ToBase64String(new byte[] { 7, 7, 7 }),
+				IsBinary = true,
+				CatalogVersion = 1
+			}), CancellationToken.None);
+
+			result.Success.Should().BeTrue();
+			result.Items[0].ErrorCode.Should().Be("not_enveloped");
+			result.Items[0].Value.Should().BeNull();
+		}
+
+		[Test]
 		public async Task Moved_ciphertext_fails_decrypt_per_item_without_failing_the_request()
 		{
 			var token = IssueGrantToken();

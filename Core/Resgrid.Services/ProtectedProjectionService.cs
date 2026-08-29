@@ -118,7 +118,14 @@ namespace Resgrid.Services
 			if (!enforced)
 				return call;
 
-			if (await ChannelAllowsProtectedContentAsync(departmentId, channel))
+			// AllowProtectedContent lets the original call through — but only while its fields are
+			// actually plaintext. Post-migration the entity carries rgdp envelopes and notification
+			// hosts cannot decrypt (no broker/grant), so an enveloped call degrades to the sanitized
+			// clone: a carrier must never receive ciphertext as message content.
+			if (await ChannelAllowsProtectedContentAsync(departmentId, channel) &&
+				!ProtectedDataEnvelope.HasEnvelopePrefix(call.Name) &&
+				!ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall) &&
+				!ProtectedDataEnvelope.HasEnvelopePrefix(call.Address))
 				return call;
 
 			// Sanitized clone: only the allowlisted system-generated call number, priority/color,

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -75,6 +75,21 @@
   </data>
   <data name="DeleteTestWarning" xml:space="preserve">
     <value>Är du säker på att du vill ta bort detta test?</value>
+  </data>
+  <data name="NotSentSuppressed" xml:space="preserve">
+    <value>Ej skickat (tystad)</value>
+  </data>
+  <data name="StaffingLevel" xml:space="preserve">
+    <value>Bemanningsnivå</value>
+  </data>
+  <data name="Suppressed" xml:space="preserve">
+    <value>Tystad</value>
+  </data>
+  <data name="SuppressedHelp" xml:space="preserve">
+    <value>Den här medlemmens bemanningsnivå är tystad i era avdelningsinställningar, därför skickades ingenting till dem.</value>
+  </data>
+  <data name="SuppressedNotice" xml:space="preserve">
+    <value>{0} medlem(mar) kontaktades inte: deras bemanningsnivå är tystad i era avdelningsinställningar, så ett riktigt larm hade inte heller nått dem.</value>
   </data>
   <data name="TestDefinitions" xml:space="preserve">
     <value>Testdefinitioner</value>

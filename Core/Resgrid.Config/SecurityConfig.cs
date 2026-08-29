@@ -46,5 +46,19 @@ namespace Resgrid.Config
 		/// Increase this value over time as hardware capabilities improve.
 		/// </summary>
 		public static int Pbkdf2Iterations = 600000;
+
+		/// <summary>
+		/// Lifetime, in minutes, of signed anonymous file links (CallFiles/GetFile). Links are
+		/// regenerated on every authenticated GetFilesForCall response, so a short lifetime only
+		/// bounds how long a leaked/forwarded URL keeps working. Default 24 hours.
+		/// </summary>
+		public static int SignedFileLinkTtlMinutes = 1440;
+
+		/// <summary>
+		/// Accept legacy signed file links that carry no expiry (issued before expiring links
+		/// shipped). Leave true through a deployment transition, then flip false so every
+		/// anonymous file link has a bounded lifetime.
+		/// </summary>
+		public static bool AllowLegacySignedFileLinks = true;
 	}
 }

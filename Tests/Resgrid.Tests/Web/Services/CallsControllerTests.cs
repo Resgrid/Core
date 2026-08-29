@@ -32,6 +32,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IAuthorizationService> _authorizationService;
 		private Mock<IProtocolsService> _protocolsService;
 		private Mock<IDepartmentDataProtectionService> _dataProtectionService;
+		private Mock<IProtectedReadService> _protectedCallReadService;
 		private CallsController _controller;
 		private Activity _activity;
 
@@ -42,6 +43,21 @@ namespace Resgrid.Tests.Web.Services
 			_authorizationService = new Mock<IAuthorizationService>();
 			_protocolsService = new Mock<IProtocolsService>();
 			_dataProtectionService = new Mock<IDepartmentDataProtectionService>();
+
+			// Pass-through protected reads: these tests exercise unprotected departments, where the
+			// resolver returns the calls untouched.
+			_protectedCallReadService = new Mock<IProtectedReadService>();
+			_protectedCallReadService
+				.Setup(x => x.ResolveForReadAsync(It.IsAny<int>(), It.IsAny<IReadOnlyList<Call>>(), It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Returns<int, IReadOnlyList<Call>, string, string, CancellationToken>((d, calls, g, u, ct) =>
+					Task.FromResult<IReadOnlyList<ProtectedReadResult>>(
+						(calls ?? new List<Call>()).Select(c => new ProtectedReadResult { Call = c }).ToList()));
+			_protectedCallReadService
+				.Setup(x => x.ResolveForReadAsync(It.IsAny<int>(), It.IsAny<Call>(), It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Returns<int, Call, string, string, CancellationToken>((d, call, g, u, ct) =>
+					Task.FromResult(new ProtectedReadResult { Call = call }));
 
 			var httpContext = new DefaultHttpContext
 			{
@@ -78,7 +94,9 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<ICallDispatchStatusService>(),
 				Mock.Of<IDispatchRecommendationService>(),
 				Mock.Of<IFeatureToggleService>(),
-				_dataProtectionService.Object)
+				_dataProtectionService.Object,
+				_protectedCallReadService.Object,
+				Mock.Of<IProtectedWriteService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

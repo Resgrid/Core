@@ -44,6 +44,10 @@ namespace Resgrid.Services
 		private readonly IIndoorMapService _indoorMapService;
 		private readonly ICallVideoFeedRepository _callVideoFeedRepository;
 
+		// Lazy: breaks any construction-time dependency cycle and defers the protected-write graph
+		// (broker client) until a save actually needs it.
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
+
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
 			ICacheProvider cacheProvider, ICallNotesRepository callNotesRepository,
@@ -52,8 +56,10 @@ namespace Resgrid.Services
 			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider,
 			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService,
 			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository,
-			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository)
+			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository,
+			Lazy<IProtectedWriteService> protectedWriteService)
 		{
+			_protectedWriteService = protectedWriteService;
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
 			_callDispatchesRepository = callDispatchesRepository;
@@ -150,7 +156,66 @@ namespace Resgrid.Services
 				}
 			}
 
+			// A round-tripped REDACTED placeholder on an edit (a client that never saw the plaintext
+			// posting the form back) means "unchanged" — fetch the stored row BEFORE it is
+			// overwritten so the safety net below can restore the stored envelopes.
+			Call existingCallForRestore = null;
+			if (call.CallId > 0 &&
+				Resgrid.Services.ProtectedReadService.CallFieldAccessors.Any(a => a.Value.Get(call) == ProtectedDataEnvelope.RedactionValue))
+				existingCallForRestore = await _callsRepository.GetByIdAsync(call.CallId);
+
 			var savedCall = await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
+
+			// ADP write safety net (plan 4.2/19.2): whatever path reached this service — API edge,
+			// chatbot, workers, importers, weather attach — a protected department's cataloged
+			// plaintext is workload-encrypted before it is left at rest. Attended step-up POLICY is
+			// enforced at the API edge; this layer only guarantees no plaintext persists, and it
+			// fails closed by throwing. Already-enveloped fields are skipped, so edge-encrypted
+			// saves are a no-op here.
+			var protectedWrite = await _protectedWriteService.Value.PrepareCallWriteAsync(savedCall.DepartmentId,
+				savedCall, existingCallForRestore, null, null, workloadCaller: true, cancellationToken);
+			if (existingCallForRestore != null && !protectedWrite.Changed && protectedWrite.Success)
+			{
+				// Sentinel restore alone doesn't flip Changed (no broker slots) — persist the
+				// restored envelopes over the transiently-saved placeholder row.
+				savedCall = await _callsRepository.SaveOrUpdateAsync(savedCall, cancellationToken);
+			}
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); call {savedCall.CallId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed)
+				savedCall = await _callsRepository.SaveOrUpdateAsync(savedCall, cancellationToken);
+
+			if (protectedWrite.IsProtected)
+			{
+				// The repository cascade (HandleChildObjects) also persisted any attached
+				// Attachments/CallNotes collections — email import builds calls this way — so those
+				// rows exist with real identity ids (valid AAD rowKeys) but still hold plaintext.
+				if (savedCall.Attachments != null && savedCall.Attachments.Any())
+				{
+					foreach (var attachment in savedCall.Attachments)
+					{
+						var attachmentWrite = await _protectedWriteService.Value.PrepareCallAttachmentWriteAsync(savedCall.DepartmentId,
+							attachment, null, null, workloadCaller: true, cancellationToken);
+						if (!attachmentWrite.Success)
+							throw new InvalidOperationException($"Protected write blocked ({attachmentWrite.Reason}); call attachment {attachment.CallAttachmentId} has transient plaintext pending re-encryption.");
+						if (attachmentWrite.Changed)
+							await _callAttachmentRepository.SaveOrUpdateAsync(attachment, cancellationToken);
+					}
+				}
+
+				if (savedCall.CallNotes != null && savedCall.CallNotes.Any())
+				{
+					foreach (var note in savedCall.CallNotes)
+					{
+						var noteWrite = await _protectedWriteService.Value.PrepareCallNoteWriteAsync(savedCall.DepartmentId,
+							note, null, null, workloadCaller: true, cancellationToken);
+						if (!noteWrite.Success)
+							throw new InvalidOperationException($"Protected write blocked ({noteWrite.Reason}); call note {note.CallNoteId} has transient plaintext pending re-encryption.");
+						if (noteWrite.Changed)
+							await _callNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
+					}
+				}
+			}
 
 			if (call.References != null && call.References.Any())
 			{
@@ -387,7 +452,21 @@ namespace Resgrid.Services
 
 		public async Task<CallNote> SaveCallNoteAsync(CallNote note, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _callNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
+			var saved = await _callNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
+
+			// ADP write safety net — see SaveCallAsync. The department comes through the parent call.
+			var call = await GetCallByIdAsync(saved.CallId);
+			if (call != null)
+			{
+				var protectedWrite = await _protectedWriteService.Value.PrepareCallNoteWriteAsync(call.DepartmentId,
+					saved, null, null, workloadCaller: true, cancellationToken);
+				if (!protectedWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); call note {saved.CallNoteId} has transient plaintext pending re-encryption.");
+				if (protectedWrite.Changed)
+					saved = await _callNotesRepository.SaveOrUpdateAsync(saved, cancellationToken);
+			}
+
+			return saved;
 		}
 
 		public async Task<List<CallNote>> GetFlaggedCallNotesByDepartmentIdAsync(int departmentId)
@@ -432,7 +511,21 @@ namespace Resgrid.Services
 
 		public async Task<CallAttachment> SaveCallAttachmentAsync(CallAttachment attachment, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _callAttachmentRepository.SaveOrUpdateAsync(attachment, cancellationToken);
+			var saved = await _callAttachmentRepository.SaveOrUpdateAsync(attachment, cancellationToken);
+
+			// ADP write safety net — see SaveCallAsync.
+			var call = await GetCallByIdAsync(saved.CallId);
+			if (call != null)
+			{
+				var protectedWrite = await _protectedWriteService.Value.PrepareCallAttachmentWriteAsync(call.DepartmentId,
+					saved, null, null, workloadCaller: true, cancellationToken);
+				if (!protectedWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); call attachment {saved.CallAttachmentId} has transient plaintext pending re-encryption.");
+				if (protectedWrite.Changed)
+					saved = await _callAttachmentRepository.SaveOrUpdateAsync(saved, cancellationToken);
+			}
+
+			return saved;
 		}
 
 		public async Task<bool> MarkCallDispatchesAsSentAsync(int callId, List<Guid> usersToMark)

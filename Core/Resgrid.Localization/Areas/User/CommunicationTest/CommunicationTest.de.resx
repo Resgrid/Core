@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -75,6 +75,21 @@
   </data>
   <data name="DeleteTestWarning" xml:space="preserve">
     <value>Möchten Sie diesen Test wirklich löschen?</value>
+  </data>
+  <data name="NotSentSuppressed" xml:space="preserve">
+    <value>Nicht gesendet (unterdrückt)</value>
+  </data>
+  <data name="StaffingLevel" xml:space="preserve">
+    <value>Personalstufe</value>
+  </data>
+  <data name="Suppressed" xml:space="preserve">
+    <value>Unterdrückt</value>
+  </data>
+  <data name="SuppressedHelp" xml:space="preserve">
+    <value>Die Personalstufe dieses Mitglieds ist in Ihren Abteilungseinstellungen stummgeschaltet, daher wurde nichts an ihn gesendet.</value>
+  </data>
+  <data name="SuppressedNotice" xml:space="preserve">
+    <value>{0} Mitglied(er) wurden nicht kontaktiert: Ihre Personalstufe ist in Ihren Abteilungseinstellungen stummgeschaltet, eine echte Alarmierung hätte sie ebenfalls nicht erreicht.</value>
   </data>
   <data name="TestDefinitions" xml:space="preserve">
     <value>Testdefinitionen</value>

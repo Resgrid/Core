@@ -37,6 +37,7 @@ namespace Resgrid.Tests.Services
 		private Mock<ICallContactsRepository> _callContactsRepo;
 		private Mock<IIndoorMapService> _indoorMapService;
 		private Mock<ICallVideoFeedRepository> _callVideoFeedRepo;
+		private Mock<IProtectedWriteService> _protectedWriteService;
 		private CallsService _service;
 
 		[SetUp]
@@ -62,6 +63,15 @@ namespace Resgrid.Tests.Services
 			_callContactsRepo = new Mock<ICallContactsRepository>();
 			_indoorMapService = new Mock<IIndoorMapService>();
 			_callVideoFeedRepo = new Mock<ICallVideoFeedRepository>();
+			// Loose-mock Prepare* would return a null Task (NRE at the await in the write safety
+			// net); every call answers Allowed() — video-feed tests never touch a protected dept.
+			_protectedWriteService = new Mock<IProtectedWriteService>();
+			_protectedWriteService.Setup(x => x.PrepareCallWriteAsync(It.IsAny<int>(), It.IsAny<Call>(), It.IsAny<Call>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			_protectedWriteService.Setup(x => x.PrepareCallNoteWriteAsync(It.IsAny<int>(), It.IsAny<CallNote>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			_protectedWriteService.Setup(x => x.PrepareCallAttachmentWriteAsync(It.IsAny<int>(), It.IsAny<CallAttachment>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
 
 			_service = new CallsService(
 				_callsRepo.Object, _communicationService.Object, _callDispatchesRepo.Object,
@@ -70,7 +80,8 @@ namespace Resgrid.Tests.Services
 				_callDispatchUnitRepo.Object, _callDispatchRoleRepo.Object, _callPriorityRepo.Object,
 				_shortenUrlProvider.Object, _callProtocolsRepo.Object, _geoLocationProvider.Object,
 				_departmentsService.Object, _callReferencesRepo.Object, _callContactsRepo.Object,
-				_indoorMapService.Object, _callVideoFeedRepo.Object);
+				_indoorMapService.Object, _callVideoFeedRepo.Object,
+				new Lazy<IProtectedWriteService>(() => _protectedWriteService.Object));
 		}
 
 		[Test]

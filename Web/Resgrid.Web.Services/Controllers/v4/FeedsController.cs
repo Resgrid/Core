@@ -57,7 +57,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			feed.Authors.Add(new SyndicationPerson("team@resgrid.com"));
 			feed.Categories.Add(new SyndicationCategory("Resgrid Calls"));
 			feed.Description = new TextSyndicationContent(string.Format("The active calls for the department {0}", department.Name));
-			feed.Items = calls.Select(call => new SyndicationItem(call.Name, call.NatureOfCall, new Uri($"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Dispatch/ViewCall?callId=" + call.CallId), call.CallId.ToString(), call.LoggedOn)).ToList();
+
+			// ADP egress (plan 5.5): this is an anonymous integration feed — protected departments'
+			// enveloped values must never leave as content (nor as ciphertext). Generic titles keep
+			// the feed functional; details require signing in.
+			feed.Items = calls.Select(call => new SyndicationItem(
+				Resgrid.Model.ProtectedDataEnvelope.HasEnvelopePrefix(call.Name)
+					? $"Protected dispatch {call.Number}"
+					: call.Name,
+				Resgrid.Model.ProtectedDataEnvelope.HasEnvelopePrefix(call.NatureOfCall)
+					? "A protected dispatch is available. Sign in to Resgrid to view details."
+					: call.NatureOfCall,
+				new Uri($"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Dispatch/ViewCall?callId=" + call.CallId),
+				call.CallId.ToString(), call.LoggedOn)).ToList();
 
 
 			var settings = new XmlWriterSettings

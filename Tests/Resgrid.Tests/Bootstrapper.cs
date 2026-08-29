@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
+using Moq;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Providers.AddressVerification;
@@ -83,6 +84,26 @@ namespace Resgrid.Tests
 					.As<IDepartmentOperationLockRepository>();
 				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionBulkRepository>().Object)
 					.As<IDepartmentDataProtectionBulkRepository>();
+
+				// CallsService's write safety net resolves IProtectedWriteService lazily. The real
+				// ProtectedReadService needs the broker client (not registered here), and a LOOSE mock
+				// would return a null Task from Prepare* (NRE at the await) — so the stub is set up to
+				// answer every call with Allowed(): departments in this container are never protected.
+				var protectedWriteStub = new Moq.Mock<Resgrid.Model.Services.IProtectedWriteService>();
+				protectedWriteStub.Setup(x => x.PreflightWriteAsync(Moq.It.IsAny<int>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<bool>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
+				protectedWriteStub.Setup(x => x.PrepareCallWriteAsync(Moq.It.IsAny<int>(), Moq.It.IsAny<Resgrid.Model.Call>(), Moq.It.IsAny<Resgrid.Model.Call>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<bool>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
+				protectedWriteStub.Setup(x => x.PrepareCallNoteWriteAsync(Moq.It.IsAny<int>(), Moq.It.IsAny<Resgrid.Model.CallNote>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<bool>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
+				protectedWriteStub.Setup(x => x.PrepareCallAttachmentWriteAsync(Moq.It.IsAny<int>(), Moq.It.IsAny<Resgrid.Model.CallAttachment>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<bool>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
+				protectedWriteStub.Setup(x => x.PrepareContactWriteAsync(Moq.It.IsAny<int>(), Moq.It.IsAny<Resgrid.Model.Contact>(), Moq.It.IsAny<Resgrid.Model.Contact>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<bool>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
+				protectedWriteStub.Setup(x => x.PrepareContactNoteWriteAsync(Moq.It.IsAny<int>(), Moq.It.IsAny<Resgrid.Model.ContactNote>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<bool>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
+				builder.RegisterInstance(protectedWriteStub.Object)
+					.As<Resgrid.Model.Services.IProtectedWriteService>();
 
 				// The real FeatureToggleService's repository graph is not in the testing data module;
 				// the protection service consumes it only for the enrollment admission gate, which no

@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
@@ -415,6 +415,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 						ContactCarrier = r.ContactCarrier,
 						VerificationStatus = r.VerificationStatus,
 						VerificationStatusText = r.GetVerificationDisplayText(),
+						ChannelEnabled = r.ChannelEnabled,
+						StaffingLevel = r.StaffingLevel,
+						StaffingLevelText = r.GetStaffingLevelDisplayText(),
+						Suppressed = r.Suppressed,
 						SendAttempted = r.SendAttempted,
 						SendSucceeded = r.SendSucceeded,
 						SentOn = r.SentOn?.ToString("O"),

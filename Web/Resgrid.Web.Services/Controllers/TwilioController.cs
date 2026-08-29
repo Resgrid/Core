@@ -144,6 +144,9 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("IncomingMessage")]
 		[Produces("application/xml")]
+		// Twilio signature validation: without it anyone who learns a member's mobile number can
+		// forge inbound SMS and run text commands (respond, staffing, text-to-call) as that member.
+		[ValidateRequest]
 		public async Task<ActionResult> IncomingMessage([FromQuery] TwilioMessage request)
 		{
 			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From) || string.IsNullOrWhiteSpace(request.Body))
@@ -1127,6 +1130,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("InboundVoiceAction")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> InboundVoiceAction(string userId, [FromQuery] VoiceRequest twilioRequest, [FromQuery] string retry = null)
 		{
 			var response = new VoiceResponse();
@@ -1382,6 +1386,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("InboundVoiceActionStatus")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> InboundVoiceActionStatus(string userId, [FromQuery] VoiceRequest twilioRequest)
 		{
 			var response = new VoiceResponse();
@@ -1424,6 +1429,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("InboundVoiceActionStaffing")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> InboundVoiceActionStaffing(string userId, [FromQuery] VoiceRequest twilioRequest)
 		{
 			var response = new VoiceResponse();

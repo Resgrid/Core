@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -75,6 +75,21 @@
   </data>
   <data name="DeleteTestWarning" xml:space="preserve">
     <value>هل أنت متأكد من حذف هذا الاختبار؟</value>
+  </data>
+  <data name="NotSentSuppressed" xml:space="preserve">
+    <value>لم يُرسل (مكتوم)</value>
+  </data>
+  <data name="StaffingLevel" xml:space="preserve">
+    <value>مستوى التوظيف</value>
+  </data>
+  <data name="Suppressed" xml:space="preserve">
+    <value>مكتوم</value>
+  </data>
+  <data name="SuppressedHelp" xml:space="preserve">
+    <value>مستوى التوظيف لهذا العضو مكتوم في إعدادات القسم، لذلك لم يُرسل إليه أي شيء.</value>
+  </data>
+  <data name="SuppressedNotice" xml:space="preserve">
+    <value>لم يتم الاتصال بـ {0} عضو: مستوى التوظيف الخاص بهم مكتوم في إعدادات القسم، لذا لن يصلهم أي إرسال حقيقي أيضًا.</value>
   </data>
   <data name="TestDefinitions" xml:space="preserve">
     <value>تعريفات الاختبار</value>

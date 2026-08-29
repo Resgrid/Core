@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Resgrid.Web.Services.Models.v4.CommunicationTests;
 
@@ -39,6 +39,31 @@ public class CommunicationTestResultData
 	/// "Grandfathered", or "N/A" for push. Supplied so every client shows the same wording.
 	/// </summary>
 	public string VerificationStatusText { get; set; }
+
+	/// <summary>
+	/// Whether the member had this channel switched on in their own notification settings when the
+	/// run was built. Null for runs built before the election was recorded — read the member's
+	/// current profile there rather than treating null as off.
+	/// </summary>
+	public bool? ChannelEnabled { get; set; }
+
+	/// <summary>
+	/// The member's staffing level when the run was built, or null when they had never set one.
+	/// </summary>
+	public int? StaffingLevel { get; set; }
+
+	/// <summary>
+	/// Display name for <see cref="StaffingLevel"/> as the department had it configured at run time,
+	/// or the raw level when it is no longer configured. Empty when no level was recorded.
+	/// </summary>
+	public string StaffingLevelText { get; set; }
+
+	/// <summary>
+	/// Whether the department's Suppress (Mute) Staffing Levels setting muted this member for this
+	/// run. A suppressed result was deliberately never sent, so it is not a delivery failure.
+	/// </summary>
+	public bool Suppressed { get; set; }
+
 	public bool SendAttempted { get; set; }
 	public bool SendSucceeded { get; set; }
 	public string SentOn { get; set; }

@@ -632,4 +632,88 @@
   <data name="Pois" xml:space="preserve">
     <value>POI</value>
   </data>
+  <data name="AdpProtectedCall" xml:space="preserve">
+    <value>Skyddat larm</value>
+  </data>
+  <data name="AdpProtectedCertifications" xml:space="preserve">
+    <value>Skyddade certifikat</value>
+  </data>
+  <data name="AdpProtectedContact" xml:space="preserve">
+    <value>Skyddad kontakt</value>
+  </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Skyddad personalpost</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Skyddad enhetspost</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Skyddad profil</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Skyddat meddelande</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Skyddat dokument</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Skyddad kalenderpost</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Skyddad modereringskö</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Skyddade enhetsloggar</value>
+  </data>
+  <data name="AdpProtectedBannerDescription" xml:space="preserve">
+    <value>krypterat i vila för denna organisation. Behöriga användare och godkända kanaler kan ändå röja det.</value>
+  </data>
+  <data name="AdpVerifyAndReveal" xml:space="preserve">
+    <value>Verifiera och visa</value>
+  </data>
+  <data name="AdpConceal" xml:space="preserve">
+    <value>Dölj</value>
+  </data>
+  <data name="AdpStepUpTitle" xml:space="preserve">
+    <value>Verifiera för att visa skyddade uppgifter</value>
+  </data>
+  <data name="AdpStepUpInstructions" xml:space="preserve">
+    <value>Ange den 6-siffriga koden från din autentiseringsapp. Visade värden är synliga endast under denna organisations verifieringsfönster och lagras aldrig i din webbläsare.</value>
+  </data>
+  <data name="AdpVerificationCode" xml:space="preserve">
+    <value>Verifieringskod</value>
+  </data>
+  <data name="AdpVerify" xml:space="preserve">
+    <value>Verifiera</value>
+  </data>
+  <data name="AdpErrorInvalidCode" xml:space="preserve">
+    <value>Verifieringskoden är ogiltig eller har upphört att gälla.</value>
+  </data>
+  <data name="AdpErrorTooManyAttempts" xml:space="preserve">
+    <value>För många verifieringsförsök. Vänta några minuter och försök igen.</value>
+  </data>
+  <data name="AdpErrorMfaNotEnrolled" xml:space="preserve">
+    <value>Tvåfaktorsautentisering är inte aktiverad för detta konto. Aktivera först en autentiseringsapp i kontots säkerhetsinställningar.</value>
+  </data>
+  <data name="AdpErrorGrantsNotConfigured" xml:space="preserve">
+    <value>Åtkomst till skyddade uppgifter är inte konfigurerad på denna server.</value>
+  </data>
+  <data name="AdpErrorStepUpRequired" xml:space="preserve">
+    <value>Verifiering krävs igen.</value>
+  </data>
+  <data name="AdpErrorGrantExpired" xml:space="preserve">
+    <value>Verifieringsfönstret har gått ut. Verifiera igen.</value>
+  </data>
+  <data name="AdpErrorGrantRevoked" xml:space="preserve">
+    <value>Åtkomsten återkallades av en policyändring. Verifiera igen.</value>
+  </data>
+  <data name="AdpErrorAccessDenied" xml:space="preserve">
+    <value>Du har inte behörighet att visa dessa skyddade uppgifter.</value>
+  </data>
+  <data name="AdpErrorBrokerUnavailable" xml:space="preserve">
+    <value>Tjänsten för skyddade uppgifter är otillgänglig. Försök igen om en stund.</value>
+  </data>
+  <data name="AdpErrorGeneric" xml:space="preserve">
+    <value>Begäran misslyckades. Försök igen.</value>
+  </data>
 </root>

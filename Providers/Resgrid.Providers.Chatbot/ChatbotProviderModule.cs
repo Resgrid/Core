@@ -47,6 +47,11 @@ namespace Resgrid.Providers.Chatbot
 			builder.RegisterType<Services.ChatbotOutboundService>()
 				.As<Resgrid.Model.Services.IChatbotOutboundService>()
 				.InstancePerLifetimeScope();
+
+			// ADP outbound net (plan 7.5.1): a chat message lands in a third-party service's storage
+			// and, on a shared channel, in front of people who are not the intended recipient.
+			builder.RegisterDecorator<Services.ProtectedChatbotOutboundDecorator,
+				Resgrid.Model.Services.IChatbotOutboundService>();
 		}
 	}
 }

@@ -29,6 +29,28 @@
 	</div>
 </div>
 
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the
+    // step-up wiring in the Scripts section. Declared unconditionally so the section
+    // closure can see it; both partials only render when the page is protected.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedPerson"],
+        RevealController = "Personnel",
+        RevealAction = "RevealPerson",
+        RevealData = new Dictionary<string, string> { { "userId", Model.User.Id } }
+    };
+}
+
+@if (Model.IsProtectedRecord)
+{
+	<div class="row">
+		<div class="col-xs-12" style="padding: 15px 30px 0 30px;">
+			<partial name="_AdpRevealBanner" model="adpReveal" />
+		</div>
+	</div>
+}
+
 <div class="row">
 	<div class="col-xs-12">
 		<div class="wrapper wrapper-content">
@@ -149,5 +171,8 @@
 
 @section Scripts
 {
-
+	@if (Model.IsProtectedRecord)
+	{
+		<partial name="_AdpRevealScripts" model="adpReveal" />
+	}
 }

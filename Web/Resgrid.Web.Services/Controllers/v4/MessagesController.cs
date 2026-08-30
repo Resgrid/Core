@@ -42,6 +42,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IUnitsService _unitsService;
 		private readonly ICalendarService _calendarService;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public MessagesController(
 			ICallsService callsService,
@@ -54,7 +55,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService,
 			IUnitsService unitsService,
-			ICalendarService calendarService)
+			ICalendarService calendarService,
+			IProtectedReadService protectedReadService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
@@ -67,7 +69,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_personnelRolesService = personnelRolesService;
 			_unitsService = unitsService;
 			_calendarService = calendarService;
+			_protectedReadService = protectedReadService;
 		}
+
+		/// <summary>
+		/// The caller's Protected Data Grant, if they presented one. Held in app memory only and
+		/// minted by DataProtection/VerifyStepUp; absent means protected values resolve to the
+		/// REDACTED placeholder rather than plaintext.
+		/// </summary>
+		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
 
 		#endregion Members and Constructors
 
@@ -84,6 +94,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new GetMessagesResult();
 			var messages =
 				(await _messageService.GetInboxMessagesByUserIdAsync(UserId)).OrderByDescending(x => x.SentOn);
+
+			// ADP (catalog v7): one broker batch for the whole page. With a valid grant the subjects
+			// and bodies come back as plaintext; without one they come back as the REDACTED
+			// placeholder - never as ciphertext.
+			await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId, messages.ToList(),
+				ProtectedGrantToken, UserId);
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
@@ -131,6 +148,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new GetMessagesResult();
 			var messages = (await _messageService.GetSentMessagesByUserIdAsync(UserId)).OrderBy(x => x.SentOn)
 				.OrderByDescending(x => x.SentOn);
+
+			// ADP (catalog v7): one broker batch for the page. Sending a message does not exempt the
+			// sender - the row is encrypted under the department key, not theirs.
+			await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId, messages.ToList(),
+				ProtectedGrantToken, UserId);
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
@@ -187,6 +210,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return Unauthorized();
 
 				await _messageService.ReadMessageRecipientAsync(messageId, UserId, cancellationToken);
+
+				// ADP (catalog v7). Resolved AFTER the read-receipt write so the receipt is not
+				// carrying decrypted values back into the row.
+				await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId,
+					new List<Message> { savedMessage }, ProtectedGrantToken, UserId);
 
 				result.Data = ConvertMessageResultData(savedMessage, department, UserId, names);
 				result.PageSize = 1;
@@ -454,7 +482,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					if ((responseInput.Type != CalendarRsvpResponseTypeAttending
 						&& responseInput.Type != CalendarRsvpResponseTypeNotAttending)
-						|| !TextResponsePromptMetadata.TryGetCalendarItemId(response.Note, out var calendarItemId))
+						|| !TextResponsePromptMetadata.TryGetCalendarItemId(response.PromptMetadata, out var calendarItemId))
 						return BadRequest();
 
 					var calendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
@@ -594,7 +622,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					message.RespondedOn = respose.ReadOn;
 
 					if (savedMessage.Type == (int)MessageTypes.CalendarRsvp
-						&& TextResponsePromptMetadata.TryGetCalendarItemId(respose.Note, out var calendarItemId))
+						&& TextResponsePromptMetadata.TryGetCalendarItemId(respose.PromptMetadata, out var calendarItemId))
 						message.CalendarItemId = calendarItemId.ToString();
 				}
 				else

@@ -28,6 +28,15 @@ export function buildApiUrl(path: string, query?: ApiQuery): string {
 export function apiAuthHeaders(extra?: HeadersInit): Headers {
   const headers = new Headers(extra);
   headers.set('Accept', 'application/json');
+
+  // ADP (plan 7.2): when the page has an active Protected Data Grant, every API read carries it,
+  // so the server returns plaintext instead of the REDACTED placeholder. The token lives in the
+  // reveal module's closure and is written straight into these headers - it is never handed back
+  // to this code, and a page without the module simply sends nothing.
+  const reveal = (window as unknown as { resgridAdpReveal?: { applyGrantHeader?: (target: Headers) => void } })
+    .resgridAdpReveal;
+  reveal?.applyGrantHeader?.(headers);
+
   return headers;
 }
 

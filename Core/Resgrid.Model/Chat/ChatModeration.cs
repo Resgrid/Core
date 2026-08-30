@@ -34,6 +34,9 @@ namespace Resgrid.Model
 
 		public string ResolutionNote { get; set; }
 
+		/// <summary>ADP row marker (M0139): true once this row's cataloged values carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
+
 		[NotMapped]
 		public string TableName => "ChatMessageFlags";
 
@@ -83,6 +86,9 @@ namespace Resgrid.Model
 		public string Reason { get; set; }
 
 		public string DetailsJson { get; set; }
+
+		/// <summary>ADP row marker (M0139): true once this row's cataloged values carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
 
 		[NotMapped]
 		public string TableName => "ChatModerationActions";
@@ -184,6 +190,9 @@ namespace Resgrid.Model
 		public byte[] Data { get; set; }
 
 		public string Error { get; set; }
+
+		/// <summary>ADP row marker (M0139): true once this row's cataloged values carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
 
 		[NotMapped]
 		public string TableName => "ChatExports";

@@ -29,21 +29,38 @@ namespace Resgrid.Services
 	{
 		private static readonly IReadOnlyList<AdpTableBinding> Bindings = AdpTableBindings.V1;
 
+		/// <summary>
+		/// The tables and columns THIS run touches. Enrollment, rotation and offboarding sweep the
+		/// whole catalog; a CatalogUpgrade sweeps only the fields added since the department's pinned
+		/// version, so it never re-reads a table it has nothing to do in and never re-encrypts an
+		/// already-protected value.
+		/// </summary>
+		private IReadOnlyList<AdpTableBinding> BindingsFor(AdpMigrationNightContext context)
+		{
+			if (context.Kind != DepartmentDataProtectionMigrationKind.CatalogUpgrade)
+				return Bindings;
+
+			return AdpTableBindings.ForVersionRange(_fieldCatalog, context.FromCatalogVersion, context.CatalogVersion);
+		}
+
 		private readonly IDepartmentDataProtectionBulkRepository _bulkRepository;
 		private readonly IDepartmentDataProtectionMigrationRepository _migrationRepository;
 		private readonly IDepartmentKeyService _keyService;
 		private readonly IKeyWrappingProvider _keyWrappingProvider;
 		private readonly IProtectedFieldCryptoService _cryptoService;
+		private readonly IProtectedFieldCatalog _fieldCatalog;
 
 		public DepartmentDataMigrationEngine(IDepartmentDataProtectionBulkRepository bulkRepository,
 			IDepartmentDataProtectionMigrationRepository migrationRepository, IDepartmentKeyService keyService,
-			IKeyWrappingProvider keyWrappingProvider, IProtectedFieldCryptoService cryptoService)
+			IKeyWrappingProvider keyWrappingProvider, IProtectedFieldCryptoService cryptoService,
+			IProtectedFieldCatalog fieldCatalog)
 		{
 			_bulkRepository = bulkRepository;
 			_migrationRepository = migrationRepository;
 			_keyService = keyService;
 			_keyWrappingProvider = keyWrappingProvider;
 			_cryptoService = cryptoService;
+			_fieldCatalog = fieldCatalog;
 		}
 
 		/// <summary>
@@ -150,7 +167,7 @@ namespace Resgrid.Services
 		{
 			var enveloped = context.Kind == DepartmentDataProtectionMigrationKind.Offboarding;
 
-			foreach (var binding in Bindings)
+			foreach (var binding in BindingsFor(context))
 			{
 				cancellationToken.ThrowIfCancellationRequested();
 
@@ -178,7 +195,7 @@ namespace Resgrid.Services
 			long nightProcessed = 0;
 			var batchSize = Math.Max(50, Config.DataProtectionConfig.MigrationBatchSize);
 
-			foreach (var binding in Bindings)
+			foreach (var binding in BindingsFor(context))
 			{
 				var migrationRow = await _migrationRepository.GetActiveByDepartmentAndTableAsync(context.DepartmentId,
 					context.Kind, binding.TableName);
@@ -308,12 +325,12 @@ namespace Resgrid.Services
 						// Validate against THIS department's AAD with the key version that wrote the
 						// envelope; a mismatch throws (foreign envelope).
 						var validationDek = await ValidationDekForTextAsync(value);
-						_cryptoService.DecryptText(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						_cryptoService.DecryptText(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey);
 						return ColumnOutcome.AlreadyInTargetState;
 					}
 
 					setValues[spec.ColumnName] = _cryptoService.EncryptText(targetDek, keyVersion, value,
-						context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						context.DepartmentId, spec.FieldId, row.RowKey);
 					return ColumnOutcome.Changed;
 				}
 
@@ -332,12 +349,12 @@ namespace Resgrid.Services
 						if (validationDek == null)
 							throw new CryptographicException("Envelope references an unknown department key version.");
 
-						_cryptoService.DecryptBinary(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						_cryptoService.DecryptBinary(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey);
 						return ColumnOutcome.AlreadyInTargetState;
 					}
 
 					setValues[spec.ColumnName] = _cryptoService.EncryptBinary(targetDek, keyVersion, value,
-						context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						context.DepartmentId, spec.FieldId, row.RowKey);
 					return ColumnOutcome.Changed;
 				}
 
@@ -350,7 +367,7 @@ namespace Resgrid.Services
 					{
 						var invariant = Convert.ToString(typed, CultureInfo.InvariantCulture);
 						setValues[spec.CompanionColumn] = _cryptoService.EncryptText(targetDek, keyVersion, invariant,
-							context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+							context.DepartmentId, spec.FieldId, row.RowKey);
 						setValues[spec.ColumnName] = null;
 						return ColumnOutcome.Changed;
 					}
@@ -358,7 +375,7 @@ namespace Resgrid.Services
 					if (!string.IsNullOrEmpty(companion))
 					{
 						var validationDek = await ValidationDekForTextAsync(companion);
-						_cryptoService.DecryptText(validationDek, companion, context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						_cryptoService.DecryptText(validationDek, companion, context.DepartmentId, spec.FieldId, row.RowKey);
 						return ColumnOutcome.AlreadyInTargetState;
 					}
 
@@ -395,7 +412,7 @@ namespace Resgrid.Services
 						throw new InvalidOperationException($"No key row for envelope version {envelopeKeyVersion}.");
 
 					setValues[spec.ColumnName] = _cryptoService.DecryptText(dek, value,
-						context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						context.DepartmentId, spec.FieldId, row.RowKey);
 					return ColumnOutcome.Changed;
 				}
 
@@ -415,7 +432,7 @@ namespace Resgrid.Services
 						throw new InvalidOperationException($"No key row for envelope version {envelopeKeyVersion}.");
 
 					setValues[spec.ColumnName] = _cryptoService.DecryptBinary(dek, value,
-						context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						context.DepartmentId, spec.FieldId, row.RowKey);
 					return ColumnOutcome.Changed;
 				}
 
@@ -433,7 +450,7 @@ namespace Resgrid.Services
 						throw new InvalidOperationException($"No key row for envelope version {envelopeKeyVersion}.");
 
 					var plaintext = _cryptoService.DecryptText(dek, companion,
-						context.DepartmentId, spec.FieldId, row.RowKey, context.CatalogVersion);
+						context.DepartmentId, spec.FieldId, row.RowKey);
 					setValues[spec.ColumnName] = decimal.Parse(plaintext, CultureInfo.InvariantCulture);
 					setValues[spec.CompanionColumn] = null;
 					return ColumnOutcome.Changed;

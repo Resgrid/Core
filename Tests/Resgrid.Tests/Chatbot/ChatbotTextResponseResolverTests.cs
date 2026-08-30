@@ -49,7 +49,7 @@ namespace Resgrid.Tests.Chatbot
 				{
 					MessageId = 1,
 					UserId = "user-1",
-					Note = TextResponsePromptMetadata.ForPoll(10)
+					PromptMetadata = TextResponsePromptMetadata.ForPoll(10)
 				});
 			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(3, "user-1"))
 				.ReturnsAsync(new MessageRecipient { MessageId = 3, UserId = "user-1", Response = "Yes" });
@@ -75,14 +75,14 @@ namespace Resgrid.Tests.Chatbot
 				{
 					MessageId = 4,
 					UserId = "user-1",
-					Note = TextResponsePromptMetadata.ForPoll(10)
+					PromptMetadata = TextResponsePromptMetadata.ForPoll(10)
 				});
 			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(5, "user-1"))
 				.ReturnsAsync(new MessageRecipient
 				{
 					MessageId = 5,
 					UserId = "user-1",
-					Note = TextResponsePromptMetadata.ForCalendarRsvp(77)
+					PromptMetadata = TextResponsePromptMetadata.ForCalendarRsvp(77)
 				});
 			_calendar.Setup(c => c.GetCalendarItemByIdAsync(77)).ReturnsAsync(new CalendarItem
 			{
@@ -116,7 +116,7 @@ namespace Resgrid.Tests.Chatbot
 				{
 					MessageId = 4,
 					UserId = "user-1",
-					Note = TextResponsePromptMetadata.ForPoll(20)
+					PromptMetadata = TextResponsePromptMetadata.ForPoll(20)
 				});
 
 			// Act
@@ -135,7 +135,7 @@ namespace Resgrid.Tests.Chatbot
 				new Message { MessageId = 5, Type = (int)MessageTypes.CalendarRsvp, Subject = "Calendar RSVP: Drill", SentOn = now }
 			});
 			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(5, "user-1"))
-				.ReturnsAsync(new MessageRecipient { MessageId = 5, UserId = "user-1", Note = TextResponsePromptMetadata.ForCalendarRsvp(77) });
+				.ReturnsAsync(new MessageRecipient { MessageId = 5, UserId = "user-1", PromptMetadata = TextResponsePromptMetadata.ForCalendarRsvp(77) });
 			_calendar.Setup(c => c.GetCalendarItemByIdAsync(77)).ReturnsAsync(new CalendarItem
 			{
 				CalendarItemId = 77, DepartmentId = 10, SignupType = (int)CalendarItemSignupTypes.RSVP
@@ -191,7 +191,7 @@ namespace Resgrid.Tests.Chatbot
 			{
 				MessageId = 4,
 				UserId = "user-1",
-				Note = TextResponsePromptMetadata.ForPoll(20)
+				PromptMetadata = TextResponsePromptMetadata.ForPoll(20)
 			};
 			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(4, "user-1"))
 				.ReturnsAsync(recipient);
@@ -252,7 +252,7 @@ namespace Resgrid.Tests.Chatbot
 			response.Processed.Should().BeTrue();
 			saved.Should().NotBeNull();
 			saved.MessageRecipients.Should().HaveCount(2).And.OnlyContain(r =>
-				r.Note == TextResponsePromptMetadata.ForPoll(10));
+				r.PromptMetadata == TextResponsePromptMetadata.ForPoll(10));
 		}
 
 		[Test]
@@ -280,7 +280,7 @@ namespace Resgrid.Tests.Chatbot
 			saved.ExpireOn.Should().BeCloseTo(saved.SentOn.AddDays(1), TimeSpan.FromSeconds(1));
 			saved.MessageRecipients.Should().ContainSingle();
 			saved.MessageRecipients.Should().ContainSingle(r =>
-				r.UserId == "user-1" && r.Note == TextResponsePromptMetadata.ForCalendarRsvp(44));
+				r.UserId == "user-1" && r.PromptMetadata == TextResponsePromptMetadata.ForCalendarRsvp(44));
 		}
 
 		[Test]
@@ -292,7 +292,7 @@ namespace Resgrid.Tests.Chatbot
 				MessageRecipientId = 21,
 				MessageId = 12,
 				UserId = "user-1",
-				Note = TextResponsePromptMetadata.ForCalendarRsvp(44)
+				PromptMetadata = TextResponsePromptMetadata.ForCalendarRsvp(44)
 			};
 			var existing = new Message
 			{
@@ -346,7 +346,7 @@ namespace Resgrid.Tests.Chatbot
 						MessageRecipientId = 21,
 						MessageId = 12,
 						UserId = "user-1",
-						Note = TextResponsePromptMetadata.ForCalendarRsvp(44)
+						PromptMetadata = TextResponsePromptMetadata.ForCalendarRsvp(44)
 					}
 				}
 			};
@@ -371,7 +371,7 @@ namespace Resgrid.Tests.Chatbot
 			saved.Should().NotBeSameAs(expired);
 			saved.MessageId.Should().Be(0);
 			saved.MessageRecipients.Should().ContainSingle(r =>
-				r.UserId == "user-1" && r.Note == TextResponsePromptMetadata.ForCalendarRsvp(44));
+				r.UserId == "user-1" && r.PromptMetadata == TextResponsePromptMetadata.ForCalendarRsvp(44));
 		}
 
 		[Test]

@@ -46,6 +46,9 @@ namespace Resgrid.Services
 			builder.RegisterType<SmsService>().As<ISmsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PushLogsService>().As<IPushLogsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PushService>().As<IPushService>().SingleInstance();
+			// ADP outbound net (plan 7.5): a push title or subtitle carrying an envelope would land
+			// on a lock screen and in the OS notification log.
+			builder.RegisterDecorator<ProtectedPushServiceDecorator, IPushService>();
 			builder.RegisterType<MessageService>().As<IMessageService>().InstancePerLifetimeScope();
 			builder.RegisterType<TextResponsePromptService>().As<ITextResponsePromptService>().InstancePerLifetimeScope();
 			builder.RegisterType<AddressService>().As<IAddressService>().InstancePerLifetimeScope();
@@ -170,6 +173,9 @@ namespace Resgrid.Services
 			builder.RegisterType<DepartmentKeyService>().As<IDepartmentKeyService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtectedFieldCryptoService>().As<IProtectedFieldCryptoService>().SingleInstance();
 			builder.RegisterType<ProtectedDataGrantService>().As<IProtectedDataGrantService>().SingleInstance();
+			builder.RegisterType<DepartmentMemberSensitiveDataService>().As<IDepartmentMemberSensitiveDataService>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentMemberEmergencyContactService>().As<IDepartmentMemberEmergencyContactService>().InstancePerLifetimeScope();
+			builder.RegisterType<MemberProfileRelocationService>().As<IMemberProfileRelocationService>().InstancePerLifetimeScope();
 			// Attended protected reads + the write safety net. Requires IProtectedDataBrokerClient,
 			// so every composition root that loads this module must also load
 			// ProtectedDataBrokerClientModule (client only — no key material).

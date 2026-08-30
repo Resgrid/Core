@@ -80,6 +80,14 @@ namespace Resgrid.Model
 		//[ProtoMember(17)]
 		public bool DoNotRecieveNewsletters { get; set; }
 
+		/// <summary>
+		/// GONE FROM THE SCHEMA (M0141). A profile is global to a person across every department
+		/// they belong to, so this could never be encrypted under one department's key; the value
+		/// lives on DepartmentMemberSensitiveData per department and is cataloged there. The
+		/// property is kept only so the ProtoMember numbering stays stable for older app builds
+		/// that still deserialize it, and is NotMapped/ignored so no SQL ever names the column.
+		/// </summary>
+		[NotMapped]
 		[ProtoMember(18)]
 		public string IdentificationNumber { get; set; }
 
@@ -243,7 +251,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "User", "MembershipEmail" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "User", "MembershipEmail", "IdentificationNumber" };
 
 		[NotMapped]
 		public FullNameFormat FullName

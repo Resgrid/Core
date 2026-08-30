@@ -439,6 +439,10 @@ namespace Resgrid.Web
 				// ADP department operation lock: refuses department-scoped mutations with 423 Locked
 				// while a migration window holds the department's lock; reads pass through untouched.
 				options.Filters.Add<Filters.DepartmentLockActionFilter>();
+				// ADP response-boundary net: for a protected department, redacts any value that
+				// reached the response still carrying an envelope, and logs the surface that missed
+				// its resolve call. Defence in depth, not a substitute for resolving.
+				options.Filters.Add<Filters.ProtectedDataEgressFilter>();
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;

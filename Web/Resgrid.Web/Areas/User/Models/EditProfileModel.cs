@@ -11,6 +11,13 @@ namespace Resgrid.Web.Areas.User.Models
 	{
 		public string ApiUrl { get; set; }
 		public string UdfFormHtml { get; set; }
+
+		/// <summary>
+		/// True when this department encrypts member data: the identification number, addresses,
+		/// emergency contacts and custom fields on this page render as placeholders until the
+		/// member steps up. Drives the reveal banner.
+		/// </summary>
+		public bool IsProtectedProfile { get; set; }
 		public Department Department { get; set; }
 		public IdentityUser User { get; set; }
 		public bool Self { get; set; }

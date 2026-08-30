@@ -10,6 +10,9 @@ namespace Resgrid.Web.Areas.User.Models.Messages
 		public IdentityUser User { get; set; }
 		public Message Message { get; set; } 
 		public int UnreadMessages { get; set; }
+
+		/// <summary>True when this page is showing ADP placeholders that a grant could reveal.</summary>
+		public bool IsProtectedMessage { get; set; }
 		public List<UserGroupRole> UserGroupsAndRoles { get; set; }
 		public bool CanRespondToCalendarRsvp { get; set; }
 		public int? CalendarRsvpAttendeeType { get; set; }

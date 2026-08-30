@@ -26,6 +26,7 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IUnitsService _unitsService;
+		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
 
 		public WorkflowTemplateContextBuilder(
 			IDepartmentsService departmentsService,
@@ -33,7 +34,8 @@ namespace Resgrid.Services
 			IUserProfileService userProfileService,
 			IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService,
-			IUnitsService unitsService)
+			IUnitsService unitsService,
+			IDepartmentMemberSensitiveDataService memberSensitiveDataService)
 		{
 			_departmentsService = departmentsService;
 			_departmentSettingsService = departmentSettingsService;
@@ -41,6 +43,7 @@ namespace Resgrid.Services
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
 			_unitsService = unitsService;
+			_memberSensitiveDataService = memberSensitiveDataService;
 		}
 
 		public async Task<object> BuildContextAsync(
@@ -395,7 +398,7 @@ namespace Resgrid.Services
 				}
 			}
 
-			await AddCommonUserVariablesAsync(scriptObject, triggeringUserId);
+			await AddCommonUserVariablesAsync(scriptObject, departmentId, triggeringUserId);
 
 			return scriptObject;
 		}
@@ -525,12 +528,18 @@ namespace Resgrid.Services
 			return incident["user_id"]?.ToString();
 		}
 
-		private async Task AddCommonUserVariablesAsync(ScriptObject obj, string userId)
+		private async Task AddCommonUserVariablesAsync(ScriptObject obj, int departmentId, string userId)
 		{
 			var u = new ScriptObject();
 			if (!string.IsNullOrWhiteSpace(userId))
 			{
 				var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+
+				// The identification number is department-scoped and protected (plan 5.1). Workflow
+				// variables feed outbound email, SMS and webhooks with no reveal step, so a protected
+				// department renders the placeholder rather than the number — and the legacy global
+				// column is not consulted at all, since it answers for the wrong department.
+				var sensitive = await _memberSensitiveDataService.GetByDepartmentAndUserAsync(departmentId, userId);
 				u["id"] = userId;
 				u["first_name"] = profile?.FirstName ?? string.Empty;
 				u["last_name"] = profile?.LastName ?? string.Empty;
@@ -538,7 +547,7 @@ namespace Resgrid.Services
 				u["email"] = profile?.MembershipEmail ?? string.Empty;
 				u["mobile_number"] = profile?.MobileNumber ?? string.Empty;
 				u["home_number"] = profile?.HomeNumber ?? string.Empty;
-				u["identification_number"] = profile?.IdentificationNumber ?? string.Empty;
+				u["identification_number"] = ProtectedDataEnvelope.SafeDisplay(sensitive?.IdentificationNumber) ?? string.Empty;
 				u["username"] = string.Empty; // populated from IdentityUser if needed
 				u["time_zone"] = profile?.TimeZone ?? string.Empty;
 			}
@@ -566,14 +575,18 @@ namespace Resgrid.Services
 			var c = new ScriptObject();
 			c["id"] = call.CallId;
 			c["number"] = call.Number ?? string.Empty;
-			c["name"] = call.Name ?? string.Empty;
-			c["nature"] = call.NatureOfCall ?? string.Empty;
-			c["notes"] = call.Notes ?? string.Empty;
-			c["address"] = call.Address ?? string.Empty;
-			c["geo_location"] = call.GeoLocationData ?? string.Empty;
-			c["type"] = call.Type ?? string.Empty;
-			c["incident_number"] = call.IncidentNumber ?? string.Empty;
-			c["reference_number"] = call.ReferenceNumber ?? string.Empty;
+			// ADP (plan section 8): workflows render these into outbound email/SMS/webhooks and run
+			// UNATTENDED — no grant can exist here, so a protected department's cataloged values must
+			// degrade to the REDACTED placeholder. Ciphertext must never reach a template, and the
+			// system-generated call number stays plaintext as the safe identifier.
+			c["name"] = ProtectedDataEnvelope.SafeDisplay(call.Name) ?? string.Empty;
+			c["nature"] = ProtectedDataEnvelope.SafeDisplay(call.NatureOfCall) ?? string.Empty;
+			c["notes"] = ProtectedDataEnvelope.SafeDisplay(call.Notes) ?? string.Empty;
+			c["address"] = ProtectedDataEnvelope.SafeDisplay(call.Address) ?? string.Empty;
+			c["geo_location"] = ProtectedDataEnvelope.SafeDisplay(call.GeoLocationData) ?? string.Empty;
+			c["type"] = ProtectedDataEnvelope.SafeDisplay(call.Type) ?? string.Empty;
+			c["incident_number"] = ProtectedDataEnvelope.SafeDisplay(call.IncidentNumber) ?? string.Empty;
+			c["reference_number"] = ProtectedDataEnvelope.SafeDisplay(call.ReferenceNumber) ?? string.Empty;
 			c["map_page"] = call.MapPage ?? string.Empty;
 			c["priority"] = call.Priority;
 			c["priority_text"] = call.GetPriorityText();
@@ -581,18 +594,18 @@ namespace Resgrid.Services
 			c["state"] = call.State;
 			c["state_text"] = call.GetStateText();
 			c["source"] = call.CallSource;
-			c["external_id"] = call.ExternalIdentifier ?? string.Empty;
+			c["external_id"] = ProtectedDataEnvelope.SafeDisplay(call.ExternalIdentifier) ?? string.Empty;
 			c["logged_on"] = call.LoggedOn;
 			c["closed_on"] = call.ClosedOn;
-			c["completed_notes"] = call.CompletedNotes ?? string.Empty;
-			c["contact_name"] = call.ContactName ?? string.Empty;
-			c["contact_number"] = call.ContactNumber ?? string.Empty;
-			c["w3w"] = call.W3W ?? string.Empty;
+			c["completed_notes"] = ProtectedDataEnvelope.SafeDisplay(call.CompletedNotes) ?? string.Empty;
+			c["contact_name"] = ProtectedDataEnvelope.SafeDisplay(call.ContactName) ?? string.Empty;
+			c["contact_number"] = ProtectedDataEnvelope.SafeDisplay(call.ContactNumber) ?? string.Empty;
+			c["w3w"] = ProtectedDataEnvelope.SafeDisplay(call.W3W) ?? string.Empty;
 			c["dispatch_count"] = call.DispatchCount;
 			c["dispatch_on"] = call.DispatchOn;
-			c["form_data"] = call.CallFormData ?? string.Empty;
+			c["form_data"] = ProtectedDataEnvelope.SafeDisplay(call.CallFormData) ?? string.Empty;
 			c["is_deleted"] = call.IsDeleted;
-			c["deleted_reason"] = call.DeletedReason ?? string.Empty;
+			c["deleted_reason"] = ProtectedDataEnvelope.SafeDisplay(call.DeletedReason) ?? string.Empty;
 
 			// ── Personnel dispatches ──────────────────────────────────────────────────
 			// Pre-fetch all user profiles and group/role data needed for enrichment
@@ -601,10 +614,16 @@ namespace Resgrid.Services
 				: new List<string>();
 
 			Dictionary<string, UserProfile> profileMap = new Dictionary<string, UserProfile>();
+			IReadOnlyDictionary<string, DepartmentMemberSensitiveData> sensitiveByUser =
+				new Dictionary<string, DepartmentMemberSensitiveData>();
 			if (dispatchUserIds.Count > 0)
 			{
 				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(dispatchUserIds);
 				profileMap = profiles?.ToDictionary(p => p.UserId, p => p) ?? new Dictionary<string, UserProfile>();
+
+				// Identification numbers are department-scoped and protected (plan 5.1); this context
+				// has no reveal step, so they render as the placeholder for a protected department.
+				sensitiveByUser = await _memberSensitiveDataService.GetResolvedForDepartmentAsync(departmentId, null, null);
 			}
 
 			// Pre-fetch department roles once (used for role-name enrichment below)
@@ -655,7 +674,9 @@ namespace Resgrid.Services
 						item["full_name"] = profile.FullName?.AsFirstNameLastName ?? string.Empty;
 						item["email"] = profile.MembershipEmail ?? string.Empty;
 						item["mobile_number"] = profile.MobileNumber ?? string.Empty;
-						item["identification_number"] = profile.IdentificationNumber ?? string.Empty;
+						item["identification_number"] = sensitiveByUser.TryGetValue(d.UserId, out var sensitive)
+							? ProtectedDataEnvelope.SafeDisplay(sensitive.IdentificationNumber) ?? string.Empty
+							: string.Empty;
 					}
 					else
 					{
@@ -786,7 +807,7 @@ namespace Resgrid.Services
 				foreach (var n in call.CallNotes)
 				{
 					var item = new ScriptObject();
-					item["note"] = n.Note ?? string.Empty;
+					item["note"] = ProtectedDataEnvelope.SafeDisplay(n.Note) ?? string.Empty;
 					item["source"] = n.Source.ToString();
 					item["timestamp"] = n.Timestamp;
 					item["user_id"] = n.UserId ?? string.Empty;
@@ -822,7 +843,7 @@ namespace Resgrid.Services
 				s["state"] = status.State;
 				s["state_text"] = status.GetStatusText();
 				s["timestamp"] = status.Timestamp;
-				s["note"] = status.Note ?? string.Empty;
+				s["note"] = ProtectedDataEnvelope.SafeDisplay(status.Note) ?? string.Empty;
 				s["latitude"] = status.Latitude;
 				s["longitude"] = status.Longitude;
 				s["destination_id"] = status.DestinationId;
@@ -883,9 +904,9 @@ namespace Resgrid.Services
 				s["action_type"] = status.ActionTypeId;
 				s["action_text"] = status.GetActionText();
 				s["timestamp"] = status.Timestamp;
-				s["geo_location"] = status.GeoLocationData ?? string.Empty;
+				s["geo_location"] = ProtectedDataEnvelope.SafeDisplay(status.GeoLocationData) ?? string.Empty;
 				s["destination_id"] = status.DestinationId;
-				s["note"] = status.Note ?? string.Empty;
+				s["note"] = ProtectedDataEnvelope.SafeDisplay(status.Note) ?? string.Empty;
 			}
 			obj["status"] = s;
 
@@ -1065,13 +1086,17 @@ namespace Resgrid.Services
 
 		private static void MapCertificationVariables(ScriptObject obj, PersonnelCertification cert, int daysUntilExpiry)
 		{
+			// Cataloged since v6 (plan 5.1). Workflow variables feed outbound email, SMS and
+			// webhooks with no reveal step, so a protected department's certification renders as the
+			// placeholder — an expiry reminder can still say a certification is due without naming
+			// the licence number.
 			var c = new ScriptObject();
 			c["id"] = cert.PersonnelCertificationId;
-			c["name"] = cert.Name ?? string.Empty;
-			c["number"] = cert.Number ?? string.Empty;
-			c["type"] = cert.Type ?? string.Empty;
-			c["area"] = cert.Area ?? string.Empty;
-			c["issued_by"] = cert.IssuedBy ?? string.Empty;
+			c["name"] = ProtectedDataEnvelope.SafeDisplay(cert.Name) ?? string.Empty;
+			c["number"] = ProtectedDataEnvelope.SafeDisplay(cert.Number) ?? string.Empty;
+			c["type"] = ProtectedDataEnvelope.SafeDisplay(cert.Type) ?? string.Empty;
+			c["area"] = ProtectedDataEnvelope.SafeDisplay(cert.Area) ?? string.Empty;
+			c["issued_by"] = ProtectedDataEnvelope.SafeDisplay(cert.IssuedBy) ?? string.Empty;
 			c["expires_on"] = cert.ExpiresOn;
 			c["received_on"] = cert.RecievedOn;
 			c["days_until_expiry"] = daysUntilExpiry;

@@ -11,6 +11,7 @@ using System.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using System;
+using System.Globalization;
 using Resgrid.Web.Services.Models.v4.Mapping;
 using Resgrid.Web.Services.Models.v4.Roles;
 using GeoJSON.Net;
@@ -47,6 +48,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IIndoorMapService _indoorMapService;
 		private readonly ICustomMapService _customMapService;
+		private readonly IProtectedReadService _protectedReadService;
+		private readonly IDepartmentDataProtectionService _dataProtectionService;
 
 		public MappingController(
 			IUsersService usersService,
@@ -64,7 +67,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IMappingService mappingService,
 			Model.Services.IAuthorizationService authorizationService,
 			IIndoorMapService indoorMapService,
-			ICustomMapService customMapService
+			ICustomMapService customMapService,
+			IProtectedReadService protectedReadService,
+			IDepartmentDataProtectionService dataProtectionService
 			)
 		{
 			_usersService = usersService;
@@ -83,7 +88,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_authorizationService = authorizationService;
 			_indoorMapService = indoorMapService;
 			_customMapService = customMapService;
+			_protectedReadService = protectedReadService;
+			_dataProtectionService = dataProtectionService;
 		}
+
+		/// <summary>
+		/// True when the caller authenticated as the BigBoard client application. BigBoard is an
+		/// unattended display: it can never hold a grant, so it is stepped down structurally
+		/// (plan section 7.3) and egress policy can never relax that.
+		/// </summary>
+		private bool IsBigBoardSession =>
+			string.Equals(User?.FindFirst(Resgrid.Model.Security.SessionClaimTypes.ClientApp)?.Value,
+				((int)UserSessionClientApplication.BigBoard).ToString(CultureInfo.InvariantCulture),
+				StringComparison.Ordinal);
+
+		/// <summary>The generic label a protected call carries on a map that cannot reveal it.</summary>
+		private const string ProtectedMapLabel = "Protected incident — open Resgrid to view details.";
 		#endregion Members and Constructors
 
 		/// <summary>
@@ -256,14 +276,38 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (calls != null && calls.Any())
 			{
+				// ADP (plan sections 7.1, 7.3): map markers are built from cataloged call fields, so
+				// they run through the protected-read pipeline first. With a valid grant the labels
+				// are plaintext; without one every cataloged value is the REDACTED placeholder and
+				// the marker degrades to a generic label with NO location — a map payload must never
+				// carry ciphertext, a protected label, or an exact protected position. BigBoard is
+				// stepped down unconditionally: it cannot hold a grant.
+				var mapCallsAreProtected = await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId);
+				if (mapCallsAreProtected)
+				{
+					var mapGrantToken = IsBigBoardSession
+						? null
+						: Request.Headers[Resgrid.Web.Services.Controllers.v4.DataProtectionController.GrantHeader].ToString();
+
+					await _protectedReadService.ResolveForReadAsync(DepartmentId, calls.ToList(), mapGrantToken, UserId);
+				}
+
 				foreach (var call in calls)
 				{
+					var callIsRedacted = mapCallsAreProtected &&
+						(call.Name == ProtectedDataEnvelope.RedactionValue ||
+						 ProtectedDataEnvelope.HasEnvelopePrefix(call.Name));
+
 					MapMakerInfoData info = new MapMakerInfoData();
 					info.ImagePath = "Call";
 					info.Id = $"c{call.CallId}";
-					info.Title = call.Name;
-					info.InfoWindowContent = call.NatureOfCall;
+					info.Title = callIsRedacted ? ProtectedMapLabel : ProtectedDataEnvelope.SafeDisplay(call.Name);
+					info.InfoWindowContent = callIsRedacted ? null : ProtectedDataEnvelope.SafeDisplay(call.NatureOfCall);
 					info.Type = 0;
+
+					// A redacted call contributes no marker at all: its position is itself protected.
+					if (callIsRedacted)
+						continue;
 
 					try
 					{
@@ -278,7 +322,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 						//		info.ImagePath = ((MapIconTypes)type.MapIconType.Value).ToString();
 						//}
 
-						if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+						if (!String.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1 &&
+							call.GeoLocationData != ProtectedDataEnvelope.RedactionValue &&
+							!ProtectedDataEnvelope.HasEnvelopePrefix(call.GeoLocationData))
 						{
 							try
 							{
@@ -289,7 +335,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 							}
 							catch { }
 						}
-						else if (!String.IsNullOrEmpty(call.Address))
+						else if (!String.IsNullOrEmpty(call.Address) &&
+							call.Address != ProtectedDataEnvelope.RedactionValue &&
+							!ProtectedDataEnvelope.HasEnvelopePrefix(call.Address))
 						{
 							string coordinates = await _geoLocationProvider.GetLatLonFromAddress(call.Address);
 							if (!String.IsNullOrEmpty(coordinates))

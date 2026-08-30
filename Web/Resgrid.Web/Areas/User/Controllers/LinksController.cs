@@ -223,7 +223,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var callJson = new CallListJson();
 					callJson.CallId = call.CallId;
 					callJson.Number = call.Number;
-					callJson.Name = call.Name;
+					// ADP: a linked department is a DIFFERENT tenant — its members can never hold a
+					// grant for the sharing department, so a protected call name degrades to the
+					// system-generated number rather than leaking ciphertext across the link.
+					callJson.Name = ProtectedDataEnvelope.HasEnvelopePrefix(call.Name)
+						? Resgrid.Services.ProtectedProjectionService.GenericDispatchText
+						: call.Name;
 					callJson.State = _callsService.CallStateToString((CallStates) call.State);
 					callJson.StateColor = _callsService.CallStateToColor((CallStates) call.State);
 					callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);

@@ -1,19 +1,28 @@
 @model Resgrid.Web.Areas.User.Models.Contacts.ViewContactView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
 @using System.Linq
 @{
     ViewBag.Title = "Resgrid | " + @localizer["ViewContactHeader"];
 }
 
 <div class="wrapper wrapper-content animated fadeInRight">
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the
+    // step-up wiring in the Scripts section. Declared unconditionally so the section
+    // closure can see it; both partials only render when the page is protected.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedContact"],
+        RevealController = "Contacts",
+        RevealAction = "RevealContact",
+        RevealData = new Dictionary<string, string> { { "contactId", Model.Contact.ContactId } }
+    };
+}
+
     @if (Model.IsProtectedContact)
     {
-        <div class="alert alert-info" id="adpProtectedBanner">
-            <i class="fa fa-shield"></i>
-            <strong>Protected contact</strong> &mdash; encrypted at rest for this department. Authorized users and approved channels may still disclose it.
-            <button type="button" class="btn btn-primary btn-xs pull-right" id="adpRevealButton">Verify &amp; Reveal</button>
-            <button type="button" class="btn btn-default btn-xs pull-right" id="adpConcealButton" style="margin-right: 6px;">Conceal</button>
-        </div>
+        <partial name="_AdpRevealBanner" model="adpReveal" />
     }
     <div class="ibox">
         <div class="ibox-title">
@@ -607,48 +616,12 @@
 </div>
 
 
-@if (Model.IsProtectedContact)
-{
-<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="adpStepUpModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title"><i class="fa fa-shield"></i> Verify to view protected data</h4>
-            </div>
-            <div class="modal-body">
-                <p>Enter the 6-digit code from your authenticator app. Revealed values stay visible only for this department's step-up window and are never stored in your browser.</p>
-                <div class="alert alert-danger" id="adpStepUpError" style="display: none;"></div>
-                <div class="form-group">
-                    <label for="adpStepUpCode">Verification code</label>
-                    <input type="text" class="form-control" id="adpStepUpCode" maxlength="8" autocomplete="one-time-code" inputmode="numeric" />
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="adpStepUpSubmit">Verify</button>
-            </div>
-        </div>
-    </div>
-</div>
-}
 
 @section Scripts
 {
     @if (Model.IsProtectedContact)
     {
-        <form id="adpAntiForgeryForm">@Html.AntiForgeryToken()</form>
-        <script src="~/js/app/internal/dataprotection/resgrid.adp.reveal.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            $(function () {
-                resgridAdpReveal.init({
-                    verifyUrl: '@Url.Action("VerifyStepUp", "DataProtection", new { area = "User" })',
-                    revealUrl: '@Url.Action("RevealContact", "Contacts", new { area = "User" })',
-                    revealData: { contactId: '@Model.Contact.ContactId' },
-                    antiForgeryToken: $('#adpAntiForgeryForm input[name="__RequestVerificationToken"]').val()
-                });
-            });
-        </script>
+        <partial name="_AdpRevealScripts" model="adpReveal" />
     }
     <script>
         const contactId = '@Model.Contact.ContactId';

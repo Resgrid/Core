@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Newtonsoft.Json;
 using Resgrid.Framework;
+using Resgrid.Model.Services;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 
@@ -32,6 +33,7 @@ namespace Resgrid.Workers.Framework.Logic
 			try
 			{
 				var exportRepository = Bootstrapper.GetKernel().Resolve<IChatExportRepository>();
+				var protectedWriteService = Bootstrapper.GetKernel().Resolve<IProtectedWriteService>();
 
 				// Recovery first: exports stranded in Running by a crashed worker go back to the queue
 				// so they are picked up below (possibly by this run).
@@ -66,6 +68,23 @@ namespace Resgrid.Workers.Framework.Logic
 						export.Status = (int)ChatExportStatus.Failed;
 						export.CompletedOn = DateTime.UtcNow;
 						export.Error = ex.Message;
+					}
+
+					// ADP write safety net (plan 5.3, catalog v8). The archive IS the conversation, so
+					// for an enrolled department it is enveloped before it is stored - and so is the
+					// failure text, which quotes whatever the export choked on. Fails closed: a job
+					// whose payload cannot be protected is marked Failed rather than stored in the
+					// clear.
+					var protectedWrite = await protectedWriteService.PrepareChatExportWriteAsync(
+						export.DepartmentId, export, null, null, workloadCaller: true, cancellationToken);
+
+					if (!protectedWrite.Success)
+					{
+						Logging.LogError($"Chat export {export.ChatExportId} could not be protected ({protectedWrite.Reason}); the archive was discarded.");
+						export.Data = null;
+						export.Status = (int)ChatExportStatus.Failed;
+						export.CompletedOn = DateTime.UtcNow;
+						export.Error = null;
 					}
 
 					await exportRepository.UpdateAsync(export, cancellationToken);

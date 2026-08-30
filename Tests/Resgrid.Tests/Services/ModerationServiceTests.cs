@@ -580,13 +580,43 @@ namespace Resgrid.Tests.Services
 			_actions.Verify(x => x.GetByRequestIdsAsync(It.IsAny<IEnumerable<string>>()), Times.Never);
 		}
 
+		/// <summary>
+		/// The ADP write net runs on every moderation write (catalog v8). These tests are about
+		/// moderation behaviour, so it is stubbed to a plain allow - a loose mock returns a null Task
+		/// and NREs at the await.
+		/// </summary>
+		private static Lazy<IProtectedWriteService> AllowedProtectedWrites()
+		{
+			var stub = new Mock<IProtectedWriteService>();
+			stub.Setup(x => x.PrepareModerationRequestWriteAsync(It.IsAny<int>(), It.IsAny<ModerationRequest>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareModerationReportWriteAsync(It.IsAny<int>(), It.IsAny<ModerationReport>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareModerationActionWriteAsync(It.IsAny<int>(), It.IsAny<ModerationAction>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareChatMessageFlagWriteAsync(It.IsAny<int>(), It.IsAny<ChatMessageFlag>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareChatModerationActionWriteAsync(It.IsAny<int>(), It.IsAny<ChatModerationAction>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareChatExportWriteAsync(It.IsAny<int>(), It.IsAny<ChatExport>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+
+			return new Lazy<IProtectedWriteService>(() => stub.Object);
+		}
+
 		private ModerationService CreateService()
 		{
 			return new ModerationService(_requests.Object, _reports.Object, _actions.Object,
 				_chatMessages.Object, _chatAttachments.Object, _chatChannels.Object, _chatPermissions.Object,
 				_chatMessageService.Object, _messages.Object, _callNotes.Object, _callAttachments.Object,
 				_calls.Object, _groups.Object, _authorization.Object, _audit.Object, _userProfiles.Object,
-				_unitOfWork.Object, _outboundQueue.Object);
+				_unitOfWork.Object, _outboundQueue.Object, AllowedProtectedWrites());
 		}
 
 		private void SetupMessageEvidence()

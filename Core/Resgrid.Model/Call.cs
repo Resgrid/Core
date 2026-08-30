@@ -239,6 +239,13 @@ namespace Resgrid.Model
 			var number = Number?.Trim();
 			var name = Name?.Trim();
 
+			// Calls.Name is cataloged; Calls.Number is deliberately not (plan 5.1). Every caller of
+			// this helper names a chat channel, and that name is PERSISTED and shown to the whole
+			// department — so a protected department must fall back to the number rather than carry
+			// an envelope, or the placeholder, into a durable label.
+			if (ProtectedDataEnvelope.HasEnvelopePrefix(name) || name == ProtectedDataEnvelope.RedactionValue)
+				name = null;
+
 			if (String.IsNullOrWhiteSpace(name))
 				return String.IsNullOrWhiteSpace(number) ? String.Empty : number;
 

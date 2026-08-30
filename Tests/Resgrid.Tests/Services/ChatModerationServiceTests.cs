@@ -58,7 +58,38 @@ namespace Resgrid.Tests.Services
 				_channelService.Object,
 				_permissionService.Object,
 				auditService.Object,
-				Mock.Of<IEventAggregator>());
+				Mock.Of<IEventAggregator>(),
+				AllowedProtectedWrites());
+		}
+
+		/// <summary>
+		/// The ADP write net runs on every moderation write (catalog v8). These tests are about
+		/// moderation behaviour, so it is stubbed to a plain allow - a loose mock returns a null Task
+		/// and NREs at the await.
+		/// </summary>
+		private static Lazy<IProtectedWriteService> AllowedProtectedWrites()
+		{
+			var stub = new Mock<IProtectedWriteService>();
+			stub.Setup(x => x.PrepareModerationRequestWriteAsync(It.IsAny<int>(), It.IsAny<ModerationRequest>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareModerationReportWriteAsync(It.IsAny<int>(), It.IsAny<ModerationReport>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareModerationActionWriteAsync(It.IsAny<int>(), It.IsAny<ModerationAction>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareChatMessageFlagWriteAsync(It.IsAny<int>(), It.IsAny<ChatMessageFlag>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareChatModerationActionWriteAsync(It.IsAny<int>(), It.IsAny<ChatModerationAction>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareChatExportWriteAsync(It.IsAny<int>(), It.IsAny<ChatExport>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+
+			return new Lazy<IProtectedWriteService>(() => stub.Object);
 		}
 
 		[Test]

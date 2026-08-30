@@ -19,6 +19,13 @@ namespace Resgrid.Model
 		/// <summary>Catalog version this run migrates to.</summary>
 		public int CatalogVersion { get; set; }
 
+		/// <summary>
+		/// Catalog version the department is migrating FROM. Zero for enrollment and offboarding
+		/// (the whole catalog is in scope); for a CatalogUpgrade it is the department's pinned
+		/// version, and only fields added after it are swept.
+		/// </summary>
+		public int FromCatalogVersion { get; set; }
+
 		/// <summary>Target department key version for enrollment/rotation; null for offboarding.</summary>
 		public int? TargetKeyVersion { get; set; }
 

@@ -9,6 +9,28 @@
   Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the step-up
+    // wiring in the Scripts section. Declared unconditionally so the section closure can see it;
+    // both partials only render when the message is protected.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedMessage"],
+        RevealController = "Messages",
+        RevealAction = "RevealMessage",
+        RevealData = new Dictionary<string, string> { { "messageId", Model.Message.MessageId.ToString() } }
+    };
+}
+
+@if (Model.IsProtectedMessage)
+{
+  <div class="row">
+    <div class="col-lg-12" style="padding: 15px 30px 0 30px;">
+      <partial name="_AdpRevealBanner" model="adpReveal" />
+    </div>
+  </div>
+}
+
 <div class="wrapper wrapper-content">
   <div class="row">
     <div class="col-lg-3">
@@ -39,7 +61,7 @@
         </h2>
         <div class="mail-tools tooltip-demo m-t-md">
           <h3>
-            <span class="font-noraml">@localizer["SubjectLabel"]: </span>@Model.Message.Subject
+            <span class="font-noraml">@localizer["SubjectLabel"]: </span><span data-adp-field="messages.subject">@Model.Message.Subject</span>
           </h3>
           <h5>
             <span class="pull-right font-noraml">@Model.Message.SentOn.TimeConverterToString(Model.Department)</span>
@@ -86,7 +108,9 @@
       </div>
       <div class="mail-box">
         <div class="mail-body">
-          @Html.Raw(Model.Message.Body)
+          @* The body is raw HTML for an unprotected message; a revealed value is written with
+             text() by the reveal module, so decrypted content can never execute as markup. *@
+          <span data-adp-field="messages.body">@Html.Raw(Model.Message.Body)</span>
         </div>
 
         @if (!String.IsNullOrWhiteSpace(Model.ModerationMessage))
@@ -379,6 +403,10 @@
 
 @section Scripts
 {
+  @if (Model.IsProtectedMessage)
+  {
+    <partial name="_AdpRevealScripts" model="adpReveal" />
+  }
   <script src="~/lib/printThis/printThis.js"></script>
   <script src="~/js/app/internal/messages/resgrid.messages.viewMessage.js"></script>
 }

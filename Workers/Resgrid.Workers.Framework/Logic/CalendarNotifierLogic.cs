@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Resgrid.Localization.Areas.User.SystemMessages;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 
@@ -48,12 +49,13 @@ namespace Resgrid.Workers.Framework.Logic
 
 					var adjustedDateTime = item.CalendarItem.Start.TimeConverter(department);
 
-					title = string.Format("Upcoming: {0}", item.CalendarItem.Title);
+					title = string.Format("Upcoming: {0}",
+						SafeCalendarText(item.CalendarItem.Title, "AdpProtectedCalendarTitle"));
 
 					if (String.IsNullOrWhiteSpace(item.CalendarItem.Location))
 						message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()}";
 					else
-						message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {item.CalendarItem.Location}";
+						message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {SafeCalendarText(item.CalendarItem.Location, "AdpProtectedCalendarLocation")}";
 
 					if (item.CalendarItem.SignupType == (int)CalendarItemSignupTypes.RSVP)
 						message += " Reply YES or NO.";
@@ -88,12 +90,12 @@ namespace Resgrid.Workers.Framework.Logic
 				var department = await _departmentsService.GetDepartmentByIdAsync(item.CalendarItem.DepartmentId, false);
 
 				var adjustedDateTime = item.CalendarItem.Start.TimeConverter(department);
-				title = $"Upcoming: {item.CalendarItem.Title}";
+				title = $"Upcoming: {SafeCalendarText(item.CalendarItem.Title, "AdpProtectedCalendarTitle")}";
 
 				if (String.IsNullOrWhiteSpace(item.CalendarItem.Location))
 					message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()}";
 				else
-					message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {item.CalendarItem.Location}";
+					message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {SafeCalendarText(item.CalendarItem.Location, "AdpProtectedCalendarLocation")}";
 
 				if (item.CalendarItem.SignupType == (int)CalendarItemSignupTypes.RSVP)
 					message += " Reply YES or NO.";
@@ -157,5 +159,17 @@ namespace Resgrid.Workers.Framework.Logic
 				}
 			}
 		}
+		/// <summary>
+		/// A reminder is built by a worker, which holds no grant and cannot decrypt. For a protected
+		/// department the title and location are envelopes (catalog v9), and dropping ciphertext into
+		/// a notification would both leak the shape of the data and get re-encrypted as-is by the
+		/// message write net. So an enveloped value becomes a generic phrase and the member opens
+		/// the entry signed in - the same rule dispatches follow.
+		/// </summary>
+		private static string SafeCalendarText(string value, string resourceKey)
+			=> ProtectedDataEnvelope.HasEnvelopePrefix(value) || value == ProtectedDataEnvelope.RedactionValue
+				? SystemMessagesResources.Get(resourceKey, null)
+				: value;
+
 	}
 }

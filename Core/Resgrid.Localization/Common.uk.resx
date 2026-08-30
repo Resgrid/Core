@@ -632,4 +632,88 @@
   <data name="Pois" xml:space="preserve">
     <value>POI</value>
   </data>
+  <data name="AdpProtectedCall" xml:space="preserve">
+    <value>Захищений виклик</value>
+  </data>
+  <data name="AdpProtectedCertifications" xml:space="preserve">
+    <value>Захищені сертифікати</value>
+  </data>
+  <data name="AdpProtectedContact" xml:space="preserve">
+    <value>Захищений контакт</value>
+  </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Захищений запис особового складу</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Захищений запис підрозділу</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Захищений профіль</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Захищене повідомлення</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Захищений документ</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Захищений запис календаря</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Захищена черга модерації</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Захищені журнали підрозділу</value>
+  </data>
+  <data name="AdpProtectedBannerDescription" xml:space="preserve">
+    <value>зашифровано в стані спокою для цього підрозділу. Авторизовані користувачі та схвалені канали все одно можуть його розкрити.</value>
+  </data>
+  <data name="AdpVerifyAndReveal" xml:space="preserve">
+    <value>Підтвердити й показати</value>
+  </data>
+  <data name="AdpConceal" xml:space="preserve">
+    <value>Приховати</value>
+  </data>
+  <data name="AdpStepUpTitle" xml:space="preserve">
+    <value>Підтвердьте, щоб переглянути захищені дані</value>
+  </data>
+  <data name="AdpStepUpInstructions" xml:space="preserve">
+    <value>Введіть 6-значний код із застосунку автентифікації. Показані значення залишаються видимими лише протягом вікна підтвердження цього підрозділу й ніколи не зберігаються у вашому браузері.</value>
+  </data>
+  <data name="AdpVerificationCode" xml:space="preserve">
+    <value>Код підтвердження</value>
+  </data>
+  <data name="AdpVerify" xml:space="preserve">
+    <value>Підтвердити</value>
+  </data>
+  <data name="AdpErrorInvalidCode" xml:space="preserve">
+    <value>Код підтвердження недійсний або протермінований.</value>
+  </data>
+  <data name="AdpErrorTooManyAttempts" xml:space="preserve">
+    <value>Забагато спроб підтвердження. Зачекайте кілька хвилин і спробуйте ще раз.</value>
+  </data>
+  <data name="AdpErrorMfaNotEnrolled" xml:space="preserve">
+    <value>Для цього облікового запису не налаштовано двофакторну автентифікацію. Спершу налаштуйте застосунок автентифікації в параметрах безпеки облікового запису.</value>
+  </data>
+  <data name="AdpErrorGrantsNotConfigured" xml:space="preserve">
+    <value>Доступ до захищених даних не налаштовано на цьому сервері.</value>
+  </data>
+  <data name="AdpErrorStepUpRequired" xml:space="preserve">
+    <value>Потрібне повторне підтвердження.</value>
+  </data>
+  <data name="AdpErrorGrantExpired" xml:space="preserve">
+    <value>Вікно підтвердження завершилося. Підтвердьте ще раз.</value>
+  </data>
+  <data name="AdpErrorGrantRevoked" xml:space="preserve">
+    <value>Доступ відкликано через зміну політики. Підтвердьте ще раз.</value>
+  </data>
+  <data name="AdpErrorAccessDenied" xml:space="preserve">
+    <value>Ви не маєте дозволу переглядати ці захищені дані.</value>
+  </data>
+  <data name="AdpErrorBrokerUnavailable" xml:space="preserve">
+    <value>Служба захищених даних недоступна. Спробуйте ще раз незабаром.</value>
+  </data>
+  <data name="AdpErrorGeneric" xml:space="preserve">
+    <value>Запит не вдався. Спробуйте ще раз.</value>
+  </data>
 </root>

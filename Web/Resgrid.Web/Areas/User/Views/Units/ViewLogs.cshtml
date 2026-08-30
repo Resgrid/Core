@@ -3,6 +3,26 @@
 @{
     ViewBag.Title = "Resgrid | " + @localizer["ViewUnitLogsHeader"];
 }
+
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner and the Scripts section.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedUnitLogs"],
+        RevealController = "Units",
+        RevealAction = "RevealUnitLogs",
+        RevealData = new Dictionary<string, string> { { "unitId", Model.Unit.UnitId.ToString() } }
+    };
+}
+
+@if (Model.IsProtectedLogs)
+{
+    <div class="row">
+        <div class="col-lg-12" style="padding: 15px 30px 0 30px;">
+            <partial name="_AdpRevealBanner" model="adpReveal" />
+        </div>
+    </div>
+}
 @section Styles
     {
 
@@ -50,7 +70,7 @@
                                 {
                                     <tr>
                                         <td>@log.Timestamp.TimeConverterToString(Model.Department)</td>
-                                        <td>@Html.Raw(log.Narrative)</td>
+                                        <td data-adp-field="unitlogs.narrative:@log.UnitLogId">@Html.Raw(log.Narrative)</td>
                                     </tr>
                                 }
                             </tbody>
@@ -65,5 +85,8 @@
 
 @section Scripts
     {
-
+    @if (Model.IsProtectedLogs)
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
 }

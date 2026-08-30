@@ -9,7 +9,8 @@ namespace Resgrid.Providers.Migrations.Migrations
 	///    is never consulted for runtime crypto, grants, rotation, or opt-out of already-enabled
 	///    departments. No percentage rollout or targeting is ever applied to this key.
 	/// 2. The yearly single-tier ADP PlanAddon row (PlanAddonTypes.ADP = 2, $999/yr launch price).
-	///    ExternalId carries the Stripe yearly price id (under product prod_V9NRrdSq5hxCk8).
+	///    ExternalId carries the Stripe yearly price id (under product prod_V9NRrdSq5hxCk8); M0136
+///    repoints existing rows when that price id changes.
 	///    TestExternalId seeds empty until the Stripe test-mode counterpart exists. The Paddle
 	///    price id is NOT stored here — per the PTT precedent it lives in
 	///    PaymentProviderConfig.PaddleAdpAddon (pri_01m11vm50c17z0rxcgy4fppf80, product
@@ -39,7 +40,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 			Execute.Sql(
 				"IF NOT EXISTS (SELECT 1 FROM [PlanAddons] WHERE [PlanAddonId] = '" + AdpPlanAddonId + "') " +
 				"INSERT INTO [PlanAddons] ([PlanAddonId], [AddonType], [Cost], [ExternalId], [TestExternalId]) " +
-				"VALUES ('" + AdpPlanAddonId + "', 2, 999, 'price_0U94gcqJFDZJcnkVOJNe9SnR', '');");
+				"VALUES ('" + AdpPlanAddonId + "', 2, 999, 'price_0U9wyZqJFDZJcnkVfFDTHoHl', '');");
 		}
 
 		public override void Down()

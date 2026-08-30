@@ -64,6 +64,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IPasswordRecoveryService _passwordRecoveryService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, ICertificationService certificationService,
@@ -74,7 +75,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IExternalIdentityLinkService externalIdentityLinkService, IUserSessionService userSessionService,
 			ISystemAuditsService systemAuditsService, IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService, IPasswordRecoveryService passwordRecoveryService,
-			IEventAggregator eventAggregator)
+			IEventAggregator eventAggregator, IProtectedReadService protectedReadService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -98,6 +99,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentSettingsService = departmentSettingsService;
 			_passwordRecoveryService = passwordRecoveryService;
 			_eventAggregator = eventAggregator;
+			_protectedReadService = protectedReadService;
 		}
 		#endregion Private Members and Constructors
 
@@ -764,10 +766,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
 
+			if (!await CanReachCertificationsForAsync(userToGet))
+				return Unauthorized();
+
 			var model = new CertificationsView();
 			model.Certifications= await _certificationService.GetCertificationsByUserIdAsync(userToGet);
 			model.Department= await _departmentsService.GetDepartmentByUserIdAsync(userToGet);
 			model.UserId = userToGet;
+
+			// Attended protected read (plan 7.1). Metadata only: the document bytes are stripped
+			// here and re-fetched by the download endpoint, which opts into decryption. Without a
+			// grant the text renders as the REDACTED placeholder and the page offers a step-up.
+			var protectedRead = await _protectedReadService.ResolveCertificationsForReadAsync(DepartmentId,
+				model.Certifications, Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+			model.IsProtected = protectedRead.IsProtected;
 
 			var user= _usersService.GetUserById(userToGet);
 			if (userToGet == UserId)
@@ -783,6 +795,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AddCertification(string userId)
 		{
 			string userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
+
+			if (!await CanReachCertificationsForAsync(userToGet))
+				return Unauthorized();
+
 			var model = new AddCertificationView();
 			model.UserId = userToGet;
 			var types = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
@@ -796,6 +812,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_View)]
 		public async Task<IActionResult> AddCertification(AddCertificationView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
+			// The subject comes from the form, so it is checked before anything is read or written.
+			if (model == null || !await CanReachCertificationsForAsync(model.UserId))
+				return Unauthorized();
+
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{
 				var extenion = FileHelper.GetFileExtensionWithoutDot(fileToUpload.FileName);
@@ -851,9 +871,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> DeleteCertification(int certId, CancellationToken cancellationToken)
 		{
-			var cert= await _certificationService.GetCertificationByIdAsync(certId);
+			var cert = await GetAuthorizedCertificationAsync(certId);
 
-			if (cert.DepartmentId != DepartmentId)
+			if (cert == null)
 				return Unauthorized();
 
 			string userId = cert.UserId;
@@ -871,9 +891,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> EditCertification(EditCertificationView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
-			var cert= await _certificationService.GetCertificationByIdAsync(model.CertificationId);
+			var cert = await GetAuthorizedCertificationAsync(model?.CertificationId ?? 0);
 
-			if (cert.DepartmentId != DepartmentId)
+			if (cert == null)
 				return Unauthorized();
 
 			if (fileToUpload != null && fileToUpload.Length > 0)
@@ -928,10 +948,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> EditCertification(int certId)
 		{
-			var cert= await _certificationService.GetCertificationByIdAsync(certId);
+			var cert = await GetAuthorizedCertificationAsync(certId);
 
-			if (cert.DepartmentId != DepartmentId)
+			if (cert == null)
 				return Unauthorized();
+
+			// Resolved so the form is populated with real values for a caller holding a grant, and
+			// with the REDACTED placeholder otherwise — which the save path recognises and restores
+			// rather than writing over the stored value.
+			await _protectedReadService.ResolveCertificationsForReadAsync(DepartmentId,
+				new List<PersonnelCertification> { cert },
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 
 			var model = new EditCertificationView();
 			model.CertificationId = cert.PersonnelCertificationId;
@@ -954,15 +981,100 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		public async Task<IActionResult> GetCertificationData(int certId)
 		{
-			var cert= await _certificationService.GetCertificationByIdAsync(certId);
+			// This endpoint serves the document itself — a scan carrying the member's name, licence
+			// number and often their signature. It needs the subject check most of all.
+			var cert = await GetAuthorizedCertificationAsync(certId);
 
-			if (cert.DepartmentId != DepartmentId)
+			if (cert == null)
 				return Unauthorized();
+
+			// The one endpoint that opts into decrypting the document itself. A concealed payload
+			// comes back null rather than as ciphertext bytes, so a caller without a grant gets a
+			// refusal instead of a file full of envelope. The page requests this through the reveal
+			// module, which puts the grant on the request; a plain link cannot carry a header.
+			await _protectedReadService.ResolveCertificationsForReadAsync(DepartmentId,
+				new List<PersonnelCertification> { cert },
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId, includeData: true);
+
+			if (cert.Data == null || cert.Data.Length == 0)
+				return NotFound();
 
 			return new FileContentResult(cert.Data, cert.Filetype)
 			{
-				FileDownloadName = cert.Filename
+				FileDownloadName = ProtectedDataEnvelope.SafeDisplay(cert.Filename)
 			};
+		}
+
+		/// <summary>
+		/// Certifications carry licence numbers and scanned documents — protected personnel data
+		/// (plan 5.1, catalog v6). Department scoping alone is not authorization: it only proves the
+		/// row belongs to this tenant, not that the caller may see THIS member's record. Every
+		/// certification action resolves the subject and runs the same rule the rest of the
+		/// department-scoped member data uses — your own record, or an admin over that member.
+		/// </summary>
+		private async Task<bool> CanReachCertificationsForAsync(string subjectUserId)
+		{
+			if (string.IsNullOrWhiteSpace(subjectUserId))
+				return false;
+
+			return await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, subjectUserId);
+		}
+
+		/// <summary>
+		/// Loads a certification and confirms the caller may reach it. Returns null when the id does
+		/// not exist, belongs to another department, or belongs to a member this caller has no
+		/// business reading — all three are indistinguishable to the caller on purpose.
+		/// </summary>
+		private async Task<PersonnelCertification> GetAuthorizedCertificationAsync(int certId)
+		{
+			var certification = await _certificationService.GetCertificationByIdAsync(certId);
+
+			if (certification == null || certification.DepartmentId != DepartmentId)
+				return null;
+
+			return await CanReachCertificationsForAsync(certification.UserId) ? certification : null;
+		}
+
+		/// <summary>
+		/// Reveals a member's certification values to a caller holding a valid grant (plan 7.2).
+		/// Keys are catalog field ids suffixed with the row id, because this page shows many rows
+		/// and a flat field map could not tell them apart.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Profile_View)]
+		public async Task<IActionResult> RevealCertifications([FromForm] string userId)
+		{
+			var userToGet = !String.IsNullOrWhiteSpace(userId) ? userId : UserId;
+
+			// The grant proves the CALLER stepped up; it says nothing about whose data they may
+			// step up to. Without this, any member holding Profile_View could post another
+			// member's id and decrypt their licence numbers.
+			if (!await CanReachCertificationsForAsync(userToGet))
+				return Unauthorized();
+
+			var certifications = await _certificationService.GetCertificationsByUserIdAsync(userToGet);
+			if (certifications == null || !certifications.Any())
+				return Json(new { success = true, fields = new Dictionary<string, string>() });
+
+			// Rows are keyed by user, so a caller cannot reach another department's certifications
+			// through this endpoint even if the ids were guessed.
+			certifications = certifications.Where(c => c.DepartmentId == DepartmentId).ToList();
+
+			var resolved = await _protectedReadService.ResolveCertificationsForReadAsync(DepartmentId,
+				certifications, Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+
+			if (resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			var fields = new Dictionary<string, string>();
+			foreach (var certification in certifications)
+			{
+				foreach (var accessor in Resgrid.Services.ProtectedReadService.CertificationFieldAccessors)
+					fields[$"{accessor.Key}:{certification.PersonnelCertificationId}"] = accessor.Value.Get(certification);
+			}
+
+			return Json(new { success = true, fields });
 		}
 
 		[Authorize(Policy = ResgridResources.Profile_View)]

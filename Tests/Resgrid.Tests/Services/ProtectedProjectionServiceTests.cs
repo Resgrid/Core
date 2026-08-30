@@ -188,6 +188,51 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Allow_protected_content_degrades_when_any_cataloged_field_is_enveloped()
+		{
+			_protection.Setup(x => x.IsProtectionEnforcedAsync(DeptId)).ReturnsAsync(true);
+			SetupEgress(push: Resgrid.Model.ProtectedDataEgressMode.AllowProtectedContent);
+
+			// Name/NatureOfCall/Address are plaintext, so a fixed three-field check would wave this
+			// through — but Notes carries an envelope, and templates and TTS prompts read it. Every
+			// cataloged field must be checked or ciphertext reaches the carrier.
+			var call = new Resgrid.Model.Call
+			{
+				CallId = 1001,
+				DepartmentId = DeptId,
+				Number = "26-100",
+				Name = "Structure Fire",
+				NatureOfCall = "Smoke showing",
+				Notes = "rgdp:1:1:notes=="
+			};
+
+			var safe = await _service.BuildNotificationSafeCallAsync(DeptId, call, Resgrid.Model.ProtectedDataEgressChannel.Push);
+
+			safe.Should().NotBeSameAs(call, "an enveloped cataloged field forces the sanitized clone");
+			safe.NatureOfCall.Should().Be(ProtectedProjectionService.GenericDispatchText);
+			safe.Notes.Should().BeNull("the sanitized clone carries no user-authored content");
+		}
+
+		[Test]
+		public async Task Allow_protected_content_degrades_on_an_enveloped_contact_number()
+		{
+			_protection.Setup(x => x.IsProtectionEnforcedAsync(DeptId)).ReturnsAsync(true);
+			SetupEgress(push: Resgrid.Model.ProtectedDataEgressMode.AllowProtectedContent);
+
+			var call = new Resgrid.Model.Call
+			{
+				CallId = 1001,
+				DepartmentId = DeptId,
+				Number = "26-100",
+				Name = "Structure Fire",
+				ContactNumber = "rgdp:1:1:contactnumber=="
+			};
+
+			(await _service.BuildNotificationSafeCallAsync(DeptId, call, Resgrid.Model.ProtectedDataEgressChannel.Push))
+				.Should().NotBeSameAs(call);
+		}
+
+		[Test]
 		public async Task Unknown_protection_or_egress_state_sanitizes_defensively()
 		{
 			_protection.Setup(x => x.IsProtectionEnforcedAsync(DeptId))

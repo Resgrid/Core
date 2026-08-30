@@ -66,6 +66,28 @@ namespace Resgrid.Model
 		[ProtoMember(13)]
 		public string ProtectedLongitudeEnvelope { get; set; }
 
+		/// <summary>
+		/// The department that owns this row (M0137). Messages are addressed to users, and a user
+		/// can belong to several departments and move between them, so ownership is resolved ONCE
+		/// at send time and frozen here rather than derived through a join: the ADP envelope AAD
+		/// binds the department, and a derived value that later moves would orphan every envelope
+		/// written under it. Null on historic rows the M0137 backfill could not attribute, which
+		/// keeps them out of encryption instead of encrypting them under a guess.
+		/// </summary>
+		[ProtoMember(14)]
+		public int? DepartmentId { get; set; }
+
+		/// <summary>
+		/// Machine metadata for prompts that can be answered from any text channel — which calendar
+		/// item or poll this recipient row belongs to (M0138). It used to share the Note column with
+		/// the member's own words, which is what kept Note out of the protected-field catalog: every
+		/// reader of this token runs WITHOUT a Protected Data Grant (the chatbot inbound resolver
+		/// most of all), and the broker's workload lane cannot decrypt. Deliberately NOT cataloged:
+		/// it is a row pointer and says nothing about a person.
+		/// </summary>
+		[ProtoMember(15)]
+		public string PromptMetadata { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

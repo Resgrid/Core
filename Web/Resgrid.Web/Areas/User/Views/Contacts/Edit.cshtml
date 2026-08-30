@@ -3,6 +3,19 @@
 @{
     ViewData["Title"] = "Resgrid | " + @localizer["EditContact"];
 }
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the
+    // step-up wiring in the Scripts section. Declared unconditionally so the section
+    // closure can see it; both partials only render when the page is protected.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedContact"],
+        RevealController = "Contacts",
+        RevealAction = "RevealContact",
+        RevealData = new Dictionary<string, string> { { "contactId", Model.Contact.ContactId } }
+    };
+}
+
 @section Styles
 {
     <link rel="stylesheet" href="~/clib/croppic/css/croppic.css" />
@@ -11,6 +24,25 @@
 <form id="editContactForm" class="form-horizontal" role="form" asp-controller="Contacts" asp-action="Edit" asp-route-area="User" method="post">
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.Contact.ContactId)
+
+    @*
+        ADP: the coordinate inputs are split into latitude/longitude, and a protected contact's
+        coordinates render as the REDACTED placeholder, which does not split - so those inputs are
+        empty for a value the editor was never shown. Round-tripping the placeholder here is what
+        lets the POST tell "never revealed" apart from "deliberately cleared".
+    *@
+    @Html.HiddenFor(m => m.Contact.EntranceGpsCoordinates)
+    @Html.HiddenFor(m => m.Contact.ExitGpsCoordinates)
+    @Html.HiddenFor(m => m.Contact.LocationGpsCoordinates)
+
+    @if (Model.IsProtectedContact)
+    {
+        <div class="row">
+            <div class="col-xs-12" style="padding: 15px 30px 0 30px;">
+                <partial name="_AdpRevealBanner" model="adpReveal" />
+            </div>
+        </div>
+    }
 
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-sm-4">
@@ -78,47 +110,47 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["FirstNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["FirstNamePlaceholder"]" asp-for="Contact.FirstName" /></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["FirstNamePlaceholder"]" asp-for="Contact.FirstName" data-adp-field="contacts.firstname" /></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["LastNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["LastNamePlaceholder"]" asp-for="Contact.LastName"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["LastNamePlaceholder"]" asp-for="Contact.LastName" data-adp-field="contacts.lastname"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MiddleNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MiddleNamePlaceholder"]" asp-for="Contact.MiddleName"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MiddleNamePlaceholder"]" asp-for="Contact.MiddleName" data-adp-field="contacts.middlename"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CompanyNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CompanyNamePlaceholder"]" asp-for="Contact.CompanyName"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CompanyNamePlaceholder"]" asp-for="Contact.CompanyName" data-adp-field="contacts.companyname"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["OtherNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["OtherNamePlaceholder"]" asp-for="Contact.OtherName"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["OtherNamePlaceholder"]" asp-for="Contact.OtherName" data-adp-field="contacts.othername"></div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["EmailAddressLabel"]</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Contact.Email">
+                                <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Contact.Email" data-adp-field="contacts.email">
                                 <span class="help-block m-b-none">@localizer["EmailAddressHelper"]</span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CellPhoneLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["CellPhonePlaceholder"]" asp-for="Contact.CellPhoneNumber"><span asp-validation-for="Contact.CellPhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
+                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["CellPhonePlaceholder"]" asp-for="Contact.CellPhoneNumber" data-adp-field="contacts.cellphonenumber"><span asp-validation-for="Contact.CellPhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["HomePhoneLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["HomePhonePlaceholder"]" asp-for="Contact.HomePhoneNumber"><span asp-validation-for="Contact.HomePhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
+                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["HomePhonePlaceholder"]" asp-for="Contact.HomePhoneNumber" data-adp-field="contacts.homephonenumber"><span asp-validation-for="Contact.HomePhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["FaxPhoneLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["FaxPhonePlaceholder"]" asp-for="Contact.FaxPhoneNumber"><span asp-validation-for="Contact.FaxPhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
+                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["FaxPhonePlaceholder"]" asp-for="Contact.FaxPhoneNumber" data-adp-field="contacts.faxphonenumber"><span asp-validation-for="Contact.FaxPhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["OfficePhoneLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["OfficePhonePlaceholder"]" asp-for="Contact.OfficePhoneNumber"><span asp-validation-for="Contact.OfficePhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
+                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["OfficePhonePlaceholder"]" asp-for="Contact.OfficePhoneNumber" data-adp-field="contacts.officephonenumber"><span asp-validation-for="Contact.OfficePhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
                         </div>
                         <div class="hr-line-dashed"></div>
                         <h3>
@@ -307,6 +339,105 @@
 
 @section Scripts
 {
+    @if (Model.IsProtectedContact)
+    {
+    <script type="text/javascript">
+        // ADP reveal, the fields a data-adp-field marker cannot reach (plan 7.2).
+        //
+        // Two shapes need help. The GPS coordinates are stored as one "lat,long" string but edited
+        // through two inputs, so the marker on the hidden round-trip field cannot fill them. And
+        // Description / OtherInfo are Quill editors whose DOM belongs to Quill, not to the input the
+        // form posts. Without this the page reveals its plain inputs and leaves these showing the
+        // placeholder - a half-reveal of one record.
+        (function () {
+            var REDACTED = 'REDACTED';
+
+            var coordinates = [
+                { key: 'contacts.locationgpscoordinates', lat: '#LocationGpsLatitude', lng: '#LocationGpsLongitude' },
+                { key: 'contacts.entrancegpscoordinates', lat: '#EntranceGpsLatitude', lng: '#EntranceGpsLongitude' },
+                { key: 'contacts.exitgpscoordinates', lat: '#ExitGpsLatitude', lng: '#ExitGpsLongitude' }
+            ];
+
+            var editors = [
+                { key: 'contacts.description', container: '#description-container' },
+                { key: 'contacts.otherinfo', container: '#otherInfo-container' }
+            ];
+
+            function usable(value) {
+                // Same rule the reveal module applies: never paint a placeholder or ciphertext that
+                // failed to decrypt server-side into the page.
+                return typeof value === 'string' && value !== '' && value !== REDACTED
+                    && value.indexOf('rgdp:') !== 0 && value.indexOf('rgdpb:') !== 0;
+            }
+
+            function quill(container) {
+                var element = document.querySelector(container);
+                return (element && typeof Quill !== 'undefined' && Quill.find) ? Quill.find(element) : null;
+            }
+
+            window.resgridAdpPageRevealed = function (values) {
+                if (!values)
+                    return;
+
+                $.each(coordinates, function (_, pair) {
+                    var value = values[pair.key];
+                    if (!usable(value))
+                        return;
+
+                    // Anything that is not a well-formed pair is left alone rather than guessed at:
+                    // writing half of a coordinate would post a broken location back.
+                    var parts = value.split(',');
+                    if (parts.length !== 2)
+                        return;
+
+                    $(pair.lat).val($.trim(parts[0]));
+                    $(pair.lng).val($.trim(parts[1]));
+                    $(pair.lat).add(pair.lng).data('adp-page-revealed', true);
+                });
+
+                $.each(editors, function (_, editor) {
+                    var value = values[editor.key];
+                    if (!usable(value))
+                        return;
+
+                    var instance = quill(editor.container);
+                    if (!instance)
+                        return;
+
+                    // Quill's own API, so the revealed HTML is parsed into its document model rather
+                    // than injected as markup, and the submit handler picks it up unchanged.
+                    instance.clipboard.dangerouslyPasteHTML(value);
+                    $(editor.container).data('adp-page-revealed', true);
+                });
+            };
+
+            window.resgridAdpPageConcealed = function () {
+                $.each(coordinates, function (_, pair) {
+                    var $lat = $(pair.lat);
+                    if (!$lat.data('adp-page-revealed'))
+                        return;
+
+                    $lat.val('').removeData('adp-page-revealed');
+                    $(pair.lng).val('').removeData('adp-page-revealed');
+                });
+
+                $.each(editors, function (_, editor) {
+                    var $container = $(editor.container);
+                    if (!$container.data('adp-page-revealed'))
+                        return;
+
+                    var instance = quill(editor.container);
+                    if (instance)
+                        instance.setText(REDACTED);
+
+                    $container.removeData('adp-page-revealed');
+                });
+            };
+        })();
+    </script>
+
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/app/resgrid.phonevalidate.js"></script>
 

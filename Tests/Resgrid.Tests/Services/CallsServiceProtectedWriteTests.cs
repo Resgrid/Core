@@ -162,6 +162,73 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task SaveCallNoteAsync_UnresolvableParentCall_FailsClosed()
+		{
+			// The department (and so the protection state) is only reachable through the parent call.
+			// An unresolvable parent must block the write, not silently leave plaintext at rest.
+			var note = new CallNote { CallNoteId = 8, CallId = 42, Note = "Occupant on O2" };
+
+			Func<Task> act = async () => await _service.SaveCallNoteAsync(note);
+
+			await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("*parent call 42 not found*");
+			_protectedWriteService.Verify(x => x.PrepareCallNoteWriteAsync(It.IsAny<int>(), It.IsAny<CallNote>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task SaveCallAttachmentAsync_UnresolvableParentCall_FailsClosed()
+		{
+			var attachment = new CallAttachment { CallAttachmentId = 7, CallId = 42, FileName = "scene.jpg" };
+
+			Func<Task> act = async () => await _service.SaveCallAttachmentAsync(attachment);
+
+			await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("*parent call 42 not found*");
+			_protectedWriteService.Verify(x => x.PrepareCallAttachmentWriteAsync(It.IsAny<int>(), It.IsAny<CallAttachment>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task SaveCallNoteAsync_RedactedSentinel_RestoresTheStoredEnvelopeAndResaves()
+		{
+			_callsRepo.Setup(x => x.GetByIdAsync(42)).ReturnsAsync(BuildCall());
+			_callNotesRepo.Setup(x => x.GetByIdAsync(8))
+				.ReturnsAsync(new CallNote { CallNoteId = 8, CallId = 42, Note = "rgdp:1:1:storednote==" });
+
+			var edited = new CallNote { CallNoteId = 8, CallId = 42, Note = ProtectedDataEnvelope.RedactionValue };
+
+			var result = await _service.SaveCallNoteAsync(edited);
+
+			result.Note.Should().Be("rgdp:1:1:storednote==", "REDACTED means unchanged — the stored envelope is restored, never persisted literally");
+			// Initial save plus the re-save that persists the restore over the placeholder row.
+			_callNotesRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CallNote>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task SaveCallAttachmentAsync_RedactedSentinel_RestoresTheStoredEnvelope()
+		{
+			_callsRepo.Setup(x => x.GetByIdAsync(42)).ReturnsAsync(BuildCall());
+			_callAttachmentRepo.Setup(x => x.GetByIdAsync(7))
+				.ReturnsAsync(new CallAttachment { CallAttachmentId = 7, CallId = 42, FileName = "rgdp:1:1:storedname==" });
+
+			var edited = new CallAttachment { CallAttachmentId = 7, CallId = 42, FileName = ProtectedDataEnvelope.RedactionValue };
+
+			var result = await _service.SaveCallAttachmentAsync(edited);
+
+			result.FileName.Should().Be("rgdp:1:1:storedname==");
+			_callAttachmentRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task SaveCallAttachmentAsync_NoSentinel_DoesNotFetchTheStoredRow()
+		{
+			_callsRepo.Setup(x => x.GetByIdAsync(42)).ReturnsAsync(BuildCall());
+			var attachment = new CallAttachment { CallAttachmentId = 7, CallId = 42, FileName = "scene.jpg" };
+
+			await _service.SaveCallAttachmentAsync(attachment);
+
+			_callAttachmentRepo.Verify(x => x.GetByIdAsync(It.IsAny<int>()), Times.Never);
+			_callAttachmentRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CallAttachment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
 		public async Task SaveCallAsync_BlockedCallWrite_Throws()
 		{
 			var call = BuildCall();

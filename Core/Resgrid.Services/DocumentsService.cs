@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,11 +15,14 @@ namespace Resgrid.Services
 	public class DocumentsService : IDocumentsService
 	{
 		private readonly IDocumentRepository _documentRepository;
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 		private readonly IDocumentCategoriesRepository _documentCategoriesRepository;
 		private readonly IEventAggregator _eventAggregator;
 
-		public DocumentsService(IDocumentRepository documentRepository, IDocumentCategoriesRepository documentCategoriesRepository, IEventAggregator eventAggregator)
+		public DocumentsService(IDocumentRepository documentRepository, IDocumentCategoriesRepository documentCategoriesRepository,
+			IEventAggregator eventAggregator, Lazy<IProtectedWriteService> protectedWriteService)
 		{
+			_protectedWriteService = protectedWriteService;
 			_documentRepository = documentRepository;
 			_documentCategoriesRepository = documentCategoriesRepository;
 			_eventAggregator = eventAggregator;
@@ -65,7 +69,40 @@ namespace Resgrid.Services
 
 		public async Task<Document> SaveDocumentAsync(Document document, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _documentRepository.SaveOrUpdateAsync(document, cancellationToken);
+			// The stored row backs REDACTED-sentinel restoration and the "no new file uploaded" keep.
+			Document existing = null;
+			if (document != null && document.DocumentId > 0)
+				existing = await _documentRepository.GetByIdAsync(document.DocumentId);
+
+			// ADP write safety net (plan 4.2/19.2, catalog v9).
+			// An UPDATE already has its identity, so it is enveloped BEFORE the save and no plaintext
+			// version of a cataloged field ever reaches the table - the same split CertificationService
+			// uses. Only an INSERT has to be persisted first, because the AAD row key IS the identity
+			// pk and cannot be bound until the database assigns it (plan 4.2/19.2). Fails closed
+			// either way.
+			var isExistingRow = document != null && document.DocumentId > 0;
+
+			if (isExistingRow)
+			{
+				var preSaveWrite = await _protectedWriteService.Value.PrepareDocumentWriteAsync(
+					document.DepartmentId, document, existing, null, null, workloadCaller: true, cancellationToken);
+				if (!preSaveWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({preSaveWrite.Reason}); document {document.DocumentId} was NOT saved.");
+			}
+
+			var saved = await _documentRepository.SaveOrUpdateAsync(document, cancellationToken);
+
+			if (!isExistingRow)
+			{
+				var protectedWrite = await _protectedWriteService.Value.PrepareDocumentWriteAsync(saved.DepartmentId,
+					saved, existing, null, null, workloadCaller: true, cancellationToken);
+				if (!protectedWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); document {saved.DocumentId} has transient plaintext pending re-encryption.");
+				if (protectedWrite.Changed)
+					saved = await _documentRepository.SaveOrUpdateAsync(saved, cancellationToken);
+			}
+
+			return saved;
 		}
 
 		public async Task<List<string>> GetDistinctCategoriesByDepartmentIdAsync(int departmentId)

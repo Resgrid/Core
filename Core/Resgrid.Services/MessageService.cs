@@ -19,11 +19,13 @@ namespace Resgrid.Services
 		private readonly IQueueService _queueService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IMessageRecipientRepository _messageRecipientRepository;
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 
 		public MessageService(IMessageRepository messageRepository, IPushService pushService,
 			ICommunicationService communicationService,
 			IQueueService queueService, IUserProfileService userProfileService,
-			IMessageRecipientRepository messageRecipientRepository)
+			IMessageRecipientRepository messageRecipientRepository,
+			Lazy<IProtectedWriteService> protectedWriteService)
 		{
 			_messageRepository = messageRepository;
 			_pushService = pushService;
@@ -31,6 +33,7 @@ namespace Resgrid.Services
 			_queueService = queueService;
 			_userProfileService = userProfileService;
 			_messageRecipientRepository = messageRecipientRepository;
+			_protectedWriteService = protectedWriteService;
 		}
 
 		public async Task<Message> GetMessageByIdAsync(int messageId)
@@ -44,10 +47,50 @@ namespace Resgrid.Services
 			message.Body = message.Body?.Truncate(Message.MaximumBodyLength);
 			message.SentOn = message.SentOn.ToUniversalTime();
 
+			// Recipients are cascade-saved with their parent, so they take the parent's owner here
+			// rather than each caller remembering to set it (M0137). Only rows that do not already
+			// carry one: a recipient row never changes department after it is written.
+			if (message.DepartmentId.HasValue && message.MessageRecipients != null)
+			{
+				foreach (var recipient in message.MessageRecipients)
+				{
+					if (!recipient.DepartmentId.HasValue)
+						recipient.DepartmentId = message.DepartmentId;
+				}
+			}
+
 			if (message.ReadOn.HasValue)
 				message.ReadOn = message.ReadOn.Value.ToUniversalTime();
 
-			return await _messageRepository.SaveOrUpdateAsync(message, cancellationToken);
+			var saved = await _messageRepository.SaveOrUpdateAsync(message, cancellationToken);
+
+			// ADP write safety net (plan 4.2/19.2, catalog v7). Runs AFTER the save because the AAD
+			// row key is the identity pk, and because the recipient rows are cascade-saved by that
+			// same call - their ids do not exist until it returns. Fails closed by throwing rather
+			// than leaving a member's message body in plaintext.
+			var protectedWrite = await _protectedWriteService.Value.PrepareMessageWriteAsync(
+				saved.DepartmentId ?? 0, saved, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); message {saved.MessageId} has transient plaintext pending re-encryption.");
+
+			var recipientChanged = false;
+			if (saved.MessageRecipients != null)
+			{
+				foreach (var recipient in saved.MessageRecipients.Where(r => r != null))
+				{
+					var recipientWrite = await _protectedWriteService.Value.PrepareMessageRecipientWriteAsync(
+						saved.DepartmentId ?? 0, recipient, null, null, workloadCaller: true, cancellationToken);
+					if (!recipientWrite.Success)
+						throw new InvalidOperationException($"Protected write blocked ({recipientWrite.Reason}); message recipient {recipient.MessageRecipientId} has transient plaintext pending re-encryption.");
+
+					recipientChanged |= recipientWrite.Changed;
+				}
+			}
+
+			if (protectedWrite.Changed || recipientChanged)
+				saved = await _messageRepository.SaveOrUpdateAsync(saved, cancellationToken);
+
+			return saved;
 		}
 
 		public async Task<List<Message>> GetInboxMessagesByUserIdAsync(string userId)
@@ -109,6 +152,18 @@ namespace Resgrid.Services
 			return await _messageRepository.UpdateRecievedMessagesAsReadAsync(userId, messageIds);
 		}
 
+		private async Task EnsureRecipientOwnerAsync(MessageRecipient recipient)
+		{
+			// A recipient row saved on its own (marking it read, recording an RSVP response) has no
+			// department in hand. One keyed read of the parent fills it; rows written after M0137
+			// already carry one, so this only fires on the historic tail.
+			if (recipient == null || recipient.DepartmentId.HasValue || recipient.MessageId <= 0)
+				return;
+
+			var parent = await _messageRepository.GetMessagesByMessageIdAsync(recipient.MessageId);
+			recipient.DepartmentId = parent?.DepartmentId;
+		}
+
 		public async Task<MessageRecipient> MarkMessageRecipientAsDeletedAsync(int messageId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var message = await GetMessageRecipientByMessageAndUserAsync(messageId, userId);
@@ -119,6 +174,19 @@ namespace Resgrid.Services
 
 		public async Task<bool> SendMessageAsync(Message message, string sendersName, int departmentId, bool broadcastSingle = true, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// Send is the only point in the pipeline that is told which department this belongs to,
+			// and every producer saves the message and then sends it. Stamping the owner here (and
+			// re-persisting when the row was saved without one) is what keeps M0137's column
+			// populated going forward; without it every new row would be as unattributable as the
+			// historic ones the backfill could not resolve.
+			if (departmentId > 0 && !message.DepartmentId.HasValue)
+			{
+				message.DepartmentId = departmentId;
+
+				if (message.MessageId > 0)
+					await SaveMessageAsync(message, cancellationToken);
+			}
+
 			if (broadcastSingle)
 			{
 				foreach (var recip in message.GetRecipients())
@@ -129,6 +197,7 @@ namespace Resgrid.Services
 					m.SendingUserId = message.SendingUserId;
 					m.ReceivingUserId = recip;
 					m.SentOn = message.SentOn;
+					m.DepartmentId = departmentId > 0 ? departmentId : message.DepartmentId;
 
 					var savedMessage = await SaveMessageAsync(m, cancellationToken);
 
@@ -223,7 +292,21 @@ namespace Resgrid.Services
 
 		public async Task<MessageRecipient> SaveMessageRecipientAsync(MessageRecipient messageRecipient, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _messageRecipientRepository.SaveOrUpdateAsync(messageRecipient, cancellationToken);
+			await EnsureRecipientOwnerAsync(messageRecipient);
+
+			var saved = await _messageRecipientRepository.SaveOrUpdateAsync(messageRecipient, cancellationToken);
+
+			// A reply arrives as plaintext from an inbound SMS, so this row needs the net as much as
+			// the parent does (catalog v7).
+			var protectedWrite = await _protectedWriteService.Value.PrepareMessageRecipientWriteAsync(
+				saved.DepartmentId ?? 0, saved, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); message recipient {saved.MessageRecipientId} has transient plaintext pending re-encryption.");
+
+			if (protectedWrite.Changed)
+				saved = await _messageRecipientRepository.SaveOrUpdateAsync(saved, cancellationToken);
+
+			return saved;
 		}
 	}
 }

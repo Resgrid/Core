@@ -16,7 +16,7 @@ namespace Resgrid.Services
 				return string.Empty;
 
 			var valueMap = (existingValues ?? new List<UdfFieldValue>())
-				.ToDictionary(v => v.UdfFieldId, v => v.Value ?? string.Empty);
+				.ToDictionary(v => v.UdfFieldId, v => ProtectedDataEnvelope.SafeDisplay(v.Value) ?? string.Empty);
 
 			var sb = new StringBuilder();
 			sb.AppendLine($"<div class=\"udf-section\" data-definition-id=\"{definition.UdfDefinitionId}\" data-entity-type=\"{definition.EntityType}\">");
@@ -57,7 +57,7 @@ namespace Resgrid.Services
 				return JsonConvert.SerializeObject(new { definitionId = (string)null, entityType = 0, fields = new object[0] });
 
 			var valueMap = (existingValues ?? new List<UdfFieldValue>())
-				.ToDictionary(v => v.UdfFieldId, v => v.Value);
+				.ToDictionary(v => v.UdfFieldId, v => ProtectedDataEnvelope.SafeDisplay(v.Value));
 
 			var schemaFields = fields
 				.Where(f => f.IsEnabled && f.IsVisibleOnMobile)
@@ -119,7 +119,7 @@ namespace Resgrid.Services
 				return string.Empty;
 
 			var valueMap = (values ?? new List<UdfFieldValue>())
-				.ToDictionary(v => v.UdfFieldId, v => v.Value ?? string.Empty);
+				.ToDictionary(v => v.UdfFieldId, v => ProtectedDataEnvelope.SafeDisplay(v.Value) ?? string.Empty);
 
 			var sb = new StringBuilder();
 			sb.AppendLine($"<div class=\"udf-readonly-section\" data-definition-id=\"{definition.UdfDefinitionId}\">");
@@ -183,8 +183,17 @@ namespace Resgrid.Services
 			var requiredMark = field.IsRequired ? " <span class=\"text-danger\">*</span>" : "";
 
 			var sb = new StringBuilder();
+
+			// A field showing the placeholder is marked for the reveal module (plan 7.2). The marker
+			// goes on the wrapper rather than each input variant, so every data type is covered by
+			// one attribute; the module finds the control inside it. Only redacted fields carry it,
+			// so an unprotected department's markup is unchanged.
+			var revealAttr = currentValue == ProtectedDataEnvelope.RedactionValue
+				? $" data-adp-field=\"udffieldvalues.value:{field.UdfFieldId}\""
+				: string.Empty;
+
 			// Bootstrap 3 form-horizontal: form-group with col-sm-2 label / col-sm-10 input
-			sb.AppendLine($"  <div class=\"form-group udf-field\" data-field-id=\"{field.UdfFieldId}\">");
+			sb.AppendLine($"  <div class=\"form-group udf-field\" data-field-id=\"{field.UdfFieldId}\"{revealAttr}>");
 
 			if (dataType == UdfFieldDataType.Boolean)
 			{

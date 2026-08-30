@@ -54,7 +54,7 @@ public class CommunicationTestResultData
 
 	/// <summary>
 	/// Display name for <see cref="StaffingLevel"/> as the department had it configured at run time,
-	/// or the raw level when it is no longer configured. Empty when no level was recorded.
+	/// or the raw level when it is no longer configured. "-" when no level was recorded.
 	/// </summary>
 	public string StaffingLevelText { get; set; }
 

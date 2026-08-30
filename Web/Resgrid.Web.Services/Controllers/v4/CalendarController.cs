@@ -39,17 +39,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public CalendarController(ICalendarService calendarService, IDepartmentsService departmentsService,
 			IAuthorizationService authorizationService, IEventAggregator eventAggregator,
-			IUserProfileService userProfileService)
+			IUserProfileService userProfileService, IProtectedReadService protectedReadService)
 		{
+			_protectedReadService = protectedReadService;
 			_calendarService = calendarService;
 			_departmentsService = departmentsService;
 			_authorizationService = authorizationService;
 			_eventAggregator = eventAggregator;
 			_userProfileService = userProfileService;
 		}
+		/// <summary>
+		/// The caller's Protected Data Grant, if they presented one. Absent means calendar entries
+		/// resolve to the REDACTED placeholder rather than plaintext.
+		/// </summary>
+		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
+
 		#endregion Members and Constructors
 
 		/// <summary>
@@ -65,6 +73,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data = new List<GetAllCalendarItemResultData>();
 
 			var items = await _calendarService.GetAllCalendarItemsForDepartmentAsync(DepartmentId);
+
+			// ADP (catalog v9): one broker batch for the page. With a grant the titles come back as
+			// plaintext; without one they are the REDACTED placeholder, never ciphertext. The
+			// scheduling columns are not cataloged, so the calendar lays out either way.
+			await _protectedReadService.ResolveCalendarItemsForReadAsync(DepartmentId, items,
+				ProtectedGrantToken, UserId);
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
@@ -115,6 +129,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data = new List<GetAllCalendarItemResultData>();
 
 			var items = await _calendarService.GetAllCalendarItemsForDepartmentInRangeAsync(DepartmentId, start.SetToMidnight(), end.SetToEndOfDay());
+
+			await _protectedReadService.ResolveCalendarItemsForReadAsync(DepartmentId, items,
+				ProtectedGrantToken, UserId);
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
@@ -161,6 +178,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new GetCalendarItemResult();
 			var item = await _calendarService.GetCalendarItemByIdAsync(id);
+
+			if (item != null)
+				await _protectedReadService.ResolveCalendarItemsForReadAsync(DepartmentId, new[] { item },
+					ProtectedGrantToken, UserId);
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);

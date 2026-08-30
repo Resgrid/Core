@@ -62,17 +62,51 @@
     <value>Kalender</value>
   </data>
   <data name="GdprExportReadyBody" xml:space="preserve">
-    <value>Hej {0},
-
-Din export av personuppgifter är klar för nedladdning.
-
-Nedladdningslänk: {1}
-
-Länken upphör att gälla {2:f} UTC. Efter detta datum är uppgifterna inte längre tillgängliga.
-
-Om du inte har begärt detta, kontakta supporten.
-
+    <value>Hej {0},
+
+
+
+Din export av personuppgifter är klar för nedladdning.
+
+
+
+Nedladdningslänk: {1}
+
+
+
+Länken upphör att gälla {2:f} UTC. Efter detta datum är uppgifterna inte längre tillgängliga.
+
+
+
+Om du inte har begärt detta, kontakta supporten.
+
+
+
 Resgrid-teamet</value>
+  </data>
+  <data name="GdprExportWithheldNotice" xml:space="preserve">
+    <value>Din organisation använder avancerat dataskydd, så vissa värden i den här exporten är krypterade och visas som REDACTED. De ingår fortfarande i dina uppgifter och har inte raderats.</value>
+  </data>
+  <data name="GdprExportWithheldHowTo" xml:space="preserve">
+    <value>Logga in i Resgrid och öppna sidan där värdena hör hemma för att visa dem efter att du bekräftat din identitet. Din organisationsadministratör kan också lämna ut dem.</value>
+  </data>
+  <data name="AdpProtectedMessageSubject" xml:space="preserve">
+    <value>Skyddat meddelande</value>
+  </data>
+  <data name="AdpProtectedMessageNotice" xml:space="preserve">
+    <value>Ett skyddat meddelande väntar på dig. Logga in i Resgrid för att läsa det.</value>
+  </data>
+  <data name="AdpProtectedCalendarTitle" xml:space="preserve">
+    <value>Skyddad kalenderpost</value>
+  </data>
+  <data name="AdpProtectedCalendarLocation" xml:space="preserve">
+    <value>en skyddad plats</value>
+  </data>
+  <data name="AdpProtectedDispatchNotice" xml:space="preserve">
+    <value>Ett skyddat larm finns tillgängligt. Logga in i Resgrid för att se detaljerna.</value>
+  </data>
+  <data name="AdpProtectedDispatchName" xml:space="preserve">
+    <value>Skyddat larm</value>
   </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>Din Resgrid-dataexport är klar</value>
@@ -81,12 +115,18 @@ Resgrid-teamet</value>
     <value>Avisering</value>
   </data>
   <data name="VerificationCodeEmailBody" xml:space="preserve">
-    <value>Hej {0},
-
-Din Resgrid-verifieringskod är: {1}
-
-Koden upphör att gälla om {2} minuter. Om du inte har begärt detta kan du ignorera detta e-postmeddelande.
-
+    <value>Hej {0},
+
+
+
+Din Resgrid-verifieringskod är: {1}
+
+
+
+Koden upphör att gälla om {2} minuter. Om du inte har begärt detta kan du ignorera detta e-postmeddelande.
+
+
+
 Resgrid-teamet</value>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">

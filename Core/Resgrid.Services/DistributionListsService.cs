@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,10 +12,14 @@ namespace Resgrid.Services
 	public class DistributionListsService : IDistributionListsService
 	{
 		private readonly IDistributionListRepository _distributionListRepository;
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 		private readonly IDistributionListMemberRepository _distributionListMemberRepository;
 
-		public DistributionListsService(IDistributionListRepository distributionListRepository, IDistributionListMemberRepository distributionListMemberRepository)
+		public DistributionListsService(IDistributionListRepository distributionListRepository,
+			IDistributionListMemberRepository distributionListMemberRepository,
+			Lazy<IProtectedWriteService> protectedWriteService)
 		{
+			_protectedWriteService = protectedWriteService;
 			_distributionListRepository = distributionListRepository;
 			_distributionListMemberRepository = distributionListMemberRepository;
 		}
@@ -57,7 +62,37 @@ namespace Resgrid.Services
 
 		public async Task<DistributionList> SaveDistributionListAsync(DistributionList distributionList, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			DistributionList existing = null;
+			if (distributionList != null && distributionList.DistributionListId > 0)
+				existing = await _distributionListRepository.GetByIdAsync(distributionList.DistributionListId);
+
+			// ADP write safety net (plan 4.2/19.2, catalog v9).
+			// An UPDATE already has its identity, so it is enveloped BEFORE the save and no plaintext
+			// version of a cataloged field ever reaches the table - the same split CertificationService
+			// uses. Only an INSERT has to be persisted first, because the AAD row key IS the identity
+			// pk and cannot be bound until the database assigns it (plan 4.2/19.2). Fails closed
+			// either way.
+			var isExistingRow = distributionList != null && distributionList.DistributionListId > 0;
+
+			if (isExistingRow)
+			{
+				var preSaveWrite = await _protectedWriteService.Value.PrepareDistributionListWriteAsync(
+					distributionList.DepartmentId, distributionList, existing, null, null, workloadCaller: true, cancellationToken);
+				if (!preSaveWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({preSaveWrite.Reason}); distribution list {distributionList.DistributionListId} was NOT saved.");
+			}
+
 			var savedList = await _distributionListRepository.SaveOrUpdateAsync(distributionList, cancellationToken);
+
+			if (!isExistingRow)
+			{
+				var protectedWrite = await _protectedWriteService.Value.PrepareDistributionListWriteAsync(
+					savedList.DepartmentId, savedList, existing, null, null, workloadCaller: true, cancellationToken);
+				if (!protectedWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); distribution list {savedList.DistributionListId} has transient plaintext credentials pending re-encryption.");
+				if (protectedWrite.Changed)
+					savedList = await _distributionListRepository.SaveOrUpdateAsync(savedList, cancellationToken);
+			}
 
 			if (distributionList.Members != null && distributionList.Members.Any())
 			{

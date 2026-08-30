@@ -62,17 +62,51 @@
     <value>Календар</value>
   </data>
   <data name="GdprExportReadyBody" xml:space="preserve">
-    <value>Вітаємо, {0}!
-
-Експорт ваших персональних даних готовий до завантаження.
-
-Посилання для завантаження: {1}
-
-Посилання діє до {2:f} UTC. Після цієї дати дані будуть недоступні.
-
-Якщо ви не надсилали запит, зверніться до служби підтримки.
-
+    <value>Вітаємо, {0}!
+
+
+
+Експорт ваших персональних даних готовий до завантаження.
+
+
+
+Посилання для завантаження: {1}
+
+
+
+Посилання діє до {2:f} UTC. Після цієї дати дані будуть недоступні.
+
+
+
+Якщо ви не надсилали запит, зверніться до служби підтримки.
+
+
+
 Команда Resgrid</value>
+  </data>
+  <data name="GdprExportWithheldNotice" xml:space="preserve">
+    <value>Ваш підрозділ використовує розширений захист даних, тому деякі значення в цьому експорті зашифровані й відображаються як REDACTED. Вони й далі є частиною ваших даних і не були видалені.</value>
+  </data>
+  <data name="GdprExportWithheldHowTo" xml:space="preserve">
+    <value>Щоб побачити ці значення, увійдіть у Resgrid і відкрийте сторінку, до якої вони належать, — там ви зможете показати їх після підтвердження особи. Їх також може надати адміністратор вашого підрозділу.</value>
+  </data>
+  <data name="AdpProtectedMessageSubject" xml:space="preserve">
+    <value>Захищене повідомлення</value>
+  </data>
+  <data name="AdpProtectedMessageNotice" xml:space="preserve">
+    <value>На вас чекає захищене повідомлення. Увійдіть у Resgrid, щоб прочитати його.</value>
+  </data>
+  <data name="AdpProtectedCalendarTitle" xml:space="preserve">
+    <value>Захищений запис календаря</value>
+  </data>
+  <data name="AdpProtectedCalendarLocation" xml:space="preserve">
+    <value>захищеному місці</value>
+  </data>
+  <data name="AdpProtectedDispatchNotice" xml:space="preserve">
+    <value>Доступний захищений виклик. Увійдіть у Resgrid, щоб переглянути деталі.</value>
+  </data>
+  <data name="AdpProtectedDispatchName" xml:space="preserve">
+    <value>Захищений виклик</value>
   </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>Ваш експорт даних Resgrid готовий</value>
@@ -81,12 +115,18 @@
     <value>Сповіщення</value>
   </data>
   <data name="VerificationCodeEmailBody" xml:space="preserve">
-    <value>Вітаємо, {0}!
-
-Ваш код підтвердження Resgrid: {1}
-
-Код діє {2} хв. Якщо ви не надсилали запит, просто проігноруйте цей лист.
-
+    <value>Вітаємо, {0}!
+
+
+
+Ваш код підтвердження Resgrid: {1}
+
+
+
+Код діє {2} хв. Якщо ви не надсилали запит, просто проігноруйте цей лист.
+
+
+
 Команда Resgrid</value>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">

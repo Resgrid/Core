@@ -40,6 +40,8 @@ namespace Resgrid.Services
 		private readonly IAuditLogsRepository _auditLogsRepository;
 		private readonly IScheduledTasksService _scheduledTasksService;
 		private readonly IUserSessionService _userSessionService;
+		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
+		private readonly IDepartmentMemberEmergencyContactService _emergencyContactService;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -49,7 +51,9 @@ namespace Resgrid.Services
 			ICertificationService certificationService, ILogService logService, IInventoryService inventoryService,
 			IEventAggregator eventAggregator, IAddressService addressService, IQueueService queueService, IEmailService emailService,
 			IDeleteRepository deleteRepository, IAuditLogsRepository auditLogsRepository,
-			IScheduledTasksService scheduledTasksService, IUserSessionService userSessionService)
+			IScheduledTasksService scheduledTasksService, IUserSessionService userSessionService,
+			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
+			IDepartmentMemberEmergencyContactService emergencyContactService)
 		{
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
@@ -76,6 +80,8 @@ namespace Resgrid.Services
 			_auditLogsRepository = auditLogsRepository;
 			_scheduledTasksService = scheduledTasksService;
 			_userSessionService = userSessionService;
+			_memberSensitiveDataService = memberSensitiveDataService;
+			_emergencyContactService = emergencyContactService;
 		}
 
 		public async Task<DeleteUserResults> DeleteUserAsync(int departmentId, string authorizingUserId, string userIdToDelete, CancellationToken cancellationToken = default(CancellationToken))
@@ -115,6 +121,14 @@ namespace Resgrid.Services
 			await _departmentGroupsService.DeleteUserFromGroupsAsync(userId, departmentId, cancellationToken);
 			await _distributionListsService.RemoveUserFromAllListsInDepartmentAsync(userId, departmentId, cancellationToken);
 			await _scheduledTasksService.DeleteAllTasksForUserInDepartmentAsync(userId, departmentId, cancellationToken);
+
+			// Department-scoped personal data goes with the membership (ADP plan 5.1). Before the
+			// relocation these values lived on the global profile and a revoked member simply stopped
+			// being reachable; now the department holds the only copy of their identification number,
+			// address and next-of-kin details, so leaving the rows behind would retain a former
+			// member's personal data under a department that no longer has any relationship with them.
+			await _memberSensitiveDataService.DeleteForMemberAsync(departmentId, userId, cancellationToken);
+			await _emergencyContactService.DeleteAllForMemberAsync(departmentId, userId, cancellationToken);
 
 			// Soft-delete the membership last (this also writes the audit event and clears caches).
 			var member = await _departmentsService.DeleteUserAsync(departmentId, userId, revokingUserId, cancellationToken);
@@ -168,6 +182,13 @@ namespace Resgrid.Services
 				{
 					await _personnelRolesService.RemoveUserFromAllRolesAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
 					await _departmentGroupsService.DeleteUserFromGroupsAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
+
+					// Department-scoped personal data (ADP plan 5.1). Since the identification number
+					// and addresses moved off the global profile, these rows are the only copy — the
+					// profile scrub below no longer reaches them, and neither does deleting the
+					// legacy Addresses rows.
+					await _memberSensitiveDataService.DeleteForMemberAsync(dm.DepartmentId, userIdToDelete, cancellationToken);
+					await _emergencyContactService.DeleteAllForMemberAsync(dm.DepartmentId, userIdToDelete, cancellationToken);
 				}
 			}
 
@@ -237,6 +258,10 @@ namespace Resgrid.Services
 				userProfile.SecurityPin = null;
 				userProfile.SecurityPinEnabled = false;
 
+				// M0141 (contract) cleared these links; a member's addresses live on their
+				// department-scoped DepartmentMemberSensitiveData rows, which this service deletes
+				// with the rest of the department data. Kept as a defensive sweep for any row a
+				// pre-contract deployment left behind.
 				if (userProfile.HomeAddressId.HasValue)
 					await _addressService.DeleteAddress(userProfile.HomeAddressId.Value, cancellationToken);
 

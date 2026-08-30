@@ -632,4 +632,88 @@
   <data name="Pois" xml:space="preserve">
     <value>POI</value>
   </data>
+  <data name="AdpProtectedCall" xml:space="preserve">
+    <value>Zgłoszenie chronione</value>
+  </data>
+  <data name="AdpProtectedCertifications" xml:space="preserve">
+    <value>Chronione certyfikaty</value>
+  </data>
+  <data name="AdpProtectedContact" xml:space="preserve">
+    <value>Kontakt chroniony</value>
+  </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Chroniony rekord personelu</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Chroniony rekord jednostki</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Chroniony profil</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Chroniona wiadomość</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Chroniony dokument</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Chroniony wpis kalendarza</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Chroniona kolejka moderacji</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Chronione dzienniki jednostki</value>
+  </data>
+  <data name="AdpProtectedBannerDescription" xml:space="preserve">
+    <value>zaszyfrowane w spoczynku dla tego departamentu. Uprawnieni użytkownicy i zatwierdzone kanały nadal mogą je ujawnić.</value>
+  </data>
+  <data name="AdpVerifyAndReveal" xml:space="preserve">
+    <value>Zweryfikuj i pokaż</value>
+  </data>
+  <data name="AdpConceal" xml:space="preserve">
+    <value>Ukryj</value>
+  </data>
+  <data name="AdpStepUpTitle" xml:space="preserve">
+    <value>Zweryfikuj, aby zobaczyć chronione dane</value>
+  </data>
+  <data name="AdpStepUpInstructions" xml:space="preserve">
+    <value>Wprowadź 6-cyfrowy kod z aplikacji uwierzytelniającej. Pokazane wartości pozostają widoczne tylko przez okno weryfikacji tego departamentu i nigdy nie są przechowywane w przeglądarce.</value>
+  </data>
+  <data name="AdpVerificationCode" xml:space="preserve">
+    <value>Kod weryfikacyjny</value>
+  </data>
+  <data name="AdpVerify" xml:space="preserve">
+    <value>Zweryfikuj</value>
+  </data>
+  <data name="AdpErrorInvalidCode" xml:space="preserve">
+    <value>Kod weryfikacyjny jest nieprawidłowy lub wygasł.</value>
+  </data>
+  <data name="AdpErrorTooManyAttempts" xml:space="preserve">
+    <value>Zbyt wiele prób weryfikacji. Odczekaj kilka minut i spróbuj ponownie.</value>
+  </data>
+  <data name="AdpErrorMfaNotEnrolled" xml:space="preserve">
+    <value>Uwierzytelnianie dwuskładnikowe nie jest skonfigurowane dla tego konta. Najpierw skonfiguruj aplikację uwierzytelniającą w ustawieniach zabezpieczeń konta.</value>
+  </data>
+  <data name="AdpErrorGrantsNotConfigured" xml:space="preserve">
+    <value>Dostęp do chronionych danych nie jest skonfigurowany na tym serwerze.</value>
+  </data>
+  <data name="AdpErrorStepUpRequired" xml:space="preserve">
+    <value>Wymagana jest ponowna weryfikacja.</value>
+  </data>
+  <data name="AdpErrorGrantExpired" xml:space="preserve">
+    <value>Okno weryfikacji wygasło. Zweryfikuj ponownie.</value>
+  </data>
+  <data name="AdpErrorGrantRevoked" xml:space="preserve">
+    <value>Dostęp został cofnięty przez zmianę zasad. Zweryfikuj ponownie.</value>
+  </data>
+  <data name="AdpErrorAccessDenied" xml:space="preserve">
+    <value>Nie masz uprawnień do wyświetlenia tych chronionych danych.</value>
+  </data>
+  <data name="AdpErrorBrokerUnavailable" xml:space="preserve">
+    <value>Usługa chronionych danych jest niedostępna. Spróbuj ponownie za chwilę.</value>
+  </data>
+  <data name="AdpErrorGeneric" xml:space="preserve">
+    <value>Żądanie nie powiodło się. Spróbuj ponownie.</value>
+  </data>
 </root>

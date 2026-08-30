@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -204,6 +204,38 @@ namespace Resgrid.Services
 				.GroupBy(v => v.UdfFieldId, StringComparer.Ordinal)
 				.Select(g => g.Last())
 				.ToList();
+
+			// REDACTED-sentinel restoration (ADP plan 5.2). udffieldvalues.value is cataloged, and
+			// the edit surfaces render it through SafeDisplay — so an editor without a grant sees
+			// the placeholder and posts it straight back. This save is delete-then-reinsert, so
+			// without the swap below the real value is deleted and the literal placeholder is
+			// inserted in its place: the member's protected UDF value is gone, and no reveal can
+			// bring it back. Done before the delete, while the stored values still exist.
+			var submittedSentinels = normalizedValues
+				.Where(v => v.Value == ProtectedDataEnvelope.RedactionValue)
+				.ToList();
+
+			if (submittedSentinels.Count > 0)
+			{
+				// Queried against THIS definition rather than through the by-department accessor, which
+				// re-resolves whatever is active now. An administrator publishing a new definition
+				// mid-save would otherwise return values keyed by the new definition's field ids: no
+				// id would match, every sentinel would fall through to null, and the delete-then-
+				// reinsert below would drop the real values on the floor.
+				var stored = (await _valueRepository.GetFieldValuesByEntityAsync(entityType, entityId,
+						definition.UdfDefinitionId))
+					?.Where(v => !string.IsNullOrEmpty(v.UdfFieldId))
+					.GroupBy(v => v.UdfFieldId, StringComparer.Ordinal)
+					.ToDictionary(g => g.Key, g => g.Last().Value, StringComparer.Ordinal)
+					?? new Dictionary<string, string>(StringComparer.Ordinal);
+
+				foreach (var value in submittedSentinels)
+				{
+					// No stored value means there is nothing behind the placeholder to keep, so the
+					// field is cleared rather than having the literal word written into it.
+					value.Value = stored.TryGetValue(value.UdfFieldId, out var existing) ? existing : null;
+				}
+			}
 
 			// Delete existing values for this entity + definition version, then re-insert.
 			// Wrap both operations in a single transaction so a failed insert cannot leave

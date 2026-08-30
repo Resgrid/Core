@@ -3,6 +3,17 @@
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
+@{
+	// ADP reveal (plan 5.3/7.2). The queue itself stays usable without a grant - status, reason
+	// code and counts are structural and never encrypted - but the excerpts read as REDACTED until
+	// a moderator steps up. There is no per-record reveal endpoint here: the table is a component
+	// reading the v4 API, so a successful step-up simply makes it re-read with the grant attached.
+	var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+	{
+		BannerTitle = commonLocalizer["AdpProtectedModeration"]
+	};
+}
+
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-8">
 		<h2>@commonLocalizer["ChatModerationModule"]</h2>
@@ -18,6 +29,12 @@
 </div>
 
 <div class="row">
+	<div class="col-xs-12" style="padding: 15px 30px 0 30px;">
+		<partial name="_AdpRevealBanner" model="adpReveal" />
+	</div>
+</div>
+
+<div class="row">
 	<div class="col-xs-12">
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
@@ -28,3 +45,19 @@
 		</div>
 	</div>
 </div>
+
+@section Scripts
+{
+	<partial name="_AdpRevealScripts" model="adpReveal" />
+	<script type="text/javascript">
+		// The moderation table listens for this and re-reads; every API request picks the grant up
+		// from the reveal module's own header hook.
+		window.resgridAdpPageRevealed = function () {
+			window.dispatchEvent(new CustomEvent('resgrid:adp-reveal-changed'));
+		};
+
+		window.resgridAdpPageConcealed = function () {
+			window.dispatchEvent(new CustomEvent('resgrid:adp-reveal-changed'));
+		};
+	</script>
+}

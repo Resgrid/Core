@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using Resgrid.Model.Services;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -37,7 +38,23 @@ namespace Resgrid.Tests.Services
 				null,
 				null,
 				_messageRecipientRepository.Object,
-				_unitOfWork.Object);
+				_unitOfWork.Object,
+				AllowedProtectedWrites());
+		}
+
+		/// <summary>
+		/// The ADP write net runs on every calendar item save (catalog v9). Stubbed to a plain allow
+		/// here - a loose mock returns a null Task and NREs at the await.
+		/// </summary>
+		private static Lazy<IProtectedWriteService> AllowedProtectedWrites()
+		{
+			var stub = new Mock<IProtectedWriteService>();
+			stub.Setup(x => x.PrepareCalendarItemWriteAsync(It.IsAny<int>(), It.IsAny<CalendarItem>(),
+					It.IsAny<CalendarItem>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(),
+					It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+
+			return new Lazy<IProtectedWriteService>(() => stub.Object);
 		}
 
 		[Test]

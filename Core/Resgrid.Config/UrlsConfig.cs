@@ -11,6 +11,6 @@
 
 		public static string HomeUrl = "https://resgrid.com";
 
-		public static string SystemStatusPageUrl = "https://resgrid.freshstatus.io";
+		public static string SystemStatusPageUrl = "https://oneuptime.resgrid.net/status-page/09d6b850-e50e-42e2-8497-9ab55e5be465";
 	}
 }

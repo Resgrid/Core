@@ -45,6 +45,7 @@ namespace Resgrid.Services
 		private readonly IUserProfileService _userProfileService;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IOutboundQueueProvider _outboundQueueProvider;
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 
 		public ModerationService(IModerationRequestRepository moderationRequestRepository,
 			IModerationReportRepository moderationReportRepository, IModerationActionRepository moderationActionRepository,
@@ -55,7 +56,7 @@ namespace Resgrid.Services
 			ICallsService callsService, IDepartmentGroupsService departmentGroupsService,
 			IAuthorizationService authorizationService, IAuditService auditService,
 			IUserProfileService userProfileService, IUnitOfWork unitOfWork,
-			IOutboundQueueProvider outboundQueueProvider)
+			IOutboundQueueProvider outboundQueueProvider, Lazy<IProtectedWriteService> protectedWriteService)
 		{
 			_moderationRequestRepository = moderationRequestRepository;
 			_moderationReportRepository = moderationReportRepository;
@@ -75,6 +76,22 @@ namespace Resgrid.Services
 			_userProfileService = userProfileService;
 			_unitOfWork = unitOfWork;
 			_outboundQueueProvider = outboundQueueProvider;
+			_protectedWriteService = protectedWriteService;
+		}
+
+		/// <summary>
+		/// ADP write safety net (plan 5.3, catalog v8). Moderation rows carry a VERBATIM copy of the
+		/// worst content the department holds, so for an enrolled department they are enveloped
+		/// BEFORE the insert - the primary key is assigned here rather than by the database, so
+		/// unlike the identity-keyed families there is no moment where plaintext sits in the table.
+		/// Fails closed by throwing: a moderation record that cannot be protected must not be
+		/// written at all.
+		/// </summary>
+		private async Task ProtectModerationWriteAsync(Func<Task<ProtectedWriteResult>> prepare, string description)
+		{
+			var result = await prepare();
+			if (!result.Success)
+				throw new InvalidOperationException($"Protected write blocked ({result.Reason}); {description} was NOT saved.");
 		}
 
 		public async Task<ModerationReport> FlagAsync(int departmentId, string reportedByUserId,
@@ -116,6 +133,11 @@ namespace Resgrid.Services
 					CreatedOn = now,
 					ModifiedOn = now
 				};
+
+				await ProtectModerationWriteAsync(
+					() => _protectedWriteService.Value.PrepareModerationRequestWriteAsync(departmentId, request,
+						null, null, workloadCaller: true, cancellationToken),
+					$"moderation request for {itemType} {itemId}");
 
 				try
 				{
@@ -189,6 +211,11 @@ namespace Resgrid.Services
 					Note = note,
 					ReportedOn = DateTime.UtcNow
 				};
+
+				await ProtectModerationWriteAsync(
+					() => _protectedWriteService.Value.PrepareModerationReportWriteAsync(report.DepartmentId, report,
+						null, null, workloadCaller: true, cancellationToken),
+					$"moderation report {report.ModerationReportId}");
 
 				try
 				{
@@ -714,7 +741,18 @@ namespace Resgrid.Services
 			string byUserId, string note, int? previousStatus, int? newStatus, ChatModerationContext context,
 			object details, CancellationToken cancellationToken, bool includeEvidence = false)
 		{
-			await _moderationActionRepository.InsertAsync(new ModerationAction
+			// The evidence snapshot is a COPY of the request's own columns, and an envelope is bound
+			// to the field id and row key it was written for - copying ciphertext into a different
+			// row would produce bytes nothing can ever decrypt. So evidence is copied only while the
+			// request is still plaintext; for a protected department the action points at the
+			// request (ModerationRequestId), which holds the protected original and is not deleted
+			// when the moderated item is.
+			var evidenceIsCopyable = includeEvidence
+				&& !ProtectedDataEnvelope.HasEnvelopePrefix(request.OriginalText)
+				&& !ProtectedDataEnvelope.HasEnvelopePrefix(request.OriginalMetadataJson)
+				&& !ProtectedReadService.IsBinaryEnveloped(request.OriginalContent);
+
+			var action = new ModerationAction
 			{
 				ModerationActionId = Guid.NewGuid().ToString(),
 				ModerationRequestId = request.ModerationRequestId,
@@ -731,10 +769,17 @@ namespace Resgrid.Services
 				TraceId = context?.TraceId,
 				ServerName = Environment.MachineName,
 				DetailsJson = details == null ? null : JsonConvert.SerializeObject(details),
-				EvidenceText = includeEvidence ? request.OriginalText : null,
-				EvidenceContent = includeEvidence ? request.OriginalContent : null,
-				EvidenceMetadataJson = includeEvidence ? request.OriginalMetadataJson : null
-			}, cancellationToken);
+				EvidenceText = evidenceIsCopyable ? request.OriginalText : null,
+				EvidenceContent = evidenceIsCopyable ? request.OriginalContent : null,
+				EvidenceMetadataJson = evidenceIsCopyable ? request.OriginalMetadataJson : null
+			};
+
+			await ProtectModerationWriteAsync(
+				() => _protectedWriteService.Value.PrepareModerationActionWriteAsync(action.DepartmentId, action,
+					null, null, workloadCaller: true, cancellationToken),
+				$"moderation action {action.ModerationActionId}");
+
+			await _moderationActionRepository.InsertAsync(action, cancellationToken);
 		}
 
 		private async Task RecordDepartmentAuditAsync(ModerationRequest request, AuditLogTypes logType,

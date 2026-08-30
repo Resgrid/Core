@@ -140,6 +140,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>
+		/// Row-count progress for the status panel while a migration is in flight. Value-free: row
+		/// counts and table names, never a value out of any row. Read-only, so it stays a GET and
+		/// is polled by the status panel.
+		/// </summary>
+		[HttpGet]
+		public async Task<IActionResult> MigrationProgress(CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
+			return Json(await _dataProtectionService.GetMigrationProgressAsync(DepartmentId, cancellationToken));
+		}
+
+		/// <summary>
 		/// Wizard step 8: final confirmation and queueing. The acknowledgement record persisted on
 		/// the policy embeds the version, every acknowledged item, the lock consent, and a FRESH
 		/// server-side sizing scan (the client-shown estimate is advisory; the record's numbers are

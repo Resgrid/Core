@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using Resgrid.Model;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Services
 {
@@ -13,6 +15,39 @@ namespace Resgrid.Services
 	public static class AdpTableBindings
 	{
 		public static readonly IReadOnlyList<AdpTableBinding> V1 = Build();
+
+		/// <summary>
+		/// The bindings restricted to the columns whose catalog fields were added in
+		/// (fromCatalogVersion, toCatalogVersion] — the exact work list for a catalog-upgrade sweep.
+		/// Tables left with no in-range column are dropped entirely, so an upgrade never re-reads a
+		/// table it has nothing to do in. A range covering everything returns the full bindings.
+		/// </summary>
+		public static IReadOnlyList<AdpTableBinding> ForVersionRange(IProtectedFieldCatalog catalog,
+			int fromCatalogVersion, int toCatalogVersion)
+		{
+			if (catalog == null || toCatalogVersion <= fromCatalogVersion)
+				return new List<AdpTableBinding>();
+
+			var inRange = new HashSet<string>(
+				catalog.GetAddedBetween(fromCatalogVersion, toCatalogVersion).Select(e => e.FieldId),
+				System.StringComparer.OrdinalIgnoreCase);
+
+			var scoped = new List<AdpTableBinding>();
+			foreach (var binding in V1)
+			{
+				var columns = binding.Columns.Where(c => inRange.Contains(c.FieldId)).ToList();
+				if (columns.Count == 0)
+					continue;
+
+				// Columns is constructor-only, so rebuild the binding with the in-range subset and
+				// carry the init-only marker column across.
+				scoped.Add(new AdpTableBinding(binding.TableName, binding.PkColumn, binding.PkIsNumeric,
+					binding.DepartmentColumn, binding.ParentFkColumn, binding.ParentTable, binding.ParentPkColumn,
+					columns) with { ProtectedMarkerColumn = binding.ProtectedMarkerColumn });
+			}
+
+			return scoped;
+		}
 
 		private static IReadOnlyList<AdpTableBinding> Build()
 		{
@@ -77,12 +112,178 @@ namespace Resgrid.Services
 					Text("ContactNotes", "Note")
 				}),
 
+				// Catalog v2 (section 5.2). Neither table carries its own DepartmentId, so ownership
+				// derives from a verified parent: UDF values through their definition, unit states
+				// through the unit. (Messages and MessageRecipients were absent for the same reason
+				// until M0137 gave them a DepartmentId of their own; they are bound below at v7.)
+				// Catalog v3: the incident log carries its own DepartmentId.
+				AdpTableBinding.Direct("Logs", "LogId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("Logs", "Narrative"),
+					Text("Logs", "InitialReport"),
+					Text("Logs", "Cause"),
+					Text("Logs", "ContactName"),
+					Text("Logs", "ContactNumber"),
+					Text("Logs", "OtherPersonnel"),
+					Text("Logs", "Location"),
+					Text("Logs", "BodyLocation"),
+					Text("Logs", "PronouncedDeceasedBy")
+				}),
+
+				AdpTableBinding.ViaParent("UdfFieldValues", "UdfFieldValueId", pkIsNumeric: false, "UdfDefinitionId", "UdfDefinitions", "UdfDefinitionId", new[]
+				{
+					Text("UdfFieldValues", "Value")
+				}),
+
+				AdpTableBinding.ViaParent("UnitStates", "UnitStateId", pkIsNumeric: true, "UnitId", "Units", "UnitId", new[]
+				{
+					Text("UnitStates", "Note"),
+					Text("UnitStates", "GeoLocationData"),
+					Companion("UnitStates", "Latitude"),
+					Companion("UnitStates", "Longitude")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				// Catalog v4: a member's department-scoped emergency contacts (several per member).
+				AdpTableBinding.Direct("DepartmentMemberEmergencyContacts", "DepartmentMemberEmergencyContactId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("DepartmentMemberEmergencyContacts", "Name"),
+					Text("DepartmentMemberEmergencyContacts", "Relationship"),
+					Text("DepartmentMemberEmergencyContacts", "PhoneNumber"),
+					Text("DepartmentMemberEmergencyContacts", "AlternatePhoneNumber"),
+					Text("DepartmentMemberEmergencyContacts", "Email"),
+					Text("DepartmentMemberEmergencyContacts", "Notes")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
 				AdpTableBinding.Direct("DepartmentMemberSensitiveData", "DepartmentMemberSensitiveDataId", pkIsNumeric: true, "DepartmentId", new[]
 				{
 					Text("DepartmentMemberSensitiveData", "IdentificationNumber"),
-					Text("DepartmentMemberSensitiveData", "EmergencyContactName"),
-					Text("DepartmentMemberSensitiveData", "EmergencyContactPhone"),
-					Text("DepartmentMemberSensitiveData", "Notes")
+					Text("DepartmentMemberSensitiveData", "Notes"),
+					Text("DepartmentMemberSensitiveData", "HomeAddress1"),
+					Text("DepartmentMemberSensitiveData", "HomeCity"),
+					Text("DepartmentMemberSensitiveData", "HomeState"),
+					Text("DepartmentMemberSensitiveData", "HomePostalCode"),
+					Text("DepartmentMemberSensitiveData", "HomeCountry"),
+					Text("DepartmentMemberSensitiveData", "MailingAddress1"),
+					Text("DepartmentMemberSensitiveData", "MailingCity"),
+					Text("DepartmentMemberSensitiveData", "MailingState"),
+					Text("DepartmentMemberSensitiveData", "MailingPostalCode"),
+					Text("DepartmentMemberSensitiveData", "MailingCountry")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("PersonnelCertifications", "PersonnelCertificationId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("PersonnelCertifications", "Name"),
+					Text("PersonnelCertifications", "Number"),
+					Text("PersonnelCertifications", "Type"),
+					Text("PersonnelCertifications", "Area"),
+					Text("PersonnelCertifications", "IssuedBy"),
+					Text("PersonnelCertifications", "Filename"),
+					Binary("PersonnelCertifications", "Data")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				// Catalog v7: member messaging. Both are Direct on their OWN DepartmentId (M0137)
+				// rather than ViaParent — a recipient row is scoped by the same column its parent
+				// is, and the AAD needs a value on the row itself. Rows the M0137 backfill could
+				// not attribute have a NULL DepartmentId and are therefore never selected by a
+				// department-scoped sweep: unresolved ownership means untouched, not guessed.
+				//
+				// Messages has no IsProtected marker column (M0129 added one to MessageRecipients
+				// only); reads detect the envelope prefix, exactly as they do for Contacts.
+				AdpTableBinding.Direct("Messages", "MessageId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("Messages", "Subject"),
+					Text("Messages", "Body")
+				}),
+
+				// Note is here only because M0138 moved the prompt metadata it used to share a column
+				// with into PromptMetadata (which stays plaintext for the grantless readers).
+				AdpTableBinding.Direct("MessageRecipients", "MessageRecipientId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("MessageRecipients", "Response"),
+					Text("MessageRecipients", "Note"),
+					Companion("MessageRecipients", "Latitude"),
+					Companion("MessageRecipients", "Longitude")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				// Catalog v8: moderation (section 5.3). All six tables carry their own DepartmentId
+				// and a string primary key the service assigns before insert, so every row can be
+				// enveloped BEFORE it first reaches the table - no transient plaintext anywhere in
+				// this family. Markers come from M0139.
+				AdpTableBinding.Direct("ModerationRequests", "ModerationRequestId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("ModerationRequests", "OriginalSubject"),
+					Text("ModerationRequests", "OriginalText"),
+					Text("ModerationRequests", "OriginalFileName"),
+					Text("ModerationRequests", "OriginalContentType"),
+					Binary("ModerationRequests", "OriginalContent"),
+					Text("ModerationRequests", "OriginalMetadataJson"),
+					Text("ModerationRequests", "AdminNote")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("ModerationReports", "ModerationReportId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("ModerationReports", "Note")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("ModerationActions", "ModerationActionId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("ModerationActions", "Note"),
+					Text("ModerationActions", "DetailsJson"),
+					Text("ModerationActions", "EvidenceText"),
+					Binary("ModerationActions", "EvidenceContent"),
+					Text("ModerationActions", "EvidenceMetadataJson")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("ChatMessageFlags", "ChatMessageFlagId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("ChatMessageFlags", "Note"),
+					Text("ChatMessageFlags", "ResolutionNote")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("ChatModerationActions", "ChatModerationActionId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("ChatModerationActions", "Reason"),
+					Text("ChatModerationActions", "DetailsJson")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("ChatExports", "ChatExportId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Binary("ChatExports", "Data"),
+					Text("ChatExports", "Error")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				// Catalog v9: the plan's remaining candidates. UnitLogs has no DepartmentId of its
+				// own, so it derives ownership through its unit exactly as UnitStates does; the rest
+				// carry their own. Markers come from M0140.
+				AdpTableBinding.ViaParent("UnitLogs", "UnitLogId", pkIsNumeric: true, "UnitId", "Units", "UnitId", new[]
+				{
+					Text("UnitLogs", "Narrative")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("UserStates", "UserStateId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("UserStates", "Note")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("CalendarItems", "CalendarItemId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("CalendarItems", "Title"),
+					Text("CalendarItems", "Description"),
+					Text("CalendarItems", "Location")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("Documents", "DocumentId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("Documents", "Name"),
+					Text("Documents", "Description"),
+					Text("Documents", "Filename"),
+					Binary("Documents", "Data")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("DistributionLists", "DistributionListId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("DistributionLists", "Username"),
+					Text("DistributionLists", "Password")
 				}) with { ProtectedMarkerColumn = "IsProtected" }
 			};
 		}

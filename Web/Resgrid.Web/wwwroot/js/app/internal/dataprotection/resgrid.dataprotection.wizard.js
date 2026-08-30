@@ -21,19 +21,31 @@ var resgrid;
             }
 
             var errorText = {
+                // Localized by the host view (adpWizardMessages), keyed by the value-free codes
+                // the server returns. English fallbacks keep the UI readable if a key is missing.
                 'acknowledgements_incomplete': 'Every acknowledgement must be checked before enrollment can be queued.',
                 'lock_consent_required': 'The overnight operation pause must be consented to before enrollment can be queued.',
-                'protected_access_denied': 'Only the department\'s managing member may run this command.',
+                'protected_access_denied': "Only the department's managing member may run this command.",
                 'addon_required': 'An active Advanced Data Protection addon is required.',
                 'plan_required': 'Advanced Data Protection requires a paid plan.',
                 'feature_not_available': 'Advanced Data Protection enrollment is temporarily unavailable.',
-                'invalid_state': 'The department\'s protection state does not permit this command. Reload the page for current status.',
+                'invalid_state': "The department's protection state does not permit this command. Reload the page for current status.",
                 'invalid_window': 'A valid migration window time zone is required.',
                 'command_failed': 'The command could not be completed; it may be retried.'
             };
 
+            // The host view supplies localized text in adpWizardMessages, keyed by the same
+            // value-free codes the server returns; errorText above is the English fallback.
+            function localized(code) {
+                var messages = window.adpWizardMessages || {};
+                return messages[code] || null;
+            }
+
             function showError(container, code) {
-                $(container).html('<div class="alert alert-danger">' + (errorText[code] || errorText['command_failed']) + '</div>');
+                var text = localized(code) || errorText[code]
+                    || localized('command_failed') || errorText['command_failed'];
+                $(container).text('');
+                $('<div class="alert alert-danger"></div>').text(text).appendTo($(container));
             }
 
             $(document).ready(function () {
@@ -121,9 +133,61 @@ var resgrid;
                     });
                 });
 
+                // ── Migration progress ──────────────────────────────────────────
+                // Present only while a run is in flight. The counts come from the engine's own
+                // cursor rows, so the panel and the worker cannot disagree; they move only during
+                // the department's overnight window, which is why this polls slowly.
+                var $progress = $('#adpMigrationProgress');
+                if ($progress.length) {
+                    var format = function (template, values) {
+                        return (template || '').replace(/\{(\d+)\}/g, function (match, index) {
+                            var value = values[Number(index)];
+                            return value === undefined || value === null ? match : value;
+                        });
+                    };
+
+                    var renderProgress = function (progress) {
+                        if (!progress || !progress.IsRunning || !progress.RowsTotal) {
+                            $('#adpMigrationProgressRows').text(localized('progress_pending') || '');
+                            $('#adpMigrationProgressTable').text('');
+                            $progress.show();
+                            return;
+                        }
+
+                        var percent = progress.PercentComplete || 0;
+                        $('#adpMigrationProgressBar')
+                            .css('width', percent + '%')
+                            .attr('aria-valuenow', percent)
+                            .text(percent + '%');
+
+                        $('#adpMigrationProgressRows').text(format(localized('progress_rows'),
+                            [progress.RowsCompleted, progress.RowsTotal]));
+
+                        $('#adpMigrationProgressTable').text(progress.CurrentTable
+                            ? format(localized('progress_table'), [progress.CurrentTable])
+                            : '');
+
+                        var $anomalies = $('#adpMigrationProgressAnomalies');
+                        if (progress.RowsAnomalous > 0)
+                            $anomalies.text(format(localized('progress_anomalies'), [progress.RowsAnomalous])).show();
+                        else
+                            $anomalies.hide();
+
+                        $progress.show();
+                    };
+
+                    var pollProgress = function () {
+                        $.getJSON('/User/DataProtection/MigrationProgress')
+                            .done(renderProgress);
+                    };
+
+                    pollProgress();
+                    window.setInterval(pollProgress, 60000);
+                }
+
                 // ── Status-panel commands ───────────────────────────────────────
                 $('#btnCancelQueued').click(function () {
-                    if (!window.confirm('Cancel the queued enrollment? Nothing has been migrated yet; you can enroll again later while the addon is active.'))
+                    if (!window.confirm(localized('confirm_cancel_queued') || 'Cancel the queued enrollment? Nothing has been migrated yet; you can enroll again later while the addon is active.'))
                         return;
                     var btn = $(this).prop('disabled', true);
                     post('/User/DataProtection/CancelQueuedEnrollment').done(function (result) {
@@ -133,7 +197,7 @@ var resgrid;
                 });
 
                 $('#btnRevokeOffboarding').click(function () {
-                    if (!window.confirm('Keep Advanced Data Protection active? The scheduled offboarding will be cancelled.'))
+                    if (!window.confirm(localized('confirm_revoke_offboarding') || 'Keep Advanced Data Protection active? The scheduled offboarding will be cancelled.'))
                         return;
                     var btn = $(this).prop('disabled', true);
                     post('/User/DataProtection/RevokeOffboarding').done(function (result) {

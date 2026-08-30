@@ -38,6 +38,7 @@ namespace Resgrid.Workers.Framework.Logic
 		private readonly IProtectedFieldCatalog _catalog;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IEmailService _emailService;
+		private readonly IMemberProfileRelocationService _relocationService;
 
 		public AdpMigrationLogic()
 			: this(
@@ -48,7 +49,8 @@ namespace Resgrid.Workers.Framework.Logic
 				Bootstrapper.GetKernel().Resolve<IDepartmentDataMigrationEngine>(),
 				Bootstrapper.GetKernel().Resolve<IProtectedFieldCatalog>(),
 				Bootstrapper.GetKernel().Resolve<IDepartmentsService>(),
-				Bootstrapper.GetKernel().Resolve<IEmailService>())
+				Bootstrapper.GetKernel().Resolve<IEmailService>(),
+				Bootstrapper.GetKernel().Resolve<IMemberProfileRelocationService>())
 		{
 		}
 
@@ -56,7 +58,8 @@ namespace Resgrid.Workers.Framework.Logic
 			IDepartmentDataProtectionPolicyRepository policyRepository,
 			IDepartmentDataProtectionService protectionService, IDepartmentKeyService keyService,
 			IDepartmentDataMigrationEngine engine, IProtectedFieldCatalog catalog,
-			IDepartmentsService departmentsService, IEmailService emailService)
+			IDepartmentsService departmentsService, IEmailService emailService,
+			IMemberProfileRelocationService relocationService)
 		{
 			_lockService = lockService ?? throw new ArgumentNullException(nameof(lockService));
 			_policyRepository = policyRepository ?? throw new ArgumentNullException(nameof(policyRepository));
@@ -66,6 +69,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
 			_departmentsService = departmentsService ?? throw new ArgumentNullException(nameof(departmentsService));
 			_emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+			_relocationService = relocationService ?? throw new ArgumentNullException(nameof(relocationService));
 		}
 
 		public async Task<Tuple<bool, string>> Process(CancellationToken cancellationToken)
@@ -100,6 +104,28 @@ namespace Resgrid.Workers.Framework.Logic
 						policy.ActiveMigrationKind = (int)DepartmentDataProtectionMigrationKind.Offboarding;
 						await _protectionService.InvalidateProtectionCacheAsync(policy.DepartmentId);
 						summary.Add($"offboarding due for department {policy.DepartmentId}");
+					}
+				}
+
+				// 2b) Catalog upgrades due: the code's catalog has advanced past what this
+				// department was migrated to, so the newly cataloged fields are still landing in
+				// plaintext. Sweep only those fields; existing envelopes are untouched (the catalog
+				// version is not an AAD component). The department's OLD CatalogVersion stays on the
+				// policy row until the upgrade verifies — that is what makes the run resumable
+				// across nights, since FromCatalogVersion is read straight off the policy.
+				foreach (var policy in policies.Where(p =>
+							 p.State == (int)DepartmentDataProtectionState.Enabled &&
+							 p.CatalogVersion < _catalog.Version))
+				{
+					var rows = await _policyRepository.TryTransitionStateAsync(policy.DepartmentId,
+						DepartmentDataProtectionState.Enabled, DepartmentDataProtectionState.Encrypting,
+						(int)DepartmentDataProtectionMigrationKind.CatalogUpgrade, WorkerIdentity, cancellationToken);
+					if (rows > 0)
+					{
+						policy.State = (int)DepartmentDataProtectionState.Encrypting;
+						policy.ActiveMigrationKind = (int)DepartmentDataProtectionMigrationKind.CatalogUpgrade;
+						await _protectionService.InvalidateProtectionCacheAsync(policy.DepartmentId);
+						summary.Add($"catalog upgrade v{policy.CatalogVersion}->v{_catalog.Version} queued for department {policy.DepartmentId}");
 					}
 				}
 
@@ -276,6 +302,10 @@ namespace Resgrid.Workers.Framework.Logic
 					DepartmentId = departmentId,
 					Kind = kind,
 					CatalogVersion = _catalog.Version,
+
+					// Still the department's OLD version until the run verifies, so a resumed
+					// upgrade keeps sweeping the same field range.
+					FromCatalogVersion = policy.CatalogVersion,
 					WindowEndUtc = windowEndUtc,
 					DepartmentOperationLockId = departmentLock.DepartmentOperationLockId,
 					CorrelationId = correlationId,
@@ -317,6 +347,16 @@ namespace Resgrid.Workers.Framework.Logic
 
 				if (state == DepartmentDataProtectionState.Encrypting)
 				{
+					// Before the sweep: move any member data still sitting in the legacy global
+					// location into this department's own rows (plan 5.1), so the night encrypts a
+					// complete corpus instead of leaving identification numbers and addresses behind
+					// in plaintext. Safe at any point in a resumed run — relocated values go through
+					// the normal write path, which envelopes them because the department is already
+					// encrypting new writes, so it does not matter where the sweep cursor sits.
+					var relocation = await _relocationService.RelocateDepartmentAsync(departmentId, cancellationToken);
+					if (relocation.Failures > 0)
+						Logging.LogError($"ADP migration: {relocation.Failures} member profile relocation(s) failed for department {departmentId}; they retry on the next pass.");
+
 					var night = await _engine.RunEncryptionNightAsync(context, cancellationToken);
 					if (night.Outcome == AdpMigrationNightOutcome.WindowClosed)
 					{
@@ -334,7 +374,7 @@ namespace Resgrid.Workers.Framework.Logic
 					}
 
 					if (await _policyRepository.TryTransitionStateAsync(departmentId, DepartmentDataProtectionState.Encrypting,
-							DepartmentDataProtectionState.Verifying, (int)DepartmentDataProtectionMigrationKind.Enrollment,
+							DepartmentDataProtectionState.Verifying, (int)kind,
 							WorkerIdentity, cancellationToken) == 0)
 						return $"department {departmentId}: verify transition race";
 
@@ -419,7 +459,18 @@ namespace Resgrid.Workers.Framework.Logic
 						await _policyRepository.SaveOrUpdateAsync(enabledPolicy, cancellationToken);
 					}
 
+					// The epoch bump invalidates outstanding grants: after an upgrade a client's cached
+					// view of which fields are protected is stale, so everyone re-steps-up.
 					await _protectionService.IncrementPolicyEpochAsync(departmentId, WorkerIdentity, cancellationToken);
+
+					if (kind == DepartmentDataProtectionMigrationKind.CatalogUpgrade)
+					{
+						await NotifyAdminsAsync(departmentId,
+							"Advanced Data Protection: additional fields are now protected for your department and verification passed. No action is needed.");
+						releaseKind = DepartmentOperationLockReleaseKind.Completed;
+						return $"department {departmentId}: catalog upgrade complete at v{context.CatalogVersion}";
+					}
+
 					await NotifyAdminsAsync(departmentId,
 						"Advanced Data Protection: verification passed and protection is now ACTIVE for your department.");
 					releaseKind = DepartmentOperationLockReleaseKind.Completed;

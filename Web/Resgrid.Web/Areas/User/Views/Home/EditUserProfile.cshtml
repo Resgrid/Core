@@ -1,8 +1,22 @@
 ﻿@model Resgrid.Web.Areas.User.Models.EditProfileModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> adpLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Home.EditProfile> localizer
 @{
     ViewData["Title"] = "Resgrid | Edit User Profile";
 }
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the
+    // step-up wiring in the Scripts section. Declared unconditionally so the section
+    // closure can see it; both partials only render when the page is protected.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedProfile"],
+        RevealController = "Home",
+        RevealAction = "RevealUserProfile",
+        RevealData = new Dictionary<string, string> { { "userId", Model.UserId } }
+    };
+}
+
 @section Styles
 {
     <link rel="stylesheet" href="~/clib/croppic/css/croppic.css" />
@@ -75,6 +89,15 @@
         </div>
     }
 
+    @if (Model.IsProtectedProfile)
+    {
+        <div class="row">
+            <div class="col-lg-12" style="padding: 15px 30px 0 30px;">
+                <partial name="_AdpRevealBanner" model="adpReveal" />
+            </div>
+        </div>
+    }
+
     <div class="row">
         <div class="col-lg-9">
             <div class="wrapper wrapper-content animated fadeInUp">
@@ -82,7 +105,7 @@
                     <div class="ibox-content">
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["IDNumberLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["IDNumberPlaceholder"]" asp-for="Profile.IdentificationNumber"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["IDNumberPlaceholder"]" asp-for="Profile.IdentificationNumber" data-adp-field="departmentmembersensitivedata.identificationnumber"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["FirstNameLabel"]</label>
@@ -354,28 +377,53 @@
                             <div class="hr-line-dashed"></div>
                         }
 
+                        <h3>@adpLocalizer["EmergencyContactsHeader"]</h3>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <p class="text-muted">
+                                    @adpLocalizer["EmergencyContactsIntro"]
+                                </p>
+                                <table class="table table-striped" id="emergencyContactsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>@adpLocalizer["ContactNameLabel"]</th>
+                                            <th>@adpLocalizer["RelationshipLabel"]</th>
+                                            <th>@adpLocalizer["PhoneNumberLabel"]</th>
+                                            <th>@adpLocalizer["AlternateColumn"]</th>
+                                            <th>@adpLocalizer["EmailLabel"]</th>
+                                            <th>@adpLocalizer["PrimaryColumn"]</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="emergencyContactsBody"></tbody>
+                                </table>
+                                <button type="button" class="btn btn-sm btn-primary" id="addEmergencyContactBtn">@adpLocalizer["AddEmergencyContact"]</button>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+
                         <h3>
                             @localizer["PhysicalAddressHeader"]
                         </h3>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["AddressLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["AddressPlaceholder"]" asp-for="PhysicalAddress1"><span asp-validation-for="PhysicalAddress1" class="text-danger"></span></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["AddressPlaceholder"]" asp-for="PhysicalAddress1" data-adp-field="departmentmembersensitivedata.homeaddress1"><span asp-validation-for="PhysicalAddress1" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CityLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CityPlaceholder"]" asp-for="PhysicalCity"><span asp-validation-for="PhysicalCity" class="text-danger"></span></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CityPlaceholder"]" asp-for="PhysicalCity" data-adp-field="departmentmembersensitivedata.homecity"><span asp-validation-for="PhysicalCity" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["StateLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["StatePlaceholder"]" asp-for="PhysicalState"><span asp-validation-for="PhysicalState" class="text-danger"></span></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["StatePlaceholder"]" asp-for="PhysicalState" data-adp-field="departmentmembersensitivedata.homestate"><span asp-validation-for="PhysicalState" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PostalCodeLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["PostalCodePlaceholder"]" asp-for="PhysicalPostalCode"><span asp-validation-for="PhysicalPostalCode" class="text-danger"></span></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["PostalCodePlaceholder"]" asp-for="PhysicalPostalCode" data-adp-field="departmentmembersensitivedata.homepostalcode"><span asp-validation-for="PhysicalPostalCode" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CountryLabel"]</label>
-                            <div class="col-sm-10"><select asp-for="PhysicalCountry" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;"></select></div>
+                            <div class="col-sm-10"><select asp-for="PhysicalCountry" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;" data-adp-field="departmentmembersensitivedata.homecountry"></select></div>
                         </div>
 
                         <h3>
@@ -387,23 +435,23 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingAddressLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingAddressPlaceholder"]" asp-for="MailingAddress1"><span asp-validation-for="MailingAddress1" class="text-danger"></span></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingAddressPlaceholder"]" asp-for="MailingAddress1" data-adp-field="departmentmembersensitivedata.mailingaddress1"><span asp-validation-for="MailingAddress1" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingCityLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingCityPlaceholder"]" asp-for="MailingCity"><span asp-validation-for="MailingCity" class="text-danger"></span></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingCityPlaceholder"]" asp-for="MailingCity" data-adp-field="departmentmembersensitivedata.mailingcity"><span asp-validation-for="MailingCity" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingStateLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingStatePlaceholder"]" asp-for="MailingState"><span asp-validation-for="MailingState" class="text-danger"></span></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingStatePlaceholder"]" asp-for="MailingState" data-adp-field="departmentmembersensitivedata.mailingstate"><span asp-validation-for="MailingState" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingPostalCodeLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingPostalCodePlaceholder"]" asp-for="MailingPostalCode"><span asp-validation-for="MailingPostalCode" class="text-danger"></span></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingPostalCodePlaceholder"]" asp-for="MailingPostalCode" data-adp-field="departmentmembersensitivedata.mailingpostalcode"><span asp-validation-for="MailingPostalCode" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingCountryLabel"]</label>
-                            <div class="col-sm-10"><select asp-for="MailingCountry" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;"></select></div>
+                            <div class="col-sm-10"><select asp-for="MailingCountry" asp-items="ViewBag.Countries" style="padding-left: 0; width: 100%;" data-adp-field="departmentmembersensitivedata.mailingcountry"></select></div>
                         </div>
                         <div class="hr-line-dashed"></div>
 
@@ -848,9 +896,103 @@
 
 
 
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="emergencyContactModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="emergencyContactModalTitle">@adpLocalizer["EmergencyContactTitle"]</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger" id="emergencyContactError" style="display: none;"></div>
+                <input type="hidden" id="ecId" value="0" />
+                <div class="form-group">
+                    <label for="ecName">@adpLocalizer["ContactNameLabel"]</label>
+                    <input type="text" class="form-control" id="ecName" maxlength="250" />
+                </div>
+                <div class="form-group">
+                    <label for="ecRelationship">@adpLocalizer["RelationshipLabel"]</label>
+                    <input type="text" class="form-control" id="ecRelationship" maxlength="100" />
+                </div>
+                <div class="form-group">
+                    <label for="ecPhone">@adpLocalizer["PhoneNumberLabel"]</label>
+                    <input type="text" class="form-control" id="ecPhone" maxlength="50" />
+                </div>
+                <div class="form-group">
+                    <label for="ecAltPhone">@adpLocalizer["AlternatePhoneLabel"]</label>
+                    <input type="text" class="form-control" id="ecAltPhone" maxlength="50" />
+                </div>
+                <div class="form-group">
+                    <label for="ecEmail">@adpLocalizer["EmailLabel"]</label>
+                    <input type="text" class="form-control" id="ecEmail" maxlength="250" />
+                </div>
+                <div class="form-group">
+                    <label for="ecNotes">@adpLocalizer["NotesLabel"]</label>
+                    <textarea class="form-control" id="ecNotes" rows="2"></textarea>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" id="ecIsPrimary" /> @adpLocalizer["PrimaryContactLabel"]</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@adpLocalizer["CancelAction"]</button>
+                <button type="button" class="btn btn-primary" id="ecSaveBtn">@adpLocalizer["SaveAction"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts
 {
+    @if (Model.IsProtectedProfile)
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+
+        <script type="text/javascript">
+            // Emergency contacts are rendered by their own module from their own endpoint, which
+            // reads the same grant header. So the reveal does not write into those rows - it
+            // re-reads the list with the grant attached, and re-reads it WITHOUT one on conceal so
+            // the plaintext leaves the DOM at the same moment the marked fields do.
+            window.resgridAdpPageRevealed = function () {
+                resgridEmergencyContacts.reload();
+            };
+
+            window.resgridAdpPageConcealed = function () {
+                resgridEmergencyContacts.reload();
+            };
+        </script>
+    }
     <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/js/app/internal/profile/resgrid.emergencycontacts.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            resgridEmergencyContacts.init({
+                listUrl: '@Url.Action("GetEmergencyContacts", "Home", new { area = "User" })',
+                saveUrl: '@Url.Action("SaveEmergencyContact", "Home", new { area = "User" })',
+                deleteUrl: '@Url.Action("DeleteEmergencyContact", "Home", new { area = "User" })',
+                userId: '@Model.UserId',
+                beforeSend: function (xhr) {
+                    // Present only when the page rendered the reveal partial; the module treats a
+                    // missing hook as "no grant", which is the unprotected behaviour.
+                    if (window.resgridAdpReveal && window.resgridAdpReveal.applyGrantHeader)
+                        window.resgridAdpReveal.applyGrantHeader(xhr);
+                },
+                messages: {
+                    addTitle: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["AddEmergencyContact"].Value)),
+                    editTitle: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["EditEmergencyContact"].Value)),
+                    none: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["NoEmergencyContacts"].Value)),
+                    yes: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["YesLabel"].Value)),
+                    edit: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["EditAction"].Value)),
+                    remove: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["DeleteAction"].Value)),
+                    nameRequired: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["NameRequired"].Value)),
+                    saveFailed: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["ContactSaveFailed"].Value)),
+                    confirmRemove: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(adpLocalizer["ConfirmRemoveContact"].Value))
+                },
+                antiForgeryToken: $('input[name="__RequestVerificationToken"]').first().val()
+            });
+        });
+    </script>
 
     <script src="~/js/app/resgrid.phonevalidate.js"></script>
 

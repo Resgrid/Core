@@ -78,6 +78,9 @@ namespace Resgrid.Model
 		public DateTime? CompletedOn { get; set; }
 		public string AdminNote { get; set; }
 
+		/// <summary>ADP row marker (M0139): true once this row's cataloged values carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
+
 		[NotMapped]
 		public List<ModerationReport> Reports { get; set; } = new List<ModerationReport>();
 
@@ -119,6 +122,9 @@ namespace Resgrid.Model
 		public int Reason { get; set; }
 		public string Note { get; set; }
 		public DateTime ReportedOn { get; set; }
+
+		/// <summary>ADP row marker (M0139): true once this row's cataloged values carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
 
 		[NotMapped]
 		public string TableName => "ModerationReports";
@@ -168,6 +174,9 @@ namespace Resgrid.Model
 		public byte[] EvidenceContent { get; set; }
 
 		public string EvidenceMetadataJson { get; set; }
+
+		/// <summary>ADP row marker (M0139): true once this row's cataloged values carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
 
 		[NotMapped]
 		public string TableName => "ModerationActions";

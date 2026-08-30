@@ -57,8 +57,123 @@ namespace Resgrid.Model.Services
 		Task<ProtectedWriteResult> PrepareContactWriteAsync(int departmentId, Contact contact, Contact existingContact,
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Prepares a personnel certification (six cataloged text fields plus the binary document).
+		/// existingCertification enables REDACTED-sentinel restoration on edits, so an admin editing
+		/// a member's certification without a grant cannot save the placeholder over the real value;
+		/// pass null for creates.
+		/// </summary>
+		Task<ProtectedWriteResult> PrepareCertificationWriteAsync(int departmentId,
+			PersonnelCertification certification, PersonnelCertification existingCertification,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a linked-call reference note (callreferences.note).</summary>
+		Task<ProtectedWriteResult> PrepareCallReferenceWriteAsync(int departmentId, CallReference reference,
+			CallReference existingReference, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a member message (messages.subject/body).</summary>
+		Task<ProtectedWriteResult> PrepareMessageWriteAsync(int departmentId, Message message,
+			string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a message recipient row (response/note plus companion coordinates).</summary>
+		Task<ProtectedWriteResult> PrepareMessageRecipientWriteAsync(int departmentId, MessageRecipient recipient,
+			string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a moderation request (the verbatim copy of the reported content).</summary>
+		Task<ProtectedWriteResult> PrepareModerationRequestWriteAsync(int departmentId, ModerationRequest request,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a reporter's note on a moderation report.</summary>
+		Task<ProtectedWriteResult> PrepareModerationReportWriteAsync(int departmentId, ModerationReport report,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a moderation action (note, details, evidence snapshot).</summary>
+		Task<ProtectedWriteResult> PrepareModerationActionWriteAsync(int departmentId, ModerationAction action,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a chat message flag (note, resolution note).</summary>
+		Task<ProtectedWriteResult> PrepareChatMessageFlagWriteAsync(int departmentId, ChatMessageFlag flag,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a chat moderation action (reason, details).</summary>
+		Task<ProtectedWriteResult> PrepareChatModerationActionWriteAsync(int departmentId, ChatModerationAction action,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a chat export row (the archive payload and any failure text).</summary>
+		Task<ProtectedWriteResult> PrepareChatExportWriteAsync(int departmentId, ChatExport export,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a unit log narrative (unitlogs.narrative).</summary>
+		Task<ProtectedWriteResult> PrepareUnitLogWriteAsync(int departmentId, UnitLog log,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a user state note (userstates.note).</summary>
+		Task<ProtectedWriteResult> PrepareUserStateWriteAsync(int departmentId, UserState state,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a calendar item (title, description, location).</summary>
+		Task<ProtectedWriteResult> PrepareCalendarItemWriteAsync(int departmentId, CalendarItem item,
+			CalendarItem existingItem, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a department document (name, description, filename and the file).</summary>
+		Task<ProtectedWriteResult> PrepareDocumentWriteAsync(int departmentId, Document document,
+			Document existingDocument, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares stored distribution-list mailbox credentials (section 22.1).</summary>
+		Task<ProtectedWriteResult> PrepareDistributionListWriteAsync(int departmentId, DistributionList list,
+			DistributionList existingList, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a call log narrative (calllogs.narrative).</summary>
+		Task<ProtectedWriteResult> PrepareCallLogWriteAsync(int departmentId, CallLog log,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
 		/// <summary>Prepares a contact note (text field).</summary>
 		Task<ProtectedWriteResult> PrepareContactNoteWriteAsync(int departmentId, ContactNote note,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Prepares a unit state (catalog v2): note, geolocation text, and the typed
+		/// latitude/longitude which move into their companion envelope columns.
+		/// </summary>
+		Task<ProtectedWriteResult> PrepareUnitStateWriteAsync(int departmentId, UnitState state,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Prepares one department-scoped emergency contact (catalog v4).
+		///
+		/// <paramref name="existingContact"/> is the stored row and is what a REDACTED sentinel is
+		/// restored from. The profile page renders these fields as placeholders whenever protection
+		/// is enforced, so an edit saved without a grant posts the placeholder straight back; with no
+		/// stored row to restore from, the member's next-of-kin details would be nulled instead.
+		/// </summary>
+		Task<ProtectedWriteResult> PrepareMemberEmergencyContactWriteAsync(int departmentId,
+			DepartmentMemberEmergencyContact contact, DepartmentMemberEmergencyContact existingContact,
+			string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Prepares a department-scoped sensitive personnel row (catalog v1 personnel family).
+		///
+		/// <paramref name="existingData"/> is the stored row and is what a REDACTED sentinel is
+		/// restored from - see the emergency-contact overload; the same grantless-save path would
+		/// otherwise null the identification number and both addresses.
+		/// </summary>
+		Task<ProtectedWriteResult> PrepareMemberSensitiveDataWriteAsync(int departmentId, DepartmentMemberSensitiveData data,
+			DepartmentMemberSensitiveData existingData,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares an incident log (catalog v3).</summary>
+		Task<ProtectedWriteResult> PrepareLogWriteAsync(int departmentId, Log log,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a user-defined field value (catalog v2).</summary>
+		Task<ProtectedWriteResult> PrepareUdfFieldValueWriteAsync(int departmentId, UdfFieldValue value,
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
 	}
 }

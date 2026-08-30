@@ -111,6 +111,12 @@
             Mobile or Tablet Device specific operations
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.CalendarController.ProtectedGrantToken">
+            <summary>
+            The caller's Protected Data Grant, if they presented one. Absent means calendar entries
+            resolve to the REDACTED placeholder rather than plaintext.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItems">
             <summary>
             Gets the department calendar items.
@@ -1962,6 +1968,16 @@
             Mapping operations
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.MappingController.IsBigBoardSession">
+            <summary>
+            True when the caller authenticated as the BigBoard client application. BigBoard is an
+            unattended display: it can never hold a grant, so it is stepped down structurally
+            (plan section 7.3) and egress policy can never relax that.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.MappingController.ProtectedMapLabel">
+            <summary>The generic label a protected call carries on a map that cannot reveal it.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMapDataAndMarkers">
             <summary>
             Data to center the map and it's default location plus marker information for displaying makers on the map.
@@ -2096,6 +2112,13 @@
             Messaging system interaction
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.MessagesController.ProtectedGrantToken">
+            <summary>
+            The caller's Protected Data Grant, if they presented one. Held in app memory only and
+            minted by DataProtection/VerifyStepUp; absent means protected values resolve to the
+            REDACTED placeholder rather than plaintext.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetInboxMessages(System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Returns all inbox messages for a user.
@@ -2147,6 +2170,21 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ModerationController">
             <summary>Department and group-scoped moderation requests across supported content types.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ModerationController.ProtectedGrantToken">
+            <summary>
+            The caller's Protected Data Grant, if they presented one. A moderator needs their normal
+            permission AND a current grant to see the excerpts (plan 5.3); without one the queue is
+            still usable - status, reason code and counts are structural and never encrypted - but
+            every quoted value reads as the REDACTED placeholder rather than ciphertext.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.ResolveModerationAsync(System.Collections.Generic.IReadOnlyList{Resgrid.Model.ModerationRequest},System.Threading.CancellationToken)">
+            <summary>
+            Resolves a moderation request and its children in one broker batch. The reported FILE is
+            never included here: a list or detail payload carries metadata, and the endpoints that
+            actually serve bytes opt in separately.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.Flag(Resgrid.Web.Services.Models.v4.Moderation.FlagModerationInput,System.Threading.CancellationToken)">
             <summary>Reports an accessible chat message, Message, call note or call image.</summary>
@@ -2250,6 +2288,14 @@
             </summary>
             <returns>GetPersonnelFilterOptionsResult with information pertaining to each filter option</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelController.ApplyMemberIdentificationNumberAsync(Resgrid.Model.UserProfile)">
+            <summary>
+            Replaces the profile's legacy global identification number with the DEPARTMENT-SCOPED one
+            (ADP plan 5.1): a badge number is department-issued, so the value a caller sees must be
+            the one THIS department holds. Resolved through the protected pipeline — plaintext with a
+            valid grant, the REDACTED placeholder without one.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelLocationController">
             <summary>
             Operations involving the location of a person setting the real-time location or getting the latest location for people.
@@ -2271,6 +2317,12 @@
         <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController">
             <summary>
             Operations to perform against personnel staffing, i.e. Available, Delayed, in a department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.ProtectedGrantToken">
+            <summary>
+            The caller's Protected Data Grant, if they presented one. Absent means a staffing note
+            resolves to the REDACTED placeholder rather than plaintext.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.GetCurrentStatffing(System.String)">
@@ -2896,6 +2948,17 @@
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitsController">
             <summary>
             Information regarding Units
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.UnitsController.ProtectedGrantToken">
+            <summary>The caller's Protected Data Grant, when presented (plan section 3.1 step 6).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UnitsController.ResolveOperationalReadsAsync(System.Collections.Generic.IReadOnlyList{Resgrid.Model.UnitState},System.Collections.Generic.IReadOnlyList{Resgrid.Model.UdfFieldValue})">
+            <summary>
+            Resolves the catalog-v2 operational fields these endpoints return — unit-state note and
+            position, plus UDF values — through the attended read pipeline. With a valid grant the
+            values come back as plaintext; without one every enveloped value becomes the exact
+            REDACTED placeholder. Either way the DTO converters never see ciphertext.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.UnitsController.GetAllUnits">
@@ -5477,6 +5540,20 @@
              Failure posture matches IDepartmentLockService: a lock-store outage fails OPEN — the lock
              protects a migration, but dispatch availability beats migration progress, and the migration
              worker separately refuses to proceed when it cannot verify its own lock.
+             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.ProtectedDataEgressFilter">
+             <summary>
+             API twin of the MVC response-boundary net (plan section 7.5). For a department whose
+             protection is enforced, the outgoing result object is walked and any value still carrying an
+             rgdp/rgdpb envelope is replaced with the REDACTED placeholder before serialization.
+            
+             The v4 surface is where this matters most: a result DTO is mapped field by field from an
+             entity, so forgetting the resolve call ships ciphertext to every mobile client. Two of the
+             four leaks found by hand were exactly this shape.
+            
+             Redacts AND logs — a silent redaction would hide the missing resolve call, and the log line
+             with the member path is what makes the missed surface findable.
              </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Filters.RequiresIncidentCapabilityAttribute">
@@ -9123,7 +9200,7 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.StaffingLevelText">
             <summary>
             Display name for <see cref="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.StaffingLevel"/> as the department had it configured at run time,
-            or the raw level when it is no longer configured. Empty when no level was recorded.
+            or the raw level when it is no longer configured. "-" when no level was recorded.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.Suppressed">

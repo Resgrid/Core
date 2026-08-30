@@ -28,7 +28,28 @@ namespace Resgrid.Model.Services
 		/// "sign in to Resgrid" line — safe to hand to any template, provider DTO, or TTS builder.
 		/// ProtectedAfterPin behaves as GenericOnly until the PIN-release flow ships.
 		/// </summary>
-		Task<Call> BuildNotificationSafeCallAsync(int departmentId, Call call, ProtectedDataEgressChannel channel);
+		/// <summary>
+		/// The safe view of a member message for one outbound channel (catalog v7). A protected
+		/// department's message body and subject are encrypted at rest, and notification hosts hold
+		/// no grant and no broker, so what they would otherwise hand a carrier is ciphertext. The
+		/// sanitized clone carries no content at all - the member is told a message is waiting and
+		/// reads it signed in.
+		/// </summary>
+		/// <param name="culture">
+		/// The RECIPIENT's language; the clone carries text a member actually reads. Null falls back
+		/// to English.
+		/// </param>
+		Task<Message> BuildNotificationSafeMessageAsync(int departmentId, Message message,
+			ProtectedDataEgressChannel channel, string culture = null);
+
+		/// <param name="culture">
+		/// The RECIPIENT's language. The sanitized clone carries text a member actually reads on
+		/// their handset, so it is localized like every other outbound string; the safe view is
+		/// built per recipient, so the caller passes the profile language it already has. Null
+		/// falls back to English — a unit device or a member with no language set.
+		/// </param>
+		Task<Call> BuildNotificationSafeCallAsync(int departmentId, Call call, ProtectedDataEgressChannel channel,
+			string culture = null);
 
 		/// <summary>
 		/// True when this channel must receive only sanitized (generic) content for the department:

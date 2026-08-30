@@ -1,0 +1,70 @@
+@model Resgrid.Web.Areas.User.Models.AdpRevealView
+@*
+	Step-up modal + reveal module wiring (plan 7.2). Render inside the host view's Scripts
+	section, paired with _AdpRevealBanner in the body. The grant issued by VerifyStepUp lives in
+	the module's closure only — never a cookie, storage or the URL.
+
+	A host page that needs to react to a reveal (re-fetching a client-rendered list with the
+	grant attached, for example) defines window.resgridAdpPageRevealed / ...PageConcealed before
+	this block runs; the module calls them and nothing else changes.
+*@
+<div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="adpStepUpModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"><i class="fa fa-shield"></i> @commonLocalizer["AdpStepUpTitle"]</h4>
+            </div>
+            <div class="modal-body">
+                <p>@commonLocalizer["AdpStepUpInstructions"]</p>
+                <div class="alert alert-danger" id="adpStepUpError" style="display: none;"></div>
+                <div class="form-group">
+                    <label for="adpStepUpCode">@commonLocalizer["AdpVerificationCode"]</label>
+                    <input type="text" class="form-control" id="adpStepUpCode" maxlength="8" autocomplete="one-time-code" inputmode="numeric" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@commonLocalizer["Cancel"]</button>
+                <button type="button" class="btn btn-primary" id="adpStepUpSubmit">@commonLocalizer["AdpVerify"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="adpAntiForgeryForm">@Html.AntiForgeryToken()</form>
+<script src="~/js/app/internal/dataprotection/resgrid.adp.reveal.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(function () {
+        resgridAdpReveal.init({
+            verifyUrl: '@Url.Action("VerifyStepUp", "DataProtection", new { area = "User" })',
+            @* A page with no per-record reveal endpoint (its values come from the API through its
+               own component) leaves these unset; step-up alone is the whole job and the host
+               reloads through onRevealed. *@
+            revealUrl: @Html.Raw(string.IsNullOrWhiteSpace(Model.RevealAction)
+                ? "null"
+                : "'" + Url.Action(Model.RevealAction, Model.RevealController, new { area = "User" }) + "'"),
+            revealData: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RevealData)),
+            messages: {
+                invalid_totp: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorInvalidCode"].Value)),
+                too_many_attempts: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorTooManyAttempts"].Value)),
+                mfa_not_enrolled: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorMfaNotEnrolled"].Value)),
+                grants_not_configured: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantsNotConfigured"].Value)),
+                step_up_required: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorStepUpRequired"].Value)),
+                grant_expired: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantExpired"].Value)),
+                grant_revoked: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantRevoked"].Value)),
+                protected_access_denied: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorAccessDenied"].Value)),
+                broker_unavailable: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorBrokerUnavailable"].Value)),
+                generic: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGeneric"].Value))
+            },
+            onRevealed: function (values) {
+                if (typeof window.resgridAdpPageRevealed === 'function')
+                    window.resgridAdpPageRevealed(values);
+            },
+            onConcealed: function () {
+                if (typeof window.resgridAdpPageConcealed === 'function')
+                    window.resgridAdpPageConcealed();
+            },
+            antiForgeryToken: $('#adpAntiForgeryForm input[name="__RequestVerificationToken"]').val()
+        });
+    });
+</script>

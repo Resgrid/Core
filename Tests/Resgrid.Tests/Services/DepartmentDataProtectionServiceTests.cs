@@ -25,6 +25,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IFeatureToggleService> _featureToggleService;
 		private Mock<ISubscriptionsService> _subscriptionsService;
 		private Mock<ICacheProvider> _cacheProvider;
+		private Mock<IDepartmentDataProtectionMigrationRepository> _migrationRepo;
 		private DepartmentDataProtectionService _service;
 
 		[SetUp]
@@ -36,6 +37,7 @@ namespace Resgrid.Tests.Services
 			_featureToggleService = new Mock<IFeatureToggleService>();
 			_subscriptionsService = new Mock<ISubscriptionsService>();
 			_cacheProvider = new Mock<ICacheProvider>();
+			_migrationRepo = new Mock<IDepartmentDataProtectionMigrationRepository>();
 
 			// Cache pass-throughs so repository setups drive behavior.
 			_cacheProvider
@@ -61,7 +63,7 @@ namespace Resgrid.Tests.Services
 
 			_service = new DepartmentDataProtectionService(_policyRepo.Object, _egressRepo.Object,
 				_departmentsService.Object, _featureToggleService.Object, _subscriptionsService.Object,
-				_cacheProvider.Object);
+				_cacheProvider.Object, new ProtectedFieldCatalog(), _migrationRepo.Object);
 		}
 
 		#region QueueEnrollment gates
@@ -411,5 +413,127 @@ namespace Resgrid.Tests.Services
 		}
 
 		#endregion
+	
+		#region Enforcement during a catalog upgrade
+
+		/// <summary>
+		/// Enrollment's Encrypting state correctly reads as "not enforced" — nothing is encrypted
+		/// yet. A CATALOG UPGRADE passes through the same state on a department whose corpus is
+		/// ALREADY fully enveloped, so enforcement must stay on: without it the read pipeline would
+		/// pass rgdp ciphertext straight through to clients for the whole upgrade window.
+		/// </summary>
+		[Test]
+		public async Task Enforcement_stays_on_while_a_catalog_upgrade_sweeps()
+		{
+			foreach (var state in new[] { DepartmentDataProtectionState.Encrypting, DepartmentDataProtectionState.Verifying })
+			{
+				_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync(new DepartmentDataProtectionPolicy
+				{
+					DepartmentDataProtectionPolicyId = 1,
+					DepartmentId = DeptId,
+					State = (int)state,
+					ActiveMigrationKind = (int)DepartmentDataProtectionMigrationKind.CatalogUpgrade
+				});
+
+				(await _service.IsProtectionEnforcedAsync(DeptId)).Should().BeTrue($"a catalog upgrade in {state} must keep enforcing");
+			}
+		}
+
+		[Test]
+		public async Task Enforcement_stays_off_while_enrollment_encrypts()
+		{
+			foreach (var state in new[] { DepartmentDataProtectionState.Encrypting, DepartmentDataProtectionState.Verifying })
+			{
+				_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync(new DepartmentDataProtectionPolicy
+				{
+					DepartmentDataProtectionPolicyId = 1,
+					DepartmentId = DeptId,
+					State = (int)state,
+					ActiveMigrationKind = (int)DepartmentDataProtectionMigrationKind.Enrollment
+				});
+
+				(await _service.IsProtectionEnforcedAsync(DeptId)).Should().BeFalse(
+					"nothing is encrypted during a first enrollment, so there is nothing to enforce");
+			}
+		}
+
+		/// <summary>
+		/// Every failure leaves envelopes at rest — enrollment and catalog upgrade stop part-way
+		/// through a sweep, rotation fails over an already-enveloped corpus, and offboarding fails
+		/// with the decrypt pass incomplete. ShouldEncryptNewWritesAsync keeps encrypting in this
+		/// state for everything but offboarding, so reads must enforce or the two disagree: writes
+		/// producing envelopes that reads hand straight to clients.
+		/// </summary>
+		[Test]
+		public async Task Enforcement_stays_on_after_any_failed_run()
+		{
+			foreach (var kind in new[]
+			{
+				DepartmentDataProtectionMigrationKind.Enrollment,
+				DepartmentDataProtectionMigrationKind.CatalogUpgrade,
+				DepartmentDataProtectionMigrationKind.Rotation,
+				DepartmentDataProtectionMigrationKind.Offboarding
+			})
+			{
+				_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId)).ReturnsAsync(new DepartmentDataProtectionPolicy
+				{
+					DepartmentDataProtectionPolicyId = 1,
+					DepartmentId = DeptId,
+					State = (int)DepartmentDataProtectionState.Failed,
+					ActiveMigrationKind = (int)kind
+				});
+
+				(await _service.IsProtectionEnforcedAsync(DeptId)).Should().BeTrue(
+					$"a failed {kind} run can leave envelopes at rest, and serving those is unrecoverable");
+			}
+		}
+
+		#endregion
+
+		#region Migration progress
+
+		[Test]
+		public async Task Migration_progress_is_not_running_without_an_active_kind()
+		{
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId))
+				.ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = DeptId, State = (int)DepartmentDataProtectionState.Enabled });
+
+			var progress = await _service.GetMigrationProgressAsync(DeptId);
+
+			progress.IsRunning.Should().BeFalse();
+			progress.PercentComplete.Should().BeNull();
+		}
+
+		[Test]
+		public async Task Migration_progress_counts_rows_the_same_way_the_engine_does()
+		{
+			// Already-protected rows count as done: a resumed run passes over them without work,
+			// and a panel that ignored them would appear to stall.
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId))
+				.ReturnsAsync(new DepartmentDataProtectionPolicy
+				{
+					DepartmentId = DeptId,
+					State = (int)DepartmentDataProtectionState.Encrypting,
+					ActiveMigrationKind = (int)DepartmentDataProtectionMigrationKind.Enrollment
+				});
+
+			_migrationRepo.Setup(x => x.GetActiveByDepartmentIdAsync(DeptId, DepartmentDataProtectionMigrationKind.Enrollment))
+				.ReturnsAsync(new[]
+				{
+					new DepartmentDataProtectionMigration { TargetTable = "Calls", RowsTotal = 100, RowsProcessed = 90 },
+					new DepartmentDataProtectionMigration { TargetTable = "Contacts", RowsTotal = 100, RowsProcessed = 10, RowsAlreadyProtected = 10 }
+				});
+
+			var progress = await _service.GetMigrationProgressAsync(DeptId);
+
+			progress.IsRunning.Should().BeTrue();
+			progress.RowsTotal.Should().Be(200);
+			progress.RowsCompleted.Should().Be(110);
+			progress.PercentComplete.Should().Be(55);
+			progress.TablesStarted.Should().Be(2);
+			progress.CurrentTable.Should().Be("Contacts", "the least-finished table is the one still being worked");
+		}
+
+		#endregion Migration progress
 	}
 }

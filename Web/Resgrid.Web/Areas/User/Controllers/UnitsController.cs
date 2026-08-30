@@ -50,12 +50,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider, IMappingService mappingService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IStringLocalizer<Resgrid.Localization.Common> localizer,
-			IPersonnelRolesService personnelRolesService)
+			IPersonnelRolesService personnelRolesService, IProtectedReadService protectedReadService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -75,6 +76,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_udfRenderingService = udfRenderingService;
 			_localizer = localizer;
 			_personnelRolesService = personnelRolesService;
+			_protectedReadService = protectedReadService;
 		}
 		#endregion Private Members and Constructors
 
@@ -517,10 +519,83 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, unitId.ToString());
 				var visibleFieldIds = udfFields.Select(f => f.UdfFieldId).ToHashSet();
 				var filteredValues = (udfValues ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+
+				// ADP: the renderer turns an envelope into the REDACTED placeholder, so an enveloped
+				// value here is exactly "this page has something a grant could reveal". The values
+				// are already loaded, so the check costs nothing.
+				model.IsProtectedRecord = filteredValues.Any(v => ProtectedDataEnvelope.HasEnvelopePrefix(v.Value));
+
 				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, filteredValues);
 			}
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2) for a unit's log narratives. Keyed per row
+		/// ("unitlogs.narrative:{id}") because the page shows a list, not one record - the same
+		/// shape the user-defined field reveal uses.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.UnitLog_View)]
+		public async Task<IActionResult> RevealUnitLogs([FromForm] int unitId)
+		{
+			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
+				return Unauthorized();
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+			if (unit == null || unit.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var logs = await _unitsService.GetLogsForUnitAsync(unitId);
+			string grantToken = Request.Headers["X-Resgrid-Protected-Grant"];
+
+			var resolved = await _protectedReadService.ResolveUnitLogsForReadAsync(DepartmentId, logs,
+				grantToken, UserId);
+
+			if (resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			var fields = new Dictionary<string, string>();
+			foreach (var log in logs ?? new List<UnitLog>())
+				fields[$"unitlogs.narrative:{log.UnitLogId}"] = log.Narrative;
+
+			return Json(new { success = true, fields });
+		}
+
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2). A grant proves the CALLER stepped up; it is never an
+		/// authorization decision about the target, so the unit is authorized exactly as the edit
+		/// page that hosts the reveal authorizes it.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Unit_Update)]
+		public async Task<IActionResult> RevealUnit([FromForm] int unitId)
+		{
+			if (!await _authorizationService.CanUserModifyUnitAsync(UserId, unitId))
+				return Unauthorized();
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+			if (unit == null || unit.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var fields = new Dictionary<string, string>();
+
+			// The reveal must hide exactly what the hosting page hides: a grant is step-up proof,
+			// never a field-visibility decision.
+			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+			bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+
+			var resolved = await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
+				_protectedReadService, DepartmentId, UdfEntityType.Unit, unitId.ToString(),
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId, isDeptAdmin, isGroupAdmin);
+
+			if (resolved != null && resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			return Json(new { success = true, fields });
 		}
 
 		[HttpPost]
@@ -907,6 +982,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model.Logs = await _unitsService.GetLogsForUnitAsync(model.Unit.UnitId);
+
+			// ADP (catalog v9): server-rendered pages render narratives as REDACTED; the reveal is
+			// client-side (step-up modal then RevealUnitLogs).
+			var protectedRead = await _protectedReadService.ResolveUnitLogsForReadAsync(DepartmentId,
+				model.Logs, null, UserId);
+			model.IsProtectedLogs = protectedRead.IsProtected;
 
 			return View(model);
 		}
@@ -1624,7 +1705,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				sb.Append("<optgroup label='Calls'>");
 				foreach (var call in activeCalls)
 				{
-					sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{HttpUtility.HtmlEncode(call.Name)}</option>");
+					sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{HttpUtility.HtmlEncode(ProtectedDataEnvelope.SafeDisplay(call.Name))}</option>");
 				}
 				sb.Append("</optgroup>");
 			}
@@ -1738,7 +1819,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				foreach (var call in activeCalls)
 				{
 					var callHref = BuildUnitStateHref(actionWithDestination, unitId, unitIds, state.CustomStateDetailId, (int)DestinationEntityTypes.Call, call.CallId);
-					var callText = HttpUtility.HtmlEncode($"{call.GetIdentifier()}:{call.Name}");
+					var callText = HttpUtility.HtmlEncode($"{call.GetIdentifier()}:{ProtectedDataEnvelope.SafeDisplay(call.Name)}");
 					sb.Append($"<li><a href='{callHref}'>{callText}</a></li>");
 				}
 			}

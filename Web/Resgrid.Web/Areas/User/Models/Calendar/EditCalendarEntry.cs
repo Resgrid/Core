@@ -8,6 +8,9 @@ namespace Resgrid.WebCore.Areas.User.Models.Calendar
 	{
 		public string Message { get; set; }
 		public CalendarItem Item { get; set; }
+
+		/// <summary>True when this page is showing ADP placeholders that a grant could reveal.</summary>
+		public bool IsProtectedItem { get; set; }
 		public RecurrenceTypes RecurrenceTypes { get; set; }
 		public List<CalendarItemType> Types { get; set; }
 

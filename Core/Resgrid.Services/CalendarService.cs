@@ -1,4 +1,4 @@
-﻿using Resgrid.Framework;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
@@ -17,6 +17,7 @@ namespace Resgrid.Services
 	public class CalendarService : ICalendarService
 	{
 		private readonly ICalendarItemsRepository _calendarItemRepository;
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 		private readonly ICalendarItemTypeRepository _calendarItemTypeRepository;
 		private readonly ICalendarItemAttendeeRepository _calendarItemAttendeeRepository;
 		private readonly IDepartmentsService _departmentsService;
@@ -35,8 +36,10 @@ namespace Resgrid.Services
 			IUserProfileService userProfileService, IDepartmentGroupsService departmentGroupsService, IDepartmentSettingsService departmentSettingsService,
 			IEncryptionService encryptionService, ICalendarItemCheckInRepository calendarItemCheckInRepository,
 			IMessageRecipientRepository messageRecipientRepository, IUnitOfWork unitOfWork,
+			Lazy<IProtectedWriteService> protectedWriteService,
 			ITextResponsePromptService textResponsePromptService = null)
 		{
+			_protectedWriteService = protectedWriteService;
 			_calendarItemRepository = calendarItemRepository;
 			_calendarItemTypeRepository = calendarItemTypeRepository;
 			_calendarItemAttendeeRepository = calendarItemAttendeeRepository;
@@ -90,7 +93,41 @@ namespace Resgrid.Services
 
 		public async Task<CalendarItem> SaveCalendarItemAsync(CalendarItem calendarItem, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _calendarItemRepository.SaveOrUpdateAsync(calendarItem, cancellationToken);
+			// The stored row backs REDACTED-sentinel restoration: an editor without a grant posts
+			// placeholders back from the form, and those must not overwrite the real values.
+			CalendarItem existing = null;
+			if (calendarItem != null && calendarItem.CalendarItemId > 0)
+				existing = await _calendarItemRepository.GetCalendarItemByIdAsync(calendarItem.CalendarItemId);
+
+			// ADP write safety net (plan 4.2/19.2, catalog v9).
+			// An UPDATE already has its identity, so it is enveloped BEFORE the save and no plaintext
+			// version of a cataloged field ever reaches the table - the same split CertificationService
+			// uses. Only an INSERT has to be persisted first, because the AAD row key IS the identity
+			// pk and cannot be bound until the database assigns it (plan 4.2/19.2). Fails closed
+			// either way.
+			var isExistingRow = calendarItem != null && calendarItem.CalendarItemId > 0;
+
+			if (isExistingRow)
+			{
+				var preSaveWrite = await _protectedWriteService.Value.PrepareCalendarItemWriteAsync(
+					calendarItem.DepartmentId, calendarItem, existing, null, null, workloadCaller: true, cancellationToken);
+				if (!preSaveWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({preSaveWrite.Reason}); calendar item {calendarItem.CalendarItemId} was NOT saved.");
+			}
+
+			var saved = await _calendarItemRepository.SaveOrUpdateAsync(calendarItem, cancellationToken);
+
+			if (!isExistingRow)
+			{
+				var protectedWrite = await _protectedWriteService.Value.PrepareCalendarItemWriteAsync(saved.DepartmentId,
+					saved, existing, null, null, workloadCaller: true, cancellationToken);
+				if (!protectedWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); calendar item {saved.CalendarItemId} has transient plaintext pending re-encryption.");
+				if (protectedWrite.Changed)
+					saved = await _calendarItemRepository.SaveOrUpdateAsync(saved, cancellationToken);
+			}
+
+			return saved;
 		}
 
 		public async Task<CalendarItem> GetCalendarItemByIdAsync(int calendarItemId)

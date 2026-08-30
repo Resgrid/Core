@@ -119,6 +119,15 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
 
   useEffect(() => { void load(); }, [load]);
 
+  // ADP: revealing (or concealing) changes what the SAME request returns - the excerpts come back
+  // as plaintext or as the REDACTED placeholder - so the queue re-reads rather than trying to
+  // patch rows in place.
+  useEffect(() => {
+    const reload = () => { void load(); };
+    window.addEventListener('resgrid:adp-reveal-changed', reload);
+    return () => window.removeEventListener('resgrid:adp-reveal-changed', reload);
+  }, [load]);
+
   const complete = async (request: ModerationRequestDto, disposition: 1 | 2) => {
     setBusy(request.ModerationRequestId);
     setError(null);

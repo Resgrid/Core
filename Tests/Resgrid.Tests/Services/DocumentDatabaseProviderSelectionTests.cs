@@ -1,3 +1,4 @@
+using System.Threading;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -269,7 +270,23 @@ namespace Resgrid.Tests.Services
 				new Mock<IUnitActiveRolesRepository>().Object,
 				new Mock<IDepartmentGroupsService>().Object,
 				new Mock<ILimitsService>().Object,
-				new Mock<IPersonnelRolesService>().Object);
+				new Mock<IPersonnelRolesService>().Object,
+				ProtectedWriteStub());
+		}
+
+		/// <summary>
+		/// UnitsService's ADP write safety net resolves this lazily. A loose mock would return a null
+		/// Task from Prepare* (NRE at the await), so the stub answers Allowed() — these tests are
+		/// about document-provider selection, not protection.
+		/// </summary>
+		private static Lazy<IProtectedWriteService> ProtectedWriteStub()
+		{
+			var stub = new Mock<IProtectedWriteService>();
+			stub.Setup(x => x.PrepareUnitStateWriteAsync(It.IsAny<int>(), It.IsAny<UnitState>(), It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+
+			return new Lazy<IProtectedWriteService>(() => stub.Object);
 		}
 
 		private static UsersService CreateUsersService(IEventAggregator eventAggregator, Lazy<IMongoRepository<PersonnelLocation>> mongoRepository, IPersonnelLocationsDocRepository personnelLocationsDocRepository)

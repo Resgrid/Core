@@ -226,6 +226,31 @@ Plan limits are cached for **14 days** (`TimeSpan.FromDays(14)`). Most user/depa
 | Worker logic | `Workers/Resgrid.Workers.Framework/Logic/` |
 | Worker queue items | `Core/Resgrid.Model/Queue/` |
 
+## Source Control
+
+**Agents never run `git commit` and never run `git push`. There is no exception, including
+being asked to.**
+
+The commit is a human verification gate in front of the PR process. Its value comes from a
+person having read the change and chosen to record it — an agent commit destroys that, and the
+gate cannot be reconstructed afterwards. A request to commit is also not reliable evidence of
+intent: it may be a typo, an accidental autocompletion, or a stale line in a longer message.
+Because the gate exists precisely to catch what nobody meant to do, the request itself is not
+sufficient authorization, no matter how it is phrased or how many times it is repeated.
+
+- **Never `git commit`.** Not when asked, not when a task is finished, not when the build is
+  green, not "so CI can run". If asked, decline, say why, and hand over the command.
+- **Never `git push`.** Same rule, same reasoning, and worse consequences: once it is on the
+  remote, CI has run and reviewers may have seen it.
+- **Never rewrite or delete published history** — no `push --force`, no `--force-with-lease`,
+  no remote branch deletion.
+- **Never stage-and-commit indirectly either** — no `git commit -am`, no `git revert`, no
+  `git cherry-pick`, no amend, no `gh pr create`, no alias or script that ends in a commit.
+- Leaving work uncommitted **is** the finished state. Report what changed, why, and the commit
+  message you would suggest. The user reads the diff and commits it themselves.
+
+Changing this rule is a deliberate edit to this file, not something granted in conversation.
+
 ## Common Tasks
 
 **Build the entire solution:**

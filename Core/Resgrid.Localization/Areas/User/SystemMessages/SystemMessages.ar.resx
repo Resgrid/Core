@@ -62,17 +62,51 @@
     <value>التقويم</value>
   </data>
   <data name="GdprExportReadyBody" xml:space="preserve">
-    <value>مرحبًا {0}،
-
-تصدير بياناتك الشخصية جاهز للتنزيل.
-
-رابط التنزيل: {1}
-
-تنتهي صلاحية هذا الرابط في {2:f} بتوقيت UTC. بعد هذا التاريخ لن تكون البيانات متاحة.
-
-إذا لم تطلب ذلك، يرجى التواصل مع الدعم.
-
+    <value>مرحبًا {0}،
+
+
+
+تصدير بياناتك الشخصية جاهز للتنزيل.
+
+
+
+رابط التنزيل: {1}
+
+
+
+تنتهي صلاحية هذا الرابط في {2:f} بتوقيت UTC. بعد هذا التاريخ لن تكون البيانات متاحة.
+
+
+
+إذا لم تطلب ذلك، يرجى التواصل مع الدعم.
+
+
+
 فريق Resgrid</value>
+  </data>
+  <data name="GdprExportWithheldNotice" xml:space="preserve">
+    <value>تستخدم إدارتك الحماية المتقدمة للبيانات، لذلك فإن بعض القيم في هذا التصدير مشفّرة وتظهر بالعلامة REDACTED. وهي لا تزال جزءًا من سجلك ولم يتم حذفها.</value>
+  </data>
+  <data name="GdprExportWithheldHowTo" xml:space="preserve">
+    <value>لعرض هذه القيم، سجّل الدخول إلى Resgrid وافتح الصفحة التي تنتمي إليها، حيث يمكنك إظهارها بعد تأكيد هويتك. كما يمكن لمسؤول إدارتك تزويدك بها.</value>
+  </data>
+  <data name="AdpProtectedMessageSubject" xml:space="preserve">
+    <value>رسالة محمية</value>
+  </data>
+  <data name="AdpProtectedMessageNotice" xml:space="preserve">
+    <value>في انتظارك رسالة محمية. سجّل الدخول إلى Resgrid لقراءتها.</value>
+  </data>
+  <data name="AdpProtectedCalendarTitle" xml:space="preserve">
+    <value>إدخال تقويم محمي</value>
+  </data>
+  <data name="AdpProtectedCalendarLocation" xml:space="preserve">
+    <value>موقع محمي</value>
+  </data>
+  <data name="AdpProtectedDispatchNotice" xml:space="preserve">
+    <value>يتوفر بلاغ محمي. سجّل الدخول إلى Resgrid لعرض التفاصيل.</value>
+  </data>
+  <data name="AdpProtectedDispatchName" xml:space="preserve">
+    <value>بلاغ محمي</value>
   </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>تصدير بياناتك من Resgrid جاهز</value>
@@ -81,12 +115,18 @@
     <value>إشعار</value>
   </data>
   <data name="VerificationCodeEmailBody" xml:space="preserve">
-    <value>مرحبًا {0}،
-
-رمز التحقق الخاص بك في Resgrid هو: {1}
-
-تنتهي صلاحية هذا الرمز خلال {2} دقيقة. إذا لم تطلب ذلك، فتجاهل هذا البريد.
-
+    <value>مرحبًا {0}،
+
+
+
+رمز التحقق الخاص بك في Resgrid هو: {1}
+
+
+
+تنتهي صلاحية هذا الرمز خلال {2} دقيقة. إذا لم تطلب ذلك، فتجاهل هذا البريد.
+
+
+
 فريق Resgrid</value>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">

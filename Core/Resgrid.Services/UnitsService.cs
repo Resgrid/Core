@@ -32,13 +32,17 @@ namespace Resgrid.Services
 		private readonly ILimitsService _limitsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 
+		// Lazy: defers the protected-write graph (broker client) until a state save actually needs it.
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
+
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
 			IEventAggregator eventAggregator, ICustomStateService customStateService, Lazy<IMongoRepository<UnitsLocation>> unitLocationRepository,
 			IUnitLocationsDocRepository unitLocationsDocRepository, Lazy<IUnitLocationsMongoRepository> unitLocationsMongoRepository,
 			IUnitActiveRolesRepository unitActiveRolesRepository,
-			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService)
+			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService,
+			Lazy<IProtectedWriteService> protectedWriteService)
 		{
 			_unitsRepository = unitsRepository;
 			_unitStatesRepository = unitStatesRepository;
@@ -57,6 +61,7 @@ namespace Resgrid.Services
 			_departmentGroupsService = departmentGroupsService;
 			_limitsService = limitsService;
 			_personnelRolesService = personnelRolesService;
+			_protectedWriteService = protectedWriteService;
 		}
 
 		public async Task<List<Unit>> GetAllAsync()
@@ -104,7 +109,22 @@ namespace Resgrid.Services
 
 		public async Task<UnitLog> SaveUnitLogAsync(UnitLog unitLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _unitLogsRepository.SaveOrUpdateAsync(unitLog, cancellationToken);
+			var saved = await _unitLogsRepository.SaveOrUpdateAsync(unitLog, cancellationToken);
+
+			// ADP write safety net (plan 4.2/19.2, catalog v9). Runs AFTER the save because the AAD
+			// row key is the identity pk, then re-persists the enveloped row. Fails closed by
+			// throwing rather than leaving the value in plaintext.
+			var departmentId = saved.Unit?.DepartmentId
+				?? (await _unitsRepository.GetByIdAsync(saved.UnitId))?.DepartmentId ?? 0;
+
+			var protectedWrite = await _protectedWriteService.Value.PrepareUnitLogWriteAsync(departmentId, saved,
+				null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); unit log {saved.UnitLogId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed)
+				saved = await _unitLogsRepository.SaveOrUpdateAsync(saved, cancellationToken);
+
+			return saved;
 		}
 
 		public async Task<List<Unit>> GetUnitsForDepartmentAsync(int departmentId)
@@ -343,6 +363,17 @@ namespace Resgrid.Services
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
+			// ADP write safety net (plan 4.2/19.2), catalog v2: unit-state note, geolocation and the
+			// typed coordinates are cataloged operational fields. Runs AFTER the save so the identity
+			// pk exists (it is the AAD row key), then re-persists the enveloped row. Every caller —
+			// v4 API, apps, unit tracking ingress, workers — is covered here rather than per-caller.
+			var protectedWrite = await _protectedWriteService.Value.PrepareUnitStateWriteAsync(departmentId,
+				saved, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); unit state {saved.UnitStateId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed)
+				saved = await _unitStatesRepository.SaveOrUpdateAsync(saved, cancellationToken);
+
 			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved, PreviousStatus = previousState });
 
 			return saved;
@@ -375,9 +406,20 @@ namespace Resgrid.Services
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
+			// ADP write safety net (plan 4.2/19.2), catalog v2: unit-state note, geolocation and the
+			// typed coordinates are cataloged operational fields. Runs AFTER the save so the identity
+			// pk exists (it is the AAD row key), then re-persists the enveloped row. Every caller —
+			// v4 API, apps, unit tracking ingress, workers — is covered here rather than per-caller.
+			var protectedWrite = await _protectedWriteService.Value.PrepareUnitStateWriteAsync(departmentId,
+				saved, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); unit state {saved.UnitStateId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed)
+				saved = await _unitStatesRepository.SaveOrUpdateAsync(saved, cancellationToken);
+
 			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved, PreviousStatus = previousState, AutoGenerated = autoGenerated });
 
-			return state;
+			return saved;
 		}
 
 		public async Task<List<UnitLog>> GetLogsForUnitAsync(int unitId)

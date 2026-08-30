@@ -29,6 +29,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUsersService _usersService;
 		private readonly ICalendarService _calendarService;
+		private readonly IProtectedReadService _protectedReadService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly IEventAggregator _eventAggregator;
@@ -40,8 +41,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public CalendarController(IDepartmentsService departmentsService, IUsersService usersService, ICalendarService calendarService,
 			IDepartmentGroupsService departmentGroupsService, IGeoLocationProvider geoLocationProvider, IEventAggregator eventAggregator,
 			IAuthorizationService authorizationService, IUserProfileService userProfileService,
-			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService)
+			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
+			IProtectedReadService protectedReadService)
 		{
+			_protectedReadService = protectedReadService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_calendarService = calendarService;
@@ -73,6 +76,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.UpcomingItems = new List<CalendarItem>();
 			model.UpcomingItems = await _calendarService.GetUpcomingCalendarItemsAsync(DepartmentId, DateTime.UtcNow);
+
+			// ADP (catalog v9): titles, descriptions and locations render as REDACTED on the server.
+			// The scheduling columns are never encrypted, so the calendar still lays out.
+			await _protectedReadService.ResolveCalendarItemsForReadAsync(DepartmentId, model.UpcomingItems, null, UserId);
 
 			// Check calendar sync permission
 			var calSyncPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.UseCalendarSync);
@@ -185,6 +192,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2) for a calendar entry's title, description and location.
+		/// The subject is authorized exactly as the page hosting the reveal authorizes it.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		public async Task<IActionResult> RevealCalendarItem([FromForm] int calendarItemId)
+		{
+			var item = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+
+			if (item == null || item.DepartmentId != DepartmentId)
+				return NotFound();
+
+			string grantToken = Request.Headers["X-Resgrid-Protected-Grant"];
+			var resolved = await _protectedReadService.ResolveCalendarItemsForReadAsync(DepartmentId,
+				new[] { item }, grantToken, UserId);
+
+			if (resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			var fields = Resgrid.Services.ProtectedReadService.CalendarItemFieldAccessors
+				.ToDictionary(a => a.Key, a => a.Value.Get(item));
+
+			return Json(new { success = true, fields });
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_Update)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -196,6 +230,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model.Item = await _calendarService.GetCalendarItemByIdAsync(id);
+
+			// ADP: the edit form renders protected values as the REDACTED sentinel; a field posted
+			// back unchanged is restored to its stored envelope by the write safety net.
+			var protectedRead = await _protectedReadService.ResolveCalendarItemsForReadAsync(DepartmentId,
+				new[] { model.Item }, null, UserId);
+			model.IsProtectedItem = protectedRead.IsProtected;
 			model.Types = new List<CalendarItemType>();
 			model.Types.Add(new CalendarItemType() { CalendarItemTypeId = 0, Name = "No Type" });
 			model.Types.AddRange(await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId));

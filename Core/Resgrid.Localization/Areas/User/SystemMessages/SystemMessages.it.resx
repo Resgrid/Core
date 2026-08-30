@@ -62,17 +62,51 @@
     <value>Calendario</value>
   </data>
   <data name="GdprExportReadyBody" xml:space="preserve">
-    <value>Ciao {0},
-
-L'esportazione dei tuoi dati personali è pronta per il download.
-
-Link per il download: {1}
-
-Questo link scade il {2:f} UTC. Dopo tale data i dati non saranno più disponibili.
-
-Se non hai richiesto tu questa operazione, contatta l'assistenza.
-
+    <value>Ciao {0},
+
+
+
+L'esportazione dei tuoi dati personali è pronta per il download.
+
+
+
+Link per il download: {1}
+
+
+
+Questo link scade il {2:f} UTC. Dopo tale data i dati non saranno più disponibili.
+
+
+
+Se non hai richiesto tu questa operazione, contatta l'assistenza.
+
+
+
 Il team Resgrid</value>
+  </data>
+  <data name="GdprExportWithheldNotice" xml:space="preserve">
+    <value>Il tuo dipartimento utilizza la Protezione avanzata dei dati, quindi alcuni valori di questa esportazione sono cifrati e compaiono come REDACTED. Fanno comunque parte dei tuoi dati e non sono stati eliminati.</value>
+  </data>
+  <data name="GdprExportWithheldHowTo" xml:space="preserve">
+    <value>Per vedere questi valori, accedi a Resgrid e apri la pagina a cui appartengono, dove puoi mostrarli dopo aver confermato la tua identità. Anche l'amministratore del dipartimento può fornirteli.</value>
+  </data>
+  <data name="AdpProtectedMessageSubject" xml:space="preserve">
+    <value>Messaggio protetto</value>
+  </data>
+  <data name="AdpProtectedMessageNotice" xml:space="preserve">
+    <value>Ti attende un messaggio protetto. Accedi a Resgrid per leggerlo.</value>
+  </data>
+  <data name="AdpProtectedCalendarTitle" xml:space="preserve">
+    <value>Voce di calendario protetta</value>
+  </data>
+  <data name="AdpProtectedCalendarLocation" xml:space="preserve">
+    <value>un luogo protetto</value>
+  </data>
+  <data name="AdpProtectedDispatchNotice" xml:space="preserve">
+    <value>È disponibile un intervento protetto. Accedi a Resgrid per vederne i dettagli.</value>
+  </data>
+  <data name="AdpProtectedDispatchName" xml:space="preserve">
+    <value>Intervento protetto</value>
   </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>La tua esportazione dati Resgrid è pronta</value>
@@ -81,12 +115,18 @@ Il team Resgrid</value>
     <value>Notifica</value>
   </data>
   <data name="VerificationCodeEmailBody" xml:space="preserve">
-    <value>Ciao {0},
-
-Il tuo codice di verifica Resgrid è: {1}
-
-Questo codice scade tra {2} minuti. Se non hai richiesto tu questa operazione, ignora questa email.
-
+    <value>Ciao {0},
+
+
+
+Il tuo codice di verifica Resgrid è: {1}
+
+
+
+Questo codice scade tra {2} minuti. Se non hai richiesto tu questa operazione, ignora questa email.
+
+
+
 Il team Resgrid</value>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">

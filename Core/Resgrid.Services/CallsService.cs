@@ -223,7 +223,17 @@ namespace Resgrid.Services
 				{
 					reference.SourceCallId = savedCall.CallId;
 
-					await _callReferencesRepository.SaveOrUpdateAsync(reference, cancellationToken);
+					var savedReference = await _callReferencesRepository.SaveOrUpdateAsync(reference, cancellationToken);
+
+					// ADP write safety net: callreferences.note is cataloged, and the linked-call
+					// editor posts it back from a hidden input — so without this the note is stored
+					// in plaintext, or the REDACTED placeholder overwrites it.
+					var referenceWrite = await _protectedWriteService.Value.PrepareCallReferenceWriteAsync(
+						savedCall.DepartmentId, savedReference, null, null, null, workloadCaller: true, cancellationToken);
+					if (!referenceWrite.Success)
+						throw new InvalidOperationException($"Protected write blocked ({referenceWrite.Reason}); call reference {savedReference.CallReferenceId} has transient plaintext pending re-encryption.");
+					if (referenceWrite.Changed)
+						await _callReferencesRepository.SaveOrUpdateAsync(savedReference, cancellationToken);
 				}
 			}
 
@@ -452,21 +462,65 @@ namespace Resgrid.Services
 
 		public async Task<CallNote> SaveCallNoteAsync(CallNote note, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var existingNoteForRestore = await GetStoredNoteForSentinelRestoreAsync(note);
+
 			var saved = await _callNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
 
-			// ADP write safety net — see SaveCallAsync. The department comes through the parent call.
+			// ADP write safety net — see SaveCallAsync. The department comes through the parent call,
+			// so an unresolvable parent means an unknown protection state: fail closed rather than
+			// leaving cataloged plaintext at rest while reporting success.
 			var call = await GetCallByIdAsync(saved.CallId);
-			if (call != null)
+			if (call == null)
 			{
-				var protectedWrite = await _protectedWriteService.Value.PrepareCallNoteWriteAsync(call.DepartmentId,
-					saved, null, null, workloadCaller: true, cancellationToken);
-				if (!protectedWrite.Success)
-					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); call note {saved.CallNoteId} has transient plaintext pending re-encryption.");
-				if (protectedWrite.Changed)
-					saved = await _callNotesRepository.SaveOrUpdateAsync(saved, cancellationToken);
+				Logging.LogError($"ADP write safety net could not resolve parent call {saved.CallId} for call note {saved.CallNoteId}; blocking the write.");
+				throw new InvalidOperationException($"Protected write blocked (parent call {saved.CallId} not found); call note {saved.CallNoteId} has transient plaintext pending re-encryption.");
 			}
 
+			var restored = RestoreNoteSentinels(saved, existingNoteForRestore);
+
+			var protectedWrite = await _protectedWriteService.Value.PrepareCallNoteWriteAsync(call.DepartmentId,
+				saved, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); call note {saved.CallNoteId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed || restored)
+				saved = await _callNotesRepository.SaveOrUpdateAsync(saved, cancellationToken);
+
 			return saved;
+		}
+
+		/// <summary>
+		/// A round-tripped REDACTED placeholder on an edit means "unchanged" (the client never saw
+		/// the plaintext). The stored row is fetched BEFORE the save so the placeholder can be
+		/// replaced with the stored envelope — persisting the literal sentinel would destroy the
+		/// value. Returns null when no cataloged field carries the sentinel (the common case).
+		/// </summary>
+		private async Task<CallNote> GetStoredNoteForSentinelRestoreAsync(CallNote note)
+		{
+			if (note == null || note.CallNoteId <= 0)
+				return null;
+
+			if (!ProtectedReadService.NoteFieldAccessors.Any(a => a.Value.Get(note) == ProtectedDataEnvelope.RedactionValue))
+				return null;
+
+			return await _callNotesRepository.GetByIdAsync(note.CallNoteId);
+		}
+
+		private static bool RestoreNoteSentinels(CallNote note, CallNote stored)
+		{
+			if (note == null || stored == null)
+				return false;
+
+			var restored = false;
+			foreach (var accessor in ProtectedReadService.NoteFieldAccessors)
+			{
+				if (accessor.Value.Get(note) != ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				accessor.Value.Set(note, accessor.Value.Get(stored));
+				restored = true;
+			}
+
+			return restored;
 		}
 
 		public async Task<List<CallNote>> GetFlaggedCallNotesByDepartmentIdAsync(int departmentId)
@@ -511,21 +565,59 @@ namespace Resgrid.Services
 
 		public async Task<CallAttachment> SaveCallAttachmentAsync(CallAttachment attachment, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var existingAttachmentForRestore = await GetStoredAttachmentForSentinelRestoreAsync(attachment);
+
 			var saved = await _callAttachmentRepository.SaveOrUpdateAsync(attachment, cancellationToken);
 
-			// ADP write safety net — see SaveCallAsync.
+			// ADP write safety net — see SaveCallAsync. Fail closed when the parent call (and so the
+			// department's protection state) cannot be resolved.
 			var call = await GetCallByIdAsync(saved.CallId);
-			if (call != null)
+			if (call == null)
 			{
-				var protectedWrite = await _protectedWriteService.Value.PrepareCallAttachmentWriteAsync(call.DepartmentId,
-					saved, null, null, workloadCaller: true, cancellationToken);
-				if (!protectedWrite.Success)
-					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); call attachment {saved.CallAttachmentId} has transient plaintext pending re-encryption.");
-				if (protectedWrite.Changed)
-					saved = await _callAttachmentRepository.SaveOrUpdateAsync(saved, cancellationToken);
+				Logging.LogError($"ADP write safety net could not resolve parent call {saved.CallId} for call attachment {saved.CallAttachmentId}; blocking the write.");
+				throw new InvalidOperationException($"Protected write blocked (parent call {saved.CallId} not found); call attachment {saved.CallAttachmentId} has transient plaintext pending re-encryption.");
 			}
 
+			var restored = RestoreAttachmentSentinels(saved, existingAttachmentForRestore);
+
+			var protectedWrite = await _protectedWriteService.Value.PrepareCallAttachmentWriteAsync(call.DepartmentId,
+				saved, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); call attachment {saved.CallAttachmentId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed || restored)
+				saved = await _callAttachmentRepository.SaveOrUpdateAsync(saved, cancellationToken);
+
 			return saved;
+		}
+
+		/// <summary>See <see cref="GetStoredNoteForSentinelRestoreAsync"/> — same contract for attachments.</summary>
+		private async Task<CallAttachment> GetStoredAttachmentForSentinelRestoreAsync(CallAttachment attachment)
+		{
+			if (attachment == null || attachment.CallAttachmentId <= 0)
+				return null;
+
+			if (!ProtectedReadService.AttachmentFieldAccessors.Any(a => a.Value.Get(attachment) == ProtectedDataEnvelope.RedactionValue))
+				return null;
+
+			return await _callAttachmentRepository.GetByIdAsync(attachment.CallAttachmentId);
+		}
+
+		private static bool RestoreAttachmentSentinels(CallAttachment attachment, CallAttachment stored)
+		{
+			if (attachment == null || stored == null)
+				return false;
+
+			var restored = false;
+			foreach (var accessor in ProtectedReadService.AttachmentFieldAccessors)
+			{
+				if (accessor.Value.Get(attachment) != ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				accessor.Value.Set(attachment, accessor.Value.Get(stored));
+				restored = true;
+			}
+
+			return restored;
 		}
 
 		public async Task<bool> MarkCallDispatchesAsSentAsync(int callId, List<Guid> usersToMark)

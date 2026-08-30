@@ -62,17 +62,51 @@
     <value>Calendar</value>
   </data>
   <data name="GdprExportReadyBody" xml:space="preserve">
-    <value>Hi {0},
-
-Your personal data export is ready for download.
-
-Download link: {1}
-
-This link expires on {2:f} UTC. After this date the data will no longer be available.
-
-If you did not request this, please contact support.
-
+    <value>Hi {0},
+
+
+
+Your personal data export is ready for download.
+
+
+
+Download link: {1}
+
+
+
+This link expires on {2:f} UTC. After this date the data will no longer be available.
+
+
+
+If you did not request this, please contact support.
+
+
+
 The Resgrid Team</value>
+  </data>
+  <data name="GdprExportWithheldNotice" xml:space="preserve">
+    <value>Your department uses Advanced Data Protection, so some of the values in this export are encrypted and appear as REDACTED. They are still part of your record and have not been deleted.</value>
+  </data>
+  <data name="GdprExportWithheldHowTo" xml:space="preserve">
+    <value>To see these values, sign in to Resgrid and open the page they belong to, where you can reveal them after confirming your identity. Your department administrator can also provide them.</value>
+  </data>
+  <data name="AdpProtectedMessageSubject" xml:space="preserve">
+    <value>Protected message</value>
+  </data>
+  <data name="AdpProtectedMessageNotice" xml:space="preserve">
+    <value>A protected message is waiting for you. Sign in to Resgrid to read it.</value>
+  </data>
+  <data name="AdpProtectedCalendarTitle" xml:space="preserve">
+    <value>Protected calendar entry</value>
+  </data>
+  <data name="AdpProtectedCalendarLocation" xml:space="preserve">
+    <value>a protected location</value>
+  </data>
+  <data name="AdpProtectedDispatchNotice" xml:space="preserve">
+    <value>A protected dispatch is available. Sign in to Resgrid to view details.</value>
+  </data>
+  <data name="AdpProtectedDispatchName" xml:space="preserve">
+    <value>Protected dispatch</value>
   </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>Your Resgrid Data Export is Ready</value>
@@ -81,12 +115,18 @@ The Resgrid Team</value>
     <value>Notification</value>
   </data>
   <data name="VerificationCodeEmailBody" xml:space="preserve">
-    <value>Hi {0},
-
-Your Resgrid verification code is: {1}
-
-This code expires in {2} minutes. If you did not request this, please ignore this email.
-
+    <value>Hi {0},
+
+
+
+Your Resgrid verification code is: {1}
+
+
+
+This code expires in {2} minutes. If you did not request this, please ignore this email.
+
+
+
 The Resgrid Team</value>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">

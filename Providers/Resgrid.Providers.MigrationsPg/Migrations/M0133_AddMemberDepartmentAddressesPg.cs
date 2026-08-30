@@ -46,7 +46,17 @@ WHERE up.userid = s.userid AND s.mailingaddress1 IS NULL AND s.isprotected = fal
 		public override void Down()
 		{
 			// Only safe while every department is Disabled: for a protected department these columns
-			// hold rgdp ciphertext that exists nowhere else.
+			// hold rgdp ciphertext that exists nowhere else. Refused rather than left to the comment,
+			// because the loss is unrecoverable - the legacy profile copy is gone by then (M0141).
+			if (Schema.Table("departmentmembersensitivedata").Column("homeaddress1").Exists())
+				Execute.Sql(@"
+DO $$
+BEGIN
+	IF EXISTS (SELECT 1 FROM departmentmembersensitivedata WHERE isprotected = true) THEN
+		RAISE EXCEPTION 'M0133 rollback refused: protected member address data exists and these columns hold the only copy. Offboard the affected departments first.';
+	END IF;
+END $$;");
+
 			if (Schema.Table("departmentmembersensitivedata").Column("homeaddress1").Exists())
 				Delete.Column("homeaddress1").Column("homecity").Column("homestate")
 					.Column("homepostalcode").Column("homecountry")

@@ -101,10 +101,18 @@ namespace Resgrid.Services
 			// edits this data far more often than they first fill it in. Fails closed either way.
 			var isExistingRow = data.DepartmentMemberSensitiveDataId > 0;
 
+			// The stored row backs REDACTED-sentinel restoration. The profile page renders every one
+			// of these values as a placeholder while protection is enforced, so a save made without a
+			// grant posts placeholders back for fields the editor never touched; with no stored row
+			// to restore from, the identification number and both addresses would be nulled instead.
+			DepartmentMemberSensitiveData existing = null;
+			if (isExistingRow)
+				existing = await _repository.GetByDepartmentAndUserAsync(data.DepartmentId, data.UserId);
+
 			if (isExistingRow)
 			{
 				var preSaveWrite = await _protectedWriteService.Value.PrepareMemberSensitiveDataWriteAsync(
-					data.DepartmentId, data, null, null, workloadCaller: true, cancellationToken);
+					data.DepartmentId, data, existing, null, null, workloadCaller: true, cancellationToken);
 				if (!preSaveWrite.Success)
 					throw new InvalidOperationException($"Protected write blocked ({preSaveWrite.Reason}); member sensitive data {data.DepartmentMemberSensitiveDataId} was NOT saved.");
 			}
@@ -114,7 +122,7 @@ namespace Resgrid.Services
 			if (!isExistingRow)
 			{
 				var protectedWrite = await _protectedWriteService.Value.PrepareMemberSensitiveDataWriteAsync(
-					saved.DepartmentId, saved, null, null, workloadCaller: true, cancellationToken);
+					saved.DepartmentId, saved, existing, null, null, workloadCaller: true, cancellationToken);
 				if (!protectedWrite.Success)
 					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); member sensitive data {saved.DepartmentMemberSensitiveDataId} has transient plaintext pending re-encryption.");
 				if (protectedWrite.Changed)

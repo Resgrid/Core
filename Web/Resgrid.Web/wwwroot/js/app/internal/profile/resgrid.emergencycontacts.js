@@ -23,6 +23,7 @@
 
 	var settings = null;
 	var contacts = [];
+	var loadVersion = 0;
 
 	function cell(value) {
 		return $('<td></td>').text(value || '');
@@ -64,12 +65,22 @@
 		// The list endpoint resolves protected values against whatever grant the request carries,
 		// so the SAME call returns placeholders normally and plaintext while a reveal is active.
 		// settings.beforeSend is the reveal module's header hook; without one this is unchanged.
+		//
+		// Reveal and conceal each trigger a load, and the two race: conceal fires its ungranted
+		// request while the granted one is still in flight, and if the granted one lands last it
+		// renders plaintext into a page the member has already concealed. Only the newest load is
+		// allowed to render.
+		var version = ++loadVersion;
+
 		$.ajax({
 			url: settings.listUrl,
 			dataType: 'json',
 			data: { userId: settings.userId },
 			beforeSend: typeof settings.beforeSend === 'function' ? settings.beforeSend : undefined
 		}).done(function (data) {
+			if (version !== loadVersion)
+				return;
+
 			contacts = data || [];
 			render();
 		});

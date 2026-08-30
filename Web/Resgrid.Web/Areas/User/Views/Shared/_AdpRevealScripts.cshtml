@@ -56,9 +56,9 @@
                 broker_unavailable: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorBrokerUnavailable"].Value)),
                 generic: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGeneric"].Value))
             },
-            onRevealed: function () {
+            onRevealed: function (values) {
                 if (typeof window.resgridAdpPageRevealed === 'function')
-                    window.resgridAdpPageRevealed();
+                    window.resgridAdpPageRevealed(values);
             },
             onConcealed: function () {
                 if (typeof window.resgridAdpPageConcealed === 'function')

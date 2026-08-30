@@ -52,10 +52,21 @@ namespace Resgrid.Services
 			// edits this data far more often than they first fill it in. Fails closed either way.
 			var isExistingRow = contact.DepartmentMemberEmergencyContactId > 0;
 
+			// The stored row backs REDACTED-sentinel restoration. The contacts table renders every
+			// cataloged value as a placeholder while protection is enforced, so an edit saved without
+			// a grant posts placeholders back; with no stored row to restore from, the member's
+			// next-of-kin name, relationship, both phone numbers and email would be nulled. Loaded
+			// through the member-scoped accessor so an id from another member cannot be reached.
+			DepartmentMemberEmergencyContact existing = null;
+			if (isExistingRow)
+				existing = (await _repository.GetAllByDepartmentAndUserAsync(contact.DepartmentId, contact.UserId))
+					?.FirstOrDefault(x => x != null
+						&& x.DepartmentMemberEmergencyContactId == contact.DepartmentMemberEmergencyContactId);
+
 			if (isExistingRow)
 			{
 				var preSaveWrite = await _protectedWriteService.Value.PrepareMemberEmergencyContactWriteAsync(
-					contact.DepartmentId, contact, null, null, workloadCaller: true, cancellationToken);
+					contact.DepartmentId, contact, existing, null, null, workloadCaller: true, cancellationToken);
 				if (!preSaveWrite.Success)
 					throw new InvalidOperationException($"Protected write blocked ({preSaveWrite.Reason}); emergency contact {contact.DepartmentMemberEmergencyContactId} was NOT saved.");
 			}
@@ -65,7 +76,7 @@ namespace Resgrid.Services
 			if (!isExistingRow)
 			{
 				var protectedWrite = await _protectedWriteService.Value.PrepareMemberEmergencyContactWriteAsync(
-					saved.DepartmentId, saved, null, null, workloadCaller: true, cancellationToken);
+					saved.DepartmentId, saved, existing, null, null, workloadCaller: true, cancellationToken);
 				if (!protectedWrite.Success)
 					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); emergency contact {saved.DepartmentMemberEmergencyContactId} has transient plaintext pending re-encryption.");
 				if (protectedWrite.Changed)

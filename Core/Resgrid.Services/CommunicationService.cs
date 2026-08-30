@@ -1,4 +1,4 @@
-﻿using Resgrid.Framework;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Messages;
@@ -116,8 +116,11 @@ namespace Resgrid.Services
 					// and headline, so skip the generic "Msg:" prefix and "Msg from System" subtitle.
 					spm.Title = pushMessage.Subject.Truncate(200);
 
-					if (!String.IsNullOrWhiteSpace(message.PushSubTitle))
-						spm.SubTitle = message.PushSubTitle.Truncate(200);
+					// Read from the PROJECTED message, not the original: the sanitized clone a protected
+					// department gets does not carry a subtitle, so it falls through to the generic
+					// label instead of putting the alert headline on a lock screen.
+					if (!String.IsNullOrWhiteSpace(pushMessage.PushSubTitle))
+						spm.SubTitle = pushMessage.PushSubTitle.Truncate(200);
 					else
 						spm.SubTitle = "Weather Alert";
 				}

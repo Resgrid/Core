@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -217,7 +217,13 @@ namespace Resgrid.Services
 
 			if (submittedSentinels.Count > 0)
 			{
-				var stored = (await GetFieldValuesForEntityAsync(departmentId, entityType, entityId))
+				// Queried against THIS definition rather than through the by-department accessor, which
+				// re-resolves whatever is active now. An administrator publishing a new definition
+				// mid-save would otherwise return values keyed by the new definition's field ids: no
+				// id would match, every sentinel would fall through to null, and the delete-then-
+				// reinsert below would drop the real values on the floor.
+				var stored = (await _valueRepository.GetFieldValuesByEntityAsync(entityType, entityId,
+						definition.UdfDefinitionId))
 					?.Where(v => !string.IsNullOrEmpty(v.UdfFieldId))
 					.GroupBy(v => v.UdfFieldId, StringComparer.Ordinal)
 					.ToDictionary(g => g.Key, g => g.Last().Value, StringComparer.Ordinal)

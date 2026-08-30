@@ -25,6 +25,13 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	///
 	/// The address links are CLEARED rather than dropped: they are ordinary nullable columns that
 	/// several code paths still read defensively, and a null reads the same as an absent column.
+	///
+	/// OUT OF SCOPE, deliberately: a userprofile with no active department membership. There is no
+	/// department to scope its identification number or address to, so there is nowhere for
+	/// relocation to move them and the guard in step 1 cannot cover them. ADP's whole premise is
+	/// that this data cannot remain on a global profile, so for these accounts the contraction is
+	/// the intended end state rather than an oversight: the values are removed with the columns.
+	/// A member who rejoins a department re-enters their details on the department-scoped row.
 	/// </summary>
 	[Migration(141)]
 	public class M0141_ContractLegacyMemberProfileDataPg : Migration

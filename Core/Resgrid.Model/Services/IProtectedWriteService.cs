@@ -144,13 +144,28 @@ namespace Resgrid.Model.Services
 		Task<ProtectedWriteResult> PrepareUnitStateWriteAsync(int departmentId, UnitState state,
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
 
-		/// <summary>Prepares one department-scoped emergency contact (catalog v4).</summary>
+		/// <summary>
+		/// Prepares one department-scoped emergency contact (catalog v4).
+		///
+		/// <paramref name="existingContact"/> is the stored row and is what a REDACTED sentinel is
+		/// restored from. The profile page renders these fields as placeholders whenever protection
+		/// is enforced, so an edit saved without a grant posts the placeholder straight back; with no
+		/// stored row to restore from, the member's next-of-kin details would be nulled instead.
+		/// </summary>
 		Task<ProtectedWriteResult> PrepareMemberEmergencyContactWriteAsync(int departmentId,
-			DepartmentMemberEmergencyContact contact, string grantToken, string userId, bool workloadCaller,
+			DepartmentMemberEmergencyContact contact, DepartmentMemberEmergencyContact existingContact,
+			string grantToken, string userId, bool workloadCaller,
 			CancellationToken cancellationToken = default);
 
-		/// <summary>Prepares a department-scoped sensitive personnel row (catalog v1 personnel family).</summary>
+		/// <summary>
+		/// Prepares a department-scoped sensitive personnel row (catalog v1 personnel family).
+		///
+		/// <paramref name="existingData"/> is the stored row and is what a REDACTED sentinel is
+		/// restored from - see the emergency-contact overload; the same grantless-save path would
+		/// otherwise null the identification number and both addresses.
+		/// </summary>
 		Task<ProtectedWriteResult> PrepareMemberSensitiveDataWriteAsync(int departmentId, DepartmentMemberSensitiveData data,
+			DepartmentMemberSensitiveData existingData,
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
 
 		/// <summary>Prepares an incident log (catalog v3).</summary>

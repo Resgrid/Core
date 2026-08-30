@@ -574,16 +574,17 @@ namespace Resgrid.Services
 		}
 
 		public async Task<ProtectedWriteResult> PrepareMemberEmergencyContactWriteAsync(int departmentId,
-			DepartmentMemberEmergencyContact contact, string grantToken, string userId, bool workloadCaller,
+			DepartmentMemberEmergencyContact contact, DepartmentMemberEmergencyContact existingContact,
+			string grantToken, string userId, bool workloadCaller,
 			CancellationToken cancellationToken = default)
 		{
 			if (contact == null)
 				return ProtectedWriteResult.Allowed();
 
 			// Sentinel policy first: a value the editor never had revealed must not survive into the
-			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
-			// literal placeholder stored.
-			var sentinelsHandled = ApplySentinelPolicy(contact, null, MemberEmergencyContactAccessors);
+			// row. With the stored row in hand the placeholder RESTORES; without one it clears, which
+			// is why the caller loads it for an update.
+			var sentinelsHandled = ApplySentinelPolicy(contact, existingContact, MemberEmergencyContactAccessors);
 
 			var slots = new List<WriteSlot>();
 			var rowKey = contact.DepartmentMemberEmergencyContactId.ToString(CultureInfo.InvariantCulture);
@@ -641,16 +642,17 @@ namespace Resgrid.Services
 		}
 
 		public async Task<ProtectedWriteResult> PrepareMemberSensitiveDataWriteAsync(int departmentId,
-			DepartmentMemberSensitiveData data, string grantToken, string userId, bool workloadCaller,
+			DepartmentMemberSensitiveData data, DepartmentMemberSensitiveData existingData,
+			string grantToken, string userId, bool workloadCaller,
 			CancellationToken cancellationToken = default)
 		{
 			if (data == null)
 				return ProtectedWriteResult.Allowed();
 
 			// Sentinel policy first: a value the editor never had revealed must not survive into the
-			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
-			// literal placeholder stored.
-			var sentinelsHandled = ApplySentinelPolicy(data, null, MemberSensitiveDataAccessors);
+			// row. With the stored row in hand the placeholder RESTORES; without one it clears, which
+			// is why the caller loads it for an update.
+			var sentinelsHandled = ApplySentinelPolicy(data, existingData, MemberSensitiveDataAccessors);
 
 
 			var slots = new List<WriteSlot>();

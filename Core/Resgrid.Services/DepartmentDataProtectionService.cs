@@ -365,12 +365,28 @@ namespace Resgrid.Services
 						? DepartmentDataProtectionEnrollmentResult.InvalidState
 						: DepartmentDataProtectionEnrollmentResult.Queued;
 
-				// Idempotency. Providers retry and duplicate webhooks; an event already applied is
-				// acknowledged rather than re-run, so a replayed Cancelled cannot re-schedule an
-				// offboarding a member has since revoked.
+				// Idempotency, first pass. Providers retry and duplicate webhooks; an event already
+				// applied is acknowledged rather than re-run, so an immediate redelivery of Cancelled
+				// cannot re-schedule an offboarding a member has since revoked.
 				if (!string.IsNullOrWhiteSpace(billingEvent.ProviderEventId) &&
 					string.Equals(policy.LastBillingEventId, billingEvent.ProviderEventId, StringComparison.OrdinalIgnoreCase))
 					return DepartmentDataProtectionEnrollmentResult.Queued;
+
+				// Idempotency, second pass. The id above remembers exactly one event, so it stops
+				// recognising a redelivery once any other event has overwritten it: Cancelled applies,
+				// Renewed withdraws the offboarding AND takes over the id slot, then the provider
+				// redelivers the Cancelled - which would pass the check above and re-schedule the
+				// offboarding the renewal just withdrew. The provider's own timestamp orders them, so
+				// anything older than what has already been applied is a stale redelivery and a no-op.
+				// Equal timestamps still apply: two distinct events can share a second.
+				if (billingEvent.OccurredOnUtc != default && policy.LastBillingEventOccurredOn.HasValue &&
+					billingEvent.OccurredOnUtc < policy.LastBillingEventOccurredOn.Value)
+				{
+					Logging.LogInfo($"ADP billing event {billingEvent.Kind} for department {billingEvent.DepartmentId} " +
+						$"ignored as a stale redelivery (occurred {billingEvent.OccurredOnUtc:o}, last applied " +
+						$"{policy.LastBillingEventOccurredOn.Value:o}).");
+					return DepartmentDataProtectionEnrollmentResult.Queued;
+				}
 
 				var result = DepartmentDataProtectionEnrollmentResult.Queued;
 
@@ -473,6 +489,13 @@ namespace Resgrid.Services
 				policy.AddonBillingReference = billingEvent.ExternalSubscriptionRef;
 
 			policy.LastBillingEventId = billingEvent.ProviderEventId;
+
+			// Never moves backwards. An out-of-order event that was recent enough to apply must not
+			// lower the watermark, or the redelivery it just overtook would become applicable again.
+			if (billingEvent.OccurredOnUtc != default &&
+				(!policy.LastBillingEventOccurredOn.HasValue ||
+					billingEvent.OccurredOnUtc > policy.LastBillingEventOccurredOn.Value))
+				policy.LastBillingEventOccurredOn = billingEvent.OccurredOnUtc;
 			policy.UpdatedOn = DateTime.UtcNow;
 			policy.UpdatedByUserId = "system:billing";
 

@@ -126,9 +126,11 @@
 		$('#adpConcealButton').show();
 
 		// Host hook: see conceal(). Runs after the marked fields are written so a reloading
-		// module can assume the grant is live.
+		// module can assume the grant is live. The values are handed over as well, for the fields a
+		// data-adp-field marker cannot reach on its own - a coordinate pair split across two inputs,
+		// or a rich-text editor whose DOM is owned by another library.
 		if (settings && typeof settings.onRevealed === 'function')
-			settings.onRevealed();
+			settings.onRevealed(values);
 	}
 
 	// English fallbacks: the host view supplies localized text through settings.messages, keyed by

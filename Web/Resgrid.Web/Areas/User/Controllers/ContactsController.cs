@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -986,8 +986,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// The contact's UDF values are cataloged too, and the form renders them as inputs marked
 			// for this module. Revealing the contact but leaving its custom fields showing the
 			// placeholder would be an odd half-reveal of the same record.
+			// The reveal must hide exactly what the hosting page hides: a grant is step-up proof,
+			// never a field-visibility decision.
+			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+			bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+
 			await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
-				_protectedReadService, DepartmentId, UdfEntityType.Contact, contactId, grantToken, UserId);
+				_protectedReadService, DepartmentId, UdfEntityType.Contact, contactId, grantToken, UserId,
+				isDeptAdmin, isGroupAdmin);
 
 			return Json(new { success = true, fields });
 		}

@@ -36,8 +36,8 @@ namespace Resgrid.Tests.Services
 
 			_protectedWriteService = new Mock<IProtectedWriteService>();
 			_protectedWriteService.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(It.IsAny<int>(),
-					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<string>(), It.IsAny<string>(),
-					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<DepartmentMemberEmergencyContact>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ProtectedWriteResult.Allowed());
 
 			_service = new DepartmentMemberEmergencyContactService(_repo.Object,
@@ -121,7 +121,8 @@ namespace Resgrid.Tests.Services
 		public async Task Protected_department_repersists_the_enveloped_contact()
 		{
 			_protectedWriteService.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(DeptId,
-					It.IsAny<DepartmentMemberEmergencyContact>(), null, null, true, It.IsAny<CancellationToken>()))
+					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<DepartmentMemberEmergencyContact>(),
+					null, null, true, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ProtectedWriteResult.Allowed(isProtected: true, changed: true));
 
 			// A NEW row: its identity pk is the AAD row key, so it cannot be enveloped until the
@@ -137,7 +138,8 @@ namespace Resgrid.Tests.Services
 		public async Task Blocked_protected_write_throws_rather_than_leaving_plaintext()
 		{
 			_protectedWriteService.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(DeptId,
-					It.IsAny<DepartmentMemberEmergencyContact>(), null, null, true, It.IsAny<CancellationToken>()))
+					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<DepartmentMemberEmergencyContact>(),
+					null, null, true, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ProtectedWriteResult.Blocked("broker_unavailable"));
 
 			Func<Task> act = async () => await _service.SaveAsync(BuildContact());
@@ -182,8 +184,8 @@ namespace Resgrid.Tests.Services
 			var order = new List<string>();
 
 			_protectedWriteService.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(It.IsAny<int>(),
-					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<string>(), It.IsAny<string>(),
-					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<DepartmentMemberEmergencyContact>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ProtectedWriteResult.Allowed())
 				.Callback(() => order.Add("protect"));
 
@@ -202,8 +204,8 @@ namespace Resgrid.Tests.Services
 			var order = new List<string>();
 
 			_protectedWriteService.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(It.IsAny<int>(),
-					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<string>(), It.IsAny<string>(),
-					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<DepartmentMemberEmergencyContact>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ProtectedWriteResult.Allowed())
 				.Callback(() => order.Add("protect"));
 
@@ -226,8 +228,8 @@ namespace Resgrid.Tests.Services
 			// The pre-save path can fail closed WITHOUT leaving a transient plaintext row, which the
 			// post-save path cannot. The message must not claim otherwise.
 			_protectedWriteService.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(It.IsAny<int>(),
-					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<string>(), It.IsAny<string>(),
-					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<DepartmentMemberEmergencyContact>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ProtectedWriteResult.Blocked("broker_unavailable"));
 
 			Func<Task> save = () => _service.SaveAsync(BuildContact(9));

@@ -1,4 +1,4 @@
-﻿using Resgrid.Framework;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
@@ -99,17 +99,33 @@ namespace Resgrid.Services
 			if (calendarItem != null && calendarItem.CalendarItemId > 0)
 				existing = await _calendarItemRepository.GetCalendarItemByIdAsync(calendarItem.CalendarItemId);
 
+			// ADP write safety net (plan 4.2/19.2, catalog v9).
+			// An UPDATE already has its identity, so it is enveloped BEFORE the save and no plaintext
+			// version of a cataloged field ever reaches the table - the same split CertificationService
+			// uses. Only an INSERT has to be persisted first, because the AAD row key IS the identity
+			// pk and cannot be bound until the database assigns it (plan 4.2/19.2). Fails closed
+			// either way.
+			var isExistingRow = calendarItem != null && calendarItem.CalendarItemId > 0;
+
+			if (isExistingRow)
+			{
+				var preSaveWrite = await _protectedWriteService.Value.PrepareCalendarItemWriteAsync(
+					calendarItem.DepartmentId, calendarItem, existing, null, null, workloadCaller: true, cancellationToken);
+				if (!preSaveWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({preSaveWrite.Reason}); calendar item {calendarItem.CalendarItemId} was NOT saved.");
+			}
+
 			var saved = await _calendarItemRepository.SaveOrUpdateAsync(calendarItem, cancellationToken);
 
-			// ADP write safety net (plan 4.2/19.2, catalog v9). Runs AFTER the save because the AAD
-			// row key is the identity pk, then re-persists the enveloped row. Fails closed by
-			// throwing rather than leaving the value in plaintext.
-			var protectedWrite = await _protectedWriteService.Value.PrepareCalendarItemWriteAsync(saved.DepartmentId,
-				saved, existing, null, null, workloadCaller: true, cancellationToken);
-			if (!protectedWrite.Success)
-				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); calendar item {saved.CalendarItemId} has transient plaintext pending re-encryption.");
-			if (protectedWrite.Changed)
-				saved = await _calendarItemRepository.SaveOrUpdateAsync(saved, cancellationToken);
+			if (!isExistingRow)
+			{
+				var protectedWrite = await _protectedWriteService.Value.PrepareCalendarItemWriteAsync(saved.DepartmentId,
+					saved, existing, null, null, workloadCaller: true, cancellationToken);
+				if (!protectedWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); calendar item {saved.CalendarItemId} has transient plaintext pending re-encryption.");
+				if (protectedWrite.Changed)
+					saved = await _calendarItemRepository.SaveOrUpdateAsync(saved, cancellationToken);
+			}
 
 			return saved;
 		}

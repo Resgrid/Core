@@ -60,6 +60,46 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 		#endregion Private Members and Constructors
 
+		/// <summary>
+		/// Resolves protected message fields against the department that OWNS each message, not the
+		/// caller's ambient one. An inbox is keyed by user, and a member of more than one department
+		/// sees messages from all of them; resolving those under the ambient department asks the
+		/// wrong policy whether protection is enforced and hands the broker a key the envelopes were
+		/// never bound to (the AAD carries the owning department).
+		///
+		/// A message with no recorded owner is left exactly as it is. Ownership was added by M0137
+		/// and backfilled; anything it could not resolve is historic, and guessing the ambient
+		/// department for it would be the same mistake in a quieter form.
+		/// </summary>
+		private async Task<ProtectedReadResult> ResolveMessagesByOwningDepartmentAsync(
+			IEnumerable<Message> messages, string grantToken)
+		{
+			var combined = new ProtectedReadResult();
+
+			var groups = (messages ?? Enumerable.Empty<Message>())
+				.Where(m => m != null && m.DepartmentId.HasValue && m.DepartmentId.Value > 0)
+				.GroupBy(m => m.DepartmentId.Value);
+
+			foreach (var group in groups)
+			{
+				var resolved = await _protectedReadService.ResolveMessagesForReadAsync(group.Key,
+					group.ToList(), grantToken, UserId);
+
+				if (resolved == null)
+					continue;
+
+				// Any protected department in the set makes the page protected, and the first real
+				// reason is the one the client needs to act on (an expired grant must re-prompt).
+				if (resolved.IsProtected)
+					combined.IsProtected = true;
+
+				if (combined.ProtectedReason == null && resolved.ProtectedReason != null)
+					combined.ProtectedReason = resolved.ProtectedReason;
+			}
+
+			return combined;
+		}
+
 		[Authorize(Policy = ResgridResources.Messages_View)]
 		public async Task<IActionResult> Inbox()
 		{
@@ -71,7 +111,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// ADP (catalog v7): server-rendered pages always render protected values as REDACTED - a
 			// grant lives only in the browser, never in the server session.
-			await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId, model.Messages, null, UserId);
+			await ResolveMessagesByOwningDepartmentAsync(model.Messages, null);
 
 			model.UnreadMessages = await _messageService.GetUnreadMessagesCountByUserIdAsync(UserId);
 			
@@ -89,7 +129,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Messages = await _messageService.GetSentMessagesByUserIdAsync(UserId);
 
 			// ADP: the sender sees placeholders too - the row is encrypted under the department key.
-			await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId, model.Messages, null, UserId);
+			await ResolveMessagesByOwningDepartmentAsync(model.Messages, null);
 
 			return View(model);
 		}
@@ -300,8 +340,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _messageService.ReadMessageRecipientAsync(messageId, UserId, cancellationToken);
 
 			// ADP (catalog v7): REDACTED on the server, revealed client-side through RevealMessage.
-			var protectedRead = await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId,
-				new List<Message> { model.Message }, null, UserId);
+			var protectedRead = await ResolveMessagesByOwningDepartmentAsync(
+				new List<Message> { model.Message }, null);
 			model.IsProtectedMessage = protectedRead.IsProtected;
 
 			return View(model);
@@ -325,8 +365,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 
 			string grantToken = Request.Headers["X-Resgrid-Protected-Grant"];
-			var resolved = await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId,
-				new List<Message> { message }, grantToken, UserId);
+			var resolved = await ResolveMessagesByOwningDepartmentAsync(
+				new List<Message> { message }, grantToken);
 
 			if (resolved.IsProtected && resolved.ProtectedReason != null)
 				return Json(new { success = false, error = resolved.ProtectedReason });

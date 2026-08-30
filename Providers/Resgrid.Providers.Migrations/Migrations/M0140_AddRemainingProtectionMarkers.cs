@@ -37,8 +37,21 @@ namespace Resgrid.Providers.Migrations.Migrations
 
 		public override void Down()
 		{
-			// The marker only: for an enrolled department the columns beside it hold the only copy
-			// of the values, and dropping or narrowing them would destroy data.
+			// Refuses rather than relying on the operator having read the comment below. Dropping the
+			// marker off a table that still holds enveloped rows leaves ciphertext with nothing to
+			// identify it by, and a later re-apply recreates the marker as false - so those rows read
+			// as unprotected while their values are unreadable.
+			foreach (var table in Tables)
+			{
+				if (Schema.Table(table).Column("IsProtected").Exists())
+					Execute.Sql($@"
+IF EXISTS (SELECT 1 FROM [{table}] WHERE [IsProtected] = 1)
+	THROW 51000, 'M0140 rollback refused: protected rows exist in {table} and dropping IsProtected would orphan their envelopes. Offboard the affected departments first.', 1;");
+			}
+
+			// The marker only. The values themselves stay exactly as they are: for an enrolled
+			// department these columns hold the ONLY copy, and dropping or narrowing them would
+			// destroy data.
 			foreach (var table in Tables)
 			{
 				if (Schema.Table(table).Column("IsProtected").Exists())

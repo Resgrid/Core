@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -1397,8 +1397,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// The call's user-defined fields are cataloged too, and both the view and the edit form
 			// mark them for this module. Revealing the call while its custom fields keep showing the
 			// placeholder is a half-reveal of one record.
+			// The reveal must hide exactly what the hosting page hides: a grant is step-up proof,
+			// never a field-visibility decision.
+			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+			bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+
 			await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
-				_protectedReadService, DepartmentId, UdfEntityType.Call, callId.ToString(), grantToken, UserId);
+				_protectedReadService, DepartmentId, UdfEntityType.Call, callId.ToString(), grantToken, UserId,
+				isDeptAdmin, isGroupAdmin);
 
 			return Json(new { success = true, fields });
 		}

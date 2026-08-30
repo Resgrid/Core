@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,6 +23,12 @@ namespace Resgrid.Web.Helpers
 	/// </summary>
 	public static class ProtectedUdfRevealHelper
 	{
+		/// <param name="isDepartmentAdmin">
+		/// The caller's department-admin status, and <paramref name="isGroupAdmin"/> their group-admin
+		/// status. Both are REQUIRED rather than optional: a grant proves the caller stepped up, it is
+		/// not a field-visibility decision, so a reveal must hide exactly what its hosting page hides.
+		/// Making them parameters means a new reveal endpoint cannot forget the check.
+		/// </param>
 		/// <returns>
 		/// The resolution result, or null when the record has no custom field values at all. A
 		/// caller whose page has nothing else protected uses it to answer the client with the
@@ -29,7 +36,8 @@ namespace Resgrid.Web.Helpers
 		/// </returns>
 		public static async Task<ProtectedReadResult> AddUdfValuesAsync(IDictionary<string, string> fields,
 			IUserDefinedFieldsService userDefinedFieldsService, IProtectedReadService protectedReadService,
-			int departmentId, UdfEntityType entityType, string entityId, string grantToken, string userId)
+			int departmentId, UdfEntityType entityType, string entityId, string grantToken, string userId,
+			bool isDepartmentAdmin, bool isGroupAdmin)
 		{
 			if (fields == null || string.IsNullOrWhiteSpace(entityId))
 				return null;
@@ -40,13 +48,30 @@ namespace Resgrid.Web.Helpers
 			if (values == null || !values.Any())
 				return null;
 
+			// Field visibility is decided the same way the hosting page decides it. Without this a
+			// caller holding a grant but neither department nor group admin would receive, through
+			// the reveal response, the very values the page filtered out of the render.
+			var visibleFields = await userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(
+				departmentId, (int)entityType, isDepartmentAdmin, isGroupAdmin);
+
+			var visibleFieldIds = (visibleFields ?? new List<UdfField>())
+				.Where(f => !string.IsNullOrEmpty(f.UdfFieldId))
+				.Select(f => f.UdfFieldId)
+				.ToHashSet(StringComparer.Ordinal);
+
+			values = values.Where(v => v != null && !string.IsNullOrEmpty(v.UdfFieldId)
+				&& visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+
+			if (!values.Any())
+				return null;
+
 			var result = await protectedReadService.ResolveUdfFieldValuesForReadAsync(departmentId, values,
 				grantToken, userId);
 
 			// A value the caller's grant could not open comes back as the placeholder; the client
 			// treats that as "nothing to write" and leaves the field concealed, so it is passed
 			// through unchanged rather than filtered here.
-			foreach (var value in values.Where(v => !string.IsNullOrEmpty(v.UdfFieldId)))
+			foreach (var value in values)
 				fields[$"udffieldvalues.value:{value.UdfFieldId}"] = value.Value;
 
 			return result;

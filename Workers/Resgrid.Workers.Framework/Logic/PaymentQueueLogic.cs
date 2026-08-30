@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Autofac;
 using Resgrid.Framework;
@@ -15,6 +15,7 @@ namespace Resgrid.Workers.Framework.Logic
 		public static async Task<bool> ProcessPaymentQueueItem(CqrsEvent qi)
 		{
 			bool success = true;
+			string adpFailure = null;
 
 			if (qi != null)
 			{
@@ -124,6 +125,15 @@ namespace Resgrid.Workers.Framework.Logic
 								// outcome. Nothing about the department's data is knowable from here.
 								Logging.LogInfo($"ADP billing event {adpEvent.Kind} for department " +
 									$"{adpEvent.DepartmentId} applied with result {adpResult}.");
+
+								// The service catches its own exceptions, so a transient database or
+								// cache fault comes back as Failed rather than as a throw - and a
+								// swallowed Failed leaves the department in the wrong protection state
+								// until the provider happens to send another event. Rethrowing puts the
+								// message back on the queue for a bounded retry; the service is
+								// idempotent on ProviderEventId, so redelivery is safe.
+								if (adpResult == DepartmentDataProtectionEnrollmentResult.Failed)
+									adpFailure = $"ADP billing event {adpEvent.Kind} for department {adpEvent.DepartmentId} failed to apply.";
 							}
 							break;
 
@@ -136,6 +146,14 @@ namespace Resgrid.Workers.Framework.Logic
 					Logging.LogException(ex);
 					Logging.SendExceptionEmail(ex, "ProcessPaymentQueueItem");
 				}
+			}
+
+			// Thrown outside the catch above deliberately: that block exists to keep one bad payment
+			// message from killing the consumer, and swallowing this one would defeat the retry.
+			if (adpFailure != null)
+			{
+				success = false;
+				throw new InvalidOperationException(adpFailure);
 			}
 
 			return success;

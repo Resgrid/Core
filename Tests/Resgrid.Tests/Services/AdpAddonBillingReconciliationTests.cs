@@ -180,6 +180,57 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task A_cancellation_redelivered_after_a_renewal_is_ignored()
+		{
+			// The id slot only remembers ONE event. Cancel, renew (which withdraws the offboarding and
+			// takes over that slot), then the provider redelivers the cancel: its id no longer matches,
+			// so nothing but the provider's own ordering can tell that it is stale.
+			var cancellation = Event(AdpAddonBillingEventKind.Cancelled, "evt-cancel");
+			cancellation.OccurredOnUtc = new DateTime(2026, 9, 1, 10, 0, 0, DateTimeKind.Utc);
+			await _service.ApplyAddonBillingEventAsync(cancellation);
+			((DepartmentDataProtectionState)_policy.State).Should().Be(DepartmentDataProtectionState.OffboardingScheduled);
+
+			var renewal = Event(AdpAddonBillingEventKind.Renewed, "evt-renew");
+			renewal.OccurredOnUtc = new DateTime(2026, 9, 1, 11, 0, 0, DateTimeKind.Utc);
+			await _service.ApplyAddonBillingEventAsync(renewal);
+			((DepartmentDataProtectionState)_policy.State).Should().Be(DepartmentDataProtectionState.Enabled);
+
+			await _service.ApplyAddonBillingEventAsync(cancellation);
+
+			((DepartmentDataProtectionState)_policy.State).Should().Be(DepartmentDataProtectionState.Enabled,
+				"the redelivered cancellation predates the renewal, so it must not re-schedule the offboarding");
+			_policy.OffboardingEffectiveOn.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_genuinely_newer_cancellation_after_a_renewal_still_applies()
+		{
+			// The ordering guard must not swallow real events. A member who renews and then cancels a
+			// week later has cancelled, and protection has to wind down.
+			var renewal = Event(AdpAddonBillingEventKind.Renewed, "evt-renew");
+			renewal.OccurredOnUtc = new DateTime(2026, 9, 1, 11, 0, 0, DateTimeKind.Utc);
+			await _service.ApplyAddonBillingEventAsync(renewal);
+
+			var cancellation = Event(AdpAddonBillingEventKind.Cancelled, "evt-cancel");
+			cancellation.OccurredOnUtc = new DateTime(2026, 9, 8, 9, 0, 0, DateTimeKind.Utc);
+			await _service.ApplyAddonBillingEventAsync(cancellation);
+
+			((DepartmentDataProtectionState)_policy.State).Should().Be(DepartmentDataProtectionState.OffboardingScheduled);
+		}
+
+		[Test]
+		public async Task The_ordering_watermark_never_moves_backwards()
+		{
+			var newer = Event(AdpAddonBillingEventKind.Renewed, "evt-newer");
+			newer.OccurredOnUtc = new DateTime(2026, 9, 10, 0, 0, 0, DateTimeKind.Utc);
+			await _service.ApplyAddonBillingEventAsync(newer);
+
+			// Applying an older-but-not-stale event must not lower the watermark, or the redeliveries
+			// it just overtook would become applicable all over again.
+			_policy.LastBillingEventOccurredOn.Should().Be(new DateTime(2026, 9, 10, 0, 0, 0, DateTimeKind.Utc));
+		}
+
+		[Test]
 		public async Task The_subscription_reference_is_recorded_for_the_operator()
 		{
 			await _service.ApplyAddonBillingEventAsync(Event(AdpAddonBillingEventKind.Activated));

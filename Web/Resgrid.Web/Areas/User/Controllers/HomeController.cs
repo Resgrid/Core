@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -1395,8 +1395,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 					fields[accessor.Key] = accessor.Value.Get(sensitive);
 			}
 
+			// The reveal must hide exactly what the hosting page hides: a grant is step-up proof,
+			// never a field-visibility decision.
+			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+			bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+
 			var resolvedUdf = await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
-				_protectedReadService, DepartmentId, UdfEntityType.Personnel, userId, grantToken, UserId);
+				_protectedReadService, DepartmentId, UdfEntityType.Personnel, userId, grantToken, UserId,
+				isDeptAdmin, isGroupAdmin);
 
 			if (resolvedUdf != null && resolvedUdf.IsProtected && resolvedUdf.ProtectedReason != null)
 				return Json(new { success = false, error = resolvedUdf.ProtectedReason });

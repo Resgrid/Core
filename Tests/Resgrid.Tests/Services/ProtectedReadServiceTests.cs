@@ -938,7 +938,7 @@ namespace Resgrid.Tests.Services
 				DepartmentId = DeptId,
 				Name = ProtectedDataEnvelope.RedactionValue
 			};
-			await _service.PrepareMemberEmergencyContactWriteAsync(DeptId, contact, IssueGrant(), UserId,
+			await _service.PrepareMemberEmergencyContactWriteAsync(DeptId, contact, null, IssueGrant(), UserId,
 				workloadCaller: false);
 			contact.Name.Should().BeNull();
 		}
@@ -1116,7 +1116,7 @@ namespace Resgrid.Tests.Services
 				HomeCountry = "United States"
 			};
 
-			var result = await _service.PrepareMemberSensitiveDataWriteAsync(DeptId, data, IssueGrant(), UserId, workloadCaller: false);
+			var result = await _service.PrepareMemberSensitiveDataWriteAsync(DeptId, data, null, IssueGrant(), UserId, workloadCaller: false);
 
 			result.Success.Should().BeTrue();
 

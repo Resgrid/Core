@@ -101,6 +101,16 @@ namespace Resgrid.Model
 		[ProtoMember(24)]
 		public string LastBillingEventId { get; set; }
 
+		/// <summary>
+		/// When the last applied ADP billing event occurred at the provider (M0143). The id above
+		/// only remembers ONE event, so it cannot recognise a redelivery that arrived after some
+		/// other event overwrote it: cancel, renew, then a redelivery of the cancel would pass the id
+		/// check and re-schedule an offboarding the renewal had just withdrawn. Comparing the
+		/// provider's own timestamp makes any event older than the last applied one a no-op.
+		/// </summary>
+		[ProtoMember(25)]
+		public DateTime? LastBillingEventOccurredOn { get; set; }
+
 		/// <summary>Department-local overnight migration window start, "HH:mm" (default 22:00).</summary>
 		[MaxLength(5)]
 		[ProtoMember(15)]

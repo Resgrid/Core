@@ -3,6 +3,19 @@
 @{
     ViewData["Title"] = "Resgrid | " + @localizer["EditContact"];
 }
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the
+    // step-up wiring in the Scripts section. Declared unconditionally so the section
+    // closure can see it; both partials only render when the page is protected.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedContact"],
+        RevealController = "Contacts",
+        RevealAction = "RevealContact",
+        RevealData = new Dictionary<string, string> { { "contactId", Model.Contact.ContactId } }
+    };
+}
+
 @section Styles
 {
     <link rel="stylesheet" href="~/clib/croppic/css/croppic.css" />
@@ -11,6 +24,25 @@
 <form id="editContactForm" class="form-horizontal" role="form" asp-controller="Contacts" asp-action="Edit" asp-route-area="User" method="post">
     @Html.AntiForgeryToken()
     @Html.HiddenFor(m => m.Contact.ContactId)
+
+    @*
+        ADP: the coordinate inputs are split into latitude/longitude, and a protected contact's
+        coordinates render as the REDACTED placeholder, which does not split - so those inputs are
+        empty for a value the editor was never shown. Round-tripping the placeholder here is what
+        lets the POST tell "never revealed" apart from "deliberately cleared".
+    *@
+    @Html.HiddenFor(m => m.Contact.EntranceGpsCoordinates)
+    @Html.HiddenFor(m => m.Contact.ExitGpsCoordinates)
+    @Html.HiddenFor(m => m.Contact.LocationGpsCoordinates)
+
+    @if (Model.IsProtectedContact)
+    {
+        <div class="row">
+            <div class="col-xs-12" style="padding: 15px 30px 0 30px;">
+                <partial name="_AdpRevealBanner" model="adpReveal" />
+            </div>
+        </div>
+    }
 
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-sm-4">
@@ -78,11 +110,11 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["FirstNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["FirstNamePlaceholder"]" asp-for="Contact.FirstName" /></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["FirstNamePlaceholder"]" asp-for="Contact.FirstName" data-adp-field="contacts.firstname" /></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["LastNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["LastNamePlaceholder"]" asp-for="Contact.LastName"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["LastNamePlaceholder"]" asp-for="Contact.LastName" data-adp-field="contacts.lastname"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MiddleNameLabel"]</label>
@@ -90,7 +122,7 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CompanyNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CompanyNamePlaceholder"]" asp-for="Contact.CompanyName"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CompanyNamePlaceholder"]" asp-for="Contact.CompanyName" data-adp-field="contacts.companyname"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["OtherNameLabel"]</label>
@@ -100,17 +132,17 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["EmailAddressLabel"]</label>
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Contact.Email">
+                                <input type="email" class="form-control" placeholder="@localizer["EmailAddressPlaceholder"]" asp-for="Contact.Email" data-adp-field="contacts.email">
                                 <span class="help-block m-b-none">@localizer["EmailAddressHelper"]</span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CellPhoneLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["CellPhonePlaceholder"]" asp-for="Contact.CellPhoneNumber"><span asp-validation-for="Contact.CellPhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
+                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["CellPhonePlaceholder"]" asp-for="Contact.CellPhoneNumber" data-adp-field="contacts.cellphonenumber"><span asp-validation-for="Contact.CellPhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["HomePhoneLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["HomePhonePlaceholder"]" asp-for="Contact.HomePhoneNumber"><span asp-validation-for="Contact.HomePhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
+                            <div class="col-sm-10"><input type="text" class="form-control js-phone-validate" placeholder="@localizer["HomePhonePlaceholder"]" asp-for="Contact.HomePhoneNumber" data-adp-field="contacts.homephonenumber"><span asp-validation-for="Contact.HomePhoneNumber" class="text-danger"></span><div class="js-phone-feedback small"></div></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["FaxPhoneLabel"]</label>
@@ -307,6 +339,10 @@
 
 @section Scripts
 {
+    @if (Model.IsProtectedContact)
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/app/resgrid.phonevalidate.js"></script>
 

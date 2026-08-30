@@ -681,6 +681,30 @@
   <data name="AdpProtectedContact" xml:space="preserve">
     <value>Contacto protegido</value>
   </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Registro de personal protegido</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Registro de unidad protegido</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Perfil protegido</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Mensaje protegido</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Documento protegido</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Entrada de calendario protegida</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Cola de moderación protegida</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Registros de unidad protegidos</value>
+  </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>cifrado en reposo para este departamento. Los usuarios autorizados y los canales aprobados aún pueden divulgarlo.</value>
   </data>

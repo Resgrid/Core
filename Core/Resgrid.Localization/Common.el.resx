@@ -693,6 +693,30 @@
   <data name="AdpProtectedContact" xml:space="preserve">
     <value>Προστατευμένη επαφή</value>
   </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Προστατευμένη εγγραφή προσωπικού</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Προστατευμένη εγγραφή μονάδας</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Προστατευμένο προφίλ</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Προστατευμένο μήνυμα</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Προστατευμένο έγγραφο</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Προστατευμένη καταχώριση ημερολογίου</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Προστατευμένη ουρά συντονισμού</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Προστατευμένα αρχεία καταγραφής μονάδας</value>
+  </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>κρυπτογραφημένο σε ηρεμία για αυτό το τμήμα. Οι εξουσιοδοτημένοι χρήστες και τα εγκεκριμένα κανάλια μπορούν παρ’ όλα αυτά να το αποκαλύψουν.</value>
   </data>

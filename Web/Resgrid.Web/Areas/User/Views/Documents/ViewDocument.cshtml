@@ -5,6 +5,28 @@
     ViewBag.Title = "Resgrid | " + localizer["ViewDocumentHeader"];
 }
 
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the step-up
+    // wiring in the Scripts section. Declared unconditionally so the section closure can see it;
+    // both partials only render when the record is protected.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedDocument"],
+        RevealController = "Documents",
+        RevealAction = "RevealDocument",
+        RevealData = new Dictionary<string, string> { { "documentId", Model.Document.DocumentId.ToString() } }
+    };
+}
+
+@if (Model.IsProtectedDocument)
+{
+    <div class="row">
+        <div class="col-lg-12" style="padding: 15px 30px 0 30px;">
+            <partial name="_AdpRevealBanner" model="adpReveal" />
+        </div>
+    </div>
+}
+
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-5">
         <h2>@localizer["ViewDocumentHeader"]</h2>
@@ -16,7 +38,7 @@
                 <a asp-controller="Documents" asp-action="Index" asp-route-area="User">@commonLocalizer["DocumentsModule"]</a>
             </li>
             <li class="active">
-                <strong>@Model.Document.Name</strong>
+                <strong data-adp-field="documents.name">@Model.Document.Name</strong>
             </li>
         </ol>
     </div>
@@ -51,14 +73,14 @@
         <div class="wrapper wrapper-content animated fadeInUp">
             <div class="ibox">
                 <div class="ibox-title">
-                    <h5><i class="@Model.Document.GetIconType()" style="margin-right: 8px;"></i>@Model.Document.Name</h5>
+                    <h5><i class="@Model.Document.GetIconType()" style="margin-right: 8px;"></i><span data-adp-field="documents.name">@Model.Document.Name</span></h5>
                 </div>
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-md-6">
                             <dl class="dl-horizontal">
                                 <dt>@commonLocalizer["Name"]</dt>
-                                <dd>@Model.Document.Name</dd>
+                                <dd data-adp-field="documents.name">@Model.Document.Name</dd>
                                 <dt>@localizer["Category"]</dt>
                                 <dd>@(String.IsNullOrWhiteSpace(Model.Document.Category) ? commonLocalizer["None"] : Model.Document.Category)</dd>
                             </dl>
@@ -95,7 +117,7 @@
                         <div class="col-lg-12">
                             <div class="well" style="margin-bottom: 0;">
                                 <i class="@Model.Document.GetIconType() fa-2x" style="vertical-align: middle; margin-right: 10px;"></i>
-                                <strong>@(String.IsNullOrWhiteSpace(Model.Document.Filename) ? Model.Document.Name : Model.Document.Filename)</strong>
+                                <strong data-adp-field="documents.filename">@(String.IsNullOrWhiteSpace(Model.Document.Filename) ? Model.Document.Name : Model.Document.Filename)</strong>
                                 <a class="btn btn-primary pull-right" asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@Model.Document.DocumentId">
                                     <i class="fa fa-download"></i> @commonLocalizer["Download"]
                                 </a>
@@ -108,3 +130,25 @@
         </div>
     </div>
 </div>
+
+@section Scripts
+{
+    @if (Model.IsProtectedDocument)
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+        <script type="text/javascript">
+            // A plain download link cannot carry the grant header, so the button fetches the file
+            // through the reveal module instead - which is also why the server refuses to serve an
+            // enveloped payload to an ordinary GET.
+            $(function () {
+                $('a[href*="GetDocument"]').on('click', function (e) {
+                    e.preventDefault();
+                    resgridAdpReveal.download($(this).attr('href'),
+                        @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+                            string.IsNullOrWhiteSpace(Model.Document.Filename) ? Model.Document.Name : Model.Document.Filename)),
+                        function (message) { window.alert(message); });
+                });
+            });
+        </script>
+    }
+}

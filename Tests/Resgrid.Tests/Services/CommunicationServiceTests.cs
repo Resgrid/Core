@@ -59,8 +59,13 @@ namespace Resgrid.Tests.Services
 				// notification-safe view is the original call.
 				_protectedProjectionServiceMock = new Mock<IProtectedProjectionService>();
 				_protectedProjectionServiceMock
-					.Setup(x => x.BuildNotificationSafeCallAsync(It.IsAny<int>(), It.IsAny<Call>(), It.IsAny<ProtectedDataEgressChannel>()))
-					.Returns<int, Call, ProtectedDataEgressChannel>((d, c, ch) => Task.FromResult(c));
+					.Setup(x => x.BuildNotificationSafeCallAsync(It.IsAny<int>(), It.IsAny<Call>(),
+						It.IsAny<ProtectedDataEgressChannel>(), It.IsAny<string>()))
+					.Returns<int, Call, ProtectedDataEgressChannel, string>((d, c, ch, culture) => Task.FromResult(c));
+				_protectedProjectionServiceMock
+					.Setup(x => x.BuildNotificationSafeMessageAsync(It.IsAny<int>(), It.IsAny<Message>(),
+						It.IsAny<ProtectedDataEgressChannel>(), It.IsAny<string>()))
+					.Returns<int, Message, ProtectedDataEgressChannel, string>((d, m, ch, culture) => Task.FromResult(m));
 				_protectedProjectionServiceMock
 					.Setup(x => x.IsChannelSanitizedAsync(It.IsAny<int>(), It.IsAny<ProtectedDataEgressChannel>()))
 					.ReturnsAsync(false);

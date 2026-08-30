@@ -100,6 +100,21 @@
   <data name="CancelQueuedEnrollment" xml:space="preserve">
     <value>Eingereihte Anmeldung abbrechen</value>
   </data>
+  <data name="MigrationProgressHeader" xml:space="preserve">
+    <value>Migrationsfortschritt</value>
+  </data>
+  <data name="MigrationProgressRows" xml:space="preserve">
+    <value>{0} von {1} Zeilen verarbeitet</value>
+  </data>
+  <data name="MigrationProgressTable" xml:space="preserve">
+    <value>Aktuell wird {0} verarbeitet.</value>
+  </data>
+  <data name="MigrationProgressPending" xml:space="preserve">
+    <value>Es wurden noch keine Zeilen gezählt – das erste Nachtfenster hat noch nicht begonnen.</value>
+  </data>
+  <data name="MigrationProgressAnomalies" xml:space="preserve">
+    <value>{0} Zeilen konnten nicht verarbeitet werden und erfordern Aufmerksamkeit.</value>
+  </data>
   <data name="MigrationInProgress" xml:space="preserve">
     <value>Die Migration läuft. Die Arbeit findet nur innerhalb Ihres Nachtfensters statt ({0}–{1}, {2}); außerhalb ist Ihre Abteilung voll einsatzfähig.</value>
   </data>

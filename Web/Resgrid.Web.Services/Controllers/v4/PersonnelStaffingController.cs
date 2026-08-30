@@ -32,10 +32,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IUserStateService _userStateService;
+		private readonly IProtectedReadService _protectedReadService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+
+		/// <summary>
+		/// The caller's Protected Data Grant, if they presented one. Absent means a staffing note
+		/// resolves to the REDACTED placeholder rather than plaintext.
+		/// </summary>
+		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
 
 		public PersonnelStaffingController(
 			IUsersService usersService,
@@ -46,9 +53,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentSettingsService departmentSettingsService,
-			Model.Services.IAuthorizationService authorizationService
+			Model.Services.IAuthorizationService authorizationService,
+			IProtectedReadService protectedReadService
 			)
 		{
+			_protectedReadService = protectedReadService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
 			_departmentsService = departmentsService;
@@ -91,6 +100,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			var userState = await _userStateService.GetLastUserStateByUserIdAsync(userId);
+
+			// ADP (catalog v9): a staffing note is often why someone is unavailable. With a grant it
+			// comes back as plaintext; without one as the REDACTED placeholder, never ciphertext.
+			if (userState != null)
+				await _protectedReadService.ResolveUserStatesForReadAsync(DepartmentId, new[] { userState },
+					ProtectedGrantToken, UserId);
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (userState != null)

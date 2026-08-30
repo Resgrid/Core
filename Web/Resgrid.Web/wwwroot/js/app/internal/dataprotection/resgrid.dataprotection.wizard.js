@@ -133,6 +133,58 @@ var resgrid;
                     });
                 });
 
+                // ── Migration progress ──────────────────────────────────────────
+                // Present only while a run is in flight. The counts come from the engine's own
+                // cursor rows, so the panel and the worker cannot disagree; they move only during
+                // the department's overnight window, which is why this polls slowly.
+                var $progress = $('#adpMigrationProgress');
+                if ($progress.length) {
+                    var format = function (template, values) {
+                        return (template || '').replace(/\{(\d+)\}/g, function (match, index) {
+                            var value = values[Number(index)];
+                            return value === undefined || value === null ? match : value;
+                        });
+                    };
+
+                    var renderProgress = function (progress) {
+                        if (!progress || !progress.IsRunning || !progress.RowsTotal) {
+                            $('#adpMigrationProgressRows').text(localized('progress_pending') || '');
+                            $('#adpMigrationProgressTable').text('');
+                            $progress.show();
+                            return;
+                        }
+
+                        var percent = progress.PercentComplete || 0;
+                        $('#adpMigrationProgressBar')
+                            .css('width', percent + '%')
+                            .attr('aria-valuenow', percent)
+                            .text(percent + '%');
+
+                        $('#adpMigrationProgressRows').text(format(localized('progress_rows'),
+                            [progress.RowsCompleted, progress.RowsTotal]));
+
+                        $('#adpMigrationProgressTable').text(progress.CurrentTable
+                            ? format(localized('progress_table'), [progress.CurrentTable])
+                            : '');
+
+                        var $anomalies = $('#adpMigrationProgressAnomalies');
+                        if (progress.RowsAnomalous > 0)
+                            $anomalies.text(format(localized('progress_anomalies'), [progress.RowsAnomalous])).show();
+                        else
+                            $anomalies.hide();
+
+                        $progress.show();
+                    };
+
+                    var pollProgress = function () {
+                        $.getJSON('/User/DataProtection/MigrationProgress')
+                            .done(renderProgress);
+                    };
+
+                    pollProgress();
+                    window.setInterval(pollProgress, 60000);
+                }
+
                 // ── Status-panel commands ───────────────────────────────────────
                 $('#btnCancelQueued').click(function () {
                     if (!window.confirm(localized('confirm_cancel_queued') || 'Cancel the queued enrollment? Nothing has been migrated yet; you can enroll again later while the addon is active.'))

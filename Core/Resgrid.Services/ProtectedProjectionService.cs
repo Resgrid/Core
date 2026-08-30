@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Localization.Areas.User.SystemMessages;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -96,9 +97,16 @@ namespace Resgrid.Services
 		/// <summary>
 		/// The exact generic line the plan mandates for GenericOnly egress (section 9.1).
 		/// </summary>
+		/// <summary>
+		/// English fallback for the sanitized dispatch text. The value members actually receive is
+		/// resolved per recipient through SystemMessagesResources; this constant remains for the
+		/// surfaces that have no recipient at all (the shared web link page) and as the resource
+		/// default.
+		/// </summary>
 		public const string GenericDispatchText = "A protected dispatch is available. Sign in to Resgrid to view details.";
 
-		public async Task<Call> BuildNotificationSafeCallAsync(int departmentId, Call call, ProtectedDataEgressChannel channel)
+		public async Task<Call> BuildNotificationSafeCallAsync(int departmentId, Call call, ProtectedDataEgressChannel channel,
+			string culture = null)
 		{
 			if (call == null)
 				return null;
@@ -143,9 +151,75 @@ namespace Resgrid.Services
 				State = call.State,
 				IsCritical = call.IsCritical,
 				LoggedOn = call.LoggedOn,
-				Name = string.IsNullOrWhiteSpace(call.Number) ? "Protected dispatch" : call.Number,
-				NatureOfCall = GenericDispatchText
+				Name = string.IsNullOrWhiteSpace(call.Number)
+					? SystemMessagesResources.Get("AdpProtectedDispatchName", culture)
+					: call.Number,
+				NatureOfCall = SystemMessagesResources.Get("AdpProtectedDispatchNotice", culture)
 			};
+		}
+
+		public async Task<Message> BuildNotificationSafeMessageAsync(int departmentId, Message message,
+			ProtectedDataEgressChannel channel, string culture = null)
+		{
+			if (message == null)
+				return null;
+
+			bool enforced;
+			try
+			{
+				enforced = await _dataProtectionService.IsProtectionEnforcedAsync(departmentId);
+			}
+			catch (Exception ex)
+			{
+				// Unknown protection state must not leak plaintext to a carrier or provider.
+				Logging.LogException(ex, $"Protection-state lookup failed for department {departmentId}; sanitizing the {channel} message notification defensively.");
+				enforced = true;
+			}
+
+			if (!enforced)
+				return message;
+
+			// Same rule as dispatches: an AllowProtectedContent channel may carry the real message
+			// only while it is actually plaintext. Once the row is enveloped there is nothing the
+			// notification host can do with it but forward ciphertext.
+			if (await ChannelAllowsProtectedContentAsync(departmentId, channel) && !HasAnyEnvelopedMessageField(message))
+				return message;
+
+			// Sanitized clone: routing and structure survive, content does not. Type is preserved
+			// because delivery branches on it (weather alerts are email/push only), and the read
+			// state because the inbox badge is computed from it.
+			return new Message
+			{
+				MessageId = message.MessageId,
+				DepartmentId = message.DepartmentId,
+				SendingUserId = message.SendingUserId,
+				SendingUser = message.SendingUser,
+				ReceivingUserId = message.ReceivingUserId,
+				ReceivingUser = message.ReceivingUser,
+				SystemGenerated = message.SystemGenerated,
+				Type = message.Type,
+				SentOn = message.SentOn,
+				ReadOn = message.ReadOn,
+				ExpireOn = message.ExpireOn,
+				IsBroadcast = message.IsBroadcast,
+				Subject = SystemMessagesResources.Get("AdpProtectedMessageSubject", culture),
+				Body = SystemMessagesResources.Get("AdpProtectedMessageNotice", culture)
+			};
+		}
+
+		/// <summary>
+		/// True when any cataloged Messages field carries an envelope prefix. Driven by the
+		/// parity-pinned accessor map so a catalog addition is covered without touching this guard.
+		/// </summary>
+		private static bool HasAnyEnvelopedMessageField(Message message)
+		{
+			foreach (var accessor in ProtectedReadService.MessageFieldAccessors)
+			{
+				if (ProtectedDataEnvelope.HasEnvelopePrefix(accessor.Value.Get(message)))
+					return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>

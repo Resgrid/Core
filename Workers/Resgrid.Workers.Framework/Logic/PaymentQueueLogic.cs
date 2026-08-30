@@ -104,6 +104,29 @@ namespace Resgrid.Workers.Framework.Logic
 								await paymentProviderService.ProcessStripeInvoicePaidAsync(invoicePaid);
 							}
 							break;
+
+						// ADP addon billing events (plan 17.2). The Billing API resolves the department
+						// and emits a typed event; Core applies it to the durable protection state.
+						// Every one of these is idempotent in the service - providers retry.
+						case CqrsEventTypes.AdpAddonActivated:
+						case CqrsEventTypes.AdpAddonRenewed:
+						case CqrsEventTypes.AdpAddonCancelled:
+						case CqrsEventTypes.AdpAddonPaymentFailed:
+							var adpEvent = JsonConvert.DeserializeObject<AdpAddonBillingEvent>(qi.Data);
+
+							if (adpEvent != null)
+							{
+								var dataProtectionService = Bootstrapper.GetKernel().Resolve<IDepartmentDataProtectionService>();
+
+								var adpResult = await dataProtectionService.ApplyAddonBillingEventAsync(adpEvent);
+
+								// Value-free by construction: a department id, the event kind and the
+								// outcome. Nothing about the department's data is knowable from here.
+								Logging.LogInfo($"ADP billing event {adpEvent.Kind} for department " +
+									$"{adpEvent.DepartmentId} applied with result {adpResult}.");
+							}
+							break;
+
 						default:
 							throw new ArgumentOutOfRangeException();
 					}

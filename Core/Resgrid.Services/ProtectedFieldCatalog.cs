@@ -20,6 +20,10 @@ namespace Resgrid.Services
 		private const string PersonnelFamily = "Personnel";
 		private const string ContactsFamily = "Contacts";
 		private const string OperationalFamily = "Operational";
+		private const string MessagingFamily = "Messaging";
+		private const string ModerationFamily = "Moderation";
+		private const string DocumentsFamily = "Documents";
+		private const string CredentialsFamily = "Credentials";
 
 		/// <summary>Catalog version the section 5.2 operational entries were added in.</summary>
 		private const int OperationalCatalogVersion = 2;
@@ -35,6 +39,18 @@ namespace Resgrid.Services
 
 		/// <summary>Catalog version the personnel certification family was added in.</summary>
 		private const int CertificationCatalogVersion = 6;
+
+		/// <summary>Catalog version the member-messaging family was added in.</summary>
+		private const int MessagingCatalogVersion = 7;
+
+		/// <summary>Catalog version the moderation family was added in.</summary>
+		private const int ModerationCatalogVersion = 8;
+
+		/// <summary>
+		/// Catalog version the plan's remaining candidates were added in: unit logs, user state
+		/// notes, calendar items, documents and the stored mailbox credentials.
+		/// </summary>
+		private const int RemainingCandidatesCatalogVersion = 9;
 
 		private static readonly IReadOnlyList<ProtectedFieldDefinition> Entries = BuildV1();
 		private static readonly Dictionary<string, ProtectedFieldDefinition> ById =
@@ -284,6 +300,141 @@ namespace Resgrid.Services
 
 			list.Add(new ProtectedFieldDefinition("contactnotes.note", ContactsFamily, "ContactNotes", "Note",
 				ProtectedFieldStorageKind.Text, ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedContactData));
+
+			// ---- Member messaging (section 5.2), catalog v7 -----------------------------------
+			// Member-to-member messages are free text about incidents, patients and people, and the
+			// reply carries whatever the member typed back; the position a reply was filed from is
+			// protected location data and rides the companion columns. Both tables became bindable
+			// only with M0137, which gave them a DepartmentId of their own — an envelope AAD binds
+			// the department, and until then these rows could not be attributed to one.
+			//
+			// Subject is cataloged with the body deliberately. A subject line like "Overdose at 14
+			// Elm - do not tell the family" discloses as much as the message, and leaving it in the
+			// clear would leave every inbox listing readable.
+			//
+			// MessageRecipients.Note needed M0138 before it could be listed here. It used to be
+			// dual-purpose - besides a member's typed note it carried the TextResponsePromptMetadata
+			// token naming the calendar item or poll a prompt belongs to, parsed by the chatbot
+			// inbound resolver, the RSVP prompt service and both message controllers. Those paths
+			// hold NO grant and the broker's workload lane is encrypt-only, so encrypting the column
+			// would have silently broken calendar RSVP and poll replies for the departments that
+			// turned protection on. M0138 moved the token to MessageRecipients.PromptMetadata (which
+			// stays plaintext: it is a row pointer and says nothing about a person), leaving Note as
+			// ordinary member free text and part of this family.
+			void MessageField(string table, string column, ProtectedFieldClassification classification,
+				ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
+					MessagingFamily, table, column, kind, classification,
+					PermissionTypes.ViewProtectedOperationalData, PermissionTypes.ViewProtectedOperationalData,
+					MessagingCatalogVersion));
+
+			MessageField("Messages", "Subject", ProtectedFieldClassification.Sensitive);
+			MessageField("Messages", "Body", ProtectedFieldClassification.Sensitive);
+			MessageField("MessageRecipients", "Response", ProtectedFieldClassification.Sensitive);
+			MessageField("MessageRecipients", "Note", ProtectedFieldClassification.Sensitive);
+			MessageField("MessageRecipients", "Latitude", ProtectedFieldClassification.Sensitive,
+				ProtectedFieldStorageKind.CompanionColumn);
+			MessageField("MessageRecipients", "Longitude", ProtectedFieldClassification.Sensitive,
+				ProtectedFieldStorageKind.CompanionColumn);
+
+			// ---- Moderation (section 5.3), catalog v8 ------------------------------------------
+			// A moderation record is a VERBATIM COPY of the worst content the department holds: the
+			// message or note that was reported, the file that came with it, and the moderator's
+			// account of why. Leaving it in the clear would mean a protected department encrypts
+			// the original and keeps a plaintext duplicate one table over, reachable by anyone who
+			// can read the queue.
+			//
+			// Moderators need their normal permission AND a current grant (plan 5.3). The queue
+			// itself stays usable without one: status, reason CODE and counts are structural and
+			// stay plaintext, so a moderator can triage; only the excerpts need the step-up.
+			//
+			// NOT cataloged, deliberately: ModerationActions.ActorRole / IpAddress / UserAgent /
+			// TraceId / ServerName. Those are the security audit trail of who acted and from where
+			// (section 5.4), they are not the reported content, and encrypting them would blind the
+			// very trail that exists to investigate abuse of the moderation tools themselves.
+			void Moderation(string table, string column, ProtectedFieldClassification classification,
+				ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
+					ModerationFamily, table, column, kind, classification,
+					PermissionTypes.ViewProtectedOperationalData, PermissionTypes.ViewProtectedOperationalData,
+					ModerationCatalogVersion));
+
+			Moderation("ModerationRequests", "OriginalSubject", ProtectedFieldClassification.Sensitive);
+			Moderation("ModerationRequests", "OriginalText", ProtectedFieldClassification.Sensitive);
+			Moderation("ModerationRequests", "OriginalFileName", ProtectedFieldClassification.Sensitive);
+			Moderation("ModerationRequests", "OriginalContentType", ProtectedFieldClassification.Sensitive);
+			Moderation("ModerationRequests", "OriginalContent", ProtectedFieldClassification.Sensitive,
+				ProtectedFieldStorageKind.Binary);
+			Moderation("ModerationRequests", "OriginalMetadataJson", ProtectedFieldClassification.Sensitive);
+			Moderation("ModerationRequests", "AdminNote", ProtectedFieldClassification.Sensitive);
+
+			Moderation("ModerationReports", "Note", ProtectedFieldClassification.Sensitive);
+
+			Moderation("ModerationActions", "Note", ProtectedFieldClassification.Sensitive);
+			Moderation("ModerationActions", "DetailsJson", ProtectedFieldClassification.Sensitive);
+			Moderation("ModerationActions", "EvidenceText", ProtectedFieldClassification.Sensitive);
+			Moderation("ModerationActions", "EvidenceContent", ProtectedFieldClassification.Sensitive,
+				ProtectedFieldStorageKind.Binary);
+			Moderation("ModerationActions", "EvidenceMetadataJson", ProtectedFieldClassification.Sensitive);
+
+			// Chat moderation carries the same classification (plan 5.3): flag and action notes,
+			// reasons, detail JSON, and the export payload — an export is the whole conversation.
+			Moderation("ChatMessageFlags", "Note", ProtectedFieldClassification.Sensitive);
+			Moderation("ChatMessageFlags", "ResolutionNote", ProtectedFieldClassification.Sensitive);
+
+			Moderation("ChatModerationActions", "Reason", ProtectedFieldClassification.Sensitive);
+			Moderation("ChatModerationActions", "DetailsJson", ProtectedFieldClassification.Sensitive);
+
+			Moderation("ChatExports", "Data", ProtectedFieldClassification.Sensitive,
+				ProtectedFieldStorageKind.Binary);
+			Moderation("ChatExports", "Error", ProtectedFieldClassification.Sensitive);
+
+			// ---- The plan's remaining candidates (sections 5.2 and 22.1), catalog v9 -----------
+			void Remaining(string family, string table, string column, ProtectedFieldClassification classification,
+				PermissionTypes permission, ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
+					family, table, column, kind, classification, permission, permission,
+					RemainingCandidatesCatalogVersion));
+
+			// A unit log narrative is the crew's own account of a response, and a user state note is
+			// why someone is unavailable ("at the hospital with my father") - both free text about
+			// people, which the plan defaults to sensitive in a protected department.
+			Remaining(OperationalFamily, "UnitLogs", "Narrative", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData);
+			Remaining(OperationalFamily, "UserStates", "Note", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData);
+
+			// Calendar entries name people and places: "Meet family re: incident 4471", a home
+			// address as the location. Structural scheduling columns (start/end, timezone,
+			// recurrence rule) stay plaintext - a protected department's calendar must still lay out.
+			Remaining(OperationalFamily, "CalendarItems", "Title", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData);
+			Remaining(OperationalFamily, "CalendarItems", "Description", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData);
+			Remaining(OperationalFamily, "CalendarItems", "Location", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData);
+
+			// A department document is whatever they uploaded - protocols, but also incident
+			// paperwork and personnel letters. The FILE is the point, so it is cataloged with its
+			// name: protecting the metadata while serving the bytes in the clear protects nothing.
+			Remaining(DocumentsFamily, "Documents", "Name", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData);
+			Remaining(DocumentsFamily, "Documents", "Description", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData);
+			Remaining(DocumentsFamily, "Documents", "Filename", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData);
+			Remaining(DocumentsFamily, "Documents", "Data", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData, ProtectedFieldStorageKind.Binary);
+
+			// Section 22.1 credential hygiene: a stored mailbox username and password sitting in the
+			// clear is a standing credential leak. Nothing in the codebase reads these columns today
+			// (the import paths take their configuration elsewhere), so binding them costs nothing —
+			// but a FUTURE consumer would need an attended path or a workload-decryptable secret
+			// store, because the broker's decrypt lane is grant-gated by design.
+			Remaining(CredentialsFamily, "DistributionLists", "Username", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ManageDepartmentDataProtection);
+			Remaining(CredentialsFamily, "DistributionLists", "Password", ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ManageDepartmentDataProtection);
 
 			return list;
 		}

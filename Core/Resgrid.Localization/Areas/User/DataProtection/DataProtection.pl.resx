@@ -100,6 +100,21 @@
   <data name="CancelQueuedEnrollment" xml:space="preserve">
     <value>Anuluj rejestrację w kolejce</value>
   </data>
+  <data name="MigrationProgressHeader" xml:space="preserve">
+    <value>Postęp migracji</value>
+  </data>
+  <data name="MigrationProgressRows" xml:space="preserve">
+    <value>Przetworzono {0} z {1} wierszy</value>
+  </data>
+  <data name="MigrationProgressTable" xml:space="preserve">
+    <value>Obecnie przetwarzane: {0}.</value>
+  </data>
+  <data name="MigrationProgressPending" xml:space="preserve">
+    <value>Nie policzono jeszcze żadnych wierszy — pierwsze okno nocne jeszcze się nie rozpoczęło.</value>
+  </data>
+  <data name="MigrationProgressAnomalies" xml:space="preserve">
+    <value>{0} wierszy nie udało się przetworzyć i wymagają uwagi.</value>
+  </data>
   <data name="MigrationInProgress" xml:space="preserve">
     <value>Migracja jest w toku. Prace odbywają się tylko w oknie nocnym ({0}–{1}, {2}); poza nim departament działa w pełni.</value>
   </data>

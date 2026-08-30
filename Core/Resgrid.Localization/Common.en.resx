@@ -693,6 +693,30 @@
   <data name="AdpProtectedContact" xml:space="preserve">
     <value>Protected contact</value>
   </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Protected personnel record</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Protected unit record</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Protected profile</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Protected message</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Protected document</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Protected calendar entry</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Protected moderation queue</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Protected unit logs</value>
+  </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>encrypted at rest for this department. Authorized users and approved channels may still disclose it.</value>
   </data>

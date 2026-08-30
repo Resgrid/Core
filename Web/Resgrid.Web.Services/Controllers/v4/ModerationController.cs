@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,11 +21,47 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		private readonly IModerationService _moderationService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IProtectedReadService _protectedReadService;
 
-		public ModerationController(IModerationService moderationService, IAuthorizationService authorizationService)
+		public ModerationController(IModerationService moderationService, IAuthorizationService authorizationService,
+			IProtectedReadService protectedReadService)
 		{
 			_moderationService = moderationService;
 			_authorizationService = authorizationService;
+			_protectedReadService = protectedReadService;
+		}
+
+		/// <summary>
+		/// The caller's Protected Data Grant, if they presented one. A moderator needs their normal
+		/// permission AND a current grant to see the excerpts (plan 5.3); without one the queue is
+		/// still usable - status, reason code and counts are structural and never encrypted - but
+		/// every quoted value reads as the REDACTED placeholder rather than ciphertext.
+		/// </summary>
+		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
+
+		/// <summary>
+		/// Resolves a moderation request and its children in one broker batch. The reported FILE is
+		/// never included here: a list or detail payload carries metadata, and the endpoints that
+		/// actually serve bytes opt in separately.
+		/// </summary>
+		private async Task ResolveModerationAsync(IReadOnlyList<ModerationRequest> requests,
+			CancellationToken cancellationToken = default)
+		{
+			if (requests == null || requests.Count == 0)
+				return;
+
+			await _protectedReadService.ResolveModerationRequestsForReadAsync(DepartmentId, requests,
+				ProtectedGrantToken, UserId, includeContent: false, cancellationToken);
+
+			var reports = requests.Where(r => r?.Reports != null).SelectMany(r => r.Reports).ToList();
+			if (reports.Count > 0)
+				await _protectedReadService.ResolveModerationReportsForReadAsync(DepartmentId, reports,
+					ProtectedGrantToken, UserId, cancellationToken);
+
+			var actions = requests.Where(r => r?.Actions != null).SelectMany(r => r.Actions).ToList();
+			if (actions.Count > 0)
+				await _protectedReadService.ResolveModerationActionsForReadAsync(DepartmentId, actions,
+					ProtectedGrantToken, UserId, includeContent: false, cancellationToken);
 		}
 
 		/// <summary>Reports an accessible chat message, Message, call note or call image.</summary>
@@ -80,6 +117,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (request == null)
 				return NotFound();
 
+			// The reporter sees their own flag's status; the quoted content follows the same rule as
+			// the moderator queue - revealed with a grant, placeholder without one.
+			await ResolveModerationAsync(new[] { request });
+
 			var result = new GetModerationRequestResult
 			{
 				Data = ConvertRequest(request, false),
@@ -116,6 +157,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					PageSize = pageSize
 				});
 
+			await ResolveModerationAsync(requests);
+
 			var result = new GetModerationRequestsResult
 			{
 				Data = requests.Select(x => ConvertRequest(x, true)).ToList(),
@@ -137,6 +180,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var request = await _moderationService.GetRequestAsync(requestId, DepartmentId, UserId);
 			if (request == null)
 				return NotFound();
+
+			await ResolveModerationAsync(new[] { request });
 
 			var result = new GetModerationRequestResult
 			{

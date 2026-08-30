@@ -100,6 +100,21 @@
   <data name="CancelQueuedEnrollment" xml:space="preserve">
     <value>Ακύρωση εγγραφής σε ουρά</value>
   </data>
+  <data name="MigrationProgressHeader" xml:space="preserve">
+    <value>Πρόοδος μετεγκατάστασης</value>
+  </data>
+  <data name="MigrationProgressRows" xml:space="preserve">
+    <value>Επεξεργάστηκαν {0} από {1} εγγραφές</value>
+  </data>
+  <data name="MigrationProgressTable" xml:space="preserve">
+    <value>Αυτήν τη στιγμή γίνεται επεξεργασία: {0}.</value>
+  </data>
+  <data name="MigrationProgressPending" xml:space="preserve">
+    <value>Δεν έχουν καταμετρηθεί ακόμη εγγραφές — το πρώτο νυχτερινό παράθυρο δεν έχει ξεκινήσει.</value>
+  </data>
+  <data name="MigrationProgressAnomalies" xml:space="preserve">
+    <value>{0} εγγραφές δεν ήταν δυνατό να επεξεργαστούν και χρειάζονται προσοχή.</value>
+  </data>
   <data name="MigrationInProgress" xml:space="preserve">
     <value>Η μετεγκατάσταση βρίσκεται σε εξέλιξη. Η εργασία γίνεται μόνο εντός του νυχτερινού παραθύρου ({0}–{1}, {2})· εκτός αυτού το τμήμα σας λειτουργεί πλήρως.</value>
   </data>

@@ -100,6 +100,21 @@
   <data name="CancelQueuedEnrollment" xml:space="preserve">
     <value>Cancel queued enrollment</value>
   </data>
+  <data name="MigrationProgressHeader" xml:space="preserve">
+    <value>Migration progress</value>
+  </data>
+  <data name="MigrationProgressRows" xml:space="preserve">
+    <value>{0} of {1} rows processed</value>
+  </data>
+  <data name="MigrationProgressTable" xml:space="preserve">
+    <value>Currently working through {0}.</value>
+  </data>
+  <data name="MigrationProgressPending" xml:space="preserve">
+    <value>No rows have been counted yet - the first overnight window has not started.</value>
+  </data>
+  <data name="MigrationProgressAnomalies" xml:space="preserve">
+    <value>{0} rows could not be processed and need attention.</value>
+  </data>
   <data name="MigrationInProgress" xml:space="preserve">
     <value>Migration is in progress. Work happens only inside your overnight window ({0}–{1}, {2}); your department is in full service outside it.</value>
   </data>

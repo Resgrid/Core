@@ -64,6 +64,98 @@ namespace Resgrid.Model.Services
 			IReadOnlyList<PersonnelCertification> certifications, string grantToken, string userId,
 			bool includeData = false, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Resolves the notes on a call's linked-call references (callreferences.note). Written from
+		/// the linked-call editor and rendered back into it, so it needs the same treatment as any
+		/// other cataloged free text.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveCallReferencesForReadAsync(int departmentId,
+			IReadOnlyList<CallReference> references, string grantToken, string userId,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves member messages (messages.subject/body, catalog v7). Populated MessageRecipients
+		/// ride the same broker batch, so an inbox read reveals the conversation in one round trip.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveMessagesForReadAsync(int departmentId,
+			IReadOnlyList<Message> messages, string grantToken, string userId,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves standalone message-recipient rows (response/note plus the companion coordinates
+		/// a reply was filed from).
+		/// </summary>
+		Task<ProtectedReadResult> ResolveMessageRecipientsForReadAsync(int departmentId,
+			IReadOnlyList<MessageRecipient> recipients, string grantToken, string userId,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves moderation requests (the reported subject, text, file name/type, metadata and the
+		/// moderator's admin note). The reported FILE rides along only when includeContent is set;
+		/// a queue listing strips the bytes.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveModerationRequestsForReadAsync(int departmentId,
+			IReadOnlyList<ModerationRequest> requests, string grantToken, string userId,
+			bool includeContent = false, CancellationToken cancellationToken = default);
+
+		/// <summary>Resolves reporter notes on moderation reports.</summary>
+		Task<ProtectedReadResult> ResolveModerationReportsForReadAsync(int departmentId,
+			IReadOnlyList<ModerationReport> reports, string grantToken, string userId,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves moderation actions (note, details and the evidence snapshot). The actor/IP/
+		/// user-agent audit columns are not cataloged and always read as themselves.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveModerationActionsForReadAsync(int departmentId,
+			IReadOnlyList<ModerationAction> actions, string grantToken, string userId,
+			bool includeContent = false, CancellationToken cancellationToken = default);
+
+		/// <summary>Resolves chat message flag notes and resolution notes.</summary>
+		Task<ProtectedReadResult> ResolveChatMessageFlagsForReadAsync(int departmentId,
+			IReadOnlyList<ChatMessageFlag> flags, string grantToken, string userId,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Resolves chat moderation action reasons and detail JSON.</summary>
+		Task<ProtectedReadResult> ResolveChatModerationActionsForReadAsync(int departmentId,
+			IReadOnlyList<ChatModerationAction> actions, string grantToken, string userId,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves chat export rows. The archive itself is an entire conversation, so it decrypts
+		/// only when includeData is set; a status listing strips it.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveChatExportsForReadAsync(int departmentId,
+			IReadOnlyList<ChatExport> exports, string grantToken, string userId,
+			bool includeData = false, CancellationToken cancellationToken = default);
+
+		/// <summary>Resolves unit log narratives (unitlogs.narrative).</summary>
+		Task<ProtectedReadResult> ResolveUnitLogsForReadAsync(int departmentId, IReadOnlyList<UnitLog> logs,
+			string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>Resolves user state notes (userstates.note).</summary>
+		Task<ProtectedReadResult> ResolveUserStatesForReadAsync(int departmentId, IReadOnlyList<UserState> states,
+			string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves calendar item title/description/location. The scheduling columns are structural
+		/// and never encrypted, so a protected department's calendar still lays out without a grant.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveCalendarItemsForReadAsync(int departmentId, IReadOnlyList<CalendarItem> items,
+			string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves department documents. The file itself decrypts only when includeData is set; a
+		/// listing strips the bytes rather than handing back ciphertext.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveDocumentsForReadAsync(int departmentId, IReadOnlyList<Document> documents,
+			string grantToken, string userId, bool includeData = false, CancellationToken cancellationToken = default);
+
+		/// <summary>Resolves stored distribution-list mailbox credentials (section 22.1).</summary>
+		Task<ProtectedReadResult> ResolveDistributionListsForReadAsync(int departmentId,
+			IReadOnlyList<DistributionList> lists, string grantToken, string userId,
+			CancellationToken cancellationToken = default);
+
 		/// <summary>Resolves standalone contact-note lists (contactnotes.note).</summary>
 		Task<ProtectedReadResult> ResolveContactNotesForReadAsync(int departmentId,
 			IReadOnlyList<ContactNote> notes, string grantToken, string userId, CancellationToken cancellationToken = default);

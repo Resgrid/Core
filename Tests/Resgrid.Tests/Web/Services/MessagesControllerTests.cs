@@ -85,10 +85,28 @@ namespace Resgrid.Tests.Web.Services
 				_departmentGroupsService.Object,
 				_personnelRolesService.Object,
 				Mock.Of<IUnitsService>(),
-				Mock.Of<ICalendarService>())
+				Mock.Of<ICalendarService>(),
+				PassThroughProtectedReads())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
+		}
+
+		/// <summary>
+		/// These tests exercise an unprotected department, where resolution is a no-op. A loose mock
+		/// would return a null Task from the resolve call and NRE at the await.
+		/// </summary>
+		private static IProtectedReadService PassThroughProtectedReads()
+		{
+			var stub = new Mock<IProtectedReadService>();
+			stub.Setup(x => x.ResolveMessagesForReadAsync(It.IsAny<int>(), It.IsAny<IReadOnlyList<Message>>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtectedReadResult());
+			stub.Setup(x => x.ResolveMessageRecipientsForReadAsync(It.IsAny<int>(), It.IsAny<IReadOnlyList<MessageRecipient>>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtectedReadResult());
+
+			return stub.Object;
 		}
 
 		[TearDown]

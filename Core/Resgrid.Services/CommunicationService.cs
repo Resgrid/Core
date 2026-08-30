@@ -57,6 +57,19 @@ namespace Resgrid.Services
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
 				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
+			// ADP (catalog v7): messages.subject/body are encrypted at rest for a protected
+			// department, and this host has neither a grant nor the broker - so per channel it
+			// either sends the real message (unprotected, or a channel the department has opted
+			// into with plaintext still in the row) or a content-free notice telling the member to
+			// sign in. Resolved per channel because the department can allow content on one and
+			// not another.
+			var smsMessage = await _protectedProjectionService.BuildNotificationSafeMessageAsync(
+				departmentId, message, ProtectedDataEgressChannel.Sms, profile?.Language);
+			var emailMessage = await _protectedProjectionService.BuildNotificationSafeMessageAsync(
+				departmentId, message, ProtectedDataEgressChannel.Email, profile?.Language);
+			var pushMessage = await _protectedProjectionService.BuildNotificationSafeMessageAsync(
+				departmentId, message, ProtectedDataEgressChannel.Push, profile?.Language);
+
 			// Weather Alert Notifications are intentionally email/push-only.
 			if (message.Type != (int)MessageTypes.WeatherAlert &&
 				(profile == null || (message.SystemGenerated ? profile.SendNotificationSms : profile.SendMessageSms)))
@@ -66,7 +79,7 @@ namespace Resgrid.Services
 					try
 					{
 						var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
-						await _smsService.SendMessageAsync(message, departmentNumber, departmentId, profile, payment);
+						await _smsService.SendMessageAsync(smsMessage, departmentNumber, departmentId, profile, payment);
 					}
 					catch (Exception ex)
 					{
@@ -81,7 +94,7 @@ namespace Resgrid.Services
 				{
 					try
 					{
-						await _emailService.SendMessageAsync(message, sendersName, departmentId, profile, message.ReceivingUser);
+						await _emailService.SendMessageAsync(emailMessage, sendersName, departmentId, profile, message.ReceivingUser);
 					}
 					catch (Exception ex)
 					{
@@ -101,7 +114,7 @@ namespace Resgrid.Services
 				{
 					// Weather alerts carry their own descriptive subject (e.g. "[Severe] Weather Alert: Tornado Warning")
 					// and headline, so skip the generic "Msg:" prefix and "Msg from System" subtitle.
-					spm.Title = message.Subject.Truncate(200);
+					spm.Title = pushMessage.Subject.Truncate(200);
 
 					if (!String.IsNullOrWhiteSpace(message.PushSubTitle))
 						spm.SubTitle = message.PushSubTitle.Truncate(200);
@@ -115,7 +128,9 @@ namespace Resgrid.Services
 					else
 						spm.SubTitle = string.Format("Msg from {0}", sendersName);
 
-					spm.Title = "Msg:" + message.Subject.Truncate(200);
+					// The push title is the notification a phone shows on the lock screen - the one
+					// place a protected subject would be readable without signing in.
+					spm.Title = "Msg:" + pushMessage.Subject.Truncate(200);
 				}
 
 
@@ -137,12 +152,17 @@ namespace Resgrid.Services
 				// Outbound chat platforms (Discord/Slack/etc.) as a sibling channel; failures are isolated.
 				try
 				{
+					// ChatPlatform is always sanitized for a protected department (plan 9.1): the
+					// content would land in a third-party workspace outside the department's control.
+					var chatMessage = await _protectedProjectionService.BuildNotificationSafeMessageAsync(
+						departmentId, message, ProtectedDataEgressChannel.ChatPlatform, profile?.Language);
+
 					await _chatbotOutboundService.SendToUserAsync(message.ReceivingUserId, departmentId,
 						new ChatbotOutboundMessage
 						{
 							Type = ChatbotOutboundType.Message,
-							Title = message.Subject,
-							Body = message.Body,
+							Title = chatMessage.Subject,
+							Body = chatMessage.Body,
 							ReferenceId = message.MessageId.ToString()
 						});
 				}
@@ -170,11 +190,11 @@ namespace Resgrid.Services
 			// template, provider DTO, or TTS prompt is built. For unprotected departments every one
 			// of these is the original call; for protected departments each channel gets the
 			// sanitized clone unless its egress mode explicitly allows protected content.
-			var chatCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.ChatPlatform);
-			var pushCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push);
-			var smsCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms);
-			var emailCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Email);
-			var voiceCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Voice);
+			var chatCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.ChatPlatform, profile?.Language);
+			var pushCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push, profile?.Language);
+			var smsCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms, profile?.Language);
+			var emailCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Email, profile?.Language);
+			var voiceCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Voice, profile?.Language);
 
 			// The pre-resolved address parameter is protected location data; it only survives for a
 			// channel whose safe view is the original call.
@@ -414,9 +434,9 @@ namespace Resgrid.Services
 
 			// ADP egress: per-channel notification-safe views for the cancellation, resolved before
 			// any template or provider DTO — same contract as the original dispatch.
-			var pushCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push);
-			var smsCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms);
-			var emailCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Email);
+			var pushCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push, profile?.Language);
+			var smsCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms, profile?.Language);
+			var emailCall = await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Email, profile?.Language);
 			var pushAddress = ReferenceEquals(pushCall, call) ? address : null;
 
 			// Send a Push Notification
@@ -819,6 +839,10 @@ namespace Resgrid.Services
 			// content, addresses, coordinates and the personnel roster. The channel decision is
 			// made even when there is NO call — a call-less trouble alert still carries the unit
 			// location and the personnel roster.
+			//
+			// No recipient language here, unlike the per-member dispatch paths: a trouble alert fans
+			// out to a whole roster in one call, so the safe view is built once for readers who may
+			// not share a language. It falls back to English rather than picking one member's.
 			var pushCall = call != null ? await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Push) : null;
 			var smsCall = call != null ? await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Sms) : null;
 			var emailCall = call != null ? await _protectedProjectionService.BuildNotificationSafeCallAsync(departmentId, call, ProtectedDataEgressChannel.Email) : null;

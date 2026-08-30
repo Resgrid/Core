@@ -223,7 +223,17 @@ namespace Resgrid.Services
 				{
 					reference.SourceCallId = savedCall.CallId;
 
-					await _callReferencesRepository.SaveOrUpdateAsync(reference, cancellationToken);
+					var savedReference = await _callReferencesRepository.SaveOrUpdateAsync(reference, cancellationToken);
+
+					// ADP write safety net: callreferences.note is cataloged, and the linked-call
+					// editor posts it back from a hidden input — so without this the note is stored
+					// in plaintext, or the REDACTED placeholder overwrites it.
+					var referenceWrite = await _protectedWriteService.Value.PrepareCallReferenceWriteAsync(
+						savedCall.DepartmentId, savedReference, null, null, null, workloadCaller: true, cancellationToken);
+					if (!referenceWrite.Success)
+						throw new InvalidOperationException($"Protected write blocked ({referenceWrite.Reason}); call reference {savedReference.CallReferenceId} has transient plaintext pending re-encryption.");
+					if (referenceWrite.Changed)
+						await _callReferencesRepository.SaveOrUpdateAsync(savedReference, cancellationToken);
 				}
 			}
 

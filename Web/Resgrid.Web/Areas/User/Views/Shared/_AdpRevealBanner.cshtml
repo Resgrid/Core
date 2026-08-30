@@ -1,0 +1,12 @@
+@model Resgrid.Web.Areas.User.Models.AdpRevealView
+@*
+	ADP reveal banner (plan 7.2). Render it only when the page actually shows protected values;
+	the buttons are wired by _AdpRevealScripts, which must be rendered in the same view's
+	Scripts section.
+*@
+<div class="alert alert-info" id="adpProtectedBanner">
+    <i class="fa fa-shield"></i>
+    <strong>@Model.BannerTitle</strong> &mdash; @commonLocalizer["AdpProtectedBannerDescription"]
+    <button type="button" class="btn btn-primary btn-xs pull-right" id="adpRevealButton">@commonLocalizer["AdpVerifyAndReveal"]</button>
+    <button type="button" class="btn btn-default btn-xs pull-right" id="adpConcealButton" style="margin-right: 6px;">@commonLocalizer["AdpConceal"]</button>
+</div>

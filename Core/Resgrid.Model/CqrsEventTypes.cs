@@ -25,5 +25,12 @@
 		PaddleSubscriptionCanceled = 20,
 		PaddleSubscriptionCreated = 21,
 		IncidentCommandUpdated = 22,
+
+		// ADP addon billing events (plan 17.2). Emitted by the Billing API with the department
+		// already resolved, applied in Core by DepartmentDataProtectionService.
+		AdpAddonActivated = 23,
+		AdpAddonRenewed = 24,
+		AdpAddonCancelled = 25,
+		AdpAddonPaymentFailed = 26,
 	}
 }

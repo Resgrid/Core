@@ -109,7 +109,22 @@ namespace Resgrid.Services
 
 		public async Task<UnitLog> SaveUnitLogAsync(UnitLog unitLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _unitLogsRepository.SaveOrUpdateAsync(unitLog, cancellationToken);
+			var saved = await _unitLogsRepository.SaveOrUpdateAsync(unitLog, cancellationToken);
+
+			// ADP write safety net (plan 4.2/19.2, catalog v9). Runs AFTER the save because the AAD
+			// row key is the identity pk, then re-persists the enveloped row. Fails closed by
+			// throwing rather than leaving the value in plaintext.
+			var departmentId = saved.Unit?.DepartmentId
+				?? (await _unitsRepository.GetByIdAsync(saved.UnitId))?.DepartmentId ?? 0;
+
+			var protectedWrite = await _protectedWriteService.Value.PrepareUnitLogWriteAsync(departmentId, saved,
+				null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); unit log {saved.UnitLogId} has transient plaintext pending re-encryption.");
+			if (protectedWrite.Changed)
+				saved = await _unitLogsRepository.SaveOrUpdateAsync(saved, cancellationToken);
+
+			return saved;
 		}
 
 		public async Task<List<Unit>> GetUnitsForDepartmentAsync(int departmentId)

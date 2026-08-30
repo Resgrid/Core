@@ -258,6 +258,10 @@ namespace Resgrid.Services
 				userProfile.SecurityPin = null;
 				userProfile.SecurityPinEnabled = false;
 
+				// M0141 (contract) cleared these links; a member's addresses live on their
+				// department-scoped DepartmentMemberSensitiveData rows, which this service deletes
+				// with the rest of the department data. Kept as a defensive sweep for any row a
+				// pre-contract deployment left behind.
 				if (userProfile.HomeAddressId.HasValue)
 					await _addressService.DeleteAddress(userProfile.HomeAddressId.Value, cancellationToken);
 

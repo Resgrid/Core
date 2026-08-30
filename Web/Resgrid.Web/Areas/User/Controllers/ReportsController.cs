@@ -633,7 +633,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					person.StaffingTimestamp = staffing.Timestamp.FormatForDepartment(model.Department);
 
-				person.StaffingNote = staffing.Note;
+				// ADP (catalog v9): every other staffing note in this file is masked; this one was
+				// missed and would have printed the envelope into the report and its PDF.
+				person.StaffingNote = ProtectedDataEnvelope.SafeDisplay(staffing.Note);
 
 				GroupBreakdown groupBreakdown = model.GroupBreakdowns.FirstOrDefault(x => x.Name == person.Group);
 				bool isNew = false;

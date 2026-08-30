@@ -94,17 +94,32 @@ namespace Resgrid.Services
 			if (string.IsNullOrWhiteSpace(data.ProtectionId))
 				data.ProtectionId = Guid.NewGuid().ToString("N");
 
+			// ADP write safety net (plan 4.2/19.2). The AAD row key is the identity pk, so a NEW row
+			// must be inserted before it can be enveloped, and that insert is a transient plaintext
+			// write. An UPDATE already has its id, so it is enveloped BEFORE the save and no
+			// plaintext ever reaches the table - which is the common path here, since a member
+			// edits this data far more often than they first fill it in. Fails closed either way.
+			var isExistingRow = data.DepartmentMemberSensitiveDataId > 0;
+
+			if (isExistingRow)
+			{
+				var preSaveWrite = await _protectedWriteService.Value.PrepareMemberSensitiveDataWriteAsync(
+					data.DepartmentId, data, null, null, workloadCaller: true, cancellationToken);
+				if (!preSaveWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({preSaveWrite.Reason}); member sensitive data {data.DepartmentMemberSensitiveDataId} was NOT saved.");
+			}
+
 			var saved = await _repository.SaveOrUpdateAsync(data, cancellationToken);
 
-			// ADP write safety net (plan 4.2/19.2). Runs AFTER the save so the identity pk exists —
-			// it is the AAD row key — then re-persists the enveloped row. Fails closed by throwing
-			// rather than leaving a member's identification number in plaintext.
-			var protectedWrite = await _protectedWriteService.Value.PrepareMemberSensitiveDataWriteAsync(
-				saved.DepartmentId, saved, null, null, workloadCaller: true, cancellationToken);
-			if (!protectedWrite.Success)
-				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); member sensitive data {saved.DepartmentMemberSensitiveDataId} has transient plaintext pending re-encryption.");
-			if (protectedWrite.Changed)
-				saved = await _repository.SaveOrUpdateAsync(saved, cancellationToken);
+			if (!isExistingRow)
+			{
+				var protectedWrite = await _protectedWriteService.Value.PrepareMemberSensitiveDataWriteAsync(
+					saved.DepartmentId, saved, null, null, workloadCaller: true, cancellationToken);
+				if (!protectedWrite.Success)
+					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); member sensitive data {saved.DepartmentMemberSensitiveDataId} has transient plaintext pending re-encryption.");
+				if (protectedWrite.Changed)
+					saved = await _repository.SaveOrUpdateAsync(saved, cancellationToken);
+			}
 
 			return saved;
 		}

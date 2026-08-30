@@ -9,6 +9,10 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 	public class UpdateCallView: BaseUserModel
 	{
 		public string UdfFormHtml { get; set; }
+
+		/// <summary>True when this page is showing ADP placeholders that a grant could reveal.</summary>
+		public bool IsProtectedCall { get; set; }
+
 		public Department Department { get; set; }
 		public IdentityUser User { get; set; }
 		public Call Call { get; set; }

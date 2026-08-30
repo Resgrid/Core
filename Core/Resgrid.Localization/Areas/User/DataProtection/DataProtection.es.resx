@@ -100,6 +100,21 @@
   <data name="CancelQueuedEnrollment" xml:space="preserve">
     <value>Cancelar la inscripción en cola</value>
   </data>
+  <data name="MigrationProgressHeader" xml:space="preserve">
+    <value>Progreso de la migración</value>
+  </data>
+  <data name="MigrationProgressRows" xml:space="preserve">
+    <value>{0} de {1} filas procesadas</value>
+  </data>
+  <data name="MigrationProgressTable" xml:space="preserve">
+    <value>Procesando actualmente {0}.</value>
+  </data>
+  <data name="MigrationProgressPending" xml:space="preserve">
+    <value>Todavía no se ha contado ninguna fila: la primera ventana nocturna aún no ha comenzado.</value>
+  </data>
+  <data name="MigrationProgressAnomalies" xml:space="preserve">
+    <value>{0} filas no se pudieron procesar y requieren atención.</value>
+  </data>
   <data name="MigrationInProgress" xml:space="preserve">
     <value>La migración está en curso. El trabajo ocurre solo dentro de su ventana nocturna ({0}–{1}, {2}); fuera de ella su departamento está en pleno servicio.</value>
   </data>

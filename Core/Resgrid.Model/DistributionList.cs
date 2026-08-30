@@ -69,6 +69,10 @@ namespace Resgrid.Model
 		}
 
 
+
+		/// <summary>ADP row marker (M0140): true once this row's cataloged values carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
+
 		[NotMapped]
 		public string TableName => "DistributionLists";
 

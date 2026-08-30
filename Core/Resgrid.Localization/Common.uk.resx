@@ -641,6 +641,30 @@
   <data name="AdpProtectedContact" xml:space="preserve">
     <value>Захищений контакт</value>
   </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Захищений запис особового складу</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Захищений запис підрозділу</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Захищений профіль</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Захищене повідомлення</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Захищений документ</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Захищений запис календаря</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Захищена черга модерації</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Захищені журнали підрозділу</value>
+  </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>зашифровано в стані спокою для цього підрозділу. Авторизовані користувачі та схвалені канали все одно можуть його розкрити.</value>
   </data>

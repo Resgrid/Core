@@ -67,6 +67,68 @@ namespace Resgrid.Model.Services
 			PersonnelCertification certification, PersonnelCertification existingCertification,
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
 
+		/// <summary>Prepares a linked-call reference note (callreferences.note).</summary>
+		Task<ProtectedWriteResult> PrepareCallReferenceWriteAsync(int departmentId, CallReference reference,
+			CallReference existingReference, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a member message (messages.subject/body).</summary>
+		Task<ProtectedWriteResult> PrepareMessageWriteAsync(int departmentId, Message message,
+			string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a message recipient row (response/note plus companion coordinates).</summary>
+		Task<ProtectedWriteResult> PrepareMessageRecipientWriteAsync(int departmentId, MessageRecipient recipient,
+			string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a moderation request (the verbatim copy of the reported content).</summary>
+		Task<ProtectedWriteResult> PrepareModerationRequestWriteAsync(int departmentId, ModerationRequest request,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a reporter's note on a moderation report.</summary>
+		Task<ProtectedWriteResult> PrepareModerationReportWriteAsync(int departmentId, ModerationReport report,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a moderation action (note, details, evidence snapshot).</summary>
+		Task<ProtectedWriteResult> PrepareModerationActionWriteAsync(int departmentId, ModerationAction action,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a chat message flag (note, resolution note).</summary>
+		Task<ProtectedWriteResult> PrepareChatMessageFlagWriteAsync(int departmentId, ChatMessageFlag flag,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a chat moderation action (reason, details).</summary>
+		Task<ProtectedWriteResult> PrepareChatModerationActionWriteAsync(int departmentId, ChatModerationAction action,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a chat export row (the archive payload and any failure text).</summary>
+		Task<ProtectedWriteResult> PrepareChatExportWriteAsync(int departmentId, ChatExport export,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a unit log narrative (unitlogs.narrative).</summary>
+		Task<ProtectedWriteResult> PrepareUnitLogWriteAsync(int departmentId, UnitLog log,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a user state note (userstates.note).</summary>
+		Task<ProtectedWriteResult> PrepareUserStateWriteAsync(int departmentId, UserState state,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a calendar item (title, description, location).</summary>
+		Task<ProtectedWriteResult> PrepareCalendarItemWriteAsync(int departmentId, CalendarItem item,
+			CalendarItem existingItem, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a department document (name, description, filename and the file).</summary>
+		Task<ProtectedWriteResult> PrepareDocumentWriteAsync(int departmentId, Document document,
+			Document existingDocument, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares stored distribution-list mailbox credentials (section 22.1).</summary>
+		Task<ProtectedWriteResult> PrepareDistributionListWriteAsync(int departmentId, DistributionList list,
+			DistributionList existingList, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
 		/// <summary>Prepares a call log narrative (calllogs.narrative).</summary>
 		Task<ProtectedWriteResult> PrepareCallLogWriteAsync(int departmentId, CallLog log,
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);

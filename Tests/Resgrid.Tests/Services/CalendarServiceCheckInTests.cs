@@ -60,10 +60,26 @@ namespace Resgrid.Tests.Services
 				_encryptionService.Object,
 				_checkInRepo.Object,
 				_messageRecipientRepo.Object,
-				_unitOfWork.Object);
+				_unitOfWork.Object,
+				AllowedProtectedWrites());
 		}
 
 		#region Service Logic Tests
+
+		/// <summary>
+		/// The ADP write net runs on every calendar item save (catalog v9). Stubbed to a plain allow
+		/// here - a loose mock returns a null Task and NREs at the await.
+		/// </summary>
+		private static Lazy<IProtectedWriteService> AllowedProtectedWrites()
+		{
+			var stub = new Mock<IProtectedWriteService>();
+			stub.Setup(x => x.PrepareCalendarItemWriteAsync(It.IsAny<int>(), It.IsAny<CalendarItem>(),
+					It.IsAny<CalendarItem>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(),
+					It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+
+			return new Lazy<IProtectedWriteService>(() => stub.Object);
+		}
 
 		[Test]
 		public async Task CheckInToEvent_creates_new_record_when_none_exists()

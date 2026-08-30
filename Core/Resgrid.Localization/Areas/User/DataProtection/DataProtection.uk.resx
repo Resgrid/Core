@@ -100,6 +100,21 @@
   <data name="CancelQueuedEnrollment" xml:space="preserve">
     <value>Скасувати реєстрацію в черзі</value>
   </data>
+  <data name="MigrationProgressHeader" xml:space="preserve">
+    <value>Хід міграції</value>
+  </data>
+  <data name="MigrationProgressRows" xml:space="preserve">
+    <value>Оброблено {0} з {1} рядків</value>
+  </data>
+  <data name="MigrationProgressTable" xml:space="preserve">
+    <value>Зараз обробляється: {0}.</value>
+  </data>
+  <data name="MigrationProgressPending" xml:space="preserve">
+    <value>Рядки ще не підраховані — перше нічне вікно ще не почалося.</value>
+  </data>
+  <data name="MigrationProgressAnomalies" xml:space="preserve">
+    <value>{0} рядків не вдалося обробити, потрібна увага.</value>
+  </data>
   <data name="MigrationInProgress" xml:space="preserve">
     <value>Міграція триває. Робота відбувається лише у нічному вікні ({0}–{1}, {2}); поза ним підрозділ працює у повному обсязі.</value>
   </data>

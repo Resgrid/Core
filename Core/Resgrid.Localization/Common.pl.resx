@@ -641,6 +641,30 @@
   <data name="AdpProtectedContact" xml:space="preserve">
     <value>Kontakt chroniony</value>
   </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Chroniony rekord personelu</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Chroniony rekord jednostki</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Chroniony profil</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Chroniona wiadomość</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Chroniony dokument</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Chroniony wpis kalendarza</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Chroniona kolejka moderacji</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Chronione dzienniki jednostki</value>
+  </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>zaszyfrowane w spoczynku dla tego departamentu. Uprawnieni użytkownicy i zatwierdzone kanały nadal mogą je ujawnić.</value>
   </data>

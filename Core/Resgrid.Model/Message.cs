@@ -72,6 +72,17 @@ namespace Resgrid.Model
 		public virtual ICollection<MessageRecipient> MessageRecipients { get; set; }
 
 		/// <summary>
+		/// The department that owns this row (M0137). Messages are addressed to users, and a user
+		/// can belong to several departments and move between them, so ownership is resolved ONCE
+		/// at send time and frozen here rather than derived through a join: the ADP envelope AAD
+		/// binds the department, and a derived value that later moves would orphan every envelope
+		/// written under it. Null on historic rows the M0137 backfill could not attribute, which
+		/// keeps them out of encryption instead of encrypting them under a guess.
+		/// </summary>
+		[ProtoMember(15)]
+		public int? DepartmentId { get; set; }
+
+		/// <summary>
 		/// Optional subtitle for push/inbox notifications; not persisted. When set, delivery
 		/// uses this instead of the generic "Msg from ..." subtitle.
 		/// </summary>

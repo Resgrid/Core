@@ -112,6 +112,10 @@ namespace Resgrid.Tests
 					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
 				protectedWriteStub.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(Moq.It.IsAny<int>(), Moq.It.IsAny<Resgrid.Model.DepartmentMemberEmergencyContact>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<bool>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
 					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
+				protectedWriteStub.Setup(x => x.PrepareMessageWriteAsync(Moq.It.IsAny<int>(), Moq.It.IsAny<Resgrid.Model.Message>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<bool>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
+				protectedWriteStub.Setup(x => x.PrepareMessageRecipientWriteAsync(Moq.It.IsAny<int>(), Moq.It.IsAny<Resgrid.Model.MessageRecipient>(), Moq.It.IsAny<string>(), Moq.It.IsAny<string>(), Moq.It.IsAny<bool>(), Moq.It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(Resgrid.Model.ProtectedWriteResult.Allowed());
 				builder.RegisterInstance(protectedWriteStub.Object)
 					.As<Resgrid.Model.Services.IProtectedWriteService>();
 

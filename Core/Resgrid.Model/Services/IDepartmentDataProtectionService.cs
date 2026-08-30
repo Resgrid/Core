@@ -107,6 +107,25 @@ namespace Resgrid.Model.Services
 		Task<AdpEnrollmentPreflight> GetEnrollmentPreflightAsync(int departmentId, string requestingUserId,
 			CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Row-count progress for the department's in-flight migration, for the wizard status panel
+		/// (plan 18). Reads the SAME cursor rows the engine writes, so the panel cannot disagree
+		/// with the worker. Returns a not-running report when nothing is in flight.
+		/// </summary>
+		Task<AdpMigrationProgress> GetMigrationProgressAsync(int departmentId,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Applies an ADP addon billing event to the department's durable protection state
+		/// (plan 17.3). Idempotent: providers retry and duplicate webhooks, and an out-of-order
+		/// Cancelled-then-Renewed pair must settle on the provider's current truth.
+		///
+		/// This can only move lifecycle state. It never disables decryption, suppresses grants or
+		/// downgrades clients — only the completed offboarding migration changes ciphertext.
+		/// </summary>
+		Task<DepartmentDataProtectionEnrollmentResult> ApplyAddonBillingEventAsync(AdpAddonBillingEvent billingEvent,
+			CancellationToken cancellationToken = default);
+
 		/// <summary>Atomically bumps the department policy epoch (grant revocation); returns the new epoch.</summary>
 		Task<long> IncrementPolicyEpochAsync(int departmentId, string updatedByUserId, CancellationToken cancellationToken = default);
 

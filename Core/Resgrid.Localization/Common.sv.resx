@@ -641,6 +641,30 @@
   <data name="AdpProtectedContact" xml:space="preserve">
     <value>Skyddad kontakt</value>
   </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Skyddad personalpost</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Skyddad enhetspost</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Skyddad profil</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Skyddat meddelande</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Skyddat dokument</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Skyddad kalenderpost</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Skyddad modereringskö</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Skyddade enhetsloggar</value>
+  </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>krypterat i vila för denna organisation. Behöriga användare och godkända kanaler kan ändå röja det.</value>
   </data>

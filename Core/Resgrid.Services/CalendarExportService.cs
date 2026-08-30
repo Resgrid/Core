@@ -3,6 +3,7 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Ical.Net.Serialization;
 using Resgrid.Config;
+using Resgrid.Localization.Areas.User.SystemMessages;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using System;
@@ -67,14 +68,29 @@ namespace Resgrid.Services
 			return calendar;
 		}
 
+		/// <summary>
+		/// The iCal feed is fetched by a calendar application with a revocable token and NO Protected
+		/// Data Grant — there is no step-up available to it and never will be. So for a protected
+		/// department the entry keeps its shape (when it starts, how long, its reminder) and loses
+		/// its content: the member sees that something is scheduled and opens Resgrid to find out
+		/// what. This is the same rule the RSS feed follows for dispatches (plan 5.5).
+		/// </summary>
+		private static string SafeFeedText(string value, string generic)
+			=> ProtectedDataEnvelope.HasEnvelopePrefix(value) || value == ProtectedDataEnvelope.RedactionValue
+				? generic
+				: value;
+
 		private static CalendarEvent MapToCalendarEvent(CalendarItem item)
 		{
+			var summary = SafeFeedText(item.Title,
+				SystemMessagesResources.Get("AdpProtectedCalendarTitle", null));
+
 			var ev = new CalendarEvent
 			{
 				Uid = $"resgrid-cal-{item.CalendarItemId}@resgrid",
-				Summary = item.Title ?? string.Empty,
-				Description = StripHtml(item.Description),
-				Location = item.Location,
+				Summary = summary ?? string.Empty,
+				Description = StripHtml(SafeFeedText(item.Description, string.Empty)),
+				Location = SafeFeedText(item.Location, string.Empty),
 				IsAllDay = item.IsAllDay
 			};
 
@@ -102,7 +118,7 @@ namespace Resgrid.Services
 				var alarm = new Alarm
 				{
 					Action = AlarmAction.Display,
-					Description = item.Title ?? "Reminder",
+					Description = summary ?? "Reminder",
 					Trigger = new Trigger(TimeSpan.FromMinutes(-reminderMinutes))
 				};
 				ev.Alarms.Add(alarm);

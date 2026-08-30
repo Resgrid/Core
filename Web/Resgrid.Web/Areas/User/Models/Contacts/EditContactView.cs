@@ -6,6 +6,9 @@ namespace Resgrid.Web.Areas.User.Models.Contacts;
 public class EditContactView
 {
 	public string UdfFormHtml { get; set; }
+
+	/// <summary>True when this page is showing ADP placeholders that a grant could reveal.</summary>
+	public bool IsProtectedContact { get; set; }
 	public string Message { get; set; }
 
 	public Department Department { get; set; }

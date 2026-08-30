@@ -4,6 +4,27 @@
     ViewBag.Title = "Resgrid | " + @localizer["EditEntryeHeader"];
 }
 
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the step-up
+    // wiring in the Scripts section. Declared unconditionally so the section closure can see it.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedCalendarEntry"],
+        RevealController = "Calendar",
+        RevealAction = "RevealCalendarItem",
+        RevealData = new Dictionary<string, string> { { "calendarItemId", Model.Item.CalendarItemId.ToString() } }
+    };
+}
+
+@if (Model.IsProtectedItem)
+{
+    <div class="row">
+        <div class="col-lg-12" style="padding: 15px 30px 0 30px;">
+            <partial name="_AdpRevealBanner" model="adpReveal" />
+        </div>
+    </div>
+}
+
 @section Styles
 {
 
@@ -77,7 +98,7 @@
                         }
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@commonLocalizer["Title"]</label>
-                            <div class="col-sm-6"><input type="text" class="form-control" placeholder="@localizer["TitlePlaceholder"]" asp-for="Item.Title"></div>
+                            <div class="col-sm-6"><input type="text" class="form-control" placeholder="@localizer["TitlePlaceholder"]" asp-for="Item.Title" data-adp-field="calendaritems.title"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@commonLocalizer["Type"]</label>
@@ -301,7 +322,7 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@commonLocalizer["Location"]</label>
-                            <div class="col-sm-6"><input type="text" class="form-control" placeholder="Location of the Event" asp-for="Item.Location"></div>
+                            <div class="col-sm-6"><input type="text" class="form-control" placeholder="Location of the Event" asp-for="Item.Location" data-adp-field="calendaritems.location"></div>
                         </div>
                         @*<div class="form-group">
                         <label class="col-sm-2 control-label">Restrict Editing</label>
@@ -398,6 +419,10 @@
 
 @section Scripts
 {
+    @if (Model.IsProtectedItem)
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
     <script>
         var recurranceParentId = '@Model.Item.RecurrenceId';
         var isRepeatParent = '@Model.IsRecurrenceParent';

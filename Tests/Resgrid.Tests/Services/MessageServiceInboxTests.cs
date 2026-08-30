@@ -9,6 +9,7 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Services;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Queries.Messages;
 using Resgrid.Repositories.DataRepository.Servers.SqlServer;
@@ -20,6 +21,23 @@ namespace Resgrid.Tests.Services
 	[TestFixture]
 	public class MessageServiceInboxTests
 	{
+		/// <summary>
+		/// The ADP write net runs on every message save (catalog v7). These tests are about inbox
+		/// behaviour, so the net is stubbed to a plain allow - a loose mock would hand back a null
+		/// Task and NRE at the await.
+		/// </summary>
+		private static Lazy<IProtectedWriteService> AllowedWrites()
+		{
+			var stub = new Mock<IProtectedWriteService>();
+			stub.Setup(x => x.PrepareMessageWriteAsync(It.IsAny<int>(), It.IsAny<Message>(), It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+			stub.Setup(x => x.PrepareMessageRecipientWriteAsync(It.IsAny<int>(), It.IsAny<MessageRecipient>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed());
+
+			return new Lazy<IProtectedWriteService>(() => stub.Object);
+		}
 		[Test]
 		public async Task SaveMessageTruncatesValuesToDatabaseColumnLengths()
 		{
@@ -27,7 +45,7 @@ namespace Resgrid.Tests.Services
 			repository
 				.Setup(x => x.SaveOrUpdateAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((Message savedMessage, CancellationToken _, bool _) => savedMessage);
-			var service = new MessageService(repository.Object, null, null, null, null, null);
+			var service = new MessageService(repository.Object, null, null, null, null, null, AllowedWrites());
 			var message = new Message
 			{
 				Subject = new string('s', Message.MaximumSubjectLength + 1),
@@ -61,7 +79,7 @@ namespace Resgrid.Tests.Services
 				.ReturnsAsync(messages);
 			repository.Setup(x => x.GetUnreadMessageCountAsync("user-1"))
 				.ReturnsAsync(2);
-			var service = new MessageService(repository.Object, null, null, null, null, null);
+			var service = new MessageService(repository.Object, null, null, null, null, null, AllowedWrites());
 
 			var inbox = await service.GetInboxMessagesByUserIdAsync("user-1");
 			var unreadCount = await service.GetUnreadMessagesCountByUserIdAsync("user-1");
@@ -80,7 +98,7 @@ namespace Resgrid.Tests.Services
 			message.SystemGenerated = true;
 			message.SendingUserId = "user-1";
 			message.Type = (int)MessageTypes.CalendarRsvp;
-			message.MessageRecipients.First().Note = TextResponsePromptMetadata.ForCalendarRsvp(8521);
+			message.MessageRecipients.First().PromptMetadata = TextResponsePromptMetadata.ForCalendarRsvp(8521);
 			message.MessageRecipients.First().Response = "Yes";
 
 			var result = MessagesController.ConvertMessageResultData(message, null, "user-1", null);

@@ -8,7 +8,7 @@
 
 	var REDACTED = 'REDACTED';
 
-	var settings = null;   // { verifyUrl, revealUrl, revealData, antiForgeryToken, messages }
+	var settings = null;   // { verifyUrl, revealUrl, revealData, antiForgeryToken, messages, onRevealed, onConcealed }
 	var grantToken = null;
 	var expiryTimer = null;
 	var revealed = false;
@@ -24,11 +24,13 @@
 		}
 		grantToken = null;
 
+		var wasRevealed = revealed;
+
 		if (revealed) {
 			fields().each(function () {
 				var $el = $(this);
 				if ($el.data('adp-revealed')) {
-					$el.text(REDACTED);
+					write($el, REDACTED);
 					$el.removeData('adp-revealed');
 				}
 			});
@@ -37,6 +39,12 @@
 
 		$('#adpRevealButton').show();
 		$('#adpConcealButton').hide();
+
+		// Host hook: a page whose values are fetched by another module (the profile page's
+		// emergency contacts) reloads them WITHOUT the grant so plaintext leaves the DOM at the
+		// same moment the marked-up fields do.
+		if (wasRevealed && settings && typeof settings.onConcealed === 'function')
+			settings.onConcealed();
 	}
 
 	function scheduleConceal(expiresOnUtc) {
@@ -59,6 +67,25 @@
 			return null;
 
 		return value;
+	}
+
+	// A revealed value can land on a read-only element or on a form control. Text nodes take
+	// text() so decrypted content can never execute as markup; inputs take val(), which is not a
+	// markup context at all. A wrapper (the UDF renderer marks the form-group, not each input
+	// variant) hands the value to the control inside it.
+	function write($el, value) {
+		if ($el.is('input, textarea, select')) {
+			$el.val(value);
+			return;
+		}
+
+		var $control = $el.find('input, textarea, select').first();
+		if ($control.length) {
+			$control.val(value);
+			return;
+		}
+
+		$el.text(value);
 	}
 
 	function applyFields(values) {
@@ -90,13 +117,18 @@
 			if (typeof value === 'string' && (value.indexOf('rgdp:') === 0 || value.indexOf('rgdpb:') === 0))
 				return;
 
-			$el.text(value);
+			write($el, value);
 			$el.data('adp-revealed', true);
 		});
 
 		revealed = true;
 		$('#adpRevealButton').hide();
 		$('#adpConcealButton').show();
+
+		// Host hook: see conceal(). Runs after the marked fields are written so a reloading
+		// module can assume the grant is live.
+		if (settings && typeof settings.onRevealed === 'function')
+			settings.onRevealed();
 	}
 
 	// English fallbacks: the host view supplies localized text through settings.messages, keyed by
@@ -123,6 +155,20 @@
 	}
 
 	function doReveal() {
+		// A page whose values are fetched by something else (the moderation queue reads the v4 API
+		// through its own component) has no per-record reveal endpoint. Step-up alone is the whole
+		// job: the grant is now live, so the host reloads and the same requests come back revealed.
+		if (!settings.revealUrl) {
+			revealed = true;
+			$('#adpRevealButton').hide();
+			$('#adpConcealButton').show();
+
+			if (typeof settings.onRevealed === 'function')
+				settings.onRevealed();
+
+			return;
+		}
+
 		var payload = $.extend({ __RequestVerificationToken: settings.antiForgeryToken }, settings.revealData);
 		$.ajax({
 			url: settings.revealUrl,
@@ -220,8 +266,26 @@
 			});
 	}
 
+	// jQuery beforeSend hook for a host module that fetches its own protected values (the
+	// profile page's emergency contacts come from their own endpoint, which already reads this
+	// header). The token is written onto the request and never returned to the caller, so it
+	// stays inside this closure.
+	function applyGrantHeader(target) {
+		if (!grantToken || !target)
+			return;
+
+		// Works for a jQuery/XMLHttpRequest (setRequestHeader) and for a fetch Headers object
+		// (set). Either way the token is written INTO the caller's request and never returned,
+		// so it stays inside this closure.
+		if (typeof target.setRequestHeader === 'function')
+			target.setRequestHeader('X-Resgrid-Protected-Grant', grantToken);
+		else if (typeof target.set === 'function')
+			target.set('X-Resgrid-Protected-Grant', grantToken);
+	}
+
 	window.resgridAdpReveal = {
 		download: downloadProtected,
+		applyGrantHeader: applyGrantHeader,
 
 		init: function (options) {
 			settings = options;

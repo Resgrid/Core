@@ -111,6 +111,12 @@
             Mobile or Tablet Device specific operations
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.CalendarController.ProtectedGrantToken">
+            <summary>
+            The caller's Protected Data Grant, if they presented one. Absent means calendar entries
+            resolve to the REDACTED placeholder rather than plaintext.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItems">
             <summary>
             Gets the department calendar items.
@@ -2106,6 +2112,13 @@
             Messaging system interaction
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.MessagesController.ProtectedGrantToken">
+            <summary>
+            The caller's Protected Data Grant, if they presented one. Held in app memory only and
+            minted by DataProtection/VerifyStepUp; absent means protected values resolve to the
+            REDACTED placeholder rather than plaintext.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.GetInboxMessages(System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Returns all inbox messages for a user.
@@ -2157,6 +2170,21 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ModerationController">
             <summary>Department and group-scoped moderation requests across supported content types.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ModerationController.ProtectedGrantToken">
+            <summary>
+            The caller's Protected Data Grant, if they presented one. A moderator needs their normal
+            permission AND a current grant to see the excerpts (plan 5.3); without one the queue is
+            still usable - status, reason code and counts are structural and never encrypted - but
+            every quoted value reads as the REDACTED placeholder rather than ciphertext.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.ResolveModerationAsync(System.Collections.Generic.IReadOnlyList{Resgrid.Model.ModerationRequest},System.Threading.CancellationToken)">
+            <summary>
+            Resolves a moderation request and its children in one broker batch. The reported FILE is
+            never included here: a list or detail payload carries metadata, and the endpoints that
+            actually serve bytes opt in separately.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.Flag(Resgrid.Web.Services.Models.v4.Moderation.FlagModerationInput,System.Threading.CancellationToken)">
             <summary>Reports an accessible chat message, Message, call note or call image.</summary>
@@ -2289,6 +2317,12 @@
         <member name="T:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController">
             <summary>
             Operations to perform against personnel staffing, i.e. Available, Delayed, in a department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.ProtectedGrantToken">
+            <summary>
+            The caller's Protected Data Grant, if they presented one. Absent means a staffing note
+            resolves to the REDACTED placeholder rather than plaintext.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.PersonnelStaffingController.GetCurrentStatffing(System.String)">

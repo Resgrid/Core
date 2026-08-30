@@ -753,8 +753,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
 
 			// ADP: the edit form renders protected values as the REDACTED sentinel; a field posted
-			// back unchanged is restored to its stored envelope by the write safety net.
-			model.Call = (await _protectedReadService.ResolveForReadAsync(DepartmentId, model.Call, null, UserId)).Call;
+			// back unchanged is restored to its stored envelope by the write safety net. Editing
+			// blind is workable but poor, so the page also carries the reveal banner.
+			var protectedEditRead = await _protectedReadService.ResolveForReadAsync(DepartmentId, model.Call, null, UserId);
+			model.Call = protectedEditRead.Call;
+			model.IsProtectedCall = protectedEditRead.IsProtected;
 			model.CallPriority = model.Call.Priority;
 			model = await FillUpdateCallView(model);
 
@@ -1390,6 +1393,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var fields = Resgrid.Services.ProtectedReadService.CallFieldAccessors
 				.ToDictionary(a => a.Key, a => a.Value.Get(resolved.Call));
+
+			// The call's user-defined fields are cataloged too, and both the view and the edit form
+			// mark them for this module. Revealing the call while its custom fields keep showing the
+			// placeholder is a half-reveal of one record.
+			await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
+				_protectedReadService, DepartmentId, UdfEntityType.Call, callId.ToString(), grantToken, UserId);
 
 			return Json(new { success = true, fields });
 		}

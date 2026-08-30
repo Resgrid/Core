@@ -90,6 +90,24 @@ L'équipe Resgrid</value>
   <data name="GdprExportWithheldHowTo" xml:space="preserve">
     <value>Pour consulter ces valeurs, connectez-vous à Resgrid et ouvrez la page correspondante, où vous pourrez les afficher après confirmation de votre identité. L'administrateur de votre service peut également vous les communiquer.</value>
   </data>
+  <data name="AdpProtectedMessageSubject" xml:space="preserve">
+    <value>Message protégé</value>
+  </data>
+  <data name="AdpProtectedMessageNotice" xml:space="preserve">
+    <value>Un message protégé vous attend. Connectez-vous à Resgrid pour le lire.</value>
+  </data>
+  <data name="AdpProtectedCalendarTitle" xml:space="preserve">
+    <value>Entrée de calendrier protégée</value>
+  </data>
+  <data name="AdpProtectedCalendarLocation" xml:space="preserve">
+    <value>un lieu protégé</value>
+  </data>
+  <data name="AdpProtectedDispatchNotice" xml:space="preserve">
+    <value>Une intervention protégée est disponible. Connectez-vous à Resgrid pour en voir les détails.</value>
+  </data>
+  <data name="AdpProtectedDispatchName" xml:space="preserve">
+    <value>Intervention protégée</value>
+  </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>Votre export de données Resgrid est prêt</value>
   </data>

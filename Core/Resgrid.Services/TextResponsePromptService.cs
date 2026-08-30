@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Localization.Areas.User.SystemMessages;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Messages;
@@ -37,7 +38,7 @@ namespace Resgrid.Services
 				&& candidate.MessageRecipients?.Any(recipient =>
 					!recipient.IsDeleted
 					&& string.Equals(recipient.UserId, userId, StringComparison.Ordinal)
-					&& TextResponsePromptMetadata.TryGetCalendarItemId(recipient.Note, out var calendarItemId)
+					&& TextResponsePromptMetadata.TryGetCalendarItemId(recipient.PromptMetadata, out var calendarItemId)
 					&& calendarItemId == calendarItem.CalendarItemId) == true);
 
 			if (message == null)
@@ -49,14 +50,25 @@ namespace Resgrid.Services
 						new MessageRecipient
 						{
 							UserId = userId,
-							Note = metadata
+							PromptMetadata = metadata
 						}
 					}
 				};
 			}
 
-			message.Subject = ("Calendar RSVP: " + calendarItem.Title).Truncate(150);
-			message.Body = ($"Event #{calendarItem.CalendarItemId}: {calendarItem.Title}. Reply YES or NO.").Truncate(4000);
+			// The prompt belongs to the department that owns the calendar item (M0137); it is created
+			// here rather than through SendMessageAsync, so the owner is stamped here too.
+			message.DepartmentId = calendarItem.DepartmentId;
+			// The title is cataloged (v9) and this runs without a grant, so an enveloped title becomes
+			// a generic phrase rather than ciphertext quoted into a message the write net would then
+			// encrypt as-is.
+			var promptTitle = ProtectedDataEnvelope.HasEnvelopePrefix(calendarItem.Title)
+				|| calendarItem.Title == ProtectedDataEnvelope.RedactionValue
+					? SystemMessagesResources.Get("AdpProtectedCalendarTitle", null)
+					: calendarItem.Title;
+
+			message.Subject = ("Calendar RSVP: " + promptTitle).Truncate(150);
+			message.Body = ($"Event #{calendarItem.CalendarItemId}: {promptTitle}. Reply YES or NO.").Truncate(4000);
 			message.SendingUserId = calendarItem.CreatorUserId;
 			message.SentOn = now;
 			message.ExpireOn = now.AddDays(1);

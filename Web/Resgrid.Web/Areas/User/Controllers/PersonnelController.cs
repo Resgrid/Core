@@ -62,6 +62,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
+		private readonly IProtectedReadService _protectedReadService;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
@@ -70,7 +71,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
 			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			IStringLocalizer<Resgrid.Localization.Common> localizer, IPhoneNumberProcesserProvider phoneNumberProcesser,
-			IExternalIdentityLinkService externalIdentityLinkService)
+			IExternalIdentityLinkService externalIdentityLinkService, IProtectedReadService protectedReadService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -98,6 +99,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_localizer = localizer;
 			_phoneNumberProcesser = phoneNumberProcesser;
 			_externalIdentityLinkService = externalIdentityLinkService;
+			_protectedReadService = protectedReadService;
 		}
 		#endregion Private Members and Constructors
 
@@ -460,10 +462,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, userId);
 				var visibleFieldIds = udfFields.Select(f => f.UdfFieldId).ToHashSet();
 				var filteredValues = (udfValues ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+
+				// ADP: the renderer turns an envelope into the REDACTED placeholder, so an enveloped
+				// value here is exactly "this page has something a grant could reveal". Asking the
+				// values costs nothing extra - they are already loaded.
+				model.IsProtectedRecord = filteredValues.Any(v => ProtectedDataEnvelope.HasEnvelopePrefix(v.Value));
+
 				model.UdfReadOnlyHtml = _udfRenderingService.GenerateReadOnlyHtml(udfDefinition, udfFields, filteredValues);
 			}
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2). A grant proves the CALLER stepped up; it is never an
+		/// authorization decision about the target, so the subject is authorized exactly as the page
+		/// that hosts the reveal authorizes it.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Personnel_View)]
+		public async Task<IActionResult> RevealPerson([FromForm] string userId)
+		{
+			if (String.IsNullOrWhiteSpace(userId))
+				return BadRequest();
+
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
+				return Unauthorized();
+
+			var fields = new Dictionary<string, string>();
+			var resolved = await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
+				_protectedReadService, DepartmentId, UdfEntityType.Personnel, userId,
+				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
+
+			if (resolved != null && resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			return Json(new { success = true, fields });
 		}
 
 		[HttpPost]

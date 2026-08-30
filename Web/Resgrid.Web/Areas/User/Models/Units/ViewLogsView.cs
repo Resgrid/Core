@@ -9,6 +9,9 @@ namespace Resgrid.Web.Areas.User.Models.Units
 		public Unit Unit { get; set; }
 		public List<UnitLog> Logs { get; set; }
 
+		/// <summary>True when this page is showing ADP placeholders that a grant could reveal.</summary>
+		public bool IsProtectedLogs { get; set; }
+
 		public bool ConfirmClearAll { get; set; }
 		public string Message { get; set; }
 		public string OSMKey { get; set; }

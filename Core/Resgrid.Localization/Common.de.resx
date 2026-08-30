@@ -641,6 +641,30 @@
   <data name="AdpProtectedContact" xml:space="preserve">
     <value>Geschützter Kontakt</value>
   </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Geschützter Personaldatensatz</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Geschützter Einheitendatensatz</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Geschütztes Profil</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Geschützte Nachricht</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Geschütztes Dokument</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Geschützter Kalendereintrag</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>Geschützte Moderationswarteschlange</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Geschützte Einheitenprotokolle</value>
+  </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>für diese Abteilung im Ruhezustand verschlüsselt. Berechtigte Benutzer und freigegebene Kanäle können sie dennoch offenlegen.</value>
   </data>

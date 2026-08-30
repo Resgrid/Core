@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -123,7 +124,10 @@ namespace Resgrid.Tests.Services
 					It.IsAny<DepartmentMemberEmergencyContact>(), null, null, true, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ProtectedWriteResult.Allowed(isProtected: true, changed: true));
 
-			await _service.SaveAsync(BuildContact());
+			// A NEW row: its identity pk is the AAD row key, so it cannot be enveloped until the
+			// insert has happened, and the envelopes then need a second write. An existing row takes
+			// the pre-save path instead and is saved exactly once.
+			await _service.SaveAsync(BuildContact(0));
 
 			_repo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()),
 				Times.Exactly(2), "initial save plus the re-save that persists the envelopes");
@@ -164,6 +168,73 @@ namespace Resgrid.Tests.Services
 
 			deleted.Should().BeFalse();
 			_repo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		/// <summary>
+		/// The AAD row key is the identity pk, so a NEW row has to reach the table before it can be
+		/// enveloped — that first insert is unavoidably plaintext. An EDIT has no such excuse: the
+		/// id already exists, so the values are enveloped BEFORE the write and next-of-kin details
+		/// never sit in the table in the clear, not even for the width of one statement.
+		/// </summary>
+		[Test]
+		public async Task An_existing_row_is_enveloped_before_it_is_saved()
+		{
+			var order = new List<string>();
+
+			_protectedWriteService.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(It.IsAny<int>(),
+					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed())
+				.Callback(() => order.Add("protect"));
+
+			_repo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((DepartmentMemberEmergencyContact c, CancellationToken _, bool __) => c)
+				.Callback(() => order.Add("save"));
+
+			await _service.SaveAsync(BuildContact(7));
+
+			order.Should().Equal(new[] { "protect", "save" });
+		}
+
+		[Test]
+		public async Task A_new_row_is_saved_first_because_the_row_key_does_not_exist_yet()
+		{
+			var order = new List<string>();
+
+			_protectedWriteService.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(It.IsAny<int>(),
+					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Allowed())
+				.Callback(() => order.Add("protect"));
+
+			_repo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((DepartmentMemberEmergencyContact c, CancellationToken _, bool __) =>
+				{
+					c.DepartmentMemberEmergencyContactId = 42;
+					return c;
+				})
+				.Callback(() => order.Add("save"));
+
+			await _service.SaveAsync(BuildContact(0));
+
+			order.Should().Equal(new[] { "save", "protect" });
+		}
+
+		[Test]
+		public void A_blocked_write_on_an_existing_row_saves_nothing_at_all()
+		{
+			// The pre-save path can fail closed WITHOUT leaving a transient plaintext row, which the
+			// post-save path cannot. The message must not claim otherwise.
+			_protectedWriteService.Setup(x => x.PrepareMemberEmergencyContactWriteAsync(It.IsAny<int>(),
+					It.IsAny<DepartmentMemberEmergencyContact>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(ProtectedWriteResult.Blocked("broker_unavailable"));
+
+			Func<Task> save = () => _service.SaveAsync(BuildContact(9));
+
+			save.Should().ThrowAsync<InvalidOperationException>().WithMessage("*was NOT saved*");
+			_repo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<DepartmentMemberEmergencyContact>(),
+				It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
 		}
 
 		[Test]

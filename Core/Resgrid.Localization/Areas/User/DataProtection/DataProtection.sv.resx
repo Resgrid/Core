@@ -100,6 +100,21 @@
   <data name="CancelQueuedEnrollment" xml:space="preserve">
     <value>Avbryt köad registrering</value>
   </data>
+  <data name="MigrationProgressHeader" xml:space="preserve">
+    <value>Migreringsförlopp</value>
+  </data>
+  <data name="MigrationProgressRows" xml:space="preserve">
+    <value>{0} av {1} rader bearbetade</value>
+  </data>
+  <data name="MigrationProgressTable" xml:space="preserve">
+    <value>Bearbetar just nu {0}.</value>
+  </data>
+  <data name="MigrationProgressPending" xml:space="preserve">
+    <value>Inga rader har räknats ännu – det första nattfönstret har inte börjat.</value>
+  </data>
+  <data name="MigrationProgressAnomalies" xml:space="preserve">
+    <value>{0} rader kunde inte bearbetas och kräver åtgärd.</value>
+  </data>
   <data name="MigrationInProgress" xml:space="preserve">
     <value>Migreringen pågår. Arbetet sker endast inom nattfönstret ({0}–{1}, {2}); utanför det är organisationen i full drift.</value>
   </data>

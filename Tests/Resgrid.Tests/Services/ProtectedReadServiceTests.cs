@@ -272,13 +272,17 @@ namespace Resgrid.Tests.Services
 		{
 			// Migrated (so their columns DO get enveloped) but not read back through this service.
 			// Anything added here needs its own safe-display or reveal path before it is read.
-			var withoutReadAccessors = new[] { "CallReferences" };
+			var withoutReadAccessors = Array.Empty<string>();
 
 			var covered = new[]
 			{
 				"Calls", "CallNotes", "CallAttachments", "Contacts", "ContactNotes",
 				"UnitStates", "UdfFieldValues", "Logs", "DepartmentMemberSensitiveData",
-				"DepartmentMemberEmergencyContacts", "PersonnelCertifications", "CallLogs"
+				"DepartmentMemberEmergencyContacts", "PersonnelCertifications", "CallLogs", "CallReferences",
+				"Messages", "MessageRecipients",
+				"ModerationRequests", "ModerationReports", "ModerationActions",
+				"ChatMessageFlags", "ChatModerationActions", "ChatExports",
+				"UnitLogs", "UserStates", "CalendarItems", "Documents", "DistributionLists"
 			};
 
 			AdpTableBindings.V1.Select(b => b.TableName)
@@ -337,7 +341,128 @@ namespace Resgrid.Tests.Services
 				It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
+		[Test]
+		public async Task Messages_redact_without_a_grant_and_carry_their_recipients_along()
+		{
+			var message = new Message
+			{
+				MessageId = 11,
+				DepartmentId = DeptId,
+				Subject = "rgdp:1:1:subject==",
+				Body = "rgdp:1:1:body==",
+				MessageRecipients = new List<MessageRecipient>
+				{
+					new MessageRecipient
+					{
+						MessageRecipientId = 21,
+						DepartmentId = DeptId,
+						Response = "rgdp:1:1:response==",
+						ProtectedLatitudeEnvelope = "rgdp:1:1:lat=="
+					}
+				}
+			};
+
+			var result = await _service.ResolveMessagesForReadAsync(DeptId, new[] { message }, null, UserId);
+
+			result.IsProtected.Should().BeTrue();
+			result.ProtectedReason.Should().Be("step_up_required");
+			message.Subject.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			message.Body.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			message.MessageRecipients.First().Response.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			message.MessageRecipients.First().Latitude.Should().BeNull("a concealed coordinate stays null, never a placeholder in a decimal");
+			result.RedactedFields.Should().Contain("messages.subject").And.Contain("messagerecipients.response");
+		}
+
+		[Test]
+		public async Task Messages_and_their_recipients_reveal_in_one_broker_batch()
+		{
+			var message = new Message
+			{
+				MessageId = 11,
+				DepartmentId = DeptId,
+				Subject = "rgdp:1:1:subject==",
+				Body = "rgdp:1:1:body==",
+				MessageRecipients = new List<MessageRecipient>
+				{
+					new MessageRecipient { MessageRecipientId = 21, DepartmentId = DeptId, Response = "rgdp:1:1:response==" }
+				}
+			};
+
+			_brokerClient.Setup(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string g, string r, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken ct) =>
+					new ProtectedDataBrokerResult
+					{
+						Success = true,
+						Items = items.Select(i => new ProtectedFieldOperationResult
+						{
+							FieldId = i.FieldId,
+							RowKey = i.RowKey,
+							Value = i.FieldId == "messages.subject" ? "Shift swap"
+								: i.FieldId == "messages.body" ? "Can you cover Saturday?"
+								: "YES"
+						}).ToList()
+					});
+
+			var result = await _service.ResolveMessagesForReadAsync(DeptId, new[] { message }, IssueGrant(), UserId);
+
+			result.ProtectedReason.Should().BeNull();
+			message.Subject.Should().Be("Shift swap");
+			message.Body.Should().Be("Can you cover Saturday?");
+			message.MessageRecipients.First().Response.Should().Be("YES");
+			_brokerClient.Verify(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
+				It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Once,
+				"the conversation resolves in one round trip, not one call per row");
+		}
+
 		// ── protected writes ─────────────────────────────────────────────────────
+
+		[Test]
+		public async Task A_message_write_envelopes_the_subject_and_the_body()
+		{
+			SetupWriteEnforced();
+			SetupEncryptEcho();
+			SetupCurrentCatalogVersion();
+
+			var message = new Message { MessageId = 11, DepartmentId = DeptId, Subject = "Shift swap", Body = "Saturday?" };
+
+			var result = await _service.PrepareMessageWriteAsync(DeptId, message, null, null, workloadCaller: true);
+
+			result.Success.Should().BeTrue();
+			result.Changed.Should().BeTrue();
+			message.Subject.Should().Be("rgdp:1:1:messages.subject==");
+			message.Body.Should().Be("rgdp:1:1:messages.body==");
+		}
+
+		[Test]
+		public async Task A_recipient_write_moves_the_coordinates_into_their_companion_columns()
+		{
+			SetupWriteEnforced();
+			SetupEncryptEcho();
+			SetupCurrentCatalogVersion();
+
+			var recipient = new MessageRecipient
+			{
+				MessageRecipientId = 21,
+				DepartmentId = DeptId,
+				Response = "YES",
+				Note = "Running 10 minutes late",
+				PromptMetadata = "calendar-rsvp:5",
+				Latitude = 39.7392m,
+				Longitude = -104.9903m
+			};
+
+			var result = await _service.PrepareMessageRecipientWriteAsync(DeptId, recipient, null, null, workloadCaller: true);
+
+			result.Success.Should().BeTrue();
+			recipient.Response.Should().Be("rgdp:1:1:messagerecipients.response==");
+			recipient.ProtectedLatitudeEnvelope.Should().Be("rgdp:1:1:messagerecipients.latitude==");
+			recipient.Latitude.Should().BeNull("the typed column is emptied once the value lives in its companion");
+			recipient.IsProtected.Should().BeTrue();
+			recipient.Note.Should().Be("rgdp:1:1:messagerecipients.note==", "the note is cataloged with the rest of the message family");
+			recipient.PromptMetadata.Should().Be("calendar-rsvp:5",
+				"the prompt token is read by grantless paths and is deliberately never cataloged");
+		}
 
 		private void SetupWriteEnforced(bool enforced = true)
 		{
@@ -455,7 +580,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Redacted_sentinel_without_a_stored_row_is_never_encrypted()
+		public async Task Redacted_sentinel_without_a_stored_row_is_neutralized_not_stored()
 		{
 			SetupWriteEnforced();
 			IReadOnlyList<ProtectedFieldOperationItem> sentItems = null;
@@ -482,7 +607,12 @@ namespace Resgrid.Tests.Services
 			result.Success.Should().BeTrue();
 			sentItems.Select(i => i.FieldId).Should().BeEquivalentTo(new[] { "calls.natureofcall" },
 				"the placeholder must never be enveloped — that would destroy the original");
-			call.Name.Should().Be(ProtectedDataEnvelope.RedactionValue);
+
+			// And it must not survive as the literal word either. These nets run AFTER the row was
+			// saved, so leaving "REDACTED" in the field means it is what sits in the database, and a
+			// later save encrypts it and makes the loss permanent. With no stored row there is
+			// nothing to restore, so the honest outcome is an empty field.
+			call.Name.Should().BeNull("with nothing to restore, the placeholder is cleared rather than stored");
 		}
 
 		[Test]
@@ -775,6 +905,60 @@ namespace Resgrid.Tests.Services
 			result.Changed.Should().BeTrue("a restore with no encryption still has to be persisted");
 			edited.Name.Should().Be("rgdp:1:1:stored-name==");
 			edited.Number.Should().Be("rgdp:1:1:stored-number==");
+		}
+
+		/// <summary>
+		/// The sentinel has destroyed data four times in this codebase — member addresses, emergency
+		/// contacts, UDF values and certifications — because nine of the twelve write paths only
+		/// refused to ENCRYPT it and let the literal word stay in the row the service had already
+		/// saved. This pins the policy centrally so a new write path inherits it.
+		/// </summary>
+		[Test]
+		public async Task No_write_path_persists_the_literal_placeholder()
+		{
+			SetupWriteEnforced();
+			SetupEncryptEcho();
+			SetupCurrentCatalogVersion();
+
+			var note = new CallNote { CallNoteId = 3, Note = ProtectedDataEnvelope.RedactionValue };
+			await _service.PrepareCallNoteWriteAsync(DeptId, note, IssueGrant(), UserId, workloadCaller: false);
+			note.Note.Should().BeNull("a call note has no stored row to restore from, so the placeholder is cleared");
+
+			var log = new Log { LogId = 4, Narrative = ProtectedDataEnvelope.RedactionValue };
+			await _service.PrepareLogWriteAsync(DeptId, log, IssueGrant(), UserId, workloadCaller: false);
+			log.Narrative.Should().BeNull();
+
+			var state = new UnitState { UnitStateId = 5, Note = ProtectedDataEnvelope.RedactionValue };
+			await _service.PrepareUnitStateWriteAsync(DeptId, state, IssueGrant(), UserId, workloadCaller: false);
+			state.Note.Should().BeNull();
+
+			var contact = new DepartmentMemberEmergencyContact
+			{
+				DepartmentMemberEmergencyContactId = 6,
+				DepartmentId = DeptId,
+				Name = ProtectedDataEnvelope.RedactionValue
+			};
+			await _service.PrepareMemberEmergencyContactWriteAsync(DeptId, contact, IssueGrant(), UserId,
+				workloadCaller: false);
+			contact.Name.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_neutralized_sentinel_reports_changed_so_the_row_is_re_persisted()
+		{
+			// Nothing reaches the broker, so Changed would otherwise stay false and the caller would
+			// leave the placeholder sitting in the database.
+			SetupWriteEnforced();
+			SetupEncryptEcho();
+			SetupCurrentCatalogVersion();
+
+			var note = new CallNote { CallNoteId = 8, Note = ProtectedDataEnvelope.RedactionValue };
+
+			var result = await _service.PrepareCallNoteWriteAsync(DeptId, note, IssueGrant(), UserId,
+				workloadCaller: false);
+
+			result.Success.Should().BeTrue();
+			result.Changed.Should().BeTrue();
 		}
 
 		private void SetupCurrentCatalogVersion()

@@ -641,6 +641,30 @@
   <data name="AdpProtectedContact" xml:space="preserve">
     <value>Contact protégé</value>
   </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>Dossier du personnel protégé</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>Fiche d'unité protégée</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>Profil protégé</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>Message protégé</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>Document protégé</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>Entrée de calendrier protégée</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>File de modération protégée</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>Journaux d'unité protégés</value>
+  </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>chiffré au repos pour ce département. Les utilisateurs autorisés et les canaux approuvés peuvent tout de même le divulguer.</value>
   </data>

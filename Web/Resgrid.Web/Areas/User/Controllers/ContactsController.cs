@@ -308,9 +308,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.ServerName = Environment.MachineName;
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 
+				// Each pair of inputs writes the column its label names. The location pair used to
+				// write EntranceGpsCoordinates, which the entrance pair then overwrote, so
+				// LocationGpsCoordinates was never populated from this form.
 				if (!String.IsNullOrWhiteSpace(model.LocationGpsLatitude) && !String.IsNullOrWhiteSpace(model.LocationGpsLongitude))
 				{
-					model.Contact.EntranceGpsCoordinates = $"{model.LocationGpsLatitude},{model.LocationGpsLongitude}";
+					model.Contact.LocationGpsCoordinates = $"{model.LocationGpsLatitude},{model.LocationGpsLongitude}";
 				}
 
 				if (!String.IsNullOrWhiteSpace(model.EntranceGpsLatitude) && !String.IsNullOrWhiteSpace(model.EntranceGpsLongitude))
@@ -413,23 +416,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			// ADP: the edit form renders protected values as the REDACTED sentinel; unchanged
 			// fields posted back are restored to their stored envelopes by the write safety net.
-			await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
+			// Editing blind is workable but poor, so the page also carries the reveal banner.
+			var protectedEditRead = await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
 				new List<Contact> { model.Contact }, null, UserId);
+			model.IsProtectedContact = protectedEditRead.IsProtected;
 
-			if (!String.IsNullOrWhiteSpace(model.Contact.EntranceGpsCoordinates) &&
-				model.Contact.EntranceGpsCoordinates.Contains(','))
-			{
-				var entranceGpsCoordinates = model.Contact.EntranceGpsCoordinates.Split(',');
-				model.LocationGpsLatitude = entranceGpsCoordinates[0];
-				model.LocationGpsLongitude = entranceGpsCoordinates[1];
-			}
-
+			// Each pair of inputs reads the column its label names. The Entrance coordinates used
+			// to be read into the LOCATION inputs (and the location block then overwrote them), so
+			// the Entrance boxes on this form were never populated at all.
 			if (!String.IsNullOrWhiteSpace(model.Contact.LocationGpsCoordinates) &&
 				model.Contact.LocationGpsCoordinates.Contains(','))
 			{
 				var locationGpsCoordinates = model.Contact.LocationGpsCoordinates.Split(',');
 				model.LocationGpsLatitude = locationGpsCoordinates[0];
 				model.LocationGpsLongitude = locationGpsCoordinates[1];
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.Contact.EntranceGpsCoordinates) &&
+				model.Contact.EntranceGpsCoordinates.Contains(','))
+			{
+				var entranceGpsCoordinates = model.Contact.EntranceGpsCoordinates.Split(',');
+				model.EntranceGpsLatitude = entranceGpsCoordinates[0];
+				model.EntranceGpsLongitude = entranceGpsCoordinates[1];
 			}
 
 			if (!String.IsNullOrWhiteSpace(model.Contact.ExitGpsCoordinates) &&
@@ -583,32 +591,57 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				auditEvent.Before = contact.CloneJsonToString();
 
-				if (!String.IsNullOrWhiteSpace(model.LocationGpsLatitude) && !String.IsNullOrWhiteSpace(model.LocationGpsLongitude))
+				// The STORED row is the save target, not the posted one. This form binds 22 of the
+				// contact's columns; the entity has more - the image, the geofence, the five
+				// government-ID fields, both address links and the audit stamps - and persisting the
+				// posted object blanked every one of them on every edit. For a protected department
+				// that included the only copy of enveloped ID numbers. Copying the posted values
+				// onto the stored row is also what the rest of this area does (UnitsController.EditUnit).
+				contact.ContactType = model.Contact.ContactType;
+				contact.ContactCategoryId = model.Contact.ContactCategoryId;
+				contact.FirstName = model.Contact.FirstName;
+				contact.MiddleName = model.Contact.MiddleName;
+				contact.LastName = model.Contact.LastName;
+				contact.OtherName = model.Contact.OtherName;
+				contact.CompanyName = model.Contact.CompanyName;
+				contact.Email = model.Contact.Email;
+				contact.HomePhoneNumber = model.Contact.HomePhoneNumber;
+				contact.CellPhoneNumber = model.Contact.CellPhoneNumber;
+				contact.FaxPhoneNumber = model.Contact.FaxPhoneNumber;
+				contact.OfficePhoneNumber = model.Contact.OfficePhoneNumber;
+				contact.Description = model.Contact.Description;
+				contact.OtherInfo = model.Contact.OtherInfo;
+				contact.Website = model.Contact.Website;
+				contact.Twitter = model.Contact.Twitter;
+				contact.Facebook = model.Contact.Facebook;
+				contact.LinkedIn = model.Contact.LinkedIn;
+				contact.Instagram = model.Contact.Instagram;
+				contact.Threads = model.Contact.Threads;
+				contact.Bluesky = model.Contact.Bluesky;
+				contact.Mastodon = model.Contact.Mastodon;
+
+				// ADP: a protected contact renders its coordinates as the REDACTED placeholder, which
+				// has no comma to split, so the latitude/longitude inputs come back EMPTY for a value
+				// the editor was never shown. Clearing on empty would destroy the stored coordinates
+				// on ANY save of this page. The form round-trips the placeholder in a hidden field,
+				// so "empty inputs + placeholder" means unchanged, while empty inputs with no
+				// placeholder stay a deliberate clear.
+				string ResolveCoordinates(string latitude, string longitude, string postedValue, string storedValue)
 				{
-					contact.EntranceGpsCoordinates = $"{model.LocationGpsLatitude},{model.LocationGpsLongitude}";
-				}
-				else
-				{
-					contact.EntranceGpsCoordinates = null;
+					if (!String.IsNullOrWhiteSpace(latitude) && !String.IsNullOrWhiteSpace(longitude))
+						return $"{latitude},{longitude}";
+
+					return postedValue == ProtectedDataEnvelope.RedactionValue ? storedValue : null;
 				}
 
-				if (!String.IsNullOrWhiteSpace(model.EntranceGpsLatitude) && !String.IsNullOrWhiteSpace(model.EntranceGpsLongitude))
-				{
-					contact.EntranceGpsCoordinates = $"{model.EntranceGpsLatitude},{model.EntranceGpsLongitude}";
-				}
-				else
-				{
-					contact.EntranceGpsCoordinates = null;
-				}
-
-				if (!String.IsNullOrWhiteSpace(model.ExitGpsLatitude) && !String.IsNullOrWhiteSpace(model.ExitGpsLongitude))
-				{
-					contact.ExitGpsCoordinates = $"{model.ExitGpsLatitude},{model.ExitGpsLongitude}";
-				}
-				else
-				{
-					contact.ExitGpsCoordinates = null;
-				}
+				// Each pair of inputs writes the column its label names; the location pair used to
+				// write EntranceGpsCoordinates, which the entrance pair then overwrote.
+				contact.LocationGpsCoordinates = ResolveCoordinates(model.LocationGpsLatitude, model.LocationGpsLongitude,
+					model.Contact.LocationGpsCoordinates, contact.LocationGpsCoordinates);
+				contact.EntranceGpsCoordinates = ResolveCoordinates(model.EntranceGpsLatitude, model.EntranceGpsLongitude,
+					model.Contact.EntranceGpsCoordinates, contact.EntranceGpsCoordinates);
+				contact.ExitGpsCoordinates = ResolveCoordinates(model.ExitGpsLatitude, model.ExitGpsLongitude,
+					model.Contact.ExitGpsCoordinates, contact.ExitGpsCoordinates);
 
 				if (!String.IsNullOrWhiteSpace(model.PhysicalAddress1))
 				{
@@ -627,7 +660,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					contact.PhysicalAddressId = physicalAddress.AddressId;
 
 					if (model.MailingAddressSameAsPhysical)
-						model.Contact.MailingAddressId = physicalAddress.AddressId;
+						contact.MailingAddressId = physicalAddress.AddressId;
 				}
 
 				if (!String.IsNullOrWhiteSpace(model.MailingAddress1) && !model.MailingAddressSameAsPhysical)
@@ -647,11 +680,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 					contact.MailingAddressId = mailingAddress.AddressId;
 				}
 
-				model.Contact.DepartmentId = DepartmentId;
-				model.Contact.AddedByUserId = UserId;
-				model.Contact.AddedOn = DateTime.UtcNow;
+				// AddedOn/AddedByUserId belong to whoever created the contact; an edit stamps the
+				// edit fields instead. They used to be overwritten with the editing user and now,
+				// which lost the creator on the first edit.
+				contact.DepartmentId = DepartmentId;
+				contact.EditedByUserId = UserId;
+				contact.EditedOn = DateTime.UtcNow;
 
-				await _contactsService.SaveContactAsync(model.Contact, cancellationToken);
+				await _contactsService.SaveContactAsync(contact, cancellationToken);
 
 				// Save UDF field values for the updated contact
 				var udfDefinitionForEdit = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
@@ -682,7 +718,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				auditEvent.After = model.Contact.CloneJsonToString();
+				// The saved row, not the posted one - "after" has to describe what was persisted.
+				auditEvent.After = contact.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 				return RedirectToAction("Index", "Contacts", new { Area = "User" });
@@ -945,6 +982,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var fields = Resgrid.Services.ProtectedReadService.ContactFieldAccessors
 				.ToDictionary(a => a.Key, a => a.Value.Get(contact));
+
+			// The contact's UDF values are cataloged too, and the form renders them as inputs marked
+			// for this module. Revealing the contact but leaving its custom fields showing the
+			// placeholder would be an odd half-reveal of the same record.
+			await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
+				_protectedReadService, DepartmentId, UdfEntityType.Contact, contactId, grantToken, UserId);
 
 			return Json(new { success = true, fields });
 		}

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,10 +12,14 @@ namespace Resgrid.Services
 	public class DistributionListsService : IDistributionListsService
 	{
 		private readonly IDistributionListRepository _distributionListRepository;
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 		private readonly IDistributionListMemberRepository _distributionListMemberRepository;
 
-		public DistributionListsService(IDistributionListRepository distributionListRepository, IDistributionListMemberRepository distributionListMemberRepository)
+		public DistributionListsService(IDistributionListRepository distributionListRepository,
+			IDistributionListMemberRepository distributionListMemberRepository,
+			Lazy<IProtectedWriteService> protectedWriteService)
 		{
+			_protectedWriteService = protectedWriteService;
 			_distributionListRepository = distributionListRepository;
 			_distributionListMemberRepository = distributionListMemberRepository;
 		}
@@ -57,7 +62,21 @@ namespace Resgrid.Services
 
 		public async Task<DistributionList> SaveDistributionListAsync(DistributionList distributionList, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			DistributionList existing = null;
+			if (distributionList != null && distributionList.DistributionListId > 0)
+				existing = await _distributionListRepository.GetByIdAsync(distributionList.DistributionListId);
+
 			var savedList = await _distributionListRepository.SaveOrUpdateAsync(distributionList, cancellationToken);
+
+			// ADP write safety net (plan 4.2/19.2, catalog v9). Runs AFTER the save because the AAD
+			// row key is the identity pk, then re-persists the enveloped row. Fails closed by
+			// throwing rather than leaving the value in plaintext.
+			var protectedWrite = await _protectedWriteService.Value.PrepareDistributionListWriteAsync(
+				savedList.DepartmentId, savedList, existing, null, null, workloadCaller: true, cancellationToken);
+			if (!protectedWrite.Success)
+				throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); distribution list {savedList.DistributionListId} has transient plaintext credentials pending re-encryption.");
+			if (protectedWrite.Changed)
+				savedList = await _distributionListRepository.SaveOrUpdateAsync(savedList, cancellationToken);
 
 			if (distributionList.Members != null && distributionList.Members.Any())
 			{

@@ -31,11 +31,13 @@ namespace Resgrid.Services
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IProtectedFieldCatalog _fieldCatalog;
+		private readonly IDepartmentDataProtectionMigrationRepository _migrationRepository;
 
 		public DepartmentDataProtectionService(IDepartmentDataProtectionPolicyRepository policyRepository,
 			IDepartmentProtectedDataEgressPolicyRepository egressPolicyRepository, IDepartmentsService departmentsService,
 			IFeatureToggleService featureToggleService, ISubscriptionsService subscriptionsService,
-			ICacheProvider cacheProvider, IProtectedFieldCatalog fieldCatalog)
+			ICacheProvider cacheProvider, IProtectedFieldCatalog fieldCatalog,
+			IDepartmentDataProtectionMigrationRepository migrationRepository)
 		{
 			_policyRepository = policyRepository;
 			_egressPolicyRepository = egressPolicyRepository;
@@ -44,6 +46,44 @@ namespace Resgrid.Services
 			_subscriptionsService = subscriptionsService;
 			_cacheProvider = cacheProvider;
 			_fieldCatalog = fieldCatalog;
+			_migrationRepository = migrationRepository;
+		}
+
+		public async Task<AdpMigrationProgress> GetMigrationProgressAsync(int departmentId,
+			CancellationToken cancellationToken = default)
+		{
+			var progress = new AdpMigrationProgress();
+
+			// bypassCache: the panel is watched while a run is moving, and a stale kind would point
+			// the query at the wrong set of cursor rows.
+			var policy = await GetPolicyByDepartmentIdAsync(departmentId, bypassCache: true);
+			if (policy?.ActiveMigrationKind == null)
+				return progress;
+
+			progress.Kind = (DepartmentDataProtectionMigrationKind)policy.ActiveMigrationKind.Value;
+
+			var rows = await _migrationRepository.GetActiveByDepartmentIdAsync(departmentId, progress.Kind);
+			if (rows == null || rows.Count == 0)
+				return progress;
+
+			progress.IsRunning = true;
+			progress.TablesStarted = rows.Count;
+			progress.RowsTotal = rows.Sum(r => r.RowsTotal);
+			progress.RowsCompleted = rows.Sum(r => r.RowsProcessed + r.RowsAlreadyProtected);
+			progress.RowsAnomalous = rows.Sum(r => r.RowsAnomalous);
+
+			// Same formula as DepartmentDataMigrationEngine.ComputePercentCompleteAsync, so the two
+			// never report different numbers for the same run.
+			if (progress.RowsTotal > 0)
+				progress.PercentComplete = (int)Math.Min(100, progress.RowsCompleted * 100 / progress.RowsTotal);
+
+			progress.CurrentTable = rows
+				.OrderBy(r => r.RowsTotal <= 0 ? 1d : (double)(r.RowsProcessed + r.RowsAlreadyProtected) / r.RowsTotal)
+				.ThenBy(r => r.TargetTable)
+				.Select(r => r.TargetTable)
+				.FirstOrDefault();
+
+			return progress;
 		}
 
 		public async Task<int> GetPinnedCatalogVersionAsync(int departmentId)
@@ -305,6 +345,139 @@ namespace Resgrid.Services
 
 			await InvalidateProtectionCacheAsync(departmentId);
 			return rows > 0 ? DepartmentDataProtectionEnrollmentResult.Queued : DepartmentDataProtectionEnrollmentResult.InvalidState;
+		}
+
+		public async Task<DepartmentDataProtectionEnrollmentResult> ApplyAddonBillingEventAsync(
+			AdpAddonBillingEvent billingEvent, CancellationToken cancellationToken = default)
+		{
+			if (billingEvent == null || billingEvent.DepartmentId <= 0)
+				return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+			try
+			{
+				var policy = await GetPolicyByDepartmentIdAsync(billingEvent.DepartmentId, bypassCache: true);
+
+				// A department that has never touched ADP has no policy row. Activation and renewal
+				// are simply recorded as "may enroll" by the addon existing at all, so there is
+				// nothing to write; a cancellation for a department with no policy is a no-op.
+				if (policy == null)
+					return billingEvent.Kind == AdpAddonBillingEventKind.Cancelled
+						? DepartmentDataProtectionEnrollmentResult.InvalidState
+						: DepartmentDataProtectionEnrollmentResult.Queued;
+
+				// Idempotency. Providers retry and duplicate webhooks; an event already applied is
+				// acknowledged rather than re-run, so a replayed Cancelled cannot re-schedule an
+				// offboarding a member has since revoked.
+				if (!string.IsNullOrWhiteSpace(billingEvent.ProviderEventId) &&
+					string.Equals(policy.LastBillingEventId, billingEvent.ProviderEventId, StringComparison.OrdinalIgnoreCase))
+					return DepartmentDataProtectionEnrollmentResult.Queued;
+
+				var result = DepartmentDataProtectionEnrollmentResult.Queued;
+
+				switch (billingEvent.Kind)
+				{
+					case AdpAddonBillingEventKind.Activated:
+					case AdpAddonBillingEventKind.Renewed:
+						// No crypto change (plan 17.3). Renewal after a cancellation is the provider
+						// telling us the subscription is alive again, so a scheduled offboarding that
+						// has not started yet is withdrawn — this is what settles an out-of-order
+						// Cancelled-then-Renewed pair on the provider's current truth.
+						if ((DepartmentDataProtectionState)policy.State == DepartmentDataProtectionState.OffboardingScheduled)
+							result = await RevokeScheduledOffboardingForBillingAsync(billingEvent.DepartmentId, cancellationToken);
+						break;
+
+					case AdpAddonBillingEventKind.PaymentFailed:
+						// Dunning changes nothing about protection (plan 17.3). Recorded for the
+						// audit line and nothing else; exhausted dunning arrives later as Cancelled.
+						Logging.LogInfo($"ADP addon payment failed for department {billingEvent.DepartmentId} " +
+							$"(provider {billingEvent.ProviderName}, dunning {billingEvent.DunningState}); protection continues.");
+						break;
+
+					case AdpAddonBillingEventKind.Cancelled:
+						var source = billingEvent.IsChargeback
+							? DepartmentDataProtectionOffboardingSource.Chargeback
+							: billingEvent.IsDunningExhausted
+								? DepartmentDataProtectionOffboardingSource.DunningExhausted
+								: DepartmentDataProtectionOffboardingSource.UserCancelled;
+
+						// A chargeback or refund ends the paid cycle immediately, but offboarding
+						// still runs through the normal worker path — never an instant crypto flip.
+						var effectiveOn = billingEvent.EffectiveEndUtc ?? DateTime.UtcNow;
+
+						// Already scheduled: the provider is repeating itself. Re-scheduling would
+						// move a date a member may have been told, so it is left alone.
+						if ((DepartmentDataProtectionState)policy.State == DepartmentDataProtectionState.OffboardingScheduled)
+							break;
+
+						result = await ScheduleOffboardingAsync(billingEvent.DepartmentId, source, effectiveOn, cancellationToken);
+
+						// Mid-enrollment cancellations return InvalidState by design: the enrollment
+						// finishes to Enabled first (plan 21.3) and the reconciliation re-runs then.
+						// That is not a failure, so it is recorded rather than surfaced as one.
+						if (result == DepartmentDataProtectionEnrollmentResult.InvalidState)
+							Logging.LogInfo($"ADP cancellation for department {billingEvent.DepartmentId} deferred: " +
+								$"state {(DepartmentDataProtectionState)policy.State} completes first (plan 21.3).");
+						break;
+				}
+
+				await RecordBillingEventAsync(billingEvent, cancellationToken);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"ADP ApplyAddonBillingEventAsync failed for department {billingEvent.DepartmentId}");
+				return DepartmentDataProtectionEnrollmentResult.Failed;
+			}
+		}
+
+		/// <summary>
+		/// Withdraws an offboarding that billing has superseded. Deliberately NOT RevokeOffboardingAsync:
+		/// that one is the member-facing command and enforces managing-member authorization, which a
+		/// billing event does not have and should not need.
+		/// </summary>
+		private async Task<DepartmentDataProtectionEnrollmentResult> RevokeScheduledOffboardingForBillingAsync(
+			int departmentId, CancellationToken cancellationToken)
+		{
+			var rows = await _policyRepository.TryTransitionStateAsync(departmentId,
+				DepartmentDataProtectionState.OffboardingScheduled, DepartmentDataProtectionState.Enabled,
+				null, "system:billing", cancellationToken);
+
+			if (rows == 0)
+				return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+			var policy = await _policyRepository.GetByDepartmentIdAsync(departmentId);
+			if (policy != null)
+			{
+				policy.OffboardingEffectiveOn = null;
+				policy.OffboardingSource = null;
+				policy.UpdatedOn = DateTime.UtcNow;
+				policy.UpdatedByUserId = "system:billing";
+				await _policyRepository.SaveOrUpdateAsync(policy, cancellationToken);
+			}
+
+			await InvalidateProtectionCacheAsync(departmentId);
+			return DepartmentDataProtectionEnrollmentResult.Queued;
+		}
+
+		/// <summary>
+		/// Stamps the subscription reference and the applied event id. The id is what makes a repeat
+		/// of the same webhook a no-op above.
+		/// </summary>
+		private async Task RecordBillingEventAsync(AdpAddonBillingEvent billingEvent, CancellationToken cancellationToken)
+		{
+			var policy = await _policyRepository.GetByDepartmentIdAsync(billingEvent.DepartmentId);
+			if (policy == null)
+				return;
+
+			if (!string.IsNullOrWhiteSpace(billingEvent.ExternalSubscriptionRef))
+				policy.AddonBillingReference = billingEvent.ExternalSubscriptionRef;
+
+			policy.LastBillingEventId = billingEvent.ProviderEventId;
+			policy.UpdatedOn = DateTime.UtcNow;
+			policy.UpdatedByUserId = "system:billing";
+
+			await _policyRepository.SaveOrUpdateAsync(policy, cancellationToken);
+			await InvalidateProtectionCacheAsync(billingEvent.DepartmentId);
 		}
 
 		public async Task<DepartmentDataProtectionEnrollmentResult> ScheduleOffboardingAsync(int departmentId,

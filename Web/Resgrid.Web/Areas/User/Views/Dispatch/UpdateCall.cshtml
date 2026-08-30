@@ -5,6 +5,19 @@
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
     var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
+@{
+    // ADP reveal (plan 7.2): one descriptor shared by the banner in the body and the
+    // step-up wiring in the Scripts section. Declared unconditionally so the section
+    // closure can see it; both partials only render when the page is protected.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedCall"],
+        RevealController = "Dispatch",
+        RevealAction = "RevealCall",
+        RevealData = new Dictionary<string, string> { { "callId", Model.Call.CallId.ToString() } }
+    };
+}
+
 @section Styles
 {
     <style>
@@ -61,6 +74,15 @@
                 <div class="ibox-content">
                     <form class="form-horizontal" role="form" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" method="post" id="updateCallForm">
 
+                        @if (Model.IsProtectedCall)
+                        {
+                            <div class="row">
+                                <div class="col-md-10 col-md-offset-1">
+                                    <partial name="_AdpRevealBanner" model="adpReveal" />
+                                </div>
+                            </div>
+                        }
+
                         <div class="row">
                             <div class="col-md-8 col-md-offset-1">
                                 @Html.AntiForgeryToken()
@@ -80,7 +102,7 @@
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["NameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["NamePlaceholder"]" asp-for="Call.Name"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["NamePlaceholder"]" asp-for="Call.Name" data-adp-field="calls.name"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PrioirtyLabel"]</label>
@@ -92,11 +114,11 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["ReportNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReportNamePlaceholder"]" asp-for="Call.ContactName"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReportNamePlaceholder"]" asp-for="Call.ContactName" data-adp-field="calls.contactname"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["ReportContactLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReportContactPlaceholder"]" asp-for="Call.ContactNumber"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReportContactPlaceholder"]" asp-for="Call.ContactNumber" data-adp-field="calls.contactnumber"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PrimaryContactLabel"]</label>
@@ -118,15 +140,15 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallIdentifierLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CallIdentifierPlaceholder"]" asp-for="Call.ExternalIdentifier"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CallIdentifierPlaceholder"]" asp-for="Call.ExternalIdentifier" data-adp-field="calls.externalidentifier"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["IncidentIdLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["IncidentIdPlaceholder"]" asp-for="Call.IncidentNumber"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["IncidentIdPlaceholder"]" asp-for="Call.IncidentNumber" data-adp-field="calls.incidentnumber"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["ReferenceIdLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReferenceIdPlaceholder"]" asp-for="Call.ReferenceNumber"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReferenceIdPlaceholder"]" asp-for="Call.ReferenceNumber" data-adp-field="calls.referencenumber"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallNatureLabel"]</label>
@@ -158,7 +180,7 @@
                                 <div class="row">
                                     <div class="col-md-5">
                                         <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control" placeholder="@localizer["LocationPlaceholder"]" asp-for="Call.Address">
+                                            <input type="text" class="form-control" placeholder="@localizer["LocationPlaceholder"]" asp-for="Call.Address" data-adp-field="calls.address">
                                             <span class="input-group-btn">
                                                 <a id="searchButton" href="#" class="btn btn-info">@localizer["FindAddress"]</a>
                                             </span>
@@ -470,6 +492,10 @@
 
 @section Scripts
 {
+    @if (Model.IsProtectedCall)
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
     <script src="~/lib/formBuilder/dist/form-render.min.js" type="text/javascript"></script>
 
     <script type="text/javascript">

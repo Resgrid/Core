@@ -61,11 +61,18 @@
 	}
 
 	function load() {
-		$.getJSON(settings.listUrl, { userId: settings.userId })
-			.done(function (data) {
-				contacts = data || [];
-				render();
-			});
+		// The list endpoint resolves protected values against whatever grant the request carries,
+		// so the SAME call returns placeholders normally and plaintext while a reveal is active.
+		// settings.beforeSend is the reveal module's header hook; without one this is unchanged.
+		$.ajax({
+			url: settings.listUrl,
+			dataType: 'json',
+			data: { userId: settings.userId },
+			beforeSend: typeof settings.beforeSend === 'function' ? settings.beforeSend : undefined
+		}).done(function (data) {
+			contacts = data || [];
+			render();
+		});
 	}
 
 	function openModal(contact) {
@@ -139,6 +146,10 @@
 	}
 
 	window.resgridEmergencyContacts = {
+		// Re-reads the list. The profile page calls this when a reveal starts (to pick up
+		// plaintext) and when it ends (to put the placeholders back).
+		reload: load,
+
 		init: function (options) {
 			settings = options;
 

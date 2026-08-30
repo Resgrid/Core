@@ -82,6 +82,13 @@ namespace Resgrid.Services
 		/// <summary>The rgdpb binary attachment payload field id.</summary>
 		public const string AttachmentDataFieldId = "callattachments.data";
 
+		/// <summary>CallReferences text columns (parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<CallReference, string> Get, Action<CallReference, string> Set)> CallReferenceFieldAccessors =
+			new Dictionary<string, (Func<CallReference, string>, Action<CallReference, string>)>
+			{
+				["callreferences.note"] = (r => r.Note, (r, v) => r.Note = v)
+			};
+
 		/// <summary>
 		/// CallLogs text columns (parity-pinned). CallLogs is the per-call running log, a different
 		/// table and entity from the Log family's incident work logs — both happen to call their
@@ -213,6 +220,145 @@ namespace Resgrid.Services
 				["udffieldvalues.value"] = (v => v.Value, (v, x) => v.Value = x)
 			};
 
+		/// <summary>Messages text columns (catalog v7; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<Message, string> Get, Action<Message, string> Set)> MessageFieldAccessors =
+			new Dictionary<string, (Func<Message, string>, Action<Message, string>)>
+			{
+				["messages.subject"] = (m => m.Subject, (m, v) => m.Subject = v),
+				["messages.body"] = (m => m.Body, (m, v) => m.Body = v)
+			};
+
+		/// <summary>
+		/// MessageRecipients text columns (catalog v7; parity-pinned). PromptMetadata is NOT here and
+		/// never will be: every reader of that token runs without a grant.
+		/// </summary>
+		public static readonly IReadOnlyDictionary<string, (Func<MessageRecipient, string> Get, Action<MessageRecipient, string> Set)> MessageRecipientFieldAccessors =
+			new Dictionary<string, (Func<MessageRecipient, string>, Action<MessageRecipient, string>)>
+			{
+				["messagerecipients.response"] = (r => r.Response, (r, v) => r.Response = v),
+				["messagerecipients.note"] = (r => r.Note, (r, v) => r.Note = v)
+			};
+
+		/// <summary>MessageRecipients companion columns: the position a reply was filed from.</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<MessageRecipient, string> GetEnvelope, Action<MessageRecipient, decimal?> SetTyped)> MessageRecipientCompanionAccessors =
+			new Dictionary<string, (Func<MessageRecipient, string>, Action<MessageRecipient, decimal?>)>
+			{
+				["messagerecipients.latitude"] = (r => r.ProtectedLatitudeEnvelope, (r, v) => r.Latitude = v),
+				["messagerecipients.longitude"] = (r => r.ProtectedLongitudeEnvelope, (r, v) => r.Longitude = v)
+			};
+
+		/// <summary>ModerationRequests text columns (catalog v8; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<ModerationRequest, string> Get, Action<ModerationRequest, string> Set)> ModerationRequestFieldAccessors =
+			new Dictionary<string, (Func<ModerationRequest, string>, Action<ModerationRequest, string>)>
+			{
+				["moderationrequests.originalsubject"] = (r => r.OriginalSubject, (r, v) => r.OriginalSubject = v),
+				["moderationrequests.originaltext"] = (r => r.OriginalText, (r, v) => r.OriginalText = v),
+				["moderationrequests.originalfilename"] = (r => r.OriginalFileName, (r, v) => r.OriginalFileName = v),
+				["moderationrequests.originalcontenttype"] = (r => r.OriginalContentType, (r, v) => r.OriginalContentType = v),
+				["moderationrequests.originalmetadatajson"] = (r => r.OriginalMetadataJson, (r, v) => r.OriginalMetadataJson = v),
+				["moderationrequests.adminnote"] = (r => r.AdminNote, (r, v) => r.AdminNote = v)
+			};
+
+		/// <summary>The rgdpb binary payload of the reported item.</summary>
+		public const string ModerationRequestContentFieldId = "moderationrequests.originalcontent";
+
+		/// <summary>ModerationReports text columns (catalog v8; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<ModerationReport, string> Get, Action<ModerationReport, string> Set)> ModerationReportFieldAccessors =
+			new Dictionary<string, (Func<ModerationReport, string>, Action<ModerationReport, string>)>
+			{
+				["moderationreports.note"] = (r => r.Note, (r, v) => r.Note = v)
+			};
+
+		/// <summary>
+		/// ModerationActions text columns (catalog v8; parity-pinned). ActorRole/IpAddress/UserAgent/
+		/// TraceId/ServerName are NOT here: they are the security audit trail of who acted and from
+		/// where, not the reported content (plan 5.4).
+		/// </summary>
+		public static readonly IReadOnlyDictionary<string, (Func<ModerationAction, string> Get, Action<ModerationAction, string> Set)> ModerationActionFieldAccessors =
+			new Dictionary<string, (Func<ModerationAction, string>, Action<ModerationAction, string>)>
+			{
+				["moderationactions.note"] = (a => a.Note, (a, v) => a.Note = v),
+				["moderationactions.detailsjson"] = (a => a.DetailsJson, (a, v) => a.DetailsJson = v),
+				["moderationactions.evidencetext"] = (a => a.EvidenceText, (a, v) => a.EvidenceText = v),
+				["moderationactions.evidencemetadatajson"] = (a => a.EvidenceMetadataJson, (a, v) => a.EvidenceMetadataJson = v)
+			};
+
+		/// <summary>The rgdpb binary evidence snapshot on a moderation action.</summary>
+		public const string ModerationActionEvidenceFieldId = "moderationactions.evidencecontent";
+
+		/// <summary>ChatMessageFlags text columns (catalog v8; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<ChatMessageFlag, string> Get, Action<ChatMessageFlag, string> Set)> ChatMessageFlagFieldAccessors =
+			new Dictionary<string, (Func<ChatMessageFlag, string>, Action<ChatMessageFlag, string>)>
+			{
+				["chatmessageflags.note"] = (f => f.Note, (f, v) => f.Note = v),
+				["chatmessageflags.resolutionnote"] = (f => f.ResolutionNote, (f, v) => f.ResolutionNote = v)
+			};
+
+		/// <summary>ChatModerationActions text columns (catalog v8; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<ChatModerationAction, string> Get, Action<ChatModerationAction, string> Set)> ChatModerationActionFieldAccessors =
+			new Dictionary<string, (Func<ChatModerationAction, string>, Action<ChatModerationAction, string>)>
+			{
+				["chatmoderationactions.reason"] = (a => a.Reason, (a, v) => a.Reason = v),
+				["chatmoderationactions.detailsjson"] = (a => a.DetailsJson, (a, v) => a.DetailsJson = v)
+			};
+
+		/// <summary>ChatExports text columns (catalog v8; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<ChatExport, string> Get, Action<ChatExport, string> Set)> ChatExportFieldAccessors =
+			new Dictionary<string, (Func<ChatExport, string>, Action<ChatExport, string>)>
+			{
+				["chatexports.error"] = (e => e.Error, (e, v) => e.Error = v)
+			};
+
+		/// <summary>The rgdpb export payload — an entire conversation.</summary>
+		public const string ChatExportDataFieldId = "chatexports.data";
+
+		/// <summary>UnitLogs text columns (catalog v9; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<UnitLog, string> Get, Action<UnitLog, string> Set)> UnitLogFieldAccessors =
+			new Dictionary<string, (Func<UnitLog, string>, Action<UnitLog, string>)>
+			{
+				["unitlogs.narrative"] = (l => l.Narrative, (l, v) => l.Narrative = v)
+			};
+
+		/// <summary>UserStates text columns (catalog v9; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<UserState, string> Get, Action<UserState, string> Set)> UserStateFieldAccessors =
+			new Dictionary<string, (Func<UserState, string>, Action<UserState, string>)>
+			{
+				["userstates.note"] = (u => u.Note, (u, v) => u.Note = v)
+			};
+
+		/// <summary>
+		/// CalendarItems text columns (catalog v9; parity-pinned). The scheduling columns - start,
+		/// end, timezones, recurrence rule - are structural and stay plaintext, so a protected
+		/// department's calendar still lays out without a grant.
+		/// </summary>
+		public static readonly IReadOnlyDictionary<string, (Func<CalendarItem, string> Get, Action<CalendarItem, string> Set)> CalendarItemFieldAccessors =
+			new Dictionary<string, (Func<CalendarItem, string>, Action<CalendarItem, string>)>
+			{
+				["calendaritems.title"] = (c => c.Title, (c, v) => c.Title = v),
+				["calendaritems.description"] = (c => c.Description, (c, v) => c.Description = v),
+				["calendaritems.location"] = (c => c.Location, (c, v) => c.Location = v)
+			};
+
+		/// <summary>Documents text columns (catalog v9; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<Document, string> Get, Action<Document, string> Set)> DocumentFieldAccessors =
+			new Dictionary<string, (Func<Document, string>, Action<Document, string>)>
+			{
+				["documents.name"] = (d => d.Name, (d, v) => d.Name = v),
+				["documents.description"] = (d => d.Description, (d, v) => d.Description = v),
+				["documents.filename"] = (d => d.Filename, (d, v) => d.Filename = v)
+			};
+
+		/// <summary>The rgdpb document payload.</summary>
+		public const string DocumentDataFieldId = "documents.data";
+
+		/// <summary>DistributionLists stored mailbox credentials (catalog v9; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<DistributionList, string> Get, Action<DistributionList, string> Set)> DistributionListFieldAccessors =
+			new Dictionary<string, (Func<DistributionList, string>, Action<DistributionList, string>)>
+			{
+				["distributionlists.username"] = (d => d.Username, (d, v) => d.Username = v),
+				["distributionlists.password"] = (d => d.Password, (d, v) => d.Password = v)
+			};
+
 		private static readonly byte[] BinaryPrefixBytes = Encoding.ASCII.GetBytes(ProtectedDataEnvelope.BinaryPrefix);
 
 		/// <summary>One protected value wired to its reveal/redact actions on the owning entity.</summary>
@@ -273,6 +419,34 @@ namespace Resgrid.Services
 				if (result.Call.Attachments != null)
 					foreach (var attachment in result.Call.Attachments.Where(a => a != null))
 						CollectAttachmentSlots(result, attachment, slots, includeData: false);
+
+				// Linked-call reference notes ride the same batch. Resolving them here rather than in
+				// each controller means every surface that populates References is covered, including
+				// the linked-call editor that posts the note back from a hidden input.
+				if (result.Call.References != null)
+				{
+					foreach (var reference in result.Call.References.Where(r => r != null))
+					{
+						foreach (var accessor in CallReferenceFieldAccessors)
+						{
+							var referenceValue = accessor.Value.Get(reference);
+							if (!ProtectedDataEnvelope.HasEnvelopePrefix(referenceValue))
+								continue;
+
+							var set = accessor.Value.Set;
+							var target = reference;
+							slots.Add(new Slot
+							{
+								FieldId = accessor.Key,
+								RowKey = target.CallReferenceId,
+								WireValue = referenceValue,
+								Owner = result,
+								Reveal = plaintext => set(target, plaintext),
+								Redact = () => set(target, ProtectedDataEnvelope.RedactionValue)
+							});
+						}
+					}
+				}
 			}
 
 			await ResolveSlotsAsync(departmentId, grantToken, userId, results, slots, cancellationToken);
@@ -361,12 +535,55 @@ namespace Resgrid.Services
 			return result;
 		}
 
+		/// <summary>
+		/// Applies the REDACTED-sentinel policy to a cataloged entity before it is encrypted, and
+		/// reports whether anything moved so the caller knows the row must be re-persisted.
+		///
+		/// The sentinel is what a form posts back for a value the editor was never allowed to see.
+		/// It must NEVER reach the database: the write nets run after the row has already been
+		/// saved, so simply skipping the field — which nine of these paths used to do — leaves the
+		/// literal word "REDACTED" stored in place of the member's real data, and a later save then
+		/// encrypts that word and makes the loss permanent.
+		///
+		/// Two outcomes, in order of preference:
+		///  * an existing row was supplied — restore the stored value, which is the real fix;
+		///  * no existing row — null the field, which still loses the edit but leaves the column
+		///    honestly empty rather than holding a fake value that looks like data.
+		///
+		/// Callers that can supply the stored row should; this is the floor, not the ceiling.
+		/// </summary>
+		private static bool ApplySentinelPolicy<T>(T entity, T existing,
+			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors)
+			where T : class
+		{
+			if (entity == null)
+				return false;
+
+			var changed = false;
+
+			foreach (var accessor in accessors)
+			{
+				if (accessor.Value.Get(entity) != ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				accessor.Value.Set(entity, existing != null ? accessor.Value.Get(existing) : null);
+				changed = true;
+			}
+
+			return changed;
+		}
+
 		public async Task<ProtectedWriteResult> PrepareMemberEmergencyContactWriteAsync(int departmentId,
 			DepartmentMemberEmergencyContact contact, string grantToken, string userId, bool workloadCaller,
 			CancellationToken cancellationToken = default)
 		{
 			if (contact == null)
 				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(contact, null, MemberEmergencyContactAccessors);
 
 			var slots = new List<WriteSlot>();
 			var rowKey = contact.DepartmentMemberEmergencyContactId.ToString(CultureInfo.InvariantCulture);
@@ -381,8 +598,15 @@ namespace Resgrid.Services
 				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(contact, envelope) });
 			}
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
 				() => contact.IsProtected = true, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedReadResult> ResolveMemberSensitiveDataForReadAsync(int departmentId,
@@ -423,6 +647,12 @@ namespace Resgrid.Services
 			if (data == null)
 				return ProtectedWriteResult.Allowed();
 
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(data, null, MemberSensitiveDataAccessors);
+
+
 			var slots = new List<WriteSlot>();
 			var rowKey = data.DepartmentMemberSensitiveDataId.ToString(CultureInfo.InvariantCulture);
 			foreach (var accessor in MemberSensitiveDataAccessors)
@@ -436,8 +666,264 @@ namespace Resgrid.Services
 				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(data, envelope) });
 			}
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
 				() => data.IsProtected = true, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveCallReferencesForReadAsync(int departmentId,
+			IReadOnlyList<CallReference> references, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var reference in (references ?? Array.Empty<CallReference>()).Where(r => r != null))
+			{
+				foreach (var accessor in CallReferenceFieldAccessors)
+				{
+					var value = accessor.Value.Get(reference);
+					if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+						continue;
+
+					var set = accessor.Value.Set;
+					slots.Add(new Slot
+					{
+						FieldId = accessor.Key,
+						RowKey = reference.CallReferenceId,
+						WireValue = value,
+						Owner = result,
+						Reveal = plaintext => set(reference, plaintext),
+						Redact = () => set(reference, ProtectedDataEnvelope.RedactionValue)
+					});
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveMessagesForReadAsync(int departmentId,
+			IReadOnlyList<Message> messages, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var message in (messages ?? Array.Empty<Message>()).Where(m => m != null))
+			{
+				CollectMessageSlots(result, message, slots);
+
+				// Recipients ride the same batch when they are populated, exactly as call notes and
+				// attachments do: revealing the body while the replies keep showing placeholders
+				// would be a half-reveal of one conversation.
+				if (message.MessageRecipients != null)
+				{
+					foreach (var recipient in message.MessageRecipients.Where(r => r != null))
+						CollectMessageRecipientSlots(result, recipient, slots);
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveMessageRecipientsForReadAsync(int departmentId,
+			IReadOnlyList<MessageRecipient> recipients, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var recipient in (recipients ?? Array.Empty<MessageRecipient>()).Where(r => r != null))
+				CollectMessageRecipientSlots(result, recipient, slots);
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveModerationRequestsForReadAsync(int departmentId,
+			IReadOnlyList<ModerationRequest> requests, string grantToken, string userId,
+			bool includeContent = false, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var request in (requests ?? Array.Empty<ModerationRequest>()).Where(r => r != null))
+			{
+				var rowKey = request.ModerationRequestId;
+				CollectTextSlots(result, slots, ModerationRequestFieldAccessors, request, rowKey);
+
+				// The reported file rides along only when the caller asked for it; a queue listing
+				// strips the bytes so a serializer can never carry ciphertext it will not decrypt.
+				CollectBinarySlot(result, slots, ModerationRequestContentFieldId, rowKey,
+					request.OriginalContent, includeContent,
+					bytes => request.OriginalContent = bytes);
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveModerationReportsForReadAsync(int departmentId,
+			IReadOnlyList<ModerationReport> reports, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var report in (reports ?? Array.Empty<ModerationReport>()).Where(r => r != null))
+				CollectTextSlots(result, slots, ModerationReportFieldAccessors, report, report.ModerationReportId);
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveModerationActionsForReadAsync(int departmentId,
+			IReadOnlyList<ModerationAction> actions, string grantToken, string userId,
+			bool includeContent = false, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var action in (actions ?? Array.Empty<ModerationAction>()).Where(a => a != null))
+			{
+				var rowKey = action.ModerationActionId;
+				CollectTextSlots(result, slots, ModerationActionFieldAccessors, action, rowKey);
+				CollectBinarySlot(result, slots, ModerationActionEvidenceFieldId, rowKey,
+					action.EvidenceContent, includeContent,
+					bytes => action.EvidenceContent = bytes);
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveChatMessageFlagsForReadAsync(int departmentId,
+			IReadOnlyList<ChatMessageFlag> flags, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var flag in (flags ?? Array.Empty<ChatMessageFlag>()).Where(f => f != null))
+				CollectTextSlots(result, slots, ChatMessageFlagFieldAccessors, flag, flag.ChatMessageFlagId);
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveChatModerationActionsForReadAsync(int departmentId,
+			IReadOnlyList<ChatModerationAction> actions, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var action in (actions ?? Array.Empty<ChatModerationAction>()).Where(a => a != null))
+				CollectTextSlots(result, slots, ChatModerationActionFieldAccessors, action, action.ChatModerationActionId);
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveChatExportsForReadAsync(int departmentId,
+			IReadOnlyList<ChatExport> exports, string grantToken, string userId,
+			bool includeData = false, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var export in (exports ?? Array.Empty<ChatExport>()).Where(e => e != null))
+			{
+				var rowKey = export.ChatExportId;
+				CollectTextSlots(result, slots, ChatExportFieldAccessors, export, rowKey);
+				CollectBinarySlot(result, slots, ChatExportDataFieldId, rowKey, export.Data, includeData,
+					bytes => export.Data = bytes);
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveUnitLogsForReadAsync(int departmentId,
+			IReadOnlyList<UnitLog> logs, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var log in (logs ?? Array.Empty<UnitLog>()).Where(l => l != null))
+				CollectTextSlots(result, slots, UnitLogFieldAccessors, log, log.UnitLogId.ToString(CultureInfo.InvariantCulture));
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveUserStatesForReadAsync(int departmentId,
+			IReadOnlyList<UserState> states, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var state in (states ?? Array.Empty<UserState>()).Where(x => x != null))
+				CollectTextSlots(result, slots, UserStateFieldAccessors, state, state.UserStateId.ToString(CultureInfo.InvariantCulture));
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveCalendarItemsForReadAsync(int departmentId,
+			IReadOnlyList<CalendarItem> items, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var item in (items ?? Array.Empty<CalendarItem>()).Where(i => i != null))
+				CollectTextSlots(result, slots, CalendarItemFieldAccessors, item, item.CalendarItemId.ToString(CultureInfo.InvariantCulture));
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveDocumentsForReadAsync(int departmentId,
+			IReadOnlyList<Document> documents, string grantToken, string userId, bool includeData = false,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var document in (documents ?? Array.Empty<Document>()).Where(d => d != null))
+			{
+				var rowKey = document.DocumentId.ToString(CultureInfo.InvariantCulture);
+				CollectTextSlots(result, slots, DocumentFieldAccessors, document, rowKey);
+				CollectBinarySlot(result, slots, DocumentDataFieldId, rowKey, document.Data, includeData,
+					bytes => document.Data = bytes);
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveDistributionListsForReadAsync(int departmentId,
+			IReadOnlyList<DistributionList> lists, string grantToken, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+
+			foreach (var list in (lists ?? Array.Empty<DistributionList>()).Where(l => l != null))
+				CollectTextSlots(result, slots, DistributionListFieldAccessors, list,
+					list.DistributionListId.ToString(CultureInfo.InvariantCulture));
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
 		}
 
 		public async Task<ProtectedReadResult> ResolveCallLogsForReadAsync(int departmentId,
@@ -502,11 +988,348 @@ namespace Resgrid.Services
 			return result;
 		}
 
+		public async Task<ProtectedWriteResult> PrepareCallReferenceWriteAsync(int departmentId,
+			CallReference reference, CallReference existingReference, string grantToken, string userId,
+			bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (reference == null)
+				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: the linked-call editor round-trips the note through a hidden
+			// input, so an editor without a grant posts the placeholder straight back.
+			var sentinelsHandled = ApplySentinelPolicy(reference, existingReference, CallReferenceFieldAccessors);
+
+			var slots = new List<WriteSlot>();
+			foreach (var accessor in CallReferenceFieldAccessors)
+			{
+				var value = accessor.Value.Get(reference);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value))
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot
+				{
+					FieldId = accessor.Key,
+					RowKey = reference.CallReferenceId,
+					WireValue = value,
+					Apply = envelope => set(reference, envelope)
+				});
+			}
+
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareMessageWriteAsync(int departmentId, Message message,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (message == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(message, null, MessageFieldAccessors);
+
+			var slots = new List<WriteSlot>();
+			var rowKey = message.MessageId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in MessageFieldAccessors)
+			{
+				var value = accessor.Value.Get(message);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(message, envelope) });
+			}
+
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareMessageRecipientWriteAsync(int departmentId,
+			MessageRecipient recipient, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (recipient == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(recipient, null, MessageRecipientFieldAccessors);
+
+			var slots = new List<WriteSlot>();
+			var rowKey = recipient.MessageRecipientId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in MessageRecipientFieldAccessors)
+			{
+				var value = accessor.Value.Get(recipient);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(recipient, envelope) });
+			}
+
+			// Companion columns: the typed coordinate moves into its envelope column and the typed
+			// column is nulled - the migration engine's exact write shape (plan 22.3).
+			if (recipient.Latitude.HasValue)
+				slots.Add(new WriteSlot
+				{
+					FieldId = "messagerecipients.latitude",
+					RowKey = rowKey,
+					WireValue = recipient.Latitude.Value.ToString(CultureInfo.InvariantCulture),
+					Apply = envelope => { recipient.ProtectedLatitudeEnvelope = envelope; recipient.Latitude = null; }
+				});
+			if (recipient.Longitude.HasValue)
+				slots.Add(new WriteSlot
+				{
+					FieldId = "messagerecipients.longitude",
+					RowKey = rowKey,
+					WireValue = recipient.Longitude.Value.ToString(CultureInfo.InvariantCulture),
+					Apply = envelope => { recipient.ProtectedLongitudeEnvelope = envelope; recipient.Longitude = null; }
+				});
+
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => recipient.IsProtected = true, cancellationToken);
+
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareModerationRequestWriteAsync(int departmentId,
+			ModerationRequest request, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (request == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(request, null, ModerationRequestFieldAccessors);
+			var slots = CollectTextWriteSlots(ModerationRequestFieldAccessors, request, request.ModerationRequestId);
+
+			AddBinaryWriteSlot(slots, ModerationRequestContentFieldId, request.ModerationRequestId,
+				request.OriginalContent, bytes => request.OriginalContent = bytes);
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => request.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareModerationReportWriteAsync(int departmentId,
+			ModerationReport report, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (report == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(report, null, ModerationReportFieldAccessors);
+			var slots = CollectTextWriteSlots(ModerationReportFieldAccessors, report, report.ModerationReportId);
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => report.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareModerationActionWriteAsync(int departmentId,
+			ModerationAction action, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (action == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(action, null, ModerationActionFieldAccessors);
+			var slots = CollectTextWriteSlots(ModerationActionFieldAccessors, action, action.ModerationActionId);
+
+			AddBinaryWriteSlot(slots, ModerationActionEvidenceFieldId, action.ModerationActionId,
+				action.EvidenceContent, bytes => action.EvidenceContent = bytes);
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => action.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareChatMessageFlagWriteAsync(int departmentId,
+			ChatMessageFlag flag, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (flag == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(flag, null, ChatMessageFlagFieldAccessors);
+			var slots = CollectTextWriteSlots(ChatMessageFlagFieldAccessors, flag, flag.ChatMessageFlagId);
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => flag.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareChatModerationActionWriteAsync(int departmentId,
+			ChatModerationAction action, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (action == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(action, null, ChatModerationActionFieldAccessors);
+			var slots = CollectTextWriteSlots(ChatModerationActionFieldAccessors, action, action.ChatModerationActionId);
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => action.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareChatExportWriteAsync(int departmentId, ChatExport export,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (export == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(export, null, ChatExportFieldAccessors);
+			var slots = CollectTextWriteSlots(ChatExportFieldAccessors, export, export.ChatExportId);
+
+			AddBinaryWriteSlot(slots, ChatExportDataFieldId, export.ChatExportId, export.Data,
+				bytes => export.Data = bytes);
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => export.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		/// <summary>Every plaintext cataloged text column of one row, as write slots.</summary>
+		private static List<WriteSlot> CollectTextWriteSlots<T>(
+			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, T entity, string rowKey)
+			where T : class
+		{
+			var slots = new List<WriteSlot>();
+			foreach (var accessor in accessors)
+			{
+				var value = accessor.Value.Get(entity);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(entity, envelope) });
+			}
+
+			return slots;
+		}
+
+		private static void AddBinaryWriteSlot(List<WriteSlot> slots, string fieldId, string rowKey,
+			byte[] payload, Action<byte[]> apply)
+		{
+			if (payload == null || payload.Length == 0 || IsBinaryEnveloped(payload))
+				return;
+
+			slots.Add(new WriteSlot
+			{
+				FieldId = fieldId,
+				RowKey = rowKey,
+				IsBinary = true,
+				WireValue = Convert.ToBase64String(payload),
+				Apply = envelope => apply(Convert.FromBase64String(envelope))
+			});
+		}
+
+		private async Task<ProtectedWriteResult> FinishModerationWriteAsync(int departmentId, string grantToken,
+			string userId, bool workloadCaller, List<WriteSlot> slots, Action markProtected, bool sentinelsHandled,
+			CancellationToken cancellationToken)
+		{
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				markProtected, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot, so
+			// EncryptSlotsAsync has nothing to report and the caller would not re-persist.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareUnitLogWriteAsync(int departmentId, UnitLog log,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (log == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(log, null, UnitLogFieldAccessors);
+			var slots = CollectTextWriteSlots(UnitLogFieldAccessors, log, log.UnitLogId.ToString(CultureInfo.InvariantCulture));
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => log.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareUserStateWriteAsync(int departmentId, UserState state,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (state == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(state, null, UserStateFieldAccessors);
+			var slots = CollectTextWriteSlots(UserStateFieldAccessors, state, state.UserStateId.ToString(CultureInfo.InvariantCulture));
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => state.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareCalendarItemWriteAsync(int departmentId, CalendarItem item,
+			CalendarItem existingItem, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (item == null)
+				return ProtectedWriteResult.Allowed();
+
+			// A calendar item IS edited through a form, so a concealed value can be posted back as
+			// the placeholder; the stored row restores it.
+			var sentinelsHandled = ApplySentinelPolicy(item, existingItem, CalendarItemFieldAccessors);
+			var slots = CollectTextWriteSlots(CalendarItemFieldAccessors, item, item.CalendarItemId.ToString(CultureInfo.InvariantCulture));
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => item.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareDocumentWriteAsync(int departmentId, Document document,
+			Document existingDocument, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default)
+		{
+			if (document == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(document, existingDocument, DocumentFieldAccessors);
+			var rowKey = document.DocumentId.ToString(CultureInfo.InvariantCulture);
+			var slots = CollectTextWriteSlots(DocumentFieldAccessors, document, rowKey);
+
+			AddBinaryWriteSlot(slots, DocumentDataFieldId, rowKey, document.Data, bytes => document.Data = bytes);
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => document.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareDistributionListWriteAsync(int departmentId,
+			DistributionList list, DistributionList existingList, string grantToken, string userId,
+			bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (list == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(list, existingList, DistributionListFieldAccessors);
+			var slots = CollectTextWriteSlots(DistributionListFieldAccessors, list,
+				list.DistributionListId.ToString(CultureInfo.InvariantCulture));
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => list.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
 		public async Task<ProtectedWriteResult> PrepareCallLogWriteAsync(int departmentId, CallLog log,
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
 		{
 			if (log == null)
 				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(log, null, CallLogFieldAccessors);
 
 			var slots = new List<WriteSlot>();
 			var rowKey = log.CallLogId.ToString(CultureInfo.InvariantCulture);
@@ -523,7 +1346,14 @@ namespace Resgrid.Services
 
 			// No marker column on CallLogs, so nothing to flag — the sweep and the residue counts
 			// work off envelope detection on the column itself.
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedWriteResult> PrepareLogWriteAsync(int departmentId, Log log,
@@ -531,6 +1361,11 @@ namespace Resgrid.Services
 		{
 			if (log == null)
 				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(log, null, LogFieldAccessors);
 
 			var slots = new List<WriteSlot>();
 			var rowKey = log.LogId.ToString(CultureInfo.InvariantCulture);
@@ -545,7 +1380,14 @@ namespace Resgrid.Services
 				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(log, envelope) });
 			}
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedReadResult> ResolveUnitStatesForReadAsync(int departmentId,
@@ -701,6 +1543,12 @@ namespace Resgrid.Services
 			if (call == null)
 				return ProtectedWriteResult.Allowed();
 
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(call, existingCall, CallFieldAccessors);
+
+
 			var slots = new List<WriteSlot>();
 			var rowKey = call.CallId.ToString(CultureInfo.InvariantCulture);
 			foreach (var accessor in CallFieldAccessors)
@@ -731,7 +1579,14 @@ namespace Resgrid.Services
 				});
 			}
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedWriteResult> PrepareCallNoteWriteAsync(int departmentId, CallNote note,
@@ -739,6 +1594,11 @@ namespace Resgrid.Services
 		{
 			if (note == null)
 				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(note, null, NoteFieldAccessors);
 
 			var slots = new List<WriteSlot>();
 			var rowKey = note.CallNoteId.ToString(CultureInfo.InvariantCulture);
@@ -772,8 +1632,15 @@ namespace Resgrid.Services
 					Apply = envelope => { note.ProtectedLongitudeEnvelope = envelope; note.Longitude = null; }
 				});
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
 				() => note.IsProtected = true, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedWriteResult> PrepareCallAttachmentWriteAsync(int departmentId, CallAttachment attachment,
@@ -781,6 +1648,11 @@ namespace Resgrid.Services
 		{
 			if (attachment == null)
 				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(attachment, null, AttachmentFieldAccessors);
 
 			var slots = new List<WriteSlot>();
 			var rowKey = attachment.CallAttachmentId.ToString(CultureInfo.InvariantCulture);
@@ -822,8 +1694,15 @@ namespace Resgrid.Services
 					Apply = envelopeBase64 => attachment.Data = Convert.FromBase64String(envelopeBase64)
 				});
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
 				() => attachment.IsProtected = true, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedWriteResult> PrepareCertificationWriteAsync(int departmentId,
@@ -833,8 +1712,13 @@ namespace Resgrid.Services
 			if (certification == null)
 				return ProtectedWriteResult.Allowed();
 
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(certification, existingCertification, CertificationFieldAccessors);
+
+
 			var slots = new List<WriteSlot>();
-			var restored = false;
 			var rowKey = certification.PersonnelCertificationId.ToString(CultureInfo.InvariantCulture);
 			foreach (var accessor in CertificationFieldAccessors)
 			{
@@ -845,10 +1729,7 @@ namespace Resgrid.Services
 				if (value == ProtectedDataEnvelope.RedactionValue)
 				{
 					if (existingCertification != null)
-					{
 						accessor.Value.Set(certification, accessor.Value.Get(existingCertification));
-						restored = true;
-					}
 
 					continue;
 				}
@@ -883,7 +1764,7 @@ namespace Resgrid.Services
 			// without this the transiently-saved row keeps the literal REDACTED placeholder and the
 			// member's certification number and file name are gone. Reported through the result
 			// rather than left to each caller to special-case, the way calls and contacts do.
-			if (restored && result.Success && !result.Changed)
+			if (sentinelsHandled && result.Success && !result.Changed)
 				result.Changed = true;
 
 			return result;
@@ -894,6 +1775,11 @@ namespace Resgrid.Services
 		{
 			if (contact == null)
 				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(contact, existingContact, ContactFieldAccessors);
 
 			var slots = new List<WriteSlot>();
 			var rowKey = contact.ContactId;
@@ -925,7 +1811,14 @@ namespace Resgrid.Services
 					Apply = envelopeBase64 => contact.Image = Convert.FromBase64String(envelopeBase64)
 				});
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedWriteResult> PrepareContactNoteWriteAsync(int departmentId, ContactNote note,
@@ -933,6 +1826,11 @@ namespace Resgrid.Services
 		{
 			if (note == null)
 				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(note, null, ContactNoteFieldAccessors);
 
 			var slots = new List<WriteSlot>();
 			var rowKey = note.ContactNoteId;
@@ -947,7 +1845,14 @@ namespace Resgrid.Services
 				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(note, envelope) });
 			}
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedWriteResult> PrepareUnitStateWriteAsync(int departmentId, UnitState state,
@@ -955,6 +1860,11 @@ namespace Resgrid.Services
 		{
 			if (state == null)
 				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(state, null, UnitStateFieldAccessors);
 
 			var slots = new List<WriteSlot>();
 			var rowKey = state.UnitStateId.ToString(CultureInfo.InvariantCulture);
@@ -988,8 +1898,15 @@ namespace Resgrid.Services
 					Apply = envelope => { state.ProtectedLongitudeEnvelope = envelope; state.Longitude = null; }
 				});
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
 				() => state.IsProtected = true, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		public async Task<ProtectedWriteResult> PrepareUdfFieldValueWriteAsync(int departmentId, UdfFieldValue value,
@@ -997,6 +1914,12 @@ namespace Resgrid.Services
 		{
 			if (value == null)
 				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored.
+			var sentinelsHandled = ApplySentinelPolicy(value, null, UdfFieldValueAccessors);
+
 
 			var slots = new List<WriteSlot>();
 			foreach (var accessor in UdfFieldValueAccessors)
@@ -1016,7 +1939,14 @@ namespace Resgrid.Services
 				});
 			}
 
-			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, null, cancellationToken);
+
+			// A restore or neutralization mutates the entity without producing a broker slot,
+			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
 		}
 
 		/// <summary>
@@ -1257,6 +2187,132 @@ namespace Resgrid.Services
 					Owner = owner,
 					Reveal = plaintext => set(value, plaintext),
 					Redact = () => set(value, ProtectedDataEnvelope.RedactionValue)
+				});
+			}
+		}
+
+		/// <summary>
+		/// Collects every enveloped text column of one row. The moderation family is six tables of
+		/// plain text columns with no companions, so they all share this instead of six near-identical
+		/// loops.
+		/// </summary>
+		private static void CollectTextSlots<T>(ProtectedReadResult owner, List<Slot> slots,
+			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, T entity, string rowKey)
+			where T : class
+		{
+			foreach (var accessor in accessors)
+			{
+				var value = accessor.Value.Get(entity);
+				if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new Slot
+				{
+					FieldId = accessor.Key,
+					RowKey = rowKey,
+					WireValue = value,
+					Owner = owner,
+					Reveal = plaintext => set(entity, plaintext),
+					Redact = () => set(entity, ProtectedDataEnvelope.RedactionValue)
+				});
+			}
+		}
+
+		/// <summary>
+		/// An enveloped binary payload either resolves (the caller opted in) or is STRIPPED. It is
+		/// never handed back as ciphertext: these are files and export archives, and a serializer
+		/// downstream would happily write the bytes to a response.
+		/// </summary>
+		private static void CollectBinarySlot(ProtectedReadResult owner, List<Slot> slots, string fieldId,
+			string rowKey, byte[] payload, bool include, Action<byte[]> apply)
+		{
+			if (!IsBinaryEnveloped(payload))
+				return;
+
+			if (!include)
+			{
+				// Metadata-only resolution: strip the ciphertext bytes so a serializer can never
+				// carry them out; the endpoints that serve the file opt into decryption.
+				apply(null);
+				owner.RedactedFields.Add(fieldId);
+				return;
+			}
+
+			slots.Add(new Slot
+			{
+				FieldId = fieldId,
+				RowKey = rowKey,
+				WireValue = Convert.ToBase64String(payload),
+				IsBinary = true,
+				Owner = owner,
+				Reveal = plaintext => apply(Convert.FromBase64String(plaintext)),
+				Redact = () => apply(null)
+			});
+		}
+
+		private static void CollectMessageSlots(ProtectedReadResult owner, Message message, List<Slot> slots)
+		{
+			var rowKey = message.MessageId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in MessageFieldAccessors)
+			{
+				var value = accessor.Value.Get(message);
+				if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new Slot
+				{
+					FieldId = accessor.Key,
+					RowKey = rowKey,
+					WireValue = value,
+					Owner = owner,
+					Reveal = plaintext => set(message, plaintext),
+					Redact = () => set(message, ProtectedDataEnvelope.RedactionValue)
+				});
+			}
+		}
+
+		private static void CollectMessageRecipientSlots(ProtectedReadResult owner, MessageRecipient recipient,
+			List<Slot> slots)
+		{
+			var rowKey = recipient.MessageRecipientId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in MessageRecipientFieldAccessors)
+			{
+				var value = accessor.Value.Get(recipient);
+				if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new Slot
+				{
+					FieldId = accessor.Key,
+					RowKey = rowKey,
+					WireValue = value,
+					Owner = owner,
+					Reveal = plaintext => set(recipient, plaintext),
+					Redact = () => set(recipient, ProtectedDataEnvelope.RedactionValue)
+				});
+			}
+
+			foreach (var accessor in MessageRecipientCompanionAccessors)
+			{
+				var envelope = accessor.Value.GetEnvelope(recipient);
+				if (!ProtectedDataEnvelope.HasEnvelopePrefix(envelope))
+					continue;
+
+				var setTyped = accessor.Value.SetTyped;
+				slots.Add(new Slot
+				{
+					FieldId = accessor.Key,
+					RowKey = rowKey,
+					WireValue = envelope,
+					Owner = owner,
+					// Companion reveal: the envelope held the invariant string of the typed value;
+					// an unparseable payload stays concealed (typed column remains null).
+					Reveal = plaintext => setTyped(recipient,
+						decimal.TryParse(plaintext, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : null),
+					Redact = () => setTyped(recipient, null)
 				});
 			}
 		}

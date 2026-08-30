@@ -53,7 +53,7 @@ namespace Resgrid.Chatbot.Services
 
 				if (message.Type == (int)MessageTypes.Poll)
 				{
-					if (!TextResponsePromptMetadata.TryGetPollDepartmentId(recipient.Note, out var pollDepartmentId)
+					if (!TextResponsePromptMetadata.TryGetPollDepartmentId(recipient.PromptMetadata, out var pollDepartmentId)
 						|| pollDepartmentId != departmentId)
 						continue;
 
@@ -67,7 +67,7 @@ namespace Resgrid.Chatbot.Services
 					continue;
 				}
 
-				if (!TextResponsePromptMetadata.TryGetCalendarItemId(recipient.Note, out var calendarItemId)
+				if (!TextResponsePromptMetadata.TryGetCalendarItemId(recipient.PromptMetadata, out var calendarItemId)
 					|| !seenCalendarItems.Add(calendarItemId))
 					continue;
 
@@ -102,7 +102,7 @@ namespace Resgrid.Chatbot.Services
 
 			if (target.Type == PendingTextResponseType.Poll)
 			{
-				if (!TextResponsePromptMetadata.TryGetPollDepartmentId(recipient.Note, out var pollDepartmentId)
+				if (!TextResponsePromptMetadata.TryGetPollDepartmentId(recipient.PromptMetadata, out var pollDepartmentId)
 					|| pollDepartmentId != session.DepartmentId)
 					return null;
 

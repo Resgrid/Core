@@ -208,6 +208,30 @@
   <data name="AdpProtectedContact" xml:space="preserve">
     <value>جهة اتصال محمية</value>
   </data>
+  <data name="AdpProtectedPerson" xml:space="preserve">
+    <value>سجل أفراد محمي</value>
+  </data>
+  <data name="AdpProtectedUnit" xml:space="preserve">
+    <value>سجل وحدة محمي</value>
+  </data>
+  <data name="AdpProtectedProfile" xml:space="preserve">
+    <value>ملف شخصي محمي</value>
+  </data>
+  <data name="AdpProtectedMessage" xml:space="preserve">
+    <value>رسالة محمية</value>
+  </data>
+  <data name="AdpProtectedDocument" xml:space="preserve">
+    <value>مستند محمي</value>
+  </data>
+  <data name="AdpProtectedCalendarEntry" xml:space="preserve">
+    <value>إدخال تقويم محمي</value>
+  </data>
+  <data name="AdpProtectedModeration" xml:space="preserve">
+    <value>قائمة إشراف محمية</value>
+  </data>
+  <data name="AdpProtectedUnitLogs" xml:space="preserve">
+    <value>سجلات وحدة محمية</value>
+  </data>
   <data name="AdpProtectedBannerDescription" xml:space="preserve">
     <value>مشفّر أثناء التخزين لهذه الإدارة. لا يزال بإمكان المستخدمين المصرح لهم والقنوات المعتمدة الكشف عنه.</value>
   </data>

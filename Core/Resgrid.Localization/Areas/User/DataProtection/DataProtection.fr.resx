@@ -100,6 +100,21 @@
   <data name="CancelQueuedEnrollment" xml:space="preserve">
     <value>Annuler l'inscription en file d'attente</value>
   </data>
+  <data name="MigrationProgressHeader" xml:space="preserve">
+    <value>Progression de la migration</value>
+  </data>
+  <data name="MigrationProgressRows" xml:space="preserve">
+    <value>{0} sur {1} lignes traitées</value>
+  </data>
+  <data name="MigrationProgressTable" xml:space="preserve">
+    <value>Traitement en cours de {0}.</value>
+  </data>
+  <data name="MigrationProgressPending" xml:space="preserve">
+    <value>Aucune ligne n'a encore été comptée : la première fenêtre nocturne n'a pas commencé.</value>
+  </data>
+  <data name="MigrationProgressAnomalies" xml:space="preserve">
+    <value>{0} lignes n'ont pas pu être traitées et nécessitent votre attention.</value>
+  </data>
   <data name="MigrationInProgress" xml:space="preserve">
     <value>La migration est en cours. Le travail n'a lieu que dans votre fenêtre nocturne ({0}–{1}, {2}) ; en dehors, votre département est pleinement opérationnel.</value>
   </data>

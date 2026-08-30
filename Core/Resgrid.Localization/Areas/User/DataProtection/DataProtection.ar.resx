@@ -100,6 +100,21 @@
   <data name="CancelQueuedEnrollment" xml:space="preserve">
     <value>إلغاء التسجيل في قائمة الانتظار</value>
   </data>
+  <data name="MigrationProgressHeader" xml:space="preserve">
+    <value>تقدّم الترحيل</value>
+  </data>
+  <data name="MigrationProgressRows" xml:space="preserve">
+    <value>تمت معالجة {0} من {1} صفًا</value>
+  </data>
+  <data name="MigrationProgressTable" xml:space="preserve">
+    <value>تجري المعالجة حاليًا: {0}.</value>
+  </data>
+  <data name="MigrationProgressPending" xml:space="preserve">
+    <value>لم يتم إحصاء أي صفوف بعد — لم تبدأ النافذة الليلية الأولى.</value>
+  </data>
+  <data name="MigrationProgressAnomalies" xml:space="preserve">
+    <value>تعذّرت معالجة {0} صفًا وتحتاج إلى انتباه.</value>
+  </data>
   <data name="MigrationInProgress" xml:space="preserve">
     <value>الترحيل قيد التنفيذ. يجري العمل فقط داخل نافذتك الليلية ({0}–{1}، {2})؛ وخارجها تعمل إدارتك بكامل الخدمة.</value>
   </data>

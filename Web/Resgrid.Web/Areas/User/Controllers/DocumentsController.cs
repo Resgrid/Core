@@ -25,10 +25,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Private Members and Constructors
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDocumentsService _documentsService;
+		private readonly IProtectedReadService _protectedReadService;
 		private readonly IEventAggregator _eventAggregator;
 
-		public DocumentsController(IDepartmentsService departmentsService, IDocumentsService documentsService, IEventAggregator eventAggregator)
+		public DocumentsController(IDepartmentsService departmentsService, IDocumentsService documentsService,
+			IEventAggregator eventAggregator, IProtectedReadService protectedReadService)
 		{
+			_protectedReadService = protectedReadService;
 			_departmentsService = departmentsService;
 			_documentsService = documentsService;
 			_eventAggregator = eventAggregator;
@@ -41,6 +44,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new IndexView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			model.Documents = await _documentsService.GetFilteredDocumentsByDepartmentIdAsync(DepartmentId, type, category);
+
+			// ADP (catalog v9): server-rendered pages always render protected values as REDACTED - a
+			// grant lives only in the browser. The file bytes are stripped here as well, so a listing
+			// can never carry ciphertext.
+			await _protectedReadService.ResolveDocumentsForReadAsync(DepartmentId, model.Documents, null, UserId);
 
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				model.Documents = model.Documents.Where(x => !x.AdminsOnly).ToList();
@@ -83,9 +91,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
 
+			// ADP: REDACTED on the server; the reveal is client-side (step-up modal then RevealDocument).
+			var protectedRead = await _protectedReadService.ResolveDocumentsForReadAsync(DepartmentId,
+				new[] { document }, null, UserId);
+
 			var canManageDocument = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || document.UserId == UserId;
 			var model = new ViewDocumentView
 			{
+				IsProtectedDocument = protectedRead.IsProtected,
 				Document = document,
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				UploadedByName = await UserHelper.GetFullNameForUser(document.UserId),
@@ -95,6 +108,40 @@ namespace Resgrid.Web.Areas.User.Controllers
 			};
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2). A grant proves the CALLER stepped up; it is never an
+		/// authorization decision about the target, so the document is authorized exactly as the page
+		/// hosting the reveal authorizes it - including the admins-only flag.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Documents_View)]
+		public async Task<IActionResult> RevealDocument([FromForm] int documentId)
+		{
+			var document = await _documentsService.GetDocumentByIdAsync(documentId);
+
+			if (document == null || document.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
+			string grantToken = Request.Headers["X-Resgrid-Protected-Grant"];
+
+			// Metadata only: the file itself is fetched separately through the reveal module's
+			// download helper, which carries the grant on that request.
+			var resolved = await _protectedReadService.ResolveDocumentsForReadAsync(DepartmentId,
+				new[] { document }, grantToken, UserId);
+
+			if (resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			var fields = Resgrid.Services.ProtectedReadService.DocumentFieldAccessors
+				.ToDictionary(a => a.Key, a => a.Value.Get(document));
+
+			return Json(new { success = true, fields });
 		}
 
 		[HttpGet]
@@ -118,6 +165,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
+
+			// ADP: the file decrypts only for a caller presenting a valid grant. A plain <a href>
+			// cannot carry the header, so the view downloads through resgridAdpReveal.download().
+			var protectedRead = await _protectedReadService.ResolveDocumentsForReadAsync(DepartmentId,
+				new[] { document }, Request.Headers["X-Resgrid-Protected-Grant"], UserId, includeData: true);
+
+			if (document.Data == null || ProtectedReadService.IsBinaryEnveloped(document.Data))
+			{
+				// Either the payload could not be decrypted or it is still enveloped. Ciphertext is
+				// never served as a file; the caller is told nothing beyond "not available".
+				Logging.LogInfo($"Protected document {document.DocumentId} was not served ({protectedRead.ProtectedReason ?? "enveloped"}).");
+				return NotFound();
+			}
 
 			return new FileContentResult(document.Data, String.IsNullOrWhiteSpace(document.Type) ? "application/octet-stream" : document.Type)
 			{

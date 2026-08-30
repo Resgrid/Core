@@ -90,6 +90,24 @@
   <data name="GdprExportWithheldHowTo" xml:space="preserve">
     <value>لعرض هذه القيم، سجّل الدخول إلى Resgrid وافتح الصفحة التي تنتمي إليها، حيث يمكنك إظهارها بعد تأكيد هويتك. كما يمكن لمسؤول إدارتك تزويدك بها.</value>
   </data>
+  <data name="AdpProtectedMessageSubject" xml:space="preserve">
+    <value>رسالة محمية</value>
+  </data>
+  <data name="AdpProtectedMessageNotice" xml:space="preserve">
+    <value>في انتظارك رسالة محمية. سجّل الدخول إلى Resgrid لقراءتها.</value>
+  </data>
+  <data name="AdpProtectedCalendarTitle" xml:space="preserve">
+    <value>إدخال تقويم محمي</value>
+  </data>
+  <data name="AdpProtectedCalendarLocation" xml:space="preserve">
+    <value>موقع محمي</value>
+  </data>
+  <data name="AdpProtectedDispatchNotice" xml:space="preserve">
+    <value>يتوفر بلاغ محمي. سجّل الدخول إلى Resgrid لعرض التفاصيل.</value>
+  </data>
+  <data name="AdpProtectedDispatchName" xml:space="preserve">
+    <value>بلاغ محمي</value>
+  </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>تصدير بياناتك من Resgrid جاهز</value>
   </data>

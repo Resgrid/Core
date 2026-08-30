@@ -90,6 +90,24 @@
   <data name="GdprExportWithheldHowTo" xml:space="preserve">
     <value>Για να δείτε αυτές τις τιμές, συνδεθείτε στο Resgrid και ανοίξτε τη σελίδα στην οποία ανήκουν, όπου μπορείτε να τις εμφανίσετε αφού επιβεβαιώσετε την ταυτότητά σας. Μπορεί επίσης να σας τις δώσει ο διαχειριστής της υπηρεσίας σας.</value>
   </data>
+  <data name="AdpProtectedMessageSubject" xml:space="preserve">
+    <value>Προστατευμένο μήνυμα</value>
+  </data>
+  <data name="AdpProtectedMessageNotice" xml:space="preserve">
+    <value>Σας περιμένει ένα προστατευμένο μήνυμα. Συνδεθείτε στο Resgrid για να το διαβάσετε.</value>
+  </data>
+  <data name="AdpProtectedCalendarTitle" xml:space="preserve">
+    <value>Προστατευμένη καταχώριση ημερολογίου</value>
+  </data>
+  <data name="AdpProtectedCalendarLocation" xml:space="preserve">
+    <value>προστατευμένη τοποθεσία</value>
+  </data>
+  <data name="AdpProtectedDispatchNotice" xml:space="preserve">
+    <value>Υπάρχει διαθέσιμη προστατευμένη κλήση. Συνδεθείτε στο Resgrid για να δείτε τις λεπτομέρειες.</value>
+  </data>
+  <data name="AdpProtectedDispatchName" xml:space="preserve">
+    <value>Προστατευμένη κλήση</value>
+  </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>Η εξαγωγή δεδομένων σας από το Resgrid είναι έτοιμη</value>
   </data>

@@ -463,11 +463,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _protectedReadService.ResolveMemberSensitiveDataForReadAsync(DepartmentId, new[] { memberAddresses },
 					Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 
-			// The legacy shared-Addresses link is read ONLY while the department is unprotected and
-			// relocation has not reached this member yet. Once protection is enforced that link is a
-			// plaintext copy of data this department has already encrypted, and rendering it would
-			// walk straight around the reveal pipeline.
-			var legacyAddressFallbackAllowed = !await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId);
+			// M0141 (contract) cleared the legacy shared-Addresses links and deleted the rows nothing
+			// else referenced, so there is no fallback left to read: the department-scoped copy is
+			// the only copy. The protection state is still needed for the reveal banner below.
+			var protectionEnforced = await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId);
+
+			// When protection is enforced, this page is showing placeholders for the identification
+			// number, the addresses, the emergency contacts and the custom fields, and a step-up can
+			// open them.
+			model.IsProtectedProfile = protectionEnforced;
 
 			if (memberAddresses != null && !string.IsNullOrWhiteSpace(memberAddresses.HomeAddress1))
 			{
@@ -476,15 +480,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.PhysicalCountry = memberAddresses.HomeCountry;
 				model.PhysicalPostalCode = memberAddresses.HomePostalCode;
 				model.PhysicalState = memberAddresses.HomeState;
-			}
-			else if (legacyAddressFallbackAllowed && model.Profile != null && model.Profile.HomeAddressId.HasValue)
-			{
-				var homeAddress = await _addressService.GetAddressByIdAsync(model.Profile.HomeAddressId.Value);
-				model.PhysicalAddress1 = homeAddress.Address1;
-				model.PhysicalCity = homeAddress.City;
-				model.PhysicalCountry = homeAddress.Country;
-				model.PhysicalPostalCode = homeAddress.PostalCode;
-				model.PhysicalState = homeAddress.State;
 			}
 
 			if (memberAddresses != null && !string.IsNullOrWhiteSpace(memberAddresses.MailingAddress1))
@@ -517,23 +512,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 					SameComponent(memberAddresses.MailingState, memberAddresses.HomeState) &&
 					SameComponent(memberAddresses.MailingPostalCode, memberAddresses.HomePostalCode) &&
 					SameComponent(memberAddresses.MailingCountry, memberAddresses.HomeCountry);
-			}
-			else if (legacyAddressFallbackAllowed && model.Profile != null && model.Profile.MailingAddressId.HasValue)
-			{
-				if (model.Profile.HomeAddressId.HasValue &&
-					model.Profile.MailingAddressId.Value == model.Profile.HomeAddressId.Value)
-				{
-					model.MailingAddressSameAsPhysical = true;
-				}
-				else
-				{
-					var mailingAddress = await _addressService.GetAddressByIdAsync(model.Profile.MailingAddressId.Value);
-					model.MailingAddress1 = mailingAddress.Address1;
-					model.MailingCity = mailingAddress.City;
-					model.MailingCountry = mailingAddress.Country;
-					model.MailingPostalCode = mailingAddress.PostalCode;
-					model.MailingState = mailingAddress.State;
-				}
 			}
 
 			if (model.Profile != null)
@@ -1379,6 +1357,52 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion GDPR Data Export
+
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2) for the profile page: the member's department-scoped
+		/// sensitive data (identification number, home and mailing address) and their custom field
+		/// values. Emergency contacts are NOT included — they are rendered by their own module from
+		/// GetEmergencyContacts, which already reads this same grant header, so the page re-fetches
+		/// that list when a reveal succeeds.
+		///
+		/// A grant proves the CALLER stepped up; it says nothing about whose profile they may open,
+		/// so the subject is authorized with the same rule the page itself runs on.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<IActionResult> RevealUserProfile([FromForm] string userId)
+		{
+			if (string.IsNullOrWhiteSpace(userId))
+				userId = UserId;
+
+			if (!await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, userId))
+				return Unauthorized();
+
+			string grantToken = Request.Headers["X-Resgrid-Protected-Grant"];
+			var fields = new Dictionary<string, string>();
+
+			var sensitive = await _memberSensitiveDataService.GetByDepartmentAndUserAsync(DepartmentId, userId);
+			if (sensitive != null)
+			{
+				var resolvedSensitive = await _protectedReadService.ResolveMemberSensitiveDataForReadAsync(
+					DepartmentId, new[] { sensitive }, grantToken, UserId);
+
+				if (resolvedSensitive.IsProtected && resolvedSensitive.ProtectedReason != null)
+					return Json(new { success = false, error = resolvedSensitive.ProtectedReason });
+
+				foreach (var accessor in Resgrid.Services.ProtectedReadService.MemberSensitiveDataAccessors)
+					fields[accessor.Key] = accessor.Value.Get(sensitive);
+			}
+
+			var resolvedUdf = await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
+				_protectedReadService, DepartmentId, UdfEntityType.Personnel, userId, grantToken, UserId);
+
+			if (resolvedUdf != null && resolvedUdf.IsProtected && resolvedUdf.ProtectedReason != null)
+				return Json(new { success = false, error = resolvedUdf.ProtectedReason });
+
+			return Json(new { success = true, fields });
+		}
 
 		#region Emergency contacts
 

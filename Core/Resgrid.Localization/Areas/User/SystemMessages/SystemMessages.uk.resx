@@ -90,6 +90,24 @@
   <data name="GdprExportWithheldHowTo" xml:space="preserve">
     <value>Щоб побачити ці значення, увійдіть у Resgrid і відкрийте сторінку, до якої вони належать, — там ви зможете показати їх після підтвердження особи. Їх також може надати адміністратор вашого підрозділу.</value>
   </data>
+  <data name="AdpProtectedMessageSubject" xml:space="preserve">
+    <value>Захищене повідомлення</value>
+  </data>
+  <data name="AdpProtectedMessageNotice" xml:space="preserve">
+    <value>На вас чекає захищене повідомлення. Увійдіть у Resgrid, щоб прочитати його.</value>
+  </data>
+  <data name="AdpProtectedCalendarTitle" xml:space="preserve">
+    <value>Захищений запис календаря</value>
+  </data>
+  <data name="AdpProtectedCalendarLocation" xml:space="preserve">
+    <value>захищеному місці</value>
+  </data>
+  <data name="AdpProtectedDispatchNotice" xml:space="preserve">
+    <value>Доступний захищений виклик. Увійдіть у Resgrid, щоб переглянути деталі.</value>
+  </data>
+  <data name="AdpProtectedDispatchName" xml:space="preserve">
+    <value>Захищений виклик</value>
+  </data>
   <data name="GdprExportReadySubject" xml:space="preserve">
     <value>Ваш експорт даних Resgrid готовий</value>
   </data>

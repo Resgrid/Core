@@ -29,12 +29,14 @@ namespace Resgrid.Services
 		private readonly IChatChannelService _chatChannelService;
 		private readonly IChatPermissionService _chatPermissionService;
 		private readonly IAuditService _auditService;
+		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 		private readonly IEventAggregator _eventAggregator;
 
 		public ChatModerationService(IChatMessageFlagRepository chatMessageFlagRepository, IChatModerationActionRepository chatModerationActionRepository,
 			IChatExportRepository chatExportRepository, IChatChannelRepository chatChannelRepository, IChatChannelMemberRepository chatChannelMemberRepository,
 			IChatMessageRepository chatMessageRepository, IChatMessageService chatMessageService, IChatChannelService chatChannelService,
-			IChatPermissionService chatPermissionService, IAuditService auditService, IEventAggregator eventAggregator)
+			IChatPermissionService chatPermissionService, IAuditService auditService, IEventAggregator eventAggregator,
+			Lazy<IProtectedWriteService> protectedWriteService)
 		{
 			_chatMessageFlagRepository = chatMessageFlagRepository;
 			_chatModerationActionRepository = chatModerationActionRepository;
@@ -46,6 +48,7 @@ namespace Resgrid.Services
 			_chatChannelService = chatChannelService;
 			_chatPermissionService = chatPermissionService;
 			_auditService = auditService;
+			_protectedWriteService = protectedWriteService;
 			_eventAggregator = eventAggregator;
 		}
 
@@ -65,7 +68,7 @@ namespace Resgrid.Services
 			if (existing != null)
 				return existing;
 
-			var flag = await _chatMessageFlagRepository.InsertAsync(new ChatMessageFlag
+			var newFlag = new ChatMessageFlag
 			{
 				ChatMessageFlagId = Guid.NewGuid().ToString(),
 				ChatMessageId = chatMessageId,
@@ -76,7 +79,17 @@ namespace Resgrid.Services
 				Note = note,
 				FlaggedOn = DateTime.UtcNow,
 				Status = (int)ChatFlagStatus.Open
-			}, cancellationToken);
+			};
+
+			// ADP write safety net (plan 5.3, catalog v8). The id is assigned here rather than by the
+			// database, so the row is enveloped BEFORE the insert and no plaintext ever reaches the
+			// table. Fails closed: a flag that cannot be protected is not written.
+			await ProtectChatModerationWriteAsync(
+				() => _protectedWriteService.Value.PrepareChatMessageFlagWriteAsync(newFlag.DepartmentId, newFlag,
+					null, null, workloadCaller: true, cancellationToken),
+				$"chat message flag {newFlag.ChatMessageFlagId}");
+
+			var flag = await _chatMessageFlagRepository.InsertAsync(newFlag, cancellationToken);
 
 			PublishModerationEvent(message.DepartmentId, message.ChatChannelId, new { Type = "flagged", flag.ChatMessageFlagId, chatMessageId });
 
@@ -229,6 +242,8 @@ namespace Resgrid.Services
 					return null;
 			}
 
+			// Queued exports carry no payload yet; the worker runs the same net when it attaches the
+			// archive (ChatExportLogic).
 			var export = await _chatExportRepository.InsertAsync(new ChatExport
 			{
 				ChatExportId = Guid.NewGuid().ToString(),
@@ -308,11 +323,23 @@ namespace Resgrid.Services
 			return member != null && member.DepartmentId == channel.DepartmentId ? member : null;
 		}
 
+		/// <summary>
+		/// ADP write safety net (plan 5.3, catalog v8). Chat moderation rows quote the message that
+		/// was reported and the moderator's reasoning, so they are enveloped before they are written.
+		/// Fails closed by throwing rather than storing the quote in the clear.
+		/// </summary>
+		private static async Task ProtectChatModerationWriteAsync(Func<Task<ProtectedWriteResult>> prepare, string description)
+		{
+			var result = await prepare();
+			if (!result.Success)
+				throw new InvalidOperationException($"Protected write blocked ({result.Reason}); {description} was NOT saved.");
+		}
+
 		private async Task RecordActionAsync(int departmentId, string chatChannelId, string chatMessageId, string targetUserId, int? targetUnitId,
 			ChatModerationActionType actionType, string byUserId, string reason, string detailsJson, AuditLogTypes auditLogType, CancellationToken cancellationToken,
 			ChatModerationContext context = null)
 		{
-			await _chatModerationActionRepository.InsertAsync(new ChatModerationAction
+			var action = new ChatModerationAction
 			{
 				ChatModerationActionId = Guid.NewGuid().ToString(),
 				DepartmentId = departmentId,
@@ -325,7 +352,14 @@ namespace Resgrid.Services
 				PerformedOn = DateTime.UtcNow,
 				Reason = reason,
 				DetailsJson = detailsJson
-			}, cancellationToken);
+			};
+
+			await ProtectChatModerationWriteAsync(
+				() => _protectedWriteService.Value.PrepareChatModerationActionWriteAsync(departmentId, action,
+					null, null, workloadCaller: true, cancellationToken),
+				$"chat moderation action {action.ChatModerationActionId}");
+
+			await _chatModerationActionRepository.InsertAsync(action, cancellationToken);
 
 			// Mirror to the department audit trail with full forensic context for SIEM ingestion. This
 			// is only reached after the action succeeded, so result is always Success; a failed action

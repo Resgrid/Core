@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Threading;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
@@ -47,10 +48,31 @@ namespace Resgrid.Tests.Web.Services
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = httpContext };
 			_activity = new Activity("ModerationControllerTests").Start();
 
-			_controller = new ModerationController(_moderationService.Object, Mock.Of<IAuthorizationService>())
+			_controller = new ModerationController(_moderationService.Object, Mock.Of<IAuthorizationService>(),
+				PassThroughProtectedReads())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
+		}
+
+		/// <summary>
+		/// These tests exercise an unprotected department, where resolution is a no-op. A loose mock
+		/// returns a null Task from the resolve call and NREs at the await.
+		/// </summary>
+		private static IProtectedReadService PassThroughProtectedReads()
+		{
+			var stub = new Mock<IProtectedReadService>();
+			stub.Setup(x => x.ResolveModerationRequestsForReadAsync(It.IsAny<int>(), It.IsAny<IReadOnlyList<ModerationRequest>>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtectedReadResult());
+			stub.Setup(x => x.ResolveModerationReportsForReadAsync(It.IsAny<int>(), It.IsAny<IReadOnlyList<ModerationReport>>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtectedReadResult());
+			stub.Setup(x => x.ResolveModerationActionsForReadAsync(It.IsAny<int>(), It.IsAny<IReadOnlyList<ModerationAction>>(),
+					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtectedReadResult());
+
+			return stub.Object;
 		}
 
 		[TearDown]

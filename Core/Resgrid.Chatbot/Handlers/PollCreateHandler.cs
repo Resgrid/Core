@@ -96,7 +96,7 @@ namespace Resgrid.Chatbot.Handlers
 				foreach (var userId in recipients)
 				{
 					msg.AddRecipient(userId);
-					msg.MessageRecipients.Last().Note = TextResponsePromptMetadata.ForPoll(session.DepartmentId);
+					msg.MessageRecipients.Last().PromptMetadata = TextResponsePromptMetadata.ForPoll(session.DepartmentId);
 				}
 
 				var saved = await _messageService.SaveMessageAsync(msg);

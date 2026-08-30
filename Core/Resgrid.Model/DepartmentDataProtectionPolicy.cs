@@ -93,6 +93,14 @@ namespace Resgrid.Model
 		[ProtoMember(14)]
 		public string AddonBillingReference { get; set; }
 
+		/// <summary>
+		/// The provider event id of the last ADP billing event applied (M0142). Payment providers
+		/// retry and duplicate webhooks, so this is what lets the handler recognise an event it has
+		/// already acted on and refuse to act twice.
+		/// </summary>
+		[ProtoMember(24)]
+		public string LastBillingEventId { get; set; }
+
 		/// <summary>Department-local overnight migration window start, "HH:mm" (default 22:00).</summary>
 		[MaxLength(5)]
 		[ProtoMember(15)]

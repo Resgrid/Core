@@ -35,13 +35,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IShiftsService _shiftsService;
 		private readonly ICalendarService _calendarService;
 		private readonly IModerationService _moderationService;
+		private readonly IProtectedReadService _protectedReadService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> _moderationLocalizer;
 
 		public MessagesController(IMessageService messageService, IDepartmentsService departmentsService, IUsersService usersService,
 			ICommunicationService communicationService, Model.Services.IAuthorizationService authorizationService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, IShiftsService shiftsService, ICalendarService calendarService,
 			IModerationService moderationService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> moderationLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> moderationLocalizer,
+			IProtectedReadService protectedReadService)
 		{
 			_messageService = messageService;
 			_departmentsService = departmentsService;
@@ -54,6 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_calendarService = calendarService;
 			_moderationService = moderationService;
 			_moderationLocalizer = moderationLocalizer;
+			_protectedReadService = protectedReadService;
 		}
 		#endregion Private Members and Constructors
 
@@ -65,6 +68,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			
 			model.User = _usersService.GetUserById(UserId);
 			model.Messages = await _messageService.GetInboxMessagesByUserIdAsync(UserId);
+
+			// ADP (catalog v7): server-rendered pages always render protected values as REDACTED - a
+			// grant lives only in the browser, never in the server session.
+			await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId, model.Messages, null, UserId);
+
 			model.UnreadMessages = await _messageService.GetUnreadMessagesCountByUserIdAsync(UserId);
 			
 			return View(model);
@@ -79,6 +87,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			
 			model.User = _usersService.GetUserById(UserId);
 			model.Messages = await _messageService.GetSentMessagesByUserIdAsync(UserId);
+
+			// ADP: the sender sees placeholders too - the row is encrypted under the department key.
+			await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId, model.Messages, null, UserId);
 
 			return View(model);
 		}
@@ -272,7 +283,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var recipient = model.Message.MessageRecipients?.FirstOrDefault(x => x.UserId == UserId && !x.IsDeleted);
 				if (recipient != null
-					&& TextResponsePromptMetadata.TryGetCalendarItemId(recipient.Note, out var calendarItemId))
+					&& TextResponsePromptMetadata.TryGetCalendarItemId(recipient.PromptMetadata, out var calendarItemId))
 				{
 					var calendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
 					if (calendarItem != null && calendarItem.DepartmentId == DepartmentId
@@ -288,7 +299,42 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			await _messageService.ReadMessageRecipientAsync(messageId, UserId, cancellationToken);
 
+			// ADP (catalog v7): REDACTED on the server, revealed client-side through RevealMessage.
+			var protectedRead = await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId,
+				new List<Message> { model.Message }, null, UserId);
+			model.IsProtectedMessage = protectedRead.IsProtected;
+
 			return View(model);
+		}
+
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2). A grant proves the CALLER stepped up; it is never an
+		/// authorization decision about the target, so the message is authorized exactly as the page
+		/// hosting the reveal authorizes it.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Messages_View)]
+		public async Task<IActionResult> RevealMessage([FromForm] int messageId)
+		{
+			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
+				return Unauthorized();
+
+			var message = await _messageService.GetMessageByIdAsync(messageId);
+			if (message == null)
+				return NotFound();
+
+			string grantToken = Request.Headers["X-Resgrid-Protected-Grant"];
+			var resolved = await _protectedReadService.ResolveMessagesForReadAsync(DepartmentId,
+				new List<Message> { message }, grantToken, UserId);
+
+			if (resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			var fields = Resgrid.Services.ProtectedReadService.MessageFieldAccessors
+				.ToDictionary(a => a.Key, a => a.Value.Get(message));
+
+			return Json(new { success = true, fields });
 		}
 
 		[HttpPost]
@@ -326,7 +372,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var recipient = message.MessageRecipients?.FirstOrDefault(x => x.UserId == UserId && !x.IsDeleted);
 			if (recipient == null
-				|| !TextResponsePromptMetadata.TryGetCalendarItemId(recipient.Note, out var calendarItemId))
+				|| !TextResponsePromptMetadata.TryGetCalendarItemId(recipient.PromptMetadata, out var calendarItemId))
 				return Unauthorized();
 
 			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);

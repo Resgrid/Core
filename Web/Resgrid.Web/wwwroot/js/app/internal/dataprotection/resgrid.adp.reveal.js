@@ -8,7 +8,7 @@
 
 	var REDACTED = 'REDACTED';
 
-	var settings = null;   // { verifyUrl, revealUrl, revealData, antiForgeryToken, messages, onRevealed, onConcealed }
+	var settings = null;   // { verifyUrl, requestGrantUrl, revealUrl, revealData, antiForgeryToken, messages, onRevealed, onConcealed }
 	var grantToken = null;
 	var expiryTimer = null;
 	var revealed = false;
@@ -196,6 +196,37 @@
 		});
 	}
 
+	// A department may release named apps from the step-up prompt (plan 3.3) - a dispatcher on a
+	// live incident cannot stop to read a code off a phone. Ask the server first: it answers with a
+	// grant when this department has exempted this app, and with step_up_required otherwise, which
+	// is what puts the prompt back. The client never decides this; it only asks.
+	//
+	// Any failure falls through to the prompt. Erring towards asking for a second factor is the
+	// direction that cannot cause harm.
+	function requestGrantWithoutStepUp() {
+		if (!settings.requestGrantUrl) {
+			showStepUpModal();
+			return;
+		}
+
+		$.post(settings.requestGrantUrl, { __RequestVerificationToken: settings.antiForgeryToken })
+			.done(function (response) {
+				if (response && response.success && response.grantToken) {
+					grantToken = response.grantToken;
+					if (response.expiresOnUtc)
+						scheduleConceal(response.expiresOnUtc);
+
+					doReveal();
+					return;
+				}
+
+				showStepUpModal();
+			})
+			.fail(function () {
+				showStepUpModal();
+			});
+	}
+
 	function showStepUpModal() {
 		$('#adpStepUpError').hide().text('');
 		$('#adpStepUpCode').val('');
@@ -293,10 +324,12 @@
 			settings = options;
 
 			$('#adpRevealButton').on('click', function () {
-				if (grantToken)
+				if (grantToken) {
 					doReveal();
-				else
-					showStepUpModal();
+					return;
+				}
+
+				requestGrantWithoutStepUp();
 			});
 
 			$('#adpConcealButton').on('click', conceal).hide();

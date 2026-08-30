@@ -73,7 +73,9 @@ namespace Resgrid.Tests.Services
 				new Mock<ISubscriptionsService>().Object,
 				_cacheProvider.Object,
 				new ProtectedFieldCatalog(),
-				new Mock<IDepartmentDataProtectionMigrationRepository>().Object);
+				new Mock<IDepartmentDataProtectionMigrationRepository>().Object,
+				new Mock<IDepartmentLockService>().Object,
+				new Mock<IDepartmentKeyService>().Object);
 		}
 
 		private static AdpAddonBillingEvent Event(AdpAddonBillingEventKind kind, string eventId = "evt-1") =>

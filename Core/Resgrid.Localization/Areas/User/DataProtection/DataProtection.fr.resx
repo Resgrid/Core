@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -402,5 +402,137 @@
   </data>
   <data name="ConfirmRemoveContact" xml:space="preserve">
     <value>Supprimer ce contact d'urgence ?</value>
+  </data>
+  <data name="AddonPageTitle" xml:space="preserve">
+    <value>Module Protection avancée des données</value>
+  </data>
+  <data name="AddonBreadcrumbSubscription" xml:space="preserve">
+    <value>Abonnement</value>
+  </data>
+  <data name="AddonBuyHeading" xml:space="preserve">
+    <value>Ajouter la Protection avancée des données</value>
+  </data>
+  <data name="AddonManageHeading" xml:space="preserve">
+    <value>Gérer la Protection avancée des données</value>
+  </data>
+  <data name="AddonPerYear" xml:space="preserve">
+    <value>par an</value>
+  </data>
+  <data name="AddonSummary" xml:space="preserve">
+    <value>La Protection avancée des données chiffre les champs sensibles de votre service avec une clé réservée à votre seul service. Une fois activée, les valeurs protégées restent masquées jusqu'à ce qu'un membre se confirme avec un second facteur, et elles restent chiffrées dans les exports, les notifications et les rapports.</value>
+  </data>
+  <data name="AddonFeatureEncryption" xml:space="preserve">
+    <value>Chiffrement des champs sensibles par service</value>
+  </data>
+  <data name="AddonFeatureStepUp" xml:space="preserve">
+    <value>Confirmation par second facteur avant l'affichage des valeurs protégées</value>
+  </data>
+  <data name="AddonFeatureEgress" xml:space="preserve">
+    <value>Maîtrise de ce qui sort par e-mail, SMS et notification push</value>
+  </data>
+  <data name="AddonFeatureAudit" xml:space="preserve">
+    <value>Une piste d'audit de chaque lecture protégée, qui ne contient elle-même aucune valeur</value>
+  </data>
+  <data name="AddonBuyButton" xml:space="preserve">
+    <value>Acheter le module</value>
+  </data>
+  <data name="AddonManageButton" xml:space="preserve">
+    <value>Gérer le module</value>
+  </data>
+  <data name="AddonManagingMemberOnly" xml:space="preserve">
+    <value>Seul le membre gestionnaire du service peut acheter ou résilier ce module.</value>
+  </data>
+  <data name="AddonPaidPlanRequired" xml:space="preserve">
+    <value>La Protection avancée des données nécessite une formule payante.</value>
+  </data>
+  <data name="AddonPurchaseSeparateFromEnrollment" xml:space="preserve">
+    <value>L'achat du module ne chiffre rien en soi. Votre service est activé ensuite, depuis la page Protection des données, au moment que vous choisissez.</value>
+  </data>
+  <data name="AddonStatusLabel" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="AddonStatusActive" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="AddonStatusCancelled" xml:space="preserve">
+    <value>Résilié</value>
+  </data>
+  <data name="AddonRenewsOnLabel" xml:space="preserve">
+    <value>Se renouvelle le</value>
+  </data>
+  <data name="AddonPaidThroughLabel" xml:space="preserve">
+    <value>Payé jusqu'au</value>
+  </data>
+  <data name="AddonProtectionStateLabel" xml:space="preserve">
+    <value>État de la protection</value>
+  </data>
+  <data name="AddonNotPurchased" xml:space="preserve">
+    <value>Votre service ne dispose pas de ce module.</value>
+  </data>
+  <data name="AddonGraceNotice" xml:space="preserve">
+    <value>Nous n'avons pas encore reçu votre paiement. La protection se poursuit jusqu'au {0} : si vous payez avant cette date, tout reste chiffré et rien n'est déchiffré.</value>
+  </data>
+  <data name="AddonOffboardingNotice" xml:space="preserve">
+    <value>La protection prend fin le {0}. D'ici là tout reste chiffré, et le membre gestionnaire peut encore annuler cette décision.</value>
+  </data>
+  <data name="AddonCancelButton" xml:space="preserve">
+    <value>Résilier le module</value>
+  </data>
+  <data name="AddonCancelWarning" xml:space="preserve">
+    <value>En cas de résiliation, la protection reste active jusqu'à la fin de la période que vous avez payée. Ensuite, une migration nocturne déchiffre les données de votre service et les remet en stockage normal.</value>
+  </data>
+  <data name="AddonCancelConfirm" xml:space="preserve">
+    <value>Résilier la Protection avancée des données pour ce service ?</value>
+  </data>
+  <data name="AddonOpenSettings" xml:space="preserve">
+    <value>Ouvrir les paramètres de Protection des données</value>
+  </data>
+  <data name="StepUpSectionTitle" xml:space="preserve">
+    <value>Demande de vérification</value>
+  </data>
+  <data name="StepUpSectionIntro" xml:space="preserve">
+    <value>Avant d'afficher une valeur protégée, Resgrid demande au membre un code issu de son application d'authentification. Vous pouvez désactiver cette demande pour certaines applications.</value>
+  </data>
+  <data name="StepUpSectionWarning" xml:space="preserve">
+    <value>Laissez-la activée partout où c'est possible. La désactiver signifie que toute personne déjà connectée sur cet appareil peut révéler des données protégées sans prouver son identité — acceptable sur une console de régulation pendant une intervention, beaucoup moins sur un téléphone qui peut être perdu.</value>
+  </data>
+  <data name="StepUpClientWeb" xml:space="preserve">
+    <value>Site web Resgrid</value>
+  </data>
+  <data name="StepUpClientDispatch" xml:space="preserve">
+    <value>Console de régulation</value>
+  </data>
+  <data name="StepUpClientResponder" xml:space="preserve">
+    <value>Application Responder</value>
+  </data>
+  <data name="StepUpClientUnit" xml:space="preserve">
+    <value>Application Unit</value>
+  </data>
+  <data name="StepUpClientCommand" xml:space="preserve">
+    <value>Application de commandement d'intervention</value>
+  </data>
+  <data name="StepUpClientApi" xml:space="preserve">
+    <value>Intégrations API</value>
+  </data>
+  <data name="StepUpPromptOn" xml:space="preserve">
+    <value>Demander un code</value>
+  </data>
+  <data name="StepUpPromptOff" xml:space="preserve">
+    <value>Aucune demande</value>
+  </data>
+  <data name="StepUpSaveAction" xml:space="preserve">
+    <value>Enregistrer les paramètres de vérification</value>
+  </data>
+  <data name="StepUpSaveConfirm" xml:space="preserve">
+    <value>Modifier la demande de vérification pour ce service ?</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>Les paramètres de vérification n'ont pas pu être enregistrés.</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Seul le membre gestionnaire du service peut modifier ceci.</value>
+  </data>
+  <data name="StepUpAuditNotice" xml:space="preserve">
+    <value>Chaque modification est enregistrée avec son auteur et sa date.</value>
   </data>
 </root>

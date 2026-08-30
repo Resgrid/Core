@@ -32,6 +32,9 @@ namespace Resgrid.Model
 
 		/// <summary>UTC instant the MFA step-up completed. The mfa_at claim; never refreshed later.</summary>
 		public DateTime MfaAtUtc { get; set; }
+
+		/// <summary>Set when the department exempted the calling client from the step-up prompt.</summary>
+		public bool StepUpExempt { get; set; }
 	}
 
 	/// <summary>Result of a successful grant issuance. The token is sensitive-in-transit but value-free.</summary>

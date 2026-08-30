@@ -1,4 +1,4 @@
-﻿@using Newtonsoft.Json
+@using Newtonsoft.Json
 @using Resgrid.Framework
 @using Resgrid.Model
 @using Resgrid.Config
@@ -494,6 +494,49 @@
                                                     {
                                                         <a asp-controller="Subscription" asp-action="ManagePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
                                                     }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*
+                        Advanced Data Protection addon (ADP plan 17.1). One link for both states: the
+                        manage page offers the purchase when the department does not hold the addon
+                        yet, so this card does not need to know which state it is in.
+                    *@
+                    <div class="row">
+                        <div class='col-sm-12'>
+                            <div class="pricing-tables">
+                                <div class='row'>
+                                    <div class="col-sm-8 col-md-8 col-sm-offset-2">
+                                        <div class="plan" style="margin: 0; padding-bottom: 0;">
+                                            <div class="head">
+                                                <h2>Advanced Data Protection Addon</h2>
+                                            </div>
+                                            <div class="row" style="margin-left: 0;">
+                                                <div class="col-sm-4 col-md-4">
+                                                    <div style="padding-top: 10px;">
+                                                        <ul class="item-list" style="padding: 0;">
+                                                            <li>Per-department field encryption</li>
+                                                            <li>Second-factor reveal of protected values</li>
+                                                            <li>Email, SMS and push egress controls</li>
+                                                            <li>Value-free audit of protected reads</li>
+                                                            <li>Overnight, resumable enrollment</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 col-md-3" style="text-align: center;">
+                                                    <span class="price" style="border-top: 0; margin-bottom: 5px; padding-top: 25px">
+                                                        <h3 style="font-size: 36px;"><span class="symbol" style="font-size: 36px; vertical-align: top;">$</span>999<small>/yr</small></h3><span style="font-size: 12px;">per department</span>
+                                                    </span>
+                                                </div>
+                                                <div class="col-sm-5 col-md-5">
+                                                    <p style="color: #676a6c; padding-top: 10px;">Advanced Data Protection encrypts your department's sensitive fields with a key held only for your department, and hides them behind a second-factor check. It is available on paid plans, billed yearly, and only your department's managing member can buy or cancel it. Buying the addon does not encrypt anything on its own — you enroll afterwards, from the Data Protection settings page, at a time you choose.</p>
+                                                    <a asp-controller="Subscription" asp-action="ManageAdpAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage Data Protection</a>
                                                 </div>
                                             </div>
                                         </div>

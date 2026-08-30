@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,6 +27,13 @@ namespace Resgrid.Model.Services
 		/// computed version.
 		/// </summary>
 		Task<DepartmentDataProtectionKey> ProvisionNextKeyVersionAsync(int departmentId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Every key version the department has ever held, in any status. Used by rotation to find the
+		/// superseded versions it may retire, and by support to answer "which versions exist" without
+		/// touching key material.
+		/// </summary>
+		Task<IReadOnlyList<DepartmentDataProtectionKey>> GetAllVersionsAsync(int departmentId);
 
 		/// <summary>
 		/// Marks a Retiring version Retired once rotation re-encryption has verified no envelope still

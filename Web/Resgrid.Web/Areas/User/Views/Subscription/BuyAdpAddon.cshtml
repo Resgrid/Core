@@ -1,0 +1,77 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Subscription.AdpAddonView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["AddonPageTitle"];
+
+    // Both conditions are re-checked server-side in the POST. Hiding the button is a courtesy, not
+    // the control: plan 17.1 restricts every ADP billing action to the managing member.
+    var canPurchase = Model.IsManagingMember && Model.HasPaidPlan;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["AddonBuyHeading"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["BreadcrumbHome"]</a>
+            </li>
+            <li>
+                <a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["AddonBreadcrumbSubscription"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["AddonPageTitle"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-shield"></i> @localizer["AddonPageTitle"]</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <p>@localizer["AddonSummary"]</p>
+                            <ul class="item-list" style="padding-left: 18px;">
+                                <li>@localizer["AddonFeatureEncryption"]</li>
+                                <li>@localizer["AddonFeatureStepUp"]</li>
+                                <li>@localizer["AddonFeatureEgress"]</li>
+                                <li>@localizer["AddonFeatureAudit"]</li>
+                            </ul>
+                            <div class="alert alert-info" style="margin-top: 15px;">
+                                @localizer["AddonPurchaseSeparateFromEnrollment"]
+                            </div>
+                        </div>
+                        <div class="col-md-5" style="text-align: center;">
+                            <h1 style="font-size: 42px; margin-bottom: 0;">@Model.Price</h1>
+                            <p style="color: #676a6c;">@localizer["AddonPerYear"]</p>
+
+                            @if (!Model.HasPaidPlan)
+                            {
+                                <div class="alert alert-warning">@localizer["AddonPaidPlanRequired"]</div>
+                            }
+                            else if (!Model.IsManagingMember)
+                            {
+                                <div class="alert alert-warning">@localizer["AddonManagingMemberOnly"]</div>
+                            }
+
+                            @if (canPurchase)
+                            {
+                                <form asp-controller="Subscription" asp-action="BuyAdpAddon" asp-route-area="User" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" asp-for="PlanAddonId" />
+                                    <button type="submit" class="btn btn-primary btn-lg">@localizer["AddonBuyButton"]</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

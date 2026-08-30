@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -402,5 +402,137 @@
   </data>
   <data name="ConfirmRemoveContact" xml:space="preserve">
     <value>Видалити цей екстрений контакт?</value>
+  </data>
+  <data name="AddonPageTitle" xml:space="preserve">
+    <value>Додаток «Розширений захист даних»</value>
+  </data>
+  <data name="AddonBreadcrumbSubscription" xml:space="preserve">
+    <value>Підписка</value>
+  </data>
+  <data name="AddonBuyHeading" xml:space="preserve">
+    <value>Додати розширений захист даних</value>
+  </data>
+  <data name="AddonManageHeading" xml:space="preserve">
+    <value>Керування розширеним захистом даних</value>
+  </data>
+  <data name="AddonPerYear" xml:space="preserve">
+    <value>на рік</value>
+  </data>
+  <data name="AddonSummary" xml:space="preserve">
+    <value>Розширений захист даних шифрує конфіденційні поля вашого підрозділу ключем, який зберігається лише для нього. Після ввімкнення захищені значення залишаються прихованими, доки учасник не підтвердить себе другим фактором, і залишаються зашифрованими в експортах, сповіщеннях і звітах.</value>
+  </data>
+  <data name="AddonFeatureEncryption" xml:space="preserve">
+    <value>Шифрування конфіденційних полів у межах підрозділу</value>
+  </data>
+  <data name="AddonFeatureStepUp" xml:space="preserve">
+    <value>Підтвердження другим фактором перед показом захищених значень</value>
+  </data>
+  <data name="AddonFeatureEgress" xml:space="preserve">
+    <value>Контроль над тим, що виходить електронною поштою, SMS і push-сповіщеннями</value>
+  </data>
+  <data name="AddonFeatureAudit" xml:space="preserve">
+    <value>Журнал аудиту кожного захищеного читання, який сам не містить значень</value>
+  </data>
+  <data name="AddonBuyButton" xml:space="preserve">
+    <value>Придбати додаток</value>
+  </data>
+  <data name="AddonManageButton" xml:space="preserve">
+    <value>Керувати додатком</value>
+  </data>
+  <data name="AddonManagingMemberOnly" xml:space="preserve">
+    <value>Лише керівний учасник підрозділу може придбати або скасувати цей додаток.</value>
+  </data>
+  <data name="AddonPaidPlanRequired" xml:space="preserve">
+    <value>Розширений захист даних потребує платного тарифу.</value>
+  </data>
+  <data name="AddonPurchaseSeparateFromEnrollment" xml:space="preserve">
+    <value>Придбання додатка саме собою нічого не шифрує. Підрозділ вмикається згодом, на сторінці налаштувань захисту даних, у зручний для вас час.</value>
+  </data>
+  <data name="AddonStatusLabel" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="AddonStatusActive" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="AddonStatusCancelled" xml:space="preserve">
+    <value>Скасовано</value>
+  </data>
+  <data name="AddonRenewsOnLabel" xml:space="preserve">
+    <value>Поновлюється</value>
+  </data>
+  <data name="AddonPaidThroughLabel" xml:space="preserve">
+    <value>Оплачено до</value>
+  </data>
+  <data name="AddonProtectionStateLabel" xml:space="preserve">
+    <value>Стан захисту</value>
+  </data>
+  <data name="AddonNotPurchased" xml:space="preserve">
+    <value>Ваш підрозділ не має цього додатка.</value>
+  </data>
+  <data name="AddonGraceNotice" xml:space="preserve">
+    <value>Ми ще не отримали вашу оплату. Захист діє до {0} — якщо сплатити до цієї дати, усе залишиться зашифрованим і нічого не буде розшифровано.</value>
+  </data>
+  <data name="AddonOffboardingNotice" xml:space="preserve">
+    <value>Захист завершується {0}. До того часу все залишається зашифрованим, і керівний учасник ще може це скасувати.</value>
+  </data>
+  <data name="AddonCancelButton" xml:space="preserve">
+    <value>Скасувати додаток</value>
+  </data>
+  <data name="AddonCancelWarning" xml:space="preserve">
+    <value>Після скасування захист діятиме до кінця оплаченого періоду. Потім нічна міграція розшифрує дані підрозділу та поверне їх до звичайного сховища.</value>
+  </data>
+  <data name="AddonCancelConfirm" xml:space="preserve">
+    <value>Скасувати розширений захист даних для цього підрозділу?</value>
+  </data>
+  <data name="AddonOpenSettings" xml:space="preserve">
+    <value>Відкрити налаштування захисту даних</value>
+  </data>
+  <data name="StepUpSectionTitle" xml:space="preserve">
+    <value>Запит підтвердження</value>
+  </data>
+  <data name="StepUpSectionIntro" xml:space="preserve">
+    <value>Перш ніж показати захищене значення, Resgrid просить учасника ввести код із застосунку автентифікації. Цей запит можна вимкнути для окремих застосунків.</value>
+  </data>
+  <data name="StepUpSectionWarning" xml:space="preserve">
+    <value>Залишайте його ввімкненим скрізь, де можливо. Вимкнення означає, що будь-хто, вже увійшовши на цьому пристрої, зможе розкрити захищені дані без підтвердження особи — прийнятно на диспетчерській консолі під час виїзду, значно менше на телефоні, який можна загубити.</value>
+  </data>
+  <data name="StepUpClientWeb" xml:space="preserve">
+    <value>Вебсайт Resgrid</value>
+  </data>
+  <data name="StepUpClientDispatch" xml:space="preserve">
+    <value>Диспетчерська консоль</value>
+  </data>
+  <data name="StepUpClientResponder" xml:space="preserve">
+    <value>Застосунок Responder</value>
+  </data>
+  <data name="StepUpClientUnit" xml:space="preserve">
+    <value>Застосунок Unit</value>
+  </data>
+  <data name="StepUpClientCommand" xml:space="preserve">
+    <value>Застосунок керування інцидентом</value>
+  </data>
+  <data name="StepUpClientApi" xml:space="preserve">
+    <value>Інтеграції API</value>
+  </data>
+  <data name="StepUpPromptOn" xml:space="preserve">
+    <value>Запитувати код</value>
+  </data>
+  <data name="StepUpPromptOff" xml:space="preserve">
+    <value>Без запиту</value>
+  </data>
+  <data name="StepUpSaveAction" xml:space="preserve">
+    <value>Зберегти налаштування підтвердження</value>
+  </data>
+  <data name="StepUpSaveConfirm" xml:space="preserve">
+    <value>Змінити запит підтвердження для цього підрозділу?</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти налаштування підтвердження.</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Лише керівний учасник підрозділу може це змінити.</value>
+  </data>
+  <data name="StepUpAuditNotice" xml:space="preserve">
+    <value>Кожну зміну записано разом з автором і часом.</value>
   </data>
 </root>

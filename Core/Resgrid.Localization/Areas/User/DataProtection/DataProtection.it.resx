@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -402,5 +402,137 @@
   </data>
   <data name="ConfirmRemoveContact" xml:space="preserve">
     <value>Rimuovere questo contatto di emergenza?</value>
+  </data>
+  <data name="AddonPageTitle" xml:space="preserve">
+    <value>Componente aggiuntivo Protezione dati avanzata</value>
+  </data>
+  <data name="AddonBreadcrumbSubscription" xml:space="preserve">
+    <value>Abbonamento</value>
+  </data>
+  <data name="AddonBuyHeading" xml:space="preserve">
+    <value>Aggiungi la Protezione dati avanzata</value>
+  </data>
+  <data name="AddonManageHeading" xml:space="preserve">
+    <value>Gestisci la Protezione dati avanzata</value>
+  </data>
+  <data name="AddonPerYear" xml:space="preserve">
+    <value>all'anno</value>
+  </data>
+  <data name="AddonSummary" xml:space="preserve">
+    <value>La Protezione dati avanzata cifra i campi sensibili del tuo dipartimento con una chiave riservata al solo dipartimento. Una volta attivata, i valori protetti restano nascosti finché un membro non si conferma con un secondo fattore, e rimangono cifrati in esportazioni, notifiche e report.</value>
+  </data>
+  <data name="AddonFeatureEncryption" xml:space="preserve">
+    <value>Cifratura dei campi sensibili per dipartimento</value>
+  </data>
+  <data name="AddonFeatureStepUp" xml:space="preserve">
+    <value>Conferma con secondo fattore prima di mostrare i valori protetti</value>
+  </data>
+  <data name="AddonFeatureEgress" xml:space="preserve">
+    <value>Controllo su ciò che esce via e-mail, SMS e notifiche push</value>
+  </data>
+  <data name="AddonFeatureAudit" xml:space="preserve">
+    <value>Una traccia di controllo di ogni lettura protetta, che non contiene valori</value>
+  </data>
+  <data name="AddonBuyButton" xml:space="preserve">
+    <value>Acquista il componente</value>
+  </data>
+  <data name="AddonManageButton" xml:space="preserve">
+    <value>Gestisci il componente</value>
+  </data>
+  <data name="AddonManagingMemberOnly" xml:space="preserve">
+    <value>Solo il membro amministratore del dipartimento può acquistare o annullare questo componente aggiuntivo.</value>
+  </data>
+  <data name="AddonPaidPlanRequired" xml:space="preserve">
+    <value>La Protezione dati avanzata richiede un piano a pagamento.</value>
+  </data>
+  <data name="AddonPurchaseSeparateFromEnrollment" xml:space="preserve">
+    <value>L'acquisto del componente da solo non cifra nulla. Il dipartimento viene attivato in seguito, dalla pagina Protezione dati, nel momento che sceglierai.</value>
+  </data>
+  <data name="AddonStatusLabel" xml:space="preserve">
+    <value>Stato</value>
+  </data>
+  <data name="AddonStatusActive" xml:space="preserve">
+    <value>Attivo</value>
+  </data>
+  <data name="AddonStatusCancelled" xml:space="preserve">
+    <value>Annullato</value>
+  </data>
+  <data name="AddonRenewsOnLabel" xml:space="preserve">
+    <value>Si rinnova il</value>
+  </data>
+  <data name="AddonPaidThroughLabel" xml:space="preserve">
+    <value>Pagato fino al</value>
+  </data>
+  <data name="AddonProtectionStateLabel" xml:space="preserve">
+    <value>Stato della protezione</value>
+  </data>
+  <data name="AddonNotPurchased" xml:space="preserve">
+    <value>Il tuo dipartimento non dispone di questo componente aggiuntivo.</value>
+  </data>
+  <data name="AddonGraceNotice" xml:space="preserve">
+    <value>Non abbiamo ancora ricevuto il pagamento. La protezione continua fino al {0}: pagando prima di tale data tutto resta cifrato e nulla viene decifrato.</value>
+  </data>
+  <data name="AddonOffboardingNotice" xml:space="preserve">
+    <value>La protezione termina il {0}. Fino ad allora tutto resta cifrato e il membro amministratore può ancora annullare questa scelta.</value>
+  </data>
+  <data name="AddonCancelButton" xml:space="preserve">
+    <value>Annulla il componente</value>
+  </data>
+  <data name="AddonCancelWarning" xml:space="preserve">
+    <value>Annullando, la protezione resta attiva fino alla fine del periodo che hai pagato. Dopodiché una migrazione notturna decifra i dati del dipartimento riportandoli allo spazio di archiviazione normale.</value>
+  </data>
+  <data name="AddonCancelConfirm" xml:space="preserve">
+    <value>Annullare la Protezione dati avanzata per questo dipartimento?</value>
+  </data>
+  <data name="AddonOpenSettings" xml:space="preserve">
+    <value>Apri le impostazioni di Protezione dati</value>
+  </data>
+  <data name="StepUpSectionTitle" xml:space="preserve">
+    <value>Richiesta di verifica</value>
+  </data>
+  <data name="StepUpSectionIntro" xml:space="preserve">
+    <value>Prima di mostrare un valore protetto, Resgrid chiede al membro un codice dalla sua app di autenticazione. Puoi disattivare questa richiesta per singole applicazioni.</value>
+  </data>
+  <data name="StepUpSectionWarning" xml:space="preserve">
+    <value>Lasciala attiva ovunque sia possibile. Disattivarla significa che chiunque abbia già effettuato l'accesso su quel dispositivo può rivelare dati protetti senza dimostrare la propria identità: accettabile su una console di centrale durante un intervento, molto meno su un telefono che si può perdere.</value>
+  </data>
+  <data name="StepUpClientWeb" xml:space="preserve">
+    <value>Sito web Resgrid</value>
+  </data>
+  <data name="StepUpClientDispatch" xml:space="preserve">
+    <value>Console di centrale</value>
+  </data>
+  <data name="StepUpClientResponder" xml:space="preserve">
+    <value>App Responder</value>
+  </data>
+  <data name="StepUpClientUnit" xml:space="preserve">
+    <value>App Unit</value>
+  </data>
+  <data name="StepUpClientCommand" xml:space="preserve">
+    <value>App di Comando Incidente</value>
+  </data>
+  <data name="StepUpClientApi" xml:space="preserve">
+    <value>Integrazioni API</value>
+  </data>
+  <data name="StepUpPromptOn" xml:space="preserve">
+    <value>Chiedi un codice</value>
+  </data>
+  <data name="StepUpPromptOff" xml:space="preserve">
+    <value>Nessuna richiesta</value>
+  </data>
+  <data name="StepUpSaveAction" xml:space="preserve">
+    <value>Salva impostazioni di verifica</value>
+  </data>
+  <data name="StepUpSaveConfirm" xml:space="preserve">
+    <value>Modificare la richiesta di verifica per questo dipartimento?</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>Non è stato possibile salvare le impostazioni di verifica.</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Solo il membro amministratore del dipartimento può modificarlo.</value>
+  </data>
+  <data name="StepUpAuditNotice" xml:space="preserve">
+    <value>Ogni modifica viene registrata con autore e data.</value>
   </data>
 </root>

@@ -1,0 +1,111 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Subscription.AdpAddonView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["AddonPageTitle"];
+
+    // Billing status and protection status are shown as two separate lines throughout this page.
+    // They genuinely can disagree - a cancelled addon still protects until its offboarding
+    // migration runs - and collapsing them into one badge would tell a member their data was
+    // already decrypted while it was not, or the reverse.
+    var canCancel = Model.IsManagingMember && Model.HasAddon && !Model.IsCancelled;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["AddonManageHeading"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["BreadcrumbHome"]</a>
+            </li>
+            <li>
+                <a asp-controller="Subscription" asp-action="Index" asp-route-area="User">@localizer["AddonBreadcrumbSubscription"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["AddonPageTitle"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-shield"></i> @localizer["AddonPageTitle"]</h5>
+                </div>
+                <div class="ibox-content">
+                    @if (!Model.HasAddon)
+                    {
+                        <div class="alert alert-info">@localizer["AddonNotPurchased"]</div>
+                        <a asp-controller="Subscription" asp-action="BuyAdpAddon" asp-route-area="User" class="btn btn-primary">@localizer["AddonBuyButton"]</a>
+                    }
+                    else
+                    {
+                        <dl class="dl-horizontal">
+                            <dt>@localizer["AddonStatusLabel"]</dt>
+                            <dd>
+                                @if (Model.IsCancelled)
+                                {
+                                    <span class="label label-warning">@localizer["AddonStatusCancelled"]</span>
+                                }
+                                else
+                                {
+                                    <span class="label label-primary">@localizer["AddonStatusActive"]</span>
+                                }
+                            </dd>
+
+                            @if (Model.EndingOn.HasValue)
+                            {
+                                <dt>@localizer["AddonRenewsOnLabel"]</dt>
+                                <dd>@Model.EndingOn.Value.ToString("D")</dd>
+                            }
+
+                            @if (Model.PaidThroughOn.HasValue)
+                            {
+                                <dt>@localizer["AddonPaidThroughLabel"]</dt>
+                                <dd>@Model.PaidThroughOn.Value.ToString("D")</dd>
+                            }
+
+                            <dt>@localizer["AddonProtectionStateLabel"]</dt>
+                            <dd>@Model.ProtectionState.ToString()</dd>
+                        </dl>
+
+                        @if (Model.IsInGrace)
+                        {
+                            <div class="alert alert-warning">
+                                @string.Format(localizer["AddonGraceNotice"].Value, Model.GraceEndsOn.Value.ToString("D"))
+                            </div>
+                        }
+
+                        @if (Model.OffboardingEffectiveOn.HasValue)
+                        {
+                            <div class="alert alert-warning">
+                                @string.Format(localizer["AddonOffboardingNotice"].Value, Model.OffboardingEffectiveOn.Value.ToString("D"))
+                            </div>
+                        }
+
+                        <a asp-controller="DataProtection" asp-action="Index" asp-route-area="User" class="btn btn-primary">@localizer["AddonOpenSettings"]</a>
+
+                        @if (canCancel)
+                        {
+                            <hr />
+                            <p>@localizer["AddonCancelWarning"]</p>
+                            <form asp-controller="Subscription" asp-action="CancelAdpAddon" asp-route-area="User" method="post"
+                                  onsubmit="return confirm('@Html.Raw(Html.Encode(localizer["AddonCancelConfirm"].Value).Replace("'", "\\'"))');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger">@localizer["AddonCancelButton"]</button>
+                            </form>
+                        }
+                        else if (!Model.IsManagingMember)
+                        {
+                            <hr />
+                            <div class="alert alert-warning">@localizer["AddonManagingMemberOnly"]</div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

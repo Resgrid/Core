@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Repositories.DataRepository;
@@ -18,14 +19,17 @@ namespace Resgrid.Services
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 		private readonly IDocumentCategoriesRepository _documentCategoriesRepository;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public DocumentsService(IDocumentRepository documentRepository, IDocumentCategoriesRepository documentCategoriesRepository,
-			IEventAggregator eventAggregator, Lazy<IProtectedWriteService> protectedWriteService)
+			IEventAggregator eventAggregator, Lazy<IProtectedWriteService> protectedWriteService,
+			IUnitOfWork unitOfWork)
 		{
 			_protectedWriteService = protectedWriteService;
 			_documentRepository = documentRepository;
 			_documentCategoriesRepository = documentCategoriesRepository;
 			_eventAggregator = eventAggregator;
+			_unitOfWork = unitOfWork;
 		}
 
 		public async Task<List<Document>> GetAllDocumentsByDepartmentIdAsync(int departmentId)
@@ -74,12 +78,9 @@ namespace Resgrid.Services
 			if (document != null && document.DocumentId > 0)
 				existing = await _documentRepository.GetByIdAsync(document.DocumentId);
 
-			// ADP write safety net (plan 4.2/19.2, catalog v9).
-			// An UPDATE already has its identity, so it is enveloped BEFORE the save and no plaintext
-			// version of a cataloged field ever reaches the table - the same split CertificationService
-			// uses. Only an INSERT has to be persisted first, because the AAD row key IS the identity
-			// pk and cannot be bound until the database assigns it (plan 4.2/19.2). Fails closed
-			// either way.
+			// ADP write safety net (plan 4.2/19.2, catalog v9). An UPDATE already has its identity, so
+			// it is enveloped BEFORE the save and no plaintext version of a cataloged field ever
+			// reaches the table - the same split CertificationService uses. Fails closed.
 			var isExistingRow = document != null && document.DocumentId > 0;
 
 			if (isExistingRow)
@@ -88,21 +89,53 @@ namespace Resgrid.Services
 					document.DepartmentId, document, existing, null, null, workloadCaller: true, cancellationToken);
 				if (!preSaveWrite.Success)
 					throw new InvalidOperationException($"Protected write blocked ({preSaveWrite.Reason}); document {document.DocumentId} was NOT saved.");
+
+				return await _documentRepository.SaveOrUpdateAsync(document, cancellationToken);
 			}
 
-			var saved = await _documentRepository.SaveOrUpdateAsync(document, cancellationToken);
+			// An INSERT cannot be enveloped first: the AAD row key IS the identity pk, and only the
+			// database can assign it. So the insert, the encryption and the re-save run inside ONE
+			// transaction and commit only once the values are enveloped. Without it a broker failure
+			// left a committed row holding the document's plaintext - including its file bytes - in a
+			// protected department, which is the exact thing this feature exists to prevent, and
+			// throwing afterwards did nothing to remove it.
+			//
+			// The transaction does span the broker round trip (up to DataProtectionConfig
+			// .BrokerTimeoutMs). That is deliberate: this is a low-frequency, interactive upload
+			// holding one new row, and a slow save is recoverable where readable plaintext at rest
+			// is not.
+			//
+			// Only commit or roll back the transaction we opened. A future caller that already has a
+			// unit of work in flight keeps ownership of it - committing someone else's work here, or
+			// discarding it, would be worse than the problem being fixed.
+			var ownsTransaction = _unitOfWork.Connection == null;
+			if (ownsTransaction)
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
-			if (!isExistingRow)
+			try
 			{
+				var saved = await _documentRepository.SaveOrUpdateAsync(document, cancellationToken);
+
 				var protectedWrite = await _protectedWriteService.Value.PrepareDocumentWriteAsync(saved.DepartmentId,
 					saved, existing, null, null, workloadCaller: true, cancellationToken);
 				if (!protectedWrite.Success)
-					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); document {saved.DocumentId} has transient plaintext pending re-encryption.");
+					throw new InvalidOperationException($"Protected write blocked ({protectedWrite.Reason}); document {saved.DocumentId} was NOT saved.");
+
 				if (protectedWrite.Changed)
 					saved = await _documentRepository.SaveOrUpdateAsync(saved, cancellationToken);
-			}
 
-			return saved;
+				if (ownsTransaction)
+					_unitOfWork.CommitChanges();
+
+				return saved;
+			}
+			catch
+			{
+				if (ownsTransaction)
+					_unitOfWork.DiscardChanges();
+
+				throw;
+			}
 		}
 
 		public async Task<List<string>> GetDistinctCategoriesByDepartmentIdAsync(int departmentId)

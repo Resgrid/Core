@@ -1419,15 +1419,25 @@
             values, ciphertext, or key material.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.VerifyStepUp(Resgrid.Web.Services.Models.v4.DataProtection.VerifyStepUpInput)">
-            <summary>
-            Verifies the caller's authenticator (TOTP) code for the ADP step-up (plan section 3).
-            Success returns the absolute expiry of the step-up window — clients hold it in memory
-            only, conceal protected values at expiry, and prompt again on the next reveal/edit.
-            Refreshing an access token never refreshes this window. Allowed during a department lock:
-            step-up is a read-side control and reads continue while locked. Attempts are rate limited
-            per user; the code is never logged.
-            </summary>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.RequestGrant">
+             <summary>
+             Verifies the caller's authenticator (TOTP) code for the ADP step-up (plan section 3).
+             Success returns the absolute expiry of the step-up window — clients hold it in memory
+             only, conceal protected values at expiry, and prompt again on the next reveal/edit.
+             Refreshing an access token never refreshes this window. Allowed during a department lock:
+             step-up is a read-side control and reads continue while locked. Attempts are rate limited
+             per user; the code is never logged.
+             </summary>
+             <summary>
+             Issues a grant without a second factor for a client the department has exempted from the
+             step-up prompt (plan section 3.3). Refused with <c>step_up_required</c> for every other
+             client, which is what the app treats as "show the code prompt".
+            
+             The exemption is per client application and is off for every app until a department's
+             managing member turns it off deliberately. It removes the PROMPT, not the grant: the
+             caller is still authenticated, the grant is still bound to this department and policy
+             epoch, still expires, and still authorizes an audited read.
+             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DataProtectionController.QueueEnrollment(Resgrid.Web.Services.Models.v4.DataProtection.QueueEnrollmentInput)">
             <summary>

@@ -134,6 +134,68 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// step-up is a read-side control and reads continue while locked. Attempts are rate limited
 		/// per user; the code is never logged.
 		/// </summary>
+		/// <summary>
+		/// Issues a grant without a second factor for a client the department has exempted from the
+		/// step-up prompt (plan section 3.3). Refused with <c>step_up_required</c> for every other
+		/// client, which is what the app treats as "show the code prompt".
+		///
+		/// The exemption is per client application and is off for every app until a department's
+		/// managing member turns it off deliberately. It removes the PROMPT, not the grant: the
+		/// caller is still authenticated, the grant is still bound to this department and policy
+		/// epoch, still expires, and still authorizes an audited read.
+		/// </summary>
+		[HttpPost("RequestGrant")]
+		[AllowDuringDepartmentLock]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize]
+		public async Task<ActionResult<StepUpResult>> RequestGrant()
+		{
+			var clientApp = int.TryParse(User.FindFirst(Model.Security.SessionClaimTypes.ClientApp)?.Value, out var parsed)
+				? (UserSessionClientApplication)parsed
+				: UserSessionClientApplication.Api;
+
+			if (await _dataProtectionService.IsStepUpRequiredForClientAsync(DepartmentId, clientApp))
+				return Problem(type: "step_up_required",
+					title: "This department requires second-factor verification before protected values are shown.",
+					statusCode: StatusCodes.Status401Unauthorized);
+
+			if (!_grantService.CanIssueGrants)
+				return Problem(type: "grants_not_configured", title: "Protected data grants are not configured.",
+					statusCode: StatusCodes.Status503ServiceUnavailable);
+
+			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
+			var windowMinutes = policy?.StepUpWindowMinutes > 0
+				? policy.StepUpWindowMinutes
+				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
+			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
+
+			var issued = _grantService.IssueGrant(new ProtectedDataGrantIssueRequest
+			{
+				UserId = UserId,
+				DepartmentId = DepartmentId,
+				SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
+				ClientApp = (int)clientApp,
+				PolicyEpoch = policy?.PolicyEpoch ?? 0,
+				WindowMinutes = windowMinutes,
+				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
+				MfaAtUtc = DateTime.UtcNow,
+				StepUpExempt = true
+			});
+
+			var exemptResult = new StepUpResult
+			{
+				GrantId = issued.GrantId,
+				GrantToken = issued.Token,
+				StepUpExpiresOnUtc = issued.ExpiresOnUtc.ToString("O"),
+				StepUpWindowMinutes = windowMinutes,
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+
+			ResponseHelper.PopulateV4ResponseData(exemptResult);
+			return exemptResult;
+		}
+
 		[HttpPost("VerifyStepUp")]
 		[AllowDuringDepartmentLock]
 		[ProducesResponseType(StatusCodes.Status200OK)]

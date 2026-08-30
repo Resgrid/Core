@@ -93,7 +93,8 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<IAffiliateService>(),
 				Mock.Of<IUserProfileService>(),
 				Options.Create(new AppOptions()),
-				Mock.Of<IEventAggregator>())
+				Mock.Of<IEventAggregator>(),
+				Mock.Of<IDepartmentDataProtectionService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

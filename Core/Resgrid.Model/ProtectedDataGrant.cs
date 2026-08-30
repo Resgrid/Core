@@ -36,6 +36,14 @@ namespace Resgrid.Model
 		/// <summary>UTC instant the fresh MFA step-up completed (mfa_at). Absolute; never refreshed.</summary>
 		public DateTime MfaAtUtc { get; set; }
 
+		/// <summary>
+		/// True when this grant was issued WITHOUT a second factor because the department exempted
+		/// the calling client (<see cref="AdpStepUpExemptClients"/>). Carried explicitly rather than
+		/// inferred from <see cref="MfaAtUtc"/>, which records when the grant was minted either way —
+		/// an auditor asking "did somebody actually step up for this?" needs a straight answer.
+		/// </summary>
+		public bool StepUpExempt { get; set; }
+
 		/// <summary>UTC issuance instant (iat).</summary>
 		public DateTime IssuedAtUtc { get; set; }
 

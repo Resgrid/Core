@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -402,5 +402,137 @@
   </data>
   <data name="ConfirmRemoveContact" xml:space="preserve">
     <value>Diesen Notfallkontakt entfernen?</value>
+  </data>
+  <data name="AddonPageTitle" xml:space="preserve">
+    <value>Add-on „Erweiterter Datenschutz“</value>
+  </data>
+  <data name="AddonBreadcrumbSubscription" xml:space="preserve">
+    <value>Abonnement</value>
+  </data>
+  <data name="AddonBuyHeading" xml:space="preserve">
+    <value>Erweiterten Datenschutz hinzufügen</value>
+  </data>
+  <data name="AddonManageHeading" xml:space="preserve">
+    <value>Erweiterten Datenschutz verwalten</value>
+  </data>
+  <data name="AddonPerYear" xml:space="preserve">
+    <value>pro Jahr</value>
+  </data>
+  <data name="AddonSummary" xml:space="preserve">
+    <value>Der erweiterte Datenschutz verschlüsselt die sensiblen Felder Ihrer Abteilung mit einem Schlüssel, der ausschließlich für Ihre Abteilung vorgehalten wird. Nach der Registrierung bleiben geschützte Werte verborgen, bis ein Mitglied sich mit einem zweiten Faktor bestätigt, und sie bleiben in Exporten, Benachrichtigungen und Berichten verschlüsselt.</value>
+  </data>
+  <data name="AddonFeatureEncryption" xml:space="preserve">
+    <value>Verschlüsselung sensibler Felder je Abteilung</value>
+  </data>
+  <data name="AddonFeatureStepUp" xml:space="preserve">
+    <value>Bestätigung mit einem zweiten Faktor, bevor geschützte Werte angezeigt werden</value>
+  </data>
+  <data name="AddonFeatureEgress" xml:space="preserve">
+    <value>Kontrolle darüber, was per E-Mail, SMS und Push-Benachrichtigung das System verlässt</value>
+  </data>
+  <data name="AddonFeatureAudit" xml:space="preserve">
+    <value>Ein Prüfpfad über jeden geschützten Zugriff, der selbst keine Werte enthält</value>
+  </data>
+  <data name="AddonBuyButton" xml:space="preserve">
+    <value>Add-on kaufen</value>
+  </data>
+  <data name="AddonManageButton" xml:space="preserve">
+    <value>Add-on verwalten</value>
+  </data>
+  <data name="AddonManagingMemberOnly" xml:space="preserve">
+    <value>Nur das verwaltende Mitglied der Abteilung kann dieses Add-on kaufen oder kündigen.</value>
+  </data>
+  <data name="AddonPaidPlanRequired" xml:space="preserve">
+    <value>Der erweiterte Datenschutz erfordert einen kostenpflichtigen Tarif.</value>
+  </data>
+  <data name="AddonPurchaseSeparateFromEnrollment" xml:space="preserve">
+    <value>Der Kauf des Add-ons verschlüsselt für sich genommen noch nichts. Ihre Abteilung wird danach auf der Seite „Datenschutz“ zu einem von Ihnen gewählten Zeitpunkt registriert.</value>
+  </data>
+  <data name="AddonStatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AddonStatusActive" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="AddonStatusCancelled" xml:space="preserve">
+    <value>Gekündigt</value>
+  </data>
+  <data name="AddonRenewsOnLabel" xml:space="preserve">
+    <value>Verlängert sich am</value>
+  </data>
+  <data name="AddonPaidThroughLabel" xml:space="preserve">
+    <value>Bezahlt bis</value>
+  </data>
+  <data name="AddonProtectionStateLabel" xml:space="preserve">
+    <value>Schutzstatus</value>
+  </data>
+  <data name="AddonNotPurchased" xml:space="preserve">
+    <value>Ihre Abteilung verfügt nicht über dieses Add-on.</value>
+  </data>
+  <data name="AddonGraceNotice" xml:space="preserve">
+    <value>Ihre Zahlung ist noch nicht bei uns eingegangen. Der Schutz läuft bis zum {0} weiter — wenn Sie vorher zahlen, bleibt alles verschlüsselt und nichts wird entschlüsselt.</value>
+  </data>
+  <data name="AddonOffboardingNotice" xml:space="preserve">
+    <value>Der Schutz endet am {0}. Bis dahin bleibt alles verschlüsselt, und das verwaltende Mitglied kann dies noch rückgängig machen.</value>
+  </data>
+  <data name="AddonCancelButton" xml:space="preserve">
+    <value>Add-on kündigen</value>
+  </data>
+  <data name="AddonCancelWarning" xml:space="preserve">
+    <value>Bei einer Kündigung läuft der Schutz bis zum Ende des von Ihnen bezahlten Zeitraums weiter. Danach entschlüsselt eine nächtliche Migration die Daten Ihrer Abteilung zurück in die normale Speicherung.</value>
+  </data>
+  <data name="AddonCancelConfirm" xml:space="preserve">
+    <value>Erweiterten Datenschutz für diese Abteilung kündigen?</value>
+  </data>
+  <data name="AddonOpenSettings" xml:space="preserve">
+    <value>Datenschutz-Einstellungen öffnen</value>
+  </data>
+  <data name="StepUpSectionTitle" xml:space="preserve">
+    <value>Bestätigungsabfrage</value>
+  </data>
+  <data name="StepUpSectionIntro" xml:space="preserve">
+    <value>Bevor ein geschützter Wert angezeigt wird, fragt Resgrid das Mitglied nach einem Code aus seiner Authenticator-App. Sie können diese Abfrage für einzelne Anwendungen abschalten.</value>
+  </data>
+  <data name="StepUpSectionWarning" xml:space="preserve">
+    <value>Lassen Sie sie eingeschaltet, wo immer es geht. Abschalten bedeutet, dass jede bereits angemeldete Person an diesem Gerät geschützte Daten aufdecken kann, ohne ihre Identität nachzuweisen — auf einer Leitstellenkonsole im Einsatz vertretbar, auf einem Telefon, das verloren gehen kann, deutlich weniger.</value>
+  </data>
+  <data name="StepUpClientWeb" xml:space="preserve">
+    <value>Resgrid-Website</value>
+  </data>
+  <data name="StepUpClientDispatch" xml:space="preserve">
+    <value>Leitstellenkonsole</value>
+  </data>
+  <data name="StepUpClientResponder" xml:space="preserve">
+    <value>Responder-App</value>
+  </data>
+  <data name="StepUpClientUnit" xml:space="preserve">
+    <value>Unit-App</value>
+  </data>
+  <data name="StepUpClientCommand" xml:space="preserve">
+    <value>Einsatzleitungs-App</value>
+  </data>
+  <data name="StepUpClientApi" xml:space="preserve">
+    <value>API-Integrationen</value>
+  </data>
+  <data name="StepUpPromptOn" xml:space="preserve">
+    <value>Code abfragen</value>
+  </data>
+  <data name="StepUpPromptOff" xml:space="preserve">
+    <value>Keine Abfrage</value>
+  </data>
+  <data name="StepUpSaveAction" xml:space="preserve">
+    <value>Bestätigungseinstellungen speichern</value>
+  </data>
+  <data name="StepUpSaveConfirm" xml:space="preserve">
+    <value>Die Bestätigungsabfrage für diese Abteilung ändern?</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>Die Bestätigungseinstellungen konnten nicht gespeichert werden.</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Nur das verwaltende Mitglied der Abteilung kann dies ändern.</value>
+  </data>
+  <data name="StepUpAuditNotice" xml:space="preserve">
+    <value>Jede Änderung wird mit Urheber und Zeitpunkt protokolliert.</value>
   </data>
 </root>

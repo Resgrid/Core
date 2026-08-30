@@ -44,6 +44,21 @@ namespace Resgrid.Web.Areas.User.Models.DataProtection
 		public string DefaultWindowStart { get; set; }
 
 		public string DefaultWindowEnd { get; set; }
+
+		/// <summary>The department's current per-app step-up exemptions (plan 3.3). None by default.</summary>
+		public AdpStepUpExemptClients StepUpExemptClients { get; set; }
+
+		/// <summary>The apps a department may exempt, in the order the settings card lists them.</summary>
+		public static readonly IReadOnlyList<(AdpStepUpExemptClients Flag, string LabelKey)> ExemptableClients =
+			new[]
+			{
+				(AdpStepUpExemptClients.Web, "StepUpClientWeb"),
+				(AdpStepUpExemptClients.Dispatch, "StepUpClientDispatch"),
+				(AdpStepUpExemptClients.Responder, "StepUpClientResponder"),
+				(AdpStepUpExemptClients.Unit, "StepUpClientUnit"),
+				(AdpStepUpExemptClients.Command, "StepUpClientCommand"),
+				(AdpStepUpExemptClients.Api, "StepUpClientApi")
+			};
 	}
 
 	/// <summary>POST body for the wizard's final queue step. Acknowledgements must ALL be true.</summary>

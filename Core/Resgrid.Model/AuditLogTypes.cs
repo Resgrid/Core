@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Model
+namespace Resgrid.Model
 {
 	public enum AuditLogTypes
 	{
@@ -193,6 +193,10 @@
 		ModerationRequestCompleted,
 		ModerationEvidenceDownloaded,
 		PasswordResetByAdministrator,
-		UserAuthenticationSessionsRevoked
+		UserAuthenticationSessionsRevoked,
+		// Advanced Data Protection: a department releasing (or restoring) the step-up prompt for a
+		// client app. Weakening a protection control is exactly the kind of change that has to be
+		// answerable later, so it is audited with the before and after mask.
+		DataProtectionStepUpExemptionsChanged
 	}
 }

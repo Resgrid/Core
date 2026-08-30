@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.DataProtection;
@@ -66,13 +67,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly IProtectedDataGrantService _grantService;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IEventAggregator _eventAggregator;
 
 		public DataProtectionController(IDepartmentDataProtectionService dataProtectionService,
 			IDepartmentLockService departmentLockService, IAdpSizingService sizingService,
 			IProtectedDataBrokerClient brokerClient, IDepartmentsService departmentsService,
 			UserManager<IdentityUser> userManager, IProtectedDataGrantService grantService,
-			ICacheProvider cacheProvider)
+			ICacheProvider cacheProvider, IEventAggregator eventAggregator)
 		{
+			_eventAggregator = eventAggregator;
 			_dataProtectionService = dataProtectionService;
 			_departmentLockService = departmentLockService;
 			_sizingService = sizingService;
@@ -112,6 +115,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var managingUser = await _userManager.FindByIdAsync(department.ManagingUserId);
 				model.ManagingMemberHasMfa = managingUser != null && await _userManager.GetTwoFactorEnabledAsync(managingUser);
 			}
+
+			model.StepUpExemptClients = ((AdpStepUpExemptClients)(policy?.StepUpExemptClients ?? 0)).Sanitize();
 
 			model.DefaultWindowStart = Config.DataProtectionConfig.MigrationWindowDefaultStartLocal;
 			model.DefaultWindowEnd = Config.DataProtectionConfig.MigrationWindowDefaultEndLocal;
@@ -236,6 +241,99 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// conceals values at expiry, and prompts again on the next reveal. Rate limited per user; the
 		/// code is never logged. Allowed during a department lock — step-up is a read-side control.
 		/// </summary>
+		/// <summary>
+		/// Replaces the department's per-app step-up exemptions (plan 3.3).
+		///
+		/// Requires a fresh second factor to change — you have to prove one to switch one off. That is
+		/// not ceremony: without it, anyone who walked up to a signed-in session could quietly remove
+		/// the control that would have stopped them, and the first sign would be plaintext on screen.
+		///
+		/// Audited with the before and after mask. The service enforces managing-member only and bumps
+		/// the policy epoch so outstanding grants issued under the previous setting stop working.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor(RequireForOperation = true)]
+		public async Task<IActionResult> SaveStepUpExemptions([FromForm] int exemptions, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
+			var before = await _dataProtectionService.GetStepUpExemptClientsAsync(DepartmentId, bypassCache: true);
+			var requested = ((AdpStepUpExemptClients)exemptions).Sanitize();
+
+			var outcome = await _dataProtectionService.SetStepUpExemptClientsAsync(DepartmentId, requested,
+				UserId, cancellationToken);
+
+			// Audited whatever the outcome: a REFUSED attempt to weaken this is at least as
+			// interesting as a successful one.
+			var auditEvent = new AuditEvent
+			{
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Type = AuditLogTypes.DataProtectionStepUpExemptionsChanged,
+				Before = before.ToString(),
+				After = requested.ToString(),
+				Successful = outcome == DepartmentDataProtectionEnrollmentResult.Queued,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+			};
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+			return MapOutcome(outcome);
+		}
+
+		/// <summary>
+		/// Issues a grant WITHOUT a second factor, but only for a client the department has explicitly
+		/// exempted (plan 3.3). The client calls this first and falls back to the step-up modal when
+		/// it is refused, so the prompt appears exactly where the department left it switched on.
+		///
+		/// This never weakens VerifyStepUp and never bypasses anything else: the caller is still an
+		/// authenticated member of the department, the grant is still tenant-bound, epoch-bound and
+		/// short-lived, and every read it authorizes is still audited. What is skipped is only the
+		/// second factor — and the grant records that it was skipped.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[AllowDuringDepartmentLock]
+		public async Task<IActionResult> RequestGrant()
+		{
+			if (await _dataProtectionService.IsStepUpRequiredForClientAsync(DepartmentId, UserSessionClientApplication.Web))
+				return Json(new { success = false, error = "step_up_required" });
+
+			if (!_grantService.CanIssueGrants)
+				return Json(new { success = false, error = "grants_not_configured" });
+
+			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
+			var windowMinutes = policy?.StepUpWindowMinutes > 0
+				? policy.StepUpWindowMinutes
+				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
+			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
+
+			var issued = _grantService.IssueGrant(new ProtectedDataGrantIssueRequest
+			{
+				UserId = UserId,
+				DepartmentId = DepartmentId,
+				SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
+				ClientApp = (int)UserSessionClientApplication.Web,
+				PolicyEpoch = policy?.PolicyEpoch ?? 0,
+				WindowMinutes = windowMinutes,
+				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
+				MfaAtUtc = DateTime.UtcNow,
+				StepUpExempt = true
+			});
+
+			return Json(new
+			{
+				success = true,
+				grantToken = issued.Token,
+				grantId = issued.GrantId,
+				expiresOnUtc = issued.ExpiresOnUtc.ToString("O"),
+				windowMinutes
+			});
+		}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[AllowDuringDepartmentLock]

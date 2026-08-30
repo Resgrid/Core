@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -402,5 +402,137 @@
   </data>
   <data name="ConfirmRemoveContact" xml:space="preserve">
     <value>Remove this emergency contact?</value>
+  </data>
+  <data name="AddonPageTitle" xml:space="preserve">
+    <value>Advanced Data Protection Addon</value>
+  </data>
+  <data name="AddonBreadcrumbSubscription" xml:space="preserve">
+    <value>Subscription</value>
+  </data>
+  <data name="AddonBuyHeading" xml:space="preserve">
+    <value>Add Advanced Data Protection</value>
+  </data>
+  <data name="AddonManageHeading" xml:space="preserve">
+    <value>Manage Advanced Data Protection</value>
+  </data>
+  <data name="AddonPerYear" xml:space="preserve">
+    <value>per year</value>
+  </data>
+  <data name="AddonSummary" xml:space="preserve">
+    <value>Advanced Data Protection encrypts your department's sensitive fields with a key held only for your department. Once enrolled, protected values stay hidden until a member confirms who they are with a second factor, and they remain encrypted in exports, notifications and reports.</value>
+  </data>
+  <data name="AddonFeatureEncryption" xml:space="preserve">
+    <value>Per-department encryption of sensitive fields</value>
+  </data>
+  <data name="AddonFeatureStepUp" xml:space="preserve">
+    <value>Second-factor confirmation before protected values are shown</value>
+  </data>
+  <data name="AddonFeatureEgress" xml:space="preserve">
+    <value>Control over what leaves in email, SMS and push notifications</value>
+  </data>
+  <data name="AddonFeatureAudit" xml:space="preserve">
+    <value>An audit trail of every protected read that holds no values itself</value>
+  </data>
+  <data name="AddonBuyButton" xml:space="preserve">
+    <value>Purchase Addon</value>
+  </data>
+  <data name="AddonManageButton" xml:space="preserve">
+    <value>Manage Addon</value>
+  </data>
+  <data name="AddonManagingMemberOnly" xml:space="preserve">
+    <value>Only the department's managing member can purchase or cancel this addon.</value>
+  </data>
+  <data name="AddonPaidPlanRequired" xml:space="preserve">
+    <value>Advanced Data Protection requires a paid plan.</value>
+  </data>
+  <data name="AddonPurchaseSeparateFromEnrollment" xml:space="preserve">
+    <value>Purchasing the addon does not encrypt anything by itself. Your department is enrolled afterwards, from the Data Protection settings page, at a time you choose.</value>
+  </data>
+  <data name="AddonStatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AddonStatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="AddonStatusCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="AddonRenewsOnLabel" xml:space="preserve">
+    <value>Renews on</value>
+  </data>
+  <data name="AddonPaidThroughLabel" xml:space="preserve">
+    <value>Paid through</value>
+  </data>
+  <data name="AddonProtectionStateLabel" xml:space="preserve">
+    <value>Protection state</value>
+  </data>
+  <data name="AddonNotPurchased" xml:space="preserve">
+    <value>Your department does not have this addon.</value>
+  </data>
+  <data name="AddonGraceNotice" xml:space="preserve">
+    <value>We have not received your payment yet. Protection continues until {0} — paying before then keeps everything encrypted and nothing is decrypted.</value>
+  </data>
+  <data name="AddonOffboardingNotice" xml:space="preserve">
+    <value>Protection ends on {0}. Until then everything stays encrypted, and the managing member can still reverse this.</value>
+  </data>
+  <data name="AddonCancelButton" xml:space="preserve">
+    <value>Cancel Addon</value>
+  </data>
+  <data name="AddonCancelWarning" xml:space="preserve">
+    <value>Cancelling keeps protection running until the end of the period you have paid for. After that an overnight migration decrypts your department's data back to normal storage.</value>
+  </data>
+  <data name="AddonCancelConfirm" xml:space="preserve">
+    <value>Cancel Advanced Data Protection for this department?</value>
+  </data>
+  <data name="AddonOpenSettings" xml:space="preserve">
+    <value>Open Data Protection settings</value>
+  </data>
+  <data name="StepUpSectionTitle" xml:space="preserve">
+    <value>Verification prompt</value>
+  </data>
+  <data name="StepUpSectionIntro" xml:space="preserve">
+    <value>Before a protected value is shown, Resgrid asks the member for a code from their authenticator app. You can switch that prompt off for individual applications.</value>
+  </data>
+  <data name="StepUpSectionWarning" xml:space="preserve">
+    <value>Leave this on wherever you can. Switching it off means anyone already signed in on that device can reveal protected data without proving who they are — worth accepting on a dispatch console during an incident, much less so on a phone that can be lost.</value>
+  </data>
+  <data name="StepUpClientWeb" xml:space="preserve">
+    <value>Resgrid web site</value>
+  </data>
+  <data name="StepUpClientDispatch" xml:space="preserve">
+    <value>Dispatch console</value>
+  </data>
+  <data name="StepUpClientResponder" xml:space="preserve">
+    <value>Responder app</value>
+  </data>
+  <data name="StepUpClientUnit" xml:space="preserve">
+    <value>Unit app</value>
+  </data>
+  <data name="StepUpClientCommand" xml:space="preserve">
+    <value>Incident Command app</value>
+  </data>
+  <data name="StepUpClientApi" xml:space="preserve">
+    <value>API integrations</value>
+  </data>
+  <data name="StepUpPromptOn" xml:space="preserve">
+    <value>Prompt for a code</value>
+  </data>
+  <data name="StepUpPromptOff" xml:space="preserve">
+    <value>No prompt</value>
+  </data>
+  <data name="StepUpSaveAction" xml:space="preserve">
+    <value>Save verification settings</value>
+  </data>
+  <data name="StepUpSaveConfirm" xml:space="preserve">
+    <value>Change the verification prompt for this department?</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>The verification settings could not be saved.</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Only the department's managing member can change this.</value>
+  </data>
+  <data name="StepUpAuditNotice" xml:space="preserve">
+    <value>Every change is recorded with who made it and when.</value>
   </data>
 </root>

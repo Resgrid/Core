@@ -126,6 +126,68 @@ namespace Resgrid.Model.Services
 		Task<DepartmentDataProtectionEnrollmentResult> ApplyAddonBillingEventAsync(AdpAddonBillingEvent billingEvent,
 			CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// True when the calling client must complete a second factor before a grant is issued
+		/// (plan 3.3). Departments may exempt named apps; everything else prompts.
+		///
+		/// Fails CLOSED: a lookup that throws, a department with no policy, and any client that is
+		/// not exemptable all read as "step up required". The safe answer to "I am not sure" is the
+		/// prompt.
+		/// </summary>
+		Task<bool> IsStepUpRequiredForClientAsync(int departmentId, UserSessionClientApplication client);
+
+		/// <summary>The department's current per-app step-up exemptions (plan 3.3).</summary>
+		Task<AdpStepUpExemptClients> GetStepUpExemptClientsAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>
+		/// Replaces the department's step-up exemptions. Managing member only, and every change bumps
+		/// the policy epoch: tightening the setting has to invalidate the grants the looser one
+		/// already issued, or the change would not bite until they expired on their own.
+		///
+		/// The caller is responsible for writing the audit record — it needs the request's IP and
+		/// user agent, which this layer does not have.
+		/// </summary>
+		Task<DepartmentDataProtectionEnrollmentResult> SetStepUpExemptClientsAsync(int departmentId,
+			AdpStepUpExemptClients exemptions, string requestingUserId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Queues a department key rotation (plan 11.3): provisions the next key version, moves the
+		/// current one to Retiring, and sets the department Rotating so the overnight worker re-keys
+		/// every envelope. The superseded version is only retired after verification proves nothing
+		/// still references it.
+		///
+		/// Rotation is a RESGRID operation, not a customer one - it runs under the CryptoOps identity
+		/// and is triggered from BackOffice. Protection, grants and reads continue throughout: the
+		/// department sees a locked overnight window, exactly as it saw at enrollment.
+		///
+		/// Only an Enabled department can rotate. Anything mid-migration already owns the cursor.
+		/// </summary>
+		Task<DepartmentDataProtectionEnrollmentResult> QueueKeyRotationAsync(int departmentId,
+			string requestingUserId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Puts a Failed migration back in the queue, resuming from its stored cursor (plan 7.4).
+		///
+		/// A Failed run is deliberately never auto-resumed: whatever stopped it is usually still
+		/// there, and a worker that retries on its own turns one bad night into a loop. An operator
+		/// clears the cause and calls this. The migration kind on the policy decides which state it
+		/// returns to, so an offboarding resumes decrypting and an enrollment resumes encrypting.
+		/// </summary>
+		Task<DepartmentDataProtectionEnrollmentResult> RetryFailedMigrationAsync(int departmentId,
+			string requestingUserId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Stops an in-flight migration window (plan 7.4). Releases the department operation lock as
+		/// Aborted, so the worker stops at its next checkpoint, and marks the run Failed with an
+		/// operator error code — which is the state that can be retried from the cursor.
+		///
+		/// Nothing already written is undone. Every row the run has processed stays exactly as it
+		/// is; that is what makes stopping safe at any point, and it is why this is an abort rather
+		/// than a rollback.
+		/// </summary>
+		Task<bool> AbortActiveMigrationAsync(int departmentId, string requestingUserId,
+			CancellationToken cancellationToken = default);
+
 		/// <summary>Atomically bumps the department policy epoch (grant revocation); returns the new epoch.</summary>
 		Task<long> IncrementPolicyEpochAsync(int departmentId, string updatedByUserId, CancellationToken cancellationToken = default);
 

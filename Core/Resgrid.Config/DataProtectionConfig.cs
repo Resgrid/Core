@@ -13,6 +13,28 @@ namespace Resgrid.Config
 		/// <summary>Base URL of the Protected Data Broker service (empty = no broker deployed).</summary>
 		public static string BrokerBaseUrl = "";
 
+		/// <summary>
+		/// Grace in days after the paid-through date before an AUTOMATIC-billing lapse can schedule
+		/// offboarding. Matches PlanAddon.GetEndDateFromNow()'s yearly + 14 days, which is the grace
+		/// the rest of the platform already gives a failed renewal.
+		/// </summary>
+		public static int AddonAutomaticBillingGraceDays = 14;
+
+		/// <summary>
+		/// Grace in days for an INVOICED department. Sized for the worst common terms rather than the
+		/// average: NET45 plus a fortnight of internal approval plus a fortnight of cheque handling
+		/// still lands inside 75 days. Decrypting a customer's data because their finance team is
+		/// slow is not a recoverable mistake, and the cost of being generous here is a few weeks of
+		/// protection nobody has paid for yet.
+		/// </summary>
+		public static int AddonInvoicedBillingGraceDays = 75;
+
+		/// <summary>
+		/// Ceiling on any per-department grace override. Support can extend a genuine slow payer;
+		/// nobody can accidentally grant a permanent free ride by typing an extra digit.
+		/// </summary>
+		public static int AddonMaxGraceDays = 180;
+
 		/// <summary>Audience the application tier expects on broker mTLS/workload credentials.</summary>
 		public static string BrokerAudience = "resgrid-protected-broker";
 

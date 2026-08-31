@@ -188,19 +188,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (plan == null)
 					return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the Advanced Data Protection plan. Please try again.");
 
+				// Audited AFTER the provider call, with the provider's own answer. Recorded first it
+				// claimed success for a purchase the billing API may then have refused, which is the
+				// one thing an addon audit trail must never do.
+				var purchased = await _subscriptionsService.AddAddonAddedToExistingSub(DepartmentId, plan, addonPlan);
+
 				var auditEvent = new AuditEvent();
 				auditEvent.Before = null;
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.AddonSubscriptionModified;
 				auditEvent.After = $"ADP addon purchased ({addonPlan.PlanAddonId})";
-				auditEvent.Successful = true;
+				auditEvent.Successful = purchased != null;
 				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
 				auditEvent.ServerName = Environment.MachineName;
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
-
-				await _subscriptionsService.AddAddonAddedToExistingSub(DepartmentId, plan, addonPlan);
 
 				// The provider's webhook is what actually activates the addon in Core; this page only
 				// starts the purchase. Nothing about protection changes here either way - the
@@ -239,22 +242,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!await IsAdpManagingMemberAsync())
 					return Unauthorized();
 
+				// Cancels the BILLING subscription only. Protection keeps running until the provider's
+				// cancellation event reaches Core and the offboarding migration it schedules actually
+				// runs; nothing here touches a key or a ciphertext.
+				//
+				// Audited AFTER the call, with the provider's own answer: recorded first it claimed a
+				// cancellation the billing API may then have refused.
+				var cancelled = await _subscriptionsService.CancelPlanAddonByTypeFromStripeAsync(DepartmentId, (int)PlanAddonTypes.ADP);
+
 				var auditEvent = new AuditEvent();
 				auditEvent.Before = null;
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
 				auditEvent.Type = AuditLogTypes.AddonSubscriptionModified;
 				auditEvent.After = "ADP addon cancelled";
-				auditEvent.Successful = true;
+				auditEvent.Successful = cancelled;
 				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
 				auditEvent.ServerName = Environment.MachineName;
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
-
-				// Cancels the BILLING subscription only. Protection keeps running until the provider's
-				// cancellation event reaches Core and the offboarding migration it schedules actually
-				// runs; nothing here touches a key or a ciphertext.
-				await _subscriptionsService.CancelPlanAddonByTypeFromStripeAsync(DepartmentId, (int)PlanAddonTypes.ADP);
 
 				return RedirectToAction("ManageAdpAddon", "Subscription", new { Area = "User" });
 			}

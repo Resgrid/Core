@@ -134,7 +134,22 @@ namespace Resgrid.Model.Services
 		/// not exemptable all read as "step up required". The safe answer to "I am not sure" is the
 		/// prompt.
 		/// </summary>
-		Task<bool> IsStepUpRequiredForClientAsync(int departmentId, UserSessionClientApplication client);
+		Task<bool> IsStepUpRequiredForClientAsync(int departmentId, UserSessionClientApplication client,
+			bool bypassCache = false);
+
+		/// <summary>
+		/// The step-up decision AND the policy epoch a step-up-exempt grant must carry, both taken
+		/// from a SINGLE policy read (plan 3.3).
+		///
+		/// Callers that issue a grant must use this rather than checking the exemption and reading
+		/// the epoch separately: a revocation landing between two reads would pass the check against
+		/// the old policy and stamp the grant with the new epoch, so the grant would survive the
+		/// revocation that was supposed to kill it.
+		///
+		/// Fails CLOSED, the same as <see cref="IsStepUpRequiredForClientAsync"/>.
+		/// </summary>
+		Task<AdpStepUpDecision> GetStepUpDecisionForClientAsync(int departmentId,
+			UserSessionClientApplication client, bool bypassCache = false);
 
 		/// <summary>The department's current per-app step-up exemptions (plan 3.3).</summary>
 		Task<AdpStepUpExemptClients> GetStepUpExemptClientsAsync(int departmentId, bool bypassCache = false);

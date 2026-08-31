@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -107,6 +107,35 @@ namespace Resgrid.Tests.Services
 			await _service.RetryFailedMigrationAsync(DeptId, Operator);
 
 			((DepartmentDataProtectionState)_policy.State).Should().Be(DepartmentDataProtectionState.DisableRequested);
+		}
+
+		[Test]
+		public async Task A_failed_rotation_resumes_as_a_rotation()
+		{
+			_policy.ActiveMigrationKind = (int)DepartmentDataProtectionMigrationKind.Rotation;
+
+			await _service.RetryFailedMigrationAsync(DeptId, Operator);
+
+			((DepartmentDataProtectionState)_policy.State).Should().Be(DepartmentDataProtectionState.Rotating);
+		}
+
+		[Test]
+		public async Task A_failed_catalog_upgrade_resumes_as_a_catalog_upgrade()
+		{
+			// EnrollmentQueued would be worse than a wasted pass. The worker's enrollment path
+			// rewrites ActiveMigrationKind to Enrollment on its first transition, and an Encrypting
+			// department only enforces protection while its kind still reads CatalogUpgrade - so the
+			// resumed run would hand rgdp ciphertext to clients through the unenforced read path.
+			_policy.ActiveMigrationKind = (int)DepartmentDataProtectionMigrationKind.CatalogUpgrade;
+
+			var result = await _service.RetryFailedMigrationAsync(DeptId, Operator);
+
+			result.Should().Be(DepartmentDataProtectionEnrollmentResult.Queued);
+			((DepartmentDataProtectionState)_policy.State).Should().Be(DepartmentDataProtectionState.Encrypting);
+			_policyRepo.Verify(x => x.TryTransitionStateAsync(DeptId, DepartmentDataProtectionState.Failed,
+					DepartmentDataProtectionState.Encrypting,
+					(int)DepartmentDataProtectionMigrationKind.CatalogUpgrade, Operator, It.IsAny<CancellationToken>()),
+				Times.Once, "the kind is what keeps enforcement on and the field scope narrow");
 		}
 
 		[Test]

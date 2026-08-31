@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -105,12 +106,17 @@ namespace Resgrid.Services
 			// holding one new row, and a slow save is recoverable where readable plaintext at rest
 			// is not.
 			//
-			// Only commit or roll back the transaction we opened. A future caller that already has a
-			// unit of work in flight keeps ownership of it - committing someone else's work here, or
-			// discarding it, would be worse than the problem being fixed.
-			var ownsTransaction = _unitOfWork.Connection == null;
-			if (ownsTransaction)
-				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			// A caller that ALREADY holds a unit of work is refused rather than served. The rollback
+			// below is the only thing between a failed protected write and a committed plaintext row,
+			// and it is not ours to perform on somebody else's transaction: discarding their work
+			// would be worse than the problem being fixed, and IUnitOfWork exposes no rollback-only
+			// flag to raise instead - so the caller would go on to commit the plaintext insert this
+			// method had just made. Refusing is loud and recoverable; committing plaintext is not.
+			if (_unitOfWork.Connection != null)
+				throw new InvalidOperationException(
+					"A new document cannot be created inside a caller-owned transaction: its plaintext insert could not be rolled back independently if the protected write failed.");
+
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
 			try
 			{
@@ -124,15 +130,17 @@ namespace Resgrid.Services
 				if (protectedWrite.Changed)
 					saved = await _documentRepository.SaveOrUpdateAsync(saved, cancellationToken);
 
-				if (ownsTransaction)
-					_unitOfWork.CommitChanges();
+				_unitOfWork.CommitChanges();
 
 				return saved;
 			}
-			catch
+			catch (Exception ex)
 			{
-				if (ownsTransaction)
-					_unitOfWork.DiscardChanges();
+				// Logged here rather than left to the caller: this is the point that knows the insert
+				// was rolled back, and that no plaintext row survived the failure.
+				Logging.LogException(ex, $"Document create rolled back for department {document?.DepartmentId}; the protected write did not complete.");
+
+				_unitOfWork.DiscardChanges();
 
 				throw;
 			}

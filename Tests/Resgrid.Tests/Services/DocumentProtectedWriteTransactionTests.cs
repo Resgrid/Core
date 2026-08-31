@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -135,14 +135,21 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task A_caller_that_already_owns_a_transaction_keeps_it()
+		public async Task A_new_document_is_refused_inside_a_caller_owned_transaction()
 		{
 			// Committing someone else's in-flight unit of work here — or discarding it — would be
-			// worse than the problem this transaction solves.
+			// worse than the problem this transaction solves, and IUnitOfWork has no rollback-only
+			// flag to raise instead. Serving the caller anyway would insert the plaintext row and
+			// then leave the caller free to commit it, so the save is refused before the insert.
 			_unitOfWork.SetupGet(x => x.Connection).Returns(Mock.Of<System.Data.Common.DbConnection>());
 
-			await _service.SaveDocumentAsync(New());
+			var act = async () => await _service.SaveDocumentAsync(New());
 
+			await act.Should().ThrowAsync<InvalidOperationException>()
+				.WithMessage("*caller-owned transaction*");
+
+			_repo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<Document>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()),
+				Times.Never, "nothing plaintext may be inserted on a path that cannot roll it back");
 			_unitOfWork.Verify(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()), Times.Never);
 			_unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
 			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Never);

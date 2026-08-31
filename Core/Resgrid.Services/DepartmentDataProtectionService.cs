@@ -812,10 +812,37 @@ namespace Resgrid.Services
 			}
 		}
 
-		public async Task<bool> IsStepUpRequiredForClientAsync(int departmentId, UserSessionClientApplication client)
+		public async Task<bool> IsStepUpRequiredForClientAsync(int departmentId, UserSessionClientApplication client,
+			bool bypassCache = false)
 		{
-			var exemptions = await GetStepUpExemptClientsAsync(departmentId);
-			return !exemptions.IsExempt(client);
+			var decision = await GetStepUpDecisionForClientAsync(departmentId, client, bypassCache);
+			return decision.StepUpRequired;
+		}
+
+		public async Task<AdpStepUpDecision> GetStepUpDecisionForClientAsync(int departmentId,
+			UserSessionClientApplication client, bool bypassCache = false)
+		{
+			try
+			{
+				// ONE read backs the whole decision. The epoch a grant is stamped with has to come
+				// from the same snapshot that said the client was exempt, or a revocation arriving
+				// between two reads would mint a grant carrying the epoch its own revocation bumped.
+				var policy = await GetPolicyByDepartmentIdAsync(departmentId, bypassCache);
+				var exemptions = ((AdpStepUpExemptClients)(policy?.StepUpExemptClients ?? 0)).Sanitize();
+
+				return new AdpStepUpDecision
+				{
+					StepUpRequired = policy == null || !exemptions.IsExempt(client),
+					PolicyEpoch = policy?.PolicyEpoch ?? 0,
+					StepUpWindowMinutes = policy?.StepUpWindowMinutes ?? 0
+				};
+			}
+			catch (Exception ex)
+			{
+				// Fail closed: an unknown setting must read as "nothing is exempt", which prompts.
+				Logging.LogException(ex, $"ADP step-up decision lookup failed for department {departmentId}; requiring step up.");
+				return new AdpStepUpDecision { StepUpRequired = true };
+			}
 		}
 
 		public async Task<DepartmentDataProtectionEnrollmentResult> SetStepUpExemptClientsAsync(int departmentId,
@@ -876,8 +903,8 @@ namespace Resgrid.Services
 					return DepartmentDataProtectionEnrollmentResult.InvalidState;
 
 				// The key is provisioned BEFORE the state moves. Provisioning is the step that can
-				// fail on a KMS outage, and failing it here leaves the department Enabled and
-				// untouched; failing it after the transition would park a department in Rotating with
+				// fail on a KMS outage, and failing it here leaves the department Enabled with no new
+				// version; failing it after the transition would park a department in Rotating with
 				// no version to rotate to.
 				var newKey = await _keyService.ProvisionNextKeyVersionAsync(departmentId, cancellationToken);
 				if (newKey == null)
@@ -888,7 +915,15 @@ namespace Resgrid.Services
 					(int)DepartmentDataProtectionMigrationKind.Rotation, requestingUserId, cancellationToken);
 
 				if (rows == 0)
+				{
+					// Losing this race is NOT a no-op: provisioning already activated the new version
+					// and moved the previous one to Retiring, so the department stays Enabled holding
+					// a key version no sweep is queued to apply. New writes take the new version while
+					// older envelopes still name the Retiring one — readable, and cleared by the next
+					// rotation, but an operator has to be able to see that it happened.
+					Logging.LogError($"ADP key rotation for department {departmentId} lost the Enabled->Rotating transition after key v{newKey.Version} was activated; the department holds an unswept key version.");
 					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+				}
 
 				await InvalidateProtectionCacheAsync(departmentId);
 
@@ -924,10 +959,18 @@ namespace Resgrid.Services
 				// Each kind resumes into the state its own sweep runs from. An offboarding that came
 				// back as EnrollmentQueued would re-encrypt a department on its way out, and a
 				// rotation that did would re-run enrollment over an already-protected corpus.
+				//
+				// CatalogUpgrade resumes into Encrypting, the state the nightly sweep queues it into.
+				// Sending it to EnrollmentQueued would be worse than a wasted pass: the worker's
+				// enrollment path rewrites ActiveMigrationKind to Enrollment on its first transition,
+				// which both loses the upgrade's narrower field scope and drops enforcement — an
+				// Encrypting department only enforces while its kind still reads CatalogUpgrade, so
+				// the unenforced read path would start handing out rgdp ciphertext.
 				var resumeState = (DepartmentDataProtectionMigrationKind)policy.ActiveMigrationKind.Value switch
 				{
 					DepartmentDataProtectionMigrationKind.Offboarding => DepartmentDataProtectionState.DisableRequested,
 					DepartmentDataProtectionMigrationKind.Rotation => DepartmentDataProtectionState.Rotating,
+					DepartmentDataProtectionMigrationKind.CatalogUpgrade => DepartmentDataProtectionState.Encrypting,
 					_ => DepartmentDataProtectionState.EnrollmentQueued
 				};
 

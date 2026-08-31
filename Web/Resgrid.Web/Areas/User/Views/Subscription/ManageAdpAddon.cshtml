@@ -1,3 +1,4 @@
+﻿@using Newtonsoft.Json
 @using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Subscription.AdpAddonView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.DataProtection.DataProtection> localizer
@@ -9,6 +10,13 @@
     // migration runs - and collapsing them into one badge would tell a member their data was
     // already decrypted while it was not, or the reverse.
     var canCancel = Model.IsManagingMember && Model.HasAddon && !Model.IsCancelled;
+
+    // JavaScript-encoded, not HTML-encoded. Html.Encode turns an apostrophe into &#x27;, which the
+    // browser decodes back to ' while building the attribute value - the JS parser then sees an
+    // unterminated string and the confirm() prompt silently stops running. Same escaping Index.cshtml
+    // uses for the values it hands to script.
+    var cancelConfirmJson = Html.Raw(JsonConvert.SerializeObject(localizer["AddonCancelConfirm"].Value,
+        new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }));
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -93,7 +101,7 @@
                             <hr />
                             <p>@localizer["AddonCancelWarning"]</p>
                             <form asp-controller="Subscription" asp-action="CancelAdpAddon" asp-route-area="User" method="post"
-                                  onsubmit="return confirm('@Html.Raw(Html.Encode(localizer["AddonCancelConfirm"].Value).Replace("'", "\\'"))');">
+                                  onsubmit='return confirm(@cancelConfirmJson);'>
                                 @Html.AntiForgeryToken()
                                 <button type="submit" class="btn btn-danger">@localizer["AddonCancelButton"]</button>
                             </form>

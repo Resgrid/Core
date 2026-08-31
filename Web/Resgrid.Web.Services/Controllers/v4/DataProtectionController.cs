@@ -127,14 +127,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// Verifies the caller's authenticator (TOTP) code for the ADP step-up (plan section 3).
-		/// Success returns the absolute expiry of the step-up window — clients hold it in memory
-		/// only, conceal protected values at expiry, and prompt again on the next reveal/edit.
-		/// Refreshing an access token never refreshes this window. Allowed during a department lock:
-		/// step-up is a read-side control and reads continue while locked. Attempts are rate limited
-		/// per user; the code is never logged.
-		/// </summary>
-		/// <summary>
 		/// Issues a grant without a second factor for a client the department has exempted from the
 		/// step-up prompt (plan section 3.3). Refused with <c>step_up_required</c> for every other
 		/// client, which is what the app treats as "show the code prompt".
@@ -154,7 +146,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				? (UserSessionClientApplication)parsed
 				: UserSessionClientApplication.Api;
 
-			if (await _dataProtectionService.IsStepUpRequiredForClientAsync(DepartmentId, clientApp))
+			// The exemption answer and the epoch the grant is stamped with come from ONE policy
+			// snapshot. Asking for them separately let a revocation land in between and mint a grant
+			// carrying the epoch that revocation had just bumped — a grant that outlived its own
+			// revocation.
+			var decision = await _dataProtectionService.GetStepUpDecisionForClientAsync(DepartmentId, clientApp);
+
+			if (decision.StepUpRequired)
 				return Problem(type: "step_up_required",
 					title: "This department requires second-factor verification before protected values are shown.",
 					statusCode: StatusCodes.Status401Unauthorized);
@@ -163,9 +161,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Problem(type: "grants_not_configured", title: "Protected data grants are not configured.",
 					statusCode: StatusCodes.Status503ServiceUnavailable);
 
-			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
-			var windowMinutes = policy?.StepUpWindowMinutes > 0
-				? policy.StepUpWindowMinutes
+			var windowMinutes = decision.StepUpWindowMinutes > 0
+				? decision.StepUpWindowMinutes
 				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
 			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
 
@@ -175,7 +172,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DepartmentId = DepartmentId,
 				SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
 				ClientApp = (int)clientApp,
-				PolicyEpoch = policy?.PolicyEpoch ?? 0,
+				PolicyEpoch = decision.PolicyEpoch,
 				WindowMinutes = windowMinutes,
 				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
 				MfaAtUtc = DateTime.UtcNow,
@@ -336,6 +333,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// epoch. On deployments without grant key material (CanValidateGrants false) the gate is
 		/// inactive and the pre-Phase-2 gates (managing member, addon, global flag) stand alone.
 		/// Returns null when the command may proceed.
+		///
+		/// A step-up-EXEMPT grant is refused here. Those are minted by RequestGrant without any second
+		/// factor, for a client the department exempted from the reveal prompt (plan 3.3) — that
+		/// exemption covers reading protected values, not running enrollment or offboarding. Accepting
+		/// one would let an exempt client change the department's protection lifecycle with a password
+		/// alone, which is exactly what this gate exists to stop.
 		/// </summary>
 		private async Task<ActionResult> RequireRecentMfaAsync()
 		{
@@ -348,6 +351,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				requiredScope: null, out var grant);
 
 			if (outcome != ProtectedDataGrantValidationOutcome.Valid ||
+				grant.StepUpExempt ||
 				!string.Equals(grant.UserId, UserId, StringComparison.OrdinalIgnoreCase))
 				return Problem(type: "step_up_required",
 					title: "Recent multi-factor verification is required for this command. Verify your authenticator code and retry with the issued grant.",

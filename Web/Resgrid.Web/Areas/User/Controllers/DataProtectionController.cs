@@ -299,15 +299,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[AllowDuringDepartmentLock]
 		public async Task<IActionResult> RequestGrant()
 		{
-			if (await _dataProtectionService.IsStepUpRequiredForClientAsync(DepartmentId, UserSessionClientApplication.Web))
+			// The exemption answer and the epoch stamped on the grant come from ONE policy snapshot.
+			// Read separately, a managing member revoking the Web exemption between the two reads
+			// would have the check pass against the old policy while the grant took the epoch that
+			// revocation bumped — leaving a step-up-exempt grant alive after the revocation.
+			var decision = await _dataProtectionService.GetStepUpDecisionForClientAsync(DepartmentId,
+				UserSessionClientApplication.Web);
+
+			if (decision.StepUpRequired)
 				return Json(new { success = false, error = "step_up_required" });
 
 			if (!_grantService.CanIssueGrants)
 				return Json(new { success = false, error = "grants_not_configured" });
 
-			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId);
-			var windowMinutes = policy?.StepUpWindowMinutes > 0
-				? policy.StepUpWindowMinutes
+			var windowMinutes = decision.StepUpWindowMinutes > 0
+				? decision.StepUpWindowMinutes
 				: Config.DataProtectionConfig.StepUpWindowDefaultMinutes;
 			windowMinutes = Math.Min(Math.Max(1, windowMinutes), Math.Max(1, Config.DataProtectionConfig.StepUpMaximumMinutes));
 
@@ -317,7 +323,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DepartmentId = DepartmentId,
 				SessionId = User.FindFirst(Model.Security.SessionClaimTypes.SessionId)?.Value,
 				ClientApp = (int)UserSessionClientApplication.Web,
-				PolicyEpoch = policy?.PolicyEpoch ?? 0,
+				PolicyEpoch = decision.PolicyEpoch,
 				WindowMinutes = windowMinutes,
 				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
 				MfaAtUtc = DateTime.UtcNow,

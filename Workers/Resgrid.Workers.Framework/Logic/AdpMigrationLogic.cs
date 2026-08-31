@@ -558,6 +558,7 @@ namespace Resgrid.Workers.Framework.Logic
 				return 0;
 
 			var retired = 0;
+			var stillRetiring = new List<int>();
 
 			try
 			{
@@ -567,14 +568,40 @@ namespace Resgrid.Workers.Framework.Logic
 					.Where(k => k.Version < targetVersion &&
 						(DepartmentDataProtectionKeyStatus)k.Status == DepartmentDataProtectionKeyStatus.Retiring))
 				{
-					if (await _keyService.RetireKeyVersionAsync(departmentId, key.Version, cancellationToken))
-						retired++;
+					// Each version is retired independently. One version that will not retire - a KMS
+					// blip, a row another process is holding - must not skip the versions after it:
+					// the run reports complete and the department returns to Enabled, which the sweep
+					// does not pick up again, so anything passed over here waits for the next rotation.
+					try
+					{
+						if (await _keyService.RetireKeyVersionAsync(departmentId, key.Version, cancellationToken))
+							retired++;
+						else
+							stillRetiring.Add(key.Version);
+					}
+					catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+					{
+						// Shutdown, not a retirement failure: stop the loop rather than logging every
+						// remaining version as a problem.
+						throw;
+					}
+					catch (Exception ex)
+					{
+						stillRetiring.Add(key.Version);
+						Logging.LogException(ex, $"ADP rotation for department {departmentId} could not retire key v{key.Version}; continuing with the remaining versions.");
+					}
 				}
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"ADP rotation for department {departmentId} completed but retiring superseded key versions failed.");
 			}
+
+			// Named explicitly so an operator can repeat the tidy-up without diffing key tables. The
+			// data itself is fully re-keyed and readable either way - this is metadata that stayed
+			// behind, not a rotation that has to be unwound.
+			if (stillRetiring.Count > 0)
+				Logging.LogError($"ADP rotation for department {departmentId} left key version(s) {string.Join(", ", stillRetiring.Select(v => $"v{v}"))} in Retiring; they are not swept again until the next rotation and need an operator to retire them.");
 
 			return retired;
 		}

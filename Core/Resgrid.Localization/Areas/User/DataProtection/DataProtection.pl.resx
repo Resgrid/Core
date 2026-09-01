@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -402,5 +402,137 @@
   </data>
   <data name="ConfirmRemoveContact" xml:space="preserve">
     <value>Usunąć ten kontakt alarmowy?</value>
+  </data>
+  <data name="AddonPageTitle" xml:space="preserve">
+    <value>Dodatek Zaawansowana ochrona danych</value>
+  </data>
+  <data name="AddonBreadcrumbSubscription" xml:space="preserve">
+    <value>Subskrypcja</value>
+  </data>
+  <data name="AddonBuyHeading" xml:space="preserve">
+    <value>Dodaj Zaawansowaną ochronę danych</value>
+  </data>
+  <data name="AddonManageHeading" xml:space="preserve">
+    <value>Zarządzaj Zaawansowaną ochroną danych</value>
+  </data>
+  <data name="AddonPerYear" xml:space="preserve">
+    <value>rocznie</value>
+  </data>
+  <data name="AddonSummary" xml:space="preserve">
+    <value>Zaawansowana ochrona danych szyfruje wrażliwe pola Twojej jednostki kluczem przechowywanym wyłącznie dla niej. Po włączeniu chronione wartości pozostają ukryte, dopóki członek nie potwierdzi tożsamości drugim składnikiem, i pozostają zaszyfrowane w eksportach, powiadomieniach i raportach.</value>
+  </data>
+  <data name="AddonFeatureEncryption" xml:space="preserve">
+    <value>Szyfrowanie wrażliwych pól w obrębie jednostki</value>
+  </data>
+  <data name="AddonFeatureStepUp" xml:space="preserve">
+    <value>Potwierdzenie drugim składnikiem przed pokazaniem chronionych wartości</value>
+  </data>
+  <data name="AddonFeatureEgress" xml:space="preserve">
+    <value>Kontrola nad tym, co wychodzi w wiadomościach e-mail, SMS i powiadomieniach push</value>
+  </data>
+  <data name="AddonFeatureAudit" xml:space="preserve">
+    <value>Ślad audytowy każdego chronionego odczytu, który sam nie zawiera żadnych wartości</value>
+  </data>
+  <data name="AddonBuyButton" xml:space="preserve">
+    <value>Kup dodatek</value>
+  </data>
+  <data name="AddonManageButton" xml:space="preserve">
+    <value>Zarządzaj dodatkiem</value>
+  </data>
+  <data name="AddonManagingMemberOnly" xml:space="preserve">
+    <value>Tylko członek zarządzający jednostką może kupić lub anulować ten dodatek.</value>
+  </data>
+  <data name="AddonPaidPlanRequired" xml:space="preserve">
+    <value>Zaawansowana ochrona danych wymaga płatnego planu.</value>
+  </data>
+  <data name="AddonPurchaseSeparateFromEnrollment" xml:space="preserve">
+    <value>Sam zakup dodatku niczego nie szyfruje. Jednostka jest włączana później, na stronie ustawień Ochrony danych, w wybranym przez Ciebie momencie.</value>
+  </data>
+  <data name="AddonStatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AddonStatusActive" xml:space="preserve">
+    <value>Aktywny</value>
+  </data>
+  <data name="AddonStatusCancelled" xml:space="preserve">
+    <value>Anulowany</value>
+  </data>
+  <data name="AddonRenewsOnLabel" xml:space="preserve">
+    <value>Odnawia się</value>
+  </data>
+  <data name="AddonPaidThroughLabel" xml:space="preserve">
+    <value>Opłacone do</value>
+  </data>
+  <data name="AddonProtectionStateLabel" xml:space="preserve">
+    <value>Stan ochrony</value>
+  </data>
+  <data name="AddonNotPurchased" xml:space="preserve">
+    <value>Twoja jednostka nie posiada tego dodatku.</value>
+  </data>
+  <data name="AddonGraceNotice" xml:space="preserve">
+    <value>Nie otrzymaliśmy jeszcze Twojej płatności. Ochrona działa do {0} — opłacenie przed tą datą sprawia, że wszystko pozostaje zaszyfrowane i nic nie jest odszyfrowywane.</value>
+  </data>
+  <data name="AddonOffboardingNotice" xml:space="preserve">
+    <value>Ochrona kończy się {0}. Do tego czasu wszystko pozostaje zaszyfrowane, a członek zarządzający wciąż może to cofnąć.</value>
+  </data>
+  <data name="AddonCancelButton" xml:space="preserve">
+    <value>Anuluj dodatek</value>
+  </data>
+  <data name="AddonCancelWarning" xml:space="preserve">
+    <value>Po anulowaniu ochrona działa do końca opłaconego okresu. Następnie nocna migracja odszyfrowuje dane jednostki i przywraca je do zwykłego magazynu.</value>
+  </data>
+  <data name="AddonCancelConfirm" xml:space="preserve">
+    <value>Anulować Zaawansowaną ochronę danych dla tej jednostki?</value>
+  </data>
+  <data name="AddonOpenSettings" xml:space="preserve">
+    <value>Otwórz ustawienia Ochrony danych</value>
+  </data>
+  <data name="StepUpSectionTitle" xml:space="preserve">
+    <value>Monit weryfikacyjny</value>
+  </data>
+  <data name="StepUpSectionIntro" xml:space="preserve">
+    <value>Przed pokazaniem chronionej wartości Resgrid prosi członka o kod z aplikacji uwierzytelniającej. Ten monit można wyłączyć dla poszczególnych aplikacji.</value>
+  </data>
+  <data name="StepUpSectionWarning" xml:space="preserve">
+    <value>Zostaw go włączonego wszędzie, gdzie to możliwe. Wyłączenie oznacza, że każdy już zalogowany na tym urządzeniu może ujawnić chronione dane bez potwierdzania tożsamości — do przyjęcia na konsoli dyspozytorskiej podczas zdarzenia, znacznie mniej na telefonie, który można zgubić.</value>
+  </data>
+  <data name="StepUpClientWeb" xml:space="preserve">
+    <value>Witryna Resgrid</value>
+  </data>
+  <data name="StepUpClientDispatch" xml:space="preserve">
+    <value>Konsola dyspozytorska</value>
+  </data>
+  <data name="StepUpClientResponder" xml:space="preserve">
+    <value>Aplikacja Responder</value>
+  </data>
+  <data name="StepUpClientUnit" xml:space="preserve">
+    <value>Aplikacja Unit</value>
+  </data>
+  <data name="StepUpClientCommand" xml:space="preserve">
+    <value>Aplikacja dowodzenia zdarzeniem</value>
+  </data>
+  <data name="StepUpClientApi" xml:space="preserve">
+    <value>Integracje API</value>
+  </data>
+  <data name="StepUpPromptOn" xml:space="preserve">
+    <value>Pytaj o kod</value>
+  </data>
+  <data name="StepUpPromptOff" xml:space="preserve">
+    <value>Bez pytania</value>
+  </data>
+  <data name="StepUpSaveAction" xml:space="preserve">
+    <value>Zapisz ustawienia weryfikacji</value>
+  </data>
+  <data name="StepUpSaveConfirm" xml:space="preserve">
+    <value>Zmienić monit weryfikacyjny dla tej jednostki?</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>Nie udało się zapisać ustawień weryfikacji.</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Tylko członek zarządzający jednostką może to zmienić.</value>
+  </data>
+  <data name="StepUpAuditNotice" xml:space="preserve">
+    <value>Każda zmiana jest rejestrowana wraz z autorem i czasem.</value>
   </data>
 </root>

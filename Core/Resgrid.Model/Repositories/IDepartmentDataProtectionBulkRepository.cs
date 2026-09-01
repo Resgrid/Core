@@ -49,6 +49,15 @@ namespace Resgrid.Model.Repositories
 		/// Residue scan for companion-column fields: enrollment residue = typed column still non-null;
 		/// offboarding residue = companion envelope column still non-null.
 		/// </summary>
+		/// <summary>
+		/// Rotation residue: values that ARE enveloped but reference a key version other than
+		/// <paramref name="targetKeyVersion"/>. A rotation ends with everything still enveloped, so
+		/// the enveloped/not-enveloped counts prove nothing about it — this is the gate that says the
+		/// superseded version is genuinely unreferenced and can be retired.
+		/// </summary>
+		Task<long> CountSupersededKeyVersionResidueAsync(AdpTableBinding binding, int departmentId,
+			int targetKeyVersion, CancellationToken cancellationToken = default);
+
 		Task<long> CountCompanionResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped,
 			CancellationToken cancellationToken = default);
 	}

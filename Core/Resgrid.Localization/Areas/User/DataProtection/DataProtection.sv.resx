@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -402,5 +402,137 @@
   </data>
   <data name="ConfirmRemoveContact" xml:space="preserve">
     <value>Ta bort denna nödkontakt?</value>
+  </data>
+  <data name="AddonPageTitle" xml:space="preserve">
+    <value>Tillägget Avancerat dataskydd</value>
+  </data>
+  <data name="AddonBreadcrumbSubscription" xml:space="preserve">
+    <value>Prenumeration</value>
+  </data>
+  <data name="AddonBuyHeading" xml:space="preserve">
+    <value>Lägg till Avancerat dataskydd</value>
+  </data>
+  <data name="AddonManageHeading" xml:space="preserve">
+    <value>Hantera Avancerat dataskydd</value>
+  </data>
+  <data name="AddonPerYear" xml:space="preserve">
+    <value>per år</value>
+  </data>
+  <data name="AddonSummary" xml:space="preserve">
+    <value>Avancerat dataskydd krypterar din kårs känsliga fält med en nyckel som bara finns för din kår. När det har aktiverats förblir skyddade värden dolda tills en medlem bekräftar sig med en andra faktor, och de förblir krypterade i exporter, aviseringar och rapporter.</value>
+  </data>
+  <data name="AddonFeatureEncryption" xml:space="preserve">
+    <value>Kryptering av känsliga fält per kår</value>
+  </data>
+  <data name="AddonFeatureStepUp" xml:space="preserve">
+    <value>Bekräftelse med en andra faktor innan skyddade värden visas</value>
+  </data>
+  <data name="AddonFeatureEgress" xml:space="preserve">
+    <value>Kontroll över vad som lämnar systemet via e-post, SMS och push-aviseringar</value>
+  </data>
+  <data name="AddonFeatureAudit" xml:space="preserve">
+    <value>Ett granskningsspår över varje skyddad läsning, som självt inte innehåller några värden</value>
+  </data>
+  <data name="AddonBuyButton" xml:space="preserve">
+    <value>Köp tillägget</value>
+  </data>
+  <data name="AddonManageButton" xml:space="preserve">
+    <value>Hantera tillägget</value>
+  </data>
+  <data name="AddonManagingMemberOnly" xml:space="preserve">
+    <value>Endast kårens förvaltande medlem kan köpa eller säga upp detta tillägg.</value>
+  </data>
+  <data name="AddonPaidPlanRequired" xml:space="preserve">
+    <value>Avancerat dataskydd kräver ett betalt abonnemang.</value>
+  </data>
+  <data name="AddonPurchaseSeparateFromEnrollment" xml:space="preserve">
+    <value>Att köpa tillägget krypterar ingenting i sig. Din kår aktiveras därefter, från sidan Dataskydd, vid en tidpunkt du väljer.</value>
+  </data>
+  <data name="AddonStatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AddonStatusActive" xml:space="preserve">
+    <value>Aktivt</value>
+  </data>
+  <data name="AddonStatusCancelled" xml:space="preserve">
+    <value>Uppsagt</value>
+  </data>
+  <data name="AddonRenewsOnLabel" xml:space="preserve">
+    <value>Förnyas den</value>
+  </data>
+  <data name="AddonPaidThroughLabel" xml:space="preserve">
+    <value>Betalt till och med</value>
+  </data>
+  <data name="AddonProtectionStateLabel" xml:space="preserve">
+    <value>Skyddets tillstånd</value>
+  </data>
+  <data name="AddonNotPurchased" xml:space="preserve">
+    <value>Din kår har inte detta tillägg.</value>
+  </data>
+  <data name="AddonGraceNotice" xml:space="preserve">
+    <value>Vi har ännu inte fått din betalning. Skyddet fortsätter till {0} — betalar du innan dess förblir allt krypterat och ingenting dekrypteras.</value>
+  </data>
+  <data name="AddonOffboardingNotice" xml:space="preserve">
+    <value>Skyddet upphör den {0}. Fram till dess förblir allt krypterat, och den förvaltande medlemmen kan fortfarande ångra detta.</value>
+  </data>
+  <data name="AddonCancelButton" xml:space="preserve">
+    <value>Säg upp tillägget</value>
+  </data>
+  <data name="AddonCancelWarning" xml:space="preserve">
+    <value>Vid uppsägning fortsätter skyddet till slutet av den period du har betalat för. Därefter dekrypterar en nattlig migrering kårens data tillbaka till vanlig lagring.</value>
+  </data>
+  <data name="AddonCancelConfirm" xml:space="preserve">
+    <value>Säga upp Avancerat dataskydd för den här kåren?</value>
+  </data>
+  <data name="AddonOpenSettings" xml:space="preserve">
+    <value>Öppna inställningarna för Dataskydd</value>
+  </data>
+  <data name="StepUpSectionTitle" xml:space="preserve">
+    <value>Verifieringsfråga</value>
+  </data>
+  <data name="StepUpSectionIntro" xml:space="preserve">
+    <value>Innan ett skyddat värde visas ber Resgrid medlemmen om en kod från autentiseringsappen. Du kan stänga av den frågan för enskilda applikationer.</value>
+  </data>
+  <data name="StepUpSectionWarning" xml:space="preserve">
+    <value>Låt den vara på där du kan. Att stänga av den innebär att alla som redan är inloggade på enheten kan visa skyddade uppgifter utan att styrka vem de är — rimligt på en larmcentralskonsol under ett larm, betydligt mindre på en telefon som kan tappas bort.</value>
+  </data>
+  <data name="StepUpClientWeb" xml:space="preserve">
+    <value>Resgrids webbplats</value>
+  </data>
+  <data name="StepUpClientDispatch" xml:space="preserve">
+    <value>Larmcentralskonsol</value>
+  </data>
+  <data name="StepUpClientResponder" xml:space="preserve">
+    <value>Responder-appen</value>
+  </data>
+  <data name="StepUpClientUnit" xml:space="preserve">
+    <value>Unit-appen</value>
+  </data>
+  <data name="StepUpClientCommand" xml:space="preserve">
+    <value>Appen för insatsledning</value>
+  </data>
+  <data name="StepUpClientApi" xml:space="preserve">
+    <value>API-integrationer</value>
+  </data>
+  <data name="StepUpPromptOn" xml:space="preserve">
+    <value>Fråga efter kod</value>
+  </data>
+  <data name="StepUpPromptOff" xml:space="preserve">
+    <value>Ingen fråga</value>
+  </data>
+  <data name="StepUpSaveAction" xml:space="preserve">
+    <value>Spara verifieringsinställningar</value>
+  </data>
+  <data name="StepUpSaveConfirm" xml:space="preserve">
+    <value>Ändra verifieringsfrågan för den här kåren?</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>Verifieringsinställningarna kunde inte sparas.</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Endast kårens förvaltande medlem kan ändra detta.</value>
+  </data>
+  <data name="StepUpAuditNotice" xml:space="preserve">
+    <value>Varje ändring loggas med vem som gjorde den och när.</value>
   </data>
 </root>

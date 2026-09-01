@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
@@ -32,6 +33,11 @@ namespace Resgrid.Services
 
 		public Task<DepartmentDataProtectionKey> GetKeyByVersionAsync(int departmentId, int version) =>
 			_keyRepository.GetByDepartmentAndVersionAsync(departmentId, version);
+
+		public async Task<IReadOnlyList<DepartmentDataProtectionKey>> GetAllVersionsAsync(int departmentId)
+		{
+			return await _keyRepository.GetAllVersionsByDepartmentIdAsync(departmentId) ?? new List<DepartmentDataProtectionKey>();
+		}
 
 		public async Task<DepartmentDataProtectionKey> ProvisionNextKeyVersionAsync(int departmentId,
 			CancellationToken cancellationToken = default)

@@ -189,6 +189,59 @@ namespace Resgrid.Repositories.DataRepository
 			return await CountWhereAsync(binding, departmentId, string.Join(" OR ", predicates), cancellationToken);
 		}
 
+		public async Task<long> CountSupersededKeyVersionResidueAsync(AdpTableBinding binding, int departmentId,
+			int targetKeyVersion, CancellationToken cancellationToken = default)
+		{
+			if (targetKeyVersion <= 0)
+				return 0;
+
+			// Both envelope variants carry an ASCII header of "{prefix}{formatVersion}:{keyVersion}:",
+			// so "on the target version" is a literal prefix match and everything else enveloped is
+			// residue. Composed from the format constants rather than written out, so a future format
+			// version cannot leave this silently matching nothing.
+			var textTargetPrefix = $"{ProtectedDataEnvelope.Prefix}{ProtectedDataEnvelope.CurrentVersion}:{targetKeyVersion}:";
+			var binaryTargetPrefix = Encoding.ASCII.GetBytes(
+				$"{ProtectedDataEnvelope.BinaryPrefix}{ProtectedDataEnvelope.CurrentVersion}:{targetKeyVersion}:");
+
+			var predicates = new List<string>();
+
+			foreach (var column in binding.Columns)
+			{
+				switch (column.StorageKind)
+				{
+					case ProtectedFieldStorageKind.Text:
+						predicates.Add(TextSupersededPredicate(Ident(column.ColumnName), textTargetPrefix));
+						break;
+
+					case ProtectedFieldStorageKind.CompanionColumn:
+						predicates.Add(TextSupersededPredicate(Ident(column.CompanionColumn), textTargetPrefix));
+						break;
+
+					case ProtectedFieldStorageKind.Binary:
+					{
+						var envelopeMatch = BinaryPrefixPredicate(Ident(column.ColumnName), BinaryPrefixBytes);
+						var targetMatch = BinaryPrefixPredicate(Ident(column.ColumnName), binaryTargetPrefix);
+						predicates.Add($"({Ident(column.ColumnName)} IS NOT NULL AND {envelopeMatch} AND NOT ({targetMatch}))");
+						break;
+					}
+				}
+			}
+
+			if (predicates.Count == 0)
+				return 0;
+
+			return await CountWhereAsync(binding, departmentId, string.Join(" OR ", predicates), cancellationToken);
+		}
+
+		/// <summary>Enveloped text that is not on the target key version. LIKE metacharacters cannot
+		/// appear in the composed prefix (it is prefix, digits and colons), so it is safe inline.</summary>
+		private static string TextSupersededPredicate(string column, string targetPrefix) =>
+			$"({column} LIKE 'rgdp:%' AND {column} NOT LIKE '{targetPrefix}%')";
+
+		private string BinaryPrefixPredicate(string column, byte[] prefix) => _isPostgres
+			? $"substring({column} from 1 for {prefix.Length}) = '\\x{Convert.ToHexString(prefix).ToLowerInvariant()}'::bytea"
+			: $"SUBSTRING({column}, 1, {prefix.Length}) = 0x{Convert.ToHexString(prefix)}";
+
 		public async Task<long> CountCompanionResidueAsync(AdpTableBinding binding, int departmentId, bool enveloped,
 			CancellationToken cancellationToken = default)
 		{

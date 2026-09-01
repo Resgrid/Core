@@ -111,6 +111,57 @@ namespace Resgrid.Model
 		[ProtoMember(25)]
 		public DateTime? LastBillingEventOccurredOn { get; set; }
 
+		/// <summary>
+		/// End of the addon cycle billing has actually been paid for (M0144). The anchor every grace
+		/// calculation starts from, and the only date that says "this department is paid up".
+		/// </summary>
+		[ProtoMember(26)]
+		public DateTime? AddonPaidThroughOn { get; set; }
+
+		/// <summary>
+		/// <see cref="AdpAddonBillingMode"/> - automatic card billing or invoiced payment terms. It
+		/// selects which default grace applies, because a failed card and an unpaid NET45 invoice are
+		/// not the same event even though both arrive as "not paid yet".
+		/// </summary>
+		[ProtoMember(27)]
+		public int? AddonBillingMode { get; set; }
+
+		/// <summary>
+		/// When the CURRENT lapse began - the first payment failure of this episode, or the first
+		/// event seen after the paid-through date passed. Null once payment lands again.
+		/// </summary>
+		[ProtoMember(28)]
+		public DateTime? AddonDunningStartedOn { get; set; }
+
+		/// <summary>
+		/// The hard floor: offboarding for a NON-VOLUNTARY lapse is never scheduled before this
+		/// instant, whatever the provider says. Computed ONCE per lapse, deliberately — recomputing
+		/// it on each retry webhook would let a card that fails forever renew its own grace forever.
+		/// Cleared when a payment lands.
+		/// </summary>
+		[ProtoMember(29)]
+		public DateTime? AddonGraceEndsOn { get; set; }
+
+		/// <summary>
+		/// Per-department grace in days, overriding the configured default (M0144). For the customer
+		/// whose purchase order genuinely takes ninety days. Support sets it with a reason; it is
+		/// clamped to <c>DataProtectionConfig.AddonMaxGraceDays</c> so a mistyped value cannot hand
+		/// out protection indefinitely.
+		/// </summary>
+		[ProtoMember(30)]
+		public int? AddonGraceDaysOverride { get; set; }
+
+		/// <summary>
+		/// <see cref="AdpStepUpExemptClients"/> bitmask — which client apps this department has
+		/// released from the step-up prompt (M0145). Zero, the default, means every app prompts.
+		///
+		/// Only ever moves by an explicit act of the department's managing member, and every change
+		/// is audited and bumps the policy epoch: tightening it has to invalidate the grants the
+		/// looser setting already handed out, or the change would not take effect until they expired.
+		/// </summary>
+		[ProtoMember(31)]
+		public int StepUpExemptClients { get; set; }
+
 		/// <summary>Department-local overnight migration window start, "HH:mm" (default 22:00).</summary>
 		[MaxLength(5)]
 		[ProtoMember(15)]

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Providers;
@@ -127,6 +127,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var contactData = ConvertContactData(contact, department, addedOnPerson, editedPerson);
 					contactData.IsProtected = protectedRead.IsProtected;
 					contactData.ProtectedReason = protectedRead.ProtectedReason;
+
+					// Per ROW, not the batch union: a field redacted on one contact must not be
+					// reported as redacted on every other contact in the list. Without this the
+					// clients fall back to sniffing for the literal "REDACTED" string, which
+					// mistakes a member who typed that word for a protected value.
+					contactData.RedactedFields = Resgrid.Services.ProtectedReadService.GetRedactedFieldIds(
+						contact, Resgrid.Services.ProtectedReadService.ContactFieldAccessors);
+
 					result.Data.Add(contactData);
 				}
 

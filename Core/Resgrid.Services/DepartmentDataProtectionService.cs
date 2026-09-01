@@ -32,13 +32,18 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IProtectedFieldCatalog _fieldCatalog;
 		private readonly IDepartmentDataProtectionMigrationRepository _migrationRepository;
+		private readonly IDepartmentLockService _departmentLockService;
+		private readonly IDepartmentKeyService _keyService;
 
 		public DepartmentDataProtectionService(IDepartmentDataProtectionPolicyRepository policyRepository,
 			IDepartmentProtectedDataEgressPolicyRepository egressPolicyRepository, IDepartmentsService departmentsService,
 			IFeatureToggleService featureToggleService, ISubscriptionsService subscriptionsService,
 			ICacheProvider cacheProvider, IProtectedFieldCatalog fieldCatalog,
-			IDepartmentDataProtectionMigrationRepository migrationRepository)
+			IDepartmentDataProtectionMigrationRepository migrationRepository,
+			IDepartmentLockService departmentLockService, IDepartmentKeyService keyService)
 		{
+			_departmentLockService = departmentLockService;
+			_keyService = keyService;
 			_policyRepository = policyRepository;
 			_egressPolicyRepository = egressPolicyRepository;
 			_departmentsService = departmentsService;
@@ -394,20 +399,37 @@ namespace Resgrid.Services
 				{
 					case AdpAddonBillingEventKind.Activated:
 					case AdpAddonBillingEventKind.Renewed:
-						// No crypto change (plan 17.3). Renewal after a cancellation is the provider
-						// telling us the subscription is alive again, so a scheduled offboarding that
-						// has not started yet is withdrawn — this is what settles an out-of-order
-						// Cancelled-then-Renewed pair on the provider's current truth.
+						// No crypto change (plan 17.3). A payment landing ENDS any lapse: the grace
+						// floor and the dunning marker are cleared, and a scheduled offboarding that
+						// has not started yet is withdrawn.
+						//
+						// This is the whole recovery path for a late payer. An invoiced department
+						// whose NET45 cheque clears on day fifty arrives here as a Renewed, and the
+						// offboarding scheduled at their grace floor is withdrawn before its date -
+						// nothing was ever decrypted, and nobody had to phone support.
+						policy.AddonDunningStartedOn = null;
+						policy.AddonGraceEndsOn = null;
+
 						if ((DepartmentDataProtectionState)policy.State == DepartmentDataProtectionState.OffboardingScheduled)
 							result = await RevokeScheduledOffboardingForBillingAsync(billingEvent.DepartmentId, cancellationToken);
 						break;
 
 					case AdpAddonBillingEventKind.PaymentFailed:
-						// Dunning changes nothing about protection (plan 17.3). Recorded for the
-						// audit line and nothing else; exhausted dunning arrives later as Cancelled.
+						// Protection continues untouched (plan 17.3). What this DOES do is fix the
+						// floor beneath which offboarding can later be scheduled, once, at the start
+						// of the lapse - see BeginLapseIfNewAsync for why once and not per event.
+						BeginLapseIfNew(policy, billingEvent);
+
 						Logging.LogInfo($"ADP addon payment failed for department {billingEvent.DepartmentId} " +
-							$"(provider {billingEvent.ProviderName}, dunning {billingEvent.DunningState}); protection continues.");
-						break;
+							$"(provider {billingEvent.ProviderName}, dunning {billingEvent.DunningState}); protection " +
+							$"continues to at least {policy.AddonGraceEndsOn:o}.");
+
+						// An exhausted dunning cycle is a cancellation in everything but name, and
+						// some providers report it that way rather than sending a separate cancel.
+						if (!billingEvent.IsDunningExhausted)
+							break;
+
+						goto case AdpAddonBillingEventKind.Cancelled;
 
 					case AdpAddonBillingEventKind.Cancelled:
 						var source = billingEvent.IsChargeback
@@ -416,9 +438,7 @@ namespace Resgrid.Services
 								? DepartmentDataProtectionOffboardingSource.DunningExhausted
 								: DepartmentDataProtectionOffboardingSource.UserCancelled;
 
-						// A chargeback or refund ends the paid cycle immediately, but offboarding
-						// still runs through the normal worker path — never an instant crypto flip.
-						var effectiveOn = billingEvent.EffectiveEndUtc ?? DateTime.UtcNow;
+						var effectiveOn = ResolveOffboardingEffectiveOn(policy, billingEvent, source);
 
 						// Already scheduled: the provider is repeating itself. Re-scheduling would
 						// move a date a member may have been told, so it is left alone.
@@ -436,7 +456,7 @@ namespace Resgrid.Services
 						break;
 				}
 
-				await RecordBillingEventAsync(billingEvent, cancellationToken);
+				await RecordBillingEventAsync(billingEvent, policy, cancellationToken);
 				return result;
 			}
 			catch (Exception ex)
@@ -444,6 +464,73 @@ namespace Resgrid.Services
 				Logging.LogException(ex, $"ADP ApplyAddonBillingEventAsync failed for department {billingEvent.DepartmentId}");
 				return DepartmentDataProtectionEnrollmentResult.Failed;
 			}
+		}
+
+		/// <summary>
+		/// The grace a lapse gets, in days: the department's own override if support set one, else the
+		/// configured default for how it pays. Clamped so a mistyped override cannot hand out
+		/// protection indefinitely, and floored at zero so a negative one cannot backdate the floor
+		/// into the past.
+		/// </summary>
+		private static int ResolveGraceDays(DepartmentDataProtectionPolicy policy)
+		{
+			var configured = (AdpAddonBillingMode?)policy.AddonBillingMode == AdpAddonBillingMode.Invoiced
+				? Config.DataProtectionConfig.AddonInvoicedBillingGraceDays
+				: Config.DataProtectionConfig.AddonAutomaticBillingGraceDays;
+
+			var days = policy.AddonGraceDaysOverride ?? configured;
+			var ceiling = Math.Max(0, Config.DataProtectionConfig.AddonMaxGraceDays);
+
+			return Math.Min(Math.Max(0, days), ceiling);
+		}
+
+		/// <summary>
+		/// Opens a lapse and fixes its grace floor — ONCE. A failing card produces a payment-failure
+		/// webhook on every retry, and recomputing the floor on each one would push it forward
+		/// indefinitely: a department whose card never works again would keep protection forever
+		/// while paying nothing. So the floor is set on the first failure of an episode and left
+		/// alone until a payment lands and clears it.
+		///
+		/// The anchor is the paid-through date, not "now": what the department bought runs out when
+		/// it runs out, and the grace is added to that. Only when we have no paid-through date at all
+		/// does the failure's own timestamp stand in.
+		/// </summary>
+		private static void BeginLapseIfNew(DepartmentDataProtectionPolicy policy, AdpAddonBillingEvent billingEvent)
+		{
+			if (policy.AddonGraceEndsOn.HasValue && policy.AddonDunningStartedOn.HasValue)
+				return;
+
+			var occurredOn = billingEvent.OccurredOnUtc != default ? billingEvent.OccurredOnUtc : DateTime.UtcNow;
+
+			policy.AddonDunningStartedOn = occurredOn;
+			policy.AddonGraceEndsOn = (policy.AddonPaidThroughOn ?? occurredOn).AddDays(ResolveGraceDays(policy));
+		}
+
+		/// <summary>
+		/// When protection actually ends for a cancellation.
+		///
+		/// A member who cancels gets exactly what they paid for and not a day more — they asked to
+		/// stop, so the provider's end-of-cycle date stands. A chargeback ends it now; that is a
+		/// dispute, not a slow payment. Between those two sits the case this exists for: a department
+		/// that simply has not paid yet, where the provider's end date is only a statement about
+		/// billing, and using it directly would decrypt a customer whose invoice is still inside its
+		/// terms. There, the grace floor wins.
+		/// </summary>
+		private static DateTime ResolveOffboardingEffectiveOn(DepartmentDataProtectionPolicy policy,
+			AdpAddonBillingEvent billingEvent, DepartmentDataProtectionOffboardingSource source)
+		{
+			var providerEnd = billingEvent.EffectiveEndUtc ?? DateTime.UtcNow;
+
+			if (source != DepartmentDataProtectionOffboardingSource.DunningExhausted)
+				return providerEnd;
+
+			// The floor may not have been set if the provider never sent a payment failure before
+			// giving up, so compute it here rather than trusting it to exist.
+			if (!policy.AddonGraceEndsOn.HasValue)
+				BeginLapseIfNew(policy, billingEvent);
+
+			var floor = policy.AddonGraceEndsOn ?? providerEnd;
+			return floor > providerEnd ? floor : providerEnd;
 		}
 
 		/// <summary>
@@ -479,11 +566,26 @@ namespace Resgrid.Services
 		/// Stamps the subscription reference and the applied event id. The id is what makes a repeat
 		/// of the same webhook a no-op above.
 		/// </summary>
-		private async Task RecordBillingEventAsync(AdpAddonBillingEvent billingEvent, CancellationToken cancellationToken)
+		private async Task RecordBillingEventAsync(AdpAddonBillingEvent billingEvent,
+			DepartmentDataProtectionPolicy applied, CancellationToken cancellationToken)
 		{
 			var policy = await _policyRepository.GetByDepartmentIdAsync(billingEvent.DepartmentId);
 			if (policy == null)
 				return;
+
+			// The lapse fields were decided against the row the rules ran on; carry them across
+			// rather than recomputing, so a state transition in between cannot change the answer.
+			policy.AddonDunningStartedOn = applied?.AddonDunningStartedOn;
+			policy.AddonGraceEndsOn = applied?.AddonGraceEndsOn;
+
+			if (billingEvent.BillingMode.HasValue)
+				policy.AddonBillingMode = (int)billingEvent.BillingMode.Value;
+
+			// Only ever moves forward. A late-arriving event from an older cycle must not shorten
+			// what the department has already been told it is paid up to.
+			if (billingEvent.PaidThroughUtc.HasValue &&
+				(!policy.AddonPaidThroughOn.HasValue || billingEvent.PaidThroughUtc.Value > policy.AddonPaidThroughOn.Value))
+				policy.AddonPaidThroughOn = billingEvent.PaidThroughUtc.Value;
 
 			if (!string.IsNullOrWhiteSpace(billingEvent.ExternalSubscriptionRef))
 				policy.AddonBillingReference = billingEvent.ExternalSubscriptionRef;
@@ -693,6 +795,247 @@ namespace Resgrid.Services
 			preflight.StateAllowsEnrollment = await GetStateAsync(departmentId, bypassCache: true) == DepartmentDataProtectionState.Disabled;
 
 			return preflight;
+		}
+
+		public async Task<AdpStepUpExemptClients> GetStepUpExemptClientsAsync(int departmentId, bool bypassCache = false)
+		{
+			try
+			{
+				var policy = await GetPolicyByDepartmentIdAsync(departmentId, bypassCache);
+				return ((AdpStepUpExemptClients)(policy?.StepUpExemptClients ?? 0)).Sanitize();
+			}
+			catch (Exception ex)
+			{
+				// Fail closed: an unknown setting must read as "nothing is exempt", which prompts.
+				Logging.LogException(ex, $"ADP step-up exemption lookup failed for department {departmentId}; reporting none exempt.");
+				return AdpStepUpExemptClients.None;
+			}
+		}
+
+		public async Task<bool> IsStepUpRequiredForClientAsync(int departmentId, UserSessionClientApplication client,
+			bool bypassCache = false)
+		{
+			var decision = await GetStepUpDecisionForClientAsync(departmentId, client, bypassCache);
+			return decision.StepUpRequired;
+		}
+
+		public async Task<AdpStepUpDecision> GetStepUpDecisionForClientAsync(int departmentId,
+			UserSessionClientApplication client, bool bypassCache = false)
+		{
+			try
+			{
+				// ONE read backs the whole decision. The epoch a grant is stamped with has to come
+				// from the same snapshot that said the client was exempt, or a revocation arriving
+				// between two reads would mint a grant carrying the epoch its own revocation bumped.
+				var policy = await GetPolicyByDepartmentIdAsync(departmentId, bypassCache);
+				var exemptions = ((AdpStepUpExemptClients)(policy?.StepUpExemptClients ?? 0)).Sanitize();
+
+				return new AdpStepUpDecision
+				{
+					StepUpRequired = policy == null || !exemptions.IsExempt(client),
+					PolicyEpoch = policy?.PolicyEpoch ?? 0,
+					StepUpWindowMinutes = policy?.StepUpWindowMinutes ?? 0
+				};
+			}
+			catch (Exception ex)
+			{
+				// Fail closed: an unknown setting must read as "nothing is exempt", which prompts.
+				Logging.LogException(ex, $"ADP step-up decision lookup failed for department {departmentId}; requiring step up.");
+				return new AdpStepUpDecision { StepUpRequired = true };
+			}
+		}
+
+		public async Task<DepartmentDataProtectionEnrollmentResult> SetStepUpExemptClientsAsync(int departmentId,
+			AdpStepUpExemptClients exemptions, string requestingUserId, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				// Weakening a protection control is a managing-member decision, the same identity that
+				// bought the addon and enrolled the department - not any administrator.
+				var managingCheck = await VerifyManagingMemberAsync(departmentId, requestingUserId);
+				if (managingCheck != null)
+					return managingCheck.Value;
+
+				var policy = await _policyRepository.GetByDepartmentIdAsync(departmentId);
+				if (policy == null)
+					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+				var sanitized = exemptions.Sanitize();
+				if ((AdpStepUpExemptClients)policy.StepUpExemptClients == sanitized)
+					return DepartmentDataProtectionEnrollmentResult.Queued;
+
+				policy.StepUpExemptClients = (int)sanitized;
+				policy.UpdatedOn = DateTime.UtcNow;
+				policy.UpdatedByUserId = requestingUserId;
+				await _policyRepository.SaveOrUpdateAsync(policy, cancellationToken);
+
+				await InvalidateProtectionCacheAsync(departmentId);
+
+				// The epoch bump is what makes a TIGHTENING take effect now rather than whenever the
+				// last loosely-issued grant happened to expire. It is applied in both directions so
+				// the rule stays simple and there is never a window where the two disagree.
+				await IncrementPolicyEpochAsync(departmentId, requestingUserId, cancellationToken);
+
+				Logging.LogInfo($"ADP step-up exemptions for department {departmentId} set to {sanitized} by {requestingUserId}.");
+
+				return DepartmentDataProtectionEnrollmentResult.Queued;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"ADP SetStepUpExemptClientsAsync failed for department {departmentId}");
+				return DepartmentDataProtectionEnrollmentResult.Failed;
+			}
+		}
+
+		public async Task<DepartmentDataProtectionEnrollmentResult> QueueKeyRotationAsync(int departmentId,
+			string requestingUserId, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var policy = await GetPolicyByDepartmentIdAsync(departmentId, bypassCache: true);
+				if (policy == null)
+					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+				// Enabled only. A department mid-enrollment, mid-upgrade or mid-offboarding already
+				// has a cursor in flight, and a second sweep over the same rows under a different key
+				// would race the first.
+				if ((DepartmentDataProtectionState)policy.State != DepartmentDataProtectionState.Enabled)
+					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+				// The key is provisioned BEFORE the state moves. Provisioning is the step that can
+				// fail on a KMS outage, and failing it here leaves the department Enabled with no new
+				// version; failing it after the transition would park a department in Rotating with
+				// no version to rotate to.
+				var newKey = await _keyService.ProvisionNextKeyVersionAsync(departmentId, cancellationToken);
+				if (newKey == null)
+					return DepartmentDataProtectionEnrollmentResult.Failed;
+
+				var rows = await _policyRepository.TryTransitionStateAsync(departmentId,
+					DepartmentDataProtectionState.Enabled, DepartmentDataProtectionState.Rotating,
+					(int)DepartmentDataProtectionMigrationKind.Rotation, requestingUserId, cancellationToken);
+
+				if (rows == 0)
+				{
+					// Losing this race is NOT a no-op: provisioning already activated the new version
+					// and moved the previous one to Retiring, so the department stays Enabled holding
+					// a key version no sweep is queued to apply. New writes take the new version while
+					// older envelopes still name the Retiring one — readable, and cleared by the next
+					// rotation, but an operator has to be able to see that it happened.
+					Logging.LogError($"ADP key rotation for department {departmentId} lost the Enabled->Rotating transition after key v{newKey.Version} was activated; the department holds an unswept key version.");
+					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+				}
+
+				await InvalidateProtectionCacheAsync(departmentId);
+
+				// Value-free: department, key version and who asked. Never key material.
+				Logging.LogInfo($"ADP key rotation queued for department {departmentId} to key v{newKey.Version} by {requestingUserId}.");
+
+				return DepartmentDataProtectionEnrollmentResult.Queued;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"ADP QueueKeyRotationAsync failed for department {departmentId}");
+				return DepartmentDataProtectionEnrollmentResult.Failed;
+			}
+		}
+
+		public async Task<DepartmentDataProtectionEnrollmentResult> RetryFailedMigrationAsync(int departmentId,
+			string requestingUserId, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var policy = await GetPolicyByDepartmentIdAsync(departmentId, bypassCache: true);
+				if (policy == null)
+					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+				if ((DepartmentDataProtectionState)policy.State != DepartmentDataProtectionState.Failed)
+					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+				// A run that failed without recording what it was doing cannot be resumed safely:
+				// encrypting and decrypting from the same cursor are opposite operations.
+				if (!policy.ActiveMigrationKind.HasValue)
+					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+				// Each kind resumes into the state its own sweep runs from. An offboarding that came
+				// back as EnrollmentQueued would re-encrypt a department on its way out, and a
+				// rotation that did would re-run enrollment over an already-protected corpus.
+				//
+				// CatalogUpgrade resumes into Encrypting, the state the nightly sweep queues it into.
+				// Sending it to EnrollmentQueued would be worse than a wasted pass: the worker's
+				// enrollment path rewrites ActiveMigrationKind to Enrollment on its first transition,
+				// which both loses the upgrade's narrower field scope and drops enforcement — an
+				// Encrypting department only enforces while its kind still reads CatalogUpgrade, so
+				// the unenforced read path would start handing out rgdp ciphertext.
+				var resumeState = (DepartmentDataProtectionMigrationKind)policy.ActiveMigrationKind.Value switch
+				{
+					DepartmentDataProtectionMigrationKind.Offboarding => DepartmentDataProtectionState.DisableRequested,
+					DepartmentDataProtectionMigrationKind.Rotation => DepartmentDataProtectionState.Rotating,
+					DepartmentDataProtectionMigrationKind.CatalogUpgrade => DepartmentDataProtectionState.Encrypting,
+					_ => DepartmentDataProtectionState.EnrollmentQueued
+				};
+
+				var rows = await _policyRepository.TryTransitionStateAsync(departmentId,
+					DepartmentDataProtectionState.Failed, resumeState, policy.ActiveMigrationKind,
+					requestingUserId, cancellationToken);
+
+				if (rows == 0)
+					return DepartmentDataProtectionEnrollmentResult.InvalidState;
+
+				await InvalidateProtectionCacheAsync(departmentId);
+				Logging.LogInfo($"ADP migration for department {departmentId} re-queued as {resumeState} by {requestingUserId}; resumes from its cursor.");
+
+				return DepartmentDataProtectionEnrollmentResult.Queued;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"ADP RetryFailedMigrationAsync failed for department {departmentId}");
+				return DepartmentDataProtectionEnrollmentResult.Failed;
+			}
+		}
+
+		public async Task<bool> AbortActiveMigrationAsync(int departmentId, string requestingUserId,
+			CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var policy = await GetPolicyByDepartmentIdAsync(departmentId, bypassCache: true);
+				if (policy == null)
+					return false;
+
+				var state = (DepartmentDataProtectionState)policy.State;
+
+				// Only a state the worker is actually running can be aborted. Enabled, Disabled and
+				// the scheduled states have no window to stop.
+				if (state != DepartmentDataProtectionState.ProvisioningKey &&
+					state != DepartmentDataProtectionState.Encrypting &&
+					state != DepartmentDataProtectionState.Verifying &&
+					state != DepartmentDataProtectionState.Decrypting)
+					return false;
+
+				// The lock goes first. The worker checks it on every heartbeat, so releasing it is
+				// what actually makes the run stop; flipping the state first would leave a worker
+				// writing into a department the state says is idle.
+				var activeLock = await _departmentLockService.GetActiveLockAsync(departmentId, bypassCache: true);
+				if (activeLock != null)
+					await _departmentLockService.ReleaseLockAsync(activeLock.DepartmentOperationLockId,
+						DepartmentOperationLockReleaseKind.Aborted, requestingUserId, cancellationToken);
+
+				var rows = await _policyRepository.TryTransitionStateAsync(departmentId, state,
+					DepartmentDataProtectionState.Failed, policy.ActiveMigrationKind, requestingUserId,
+					cancellationToken);
+
+				await InvalidateProtectionCacheAsync(departmentId);
+
+				if (rows > 0)
+					Logging.LogInfo($"ADP migration for department {departmentId} aborted from {state} by {requestingUserId}; resumable from its cursor.");
+
+				return rows > 0;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"ADP AbortActiveMigrationAsync failed for department {departmentId}");
+				return false;
+			}
 		}
 
 		public async Task<long> IncrementPolicyEpochAsync(int departmentId, string updatedByUserId, CancellationToken cancellationToken = default)

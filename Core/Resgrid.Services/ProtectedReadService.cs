@@ -552,6 +552,35 @@ namespace Resgrid.Services
 		///
 		/// Callers that can supply the stored row should; this is the floor, not the ceiling.
 		/// </summary>
+		/// <summary>
+		/// The catalog field ids this ONE entity had redacted, read off the entity after a resolve.
+		///
+		/// A batch resolve returns a single result whose RedactedFields is the union across every row
+		/// it touched, which is the right answer for one record and the wrong one for a list: a field
+		/// redacted on one contact would be reported as redacted on all of them, including the ones
+		/// where it is simply empty. Rather than resolve per row — N broker round trips instead of
+		/// one — the batch runs once and each row's own values are then read back here.
+		///
+		/// Safe because the resolve writes the sentinel INTO the entity, so by this point the entity
+		/// itself carries the answer.
+		/// </summary>
+		public static List<string> GetRedactedFieldIds<T>(T entity,
+			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors)
+			where T : class
+		{
+			var redacted = new List<string>();
+			if (entity == null)
+				return redacted;
+
+			foreach (var accessor in accessors)
+			{
+				if (accessor.Value.Get(entity) == ProtectedDataEnvelope.RedactionValue)
+					redacted.Add(accessor.Key);
+			}
+
+			return redacted;
+		}
+
 		private static bool ApplySentinelPolicy<T>(T entity, T existing,
 			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors)
 			where T : class

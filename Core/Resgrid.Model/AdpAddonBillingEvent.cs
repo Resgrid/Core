@@ -58,6 +58,13 @@ namespace Resgrid.Model
 		/// <summary>Provider dunning descriptor, carried for the audit line only (PaymentFailed).</summary>
 		public string DunningState { get; set; }
 
+		/// <summary>
+		/// How this department pays. Resolved on the billing side, which is the only side that knows
+		/// whether the department is on a provider-charged subscription or invoiced on terms. Null
+		/// means "unchanged" — an event that does not carry it leaves the recorded mode alone.
+		/// </summary>
+		public AdpAddonBillingMode? BillingMode { get; set; }
+
 		/// <summary>True when this cancellation came from a chargeback or refund rather than the member.</summary>
 		public bool IsChargeback { get; set; }
 

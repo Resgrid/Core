@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -402,5 +402,137 @@
   </data>
   <data name="ConfirmRemoveContact" xml:space="preserve">
     <value>إزالة جهة اتصال الطوارئ هذه؟</value>
+  </data>
+  <data name="AddonPageTitle" xml:space="preserve">
+    <value>إضافة الحماية المتقدمة للبيانات</value>
+  </data>
+  <data name="AddonBreadcrumbSubscription" xml:space="preserve">
+    <value>الاشتراك</value>
+  </data>
+  <data name="AddonBuyHeading" xml:space="preserve">
+    <value>إضافة الحماية المتقدمة للبيانات</value>
+  </data>
+  <data name="AddonManageHeading" xml:space="preserve">
+    <value>إدارة الحماية المتقدمة للبيانات</value>
+  </data>
+  <data name="AddonPerYear" xml:space="preserve">
+    <value>سنويًا</value>
+  </data>
+  <data name="AddonSummary" xml:space="preserve">
+    <value>تقوم الحماية المتقدمة للبيانات بتشفير الحقول الحساسة في إدارتكم بمفتاح مخصص لها وحدها. بعد التفعيل، تظل القيم المحمية مخفية إلى أن يؤكد أحد الأعضاء هويته بعامل ثانٍ، وتبقى مشفرة في عمليات التصدير والإشعارات والتقارير.</value>
+  </data>
+  <data name="AddonFeatureEncryption" xml:space="preserve">
+    <value>تشفير الحقول الحساسة على مستوى الإدارة</value>
+  </data>
+  <data name="AddonFeatureStepUp" xml:space="preserve">
+    <value>تأكيد بعامل ثانٍ قبل إظهار القيم المحمية</value>
+  </data>
+  <data name="AddonFeatureEgress" xml:space="preserve">
+    <value>التحكم فيما يخرج عبر البريد الإلكتروني والرسائل القصيرة والإشعارات الفورية</value>
+  </data>
+  <data name="AddonFeatureAudit" xml:space="preserve">
+    <value>سجل تدقيق لكل قراءة محمية لا يتضمن أي قيم بذاته</value>
+  </data>
+  <data name="AddonBuyButton" xml:space="preserve">
+    <value>شراء الإضافة</value>
+  </data>
+  <data name="AddonManageButton" xml:space="preserve">
+    <value>إدارة الإضافة</value>
+  </data>
+  <data name="AddonManagingMemberOnly" xml:space="preserve">
+    <value>يستطيع العضو المسؤول عن الإدارة وحده شراء هذه الإضافة أو إلغاءها.</value>
+  </data>
+  <data name="AddonPaidPlanRequired" xml:space="preserve">
+    <value>تتطلب الحماية المتقدمة للبيانات خطة مدفوعة.</value>
+  </data>
+  <data name="AddonPurchaseSeparateFromEnrollment" xml:space="preserve">
+    <value>شراء الإضافة وحده لا يشفّر أي شيء. يجري تفعيل إدارتكم لاحقًا من صفحة إعدادات حماية البيانات في الوقت الذي تختارونه.</value>
+  </data>
+  <data name="AddonStatusLabel" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="AddonStatusActive" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="AddonStatusCancelled" xml:space="preserve">
+    <value>ملغاة</value>
+  </data>
+  <data name="AddonRenewsOnLabel" xml:space="preserve">
+    <value>تتجدد في</value>
+  </data>
+  <data name="AddonPaidThroughLabel" xml:space="preserve">
+    <value>مدفوعة حتى</value>
+  </data>
+  <data name="AddonProtectionStateLabel" xml:space="preserve">
+    <value>حالة الحماية</value>
+  </data>
+  <data name="AddonNotPurchased" xml:space="preserve">
+    <value>لا تملك إدارتكم هذه الإضافة.</value>
+  </data>
+  <data name="AddonGraceNotice" xml:space="preserve">
+    <value>لم نستلم دفعتكم بعد. تستمر الحماية حتى {0} — والدفع قبل ذلك التاريخ يُبقي كل شيء مشفرًا دون فك تشفير أي بيانات.</value>
+  </data>
+  <data name="AddonOffboardingNotice" xml:space="preserve">
+    <value>تنتهي الحماية في {0}. حتى ذلك الحين يبقى كل شيء مشفرًا، ولا يزال بإمكان العضو المسؤول التراجع عن ذلك.</value>
+  </data>
+  <data name="AddonCancelButton" xml:space="preserve">
+    <value>إلغاء الإضافة</value>
+  </data>
+  <data name="AddonCancelWarning" xml:space="preserve">
+    <value>عند الإلغاء تستمر الحماية حتى نهاية المدة المدفوعة. بعد ذلك تقوم عملية ترحيل ليلية بفك تشفير بيانات إدارتكم وإعادتها إلى التخزين المعتاد.</value>
+  </data>
+  <data name="AddonCancelConfirm" xml:space="preserve">
+    <value>إلغاء الحماية المتقدمة للبيانات لهذه الإدارة؟</value>
+  </data>
+  <data name="AddonOpenSettings" xml:space="preserve">
+    <value>فتح إعدادات حماية البيانات</value>
+  </data>
+  <data name="StepUpSectionTitle" xml:space="preserve">
+    <value>طلب التحقق</value>
+  </data>
+  <data name="StepUpSectionIntro" xml:space="preserve">
+    <value>قبل إظهار أي قيمة محمية، يطلب Resgrid من العضو رمزًا من تطبيق المصادقة. ويمكنكم إيقاف هذا الطلب لتطبيقات بعينها.</value>
+  </data>
+  <data name="StepUpSectionWarning" xml:space="preserve">
+    <value>اتركوه مفعّلًا حيثما أمكن. إيقافه يعني أن أي شخص سجّل الدخول بالفعل على ذلك الجهاز يستطيع كشف البيانات المحمية دون إثبات هويته — وهو أمر مقبول على وحدة الإرسال أثناء حادث، وأقل قبولًا بكثير على هاتف قد يُفقد.</value>
+  </data>
+  <data name="StepUpClientWeb" xml:space="preserve">
+    <value>موقع Resgrid</value>
+  </data>
+  <data name="StepUpClientDispatch" xml:space="preserve">
+    <value>وحدة الإرسال</value>
+  </data>
+  <data name="StepUpClientResponder" xml:space="preserve">
+    <value>تطبيق Responder</value>
+  </data>
+  <data name="StepUpClientUnit" xml:space="preserve">
+    <value>تطبيق Unit</value>
+  </data>
+  <data name="StepUpClientCommand" xml:space="preserve">
+    <value>تطبيق قيادة الحادث</value>
+  </data>
+  <data name="StepUpClientApi" xml:space="preserve">
+    <value>تكاملات واجهة البرمجة</value>
+  </data>
+  <data name="StepUpPromptOn" xml:space="preserve">
+    <value>طلب رمز</value>
+  </data>
+  <data name="StepUpPromptOff" xml:space="preserve">
+    <value>بدون طلب</value>
+  </data>
+  <data name="StepUpSaveAction" xml:space="preserve">
+    <value>حفظ إعدادات التحقق</value>
+  </data>
+  <data name="StepUpSaveConfirm" xml:space="preserve">
+    <value>تغيير طلب التحقق لهذه الإدارة؟</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>تعذّر حفظ إعدادات التحقق.</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>يستطيع العضو المسؤول عن الإدارة وحده تغيير ذلك.</value>
+  </data>
+  <data name="StepUpAuditNotice" xml:space="preserve">
+    <value>تُسجَّل كل تغييرات مع اسم من أجراها ووقتها.</value>
   </data>
 </root>

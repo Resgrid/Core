@@ -172,5 +172,66 @@ namespace Resgrid.Tests.Web.User
 			callers.Should().BeGreaterThanOrEqualTo(5,
 				"contacts, calls, personnel, units and the profile page all reveal UDF values");
 		}
+
+		/// <summary>
+		/// The UDF resolve is its own grant validation, and it is the one that can fail alone: a
+		/// record whose own cataloged columns are all empty produces no slots, so its resolve returns
+		/// without ever checking the grant. When the custom fields ARE enveloped, that second call is
+		/// where an expired grant surfaces.
+		///
+		/// Discarding its result answers success with placeholders the client declines to write, so
+		/// the member clicks Reveal and nothing happens — no error, no re-prompt. Two of the five
+		/// endpoints shipped with exactly that omission, which is why this is pinned structurally
+		/// rather than left to review.
+		/// </summary>
+		[Test]
+		public void Every_reveal_endpoint_reports_a_udf_grant_failure_to_the_client()
+		{
+			var root = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+			while (root != null && !System.IO.File.Exists(Path.Combine(root.FullName, "Resgrid.sln")))
+				root = root.Parent;
+
+			root.Should().NotBeNull("the tests must be able to find the repository root");
+
+			var controllers = Directory.GetFiles(Path.Combine(root!.FullName, "Web", "Resgrid.Web",
+				"Areas", "User", "Controllers"), "*.cs");
+
+			var checkedCallers = 0;
+
+			foreach (var path in controllers)
+			{
+				var source = System.IO.File.ReadAllText(path);
+				if (!source.Contains("ProtectedUdfRevealHelper.AddUdfValuesAsync"))
+					continue;
+
+				var name = Path.GetFileName(path);
+
+				// Every call must be of the form "var <name> = await ...AddUdfValuesAsync(...)", and
+				// <name>.ProtectedReason must be read soon after. An unassigned call cannot report
+				// anything, and an assigned-but-unread one is the same bug wearing a variable.
+				foreach (System.Text.RegularExpressions.Match call in Regex.Matches(source,
+					@"var\s+(?<variable>\w+)\s*=\s*await\s+ProtectedUdfRevealHelper\.AddUdfValuesAsync\b[^;]*;(?<tail>[\s\S]{0,800})",
+					RegexOptions.None))
+				{
+					checkedCallers++;
+
+					var variable = call.Groups["variable"].Value;
+					call.Groups["tail"].Value.Should().Contain($"{variable}.ProtectedReason",
+						$"{name} must answer success:false with the machine-readable reason so the client can re-prompt for step-up");
+				}
+
+				// A call that is not assigned at all never reaches the loop above, so count them
+				// separately rather than letting them pass unnoticed.
+				var totalCalls = Regex.Matches(source, @"ProtectedUdfRevealHelper\.AddUdfValuesAsync\b").Count;
+				var assignedCalls = Regex.Matches(source,
+					@"var\s+\w+\s*=\s*await\s+ProtectedUdfRevealHelper\.AddUdfValuesAsync\b").Count;
+
+				assignedCalls.Should().Be(totalCalls,
+					$"{name} must keep the reveal result — a dropped grant failure is invisible to the caller");
+			}
+
+			checkedCallers.Should().BeGreaterThanOrEqualTo(5,
+				"every reveal endpoint that loads UDF values has to be covered by this");
+		}
 	}
 }

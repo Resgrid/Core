@@ -100,7 +100,11 @@ namespace Resgrid.Services
 				new Claim(ClientAppClaim, request.ClientApp.ToString(), ClaimValueTypes.Integer32),
 				new Claim(PolicyEpochClaim, request.PolicyEpoch.ToString(), ClaimValueTypes.Integer64),
 				new Claim(MfaAtClaim, ToUnixSeconds(mfaAt).ToString(), ClaimValueTypes.Integer64),
-				new Claim(AmrClaim, "otp"),
+
+				// amr states honestly how this grant was authenticated. An exempted client produced no
+				// second factor, so claiming "otp" would put a lie in the audit trail of exactly the
+				// grants an auditor is most likely to be asking about.
+				new Claim(AmrClaim, request.StepUpExempt ? "pwd" : "otp"),
 				new Claim(ScopeClaim, string.Join(" ", request.Scopes))
 			};
 
@@ -219,6 +223,7 @@ namespace Resgrid.Services
 				PolicyEpoch = policyEpoch,
 				Scopes = scopes,
 				MfaAtUtc = DateTimeOffset.FromUnixTimeSeconds(mfaAtSeconds).UtcDateTime,
+				StepUpExempt = !string.Equals(principal.FindFirst(AmrClaim)?.Value, "otp", StringComparison.Ordinal),
 				IssuedAtUtc = parsedToken.IssuedAt,
 				ExpiresOnUtc = parsedToken.ValidTo
 			};

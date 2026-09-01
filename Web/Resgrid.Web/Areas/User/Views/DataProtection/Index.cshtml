@@ -291,6 +291,65 @@
             </div>
         </div>
     }
+
+    @*
+        Verification prompt settings (plan 3.3). Rendered only for a protected department: there is
+        nothing to prompt for until protection is on. Every app defaults to prompting and stays that
+        way until the managing member deliberately turns one off, which is why the checkbox means
+        "stop prompting" rather than "protect this".
+    *@
+    @if (Model.State != DepartmentDataProtectionState.Disabled)
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-mobile"></i> @localizer["StepUpSectionTitle"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <p>@localizer["StepUpSectionIntro"]</p>
+                        <div class="alert alert-warning">@localizer["StepUpSectionWarning"]</div>
+
+                        @if (!Model.IsManagingMember)
+                        {
+                            <div class="alert alert-info">@localizer["StepUpManagingMemberOnly"]</div>
+                        }
+
+                        <table class="table table-striped">
+                            <tbody>
+                                @foreach (var client in Resgrid.Web.Areas.User.Models.DataProtection.DataProtectionIndexView.ExemptableClients)
+                                {
+                                    var isExempt = (Model.StepUpExemptClients & client.Flag) != 0;
+                                    <tr>
+                                        <td style="width: 55%;">@localizer[client.LabelKey]</td>
+                                        <td>
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" class="adp-stepup-exempt"
+                                                           value="@((int)client.Flag)"
+                                                           @(isExempt ? "checked" : "")
+                                                           @(Model.IsManagingMember ? "" : "disabled") />
+                                                    @(isExempt ? localizer["StepUpPromptOff"] : localizer["StepUpPromptOn"])
+                                                </label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <p class="text-muted"><small>@localizer["StepUpAuditNotice"]</small></p>
+
+                        @if (Model.IsManagingMember)
+                        {
+                            <button class="btn btn-primary" id="adpSaveStepUpExemptions">@localizer["StepUpSaveAction"]</button>
+                            <span id="adpStepUpExemptionsError" class="text-danger" style="margin-left: 10px;"></span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @section Scripts
@@ -317,4 +376,41 @@
         };
     </script>
     <script src="~/js/app/internal/dataprotection/resgrid.dataprotection.wizard.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        // Verification prompt settings (plan 3.3). The whole mask is posted every time rather than a
+        // per-app delta: the audit record then shows the department's complete before and after
+        // state, which is what someone reviewing a weakening actually needs to see.
+        $(function () {
+            $('#adpSaveStepUpExemptions').on('click', function () {
+                if (!window.confirm(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["StepUpSaveConfirm"].Value))))
+                    return;
+
+                var mask = 0;
+                $('.adp-stepup-exempt:checked').each(function () {
+                    mask |= parseInt($(this).val(), 10) || 0;
+                });
+
+                var $button = $('#adpSaveStepUpExemptions').prop('disabled', true);
+                $('#adpStepUpExemptionsError').text('');
+
+                $.post('@Url.Action("SaveStepUpExemptions", "DataProtection", new { area = "User" })', {
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val(),
+                    exemptions: mask
+                }).done(function (response) {
+                    $button.prop('disabled', false);
+
+                    if (response && response.success) {
+                        window.location.reload();
+                        return;
+                    }
+
+                    $('#adpStepUpExemptionsError').text(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["StepUpSaveFailed"].Value)));
+                }).fail(function () {
+                    $button.prop('disabled', false);
+                    $('#adpStepUpExemptionsError').text(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["StepUpSaveFailed"].Value)));
+                });
+            });
+        });
+    </script>
 }

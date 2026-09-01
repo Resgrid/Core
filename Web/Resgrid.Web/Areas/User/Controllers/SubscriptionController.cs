@@ -48,12 +48,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserProfileService _userProfileService;
 		private readonly IOptions<AppOptions> _appOptionsAccessor;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IDepartmentDataProtectionService _dataProtectionService;
 
 		public SubscriptionController(IDepartmentsService departmentsService, IUsersService usersService, IDepartmentGroupsService departmentGroupsService,
 			Model.Services.IAuthorizationService authorizationService, ISubscriptionsService subscriptionsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
 			IDepartmentSettingsService departmentSettingsService, IEmailService emailService, IAffiliateService affiliateService,
-			IUserProfileService userProfileService, IOptions<AppOptions> appOptionsAccessor, IEventAggregator eventAggregator)
+			IUserProfileService userProfileService, IOptions<AppOptions> appOptionsAccessor, IEventAggregator eventAggregator,
+			IDepartmentDataProtectionService dataProtectionService)
 		{
+			_dataProtectionService = dataProtectionService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_departmentGroupsService = departmentGroupsService;
@@ -70,6 +73,207 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion Private Members and Constructors
+
+		#region Advanced Data Protection addon
+
+		/// <summary>
+		/// The ADP addon plan for this data center. Resolved by TYPE rather than by a hardcoded id
+		/// like the PTT pages use: the addon is seeded once per data center with its own id, and a
+		/// literal here would work in one region and quietly fail in the other.
+		/// </summary>
+		private async Task<PlanAddon> GetAdpAddonPlanAsync()
+		{
+			var plans = await _subscriptionsService.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP);
+			return plans?.FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Plan 17.1: every ADP billing action is restricted to the department's managing member,
+		/// server-side. Not "an administrator" — enrolling commits the department's data to a key it
+		/// then depends on, and cancelling starts the migration that undoes it, so both stay with the
+		/// single person who owns the account.
+		/// </summary>
+		private async Task<bool> IsAdpManagingMemberAsync()
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			return department != null && !string.IsNullOrWhiteSpace(department.ManagingUserId)
+				&& string.Equals(department.ManagingUserId, UserId, StringComparison.OrdinalIgnoreCase);
+		}
+
+		/// <summary>
+		/// Loads everything both ADP addon pages render. Billing facts come from the addon rows and
+		/// protection facts from the policy, and they are kept apart on purpose — see AdpAddonView.
+		/// </summary>
+		private async Task<AdpAddonView> BuildAdpAddonViewAsync()
+		{
+			var model = new AdpAddonView();
+
+			model.PlanAddon = await GetAdpAddonPlanAsync();
+			if (model.PlanAddon == null)
+				return null;
+
+			model.PlanAddonId = model.PlanAddon.PlanAddonId;
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.IsManagingMember = model.Department != null
+				&& !string.IsNullOrWhiteSpace(model.Department.ManagingUserId)
+				&& string.Equals(model.Department.ManagingUserId, UserId, StringComparison.OrdinalIgnoreCase);
+
+			model.Price = model.PlanAddon.Cost.ToString("C0", Cultures.UnitedStates);
+
+			var currentPlan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
+			model.HasPaidPlan = currentPlan != null && currentPlan.Cost > 0;
+
+			var addons = await _subscriptionsService.GetCurrentPaymentAddonsForDepartmentAsync(DepartmentId,
+				new List<string> { model.PlanAddon.PlanAddonId });
+
+			var addon = addons?.OrderByDescending(x => x.EndingOn).FirstOrDefault();
+			if (addon != null)
+			{
+				model.HasAddon = true;
+				model.IsCancelled = addon.IsCancelled;
+				model.EndingOn = addon.EndingOn;
+			}
+
+			// Protection state is read fresh: a member who has just enrolled or cancelled is looking
+			// at this page precisely to see whether it took effect.
+			var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId, bypassCache: true);
+			model.ProtectionState = policy == null
+				? DepartmentDataProtectionState.Disabled
+				: (DepartmentDataProtectionState)policy.State;
+			model.PaidThroughOn = policy?.AddonPaidThroughOn;
+			model.GraceEndsOn = policy?.AddonGraceEndsOn;
+			model.OffboardingEffectiveOn = policy?.OffboardingEffectiveOn;
+
+			return model;
+		}
+
+		/// <summary>Purchase page for the ADP addon (plan 17.1).</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> BuyAdpAddon()
+		{
+			var model = await BuildAdpAddonViewAsync();
+			if (model == null)
+				return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the Advanced Data Protection add-on. Please try again.");
+
+			// An active addon belongs on the management page; sending them there beats rendering a
+			// buy button that the POST would refuse.
+			if (model.HasAddon && !model.IsCancelled)
+				return RedirectToAction("ManageAdpAddon", "Subscription", new { Area = "User" });
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		[RequiresRecentTwoFactor]
+		public async Task<IActionResult> BuyAdpAddon(AdpAddonView postedModel, CancellationToken cancellationToken)
+		{
+			try
+			{
+				// Re-checked here rather than trusted from the page: the GET only decides what to draw.
+				if (!await IsAdpManagingMemberAsync())
+					return Unauthorized();
+
+				var addonPlan = await GetAdpAddonPlanAsync();
+				if (addonPlan == null || !addonPlan.PlanId.HasValue)
+					return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the Advanced Data Protection add-on. Please try again.");
+
+				var currentPlan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(DepartmentId);
+				if (currentPlan == null || currentPlan.Cost <= 0)
+					return RedirectToAction("BuyAdpAddon", "Subscription", new { Area = "User" });
+
+				var plan = await _subscriptionsService.GetPlanByIdAsync(addonPlan.PlanId.Value);
+				if (plan == null)
+					return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the Advanced Data Protection plan. Please try again.");
+
+				// Audited AFTER the provider call, with the provider's own answer. Recorded first it
+				// claimed success for a purchase the billing API may then have refused, which is the
+				// one thing an addon audit trail must never do.
+				var purchased = await _subscriptionsService.AddAddonAddedToExistingSub(DepartmentId, plan, addonPlan);
+
+				var auditEvent = new AuditEvent();
+				auditEvent.Before = null;
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.AddonSubscriptionModified;
+				auditEvent.After = $"ADP addon purchased ({addonPlan.PlanAddonId})";
+				auditEvent.Successful = purchased != null;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+				// The provider's webhook is what actually activates the addon in Core; this page only
+				// starts the purchase. Nothing about protection changes here either way - the
+				// department enrolls afterwards, from the Data Protection page, when it chooses to.
+				return RedirectToAction("PaymentComplete", "Subscription", new { Area = "User", planId = plan.PlanId });
+			}
+			catch (Exception ex)
+			{
+				Logging.SendExceptionEmail(ex, "BuyAdpAddon", DepartmentId, UserName);
+
+				return RedirectToAction("PaymentFailed", "Subscription",
+					new { Area = "User", chargeId = "", errorMessage = ex.Message });
+			}
+		}
+
+		/// <summary>Management page for an ADP addon the department already holds (plan 17.1).</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ManageAdpAddon()
+		{
+			var model = await BuildAdpAddonViewAsync();
+			if (model == null)
+				return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the Advanced Data Protection add-on. Please try again.");
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		[RequiresRecentTwoFactor]
+		public async Task<IActionResult> CancelAdpAddon(CancellationToken cancellationToken)
+		{
+			try
+			{
+				if (!await IsAdpManagingMemberAsync())
+					return Unauthorized();
+
+				// Cancels the BILLING subscription only. Protection keeps running until the provider's
+				// cancellation event reaches Core and the offboarding migration it schedules actually
+				// runs; nothing here touches a key or a ciphertext.
+				//
+				// Audited AFTER the call, with the provider's own answer: recorded first it claimed a
+				// cancellation the billing API may then have refused.
+				var cancelled = await _subscriptionsService.CancelPlanAddonByTypeFromStripeAsync(DepartmentId, (int)PlanAddonTypes.ADP);
+
+				var auditEvent = new AuditEvent();
+				auditEvent.Before = null;
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.AddonSubscriptionModified;
+				auditEvent.After = "ADP addon cancelled";
+				auditEvent.Successful = cancelled;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+				return RedirectToAction("ManageAdpAddon", "Subscription", new { Area = "User" });
+			}
+			catch (Exception ex)
+			{
+				Logging.SendExceptionEmail(ex, "CancelAdpAddon", DepartmentId, UserName);
+
+				return RedirectToAction("PaymentFailed", "Subscription",
+					new { Area = "User", chargeId = "", errorMessage = ex.Message });
+			}
+		}
+
+		#endregion Advanced Data Protection addon
 
 		private static bool ShouldUsePaddleForSubscriptionFlow(Payment currentPayment, string paddleCustomerId)
 		{

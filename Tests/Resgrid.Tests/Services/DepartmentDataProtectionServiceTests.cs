@@ -63,7 +63,9 @@ namespace Resgrid.Tests.Services
 
 			_service = new DepartmentDataProtectionService(_policyRepo.Object, _egressRepo.Object,
 				_departmentsService.Object, _featureToggleService.Object, _subscriptionsService.Object,
-				_cacheProvider.Object, new ProtectedFieldCatalog(), _migrationRepo.Object);
+				_cacheProvider.Object, new ProtectedFieldCatalog(), _migrationRepo.Object,
+				new Mock<IDepartmentLockService>().Object,
+				new Mock<IDepartmentKeyService>().Object);
 		}
 
 		#region QueueEnrollment gates

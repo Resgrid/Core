@@ -189,6 +189,7 @@ namespace Resgrid.Workers.Framework.Logic
 				case DepartmentDataProtectionState.EnrollmentQueued:
 				case DepartmentDataProtectionState.ProvisioningKey:
 				case DepartmentDataProtectionState.Encrypting:
+				case DepartmentDataProtectionState.Rotating:
 				case DepartmentDataProtectionState.Verifying:
 				case DepartmentDataProtectionState.DisableRequested:
 				case DepartmentDataProtectionState.Decrypting:
@@ -345,6 +346,36 @@ namespace Resgrid.Workers.Framework.Logic
 					context.TargetKeyVersion = activeKey?.Version;
 				}
 
+				// A rotation re-encrypts an already-protected corpus under the new key version. It
+				// runs the same night as an enrollment because the engine's encrypt path IS the
+				// re-key path - it decrypts each envelope to validate it anyway, so a rotation is
+				// that decrypt followed by an encrypt under the new version.
+				if (state == DepartmentDataProtectionState.Rotating)
+				{
+					var rotationNight = await _engine.RunEncryptionNightAsync(context, cancellationToken);
+					if (rotationNight.Outcome == AdpMigrationNightOutcome.WindowClosed)
+					{
+						await NotifyAdminsAsync(departmentId,
+							$"Advanced Data Protection: tonight's key rotation checkpoint is complete ({rotationNight.PercentComplete?.ToString() ?? "?"}% done). Your department is back in full service; work resumes the next scheduled night.");
+						return $"department {departmentId}: rotation checkpointed";
+					}
+
+					if (rotationNight.Outcome == AdpMigrationNightOutcome.Failed)
+					{
+						releaseKind = DepartmentOperationLockReleaseKind.Aborted;
+						await FailInFlightMigrationAsync(departmentId, rotationNight.ErrorCode, cancellationToken);
+						await NotifyFailureAsync(departmentId);
+						return $"department {departmentId}: rotation failed ({rotationNight.ErrorCode})";
+					}
+
+					if (await _policyRepository.TryTransitionStateAsync(departmentId, DepartmentDataProtectionState.Rotating,
+							DepartmentDataProtectionState.Verifying, (int)DepartmentDataProtectionMigrationKind.Rotation,
+							WorkerIdentity, cancellationToken) == 0)
+						return $"department {departmentId}: verify transition race";
+
+					state = DepartmentDataProtectionState.Verifying;
+				}
+
 				if (state == DepartmentDataProtectionState.Encrypting)
 				{
 					// Before the sweep: move any member data still sitting in the legacy global
@@ -471,6 +502,21 @@ namespace Resgrid.Workers.Framework.Logic
 						return $"department {departmentId}: catalog upgrade complete at v{context.CatalogVersion}";
 					}
 
+					if (kind == DepartmentDataProtectionMigrationKind.Rotation)
+					{
+						// Retirement happens ONLY here, after verification proved no envelope still
+						// references a superseded version (plan 11.3: "retires old versions only after
+						// all copies and restore tests pass"). Retiring earlier would make any row the
+						// sweep had not reached yet unreadable. The rows themselves are never deleted -
+						// cryptographic erasure is a separate dual-controlled operation.
+						var retired = await RetireSupersededKeyVersionsAsync(departmentId, context.TargetKeyVersion ?? 0, cancellationToken);
+
+						await NotifyAdminsAsync(departmentId,
+							"Advanced Data Protection: your department's encryption key has been rotated and verification passed. No action is needed.");
+						releaseKind = DepartmentOperationLockReleaseKind.Completed;
+						return $"department {departmentId}: rotation complete at key v{context.TargetKeyVersion}, {retired} version(s) retired";
+					}
+
 					await NotifyAdminsAsync(departmentId,
 						"Advanced Data Protection: verification passed and protection is now ACTIVE for your department.");
 					releaseKind = DepartmentOperationLockReleaseKind.Completed;
@@ -498,6 +544,66 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				await _lockService.ReleaseLockAsync(departmentLock.DepartmentOperationLockId, releaseKind, WorkerIdentity, CancellationToken.None);
 			}
+		}
+
+		/// <summary>
+		/// Retires every Retiring version below the rotation target. Called only after verification,
+		/// so by this point nothing references them. Failures here are logged rather than failing the
+		/// run: the data is fully re-keyed and readable, and a version left Retiring is a metadata
+		/// tidy-up an operator can repeat, not a reason to unwind a successful rotation.
+		/// </summary>
+		private async Task<int> RetireSupersededKeyVersionsAsync(int departmentId, int targetVersion, CancellationToken cancellationToken)
+		{
+			if (targetVersion <= 0)
+				return 0;
+
+			var retired = 0;
+			var stillRetiring = new List<int>();
+
+			try
+			{
+				var versions = await _keyService.GetAllVersionsAsync(departmentId);
+
+				foreach (var key in (versions ?? Array.Empty<DepartmentDataProtectionKey>())
+					.Where(k => k.Version < targetVersion &&
+						(DepartmentDataProtectionKeyStatus)k.Status == DepartmentDataProtectionKeyStatus.Retiring))
+				{
+					// Each version is retired independently. One version that will not retire - a KMS
+					// blip, a row another process is holding - must not skip the versions after it:
+					// the run reports complete and the department returns to Enabled, which the sweep
+					// does not pick up again, so anything passed over here waits for the next rotation.
+					try
+					{
+						if (await _keyService.RetireKeyVersionAsync(departmentId, key.Version, cancellationToken))
+							retired++;
+						else
+							stillRetiring.Add(key.Version);
+					}
+					catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+					{
+						// Shutdown, not a retirement failure: stop the loop rather than logging every
+						// remaining version as a problem.
+						throw;
+					}
+					catch (Exception ex)
+					{
+						stillRetiring.Add(key.Version);
+						Logging.LogException(ex, $"ADP rotation for department {departmentId} could not retire key v{key.Version}; continuing with the remaining versions.");
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"ADP rotation for department {departmentId} completed but retiring superseded key versions failed.");
+			}
+
+			// Named explicitly so an operator can repeat the tidy-up without diffing key tables. The
+			// data itself is fully re-keyed and readable either way - this is metadata that stayed
+			// behind, not a rotation that has to be unwound.
+			if (stillRetiring.Count > 0)
+				Logging.LogError($"ADP rotation for department {departmentId} left key version(s) {string.Join(", ", stillRetiring.Select(v => $"v{v}"))} in Retiring; they are not swept again until the next rotation and need an operator to retire them.");
+
+			return retired;
 		}
 
 		/// <summary>Moves an in-flight (transitional) state to Failed, preserving the migration kind for resume.</summary>

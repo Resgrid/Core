@@ -177,6 +177,109 @@ namespace Resgrid.Tests.Services
 				"old-version envelopes are counted already-protected, never re-encrypted");
 		}
 
+		/// <summary>
+		/// Rotation rides the encryption path, and the difference between the two is one branch: an
+		/// envelope on an older version is re-encrypted rather than counted already-protected. The
+		/// test that matters is that the VALUE survives it — a rotation that silently changed data
+		/// would be indistinguishable from one that worked until someone read a record back.
+		/// </summary>
+		[Test]
+		public async Task Rotation_re_encrypts_every_envelope_under_the_new_key_and_preserves_the_values()
+		{
+			await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
+			var beforeRotation = (string)_bulk.Table("Calls")[0]["Name"];
+
+			var v2 = await ProvisionVersionTwoAsync();
+
+			var context = Context(DepartmentDataProtectionMigrationKind.Rotation);
+			context.TargetKeyVersion = 2;
+			var result = await _engine.RunEncryptionNightAsync(context, CancellationToken.None);
+
+			result.Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
+
+			var rotated = (string)_bulk.Table("Calls")[0]["Name"];
+			rotated.Should().NotBe(beforeRotation, "the envelope was rewritten");
+			rotated.Should().StartWith("rgdp:1:2:", "and rewritten under the new key version");
+
+			// The whole point: same plaintext, different key.
+			_crypto.DecryptText(v2, rotated, DeptId, "calls.name", "1").Should().Be("Structure Fire");
+		}
+
+		[Test]
+		public async Task Rotation_leaves_a_value_already_on_the_target_version_untouched()
+		{
+			// Resumability: a rotation that stopped mid-table and restarted must not rewrite what the
+			// first pass already moved, or every retry would churn the whole corpus again.
+			await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
+			await ProvisionVersionTwoAsync();
+
+			var context = Context(DepartmentDataProtectionMigrationKind.Rotation);
+			context.TargetKeyVersion = 2;
+			await _engine.RunEncryptionNightAsync(context, CancellationToken.None);
+			var afterFirstRotation = _bulk.Snapshot("Calls");
+
+			_migrations.Rows.Clear();
+			var second = await _engine.RunEncryptionNightAsync(context, CancellationToken.None);
+
+			second.Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
+			_bulk.Snapshot("Calls").Should().BeEquivalentTo(afterFirstRotation,
+				"values already on the target version are counted already-protected, not re-keyed again");
+		}
+
+		[Test]
+		public async Task Rotation_verification_fails_while_anything_is_still_on_the_old_version()
+		{
+			// This gate is what stands between a half-rotated department and a retired key version
+			// that would make those rows permanently unreadable.
+			await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
+			await ProvisionVersionTwoAsync();
+
+			var context = Context(DepartmentDataProtectionMigrationKind.Rotation);
+			context.TargetKeyVersion = 2;
+
+			(await _engine.VerifyAsync(context, CancellationToken.None)).Should().BeFalse(
+				"nothing has been re-keyed yet, so every row still references v1");
+
+			await _engine.RunEncryptionNightAsync(context, CancellationToken.None);
+
+			(await _engine.VerifyAsync(context, CancellationToken.None)).Should().BeTrue(
+				"after the sweep no envelope references a superseded version");
+		}
+
+		[Test]
+		public async Task Rotation_still_halts_on_an_envelope_it_cannot_open()
+		{
+			// Re-keying must not become a way to launder a foreign envelope into this department's
+			// current key: the decrypt that produces the plaintext is the same one that validates it.
+			await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
+			await ProvisionVersionTwoAsync();
+
+			_bulk.Table("Calls")[0]["Name"] = "rgdp:1:1:" + Convert.ToBase64String(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+
+			var context = Context(DepartmentDataProtectionMigrationKind.Rotation);
+			context.TargetKeyVersion = 2;
+			var result = await _engine.RunEncryptionNightAsync(context, CancellationToken.None);
+
+			result.Outcome.Should().Be(AdpMigrationNightOutcome.Failed);
+		}
+
+		private async Task<byte[]> ProvisionVersionTwoAsync()
+		{
+			var wrapped = await _keyProvider.GenerateWrappedDataKeyAsync(DeptId);
+			var keyRow = new DepartmentDataProtectionKey
+			{
+				DepartmentId = DeptId,
+				Version = 2,
+				WrappedKey = wrapped.WrappedKeyBase64,
+				Status = (int)DepartmentDataProtectionKeyStatus.Active
+			};
+
+			_keyService.Setup(x => x.GetKeyByVersionAsync(DeptId, 2)).ReturnsAsync(keyRow);
+			_keyService.Setup(x => x.GetActiveKeyAsync(DeptId)).ReturnsAsync(keyRow);
+
+			return await _keyProvider.UnwrapDataKeyAsync(DeptId, wrapped.WrappedKeyBase64);
+		}
+
 		[Test]
 		public async Task Envelope_referencing_an_unknown_key_version_halts_the_run()
 		{
@@ -363,6 +466,47 @@ namespace Resgrid.Tests.Services
 					var isEnvelope = value.StartsWith("rgdp:", StringComparison.Ordinal);
 					return enveloped ? isEnvelope : !isEnvelope;
 				}));
+				return Task.FromResult((long)count);
+			}
+
+			public Task<long> CountSupersededKeyVersionResidueAsync(AdpTableBinding binding, int departmentId,
+				int targetKeyVersion, CancellationToken cancellationToken = default)
+			{
+				if (!_tables.TryGetValue(binding.TableName, out var table))
+					return Task.FromResult(0L);
+
+				var textPrefix = $"rgdp:{ProtectedDataEnvelope.CurrentVersion}:{targetKeyVersion}:";
+				var binaryPrefix = System.Text.Encoding.ASCII.GetBytes(
+					$"rgdpb:{ProtectedDataEnvelope.CurrentVersion}:{targetKeyVersion}:");
+
+				bool TextIsStale(string value) =>
+					!string.IsNullOrEmpty(value)
+					&& value.StartsWith("rgdp:", StringComparison.Ordinal)
+					&& !value.StartsWith(textPrefix, StringComparison.Ordinal);
+
+				bool BinaryIsStale(byte[] value)
+				{
+					if (value == null || value.Length < 6)
+						return false;
+
+					var isEnvelope = System.Text.Encoding.ASCII.GetString(value, 0, 6) == "rgdpb:";
+					if (!isEnvelope)
+						return false;
+
+					if (value.Length < binaryPrefix.Length)
+						return true;
+
+					return !value.Take(binaryPrefix.Length).SequenceEqual(binaryPrefix);
+				}
+
+				var count = table.Rows.Count(r => binding.Columns.Any(c => c.StorageKind switch
+				{
+					ProtectedFieldStorageKind.Text => TextIsStale(r.TryGetValue(c.ColumnName, out var t) ? t as string : null),
+					ProtectedFieldStorageKind.CompanionColumn => TextIsStale(r.TryGetValue(c.CompanionColumn, out var cc) ? cc as string : null),
+					ProtectedFieldStorageKind.Binary => BinaryIsStale(r.TryGetValue(c.ColumnName, out var b) ? b as byte[] : null),
+					_ => false
+				}));
+
 				return Task.FromResult((long)count);
 			}
 

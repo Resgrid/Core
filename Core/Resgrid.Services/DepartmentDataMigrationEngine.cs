@@ -167,9 +167,31 @@ namespace Resgrid.Services
 		{
 			var enveloped = context.Kind == DepartmentDataProtectionMigrationKind.Offboarding;
 
+			// A rotation ends with everything still enveloped, so "is it enveloped" proves nothing.
+			// What it has to prove is that no envelope still references a SUPERSEDED key version -
+			// otherwise the old version could not be retired without making those rows unreadable.
+			var rotationTargetVersion = context.Kind == DepartmentDataProtectionMigrationKind.Rotation
+				? context.TargetKeyVersion ?? 0
+				: 0;
+
 			foreach (var binding in BindingsFor(context))
 			{
 				cancellationToken.ThrowIfCancellationRequested();
+
+				if (rotationTargetVersion > 0)
+				{
+					var staleVersions = await _bulkRepository.CountSupersededKeyVersionResidueAsync(binding,
+						context.DepartmentId, rotationTargetVersion, cancellationToken);
+
+					if (staleVersions > 0)
+					{
+						Logging.LogError($"ADP rotation verification failed for department {context.DepartmentId} table {binding.TableName}: {staleVersions} value(s) still on a superseded key version.");
+						await MarkVerificationAsync(context, DepartmentDataProtectionVerificationState.Failed, complete: false, cancellationToken);
+						return false;
+					}
+
+					continue;
+				}
 
 				var textResidue = await _bulkRepository.CountTextResidueAsync(binding, context.DepartmentId, enveloped, cancellationToken);
 				var binaryResidue = await _bulkRepository.CountBinaryResidueAsync(binding, context.DepartmentId, enveloped, cancellationToken);
@@ -298,9 +320,17 @@ namespace Resgrid.Services
 			byte[] targetDek, int keyVersion, AdpMigrationNightContext context,
 			AdpColumnSpec spec, AdpBulkFieldRow row, Dictionary<string, object> setValues)
 		{
+			// A ROTATION re-encrypts every envelope under the new key version. It rides the encryption
+			// path rather than having one of its own because the two differ by a single step: the
+			// validation decrypt below already produces the plaintext, so re-keying is just encrypting
+			// that same plaintext again under the new version. The key version is NOT an AAD component
+			// (the AAD binds department, field and row), so a re-keyed envelope stays bound to exactly
+			// what it was bound to before.
+			var isRekeying = context.Kind == DepartmentDataProtectionMigrationKind.Rotation;
+
 			// Resolves the DEK for the key version an EXISTING envelope references; an unparseable
 			// header or an unknown version reads as corrupt/foreign and halts the run (fail closed).
-			async Task<byte[]> ValidationDekForTextAsync(string envelope)
+			async Task<(byte[] Dek, int Version)> ValidationDekForTextAsync(string envelope)
 			{
 				if (!ProtectedDataEnvelope.TryParse(envelope, out _, out var envelopeKeyVersion, out _))
 					throw new CryptographicException("Prefixed value is not a parseable ADP envelope; treating as corrupt.");
@@ -309,7 +339,7 @@ namespace Resgrid.Services
 				if (validationDek == null)
 					throw new CryptographicException("Envelope references an unknown department key version.");
 
-				return validationDek;
+				return (validationDek, envelopeKeyVersion);
 			}
 
 			switch (spec.StorageKind)
@@ -324,8 +354,16 @@ namespace Resgrid.Services
 					{
 						// Validate against THIS department's AAD with the key version that wrote the
 						// envelope; a mismatch throws (foreign envelope).
-						var validationDek = await ValidationDekForTextAsync(value);
-						_cryptoService.DecryptText(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey);
+						var (validationDek, envelopeKeyVersion) = await ValidationDekForTextAsync(value);
+						var plaintext = _cryptoService.DecryptText(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey);
+
+						if (isRekeying && envelopeKeyVersion != keyVersion)
+						{
+							setValues[spec.ColumnName] = _cryptoService.EncryptText(targetDek, keyVersion, plaintext,
+								context.DepartmentId, spec.FieldId, row.RowKey);
+							return ColumnOutcome.Changed;
+						}
+
 						return ColumnOutcome.AlreadyInTargetState;
 					}
 
@@ -349,7 +387,15 @@ namespace Resgrid.Services
 						if (validationDek == null)
 							throw new CryptographicException("Envelope references an unknown department key version.");
 
-						_cryptoService.DecryptBinary(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey);
+						var plaintext = _cryptoService.DecryptBinary(validationDek, value, context.DepartmentId, spec.FieldId, row.RowKey);
+
+						if (isRekeying && envelopeKeyVersion != keyVersion)
+						{
+							setValues[spec.ColumnName] = _cryptoService.EncryptBinary(targetDek, keyVersion, plaintext,
+								context.DepartmentId, spec.FieldId, row.RowKey);
+							return ColumnOutcome.Changed;
+						}
+
 						return ColumnOutcome.AlreadyInTargetState;
 					}
 
@@ -374,8 +420,16 @@ namespace Resgrid.Services
 
 					if (!string.IsNullOrEmpty(companion))
 					{
-						var validationDek = await ValidationDekForTextAsync(companion);
-						_cryptoService.DecryptText(validationDek, companion, context.DepartmentId, spec.FieldId, row.RowKey);
+						var (validationDek, envelopeKeyVersion) = await ValidationDekForTextAsync(companion);
+						var plaintext = _cryptoService.DecryptText(validationDek, companion, context.DepartmentId, spec.FieldId, row.RowKey);
+
+						if (isRekeying && envelopeKeyVersion != keyVersion)
+						{
+							setValues[spec.CompanionColumn] = _cryptoService.EncryptText(targetDek, keyVersion, plaintext,
+								context.DepartmentId, spec.FieldId, row.RowKey);
+							return ColumnOutcome.Changed;
+						}
+
 						return ColumnOutcome.AlreadyInTargetState;
 					}
 

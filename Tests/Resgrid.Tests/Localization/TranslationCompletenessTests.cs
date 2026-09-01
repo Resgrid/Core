@@ -72,6 +72,9 @@ namespace Resgrid.Tests.Localization
 			"DataProtection|it|BreadcrumbHome",     // Italian UIs use the English "Home".
 			"DataProtection|it|EmailLabel",         // "Email" is standard Italian usage.
 			"DataProtection|el|EmailLabel",         // Greek UIs use the Latin-script "Email".
+			"DataProtection|de|AddonStatusLabel",   // "Status" is the German word too.
+			"DataProtection|pl|AddonStatusLabel",   // Polish uses "Status" as well.
+			"DataProtection|sv|AddonStatusLabel",   // So does Swedish.
 
 			// Brand and protocol names carry across every language.
 			"CommunicationTest|de|Push", "CommunicationTest|de|SMS",

@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:schema id="root">
     <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -402,5 +402,137 @@
   </data>
   <data name="ConfirmRemoveContact" xml:space="preserve">
     <value>Κατάργηση αυτής της επαφής έκτακτης ανάγκης;</value>
+  </data>
+  <data name="AddonPageTitle" xml:space="preserve">
+    <value>Πρόσθετο Προηγμένης Προστασίας Δεδομένων</value>
+  </data>
+  <data name="AddonBreadcrumbSubscription" xml:space="preserve">
+    <value>Συνδρομή</value>
+  </data>
+  <data name="AddonBuyHeading" xml:space="preserve">
+    <value>Προσθήκη Προηγμένης Προστασίας Δεδομένων</value>
+  </data>
+  <data name="AddonManageHeading" xml:space="preserve">
+    <value>Διαχείριση Προηγμένης Προστασίας Δεδομένων</value>
+  </data>
+  <data name="AddonPerYear" xml:space="preserve">
+    <value>ανά έτος</value>
+  </data>
+  <data name="AddonSummary" xml:space="preserve">
+    <value>Η Προηγμένη Προστασία Δεδομένων κρυπτογραφεί τα ευαίσθητα πεδία της υπηρεσίας σας με κλειδί που τηρείται αποκλειστικά για αυτήν. Μετά την ενεργοποίηση, οι προστατευμένες τιμές παραμένουν κρυφές έως ότου ένα μέλος επιβεβαιωθεί με δεύτερο παράγοντα, και παραμένουν κρυπτογραφημένες σε εξαγωγές, ειδοποιήσεις και αναφορές.</value>
+  </data>
+  <data name="AddonFeatureEncryption" xml:space="preserve">
+    <value>Κρυπτογράφηση ευαίσθητων πεδίων ανά υπηρεσία</value>
+  </data>
+  <data name="AddonFeatureStepUp" xml:space="preserve">
+    <value>Επιβεβαίωση με δεύτερο παράγοντα πριν εμφανιστούν οι προστατευμένες τιμές</value>
+  </data>
+  <data name="AddonFeatureEgress" xml:space="preserve">
+    <value>Έλεγχος όσων εξέρχονται μέσω email, SMS και ειδοποιήσεων push</value>
+  </data>
+  <data name="AddonFeatureAudit" xml:space="preserve">
+    <value>Ιστορικό ελέγχου κάθε προστατευμένης ανάγνωσης, το οποίο δεν περιέχει τιμές</value>
+  </data>
+  <data name="AddonBuyButton" xml:space="preserve">
+    <value>Αγορά προσθέτου</value>
+  </data>
+  <data name="AddonManageButton" xml:space="preserve">
+    <value>Διαχείριση προσθέτου</value>
+  </data>
+  <data name="AddonManagingMemberOnly" xml:space="preserve">
+    <value>Μόνο το διαχειριστικό μέλος της υπηρεσίας μπορεί να αγοράσει ή να ακυρώσει αυτό το πρόσθετο.</value>
+  </data>
+  <data name="AddonPaidPlanRequired" xml:space="preserve">
+    <value>Η Προηγμένη Προστασία Δεδομένων απαιτεί πληρωμένο πρόγραμμα.</value>
+  </data>
+  <data name="AddonPurchaseSeparateFromEnrollment" xml:space="preserve">
+    <value>Η αγορά του προσθέτου δεν κρυπτογραφεί από μόνη της τίποτα. Η υπηρεσία σας ενεργοποιείται στη συνέχεια, από τη σελίδα Προστασίας Δεδομένων, όποτε το επιλέξετε.</value>
+  </data>
+  <data name="AddonStatusLabel" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="AddonStatusActive" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="AddonStatusCancelled" xml:space="preserve">
+    <value>Ακυρωμένο</value>
+  </data>
+  <data name="AddonRenewsOnLabel" xml:space="preserve">
+    <value>Ανανεώνεται στις</value>
+  </data>
+  <data name="AddonPaidThroughLabel" xml:space="preserve">
+    <value>Πληρωμένο έως</value>
+  </data>
+  <data name="AddonProtectionStateLabel" xml:space="preserve">
+    <value>Κατάσταση προστασίας</value>
+  </data>
+  <data name="AddonNotPurchased" xml:space="preserve">
+    <value>Η υπηρεσία σας δεν διαθέτει αυτό το πρόσθετο.</value>
+  </data>
+  <data name="AddonGraceNotice" xml:space="preserve">
+    <value>Δεν έχουμε λάβει ακόμη την πληρωμή σας. Η προστασία συνεχίζεται έως τις {0} — αν πληρώσετε πριν από τότε, όλα παραμένουν κρυπτογραφημένα και τίποτα δεν αποκρυπτογραφείται.</value>
+  </data>
+  <data name="AddonOffboardingNotice" xml:space="preserve">
+    <value>Η προστασία λήγει στις {0}. Έως τότε όλα παραμένουν κρυπτογραφημένα και το διαχειριστικό μέλος μπορεί ακόμη να το αναιρέσει.</value>
+  </data>
+  <data name="AddonCancelButton" xml:space="preserve">
+    <value>Ακύρωση προσθέτου</value>
+  </data>
+  <data name="AddonCancelWarning" xml:space="preserve">
+    <value>Με την ακύρωση, η προστασία συνεχίζεται έως το τέλος της περιόδου που έχετε πληρώσει. Στη συνέχεια, μια νυχτερινή μεταφορά αποκρυπτογραφεί τα δεδομένα της υπηρεσίας σας και τα επαναφέρει στην κανονική αποθήκευση.</value>
+  </data>
+  <data name="AddonCancelConfirm" xml:space="preserve">
+    <value>Ακύρωση της Προηγμένης Προστασίας Δεδομένων για αυτήν την υπηρεσία;</value>
+  </data>
+  <data name="AddonOpenSettings" xml:space="preserve">
+    <value>Άνοιγμα ρυθμίσεων Προστασίας Δεδομένων</value>
+  </data>
+  <data name="StepUpSectionTitle" xml:space="preserve">
+    <value>Αίτημα επαλήθευσης</value>
+  </data>
+  <data name="StepUpSectionIntro" xml:space="preserve">
+    <value>Πριν εμφανιστεί μια προστατευμένη τιμή, το Resgrid ζητά από το μέλος έναν κωδικό από την εφαρμογή ελέγχου ταυτότητας. Μπορείτε να απενεργοποιήσετε αυτό το αίτημα για συγκεκριμένες εφαρμογές.</value>
+  </data>
+  <data name="StepUpSectionWarning" xml:space="preserve">
+    <value>Αφήστε το ενεργό όπου μπορείτε. Η απενεργοποίηση σημαίνει ότι όποιος έχει ήδη συνδεθεί σε εκείνη τη συσκευή μπορεί να αποκαλύψει προστατευμένα δεδομένα χωρίς να αποδείξει ποιος είναι — ανεκτό σε κονσόλα διαχείρισης κατά τη διάρκεια συμβάντος, πολύ λιγότερο σε τηλέφωνο που μπορεί να χαθεί.</value>
+  </data>
+  <data name="StepUpClientWeb" xml:space="preserve">
+    <value>Ιστότοπος Resgrid</value>
+  </data>
+  <data name="StepUpClientDispatch" xml:space="preserve">
+    <value>Κονσόλα διαχείρισης κλήσεων</value>
+  </data>
+  <data name="StepUpClientResponder" xml:space="preserve">
+    <value>Εφαρμογή Responder</value>
+  </data>
+  <data name="StepUpClientUnit" xml:space="preserve">
+    <value>Εφαρμογή Unit</value>
+  </data>
+  <data name="StepUpClientCommand" xml:space="preserve">
+    <value>Εφαρμογή Διοίκησης Συμβάντος</value>
+  </data>
+  <data name="StepUpClientApi" xml:space="preserve">
+    <value>Ενσωματώσεις API</value>
+  </data>
+  <data name="StepUpPromptOn" xml:space="preserve">
+    <value>Να ζητείται κωδικός</value>
+  </data>
+  <data name="StepUpPromptOff" xml:space="preserve">
+    <value>Χωρίς αίτημα</value>
+  </data>
+  <data name="StepUpSaveAction" xml:space="preserve">
+    <value>Αποθήκευση ρυθμίσεων επαλήθευσης</value>
+  </data>
+  <data name="StepUpSaveConfirm" xml:space="preserve">
+    <value>Αλλαγή του αιτήματος επαλήθευσης για αυτήν την υπηρεσία;</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση των ρυθμίσεων επαλήθευσης.</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Μόνο το διαχειριστικό μέλος της υπηρεσίας μπορεί να το αλλάξει.</value>
+  </data>
+  <data name="StepUpAuditNotice" xml:space="preserve">
+    <value>Κάθε αλλαγή καταγράφεται με το ποιος την έκανε και πότε.</value>
   </data>
 </root>

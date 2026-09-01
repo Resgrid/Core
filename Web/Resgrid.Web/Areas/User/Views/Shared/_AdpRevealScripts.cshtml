@@ -37,6 +37,9 @@
     $(function () {
         resgridAdpReveal.init({
             verifyUrl: '@Url.Action("VerifyStepUp", "DataProtection", new { area = "User" })',
+            @* Asked before the prompt is shown; answers step_up_required unless the department has
+               exempted this app, in which case it returns a grant directly (plan 3.3). *@
+            requestGrantUrl: '@Url.Action("RequestGrant", "DataProtection", new { area = "User" })',
             @* A page with no per-record reveal endpoint (its values come from the API through its
                own component) leaves these unset; step-up alone is the whole job and the host
                reloads through onRevealed. *@

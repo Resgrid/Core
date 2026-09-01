@@ -991,9 +991,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
 			bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
 
-			await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
+			var resolvedUdf = await ProtectedUdfRevealHelper.AddUdfValuesAsync(fields, _userDefinedFieldsService,
 				_protectedReadService, DepartmentId, UdfEntityType.Contact, contactId, grantToken, UserId,
 				isDeptAdmin, isGroupAdmin);
+
+			// The UDF resolve is a SEPARATE grant validation, and it is the one that can fail on its
+			// own: a record whose own cataloged columns are all empty produces no slots, so its
+			// resolve returns without ever checking the grant. If the custom fields are enveloped,
+			// this call is where an expired grant actually surfaces - and dropping the reason would
+			// answer success with placeholders the client silently declines to write, so the member
+			// clicks Reveal and nothing happens. Null when the record has no custom values at all.
+			if (resolvedUdf != null && resolvedUdf.IsProtected && resolvedUdf.ProtectedReason != null)
+				return Json(new { success = false, error = resolvedUdf.ProtectedReason });
 
 			return Json(new { success = true, fields });
 		}

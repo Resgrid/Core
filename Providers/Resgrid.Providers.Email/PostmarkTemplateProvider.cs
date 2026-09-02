@@ -324,12 +324,12 @@ namespace Resgrid.Providers.EmailProvider
 
 			var templateModel = new Dictionary<string, object>
 			{
-				{ "name", System.Net.WebUtility.HtmlEncode(name) },
-				{ "department_name", System.Net.WebUtility.HtmlEncode(departmentName) },
+				{ "name", name },
+				{ "department_name", departmentName },
 				{ "support_url", LIVECHAT_URL },
-				{ "ip_address", System.Net.WebUtility.HtmlEncode(ipAddress) },
-				{ "user_agent", System.Net.WebUtility.HtmlEncode(userAgent) },
-				{ "requested_on", System.Net.WebUtility.HtmlEncode(requestedOn) },
+				{ "ip_address", ipAddress },
+				{ "user_agent", userAgent },
+				{ "requested_on", requestedOn },
 				// Mustachio resolves fields in an each block against the current item, so the
 				// URL must live in that item instead of beside a boolean section flag.
 				{
@@ -339,7 +339,7 @@ namespace Resgrid.Providers.EmailProvider
 						{
 							new Dictionary<string, object>
 							{
-								{ "url", System.Net.WebUtility.HtmlEncode(resetUrl) }
+								{ "url", resetUrl }
 							}
 						}
 				},

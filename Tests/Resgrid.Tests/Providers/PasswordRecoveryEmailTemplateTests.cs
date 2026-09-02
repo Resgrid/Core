@@ -90,5 +90,36 @@ namespace Resgrid.Tests.Providers
 			result.Should().BeFalse();
 			senderMock.Verify(sender => sender.Send(It.IsAny<Email>()), Times.Never);
 		}
+
+		[Test]
+		public async Task SendPasswordRecoveryMail_WithSpecialCharacters_EncodesTemplateValuesExactlyOnce()
+		{
+			// Arrange
+			const string resetUrl =
+				"https://app.resgrid.test/Account/ResetPassword?token=abc123&returnUrl=%2FUser%2FHome";
+			Email sent = null;
+			var senderMock = new Mock<IEmailSender>();
+			senderMock
+				.Setup(sender => sender.Send(It.IsAny<Email>()))
+				.Callback<Email>(email => sent = email)
+				.ReturnsAsync(true);
+			var provider = new PostmarkTemplateProvider(senderMock.Object);
+
+			// Act
+			var result = await provider.SendPasswordRecoveryMail("Brandon & <Team>", "brandon@example.com",
+				"Example & <Fire>", resetUrl, "192.0.2.1 & proxy", "Browser <Beta> & Co",
+				"2026-09-02 14:12 UTC & verified", false);
+
+			// Assert
+			result.Should().BeTrue();
+			sent.Should().NotBeNull();
+			sent.HtmlBody.Should().Contain("Brandon &amp; &lt;Team&gt;");
+			sent.HtmlBody.Should().Contain("Example &amp; &lt;Fire&gt;");
+			sent.HtmlBody.Should().Contain("192.0.2.1 &amp; proxy");
+			sent.HtmlBody.Should().Contain("Browser &lt;Beta&gt; &amp; Co");
+			sent.HtmlBody.Should().Contain("2026-09-02 14:12 UTC &amp; verified");
+			sent.HtmlBody.Should().NotContain("&amp;amp;");
+			WebUtility.HtmlDecode(sent.HtmlBody).Should().Contain($"href=\"{resetUrl}\"");
+		}
 	}
 }

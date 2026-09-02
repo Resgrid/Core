@@ -260,6 +260,30 @@ namespace Resgrid.Tests.Providers
 			email.HtmlBody.Should().NotContain("href=\"\"");
 		}
 
+		[Test]
+		public async Task MessageAndReportBodies_WithPlainTextLineBreaks_PreserveWhitespace()
+		{
+			// Arrange
+			const string body = "<p>First line</p><p>  Indented second line</p>";
+			var sentEmails = new List<Email>();
+			var provider = CreateProvider(sentEmails);
+
+			// Act
+			await provider.SendMessageMail("member@example.com", "New message", "Drill details", body,
+				"chief@example.com", "Chief Smith", "2026-09-02 07:12 UTC", 42);
+			await provider.SendReportDeliveryMail("member@example.com", "Scheduled report", body,
+				"2026-09-02 07:12 UTC", "Weekly activity", "weekly.pdf", new byte[] { 1, 2, 3 }, null);
+
+			// Assert
+			sentEmails.Should().HaveCount(2);
+			foreach (var email in sentEmails)
+			{
+				email.HtmlBody.Should().Contain("<p style=\"white-space: pre-wrap;\">",
+					$"'{email.Subject}' should display the converted plain-text whitespace and line breaks");
+				email.HtmlBody.Should().Contain("\r\nFirst line\r\n  Indented second line");
+			}
+		}
+
 		[TestCase(null)]
 		[TestCase("")]
 		public async Task SendInviteMail_WithoutInviteCode_DoesNotSendUnusableAction(string inviteCode)

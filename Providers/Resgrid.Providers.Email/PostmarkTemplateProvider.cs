@@ -16,10 +16,10 @@ namespace Resgrid.Providers.EmailProvider
 
 		private static string FROM_EMAIL = OutboundEmailServerConfig.FromMail;
 		private static string DONOTREPLY_EMAIL = OutboundEmailServerConfig.FromMail;
-		private static string LOGIN_URL = $"{SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn";
+		private static string LOGIN_URL => GetAppUrl("Account/LogOn");
 		private static string LIVECHAT_URL = $"https://resgrid.com/contact";
-		private static string HELP_URL = "https://resgrid.zohodesk.com/portal/en/homem";
-		private static string UPDATEBILLINGINFO_URL = $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription/UpdateBillingInfo";
+		private static string HELP_URL = "https://resgrid.zohodesk.com/portal/en/home";
+		private static string UPDATEBILLINGINFO_URL => GetAppUrl("User/Subscription/UpdateBillingInfo");
 
 		public PostmarkTemplateProvider(IEmailSender emailSender)
 		{
@@ -54,8 +54,8 @@ namespace Resgrid.Providers.EmailProvider
 				{ "department_name", departmentName },
 				{ "local_deletion_date", localCompletedOn.ToString("F") },
 				{ "name", sendingToPersonName },
-				{ "login_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn" },
-				{ "support_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Home/Contact" },
+				{ "login_url", GetAppUrl("Account/LogOn") },
+				{ "support_url", GetAppUrl("Home/Contact") },
 			};
 
 			try
@@ -102,16 +102,20 @@ namespace Resgrid.Providers.EmailProvider
 				{ "priority", priority },
 				{ "address", address },
 				{ "map_page", mapPage },
-				{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Dispatch/CallExportEx?query={callQuery}" },
-				{ "userId", userId },
-				{ "coordinates", coordinates }
+				{ "action_url", GetAppUrl($"User/Dispatch/CallExportEx?query={Uri.EscapeDataString(callQuery)}") },
+				{ "coordinates", coordinates },
+				{
+					"call_audio", String.IsNullOrWhiteSpace(shortenedAudioUrl)
+						? Array.Empty<Dictionary<string, object>>()
+						: new[]
+						{
+							new Dictionary<string, object>
+							{
+								{ "url", System.Net.WebUtility.HtmlEncode(shortenedAudioUrl) }
+							}
+						}
+				}
 			};
-
-			if (!String.IsNullOrWhiteSpace(shortenedAudioUrl))
-			{
-				templateModel.Add("hasCallAudio", "true");
-				templateModel.Add("callAudio_url", shortenedAudioUrl);
-			}
 
 
 			try
@@ -174,13 +178,13 @@ namespace Resgrid.Providers.EmailProvider
 		{
 			var templateModel = new Dictionary<string, object>
 			{
-				{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
-				{ "subscriptions_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
+				{ "greeting", String.IsNullOrWhiteSpace(name) ? "Hello," : $"Hi {System.Net.WebUtility.HtmlEncode(name)}," },
+				{ "department_name", System.Net.WebUtility.HtmlEncode(departmentName) },
+				{ "end_date", System.Net.WebUtility.HtmlEncode(endDate) },
+				{ "action_url", GetAppUrl("User/Subscription") },
+				{ "subscriptions_url", GetAppUrl("User/Subscription") },
 				{ "help_url", HELP_URL },
-				{ "trial_extension_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
-				{ "export_url", "" },
 				{ "plans_url", $"https://resgrid.com/pricing" },
-				{ "close_account_url", HELP_URL },
 			};
 
 			try
@@ -208,13 +212,13 @@ namespace Resgrid.Providers.EmailProvider
 		{
 			var templateModel = new Dictionary<string, object>
 			{
-				{ "plan_name", planName },
+				{ "greeting", String.IsNullOrWhiteSpace(name) ? "Hello," : $"Hi {System.Net.WebUtility.HtmlEncode(name)}," },
+				{ "department_name", System.Net.WebUtility.HtmlEncode(departmentName) },
+				{ "end_date", System.Net.WebUtility.HtmlEncode(endDate) },
+				{ "plan_name", System.Net.WebUtility.HtmlEncode(planName) },
 				{ "action_url", UPDATEBILLINGINFO_URL },
-				{ "subscriptions_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
+				{ "subscriptions_url", GetAppUrl("User/Subscription") },
 				{ "help_url", HELP_URL },
-				{ "trial_extension_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/User/Subscription" },
-				{ "export_url", "" },
-				{ "close_account_url", HELP_URL },
 			};
 
 			try
@@ -240,11 +244,14 @@ namespace Resgrid.Providers.EmailProvider
 
 		public async Task<bool> SendInviteMail(string code, string departmentName, string email, string senderName, string senderEmail)
 		{
+			if (String.IsNullOrWhiteSpace(code))
+				return false;
+
 			var templateModel = new Dictionary<string, object>
 			{
 				{ "invite_sender_name", senderName },
 				{ "department_name", departmentName },
-				{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/CompleteInvite?inviteCode={code}" },
+				{ "action_url", GetAppUrl($"Account/CompleteInvite?inviteCode={Uri.EscapeDataString(code)}") },
 				{ "support_email", FROM_EMAIL },
 				{ "live_chat_url", LIVECHAT_URL },
 				{ "help_url", HELP_URL },
@@ -279,11 +286,10 @@ namespace Resgrid.Providers.EmailProvider
 			var templateModel = new Dictionary<string, object>
 			{
 				{ "sender_name", senderName },
-				{ "title", subject },
+				{ "title", messageSubject },
 				{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
-				{ "action_url", $"https://app.resgrid.com/User/Messages/ViewMessage?messageId={messageId}" },
+				{ "action_url", GetAppUrl($"User/Messages/ViewMessage?messageId={messageId}") },
 				{ "timestamp", sentOn },
-				{ "commenter_name", senderName }
 			};
 
 			try
@@ -295,8 +301,10 @@ namespace Resgrid.Providers.EmailProvider
 				newEmail.HtmlBody = content;
 				newEmail.Sender = FROM_EMAIL;
 				newEmail.From = FROM_EMAIL;
-				newEmail.Subject = $"Resgrid New Message: {subject}";
+				newEmail.Subject = subject;
 				newEmail.To.Add(email);
+				if (!String.IsNullOrWhiteSpace(senderEmail))
+					newEmail.ReplyTo.Add(senderEmail);
 
 				return await _emailSender.Send(newEmail);
 			}
@@ -311,16 +319,30 @@ namespace Resgrid.Providers.EmailProvider
 			string departmentName, string resetUrl, string ipAddress, string userAgent, string requestedOn,
 			bool isSsoManaged)
 		{
+			if (!isSsoManaged && String.IsNullOrWhiteSpace(resetUrl))
+				return false;
+
 			var templateModel = new Dictionary<string, object>
 			{
-				{ "name", System.Net.WebUtility.HtmlEncode(name) },
-				{ "department_name", System.Net.WebUtility.HtmlEncode(departmentName) },
+				{ "name", name },
+				{ "department_name", departmentName },
 				{ "support_url", LIVECHAT_URL },
-				{ "reset_url", System.Net.WebUtility.HtmlEncode(resetUrl) },
-				{ "ip_address", System.Net.WebUtility.HtmlEncode(ipAddress) },
-				{ "user_agent", System.Net.WebUtility.HtmlEncode(userAgent) },
-				{ "requested_on", System.Net.WebUtility.HtmlEncode(requestedOn) },
-				{ "has_reset_link", !isSsoManaged },
+				{ "ip_address", ipAddress },
+				{ "user_agent", userAgent },
+				{ "requested_on", requestedOn },
+				// Mustachio resolves fields in an each block against the current item, so the
+				// URL must live in that item instead of beside a boolean section flag.
+				{
+					"reset_link", isSsoManaged
+						? Array.Empty<Dictionary<string, object>>()
+						: new[]
+						{
+							new Dictionary<string, object>
+							{
+								{ "url", resetUrl }
+							}
+						}
+				},
 				{ "is_sso_managed", isSsoManaged },
 			};
 
@@ -328,9 +350,41 @@ namespace Resgrid.Providers.EmailProvider
 			{
 				var template = Mustachio.Parser.Parse(GetTempate("PasswordRecovery.html"));
 				var content = template(templateModel);
+				var textContent = new StringBuilder();
+				textContent.AppendLine("Password reset requested");
+				textContent.AppendLine();
+				textContent.AppendLine($"Hi {name},");
+				textContent.AppendLine();
+				textContent.AppendLine(
+					$"You or an administrator requested a password reset for your Resgrid account in {departmentName}.");
+				textContent.AppendLine();
+
+				if (isSsoManaged)
+				{
+					textContent.AppendLine(
+						"This account is linked via SSO and cannot change its password via the Resgrid system. Contact your administrator.");
+				}
+				else
+				{
+					textContent.AppendLine("Choose a new password using this short-lived, single-use link:");
+					textContent.AppendLine(resetUrl);
+					textContent.AppendLine();
+					textContent.AppendLine(
+						"Changing your password will immediately sign you out of every Resgrid web, mobile, dispatch, and big-board session and revoke all existing access and refresh tokens.");
+				}
+
+				textContent.AppendLine();
+				textContent.AppendLine("Request details");
+				textContent.AppendLine($"Time (UTC): {requestedOn}");
+				textContent.AppendLine($"IP address: {ipAddress}");
+				textContent.AppendLine($"Browser/device: {userAgent}");
+				textContent.AppendLine();
+				textContent.AppendLine(
+					$"If you did not expect this request, no password has been changed. Contact your administrator or Resgrid support at {LIVECHAT_URL} if you are concerned.");
 
 				Email newEmail = new Email();
 				newEmail.HtmlBody = content;
+				newEmail.TextBody = textContent.ToString();
 				newEmail.Sender = FROM_EMAIL;
 				newEmail.From = FROM_EMAIL;
 				newEmail.Subject = "Resgrid password reset request";
@@ -361,9 +415,24 @@ namespace Resgrid.Providers.EmailProvider
 			{
 				var template = Mustachio.Parser.Parse(GetTempate("PasswordChangedByAdministrator.html"));
 				var content = template(templateModel);
+				var textContent = new StringBuilder();
+				textContent.AppendLine("Your Resgrid password was changed");
+				textContent.AppendLine();
+				textContent.AppendLine($"Hi {name},");
+				textContent.AppendLine();
+				textContent.AppendLine(
+					$"An administrator in {departmentName} changed the password for your Resgrid account {userName}.");
+				textContent.AppendLine(
+					"All existing Resgrid sessions were signed out. Use the new password supplied by your administrator.");
+				textContent.AppendLine();
+				textContent.AppendLine($"Log in: {LOGIN_URL}");
+				textContent.AppendLine();
+				textContent.AppendLine(
+					$"If you did not expect this change, contact your department administrator or Resgrid support at {LIVECHAT_URL}.");
 				var newEmail = new Email
 				{
 					HtmlBody = content,
+					TextBody = textContent.ToString(),
 					Sender = FROM_EMAIL,
 					From = FROM_EMAIL,
 					Subject = "Your Resgrid password was changed"
@@ -385,6 +454,9 @@ namespace Resgrid.Providers.EmailProvider
 			{
 				{ "purchase_date", processDate },
 				{ "name", name },
+				{ "department_name", departmentName },
+				{ "next_billing_date", nextBillingDate },
+				{ "processor", processor },
 				{ "billing_url", UPDATEBILLINGINFO_URL },
 				{ "uservoice_url", LIVECHAT_URL },
 				{ "receipt_id", transactionId },
@@ -401,10 +473,7 @@ namespace Resgrid.Providers.EmailProvider
 				},
 				{ "total", amount },
 				{ "support_url", HELP_URL },
-				{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}User/Subscription/ViewInvoice?paymentId={paymentId}" },
-				{ "credit_card_brand", "" },
-				{ "credit_card_last_four", "" },
-				{ "expiration_date", "" },
+				{ "action_url", GetAppUrl($"User/Subscription/ViewInvoice?paymentId={paymentId}") },
 			};
 
 			try
@@ -450,8 +519,7 @@ namespace Resgrid.Providers.EmailProvider
 			var templateModel = new Dictionary<string, object>
 			{
 				{ "name", name },
-				{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}" },
-				{ "login_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn" },
+				{ "login_url", GetAppUrl("Account/LogOn") },
 				{ "department_id", departmentId },
 				{ "department_name", departmentName },
 				{ "username", userName },
@@ -498,8 +566,7 @@ namespace Resgrid.Providers.EmailProvider
 			var templateModel = new Dictionary<string, object>
 			{
 				{ "name", name },
-					{ "action_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}" },
-					{ "login_url", $"{Config.SystemBehaviorConfig.ResgridBaseUrl}/Account/LogOn" },
+					{ "login_url", GetAppUrl("Account/LogOn") },
 					{ "department_name", departmentName },
 					{ "data", data },
 					{ "support_email", FROM_EMAIL },
@@ -531,22 +598,30 @@ namespace Resgrid.Providers.EmailProvider
 		public async Task<bool> SendReportDeliveryMail(string email, string subject, string messageBody, string sentOn,
 			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl)
 		{
+			if (attachmentData == null)
+				return false;
+
 			var templateModel = new Dictionary<string, object>
 			{
 				{ "title", subject },
+				{ "report_name", reportName },
 				{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
-				{ "attachment_details", new []{
-				new Dictionary<string,object> {
-					{ "attachmnet_url",  reportUrl},
-					{ "url_name", "View Live Report" },
-					{ "attachment_name", attachmentFilename },
-					{ "attachment_size", StringHelpers.GetSizeInMemory(attachmentData.LongLength) },
-					{ "attachment_type", "PDF" },
-				}
-				}
+				{ "attachment_name", attachmentFilename },
+				{ "attachment_size", StringHelpers.GetSizeInMemory(attachmentData.LongLength) },
+				{ "attachment_type", "PDF" },
+				{
+					"report_links", String.IsNullOrWhiteSpace(reportUrl)
+						? Array.Empty<Dictionary<string, object>>()
+						: new[]
+						{
+							new Dictionary<string, object>
+							{
+								{ "url", reportUrl }
+							}
+						}
 				},
 
-				{ "action_url", $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Profile/Reporting" },
+				{ "action_url", GetAppUrl("User/Profile/Reporting") },
 				{ "timestamp", sentOn }
 			};
 
@@ -579,7 +654,7 @@ namespace Resgrid.Providers.EmailProvider
 			// The model is built before the try below, so without this a null content would throw past
 			// the catch that turns every other failure here into a recorded false. A send that cannot be
 			// composed is a failed send, same as one the provider rejects.
-			if (content == null)
+			if (content == null || String.IsNullOrWhiteSpace(content.ConfirmUrl))
 				return false;
 
 			// Every string arrives already rendered in the recipient's language -- the template only
@@ -638,6 +713,11 @@ namespace Resgrid.Providers.EmailProvider
 					return reader.ReadToEnd();
 				}
 			}
+		}
+
+		private static string GetAppUrl(string relativePath)
+		{
+			return $"{SystemBehaviorConfig.ResgridBaseUrl?.TrimEnd('/')}/{relativePath.TrimStart('/')}";
 		}
 	}
 }

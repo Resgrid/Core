@@ -382,8 +382,8 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendEmail && !String.IsNullOrWhiteSpace(emailAddress))
 			{
-				await _emailProvider.SendTroubleAlertMail(emailAddress, unit.Name, gpsLocation, "", callAddress,
-					unitAddress, "", callName);
+				await _emailProvider.SendTroubleAlertMail(emailAddress, unit.Name, gpsLocation, personnelNames, callAddress,
+					unitAddress, dispatchedOn, callName);
 
 				return true;
 			}

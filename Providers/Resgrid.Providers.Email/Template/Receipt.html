@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -391,7 +391,7 @@
                 <table class="email-content" width="100%" cellpadding="0" cellspacing="0">
                     <tr>
                         <td class="email-masthead">
-                            <a href="https://example.com" class="email-masthead_name">
+                            <a href="https://resgrid.com" class="email-masthead_name">
                                 Resgrid
                             </a>
                         </td>
@@ -404,14 +404,14 @@
                                 <tr>
                                     <td class="content-cell">
                                         <h1>Hi {{name}},</h1>
-                                        <p>Thanks for using Resgrid. This email is the receipt for your purchase. No payment is due.</p>
+                                        <p>Thanks for using Resgrid. This is the receipt for the {{department_name}} subscription purchase. No payment is due.</p>
                                         <p>This purchase will appear as “RESGRID” on your credit card statement. Need to <a href="{{billing_url}}">update your payment information</a>?</p>
                                         <!-- Discount -->
                                         <table class="discount" align="center" width="100%" cellpadding="0" cellspacing="0">
                                             <tr>
                                                 <td align="center">
                                                     <h1 class="discount_heading">Did you know?</h1>
-                                                    <p class="discount_body">That if you need a new feature or process to support your origination in Resgrid we can build it for you? This usually takes two weeks depending on how big the feature is.</p>
+                                                    <p class="discount_body">If your organization needs a new feature or workflow in Resgrid, tell us about it. We regularly use customer feedback to guide development.</p>
                                                     <!-- Border based button
                                                     https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
                                                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -420,7 +420,7 @@
                                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                                     <tr>
                                                                         <td>
-                                                                            <a href="{{uservoice_url}}" class="button button--" target="_blank">Request a Feature</a>
+                                                                            <a href="{{uservoice_url}}" class="button button--green" target="_blank">Request a feature</a>
                                                                         </td>
                                                                     </tr>
                                                                 </table>
@@ -453,7 +453,7 @@
                                                         {{#each receipt_details}}
                                                         <tr>
                                                             <td width="80%" class="purchase_item">{{description}}</td>
-                                                            <td class="align-right" width="20%" class="purchase_item">{{amount}}</td>
+                                                            <td class="purchase_item align-right" width="20%">{{amount}}</td>
                                                         </tr>
                                                         {{/each}}
                                                         <tr>
@@ -469,6 +469,7 @@
                                             </tr>
                                         </table>
                                         <p>If you have any questions about this receipt, simply reply to this email or reach out to our <a href="{{support_url}}">support team</a> for help.</p>
+                                        <p>Your next billing date is {{next_billing_date}}.</p>
                                         <p>
                                             Cheers,
                                             <br>The Resgrid Team
@@ -485,7 +486,7 @@
                                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                                     <tr>
                                                                         <td>
-                                                                            <a href="{{action_url}}" class="button button--blue" target="_blank">Download as PDF</a>
+                                                                            <a href="{{action_url}}" class="button button--green" target="_blank">Download as PDF</a>
                                                                         </td>
                                                                     </tr>
                                                                 </table>
@@ -499,7 +500,8 @@
                                         <table class="body-sub">
                                             <tr>
                                                 <td>
-                                                    <p class="sub">Need a printable copy for your records?</strong> You can <a href="{{action_url}}">download a PDF version</a>.</p>
+                                                    <p class="sub">If the download button does not work, copy and paste this URL into your web browser.</p>
+                                                    <p class="sub">{{action_url}}</p>
                                                     <p class="sub">Moved recently? Have a new credit card? You can easily <a href="{{billing_url}}">update your billing information</a>.</p>
                                                 </td>
                                             </tr>

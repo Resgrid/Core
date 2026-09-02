@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -404,7 +404,8 @@
                                 <tr>
                                     <td class="content-cell">
                                         <h1>Your Resgrid subscription has been canceled</h1>
-                                        <p>Thanks for using Resgrid. Your account will be downgraded automatically to the free plan. You've added a lot of data, so here are several options for you to consider going forward.</p>
+                                        <p>{{greeting}}</p>
+                                        <p>Your subscription for {{department_name}} remains active through {{end_date}}. After that date, the account will be downgraded automatically to the free plan. Here are several options for you to consider.</p>
                                         <!-- Action -->
                                         <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
                                             <tr>
@@ -441,12 +442,12 @@
                                                         </tr>
                                                         <tr>
                                                             <td class="attributes_item">
-                                                                <strong><a href="{{plans_url}}">Use the Free Plan</a></strong> - You can just continue to use Resgrid on the free plan. You can always upgrade at any time in the future and you still get all the great Resgrid benifits at no cost.<br>
+                                                                <strong><a href="{{plans_url}}">Use the Free Plan</a></strong> - You can continue to use Resgrid on the free plan and upgrade again at any time.<br>
                                                                 <br>
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td class="attributes_item"><strong><a href="{{help_url}}">Close your account</a></strong> - You can open a ticket with us to close your account and delete your data. Or, do nothing and we'll automatically  delete the data over the free limit for you in 90 days.</td>
+                                                            <td class="attributes_item"><strong><a href="{{help_url}}">Close your account</a></strong> - Open a support ticket if you want to close your account and delete its data. Otherwise, data above the free-plan limit will be deleted automatically after 90 days.</td>
                                                         </tr>
                                                     </table>
                                                 </td>
@@ -458,6 +459,14 @@
                                             <br>The Resgrid Team
                                         </p>
                                         <p><strong>P.S.</strong> If you have any questions or need any help, please don't hesitate to reach out. You can reply to this email or join us on live chat during business hours.</p>
+                                        <table class="body-sub">
+                                            <tr>
+                                                <td>
+                                                    <p class="sub">If the upgrade button does not work, copy and paste this URL into your web browser.</p>
+                                                    <p class="sub">{{action_url}}</p>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>

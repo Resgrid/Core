@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -385,10 +385,18 @@
   </style>
 </head>
 <body>
+  <span class="preheader">{{sender_name}} sent you a Resgrid message: {{title}}</span>
   <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0">
     <tr>
       <td align="center">
         <table class="email-content" width="100%" cellpadding="0" cellspacing="0">
+          <tr>
+            <td class="email-masthead">
+              <a href="https://resgrid.com" class="email-masthead_name">
+                Resgrid
+              </a>
+            </td>
+          </tr>
           <!-- Email Body -->
           <tr>
             <td class="email-body" width="100%" cellpadding="0" cellspacing="0">
@@ -397,23 +405,7 @@
                 <tr>
                   <td class="content-cell">
                     <h1>{{title}}</h1>
-                    {{body}}
-                    <br>
-                    <br> {{#attachment_details}}
-                    <table class="attributes" width="100%" cellpadding="0" cellspacing="0">
-                      <tr>
-                        <td class="attributes_content">
-                          <table width="100%" cellpadding="0" cellspacing="0">
-                            {{#each . }}
-                            <tr>
-                              <td class="attributes_item"><a href="{{attachmnet_url}}">{{attachment_name}}</a> <span>({{attachment_size}} {{attachment_type}})</span></td>
-                            </tr>
-                            {{/each}}
-                          </table>
-                        </td>
-                      </tr>
-                    </table>
-                    {{/attachment_details}}
+                    <p>{{body}}</p>
                     <!-- Action -->
                     <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
                       <tr>
@@ -426,13 +418,21 @@
                                 <table border="0" cellspacing="0" cellpadding="0">
                                   <tr>
                                     <td>
-                                      <a href="{{action_url}}" class="button button--" target="_blank">View Message</a>
+                                      <a href="{{action_url}}" class="button button--green" target="_blank">View message</a>
                                     </td>
                                   </tr>
                                 </table>
                               </td>
                             </tr>
                           </table>
+                        </td>
+                      </tr>
+                    </table>
+                    <table class="body-sub">
+                      <tr>
+                        <td>
+                          <p class="sub">If the message button does not work, copy and paste this URL into your web browser.</p>
+                          <p class="sub">{{action_url}}</p>
                         </td>
                       </tr>
                     </table>
@@ -450,6 +450,7 @@
       <td class="content-cell">
         <p>By {{sender_name}} at {{timestamp}}</p>
         <p class="sub"><a href="{{action_url}}">View the message</a></p>
+        <p class="sub align-center">&copy; Resgrid, LLC. All rights reserved.</p>
         <p class="sub align-center">
           Resgrid, LLC
           <br />3079 Harrison Ave

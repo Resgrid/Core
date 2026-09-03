@@ -35,6 +35,8 @@ namespace Resgrid.Workers.Framework
 				builder.RegisterModule(new DataModule());
 				builder.RegisterModule(new NoSqlDataModule());
 				builder.RegisterModule(new ServicesModule());
+				builder.RegisterModule(new Resgrid.Search.SearchModule());
+				builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
 				builder.RegisterModule(new ProviderModule());
 				builder.RegisterModule(new EmailProviderModule());
 				builder.RegisterModule(new WorkerFrameworkModule());

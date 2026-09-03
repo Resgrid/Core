@@ -1,0 +1,151 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordsAccountabilityView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["AccountabilityHeader"];
+	string Name(string key) => string.IsNullOrEmpty(key) ? localizer["Unassigned"].Value : (Model.Names.TryGetValue(key, out var n) ? n : key);
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	var pivotName = Model.Pivot == RecordsAccountabilityPivot.Group ? "group" : Model.Pivot == RecordsAccountabilityPivot.Unit ? "unit" : "person";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["AccountabilityHeader"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@commonLocalizer["RecordsModule"]</a></li>
+			<li class="active"><strong>@localizer["AccountabilityHeader"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			@if (!string.IsNullOrWhiteSpace(Model.Message))
+			{
+				<div class="alert alert-success">@Model.Message</div>
+			}
+			@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+			{
+				<div class="alert alert-danger">@Model.ErrorMessage</div>
+			}
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<form class="form-inline" method="get" asp-controller="Records" asp-action="Accountability" asp-route-area="User">
+						<div class="btn-group m-r-sm">
+							<a class="btn btn-sm @(Model.Pivot == RecordsAccountabilityPivot.Person ? "btn-primary" : "btn-default")" asp-action="Accountability" asp-route-pivot="person" asp-route-days="@Model.Days">@localizer["PivotPerson"]</a>
+							<a class="btn btn-sm @(Model.Pivot == RecordsAccountabilityPivot.Group ? "btn-primary" : "btn-default")" asp-action="Accountability" asp-route-pivot="group" asp-route-days="@Model.Days">@localizer["PivotGroup"]</a>
+							<a class="btn btn-sm @(Model.Pivot == RecordsAccountabilityPivot.Unit ? "btn-primary" : "btn-default")" asp-action="Accountability" asp-route-pivot="unit" asp-route-days="@Model.Days">@localizer["PivotUnit"]</a>
+						</div>
+						<input type="hidden" name="pivot" value="@pivotName" />
+						<div class="form-group m-r-sm">
+							<label class="m-r-xs">@localizer["WindowDays"]</label>
+							<select name="days" class="form-control input-sm" onchange="this.form.submit()">
+								@foreach (var option in new[] { 7, 30, 90, 365 })
+								{
+									<option value="@option" selected="@(option == Model.Days)">@option</option>
+								}
+							</select>
+						</div>
+					</form>
+					<p class="text-muted m-t-xs m-b-none">@localizer["AccountabilityIntro"]</p>
+				</div>
+				<div class="ibox-content">
+					<div class="table-responsive">
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th>@(Model.Pivot == RecordsAccountabilityPivot.Group ? localizer["PivotGroup"] : Model.Pivot == RecordsAccountabilityPivot.Unit ? localizer["PivotUnit"] : localizer["PivotPerson"])</th>
+									<th>@localizer["ColOpen"]</th>
+									<th>@localizer["ColOverdueReviews"]</th>
+									<th>@localizer["ColReturned"]</th>
+									<th>@localizer["ColFinalizedInWindow"]</th>
+									<th>@localizer["ColAverageHoursToFinalize"]</th>
+									<th>@localizer["ColOldestOpen"]</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var row in Model.Report.Rows)
+								{
+									<tr class="@(row.OverdueReviews + row.ReturnedNotCorrected > 0 ? "warning" : "")">
+										<td>
+											<strong>@Name(row.Key)</strong>
+											@if (row.OpenRecords.Count > 0)
+											{
+												<details>
+													<summary class="text-muted small">@localizer["ShowOpenRecords"] (@row.OpenRecords.Count)</summary>
+													<ul class="list-unstyled m-t-xs">
+														@foreach (var record in row.OpenRecords)
+														{
+															<li class="m-b-xs">
+																<a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@record.RecordId">@record.Reference</a>
+																<span class="label @(record.OverdueReview || record.ReturnedNotCorrected ? "label-warning" : "label-default")">@record.State</span>
+																<small class="text-muted">@When(record.CreatedOn) &middot; @Name(record.OwnerUserId)</small>
+																@if (Model.CanRemind)
+																{
+																	<form method="post" style="display:inline" asp-controller="Records" asp-action="Remind" asp-route-area="User">
+																		@Html.AntiForgeryToken()
+																		<input type="hidden" name="recordId" value="@record.RecordId" />
+																		<input type="hidden" name="pivot" value="@pivotName" />
+																		<input type="hidden" name="days" value="@Model.Days" />
+																		<button type="submit" class="btn btn-xs btn-link">@localizer["Remind"]</button>
+																	</form>
+																}
+															</li>
+														}
+													</ul>
+												</details>
+											}
+										</td>
+										<td>@row.Open</td>
+										<td>@row.OverdueReviews</td>
+										<td>@row.ReturnedNotCorrected</td>
+										<td>@row.FinalizedInWindow</td>
+										<td>@(row.AverageHoursToFinalize?.ToString("0.0") ?? "-")</td>
+										<td>@When(row.OldestOpenOn)</td>
+										<td class="text-right">
+											@if (Model.Pivot == RecordsAccountabilityPivot.Person && !string.IsNullOrEmpty(row.Key))
+											{
+												<a class="btn btn-xs btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User" asp-route-owner="@row.Key"><i class="fa fa-list"></i></a>
+											}
+											else if (Model.Pivot == RecordsAccountabilityPivot.Group && !string.IsNullOrEmpty(row.Key))
+											{
+												<a class="btn btn-xs btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User" asp-route-group="@row.Key"><i class="fa fa-list"></i></a>
+											}
+											@if (Model.CanRemind && row.OpenRecords.Count > 0)
+											{
+												<form method="post" style="display:inline" asp-controller="Records" asp-action="RemindAll" asp-route-area="User" onsubmit="return confirm('@localizer["RemindAll"]?');">
+													@Html.AntiForgeryToken()
+													<input type="hidden" name="key" value="@row.Key" />
+													<input type="hidden" name="pivot" value="@pivotName" />
+													<input type="hidden" name="days" value="@Model.Days" />
+													<button type="submit" class="btn btn-xs btn-warning">@localizer["RemindAll"]</button>
+												</form>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+							<tfoot>
+								<tr>
+									<th>@localizer["Totals"]</th>
+									<th>@Model.Report.Totals.Open</th>
+									<th>@Model.Report.Totals.OverdueReviews</th>
+									<th>@Model.Report.Totals.ReturnedNotCorrected</th>
+									<th>@Model.Report.Totals.FinalizedInWindow</th>
+									<th>@(Model.Report.Totals.AverageHoursToFinalize?.ToString("0.0") ?? "-")</th>
+									<th>@When(Model.Report.Totals.OldestOpenOn)</th>
+									<th></th>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -396,4 +396,10 @@
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>View Role</value>
   </data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>Unfinished Records</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>This member still owns {0} unfinished Record(s). Open each one and reassign it to another member before deleting, or it stays owned by a deleted member.</value>
+  </data>
 </root>

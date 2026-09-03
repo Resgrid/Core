@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Resgrid.Web.Areas.User.Models.Security
 {
@@ -128,6 +129,13 @@ namespace Resgrid.Web.Areas.User.Models.Security
 
 		public int BreakGlassProtectedData { get; set; }
 		public SelectList BreakGlassProtectedDataPermissions { get; set; }
+
+		// Records (RMS) permissions, PermissionTypes 50-67. Rows are generated from
+		// Resgrid.Model.RecordPermissionCatalog; a missing row preselects the catalog no-row default,
+		// which equals the pre-activation Logs behavior for the parity types.
+		public List<RecordsPermissionRow> RecordsPermissions { get; set; } = new List<RecordsPermissionRow>();
+		public bool RecordsFlagEnabled { get; set; }
+		public bool RecordsActivated { get; set; }
 
 		// Two-Factor Authentication enforcement
 		public int Require2FAForAdmins { get; set; }

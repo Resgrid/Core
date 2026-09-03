@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="RecordsHeader" xml:space="preserve"><value>Записи</value></data>
+  <data name="NewRecord" xml:space="preserve"><value>Новий запис</value></data>
+  <data name="ViewRecordHeader" xml:space="preserve"><value>Перегляд запису</value></data>
+  <data name="EditRecordHeader" xml:space="preserve"><value>Редагувати запис</value></data>
+  <data name="RecordsForYear" xml:space="preserve"><value>Записи за рік</value></data>
+  <data name="AllYears" xml:space="preserve"><value>Усі роки</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>Усі типи</value></data>
+  <data name="AllStates" xml:space="preserve"><value>Усі стани</value></data>
+  <data name="Filter" xml:space="preserve"><value>Фільтр</value></data>
+  <data name="NoRecords" xml:space="preserve"><value>Жоден запис не відповідає поточному фільтру.</value></data>
+  <data name="RecordNumber" xml:space="preserve"><value>№ запису</value></data>
+  <data name="DraftReference" xml:space="preserve"><value>Посилання чернетки</value></data>
+  <data name="Type" xml:space="preserve"><value>Тип</value></data>
+  <data name="State" xml:space="preserve"><value>Стан</value></data>
+  <data name="Summary" xml:space="preserve"><value>Підсумок</value></data>
+  <data name="Author" xml:space="preserve"><value>Автор</value></data>
+  <data name="Owner" xml:space="preserve"><value>Власник</value></data>
+  <data name="Occurred" xml:space="preserve"><value>Відбулося</value></data>
+  <data name="Created" xml:space="preserve"><value>Створено</value></data>
+  <data name="Finalized" xml:space="preserve"><value>Завершено</value></data>
+  <data name="Actions" xml:space="preserve"><value>Дії</value></data>
+  <data name="Definition" xml:space="preserve"><value>Визначення</value></data>
+  <data name="Narrative" xml:space="preserve"><value>Опис</value></data>
+  <data name="NarrativeRequired" xml:space="preserve"><value>Опис є обов'язковим.</value></data>
+  <data name="InitialReport" xml:space="preserve"><value>Початковий звіт / стан</value></data>
+  <data name="Cause" xml:space="preserve"><value>Причина</value></data>
+  <data name="Investigator" xml:space="preserve"><value>Слідчий</value></data>
+  <data name="Course" xml:space="preserve"><value>Курс</value></data>
+  <data name="CourseCode" xml:space="preserve"><value>Код курсу</value></data>
+  <data name="Instructors" xml:space="preserve"><value>Інструктори</value></data>
+  <data name="MeetingType" xml:space="preserve"><value>Тип зустрічі</value></data>
+  <data name="Facilitator" xml:space="preserve"><value>Ведучий</value></data>
+  <data name="Location" xml:space="preserve"><value>Місце</value></data>
+  <data name="OtherPersonnel" xml:space="preserve"><value>Інший персонал / учасники</value></data>
+  <data name="OtherAgencies" xml:space="preserve"><value>Інші служби</value></data>
+  <data name="OtherUnits" xml:space="preserve"><value>Інші підрозділи</value></data>
+  <data name="CaseNumber" xml:space="preserve"><value>Номер справи</value></data>
+  <data name="BodyLocation" xml:space="preserve"><value>Місцезнаходження тіла</value></data>
+  <data name="PronouncedDeceasedBy" xml:space="preserve"><value>Смерть констатував</value></data>
+  <data name="Destination" xml:space="preserve"><value>Призначення</value></data>
+  <data name="ContactName" xml:space="preserve"><value>Ім'я контакту</value></data>
+  <data name="ContactNumber" xml:space="preserve"><value>Номер контакту</value></data>
+  <data name="Unit" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="ActivityTime" xml:space="preserve"><value>Час активності</value></data>
+  <data name="Call" xml:space="preserve"><value>Виклик</value></data>
+  <data name="NoCall" xml:space="preserve"><value>Без виклику</value></data>
+  <data name="CallSnapshot" xml:space="preserve"><value>Знімок виклику</value></data>
+  <data name="Participants" xml:space="preserve"><value>Учасники</value></data>
+  <data name="Units" xml:space="preserve"><value>Підрозділи</value></data>
+  <data name="Attachments" xml:space="preserve"><value>Вкладення</value></data>
+  <data name="AddAttachment" xml:space="preserve"><value>Додати вкладення</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>Відправлено</value></data>
+  <data name="Enroute" xml:space="preserve"><value>В дорозі</value></data>
+  <data name="OnScene" xml:space="preserve"><value>На місці</value></data>
+  <data name="Released" xml:space="preserve"><value>Звільнено</value></data>
+  <data name="InQuarters" xml:space="preserve"><value>На базі</value></data>
+  <data name="SaveDraft" xml:space="preserve"><value>Зберегти чернетку</value></data>
+  <data name="SaveAndFinalize" xml:space="preserve"><value>Зберегти та завершити</value></data>
+  <data name="Finalize" xml:space="preserve"><value>Завершити</value></data>
+  <data name="Amend" xml:space="preserve"><value>Внести правку</value></data>
+  <data name="AbandonAmendment" xml:space="preserve"><value>Скасувати правку</value></data>
+  <data name="Void" xml:space="preserve"><value>Анулювати</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Скасувати чернетку</value></data>
+  <data name="ReasonCode" xml:space="preserve"><value>Код причини</value></data>
+  <data name="ReasonText" xml:space="preserve"><value>Причина</value></data>
+  <data name="ReasonRequired" xml:space="preserve"><value>Причина є обов'язковою.</value></data>
+  <data name="Attestation" xml:space="preserve"><value>Я підтверджую, що цей запис є точним і повним, наскільки мені відомо.</value></data>
+  <data name="History" xml:space="preserve"><value>Історія</value></data>
+  <data name="Revision" xml:space="preserve"><value>Ревізія</value></data>
+  <data name="Transition" xml:space="preserve"><value>Перехід</value></data>
+  <data name="Actor" xml:space="preserve"><value>Ким</value></data>
+  <data name="Checksum" xml:space="preserve"><value>Контрольна сума</value></data>
+  <data name="ViewRevision" xml:space="preserve"><value>Переглянути</value></data>
+  <data name="CompareWithPrevious" xml:space="preserve"><value>Порівняти з попередньою</value></data>
+  <data name="RevisionHeader" xml:space="preserve"><value>Ревізія станом на момент</value></data>
+  <data name="DiffHeader" xml:space="preserve"><value>Порівняння ревізій</value></data>
+  <data name="NoChanges" xml:space="preserve"><value>Відмінностей між цими ревізіями немає.</value></data>
+  <data name="Withheld" xml:space="preserve"><value>Змінено обмежене поле (значення приховано)</value></data>
+  <data name="Section" xml:space="preserve"><value>Розділ</value></data>
+  <data name="Field" xml:space="preserve"><value>Поле</value></data>
+  <data name="Before" xml:space="preserve"><value>До</value></data>
+  <data name="After" xml:space="preserve"><value>Після</value></data>
+  <data name="Export" xml:space="preserve"><value>Експорт</value></data>
+  <data name="Print" xml:space="preserve"><value>Друк</value></data>
+  <data name="RestrictedSection" xml:space="preserve"><value>Обмежений розділ</value></data>
+  <data name="RestrictedNotice" xml:space="preserve"><value>У вас немає дозволу переглядати обмежені розділи цього запису.</value></data>
+  <data name="DuplicateWarning" xml:space="preserve"><value>Запис цього типу вже існує для цього виклику. Перегляньте його перед продовженням або вкажіть, чому потрібен другий.</value></data>
+  <data name="DuplicateContinueReason" xml:space="preserve"><value>Причина другого запису</value></data>
+  <data name="ActivateHeader" xml:space="preserve"><value>Активувати записи</value></data>
+  <data name="ActivateIntro" xml:space="preserve"><value>Записи замінюють модуль Журнали для цього підрозділу. Після активації наявні журнали залишаються доступними для читання, але їх не можна створювати, редагувати чи видаляти. Не можна скасувати після завершення запису.</value></data>
+  <data name="LegacyLogs" xml:space="preserve"><value>Наявні журнали</value></data>
+  <data name="LegacyUnitLogs" xml:space="preserve"><value>Наявні журнали підрозділів</value></data>
+  <data name="PermissionMapping" xml:space="preserve"><value>Зміни дозволів під час активації</value></data>
+  <data name="PermissionSource" xml:space="preserve"><value>Наявний дозвіл</value></data>
+  <data name="PermissionTarget" xml:space="preserve"><value>Дозвіл записів</value></data>
+  <data name="EffectiveAccess" xml:space="preserve"><value>Фактичний доступ</value></data>
+  <data name="LockViewGroupRecordsToGroup" xml:space="preserve"><value>Обмежити видимість записів власною групою користувача</value></data>
+  <data name="ActivationReason" xml:space="preserve"><value>Причина / примітки</value></data>
+  <data name="ActivationAcknowledge" xml:space="preserve"><value>Я розумію, що це не можна скасувати після завершення запису і що налаштування зберігання є відповідальністю цього підрозділу.</value></data>
+  <data name="Activate" xml:space="preserve"><value>Активувати</value></data>
+  <data name="ActivationBlocked" xml:space="preserve"><value>Активацію заблоковано</value></data>
+  <data name="NotActivatedNotice" xml:space="preserve"><value>Записи увімкнено для цього підрозділу, але ще не активовано. Адміністратор має активувати їх перед створенням записів.</value></data>
+  <data name="ActivatedOn" xml:space="preserve"><value>Записи активовано</value></data>
+  <data name="SettingsHeader" xml:space="preserve"><value>Налаштування записів</value></data>
+  <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Типовий життєвий цикл для визначень підрозділу</value></data>
+  <data name="ReviewDueHours" xml:space="preserve"><value>Термін перевірки (години)</value></data>
+  <data name="Numbering" xml:space="preserve"><value>Нумерація записів</value></data>
+  <data name="IncludeYear" xml:space="preserve"><value>Включати рік у номери</value></data>
+  <data name="SequenceWidth" xml:space="preserve"><value>Цифри послідовності</value></data>
+  <data name="PerGroupSequence" xml:space="preserve"><value>Окрема послідовність для станції/групи</value></data>
+  <data name="Retention" xml:space="preserve"><value>Зберігання</value></data>
+  <data name="RetentionIntro" xml:space="preserve"><value>Типово: 7 років для стандартних записів; безстроково для коронера та інших обмежених класів. Зберігання є відповідальністю підрозділу. Зміни діють на майбутнє та аудитуються.</value></data>
+  <data name="DepartmentDefaultYears" xml:space="preserve"><value>Типово для підрозділу (роки, порожньо = системне)</value></data>
+  <data name="RetentionOverrides" xml:space="preserve"><value>Перевизначення для визначень (0 = безстроково)</value></data>
+  <data name="RestrictedOverrideConfirm" xml:space="preserve"><value>Обмежений клас. Встановлення періоду вмикає автоматичне видалення. Підтвердьте для застосування.</value></data>
+  <data name="GroupVisibility" xml:space="preserve"><value>Видимість між групами</value></data>
+  <data name="GroupVisibilityDepartmentWide" xml:space="preserve"><value>Увесь підрозділ (типово)</value></data>
+  <data name="GroupVisibilityGroupScoped" xml:space="preserve"><value>За групою</value></data>
+  <data name="GroupVisibilityNote" xml:space="preserve"><value>Обмеження за групою також вимагає, щоб дозвіл «Бачити записи інших груп» був закріплений за групою. Автори, рецензенти, учасники, екіпажі та адміністратори завжди бачать запис.</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Налаштування записів збережено.</value></data>
+  <data name="Save" xml:space="preserve"><value>Зберегти</value></data>
+  <data name="ConcurrencyError" xml:space="preserve"><value>Цей запис змінив хтось інший після відкриття. Перезавантажте та застосуйте зміни знову.</value></data>
+  <data name="AmendmentOpen" xml:space="preserve"><value>Триває внесення правки. Остання завершена ревізія залишається чинною до завершення правки.</value></data>
+  <data name="RecordSaved" xml:space="preserve"><value>Запис збережено.</value></data>
+  <data name="Start" xml:space="preserve"><value>Початок</value></data>
+  <data name="End" xml:space="preserve"><value>Кінець</value></data>
+  <data name="Station" xml:space="preserve"><value>Станція / група</value></data>
+  <data name="ExternalId" xml:space="preserve"><value>Зовнішній ID</value></data>
+  <data name="BackToRecords" xml:space="preserve"><value>Назад до записів</value></data>
+  <data name="Settings" xml:space="preserve"><value>Налаштування</value></data>
+  <data name="Role" xml:space="preserve"><value>Роль</value></data>
+  <data name="Provenance" xml:space="preserve"><value>Походження</value></data>
+  <data name="PrintPdf" xml:space="preserve"><value>Зберегти як PDF</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Експортувати CSV</value></data>
+  <data name="ExportJson" xml:space="preserve"><value>Експортувати JSON</value></data>
+  <data name="PrintedBy" xml:space="preserve"><value>Надрукував(ла)</value></data>
+  <data name="PrintedOn" xml:space="preserve"><value>Надруковано</value></data>
+  <data name="PrintLayout" xml:space="preserve"><value>Макет друку</value></data>
+  <data name="ExportLimitNotice" xml:space="preserve"><value>Експорт містить щонайбільше {0} рядків; звузьте фільтр, щоб експортувати більше.</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Пошук звітів</value></data>
+  <data name="SearchUnavailable" xml:space="preserve"><value>Пошук зараз недоступний; список нижче відфільтровано без тексту пошуку.</value></data>
+  <data name="SearchTruncated" xml:space="preserve"><value>Показано лише найближчі збіги; звузьте пошук, щоб побачити більше.</value></data>
+  <data name="NarrativeSearchOn" xml:space="preserve"><value>Текст опису включено до пошуку.</value></data>
+  <data name="NarrativeSearchOff" xml:space="preserve"><value>Текст опису не індексується для цього підрозділу; пошук охоплює номери звітів, підсумки та інші безпечні поля.</value></data>
+  <data name="SearchIndexStatus" xml:space="preserve"><value>Пошуковий індекс</value></data>
+  <data name="SearchDisabled" xml:space="preserve"><value>Вимкнено</value></data>
+  <data name="SearchOnline" xml:space="preserve"><value>Онлайн</value></data>
+  <data name="SearchOffline" xml:space="preserve"><value>Офлайн</value></data>
+  <data name="SearchDocuments" xml:space="preserve"><value>Проіндексовані звіти</value></data>
+  <data name="SearchIndexNote" xml:space="preserve"><value>Воркер автоматично перебудовує пошуковий індекс щоразу, коли змінюється політика захисту або версія каталогу підрозділу. Пошук в описі вилучається після підключення Розширеного захисту даних.</value></data>
+  <data name="PrintLayoutHeader" xml:space="preserve"><value>Макет друку</value></data>
+  <data name="PrintLayoutIntro" xml:space="preserve"><value>Як бланк відображається на друкованих копіях звітів. Ідентичність і логотип беруться з профілю підрозділу; вміст звіту завжди друкується із закріпленої редакції.</value></data>
+  <data name="PrintShowLogo" xml:space="preserve"><value>Показувати логотип</value></data>
+  <data name="PrintUseShortName" xml:space="preserve"><value>Використовувати коротку назву</value></data>
+  <data name="PrintShowAddress" xml:space="preserve"><value>Показувати адресу</value></data>
+  <data name="PrintShowPhone" xml:space="preserve"><value>Показувати номер телефону</value></data>
+  <data name="PrintShowWebsite" xml:space="preserve"><value>Показувати вебсайт</value></data>
+  <data name="PrintLetterheadLine1" xml:space="preserve"><value>Рядок бланка 1</value></data>
+  <data name="PrintLetterheadLine2" xml:space="preserve"><value>Рядок бланка 2</value></data>
+  <data name="PrintFooterText" xml:space="preserve"><value>Текст нижнього колонтитула</value></data>
+  <data name="PrintWatermark" xml:space="preserve"><value>Водяний знак</value></data>
+  <data name="PrintPageSize" xml:space="preserve"><value>Розмір сторінки</value></data>
+  <data name="PrintDateTimeFormat" xml:space="preserve"><value>Формат дати й часу</value></data>
+  <data name="PrintDateTimeFormatHelp" xml:space="preserve"><value>Необов'язковий рядок формату .NET, наприклад yyyy-MM-dd HH:mm; залиште порожнім для типового формату підрозділу.</value></data>
+  <data name="PrintLayoutVersionLabel" xml:space="preserve"><value>Версія макета</value></data>
+  <data name="ManageDepartmentProfile" xml:space="preserve"><value>Керувати профілем підрозділу</value></data>
+  <data name="NoLogoNotice" xml:space="preserve"><value>Логотип ще не завантажено; на друкованих копіях відображається лише назва підрозділу.</value></data>
+  <data name="ExportSearchUnavailable" xml:space="preserve"><value>Пошук зараз недоступний, тому результати пошуку не вдалося експортувати. Очистіть пошук, щоб експортувати відфільтрований список.</value></data>
+  <data name="ReassignHeader" xml:space="preserve"><value>Перепризначити чернетку</value></data>
+  <data name="ReassignTo" xml:space="preserve"><value>Новий власник</value></data>
+  <data name="ReassignReason" xml:space="preserve"><value>Причина</value></data>
+  <data name="Reassign" xml:space="preserve"><value>Перепризначити</value></data>
+  <data name="ReassignNote" xml:space="preserve"><value>Передає право власності на цей незавершений запис іншому учаснику. Автор та історія створення не змінюються, а передача аудитується.</value></data>
+  <data name="GroupScopePreviewHeader" xml:space="preserve"><value>Попередній перегляд впливу</value></data>
+  <data name="GroupScopePreviewIntro" xml:space="preserve"><value>Що приховає обмеження за групами, перш ніж ви це підтвердите. Учасники завжди зберігають записи, які вони створили, якими володіють, які перевіряють, у яких беруть участь або на які реагують своїм підрозділом; адміністратори підрозділу бачать усе.</value></data>
+  <data name="GroupScopeTotalRecords" xml:space="preserve"><value>Записів у підрозділі</value></data>
+  <data name="GroupScopeHiddenFromUngrouped" xml:space="preserve"><value>Записів, прихованих від учасників без групи</value></data>
+  <data name="GroupScopeUnanchored" xml:space="preserve"><value>Записів без прив’язки до групи (залишаються видимими всьому підрозділу)</value></data>
+  <data name="GroupScopeUsersWithoutGroup" xml:space="preserve"><value>Учасників без групи</value></data>
+  <data name="GroupScopeLegacyRows" xml:space="preserve"><value>Застарілих рядків журналу без групи (залишаються видимими всьому підрозділу)</value></data>
+  <data name="GroupScopeGroup" xml:space="preserve"><value>Група</value></data>
+  <data name="GroupScopeMembers" xml:space="preserve"><value>Учасники</value></data>
+  <data name="GroupScopeRecords" xml:space="preserve"><value>Записи</value></data>
+  <data name="GroupScopeConfirm" xml:space="preserve"><value>Я розумію, що приховує обмеження за групами, і хочу його ввімкнути.</value></data>
+  <data name="GroupScopeConfirmRequired" xml:space="preserve"><value>Обмеження за групами не ввімкнено: спочатку підтвердьте попередній перегляд впливу. Інші налаштування збережено.</value></data>
+  <data name="Accountability" xml:space="preserve"><value>Відповідальність</value></data>
+  <data name="AccountabilityHeader" xml:space="preserve"><value>Відповідальність за записи</value></data>
+  <data name="AccountabilityIntro" xml:space="preserve"><value>Хто заборгував звіт: відкриті записи, прострочені перевірки та повернуті записи за особою, станцією або підрозділом, з часом до завершення за період. Нагадування надходять власнику, не частіше ніж раз на день на запис.</value></data>
+  <data name="PivotPerson" xml:space="preserve"><value>За особою</value></data>
+  <data name="PivotGroup" xml:space="preserve"><value>За станцією/групою</value></data>
+  <data name="PivotUnit" xml:space="preserve"><value>За підрозділом</value></data>
+  <data name="WindowDays" xml:space="preserve"><value>Період (днів)</value></data>
+  <data name="ColOpen" xml:space="preserve"><value>Відкриті</value></data>
+  <data name="ColOverdueReviews" xml:space="preserve"><value>Прострочені перевірки</value></data>
+  <data name="ColReturned" xml:space="preserve"><value>Повернуті, не виправлені</value></data>
+  <data name="ColFinalizedInWindow" xml:space="preserve"><value>Завершені за період</value></data>
+  <data name="ColAverageHoursToFinalize" xml:space="preserve"><value>Сер. годин до завершення</value></data>
+  <data name="ColOldestOpen" xml:space="preserve"><value>Найстаріший відкритий</value></data>
+  <data name="Remind" xml:space="preserve"><value>Нагадати</value></data>
+  <data name="RemindAll" xml:space="preserve"><value>Нагадати всім</value></data>
+  <data name="RemindersResult" xml:space="preserve"><value>Надіслано нагадувань: {0}, пропущено: {1}.</value></data>
+  <data name="ReminderSent" xml:space="preserve"><value>Нагадування надіслано.</value></data>
+  <data name="ReminderNotSent" xml:space="preserve"><value>Нагадування не надіслано ({0}).</value></data>
+  <data name="Unassigned" xml:space="preserve"><value>Не призначено</value></data>
+  <data name="ShowOpenRecords" xml:space="preserve"><value>Показати відкриті записи</value></data>
+  <data name="Totals" xml:space="preserve"><value>Разом</value></data>
+  <data name="OwnerFilter" xml:space="preserve"><value>Власник</value></data>
+  <data name="GroupFilter" xml:space="preserve"><value>Група</value></data>
+</root>

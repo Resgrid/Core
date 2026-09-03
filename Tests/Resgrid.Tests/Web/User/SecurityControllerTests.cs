@@ -58,7 +58,8 @@ namespace Resgrid.Tests.Web.User
 				null,
 				null,
 				Mock.Of<IDepartmentSsoService>(),
-				Mock.Of<IEncryptionService>())
+				Mock.Of<IEncryptionService>(),
+				Mock.Of<IRecordsCutoverService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

@@ -1,0 +1,108 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordsActivateView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["ActivateHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["ActivateHeader"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@localizer["ActivateHeader"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<form class="form-horizontal" method="post" asp-controller="Records" asp-action="Activate" asp-route-area="User">
+	@Html.AntiForgeryToken()
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="wrapper wrapper-content">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+						{
+							<div class="alert alert-danger">@Model.ErrorMessage</div>
+						}
+						<p>@localizer["ActivateIntro"]</p>
+
+						@if (Model.Preview.Blockers.Count > 0)
+						{
+							<div class="alert alert-danger">
+								<strong>@localizer["ActivationBlocked"]</strong>
+								<ul>
+									@foreach (var blocker in Model.Preview.Blockers)
+									{
+										<li>@blocker</li>
+									}
+								</ul>
+							</div>
+						}
+
+						<dl class="dl-horizontal">
+							<dt>@localizer["LegacyLogs"]</dt>
+							<dd>@Model.Preview.LegacyLogCount</dd>
+							<dt>@localizer["LegacyUnitLogs"]</dt>
+							<dd>@Model.Preview.LegacyUnitLogCount</dd>
+							<dt>@localizer["Provenance"]</dt>
+							<dd><code>@Model.Preview.SourceChecksum</code></dd>
+							<dt>Protected Data</dt>
+							<dd>@Model.Preview.ProtectedDataPreflight</dd>
+						</dl>
+
+						<h4>@localizer["PermissionMapping"]</h4>
+						<table class="table table-condensed table-bordered">
+							<thead>
+								<tr>
+									<th>@localizer["PermissionSource"]</th>
+									<th>@localizer["PermissionTarget"]</th>
+									<th>@localizer["EffectiveAccess"]</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var row in Model.Preview.PermissionMapping)
+								{
+									<tr>
+										<td>@(row.SourceRowExists ? row.Source.ToString() : "-")</td>
+										<td>@row.Target</td>
+										<td>@row.EffectiveAction@(row.SourceLockToGroup ? " (group)" : string.Empty)</td>
+										<td class="text-muted small">@row.Note</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+
+						<div class="form-group">
+							<div class="col-sm-12">
+								<label><input type="checkbox" asp-for="ViewGroupRecordsLockToGroup" /> @localizer["LockViewGroupRecordsToGroup"]</label>
+								@if (Model.Preview.SuggestedViewGroupRecordsLockToGroup)
+								{
+									<span class="text-muted small">(ViewGroupUsers)</span>
+								}
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">@localizer["ActivationReason"]</label>
+							<div class="col-sm-10"><input type="text" class="form-control" asp-for="Reason" maxlength="1000" /></div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-12">
+								<label><input type="checkbox" asp-for="Acknowledged" /> @localizer["ActivationAcknowledge"]</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-12">
+								<button type="submit" class="btn btn-warning" @(Model.Preview.CanActivate ? string.Empty : "disabled")>@localizer["Activate"]</button>
+								<a class="btn btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

@@ -591,4 +591,28 @@
   <data name="Detail" xml:space="preserve">
     <value>Деталі</value>
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>«Додано запис журналу» — це тригер сумісності. Після активації Звітів він спрацьовує при завершенні звіту про виїзд, навчання, роботу, нараду, судмедексперта або зворотний виклик, передаючи старі поля журналу разом з описом, і зберігається два проміжні випуски або дванадцять місяців після активації. Для нових робочих процесів використовуйте тригери Звіт.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>ID події</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>ID кореляції</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>ID причини</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>Послідовність події</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>Джерело</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>Пропущено через</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>Пропущені</value>
+  </data>
 </root>

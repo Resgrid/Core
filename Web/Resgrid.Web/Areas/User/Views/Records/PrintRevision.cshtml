@@ -1,0 +1,145 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordRevisionView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	Layout = null;
+	var s = Model.Snapshot;
+	var d = s.Details ?? new RmsOperationalRecordDetail();
+	var isCoroner = Model.RecordType == RmsOperationalRecordType.Coroner;
+	string Name(string userId) => string.IsNullOrEmpty(userId) ? "-" : (Model.PersonnelNames.TryGetValue(userId, out var n) ? n : userId);
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	string Text(string value) => string.IsNullOrWhiteSpace(value) ? "-" : value;
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>@(s.RecordNumber ?? s.DraftReference) r@(Model.Revision.RevisionNumber)</title>
+	<style>
+		body { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #111; margin: 24px 32px 64px 32px; }
+		.letterhead { border-bottom: 2px solid #222; padding-bottom: 6px; margin-bottom: 10px; }
+		.letterhead img.logo { max-height: 80px; max-width: 320px; display: block; margin-bottom: 4px; }
+		.extra-line { font-size: 10px; color: #333; }
+		.footer-text { font-size: 8.5px; color: #333; margin-bottom: 2px; }
+		.watermark { position: fixed; top: 38%; left: 0; right: 0; text-align: center; font-size: 72px; font-weight: bold; color: rgba(0, 0, 0, 0.08); }
+		@@page { size: @Model.Provenance.PageSize; }
+		.dept-name { font-size: 16px; font-weight: bold; }
+		.dept-line { font-size: 10px; color: #444; }
+		h1 { font-size: 15px; margin: 6px 0 10px 0; }
+		.section { margin-top: 12px; page-break-inside: avoid; }
+		.section h3 { font-size: 12px; margin: 0 0 4px 0; border-bottom: 1px solid #333; }
+		table { border-collapse: collapse; width: 100%; }
+		th, td { border: 1px solid #bbb; padding: 3px 6px; text-align: left; vertical-align: top; font-size: 10px; }
+		th { background: #eee; }
+		table.fields td.label { width: 28%; color: #444; background: #f7f7f7; }
+		.narrative { white-space: pre-wrap; margin: 4px 0 0 0; }
+		.restricted { border: 1px dashed #a00; padding: 6px; }
+		.state { display: inline-block; border: 1px solid #333; padding: 1px 6px; font-size: 10px; }
+		.provenance { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid #888; padding: 4px 32px; font-size: 8.5px; color: #555; background: #fff; }
+	</style>
+</head>
+<body>
+	@if (!string.IsNullOrWhiteSpace(Model.Provenance.WatermarkLabel))
+	{
+		<div class="watermark">@Model.Provenance.WatermarkLabel</div>
+	}
+	<partial name="_PrintHeader" model="Model.Provenance" />
+
+	<h1>@Model.RecordType.ToString() &mdash; @(s.RecordNumber ?? s.DraftReference) &mdash; @localizer["Revision"] @Model.Revision.RevisionNumber <span class="state">@(((RmsRevisionTransition)Model.Revision.Transition).ToString())</span></h1>
+
+	<div class="section">
+		<table class="fields">
+			<tr><td class="label">@localizer["RecordNumber"]</td><td>@Text(s.RecordNumber)</td><td class="label">@localizer["Definition"]</td><td>@s.DefinitionKey v@(s.DefinitionVersion)</td></tr>
+			<tr><td class="label">@localizer["Actor"]</td><td>@Name(Model.Revision.ActorUserId)</td><td class="label">@commonLocalizer["Date"]</td><td>@When(Model.Revision.CreatedOn)</td></tr>
+			<tr><td class="label">@localizer["Author"]</td><td>@Name(s.AuthorUserId)</td><td class="label">@localizer["Checksum"]</td><td>@Model.Revision.Checksum</td></tr>
+			<tr><td class="label">@localizer["Start"]</td><td>@When(s.StartedOn)</td><td class="label">@localizer["End"]</td><td>@When(s.EndedOn)</td></tr>
+			@if (!string.IsNullOrWhiteSpace(Model.Revision.ReasonCode))
+			{
+				<tr><td class="label">@localizer["ReasonCode"]</td><td colspan="3">@Model.Revision.ReasonCode @Model.Revision.ReasonText</td></tr>
+			}
+		</table>
+	</div>
+
+	<div class="section">
+		<h3>@localizer["Narrative"]</h3>
+		<table class="fields">
+			@if (!string.IsNullOrWhiteSpace(d.Course)) { <tr><td class="label">@localizer["Course"]</td><td>@d.Course @d.CourseCode</td></tr> }
+			@if (!string.IsNullOrWhiteSpace(d.Instructors)) { <tr><td class="label">@localizer["Instructors"]</td><td>@d.Instructors</td></tr> }
+			@if (!string.IsNullOrWhiteSpace(d.Type)) { <tr><td class="label">@localizer["Type"]</td><td>@d.Type</td></tr> }
+			@if (!string.IsNullOrWhiteSpace(d.Facilitator)) { <tr><td class="label">@localizer["Facilitator"]</td><td>@d.Facilitator</td></tr> }
+			@if (!string.IsNullOrWhiteSpace(d.CallNumber)) { <tr><td class="label">@localizer["Call"]</td><td>@d.CallNumber @d.CallName</td></tr> }
+			@if (!string.IsNullOrWhiteSpace(d.InitialReport)) { <tr><td class="label">@localizer["InitialReport"]</td><td>@d.InitialReport</td></tr> }
+			@if (!string.IsNullOrWhiteSpace(d.Cause)) { <tr><td class="label">@localizer["Cause"]</td><td>@d.Cause</td></tr> }
+			@if (!string.IsNullOrWhiteSpace(d.OtherAgencies)) { <tr><td class="label">@localizer["OtherAgencies"]</td><td>@d.OtherAgencies</td></tr> }
+			@if (!string.IsNullOrWhiteSpace(d.OtherUnits)) { <tr><td class="label">@localizer["OtherUnits"]</td><td>@d.OtherUnits</td></tr> }
+			@if (d.ActivityOn.HasValue) { <tr><td class="label">@localizer["ActivityTime"]</td><td>@When(d.ActivityOn)</td></tr> }
+			@if (!isCoroner && !string.IsNullOrWhiteSpace(d.Location)) { <tr><td class="label">@localizer["Location"]</td><td>@d.Location</td></tr> }
+			@if (!isCoroner && !string.IsNullOrWhiteSpace(d.OtherPersonnel)) { <tr><td class="label">@localizer["OtherPersonnel"]</td><td>@d.OtherPersonnel</td></tr> }
+		</table>
+		<p class="narrative">@d.Narrative</p>
+	</div>
+
+	@if (isCoroner)
+	{
+		<div class="section restricted">
+			<h3>@localizer["RestrictedSection"]</h3>
+			@if (Model.CanViewRestricted)
+			{
+				<table class="fields">
+					<tr><td class="label">@localizer["CaseNumber"]</td><td>@Text(d.CaseNumber)</td></tr>
+					<tr><td class="label">@localizer["PronouncedDeceasedBy"]</td><td>@Text(d.PronouncedDeceasedBy)</td></tr>
+					<tr><td class="label">@localizer["BodyLocation"]</td><td>@Text(d.BodyLocation)</td></tr>
+					<tr><td class="label">@localizer["Destination"]</td><td>@Text(d.Destination)</td></tr>
+					<tr><td class="label">@localizer["OtherPersonnel"]</td><td>@Text(d.OtherPersonnel)</td></tr>
+				</table>
+			}
+			else
+			{
+				<p>@localizer["RestrictedNotice"]</p>
+			}
+		</div>
+	}
+
+	@if (s.Participants.Count > 0)
+	{
+		<div class="section">
+			<h3>@localizer["Participants"]</h3>
+			<table>
+				<thead><tr><th>@commonLocalizer["Name"]</th><th>@localizer["Role"]</th><th>@localizer["Station"]</th></tr></thead>
+				<tbody>
+					@foreach (var p in s.Participants) { <tr><td>@(p.DisplayNameSnapshot ?? Name(p.UserId))</td><td>@Text(p.Role)</td><td>@Text(p.GroupNameSnapshot)</td></tr> }
+				</tbody>
+			</table>
+		</div>
+	}
+
+	@if (s.Units.Count > 0)
+	{
+		<div class="section">
+			<h3>@localizer["Units"]</h3>
+			<table>
+				<thead><tr><th>@localizer["Unit"]</th><th>@localizer["Dispatched"]</th><th>@localizer["Enroute"]</th><th>@localizer["OnScene"]</th><th>@localizer["Released"]</th><th>@localizer["InQuarters"]</th></tr></thead>
+				<tbody>
+					@foreach (var u in s.Units) { <tr><td>@u.UnitNameSnapshot</td><td>@When(u.Dispatched)</td><td>@When(u.Enroute)</td><td>@When(u.OnScene)</td><td>@When(u.Released)</td><td>@When(u.InQuarters)</td></tr> }
+				</tbody>
+			</table>
+		</div>
+	}
+
+	@if (s.Attachments.Count > 0)
+	{
+		<div class="section">
+			<h3>@localizer["Attachments"]</h3>
+			<table>
+				<thead><tr><th>@commonLocalizer["Name"]</th><th>@localizer["Checksum"]</th></tr></thead>
+				<tbody>
+					@foreach (var a in s.Attachments) { <tr><td>@a.FileName</td><td>@a.Checksum</td></tr> }
+				</tbody>
+			</table>
+		</div>
+	}
+
+	<partial name="_PrintFooter" model="Model.Provenance" />
+</body>
+</html>

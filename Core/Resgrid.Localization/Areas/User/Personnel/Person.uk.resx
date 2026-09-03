@@ -347,4 +347,10 @@
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>View Role</value>
   </data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>Незавершені записи</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>Цей учасник досі володіє {0} незавершеними записами. Відкрийте кожен і перепризначте його іншому учаснику перед видаленням, інакше він залишиться у власності видаленого учасника.</value>
+  </data>
 </root>

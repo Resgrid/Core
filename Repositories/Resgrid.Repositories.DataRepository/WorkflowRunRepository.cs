@@ -54,6 +54,37 @@ namespace Resgrid.Repositories.DataRepository
 			catch (Exception ex) { Logging.LogException(ex); throw; }
 		}
 
+		public async Task<WorkflowRun> GetByWorkflowAndEventAsync(string workflowId, string eventId)
+		{
+			if (string.IsNullOrWhiteSpace(workflowId) || string.IsNullOrWhiteSpace(eventId))
+				return null;
+
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<WorkflowRun>>(async x =>
+				{
+					var dp = new DynamicParametersExtension();
+					dp.Add("WorkflowId", workflowId);
+					dp.Add("EventId", eventId);
+					var p = _sqlConfiguration.ParameterNotation;
+					var query = Resgrid.Config.DataConfig.DatabaseType == Resgrid.Config.DatabaseTypes.Postgres
+						? $"SELECT * FROM {_sqlConfiguration.SchemaName}.workflowruns WHERE workflowid = {p}WorkflowId AND eventid = {p}EventId ORDER BY startedon ASC LIMIT 1"
+						: $"SELECT TOP 1 * FROM {_sqlConfiguration.SchemaName}.[WorkflowRuns] WHERE [WorkflowId] = {p}WorkflowId AND [EventId] = {p}EventId ORDER BY [StartedOn] ASC";
+					var rows = await x.QueryAsync<WorkflowRun>(sql: query, param: dp, transaction: _unitOfWork.Transaction);
+					return System.Linq.Enumerable.FirstOrDefault(rows);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create()) { await conn.OpenAsync(); return await selectFunction(conn); }
+				}
+				conn = _unitOfWork.CreateOrGetConnection();
+				return await selectFunction(conn);
+			}
+			catch (Exception ex) { Logging.LogException(ex); throw; }
+		}
+
 		public async Task<IEnumerable<WorkflowRun>> GetPendingAndRunningByDepartmentIdAsync(int departmentId)
 		{
 			try

@@ -716,4 +716,8 @@
   <data name="AdpErrorGeneric" xml:space="preserve">
     <value>Żądanie nie powiodło się. Spróbuj ponownie.</value>
   </data>
+  <data name="RecordsModule" xml:space="preserve"><value>Rejestry</value></data>
+  <data name="DepartmentProfile" xml:space="preserve">
+    <value>Profil wydziału</value>
+  </data>
 </root>

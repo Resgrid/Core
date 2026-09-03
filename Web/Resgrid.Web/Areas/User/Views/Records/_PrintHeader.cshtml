@@ -1,0 +1,29 @@
+@model Resgrid.Web.Areas.User.Models.Records.RecordPrintProvenance
+@*
+	Branding block (RMS plan section 4.10.1): identity from the Department Profile, rendered per the DepartmentDefault
+	print layout. The letterhead resolves at print time; the record content below it always renders from the pinned
+	revision, and the layout version in the footer keeps the distinction auditable.
+*@
+<div class="letterhead">
+	@if (!string.IsNullOrWhiteSpace(Model.LogoDataUri))
+	{
+		<img class="logo" src="@Model.LogoDataUri" alt="" />
+	}
+	<div class="dept-name">@Model.DepartmentName</div>
+	@if (!string.IsNullOrWhiteSpace(Model.DepartmentAddress))
+	{
+		<div class="dept-line">@Model.DepartmentAddress</div>
+	}
+	@if (!string.IsNullOrWhiteSpace(Model.DepartmentPhone) || !string.IsNullOrWhiteSpace(Model.Website))
+	{
+		<div class="dept-line">@Model.DepartmentPhone @(string.IsNullOrWhiteSpace(Model.DepartmentPhone) || string.IsNullOrWhiteSpace(Model.Website) ? string.Empty : "&middot;") @Model.Website</div>
+	}
+	@if (!string.IsNullOrWhiteSpace(Model.LetterheadLine1))
+	{
+		<div class="extra-line">@Model.LetterheadLine1</div>
+	}
+	@if (!string.IsNullOrWhiteSpace(Model.LetterheadLine2))
+	{
+		<div class="extra-line">@Model.LetterheadLine2</div>
+	}
+</div>

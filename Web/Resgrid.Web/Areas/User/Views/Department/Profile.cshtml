@@ -1,0 +1,164 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Settings.DepartmentProfileModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["DepartmentProfileHeader"];
+	var hasLogo = Model.Branding != null && Model.Branding.HasLogo;
+	var printHeader = Model.Branding?.Rendition(DepartmentProfileMediaKind.PrintHeader);
+	var masthead = Model.Branding?.Rendition(DepartmentProfileMediaKind.EmailMasthead);
+	var thumbnail = Model.Branding?.Rendition(DepartmentProfileMediaKind.Thumbnail);
+	var stamp = printHeader?.Checksum ?? string.Empty;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["DepartmentProfileHeader"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Department" asp-action="Settings" asp-route-area="User">@commonLocalizer["DepartmentSettings"]</a></li>
+			<li class="active"><strong>@localizer["DepartmentProfileHeader"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-7">
+		<div class="wrapper wrapper-content">
+			@if (!string.IsNullOrEmpty(Model.Message))
+			{
+				<div class="alert alert-success">@Model.Message</div>
+			}
+			@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+			{
+				<div class="alert alert-danger">@Model.ErrorMessage</div>
+			}
+
+			<div class="ibox float-e-margins">
+				<div class="ibox-title"><h5>@localizer["ProfileIdentity"]</h5></div>
+				<div class="ibox-content">
+					<p class="text-muted">@localizer["ProfileIntro"]</p>
+					<form class="form-horizontal" method="post" asp-controller="Department" asp-action="Profile" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="Name">@localizer["ProfileDisplayName"]</label>
+							<div class="col-sm-9"><input asp-for="Name" class="form-control" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="ShortName">@localizer["ProfileShortName"]</label>
+							<div class="col-sm-9"><input asp-for="ShortName" class="form-control" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="Code">@localizer["ProfileCode"]</label>
+							<div class="col-sm-9"><input asp-for="Code" class="form-control" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="Description">@localizer["ProfileDescription"]</label>
+							<div class="col-sm-9"><textarea asp-for="Description" class="form-control" rows="3"></textarea></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="PhoneNumber">@localizer["ProfilePhone"]</label>
+							<div class="col-sm-9"><input asp-for="PhoneNumber" class="form-control" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="Website">@localizer["ProfileWebsite"]</label>
+							<div class="col-sm-9"><input asp-for="Website" class="form-control" placeholder="https://" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ProfileAddress"]</label>
+							<div class="col-sm-9">
+								<p class="form-control-static">@(Model.Branding?.AddressText ?? "-")</p>
+								<small class="text-muted">@localizer["ProfileAddressNote"] <a asp-controller="Department" asp-action="Address" asp-route-area="User">@localizer["Address"]</a></small>
+							</div>
+						</div>
+						<div class="hr-line-dashed"></div>
+						<h4>@localizer["ProfileSocial"]</h4>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="Facebook">Facebook</label>
+							<div class="col-sm-9"><input asp-for="Facebook" class="form-control" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="Twitter">X / Twitter</label>
+							<div class="col-sm-9"><input asp-for="Twitter" class="form-control" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="Instagram">Instagram</label>
+							<div class="col-sm-9"><input asp-for="Instagram" class="form-control" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="YouTube">YouTube</label>
+							<div class="col-sm-9"><input asp-for="YouTube" class="form-control" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" asp-for="LinkedIn">LinkedIn</label>
+							<div class="col-sm-9"><input asp-for="LinkedIn" class="form-control" /></div>
+						</div>
+						<div class="hr-line-dashed"></div>
+						<div class="form-group">
+							<div class="col-sm-9 col-sm-offset-3">
+								<div class="checkbox"><label><input asp-for="UseDepartmentBrandingInEmails" /> @localizer["ProfileUseBrandingInEmails"]</label></div>
+								<small class="text-muted">@localizer["ProfileUseBrandingInEmailsHelp"]</small>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-9 col-sm-offset-3">
+								<button type="submit" class="btn btn-primary">@commonLocalizer["Save"]</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-lg-5">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title"><h5>@localizer["ProfileLogo"]</h5></div>
+				<div class="ibox-content">
+					<p class="text-muted">@localizer["ProfileLogoHelp"]</p>
+					@if (hasLogo)
+					{
+						<dl>
+							<dt>@localizer["ProfileRenditionPrint"] (@(printHeader?.Width)&times;@(printHeader?.Height))</dt>
+							<dd><img src="@Url.Action("ProfileMedia", "Department", new { area = "User", kind = (int)DepartmentProfileMediaKind.PrintHeader, v = stamp })" alt="" style="max-width:100%;max-height:120px;border:1px solid #ddd;padding:4px;background:#fff;" /></dd>
+							<dt>@localizer["ProfileRenditionEmail"] (@(masthead?.Width)&times;@(masthead?.Height))</dt>
+							<dd><img src="@Url.Action("ProfileMedia", "Department", new { area = "User", kind = (int)DepartmentProfileMediaKind.EmailMasthead, v = stamp })" alt="" style="border:1px solid #ddd;padding:4px;background:#fff;" /></dd>
+							<dt>@localizer["ProfileRenditionThumb"] (@(thumbnail?.Width)&times;@(thumbnail?.Height))</dt>
+							<dd><img src="@Url.Action("ProfileMedia", "Department", new { area = "User", kind = (int)DepartmentProfileMediaKind.Thumbnail, v = stamp })" alt="" style="border:1px solid #ddd;padding:4px;background:#fff;" /></dd>
+						</dl>
+						<form method="post" asp-controller="Department" asp-action="RemoveProfileLogo" asp-route-area="User" class="m-b-md">
+							@Html.AntiForgeryToken()
+							<button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('@localizer["ProfileRemoveLogo"]?');">@localizer["ProfileRemoveLogo"]</button>
+						</form>
+					}
+					else
+					{
+						<p class="text-muted">@localizer["ProfileNoLogo"]</p>
+					}
+					<form method="post" enctype="multipart/form-data" asp-controller="Department" asp-action="ProfileLogo" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<div class="form-group">
+							<input type="file" name="logo" accept="image/png,image/jpeg" required />
+						</div>
+						<button type="submit" class="btn btn-primary btn-sm">@localizer["ProfileUpload"]</button>
+					</form>
+				</div>
+			</div>
+
+			@if (hasLogo)
+			{
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["ProfileMediaKey"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["ProfileMediaKeyHelp"]</p>
+						<p><code style="word-break:break-all;">@Model.PublicMastheadUrl</code></p>
+						<form method="post" asp-controller="Department" asp-action="RegenerateProfileMediaKey" asp-route-area="User">
+							@Html.AntiForgeryToken()
+							<button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('@localizer["ProfileRegenerateKey"]?');">@localizer["ProfileRegenerateKey"]</button>
+						</form>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>

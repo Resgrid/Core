@@ -174,6 +174,98 @@ namespace Resgrid.Web.ServicesCore.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete);
 		}
 
+		// Records (RMS) helpers. The Web and Web.Services copies of this file must expose identical members
+		// (ClaimsAuthorizationHelperParityTests).
+		public static bool CanViewRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View);
+		}
+
+		public static bool CanCreateRecord()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Create);
+		}
+
+		public static bool CanReviewRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Review);
+		}
+
+		public static bool CanApproveRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Approve);
+		}
+
+		public static bool CanFinalizeRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Finalize);
+		}
+
+		public static bool CanSubmitRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Submit);
+		}
+
+		public static bool CanAmendRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Amend);
+		}
+
+		public static bool CanVoidRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Void);
+		}
+
+		public static bool CanExportRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Export);
+		}
+
+		public static bool CanShareRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Share);
+		}
+
+		public static bool CanReassignRecordDrafts()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Reassign);
+		}
+
+		public static bool CanViewLegacyRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.RecordLegacy, ResgridClaimTypes.Actions.View);
+		}
+
+		public static bool CanViewRestrictedRecords()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.RecordRestricted, ResgridClaimTypes.Actions.View);
+		}
+
+		public static bool CanManageRecordDefinitions()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Update);
+		}
+
+		public static bool CanPublishRecordDefinitions()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Publish);
+		}
+
+		public static bool CanManageRecordReports()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.RecordReport, ResgridClaimTypes.Actions.Update);
+		}
+
+		public static bool CanManageRecordDisclosures()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.RecordDisclosure, ResgridClaimTypes.Actions.Update);
+		}
+
+		public static bool CanManageRecordLegalHold()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.RecordLegalHold, ResgridClaimTypes.Actions.Update);
+		}
+
 		public static bool CanCreateShift()
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.Create);

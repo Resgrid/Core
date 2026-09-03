@@ -1656,5 +1656,114 @@ namespace Resgrid.Providers.Claims
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Delete));
 			}
 		}
+
+		#region Records (RMS) - PermissionTypes 50-67, Identifier Allocation Registry section 4
+
+		/// <summary>
+		/// Derives every Records claim from the department's Permission rows. A missing row evaluates as
+		/// the descriptor's documented no-row default (RecordPermissionCatalog), which equals today's Logs
+		/// behavior for the parity types, so activation changes nobody's effective access by accident.
+		/// Record_View is issued to every department member exactly as Log:View is today; ViewGroupRecords
+		/// (61) issues no claim because cross-group visibility is evaluated per Record at the service layer.
+		/// </summary>
+		public static void AddRecordClaims(ClaimsIdentity identity, bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			AddClaimOnce(identity, ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View);
+
+			foreach (var descriptor in RecordPermissionCatalog.All)
+			{
+				var grants = RecordClaimGrants(descriptor.Type);
+				if (grants.Length == 0)
+					continue;
+
+				var permission = permissions?.FirstOrDefault(x => x.PermissionType == (int)descriptor.Type);
+				var action = permission != null ? permission.Action : (int)descriptor.NoRowDefault;
+				var roleIdCsv = permission != null ? permission.Data : null;
+
+				if (!IsPermissionActionSatisfied(action, roleIdCsv, isAdmin, isGroupAdmin, roles))
+					continue;
+
+				foreach (var grant in grants)
+					AddClaimOnce(identity, grant.Resource, grant.Action);
+			}
+		}
+
+		/// <summary>
+		/// The PermissionActions ladder as one function, including value 4
+		/// (DepartmentAndGroupAdminsAndSelectRoles). Department administrators pass every value, an
+		/// unrecognised future value denies (fail closed), and a malformed role CSV is treated as empty.
+		/// </summary>
+		public static bool IsPermissionActionSatisfied(int action, string roleIdCsv, bool isAdmin, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			return RecordPermissionEvaluation.IsSatisfied(action, roleIdCsv, isAdmin, isGroupAdmin, roles);
+		}
+
+		public readonly struct RecordClaimGrant
+		{
+			public RecordClaimGrant(string resource, string action)
+			{
+				Resource = resource;
+				Action = action;
+			}
+
+			public string Resource { get; }
+			public string Action { get; }
+		}
+
+		private static readonly RecordClaimGrant[] NoGrants = new RecordClaimGrant[0];
+
+		/// <summary>Claim(s) a satisfied PermissionTypes row issues. Registry section 4.1, "Grants" column.</summary>
+		public static RecordClaimGrant[] RecordClaimGrants(PermissionTypes type)
+		{
+			switch (type)
+			{
+				case PermissionTypes.CreateRecord:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Create) };
+				case PermissionTypes.DeleteRecord:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Void) };
+				case PermissionTypes.ReviewRecords:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Review) };
+				case PermissionTypes.ApproveRecords:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Approve) };
+				case PermissionTypes.FinalizeRecords:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Finalize) };
+				case PermissionTypes.AmendRecords:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Amend) };
+				case PermissionTypes.SubmitRecords:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Submit) };
+				case PermissionTypes.ExportRecords:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Export) };
+				case PermissionTypes.ShareRecordsExternally:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Share) };
+				case PermissionTypes.ViewRestrictedRecords:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordRestricted, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.ViewLegacyRecords:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordLegacy, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.ViewGroupRecords:
+					return NoGrants;
+				case PermissionTypes.ManageRecordDefinitions:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Update) };
+				case PermissionTypes.PublishRecordDefinitions:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Publish) };
+				case PermissionTypes.ManageRecordReports:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordReport, ResgridClaimTypes.Actions.Update) };
+				case PermissionTypes.ManageRecordDisclosures:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordDisclosure, ResgridClaimTypes.Actions.Update) };
+				case PermissionTypes.ManageRecordLegalHold:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordLegalHold, ResgridClaimTypes.Actions.Update) };
+				case PermissionTypes.ReassignRecordDrafts:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Reassign) };
+				default:
+					return NoGrants;
+			}
+		}
+
+		private static void AddClaimOnce(ClaimsIdentity identity, string type, string value)
+		{
+			if (!identity.HasClaim(type, value))
+				identity.AddClaim(new Claim(type, value));
+		}
+
+		#endregion Records (RMS)
 	}
 }

@@ -81,7 +81,7 @@ namespace Resgrid.Providers.EmailProvider
 
 
 		public async Task<bool> SendCallMail(string email, string subject, string title, string priority, string natureOfCall, string mapPage, string address,
-			string dispatchedOn, int callId, string userId, string coordinates, string shortenedAudioUrl)
+			string dispatchedOn, int callId, string userId, string coordinates, string shortenedAudioUrl, DepartmentEmailBranding branding)
 		{
 			string callQuery = String.Empty;
 
@@ -116,6 +116,8 @@ namespace Resgrid.Providers.EmailProvider
 						}
 				}
 			};
+
+			AddDepartmentBranding(templateModel, branding);
 
 
 			try
@@ -281,7 +283,7 @@ namespace Resgrid.Providers.EmailProvider
 		}
 
 		public async Task<bool> SendMessageMail(string email, string subject, string messageSubject, string messageBody, string senderEmail, string senderName, string sentOn,
-			int messageId)
+			int messageId, DepartmentEmailBranding branding)
 		{
 			var templateModel = new Dictionary<string, object>
 			{
@@ -291,6 +293,8 @@ namespace Resgrid.Providers.EmailProvider
 				{ "action_url", GetAppUrl($"User/Messages/ViewMessage?messageId={messageId}") },
 				{ "timestamp", sentOn },
 			};
+
+			AddDepartmentBranding(templateModel, branding);
 
 			try
 			{
@@ -596,7 +600,7 @@ namespace Resgrid.Providers.EmailProvider
 		}
 
 		public async Task<bool> SendReportDeliveryMail(string email, string subject, string messageBody, string sentOn,
-			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl)
+			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl, DepartmentEmailBranding branding)
 		{
 			if (attachmentData == null)
 				return false;
@@ -624,6 +628,8 @@ namespace Resgrid.Providers.EmailProvider
 				{ "action_url", GetAppUrl("User/Profile/Reporting") },
 				{ "timestamp", sentOn }
 			};
+
+			AddDepartmentBranding(templateModel, branding);
 
 			try
 			{
@@ -701,6 +707,28 @@ namespace Resgrid.Providers.EmailProvider
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Department masthead variables (RMS plan section 4.10.1). The two sections are mutually exclusive, so a
+		/// department without the opt-in (or without a logo) renders today's Resgrid chrome byte-for-byte and the
+		/// department block only appears when both conditions hold. Mustache resolves names inside a section
+		/// against the section value, so the department variables ride inside the department_branding object.
+		/// The footer's Resgrid, LLC identity is never part of the swap.
+		/// </summary>
+		private static void AddDepartmentBranding(Dictionary<string, object> templateModel, DepartmentEmailBranding branding)
+		{
+			var enabled = branding != null && branding.Enabled && !String.IsNullOrWhiteSpace(branding.LogoUrl);
+
+			templateModel["resgrid_branding"] = !enabled;
+			templateModel["department_branding"] = enabled
+				? new Dictionary<string, object>
+				{
+					{ "department_logo_url", branding.LogoUrl },
+					{ "department_display_name", branding.DisplayName ?? String.Empty },
+					{ "department_website", branding.Website ?? SystemBehaviorConfig.ResgridBaseUrl }
+				}
+				: (object)false;
 		}
 
 		private string GetTempate(string templateName)

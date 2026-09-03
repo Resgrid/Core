@@ -33,6 +33,8 @@ namespace Resgrid.Tests.Localization
 			// ADP screens (enrollment wizard, protection status, emergency contacts) shipped fully
 			// translated; guarding them stops English placeholders creeping back in.
 			"Areas/User/DataProtection/DataProtection",
+			// Records (RMS) shipped fully translated in RMS-1; keep it that way.
+			"Areas/User/Records/Records",
 		};
 
 		private static string LocalizationRoot()
@@ -103,6 +105,17 @@ namespace Resgrid.Tests.Localization
 			"CommunicationTest|es|MinutesShort", "CommunicationTest|fr|MinutesShort",
 			"CommunicationTest|it|MinutesShort", "CommunicationTest|pl|MinutesShort",
 			"CommunicationTest|sv|MinutesShort",
+
+			// Records (RMS): words that are the same in the target language, checked side by side.
+			"Records|de|Definition", "Records|de|Revision",
+			"Records|fr|Type", "Records|fr|Actions", "Records|fr|Cause", "Records|fr|Destination",
+			"Records|fr|Participants", "Records|fr|Transition", "Records|fr|Section", "Records|fr|Provenance",
+			"Records|fr|Enroute",                 // "En route" is French to begin with.
+			"Records|it|Checksum",                // Italian keeps the technical term.
+			"Records|sv|Definition", "Records|sv|Destination", "Records|sv|Revision", "Records|sv|Start",
+			"Records|de|SearchOnline", "Records|de|SearchOffline",   // "Online"/"Offline" are the German words too.
+			"Records|pl|SearchOnline", "Records|pl|SearchOffline",   // Polish uses them verbatim.
+			"Records|sv|SearchOnline", "Records|sv|SearchOffline",   // So does Swedish.
 
 			// Counted phrases whose wording matches English.
 			"CommunicationTest|es|ScopeRoles",    // {0} roles

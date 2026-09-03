@@ -305,4 +305,5 @@
   <data name="WorkLogInformation" xml:space="preserve">
     <value>Work Log Information</value>
   </data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>Записи активні для цього підрозділу. Наявні журнали доступні лише для читання: перегляд, друк та експорт, але не створення, редагування чи видалення.</value></data>
 </root>

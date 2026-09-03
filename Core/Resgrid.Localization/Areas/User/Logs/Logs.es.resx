@@ -345,4 +345,5 @@
   <data name="WorkLogInformation" xml:space="preserve">
     <value>Work Log Information</value>
   </data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>Registros está activo para este departamento. Las bitácoras existentes son de solo lectura: se pueden ver, imprimir y exportar, pero no crear, editar ni eliminar.</value></data>
 </root>

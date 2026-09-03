@@ -11,6 +11,8 @@ namespace Resgrid.Web.Areas.User.Models.Units
 
 		/// <summary>True when this page is showing ADP placeholders that a grant could reveal.</summary>
 		public bool IsProtectedLogs { get; set; }
+		/// <summary>True once Records is active for the department: legacy unit logs are read-only (RMS plan section 4.1).</summary>
+		public bool LegacyReadOnly { get; set; }
 
 		public bool ConfirmClearAll { get; set; }
 		public string Message { get; set; }

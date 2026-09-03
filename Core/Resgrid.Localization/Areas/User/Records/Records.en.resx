@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="RecordsHeader" xml:space="preserve"><value>Records</value></data>
+  <data name="NewRecord" xml:space="preserve"><value>New Record</value></data>
+  <data name="ViewRecordHeader" xml:space="preserve"><value>View Record</value></data>
+  <data name="EditRecordHeader" xml:space="preserve"><value>Edit Record</value></data>
+  <data name="RecordsForYear" xml:space="preserve"><value>Records for year</value></data>
+  <data name="AllYears" xml:space="preserve"><value>All years</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>All types</value></data>
+  <data name="AllStates" xml:space="preserve"><value>All states</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="NoRecords" xml:space="preserve"><value>No records match the current filter.</value></data>
+  <data name="RecordNumber" xml:space="preserve"><value>Record #</value></data>
+  <data name="DraftReference" xml:space="preserve"><value>Draft reference</value></data>
+  <data name="Type" xml:space="preserve"><value>Type</value></data>
+  <data name="State" xml:space="preserve"><value>State</value></data>
+  <data name="Summary" xml:space="preserve"><value>Summary</value></data>
+  <data name="Author" xml:space="preserve"><value>Author</value></data>
+  <data name="Owner" xml:space="preserve"><value>Owner</value></data>
+  <data name="Occurred" xml:space="preserve"><value>Occurred</value></data>
+  <data name="Created" xml:space="preserve"><value>Created</value></data>
+  <data name="Finalized" xml:space="preserve"><value>Finalized</value></data>
+  <data name="Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Definition" xml:space="preserve"><value>Definition</value></data>
+  <data name="Narrative" xml:space="preserve"><value>Narrative</value></data>
+  <data name="NarrativeRequired" xml:space="preserve"><value>A narrative is required.</value></data>
+  <data name="InitialReport" xml:space="preserve"><value>Initial report / condition</value></data>
+  <data name="Cause" xml:space="preserve"><value>Cause</value></data>
+  <data name="Investigator" xml:space="preserve"><value>Investigator</value></data>
+  <data name="Course" xml:space="preserve"><value>Course</value></data>
+  <data name="CourseCode" xml:space="preserve"><value>Course code</value></data>
+  <data name="Instructors" xml:space="preserve"><value>Instructors</value></data>
+  <data name="MeetingType" xml:space="preserve"><value>Meeting type</value></data>
+  <data name="Facilitator" xml:space="preserve"><value>Facilitator</value></data>
+  <data name="Location" xml:space="preserve"><value>Location</value></data>
+  <data name="OtherPersonnel" xml:space="preserve"><value>Other personnel / attendees</value></data>
+  <data name="OtherAgencies" xml:space="preserve"><value>Other agencies</value></data>
+  <data name="OtherUnits" xml:space="preserve"><value>Other units</value></data>
+  <data name="CaseNumber" xml:space="preserve"><value>Case number</value></data>
+  <data name="BodyLocation" xml:space="preserve"><value>Body location</value></data>
+  <data name="PronouncedDeceasedBy" xml:space="preserve"><value>Pronounced deceased by</value></data>
+  <data name="Destination" xml:space="preserve"><value>Destination</value></data>
+  <data name="ContactName" xml:space="preserve"><value>Contact name</value></data>
+  <data name="ContactNumber" xml:space="preserve"><value>Contact number</value></data>
+  <data name="Unit" xml:space="preserve"><value>Unit</value></data>
+  <data name="ActivityTime" xml:space="preserve"><value>Activity time</value></data>
+  <data name="Call" xml:space="preserve"><value>Call</value></data>
+  <data name="NoCall" xml:space="preserve"><value>No call</value></data>
+  <data name="CallSnapshot" xml:space="preserve"><value>Call snapshot</value></data>
+  <data name="Participants" xml:space="preserve"><value>Participants</value></data>
+  <data name="Units" xml:space="preserve"><value>Units</value></data>
+  <data name="Attachments" xml:space="preserve"><value>Attachments</value></data>
+  <data name="AddAttachment" xml:space="preserve"><value>Add attachment</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>Dispatched</value></data>
+  <data name="Enroute" xml:space="preserve"><value>En route</value></data>
+  <data name="OnScene" xml:space="preserve"><value>On scene</value></data>
+  <data name="Released" xml:space="preserve"><value>Released</value></data>
+  <data name="InQuarters" xml:space="preserve"><value>In quarters</value></data>
+  <data name="SaveDraft" xml:space="preserve"><value>Save draft</value></data>
+  <data name="SaveAndFinalize" xml:space="preserve"><value>Save and finalize</value></data>
+  <data name="Finalize" xml:space="preserve"><value>Finalize</value></data>
+  <data name="Amend" xml:space="preserve"><value>Amend</value></data>
+  <data name="AbandonAmendment" xml:space="preserve"><value>Abandon amendment</value></data>
+  <data name="Void" xml:space="preserve"><value>Void</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel draft</value></data>
+  <data name="ReasonCode" xml:space="preserve"><value>Reason code</value></data>
+  <data name="ReasonText" xml:space="preserve"><value>Reason</value></data>
+  <data name="ReasonRequired" xml:space="preserve"><value>A reason is required.</value></data>
+  <data name="Attestation" xml:space="preserve"><value>I attest that this record is accurate and complete to the best of my knowledge.</value></data>
+  <data name="History" xml:space="preserve"><value>History</value></data>
+  <data name="Revision" xml:space="preserve"><value>Revision</value></data>
+  <data name="Transition" xml:space="preserve"><value>Transition</value></data>
+  <data name="Actor" xml:space="preserve"><value>By</value></data>
+  <data name="Checksum" xml:space="preserve"><value>Checksum</value></data>
+  <data name="ViewRevision" xml:space="preserve"><value>View</value></data>
+  <data name="CompareWithPrevious" xml:space="preserve"><value>Compare with previous</value></data>
+  <data name="RevisionHeader" xml:space="preserve"><value>Revision as it stood</value></data>
+  <data name="DiffHeader" xml:space="preserve"><value>Revision comparison</value></data>
+  <data name="NoChanges" xml:space="preserve"><value>No differences between these revisions.</value></data>
+  <data name="Withheld" xml:space="preserve"><value>Restricted field changed (values withheld)</value></data>
+  <data name="Section" xml:space="preserve"><value>Section</value></data>
+  <data name="Field" xml:space="preserve"><value>Field</value></data>
+  <data name="Before" xml:space="preserve"><value>Before</value></data>
+  <data name="After" xml:space="preserve"><value>After</value></data>
+  <data name="Export" xml:space="preserve"><value>Export</value></data>
+  <data name="Print" xml:space="preserve"><value>Print</value></data>
+  <data name="RestrictedSection" xml:space="preserve"><value>Restricted section</value></data>
+  <data name="RestrictedNotice" xml:space="preserve"><value>You do not have permission to view the restricted sections of this record.</value></data>
+  <data name="DuplicateWarning" xml:space="preserve"><value>A record of this type already exists for this call. Review it before continuing, or state why a second record is needed.</value></data>
+  <data name="DuplicateContinueReason" xml:space="preserve"><value>Reason for a second record</value></data>
+  <data name="ActivateHeader" xml:space="preserve"><value>Activate Records</value></data>
+  <data name="ActivateIntro" xml:space="preserve"><value>Records replaces the Logs module for this department. After activation, existing Logs remain readable in the Logs module but can no longer be created, edited or deleted. This cannot be undone once a record has been finalized.</value></data>
+  <data name="LegacyLogs" xml:space="preserve"><value>Existing logs</value></data>
+  <data name="LegacyUnitLogs" xml:space="preserve"><value>Existing unit logs</value></data>
+  <data name="PermissionMapping" xml:space="preserve"><value>Permission changes at activation</value></data>
+  <data name="PermissionSource" xml:space="preserve"><value>Existing permission</value></data>
+  <data name="PermissionTarget" xml:space="preserve"><value>Records permission</value></data>
+  <data name="EffectiveAccess" xml:space="preserve"><value>Effective access</value></data>
+  <data name="LockViewGroupRecordsToGroup" xml:space="preserve"><value>Limit record visibility to the viewer's own group</value></data>
+  <data name="ActivationReason" xml:space="preserve"><value>Reason / notes</value></data>
+  <data name="ActivationAcknowledge" xml:space="preserve"><value>I understand that this cannot be reversed once a record is finalized, and that retention configuration is this department's responsibility.</value></data>
+  <data name="Activate" xml:space="preserve"><value>Activate</value></data>
+  <data name="ActivationBlocked" xml:space="preserve"><value>Activation is blocked</value></data>
+  <data name="NotActivatedNotice" xml:space="preserve"><value>Records is enabled for this department but has not been activated yet. A department administrator must activate it before records can be created.</value></data>
+  <data name="ActivatedOn" xml:space="preserve"><value>Records activated on</value></data>
+  <data name="SettingsHeader" xml:space="preserve"><value>Records Settings</value></data>
+  <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Default lifecycle preset for department definitions</value></data>
+  <data name="ReviewDueHours" xml:space="preserve"><value>Review due (hours)</value></data>
+  <data name="Numbering" xml:space="preserve"><value>Record numbering</value></data>
+  <data name="IncludeYear" xml:space="preserve"><value>Include the year in record numbers</value></data>
+  <data name="SequenceWidth" xml:space="preserve"><value>Sequence digits</value></data>
+  <data name="PerGroupSequence" xml:space="preserve"><value>Separate sequence per station/group</value></data>
+  <data name="Retention" xml:space="preserve"><value>Retention</value></data>
+  <data name="RetentionIntro" xml:space="preserve"><value>Shipped defaults: 7 years for standard records; permanent for Coroner and other restricted classes. Retention configuration is this department's responsibility under its own jurisdiction's rules. Changes apply prospectively and are audited.</value></data>
+  <data name="DepartmentDefaultYears" xml:space="preserve"><value>Department default (years, blank = system default)</value></data>
+  <data name="RetentionOverrides" xml:space="preserve"><value>Per-definition overrides (0 = permanent)</value></data>
+  <data name="RestrictedOverrideConfirm" xml:space="preserve"><value>This is a restricted class. Setting a period enables automatic purge of these records. Confirm to apply.</value></data>
+  <data name="GroupVisibility" xml:space="preserve"><value>Cross-group visibility</value></data>
+  <data name="GroupVisibilityDepartmentWide" xml:space="preserve"><value>Department-wide (default)</value></data>
+  <data name="GroupVisibilityGroupScoped" xml:space="preserve"><value>Group-scoped</value></data>
+  <data name="GroupVisibilityNote" xml:space="preserve"><value>Group scoping also requires the "See other groups' Records" permission to be locked to group. Authors, reviewers, named participants, responding unit crews and department administrators always see a record.</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Records settings saved.</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="ConcurrencyError" xml:space="preserve"><value>This record was changed by someone else since you opened it. Reload and apply your changes again.</value></data>
+  <data name="AmendmentOpen" xml:space="preserve"><value>An amendment is in progress. The last finalized revision remains authoritative until the amendment is finalized.</value></data>
+  <data name="RecordSaved" xml:space="preserve"><value>Record saved.</value></data>
+  <data name="Start" xml:space="preserve"><value>Start</value></data>
+  <data name="End" xml:space="preserve"><value>End</value></data>
+  <data name="Station" xml:space="preserve"><value>Station / group</value></data>
+  <data name="ExternalId" xml:space="preserve"><value>External ID</value></data>
+  <data name="BackToRecords" xml:space="preserve"><value>Back to Records</value></data>
+  <data name="Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Role" xml:space="preserve"><value>Role</value></data>
+  <data name="Provenance" xml:space="preserve"><value>Provenance</value></data>
+  <data name="PrintPdf" xml:space="preserve"><value>Save as PDF</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Export CSV</value></data>
+  <data name="ExportJson" xml:space="preserve"><value>Export JSON</value></data>
+  <data name="PrintedBy" xml:space="preserve"><value>Printed by</value></data>
+  <data name="PrintedOn" xml:space="preserve"><value>Printed on</value></data>
+  <data name="PrintLayout" xml:space="preserve"><value>Layout</value></data>
+  <data name="ExportLimitNotice" xml:space="preserve"><value>Exports include at most {0} rows; narrow the filter to export more.</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Search records</value></data>
+  <data name="SearchUnavailable" xml:space="preserve"><value>Search is unavailable right now; the list below is filtered without the search text.</value></data>
+  <data name="SearchTruncated" xml:space="preserve"><value>Only the closest matches are shown; narrow the search to see more.</value></data>
+  <data name="NarrativeSearchOn" xml:space="preserve"><value>Narrative text is included in search.</value></data>
+  <data name="NarrativeSearchOff" xml:space="preserve"><value>Narrative text is not indexed for this department; search covers record numbers, summaries and other safe fields.</value></data>
+  <data name="SearchIndexStatus" xml:space="preserve"><value>Search index</value></data>
+  <data name="SearchDisabled" xml:space="preserve"><value>Disabled</value></data>
+  <data name="SearchOnline" xml:space="preserve"><value>Online</value></data>
+  <data name="SearchOffline" xml:space="preserve"><value>Offline</value></data>
+  <data name="SearchDocuments" xml:space="preserve"><value>Indexed records</value></data>
+  <data name="SearchIndexNote" xml:space="preserve"><value>The worker rebuilds the search index automatically whenever the department's protection policy or catalog version changes. Narrative search is withdrawn when Advanced Data Protection is enrolled.</value></data>
+  <data name="PrintLayoutHeader" xml:space="preserve"><value>Print layout</value></data>
+  <data name="PrintLayoutIntro" xml:space="preserve"><value>How the letterhead renders on record prints. Identity and logo come from the Department Profile; the record content itself always prints from the pinned revision.</value></data>
+  <data name="PrintShowLogo" xml:space="preserve"><value>Show logo</value></data>
+  <data name="PrintUseShortName" xml:space="preserve"><value>Use the short name</value></data>
+  <data name="PrintShowAddress" xml:space="preserve"><value>Show address</value></data>
+  <data name="PrintShowPhone" xml:space="preserve"><value>Show phone number</value></data>
+  <data name="PrintShowWebsite" xml:space="preserve"><value>Show website</value></data>
+  <data name="PrintLetterheadLine1" xml:space="preserve"><value>Letterhead line 1</value></data>
+  <data name="PrintLetterheadLine2" xml:space="preserve"><value>Letterhead line 2</value></data>
+  <data name="PrintFooterText" xml:space="preserve"><value>Footer text</value></data>
+  <data name="PrintWatermark" xml:space="preserve"><value>Watermark label</value></data>
+  <data name="PrintPageSize" xml:space="preserve"><value>Page size</value></data>
+  <data name="PrintDateTimeFormat" xml:space="preserve"><value>Date and time format</value></data>
+  <data name="PrintDateTimeFormatHelp" xml:space="preserve"><value>Optional .NET format string, for example yyyy-MM-dd HH:mm; leave empty for the department default.</value></data>
+  <data name="PrintLayoutVersionLabel" xml:space="preserve"><value>Layout version</value></data>
+  <data name="ManageDepartmentProfile" xml:space="preserve"><value>Manage the Department Profile</value></data>
+  <data name="NoLogoNotice" xml:space="preserve"><value>No logo has been uploaded yet; prints show the department name only.</value></data>
+  <data name="ExportSearchUnavailable" xml:space="preserve"><value>Search is unavailable right now, so the search hits could not be exported. Clear the search to export the filtered list instead.</value></data>
+  <data name="ReassignHeader" xml:space="preserve"><value>Reassign draft</value></data>
+  <data name="ReassignTo" xml:space="preserve"><value>New owner</value></data>
+  <data name="ReassignReason" xml:space="preserve"><value>Reason</value></data>
+  <data name="Reassign" xml:space="preserve"><value>Reassign</value></data>
+  <data name="ReassignNote" xml:space="preserve"><value>Transfers ownership of this unfinished Record to another member. The author and the creation history do not change, and the transfer is audited.</value></data>
+  <data name="GroupScopePreviewHeader" xml:space="preserve"><value>Impact preview</value></data>
+  <data name="GroupScopePreviewIntro" xml:space="preserve"><value>What group scoping would hide, before you confirm it. Members always keep the Records they authored, own, review, participate in or respond to with their unit, and department administrators see everything.</value></data>
+  <data name="GroupScopeTotalRecords" xml:space="preserve"><value>Records in the department</value></data>
+  <data name="GroupScopeHiddenFromUngrouped" xml:space="preserve"><value>Records hidden from members of no group</value></data>
+  <data name="GroupScopeUnanchored" xml:space="preserve"><value>Records with no group anchor (stay department-wide)</value></data>
+  <data name="GroupScopeUsersWithoutGroup" xml:space="preserve"><value>Members in no group</value></data>
+  <data name="GroupScopeLegacyRows" xml:space="preserve"><value>Legacy log rows with no group (stay department-wide)</value></data>
+  <data name="GroupScopeGroup" xml:space="preserve"><value>Group</value></data>
+  <data name="GroupScopeMembers" xml:space="preserve"><value>Members</value></data>
+  <data name="GroupScopeRecords" xml:space="preserve"><value>Records</value></data>
+  <data name="GroupScopeConfirm" xml:space="preserve"><value>I understand what group scoping hides and want to turn it on.</value></data>
+  <data name="GroupScopeConfirmRequired" xml:space="preserve"><value>Group scoping was not turned on: confirm the impact preview first. The other settings were saved.</value></data>
+  <data name="Accountability" xml:space="preserve"><value>Accountability</value></data>
+  <data name="AccountabilityHeader" xml:space="preserve"><value>Records accountability</value></data>
+  <data name="AccountabilityIntro" xml:space="preserve"><value>Who owes a report: open Records, overdue reviews and returned Records by person, station or unit, with time to finalize over the window. Reminders go to the owner, at most once a day per Record.</value></data>
+  <data name="PivotPerson" xml:space="preserve"><value>By person</value></data>
+  <data name="PivotGroup" xml:space="preserve"><value>By station/group</value></data>
+  <data name="PivotUnit" xml:space="preserve"><value>By unit</value></data>
+  <data name="WindowDays" xml:space="preserve"><value>Window (days)</value></data>
+  <data name="ColOpen" xml:space="preserve"><value>Open</value></data>
+  <data name="ColOverdueReviews" xml:space="preserve"><value>Overdue reviews</value></data>
+  <data name="ColReturned" xml:space="preserve"><value>Returned, not corrected</value></data>
+  <data name="ColFinalizedInWindow" xml:space="preserve"><value>Finalized in window</value></data>
+  <data name="ColAverageHoursToFinalize" xml:space="preserve"><value>Avg. hours to finalize</value></data>
+  <data name="ColOldestOpen" xml:space="preserve"><value>Oldest open</value></data>
+  <data name="Remind" xml:space="preserve"><value>Remind</value></data>
+  <data name="RemindAll" xml:space="preserve"><value>Remind all</value></data>
+  <data name="RemindersResult" xml:space="preserve"><value>{0} reminder(s) sent, {1} skipped.</value></data>
+  <data name="ReminderSent" xml:space="preserve"><value>Reminder sent.</value></data>
+  <data name="ReminderNotSent" xml:space="preserve"><value>Reminder not sent ({0}).</value></data>
+  <data name="Unassigned" xml:space="preserve"><value>Unassigned</value></data>
+  <data name="ShowOpenRecords" xml:space="preserve"><value>Show open records</value></data>
+  <data name="Totals" xml:space="preserve"><value>Totals</value></data>
+  <data name="OwnerFilter" xml:space="preserve"><value>Owner</value></data>
+  <data name="GroupFilter" xml:space="preserve"><value>Group</value></data>
+</root>

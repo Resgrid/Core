@@ -22,6 +22,7 @@
                     @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                     {
                         <li class="@Html.IsSelected(controller: "Department", action: "Settings")"><a asp-controller="Department" asp-action="Settings" asp-route-area="User">@commonLocalizer["DepartmentSettings"]</a></li>
+                        <li class="@Html.IsSelected(controller: "Department", action: "Profile")"><a asp-controller="Department" asp-action="Profile" asp-route-area="User">@commonLocalizer["DepartmentProfile"]</a></li>
                         <li class="@Html.IsSelected(controller: "Groups", action: "Index")"><a asp-controller="Groups" asp-action="Index" asp-route-area="User">@commonLocalizer["StationAndGroups"]</a></li>
                         <li class="@Html.IsSelected(controller: "Department", action: "CallSettings")"><a asp-controller="Department" asp-action="CallSettings" asp-route-area="User">@commonLocalizer["CallImportSettings"]</a></li>
                         <li class="@Html.IsSelected(controller: "CustomStatuses", action: "Index")"><a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">@commonLocalizer["CustomStatuses"]</a></li>

@@ -31,6 +31,9 @@ namespace Resgrid.Services
 			d["use_24_hour_time"] = false;
 			d["created_on"] = new DateTime(2020, 1, 1);
 			d["phone_number"] = "555-867-5309";
+			d["display_name"] = "Sample Fire Department";
+			d["logo_url"] = "https://app.resgrid.com/User/Department/PublicMasthead?key=sample";
+			d["website"] = "https://www.samplefire.example";
 
 			var addr = new ScriptObject();
 			addr["street"] = "100 Main Street";
@@ -502,6 +505,136 @@ namespace Resgrid.Services
 					coverageGap["summary"] = "Station 1: 0/1 Engine";
 					obj["coverage_gap"] = coverageGap;
 					break;
+
+				case WorkflowTriggerEventType.RecordCreated:
+				case WorkflowTriggerEventType.RecordSubmittedForReview:
+				case WorkflowTriggerEventType.RecordReturnedForCorrection:
+				case WorkflowTriggerEventType.RecordFinalized:
+				case WorkflowTriggerEventType.RecordAmended:
+				case WorkflowTriggerEventType.RecordVoided:
+				case WorkflowTriggerEventType.RecordCancelled:
+					AddRecordsSamples(obj, eventType);
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Records (RMS) triggers 100-107: a bounded snapshot matching RecordEventVariables, RecordVariables and
+		/// RecordChangeVariables in WorkflowTemplateVariableCatalog. The state pair follows the trigger.
+		/// </summary>
+		private static void AddRecordsSamples(ScriptObject obj, WorkflowTriggerEventType eventType)
+		{
+			var previousState = "Draft";
+			var currentState = "Draft";
+			var reasonCode = "";
+			var recordNumber = "";
+			var revisionNumber = 0;
+			string revisionId = null;
+			string priorRevisionId = null;
+			DateTime? finalizedOn = null;
+
+			switch (eventType)
+			{
+				case WorkflowTriggerEventType.RecordSubmittedForReview:
+					currentState = "ReadyForReview";
+					break;
+				case WorkflowTriggerEventType.RecordReturnedForCorrection:
+					previousState = "ReadyForReview";
+					currentState = "Returned";
+					reasonCode = "incomplete";
+					break;
+				case WorkflowTriggerEventType.RecordFinalized:
+					currentState = "Finalized";
+					recordNumber = "TRN-2026-0042";
+					revisionNumber = 1;
+					revisionId = "0f3c1d2e-5b6a-4c7d-8e9f-0a1b2c3d4e5f";
+					finalizedOn = DateTime.Now;
+					break;
+				case WorkflowTriggerEventType.RecordAmended:
+					previousState = "Finalized";
+					currentState = "Amended";
+					recordNumber = "TRN-2026-0042";
+					revisionNumber = 2;
+					priorRevisionId = "0f3c1d2e-5b6a-4c7d-8e9f-0a1b2c3d4e5f";
+					revisionId = "1a2b3c4d-6e7f-4a8b-9c0d-1e2f3a4b5c6d";
+					reasonCode = "correction";
+					finalizedOn = DateTime.Now.AddDays(-1);
+					break;
+				case WorkflowTriggerEventType.RecordVoided:
+					previousState = "Finalized";
+					currentState = "Voided";
+					recordNumber = "TRN-2026-0042";
+					revisionNumber = 2;
+					priorRevisionId = "0f3c1d2e-5b6a-4c7d-8e9f-0a1b2c3d4e5f";
+					revisionId = "2b3c4d5e-7f8a-4b9c-0d1e-2f3a4b5c6d7e";
+					reasonCode = "duplicate";
+					finalizedOn = DateTime.Now.AddDays(-1);
+					break;
+				case WorkflowTriggerEventType.RecordCancelled:
+					currentState = "Cancelled";
+					break;
+			}
+
+			var e = new ScriptObject();
+			e["id"] = "5f1c0f0e-9a2b-4c3d-8e4f-6a7b8c9d0e1f";
+			e["name"] = eventType.ToString();
+			e["schema_version"] = 1;
+			e["occurred_on"] = DateTime.Now;
+			e["correlation_id"] = "9d8c7b6a-5f4e-4d3c-b2a1-0f9e8d7c6b5a";
+			e["causation_id"] = "";
+			e["sequence"] = revisionNumber + 1;
+			e["is_replay"] = false;
+			e["origin_client"] = "Web";
+			obj["event"] = e;
+
+			var r = new ScriptObject();
+			r["id"] = "9d8c7b6a-5f4e-4d3c-b2a1-0f9e8d7c6b5a";
+			r["record_number"] = recordNumber;
+			r["draft_reference"] = "D-7Q2MX";
+			r["definition_key"] = "system.training";
+			r["definition_version"] = 1;
+			r["type_key"] = "Training";
+			r["state"] = currentState;
+			r["lifecycle_preset"] = "QuickEntry";
+			r["department_id"] = 1;
+			r["station_group_id"] = 12;
+			r["call_id"] = 1001;
+			r["external_id"] = "";
+			r["author_user_id"] = "00000000-0000-0000-0000-000000000001";
+			r["owner_user_id"] = "00000000-0000-0000-0000-000000000001";
+			r["started_on"] = DateTime.Now.AddHours(-3);
+			r["ended_on"] = DateTime.Now.AddHours(-1);
+			r["created_on"] = DateTime.Now.AddHours(-1);
+			r["finalized_on"] = finalizedOn;
+			r["revision_id"] = revisionId ?? "";
+			r["revision_number"] = revisionNumber;
+			r["checksum"] = revisionId == null ? "" : "3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b";
+			r["summary"] = "Pump Operations — Hose evolutions";
+			r["url"] = "https://resgrid.local/User/Records/Details/9d8c7b6a-5f4e-4d3c-b2a1-0f9e8d7c6b5a";
+			obj["record"] = r;
+
+			var c = new ScriptObject();
+			c["previous_state"] = previousState;
+			c["current_state"] = currentState;
+			c["prior_revision_id"] = priorRevisionId ?? "";
+			c["current_revision_id"] = revisionId ?? "";
+			c["reason_code"] = reasonCode;
+			if (eventType == WorkflowTriggerEventType.RecordCancelled)
+				c["number_disposition"] = "none";
+			obj["record_change"] = c;
+
+			if (eventType == WorkflowTriggerEventType.RecordSubmittedForReview || eventType == WorkflowTriggerEventType.RecordReturnedForCorrection)
+			{
+				var returned = eventType == WorkflowTriggerEventType.RecordReturnedForCorrection;
+				var review = new ScriptObject();
+				review["reviewer_user_id"] = returned ? "00000000-0000-0000-0000-000000000002" : "";
+				review["submitted_for_review_on"] = DateTime.Now.AddHours(-2);
+				review["review_due_on"] = DateTime.Now.AddHours(46);
+				review["returned_on"] = returned ? DateTime.Now : (DateTime?)null;
+				review["return_count"] = returned ? 1 : 0;
+				review["reason_code"] = returned ? "incomplete" : "";
+				review["reason_text"] = returned ? "Unit times are missing for Engine 1." : "";
+				obj["review"] = review;
 			}
 		}
 	}

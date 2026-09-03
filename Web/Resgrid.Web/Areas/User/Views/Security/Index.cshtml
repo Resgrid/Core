@@ -444,6 +444,37 @@
                                             <div id="adpBreakGlassRolesDiv" style="display: none;"><select id="adpBreakGlassRoles" name="adpBreakGlassRoles"></select></div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td colspan="5">
+                                            <strong>@localizer["PermRecordsSectionHeader"]</strong><br /><small>@localizer["PermRecordsSectionNote"]</small>
+                                            @if (!Model.RecordsActivated)
+                                            {
+                                                <br /><small class="text-warning">@localizer["PermRecordsNotActivatedNote"]</small>
+                                            }
+                                        </td>
+                                    </tr>
+                                    @foreach (var row in Model.RecordsPermissions)
+                                    {
+                                        <tr data-record-perm="@row.PermissionType" data-record-el="@row.ElementId">
+                                            <td>@localizer[row.LabelKey]</td>
+                                            <td style="max-width: 350px">@localizer[row.NoteKey]</td>
+                                            <td>@Html.DropDownList(row.ElementId, row.Options, new { id = row.ElementId })</td>
+                                            <td>
+                                                @if (row.ShowLockToGroup)
+                                                {
+                                                    <input type="checkbox" id="@row.LockElementId" name="@row.LockElementId" checked="@row.LockToGroup" />
+                                                }
+                                                else
+                                                {
+                                                    @localizer["PermissionNA"]
+                                                }
+                                            </td>
+                                            <td>
+                                                <span id="@(row.ElementId)NoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                                <div id="@(row.ElementId)RolesDiv" style="display: none;"><select id="@(row.ElementId)Roles" name="@(row.ElementId)Roles"></select></div>
+                                            </td>
+                                        </tr>
+                                    }
                                 </tbody>
                             </table>
                         </div>

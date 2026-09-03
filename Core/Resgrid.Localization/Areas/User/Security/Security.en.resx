@@ -398,6 +398,45 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Records</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>These permissions control the Records module, the successor to Logs. As with most Resgrid permissions, an unset row falls through to the default shown, which matches how Logs behave today. Activating Records for your department also copies your Create Log and Delete Log settings onto the matching rows unless you have already set them here.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Records is not active for this department yet. You can prepare these settings now; they take effect once Records is activated.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>Create Records</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>Who can author new records and edit their own drafts. Matches Create Log until you change it.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>Void or Cancel Records</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>Who can cancel a draft or void a finalized record. Voiding keeps the record and its history; nothing is deleted. Matches Delete Log until you change it.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>Review Records</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>Who can review records submitted for review and return them for correction. Group Only limits group admins to records from their own group.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>Approve Records</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>Who can approve a reviewed record before it is finalized, for record types that use the approval lifecycle.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>Finalize Records</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>Who can finalize a record, which assigns its record number and locks its content. Quick Entry record types finalize on save, so this matches Create Log until you change it.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>Amend Finalized Records</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>Who can open an amendment on a finalized record. An amendment creates a new revision; the original revision stays intact.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>Submit Records Externally</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>Who can submit a finalized record to an external reporting destination such as a state or national system.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>Print and Export Records</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>Who can print a record or export a list of records.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>Share Records</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>Who can share a record with other groups in the department or with people outside it.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>View Restricted Sections</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>Who can read the restricted sections of a record, such as the details on a coroner record. Everyone else sees that the section exists but not its contents.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>View Legacy Logs</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>Who can read the read-only Logs history from before Records was activated.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>View Records From Other Groups</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>Whether personnel can see records that belong to other groups. Tick Group Only and set Records Settings to group-scoped visibility to limit people to their own group's records. Leave it unrestricted to keep the department-wide view Logs has today.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>Manage Record Definitions</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>Who can create and edit record definitions, the forms that records are built from.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>Publish Record Definitions</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>Who can publish a record definition version so it can be used for new records.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>Manage Record Reports</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>Who can create and edit saved record reports and their schedules.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>Manage Record Disclosures</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>Who can prepare and release public-records disclosure packages.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>Manage Legal Holds</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Who can place and release legal holds, which suspend retention and prevent a record from being voided.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Reassign Draft Records</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Who can move a draft record to a different author, for example when the original author is unavailable.</value></data>
 </root>
 
 

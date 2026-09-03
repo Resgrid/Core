@@ -18,6 +18,9 @@ namespace Resgrid.Model
 			new TemplateVariableDescriptor("department.use_24_hour_time", "Whether the department uses 24-hour time", "bool", true),
 			new TemplateVariableDescriptor("department.created_on", "Department creation date", "datetime", true),
 			new TemplateVariableDescriptor("department.phone_number", "Department phone number", "string", true),
+			new TemplateVariableDescriptor("department.display_name", "Department Profile display name (falls back to the department name)", "string", true),
+			new TemplateVariableDescriptor("department.logo_url", "Department email masthead logo URL; empty unless a logo is uploaded and 'Use department branding in emails' is on", "string", true),
+			new TemplateVariableDescriptor("department.website", "Department Profile website (absolute URL, empty when not set)", "string", true),
 			new TemplateVariableDescriptor("department.address.street", "Street address", "string", true),
 			new TemplateVariableDescriptor("department.address.city", "City", "string", true),
 			new TemplateVariableDescriptor("department.address.state", "State/Province", "string", true),
@@ -85,6 +88,70 @@ namespace Resgrid.Model
 		private static List<TemplateVariableDescriptor> GetCommon() =>
 			new List<TemplateVariableDescriptor>(CommonDeptVariables.Count + CommonTimestampVariables.Count + CommonUserVariables.Count)
 				.Also(l => { l.AddRange(CommonDeptVariables); l.AddRange(CommonTimestampVariables); l.AddRange(CommonUserVariables); });
+
+		// Records (RMS) native lifecycle triggers 100-107 (plan section 5.6). The event, record and record_change
+		// namespaces are the bounded snapshot the DomainEventOutbox dispatched; nothing is rehydrated from current
+		// record state, and no narrative or restricted-section field is exposed here.
+		private static readonly List<TemplateVariableDescriptor> RecordEventVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("event.id", "Event ID (stable across retries)", "string", false),
+			new TemplateVariableDescriptor("event.name", "Trigger name, e.g. RecordFinalized", "string", false),
+			new TemplateVariableDescriptor("event.schema_version", "Event schema version", "int", false),
+			new TemplateVariableDescriptor("event.occurred_on", "When the event occurred (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("event.correlation_id", "Correlation ID (the record ID)", "string", false),
+			new TemplateVariableDescriptor("event.causation_id", "ID of the event that caused this one", "string", false),
+			new TemplateVariableDescriptor("event.sequence", "Per-record sequence number", "int", false),
+			new TemplateVariableDescriptor("event.is_replay", "Whether this is a replayed event", "bool", false),
+			new TemplateVariableDescriptor("event.origin_client", "Originating client (Web, Responder, Unit, IncidentCommand, Dispatch, Api, System)", "string", false),
+		};
+
+		private static readonly List<TemplateVariableDescriptor> RecordVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("record.id", "Record ID", "string", false),
+			new TemplateVariableDescriptor("record.record_number", "Record number (empty until finalized)", "string", false),
+			new TemplateVariableDescriptor("record.draft_reference", "Draft reference shown before numbering", "string", false),
+			new TemplateVariableDescriptor("record.definition_key", "Definition key, e.g. system.training", "string", false),
+			new TemplateVariableDescriptor("record.definition_version", "Definition version", "int", false),
+			new TemplateVariableDescriptor("record.type_key", "Record type (Run, Training, Work, Meeting, Coroner, Callback, UnitActivity)", "string", false),
+			new TemplateVariableDescriptor("record.state", "Lifecycle state after this event", "string", false),
+			new TemplateVariableDescriptor("record.lifecycle_preset", "Lifecycle preset (QuickEntry, ReviewRequired, ApprovalAcknowledgement)", "string", false),
+			new TemplateVariableDescriptor("record.department_id", "Department ID", "int", false),
+			new TemplateVariableDescriptor("record.station_group_id", "Station/group ID", "int", false),
+			new TemplateVariableDescriptor("record.call_id", "Linked call ID", "int", false),
+			new TemplateVariableDescriptor("record.external_id", "External ID", "string", false),
+			new TemplateVariableDescriptor("record.author_user_id", "Author user ID", "string", false),
+			new TemplateVariableDescriptor("record.owner_user_id", "Current owner user ID", "string", false),
+			new TemplateVariableDescriptor("record.started_on", "Start time", "datetime", false),
+			new TemplateVariableDescriptor("record.ended_on", "End time", "datetime", false),
+			new TemplateVariableDescriptor("record.created_on", "When the record was created", "datetime", false),
+			new TemplateVariableDescriptor("record.finalized_on", "When the record was finalized", "datetime", false),
+			new TemplateVariableDescriptor("record.revision_id", "Current revision ID", "string", false),
+			new TemplateVariableDescriptor("record.revision_number", "Current revision number", "int", false),
+			new TemplateVariableDescriptor("record.checksum", "Revision checksum (SHA-256)", "string", false),
+			new TemplateVariableDescriptor("record.summary", "Display summary", "string", false),
+			new TemplateVariableDescriptor("record.url", "Link to the record in Resgrid", "string", false),
+		};
+
+		private static readonly List<TemplateVariableDescriptor> RecordChangeVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("record_change.previous_state", "State before this event", "string", false),
+			new TemplateVariableDescriptor("record_change.current_state", "State after this event", "string", false),
+			new TemplateVariableDescriptor("record_change.prior_revision_id", "Prior revision ID", "string", false),
+			new TemplateVariableDescriptor("record_change.current_revision_id", "Current revision ID", "string", false),
+			new TemplateVariableDescriptor("record_change.reason_code", "Normalized reason code", "string", false),
+		};
+
+		// review.* rides only on the two review-path triggers: review bookkeeping, never record content.
+		private static readonly List<TemplateVariableDescriptor> ReviewVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("review.reviewer_user_id", "Reviewer user ID (set when the record was returned)", "string", false),
+			new TemplateVariableDescriptor("review.submitted_for_review_on", "When the record was submitted for review (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("review.review_due_on", "Review due time from the department's review-due hours (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("review.returned_on", "When the record was last returned for correction (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("review.return_count", "How many times the record has been returned", "int", false),
+			new TemplateVariableDescriptor("review.reason_code", "Return reason code", "string", false),
+			new TemplateVariableDescriptor("review.reason_text", "Return reason text entered by the reviewer", "string", false),
+		};
 
 		public static IReadOnlyList<TemplateVariableDescriptor> GetVariableCatalog(WorkflowTriggerEventType eventType)
 		{
@@ -554,6 +621,22 @@ namespace Resgrid.Model
 						new TemplateVariableDescriptor("coverage_gap.gap_count", "Number of stations below minimum coverage", "int", false),
 						new TemplateVariableDescriptor("coverage_gap.summary", "Human-readable coverage gap summary", "string", false),
 					});
+					break;
+
+				case WorkflowTriggerEventType.RecordCreated:
+				case WorkflowTriggerEventType.RecordSubmittedForReview:
+				case WorkflowTriggerEventType.RecordReturnedForCorrection:
+				case WorkflowTriggerEventType.RecordFinalized:
+				case WorkflowTriggerEventType.RecordAmended:
+				case WorkflowTriggerEventType.RecordVoided:
+				case WorkflowTriggerEventType.RecordCancelled:
+					list.AddRange(RecordEventVariables);
+					list.AddRange(RecordVariables);
+					list.AddRange(RecordChangeVariables);
+					if (eventType == WorkflowTriggerEventType.RecordCancelled)
+						list.Add(new TemplateVariableDescriptor("record_change.number_disposition", "What happened to a reserved record number (none or voided)", "string", false));
+					if (eventType == WorkflowTriggerEventType.RecordSubmittedForReview || eventType == WorkflowTriggerEventType.RecordReturnedForCorrection)
+						list.AddRange(ReviewVariables);
 					break;
 			}
 

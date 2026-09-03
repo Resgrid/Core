@@ -953,4 +953,43 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Rapporti</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>Queste autorizzazioni controllano il modulo Rapporti, successore dei Registri. Come per la maggior parte delle autorizzazioni Resgrid, una riga non impostata usa il valore predefinito mostrato, che corrisponde al comportamento attuale dei Registri. Attivando i Rapporti per il dipartimento vengono inoltre copiate le impostazioni Crea registro ed Elimina registro sulle righe corrispondenti, salvo che non le abbiate già impostate qui.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>I Rapporti non sono ancora attivi per questo dipartimento. Potete preparare queste impostazioni adesso; avranno effetto quando i Rapporti verranno attivati.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>Creare rapporti</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>Chi può redigere nuovi rapporti e modificare le proprie bozze. Corrisponde a Crea registro finché non lo modificate.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>Annullare rapporti</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>Chi può annullare una bozza o invalidare un rapporto finalizzato. L'invalidazione conserva il rapporto e la sua cronologia; nulla viene eliminato. Corrisponde a Elimina registro finché non lo modificate.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>Revisionare rapporti</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>Chi può revisionare i rapporti inviati in revisione e restituirli per correzione. Solo gruppo limita gli amministratori di gruppo ai rapporti del proprio gruppo.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>Approvare rapporti</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>Chi può approvare un rapporto revisionato prima della finalizzazione, per i tipi di rapporto che usano il ciclo di approvazione.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>Finalizzare rapporti</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>Chi può finalizzare un rapporto, assegnandone il numero e bloccandone il contenuto. I tipi a inserimento rapido vengono finalizzati al salvataggio, quindi corrisponde a Crea registro finché non lo modificate.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>Emendare rapporti finalizzati</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>Chi può aprire un emendamento su un rapporto finalizzato. L'emendamento crea una nuova revisione; la revisione originale resta intatta.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>Trasmettere rapporti all'esterno</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>Chi può trasmettere un rapporto finalizzato a una destinazione di segnalazione esterna, come un sistema regionale o nazionale.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>Stampare ed esportare rapporti</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>Chi può stampare un rapporto o esportare un elenco di rapporti.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>Condividere rapporti</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>Chi può condividere un rapporto con altri gruppi del dipartimento o con persone esterne.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>Visualizzare sezioni riservate</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>Chi può leggere le sezioni riservate di un rapporto, come i dettagli di un rapporto del medico legale. Gli altri vedono che la sezione esiste, ma non il suo contenuto.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>Visualizzare registri precedenti</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>Chi può leggere la cronologia dei Registri in sola lettura precedente all'attivazione dei Rapporti.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>Visualizzare rapporti di altri gruppi</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>Se il personale può vedere i rapporti di altri gruppi. Spuntate Solo gruppo e impostate la visibilità per gruppo nelle Impostazioni rapporti per limitare ciascuno ai rapporti del proprio gruppo. Lasciate senza restrizioni per mantenere la vista a livello di dipartimento che i Registri hanno oggi.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>Gestire definizioni di rapporto</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>Chi può creare e modificare le definizioni di rapporto, i moduli da cui sono costruiti i rapporti.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>Pubblicare definizioni di rapporto</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>Chi può pubblicare una versione di definizione di rapporto affinché sia utilizzabile per nuovi rapporti.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>Gestire report sui rapporti</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>Chi può creare e modificare i report salvati sui rapporti e le loro pianificazioni.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>Gestire divulgazioni di rapporti</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>Chi può preparare e rilasciare i pacchetti di divulgazione di atti pubblici.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>Gestire vincoli legali</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Chi può applicare e rimuovere i vincoli legali, che sospendono la conservazione e impediscono l'invalidazione di un rapporto.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Riassegnare bozze di rapporto</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Chi può trasferire una bozza di rapporto a un altro autore, ad esempio quando l'autore originale non è disponibile.</value></data>
 </root>

@@ -22,7 +22,15 @@ namespace Resgrid.Model
 
 		[Display(Name = "Contact")]
 		[Description("Contact")]
-		Contact = 3
+		Contact = 3,
+
+		/// <summary>
+		/// A Records (RMS) Record. UDF definitions for Records are scoped to a definition key and version,
+		/// and UDF values never enter a standardized export or submission payload (RMS plan section 4.1).
+		/// </summary>
+		[Display(Name = "Record")]
+		[Description("Record")]
+		Record = 4
 	}
 }
 

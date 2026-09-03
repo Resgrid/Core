@@ -32,6 +32,8 @@ namespace Resgrid.Tests
 				builder.RegisterModule(new TestingDataModule());
 				builder.RegisterModule(new NoSqlDataModule());
 				builder.RegisterModule(new ServicesModule());
+				builder.RegisterModule(new Resgrid.Search.SearchModule());
+				builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
 				builder.RegisterModule(new ProviderModule());
 				builder.RegisterModule(new EmailProviderModule());
 				builder.RegisterModule(new WorkerFrameworkModule());

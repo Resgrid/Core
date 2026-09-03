@@ -354,4 +354,5 @@
   <data name="WorkLogInformation" xml:space="preserve">
     <value>Work Log Information</value>
   </data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>Records is active for this department. Existing logs are read-only: they can be viewed, printed and exported, but not created, edited or deleted.</value></data>
 </root>

@@ -953,4 +953,43 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Berichte</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>Diese Berechtigungen steuern das Modul Berichte, den Nachfolger der Protokolle. Wie bei den meisten Resgrid-Berechtigungen gilt für eine nicht gesetzte Zeile der angezeigte Standardwert, der dem heutigen Verhalten der Protokolle entspricht. Beim Aktivieren von Berichten für Ihre Abteilung werden außerdem Ihre Einstellungen für „Protokoll erstellen“ und „Protokoll löschen“ auf die passenden Zeilen übernommen, sofern Sie sie hier nicht bereits gesetzt haben.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Berichte sind für diese Abteilung noch nicht aktiviert. Sie können diese Einstellungen jetzt vorbereiten; sie gelten, sobald Berichte aktiviert werden.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>Berichte erstellen</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>Wer neue Berichte anlegen und eigene Entwürfe bearbeiten darf. Entspricht „Protokoll erstellen“, bis Sie es ändern.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>Berichte annullieren oder abbrechen</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>Wer einen Entwurf abbrechen oder einen abgeschlossenen Bericht annullieren darf. Beim Annullieren bleiben Bericht und Verlauf erhalten; nichts wird gelöscht. Entspricht „Protokoll löschen“, bis Sie es ändern.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>Berichte prüfen</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>Wer zur Prüfung eingereichte Berichte prüfen und zur Korrektur zurückgeben darf. „Nur Gruppe“ beschränkt Gruppenadministratoren auf Berichte ihrer eigenen Gruppe.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>Berichte genehmigen</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>Wer einen geprüften Bericht vor dem Abschluss genehmigen darf, bei Berichtstypen mit Genehmigungsablauf.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>Berichte abschließen</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>Wer einen Bericht abschließen darf; dabei wird die Berichtsnummer vergeben und der Inhalt gesperrt. Schnellerfassungs-Berichtstypen werden beim Speichern abgeschlossen, daher entspricht dies „Protokoll erstellen“, bis Sie es ändern.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>Abgeschlossene Berichte ergänzen</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>Wer eine Ergänzung zu einem abgeschlossenen Bericht eröffnen darf. Eine Ergänzung erzeugt eine neue Revision; die ursprüngliche Revision bleibt unverändert.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>Berichte extern übermitteln</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>Wer einen abgeschlossenen Bericht an ein externes Meldesystem wie ein Landes- oder Bundessystem übermitteln darf.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>Berichte drucken und exportieren</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>Wer einen Bericht drucken oder eine Berichtsliste exportieren darf.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>Berichte teilen</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>Wer einen Bericht mit anderen Gruppen der Abteilung oder mit externen Personen teilen darf.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>Eingeschränkte Abschnitte anzeigen</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>Wer die eingeschränkten Abschnitte eines Berichts lesen darf, etwa die Details eines Leichenschauberichts. Alle anderen sehen, dass der Abschnitt existiert, aber nicht seinen Inhalt.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>Alte Protokolle anzeigen</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>Wer den schreibgeschützten Protokollverlauf aus der Zeit vor der Aktivierung von Berichten lesen darf.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>Berichte anderer Gruppen anzeigen</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>Ob Personal Berichte anderer Gruppen sehen darf. Aktivieren Sie „Nur Gruppe“ und stellen Sie in den Berichtseinstellungen die gruppenbezogene Sichtbarkeit ein, um Personen auf die Berichte ihrer eigenen Gruppe zu beschränken. Lassen Sie es uneingeschränkt, um die heutige abteilungsweite Ansicht der Protokolle beizubehalten.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>Berichtsdefinitionen verwalten</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>Wer Berichtsdefinitionen, also die Formulare, aus denen Berichte aufgebaut sind, erstellen und bearbeiten darf.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>Berichtsdefinitionen veröffentlichen</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>Wer eine Version einer Berichtsdefinition veröffentlichen darf, damit sie für neue Berichte verwendet werden kann.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>Berichtsauswertungen verwalten</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>Wer gespeicherte Berichtsauswertungen und deren Zeitpläne erstellen und bearbeiten darf.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>Berichtsoffenlegungen verwalten</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>Wer Offenlegungspakete für Auskunftsersuchen vorbereiten und freigeben darf.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>Rechtliche Sperren verwalten</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Wer rechtliche Sperren setzen und aufheben darf; sie setzen die Aufbewahrungsfrist aus und verhindern das Annullieren eines Berichts.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Berichtsentwürfe neu zuweisen</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Wer einen Berichtsentwurf einem anderen Verfasser zuweisen darf, etwa wenn der ursprüngliche Verfasser nicht verfügbar ist.</value></data>
 </root>

@@ -591,4 +591,28 @@
   <data name="Detail" xml:space="preserve">
     <value>Détail</value>
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>« Journal ajouté » est un déclencheur de compatibilité. Une fois les Rapports actifs, il se déclenche à la finalisation d'un rapport d'intervention, de formation, de travail, de réunion, de médecin légiste ou de rappel, avec les anciens champs du journal y compris le récit, et il est conservé pendant deux versions mineures ou douze mois après l'activation. Utilisez les déclencheurs Rapport pour les nouveaux workflows.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>ID de l'événement</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>ID de corrélation</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>ID de causalité</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>Séquence de l'événement</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>Origine</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>Ignoré en raison de</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>Ignorés</value>
+  </data>
 </root>

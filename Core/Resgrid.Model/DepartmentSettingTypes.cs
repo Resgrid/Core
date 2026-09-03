@@ -80,5 +80,33 @@
 		/// Their reset action sends the member the hardened, single-use password recovery link instead.
 		/// </summary>
 		RequirePasswordResetViaEmail = 63,
+
+		// -- Records (RMS) block 70-77 -- Identifier Allocation Registry section 3.4. 64-69 is the
+		// cross-plan buffer and must not be taken here. All are edited from the Records Settings screen
+		// (RMS plan section 4.9); RecordsActivatedOn is deliberately NOT a setting (RmsDepartmentCutover).
+
+		/// <summary>Cached scalar: default <see cref="RmsLifecyclePreset"/> for new department-owned definitions (locked definitions keep their own).</summary>
+		RecordsDefaultLifecyclePreset = 70,
+
+		/// <summary>Cached scalar: review-due target in hours; a per-definition override wins.</summary>
+		RecordsReviewDueHours = 71,
+
+		/// <summary>ProtoBuf-serialized <see cref="RecordsNumberingConfig"/>: department-wide numbering defaults applied when a definition declares none.</summary>
+		RecordsNumberingConfig = 72,
+
+		/// <summary>ProtoBuf-serialized <see cref="RecordsSearchConfig"/>: index scope and the protected degrade mode.</summary>
+		RecordsSearchConfig = 73,
+
+		/// <summary>ProtoBuf-serialized <see cref="RecordsRetentionPolicy"/>: department default years plus per-definition overrides (0 = permanent).</summary>
+		RecordsRetentionPolicy = 74,
+
+		/// <summary>Cached scalar <see cref="RecordsGroupVisibilityMode"/>: DepartmentWide (0, default) or GroupScoped (1). v1 is on/off only.</summary>
+		RecordsGroupVisibilityMode = 75,
+
+		/// <summary>ProtoBuf: RESERVED, unused in v1. Becomes the per-anchor group-scope toggle later without a new value.</summary>
+		RecordsGroupScopeConfig = 76,
+
+		/// <summary>ProtoBuf-serialized <see cref="RecordsDisclosureConfig"/>: public-records statutory clock, default redaction profile, release approver. RMS-3.</summary>
+		RecordsDisclosureConfig = 77,
 	}
 }

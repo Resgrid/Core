@@ -591,4 +591,28 @@
   <data name="Detail" xml:space="preserve">
     <value>Detalj</value>
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>”Logg tillagd” är en kompatibilitetsutlösare. När Rapporter är aktivt utlöses den när en insats-, utbildnings-, arbets-, mötes-, rättsläkar- eller återkallningsrapport slutförs, med de gamla loggfälten inklusive berättelsen, och den behålls i två mindre versioner eller tolv månader efter aktiveringen. Använd Rapport-utlösarna för nya arbetsflöden.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>Händelse-ID</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>Korrelations-ID</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>Orsaks-ID</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>Händelsesekvens</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>Ursprung</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>Hoppades över på grund av</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>Överhoppade</value>
+  </data>
 </root>

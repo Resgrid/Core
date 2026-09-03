@@ -591,4 +591,28 @@
   <data name="Detail" xml:space="preserve">
     <value>Dettaglio</value>
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>«Registro aggiunto» è un trigger di compatibilità. Con i Rapporti attivi scatta alla finalizzazione di un rapporto di intervento, formazione, lavoro, riunione, medico legale o richiamo, con i vecchi campi del registro inclusa la narrativa, e viene mantenuto per due versioni minori o dodici mesi dopo l'attivazione. Usate i trigger Rapporto per i nuovi flussi.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>ID evento</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>ID correlazione</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>ID causa</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>Sequenza evento</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>Origine</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>Saltato per</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>Saltati</value>
+  </data>
 </root>

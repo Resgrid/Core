@@ -1,0 +1,178 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@using Resgrid.Web.Areas.User.Models.Records
+@model Resgrid.Web.Areas.User.Models.Records.RecordsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["RecordsHeader"];
+	string StateClass(int state)
+	{
+		switch ((RmsRecordState)state)
+		{
+			case RmsRecordState.Draft: return "default";
+			case RmsRecordState.ReadyForReview: return "info";
+			case RmsRecordState.Returned: return "warning";
+			case RmsRecordState.Finalized: return "primary";
+			case RmsRecordState.Amended: return "primary";
+			case RmsRecordState.Voided: return "danger";
+			case RmsRecordState.Cancelled: return "danger";
+			default: return "default";
+		}
+	}
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["RecordsHeader"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li class="active"><strong>@localizer["RecordsHeader"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord())
+			{
+				<a class="btn btn-success" asp-controller="Records" asp-action="New" asp-route-area="User"><i class="icon-plus"></i> @localizer["NewRecord"]</a>
+			}
+			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanExportRecords())
+			{
+				<a class="btn btn-default" asp-controller="Records" asp-action="ExportList" asp-route-area="User" asp-route-year="@Model.Year" asp-route-definitionKey="@Model.DefinitionKey" asp-route-state="@Model.StateFilter" asp-route-q="@Model.Query" asp-route-format="csv"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
+				<a class="btn btn-default" asp-controller="Records" asp-action="ExportList" asp-route-area="User" asp-route-year="@Model.Year" asp-route-definitionKey="@Model.DefinitionKey" asp-route-state="@Model.StateFilter" asp-route-q="@Model.Query" asp-route-format="json"><i class="fa fa-download"></i> @localizer["ExportJson"]</a>
+			}
+			@if (Model.ModuleState.RecordsUsable && (Model.IsDepartmentAdmin || ClaimsAuthorizationHelper.CanReviewRecords() || ClaimsAuthorizationHelper.CanApproveRecords() || ClaimsAuthorizationHelper.CanManageRecordReports()))
+			{
+				<a class="btn btn-default" asp-controller="Records" asp-action="Accountability" asp-route-area="User"><i class="fa fa-users"></i> @localizer["Accountability"]</a>
+			}
+			@if (Model.IsDepartmentAdmin)
+			{
+				<a class="btn btn-inverse" asp-controller="Records" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @localizer["Settings"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			@if (!Model.ModuleState.RecordsUsable)
+			{
+				<div class="alert alert-warning">
+					@localizer["NotActivatedNotice"]
+					@if (Model.IsDepartmentAdmin && Model.ModuleState.FlagEnabled)
+					{
+						<div class="m-t-sm">
+							<a class="btn btn-warning" asp-controller="Records" asp-action="Activate" asp-route-area="User">@localizer["ActivateHeader"]</a>
+						</div>
+					}
+				</div>
+			}
+			else
+			{
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<form class="form-inline" method="get" asp-controller="Records" asp-action="Index" asp-route-area="User">
+							<div class="form-group m-r-sm">
+								<input type="text" name="q" value="@Model.Query" class="form-control input-sm" placeholder="@localizer["SearchPlaceholder"]" maxlength="200" disabled="@(!Model.SearchAvailable)" />
+							</div>
+							<div class="form-group m-r-sm">
+								<label class="m-r-xs">@localizer["RecordsForYear"]</label>
+								@Html.DropDownListFor(m => m.Year, Model.Years, localizer["AllYears"].Value, new { @class = "form-control input-sm" })
+							</div>
+							<div class="form-group m-r-sm">
+								<label class="m-r-xs">@localizer["Type"]</label>
+								@Html.DropDownListFor(m => m.DefinitionKey, Model.Definitions, localizer["AllTypes"].Value, new { @class = "form-control input-sm" })
+							</div>
+							<div class="form-group m-r-sm">
+								<label class="m-r-xs">@localizer["State"]</label>
+								@Html.DropDownListFor(m => m.StateFilter, Model.States, localizer["AllStates"].Value, new { @class = "form-control input-sm" })
+							</div>
+							@if (Model.OwnerFilter != null)
+							{
+								<input type="hidden" name="owner" value="@Model.OwnerFilter" />
+								<span class="label label-info m-r-sm">@localizer["OwnerFilter"]: @(Model.PersonnelNames.TryGetValue(Model.OwnerFilter, out var ownerName) ? ownerName : Model.OwnerFilter) <a asp-controller="Records" asp-action="Index" asp-route-area="User" asp-route-year="@Model.Year" asp-route-definitionKey="@Model.DefinitionKey" asp-route-state="@Model.StateFilter" class="text-white">&times;</a></span>
+							}
+							@if (Model.GroupFilter.HasValue)
+							{
+								<input type="hidden" name="group" value="@Model.GroupFilter" />
+								<span class="label label-info m-r-sm">@localizer["GroupFilter"]: @Model.GroupFilter <a asp-controller="Records" asp-action="Index" asp-route-area="User" asp-route-year="@Model.Year" asp-route-definitionKey="@Model.DefinitionKey" asp-route-state="@Model.StateFilter" class="text-white">&times;</a></span>
+							}
+							<button type="submit" class="btn btn-sm btn-primary">@localizer["Filter"]</button>
+							@if (Model.Total > RecordsListExport.MaxRows)
+							{
+								<small class="text-muted m-l-sm">@string.Format(localizer["ExportLimitNotice"].Value, RecordsListExport.MaxRows)</small>
+							}
+						</form>
+						@if (Model.SearchDegraded)
+						{
+							<div class="text-warning small m-t-xs">@localizer["SearchUnavailable"]</div>
+						}
+						else if (Model.Query != null)
+						{
+							<div class="text-muted small m-t-xs">@(Model.NarrativeSearchAvailable ? localizer["NarrativeSearchOn"] : localizer["NarrativeSearchOff"]) @(Model.SearchTruncated ? localizer["SearchTruncated"] : string.Empty)</div>
+						}
+					</div>
+					<div class="ibox-content">
+						@if (Model.Records.Count == 0)
+						{
+							<p class="text-muted">@localizer["NoRecords"]</p>
+						}
+						else
+						{
+							<table class="table table-striped table-bordered table-hover">
+								<thead>
+									<tr>
+										<th>@localizer["RecordNumber"]</th>
+										<th>@localizer["Type"]</th>
+										<th>@localizer["State"]</th>
+										<th>@localizer["Summary"]</th>
+										<th>@localizer["Occurred"]</th>
+										<th>@localizer["Author"]</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var r in Model.Records)
+									{
+										<tr>
+											<td>
+												@if (!string.IsNullOrWhiteSpace(r.RecordNumber))
+												{
+													<strong>@r.RecordNumber</strong>
+												}
+												else
+												{
+													<span class="text-muted">@r.DraftReference</span>
+												}
+											</td>
+											<td>@(r.RecordType.HasValue ? ((RmsOperationalRecordType)r.RecordType.Value).ToString() : r.DefinitionKey)</td>
+											<td><span class="label label-@StateClass(r.State)">@(((RmsRecordState)r.State).ToString())</span></td>
+											<td>@r.DisplaySummary</td>
+											<td>@((r.OccurredOn ?? r.RecordCreatedOn).TimeConverterToString(Model.Department))</td>
+											<td>@(Model.PersonnelNames.TryGetValue(r.AuthorUserId ?? string.Empty, out var name) ? name : r.AuthorUserId)</td>
+											<td class="text-right">
+												<a class="btn btn-xs btn-info" asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@r.RmsRecordSearchProjectionId">@localizer["ViewRevision"]</a>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+							@if (Model.TotalPages > 1)
+							{
+								<ul class="pagination pagination-sm">
+									@for (var p = 1; p <= Model.TotalPages; p++)
+									{
+										<li class="@(p == Model.Page ? "active" : string.Empty)">
+											<a asp-controller="Records" asp-action="Index" asp-route-area="User" asp-route-year="@Model.Year" asp-route-definitionKey="@Model.DefinitionKey" asp-route-state="@Model.StateFilter" asp-route-q="@Model.Query" asp-route-owner="@Model.OwnerFilter" asp-route-group="@Model.GroupFilter" asp-route-page="@p">@p</a>
+										</li>
+									}
+								</ul>
+							}
+						}
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>

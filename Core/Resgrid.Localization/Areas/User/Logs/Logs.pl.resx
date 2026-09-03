@@ -305,4 +305,5 @@
   <data name="WorkLogInformation" xml:space="preserve">
     <value>Work Log Information</value>
   </data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>Rejestry są aktywne dla tego wydziału. Istniejące dzienniki są tylko do odczytu: można je przeglądać, drukować i eksportować, ale nie tworzyć, edytować ani usuwać.</value></data>
 </root>

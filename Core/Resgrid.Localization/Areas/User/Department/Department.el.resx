@@ -1080,4 +1080,97 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>Επιστροφή</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>Προφίλ υπηρεσίας</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>Αυτή είναι η ταυτότητα που το Resgrid εκτυπώνει στις αναφορές, εμφανίζει στα επώνυμα email και χρησιμοποιεί όπου παρουσιάζεται η υπηρεσία. Αφήστε ένα πεδίο κενό για να χρησιμοποιηθούν οι ρυθμίσεις της υπηρεσίας.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>Ταυτότητα</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>Εμφανιζόμενο όνομα</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>Σύντομο όνομα</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>Κωδικός</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>Αριθμός τηλεφώνου</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>Ιστότοπος</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>Η διεύθυνση που εκτυπώνεται σε αναφορές και email είναι η διεύθυνση της υπηρεσίας:</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>Κοινωνικά δίκτυα</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>Λογότυπο</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG ή JPEG, έως 2 MB, τουλάχιστον 200 px στη μεγάλη πλευρά (συνιστώνται 512 px ή περισσότερα). Το αρχείο επανακωδικοποιείται χωρίς μεταδεδομένα και από αυτό δημιουργούνται οι εκδοχές για κεφαλίδα εκτύπωσης, κεφαλίδα email και μικρογραφία.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>Μεταφόρτωση λογοτύπου</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>Αφαίρεση λογοτύπου</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>Δεν έχει μεταφορτωθεί λογότυπο. Οι εκτυπώσεις και τα email χρησιμοποιούν μόνο το όνομα της υπηρεσίας.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>Κεφαλίδα εκτύπωσης</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>Κεφαλίδα email</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>Μικρογραφία</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>Χρήση της κεφαλίδας της υπηρεσίας στα επιχειρησιακά email</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>Τα email για κλήσεις, μηνύματα, παράδοση αναφορών και ροές εργασίας εμφανίζουν το λογότυπο και το όνομά σας αντί για την κεφαλίδα του Resgrid· οι ειδοποιήσεις αναφορών αποστέλλονται ως «όνομα υπηρεσίας via Resgrid». Τα email λογαριασμού και χρέωσης παραμένουν πάντα με την επωνυμία Resgrid.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>Δημόσιος σύνδεσμος κεφαλίδας</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>Οι εφαρμογές email δεν μπορούν να συνδεθούν, οπότε η κεφαλίδα σερβίρεται από αυτόν τον μη προβλέψιμο σύνδεσμο. Η αναδημιουργία του ακυρώνει την εικόνα σε κάθε email που έχει ήδη σταλεί.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>Αναδημιουργία συνδέσμου</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>Το προφίλ της υπηρεσίας αποθηκεύτηκε.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>Το λογότυπο μεταφορτώθηκε και οι εκδοχές δημιουργήθηκαν.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>Το λογότυπο αφαιρέθηκε.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>Επιλέξτε αρχείο PNG ή JPEG για μεταφόρτωση.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>Εκδόθηκε νέος σύνδεσμος κεφαλίδας· τα email που έχουν ήδη σταλεί δεν θα εμφανίζουν πλέον το λογότυπο.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>Το προφίλ δεν ήταν δυνατό να αποθηκευτεί· ελέγξτε τα επισημασμένα πεδία.</value>
+  </data>
 </root>

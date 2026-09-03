@@ -1,0 +1,72 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordDiffView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>@Model.Provenance.RecordNumber r@(Model.From.RevisionNumber)-r@(Model.To.RevisionNumber)</title>
+	<style>
+		body { font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #111; margin: 24px 32px 64px 32px; }
+		.letterhead { border-bottom: 2px solid #222; padding-bottom: 6px; margin-bottom: 10px; }
+		.letterhead img.logo { max-height: 80px; max-width: 320px; display: block; margin-bottom: 4px; }
+		.extra-line { font-size: 10px; color: #333; }
+		.footer-text { font-size: 8.5px; color: #333; margin-bottom: 2px; }
+		.watermark { position: fixed; top: 38%; left: 0; right: 0; text-align: center; font-size: 72px; font-weight: bold; color: rgba(0, 0, 0, 0.08); }
+		@@page { size: @Model.Provenance.PageSize; }
+		.dept-name { font-size: 16px; font-weight: bold; }
+		.dept-line { font-size: 10px; color: #444; }
+		h1 { font-size: 15px; margin: 6px 0 10px 0; }
+		table { border-collapse: collapse; width: 100%; }
+		th, td { border: 1px solid #bbb; padding: 3px 6px; text-align: left; vertical-align: top; font-size: 10px; }
+		th { background: #eee; }
+		td.before { background: #fdecea; white-space: pre-wrap; }
+		td.after { background: #e9f7ea; white-space: pre-wrap; }
+		td.withheld { color: #666; font-style: italic; }
+		.provenance { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid #888; padding: 4px 32px; font-size: 8.5px; color: #555; background: #fff; }
+	</style>
+</head>
+<body>
+	@if (!string.IsNullOrWhiteSpace(Model.Provenance.WatermarkLabel))
+	{
+		<div class="watermark">@Model.Provenance.WatermarkLabel</div>
+	}
+	<partial name="_PrintHeader" model="Model.Provenance" />
+
+	<h1>@localizer["DiffHeader"]: @Model.Provenance.RecordNumber &mdash; @localizer["Revision"] @Model.From.RevisionNumber &rarr; @Model.To.RevisionNumber</h1>
+
+	@if (Model.Diffs.Count == 0)
+	{
+		<p>@localizer["NoChanges"]</p>
+	}
+	else
+	{
+		<table>
+			<thead><tr><th>@localizer["Section"]</th><th>@localizer["Field"]</th><th>@localizer["Before"]</th><th>@localizer["After"]</th></tr></thead>
+			<tbody>
+				@foreach (var d in Model.Diffs)
+				{
+					<tr>
+						<td>@d.Section</td>
+						<td>@d.FieldKey</td>
+						@if (d.Withheld)
+						{
+							<td colspan="2" class="withheld">@localizer["Withheld"]</td>
+						}
+						else
+						{
+							<td class="before">@d.OldValue</td>
+							<td class="after">@d.NewValue</td>
+						}
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+
+	<partial name="_PrintFooter" model="Model.Provenance" />
+</body>
+</html>

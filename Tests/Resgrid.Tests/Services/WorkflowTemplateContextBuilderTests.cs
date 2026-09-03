@@ -26,6 +26,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IPersonnelRolesService> PersonnelRolesServiceMock;
 			protected Mock<IUnitsService> UnitsServiceMock;
 			protected Mock<IDepartmentMemberSensitiveDataService> MemberSensitiveDataServiceMock;
+			protected Mock<IDepartmentProfileMediaService> DepartmentProfileMediaServiceMock;
 
 			protected Department TestDepartment;
 			protected UserProfile TestProfile;
@@ -89,6 +90,13 @@ namespace Resgrid.Tests.Services
 					.Setup(s => s.GetResolvedForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
 					.ReturnsAsync(new System.Collections.Generic.Dictionary<string, DepartmentMemberSensitiveData>());
 
+				// No Department Profile branding by default: display_name falls back to the department name,
+				// logo_url and website render empty.
+				DepartmentProfileMediaServiceMock = new Mock<IDepartmentProfileMediaService>();
+				DepartmentProfileMediaServiceMock
+					.Setup(s => s.GetEmailBrandingAsync(It.IsAny<int>()))
+					.ReturnsAsync((int id) => DepartmentEmailBranding.Disabled(id));
+
 				Sut = new WorkflowTemplateContextBuilder(
 					DepartmentsServiceMock.Object,
 					DepartmentSettingsServiceMock.Object,
@@ -96,7 +104,8 @@ namespace Resgrid.Tests.Services
 					DepartmentGroupsServiceMock.Object,
 					PersonnelRolesServiceMock.Object,
 					UnitsServiceMock.Object,
-					MemberSensitiveDataServiceMock.Object);
+					MemberSensitiveDataServiceMock.Object,
+					DepartmentProfileMediaServiceMock.Object);
 			}
 
 			protected async Task<ScriptObject> BuildContext(WorkflowTriggerEventType eventType, object payload)
@@ -139,6 +148,71 @@ namespace Resgrid.Tests.Services
 				Func<Task> act = async () => await BuildContext(WorkflowTriggerEventType.CallAdded,
 					new CallAddedEvent { DepartmentId = 1 });
 				act.Should().NotThrowAsync();
+			}
+		}
+
+		/// <summary>
+		/// Department Profile identity for workflow email bodies (RMS plan section 4.10.1): the masthead URL obeys
+		/// the same opt-in as the system emails, the name and website are plain identity.
+		/// </summary>
+		[TestFixture]
+		public class when_building_department_branding_variables : with_the_context_builder
+		{
+			private async Task<ScriptObject> DepartmentVariables()
+			{
+				var ctx = await BuildContext(WorkflowTriggerEventType.CallAdded,
+					new CallAddedEvent { DepartmentId = 1, Call = WorkflowHelpers.CreateTestCall() });
+				return (ScriptObject)ctx["department"];
+			}
+
+			[Test]
+			public async Task ShouldFallBackToTheDepartmentNameWithoutProfileBranding()
+			{
+				// One fixture instance serves every test here, so the branding mock is pinned rather than inherited.
+				DepartmentProfileMediaServiceMock
+					.Setup(s => s.GetEmailBrandingAsync(It.IsAny<int>()))
+					.ReturnsAsync((int id) => DepartmentEmailBranding.Disabled(id));
+
+				var dept = await DepartmentVariables();
+
+				dept["display_name"].Should().Be(dept["name"], "no profile name means the Department row name");
+				dept["logo_url"].Should().Be(string.Empty);
+				dept["website"].Should().Be(string.Empty);
+			}
+
+			[Test]
+			public async Task ShouldExposeTheMastheadUrlWhenEmailBrandingIsOn()
+			{
+				DepartmentProfileMediaServiceMock
+					.Setup(s => s.GetEmailBrandingAsync(1))
+					.ReturnsAsync(new DepartmentEmailBranding
+					{
+						DepartmentId = 1, Enabled = true, DisplayName = "Springfield Fire",
+						LogoUrl = "https://app.example/User/Department/PublicMasthead?key=abc", Website = "https://www.springfieldfire.example/"
+					});
+
+				var dept = await DepartmentVariables();
+
+				dept["display_name"].Should().Be("Springfield Fire");
+				dept["logo_url"].Should().Be("https://app.example/User/Department/PublicMasthead?key=abc");
+				dept["website"].Should().Be("https://www.springfieldfire.example/");
+			}
+
+			[Test]
+			public async Task ShouldKeepIdentityButHideTheLogoWhenTheOptInIsOff()
+			{
+				DepartmentProfileMediaServiceMock
+					.Setup(s => s.GetEmailBrandingAsync(1))
+					.ReturnsAsync(new DepartmentEmailBranding
+					{
+						DepartmentId = 1, Enabled = false, DisplayName = "Springfield Fire", Website = "https://www.springfieldfire.example/"
+					});
+
+				var dept = await DepartmentVariables();
+
+				dept["display_name"].Should().Be("Springfield Fire");
+				dept["logo_url"].Should().Be(string.Empty, "a workflow author cannot leak a masthead the department never enabled");
+				dept["website"].Should().Be("https://www.springfieldfire.example/");
 			}
 		}
 

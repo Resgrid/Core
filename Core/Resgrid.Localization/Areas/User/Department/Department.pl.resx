@@ -1001,4 +1001,97 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>Powrót</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>Profil wydziału</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>To tożsamość, którą Resgrid drukuje na raportach, pokazuje w oznakowanych wiadomościach e-mail i stosuje wszędzie tam, gdzie wydział się prezentuje. Pozostaw pole puste, aby użyć ustawień wydziału.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>Tożsamość</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>Nazwa wyświetlana</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>Nazwa skrócona</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>Numer telefonu</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>Strona WWW</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>Adres</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>Adres drukowany na raportach i w wiadomościach to adres wydziału:</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>Media społecznościowe</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG lub JPEG, do 2 MB, co najmniej 200 px na dłuższym boku (zalecane 512 px lub więcej). Plik jest ponownie kodowany bez metadanych, a na jego podstawie powstają wersje: nagłówek wydruku, nagłówek e-mail i miniatura.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>Prześlij logo</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>Usuń logo</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>Nie przesłano logo. Wydruki i wiadomości używają wyłącznie nazwy wydziału.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>Nagłówek wydruku</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>Nagłówek e-mail</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>Miniatura</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>Używaj nagłówka wydziału w wiadomościach operacyjnych</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>Wiadomości o wyjazdach, komunikatach, dostarczaniu raportów i przepływach pracy pokazują Twoje logo i nazwę zamiast nagłówka Resgrid; powiadomienia o raportach są wysyłane jako „nazwa jednostki via Resgrid”. Wiadomości dotyczące konta i rozliczeń zawsze pozostają z marką Resgrid.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>Publiczny link nagłówka</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>Klienci poczty nie mogą się logować, dlatego nagłówek jest serwowany z tego niemożliwego do odgadnięcia linku. Ponowne wygenerowanie unieważnia obraz we wszystkich już wysłanych wiadomościach.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>Wygeneruj link ponownie</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>Profil wydziału zapisany.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>Logo przesłane, wersje wygenerowane.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>Logo usunięte.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>Wybierz plik PNG lub JPEG do przesłania.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>Wydano nowy link nagłówka; wcześniej wysłane wiadomości nie będą już pokazywać logo.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>Nie udało się zapisać profilu; sprawdź wyróżnione pola.</value>
+  </data>
 </root>

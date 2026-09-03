@@ -19,7 +19,7 @@
       </li>
     </ol>
   </div>
-  @if (ClaimsAuthorizationHelper.CanCreateLog())
+  @if (ClaimsAuthorizationHelper.CanCreateLog() && !Model.LegacyReadOnly)
   {
     <div class="col-sm-8">
       <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
@@ -32,6 +32,10 @@
 <div class="row">
   <div class="col-xs-12">
     <div class="wrapper wrapper-content">
+      @if (Model.LegacyReadOnly)
+      {
+        <div class="alert alert-info">@localizer["LogsReadOnly"]</div>
+      }
       <div class="ibox float-e-margins" id="personnelContainer">
         <div class="ibox-tools">
           <div class="buttons-actions" style="padding-left: 12px; text-align:left;">

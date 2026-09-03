@@ -178,5 +178,26 @@
 		public const string WeatherAlert_Update = "WeatherAlert_Update";
 		public const string WeatherAlert_Create = "WeatherAlert_Create";
 		public const string WeatherAlert_Delete = "WeatherAlert_Delete";
+
+		// Records (RMS): 18 policies from PermissionTypes 50-67 (registry section 4.2). Registered in
+		// both Startup.cs files; ClaimsAuthorizationHelperParityTests asserts the helper copies match.
+		public const string Record_View = "Record_View";
+		public const string Record_Create = "Record_Create";
+		public const string Record_Review = "Record_Review";
+		public const string Record_Approve = "Record_Approve";
+		public const string Record_Finalize = "Record_Finalize";
+		public const string Record_Submit = "Record_Submit";
+		public const string Record_Amend = "Record_Amend";
+		public const string Record_Void = "Record_Void";
+		public const string Record_Export = "Record_Export";
+		public const string Record_Share = "Record_Share";
+		public const string Record_Reassign = "Record_Reassign";
+		public const string RecordLegacy_View = "RecordLegacy_View";
+		public const string RecordRestricted_View = "RecordRestricted_View";
+		public const string RecordDefinition_Update = "RecordDefinition_Update";
+		public const string RecordDefinition_Publish = "RecordDefinition_Publish";
+		public const string RecordReport_Update = "RecordReport_Update";
+		public const string RecordDisclosure_Update = "RecordDisclosure_Update";
+		public const string RecordLegalHold_Update = "RecordLegalHold_Update";
 	}
 }

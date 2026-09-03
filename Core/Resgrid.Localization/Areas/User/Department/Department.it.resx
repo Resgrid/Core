@@ -1001,4 +1001,97 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>In rientro</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>Profilo del dipartimento</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>Questa è l'identità che Resgrid stampa sui rapporti, mostra nelle e-mail personalizzate e usa ovunque il dipartimento si presenti. Lasciate un campo vuoto per ricorrere alle impostazioni del dipartimento.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>Identità</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>Nome visualizzato</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>Nome breve</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>Codice</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>Descrizione</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>Numero di telefono</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>Sito web</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>Indirizzo</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>L'indirizzo stampato su rapporti ed e-mail è quello del dipartimento:</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>Social</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG o JPEG, fino a 2 MB, almeno 200 px sul lato lungo (consigliati 512 px o più). Il file viene ricodificato senza metadati e da esso vengono generate le versioni per intestazione di stampa, testata e-mail e miniatura.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>Carica logo</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>Rimuovi logo</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>Nessun logo caricato. Stampe ed e-mail usano solo il nome del dipartimento.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>Intestazione di stampa</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>Testata e-mail</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>Miniatura</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>Usa la testata del dipartimento nelle e-mail operative</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>Le e-mail di intervento, messaggi, consegna report e flussi di lavoro mostrano il vostro logo e nome al posto della testata Resgrid; le notifiche dei rapporti vengono inviate come "nome del dipartimento via Resgrid". Le e-mail di account e fatturazione restano sempre con il marchio Resgrid.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>Link pubblico della testata</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>I client di posta non possono accedere, quindi la testata è servita da questo link non indovinabile. Rigenerarlo invalida l'immagine in tutte le e-mail già inviate.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>Rigenera link</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>Profilo del dipartimento salvato.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>Logo caricato e versioni generate.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>Logo rimosso.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>Scegliete un file PNG o JPEG da caricare.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>È stato emesso un nuovo link della testata; le e-mail già inviate non mostreranno più il logo.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>Impossibile salvare il profilo; controllate i campi evidenziati.</value>
+  </data>
 </root>

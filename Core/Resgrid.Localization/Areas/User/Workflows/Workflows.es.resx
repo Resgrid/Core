@@ -612,5 +612,29 @@
   <data name="Detail" xml:space="preserve">
     <value>Detalle</value>
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>«Bitácora añadida» es un disparador de compatibilidad. Con Registros activo se dispara al finalizar un registro de salida, formación, trabajo, reunión, forense o rellamada, con los campos antiguos de la bitácora incluido el texto narrativo, y se conserva durante dos versiones menores o doce meses tras la activación. Use los disparadores de Registro para los flujos nuevos.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>ID del evento</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>ID de correlación</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>ID de causa</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>Secuencia del evento</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>Origen</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>Omitido por</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>Omitidos</value>
+  </data>
 </root>
 

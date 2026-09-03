@@ -35,6 +35,9 @@ namespace Resgrid.Services
 		// Lazy: defers the protected-write graph (broker client) until a state save actually needs it.
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 
+		// Lazy: the Records cutover guard (RMS plan section 4.1) is consulted only on a legacy UnitLog write.
+		private readonly Lazy<IRecordsCutoverService> _recordsCutoverService;
+
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
@@ -42,8 +45,9 @@ namespace Resgrid.Services
 			IUnitLocationsDocRepository unitLocationsDocRepository, Lazy<IUnitLocationsMongoRepository> unitLocationsMongoRepository,
 			IUnitActiveRolesRepository unitActiveRolesRepository,
 			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService,
-			Lazy<IProtectedWriteService> protectedWriteService)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService)
 		{
+			_recordsCutoverService = recordsCutoverService;
 			_unitsRepository = unitsRepository;
 			_unitStatesRepository = unitStatesRepository;
 			_unitLogsRepository = unitLogsRepository;
@@ -109,6 +113,11 @@ namespace Resgrid.Services
 
 		public async Task<UnitLog> SaveUnitLogAsync(UnitLog unitLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// UnitLogs carry no DepartmentId; scope the Records cutover guard through the owning Unit (RMS plan section 4.1).
+			var owningUnit = await _unitsRepository.GetByIdAsync(unitLog.UnitId);
+			if (owningUnit != null)
+				await _recordsCutoverService.Value.EnsureLegacyWriteAllowedAsync(owningUnit.DepartmentId, "UnitsService.SaveUnitLogAsync");
+
 			var saved = await _unitLogsRepository.SaveOrUpdateAsync(unitLog, cancellationToken);
 
 			// ADP write safety net (plan 4.2/19.2, catalog v9). Runs AFTER the save because the AAD

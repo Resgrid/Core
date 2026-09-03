@@ -28,12 +28,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
+		private readonly IRecordsCutoverService _recordsCutoverService;
 
 		public WorkflowsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, IAuditService auditService,
 			IEventAggregator eventAggregator, ISubscriptionsService subscriptionsService,
-			IWorkflowTemplateContextBuilder contextBuilder)
+			IWorkflowTemplateContextBuilder contextBuilder, IRecordsCutoverService recordsCutoverService)
 		{
 			_workflowService         = workflowService;
 			_departmentsService      = departmentsService;
@@ -44,6 +45,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator         = eventAggregator;
 			_subscriptionsService    = subscriptionsService;
 			_contextBuilder          = contextBuilder;
+			_recordsCutoverService   = recordsCutoverService;
 		}
 
 		// ── Index ─────────────────────────────────────────────────────────────────
@@ -70,6 +72,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var usedEventTypes = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
 			ViewBag.UsedEventTypes = usedEventTypes;
+			ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
 
 			return View(new Workflow { MaxRetryCount = 3, RetryBackoffBaseSeconds = 5, IsEnabled = true });
 		}
@@ -98,6 +101,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var usedEventTypes = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
 				ViewBag.UsedEventTypes = usedEventTypes;
+				ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
 				return View(model);
 			}
 
@@ -108,6 +112,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					"A workflow already exists for this trigger event type. Only one workflow per event type is allowed.");
 				var usedEventTypes = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
 				ViewBag.UsedEventTypes = usedEventTypes;
+				ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
 				return View(model);
 			}
 
@@ -119,6 +124,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError(string.Empty, "Workflow limit reached for your plan. Please upgrade to add more workflows.");
 				var usedEventTypes2 = await _workflowService.GetUsedEventTypesForDepartmentAsync(DepartmentId, ct);
 				ViewBag.UsedEventTypes = usedEventTypes2;
+				ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
 				return View(model);
 			}
 
@@ -162,6 +168,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			);
 
 			ViewBag.TriggerEventTypeName = ((WorkflowTriggerEventType)workflow.TriggerEventType).ToString();
+			ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
 
 			return View(workflow);
 		}
@@ -177,6 +184,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ModelState.IsValid)
 			{
 				ViewBag.TriggerEventTypeName = ((WorkflowTriggerEventType)model.TriggerEventType).ToString();
+				ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
 				return View(model);
 			}
 
@@ -614,6 +622,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		// ── Permission Helpers ────────────────────────────────────────────────────
+
+		/// <summary>
+		/// Records (RMS) triggers 100-115 are only offered once Records is usable for the department (plan section
+		/// 5.6). A workflow already bound to one keeps working; the outbox simply never fires before activation.
+		/// </summary>
+		private async Task<bool> RecordsTriggersAvailableAsync()
+		{
+			var state = await _recordsCutoverService.GetModuleStateAsync(DepartmentId);
+			return state != null && state.RecordsUsable;
+		}
 
 		private async Task<bool> CanUserManageWorkflowsAsync()
 		{

@@ -36,8 +36,9 @@
                     <div class="ibox-title"><h5>@localizer["Last24Hours"]</h5></div>
                     <div class="ibox-content">
                         <div class="row">
-                            <div class="col-xs-6"><h2 class="text-success">@Model.SuccessfulRuns24h</h2><p>@localizer["Successful"]</p></div>
-                            <div class="col-xs-6"><h2 class="text-danger">@Model.FailedRuns24h</h2><p>@localizer["Failed"]</p></div>
+                            <div class="col-xs-4"><h2 class="text-success">@Model.SuccessfulRuns24h</h2><p>@localizer["Successful"]</p></div>
+                            <div class="col-xs-4"><h2 class="text-danger">@Model.FailedRuns24h</h2><p>@localizer["Failed"]</p></div>
+                            <div class="col-xs-4"><h2 class="text-warning">@Model.SkippedRuns24h</h2><p>@localizer["SkippedRuns"]</p></div>
                         </div>
                         <p class="text-muted">@localizer["Total"]: @Model.TotalRuns24h</p>
                     </div>
@@ -49,8 +50,9 @@
                     <div class="ibox-title"><h5>@localizer["Last7Days"]</h5></div>
                     <div class="ibox-content">
                         <div class="row">
-                            <div class="col-xs-6"><h2 class="text-success">@Model.SuccessfulRuns7d</h2><p>@localizer["Successful"]</p></div>
-                            <div class="col-xs-6"><h2 class="text-danger">@Model.FailedRuns7d</h2><p>@localizer["Failed"]</p></div>
+                            <div class="col-xs-4"><h2 class="text-success">@Model.SuccessfulRuns7d</h2><p>@localizer["Successful"]</p></div>
+                            <div class="col-xs-4"><h2 class="text-danger">@Model.FailedRuns7d</h2><p>@localizer["Failed"]</p></div>
+                            <div class="col-xs-4"><h2 class="text-warning">@Model.SkippedRuns7d</h2><p>@localizer["SkippedRuns"]</p></div>
                         </div>
                         <p class="text-muted">@localizer["Total"]: @Model.TotalRuns7d</p>
                     </div>
@@ -62,8 +64,9 @@
                     <div class="ibox-title"><h5>@localizer["Last30Days"]</h5></div>
                     <div class="ibox-content">
                         <div class="row">
-                            <div class="col-xs-6"><h2 class="text-success">@Model.SuccessfulRuns30d</h2><p>@localizer["Successful"]</p></div>
-                            <div class="col-xs-6"><h2 class="text-danger">@Model.FailedRuns30d</h2><p>@localizer["Failed"]</p></div>
+                            <div class="col-xs-4"><h2 class="text-success">@Model.SuccessfulRuns30d</h2><p>@localizer["Successful"]</p></div>
+                            <div class="col-xs-4"><h2 class="text-danger">@Model.FailedRuns30d</h2><p>@localizer["Failed"]</p></div>
+                            <div class="col-xs-4"><h2 class="text-warning">@Model.SkippedRuns30d</h2><p>@localizer["SkippedRuns"]</p></div>
                         </div>
                         <p class="text-muted">
                             @localizer["Total"]: @Model.TotalRuns30d &nbsp;|&nbsp;

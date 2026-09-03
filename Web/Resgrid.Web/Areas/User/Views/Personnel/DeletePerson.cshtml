@@ -47,6 +47,19 @@
 						<div class='alert alert-warning'>
 							<i class='picons-16-basic1-104'></i>@localizer["CheckToDelete"]
 						</div>
+						@if (Model.OutstandingRecords != null && Model.OutstandingRecords.Count > 0)
+						{
+							<div class="alert alert-info">
+								<strong>@localizer["OutstandingRecordsHeader"]</strong>
+								<p>@string.Format(localizer["OutstandingRecordsNote"], Model.OutstandingRecords.Count)</p>
+								<ul>
+									@foreach (var record in Model.OutstandingRecords)
+									{
+										<li><a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@(record.RecordNumber ?? record.DraftReference)</a> &mdash; @record.DisplaySummary</li>
+									}
+								</ul>
+							</div>
+						}
 
 						<div class="form-group">
 						  <label class="col-sm-2 control-label">@localizer["ConfirmDelete"]</label>

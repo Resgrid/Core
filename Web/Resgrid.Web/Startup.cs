@@ -240,6 +240,26 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.Log_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Log_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
 
+				// Records (RMS) policies, registry section 4.2; keep byte-identical in Web and Web.Services.
+				options.AddPolicy(ResgridResources.Record_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Record_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Record_Review, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Review));
+				options.AddPolicy(ResgridResources.Record_Approve, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Approve));
+				options.AddPolicy(ResgridResources.Record_Finalize, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Finalize));
+				options.AddPolicy(ResgridResources.Record_Submit, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Submit));
+				options.AddPolicy(ResgridResources.Record_Amend, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Amend));
+				options.AddPolicy(ResgridResources.Record_Void, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Void));
+				options.AddPolicy(ResgridResources.Record_Export, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Export));
+				options.AddPolicy(ResgridResources.Record_Share, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Share));
+				options.AddPolicy(ResgridResources.Record_Reassign, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Reassign));
+				options.AddPolicy(ResgridResources.RecordLegacy_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordLegacy, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.RecordRestricted_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordRestricted, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.RecordDefinition_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.RecordDefinition_Publish, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Publish));
+				options.AddPolicy(ResgridResources.RecordReport_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordReport, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.RecordDisclosure_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDisclosure, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.RecordLegalHold_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordLegalHold, ResgridClaimTypes.Actions.Update));
+
 				options.AddPolicy(ResgridResources.Shift_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.Shift_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Shift_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.Create));
@@ -522,6 +542,8 @@ namespace Resgrid.Web
 			builder.RegisterModule(new DataModule());
 			builder.RegisterModule(new NoSqlDataModule());
 			builder.RegisterModule(new ServicesModule());
+			builder.RegisterModule(new Resgrid.Search.SearchModule());
+			builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
 			builder.RegisterModule(new ProviderModule());
 			builder.RegisterModule(new EmailProviderModule());
 			builder.RegisterModule(new BusModule());

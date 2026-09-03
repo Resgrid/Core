@@ -23,11 +23,15 @@ namespace Resgrid.Services
 		// Lazy: defers the protected-write graph (broker client) until a log save actually needs it.
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 
+		// Lazy: the Records cutover guard (RMS plan section 4.1) is consulted only on a legacy write.
+		private readonly Lazy<IRecordsCutoverService> _recordsCutoverService;
+
 		public WorkLogsService(ILogsRepository logsRepository, ICallLogsRepository callLogsRepository, ILogUsersRepository logUsersRepository,
 			ILogAttachmentRepository logAttachmentRepository, ILogUnitsRepository logUnitsRepository, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, ICallsService callsService,
-			Lazy<IProtectedWriteService> protectedWriteService)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService)
 		{
+			_recordsCutoverService = recordsCutoverService;
 			_logsRepository = logsRepository;
 			_callLogsRepository = callLogsRepository;
 			_logUsersRepository = logUsersRepository;
@@ -105,6 +109,9 @@ namespace Resgrid.Services
 
 		public async Task<Log> SaveLogAsync(Log log, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// After Records activation no legacy Log is created or edited, whoever the caller is (RMS plan section 4.1).
+			await _recordsCutoverService.Value.EnsureLegacyWriteAllowedAsync(log.DepartmentId, "WorkLogsService.SaveLogAsync", log.LoggedByUserId);
+
 			log.LoggedOn = DateTime.UtcNow;
 
 			var savedLog = await _logsRepository.SaveOrUpdateAsync(log, cancellationToken, true);
@@ -212,6 +219,8 @@ namespace Resgrid.Services
 
 			if (log != null)
 			{
+				await _recordsCutoverService.Value.EnsureLegacyWriteAllowedAsync(log.DepartmentId, "WorkLogsService.DeleteLogAsync");
+
 				return await _logsRepository.DeleteAsync(log, cancellationToken);
 			}
 
@@ -226,6 +235,10 @@ namespace Resgrid.Services
 
 		public async Task<LogAttachment> SaveLogAttachmentAsync(LogAttachment attachment, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var owningLog = await _logsRepository.GetByIdAsync(attachment.LogId);
+			if (owningLog != null)
+				await _recordsCutoverService.Value.EnsureLegacyWriteAllowedAsync(owningLog.DepartmentId, "WorkLogsService.SaveLogAttachmentAsync", attachment.UserId);
+
 			return await _logAttachmentRepository.SaveOrUpdateAsync(attachment, cancellationToken);
 		}
 

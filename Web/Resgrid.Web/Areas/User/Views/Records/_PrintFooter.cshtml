@@ -1,0 +1,22 @@
+@model Resgrid.Web.Areas.User.Models.Records.RecordPrintProvenance
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@*
+	Provenance footer (RMS plan section 4.10.1): record number, definition key/version, revision number,
+	printed-by, printed-on and layout version. No layout can remove it; it repeats on every page. The department's
+	footer text (e.g. a confidentiality statement) sits above it.
+*@
+<div class="provenance">
+	@if (!string.IsNullOrWhiteSpace(Model.FooterText))
+	{
+		<div class="footer-text">@Model.FooterText</div>
+	}
+	<span>@Model.RecordNumber</span>
+	<span>&middot; @Model.DefinitionKey v@(Model.DefinitionVersion)</span>
+	@if (Model.RevisionNumber.HasValue)
+	{
+		<span>&middot; @localizer["Revision"] @Model.RevisionNumber</span>
+	}
+	<span>&middot; @localizer["PrintedBy"]: @Model.PrintedByName</span>
+	<span>&middot; @localizer["PrintedOn"]: @Model.PrintedOnText</span>
+	<span>&middot; @localizer["PrintLayout"]: @Model.LayoutVersion</span>
+</div>

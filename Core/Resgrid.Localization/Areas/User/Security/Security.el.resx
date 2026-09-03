@@ -398,6 +398,45 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Αναφορές</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>Αυτά τα δικαιώματα ελέγχουν την ενότητα Αναφορές, τη διάδοχο των Ημερολογίων. Όπως στα περισσότερα δικαιώματα Resgrid, μια γραμμή που δεν έχει οριστεί χρησιμοποιεί την προεπιλογή που εμφανίζεται, η οποία αντιστοιχεί στη σημερινή συμπεριφορά των Ημερολογίων. Η ενεργοποίηση των Αναφορών για την υπηρεσία σας αντιγράφει επίσης τις ρυθμίσεις Δημιουργία ημερολογίου και Διαγραφή ημερολογίου στις αντίστοιχες γραμμές, εκτός αν τις έχετε ήδη ορίσει εδώ.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Οι Αναφορές δεν είναι ακόμη ενεργές για αυτήν την υπηρεσία. Μπορείτε να προετοιμάσετε τις ρυθμίσεις τώρα· θα ισχύσουν μόλις ενεργοποιηθούν οι Αναφορές.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>Δημιουργία αναφορών</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>Ποιος μπορεί να συντάσσει νέες αναφορές και να επεξεργάζεται τα δικά του πρόχειρα. Αντιστοιχεί στη Δημιουργία ημερολογίου μέχρι να το αλλάξετε.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>Ακύρωση αναφορών</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>Ποιος μπορεί να ακυρώσει ένα πρόχειρο ή να ακυρώσει μια οριστικοποιημένη αναφορά. Η ακύρωση διατηρεί την αναφορά και το ιστορικό της· τίποτα δεν διαγράφεται. Αντιστοιχεί στη Διαγραφή ημερολογίου μέχρι να το αλλάξετε.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>Έλεγχος αναφορών</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>Ποιος μπορεί να ελέγχει αναφορές που υποβλήθηκαν για έλεγχο και να τις επιστρέφει για διόρθωση. Το Μόνο ομάδα περιορίζει τους διαχειριστές ομάδας στις αναφορές της δικής τους ομάδας.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>Έγκριση αναφορών</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>Ποιος μπορεί να εγκρίνει μια ελεγμένη αναφορά πριν την οριστικοποίηση, για τύπους αναφορών με κύκλο έγκρισης.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>Οριστικοποίηση αναφορών</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>Ποιος μπορεί να οριστικοποιήσει μια αναφορά, πράγμα που αποδίδει τον αριθμό της και κλειδώνει το περιεχόμενο. Οι τύποι γρήγορης καταχώρισης οριστικοποιούνται κατά την αποθήκευση, οπότε αντιστοιχεί στη Δημιουργία ημερολογίου μέχρι να το αλλάξετε.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>Τροποποίηση οριστικοποιημένων αναφορών</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>Ποιος μπορεί να ανοίξει τροποποίηση σε οριστικοποιημένη αναφορά. Η τροποποίηση δημιουργεί νέα αναθεώρηση· η αρχική αναθεώρηση παραμένει άθικτη.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>Εξωτερική υποβολή αναφορών</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>Ποιος μπορεί να υποβάλει μια οριστικοποιημένη αναφορά σε εξωτερικό προορισμό αναφοράς, όπως ένα περιφερειακό ή εθνικό σύστημα.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>Εκτύπωση και εξαγωγή αναφορών</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>Ποιος μπορεί να εκτυπώσει μια αναφορά ή να εξαγάγει λίστα αναφορών.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>Κοινοποίηση αναφορών</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>Ποιος μπορεί να κοινοποιήσει μια αναφορά σε άλλες ομάδες της υπηρεσίας ή σε άτομα εκτός αυτής.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>Προβολή περιορισμένων ενοτήτων</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>Ποιος μπορεί να διαβάζει τις περιορισμένες ενότητες μιας αναφοράς, όπως τις λεπτομέρειες μιας ιατροδικαστικής αναφοράς. Οι υπόλοιποι βλέπουν ότι η ενότητα υπάρχει, αλλά όχι το περιεχόμενό της.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>Προβολή παλαιών ημερολογίων</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>Ποιος μπορεί να διαβάζει το ιστορικό Ημερολογίων (μόνο για ανάγνωση) πριν από την ενεργοποίηση των Αναφορών.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>Προβολή αναφορών άλλων ομάδων</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>Αν το προσωπικό μπορεί να βλέπει αναφορές που ανήκουν σε άλλες ομάδες. Επιλέξτε Μόνο ομάδα και ορίστε ορατότητα ανά ομάδα στις Ρυθμίσεις αναφορών για να περιορίσετε τα άτομα στις αναφορές της δικής τους ομάδας. Αφήστε το χωρίς περιορισμό για να διατηρήσετε τη σημερινή προβολή σε επίπεδο υπηρεσίας των Ημερολογίων.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>Διαχείριση ορισμών αναφορών</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>Ποιος μπορεί να δημιουργεί και να επεξεργάζεται ορισμούς αναφορών, δηλαδή τις φόρμες από τις οποίες συντίθενται οι αναφορές.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>Δημοσίευση ορισμών αναφορών</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>Ποιος μπορεί να δημοσιεύσει μια έκδοση ορισμού αναφοράς ώστε να χρησιμοποιείται σε νέες αναφορές.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>Διαχείριση συγκεντρωτικών αναφορών</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>Ποιος μπορεί να δημιουργεί και να επεξεργάζεται αποθηκευμένες συγκεντρωτικές αναφορές και τα χρονοδιαγράμματά τους.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>Διαχείριση γνωστοποιήσεων αναφορών</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>Ποιος μπορεί να προετοιμάζει και να παραδίδει πακέτα γνωστοποίησης δημόσιων εγγράφων.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>Διαχείριση νομικών δεσμεύσεων</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Ποιος μπορεί να θέτει και να αίρει νομικές δεσμεύσεις, οι οποίες αναστέλλουν τη διατήρηση και εμποδίζουν την ακύρωση αναφοράς.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Ανάθεση πρόχειρων αναφορών σε άλλον</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Ποιος μπορεί να μεταφέρει ένα πρόχειρο αναφοράς σε άλλον συντάκτη, για παράδειγμα όταν ο αρχικός συντάκτης δεν είναι διαθέσιμος.</value></data>
 </root>
 
 

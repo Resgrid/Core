@@ -296,6 +296,27 @@ namespace Resgrid.Repositories.DataRepository
 
 			// UTF-8 / PostgreSQL-migration data maintenance
 			builder.RegisterType<Utf8MaintenanceRepository>().As<IUtf8MaintenanceRepository>().InstancePerLifetimeScope();
+
+			// Records (RMS) repositories - RMS plan section 5.11.1
+			builder.RegisterType<RmsOperationalRecordsRepository>().As<IRmsOperationalRecordsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsOperationalRecordDetailsRepository>().As<IRmsOperationalRecordDetailsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordParticipantsRepository>().As<IRmsRecordParticipantsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordUnitResponsesRepository>().As<IRmsRecordUnitResponsesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordAttachmentsRepository>().As<IRmsRecordAttachmentsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsExternalReferencesRepository>().As<IRmsExternalReferencesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DomainEventOutboxRepository>().As<IDomainEventOutboxRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsDepartmentCutoversRepository>().As<IRmsDepartmentCutoversRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsDepartmentCutoverEventsRepository>().As<IRmsDepartmentCutoverEventsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRevisionsRepository>().As<IRmsRevisionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsAccessAuditsRepository>().As<IRmsAccessAuditsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordSearchProjectionsRepository>().As<IRmsRecordSearchProjectionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsSearchIndexStatesRepository>().As<IRmsSearchIndexStatesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordGroupScopesRepository>().As<IRmsRecordGroupScopesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordSharesRepository>().As<IRmsRecordSharesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsLegacyStatsRepository>().As<IRmsLegacyStatsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentProfileRepository>().As<IDepartmentProfileRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentProfileMediaRepository>().As<IDepartmentProfileMediaRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordPrintLayoutsRepository>().As<IRmsRecordPrintLayoutsRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

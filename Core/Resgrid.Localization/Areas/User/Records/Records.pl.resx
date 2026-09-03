@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="RecordsHeader" xml:space="preserve"><value>Rejestry</value></data>
+  <data name="NewRecord" xml:space="preserve"><value>Nowy rejestr</value></data>
+  <data name="ViewRecordHeader" xml:space="preserve"><value>Wyświetl rejestr</value></data>
+  <data name="EditRecordHeader" xml:space="preserve"><value>Edytuj rejestr</value></data>
+  <data name="RecordsForYear" xml:space="preserve"><value>Rejestry z roku</value></data>
+  <data name="AllYears" xml:space="preserve"><value>Wszystkie lata</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>Wszystkie typy</value></data>
+  <data name="AllStates" xml:space="preserve"><value>Wszystkie stany</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtruj</value></data>
+  <data name="NoRecords" xml:space="preserve"><value>Żaden rejestr nie pasuje do bieżącego filtru.</value></data>
+  <data name="RecordNumber" xml:space="preserve"><value>Nr rejestru</value></data>
+  <data name="DraftReference" xml:space="preserve"><value>Odniesienie roboczej</value></data>
+  <data name="Type" xml:space="preserve"><value>Typ</value></data>
+  <data name="State" xml:space="preserve"><value>Stan</value></data>
+  <data name="Summary" xml:space="preserve"><value>Podsumowanie</value></data>
+  <data name="Author" xml:space="preserve"><value>Autor</value></data>
+  <data name="Owner" xml:space="preserve"><value>Właściciel</value></data>
+  <data name="Occurred" xml:space="preserve"><value>Wystąpił</value></data>
+  <data name="Created" xml:space="preserve"><value>Utworzono</value></data>
+  <data name="Finalized" xml:space="preserve"><value>Sfinalizowano</value></data>
+  <data name="Actions" xml:space="preserve"><value>Akcje</value></data>
+  <data name="Definition" xml:space="preserve"><value>Definicja</value></data>
+  <data name="Narrative" xml:space="preserve"><value>Opis</value></data>
+  <data name="NarrativeRequired" xml:space="preserve"><value>Opis jest wymagany.</value></data>
+  <data name="InitialReport" xml:space="preserve"><value>Raport wstępny / stan</value></data>
+  <data name="Cause" xml:space="preserve"><value>Przyczyna</value></data>
+  <data name="Investigator" xml:space="preserve"><value>Śledczy</value></data>
+  <data name="Course" xml:space="preserve"><value>Kurs</value></data>
+  <data name="CourseCode" xml:space="preserve"><value>Kod kursu</value></data>
+  <data name="Instructors" xml:space="preserve"><value>Instruktorzy</value></data>
+  <data name="MeetingType" xml:space="preserve"><value>Typ spotkania</value></data>
+  <data name="Facilitator" xml:space="preserve"><value>Prowadzący</value></data>
+  <data name="Location" xml:space="preserve"><value>Lokalizacja</value></data>
+  <data name="OtherPersonnel" xml:space="preserve"><value>Inny personel / uczestnicy</value></data>
+  <data name="OtherAgencies" xml:space="preserve"><value>Inne agencje</value></data>
+  <data name="OtherUnits" xml:space="preserve"><value>Inne jednostki</value></data>
+  <data name="CaseNumber" xml:space="preserve"><value>Numer sprawy</value></data>
+  <data name="BodyLocation" xml:space="preserve"><value>Miejsce ciała</value></data>
+  <data name="PronouncedDeceasedBy" xml:space="preserve"><value>Zgon stwierdził</value></data>
+  <data name="Destination" xml:space="preserve"><value>Miejsce docelowe</value></data>
+  <data name="ContactName" xml:space="preserve"><value>Nazwa kontaktu</value></data>
+  <data name="ContactNumber" xml:space="preserve"><value>Numer kontaktowy</value></data>
+  <data name="Unit" xml:space="preserve"><value>Jednostka</value></data>
+  <data name="ActivityTime" xml:space="preserve"><value>Czas aktywności</value></data>
+  <data name="Call" xml:space="preserve"><value>Zgłoszenie</value></data>
+  <data name="NoCall" xml:space="preserve"><value>Brak zgłoszenia</value></data>
+  <data name="CallSnapshot" xml:space="preserve"><value>Migawka zgłoszenia</value></data>
+  <data name="Participants" xml:space="preserve"><value>Uczestnicy</value></data>
+  <data name="Units" xml:space="preserve"><value>Jednostki</value></data>
+  <data name="Attachments" xml:space="preserve"><value>Załączniki</value></data>
+  <data name="AddAttachment" xml:space="preserve"><value>Dodaj załącznik</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>Wysłano</value></data>
+  <data name="Enroute" xml:space="preserve"><value>W drodze</value></data>
+  <data name="OnScene" xml:space="preserve"><value>Na miejscu</value></data>
+  <data name="Released" xml:space="preserve"><value>Zwolniono</value></data>
+  <data name="InQuarters" xml:space="preserve"><value>W remizie</value></data>
+  <data name="SaveDraft" xml:space="preserve"><value>Zapisz roboczą</value></data>
+  <data name="SaveAndFinalize" xml:space="preserve"><value>Zapisz i sfinalizuj</value></data>
+  <data name="Finalize" xml:space="preserve"><value>Sfinalizuj</value></data>
+  <data name="Amend" xml:space="preserve"><value>Popraw</value></data>
+  <data name="AbandonAmendment" xml:space="preserve"><value>Porzuć poprawkę</value></data>
+  <data name="Void" xml:space="preserve"><value>Unieważnij</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Anuluj roboczą</value></data>
+  <data name="ReasonCode" xml:space="preserve"><value>Kod powodu</value></data>
+  <data name="ReasonText" xml:space="preserve"><value>Powód</value></data>
+  <data name="ReasonRequired" xml:space="preserve"><value>Powód jest wymagany.</value></data>
+  <data name="Attestation" xml:space="preserve"><value>Poświadczam, że ten rejestr jest dokładny i kompletny zgodnie z moją wiedzą.</value></data>
+  <data name="History" xml:space="preserve"><value>Historia</value></data>
+  <data name="Revision" xml:space="preserve"><value>Wersja</value></data>
+  <data name="Transition" xml:space="preserve"><value>Przejście</value></data>
+  <data name="Actor" xml:space="preserve"><value>Przez</value></data>
+  <data name="Checksum" xml:space="preserve"><value>Suma kontrolna</value></data>
+  <data name="ViewRevision" xml:space="preserve"><value>Wyświetl</value></data>
+  <data name="CompareWithPrevious" xml:space="preserve"><value>Porównaj z poprzednią</value></data>
+  <data name="RevisionHeader" xml:space="preserve"><value>Wersja w ówczesnym stanie</value></data>
+  <data name="DiffHeader" xml:space="preserve"><value>Porównanie wersji</value></data>
+  <data name="NoChanges" xml:space="preserve"><value>Brak różnic między tymi wersjami.</value></data>
+  <data name="Withheld" xml:space="preserve"><value>Zmieniono pole zastrzeżone (wartości ukryte)</value></data>
+  <data name="Section" xml:space="preserve"><value>Sekcja</value></data>
+  <data name="Field" xml:space="preserve"><value>Pole</value></data>
+  <data name="Before" xml:space="preserve"><value>Przed</value></data>
+  <data name="After" xml:space="preserve"><value>Po</value></data>
+  <data name="Export" xml:space="preserve"><value>Eksportuj</value></data>
+  <data name="Print" xml:space="preserve"><value>Drukuj</value></data>
+  <data name="RestrictedSection" xml:space="preserve"><value>Sekcja zastrzeżona</value></data>
+  <data name="RestrictedNotice" xml:space="preserve"><value>Nie masz uprawnień do wyświetlania zastrzeżonych sekcji tego rejestru.</value></data>
+  <data name="DuplicateWarning" xml:space="preserve"><value>Rejestr tego typu już istnieje dla tego zgłoszenia. Sprawdź go przed kontynuowaniem lub podaj, dlaczego potrzebny jest drugi.</value></data>
+  <data name="DuplicateContinueReason" xml:space="preserve"><value>Powód drugiego rejestru</value></data>
+  <data name="ActivateHeader" xml:space="preserve"><value>Aktywuj rejestry</value></data>
+  <data name="ActivateIntro" xml:space="preserve"><value>Rejestry zastępują moduł Dzienniki dla tego wydziału. Po aktywacji istniejące dzienniki pozostają do odczytu, ale nie można ich tworzyć, edytować ani usuwać. Nie można tego cofnąć po sfinalizowaniu rejestru.</value></data>
+  <data name="LegacyLogs" xml:space="preserve"><value>Istniejące dzienniki</value></data>
+  <data name="LegacyUnitLogs" xml:space="preserve"><value>Istniejące dzienniki jednostek</value></data>
+  <data name="PermissionMapping" xml:space="preserve"><value>Zmiany uprawnień przy aktywacji</value></data>
+  <data name="PermissionSource" xml:space="preserve"><value>Istniejące uprawnienie</value></data>
+  <data name="PermissionTarget" xml:space="preserve"><value>Uprawnienie rejestrów</value></data>
+  <data name="EffectiveAccess" xml:space="preserve"><value>Efektywny dostęp</value></data>
+  <data name="LockViewGroupRecordsToGroup" xml:space="preserve"><value>Ogranicz widoczność rejestrów do grupy użytkownika</value></data>
+  <data name="ActivationReason" xml:space="preserve"><value>Powód / uwagi</value></data>
+  <data name="ActivationAcknowledge" xml:space="preserve"><value>Rozumiem, że nie można tego cofnąć po sfinalizowaniu rejestru i że konfiguracja retencji jest obowiązkiem tego wydziału.</value></data>
+  <data name="Activate" xml:space="preserve"><value>Aktywuj</value></data>
+  <data name="ActivationBlocked" xml:space="preserve"><value>Aktywacja zablokowana</value></data>
+  <data name="NotActivatedNotice" xml:space="preserve"><value>Rejestry są włączone dla tego wydziału, ale jeszcze nie aktywowane. Administrator musi je aktywować przed tworzeniem rejestrów.</value></data>
+  <data name="ActivatedOn" xml:space="preserve"><value>Rejestry aktywowano</value></data>
+  <data name="SettingsHeader" xml:space="preserve"><value>Ustawienia rejestrów</value></data>
+  <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Domyślny cykl życia dla definicji wydziału</value></data>
+  <data name="ReviewDueHours" xml:space="preserve"><value>Termin przeglądu (godziny)</value></data>
+  <data name="Numbering" xml:space="preserve"><value>Numeracja rejestrów</value></data>
+  <data name="IncludeYear" xml:space="preserve"><value>Uwzględnij rok w numerach</value></data>
+  <data name="SequenceWidth" xml:space="preserve"><value>Cyfry sekwencji</value></data>
+  <data name="PerGroupSequence" xml:space="preserve"><value>Osobna sekwencja dla stacji/grupy</value></data>
+  <data name="Retention" xml:space="preserve"><value>Retencja</value></data>
+  <data name="RetentionIntro" xml:space="preserve"><value>Domyślnie: 7 lat dla rejestrów standardowych; bezterminowo dla koronera i innych klas zastrzeżonych. Retencja jest obowiązkiem wydziału. Zmiany działają prospektywnie i są audytowane.</value></data>
+  <data name="DepartmentDefaultYears" xml:space="preserve"><value>Domyślne wydziału (lata, puste = systemowe)</value></data>
+  <data name="RetentionOverrides" xml:space="preserve"><value>Nadpisania dla definicji (0 = bezterminowo)</value></data>
+  <data name="RestrictedOverrideConfirm" xml:space="preserve"><value>Klasa zastrzeżona. Ustawienie okresu włącza automatyczne usuwanie. Potwierdź, aby zastosować.</value></data>
+  <data name="GroupVisibility" xml:space="preserve"><value>Widoczność między grupami</value></data>
+  <data name="GroupVisibilityDepartmentWide" xml:space="preserve"><value>Cały wydział (domyślnie)</value></data>
+  <data name="GroupVisibilityGroupScoped" xml:space="preserve"><value>Wg grupy</value></data>
+  <data name="GroupVisibilityNote" xml:space="preserve"><value>Zakres grupowy wymaga też zablokowania uprawnienia „Zobacz rejestry innych grup” do grupy. Autorzy, recenzenci, uczestnicy, załogi i administratorzy zawsze widzą rejestr.</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Zapisano ustawienia rejestrów.</value></data>
+  <data name="Save" xml:space="preserve"><value>Zapisz</value></data>
+  <data name="ConcurrencyError" xml:space="preserve"><value>Ten rejestr został zmieniony przez kogoś innego od czasu otwarcia. Załaduj ponownie i zastosuj zmiany.</value></data>
+  <data name="AmendmentOpen" xml:space="preserve"><value>Trwa poprawka. Ostatnia sfinalizowana wersja pozostaje obowiązująca do sfinalizowania poprawki.</value></data>
+  <data name="RecordSaved" xml:space="preserve"><value>Zapisano rejestr.</value></data>
+  <data name="Start" xml:space="preserve"><value>Początek</value></data>
+  <data name="End" xml:space="preserve"><value>Koniec</value></data>
+  <data name="Station" xml:space="preserve"><value>Stacja / grupa</value></data>
+  <data name="ExternalId" xml:space="preserve"><value>ID zewnętrzne</value></data>
+  <data name="BackToRecords" xml:space="preserve"><value>Powrót do rejestrów</value></data>
+  <data name="Settings" xml:space="preserve"><value>Ustawienia</value></data>
+  <data name="Role" xml:space="preserve"><value>Rola</value></data>
+  <data name="Provenance" xml:space="preserve"><value>Pochodzenie</value></data>
+  <data name="PrintPdf" xml:space="preserve"><value>Zapisz jako PDF</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Eksportuj CSV</value></data>
+  <data name="ExportJson" xml:space="preserve"><value>Eksportuj JSON</value></data>
+  <data name="PrintedBy" xml:space="preserve"><value>Wydrukował(a)</value></data>
+  <data name="PrintedOn" xml:space="preserve"><value>Wydrukowano</value></data>
+  <data name="PrintLayout" xml:space="preserve"><value>Układ wydruku</value></data>
+  <data name="ExportLimitNotice" xml:space="preserve"><value>Eksport obejmuje maksymalnie {0} wierszy; zawęź filtr, aby wyeksportować więcej.</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Szukaj raportów</value></data>
+  <data name="SearchUnavailable" xml:space="preserve"><value>Wyszukiwanie jest obecnie niedostępne; poniższa lista jest przefiltrowana bez tekstu wyszukiwania.</value></data>
+  <data name="SearchTruncated" xml:space="preserve"><value>Pokazywane są tylko najbliższe dopasowania; zawęź wyszukiwanie, aby zobaczyć więcej.</value></data>
+  <data name="NarrativeSearchOn" xml:space="preserve"><value>Treść opisu jest uwzględniana w wyszukiwaniu.</value></data>
+  <data name="NarrativeSearchOff" xml:space="preserve"><value>Treść opisu nie jest indeksowana dla tego wydziału; wyszukiwanie obejmuje numery raportów, podsumowania i inne bezpieczne pola.</value></data>
+  <data name="SearchIndexStatus" xml:space="preserve"><value>Indeks wyszukiwania</value></data>
+  <data name="SearchDisabled" xml:space="preserve"><value>Wyłączony</value></data>
+  <data name="SearchOnline" xml:space="preserve"><value>Online</value></data>
+  <data name="SearchOffline" xml:space="preserve"><value>Offline</value></data>
+  <data name="SearchDocuments" xml:space="preserve"><value>Zaindeksowane raporty</value></data>
+  <data name="SearchIndexNote" xml:space="preserve"><value>Worker automatycznie przebudowuje indeks wyszukiwania, gdy zmieni się polityka ochrony lub wersja katalogu wydziału. Wyszukiwanie w opisie jest wycofywane po włączeniu Zaawansowanej ochrony danych.</value></data>
+  <data name="PrintLayoutHeader" xml:space="preserve"><value>Układ wydruku</value></data>
+  <data name="PrintLayoutIntro" xml:space="preserve"><value>Jak nagłówek firmowy jest renderowany na wydrukach raportów. Tożsamość i logo pochodzą z profilu wydziału; treść raportu zawsze drukuje się z przypiętej wersji.</value></data>
+  <data name="PrintShowLogo" xml:space="preserve"><value>Pokaż logo</value></data>
+  <data name="PrintUseShortName" xml:space="preserve"><value>Używaj nazwy skróconej</value></data>
+  <data name="PrintShowAddress" xml:space="preserve"><value>Pokaż adres</value></data>
+  <data name="PrintShowPhone" xml:space="preserve"><value>Pokaż numer telefonu</value></data>
+  <data name="PrintShowWebsite" xml:space="preserve"><value>Pokaż stronę WWW</value></data>
+  <data name="PrintLetterheadLine1" xml:space="preserve"><value>Wiersz nagłówka 1</value></data>
+  <data name="PrintLetterheadLine2" xml:space="preserve"><value>Wiersz nagłówka 2</value></data>
+  <data name="PrintFooterText" xml:space="preserve"><value>Tekst stopki</value></data>
+  <data name="PrintWatermark" xml:space="preserve"><value>Znak wodny</value></data>
+  <data name="PrintPageSize" xml:space="preserve"><value>Rozmiar strony</value></data>
+  <data name="PrintDateTimeFormat" xml:space="preserve"><value>Format daty i godziny</value></data>
+  <data name="PrintDateTimeFormatHelp" xml:space="preserve"><value>Opcjonalny ciąg formatu .NET, np. yyyy-MM-dd HH:mm; pozostaw puste, aby użyć domyślnego formatu wydziału.</value></data>
+  <data name="PrintLayoutVersionLabel" xml:space="preserve"><value>Wersja układu</value></data>
+  <data name="ManageDepartmentProfile" xml:space="preserve"><value>Zarządzaj profilem wydziału</value></data>
+  <data name="NoLogoNotice" xml:space="preserve"><value>Nie przesłano jeszcze logo; wydruki pokazują tylko nazwę wydziału.</value></data>
+  <data name="ExportSearchUnavailable" xml:space="preserve"><value>Wyszukiwanie jest obecnie niedostępne, więc nie udało się wyeksportować wyników. Wyczyść wyszukiwanie, aby wyeksportować przefiltrowaną listę.</value></data>
+  <data name="ReassignHeader" xml:space="preserve"><value>Przypisz szkic ponownie</value></data>
+  <data name="ReassignTo" xml:space="preserve"><value>Nowy właściciel</value></data>
+  <data name="ReassignReason" xml:space="preserve"><value>Powód</value></data>
+  <data name="Reassign" xml:space="preserve"><value>Przypisz ponownie</value></data>
+  <data name="ReassignNote" xml:space="preserve"><value>Przenosi własność tego niezakończonego rekordu na innego członka. Autor i historia utworzenia pozostają bez zmian, a przeniesienie jest audytowane.</value></data>
+  <data name="GroupScopePreviewHeader" xml:space="preserve"><value>Podgląd wpływu</value></data>
+  <data name="GroupScopePreviewIntro" xml:space="preserve"><value>Co ukryłoby ograniczenie do grup, zanim je potwierdzisz. Członkowie zawsze zachowują rekordy, które napisali, posiadają, przeglądają, w których uczestniczą lub na które odpowiadają swoją jednostką; administratorzy jednostki widzą wszystko.</value></data>
+  <data name="GroupScopeTotalRecords" xml:space="preserve"><value>Rekordy w jednostce</value></data>
+  <data name="GroupScopeHiddenFromUngrouped" xml:space="preserve"><value>Rekordy ukryte przed członkami bez grupy</value></data>
+  <data name="GroupScopeUnanchored" xml:space="preserve"><value>Rekordy bez kotwicy grupy (pozostają widoczne dla całej jednostki)</value></data>
+  <data name="GroupScopeUsersWithoutGroup" xml:space="preserve"><value>Członkowie bez grupy</value></data>
+  <data name="GroupScopeLegacyRows" xml:space="preserve"><value>Stare wiersze dzienników bez grupy (pozostają widoczne dla całej jednostki)</value></data>
+  <data name="GroupScopeGroup" xml:space="preserve"><value>Grupa</value></data>
+  <data name="GroupScopeMembers" xml:space="preserve"><value>Członkowie</value></data>
+  <data name="GroupScopeRecords" xml:space="preserve"><value>Rekordy</value></data>
+  <data name="GroupScopeConfirm" xml:space="preserve"><value>Rozumiem, co ukrywa ograniczenie do grup, i chcę je włączyć.</value></data>
+  <data name="GroupScopeConfirmRequired" xml:space="preserve"><value>Ograniczenie do grup nie zostało włączone: najpierw potwierdź podgląd wpływu. Pozostałe ustawienia zostały zapisane.</value></data>
+  <data name="Accountability" xml:space="preserve"><value>Odpowiedzialność</value></data>
+  <data name="AccountabilityHeader" xml:space="preserve"><value>Odpowiedzialność za rekordy</value></data>
+  <data name="AccountabilityIntro" xml:space="preserve"><value>Kto zalega z raportem: otwarte rekordy, zaległe przeglądy i zwrócone rekordy według osoby, stacji lub jednostki, z czasem do zakończenia w okresie. Przypomnienia trafiają do właściciela, najwyżej raz dziennie na rekord.</value></data>
+  <data name="PivotPerson" xml:space="preserve"><value>Według osoby</value></data>
+  <data name="PivotGroup" xml:space="preserve"><value>Według stacji/grupy</value></data>
+  <data name="PivotUnit" xml:space="preserve"><value>Według jednostki</value></data>
+  <data name="WindowDays" xml:space="preserve"><value>Okres (dni)</value></data>
+  <data name="ColOpen" xml:space="preserve"><value>Otwarte</value></data>
+  <data name="ColOverdueReviews" xml:space="preserve"><value>Zaległe przeglądy</value></data>
+  <data name="ColReturned" xml:space="preserve"><value>Zwrócone, niepoprawione</value></data>
+  <data name="ColFinalizedInWindow" xml:space="preserve"><value>Zakończone w okresie</value></data>
+  <data name="ColAverageHoursToFinalize" xml:space="preserve"><value>Śr. godzin do zakończenia</value></data>
+  <data name="ColOldestOpen" xml:space="preserve"><value>Najstarszy otwarty</value></data>
+  <data name="Remind" xml:space="preserve"><value>Przypomnij</value></data>
+  <data name="RemindAll" xml:space="preserve"><value>Przypomnij wszystkim</value></data>
+  <data name="RemindersResult" xml:space="preserve"><value>Wysłano {0} przypomnień, pominięto {1}.</value></data>
+  <data name="ReminderSent" xml:space="preserve"><value>Przypomnienie wysłane.</value></data>
+  <data name="ReminderNotSent" xml:space="preserve"><value>Przypomnienia nie wysłano ({0}).</value></data>
+  <data name="Unassigned" xml:space="preserve"><value>Nieprzypisane</value></data>
+  <data name="ShowOpenRecords" xml:space="preserve"><value>Pokaż otwarte rekordy</value></data>
+  <data name="Totals" xml:space="preserve"><value>Razem</value></data>
+  <data name="OwnerFilter" xml:space="preserve"><value>Właściciel</value></data>
+  <data name="GroupFilter" xml:space="preserve"><value>Grupa</value></data>
+</root>

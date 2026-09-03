@@ -31,11 +31,13 @@ namespace Resgrid.Services
 		private readonly ICallEmailProvider _callEmailProvider;
 		private readonly IEmailSender _emailSender;
 		private readonly IAmazonEmailSender _amazonEmailSender;
+		private readonly IDepartmentProfileMediaService _departmentProfileMediaService;
 
 		private SmtpClient _smtpClient;
 
 		public EmailService(IUserProfileService userProfileService, IUsersService usersService, IGeoLocationProvider geoLocationProvider, IEmailProvider emailProvider,
-			IDepartmentsService departmentsService, ICallEmailProvider callEmailProvider, IEmailSender emailSender, IAmazonEmailSender amazonEmailSender)
+			IDepartmentsService departmentsService, ICallEmailProvider callEmailProvider, IEmailSender emailSender, IAmazonEmailSender amazonEmailSender,
+			IDepartmentProfileMediaService departmentProfileMediaService)
 		{
 			_userProfileService = userProfileService;
 			_usersService = usersService;
@@ -45,6 +47,7 @@ namespace Resgrid.Services
 			_callEmailProvider = callEmailProvider;
 			_emailSender = emailSender;
 			_amazonEmailSender = amazonEmailSender;
+			_departmentProfileMediaService = departmentProfileMediaService;
 
 			_smtpClient = new SmtpClient
 			{
@@ -61,6 +64,37 @@ namespace Resgrid.Services
 			_emailProvider.Configure(emailSender, "DO-NOT-REPLY@resgrid.com");
 		}
 		#endregion Private Members and Constructors
+
+		/// <summary>
+		/// Department masthead for a department-scoped operational email (RMS plan section 4.10.1). A lookup
+		/// failure means Resgrid chrome, never a lost email: a degraded dispatch email is bad, an undelivered
+		/// one is dangerous.
+		/// </summary>
+		private async Task<DepartmentEmailBranding> GetEmailBrandingAsync(int departmentId)
+		{
+			try
+			{
+				return await _departmentProfileMediaService.GetEmailBrandingAsync(departmentId) ?? DepartmentEmailBranding.Disabled(departmentId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return DepartmentEmailBranding.Disabled(departmentId);
+			}
+		}
+
+		/// <summary>
+		/// The plain-text notification email has no masthead to swap, so the department identity rides on the
+		/// From display name instead ("Springfield Fire via Resgrid"). The address, and with it the sender
+		/// accountability, stays Resgrid's.
+		/// </summary>
+		public static string NotificationFromDisplayName(DepartmentEmailBranding branding)
+		{
+			if (branding != null && branding.Enabled && !String.IsNullOrWhiteSpace(branding.DisplayName))
+				return $"{branding.DisplayName.Trim()} via Resgrid";
+
+			return "Resgrid";
+		}
 
 		public async Task<bool> SendWelcomeEmail(string departmentName, string name, string emailAddress, string userName, int departmentId)
 		{
@@ -175,7 +209,10 @@ namespace Resgrid.Services
 				senderEmail = "do-not-reply@resgrid.com";
 
 			if (profile != null && profile.SendMessageEmail)
-				await _emailProvider.SendMessageMail(user.Email, subject, message.Subject, message.Body, senderEmail, senderName, message.SentOn.ToString("G") + " UTC", message.MessageId);
+			{
+				var branding = await GetEmailBrandingAsync(departmentId);
+				await _emailProvider.SendMessageMail(user.Email, subject, message.Subject, message.Body, senderEmail, senderName, message.SentOn.ToString("G") + " UTC", message.MessageId, branding);
+			}
 
 			return true;
 		}
@@ -261,8 +298,11 @@ namespace Resgrid.Services
 			}
 
 			if (profile != null && profile.SendEmail && !String.IsNullOrWhiteSpace(emailAddress))
+			{
+				var branding = await GetEmailBrandingAsync(call.DepartmentId);
 				await _emailProvider.SendCallMail(emailAddress, subject, call.Name, priority, call.NatureOfCall, call.MapPage,
-																	address, dispatchedOn, call.CallId, dispatch.UserId, coordinates, call.ShortenedAudioUrl);
+																	address, dispatchedOn, call.CallId, dispatch.UserId, coordinates, call.ShortenedAudioUrl, branding);
+			}
 
 			return true;
 		}
@@ -338,8 +378,11 @@ namespace Resgrid.Services
 			}
 
 			if (profile != null && profile.SendEmail && !String.IsNullOrWhiteSpace(emailAddress))
+			{
+				var branding = await GetEmailBrandingAsync(call.DepartmentId);
 				await _emailProvider.SendCallMail(emailAddress, subject, call.Name, priority, natureOfCall, call.MapPage,
-																	address, dispatchedOn, call.CallId, dispatch.UserId, coordinates, call.ShortenedAudioUrl);
+																	address, dispatchedOn, call.CallId, dispatch.UserId, coordinates, call.ShortenedAudioUrl, branding);
+			}
 
 			return true;
 		}
@@ -414,7 +457,8 @@ namespace Resgrid.Services
 
 			var body = string.Format("Your scheduled Resgrid report is attached. It will be as an email attachment. You can view the live report by clicking the link in the email and logging in.");
 
-			return await _emailProvider.SendReportDeliveryMail(email.To, email.Subject, body, DateTime.UtcNow.ToString("G") + " UTC", reportName, email.AttachmentName, email.AttachmentData, reportUrl);
+			var branding = await GetEmailBrandingAsync(departmentId);
+			return await _emailProvider.SendReportDeliveryMail(email.To, email.Subject, body, DateTime.UtcNow.ToString("G") + " UTC", reportName, email.AttachmentName, email.AttachmentData, reportUrl, branding);
 		}
 
 
@@ -656,11 +700,13 @@ namespace Resgrid.Services
 
 				if (email != null)
 				{
+					var branding = await GetEmailBrandingAsync(departmentId);
+
 					using (var mail = new MailMessage())
 					{
 						mail.To.Add(email);
 						mail.Subject = SystemMessagesResources.Get("NotificationEmailSubject", profile?.Language);
-						mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
+						mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, NotificationFromDisplayName(branding));
 
 						mail.Body = message;
 						mail.IsBodyHtml = false;

@@ -51,13 +51,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly IRecordsCutoverService _recordsCutoverService;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider, IMappingService mappingService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IStringLocalizer<Resgrid.Localization.Common> localizer,
-			IPersonnelRolesService personnelRolesService, IProtectedReadService protectedReadService)
+			IPersonnelRolesService personnelRolesService, IProtectedReadService protectedReadService,
+			IRecordsCutoverService recordsCutoverService)
 		{
+			_recordsCutoverService = recordsCutoverService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_unitsService = unitsService;
@@ -931,6 +934,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.UnitLog_Create)]
 		public async Task<IActionResult> AddLog(int unitId)
 		{
+			// After Records activation no legacy UnitLog is created (RMS plan section 4.1); the service boundary denies too.
+			if (await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId))
+				return RedirectToAction("ViewLogs", new { unitId });
+
 			var model = new AddLogView();
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
@@ -953,6 +960,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.UnitLog_Create)]
 		public async Task<IActionResult> AddLog(AddLogView model, CancellationToken cancellationToken)
 		{
+			if (await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId))
+				return RedirectToAction("ViewLogs", new { unitId = model.Log.UnitId });
+
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, model.Log.UnitId))
 				return Unauthorized();
 
@@ -982,6 +992,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model.Logs = await _unitsService.GetLogsForUnitAsync(model.Unit.UnitId);
+			model.LegacyReadOnly = await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId);
 
 			// ADP (catalog v9): server-rendered pages render narratives as REDACTED; the reveal is
 			// client-side (step-up modal then RevealUnitLogs).

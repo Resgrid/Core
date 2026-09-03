@@ -40,12 +40,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUnitsService _unitsService;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly IRecordsCutoverService _recordsCutoverService;
 
 		public LogsController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
 			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IEventAggregator eventAggregator,
-			IUnitsService unitsService, IProtectedReadService protectedReadService)
+			IUnitsService unitsService, IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService)
 		{
+			_recordsCutoverService = recordsCutoverService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_callsService = callsService;
@@ -72,6 +74,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 			model.WorkLogs = await _workLogsService.GetAllLogsForUserAsync(UserId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			model.LegacyReadOnly = await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId);
 
 			model.Years = new List<SelectListItem>();
 
@@ -93,6 +96,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Log_Create)]
 		public async Task<IActionResult> NewLog()
 		{
+			// After Records activation legacy Logs are read-only (RMS plan section 4.1); the service boundary denies too.
+			if (await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId))
+				return RedirectToAction("Index");
+
 			var model = new NewLogView();
 			await PopulateLogViewModel(model);
 			model.Log = new Log();
@@ -107,6 +114,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Log_Create)]
 		public async Task<IActionResult> NewLog(NewLogView model, IFormCollection form, ICollection<IFormFile> files, CancellationToken cancellationToken)
 		{
+			if (await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId))
+				return RedirectToAction("Index");
+
 			await PopulateLogViewModel(model);
 
 			if (model.LogType == LogTypes.Work && String.IsNullOrWhiteSpace(form["nonUnitPersonnel"]))
@@ -489,6 +499,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Log_Delete)]
 		public async Task<IActionResult> DeleteWorkLog(int logId, CancellationToken cancellationToken)
 		{
+			if (await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId))
+				return RedirectToAction("Index");
+
 			if (!await _authorizationService.CanUserDeleteWorkLogAsync(UserId, logId))
 				return Unauthorized();
 

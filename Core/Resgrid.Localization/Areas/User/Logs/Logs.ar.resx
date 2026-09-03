@@ -56,4 +56,5 @@
   <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
   <data name="Save" xml:space="preserve"><value>حفظ</value></data>
   <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>السجلات مفعّلة لهذه الإدارة. السجلات القديمة للقراءة فقط: يمكن عرضها وطباعتها وتصديرها لكن لا يمكن إنشاؤها أو تعديلها أو حذفها.</value></data>
 </root>

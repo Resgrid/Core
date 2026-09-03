@@ -351,4 +351,43 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>السجلات</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>تتحكم هذه الأذونات في وحدة السجلات، خليفة الدفاتر. وكما هو الحال مع معظم أذونات Resgrid، يعتمد الصف غير المضبوط القيمة الافتراضية المعروضة، وهي تطابق سلوك الدفاتر الحالي. كما يؤدي تفعيل السجلات لقسمك إلى نسخ إعدادات إنشاء دفتر وحذف دفتر إلى الصفوف المقابلة ما لم تكن قد ضبطتها هنا مسبقًا.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>السجلات غير مفعّلة لهذا القسم بعد. يمكنك تجهيز هذه الإعدادات الآن؛ وستسري بمجرد تفعيل السجلات.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>إنشاء السجلات</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>من يمكنه إنشاء سجلات جديدة وتحرير مسوداته الخاصة. يطابق إعداد إنشاء دفتر إلى أن تغيّره.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>إلغاء السجلات أو إبطالها</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>من يمكنه إلغاء مسودة أو إبطال سجل نهائي. يحتفظ الإبطال بالسجل وتاريخه؛ ولا يُحذف شيء. يطابق إعداد حذف دفتر إلى أن تغيّره.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>مراجعة السجلات</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>من يمكنه مراجعة السجلات المقدَّمة للمراجعة وإعادتها للتصحيح. يقصر خيار المجموعة فقط مديري المجموعات على سجلات مجموعتهم.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>اعتماد السجلات</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>من يمكنه اعتماد سجل تمت مراجعته قبل إنهائه، لأنواع السجلات التي تستخدم دورة الاعتماد.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>إنهاء السجلات</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>من يمكنه إنهاء سجل، وهو ما يمنحه رقمه ويقفل محتواه. تُنهى أنواع الإدخال السريع عند الحفظ، لذا يطابق هذا إعداد إنشاء دفتر إلى أن تغيّره.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>تعديل السجلات النهائية</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>من يمكنه فتح تعديل على سجل نهائي. ينشئ التعديل مراجعة جديدة؛ وتبقى المراجعة الأصلية كما هي.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>إرسال السجلات خارجيًا</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>من يمكنه إرسال سجل نهائي إلى جهة إبلاغ خارجية مثل نظام إقليمي أو وطني.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>طباعة السجلات وتصديرها</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>من يمكنه طباعة سجل أو تصدير قائمة سجلات.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>مشاركة السجلات</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>من يمكنه مشاركة سجل مع مجموعات أخرى في القسم أو مع أشخاص من خارجه.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>عرض الأقسام المقيّدة</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>من يمكنه قراءة الأقسام المقيّدة في سجل، مثل تفاصيل سجل الطب الشرعي. يرى الآخرون أن القسم موجود دون الاطلاع على محتواه.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>عرض الدفاتر القديمة</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>من يمكنه قراءة تاريخ الدفاتر للقراءة فقط من الفترة السابقة لتفعيل السجلات.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>عرض سجلات المجموعات الأخرى</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>ما إذا كان بإمكان الأفراد رؤية السجلات التابعة لمجموعات أخرى. حدد خيار المجموعة فقط واضبط الرؤية حسب المجموعة في إعدادات السجلات لقصر الأشخاص على سجلات مجموعتهم. اتركه دون تقييد للإبقاء على العرض على مستوى القسم كما هو الحال في الدفاتر اليوم.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>إدارة تعريفات السجلات</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>من يمكنه إنشاء تعريفات السجلات وتحريرها، وهي النماذج التي تُبنى منها السجلات.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>نشر تعريفات السجلات</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>من يمكنه نشر إصدار من تعريف سجل ليُستخدم في السجلات الجديدة.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>إدارة تقارير السجلات</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>من يمكنه إنشاء تقارير السجلات المحفوظة وجداولها وتحريرها.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>إدارة إفصاحات السجلات</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>من يمكنه إعداد حزم الإفصاح عن السجلات العامة وإصدارها.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>إدارة الحجز القانوني</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>من يمكنه فرض الحجز القانوني ورفعه، وهو ما يعلّق مدة الاحتفاظ ويمنع إبطال السجل.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>إعادة إسناد مسودات السجلات</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>من يمكنه نقل مسودة سجل إلى مؤلف آخر، مثلاً عندما يكون المؤلف الأصلي غير متاح.</value></data>
 </root>

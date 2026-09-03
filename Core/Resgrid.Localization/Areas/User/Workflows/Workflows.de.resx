@@ -591,4 +591,28 @@
   <data name="Detail" xml:space="preserve">
     <value>Detail</value>
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>„Protokoll hinzugefügt“ ist ein Kompatibilitäts-Auslöser. Sobald Berichte aktiv sind, wird er beim Abschluss eines Einsatz-, Schulungs-, Arbeits-, Besprechungs-, Leichenschau- oder Rückruf-Berichts ausgelöst und überträgt die alten Protokollfelder einschließlich des Berichtstexts; er bleibt zwei Minor-Releases oder zwölf Monate nach der Aktivierung erhalten. Verwenden Sie für neue Workflows die Berichts-Auslöser.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>Ereignis-ID</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>Korrelations-ID</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>Verursachungs-ID</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>Ereignisfolge</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>Ursprung</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>Übersprungen wegen</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>Übersprungen</value>
+  </data>
 </root>

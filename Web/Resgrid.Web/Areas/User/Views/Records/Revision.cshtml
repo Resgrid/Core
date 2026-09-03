@@ -1,0 +1,107 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordRevisionView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["RevisionHeader"];
+	var s = Model.Snapshot;
+	var d = s.Details ?? new RmsOperationalRecordDetail();
+	var isCoroner = Model.RecordType == RmsOperationalRecordType.Coroner;
+	string Name(string userId) => string.IsNullOrEmpty(userId) ? "-" : (Model.PersonnelNames.TryGetValue(userId, out var n) ? n : userId);
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["RevisionHeader"] #@Model.Revision.RevisionNumber</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li><a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@s.RecordId">@(s.RecordNumber ?? s.DraftReference)</a></li>
+			<li class="active"><strong>@localizer["Revision"] @Model.Revision.RevisionNumber</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (ClaimsAuthorizationHelper.CanExportRecords())
+			{
+				<a class="btn btn-info" asp-controller="Records" asp-action="PrintRevision" asp-route-area="User" asp-route-id="@s.RecordId" asp-route-revisionId="@Model.Revision.RmsRevisionId"><i class="fa fa-file-pdf-o"></i> @localizer["PrintPdf"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-8">
+		<div class="wrapper wrapper-content">
+			<div class="ibox">
+				<div class="ibox-title"><h5>@Model.RecordType.ToString() <span class="label label-default">@(((RmsRevisionTransition)Model.Revision.Transition).ToString())</span></h5></div>
+				<div class="ibox-content">
+					<dl class="dl-horizontal">
+						<dt>@localizer["RecordNumber"]</dt><dd>@(s.RecordNumber ?? "-")</dd>
+						<dt>@localizer["Definition"]</dt><dd>@s.DefinitionKey v@(s.DefinitionVersion)</dd>
+						<dt>@localizer["Actor"]</dt><dd>@Name(Model.Revision.ActorUserId)</dd>
+						<dt>@commonLocalizer["Date"]</dt><dd>@When(Model.Revision.CreatedOn)</dd>
+						<dt>@localizer["Checksum"]</dt><dd><code>@Model.Revision.Checksum</code></dd>
+						@if (!string.IsNullOrWhiteSpace(Model.Revision.ReasonCode))
+						{
+							<dt>@localizer["ReasonCode"]</dt><dd>@Model.Revision.ReasonCode @Model.Revision.ReasonText</dd>
+						}
+						<dt>@localizer["Start"]</dt><dd>@When(s.StartedOn)</dd>
+						<dt>@localizer["End"]</dt><dd>@When(s.EndedOn)</dd>
+						@if (!string.IsNullOrWhiteSpace(d.Course)) { <dt>@localizer["Course"]</dt><dd>@d.Course @d.CourseCode</dd> }
+						@if (!string.IsNullOrWhiteSpace(d.Instructors)) { <dt>@localizer["Instructors"]</dt><dd>@d.Instructors</dd> }
+						@if (!string.IsNullOrWhiteSpace(d.Type)) { <dt>@localizer["Type"]</dt><dd>@d.Type</dd> }
+						@if (!string.IsNullOrWhiteSpace(d.CallNumber)) { <dt>@localizer["Call"]</dt><dd>@d.CallNumber @d.CallName</dd> }
+						@if (!string.IsNullOrWhiteSpace(d.InitialReport)) { <dt>@localizer["InitialReport"]</dt><dd>@d.InitialReport</dd> }
+						@if (!string.IsNullOrWhiteSpace(d.Cause)) { <dt>@localizer["Cause"]</dt><dd>@d.Cause</dd> }
+						@if (!isCoroner && !string.IsNullOrWhiteSpace(d.Location)) { <dt>@localizer["Location"]</dt><dd>@d.Location</dd> }
+						@if (!isCoroner && !string.IsNullOrWhiteSpace(d.OtherPersonnel)) { <dt>@localizer["OtherPersonnel"]</dt><dd>@d.OtherPersonnel</dd> }
+					</dl>
+					<p style="white-space:pre-wrap">@d.Narrative</p>
+
+					@if (isCoroner)
+					{
+						<h4><i class="fa fa-lock"></i> @localizer["RestrictedSection"]</h4>
+						@if (Model.CanViewRestricted)
+						{
+							<dl class="dl-horizontal">
+								<dt>@localizer["CaseNumber"]</dt><dd>@d.CaseNumber</dd>
+								<dt>@localizer["PronouncedDeceasedBy"]</dt><dd>@d.PronouncedDeceasedBy</dd>
+								<dt>@localizer["BodyLocation"]</dt><dd>@d.BodyLocation</dd>
+								<dt>@localizer["Destination"]</dt><dd>@d.Destination</dd>
+								<dt>@localizer["OtherPersonnel"]</dt><dd>@d.OtherPersonnel</dd>
+							</dl>
+						}
+						else
+						{
+							<p class="text-muted">@localizer["RestrictedNotice"]</p>
+						}
+					}
+
+					@if (s.Participants.Count > 0)
+					{
+						<h4>@localizer["Participants"]</h4>
+						<ul>
+							@foreach (var p in s.Participants) { <li>@(p.DisplayNameSnapshot ?? Name(p.UserId)) @(string.IsNullOrWhiteSpace(p.Role) ? string.Empty : "(" + p.Role + ")")</li> }
+						</ul>
+					}
+					@if (s.Units.Count > 0)
+					{
+						<h4>@localizer["Units"]</h4>
+						<ul>
+							@foreach (var u in s.Units) { <li>@u.UnitNameSnapshot: @When(u.Dispatched) / @When(u.Enroute) / @When(u.OnScene) / @When(u.Released) / @When(u.InQuarters)</li> }
+						</ul>
+					}
+					@if (s.Attachments.Count > 0)
+					{
+						<h4>@localizer["Attachments"]</h4>
+						<ul>
+							@foreach (var a in s.Attachments) { <li>@a.FileName <span class="text-muted small">(@a.Checksum)</span></li> }
+						</ul>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

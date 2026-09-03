@@ -72,6 +72,10 @@
                                     <p class="form-control-static">
                                         <strong>@triggerEventTypeName</strong>
                                         <br /><small class="text-muted">The trigger event type cannot be changed after creation.</small>
+                                        @if ((bool)(ViewBag.RecordsTriggersAvailable ?? false) && Model.TriggerEventType == (int)Resgrid.Model.WorkflowTriggerEventType.LogAdded)
+                                        {
+                                            <br /><small class="text-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["LogAddedCompatibilityWarning"]</small>
+                                        }
                                     </p>
                                 </div>
                             </div>

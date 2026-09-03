@@ -347,4 +347,10 @@
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>View Role</value>
   </data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>Niezakończone rekordy</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>Ten członek nadal posiada {0} niezakończonych rekordów. Otwórz każdy z nich i przypisz go innemu członkowi przed usunięciem, w przeciwnym razie pozostanie własnością usuniętego członka.</value>
+  </data>
 </root>

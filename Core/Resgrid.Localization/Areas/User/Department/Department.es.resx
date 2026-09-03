@@ -936,4 +936,97 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>Regresando</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>Perfil del departamento</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>Esta es la identidad que Resgrid imprime en los registros, muestra en los correos con marca y usa dondequiera que el departamento se presente. Deje un campo vacío para usar la configuración del departamento.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>Identidad</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>Nombre para mostrar</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>Nombre corto</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>Número de teléfono</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>Sitio web</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>La dirección impresa en registros y correos es la dirección del departamento:</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>Redes sociales</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>Logotipo</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG o JPEG, hasta 2 MB, al menos 200 px en el lado largo (se recomiendan 512 px o más). La imagen se recodifica sin metadatos y a partir de ella se generan las versiones para encabezado de impresión, cabecera de correo y miniatura.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>Subir logotipo</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>Quitar logotipo</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>No se ha subido ningún logotipo. Las impresiones y los correos usan solo el nombre del departamento.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>Encabezado de impresión</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>Cabecera de correo</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>Miniatura</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>Usar la cabecera del departamento en los correos operativos</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>Los correos de llamadas, mensajes, entrega de informes y flujos de trabajo muestran su logotipo y nombre en lugar de la cabecera de Resgrid; las notificaciones de registros se envían como «nombre del departamento via Resgrid». Los correos de cuenta y facturación siempre conservan la marca Resgrid.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>Enlace público de la cabecera</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>Los clientes de correo no pueden iniciar sesión, por lo que la cabecera se sirve desde este enlace imposible de adivinar. Regenerarlo invalida la imagen en todos los correos ya enviados.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>Regenerar enlace</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>Perfil del departamento guardado.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>Logotipo subido y versiones generadas.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>Logotipo eliminado.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>Elija un archivo PNG o JPEG para subir.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>Se ha emitido un nuevo enlace de cabecera; los correos ya enviados dejarán de mostrar el logotipo.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>No se pudo guardar el perfil; revise los campos marcados.</value>
+  </data>
 </root>

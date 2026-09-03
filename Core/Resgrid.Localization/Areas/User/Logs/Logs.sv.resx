@@ -305,4 +305,5 @@
   <data name="WorkLogInformation" xml:space="preserve">
     <value>Work Log Information</value>
   </data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>Journaler är aktivt för denna avdelning. Befintliga loggar är skrivskyddade: de kan visas, skrivas ut och exporteras, men inte skapas, redigeras eller raderas.</value></data>
 </root>

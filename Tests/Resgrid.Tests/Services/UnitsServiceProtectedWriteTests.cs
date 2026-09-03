@@ -50,7 +50,8 @@ namespace Resgrid.Tests.Services
 				new Lazy<IUnitLocationsMongoRepository>(() => Mock.Of<IUnitLocationsMongoRepository>()),
 				Mock.Of<IUnitActiveRolesRepository>(), Mock.Of<IDepartmentGroupsService>(), Mock.Of<ILimitsService>(),
 				Mock.Of<IPersonnelRolesService>(),
-				new Lazy<IProtectedWriteService>(() => _protectedWriteService.Object));
+				new Lazy<IProtectedWriteService>(() => _protectedWriteService.Object),
+				new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()));
 		}
 
 		private static UnitState BuildState() => new UnitState

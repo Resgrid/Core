@@ -1,5 +1,6 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Units.ViewLogsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Logs.Logs> logsLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["ViewUnitLogsHeader"];
 }
@@ -45,7 +46,14 @@
         </div>
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <a class="btn btn-primary top-button" asp-controller="Units" asp-action="AddLog" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId">@localizer["AddLog"]</a>
+                @if (Model.LegacyReadOnly)
+                {
+                    <span class="text-muted">@logsLocalizer["LogsReadOnly"]</span>
+                }
+                else
+                {
+                    <a class="btn btn-primary top-button" asp-controller="Units" asp-action="AddLog" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId">@localizer["AddLog"]</a>
+                }
             </div>
         </div>
     </div>

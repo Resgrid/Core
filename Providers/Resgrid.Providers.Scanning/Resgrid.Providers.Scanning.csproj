@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Description>Malware scanning for Records attachments (ClamAV clamd INSTREAM client).</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+  </ItemGroup>
+
+</Project>

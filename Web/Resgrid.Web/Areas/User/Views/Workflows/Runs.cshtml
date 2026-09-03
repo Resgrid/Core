@@ -62,7 +62,8 @@
                                         <td>@run.StartedOn.ToString("yyyy-MM-dd HH:mm:ss")</td>
                                         <td>@(run.CompletedOn?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</td>
                                         <td>@run.AttemptNumber</td>
-                                        <td class="text-danger small">@(run.ErrorMessage?.Length > 80 ? run.ErrorMessage.Substring(0,80)+"..." : run.ErrorMessage)</td>
+                                        @{ var note = run.ErrorMessage ?? (string.IsNullOrWhiteSpace(run.SkipReason) ? null : localizer["SkipReason"] + ": " + run.SkipReason); }
+                                        <td class="text-danger small">@(note?.Length > 80 ? note.Substring(0,80)+"..." : note)</td>
                                     </tr>
                                 }
                             </tbody>

@@ -57,6 +57,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly IUnitStatesService _unitStatesService;
 		private readonly ICalendarService _calendarService;
+		// Department activity and personnel hours read legacy Logs and finalized Records through one feed, so
+		// totals reconcile across the Records cutover (RMS plan section 4.10).
+		private readonly IRecordsReportingService _recordsReporting;
 
 		public ReportsController(IDepartmentsService departmentsService, IUsersService usersService,
 			IActionLogsService actionLogsService,
@@ -69,7 +72,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICustomStateService customStateService, IAuthorizationService authorizationService,
 			IUnitsService unitsService, IUnitStatesService unitStatesService,
 			ICalendarService calendarService, IDepartmentMemberSensitiveDataService memberSensitiveDataService,
-			IProtectedReadService protectedReadService)
+			IProtectedReadService protectedReadService, IRecordsReportingService recordsReporting)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -92,6 +95,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_unitsService = unitsService;
 			_unitStatesService = unitStatesService;
 			_calendarService = calendarService;
+			_recordsReporting = recordsReporting;
 		}
 
 		#endregion Private Members and Constructors
@@ -1045,7 +1049,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1),
 				new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59));
 			var logs =
-				await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Training,
+				await _recordsReporting.GetActivityAsync(DepartmentId, UserId, RmsOperationalRecordType.Training,
 					new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1),
 					new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59));
 
@@ -1110,20 +1114,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 						training.Group = group.Name;
 
 						var totalTrainings = logs.Where(x =>
-							x.StationGroup == null || x.StationGroupId == group.DepartmentGroupId);
+							!x.StationGroupId.HasValue || x.StationGroupId == group.DepartmentGroupId);
 						training.Total = totalTrainings.Count();
 					}
 					else
 					{
-						var totalTrainings = logs.Where(x => x.StationGroup == null);
+						var totalTrainings = logs.Where(x => !x.StationGroupId.HasValue);
 						training.Total = totalTrainings.Count();
 					}
 
 					var tonedCalls = calls.Where(x => x.Dispatches.Select(y => y.UserId).Contains(person.UserId));
 					response.TotalCalls = tonedCalls.Count();
 
-					var attendedTrainings = logs.Where(x =>
-						x.Users != null && x.Users.Select(y => y.UserId).Contains(person.UserId));
+					var attendedTrainings = logs.Where(x => x.Participants.Select(y => y.UserId).Contains(person.UserId));
 					training.Attended = attendedTrainings.Count();
 
 					var actionLogs = await _actionLogsService.GetAllActionLogsForUserInDateRangeAsync(person.UserId,
@@ -1137,11 +1140,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 						foreach (var tonnedCall in call.ToList())
 						{
-							var callLog = await _logService.GetLogsForCallAsync(tonnedCall.CallId);
+							var callLog = await _recordsReporting.GetCallActivityAsync(DepartmentId, UserId, tonnedCall.CallId);
 							if (callLog != null && callLog.Any())
 							{
-								var userLogs = callLog.Where(x =>
-									x.Users != null && x.Users.Select(y => y.UserId).Contains(person.UserId));
+								var userLogs = callLog.Where(x => x.Participants.Select(y => y.UserId).Contains(person.UserId));
 								if (userLogs != null && userLogs.Any())
 								{
 									count += userLogs.Count();
@@ -1196,13 +1198,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var workLogs =
-				await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Work, model.Start,
+				await _recordsReporting.GetActivityAsync(DepartmentId, UserId, RmsOperationalRecordType.Work, model.Start,
 					model.End);
 			var trainingLogs =
-				await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Training,
+				await _recordsReporting.GetActivityAsync(DepartmentId, UserId, RmsOperationalRecordType.Training,
 					model.Start, model.End);
 			var callLogs =
-				await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Run, model.Start,
+				await _recordsReporting.GetActivityAsync(DepartmentId, UserId, RmsOperationalRecordType.Run, model.Start,
 					model.End);
 
 			model.CallsHours = new List<PersonnelCallHours>();
@@ -1243,13 +1245,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 						trainingHours.Group = group.Name;
 					}
 
-					var totalCallLogs = callLogs.Where(x => x.Users.Select(y => y.UserId).Contains(person.UserId));
+					var totalCallLogs = callLogs.Where(x => x.Participants.Select(y => y.UserId).Contains(person.UserId));
 					callHours.TotalCalls = totalCallLogs.Count();
 
 					double callTotalHours = 0;
 					foreach (var log in totalCallLogs)
 					{
-						var userLog = log.Users.FirstOrDefault(x => x.UserId == person.UserId);
+						var userLog = log.Participants.FirstOrDefault(x => x.UserId == person.UserId);
 						if (log.StartedOn.HasValue && log.EndedOn.HasValue)
 						{
 							callTotalHours += (log.EndedOn.Value - log.StartedOn.Value).TotalSeconds;
@@ -1274,13 +1276,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					callHours.TotalSeconds += callTotalHours;
 
-					var totalWorkLogs = workLogs.Where(x => x.Users.Select(y => y.UserId).Contains(person.UserId));
+					var totalWorkLogs = workLogs.Where(x => x.Participants.Select(y => y.UserId).Contains(person.UserId));
 					workHours.TotalWorkLogs = totalWorkLogs.Count();
 					workHours.TotalSeconds = totalWorkLogs.Where(log => log.StartedOn.HasValue && log.EndedOn.HasValue)
 						.Sum(log => (log.EndedOn.Value - log.StartedOn.Value).TotalSeconds);
 
 					var totalTrainingLogs =
-						trainingLogs.Where(x => x.Users.Select(y => y.UserId).Contains(person.UserId));
+						trainingLogs.Where(x => x.Participants.Select(y => y.UserId).Contains(person.UserId));
 					trainingHours.TotalTrainings = totalTrainingLogs.Count();
 					trainingHours.TotalSeconds = totalTrainingLogs
 						.Where(log => log.StartedOn.HasValue && log.EndedOn.HasValue).Sum(log =>
@@ -1320,15 +1322,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			var workLogs =
-				await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Work,
+				await _recordsReporting.GetActivityAsync(DepartmentId, UserId, RmsOperationalRecordType.Work,
 					model.Start, model.End);
 
 			var trainingLogs =
-				await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Training,
+				await _recordsReporting.GetActivityAsync(DepartmentId, UserId, RmsOperationalRecordType.Training,
 					model.Start, model.End);
 
 			var callLogs =
-				await _workLogsService.GetAllLogsByDepartmentDateRangeAsync(DepartmentId, LogTypes.Run,
+				await _recordsReporting.GetActivityAsync(DepartmentId, UserId, RmsOperationalRecordType.Run,
 					model.Start, model.End);
 
 			model.CallDetails = new List<CallDetail>();
@@ -1345,15 +1347,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (group != null)
 				model.Group = group.Name;
 
-			var totalCallLogs = callLogs.Where(x => x.Users.Select(y => y.UserId).Contains(userId));
+			var totalCallLogs = callLogs.Where(x => x.Participants.Select(y => y.UserId).Contains(userId));
 			foreach (var log in totalCallLogs)
 			{
 				var callDetail = new CallDetail();
-				callDetail.CallNumber = log.Call.Number;
-				callDetail.Name = log.Call.Name;
+				callDetail.CallNumber = log.CallNumber;
+				callDetail.Name = log.CallName;
 
 				bool valueSet = false;
-				var userLog = log.Users.FirstOrDefault(x => x.UserId == userId);
+				var userLog = log.Participants.FirstOrDefault(x => x.UserId == userId);
 				if (log.StartedOn.HasValue && log.EndedOn.HasValue)
 				{
 					callDetail.Start = log.StartedOn.Value;
@@ -1390,7 +1392,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.CallDetails.Add(callDetail);
 			}
 
-			var totalWorkLogs = workLogs.Where(x => x.Users.Select(y => y.UserId).Contains(userId));
+			var totalWorkLogs = workLogs.Where(x => x.Participants.Select(y => y.UserId).Contains(userId));
 			foreach (var log in totalWorkLogs)
 			{
 				var workDetail = new WorkDetail();
@@ -1408,7 +1410,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
-			var totalTrainingLogs = trainingLogs.Where(x => x.Users.Select(y => y.UserId).Contains(userId));
+			var totalTrainingLogs = trainingLogs.Where(x => x.Participants.Select(y => y.UserId).Contains(userId));
 			foreach (var log in totalTrainingLogs)
 			{
 				var trainingDetail = new TrainingDetail();

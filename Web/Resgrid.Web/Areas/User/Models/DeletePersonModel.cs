@@ -14,5 +14,8 @@ namespace Resgrid.Web.Areas.User.Models
 
 		[Required]
 		public bool AreYouSure { get; set; }
+
+		/// <summary>Unfinalized Records the member still owns (RMS plan 4.7); shown so they can be reassigned first.</summary>
+		public System.Collections.Generic.List<RmsOperationalRecord> OutstandingRecords { get; set; } = new System.Collections.Generic.List<RmsOperationalRecord>();
 	}
 }

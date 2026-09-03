@@ -63,7 +63,7 @@ namespace Resgrid.Tests.Providers
 			// Act
 			var result = await provider.SendCallMail("member@example.com", "New call", "Structure fire",
 				"High", "Reported structure fire", "12-A", "100 Main St", "2026-09-02 07:12",
-				42, "user-1", "38.9399,-119.9772", AudioUrl);
+				42, "user-1", "38.9399,-119.9772", AudioUrl, null);
 
 			// Assert
 			result.Should().BeTrue();
@@ -84,7 +84,7 @@ namespace Resgrid.Tests.Providers
 			// Act
 			var result = await provider.SendCallMail("member@example.com", "New call", "Structure fire",
 				"High", "Reported structure fire", "12-A", "100 Main St", "2026-09-02 07:12",
-				42, "user-1", "38.9399,-119.9772", null);
+				42, "user-1", "38.9399,-119.9772", null, null);
 
 			// Assert
 			result.Should().BeTrue();
@@ -125,7 +125,7 @@ namespace Resgrid.Tests.Providers
 				"Recipient", "member@example.com");
 			await provider.SendCallMail("member@example.com", "New call", "Structure fire", "High",
 				"Reported structure fire", "12-A", "100 Main St", "2026-09-02 07:12", 42, "user-1",
-				"38.9399,-119.9772", AudioUrl);
+				"38.9399,-119.9772", AudioUrl, null);
 			await provider.SendTroubleAlertMail("member@example.com", "Engine 1", "38.9399,-119.9772",
 				"Alex Smith", "100 Main St", "101 Main St", "2026-09-02 07:12", "Structure fire");
 			await provider.SendCancellationReciept("Recipient", "member@example.com", "2026-09-30",
@@ -136,7 +136,7 @@ namespace Resgrid.Tests.Providers
 				"chief@example.com");
 			await provider.SendMessageMail("member@example.com", "Resgrid message from Chief Smith",
 				"September drill", "Please review the drill plan.", "chief@example.com", "Chief Smith",
-				"2026-09-02 07:12 UTC", 42);
+				"2026-09-02 07:12 UTC", 42, null);
 			await provider.SendPasswordRecoveryMail("Recipient", "member@example.com", "Example Fire",
 				"https://app.resgrid.test/reset#token", "192.0.2.1", "Test browser", "2026-09-02 07:12 UTC",
 				false);
@@ -150,7 +150,7 @@ namespace Resgrid.Tests.Providers
 				"member@example.com", 42);
 			await provider.SendReportDeliveryMail("member@example.com", "Scheduled report",
 				"Your report is attached.", "2026-09-02 07:12 UTC", "Weekly activity", "weekly.pdf",
-				new byte[] { 1, 2, 3 }, "https://app.resgrid.test/report/42");
+				new byte[] { 1, 2, 3 }, "https://app.resgrid.test/report/42", null);
 			await provider.SendCommunicationTestMail("member@example.com", CommunicationTestContent());
 
 			// Assert
@@ -190,7 +190,7 @@ namespace Resgrid.Tests.Providers
 			// Act
 			await provider.SendCallMail("member@example.com", "New call", "Structure fire", "High",
 				"Reported structure fire", "12-A", "100 Main St", "2026-09-02 07:12", 42, "user-1",
-				"38.9399,-119.9772", null);
+				"38.9399,-119.9772", null, null);
 			await provider.SendCancellationReciept("Recipient", "member@example.com", "2026-09-30",
 				"Example Fire");
 			await provider.SendChargeFailed("Recipient", "member@example.com", "2026-09-30", "Example Fire",
@@ -199,7 +199,7 @@ namespace Resgrid.Tests.Providers
 				"chief@example.com");
 			await provider.SendMessageMail("member@example.com", "Resgrid message from Chief Smith",
 				"September drill", "Please review the drill plan.", "chief@example.com", "Chief Smith",
-				"2026-09-02 07:12 UTC", 42);
+				"2026-09-02 07:12 UTC", 42, null);
 			await provider.SendPasswordChangedByAdministratorMail("Recipient", "recipient",
 				"member@example.com", "Example Fire");
 			await provider.SendPaymentReciept("Example Fire", "Recipient", "2026-09-02", "$20.00",
@@ -250,7 +250,7 @@ namespace Resgrid.Tests.Providers
 			// Act
 			var result = await provider.SendReportDeliveryMail("member@example.com", "Scheduled report",
 				"Your report is attached.", "2026-09-02 07:12 UTC", "Weekly activity", "weekly.pdf",
-				new byte[] { 1, 2, 3 }, null);
+				new byte[] { 1, 2, 3 }, null, null);
 
 			// Assert
 			result.Should().BeTrue();
@@ -270,9 +270,9 @@ namespace Resgrid.Tests.Providers
 
 			// Act
 			await provider.SendMessageMail("member@example.com", "New message", "Drill details", body,
-				"chief@example.com", "Chief Smith", "2026-09-02 07:12 UTC", 42);
+				"chief@example.com", "Chief Smith", "2026-09-02 07:12 UTC", 42, null);
 			await provider.SendReportDeliveryMail("member@example.com", "Scheduled report", body,
-				"2026-09-02 07:12 UTC", "Weekly activity", "weekly.pdf", new byte[] { 1, 2, 3 }, null);
+				"2026-09-02 07:12 UTC", "Weekly activity", "weekly.pdf", new byte[] { 1, 2, 3 }, null, null);
 
 			// Assert
 			sentEmails.Should().HaveCount(2);

@@ -45,5 +45,29 @@ namespace Resgrid.Tests.Services
 			source.Should().NotContain(
 				"IF (SELECT COUNT(*) FROM DepartmentMembers WHERE UserId = @UserId) = 1");
 		}
+
+		[Test]
+		public void Managing_user_keeps_other_department_memberships_and_account()
+		{
+			var source = RepositorySource();
+			const string deleteTargetMembership =
+				"DELETE FROM [dbo].[DepartmentMembers] WHERE UserId = @ManagingUserId AND DepartmentId = @DepartmentId";
+			const string noMembershipsRemain =
+				"IF (SELECT COUNT(*) FROM DepartmentMembers WHERE UserId = @ManagingUserId) = 0";
+			const string deleteAccount =
+				"DELETE FROM [dbo].[AspNetUsers] WHERE Id = @ManagingUserId";
+
+			var deleteTargetMembershipIndex = source.IndexOf(deleteTargetMembership, StringComparison.Ordinal);
+			var remainingMembershipCheckIndex = source.IndexOf(noMembershipsRemain, StringComparison.Ordinal);
+			var deleteAccountIndex = source.IndexOf(deleteAccount, StringComparison.Ordinal);
+
+			deleteTargetMembershipIndex.Should().BeGreaterThan(0);
+			remainingMembershipCheckIndex.Should().BeGreaterThan(deleteTargetMembershipIndex);
+			deleteAccountIndex.Should().BeGreaterThan(remainingMembershipCheckIndex,
+				"the managing user's account must be deleted only when no memberships remain");
+			source.Should().NotMatchRegex(
+				@"DELETE FROM \[dbo\]\.\[DepartmentMembers\] WHERE UserId = @ManagingUserId\s*(?:\r?\n|$)",
+				"memberships in other departments must be preserved");
+		}
 	}
 }

@@ -63,6 +63,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
@@ -71,7 +72,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
 			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			IStringLocalizer<Resgrid.Localization.Common> localizer, IPhoneNumberProcesserProvider phoneNumberProcesser,
-			IExternalIdentityLinkService externalIdentityLinkService, IProtectedReadService protectedReadService)
+			IExternalIdentityLinkService externalIdentityLinkService, IProtectedReadService protectedReadService,
+			IDepartmentMemberSensitiveDataService memberSensitiveDataService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -100,6 +102,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_phoneNumberProcesser = phoneNumberProcesser;
 			_externalIdentityLinkService = externalIdentityLinkService;
 			_protectedReadService = protectedReadService;
+			_memberSensitiveDataService = memberSensitiveDataService;
 		}
 		#endregion Private Members and Constructors
 
@@ -607,6 +610,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var result = await _userManager.CreateAsync(user, model.NewPassword);
 				if (result.Succeeded)
 				{
+					// IdentificationNumber is department-issued. Keep it off the new global profile
+					// row even while the legacy columns remain available as relocation sources.
+					var identificationNumber = model.Profile.IdentificationNumber;
+					model.Profile.IdentificationNumber = null;
+					model.Profile.HomeAddressId = null;
+					model.Profile.MailingAddressId = null;
 					model.Profile.UserId = user.UserId;
 					model.Profile.MobileCarrier = (int)model.Carrier;
 					model.Profile.FirstName = model.FirstName;
@@ -623,6 +632,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 					catch { }
 
 					await _departmentsService.AddUserToDepartmentAsync(DepartmentId, user.UserId, false, cancellationToken);
+
+					if (!string.IsNullOrWhiteSpace(identificationNumber))
+					{
+						await _memberSensitiveDataService.SaveAsync(new DepartmentMemberSensitiveData
+						{
+							DepartmentId = DepartmentId,
+							UserId = user.UserId,
+							IdentificationNumber = identificationNumber,
+							// This is a brand-new profile with no legacy data to relocate. Stamping it
+							// prevents a later sweep from treating the row as an incomplete move.
+							LegacyProfileRelocatedOn = DateTime.UtcNow
+						}, cancellationToken);
+					}
 
 					if (model.MustChangePasswordOnLogin)
 					{

@@ -38,44 +38,48 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Execute.Sql(@"
-DO $$
-BEGIN
-	IF EXISTS (
-		SELECT 1
-		FROM userprofiles up
-		INNER JOIN departmentmembers dm ON dm.userid = up.userid AND dm.isdeleted = false
-		LEFT JOIN departmentmembersensitivedata s
-			ON s.departmentid = dm.departmentid AND s.userid = up.userid
-		WHERE (
-				(up.identificationnumber IS NOT NULL AND btrim(up.identificationnumber::text) <> '')
-				OR up.homeaddressid IS NOT NULL
-				OR up.mailingaddressid IS NOT NULL
-			)
-		  AND (s.departmentmembersensitivedataid IS NULL OR s.legacyprofilerelocatedon IS NULL)) THEN
-		RAISE EXCEPTION 'M0141 refused: members still hold legacy profile data that relocation has not stamped as moved. Run the member profile relocation to completion first - this migration destroys the originals.';
-	END IF;
-END $$;");
-
-			// Only addresses nothing else references. A shared row (a contact's, a station's) is
-			// left exactly as it is.
-			Execute.Sql(@"
-DELETE FROM addresses a
-WHERE EXISTS (SELECT 1 FROM userprofiles up
-              WHERE up.homeaddressid = a.addressid OR up.mailingaddressid = a.addressid)
-  AND NOT EXISTS (SELECT 1 FROM contacts c
-                  WHERE c.physicaladdressid = a.addressid OR c.mailingaddressid = a.addressid)
-  AND NOT EXISTS (SELECT 1 FROM departments d WHERE d.addressid = a.addressid)
-  AND NOT EXISTS (SELECT 1 FROM departmentgroups g WHERE g.addressid = a.addressid)
-  AND NOT EXISTS (SELECT 1 FROM departmentprofiles p WHERE p.addressid = a.addressid);");
-
-			Execute.Sql(@"
-UPDATE userprofiles
-SET homeaddressid = NULL, mailingaddressid = NULL
-WHERE homeaddressid IS NOT NULL OR mailingaddressid IS NOT NULL;");
-
-			if (Schema.Table("userprofiles").Column("identificationnumber").Exists())
-				Delete.Column("identificationnumber").FromTable("userprofiles");
+			// Note: This migration is in order by the migration code has not run against production,
+			// so this migration would have been applied and destryed the data. What this migration
+			// does will need to be recreated here in a little bit.
+			
+// 			Execute.Sql(@"
+// DO $$
+// BEGIN
+// 	IF EXISTS (
+// 		SELECT 1
+// 		FROM userprofiles up
+// 		INNER JOIN departmentmembers dm ON dm.userid = up.userid AND dm.isdeleted = false
+// 		LEFT JOIN departmentmembersensitivedata s
+// 			ON s.departmentid = dm.departmentid AND s.userid = up.userid
+// 		WHERE (
+// 				(up.identificationnumber IS NOT NULL AND btrim(up.identificationnumber::text) <> '')
+// 				OR up.homeaddressid IS NOT NULL
+// 				OR up.mailingaddressid IS NOT NULL
+// 			)
+// 		  AND (s.departmentmembersensitivedataid IS NULL OR s.legacyprofilerelocatedon IS NULL)) THEN
+// 		RAISE EXCEPTION 'M0141 refused: members still hold legacy profile data that relocation has not stamped as moved. Run the member profile relocation to completion first - this migration destroys the originals.';
+// 	END IF;
+// END $$;");
+//
+// 			// Only addresses nothing else references. A shared row (a contact's, a station's) is
+// 			// left exactly as it is.
+// 			Execute.Sql(@"
+// DELETE FROM addresses a
+// WHERE EXISTS (SELECT 1 FROM userprofiles up
+//               WHERE up.homeaddressid = a.addressid OR up.mailingaddressid = a.addressid)
+//   AND NOT EXISTS (SELECT 1 FROM contacts c
+//                   WHERE c.physicaladdressid = a.addressid OR c.mailingaddressid = a.addressid)
+//   AND NOT EXISTS (SELECT 1 FROM departments d WHERE d.addressid = a.addressid)
+//   AND NOT EXISTS (SELECT 1 FROM departmentgroups g WHERE g.addressid = a.addressid)
+//   AND NOT EXISTS (SELECT 1 FROM departmentprofiles p WHERE p.addressid = a.addressid);");
+//
+// 			Execute.Sql(@"
+// UPDATE userprofiles
+// SET homeaddressid = NULL, mailingaddressid = NULL
+// WHERE homeaddressid IS NOT NULL OR mailingaddressid IS NOT NULL;");
+//
+// 			if (Schema.Table("userprofiles").Column("identificationnumber").Exists())
+// 				Delete.Column("identificationnumber").FromTable("userprofiles");
 		}
 
 		public override void Down()

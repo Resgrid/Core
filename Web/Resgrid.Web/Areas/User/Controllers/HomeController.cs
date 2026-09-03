@@ -437,7 +437,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Email = model.User.Email;
 
 			model.Profile = await _userProfileService.GetProfileByUserIdAsync(userId, true);
-			await HydrateMemberIdentificationNumberAsync(model, userId);
+			var protectionEnforced = await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId);
+			await HydrateMemberIdentificationNumberAsync(model, userId, protectionEnforced);
 
 			if (model.Profile == null)
 				model.Profile = new UserProfile();
@@ -463,10 +464,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _protectedReadService.ResolveMemberSensitiveDataForReadAsync(DepartmentId, new[] { memberAddresses },
 					Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 
-			// M0141 (contract) cleared the legacy shared-Addresses links and deleted the rows nothing
-			// else referenced, so there is no fallback left to read: the department-scoped copy is
-			// the only copy. The protection state is still needed for the reveal banner below.
-			var protectionEnforced = await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId);
+			// During the expand/relocate window, an unprotected member whose target row has not been
+			// stamped may still need the legacy address as a read-only fallback. Never fall back after
+			// relocation (a blank target can be an intentional clear), and never bypass ADP for a
+			// protected department by rendering the plaintext legacy copy.
+			var legacyAddressFallbackAllowed = !protectionEnforced &&
+				(memberAddresses == null || !memberAddresses.LegacyProfileRelocatedOn.HasValue);
 
 			// When protection is enforced, this page is showing placeholders for the identification
 			// number, the addresses, the emergency contacts and the custom fields, and a step-up can
@@ -480,6 +483,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.PhysicalCountry = memberAddresses.HomeCountry;
 				model.PhysicalPostalCode = memberAddresses.HomePostalCode;
 				model.PhysicalState = memberAddresses.HomeState;
+			}
+			else if (legacyAddressFallbackAllowed && model.Profile != null && model.Profile.HomeAddressId.HasValue)
+			{
+				var homeAddress = await _addressService.GetAddressByIdAsync(model.Profile.HomeAddressId.Value);
+				if (homeAddress != null)
+				{
+					model.PhysicalAddress1 = homeAddress.Address1;
+					model.PhysicalCity = homeAddress.City;
+					model.PhysicalCountry = homeAddress.Country;
+					model.PhysicalPostalCode = homeAddress.PostalCode;
+					model.PhysicalState = homeAddress.State;
+				}
 			}
 
 			if (memberAddresses != null && !string.IsNullOrWhiteSpace(memberAddresses.MailingAddress1))
@@ -512,6 +527,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 					SameComponent(memberAddresses.MailingState, memberAddresses.HomeState) &&
 					SameComponent(memberAddresses.MailingPostalCode, memberAddresses.HomePostalCode) &&
 					SameComponent(memberAddresses.MailingCountry, memberAddresses.HomeCountry);
+			}
+			else if (legacyAddressFallbackAllowed && model.Profile != null && model.Profile.MailingAddressId.HasValue)
+			{
+				if (model.Profile.HomeAddressId.HasValue &&
+					model.Profile.MailingAddressId.Value == model.Profile.HomeAddressId.Value)
+				{
+					model.MailingAddressSameAsPhysical = true;
+				}
+				else
+				{
+					var mailingAddress = await _addressService.GetAddressByIdAsync(model.Profile.MailingAddressId.Value);
+					if (mailingAddress != null)
+					{
+						model.MailingAddress1 = mailingAddress.Address1;
+						model.MailingCity = mailingAddress.City;
+						model.MailingCountry = mailingAddress.Country;
+						model.MailingPostalCode = mailingAddress.PostalCode;
+						model.MailingState = mailingAddress.State;
+					}
+				}
 			}
 
 			if (model.Profile != null)
@@ -773,7 +808,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.ServerName = Environment.MachineName;
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 
-				var savedProfile = await _userProfileService.GetProfileByUserIdAsync(model.UserId);
+				var savedProfile = await _userProfileService.GetProfileByUserIdAsync(model.UserId, true);
 
 				if (savedProfile == null)
 					savedProfile = new UserProfile();
@@ -801,13 +836,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				savedProfile.HomeNumber = (homeResult != null && homeResult.IsValid && !string.IsNullOrWhiteSpace(homeResult.InternationalNumber))
 					? homeResult.InternationalNumber
 					: model.Profile.HomeNumber;
-				// The identification number is DEPARTMENT-SCOPED (ADP plan 5.1): a profile row is
-				// global to the user, so it can neither be encrypted with one department's key nor
-				// hold the different numbers different departments issue the same person. The
-				// profile column is left untouched here — it is dropped in the contract migration
-				// once this is deployed.
-				await SaveMemberIdentificationNumberAsync(model.UserId, model.Profile.IdentificationNumber, cancellationToken);
-				await SaveMemberAddressesAsync(model, cancellationToken);
+				// Identification number and addresses are department-scoped. The legacy profile
+				// fields remain read-only migration sources throughout the expand/relocate window.
+				await SaveMemberSensitiveProfileAsync(model, savedProfile, cancellationToken);
 				savedProfile.TimeZone = model.Profile.TimeZone;
 				savedProfile.Language = model.Profile.Language;
 
@@ -873,7 +904,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 
 				// Addresses are NOT written back to the shared Addresses table or relinked on the
-				// profile. SaveMemberAddressesAsync above is the only writer now (plan 5.1): the
+				// profile. SaveMemberSensitiveProfileAsync above is the only writer now (plan 5.1): the
 				// department-scoped copy is the one that can be encrypted, and keeping a second
 				// plaintext copy in sync would recreate exactly the leak this move exists to close.
 				// The legacy link is left as it stands for members relocation has not reached yet;
@@ -1546,7 +1577,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// Protected departments resolve it through the read pipeline, so it arrives as plaintext
 		/// with a valid grant and as the REDACTED placeholder without one — never as ciphertext.
 		/// </summary>
-		private async Task HydrateMemberIdentificationNumberAsync(EditProfileModel model, string userId)
+		private async Task HydrateMemberIdentificationNumberAsync(EditProfileModel model, string userId,
+			bool protectionEnforced)
 		{
 			if (model?.Profile == null)
 				return;
@@ -1554,24 +1586,42 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var sensitive = await _memberSensitiveDataService.GetByDepartmentAndUserAsync(DepartmentId, userId);
 			if (sensitive == null)
 			{
-				model.Profile.IdentificationNumber = null;
+				// Dapper still hydrates the ignored legacy column during the relocation window. It is
+				// safe as a read-only fallback only for an unprotected department; a protected
+				// department must wait for the worker to move it through the encrypted write path.
+				if (protectionEnforced)
+					model.Profile.IdentificationNumber = null;
 				return;
 			}
 
 			await _protectedReadService.ResolveMemberSensitiveDataForReadAsync(DepartmentId, new[] { sensitive },
 				Request.Headers["X-Resgrid-Protected-Grant"].ToString(), UserId);
 
-			model.Profile.IdentificationNumber = sensitive.IdentificationNumber;
+			// Once stamped, an empty target is authoritative (the member may have cleared it). Before
+			// the stamp, an unprotected row with an empty target can still read the legacy source so
+			// this edit itself completes the move instead of presenting a surprising blank.
+			if (protectionEnforced || sensitive.LegacyProfileRelocatedOn.HasValue ||
+				!string.IsNullOrWhiteSpace(sensitive.IdentificationNumber))
+			{
+				model.Profile.IdentificationNumber = sensitive.IdentificationNumber;
+			}
 		}
 
 		/// <summary>
-		/// Persists the member's department-scoped home and mailing addresses (plan 5.1). Values
-		/// still showing the REDACTED placeholder were never revealed to this user and are skipped
-		/// rather than written back over the stored address.
+		/// Persists all fields moved by the member-profile relocation as one department-scoped row.
+		/// Values still showing the REDACTED placeholder were never revealed to this user and are
+		/// skipped rather than written back over the stored value.
+		///
+		/// An unprotected edit also completes the relocation marker. The GET action either loaded the
+		/// department value or supplied the guarded legacy fallback for every field, so the submitted
+		/// row is authoritative even when the user deliberately cleared a value. Protected departments
+		/// are left unstamped for MemberProfileRelocationService, which is the only path allowed to move
+		/// a plaintext legacy value into an enrolled row.
 		/// </summary>
-		private async Task SaveMemberAddressesAsync(EditProfileModel model, CancellationToken cancellationToken)
+		private async Task SaveMemberSensitiveProfileAsync(EditProfileModel model, UserProfile legacyProfile,
+			CancellationToken cancellationToken)
 		{
-			if (model == null)
+			if (model?.Profile == null)
 				return;
 
 			var sensitive = await _memberSensitiveDataService.GetByDepartmentAndUserAsync(DepartmentId, model.UserId);
@@ -1591,18 +1641,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var home1 = model.PhysicalAddress1;
 			var mailing1 = model.MailingAddressSameAsPhysical ? model.PhysicalAddress1 : model.MailingAddress1;
+			var mailingCity = model.MailingAddressSameAsPhysical ? model.PhysicalCity : model.MailingCity;
+			var mailingState = model.MailingAddressSameAsPhysical ? model.PhysicalState : model.MailingState;
+			var mailingPostalCode = model.MailingAddressSameAsPhysical ? model.PhysicalPostalCode : model.MailingPostalCode;
+			var mailingCountry = model.MailingAddressSameAsPhysical ? model.PhysicalCountry : model.MailingCountry;
+
+			var submittedValues = new[]
+			{
+				model.Profile.IdentificationNumber,
+				home1, model.PhysicalCity, model.PhysicalState, model.PhysicalPostalCode, model.PhysicalCountry,
+				mailing1, mailingCity, mailingState, mailingPostalCode, mailingCountry
+			};
+
+			var protectionEnforced = await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId);
+			var canCompleteRelocation = !protectionEnforced && submittedValues.All(value => !Unchanged(value));
+			var hasSubmittedData = submittedValues.Any(value => !Unchanged(value) && !string.IsNullOrWhiteSpace(value));
+			var hasLegacyData = legacyProfile != null &&
+				(!string.IsNullOrWhiteSpace(legacyProfile.IdentificationNumber) || legacyProfile.HomeAddressId.HasValue ||
+				 legacyProfile.MailingAddressId.HasValue);
 
 			if (isNewRow)
 			{
-				// Nothing stored yet, so there is nothing a sentinel could protect; if the form
-				// carries no address at all there is nothing to create either.
-				if ((Unchanged(home1) || string.IsNullOrWhiteSpace(home1)) &&
-					(Unchanged(mailing1) || string.IsNullOrWhiteSpace(mailing1)))
+				// Usually an all-empty form needs no row. The exception is an unprotected profile
+				// that still has legacy data: an all-empty submission there is an intentional clear,
+				// so persist an empty, stamped target rather than letting the worker resurrect it.
+				if (!hasSubmittedData && !(canCompleteRelocation && hasLegacyData))
 					return;
 
 				sensitive = new DepartmentMemberSensitiveData { DepartmentId = DepartmentId, UserId = model.UserId };
 			}
 
+			Apply(model.Profile.IdentificationNumber, v => sensitive.IdentificationNumber = v);
 			Apply(home1, v => sensitive.HomeAddress1 = v);
 			Apply(model.PhysicalCity, v => sensitive.HomeCity = v);
 			Apply(model.PhysicalState, v => sensitive.HomeState = v);
@@ -1613,36 +1682,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// encrypted per row, so there is nothing to share and a later edit to one must not
 			// silently rewrite the other.
 			Apply(mailing1, v => sensitive.MailingAddress1 = v);
-			Apply(model.MailingAddressSameAsPhysical ? model.PhysicalCity : model.MailingCity, v => sensitive.MailingCity = v);
-			Apply(model.MailingAddressSameAsPhysical ? model.PhysicalState : model.MailingState, v => sensitive.MailingState = v);
-			Apply(model.MailingAddressSameAsPhysical ? model.PhysicalPostalCode : model.MailingPostalCode, v => sensitive.MailingPostalCode = v);
-			Apply(model.MailingAddressSameAsPhysical ? model.PhysicalCountry : model.MailingCountry, v => sensitive.MailingCountry = v);
+			Apply(mailingCity, v => sensitive.MailingCity = v);
+			Apply(mailingState, v => sensitive.MailingState = v);
+			Apply(mailingPostalCode, v => sensitive.MailingPostalCode = v);
+			Apply(mailingCountry, v => sensitive.MailingCountry = v);
 
-			await _memberSensitiveDataService.SaveAsync(sensitive, cancellationToken);
-		}
-
-		/// <summary>
-		/// Persists the member's department-scoped identification number, creating the row on first
-		/// use. A value still showing the REDACTED placeholder was never revealed to this user, so it
-		/// is ignored rather than written back over the stored value.
-		/// </summary>
-		private async Task SaveMemberIdentificationNumberAsync(string userId, string identificationNumber,
-			CancellationToken cancellationToken)
-		{
-			if (identificationNumber == ProtectedDataEnvelope.RedactionValue)
-				return;
-
-			var sensitive = await _memberSensitiveDataService.GetByDepartmentAndUserAsync(DepartmentId, userId);
-
-			if (sensitive == null)
-			{
-				if (string.IsNullOrWhiteSpace(identificationNumber))
-					return;
-
-				sensitive = new DepartmentMemberSensitiveData { DepartmentId = DepartmentId, UserId = userId };
-			}
-
-			sensitive.IdentificationNumber = identificationNumber;
+			if (canCompleteRelocation && !sensitive.LegacyProfileRelocatedOn.HasValue)
+				sensitive.LegacyProfileRelocatedOn = DateTime.UtcNow;
 
 			await _memberSensitiveDataService.SaveAsync(sensitive, cancellationToken);
 		}

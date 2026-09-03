@@ -44,9 +44,17 @@ namespace Resgrid.Model
 		[ProtoMember(8)]
 		public string HomeNumber { get; set; }
 
+		/// <summary>
+		/// Legacy migration source for the department-scoped home address. Current application
+		/// writes exclude this property through IgnoredProperties while Dapper reads still hydrate it.
+		/// </summary>
 		[ProtoMember(9)]
 		public int? HomeAddressId { get; set; }
 
+		/// <summary>
+		/// Legacy migration source for the department-scoped mailing address. Current application
+		/// writes exclude this property through IgnoredProperties while Dapper reads still hydrate it.
+		/// </summary>
 		[ProtoMember(10)]
 		public int? MailingAddressId { get; set; }
 
@@ -81,13 +89,16 @@ namespace Resgrid.Model
 		public bool DoNotRecieveNewsletters { get; set; }
 
 		/// <summary>
-		/// GONE FROM THE SCHEMA (M0141). A profile is global to a person across every department
-		/// they belong to, so this could never be encrypted under one department's key; the value
-		/// lives on DepartmentMemberSensitiveData per department and is cataloged there. The
-		/// property is kept only so the ProtoMember numbering stays stable for older app builds
-		/// that still deserialize it, and is NotMapped/ignored so no SQL ever names the column.
+		/// LEGACY MIGRATION SOURCE. A profile is global to a person across every department they
+		/// belong to, so new values live on DepartmentMemberSensitiveData per department and are
+		/// cataloged there. Until the later contract migration removes the column, Dapper SELECT *
+		/// queries deliberately still hydrate this property for MemberProfileRelocationService.
+		/// Generic inserts/updates ignore it, so current application paths cannot add or change
+		/// legacy values while the relocation is active. JsonIgnore also keeps the temporary
+		/// plaintext source out of profile JSON and audit payloads.
 		/// </summary>
 		[NotMapped]
+		[JsonIgnore]
 		[ProtoMember(18)]
 		public string IdentificationNumber { get; set; }
 
@@ -251,7 +262,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "User", "MembershipEmail", "IdentificationNumber" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "User", "MembershipEmail", "IdentificationNumber", "HomeAddressId", "MailingAddressId" };
 
 		[NotMapped]
 		public FullNameFormat FullName

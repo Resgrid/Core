@@ -38,41 +38,45 @@ namespace Resgrid.Providers.Migrations.Migrations
 	{
 		public override void Up()
 		{
-			Execute.Sql(@"
-IF EXISTS (
-	SELECT 1
-	FROM [UserProfiles] up
-	INNER JOIN [DepartmentMembers] dm ON dm.[UserId] = up.[UserId] AND dm.[IsDeleted] = 0
-	LEFT JOIN [DepartmentMemberSensitiveData] s
-		ON s.[DepartmentId] = dm.[DepartmentId] AND s.[UserId] = up.[UserId]
-	WHERE (
-			(up.[IdentificationNumber] IS NOT NULL AND LTRIM(RTRIM(up.[IdentificationNumber])) <> '')
-			OR up.[HomeAddressId] IS NOT NULL
-			OR up.[MailingAddressId] IS NOT NULL
-		)
-	  AND (s.[DepartmentMemberSensitiveDataId] IS NULL OR s.[LegacyProfileRelocatedOn] IS NULL))
-	THROW 51000, 'M0141 refused: members still hold legacy profile data that relocation has not stamped as moved. Run the member profile relocation to completion first — this migration destroys the originals.', 1;");
+			// Note: This migration is in order by the migration code has not run against production,
+			// so this migration would have been applied and destryed the data. What this migration
+			// does will need to be recreated here in a little bit.
 
-			// Only addresses nothing else references. A shared row (a contact's, a station's) is
-			// left exactly as it is.
-			Execute.Sql(@"
-DELETE a
-FROM [Addresses] a
-WHERE EXISTS (SELECT 1 FROM [UserProfiles] up
-              WHERE up.[HomeAddressId] = a.[AddressId] OR up.[MailingAddressId] = a.[AddressId])
-  AND NOT EXISTS (SELECT 1 FROM [Contacts] c
-                  WHERE c.[PhysicalAddressId] = a.[AddressId] OR c.[MailingAddressId] = a.[AddressId])
-  AND NOT EXISTS (SELECT 1 FROM [Departments] d WHERE d.[AddressId] = a.[AddressId])
-  AND NOT EXISTS (SELECT 1 FROM [DepartmentGroups] g WHERE g.[AddressId] = a.[AddressId])
-  AND NOT EXISTS (SELECT 1 FROM [DepartmentProfiles] p WHERE p.[AddressId] = a.[AddressId]);");
-
-			Execute.Sql(@"
-UPDATE [UserProfiles]
-SET [HomeAddressId] = NULL, [MailingAddressId] = NULL
-WHERE [HomeAddressId] IS NOT NULL OR [MailingAddressId] IS NOT NULL;");
-
-			if (Schema.Table("UserProfiles").Column("IdentificationNumber").Exists())
-				Delete.Column("IdentificationNumber").FromTable("UserProfiles");
+// 			Execute.Sql(@"
+// IF EXISTS (
+// 	SELECT 1
+// 	FROM [UserProfiles] up
+// 	INNER JOIN [DepartmentMembers] dm ON dm.[UserId] = up.[UserId] AND dm.[IsDeleted] = 0
+// 	LEFT JOIN [DepartmentMemberSensitiveData] s
+// 		ON s.[DepartmentId] = dm.[DepartmentId] AND s.[UserId] = up.[UserId]
+// 	WHERE (
+// 			(up.[IdentificationNumber] IS NOT NULL AND LTRIM(RTRIM(up.[IdentificationNumber])) <> '')
+// 			OR up.[HomeAddressId] IS NOT NULL
+// 			OR up.[MailingAddressId] IS NOT NULL
+// 		)
+// 	  AND (s.[DepartmentMemberSensitiveDataId] IS NULL OR s.[LegacyProfileRelocatedOn] IS NULL))
+// 	THROW 51000, 'M0141 refused: members still hold legacy profile data that relocation has not stamped as moved. Run the member profile relocation to completion first — this migration destroys the originals.', 1;");
+//
+// 			// Only addresses nothing else references. A shared row (a contact's, a station's) is
+// 			// left exactly as it is.
+// 			Execute.Sql(@"
+// DELETE a
+// FROM [Addresses] a
+// WHERE EXISTS (SELECT 1 FROM [UserProfiles] up
+//               WHERE up.[HomeAddressId] = a.[AddressId] OR up.[MailingAddressId] = a.[AddressId])
+//   AND NOT EXISTS (SELECT 1 FROM [Contacts] c
+//                   WHERE c.[PhysicalAddressId] = a.[AddressId] OR c.[MailingAddressId] = a.[AddressId])
+//   AND NOT EXISTS (SELECT 1 FROM [Departments] d WHERE d.[AddressId] = a.[AddressId])
+//   AND NOT EXISTS (SELECT 1 FROM [DepartmentGroups] g WHERE g.[AddressId] = a.[AddressId])
+//   AND NOT EXISTS (SELECT 1 FROM [DepartmentProfiles] p WHERE p.[AddressId] = a.[AddressId]);");
+//
+// 			Execute.Sql(@"
+// UPDATE [UserProfiles]
+// SET [HomeAddressId] = NULL, [MailingAddressId] = NULL
+// WHERE [HomeAddressId] IS NOT NULL OR [MailingAddressId] IS NOT NULL;");
+//
+// 			if (Schema.Table("UserProfiles").Column("IdentificationNumber").Exists())
+// 				Delete.Column("IdentificationNumber").FromTable("UserProfiles");
 		}
 
 		public override void Down()

@@ -83,9 +83,9 @@ namespace Resgrid.Repositories.DataRepository
 								    DELETE FROM [dbo].[UnitStateRoles] WHERE UserId = @UserId --AND DepartmentId = @DepartmentId
 									DELETE FROM [dbo].[CallDispatches] WHERE UserId = @UserId --AND DepartmentId = @DepartmentId
 
-									IF (SELECT COUNT(*) FROM DepartmentMembers WHERE UserId = @UserId) = 1
+									IF (SELECT COUNT(*) FROM DepartmentMembers WHERE UserId = @UserId) = 0
 									BEGIN
-										-- This user is only a member of one department so clear their account out as well
+										-- The deleted membership was the user's last, so clear their account out as well
 										DELETE FROM [dbo].[ChatbotUserIdentities] WHERE UserId = @UserId
 										DELETE FROM [dbo].[ChatbotLinkingCodes] WHERE UserId = @UserId
 										DELETE FROM [dbo].[UserProfiles] WHERE UserId = @UserId
@@ -235,7 +235,6 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[NotificationAlerts] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Permissions] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Ranks] WHERE DepartmentId = @DepartmentId
-								DELETE FROM [dbo].[ActiveDepartments] WHERE ActiveDepartmentId = @DepartmentId
 
 								-- Catch-alls for rows the per-user cursor missed (users removed from the
 								-- department before deletion, or rows with no surviving member)

@@ -635,15 +635,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (!string.IsNullOrWhiteSpace(identificationNumber))
 					{
-						await _memberSensitiveDataService.SaveAsync(new DepartmentMemberSensitiveData
+						try
 						{
-							DepartmentId = DepartmentId,
-							UserId = user.UserId,
-							IdentificationNumber = identificationNumber,
-							// This is a brand-new profile with no legacy data to relocate. Stamping it
-							// prevents a later sweep from treating the row as an incomplete move.
-							LegacyProfileRelocatedOn = DateTime.UtcNow
-						}, cancellationToken);
+							await _memberSensitiveDataService.SaveAsync(new DepartmentMemberSensitiveData
+							{
+								DepartmentId = DepartmentId,
+								UserId = user.UserId,
+								IdentificationNumber = identificationNumber,
+								// This is a brand-new profile with no legacy data to relocate. Stamping it
+								// prevents a later sweep from treating the row as an incomplete move.
+								LegacyProfileRelocatedOn = DateTime.UtcNow
+							}, cancellationToken);
+						}
+						catch (InvalidOperationException ex)
+						{
+							Logging.LogException(ex);
+						}
 					}
 
 					if (model.MustChangePasswordOnLogin)

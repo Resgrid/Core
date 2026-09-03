@@ -438,10 +438,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Profile = await _userProfileService.GetProfileByUserIdAsync(userId, true);
 			var protectionEnforced = await _dataProtectionService.IsProtectionEnforcedAsync(DepartmentId);
-			await HydrateMemberIdentificationNumberAsync(model, userId, protectionEnforced);
 
 			if (model.Profile == null)
 				model.Profile = new UserProfile();
+
+			await HydrateMemberIdentificationNumberAsync(model, userId, protectionEnforced);
 
 			// Security PIN is only shown to the profile's owner (never to admins editing another user).
 			model.DepartmentForcesSecurityPin = await _departmentSettingsService.GetForceChatbotSecurityPinAsync(DepartmentId);

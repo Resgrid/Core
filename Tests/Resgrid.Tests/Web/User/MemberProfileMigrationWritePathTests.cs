@@ -67,6 +67,11 @@ namespace Resgrid.Tests.Web.User
 			body.Should().Contain("IdentificationNumber = identificationNumber");
 			body.Should().Contain("LegacyProfileRelocatedOn = DateTime.UtcNow",
 				"a brand-new profile has no legacy source for the relocation worker to revisit");
+			body.Should().Contain("catch (InvalidOperationException ex)",
+				"a protected-write failure must not abandon the remaining user-creation steps");
+			body.Should().Contain("Logging.LogException(ex);");
+			body.Should().Contain("}, cancellationToken);",
+				"cancellation must still be passed to the department-scoped save");
 		}
 
 		[Test]
@@ -112,6 +117,9 @@ namespace Resgrid.Tests.Web.User
 				"a blank target after the marker can be an intentional clear and must not fall back");
 			get.Should().Contain("model.Profile.HomeAddressId.Value");
 			get.Should().Contain("model.Profile.MailingAddressId.Value");
+			get.IndexOf("await HydrateMemberIdentificationNumberAsync", StringComparison.Ordinal).Should().BeGreaterThan(
+				get.IndexOf("model.Profile = new UserProfile();", StringComparison.Ordinal),
+				"the fallback profile must exist before department-scoped identification data is hydrated");
 			get.Should().NotContain("savedProfile.HomeAddressId =",
 				"legacy addresses are displayed only to bridge the relocation window, never rewritten");
 		}

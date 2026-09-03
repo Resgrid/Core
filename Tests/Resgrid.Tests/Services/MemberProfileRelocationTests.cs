@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
 using FluentAssertions;
 using Moq;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Repositories.DataRepository.Extensions;
+using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 using Resgrid.Services;
 
 namespace Resgrid.Tests.Services
@@ -106,6 +111,42 @@ namespace Resgrid.Tests.Services
 			row.HomePostalCode.Should().Be("62701");
 			row.MailingAddress1.Should().Be("2 Mailing Street");
 			row.LegacyProfileRelocatedOn.Should().NotBeNull();
+		}
+
+		[Test]
+		public void Legacy_profile_fields_are_readable_for_relocation_but_not_generically_written()
+		{
+			// Dapper maps SELECT * independently of EF's NotMapped attribute and the custom write
+			// exclusions, so it still hydrates the legacy sources while the generic Resgrid
+			// insert/update builder keeps current application writes away from the old columns.
+			var table = new DataTable();
+			table.Columns.Add(nameof(UserProfile.UserId), typeof(string));
+			table.Columns.Add(nameof(UserProfile.IdentificationNumber), typeof(string));
+			table.Columns.Add(nameof(UserProfile.HomeAddressId), typeof(int));
+			table.Columns.Add(nameof(UserProfile.MailingAddressId), typeof(int));
+			table.Rows.Add("user-1", "BADGE-7", 101, 202);
+
+			using var reader = table.CreateDataReader();
+			reader.Read().Should().BeTrue();
+			var profile = reader.GetRowParser<UserProfile>()(reader);
+
+			profile.IdentificationNumber.Should().Be("BADGE-7",
+				"MemberProfileRelocationService must still be able to read the retained source column");
+			profile.HomeAddressId.Should().Be(101);
+			profile.MailingAddressId.Should().Be(202);
+			profile.IgnoredProperties.Should().Contain(new[]
+			{
+				nameof(UserProfile.IdentificationNumber), nameof(UserProfile.HomeAddressId),
+				nameof(UserProfile.MailingAddressId)
+			}, "new profile inserts and edits must never write the legacy global values");
+			var writeColumns = profile.GetColumns(new SqlServerConfiguration(),
+				ignoreProperties: profile.IgnoredProperties).ToList();
+			writeColumns.Should().NotContain(column =>
+				column.Contains(nameof(UserProfile.IdentificationNumber), StringComparison.OrdinalIgnoreCase) ||
+				column.Contains(nameof(UserProfile.HomeAddressId), StringComparison.OrdinalIgnoreCase) ||
+				column.Contains(nameof(UserProfile.MailingAddressId), StringComparison.OrdinalIgnoreCase));
+			JsonConvert.SerializeObject(profile).Should().NotContain($"\"{nameof(UserProfile.IdentificationNumber)}\":",
+				"the temporary plaintext source must not bypass the department-scoped read path");
 		}
 
 		[Test]

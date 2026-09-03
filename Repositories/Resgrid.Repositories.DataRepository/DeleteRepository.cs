@@ -83,9 +83,9 @@ namespace Resgrid.Repositories.DataRepository
 								    DELETE FROM [dbo].[UnitStateRoles] WHERE UserId = @UserId --AND DepartmentId = @DepartmentId
 									DELETE FROM [dbo].[CallDispatches] WHERE UserId = @UserId --AND DepartmentId = @DepartmentId
 
-									IF (SELECT COUNT(*) FROM DepartmentMembers WHERE UserId = @UserId) = 1
+									IF (SELECT COUNT(*) FROM DepartmentMembers WHERE UserId = @UserId) = 0
 									BEGIN
-										-- This user is only a member of one department so clear their account out as well
+										-- The deleted membership was the user's last, so clear their account out as well
 										DELETE FROM [dbo].[ChatbotUserIdentities] WHERE UserId = @UserId
 										DELETE FROM [dbo].[ChatbotLinkingCodes] WHERE UserId = @UserId
 										DELETE FROM [dbo].[UserProfiles] WHERE UserId = @UserId
@@ -235,7 +235,6 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[NotificationAlerts] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Permissions] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Ranks] WHERE DepartmentId = @DepartmentId
-								DELETE FROM [dbo].[ActiveDepartments] WHERE ActiveDepartmentId = @DepartmentId
 
 								-- Catch-alls for rows the per-user cursor missed (users removed from the
 								-- department before deletion, or rows with no surviving member)
@@ -277,35 +276,40 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[DepartmentCallPruning] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Departments] WHERE DepartmentId = @DepartmentId
 
-								-- Delete the managing member's user
-								DELETE FROM [dbo].[ScheduledTasks] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[UserStates] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[Logs] WHERE LoggedByUserId = @ManagingUserId
-								DELETE FROM [dbo].[MessageRecipients] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE ReceivingUserId = @ManagingUserId)
-								DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE SendingUserId = @ManagingUserId)
-								DELETE FROM [dbo].[Messages] WHERE ReceivingUserId = @ManagingUserId
-								DELETE FROM [dbo].[Messages] WHERE SendingUserId = @ManagingUserId
-								DELETE FROM [dbo].[PersonnelCertifications] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[PersonnelRoleUsers] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[PushUris] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[UserProfiles] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[UserStates] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[ActionLogs] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[DepartmentMembers] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[DepartmentGroupMembers] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[DistributionListMembers] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[PersonnelRoleUsers] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[PushUris] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[UnitStateRoles] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[CallDispatches] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[ChatbotUserIdentities] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[ChatbotLinkingCodes] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[AspNetUserClaims] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[AspNetUserLogins] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[AspNetUserRoles] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[AspNetUsersExt] WHERE UserId = @ManagingUserId
-								DELETE FROM [dbo].[AspNetUsers] WHERE Id = @ManagingUserId
+								-- Remove only this department's managing membership. The same user may
+								-- manage or belong to another department and must retain that account.
+								DELETE FROM [dbo].[DepartmentMembers] WHERE UserId = @ManagingUserId AND DepartmentId = @DepartmentId
+
+								IF (SELECT COUNT(*) FROM DepartmentMembers WHERE UserId = @ManagingUserId) = 0
+								BEGIN
+									DELETE FROM [dbo].[ScheduledTasks] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[UserStates] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[Logs] WHERE LoggedByUserId = @ManagingUserId
+									DELETE FROM [dbo].[MessageRecipients] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE ReceivingUserId = @ManagingUserId)
+									DELETE FROM [dbo].[MessageRecipients] WHERE MessageId IN (SELECT MessageId FROM [dbo].[Messages] WHERE SendingUserId = @ManagingUserId)
+									DELETE FROM [dbo].[Messages] WHERE ReceivingUserId = @ManagingUserId
+									DELETE FROM [dbo].[Messages] WHERE SendingUserId = @ManagingUserId
+									DELETE FROM [dbo].[PersonnelCertifications] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[PersonnelRoleUsers] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[PushUris] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[UserProfiles] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[UserStates] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[ActionLogs] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[DepartmentGroupMembers] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[DistributionListMembers] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[PersonnelRoleUsers] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[PushUris] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[UnitStateRoles] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[CallDispatches] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[ChatbotUserIdentities] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[ChatbotLinkingCodes] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[AspNetUserClaims] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[AspNetUserLogins] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[AspNetUserRoles] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[AspNetUsersExt] WHERE UserId = @ManagingUserId
+									DELETE FROM [dbo].[AspNetUsers] WHERE Id = @ManagingUserId
+								END
 						",
 							new { DepartmentId = departmentId }, transaction);
 

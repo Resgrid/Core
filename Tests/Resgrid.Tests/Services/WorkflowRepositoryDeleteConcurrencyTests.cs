@@ -388,6 +388,7 @@ namespace Resgrid.Tests.Services
 		private readonly List<string> _log;
 		private readonly Action _onLockSelected;
 		private readonly Action _onAllDeleted;
+		private readonly object _scalarResult;
 
 		// Counts how many DELETE statements have been executed (we expect 4).
 		private int _deleteCount;
@@ -395,11 +396,13 @@ namespace Resgrid.Tests.Services
 		public CapturingConnection(
 			List<string> log,
 			Action onLockSelected = null,
-			Action onAllDeleted = null)
+			Action onAllDeleted = null,
+			object scalarResult = null)
 		{
 			_log = log;
 			_onLockSelected = onLockSelected;
 			_onAllDeleted = onAllDeleted;
+			_scalarResult = scalarResult;
 		}
 
 		// ── DbConnection overrides ───────────────────────────────────────────────────
@@ -417,7 +420,7 @@ namespace Resgrid.Tests.Services
 		public override void ChangeDatabase(string databaseName) { }
 		public override void Close() { }
 
-		protected override DbCommand CreateDbCommand() => new CapturingCommand(this, OnExecute);
+		protected override DbCommand CreateDbCommand() => new CapturingCommand(this, OnExecute, _scalarResult);
 
 		// ── internal callback ────────────────────────────────────────────────────────
 
@@ -475,11 +478,13 @@ namespace Resgrid.Tests.Services
 	{
 		private readonly Action<string> _onExecute;
 		private readonly CapturingConnection _conn;
+		private readonly object _scalarResult;
 
-		public CapturingCommand(CapturingConnection conn, Action<string> onExecute)
+		public CapturingCommand(CapturingConnection conn, Action<string> onExecute, object scalarResult)
 		{
 			_conn      = conn;
 			_onExecute = onExecute;
+			_scalarResult = scalarResult;
 		}
 
 		public override string CommandText { get; set; } = string.Empty;
@@ -500,7 +505,7 @@ namespace Resgrid.Tests.Services
 		public override object ExecuteScalar()
 		{
 			_onExecute(CommandText);
-			return null;
+			return _scalarResult;
 		}
 		protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
 		{
@@ -592,7 +597,6 @@ namespace Resgrid.Tests.Services
 		protected override void SetParameter(string parameterName, DbParameter value) => _items[IndexOf(parameterName)] = value;
 	}
 }
-
 
 
 

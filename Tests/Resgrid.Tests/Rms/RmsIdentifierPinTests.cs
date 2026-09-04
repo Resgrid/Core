@@ -74,6 +74,10 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.RecordSubmittedForReview).Should().Be(101);
 			((int)WorkflowTriggerEventType.RecordReturnedForCorrection).Should().Be(102);
 			((int)WorkflowTriggerEventType.RecordFinalized).Should().Be(104);
+			((int)WorkflowTriggerEventType.RecordSubmissionQueued).Should().Be(108);
+			((int)WorkflowTriggerEventType.RecordSubmissionAccepted).Should().Be(109);
+			((int)WorkflowTriggerEventType.RecordSubmissionRejected).Should().Be(110);
+			((int)WorkflowTriggerEventType.RecordSubmissionFailed).Should().Be(111);
 			((int)WorkflowTriggerEventType.RecordAmended).Should().Be(105);
 			((int)WorkflowTriggerEventType.RecordVoided).Should().Be(106);
 			((int)WorkflowTriggerEventType.RecordCancelled).Should().Be(107);

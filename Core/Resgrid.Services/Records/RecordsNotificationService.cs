@@ -17,18 +17,21 @@ namespace Resgrid.Services.Records
 	public class RecordsNotificationService : IRecordsNotificationService
 	{
 		public const string ReturnedForCorrectionTitle = "Record returned for correction";
+		public const string SubmissionRejectedTitle = "Incident report rejected by NERIS";
 		private const int MaxReasonTextLength = 200;
 
 		private readonly IRmsOperationalRecordsRepository _records;
+		private readonly IRmsIncidentReportsRepository _incidentReports;
 		private readonly ICommunicationService _communication;
 		private readonly IDepartmentsService _departments;
 		private readonly IDepartmentSettingsService _departmentSettings;
 		private readonly IUserProfileService _profiles;
 
 		public RecordsNotificationService(IRmsOperationalRecordsRepository records, ICommunicationService communication,
-			IDepartmentsService departments, IDepartmentSettingsService departmentSettings, IUserProfileService profiles)
+			IDepartmentsService departments, IDepartmentSettingsService departmentSettings, IUserProfileService profiles, IRmsIncidentReportsRepository incidentReports)
 		{
 			_records = records;
+			_incidentReports = incidentReports;
 			_communication = communication;
 			_departments = departments;
 			_departmentSettings = departmentSettings;
@@ -63,6 +66,58 @@ namespace Resgrid.Services.Records
 				Logging.LogException(ex, $"Return-for-correction notification for record {recordId} could not be sent.");
 				return false;
 			}
+		}
+
+		public async Task<bool> NotifySubmissionRejectedAsync(int departmentId, string reportId, CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(reportId))
+				return false;
+
+			var report = await _incidentReports.GetByIdForDepartmentAsync(departmentId, reportId);
+			if (report == null || report.State != (int)RmsRecordState.Rejected || string.IsNullOrWhiteSpace(report.AuthorUserId))
+				return false;
+
+			cancellationToken.ThrowIfCancellationRequested();
+			var department = await _departments.GetDepartmentByIdAsync(departmentId, false);
+			var departmentNumber = await _departmentSettings.GetTextToCallNumberForDepartmentAsync(departmentId);
+			var author = await _profiles.GetProfileByUserIdAsync(report.AuthorUserId, false);
+			var message = BuildSubmissionRejectedMessage(report);
+
+			try
+			{
+				return await _communication.SendNotificationAsync(report.AuthorUserId, departmentId, message, departmentNumber, department, SubmissionRejectedTitle, author);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Submission-rejected notification for report {reportId} could not be sent.");
+				return false;
+			}
+		}
+
+		/// <summary>Header, normalized rejection summary (codes and field paths, never destination payloads) and a link.</summary>
+		public static string BuildSubmissionRejectedMessage(RmsIncidentReport report)
+		{
+			if (report == null)
+				throw new ArgumentNullException(nameof(report));
+
+			var reference = string.IsNullOrWhiteSpace(report.RecordNumber) ? report.DraftReference : report.RecordNumber;
+			var builder = new StringBuilder();
+			builder.Append("Incident report ").Append(reference);
+			if (!string.IsNullOrWhiteSpace(report.IncidentNumber))
+				builder.Append(" (incident ").Append(report.IncidentNumber).Append(')');
+			builder.Append(" was rejected by NERIS.");
+
+			if (!string.IsNullOrWhiteSpace(report.RejectionSummary))
+			{
+				var summary = report.RejectionSummary.Trim();
+				if (summary.Length > MaxReasonTextLength)
+					summary = summary.Substring(0, MaxReasonTextLength) + "…";
+				builder.Append(" Issues: ").Append(summary);
+			}
+
+			var baseUrl = (Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/');
+			builder.Append(' ').Append(baseUrl).Append("/User/IncidentReports/Details/").Append(report.RmsIncidentReportId);
+			return builder.ToString();
 		}
 
 		public static string BuildReturnedForCorrectionMessage(RmsOperationalRecord record, string reviewerName)

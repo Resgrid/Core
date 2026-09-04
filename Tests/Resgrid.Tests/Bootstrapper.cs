@@ -34,6 +34,7 @@ namespace Resgrid.Tests
 				builder.RegisterModule(new ServicesModule());
 				builder.RegisterModule(new Resgrid.Search.SearchModule());
 				builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
+				builder.RegisterModule(new Resgrid.Providers.Neris.NerisProviderModule());
 				builder.RegisterModule(new ProviderModule());
 				builder.RegisterModule(new EmailProviderModule());
 				builder.RegisterModule(new WorkerFrameworkModule());

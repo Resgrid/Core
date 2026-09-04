@@ -213,4 +213,134 @@
   <data name="Totals" xml:space="preserve"><value>Summen</value></data>
   <data name="OwnerFilter" xml:space="preserve"><value>Eigentümer</value></data>
   <data name="GroupFilter" xml:space="preserve"><value>Gruppe</value></data>
+  <data name="IncidentReports" xml:space="preserve"><value>Einsatzberichte</value></data>
+  <data name="IncidentReportsHeader" xml:space="preserve"><value>NERIS-Einsatzberichte</value></data>
+  <data name="IncidentReportsIntro" xml:space="preserve"><value>Ein maßgeblicher Einsatzbericht pro Einsatz. Berichte beginnen beim disponierten Einsatz, führen die Quelle jedes vorausgefüllten Werts mit und werden vor Bestätigung und Übermittlung gegen den festgelegten NERIS-Vertrag geprüft.</value></data>
+  <data name="ViewIncidentReport" xml:space="preserve"><value>Einsatzbericht</value></data>
+  <data name="EditIncidentReport" xml:space="preserve"><value>Einsatzbericht bearbeiten</value></data>
+  <data name="StartFromCall" xml:space="preserve"><value>Aus Einsatz starten</value></data>
+  <data name="StartIncidentReport" xml:space="preserve"><value>Einsatzbericht starten</value></data>
+  <data name="SelectCall" xml:space="preserve"><value>Einsatz auswählen</value></data>
+  <data name="NoActiveCalls" xml:space="preserve"><value>Keine aktiven Einsätze; öffnen Sie einen abgeschlossenen Einsatz in der Disposition, um seinen Bericht zu starten.</value></data>
+  <data name="IncidentReportStarted" xml:space="preserve"><value>Einsatzbericht aus dem Einsatz gestartet.</value></data>
+  <data name="ExistingReportForCall" xml:space="preserve"><value>Für diesen Einsatz gibt es bereits einen Einsatzbericht.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>Einsatznummer</value></data>
+  <data name="NerisIncidentId" xml:space="preserve"><value>NERIS-Einsatz-ID</value></data>
+  <data name="Submission" xml:space="preserve"><value>Übermittlung</value></data>
+  <data name="Submissions" xml:space="preserve"><value>Übermittlungen</value></data>
+  <data name="SubmissionState" xml:space="preserve"><value>Übermittlungsstatus</value></data>
+  <data name="NoSubmissions" xml:space="preserve"><value>Diese Revision wurde nicht übermittelt.</value></data>
+  <data name="Attempts" xml:space="preserve"><value>Versuche</value></data>
+  <data name="ExternalStatus" xml:space="preserve"><value>Zielstatus</value></data>
+  <data name="ErrorSummary" xml:space="preserve"><value>Probleme</value></data>
+  <data name="QueuedOn" xml:space="preserve"><value>Eingereiht</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Gesendet</value></data>
+  <data name="CompletedOn" xml:space="preserve"><value>Abgeschlossen</value></data>
+  <data name="Payload" xml:space="preserve"><value>Nutzdaten</value></data>
+  <data name="SubmitToNeris" xml:space="preserve"><value>An NERIS übermitteln</value></data>
+  <data name="Resubmit" xml:space="preserve"><value>Korrigieren und erneut übermitteln</value></data>
+  <data name="Validate" xml:space="preserve"><value>Prüfen</value></data>
+  <data name="ValidateWithDestination" xml:space="preserve"><value>Mit NERIS prüfen</value></data>
+  <data name="ValidationIssues" xml:space="preserve"><value>Prüfprobleme</value></data>
+  <data name="NoValidationIssues" xml:space="preserve"><value>Keine offenen Prüfprobleme.</value></data>
+  <data name="ValidationRun" xml:space="preserve"><value>Prüfung abgeschlossen mit {0} Problem(en).</value></data>
+  <data name="Severity" xml:space="preserve"><value>Schweregrad</value></data>
+  <data name="Rule" xml:space="preserve"><value>Regel</value></data>
+  <data name="IssueMessage" xml:space="preserve"><value>Meldung</value></data>
+  <data name="Source" xml:space="preserve"><value>Quelle</value></data>
+  <data name="ValidationBlocked" xml:space="preserve"><value>Beheben Sie die folgenden Fehler vor dem Abschließen.</value></data>
+  <data name="SubmissionDisabledNotice" xml:space="preserve"><value>Die NERIS-Übermittlung ist für diese Abteilung nicht aktiviert. Abgeschlossene Berichte bleiben lokal, bis ein Administrator das NERIS-Profil einrichtet.</value></data>
+  <data name="SystemDisabledNotice" xml:space="preserve"><value>Die NERIS-Übermittlung ist systemweit abgeschaltet; Berichte können erstellt und abgeschlossen, aber nicht übermittelt werden.</value></data>
+  <data name="ProfileNotConfigured" xml:space="preserve"><value>Das NERIS-Profil ist nicht eingerichtet.</value></data>
+  <data name="RejectedNotice" xml:space="preserve"><value>NERIS hat diesen Bericht abgelehnt. Korrigieren Sie die Felder und übermitteln Sie erneut; eine neue Revision und ein neuer Idempotenzschlüssel werden erzeugt.</value></data>
+  <data name="SubmittedNotice" xml:space="preserve"><value>Dieser Bericht liegt bei NERIS. Die Bearbeitung wartet auf die Antwort des Ziels.</value></data>
+  <data name="AcceptedNotice" xml:space="preserve"><value>NERIS hat diesen Bericht akzeptiert.</value></data>
+  <data name="DispatchTimes" xml:space="preserve"><value>Dispositionszeiten</value></data>
+  <data name="CallCreated" xml:space="preserve"><value>Einsatz erstellt</value></data>
+  <data name="CallAnswered" xml:space="preserve"><value>Anruf angenommen</value></data>
+  <data name="CallArrival" xml:space="preserve"><value>Erstes Eintreffen</value></data>
+  <data name="IncidentCleared" xml:space="preserve"><value>Einsatz beendet</value></data>
+  <data name="DispatchCenter" xml:space="preserve"><value>Leitstelle</value></data>
+  <data name="DeterminantCode" xml:space="preserve"><value>Determinantencode</value></data>
+  <data name="DispatchIncidentCode" xml:space="preserve"><value>Dispositions-Einsatzcode</value></data>
+  <data name="Disposition" xml:space="preserve"><value>Ergebnis</value></data>
+  <data name="PeoplePresent" xml:space="preserve"><value>Personen anwesend</value></data>
+  <data name="DisplacementCount" xml:space="preserve"><value>Vertriebene Personen</value></data>
+  <data name="AnimalsRescued" xml:space="preserve"><value>Gerettete Tiere</value></data>
+  <data name="SpecialModifiers" xml:space="preserve"><value>Besondere Kennzeichen</value></data>
+  <data name="IncidentTypes" xml:space="preserve"><value>Einsatzarten</value></data>
+  <data name="Primary" xml:space="preserve"><value>Primär</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>NERIS-Typ</value></data>
+  <data name="AddressText" xml:space="preserve"><value>Adresse</value></data>
+  <data name="StreetNumber" xml:space="preserve"><value>Hausnummer</value></data>
+  <data name="Street" xml:space="preserve"><value>Straße</value></data>
+  <data name="Municipality" xml:space="preserve"><value>Gemeinde</value></data>
+  <data name="County" xml:space="preserve"><value>Landkreis</value></data>
+  <data name="StateProvince" xml:space="preserve"><value>Bundesland</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Postleitzahl</value></data>
+  <data name="Country" xml:space="preserve"><value>Land</value></data>
+  <data name="PlaceType" xml:space="preserve"><value>Ortstyp</value></data>
+  <data name="LocationUse" xml:space="preserve"><value>Nutzung</value></data>
+  <data name="CrossStreet" xml:space="preserve"><value>Querstraße</value></data>
+  <data name="Coordinates" xml:space="preserve"><value>Koordinaten</value></data>
+  <data name="UnitNerisId" xml:space="preserve"><value>NERIS-Einheiten-ID</value></data>
+  <data name="Staffing" xml:space="preserve"><value>Besatzung</value></data>
+  <data name="Staged" xml:space="preserve"><value>Bereitstellung</value></data>
+  <data name="CanceledEnroute" xml:space="preserve"><value>Unterwegs abgebrochen</value></data>
+  <data name="Cleared" xml:space="preserve"><value>Frei</value></data>
+  <data name="ResponseMode" xml:space="preserve"><value>Fahrmodus</value></data>
+  <data name="Aid" xml:space="preserve"><value>Nachbarschaftshilfe</value></data>
+  <data name="AidDirection" xml:space="preserve"><value>Richtung</value></data>
+  <data name="AidType" xml:space="preserve"><value>Hilfeart</value></data>
+  <data name="Counterpart" xml:space="preserve"><value>Organisation</value></data>
+  <data name="CounterpartNerisId" xml:space="preserve"><value>NERIS-ID der Organisation</value></data>
+  <data name="NonFireDepartment" xml:space="preserve"><value>Nicht-Feuerwehr</value></data>
+  <data name="Tactics" xml:space="preserve"><value>Maßnahmen und Taktik</value></data>
+  <data name="Tactic" xml:space="preserve"><value>Maßnahme</value></data>
+  <data name="ActorUnit" xml:space="preserve"><value>Einheit</value></data>
+  <data name="OccurredOn" xml:space="preserve"><value>Zeit</value></data>
+  <data name="ImpedimentNarrative" xml:space="preserve"><value>Hindernisse</value></data>
+  <data name="OutcomeNarrative" xml:space="preserve"><value>Ergebnis</value></data>
+  <data name="ProvenanceIntro" xml:space="preserve"><value>Woher jeder vorausgefüllte Wert stammt. Korrekturen behalten das Original neben dem korrigierten Wert.</value></data>
+  <data name="FactKey" xml:space="preserve"><value>Fakt</value></data>
+  <data name="SourceValue" xml:space="preserve"><value>Quellwert</value></data>
+  <data name="CurrentValue" xml:space="preserve"><value>Aktueller Wert</value></data>
+  <data name="CorrectedBy" xml:space="preserve"><value>Korrigiert von</value></data>
+  <data name="SourceDispatch" xml:space="preserve"><value>Disposition</value></data>
+  <data name="SourceApp" xml:space="preserve"><value>Anwendung</value></data>
+  <data name="SourceDerived" xml:space="preserve"><value>Abgeleitet</value></data>
+  <data name="SourceCorrected" xml:space="preserve"><value>Korrigiert</value></data>
+  <data name="SaveAndValidate" xml:space="preserve"><value>Speichern und prüfen</value></data>
+  <data name="Signatures" xml:space="preserve"><value>Bestätigungen</value></data>
+  <data name="Signer" xml:space="preserve"><value>Unterzeichnet von</value></data>
+  <data name="SignedOn" xml:space="preserve"><value>Unterzeichnet</value></data>
+  <data name="SubmitForReview" xml:space="preserve"><value>Zur Prüfung einreichen</value></data>
+  <data name="ReturnForCorrection" xml:space="preserve"><value>Zur Korrektur zurückgeben</value></data>
+  <data name="ReviewDue" xml:space="preserve"><value>Prüfung fällig</value></data>
+  <data name="NerisSettingsHeader" xml:space="preserve"><value>NERIS-Einstellungen</value></data>
+  <data name="NerisSettingsIntro" xml:space="preserve"><value>NERIS-Identität, Zugangsdaten und Umgebung der Abteilung sowie die Zuordnung lokaler Einsatzarten zu NERIS-Einsatzarten. Zugangsdaten werden pro Abteilung verschlüsselt gespeichert und nie wieder angezeigt.</value></data>
+  <data name="NerisEntityId" xml:space="preserve"><value>NERIS-Entitäts-ID</value></data>
+  <data name="EntityName" xml:space="preserve"><value>Entitätsname</value></data>
+  <data name="Environment" xml:space="preserve"><value>Umgebung</value></data>
+  <data name="BaseUrlOverride" xml:space="preserve"><value>API-Basis-URL überschreiben</value></data>
+  <data name="GrantType" xml:space="preserve"><value>Grant-Typ</value></data>
+  <data name="Username" xml:space="preserve"><value>Benutzername</value></data>
+  <data name="Password" xml:space="preserve"><value>Passwort</value></data>
+  <data name="ClientId" xml:space="preserve"><value>Client-ID</value></data>
+  <data name="ClientSecret" xml:space="preserve"><value>Client-Secret</value></data>
+  <data name="CredentialStored" xml:space="preserve"><value>Zugangsdaten sind gespeichert. Felder leer lassen, um sie zu behalten.</value></data>
+  <data name="CredentialMissing" xml:space="preserve"><value>Keine Zugangsdaten gespeichert.</value></data>
+  <data name="AutoSubmitOnFinalize" xml:space="preserve"><value>Beim Abschließen eines Berichts automatisch übermitteln</value></data>
+  <data name="NerisEnabled" xml:space="preserve"><value>NERIS-Übermittlung für diese Abteilung aktivieren</value></data>
+  <data name="ContractVersion" xml:space="preserve"><value>Vertragsversion</value></data>
+  <data name="LastTokenIssued" xml:space="preserve"><value>Letztes Token ausgestellt</value></data>
+  <data name="LastSuccessfulCall" xml:space="preserve"><value>Letzter erfolgreicher Aufruf</value></data>
+  <data name="LastError" xml:space="preserve"><value>Letzter Fehler</value></data>
+  <data name="Crosswalk" xml:space="preserve"><value>Zuordnung der Einsatzarten</value></data>
+  <data name="CrosswalkIntro" xml:space="preserve"><value>Ordnen Sie jede Einsatzart der NERIS-Einsatzart zu, die sie vorausfüllt. Nicht zugeordnete Arten überlassen die Wahl dem Verfasser.</value></data>
+  <data name="CallType" xml:space="preserve"><value>Einsatzart</value></data>
+  <data name="Unmapped" xml:space="preserve"><value>Nicht zugeordnet</value></data>
+  <data name="QueueCounts" xml:space="preserve"><value>Übermittlungswarteschlange</value></data>
+  <data name="NerisSettingsSaved" xml:space="preserve"><value>NERIS-Einstellungen gespeichert.</value></data>
+  <data name="SubmissionQueued" xml:space="preserve"><value>Übermittlung an NERIS eingereiht.</value></data>
 </root>

@@ -1,0 +1,165 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.IncidentReportsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["IncidentReportsHeader"];
+	string Name(string userId) => string.IsNullOrEmpty(userId) ? "-" : (Model.PersonnelNames.TryGetValue(userId, out var n) ? n : userId);
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["IncidentReportsHeader"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@localizer["IncidentReports"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User"><i class="fa fa-arrow-left"></i> @localizer["BackToRecords"]</a>
+			@if (Model.IsDepartmentAdmin)
+			{
+				<a class="btn btn-inverse" asp-controller="IncidentReports" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @localizer["NerisSettingsHeader"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="wrapper wrapper-content">
+			@if (!string.IsNullOrEmpty(Model.Message))
+			{
+				<div class="alert alert-success">@Model.Message</div>
+			}
+			@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+			{
+				<div class="alert alert-danger">@Model.ErrorMessage</div>
+			}
+			@if (!Model.ModuleState.RecordsUsable)
+			{
+				<div class="alert alert-warning">@localizer["NotActivatedNotice"]</div>
+			}
+			else if (!Model.SystemEnabled)
+			{
+				<div class="alert alert-info">@localizer["SystemDisabledNotice"]</div>
+			}
+			else if (!Model.SubmissionEnabled)
+			{
+				<div class="alert alert-info">@localizer["SubmissionDisabledNotice"]</div>
+			}
+
+			<p class="text-muted">@localizer["IncidentReportsIntro"]</p>
+
+			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord())
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-phone"></i> @localizer["StartFromCall"]</h5></div>
+					<div class="ibox-content">
+						@if (Model.ActiveCalls.Count == 0)
+						{
+							<p class="text-muted">@localizer["NoActiveCalls"]</p>
+						}
+						else
+						{
+							<form class="form-inline" method="post" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User">
+								@Html.AntiForgeryToken()
+								<div class="form-group">
+									<label class="sr-only" for="callId">@localizer["SelectCall"]</label>
+									<select class="form-control" name="callId" id="callId" style="min-width:320px">
+										@foreach (var c in Model.ActiveCalls)
+										{
+											<option value="@c.Value">@c.Text</option>
+										}
+									</select>
+								</div>
+								<button type="submit" class="btn btn-success"><i class="icon-plus"></i> @localizer["StartIncidentReport"]</button>
+							</form>
+						}
+					</div>
+				</div>
+			}
+
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-fire"></i> @localizer["IncidentReports"]</h5></div>
+				<div class="ibox-content">
+					<form class="form-inline" method="get" asp-controller="IncidentReports" asp-action="Index" asp-route-area="User" style="margin-bottom:12px">
+						<div class="form-group">
+							<select class="form-control" name="year">
+								<option value="">@localizer["AllYears"]</option>
+								@foreach (var y in Model.Years)
+								{
+									<option value="@y.Value" selected="@(Model.Year.HasValue && Model.Year.Value.ToString() == y.Value)">@y.Text</option>
+								}
+							</select>
+						</div>
+						<div class="form-group">
+							<select class="form-control" name="state">
+								<option value="">@localizer["AllStates"]</option>
+								@foreach (var s in Model.States)
+								{
+									<option value="@s.Value" selected="@(Model.StateFilter == s.Value)">@s.Text</option>
+								}
+							</select>
+						</div>
+						<button type="submit" class="btn btn-sm btn-primary">@localizer["Filter"]</button>
+					</form>
+
+					@if (Model.Reports.Count == 0)
+					{
+						<p class="text-muted">@localizer["NoRecords"]</p>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th>@localizer["RecordNumber"]</th>
+										<th>@localizer["IncidentNumber"]</th>
+										<th>@localizer["Summary"]</th>
+										<th>@localizer["State"]</th>
+										<th>@localizer["SubmissionState"]</th>
+										<th>@localizer["NerisIncidentId"]</th>
+										<th>@localizer["Owner"]</th>
+										<th>@localizer["Created"]</th>
+										<th>@localizer["Actions"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var r in Model.Reports)
+									{
+										<tr>
+											<td>@(r.RecordNumber ?? r.DraftReference)</td>
+											<td>@r.IncidentNumber</td>
+											<td>@r.DisplaySummary</td>
+											<td><span class="label label-primary">@(((RmsRecordState)r.State).ToString())</span></td>
+											<td>@(r.LastSubmissionState.HasValue ? ((RmsSubmissionState)r.LastSubmissionState.Value).ToString() : "-")</td>
+											<td>@(r.NerisIncidentId ?? "-")</td>
+											<td>@Name(r.OwnerUserId)</td>
+											<td>@When(r.CreatedOn)</td>
+											<td><a class="btn btn-xs btn-info" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@localizer["ViewRevision"]</a></td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+						@if (Model.TotalPages > 1)
+						{
+							<ul class="pagination">
+								@for (var p = 1; p <= Model.TotalPages; p++)
+								{
+									<li class="@(p == Model.Page ? "active" : string.Empty)"><a asp-controller="IncidentReports" asp-action="Index" asp-route-area="User" asp-route-year="@Model.Year" asp-route-state="@Model.StateFilter" asp-route-page="@p">@p</a></li>
+								}
+							</ul>
+						}
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

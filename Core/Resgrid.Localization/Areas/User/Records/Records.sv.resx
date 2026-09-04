@@ -213,4 +213,134 @@
   <data name="Totals" xml:space="preserve"><value>Totalt</value></data>
   <data name="OwnerFilter" xml:space="preserve"><value>Ägare</value></data>
   <data name="GroupFilter" xml:space="preserve"><value>Grupp</value></data>
+  <data name="IncidentReports" xml:space="preserve"><value>Insatsrapporter</value></data>
+  <data name="IncidentReportsHeader" xml:space="preserve"><value>NERIS-insatsrapporter</value></data>
+  <data name="IncidentReportsIntro" xml:space="preserve"><value>En auktoritativ insatsrapport per larm. Rapporter utgår från det utlarmade ärendet, bär källan till varje förifyllt värde och valideras mot det låsta NERIS-kontraktet innan de attesteras och skickas.</value></data>
+  <data name="ViewIncidentReport" xml:space="preserve"><value>Insatsrapport</value></data>
+  <data name="EditIncidentReport" xml:space="preserve"><value>Redigera insatsrapport</value></data>
+  <data name="StartFromCall" xml:space="preserve"><value>Starta från larm</value></data>
+  <data name="StartIncidentReport" xml:space="preserve"><value>Starta insatsrapport</value></data>
+  <data name="SelectCall" xml:space="preserve"><value>Välj ett larm</value></data>
+  <data name="NoActiveCalls" xml:space="preserve"><value>Inga aktiva larm; öppna ett avslutat larm från Utlarmning för att starta dess rapport.</value></data>
+  <data name="IncidentReportStarted" xml:space="preserve"><value>Insatsrapport startad från larmet.</value></data>
+  <data name="ExistingReportForCall" xml:space="preserve"><value>Detta larm har redan en insatsrapport.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>Insatsnummer</value></data>
+  <data name="NerisIncidentId" xml:space="preserve"><value>NERIS-insats-ID</value></data>
+  <data name="Submission" xml:space="preserve"><value>Inlämning</value></data>
+  <data name="Submissions" xml:space="preserve"><value>Inlämningar</value></data>
+  <data name="SubmissionState" xml:space="preserve"><value>Inlämningsstatus</value></data>
+  <data name="NoSubmissions" xml:space="preserve"><value>Denna revision har inte skickats.</value></data>
+  <data name="Attempts" xml:space="preserve"><value>Försök</value></data>
+  <data name="ExternalStatus" xml:space="preserve"><value>Mottagarstatus</value></data>
+  <data name="ErrorSummary" xml:space="preserve"><value>Problem</value></data>
+  <data name="QueuedOn" xml:space="preserve"><value>Köad</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Skickad</value></data>
+  <data name="CompletedOn" xml:space="preserve"><value>Slutförd</value></data>
+  <data name="Payload" xml:space="preserve"><value>Nyttolast</value></data>
+  <data name="SubmitToNeris" xml:space="preserve"><value>Skicka till NERIS</value></data>
+  <data name="Resubmit" xml:space="preserve"><value>Rätta och skicka igen</value></data>
+  <data name="Validate" xml:space="preserve"><value>Validera</value></data>
+  <data name="ValidateWithDestination" xml:space="preserve"><value>Validera med NERIS</value></data>
+  <data name="ValidationIssues" xml:space="preserve"><value>Valideringsproblem</value></data>
+  <data name="NoValidationIssues" xml:space="preserve"><value>Inga öppna valideringsproblem.</value></data>
+  <data name="ValidationRun" xml:space="preserve"><value>Validering klar med {0} problem.</value></data>
+  <data name="Severity" xml:space="preserve"><value>Allvarlighet</value></data>
+  <data name="Rule" xml:space="preserve"><value>Regel</value></data>
+  <data name="IssueMessage" xml:space="preserve"><value>Meddelande</value></data>
+  <data name="Source" xml:space="preserve"><value>Källa</value></data>
+  <data name="ValidationBlocked" xml:space="preserve"><value>Åtgärda felen nedan innan du slutför.</value></data>
+  <data name="SubmissionDisabledNotice" xml:space="preserve"><value>NERIS-inlämning är inte aktiverad för denna organisation. Slutförda rapporter stannar lokalt tills en administratör konfigurerar NERIS-profilen.</value></data>
+  <data name="SystemDisabledNotice" xml:space="preserve"><value>NERIS-inlämning är avstängd i hela systemet; rapporter kan skrivas och slutföras men inte levereras.</value></data>
+  <data name="ProfileNotConfigured" xml:space="preserve"><value>NERIS-profilen är inte konfigurerad.</value></data>
+  <data name="RejectedNotice" xml:space="preserve"><value>NERIS avvisade denna rapport. Rätta fälten och skicka igen; en ny revision och en ny idempotensnyckel skapas.</value></data>
+  <data name="SubmittedNotice" xml:space="preserve"><value>Denna rapport ligger hos NERIS. Redigering väntar tills mottagaren svarar.</value></data>
+  <data name="AcceptedNotice" xml:space="preserve"><value>NERIS godkände denna rapport.</value></data>
+  <data name="DispatchTimes" xml:space="preserve"><value>Utlarmningstider</value></data>
+  <data name="CallCreated" xml:space="preserve"><value>Larm skapat</value></data>
+  <data name="CallAnswered" xml:space="preserve"><value>Samtal besvarat</value></data>
+  <data name="CallArrival" xml:space="preserve"><value>Första ankomst</value></data>
+  <data name="IncidentCleared" xml:space="preserve"><value>Insats avslutad</value></data>
+  <data name="DispatchCenter" xml:space="preserve"><value>Larmcentral</value></data>
+  <data name="DeterminantCode" xml:space="preserve"><value>Determinantkod</value></data>
+  <data name="DispatchIncidentCode" xml:space="preserve"><value>Utlarmningskod</value></data>
+  <data name="Disposition" xml:space="preserve"><value>Utfall</value></data>
+  <data name="PeoplePresent" xml:space="preserve"><value>Personer närvarande</value></data>
+  <data name="DisplacementCount" xml:space="preserve"><value>Evakuerade personer</value></data>
+  <data name="AnimalsRescued" xml:space="preserve"><value>Räddade djur</value></data>
+  <data name="SpecialModifiers" xml:space="preserve"><value>Särskilda modifierare</value></data>
+  <data name="IncidentTypes" xml:space="preserve"><value>Insatstyper</value></data>
+  <data name="Primary" xml:space="preserve"><value>Primär</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>NERIS-typ</value></data>
+  <data name="AddressText" xml:space="preserve"><value>Adress</value></data>
+  <data name="StreetNumber" xml:space="preserve"><value>Nummer</value></data>
+  <data name="Street" xml:space="preserve"><value>Gata</value></data>
+  <data name="Municipality" xml:space="preserve"><value>Kommun</value></data>
+  <data name="County" xml:space="preserve"><value>Län</value></data>
+  <data name="StateProvince" xml:space="preserve"><value>Delstat</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Postnummer</value></data>
+  <data name="Country" xml:space="preserve"><value>Land</value></data>
+  <data name="PlaceType" xml:space="preserve"><value>Platstyp</value></data>
+  <data name="LocationUse" xml:space="preserve"><value>Användning</value></data>
+  <data name="CrossStreet" xml:space="preserve"><value>Tvärgata</value></data>
+  <data name="Coordinates" xml:space="preserve"><value>Koordinater</value></data>
+  <data name="UnitNerisId" xml:space="preserve"><value>NERIS-enhets-ID</value></data>
+  <data name="Staffing" xml:space="preserve"><value>Bemanning</value></data>
+  <data name="Staged" xml:space="preserve"><value>Uppställd</value></data>
+  <data name="CanceledEnroute" xml:space="preserve"><value>Avbruten under färd</value></data>
+  <data name="Cleared" xml:space="preserve"><value>Klar</value></data>
+  <data name="ResponseMode" xml:space="preserve"><value>Körsätt</value></data>
+  <data name="Aid" xml:space="preserve"><value>Ömsesidig hjälp</value></data>
+  <data name="AidDirection" xml:space="preserve"><value>Riktning</value></data>
+  <data name="AidType" xml:space="preserve"><value>Hjälptyp</value></data>
+  <data name="Counterpart" xml:space="preserve"><value>Organisation</value></data>
+  <data name="CounterpartNerisId" xml:space="preserve"><value>Organisationens NERIS-ID</value></data>
+  <data name="NonFireDepartment" xml:space="preserve"><value>Icke-räddningstjänst</value></data>
+  <data name="Tactics" xml:space="preserve"><value>Åtgärder och taktik</value></data>
+  <data name="Tactic" xml:space="preserve"><value>Taktik</value></data>
+  <data name="ActorUnit" xml:space="preserve"><value>Enhet</value></data>
+  <data name="OccurredOn" xml:space="preserve"><value>Tid</value></data>
+  <data name="ImpedimentNarrative" xml:space="preserve"><value>Hinder</value></data>
+  <data name="OutcomeNarrative" xml:space="preserve"><value>Resultat</value></data>
+  <data name="ProvenanceIntro" xml:space="preserve"><value>Var varje förifyllt värde kom ifrån. Rättelser behåller originalet bredvid det rättade värdet.</value></data>
+  <data name="FactKey" xml:space="preserve"><value>Faktum</value></data>
+  <data name="SourceValue" xml:space="preserve"><value>Källvärde</value></data>
+  <data name="CurrentValue" xml:space="preserve"><value>Aktuellt värde</value></data>
+  <data name="CorrectedBy" xml:space="preserve"><value>Rättat av</value></data>
+  <data name="SourceDispatch" xml:space="preserve"><value>Utlarmning</value></data>
+  <data name="SourceApp" xml:space="preserve"><value>Applikation</value></data>
+  <data name="SourceDerived" xml:space="preserve"><value>Härlett</value></data>
+  <data name="SourceCorrected" xml:space="preserve"><value>Rättat</value></data>
+  <data name="SaveAndValidate" xml:space="preserve"><value>Spara och validera</value></data>
+  <data name="Signatures" xml:space="preserve"><value>Attesteringar</value></data>
+  <data name="Signer" xml:space="preserve"><value>Signerat av</value></data>
+  <data name="SignedOn" xml:space="preserve"><value>Signerat</value></data>
+  <data name="SubmitForReview" xml:space="preserve"><value>Skicka för granskning</value></data>
+  <data name="ReturnForCorrection" xml:space="preserve"><value>Returnera för rättelse</value></data>
+  <data name="ReviewDue" xml:space="preserve"><value>Granskning senast</value></data>
+  <data name="NerisSettingsHeader" xml:space="preserve"><value>NERIS-inställningar</value></data>
+  <data name="NerisSettingsIntro" xml:space="preserve"><value>Organisationens NERIS-identitet, inloggning och miljö samt mappningen från lokala larmtyper till NERIS-insatstyper. Inloggningsuppgifter lagras krypterade per organisation och visas aldrig igen.</value></data>
+  <data name="NerisEntityId" xml:space="preserve"><value>NERIS-entitets-ID</value></data>
+  <data name="EntityName" xml:space="preserve"><value>Entitetsnamn</value></data>
+  <data name="Environment" xml:space="preserve"><value>Miljö</value></data>
+  <data name="BaseUrlOverride" xml:space="preserve"><value>Åsidosätt API-bas-URL</value></data>
+  <data name="GrantType" xml:space="preserve"><value>Grant-typ</value></data>
+  <data name="Username" xml:space="preserve"><value>Användarnamn</value></data>
+  <data name="Password" xml:space="preserve"><value>Lösenord</value></data>
+  <data name="ClientId" xml:space="preserve"><value>Klient-ID</value></data>
+  <data name="ClientSecret" xml:space="preserve"><value>Klienthemlighet</value></data>
+  <data name="CredentialStored" xml:space="preserve"><value>En inloggning är lagrad. Lämna fälten tomma för att behålla den.</value></data>
+  <data name="CredentialMissing" xml:space="preserve"><value>Ingen inloggning är lagrad.</value></data>
+  <data name="AutoSubmitOnFinalize" xml:space="preserve"><value>Skicka automatiskt när en rapport slutförs</value></data>
+  <data name="NerisEnabled" xml:space="preserve"><value>Aktivera NERIS-inlämning för denna organisation</value></data>
+  <data name="ContractVersion" xml:space="preserve"><value>Kontraktsversion</value></data>
+  <data name="LastTokenIssued" xml:space="preserve"><value>Senaste token utfärdad</value></data>
+  <data name="LastSuccessfulCall" xml:space="preserve"><value>Senaste lyckade anrop</value></data>
+  <data name="LastError" xml:space="preserve"><value>Senaste fel</value></data>
+  <data name="Crosswalk" xml:space="preserve"><value>Mappning av larmtyper</value></data>
+  <data name="CrosswalkIntro" xml:space="preserve"><value>Mappa varje larmtyp till den NERIS-insatstyp den förifyller. Omappade typer lämnar valet till författaren.</value></data>
+  <data name="CallType" xml:space="preserve"><value>Larmtyp</value></data>
+  <data name="Unmapped" xml:space="preserve"><value>Omappad</value></data>
+  <data name="QueueCounts" xml:space="preserve"><value>Inlämningskö</value></data>
+  <data name="NerisSettingsSaved" xml:space="preserve"><value>NERIS-inställningar sparade.</value></data>
+  <data name="SubmissionQueued" xml:space="preserve"><value>Inlämning köad för NERIS.</value></data>
 </root>

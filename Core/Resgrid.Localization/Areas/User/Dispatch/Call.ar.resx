@@ -278,4 +278,7 @@
   <data name="ScheduledDispatchDate" xml:space="preserve">
     <value>تاريخ الإرسال المجدول</value>
   </data>
+  <data name="IncidentReport" xml:space="preserve">
+    <value>تقرير الحادث</value>
+  </data>
 </root>

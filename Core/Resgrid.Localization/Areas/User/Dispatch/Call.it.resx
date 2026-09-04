@@ -845,4 +845,7 @@
   <data name="ScheduledDispatchDate" xml:space="preserve">
     <value>Data di invio programmata</value>
   </data>
+  <data name="IncidentReport" xml:space="preserve">
+    <value>Rapporto di incidente</value>
+  </data>
 </root>

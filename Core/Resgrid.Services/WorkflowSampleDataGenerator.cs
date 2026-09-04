@@ -623,6 +623,27 @@ namespace Resgrid.Services
 				c["number_disposition"] = "none";
 			obj["record_change"] = c;
 
+			if (eventType >= WorkflowTriggerEventType.RecordSubmissionQueued && eventType <= WorkflowTriggerEventType.RecordSubmissionFailed)
+			{
+				r["kind"] = "IncidentReport";
+				r["incident_number"] = "2026-000123";
+				r["neris_incident_id"] = eventType == WorkflowTriggerEventType.RecordSubmissionQueued ? "" : "FD24027000I2026000123";
+				var s = new ScriptObject();
+				s["id"] = "7c1e2a9b-3d4f-4e5a-8b6c-1d2e3f4a5b6c";
+				s["destination"] = "NERIS";
+				s["destination_version"] = "1.4.78";
+				s["state"] = eventType == WorkflowTriggerEventType.RecordSubmissionQueued ? "Queued" : eventType == WorkflowTriggerEventType.RecordSubmissionAccepted ? "Accepted" : eventType == WorkflowTriggerEventType.RecordSubmissionRejected ? "Rejected" : "Failed";
+				s["external_id"] = eventType == WorkflowTriggerEventType.RecordSubmissionQueued ? "" : "FD24027000I2026000123";
+				s["external_status"] = eventType == WorkflowTriggerEventType.RecordSubmissionAccepted ? "APPROVED" : eventType == WorkflowTriggerEventType.RecordSubmissionRejected ? "REJECTED" : "";
+				s["attempts"] = eventType == WorkflowTriggerEventType.RecordSubmissionFailed ? 5 : 1;
+				s["max_attempts"] = 5;
+				s["error_summary"] = eventType == WorkflowTriggerEventType.RecordSubmissionRejected ? "dispatch.call_answered (missing)" : eventType == WorkflowTriggerEventType.RecordSubmissionFailed ? "Delivery exhausted its retries: NERIS returned 503." : "";
+				s["queued_on"] = DateTime.Now.AddMinutes(-30);
+				s["sent_on"] = DateTime.Now.AddMinutes(-1);
+				s["completed_on"] = eventType == WorkflowTriggerEventType.RecordSubmissionQueued ? (DateTime?)null : DateTime.Now;
+				obj["submission"] = s;
+			}
+
 			if (eventType == WorkflowTriggerEventType.RecordSubmittedForReview || eventType == WorkflowTriggerEventType.RecordReturnedForCorrection)
 			{
 				var returned = eventType == WorkflowTriggerEventType.RecordReturnedForCorrection;

@@ -151,7 +151,7 @@ namespace Resgrid.Services.Records
 			return preview;
 		}
 
-		public async Task<RecordsActivationResult> ActivateAsync(int departmentId, string userId, string reason, bool viewGroupRecordsLockToGroup, CancellationToken cancellationToken = default)
+		public async Task<RecordsActivationResult> ActivateAsync(int departmentId, string userId, string reason, bool viewGroupRecordsLockToGroup, string ipAddress = null, CancellationToken cancellationToken = default)
 		{
 			if (string.IsNullOrWhiteSpace(userId))
 				return RecordsActivationResult.Failed("An acting user is required.");
@@ -237,6 +237,7 @@ namespace Resgrid.Services.Records
 					Action = (int)RmsAccessAuditAction.Activation,
 					ActorUserId = userId,
 					Purpose = "Records activation",
+					IpAddress = ipAddress,
 					Successful = true,
 					OccurredOn = now,
 					OriginClient = (int)RmsOriginClient.Web,
@@ -270,7 +271,7 @@ namespace Resgrid.Services.Records
 				: RecordsRollbackOutcome.CleanRevert;
 		}
 
-		public async Task<RecordsActivationResult> RevertAsync(int departmentId, string userId, string reason, CancellationToken cancellationToken = default)
+		public async Task<RecordsActivationResult> RevertAsync(int departmentId, string userId, string reason, string ipAddress = null, CancellationToken cancellationToken = default)
 		{
 			var cutover = await _cutoversRepository.GetByDepartmentIdAsync(departmentId);
 			if (cutover == null || !cutover.IsActive)
@@ -310,6 +311,7 @@ namespace Resgrid.Services.Records
 					Action = (int)RmsAccessAuditAction.Activation,
 					ActorUserId = userId,
 					Purpose = "Records clean revert",
+					IpAddress = ipAddress,
 					Successful = true,
 					OccurredOn = now,
 					OriginClient = (int)RmsOriginClient.Web,

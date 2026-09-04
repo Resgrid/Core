@@ -32,13 +32,15 @@ namespace Resgrid.Services.Records
 		private readonly IRmsRecordParticipantsRepository _participantsRepository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IRmsLegacyStatsRepository _legacyStats;
+		private readonly IRmsIncidentReportsRepository _incidentReports;
 
 		public RecordsAuthorizationService(IPermissionsService permissionsService, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService,
 			IRmsOperationalRecordsRepository recordsRepository, IRmsRecordGroupScopesRepository groupScopesRepository,
-			IRmsRecordParticipantsRepository participantsRepository, ICacheProvider cacheProvider, IRmsLegacyStatsRepository legacyStats)
+			IRmsRecordParticipantsRepository participantsRepository, ICacheProvider cacheProvider, IRmsLegacyStatsRepository legacyStats, IRmsIncidentReportsRepository incidentReports)
 		{
 			_legacyStats = legacyStats;
+			_incidentReports = incidentReports;
 			_permissionsService = permissionsService;
 			_departmentsService = departmentsService;
 			_departmentGroupsService = departmentGroupsService;
@@ -111,24 +113,40 @@ namespace Resgrid.Services.Records
 		{
 			try
 			{
+				// Both aggregates share the id space, the group-scope table and this rule (RMS-2 incident reports have no participants).
+				string author, owner, reviewer, approver;
+				var isOperational = true;
 				var record = await _recordsRepository.GetByIdForDepartmentAsync(departmentId, recordId);
-				if (record == null || record.DeletedOn.HasValue)
-					return false;
+				if (record != null && !record.DeletedOn.HasValue)
+				{
+					author = record.AuthorUserId; owner = record.OwnerUserId; reviewer = record.ReviewerUserId; approver = record.ApproverUserId;
+				}
+				else
+				{
+					var report = await _incidentReports.GetByIdForDepartmentAsync(departmentId, recordId);
+					if (report == null || report.DeletedOn.HasValue)
+						return false;
+					isOperational = false;
+					author = report.AuthorUserId; owner = report.OwnerUserId; reviewer = report.ReviewerUserId; approver = null;
+				}
 
 				// Always-visible cases resolve before any group evaluation.
-				if (string.Equals(record.AuthorUserId, userId, StringComparison.Ordinal) ||
-					string.Equals(record.OwnerUserId, userId, StringComparison.Ordinal) ||
-					string.Equals(record.ReviewerUserId, userId, StringComparison.Ordinal) ||
-					string.Equals(record.ApproverUserId, userId, StringComparison.Ordinal))
+				if (string.Equals(author, userId, StringComparison.Ordinal) ||
+					string.Equals(owner, userId, StringComparison.Ordinal) ||
+					string.Equals(reviewer, userId, StringComparison.Ordinal) ||
+					string.Equals(approver, userId, StringComparison.Ordinal))
 					return true;
 
 				var visible = await GetVisibleGroupIdsAsync(userId, departmentId);
 				if (visible == null)
 					return true;
 
-				var participants = await _participantsRepository.GetForRecordAsync(departmentId, recordId, null);
-				if (participants != null && participants.Any(p => string.Equals(p.UserId, userId, StringComparison.Ordinal)))
-					return true;
+				if (isOperational)
+				{
+					var participants = await _participantsRepository.GetForRecordAsync(departmentId, recordId, null);
+					if (participants != null && participants.Any(p => string.Equals(p.UserId, userId, StringComparison.Ordinal)))
+						return true;
+				}
 
 				var scope = await _groupScopesRepository.GetForRecordAsync(departmentId, recordId);
 				return scope != null && scope.Any(s => visible.Contains(s.DepartmentGroupId));

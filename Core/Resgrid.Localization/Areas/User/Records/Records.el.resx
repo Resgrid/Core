@@ -213,4 +213,134 @@
   <data name="Totals" xml:space="preserve"><value>Σύνολα</value></data>
   <data name="OwnerFilter" xml:space="preserve"><value>Κάτοχος</value></data>
   <data name="GroupFilter" xml:space="preserve"><value>Ομάδα</value></data>
+  <data name="IncidentReports" xml:space="preserve"><value>Αναφορές συμβάντων</value></data>
+  <data name="IncidentReportsHeader" xml:space="preserve"><value>Αναφορές συμβάντων NERIS</value></data>
+  <data name="IncidentReportsIntro" xml:space="preserve"><value>Μία έγκυρη αναφορά συμβάντος ανά κλήση. Οι αναφορές ξεκινούν από την κλήση αποστολής, φέρουν την πηγή κάθε προσυμπληρωμένης τιμής και επικυρώνονται με το καθορισμένο συμβόλαιο NERIS πριν από τη βεβαίωση και την υποβολή.</value></data>
+  <data name="ViewIncidentReport" xml:space="preserve"><value>Αναφορά συμβάντος</value></data>
+  <data name="EditIncidentReport" xml:space="preserve"><value>Επεξεργασία αναφοράς συμβάντος</value></data>
+  <data name="StartFromCall" xml:space="preserve"><value>Έναρξη από κλήση</value></data>
+  <data name="StartIncidentReport" xml:space="preserve"><value>Έναρξη αναφοράς συμβάντος</value></data>
+  <data name="SelectCall" xml:space="preserve"><value>Επιλέξτε κλήση</value></data>
+  <data name="NoActiveCalls" xml:space="preserve"><value>Δεν υπάρχουν ενεργές κλήσεις. Ανοίξτε μια κλειστή κλήση από την Αποστολή για να ξεκινήσετε την αναφορά της.</value></data>
+  <data name="IncidentReportStarted" xml:space="preserve"><value>Η αναφορά συμβάντος ξεκίνησε από την κλήση.</value></data>
+  <data name="ExistingReportForCall" xml:space="preserve"><value>Αυτή η κλήση έχει ήδη αναφορά συμβάντος.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>Αριθμός συμβάντος</value></data>
+  <data name="NerisIncidentId" xml:space="preserve"><value>Αναγνωριστικό συμβάντος NERIS</value></data>
+  <data name="Submission" xml:space="preserve"><value>Υποβολή</value></data>
+  <data name="Submissions" xml:space="preserve"><value>Υποβολές</value></data>
+  <data name="SubmissionState" xml:space="preserve"><value>Κατάσταση υποβολής</value></data>
+  <data name="NoSubmissions" xml:space="preserve"><value>Αυτή η αναθεώρηση δεν έχει υποβληθεί.</value></data>
+  <data name="Attempts" xml:space="preserve"><value>Προσπάθειες</value></data>
+  <data name="ExternalStatus" xml:space="preserve"><value>Κατάσταση προορισμού</value></data>
+  <data name="ErrorSummary" xml:space="preserve"><value>Ζητήματα</value></data>
+  <data name="QueuedOn" xml:space="preserve"><value>Σε ουρά</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Απεστάλη</value></data>
+  <data name="CompletedOn" xml:space="preserve"><value>Ολοκληρώθηκε</value></data>
+  <data name="Payload" xml:space="preserve"><value>Ωφέλιμο φορτίο</value></data>
+  <data name="SubmitToNeris" xml:space="preserve"><value>Υποβολή στο NERIS</value></data>
+  <data name="Resubmit" xml:space="preserve"><value>Διόρθωση και επανυποβολή</value></data>
+  <data name="Validate" xml:space="preserve"><value>Επικύρωση</value></data>
+  <data name="ValidateWithDestination" xml:space="preserve"><value>Επικύρωση με NERIS</value></data>
+  <data name="ValidationIssues" xml:space="preserve"><value>Ζητήματα επικύρωσης</value></data>
+  <data name="NoValidationIssues" xml:space="preserve"><value>Δεν υπάρχουν εκκρεμή ζητήματα επικύρωσης.</value></data>
+  <data name="ValidationRun" xml:space="preserve"><value>Η επικύρωση ολοκληρώθηκε με {0} ζήτημα(τα).</value></data>
+  <data name="Severity" xml:space="preserve"><value>Σοβαρότητα</value></data>
+  <data name="Rule" xml:space="preserve"><value>Κανόνας</value></data>
+  <data name="IssueMessage" xml:space="preserve"><value>Μήνυμα</value></data>
+  <data name="Source" xml:space="preserve"><value>Πηγή</value></data>
+  <data name="ValidationBlocked" xml:space="preserve"><value>Διορθώστε τα παρακάτω σφάλματα πριν την οριστικοποίηση.</value></data>
+  <data name="SubmissionDisabledNotice" xml:space="preserve"><value>Η υποβολή στο NERIS δεν είναι ενεργή για αυτό το τμήμα. Οι οριστικοποιημένες αναφορές παραμένουν τοπικές μέχρι ένας διαχειριστής να ρυθμίσει το προφίλ NERIS.</value></data>
+  <data name="SystemDisabledNotice" xml:space="preserve"><value>Η υποβολή στο NERIS είναι απενεργοποιημένη σε επίπεδο συστήματος. Οι αναφορές μπορούν να συνταχθούν και να οριστικοποιηθούν αλλά όχι να παραδοθούν.</value></data>
+  <data name="ProfileNotConfigured" xml:space="preserve"><value>Το προφίλ NERIS δεν έχει ρυθμιστεί.</value></data>
+  <data name="RejectedNotice" xml:space="preserve"><value>Το NERIS απέρριψε αυτή την αναφορά. Διορθώστε τα πεδία και επανυποβάλετε· δημιουργούνται νέα αναθεώρηση και νέο κλειδί αδρανοποίησης.</value></data>
+  <data name="SubmittedNotice" xml:space="preserve"><value>Αυτή η αναφορά βρίσκεται στο NERIS. Η επεξεργασία αναμένει την απάντηση του προορισμού.</value></data>
+  <data name="AcceptedNotice" xml:space="preserve"><value>Το NERIS αποδέχθηκε αυτή την αναφορά.</value></data>
+  <data name="DispatchTimes" xml:space="preserve"><value>Χρόνοι αποστολής</value></data>
+  <data name="CallCreated" xml:space="preserve"><value>Δημιουργία κλήσης</value></data>
+  <data name="CallAnswered" xml:space="preserve"><value>Απάντηση κλήσης</value></data>
+  <data name="CallArrival" xml:space="preserve"><value>Πρώτη άφιξη</value></data>
+  <data name="IncidentCleared" xml:space="preserve"><value>Λήξη συμβάντος</value></data>
+  <data name="DispatchCenter" xml:space="preserve"><value>Κέντρο αποστολής</value></data>
+  <data name="DeterminantCode" xml:space="preserve"><value>Κωδικός καθοριστή</value></data>
+  <data name="DispatchIncidentCode" xml:space="preserve"><value>Κωδικός συμβάντος αποστολής</value></data>
+  <data name="Disposition" xml:space="preserve"><value>Έκβαση</value></data>
+  <data name="PeoplePresent" xml:space="preserve"><value>Παρόντα άτομα</value></data>
+  <data name="DisplacementCount" xml:space="preserve"><value>Εκτοπισμένα άτομα</value></data>
+  <data name="AnimalsRescued" xml:space="preserve"><value>Διασωθέντα ζώα</value></data>
+  <data name="SpecialModifiers" xml:space="preserve"><value>Ειδικοί τροποποιητές</value></data>
+  <data name="IncidentTypes" xml:space="preserve"><value>Τύποι συμβάντος</value></data>
+  <data name="Primary" xml:space="preserve"><value>Κύριος</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>Τύπος NERIS</value></data>
+  <data name="AddressText" xml:space="preserve"><value>Διεύθυνση</value></data>
+  <data name="StreetNumber" xml:space="preserve"><value>Αριθμός</value></data>
+  <data name="Street" xml:space="preserve"><value>Οδός</value></data>
+  <data name="Municipality" xml:space="preserve"><value>Δήμος</value></data>
+  <data name="County" xml:space="preserve"><value>Νομός</value></data>
+  <data name="StateProvince" xml:space="preserve"><value>Πολιτεία</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Ταχυδρομικός κώδικας</value></data>
+  <data name="Country" xml:space="preserve"><value>Χώρα</value></data>
+  <data name="PlaceType" xml:space="preserve"><value>Τύπος τόπου</value></data>
+  <data name="LocationUse" xml:space="preserve"><value>Χρήση τοποθεσίας</value></data>
+  <data name="CrossStreet" xml:space="preserve"><value>Κάθετη οδός</value></data>
+  <data name="Coordinates" xml:space="preserve"><value>Συντεταγμένες</value></data>
+  <data name="UnitNerisId" xml:space="preserve"><value>Αναγνωριστικό μονάδας NERIS</value></data>
+  <data name="Staffing" xml:space="preserve"><value>Στελέχωση</value></data>
+  <data name="Staged" xml:space="preserve"><value>Σε αναμονή</value></data>
+  <data name="CanceledEnroute" xml:space="preserve"><value>Ακύρωση καθ' οδόν</value></data>
+  <data name="Cleared" xml:space="preserve"><value>Ελεύθερο</value></data>
+  <data name="ResponseMode" xml:space="preserve"><value>Τρόπος απόκρισης</value></data>
+  <data name="Aid" xml:space="preserve"><value>Αμοιβαία βοήθεια</value></data>
+  <data name="AidDirection" xml:space="preserve"><value>Κατεύθυνση</value></data>
+  <data name="AidType" xml:space="preserve"><value>Τύπος βοήθειας</value></data>
+  <data name="Counterpart" xml:space="preserve"><value>Φορέας</value></data>
+  <data name="CounterpartNerisId" xml:space="preserve"><value>Αναγνωριστικό NERIS φορέα</value></data>
+  <data name="NonFireDepartment" xml:space="preserve"><value>Μη πυροσβεστικός φορέας</value></data>
+  <data name="Tactics" xml:space="preserve"><value>Ενέργειες και τακτικές</value></data>
+  <data name="Tactic" xml:space="preserve"><value>Τακτική</value></data>
+  <data name="ActorUnit" xml:space="preserve"><value>Μονάδα</value></data>
+  <data name="OccurredOn" xml:space="preserve"><value>Ώρα</value></data>
+  <data name="ImpedimentNarrative" xml:space="preserve"><value>Εμπόδια</value></data>
+  <data name="OutcomeNarrative" xml:space="preserve"><value>Αποτέλεσμα</value></data>
+  <data name="ProvenanceIntro" xml:space="preserve"><value>Από πού προήλθε κάθε προσυμπληρωμένη τιμή. Οι διορθώσεις διατηρούν το αρχικό δίπλα στη διορθωμένη τιμή.</value></data>
+  <data name="FactKey" xml:space="preserve"><value>Στοιχείο</value></data>
+  <data name="SourceValue" xml:space="preserve"><value>Τιμή πηγής</value></data>
+  <data name="CurrentValue" xml:space="preserve"><value>Τρέχουσα τιμή</value></data>
+  <data name="CorrectedBy" xml:space="preserve"><value>Διορθώθηκε από</value></data>
+  <data name="SourceDispatch" xml:space="preserve"><value>Αποστολή</value></data>
+  <data name="SourceApp" xml:space="preserve"><value>Εφαρμογή</value></data>
+  <data name="SourceDerived" xml:space="preserve"><value>Παράγωγο</value></data>
+  <data name="SourceCorrected" xml:space="preserve"><value>Διορθωμένο</value></data>
+  <data name="SaveAndValidate" xml:space="preserve"><value>Αποθήκευση και επικύρωση</value></data>
+  <data name="Signatures" xml:space="preserve"><value>Βεβαιώσεις</value></data>
+  <data name="Signer" xml:space="preserve"><value>Υπογράφηκε από</value></data>
+  <data name="SignedOn" xml:space="preserve"><value>Υπογράφηκε</value></data>
+  <data name="SubmitForReview" xml:space="preserve"><value>Υποβολή για έλεγχο</value></data>
+  <data name="ReturnForCorrection" xml:space="preserve"><value>Επιστροφή για διόρθωση</value></data>
+  <data name="ReviewDue" xml:space="preserve"><value>Προθεσμία ελέγχου</value></data>
+  <data name="NerisSettingsHeader" xml:space="preserve"><value>Ρυθμίσεις NERIS</value></data>
+  <data name="NerisSettingsIntro" xml:space="preserve"><value>Η ταυτότητα, τα διαπιστευτήρια και το περιβάλλον NERIS του τμήματος, καθώς και η αντιστοίχιση τοπικών τύπων κλήσης σε τύπους συμβάντος NERIS. Τα διαπιστευτήρια αποθηκεύονται κρυπτογραφημένα ανά τμήμα και δεν εμφανίζονται ξανά.</value></data>
+  <data name="NerisEntityId" xml:space="preserve"><value>Αναγνωριστικό οντότητας NERIS</value></data>
+  <data name="EntityName" xml:space="preserve"><value>Όνομα οντότητας</value></data>
+  <data name="Environment" xml:space="preserve"><value>Περιβάλλον</value></data>
+  <data name="BaseUrlOverride" xml:space="preserve"><value>Παράκαμψη βασικού URL API</value></data>
+  <data name="GrantType" xml:space="preserve"><value>Τύπος εξουσιοδότησης</value></data>
+  <data name="Username" xml:space="preserve"><value>Όνομα χρήστη</value></data>
+  <data name="Password" xml:space="preserve"><value>Κωδικός πρόσβασης</value></data>
+  <data name="ClientId" xml:space="preserve"><value>Αναγνωριστικό πελάτη</value></data>
+  <data name="ClientSecret" xml:space="preserve"><value>Μυστικό πελάτη</value></data>
+  <data name="CredentialStored" xml:space="preserve"><value>Υπάρχουν αποθηκευμένα διαπιστευτήρια. Αφήστε τα πεδία κενά για να τα διατηρήσετε.</value></data>
+  <data name="CredentialMissing" xml:space="preserve"><value>Δεν υπάρχουν αποθηκευμένα διαπιστευτήρια.</value></data>
+  <data name="AutoSubmitOnFinalize" xml:space="preserve"><value>Αυτόματη υποβολή κατά την οριστικοποίηση αναφοράς</value></data>
+  <data name="NerisEnabled" xml:space="preserve"><value>Ενεργοποίηση υποβολής NERIS για αυτό το τμήμα</value></data>
+  <data name="ContractVersion" xml:space="preserve"><value>Έκδοση συμβολαίου</value></data>
+  <data name="LastTokenIssued" xml:space="preserve"><value>Τελευταίο διακριτικό</value></data>
+  <data name="LastSuccessfulCall" xml:space="preserve"><value>Τελευταία επιτυχής κλήση</value></data>
+  <data name="LastError" xml:space="preserve"><value>Τελευταίο σφάλμα</value></data>
+  <data name="Crosswalk" xml:space="preserve"><value>Αντιστοίχιση τύπων κλήσης</value></data>
+  <data name="CrosswalkIntro" xml:space="preserve"><value>Αντιστοιχίστε κάθε τύπο κλήσης αποστολής στον τύπο συμβάντος NERIS που προσυμπληρώνει. Οι μη αντιστοιχισμένοι τύποι αφήνουν την επιλογή στον συντάκτη.</value></data>
+  <data name="CallType" xml:space="preserve"><value>Τύπος κλήσης</value></data>
+  <data name="Unmapped" xml:space="preserve"><value>Μη αντιστοιχισμένο</value></data>
+  <data name="QueueCounts" xml:space="preserve"><value>Ουρά υποβολών</value></data>
+  <data name="NerisSettingsSaved" xml:space="preserve"><value>Οι ρυθμίσεις NERIS αποθηκεύτηκαν.</value></data>
+  <data name="SubmissionQueued" xml:space="preserve"><value>Η υποβολή μπήκε στην ουρά για το NERIS.</value></data>
 </root>

@@ -22,6 +22,17 @@ namespace Resgrid.Tests.Rms
 			Resolve<IRmsRecordValueService>().Should().NotBeNull();
 			Resolve<IRmsInventoryUsageAdapter>().Should().NotBeNull();
 			Resolve<IRecordsAccountabilityService>().Should().NotBeNull();
+			// RMS-2 NERIS boundary
+			Resolve<Resgrid.Model.Providers.INerisProfileService>().Should().NotBeNull();
+			Resolve<Resgrid.Model.Providers.INerisMappingService>().Should().NotBeNull();
+			Resolve<Resgrid.Model.Providers.INerisValidationService>().Should().NotBeNull();
+			Resolve<Resgrid.Model.Providers.INerisApiClient>().Should().NotBeNull();
+			Resolve<Resgrid.Model.Providers.INerisSubmissionService>().Should().NotBeNull();
+			Resolve<IIncidentReportsService>().Should().NotBeNull();
+			Resolve<IRecordsSubmissionService>().Should().NotBeNull();
+			Resolve<IRecordsApiStateStore>().Should().NotBeNull();
+			Resolve<IRecordsApiIdempotencyService>().Should().NotBeNull();
+			Resolve<IRecordAttachmentUploadService>().Should().NotBeNull();
 			Resolve<IRecordsNotificationService>().Should().NotBeNull();
 			Resolve<IRecordsSearchService>().Should().NotBeNull();
 			Resolve<IRecordsSearchIndexer>().Should().NotBeNull();
@@ -54,6 +65,21 @@ namespace Resgrid.Tests.Rms
 			Resolve<IDepartmentProfileRepository>().Should().NotBeNull();
 			Resolve<IDepartmentProfileMediaRepository>().Should().NotBeNull();
 			Resolve<IRmsRecordPrintLayoutsRepository>().Should().NotBeNull();
+			// RMS-2 (M0164-M0166)
+			Resolve<IRmsIncidentReportsRepository>().Should().NotBeNull();
+			Resolve<IRmsSourceFactsRepository>().Should().NotBeNull();
+			Resolve<IRmsUnitResponsesRepository>().Should().NotBeNull();
+			Resolve<IRmsIncidentTypesRepository>().Should().NotBeNull();
+			Resolve<IRmsActionTacticsRepository>().Should().NotBeNull();
+			Resolve<IRmsAidsRepository>().Should().NotBeNull();
+			Resolve<IRmsLocationsRepository>().Should().NotBeNull();
+			Resolve<IRmsNarrativesRepository>().Should().NotBeNull();
+			Resolve<IRmsValidationIssuesRepository>().Should().NotBeNull();
+			Resolve<IRmsSubmissionsRepository>().Should().NotBeNull();
+			Resolve<IRmsSignaturesRepository>().Should().NotBeNull();
+			Resolve<IRmsNerisProfilesRepository>().Should().NotBeNull();
+			Resolve<IRmsNerisValueSetsRepository>().Should().NotBeNull();
+			Resolve<IRmsNerisCrosswalksRepository>().Should().NotBeNull();
 		}
 
 		[Test]

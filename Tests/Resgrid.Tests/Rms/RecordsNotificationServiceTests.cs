@@ -36,7 +36,7 @@ namespace Resgrid.Tests.Rms
 			var settings = new Mock<IDepartmentSettingsService>();
 			settings.Setup(s => s.GetTextToCallNumberForDepartmentAsync(Dept)).ReturnsAsync("+15555550100");
 
-			_service = new RecordsNotificationService(_records.Object, _communication.Object, departments.Object, settings.Object, _profiles.Object);
+			_service = new RecordsNotificationService(_records.Object, _communication.Object, departments.Object, settings.Object, _profiles.Object, new Mock<IRmsIncidentReportsRepository>().Object);
 		}
 
 		private static RmsOperationalRecord Returned() => new RmsOperationalRecord

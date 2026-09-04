@@ -84,7 +84,22 @@
 		RecordVoided = 106,
 
 		/// <summary>A non-finalized Record was abandoned; carries the reserved-number disposition.</summary>
-		RecordCancelled = 107
+		RecordCancelled = 107,
+
+		// RMS-2 reporting-destination triggers (plan section 5.6). Emitted by the submission worker (41), never
+		// from the Records transaction; payloads carry sanitized submission.* data and never the destination payload.
+
+		/// <summary>A finalized revision was queued for NERIS or another configured reporting destination.</summary>
+		RecordSubmissionQueued = 108,
+
+		/// <summary>The destination accepted the immutable revision.</summary>
+		RecordSubmissionAccepted = 109,
+
+		/// <summary>The destination rejected it with normalized, non-sensitive error codes.</summary>
+		RecordSubmissionRejected = 110,
+
+		/// <summary>Delivery exhausted its retries or requires operator attention.</summary>
+		RecordSubmissionFailed = 111
 	}
 
 	public static class WorkflowTriggerEventTypes

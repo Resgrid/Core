@@ -242,6 +242,13 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordsService>().As<IRecordsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RmsInventoryUsageAdapter>().As<IRmsInventoryUsageAdapter>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsAccountabilityService>().As<IRecordsAccountabilityService>().InstancePerLifetimeScope();
+			// RMS-2: NERIS incident reports and the submission worker logic
+			builder.RegisterType<Records.IncidentReportsService>().As<IIncidentReportsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsSubmissionService>().As<IRecordsSubmissionService>().InstancePerLifetimeScope();
+			// RMS-1B v4 Records API support: keyed short-lived state, command idempotency, resumable attachment sessions
+			builder.RegisterType<Records.RecordsApiStateStore>().As<IRecordsApiStateStore>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsApiIdempotencyService>().As<IRecordsApiIdempotencyService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordAttachmentUploadService>().As<IRecordAttachmentUploadService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsNotificationService>().As<IRecordsNotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsSearchIndexMaintenanceService>().As<IRecordsSearchIndexMaintenanceService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsReportingService>().As<IRecordsReportingService>().InstancePerLifetimeScope();

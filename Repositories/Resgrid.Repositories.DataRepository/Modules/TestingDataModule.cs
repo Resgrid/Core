@@ -270,6 +270,21 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentProfileRepository>().As<IDepartmentProfileRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentProfileMediaRepository>().As<IDepartmentProfileMediaRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsRecordPrintLayoutsRepository>().As<IRmsRecordPrintLayoutsRepository>().InstancePerLifetimeScope();
+			// NERIS incident report aggregate (RMS-2, registry M0164-M0166)
+			builder.RegisterType<RmsIncidentReportsRepository>().As<IRmsIncidentReportsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsSourceFactsRepository>().As<IRmsSourceFactsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsUnitResponsesRepository>().As<IRmsUnitResponsesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsIncidentTypesRepository>().As<IRmsIncidentTypesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsActionTacticsRepository>().As<IRmsActionTacticsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsAidsRepository>().As<IRmsAidsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsLocationsRepository>().As<IRmsLocationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsNarrativesRepository>().As<IRmsNarrativesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsValidationIssuesRepository>().As<IRmsValidationIssuesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsSubmissionsRepository>().As<IRmsSubmissionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsSignaturesRepository>().As<IRmsSignaturesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsNerisProfilesRepository>().As<IRmsNerisProfilesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsNerisValueSetsRepository>().As<IRmsNerisValueSetsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsNerisCrosswalksRepository>().As<IRmsNerisCrosswalksRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

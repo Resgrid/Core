@@ -199,7 +199,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
-			var result = await _cutoverService.ActivateAsync(DepartmentId, UserId, model.Reason, model.ViewGroupRecordsLockToGroup, cancellationToken);
+			var result = await _cutoverService.ActivateAsync(DepartmentId, UserId, model.Reason, model.ViewGroupRecordsLockToGroup, IpAddressHelper.GetRequestIP(Request, true), cancellationToken);
 			if (!result.Success)
 			{
 				model.ErrorMessage = result.Error;

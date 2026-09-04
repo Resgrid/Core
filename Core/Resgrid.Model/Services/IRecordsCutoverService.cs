@@ -28,13 +28,13 @@ namespace Resgrid.Model.Services
 		/// (registry section 4.6), ViewGroupRecords row when the administrator chose LockToGroup, history
 		/// event and access audit. Refuses when the flag is off, preflight blocks, or already activated.
 		/// </summary>
-		Task<RecordsActivationResult> ActivateAsync(int departmentId, string userId, string reason, bool viewGroupRecordsLockToGroup, CancellationToken cancellationToken = default);
+		Task<RecordsActivationResult> ActivateAsync(int departmentId, string userId, string reason, bool viewGroupRecordsLockToGroup, string ipAddress = null, CancellationToken cancellationToken = default);
 
 		/// <summary>Which rollback outcome the decision frame permits right now.</summary>
 		Task<RecordsRollbackOutcome> GetRollbackOutcomeAsync(int departmentId);
 
 		/// <summary>Clean revert only (zero Records rows since activation); anything else returns a failure naming the outcome.</summary>
-		Task<RecordsActivationResult> RevertAsync(int departmentId, string userId, string reason, CancellationToken cancellationToken = default);
+		Task<RecordsActivationResult> RevertAsync(int departmentId, string userId, string reason, string ipAddress = null, CancellationToken cancellationToken = default);
 
 		Task InvalidateCacheAsync(int departmentId);
 	}

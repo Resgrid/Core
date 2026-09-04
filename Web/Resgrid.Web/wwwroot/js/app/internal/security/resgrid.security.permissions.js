@@ -32,6 +32,10 @@ var resgrid;
                         url: url,
                         type: 'POST',
                         headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).fail(function () {
+                        // A rejected write leaves select2 showing roles the server never stored, so the
+                        // failure has to be surfaced rather than swallowed as an unhandled rejection.
+                        resgrid.common.notifications.showError('Permission Not Saved', 'The permission change could not be saved. Reload the page and try again.');
                     });
                 });
                 $.ajax({

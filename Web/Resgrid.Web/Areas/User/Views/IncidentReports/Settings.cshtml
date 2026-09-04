@@ -1,0 +1,160 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.NerisSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["NerisSettingsHeader"];
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["NerisSettingsHeader"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li><a asp-controller="IncidentReports" asp-action="Index" asp-route-area="User">@localizer["IncidentReports"]</a></li>
+			<li class="active"><strong>@localizer["NerisSettingsHeader"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<form class="form-horizontal" method="post" asp-controller="IncidentReports" asp-action="Settings" asp-route-area="User" autocomplete="off">
+	@Html.AntiForgeryToken()
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="wrapper wrapper-content">
+				@if (!string.IsNullOrEmpty(Model.Message))
+				{
+					<div class="alert alert-success">@Model.Message</div>
+				}
+				@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+				{
+					<div class="alert alert-danger">@Model.ErrorMessage</div>
+				}
+				@if (!Model.SystemEnabled)
+				{
+					<div class="alert alert-info">@localizer["SystemDisabledNotice"]</div>
+				}
+				<p class="text-muted">@localizer["NerisSettingsIntro"]</p>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-id-card-o"></i> NERIS <small>@localizer["ContractVersion"] @Model.ContractVersion</small></h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["NerisEntityId"]</label>
+							<div class="col-sm-4"><input type="text" class="form-control" asp-for="NerisEntityId" placeholder="FD00000000" maxlength="16" /></div>
+							<label class="col-sm-2 control-label">@localizer["EntityName"]</label>
+							<div class="col-sm-3"><input type="text" class="form-control" asp-for="EntityName" maxlength="256" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["Environment"]</label>
+							<div class="col-sm-3"><select class="form-control" asp-for="Environment" asp-items="Model.Environments"></select></div>
+							<label class="col-sm-2 control-label">@localizer["GrantType"]</label>
+							<div class="col-sm-4"><select class="form-control" asp-for="GrantType" asp-items="Model.GrantTypes"></select></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["BaseUrlOverride"]</label>
+							<div class="col-sm-9"><input type="url" class="form-control" asp-for="BaseUrlOverride" maxlength="512" /></div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9">
+								<div class="checkbox"><label><input type="checkbox" asp-for="IsEnabled" /> @localizer["NerisEnabled"]</label></div>
+								<div class="checkbox"><label><input type="checkbox" asp-for="AutoSubmitOnFinalize" /> @localizer["AutoSubmitOnFinalize"]</label></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-key"></i> @localizer["Password"] / @localizer["ClientSecret"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@(Model.HasCredential ? localizer["CredentialStored"] : localizer["CredentialMissing"])</p>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["Username"]</label>
+							<div class="col-sm-4"><input type="text" class="form-control" asp-for="Username" autocomplete="off" maxlength="256" /></div>
+							<label class="col-sm-2 control-label">@localizer["Password"]</label>
+							<div class="col-sm-3"><input type="password" class="form-control" asp-for="Password" autocomplete="new-password" maxlength="256" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ClientId"]</label>
+							<div class="col-sm-4"><input type="text" class="form-control" asp-for="ClientId" autocomplete="off" maxlength="256" /></div>
+							<label class="col-sm-2 control-label">@localizer["ClientSecret"]</label>
+							<div class="col-sm-3"><input type="password" class="form-control" asp-for="ClientSecret" autocomplete="new-password" maxlength="512" /></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-exchange"></i> @localizer["Crosswalk"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["CrosswalkIntro"]</p>
+						@if (Model.Crosswalk.Count == 0)
+						{
+							<p class="text-muted">-</p>
+						}
+						else
+						{
+							<table class="table table-condensed">
+								<thead><tr><th>@localizer["CallType"]</th><th>@localizer["TypeCode"]</th></tr></thead>
+								<tbody>
+									@for (var i = 0; i < Model.Crosswalk.Count; i++)
+									{
+										<tr>
+											<td><input type="hidden" name="Crosswalk[@i].CallType" value="@Model.Crosswalk[i].CallType" />@Model.Crosswalk[i].CallType</td>
+											<td>
+												<select class="form-control input-sm" name="Crosswalk[@i].NerisCode">
+													<option value="">@localizer["Unmapped"]</option>
+													@foreach (var c in Model.IncidentTypeCodes)
+													{
+														<option value="@c.Value" selected="@(c.Value == Model.Crosswalk[i].NerisCode)">@c.Text</option>
+													}
+												</select>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						}
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-12">
+						<a class="btn btn-white" asp-controller="IncidentReports" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+						<button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4">
+			<div class="wrapper wrapper-content">
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-heartbeat"></i> @commonLocalizer["Status"]</h5></div>
+					<div class="ibox-content">
+						<dl class="dl-horizontal">
+							<dt>@localizer["SubmissionState"]</dt><dd><span class="label @(Model.SubmissionEnabled ? "label-primary" : "label-default")">@(Model.SubmissionEnabled ? commonLocalizer["Enabled"] : commonLocalizer["Disabled"])</span></dd>
+							<dt>@localizer["LastTokenIssued"]</dt><dd>@When(Model.LastTokenIssuedOn)</dd>
+							<dt>@localizer["LastSuccessfulCall"]</dt><dd>@When(Model.LastSuccessfulCallOn)</dd>
+							@if (!string.IsNullOrWhiteSpace(Model.LastError))
+							{
+								<dt>@localizer["LastError"]</dt><dd class="text-danger">@Model.LastError</dd>
+							}
+						</dl>
+					</div>
+				</div>
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-cloud-upload"></i> @localizer["QueueCounts"]</h5></div>
+					<div class="ibox-content">
+						<dl class="dl-horizontal">
+							@foreach (var kv in Model.QueueCounts)
+							{
+								<dt>@kv.Key</dt><dd>@kv.Value</dd>
+							}
+						</dl>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

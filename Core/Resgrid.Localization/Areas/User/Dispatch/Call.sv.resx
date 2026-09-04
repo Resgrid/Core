@@ -845,4 +845,7 @@
   <data name="ScheduledDispatchDate" xml:space="preserve">
     <value>Schemalagt larmdatum</value>
   </data>
+  <data name="IncidentReport" xml:space="preserve">
+    <value>Insatsrapport</value>
+  </data>
 </root>

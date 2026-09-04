@@ -213,4 +213,134 @@
   <data name="Totals" xml:space="preserve"><value>Разом</value></data>
   <data name="OwnerFilter" xml:space="preserve"><value>Власник</value></data>
   <data name="GroupFilter" xml:space="preserve"><value>Група</value></data>
+  <data name="IncidentReports" xml:space="preserve"><value>Звіти про інциденти</value></data>
+  <data name="IncidentReportsHeader" xml:space="preserve"><value>Звіти про інциденти NERIS</value></data>
+  <data name="IncidentReportsIntro" xml:space="preserve"><value>Один авторитетний звіт про інцидент на виклик. Звіти починаються з диспетчеризованого виклику, зберігають джерело кожного попередньо заповненого значення та перевіряються за закріпленим контрактом NERIS перед засвідченням і поданням.</value></data>
+  <data name="ViewIncidentReport" xml:space="preserve"><value>Звіт про інцидент</value></data>
+  <data name="EditIncidentReport" xml:space="preserve"><value>Редагувати звіт про інцидент</value></data>
+  <data name="StartFromCall" xml:space="preserve"><value>Почати з виклику</value></data>
+  <data name="StartIncidentReport" xml:space="preserve"><value>Почати звіт про інцидент</value></data>
+  <data name="SelectCall" xml:space="preserve"><value>Виберіть виклик</value></data>
+  <data name="NoActiveCalls" xml:space="preserve"><value>Немає активних викликів; відкрийте закритий виклик у Диспетчеризації, щоб почати його звіт.</value></data>
+  <data name="IncidentReportStarted" xml:space="preserve"><value>Звіт про інцидент розпочато з виклику.</value></data>
+  <data name="ExistingReportForCall" xml:space="preserve"><value>Цей виклик уже має звіт про інцидент.</value></data>
+  <data name="IncidentNumber" xml:space="preserve"><value>Номер інциденту</value></data>
+  <data name="NerisIncidentId" xml:space="preserve"><value>Ідентифікатор інциденту NERIS</value></data>
+  <data name="Submission" xml:space="preserve"><value>Подання</value></data>
+  <data name="Submissions" xml:space="preserve"><value>Подання</value></data>
+  <data name="SubmissionState" xml:space="preserve"><value>Стан подання</value></data>
+  <data name="NoSubmissions" xml:space="preserve"><value>Цю редакцію не подано.</value></data>
+  <data name="Attempts" xml:space="preserve"><value>Спроби</value></data>
+  <data name="ExternalStatus" xml:space="preserve"><value>Стан призначення</value></data>
+  <data name="ErrorSummary" xml:space="preserve"><value>Проблеми</value></data>
+  <data name="QueuedOn" xml:space="preserve"><value>У черзі</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Надіслано</value></data>
+  <data name="CompletedOn" xml:space="preserve"><value>Завершено</value></data>
+  <data name="Payload" xml:space="preserve"><value>Корисне навантаження</value></data>
+  <data name="SubmitToNeris" xml:space="preserve"><value>Подати до NERIS</value></data>
+  <data name="Resubmit" xml:space="preserve"><value>Виправити та подати повторно</value></data>
+  <data name="Validate" xml:space="preserve"><value>Перевірити</value></data>
+  <data name="ValidateWithDestination" xml:space="preserve"><value>Перевірити з NERIS</value></data>
+  <data name="ValidationIssues" xml:space="preserve"><value>Проблеми перевірки</value></data>
+  <data name="NoValidationIssues" xml:space="preserve"><value>Немає відкритих проблем перевірки.</value></data>
+  <data name="ValidationRun" xml:space="preserve"><value>Перевірку завершено, проблем: {0}.</value></data>
+  <data name="Severity" xml:space="preserve"><value>Серйозність</value></data>
+  <data name="Rule" xml:space="preserve"><value>Правило</value></data>
+  <data name="IssueMessage" xml:space="preserve"><value>Повідомлення</value></data>
+  <data name="Source" xml:space="preserve"><value>Джерело</value></data>
+  <data name="ValidationBlocked" xml:space="preserve"><value>Виправте помилки нижче перед завершенням.</value></data>
+  <data name="SubmissionDisabledNotice" xml:space="preserve"><value>Подання до NERIS не ввімкнено для цього підрозділу. Завершені звіти залишаються локальними, доки адміністратор не налаштує профіль NERIS.</value></data>
+  <data name="SystemDisabledNotice" xml:space="preserve"><value>Подання до NERIS вимкнено в усій системі; звіти можна створювати та завершувати, але не доставляти.</value></data>
+  <data name="ProfileNotConfigured" xml:space="preserve"><value>Профіль NERIS не налаштовано.</value></data>
+  <data name="RejectedNotice" xml:space="preserve"><value>NERIS відхилив цей звіт. Виправте поля та подайте повторно; буде створено нову редакцію та новий ключ ідемпотентності.</value></data>
+  <data name="SubmittedNotice" xml:space="preserve"><value>Цей звіт перебуває в NERIS. Редагування очікує відповіді призначення.</value></data>
+  <data name="AcceptedNotice" xml:space="preserve"><value>NERIS прийняв цей звіт.</value></data>
+  <data name="DispatchTimes" xml:space="preserve"><value>Часи диспетчеризації</value></data>
+  <data name="CallCreated" xml:space="preserve"><value>Виклик створено</value></data>
+  <data name="CallAnswered" xml:space="preserve"><value>Виклик прийнято</value></data>
+  <data name="CallArrival" xml:space="preserve"><value>Перше прибуття</value></data>
+  <data name="IncidentCleared" xml:space="preserve"><value>Інцидент завершено</value></data>
+  <data name="DispatchCenter" xml:space="preserve"><value>Диспетчерський центр</value></data>
+  <data name="DeterminantCode" xml:space="preserve"><value>Код детермінанти</value></data>
+  <data name="DispatchIncidentCode" xml:space="preserve"><value>Код інциденту диспетчеризації</value></data>
+  <data name="Disposition" xml:space="preserve"><value>Результат</value></data>
+  <data name="PeoplePresent" xml:space="preserve"><value>Присутні люди</value></data>
+  <data name="DisplacementCount" xml:space="preserve"><value>Переміщені особи</value></data>
+  <data name="AnimalsRescued" xml:space="preserve"><value>Врятовані тварини</value></data>
+  <data name="SpecialModifiers" xml:space="preserve"><value>Спеціальні модифікатори</value></data>
+  <data name="IncidentTypes" xml:space="preserve"><value>Типи інциденту</value></data>
+  <data name="Primary" xml:space="preserve"><value>Основний</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>Тип NERIS</value></data>
+  <data name="AddressText" xml:space="preserve"><value>Адреса</value></data>
+  <data name="StreetNumber" xml:space="preserve"><value>Номер</value></data>
+  <data name="Street" xml:space="preserve"><value>Вулиця</value></data>
+  <data name="Municipality" xml:space="preserve"><value>Муніципалітет</value></data>
+  <data name="County" xml:space="preserve"><value>Округ</value></data>
+  <data name="StateProvince" xml:space="preserve"><value>Штат</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Поштовий індекс</value></data>
+  <data name="Country" xml:space="preserve"><value>Країна</value></data>
+  <data name="PlaceType" xml:space="preserve"><value>Тип місця</value></data>
+  <data name="LocationUse" xml:space="preserve"><value>Використання місця</value></data>
+  <data name="CrossStreet" xml:space="preserve"><value>Перехресна вулиця</value></data>
+  <data name="Coordinates" xml:space="preserve"><value>Координати</value></data>
+  <data name="UnitNerisId" xml:space="preserve"><value>Ідентифікатор підрозділу NERIS</value></data>
+  <data name="Staffing" xml:space="preserve"><value>Укомплектування</value></data>
+  <data name="Staged" xml:space="preserve"><value>Очікування</value></data>
+  <data name="CanceledEnroute" xml:space="preserve"><value>Скасовано в дорозі</value></data>
+  <data name="Cleared" xml:space="preserve"><value>Звільнено</value></data>
+  <data name="ResponseMode" xml:space="preserve"><value>Режим реагування</value></data>
+  <data name="Aid" xml:space="preserve"><value>Взаємодопомога</value></data>
+  <data name="AidDirection" xml:space="preserve"><value>Напрям</value></data>
+  <data name="AidType" xml:space="preserve"><value>Тип допомоги</value></data>
+  <data name="Counterpart" xml:space="preserve"><value>Організація</value></data>
+  <data name="CounterpartNerisId" xml:space="preserve"><value>NERIS-ідентифікатор організації</value></data>
+  <data name="NonFireDepartment" xml:space="preserve"><value>Непожежна організація</value></data>
+  <data name="Tactics" xml:space="preserve"><value>Дії та тактика</value></data>
+  <data name="Tactic" xml:space="preserve"><value>Тактика</value></data>
+  <data name="ActorUnit" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="OccurredOn" xml:space="preserve"><value>Час</value></data>
+  <data name="ImpedimentNarrative" xml:space="preserve"><value>Перешкоди</value></data>
+  <data name="OutcomeNarrative" xml:space="preserve"><value>Результат</value></data>
+  <data name="ProvenanceIntro" xml:space="preserve"><value>Звідки походить кожне попередньо заповнене значення. Виправлення зберігають оригінал поруч із виправленим значенням.</value></data>
+  <data name="FactKey" xml:space="preserve"><value>Факт</value></data>
+  <data name="SourceValue" xml:space="preserve"><value>Значення джерела</value></data>
+  <data name="CurrentValue" xml:space="preserve"><value>Поточне значення</value></data>
+  <data name="CorrectedBy" xml:space="preserve"><value>Виправив</value></data>
+  <data name="SourceDispatch" xml:space="preserve"><value>Диспетчеризація</value></data>
+  <data name="SourceApp" xml:space="preserve"><value>Застосунок</value></data>
+  <data name="SourceDerived" xml:space="preserve"><value>Похідне</value></data>
+  <data name="SourceCorrected" xml:space="preserve"><value>Виправлено</value></data>
+  <data name="SaveAndValidate" xml:space="preserve"><value>Зберегти та перевірити</value></data>
+  <data name="Signatures" xml:space="preserve"><value>Засвідчення</value></data>
+  <data name="Signer" xml:space="preserve"><value>Підписав</value></data>
+  <data name="SignedOn" xml:space="preserve"><value>Підписано</value></data>
+  <data name="SubmitForReview" xml:space="preserve"><value>Надіслати на перевірку</value></data>
+  <data name="ReturnForCorrection" xml:space="preserve"><value>Повернути на виправлення</value></data>
+  <data name="ReviewDue" xml:space="preserve"><value>Термін перевірки</value></data>
+  <data name="NerisSettingsHeader" xml:space="preserve"><value>Налаштування NERIS</value></data>
+  <data name="NerisSettingsIntro" xml:space="preserve"><value>Ідентичність, облікові дані та середовище NERIS підрозділу, а також відповідність локальних типів викликів типам інцидентів NERIS. Облікові дані зберігаються зашифрованими для кожного підрозділу й більше не показуються.</value></data>
+  <data name="NerisEntityId" xml:space="preserve"><value>Ідентифікатор суб'єкта NERIS</value></data>
+  <data name="EntityName" xml:space="preserve"><value>Назва суб'єкта</value></data>
+  <data name="Environment" xml:space="preserve"><value>Середовище</value></data>
+  <data name="BaseUrlOverride" xml:space="preserve"><value>Заміна базового URL API</value></data>
+  <data name="GrantType" xml:space="preserve"><value>Тип гранту</value></data>
+  <data name="Username" xml:space="preserve"><value>Ім'я користувача</value></data>
+  <data name="Password" xml:space="preserve"><value>Пароль</value></data>
+  <data name="ClientId" xml:space="preserve"><value>Ідентифікатор клієнта</value></data>
+  <data name="ClientSecret" xml:space="preserve"><value>Секрет клієнта</value></data>
+  <data name="CredentialStored" xml:space="preserve"><value>Облікові дані збережено. Залиште поля порожніми, щоб зберегти їх.</value></data>
+  <data name="CredentialMissing" xml:space="preserve"><value>Облікові дані не збережено.</value></data>
+  <data name="AutoSubmitOnFinalize" xml:space="preserve"><value>Подавати автоматично після завершення звіту</value></data>
+  <data name="NerisEnabled" xml:space="preserve"><value>Увімкнути подання до NERIS для цього підрозділу</value></data>
+  <data name="ContractVersion" xml:space="preserve"><value>Версія контракту</value></data>
+  <data name="LastTokenIssued" xml:space="preserve"><value>Останній виданий токен</value></data>
+  <data name="LastSuccessfulCall" xml:space="preserve"><value>Останній успішний виклик</value></data>
+  <data name="LastError" xml:space="preserve"><value>Остання помилка</value></data>
+  <data name="Crosswalk" xml:space="preserve"><value>Відповідність типів викликів</value></data>
+  <data name="CrosswalkIntro" xml:space="preserve"><value>Зіставте кожен тип виклику з типом інциденту NERIS, який він попередньо заповнює. Незіставлені типи залишають вибір автору.</value></data>
+  <data name="CallType" xml:space="preserve"><value>Тип виклику</value></data>
+  <data name="Unmapped" xml:space="preserve"><value>Не зіставлено</value></data>
+  <data name="QueueCounts" xml:space="preserve"><value>Черга подань</value></data>
+  <data name="NerisSettingsSaved" xml:space="preserve"><value>Налаштування NERIS збережено.</value></data>
+  <data name="SubmissionQueued" xml:space="preserve"><value>Подання поставлено в чергу для NERIS.</value></data>
 </root>

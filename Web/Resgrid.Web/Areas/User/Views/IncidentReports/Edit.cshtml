@@ -1,0 +1,341 @@
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.IncidentReportEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["EditIncidentReport"];
+	var reference = string.IsNullOrWhiteSpace(Model.RecordNumber) ? Model.DraftReference : Model.RecordNumber;
+	string Dt(DateTime? v) => v.HasValue ? v.Value.ToString("yyyy-MM-ddTHH:mm") : string.Empty;
+	Func<string, object> badge = key =>
+	{
+		var p = Model.ProvenanceFor(key);
+		if (p == null) return Html.Raw(string.Empty);
+		var css = p == "Corrected" ? "label-warning" : p == "Derived" ? "label-default" : "label-info";
+		return Html.Raw($"<span class=\"label {css}\" title=\"{localizer["Provenance"]}\">{localizer["Source" + p]}</span>");
+	};
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["EditIncidentReport"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li><a asp-controller="IncidentReports" asp-action="Index" asp-route-area="User">@localizer["IncidentReports"]</a></li>
+			<li><a asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@Model.ReportId">@reference</a></li>
+			<li class="active"><strong>@commonLocalizer["Edit"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<form class="form-horizontal" method="post" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User">
+	@Html.AntiForgeryToken()
+	@Html.HiddenFor(m => m.ReportId)
+	@Html.HiddenFor(m => m.RowVersion)
+	@Html.HiddenFor(m => m.CallId)
+
+	<div class="row">
+		<div class="col-lg-9">
+			<div class="wrapper wrapper-content">
+				@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+				{
+					<div class="alert alert-danger">@Model.ErrorMessage</div>
+				}
+				@if (Model.IsAmendment)
+				{
+					<div class="alert alert-info">@localizer["AmendmentOpen"]</div>
+				}
+				@if (Model.IsRejected)
+				{
+					<div class="alert alert-danger"><strong>@localizer["RejectedNotice"]</strong> @Model.RejectionSummary</div>
+				}
+				@if (Model.Issues.Count > 0)
+				{
+					<div class="alert alert-warning">
+						<strong>@localizer["ValidationIssues"]</strong>
+						<ul style="margin-bottom:0">
+							@foreach (var i in Model.Issues.OrderBy(i => i.Severity))
+							{
+								<li><span class="label @(i.Severity == (int)RmsValidationSeverity.Error ? "label-danger" : "label-warning")">@(((RmsValidationSeverity)i.Severity).ToString())</span> <code>@i.FieldPath</code> @i.Message</li>
+							}
+						</ul>
+					</div>
+				}
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-fire"></i> @reference <small>@Model.CallLabel</small></h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["IncidentNumber"] @badge(NerisFactKeys.IncidentNumber)</label>
+							<div class="col-sm-4"><input type="text" class="form-control" asp-for="IncidentNumber" maxlength="64" /></div>
+							<label class="col-sm-2 control-label">@localizer["Station"]</label>
+							<div class="col-sm-3"><select class="form-control" asp-for="StationGroupId" asp-items="Model.Stations"><option value="">-</option></select></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["DispatchIncidentCode"] @badge(NerisFactKeys.IncidentCode)</label>
+							<div class="col-sm-4"><input type="text" class="form-control" asp-for="DispatchIncidentCode" maxlength="64" /></div>
+							<label class="col-sm-2 control-label">@localizer["DeterminantCode"]</label>
+							<div class="col-sm-3"><input type="text" class="form-control" asp-for="DeterminantCode" maxlength="32" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["DispatchCenter"]</label>
+							<div class="col-sm-4"><input type="text" class="form-control" asp-for="DispatchCenterId" maxlength="64" /></div>
+							<label class="col-sm-2 control-label">@localizer["Disposition"]</label>
+							<div class="col-sm-3"><input type="text" class="form-control" asp-for="Disposition" maxlength="64" /></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-clock-o"></i> @localizer["DispatchTimes"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["CallCreated"] @badge(NerisFactKeys.CallCreate)</label>
+							<div class="col-sm-3"><input type="datetime-local" class="form-control" asp-for="CallCreatedOn" asp-format="{0:yyyy-MM-ddTHH:mm}" /></div>
+							<label class="col-sm-3 control-label">@localizer["CallAnswered"] @badge(NerisFactKeys.CallAnswered)</label>
+							<div class="col-sm-3"><input type="datetime-local" class="form-control" asp-for="CallAnsweredOn" asp-format="{0:yyyy-MM-ddTHH:mm}" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["CallArrival"] @badge(NerisFactKeys.CallArrival)</label>
+							<div class="col-sm-3"><input type="datetime-local" class="form-control" asp-for="CallArrivalOn" asp-format="{0:yyyy-MM-ddTHH:mm}" /></div>
+							<label class="col-sm-3 control-label">@localizer["IncidentCleared"] @badge(NerisFactKeys.IncidentClear)</label>
+							<div class="col-sm-3"><input type="datetime-local" class="form-control" asp-for="IncidentClearedOn" asp-format="{0:yyyy-MM-ddTHH:mm}" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PeoplePresent"]</label>
+							<div class="col-sm-3"><select class="form-control" asp-for="PeoplePresent"><option value="">-</option><option value="true">@commonLocalizer["Yes"]</option><option value="false">@commonLocalizer["No"]</option></select></div>
+							<label class="col-sm-3 control-label">@localizer["DisplacementCount"]</label>
+							<div class="col-sm-1"><input type="number" min="0" class="form-control" asp-for="DisplacementCount" /></div>
+							<label class="col-sm-1 control-label">@localizer["AnimalsRescued"]</label>
+							<div class="col-sm-1"><input type="number" min="0" class="form-control" asp-for="AnimalsRescued" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["SpecialModifiers"]</label>
+							<div class="col-sm-9">
+								@foreach (var m in Model.SpecialModifierCodes)
+								{
+									<label class="checkbox-inline"><input type="checkbox" name="SpecialModifiers" value="@m.Value" @(Model.SpecialModifiers.Contains(m.Value) ? "checked" : string.Empty) /> @m.Text</label>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-tags"></i> @localizer["IncidentTypes"] @badge(NerisFactKeys.IncidentType)</h5></div>
+					<div class="ibox-content">
+						@for (var i = 0; i < Resgrid.Web.Areas.User.Models.Records.IncidentReportEditView.TypeRows; i++)
+						{
+							var row = i < Model.Types.Count ? Model.Types[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentTypeRow();
+							<div class="form-group">
+								<label class="col-sm-3 control-label">@localizer["TypeCode"] @(i + 1)</label>
+								<div class="col-sm-7">
+									<select class="form-control" name="Types[@i].TypeCode">
+										<option value="">-</option>
+										@foreach (var c in Model.IncidentTypeCodes)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.TypeCode)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-2"><label class="checkbox-inline"><input type="checkbox" name="Types[@i].IsPrimary" value="true" @(row.IsPrimary ? "checked" : string.Empty) /> @localizer["Primary"]</label></div>
+							</div>
+						}
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-map-marker"></i> @localizer["Location"] @badge(NerisFactKeys.Location)</h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["AddressText"]</label>
+							<div class="col-sm-9"><input type="text" class="form-control" asp-for="AddressText" maxlength="512" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["StreetNumber"]</label>
+							<div class="col-sm-1"><input type="text" class="form-control" asp-for="NumberPrefix" placeholder="N" maxlength="16" /></div>
+							<div class="col-sm-2"><input type="text" class="form-control" asp-for="Number" maxlength="32" /></div>
+							<div class="col-sm-1"><input type="text" class="form-control" asp-for="NumberSuffix" placeholder="A" maxlength="16" /></div>
+							<label class="col-sm-1 control-label">@localizer["Street"]</label>
+							<div class="col-sm-4"><input type="text" class="form-control" asp-for="Street" maxlength="128" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["Municipality"]</label>
+							<div class="col-sm-3"><input type="text" class="form-control" asp-for="Municipality" maxlength="128" /></div>
+							<label class="col-sm-1 control-label">@localizer["County"]</label>
+							<div class="col-sm-2"><input type="text" class="form-control" asp-for="County" maxlength="128" /></div>
+							<label class="col-sm-1 control-label">@localizer["StateProvince"]</label>
+							<div class="col-sm-2"><input type="text" class="form-control" asp-for="LocationState" maxlength="2" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PostalCode"]</label>
+							<div class="col-sm-2"><input type="text" class="form-control" asp-for="PostalCode" maxlength="16" /></div>
+							<label class="col-sm-1 control-label">@localizer["Country"]</label>
+							<div class="col-sm-1"><input type="text" class="form-control" asp-for="Country" maxlength="2" /></div>
+							<label class="col-sm-2 control-label">@localizer["Coordinates"] @badge(NerisFactKeys.Point)</label>
+							<div class="col-sm-3"><div class="input-group"><input type="number" step="any" class="form-control" asp-for="Latitude" placeholder="lat" /><span class="input-group-addon">,</span><input type="number" step="any" class="form-control" asp-for="Longitude" placeholder="lon" /></div></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PlaceType"]</label>
+							<div class="col-sm-4"><select class="form-control" asp-for="PlaceType" asp-items="Model.PlaceTypes"><option value="">-</option></select></div>
+							<label class="col-sm-1 control-label">@localizer["LocationUse"]</label>
+							<div class="col-sm-4"><select class="form-control" asp-for="LocationUse" asp-items="Model.LocationUses"><option value="">-</option></select></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["CrossStreet"]</label>
+							<div class="col-sm-4"><input type="text" class="form-control" asp-for="CrossStreet1" maxlength="128" /></div>
+							<div class="col-sm-5"><input type="text" class="form-control" asp-for="CrossStreet2" maxlength="128" /></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-truck"></i> @localizer["Units"]</h5></div>
+					<div class="ibox-content">
+						<div class="table-responsive">
+							<table class="table table-condensed">
+								<thead><tr><th></th><th>@localizer["Unit"]</th><th>@localizer["UnitNerisId"]</th><th>@localizer["Staffing"]</th><th>@localizer["Dispatched"]</th><th>@localizer["Enroute"]</th><th>@localizer["OnScene"]</th><th>@localizer["Staged"]</th><th>@localizer["CanceledEnroute"]</th><th>@localizer["Cleared"]</th><th>@localizer["ResponseMode"]</th></tr></thead>
+								<tbody>
+									@for (var i = 0; i < Model.AvailableUnits.Count; i++)
+									{
+										var unitId = int.Parse(Model.AvailableUnits[i].Value);
+										var existing = Model.Units.FirstOrDefault(u => u.UnitId == unitId);
+										<tr>
+											<td><input type="hidden" name="Units[@i].UnitId" value="@unitId" /><input type="checkbox" name="Units[@i].Selected" value="true" @(existing != null && existing.Selected ? "checked" : string.Empty) /></td>
+											<td>@Model.AvailableUnits[i].Text @badge(NerisFactKeys.UnitTime(unitId, "dispatch"))</td>
+											<td><input type="text" class="form-control input-sm" name="Units[@i].UnitNerisId" value="@existing?.UnitNerisId" maxlength="32" /></td>
+											<td><input type="number" min="0" class="form-control input-sm" name="Units[@i].Staffing" value="@existing?.Staffing" style="width:70px" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].DispatchedOn" value="@Dt(existing?.DispatchedOn)" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].EnrouteOn" value="@Dt(existing?.EnrouteOn)" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].OnSceneOn" value="@Dt(existing?.OnSceneOn)" /> @badge(NerisFactKeys.UnitTime(unitId, "on_scene"))</td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].StagingOn" value="@Dt(existing?.StagingOn)" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].CanceledEnrouteOn" value="@Dt(existing?.CanceledEnrouteOn)" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].ClearedOn" value="@Dt(existing?.ClearedOn)" /></td>
+											<td>
+												<select class="form-control input-sm" name="Units[@i].ResponseMode">
+													@foreach (var m in Model.ResponseModes)
+													{
+														<option value="@m.Value" selected="@(m.Value == (existing?.ResponseMode ?? "EMERGENT"))">@m.Text</option>
+													}
+												</select>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-handshake-o"></i> @localizer["Aid"]</h5></div>
+					<div class="ibox-content">
+						@for (var i = 0; i < Resgrid.Web.Areas.User.Models.Records.IncidentReportEditView.AidRows; i++)
+						{
+							var row = i < Model.Aids.Count ? Model.Aids[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentAidRow();
+							<div class="form-group">
+								<div class="col-sm-2">
+									<select class="form-control input-sm" name="Aids[@i].Direction">
+										@foreach (var d in Model.AidDirections)
+										{
+											<option value="@d.Value" selected="@(d.Value == (row.Direction ?? "RECEIVED"))">@d.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-3">
+									<select class="form-control input-sm" name="Aids[@i].AidType">
+										<option value="">@localizer["AidType"]</option>
+										@foreach (var t in Model.AidTypes)
+										{
+											<option value="@t.Value" selected="@(t.Value == row.AidType)">@t.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-2"><input type="text" class="form-control input-sm" name="Aids[@i].CounterpartNerisId" value="@row.CounterpartNerisId" placeholder="@localizer["CounterpartNerisId"]" maxlength="32" /></div>
+								<div class="col-sm-2"><input type="text" class="form-control input-sm" name="Aids[@i].CounterpartName" value="@row.CounterpartName" placeholder="@localizer["Counterpart"]" maxlength="128" /></div>
+								<div class="col-sm-3">
+									<label class="checkbox-inline"><input type="checkbox" name="Aids[@i].IsNonFireDepartment" value="true" @(row.IsNonFireDepartment ? "checked" : string.Empty) /> @localizer["NonFireDepartment"]</label>
+									<select class="form-control input-sm" name="Aids[@i].NonFdType">
+										<option value="">-</option>
+										@foreach (var t in Model.NonFdTypes)
+										{
+											<option value="@t.Value" selected="@(t.Value == row.NonFdType)">@t.Text</option>
+										}
+									</select>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-tasks"></i> @localizer["Tactics"]</h5></div>
+					<div class="ibox-content">
+						@for (var i = 0; i < Resgrid.Web.Areas.User.Models.Records.IncidentReportEditView.TacticRows; i++)
+						{
+							var row = i < Model.Tactics.Count ? Model.Tactics[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentTacticRow();
+							<div class="form-group">
+								<div class="col-sm-6">
+									<select class="form-control input-sm" name="Tactics[@i].TacticCode">
+										<option value="">-</option>
+										@foreach (var c in Model.TacticCodes)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.TacticCode)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-3">
+									<select class="form-control input-sm" name="Tactics[@i].ActorUnitId">
+										<option value="">@localizer["ActorUnit"]</option>
+										@foreach (var u in Model.AvailableUnits)
+										{
+											<option value="@u.Value" selected="@(row.ActorUnitId.HasValue && u.Value == row.ActorUnitId.Value.ToString())">@u.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-3"><input type="datetime-local" class="form-control input-sm" name="Tactics[@i].OccurredOn" value="@Dt(row.OccurredOn)" /></div>
+							</div>
+						}
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-file-text-o"></i> @localizer["Narrative"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["Narrative"]</label>
+							<div class="col-sm-9"><textarea class="form-control" rows="8" asp-for="Narrative"></textarea></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ImpedimentNarrative"]</label>
+							<div class="col-sm-9"><textarea class="form-control" rows="3" asp-for="ImpedimentNarrative"></textarea></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["OutcomeNarrative"]</label>
+							<div class="col-sm-9"><textarea class="form-control" rows="3" asp-for="OutcomeNarrative"></textarea></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-12">
+						<a class="btn btn-white" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@Model.ReportId">@commonLocalizer["Cancel"]</a>
+						<button type="submit" class="btn btn-primary" name="ValidateAfterSave" value="false">@localizer["SaveDraft"]</button>
+						<button type="submit" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-3">
+			<div class="wrapper wrapper-content">
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-link"></i> @localizer["Provenance"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["ProvenanceIntro"]</p>
+						<p><span class="label label-info">@localizer["SourceDispatch"]</span> <span class="label label-info">@localizer["SourceApp"]</span> <span class="label label-default">@localizer["SourceDerived"]</span> <span class="label label-warning">@localizer["SourceCorrected"]</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

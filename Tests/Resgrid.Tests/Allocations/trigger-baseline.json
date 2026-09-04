@@ -57,5 +57,9 @@
   "RecordFinalized": 104,
   "RecordAmended": 105,
   "RecordVoided": 106,
-  "RecordCancelled": 107
+  "RecordCancelled": 107,
+  "RecordSubmissionQueued": 108,
+  "RecordSubmissionAccepted": 109,
+  "RecordSubmissionRejected": 110,
+  "RecordSubmissionFailed": 111
 }

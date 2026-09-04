@@ -499,6 +499,14 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Worker ID 41 (Identifier Allocation Registry section 3.3, RMS-2): NERIS submission sweep. Claims due
+				// submissions with a lease, talks to the destination outside any transaction, no-op while NerisConfig.Enabled is off.
+				_logger.Log(LogLevel.Information, "Scheduling Records Submission");
+				await Client.ScheduleAsync("Records Submission",
+					new Commands.RmsSubmissionCommand(41),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

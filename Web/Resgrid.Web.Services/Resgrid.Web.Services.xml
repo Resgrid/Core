@@ -1903,6 +1903,38 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.ExportAfterAction(System.Int32)">
             <summary>Exports the full after-action report (summary, times, lanes, utilization, timeline) as CSV.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentReportsController">
+            <summary>
+            NERIS incident reports over the v4 Records contract (RMS-2 aggregate, RMS-1B client contract): one authoritative
+            report per Call, source-aware prefill with provenance, ETag-guarded draft saves, local/destination validation,
+            attestation, and sanitized submission history. Same gates as Records: flag first, per-record visibility on
+            every read, Field Records flags for field clients.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.GetIncidentReport(System.String)">
+            <summary>One report with all sections, provenance facts, validation issues and sanitized submission history. Sets a weak ETag.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.GetForCall(System.Int32)">
+            <summary>The authoritative report for a Call, if one exists.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.Start(Resgrid.Web.Services.Models.v4.Records.StartIncidentReportInput,System.Threading.CancellationToken)">
+            <summary>Starts the report for a Call with dispatch prefill (SingleAuthoritative): a second start returns the existing report with 200.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.SaveDraft(Resgrid.Web.Services.Models.v4.Records.SaveIncidentReportDraftInput,System.Threading.CancellationToken)">
+            <summary>ETag-guarded draft save; 409 with the current report on a stale row version.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.Validate(Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput,System.Threading.CancellationToken)">
+            <summary>Runs local validation (and the destination's validate endpoint when IncludeDestination and submission is enabled); issues stay on the report.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.Finalize(Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput,System.Threading.CancellationToken)">
+            <summary>Validate-then-sign: local errors return 422 with the issues; otherwise the revision, attestation and (when the profile allows) the submission are written.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.CorrectAndResubmit(Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput,System.Threading.CancellationToken)">
+            <summary>After a rejection: a new revision and a new idempotency key, back into the submission queue.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.Submit(Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput,System.Threading.CancellationToken)">
+            <summary>Queues (or re-queues) the current revision for the destination.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController">
             <summary>
             Incident-scoped ad-hoc resources: create units/personnel on the fly for non-Resgrid resources, build
@@ -2413,6 +2445,95 @@
             Anonymous, token-scoped public incident status feed. It exposes only records explicitly marked Public and only
             while the Incident Commander/PIO has public sharing enabled. Disabling sharing revokes the token immediately.
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordsController">
+            <summary>
+            Records (RMS) client contract, RMS-1B (plan sections 5.3, 5.4, 5.9.1): capability manifest with the locked
+            definition catalog and the Protected Data block, authorization-filtered list/search, a delta cursor with
+            tombstones, ETag-guarded draft saves that return the changed field paths on conflict, scoped idempotency on
+            creates and commands, revision history and diffs, and resumable checksummed attachment uploads. Every action
+            gates on the Records.System flag first; every read passes the per-record visibility rule.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Capabilities">
+            <summary>
+            The Records capability manifest: module/cutover state, the caller's effective Record permissions, per-app
+            Field Records flags, the published (locked) definition catalog with field applicability and minimum client
+            capability, search availability, upload limits, and the Protected Data block (plan 5.9.1).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.ProtectionAsync">
+            <summary>Plan 5.9.1: the same shape before and after Protected Data enrollment; NotInstalled while the subsystem is absent.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.GetRecords(System.Nullable{System.Int32},System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,System.Nullable{System.Int32},System.Int32,System.Int32)">
+            <summary>The authorization-filtered record queue (safe projection columns only).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Search(System.String,System.Nullable{System.Int32},System.String,System.Nullable{System.Int32},System.Int32,System.Int32)">
+            <summary>
+            Free-text search over the records index (plan 5.10). Hits are re-checked against per-record visibility;
+            when the host is off or unavailable the filtered queue is returned with SearchDegraded set and the text is not applied.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Changes(System.Int64,System.Int32)">
+            <summary>
+            Delta cursor (plan 5.3): records modified after <paramref name="since"/> (Unix epoch ms; 0 = full pull),
+            oldest first, with tombstones for cancelled, voided and deleted records so clients remove them locally.
+            Persist Data.ServerTimestampMs and pass it back as the next since; loop while HasMore.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.GetRecord(System.String)">
+            <summary>One record with its working details, participants, units, attachment metadata and revision summaries. Sets a weak ETag.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.GetRevision(System.String,System.String)">
+            <summary>A revision rendered from its own snapshot; restricted fields withheld without RecordRestricted_View.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Diff(System.String,System.String,System.String)">
+            <summary>On-demand field-level diff between two revisions of the same record (plan 4.8).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CreateDraft(Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput,System.Threading.CancellationToken)">
+            <summary>
+            Creates a draft. IdempotencyKey (body or Idempotency-Key header) makes the create replayable: the same key
+            returns the existing record with 200 instead of a duplicate. Field clients need their Records.Field.* flag.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.SaveDraft(Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput,System.Threading.CancellationToken)">
+            <summary>
+            ETag-guarded draft save. RowVersion (or If-Match) must equal the current row version; otherwise 409 with
+            the current record and the field paths the client's copy would have changed, for deliberate reconciliation.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Finalize(Resgrid.Web.Services.Models.v4.Records.RecordCommandInput,System.Threading.CancellationToken)">
+            <summary>Finalize: validates, writes the immutable revision and attestation, emits the lifecycle events. Attested must be true. Online-only by design.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CommandAsync(Resgrid.Web.Services.Models.v4.Records.RecordCommandInput,System.Boolean,System.Func{System.Int64,System.Threading.Tasks.Task{Resgrid.Model.RecordAggregate}})">
+            <summary>
+            Shared command path: flag/usable gate, field-client gate, per-record visibility, scoped idempotency replay,
+            ETag check where the transition takes one, and the 409/400 mapping. Never last-writer-wins.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.GetAttachment(System.String,System.String)">
+            <summary>Attachment content (base64), department- and record-bound, audited as a read.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.BeginUpload(Resgrid.Web.Services.Models.v4.Records.BeginRecordUploadInput)">
+            <summary>Opens a resumable upload session (plan 5.3): declare size and SHA-256; send chunks with UploadChunk; finish with CompleteUpload.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.UploadChunk(Resgrid.Web.Services.Models.v4.Records.RecordUploadChunkInput)">
+            <summary>One chunk at the session's next offset (base64, at most ChunkSize bytes). Returns ReceivedBytes to resume from.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.GetUpload(System.String)">
+            <summary>Session status, for resuming after a dropped connection.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CompleteUpload(Resgrid.Web.Services.Models.v4.Records.CompleteRecordUploadInput,System.Threading.CancellationToken)">
+            <summary>Verifies size and SHA-256, then stores the attachment through hygiene and the scanner. 422 on checksum mismatch or rejection.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.UsableAsync">
+            <summary>Writes need the module usable: flag on and the department activated.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.FieldClientGateAsync(Resgrid.Model.RmsOriginClient)">
+            <summary>A field client below its flag fails closed for authoring (plan 4.1); non-field origins pass.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.LoadAuthorizedAsync(System.String,System.Boolean)">
+            <summary>Loads a record only when the caller passes the per-record visibility rule; a refusal is audited as Denied.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ReportingController">
              <summary>
@@ -5644,6 +5765,24 @@
             
              Reads are inherited from <see cref="T:Resgrid.Web.Services.Helpers.UtcDateTimeConverter"/> and accept both formats.
              </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.RecordsApiHelper">
+            <summary>Shared plumbing for the v4 Records contract: origin/field-flag resolution, ETag headers, UTC normalization.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.RecordsApiHelper.FieldFlagFor(Resgrid.Model.RmsOriginClient)">
+            <summary>The Records.Field.* flag a field client must have on to create or edit; null for non-field origins.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.RecordsApiHelper.ResolveRowVersion(System.Nullable{System.Int64},Microsoft.AspNetCore.Http.HttpRequest)">
+            <summary>Body RowVersion wins; otherwise If-Match; null when neither is usable.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.RecordsApiHelper.Utc(System.Nullable{System.DateTime})">
+            <summary>Clients send UTC; a local-kind value is converted, an unspecified one is taken as UTC.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.RecordsApiMapper">
+            <summary>Entity to DTO mapping for the v4 Records controller. Restricted detail fields are withheld here, never downstream.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.IncidentReportsApiMapper">
+            <summary>Entity to DTO mapping for the v4 IncidentReports controller. Submissions are sanitized: no payload, no response body.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.UtcDateTimeConverter">
              <summary>
@@ -11780,6 +11919,114 @@
             <summary>
             Response Data
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentReportData">
+            <summary>A hydrated NERIS incident report: header, dispatch facts, sections, provenance, validation issues, sanitized submission history.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentFactData">
+            <summary>Provenance for one prefilled value (plan 4.2): where it came from, what it was, what it is now.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentSubmissionData">
+            <summary>Sanitized delivery outcome (plan 5.6): state, external id/status, attempts, codes and field paths. Never payload or response bodies.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.StartIncidentReportInput">
+            <summary>Start (or return) the one authoritative incident report for a Call.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.SaveIncidentReportDraftInput">
+            <summary>Draft save; every list replaces the draft rows. Dates are UTC.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput.IncludeDestination">
+            <summary>Validate: also call the destination's validate endpoint when submission is enabled.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentReportConflictResult">
+            <summary>409 on a stale incident report save.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsCapabilitiesResult">
+            <summary>Capability manifest for the Records module (RMS plan sections 5.4, 5.9.1).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsCapabilitiesData.ContractVersion">
+            <summary>The contract version this server speaks; a client below a definition's MinimumClientCapability fails closed for authoring.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsCapabilitiesData.Protection">
+            <summary>Protected Data block (plan 5.9.1): same shape before and after enrollment.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsFieldClientsData">
+            <summary>Per-app Field Records flags; a field client whose flag is off is refused on create/edit.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsProtectionData.State">
+            <summary>NotInstalled until the department is enrolled; then the DepartmentDataProtectionState name.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsResult">
+            <summary>Paged list of records the caller may see.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsResult.SearchDegraded">
+            <summary>Search only: the text was not applied because the search host is off or unavailable.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordSummaryData">
+            <summary>Safe projection columns only (plan 5.10): never narrative, restricted detail or attachment bytes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordSummaryData.IsTombstone">
+            <summary>Delta feed: the record is gone for the client (deleted, cancelled or voided); remove it locally.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsChangesResult">
+            <summary>Delta cursor (plan 5.3): persist ServerTimestampMs and pass it back as <c>since</c>.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordData">
+            <summary>A hydrated Record: header, working details, participants, units, attachment metadata and revision summaries. Restricted fields are withheld without RecordRestricted_View.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordData.ETag">
+            <summary>Weak ETag of the header row (<c>W/"{RowVersion}"</c>); send it back as If-Match or RowVersion on saves and commands.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput">
+            <summary>Create or save a draft. Dates are UTC. Every list replaces the draft rows wholesale.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.RecordId">
+            <summary>Null on create.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.RowVersion">
+            <summary>Required on save (or send If-Match); the row version the client last saw.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.IdempotencyKey">
+            <summary>Scoped idempotency key for offline-created drafts: the same key returns the same record.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.ClientRecordId">
+            <summary>Client-generated GUID for an offline-created draft; server-assigned when null.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.OriginClient">
+            <summary>RmsOriginClient: 2 Responder, 3 Unit, 4 IncidentCommand, 5 Dispatch, 6 Api (default). Field clients are gated by their Records.Field.* flag.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordCommandInput">
+            <summary>A lifecycle command. RowVersion (or If-Match) guards ETag-checked transitions; IdempotencyKey replays the first outcome.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordCommandInput.Attested">
+            <summary>Finalize: the author confirmed the attestation statement.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordCommandInput.NewOwnerUserId">
+            <summary>Reassign: the new draft owner.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordConflictResult">
+            <summary>409: the client's row version is stale. Reconcile against Current and the changed field paths; never last-writer-wins.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordRevisionSnapshotResult">
+            <summary>One revision rendered from its snapshot; restricted fields withheld without RecordRestricted_View.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordAttachmentContentData.Data">
+            <summary>Base64 content.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.BeginRecordUploadInput">
+            <summary>Open a resumable upload: declare size and SHA-256 up front (plan 5.3).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.BeginRecordUploadInput.Sha256">
+            <summary>Lower-case hex SHA-256 of the whole file.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordUploadData.ReceivedBytes">
+            <summary>Resume from here: the next chunk's Offset.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordUploadChunkInput.Offset">
+            <summary>Byte offset of this chunk; must equal the session's ReceivedBytes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordUploadChunkInput.Data">
+            <summary>Base64 chunk, at most ChunkSize bytes.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Reporting.DashboardReportResult">
             <summary>Composite dashboard report (scalar totals, dense series, breakdowns).</summary>

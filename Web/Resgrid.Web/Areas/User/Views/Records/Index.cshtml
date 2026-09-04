@@ -36,6 +36,10 @@
 			{
 				<a class="btn btn-success" asp-controller="Records" asp-action="New" asp-route-area="User"><i class="icon-plus"></i> @localizer["NewRecord"]</a>
 			}
+			@if (Model.ModuleState.RecordsUsable)
+			{
+				<a class="btn btn-primary" asp-controller="IncidentReports" asp-action="Index" asp-route-area="User"><i class="fa fa-fire"></i> @localizer["IncidentReports"]</a>
+			}
 			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanExportRecords())
 			{
 				<a class="btn btn-default" asp-controller="Records" asp-action="ExportList" asp-route-area="User" asp-route-year="@Model.Year" asp-route-definitionKey="@Model.DefinitionKey" asp-route-state="@Model.StateFilter" asp-route-q="@Model.Query" asp-route-format="csv"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
@@ -152,7 +156,7 @@
 											<td>@((r.OccurredOn ?? r.RecordCreatedOn).TimeConverterToString(Model.Department))</td>
 											<td>@(Model.PersonnelNames.TryGetValue(r.AuthorUserId ?? string.Empty, out var name) ? name : r.AuthorUserId)</td>
 											<td class="text-right">
-												<a class="btn btn-xs btn-info" asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@r.RmsRecordSearchProjectionId">@localizer["ViewRevision"]</a>
+												<a class="btn btn-xs btn-info" asp-controller="@(r.RecordKind == (int)RmsRecordKind.IncidentReport ? "IncidentReports" : "Records")" asp-action="Details" asp-route-area="User" asp-route-id="@r.RmsRecordSearchProjectionId">@localizer["ViewRevision"]</a>
 											</td>
 										</tr>
 									}

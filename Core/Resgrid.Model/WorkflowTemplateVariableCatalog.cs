@@ -141,6 +141,24 @@ namespace Resgrid.Model
 			new TemplateVariableDescriptor("record_change.reason_code", "Normalized reason code", "string", false),
 		};
 
+		// submission.* (RMS-2 triggers 108-111): the sanitized delivery outcome — state, external id/status, attempts,
+		// codes and field paths. Never the destination payload or response body (plan section 5.6).
+		private static readonly List<TemplateVariableDescriptor> SubmissionVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("submission.id", "Submission ID", "string", false),
+			new TemplateVariableDescriptor("submission.destination", "Reporting destination, e.g. NERIS", "string", false),
+			new TemplateVariableDescriptor("submission.destination_version", "Pinned destination contract version", "string", false),
+			new TemplateVariableDescriptor("submission.state", "Submission state (Queued, AwaitingDestination, Accepted, Rejected, Failed)", "string", false),
+			new TemplateVariableDescriptor("submission.external_id", "Destination incident ID once assigned", "string", false),
+			new TemplateVariableDescriptor("submission.external_status", "Destination status value", "string", false),
+			new TemplateVariableDescriptor("submission.attempts", "Delivery attempts so far", "int", false),
+			new TemplateVariableDescriptor("submission.max_attempts", "Attempts allowed before the submission fails", "int", false),
+			new TemplateVariableDescriptor("submission.error_summary", "Normalized rejection/failure summary (codes and field paths)", "string", false),
+			new TemplateVariableDescriptor("submission.queued_on", "When the revision was queued (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("submission.sent_on", "When the last attempt was sent (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("submission.completed_on", "When the submission reached a final state (UTC)", "datetime", false),
+		};
+
 		// review.* rides only on the two review-path triggers: review bookkeeping, never record content.
 		private static readonly List<TemplateVariableDescriptor> ReviewVariables = new List<TemplateVariableDescriptor>
 		{
@@ -637,6 +655,19 @@ namespace Resgrid.Model
 						list.Add(new TemplateVariableDescriptor("record_change.number_disposition", "What happened to a reserved record number (none or voided)", "string", false));
 					if (eventType == WorkflowTriggerEventType.RecordSubmittedForReview || eventType == WorkflowTriggerEventType.RecordReturnedForCorrection)
 						list.AddRange(ReviewVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordSubmissionQueued:
+				case WorkflowTriggerEventType.RecordSubmissionAccepted:
+				case WorkflowTriggerEventType.RecordSubmissionRejected:
+				case WorkflowTriggerEventType.RecordSubmissionFailed:
+					list.AddRange(RecordEventVariables);
+					list.AddRange(RecordVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind (Operational or IncidentReport)", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.incident_number", "Department incident number sent to the destination", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.neris_incident_id", "NERIS incident ID once assigned", "string", false));
+					list.AddRange(RecordChangeVariables);
+					list.AddRange(SubmissionVariables);
 					break;
 			}
 

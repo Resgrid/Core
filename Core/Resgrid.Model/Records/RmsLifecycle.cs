@@ -106,6 +106,9 @@ namespace Resgrid.Model
 				case RmsRecordState.Amended: return WorkflowTriggerEventType.RecordAmended;
 				case RmsRecordState.Voided: return WorkflowTriggerEventType.RecordVoided;
 				case RmsRecordState.Cancelled: return WorkflowTriggerEventType.RecordCancelled;
+				case RmsRecordState.Submitted: return WorkflowTriggerEventType.RecordSubmissionQueued;
+				case RmsRecordState.Accepted: return WorkflowTriggerEventType.RecordSubmissionAccepted;
+				case RmsRecordState.Rejected: return WorkflowTriggerEventType.RecordSubmissionRejected;
 				default: return null;
 			}
 		}

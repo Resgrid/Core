@@ -33,6 +33,14 @@ namespace Resgrid.Workers.Framework.Logic
 				return true;
 			}
 
+			if (ni?.Type == (int)EventTypes.RecordSubmissionRejected)
+			{
+				// Records notification 33 (RMS-2): the destination rejected the author's incident report; author-targeted like 31.
+				var recordsNotificationService = Bootstrapper.GetKernel().Resolve<IRecordsNotificationService>();
+				await recordsNotificationService.NotifySubmissionRejectedAsync(ni.DepartmentId, ni.Value, cancellationToken);
+				return true;
+			}
+
 			if (ni != null)
 			{
 				var _notificationService = Bootstrapper.GetKernel().Resolve<INotificationService>();

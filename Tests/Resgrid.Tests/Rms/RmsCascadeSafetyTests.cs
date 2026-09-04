@@ -25,7 +25,9 @@ namespace Resgrid.Tests.Rms
 			typeof(RmsOperationalRecord), typeof(RmsOperationalRecordDetail), typeof(RmsRevision), typeof(RmsRecordParticipant),
 			typeof(RmsRecordUnitResponse), typeof(RmsRecordAttachment), typeof(RmsExternalReference), typeof(RmsRecordGroupScope),
 			typeof(RmsRecordShare), typeof(RmsAccessAudit), typeof(RmsRecordSearchProjection), typeof(RmsDepartmentCutover),
-			typeof(RmsDepartmentCutoverEvent), typeof(DomainEventOutboxEntry), typeof(RmsRecordPrintLayout)
+			typeof(RmsDepartmentCutoverEvent), typeof(DomainEventOutboxEntry), typeof(RmsRecordPrintLayout),
+			typeof(RmsIncidentReport), typeof(RmsSourceFact), typeof(RmsUnitResponse), typeof(RmsIncidentType), typeof(RmsActionTactic), typeof(RmsAid),
+			typeof(RmsLocation), typeof(RmsNarrative), typeof(RmsValidationIssue), typeof(RmsSubmission), typeof(RmsSignature), typeof(RmsNerisProfile), typeof(RmsNerisCrosswalk)
 		};
 
 		[Test]
@@ -58,7 +60,7 @@ namespace Resgrid.Tests.Rms
 			foreach (var type in Rms1Entities.Where(t => t != typeof(DomainEventOutboxEntry)))
 			{
 				type.GetProperty("DepartmentId").Should().NotBeNull($"{type.Name} needs DepartmentId");
-				if (type != typeof(RmsRecordGroupScope) && type != typeof(RmsDepartmentCutoverEvent) && type != typeof(RmsRecordPrintLayout) && type != typeof(RmsAccessAudit))
+				if (type != typeof(RmsRecordGroupScope) && type != typeof(RmsDepartmentCutoverEvent) && type != typeof(RmsRecordPrintLayout) && type != typeof(RmsAccessAudit) && type != typeof(RmsValidationIssue))
 					type.GetProperty("ProtectionId").Should().NotBeNull($"{type.Name} needs ProtectionId");
 			}
 		}

@@ -13,5 +13,8 @@ namespace Resgrid.Model.Services
 	{
 		/// <summary>Notifies the author that their record was returned; false when nothing was sent (record missing, not Returned, no author).</summary>
 		Task<bool> NotifyReturnedForCorrectionAsync(int departmentId, string recordId, CancellationToken cancellationToken = default);
+
+		/// <summary>EventTypes 33: the destination rejected the author's incident report; codes and field paths only, plus a link.</summary>
+		Task<bool> NotifySubmissionRejectedAsync(int departmentId, string reportId, CancellationToken cancellationToken = default);
 	}
 }

@@ -150,7 +150,7 @@ namespace Resgrid.Search
 				{
 					try { _directory.Dispose(); } catch (Exception ex) { Logging.LogException(ex); }
 				}
-				Analyzer.Dispose();
+				try { Analyzer.Dispose(); } catch (Exception ex) { Logging.LogException(ex); }
 			}
 		}
 	}

@@ -845,4 +845,7 @@
   <data name="ScheduledDispatchDate" xml:space="preserve">
     <value>Запланована дата відправки</value>
   </data>
+  <data name="IncidentReport" xml:space="preserve">
+    <value>Звіт про інцидент</value>
+  </data>
 </root>

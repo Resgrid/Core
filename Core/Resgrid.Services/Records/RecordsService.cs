@@ -584,6 +584,12 @@ namespace Resgrid.Services.Records
 			return (await _projections.GetYearsAsync(departmentId))?.ToList() ?? new List<int>();
 		}
 
+		public async Task<List<RmsRecordSearchProjection>> GetChangesSinceAsync(int departmentId, DateTime? since, int take)
+		{
+			var bounded = Math.Max(1, Math.Min(500, take));
+			return (await _projections.GetModifiedSinceAsync(departmentId, since, bounded))?.OrderBy(p => p.ModifiedOn).ThenBy(p => p.RmsRecordSearchProjectionId, StringComparer.Ordinal).ToList() ?? new List<RmsRecordSearchProjection>();
+		}
+
 		public async Task<List<RmsRevision>> GetRevisionsAsync(int departmentId, string recordId)
 		{
 			return (await _revisions.GetForRecordAsync(departmentId, recordId))?.ToList() ?? new List<RmsRevision>();

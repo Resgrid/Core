@@ -407,6 +407,10 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordAmended:
 				case WorkflowTriggerEventType.RecordVoided:
 				case WorkflowTriggerEventType.RecordCancelled:
+				case WorkflowTriggerEventType.RecordSubmissionQueued:
+				case WorkflowTriggerEventType.RecordSubmissionAccepted:
+				case WorkflowTriggerEventType.RecordSubmissionRejected:
+				case WorkflowTriggerEventType.RecordSubmissionFailed:
 				{
 					// Records (RMS): the payload is the outbox snapshot carried by RecordsWorkflowEvent; it is never
 					// rehydrated from current record state, so a retry sees exactly what the original run saw.
@@ -1178,9 +1182,10 @@ namespace Resgrid.Services
 			var recordToken = payload["record"] as JObject;
 			var record = ToScriptObject(recordToken);
 			var recordId = recordToken?["id"]?.Type == JTokenType.String ? (string)recordToken["id"] : null;
+			var isIncident = recordToken?["kind"]?.Type == JTokenType.String && string.Equals((string)recordToken["kind"], "IncidentReport", StringComparison.Ordinal);
 			record["url"] = string.IsNullOrWhiteSpace(recordId)
 				? string.Empty
-				: $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Records/Details/{recordId}";
+				: $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/{(isIncident ? "IncidentReports" : "Records")}/Details/{recordId}";
 			obj["record"] = record;
 
 			var change = ToScriptObject(payload["record_change"] as JObject);
@@ -1194,6 +1199,9 @@ namespace Resgrid.Services
 
 			if (payload["review"] is JObject review)
 				obj["review"] = ToScriptObject(review);
+
+			if (payload["submission"] is JObject submission)
+				obj["submission"] = ToScriptObject(submission);
 
 			return recordToken?["author_user_id"]?.Type == JTokenType.String ? (string)recordToken["author_user_id"] : null;
 		}

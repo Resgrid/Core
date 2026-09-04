@@ -37,7 +37,7 @@ namespace Resgrid.Services.Records
 			nameof(RmsOperationalRecordDetail.Destination)
 		};
 
-		private static readonly string[] DetailFieldOrder =
+		public static readonly string[] DetailFieldOrder =
 		{
 			nameof(RmsOperationalRecordDetail.Narrative), nameof(RmsOperationalRecordDetail.InitialReport), nameof(RmsOperationalRecordDetail.Type),
 			nameof(RmsOperationalRecordDetail.Course), nameof(RmsOperationalRecordDetail.CourseCode), nameof(RmsOperationalRecordDetail.Instructors),

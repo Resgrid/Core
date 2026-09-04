@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Description>NERIS reporting destination: pinned OpenAPI contract, value sets, mapping, validation, and submission client (RMS plan section 5.5).</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The reviewed contract is pinned by version and date so a regeneration is reproducible without a network fetch. -->
+    <None Include="Contract\neris-openapi-v1.4.78-2026-09-03.json" />
+    <EmbeddedResource Include="Contract\neris-value-sets-v1.4.78-2026-09-03.json" LogicalName="Resgrid.Providers.Neris.Contract.value-sets.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+  </ItemGroup>
+
+</Project>

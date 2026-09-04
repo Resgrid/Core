@@ -158,6 +158,41 @@ namespace Resgrid.Services.Records
 			}
 		}
 
+		public async Task<bool> CanSystemPrincipalViewRecordAsync(SystemPrincipalRecordGrant grant, string recordId)
+		{
+			if (grant == null || string.IsNullOrWhiteSpace(recordId))
+				return false;
+
+			try
+			{
+				// The record must exist, live, in the granted department. Both aggregates share the id space.
+				var record = await _recordsRepository.GetByIdForDepartmentAsync(grant.DepartmentId, recordId);
+				var exists = record != null && !record.DeletedOn.HasValue;
+				if (!exists)
+				{
+					var report = await _incidentReports.GetByIdForDepartmentAsync(grant.DepartmentId, recordId);
+					exists = report != null && !report.DeletedOn.HasValue;
+				}
+
+				if (!exists)
+					return false;
+
+				if (grant.DepartmentWide)
+					return true;
+
+				if (grant.GroupIds.Count == 0)
+					return false;
+
+				var scope = await _groupScopesRepository.GetForRecordAsync(grant.DepartmentId, recordId);
+				return scope != null && scope.Any(s => grant.GroupIds.Contains(s.DepartmentGroupId));
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"CanSystemPrincipalViewRecordAsync failed for record {recordId}; failing closed.");
+				return false;
+			}
+		}
+
 		private class VisibleGroupsCacheEntry
 		{
 			public int DepartmentId { get; set; }

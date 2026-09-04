@@ -513,13 +513,21 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordAmended:
 				case WorkflowTriggerEventType.RecordVoided:
 				case WorkflowTriggerEventType.RecordCancelled:
+				// The submission and obligation triggers build their own blocks inside AddRecordsSamples; without
+				// these cases the template preview advertises submission.* and obligation.* variables that never
+				// render.
+				case WorkflowTriggerEventType.RecordSubmissionQueued:
+				case WorkflowTriggerEventType.RecordSubmissionAccepted:
+				case WorkflowTriggerEventType.RecordSubmissionRejected:
+				case WorkflowTriggerEventType.RecordSubmissionFailed:
+				case WorkflowTriggerEventType.RecordOverdue:
 					AddRecordsSamples(obj, eventType);
 					break;
 			}
 		}
 
 		/// <summary>
-		/// Records (RMS) triggers 100-107: a bounded snapshot matching RecordEventVariables, RecordVariables and
+		/// Records (RMS) triggers 100-112: a bounded snapshot matching RecordEventVariables, RecordVariables and
 		/// RecordChangeVariables in WorkflowTemplateVariableCatalog. The state pair follows the trigger.
 		/// </summary>
 		private static void AddRecordsSamples(ScriptObject obj, WorkflowTriggerEventType eventType)
@@ -642,6 +650,18 @@ namespace Resgrid.Services
 				s["sent_on"] = DateTime.Now.AddMinutes(-1);
 				s["completed_on"] = eventType == WorkflowTriggerEventType.RecordSubmissionQueued ? (DateTime?)null : DateTime.Now;
 				obj["submission"] = s;
+			}
+
+			if (eventType == WorkflowTriggerEventType.RecordOverdue)
+			{
+				r["kind"] = "Operational";
+				var o = new ScriptObject();
+				o["type"] = "Review";
+				o["due_on"] = DateTime.Now.AddHours(-30);
+				o["overdue_hours"] = 30;
+				o["responsible_user_id"] = "00000000-0000-0000-0000-000000000000";
+				o["overdue_count"] = 1;
+				obj["obligation"] = o;
 			}
 
 			if (eventType == WorkflowTriggerEventType.RecordSubmittedForReview || eventType == WorkflowTriggerEventType.RecordReturnedForCorrection)

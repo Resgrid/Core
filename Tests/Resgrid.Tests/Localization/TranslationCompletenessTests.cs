@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -114,6 +114,15 @@ namespace Resgrid.Tests.Localization
 			"Records|it|Checksum",                // Italian keeps the technical term.
 			"Records|sv|Definition", "Records|sv|Destination", "Records|sv|Revision", "Records|sv|Start",
 			"Records|de|SearchOnline", "Records|de|SearchOffline",   // "Online"/"Offline" are the German words too.
+
+			// RMS-3 screens: same word in the target language, checked side by side.
+			"Records|de|DefinitionKey",          // "Definition" is the German word too.
+			"Records|sv|DefinitionKey",          // So is the Swedish one.
+			"Records|de|RequesterOrganization",  // "Organisation" is German as well.
+			"Records|sv|RequesterOrganization",  // And Swedish.
+			"Records|es|Error",                  // "Error" is the Spanish word.
+			"Records|fr|EvidenceSource",         // "Source" is French to begin with.
+			"Records|pl|Model",                  // Polish spells it "Model" as well.
 			"Records|pl|SearchOnline", "Records|pl|SearchOffline",   // Polish uses them verbatim.
 			"Records|sv|SearchOnline", "Records|sv|SearchOffline",   // So does Swedish.
 

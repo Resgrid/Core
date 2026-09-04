@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -29,6 +29,9 @@ namespace Resgrid.Services.Records
 
 		private readonly IRmsSubmissionsRepository _submissions;
 		private readonly IRmsIncidentReportsRepository _reports;
+		private readonly IRmsIncidentAnalysesRepository _analyses;
+		private readonly IRmsDepartmentCutoversRepository _cutovers;
+		private readonly IIncidentAnalysisService _analysisService;
 		private readonly IRmsRecordSearchProjectionsRepository _projections;
 		private readonly IRmsAccessAuditsRepository _audits;
 		private readonly INerisProfileService _profiles;
@@ -37,12 +40,15 @@ namespace Resgrid.Services.Records
 		private readonly IOutboundQueueProvider _outboundQueue;
 		private readonly IUnitOfWork _unitOfWork;
 
-		public RecordsSubmissionService(IRmsSubmissionsRepository submissions, IRmsIncidentReportsRepository reports, IRmsRecordSearchProjectionsRepository projections,
+		public RecordsSubmissionService(IRmsSubmissionsRepository submissions, IRmsIncidentReportsRepository reports, IRmsIncidentAnalysesRepository analyses, IRmsRecordSearchProjectionsRepository projections,
 			IRmsAccessAuditsRepository audits, INerisProfileService profiles, INerisSubmissionService delivery, IDomainEventOutboxService outbox,
-			IOutboundQueueProvider outboundQueue, IUnitOfWork unitOfWork)
+			IOutboundQueueProvider outboundQueue, IUnitOfWork unitOfWork, IRmsDepartmentCutoversRepository cutovers, IIncidentAnalysisService analysisService)
 		{
 			_submissions = submissions;
 			_reports = reports;
+			_analyses = analyses;
+			_cutovers = cutovers;
+			_analysisService = analysisService;
 			_projections = projections;
 			_audits = audits;
 			_profiles = profiles;
@@ -59,6 +65,21 @@ namespace Resgrid.Services.Records
 			{
 				result.Message = "NERIS submission disabled; nothing to do.";
 				return result;
+			}
+
+			// An analysis finalized before its incident was filed has no submission row yet. Queue those first so
+			// they join this sweep rather than waiting a whole cycle after the incident finally lands.
+			foreach (var cutover in (await _cutovers.GetActiveAsync())?.ToList() ?? new List<RmsDepartmentCutover>())
+			{
+				try
+				{
+					await _analysisService.QueueAwaitingIncidentAsync(cutover.DepartmentId, cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Awaiting incident analyses could not be queued for department {cutover.DepartmentId}.");
+					result.Errors++;
+				}
 			}
 
 			var owner = $"{Environment.MachineName}:{Guid.NewGuid():N}";
@@ -100,9 +121,15 @@ namespace Resgrid.Services.Records
 			if (submission == null) throw new ArgumentNullException(nameof(submission));
 			var now = DateTime.UtcNow;
 
+			// The incident-analysis filing (RMS-3) rides the same queue and the same lease, but it is a different
+			// endpoint against a different aggregate, and it raises none of triggers 108-111: those describe the
+			// incident's own filing, and an analysis outcome must never be mistaken for one.
+			if (string.Equals(submission.Destination, RmsSubmissionDestinations.NerisIncidentAnalysis, StringComparison.Ordinal))
+				return await ProcessAnalysisAsync(submission, now, cancellationToken);
+
 			var report = await _reports.GetByIdForDepartmentAsync(submission.DepartmentId, submission.RecordId);
 			if (report == null || report.DeletedOn.HasValue)
-				return await PersistAsync(submission, report, Fatal("The report no longer exists."), now, cancellationToken);
+				return await PersistAsync(submission, report, Fatal("The report no longer exists."), now, false, cancellationToken);
 
 			// A superseding revision or a void may have arrived while this row waited; never deliver stale content.
 			if (submission.State == (int)RmsSubmissionState.Superseded || RmsLifecycle.IsTerminal((RmsRecordState)report.State))
@@ -120,7 +147,8 @@ namespace Resgrid.Services.Records
 			}
 
 			NerisSubmissionOutcome outcome;
-			if (submission.State == (int)RmsSubmissionState.AwaitingDestination)
+			var wasDelivery = submission.State != (int)RmsSubmissionState.AwaitingDestination;
+			if (!wasDelivery)
 			{
 				var nerisId = submission.ExternalId ?? report.NerisIncidentId;
 				outcome = string.IsNullOrWhiteSpace(nerisId)
@@ -134,10 +162,174 @@ namespace Resgrid.Services.Records
 				outcome = await _delivery.DeliverAsync(profile, submission, report.NerisIncidentId, cancellationToken);
 			}
 
-			return await PersistAsync(submission, report, outcome, now, cancellationToken);
+			return await PersistAsync(submission, report, outcome, now, wasDelivery, cancellationToken);
 		}
 
-		private async Task<RmsSubmission> PersistAsync(RmsSubmission submission, RmsIncidentReport report, NerisSubmissionOutcome outcome, DateTime now, CancellationToken cancellationToken)
+		/// <summary>
+		/// One delivery attempt for an incident-analysis filing. The analysis can only be filed against an incident
+		/// the destination already holds, so a missing incident id is a wait — the row is deferred, never failed.
+		/// </summary>
+		private async Task<RmsSubmission> ProcessAnalysisAsync(RmsSubmission submission, DateTime now, CancellationToken cancellationToken)
+		{
+			var analysis = await _analyses.GetByIdForDepartmentAsync(submission.DepartmentId, submission.RecordId);
+			if (analysis == null || analysis.DeletedOn.HasValue)
+				return await PersistAnalysisAsync(submission, null, Fatal("The incident analysis no longer exists."), now, false, cancellationToken);
+
+			if (submission.State == (int)RmsSubmissionState.Superseded || (RmsIncidentAnalysisState)analysis.State == RmsIncidentAnalysisState.Voided)
+			{
+				submission.State = (int)RmsSubmissionState.Superseded;
+				submission.CompletedOn = now;
+				return await ReleaseAsync(submission, now, cancellationToken);
+			}
+
+			var profile = await _profiles.GetProfileAsync(submission.DepartmentId);
+			if (!await _profiles.IsSubmissionEnabledAsync(submission.DepartmentId))
+			{
+				submission.NextAttemptOn = now.AddMinutes(Math.Max(1, NerisConfig.StatusPollMinutes));
+				return await ReleaseAsync(submission, now, cancellationToken);
+			}
+
+			var report = await _reports.GetByIdForDepartmentAsync(submission.DepartmentId, analysis.IncidentReportId);
+
+			NerisSubmissionOutcome outcome;
+			var wasDelivery = submission.State != (int)RmsSubmissionState.AwaitingDestination;
+			if (!wasDelivery)
+			{
+				var analysisId = submission.ExternalId ?? analysis.NerisAnalysisId;
+				outcome = string.IsNullOrWhiteSpace(analysisId)
+					? Fatal("The analysis submission is awaiting the destination but carries no analysis ID.")
+					: await _delivery.CheckAnalysisStatusAsync(profile, analysisId, cancellationToken);
+			}
+			else
+			{
+				submission.Attempts += 1;
+				submission.SentOn = now;
+				outcome = await _delivery.DeliverAnalysisAsync(profile, submission, report?.NerisIncidentId, analysis.NerisAnalysisId, cancellationToken);
+			}
+
+			return await PersistAnalysisAsync(submission, analysis, outcome, now, wasDelivery, cancellationToken);
+		}
+
+		private async Task<RmsSubmission> PersistAnalysisAsync(RmsSubmission submission, RmsIncidentAnalysis analysis, NerisSubmissionOutcome outcome, DateTime now, bool wasDelivery, CancellationToken cancellationToken)
+		{
+			await InTransactionAsync(async () =>
+			{
+				if (outcome.ResponseJson != null)
+				{
+					submission.ResponseJson = outcome.ResponseJson;
+					submission.ResponseChecksum = RecordSnapshotSerializer.Checksum(outcome.ResponseJson);
+				}
+				submission.ResponseStatusCode = outcome.StatusCode;
+				if (!string.IsNullOrWhiteSpace(outcome.ExternalId))
+					submission.ExternalId = outcome.ExternalId;
+				if (!string.IsNullOrWhiteSpace(outcome.ExternalStatus))
+					submission.ExternalStatus = outcome.ExternalStatus;
+
+				RmsIncidentAnalysisState? analysisState = null;
+				string auditPurpose;
+
+				switch (outcome.Kind)
+				{
+					case NerisOutcomeKind.Created:
+					case NerisOutcomeKind.Updated:
+					case NerisOutcomeKind.Pending:
+						submission.State = (int)RmsSubmissionState.AwaitingDestination;
+						submission.NextAttemptOn = now.AddMinutes(Math.Max(1, NerisConfig.StatusPollMinutes));
+						submission.ErrorSummary = null;
+						analysisState = RmsIncidentAnalysisState.Submitted;
+						auditPurpose = "Analysis delivered";
+						break;
+
+					case NerisOutcomeKind.Accepted:
+						submission.State = (int)RmsSubmissionState.Accepted;
+						submission.CompletedOn = now;
+						submission.NextAttemptOn = null;
+						submission.ErrorSummary = null;
+						analysisState = RmsIncidentAnalysisState.Accepted;
+						auditPurpose = "Analysis accepted";
+						break;
+
+					case NerisOutcomeKind.Rejected:
+						submission.State = (int)RmsSubmissionState.Rejected;
+						submission.CompletedOn = now;
+						submission.NextAttemptOn = null;
+						submission.ErrorSummary = Summarize(outcome);
+						analysisState = RmsIncidentAnalysisState.Rejected;
+						auditPurpose = "Analysis rejected";
+						break;
+
+					case NerisOutcomeKind.Transient:
+						// Only a delivery spends the retry budget. A status poll leaves Attempts untouched, so once a
+						// row reaches AwaitingDestination on its last allowed attempt the first transient poll error
+						// would otherwise fail a submission the destination already holds and may still accept.
+						if (wasDelivery && submission.Attempts >= Math.Max(1, submission.MaxAttempts))
+						{
+							submission.State = (int)RmsSubmissionState.Failed;
+							submission.CompletedOn = now;
+							submission.NextAttemptOn = null;
+							submission.ErrorSummary = "Delivery exhausted its retries: " + (outcome.Message ?? "destination unavailable");
+							auditPurpose = "Analysis submission failed (retries exhausted)";
+						}
+						else
+						{
+							if (submission.State != (int)RmsSubmissionState.AwaitingDestination)
+								submission.State = (int)RmsSubmissionState.Queued;
+							submission.NextAttemptOn = now.AddMinutes(Backoff(submission.Attempts));
+							submission.ErrorSummary = outcome.Message;
+							auditPurpose = "Analysis submission deferred";
+						}
+						break;
+
+					default:
+						submission.State = (int)RmsSubmissionState.Failed;
+						submission.CompletedOn = now;
+						submission.NextAttemptOn = null;
+						submission.ErrorSummary = outcome.Message ?? "Delivery needs operator attention.";
+						auditPurpose = "Analysis submission failed";
+						break;
+				}
+
+				submission.LeaseOwner = null;
+				submission.LeaseExpiresOn = null;
+				submission.ModifiedOn = now;
+				submission.RowVersion += 1;
+				await _submissions.UpdateAsync(submission, cancellationToken, true);
+
+				if (analysis != null)
+				{
+					if (!string.IsNullOrWhiteSpace(submission.ExternalId))
+						analysis.NerisAnalysisId = submission.ExternalId;
+					analysis.LastSubmissionId = submission.RmsSubmissionId;
+					analysis.LastSubmissionState = submission.State;
+					if (analysisState.HasValue)
+					{
+						analysis.State = (int)analysisState.Value;
+						if (analysisState == RmsIncidentAnalysisState.Accepted) analysis.AcceptedOn = now;
+						if (analysisState == RmsIncidentAnalysisState.Rejected) { analysis.RejectedOn = now; analysis.RejectionSummary = submission.ErrorSummary; }
+					}
+					analysis.ModifiedOn = now;
+					analysis.RowVersion += 1;
+					await _analyses.UpdateAsync(analysis, cancellationToken, true);
+
+					await _audits.InsertAsync(new RmsAccessAudit
+					{
+						DepartmentId = analysis.DepartmentId,
+						RecordId = analysis.RmsIncidentAnalysisId,
+						RevisionId = submission.RevisionId,
+						Action = (int)RmsAccessAuditAction.Submit,
+						Purpose = auditPurpose,
+						OriginClient = (int)RmsOriginClient.System,
+						Successful = outcome.Kind != NerisOutcomeKind.Fatal,
+						OccurredOn = now,
+						DetailJson = JsonConvert.SerializeObject(new { submission.RmsSubmissionId, submission.Attempts, outcome.Kind, outcome.StatusCode, submission.ExternalId, submission.ExternalStatus, submission.ResponseChecksum })
+					}, cancellationToken, true);
+				}
+			});
+
+			return submission;
+		}
+
+		private async Task<RmsSubmission> PersistAsync(RmsSubmission submission, RmsIncidentReport report, NerisSubmissionOutcome outcome, DateTime now, bool wasDelivery, CancellationToken cancellationToken)
 		{
 			var outboxIds = new List<long>();
 			NotificationItem notification = null;
@@ -192,7 +384,10 @@ namespace Resgrid.Services.Records
 						break;
 
 					case NerisOutcomeKind.Transient:
-						if (submission.Attempts >= Math.Max(1, submission.MaxAttempts))
+						// Only a delivery spends the retry budget. A status poll leaves Attempts untouched, so once a
+						// row reaches AwaitingDestination on its last allowed attempt the first transient poll error
+						// would otherwise fail a submission the destination already holds and may still accept.
+						if (wasDelivery && submission.Attempts >= Math.Max(1, submission.MaxAttempts))
 						{
 							submission.State = (int)RmsSubmissionState.Failed;
 							submission.CompletedOn = now;

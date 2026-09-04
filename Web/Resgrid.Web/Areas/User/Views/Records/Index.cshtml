@@ -1,4 +1,4 @@
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
 @using Resgrid.Web.Areas.User.Models.Records
@@ -39,6 +39,11 @@
 			@if (Model.ModuleState.RecordsUsable)
 			{
 				<a class="btn btn-primary" asp-controller="IncidentReports" asp-action="Index" asp-route-area="User"><i class="fa fa-fire"></i> @localizer["IncidentReports"]</a>
+				<a class="btn btn-default" asp-controller="Records" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-dashboard"></i> @localizer["RecordsDashboard"]</a>
+			}
+			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanManageRecordDisclosures())
+			{
+				<a class="btn btn-default" asp-controller="Disclosures" asp-action="Index" asp-route-area="User"><i class="fa fa-gavel"></i> @localizer["Disclosures"]</a>
 			}
 			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanExportRecords())
 			{

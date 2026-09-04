@@ -1,4 +1,4 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Services
@@ -16,5 +16,12 @@ namespace Resgrid.Model.Services
 
 		/// <summary>EventTypes 33: the destination rejected the author's incident report; codes and field paths only, plus a link.</summary>
 		Task<bool> NotifySubmissionRejectedAsync(int departmentId, string reportId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// EventTypes 32 (RMS-3, worker 42): an obligation on a Record has gone overdue. Targeted at whoever the
+		/// obligation rests with — the reviewer for a review, the author for a correction or a resubmission — and
+		/// carries the reference, the obligation and how late it is. Never record content.
+		/// </summary>
+		Task<bool> NotifyObligationOverdueAsync(int departmentId, string recordId, RmsRecordObligation obligation, CancellationToken cancellationToken = default);
 	}
 }

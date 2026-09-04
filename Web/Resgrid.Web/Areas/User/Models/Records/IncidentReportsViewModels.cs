@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Areas.User.Models.Records
 {
@@ -45,6 +46,15 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public bool CanVoid { get; set; }
 		public bool CanExport { get; set; }
 		public bool IsDepartmentAdmin { get; set; }
+		public bool CanViewRestricted { get; set; }
+
+		// RMS-3: the progressive section rules the report is judged against, the separate analysis filing, and the
+		// evidence artifacts captured against this report.
+		public List<NerisSectionRequirement> SectionRequirements { get; set; } = new List<NerisSectionRequirement>();
+		public RmsIncidentAnalysis Analysis { get; set; }
+		public List<RmsEvidenceArtifact> Evidence { get; set; } = new List<RmsEvidenceArtifact>();
+		public List<RecordEvidenceSourceState> EvidenceSources { get; set; } = new List<RecordEvidenceSourceState>();
+
 		public RmsRecordState State => (RmsRecordState)Aggregate.Report.State;
 		public bool RequiresReview => (RmsLifecyclePreset)Aggregate.Report.LifecyclePreset != RmsLifecyclePreset.QuickEntry;
 		public bool IsEditable => RmsLifecycle.IsEditable(State) || State == RmsRecordState.Rejected || Aggregate.Report.AmendsRevisionId != null;
@@ -97,6 +107,9 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public const int TypeRows = 3;
 		public const int AidRows = 3;
 		public const int TacticRows = 5;
+		public const int ResourceRows = 4;
+		public const int CasualtyRows = 4;
+		public const int ExposureRows = 3;
 
 		public string ReportId { get; set; }
 		public long RowVersion { get; set; }
@@ -147,6 +160,19 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public List<IncidentAidRow> Aids { get; set; } = new List<IncidentAidRow>();
 		public List<IncidentTacticRow> Tactics { get; set; } = new List<IncidentTacticRow>();
 
+		// RMS-3 conditional sections. Modules is one flat list across every applicable section; each row carries
+		// its own Kind so the form can render sections in rule order without a jagged binding shape.
+		public List<IncidentModuleRow> Modules { get; set; } = new List<IncidentModuleRow>();
+		public List<IncidentResourceRow> Resources { get; set; } = new List<IncidentResourceRow>();
+		public List<IncidentCasualtyRow> Casualties { get; set; } = new List<IncidentCasualtyRow>();
+		public List<IncidentExposureRow> Exposures { get; set; } = new List<IncidentExposureRow>();
+
+		/// <summary>The progressive section rules for the types currently selected, with their value sets.</summary>
+		public List<IncidentSectionView> Sections { get; set; } = new List<IncidentSectionView>();
+
+		/// <summary>False hides the restricted casualty fields; the service keeps the stored values rather than erasing them.</summary>
+		public bool CanEditRestricted { get; set; }
+
 		public string Narrative { get; set; }
 		public string ImpedimentNarrative { get; set; }
 		public string OutcomeNarrative { get; set; }
@@ -163,6 +189,23 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public List<SelectListItem> PlaceTypes { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> LocationUses { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> ResponseModes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> CasualtyPersonTypes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> CasualtyCauses { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> CasualtyActions { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> CasualtyTimelines { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> DutyTypes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> PpeCodes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> RescueTypes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> RescueActionCodes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> RescueImpedimentCodes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> RescueModes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> RescuePaths { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> RescueElevations { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> PresenceKnownCodes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> ExposureItemTypes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> ExposureDamageTypes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> DisplacementCauseCodes { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> Personnel { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> Stations { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> AvailableUnits { get; set; } = new List<SelectListItem>();
 		/// <summary>Provenance rows keyed by fact key, so the form can show where a prefilled value came from.</summary>

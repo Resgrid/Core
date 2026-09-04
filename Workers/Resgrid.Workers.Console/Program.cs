@@ -507,6 +507,23 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Worker ID 42 (Identifier Allocation Registry section 3.3, RMS-3): the bounded RecordOverdue evaluation.
+				// Daily rather than minutely: an obligation that fell due overnight is chased once the next morning,
+				// and the emit-once guarantee comes from the persisted due-state row, not from this cadence.
+				_logger.Log(LogLevel.Information, "Scheduling RMS Due State Evaluation");
+				await Client.ScheduleAsync("RMS Due State Evaluation",
+					new Commands.RmsDueStateEvaluationCommand(42),
+					Cron.Daily(4, 0),
+					stoppingToken);
+
+				// Worker ID 43 (Identifier Allocation Registry section 3.3, RMS-3): retention, legal hold and
+				// attachment purge, plus the rescan of attachments the scanner could not reach at upload time.
+				_logger.Log(LogLevel.Information, "Scheduling RMS Retention And Purge");
+				await Client.ScheduleAsync("RMS Retention And Purge",
+					new Commands.RmsRetentionAndPurgeCommand(43),
+					Cron.Daily(3, 30),
+					stoppingToken);
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

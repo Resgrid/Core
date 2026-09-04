@@ -13,7 +13,10 @@ namespace Resgrid.Model
 		Operational = 1,
 
 		/// <summary>RmsIncidentReport: the NERIS incident report aggregate (RMS-2).</summary>
-		IncidentReport = 2
+		IncidentReport = 2,
+
+		/// <summary>RmsIncidentAnalysis: the separate NERIS fire/hazmat analysis filing for an incident (RMS-3).</summary>
+		IncidentAnalysis = 3
 	}
 
 	/// <summary>

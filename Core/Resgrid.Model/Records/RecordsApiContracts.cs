@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -259,7 +259,13 @@ namespace Resgrid.Model.Services
 	/// <summary>Scoped idempotency for v4 Records commands: the same (department, user, key) replays the first outcome instead of re-running the transition.</summary>
 	public interface IRecordsApiIdempotencyService
 	{
-		Task<string> TryGetRecordIdAsync(int departmentId, string userId, string idempotencyKey);
-		Task RememberAsync(int departmentId, string userId, string idempotencyKey, string recordId);
+		/// <summary>
+		/// The record a previous call under this key produced, or null. <paramref name="command"/> scopes the key to
+		/// one operation: a client that reuses a key across two different commands on the same record must not have
+		/// the second one silently replayed as a success.
+		/// </summary>
+		Task<string> TryGetRecordIdAsync(int departmentId, string userId, string idempotencyKey, string command);
+
+		Task RememberAsync(int departmentId, string userId, string idempotencyKey, string command, string recordId);
 	}
 }

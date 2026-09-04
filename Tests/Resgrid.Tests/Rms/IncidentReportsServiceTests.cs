@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -104,7 +104,9 @@ namespace Resgrid.Tests.Rms
 
 			_service = new IncidentReportsService(_store.ReportsRepo.Object, _store.FactsRepo.Object, _store.UnitsRepo.Object, _store.TypesRepo.Object,
 				_store.TacticsRepo.Object, _store.AidsRepo.Object, _store.LocationsRepo.Object, _store.NarrativesRepo.Object, _store.IssuesRepo.Object,
-				_store.SubmissionsRepo.Object, _store.SignaturesRepo.Object, _store.Shared.RevisionsRepo.Object, _store.Shared.AuditsRepo.Object,
+				_store.SubmissionsRepo.Object, _store.SignaturesRepo.Object,
+				_store.ModulesRepo.Object, _store.ResourcesRepo.Object, _store.CasualtiesRepo.Object, _store.ExposuresRepo.Object,
+				_store.Shared.RevisionsRepo.Object, _store.Shared.AuditsRepo.Object,
 				_store.Shared.ScopesRepo.Object, _store.Shared.SharesRepo.Object, _store.Shared.ProjectionsRepo.Object, outbox, _settings.Object,
 				_groups.Object, _profiles.Object, _roles.Object, _units.Object, _calls.Object, _adp.Object, _store.UnitOfWork.Object,
 				_neris.Object, new NerisMappingService(), _validation.Object);
@@ -164,6 +166,42 @@ namespace Resgrid.Tests.Rms
 			second.Report.RmsIncidentReportId.Should().Be(first.Report.RmsIncidentReportId, "one authoritative report per entity per Call");
 			_store.Reports.Should().ContainSingle();
 			_store.Outbox.Should().ContainSingle();
+		}
+
+		[Test]
+		public async Task Start_after_the_reporting_entity_is_configured_still_returns_the_original_report()
+		{
+			// A report started before the NERIS profile existed carries the placeholder entity. Matching only the
+			// current entity would start a second authoritative report for the same call.
+			_profile = null;
+			var first = await _service.StartFromCallAsync(Dept, "author", CallId);
+
+			_profile = new RmsNerisProfile { DepartmentId = Dept, NerisEntityId = "FD24027000", ContractVersion = "1.4.78", IsEnabled = true };
+			var second = await _service.StartFromCallAsync(Dept, "author", CallId);
+
+			second.Report.RmsIncidentReportId.Should().Be(first.Report.RmsIncidentReportId);
+			_store.Reports.Should().ContainSingle("SingleAuthoritative survives the entity id being configured later");
+		}
+
+		[Test]
+		public async Task The_promoted_primary_incident_type_is_persisted_not_only_returned()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var input = DraftFrom(started);
+			input.Types = new List<IncidentTypeInput>
+			{
+				new IncidentTypeInput { TypeCode = "FIRE||STRUCTURE_FIRE||RESIDENTIAL", IsPrimary = false },
+				new IncidentTypeInput { TypeCode = "RESCUE||SEARCH", IsPrimary = false }
+			};
+
+			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input);
+
+			saved.Types.Count(t => t.IsPrimary).Should().Be(1);
+			_store.Types.Where(t => t.RecordId == started.Report.RmsIncidentReportId && t.RevisionId == null)
+				.Count(t => t.IsPrimary).Should().Be(1, "the stored rows must agree with what the save returned, or the next hydrate fails validation");
+
+			var hydrated = await _service.GetAsync(Dept, started.Report.RmsIncidentReportId);
+			hydrated.Types.Count(t => t.IsPrimary).Should().Be(1);
 		}
 
 		[Test]

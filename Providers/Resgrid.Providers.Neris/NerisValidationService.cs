@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -77,7 +77,10 @@ namespace Resgrid.Providers.Neris
 					Add("neris.location.place_type", RmsValidationSeverity.Error, "base.location.place_type", $"'{snapshot.Location.PlaceType}' is not a NERIS place type.");
 				if (snapshot.Location.Latitude.HasValue != snapshot.Location.Longitude.HasValue)
 					Add("neris.location.point", RmsValidationSeverity.Error, "base.point", "Latitude and longitude must both be present.");
-				if (snapshot.Location.Latitude.HasValue && (Math.Abs(snapshot.Location.Latitude.Value) > 90 || Math.Abs(snapshot.Location.Longitude.Value) > 180))
+				// Both coordinates, or the range check dereferences the missing one and the whole validation run fails
+				// with an exception instead of reporting the paired-coordinate error above.
+				if (snapshot.Location.Latitude.HasValue && snapshot.Location.Longitude.HasValue
+					&& (Math.Abs(snapshot.Location.Latitude.Value) > 90 || Math.Abs(snapshot.Location.Longitude.Value) > 180))
 					Add("neris.location.point.range", RmsValidationSeverity.Error, "base.point", "Coordinates are out of range.");
 			}
 
@@ -141,7 +144,285 @@ namespace Resgrid.Providers.Neris
 			foreach (var tactic in snapshot.Tactics.Where(t => !catalog.Contains("action_tactic", t.TacticCode)))
 				Add("neris.tactic.code", RmsValidationSeverity.Error, "actions_tactics", $"'{tactic.TacticCode}' is not a NERIS action/tactic.");
 
+			// Non-unit resources are a department record: contract 1.4.78 has no incident-level resources field, so
+			// they are never submitted and there is no NERIS value set to check them against.
+			foreach (var resource in snapshot.Resources.Where(r => string.IsNullOrWhiteSpace(r.ResourceCode)))
+				Add("neris.resource.code", RmsValidationSeverity.Error, "resources", "A resource entry needs a code.");
+
+			ValidateSections(Add, snapshot, catalog);
+			ValidateExposures(Add, snapshot, catalog);
+			ValidateCasualties(Add, snapshot, catalog);
+
 			return issues;
+		}
+
+		/// <summary>
+		/// Progressive section rules (RMS-3): the sections the selected incident types demand must be present and
+		/// coherent, and every section that is present must carry codes the pinned contract knows.
+		/// </summary>
+		private static void ValidateSections(Action<string, RmsValidationSeverity, string, string> add, NerisIncidentSnapshot snapshot, NerisValueSetCatalog catalog)
+		{
+			var present = snapshot.Modules.Select(m => (RmsIncidentModuleKind)m.ModuleKind).Distinct().ToList();
+
+			foreach (var requirement in NerisSectionRules.For(snapshot.Types.Select(t => t.TypeCode)))
+			{
+				if (present.Contains(requirement.Kind))
+					continue;
+
+				var descriptor = RmsIncidentModuleCatalog.Get(requirement.Kind);
+				add(
+					"neris.section." + requirement.Kind.ToString().ToLowerInvariant(),
+					requirement.Required ? RmsValidationSeverity.Error : RmsValidationSeverity.Warning,
+					descriptor?.PayloadPath ?? requirement.Kind.ToString(),
+					$"The {requirement.Kind} section is missing. {requirement.Reason}");
+			}
+
+			foreach (var kind in present)
+			{
+				foreach (var other in present.Where(o => NerisSectionRules.Conflicts(kind, o)))
+				{
+					add("neris.section.conflict", RmsValidationSeverity.Error, "fire_detail.location_detail",
+						$"A report cannot carry both the {kind} and {other} sections; the fire was either in a structure or outside it.");
+					break;
+				}
+			}
+
+			foreach (var module in snapshot.Modules)
+			{
+				var kind = (RmsIncidentModuleKind)module.ModuleKind;
+				var descriptor = RmsIncidentModuleCatalog.Get(kind);
+				if (descriptor == null)
+				{
+					add("neris.section.unknown", RmsValidationSeverity.Error, kind.ToString(), $"'{kind}' is not a section of contract {catalog.ContractVersion}.");
+					continue;
+				}
+
+				var path = descriptor.PayloadPath;
+
+				if (!descriptor.IsCollection && snapshot.Modules.Count(m => m.ModuleKind == module.ModuleKind) > 1)
+					add("neris.section.cardinality", RmsValidationSeverity.Error, path, $"The {kind} section may appear only once.");
+
+				if (!string.IsNullOrWhiteSpace(module.DetailJson) && !ParsesAsObject(module.DetailJson))
+					add("neris.section.detail", RmsValidationSeverity.Error, path, $"The {kind} section body is not a JSON object and cannot be submitted.");
+
+				var primarySet = NerisSectionRules.PrimaryCodeSetFor(kind);
+				if (primarySet != null && !string.IsNullOrWhiteSpace(module.PrimaryCode) && !catalog.Contains(primarySet, module.PrimaryCode))
+					add("neris.section.primary_code", RmsValidationSeverity.Error, path, $"'{module.PrimaryCode}' is not a NERIS {primarySet} value.");
+
+				var secondarySet = NerisSectionRules.SecondaryCodeSetFor(kind);
+				if (secondarySet != null && !string.IsNullOrWhiteSpace(module.SecondaryCode) && !catalog.Contains(secondarySet, module.SecondaryCode))
+					add("neris.section.secondary_code", RmsValidationSeverity.Error, path, $"'{module.SecondaryCode}' is not a NERIS {secondarySet} value.");
+
+				if (!string.IsNullOrWhiteSpace(module.QuantityUnit) && !catalog.Contains("hazard_unit", module.QuantityUnit))
+					add("neris.section.quantity_unit", RmsValidationSeverity.Error, path, $"'{module.QuantityUnit}' is not a NERIS unit of measure.");
+			}
+		}
+
+		private static void ValidateExposures(Action<string, RmsValidationSeverity, string, string> add, NerisIncidentSnapshot snapshot, NerisValueSetCatalog catalog)
+		{
+			var index = 0;
+			foreach (var exposure in snapshot.Exposures.OrderBy(e => e.Ordinal))
+			{
+				var path = $"exposures[{index++}]";
+
+				// damage_type is required by the contract; the rest are checked only when supplied.
+				if (string.IsNullOrWhiteSpace(exposure.DamageType))
+					add("neris.exposure.damage_type", RmsValidationSeverity.Error, path + ".damage_type", "Each exposure needs a damage rating.");
+				else if (!catalog.Contains("exposure_damage", exposure.DamageType))
+					add("neris.exposure.damage_type.code", RmsValidationSeverity.Error, path + ".damage_type", $"'{exposure.DamageType}' is not a NERIS exposure damage rating.");
+
+				if (!string.IsNullOrWhiteSpace(exposure.ItemType) && !catalog.Contains("exposure_item", exposure.ItemType))
+					add("neris.exposure.item_type", RmsValidationSeverity.Error, path + ".location_detail", $"'{exposure.ItemType}' is not a NERIS exposure item type.");
+
+				if (!string.IsNullOrWhiteSpace(exposure.LocationUse) && !catalog.Contains("location_use", exposure.LocationUse))
+					add("neris.exposure.location_use", RmsValidationSeverity.Error, path + ".location_use", $"'{exposure.LocationUse}' is not a NERIS location use.");
+
+				foreach (var cause in Split(exposure.DisplacementCausesCsv).Where(c => !catalog.Contains("displace_cause", c)))
+					add("neris.exposure.displace_cause", RmsValidationSeverity.Error, path + ".displacement_causes", $"'{cause}' is not a NERIS displacement cause.");
+
+				if (exposure.Latitude.HasValue != exposure.Longitude.HasValue)
+					add("neris.exposure.point", RmsValidationSeverity.Error, path + ".point", "Latitude and longitude must both be present.");
+			}
+		}
+
+		private static void ValidateCasualties(Action<string, RmsValidationSeverity, string, string> add, NerisIncidentSnapshot snapshot, NerisValueSetCatalog catalog)
+		{
+			var index = 0;
+			foreach (var casualty in snapshot.Casualties.OrderBy(c => c.Ordinal))
+			{
+				var path = $"casualty_rescues[{index++}]";
+
+				if (casualty.PersonType != RmsCasualtyPersonTypes.Firefighter && casualty.PersonType != RmsCasualtyPersonTypes.Civilian)
+					add("neris.casualty.person_type", RmsValidationSeverity.Error, path + ".type", "Each casualty or rescue must say whether the person was a firefighter (FF) or not (NONFF).");
+
+				if (!string.IsNullOrWhiteSpace(casualty.Gender) && !catalog.Contains("gender", casualty.Gender))
+					add("neris.casualty.gender", RmsValidationSeverity.Error, path + ".gender", $"'{casualty.Gender}' is not a NERIS gender value.");
+
+				if (!string.IsNullOrWhiteSpace(casualty.Race) && !catalog.Contains("race", casualty.Race))
+					add("neris.casualty.race", RmsValidationSeverity.Error, path + ".race", $"'{casualty.Race}' is not a NERIS race value.");
+
+				if (!string.IsNullOrWhiteSpace(casualty.BirthMonthYear) && !BirthMonthYearPattern.IsMatch(casualty.BirthMonthYear))
+					add("neris.casualty.birth_month_year", RmsValidationSeverity.Error, path + ".birth_month_year", "Birth month and year must be written as YYYY-MM.");
+
+				if ((RmsCasualtyRescueKind)casualty.Kind == RmsCasualtyRescueKind.Casualty)
+				{
+					if (!string.IsNullOrWhiteSpace(casualty.CasualtyCause) && !catalog.Contains("casualty_cause", casualty.CasualtyCause))
+						add("neris.casualty.cause", RmsValidationSeverity.Error, path + ".casualty", $"'{casualty.CasualtyCause}' is not a NERIS casualty cause.");
+					if (!string.IsNullOrWhiteSpace(casualty.CasualtyAction) && !catalog.Contains("casualty_action", casualty.CasualtyAction))
+						add("neris.casualty.action", RmsValidationSeverity.Error, path + ".casualty", $"'{casualty.CasualtyAction}' is not a NERIS casualty action.");
+					if (!string.IsNullOrWhiteSpace(casualty.CasualtyTimeline) && !catalog.Contains("casualty_timeline", casualty.CasualtyTimeline))
+						add("neris.casualty.timeline", RmsValidationSeverity.Error, path + ".casualty", $"'{casualty.CasualtyTimeline}' is not a NERIS casualty timeline.");
+					if (!string.IsNullOrWhiteSpace(casualty.DutyType) && !catalog.Contains("duty", casualty.DutyType))
+						add("neris.casualty.duty", RmsValidationSeverity.Error, path + ".casualty", $"'{casualty.DutyType}' is not a NERIS duty type.");
+					foreach (var ppe in Split(casualty.PpeCsv).Where(p => !catalog.Contains("casualty_ppe", p)))
+						add("neris.casualty.ppe", RmsValidationSeverity.Error, path + ".casualty", $"'{ppe}' is not a NERIS PPE item.");
+
+					// A responder casualty without duty context cannot be analysed; the contract accepts it, the fire service should not.
+					if (casualty.PersonType == RmsCasualtyPersonTypes.Firefighter && string.IsNullOrWhiteSpace(casualty.DutyType))
+						add("neris.casualty.ff_duty", RmsValidationSeverity.Warning, path + ".casualty", "A firefighter casualty should record what the member was doing at the time.");
+				}
+				else
+				{
+					if (string.IsNullOrWhiteSpace(casualty.RescueType))
+						add("neris.rescue.type", RmsValidationSeverity.Error, path + ".rescue", "Each rescue needs a rescue type.");
+					foreach (var action in Split(casualty.RescueActionsCsv).Where(a => !catalog.Contains("rescue_action", a)))
+						add("neris.rescue.action", RmsValidationSeverity.Error, path + ".rescue", $"'{action}' is not a NERIS rescue action.");
+					foreach (var impediment in Split(casualty.RescueImpedimentsCsv).Where(i => !catalog.Contains("rescue_impediment", i)))
+						add("neris.rescue.impediment", RmsValidationSeverity.Error, path + ".rescue", $"'{impediment}' is not a NERIS rescue impediment.");
+					if (!string.IsNullOrWhiteSpace(casualty.RescueMode) && !catalog.Contains("rescue_mode", casualty.RescueMode))
+						add("neris.rescue.mode", RmsValidationSeverity.Error, path + ".rescue", $"'{casualty.RescueMode}' is not a NERIS rescue mode.");
+					if (!string.IsNullOrWhiteSpace(casualty.RescuePath) && !catalog.Contains("rescue_path", casualty.RescuePath))
+						add("neris.rescue.path", RmsValidationSeverity.Error, path + ".rescue", $"'{casualty.RescuePath}' is not a NERIS rescue path.");
+					if (!string.IsNullOrWhiteSpace(casualty.RescueElevation) && !catalog.Contains("rescue_elevation", casualty.RescueElevation))
+						add("neris.rescue.elevation", RmsValidationSeverity.Error, path + ".rescue", $"'{casualty.RescueElevation}' is not a NERIS rescue elevation.");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Local validation of the separate incident-analysis filing (RMS-3). It is checked on its own because it
+		/// is submitted on its own; an analysis problem must never block the incident it belongs to.
+		/// </summary>
+		public List<RmsValidationIssue> ValidateAnalysisLocal(NerisIncidentAnalysisSnapshot snapshot, RmsNerisProfile profile)
+		{
+			var issues = new List<RmsValidationIssue>();
+			if (snapshot?.Analysis == null)
+				return issues;
+
+			var analysis = snapshot.Analysis;
+			var catalog = NerisValueSetCatalog.Instance;
+			void Add(string rule, RmsValidationSeverity severity, string path, string message)
+			{
+				issues.Add(new RmsValidationIssue
+				{
+					RmsValidationIssueId = Guid.NewGuid().ToString(),
+					DepartmentId = analysis.DepartmentId,
+					RecordId = analysis.RmsIncidentAnalysisId,
+					ProfileVersion = catalog.ContractVersion,
+					RuleKey = rule,
+					Severity = (int)severity,
+					FieldPath = path,
+					Message = message,
+					Source = (int)RmsValidationSource.Local,
+					CreatedOn = DateTime.UtcNow
+				});
+			}
+
+			if (profile == null || string.IsNullOrWhiteSpace(profile.NerisEntityId))
+				Add("neris.profile.entity", RmsValidationSeverity.Error, "base.department_neris_id", "The department has no NERIS entity ID configured.");
+
+			if (string.IsNullOrWhiteSpace(snapshot.Report?.NerisIncidentId))
+				Add("neris.analysis.incident", RmsValidationSeverity.Error, "base.incident_neris_id", "The incident must be filed with NERIS before its analysis can be.");
+
+			if (!string.IsNullOrWhiteSpace(analysis.GeneralCause) && !catalog.Contains("fire_cause_general", analysis.GeneralCause))
+				Add("neris.analysis.general_cause", RmsValidationSeverity.Error, "base.general_cause", $"'{analysis.GeneralCause}' is not a NERIS general fire cause.");
+
+			foreach (var investigation in Split(analysis.InvestigationTypesCsv).Where(i => !catalog.Contains("fire_invest", i)))
+				Add("neris.analysis.investigation", RmsValidationSeverity.Error, "base.investigation_types", $"'{investigation}' is not a NERIS investigation type.");
+
+			var index = 0;
+			foreach (var property in snapshot.Properties.OrderBy(p => p.Ordinal))
+			{
+				var path = $"properties[{index++}]";
+				if (!string.IsNullOrWhiteSpace(property.LocationUse) && !catalog.Contains("location_use", property.LocationUse))
+					Add("neris.analysis.property.location_use", RmsValidationSeverity.Error, path + ".location_use", $"'{property.LocationUse}' is not a NERIS location use.");
+				if (!string.IsNullOrWhiteSpace(property.ConstructionType) && !catalog.Contains("construction", property.ConstructionType))
+					Add("neris.analysis.property.construction", RmsValidationSeverity.Error, path + ".construction_type", $"'{property.ConstructionType}' is not a NERIS construction type.");
+				if (!string.IsNullOrWhiteSpace(property.DamageType) && !catalog.Contains("fire_bldg_damage", property.DamageType))
+					Add("neris.analysis.property.damage", RmsValidationSeverity.Error, path + ".damage_type", $"'{property.DamageType}' is not a NERIS building damage rating.");
+				if (!string.IsNullOrWhiteSpace(property.FireSpread) && !catalog.Contains("fire_spread", property.FireSpread))
+					Add("neris.analysis.property.fire_spread", RmsValidationSeverity.Error, path + ".fire_spread", $"'{property.FireSpread}' is not a NERIS fire spread value.");
+				if (property.EstimatedLoss.HasValue && property.EstimatedValue.HasValue && property.EstimatedLoss > property.EstimatedValue)
+					Add("neris.analysis.property.loss", RmsValidationSeverity.Warning, path + ".estimated_loss", "The reported loss is greater than the reported pre-incident value.");
+			}
+
+			index = 0;
+			foreach (var vehicle in snapshot.Vehicles.OrderBy(v => v.Ordinal))
+			{
+				var path = $"vehicles[{index++}]";
+				if (!string.IsNullOrWhiteSpace(vehicle.Make) && !catalog.Contains("auto_make", vehicle.Make))
+					Add("neris.analysis.vehicle.make", RmsValidationSeverity.Error, path + ".make", $"'{vehicle.Make}' is not a NERIS vehicle make.");
+				if (!string.IsNullOrWhiteSpace(vehicle.BodyStyle) && !catalog.Contains("auto_body_style", vehicle.BodyStyle))
+					Add("neris.analysis.vehicle.body_style", RmsValidationSeverity.Error, path + ".body_style", $"'{vehicle.BodyStyle}' is not a NERIS body style.");
+				if (!string.IsNullOrWhiteSpace(vehicle.Powertrain) && !catalog.Contains("powertrain", vehicle.Powertrain))
+					Add("neris.analysis.vehicle.powertrain", RmsValidationSeverity.Error, path + ".powertrain", $"'{vehicle.Powertrain}' is not a NERIS powertrain.");
+				if (!string.IsNullOrWhiteSpace(vehicle.DamageType) && !catalog.Contains("vehicle_damage", vehicle.DamageType))
+					Add("neris.analysis.vehicle.damage", RmsValidationSeverity.Error, path + ".damage_type", $"'{vehicle.DamageType}' is not a NERIS vehicle damage rating.");
+			}
+
+			foreach (var module in snapshot.Modules)
+			{
+				var kind = (RmsIncidentModuleKind)module.ModuleKind;
+				var descriptor = RmsIncidentModuleCatalog.Get(kind);
+				if (descriptor == null || !descriptor.BelongsToAnalysis)
+				{
+					Add("neris.analysis.section.unknown", RmsValidationSeverity.Error, kind.ToString(), $"'{kind}' is not a section of the incident analysis.");
+					continue;
+				}
+
+				if (!string.IsNullOrWhiteSpace(module.DetailJson) && !ParsesAsObject(module.DetailJson))
+					Add("neris.analysis.section.detail", RmsValidationSeverity.Error, descriptor.PayloadPath, $"The {kind} section body is not a JSON object and cannot be submitted.");
+
+				var primarySet = NerisSectionRules.PrimaryCodeSetFor(kind);
+				if (primarySet != null && !string.IsNullOrWhiteSpace(module.PrimaryCode) && !catalog.Contains(primarySet, module.PrimaryCode))
+					Add("neris.analysis.section.primary_code", RmsValidationSeverity.Error, descriptor.PayloadPath, $"'{module.PrimaryCode}' is not a NERIS {primarySet} value.");
+			}
+
+			return issues;
+		}
+
+		private static readonly Regex BirthMonthYearPattern = new Regex(@"^\d{4}-(0[1-9]|1[0-2])$", RegexOptions.Compiled);
+
+		private static IEnumerable<string> Split(string csv)
+		{
+			if (string.IsNullOrWhiteSpace(csv))
+				return Enumerable.Empty<string>();
+
+			return csv.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(v => v.Trim()).Where(v => v.Length > 0);
+		}
+
+		private static bool ParsesAsObject(string json)
+		{
+			try
+			{
+				Newtonsoft.Json.Linq.JObject.Parse(json);
+				return true;
+			}
+			catch (Newtonsoft.Json.JsonReaderException)
+			{
+				return false;
+			}
+		}
+
+		public IReadOnlyList<NerisSectionRequirement> GetSectionRequirements(IEnumerable<string> incidentTypeCodes)
+		{
+			return NerisSectionRules.For(incidentTypeCodes)
+				.Select(r => new NerisSectionRequirement
+				{
+					Kind = r.Kind, Required = r.Required, Reason = r.Reason,
+					PrimaryCodeSet = NerisSectionRules.PrimaryCodeSetFor(r.Kind), SecondaryCodeSet = NerisSectionRules.SecondaryCodeSetFor(r.Kind)
+				})
+				.ToList();
 		}
 
 		public async Task<List<RmsValidationIssue>> ValidateRemoteAsync(RmsNerisProfile profile, string payloadJson, CancellationToken cancellationToken = default)

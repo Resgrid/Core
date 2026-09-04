@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -330,13 +330,18 @@ namespace Resgrid.Web.Services.Helpers
 			};
 		}
 
-		public static IncidentReportData ToReport(IncidentReportAggregate a, bool submissionEnabled)
+		public static IncidentReportData ToReport(IncidentReportAggregate a, bool submissionEnabled, bool canViewRestricted = true,
+			IEnumerable<NerisSectionRequirement> sections = null, string incidentAnalysisId = null)
 		{
+			var withheld = new List<string>();
 			var r = a.Report;
 			var state = (RmsRecordState)r.State;
 			var preset = (RmsLifecyclePreset)r.LifecyclePreset;
 			var canQueue = submissionEnabled && r.AmendsRevisionId == null && !string.IsNullOrWhiteSpace(r.CurrentRevisionId)
-				&& (state == RmsRecordState.Finalized || state == RmsRecordState.Amended || state == RmsRecordState.Corrected || (state == RmsRecordState.Rejected && a.Submissions.Any(s => s.State == (int)RmsSubmissionState.Failed)));
+				&& (state == RmsRecordState.Finalized || state == RmsRecordState.Amended || state == RmsRecordState.Corrected
+					// A destination rejection is stored as RmsSubmissionState.Rejected, and QueueSubmissionCoreAsync
+					// re-queues Failed, Superseded and Rejected alike; reporting only Failed hid the retry action.
+					|| (state == RmsRecordState.Rejected && a.Submissions.Any(s => s.State == (int)RmsSubmissionState.Failed || s.State == (int)RmsSubmissionState.Rejected)));
 			return new IncidentReportData
 			{
 				ReportId = r.RmsIncidentReportId, CallId = r.CallId, ReportingEntityId = r.ReportingEntityId, DefinitionKey = r.DefinitionKey, DefinitionVersion = r.DefinitionVersion, ProfileVersion = r.ProfileVersion,
@@ -376,6 +381,16 @@ namespace Resgrid.Web.Services.Helpers
 					FactKey = f.FactKey, SourceKind = f.SourceKind, SourceKindName = ((RmsSourceKind)f.SourceKind).ToString(), SourceSystem = f.SourceSystem, SourceEntityType = f.SourceEntityType, SourceEntityId = f.SourceEntityId,
 					SourceValue = f.SourceValue, CurrentValue = f.CurrentValue, SourceTime = f.SourceTime, CorrectedOn = f.CorrectedOn, CorrectedByUserId = f.CorrectedByUserId
 				}).ToList(),
+				Sections = BuildSections(a, sections),
+				Modules = a.Modules.OrderBy(m => m.Ordinal).Select(ToModule).ToList(),
+				Resources = a.Resources.OrderBy(r => r.Ordinal).Select(r => new IncidentResourceData
+				{
+					ResourceId = r.RmsIncidentResourceId, ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail, Ordinal = r.Ordinal
+				}).ToList(),
+				Casualties = a.Casualties.OrderBy(c => c.Ordinal).Select(c => ToCasualty(c, canViewRestricted, withheld)).ToList(),
+				Exposures = a.Exposures.OrderBy(e => e.Ordinal).Select(ToExposure).ToList(),
+				WithheldFields = withheld,
+				IncidentAnalysisId = incidentAnalysisId,
 				Issues = a.Issues.Select(ToIssue).ToList(),
 				Submissions = a.Submissions.OrderByDescending(s => s.QueuedOn).Select(s => new IncidentSubmissionData
 				{
@@ -391,6 +406,99 @@ namespace Resgrid.Web.Services.Helpers
 				Revisions = a.Revisions.OrderByDescending(x => x.RevisionNumber).Select(RecordsApiMapper.ToRevision).ToList(),
 				GroupScopeIds = a.GroupScope.Select(g => g.DepartmentGroupId).Distinct().ToList()
 			};
+		}
+
+		/// <summary>
+		/// The progressive section requirements, each marked with whether the report already carries that section,
+		/// plus the contract's payload path and schema so a client can render and post the right shape.
+		/// </summary>
+		private static List<IncidentSectionRequirementData> BuildSections(IncidentReportAggregate a, IEnumerable<NerisSectionRequirement> sections)
+		{
+			var present = new HashSet<int>(a.Modules.Select(m => m.ModuleKind));
+			return (sections ?? Enumerable.Empty<NerisSectionRequirement>()).Select(r =>
+			{
+				var descriptor = RmsIncidentModuleCatalog.Get(r.Kind);
+				return new IncidentSectionRequirementData
+				{
+					Kind = (int)r.Kind,
+					KindName = r.Kind.ToString(),
+					PayloadPath = descriptor?.PayloadPath,
+					SchemaName = descriptor?.SchemaName,
+					IsCollection = descriptor?.IsCollection ?? false,
+					Required = r.Required,
+					Reason = r.Reason,
+					PrimaryCodeSet = r.PrimaryCodeSet,
+					SecondaryCodeSet = r.SecondaryCodeSet,
+					Present = present.Contains((int)r.Kind)
+				};
+			}).ToList();
+		}
+
+		public static IncidentModuleData ToModule(RmsIncidentModule m)
+		{
+			var kind = (RmsIncidentModuleKind)m.ModuleKind;
+			var descriptor = RmsIncidentModuleCatalog.Get(kind);
+			return new IncidentModuleData
+			{
+				ModuleId = m.RmsIncidentModuleId, Kind = m.ModuleKind, KindName = kind.ToString(),
+				PayloadPath = descriptor?.PayloadPath, SchemaName = m.SchemaName ?? descriptor?.SchemaName,
+				PrimaryCode = m.PrimaryCode, SecondaryCode = m.SecondaryCode, Quantity = m.Quantity, QuantityUnit = m.QuantityUnit,
+				OccurredOn = m.OccurredOn, DetailJson = m.DetailJson, Ordinal = m.Ordinal
+			};
+		}
+
+		/// <summary>
+		/// A casualty or rescue. The entry itself is not secret — that somebody was hurt is part of the report —
+		/// but demographics, the personnel link and the injury detail are restricted, so they are dropped and named
+		/// rather than the whole row disappearing, which would misrepresent the incident.
+		/// </summary>
+		public static IncidentCasualtyData ToCasualty(RmsCasualtyRescue c, bool canViewRestricted, List<string> withheld)
+		{
+			var data = new IncidentCasualtyData
+			{
+				CasualtyId = c.RmsCasualtyRescueId, Kind = c.Kind, KindName = ((RmsCasualtyRescueKind)c.Kind).ToString(), PersonType = c.PersonType,
+				YearsOfService = c.YearsOfService, JobClassification = c.JobClassification, WasInjured = c.WasInjured, WasFatal = c.WasFatal,
+				CasualtyCause = c.CasualtyCause, CasualtyAction = c.CasualtyAction, CasualtyTimeline = c.CasualtyTimeline, DutyType = c.DutyType,
+				Ppe = SplitCodes(c.PpeCsv), RescueType = c.RescueType, RescueActions = SplitCodes(c.RescueActionsCsv),
+				RescueImpediments = SplitCodes(c.RescueImpedimentsCsv), RescueMode = c.RescueMode, RescuePath = c.RescuePath,
+				RescueElevation = c.RescueElevation, PresenceKnown = c.PresenceKnown, OccurredOn = c.OccurredOn, Ordinal = c.Ordinal
+			};
+
+			if (canViewRestricted)
+			{
+				data.PersonnelUserId = c.PersonnelUserId;
+				data.Rank = c.Rank;
+				data.BirthMonthYear = c.BirthMonthYear;
+				data.Gender = c.Gender;
+				data.Race = c.Race;
+				data.InjuryDetailJson = c.InjuryDetailJson;
+			}
+			else
+			{
+				foreach (var field in new[] { "PersonnelUserId", "Rank", "BirthMonthYear", "Gender", "Race", "InjuryDetailJson" })
+					withheld.Add("Casualties." + field);
+			}
+
+			return data;
+		}
+
+		public static IncidentExposureData ToExposure(RmsExposure e)
+		{
+			return new IncidentExposureData
+			{
+				ExposureId = e.RmsExposureId, LocationKind = e.LocationKind, ItemType = e.ItemType, DamageType = e.DamageType, LocationUse = e.LocationUse,
+				PeoplePresent = e.PeoplePresent, DisplacementCount = e.DisplacementCount, DisplacementCauses = SplitCodes(e.DisplacementCausesCsv),
+				AddressText = e.AddressText, Street = e.Street, Municipality = e.Municipality, State = e.State, PostalCode = e.PostalCode,
+				Latitude = e.Latitude, Longitude = e.Longitude, EstimatedValue = e.EstimatedValue, EstimatedLoss = e.EstimatedLoss,
+				CurrencyCode = e.CurrencyCode, Ordinal = e.Ordinal
+			};
+		}
+
+		private static List<string> SplitCodes(string csv)
+		{
+			return string.IsNullOrWhiteSpace(csv)
+				? new List<string>()
+				: csv.Split(',').Select(c => c.Trim()).Where(c => c.Length > 0).ToList();
 		}
 
 		public static IncidentIssueData ToIssue(RmsValidationIssue i)
@@ -430,6 +538,32 @@ namespace Resgrid.Web.Services.Helpers
 				ImpedimentNarrative = input.ImpedimentNarrative,
 				OutcomeNarrative = input.OutcomeNarrative,
 				SupplementalJson = input.SupplementalJson,
+				// Null stays null: the service reads absence as "leave this section alone".
+				Modules = input.Modules?.Select(m => new IncidentModuleInput
+				{
+					Kind = (RmsIncidentModuleKind)m.Kind, PrimaryCode = m.PrimaryCode, SecondaryCode = m.SecondaryCode,
+					Quantity = m.Quantity, QuantityUnit = m.QuantityUnit, OccurredOn = RecordsApiHelper.Utc(m.OccurredOn), DetailJson = m.DetailJson
+				}).ToList(),
+				Resources = input.Resources?.Select(r => new IncidentResourceInput { ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList(),
+				Casualties = input.Casualties?.Select(c => new IncidentCasualtyRescueInput
+				{
+					Kind = (RmsCasualtyRescueKind)c.Kind, PersonType = c.PersonType, PersonnelUserId = c.PersonnelUserId, Rank = c.Rank,
+					YearsOfService = c.YearsOfService, JobClassification = c.JobClassification, BirthMonthYear = c.BirthMonthYear,
+					Gender = c.Gender, Race = c.Race, WasInjured = c.WasInjured, WasFatal = c.WasFatal,
+					CasualtyCause = c.CasualtyCause, CasualtyAction = c.CasualtyAction, CasualtyTimeline = c.CasualtyTimeline, DutyType = c.DutyType,
+					Ppe = c.Ppe ?? new List<string>(), InjuryDetailJson = c.InjuryDetailJson, RescueType = c.RescueType,
+					RescueActions = c.RescueActions ?? new List<string>(), RescueImpediments = c.RescueImpediments ?? new List<string>(),
+					RescueMode = c.RescueMode, RescuePath = c.RescuePath, RescueElevation = c.RescueElevation, PresenceKnown = c.PresenceKnown,
+					OccurredOn = RecordsApiHelper.Utc(c.OccurredOn), DetailJson = c.DetailJson
+				}).ToList(),
+				Exposures = input.Exposures?.Select(e => new IncidentExposureInput
+				{
+					LocationKind = e.LocationKind, ItemType = e.ItemType, DamageType = e.DamageType, LocationUse = e.LocationUse,
+					PeoplePresent = e.PeoplePresent, DisplacementCount = e.DisplacementCount, DisplacementCauses = e.DisplacementCauses ?? new List<string>(),
+					AddressText = e.AddressText, Street = e.Street, Municipality = e.Municipality, State = e.State, PostalCode = e.PostalCode,
+					Latitude = e.Latitude, Longitude = e.Longitude, EstimatedValue = e.EstimatedValue, EstimatedLoss = e.EstimatedLoss,
+					CurrencyCode = e.CurrencyCode, DetailJson = e.DetailJson
+				}).ToList(),
 				OriginClient = origin
 			};
 		}

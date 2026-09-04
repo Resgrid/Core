@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,7 +61,7 @@ namespace Resgrid.Model.Services
 		Task<List<int>> GetYearsAsync(int departmentId);
 
 		/// <summary>Delta cursor for clients (plan section 5.3): projections modified after <paramref name="since"/>, oldest first, including tombstones (cancelled, voided, deleted).</summary>
-		Task<List<RmsRecordSearchProjection>> GetChangesSinceAsync(int departmentId, DateTime? since, int take);
+		Task<List<RmsRecordSearchProjection>> GetChangesSinceAsync(int departmentId, DateTime? since, int take, string sinceId = null);
 
 		Task<RmsRecordAttachment> AddAttachmentAsync(int departmentId, string userId, string recordId, string fileName, string contentType, byte[] data, string description, CancellationToken cancellationToken = default);
 

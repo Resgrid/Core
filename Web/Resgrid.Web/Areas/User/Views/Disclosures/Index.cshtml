@@ -1,0 +1,170 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.DisclosureIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["Disclosures"];
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	string Name(string userId) => string.IsNullOrEmpty(userId) ? "-" : (Model.PersonnelNames.TryGetValue(userId, out var n) ? n : userId);
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["Disclosures"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@localizer["Disclosures"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+	{
+		<div class="alert alert-danger">@Model.ErrorMessage</div>
+	}
+	@if (!string.IsNullOrEmpty(Model.Message))
+	{
+		<div class="alert alert-success">@Model.Message</div>
+	}
+	@if (!Model.ModuleState.RecordsUsable)
+	{
+		<div class="alert alert-warning">@localizer["RecordsNotActivated"]</div>
+	}
+
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="ibox">
+				<div class="ibox-title">
+					<h5><i class="fa fa-gavel"></i> @localizer["DisclosureQueue"]</h5>
+					<div class="ibox-tools">
+						<form method="get" class="form-inline" asp-controller="Disclosures" asp-action="Index" asp-route-area="User">
+							<select class="form-control input-sm" name="state" onchange="this.form.submit()">
+								<option value="">@localizer["AllStates"]</option>
+								@foreach (var s in Model.States)
+								{
+									<option value="@s.Value" selected="@(Model.StateFilter.HasValue && s.Value == Model.StateFilter.Value.ToString())">@s.Text</option>
+								}
+							</select>
+						</form>
+					</div>
+				</div>
+				<div class="ibox-content">
+					@if (Model.Requests.Count == 0)
+					{
+						<p class="text-muted">@localizer["NoDisclosures"]</p>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table class="table table-condensed table-hover">
+								<thead>
+									<tr>
+										<th>@localizer["RequestNumber"]</th>
+										@if (Model.CanViewRestricted)
+										{
+											<th>@localizer["Requester"]</th>
+										}
+										<th>@localizer["ReceivedOn"]</th>
+										<th>@localizer["StatutoryDueOn"]</th>
+										<th>@localizer["State"]</th>
+										<th>@localizer["AssignedTo"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var request in Model.Requests)
+									{
+										<tr class="@(request.IsOverdue ? "danger" : string.Empty)">
+											<td><a asp-controller="Disclosures" asp-action="Details" asp-route-area="User" asp-route-id="@request.RmsDisclosureRequestId">@request.RequestNumber</a></td>
+											@if (Model.CanViewRestricted)
+											{
+												<td>@request.RequesterName <small class="text-muted">@request.RequesterOrganization</small></td>
+											}
+											<td>@When(request.ReceivedOn)</td>
+											<td>
+												@When(request.StatutoryDueOn)
+												@if (request.IsOverdue)
+												{
+													<span class="label label-danger">@localizer["Overdue"]</span>
+												}
+											</td>
+											<td><span class="label label-primary">@(((RmsDisclosureState)request.State).ToString())</span></td>
+											<td>@Name(request.AssignedToUserId)</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+					@if (!Model.CanViewRestricted)
+					{
+						<p class="text-muted"><i class="fa fa-lock"></i> @localizer["RequesterIdentityWithheld"]</p>
+					}
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-4">
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-plus"></i> @localizer["LogDisclosure"]</h5></div>
+				<div class="ibox-content">
+					<p class="text-muted">@localizer["DisclosureIntro"]</p>
+					<form method="post" asp-controller="Disclosures" asp-action="Create" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<div class="form-group">
+							<label>@localizer["RequesterName"]</label>
+							<input type="text" class="form-control" name="requesterName" maxlength="128" required />
+						</div>
+						<div class="form-group">
+							<label>@localizer["RequesterOrganization"]</label>
+							<input type="text" class="form-control" name="requesterOrganization" maxlength="128" />
+						</div>
+						<div class="form-group">
+							<label>@localizer["RequesterContact"]</label>
+							<input type="text" class="form-control" name="requesterContact" maxlength="256" />
+						</div>
+						<div class="form-group">
+							<label>@localizer["ReceivedOn"]</label>
+							<input type="datetime-local" class="form-control" name="receivedOn" />
+						</div>
+						<div class="form-group">
+							<label>@localizer["StatutoryDueOn"]</label>
+							<input type="datetime-local" class="form-control" name="statutoryDueOn" />
+							<span class="help-block">@localizer["StatutoryDueHint"]</span>
+						</div>
+						<div class="form-group">
+							<label>@localizer["JurisdictionProfile"]</label>
+							<input type="text" class="form-control" name="jurisdictionProfile" maxlength="16" placeholder="US-IL" />
+						</div>
+						<div class="form-group">
+							<label>@localizer["ScopeNarrative"]</label>
+							<textarea class="form-control" rows="3" name="scopeNarrative" maxlength="2048"></textarea>
+						</div>
+						<div class="form-group">
+							<label>@localizer["AssignedTo"]</label>
+							<select class="form-control" name="assignedToUserId">
+								<option value="">-</option>
+								@foreach (var person in Model.Personnel)
+								{
+									<option value="@person.Value">@person.Text</option>
+								}
+							</select>
+						</div>
+						<div class="form-group">
+							<label>@localizer["RedactionProfile"]</label>
+							<select class="form-control" name="redactionProfile">
+								@foreach (var profile in Model.RedactionProfiles)
+								{
+									<option value="@profile.Value">@profile.Text</option>
+								}
+							</select>
+						</div>
+						<button type="submit" class="btn btn-primary btn-block" @(Model.ModuleState.RecordsUsable ? string.Empty : "disabled")>@localizer["LogDisclosure"]</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

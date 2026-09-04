@@ -1,0 +1,273 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.IncidentAnalysisDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["IncidentAnalysis"];
+	var a = Model.Aggregate;
+	var analysis = a.Analysis;
+	string Name(string userId) => string.IsNullOrEmpty(userId) ? "-" : (Model.PersonnelNames.TryGetValue(userId, out var n) ? n : userId);
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["IncidentAnalysis"] <span class="label label-primary">@Model.State</span></h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="IncidentReports" asp-action="Index" asp-route-area="User">@localizer["IncidentReports"]</a></li>
+			<li><a asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@analysis.IncidentReportId">@Model.Reference</a></li>
+			<li class="active"><strong>@localizer["IncidentAnalysis"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+	{
+		<div class="alert alert-danger">@Model.ErrorMessage</div>
+	}
+	@if (!string.IsNullOrEmpty(Model.Message))
+	{
+		<div class="alert alert-success">@Model.Message</div>
+	}
+	@if (Model.State == RmsIncidentAnalysisState.Finalized && !a.IncidentIsFiled)
+	{
+		<div class="alert alert-info">@localizer["AnalysisAwaitingIncident"]</div>
+	}
+	@if (Model.State == RmsIncidentAnalysisState.Rejected)
+	{
+		<div class="alert alert-danger"><strong>@localizer["RejectedNotice"]</strong> @analysis.RejectionSummary</div>
+	}
+
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-search"></i> @Model.Reference</h5></div>
+				<div class="ibox-content">
+					<dl class="dl-horizontal">
+						<dt>@localizer["GeneralCause"]</dt><dd>@(analysis.GeneralCause ?? "-")</dd>
+						<dt>@localizer["InvestigationTypes"]</dt><dd>@(string.IsNullOrWhiteSpace(analysis.InvestigationTypesCsv) ? "-" : analysis.InvestigationTypesCsv.Replace(",", ", "))</dd>
+						<dt>@localizer["EstimatedValue"]</dt><dd>@(analysis.EstimatedValueTotal?.ToString("0.##") ?? "-") @analysis.CurrencyCode</dd>
+						<dt>@localizer["EstimatedLoss"]</dt><dd>@(analysis.EstimatedLossTotal?.ToString("0.##") ?? "-") @analysis.CurrencyCode</dd>
+						<dt>@localizer["NerisAnalysisId"]</dt><dd>@(analysis.NerisAnalysisId ?? "-")</dd>
+						<dt>@localizer["Author"]</dt><dd>@Name(analysis.AuthorUserId)</dd>
+						<dt>@localizer["FinalizedOn"]</dt><dd>@When(analysis.FinalizedOn)</dd>
+						<dt>@localizer["ProfileVersion"]</dt><dd><code>@analysis.ProfileVersion</code></dd>
+					</dl>
+				</div>
+			</div>
+
+			@if (a.Modules.Count > 0)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-list-alt"></i> @localizer["AnalysisSections"]</h5></div>
+					<div class="ibox-content">
+						<div class="table-responsive">
+							<table class="table table-condensed">
+								<thead><tr><th>@localizer["Section"]</th><th>@localizer["PrimaryCode"]</th><th>@localizer["SecondaryCode"]</th><th>@localizer["Quantity"]</th></tr></thead>
+								<tbody>
+									@foreach (var module in a.Modules.OrderBy(m => m.Ordinal))
+									{
+										<tr>
+											<td>@localizer["Section" + ((RmsIncidentModuleKind)module.ModuleKind).ToString()]</td>
+											<td>@module.PrimaryCode</td>
+											<td>@module.SecondaryCode</td>
+											<td>@(module.Quantity.HasValue ? module.Quantity.Value.ToString("0.##") + " " + module.QuantityUnit : "-")</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			}
+
+			@if (a.Properties.Count > 0)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-building-o"></i> @localizer["Properties"]</h5></div>
+					<div class="ibox-content">
+						<div class="table-responsive">
+							<table class="table table-condensed">
+								<thead><tr><th>@localizer["LocationUse"]</th><th>@localizer["ConstructionType"]</th><th>@localizer["DamageType"]</th><th>@localizer["FireSpread"]</th><th>@localizer["EstimatedValue"]</th><th>@localizer["EstimatedLoss"]</th></tr></thead>
+								<tbody>
+									@foreach (var property in a.Properties.OrderBy(p => p.Ordinal))
+									{
+										<tr>
+											<td>@property.LocationUse</td>
+											<td>@property.ConstructionType</td>
+											<td>@property.DamageType</td>
+											<td>@property.FireSpread</td>
+											<td>@(property.EstimatedValue?.ToString("0.##") ?? "-")</td>
+											<td>@(property.EstimatedLoss?.ToString("0.##") ?? "-")</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			}
+
+			@if (a.Vehicles.Count > 0)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-car"></i> @localizer["Vehicles"]</h5></div>
+					<div class="ibox-content">
+						<div class="table-responsive">
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>@localizer["Make"]</th><th>@localizer["Model"]</th><th>@localizer["ModelYear"]</th><th>@localizer["DamageType"]</th>
+										@if (Model.CanViewRestricted)
+										{
+											<th>@localizer["Vin"]</th><th>@localizer["LicensePlate"]</th>
+										}
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var vehicle in a.Vehicles.OrderBy(v => v.Ordinal))
+									{
+										<tr>
+											<td>@vehicle.Make</td>
+											<td>@vehicle.Model</td>
+											<td>@vehicle.ModelYear</td>
+											<td>@vehicle.DamageType</td>
+											@if (Model.CanViewRestricted)
+											{
+												<td>@vehicle.Vin</td>
+												<td>@vehicle.LicensePlate @vehicle.LicenseState</td>
+											}
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+						@if (!Model.CanViewRestricted)
+						{
+							<p class="text-muted"><i class="fa fa-lock"></i> @localizer["RestrictedFieldsHidden"]</p>
+						}
+					</div>
+				</div>
+			}
+
+			@if (a.Submissions.Count > 0)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-cloud-upload"></i> @localizer["Submissions"]</h5></div>
+					<div class="ibox-content">
+						<div class="table-responsive">
+							<table class="table table-condensed">
+								<thead><tr><th>@localizer["State"]</th><th>@localizer["Queued"]</th><th>@localizer["Sent"]</th><th>@localizer["Attempts"]</th><th>@localizer["ExternalId"]</th><th>@localizer["Error"]</th></tr></thead>
+								<tbody>
+									@foreach (var submission in a.Submissions.OrderByDescending(s => s.QueuedOn))
+									{
+										<tr>
+											<td>@(((RmsSubmissionState)submission.State).ToString())</td>
+											<td>@When(submission.QueuedOn)</td>
+											<td>@When(submission.SentOn)</td>
+											<td>@submission.Attempts / @submission.MaxAttempts</td>
+											<td>@submission.ExternalId</td>
+											<td>@submission.ErrorSummary</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+
+		<div class="col-lg-4">
+			@if (Model.CanEdit && Model.IsEditable)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-pencil"></i> @commonLocalizer["Edit"]</h5></div>
+					<div class="ibox-content">
+						<a class="btn btn-primary btn-block" asp-controller="IncidentAnalysis" asp-action="Edit" asp-route-area="User" asp-route-id="@analysis.RmsIncidentAnalysisId">@localizer["EditIncidentAnalysis"]</a>
+						<form method="post" asp-controller="IncidentAnalysis" asp-action="Validate" asp-route-area="User" style="margin-top:8px">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="id" value="@analysis.RmsIncidentAnalysisId" />
+							<button type="submit" class="btn btn-white btn-block">@localizer["Validate"]</button>
+						</form>
+					</div>
+				</div>
+			}
+
+			@if (Model.CanFinalize && Model.IsEditable)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-check"></i> @localizer["Finalize"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["FinalizeAnalysisIntro"]</p>
+						<form method="post" asp-controller="IncidentAnalysis" asp-action="Finalize" asp-route-area="User">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="id" value="@analysis.RmsIncidentAnalysisId" />
+							<input type="hidden" name="rowVersion" value="@analysis.RowVersion" />
+							<button type="submit" class="btn btn-success btn-block">@localizer["Finalize"]</button>
+						</form>
+					</div>
+				</div>
+			}
+
+			@if (Model.CanSubmit && Model.CanQueueSubmission)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-cloud-upload"></i> @localizer["Submit"]</h5></div>
+					<div class="ibox-content">
+						<form method="post" asp-controller="IncidentAnalysis" asp-action="Submit" asp-route-area="User">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="id" value="@analysis.RmsIncidentAnalysisId" />
+							<button type="submit" class="btn btn-primary btn-block" @(a.IncidentIsFiled ? string.Empty : "disabled")>@localizer["QueueSubmission"]</button>
+						</form>
+						@if (!a.IncidentIsFiled)
+						{
+							<p class="text-muted" style="margin-top:8px">@localizer["AnalysisAwaitingIncident"]</p>
+						}
+					</div>
+				</div>
+			}
+
+			@if (Model.CanVoid && Model.State != RmsIncidentAnalysisState.Voided)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-ban"></i> @localizer["Void"]</h5></div>
+					<div class="ibox-content">
+						<form method="post" asp-controller="IncidentAnalysis" asp-action="Void" asp-route-area="User">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="id" value="@analysis.RmsIncidentAnalysisId" />
+							<input type="text" class="form-control" name="reasonCode" maxlength="64" placeholder="@localizer["ReasonCode"]" />
+							<textarea class="form-control" name="reasonText" rows="2" maxlength="512" placeholder="@localizer["ReasonText"]" style="margin-top:8px"></textarea>
+							<button type="submit" class="btn btn-danger btn-block" style="margin-top:8px">@localizer["Void"]</button>
+						</form>
+					</div>
+				</div>
+			}
+
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-history"></i> @localizer["History"]</h5></div>
+				<div class="ibox-content">
+					@if (a.Revisions.Count == 0)
+					{
+						<p class="text-muted">-</p>
+					}
+					else
+					{
+						<ul class="list-unstyled">
+							@foreach (var revision in a.Revisions.OrderByDescending(x => x.RevisionNumber))
+							{
+								<li>
+									<strong>#@revision.RevisionNumber</strong> @(((RmsRevisionTransition)revision.Transition).ToString())
+									<small class="text-muted">@When(revision.CreatedOn) — @Name(revision.ActorUserId)</small>
+								</li>
+							}
+						</ul>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

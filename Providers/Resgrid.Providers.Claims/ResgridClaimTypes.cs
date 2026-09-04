@@ -44,6 +44,14 @@
 			/// per-user authorization checks and support cross-department operation.
 			/// </summary>
 			public const string ServiceAccount = "ServiceAccount";
+
+			/// <summary>
+			/// Records (RMS): the purpose named by the system principal's configured Record grant
+			/// (Identifier Allocation Registry section 4.4). Present only on system-principal tokens that
+			/// carry a grant, so its presence is what marks a Record read as non-user; the value is written
+			/// to the Record access audit. A user principal never carries this claim.
+			/// </summary>
+			public const string RecordGrantPurpose = "RecordGrantPurpose";
 		}
 
 		public static class Resources

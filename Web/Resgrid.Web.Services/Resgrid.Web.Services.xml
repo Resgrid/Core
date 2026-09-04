@@ -1310,6 +1310,17 @@
             Used for system-level and client-credentials service principals that need full access.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.AddSystemRecordViewClaim(System.Security.Claims.ClaimsIdentity,System.Int32)">
+            <summary>
+            Records (RMS) is deliberately absent from <see cref="M:Resgrid.Web.Services.Controllers.v4.ConnectController.AddAllResourceClaims(System.Security.Claims.ClaimsIdentity)"/>. A system principal —
+            the cross-department system account or a department service account — reads Records only under an
+            explicitly configured department+purpose grant, and then only with <c>Record_View</c>
+            (Identifier Allocation Registry section 4.4). No configuration produces a mutating or restricted
+            Record claim here. The purpose rides along on its own claim so the per-request guard can identify
+            the principal as non-user and write the purpose to the Record access audit.
+            </summary>
+            <param name="departmentId">The principal's department, or 0 for the cross-department system account.</param>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.FixedTimeSecretEquals(System.String,System.String)">
             <summary>
             Performs a timing-safe comparison of two secret strings to prevent timing attacks.
@@ -1513,6 +1524,56 @@
             <param name="deviceUuid">Input to deregister the device for</param>
             <returns>Result for the unregistration</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.DisclosuresController">
+            <summary>
+            Public-records and access-to-information requests over the v4 Records contract (RMS plan section 4.7, RMS-3).
+            <para>
+            Every endpoint requires <c>RecordDisclosure_Update</c>, including the reads: a public-records queue names who
+            asked for what, which is itself restricted in most jurisdictions, so this is not a Record_View surface. A
+            system principal is refused outright — a statutory release is a human act, and no service account is ever
+            granted a disclosure policy.
+            </para>
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.GetRequests(System.Nullable{System.Int32},System.Int32,System.Int32)">
+            <summary>The disclosure queue, newest first; <paramref name="state"/> filters to one state.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.PreviewScope(System.String,System.Int32)">
+            <summary>
+            What the scope resolves to right now, through the same authorization path as the Records queue. Drafts
+            are listed but never producible: an unfinished report is not a public record.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.GetProductions(System.String)">
+            <summary>The request's productions; the released content itself is only carried by GetProduction.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.GetProduction(System.String,System.String)">
+            <summary>
+            One production with its redacted artifact. The request id is required rather than inferred: a production
+            is only meaningful as part of its request, and reading one is the act of re-opening a release.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.VerifyProduction(System.String,System.String)">
+            <summary>Re-computes a production's checksum from its stored artifact; false means it was tampered with.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.Create(Resgrid.Web.Services.Models.v4.Records.CreateDisclosureRequestInput,System.Threading.CancellationToken)">
+            <summary>Logs a request and starts the statutory clock.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.SaveScope(Resgrid.Web.Services.Models.v4.Records.SaveDisclosureScopeInput,System.Threading.CancellationToken)">
+            <summary>Saves the scope query and narrative; refused once a production exists, because the scope is what was produced against.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.Produce(Resgrid.Web.Services.Models.v4.Records.DisclosureCommandInput,System.Threading.CancellationToken)">
+            <summary>Builds a new immutable production: redacted content, produced-set snapshot, redaction log and checksum.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.Release(Resgrid.Web.Services.Models.v4.Records.DisclosureCommandInput,System.Threading.CancellationToken)">
+            <summary>Releases a prepared production to the requester and closes the statutory clock.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.Close(Resgrid.Web.Services.Models.v4.Records.DisclosureCommandInput,System.Threading.CancellationToken)">
+            <summary>Closes a request without release — denied under an exemption, or withdrawn. A reason is required.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.LoadProductionAsync(System.String,System.String)">
+            <summary>A production is only reachable through its own request, so a stray id cannot walk another department's release.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.DispatchController">
             <summary>
             API Calls that are used for the Dispatch App
@@ -1700,6 +1761,48 @@
             Deletes a message from the inbox by its ID
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController">
+            <summary>
+            The NERIS incident-analysis filing (RMS-3): the fire/hazmat investigation the contract posts separately from
+            the incident, once the destination already holds it.
+            <para>
+            It is a second submittable artifact for the same incident rather than a section of it, so it has its own
+            endpoints, its own ETag and its own lifecycle — an analysis that will not validate must never block the
+            incident report. Visibility is inherited from the incident: an analysis is never visible to somebody who
+            cannot see the report it belongs to.
+            </para>
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>Same system-principal gate as the other Records controllers (registry section 4.4).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController.GetIncidentAnalysis(System.String)">
+            <summary>The analysis by its own id.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController.GetForReport(System.String)">
+            <summary>The analysis for an incident report, if one has been started.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController.Start(Resgrid.Web.Services.Models.v4.Records.StartIncidentAnalysisInput,System.Threading.CancellationToken)">
+            <summary>Starts (or returns) the analysis for a report; one per report, so a second start is a 200.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController.SaveDraft(Resgrid.Web.Services.Models.v4.Records.SaveIncidentAnalysisDraftInput,System.Threading.CancellationToken)">
+            <summary>ETag-guarded draft save; 409 with the current analysis on a stale row version.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController.Validate(Resgrid.Web.Services.Models.v4.Records.IncidentAnalysisCommandInput,System.Threading.CancellationToken)">
+            <summary>Local validation against the pinned contract; the incident's own issue list is never touched.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController.Finalize(Resgrid.Web.Services.Models.v4.Records.IncidentAnalysisCommandInput,System.Threading.CancellationToken)">
+            <summary>
+            Writes the immutable revision and queues the filing. Finalizing before the incident is at the
+            destination is allowed: the submission waits for the incident's NERIS id rather than failing.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController.Submit(Resgrid.Web.Services.Models.v4.Records.IncidentAnalysisCommandInput,System.Threading.CancellationToken)">
+            <summary>Queues (or re-queues) the current revision; used when the incident was filed after the analysis was finalized.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentAnalysisController.CanViewReportAsync(System.String)">
+            <summary>An analysis is only as visible as the incident it belongs to.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentCommandController">
             <summary>
@@ -1911,6 +2014,25 @@
             every read, Field Records flags for field clients.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>
+            Same system-principal gate as <see cref="T:Resgrid.Web.Services.Controllers.v4.RecordsController"/>: a service account with no configured
+            Record grant for this department is refused before the action runs, and a granted one is confined to
+            reads because no mutating Record policy is ever issued to it (registry section 4.4).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.SystemGrant">
+            <summary>The configured grant this request runs under, or null for a user principal or an ungranted system one.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.VisibleGroupIdsAsync">
+            <summary>Group filter for the caller: the grant's groups for a system principal, the member's own otherwise.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.CanViewRecordAsync(System.String)">
+            <summary>Per-record visibility for the caller, routed to the grant rule for a system principal.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.AccessPurpose(System.String)">
+            <summary>Audit purpose: the grant's stated purpose for a system principal, so a machine read is never anonymous.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.GetIncidentReport(System.String)">
             <summary>One report with all sections, provenance facts, validation issues and sanitized submission history. Sets a weak ETag.</summary>
         </member>
@@ -1934,6 +2056,13 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.Submit(Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput,System.Threading.CancellationToken)">
             <summary>Queues (or re-queues) the current revision for the destination.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.CommandAsync(Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput,System.Boolean,System.Func{System.Int64,System.Threading.Tasks.Task{Resgrid.Model.IncidentReportAggregate}},System.String)">
+            <summary>
+            <paramref name="command"/> scopes the idempotency key to the calling action. Without it a client that
+            reused one key for SubmitForReview and then Finalize matched on the report alone and was told the second
+            command succeeded without it ever running.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController">
             <summary>
@@ -2446,6 +2575,45 @@
             while the Incident Commander/PIO has public sharing enabled. Disabling sharing revokes the token immediately.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController">
+            <summary>
+            Evidence capture over the v4 Records contract (RMS plan section 4.5, RMS-3): readiness, run-card activation,
+            tracking fixes, promoted chat, inventory usage and certification validity.
+            <para>
+            A capture is a write to an official record, so it needs Record_Create and a stated reason; reading one only
+            needs Record_View plus visibility of the Record it supports. Artifacts are immutable: there is no update or
+            delete endpoint, and a correction is a fresh capture that supersedes the old one.
+            </para>
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>Same system-principal gate as the other Records controllers (registry section 4.4).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController.GetSources">
+            <summary>
+            Which of the six sources can produce evidence for this department right now. A source that is not built
+            or not configured answers "unavailable, and here is why" — which is a different answer from "there was
+            no evidence" and is why the list always carries all six.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController.GetEvidence(System.String,System.String,System.Boolean)">
+            <summary>Artifacts on the working draft, or on a revision when one is named. Manifests are not carried in a list.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController.GetArtifact(System.String)">
+            <summary>One artifact with its manifest; the manifest is withheld and flagged when it is classified above the caller.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController.Verify(System.String)">
+            <summary>Re-computes the checksum from the stored manifest; false means the artifact was tampered with.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController.Capture(Resgrid.Web.Services.Models.v4.Records.CaptureRecordEvidenceInput,System.Threading.CancellationToken)">
+            <summary>
+            Captures one artifact. 409 when the source has nothing to give for this department — that is a real
+            answer about the source, not a client error, and the reason is carried in the problem detail.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController.LoadAuthorizedAsync(System.String)">
+            <summary>An artifact is only as visible as the Record it supports.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordsController">
             <summary>
             Records (RMS) client contract, RMS-1B (plan sections 5.3, 5.4, 5.9.1): capability manifest with the locked
@@ -2453,6 +2621,29 @@
             tombstones, ETag-guarded draft saves that return the changed field paths on conflict, scoped idempotency on
             creates and commands, revision history and diffs, and resumable checksummed attachment uploads. Every action
             gates on the Records.System flag first; every read passes the per-record visibility rule.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>
+            Every action on this controller refuses a system principal that has no configured Record grant for
+            the department it resolved to, before the action runs (Identifier Allocation Registry section 4.4).
+            A user principal is untouched. Mutating actions need no further guard: their policies are never
+            issued to a system principal, so the claim check has already refused them.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Dashboard(System.Threading.CancellationToken)">
+            <summary>
+            The Records work queues an officer opens the module to look at (RMS-3): incomplete, awaiting review,
+            rejected, accepted, overdue, plus the disclosure clock. Group-scope aware, so a member is never told that
+            records exist which their own queue will not show them, and a count that cannot be produced degrades into
+            a warning rather than failing the whole dashboard.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CrosswalkCoverage(System.Threading.CancellationToken)">
+            <summary>
+            NERIS crosswalk coverage: which of the department's own call types map to a NERIS incident type, which do
+            not, and which map to a code the pinned contract no longer carries. A gap report, not a statistic — every
+            unmapped type is a filing somebody classifies by hand on the night.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Capabilities">
@@ -2474,7 +2665,7 @@
             when the host is off or unavailable the filtered queue is returned with SearchDegraded set and the text is not applied.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Changes(System.Int64,System.Int32)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Changes(System.Int64,System.Int32,System.String)">
             <summary>
             Delta cursor (plan 5.3): records modified after <paramref name="since"/> (Unix epoch ms; 0 = full pull),
             oldest first, with tombstones for cancelled, voided and deleted records so clients remove them locally.
@@ -2505,7 +2696,7 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Finalize(Resgrid.Web.Services.Models.v4.Records.RecordCommandInput,System.Threading.CancellationToken)">
             <summary>Finalize: validates, writes the immutable revision and attestation, emits the lifecycle events. Attested must be true. Online-only by design.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CommandAsync(Resgrid.Web.Services.Models.v4.Records.RecordCommandInput,System.Boolean,System.Func{System.Int64,System.Threading.Tasks.Task{Resgrid.Model.RecordAggregate}})">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CommandAsync(Resgrid.Web.Services.Models.v4.Records.RecordCommandInput,System.Boolean,System.Func{System.Int64,System.Threading.Tasks.Task{Resgrid.Model.RecordAggregate}},System.String)">
             <summary>
             Shared command path: flag/usable gate, field-client gate, per-record visibility, scoped idempotency replay,
             ETag check where the transition takes one, and the 409/400 mapping. Never last-writer-wins.
@@ -2525,6 +2716,27 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CompleteUpload(Resgrid.Web.Services.Models.v4.Records.CompleteRecordUploadInput,System.Threading.CancellationToken)">
             <summary>Verifies size and SHA-256, then stores the attachment through hygiene and the scanner. 422 on checksum mismatch or rejection.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.RecordsController.IsSystemPrincipal">
+            <summary>True when the caller is the relay key or a client_credentials service account, not a member.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.RecordsController.SystemGrant">
+            <summary>The configured grant this request runs under, or null for a user principal or an ungranted system one.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.SystemPrincipalGate">
+            <summary>
+            A system principal with no grant for this department is refused before any read runs. Mutating
+            endpoints need no equivalent: their policies are never issued to a system principal at all.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.VisibleGroupIdsAsync">
+            <summary>Group filter for the caller: the grant's groups for a system principal, the member's own otherwise.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CanViewRecordAsync(System.String)">
+            <summary>Per-record visibility for the caller, routed to the grant rule for a system principal.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.AccessPurpose(System.String)">
+            <summary>Audit purpose: the grant's stated purpose for a system principal, so a machine read is never anonymous.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.UsableAsync">
             <summary>Writes need the module usable: flag on and the department activated.</summary>
@@ -5784,6 +5996,83 @@
         <member name="T:Resgrid.Web.Services.Helpers.IncidentReportsApiMapper">
             <summary>Entity to DTO mapping for the v4 IncidentReports controller. Submissions are sanitized: no payload, no response body.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Helpers.IncidentReportsApiMapper.BuildSections(Resgrid.Model.IncidentReportAggregate,System.Collections.Generic.IEnumerable{Resgrid.Model.NerisSectionRequirement})">
+            <summary>
+            The progressive section requirements, each marked with whether the report already carries that section,
+            plus the contract's payload path and schema so a client can render and post the right shape.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.IncidentReportsApiMapper.ToCasualty(Resgrid.Model.RmsCasualtyRescue,System.Boolean,System.Collections.Generic.List{System.String})">
+            <summary>
+            A casualty or rescue. The entry itself is not secret — that somebody was hurt is part of the report —
+            but demographics, the personnel link and the injury detail are restricted, so they are dropped and named
+            rather than the whole row disappearing, which would misrepresent the incident.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.IncidentAnalysisApiMapper">
+            <summary>
+            v4 mapping for the RMS-3 surfaces: the incident-analysis filing, evidence artifacts, public-records
+            disclosures and the Records dashboard. Kept apart from <see cref="T:Resgrid.Web.Services.Helpers.IncidentReportsApiMapper"/> because these
+            are separate aggregates with their own lifecycles, not sections of the incident report.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.IncidentAnalysisApiMapper.ToVehicle(Resgrid.Model.RmsIncidentVehicle,System.Boolean,System.Collections.Generic.List{System.String})">
+            <summary>
+            The vehicle row stays visible without the restricted grant — that a vehicle burned is part of the
+            incident — but VIN, plate and registration state identify a person's property, so those three are
+            dropped and named instead of the row disappearing.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.RecordEvidenceApiMapper">
+            <summary>Evidence artifacts (RMS plan section 4.5).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.RecordEvidenceApiMapper.ToArtifact(Resgrid.Model.RmsEvidenceArtifact,System.Boolean,System.Boolean)">
+            <summary>
+            <paramref name="includeManifest"/> is only ever true for a single-artifact read. A restricted artifact's
+            manifest is withheld and flagged rather than omitted silently, so the caller knows there is content they
+            are not seeing.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.DisclosuresApiMapper">
+            <summary>Public-records requests and productions (RMS plan section 4.7).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.DisclosuresApiMapper.ToProduction(Resgrid.Model.RmsDisclosureProduction,System.Boolean)">
+            <summary>The redacted artifact is only carried on a single-production read; a listing would ship the whole release.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.DisclosuresApiMapper.ToScopeQuery(Resgrid.Web.Services.Models.v4.Records.DisclosureScopeQueryInput)">
+            <summary>
+            The scope query as the Records queue runs it. The viewer fields are deliberately not accepted from the
+            client — the service sets them from the caller, so a scope can never be widened past what its author
+            may see.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.RecordsDashboardApiMapper">
+            <summary>Dashboard counts and crosswalk coverage.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.RecordsSystemPrincipal">
+            <summary>
+            Request-side resolution of the Record grant a system principal is acting under (Identifier Allocation
+            Registry section 4.4). The claim issued at sign-in only says "some grant exists"; this re-reads the
+            configuration against the department the request actually resolved to, so a token minted while a grant
+            existed stops working the moment the grant is removed or points at another department.
+            <para>
+            Nothing here can widen access. Mutating and restricted Record policies are unreachable for a system
+            principal because the claim is never issued, not because this class declines to hand one out.
+            </para>
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.RecordsSystemPrincipal.IsSystemPrincipal(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Whether the caller is a non-user principal — the SMTP relay key or a client_credentials service
+            account. A real member never carries either marker.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.RecordsSystemPrincipal.ResolveGrant(System.Security.Claims.ClaimsPrincipal,System.Int32)">
+            <summary>
+            The grant covering this request, or null when the caller is a user principal or has no grant for
+            the department. Callers treat null-with-a-system-principal as a denial, not as "unrestricted".
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Helpers.UtcDateTimeConverter">
              <summary>
              Serialises a <see cref="T:System.DateTime"/> that is known to hold a UTC instant with an explicit "Z".
@@ -5847,6 +6136,8 @@
             Used by the SMTP Relay in hosted multi-department mode to bypass OAuth 2.0 entirely.
             The handler creates a ClaimsPrincipal with full permissions across all departments.
             Department scoping is achieved via the DepartmentId field on individual API request models.
+            Records (RMS) is the one exception to "full permissions": the principal gets Record_View only when a
+            department+purpose grant is configured, and never a mutating or restricted Record claim.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Middleware.SystemApiKeyAuthHandler.FixedTimeApiKeyEquals(System.String,System.String)">
@@ -11920,8 +12211,36 @@
             Response Data
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentAnalysisData">
+            <summary>
+            The NERIS incident-analysis filing (RMS-3): the fire/hazmat investigation posted separately from the
+            incident, once the destination already holds it. Its own state, revisions and idempotency key, which is why
+            it is a document in its own right rather than a section of the report.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentAnalysisData.IncidentIsFiled">
+            <summary>
+            False while the incident itself has no destination id. Finalizing is still allowed — the filing waits
+            rather than failing — but a client should say so rather than showing a submit button that defers.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentAnalysisData.WithheldFields">
+            <summary>Restricted fields withheld because the caller lacks RecordRestricted_View.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentVehicleData">
+            <summary>VIN, plate and registration state are restricted: they identify a person's vehicle.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.SaveIncidentAnalysisDraftInput">
+            <summary>Draft save; every list replaces the draft rows, except a null list which leaves that set alone.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentReportData">
             <summary>A hydrated NERIS incident report: header, dispatch facts, sections, provenance, validation issues, sanitized submission history.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentReportData.WithheldFields">
+            <summary>Restricted fields withheld from this response because the caller lacks RecordRestricted_View.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentReportData.IncidentAnalysisId">
+            <summary>The analysis filing for this incident, when one has been started.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentFactData">
             <summary>Provenance for one prefilled value (plan 4.2): where it came from, what it was, what it is now.</summary>
@@ -11937,6 +12256,30 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentReportCommandInput.IncludeDestination">
             <summary>Validate: also call the destination's validate endpoint when submission is enabled.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentSectionRequirementData">
+            <summary>One conditional section the selected incident types demand or suggest (plan section 4.2).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentSectionRequirementData.PayloadPath">
+            <summary>Dotted path in the pinned NERIS contract this section serializes into.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentSectionRequirementData.Required">
+            <summary>True blocks finalization; false is a warning the author may answer or ignore.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentSectionRequirementData.PrimaryCodeSet">
+            <summary>Value set the section's headline code must belong to; null when it has no coded headline.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentSectionRequirementData.Present">
+            <summary>Whether the report already carries a section of this kind.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentModuleData.DetailJson">
+            <summary>The contract-shaped section body.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentCasualtyData">
+            <summary>
+            A casualty or rescue. Demographics, the personnel link and the injury detail are restricted: a caller
+            without RecordRestricted_View gets the entry with those fields absent and named in WithheldFields.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentReportConflictResult">
             <summary>409 on a stale incident report save.</summary>
@@ -11970,6 +12313,13 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsChangesResult">
             <summary>Delta cursor (plan 5.3): persist ServerTimestampMs and pass it back as <c>since</c>.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsChangesData.ServerCursorId">
+            <summary>
+            Tie-breaker for the next call, sent back as <c>sinceId</c> alongside <c>since</c>. Several records routinely
+            share a modified timestamp; without it the rows that fall after a page break inside one timestamp are never
+            delivered.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordData">
             <summary>A hydrated Record: header, working details, participants, units, attachment metadata and revision summaries. Restricted fields are withheld without RecordRestricted_View.</summary>
@@ -12027,6 +12377,68 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordUploadChunkInput.Data">
             <summary>Base64 chunk, at most ChunkSize bytes.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordEvidenceSourceData">
+            <summary>
+            Whether one of the six evidence sources can produce anything for this department right now. "Unavailable
+            with a reason" is a real answer and is not the same as "there was no evidence", so the client renders the
+            source either way rather than hiding it.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordEvidenceArtifactData">
+            <summary>
+            An immutable evidence artifact. <see cref="P:Resgrid.Web.Services.Models.v4.Records.RecordEvidenceArtifactData.ManifestJson"/> is only populated on the single-artifact read,
+            and only for a caller allowed to see that artifact's classification — a list of twenty artifacts must not
+            ship twenty manifests, and a restricted manifest must not ship at all to an unrestricted caller.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordEvidenceArtifactData.ManifestJson">
+            <summary>The artifact body; null in list responses and null when the caller may not see its classification.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordEvidenceArtifactData.ManifestWithheld">
+            <summary>True when the manifest was withheld rather than simply not requested.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.CaptureRecordEvidenceInput">
+            <summary>Capture one artifact. The server bounds the window and decides the classification; neither is a client input.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.CaptureRecordEvidenceInput.RecordKind">
+            <summary>RmsRecordKind; Operational by default, Incident for a NERIS report.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.CaptureRecordEvidenceInput.CaptureReason">
+            <summary>Required: why this evidence is being put into an official record.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.DisclosureRequestData">
+            <summary>
+            A public-records request. Who asked is restricted in most jurisdictions, so the requester fields are
+            withheld — and named in <see cref="P:Resgrid.Web.Services.Models.v4.Records.DisclosureRequestData.WithheldFields"/> — from a caller without RecordRestricted_View.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.SaveDisclosureScopeInput">
+            <summary>The scope a production runs against, expressed as the same bounded query the Records queue runs.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.DisclosureProductionData">
+            <summary>
+            One immutable produced set. The redacted artifact itself is only returned on the single-production read,
+            so listing a request's productions never ships several megabytes of released content.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.DisclosureProductionData.ProducedSetJson">
+            <summary>Record and revision ids released, with their checksums at production time.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.DisclosureProductionData.WithheldFieldsJson">
+            <summary>The redaction log: which fields were withheld and under what heading.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.DisclosureProductionData.ArtifactJson">
+            <summary>The redacted content; single-production read only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.DisclosureCommandInput.Disposition">
+            <summary>RmsDisclosureState for a close: Denied, Withdrawn or Closed.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsDashboardData">
+            <summary>The Records work queues, group-scope-aware. A count that could not be produced degrades into <see cref="P:Resgrid.Web.Services.Models.v4.Records.RecordsDashboardData.Warnings"/>.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.NerisCrosswalkCoverageData">
+            <summary>Crosswalk gap report: an unmapped or stale local code is a filing that will need manual work.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Reporting.DashboardReportResult">
             <summary>Composite dashboard report (scalar totals, dense series, breakdowns).</summary>

@@ -1,4 +1,4 @@
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Records.IncidentReportDetailView
@@ -250,6 +250,206 @@
 					</div>
 				</div>
 			}
+
+			@if (Model.SectionRequirements.Count > 0 || a.Modules.Count > 0 || a.Casualties.Count > 0 || a.Exposures.Count > 0 || a.Resources.Count > 0)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-list-alt"></i> @localizer["ConditionalSections"]</h5></div>
+					<div class="ibox-content">
+						<div class="table-responsive">
+							<table class="table table-condensed">
+								<thead><tr><th>@localizer["Section"]</th><th>@localizer["Applies"]</th><th>@localizer["Present"]</th><th>@localizer["PrimaryCode"]</th><th>@localizer["SecondaryCode"]</th><th>@localizer["Quantity"]</th></tr></thead>
+								<tbody>
+									@foreach (var requirement in Model.SectionRequirements)
+									{
+										var rows = a.Modules.Where(m => m.ModuleKind == (int)requirement.Kind).OrderBy(m => m.Ordinal).ToList();
+										<tr>
+											<td>@localizer["Section" + requirement.Kind.ToString()]</td>
+											<td><span class="label @(requirement.Required ? "label-danger" : "label-warning")">@(requirement.Required ? localizer["Required"] : localizer["Suggested"])</span> <small class="text-muted">@requirement.Reason</small></td>
+											<td>@(rows.Count > 0 ? rows.Count.ToString() : "-")</td>
+											<td>@string.Join(", ", rows.Select(m => m.PrimaryCode).Where(c => !string.IsNullOrWhiteSpace(c)))</td>
+											<td>@string.Join(", ", rows.Select(m => m.SecondaryCode).Where(c => !string.IsNullOrWhiteSpace(c)))</td>
+											<td>@string.Join(", ", rows.Where(m => m.Quantity.HasValue).Select(m => m.Quantity.Value.ToString("0.##") + " " + m.QuantityUnit))</td>
+										</tr>
+									}
+									@foreach (var module in a.Modules.Where(m => Model.SectionRequirements.All(x => (int)x.Kind != m.ModuleKind)).OrderBy(m => m.Ordinal))
+									{
+										<tr class="warning">
+											<td>@localizer["Section" + ((RmsIncidentModuleKind)module.ModuleKind).ToString()]</td>
+											<td colspan="2"><span class="label label-default">@localizer["SectionNoLongerApplies"]</span></td>
+											<td>@module.PrimaryCode</td>
+											<td>@module.SecondaryCode</td>
+											<td>@(module.Quantity.HasValue ? module.Quantity.Value.ToString("0.##") + " " + module.QuantityUnit : "-")</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+
+						@if (a.Casualties.Count > 0)
+						{
+							<h4>@localizer["CasualtiesAndRescues"]</h4>
+							<div class="table-responsive">
+								<table class="table table-condensed">
+									<thead><tr><th>@localizer["Kind"]</th><th>@localizer["PersonType"]</th><th>@localizer["Injured"]</th><th>@localizer["CasualtyCause"]</th><th>@localizer["RescueType"]</th><th>@localizer["Occurred"]</th></tr></thead>
+									<tbody>
+										@foreach (var casualty in a.Casualties.OrderBy(c => c.Ordinal))
+										{
+											<tr>
+												<td>@(((RmsCasualtyRescueKind)casualty.Kind) == RmsCasualtyRescueKind.Rescue ? localizer["Rescue"] : localizer["Casualty"])</td>
+												<td>@casualty.PersonType</td>
+												<td>@(casualty.WasFatal ? localizer["Fatal"] : casualty.WasInjured == true ? commonLocalizer["Yes"] : casualty.WasInjured == false ? commonLocalizer["No"] : (Microsoft.Extensions.Localization.LocalizedString)null)</td>
+												<td>@casualty.CasualtyCause</td>
+												<td>@casualty.RescueType</td>
+												<td>@When(casualty.OccurredOn)</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+							@if (!Model.CanViewRestricted)
+							{
+								<p class="text-muted"><i class="fa fa-lock"></i> @localizer["RestrictedFieldsHidden"]</p>
+							}
+						}
+
+						@if (a.Exposures.Count > 0)
+						{
+							<h4>@localizer["Exposures"]</h4>
+							<div class="table-responsive">
+								<table class="table table-condensed">
+									<thead><tr><th>@localizer["DamageType"]</th><th>@localizer["ExposureItem"]</th><th>@localizer["LocationUse"]</th><th>@localizer["AddressText"]</th><th>@localizer["EstimatedLoss"]</th></tr></thead>
+									<tbody>
+										@foreach (var exposure in a.Exposures.OrderBy(e => e.Ordinal))
+										{
+											<tr>
+												<td>@exposure.DamageType</td>
+												<td>@exposure.ItemType</td>
+												<td>@exposure.LocationUse</td>
+												<td>@(exposure.AddressText ?? exposure.Street)</td>
+												<td>@(exposure.EstimatedLoss?.ToString("0.##") ?? "-")</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+						}
+
+						@if (a.Resources.Count > 0)
+						{
+							<h4>@localizer["Resources"] <small class="text-muted">@localizer["ResourcesNotSubmitted"]</small></h4>
+							<ul>
+								@foreach (var resource in a.Resources.OrderBy(x => x.Ordinal))
+								{
+									<li>@resource.ResourceCode @(resource.Quantity.HasValue ? "x" + resource.Quantity.Value : string.Empty) <small class="text-muted">@resource.Detail</small></li>
+								}
+							</ul>
+						}
+					</div>
+				</div>
+			}
+
+			<div class="ibox">
+				<div class="ibox-title">
+					<h5><i class="fa fa-search"></i> @localizer["IncidentAnalysis"]</h5>
+				</div>
+				<div class="ibox-content">
+					<p class="text-muted">@localizer["IncidentAnalysisIntro"]</p>
+					@if (Model.Analysis != null)
+					{
+						<p>
+							<a class="btn btn-white btn-sm" asp-controller="IncidentAnalysis" asp-action="Details" asp-route-area="User" asp-route-id="@Model.Analysis.RmsIncidentAnalysisId">
+								<i class="fa fa-search"></i> @localizer["OpenAnalysis"]
+							</a>
+							<span class="label label-primary">@Model.Analysis.State.ToString()</span>
+							@if (!string.IsNullOrWhiteSpace(Model.Analysis.NerisAnalysisId))
+							{
+								<code>@Model.Analysis.NerisAnalysisId</code>
+							}
+						</p>
+					}
+					else if (Model.CanEdit)
+					{
+						<form method="post" asp-controller="IncidentAnalysis" asp-action="Start" asp-route-area="User">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="reportId" value="@r.RmsIncidentReportId" />
+							<button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> @localizer["StartAnalysis"]</button>
+						</form>
+					}
+					else
+					{
+						<p class="text-muted">-</p>
+					}
+				</div>
+			</div>
+
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-paperclip"></i> @localizer["Evidence"]</h5></div>
+				<div class="ibox-content">
+					<p class="text-muted">@localizer["EvidenceIntro"]</p>
+					@if (Model.Evidence.Count > 0)
+					{
+						<div class="table-responsive">
+							<table class="table table-condensed">
+								<thead><tr><th>@localizer["EvidenceSource"]</th><th>@localizer["Title"]</th><th>@localizer["Items"]</th><th>@localizer["CapturedOn"]</th><th>@localizer["CapturedBy"]</th><th>@localizer["Checksum"]</th><th></th></tr></thead>
+								<tbody>
+									@foreach (var artifact in Model.Evidence.OrderByDescending(x => x.CapturedOn))
+									{
+										<tr class="@(artifact.IsCurrent ? string.Empty : "text-muted")">
+											<td>@localizer["Evidence" + ((RmsEvidenceKind)artifact.Kind).ToString()]</td>
+											<td>
+												@artifact.Title
+												@if ((RmsEvidenceClassification)artifact.Classification != RmsEvidenceClassification.Unrestricted)
+												{
+													<span class="label label-warning"><i class="fa fa-lock"></i> @((RmsEvidenceClassification)artifact.Classification)</span>
+												}
+												@if (!artifact.IsCurrent)
+												{
+													<span class="label label-default">@localizer["Superseded"]</span>
+												}
+											</td>
+											<td>@artifact.SourceItemCount</td>
+											<td>@When(artifact.CapturedOn)</td>
+											<td>@Name(artifact.CapturedByUserId)</td>
+											<td><code title="@artifact.Checksum">@(artifact.Checksum?.Length > 12 ? artifact.Checksum.Substring(0, 12) : artifact.Checksum)</code></td>
+											<td>
+												@if (Model.CanViewRestricted || (RmsEvidenceClassification)artifact.Classification == RmsEvidenceClassification.Unrestricted)
+												{
+													<a class="btn btn-xs btn-white" asp-controller="IncidentReports" asp-action="EvidenceManifest" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" asp-route-artifactId="@artifact.RmsEvidenceArtifactId">
+														<i class="fa fa-download"></i> @localizer["Manifest"]
+													</a>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+					else
+					{
+						<p class="text-muted">@localizer["NoEvidenceCaptured"]</p>
+					}
+
+					@if (Model.CanEdit && Model.IsEditable)
+					{
+						<form method="post" class="form-inline" asp-controller="IncidentReports" asp-action="CaptureEvidence" asp-route-area="User">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="id" value="@r.RmsIncidentReportId" />
+							<select class="form-control input-sm" name="kind">
+								@foreach (var source in Model.EvidenceSources)
+								{
+									<option value="@((int)source.Kind)" disabled="@(!source.Available)">
+										@localizer["Evidence" + source.Kind.ToString()]@(source.Available ? string.Empty : " — " + source.Reason)
+									</option>
+								}
+							</select>
+							<input type="text" class="form-control input-sm" name="captureReason" maxlength="256" placeholder="@localizer["CaptureReason"]" required />
+							<button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-camera"></i> @localizer["Capture"]</button>
+						</form>
+					}
+				</div>
+			</div>
 
 			<div class="ibox">
 				<div class="ibox-title"><h5><i class="fa fa-file-text-o"></i> @localizer["Narrative"]</h5></div>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -81,9 +81,34 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.RecordAmended).Should().Be(105);
 			((int)WorkflowTriggerEventType.RecordVoided).Should().Be(106);
 			((int)WorkflowTriggerEventType.RecordCancelled).Should().Be(107);
+			((int)WorkflowTriggerEventType.RecordOverdue).Should().Be(112);
 
 			foreach (var value in Enumerable.Range(52, 48))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");
+		}
+
+		[Test]
+		public void Rms_worker_command_ids_are_the_registry_values()
+		{
+			// The RMS worker block is 40-43 plus the Unified Search allocation (44) that RMS-1 absorbed. These are
+			// scheduled by integer in Workers/Resgrid.Workers.Console/Program.cs; the pin keeps that file honest.
+			var program = ProgramSource();
+			program.Should().Contain("new Commands.DomainEventOutboxDispatchCommand(40)");
+			program.Should().Contain("new Commands.RmsSubmissionCommand(41)");
+			program.Should().Contain("new Commands.RmsDueStateEvaluationCommand(42)");
+			program.Should().Contain("new Commands.RmsRetentionAndPurgeCommand(43)");
+			program.Should().Contain("new Commands.RecordsSearchIndexCommand(44)");
+		}
+
+		private static string ProgramSource()
+		{
+			var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+			while (directory != null && !System.IO.File.Exists(Path.Combine(directory.FullName, "Resgrid.sln")))
+				directory = directory.Parent;
+
+			var path = Path.Combine(directory!.FullName, "Workers", "Resgrid.Workers.Console", "Program.cs");
+			System.IO.File.Exists(path).Should().BeTrue("the worker host must exist at its documented path");
+			return System.IO.File.ReadAllText(path);
 		}
 
 		[Test]

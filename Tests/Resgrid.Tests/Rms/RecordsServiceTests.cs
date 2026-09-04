@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -36,6 +36,9 @@ namespace Resgrid.Tests.Rms
 		private List<Resgrid.Model.Queue.NotificationItem> _notifications;
 		private Mock<Resgrid.Model.Providers.IOutboundQueueProvider> _outboundQueue;
 		private RecordsService _service;
+		private Mock<IRecordsEvidenceService> _evidence;
+		/// <summary>Revisions the finalize path bound draft evidence to (RMS-3c).</summary>
+		private readonly List<string> _boundRevisions = new List<string>();
 
 		[SetUp]
 		public void SetUp()
@@ -76,8 +79,12 @@ namespace Resgrid.Tests.Rms
 			_outboundQueue.Setup(q => q.EnqueueNotification(It.IsAny<Resgrid.Model.Queue.NotificationItem>()))
 				.Callback<Resgrid.Model.Queue.NotificationItem>(n => _notifications.Add(n)).ReturnsAsync(true);
 
+			_evidence = new Mock<IRecordsEvidenceService>();
+			_evidence.Setup(e => e.BindToRevisionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string r, string rev, CancellationToken c) => { _boundRevisions.Add(rev); return 0; });
+
 			_service = new RecordsService(_store.RecordsRepo.Object, new Resgrid.Services.Records.RmsRecordValueService(_store.DetailsRepo.Object), _store.ParticipantsRepo.Object, _store.UnitsRepo.Object,
-				_store.AttachmentsRepo.Object, _store.RevisionsRepo.Object, _store.ScopesRepo.Object, _store.SharesRepo.Object, _store.ProjectionsRepo.Object,
+				_store.AttachmentsRepo.Object, _store.RevisionsRepo.Object, _evidence.Object, _store.ScopesRepo.Object, _store.SharesRepo.Object, _store.ProjectionsRepo.Object,
 				_store.AuditsRepo.Object, outbox, _cutover.Object, _settings.Object, _groups.Object, _profiles.Object, _units.Object, _calls.Object, _adp.Object,
 				_store.UnitOfWork.Object, _outboundQueue.Object, new Resgrid.Services.Records.NullRecordAttachmentScanner());
 		}

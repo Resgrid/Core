@@ -45,5 +45,34 @@ namespace Resgrid.Providers.Neris
 			var credential = await _profiles.GetCredentialAsync(profile);
 			return await _client.GetStatusAsync(profile, credential, nerisIncidentId, cancellationToken);
 		}
+
+		public async Task<NerisSubmissionOutcome> DeliverAnalysisAsync(RmsNerisProfile profile, RmsSubmission submission, string nerisIncidentId, string existingNerisAnalysisId, CancellationToken cancellationToken = default)
+		{
+			if (submission == null) throw new ArgumentNullException(nameof(submission));
+			if (string.IsNullOrWhiteSpace(submission.PayloadJson))
+				return new NerisSubmissionOutcome { Kind = NerisOutcomeKind.Fatal, Message = "The submission carries no payload." };
+
+			// The analysis files against an incident. Without the incident's id there is nothing to file against,
+			// and that is a wait, not a failure: the incident's own submission is still in flight.
+			if (string.IsNullOrWhiteSpace(nerisIncidentId) && string.IsNullOrWhiteSpace(existingNerisAnalysisId))
+				return new NerisSubmissionOutcome { Kind = NerisOutcomeKind.Transient, Message = "The incident is not filed yet; the analysis waits for it." };
+
+			var credential = await _profiles.GetCredentialAsync(profile);
+			if (!string.IsNullOrWhiteSpace(existingNerisAnalysisId))
+			{
+				var update = await _client.UpdateIncidentAnalysisAsync(profile, credential, existingNerisAnalysisId, submission.PayloadJson, cancellationToken);
+				if (update.Kind == NerisOutcomeKind.Fatal && update.StatusCode == 404)
+					return await _client.CreateIncidentAnalysisAsync(profile, credential, nerisIncidentId, submission.PayloadJson, cancellationToken);
+				return update;
+			}
+
+			return await _client.CreateIncidentAnalysisAsync(profile, credential, nerisIncidentId, submission.PayloadJson, cancellationToken);
+		}
+
+		public async Task<NerisSubmissionOutcome> CheckAnalysisStatusAsync(RmsNerisProfile profile, string nerisAnalysisId, CancellationToken cancellationToken = default)
+		{
+			var credential = await _profiles.GetCredentialAsync(profile);
+			return await _client.GetIncidentAnalysisStatusAsync(profile, credential, nerisAnalysisId, cancellationToken);
+		}
 	}
 }

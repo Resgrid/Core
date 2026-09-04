@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -343,4 +343,625 @@
   <data name="QueueCounts" xml:space="preserve"><value>Черга подань</value></data>
   <data name="NerisSettingsSaved" xml:space="preserve"><value>Налаштування NERIS збережено.</value></data>
   <data name="SubmissionQueued" xml:space="preserve"><value>Подання поставлено в чергу для NERIS.</value></data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Прийнято</value>
+  </data>
+  <data name="AllDefinitions" xml:space="preserve">
+    <value>Усі визначення</value>
+  </data>
+  <data name="AnalysesAwaitingFiling" xml:space="preserve">
+    <value>Аналізи, що очікують подання</value>
+  </data>
+  <data name="AnalysisAwaitingIncident" xml:space="preserve">
+    <value>Цей аналіз завершено; його буде подано, щойно сам виклик потрапить до NERIS.</value>
+  </data>
+  <data name="AnalysisSections" xml:space="preserve">
+    <value>Розділи аналізу</value>
+  </data>
+  <data name="Applies" xml:space="preserve">
+    <value>Застосовується</value>
+  </data>
+  <data name="AssignedTo" xml:space="preserve">
+    <value>Призначено</value>
+  </data>
+  <data name="Automobile" xml:space="preserve">
+    <value>Легковий автомобіль</value>
+  </data>
+  <data name="AwaitingReview" xml:space="preserve">
+    <value>Очікує на перевірку</value>
+  </data>
+  <data name="AwaitingReviewHint" xml:space="preserve">
+    <value>Записи, подані на перевірку й ще не затверджені</value>
+  </data>
+  <data name="BackToReport" xml:space="preserve">
+    <value>Назад до звіту про виклик</value>
+  </data>
+  <data name="BodyStyle" xml:space="preserve">
+    <value>Тип кузова</value>
+  </data>
+  <data name="CallId" xml:space="preserve">
+    <value>Виклик</value>
+  </data>
+  <data name="Capture" xml:space="preserve">
+    <value>Зафіксувати</value>
+  </data>
+  <data name="CaptureReason" xml:space="preserve">
+    <value>Причина фіксації цього доказу</value>
+  </data>
+  <data name="CapturedBy" xml:space="preserve">
+    <value>Зафіксував</value>
+  </data>
+  <data name="CapturedOn" xml:space="preserve">
+    <value>Зафіксовано</value>
+  </data>
+  <data name="CasualtiesAndRescues" xml:space="preserve">
+    <value>Постраждалі та врятовані</value>
+  </data>
+  <data name="Casualty" xml:space="preserve">
+    <value>Постраждалий</value>
+  </data>
+  <data name="CasualtyAction" xml:space="preserve">
+    <value>Дія на той момент</value>
+  </data>
+  <data name="CasualtyCause" xml:space="preserve">
+    <value>Причина травми</value>
+  </data>
+  <data name="CasualtyTimeline" xml:space="preserve">
+    <value>Коли це сталося</value>
+  </data>
+  <data name="Civilian" xml:space="preserve">
+    <value>Цивільна особа</value>
+  </data>
+  <data name="CloseRequest" xml:space="preserve">
+    <value>Закрити запит</value>
+  </data>
+  <data name="ClosedOn" xml:space="preserve">
+    <value>Закрито</value>
+  </data>
+  <data name="ConditionalSections" xml:space="preserve">
+    <value>Умовні розділи</value>
+  </data>
+  <data name="ConstructionType" xml:space="preserve">
+    <value>Тип конструкції</value>
+  </data>
+  <data name="ContentsLoss" xml:space="preserve">
+    <value>Втрати вмісту</value>
+  </data>
+  <data name="ContentsValue" xml:space="preserve">
+    <value>Вартість вмісту</value>
+  </data>
+  <data name="CrosswalkCoverage" xml:space="preserve">
+    <value>Покриття зіставлення кодів</value>
+  </data>
+  <data name="CrosswalkCoverageIntro" xml:space="preserve">
+    <value>Кожен місцевий тип виклику без коду NERIS доведеться класифікувати вручну під час події.</value>
+  </data>
+  <data name="CurrencyCode" xml:space="preserve">
+    <value>Валюта</value>
+  </data>
+  <data name="DamageType" xml:space="preserve">
+    <value>Ступінь пошкодження</value>
+  </data>
+  <data name="DashboardDegraded" xml:space="preserve">
+    <value>Деякі підрахунки не вдалося виконати:</value>
+  </data>
+  <data name="DefinitionKey" xml:space="preserve">
+    <value>Визначення</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Подробиця</value>
+  </data>
+  <data name="Disclosure" xml:space="preserve">
+    <value>Запит на доступ до документів</value>
+  </data>
+  <data name="DisclosureClosed" xml:space="preserve">
+    <value>Запит на доступ до документів закрито.</value>
+  </data>
+  <data name="DisclosureCreated" xml:space="preserve">
+    <value>Запит на доступ до документів зареєстровано.</value>
+  </data>
+  <data name="DisclosureIntro" xml:space="preserve">
+    <value>Запит на доступ до документів має встановлений законом строк, тому його відстежують тут, а не опрацьовують принагідно.</value>
+  </data>
+  <data name="DisclosureOverdueNotice" xml:space="preserve">
+    <value>Цей запит прострочив встановлений законом строк.</value>
+  </data>
+  <data name="DisclosureProduced" xml:space="preserve">
+    <value>Підготовлено відредаговану добірку.</value>
+  </data>
+  <data name="DisclosureQueue" xml:space="preserve">
+    <value>Запити на доступ до документів</value>
+  </data>
+  <data name="DisclosureReasonRequired" xml:space="preserve">
+    <value>Щоб закрити запит, потрібно вказати причину.</value>
+  </data>
+  <data name="DisclosureReleased" xml:space="preserve">
+    <value>Добірку передано заявникові.</value>
+  </data>
+  <data name="DisclosureScopeSaved" xml:space="preserve">
+    <value>Обсяг збережено.</value>
+  </data>
+  <data name="Disclosures" xml:space="preserve">
+    <value>Доступ до документів</value>
+  </data>
+  <data name="DispositionReason" xml:space="preserve">
+    <value>Підстава рішення</value>
+  </data>
+  <data name="Drafts" xml:space="preserve">
+    <value>Чернетки</value>
+  </data>
+  <data name="DutyType" xml:space="preserve">
+    <value>Вид служби на той момент</value>
+  </data>
+  <data name="EditCrosswalk" xml:space="preserve">
+    <value>Редагувати зіставлення кодів</value>
+  </data>
+  <data name="EditIncidentAnalysis" xml:space="preserve">
+    <value>Редагувати аналіз виклику</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="EstimatedLoss" xml:space="preserve">
+    <value>Оцінені збитки</value>
+  </data>
+  <data name="EstimatedValue" xml:space="preserve">
+    <value>Оцінена вартість</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>Докази</value>
+  </data>
+  <data name="EvidenceCaptured" xml:space="preserve">
+    <value>Доказ зафіксовано.</value>
+  </data>
+  <data name="EvidenceCertificationSnapshot" xml:space="preserve">
+    <value>Кваліфікації на час виклику</value>
+  </data>
+  <data name="EvidenceChatPromotion" xml:space="preserve">
+    <value>Долучені повідомлення з виклику</value>
+  </data>
+  <data name="EvidenceIntro" xml:space="preserve">
+    <value>Кожен доказ — обмежений знімок, зроблений один раз, з контрольною сумою і без змін; виправлення — це нова фіксація.</value>
+  </data>
+  <data name="EvidenceInventoryUsage" xml:space="preserve">
+    <value>Використані матеріали та підконтрольні речовини</value>
+  </data>
+  <data name="EvidenceReadinessPacket" xml:space="preserve">
+    <value>Готовність на момент виклику</value>
+  </data>
+  <data name="EvidenceReasonRequired" xml:space="preserve">
+    <value>Щоб долучити доказ до офіційного запису, потрібно вказати причину.</value>
+  </data>
+  <data name="EvidenceRunCardActivation" xml:space="preserve">
+    <value>Рішення про висилання</value>
+  </data>
+  <data name="EvidenceSource" xml:space="preserve">
+    <value>Джерело</value>
+  </data>
+  <data name="EvidenceTrackingFix" xml:space="preserve">
+    <value>Координати підрозділів</value>
+  </data>
+  <data name="EvidenceUnavailable" xml:space="preserve">
+    <value>Це джерело доказів не мало чого зафіксувати для цього запису.</value>
+  </data>
+  <data name="ExposureItem" xml:space="preserve">
+    <value>Об'єкт впливу</value>
+  </data>
+  <data name="Exposures" xml:space="preserve">
+    <value>Об'єкти впливу</value>
+  </data>
+  <data name="Fatal" xml:space="preserve">
+    <value>Смертельний</value>
+  </data>
+  <data name="FinalizeAnalysisIntro" xml:space="preserve">
+    <value>Завершення записує незмінну версію. Подання чекає на ідентифікатор NERIS виклику, якщо його ще немає.</value>
+  </data>
+  <data name="FinalizedOn" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="FireSpread" xml:space="preserve">
+    <value>Поширення вогню</value>
+  </data>
+  <data name="Firefighter" xml:space="preserve">
+    <value>Пожежний</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Стать</value>
+  </data>
+  <data name="GeneralCause" xml:space="preserve">
+    <value>Загальна причина</value>
+  </data>
+  <data name="IncidentAnalysis" xml:space="preserve">
+    <value>Аналіз виклику</value>
+  </data>
+  <data name="IncidentAnalysisIntro" xml:space="preserve">
+    <value>Розслідування пожежі та небезпечних речовин подають окремо від виклику, коли отримувач уже має його.</value>
+  </data>
+  <data name="IncidentIncomplete" xml:space="preserve">
+    <value>Незавершені звіти</value>
+  </data>
+  <data name="IncidentIncompleteHint" xml:space="preserve">
+    <value>Звіти про виклики, ще не завершені</value>
+  </data>
+  <data name="IncludeLegacy" xml:space="preserve">
+    <value>Включати застарілі записи журналу</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>Незавершені</value>
+  </data>
+  <data name="Injured" xml:space="preserve">
+    <value>Травмовано</value>
+  </data>
+  <data name="InvestigationTypes" xml:space="preserve">
+    <value>Види розслідування</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="JurisdictionProfile" xml:space="preserve">
+    <value>Юрисдикція</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Вид</value>
+  </data>
+  <data name="LicensePlate" xml:space="preserve">
+    <value>Номерний знак</value>
+  </data>
+  <data name="LocalCode" xml:space="preserve">
+    <value>Локальний код</value>
+  </data>
+  <data name="LogDisclosure" xml:space="preserve">
+    <value>Зареєструвати запит</value>
+  </data>
+  <data name="Make" xml:space="preserve">
+    <value>Марка</value>
+  </data>
+  <data name="Manifest" xml:space="preserve">
+    <value>Опис вмісту</value>
+  </data>
+  <data name="Mapped" xml:space="preserve">
+    <value>зіставлено</value>
+  </data>
+  <data name="Matched" xml:space="preserve">
+    <value>знайдено</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Модель</value>
+  </data>
+  <data name="ModelYear" xml:space="preserve">
+    <value>Модельний рік</value>
+  </data>
+  <data name="NerisAnalysisId" xml:space="preserve">
+    <value>Ідентифікатор аналізу NERIS</value>
+  </data>
+  <data name="NerisCode" xml:space="preserve">
+    <value>Код NERIS</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>Запитів на доступ не зареєстровано.</value>
+  </data>
+  <data name="NoEvidenceCaptured" xml:space="preserve">
+    <value>До цього звіту не зафіксовано жодних доказів.</value>
+  </data>
+  <data name="NoProductions" xml:space="preserve">
+    <value>Ще нічого не підготовлено.</value>
+  </data>
+  <data name="NoSectionsYet" xml:space="preserve">
+    <value>Умовні розділи не застосовуються, доки не обрано тип виклику.</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Відкриті</value>
+  </data>
+  <data name="OpenAnalysis" xml:space="preserve">
+    <value>Відкрити аналіз</value>
+  </data>
+  <data name="OpenDisclosureQueue" xml:space="preserve">
+    <value>Відкрити запити на доступ</value>
+  </data>
+  <data name="OpenIncidentQueue" xml:space="preserve">
+    <value>Відкрити чергу викликів</value>
+  </data>
+  <data name="OpenRecordsQueue" xml:space="preserve">
+    <value>Відкрити чергу записів</value>
+  </data>
+  <data name="OperationalRecords" xml:space="preserve">
+    <value>Оперативні записи</value>
+  </data>
+  <data name="Overdue" xml:space="preserve">
+    <value>Прострочені</value>
+  </data>
+  <data name="OverdueHint" xml:space="preserve">
+    <value>Обов'язки, строк яких минув</value>
+  </data>
+  <data name="PersonType" xml:space="preserve">
+    <value>Тип особи</value>
+  </data>
+  <data name="PersonnelMember" xml:space="preserve">
+    <value>Член підрозділу</value>
+  </data>
+  <data name="Powertrain" xml:space="preserve">
+    <value>Силова установка</value>
+  </data>
+  <data name="PreparedOn" xml:space="preserve">
+    <value>Підготовлено</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>У записі</value>
+  </data>
+  <data name="PrimaryCode" xml:space="preserve">
+    <value>Основний код</value>
+  </data>
+  <data name="Produce" xml:space="preserve">
+    <value>Підготувати добірку</value>
+  </data>
+  <data name="ProduceIntro" xml:space="preserve">
+    <value>Добірка — це новий незмінний документ; пізніші зміни не змінять того, що було видано.</value>
+  </data>
+  <data name="Producible" xml:space="preserve">
+    <value>Можна видати</value>
+  </data>
+  <data name="ProductionIntact" xml:space="preserve">
+    <value>Контрольна сума збігається; добірку не змінювали.</value>
+  </data>
+  <data name="ProductionTampered" xml:space="preserve">
+    <value>Контрольна сума не збігається зі збереженою.</value>
+  </data>
+  <data name="Productions" xml:space="preserve">
+    <value>Підготовлені добірки</value>
+  </data>
+  <data name="ProfileVersion" xml:space="preserve">
+    <value>Версія контракту</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>Об'єкти нерухомості</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Кількість</value>
+  </data>
+  <data name="QueueSubmission" xml:space="preserve">
+    <value>Поставити подання в чергу</value>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value>У черзі</value>
+  </data>
+  <data name="Race" xml:space="preserve">
+    <value>Етнічна належність</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Звання</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+    <value>Отримано</value>
+  </data>
+  <data name="RecordCount" xml:space="preserve">
+    <value>Записи</value>
+  </data>
+  <data name="RecordsDashboard" xml:space="preserve">
+    <value>Панель записів</value>
+  </data>
+  <data name="RecordsNotActivated" xml:space="preserve">
+    <value>Модуль записів ще не активовано для цього підрозділу.</value>
+  </data>
+  <data name="RedactionProfile" xml:space="preserve">
+    <value>Профіль редагування</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Відхилені</value>
+  </data>
+  <data name="RejectedHint" xml:space="preserve">
+    <value>Відхилені отримувачем і ще не виправлені</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Видати</value>
+  </data>
+  <data name="ReleasedOn" xml:space="preserve">
+    <value>Видано</value>
+  </data>
+  <data name="Request" xml:space="preserve">
+    <value>Запит</value>
+  </data>
+  <data name="RequestNumber" xml:space="preserve">
+    <value>Реєстраційний номер</value>
+  </data>
+  <data name="Requester" xml:space="preserve">
+    <value>Заявник</value>
+  </data>
+  <data name="RequesterContact" xml:space="preserve">
+    <value>Контактні дані</value>
+  </data>
+  <data name="RequesterIdentityWithheld" xml:space="preserve">
+    <value>Особу заявника захищено, і тут вона не показується.</value>
+  </data>
+  <data name="RequesterName" xml:space="preserve">
+    <value>Ім'я заявника</value>
+  </data>
+  <data name="RequesterOrganization" xml:space="preserve">
+    <value>Організація</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Обов'язковий</value>
+  </data>
+  <data name="Rescue" xml:space="preserve">
+    <value>Рятування</value>
+  </data>
+  <data name="RescueElevation" xml:space="preserve">
+    <value>Рівень рятування</value>
+  </data>
+  <data name="RescueMode" xml:space="preserve">
+    <value>Спосіб рятування</value>
+  </data>
+  <data name="RescuePath" xml:space="preserve">
+    <value>Шлях рятування</value>
+  </data>
+  <data name="RescueType" xml:space="preserve">
+    <value>Тип рятування</value>
+  </data>
+  <data name="ResourceCode" xml:space="preserve">
+    <value>Ресурс</value>
+  </data>
+  <data name="Resources" xml:space="preserve">
+    <value>Ресурси</value>
+  </data>
+  <data name="ResourcesNotSubmitted" xml:space="preserve">
+    <value>зберігається лише в записі підрозділу, ніколи не надсилається до NERIS</value>
+  </data>
+  <data name="RestrictedFieldsHidden" xml:space="preserve">
+    <value>Деякі поля обмежені й вам не показуються.</value>
+  </data>
+  <data name="Returned" xml:space="preserve">
+    <value>Повернуті на виправлення</value>
+  </data>
+  <data name="SaveScope" xml:space="preserve">
+    <value>Зберегти обсяг</value>
+  </data>
+  <data name="Scope" xml:space="preserve">
+    <value>Обсяг</value>
+  </data>
+  <data name="ScopeFrozen" xml:space="preserve">
+    <value>Обсяг зафіксовано, бо на його основі вже підготовлено добірку.</value>
+  </data>
+  <data name="ScopeNarrative" xml:space="preserve">
+    <value>Що саме запитано</value>
+  </data>
+  <data name="ScopePreview" xml:space="preserve">
+    <value>Що охоплює обсяг</value>
+  </data>
+  <data name="ScopePreviewTruncated" xml:space="preserve">
+    <value>Відповідає більше записів, ніж перелічено тут.</value>
+  </data>
+  <data name="SecondaryCode" xml:space="preserve">
+    <value>Додатковий код</value>
+  </data>
+  <data name="SectionBattery" xml:space="preserve">
+    <value>Задіяна батарея</value>
+  </data>
+  <data name="SectionChemical" xml:space="preserve">
+    <value>Викинута хімічна речовина</value>
+  </data>
+  <data name="SectionCookingFireSuppression" xml:space="preserve">
+    <value>Кухонна система пожежогасіння</value>
+  </data>
+  <data name="SectionCsstHazard" xml:space="preserve">
+    <value>Гофрована газова труба з нержавіючої сталі</value>
+  </data>
+  <data name="SectionElectricHazard" xml:space="preserve">
+    <value>Електрична небезпека</value>
+  </data>
+  <data name="SectionFire" xml:space="preserve">
+    <value>Дані про пожежу</value>
+  </data>
+  <data name="SectionFireAlarm" xml:space="preserve">
+    <value>Система пожежної сигналізації</value>
+  </data>
+  <data name="SectionFireSuppression" xml:space="preserve">
+    <value>Система пожежогасіння</value>
+  </data>
+  <data name="SectionHazsit" xml:space="preserve">
+    <value>Небезпечна ситуація</value>
+  </data>
+  <data name="SectionHazsitAnalysis" xml:space="preserve">
+    <value>Аналіз небезпечної ситуації</value>
+  </data>
+  <data name="SectionMedical" xml:space="preserve">
+    <value>Допомога пацієнту</value>
+  </data>
+  <data name="SectionMedicalOxygenHazard" xml:space="preserve">
+    <value>Домашній медичний кисень</value>
+  </data>
+  <data name="SectionNoLongerApplies" xml:space="preserve">
+    <value>Цей розділ більше не стосується обраних типів виклику.</value>
+  </data>
+  <data name="SectionOtherAlarm" xml:space="preserve">
+    <value>Інша сигналізація</value>
+  </data>
+  <data name="SectionOutsideFire" xml:space="preserve">
+    <value>Аналіз пожежі на відкритій місцевості</value>
+  </data>
+  <data name="SectionOutsideFireLocation" xml:space="preserve">
+    <value>Місце пожежі на відкритій місцевості</value>
+  </data>
+  <data name="SectionPowergenHazard" xml:space="preserve">
+    <value>Небезпека від генерації електроенергії</value>
+  </data>
+  <data name="SectionProduct" xml:space="preserve">
+    <value>Задіяний виріб</value>
+  </data>
+  <data name="SectionSmokeAlarm" xml:space="preserve">
+    <value>Димовий сповіщувач</value>
+  </data>
+  <data name="SectionStructureFireLocation" xml:space="preserve">
+    <value>Місце пожежі в будівлі</value>
+  </data>
+  <data name="SectionStructureFireOrigin" xml:space="preserve">
+    <value>Осередок пожежі в будівлі</value>
+  </data>
+  <data name="Sent" xml:space="preserve">
+    <value>Надіслано</value>
+  </data>
+  <data name="SetKey" xml:space="preserve">
+    <value>Набір значень</value>
+  </data>
+  <data name="Stale" xml:space="preserve">
+    <value>застарілі</value>
+  </data>
+  <data name="StartAnalysis" xml:space="preserve">
+    <value>Розпочати аналіз</value>
+  </data>
+  <data name="States" xml:space="preserve">
+    <value>Статуси</value>
+  </data>
+  <data name="StatutoryDueHint" xml:space="preserve">
+    <value>Якщо залишити порожнім, дату визначить встановлений законом строк підрозділу.</value>
+  </data>
+  <data name="StatutoryDueOn" xml:space="preserve">
+    <value>Встановлений законом строк</value>
+  </data>
+  <data name="StoriesAbove" xml:space="preserve">
+    <value>Поверхів над рівнем землі</value>
+  </data>
+  <data name="StoriesBelow" xml:space="preserve">
+    <value>Поверхів нижче рівня землі</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Подати</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>Подані</value>
+  </data>
+  <data name="Suggested" xml:space="preserve">
+    <value>Рекомендований</value>
+  </data>
+  <data name="Superseded" xml:space="preserve">
+    <value>Замінено</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Vacancy" xml:space="preserve">
+    <value>Стан заселеності</value>
+  </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>Транспортні засоби</value>
+  </data>
+  <data name="VerifyProduction" xml:space="preserve">
+    <value>Перевірити контрольну суму</value>
+  </data>
+  <data name="Vin" xml:space="preserve">
+    <value>Ідентифікаційний номер кузова</value>
+  </data>
+  <data name="WasOccupied" xml:space="preserve">
+    <value>Був зайнятий на той момент</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Рік</value>
+  </data>
+  <data name="YearBuilt" xml:space="preserve">
+    <value>Рік побудови</value>
+  </data>
+  <data name="OtherVehicle" xml:space="preserve">
+    <value>Інший транспортний засіб</value>
+  </data>
+  <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
+    <value>Після зміни типу надання доступу NERIS потрібні нові облікові дані.</value>
+  </data>
 </root>

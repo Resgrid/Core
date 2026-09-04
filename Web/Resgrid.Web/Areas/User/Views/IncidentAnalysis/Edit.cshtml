@@ -1,0 +1,301 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.IncidentAnalysisEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["EditIncidentAnalysis"];
+	string Dt(DateTime? v) => v.HasValue ? v.Value.ToString("yyyy-MM-ddTHH:mm") : string.Empty;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@localizer["EditIncidentAnalysis"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="IncidentReports" asp-action="Index" asp-route-area="User">@localizer["IncidentReports"]</a></li>
+			<li><a asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@Model.ReportId">@Model.Reference</a></li>
+			<li class="active"><strong>@localizer["IncidentAnalysis"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<form class="form-horizontal" method="post" asp-controller="IncidentAnalysis" asp-action="Edit" asp-route-area="User">
+	@Html.AntiForgeryToken()
+	@Html.HiddenFor(m => m.AnalysisId)
+	@Html.HiddenFor(m => m.ReportId)
+	@Html.HiddenFor(m => m.RowVersion)
+
+	<div class="row">
+		<div class="col-lg-9">
+			<div class="wrapper wrapper-content">
+				@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+				{
+					<div class="alert alert-danger">@Model.ErrorMessage</div>
+				}
+				@if (!string.IsNullOrEmpty(Model.Message))
+				{
+					<div class="alert alert-success">@Model.Message</div>
+				}
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-search"></i> @localizer["IncidentAnalysis"] <small>@Model.Reference</small> <span class="label label-primary">@Model.State</span></h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["GeneralCause"]</label>
+							<div class="col-sm-5"><select class="form-control" asp-for="GeneralCause" asp-items="Model.GeneralCauses"><option value="">-</option></select></div>
+							<label class="col-sm-2 control-label">@localizer["CurrencyCode"]</label>
+							<div class="col-sm-2"><input type="text" class="form-control" asp-for="CurrencyCode" maxlength="3" placeholder="USD" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["InvestigationTypes"]</label>
+							<div class="col-sm-9">
+								@foreach (var c in Model.InvestigationTypeCodes)
+								{
+									<label class="checkbox-inline"><input type="checkbox" name="InvestigationTypes" value="@c.Value" @(Model.InvestigationTypes.Contains(c.Value) ? "checked" : string.Empty) /> @c.Text</label>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-list-alt"></i> @localizer["AnalysisSections"]</h5></div>
+					<div class="ibox-content">
+						@if (Model.Sections.Count == 0)
+						{
+							<p class="text-muted">@localizer["NoSectionsYet"]</p>
+						}
+						@foreach (var sectionView in Model.Sections)
+						{
+							var indices = Enumerable.Range(0, Model.Modules.Count).Where(i => Model.Modules[i].Kind == (int)sectionView.Kind).ToList();
+							<div class="hr-line-dashed"></div>
+							<h4>
+								@localizer["Section" + sectionView.Kind.ToString()]
+								<span class="label @(sectionView.Required ? "label-danger" : "label-warning")">@(sectionView.Required ? localizer["Required"] : localizer["Suggested"])</span>
+								<small><code>@sectionView.PayloadPath</code></small>
+							</h4>
+							<p class="text-muted">@sectionView.Reason</p>
+							@foreach (var i in indices)
+							{
+								var row = Model.Modules[i];
+								<div class="form-group">
+									<div class="col-sm-1">
+										<input type="hidden" name="Modules[@i].Kind" value="@row.Kind" />
+										<label class="checkbox-inline"><input type="checkbox" name="Modules[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /></label>
+									</div>
+									<div class="col-sm-3">
+										@if (sectionView.PrimaryCodes.Count > 0)
+										{
+											<select class="form-control input-sm" name="Modules[@i].PrimaryCode">
+												<option value="">@localizer["PrimaryCode"]</option>
+												@foreach (var c in sectionView.PrimaryCodes)
+												{
+													<option value="@c.Value" selected="@(c.Value == row.PrimaryCode)">@c.Text</option>
+												}
+											</select>
+										}
+										else
+										{
+											<input type="text" class="form-control input-sm" name="Modules[@i].PrimaryCode" value="@row.PrimaryCode" placeholder="@localizer["PrimaryCode"]" maxlength="64" />
+										}
+									</div>
+									<div class="col-sm-3">
+										@if (sectionView.SecondaryCodes.Count > 0)
+										{
+											<select class="form-control input-sm" name="Modules[@i].SecondaryCode">
+												<option value="">@localizer["SecondaryCode"]</option>
+												@foreach (var c in sectionView.SecondaryCodes)
+												{
+													<option value="@c.Value" selected="@(c.Value == row.SecondaryCode)">@c.Text</option>
+												}
+											</select>
+										}
+									</div>
+									<div class="col-sm-2"><input type="number" step="any" class="form-control input-sm" name="Modules[@i].Quantity" value="@row.Quantity" placeholder="@localizer["Quantity"]" /></div>
+									<div class="col-sm-1"><input type="text" class="form-control input-sm" name="Modules[@i].QuantityUnit" value="@row.QuantityUnit" placeholder="@localizer["Unit"]" maxlength="32" /></div>
+									<div class="col-sm-2"><input type="datetime-local" class="form-control input-sm" name="Modules[@i].OccurredOn" value="@Dt(row.OccurredOn)" /></div>
+								</div>
+								<div class="form-group">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-11"><textarea class="form-control input-sm" rows="2" name="Modules[@i].DetailJson" placeholder="@sectionView.SchemaName">@row.DetailJson</textarea></div>
+								</div>
+							}
+						}
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-building-o"></i> @localizer["Properties"]</h5></div>
+					<div class="ibox-content">
+						@for (var i = 0; i < Model.Properties.Count + Resgrid.Web.Areas.User.Models.Records.IncidentAnalysisEditView.PropertyRows; i++)
+						{
+							var row = i < Model.Properties.Count ? Model.Properties[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentPropertyRow();
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<div class="col-sm-1"><label class="checkbox-inline"><input type="checkbox" name="Properties[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /></label></div>
+								<div class="col-sm-4">
+									<select class="form-control input-sm" name="Properties[@i].LocationUse">
+										<option value="">@localizer["LocationUse"]</option>
+										@foreach (var c in Model.LocationUses)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.LocationUse)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-3">
+									<select class="form-control input-sm" name="Properties[@i].ConstructionType">
+										<option value="">@localizer["ConstructionType"]</option>
+										@foreach (var c in Model.ConstructionTypes)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.ConstructionType)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-2">
+									<select class="form-control input-sm" name="Properties[@i].Vacancy">
+										<option value="">@localizer["Vacancy"]</option>
+										@foreach (var c in Model.Vacancies)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.Vacancy)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-2"><input type="number" class="form-control input-sm" name="Properties[@i].YearBuilt" value="@row.YearBuilt" placeholder="@localizer["YearBuilt"]" /></div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-1"></div>
+								<div class="col-sm-3">
+									<select class="form-control input-sm" name="Properties[@i].DamageType">
+										<option value="">@localizer["DamageType"]</option>
+										@foreach (var c in Model.BuildingDamageTypes)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.DamageType)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-3">
+									<select class="form-control input-sm" name="Properties[@i].FireSpread">
+										<option value="">@localizer["FireSpread"]</option>
+										@foreach (var c in Model.FireSpreads)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.FireSpread)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-1"><input type="number" min="0" class="form-control input-sm" name="Properties[@i].StoriesAboveGrade" value="@row.StoriesAboveGrade" placeholder="@localizer["StoriesAbove"]" /></div>
+								<div class="col-sm-1"><input type="number" min="0" class="form-control input-sm" name="Properties[@i].StoriesBelowGrade" value="@row.StoriesBelowGrade" placeholder="@localizer["StoriesBelow"]" /></div>
+								<div class="col-sm-3">
+									<div class="input-group">
+										<input type="number" step="any" class="form-control input-sm" name="Properties[@i].EstimatedValue" value="@row.EstimatedValue" placeholder="@localizer["EstimatedValue"]" />
+										<input type="number" step="any" class="form-control input-sm" name="Properties[@i].EstimatedLoss" value="@row.EstimatedLoss" placeholder="@localizer["EstimatedLoss"]" />
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-1"></div>
+								<div class="col-sm-3"><input type="number" step="any" class="form-control input-sm" name="Properties[@i].ContentsValue" value="@row.ContentsValue" placeholder="@localizer["ContentsValue"]" /></div>
+								<div class="col-sm-3"><input type="number" step="any" class="form-control input-sm" name="Properties[@i].ContentsLoss" value="@row.ContentsLoss" placeholder="@localizer["ContentsLoss"]" /></div>
+								<div class="col-sm-5"><input type="text" class="form-control input-sm" name="Properties[@i].DetailJson" value="@row.DetailJson" placeholder="PropertyPayload" /></div>
+							</div>
+						}
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5><i class="fa fa-car"></i> @localizer["Vehicles"]</h5></div>
+					<div class="ibox-content">
+						@if (!Model.CanEditRestricted)
+						{
+							<div class="alert alert-info">@localizer["RestrictedFieldsHidden"]</div>
+						}
+						@for (var i = 0; i < Model.Vehicles.Count + Resgrid.Web.Areas.User.Models.Records.IncidentAnalysisEditView.VehicleRows; i++)
+						{
+							var row = i < Model.Vehicles.Count ? Model.Vehicles[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentVehicleRow();
+							<div class="hr-line-dashed"></div>
+							<div class="form-group">
+								<div class="col-sm-1"><label class="checkbox-inline"><input type="checkbox" name="Vehicles[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /></label></div>
+								<div class="col-sm-2">
+									<select class="form-control input-sm" name="Vehicles[@i].VehicleKind">
+										<option value="AUTOMOBILE" selected="@(row.VehicleKind != "OTHER")">@localizer["Automobile"]</option>
+										<option value="OTHER" selected="@(row.VehicleKind == "OTHER")">@localizer["OtherVehicle"]</option>
+									</select>
+								</div>
+								<div class="col-sm-3">
+									<select class="form-control input-sm" name="Vehicles[@i].Make">
+										<option value="">@localizer["Make"]</option>
+										@foreach (var c in Model.VehicleMakes)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.Make)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-2"><input type="text" class="form-control input-sm" name="Vehicles[@i].Model" value="@row.Model" placeholder="@localizer["Model"]" maxlength="64" /></div>
+								<div class="col-sm-1"><input type="number" class="form-control input-sm" name="Vehicles[@i].ModelYear" value="@row.ModelYear" placeholder="@localizer["ModelYear"]" /></div>
+								<div class="col-sm-3"><label class="checkbox-inline"><input type="checkbox" name="Vehicles[@i].WasOccupied" value="true" @(row.WasOccupied ? "checked" : string.Empty) /> @localizer["WasOccupied"]</label></div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-1"></div>
+								<div class="col-sm-3">
+									<select class="form-control input-sm" name="Vehicles[@i].BodyStyle">
+										<option value="">@localizer["BodyStyle"]</option>
+										@foreach (var c in Model.VehicleBodyStyles)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.BodyStyle)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-3">
+									<select class="form-control input-sm" name="Vehicles[@i].Powertrain">
+										<option value="">@localizer["Powertrain"]</option>
+										@foreach (var c in Model.Powertrains)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.Powertrain)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-3">
+									<select class="form-control input-sm" name="Vehicles[@i].DamageType">
+										<option value="">@localizer["DamageType"]</option>
+										@foreach (var c in Model.VehicleDamageTypes)
+										{
+											<option value="@c.Value" selected="@(c.Value == row.DamageType)">@c.Text</option>
+										}
+									</select>
+								</div>
+								<div class="col-sm-2"><input type="number" step="any" class="form-control input-sm" name="Vehicles[@i].EstimatedLoss" value="@row.EstimatedLoss" placeholder="@localizer["EstimatedLoss"]" /></div>
+							</div>
+							@if (Model.CanEditRestricted)
+							{
+								<div class="form-group">
+									<div class="col-sm-1"></div>
+									<div class="col-sm-4"><input type="text" class="form-control input-sm" name="Vehicles[@i].Vin" value="@row.Vin" placeholder="@localizer["Vin"]" maxlength="32" /></div>
+									<div class="col-sm-3"><input type="text" class="form-control input-sm" name="Vehicles[@i].LicensePlate" value="@row.LicensePlate" placeholder="@localizer["LicensePlate"]" maxlength="16" /></div>
+									<div class="col-sm-2"><input type="text" class="form-control input-sm" name="Vehicles[@i].LicenseState" value="@row.LicenseState" placeholder="@localizer["StateProvince"]" maxlength="2" /></div>
+								</div>
+							}
+						}
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-sm-12">
+						<a class="btn btn-white" asp-controller="IncidentAnalysis" asp-action="Details" asp-route-area="User" asp-route-id="@Model.AnalysisId">@commonLocalizer["Cancel"]</a>
+						<button type="submit" class="btn btn-primary" name="ValidateAfterSave" value="false">@localizer["SaveDraft"]</button>
+						<button type="submit" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-3">
+			<div class="wrapper wrapper-content">
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-info-circle"></i> @localizer["IncidentAnalysis"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["IncidentAnalysisIntro"]</p>
+						<p><a asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@Model.ReportId">@localizer["BackToReport"]</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

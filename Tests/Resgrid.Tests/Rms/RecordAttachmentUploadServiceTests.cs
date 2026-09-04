@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -184,17 +184,20 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
-		public async Task Idempotency_service_replays_by_department_user_and_key()
+		public async Task Idempotency_service_replays_by_department_user_command_and_key()
 		{
 			var idempotency = new RecordsApiIdempotencyService(_store);
 
-			(await idempotency.TryGetRecordIdAsync(Dept, "u1", "k1")).Should().BeNull();
-			await idempotency.RememberAsync(Dept, "u1", "k1", "rec-9");
+			(await idempotency.TryGetRecordIdAsync(Dept, "u1", "k1", "Finalize")).Should().BeNull();
+			await idempotency.RememberAsync(Dept, "u1", "k1", "Finalize", "rec-9");
 
-			(await idempotency.TryGetRecordIdAsync(Dept, "u1", "k1")).Should().Be("rec-9");
-			(await idempotency.TryGetRecordIdAsync(Dept, "u2", "k1")).Should().BeNull("keys are scoped to the user");
-			(await idempotency.TryGetRecordIdAsync(43, "u1", "k1")).Should().BeNull("keys are scoped to the department");
-			(await idempotency.TryGetRecordIdAsync(Dept, "u1", null)).Should().BeNull();
+			(await idempotency.TryGetRecordIdAsync(Dept, "u1", "k1", "Finalize")).Should().Be("rec-9");
+			(await idempotency.TryGetRecordIdAsync(Dept, "u2", "k1", "Finalize")).Should().BeNull("keys are scoped to the user");
+			(await idempotency.TryGetRecordIdAsync(43, "u1", "k1", "Finalize")).Should().BeNull("keys are scoped to the department");
+			(await idempotency.TryGetRecordIdAsync(Dept, "u1", null, "Finalize")).Should().BeNull();
+
+			// A client that reuses one key for a second command must not be told that command already succeeded.
+			(await idempotency.TryGetRecordIdAsync(Dept, "u1", "k1", "Void")).Should().BeNull("keys are scoped to the command");
 		}
 
 		[Test]

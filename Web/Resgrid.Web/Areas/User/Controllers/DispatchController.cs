@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -76,6 +76,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDispatchRecommendationService _dispatchRecommendationService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly IRecordsCutoverService _recordsCutoverService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -89,7 +90,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICallDispatchStatusService callDispatchStatusService, IModerationService moderationService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer,
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
-			IProtectedReadService protectedReadService)
+			IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -124,6 +125,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_dispatchRecommendationService = dispatchRecommendationService;
 			_featureToggleService = featureToggleService;
 			_protectedReadService = protectedReadService;
+			_recordsCutoverService = recordsCutoverService;
 		}
 		#endregion Private Members and Constructors
 
@@ -3348,6 +3350,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(model.Department.DepartmentId);
 			model.CallPriorities = model.CallPriority.ToSelectList();
+
+			// The Incident Report control posts to IncidentReports/Start, which 404s when Records is not usable for
+			// the department; the button has to know that as well as whether the member may create a record.
+			model.RecordsUsable = (await _recordsCutoverService.GetModuleStateAsync(model.Department.DepartmentId)).RecordsUsable;
 			model.UnGroupedUsers = new List<IdentityUser>();
 
 			model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, model.Call.CallId)).OrderBy(y => y.Timestamp).ToList();

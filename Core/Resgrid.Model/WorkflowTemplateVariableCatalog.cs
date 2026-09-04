@@ -159,6 +159,17 @@ namespace Resgrid.Model
 			new TemplateVariableDescriptor("submission.completed_on", "When the submission reached a final state (UTC)", "datetime", false),
 		};
 
+		// obligation.* rides only on trigger 112 (RMS-3): what the record is late for and by how long. Nothing about
+		// the record's content — a workflow that chases an overdue report never needs to read one.
+		private static readonly List<TemplateVariableDescriptor> ObligationVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("obligation.type", "What the record is late for (Review, Correction, Submission)", "string", false),
+			new TemplateVariableDescriptor("obligation.due_on", "When the obligation fell due (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("obligation.overdue_hours", "Hours past due at evaluation time", "int", false),
+			new TemplateVariableDescriptor("obligation.responsible_user_id", "Who the obligation rests with", "string", false),
+			new TemplateVariableDescriptor("obligation.overdue_count", "How many times this obligation has gone overdue", "int", false),
+		};
+
 		// review.* rides only on the two review-path triggers: review bookkeeping, never record content.
 		private static readonly List<TemplateVariableDescriptor> ReviewVariables = new List<TemplateVariableDescriptor>
 		{
@@ -668,6 +679,13 @@ namespace Resgrid.Model
 					list.Add(new TemplateVariableDescriptor("record.neris_incident_id", "NERIS incident ID once assigned", "string", false));
 					list.AddRange(RecordChangeVariables);
 					list.AddRange(SubmissionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordOverdue:
+					list.AddRange(RecordEventVariables);
+					list.AddRange(RecordVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind (Operational or IncidentReport)", "string", false));
+					list.AddRange(ObligationVariables);
 					break;
 			}
 

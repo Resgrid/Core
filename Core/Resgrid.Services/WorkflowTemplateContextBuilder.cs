@@ -411,6 +411,7 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordSubmissionAccepted:
 				case WorkflowTriggerEventType.RecordSubmissionRejected:
 				case WorkflowTriggerEventType.RecordSubmissionFailed:
+				case WorkflowTriggerEventType.RecordOverdue:
 				{
 					// Records (RMS): the payload is the outbox snapshot carried by RecordsWorkflowEvent; it is never
 					// rehydrated from current record state, so a retry sees exactly what the original run saw.
@@ -1202,6 +1203,9 @@ namespace Resgrid.Services
 
 			if (payload["submission"] is JObject submission)
 				obj["submission"] = ToScriptObject(submission);
+
+			if (payload["obligation"] is JObject obligation)
+				obj["obligation"] = ToScriptObject(obligation);
 
 			return recordToken?["author_user_id"]?.Type == JTokenType.String ? (string)recordToken["author_user_id"] : null;
 		}

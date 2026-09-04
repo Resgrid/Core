@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Resgrid.Model
@@ -14,6 +14,14 @@ namespace Resgrid.Model
 		public List<RmsActionTactic> Tactics { get; set; } = new List<RmsActionTactic>();
 		public RmsNarrative Narrative { get; set; }
 		public List<RmsSourceFact> Facts { get; set; } = new List<RmsSourceFact>();
+		/// <summary>RMS-3 conditional sections (fire, hazsit, alarms, suppression, emerging hazards, medical).</summary>
+		public List<RmsIncidentModule> Modules { get; set; } = new List<RmsIncidentModule>();
+		/// <summary>RMS-3 non-unit resources used on the incident.</summary>
+		public List<RmsIncidentResource> Resources { get; set; } = new List<RmsIncidentResource>();
+		/// <summary>RMS-3 restricted class: civilian and responder casualties and rescues.</summary>
+		public List<RmsCasualtyRescue> Casualties { get; set; } = new List<RmsCasualtyRescue>();
+		/// <summary>RMS-3: property other than the incident property that the incident damaged.</summary>
+		public List<RmsExposure> Exposures { get; set; } = new List<RmsExposure>();
 		public List<RmsValidationIssue> Issues { get; set; } = new List<RmsValidationIssue>();
 		public List<RmsSubmission> Submissions { get; set; } = new List<RmsSubmission>();
 		public List<RmsSignature> Signatures { get; set; } = new List<RmsSignature>();
@@ -117,6 +125,159 @@ namespace Resgrid.Model
 		public string OutcomeNarrative { get; set; }
 		public string SupplementalJson { get; set; }
 		public RmsOriginClient OriginClient { get; set; } = RmsOriginClient.Web;
+
+		// RMS-3 conditional sections. Null means "leave this section alone"; an empty list clears it. Draft saves
+		// from a client that does not render a section must not silently delete the section an officer authored on
+		// the Web, which is why absence and emptiness are different here and nowhere else in this input.
+		public List<IncidentModuleInput> Modules { get; set; }
+		public List<IncidentResourceInput> Resources { get; set; }
+		public List<IncidentCasualtyRescueInput> Casualties { get; set; }
+		public List<IncidentExposureInput> Exposures { get; set; }
+	}
+
+	/// <summary>One conditional section instance being saved; <see cref="DetailJson"/> is the contract-shaped body.</summary>
+	public class IncidentModuleInput
+	{
+		public RmsIncidentModuleKind Kind { get; set; }
+		public string PrimaryCode { get; set; }
+		public string SecondaryCode { get; set; }
+		public decimal? Quantity { get; set; }
+		public string QuantityUnit { get; set; }
+		public DateTime? OccurredOn { get; set; }
+		public string DetailJson { get; set; }
+	}
+
+	public class IncidentResourceInput
+	{
+		public string ResourceCode { get; set; }
+		public int? Quantity { get; set; }
+		public string Detail { get; set; }
+	}
+
+	/// <summary>
+	/// A casualty or rescue. Restricted fields are only accepted from a caller holding RecordRestricted_View; the
+	/// service drops them otherwise rather than failing the save, so a reviewer without the restricted grant can
+	/// still correct the unrestricted half of a report.
+	/// </summary>
+	public class IncidentCasualtyRescueInput
+	{
+		public RmsCasualtyRescueKind Kind { get; set; }
+		public string PersonType { get; set; }
+		public string PersonnelUserId { get; set; }
+		public string Rank { get; set; }
+		public decimal? YearsOfService { get; set; }
+		public string JobClassification { get; set; }
+		public string BirthMonthYear { get; set; }
+		public string Gender { get; set; }
+		public string Race { get; set; }
+		public bool? WasInjured { get; set; }
+		public string CasualtyCause { get; set; }
+		public string CasualtyAction { get; set; }
+		public string CasualtyTimeline { get; set; }
+		public string DutyType { get; set; }
+		public List<string> Ppe { get; set; } = new List<string>();
+		public string InjuryDetailJson { get; set; }
+		public bool WasFatal { get; set; }
+		public string RescueType { get; set; }
+		public List<string> RescueActions { get; set; } = new List<string>();
+		public List<string> RescueImpediments { get; set; } = new List<string>();
+		public string RescueMode { get; set; }
+		public string RescuePath { get; set; }
+		public string RescueElevation { get; set; }
+		public string PresenceKnown { get; set; }
+		public DateTime? OccurredOn { get; set; }
+		public string DetailJson { get; set; }
+	}
+
+	public class IncidentExposureInput
+	{
+		public string LocationKind { get; set; }
+		public string ItemType { get; set; }
+		public string DamageType { get; set; }
+		public string LocationUse { get; set; }
+		public bool? PeoplePresent { get; set; }
+		public int? DisplacementCount { get; set; }
+		public List<string> DisplacementCauses { get; set; } = new List<string>();
+		public string AddressText { get; set; }
+		public string Street { get; set; }
+		public string Municipality { get; set; }
+		public string State { get; set; }
+		public string PostalCode { get; set; }
+		public decimal? Latitude { get; set; }
+		public decimal? Longitude { get; set; }
+		public decimal? EstimatedValue { get; set; }
+		public decimal? EstimatedLoss { get; set; }
+		public string CurrencyCode { get; set; }
+		public string DetailJson { get; set; }
+	}
+
+	/// <summary>The incident-analysis filing as its authoring surface and the mapper read it (RMS-3).</summary>
+	public class IncidentAnalysisAggregate
+	{
+		public RmsIncidentAnalysis Analysis { get; set; }
+		/// <summary>The incident this analysis files against; needed for the destination id and the base block.</summary>
+		public RmsIncidentReport Report { get; set; }
+		public List<RmsIncidentModule> Modules { get; set; } = new List<RmsIncidentModule>();
+		public List<RmsIncidentProperty> Properties { get; set; } = new List<RmsIncidentProperty>();
+		public List<RmsIncidentVehicle> Vehicles { get; set; } = new List<RmsIncidentVehicle>();
+		public List<RmsSubmission> Submissions { get; set; } = new List<RmsSubmission>();
+		public List<RmsRevision> Revisions { get; set; } = new List<RmsRevision>();
+
+		public RmsIncidentAnalysisState State => (RmsIncidentAnalysisState)(Analysis?.State ?? 0);
+
+		/// <summary>The analysis can only be filed once the incident itself exists at the destination.</summary>
+		public bool IncidentIsFiled => !string.IsNullOrWhiteSpace(Report?.NerisIncidentId);
+	}
+
+	/// <summary>A draft save of the incident-analysis filing; every list replaces the draft rows wholesale.</summary>
+	public class IncidentAnalysisDraftInput
+	{
+		public string GeneralCause { get; set; }
+		public List<string> InvestigationTypes { get; set; } = new List<string>();
+		public string CurrencyCode { get; set; }
+		public List<IncidentModuleInput> Modules { get; set; }
+		public List<IncidentPropertyInput> Properties { get; set; }
+		public List<IncidentVehicleInput> Vehicles { get; set; }
+		public RmsOriginClient OriginClient { get; set; } = RmsOriginClient.Web;
+	}
+
+	public class IncidentPropertyInput
+	{
+		public string LocationUse { get; set; }
+		public string ConstructionType { get; set; }
+		public string Foundation { get; set; }
+		public string ExteriorFinish { get; set; }
+		public string RoofMaterial { get; set; }
+		public int? StoriesAboveGrade { get; set; }
+		public int? StoriesBelowGrade { get; set; }
+		public int? YearBuilt { get; set; }
+		public string Vacancy { get; set; }
+		public string DamageType { get; set; }
+		public string FireSpread { get; set; }
+		public decimal? EstimatedValue { get; set; }
+		public decimal? EstimatedLoss { get; set; }
+		public decimal? ContentsValue { get; set; }
+		public decimal? ContentsLoss { get; set; }
+		public string DetailJson { get; set; }
+	}
+
+	/// <summary>VIN and plate are restricted; the service drops them from a caller without RecordRestricted_View.</summary>
+	public class IncidentVehicleInput
+	{
+		public string VehicleKind { get; set; }
+		public string Make { get; set; }
+		public string Model { get; set; }
+		public int? ModelYear { get; set; }
+		public string BodyStyle { get; set; }
+		public string Powertrain { get; set; }
+		public string DamageType { get; set; }
+		public string Vin { get; set; }
+		public string LicensePlate { get; set; }
+		public string LicenseState { get; set; }
+		public bool WasOccupied { get; set; }
+		public decimal? EstimatedValue { get; set; }
+		public decimal? EstimatedLoss { get; set; }
+		public string DetailJson { get; set; }
 	}
 
 	/// <summary>Stable provenance keys for the prefilled facts (RmsSourceFact.FactKey).</summary>

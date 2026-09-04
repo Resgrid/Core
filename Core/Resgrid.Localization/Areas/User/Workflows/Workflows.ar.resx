@@ -590,4 +590,28 @@
   <data name="Detail" xml:space="preserve">
     <value>تفاصيل</value>
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>«تمت إضافة دفتر» مشغّل توافق. بعد تفعيل السجلات يعمل عند إنهاء سجل خروج أو تدريب أو عمل أو اجتماع أو طب شرعي أو معاودة اتصال، ناقلًا حقول الدفتر القديمة بما فيها السرد، ويُحتفظ به لإصدارين فرعيين أو اثني عشر شهرًا بعد التفعيل. استخدم مشغّلات السجل لسير العمل الجديد.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>معرّف الحدث</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>معرّف الارتباط</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>معرّف السبب</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>تسلسل الحدث</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>المصدر</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>تم التخطي بسبب</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>المتخطاة</value>
+  </data>
 </root>

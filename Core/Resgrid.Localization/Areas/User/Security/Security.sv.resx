@@ -953,4 +953,43 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Rapporter</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>Dessa behörigheter styr modulen Rapporter, efterföljaren till Loggar. Som för de flesta Resgrid-behörigheter gäller det visade standardvärdet för en rad som inte ställts in, och det motsvarar hur Loggar fungerar i dag. När Rapporter aktiveras för din avdelning kopieras även inställningarna Skapa logg och Ta bort logg till motsvarande rader, om du inte redan har ställt in dem här.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Rapporter är ännu inte aktiverat för den här avdelningen. Du kan förbereda inställningarna nu; de börjar gälla när Rapporter aktiveras.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>Skapa rapporter</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>Vem som får skriva nya rapporter och redigera sina egna utkast. Motsvarar Skapa logg tills du ändrar det.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>Ogiltigförklara eller avbryta rapporter</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>Vem som får avbryta ett utkast eller ogiltigförklara en slutförd rapport. Ogiltigförklaring behåller rapporten och dess historik; inget raderas. Motsvarar Ta bort logg tills du ändrar det.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>Granska rapporter</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>Vem som får granska rapporter som skickats för granskning och återsända dem för rättelse. Endast grupp begränsar gruppadministratörer till rapporter från den egna gruppen.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>Godkänna rapporter</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>Vem som får godkänna en granskad rapport innan den slutförs, för rapporttyper som använder godkännandeflödet.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>Slutföra rapporter</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>Vem som får slutföra en rapport, vilket tilldelar rapportnumret och låser innehållet. Rapporttyper med snabbinmatning slutförs vid sparande, så detta motsvarar Skapa logg tills du ändrar det.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>Komplettera slutförda rapporter</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>Vem som får öppna en komplettering av en slutförd rapport. En komplettering skapar en ny revision; den ursprungliga revisionen förblir orörd.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>Skicka rapporter externt</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>Vem som får skicka en slutförd rapport till en extern rapporteringsmottagare, till exempel ett regionalt eller nationellt system.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>Skriva ut och exportera rapporter</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>Vem som får skriva ut en rapport eller exportera en lista med rapporter.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>Dela rapporter</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>Vem som får dela en rapport med andra grupper i avdelningen eller med personer utanför den.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>Visa begränsade avsnitt</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>Vem som får läsa de begränsade avsnitten i en rapport, till exempel detaljerna i en rättsläkarrapport. Alla andra ser att avsnittet finns men inte dess innehåll.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>Visa äldre loggar</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>Vem som får läsa den skrivskyddade logghistoriken från tiden innan Rapporter aktiverades.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>Visa rapporter från andra grupper</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>Om personal får se rapporter som tillhör andra grupper. Markera Endast grupp och ställ in gruppbegränsad synlighet i Rapportinställningar för att begränsa personer till den egna gruppens rapporter. Lämna obegränsat för att behålla den avdelningsövergripande vy som Loggar har i dag.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>Hantera rapportdefinitioner</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>Vem som får skapa och redigera rapportdefinitioner, formulären som rapporter byggs av.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>Publicera rapportdefinitioner</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>Vem som får publicera en version av en rapportdefinition så att den kan användas för nya rapporter.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>Hantera rapportsammanställningar</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>Vem som får skapa och redigera sparade rapportsammanställningar och deras scheman.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>Hantera utlämnanden av rapporter</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>Vem som får förbereda och lämna ut paket för utlämnande av allmänna handlingar.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>Hantera rättsliga spärrar</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Vem som får lägga och häva rättsliga spärrar, som pausar gallring och hindrar att en rapport ogiltigförklaras.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Omfördela rapportutkast</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Vem som får flytta ett rapportutkast till en annan författare, till exempel när den ursprungliga författaren inte är tillgänglig.</value></data>
 </root>

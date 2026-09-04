@@ -305,4 +305,5 @@
   <data name="WorkLogInformation" xml:space="preserve">
     <value>Work Log Information</value>
   </data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>Les dossiers sont actifs pour ce service. Les journaux existants sont en lecture seule : consultables, imprimables et exportables, mais ni créés, ni modifiés, ni supprimés.</value></data>
 </root>

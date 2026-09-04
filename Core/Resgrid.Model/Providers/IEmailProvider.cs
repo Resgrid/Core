@@ -12,9 +12,9 @@ namespace Resgrid.Model.Providers
 			string resetUrl, string ipAddress, string userAgent, string requestedOn, bool isSsoManaged);
 		Task<bool> SendPasswordChangedByAdministratorMail(string name, string userName, string email, string departmentName);
 		Task<bool> SendSignupMail(string name, string departmentName, string email);
-		Task<bool> SendMessageMail(string email, string subject, string messageSubject, string messageBody, string senderEmail, string senderName, string sentOn, int messageId);
+		Task<bool> SendMessageMail(string email, string subject, string messageSubject, string messageBody, string senderEmail, string senderName, string sentOn, int messageId, DepartmentEmailBranding branding);
 		Task<bool> SendCallMail(string email, string subject, string title, string priority, string natureOfCall, string mapPage,
-		            string address, string dispatchedOn, int callId, string userId, string coordinates, string shortenedAudioUrl);
+		            string address, string dispatchedOn, int callId, string userId, string coordinates, string shortenedAudioUrl, DepartmentEmailBranding branding);
 		Task<bool> SendInviteMail(string code, string departmentName, string email, string senderName, string senderEmail);
 
 		Task<bool> SendPaymentReciept(string departmentName, string name, string processDate, string amount, string email, string processor,
@@ -42,7 +42,7 @@ namespace Resgrid.Model.Providers
 		Task<bool> SendNewDepartmentLinkMail(string name, string departmentName, string data, string email, int departmentId);
 		Task<bool> SendTroubleAlertMail(string email, string unitName, string gpsLocation, string personnel, string callAddress, string unitAddress, string dispatchedOn, string callName);
 		Task<bool> SendReportDeliveryMail(string email, string subject, string messageBody, string sentOn,
-			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl);
+			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl, DepartmentEmailBranding branding);
 
 		Task<bool> SendCommunicationTestMail(string email, CommunicationTestEmailContent content);
 

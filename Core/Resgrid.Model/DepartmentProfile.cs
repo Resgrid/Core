@@ -125,6 +125,9 @@ namespace Resgrid.Model
 		[ProtoMember(34)]
 		public string PhoneNumber { get; set; }
 
+		/// <summary>Department-scoped operational emails render the department masthead instead of the Resgrid one (RMS plan section 4.10.1, M0172).</summary>
+		public bool UseDepartmentBrandingInEmails { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

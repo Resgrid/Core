@@ -283,4 +283,8 @@
   <data name="AdpErrorGeneric" xml:space="preserve">
     <value>فشل الطلب. حاول مرة أخرى.</value>
   </data>
+  <data name="RecordsModule" xml:space="preserve"><value>السجلات</value></data>
+  <data name="DepartmentProfile" xml:space="preserve">
+    <value>ملف القسم</value>
+  </data>
 </root>

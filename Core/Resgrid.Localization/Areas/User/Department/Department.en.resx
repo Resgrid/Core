@@ -1086,4 +1086,97 @@
   <data name="RequirePasswordResetViaEmailHelp" xml:space="preserve">
     <value>Prevents department and group administrators from choosing or seeing a member's new password. Reset actions send the member a short-lived, single-use email link instead. Existing sessions are revoked after the member successfully changes the password.</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>Department Profile</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>This is the identity Resgrid prints on records, shows on branded emails and uses wherever the department presents itself. Leave a field empty to fall back to the department settings.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>Identity</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>Display name</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>Short name</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>The address printed on records and emails is the department address:</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>Social links</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG or JPEG, up to 2 MB, at least 200 px on the long edge (512 px or larger recommended). The upload is re-encoded with its metadata removed, and the print header, email masthead and thumbnail renditions are generated from it.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>Upload logo</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>Remove logo</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>No logo has been uploaded. Prints and emails use the department name alone.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>Print header</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>Email masthead</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>Thumbnail</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>Use the department masthead on operational emails</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>Call, message, report delivery and workflow emails show your logo and name instead of the Resgrid masthead; records notifications are sent as "department name via Resgrid". Account and billing emails always stay Resgrid-branded.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>Public masthead link</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>Email clients cannot sign in, so the masthead is served from this unguessable link. Regenerating it invalidates the image in every email already sent.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>Regenerate link</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>Department profile saved.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>Logo uploaded and renditions generated.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>Logo removed.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>Choose a PNG or JPEG file to upload.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>A new masthead link has been issued; previously sent emails will no longer show the logo.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>The profile could not be saved; check the highlighted fields.</value>
+  </data>
 </root>

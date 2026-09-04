@@ -953,4 +953,43 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Звіти</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>Ці дозволи керують модулем Звіти, наступником Журналів. Як і для більшості дозволів Resgrid, для неналаштованого рядка діє показане значення за замовчуванням, яке відповідає поточній поведінці Журналів. Під час активації Звітів для вашого підрозділу налаштування «Створити запис журналу» та «Видалити запис журналу» також копіюються у відповідні рядки, якщо ви ще не задали їх тут.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Звіти ще не активовано для цього підрозділу. Ви можете підготувати ці налаштування зараз; вони набудуть чинності після активації Звітів.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>Створення звітів</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>Хто може створювати нові звіти та редагувати власні чернетки. Відповідає «Створити запис журналу», доки ви це не зміните.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>Анулювання або скасування звітів</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>Хто може скасувати чернетку або анулювати завершений звіт. Анулювання зберігає звіт та його історію; нічого не видаляється. Відповідає «Видалити запис журналу», доки ви це не зміните.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>Перевірка звітів</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>Хто може перевіряти звіти, подані на перевірку, і повертати їх на виправлення. «Лише група» обмежує адміністраторів груп звітами їхньої власної групи.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>Затвердження звітів</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>Хто може затвердити перевірений звіт перед завершенням, для типів звітів із циклом затвердження.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>Завершення звітів</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>Хто може завершити звіт, що присвоює йому номер і блокує вміст. Типи швидкого введення завершуються під час збереження, тому це відповідає «Створити запис журналу», доки ви це не зміните.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>Внесення поправок до завершених звітів</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>Хто може відкрити поправку до завершеного звіту. Поправка створює нову редакцію; початкова редакція залишається незмінною.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>Зовнішнє подання звітів</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>Хто може подати завершений звіт до зовнішньої системи звітності, наприклад регіональної або національної.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>Друк та експорт звітів</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>Хто може роздрукувати звіт або експортувати список звітів.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>Надання спільного доступу до звітів</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>Хто може надати доступ до звіту іншим групам підрозділу або стороннім особам.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>Перегляд обмежених розділів</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>Хто може читати обмежені розділи звіту, наприклад подробиці звіту судмедексперта. Усі інші бачать, що розділ існує, але не його вміст.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>Перегляд старих журналів</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>Хто може читати історію Журналів (лише для читання) за період до активації Звітів.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>Перегляд звітів інших груп</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>Чи може персонал бачити звіти інших груп. Поставте позначку «Лише група» та встановіть групову видимість у Налаштуваннях звітів, щоб обмежити людей звітами їхньої власної групи. Залиште без обмежень, щоб зберегти поточний загальнопідрозділовий перегляд, як у Журналах.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>Керування визначеннями звітів</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>Хто може створювати та редагувати визначення звітів — форми, з яких будуються звіти.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>Публікація визначень звітів</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>Хто може опублікувати версію визначення звіту, щоб її можна було використовувати для нових звітів.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>Керування зведеннями звітів</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>Хто може створювати та редагувати збережені зведення звітів та їхні розклади.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>Керування розкриттям звітів</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>Хто може готувати та видавати пакети розкриття публічної інформації.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>Керування юридичними утриманнями</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Хто може накладати та знімати юридичні утримання, які призупиняють строк зберігання та не дозволяють анулювати звіт.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Перепризначення чернеток звітів</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Хто може передати чернетку звіту іншому автору, наприклад коли початковий автор недоступний.</value></data>
 </root>

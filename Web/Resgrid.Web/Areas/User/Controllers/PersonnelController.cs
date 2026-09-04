@@ -59,6 +59,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IMappingService _mappingService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly IRecordsService _recordsService;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 		private readonly IExternalIdentityLinkService _externalIdentityLinkService;
@@ -73,7 +74,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			IStringLocalizer<Resgrid.Localization.Common> localizer, IPhoneNumberProcesserProvider phoneNumberProcesser,
 			IExternalIdentityLinkService externalIdentityLinkService, IProtectedReadService protectedReadService,
-			IDepartmentMemberSensitiveDataService memberSensitiveDataService)
+			IDepartmentMemberSensitiveDataService memberSensitiveDataService, IRecordsService recordsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -98,6 +99,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_mappingService = mappingService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
+			_recordsService = recordsService;
 			_localizer = localizer;
 			_phoneNumberProcesser = phoneNumberProcesser;
 			_externalIdentityLinkService = externalIdentityLinkService;
@@ -758,6 +760,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(userId);
 			model.UserId = userId;
+
+			// Draft ownership transfer (RMS plan 4.7): a member's unfinished Records are shown before the deletion
+			// completes so they can be reassigned rather than stranded. A Records failure never blocks this page.
+			try
+			{
+				model.OutstandingRecords = await _recordsService.GetOutstandingForOwnerAsync(DepartmentId, userId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 
 			return View(model);
 		}

@@ -305,4 +305,5 @@
   <data name="WorkLogInformation" xml:space="preserve">
     <value>Work Log Information</value>
   </data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>Registri è attivo per questo dipartimento. I log esistenti sono di sola lettura: visualizzabili, stampabili ed esportabili, ma non creabili, modificabili o eliminabili.</value></data>
 </root>

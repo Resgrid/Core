@@ -1001,4 +1001,97 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>Återvänder</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>Avdelningsprofil</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>Detta är den identitet som Resgrid skriver på rapporter, visar i profilerade e-postmeddelanden och använder överallt där avdelningen presenterar sig. Lämna ett fält tomt för att falla tillbaka på avdelningsinställningarna.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>Identitet</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>Visningsnamn</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>Kortnamn</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>Telefonnummer</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>Webbplats</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>Adress</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>Adressen som skrivs på rapporter och e-post är avdelningens adress:</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>Sociala länkar</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>Logotyp</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG eller JPEG, högst 2 MB, minst 200 px på långsidan (512 px eller mer rekommenderas). Filen kodas om utan metadata och därifrån skapas varianterna för utskriftshuvud, e-posthuvud och miniatyr.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>Ladda upp logotyp</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>Ta bort logotyp</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>Ingen logotyp har laddats upp. Utskrifter och e-post använder bara avdelningens namn.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>Utskriftshuvud</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>E-posthuvud</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>Miniatyr</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>Använd avdelningens e-posthuvud i operativa e-postmeddelanden</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>E-post om larm, meddelanden, rapportleverans och arbetsflöden visar er logotyp och ert namn i stället för Resgrids huvud; aviseringar om rapporter skickas som ”organisationens namn via Resgrid”. Konto- och faktureringsmeddelanden behåller alltid Resgrids profil.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>Offentlig länk till e-posthuvudet</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>E-postklienter kan inte logga in, så huvudet levereras via denna länk som inte går att gissa. Om den skapas på nytt blir bilden ogiltig i alla redan skickade meddelanden.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>Skapa ny länk</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>Avdelningsprofilen har sparats.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>Logotypen är uppladdad och varianterna skapade.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>Logotypen har tagits bort.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>Välj en PNG- eller JPEG-fil att ladda upp.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>En ny länk till e-posthuvudet har utfärdats; redan skickade meddelanden visar inte längre logotypen.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>Profilen kunde inte sparas; kontrollera de markerade fälten.</value>
+  </data>
 </root>

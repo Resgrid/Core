@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,11 +23,13 @@ using Resgrid.Web.Areas.User.Models.Departments.UnitSettings;
 using Resgrid.Web.Areas.User.Models.Home;
 using Resgrid.Web.Areas.User.Models.Settings;
 using Resgrid.Web.Helpers;
+using Resgrid.Services;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Web.Models.AccountViewModels;
 using Resgrid.Model.Providers;
 using AuditEvent = Resgrid.Model.Events.AuditEvent;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Localization;
 using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -67,6 +70,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ISecurityPinService _securityPinService;
 		private readonly IRunCardsService _runCardsService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IDepartmentProfileMediaService _departmentProfileMediaService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> _departmentLocalizer;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
@@ -75,7 +80,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICertificationService certificationService, INumbersService numbersService, IScheduledTasksService scheduledTasksService, IPersonnelRolesService personnelRolesService,
 			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider, IQueueService queueService,
 			IDocumentsService documentsService, INotesService notesService, IContactsService contactsService, ICheckInTimerService checkInTimerService,
-			ISecurityPinService securityPinService, IRunCardsService runCardsService, IFeatureToggleService featureToggleService)
+			ISecurityPinService securityPinService, IRunCardsService runCardsService, IFeatureToggleService featureToggleService,
+			IDepartmentProfileMediaService departmentProfileMediaService, IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -108,6 +114,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_securityPinService = securityPinService;
 			_runCardsService = runCardsService;
 			_featureToggleService = featureToggleService;
+			_departmentProfileMediaService = departmentProfileMediaService;
+			_departmentLocalizer = departmentLocalizer;
 		}
 
 		#endregion Private Members and Constructors
@@ -884,6 +892,222 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion Settings
+
+		#region Department Profile (RMS plan section 4.10.1)
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Profile()
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			return View(await BuildProfileModelAsync());
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Profile(DepartmentProfileModel model, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			if (!ModelState.IsValid)
+			{
+				var invalid = await BuildProfileModelAsync();
+				invalid.ErrorMessage = _departmentLocalizer["ProfileSaveFailed"];
+				return View(invalid);
+			}
+
+			// The profile row is loaded server-side; only the identity fields are copied from the form.
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var profile = await _departmentProfileMediaService.GetOrCreateProfileAsync(DepartmentId, cancellationToken);
+			var before = ProfileSnapshot(profile);
+
+			profile.Name = Clean(model.Name) ?? department?.Name;
+			profile.ShortName = Clean(model.ShortName);
+			profile.Code = Clean(model.Code) ?? department?.Code;
+			profile.Description = Clean(model.Description);
+			profile.PhoneNumber = Clean(model.PhoneNumber);
+			profile.Website = Clean(model.Website);
+			profile.Facebook = Clean(model.Facebook);
+			profile.Twitter = Clean(model.Twitter);
+			profile.Instagram = Clean(model.Instagram);
+			profile.YouTube = Clean(model.YouTube);
+			profile.LinkedIn = Clean(model.LinkedIn);
+			profile.UseDepartmentBrandingInEmails = model.UseDepartmentBrandingInEmails;
+
+			await _departmentProfileMediaService.SaveProfileAsync(profile, cancellationToken);
+			SendProfileAudit(before, ProfileSnapshot(profile));
+
+			var saved = await BuildProfileModelAsync();
+			saved.Message = _departmentLocalizer["ProfileSaved"];
+			return View(saved);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ProfileLogo(IFormFile logo, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			DepartmentProfileModel result;
+			if (logo == null || logo.Length == 0)
+			{
+				result = await BuildProfileModelAsync();
+				result.ErrorMessage = _departmentLocalizer["ProfileLogoRequired"];
+				return View("Profile", result);
+			}
+
+			try
+			{
+				using var stream = new MemoryStream();
+				await logo.CopyToAsync(stream, cancellationToken);
+				await _departmentProfileMediaService.UploadLogoAsync(DepartmentId, UserId, Path.GetFileName(logo.FileName), logo.ContentType, stream.ToArray(), cancellationToken);
+				SendProfileAudit("logo", "uploaded " + Path.GetFileName(logo.FileName));
+
+				result = await BuildProfileModelAsync();
+				result.Message = _departmentLocalizer["ProfileLogoSaved"];
+			}
+			catch (DepartmentLogoRejectedException ex)
+			{
+				result = await BuildProfileModelAsync();
+				result.ErrorMessage = ex.Message;
+			}
+
+			return View("Profile", result);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> RemoveProfileLogo(CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			await _departmentProfileMediaService.RemoveLogoAsync(DepartmentId, UserId, cancellationToken);
+			SendProfileAudit("logo", "removed");
+
+			var result = await BuildProfileModelAsync();
+			result.Message = _departmentLocalizer["ProfileLogoRemoved"];
+			return View("Profile", result);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> RegenerateProfileMediaKey(CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			await _departmentProfileMediaService.RegenerateMediaKeyAsync(DepartmentId, UserId, cancellationToken);
+			SendProfileAudit("mediaKey", "regenerated");
+
+			var result = await BuildProfileModelAsync();
+			result.Message = _departmentLocalizer["ProfileKeyRegenerated"];
+			return View("Profile", result);
+		}
+
+		/// <summary>Authenticated rendition serving for the profile page previews.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ProfileMedia(int kind)
+		{
+			if (!Enum.IsDefined(typeof(DepartmentProfileMediaKind), kind))
+				return NotFound();
+
+			var media = await _departmentProfileMediaService.GetMediaAsync(DepartmentId, (DepartmentProfileMediaKind)kind);
+			if (media?.Data == null || media.Data.Length == 0)
+				return NotFound();
+
+			Response.Headers["Cache-Control"] = "private, max-age=300";
+			return File(media.Data, media.ContentType ?? "application/octet-stream");
+		}
+
+		/// <summary>
+		/// Anonymous masthead for email clients (RMS plan section 4.10.1): keyed by the department's unguessable
+		/// MediaKey, long-cached with an ETag, and serving nothing but the EmailMasthead rendition.
+		/// </summary>
+		[HttpGet]
+		[AllowAnonymous]
+		public async Task<IActionResult> PublicMasthead(string key)
+		{
+			var media = await _departmentProfileMediaService.GetPublicMastheadAsync(key);
+			if (media?.Data == null || media.Data.Length == 0)
+				return NotFound();
+
+			var etag = "\"" + media.Checksum + "\"";
+			if (Request.Headers.TryGetValue("If-None-Match", out var ifNoneMatch) && ifNoneMatch.ToString() == etag)
+				return StatusCode(304);
+
+			Response.Headers["Cache-Control"] = "public, max-age=31536000, immutable";
+			Response.Headers["ETag"] = etag;
+			return File(media.Data, media.ContentType ?? "image/png");
+		}
+
+		private async Task<DepartmentProfileModel> BuildProfileModelAsync()
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var profile = await _departmentProfileMediaService.GetOrCreateProfileAsync(DepartmentId);
+			var branding = await _departmentProfileMediaService.GetBrandingAsync(DepartmentId);
+
+			return new DepartmentProfileModel
+			{
+				Department = department,
+				Profile = profile,
+				Branding = branding,
+				Name = profile.Name ?? department?.Name,
+				ShortName = profile.ShortName,
+				Code = profile.Code ?? department?.Code,
+				Description = profile.Description,
+				PhoneNumber = profile.PhoneNumber,
+				Website = profile.Website,
+				Facebook = profile.Facebook,
+				Twitter = profile.Twitter,
+				Instagram = profile.Instagram,
+				YouTube = profile.YouTube,
+				LinkedIn = profile.LinkedIn,
+				UseDepartmentBrandingInEmails = profile.UseDepartmentBrandingInEmails,
+				PublicMastheadUrl = branding.HasLogo && !string.IsNullOrWhiteSpace(branding.MediaKey) ? DepartmentProfileMediaService.PublicMastheadUrl(branding.MediaKey) : null
+			};
+		}
+
+		private static string Clean(string value)
+		{
+			return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+		}
+
+		private static string ProfileSnapshot(DepartmentProfile profile)
+		{
+			return JsonConvert.SerializeObject(new
+			{
+				profile.Name, profile.ShortName, profile.Code, profile.Description, profile.PhoneNumber, profile.Website,
+				profile.Facebook, profile.Twitter, profile.Instagram, profile.YouTube, profile.LinkedIn, profile.UseDepartmentBrandingInEmails
+			});
+		}
+
+		private void SendProfileAudit(string before, string after)
+		{
+			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
+			{
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Type = AuditLogTypes.DepartmentSettingsChanged,
+				Before = before,
+				After = after,
+				Successful = true,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+			});
+		}
+
+		#endregion Department Profile
 
 		#region User States
 

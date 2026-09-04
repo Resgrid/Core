@@ -1415,5 +1415,126 @@ namespace Resgrid.Services
 
 			return EspeakVoiceCatalog.DefaultIdentifier;
 		}
+
+		#region Records (RMS) department settings 70-77 - RMS plan section 4.9
+
+		private const string RecordsSettingCacheKey = "DSetRecords_{0}_{1}";
+		public const int DefaultRecordsReviewDueHours = 72;
+
+		private async Task<string> GetRecordsSettingStringAsync(int departmentId, DepartmentSettingTypes type, bool bypassCache)
+		{
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, type);
+				return s?.Setting ?? string.Empty;
+			}
+
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				return await _cacheProvider.RetrieveAsync<string>(string.Format(RecordsSettingCacheKey, (int)type, departmentId), getSetting, LongCacheLength);
+
+			return await getSetting();
+		}
+
+		private async Task<T> GetRecordsSettingObjectAsync<T>(int departmentId, DepartmentSettingTypes type, bool bypassCache) where T : class, new()
+		{
+			var value = await GetRecordsSettingStringAsync(departmentId, type, bypassCache);
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<T>(value);
+					if (config != null)
+						return config;
+				}
+				catch (Exception)
+				{
+					// A corrupt setting blob falls back to defaults rather than breaking Records.
+				}
+			}
+
+			return new T();
+		}
+
+		private async Task<DepartmentSetting> SetRecordsSettingAsync(int departmentId, DepartmentSettingTypes type, string value, CancellationToken cancellationToken)
+		{
+			var result = await SaveOrUpdateSettingAsync(departmentId, value, type, cancellationToken);
+			_cacheProvider.Remove(string.Format(RecordsSettingCacheKey, (int)type, departmentId));
+			return result;
+		}
+
+		public async Task<RmsLifecyclePreset> GetRecordsDefaultLifecyclePresetAsync(int departmentId, bool bypassCache = false)
+		{
+			var value = await GetRecordsSettingStringAsync(departmentId, DepartmentSettingTypes.RecordsDefaultLifecyclePreset, bypassCache);
+			return int.TryParse(value, out var preset) && Enum.IsDefined(typeof(RmsLifecyclePreset), preset) ? (RmsLifecyclePreset)preset : RmsLifecyclePreset.QuickEntry;
+		}
+
+		public Task<DepartmentSetting> SetRecordsDefaultLifecyclePresetAsync(int departmentId, RmsLifecyclePreset preset, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsDefaultLifecyclePreset, ((int)preset).ToString(), cancellationToken);
+		}
+
+		public async Task<int> GetRecordsReviewDueHoursAsync(int departmentId, bool bypassCache = false)
+		{
+			var value = await GetRecordsSettingStringAsync(departmentId, DepartmentSettingTypes.RecordsReviewDueHours, bypassCache);
+			return int.TryParse(value, out var hours) && hours > 0 ? Math.Min(hours, 24 * 365) : DefaultRecordsReviewDueHours;
+		}
+
+		public Task<DepartmentSetting> SetRecordsReviewDueHoursAsync(int departmentId, int hours, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsReviewDueHours, Math.Max(1, hours).ToString(), cancellationToken);
+		}
+
+		public Task<RecordsNumberingConfig> GetRecordsNumberingConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			return GetRecordsSettingObjectAsync<RecordsNumberingConfig>(departmentId, DepartmentSettingTypes.RecordsNumberingConfig, bypassCache);
+		}
+
+		public Task<DepartmentSetting> SetRecordsNumberingConfigAsync(int departmentId, RecordsNumberingConfig config, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsNumberingConfig, ObjectSerialization.Serialize(config ?? new RecordsNumberingConfig()), cancellationToken);
+		}
+
+		public Task<RecordsSearchConfig> GetRecordsSearchConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			return GetRecordsSettingObjectAsync<RecordsSearchConfig>(departmentId, DepartmentSettingTypes.RecordsSearchConfig, bypassCache);
+		}
+
+		public Task<DepartmentSetting> SetRecordsSearchConfigAsync(int departmentId, RecordsSearchConfig config, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsSearchConfig, ObjectSerialization.Serialize(config ?? new RecordsSearchConfig()), cancellationToken);
+		}
+
+		public Task<RecordsRetentionPolicy> GetRecordsRetentionPolicyAsync(int departmentId, bool bypassCache = false)
+		{
+			return GetRecordsSettingObjectAsync<RecordsRetentionPolicy>(departmentId, DepartmentSettingTypes.RecordsRetentionPolicy, bypassCache);
+		}
+
+		public Task<DepartmentSetting> SetRecordsRetentionPolicyAsync(int departmentId, RecordsRetentionPolicy policy, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsRetentionPolicy, ObjectSerialization.Serialize(policy ?? new RecordsRetentionPolicy()), cancellationToken);
+		}
+
+		public async Task<RecordsGroupVisibilityMode> GetRecordsGroupVisibilityModeAsync(int departmentId, bool bypassCache = false)
+		{
+			var value = await GetRecordsSettingStringAsync(departmentId, DepartmentSettingTypes.RecordsGroupVisibilityMode, bypassCache);
+			return int.TryParse(value, out var mode) && mode == (int)RecordsGroupVisibilityMode.GroupScoped ? RecordsGroupVisibilityMode.GroupScoped : RecordsGroupVisibilityMode.DepartmentWide;
+		}
+
+		public Task<DepartmentSetting> SetRecordsGroupVisibilityModeAsync(int departmentId, RecordsGroupVisibilityMode mode, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsGroupVisibilityMode, ((int)mode).ToString(), cancellationToken);
+		}
+
+		public Task<RecordsDisclosureConfig> GetRecordsDisclosureConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			return GetRecordsSettingObjectAsync<RecordsDisclosureConfig>(departmentId, DepartmentSettingTypes.RecordsDisclosureConfig, bypassCache);
+		}
+
+		public Task<DepartmentSetting> SetRecordsDisclosureConfigAsync(int departmentId, RecordsDisclosureConfig config, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsDisclosureConfig, ObjectSerialization.Serialize(config ?? new RecordsDisclosureConfig()), cancellationToken);
+		}
+
+		#endregion Records (RMS) department settings
 	}
 }

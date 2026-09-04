@@ -3,6 +3,9 @@
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
 	var chatSystemEnabled = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, ClaimsAuthorizationHelper.GetDepartmentId());
+	// Records.System flag: Records takes the Logs sidebar position and the Logs link is absent. The
+	// existing LogsDisabled module setting still controls whether that position is visible at all.
+	var recordsEnabled = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsSystem, ClaimsAuthorizationHelper.GetDepartmentId());
 }
 <nav class="navbar-default navbar-static-side" role="navigation">
 	<div class="nav-header">
@@ -71,7 +74,13 @@
 					<a asp-controller="Shifts" asp-action="Index" asp-route-area="User"><i class="fa fa-briefcase"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["ShiftsModule"]</span></a>
 				</li>
 			}
-			@if (SettingsHelper.IsLogsEnabled())
+			@if (SettingsHelper.IsLogsEnabled() && recordsEnabled)
+			{
+				<li class="@Html.IsSelected(controller: "Records")">
+					<a asp-controller="Records" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.records">@commonLocalizer["RecordsModule"]</span></a>
+				</li>
+			}
+			else if (SettingsHelper.IsLogsEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Logs")">
 					<a asp-controller="Logs" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.logs">@commonLocalizer["LogsModule"]</span></a>

@@ -347,4 +347,10 @@
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>View Role</value>
   </data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>Record non finalizzati</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>Questo membro possiede ancora {0} record non finalizzati. Aprire ciascuno e riassegnarlo a un altro membro prima di eliminare, altrimenti resterà di proprietà di un membro eliminato.</value>
+  </data>
 </root>

@@ -614,5 +614,29 @@
   <data name="Detail" xml:space="preserve">
     <value>Λεπτομέρεια</value>
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>Το «Προστέθηκε ημερολόγιο» είναι έναυσμα συμβατότητας. Με ενεργές τις Αναφορές, ενεργοποιείται όταν οριστικοποιείται αναφορά επέμβασης, εκπαίδευσης, εργασίας, σύσκεψης, ιατροδικαστή ή επανάκλησης, μεταφέροντας τα παλιά πεδία ημερολογίου μαζί με την αφήγηση, και διατηρείται για δύο δευτερεύουσες εκδόσεις ή δώδεκα μήνες μετά την ενεργοποίηση. Χρησιμοποιήστε τα εναύσματα Αναφοράς για νέες ροές εργασίας.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>ID συμβάντος</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>ID συσχέτισης</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>ID αιτίας</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>Ακολουθία συμβάντος</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>Προέλευση</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>Παραλείφθηκε λόγω</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>Παραλειφθείσες</value>
+  </data>
 </root>
 

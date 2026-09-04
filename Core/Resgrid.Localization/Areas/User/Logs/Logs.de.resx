@@ -305,4 +305,5 @@
   <data name="WorkLogInformation" xml:space="preserve">
     <value>Work Log Information</value>
   </data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>Akten ist für diese Abteilung aktiv. Bestehende Protokolle sind schreibgeschützt: Sie können angezeigt, gedruckt und exportiert, aber nicht erstellt, bearbeitet oder gelöscht werden.</value></data>
 </root>

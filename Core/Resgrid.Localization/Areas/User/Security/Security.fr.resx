@@ -953,4 +953,43 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Rapports</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>Ces autorisations contrôlent le module Rapports, successeur des Journaux. Comme pour la plupart des autorisations Resgrid, une ligne non définie applique la valeur par défaut affichée, qui correspond au comportement actuel des Journaux. L'activation des Rapports pour votre service copie également vos réglages Créer un journal et Supprimer un journal sur les lignes correspondantes, sauf si vous les avez déjà définis ici.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Les Rapports ne sont pas encore actifs pour ce service. Vous pouvez préparer ces réglages dès maintenant ; ils s'appliqueront une fois les Rapports activés.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>Créer des rapports</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>Qui peut rédiger de nouveaux rapports et modifier ses propres brouillons. Correspond à Créer un journal jusqu'à ce que vous le changiez.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>Annuler des rapports</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>Qui peut abandonner un brouillon ou annuler un rapport finalisé. L'annulation conserve le rapport et son historique ; rien n'est supprimé. Correspond à Supprimer un journal jusqu'à ce que vous le changiez.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>Réviser des rapports</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>Qui peut réviser les rapports soumis pour révision et les renvoyer pour correction. Groupe uniquement limite les administrateurs de groupe aux rapports de leur propre groupe.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>Approuver des rapports</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>Qui peut approuver un rapport révisé avant sa finalisation, pour les types de rapport utilisant le cycle d'approbation.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>Finaliser des rapports</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>Qui peut finaliser un rapport, ce qui attribue son numéro et verrouille son contenu. Les types de rapport en saisie rapide sont finalisés à l'enregistrement ; cela correspond donc à Créer un journal jusqu'à ce que vous le changiez.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>Amender des rapports finalisés</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>Qui peut ouvrir un amendement sur un rapport finalisé. Un amendement crée une nouvelle révision ; la révision d'origine reste intacte.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>Transmettre des rapports en externe</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>Qui peut transmettre un rapport finalisé à une destination de déclaration externe, comme un système régional ou national.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>Imprimer et exporter des rapports</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>Qui peut imprimer un rapport ou exporter une liste de rapports.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>Partager des rapports</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>Qui peut partager un rapport avec d'autres groupes du service ou avec des personnes extérieures.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>Voir les sections restreintes</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>Qui peut lire les sections restreintes d'un rapport, comme les détails d'un rapport de médecin légiste. Les autres voient que la section existe, mais pas son contenu.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>Voir les anciens journaux</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>Qui peut lire l'historique des Journaux en lecture seule antérieur à l'activation des Rapports.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>Voir les rapports des autres groupes</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>Si le personnel peut voir les rapports appartenant à d'autres groupes. Cochez Groupe uniquement et réglez la visibilité par groupe dans les Paramètres des rapports pour limiter chacun aux rapports de son propre groupe. Laissez sans restriction pour conserver la vue à l'échelle du service qu'ont les Journaux aujourd'hui.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>Gérer les définitions de rapport</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>Qui peut créer et modifier les définitions de rapport, c'est-à-dire les formulaires à partir desquels les rapports sont construits.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>Publier les définitions de rapport</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>Qui peut publier une version de définition de rapport afin qu'elle soit utilisable pour de nouveaux rapports.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>Gérer les états de rapports</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>Qui peut créer et modifier les états de rapports enregistrés et leurs planifications.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>Gérer les divulgations de rapports</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>Qui peut préparer et remettre les dossiers de divulgation de documents publics.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>Gérer les conservations légales</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Qui peut poser et lever des conservations légales, qui suspendent la rétention et empêchent l'annulation d'un rapport.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Réattribuer les brouillons de rapport</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Qui peut transférer un brouillon de rapport à un autre auteur, par exemple lorsque l'auteur d'origine est indisponible.</value></data>
 </root>

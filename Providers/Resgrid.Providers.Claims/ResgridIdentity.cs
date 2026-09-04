@@ -1092,5 +1092,11 @@ namespace Resgrid.Providers.Claims
 		{
 			ClaimsLogic.AddWeatherAlertClaims(this, isAdmin);
 		}
+
+		/// <summary>Records (RMS) claims; delegates to <see cref="ClaimsLogic.AddRecordClaims"/> so the two never drift.</summary>
+		public void AddRecordClaims(bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			ClaimsLogic.AddRecordClaims(this, isAdmin, permissions, isGroupAdmin, roles);
+		}
 	}
 }

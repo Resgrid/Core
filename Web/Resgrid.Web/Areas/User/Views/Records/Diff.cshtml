@@ -1,0 +1,65 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordDiffView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["DiffHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["DiffHeader"]: #@Model.From.RevisionNumber &rarr; #@Model.To.RevisionNumber</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li><a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@Model.RecordId">@localizer["ViewRecordHeader"]</a></li>
+			<li class="active"><strong>@localizer["DiffHeader"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (ClaimsAuthorizationHelper.CanExportRecords())
+			{
+				<a class="btn btn-info" asp-controller="Records" asp-action="PrintDiff" asp-route-area="User" asp-route-id="@Model.RecordId" asp-route-from="@Model.From.RmsRevisionId" asp-route-to="@Model.To.RmsRevisionId"><i class="fa fa-file-pdf-o"></i> @localizer["PrintPdf"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-10">
+		<div class="wrapper wrapper-content">
+			<div class="ibox">
+				<div class="ibox-content">
+					@if (Model.Diffs.Count == 0)
+					{
+						<p class="text-muted">@localizer["NoChanges"]</p>
+					}
+					else
+					{
+						<table class="table table-bordered table-condensed">
+							<thead><tr><th>@localizer["Section"]</th><th>@localizer["Field"]</th><th>@localizer["Before"]</th><th>@localizer["After"]</th></tr></thead>
+							<tbody>
+								@foreach (var d in Model.Diffs)
+								{
+									<tr>
+										<td>@d.Section</td>
+										<td>@d.FieldKey</td>
+										@if (d.Withheld)
+										{
+											<td colspan="2" class="text-muted"><i class="fa fa-lock"></i> @localizer["Withheld"]</td>
+										}
+										else
+										{
+											<td class="text-danger" style="white-space:pre-wrap">@d.OldValue</td>
+											<td class="text-success" style="white-space:pre-wrap">@d.NewValue</td>
+										}
+									</tr>
+								}
+							</tbody>
+						</table>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

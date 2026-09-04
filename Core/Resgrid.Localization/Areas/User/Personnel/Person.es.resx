@@ -396,4 +396,10 @@
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>Ver rol</value>
   </data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>Registros sin finalizar</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>Este miembro aún posee {0} registro(s) sin finalizar. Abra cada uno y reasígnelo a otro miembro antes de eliminar; de lo contrario, quedará en manos de un miembro eliminado.</value>
+  </data>
 </root>

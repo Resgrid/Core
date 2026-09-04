@@ -347,4 +347,10 @@
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>View Role</value>
   </data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>Enregistrements non finalisés</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>Ce membre possède encore {0} enregistrement(s) non finalisé(s). Ouvrez chacun d'eux et réattribuez-le à un autre membre avant la suppression, sinon il restera la propriété d'un membre supprimé.</value>
+  </data>
 </root>

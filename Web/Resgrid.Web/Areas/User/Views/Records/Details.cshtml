@@ -1,0 +1,338 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["ViewRecordHeader"];
+	var record = Model.Aggregate.Record;
+	var details = Model.Aggregate.Details ?? new RmsOperationalRecordDetail();
+	var t = Model.RecordType;
+	var isCoroner = t == RmsOperationalRecordType.Coroner;
+	var isEditable = RmsLifecycle.IsEditable(Model.State) || record.AmendsRevisionId != null;
+	string Name(string userId) => string.IsNullOrEmpty(userId) ? "-" : (Model.PersonnelNames.TryGetValue(userId, out var n) ? n : userId);
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["ViewRecordHeader"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@(record.RecordNumber ?? record.DraftReference)</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanEdit && isEditable)
+			{
+				<a class="btn btn-primary" asp-controller="Records" asp-action="Edit" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@commonLocalizer["Edit"]</a>
+			}
+			@if (Model.CanAmend && RmsLifecycle.CanTransition((RmsLifecyclePreset)record.LifecyclePreset, Model.State, RmsRecordState.Amended) && record.AmendsRevisionId == null)
+			{
+				<form method="post" style="display:inline" asp-controller="Records" asp-action="Amend" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-warning">@localizer["Amend"]</button></form>
+			}
+			@if (record.AmendsRevisionId != null && Model.CanAmend)
+			{
+				<form method="post" style="display:inline" asp-controller="Records" asp-action="AbandonAmendment" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default">@localizer["AbandonAmendment"]</button></form>
+			}
+			@if (Model.CanExport)
+			{
+				<a class="btn btn-info" asp-controller="Records" asp-action="Export" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@localizer["Export"]</a>
+				<a class="btn btn-info" href="javascript:window.print()"><i class="fa fa-print"></i> @localizer["Print"]</a>
+				<a class="btn btn-info" asp-controller="Records" asp-action="Print" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId"><i class="fa fa-file-pdf-o"></i> @localizer["PrintPdf"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-8">
+		<div class="wrapper wrapper-content">
+			@if (!string.IsNullOrEmpty(Model.Message))
+			{
+				<div class="alert alert-success">@Model.Message</div>
+			}
+			@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+			{
+				<div class="alert alert-danger">@Model.ErrorMessage</div>
+			}
+			@if (record.AmendsRevisionId != null)
+			{
+				<div class="alert alert-info">@localizer["AmendmentOpen"]</div>
+			}
+
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-info-circle"></i> @t.ToString() <span class="label label-primary">@Model.State</span></h5></div>
+				<div class="ibox-content">
+					<div class="row">
+						<div class="col-md-6">
+							<dl class="dl-horizontal">
+								<dt>@localizer["RecordNumber"]</dt><dd>@(record.RecordNumber ?? "-")</dd>
+								<dt>@localizer["DraftReference"]</dt><dd>@record.DraftReference</dd>
+								<dt>@localizer["Author"]</dt><dd>@Name(record.AuthorUserId)</dd>
+								<dt>@localizer["Owner"]</dt><dd>@Name(record.OwnerUserId)</dd>
+								<dt>@localizer["Station"]</dt><dd>@(record.StationGroupId.HasValue && Model.GroupNames.TryGetValue(record.StationGroupId.Value, out var g) ? g : "-")</dd>
+							</dl>
+						</div>
+						<div class="col-md-6">
+							<dl class="dl-horizontal">
+								<dt>@localizer["Created"]</dt><dd>@When(record.CreatedOn)</dd>
+								<dt>@localizer["Start"]</dt><dd>@When(record.StartedOn)</dd>
+								<dt>@localizer["End"]</dt><dd>@When(record.EndedOn)</dd>
+								<dt>@localizer["Finalized"]</dt><dd>@When(record.FinalizedOn)</dd>
+								@if (!string.IsNullOrWhiteSpace(record.ExternalId))
+								{
+									<dt>@localizer["ExternalId"]</dt><dd>@record.ExternalId</dd>
+								}
+							</dl>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			@if (record.CallId.HasValue)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-phone"></i> @localizer["CallSnapshot"]</h5></div>
+					<div class="ibox-content">
+						<dl class="dl-horizontal">
+							<dt>@localizer["Call"]</dt><dd><a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@record.CallId">@details.CallNumber @details.CallName</a></dd>
+							<dt>@commonLocalizer["Type"]</dt><dd>@details.CallType</dd>
+							<dt>@localizer["Location"]</dt><dd>@details.CallAddress</dd>
+							<dt>@commonLocalizer["Nature"]</dt><dd>@details.CallNature</dd>
+						</dl>
+					</div>
+				</div>
+			}
+
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-file-text-o"></i> @localizer["Narrative"]</h5></div>
+				<div class="ibox-content">
+					<dl class="dl-horizontal">
+						@if (t == RmsOperationalRecordType.Training)
+						{
+							<dt>@localizer["Course"]</dt><dd>@details.Course @(string.IsNullOrWhiteSpace(details.CourseCode) ? string.Empty : "(" + details.CourseCode + ")")</dd>
+							<dt>@localizer["Instructors"]</dt><dd>@details.Instructors</dd>
+						}
+						@if (t == RmsOperationalRecordType.Meeting)
+						{
+							<dt>@localizer["MeetingType"]</dt><dd>@details.Type</dd>
+							<dt>@localizer["Facilitator"]</dt><dd>@details.Facilitator</dd>
+						}
+						@if (t == RmsOperationalRecordType.Run || t == RmsOperationalRecordType.Callback)
+						{
+							<dt>@localizer["InitialReport"]</dt><dd>@details.InitialReport</dd>
+							<dt>@localizer["Cause"]</dt><dd>@details.Cause</dd>
+							<dt>@localizer["Investigator"]</dt><dd>@Name(details.InvestigatedByUserId)</dd>
+							<dt>@localizer["OtherAgencies"]</dt><dd>@details.OtherAgencies</dd>
+							<dt>@localizer["OtherUnits"]</dt><dd>@details.OtherUnits</dd>
+						}
+						@if (t == RmsOperationalRecordType.UnitActivity)
+						{
+							<dt>@localizer["Unit"]</dt><dd>@(Model.Aggregate.Units.FirstOrDefault()?.UnitNameSnapshot ?? details.UnitId?.ToString())</dd>
+							<dt>@localizer["ActivityTime"]</dt><dd>@When(details.ActivityOn)</dd>
+						}
+						@if (!isCoroner)
+						{
+							<dt>@localizer["Location"]</dt><dd>@details.Location</dd>
+							<dt>@localizer["OtherPersonnel"]</dt><dd>@details.OtherPersonnel</dd>
+						}
+					</dl>
+					<p style="white-space:pre-wrap">@details.Narrative</p>
+				</div>
+			</div>
+
+			@if (isCoroner)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-lock"></i> @localizer["RestrictedSection"]</h5></div>
+					<div class="ibox-content">
+						@if (Model.CanViewRestricted)
+						{
+							<dl class="dl-horizontal">
+								<dt>@localizer["CaseNumber"]</dt><dd>@details.CaseNumber</dd>
+								<dt>@localizer["PronouncedDeceasedBy"]</dt><dd>@details.PronouncedDeceasedBy</dd>
+								<dt>@localizer["BodyLocation"]</dt><dd>@details.BodyLocation</dd>
+								<dt>@localizer["Destination"]</dt><dd>@details.Destination</dd>
+								<dt>@localizer["OtherPersonnel"]</dt><dd>@details.OtherPersonnel</dd>
+								<dt>@localizer["ContactName"]</dt><dd>@details.ContactName</dd>
+								<dt>@localizer["ContactNumber"]</dt><dd>@details.ContactNumber</dd>
+							</dl>
+						}
+						else
+						{
+							<p class="text-muted">@localizer["RestrictedNotice"]</p>
+						}
+					</div>
+				</div>
+			}
+
+			@if (Model.Aggregate.Participants.Count > 0)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-users"></i> @localizer["Participants"]</h5></div>
+					<div class="ibox-content">
+						<table class="table table-condensed">
+							<thead><tr><th>@commonLocalizer["Name"]</th><th>@localizer["Role"]</th><th>@localizer["Station"]</th></tr></thead>
+							<tbody>
+								@foreach (var p in Model.Aggregate.Participants)
+								{
+									<tr><td>@(p.DisplayNameSnapshot ?? Name(p.UserId))</td><td>@p.Role</td><td>@p.GroupNameSnapshot</td></tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			}
+
+			@if (Model.Aggregate.Units.Count > 0)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-truck"></i> @localizer["Units"]</h5></div>
+					<div class="ibox-content">
+						<table class="table table-condensed">
+							<thead><tr><th>@localizer["Unit"]</th><th>@localizer["Dispatched"]</th><th>@localizer["Enroute"]</th><th>@localizer["OnScene"]</th><th>@localizer["Released"]</th><th>@localizer["InQuarters"]</th></tr></thead>
+							<tbody>
+								@foreach (var u in Model.Aggregate.Units)
+								{
+									<tr><td>@u.UnitNameSnapshot</td><td>@When(u.Dispatched)</td><td>@When(u.Enroute)</td><td>@When(u.OnScene)</td><td>@When(u.Released)</td><td>@When(u.InQuarters)</td></tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			}
+
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-paperclip"></i> @localizer["Attachments"]</h5></div>
+				<div class="ibox-content">
+					@if (Model.Aggregate.Attachments.Count > 0)
+					{
+						<ul class="list-unstyled">
+							@foreach (var a in Model.Aggregate.Attachments)
+							{
+								<li><a asp-controller="Records" asp-action="Attachment" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId" asp-route-attachmentId="@a.RmsRecordAttachmentId">@a.FileName</a> <span class="text-muted small">(@a.ByteSize bytes, @Name(a.UploadedByUserId), @When(a.UploadedOn))</span></li>
+							}
+						</ul>
+					}
+					@if (Model.CanEdit && !RmsLifecycle.IsTerminal(Model.State))
+					{
+						<form method="post" enctype="multipart/form-data" asp-controller="Records" asp-action="AddAttachment" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">
+							@Html.AntiForgeryToken()
+							<input type="file" name="files" multiple />
+							<button type="submit" class="btn btn-xs btn-default m-t-xs">@localizer["AddAttachment"]</button>
+						</form>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-lg-4">
+		<div class="wrapper wrapper-content">
+			@if (Model.CanFinalize && (RmsLifecycle.CanTransition((RmsLifecyclePreset)record.LifecyclePreset, Model.State, RmsRecordState.Finalized) || record.AmendsRevisionId != null))
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["Finalize"]</h5></div>
+					<div class="ibox-content">
+						<form method="post" asp-controller="Records" asp-action="Finalize" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">
+							@Html.AntiForgeryToken()
+							<input type="hidden" name="rowVersion" value="@record.RowVersion" />
+							@if (record.AmendsRevisionId != null)
+							{
+								<div class="form-group"><label>@localizer["ReasonCode"]</label><input type="text" class="form-control" name="reasonCode" maxlength="50" required /></div>
+								<div class="form-group"><label>@localizer["ReasonText"]</label><input type="text" class="form-control" name="reasonText" /></div>
+							}
+							<div class="checkbox"><label><input type="checkbox" name="attested" value="true" required /> @localizer["Attestation"]</label></div>
+							<button type="submit" class="btn btn-success btn-block">@localizer["Finalize"]</button>
+						</form>
+					</div>
+				</div>
+			}
+
+			@if (Model.CanVoid && RmsLifecycle.CanTransition((RmsLifecyclePreset)record.LifecyclePreset, Model.State, RmsRecordState.Voided) && record.AmendsRevisionId == null)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["Void"]</h5></div>
+					<div class="ibox-content">
+						<form method="post" asp-controller="Records" asp-action="Void" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId" onsubmit="return confirm('@localizer["Void"]?');">
+							@Html.AntiForgeryToken()
+							<div class="form-group"><label>@localizer["ReasonCode"]</label><input type="text" class="form-control" name="reasonCode" maxlength="50" required /></div>
+							<div class="form-group"><label>@localizer["ReasonText"]</label><input type="text" class="form-control" name="reasonText" /></div>
+							<button type="submit" class="btn btn-danger btn-block">@localizer["Void"]</button>
+						</form>
+					</div>
+				</div>
+			}
+
+			@if (Model.CanReassign && !RmsLifecycle.IsTerminal(Model.State) && (!RmsLifecycle.IsFinalizedFamily(Model.State) || record.AmendsRevisionId != null))
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["ReassignHeader"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["ReassignNote"]</p>
+						<form method="post" asp-controller="Records" asp-action="Reassign" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">
+							@Html.AntiForgeryToken()
+							<div class="form-group">
+								<label>@localizer["ReassignTo"]</label>
+								<select class="form-control" name="newOwnerUserId" required>
+									<option value=""></option>
+									@foreach (var person in Model.PersonnelNames.Where(p => p.Key != record.OwnerUserId).OrderBy(p => p.Value))
+									{
+										<option value="@person.Key">@person.Value</option>
+									}
+								</select>
+							</div>
+							<div class="form-group"><label>@localizer["ReassignReason"]</label><input type="text" class="form-control" name="reason" maxlength="500" /></div>
+							<button type="submit" class="btn btn-warning btn-block">@localizer["Reassign"]</button>
+						</form>
+					</div>
+				</div>
+			}
+
+			@if (Model.CanVoid && RmsLifecycle.CanTransition((RmsLifecyclePreset)record.LifecyclePreset, Model.State, RmsRecordState.Cancelled))
+			{
+				<form method="post" asp-controller="Records" asp-action="CancelDraft" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId" onsubmit="return confirm('@localizer["Cancel"]?');">
+					@Html.AntiForgeryToken()
+					<button type="submit" class="btn btn-outline btn-danger btn-block m-b-md">@localizer["Cancel"]</button>
+				</form>
+			}
+
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-history"></i> @localizer["History"]</h5></div>
+				<div class="ibox-content">
+					@if (Model.Aggregate.Revisions.Count == 0)
+					{
+						<p class="text-muted">-</p>
+					}
+					else
+					{
+						<table class="table table-condensed">
+							<thead><tr><th>#</th><th>@localizer["Transition"]</th><th>@localizer["Actor"]</th><th>@commonLocalizer["Date"]</th><th></th></tr></thead>
+							<tbody>
+								@foreach (var rev in Model.Aggregate.Revisions)
+								{
+									<tr>
+										<td>@rev.RevisionNumber</td>
+										<td>@(((RmsRevisionTransition)rev.Transition).ToString())@(string.IsNullOrWhiteSpace(rev.ReasonCode) ? string.Empty : " (" + rev.ReasonCode + ")")</td>
+										<td>@Name(rev.ActorUserId)</td>
+										<td>@When(rev.CreatedOn)</td>
+										<td class="text-right">
+											<a class="btn btn-xs btn-default" asp-controller="Records" asp-action="Revision" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId" asp-route-revisionId="@rev.RmsRevisionId">@localizer["ViewRevision"]</a>
+											@if (rev.PriorRevisionId != null)
+											{
+												<a class="btn btn-xs btn-default" asp-controller="Records" asp-action="Diff" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId" asp-route-from="@rev.PriorRevisionId" asp-route-to="@rev.RmsRevisionId">@localizer["CompareWithPrevious"]</a>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

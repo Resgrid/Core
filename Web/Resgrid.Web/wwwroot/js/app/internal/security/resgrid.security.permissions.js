@@ -10,7 +10,9 @@ var resgrid;
             function antiForgeryToken() {
                 return $('input[name="__RequestVerificationToken"]').first().val();
             }
-            function initPermRoles(selector, permType) {
+            // lockValue (optional) returns the row's current LockToGroup so a role change does not
+            // silently reset the group lock; rows without a lock checkbox omit it.
+            function initPermRoles(selector, permType, lockValue) {
                 $(selector).select2({
                     placeholder: "Select roles...",
                     allowClear: true,
@@ -24,8 +26,10 @@ var resgrid;
                     }
                 });
                 $(selector).on('change', function () {
+                    var url = resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=' + permType + '&data=' + encodeURIComponent(($(selector).val() || []).join(','));
+                    if (typeof lockValue === 'function') { url += '&lockToGroup=' + lockValue(); }
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=' + permType + '&data=' + encodeURIComponent(($(selector).val() || []).join(',')),
+                        url: url,
                         type: 'POST',
                         headers: { 'RequestVerificationToken': antiForgeryToken() }
                     });
@@ -912,6 +916,58 @@ var resgrid;
                     });
                     toggleRoles();
                     initPermRoles(p.roles, p.type);
+                });
+                ////////////////////////////////////////////////////////
+
+                // Records (RMS) permissions (PermissionTypes 50-67). Rows are rendered from
+                // RecordPermissionCatalog, so the wiring reads each row's data attributes instead of a
+                // fixed list. Values 2 and 4 both take selected roles; rows with a lock checkbox send it
+                // on every write so a dropdown or role change never resets the group lock.
+                ////////////////////////////////////////////////////////
+                $('tr[data-record-perm]').each(function () {
+                    var row = $(this);
+                    var type = row.data('record-perm');
+                    var el = row.data('record-el');
+                    var sel = '#' + el;
+                    var lock = '#Lock_' + el;
+                    var roles = '#' + el + 'Roles';
+                    var span = '#' + el + 'NoRolesSpan';
+                    var div = '#' + el + 'RolesDiv';
+                    var lockValue = function () { return $(lock).length ? $(lock).is(':checked') : false; };
+                    var toggleRoles = function () {
+                        var v = $(sel).val();
+                        if (v === "2" || v === "4") {
+                            $(span).hide();
+                            $(div).show();
+                        } else {
+                            $(span).show();
+                            $(div).hide();
+                        }
+                    };
+                    var postAction = function () {
+                        return $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=' + type + '&perm=' + $(sel).val() + '&lockToGroup=' + lockValue(),
+                            type: 'POST',
+                            headers: { 'RequestVerificationToken': antiForgeryToken() }
+                        });
+                    };
+                    var postRoles = function () {
+                        return $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=' + type + '&data=' + encodeURIComponent(($(roles).val() || []).join(',')) + '&lockToGroup=' + lockValue(),
+                            type: 'POST',
+                            headers: { 'RequestVerificationToken': antiForgeryToken() }
+                        });
+                    };
+                    $(sel).change(function () {
+                        // SetPermission clears the stored roles; re-apply the ones still selected on screen.
+                        postAction().done(function () {
+                            if (($(roles).val() || []).length > 0) { postRoles(); }
+                        });
+                        toggleRoles();
+                    });
+                    $(lock).change(function () { postRoles(); });
+                    toggleRoles();
+                    initPermRoles(roles, type, lockValue);
                 });
                 ////////////////////////////////////////////////////////
 

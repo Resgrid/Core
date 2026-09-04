@@ -39,6 +39,32 @@ namespace Resgrid.Model
 
 		public DateTime QueuedOn { get; set; }
 
+		// Domain-event envelope (RMS plan section 5.6). EventId is the immutable idempotency key: one initial run
+		// per (WorkflowId, EventId), retries reuse the run. Null for the legacy in-process events.
+		[MaxLength(36)]
+		public string EventId { get; set; }
+
+		public int? EventSchemaVersion { get; set; }
+
+		[MaxLength(36)]
+		public string CorrelationId { get; set; }
+
+		[MaxLength(36)]
+		public string CausationId { get; set; }
+
+		/// <summary>Per-aggregate sequence from the outbox, so out-of-order execution is diagnosable.</summary>
+		public long? RecordSequence { get; set; }
+
+		/// <summary>Maps to RmsOriginClient for Records events.</summary>
+		public int? OriginClient { get; set; }
+
+		[MaxLength(36)]
+		public string AggregateId { get; set; }
+
+		/// <summary>Why the run was recorded as Skipped without executing (WorkflowRunSkipReasons); null for executed runs.</summary>
+		[MaxLength(100)]
+		public string SkipReason { get; set; }
+
 		public virtual ICollection<WorkflowRunLog> Logs { get; set; }
 
 		[NotMapped]

@@ -232,6 +232,23 @@ namespace Resgrid.Services
 
 			// Weather Alert Services
 			builder.RegisterType<WeatherAlertService>().As<IWeatherAlertService>().InstancePerLifetimeScope();
+
+			// Records (RMS) Services - RMS plan section 5.11.1
+			builder.RegisterType<Records.RecordsCutoverService>().As<IRecordsCutoverService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.DomainEventOutboxService>().As<IDomainEventOutboxService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsAuthorizationService>().As<IRecordsAuthorizationService>().InstancePerLifetimeScope();
+			// Value seam (plan 5.9.1): the only caller of the details repository; enrollment hooks in here.
+			builder.RegisterType<Records.RmsRecordValueService>().As<IRmsRecordValueService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsService>().As<IRecordsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RmsInventoryUsageAdapter>().As<IRmsInventoryUsageAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsAccountabilityService>().As<IRecordsAccountabilityService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsNotificationService>().As<IRecordsNotificationService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsSearchIndexMaintenanceService>().As<IRecordsSearchIndexMaintenanceService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsReportingService>().As<IRecordsReportingService>().InstancePerLifetimeScope();
+			// Default attachment scanner: no engine, rows stay Skipped. A real scanner provider replaces this registration.
+			builder.RegisterType<Records.NullRecordAttachmentScanner>().As<Resgrid.Model.Providers.IRecordAttachmentScanner>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentProfileMediaService>().As<IDepartmentProfileMediaService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsPrintLayoutService>().As<IRecordsPrintLayoutService>().InstancePerLifetimeScope();
 		}
 	}
 }

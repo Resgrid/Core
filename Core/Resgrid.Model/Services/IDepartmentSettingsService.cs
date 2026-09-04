@@ -391,5 +391,21 @@ namespace Resgrid.Model.Services
 		Task<bool> GetHardwareTrackingMobileFallbackEnabledAsync(int departmentId, bool bypassCache = false);
 
 		Task<int> GetHardwareTrackingLocationRetentionDaysAsync(int departmentId, bool bypassCache = false);
+
+		// -- Records (RMS) department settings 70-77 (RMS plan section 4.9) --------------------------------
+		Task<RmsLifecyclePreset> GetRecordsDefaultLifecyclePresetAsync(int departmentId, bool bypassCache = false);
+		Task<DepartmentSetting> SetRecordsDefaultLifecyclePresetAsync(int departmentId, RmsLifecyclePreset preset, CancellationToken cancellationToken = default(CancellationToken));
+		Task<int> GetRecordsReviewDueHoursAsync(int departmentId, bool bypassCache = false);
+		Task<DepartmentSetting> SetRecordsReviewDueHoursAsync(int departmentId, int hours, CancellationToken cancellationToken = default(CancellationToken));
+		Task<RecordsNumberingConfig> GetRecordsNumberingConfigAsync(int departmentId, bool bypassCache = false);
+		Task<DepartmentSetting> SetRecordsNumberingConfigAsync(int departmentId, RecordsNumberingConfig config, CancellationToken cancellationToken = default(CancellationToken));
+		Task<RecordsSearchConfig> GetRecordsSearchConfigAsync(int departmentId, bool bypassCache = false);
+		Task<DepartmentSetting> SetRecordsSearchConfigAsync(int departmentId, RecordsSearchConfig config, CancellationToken cancellationToken = default(CancellationToken));
+		Task<RecordsRetentionPolicy> GetRecordsRetentionPolicyAsync(int departmentId, bool bypassCache = false);
+		Task<DepartmentSetting> SetRecordsRetentionPolicyAsync(int departmentId, RecordsRetentionPolicy policy, CancellationToken cancellationToken = default(CancellationToken));
+		Task<RecordsGroupVisibilityMode> GetRecordsGroupVisibilityModeAsync(int departmentId, bool bypassCache = false);
+		Task<DepartmentSetting> SetRecordsGroupVisibilityModeAsync(int departmentId, RecordsGroupVisibilityMode mode, CancellationToken cancellationToken = default(CancellationToken));
+		Task<RecordsDisclosureConfig> GetRecordsDisclosureConfigAsync(int departmentId, bool bypassCache = false);
+		Task<DepartmentSetting> SetRecordsDisclosureConfigAsync(int departmentId, RecordsDisclosureConfig config, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

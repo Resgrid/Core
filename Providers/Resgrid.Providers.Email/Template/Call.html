@@ -390,13 +390,18 @@
     <tr>
       <td align="center">
         <table class="email-content" width="100%" cellpadding="0" cellspacing="0">
-          <tr>
+          {{#department_branding}}<tr>
+            <td class="email-masthead">
+              <a href="{{department_website}}" class="email-masthead_name"><img src="{{department_logo_url}}" alt="{{department_display_name}}" class="email-masthead_logo" width="94" style="width: 94px; max-width: 94px; height: auto; border: 0; display: block; margin: 0 auto 6px auto;" /><span>{{department_display_name}}</span></a>
+            </td>
+          </tr>
+          {{/department_branding}}{{#resgrid_branding}}<tr>
             <td class="email-masthead">
               <a href="https://resgrid.com" class="email-masthead_name">
                 Resgrid
               </a>
             </td>
-          </tr>
+          </tr>{{/resgrid_branding}}
           <!-- Email Body -->
           <tr>
             <td class="email-body" width="100%" cellpadding="0" cellspacing="0">
@@ -501,7 +506,8 @@
             <td>
               <table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0">
                 <tr>
-                  <td class="content-cell" align="center">
+                  <td class="content-cell" align="center">{{#department_branding}}
+                    <p class="sub align-center">Powered by Resgrid</p>{{/department_branding}}
                     <p class="sub align-center">&copy; Resgrid, LLC. All rights reserved.</p>
 					<p class="sub align-center">
 						Resgrid, LLC

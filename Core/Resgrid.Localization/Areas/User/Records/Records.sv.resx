@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="RecordsHeader" xml:space="preserve"><value>Journaler</value></data>
+  <data name="NewRecord" xml:space="preserve"><value>Ny journal</value></data>
+  <data name="ViewRecordHeader" xml:space="preserve"><value>Visa journal</value></data>
+  <data name="EditRecordHeader" xml:space="preserve"><value>Redigera journal</value></data>
+  <data name="RecordsForYear" xml:space="preserve"><value>Journaler för år</value></data>
+  <data name="AllYears" xml:space="preserve"><value>Alla år</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>Alla typer</value></data>
+  <data name="AllStates" xml:space="preserve"><value>Alla tillstånd</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrera</value></data>
+  <data name="NoRecords" xml:space="preserve"><value>Inga journaler matchar det aktuella filtret.</value></data>
+  <data name="RecordNumber" xml:space="preserve"><value>Journalnr</value></data>
+  <data name="DraftReference" xml:space="preserve"><value>Utkastreferens</value></data>
+  <data name="Type" xml:space="preserve"><value>Typ</value></data>
+  <data name="State" xml:space="preserve"><value>Tillstånd</value></data>
+  <data name="Summary" xml:space="preserve"><value>Sammanfattning</value></data>
+  <data name="Author" xml:space="preserve"><value>Författare</value></data>
+  <data name="Owner" xml:space="preserve"><value>Ägare</value></data>
+  <data name="Occurred" xml:space="preserve"><value>Inträffade</value></data>
+  <data name="Created" xml:space="preserve"><value>Skapad</value></data>
+  <data name="Finalized" xml:space="preserve"><value>Slutförd</value></data>
+  <data name="Actions" xml:space="preserve"><value>Åtgärder</value></data>
+  <data name="Definition" xml:space="preserve"><value>Definition</value></data>
+  <data name="Narrative" xml:space="preserve"><value>Berättelse</value></data>
+  <data name="NarrativeRequired" xml:space="preserve"><value>En berättelse krävs.</value></data>
+  <data name="InitialReport" xml:space="preserve"><value>Första rapport / tillstånd</value></data>
+  <data name="Cause" xml:space="preserve"><value>Orsak</value></data>
+  <data name="Investigator" xml:space="preserve"><value>Utredare</value></data>
+  <data name="Course" xml:space="preserve"><value>Kurs</value></data>
+  <data name="CourseCode" xml:space="preserve"><value>Kurskod</value></data>
+  <data name="Instructors" xml:space="preserve"><value>Instruktörer</value></data>
+  <data name="MeetingType" xml:space="preserve"><value>Mötestyp</value></data>
+  <data name="Facilitator" xml:space="preserve"><value>Mötesledare</value></data>
+  <data name="Location" xml:space="preserve"><value>Plats</value></data>
+  <data name="OtherPersonnel" xml:space="preserve"><value>Övrig personal / deltagare</value></data>
+  <data name="OtherAgencies" xml:space="preserve"><value>Andra organisationer</value></data>
+  <data name="OtherUnits" xml:space="preserve"><value>Andra enheter</value></data>
+  <data name="CaseNumber" xml:space="preserve"><value>Ärendenummer</value></data>
+  <data name="BodyLocation" xml:space="preserve"><value>Kroppens plats</value></data>
+  <data name="PronouncedDeceasedBy" xml:space="preserve"><value>Dödförklarad av</value></data>
+  <data name="Destination" xml:space="preserve"><value>Destination</value></data>
+  <data name="ContactName" xml:space="preserve"><value>Kontaktnamn</value></data>
+  <data name="ContactNumber" xml:space="preserve"><value>Kontaktnummer</value></data>
+  <data name="Unit" xml:space="preserve"><value>Enhet</value></data>
+  <data name="ActivityTime" xml:space="preserve"><value>Aktivitetstid</value></data>
+  <data name="Call" xml:space="preserve"><value>Larm</value></data>
+  <data name="NoCall" xml:space="preserve"><value>Inget larm</value></data>
+  <data name="CallSnapshot" xml:space="preserve"><value>Ögonblicksbild av larm</value></data>
+  <data name="Participants" xml:space="preserve"><value>Deltagare</value></data>
+  <data name="Units" xml:space="preserve"><value>Enheter</value></data>
+  <data name="Attachments" xml:space="preserve"><value>Bilagor</value></data>
+  <data name="AddAttachment" xml:space="preserve"><value>Lägg till bilaga</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>Utlarmad</value></data>
+  <data name="Enroute" xml:space="preserve"><value>På väg</value></data>
+  <data name="OnScene" xml:space="preserve"><value>På plats</value></data>
+  <data name="Released" xml:space="preserve"><value>Frigjord</value></data>
+  <data name="InQuarters" xml:space="preserve"><value>På station</value></data>
+  <data name="SaveDraft" xml:space="preserve"><value>Spara utkast</value></data>
+  <data name="SaveAndFinalize" xml:space="preserve"><value>Spara och slutför</value></data>
+  <data name="Finalize" xml:space="preserve"><value>Slutför</value></data>
+  <data name="Amend" xml:space="preserve"><value>Ändra</value></data>
+  <data name="AbandonAmendment" xml:space="preserve"><value>Överge ändringen</value></data>
+  <data name="Void" xml:space="preserve"><value>Ogiltigförklara</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Avbryt utkast</value></data>
+  <data name="ReasonCode" xml:space="preserve"><value>Orsakskod</value></data>
+  <data name="ReasonText" xml:space="preserve"><value>Orsak</value></data>
+  <data name="ReasonRequired" xml:space="preserve"><value>En orsak krävs.</value></data>
+  <data name="Attestation" xml:space="preserve"><value>Jag intygar att denna journal är korrekt och fullständig såvitt jag vet.</value></data>
+  <data name="History" xml:space="preserve"><value>Historik</value></data>
+  <data name="Revision" xml:space="preserve"><value>Revision</value></data>
+  <data name="Transition" xml:space="preserve"><value>Övergång</value></data>
+  <data name="Actor" xml:space="preserve"><value>Av</value></data>
+  <data name="Checksum" xml:space="preserve"><value>Kontrollsumma</value></data>
+  <data name="ViewRevision" xml:space="preserve"><value>Visa</value></data>
+  <data name="CompareWithPrevious" xml:space="preserve"><value>Jämför med föregående</value></data>
+  <data name="RevisionHeader" xml:space="preserve"><value>Revision som den var</value></data>
+  <data name="DiffHeader" xml:space="preserve"><value>Revisionsjämförelse</value></data>
+  <data name="NoChanges" xml:space="preserve"><value>Inga skillnader mellan dessa revisioner.</value></data>
+  <data name="Withheld" xml:space="preserve"><value>Begränsat fält ändrat (värden undanhållna)</value></data>
+  <data name="Section" xml:space="preserve"><value>Avsnitt</value></data>
+  <data name="Field" xml:space="preserve"><value>Fält</value></data>
+  <data name="Before" xml:space="preserve"><value>Före</value></data>
+  <data name="After" xml:space="preserve"><value>Efter</value></data>
+  <data name="Export" xml:space="preserve"><value>Exportera</value></data>
+  <data name="Print" xml:space="preserve"><value>Skriv ut</value></data>
+  <data name="RestrictedSection" xml:space="preserve"><value>Begränsat avsnitt</value></data>
+  <data name="RestrictedNotice" xml:space="preserve"><value>Du har inte behörighet att visa de begränsade avsnitten i denna journal.</value></data>
+  <data name="DuplicateWarning" xml:space="preserve"><value>En journal av denna typ finns redan för detta larm. Granska den innan du fortsätter, eller ange varför en andra journal behövs.</value></data>
+  <data name="DuplicateContinueReason" xml:space="preserve"><value>Orsak till andra journalen</value></data>
+  <data name="ActivateHeader" xml:space="preserve"><value>Aktivera journaler</value></data>
+  <data name="ActivateIntro" xml:space="preserve"><value>Journaler ersätter modulen Loggar för denna avdelning. Efter aktivering förblir befintliga loggar läsbara men kan inte längre skapas, redigeras eller raderas. Kan inte ångras när en journal har slutförts.</value></data>
+  <data name="LegacyLogs" xml:space="preserve"><value>Befintliga loggar</value></data>
+  <data name="LegacyUnitLogs" xml:space="preserve"><value>Befintliga enhetsloggar</value></data>
+  <data name="PermissionMapping" xml:space="preserve"><value>Behörighetsändringar vid aktivering</value></data>
+  <data name="PermissionSource" xml:space="preserve"><value>Befintlig behörighet</value></data>
+  <data name="PermissionTarget" xml:space="preserve"><value>Journalbehörighet</value></data>
+  <data name="EffectiveAccess" xml:space="preserve"><value>Effektiv åtkomst</value></data>
+  <data name="LockViewGroupRecordsToGroup" xml:space="preserve"><value>Begränsa journalers synlighet till användarens egen grupp</value></data>
+  <data name="ActivationReason" xml:space="preserve"><value>Orsak / anteckningar</value></data>
+  <data name="ActivationAcknowledge" xml:space="preserve"><value>Jag förstår att detta inte kan ångras när en journal slutförts och att lagringskonfigurationen är denna avdelnings ansvar.</value></data>
+  <data name="Activate" xml:space="preserve"><value>Aktivera</value></data>
+  <data name="ActivationBlocked" xml:space="preserve"><value>Aktivering blockerad</value></data>
+  <data name="NotActivatedNotice" xml:space="preserve"><value>Journaler är aktiverat för avdelningen men inte startat ännu. En administratör måste aktivera det innan journaler kan skapas.</value></data>
+  <data name="ActivatedOn" xml:space="preserve"><value>Journaler aktiverade</value></data>
+  <data name="SettingsHeader" xml:space="preserve"><value>Journalinställningar</value></data>
+  <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Standardlivscykel för avdelningsdefinitioner</value></data>
+  <data name="ReviewDueHours" xml:space="preserve"><value>Granskning inom (timmar)</value></data>
+  <data name="Numbering" xml:space="preserve"><value>Journalnumrering</value></data>
+  <data name="IncludeYear" xml:space="preserve"><value>Inkludera år i journalnummer</value></data>
+  <data name="SequenceWidth" xml:space="preserve"><value>Sekvenssiffror</value></data>
+  <data name="PerGroupSequence" xml:space="preserve"><value>Separat sekvens per station/grupp</value></data>
+  <data name="Retention" xml:space="preserve"><value>Lagring</value></data>
+  <data name="RetentionIntro" xml:space="preserve"><value>Standard: 7 år för vanliga journaler; permanent för rättsläkare och andra begränsade klasser. Lagringen är avdelningens ansvar. Ändringar gäller framåt och granskas.</value></data>
+  <data name="DepartmentDefaultYears" xml:space="preserve"><value>Avdelningsstandard (år, tomt = systemstandard)</value></data>
+  <data name="RetentionOverrides" xml:space="preserve"><value>Undantag per definition (0 = permanent)</value></data>
+  <data name="RestrictedOverrideConfirm" xml:space="preserve"><value>Begränsad klass. Att sätta en period aktiverar automatisk gallring. Bekräfta för att tillämpa.</value></data>
+  <data name="GroupVisibility" xml:space="preserve"><value>Synlighet mellan grupper</value></data>
+  <data name="GroupVisibilityDepartmentWide" xml:space="preserve"><value>Hela avdelningen (standard)</value></data>
+  <data name="GroupVisibilityGroupScoped" xml:space="preserve"><value>Gruppbaserad</value></data>
+  <data name="GroupVisibilityNote" xml:space="preserve"><value>Gruppbegränsning kräver även att behörigheten ”Se andra gruppers journaler” är låst till grupp. Författare, granskare, deltagare, besättningar och administratörer ser alltid en journal.</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Journalinställningar sparade.</value></data>
+  <data name="Save" xml:space="preserve"><value>Spara</value></data>
+  <data name="ConcurrencyError" xml:space="preserve"><value>Journalen ändrades av någon annan sedan du öppnade den. Ladda om och gör dina ändringar igen.</value></data>
+  <data name="AmendmentOpen" xml:space="preserve"><value>En ändring pågår. Den senast slutförda revisionen gäller tills ändringen slutförts.</value></data>
+  <data name="RecordSaved" xml:space="preserve"><value>Journal sparad.</value></data>
+  <data name="Start" xml:space="preserve"><value>Start</value></data>
+  <data name="End" xml:space="preserve"><value>Slut</value></data>
+  <data name="Station" xml:space="preserve"><value>Station / grupp</value></data>
+  <data name="ExternalId" xml:space="preserve"><value>Externt ID</value></data>
+  <data name="BackToRecords" xml:space="preserve"><value>Tillbaka till journaler</value></data>
+  <data name="Settings" xml:space="preserve"><value>Inställningar</value></data>
+  <data name="Role" xml:space="preserve"><value>Roll</value></data>
+  <data name="Provenance" xml:space="preserve"><value>Ursprung</value></data>
+  <data name="PrintPdf" xml:space="preserve"><value>Spara som PDF</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Exportera CSV</value></data>
+  <data name="ExportJson" xml:space="preserve"><value>Exportera JSON</value></data>
+  <data name="PrintedBy" xml:space="preserve"><value>Utskriven av</value></data>
+  <data name="PrintedOn" xml:space="preserve"><value>Utskriven den</value></data>
+  <data name="PrintLayout" xml:space="preserve"><value>Utskriftslayout</value></data>
+  <data name="ExportLimitNotice" xml:space="preserve"><value>Exporter innehåller högst {0} rader; begränsa filtret för att exportera fler.</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Sök rapporter</value></data>
+  <data name="SearchUnavailable" xml:space="preserve"><value>Sökningen är inte tillgänglig just nu; listan nedan är filtrerad utan söktexten.</value></data>
+  <data name="SearchTruncated" xml:space="preserve"><value>Endast de närmaste träffarna visas; begränsa sökningen för att se fler.</value></data>
+  <data name="NarrativeSearchOn" xml:space="preserve"><value>Berättelsetexten ingår i sökningen.</value></data>
+  <data name="NarrativeSearchOff" xml:space="preserve"><value>Berättelsetexten indexeras inte för den här avdelningen; sökningen omfattar rapportnummer, sammanfattningar och andra säkra fält.</value></data>
+  <data name="SearchIndexStatus" xml:space="preserve"><value>Sökindex</value></data>
+  <data name="SearchDisabled" xml:space="preserve"><value>Inaktiverat</value></data>
+  <data name="SearchOnline" xml:space="preserve"><value>Online</value></data>
+  <data name="SearchOffline" xml:space="preserve"><value>Offline</value></data>
+  <data name="SearchDocuments" xml:space="preserve"><value>Indexerade rapporter</value></data>
+  <data name="SearchIndexNote" xml:space="preserve"><value>Arbetaren bygger om sökindexet automatiskt när avdelningens skyddspolicy eller katalogversion ändras. Sökning i berättelsetext dras tillbaka när Avancerat dataskydd aktiveras.</value></data>
+  <data name="PrintLayoutHeader" xml:space="preserve"><value>Utskriftslayout</value></data>
+  <data name="PrintLayoutIntro" xml:space="preserve"><value>Hur brevhuvudet återges på rapportutskrifter. Identitet och logotyp kommer från avdelningsprofilen; rapportens innehåll skrivs alltid ut från den låsta revisionen.</value></data>
+  <data name="PrintShowLogo" xml:space="preserve"><value>Visa logotyp</value></data>
+  <data name="PrintUseShortName" xml:space="preserve"><value>Använd kortnamnet</value></data>
+  <data name="PrintShowAddress" xml:space="preserve"><value>Visa adress</value></data>
+  <data name="PrintShowPhone" xml:space="preserve"><value>Visa telefonnummer</value></data>
+  <data name="PrintShowWebsite" xml:space="preserve"><value>Visa webbplats</value></data>
+  <data name="PrintLetterheadLine1" xml:space="preserve"><value>Brevhuvudsrad 1</value></data>
+  <data name="PrintLetterheadLine2" xml:space="preserve"><value>Brevhuvudsrad 2</value></data>
+  <data name="PrintFooterText" xml:space="preserve"><value>Sidfotstext</value></data>
+  <data name="PrintWatermark" xml:space="preserve"><value>Vattenstämpel</value></data>
+  <data name="PrintPageSize" xml:space="preserve"><value>Sidstorlek</value></data>
+  <data name="PrintDateTimeFormat" xml:space="preserve"><value>Datum- och tidsformat</value></data>
+  <data name="PrintDateTimeFormatHelp" xml:space="preserve"><value>Valfri .NET-formatsträng, till exempel yyyy-MM-dd HH:mm; lämna tomt för avdelningens standard.</value></data>
+  <data name="PrintLayoutVersionLabel" xml:space="preserve"><value>Layoutversion</value></data>
+  <data name="ManageDepartmentProfile" xml:space="preserve"><value>Hantera avdelningsprofilen</value></data>
+  <data name="NoLogoNotice" xml:space="preserve"><value>Ingen logotyp har laddats upp ännu; utskrifter visar bara avdelningens namn.</value></data>
+  <data name="ExportSearchUnavailable" xml:space="preserve"><value>Sökningen är inte tillgänglig just nu, så sökträffarna kunde inte exporteras. Rensa sökningen för att exportera den filtrerade listan i stället.</value></data>
+  <data name="ReassignHeader" xml:space="preserve"><value>Omfördela utkast</value></data>
+  <data name="ReassignTo" xml:space="preserve"><value>Ny ägare</value></data>
+  <data name="ReassignReason" xml:space="preserve"><value>Orsak</value></data>
+  <data name="Reassign" xml:space="preserve"><value>Omfördela</value></data>
+  <data name="ReassignNote" xml:space="preserve"><value>Överför ägandet av den här ofärdiga posten till en annan medlem. Författare och skapandehistorik ändras inte, och överföringen granskas.</value></data>
+  <data name="GroupScopePreviewHeader" xml:space="preserve"><value>Förhandsvisning av påverkan</value></data>
+  <data name="GroupScopePreviewIntro" xml:space="preserve"><value>Vad gruppbegränsningen skulle dölja, innan du bekräftar. Medlemmar behåller alltid poster de skrivit, äger, granskar, deltar i eller svarar på med sin enhet; organisationens administratörer ser allt.</value></data>
+  <data name="GroupScopeTotalRecords" xml:space="preserve"><value>Poster i organisationen</value></data>
+  <data name="GroupScopeHiddenFromUngrouped" xml:space="preserve"><value>Poster dolda för medlemmar utan grupp</value></data>
+  <data name="GroupScopeUnanchored" xml:space="preserve"><value>Poster utan gruppankare (förblir synliga för hela organisationen)</value></data>
+  <data name="GroupScopeUsersWithoutGroup" xml:space="preserve"><value>Medlemmar utan grupp</value></data>
+  <data name="GroupScopeLegacyRows" xml:space="preserve"><value>Äldre loggrader utan grupp (förblir synliga för hela organisationen)</value></data>
+  <data name="GroupScopeGroup" xml:space="preserve"><value>Grupp</value></data>
+  <data name="GroupScopeMembers" xml:space="preserve"><value>Medlemmar</value></data>
+  <data name="GroupScopeRecords" xml:space="preserve"><value>Poster</value></data>
+  <data name="GroupScopeConfirm" xml:space="preserve"><value>Jag förstår vad gruppbegränsningen döljer och vill aktivera den.</value></data>
+  <data name="GroupScopeConfirmRequired" xml:space="preserve"><value>Gruppbegränsningen aktiverades inte: bekräfta förhandsvisningen av påverkan först. Övriga inställningar sparades.</value></data>
+  <data name="Accountability" xml:space="preserve"><value>Ansvar</value></data>
+  <data name="AccountabilityHeader" xml:space="preserve"><value>Ansvar för poster</value></data>
+  <data name="AccountabilityIntro" xml:space="preserve"><value>Vem som är skyldig en rapport: öppna poster, försenade granskningar och återsända poster per person, station eller enhet, med tid till färdigställande under perioden. Påminnelser går till ägaren, högst en gång per dag och post.</value></data>
+  <data name="PivotPerson" xml:space="preserve"><value>Per person</value></data>
+  <data name="PivotGroup" xml:space="preserve"><value>Per station/grupp</value></data>
+  <data name="PivotUnit" xml:space="preserve"><value>Per enhet</value></data>
+  <data name="WindowDays" xml:space="preserve"><value>Period (dagar)</value></data>
+  <data name="ColOpen" xml:space="preserve"><value>Öppna</value></data>
+  <data name="ColOverdueReviews" xml:space="preserve"><value>Försenade granskningar</value></data>
+  <data name="ColReturned" xml:space="preserve"><value>Återsända, ej rättade</value></data>
+  <data name="ColFinalizedInWindow" xml:space="preserve"><value>Färdigställda under perioden</value></data>
+  <data name="ColAverageHoursToFinalize" xml:space="preserve"><value>Genomsnittliga timmar till färdigställande</value></data>
+  <data name="ColOldestOpen" xml:space="preserve"><value>Äldsta öppna</value></data>
+  <data name="Remind" xml:space="preserve"><value>Påminn</value></data>
+  <data name="RemindAll" xml:space="preserve"><value>Påminn alla</value></data>
+  <data name="RemindersResult" xml:space="preserve"><value>{0} påminnelse(r) skickade, {1} hoppades över.</value></data>
+  <data name="ReminderSent" xml:space="preserve"><value>Påminnelse skickad.</value></data>
+  <data name="ReminderNotSent" xml:space="preserve"><value>Påminnelse inte skickad ({0}).</value></data>
+  <data name="Unassigned" xml:space="preserve"><value>Ej tilldelad</value></data>
+  <data name="ShowOpenRecords" xml:space="preserve"><value>Visa öppna poster</value></data>
+  <data name="Totals" xml:space="preserve"><value>Totalt</value></data>
+  <data name="OwnerFilter" xml:space="preserve"><value>Ägare</value></data>
+  <data name="GroupFilter" xml:space="preserve"><value>Grupp</value></data>
+</root>

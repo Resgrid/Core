@@ -347,4 +347,10 @@
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>View Role</value>
   </data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>Ofärdiga poster</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>Den här medlemmen äger fortfarande {0} ofärdiga poster. Öppna var och en och omfördela den till en annan medlem innan du tar bort, annars förblir den ägd av en borttagen medlem.</value>
+  </data>
 </root>

@@ -716,4 +716,8 @@
   <data name="AdpErrorGeneric" xml:space="preserve">
     <value>La requête a échoué. Réessayez.</value>
   </data>
+  <data name="RecordsModule" xml:space="preserve"><value>Dossiers</value></data>
+  <data name="DepartmentProfile" xml:space="preserve">
+    <value>Profil du service</value>
+  </data>
 </root>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Config;
 using Resgrid.Model;
@@ -125,12 +126,75 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener<CallAlarmEscalatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CallAlarmEscalated, e));
 			_eventAggregator.AddListener<DispatchShortfallEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.DispatchShortfallDetected, e));
 			_eventAggregator.AddListener<StationCoverageGapEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.StationCoverageGapDetected, e));
+
+			// Records (RMS) lifecycle triggers 100-107 arrive through the DomainEventOutbox dispatcher (post-commit in
+			// the producing process, or worker command 40's sweep), never straight from the Records transaction
+			// (plan section 5.6). The legacy LogAdded compatibility projection rides the same road with
+			// TriggerEventType = LogAdded and a LogAddedEvent-shaped payload, so existing LogAdded workflows keep
+			// their exact log.* contract without a legacy Logs row ever being written.
+			_eventAggregator.AddListener<DomainEventDispatchedEvent>(e => HandleDomainEvent(e));
 		}
 
-		private static async void HandleEvent(int departmentId, WorkflowTriggerEventType eventType, object eventObj)
+		private static void HandleDomainEvent(DomainEventDispatchedEvent dispatched)
+		{
+			if (dispatched == null || !dispatched.TriggerEventType.HasValue ||
+				!Enum.IsDefined(typeof(WorkflowTriggerEventType), dispatched.TriggerEventType.Value))
+				return;
+
+			// Replays (activation, legacy indexing, operator re-drives) must never flood workflows.
+			if (dispatched.IsReplay)
+				return;
+
+			var trigger = (WorkflowTriggerEventType)dispatched.TriggerEventType.Value;
+			var evt = RecordsWorkflowEvent.From(dispatched);
+
+			if (trigger == WorkflowTriggerEventType.LogAdded)
+			{
+				LogAddedEvent compatibility;
+				try
+				{
+					compatibility = evt.Payload?.ToObject<LogAddedEvent>();
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex, $"LogAdded compatibility payload for event {dispatched.EventId} could not be read.");
+					return;
+				}
+
+				if (compatibility?.Log == null)
+					return;
+
+				compatibility.DepartmentId = dispatched.DepartmentId;
+				HandleEvent(dispatched.DepartmentId, trigger, compatibility, dispatched);
+				return;
+			}
+
+			HandleEvent(dispatched.DepartmentId, trigger, evt, dispatched);
+		}
+
+		/// <summary>
+		/// Creates one Pending run per matching workflow and enqueues it. For Records events (an envelope is
+		/// present) the plan section 5.6 contract applies on top: the run carries the event envelope, one initial
+		/// run exists per (WorkflowId, EventId), and a rate- or daily-limited event is persisted as a Skipped run
+		/// with its reason rather than dropped. Legacy in-process events keep today's behaviour.
+		/// </summary>
+		private static async void HandleEvent(int departmentId, WorkflowTriggerEventType eventType, object eventObj, DomainEventDispatchedEvent envelope = null)
 		{
 			try
 			{
+				System.Collections.Generic.List<Workflow> workflows = null;
+				string payloadJson = null;
+
+				if (envelope != null)
+				{
+					// The skip rows below need the workflow list, so for Records events it is loaded before the limits.
+					workflows = (await _workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, (int)eventType))?.ToList();
+					if (workflows == null || workflows.Count == 0)
+						return;
+
+					payloadJson = await _protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
+				}
+
 				// ── Plan-aware rate limiting ─────────────────────────────────────────
 				var plan     = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
 				var isFreePlan = plan?.IsFree ?? false;
@@ -139,36 +203,49 @@ namespace Resgrid.Providers.Bus
 				{
 					// Free plan: aggressive per-minute limit with NO event-type exemptions
 					if (!IsWithinRateLimit(departmentId, WorkflowConfig.FreePlanRateLimitPerDepartmentPerMinute))
+					{
+						await RecordSkippedAsync(workflows, departmentId, eventType, envelope, payloadJson, WorkflowRunSkipReasons.RateLimit);
 						return;
+					}
 
 					// Free plan: daily run cap
 					if (!IsWithinDailyLimit(departmentId, WorkflowConfig.FreePlanDailyRunLimit))
+					{
+						await RecordSkippedAsync(workflows, departmentId, eventType, envelope, payloadJson, WorkflowRunSkipReasons.DailyLimit);
 						return;
+					}
 				}
 				else
 				{
 					// Paid plan: standard limit; call/update/close events are exempt
 					if (!_rateLimitExemptEventTypes.Contains(eventType) &&
 					    !IsWithinRateLimit(departmentId, WorkflowConfig.RateLimitPerDepartmentPerMinute))
+					{
+						await RecordSkippedAsync(workflows, departmentId, eventType, envelope, payloadJson, WorkflowRunSkipReasons.RateLimit);
 						return;
+					}
 				}
 				// ── End rate limiting ────────────────────────────────────────────────
 
-				var workflows = await _workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(
-					departmentId, (int)eventType);
+				if (workflows == null)
+					workflows = (await _workflowRepository.GetAllActiveByDepartmentAndEventTypeAsync(departmentId, (int)eventType))?.ToList();
 
-				if (workflows == null) return;
+				if (workflows == null || workflows.Count == 0) return;
 
 				// ADP safe projection (plan section 8): for protected departments the payload is
 				// redacted HERE, before it reaches WorkflowRun.InputPayload, the queue, retries,
 				// dead letters, history, or designer previews.
-				var payloadJson = await _protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
+				if (payloadJson == null)
+					payloadJson = await _protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
 				var department  = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 				var deptCode    = department?.Code ?? string.Empty;
 
 				foreach (var workflow in workflows)
 				{
-					var run = new WorkflowRun
+					if (await IsDuplicateAsync(workflow.WorkflowId, envelope))
+						continue;
+
+					var run = WorkflowRunEnvelope.Apply(new WorkflowRun
 					{
 						WorkflowRunId    = Guid.NewGuid().ToString(),
 						WorkflowId       = workflow.WorkflowId,
@@ -179,8 +256,18 @@ namespace Resgrid.Providers.Bus
 						StartedOn        = DateTime.UtcNow,
 						QueuedOn         = DateTime.UtcNow,
 						AttemptNumber    = 1
-					};
-					run = await _runRepository.InsertAsync(run, CancellationToken.None);
+					}, envelope);
+
+					try
+					{
+						run = await _runRepository.InsertAsync(run, CancellationToken.None);
+					}
+					catch (Exception ex) when (envelope != null && WorkflowRunEnvelope.IsDuplicateKeyViolation(ex))
+					{
+						// Two dispatchers (post-commit and the worker sweep) raced on the same event; the index is the backstop.
+						Framework.Logging.LogInfo($"Workflow {workflow.WorkflowId} already has a run for event {envelope.EventId}; duplicate dispatch ignored.");
+						continue;
+					}
 
 					var queueItem = new WorkflowQueueItem
 					{
@@ -204,6 +291,61 @@ namespace Resgrid.Providers.Bus
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
+			}
+		}
+
+		/// <summary>One initial run per (WorkflowId, EventId): a retry or a second dispatcher reuses the existing run.</summary>
+		private static async Task<bool> IsDuplicateAsync(string workflowId, DomainEventDispatchedEvent envelope)
+		{
+			if (envelope == null || string.IsNullOrWhiteSpace(envelope.EventId))
+				return false;
+
+			var existing = await _runRepository.GetByWorkflowAndEventAsync(workflowId, envelope.EventId);
+			if (existing == null)
+				return false;
+
+			Framework.Logging.LogInfo($"Workflow {workflowId} already has run {existing.WorkflowRunId} for event {envelope.EventId}; duplicate dispatch ignored.");
+			return true;
+		}
+
+		/// <summary>
+		/// A Records event that a plan or rate limit suppresses is persisted as a Skipped run per workflow, with the
+		/// reason, so it shows in run history and health instead of vanishing (plan section 5.6). Legacy events
+		/// (no envelope) are still dropped silently, as before.
+		/// </summary>
+		private static async Task RecordSkippedAsync(System.Collections.Generic.List<Workflow> workflows, int departmentId, WorkflowTriggerEventType eventType,
+			DomainEventDispatchedEvent envelope, string payloadJson, string reason)
+		{
+			if (envelope == null || workflows == null)
+				return;
+
+			var now = DateTime.UtcNow;
+			foreach (var workflow in workflows)
+			{
+				if (await IsDuplicateAsync(workflow.WorkflowId, envelope))
+					continue;
+
+				var run = WorkflowRunEnvelope.MarkSkipped(WorkflowRunEnvelope.Apply(new WorkflowRun
+				{
+					WorkflowRunId    = Guid.NewGuid().ToString(),
+					WorkflowId       = workflow.WorkflowId,
+					DepartmentId     = departmentId,
+					TriggerEventType = (int)eventType,
+					InputPayload     = payloadJson,
+					StartedOn        = now,
+					QueuedOn         = now,
+					AttemptNumber    = 1
+				}, envelope), reason, now);
+
+				try
+				{
+					await _runRepository.InsertAsync(run, CancellationToken.None);
+					Framework.Logging.LogError($"Records event {envelope.EventId} ({eventType}) was skipped for workflow {workflow.WorkflowId} in department {departmentId}: {reason}.");
+				}
+				catch (Exception ex) when (WorkflowRunEnvelope.IsDuplicateKeyViolation(ex))
+				{
+					// Already recorded by the other dispatcher.
+				}
 			}
 		}
 

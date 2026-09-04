@@ -271,7 +271,8 @@ namespace Resgrid.Tests.Services
 				new Mock<IDepartmentGroupsService>().Object,
 				new Mock<ILimitsService>().Object,
 				new Mock<IPersonnelRolesService>().Object,
-				ProtectedWriteStub());
+				ProtectedWriteStub(),
+				new Lazy<IRecordsCutoverService>(() => Mock.Of<IRecordsCutoverService>()));
 		}
 
 		/// <summary>

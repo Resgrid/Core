@@ -1050,4 +1050,97 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>عائدة</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>ملف القسم</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>هذه هي الهوية التي يطبعها Resgrid على السجلات ويعرضها في الرسائل ذات العلامة التجارية ويستخدمها أينما يقدّم القسم نفسه. اترك الحقل فارغًا للرجوع إلى إعدادات القسم.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>الهوية</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>الاسم المعروض</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>الاسم المختصر</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>الرمز</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>الموقع الإلكتروني</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>العنوان المطبوع على السجلات والرسائل هو عنوان القسم:</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>روابط التواصل الاجتماعي</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>الشعار</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG أو JPEG بحجم يصل إلى 2 ميغابايت وبعرض 200 بكسل على الأقل على الضلع الأطول (يُنصح بـ 512 بكسل أو أكثر). يُعاد ترميز الملف مع إزالة بياناته الوصفية، وتُنشأ منه نسخ رأس الطباعة ورأس البريد والصورة المصغّرة.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>رفع الشعار</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>إزالة الشعار</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>لم يُرفع أي شعار. تستخدم المطبوعات والرسائل اسم القسم فقط.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>رأس الطباعة</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>رأس البريد</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>صورة مصغّرة</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>استخدام رأس القسم في الرسائل التشغيلية</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>تعرض رسائل النداءات والرسائل وتسليم التقارير وسير العمل شعارك واسمك بدلًا من رأس Resgrid؛ وتُرسل إشعارات السجلات باسم «اسم الجهة via Resgrid». تبقى رسائل الحساب والفوترة دائمًا بعلامة Resgrid.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>الرابط العام للرأس</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>لا يمكن لبرامج البريد تسجيل الدخول، لذا يُقدَّم الرأس عبر هذا الرابط الذي لا يمكن تخمينه. تؤدي إعادة إنشائه إلى إبطال الصورة في كل رسالة أُرسلت من قبل.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>إعادة إنشاء الرابط</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>تم حفظ ملف القسم.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>تم رفع الشعار وإنشاء النسخ.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>تمت إزالة الشعار.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>اختر ملف PNG أو JPEG لرفعه.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>صدر رابط رأس جديد؛ لن تعرض الرسائل المرسلة سابقًا الشعار بعد الآن.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>تعذّر حفظ الملف؛ راجع الحقول المميّزة.</value>
+  </data>
 </root>

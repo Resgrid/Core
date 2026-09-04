@@ -611,5 +611,29 @@
   <data name="Detail" xml:space="preserve">
     <value />
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>Log Added is a compatibility trigger. Once Records is active it fires when a Run, Training, Work, Meeting, Coroner or Callback record is finalized, carrying the legacy log fields including the narrative, and it is retained for two minor releases or twelve months after activation. Use the Record triggers for new workflows.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>Event ID</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>Correlation ID</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>Causation ID</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>Event sequence</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>Origin</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>Skipped because</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
 </root>
 

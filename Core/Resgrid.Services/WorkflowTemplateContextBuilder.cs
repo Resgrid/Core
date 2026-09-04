@@ -27,6 +27,7 @@ namespace Resgrid.Services
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IUnitsService _unitsService;
 		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
+		private readonly IDepartmentProfileMediaService _departmentProfileMediaService;
 
 		public WorkflowTemplateContextBuilder(
 			IDepartmentsService departmentsService,
@@ -35,7 +36,8 @@ namespace Resgrid.Services
 			IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService,
 			IUnitsService unitsService,
-			IDepartmentMemberSensitiveDataService memberSensitiveDataService)
+			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
+			IDepartmentProfileMediaService departmentProfileMediaService)
 		{
 			_departmentsService = departmentsService;
 			_departmentSettingsService = departmentSettingsService;
@@ -44,6 +46,7 @@ namespace Resgrid.Services
 			_personnelRolesService = personnelRolesService;
 			_unitsService = unitsService;
 			_memberSensitiveDataService = memberSensitiveDataService;
+			_departmentProfileMediaService = departmentProfileMediaService;
 		}
 
 		public async Task<object> BuildContextAsync(
@@ -56,8 +59,9 @@ namespace Resgrid.Services
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 			var phoneNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(departmentId);
+			var branding = await _departmentProfileMediaService.GetEmailBrandingAsync(departmentId);
 
-			AddCommonDepartmentVariables(scriptObject, department, phoneNumber);
+			AddCommonDepartmentVariables(scriptObject, department, phoneNumber, branding);
 			AddCommonTimestampVariables(scriptObject, department?.TimeZone);
 
 			string triggeringUserId = null;
@@ -396,6 +400,21 @@ namespace Resgrid.Services
 					}
 					break;
 				}
+				case WorkflowTriggerEventType.RecordCreated:
+				case WorkflowTriggerEventType.RecordSubmittedForReview:
+				case WorkflowTriggerEventType.RecordReturnedForCorrection:
+				case WorkflowTriggerEventType.RecordFinalized:
+				case WorkflowTriggerEventType.RecordAmended:
+				case WorkflowTriggerEventType.RecordVoided:
+				case WorkflowTriggerEventType.RecordCancelled:
+				{
+					// Records (RMS): the payload is the outbox snapshot carried by RecordsWorkflowEvent; it is never
+					// rehydrated from current record state, so a retry sees exactly what the original run saw.
+					var evt = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
+					if (evt != null)
+						triggeringUserId = MapRecordsEventVariables(scriptObject, evt);
+					break;
+				}
 			}
 
 			await AddCommonUserVariablesAsync(scriptObject, departmentId, triggeringUserId);
@@ -410,7 +429,7 @@ namespace Resgrid.Services
 
 		// ── Common Variable Mappers ───────────────────────────────────────────────────
 
-		private static void AddCommonDepartmentVariables(ScriptObject obj, Department dept, string phoneNumber)
+		private static void AddCommonDepartmentVariables(ScriptObject obj, Department dept, string phoneNumber, DepartmentEmailBranding branding)
 		{
 			var d = new ScriptObject();
 			d["id"] = dept?.DepartmentId ?? 0;
@@ -421,6 +440,13 @@ namespace Resgrid.Services
 			d["use_24_hour_time"] = dept?.Use24HourTime ?? false;
 			d["created_on"] = dept?.CreatedOn;
 			d["phone_number"] = phoneNumber ?? string.Empty;
+
+			// Department Profile identity (RMS plan section 4.10.1) for workflow email bodies. The logo URL is
+			// gated by the same opt-in as the system emails, so a workflow author cannot leak a masthead the
+			// department never enabled; the name and website are plain identity and always available.
+			d["display_name"] = !string.IsNullOrWhiteSpace(branding?.DisplayName) ? branding.DisplayName : (dept?.Name ?? string.Empty);
+			d["logo_url"] = branding != null && branding.Enabled ? (branding.LogoUrl ?? string.Empty) : string.Empty;
+			d["website"] = branding?.Website ?? string.Empty;
 
 			var addr = new ScriptObject();
 			if (dept?.Address != null)
@@ -1129,6 +1155,81 @@ namespace Resgrid.Services
 				g["address"] = addr;
 			}
 			obj[key] = g;
+		}
+
+		// ── Records (RMS) ────────────────────────────────────────────────────────────────
+
+		/// <summary>Maps event.*, record.* and record_change.* from the dispatched snapshot; returns the author as the triggering user.</summary>
+		private static string MapRecordsEventVariables(ScriptObject obj, RecordsWorkflowEvent evt)
+		{
+			var e = new ScriptObject();
+			e["id"] = evt.EventId ?? string.Empty;
+			e["name"] = evt.EventName ?? string.Empty;
+			e["schema_version"] = evt.SchemaVersion;
+			e["occurred_on"] = evt.OccurredOn;
+			e["correlation_id"] = evt.CorrelationId ?? string.Empty;
+			e["causation_id"] = evt.CausationId ?? string.Empty;
+			e["sequence"] = evt.Sequence;
+			e["is_replay"] = evt.IsReplay;
+			e["origin_client"] = evt.OriginClient ?? RmsOriginClient.System.ToString();
+			obj["event"] = e;
+
+			var payload = evt.Payload ?? new JObject();
+			var recordToken = payload["record"] as JObject;
+			var record = ToScriptObject(recordToken);
+			var recordId = recordToken?["id"]?.Type == JTokenType.String ? (string)recordToken["id"] : null;
+			record["url"] = string.IsNullOrWhiteSpace(recordId)
+				? string.Empty
+				: $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Records/Details/{recordId}";
+			obj["record"] = record;
+
+			var change = ToScriptObject(payload["record_change"] as JObject);
+			if (payload["extra"] is JObject extra)
+			{
+				// Transition-specific facts (e.g. the cancelled record's number_disposition) surface on record_change.
+				foreach (var property in extra.Properties())
+					change[property.Name] = ToScriptValue(property.Value);
+			}
+			obj["record_change"] = change;
+
+			if (payload["review"] is JObject review)
+				obj["review"] = ToScriptObject(review);
+
+			return recordToken?["author_user_id"]?.Type == JTokenType.String ? (string)recordToken["author_user_id"] : null;
+		}
+
+		private static ScriptObject ToScriptObject(JObject source)
+		{
+			var result = new ScriptObject();
+			if (source == null)
+				return result;
+
+			foreach (var property in source.Properties())
+				result[property.Name] = ToScriptValue(property.Value);
+
+			return result;
+		}
+
+		private static object ToScriptValue(JToken token)
+		{
+			if (token == null)
+				return null;
+
+			switch (token.Type)
+			{
+				case JTokenType.Null:
+				case JTokenType.Undefined:
+					return null;
+				case JTokenType.Object:
+					return ToScriptObject((JObject)token);
+				case JTokenType.Array:
+					var array = new ScriptArray();
+					foreach (var item in (JArray)token)
+						array.Add(ToScriptValue(item));
+					return array;
+				default:
+					return ((JValue)token).Value;
+			}
 		}
 
 		private static T TryDeserialize<T>(string json) where T : class

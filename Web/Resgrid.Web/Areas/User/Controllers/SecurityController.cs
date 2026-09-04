@@ -42,6 +42,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
 		private readonly IDepartmentSsoService _ssoService;
 		private readonly IEncryptionService _encryptionService;
+		private readonly IRecordsCutoverService _recordsCutoverService;
 
 		public SecurityController(IDepartmentsService departmentsService, IAuditService auditService,
 			IPermissionsService permissionsService, IEventAggregator eventAggregator,
@@ -49,7 +50,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			UserManager<IdentityUser> userManager,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer,
 			IDepartmentSsoService ssoService,
-			IEncryptionService encryptionService)
+			IEncryptionService encryptionService,
+			IRecordsCutoverService recordsCutoverService)
 		{
 			_departmentsService = departmentsService;
 			_auditService = auditService;
@@ -61,6 +63,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_secLocalizer = secLocalizer;
 			_ssoService = ssoService;
 			_encryptionService = encryptionService;
+			_recordsCutoverService = recordsCutoverService;
 		}
 
 		public async Task<IActionResult> Index()
@@ -474,6 +477,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.BreakGlassProtectedData = AdpValue(PermissionTypes.BreakGlassProtectedData);
 			model.BreakGlassProtectedDataPermissions = AdpOptions(includeEveryone: false);
+
+			// ── Records (RMS) permissions, PermissionTypes 50–67 ──────────────────────────────
+			// Rows come from RecordPermissionCatalog so this screen, ClaimsLogic.AddRecordClaims and the
+			// activation-time row migration share one set of no-row defaults. A missing row preselects that
+			// default, which for the Logs-parity types equals today's CreateLog/DeleteLog fall-through.
+			model.RecordsPermissions = RecordsPermissionRows.Build(permissions);
+			var recordsState = await _recordsCutoverService.GetModuleStateAsync(DepartmentId);
+			model.RecordsFlagEnabled = recordsState != null && recordsState.FlagEnabled;
+			model.RecordsActivated = recordsState != null && recordsState.RecordsUsable;
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.IsManagingUser = department.ManagingUserId == UserId;

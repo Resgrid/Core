@@ -591,4 +591,28 @@
   <data name="Detail" xml:space="preserve">
     <value>Szczegóły</value>
   </data>
+  <data name="LogAddedCompatibilityWarning" xml:space="preserve">
+    <value>„Dodano wpis dziennika” to wyzwalacz zgodności. Po włączeniu Raportów uruchamia się przy finalizacji raportu z wyjazdu, szkolenia, pracy, spotkania, koronera lub oddzwonienia, przekazując dawne pola dziennika wraz z opisem, i jest utrzymywany przez dwa wydania pomocnicze lub dwanaście miesięcy od aktywacji. W nowych przepływach używaj wyzwalaczy Raport.</value>
+  </data>
+  <data name="EventId" xml:space="preserve">
+    <value>ID zdarzenia</value>
+  </data>
+  <data name="CorrelationId" xml:space="preserve">
+    <value>ID korelacji</value>
+  </data>
+  <data name="CausationId" xml:space="preserve">
+    <value>ID przyczyny</value>
+  </data>
+  <data name="EventSequence" xml:space="preserve">
+    <value>Sekwencja zdarzenia</value>
+  </data>
+  <data name="OriginClient" xml:space="preserve">
+    <value>Pochodzenie</value>
+  </data>
+  <data name="SkipReason" xml:space="preserve">
+    <value>Pominięto z powodu</value>
+  </data>
+  <data name="SkippedRuns" xml:space="preserve">
+    <value>Pominięte</value>
+  </data>
 </root>

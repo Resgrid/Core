@@ -953,4 +953,43 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Raporty</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>Te uprawnienia sterują modułem Raporty, następcą Dzienników. Jak w przypadku większości uprawnień Resgrid, nieustawiony wiersz przyjmuje pokazaną wartość domyślną, odpowiadającą obecnemu zachowaniu Dzienników. Aktywacja Raportów dla wydziału kopiuje też ustawienia Utwórz wpis dziennika i Usuń wpis dziennika do odpowiednich wierszy, chyba że zostały już tu ustawione.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Raporty nie są jeszcze aktywne dla tego wydziału. Możesz przygotować te ustawienia teraz; zaczną obowiązywać po aktywacji Raportów.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>Tworzenie raportów</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>Kto może tworzyć nowe raporty i edytować własne wersje robocze. Odpowiada ustawieniu Utwórz wpis dziennika, dopóki go nie zmienisz.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>Unieważnianie lub anulowanie raportów</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>Kto może anulować wersję roboczą lub unieważnić sfinalizowany raport. Unieważnienie zachowuje raport i jego historię; nic nie jest usuwane. Odpowiada ustawieniu Usuń wpis dziennika, dopóki go nie zmienisz.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>Przeglądanie raportów</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>Kto może sprawdzać raporty przekazane do przeglądu i zwracać je do poprawy. Tylko grupa ogranicza administratorów grup do raportów z ich własnej grupy.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>Zatwierdzanie raportów</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>Kto może zatwierdzić sprawdzony raport przed finalizacją, w typach raportów korzystających z cyklu zatwierdzania.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>Finalizowanie raportów</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>Kto może sfinalizować raport, co nadaje mu numer i blokuje treść. Typy szybkiego wpisu finalizują się przy zapisie, więc odpowiada to ustawieniu Utwórz wpis dziennika, dopóki go nie zmienisz.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>Poprawianie sfinalizowanych raportów</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>Kto może otworzyć poprawkę do sfinalizowanego raportu. Poprawka tworzy nową wersję; wersja pierwotna pozostaje nienaruszona.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>Przesyłanie raportów na zewnątrz</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>Kto może przesłać sfinalizowany raport do zewnętrznego systemu sprawozdawczego, np. wojewódzkiego lub krajowego.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>Drukowanie i eksport raportów</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>Kto może wydrukować raport lub wyeksportować listę raportów.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>Udostępnianie raportów</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>Kto może udostępnić raport innym grupom w wydziale lub osobom spoza niego.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>Wyświetlanie sekcji zastrzeżonych</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>Kto może czytać zastrzeżone sekcje raportu, np. szczegóły raportu koronera. Pozostali widzą, że sekcja istnieje, ale nie jej treść.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>Wyświetlanie dawnych dzienników</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>Kto może czytać historię Dzienników (tylko do odczytu) sprzed aktywacji Raportów.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>Wyświetlanie raportów innych grup</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>Czy personel może widzieć raporty należące do innych grup. Zaznacz Tylko grupa i ustaw widoczność grupową w Ustawieniach raportów, aby ograniczyć osoby do raportów własnej grupy. Pozostaw bez ograniczeń, aby zachować obecny widok całego wydziału znany z Dzienników.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>Zarządzanie definicjami raportów</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>Kto może tworzyć i edytować definicje raportów, czyli formularze, z których budowane są raporty.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>Publikowanie definicji raportów</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>Kto może opublikować wersję definicji raportu, aby można było jej używać w nowych raportach.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>Zarządzanie zestawieniami raportów</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>Kto może tworzyć i edytować zapisane zestawienia raportów oraz ich harmonogramy.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>Zarządzanie ujawnieniami raportów</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>Kto może przygotowywać i wydawać pakiety ujawnienia informacji publicznej.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>Zarządzanie blokadami prawnymi</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Kto może nakładać i zdejmować blokady prawne, które wstrzymują retencję i uniemożliwiają unieważnienie raportu.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Przypisywanie wersji roboczych innym autorom</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Kto może przekazać wersję roboczą raportu innemu autorowi, np. gdy pierwotny autor jest niedostępny.</value></data>
 </root>

@@ -57,7 +57,47 @@
 		RunCardActivated = 48,
 		CallAlarmEscalated = 49,
 		DispatchShortfallDetected = 50,
-		StationCoverageGapDetected = 51
+		StationCoverageGapDetected = 51,
+
+		// -- Records (RMS) block 100-115 -- Identifier Allocation Registry section 3.2. Values 52-99 are
+		// reserved by other pending plans and must not be taken here. Workflow definitions persist the
+		// integer, so these are append-only and never renumbered. 103 (RecordApproved) and 113-114 are
+		// RMS-1B, 108-111 RMS-2, 112 RMS-3; they are appended when their package lands.
+		// Emitted after commit through the DomainEventOutbox, never on a draft autosave.
+
+		/// <summary>A new non-legacy Record is first persisted (once, not per autosave).</summary>
+		RecordCreated = 100,
+
+		/// <summary>An author explicitly sent a Record to review.</summary>
+		RecordSubmittedForReview = 101,
+
+		/// <summary>A reviewer returned a Record with a reason code.</summary>
+		RecordReturnedForCorrection = 102,
+
+		/// <summary>A Record revision was finalized/attested. One-step Records emit Created then Finalized.</summary>
+		RecordFinalized = 104,
+
+		/// <summary>An amendment revision was finalized, referencing the prior revision.</summary>
+		RecordAmended = 105,
+
+		/// <summary>An authorized void completed with a reason code.</summary>
+		RecordVoided = 106,
+
+		/// <summary>A non-finalized Record was abandoned; carries the reserved-number disposition.</summary>
+		RecordCancelled = 107
+	}
+
+	public static class WorkflowTriggerEventTypes
+	{
+		/// <summary>The Records (RMS) trigger block, 100-115, assigned by the Identifier Allocation Registry section 3.2.</summary>
+		public const int RecordsBlockFirst = 100;
+		public const int RecordsBlockLast = 115;
+
+		public static bool IsRecordsTrigger(WorkflowTriggerEventType type)
+		{
+			var value = (int)type;
+			return value >= RecordsBlockFirst && value <= RecordsBlockLast;
+		}
 	}
 }
 

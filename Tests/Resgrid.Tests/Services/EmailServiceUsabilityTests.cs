@@ -53,7 +53,8 @@ namespace Resgrid.Tests.Services
 				departmentsService.Object,
 				new Mock<ICallEmailProvider>().Object,
 				new Mock<IEmailSender>().Object,
-				new Mock<IAmazonEmailSender>().Object);
+				new Mock<IAmazonEmailSender>().Object,
+				new Mock<IDepartmentProfileMediaService>().Object);
 
 			var timestamp = new DateTime(2026, 9, 2, 14, 12, 0, DateTimeKind.Utc);
 			var alert = new TroubleAlertEvent

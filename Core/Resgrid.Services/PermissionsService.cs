@@ -138,6 +138,11 @@ namespace Resgrid.Services
 					}
 				}
 			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles)
+			{
+				if (isUserDepartmentAdmin || isUserGroupAdmin || HasSelectedRole(permission.Data, roles))
+					return true;
+			}
 			else if (permission.Action == (int)PermissionActions.Everyone)
 			{
 				return true;
@@ -165,6 +170,10 @@ namespace Resgrid.Services
 			{
 				return true;
 			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles && isUserDepartmentAdmin)
+			{
+				return true;
+			}
 			else if (permission.Action == (int)PermissionActions.Everyone)
 			{
 				return true;
@@ -172,7 +181,12 @@ namespace Resgrid.Services
 
 			if (permission.LockToGroup)
 			{
-				if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isUserGroupAdmin)
+				if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles)
+				{
+					if (sourceGroupId == userGroupId && (isUserGroupAdmin || HasSelectedRole(permission.Data, roles)))
+						return true;
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isUserGroupAdmin)
 				{
 					if (sourceGroupId == userGroupId)
 					{
@@ -200,7 +214,12 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isUserGroupAdmin)
+				if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles)
+				{
+					if (isUserGroupAdmin || HasSelectedRole(permission.Data, roles))
+						return true;
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isUserGroupAdmin)
 				{
 					return true;
 				}
@@ -277,12 +296,37 @@ namespace Resgrid.Services
 					}
 				}
 			}
+			else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdminsAndSelectRoles)
+			{
+				if (isUserDepartmentAdmin || isUserGroupAdmin || HasSelectedRole(permission.Data, roles))
+				{
+					if (permission.LockToGroup && !isUserDepartmentAdmin)
+						return allUsers.Where(x => x.DepartmentGroupId == sourceGroupId).Select(x => x.UserId).ToList();
+
+					return allUsers.Select(x => x.UserId).ToList();
+				}
+			}
 			else if (permission.Action == (int)PermissionActions.Everyone)
 			{
 				return allUsers.Select(x => x.UserId).ToList();
 			}
 
 			return new List<string>();
+		}
+
+		/// <summary>Null-safe role-CSV membership check used by the DepartmentAndGroupAdminsAndSelectRoles (4) branches.</summary>
+		private static bool HasSelectedRole(string roleIdCsv, List<PersonnelRole> roles)
+		{
+			if (String.IsNullOrWhiteSpace(roleIdCsv) || roles == null || roles.Count == 0)
+				return false;
+
+			foreach (var part in roleIdCsv.Split(','))
+			{
+				if (int.TryParse(part.Trim(), out var roleId) && roles.Any(r => r.PersonnelRoleId == roleId))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

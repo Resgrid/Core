@@ -15,6 +15,9 @@ namespace Resgrid.Model
 		public int SuccessfulRuns24h { get; set; }
 		public int FailedRuns24h { get; set; }
 		public int RetryingRuns24h { get; set; }
+		public int SkippedRuns24h { get; set; }
+		public int SkippedRuns7d { get; set; }
+		public int SkippedRuns30d { get; set; }
 
 		// Last 7 days
 		public int TotalRuns7d { get; set; }

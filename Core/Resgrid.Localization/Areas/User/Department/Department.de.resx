@@ -1001,4 +1001,97 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>Rückfahrt</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>Abteilungsprofil</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>Dies ist die Identität, die Resgrid auf Berichte druckt, in gebrandeten E-Mails zeigt und überall verwendet, wo sich die Abteilung präsentiert. Lassen Sie ein Feld leer, um auf die Abteilungseinstellungen zurückzugreifen.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>Identität</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>Anzeigename</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>Kurzname</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>Kennung</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>Telefonnummer</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>Website</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>Die auf Berichten und E-Mails gedruckte Adresse ist die Abteilungsadresse:</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>Soziale Netzwerke</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG oder JPEG, bis 2 MB, mindestens 200 px an der langen Kante (512 px oder mehr empfohlen). Der Upload wird ohne Metadaten neu kodiert; daraus entstehen die Varianten für Druckkopf, E-Mail-Kopfzeile und Miniaturbild.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>Logo hochladen</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>Logo entfernen</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>Es wurde kein Logo hochgeladen. Ausdrucke und E-Mails verwenden nur den Abteilungsnamen.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>Druckkopf</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>E-Mail-Kopfzeile</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>Miniaturbild</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>Abteilungs-Kopfzeile in operativen E-Mails verwenden</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>E-Mails zu Einsätzen, Nachrichten, Berichtszustellung und Workflows zeigen Ihr Logo und Ihren Namen statt der Resgrid-Kopfzeile; Benachrichtigungen zu Berichten werden als „Abteilungsname via Resgrid“ gesendet. Konto- und Abrechnungs-E-Mails bleiben immer Resgrid-gebrandet.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>Öffentlicher Kopfzeilen-Link</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>E-Mail-Programme können sich nicht anmelden, daher wird die Kopfzeile über diesen nicht erratbaren Link ausgeliefert. Beim Neuerzeugen wird das Bild in allen bereits gesendeten E-Mails ungültig.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>Link neu erzeugen</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>Abteilungsprofil gespeichert.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>Logo hochgeladen und Varianten erzeugt.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>Logo entfernt.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>Wählen Sie eine PNG- oder JPEG-Datei zum Hochladen.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>Ein neuer Kopfzeilen-Link wurde ausgestellt; bereits gesendete E-Mails zeigen das Logo nicht mehr.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>Das Profil konnte nicht gespeichert werden; prüfen Sie die markierten Felder.</value>
+  </data>
 </root>

@@ -347,4 +347,10 @@
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>View Role</value>
   </data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>Unfertige Datensätze</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>Dieses Mitglied besitzt noch {0} unfertige Datensätze. Öffnen Sie jeden und weisen Sie ihn vor dem Löschen einem anderen Mitglied zu, sonst bleibt er im Besitz eines gelöschten Mitglieds.</value>
+  </data>
 </root>

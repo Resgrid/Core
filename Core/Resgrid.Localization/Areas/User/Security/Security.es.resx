@@ -357,6 +357,45 @@
   <data name="PermAdpEgressNote" xml:space="preserve"><value>Who can change how protected content leaves Resgrid over push, SMS, email and voice. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
   <data name="PermAdpBreakGlassLabel" xml:space="preserve"><value>Emergency Break-Glass Access</value></data>
   <data name="PermAdpBreakGlassNote" xml:space="preserve"><value>Who may use the audited emergency access path for protected data. It only works if break-glass is enabled in the department protection policy, requires a recorded reason, and notifies the department. Defaults to Department Admins; Everyone is deliberately not offered.</value></data>
+  <data name="PermRecordsSectionHeader" xml:space="preserve"><value>Registros</value></data>
+  <data name="PermRecordsSectionNote" xml:space="preserve"><value>Estos permisos controlan el módulo Registros, el sucesor de Bitácoras. Como en la mayoría de los permisos de Resgrid, una fila sin configurar usa el valor predeterminado mostrado, que coincide con el comportamiento actual de Bitácoras. Al activar Registros para su departamento también se copian sus ajustes de Crear bitácora y Eliminar bitácora en las filas correspondientes, salvo que ya los haya configurado aquí.</value></data>
+  <data name="PermRecordsNotActivatedNote" xml:space="preserve"><value>Registros aún no está activo para este departamento. Puede preparar estos ajustes ahora; se aplicarán cuando se active Registros.</value></data>
+  <data name="PermRecordsCreateRecordLabel" xml:space="preserve"><value>Crear registros</value></data>
+  <data name="PermRecordsCreateRecordNote" xml:space="preserve"><value>Quién puede redactar registros nuevos y editar sus propios borradores. Coincide con Crear bitácora hasta que lo cambie.</value></data>
+  <data name="PermRecordsDeleteRecordLabel" xml:space="preserve"><value>Anular o cancelar registros</value></data>
+  <data name="PermRecordsDeleteRecordNote" xml:space="preserve"><value>Quién puede cancelar un borrador o anular un registro finalizado. Al anular se conservan el registro y su historial; no se elimina nada. Coincide con Eliminar bitácora hasta que lo cambie.</value></data>
+  <data name="PermRecordsReviewRecordsLabel" xml:space="preserve"><value>Revisar registros</value></data>
+  <data name="PermRecordsReviewRecordsNote" xml:space="preserve"><value>Quién puede revisar los registros enviados a revisión y devolverlos para corrección. Solo grupo limita a los administradores de grupo a los registros de su propio grupo.</value></data>
+  <data name="PermRecordsApproveRecordsLabel" xml:space="preserve"><value>Aprobar registros</value></data>
+  <data name="PermRecordsApproveRecordsNote" xml:space="preserve"><value>Quién puede aprobar un registro revisado antes de finalizarlo, en los tipos de registro que usan el ciclo de aprobación.</value></data>
+  <data name="PermRecordsFinalizeRecordsLabel" xml:space="preserve"><value>Finalizar registros</value></data>
+  <data name="PermRecordsFinalizeRecordsNote" xml:space="preserve"><value>Quién puede finalizar un registro, lo que asigna su número y bloquea su contenido. Los tipos de entrada rápida se finalizan al guardar, por lo que coincide con Crear bitácora hasta que lo cambie.</value></data>
+  <data name="PermRecordsAmendRecordsLabel" xml:space="preserve"><value>Enmendar registros finalizados</value></data>
+  <data name="PermRecordsAmendRecordsNote" xml:space="preserve"><value>Quién puede abrir una enmienda sobre un registro finalizado. La enmienda crea una revisión nueva; la revisión original permanece intacta.</value></data>
+  <data name="PermRecordsSubmitRecordsLabel" xml:space="preserve"><value>Enviar registros externamente</value></data>
+  <data name="PermRecordsSubmitRecordsNote" xml:space="preserve"><value>Quién puede enviar un registro finalizado a un destino de reporte externo, como un sistema estatal o nacional.</value></data>
+  <data name="PermRecordsExportRecordsLabel" xml:space="preserve"><value>Imprimir y exportar registros</value></data>
+  <data name="PermRecordsExportRecordsNote" xml:space="preserve"><value>Quién puede imprimir un registro o exportar una lista de registros.</value></data>
+  <data name="PermRecordsShareRecordsExternallyLabel" xml:space="preserve"><value>Compartir registros</value></data>
+  <data name="PermRecordsShareRecordsExternallyNote" xml:space="preserve"><value>Quién puede compartir un registro con otros grupos del departamento o con personas externas.</value></data>
+  <data name="PermRecordsViewRestrictedRecordsLabel" xml:space="preserve"><value>Ver secciones restringidas</value></data>
+  <data name="PermRecordsViewRestrictedRecordsNote" xml:space="preserve"><value>Quién puede leer las secciones restringidas de un registro, como los detalles de un registro forense. Los demás ven que la sección existe, pero no su contenido.</value></data>
+  <data name="PermRecordsViewLegacyRecordsLabel" xml:space="preserve"><value>Ver bitácoras antiguas</value></data>
+  <data name="PermRecordsViewLegacyRecordsNote" xml:space="preserve"><value>Quién puede leer el historial de solo lectura de Bitácoras anterior a la activación de Registros.</value></data>
+  <data name="PermRecordsViewGroupRecordsLabel" xml:space="preserve"><value>Ver registros de otros grupos</value></data>
+  <data name="PermRecordsViewGroupRecordsNote" xml:space="preserve"><value>Si el personal puede ver registros de otros grupos. Marque Solo grupo y configure la visibilidad por grupo en Ajustes de registros para limitar a cada persona a los registros de su propio grupo. Déjelo sin restricción para mantener la vista de todo el departamento que hoy tienen las Bitácoras.</value></data>
+  <data name="PermRecordsManageRecordDefinitionsLabel" xml:space="preserve"><value>Administrar definiciones de registro</value></data>
+  <data name="PermRecordsManageRecordDefinitionsNote" xml:space="preserve"><value>Quién puede crear y editar definiciones de registro, los formularios con los que se construyen los registros.</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsLabel" xml:space="preserve"><value>Publicar definiciones de registro</value></data>
+  <data name="PermRecordsPublishRecordDefinitionsNote" xml:space="preserve"><value>Quién puede publicar una versión de una definición de registro para que pueda usarse en registros nuevos.</value></data>
+  <data name="PermRecordsManageRecordReportsLabel" xml:space="preserve"><value>Administrar informes de registros</value></data>
+  <data name="PermRecordsManageRecordReportsNote" xml:space="preserve"><value>Quién puede crear y editar informes de registros guardados y sus programaciones.</value></data>
+  <data name="PermRecordsManageRecordDisclosuresLabel" xml:space="preserve"><value>Administrar divulgaciones de registros</value></data>
+  <data name="PermRecordsManageRecordDisclosuresNote" xml:space="preserve"><value>Quién puede preparar y entregar paquetes de divulgación de registros públicos.</value></data>
+  <data name="PermRecordsManageRecordLegalHoldLabel" xml:space="preserve"><value>Administrar retenciones legales</value></data>
+  <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Quién puede aplicar y levantar retenciones legales, que suspenden la retención e impiden anular un registro.</value></data>
+  <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Reasignar borradores de registro</value></data>
+  <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Quién puede trasladar un borrador de registro a otro autor, por ejemplo cuando el autor original no está disponible.</value></data>
 </root>
 
 

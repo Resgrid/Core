@@ -9,6 +9,19 @@
 			public const string Create = "Create";
 			public const string Update = "Update";
 			public const string Delete = "Delete";
+
+			// Records (RMS) lifecycle actions (Identifier Allocation Registry section 4.2). Each is paired
+			// with a ResgridResources policy in BOTH Startup.cs files and both ClaimsAuthorizationHelper copies.
+			public const string Review = "Review";
+			public const string Approve = "Approve";
+			public const string Finalize = "Finalize";
+			public const string Submit = "Submit";
+			public const string Amend = "Amend";
+			public const string Void = "Void";
+			public const string Export = "Export";
+			public const string Publish = "Publish";
+			public const string Share = "Share";
+			public const string Reassign = "Reassign";
 		}
 
 		public static class Memberships
@@ -73,6 +86,15 @@
 			public const string Route = "Route";
 			public const string CommunicationTest = "CommunicationTest";
 			public const string WeatherAlert = "WeatherAlert";
+
+			// Records (RMS) resources (Identifier Allocation Registry section 4.2).
+			public const string Record = "Record";
+			public const string RecordLegacy = "RecordLegacy";
+			public const string RecordRestricted = "RecordRestricted";
+			public const string RecordDefinition = "RecordDefinition";
+			public const string RecordReport = "RecordReport";
+			public const string RecordDisclosure = "RecordDisclosure";
+			public const string RecordLegalHold = "RecordLegalHold";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

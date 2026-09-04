@@ -102,4 +102,10 @@
   <data name="DeleteAll" xml:space="preserve"><value>حذف الكل</value></data>
   <data name="YesImSure" xml:space="preserve"><value>نعم، أنا متأكد</value></data>
   <data name="ViewRoleHeader" xml:space="preserve"><value>عرض الدور</value></data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>سجلات غير مكتملة</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>لا يزال هذا العضو يملك {0} من السجلات غير المكتملة. افتح كل سجل وأعد إسناده إلى عضو آخر قبل الحذف، وإلا سيبقى مملوكًا لعضو محذوف.</value>
+  </data>
 </root>

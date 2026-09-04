@@ -1,0 +1,282 @@
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	var header = Model.IsNew ? localizer["NewRecord"].Value : localizer["EditRecordHeader"].Value;
+	ViewBag.Title = "Resgrid | " + header;
+	var t = Model.RecordType;
+	var isCallType = t == RmsOperationalRecordType.Run || t == RmsOperationalRecordType.Callback;
+	var isTraining = t == RmsOperationalRecordType.Training;
+	var isMeeting = t == RmsOperationalRecordType.Meeting;
+	var isCoroner = t == RmsOperationalRecordType.Coroner;
+	var isUnitActivity = t == RmsOperationalRecordType.UnitActivity;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@header</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@header</strong></li>
+		</ol>
+	</div>
+</div>
+
+<form class="form-horizontal" method="post" enctype="multipart/form-data" asp-controller="Records" asp-action="@(Model.IsNew ? "Create" : "Edit")" asp-route-area="User">
+	@Html.AntiForgeryToken()
+	@Html.HiddenFor(m => m.RecordId)
+	@Html.HiddenFor(m => m.RowVersion)
+	@Html.HiddenFor(m => m.DefinitionKey)
+	@Html.HiddenFor(m => m.IsAmendment)
+
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="wrapper wrapper-content">
+				<div class="ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>@t.ToString() @(string.IsNullOrWhiteSpace(Model.RecordNumber) ? Model.DraftReference : Model.RecordNumber)</h5>
+					</div>
+					<div class="ibox-content">
+						@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+						{
+							<div class="alert alert-danger">@Model.ErrorMessage</div>
+						}
+						@if (Model.IsAmendment)
+						{
+							<div class="alert alert-info">@localizer["AmendmentOpen"]</div>
+						}
+						@if (Model.DuplicateCandidates.Count > 0)
+						{
+							<div class="alert alert-warning">
+								@localizer["DuplicateWarning"]
+								<ul>
+									@foreach (var d in Model.DuplicateCandidates)
+									{
+										<li><a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@d.RmsOperationalRecordId">@(d.RecordNumber ?? d.DraftReference)</a> (@(((RmsRecordState)d.State).ToString()))</li>
+									}
+								</ul>
+								<label>@localizer["DuplicateContinueReason"]</label>
+								<input type="text" class="form-control" asp-for="DuplicateContinueReason" />
+							</div>
+						}
+						<div asp-validation-summary="All" class="text-danger"></div>
+
+						@if (Model.IsNew)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label required">@localizer["Definition"]</label>
+								<div class="col-sm-4">
+									<select class="form-control" asp-for="DefinitionKey" asp-items="Model.Definitions" onchange="window.location = '@Url.Action("New", "Records", new { area = "User" })?definitionKey=' + encodeURIComponent(this.value) + '&callId=@Model.CallId';"></select>
+								</div>
+							</div>
+						}
+						<div class="form-group">
+							<label class="col-sm-2 control-label">@localizer["Station"]</label>
+							<div class="col-sm-4"><select class="form-control" asp-for="StationGroupId" asp-items="Model.Stations"><option value="">-</option></select></div>
+							<label class="col-sm-2 control-label">@localizer["ExternalId"]</label>
+							<div class="col-sm-4"><input type="text" class="form-control" asp-for="ExternalId" maxlength="200" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">@localizer["Start"]</label>
+							<div class="col-sm-4"><input type="datetime-local" class="form-control" asp-for="StartedOn" asp-format="{0:yyyy-MM-ddTHH:mm}" /></div>
+							<label class="col-sm-2 control-label">@localizer["End"]</label>
+							<div class="col-sm-4"><input type="datetime-local" class="form-control" asp-for="EndedOn" asp-format="{0:yyyy-MM-ddTHH:mm}" /></div>
+						</div>
+
+						@if (isCallType)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["Call"]</label>
+								<div class="col-sm-6"><select class="form-control" asp-for="CallId" asp-items="Model.Calls"><option value="">@localizer["NoCall"]</option></select></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["InitialReport"]</label>
+								<div class="col-sm-10"><textarea class="form-control" rows="3" asp-for="Details.InitialReport"></textarea></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["Cause"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.Cause" /></div>
+								<label class="col-sm-2 control-label">@localizer["Investigator"]</label>
+								<div class="col-sm-4"><select class="form-control" asp-for="Details.InvestigatedByUserId" asp-items="Model.Personnel"><option value="">-</option></select></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["OtherAgencies"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.OtherAgencies" /></div>
+								<label class="col-sm-2 control-label">@localizer["OtherUnits"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.OtherUnits" /></div>
+							</div>
+						}
+
+						@if (isTraining)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["Course"]</label>
+								<div class="col-sm-6"><input type="text" class="form-control" asp-for="Details.Course" maxlength="400" /></div>
+								<label class="col-sm-1 control-label">@localizer["CourseCode"]</label>
+								<div class="col-sm-3"><input type="text" class="form-control" asp-for="Details.CourseCode" maxlength="100" /></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["Instructors"]</label>
+								<div class="col-sm-10"><input type="text" class="form-control" asp-for="Details.Instructors" /></div>
+							</div>
+						}
+
+						@if (isMeeting)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["MeetingType"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.Type" maxlength="200" /></div>
+								<label class="col-sm-2 control-label">@localizer["Facilitator"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.Facilitator" maxlength="400" /></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["Location"]</label>
+								<div class="col-sm-10"><input type="text" class="form-control" asp-for="Details.Location" /></div>
+							</div>
+						}
+
+						@if (isCoroner)
+						{
+							<div class="ibox-title" style="border-top:1px solid #e7eaec;"><h5><i class="fa fa-lock"></i> @localizer["RestrictedSection"]</h5></div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["CaseNumber"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.CaseNumber" /></div>
+								<label class="col-sm-2 control-label">@localizer["PronouncedDeceasedBy"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.PronouncedDeceasedBy" /></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["BodyLocation"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.BodyLocation" /></div>
+								<label class="col-sm-2 control-label">@localizer["Destination"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.Destination" /></div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["ContactName"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.ContactName" /></div>
+								<label class="col-sm-2 control-label">@localizer["ContactNumber"]</label>
+								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.ContactNumber" /></div>
+							</div>
+						}
+
+						@if (isUnitActivity)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label required">@localizer["Unit"]</label>
+								<div class="col-sm-4"><select class="form-control" asp-for="Details.UnitId" asp-items="Model.AvailableUnits"><option value="">-</option></select></div>
+								<label class="col-sm-2 control-label required">@localizer["ActivityTime"]</label>
+								<div class="col-sm-4"><input type="datetime-local" class="form-control" asp-for="Details.ActivityOn" asp-format="{0:yyyy-MM-ddTHH:mm}" /></div>
+							</div>
+						}
+
+						@if (!isCoroner)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["OtherPersonnel"]</label>
+								<div class="col-sm-10"><input type="text" class="form-control" asp-for="Details.OtherPersonnel" /></div>
+							</div>
+						}
+						@if (!isMeeting && !isCoroner)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@localizer["Location"]</label>
+								<div class="col-sm-10"><input type="text" class="form-control" asp-for="Details.Location" /></div>
+							</div>
+						}
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">@localizer["Narrative"]</label>
+							<div class="col-sm-10"><textarea class="form-control" rows="8" asp-for="Details.Narrative"></textarea></div>
+						</div>
+					</div>
+				</div>
+
+				@if (!isUnitActivity)
+				{
+					<div class="ibox float-e-margins">
+						<div class="ibox-title"><h5>@localizer["Participants"]</h5></div>
+						<div class="ibox-content">
+							<select class="form-control" multiple size="8" name="ParticipantUserIds" asp-items="Model.Personnel"></select>
+						</div>
+					</div>
+				}
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["Units"]</h5></div>
+					<div class="ibox-content">
+						<table class="table table-condensed">
+							<thead>
+								<tr>
+									<th></th>
+									<th>@localizer["Unit"]</th>
+									<th>@localizer["Dispatched"]</th>
+									<th>@localizer["Enroute"]</th>
+									<th>@localizer["OnScene"]</th>
+									<th>@localizer["Released"]</th>
+									<th>@localizer["InQuarters"]</th>
+								</tr>
+							</thead>
+							<tbody>
+								@for (var i = 0; i < Model.AvailableUnits.Count; i++)
+								{
+									var unitId = int.Parse(Model.AvailableUnits[i].Value);
+									var existing = Model.Units.FirstOrDefault(u => u.UnitId == unitId);
+									<tr>
+										<td>
+											<input type="hidden" name="Units.Index" value="@i" />
+											<input type="checkbox" name="Units[@i].UnitId" value="@unitId" @(existing != null ? "checked" : string.Empty) />
+										</td>
+										<td>@Model.AvailableUnits[i].Text</td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].Dispatched" value="@(existing?.Dispatched?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].Enroute" value="@(existing?.Enroute?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].OnScene" value="@(existing?.OnScene?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].Released" value="@(existing?.Released?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
+										<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].InQuarters" value="@(existing?.InQuarters?.ToString("yyyy-MM-ddTHH:mm"))" /></td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["Attachments"]</h5></div>
+					<div class="ibox-content">
+						<input type="file" name="files" multiple />
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						@if (Model.IsAmendment)
+						{
+							<div class="form-group">
+								<label class="col-sm-2 control-label required">@localizer["ReasonCode"]</label>
+								<div class="col-sm-3"><input type="text" class="form-control" asp-for="ReasonCode" maxlength="50" /></div>
+								<label class="col-sm-2 control-label">@localizer["ReasonText"]</label>
+								<div class="col-sm-5"><input type="text" class="form-control" asp-for="ReasonText" /></div>
+							</div>
+						}
+						@if (Model.CanFinalize)
+						{
+							<div class="form-group">
+								<div class="col-sm-12"><label><input type="checkbox" asp-for="Attested" /> @localizer["Attestation"]</label></div>
+							</div>
+						}
+						<div class="form-group">
+							<div class="col-sm-12">
+								<button type="submit" class="btn btn-primary" name="FinalizeAfterSave" value="false">@localizer["SaveDraft"]</button>
+								@if (Model.CanFinalize)
+								{
+									<button type="submit" class="btn btn-success" name="FinalizeAfterSave" value="true">@localizer["SaveAndFinalize"]</button>
+								}
+								<a class="btn btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

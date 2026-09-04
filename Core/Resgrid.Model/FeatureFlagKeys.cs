@@ -34,5 +34,25 @@ namespace Resgrid.Model
 		/// seeded off and permanent by M0126; ordinary department administrators cannot see or change it.
 		/// </summary>
 		public const string DepartmentProtectedDataEnrollment = "Security.DepartmentProtectedDataEnrollment";
+
+		/// <summary>
+		/// Gates the Records module (RMS), the feature-flagged successor to Logs. Flag off leaves the Logs
+		/// module unchanged; flag on shows Records in the Logs sidebar position (never both). Department
+		/// activation is a separate, append-only cutover fact on RmsDepartmentCutover; this flag alone never
+		/// blocks a legacy Log write. Seeded off by M0152. RMS plan section 4.1.
+		/// </summary>
+		public const string RecordsSystem = "Records.System";
+
+		/// <summary>Field Records surface in the Responder app. Depends on Records.System. Seeded off by M0152.</summary>
+		public const string RecordsFieldResponder = "Records.Field.Responder";
+
+		/// <summary>Field Records surface in the Unit app. Depends on Records.System. Seeded off by M0152.</summary>
+		public const string RecordsFieldUnit = "Records.Field.Unit";
+
+		/// <summary>Field Records surface in the IC app. Depends on Records.System. Seeded off by M0152.</summary>
+		public const string RecordsFieldIncidentCommand = "Records.Field.IncidentCommand";
+
+		/// <summary>Field Records surface in the Dispatch app. Depends on Records.System. Seeded off by M0152.</summary>
+		public const string RecordsFieldDispatch = "Records.Field.Dispatch";
 	}
 }

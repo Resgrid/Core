@@ -1,0 +1,219 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordsSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["SettingsHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["SettingsHeader"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@localizer["SettingsHeader"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<form class="form-horizontal" method="post" asp-controller="Records" asp-action="Settings" asp-route-area="User">
+	@Html.AntiForgeryToken()
+	<div class="row">
+		<div class="col-lg-9">
+			<div class="wrapper wrapper-content">
+				@if (!string.IsNullOrEmpty(Model.Message))
+				{
+					<div class="alert alert-success">@Model.Message</div>
+				}
+				@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+				{
+					<div class="alert alert-danger">@Model.ErrorMessage</div>
+				}
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["RecordsHeader"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ActivatedOn"]</label>
+							<div class="col-sm-9"><p class="form-control-static">@(Model.ModuleState.ActivatedOn.HasValue ? Model.ModuleState.ActivatedOn.Value.TimeConverterToString(Model.Department) : "-") @(Model.ModuleState.CutoverState.HasValue ? "(" + Model.ModuleState.CutoverState + ")" : string.Empty)</p></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["DefaultLifecyclePreset"]</label>
+							<div class="col-sm-4"><select class="form-control" asp-for="DefaultLifecyclePreset" asp-items="Model.Presets"></select></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ReviewDueHours"]</label>
+							<div class="col-sm-2"><input type="number" min="1" max="8760" class="form-control" asp-for="ReviewDueHours" /></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["Numbering"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9"><label><input type="checkbox" asp-for="IncludeYear" /> @localizer["IncludeYear"]</label></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["SequenceWidth"]</label>
+							<div class="col-sm-2"><input type="number" min="3" max="8" class="form-control" asp-for="SequenceWidth" /></div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9"><label><input type="checkbox" asp-for="PerGroupSequence" /> @localizer["PerGroupSequence"]</label></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["Retention"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["RetentionIntro"]</p>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["DepartmentDefaultYears"]</label>
+							<div class="col-sm-2"><input type="number" min="1" max="100" class="form-control" asp-for="DepartmentDefaultYears" /></div>
+						</div>
+						<h5>@localizer["RetentionOverrides"]</h5>
+						<table class="table table-condensed">
+							<tbody>
+								@for (var i = 0; i < Model.RetentionOverrides.Count; i++)
+								{
+									<tr>
+										<td style="width:40%">
+											@Html.HiddenFor(m => m.RetentionOverrides[i].DefinitionKey)
+											@Html.HiddenFor(m => m.RetentionOverrides[i].Restricted)
+											@Model.RetentionOverrides[i].Label
+											@if (Model.RetentionOverrides[i].Restricted)
+											{
+												<i class="fa fa-lock text-muted" title="@localizer["RestrictedSection"]"></i>
+											}
+										</td>
+										<td style="width:20%"><input type="number" min="0" max="100" class="form-control input-sm" asp-for="RetentionOverrides[i].RetentionYears" /></td>
+										<td>
+											@if (Model.RetentionOverrides[i].Restricted)
+											{
+												<label class="small"><input type="checkbox" asp-for="RetentionOverrides[i].ConfirmRestricted" /> @localizer["RestrictedOverrideConfirm"]</label>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["GroupVisibility"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["GroupVisibility"]</label>
+							<div class="col-sm-4"><select class="form-control" asp-for="GroupVisibilityMode" asp-items="Model.VisibilityModes"></select></div>
+						</div>
+						<p class="text-muted">@localizer["GroupVisibilityNote"]</p>
+						@if (Model.GroupScopePreview != null)
+						{
+							var preview = Model.GroupScopePreview;
+							<h4>@localizer["GroupScopePreviewHeader"]</h4>
+							<p class="text-muted">@localizer["GroupScopePreviewIntro"]</p>
+							<dl class="dl-horizontal">
+								<dt>@localizer["GroupScopeTotalRecords"]</dt><dd>@preview.TotalRecords</dd>
+								<dt>@localizer["GroupScopeHiddenFromUngrouped"]</dt><dd>@preview.RecordsHiddenFromUngroupedUsers</dd>
+								<dt>@localizer["GroupScopeUnanchored"]</dt><dd>@preview.RecordsWithoutGroupAnchor</dd>
+								<dt>@localizer["GroupScopeUsersWithoutGroup"]</dt><dd>@preview.UsersWithoutGroup / @preview.UsersInDepartment</dd>
+								<dt>@localizer["GroupScopeLegacyRows"]</dt><dd>@(preview.LegacyLogsWithoutGroup + preview.LegacyUnitLogs)</dd>
+							</dl>
+							@if (preview.Groups.Count > 0)
+							{
+								<table class="table table-condensed table-bordered">
+									<thead><tr><th>@localizer["GroupScopeGroup"]</th><th>@localizer["GroupScopeMembers"]</th><th>@localizer["GroupScopeRecords"]</th></tr></thead>
+									<tbody>
+										@foreach (var g in preview.Groups)
+										{
+											<tr><td>@g.GroupName</td><td>@g.MemberCount</td><td>@g.RecordCount</td></tr>
+										}
+									</tbody>
+								</table>
+							}
+							<div class="checkbox"><label><input asp-for="ConfirmGroupScoping" /> @localizer["GroupScopeConfirm"]</label></div>
+						}
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["PrintLayoutHeader"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["PrintLayoutIntro"] <a asp-controller="Department" asp-action="Profile" asp-route-area="User">@localizer["ManageDepartmentProfile"]</a></p>
+						@if (!Model.HasLogo)
+						{
+							<p class="text-warning">@localizer["NoLogoNotice"]</p>
+						}
+						<div class="form-group">
+							<div class="col-sm-9 col-sm-offset-3">
+								<div class="checkbox"><label><input asp-for="PrintLayout.ShowLogo" /> @localizer["PrintShowLogo"]</label></div>
+								<div class="checkbox"><label><input asp-for="PrintLayout.UseShortName" /> @localizer["PrintUseShortName"]</label></div>
+								<div class="checkbox"><label><input asp-for="PrintLayout.ShowAddress" /> @localizer["PrintShowAddress"]</label></div>
+								<div class="checkbox"><label><input asp-for="PrintLayout.ShowPhone" /> @localizer["PrintShowPhone"]</label></div>
+								<div class="checkbox"><label><input asp-for="PrintLayout.ShowWebsite" /> @localizer["PrintShowWebsite"]</label></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PrintLetterheadLine1"]</label>
+							<div class="col-sm-9"><input asp-for="PrintLayout.LetterheadLine1" class="form-control" maxlength="200" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PrintLetterheadLine2"]</label>
+							<div class="col-sm-9"><input asp-for="PrintLayout.LetterheadLine2" class="form-control" maxlength="200" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PrintFooterText"]</label>
+							<div class="col-sm-9"><textarea asp-for="PrintLayout.FooterText" class="form-control" rows="2" maxlength="500"></textarea></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PrintWatermark"]</label>
+							<div class="col-sm-4"><input asp-for="PrintLayout.WatermarkLabel" class="form-control" maxlength="40" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PrintPageSize"]</label>
+							<div class="col-sm-3">
+								<select asp-for="PrintLayout.PageSize" class="form-control">
+									@foreach (var size in RecordsPrintLayoutConfig.PageSizes)
+									{
+										<option value="@size" selected="@(size == Model.PrintLayout.PageSize)">@size</option>
+									}
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PrintDateTimeFormat"]</label>
+							<div class="col-sm-4"><input asp-for="PrintLayout.DateTimeFormat" class="form-control" maxlength="40" /></div>
+							<div class="col-sm-5"><span class="help-block">@localizer["PrintDateTimeFormatHelp"]</span></div>
+						</div>
+						<p class="text-muted">@localizer["PrintLayoutVersionLabel"]: @Model.PrintLayoutVersion</p>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["SearchIndexStatus"]</h5></div>
+					<div class="ibox-content">
+						<dl class="dl-horizontal">
+							<dt>@localizer["SearchIndexStatus"]</dt><dd>@(Model.SearchHealth == null || !Model.SearchHealth.Enabled ? localizer["SearchDisabled"] : Model.SearchHealth.Online ? localizer["SearchOnline"] : localizer["SearchOffline"])</dd>
+							@if (Model.SearchHealth != null && Model.SearchHealth.Online)
+							{
+								<dt>@localizer["SearchDocuments"]</dt><dd>@Model.SearchHealth.DocumentCount</dd>
+							}
+							<dt>@localizer["Narrative"]</dt><dd>@(Model.NarrativeSearchAvailable ? localizer["NarrativeSearchOn"] : localizer["NarrativeSearchOff"])</dd>
+						</dl>
+						<p class="text-muted">@localizer["SearchIndexNote"]</p>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						<button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+						<a class="btn btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

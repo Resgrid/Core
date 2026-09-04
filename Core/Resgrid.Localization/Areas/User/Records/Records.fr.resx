@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="RecordsHeader" xml:space="preserve"><value>Dossiers</value></data>
+  <data name="NewRecord" xml:space="preserve"><value>Nouveau dossier</value></data>
+  <data name="ViewRecordHeader" xml:space="preserve"><value>Voir le dossier</value></data>
+  <data name="EditRecordHeader" xml:space="preserve"><value>Modifier le dossier</value></data>
+  <data name="RecordsForYear" xml:space="preserve"><value>Dossiers de l'année</value></data>
+  <data name="AllYears" xml:space="preserve"><value>Toutes les années</value></data>
+  <data name="AllTypes" xml:space="preserve"><value>Tous les types</value></data>
+  <data name="AllStates" xml:space="preserve"><value>Tous les états</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrer</value></data>
+  <data name="NoRecords" xml:space="preserve"><value>Aucun dossier ne correspond au filtre actuel.</value></data>
+  <data name="RecordNumber" xml:space="preserve"><value>N° de dossier</value></data>
+  <data name="DraftReference" xml:space="preserve"><value>Référence du brouillon</value></data>
+  <data name="Type" xml:space="preserve"><value>Type</value></data>
+  <data name="State" xml:space="preserve"><value>État</value></data>
+  <data name="Summary" xml:space="preserve"><value>Résumé</value></data>
+  <data name="Author" xml:space="preserve"><value>Auteur</value></data>
+  <data name="Owner" xml:space="preserve"><value>Propriétaire</value></data>
+  <data name="Occurred" xml:space="preserve"><value>Survenu</value></data>
+  <data name="Created" xml:space="preserve"><value>Créé</value></data>
+  <data name="Finalized" xml:space="preserve"><value>Finalisé</value></data>
+  <data name="Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="Definition" xml:space="preserve"><value>Définition</value></data>
+  <data name="Narrative" xml:space="preserve"><value>Récit</value></data>
+  <data name="NarrativeRequired" xml:space="preserve"><value>Un récit est requis.</value></data>
+  <data name="InitialReport" xml:space="preserve"><value>Rapport initial / état</value></data>
+  <data name="Cause" xml:space="preserve"><value>Cause</value></data>
+  <data name="Investigator" xml:space="preserve"><value>Enquêteur</value></data>
+  <data name="Course" xml:space="preserve"><value>Cours</value></data>
+  <data name="CourseCode" xml:space="preserve"><value>Code du cours</value></data>
+  <data name="Instructors" xml:space="preserve"><value>Instructeurs</value></data>
+  <data name="MeetingType" xml:space="preserve"><value>Type de réunion</value></data>
+  <data name="Facilitator" xml:space="preserve"><value>Animateur</value></data>
+  <data name="Location" xml:space="preserve"><value>Lieu</value></data>
+  <data name="OtherPersonnel" xml:space="preserve"><value>Autre personnel / participants</value></data>
+  <data name="OtherAgencies" xml:space="preserve"><value>Autres organismes</value></data>
+  <data name="OtherUnits" xml:space="preserve"><value>Autres unités</value></data>
+  <data name="CaseNumber" xml:space="preserve"><value>Numéro de dossier</value></data>
+  <data name="BodyLocation" xml:space="preserve"><value>Emplacement du corps</value></data>
+  <data name="PronouncedDeceasedBy" xml:space="preserve"><value>Décès constaté par</value></data>
+  <data name="Destination" xml:space="preserve"><value>Destination</value></data>
+  <data name="ContactName" xml:space="preserve"><value>Nom du contact</value></data>
+  <data name="ContactNumber" xml:space="preserve"><value>Numéro du contact</value></data>
+  <data name="Unit" xml:space="preserve"><value>Unité</value></data>
+  <data name="ActivityTime" xml:space="preserve"><value>Heure de l'activité</value></data>
+  <data name="Call" xml:space="preserve"><value>Appel</value></data>
+  <data name="NoCall" xml:space="preserve"><value>Aucun appel</value></data>
+  <data name="CallSnapshot" xml:space="preserve"><value>Instantané de l'appel</value></data>
+  <data name="Participants" xml:space="preserve"><value>Participants</value></data>
+  <data name="Units" xml:space="preserve"><value>Unités</value></data>
+  <data name="Attachments" xml:space="preserve"><value>Pièces jointes</value></data>
+  <data name="AddAttachment" xml:space="preserve"><value>Ajouter une pièce jointe</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>Engagé</value></data>
+  <data name="Enroute" xml:space="preserve"><value>En route</value></data>
+  <data name="OnScene" xml:space="preserve"><value>Sur les lieux</value></data>
+  <data name="Released" xml:space="preserve"><value>Libéré</value></data>
+  <data name="InQuarters" xml:space="preserve"><value>À la caserne</value></data>
+  <data name="SaveDraft" xml:space="preserve"><value>Enregistrer le brouillon</value></data>
+  <data name="SaveAndFinalize" xml:space="preserve"><value>Enregistrer et finaliser</value></data>
+  <data name="Finalize" xml:space="preserve"><value>Finaliser</value></data>
+  <data name="Amend" xml:space="preserve"><value>Amender</value></data>
+  <data name="AbandonAmendment" xml:space="preserve"><value>Abandonner l'amendement</value></data>
+  <data name="Void" xml:space="preserve"><value>Annuler</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Annuler le brouillon</value></data>
+  <data name="ReasonCode" xml:space="preserve"><value>Code de motif</value></data>
+  <data name="ReasonText" xml:space="preserve"><value>Motif</value></data>
+  <data name="ReasonRequired" xml:space="preserve"><value>Un motif est requis.</value></data>
+  <data name="Attestation" xml:space="preserve"><value>J'atteste que ce dossier est exact et complet à ma connaissance.</value></data>
+  <data name="History" xml:space="preserve"><value>Historique</value></data>
+  <data name="Revision" xml:space="preserve"><value>Révision</value></data>
+  <data name="Transition" xml:space="preserve"><value>Transition</value></data>
+  <data name="Actor" xml:space="preserve"><value>Par</value></data>
+  <data name="Checksum" xml:space="preserve"><value>Somme de contrôle</value></data>
+  <data name="ViewRevision" xml:space="preserve"><value>Voir</value></data>
+  <data name="CompareWithPrevious" xml:space="preserve"><value>Comparer avec la précédente</value></data>
+  <data name="RevisionHeader" xml:space="preserve"><value>Révision telle qu'elle était</value></data>
+  <data name="DiffHeader" xml:space="preserve"><value>Comparaison des révisions</value></data>
+  <data name="NoChanges" xml:space="preserve"><value>Aucune différence entre ces révisions.</value></data>
+  <data name="Withheld" xml:space="preserve"><value>Champ restreint modifié (valeurs masquées)</value></data>
+  <data name="Section" xml:space="preserve"><value>Section</value></data>
+  <data name="Field" xml:space="preserve"><value>Champ</value></data>
+  <data name="Before" xml:space="preserve"><value>Avant</value></data>
+  <data name="After" xml:space="preserve"><value>Après</value></data>
+  <data name="Export" xml:space="preserve"><value>Exporter</value></data>
+  <data name="Print" xml:space="preserve"><value>Imprimer</value></data>
+  <data name="RestrictedSection" xml:space="preserve"><value>Section restreinte</value></data>
+  <data name="RestrictedNotice" xml:space="preserve"><value>Vous n'êtes pas autorisé à consulter les sections restreintes de ce dossier.</value></data>
+  <data name="DuplicateWarning" xml:space="preserve"><value>Un dossier de ce type existe déjà pour cet appel. Consultez-le avant de continuer, ou indiquez pourquoi un second dossier est nécessaire.</value></data>
+  <data name="DuplicateContinueReason" xml:space="preserve"><value>Motif du second dossier</value></data>
+  <data name="ActivateHeader" xml:space="preserve"><value>Activer les dossiers</value></data>
+  <data name="ActivateIntro" xml:space="preserve"><value>Les dossiers remplacent le module Journaux pour ce service. Après l'activation, les journaux existants restent consultables mais ne peuvent plus être créés, modifiés ni supprimés. Irréversible dès qu'un dossier est finalisé.</value></data>
+  <data name="LegacyLogs" xml:space="preserve"><value>Journaux existants</value></data>
+  <data name="LegacyUnitLogs" xml:space="preserve"><value>Journaux d'unité existants</value></data>
+  <data name="PermissionMapping" xml:space="preserve"><value>Modifications de permissions à l'activation</value></data>
+  <data name="PermissionSource" xml:space="preserve"><value>Permission existante</value></data>
+  <data name="PermissionTarget" xml:space="preserve"><value>Permission dossiers</value></data>
+  <data name="EffectiveAccess" xml:space="preserve"><value>Accès effectif</value></data>
+  <data name="LockViewGroupRecordsToGroup" xml:space="preserve"><value>Limiter la visibilité des dossiers au groupe de l'utilisateur</value></data>
+  <data name="ActivationReason" xml:space="preserve"><value>Motif / notes</value></data>
+  <data name="ActivationAcknowledge" xml:space="preserve"><value>Je comprends que ceci est irréversible dès qu'un dossier est finalisé et que la configuration de conservation relève de ce service.</value></data>
+  <data name="Activate" xml:space="preserve"><value>Activer</value></data>
+  <data name="ActivationBlocked" xml:space="preserve"><value>L'activation est bloquée</value></data>
+  <data name="NotActivatedNotice" xml:space="preserve"><value>Les dossiers sont disponibles pour ce service mais pas encore activés. Un administrateur doit les activer avant de créer des dossiers.</value></data>
+  <data name="ActivatedOn" xml:space="preserve"><value>Dossiers activés le</value></data>
+  <data name="SettingsHeader" xml:space="preserve"><value>Paramètres des dossiers</value></data>
+  <data name="DefaultLifecyclePreset" xml:space="preserve"><value>Cycle de vie par défaut des définitions du service</value></data>
+  <data name="ReviewDueHours" xml:space="preserve"><value>Délai de revue (heures)</value></data>
+  <data name="Numbering" xml:space="preserve"><value>Numérotation des dossiers</value></data>
+  <data name="IncludeYear" xml:space="preserve"><value>Inclure l'année dans les numéros</value></data>
+  <data name="SequenceWidth" xml:space="preserve"><value>Chiffres de la séquence</value></data>
+  <data name="PerGroupSequence" xml:space="preserve"><value>Séquence distincte par caserne/groupe</value></data>
+  <data name="Retention" xml:space="preserve"><value>Conservation</value></data>
+  <data name="RetentionIntro" xml:space="preserve"><value>Valeurs par défaut : 7 ans pour les dossiers standard ; permanent pour Coroner et les autres classes restreintes. La conservation relève de ce service. Les modifications s'appliquent pour l'avenir et sont auditées.</value></data>
+  <data name="DepartmentDefaultYears" xml:space="preserve"><value>Valeur par défaut du service (années, vide = système)</value></data>
+  <data name="RetentionOverrides" xml:space="preserve"><value>Exceptions par définition (0 = permanent)</value></data>
+  <data name="RestrictedOverrideConfirm" xml:space="preserve"><value>Classe restreinte. Définir une durée active la purge automatique de ces dossiers. Confirmez pour appliquer.</value></data>
+  <data name="GroupVisibility" xml:space="preserve"><value>Visibilité entre groupes</value></data>
+  <data name="GroupVisibilityDepartmentWide" xml:space="preserve"><value>Tout le service (par défaut)</value></data>
+  <data name="GroupVisibilityGroupScoped" xml:space="preserve"><value>Par groupe</value></data>
+  <data name="GroupVisibilityNote" xml:space="preserve"><value>La portée par groupe exige aussi que la permission « Voir les dossiers des autres groupes » soit verrouillée par groupe. Auteurs, réviseurs, participants, équipages et administrateurs voient toujours un dossier.</value></data>
+  <data name="SettingsSaved" xml:space="preserve"><value>Paramètres des dossiers enregistrés.</value></data>
+  <data name="Save" xml:space="preserve"><value>Enregistrer</value></data>
+  <data name="ConcurrencyError" xml:space="preserve"><value>Ce dossier a été modifié par quelqu'un d'autre depuis son ouverture. Rechargez et appliquez de nouveau vos modifications.</value></data>
+  <data name="AmendmentOpen" xml:space="preserve"><value>Un amendement est en cours. La dernière révision finalisée reste de référence jusqu'à sa finalisation.</value></data>
+  <data name="RecordSaved" xml:space="preserve"><value>Dossier enregistré.</value></data>
+  <data name="Start" xml:space="preserve"><value>Début</value></data>
+  <data name="End" xml:space="preserve"><value>Fin</value></data>
+  <data name="Station" xml:space="preserve"><value>Caserne / groupe</value></data>
+  <data name="ExternalId" xml:space="preserve"><value>ID externe</value></data>
+  <data name="BackToRecords" xml:space="preserve"><value>Retour aux dossiers</value></data>
+  <data name="Settings" xml:space="preserve"><value>Paramètres</value></data>
+  <data name="Role" xml:space="preserve"><value>Rôle</value></data>
+  <data name="Provenance" xml:space="preserve"><value>Provenance</value></data>
+  <data name="PrintPdf" xml:space="preserve"><value>Enregistrer en PDF</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Exporter en CSV</value></data>
+  <data name="ExportJson" xml:space="preserve"><value>Exporter en JSON</value></data>
+  <data name="PrintedBy" xml:space="preserve"><value>Imprimé par</value></data>
+  <data name="PrintedOn" xml:space="preserve"><value>Imprimé le</value></data>
+  <data name="PrintLayout" xml:space="preserve"><value>Mise en page</value></data>
+  <data name="ExportLimitNotice" xml:space="preserve"><value>Les exports contiennent au plus {0} lignes ; affinez le filtre pour en exporter davantage.</value></data>
+  <data name="SearchPlaceholder" xml:space="preserve"><value>Rechercher des rapports</value></data>
+  <data name="SearchUnavailable" xml:space="preserve"><value>La recherche est indisponible pour le moment ; la liste ci-dessous est filtrée sans le texte recherché.</value></data>
+  <data name="SearchTruncated" xml:space="preserve"><value>Seules les correspondances les plus proches sont affichées ; affinez la recherche pour en voir davantage.</value></data>
+  <data name="NarrativeSearchOn" xml:space="preserve"><value>Le texte du récit est inclus dans la recherche.</value></data>
+  <data name="NarrativeSearchOff" xml:space="preserve"><value>Le texte du récit n'est pas indexé pour ce service ; la recherche porte sur les numéros de rapport, les résumés et les autres champs sûrs.</value></data>
+  <data name="SearchIndexStatus" xml:space="preserve"><value>Index de recherche</value></data>
+  <data name="SearchDisabled" xml:space="preserve"><value>Désactivé</value></data>
+  <data name="SearchOnline" xml:space="preserve"><value>En ligne</value></data>
+  <data name="SearchOffline" xml:space="preserve"><value>Hors ligne</value></data>
+  <data name="SearchDocuments" xml:space="preserve"><value>Rapports indexés</value></data>
+  <data name="SearchIndexNote" xml:space="preserve"><value>Le worker reconstruit automatiquement l'index de recherche dès que la politique de protection ou la version du catalogue du service change. La recherche dans le récit est retirée lors de l'inscription à la Protection avancée des données.</value></data>
+  <data name="PrintLayoutHeader" xml:space="preserve"><value>Mise en page d'impression</value></data>
+  <data name="PrintLayoutIntro" xml:space="preserve"><value>Comment l'en-tête est rendu sur les impressions de rapports. L'identité et le logo proviennent du profil du service ; le contenu du rapport s'imprime toujours depuis la révision figée.</value></data>
+  <data name="PrintShowLogo" xml:space="preserve"><value>Afficher le logo</value></data>
+  <data name="PrintUseShortName" xml:space="preserve"><value>Utiliser le nom court</value></data>
+  <data name="PrintShowAddress" xml:space="preserve"><value>Afficher l'adresse</value></data>
+  <data name="PrintShowPhone" xml:space="preserve"><value>Afficher le numéro de téléphone</value></data>
+  <data name="PrintShowWebsite" xml:space="preserve"><value>Afficher le site web</value></data>
+  <data name="PrintLetterheadLine1" xml:space="preserve"><value>Ligne d'en-tête 1</value></data>
+  <data name="PrintLetterheadLine2" xml:space="preserve"><value>Ligne d'en-tête 2</value></data>
+  <data name="PrintFooterText" xml:space="preserve"><value>Texte de pied de page</value></data>
+  <data name="PrintWatermark" xml:space="preserve"><value>Filigrane</value></data>
+  <data name="PrintPageSize" xml:space="preserve"><value>Format de page</value></data>
+  <data name="PrintDateTimeFormat" xml:space="preserve"><value>Format de date et d'heure</value></data>
+  <data name="PrintDateTimeFormatHelp" xml:space="preserve"><value>Chaîne de format .NET facultative, par exemple yyyy-MM-dd HH:mm ; laissez vide pour la valeur par défaut du service.</value></data>
+  <data name="PrintLayoutVersionLabel" xml:space="preserve"><value>Version de la mise en page</value></data>
+  <data name="ManageDepartmentProfile" xml:space="preserve"><value>Gérer le profil du service</value></data>
+  <data name="NoLogoNotice" xml:space="preserve"><value>Aucun logo n'a encore été téléversé ; les impressions n'affichent que le nom du service.</value></data>
+  <data name="ExportSearchUnavailable" xml:space="preserve"><value>La recherche est indisponible pour le moment ; les résultats n'ont donc pas pu être exportés. Effacez la recherche pour exporter la liste filtrée.</value></data>
+  <data name="ReassignHeader" xml:space="preserve"><value>Réattribuer le brouillon</value></data>
+  <data name="ReassignTo" xml:space="preserve"><value>Nouveau propriétaire</value></data>
+  <data name="ReassignReason" xml:space="preserve"><value>Motif</value></data>
+  <data name="Reassign" xml:space="preserve"><value>Réattribuer</value></data>
+  <data name="ReassignNote" xml:space="preserve"><value>Transfère la propriété de cet enregistrement non finalisé à un autre membre. L'auteur et l'historique de création ne changent pas et le transfert est audité.</value></data>
+  <data name="GroupScopePreviewHeader" xml:space="preserve"><value>Aperçu de l'impact</value></data>
+  <data name="GroupScopePreviewIntro" xml:space="preserve"><value>Ce que la restriction par groupe masquerait, avant confirmation. Les membres conservent toujours les enregistrements qu'ils ont rédigés, possèdent, examinent, auxquels ils participent ou répondent avec leur unité ; les administrateurs du service voient tout.</value></data>
+  <data name="GroupScopeTotalRecords" xml:space="preserve"><value>Enregistrements du service</value></data>
+  <data name="GroupScopeHiddenFromUngrouped" xml:space="preserve"><value>Enregistrements masqués aux membres sans groupe</value></data>
+  <data name="GroupScopeUnanchored" xml:space="preserve"><value>Enregistrements sans ancre de groupe (restent visibles par tout le service)</value></data>
+  <data name="GroupScopeUsersWithoutGroup" xml:space="preserve"><value>Membres sans groupe</value></data>
+  <data name="GroupScopeLegacyRows" xml:space="preserve"><value>Lignes de journaux hérités sans groupe (restent visibles par tout le service)</value></data>
+  <data name="GroupScopeGroup" xml:space="preserve"><value>Groupe</value></data>
+  <data name="GroupScopeMembers" xml:space="preserve"><value>Membres</value></data>
+  <data name="GroupScopeRecords" xml:space="preserve"><value>Enregistrements</value></data>
+  <data name="GroupScopeConfirm" xml:space="preserve"><value>Je comprends ce que masque la restriction par groupe et je souhaite l'activer.</value></data>
+  <data name="GroupScopeConfirmRequired" xml:space="preserve"><value>La restriction par groupe n'a pas été activée : confirmez d'abord l'aperçu de l'impact. Les autres paramètres ont été enregistrés.</value></data>
+  <data name="Accountability" xml:space="preserve"><value>Responsabilité</value></data>
+  <data name="AccountabilityHeader" xml:space="preserve"><value>Responsabilité des enregistrements</value></data>
+  <data name="AccountabilityIntro" xml:space="preserve"><value>Qui doit un rapport : enregistrements ouverts, examens en retard et enregistrements renvoyés par personne, caserne ou unité, avec le délai de finalisation sur la période. Les rappels vont au propriétaire, au plus une fois par jour et par enregistrement.</value></data>
+  <data name="PivotPerson" xml:space="preserve"><value>Par personne</value></data>
+  <data name="PivotGroup" xml:space="preserve"><value>Par caserne/groupe</value></data>
+  <data name="PivotUnit" xml:space="preserve"><value>Par unité</value></data>
+  <data name="WindowDays" xml:space="preserve"><value>Période (jours)</value></data>
+  <data name="ColOpen" xml:space="preserve"><value>Ouverts</value></data>
+  <data name="ColOverdueReviews" xml:space="preserve"><value>Examens en retard</value></data>
+  <data name="ColReturned" xml:space="preserve"><value>Renvoyés, non corrigés</value></data>
+  <data name="ColFinalizedInWindow" xml:space="preserve"><value>Finalisés sur la période</value></data>
+  <data name="ColAverageHoursToFinalize" xml:space="preserve"><value>Heures moyennes avant finalisation</value></data>
+  <data name="ColOldestOpen" xml:space="preserve"><value>Plus ancien ouvert</value></data>
+  <data name="Remind" xml:space="preserve"><value>Rappeler</value></data>
+  <data name="RemindAll" xml:space="preserve"><value>Rappeler à tous</value></data>
+  <data name="RemindersResult" xml:space="preserve"><value>{0} rappel(s) envoyé(s), {1} ignoré(s).</value></data>
+  <data name="ReminderSent" xml:space="preserve"><value>Rappel envoyé.</value></data>
+  <data name="ReminderNotSent" xml:space="preserve"><value>Rappel non envoyé ({0}).</value></data>
+  <data name="Unassigned" xml:space="preserve"><value>Non attribué</value></data>
+  <data name="ShowOpenRecords" xml:space="preserve"><value>Afficher les enregistrements ouverts</value></data>
+  <data name="Totals" xml:space="preserve"><value>Totaux</value></data>
+  <data name="OwnerFilter" xml:space="preserve"><value>Propriétaire</value></data>
+  <data name="GroupFilter" xml:space="preserve"><value>Groupe</value></data>
+</root>

@@ -24,6 +24,15 @@ namespace Resgrid.Workers.Framework.Logic
 				return true;
 			}
 
+			if (ni?.Type == (int)EventTypes.RecordReturnedForCorrection)
+			{
+				// Records notification 31 is author-targeted (RMS plan section 4.7); it bypasses the department
+				// notification settings pipeline below, which is why the type stays [NotMapped].
+				var recordsNotificationService = Bootstrapper.GetKernel().Resolve<IRecordsNotificationService>();
+				await recordsNotificationService.NotifyReturnedForCorrectionAsync(ni.DepartmentId, ni.Value, cancellationToken);
+				return true;
+			}
+
 			if (ni != null)
 			{
 				var _notificationService = Bootstrapper.GetKernel().Resolve<INotificationService>();

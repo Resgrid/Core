@@ -482,6 +482,23 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(60),
 					stoppingToken);
 
+				// Worker ID 40 (Identifier Allocation Registry section 3.3). The scheduler has minute
+				// granularity, so this is the durable catch-up sweep only; the 5s commit-to-dispatch budget is
+				// met by the in-process post-commit dispatch, with the outbox row as the durable source.
+				_logger.Log(LogLevel.Information, "Scheduling Domain Event Outbox Dispatch");
+				await Client.ScheduleAsync("Domain Event Outbox Dispatch",
+					new Commands.DomainEventOutboxDispatchCommand(40),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
+				// Worker ID 44 (Identifier Allocation Registry section 3.3, the Unified Search allocation absorbed by RMS-1): records search index maintenance. This
+				// process holds the single Lucene writer; the sweep is a no-op while SearchConfig.Enabled is off.
+				_logger.Log(LogLevel.Information, "Scheduling Records Search Index");
+				await Client.ScheduleAsync("Records Search Index",
+					new Commands.RecordsSearchIndexCommand(44),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

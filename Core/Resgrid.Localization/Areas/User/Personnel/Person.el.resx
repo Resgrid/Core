@@ -396,4 +396,10 @@
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>Προβολή Ρόλου</value>
   </data>
+  <data name="OutstandingRecordsHeader" xml:space="preserve">
+    <value>Μη οριστικοποιημένες εγγραφές</value>
+  </data>
+  <data name="OutstandingRecordsNote" xml:space="preserve">
+    <value>Αυτό το μέλος κατέχει ακόμη {0} μη οριστικοποιημένες εγγραφές. Ανοίξτε καθεμία και αναθέστε την σε άλλο μέλος πριν από τη διαγραφή, αλλιώς θα παραμείνει στην κατοχή διαγραμμένου μέλους.</value>
+  </data>
 </root>

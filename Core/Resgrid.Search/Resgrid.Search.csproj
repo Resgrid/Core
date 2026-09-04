@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Description>Shared Lucene.NET search host (Unified Search Phase 1) and the RMS-owned records index.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lucene.Net" Version="4.8.0-beta00016" />
+    <PackageReference Include="Lucene.Net.Analysis.Common" Version="4.8.0-beta00016" />
+    <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00016" />
+    <PackageReference Include="Autofac" Version="8.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\Resgrid.Model\Resgrid.Model.csproj" />
+  </ItemGroup>
+
+</Project>

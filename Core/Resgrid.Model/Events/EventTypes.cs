@@ -79,7 +79,25 @@ namespace Resgrid.Model.Events
 		WeatherAlertExpired = 23,
 
 		[NotMapped]
-		ModerationRequestCompleted = 24
+		ModerationRequestCompleted = 24,
+
+		// -- Records (RMS) block 31-33 -- Identifier Allocation Registry section 3.5. 25-29 belong to
+		// Certifications and 30 is the buffer; neither may be taken here. 31 is raised by
+		// RecordsService.ReturnForCorrectionAsync and delivered to the author by IRecordsNotificationService
+		// (NotificationBroadcastLogic); it stays NotMapped because it is author-targeted, not a department
+		// broadcast the settings UI should offer. 32 and 33 remain NotMapped until their emitters land.
+
+		/// <summary>A reviewer returned a Record to its author for correction. On by default once shipped; individually disableable.</summary>
+		[NotMapped]
+		RecordReturnedForCorrection = 31,
+
+		/// <summary>A Record review obligation is overdue (worker 42, RMS-3).</summary>
+		[NotMapped]
+		RecordReviewOverdue = 32,
+
+		/// <summary>A reporting destination rejected a submitted Record revision (RMS-2).</summary>
+		[NotMapped]
+		RecordSubmissionRejected = 33
 	}
 
 	public static class EventOptions

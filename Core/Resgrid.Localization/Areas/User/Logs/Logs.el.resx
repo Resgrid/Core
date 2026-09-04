@@ -354,4 +354,5 @@
   <data name="WorkLogInformation" xml:space="preserve">
     <value>Πληροφορίες Καταγραφής Εργασίας</value>
   </data>
+  <data name="LogsReadOnly" xml:space="preserve"><value>Τα Αρχεία είναι ενεργά για αυτό το τμήμα. Τα υπάρχοντα ημερολόγια είναι μόνο για ανάγνωση: προβολή, εκτύπωση και εξαγωγή, όχι δημιουργία, επεξεργασία ή διαγραφή.</value></data>
 </root>

@@ -41,6 +41,18 @@
                         <dt>@localizer["Started"]</dt>   <dd>@Model.StartedOn.ToString("yyyy-MM-dd HH:mm:ss UTC")</dd>
                         <dt>@localizer["Completed"]</dt> <dd>@(Model.CompletedOn?.ToString("yyyy-MM-dd HH:mm:ss UTC") ?? "-")</dd>
                         <dt>@localizer["Attempt"]</dt>   <dd>@Model.AttemptNumber</dd>
+                        @if (!string.IsNullOrWhiteSpace(Model.SkipReason))
+                        {
+                            <dt>@localizer["SkipReason"]</dt> <dd class="text-warning">@Model.SkipReason</dd>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.EventId))
+                        {
+                            <dt>@localizer["EventId"]</dt> <dd><small>@Model.EventId</small></dd>
+                            <dt>@localizer["CorrelationId"]</dt> <dd><small>@(Model.CorrelationId ?? "-")</small></dd>
+                            <dt>@localizer["CausationId"]</dt> <dd><small>@(Model.CausationId ?? "-")</small></dd>
+                            <dt>@localizer["EventSequence"]</dt> <dd>@(Model.RecordSequence?.ToString() ?? "-")</dd>
+                            <dt>@localizer["OriginClient"]</dt> <dd>@(Model.OriginClient.HasValue ? ((Resgrid.Model.RmsOriginClient)Model.OriginClient.Value).ToString() : "-")</dd>
+                        }
                         @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
                         {
                             <dt>@localizer["Error"]</dt> <dd class="text-danger">@Model.ErrorMessage</dd>

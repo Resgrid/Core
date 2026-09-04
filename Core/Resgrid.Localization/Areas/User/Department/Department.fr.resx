@@ -1001,4 +1001,97 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>Retour</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>Profil du service</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>C'est l'identité que Resgrid imprime sur les rapports, affiche dans les e-mails personnalisés et utilise partout où le service se présente. Laissez un champ vide pour revenir aux paramètres du service.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>Identité</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>Nom affiché</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>Nom court</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>Numéro de téléphone</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>Site web</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>L'adresse imprimée sur les rapports et les e-mails est celle du service :</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>Réseaux sociaux</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>Logo</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG ou JPEG, 2 Mo maximum, au moins 200 px sur le grand côté (512 px ou plus recommandé). Le fichier est réencodé sans ses métadonnées, puis les versions en-tête d'impression, bandeau d'e-mail et vignette sont générées.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>Téléverser le logo</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>Supprimer le logo</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>Aucun logo n'a été téléversé. Les impressions et les e-mails n'utilisent que le nom du service.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>En-tête d'impression</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>Bandeau d'e-mail</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>Vignette</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>Utiliser le bandeau du service dans les e-mails opérationnels</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>Les e-mails d'intervention, de message, de livraison de rapports et de workflows affichent votre logo et votre nom à la place du bandeau Resgrid ; les notifications de rapports sont envoyées sous « nom du service via Resgrid ». Les e-mails de compte et de facturation restent toujours aux couleurs de Resgrid.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>Lien public du bandeau</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>Les clients de messagerie ne peuvent pas se connecter ; le bandeau est donc servi depuis ce lien impossible à deviner. Le régénérer invalide l'image dans tous les e-mails déjà envoyés.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>Régénérer le lien</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>Profil du service enregistré.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>Logo téléversé et versions générées.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>Logo supprimé.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>Choisissez un fichier PNG ou JPEG à téléverser.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>Un nouveau lien de bandeau a été émis ; les e-mails déjà envoyés n'afficheront plus le logo.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>Le profil n'a pas pu être enregistré ; vérifiez les champs signalés.</value>
+  </data>
 </root>

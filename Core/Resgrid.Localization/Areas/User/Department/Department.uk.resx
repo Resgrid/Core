@@ -1001,4 +1001,97 @@
   <data name="UnitStatusBaseType_8" xml:space="preserve">
     <value>Повернення</value>
   </data>
+  <data name="DepartmentProfileHeader" xml:space="preserve">
+    <value>Профіль підрозділу</value>
+  </data>
+  <data name="ProfileIntro" xml:space="preserve">
+    <value>Це ідентичність, яку Resgrid друкує на звітах, показує в брендованих листах і використовує скрізь, де підрозділ себе представляє. Залиште поле порожнім, щоб використати налаштування підрозділу.</value>
+  </data>
+  <data name="ProfileIdentity" xml:space="preserve">
+    <value>Ідентичність</value>
+  </data>
+  <data name="ProfileDisplayName" xml:space="preserve">
+    <value>Відображуване ім'я</value>
+  </data>
+  <data name="ProfileShortName" xml:space="preserve">
+    <value>Коротка назва</value>
+  </data>
+  <data name="ProfileCode" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="ProfileDescription" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="ProfilePhone" xml:space="preserve">
+    <value>Номер телефону</value>
+  </data>
+  <data name="ProfileWebsite" xml:space="preserve">
+    <value>Вебсайт</value>
+  </data>
+  <data name="ProfileAddress" xml:space="preserve">
+    <value>Адреса</value>
+  </data>
+  <data name="ProfileAddressNote" xml:space="preserve">
+    <value>Адреса, що друкується на звітах і в листах, — це адреса підрозділу:</value>
+  </data>
+  <data name="ProfileSocial" xml:space="preserve">
+    <value>Соціальні мережі</value>
+  </data>
+  <data name="ProfileLogo" xml:space="preserve">
+    <value>Логотип</value>
+  </data>
+  <data name="ProfileLogoHelp" xml:space="preserve">
+    <value>PNG або JPEG, до 2 МБ, щонайменше 200 px по довшій стороні (рекомендовано 512 px і більше). Файл перекодовується без метаданих, і з нього створюються варіанти для друкованої шапки, шапки листа та мініатюри.</value>
+  </data>
+  <data name="ProfileUpload" xml:space="preserve">
+    <value>Завантажити логотип</value>
+  </data>
+  <data name="ProfileRemoveLogo" xml:space="preserve">
+    <value>Видалити логотип</value>
+  </data>
+  <data name="ProfileNoLogo" xml:space="preserve">
+    <value>Логотип не завантажено. У друкованих копіях і листах використовується лише назва підрозділу.</value>
+  </data>
+  <data name="ProfileRenditionPrint" xml:space="preserve">
+    <value>Друкована шапка</value>
+  </data>
+  <data name="ProfileRenditionEmail" xml:space="preserve">
+    <value>Шапка листа</value>
+  </data>
+  <data name="ProfileRenditionThumb" xml:space="preserve">
+    <value>Мініатюра</value>
+  </data>
+  <data name="ProfileUseBrandingInEmails" xml:space="preserve">
+    <value>Використовувати шапку підрозділу в операційних листах</value>
+  </data>
+  <data name="ProfileUseBrandingInEmailsHelp" xml:space="preserve">
+    <value>Листи про виклики, повідомлення, доставку звітів та робочі процеси показують ваш логотип і назву замість шапки Resgrid; сповіщення про звіти надсилаються як «назва підрозділу via Resgrid». Листи щодо облікового запису та оплати завжди залишаються з брендом Resgrid.</value>
+  </data>
+  <data name="ProfileMediaKey" xml:space="preserve">
+    <value>Публічне посилання на шапку</value>
+  </data>
+  <data name="ProfileMediaKeyHelp" xml:space="preserve">
+    <value>Поштові клієнти не можуть увійти, тому шапка подається за цим невгадуваним посиланням. Його повторне створення робить зображення недійсним в усіх уже надісланих листах.</value>
+  </data>
+  <data name="ProfileRegenerateKey" xml:space="preserve">
+    <value>Створити посилання заново</value>
+  </data>
+  <data name="ProfileSaved" xml:space="preserve">
+    <value>Профіль підрозділу збережено.</value>
+  </data>
+  <data name="ProfileLogoSaved" xml:space="preserve">
+    <value>Логотип завантажено, варіанти створено.</value>
+  </data>
+  <data name="ProfileLogoRemoved" xml:space="preserve">
+    <value>Логотип видалено.</value>
+  </data>
+  <data name="ProfileLogoRequired" xml:space="preserve">
+    <value>Виберіть файл PNG або JPEG для завантаження.</value>
+  </data>
+  <data name="ProfileKeyRegenerated" xml:space="preserve">
+    <value>Видано нове посилання на шапку; раніше надіслані листи більше не показуватимуть логотип.</value>
+  </data>
+  <data name="ProfileSaveFailed" xml:space="preserve">
+    <value>Не вдалося зберегти профіль; перевірте виділені поля.</value>
+  </data>
 </root>

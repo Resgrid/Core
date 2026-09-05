@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Resgrid.Model;
 
@@ -279,6 +279,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 	/// <summary>Draft save; every list replaces the draft rows. Dates are UTC.</summary>
 	public class SaveIncidentReportDraftInput
 	{
+		public Resgrid.Model.RecordUdfInput CustomFields { get; set; }
 		public string ReportId { get; set; }
 		public long? RowVersion { get; set; }
 		public int? OriginClient { get; set; }
@@ -452,6 +453,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class IncidentCasualtyInputData
 	{
+		public string CasualtyId { get; set; }
 		public int Kind { get; set; }
 		public string PersonType { get; set; }
 		public string PersonnelUserId { get; set; }

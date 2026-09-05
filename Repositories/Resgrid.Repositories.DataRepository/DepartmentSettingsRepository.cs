@@ -13,8 +13,27 @@ using Resgrid.Repositories.DataRepository.Queries.DepartmentSettings;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class DepartmentSettingsRepository : RepositoryBase<DepartmentSetting>, IDepartmentSettingsRepository
+	public class DepartmentSettingsRepository : RmsRepositoryBase<DepartmentSetting>, IDepartmentSettingsRepository
 	{
+		public async Task<DepartmentSetting> SaveRecordsRetentionPolicyAsync(int departmentId, RecordsRetentionPolicy policy, System.Threading.CancellationToken cancellationToken = default)
+		{
+			var owns = UnitOfWork.Transaction == null;
+			UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				await LockRecordsDepartmentAsync(departmentId, cancellationToken);
+				var existing = await GetDepartmentSettingByIdTypeAsync(departmentId, DepartmentSettingTypes.RecordsRetentionPolicy);
+				// Corrupt history must stop policy replacement, never erase an older retention obligation.
+				var previous = string.IsNullOrEmpty(existing?.Setting) ? new RecordsRetentionPolicy() : ObjectSerialization.Deserialize<RecordsRetentionPolicy>(existing.Setting);
+				policy.PreserveHistory(previous, DateTime.UtcNow);
+				var row = existing ?? new DepartmentSetting { DepartmentId = departmentId, SettingType = (int)DepartmentSettingTypes.RecordsRetentionPolicy };
+				row.Setting = ObjectSerialization.Serialize(policy);
+				var result = existing == null ? await InsertAsync(row, cancellationToken, true) : await UpdateAsync(row, cancellationToken, true);
+				if (owns) UnitOfWork.CommitChanges();
+				return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;

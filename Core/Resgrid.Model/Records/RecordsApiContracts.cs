@@ -252,13 +252,17 @@ namespace Resgrid.Model.Services
 		Task<RecordAttachmentUploadSession> GetAsync(int departmentId, string userId, string uploadId);
 		Task<RecordAttachmentUploadSession> AppendAsync(int departmentId, string userId, string uploadId, long offset, byte[] data);
 		/// <summary>Verifies size and SHA-256, then stores the attachment through the same hygiene/scanner path as a direct upload.</summary>
-		Task<RmsRecordAttachment> CompleteAsync(int departmentId, string userId, string uploadId, string description, CancellationToken cancellationToken = default);
+		Task<RmsRecordAttachment> CompleteAsync(int departmentId, string userId, string uploadId, string description, CancellationToken cancellationToken = default, int classification = 1);
 		Task<bool> AbortAsync(int departmentId, string userId, string uploadId);
 	}
 
 	/// <summary>Scoped idempotency for v4 Records commands: the same (department, user, key) replays the first outcome instead of re-running the transition.</summary>
 	public interface IRecordsApiIdempotencyService
 	{
+		/// <summary>Commit an exclusive reservation before mutation. A false result must never execute the command.</summary>
+		Task<bool> TryReserveCommandAsync(int departmentId, string userId, string idempotencyKey, string command, string recordId, string requestChecksum);
+		Task<RecordCommandReceipt> TryGetCommandAsync(int departmentId, string userId, string idempotencyKey, string command);
+		Task RememberCommandAsync(int departmentId, string userId, string idempotencyKey, string command, string recordId, string requestChecksum);
 		/// <summary>
 		/// The record a previous call under this key produced, or null. <paramref name="command"/> scopes the key to
 		/// one operation: a client that reuses a key across two different commands on the same record must not have
@@ -267,5 +271,13 @@ namespace Resgrid.Model.Services
 		Task<string> TryGetRecordIdAsync(int departmentId, string userId, string idempotencyKey, string command);
 
 		Task RememberAsync(int departmentId, string userId, string idempotencyKey, string command, string recordId);
+	}
+
+	public class RecordCommandReceipt
+	{
+		public string RecordId { get; set; }
+		public string RequestChecksum { get; set; }
+		/// <summary>The command may be running or may have committed without a receipt. Do not automatically repeat it.</summary>
+		public bool IsPending { get; set; }
 	}
 }

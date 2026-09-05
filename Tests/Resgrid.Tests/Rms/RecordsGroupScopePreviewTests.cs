@@ -55,7 +55,7 @@ namespace Resgrid.Tests.Rms
 			departments.Setup(d => d.GetAllAdminsForDepartmentAsync(Dept)).ReturnsAsync(new List<IdentityUser> { new IdentityUser { UserId = "a" } });
 
 			var service = new RecordsAuthorizationService(Mock.Of<IPermissionsService>(), departments.Object, groups.Object, Mock.Of<IPersonnelRolesService>(),
-				Mock.Of<IDepartmentSettingsService>(), records.Object, scopes.Object, Mock.Of<IRmsRecordParticipantsRepository>(), Mock.Of<ICacheProvider>(), legacy.Object, Mock.Of<IRmsIncidentReportsRepository>());
+				Mock.Of<IDepartmentSettingsService>(), records.Object, scopes.Object, Mock.Of<IRmsRecordParticipantsRepository>(), Mock.Of<ICacheProvider>(), legacy.Object, Mock.Of<IRmsIncidentReportsRepository>(), new System.Lazy<IAuthorizationService>(() => Mock.Of<IAuthorizationService>()));
 
 			var preview = await service.PreviewGroupScopingAsync(Dept);
 

@@ -26,6 +26,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<IRecordsSearchIndexer> _indexer;
 		private Mock<IDepartmentDataProtectionService> _adp;
 		private Mock<IDepartmentSettingsService> _settings;
+		private Mock<IRmsRetentionRepository> _retention;
 		private List<RecordsSearchDocumentSource> _indexed;
 		private List<RmsSearchIndexState> _savedStates;
 		private RecordsSearchIndexMaintenanceService _service;
@@ -61,7 +62,8 @@ namespace Resgrid.Tests.Rms
 			_settings = new Mock<IDepartmentSettingsService>();
 			_settings.Setup(s => s.GetRecordsSearchConfigAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new RecordsSearchConfig { IndexNarrative = true });
 
-			_service = new RecordsSearchIndexMaintenanceService(_cutovers.Object, _projections.Object, _states.Object, _details.Object, _indexer.Object, _adp.Object, _settings.Object);
+			_retention = new Mock<IRmsRetentionRepository>();
+			_service = new RecordsSearchIndexMaintenanceService(_cutovers.Object, _projections.Object, _states.Object, _details.Object, _indexer.Object, _adp.Object, _settings.Object, _retention.Object);
 		}
 
 		[TearDown]
@@ -101,7 +103,7 @@ namespace Resgrid.Tests.Rms
 			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = "1.3.7", State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = since });
 			var deleted = Projection("rec-9", new DateTime(2026, 9, 3));
 			deleted.DeletedOn = DateTime.UtcNow;
-			_projections.SetupSequence(p => p.GetModifiedSinceAsync(Dept, since, It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new[] { Projection("rec-5", new DateTime(2026, 9, 2)), deleted });
+			_projections.SetupSequence(p => p.GetModifiedSinceAsync(Dept, since.AddSeconds(-1), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new[] { Projection("rec-5", new DateTime(2026, 9, 2)), deleted });
 			_projections.Setup(p => p.GetModifiedSinceAsync(Dept, new DateTime(2026, 9, 3), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new RmsRecordSearchProjection[0]);
 
 			var result = await _service.SweepAsync();
@@ -160,6 +162,102 @@ namespace Resgrid.Tests.Rms
 			var result = await _service.SweepAsync();
 			result.Errors.Should().Be(1);
 			result.DepartmentsChecked.Should().Be(1);
+		}
+
+		[Test]
+		public async Task Equal_timestamp_pages_include_a_late_purge_tombstone_at_the_checkpoint_boundary()
+		{
+			var previousBatch = SearchConfig.IndexBatchSize;
+			try
+			{
+				SearchConfig.IndexBatchSize = 50;
+				var stamp = new DateTime(2026, 9, 2);
+				_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState
+				{ DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = "1.3.7", State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = stamp });
+				var rows = Enumerable.Range(0, 101).Select(i => Projection("rec-" + i.ToString("D3"), stamp)).ToList();
+				rows.Last().DeletedOn = stamp;
+				_projections.Setup(p => p.GetModifiedSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()))
+					.ReturnsAsync((int department, DateTime? since, int take, string id) => rows.Where(row => !since.HasValue || row.ModifiedOn > since.Value || row.ModifiedOn == since.Value && id != null && string.CompareOrdinal(row.RmsRecordSearchProjectionId, id) > 0).Take(take).ToList());
+				var result = await _service.SweepAsync();
+				result.Errors.Should().Be(0);
+				_indexed.Select(d => d.Projection.SourceId).Should().HaveCount(100).And.OnlyHaveUniqueItems();
+				_indexer.Verify(i => i.DeleteAsync(Dept, (int)RmsSearchSourceType.Record, "rec-100", It.IsAny<CancellationToken>()), Times.Once);
+				_projections.Verify(p => p.GetModifiedSinceAsync(Dept, stamp, 50, "rec-049"), Times.Once);
+				_projections.Verify(p => p.GetModifiedSinceAsync(Dept, stamp, 50, "rec-099"), Times.Once);
+				_savedStates.Single().LastIndexedModifiedOn.Should().Be(stamp);
+			}
+			finally { SearchConfig.IndexBatchSize = previousBatch; }
+		}
+
+		[Test]
+		public async Task Failed_index_commit_does_not_advance_database_checkpoint_and_next_sweep_replays_the_tombstone()
+		{
+			var stamp = new DateTime(2026, 9, 2);
+			var state = new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = "1.3.7", State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = stamp };
+			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(() => Clone(state));
+			var deleted = Projection("purged", stamp.AddMinutes(1)); deleted.DeletedOn = deleted.ModifiedOn;
+			_projections.Setup(p => p.GetModifiedSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new[] { deleted });
+			_indexer.Setup(i => i.CommitAsync(It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("disk unavailable"));
+			(await _service.SweepAsync()).Errors.Should().Be(1);
+			_savedStates.Should().BeEmpty();
+			state.LastIndexedModifiedOn.Should().Be(stamp);
+			var committed = false;
+			_indexer.Setup(i => i.CommitAsync(It.IsAny<CancellationToken>())).Callback(() => committed = true).Returns(Task.CompletedTask);
+			_states.Setup(s => s.SaveOrUpdateAsync(It.IsAny<RmsSearchIndexState>(), It.IsAny<CancellationToken>(), true))
+				.ReturnsAsync((RmsSearchIndexState checkpoint, CancellationToken ct, bool save) => { committed.Should().BeTrue(); _savedStates.Add(Clone(checkpoint)); return checkpoint; });
+			(await _service.SweepAsync()).Errors.Should().Be(0);
+			_indexer.Verify(i => i.DeleteAsync(Dept, (int)RmsSearchSourceType.Record, "purged", It.IsAny<CancellationToken>()), Times.Exactly(2));
+			_savedStates.Single().LastIndexedModifiedOn.Should().Be(deleted.ModifiedOn);
+		}
+
+		[Test]
+		public async Task A_rebuild_cannot_publish_ready_before_the_index_commit_succeeds()
+		{
+			_projections.Setup(p => p.QueryAsync(Dept, It.IsAny<RmsRecordQuery>())).ReturnsAsync(new RmsRecordSearchProjection[0]);
+			_indexer.Setup(i => i.CommitAsync(It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("disk unavailable"));
+			(await _service.SweepAsync()).Errors.Should().Be(1);
+			_savedStates.Select(state => (RmsSearchIndexBuildState)state.State).Should().Equal(RmsSearchIndexBuildState.Rebuilding, RmsSearchIndexBuildState.Failed);
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task Durable_erasure_runs_with_indexing_disabled_and_is_acknowledged_only_after_expunge(bool failCommit)
+		{
+			SearchConfig.Enabled = false;
+			var target = new RmsSearchErasureTarget { DepartmentId = Dept, RecordId = "purged", RecordKind = (int)RmsRecordKind.IncidentReport, PurgedOn = DateTime.UtcNow, SourceIds = new List<string> { "purged", "analysis" } };
+			_retention.Setup(r => r.GetPendingSearchErasuresAsync(100, null, It.IsAny<CancellationToken>())).ReturnsAsync(new List<RmsSearchErasureTarget> { target });
+			var expunged = false;
+			_indexer.Setup(i => i.ExpungeDeletesAsync(It.IsAny<CancellationToken>())).Returns(() =>
+			{
+				if (failCommit) throw new InvalidOperationException("index commit failed");
+				expunged = true; return Task.CompletedTask;
+			});
+			_retention.Setup(r => r.CompleteSearchErasureAsync(target, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(() => { expunged.Should().BeTrue(); return true; });
+			var result = await _service.SweepAsync();
+			result.Skipped.Should().BeTrue();
+			result.SearchErasuresCompleted.Should().Be(failCommit ? 0 : 1);
+			result.Errors.Should().Be(failCommit ? 1 : 0);
+			_indexer.Verify(i => i.DeleteAsync(Dept, (int)RmsSearchSourceType.Record, "purged", It.IsAny<CancellationToken>()), Times.Once);
+			_indexer.Verify(i => i.DeleteAsync(Dept, (int)RmsSearchSourceType.Record, "analysis", It.IsAny<CancellationToken>()), Times.Once);
+			_retention.Verify(r => r.CompleteSearchErasureAsync(target, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), failCommit ? Times.Never() : Times.Once());
+			_cutovers.Verify(c => c.GetActiveAsync(), Times.Never);
+		}
+
+		[Test]
+		public async Task A_failed_erasure_page_does_not_starve_later_pending_reports()
+		{
+			SearchConfig.Enabled = false;
+			var first = Enumerable.Range(0, 100).Select(i => new RmsSearchErasureTarget { DepartmentId = Dept, RecordId = "purged-" + i.ToString("D3"), PurgedOn = DateTime.UtcNow }).ToList();
+			var last = new RmsSearchErasureTarget { DepartmentId = Dept, RecordId = "purged-100", PurgedOn = DateTime.UtcNow };
+			_retention.Setup(r => r.GetPendingSearchErasuresAsync(100, null, It.IsAny<CancellationToken>())).ReturnsAsync(first);
+			_retention.Setup(r => r.GetPendingSearchErasuresAsync(100, first.Last(), It.IsAny<CancellationToken>())).ReturnsAsync(new List<RmsSearchErasureTarget> { last });
+			_indexer.Setup(i => i.DeleteAsync(Dept, (int)RmsSearchSourceType.Record, It.Is<string>(id => id != last.RecordId), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("source unavailable"));
+			_retention.Setup(r => r.CompleteSearchErasureAsync(last, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			var result = await _service.SweepAsync();
+			result.Errors.Should().Be(100); result.SearchErasuresCompleted.Should().Be(1);
+			_indexer.Verify(i => i.ExpungeDeletesAsync(It.IsAny<CancellationToken>()), Times.Once);
+			_retention.Verify(r => r.CompleteSearchErasureAsync(It.IsAny<RmsSearchErasureTarget>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		private static RmsRecordSearchProjection Projection(string id, DateTime modifiedOn)

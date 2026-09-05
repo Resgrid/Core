@@ -17,6 +17,13 @@
 </div>
 
 <div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox"><div class="ibox-title"><h3>Record custom fields</h3></div><div class="ibox-content">
+        <p>Choose the record type whose form you want to extend.</p>
+        @foreach (var key in Resgrid.Model.RmsDefinitionKeys.LockedTypes.Keys.Concat(new[] { Resgrid.Model.RmsDefinitionKeys.NerisIncidentReport }))
+        {
+            <a class="btn btn-default" asp-action="Edit" asp-route-entityType="4" asp-route-recordDefinitionKey="@key" asp-route-recordDefinitionVersion="1">@key</a>
+        }
+    </div></div>
     <div class="row">
         <div class="col-lg-12">
 

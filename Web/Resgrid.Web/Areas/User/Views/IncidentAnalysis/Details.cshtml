@@ -170,7 +170,12 @@
 											<td>@When(submission.SentOn)</td>
 											<td>@submission.Attempts / @submission.MaxAttempts</td>
 											<td>@submission.ExternalId</td>
-											<td>@submission.ErrorSummary</td>
+										<td>@submission.ErrorSummary
+											@if (Model.CanSubmit && Model.CanViewRestricted)
+											{
+												<p><a asp-controller="RecordSubmissions" asp-action="Details" asp-route-submissionId="@submission.RmsSubmissionId">View responses and recovery actions</a></p>
+											}
+										</td>
 										</tr>
 									}
 								</tbody>
@@ -260,7 +265,9 @@
 							@foreach (var revision in a.Revisions.OrderByDescending(x => x.RevisionNumber))
 							{
 								<li>
-									<strong>#@revision.RevisionNumber</strong> @(((RmsRevisionTransition)revision.Transition).ToString())
+									<a asp-controller="RecordDocuments" asp-action="Revision" asp-route-id="@a.Analysis.RmsIncidentAnalysisId" asp-route-kind="IncidentAnalysis" asp-route-revisionId="@revision.RmsRevisionId"><strong>#@revision.RevisionNumber</strong></a> @(((RmsRevisionTransition)revision.Transition).ToString())
+									@if (revision.PriorRevisionId != null) { <a asp-controller="RecordDocuments" asp-action="Diff" asp-route-id="@a.Analysis.RmsIncidentAnalysisId" asp-route-kind="IncidentAnalysis" asp-route-from="@revision.PriorRevisionId" asp-route-to="@revision.RmsRevisionId">Compare</a> }
+									@if (ClaimsAuthorizationHelper.CanExportRecords()) { <a asp-controller="RecordDocuments" asp-action="Export" asp-route-id="@a.Analysis.RmsIncidentAnalysisId" asp-route-kind="IncidentAnalysis" asp-route-revisionId="@revision.RmsRevisionId" asp-route-format="pdf">PDF</a> }
 									<small class="text-muted">@When(revision.CreatedOn) — @Name(revision.ActorUserId)</small>
 								</li>
 							}

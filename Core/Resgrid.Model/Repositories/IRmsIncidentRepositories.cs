@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,7 +40,7 @@ namespace Resgrid.Model.Repositories
 		Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix);
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string reportId, long expectedRowVersion, CancellationToken cancellationToken = default);
 		/// <summary>Retention candidates (RMS-3, worker 43): live, closed reports finalized before the cutoff, oldest first.</summary>
-		Task<IEnumerable<RmsIncidentReport>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take);
+		Task<IEnumerable<RmsIncidentReport>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take, string afterId = null);
 	}
 
 	/// <summary>Shared contract of every per-report child row set: a working draft (RevisionId null) and immutable revision copies.</summary>
@@ -74,12 +74,14 @@ namespace Resgrid.Model.Repositories
 
 	public interface IRmsIncidentAnalysesRepository : IRepository<RmsIncidentAnalysis>
 	{
+		Task<bool> TryBumpRowVersionAsync(int departmentId, string analysisId, long expectedRowVersion, CancellationToken cancellationToken = default);
 		Task<RmsIncidentAnalysis> GetByIdForDepartmentAsync(int departmentId, string analysisId);
 		/// <summary>The analysis for an incident report; one per report, null when none has been started.</summary>
 		Task<RmsIncidentAnalysis> GetForReportAsync(int departmentId, string incidentReportId);
 		/// <summary>Analyses finalized but not yet filed because their incident had no NERIS id at the time.</summary>
 		Task<IEnumerable<RmsIncidentAnalysis>> GetAwaitingIncidentAsync(int departmentId, int take);
 		Task<int> CountByStateAsync(int departmentId, RmsIncidentAnalysisState state);
+		Task<int> CountVisibleByStateAsync(int departmentId, RmsIncidentAnalysisState state, List<int> visibleGroupIds, string userId);
 	}
 
 	public interface IRmsValidationIssuesRepository : IRepository<RmsValidationIssue>
@@ -91,6 +93,11 @@ namespace Resgrid.Model.Repositories
 
 	public interface IRmsSubmissionsRepository : IRepository<RmsSubmission>
 	{
+		Task<bool> TryReconcileReceiptAsync(int departmentId, string submissionId, long expectedVersion, string externalId, string destinationIdentity, DateTime now, CancellationToken cancellationToken = default);
+		Task<bool> TryBindUnsentAsync(int departmentId, string submissionId, long expectedVersion, string destinationIdentity, DateTime now, CancellationToken cancellationToken = default);
+		Task<bool> TryConfirmNotCreatedAsync(int departmentId, string submissionId, long expectedVersion, string destinationIdentity, DateTime now, CancellationToken cancellationToken = default);
+		/// <summary>Transaction-local completion/dispatch fence: locks and bumps only the current, unexpired lease.</summary>
+		Task<bool> TryFenceLeaseAsync(int departmentId, string submissionId, long expectedVersion, string leaseOwner, DateTime now, CancellationToken cancellationToken = default);
 		Task<RmsSubmission> GetByIdForDepartmentAsync(int departmentId, string submissionId);
 		Task<IEnumerable<RmsSubmission>> GetForRecordAsync(int departmentId, string recordId);
 		Task<RmsSubmission> GetByIdempotencyKeyAsync(string idempotencyKey);
@@ -100,6 +107,11 @@ namespace Resgrid.Model.Repositories
 		Task<int> CountByStateAsync(int departmentId, int state);
 		/// <summary>Marks every non-terminal submission of the record Superseded (a new revision issued a new idempotency key).</summary>
 		Task<int> SupersedeOpenForRecordAsync(int departmentId, string recordId, string exceptSubmissionId, DateTime utcNow, CancellationToken cancellationToken = default);
+	}
+
+	public interface IRmsSubmissionExchangesRepository : IRepository<RmsSubmissionExchange>
+	{
+		Task<IEnumerable<RmsSubmissionExchange>> GetForSubmissionAsync(int departmentId, string submissionId);
 	}
 
 	public interface IRmsSignaturesRepository : IRepository<RmsSignature>

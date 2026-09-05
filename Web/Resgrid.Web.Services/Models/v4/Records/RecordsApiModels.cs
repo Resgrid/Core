@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Resgrid.Web.Services.Models.v4.Records
@@ -152,13 +152,17 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class RecordsChangesData
 	{
+		/// <summary>Persist with the cursor. A changed or missing scope stamp on a delta forces a full cache reset.</summary>
+		public string ScopeStamp { get; set; }
+		/// <summary>Evict all locally cached RMS data (including revisions and attachments), then request since=0.</summary>
+		public bool ResetRequired { get; set; }
 		public long Since { get; set; }
 		public long ServerTimestampMs { get; set; }
 
 		/// <summary>
-		/// Tie-breaker for the next call, sent back as <c>sinceId</c> alongside <c>since</c>. Several records routinely
-		/// share a modified timestamp; without it the rows that fall after a page break inside one timestamp are never
-		/// delivered.
+		/// Opaque tie-breaker sent back unchanged as <c>sinceId</c> alongside <c>since</c>. Includes the exact database
+		/// timestamp as well as the record id. Do not parse it or substitute a record id; rounding to milliseconds
+		/// can otherwise repeat a page forever. Older id-only cursors require a full reset.
 		/// </summary>
 		public string ServerCursorId { get; set; }
 
@@ -287,6 +291,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class RecordAttachmentData
 	{
+		public int? Classification { get; set; }
 		public string AttachmentId { get; set; }
 		public string RecordId { get; set; }
 		public string FileName { get; set; }
@@ -319,6 +324,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 	/// <summary>Create or save a draft. Dates are UTC. Every list replaces the draft rows wholesale.</summary>
 	public class SaveRecordDraftInput
 	{
+		public Resgrid.Model.RecordUdfInput CustomFields { get; set; }
 		/// <summary>Null on create.</summary>
 		public string RecordId { get; set; }
 		/// <summary>Required on save (or send If-Match); the row version the client last saw.</summary>
@@ -384,6 +390,18 @@ namespace Resgrid.Web.Services.Models.v4.Records
 	}
 
 	/// <summary>A lifecycle command. RowVersion (or If-Match) guards ETag-checked transitions; IdempotencyKey replays the first outcome.</summary>
+	/// <summary>Create a closed historical Call for an existing Run draft. A current version is required; a stale retry never creates a second Call.</summary>
+	public class CreateRunCallInput
+	{
+		public string RecordId { get; set; }
+		public long? RowVersion { get; set; }
+		public string Name { get; set; }
+		public string Address { get; set; }
+		public string Nature { get; set; }
+		public DateTime OccurredOnUtc { get; set; }
+		public int? OriginClient { get; set; }
+	}
+
 	public class RecordCommandInput
 	{
 		public string RecordId { get; set; }
@@ -516,6 +534,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class CompleteRecordUploadInput
 	{
+		public int Classification { get; set; } = 1;
 		public string UploadId { get; set; }
 		public string Description { get; set; }
 	}

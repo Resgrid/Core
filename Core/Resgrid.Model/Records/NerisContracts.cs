@@ -10,6 +10,10 @@ namespace Resgrid.Model
 	/// </summary>
 	public class NerisIncidentSnapshot
 	{
+		public RecordUdfSection CustomFields { get; set; }
+		/// <summary>Departmental revision content. The national mapper never emits these collections.</summary>
+		public List<RmsRecordAttachment> Attachments { get; set; } = new List<RmsRecordAttachment>();
+		public List<RmsEvidenceArtifact> Evidence { get; set; } = new List<RmsEvidenceArtifact>();
 		public RmsIncidentReport Report { get; set; }
 		public RmsLocation Location { get; set; }
 		public List<RmsIncidentType> Types { get; set; } = new List<RmsIncidentType>();
@@ -117,6 +121,9 @@ namespace Resgrid.Model
 	/// <summary>One exchange with the destination, reduced to what the submission row and the workflow triggers may see.</summary>
 	public class NerisSubmissionOutcome
 	{
+		/// <summary>The queued payload was refused locally before credentials or HTTP; no destination response is implied.</summary>
+		public bool LocalValidationFailure { get; set; }
+		public bool DeliveryUncertain { get; set; }
 		public NerisOutcomeKind Kind { get; set; }
 		public int? StatusCode { get; set; }
 		public string ExternalId { get; set; }

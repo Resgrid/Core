@@ -30,10 +30,13 @@ namespace Resgrid.Services.Records
 		private readonly IRmsAccessAuditsRepository _audits;
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IEnumerable<IRecordEvidenceAdapter> _adapters;
+		private readonly IRecordsAuthorizationService _authorization;
+		private readonly ICallsService _calls;
+		private readonly IRmsExternalReferencesRepository _references;
 
 		public RecordsEvidenceService(IRmsEvidenceArtifactsRepository artifacts, IRmsOperationalRecordsRepository records,
 			IRmsIncidentReportsRepository incidentReports, IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork,
-			IEnumerable<IRecordEvidenceAdapter> adapters)
+			IEnumerable<IRecordEvidenceAdapter> adapters, IRecordsAuthorizationService authorization, ICallsService calls, IRmsExternalReferencesRepository references)
 		{
 			_artifacts = artifacts;
 			_records = records;
@@ -41,6 +44,27 @@ namespace Resgrid.Services.Records
 			_audits = audits;
 			_unitOfWork = unitOfWork;
 			_adapters = adapters ?? Enumerable.Empty<IRecordEvidenceAdapter>();
+			_authorization = authorization; _calls = calls;
+			_references = references;
+		}
+
+		public async Task RequireInventoryCoverageAsync(int departmentId, string recordId, IEnumerable<RmsEvidenceArtifact> captured)
+		{
+			captured = (captured ?? Enumerable.Empty<RmsEvidenceArtifact>()).ToList();
+			if (captured.Any(a=>a.DepartmentId!=departmentId || a.RecordId!=recordId || a.Checksum!=RecordSnapshotSerializer.Checksum(a.ManifestJson ?? ""))) throw new InvalidOperationException("Supporting evidence failed its integrity check.");
+			var references = ((await _references.GetForRecordAsync(departmentId, recordId)) ?? Enumerable.Empty<RmsExternalReference>())
+				.Where(r=>r.DepartmentId==departmentId && r.RecordId==recordId && !r.DeletedOn.HasValue && r.SemanticRole==RmsInventoryUsageAdapter.SemanticRole).ToList();
+			if (references.Count==0) return;
+			var covered=new Dictionary<string,string>(StringComparer.Ordinal);
+			foreach(var artifact in (captured ?? Enumerable.Empty<RmsEvidenceArtifact>()).Where(a=>a.Kind==(int)RmsEvidenceKind.InventoryUsage))
+			{
+				if (artifact.DepartmentId!=departmentId || artifact.RecordId!=recordId || artifact.Checksum!=RecordSnapshotSerializer.Checksum(artifact.ManifestJson ?? "")) throw new InvalidOperationException("The inventory evidence failed its integrity check.");
+				var manifest=Newtonsoft.Json.Linq.JObject.Parse(artifact.ManifestJson);
+				foreach(var entry in (manifest["usage"] as Newtonsoft.Json.Linq.JArray ?? new Newtonsoft.Json.Linq.JArray()).OfType<Newtonsoft.Json.Linq.JObject>())
+					if((string)entry["reference_id"] is string id) covered[id]=(string)entry["reference_checksum"];
+			}
+			if(references.Any(r=>r.Checksum!=RecordSnapshotSerializer.Checksum(r.SnapshotJson ?? "") || !covered.TryGetValue(r.RmsExternalReferenceId,out var checksum) || checksum!=r.Checksum))
+				throw new ArgumentException("Refresh the inventory evidence before finalizing; every recorded consumption must appear in the signed report.");
 		}
 
 		public async Task<List<RecordEvidenceSourceState>> GetSourceStatesAsync(int departmentId)
@@ -76,9 +100,14 @@ namespace Resgrid.Services.Records
 		public async Task<RmsEvidenceArtifact> CaptureAsync(RecordEvidenceCaptureRequest request, bool canCaptureRestricted = true, CancellationToken cancellationToken = default)
 		{
 			if (request == null) throw new ArgumentNullException(nameof(request));
+			request = JsonConvert.DeserializeObject<RecordEvidenceCaptureRequest>(JsonConvert.SerializeObject(request));
+			var requestChecksum = ComputeRequestChecksum(request);
+			if (string.IsNullOrWhiteSpace(request.CapturedByUserId)) throw new UnauthorizedAccessException();
+			if (!Enum.IsDefined(typeof(RmsEvidenceKind), request.Kind) || request.RecordKind is not (RmsRecordKind.Operational or RmsRecordKind.IncidentReport)) throw new ArgumentException("Choose a supported evidence source and record kind.");
 			if (string.IsNullOrWhiteSpace(request.RecordId)) throw new ArgumentException("A record is required.", nameof(request));
 			if (string.IsNullOrWhiteSpace(request.CaptureReason))
 				throw new ArgumentException("A capture reason is required; evidence never enters an official record anonymously.", nameof(request));
+			if (request.CaptureReason.Trim().Length > 500) throw new ArgumentException("The capture reason must be at most 500 characters.");
 
 			await RequireOpenRecordAsync(request);
 
@@ -94,8 +123,8 @@ namespace Resgrid.Services.Records
 
 			// Classification is the adapter's judgement about its own content, but the grant check is not: a member
 			// without RecordRestricted_View must not be able to pull restricted content into a record they can read.
-			if (capture.Classification != RmsEvidenceClassification.Unrestricted && !canCaptureRestricted)
-				throw new InvalidOperationException("Capturing restricted evidence requires the restricted-records grant.");
+			if (capture.Classification != RmsEvidenceClassification.Unrestricted && (!canCaptureRestricted || !await _authorization.HasPermissionAsync(request.CapturedByUserId, request.DepartmentId, PermissionTypes.ViewRestrictedRecords)))
+				throw new UnauthorizedAccessException("Capturing restricted evidence requires the restricted-records grant.");
 
 			var manifestJson = Serialize(capture.Manifest);
 			var now = DateTime.UtcNow;
@@ -115,7 +144,8 @@ namespace Resgrid.Services.Records
 				SourceEntityType = Trim(capture.SourceEntityType),
 				SourceEntityId = Trim(capture.SourceEntityId),
 				IdentifierScheme = Trim(capture.IdentifierScheme),
-				SourceVersion = Trim(capture.SourceVersion),
+				SourceVersion = Trim(capture.SourceVersion) ?? "content-sha256:" + RecordSnapshotSerializer.Checksum(manifestJson),
+				CaptureRequestChecksum = requestChecksum,
 				CoverageStart = capture.CoverageStart,
 				CoverageEnd = capture.CoverageEnd,
 				ManifestJson = manifestJson,
@@ -134,6 +164,8 @@ namespace Resgrid.Services.Records
 
 			await InTransactionAsync(async () =>
 			{
+				await RequireOpenRecordAsync(request, fence: true, cancellationToken);
+				if (capture.Classification != RmsEvidenceClassification.Unrestricted && !await _authorization.HasPermissionAsync(request.CapturedByUserId, request.DepartmentId, PermissionTypes.ViewRestrictedRecords)) throw new UnauthorizedAccessException();
 				// A re-capture of the same source supersedes rather than replaces: the earlier artifact is what an
 				// earlier revision attested to, and deleting it would rewrite history.
 				var current = await _artifacts.GetCurrentDraftOfKindAsync(request.DepartmentId, request.RecordId, request.Kind, artifact.SourceEntityId);
@@ -152,6 +184,9 @@ namespace Resgrid.Services.Records
 
 			return artifact;
 		}
+
+		public async Task<List<RmsEvidenceArtifact>> GetHistoryAsync(int departmentId, string recordId, int skip, int take) =>
+			(await _artifacts.GetHistoryAsync(departmentId, recordId, Math.Max(0, skip), Math.Clamp(take, 1, 200)))?.ToList() ?? new List<RmsEvidenceArtifact>();
 
 		public async Task<List<RmsEvidenceArtifact>> GetForRecordAsync(int departmentId, string recordId, string revisionId = null, bool includeSuperseded = false)
 		{
@@ -184,23 +219,41 @@ namespace Resgrid.Services.Records
 		/// Evidence attaches to a Record that exists and is still open. Attaching to a voided or cancelled Record
 		/// would put supporting material behind a filing nobody stands behind any more.
 		/// </summary>
-		private async Task RequireOpenRecordAsync(RecordEvidenceCaptureRequest request)
+		private async Task RequireOpenRecordAsync(RecordEvidenceCaptureRequest request, bool fence = false, CancellationToken cancellationToken = default)
 		{
+			if (!await _authorization.CanUserViewRecordAsync(request.CapturedByUserId, request.RecordId, request.DepartmentId) || !await _authorization.HasPermissionAsync(request.CapturedByUserId, request.DepartmentId, PermissionTypes.CreateRecord)) throw new UnauthorizedAccessException();
+			async Task Guard(string author, string owner, string amendment, int state, int? callId, long version)
+			{
+				if (author != request.CapturedByUserId && owner != request.CapturedByUserId && !await _authorization.IsDepartmentAdminAsync(request.CapturedByUserId, request.DepartmentId)
+					&& !(amendment != null && await _authorization.HasPermissionAsync(request.CapturedByUserId, request.DepartmentId, PermissionTypes.AmendRecords))) throw new UnauthorizedAccessException();
+				if (RmsLifecycle.IsTerminal((RmsRecordState)state) || !(RmsLifecycle.IsEditable((RmsRecordState)state) || amendment != null)) throw new InvalidOperationException("Capture evidence through an editable draft or amendment.");
+				if (request.ExpectedRowVersion.HasValue && request.ExpectedRowVersion != version) throw new RecordConcurrencyException(request.RecordId, request.ExpectedRowVersion.Value, version);
+				request.ExpectedRowVersion = version;
+				if (request.CallId.HasValue && request.CallId != callId) throw new UnauthorizedAccessException("The source Call does not match this record.");
+				request.CallId = callId;
+				if (callId.HasValue && !await _authorization.CanReadSourceCallAsync(request.CapturedByUserId, request.DepartmentId, await _calls.GetCallByIdAsync(callId.Value))) throw new UnauthorizedAccessException();
+			}
 			if (request.RecordKind == RmsRecordKind.IncidentReport)
 			{
 				var report = await _incidentReports.GetByIdForDepartmentAsync(request.DepartmentId, request.RecordId);
-				if (report == null || report.DeletedOn.HasValue)
+				if (report == null || report.DeletedOn.HasValue || report.PurgedOn.HasValue)
 					throw new InvalidOperationException($"Incident report {request.RecordId} does not exist in department {request.DepartmentId}.");
+				await Guard(report.AuthorUserId, report.OwnerUserId, report.AmendsRevisionId, report.State, report.CallId, report.RowVersion);
 				if (RmsLifecycle.IsTerminal((RmsRecordState)report.State))
 					throw new InvalidOperationException("Evidence cannot be captured against a voided or cancelled report.");
+				if (fence && !await _incidentReports.TryBumpRowVersionAsync(request.DepartmentId, request.RecordId, report.RowVersion, cancellationToken))
+					throw new RecordConcurrencyException(request.RecordId, report.RowVersion, report.RowVersion + 1);
 				return;
 			}
 
 			var record = await _records.GetByIdForDepartmentAsync(request.DepartmentId, request.RecordId);
-			if (record == null || record.DeletedOn.HasValue)
+			if (record == null || record.DeletedOn.HasValue || record.PurgedOn.HasValue)
 				throw new InvalidOperationException($"Record {request.RecordId} does not exist in department {request.DepartmentId}.");
+			await Guard(record.AuthorUserId, record.OwnerUserId, record.AmendsRevisionId, record.State, record.CallId, record.RowVersion);
 			if (RmsLifecycle.IsTerminal((RmsRecordState)record.State))
 				throw new InvalidOperationException("Evidence cannot be captured against a voided or cancelled Record.");
+			if (fence && !await _records.TryBumpRowVersionAsync(request.DepartmentId, request.RecordId, record.RowVersion, cancellationToken))
+				throw new RecordConcurrencyException(request.RecordId, record.RowVersion, record.RowVersion + 1);
 		}
 
 		/// <summary>
@@ -220,6 +273,14 @@ namespace Resgrid.Services.Records
 				NullValueHandling = NullValueHandling.Ignore
 			});
 		}
+		public static string ComputeRequestChecksum(RecordEvidenceCaptureRequest request) => RecordSnapshotSerializer.Checksum(Serialize(new
+		{
+			request.DepartmentId, request.CapturedByUserId, request.RecordId, request.RecordKind, request.Kind, request.CallId,
+			request.ExpectedRowVersion, request.CoverageStart, request.CoverageEnd, request.OriginClient, CaptureReason=Trim(request.CaptureReason),
+			SourceIds=(request.SourceIds ?? new List<string>()).Distinct(StringComparer.Ordinal).OrderBy(x=>x,StringComparer.Ordinal).ToArray(),
+			UnitIds=(request.UnitIds ?? new List<int>()).Distinct().OrderBy(x=>x).ToArray(),
+			UserIds=(request.UserIds ?? new List<string>()).Distinct(StringComparer.Ordinal).OrderBy(x=>x,StringComparer.Ordinal).ToArray()
+		}));
 
 		private static string Trim(string value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 

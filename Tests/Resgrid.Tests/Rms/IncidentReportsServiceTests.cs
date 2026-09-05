@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +21,7 @@ namespace Resgrid.Tests.Rms
 	/// attestation + submission chain, correction after rejection, and void superseding open submissions.
 	/// </summary>
 	[TestFixture]
-	public class IncidentReportsServiceTests
+	public partial class IncidentReportsServiceTests
 	{
 		private const int Dept = 42;
 		private const int CallId = 77;
@@ -43,6 +43,26 @@ namespace Resgrid.Tests.Rms
 		private List<RmsValidationIssue> _localIssues;
 		private Call _call;
 		private IncidentReportsService _service;
+		private Mock<IRecordsAuthorizationService> _authorization;
+
+		[Test]
+		public async Task Starting_an_existing_report_rechecks_current_record_visibility()
+		{
+			var created = await _service.StartFromCallAsync(Dept, "author", CallId);
+			_authorization.Setup(a => a.CanUserViewRecordAsync("other-group", created.Report.RmsIncidentReportId, Dept)).ReturnsAsync(false);
+			Func<Task> start = () => _service.StartFromCallAsync(Dept, "other-group", CallId);
+			await start.Should().ThrowAsync<UnauthorizedAccessException>();
+		}
+
+		[Test]
+		public async Task Denied_source_call_is_not_populated_or_persisted()
+		{
+			_authorization.Setup(a => a.CanReadSourceCallAsync("author", Dept, It.IsAny<Call>())).ReturnsAsync(false);
+			Func<Task> start = () => _service.StartFromCallAsync(Dept, "author", CallId);
+			await start.Should().ThrowAsync<UnauthorizedAccessException>();
+			_calls.Verify(c => c.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Never);
+			_store.Reports.Should().BeEmpty();
+		}
 
 		[SetUp]
 		public void SetUp()
@@ -100,16 +120,25 @@ namespace Resgrid.Tests.Rms
 			_validation.Setup(v => v.ValidateLocal(It.IsAny<NerisIncidentSnapshot>(), It.IsAny<RmsNerisProfile>())).Returns(() => _localIssues.ToList());
 
 			_aggregator = new Mock<IEventAggregator>();
-			var outbox = new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object);
+			_authorization = new Mock<IRecordsAuthorizationService>();
+            _authorization.Setup(a => a.IsActiveMemberAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+			_authorization.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
+			_authorization.Setup(a => a.CanUserViewRecordAsync(It.IsAny<string>(), It.IsAny<string>(), Dept)).ReturnsAsync(true);
+			_authorization.Setup(a => a.CanReadSourceCallAsync(It.IsAny<string>(), Dept, It.IsAny<Call>())).ReturnsAsync(true);
+			_service = BuildService();
+		}
 
-			_service = new IncidentReportsService(_store.ReportsRepo.Object, _store.FactsRepo.Object, _store.UnitsRepo.Object, _store.TypesRepo.Object,
+		private IncidentReportsService BuildService(IRecordsUdfService udf = null, IRecordsEvidenceService evidence = null)
+		{
+			var outbox = new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object);
+			return new IncidentReportsService(_store.ReportsRepo.Object, _store.FactsRepo.Object, _store.UnitsRepo.Object, _store.TypesRepo.Object,
 				_store.TacticsRepo.Object, _store.AidsRepo.Object, _store.LocationsRepo.Object, _store.NarrativesRepo.Object, _store.IssuesRepo.Object,
 				_store.SubmissionsRepo.Object, _store.SignaturesRepo.Object,
 				_store.ModulesRepo.Object, _store.ResourcesRepo.Object, _store.CasualtiesRepo.Object, _store.ExposuresRepo.Object,
 				_store.Shared.RevisionsRepo.Object, _store.Shared.AuditsRepo.Object,
 				_store.Shared.ScopesRepo.Object, _store.Shared.SharesRepo.Object, _store.Shared.ProjectionsRepo.Object, outbox, _settings.Object,
 				_groups.Object, _profiles.Object, _roles.Object, _units.Object, _calls.Object, _adp.Object, _store.UnitOfWork.Object,
-				_neris.Object, new NerisMappingService(), _validation.Object);
+				_neris.Object, new NerisMappingService(), _validation.Object, _authorization.Object, _store.Shared.AttachmentsRepo.Object, _store.Shared.EvidenceRepo.Object, udf ?? Mock.Of<IRecordsUdfService>(), evidence ?? Mock.Of<IRecordsEvidenceService>());
 		}
 
 		[Test]
@@ -122,7 +151,8 @@ namespace Resgrid.Tests.Rms
 			aggregate.Report.DefinitionKey.Should().Be(RmsDefinitionKeys.NerisIncidentReport);
 			aggregate.Report.IncidentNumber.Should().Be("2026-000123");
 			aggregate.Report.CallCreatedOn.Should().Be(LoggedOn);
-			aggregate.Report.CallArrivalOn.Should().Be(LoggedOn.AddMinutes(10), "first on-scene from the unit state log");
+			aggregate.Report.CallArrivalOn.Should().BeNull("unit arrival is not call arrival at the PSAP");
+			aggregate.Report.CallAnsweredOn.Should().BeNull("the Call has no observed PSAP answer time");
 			aggregate.Report.DraftReference.Should().StartWith("I-");
 			aggregate.Report.RecordNumber.Should().BeNull("numbers are allocated at finalize");
 
@@ -144,7 +174,7 @@ namespace Resgrid.Tests.Rms
 
 			var facts = aggregate.Facts;
 			facts.Single(f => f.FactKey == NerisFactKeys.IncidentNumber).SourceKind.Should().Be((int)RmsSourceKind.Dispatch);
-			facts.Single(f => f.FactKey == NerisFactKeys.CallAnswered).SourceKind.Should().Be((int)RmsSourceKind.Derived, "Resgrid holds no PSAP answered time");
+			facts.Should().NotContain(f => f.FactKey == NerisFactKeys.CallAnswered || f.FactKey == NerisFactKeys.CallArrival, "unknown PSAP timestamps must not be invented");
 			facts.Single(f => f.FactKey == NerisFactKeys.UnitTime(5, "on_scene")).SourceKind.Should().Be((int)RmsSourceKind.App);
 			facts.Single(f => f.FactKey == NerisFactKeys.IncidentType).SourceKind.Should().Be((int)RmsSourceKind.Derived);
 			facts.Should().ContainSingle(f => f.FactKey == IncidentReportsService.DispatchCommentFactPrefix + "0" && f.SourceValue == "Caller reports smoke from the roof");
@@ -194,7 +224,7 @@ namespace Resgrid.Tests.Rms
 				new IncidentTypeInput { TypeCode = "RESCUE||SEARCH", IsPrimary = false }
 			};
 
-			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input);
+			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input, true);
 
 			saved.Types.Count(t => t.IsPrimary).Should().Be(1);
 			_store.Types.Where(t => t.RecordId == started.Report.RmsIncidentReportId && t.RevisionId == null)
@@ -215,7 +245,7 @@ namespace Resgrid.Tests.Rms
 			input.Narrative = "Fire confined to the attic.";
 			input.Location.Street = "Main St";
 
-			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input);
+			var saved = await _service.SaveDraftAsync(Dept, "author", started.Report.RmsIncidentReportId, started.Report.RowVersion, input, true);
 
 			saved.Report.IncidentNumber.Should().Be("2026-000124");
 			var number = saved.Facts.Single(f => f.FactKey == NerisFactKeys.IncidentNumber);
@@ -356,7 +386,7 @@ namespace Resgrid.Tests.Rms
 
 			var input = DraftFrom(await _service.GetAsync(Dept, reportId));
 			input.CallAnsweredOn = LoggedOn.AddSeconds(30);
-			var edited = await _service.SaveDraftAsync(Dept, "author", reportId, report.RowVersion, input);
+			var edited = await _service.SaveDraftAsync(Dept, "author", reportId, report.RowVersion, input, true);
 			edited.State.Should().Be(RmsRecordState.Rejected, "a rejected report is editable in place");
 
 			var corrected = await _service.CorrectAndResubmitAsync(Dept, "author", reportId, edited.Report.RowVersion, null, null, "destination-rejection", "Answered time added");
@@ -446,6 +476,41 @@ namespace Resgrid.Tests.Rms
 			snapshot.Report.RmsIncidentReportId.Should().Be(started.Report.RmsIncidentReportId);
 			snapshot.DispatchComments.Should().ContainSingle(c => c.Comment == "Caller reports smoke from the roof" && c.Timestamp == LoggedOn.AddMinutes(1));
 			snapshot.Units.Should().ContainSingle();
+		}
+
+		[Test]
+		public async Task Revision_captures_conditional_sections_attachments_and_evidence_without_later_draft_changes()
+		{
+			_profile.AutoSubmitOnFinalize = false;
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var id = started.Report.RmsIncidentReportId;
+			_store.Modules.Add(new RmsIncidentModule { DepartmentId = Dept, RecordId = id, RmsIncidentModuleId = "fire", ModuleKind = (int)RmsIncidentModuleKind.Fire, DetailJson = "{\"water_supply\":\"HYDRANT\"}" });
+			_store.Shared.Attachments.Add(new RmsRecordAttachment { DepartmentId = Dept, RecordId = id, RmsRecordAttachmentId = "photo", FileName = "scene.txt", Data = new byte[] { 1, 2, 3 }, Checksum = "fixture" });
+			_store.Shared.EvidenceArtifacts.Add(new RmsEvidenceArtifact { DepartmentId = Dept, RecordId = id, RmsEvidenceArtifactId = "decision", ManifestJson = "{\"decision\":\"Engine 5\"}", Checksum = "fixture" });
+			var final = await _service.FinalizeAsync(Dept, "author", id, started.Report.RowVersion, null, null, null, null);
+			var revision = _store.Revisions.Single(); var json = JObject.Parse(revision.SnapshotJson);
+			json["SnapshotVersion"].Value<int>().Should().Be(2);
+			json["Modules"].Should().NotBeEmpty(); json["Evidence"].Should().NotBeEmpty();
+			json["Attachments"][0]["Data"].Type.Should().Be(JTokenType.Null);
+			_store.Shared.EvidenceArtifacts.Single().RevisionId.Should().Be(revision.RmsRevisionId);
+			_store.Reports.Single().IncidentNumber = "unfinalized correction";
+			_store.Modules.First(m => m.RevisionId == null).DetailJson = "{\"changed\":true}";
+			_store.Shared.Attachments.Add(new RmsRecordAttachment { DepartmentId = Dept, RecordId = id, RmsRecordAttachmentId = "later", FileName = "later.txt", UploadedOn = DateTime.UtcNow.AddSeconds(2) });
+			var frozen = await _service.BuildSnapshotAsync(Dept, id, revision.RmsRevisionId);
+			frozen.Report.IncidentNumber.Should().NotBe("unfinalized correction");
+			frozen.Modules.Single().DetailJson.Should().Contain("HYDRANT");
+			frozen.Attachments.Should().ContainSingle(a => a.RmsRecordAttachmentId == "photo");
+			frozen.Evidence.Single().ManifestJson.Should().Contain("Engine 5");
+			await _service.OpenAmendmentAsync(Dept, "author", id);
+			var restored = await _service.AbandonAmendmentAsync(Dept, "author", id);
+			restored.Report.IncidentNumber.Should().Be(frozen.Report.IncidentNumber);
+			restored.Modules.Single().DetailJson.Should().Be(frozen.Modules.Single().DetailJson);
+			restored.Attachments.Should().ContainSingle(a => a.RmsRecordAttachmentId == "photo");
+			restored.Evidence.Should().ContainSingle(e => e.RmsEvidenceArtifactId == "decision");
+			await _service.VoidAsync(Dept, "author", id, "duplicate", "Duplicate incident");
+			var voidSnapshot = await _service.BuildSnapshotAsync(Dept, id, _store.Reports.Single().CurrentRevisionId);
+			voidSnapshot.Attachments.Should().ContainSingle(a => a.RmsRecordAttachmentId == "photo");
+			voidSnapshot.Evidence.Should().ContainSingle(e => e.RmsEvidenceArtifactId == "decision");
 		}
 
 		/// <summary>A draft input carrying the aggregate's current values, so a test can change one thing and save.</summary>

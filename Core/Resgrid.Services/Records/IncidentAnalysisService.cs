@@ -40,12 +40,13 @@ namespace Resgrid.Services.Records
 		private readonly INerisProfileService _neris;
 		private readonly INerisMappingService _mapping;
 		private readonly INerisValidationService _validation;
+		private readonly IRecordsAuthorizationService _authorization;
 
 		public IncidentAnalysisService(IRmsIncidentAnalysesRepository analyses, IRmsIncidentReportsRepository reports,
 			IRmsIncidentModulesRepository modules, IRmsIncidentPropertiesRepository properties, IRmsIncidentVehiclesRepository vehicles,
 			IRmsValidationIssuesRepository issues, IRmsSubmissionsRepository submissions, IRmsRevisionsRepository revisions,
 			IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork, INerisProfileService neris, INerisMappingService mapping,
-			INerisValidationService validation)
+			INerisValidationService validation, IRecordsAuthorizationService authorization)
 		{
 			_analyses = analyses;
 			_reports = reports;
@@ -60,12 +61,14 @@ namespace Resgrid.Services.Records
 			_neris = neris;
 			_mapping = mapping;
 			_validation = validation;
+			_authorization = authorization;
 		}
 
 		public async Task<IncidentAnalysisAggregate> StartForReportAsync(int departmentId, string userId, string incidentReportId, RmsOriginClient origin = RmsOriginClient.Web, CancellationToken cancellationToken = default)
 		{
+			await RequirePermissionAsync(departmentId, userId, incidentReportId, PermissionTypes.CreateRecord);
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, incidentReportId);
-			if (report == null || report.DeletedOn.HasValue)
+			if (report == null || report.DeletedOn.HasValue || report.PurgedOn.HasValue)
 				throw new InvalidOperationException("The incident report does not exist.");
 
 			// One analysis per report; a second start returns the first, exactly like starting a report from a Call.
@@ -108,31 +111,33 @@ namespace Resgrid.Services.Records
 				return null;
 
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, analysis.IncidentReportId);
-			return await HydrateAsync(analysis, report, null, includeHistory);
+			return report == null || report.PurgedOn.HasValue || report.DeletedOn.HasValue ? null : await HydrateAsync(analysis, report, null, includeHistory);
 		}
 
 		public async Task<IncidentAnalysisAggregate> GetForReportAsync(int departmentId, string incidentReportId, bool includeHistory = false)
 		{
 			var analysis = await _analyses.GetForReportAsync(departmentId, incidentReportId);
-			if (analysis == null)
+			if (analysis == null || analysis.DeletedOn.HasValue)
 				return null;
 
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, incidentReportId);
-			return await HydrateAsync(analysis, report, null, includeHistory);
+			return report == null || report.PurgedOn.HasValue || report.DeletedOn.HasValue ? null : await HydrateAsync(analysis, report, null, includeHistory);
 		}
 
-		public async Task<IncidentAnalysisAggregate> SaveDraftAsync(int departmentId, string userId, string analysisId, long expectedRowVersion, IncidentAnalysisDraftInput input, bool canWriteRestricted = true, CancellationToken cancellationToken = default)
+		public async Task<IncidentAnalysisAggregate> SaveDraftAsync(int departmentId, string userId, string analysisId, long expectedRowVersion, IncidentAnalysisDraftInput input, bool canWriteRestricted = false, CancellationToken cancellationToken = default)
 		{
 			if (input == null) throw new ArgumentNullException(nameof(input));
 
 			var analysis = await LoadAsync(departmentId, analysisId);
+			await RequirePermissionAsync(departmentId, userId, analysis.IncidentReportId, PermissionTypes.CreateRecord);
+			canWriteRestricted = canWriteRestricted && await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords);
 			if ((RmsIncidentAnalysisState)analysis.State != RmsIncidentAnalysisState.Draft && (RmsIncidentAnalysisState)analysis.State != RmsIncidentAnalysisState.Rejected)
 				throw new InvalidOperationException("Only a draft or rejected analysis can be edited.");
 
 			var now = DateTime.UtcNow;
 			await InTransactionAsync(async () =>
 			{
-				if (analysis.RowVersion != expectedRowVersion)
+				if (analysis.RowVersion != expectedRowVersion || !await _analyses.TryBumpRowVersionAsync(departmentId, analysisId, expectedRowVersion, cancellationToken))
 					throw new RecordConcurrencyException(analysisId, expectedRowVersion, analysis.RowVersion);
 
 				analysis.GeneralCause = Trim(input.GeneralCause)?.ToUpperInvariant();
@@ -144,8 +149,8 @@ namespace Resgrid.Services.Records
 				await ReplaceModulesAsync(analysis, input.Modules, now, cancellationToken);
 
 				// The analysis's headline totals are the sum of what it enumerates; a department never types them.
-				analysis.EstimatedValueTotal = Sum(properties.Select(p => p.EstimatedValue), properties.Select(p => p.ContentsValue), vehicles.Select(v => v.EstimatedValue));
-				analysis.EstimatedLossTotal = Sum(properties.Select(p => p.EstimatedLoss), properties.Select(p => p.ContentsLoss), vehicles.Select(v => v.EstimatedLoss));
+				analysis.EstimatedValueTotal = Sum(properties.Select(p => PropertyTotal(p, p.EstimatedValue, "estimated_property_value")), properties.Select(p => PropertyTotal(p, p.ContentsValue, "estimated_contents_value")), vehicles.Select(v => v.EstimatedValue));
+				analysis.EstimatedLossTotal = Sum(properties.Select(p => PropertyTotal(p, p.EstimatedLoss, "estimated_property_loss_value")), properties.Select(p => PropertyTotal(p, p.ContentsLoss, "estimated_contents_loss_value")), vehicles.Select(v => v.EstimatedLoss));
 
 				analysis.ModifiedOn = now;
 				analysis.ModifiedByUserId = userId;
@@ -172,6 +177,7 @@ namespace Resgrid.Services.Records
 		public async Task<IncidentAnalysisAggregate> FinalizeAsync(int departmentId, string userId, string analysisId, long expectedRowVersion, CancellationToken cancellationToken = default)
 		{
 			var analysis = await LoadAsync(departmentId, analysisId);
+			await RequirePermissionAsync(departmentId, userId, analysis.IncidentReportId, PermissionTypes.FinalizeRecords);
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, analysis.IncidentReportId);
 
 			var issues = await ValidateAsync(departmentId, analysisId, cancellationToken);
@@ -186,7 +192,7 @@ namespace Resgrid.Services.Records
 
 			await InTransactionAsync(async () =>
 			{
-				if (analysis.RowVersion != expectedRowVersion)
+				if (analysis.RowVersion != expectedRowVersion || !await _analyses.TryBumpRowVersionAsync(departmentId, analysisId, expectedRowVersion, cancellationToken))
 					throw new RecordConcurrencyException(analysisId, expectedRowVersion, analysis.RowVersion);
 
 				var aggregate = await HydrateAsync(analysis, report, null, false);
@@ -205,6 +211,7 @@ namespace Resgrid.Services.Records
 				// Queue immediately when the incident is already filed; otherwise worker 41 picks it up when it is.
 				if (report != null && !string.IsNullOrWhiteSpace(report.NerisIncidentId) && await _neris.IsSubmissionEnabledAsync(departmentId))
 					await QueueCoreAsync(analysis, report, revision, userId, now, cancellationToken);
+				await _analyses.UpdateAsync(analysis, cancellationToken, true);
 
 				await AuditAsync(departmentId, userId, analysisId, revision.RmsRevisionId, RmsAccessAuditAction.Change, "Finalize incident analysis", RmsOriginClient.Web, cancellationToken, new { revision.Checksum });
 			});
@@ -216,6 +223,7 @@ namespace Resgrid.Services.Records
 		public async Task<IncidentAnalysisAggregate> QueueSubmissionAsync(int departmentId, string userId, string analysisId, CancellationToken cancellationToken = default)
 		{
 			var analysis = await LoadAsync(departmentId, analysisId);
+			await RequirePermissionAsync(departmentId, userId, analysis.IncidentReportId, PermissionTypes.SubmitRecords);
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, analysis.IncidentReportId);
 
 			if (string.IsNullOrWhiteSpace(analysis.CurrentRevisionId))
@@ -228,7 +236,10 @@ namespace Resgrid.Services.Records
 			var now = DateTime.UtcNow;
 			await InTransactionAsync(async () =>
 			{
-				var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, analysis.CurrentRevisionId);
+				var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, analysis.CurrentRevisionId)
+					?? throw new InvalidOperationException("The finalized revision this analysis points at is missing; it cannot be filed.");
+				if (!await _analyses.TryBumpRowVersionAsync(departmentId, analysisId, analysis.RowVersion, cancellationToken))
+					throw new RecordConcurrencyException(analysisId, analysis.RowVersion, analysis.RowVersion + 1);
 				await QueueCoreAsync(analysis, report, revision, userId, now, cancellationToken);
 				analysis.ModifiedOn = now;
 				analysis.ModifiedByUserId = userId;
@@ -279,6 +290,7 @@ namespace Resgrid.Services.Records
 				throw new ArgumentException("A void reason is required.", nameof(reasonCode));
 
 			var analysis = await LoadAsync(departmentId, analysisId);
+			await RequirePermissionAsync(departmentId, userId, analysis.IncidentReportId, PermissionTypes.DeleteRecord);
 			if ((RmsIncidentAnalysisState)analysis.State == RmsIncidentAnalysisState.Submitted)
 				throw new InvalidOperationException("The analysis is in flight to the destination and cannot be voided until it settles.");
 
@@ -286,6 +298,8 @@ namespace Resgrid.Services.Records
 			await InTransactionAsync(async () =>
 			{
 				analysis.State = (int)RmsIncidentAnalysisState.Voided;
+				if (!await _analyses.TryBumpRowVersionAsync(departmentId, analysisId, analysis.RowVersion, cancellationToken))
+					throw new RecordConcurrencyException(analysisId, analysis.RowVersion, analysis.RowVersion + 1);
 				analysis.VoidedOn = now;
 				analysis.VoidedByUserId = userId;
 				analysis.VoidReasonCode = reasonCode;
@@ -304,10 +318,21 @@ namespace Resgrid.Services.Records
 		public async Task<NerisIncidentAnalysisSnapshot> BuildSnapshotAsync(int departmentId, string analysisId, string revisionId = null)
 		{
 			var analysis = await _analyses.GetByIdForDepartmentAsync(departmentId, analysisId);
-			if (analysis == null)
+			if (analysis == null || analysis.DeletedOn.HasValue)
 				return null;
 
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, analysis.IncidentReportId);
+			if (report == null || report.PurgedOn.HasValue || report.DeletedOn.HasValue) return null;
+			if (revisionId != null)
+			{
+				var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, revisionId);
+				if (revision == null || revision.RecordId != analysisId || revision.RecordKind != (int)RmsRecordKind.IncidentAnalysis) return null;
+				if (RecordSnapshotSerializer.Checksum(revision.SnapshotJson) != revision.Checksum) throw new InvalidOperationException("The analysis revision checksum does not match.");
+				var frozen = JsonConvert.DeserializeObject<NerisIncidentAnalysisSnapshot>(revision.SnapshotJson);
+				if (frozen?.Analysis == null || frozen.Report == null) throw new InvalidOperationException("This legacy analysis revision did not capture its headers. Finalize a corrected revision before submitting it.");
+				if (frozen.Analysis.RmsIncidentAnalysisId != analysisId || frozen.Analysis.DepartmentId != departmentId || frozen.Report.RmsIncidentReportId != analysis.IncidentReportId || frozen.Report.DepartmentId != departmentId) throw new InvalidOperationException("The analysis revision does not belong to this incident.");
+				return frozen;
+			}
 			var aggregate = await HydrateAsync(analysis, report, revisionId, false);
 			return ToSnapshot(aggregate);
 		}
@@ -336,7 +361,9 @@ namespace Resgrid.Services.Records
 			var analysis = await _analyses.GetByIdForDepartmentAsync(departmentId, analysisId);
 			if (analysis == null || analysis.DeletedOn.HasValue)
 				throw new InvalidOperationException("The incident analysis does not exist.");
-			return analysis;
+			var report = await _reports.GetByIdForDepartmentAsync(departmentId, analysis.IncidentReportId);
+			if (report == null || report.PurgedOn.HasValue || report.DeletedOn.HasValue) throw new InvalidOperationException("The parent incident report is no longer available.");
+			return JsonConvert.DeserializeObject<RmsIncidentAnalysis>(JsonConvert.SerializeObject(analysis));
 		}
 
 		private async Task<IncidentAnalysisAggregate> HydrateAsync(RmsIncidentAnalysis analysis, RmsIncidentReport report, string revisionId, bool includeHistory)
@@ -395,22 +422,28 @@ namespace Resgrid.Services.Records
 			if (inputs == null)
 				return existing;
 
+			var byId = existing.ToDictionary(v => v.RmsIncidentVehicleId, StringComparer.Ordinal);
+			var suppliedIds = inputs.Where(v => !string.IsNullOrWhiteSpace(v.VehicleId)).Select(v => v.VehicleId).ToList();
+			if (suppliedIds.Distinct(StringComparer.Ordinal).Count() != suppliedIds.Count || suppliedIds.Any(id => !byId.ContainsKey(id)))
+				throw new ArgumentException("A vehicle row does not belong to this draft or was supplied more than once.");
+			if (!canWriteRestricted && existing.Any(v => !suppliedIds.Contains(v.RmsIncidentVehicleId)))
+				throw new UnauthorizedAccessException("Existing vehicles must be retained by their row identifiers when restricted fields are hidden.");
 			await _vehicles.DeleteDraftForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, cancellationToken);
 			var result = new List<RmsIncidentVehicle>();
 			var ordinal = 0;
 			foreach (var input in inputs)
 			{
-				var prior = ordinal < existing.Count ? existing[ordinal] : null;
+				var prior = !string.IsNullOrWhiteSpace(input.VehicleId) ? byId[input.VehicleId] : null;
 				var row = new RmsIncidentVehicle
 				{
-					RmsIncidentVehicleId = Guid.NewGuid().ToString(), DepartmentId = analysis.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RmsIncidentVehicleId = prior?.RmsIncidentVehicleId ?? Guid.NewGuid().ToString(), DepartmentId = analysis.DepartmentId, ProtectionId = prior?.ProtectionId ?? Guid.NewGuid().ToString(),
 					RecordId = analysis.RmsIncidentAnalysisId,
 					VehicleKind = Trim(input.VehicleKind)?.ToUpperInvariant() ?? "AUTOMOBILE",
 					Make = Trim(input.Make)?.ToUpperInvariant(), Model = Trim(input.Model), ModelYear = input.ModelYear,
 					BodyStyle = Trim(input.BodyStyle)?.ToUpperInvariant(), Powertrain = Trim(input.Powertrain)?.ToUpperInvariant(),
 					DamageType = Trim(input.DamageType)?.ToUpperInvariant(), WasOccupied = input.WasOccupied,
 					EstimatedValue = input.EstimatedValue, EstimatedLoss = input.EstimatedLoss, CurrencyCode = analysis.CurrencyCode,
-					DetailJson = Trim(input.DetailJson), Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
+					DetailJson = canWriteRestricted ? Trim(input.DetailJson) : prior?.DetailJson, Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
 				};
 
 				// VIN, plate and registration state identify a person's vehicle: restricted, so a caller without the
@@ -459,13 +492,16 @@ namespace Resgrid.Services.Records
 		{
 			var snapshotJson = JsonConvert.SerializeObject(new
 			{
+				SnapshotVersion = 2,
+				Analysis = analysis,
+				Report = draft.Report,
 				analysis.RmsIncidentAnalysisId,
 				analysis.IncidentReportId,
 				analysis.GeneralCause,
 				analysis.InvestigationTypesCsv,
 				analysis.EstimatedValueTotal,
 				analysis.EstimatedLossTotal,
-				Modules = draft.Modules.OrderBy(m => m.Ordinal).Select(m => new { m.ModuleKind, m.PrimaryCode, m.SecondaryCode, m.Quantity, m.DetailJson }),
+				Modules = draft.Modules.OrderBy(m => m.Ordinal),
 				Properties = draft.Properties.OrderBy(p => p.Ordinal),
 				Vehicles = draft.Vehicles.OrderBy(v => v.Ordinal)
 			});
@@ -500,12 +536,25 @@ namespace Resgrid.Services.Records
 
 		private async Task QueueCoreAsync(RmsIncidentAnalysis analysis, RmsIncidentReport report, RmsRevision revision, string userId, DateTime now, CancellationToken cancellationToken)
 		{
+			var priorSubmissions = (await _submissions.GetForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId))?.ToList() ?? new List<RmsSubmission>();
+			RecordsSubmissionService.RequireResolvedCreates(priorSubmissions);
 			var profile = await _neris.GetProfileAsync(analysis.DepartmentId);
-			var aggregate = await HydrateAsync(analysis, report, revision.RmsRevisionId, false);
-			var payload = _mapping.BuildIncidentAnalysisPayloadJson(ToSnapshot(aggregate), profile);
+			var snapshot = await BuildSnapshotAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, revision.RmsRevisionId) ?? throw new InvalidOperationException("The analysis revision is unavailable.");
+			// The parent receipt may arrive after local attestation. It is destination identity,
+			// not authored incident content; all incident numbers and analysis facts stay frozen.
+			if (string.IsNullOrWhiteSpace(snapshot.Report.NerisIncidentId)) snapshot.Report.NerisIncidentId = report.NerisIncidentId;
+			var payload = _mapping.BuildIncidentAnalysisPayloadJson(snapshot, profile);
 			var key = IdempotencyKey(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, revision.RmsRevisionId);
 
 			var submission = await _submissions.GetByIdempotencyKeyAsync(key);
+			if (submission?.RequiresReconciliation == true)
+				throw new InvalidOperationException("Reconcile the prior destination delivery before retrying this revision.");
+			var destination = _neris.GetDestinationIdentity(profile);
+			var externalId = RecordsSubmissionService.ResolveDestinationId(priorSubmissions, destination, analysis.NerisAnalysisId);
+			if (submission != null && submission.DestinationIdentity != destination)
+				throw new InvalidOperationException("This analysis revision was queued for another destination.");
+			if (submission != null && submission.State != (int)RmsSubmissionState.Failed && submission.State != (int)RmsSubmissionState.Superseded && submission.State != (int)RmsSubmissionState.Rejected)
+				throw new InvalidOperationException("This analysis revision is already queued or delivered.");
 			if (submission == null)
 			{
 				submission = new RmsSubmission
@@ -518,6 +567,8 @@ namespace Resgrid.Services.Records
 					RevisionId = revision.RmsRevisionId,
 					Destination = RmsSubmissionDestinations.NerisIncidentAnalysis,
 					DestinationVersion = profile?.ContractVersion ?? _neris.ContractVersion,
+					DestinationIdentity = destination,
+					ExternalId = externalId,
 					IdempotencyKey = key,
 					MaxAttempts = Math.Max(1, Config.NerisConfig.MaxAttempts),
 					PayloadJson = payload,
@@ -535,7 +586,7 @@ namespace Resgrid.Services.Records
 			{
 				// Same revision, same key: a retry, never a new payload.
 				submission.State = (int)RmsSubmissionState.Queued;
-				submission.Attempts = 0;
+				submission.MaxAttempts = submission.Attempts + Math.Max(1, Config.NerisConfig.MaxAttempts);
 				submission.NextAttemptOn = null;
 				submission.LeaseOwner = null;
 				submission.LeaseExpiresOn = null;
@@ -565,6 +616,24 @@ namespace Resgrid.Services.Records
 			type.GetProperty("ModifiedOn")?.SetValue(copy, now);
 			type.GetProperty("RowVersion")?.SetValue(copy, 1L);
 			return copy;
+		}
+
+		private async Task RequirePermissionAsync(int departmentId, string userId, string reportId, PermissionTypes permission)
+		{
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, permission)
+				|| !await _authorization.CanUserViewRecordAsync(userId, reportId, departmentId)) throw new UnauthorizedAccessException("Incident analysis access is not authorized.");
+		}
+
+		private static decimal? PropertyTotal(RmsIncidentProperty property, decimal? firstValue, string key)
+		{
+			if (string.IsNullOrWhiteSpace(property.DetailJson)) return firstValue;
+			try
+			{
+				var structures = (Newtonsoft.Json.Linq.JObject.Parse(property.DetailJson)["structures"] as Newtonsoft.Json.Linq.JArray)?.OfType<Newtonsoft.Json.Linq.JObject>().ToList();
+				if (structures == null || structures.Count == 0) return firstValue;
+				return Sum(new[] { firstValue ?? (decimal?)structures[0][key] }, structures.Skip(1).Select(s => (decimal?)s[key]));
+			}
+			catch (Newtonsoft.Json.JsonException) { throw new ArgumentException("The property fields could not be read."); }
 		}
 
 		private static decimal? Sum(params IEnumerable<decimal?>[] sets)

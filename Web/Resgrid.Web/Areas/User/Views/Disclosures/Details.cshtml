@@ -112,8 +112,9 @@
 							<div class="col-sm-9">
 								@foreach (var recordState in Model.RecordStates)
 								{
+									var stateChecked = int.TryParse(recordState.Value, out var stateValue) && Model.Scope.States?.Contains(stateValue) == true;
 									<label class="checkbox-inline">
-										<input type="checkbox" name="Scope.States" value="@recordState.Value" @(Model.Scope.States.Contains(int.Parse(recordState.Value)) ? "checked" : string.Empty) @(Model.CanEditScope ? string.Empty : "disabled") /> @recordState.Text
+										<input type="checkbox" name="Scope.States" value="@recordState.Value" @(stateChecked ? "checked" : string.Empty) @(Model.CanEditScope ? string.Empty : "disabled") /> @recordState.Text
 									</label>
 								}
 							</div>
@@ -194,10 +195,12 @@
 											<td>@production.RecordCount</td>
 											<td>@production.WithheldFieldCount</td>
 											<td>@When(production.PreparedOn) — @Name(production.PreparedByUserId)</td>
-											<td>@(production.IsReleased ? When(production.ReleasedOn) + " — " + Name(production.ReleasedByUserId) : "-")</td>
+											<td>@(production.IsReleased ? When(production.ReleasedOn) + " — " + Name(production.ReleasedByUserId) : "-")<br />@production.DeliveryMethod<br />@production.DeliveryReference</td>
 											<td><code title="@production.Checksum">@(production.Checksum?.Length > 12 ? production.Checksum.Substring(0, 12) : production.Checksum)</code></td>
 											<td>
-												<a class="btn btn-xs btn-white" asp-controller="Disclosures" asp-action="Download" asp-route-area="User" asp-route-id="@request.RmsDisclosureRequestId" asp-route-productionId="@production.RmsDisclosureProductionId"><i class="fa fa-download"></i></a>
+												<a class="btn btn-xs btn-white" asp-controller="Disclosures" asp-action="Download" asp-route-area="User" asp-route-id="@request.RmsDisclosureRequestId" asp-route-productionId="@production.RmsDisclosureProductionId" asp-route-format="zip">ZIP</a>
+												<a class="btn btn-xs btn-white" asp-action="Download" asp-route-id="@request.RmsDisclosureRequestId" asp-route-productionId="@production.RmsDisclosureProductionId" asp-route-format="pdf">PDF</a>
+												<a class="btn btn-xs btn-white" asp-action="Download" asp-route-id="@request.RmsDisclosureRequestId" asp-route-productionId="@production.RmsDisclosureProductionId" asp-route-format="json">JSON</a>
 												<form method="post" style="display:inline" asp-controller="Disclosures" asp-action="Verify" asp-route-area="User">
 													@Html.AntiForgeryToken()
 													<input type="hidden" name="id" value="@request.RmsDisclosureRequestId" />
@@ -210,7 +213,11 @@
 														@Html.AntiForgeryToken()
 														<input type="hidden" name="id" value="@request.RmsDisclosureRequestId" />
 														<input type="hidden" name="productionId" value="@production.RmsDisclosureProductionId" />
-														<button type="submit" class="btn btn-xs btn-primary">@localizer["Release"]</button>
+														<details><summary>Record delivery</summary>
+														<label>Delivery method<input class="form-control" name="deliveryMethod" required maxlength="500" /></label>
+														<label>Receipt or delivery reference<input class="form-control" name="deliveryReference" required maxlength="1000" /></label>
+														<p>Records the delivery you completed. Requests with outstanding scope items remain open.</p>
+														<button type="submit" class="btn btn-xs btn-primary">@localizer["Release"]</button></details>
 													</form>
 												}
 											</td>
@@ -231,8 +238,7 @@
 					<div class="ibox-title"><h5><i class="fa fa-archive"></i> @localizer["Produce"]</h5></div>
 					<div class="ibox-content">
 						<p class="text-muted">@localizer["ProduceIntro"]</p>
-						<form method="post" asp-controller="Disclosures" asp-action="Produce" asp-route-area="User">
-							@Html.AntiForgeryToken()
+						<form method="get" asp-controller="Disclosures" asp-action="Review" asp-route-area="User">
 							<input type="hidden" name="id" value="@request.RmsDisclosureRequestId" />
 							<select class="form-control" name="redactionProfile">
 								@foreach (var profile in Model.RedactionProfiles)
@@ -240,7 +246,7 @@
 									<option value="@profile.Value" selected="@(profile.Value == (request.RedactionProfile ?? RmsRedactionProfiles.Standard))">@profile.Text</option>
 								}
 							</select>
-							<button type="submit" class="btn btn-primary btn-block" style="margin-top:8px">@localizer["Produce"]</button>
+							<button type="submit" class="btn btn-primary btn-block" style="margin-top:8px">Review revisions and attachments</button>
 						</form>
 					</div>
 				</div>

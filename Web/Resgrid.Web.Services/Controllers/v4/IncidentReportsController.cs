@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
@@ -39,12 +39,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IRecordsApiIdempotencyService _idempotency;
 		private readonly IIncidentAnalysisService _analysis;
+		private readonly IRecordsSubmissionService _submissionWorker;
 
 		private SystemPrincipalRecordGrant _systemGrant;
 		private bool _systemGrantResolved;
 
 		public IncidentReportsController(IIncidentReportsService incidentReports, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
-			INerisProfileService neris, IFeatureToggleService featureToggleService, IRecordsApiIdempotencyService idempotency, IIncidentAnalysisService analysis)
+			INerisProfileService neris, IFeatureToggleService featureToggleService, IRecordsApiIdempotencyService idempotency, IIncidentAnalysisService analysis, IRecordsSubmissionService submissionWorker)
 		{
 			_incidentReports = incidentReports;
 			_cutoverService = cutoverService;
@@ -53,6 +54,40 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_featureToggleService = featureToggleService;
 			_idempotency = idempotency;
 			_analysis = analysis;
+			_submissionWorker = submissionWorker;
+		}
+
+		[HttpPost("Submissions/{submissionId}/Reconcile")]
+		[Authorize(Policy = ResgridResources.Record_Submit)]
+		public async Task<IActionResult> Reconcile(string submissionId, [FromBody] RmsSubmissionReconciliationInput input, CancellationToken cancellationToken)
+		{
+			if (input == null) return BadRequest();
+			if (!(await _cutoverService.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
+			try
+			{
+				if (input.ConfirmedNotCreated)
+				{
+					if (!string.IsNullOrWhiteSpace(input.ExternalId)) return BadRequest("A recorded filing cannot also be declared absent.");
+					await _submissionWorker.ConfirmNotCreatedAsync(DepartmentId, UserId, submissionId, input.RowVersion, input.VerificationReference, input.Reason, cancellationToken);
+				}
+				else await _submissionWorker.ReconcileAsync(DepartmentId, UserId, submissionId, input.RowVersion, input.ExternalId, input.Reason, cancellationToken);
+				return NoContent();
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (RecordConcurrencyException ex) { return Problem(statusCode: 409, title: ex.Message); }
+			catch (InvalidOperationException ex) { return Problem(statusCode: 409, title: ex.Message); }
+			catch (ArgumentException ex) { return Problem(statusCode: 400, title: ex.Message); }
+		}
+
+		[HttpGet("Submissions/{submissionId}/Exchanges")]
+		[Authorize(Policy = ResgridResources.Record_Submit)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<IActionResult> ExchangeHistory(string submissionId, CancellationToken cancellationToken)
+		{
+			if (!(await _cutoverService.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
+			try { return Ok(await _submissionWorker.GetHistoryAsync(DepartmentId, UserId, submissionId, cancellationToken)); }
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (InvalidOperationException) { return NotFound(); }
 		}
 
 		/// <summary>
@@ -210,6 +245,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Record_Create)]
 		public async Task<ActionResult<IncidentReportResult>> Start(StartIncidentReportInput input, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
 			if (input == null || input.CallId <= 0)
 				return BadRequest();
 			var usable = await UsableAsync();
@@ -228,6 +264,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var result = await WrapAsync(aggregate, existing != null ? ResponseHelper.Success : ResponseHelper.Created);
 				return existing != null ? Ok(result) : StatusCode(StatusCodes.Status201Created, result);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (ArgumentException ex)
 			{
 				return Problem(statusCode: StatusCodes.Status400BadRequest, title: ex.Message, type: "record_validation");
@@ -265,13 +302,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				var saved = await _incidentReports.SaveDraftAsync(DepartmentId, UserId, input.ReportId, rowVersion.Value, IncidentReportsApiMapper.ToDraftInput(input, origin), ClaimsAuthorizationHelper.CanViewRestrictedRecords(), cancellationToken);
+				var saved = await _incidentReports.SaveDraftAsync(DepartmentId, UserId, input.ReportId, rowVersion.Value, IncidentReportsApiMapper.ToDraftInput(input, origin), await CanViewRestrictedAsync(), cancellationToken);
 				return Ok(await WrapAsync(saved, ResponseHelper.Updated));
 			}
 			catch (RecordConcurrencyException ex)
 			{
 				return await ConflictAsync(input.ReportId, ex.ExpectedRowVersion);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (ArgumentException ex)
 			{
 				return Problem(statusCode: StatusCodes.Status400BadRequest, title: ex.Message, type: "record_validation");
@@ -516,7 +554,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<ActionResult<IncidentReportResult>> ConflictAsync(string reportId, long expectedRowVersion)
 		{
-			var current = await _incidentReports.GetAsync(DepartmentId, reportId, true);
+			var current = await LoadAuthorizedAsync(reportId, true);
 			if (current == null)
 				return NotFound();
 
@@ -529,7 +567,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					CurrentRowVersion = current.Report.RowVersion,
 					CurrentState = current.Report.State,
 					CurrentStateName = ((RmsRecordState)current.Report.State).ToString(),
-					Current = IncidentReportsApiMapper.ToReport(current, await _neris.IsSubmissionEnabledAsync(DepartmentId))
+					Current = IncidentReportsApiMapper.ToReport(current, await _neris.IsSubmissionEnabledAsync(DepartmentId), await CanViewRestrictedAsync())
 				},
 				PageSize = 1,
 				Status = RecordsController.ConflictStatus
@@ -547,7 +585,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var analysis = await _analysis.GetForReportAsync(DepartmentId, aggregate.Report.RmsIncidentReportId);
 
 			var data = IncidentReportsApiMapper.ToReport(aggregate, await _neris.IsSubmissionEnabledAsync(DepartmentId),
-				ClaimsAuthorizationHelper.CanViewRestrictedRecords(), sections, analysis?.Analysis?.RmsIncidentAnalysisId);
+				await CanViewRestrictedAsync(), sections, analysis?.Analysis?.RmsIncidentAnalysisId);
 
 			var result = new IncidentReportResult { Data = data, PageSize = 1, Status = status };
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -556,5 +594,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		#endregion
+
+        private async Task<bool> CanViewRestrictedAsync() => ClaimsAuthorizationHelper.CanViewRestrictedRecords()
+            && await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 	}
 }

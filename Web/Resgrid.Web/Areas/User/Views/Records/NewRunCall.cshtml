@@ -1,0 +1,16 @@
+@model Resgrid.Web.Areas.User.Models.Records.RecordNewCallView
+@{ ViewBag.Title = "Resgrid | Create Call for Run"; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-title"><h2>Create Call for Run</h2></div><div class="ibox-content">
+    <p>Record a past incident and link it to this Run. The Call is created as closed and does not dispatch responders.</p>
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+    <form method="post" asp-action="NewRunCall" asp-controller="Records" asp-area="User">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="RecordId" /><input type="hidden" asp-for="RowVersion" />
+        <div class="form-group"><label asp-for="Name">Call name</label><input asp-for="Name" class="form-control" maxlength="200" required /></div>
+        <div class="form-group"><label asp-for="OccurredOn">Occurred at (department local time)</label><input asp-for="OccurredOn" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm}" class="form-control" required /></div>
+        <div class="form-group"><label asp-for="Address">Address</label><input asp-for="Address" class="form-control" maxlength="500" /></div>
+        <div class="form-group"><label asp-for="Nature">Nature of Call</label><textarea asp-for="Nature" class="form-control" rows="5" maxlength="16000"></textarea></div>
+        <button type="submit" class="btn btn-primary">Create and link Call</button>
+        <a asp-action="Edit" asp-controller="Records" asp-area="User" asp-route-id="@Model.RecordId" class="btn btn-default">Return to Run</a>
+    </form>
+</div></div></div>

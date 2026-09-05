@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services.Records
@@ -21,6 +22,8 @@ namespace Resgrid.Services.Records
 	{
 		private static readonly ConcurrentDictionary<string, (string Value, DateTime ExpiresOn)> Local = new ConcurrentDictionary<string, (string, DateTime)>(StringComparer.Ordinal);
 		private static int _localWarned;
+		// Low-volume nodes still expire uploaded bytes; expiry must not depend on reaching 512 cached entries.
+		private static readonly Timer ExpiryTimer = new Timer(_ => Sweep(), null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
 		private readonly ICacheProvider _cache;
 
 		public RecordsApiStateStore(ICacheProvider cache)
@@ -80,8 +83,6 @@ namespace Resgrid.Services.Records
 
 		private static void Sweep()
 		{
-			if (Local.Count < 512)
-				return;
 			var now = DateTime.UtcNow;
 			foreach (var kv in Local.Where(kv => kv.Value.ExpiresOn <= now).ToList())
 				Local.TryRemove(kv.Key, out _);
@@ -91,15 +92,39 @@ namespace Resgrid.Services.Records
 		public static void ResetLocal() => Local.Clear();
 	}
 
-	/// <summary>Scoped command idempotency (plan section 5.3): remembered for a day, keyed by department, user and the client's key.</summary>
+	/// <summary>Durable command reservations scoped by department, actor, command and client key. Reads older cached receipts during rollout.</summary>
 	public class RecordsApiIdempotencyService : IRecordsApiIdempotencyService
 	{
 		public static readonly TimeSpan Retention = TimeSpan.FromHours(24);
 		private readonly IRecordsApiStateStore _store;
+		private readonly IRmsCommandReceiptsRepository _receipts;
+		private readonly ConcurrentDictionary<string, string> _reservations = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
 
-		public RecordsApiIdempotencyService(IRecordsApiStateStore store)
+		public RecordsApiIdempotencyService(IRecordsApiStateStore store, IRmsCommandReceiptsRepository receipts)
 		{
 			_store = store;
+			_receipts = receipts;
+		}
+
+		public static string DurableKey(int departmentId, string userId, string idempotencyKey, string command) =>
+			RecordSnapshotSerializer.Checksum(JsonConvert.SerializeObject(new { DepartmentId = departmentId, UserId = userId, Command = command?.Trim(), Key = idempotencyKey?.Trim() }));
+
+		public async Task<bool> TryReserveCommandAsync(int departmentId, string userId, string idempotencyKey, string command, string recordId, string requestChecksum)
+		{
+			ValidateIdentity(userId, idempotencyKey, command, recordId, requestChecksum);
+			// Preserve an older receipt rather than treating deployment or cache migration as permission to repeat.
+			if (await TryGetCommandAsync(departmentId, userId, idempotencyKey, command) != null) return false;
+			var key = DurableKey(departmentId, userId, idempotencyKey, command);
+			var reservation = Guid.NewGuid().ToString();
+			if (!await _receipts.ReserveAsync(departmentId, key, recordId, requestChecksum, reservation)) return false;
+			_reservations[key] = reservation;
+			return true;
+		}
+
+		private static void ValidateIdentity(string userId, string idempotencyKey, string command, string recordId, string requestChecksum)
+		{
+			if (string.IsNullOrWhiteSpace(idempotencyKey) || string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(command) || string.IsNullOrWhiteSpace(recordId) || string.IsNullOrWhiteSpace(requestChecksum))
+				throw new ArgumentException("A command receipt requires its actor, command, key, record and request checksum.");
 		}
 
 		/// <summary>
@@ -121,6 +146,28 @@ namespace Resgrid.Services.Records
 			if (string.IsNullOrWhiteSpace(idempotencyKey) || string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(recordId))
 				return Task.CompletedTask;
 			return _store.SetAsync(Key(departmentId, userId, idempotencyKey.Trim(), command), recordId, Retention);
+		}
+
+		public async Task<RecordCommandReceipt> TryGetCommandAsync(int departmentId, string userId, string idempotencyKey, string command)
+		{
+			if (string.IsNullOrWhiteSpace(idempotencyKey) || string.IsNullOrWhiteSpace(userId)) return null;
+			var durable = await _receipts.GetAsync(departmentId, DurableKey(departmentId, userId, idempotencyKey, command));
+			if (durable != null) return durable;
+			var value = await TryGetRecordIdAsync(departmentId, userId, idempotencyKey, command);
+			if (value == null) return null;
+			try { return JsonConvert.DeserializeObject<RecordCommandReceipt>(value) ?? new RecordCommandReceipt(); }
+			catch (JsonException) { return new RecordCommandReceipt { RecordId = value }; }
+			// A legacy/corrupt unbound receipt is deliberately present with no request checksum. Callers must
+			// reject it, rather than treating it as a cache miss and repeating a possibly completed operation.
+		}
+
+		public async Task RememberCommandAsync(int departmentId, string userId, string idempotencyKey, string command, string recordId, string requestChecksum)
+		{
+			ValidateIdentity(userId, idempotencyKey, command, recordId, requestChecksum);
+			var key = DurableKey(departmentId, userId, idempotencyKey, command);
+			if (!_reservations.TryGetValue(key, out var reservation) || !await _receipts.CompleteAsync(departmentId, key, recordId, requestChecksum, reservation))
+				throw new RecordIdempotencyException("The command outcome could not be acknowledged. Review the current record before issuing another command.");
+			_reservations.TryRemove(key, out _);
 		}
 	}
 
@@ -171,7 +218,7 @@ namespace Resgrid.Services.Records
 				DepartmentId = departmentId,
 				RecordId = recordId,
 				UserId = userId,
-				FileName = System.IO.Path.GetFileName(fileName.Trim()),
+				FileName = FileHelper.GetSafeFileName(fileName?.Trim()),
 				ContentType = string.IsNullOrWhiteSpace(contentType) ? "application/octet-stream" : contentType.Trim(),
 				DeclaredSize = declaredSize,
 				Sha256 = sha256.Trim().ToLowerInvariant(),
@@ -211,13 +258,13 @@ namespace Resgrid.Services.Records
 			if (data.Length < session.ChunkSize && index != session.ChunkCount - 1)
 				throw new RecordUploadSessionException("bad_offset", "Only the last chunk may be shorter than the chunk size.");
 
-			await _store.SetAsync(ChunkKey(departmentId, uploadId, index), Convert.ToBase64String(data), SessionLifetime);
+			await _store.SetAsync(ChunkKey(departmentId, uploadId, index), Convert.ToBase64String(data), Remaining(session));
 			session.ReceivedBytes += data.Length;
 			await SaveAsync(session);
 			return session;
 		}
 
-		public async Task<RmsRecordAttachment> CompleteAsync(int departmentId, string userId, string uploadId, string description, CancellationToken cancellationToken = default)
+		public async Task<RmsRecordAttachment> CompleteAsync(int departmentId, string userId, string uploadId, string description, CancellationToken cancellationToken = default, int classification = 1)
 		{
 			var session = await RequireOpenAsync(departmentId, userId, uploadId);
 			if (!session.IsComplete)
@@ -244,7 +291,7 @@ namespace Resgrid.Services.Records
 			RmsRecordAttachment attachment;
 			try
 			{
-				attachment = await _records.AddAttachmentAsync(departmentId, userId, session.RecordId, session.FileName, session.ContentType, buffer, description, cancellationToken);
+				attachment = await _records.AddAttachmentAsync(departmentId, userId, session.RecordId, session.FileName, session.ContentType, buffer, description, cancellationToken, classification);
 			}
 			catch (RecordAttachmentRejectedException ex)
 			{
@@ -278,6 +325,14 @@ namespace Resgrid.Services.Records
 				throw new RecordUploadSessionException("expired", "The upload session has expired; restart the upload.");
 			if (session.State != RecordUploadSessionState.Open)
 				throw new RecordUploadSessionException("closed", $"The upload session is {session.State}.");
+			var aggregate = await _records.GetAsync(departmentId, session.RecordId);
+			if (aggregate == null || aggregate.Record.PurgedOn.HasValue || aggregate.Record.DeletedOn.HasValue
+				|| !RmsLifecycle.IsEditable((RmsRecordState)aggregate.Record.State) && aggregate.Record.AmendsRevisionId == null)
+			{
+				await RemoveChunksAsync(session);
+				await _store.RemoveAsync(SessionKey(departmentId, uploadId));
+				throw new RecordUploadSessionException("closed", "The record is no longer editable; the unfinished upload was removed.");
+			}
 			return session;
 		}
 
@@ -291,8 +346,10 @@ namespace Resgrid.Services.Records
 
 		private Task SaveAsync(RecordAttachmentUploadSession session)
 		{
-			return _store.SetAsync(SessionKey(session.DepartmentId, session.UploadId), JsonConvert.SerializeObject(session), SessionLifetime);
+			return _store.SetAsync(SessionKey(session.DepartmentId, session.UploadId), JsonConvert.SerializeObject(session), Remaining(session));
 		}
+
+		private static TimeSpan Remaining(RecordAttachmentUploadSession session) => TimeSpan.FromMilliseconds(Math.Max(1, (session.ExpiresOn - DateTime.UtcNow).TotalMilliseconds));
 
 		private async Task RemoveChunksAsync(RecordAttachmentUploadSession session)
 		{

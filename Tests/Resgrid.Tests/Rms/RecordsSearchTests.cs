@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Lucene.Net.Store;
+using Moq;
 using NUnit.Framework;
 using Resgrid.Config;
 using Resgrid.Model;
+using Resgrid.Model.Repositories;
 using Resgrid.Search;
 
 namespace Resgrid.Tests.Rms
@@ -21,13 +24,17 @@ namespace Resgrid.Tests.Rms
 		private LuceneRecordsIndexHost _host;
 		private LuceneRecordsIndexer _indexer;
 		private LuceneRecordsSearchService _search;
+		private Mock<IRmsSearchWriteFence> _fence;
 
 		[SetUp]
 		public async Task SetUp()
 		{
 			SearchConfig.Enabled = true;
 			_host = new LuceneRecordsIndexHost(new RAMDirectory(), ownsDirectory: true);
-			_indexer = new LuceneRecordsIndexer(_host);
+			_fence = new Mock<IRmsSearchWriteFence>();
+			_fence.Setup(f => f.WithLiveSourceAsync(It.IsAny<RecordsSearchDocumentSource>(), It.IsAny<Func<RecordsSearchDocumentSource, int>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((RecordsSearchDocumentSource source, Func<RecordsSearchDocumentSource, int> write, CancellationToken ct) => write(source));
+			_indexer = new LuceneRecordsIndexer(_host, _fence.Object);
 			_search = new LuceneRecordsSearchService(_host);
 
 			await _indexer.IndexAsync(new[]
@@ -154,6 +161,29 @@ namespace Resgrid.Tests.Rms
 			names.Should().NotContain(RecordsIndexFields.Narrative);
 			names.Should().NotContain(n => n.ToLowerInvariant().Contains("body") || n.ToLowerInvariant().Contains("case"));
 			doc.Fields.Count(f => f.Name == RecordsIndexFields.ParticipantUserIds).Should().Be(2);
+		}
+
+		[Test, NonParallelizable]
+		public void Constructing_the_configured_host_does_not_touch_the_search_volume()
+		{
+			// The host is a container singleton, so any I/O in its constructor makes every process that composes a
+			// container require the shared volume. On a host where the configured root is not writable — a Linux
+			// container or CI runner with no /data — that turns into a container activation failure at startup.
+			var probe = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "rms-index-probe-" + Guid.NewGuid().ToString("N"));
+			var previous = SearchConfig.IndexPath;
+			SearchConfig.IndexPath = probe;
+
+			try
+			{
+				using (new LuceneRecordsIndexHost()) { }
+
+				System.IO.Directory.Exists(probe).Should().BeFalse("the directory opens on first use, not on construction");
+			}
+			finally
+			{
+				SearchConfig.IndexPath = previous;
+				if (System.IO.Directory.Exists(probe)) System.IO.Directory.Delete(probe, true);
+			}
 		}
 
 		private static RecordsSearchDocumentSource Source(RmsRecordSearchProjection projection, string narrative = null)

@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
@@ -34,36 +36,115 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IIncidentReportsService _incidentReports;
 		private readonly IRecordsCutoverService _cutoverService;
 		private readonly IRecordsAuthorizationService _recordsAuthorizationService;
+		private readonly IRecordsUdfService _udf;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IUnitsService _unitsService;
 		private readonly ICallsService _callsService;
 		private readonly INerisProfileService _neris;
 		private readonly IRmsSubmissionsRepository _submissions;
+		private readonly IRecordsSubmissionService _submissionWorker;
 		private readonly IIncidentAnalysisService _analysis;
 		private readonly IRecordsEvidenceService _evidence;
+		private readonly IIncidentAttachmentsService _attachments;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> _localizer;
 
 		public IncidentReportsController(IIncidentReportsService incidentReports, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
 			INerisProfileService neris, IRmsSubmissionsRepository submissions, IIncidentAnalysisService analysis, IRecordsEvidenceService evidence,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordsSubmissionService submissionWorker, IIncidentAttachmentsService attachments, IRecordsUdfService udf)
 		{
 			_incidentReports = incidentReports;
 			_cutoverService = cutoverService;
 			_recordsAuthorizationService = recordsAuthorizationService;
+			_udf = udf;
 			_departmentsService = departmentsService;
 			_departmentGroupsService = departmentGroupsService;
 			_unitsService = unitsService;
 			_callsService = callsService;
 			_neris = neris;
 			_submissions = submissions;
+			_submissionWorker = submissionWorker;
 			_analysis = analysis;
 			_evidence = evidence;
+			_attachments = attachments;
 			_localizer = localizer;
 		}
 
 		#region Queue / start
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> RemoveAttachment(string id, string attachmentId, long rowVersion, CancellationToken cancellationToken)
+		{
+			var aggregate = await LoadAuthorizedAsync(id); if (aggregate == null) return NotFound();
+			if (!CanEditReport(aggregate.Report)) return Forbid();
+			try { await _attachments.RemoveAsync(DepartmentId, UserId, id, attachmentId, rowVersion, cancellationToken); }
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (RecordConcurrencyException) { TempData["RecordsError"] = "The report changed. Reload before removing the attachment."; }
+			catch (InvalidOperationException ex) { TempData["RecordsError"] = ex.Message; }
+			return RedirectToAction(nameof(Details), new { id });
+		}
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		[RequestSizeLimit(27 * 1024 * 1024)]
+		public async Task<IActionResult> AddAttachment(string id, long rowVersion, IFormFile file, string description, CancellationToken cancellationToken, int classification = 1)
+		{
+			var aggregate = await LoadAuthorizedAsync(id);
+			if (aggregate == null) return NotFound();
+			if (!CanEditReport(aggregate.Report)) return Forbid();
+			if (file == null || file.Length <= 0 || file.Length > RecordAttachmentHygiene.MaxBytes) return BadRequest("Choose a file up to 25 MB.");
+			try
+			{
+				using var input = file.OpenReadStream(); using var data = new MemoryStream();
+				var buffer = new byte[81920]; int read;
+				while ((read = await input.ReadAsync(buffer, cancellationToken)) > 0)
+				{ if (data.Length + read > RecordAttachmentHygiene.MaxBytes) return BadRequest("The file exceeds 25 MB."); await data.WriteAsync(buffer.AsMemory(0, read), cancellationToken); }
+				await _attachments.AddAsync(DepartmentId, UserId, id, rowVersion, file.FileName, file.ContentType, data.ToArray(), description, cancellationToken, classification);
+				TempData["RecordsMessage"] = "Attachment saved. Files are downloadable after scanning succeeds.";
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (RecordConcurrencyException) { TempData["RecordsError"] = "The report changed during upload. Reload and attach the file again."; }
+			catch (InvalidOperationException ex) { TempData["RecordsError"] = ex.Message; }
+			catch (ArgumentException ex) { TempData["RecordsError"] = ex.Message; }
+			return RedirectToAction(nameof(Details), new { id });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<IActionResult> Attachment(string id, string attachmentId, string revisionId = null)
+		{
+			if (await LoadAuthorizedAsync(id) == null) return NotFound();
+			try
+			{
+				var attachment = await _attachments.GetAsync(DepartmentId, UserId, id, attachmentId, revisionId);
+				if (attachment == null) return NotFound();
+				await _incidentReports.RecordAccessAsync(DepartmentId, UserId, id, revisionId, RmsAccessAuditAction.Read, "Incident attachment downloaded: " + attachmentId, IpAddressHelper.GetRequestIP(Request, true));
+				Response.Headers["Cache-Control"] = "no-store"; Response.Headers["X-Content-Type-Options"] = "nosniff";
+				return File(attachment.Data, "application/octet-stream", attachment.FileName);
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (InvalidOperationException ex) { return Problem(ex.Message, statusCode: 409); }
+		}
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Submit)]
+		public async Task<IActionResult> Reconcile(string id, string submissionId, long rowVersion, string externalId, string reason, CancellationToken cancellationToken)
+		{
+			if (!(await _cutoverService.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
+			var submission = await _submissions.GetByIdForDepartmentAsync(DepartmentId, submissionId);
+			if (submission == null || submission.RecordId != id) return NotFound();
+			try
+			{
+				await _submissionWorker.ReconcileAsync(DepartmentId, UserId, submissionId, rowVersion, externalId, reason, cancellationToken);
+				TempData["RecordsMessage"] = "Destination receipt verified. Status polling will resume.";
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (InvalidOperationException ex) { TempData["RecordsError"] = ex.Message; }
+			catch (ArgumentException ex) { TempData["RecordsError"] = ex.Message; }
+			return RedirectToAction(nameof(Details), new { id });
+		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_View)]
@@ -113,10 +194,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Total = await _incidentReports.CountAsync(DepartmentId, query);
 			model.PersonnelNames = await PersonnelNamesAsync();
 
-			if (ClaimsAuthorizationHelper.CanCreateRecord())
+			if (ClaimsAuthorizationHelper.CanCreateRecord() && ClaimsAuthorizationHelper.CanViewCalls())
 			{
 				var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId) ?? new List<Call>();
-				model.ActiveCalls = calls.OrderByDescending(c => c.LoggedOn)
+				var readable = new List<Call>();
+				foreach (var call in calls)
+					if (await _recordsAuthorizationService.CanReadSourceCallAsync(UserId, DepartmentId, call)) readable.Add(call);
+				model.ActiveCalls = readable.OrderByDescending(c => c.LoggedOn)
 					.Select(c => new SelectListItem { Value = c.CallId.ToString(), Text = $"{c.Number} - {c.Name}" }).ToList();
 			}
 
@@ -128,6 +212,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Record_Create)]
 		public async Task<IActionResult> Start(int callId, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.RecordsUsable)
 				return NotFound();
@@ -139,6 +224,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				TempData["RecordsMessage"] = existing != null ? _localizer["ExistingReportForCall"].Value : _localizer["IncidentReportStarted"].Value;
 				return RedirectToAction(existing != null ? "Details" : "Edit", new { id = aggregate.Report.RmsIncidentReportId });
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (ArgumentException ex)
 			{
 				TempData["RecordsError"] = ex.Message;
@@ -185,6 +271,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Record_Submit)]
 		public async Task<IActionResult> Payload(string id, string submissionId)
 		{
+			if (!await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords)
+				|| !await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.SubmitRecords)) return Forbid();
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
 
@@ -203,6 +291,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion
 
 		#region Authoring
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> ContractSchema()
+		{
+			if (!(await _cutoverService.GetModuleStateAsync(DepartmentId)).RecordsUsable
+				|| !await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.CreateRecord)) return Forbid();
+			return Content(Resgrid.Providers.Neris.NerisContractCatalog.Instance.SchemasJson, "application/json");
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Record_Submit)]
+		public async Task<IActionResult> ExchangeHistory(string id, string submissionId, CancellationToken cancellationToken)
+		{
+			var submission = await _submissions.GetByIdForDepartmentAsync(DepartmentId, submissionId);
+			if (submission == null || submission.RecordId != id) return NotFound();
+			try
+			{
+				var history = await _submissionWorker.GetHistoryAsync(DepartmentId, UserId, submissionId, cancellationToken);
+				return File(Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(history, Newtonsoft.Json.Formatting.Indented)), "application/json", "submission-exchanges.json");
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+		}
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_Create)]
@@ -234,7 +344,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			try
 			{
-				await _incidentReports.SaveDraftAsync(DepartmentId, UserId, model.ReportId, model.RowVersion, BuildInput(model, department), ClaimsAuthorizationHelper.CanViewRestrictedRecords(), cancellationToken);
+				await _incidentReports.SaveDraftAsync(DepartmentId, UserId, model.ReportId, model.RowVersion, BuildInput(model, department), await CanViewRestrictedAsync(), cancellationToken);
 				if (model.ValidateAfterSave)
 				{
 					var issues = await _incidentReports.ValidateAsync(DepartmentId, model.ReportId, true, cancellationToken);
@@ -251,8 +361,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException)
 			{
-				return await EditWithErrorAsync(aggregate, ex.Message);
+				return await EditWithErrorAsync(aggregate, ex.Message, model.CustomFields);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 		}
 
 		[HttpPost]
@@ -398,61 +509,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Record_Create)]
-		public async Task<IActionResult> CaptureEvidence(string id, int kind, string captureReason, CancellationToken cancellationToken)
-		{
-			var aggregate = await LoadAuthorizedAsync(id);
-			if (aggregate == null)
-				return NotFound();
-			if (!CanEditReport(aggregate.Report))
-				return Unauthorized();
-			if (string.IsNullOrWhiteSpace(captureReason))
-				return await DetailsWithErrorAsync(id, _localizer["EvidenceReasonRequired"]);
-
-			try
-			{
-				var artifact = await _evidence.CaptureAsync(new RecordEvidenceCaptureRequest
-				{
-					DepartmentId = DepartmentId,
-					RecordId = id,
-					RecordKind = RmsRecordKind.IncidentReport,
-					Kind = (RmsEvidenceKind)kind,
-					CaptureReason = captureReason,
-					CallId = aggregate.Report.CallId,
-					CoverageStart = aggregate.Report.CallCreatedOn,
-					CoverageEnd = aggregate.Report.IncidentClearedOn,
-					UnitIds = aggregate.Units.Where(u => u.UnitId.HasValue).Select(u => u.UnitId.Value).ToList(),
-					CapturedByUserId = UserId,
-					OriginClient = RmsOriginClient.Web
-				}, ClaimsAuthorizationHelper.CanViewRestrictedRecords(), cancellationToken);
-
-				TempData["RecordsMessage"] = artifact == null ? _localizer["EvidenceUnavailable"].Value : _localizer["EvidenceCaptured"].Value;
-				return RedirectToAction("Details", new { id });
-			}
-			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException || ex is UnauthorizedAccessException)
-			{
-				return await DetailsWithErrorAsync(id, ex.Message);
-			}
-		}
+		public IActionResult CaptureEvidence(string id, int kind, string captureReason, CancellationToken cancellationToken) =>
+			RedirectToAction("Select", "RecordEvidence", new { recordId = id, recordKind = RmsRecordKind.IncidentReport, sourceKind = kind });
 
 		/// <summary>The stored manifest of one artifact, for an author checking what was actually captured.</summary>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<IActionResult> EvidenceManifest(string id, string artifactId)
-		{
-			if (await LoadAuthorizedAsync(id) == null)
-				return NotFound();
-
-			var artifact = await _evidence.GetAsync(DepartmentId, artifactId);
-			if (artifact == null || !string.Equals(artifact.RecordId, id, StringComparison.Ordinal) || string.IsNullOrWhiteSpace(artifact.ManifestJson))
-				return NotFound();
-
-			// Classification is decided at capture and never widened; a restricted manifest needs the restricted grant.
-			if (artifact.Classification != (int)RmsEvidenceClassification.Unrestricted && !ClaimsAuthorizationHelper.CanViewRestrictedRecords())
-				return Unauthorized();
-
-			await _incidentReports.RecordAccessAsync(DepartmentId, UserId, id, artifact.RevisionId, RmsAccessAuditAction.Export, $"Evidence {artifact.RmsEvidenceArtifactId}", IpAddressHelper.GetRequestIP(Request, true));
-			return File(Encoding.UTF8.GetBytes(artifact.ManifestJson), "application/json", $"evidence-{artifact.RmsEvidenceArtifactId.Substring(0, 8)}.json");
-		}
+		public IActionResult EvidenceManifest(string id, string artifactId) =>
+			RedirectToAction("Manifest", "RecordEvidence", new { recordId = id, recordKind = RmsRecordKind.IncidentReport, artifactId });
 
 		#endregion
 
@@ -532,6 +596,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				TempData["RecordsMessage"] = _localizer["NerisSettingsSaved"].Value;
 				return RedirectToAction("Settings");
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (ArgumentException ex)
 			{
 				var rebuilt = await BuildSettingsAsync(moduleState);
@@ -602,9 +667,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				SectionRequirements = await _incidentReports.GetSectionRequirementsAsync(DepartmentId, id),
 				Analysis = analysis?.Analysis,
-				Evidence = await _evidence.GetForRecordAsync(DepartmentId, id),
+				Evidence = aggregate.Evidence,
 				EvidenceSources = await _evidence.GetSourceStatesAsync(DepartmentId),
-				CanViewRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords(),
+				CanViewRestricted = await CanViewRestrictedAsync(),
 				Aggregate = aggregate,
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				Profile = await _neris.GetProfileAsync(DepartmentId),
@@ -631,9 +696,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View("Details", model);
 		}
 
-		private async Task<IActionResult> EditWithErrorAsync(IncidentReportAggregate aggregate, string error)
+		private async Task<IActionResult> EditWithErrorAsync(IncidentReportAggregate aggregate, string error, RecordUdfInput submittedFields = null)
 		{
 			var model = await BuildEditAsync(aggregate);
+			if (submittedFields?.DefinitionId == model.CustomFieldForm?.DefinitionId && model.CustomFieldForm != null)
+				foreach (var field in model.CustomFieldForm.Fields.Where(f => !f.Field.IsReadOnly))
+					if (submittedFields.Values?.TryGetValue(field.Field.UdfFieldId, out var value) == true) field.Value = value;
 			model.ErrorMessage = error;
 			return View("Edit", model);
 		}
@@ -654,7 +722,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return null;
 			}
 
-			return await _incidentReports.GetAsync(DepartmentId, id, includeHistory);
+			var aggregate = await _incidentReports.GetAsync(DepartmentId, id, includeHistory);
+			if (aggregate != null && !await CanViewRestrictedAsync()) aggregate.Attachments = aggregate.Attachments.Where(a => !a.RequiresRestrictedAccess).ToList();
+			return aggregate;
 		}
 
 		private bool CanEditReport(RmsIncidentReport report)
@@ -672,15 +742,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var r = aggregate.Report;
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
-			var call = await _callsService.GetCallByIdAsync(r.CallId);
+			// The report has its own captured incident number. Opening it does not authorize a fresh read of Call metadata.
 			var model = new IncidentReportEditView
 			{
+				CustomFieldForm = await _udf.ProjectAsync(DepartmentId, UserId, aggregate.CustomFields),
 				ReportId = r.RmsIncidentReportId,
 				RowVersion = r.RowVersion,
 				DraftReference = r.DraftReference,
 				RecordNumber = r.RecordNumber,
 				CallId = r.CallId,
-				CallLabel = call == null ? r.CallId.ToString() : $"{call.Number} - {call.Name}",
+				CallLabel = r.IncidentNumber ?? r.CallId.ToString(),
 				IsAmendment = r.AmendsRevisionId != null,
 				IsRejected = r.State == (int)RmsRecordState.Rejected,
 				RejectionSummary = r.RejectionSummary,
@@ -726,7 +797,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Aids = aggregate.Aids.OrderBy(a => a.Ordinal).Select(a => new IncidentAidRow { Direction = a.Direction, AidType = a.AidType, CounterpartNerisId = a.CounterpartNerisId, CounterpartName = a.CounterpartName, IsNonFireDepartment = a.IsNonFireDepartment, NonFdType = a.NonFdType }).ToList();
 			model.Tactics = aggregate.Tactics.OrderBy(t => t.Ordinal).Select(t => new IncidentTacticRow { TacticCode = t.TacticCode, ActorUnitId = t.ActorUnitId, OccurredOn = t.OccurredOn?.TimeConverter(department) }).ToList();
 
-			model.CanEditRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords();
+			model.CanEditRestricted = await CanViewRestrictedAsync();
 			await BuildSectionsAsync(model, aggregate);
 
 			model.IncidentTypeCodes = Codes(IncidentTypeSet);
@@ -782,7 +853,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private async Task BuildSectionsAsync(IncidentReportEditView model, IncidentReportAggregate aggregate)
 		{
 			var requirements = await _incidentReports.GetSectionRequirementsAsync(DepartmentId, aggregate.Report.RmsIncidentReportId);
-			var kinds = requirements.Select(r => r.Kind).ToList();
+			var kinds = requirements.Select(r => r.Kind).Concat(RmsIncidentModuleCatalog.IncidentModules().Select(d => d.Kind)).Distinct().ToList();
 			foreach (var kind in aggregate.Modules.Select(m => (RmsIncidentModuleKind)m.ModuleKind).Distinct())
 			{
 				if (!kinds.Contains(kind))
@@ -799,7 +870,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					Kind = kind,
 					Required = requirement?.Required ?? false,
-					Reason = requirement?.Reason ?? _localizer["SectionNoLongerApplies"].Value,
+					Reason = requirement?.Reason ?? _localizer["Suggested"].Value,
 					Present = rows.Count > 0,
 					IsCollection = descriptor?.IsCollection ?? false,
 					PayloadPath = descriptor?.PayloadPath,
@@ -827,12 +898,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Casualties = aggregate.Casualties.OrderBy(c => c.Ordinal).Select(c => new IncidentCasualtyRow
 			{
-				Included = true, Kind = c.Kind, PersonType = c.PersonType, PersonnelUserId = c.PersonnelUserId, Rank = c.Rank, YearsOfService = c.YearsOfService,
+				Included = true, CasualtyId = c.RmsCasualtyRescueId, Kind = c.Kind, PersonType = c.PersonType, PersonnelUserId = c.PersonnelUserId, Rank = c.Rank, YearsOfService = c.YearsOfService,
 				JobClassification = c.JobClassification, BirthMonthYear = c.BirthMonthYear, Gender = c.Gender, Race = c.Race, WasInjured = c.WasInjured, WasFatal = c.WasFatal,
 				CasualtyCause = c.CasualtyCause, CasualtyAction = c.CasualtyAction, CasualtyTimeline = c.CasualtyTimeline, DutyType = c.DutyType, Ppe = Split(c.PpeCsv),
 				InjuryDetailJson = c.InjuryDetailJson, RescueType = c.RescueType, RescueActions = Split(c.RescueActionsCsv), RescueImpediments = Split(c.RescueImpedimentsCsv),
 				RescueMode = c.RescueMode, RescuePath = c.RescuePath, RescueElevation = c.RescueElevation, PresenceKnown = c.PresenceKnown,
-				OccurredOn = c.OccurredOn?.TimeConverter(model.Department), DetailJson = c.DetailJson
+				OccurredOn = c.OccurredOn?.TimeConverter(model.Department), DetailJson = model.CanEditRestricted ? Resgrid.Providers.Neris.NerisMappingService.MapCasualtyRescue(c).ToString(Newtonsoft.Json.Formatting.None) : null
 			}).ToList();
 
 			model.Exposures = aggregate.Exposures.OrderBy(e => e.Ordinal).Select(e => new IncidentExposureRow
@@ -840,7 +911,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Included = true, LocationKind = e.LocationKind, ItemType = e.ItemType, DamageType = e.DamageType, LocationUse = e.LocationUse, PeoplePresent = e.PeoplePresent,
 				DisplacementCount = e.DisplacementCount, DisplacementCauses = Split(e.DisplacementCausesCsv), AddressText = e.AddressText, Street = e.Street,
 				Municipality = e.Municipality, State = e.State, PostalCode = e.PostalCode, Latitude = e.Latitude, Longitude = e.Longitude,
-				EstimatedValue = e.EstimatedValue, EstimatedLoss = e.EstimatedLoss, DetailJson = e.DetailJson
+				EstimatedValue = e.EstimatedValue, EstimatedLoss = e.EstimatedLoss, DetailJson = Resgrid.Providers.Neris.NerisMappingService.MapExposure(e).ToString(Newtonsoft.Json.Formatting.None)
 			}).ToList();
 		}
 
@@ -849,6 +920,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var hasLocation = new[] { model.AddressText, model.Number, model.Street, model.Municipality, model.PostalCode, model.PlaceType, model.LocationUse, model.CrossStreet1 }.Any(s => !string.IsNullOrWhiteSpace(s)) || model.Latitude.HasValue;
 			return new IncidentReportDraftInput
 			{
+				CustomFields = model.CustomFields,
 				IncidentNumber = model.IncidentNumber,
 				CallCreatedOn = ToUtc(model.CallCreatedOn, department),
 				CallAnsweredOn = ToUtc(model.CallAnsweredOn, department),
@@ -891,9 +963,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}).ToList(),
 				Resources = (model.Resources ?? new List<IncidentResourceRow>()).Where(r => !string.IsNullOrWhiteSpace(r.ResourceCode))
 					.Select(r => new IncidentResourceInput { ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList(),
-				Casualties = (model.Casualties ?? new List<IncidentCasualtyRow>()).Where(c => c.Included).Select(c => new IncidentCasualtyRescueInput
+				Casualties = (model.Casualties ?? new List<IncidentCasualtyRow>()).Where(c => c.Included).Select(c => c.Guided ? IncidentGuidedFormMapper.Casualty(c, ToUtc(c.OccurredOn, department)) : new IncidentCasualtyRescueInput
 				{
-					Kind = (RmsCasualtyRescueKind)c.Kind, PersonType = c.PersonType, PersonnelUserId = c.PersonnelUserId, Rank = c.Rank, YearsOfService = c.YearsOfService,
+					CasualtyId = c.CasualtyId, Kind = (RmsCasualtyRescueKind)c.Kind, PersonType = c.PersonType, PersonnelUserId = c.PersonnelUserId, Rank = c.Rank, YearsOfService = c.YearsOfService,
 					JobClassification = c.JobClassification, BirthMonthYear = c.BirthMonthYear, Gender = c.Gender, Race = c.Race, WasInjured = c.WasInjured, WasFatal = c.WasFatal,
 					CasualtyCause = c.CasualtyCause, CasualtyAction = c.CasualtyAction, CasualtyTimeline = c.CasualtyTimeline, DutyType = c.DutyType,
 					Ppe = c.Ppe ?? new List<string>(), InjuryDetailJson = c.InjuryDetailJson, RescueType = c.RescueType,
@@ -901,13 +973,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					RescueMode = c.RescueMode, RescuePath = c.RescuePath, RescueElevation = c.RescueElevation, PresenceKnown = c.PresenceKnown,
 					OccurredOn = ToUtc(c.OccurredOn, department), DetailJson = c.DetailJson
 				}).ToList(),
-				Exposures = (model.Exposures ?? new List<IncidentExposureRow>()).Where(e => e.Included).Select(e => new IncidentExposureInput
-				{
-					LocationKind = e.LocationKind, ItemType = e.ItemType, DamageType = e.DamageType, LocationUse = e.LocationUse, PeoplePresent = e.PeoplePresent,
-					DisplacementCount = e.DisplacementCount, DisplacementCauses = e.DisplacementCauses ?? new List<string>(), AddressText = e.AddressText, Street = e.Street,
-					Municipality = e.Municipality, State = e.State, PostalCode = e.PostalCode, Latitude = e.Latitude, Longitude = e.Longitude,
-					EstimatedValue = e.EstimatedValue, EstimatedLoss = e.EstimatedLoss, DetailJson = e.DetailJson
-				}).ToList(),
+				Exposures = (model.Exposures ?? new List<IncidentExposureRow>()).Where(e => e.Included).Select(IncidentGuidedFormMapper.Exposure).ToList(),
 				OriginClient = RmsOriginClient.Web
 			};
 		}
@@ -951,5 +1017,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion
+
+        private async Task<bool> CanViewRestrictedAsync() => ClaimsAuthorizationHelper.CanViewRestrictedRecords()
+            && await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 	}
 }

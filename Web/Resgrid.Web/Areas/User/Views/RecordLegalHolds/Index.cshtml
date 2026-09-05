@@ -1,0 +1,35 @@
+@using Resgrid.Model
+@model List<RmsRecordLegalHold>
+@{ ViewBag.Title = "Records preservation holds"; }
+<h1>Records preservation holds</h1>
+<p>Use a preservation hold for litigation, investigation or a records request. A record hold also protects its analysis and evidence. Releasing a disclosure does not release its preservation hold.</p>
+@if (TempData["HoldMessage"] != null) { <p class="alert alert-success">@TempData["HoldMessage"]</p> }
+@if (TempData["HoldError"] != null) { <p class="alert alert-danger">@TempData["HoldError"]</p> }
+<h2>Place a hold</h2>
+<form method="post" asp-action="Place" asp-area="User" asp-controller="RecordLegalHolds">
+@Html.AntiForgeryToken()
+<label>Specific record ID (leave blank for a definition/date scope)<input class="form-control" name="RecordId" value="@ViewBag.RecordId" maxlength="36" /></label>
+<label>Definition<select class="form-control" name="DefinitionKey"><option value="">All definitions</option>@foreach (var key in RmsDefinitionKeys.LockedTypes.Keys) { <option value="@key">@key</option> }<option value="@RmsDefinitionKeys.NerisIncidentReport">NERIS incident and analysis</option></select></label>
+<p>For a definition/date scope, leave both dates blank to preserve every date. These times are UTC.</p>
+<label>Period start (UTC)<input class="form-control" type="datetime-local" name="PeriodStart" /></label>
+<label>Period end (UTC)<input class="form-control" type="datetime-local" name="PeriodEnd" /></label>
+<label>Reason<select class="form-control" name="Reason"><option>Litigation</option><option>Investigation</option><option>Public records request</option><option>Other</option></select></label>
+<label>Authority or case/request reference<input class="form-control" name="ReferenceNumber" required maxlength="100" /></label>
+<label>Preservation instructions and basis<textarea class="form-control" name="Notes" required maxlength="4000"></textarea></label>
+<p><button class="btn btn-primary">Place preservation hold</button></p>
+</form>
+<h2>Hold history</h2>
+@foreach (var hold in Model)
+{
+ <section class="panel panel-default"><div class="panel-heading"><h3>@hold.ReferenceNumber · @(hold.IsActive ? "Active" : "Released")</h3></div><div class="panel-body">
+ <p>@hold.Reason · Record: @(hold.RecordId ?? "All matching") · Definition: @(hold.DefinitionKey ?? "All")</p>
+ <p>Period: @(hold.PeriodStart?.ToString("u") ?? "Any start") to @(hold.PeriodEnd?.ToString("u") ?? "Any end")</p>
+ <p style="white-space:pre-wrap">@hold.Notes</p><p>Placed @hold.PlacedOn.ToString("u") by @hold.PlacedByUserId</p>
+ @if (hold.IsActive) {
+  <form method="post" asp-action="Release" asp-controller="RecordLegalHolds" asp-area="User">@Html.AntiForgeryToken()
+  <input type="hidden" name="id" value="@hold.RmsRecordLegalHoldId" /><input type="hidden" name="expectedVersion" value="@hold.RowVersion" />
+  <label>Authority and reason for releasing preservation<textarea class="form-control" name="reason" required maxlength="4000"></textarea></label>
+  <button class="btn btn-warning">Release this hold</button></form>
+ } else { <p>Released @hold.ReleasedOn?.ToString("u") by @hold.ReleasedByUserId</p><p style="white-space:pre-wrap">@hold.ReleaseNotes</p> }
+ </div></section>
+}

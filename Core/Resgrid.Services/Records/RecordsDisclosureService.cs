@@ -5,8 +5,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
@@ -23,7 +25,7 @@ namespace Resgrid.Services.Records
 	/// catalog will consume, so this is built once and enrolls cleanly when Protected Data lands (plan 5.9).
 	/// </para>
 	/// </summary>
-	public class RecordsDisclosureService : IRecordsDisclosureService
+	public partial class RecordsDisclosureService : IRecordsDisclosureService
 	{
 		public const string NumberPrefix = "PRR-";
 
@@ -33,12 +35,14 @@ namespace Resgrid.Services.Records
 		private readonly IRmsRevisionsRepository _revisions;
 		private readonly IRmsAccessAuditsRepository _audits;
 		private readonly IRecordsAuthorizationService _authorization;
+		private readonly IRecordsUdfService _udf;
 		private readonly IDepartmentSettingsService _settings;
 		private readonly IUnitOfWork _unitOfWork;
 
 		public RecordsDisclosureService(IRmsDisclosureRequestsRepository requests, IRmsDisclosureProductionsRepository productions,
 			IRmsOperationalRecordsRepository records, IRmsRevisionsRepository revisions, IRmsAccessAuditsRepository audits,
-			IRecordsAuthorizationService authorization, IDepartmentSettingsService settings, IUnitOfWork unitOfWork)
+			IRecordsAuthorizationService authorization, IDepartmentSettingsService settings, IUnitOfWork unitOfWork,
+			IRmsIncidentReportsRepository reports, IRecordsDocumentService documents, IRmsRecordAttachmentsRepository attachments, Resgrid.Model.Providers.IPdfProvider pdf, IRmsIncidentAnalysesRepository analyses, IRecordAttachmentScanner scanner, IRecordsUdfService udf)
 		{
 			_requests = requests;
 			_productions = productions;
@@ -46,12 +50,15 @@ namespace Resgrid.Services.Records
 			_revisions = revisions;
 			_audits = audits;
 			_authorization = authorization;
+			_udf = udf;
 			_settings = settings;
 			_unitOfWork = unitOfWork;
+			_reports = reports; _documents = documents; _attachments = attachments; _pdf = pdf; _analyses = analyses; _scanner = scanner;
 		}
 
 		public async Task<RmsDisclosureRequest> CreateRequestAsync(int departmentId, string userId, RmsDisclosureRequest request, CancellationToken cancellationToken = default)
 		{
+			await RequireDisclosureAsync(departmentId, userId);
 			if (request == null) throw new ArgumentNullException(nameof(request));
 			if (string.IsNullOrWhiteSpace(request.RequesterName))
 				throw new ArgumentException("A requester is required.", nameof(request));
@@ -85,19 +92,36 @@ namespace Resgrid.Services.Records
 			return request;
 		}
 
-		public Task<RmsDisclosureRequest> GetAsync(int departmentId, string requestId)
+		public async Task<RmsDisclosureRequest> GetAsync(int departmentId, string userId, string requestId)
 		{
-			return _requests.GetByIdForDepartmentAsync(departmentId, requestId);
+			await RequireDisclosureAsync(departmentId, userId);
+			var row = await _requests.GetByIdForDepartmentAsync(departmentId, requestId);
+			var restricted = await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords);
+			await RequireDisclosureAsync(departmentId, userId);
+			return row?.DeletedOn == null ? ProjectRequest(row, restricted) : null;
 		}
 
-		public async Task<List<RmsDisclosureRequest>> QueryAsync(int departmentId, IEnumerable<RmsDisclosureState> states, int skip = 0, int take = 50)
+		public async Task<List<RmsDisclosureRequest>> QueryAsync(int departmentId, string userId, IEnumerable<RmsDisclosureState> states, int skip = 0, int take = 50)
 		{
+			await RequireDisclosureAsync(departmentId, userId);
 			var stateValues = states?.Select(s => (int)s).ToList();
-			return (await _requests.GetForDepartmentAsync(departmentId, stateValues, skip, take))?.ToList() ?? new List<RmsDisclosureRequest>();
+			var rows = (await _requests.GetForDepartmentAsync(departmentId, stateValues, skip, take))?.ToList() ?? new List<RmsDisclosureRequest>();
+			var restricted = await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords);
+			await RequireDisclosureAsync(departmentId, userId);
+			return rows.Select(r => ProjectRequest(r, restricted)).ToList();
+		}
+		private static RmsDisclosureRequest ProjectRequest(RmsDisclosureRequest row, bool restricted)
+		{
+			if (row == null) return null;
+			var copy = JsonConvert.DeserializeObject<RmsDisclosureRequest>(JsonConvert.SerializeObject(row));
+			if (!restricted) { copy.RequesterName = null; copy.RequesterOrganization = null; copy.RequesterContact = null; }
+			return copy;
 		}
 
 		public async Task<RmsDisclosureRequest> SaveScopeAsync(int departmentId, string userId, string requestId, string scopeNarrative, RmsRecordQuery scope, string redactionProfile, CancellationToken cancellationToken = default)
 		{
+			await RequireDisclosureAsync(departmentId, userId);
+			if (scope?.IncludeLegacy == true) throw new ArgumentException("Legacy Logs require a separately recorded review; this packet scope contains RMS records only.");
 			var request = await LoadAsync(departmentId, requestId);
 			RequireOpen(request);
 
@@ -118,6 +142,7 @@ namespace Resgrid.Services.Records
 
 			await InTransactionAsync(async () =>
 			{
+				await GuardRequestAsync(request, request.RowVersion - 1, cancellationToken);
 				await _requests.UpdateAsync(request, cancellationToken, true);
 				await AuditAsync(departmentId, userId, null, RmsAccessAuditAction.Admin, "Disclosure scope saved", new { requestId, request.RedactionProfile }, cancellationToken);
 			});
@@ -125,205 +150,106 @@ namespace Resgrid.Services.Records
 			return request;
 		}
 
-		public async Task<RmsDisclosureScopePreview> PreviewScopeAsync(int departmentId, string userId, string requestId, int take = 200)
+		public async Task<RmsDisclosureProduction> ReleaseAsync(int departmentId, string userId, string productionId, CancellationToken cancellationToken = default, string deliveryMethod = null, string deliveryReference = null)
 		{
-			var request = await LoadAsync(departmentId, requestId);
-			var preview = new RmsDisclosureScopePreview();
-
-			var scope = ParseScope(request.ScopeQueryJson);
-			if (scope == null)
-				return preview;
-
-			// The same authorization and group-scope path as the Records queue. A disclosure officer does not get
-			// a wider view of the department than they have anywhere else in the product.
-			scope.VisibleGroupIds = await _authorization.GetVisibleGroupIdsAsync(userId, departmentId);
-			scope.ViewerUserId = userId;
-			scope.Skip = 0;
-			scope.Take = Math.Clamp(take, 1, 1000);
-
-			var matched = (await _records.GetByDepartmentAndStatesAsync(departmentId, scope.States, scope.Year, scope.Skip, scope.Take + 1))?.ToList()
-				?? new List<RmsOperationalRecord>();
-
-			preview.Truncated = matched.Count > scope.Take;
-			foreach (var record in matched.Take(scope.Take))
-			{
-				if (!string.IsNullOrWhiteSpace(scope.DefinitionKey) && !string.Equals(record.DefinitionKey, scope.DefinitionKey, StringComparison.Ordinal))
-					continue;
-
-				preview.MatchedCount++;
-
-				// Group scoping still applies to a disclosure preview; an officer outside the group sees the same
-				// nothing they would see in the queue.
-				if (scope.VisibleGroupIds != null && !await _authorization.CanUserViewRecordAsync(userId, record.RmsOperationalRecordId, departmentId))
-				{
-					preview.WithheldWholeRecordCount++;
-					continue;
-				}
-
-				var producible = IsProducible(record, out var reason);
-				if (producible)
-					preview.ProducibleCount++;
-
-				preview.Items.Add(new RmsDisclosureScopeItem
-				{
-					RecordId = record.RmsOperationalRecordId,
-					RecordNumber = record.RecordNumber ?? record.DraftReference,
-					DefinitionKey = record.DefinitionKey,
-					Summary = record.DisplaySummary,
-					OccurredOn = record.StartedOn ?? record.CreatedOn,
-					CurrentRevisionId = record.CurrentRevisionId,
-					Producible = producible,
-					NotProducibleReason = reason
-				});
-			}
-
-			return preview;
-		}
-
-		public async Task<RmsDisclosureProduction> ProduceAsync(int departmentId, string userId, string requestId, string redactionProfile = null, CancellationToken cancellationToken = default)
-		{
-			var request = await LoadAsync(departmentId, requestId);
-			RequireOpen(request);
-
-			var profile = Blank(redactionProfile) ?? request.RedactionProfile ?? RmsRedactionProfiles.Standard;
-			var preview = await PreviewScopeAsync(departmentId, userId, requestId, 1000);
-			var producible = preview.Items.Where(i => i.Producible).ToList();
-			if (producible.Count == 0)
-				throw new InvalidOperationException("The scope resolves to nothing that can be produced; a draft record is not a public record.");
-
-			var withheld = new List<RmsRedactionEntry>();
-			var produced = new List<object>();
-			var documents = new List<object>();
-
-			foreach (var item in producible)
-			{
-				cancellationToken.ThrowIfCancellationRequested();
-
-				var revision = string.IsNullOrWhiteSpace(item.CurrentRevisionId)
-					? null
-					: await _revisions.GetByIdForDepartmentAsync(departmentId, item.CurrentRevisionId);
-
-				if (revision == null || string.IsNullOrWhiteSpace(revision.SnapshotJson))
-				{
-					withheld.Add(new RmsRedactionEntry { RecordId = item.RecordId, Section = "Record", Field = "*", Basis = "No finalized revision to produce from." });
-					continue;
-				}
-
-				var snapshot = RecordSnapshotSerializer.Deserialize(revision.SnapshotJson);
-				documents.Add(Redact(snapshot, item, profile, withheld));
-
-				// The produced set is the point: exactly which revision, and its checksum at release time.
-				produced.Add(new
-				{
-					record_id = item.RecordId,
-					record_number = item.RecordNumber,
-					revision_id = revision.RmsRevisionId,
-					revision_number = revision.RevisionNumber,
-					revision_checksum = revision.Checksum
-				});
-			}
-
-			if (documents.Count == 0)
-				throw new InvalidOperationException("Nothing in scope has a finalized revision to produce from.");
-
-			var now = DateTime.UtcNow;
-			var artifactJson = RecordsEvidenceService.Serialize(new
-			{
-				request_number = request.RequestNumber,
-				jurisdiction_profile = request.JurisdictionProfile,
-				redaction_profile = profile,
-				produced_on = now,
-				// The manifest and page numbering the plan asks for; a packet a requester can navigate.
-				manifest = documents.Select((d, i) => new { page = i + 1, record = produced[i] }).ToList(),
-				documents
-			});
-
-			var production = new RmsDisclosureProduction
-			{
-				RmsDisclosureProductionId = Guid.NewGuid().ToString(),
-				DepartmentId = departmentId,
-				ProtectionId = Guid.NewGuid().ToString(),
-				DisclosureRequestId = requestId,
-				RedactionProfile = profile,
-				ProducedSetJson = RecordsEvidenceService.Serialize(produced),
-				ArtifactJson = artifactJson,
-				Checksum = RecordSnapshotSerializer.Checksum(artifactJson),
-				ByteSize = Encoding.UTF8.GetByteCount(artifactJson),
-				RecordCount = documents.Count,
-				WithheldFieldsJson = RecordsEvidenceService.Serialize(withheld),
-				WithheldFieldCount = withheld.Count,
-				PreparedByUserId = userId,
-				PreparedOn = now,
-				CreatedOn = now,
-				ModifiedOn = now,
-				RowVersion = 1
-			};
-
-			await InTransactionAsync(async () =>
-			{
-				production.ProductionNumber = await _productions.GetMaxProductionNumberAsync(departmentId, requestId) + 1;
-				await _productions.InsertAsync(production, cancellationToken, true);
-
-				request.State = (int)RmsDisclosureState.Produced;
-				request.ModifiedOn = now;
-				request.ModifiedByUserId = userId;
-				request.RowVersion += 1;
-				await _requests.UpdateAsync(request, cancellationToken, true);
-
-				// Every produced record is audited individually: "what did we hand out about this record" has to
-				// be answerable from the record, not only from the request.
-				foreach (var item in producible.Take(documents.Count))
-					await AuditAsync(departmentId, userId, item.RecordId, RmsAccessAuditAction.Export, "Disclosure production " + request.RequestNumber,
-						new { production.RmsDisclosureProductionId, production.ProductionNumber, profile }, cancellationToken);
-
-				await AuditAsync(departmentId, userId, null, RmsAccessAuditAction.Export, "Disclosure produced",
-					new { requestId, production.RmsDisclosureProductionId, production.RecordCount, production.WithheldFieldCount, production.Checksum }, cancellationToken);
-			});
-
-			return production;
-		}
-
-		public async Task<RmsDisclosureProduction> ReleaseAsync(int departmentId, string userId, string productionId, CancellationToken cancellationToken = default)
-		{
-			var production = await _productions.GetByIdForDepartmentAsync(departmentId, productionId)
-				?? throw new InvalidOperationException("The production does not exist.");
+			var production = await GetAuthorizedProductionAsync(departmentId, userId, productionId)
+				?? throw new UnauthorizedAccessException("The production is not accessible with your current permissions.");
 
 			if (production.ReleasedOn.HasValue)
 				throw new InvalidOperationException("The production has already been released.");
+			if (string.IsNullOrWhiteSpace(deliveryMethod) || string.IsNullOrWhiteSpace(deliveryReference)) throw new ArgumentException("Record how the packet was delivered and its receipt or delivery reference.");
+			if (deliveryMethod.Length > 200 || deliveryReference.Length > 1000) throw new ArgumentException("Delivery method is limited to 200 characters and reference to 1,000 characters.");
 
 			var request = await LoadAsync(departmentId, production.DisclosureRequestId);
+			RequireOpen(request);
+			var unresolved = (bool?)JObject.Parse(production.ArtifactJson)["scope_fully_resolved"] == false;
 			var now = DateTime.UtcNow;
 
 			await InTransactionAsync(async () =>
 			{
+				await GuardRequestAsync(request, request.RowVersion, cancellationToken);
+				production = await GetAuthorizedProductionAsync(departmentId, userId, productionId) ?? throw new UnauthorizedAccessException();
+				if (production.ReleasedOn.HasValue || !await _productions.TryReleaseAsync(departmentId, productionId, production.RowVersion, userId, now, deliveryMethod.Trim(), deliveryReference.Trim(), cancellationToken))
+					throw new InvalidOperationException("The production has already been released or changed. Reload it before continuing.");
+				production = JsonConvert.DeserializeObject<RmsDisclosureProduction>(JsonConvert.SerializeObject(production));
 				production.ReleasedByUserId = userId;
 				production.ReleasedOn = now;
+				production.DeliveryMethod = deliveryMethod.Trim(); production.DeliveryReference = deliveryReference.Trim();
 				production.ModifiedOn = now;
 				production.RowVersion += 1;
-				await _productions.UpdateAsync(production, cancellationToken, true);
 
-				request.State = (int)RmsDisclosureState.Released;
-				request.ClosedOn = now;
-				request.ClosedByUserId = userId;
+				request.State = (int)(unresolved ? RmsDisclosureState.InReview : RmsDisclosureState.Released);
+				request.ClosedOn = unresolved ? null : now;
+				request.ClosedByUserId = unresolved ? null : userId;
 				request.ModifiedOn = now;
 				request.ModifiedByUserId = userId;
 				request.RowVersion += 1;
 				await _requests.UpdateAsync(request, cancellationToken, true);
 
 				await AuditAsync(departmentId, userId, null, RmsAccessAuditAction.Share, "Disclosure released",
-					new { request.RmsDisclosureRequestId, request.RequestNumber, production.RmsDisclosureProductionId, production.Checksum }, cancellationToken);
+					new { request.RmsDisclosureRequestId, request.RequestNumber, production.RmsDisclosureProductionId, production.Checksum, deliveryMethod = deliveryMethod.Trim(), deliveryReference = deliveryReference.Trim(), unresolvedScope = unresolved }, cancellationToken);
 			});
 
 			return production;
 		}
 
-		public async Task<List<RmsDisclosureProduction>> GetProductionsAsync(int departmentId, string requestId)
+		public async Task<List<RmsDisclosureProduction>> GetProductionsAsync(int departmentId, string userId, string requestId)
 		{
-			return (await _productions.GetForRequestAsync(departmentId, requestId))?.ToList() ?? new List<RmsDisclosureProduction>();
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordDisclosures)) return new List<RmsDisclosureProduction>();
+			var visible = new List<RmsDisclosureProduction>();
+			foreach (var row in (await _productions.GetForRequestAsync(departmentId, requestId)) ?? Enumerable.Empty<RmsDisclosureProduction>())
+			{
+				var authorized = await GetAuthorizedProductionAsync(departmentId, userId, row.RmsDisclosureProductionId);
+				if (authorized?.DisclosureRequestId == requestId) visible.Add(authorized);
+			}
+			// Reading a later packet can outlive the permissions used for an earlier one. Re-project the
+			// completed collection instead of returning objects authorized during source hydration.
+			var current = new List<RmsDisclosureProduction>();
+			foreach (var row in visible)
+			{
+				var authorized = await GetAuthorizedProductionAsync(departmentId, userId, row.RmsDisclosureProductionId);
+				if (authorized?.DisclosureRequestId == requestId) current.Add(authorized);
+			}
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordDisclosures)) return new List<RmsDisclosureProduction>();
+			return current;
+		}
+
+		public async Task<RmsDisclosureProduction> GetAuthorizedProductionAsync(int departmentId, string userId, string productionId)
+		{
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordDisclosures)) return null;
+			var production = await _productions.GetByIdForDepartmentAsync(departmentId, productionId);
+			if (production == null || production.DepartmentId != departmentId || string.IsNullOrEmpty(production.ArtifactJson)
+				|| production.Checksum != RecordSnapshotSerializer.Checksum(production.ArtifactJson)) return null;
+			try
+			{
+				var artifact = JObject.Parse(production.ArtifactJson);
+				var produced = JArray.Parse(production.ProducedSetJson);
+				var manifest = artifact["manifest"] as JArray;
+				if (produced.Count == 0 || produced.Count != production.RecordCount || manifest == null || manifest.Count != produced.Count) return null;
+				var restricted = (bool?)artifact["restricted_content_included"] ?? production.RedactionProfile == RmsRedactionProfiles.FullDisclosure;
+				var visibilityRequired=(int?)artifact["udf_visibility_required"] ?? 0;
+				var containsUdf=(artifact["documents"] as JArray ?? new JArray()).OfType<JObject>().Any(d=>(((d["content"] as JObject)?["CustomFields"] as JObject)?["Fields"] as JArray)?.Count>0);
+				if ((containsUdf || visibilityRequired>0) && await _udf.GetVisibilityLevelAsync(departmentId,userId)<visibilityRequired) return null;
+				if (restricted && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords)) return null;
+				for (var i = 0; i < produced.Count; i++)
+				{
+					if (!JToken.DeepEquals(produced[i], manifest[i]["record"])) return null;
+					var id = (string)produced[i]["record_id"];
+					if (string.IsNullOrWhiteSpace(id) || !await CanViewDisclosureRecordAsync(departmentId, userId, id, (RmsRecordKind)((int?)produced[i]["record_kind"] ?? (int)RmsRecordKind.Operational))) return null;
+				}
+				if ((containsUdf || visibilityRequired>0) && await _udf.GetVisibilityLevelAsync(departmentId,userId)<visibilityRequired) return null;
+				if (restricted && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords)) return null;
+				if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordDisclosures)) return null;
+				return production;
+			}
+			catch (JsonException) { return null; }
+			catch (InvalidOperationException) { return null; }
+			catch (ArgumentException) { return null; }
 		}
 
 		public async Task<RmsDisclosureRequest> CloseAsync(int departmentId, string userId, string requestId, RmsDisclosureState disposition, string reason, CancellationToken cancellationToken = default)
 		{
+			await RequireDisclosureAsync(departmentId, userId);
 			if (disposition != RmsDisclosureState.Denied && disposition != RmsDisclosureState.Withdrawn && disposition != RmsDisclosureState.Closed)
 				throw new ArgumentException("A request closes as denied, withdrawn or closed.", nameof(disposition));
 			if (string.IsNullOrWhiteSpace(reason))
@@ -343,6 +269,7 @@ namespace Resgrid.Services.Records
 
 			await InTransactionAsync(async () =>
 			{
+				await GuardRequestAsync(request, request.RowVersion - 1, cancellationToken);
 				await _requests.UpdateAsync(request, cancellationToken, true);
 				await AuditAsync(departmentId, userId, null, RmsAccessAuditAction.Admin, "Disclosure closed: " + disposition, new { requestId, reason = request.DispositionReason }, cancellationToken);
 			});
@@ -360,83 +287,6 @@ namespace Resgrid.Services.Records
 		}
 
 		// ── internals ────────────────────────────────────────────────────────────────
-
-		/// <summary>
-		/// Redacts one revision snapshot for release. Restricted detail fields come out under the standard
-		/// profile; participant identity comes out as well under the no-identifiers profile. Withholding is
-		/// logged rather than silent, because a requester is entitled to know something was withheld even when
-		/// they are not entitled to the content.
-		/// </summary>
-		private static object Redact(RecordSnapshot snapshot, RmsDisclosureScopeItem item, string profile, List<RmsRedactionEntry> withheld)
-		{
-			var full = string.Equals(profile, RmsRedactionProfiles.FullDisclosure, StringComparison.Ordinal);
-			var hideIdentities = string.Equals(profile, RmsRedactionProfiles.NoPersonalIdentifiers, StringComparison.Ordinal);
-
-			var details = new Dictionary<string, string>(StringComparer.Ordinal);
-			foreach (var field in RecordSnapshotSerializer.DetailFieldOrder)
-			{
-				var value = ReadDetail(snapshot?.Details, field);
-				if (value == null)
-					continue;
-
-				if (!full && RecordSnapshotSerializer.RestrictedDetailFields.Contains(field))
-				{
-					withheld.Add(new RmsRedactionEntry { RecordId = item.RecordId, Section = "Details", Field = field, Basis = "Restricted class" });
-					continue;
-				}
-
-				details[field] = value;
-			}
-
-			var participants = new List<object>();
-			foreach (var participant in snapshot?.Participants ?? new List<RmsRecordParticipant>())
-			{
-				if (hideIdentities)
-				{
-					withheld.Add(new RmsRedactionEntry { RecordId = item.RecordId, Section = "Participants", Field = "Identity", Basis = "Personal identifiers withheld by profile" });
-					continue;
-				}
-
-				participants.Add(new { name = participant.DisplayNameSnapshot, role = participant.Role, group = participant.GroupNameSnapshot });
-			}
-
-			return new
-			{
-				record_id = item.RecordId,
-				record_number = item.RecordNumber,
-				definition_key = item.DefinitionKey,
-				occurred_on = item.OccurredOn,
-				summary = item.Summary,
-				details,
-				participants,
-				units = (snapshot?.Units ?? new List<RmsRecordUnitResponse>()).Select(u => new { unit = u.UnitNameSnapshot }).ToList()
-			};
-		}
-
-		private static string ReadDetail(RmsOperationalRecordDetail details, string field)
-		{
-			if (details == null)
-				return null;
-
-			var property = typeof(RmsOperationalRecordDetail).GetProperty(field);
-			return property?.PropertyType == typeof(string) ? (string)property.GetValue(details) : null;
-		}
-
-		/// <summary>A public record is a finalized one. Drafts and voided records are listed, never produced.</summary>
-		private static bool IsProducible(RmsOperationalRecord record, out string reason)
-		{
-			var state = (RmsRecordState)record.State;
-			if (state == RmsRecordState.Finalized || state == RmsRecordState.Amended)
-			{
-				reason = null;
-				return true;
-			}
-
-			reason = state == RmsRecordState.Voided || state == RmsRecordState.Cancelled
-				? "The record was voided or cancelled."
-				: "The record is not finalized; a draft is not a public record.";
-			return false;
-		}
 
 		/// <summary>
 		/// A scope arriving from a client is never trusted with the viewer fields: those are set from the caller's
@@ -469,7 +319,7 @@ namespace Resgrid.Services.Records
 			var request = await _requests.GetByIdForDepartmentAsync(departmentId, requestId);
 			if (request == null || request.DeletedOn.HasValue)
 				throw new InvalidOperationException("The disclosure request does not exist.");
-			return request;
+			return JsonConvert.DeserializeObject<RmsDisclosureRequest>(JsonConvert.SerializeObject(request));
 		}
 
 		private static void RequireOpen(RmsDisclosureRequest request)
@@ -492,6 +342,8 @@ namespace Resgrid.Services.Records
 		}
 
 		private static string Blank(string value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+		private async Task GuardRequestAsync(RmsDisclosureRequest request, long expectedVersion, CancellationToken ct)
+		{ if (!await _requests.TryBumpRowVersionAsync(request.DepartmentId, request.RmsDisclosureRequestId, expectedVersion, ct)) throw new InvalidOperationException("The disclosure request changed. Reload it before continuing."); }
 
 		private Task AuditAsync(int departmentId, string userId, string recordId, RmsAccessAuditAction action, string purpose, object detail, CancellationToken cancellationToken)
 		{

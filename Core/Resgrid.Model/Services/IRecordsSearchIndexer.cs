@@ -18,6 +18,9 @@ namespace Resgrid.Model.Services
 
 		Task CommitAsync(CancellationToken cancellationToken = default);
 
+		/// <summary>Expunges deleted documents from the configured index, commits replacement segments and refreshes this process's reader.</summary>
+		Task ExpungeDeletesAsync(CancellationToken cancellationToken = default);
+
 		Task<int> CountDocumentsAsync(int departmentId);
 	}
 }

@@ -74,7 +74,10 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public void File_names_are_reduced_to_their_leaf()
 		{
+			// Both separators, on both hosts: Linux treats a backslash as an ordinary filename character, so the
+			// Windows-shaped name is the one that used to survive whole on the containers this actually runs on.
 			RecordAttachmentHygiene.Sanitize(@"C:\temp\..\report.pdf", "application/pdf", new byte[] { 1 }).FileName.Should().Be("report.pdf");
+			RecordAttachmentHygiene.Sanitize("/var/tmp/../report.pdf", "application/pdf", new byte[] { 1 }).FileName.Should().Be("report.pdf");
 		}
 
 		private static byte[] ImageWithMetadata(Action<Image<Rgba32>> unused, string format)

@@ -1,0 +1,6 @@
+.neris-guided-section { padding: 12px; margin: 12px 0; border: 1px solid #d5dce1; border-radius: 4px; }
+.neris-field { margin: 12px 0; }
+.neris-field > label { display: block; margin-bottom: 4px; }
+.neris-nested { padding-left: 16px; border-left: 2px solid #d5dce1; }
+.neris-array-entry { padding: 8px 0; border-bottom: 1px solid #e5e5e5; }
+.neris-guided-section [hidden] { display: none !important; }

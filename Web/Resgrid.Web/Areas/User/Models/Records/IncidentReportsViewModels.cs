@@ -104,6 +104,9 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	/// <summary>Draft editor for a NERIS incident report. Dates are department-local on the form and UTC in the service.</summary>
 	public class IncidentReportEditView : RecordsBaseView
 	{
+		public RecordUdfInput CustomFields { get; set; }
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public RecordUdfSection CustomFieldForm { get; set; }
 		public const int TypeRows = 3;
 		public const int AidRows = 3;
 		public const int TacticRows = 5;

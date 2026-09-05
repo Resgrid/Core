@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Config;
 using Resgrid.Providers.Neris;
 
 namespace Resgrid.Tests.Providers
@@ -64,6 +65,7 @@ namespace Resgrid.Tests.Providers
 			create.Authorization.Should().Be("Bearer tok-1");
 			create.Body.Should().Be("{\"base\":{}}");
 			create.ContentType.Should().StartWith("application/json");
+			_handler.Requests.Should().OnlyContain(r => r.UserAgent.Contains("Resgrid-RMS/"), "NERIS requires User-Agent on token and data requests");
 		}
 
 		[Test]
@@ -75,6 +77,21 @@ namespace Resgrid.Tests.Providers
 			(await _client.ValidateAsync(_profile, _credential, "{}")).Kind.Should().Be(NerisOutcomeKind.Accepted);
 
 			_handler.Requests.Should().HaveCount(3, "one token call, two validate calls");
+		}
+
+		[TestCase(202, false)]
+		[TestCase(204, false)]
+		[TestCase(201, false)]
+		[TestCase(202, true)]
+		[TestCase(204, true)]
+		[TestCase(201, true)]
+		public async Task A_successful_create_without_receipt_ID_requires_reconciliation(int status, bool analysis)
+		{
+			var path = analysis ? "/v1/incident_analysis/incident-1" : "/v1/incident/FD24027000";
+			_handler.Reply("POST", path, (HttpStatusCode)status, "{\"incident_status\":{\"status\":\"REJECTED\"},\"incident_analysis_status\":{\"status\":\"REJECTED\"}}");
+			var result = analysis ? await _client.CreateIncidentAnalysisAsync(_profile, _credential, "incident-1", "{}")
+				: await _client.CreateIncidentAsync(_profile, _credential, "{}");
+			result.DeliveryUncertain.Should().BeTrue();
 		}
 
 		[Test]
@@ -160,6 +177,51 @@ namespace Resgrid.Tests.Providers
 			_handler.Requests.Should().BeEmpty();
 		}
 
+		[TestCase("APPROVED", NerisOutcomeKind.Accepted)]
+		[TestCase("REJECTED", NerisOutcomeKind.Rejected)]
+		[TestCase("PENDING_APPROVAL", NerisOutcomeKind.Pending)]
+		public async Task Analysis_status_uses_the_query_identifier_and_analysis_status_block(string state, NerisOutcomeKind expected)
+		{
+			const string id = "IA|FD24027000|incident:42|1729023498";
+			var path = "/v1/incident_analysis/FD24027000?neris_id_ia=" + Uri.EscapeDataString(id);
+			_handler.Reply("GET", path, HttpStatusCode.OK, "{\"incident_analysis_status\":{\"status\":\"" + state + "\"},\"incident_status\":{\"status\":\"FAILED\"}}");
+			var outcome = await _client.GetIncidentAnalysisStatusAsync(_profile, _credential, id);
+			outcome.Kind.Should().Be(expected);
+			outcome.ExternalId.Should().Be(id);
+			outcome.ExternalStatus.Should().Be(state);
+			_handler.Requests[1].Path.Should().Be(path);
+		}
+
+		[Test]
+		public async Task Analysis_create_and_update_use_their_distinct_contract_routes()
+		{
+			_handler.Reply("POST", "/v1/incident_analysis/incident-1", HttpStatusCode.Created, "{\"neris_id\":\"analysis-1\",\"incident_analysis_status\":{\"status\":\"SUBMITTED\"}}");
+			_handler.Reply("PUT", "/v1/incident_analysis/FD24027000/analysis-1", HttpStatusCode.NoContent, "");
+			var created = await _client.CreateIncidentAnalysisAsync(_profile, _credential, "incident-1", "{}");
+			created.Kind.Should().Be(NerisOutcomeKind.Created);
+			created.ExternalId.Should().Be("analysis-1");
+			(await _client.UpdateIncidentAnalysisAsync(_profile, _credential, created.ExternalId, "{}")).Kind.Should().Be(NerisOutcomeKind.Updated);
+			_handler.Requests.Should().OnlyContain(r => r.UserAgent.Contains("Resgrid-RMS/"));
+		}
+
+		[TestCase(null)]
+		[TestCase("https://api.neris.fsri.org/v1")]
+		[TestCase("https://API.NERIS.FSRI.ORG:443/test/")]
+		[TestCase("http://neris.test/v1")]
+		[TestCase("https://user:password@neris.test/v1")]
+		public async Task Sandbox_misconfiguration_fails_before_credentials_or_payload_leave_the_process(string endpoint)
+		{
+			var previous = NerisConfig.SandboxBaseUrl;
+			try
+			{
+				NerisConfig.SandboxBaseUrl = "";
+				_profile.BaseUrlOverride = endpoint;
+				(await _client.CreateIncidentAsync(_profile, _credential, "{}")).Kind.Should().Be(NerisOutcomeKind.Fatal);
+				_handler.Requests.Should().BeEmpty();
+			}
+			finally { NerisConfig.SandboxBaseUrl = previous; }
+		}
+
 		public sealed class RecordedRequest
 		{
 			public string Method { get; set; }
@@ -167,6 +229,7 @@ namespace Resgrid.Tests.Providers
 			public string Body { get; set; }
 			public string Authorization { get; set; }
 			public string ContentType { get; set; }
+			public string UserAgent { get; set; }
 		}
 
 		/// <summary>Replies keyed by "METHOD path"; the token endpoint has its own script.</summary>
@@ -184,13 +247,14 @@ namespace Resgrid.Tests.Providers
 				Requests.Add(new RecordedRequest
 				{
 					Method = request.Method.Method,
-					Path = request.RequestUri.AbsolutePath,
+					Path = request.RequestUri.PathAndQuery,
 					Body = body,
 					Authorization = request.Headers.Authorization?.ToString(),
-					ContentType = request.Content?.Headers.ContentType?.ToString()
+					ContentType = request.Content?.Headers.ContentType?.ToString(),
+					UserAgent = request.Headers.UserAgent.ToString()
 				});
 
-				if (!_replies.TryGetValue($"{request.Method.Method} {request.RequestUri.AbsolutePath}", out var reply))
+				if (!_replies.TryGetValue($"{request.Method.Method} {request.RequestUri.PathAndQuery}", out var reply))
 					return new HttpResponseMessage(HttpStatusCode.NotFound) { Content = new StringContent("{\"detail\":\"not scripted\"}", Encoding.UTF8, "application/json") };
 
 				return new HttpResponseMessage(reply.status) { Content = new StringContent(reply.body ?? string.Empty, Encoding.UTF8, "application/json") };

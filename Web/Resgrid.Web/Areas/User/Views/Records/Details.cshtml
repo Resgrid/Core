@@ -25,9 +25,11 @@
 	</div>
 	<div class="col-sm-8">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="RecordEvidence" asp-action="Index" asp-route-recordId="@record.RmsOperationalRecordId" asp-route-recordKind="Operational">Supporting evidence</a>
 			@if (Model.CanEdit && isEditable)
 			{
 				<a class="btn btn-primary" asp-controller="Records" asp-action="Edit" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@commonLocalizer["Edit"]</a>
+				<a class="btn btn-default" asp-controller="RecordsInventory" asp-action="Edit" asp-route-area="User" asp-route-recordId="@record.RmsOperationalRecordId" asp-route-kind="Operational">Inventory usage</a>
 			}
 			@if (Model.CanAmend && RmsLifecycle.CanTransition((RmsLifecyclePreset)record.LifecyclePreset, Model.State, RmsRecordState.Amended) && record.AmendsRevisionId == null)
 			{
@@ -140,7 +142,7 @@
 							<dt>@localizer["OtherPersonnel"]</dt><dd>@details.OtherPersonnel</dd>
 						}
 					</dl>
-					<p style="white-space:pre-wrap">@details.Narrative</p>
+					<div style="white-space:pre-wrap">@Html.Raw(Resgrid.Framework.RecordNarrativeFormatter.Render(details.Narrative))</div>
 				</div>
 			</div>
 
@@ -222,6 +224,7 @@
 						<form method="post" enctype="multipart/form-data" asp-controller="Records" asp-action="AddAttachment" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">
 							@Html.AntiForgeryToken()
 							<input type="file" name="files" multiple />
+							<label for="record-file-classification">File classification</label><select id="record-file-classification" name="classification" class="form-control"><option value="1">Restricted</option><option value="0">Unrestricted operational content</option></select>
 							<button type="submit" class="btn btn-xs btn-default m-t-xs">@localizer["AddAttachment"]</button>
 						</form>
 					}

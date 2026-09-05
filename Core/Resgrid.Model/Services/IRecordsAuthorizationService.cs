@@ -12,6 +12,13 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface IRecordsAuthorizationService
 	{
+		Task<bool> IsActiveMemberAsync(string userId, int departmentId);
+		Task<bool> IsDepartmentAdminAsync(string userId, int departmentId);
+		Task<bool> HasPermissionAsync(string userId, int departmentId, PermissionTypes permissionType);
+		Task<bool> CanReadSourceCallAsync(string userId, int departmentId, Call call);
+		Task<bool> CanCreateSourceCallAsync(string userId, int departmentId);
+		Task<bool> CanUseSourceInventoryAsync(string userId, int departmentId, int? groupId = null);
+
 		/// <summary>Whether cross-group scoping is in force for the department (setting 75 GroupScoped and ViewGroupRecords LockToGroup).</summary>
 		Task<bool> IsGroupScopedAsync(int departmentId);
 
@@ -21,6 +28,9 @@ namespace Resgrid.Model.Services
 		/// input for list, search and report queries so visibility is a join, not a per-row callback.
 		/// </summary>
 		Task<List<int>> GetVisibleGroupIdsAsync(string userId, int departmentId);
+
+		/// <summary>Opaque fingerprint of current membership, roles, group and permission policy for local-cache invalidation. Null means read access cannot be established.</summary>
+		Task<string> GetReadScopeStampAsync(string userId, int departmentId);
 
 		/// <summary>Per-Record check applied on every detail, attachment and deep-link read.</summary>
 		Task<bool> CanUserViewRecordAsync(string userId, string recordId, int departmentId);

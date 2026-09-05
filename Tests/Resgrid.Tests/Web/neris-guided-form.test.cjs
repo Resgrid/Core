@@ -1,0 +1,115 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { chromium } = require(process.env.RESGRID_PLAYWRIGHT_PATH || 'playwright');
+const root = path.resolve(__dirname, '../../..');
+const script = fs.readFileSync(path.join(root, 'Web/Resgrid.Web/wwwroot/js/neris-guided-form.js'), 'utf8');
+const schemas = JSON.parse(fs.readFileSync(path.join(root, 'Providers/Resgrid.Providers.Neris/Contract/neris-openapi-v1.4.78-2026-09-03.json'), 'utf8')).components.schemas;
+(async () => {
+    const browser = await chromium.launch({ channel: 'msedge', headless: true });
+    try {
+        const page = await browser.newPage();
+        await page.setContent('<main id="editor"></main>');
+        await page.addScriptTag({ content: script });
+        const result = await page.evaluate(({ schemas }) => {
+            function check(condition, message) { if (!condition) throw new Error(message); }
+            const host = document.getElementById('editor');
+            const fire = { water_supply: 'HYDRANT_GREATER_500', investigation_needed: 'NO_CAUSE_OBVIOUS', investigation_types: [], location_detail: { type: 'OUTSIDE', cause: 'DEBRIS_OPEN_BURNING', acres_burned: 0.1 } };
+            const editor = NerisGuidedForm.createEditor(host, schemas.FirePayload, fire, schemas);
+            check(JSON.stringify(editor.get()) === JSON.stringify(fire), 'Opening a valid fire section changes saved facts.');
+            const selector = host.querySelector('[data-neris-path="/location_detail"] > select');
+            selector.value = '0'; selector.dispatchEvent(new Event('change'));
+            const switched = editor.get().location_detail;
+            check(switched.type === 'STRUCTURE' && switched.acres_burned === undefined && switched.cause === undefined, 'Changing section type leaks the prior branch.');
+            selector.value = '1'; selector.dispatchEvent(new Event('change'));
+            check(editor.get().location_detail.acres_burned === 0.1, 'Switching back loses the saved branch draft.');
+            host.replaceChildren();
+            const property = { parcel_id: 'parcel-1', structures: [{ damage_assessment: 'MAJOR_DAMAGE', location: { number: 100, street: 'Main St' }, estimated_property_value: 100000 }, { damage_assessment: 'NO_DAMAGE', location: { street: 'Second St' }, estimated_property_value: 80000 }] };
+            const p = NerisGuidedForm.createEditor(host, schemas.PropertyAnalysisPayload, property, schemas);
+            const propertyRead = p.get();
+            check(propertyRead.structures.length === 2 && propertyRead.structures[1].estimated_property_value === 80000, 'Nested property structures lose data on unrelated edits.');
+            const street = host.querySelector('[data-neris-path="/structures/1/location/street"] input');
+            street.value = 'Corrected St';
+            check(p.get().structures[1].location.street === 'Corrected St' && p.get().structures[0].location.street === 'Main St', 'Nested edits affect another structure.');
+            host.querySelector('[data-neris-path="/structures/0"]').parentElement.querySelector(':scope > button').click();
+            check(p.get().structures.length === 1 && p.get().structures[0].location.street === 'Corrected St', 'Removing another structure loses the edited row.');
+            check(host.querySelector('[data-neris-path="/structures/0/location/street"] input') === street && !host.querySelector('[data-neris-path="/structures/1/location/street"]'), 'Surviving structure retains its obsolete validation path.');
+            host.replaceChildren();
+            const nestedSchema = { type: 'array', items: { type: 'object', properties: { note: { type: 'object', properties: { value: { type: 'string' } } }, children: { type: 'array', items: { type: 'string' } } } } };
+            const nested = NerisGuidedForm.createEditor(host, nestedSchema, [{}, { children: ['retained'] }], {}, { root: '/report/entries' });
+            host.querySelector('[data-neris-path="/0"]').parentElement.querySelector(':scope > button').click();
+            const noteToggle = host.querySelector('[data-neris-path="/0/note"] > label input');
+            noteToggle.checked = true; noteToggle.dispatchEvent(new Event('change', { bubbles: true }));
+            const lateNote = host.querySelector('[data-neris-path="/0/note/value"] input');
+            check(lateNote && lateNote.closest('[data-neris-full-path]').dataset.nerisFullPath === '/report/entries/0/note/value', 'Opening a nested section after removing a row creates obsolete paths.');
+            lateNote.value = 'later';
+            const childArray = host.querySelector('[data-neris-path="/0/children"] .neris-nested > [data-neris-path="/0/children"]');
+            childArray.querySelector(':scope > button').click();
+            check(host.querySelector('[data-neris-path="/0/children/1"] input'), 'Adding a nested row after reindexing uses its old parent index.');
+            check(nested.get()[0].note.value === 'later' && nested.get()[0].children[0] === 'retained', 'Reindexing loses nested content.');
+            host.replaceChildren();
+            const xss = '<img src=x onerror="window.compromised=true">';
+            const textEditor = NerisGuidedForm.createEditor(host, { type: 'object', properties: { narrative: { type: 'string', maxLength: 10000 } } }, { narrative: xss }, schemas);
+            check(!host.querySelector('img') && !window.compromised && textEditor.get().narrative === xss, 'Stored report text is interpreted as HTML.');
+            host.replaceChildren();
+            const casualty = { type: 'FF', rank: 'Captain', years_of_service: 0, birth_month_year: '06/1972', casualty: { injury_or_noninjury: { type: 'UNINJURED' } } };
+            const casualtyEditor = NerisGuidedForm.createEditor(host, schemas.CasualtyRescuePayload, casualty, schemas);
+            check(JSON.stringify(casualtyEditor.get()) === JSON.stringify(casualty), 'Opening casualty details changes saved fields or loses zero years of service.');
+            const includeCasualty = host.querySelector('[data-neris-path="/casualty"] > label input[type="checkbox"]');
+            includeCasualty.checked = false; includeCasualty.dispatchEvent(new Event('change'));
+            check(casualtyEditor.get().casualty === undefined && casualtyEditor.get().rank === 'Captain', 'Removing the casualty section changes unrelated personal fields.');
+            includeCasualty.checked = true; includeCasualty.dispatchEvent(new Event('change'));
+            check(casualtyEditor.get().casualty.injury_or_noninjury.type === 'UNINJURED', 'Reopening an optional section loses its draft.');
+            const personType = host.querySelector('[data-neris-path="/type"] select');
+            personType.value = JSON.stringify('NONFF'); personType.dispatchEvent(new Event('change', { bubbles: true }));
+            check(host.querySelector('[data-neris-path="/rank"]').hidden && host.querySelector('[data-neris-path="/years_of_service"]').hidden, 'Civilian form exposes firefighter-only fields.');
+            check(casualtyEditor.get().rank === undefined && casualtyEditor.get().years_of_service === undefined, 'Civilian payload carries firefighter rank or service.');
+            personType.value = JSON.stringify('FF'); personType.dispatchEvent(new Event('change', { bubbles: true }));
+            check(!host.querySelector('[data-neris-path="/rank"]').hidden && casualtyEditor.get().rank === 'Captain' && casualtyEditor.get().years_of_service === 0, 'Changing back loses firefighter draft or zero service.');
+            host.replaceChildren();
+            const rescued = { type: 'NONFF', rescue: { presence_known: { presence_known_type: 'KNOWN' }, mayday: { called_by: 'UNIT' }, ffrescue_or_nonffrescue: { type: 'NO_RESCUE_NEEDED' } }, casualty: { injury_or_noninjury: { type: 'INJURED_NONFATAL', cause: 'EXPOSURE', ff_injury_details: { ppe_items: ['HELMET'] } } } };
+            const rescueEditor = NerisGuidedForm.createEditor(host, schemas.CasualtyRescuePayload, rescued, schemas);
+            check(rescueEditor.get().rescue.mayday === undefined && rescueEditor.get().casualty.injury_or_noninjury.ff_injury_details === undefined, 'Civilian submission includes mayday or firefighter injury details.');
+            check(!host.querySelector('[data-neris-path="/rescue/presence_known"]').hidden, 'Civilian presence control is hidden.');
+            const rescuePersonType = host.querySelector('[data-neris-path="/type"] select');
+            rescuePersonType.value = JSON.stringify('FF'); rescuePersonType.dispatchEvent(new Event('change', { bubbles: true }));
+            check(rescueEditor.get().rescue.presence_known === undefined && rescueEditor.get().rescue.mayday && rescueEditor.get().casualty.injury_or_noninjury.ff_injury_details, 'Firefighter transition fails to restore its fields or exclude civilian presence.');
+            check(host.querySelector('[data-neris-path="/rescue/presence_known"]').hidden && !host.querySelector('[data-neris-path="/rescue/mayday"]').hidden, 'Nested rescue controls do not follow person type.');
+            const sectionNames = ['FirePayload','StructureFireLocationDetailPayload','OutsideFireLocationDetailPayload','HazsitPayload','ChemicalPayload','MedicalPayload','SmokeAlarmPayload','FireAlarmPayload','OtherAlarmPayload','FireSuppressionPayload','CookingFireSuppressionPayload','ElectricHazardPayload','PowergenHazardPayload','CsstHazardPayload','MedicalOxygenHazardPayload','StructureFireOriginPayload','OutsideFirePayload','HazsitWithReleaseFactorsPayload','ProductPayload','BatteryPayload','PropertyAnalysisPayload','FfInjuryDetailsPayload','CasualtyRescuePayload','RescuePayload','ExposurePayload'];
+            for (const name of sectionNames) {
+                host.replaceChildren();
+                NerisGuidedForm.createEditor(host, schemas[name], {}, schemas).get();
+                check(!host.querySelector('textarea[name$="DetailJson"]'), 'A section requires raw JSON authoring.');
+            }
+            return { scenarios: 12, sections: sectionNames.length };
+        }, { schemas });
+        assert.equal(result.sections, 25);
+        await page.setContent('<form data-neris-schema-url="/schema"><input type="hidden" name="Properties[0].DetailJson" data-neris-schema="PropertyAnalysisPayload" data-neris-root="/property"><p data-neris-issue="/property/structures/1/location/street">Correct the street.</p></form>');
+        await page.evaluate(async ({ schemas }) => {
+            const form = document.querySelector('form');
+            form.elements[0].value = JSON.stringify({ structures: [{ location: { street: 'First' } }, { location: { street: 'Second' } }] });
+            window.fetch = async () => ({ ok: true, json: async () => schemas });
+            await NerisGuidedForm.initialize(form);
+            const jump = form.querySelector('[data-neris-issue] button');
+            if (!jump || jump.disabled) throw new Error('The initial validation issue has no working field link.');
+            jump.click();
+            if (document.activeElement.value !== 'Second') throw new Error('The issue focuses a different structure.');
+            form.querySelector('[data-neris-path="/structures/0"]').parentElement.querySelector(':scope > button').click();
+            if (!jump.disabled || form.querySelector('[aria-invalid="true"]')) throw new Error('A stale issue still targets a changed array position.');
+            if (!form.querySelector('[data-neris-full-path="/property/structures/0/location/street"]')) throw new Error('Reindexed fields lose their server validation path.');
+        }, { schemas });
+        await page.setContent('<form data-neris-schema-url="https://unavailable.invalid/schema"><input type="hidden" name="Modules[0].DetailJson" value="{&quot;original&quot;:true}" data-neris-schema="FirePayload"><button>Save</button></form>');
+        await page.evaluate(async () => {
+            window.fetch = async () => { throw new Error('simulated unavailable schema'); };
+            await NerisGuidedForm.initialize(document.querySelector('form'));
+        });
+        const denied = await page.evaluate(() => {
+            const form = document.querySelector('form');
+            const event = new Event('submit', { cancelable: true }); form.dispatchEvent(event);
+            return { prevented: event.defaultPrevented, original: form.elements[0].value };
+        });
+        assert.equal(denied.prevented, true);
+        assert.equal(denied.original, '{"original":true}');
+        console.log(JSON.stringify({ passed: result.scenarios + 2, failed: 0, sections: result.sections, browser: await browser.version() }));
+    } finally { await browser.close(); }
+})().catch(error => { console.error(error); process.exitCode = 1; });

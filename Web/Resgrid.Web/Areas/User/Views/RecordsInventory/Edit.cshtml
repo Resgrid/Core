@@ -1,0 +1,25 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordInventoryView
+@{ ViewBag.Title = "Resgrid | Record inventory usage"; var controller = Model.Kind == RmsRecordKind.IncidentReport ? "IncidentReports" : "Records"; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-title"><h2>Inventory usage</h2></div><div class="ibox-content">
+    <p>Enter supplies consumed on this report. Saving creates an inventory ledger adjustment and captures supporting evidence. Correct stock adjustments in Inventory; record corrections through an RMS amendment.</p>
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-info" role="status">@Model.ErrorMessage</div> }
+    <h3>Recorded usage</h3>
+    <table class="table"><thead><tr><th>Item</th><th>Quantity</th><th>Note</th><th>Ledger entry</th><th>Recorded at (UTC)</th></tr></thead><tbody>
+    @foreach (var usage in Model.Usage) { <tr><td>@usage.ItemName</td><td>@usage.Quantity @usage.UnitOfMeasure</td><td>@usage.Note</td><td>@usage.InventoryId</td><td>@usage.CapturedOn.ToString("u")</td></tr> }
+    </tbody></table>
+    <form method="post" asp-action="Consume" asp-controller="RecordsInventory" asp-area="User">
+        @Html.AntiForgeryToken()<input type="hidden" asp-for="RecordId" /><input type="hidden" asp-for="Kind" /><input type="hidden" asp-for="RowVersion" />
+        <div class="form-group"><label asp-for="TypeId">Item</label><select class="form-control" asp-for="TypeId" asp-items="Model.Types" required><option value="">Choose item</option></select></div>
+        <div class="form-group"><label asp-for="GroupId">Stock station</label><select class="form-control" asp-for="GroupId" asp-items="Model.Groups" required><option value="">Choose station</option></select></div>
+        <div class="form-group"><label asp-for="UnitId">Unit</label><select class="form-control" asp-for="UnitId" asp-items="Model.Units"><option value="">No assigned unit</option></select></div>
+        <div class="form-group"><label asp-for="Quantity">Quantity consumed</label><input class="form-control" asp-for="Quantity" type="number" min="0.000001" max="100000000" step="0.000001" required /></div>
+        <div class="form-group"><label asp-for="Note">Usage note</label><textarea class="form-control" asp-for="Note" rows="3" maxlength="16000"></textarea></div>
+        <button type="submit" class="btn btn-primary">Record consumption</button>
+        <a class="btn btn-default" asp-action="Details" asp-controller="@controller" asp-area="User" asp-route-id="@Model.RecordId">Return to report</a>
+    </form>
+    <form method="post" asp-action="RefreshEvidence" asp-controller="RecordsInventory" asp-area="User" style="margin-top:16px">
+        @Html.AntiForgeryToken()<input type="hidden" asp-for="RecordId" /><input type="hidden" asp-for="Kind" />
+        <button type="submit" class="btn btn-default">Refresh evidence from recorded usage</button>
+    </form>
+</div></div></div>

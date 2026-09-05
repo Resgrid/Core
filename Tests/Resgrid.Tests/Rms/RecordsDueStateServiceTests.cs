@@ -226,15 +226,24 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
-		public async Task Emissions_per_department_are_bounded()
+		public async Task Emissions_per_department_are_bounded_and_the_remainder_is_chased_by_the_next_sweep()
 		{
 			for (var i = 0; i < RecordsDueStateService.MaxEmissionsPerDepartment + 10; i++)
 				SeedRecordAwaitingReview(DateTime.UtcNow.AddHours(-5));
 
 			var result = await _service.SweepAsync();
 
-			result.BecameOverdue.Should().Be(RecordsDueStateService.MaxEmissionsPerDepartment + 10, "every row's state is still updated");
-			_store.Outbox.Count.Should().Be(RecordsDueStateService.MaxEmissionsPerDepartment, "but a department cannot flood the queue in one sweep");
+			result.BecameOverdue.Should().Be(RecordsDueStateService.MaxEmissionsPerDepartment, "only an emitted transition is recorded as one");
+			_store.Outbox.Count.Should().Be(RecordsDueStateService.MaxEmissionsPerDepartment, "a department cannot flood the queue in one sweep");
+			_store.DueStates.Count(d => d.LastEmittedState == (int)RmsDueState.Overdue)
+				.Should().Be(RecordsDueStateService.MaxEmissionsPerDepartment, "a row the cap skipped must not read as already notified");
+
+			// The cap is a trickle, not a silence: what the first sweep could not chase, the next one does.
+			var second = await _service.SweepAsync();
+
+			second.BecameOverdue.Should().Be(10);
+			_store.Outbox.Count.Should().Be(RecordsDueStateService.MaxEmissionsPerDepartment + 10);
+			(await _service.SweepAsync()).BecameOverdue.Should().Be(0, "every obligation has now been chased exactly once");
 		}
 	}
 }

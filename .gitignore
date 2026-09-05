@@ -280,3 +280,4 @@ opencode.json
 /.claude
 /Web/Resgrid.Web/wwwroot/js/ng
 /tmp
+/artifacts

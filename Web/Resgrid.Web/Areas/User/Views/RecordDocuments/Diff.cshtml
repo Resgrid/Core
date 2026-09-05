@@ -1,0 +1,11 @@
+@model List<Resgrid.Model.RecordFieldDiff>
+@{ ViewBag.Title = "Compare report revisions"; }
+<div class="wrapper wrapper-content">
+    <h2>Revision @ViewData["From"] to revision @ViewData["To"]</h2>
+    <p><a asp-action="PrintDiff" asp-route-id="@ViewData["RecordId"]" asp-route-kind="@ViewData["Kind"]" asp-route-from="@ViewData["FromId"]" asp-route-to="@ViewData["ToId"]">Print comparison as PDF</a></p>
+    @if ((bool?)ViewData["Withheld"] == true) { <p class="alert alert-info">Restricted values are withheld under your current permissions.</p> }
+    @if (Model.Count == 0) { <p>No visible content changed.</p> }
+    <table class="table table-bordered"><thead><tr><th>Field</th><th>Before</th><th>After</th></tr></thead><tbody>
+    @foreach (var change in Model) { <tr><th>@(change.FieldLabel ?? change.FieldKey)</th><td style="white-space:pre-wrap">@change.OldValue</td><td style="white-space:pre-wrap">@change.NewValue</td></tr> }
+    </tbody></table>
+</div>

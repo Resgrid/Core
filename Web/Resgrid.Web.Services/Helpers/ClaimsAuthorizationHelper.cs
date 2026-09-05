@@ -149,6 +149,8 @@ namespace Resgrid.Web.ServicesCore.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.Create);
 		}
 
+		public static bool CanViewCalls() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.View);
+
 		public static bool CanCreateTraining()
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create);

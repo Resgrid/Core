@@ -1,4 +1,5 @@
 ﻿@inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
+@inject Resgrid.Model.Services.IRecordsAuthorizationService recordsAuthorization
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
@@ -79,6 +80,10 @@
 				<li class="@Html.IsSelected(controller: "Records")">
 					<a asp-controller="Records" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.records">@commonLocalizer["RecordsModule"]</span></a>
 				</li>
+				@if (await recordsAuthorization.HasPermissionAsync(ClaimsAuthorizationHelper.GetUserId(), ClaimsAuthorizationHelper.GetDepartmentId(), Resgrid.Model.PermissionTypes.ManageRecordLegalHold))
+				{
+					<li><a asp-controller="RecordLegalHolds" asp-action="Index" asp-route-area="User"><i class="fa fa-lock"></i> Records preservation holds</a></li>
+				}
 			}
 			else if (SettingsHelper.IsLogsEnabled())
 			{

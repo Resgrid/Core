@@ -25,9 +25,10 @@ namespace Resgrid.Model.Services
 
 		/// <summary>
 		/// ETag-guarded draft save. <paramref name="canWriteRestricted"/> false keeps the stored VIN and plate on
-		/// each vehicle row rather than accepting or erasing them.
+		/// each vehicle row rather than accepting or erasing them. It defaults to false: a caller that has not
+		/// resolved the claim must not be granted restricted writes by omission.
 		/// </summary>
-		Task<IncidentAnalysisAggregate> SaveDraftAsync(int departmentId, string userId, string analysisId, long expectedRowVersion, IncidentAnalysisDraftInput input, bool canWriteRestricted = true, CancellationToken cancellationToken = default);
+		Task<IncidentAnalysisAggregate> SaveDraftAsync(int departmentId, string userId, string analysisId, long expectedRowVersion, IncidentAnalysisDraftInput input, bool canWriteRestricted = false, CancellationToken cancellationToken = default);
 
 		/// <summary>Local validation against the pinned contract; never touches the incident's own issue list.</summary>
 		Task<List<RmsValidationIssue>> ValidateAsync(int departmentId, string analysisId, CancellationToken cancellationToken = default);

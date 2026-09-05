@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Resgrid.Model;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Search
@@ -16,15 +17,16 @@ namespace Resgrid.Search
 	public class LuceneRecordsIndexer : IRecordsSearchIndexer
 	{
 		private readonly LuceneRecordsIndexHost _host;
+		private readonly IRmsSearchWriteFence _fence;
 
-		public LuceneRecordsIndexer(LuceneRecordsIndexHost host)
+		public LuceneRecordsIndexer(LuceneRecordsIndexHost host, IRmsSearchWriteFence fence)
 		{
 			_host = host ?? throw new ArgumentNullException(nameof(host));
+			_fence = fence ?? throw new ArgumentNullException(nameof(fence));
 		}
 
-		public Task<int> IndexAsync(IEnumerable<RecordsSearchDocumentSource> documents, CancellationToken cancellationToken = default)
+		public async Task<int> IndexAsync(IEnumerable<RecordsSearchDocumentSource> documents, CancellationToken cancellationToken = default)
 		{
-			var writer = _host.GetWriter();
 			var count = 0;
 
 			foreach (var source in documents ?? Array.Empty<RecordsSearchDocumentSource>())
@@ -33,38 +35,53 @@ namespace Resgrid.Search
 				if (source?.Projection == null)
 					continue;
 
-				var p = source.Projection;
-				var key = RecordsIndexFields.BuildKey(p.DepartmentId, p.SourceType, p.SourceId);
-
-				if (p.DeletedOn.HasValue)
+				count += await _fence.WithLiveSourceAsync(source, current => _host.Write(writer =>
 				{
-					writer.DeleteDocuments(new Term(RecordsIndexFields.Key, key));
-					continue;
-				}
-
-				writer.UpdateDocument(new Term(RecordsIndexFields.Key, key), RecordsSearchDocumentBuilder.Build(source));
-				count++;
+					var p = current.Projection;
+					var key = RecordsIndexFields.BuildKey(p.DepartmentId, p.SourceType, p.SourceId);
+					if (p.DeletedOn.HasValue)
+					{
+						writer.DeleteDocuments(new Term(RecordsIndexFields.Key, key));
+						return 0;
+					}
+					writer.UpdateDocument(new Term(RecordsIndexFields.Key, key), RecordsSearchDocumentBuilder.Build(current));
+					return 1;
+				}), cancellationToken);
 			}
 
-			return Task.FromResult(count);
+			return count;
 		}
 
-		public Task DeleteAsync(int departmentId, int sourceType, string sourceId, CancellationToken cancellationToken = default)
+		public async Task DeleteAsync(int departmentId, int sourceType, string sourceId, CancellationToken cancellationToken = default)
 		{
-			_host.GetWriter().DeleteDocuments(new Term(RecordsIndexFields.Key, RecordsIndexFields.BuildKey(departmentId, sourceType, sourceId)));
-			return Task.CompletedTask;
+			await _fence.WithLiveSourceAsync(new RecordsSearchDocumentSource { Projection = new RmsRecordSearchProjection
+			{ DepartmentId = departmentId, SourceType = sourceType, SourceId = sourceId, DeletedOn = DateTime.UtcNow } }, current =>
+			{
+				if (!current.Projection.DeletedOn.HasValue) throw new InvalidOperationException("A live record cannot be erased from the index by a stale deletion request.");
+				_host.Write(writer => { writer.DeleteDocuments(new Term(RecordsIndexFields.Key, RecordsIndexFields.BuildKey(departmentId, sourceType, sourceId))); return 0; });
+				return 0;
+			}, cancellationToken);
 		}
 
 		public Task DeleteDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)
 		{
-			_host.GetWriter().DeleteDocuments(new Term(RecordsIndexFields.DepartmentId, departmentId.ToString()));
+			cancellationToken.ThrowIfCancellationRequested();
+			_host.Write(writer => { writer.DeleteDocuments(new Term(RecordsIndexFields.DepartmentId, departmentId.ToString())); return 0; });
 			return Task.CompletedTask;
 		}
 
 		public Task CommitAsync(CancellationToken cancellationToken = default)
 		{
-			_host.GetWriter().Commit();
+			cancellationToken.ThrowIfCancellationRequested();
+			_host.Write(writer => { writer.Commit(); return 0; });
 			_host.MaybeRefresh();
+			return Task.CompletedTask;
+		}
+
+		public Task ExpungeDeletesAsync(CancellationToken cancellationToken = default)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			_host.ExpungeDeletes();
 			return Task.CompletedTask;
 		}
 

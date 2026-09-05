@@ -19,6 +19,10 @@ namespace Resgrid.Model.Services
 		public int InventoryId { get; set; }
 		public decimal Quantity { get; set; }
 		public string Note { get; set; }
+		public string ItemName { get; set; }
+		public string UnitOfMeasure { get; set; }
+		public string SourceChecksum { get; set; }
+		public string ReferenceChecksum { get; set; }
 		public string CapturedByUserId { get; set; }
 		public DateTime CapturedOn { get; set; }
 	}
@@ -33,6 +37,7 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface IRmsInventoryUsageAdapter
 	{
+		Task<RmsInventoryUsage> ConsumeAsync(int departmentId, string userId, string recordId, RmsRecordKind kind, long expectedRowVersion, int typeId, int groupId, int? unitId, decimal quantity, string note, CancellationToken cancellationToken = default);
 		Task<List<RmsInventoryUsage>> GetUsageForRecordAsync(int departmentId, string recordId);
 
 		Task<List<RmsInventoryUsage>> GetUsageForLegacyLogAsync(int departmentId, int logId);

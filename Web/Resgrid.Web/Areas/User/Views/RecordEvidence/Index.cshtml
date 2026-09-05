@@ -1,0 +1,40 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordEvidenceView
+@{
+	ViewBag.Title = "Resgrid | Supporting evidence";
+	var context = Model.Context;
+	var recordController = context.RecordKind == RmsRecordKind.IncidentReport ? "IncidentReports" : "Records";
+}
+<div class="wrapper wrapper-content">
+	<h2>Supporting evidence — @context.RecordNumber</h2>
+	<p><a asp-controller="@recordController" asp-action="Details" asp-route-id="@context.RecordId">Return to report</a></p>
+	@if (!string.IsNullOrWhiteSpace(Model.Message)) { <div class="alert alert-info" role="status">@Model.Message</div> }
+	<p>Captured manifests preserve the selected source facts and their checksum. Draft captures become part of the signed revision. Corrections preserve earlier evidence in the history.</p>
+	@if (context.CanCapture)
+	{
+		<p><a class="btn btn-primary" asp-action="Select" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind">Select and capture evidence</a>
+		<a class="btn btn-default" asp-controller="RecordsInventory" asp-action="Edit" asp-route-recordId="@context.RecordId" asp-route-kind="@context.RecordKind">Record inventory usage</a></p>
+	}
+	@if (Model.Artifacts.Count == 0) { <p>No evidence on this page.</p> }
+	<nav aria-label="Evidence pages">
+		@if (Model.Page > 0) { <a asp-action="Index" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-page="@(Model.Page - 1)">Previous page</a> }
+		@if (Model.HasMore) { <a asp-action="Index" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-page="@(Model.Page + 1)">Next page</a> }
+	</nav>
+	@foreach (var artifact in Model.Artifacts)
+	{
+		<div class="ibox"><div class="ibox-content">
+			@if (artifact.Withheld)
+			{
+				<p><i class="fa fa-lock" aria-hidden="true"></i> Restricted evidence withheld.</p>
+			}
+			else
+			{
+				<h3>@artifact.Title</h3>
+				<p>@artifact.Reason</p>
+				<p>@artifact.Items source item(s) · captured @artifact.CapturedOn.ToString("yyyy-MM-dd HH:mm:ss") UTC · @(artifact.Superseded ? "Superseded" : "Current") · @(artifact.RevisionId == null ? "Draft" : "Signed revision: " + artifact.RevisionId)</p>
+				<p>Source version: <code style="overflow-wrap:anywhere">@artifact.SourceVersion</code><br />SHA-256: <code style="overflow-wrap:anywhere">@artifact.Checksum</code></p>
+				@if (context.CanExport) { <a class="btn btn-default" asp-action="Manifest" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-artifactId="@artifact.Id">Download verified manifest</a> }
+			}
+		</div></div>
+	}
+</div>

@@ -41,6 +41,12 @@ namespace Resgrid.Providers.Neris
 
 		public string ContractVersion => NerisValueSetCatalog.Instance.ContractVersion;
 
+		public string GetDestinationIdentity(RmsNerisProfile profile) => Newtonsoft.Json.JsonConvert.SerializeObject(new
+		{
+			profile.DepartmentId, profile.RmsNerisProfileId, profile.NerisEntityId, profile.Environment,
+			Endpoint = NerisApiClient.BaseUrlFor(profile), Contract = profile.ContractVersion ?? ContractVersion
+		});
+
 		public IReadOnlyList<string> ValueSetKeys => NerisValueSetCatalog.Instance.SetKeys;
 
 		public Task<RmsNerisProfile> GetProfileAsync(int departmentId)

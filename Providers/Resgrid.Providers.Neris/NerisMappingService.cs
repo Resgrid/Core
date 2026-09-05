@@ -123,10 +123,8 @@ namespace Resgrid.Providers.Neris
 			{
 				["base"] = Compact(new JObject
 				{
-					["department_neris_id"] = profile.NerisEntityId,
-					["incident_neris_id"] = Blank(snapshot.Report?.NerisIncidentId),
-					["general_cause"] = Blank(analysis.GeneralCause),
-					["investigation_types"] = Csv(analysis.InvestigationTypesCsv)
+					["neris_id_incident"] = Blank(snapshot.Report?.NerisIncidentId),
+					["incident_number"] = Blank(snapshot.Report?.IncidentNumber)
 				})
 			};
 
@@ -137,6 +135,17 @@ namespace Resgrid.Providers.Neris
 				payload["vehicles"] = new JArray(snapshot.Vehicles.OrderBy(v => v.Ordinal).Select(MapVehicle));
 
 			ApplyModules(payload, snapshot.Modules, analysis: true);
+			// The analysis base has no cause/investigation-code fields. Preserve the recorded findings in its
+			// narrative and put the coded cause on the fire-origin sections supported by the pinned contract.
+			var findings = new List<string>();
+			if (!string.IsNullOrWhiteSpace(analysis.GeneralCause))
+			{
+				findings.Add("General cause: " + analysis.GeneralCause);
+				foreach (var path in new[] { "structure_fire_origin", "outside_fire" })
+					if (payload[path] is JObject origin) origin["general_cause"] = analysis.GeneralCause;
+			}
+			if (!string.IsNullOrWhiteSpace(analysis.InvestigationTypesCsv)) findings.Add("Investigation types: " + analysis.InvestigationTypesCsv);
+			if (findings.Count > 0) payload["base"]["narrative"] = string.Join("\n", findings);
 
 			return payload.ToString(Formatting.None);
 		}
@@ -148,7 +157,9 @@ namespace Resgrid.Providers.Neris
 		/// </summary>
 		private static void ApplyModules(JObject payload, List<RmsIncidentModule> modules, bool analysis)
 		{
-			foreach (var group in modules.Where(m => m != null).GroupBy(m => (RmsIncidentModuleKind)m.ModuleKind))
+			// Parent sections must be written before their separately authored children, regardless of row order.
+			foreach (var group in modules.Where(m => m != null).GroupBy(m => (RmsIncidentModuleKind)m.ModuleKind)
+				.OrderBy(g => RmsIncidentModuleCatalog.Get(g.Key)?.PayloadPath.Count(c => c == '.') ?? 0).ThenBy(g => (int)g.Key))
 			{
 				var descriptor = RmsIncidentModuleCatalog.Get(group.Key);
 				if (descriptor == null || descriptor.BelongsToAnalysis != analysis)
@@ -185,25 +196,32 @@ namespace Resgrid.Providers.Neris
 			current[segments[segments.Length - 1]] = value;
 		}
 
-		private static JObject MapExposure(RmsExposure exposure)
+		public static JObject MapExposure(RmsExposure exposure)
 		{
 			var body = ParseDetail(exposure.DetailJson) ?? new JObject();
 
 			body["damage_type"] = Blank(exposure.DamageType);
 			body["people_present"] = exposure.PeoplePresent;
 			body["displacement_count"] = exposure.DisplacementCount;
-			body["location_detail"] = NullIfEmpty(Compact(new JObject { ["type"] = Blank(exposure.LocationKind), ["item_type"] = Blank(exposure.ItemType) }));
-			body["location"] = NullIfEmpty(Compact(new JObject
-			{
-				["street"] = Blank(exposure.Street),
-				["incorporated_municipality"] = Blank(exposure.Municipality),
-				["state"] = Blank(exposure.State),
-				["postal_code"] = Blank(exposure.PostalCode),
-				["additional_info"] = Blank(exposure.AddressText)
-			}));
+			var locationKind = Blank(exposure.LocationKind) switch { "EXTERNAL" => "EXTERNAL_EXPOSURE", "INTERNAL" => "INTERNAL_EXPOSURE", var kind => kind };
+			var locationDetail = body["location_detail"] as JObject ?? new JObject();
+			Put(locationDetail, "type", locationKind);
+			if ((string)locationDetail["type"] == "EXTERNAL_EXPOSURE") Put(locationDetail, "item_type", Blank(exposure.ItemType));
+			else if ((string)locationDetail["type"] == "INTERNAL_EXPOSURE") locationDetail.Remove("item_type");
+			body["location_detail"] = NullIfEmpty(locationDetail);
+			var location = body["location"] as JObject ?? new JObject();
+			Put(location, "street", Blank(exposure.Street));
+			Put(location, "incorporated_municipality", Blank(exposure.Municipality));
+			Put(location, "state", Blank(exposure.State));
+			Put(location, "postal_code", Blank(exposure.PostalCode));
+			Put(location, "additional_info", Blank(exposure.AddressText));
+			body["location"] = NullIfEmpty(location);
 
 			if (!string.IsNullOrWhiteSpace(exposure.LocationUse))
-				body["location_use"] = new JObject { ["use_type"] = exposure.LocationUse };
+			{
+				var use = body["location_use"] as JObject ?? new JObject();
+				use["use_type"] = exposure.LocationUse; body["location_use"] = use;
+			}
 
 			var causes = Csv(exposure.DisplacementCausesCsv);
 			if (causes != null)
@@ -219,14 +237,15 @@ namespace Resgrid.Providers.Neris
 		/// The casualty/rescue entry. The department's own personnel link never leaves Resgrid — the destination
 		/// gets the reported demographics it asks for and nothing that identifies the member in our system.
 		/// </summary>
-		private static JObject MapCasualtyRescue(RmsCasualtyRescue casualty)
+		public static JObject MapCasualtyRescue(RmsCasualtyRescue casualty)
 		{
 			var body = ParseDetail(casualty.DetailJson) ?? new JObject();
 
 			body["type"] = Blank(casualty.PersonType);
 			body["rank"] = Blank(casualty.Rank);
 			body["years_of_service"] = casualty.YearsOfService;
-			body["birth_month_year"] = Blank(casualty.BirthMonthYear);
+			body["birth_month_year"] = DateTime.TryParseExact(casualty.BirthMonthYear, "yyyy-MM", CultureInfo.InvariantCulture, DateTimeStyles.None, out var birth)
+				? birth.ToString("MM/yyyy", CultureInfo.InvariantCulture) : Blank(casualty.BirthMonthYear);
 			body["gender"] = Blank(casualty.Gender);
 			body["race"] = Blank(casualty.Race);
 
@@ -250,7 +269,7 @@ namespace Resgrid.Providers.Neris
 
 			var injury = new JObject
 			{
-				["type"] = casualty.WasFatal ? "INJURED_FATAL" : "INJURED_NONFATAL",
+				["type"] = casualty.WasFatal ? "INJURED_FATAL" : casualty.WasInjured == true ? "INJURED_NONFATAL" : null,
 				["cause"] = Blank(casualty.CasualtyCause)
 			};
 
@@ -279,7 +298,7 @@ namespace Resgrid.Providers.Neris
 		/// </summary>
 		private static JObject MapRescue(RmsCasualtyRescue casualty)
 		{
-			var rescue = new JObject();
+			var rescue = ParseDetail(casualty.DetailJson)?["rescue"] as JObject ?? new JObject();
 
 			if (!string.IsNullOrWhiteSpace(casualty.PresenceKnown))
 				rescue["presence_known"] = new JObject { ["presence_known_type"] = casualty.PresenceKnown };
@@ -292,7 +311,8 @@ namespace Resgrid.Providers.Neris
 				return Compact(rescue);
 			}
 
-			var ff = new JObject { ["type"] = type ?? "RESCUED_BY_FIREFIGHTER" };
+			var ff = rescue["ffrescue_or_nonffrescue"] as JObject ?? new JObject();
+			ff["type"] = type;
 			var actions = Csv(casualty.RescueActionsCsv);
 			if (actions != null)
 				ff["actions"] = actions;
@@ -303,16 +323,15 @@ namespace Resgrid.Providers.Neris
 			var mode = Blank(casualty.RescueMode);
 			if (string.Equals(mode, RemovalMode, StringComparison.Ordinal))
 			{
-				ff["removal_or_nonremoval"] = Compact(new JObject
-				{
-					["type"] = RemovalMode,
-					["elevation_type"] = Blank(casualty.RescueElevation),
-					["rescue_path_type"] = Blank(casualty.RescuePath)
-				});
+				var removal = ff["removal_or_nonremoval"] as JObject ?? new JObject();
+				removal["type"] = RemovalMode;
+				Put(removal, "elevation_type", Blank(casualty.RescueElevation));
+				Put(removal, "rescue_path_type", Blank(casualty.RescuePath));
+				ff["removal_or_nonremoval"] = Compact(removal);
 			}
 			else
 			{
-				ff["removal_or_nonremoval"] = new JObject { ["type"] = mode ?? "OTHER" };
+				ff["removal_or_nonremoval"] = Compact(new JObject { ["type"] = mode });
 			}
 
 			rescue["ffrescue_or_nonffrescue"] = Compact(ff);
@@ -326,26 +345,26 @@ namespace Resgrid.Providers.Neris
 			"RESCUED_BY_FIREFIGHTER", "RESCUED_BY_FF_RIT", "EVAC_ASSISTED_BY_FIREFIGHTER"
 		};
 
-		private static JObject MapProperty(RmsIncidentProperty property)
+		public static JObject MapProperty(RmsIncidentProperty property)
 		{
 			var body = ParseDetail(property.DetailJson) ?? new JObject();
-
-			body["location_use"] = Blank(property.LocationUse);
-			body["construction_type"] = Blank(property.ConstructionType);
-			body["foundation"] = Blank(property.Foundation);
-			body["exterior_finish"] = Blank(property.ExteriorFinish);
-			body["roof_material"] = Blank(property.RoofMaterial);
-			body["stories_above_grade"] = property.StoriesAboveGrade;
-			body["stories_below_grade"] = property.StoriesBelowGrade;
-			body["year_built"] = property.YearBuilt;
-			body["vacancy"] = Blank(property.Vacancy);
-			body["damage_type"] = Blank(property.DamageType);
-			body["fire_spread"] = Blank(property.FireSpread);
-			body["estimated_value"] = property.EstimatedValue;
-			body["estimated_loss"] = property.EstimatedLoss;
-			body["contents_value"] = property.ContentsValue;
-			body["contents_loss"] = property.ContentsLoss;
-
+			var structure = (body["structures"] as JArray)?.FirstOrDefault() as JObject ?? new JObject();
+			var use = structure["location_use"] as JObject ?? new JObject();
+			Put(use, "use_type", Blank(property.LocationUse));
+			Put(use, "vacancy_cause", Blank(property.Vacancy));
+			if (use.HasValues) structure["location_use"] = use;
+			Put(structure, "construction_type", Blank(property.ConstructionType));
+			Put(structure, "foundation", Blank(property.Foundation));
+			Put(structure, "exterior_finish", Blank(property.ExteriorFinish));
+			Put(structure, "roof_material", Blank(property.RoofMaterial));
+			Put(structure, "year_built", property.YearBuilt);
+			Put(structure, "damage_assessment", Blank(property.DamageType));
+			Put(structure, "estimated_property_value", property.EstimatedValue);
+			Put(structure, "estimated_property_loss_value", property.EstimatedLoss);
+			Put(structure, "estimated_contents_value", property.ContentsValue);
+			Put(structure, "estimated_contents_loss_value", property.ContentsLoss);
+			if (structure.HasValues && !(body["structures"] is JArray { Count: > 0 })) body["structures"] = new JArray(structure);
+			// Stories and fire spread remain in the department snapshot; this analysis contract has no such fields.
 			return Compact(body);
 		}
 
@@ -354,20 +373,22 @@ namespace Resgrid.Providers.Neris
 			var body = ParseDetail(vehicle.DetailJson) ?? new JObject();
 
 			body["type"] = Blank(vehicle.VehicleKind);
-			body["make"] = Blank(vehicle.Make);
+			if (vehicle.VehicleKind == "AUTOMOBILE") body["make"] = Blank(vehicle.Make);
 			body["model"] = Blank(vehicle.Model);
-			body["model_year"] = vehicle.ModelYear;
-			body["body_style"] = Blank(vehicle.BodyStyle);
+			body["manufacture_year"] = vehicle.ModelYear;
+			if (vehicle.VehicleKind == "AUTOMOBILE") body["auto_body_style"] = Blank(vehicle.BodyStyle);
 			body["powertrain"] = Blank(vehicle.Powertrain);
-			body["damage_type"] = Blank(vehicle.DamageType);
-			body["vin"] = Blank(vehicle.Vin);
-			body["license_plate"] = Blank(vehicle.LicensePlate);
-			body["license_state"] = Blank(vehicle.LicenseState);
-			body["occupied"] = vehicle.WasOccupied ? true : (bool?)null;
-			body["estimated_value"] = vehicle.EstimatedValue;
-			body["estimated_loss"] = vehicle.EstimatedLoss;
+			body["damage"] = Blank(vehicle.DamageType);
+			body["identification_num"] = Blank(vehicle.Vin);
+			body["state"] = Blank(vehicle.LicenseState);
+			// Plate, occupancy and valuation are department facts, not fields in the destination's vehicle schema.
 
 			return Compact(body);
+		}
+
+		private static void Put(JObject target, string key, object value)
+		{
+			if (value != null) target[key] = JToken.FromObject(value);
 		}
 
 		private static JObject ParseDetail(string json)

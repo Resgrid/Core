@@ -76,6 +76,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 	/// <summary>Capture one artifact. The server bounds the window and decides the classification; neither is a client input.</summary>
 	public class CaptureRecordEvidenceInput
 	{
+		public long? ExpectedRowVersion { get; set; }
 		public string RecordId { get; set; }
 		/// <summary>RmsRecordKind; Operational by default, Incident for a NERIS report.</summary>
 		public int? RecordKind { get; set; }
@@ -202,6 +203,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class DisclosureScopeItemData
 	{
+		public int RecordKind { get; set; }
 		public string RecordId { get; set; }
 		public string RecordNumber { get; set; }
 		public string DefinitionKey { get; set; }
@@ -239,6 +241,8 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public string PreparedByUserId { get; set; }
 		public DateTime PreparedOn { get; set; }
 		public string ReleasedByUserId { get; set; }
+		public string DeliveryMethod { get; set; }
+		public string DeliveryReference { get; set; }
 		public DateTime? ReleasedOn { get; set; }
 		public bool IsReleased { get; set; }
 		/// <summary>Record and revision ids released, with their checksums at production time.</summary>
@@ -251,6 +255,9 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class DisclosureCommandInput
 	{
+		public string DeliveryMethod { get; set; }
+		public string DeliveryReference { get; set; }
+		public Resgrid.Model.RmsDisclosureReview Review { get; set; }
 		public string RequestId { get; set; }
 		public string ProductionId { get; set; }
 		public string RedactionProfile { get; set; }

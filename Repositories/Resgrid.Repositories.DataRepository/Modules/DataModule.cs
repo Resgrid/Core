@@ -1,4 +1,4 @@
-﻿using Autofac;
+using Autofac;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
@@ -328,6 +328,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RmsNarrativesRepository>().As<IRmsNarrativesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsValidationIssuesRepository>().As<IRmsValidationIssuesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsSubmissionsRepository>().As<IRmsSubmissionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsSubmissionExchangesRepository>().As<IRmsSubmissionExchangesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsSignaturesRepository>().As<IRmsSignaturesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsNerisProfilesRepository>().As<IRmsNerisProfilesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsNerisValueSetsRepository>().As<IRmsNerisValueSetsRepository>().InstancePerLifetimeScope();
@@ -343,6 +344,10 @@ namespace Resgrid.Repositories.DataRepository
 			// RMS-3 due state and legal holds (registry M0170)
 			builder.RegisterType<RmsRecordDueStatesRepository>().As<IRmsRecordDueStatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsRecordLegalHoldsRepository>().As<IRmsRecordLegalHoldsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsUdfDefinitionsRepository>().As<IRmsUdfDefinitionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRetentionRepository>().As<IRmsRetentionRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsSearchWriteFence>().As<IRmsSearchWriteFence>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsCommandReceiptsRepository>().As<IRmsCommandReceiptsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsEvidenceArtifactsRepository>().As<IRmsEvidenceArtifactsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsDisclosureRequestsRepository>().As<IRmsDisclosureRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsDisclosureProductionsRepository>().As<IRmsDisclosureProductionsRepository>().InstancePerLifetimeScope();

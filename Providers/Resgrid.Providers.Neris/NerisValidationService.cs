@@ -101,9 +101,9 @@ namespace Resgrid.Providers.Neris
 			if (!report.CallAnsweredOn.HasValue)
 				Add("neris.dispatch.call_answered", RmsValidationSeverity.Error, "dispatch.call_answered", "The call answered time is required.");
 			if (!report.CallArrivalOn.HasValue)
-				Add("neris.dispatch.call_arrival", RmsValidationSeverity.Error, "dispatch.call_arrival", "The first arrival time is required.");
-			if (report.CallCreatedOn.HasValue && report.CallArrivalOn.HasValue && report.CallArrivalOn < report.CallCreatedOn)
-				Add("neris.dispatch.sequence", RmsValidationSeverity.Error, "dispatch.call_arrival", "First arrival cannot be before the call was created.");
+				Add("neris.dispatch.call_arrival", RmsValidationSeverity.Error, "dispatch.call_arrival", "The call's arrival time at the dispatch center is required.");
+			if (!InOrder(report.CallArrivalOn, report.CallAnsweredOn, report.CallCreatedOn))
+				Add("neris.dispatch.sequence", RmsValidationSeverity.Error, "dispatch.call_arrival", "Call arrival at dispatch, call answered, and call creation must be in time order. Unit arrival is recorded separately.");
 			if (report.CallCreatedOn.HasValue && report.IncidentClearedOn.HasValue && report.IncidentClearedOn < report.CallCreatedOn)
 				Add("neris.dispatch.clear_sequence", RmsValidationSeverity.Error, "dispatch.incident_clear", "Incident clear cannot be before the call was created.");
 
@@ -152,6 +152,13 @@ namespace Resgrid.Providers.Neris
 			ValidateSections(Add, snapshot, catalog);
 			ValidateExposures(Add, snapshot, catalog);
 			ValidateCasualties(Add, snapshot, catalog);
+			if (profile != null)
+			{
+				var payload = new NerisMappingService().BuildIncidentPayloadJson(snapshot, profile);
+				var contractIssues = NerisContractCatalog.Instance.Validate("IncidentPayload", payload, report.DepartmentId, report.RmsIncidentReportId);
+				issues.AddRange(contractIssues);
+				if (contractIssues.Count == 0) NerisPayloadRules.Validate(Newtonsoft.Json.Linq.JObject.Parse(payload), false, (path, message) => Add("neris.contract.condition", RmsValidationSeverity.Error, path, message));
+			}
 
 			return issues;
 		}
@@ -164,7 +171,9 @@ namespace Resgrid.Providers.Neris
 		{
 			var present = snapshot.Modules.Select(m => (RmsIncidentModuleKind)m.ModuleKind).Distinct().ToList();
 
-			foreach (var requirement in NerisSectionRules.For(snapshot.Types.Select(t => t.TypeCode)))
+			var fdAids = snapshot.Aids.Where(a => !a.IsNonFireDepartment).ToList();
+			var supportOnly = fdAids.Count > 0 && fdAids.All(a => a.AidType == "SUPPORT_AID" && a.Direction == "GIVEN");
+			foreach (var requirement in NerisSectionRules.For(snapshot.Types.Select(t => t.TypeCode), supportOnly))
 			{
 				if (present.Contains(requirement.Kind))
 					continue;
@@ -332,7 +341,7 @@ namespace Resgrid.Providers.Neris
 				Add("neris.profile.entity", RmsValidationSeverity.Error, "base.department_neris_id", "The department has no NERIS entity ID configured.");
 
 			if (string.IsNullOrWhiteSpace(snapshot.Report?.NerisIncidentId))
-				Add("neris.analysis.incident", RmsValidationSeverity.Error, "base.incident_neris_id", "The incident must be filed with NERIS before its analysis can be.");
+				Add("neris.analysis.incident", RmsValidationSeverity.Error, "base.neris_id_incident", "The incident must be filed with NERIS before its analysis can be.");
 
 			if (!string.IsNullOrWhiteSpace(analysis.GeneralCause) && !catalog.Contains("fire_cause_general", analysis.GeneralCause))
 				Add("neris.analysis.general_cause", RmsValidationSeverity.Error, "base.general_cause", $"'{analysis.GeneralCause}' is not a NERIS general fire cause.");
@@ -388,6 +397,13 @@ namespace Resgrid.Providers.Neris
 					Add("neris.analysis.section.primary_code", RmsValidationSeverity.Error, descriptor.PayloadPath, $"'{module.PrimaryCode}' is not a NERIS {primarySet} value.");
 			}
 
+			if (profile != null)
+			{
+				var payload = new NerisMappingService().BuildIncidentAnalysisPayloadJson(snapshot, profile);
+				var contractIssues = NerisContractCatalog.Instance.Validate("IncidentAnalysisPayload", payload, analysis.DepartmentId, analysis.RmsIncidentAnalysisId, string.IsNullOrWhiteSpace(snapshot.Report?.NerisIncidentId));
+				issues.AddRange(contractIssues);
+				if (contractIssues.Count == 0) NerisPayloadRules.Validate(Newtonsoft.Json.Linq.JObject.Parse(payload), true, (path, message) => Add("neris.contract.condition", RmsValidationSeverity.Error, path, message));
+			}
 			return issues;
 		}
 
@@ -446,8 +462,10 @@ namespace Resgrid.Providers.Neris
 				{
 					issues.Add(new RmsValidationIssue
 					{
-						RmsValidationIssueId = Guid.NewGuid().ToString(), DepartmentId = departmentId, RecordId = recordId, RuleKey = "neris.destination." + (error.Code ?? "error"),
-						Severity = (int)RmsValidationSeverity.Error, FieldPath = error.FieldPath, Message = error.Message, Source = (int)RmsValidationSource.Destination, CreatedOn = now
+						RmsValidationIssueId = Guid.NewGuid().ToString(), DepartmentId = departmentId, RecordId = recordId,
+						RuleKey = outcome.LocalValidationFailure ? error.Code ?? "neris.local.error" : "neris.destination." + (error.Code ?? "error"),
+						Severity = (int)RmsValidationSeverity.Error, FieldPath = error.FieldPath, Message = error.Message,
+						Source = (int)(outcome.LocalValidationFailure ? RmsValidationSource.Local : RmsValidationSource.Destination), CreatedOn = now
 					});
 				}
 			}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,14 +33,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public class DisclosuresController : SecureBaseController
 	{
 		private readonly IRecordsDisclosureService _disclosures;
+		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRecordsCutoverService _cutoverService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> _localizer;
 
 		public DisclosuresController(IRecordsDisclosureService disclosures, IRecordsCutoverService cutoverService, IDepartmentsService departmentsService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordsAuthorizationService authorization)
 		{
 			_disclosures = disclosures;
+			_authorization = authorization;
 			_cutoverService = cutoverService;
 			_departmentsService = departmentsService;
 			_localizer = localizer;
@@ -63,13 +65,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				StateFilter = state,
 				States = StateItems(),
 				RedactionProfiles = ProfileItems(),
-				CanViewRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords(),
+				CanViewRestricted = await _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords),
 				PersonnelNames = await PersonnelNamesAsync()
 			};
 			model.Personnel = model.PersonnelNames.OrderBy(kvp => kvp.Value).Select(kvp => new SelectListItem { Value = kvp.Key, Text = kvp.Value }).ToList();
 
 			if (moduleState.RecordsUsable)
-				model.Requests = await _disclosures.QueryAsync(DepartmentId, states, 0, 200);
+				model.Requests = await _disclosures.QueryAsync(DepartmentId, UserId, states, 0, 200);
 
 			if (TempData["RecordsMessage"] is string message)
 				model.Message = message;
@@ -138,7 +140,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (scope == null || string.IsNullOrWhiteSpace(scope.RequestId))
 				return NotFound();
-			if (await _disclosures.GetAsync(DepartmentId, scope.RequestId) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, scope.RequestId) == null)
 				return NotFound();
 
 			try
@@ -164,17 +166,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Produce(string id, string redactionProfile, CancellationToken cancellationToken)
+		[RequestFormLimits(ValueCountLimit = 20000)]
+		[RequestSizeLimit(100 * 1024 * 1024)]
+		public async Task<IActionResult> Produce(string id, string redactionProfile, CancellationToken cancellationToken, RmsDisclosureReview review)
 		{
-			if (await _disclosures.GetAsync(DepartmentId, id) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, id) == null)
 				return NotFound();
 
 			try
 			{
-				await _disclosures.ProduceAsync(DepartmentId, UserId, id, redactionProfile, cancellationToken);
+				if (!(await _cutoverService.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
+				foreach (var file in Request.Form.Files)
+				{
+					var match = System.Text.RegularExpressions.Regex.Match(file.Name, "^derivative-([0-9]+)-([0-9]+)$");
+					if (!match.Success || !int.TryParse(match.Groups[1].Value, out var recordIndex) || !int.TryParse(match.Groups[2].Value, out var attachmentIndex)
+						|| review?.Records == null || recordIndex >= review.Records.Count || review.Records[recordIndex].Attachments == null || attachmentIndex >= review.Records[recordIndex].Attachments.Count) throw new ArgumentException("A replacement file does not match the review.");
+					if (file.Length <= 0) continue;
+					if (file.Length > 25 * 1024 * 1024) throw new ArgumentException("Replacement files must be 25 MB or smaller.");
+					var decision = review.Records[recordIndex].Attachments[attachmentIndex];
+					if (decision.Derivative != null) throw new ArgumentException("Review one replacement per source attachment.");
+					using var data = new System.IO.MemoryStream(); await file.CopyToAsync(data, cancellationToken); var bytes = data.ToArray();
+					decision.Derivative = new RmsDisclosureAttachmentDerivative { FileName = file.FileName, ContentType = file.ContentType, Data = bytes, Checksum = Resgrid.Services.Records.RecordSnapshotSerializer.Checksum(bytes) };
+				}
+				await _disclosures.ProduceAsync(DepartmentId, UserId, id, redactionProfile, cancellationToken, review);
 				TempData["RecordsMessage"] = _localizer["DisclosureProduced"].Value;
 				return RedirectToAction("Details", new { id });
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException || ex is InvalidOperationException)
 			{
 				return await DetailsWithErrorAsync(id, ex.Message);
@@ -183,17 +201,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Release(string id, string productionId, CancellationToken cancellationToken)
+		public async Task<IActionResult> Release(string id, string productionId, CancellationToken cancellationToken, string deliveryMethod, string deliveryReference)
 		{
 			if (await LoadProductionAsync(id, productionId) == null)
 				return NotFound();
 
 			try
 			{
-				await _disclosures.ReleaseAsync(DepartmentId, UserId, productionId, cancellationToken);
+				await _disclosures.ReleaseAsync(DepartmentId, UserId, productionId, cancellationToken, deliveryMethod, deliveryReference);
 				TempData["RecordsMessage"] = _localizer["DisclosureReleased"].Value;
 				return RedirectToAction("Details", new { id });
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException || ex is InvalidOperationException)
 			{
 				return await DetailsWithErrorAsync(id, ex.Message);
@@ -204,7 +223,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Close(string id, int disposition, string reason, CancellationToken cancellationToken)
 		{
-			if (await _disclosures.GetAsync(DepartmentId, id) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, id) == null)
 				return NotFound();
 			if (string.IsNullOrWhiteSpace(reason))
 				return await DetailsWithErrorAsync(id, _localizer["DisclosureReasonRequired"]);
@@ -221,17 +240,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 		}
 
+		[HttpGet]
+		public async Task<IActionResult> Review(string id, string redactionProfile)
+		{
+			if (!(await _cutoverService.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
+			try { Response.Headers["Cache-Control"] = "no-store"; return View(await _disclosures.GetReviewAsync(DepartmentId, UserId, id, redactionProfile)); }
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { return await DetailsWithErrorAsync(id, ex.Message); }
+		}
+		[HttpGet]
+		public async Task<IActionResult> ReviewAttachment(string id, string recordId, string revisionId, string attachmentId, string profile)
+		{
+			if (!(await _cutoverService.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
+			try
+			{
+				var file = await _disclosures.GetReviewAttachmentAsync(DepartmentId, UserId, id, recordId, revisionId, attachmentId, profile);
+				if (file == null) return NotFound();
+				Response.Headers["Cache-Control"] = "no-store"; Response.Headers["X-Content-Type-Options"] = "nosniff";
+				return File(file.Data, "application/octet-stream", file.FileName);
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+		}
 		/// <summary>The produced artifact as it was released, so a department can hand over exactly what it recorded handing over.</summary>
 		[HttpGet]
-		public async Task<IActionResult> Download(string id, string productionId)
+		public async Task<IActionResult> Download(string id, string productionId, string format = "zip")
 		{
 			var production = await LoadProductionAsync(id, productionId);
 			if (production == null || string.IsNullOrWhiteSpace(production.ArtifactJson))
 				return NotFound();
 
-			var request = await _disclosures.GetAsync(DepartmentId, id);
-			var name = $"{request?.RequestNumber ?? "disclosure"}-{production.ProductionNumber}.json";
-			return File(Encoding.UTF8.GetBytes(production.ArtifactJson), "application/json", name);
+			try
+			{
+				var packet = await _disclosures.DownloadAsync(DepartmentId, UserId, productionId, format);
+				Response.Headers["Cache-Control"] = "no-store"; Response.Headers["X-Content-Type-Options"] = "nosniff";
+				return File(packet.Data, packet.ContentType, packet.FileName);
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { return await DetailsWithErrorAsync(id, ex.Message); }
 		}
 
 		/// <summary>Re-computes the checksum from the stored artifact; a mismatch means it was tampered with.</summary>
@@ -255,10 +300,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(requestId) || string.IsNullOrWhiteSpace(productionId))
 				return null;
-			if (await _disclosures.GetAsync(DepartmentId, requestId) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, requestId) == null)
 				return null;
 
-			var productions = await _disclosures.GetProductionsAsync(DepartmentId, requestId);
+			var productions = await _disclosures.GetProductionsAsync(DepartmentId, UserId, requestId);
 			return productions.FirstOrDefault(p => string.Equals(p.RmsDisclosureProductionId, productionId, StringComparison.Ordinal));
 		}
 
@@ -268,7 +313,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!moduleState.FlagEnabled)
 				return null;
 
-			var request = await _disclosures.GetAsync(DepartmentId, id);
+			var request = await _disclosures.GetAsync(DepartmentId, UserId, id);
 			if (request == null)
 				return null;
 
@@ -276,9 +321,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				Request = request,
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
-				Productions = await _disclosures.GetProductionsAsync(DepartmentId, id),
+				Productions = await _disclosures.GetProductionsAsync(DepartmentId, UserId, id),
 				PersonnelNames = await PersonnelNamesAsync(),
-				CanViewRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords(),
+				CanViewRestricted = await _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords),
 				RedactionProfiles = ProfileItems(),
 				RecordStates = Enum.GetValues(typeof(RmsRecordState)).Cast<RmsRecordState>()
 					.Select(s => new SelectListItem { Value = ((int)s).ToString(), Text = s.ToString() }).ToList(),
@@ -288,7 +333,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					new SelectListItem { Value = ((int)RmsDisclosureState.Withdrawn).ToString(), Text = RmsDisclosureState.Withdrawn.ToString() },
 					new SelectListItem { Value = ((int)RmsDisclosureState.Closed).ToString(), Text = RmsDisclosureState.Closed.ToString() }
 				},
-				DefinitionKeys = RmsDefinitionKeys.LockedTypes.Keys.OrderBy(k => k).Select(k => new SelectListItem { Value = k, Text = k }).ToList()
+				DefinitionKeys = RmsDefinitionKeys.LockedTypes.Keys.Append(RmsDefinitionKeys.NerisIncidentReport).OrderBy(k => k).Select(k => new SelectListItem { Value = k, Text = k }).ToList()
 			};
 
 			model.Scope = new DisclosureScopeForm

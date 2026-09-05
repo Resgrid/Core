@@ -145,9 +145,19 @@ namespace Resgrid.Model
 		public DateTime? InQuarters { get; set; }
 	}
 
+	/// <summary>Officer-authored historical Call created and linked from an existing Run draft.</summary>
+	public class RecordNewCallInput
+	{
+		public string Name { get; set; }
+		public string Address { get; set; }
+		public string Nature { get; set; }
+		public DateTime OccurredOnUtc { get; set; }
+	}
+
 	/// <summary>Draft create/save input for a locked Logs-parity definition.</summary>
 	public class RecordDraftInput
 	{
+		public RecordUdfInput CustomFields { get; set; }
 		/// <summary>One of <see cref="RmsDefinitionKeys"/>; required on create.</summary>
 		public string DefinitionKey { get; set; }
 		public int? CallId { get; set; }
@@ -170,6 +180,7 @@ namespace Resgrid.Model
 	/// <summary>A hydrated Record: header, working/revision details, participants, units, attachment metadata.</summary>
 	public class RecordAggregate
 	{
+		public RecordUdfSection CustomFields { get; set; }
 		public RmsOperationalRecord Record { get; set; }
 		public RmsOperationalRecordDetail Details { get; set; }
 		public List<RmsRecordParticipant> Participants { get; set; } = new List<RmsRecordParticipant>();
@@ -185,7 +196,9 @@ namespace Resgrid.Model
 	/// </summary>
 	public class RecordSnapshot
 	{
+		public RecordUdfSection CustomFields { get; set; }
 		public int SnapshotVersion { get; set; } = 1;
+		public List<RmsEvidenceArtifact> Evidence { get; set; } = new List<RmsEvidenceArtifact>();
 		public string RecordId { get; set; }
 		public int DepartmentId { get; set; }
 		public string DefinitionKey { get; set; }
@@ -210,6 +223,7 @@ namespace Resgrid.Model
 	{
 		public string Section { get; set; }
 		public string FieldKey { get; set; }
+		public string FieldLabel { get; set; }
 		public string OldValue { get; set; }
 		public string NewValue { get; set; }
 		/// <summary>True when the field is restricted and the viewer lacks RecordRestricted_View: values are withheld.</summary>

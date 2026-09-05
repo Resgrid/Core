@@ -18,6 +18,7 @@ namespace Resgrid.Model.Services
 
 		/// <summary>ETag-guarded draft save; throws <see cref="RecordConcurrencyException"/> on a stale RowVersion.</summary>
 		Task<RecordAggregate> SaveDraftAsync(int departmentId, string userId, string recordId, long expectedRowVersion, RecordDraftInput input, CancellationToken cancellationToken = default);
+		Task<RecordAggregate> CreateRunCallAsync(int departmentId, string userId, string recordId, long expectedRowVersion, RecordNewCallInput input, CancellationToken cancellationToken = default);
 
 		Task<RecordAggregate> SubmitForReviewAsync(int departmentId, string userId, string recordId, long expectedRowVersion, CancellationToken cancellationToken = default);
 
@@ -63,10 +64,10 @@ namespace Resgrid.Model.Services
 		/// <summary>Delta cursor for clients (plan section 5.3): projections modified after <paramref name="since"/>, oldest first, including tombstones (cancelled, voided, deleted).</summary>
 		Task<List<RmsRecordSearchProjection>> GetChangesSinceAsync(int departmentId, DateTime? since, int take, string sinceId = null);
 
-		Task<RmsRecordAttachment> AddAttachmentAsync(int departmentId, string userId, string recordId, string fileName, string contentType, byte[] data, string description, CancellationToken cancellationToken = default);
+		Task<RmsRecordAttachment> AddAttachmentAsync(int departmentId, string userId, string recordId, string fileName, string contentType, byte[] data, string description, CancellationToken cancellationToken = default, int classification = 1);
 
 		/// <summary>Loads bytes; the caller authorizes per Record before serving.</summary>
-		Task<RmsRecordAttachment> GetAttachmentAsync(int departmentId, string attachmentId);
+		Task<RmsRecordAttachment> GetAttachmentAsync(int departmentId, string userId, string attachmentId);
 
 		Task<bool> RemoveAttachmentAsync(int departmentId, string userId, string recordId, string attachmentId, CancellationToken cancellationToken = default);
 

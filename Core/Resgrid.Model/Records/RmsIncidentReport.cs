@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ProtoBuf;
 
@@ -37,6 +37,7 @@ namespace Resgrid.Model
 
 		[ProtoMember(7)]
 		public int DefinitionVersion { get; set; }
+		public string UdfDefinitionId { get; set; }
 
 		/// <summary>Pinned NERIS contract version (value sets and payload shape) this report was authored against.</summary>
 		[ProtoMember(8)]
@@ -162,7 +163,7 @@ namespace Resgrid.Model
 		[ProtoMember(54)]
 		public DateTime? CallAnsweredOn { get; set; }
 
-		/// <summary>First unit on scene (NERIS call_arrival).</summary>
+		/// <summary>Call arrival at the PSAP/dispatch center (NERIS call_arrival), before answer/create; never unit on-scene.</summary>
 		[ProtoMember(55)]
 		public DateTime? CallArrivalOn { get; set; }
 

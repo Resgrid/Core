@@ -13,7 +13,7 @@ namespace Resgrid.Config
 		/// <summary>Production API root of the pinned contract.</summary>
 		public static string BaseUrl = "https://api.neris.fsri.org/v1";
 
-		/// <summary>Sandbox root used by profiles whose Environment is sandbox; empty means "same as BaseUrl".</summary>
+		/// <summary>Sandbox root used by sandbox profiles. Empty disables outbound requests; production is never a fallback.</summary>
 		public static string SandboxBaseUrl = "";
 
 		/// <summary>Contract version the provider was generated against (Providers/Resgrid.Providers.Neris/Contract).</summary>

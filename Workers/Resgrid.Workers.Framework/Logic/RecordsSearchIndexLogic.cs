@@ -11,7 +11,7 @@ namespace Resgrid.Workers.Framework.Logic
 	/// <summary>
 	/// Worker command 44: the records search index maintenance sweep (RMS plan section 5.10). The worker process
 	/// is the only holder of the index writer; this logic just drives IRecordsSearchIndexMaintenanceService and
-	/// is a no-op while SearchConfig.Enabled is off.
+	/// stops indexing while SearchConfig.Enabled is off but still completes durable retention erasures.
 	/// </summary>
 	public sealed class RecordsSearchIndexLogic
 	{
@@ -19,16 +19,14 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			try
 			{
-				if (!SearchConfig.Enabled)
-					return new Tuple<bool, string>(true, "Search host disabled; nothing to do.");
-
-				var maintenance = Bootstrapper.GetKernel().Resolve<IRecordsSearchIndexMaintenanceService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var maintenance = scope.Resolve<IRecordsSearchIndexMaintenanceService>();
 				var result = await maintenance.SweepAsync(cancellationToken);
 
 				if (result.Errors > 0)
 					Logging.LogError($"Records search index sweep finished with {result.Errors} error(s): {result.Message}");
 
-				return new Tuple<bool, string>(true, result.Message);
+				return new Tuple<bool, string>(result.Errors == 0, result.Message);
 			}
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 			{

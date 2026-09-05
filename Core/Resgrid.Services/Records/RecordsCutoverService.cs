@@ -145,8 +145,10 @@ namespace Resgrid.Services.Records
 			if (!preview.FlagEnabled)
 				preview.Blockers.Add("The Records.System feature flag is not enabled for this department.");
 
-			if (preview.ProtectedDataPreflight != "NotApplicable" && preview.ProtectedDataPreflight != "Enabled")
-				preview.Blockers.Add($"Protected Data is in state {preview.ProtectedDataPreflight}; activation is blocked until it settles.");
+			if (preview.ProtectedDataPreflight != "NotApplicable")
+				preview.Blockers.Add(preview.ProtectedDataPreflight == "Unknown"
+					? "Advanced Data Protection status could not be verified. Records activation is blocked."
+					: $"Records cannot be activated while Advanced Data Protection is in state {preview.ProtectedDataPreflight}.");
 
 			return preview;
 		}
@@ -411,7 +413,7 @@ namespace Resgrid.Services.Records
 		{
 			try
 			{
-				var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(departmentId);
+				var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(departmentId, true);
 				if (policy == null)
 					return "NotApplicable";
 
@@ -420,9 +422,8 @@ namespace Resgrid.Services.Records
 			}
 			catch (Exception ex)
 			{
-				// The subsystem being unreachable is treated as absent, per decision 18; the state is logged.
-				Logging.LogException(ex, $"Protected Data preflight could not be resolved for department {departmentId}; treating as NotApplicable.");
-				return "NotApplicable";
+				Logging.LogException(ex, $"Protected Data preflight could not be resolved for department {departmentId}; activation is blocked.");
+				return "Unknown";
 			}
 		}
 

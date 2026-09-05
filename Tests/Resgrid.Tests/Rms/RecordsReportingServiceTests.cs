@@ -29,6 +29,8 @@ namespace Resgrid.Tests.Rms
 		private Mock<IRmsRecordGroupScopesRepository> _scopes;
 		private Mock<IRecordsAuthorizationService> _authorization;
 		private RecordsReportingService _service;
+		private Mock<IRmsRevisionsRepository> _revisions;
+		private readonly Dictionary<string, RmsRevision> _finalized = new Dictionary<string, RmsRevision>();
 
 		[SetUp]
 		public void SetUp()
@@ -82,7 +84,18 @@ namespace Resgrid.Tests.Rms
 			_authorization = new Mock<IRecordsAuthorizationService>();
 			_authorization.Setup(a => a.GetVisibleGroupIdsAsync(It.IsAny<string>(), Dept)).ReturnsAsync((List<int>)null);
 
-			_service = new RecordsReportingService(_legacy.Object, _cutover.Object, _records.Object, new RmsRecordValueService(_details.Object), _participants.Object, _units.Object, _scopes.Object, _authorization.Object);
+			_finalized.Clear();
+			foreach (var record in _records.Object.GetByDefinitionAndStartedRangeAsync(Dept, RmsDefinitionKeys.Training, new[] { (int)RmsRecordState.Finalized }, Start, End).GetAwaiter().GetResult())
+			{
+				var detail = _details.Object.GetDraftsForRecordsAsync(Dept, new[] { record.RmsOperationalRecordId }).GetAwaiter().GetResult().First(d => d.RecordId == record.RmsOperationalRecordId);
+				var participants = _participants.Object.GetForRecordsAsync(Dept, new[] { record.RmsOperationalRecordId }).GetAwaiter().GetResult().Where(p => p.RecordId == record.RmsOperationalRecordId).ToList();
+				var units = _units.Object.GetForRecordsAsync(Dept, new[] { record.RmsOperationalRecordId }).GetAwaiter().GetResult().Where(u => u.RecordId == record.RmsOperationalRecordId).ToList();
+				AddRevision(record, detail, participants, units);
+			}
+			_records.Invocations.Clear();
+			_revisions = new Mock<IRmsRevisionsRepository>();
+			_revisions.Setup(r => r.GetByIdsForDepartmentAsync(Dept, It.IsAny<IEnumerable<string>>())).ReturnsAsync((int d, IEnumerable<string> ids) => _finalized.Values.Where(r => ids.Contains(r.RmsRevisionId)).ToList());
+			_service = new RecordsReportingService(_legacy.Object, _cutover.Object, _records.Object, _revisions.Object, _scopes.Object, _authorization.Object);
 		}
 
 		[Test]
@@ -142,6 +155,7 @@ namespace Resgrid.Tests.Rms
 			_legacy.Setup(l => l.GetLogsForCallAsync(9)).ReturnsAsync(new List<Log> { new Log { LogId = 5, DepartmentId = Dept, LogType = (int)LogTypes.Run, CallId = 9, Users = new List<LogUser> { new LogUser { UserId = "u1" } } } });
 			var finalized = Record("rec-9", "author", new DateTime(2026, 6, 1));
 			finalized.CallId = 9;
+			AddRevision(finalized, null, new List<RmsRecordParticipant>(), new List<RmsRecordUnitResponse>());
 			var draft = Record("rec-10", "author", new DateTime(2026, 6, 2));
 			draft.State = (int)RmsRecordState.Draft;
 			_records.Setup(r => r.GetByCallAsync(Dept, 9)).ReturnsAsync(new[] { finalized, draft });
@@ -164,13 +178,56 @@ namespace Resgrid.Tests.Rms
 			requested.Should().BeEquivalentTo(new[] { (int)RmsRecordState.Finalized, (int)RmsRecordState.Amended });
 		}
 
+		[Test]
+		public async Task An_open_amendment_cannot_move_official_dates_hours_call_or_participant_assignments()
+		{
+			var record = Record("rec-1", "author", new DateTime(2026, 3, 1, 9, 0, 0));
+			record.CallId = 9;
+			AddRevision(record, new RmsOperationalRecordDetail { Course = "Approved course" },
+				new List<RmsRecordParticipant> { new RmsRecordParticipant { UserId = "u1", UnitId = 3 } }, new List<RmsRecordUnitResponse>());
+			_records.Setup(r => r.GetByDefinitionAndStartedRangeAsync(Dept, RmsDefinitionKeys.Training, It.IsAny<IEnumerable<int>>(), Start, End)).ReturnsAsync(new[] { record });
+			_records.Setup(r => r.GetByCallAsync(Dept, 9)).ReturnsAsync(new[] { record });
+			var before = (await _service.GetActivityAsync(Dept, "author", RmsOperationalRecordType.Training, Start, End)).Single(e => e.SourceId == "rec-1");
+			record.AmendsRevisionId = record.CurrentRevisionId;
+			record.StartedOn = Start.AddYears(3);
+			record.EndedOn = record.StartedOn.Value.AddHours(18);
+			record.CallId = 10;
+			var during = (await _service.GetActivityAsync(Dept, "author", RmsOperationalRecordType.Training, Start, End)).Single(e => e.SourceId == "rec-1");
+			during.Should().BeEquivalentTo(before);
+			during.Participants.Single().UnitId.Should().Be(3);
+			(await _service.GetCallActivityAsync(Dept, "author", 9)).Single(e => e.SourceId == "rec-1").CallId.Should().Be(9);
+			record.AmendsRevisionId = null;
+			(await _service.GetActivityAsync(Dept, "author", RmsOperationalRecordType.Training, Start, End)).Single(e => e.SourceId == "rec-1").Should().BeEquivalentTo(before);
+		}
+
+		private void AddRevision(RmsOperationalRecord record, RmsOperationalRecordDetail details, List<RmsRecordParticipant> participants, List<RmsRecordUnitResponse> units)
+		{
+			_finalized[record.CurrentRevisionId] = new RmsRevision
+			{
+				RmsRevisionId = record.CurrentRevisionId, RecordId = record.RmsOperationalRecordId, DepartmentId = Dept,
+				CreatedOn = record.FinalizedOn.Value,
+				SnapshotJson = RecordSnapshotSerializer.Serialize(RecordSnapshotSerializer.Build(new RecordAggregate { Record = record, Details = details, Participants = participants, Units = units }))
+			};
+			_finalized[record.CurrentRevisionId].Checksum = RecordSnapshotSerializer.Checksum(_finalized[record.CurrentRevisionId].SnapshotJson);
+		}
+
+		[Test]
+		public async Task Changed_official_snapshot_cannot_silently_change_activity_totals()
+		{
+			var revision = _finalized["rec-1-final"];
+			revision.SnapshotJson = revision.SnapshotJson.Replace("2026-03-01T11:00:00", "2026-03-01T23:00:00");
+			revision.Checksum.Should().NotBe(RecordSnapshotSerializer.Checksum(revision.SnapshotJson));
+			Func<Task> report = () => _service.GetActivityAsync(Dept, "author", RmsOperationalRecordType.Training, Start, End);
+			await report.Should().ThrowAsync<InvalidOperationException>().WithMessage("*integrity*");
+		}
+
 		private static RmsOperationalRecord Record(string id, string author, DateTime startedOn)
 		{
 			return new RmsOperationalRecord
 			{
 				RmsOperationalRecordId = id, DepartmentId = Dept, DefinitionKey = RmsDefinitionKeys.Training, RecordType = (int)RmsOperationalRecordType.Training,
 				State = (int)RmsRecordState.Finalized, AuthorUserId = author, OwnerUserId = author, StartedOn = startedOn, EndedOn = startedOn.AddHours(2),
-				CreatedOn = startedOn, FinalizedOn = startedOn.Date.AddDays(1), StationGroupId = 11
+				CreatedOn = startedOn, FinalizedOn = startedOn.Date.AddDays(1), StationGroupId = 11, CurrentRevisionId = id + "-final"
 			};
 		}
 	}

@@ -88,6 +88,7 @@ namespace Resgrid.Model
 		public int DepartmentsRebuilt { get; set; }
 		public int DocumentsIndexed { get; set; }
 		public int DocumentsDeleted { get; set; }
+		public int SearchErasuresCompleted { get; set; }
 		public int Errors { get; set; }
 		public bool Skipped { get; set; }
 		public string Message { get; set; }

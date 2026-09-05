@@ -24,12 +24,14 @@
 	</div>
 </div>
 
-<form class="form-horizontal" method="post" enctype="multipart/form-data" asp-controller="Records" asp-action="@(Model.IsNew ? "Create" : "Edit")" asp-route-area="User">
+<link rel="stylesheet" href="~/lib/quill/dist/quill.snow.css" />
+<form id="record-edit-form" data-autosave-url="@(Model.IsNew ? "" : Url.Action("Autosave", "Records", new { area = "User" }))" class="form-horizontal" method="post" enctype="multipart/form-data" asp-controller="Records" asp-action="@(Model.IsNew ? "Create" : "Edit")" asp-route-area="User">
 	@Html.AntiForgeryToken()
 	@Html.HiddenFor(m => m.RecordId)
 	@Html.HiddenFor(m => m.RowVersion)
 	@Html.HiddenFor(m => m.DefinitionKey)
 	@Html.HiddenFor(m => m.IsAmendment)
+	@await Html.PartialAsync("~/Areas/User/Views/Records/_CustomFields.cshtml", Model.CustomFieldForm)
 
 	<div class="row">
 		<div class="col-xs-12">
@@ -90,6 +92,10 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label">@localizer["Call"]</label>
 								<div class="col-sm-6"><select class="form-control" asp-for="CallId" asp-items="Model.Calls"><option value="">@localizer["NoCall"]</option></select></div>
+								@if (t == RmsOperationalRecordType.Run && !Model.CallId.HasValue && ClaimsAuthorizationHelper.CanCreateCall())
+								{
+									<div class="col-sm-4">@if (Model.IsNew) { <span>Save the draft to create and link a historical Call.</span> } else { <a asp-action="NewRunCall" asp-controller="Records" asp-route-area="User" asp-route-id="@Model.RecordId" class="btn btn-default">Create Call for Run</a> }</div>
+								}
 							</div>
 							<div class="form-group">
 								<label class="col-sm-2 control-label">@localizer["InitialReport"]</label>
@@ -137,7 +143,7 @@
 							</div>
 						}
 
-						@if (isCoroner)
+						@if (isCoroner && Model.CanViewRestricted)
 						{
 							<div class="ibox-title" style="border-top:1px solid #e7eaec;"><h5><i class="fa fa-lock"></i> @localizer["RestrictedSection"]</h5></div>
 							<div class="form-group">
@@ -152,6 +158,9 @@
 								<label class="col-sm-2 control-label">@localizer["Destination"]</label>
 								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.Destination" /></div>
 							</div>
+						}
+						@if (isCoroner)
+						{
 							<div class="form-group">
 								<label class="col-sm-2 control-label">@localizer["ContactName"]</label>
 								<div class="col-sm-4"><input type="text" class="form-control" asp-for="Details.ContactName" /></div>
@@ -187,20 +196,31 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">@localizer["Narrative"]</label>
-							<div class="col-sm-10"><textarea class="form-control" rows="8" asp-for="Details.Narrative"></textarea></div>
+							<div class="col-sm-10"><textarea class="form-control" rows="8" asp-for="Details.Narrative"></textarea><template id="record-narrative-initial">@Html.Raw(Resgrid.Framework.RecordNarrativeFormatter.Render(Model.Details?.Narrative))</template><div id="record-narrative-editor" style="min-height:200px" hidden></div></div>
 						</div>
 					</div>
 				</div>
 
-				@if (!isUnitActivity)
-				{
 					<div class="ibox float-e-margins">
 						<div class="ibox-title"><h5>@localizer["Participants"]</h5></div>
 						<div class="ibox-content">
-							<select class="form-control" multiple size="8" name="ParticipantUserIds" asp-items="Model.Personnel"></select>
+							<table class="table table-condensed"><thead><tr><th>@localizer["Participants"]</th><th>@localizer["Unit"]</th><th>Role</th></tr></thead><tbody id="record-participant-rows">
+							@for (var i = 0; i < Model.ParticipantRows.Count; i++)
+							{
+								var participant = Model.ParticipantRows[i]; var name = Model.Personnel.FirstOrDefault(p => p.Value == participant.UserId)?.Text ?? participant.UserId;
+								<tr><td><label><input type="checkbox" asp-for="ParticipantRows[i].Selected" /> Include</label><select class="form-control input-sm" asp-for="ParticipantRows[i].UserId" asp-items="Model.Personnel" aria-label="Participant"><option value="">Choose a participant</option>
+								@if (!string.IsNullOrWhiteSpace(participant.UserId) && Model.Personnel.All(p => p.Value != participant.UserId)) { <option value="@participant.UserId">@name</option> }
+								</select></td>
+								<td><select class="form-control input-sm" asp-for="ParticipantRows[i].UnitId" asp-items="Model.AvailableUnits"><option value="">No assigned unit</option>
+								@if (participant.UnitId.HasValue && Model.AvailableUnits.All(u => u.Value != participant.UnitId.Value.ToString())) { <option value="@participant.UnitId">Previously assigned unit @participant.UnitId</option> }
+								</select></td><td><input class="form-control input-sm" asp-for="ParticipantRows[i].Role" maxlength="100" aria-label="Role for @name" /></td></tr>
+							}
+							</tbody></table>
+							<button class="btn btn-default" type="button" id="add-record-participant">Add participant</button>
+							<template id="record-participant-template"><tr><td><label><input type="checkbox" name="ParticipantRows[__index__].Selected" value="true" checked /> Include</label><input type="hidden" name="ParticipantRows[__index__].Selected" value="false" /><select class="form-control input-sm" name="ParticipantRows[__index__].UserId" aria-label="Participant"><option value="">Choose a participant</option>@foreach (var p in Model.Personnel) { <option value="@p.Value">@p.Text</option> }</select></td><td><select class="form-control input-sm" name="ParticipantRows[__index__].UnitId" aria-label="Assigned unit"><option value="">No assigned unit</option>@foreach (var unit in Model.AvailableUnits) { <option value="@unit.Value">@unit.Text</option> }</select></td><td><input class="form-control input-sm" name="ParticipantRows[__index__].Role" maxlength="100" aria-label="Participant role" /></td></tr></template>
+							<script src="~/js/record-participants.js" asp-append-version="true" defer></script>
 						</div>
 					</div>
-				}
 
 				<div class="ibox float-e-margins">
 					<div class="ibox-title"><h5>@localizer["Units"]</h5></div>
@@ -244,6 +264,7 @@
 					<div class="ibox-title"><h5>@localizer["Attachments"]</h5></div>
 					<div class="ibox-content">
 						<input type="file" name="files" multiple />
+						<label asp-for="AttachmentClassification">File classification (including names and descriptions)</label><select asp-for="AttachmentClassification" class="form-control"><option value="1">Restricted</option><option value="0">Unrestricted operational content</option></select>
 					</div>
 				</div>
 
@@ -266,6 +287,7 @@
 						}
 						<div class="form-group">
 							<div class="col-sm-12">
+								<p id="record-autosave-status" role="status">@(Model.IsNew ? "Save the draft to enable automatic saving." : "Changes are saved automatically. Attachments require Save Draft.")</p>
 								<button type="submit" class="btn btn-primary" name="FinalizeAfterSave" value="false">@localizer["SaveDraft"]</button>
 								@if (Model.CanFinalize)
 								{
@@ -280,3 +302,7 @@
 		</div>
 	</div>
 </form>
+@section Scripts {
+    <script src="~/lib/quill/dist/quill.min.js"></script>
+    <script src="~/js/record-authoring.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,47 @@
+@model Resgrid.Model.RmsDisclosureReview
+@{ ViewBag.Title = "Review disclosure"; }
+<div class="row"><div class="col-md-12"><h1>Review disclosure</h1>
+<p>Review every field, narrative, evidence item and attachment for this request. Profiles apply initial exclusions. Record the authority and case-specific reasons that apply in your jurisdiction.</p>
+<form method="post" enctype="multipart/form-data" asp-action="Produce" asp-controller="Disclosures" asp-area="User">
+@Html.AntiForgeryToken()
+<input type="hidden" name="id" value="@Model.RequestId" /><input type="hidden" name="redactionProfile" value="@Model.Profile" />
+<input type="hidden" asp-for="RequestId" /><input type="hidden" asp-for="Profile" /><input type="hidden" asp-for="ScopeChecksum" />
+<label asp-for="Authority">Applicable disclosure authority</label><input class="form-control" asp-for="Authority" required maxlength="1000" />
+<label asp-for="Basis">Release basis and reasons for initial exclusions</label><textarea class="form-control" asp-for="Basis" required maxlength="4000"></textarea>
+<label asp-for="UnresolvedScopeHandling">Handling of unfinished or inaccessible records</label><textarea class="form-control" asp-for="UnresolvedScopeHandling" maxlength="4000"></textarea>
+@for (var i = 0; i < Model.Records.Count; i++)
+{
+ <section class="panel panel-default" style="margin-top:20px"><div class="panel-heading"><h2>@Model.Records[i].RecordNumber · @Model.Records[i].RecordKind</h2></div><div class="panel-body">
+ <input type="hidden" asp-for="Records[i].RecordId" /><input type="hidden" asp-for="Records[i].RecordKind" /><input type="hidden" asp-for="Records[i].RevisionId" /><input type="hidden" asp-for="Records[i].RevisionChecksum" /><input type="hidden" asp-for="Records[i].ContentChecksum" />
+ <p><a asp-controller="RecordDocuments" asp-action="Revision" asp-route-id="@Model.Records[i].RecordId" asp-route-kind="@Model.Records[i].RecordKind" asp-route-revisionId="@Model.Records[i].RevisionId" target="_blank" rel="noopener">Open saved revision</a></p>
+ <label><input asp-for="Records[i].WithholdWhole" /> Withhold this entire record</label>
+ <label asp-for="Records[i].Authority">Whole-record withholding authority</label><input class="form-control" asp-for="Records[i].Authority" maxlength="1000" />
+ <label asp-for="Records[i].Basis">Whole-record withholding reason</label><textarea class="form-control" asp-for="Records[i].Basis" maxlength="4000"></textarea>
+ @if (Model.Records[i].AutomaticWithholds.Count > 0) { <details><summary>Initial access and profile exclusions</summary><ul>@foreach (var field in Model.Records[i].AutomaticWithholds) { <li>@field</li> }</ul></details> }
+ <h3>Field review</h3><p>Select additional fields to withhold. Unselected fields are included.</p>
+ @for (var f = 0; f < Model.Records[i].Fields.Count; f++)
+ {
+  var field = Model.Records[i].Fields[f]; var prefix = $"Records[{i}].Decisions[{f}]";
+  <details style="border-bottom:1px solid #ccc;padding:8px"><summary>@field.Path</summary><p style="white-space:pre-wrap">@field.Value</p>
+  <input type="hidden" name="@(prefix + ".Path")" value="@field.Path" />
+  <label><input type="checkbox" name="@(prefix + ".Withhold")" value="true" /> Withhold field</label>
+  <label>Authority<input class="form-control" name="@(prefix + ".Authority")" maxlength="1000" /></label>
+  <label>Reason<textarea class="form-control" name="@(prefix + ".Basis")" maxlength="4000"></textarea></label></details>
+ }
+ <h3>Attachment review</h3><p>Review each file and its metadata. Include the complete original, withhold it, or upload a redacted replacement. Check a replacement for hidden text, layers and metadata before uploading; record the withholding authority and reason.</p>
+ @for (var a = 0; a < Model.Records[i].Attachments.Count; a++)
+ {
+  <div class="well"><input type="hidden" asp-for="Records[i].Attachments[a].AttachmentId" /><input type="hidden" asp-for="Records[i].Attachments[a].Checksum" />
+  <p><a asp-action="ReviewAttachment" asp-route-id="@Model.RequestId" asp-route-recordId="@Model.Records[i].RecordId" asp-route-revisionId="@Model.Records[i].RevisionId" asp-route-attachmentId="@Model.Records[i].Attachments[a].AttachmentId" asp-route-profile="@Model.Profile">@Model.Records[i].Attachments[a].FileName</a></p>
+  <details><summary>Attachment metadata included with this file</summary><dl>@foreach (var metadata in Model.Records[i].Attachments[a].Metadata) { <dt>@metadata.Path</dt><dd style="white-space:pre-wrap">@metadata.Value</dd> }</dl></details>
+  <label><input asp-for="Records[i].Attachments[a].Reviewed" /> I reviewed this file and its metadata</label>
+  <label><input asp-for="Records[i].Attachments[a].Include" /> Include original or uploaded redacted replacement</label>
+  <label>Reviewed redacted replacement (optional)<input type="file" name="derivative-@i-@a" /></label>
+  <label asp-for="Records[i].Attachments[a].Authority">Withholding authority</label><input class="form-control" asp-for="Records[i].Attachments[a].Authority" maxlength="1000" />
+  <label asp-for="Records[i].Attachments[a].Basis">Withholding reason</label><textarea class="form-control" asp-for="Records[i].Attachments[a].Basis" maxlength="4000"></textarea></div>
+ }
+ </div></section>
+}
+<label><input asp-for="Reviewed" required /> I reviewed these saved revisions, evidence and files and recorded the release and withholding decisions.</label>
+<p><button type="submit" class="btn btn-primary">Prepare immutable PDF and attachment packet</button></p>
+</form></div></div>

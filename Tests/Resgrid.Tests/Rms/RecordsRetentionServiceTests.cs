@@ -9,6 +9,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services.Records;
 
@@ -30,6 +31,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<IRecordAttachmentScanner> _scanner;
 		private RecordsRetentionPolicy _policy;
 		private RecordsRetentionService _service;
+		private Mock<IRmsRetentionRepository> _purge;
 
 		[SetUp]
 		public void SetUp()
@@ -45,11 +47,28 @@ namespace Resgrid.Tests.Rms
 			_scanner = new Mock<IRecordAttachmentScanner>();
 			_scanner.Setup(s => s.ScanAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new RecordAttachmentScanResult { State = RmsAttachmentScanState.Clean });
+			// The worker tests use an in-memory purge boundary. Relational deletion/locking is tested separately.
+			_purge = new Mock<IRmsRetentionRepository>();
+			_purge.Setup(p => p.PurgeAsync(Dept, It.IsAny<string>(), It.IsAny<RmsRecordKind>(), It.IsAny<long>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, RmsRecordKind kind, long version, DateTime now, CancellationToken c) =>
+				{
+					var record = _store.Records.Single(r => r.RmsOperationalRecordId == id);
+					var years = _policy.ResolveYears(record.DefinitionKey, record.FinalizedOn.Value);
+					if (years <= 0 || record.FinalizedOn.Value.AddYears(years) > now) return new RmsPurgeResult();
+					if (_store.LegalHolds.Any(h => h.Covers(id, record.DefinitionKey, record.StartedOn))) return new RmsPurgeResult { Held = true };
+					record.PurgedOn = now; record.DisplaySummary = RecordsRetentionService.PurgedPlaceholder;
+					foreach (var detail in _store.Details.Where(x => x.RecordId == id)) RecordsRetentionService.BlankContent(detail);
+					var attachments = _store.Attachments.Where(a => a.RecordId == id).ToList();
+					foreach (var a in attachments) { a.Data = null; a.DeletedOn = now; }
+					foreach (var p in _store.Projections.Where(p => p.SourceId == id)) { p.SearchText = null; p.DisplaySummary = RecordsRetentionService.PurgedPlaceholder; }
+					_store.Audits.Add(new RmsAccessAudit { RecordId = id, Purpose = RecordsRetentionService.PurgeAuditPurpose });
+					return new RmsPurgeResult { Purged = true, AttachmentsPurged = attachments.Count };
+				});
 
 			_service = new RecordsRetentionService(_store.CutoversRepo.Object, _store.RecordsRepo.Object,
 				_incidents.ReportsRepo.Object, _store.DetailsRepo.Object, _store.AttachmentsRepo.Object,
 				_store.LegalHoldsRepo.Object, _store.AuditsRepo.Object, _store.ProjectionsRepo.Object,
-				_scanner.Object, _settings.Object);
+				_scanner.Object, _settings.Object, _purge.Object);
 		}
 
 		private RmsOperationalRecord SeedFinalized(DateTime finalizedOn, string definitionKey = null)
@@ -134,6 +153,47 @@ namespace Resgrid.Tests.Rms
 			result.RecordsPurged.Should().Be(0);
 			record.PurgedOn.Should().BeNull();
 			_store.Details.Single().Narrative.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task Short_policies_are_considered_even_when_a_longer_department_policy_exists()
+		{
+			_policy.Overrides.Add(new RecordsRetentionOverride { DefinitionKey = RmsDefinitionKeys.Training, RetentionYears = 2 });
+			SeedFinalized(DateTime.UtcNow.AddYears(-3));
+			SeedFinalized(DateTime.UtcNow.AddYears(-3), RmsDefinitionKeys.Work);
+			SeedFinalized(DateTime.UtcNow.AddYears(-20), RmsDefinitionKeys.Coroner);
+			var result = await _service.SweepAsync();
+			result.RecordsEvaluated.Should().Be(3);
+			result.RecordsPurged.Should().Be(1);
+		}
+
+		[Test]
+		public async Task Held_first_pages_do_not_starve_later_candidates()
+		{
+			for (var i = 0; i < 1001; i++) SeedFinalized(DateTime.UtcNow.AddYears(-10));
+			_purge.Setup(p => p.PurgeAsync(Dept, It.IsAny<string>(), It.IsAny<RmsRecordKind>(), It.IsAny<long>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new RmsPurgeResult { Held = true });
+			var result = await _service.SweepAsync();
+			result.RecordsEvaluated.Should().Be(1001);
+			_purge.Invocations.Select(i => i.Arguments[1]).Distinct().Should().HaveCount(1001);
+		}
+
+		[Test]
+		public async Task A_scan_finishing_after_attachment_purge_cannot_restore_bytes_or_emit_a_content_audit()
+		{
+			var record = SeedFinalized(DateTime.UtcNow.AddYears(-1));
+			var attachment = SeedAttachment(record.RmsOperationalRecordId, RmsAttachmentScanState.Pending);
+			var entered = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+			var finish = new TaskCompletionSource<RecordAttachmentScanResult>(TaskCreationOptions.RunContinuationsAsynchronously);
+			_scanner.Setup(s => s.ScanAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>()))
+				.Returns(() => { entered.SetResult(true); return finish.Task; });
+			var sweep = _service.SweepAsync();
+			await entered.Task;
+			attachment.Data = null; attachment.DeletedOn = DateTime.UtcNow; attachment.RowVersion++;
+			finish.SetResult(new RecordAttachmentScanResult { State = RmsAttachmentScanState.Rejected, Detail = "private-scanner-detail" });
+			(await sweep).AttachmentsRescanned.Should().Be(0);
+			attachment.Data.Should().BeNull();
+			_store.Audits.Should().NotContain(a => a.Purpose == "Attachment rejected on rescan");
 		}
 
 		[Test]

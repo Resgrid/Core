@@ -1541,7 +1541,7 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.PreviewScope(System.String,System.Int32)">
             <summary>
             What the scope resolves to right now, through the same authorization path as the Records queue. Drafts
-            are listed but never producible: an unfinished report is not a public record.
+            are listed for separate review; automatic production requires a saved revision.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.DisclosuresController.GetProductions(System.String)">
@@ -2665,11 +2665,12 @@
             when the host is off or unavailable the filtered queue is returned with SearchDegraded set and the text is not applied.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Changes(System.Int64,System.Int32,System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Changes(System.Int64,System.Int32,System.String,System.String)">
             <summary>
             Delta cursor (plan 5.3): records modified after <paramref name="since"/> (Unix epoch ms; 0 = full pull),
             oldest first, with tombstones for cancelled, voided and deleted records so clients remove them locally.
-            Persist Data.ServerTimestampMs and pass it back as the next since; loop while HasMore.
+            Persist Data.ServerTimestampMs, ServerCursorId and ScopeStamp together; loop while HasMore.
+            ResetRequired requires clearing cached Records, revisions, attachments and evidence before a full pull.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.GetRecord(System.String)">
@@ -2687,11 +2688,14 @@
             returns the existing record with 200 instead of a duplicate. Field clients need their Records.Field.* flag.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.SaveDraft(Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CreateRunCall(Resgrid.Web.Services.Models.v4.Records.CreateRunCallInput,System.Threading.CancellationToken)">
             <summary>
-            ETag-guarded draft save. RowVersion (or If-Match) must equal the current row version; otherwise 409 with
-            the current record and the field paths the client's copy would have changed, for deliberate reconciliation.
+            Creates and links a closed historical Call to an existing Run draft. Source authorization and the
+            parent version prevent an unauthorized or duplicate Call from being created.
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.SaveDraft(Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput,System.Threading.CancellationToken)">
+            <summary>ETag-guarded draft save; conflicts require deliberate reconciliation.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Finalize(Resgrid.Web.Services.Models.v4.Records.RecordCommandInput,System.Threading.CancellationToken)">
             <summary>Finalize: validates, writes the immutable revision and attestation, emits the lifecycle events. Attested must be true. Online-only by design.</summary>
@@ -5990,8 +5994,14 @@
         <member name="M:Resgrid.Web.Services.Helpers.RecordsApiHelper.Utc(System.Nullable{System.DateTime})">
             <summary>Clients send UTC; a local-kind value is converted, an unspecified one is taken as UTC.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Helpers.RecordsApiHelper.ChangesCursor(System.DateTime,System.String)">
+            <summary>Opaque page cursor preserves sub-millisecond database precision independently of the display timestamp.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Helpers.RecordsApiMapper">
             <summary>Entity to DTO mapping for the v4 Records controller. Restricted detail fields are withheld here, never downstream.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.RecordsApiMapper.ToTombstone(Resgrid.Model.RmsRecordSearchProjection)">
+            <summary>Content-free eviction, including when a previously cached record is no longer visible.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.IncidentReportsApiMapper">
             <summary>Entity to DTO mapping for the v4 IncidentReports controller. Submissions are sanitized: no payload, no response body.</summary>
@@ -12314,11 +12324,17 @@
         <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsChangesResult">
             <summary>Delta cursor (plan 5.3): persist ServerTimestampMs and pass it back as <c>since</c>.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsChangesData.ScopeStamp">
+            <summary>Persist with the cursor. A changed or missing scope stamp on a delta forces a full cache reset.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsChangesData.ResetRequired">
+            <summary>Evict all locally cached RMS data (including revisions and attachments), then request since=0.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsChangesData.ServerCursorId">
             <summary>
-            Tie-breaker for the next call, sent back as <c>sinceId</c> alongside <c>since</c>. Several records routinely
-            share a modified timestamp; without it the rows that fall after a page break inside one timestamp are never
-            delivered.
+            Opaque tie-breaker sent back unchanged as <c>sinceId</c> alongside <c>since</c>. Includes the exact database
+            timestamp as well as the record id. Do not parse it or substitute a record id; rounding to milliseconds
+            can otherwise repeat a page forever. Older id-only cursors require a full reset.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordData">
@@ -12345,8 +12361,9 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.OriginClient">
             <summary>RmsOriginClient: 2 Responder, 3 Unit, 4 IncidentCommand, 5 Dispatch, 6 Api (default). Field clients are gated by their Records.Field.* flag.</summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordCommandInput">
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.CreateRunCallInput">
             <summary>A lifecycle command. RowVersion (or If-Match) guards ETag-checked transitions; IdempotencyKey replays the first outcome.</summary>
+            <summary>Create a closed historical Call for an existing Run draft. A current version is required; a stale retry never creates a second Call.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordCommandInput.Attested">
             <summary>Finalize: the author confirmed the attestation statement.</summary>

@@ -72,6 +72,8 @@ namespace Resgrid.Model
 		/// Everyone=0, DepartmentAndGroupAdmins=1, DepartmentAdminsOnly=2.
 		/// </summary>
 		public int Visibility { get; set; }
+		/// <summary>Published RMS classification: 0 unrestricted, 1 restricted; unknown legacy fields require restricted access.</summary>
+		public int? RmsClassification { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]

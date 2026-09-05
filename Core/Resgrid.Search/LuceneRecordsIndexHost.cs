@@ -20,16 +20,20 @@ namespace Resgrid.Search
 	public sealed class LuceneRecordsIndexHost : IDisposable
 	{
 		private readonly object _sync = new object();
-		private readonly Directory _directory;
 		private readonly bool _ownsDirectory;
+		private Directory _directory;
 		private IndexWriter _writer;
 		private SearcherManager _searcherManager;
 		private bool _searcherIsNrt;
 		private bool _disposed;
 
 		public LuceneRecordsIndexHost()
-			: this(OpenConfiguredDirectory(), true)
 		{
+			// Deliberately no I/O here. This type is a container singleton, so opening the configured path from the
+			// constructor makes every process that merely composes its container depend on the shared volume being
+			// present and writable — a process with search disabled must still start. The directory opens on use.
+			_ownsDirectory = true;
+			Analyzer = new StandardAnalyzer(RecordsIndexFields.Version);
 		}
 
 		/// <summary>Test seam: host any directory (e.g. RAMDirectory) without touching the configured path.</summary>
@@ -46,11 +50,24 @@ namespace Resgrid.Search
 
 		public bool Enabled => SearchConfig.Enabled;
 
+		/// <summary>The backing store, opening the configured path on first use.</summary>
+		private Directory Store
+		{
+			get
+			{
+				if (_directory != null)
+					return _directory;
+
+				lock (_sync)
+					return _directory ??= OpenConfiguredDirectory();
+			}
+		}
+
 		public bool IndexExists
 		{
 			get
 			{
-				try { return DirectoryReader.IndexExists(_directory); }
+				try { return DirectoryReader.IndexExists(Store); }
 				catch (Exception ex)
 				{
 					Logging.LogException(ex, "Records search index existence check failed.");
@@ -71,9 +88,10 @@ namespace Resgrid.Search
 				var config = new IndexWriterConfig(RecordsIndexFields.Version, Analyzer)
 				{
 					OpenMode = OpenMode.CREATE_OR_APPEND,
+					MergePolicy = new TieredMergePolicy { ForceMergeDeletesPctAllowed = 0 },
 					RAMBufferSizeMB = Math.Max(1, SearchConfig.RamBufferSizeMb)
 				};
-				_writer = new IndexWriter(_directory, config);
+				_writer = new IndexWriter(Store, config);
 
 				// A reader opened before the writer existed keeps working; from here on prefer the NRT view.
 				if (_searcherManager != null && !_searcherIsNrt)
@@ -102,10 +120,10 @@ namespace Resgrid.Search
 					return _searcherManager;
 				}
 
-				if (!DirectoryReader.IndexExists(_directory))
+				if (!DirectoryReader.IndexExists(Store))
 					return null;
 
-				_searcherManager = new SearcherManager(_directory, null);
+				_searcherManager = new SearcherManager(Store, null);
 				_searcherIsNrt = false;
 				return _searcherManager;
 			}
@@ -121,6 +139,27 @@ namespace Resgrid.Search
 
 			try { manager?.MaybeRefresh(); }
 			catch (Exception ex) { Logging.LogException(ex, "Records search reader refresh failed."); }
+		}
+
+		/// <summary>Serializes mutations with the committed-segment erasure pass.</summary>
+		public int Write(Func<IndexWriter, int> mutation)
+		{
+			lock (_sync) { ThrowIfDisposed(); return mutation(GetWriter()); }
+		}
+
+		public void ExpungeDeletes()
+		{
+			lock (_sync)
+			{
+				ThrowIfDisposed();
+				var writer = GetWriter();
+				writer.ForceMergeDeletes(true);
+				writer.Commit();
+				_searcherManager?.MaybeRefreshBlocking();
+				writer.DeleteUnusedFiles();
+				using var committed = DirectoryReader.Open(Store);
+				if (committed.HasDeletions) throw new InvalidOperationException("Deleted records remain in the committed index; erasure cannot be acknowledged.");
+			}
 		}
 
 		private static Directory OpenConfiguredDirectory()
@@ -146,7 +185,9 @@ namespace Resgrid.Search
 
 				try { _searcherManager?.Dispose(); } catch (Exception ex) { Logging.LogException(ex); }
 				try { _writer?.Dispose(); } catch (Exception ex) { Logging.LogException(ex); }
-				if (_ownsDirectory)
+				// _directory, never Store: a host that was disposed without ever indexing must not open the
+				// configured path on its way out.
+				if (_ownsDirectory && _directory != null)
 				{
 					try { _directory.Dispose(); } catch (Exception ex) { Logging.LogException(ex); }
 				}

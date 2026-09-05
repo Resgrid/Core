@@ -291,12 +291,16 @@ namespace Resgrid.Services.Records
 			// A moved deadline re-arms emission: the obligation the department is now tracking is a different one.
 			var alreadyEmitted = (RmsDueState)row.LastEmittedState == RmsDueState.Overdue && !deadlineMoved;
 			var becameOverdue = observation.State == RmsDueState.Overdue && !alreadyEmitted;
+			// The sweep cap is checked before the row is marked, never after. A row marked Overdue that never
+			// produced an emission would read as already-notified on the next sweep and the obligation would
+			// go out silently; leaving it unmarked lets the next sweep pick it up.
+			var capped = becameOverdue && emissions.Count >= MaxEmissionsPerDepartment;
 
 			row.DueOn = observation.DueOn;
 			row.ResponsibleUserId = observation.ResponsibleUserId;
 			row.ModifiedOn = now;
 
-			if (becameOverdue)
+			if (becameOverdue && !capped)
 			{
 				row.LastEmittedState = (int)RmsDueState.Overdue;
 				row.LastEmittedOn = now;
@@ -316,7 +320,7 @@ namespace Resgrid.Services.Records
 			row.RowVersion += 1;
 			await _dueStates.UpdateAsync(row, cancellationToken, true);
 
-			if (!becameOverdue || emissions.Count >= MaxEmissionsPerDepartment)
+			if (!becameOverdue || capped)
 				return;
 
 			var emission = new Emission { RecordId = observation.RecordId };

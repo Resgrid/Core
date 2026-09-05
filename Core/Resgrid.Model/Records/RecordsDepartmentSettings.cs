@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ProtoBuf;
 
 namespace Resgrid.Model
@@ -107,6 +108,47 @@ namespace Resgrid.Model
 		[ProtoMember(4)]
 		public DateTime? LastChangedOn { get; set; }
 
+		[ProtoMember(5)]
+		public List<RecordsRetentionPolicyVersion> History { get; set; } = new List<RecordsRetentionPolicyVersion>();
+
+		/// <summary>The policy in force when this revision became official. Unknown pre-history is retained permanently.</summary>
+		public int ResolveYears(string definitionKey, DateTime revisionOn)
+		{
+			var applicable = this;
+			if (LastChangedOn.HasValue && revisionOn < LastChangedOn.Value)
+			{
+				applicable = (History ?? new List<RecordsRetentionPolicyVersion>()).Where(v => v.EffectiveOn <= revisionOn)
+					.OrderByDescending(v => v.EffectiveOn).Select(v => v.Policy).FirstOrDefault();
+				if (applicable == null) return Permanent;
+			}
+			var rule = applicable.Overrides?.Where(o => o.DefinitionKey == definitionKey && o.AppliesFrom <= revisionOn)
+				.OrderByDescending(o => o.AppliesFrom).FirstOrDefault();
+			if (rule != null) return Math.Max(Permanent, rule.RetentionYears);
+			return RmsDefinitionKeys.RestrictedClass.Contains(definitionKey ?? string.Empty) ? Permanent
+				: Math.Max(Permanent, applicable.DepartmentDefaultYears ?? StandardClassDefaultYears);
+		}
+
+		/// <summary>Called while holding the department write lock; caller-supplied history is never accepted.</summary>
+		public void PreserveHistory(RecordsRetentionPolicy previous, DateTime now)
+		{
+			previous ??= new RecordsRetentionPolicy();
+			History = new List<RecordsRetentionPolicyVersion>(previous.History ?? new List<RecordsRetentionPolicyVersion>());
+			History.Add(new RecordsRetentionPolicyVersion
+			{
+				EffectiveOn = previous.LastChangedOn ?? DateTime.MinValue,
+				Policy = new RecordsRetentionPolicy { DepartmentDefaultYears = previous.DepartmentDefaultYears,
+					Overrides = (previous.Overrides ?? new List<RecordsRetentionOverride>()).Select(o => new RecordsRetentionOverride
+					{ DefinitionKey = o.DefinitionKey, RetentionYears = o.RetentionYears, AppliesFrom = o.AppliesFrom }).ToList(),
+					LastChangedByUserId = previous.LastChangedByUserId }
+			});
+			LastChangedOn = now;
+			foreach (var rule in Overrides ?? new List<RecordsRetentionOverride>())
+			{
+				var old = previous.Overrides?.FirstOrDefault(o => o.DefinitionKey == rule.DefinitionKey && o.RetentionYears == rule.RetentionYears);
+				rule.AppliesFrom = old?.AppliesFrom ?? now;
+			}
+		}
+
 		/// <summary>
 		/// Retention years for a definition under this policy (legal hold is evaluated by the caller
 		/// first). Restricted-class definitions never inherit the department default; they need an
@@ -131,6 +173,13 @@ namespace Resgrid.Model
 
 			return StandardClassDefaultYears;
 		}
+	}
+
+	[ProtoContract]
+	public class RecordsRetentionPolicyVersion
+	{
+		[ProtoMember(1)] public DateTime EffectiveOn { get; set; }
+		[ProtoMember(2)] public RecordsRetentionPolicy Policy { get; set; }
 	}
 
 	/// <summary>Department setting 77 (RecordsDisclosureConfig). RMS-3 consumes it; the shape ships now so the value is claimed.</summary>

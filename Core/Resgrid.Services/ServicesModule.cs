@@ -251,6 +251,23 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordAttachmentUploadService>().As<IRecordAttachmentUploadService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsNotificationService>().As<IRecordsNotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsSearchIndexMaintenanceService>().As<IRecordsSearchIndexMaintenanceService>().InstancePerLifetimeScope();
+			// RMS-3: worker 42 (due-state evaluation, trigger 112 + notification 32) and worker 43 (retention,
+			// legal hold, attachment purge and the Pending-attachment rescan).
+			builder.RegisterType<Records.RecordsDueStateService>().As<IRecordsDueStateService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsRetentionService>().As<IRecordsRetentionService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.IncidentAnalysisService>().As<IIncidentAnalysisService>().InstancePerLifetimeScope();
+			// RMS-3c evidence: the service owns checksum, classification, retention and audit; the six adapters
+			// only decide what a bounded snapshot of their own subsystem looks like (plan section 4.5, all six ship).
+			builder.RegisterType<Records.RecordsEvidenceService>().As<IRecordsEvidenceService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.Evidence.ReadinessPacketEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.Evidence.RunCardActivationEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.Evidence.TrackingFixEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.Evidence.ChatPromotionEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.Evidence.InventoryUsageEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.Evidence.CertificationSnapshotEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
+			// RMS-3d: public-records workflow (M0171) and the Records queue dashboards.
+			builder.RegisterType<Records.RecordsDisclosureService>().As<IRecordsDisclosureService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsDashboardService>().As<IRecordsDashboardService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsReportingService>().As<IRecordsReportingService>().InstancePerLifetimeScope();
 			// Default attachment scanner: no engine, rows stay Skipped. A real scanner provider replaces this registration.
 			builder.RegisterType<Records.NullRecordAttachmentScanner>().As<Resgrid.Model.Providers.IRecordAttachmentScanner>().InstancePerLifetimeScope();

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -209,6 +209,18 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId, States = InListValue(states), Since = sinceUtc });
 		}
 
+		public Task<IEnumerable<RmsOperationalRecord>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take)
+		{
+			// Closed states only: a Record still being authored or reviewed is never a retention candidate, however old.
+			var states = new[] { (int)RmsRecordState.Finalized, (int)RmsRecordState.Amended, (int)RmsRecordState.Voided, (int)RmsRecordState.Cancelled };
+			return QueryAsync<RmsOperationalRecord>(
+				$@"SELECT * FROM {Tbl("RmsOperationalRecords")}
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")}
+					AND {Col("FinalizedOn")} IS NOT NULL AND {Col("FinalizedOn")} < {P}Cutoff AND {Col("DeletedOn")} IS NULL
+					ORDER BY {Col("FinalizedOn")} {Paging()}",
+				new { DepartmentId = departmentId, States = InListValue(states), Cutoff = cutoffUtc, Skip = 0, Take = Math.Clamp(take, 1, 10000) });
+		}
+
 		public Task<int> CountAllAsync(int departmentId)
 		{
 			return ScalarAsync<int>(
@@ -404,6 +416,16 @@ namespace Resgrid.Repositories.DataRepository
 			return QueryAsync<RmsRecordAttachment>(
 				$"SELECT {Cols(MetadataColumns)} FROM {Tbl("RmsRecordAttachments")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("DeletedOn")} IS NULL ORDER BY {Col("UploadedOn")}",
 				new { DepartmentId = departmentId, RecordId = recordId });
+		}
+
+		public Task<IEnumerable<RmsRecordAttachment>> GetPendingScanAsync(int departmentId, int take)
+		{
+			// Metadata only: the rescan loads bytes one attachment at a time so a sweep never holds a batch of them.
+			return QueryAsync<RmsRecordAttachment>(
+				$@"SELECT {Cols(MetadataColumns)} FROM {Tbl("RmsRecordAttachments")}
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ScanState")} = {P}ScanState AND {Col("DeletedOn")} IS NULL
+					ORDER BY {Col("UploadedOn")} {Paging()}",
+				new { DepartmentId = departmentId, ScanState = (int)RmsAttachmentScanState.Pending, Skip = 0, Take = Math.Clamp(take, 1, 1000) });
 		}
 
 		public Task<RmsRecordAttachment> GetByIdForDepartmentAsync(int departmentId, string attachmentId)
@@ -605,7 +627,7 @@ namespace Resgrid.Repositories.DataRepository
 		/// Visibility is a join, never a post-filter, so paging counts cannot leak (plan section 5.7.1).
 		/// The always-visible cases (author, owner, reviewer, named participant) resolve inside the query.
 		/// </summary>
-		public Task<IEnumerable<RmsRecordSearchProjection>> GetModifiedSinceAsync(int departmentId, DateTime? since, int take)
+		public Task<IEnumerable<RmsRecordSearchProjection>> GetModifiedSinceAsync(int departmentId, DateTime? since, int take, string sinceId = null)
 		{
 			var parameters = new DynamicParameters();
 			parameters.Add("DepartmentId", departmentId);
@@ -614,7 +636,18 @@ namespace Resgrid.Repositories.DataRepository
 			var sinceClause = string.Empty;
 			if (since.HasValue)
 			{
-				sinceClause = $" AND {Col("ModifiedOn")} > {P}Since";
+				// The predicate has to match the ordering, tie-breaker included, or the rows that share the cursor's
+				// timestamp and sort after it are dropped on the next page.
+				if (string.IsNullOrWhiteSpace(sinceId))
+				{
+					sinceClause = $" AND {Col("ModifiedOn")} > {P}Since";
+				}
+				else
+				{
+					sinceClause = $" AND ({Col("ModifiedOn")} > {P}Since OR ({Col("ModifiedOn")} = {P}Since AND {Col("RmsRecordSearchProjectionId")} > {P}SinceId))";
+					parameters.Add("SinceId", sinceId);
+				}
+
 				parameters.Add("Since", since.Value);
 			}
 
@@ -799,6 +832,229 @@ namespace Resgrid.Repositories.DataRepository
 			return QueryAsync<RmsRecordShare>(
 				$"SELECT * FROM {Tbl("RmsRecordShares")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId ORDER BY {Col("GrantedOn")} DESC",
 				new { DepartmentId = departmentId, RecordId = recordId });
+		}
+	}
+
+	/// <summary>
+	/// Immutable evidence artifacts (registry M0169, RMS-3). No update path: a correction supersedes rather than
+	/// edits, so a stored checksum keeps meaning what it meant when it was attested to.
+	/// </summary>
+	public class RmsEvidenceArtifactsRepository : RmsRepositoryBase<RmsEvidenceArtifact>, IRmsEvidenceArtifactsRepository
+	{
+		public RmsEvidenceArtifactsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public Task<RmsEvidenceArtifact> GetByIdForDepartmentAsync(int departmentId, string artifactId)
+		{
+			return QueryFirstOrDefaultAsync<RmsEvidenceArtifact>(
+				$"SELECT * FROM {Tbl("RmsEvidenceArtifacts")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsEvidenceArtifactId")} = {P}ArtifactId",
+				new { DepartmentId = departmentId, ArtifactId = artifactId });
+		}
+
+		public Task<IEnumerable<RmsEvidenceArtifact>> GetForRecordAsync(int departmentId, string recordId, string revisionId, bool includeSuperseded)
+		{
+			var revisionClause = revisionId == null ? $"{Col("RevisionId")} IS NULL" : $"{Col("RevisionId")} = {P}RevisionId";
+			var supersededClause = includeSuperseded ? string.Empty : $" AND {Col("SupersededOn")} IS NULL";
+			return QueryAsync<RmsEvidenceArtifact>(
+				$@"SELECT * FROM {Tbl("RmsEvidenceArtifacts")}
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {revisionClause}
+					AND {Col("DeletedOn")} IS NULL{supersededClause}
+					ORDER BY {Col("Kind")}, {Col("CapturedOn")}",
+				new { DepartmentId = departmentId, RecordId = recordId, RevisionId = revisionId });
+		}
+
+		public Task<RmsEvidenceArtifact> GetCurrentDraftOfKindAsync(int departmentId, string recordId, RmsEvidenceKind kind, string sourceEntityId)
+		{
+			// A source-scoped kind (a promoted chat set, one run card activation) can have several current
+			// artifacts, one per source row; a whole-record kind has at most one.
+			var sourceClause = sourceEntityId == null ? string.Empty : $" AND {Col("SourceEntityId")} = {P}SourceEntityId";
+			return QueryFirstOrDefaultAsync<RmsEvidenceArtifact>(
+				$@"SELECT * FROM {Tbl("RmsEvidenceArtifacts")}
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("RevisionId")} IS NULL
+					AND {Col("Kind")} = {P}Kind AND {Col("SupersededOn")} IS NULL AND {Col("DeletedOn")} IS NULL{sourceClause}",
+				new { DepartmentId = departmentId, RecordId = recordId, Kind = (int)kind, SourceEntityId = sourceEntityId });
+		}
+
+		public Task<int> BindDraftToRevisionAsync(int departmentId, string recordId, string revisionId, DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			return ExecuteAsync(
+				$@"UPDATE {Tbl("RmsEvidenceArtifacts")} SET {Col("RevisionId")} = {P}RevisionId, {Col("ModifiedOn")} = {P}Now
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("RevisionId")} IS NULL AND {Col("DeletedOn")} IS NULL",
+				new { DepartmentId = departmentId, RecordId = recordId, RevisionId = revisionId, Now = utcNow }, cancellationToken);
+		}
+
+		public Task<int> CountForRecordAsync(int departmentId, string recordId)
+		{
+			return ScalarAsync<int>(
+				$"SELECT COUNT(1) FROM {Tbl("RmsEvidenceArtifacts")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("DeletedOn")} IS NULL",
+				new { DepartmentId = departmentId, RecordId = recordId });
+		}
+	}
+
+	/// <summary>Due state per (Record, obligation) — registry M0170, RMS-3.</summary>
+	public class RmsRecordDueStatesRepository : RmsRepositoryBase<RmsRecordDueState>, IRmsRecordDueStatesRepository
+	{
+		public RmsRecordDueStatesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public Task<RmsRecordDueState> GetAsync(int departmentId, string recordId, RmsRecordObligation obligation)
+		{
+			return QueryFirstOrDefaultAsync<RmsRecordDueState>(
+				$"SELECT * FROM {Tbl("RmsRecordDueStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("Obligation")} = {P}Obligation",
+				new { DepartmentId = departmentId, RecordId = recordId, Obligation = (int)obligation });
+		}
+
+		public Task<IEnumerable<RmsRecordDueState>> GetForRecordAsync(int departmentId, string recordId)
+		{
+			return QueryAsync<RmsRecordDueState>(
+				$"SELECT * FROM {Tbl("RmsRecordDueStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId ORDER BY {Col("Obligation")}",
+				new { DepartmentId = departmentId, RecordId = recordId });
+		}
+
+		public Task<IEnumerable<RmsRecordDueState>> GetOpenForDepartmentAsync(int departmentId, int take)
+		{
+			return QueryAsync<RmsRecordDueState>(
+				$@"SELECT * FROM {Tbl("RmsRecordDueStates")}
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("LastEmittedState")} <> {P}Cleared
+					ORDER BY {Col("DueOn")} {Paging()}",
+				new { DepartmentId = departmentId, Cleared = (int)RmsDueState.Cleared, Skip = 0, Take = Math.Clamp(take, 1, 10000) });
+		}
+
+		public Task<int> CountOverdueAsync(int departmentId)
+		{
+			return ScalarAsync<int>(
+				$"SELECT COUNT(1) FROM {Tbl("RmsRecordDueStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("LastEmittedState")} = {P}Overdue",
+				new { DepartmentId = departmentId, Overdue = (int)RmsDueState.Overdue });
+		}
+
+		public Task<int> ClearForRecordAsync(int departmentId, string recordId, DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			return ExecuteAsync(
+				$@"UPDATE {Tbl("RmsRecordDueStates")} SET {Col("LastEmittedState")} = {P}Cleared, {Col("ModifiedOn")} = {P}Now
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("LastEmittedState")} <> {P}Cleared",
+				new { DepartmentId = departmentId, RecordId = recordId, Cleared = (int)RmsDueState.Cleared, Now = utcNow }, cancellationToken);
+		}
+	}
+
+	/// <summary>Public-records requests — registry M0171, RMS-3.</summary>
+	public class RmsDisclosureRequestsRepository : RmsRepositoryBase<RmsDisclosureRequest>, IRmsDisclosureRequestsRepository
+	{
+		public RmsDisclosureRequestsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public Task<RmsDisclosureRequest> GetByIdForDepartmentAsync(int departmentId, string requestId)
+		{
+			return QueryFirstOrDefaultAsync<RmsDisclosureRequest>(
+				$"SELECT * FROM {Tbl("RmsDisclosureRequests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsDisclosureRequestId")} = {P}RequestId",
+				new { DepartmentId = departmentId, RequestId = requestId });
+		}
+
+		public Task<IEnumerable<RmsDisclosureRequest>> GetForDepartmentAsync(int departmentId, IEnumerable<int> states, int skip, int take)
+		{
+			var stateList = states?.ToList();
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Skip", Math.Max(0, skip));
+			parameters.Add("Take", Math.Clamp(take, 1, 1000));
+
+			var where = $"{Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL";
+			if (stateList != null && stateList.Count > 0)
+			{
+				where += $" AND {InList("State", "States")}";
+				parameters.Add("States", InListValue(stateList));
+			}
+
+			// Oldest deadline first: the request closest to breaching its statutory clock is the one that matters.
+			return QueryAsync<RmsDisclosureRequest>(
+				$"SELECT * FROM {Tbl("RmsDisclosureRequests")} WHERE {where} ORDER BY {Col("StatutoryDueOn")}, {Col("ReceivedOn")} {Paging()}", parameters);
+		}
+
+		public Task<int> CountByStateAsync(int departmentId, RmsDisclosureState state)
+		{
+			return ScalarAsync<int>(
+				$"SELECT COUNT(1) FROM {Tbl("RmsDisclosureRequests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("State")} = {P}State AND {Col("DeletedOn")} IS NULL",
+				new { DepartmentId = departmentId, State = (int)state });
+		}
+
+		public Task<int> CountOverdueAsync(int departmentId, DateTime utcNow)
+		{
+			return ScalarAsync<int>(
+				$@"SELECT COUNT(1) FROM {Tbl("RmsDisclosureRequests")}
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL AND {Col("ClosedOn")} IS NULL
+					AND {Col("StatutoryDueOn")} IS NOT NULL AND {Col("StatutoryDueOn")} < {P}Now",
+				new { DepartmentId = departmentId, Now = utcNow });
+		}
+
+		public Task<int> GetMaxRequestNumberSequenceAsync(int departmentId, string numberPrefix)
+		{
+			return ScalarAsync<int>(
+				IsPostgres
+					? $"SELECT COALESCE(MAX(CAST(SUBSTRING({Col("RequestNumber")} FROM '[0-9]+$') AS INTEGER)), 0) FROM {Tbl("RmsDisclosureRequests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RequestNumber")} LIKE {P}Prefix"
+					: $"SELECT ISNULL(MAX(CAST(RIGHT({Col("RequestNumber")}, CHARINDEX('-', REVERSE({Col("RequestNumber")})) - 1) AS INT)), 0) FROM {Tbl("RmsDisclosureRequests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RequestNumber")} LIKE {P}Prefix",
+				new { DepartmentId = departmentId, Prefix = numberPrefix + "%" });
+		}
+	}
+
+	/// <summary>Immutable produced sets — registry M0171, RMS-3.</summary>
+	public class RmsDisclosureProductionsRepository : RmsRepositoryBase<RmsDisclosureProduction>, IRmsDisclosureProductionsRepository
+	{
+		public RmsDisclosureProductionsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public Task<RmsDisclosureProduction> GetByIdForDepartmentAsync(int departmentId, string productionId)
+		{
+			return QueryFirstOrDefaultAsync<RmsDisclosureProduction>(
+				$"SELECT * FROM {Tbl("RmsDisclosureProductions")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsDisclosureProductionId")} = {P}ProductionId",
+				new { DepartmentId = departmentId, ProductionId = productionId });
+		}
+
+		public Task<IEnumerable<RmsDisclosureProduction>> GetForRequestAsync(int departmentId, string requestId)
+		{
+			return QueryAsync<RmsDisclosureProduction>(
+				$"SELECT * FROM {Tbl("RmsDisclosureProductions")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DisclosureRequestId")} = {P}RequestId ORDER BY {Col("ProductionNumber")}",
+				new { DepartmentId = departmentId, RequestId = requestId });
+		}
+
+		public Task<int> GetMaxProductionNumberAsync(int departmentId, string requestId)
+		{
+			return ScalarAsync<int>(
+				$"SELECT COALESCE(MAX({Col("ProductionNumber")}), 0) FROM {Tbl("RmsDisclosureProductions")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DisclosureRequestId")} = {P}RequestId",
+				new { DepartmentId = departmentId, RequestId = requestId });
+		}
+	}
+
+	/// <summary>Legal holds that suspend retention — registry M0170, RMS-3.</summary>
+	public class RmsRecordLegalHoldsRepository : RmsRepositoryBase<RmsRecordLegalHold>, IRmsRecordLegalHoldsRepository
+	{
+		public RmsRecordLegalHoldsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public Task<RmsRecordLegalHold> GetByIdForDepartmentAsync(int departmentId, string holdId)
+		{
+			return QueryFirstOrDefaultAsync<RmsRecordLegalHold>(
+				$"SELECT * FROM {Tbl("RmsRecordLegalHolds")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsRecordLegalHoldId")} = {P}HoldId",
+				new { DepartmentId = departmentId, HoldId = holdId });
+		}
+
+		public Task<IEnumerable<RmsRecordLegalHold>> GetActiveForDepartmentAsync(int departmentId)
+		{
+			return QueryAsync<RmsRecordLegalHold>(
+				$"SELECT * FROM {Tbl("RmsRecordLegalHolds")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ReleasedOn")} IS NULL ORDER BY {Col("PlacedOn")} DESC",
+				new { DepartmentId = departmentId });
+		}
+
+		public Task<IEnumerable<RmsRecordLegalHold>> GetForRecordAsync(int departmentId, string recordId)
+		{
+			return QueryAsync<RmsRecordLegalHold>(
+				$"SELECT * FROM {Tbl("RmsRecordLegalHolds")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId ORDER BY {Col("PlacedOn")} DESC",
+				new { DepartmentId = departmentId, RecordId = recordId });
+		}
+
+		public Task<IEnumerable<RmsRecordLegalHold>> GetAllForDepartmentAsync(int departmentId)
+		{
+			return QueryAsync<RmsRecordLegalHold>(
+				$"SELECT * FROM {Tbl("RmsRecordLegalHolds")} WHERE {Col("DepartmentId")} = {P}DepartmentId ORDER BY {Col("PlacedOn")} DESC",
+				new { DepartmentId = departmentId });
 		}
 	}
 }

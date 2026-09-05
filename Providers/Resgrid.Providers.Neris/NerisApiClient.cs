@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +67,22 @@ namespace Resgrid.Providers.Neris
 			return SendAsync(profile, credential, HttpMethod.Get, () => $"/incident/{Entity(profile)}/{Uri.EscapeDataString(nerisIncidentId ?? string.Empty)}", null, StatusOutcome(nerisIncidentId), cancellationToken);
 		}
 
+		public Task<NerisSubmissionOutcome> CreateIncidentAnalysisAsync(RmsNerisProfile profile, NerisCredential credential, string nerisIncidentId, string payloadJson, CancellationToken cancellationToken = default)
+		{
+			// The analysis is posted against the incident, not the entity: /incident_analysis/{neris_id_incident}.
+			return SendAsync(profile, credential, HttpMethod.Post, () => $"/incident_analysis/{Uri.EscapeDataString(nerisIncidentId ?? string.Empty)}", payloadJson, CreateAnalysisOutcome, cancellationToken);
+		}
+
+		public Task<NerisSubmissionOutcome> UpdateIncidentAnalysisAsync(RmsNerisProfile profile, NerisCredential credential, string nerisAnalysisId, string payloadJson, CancellationToken cancellationToken = default)
+		{
+			return SendAsync(profile, credential, HttpMethod.Put, () => $"/incident_analysis/{Entity(profile)}/{Uri.EscapeDataString(nerisAnalysisId ?? string.Empty)}", payloadJson, UpdateOutcome(nerisAnalysisId), cancellationToken);
+		}
+
+		public Task<NerisSubmissionOutcome> GetIncidentAnalysisStatusAsync(RmsNerisProfile profile, NerisCredential credential, string nerisAnalysisId, CancellationToken cancellationToken = default)
+		{
+			return SendAsync(profile, credential, HttpMethod.Get, () => $"/incident_analysis/{Entity(profile)}/{Uri.EscapeDataString(nerisAnalysisId ?? string.Empty)}", null, StatusOutcome(nerisAnalysisId), cancellationToken);
+		}
+
 		private static string Entity(RmsNerisProfile profile) => Uri.EscapeDataString(profile.NerisEntityId);
 
 		private async Task<NerisSubmissionOutcome> SendAsync(RmsNerisProfile profile, NerisCredential credential, HttpMethod method, Func<string> pathFactory, string body,
@@ -88,7 +104,7 @@ namespace Resgrid.Providers.Neris
 			{
 				return Fatal(ex.Message);
 			}
-			catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException || ex is OperationCanceledException && !cancellationToken.IsCancellationRequested)
+			catch (Exception ex) when (IsTransientTransportFailure(ex, cancellationToken))
 			{
 				return Transient("NERIS token endpoint unreachable: " + ex.Message);
 			}
@@ -115,7 +131,7 @@ namespace Resgrid.Providers.Neris
 
 				return interpret(response.StatusCode, text);
 			}
-			catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException || ex is OperationCanceledException && !cancellationToken.IsCancellationRequested)
+			catch (Exception ex) when (IsTransientTransportFailure(ex, cancellationToken))
 			{
 				return Transient("NERIS unreachable: " + ex.Message);
 			}
@@ -146,6 +162,27 @@ namespace Resgrid.Providers.Neris
 			if ((int)status == 422)
 				return WithStatus(Rejected(text), status, text);
 			return WithStatus(Transient($"Unexpected NERIS create reply {(int)status}."), status, text);
+		}
+
+		/// <summary>Analysis creation replies with the analysis's own id and status block (RMS-3).</summary>
+		private static NerisSubmissionOutcome CreateAnalysisOutcome(HttpStatusCode status, string text)
+		{
+			if (status == HttpStatusCode.Created || status == HttpStatusCode.OK)
+			{
+				var json = TryParse(text);
+				var outcome = new NerisSubmissionOutcome
+				{
+					Kind = NerisOutcomeKind.Created,
+					ExternalId = (string)json?["neris_id"],
+					ExternalStatus = (string)json?["incident_analysis_status"]?["status"] ?? (string)json?["incident_status"]?["status"]
+				};
+				return WithStatus(Promote(outcome), status, text);
+			}
+			if ((int)status == 422)
+				return WithStatus(Rejected(text), status, text);
+			if (status == HttpStatusCode.NotFound)
+				return WithStatus(Transient("NERIS does not hold the incident yet; the analysis waits for it."), status, text);
+			return WithStatus(Transient($"Unexpected NERIS analysis create reply {(int)status}."), status, text);
 		}
 
 		private static Func<HttpStatusCode, string, NerisSubmissionOutcome> UpdateOutcome(string nerisIncidentId)
@@ -237,25 +274,44 @@ namespace Resgrid.Providers.Neris
 			return outcome;
 		}
 
+		/// <summary>
+		/// A transport failure worth retrying. Cancellation is deliberately excluded: <c>HttpClient</c> raises
+		/// <see cref="TaskCanceledException"/> (which derives from <see cref="OperationCanceledException"/>) both for
+		/// its own timeout and for a caller cancellation, so a worker shutdown would otherwise be recorded as a
+		/// failed delivery attempt and push the row towards MaxAttempts.
+		/// </summary>
+		private static bool IsTransientTransportFailure(Exception ex, CancellationToken cancellationToken)
+		{
+			if (cancellationToken.IsCancellationRequested && ex is OperationCanceledException)
+				return false;
+
+			return ex is HttpRequestException || ex is OperationCanceledException;
+		}
+
 		private async Task<string> GetTokenAsync(RmsNerisProfile profile, NerisCredential credential, CancellationToken cancellationToken)
 		{
 			var key = TokenKey(profile);
 			if (Tokens.TryGetValue(key, out var cached) && cached.ExpiresOn > DateTime.UtcNow.AddSeconds(60))
 				return cached.AccessToken;
 
-			var form = new Dictionary<string, string> { ["grant_type"] = profile.GrantType == NerisGrantTypes.Password ? "password" : "client_credentials" };
-			if (profile.GrantType == NerisGrantTypes.Password)
+			var isPassword = profile.GrantType == NerisGrantTypes.Password;
+			var form = new Dictionary<string, string> { ["grant_type"] = isPassword ? "password" : "client_credentials" };
+			if (isPassword)
 			{
 				form["username"] = credential.Username ?? string.Empty;
 				form["password"] = credential.Password ?? string.Empty;
 			}
-			else
-			{
-				form["username"] = credential.ClientId ?? string.Empty;
-				form["password"] = credential.ClientSecret ?? string.Empty;
-			}
 
 			using var request = new HttpRequestMessage(HttpMethod.Post, BaseUrlFor(profile) + "/token") { Content = new FormUrlEncodedContent(form) };
+
+			// The pinned contract's TokenBody carries username/password for the password and MFA flows only; a
+			// client-credentials integration account authenticates with HTTP Basic, so sending the id and secret as
+			// form fields fails against the destination.
+			if (!isPassword)
+			{
+				var basic = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{credential.ClientId}:{credential.ClientSecret}"));
+				request.Headers.Authorization = new AuthenticationHeaderValue("Basic", basic);
+			}
 			using var response = await _http.SendAsync(request, cancellationToken);
 			var text = response.Content == null ? string.Empty : await response.Content.ReadAsStringAsync(cancellationToken);
 			var json = TryParse(text);

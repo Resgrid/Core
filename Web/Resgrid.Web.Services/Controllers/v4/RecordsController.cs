@@ -1,12 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -29,7 +31,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
-	public class RecordsController : V4AuthenticatedApiControllerbase
+	public class RecordsController : V4AuthenticatedApiControllerbase, IActionFilter
 	{
 		public const string ConflictStatus = "conflict";
 		public const int MaxPageSize = 200;
@@ -43,10 +45,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IRecordsSearchService _recordsSearch;
 		private readonly IRecordAttachmentUploadService _uploads;
 		private readonly IRecordsApiIdempotencyService _idempotency;
+		private readonly IRecordsDashboardService _dashboard;
+
+		private SystemPrincipalRecordGrant _systemGrant;
+		private bool _systemGrantResolved;
 
 		public RecordsController(IRecordsService recordsService, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IFeatureToggleService featureToggleService, IDepartmentSettingsService departmentSettingsService, IDepartmentDataProtectionService dataProtectionService,
-			IRecordsSearchService recordsSearch, IRecordAttachmentUploadService uploads, IRecordsApiIdempotencyService idempotency)
+			IRecordsSearchService recordsSearch, IRecordAttachmentUploadService uploads, IRecordsApiIdempotencyService idempotency, IRecordsDashboardService dashboard)
 		{
 			_recordsService = recordsService;
 			_cutoverService = cutoverService;
@@ -57,7 +63,70 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_recordsSearch = recordsSearch;
 			_uploads = uploads;
 			_idempotency = idempotency;
+			_dashboard = dashboard;
 		}
+
+		/// <summary>
+		/// Every action on this controller refuses a system principal that has no configured Record grant for
+		/// the department it resolved to, before the action runs (Identifier Allocation Registry section 4.4).
+		/// A user principal is untouched. Mutating actions need no further guard: their policies are never
+		/// issued to a system principal, so the claim check has already refused them.
+		/// </summary>
+		public void OnActionExecuting(ActionExecutingContext context)
+		{
+			var gate = SystemPrincipalGate();
+			if (gate != null)
+				context.Result = gate;
+		}
+
+		public void OnActionExecuted(ActionExecutedContext context)
+		{
+		}
+
+		#region Dashboard
+
+		/// <summary>
+		/// The Records work queues an officer opens the module to look at (RMS-3): incomplete, awaiting review,
+		/// rejected, accepted, overdue, plus the disclosure clock. Group-scope aware, so a member is never told that
+		/// records exist which their own queue will not show them, and a count that cannot be produced degrades into
+		/// a warning rather than failing the whole dashboard.
+		/// </summary>
+		[HttpGet("Dashboard")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<RecordsDashboardResult>> Dashboard(CancellationToken cancellationToken)
+		{
+			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
+			if (!moduleState.FlagEnabled)
+				return NotFound();
+
+			var dashboard = await _dashboard.GetAsync(DepartmentId, UserId, cancellationToken);
+			var result = new RecordsDashboardResult { Data = RecordsDashboardApiMapper.ToDashboard(dashboard), PageSize = 1, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// NERIS crosswalk coverage: which of the department's own call types map to a NERIS incident type, which do
+		/// not, and which map to a code the pinned contract no longer carries. A gap report, not a statistic — every
+		/// unmapped type is a filing somebody classifies by hand on the night.
+		/// </summary>
+		[HttpGet("CrosswalkCoverage")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<NerisCrosswalkCoverageResult>> CrosswalkCoverage(CancellationToken cancellationToken)
+		{
+			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
+			if (!moduleState.FlagEnabled)
+				return NotFound();
+
+			var coverage = await _dashboard.GetCrosswalkCoverageAsync(DepartmentId, cancellationToken);
+			var result = new NerisCrosswalkCoverageResult { Data = RecordsDashboardApiMapper.ToCoverage(coverage), PageSize = coverage.Items.Count, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		#endregion
 
 		#region Capabilities
 
@@ -195,7 +264,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				CallId = callId,
 				OwnerUserId = string.IsNullOrWhiteSpace(owner) ? null : owner,
 				StationGroupId = group,
-				VisibleGroupIds = await _recordsAuthorizationService.GetVisibleGroupIdsAsync(UserId, DepartmentId),
+				VisibleGroupIds = await VisibleGroupIdsAsync(),
 				ViewerUserId = UserId,
 				Skip = Math.Max(0, skip),
 				Take = Math.Max(1, Math.Min(MaxPageSize, take))
@@ -233,7 +302,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Ok(result);
 			}
 
-			var visible = await _recordsAuthorizationService.GetVisibleGroupIdsAsync(UserId, DepartmentId);
+			var visible = await VisibleGroupIdsAsync();
 			var states = state.HasValue ? new List<int> { state.Value } : null;
 			take = Math.Max(1, Math.Min(MaxPageSize, take));
 			skip = Math.Max(0, skip);
@@ -270,7 +339,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var dropped = 0;
 				foreach (var id in ids)
 				{
-					if (!loaded.TryGetValue(id, out var projection) || !await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, id, DepartmentId))
+					if (!loaded.TryGetValue(id, out var projection) || !await CanViewRecordAsync(id))
 					{
 						dropped++;
 						continue;
@@ -297,7 +366,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("Changes")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<ActionResult<RecordsChangesResult>> Changes(long since = 0, int take = 200)
+		public async Task<ActionResult<RecordsChangesResult>> Changes(long since = 0, int take = 200, string sinceId = null)
 		{
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
@@ -309,20 +378,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (moduleState.RecordsUsable)
 			{
-				var visible = await _recordsAuthorizationService.GetVisibleGroupIdsAsync(UserId, DepartmentId);
-				var rows = await _recordsService.GetChangesSinceAsync(DepartmentId, RecordsApiHelper.FromUnixMs(since), take + 1);
+				var visible = await VisibleGroupIdsAsync();
+				var rows = await _recordsService.GetChangesSinceAsync(DepartmentId, RecordsApiHelper.FromUnixMs(since), take + 1, sinceId);
 				var hasMore = rows.Count > take;
 				var page = rows.Take(take).ToList();
 				foreach (var projection in page)
 				{
 					// Tombstones ride through regardless of scope (the client may hold the row); live rows pass the visibility rule.
 					var summary = RecordsApiMapper.ToSummary(projection);
-					if (!summary.IsTombstone && visible != null && !await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, projection.RmsRecordSearchProjectionId, DepartmentId))
+					if (!summary.IsTombstone && visible != null && !await CanViewRecordAsync(projection.RmsRecordSearchProjectionId))
 						continue;
 					result.Data.Records.Add(summary);
 				}
 				result.Data.HasMore = hasMore;
-				result.Data.ServerTimestampMs = hasMore && page.Count > 0 ? RecordsApiHelper.ToUnixMs(page[page.Count - 1].ModifiedOn) : RecordsApiHelper.ToUnixMs(now);
+
+				// Mid-stream the cursor is the last row delivered, timestamp and id together; at the end of the stream
+				// it is the server clock with no tie-breaker, which is the full-catch-up case.
+				if (hasMore && page.Count > 0)
+				{
+					var last = page[page.Count - 1];
+					result.Data.ServerTimestampMs = RecordsApiHelper.ToUnixMs(last.ModifiedOn);
+					result.Data.ServerCursorId = last.RmsRecordSearchProjectionId;
+				}
+				else
+				{
+					result.Data.ServerTimestampMs = RecordsApiHelper.ToUnixMs(now);
+				}
 			}
 			else
 			{
@@ -353,7 +434,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (aggregate == null)
 				return NotFound();
 
-			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, null, IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
+			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, AccessPurpose(), IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
 			return Ok(Wrap(aggregate));
 		}
 
@@ -394,7 +475,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (snapshot == null)
 				return NotFound();
 
-			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, revisionId, RmsAccessAuditAction.Read, "Revision " + revision.RevisionNumber, IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
+			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, revisionId, RmsAccessAuditAction.Read, AccessPurpose("Revision " + revision.RevisionNumber), IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
 			var result = new RecordRevisionSnapshotResult
 			{
 				Data = new RecordRevisionSnapshotData { Revision = RecordsApiMapper.ToRevision(revision), Snapshot = RecordsApiMapper.ToRecord(snapshot, ClaimsAuthorizationHelper.CanViewRestrictedRecords()) },
@@ -613,7 +694,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Shared command path: flag/usable gate, field-client gate, per-record visibility, scoped idempotency replay,
 		/// ETag check where the transition takes one, and the 409/400 mapping. Never last-writer-wins.
 		/// </summary>
-		private async Task<ActionResult<RecordResult>> CommandAsync(RecordCommandInput input, bool requiresRowVersion, Func<long, Task<RecordAggregate>> action)
+		private async Task<ActionResult<RecordResult>> CommandAsync(RecordCommandInput input, bool requiresRowVersion, Func<long, Task<RecordAggregate>> action,
+			[CallerMemberName] string command = null)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.RecordId))
 				return BadRequest();
@@ -633,7 +715,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var key = RecordsApiHelper.ResolveIdempotencyKey(input.IdempotencyKey, Request);
 			if (key != null)
 			{
-				var replayed = await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key);
+				var replayed = await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key, command);
 				if (string.Equals(replayed, input.RecordId, StringComparison.Ordinal))
 					return Ok(Wrap(await _recordsService.GetAsync(DepartmentId, input.RecordId, true), ResponseHelper.Success));
 			}
@@ -651,7 +733,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var aggregate = await action(rowVersion);
 				if (key != null)
-					await _idempotency.RememberAsync(DepartmentId, UserId, key, input.RecordId);
+					await _idempotency.RememberAsync(DepartmentId, UserId, key, command, input.RecordId);
 				return Ok(Wrap(aggregate, ResponseHelper.Updated));
 			}
 			catch (RecordConcurrencyException ex)
@@ -705,7 +787,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (attachment == null || !string.Equals(attachment.RecordId, id, StringComparison.Ordinal) || attachment.Data == null || attachment.DeletedOn.HasValue)
 				return NotFound();
 
-			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, "Attachment " + attachmentId, IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
+			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, AccessPurpose("Attachment " + attachmentId), IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
 			var meta = RecordsApiMapper.ToAttachment(attachment);
 			var result = new RecordAttachmentContentResult
 			{
@@ -903,6 +985,71 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return (await _cutoverService.GetModuleStateAsync(DepartmentId)).FlagEnabled;
 		}
 
+		#region System principals
+
+		/// <summary>True when the caller is the relay key or a client_credentials service account, not a member.</summary>
+		private bool IsSystemPrincipal => RecordsSystemPrincipal.IsSystemPrincipal(User);
+
+		/// <summary>The configured grant this request runs under, or null for a user principal or an ungranted system one.</summary>
+		private SystemPrincipalRecordGrant SystemGrant
+		{
+			get
+			{
+				if (!_systemGrantResolved)
+				{
+					_systemGrant = RecordsSystemPrincipal.ResolveGrant(User, DepartmentId);
+					_systemGrantResolved = true;
+				}
+
+				return _systemGrant;
+			}
+		}
+
+		/// <summary>
+		/// A system principal with no grant for this department is refused before any read runs. Mutating
+		/// endpoints need no equivalent: their policies are never issued to a system principal at all.
+		/// </summary>
+		private ActionResult SystemPrincipalGate()
+		{
+			if (!IsSystemPrincipal || SystemGrant != null)
+				return null;
+
+			return Problem(statusCode: StatusCodes.Status403Forbidden,
+				title: "This system principal has no configured Record grant for this department.", type: "record_grant_missing");
+		}
+
+		/// <summary>Group filter for the caller: the grant's groups for a system principal, the member's own otherwise.</summary>
+		private async Task<List<int>> VisibleGroupIdsAsync()
+		{
+			var grant = SystemGrant;
+			if (grant != null)
+				return grant.VisibleGroupIds();
+
+			return await _recordsAuthorizationService.GetVisibleGroupIdsAsync(UserId, DepartmentId);
+		}
+
+		/// <summary>Per-record visibility for the caller, routed to the grant rule for a system principal.</summary>
+		private async Task<bool> CanViewRecordAsync(string recordId)
+		{
+			var grant = SystemGrant;
+			if (grant != null)
+				return await _recordsAuthorizationService.CanSystemPrincipalViewRecordAsync(grant, recordId);
+
+			return await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, recordId, DepartmentId);
+		}
+
+		/// <summary>Audit purpose: the grant's stated purpose for a system principal, so a machine read is never anonymous.</summary>
+		private string AccessPurpose(string purpose = null)
+		{
+			var grant = SystemGrant;
+			if (grant == null)
+				return purpose;
+
+			return string.IsNullOrWhiteSpace(purpose) ? grant.Purpose : $"{grant.Purpose}: {purpose}";
+		}
+
+		#endregion
+
 		/// <summary>Writes need the module usable: flag on and the department activated.</summary>
 		private async Task<ActionResult> UsableAsync()
 		{
@@ -931,9 +1078,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (string.IsNullOrWhiteSpace(id))
 				return null;
 
-			if (!await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, id, DepartmentId))
+			if (!await CanViewRecordAsync(id))
 			{
-				await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Denied, null, IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
+				await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Denied, AccessPurpose(), IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
 				return null;
 			}
 

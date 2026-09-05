@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -35,6 +35,7 @@ namespace Resgrid.Services.Records
 		private readonly IRmsRecordUnitResponsesRepository _units;
 		private readonly IRmsRecordAttachmentsRepository _attachments;
 		private readonly IRmsRevisionsRepository _revisions;
+		private readonly IRecordsEvidenceService _evidence;
 		private readonly IRmsRecordGroupScopesRepository _scopes;
 		private readonly IRmsRecordSharesRepository _shares;
 		private readonly IRmsRecordSearchProjectionsRepository _projections;
@@ -53,7 +54,7 @@ namespace Resgrid.Services.Records
 
 		public RecordsService(IRmsOperationalRecordsRepository records, IRmsRecordValueService details,
 			IRmsRecordParticipantsRepository participants, IRmsRecordUnitResponsesRepository units, IRmsRecordAttachmentsRepository attachments,
-			IRmsRevisionsRepository revisions, IRmsRecordGroupScopesRepository scopes, IRmsRecordSharesRepository shares,
+			IRmsRevisionsRepository revisions, IRecordsEvidenceService evidence, IRmsRecordGroupScopesRepository scopes, IRmsRecordSharesRepository shares,
 			IRmsRecordSearchProjectionsRepository projections, IRmsAccessAuditsRepository audits, IDomainEventOutboxService outbox,
 			IRecordsCutoverService cutover, IDepartmentSettingsService settings, IDepartmentGroupsService groups, IUserProfileService profiles,
 			IUnitsService unitsService, ICallsService calls, IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork,
@@ -65,6 +66,7 @@ namespace Resgrid.Services.Records
 			_units = units;
 			_attachments = attachments;
 			_revisions = revisions;
+			_evidence = evidence;
 			_scopes = scopes;
 			_shares = shares;
 			_projections = projections;
@@ -584,10 +586,10 @@ namespace Resgrid.Services.Records
 			return (await _projections.GetYearsAsync(departmentId))?.ToList() ?? new List<int>();
 		}
 
-		public async Task<List<RmsRecordSearchProjection>> GetChangesSinceAsync(int departmentId, DateTime? since, int take)
+		public async Task<List<RmsRecordSearchProjection>> GetChangesSinceAsync(int departmentId, DateTime? since, int take, string sinceId = null)
 		{
 			var bounded = Math.Max(1, Math.Min(500, take));
-			return (await _projections.GetModifiedSinceAsync(departmentId, since, bounded))?.OrderBy(p => p.ModifiedOn).ThenBy(p => p.RmsRecordSearchProjectionId, StringComparer.Ordinal).ToList() ?? new List<RmsRecordSearchProjection>();
+			return (await _projections.GetModifiedSinceAsync(departmentId, since, bounded, sinceId))?.OrderBy(p => p.ModifiedOn).ThenBy(p => p.RmsRecordSearchProjectionId, StringComparer.Ordinal).ToList() ?? new List<RmsRecordSearchProjection>();
 		}
 
 		public async Task<List<RmsRevision>> GetRevisionsAsync(int departmentId, string recordId)
@@ -817,6 +819,10 @@ namespace Resgrid.Services.Records
 			};
 			await _revisions.InsertAsync(revision, cancellationToken, true);
 
+			// Evidence captured against the draft becomes evidence of this revision (RMS-3c). Binding rather than
+			// copying is deliberate: an artifact is immutable and belongs to exactly one attested revision.
+			await _evidence.BindToRevisionAsync(record.DepartmentId, record.RmsOperationalRecordId, revision.RmsRevisionId, cancellationToken);
+
 			// Revision-bound copies of the typed rows keep finalized data queryable without touching the draft rows.
 			if (draft.Details != null)
 			{
@@ -1009,31 +1015,7 @@ namespace Resgrid.Services.Records
 		{
 			var payload = new Dictionary<string, object>
 			{
-				["record"] = new
-				{
-					id = record.RmsOperationalRecordId,
-					record_number = record.RecordNumber,
-					draft_reference = record.DraftReference,
-					definition_key = record.DefinitionKey,
-					definition_version = record.DefinitionVersion,
-					type_key = record.RecordType.HasValue ? ((RmsOperationalRecordType)record.RecordType.Value).ToString() : null,
-					state = to.ToString(),
-					lifecycle_preset = ((RmsLifecyclePreset)record.LifecyclePreset).ToString(),
-					department_id = record.DepartmentId,
-					station_group_id = record.StationGroupId,
-					call_id = record.CallId,
-					external_id = record.ExternalId,
-					author_user_id = record.AuthorUserId,
-					owner_user_id = record.OwnerUserId,
-					started_on = record.StartedOn,
-					ended_on = record.EndedOn,
-					created_on = record.CreatedOn,
-					finalized_on = record.FinalizedOn,
-					revision_id = revision?.RmsRevisionId ?? record.CurrentRevisionId,
-					revision_number = revision?.RevisionNumber ?? record.RevisionCount,
-					checksum = revision?.Checksum,
-					summary = record.DisplaySummary
-				},
+				["record"] = RecordBlock(record, revision, to),
 				["record_change"] = new
 				{
 					previous_state = from.ToString(),
@@ -1076,6 +1058,40 @@ namespace Resgrid.Services.Records
 			}, cancellationToken);
 
 			return entry;
+		}
+
+		/// <summary>
+		/// The record.* block every Records event carries (plan section 5.6): header facts only, no details, no
+		/// participants and nothing restricted. Shared so the lifecycle events and the RMS-3 overdue event
+		/// (worker 42) describe a Record identically.
+		/// </summary>
+		public static object RecordBlock(RmsOperationalRecord record, RmsRevision revision, RmsRecordState state)
+		{
+			return new
+			{
+				id = record.RmsOperationalRecordId,
+				record_number = record.RecordNumber,
+				draft_reference = record.DraftReference,
+				definition_key = record.DefinitionKey,
+				definition_version = record.DefinitionVersion,
+				type_key = record.RecordType.HasValue ? ((RmsOperationalRecordType)record.RecordType.Value).ToString() : null,
+				state = state.ToString(),
+				lifecycle_preset = ((RmsLifecyclePreset)record.LifecyclePreset).ToString(),
+				department_id = record.DepartmentId,
+				station_group_id = record.StationGroupId,
+				call_id = record.CallId,
+				external_id = record.ExternalId,
+				author_user_id = record.AuthorUserId,
+				owner_user_id = record.OwnerUserId,
+				started_on = record.StartedOn,
+				ended_on = record.EndedOn,
+				created_on = record.CreatedOn,
+				finalized_on = record.FinalizedOn,
+				revision_id = revision?.RmsRevisionId ?? record.CurrentRevisionId,
+				revision_number = revision?.RevisionNumber ?? record.RevisionCount,
+				checksum = revision?.Checksum,
+				summary = record.DisplaySummary
+			};
 		}
 
 		/// <summary>

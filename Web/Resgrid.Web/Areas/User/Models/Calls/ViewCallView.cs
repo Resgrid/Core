@@ -32,6 +32,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string DestinationAddress { get; set; }
 		public string DestinationTypeName { get; set; }
 
+		/// <summary>RMS: false hides the Incident Report control, which would otherwise 404 on Start.</summary>
+		public bool RecordsUsable { get; set; }
+
 		/// <summary>ADP: true when this call carries protected fields rendered as REDACTED (plan 7.2).</summary>
 		public bool IsProtectedCall { get; set; }
 		public string ProtectedReason { get; set; }

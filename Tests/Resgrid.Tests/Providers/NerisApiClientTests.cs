@@ -53,7 +53,12 @@ namespace Resgrid.Tests.Providers
 			var token = _handler.Requests[0];
 			token.Method.Should().Be("POST");
 			token.Path.Should().Be("/v1/token");
-			token.Body.Should().Contain("grant_type=client_credentials").And.Contain("username=client").And.Contain("password=secret");
+			// A client-credentials integration account authenticates with HTTP Basic. The pinned contract's TokenBody
+			// declares username/password for the password and MFA flows only, so sending the id and secret there is
+			// rejected by the destination.
+			token.Body.Should().Contain("grant_type=client_credentials");
+			token.Body.Should().NotContain("username").And.NotContain("password=");
+			token.Authorization.Should().Be("Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("client:secret")));
 
 			var create = _handler.Requests[1];
 			create.Authorization.Should().Be("Bearer tok-1");

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -101,8 +101,8 @@ namespace Resgrid.Tests.Rms
 			_states.Setup(s => s.GetAsync(Dept, RmsSearchIndexState.RecordsIndexName)).ReturnsAsync(new RmsSearchIndexState { DepartmentId = Dept, IndexName = RmsSearchIndexState.RecordsIndexName, Generation = "1.3.7", State = (int)RmsSearchIndexBuildState.Ready, LastIndexedModifiedOn = since });
 			var deleted = Projection("rec-9", new DateTime(2026, 9, 3));
 			deleted.DeletedOn = DateTime.UtcNow;
-			_projections.SetupSequence(p => p.GetModifiedSinceAsync(Dept, since, It.IsAny<int>())).ReturnsAsync(new[] { Projection("rec-5", new DateTime(2026, 9, 2)), deleted });
-			_projections.Setup(p => p.GetModifiedSinceAsync(Dept, new DateTime(2026, 9, 3), It.IsAny<int>())).ReturnsAsync(new RmsRecordSearchProjection[0]);
+			_projections.SetupSequence(p => p.GetModifiedSinceAsync(Dept, since, It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new[] { Projection("rec-5", new DateTime(2026, 9, 2)), deleted });
+			_projections.Setup(p => p.GetModifiedSinceAsync(Dept, new DateTime(2026, 9, 3), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new RmsRecordSearchProjection[0]);
 
 			var result = await _service.SweepAsync();
 

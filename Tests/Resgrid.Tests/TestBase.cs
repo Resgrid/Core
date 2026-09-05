@@ -41,6 +41,12 @@ namespace Resgrid.Tests
 			return Bootstrapper.GetKernel().Resolve<T>();
 		}
 
+		/// <summary>Every registration for a service registered more than once (the evidence adapters, for example).</summary>
+		protected System.Collections.Generic.IEnumerable<T> ResolveAll<T>()
+		{
+			return Bootstrapper.GetKernel().Resolve<System.Collections.Generic.IEnumerable<T>>();
+		}
+
 		[SetUp]
 		public void SetupContext_ALL()
 		{

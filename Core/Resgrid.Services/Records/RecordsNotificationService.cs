@@ -18,6 +18,7 @@ namespace Resgrid.Services.Records
 	{
 		public const string ReturnedForCorrectionTitle = "Record returned for correction";
 		public const string SubmissionRejectedTitle = "Incident report rejected by NERIS";
+		public const string ObligationOverdueTitle = "Record is overdue";
 		private const int MaxReasonTextLength = 200;
 
 		private readonly IRmsOperationalRecordsRepository _records;
@@ -92,6 +93,84 @@ namespace Resgrid.Services.Records
 				Logging.LogException(ex, $"Submission-rejected notification for report {reportId} could not be sent.");
 				return false;
 			}
+		}
+
+		public async Task<bool> NotifyObligationOverdueAsync(int departmentId, string recordId, RmsRecordObligation obligation, CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(recordId))
+				return false;
+
+			// Both aggregates share the id space; whichever holds the row supplies the reference and the target.
+			string reference = null, targetUserId = null, detailPath = null;
+			DateTime? dueOn = null;
+
+			var record = await _records.GetByIdForDepartmentAsync(departmentId, recordId);
+			if (record != null && !record.DeletedOn.HasValue)
+			{
+				reference = string.IsNullOrWhiteSpace(record.RecordNumber) ? record.DraftReference : record.RecordNumber;
+				dueOn = record.ReviewDueOn;
+				targetUserId = ResponsibleFor(obligation, record.ReviewerUserId, record.OwnerUserId, record.AuthorUserId);
+				detailPath = "/User/Records/Details/";
+			}
+			else
+			{
+				var report = await _incidentReports.GetByIdForDepartmentAsync(departmentId, recordId);
+				if (report == null || report.DeletedOn.HasValue)
+					return false;
+
+				reference = string.IsNullOrWhiteSpace(report.RecordNumber) ? report.DraftReference : report.RecordNumber;
+				dueOn = report.ReviewDueOn;
+				targetUserId = ResponsibleFor(obligation, report.ReviewerUserId, report.OwnerUserId, report.AuthorUserId);
+				detailPath = "/User/IncidentReports/Details/";
+			}
+
+			if (string.IsNullOrWhiteSpace(targetUserId))
+				return false;
+
+			cancellationToken.ThrowIfCancellationRequested();
+			var department = await _departments.GetDepartmentByIdAsync(departmentId, false);
+			var departmentNumber = await _departmentSettings.GetTextToCallNumberForDepartmentAsync(departmentId);
+			var target = await _profiles.GetProfileByUserIdAsync(targetUserId, false);
+			var message = BuildObligationOverdueMessage(reference, obligation, dueOn, detailPath + recordId);
+
+			try
+			{
+				return await _communication.SendNotificationAsync(targetUserId, departmentId, message, departmentNumber, department, ObligationOverdueTitle, target);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Overdue notification for record {recordId} could not be sent.");
+				return false;
+			}
+		}
+
+		/// <summary>A review rests with the reviewer; a correction or a resubmission rests with the owner, else the author.</summary>
+		private static string ResponsibleFor(RmsRecordObligation obligation, string reviewerUserId, string ownerUserId, string authorUserId)
+		{
+			if (obligation == RmsRecordObligation.Review && !string.IsNullOrWhiteSpace(reviewerUserId))
+				return reviewerUserId;
+
+			return string.IsNullOrWhiteSpace(ownerUserId) ? authorUserId : ownerUserId;
+		}
+
+		public static string BuildObligationOverdueMessage(string reference, RmsRecordObligation obligation, DateTime? dueOn, string detailPath)
+		{
+			var what = obligation == RmsRecordObligation.Review ? "review"
+				: obligation == RmsRecordObligation.Correction ? "correction"
+				: "resubmission";
+
+			var builder = new StringBuilder();
+			builder.Append("Record ").Append(reference).Append(" is overdue for ").Append(what).Append('.');
+
+			if (dueOn.HasValue)
+			{
+				var hours = (int)Math.Max(0, (DateTime.UtcNow - dueOn.Value).TotalHours);
+				builder.Append(" It was due ").Append(hours).Append(hours == 1 ? " hour ago." : " hours ago.");
+			}
+
+			var baseUrl = (Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/');
+			builder.Append(' ').Append(baseUrl).Append(detailPath);
+			return builder.ToString();
 		}
 
 		/// <summary>Header, normalized rejection summary (codes and field paths, never destination payloads) and a link.</summary>

@@ -51,7 +51,7 @@
                     <a class="btn btn-primary" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["UpdateCallHeader"]</a>
                     <a style="text-decoration:none;" class="btn btn-warning" asp-controller="Dispatch" asp-action="CloseCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["CloseCallHeader"]</a>
                 }
-                @if (ClaimsAuthorizationHelper.CanCreateRecord())
+                @if (Model.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord())
                 {
                     <form method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default"><i class="fa fa-fire"></i> @localizer["IncidentReport"]</button></form>
                 }

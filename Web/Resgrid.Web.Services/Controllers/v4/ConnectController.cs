@@ -518,6 +518,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				// Add all resource claims for full access
 				AddAllResourceClaims(identity);
+				AddSystemRecordViewClaim(identity, 0);
 
 				var principal = new ClaimsPrincipal(identity);
 
@@ -588,6 +589,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				// Add all resource claims for full department access
 				AddAllResourceClaims(deptIdentity);
+				AddSystemRecordViewClaim(deptIdentity, department.DepartmentId);
 
 				var deptPrincipal = new ClaimsPrincipal(deptIdentity);
 
@@ -1336,6 +1338,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 		}
+		/// <summary>
+		/// Records (RMS) is deliberately absent from <see cref="AddAllResourceClaims"/>. A system principal —
+		/// the cross-department system account or a department service account — reads Records only under an
+		/// explicitly configured department+purpose grant, and then only with <c>Record_View</c>
+		/// (Identifier Allocation Registry section 4.4). No configuration produces a mutating or restricted
+		/// Record claim here. The purpose rides along on its own claim so the per-request guard can identify
+		/// the principal as non-user and write the purpose to the Record access audit.
+		/// </summary>
+		/// <param name="departmentId">The principal's department, or 0 for the cross-department system account.</param>
+		private static void AddSystemRecordViewClaim(ClaimsIdentity identity, int departmentId)
+		{
+			var grant = departmentId > 0
+				? SystemPrincipalRecordGrant.For(departmentId)
+				: SystemPrincipalRecordGrant.All().FirstOrDefault();
+
+			if (grant == null)
+				return;
+
+			identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View)
+				.SetDestinations(Destinations.AccessToken));
+			identity.AddClaim(new Claim(ResgridClaimTypes.Data.RecordGrantPurpose, grant.Purpose)
+				.SetDestinations(Destinations.AccessToken));
+		}
+
 		/// <summary>
 		/// Performs a timing-safe comparison of two secret strings to prevent timing attacks.
 		/// </summary>

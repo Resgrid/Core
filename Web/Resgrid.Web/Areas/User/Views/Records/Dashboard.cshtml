@@ -1,0 +1,194 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordsDashboardView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["RecordsDashboard"];
+	var d = Model.Dashboard;
+	var coverage = Model.Coverage;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["RecordsDashboard"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@localizer["RecordsDashboard"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message))
+	{
+		<div class="alert alert-success">@Model.Message</div>
+	}
+	@if (!Model.ModuleState.RecordsUsable)
+	{
+		<div class="alert alert-warning">@localizer["RecordsNotActivated"]</div>
+	}
+
+	@if (d != null)
+	{
+		@if (d.Warnings.Count > 0)
+		{
+			<div class="alert alert-warning">
+				<strong>@localizer["DashboardDegraded"]</strong>
+				<ul style="margin-bottom:0">
+					@foreach (var warning in d.Warnings)
+					{
+						<li>@warning</li>
+					}
+				</ul>
+			</div>
+		}
+
+		<div class="row">
+			<div class="col-lg-3 col-md-6">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["IncidentIncomplete"]</h5></div>
+					<div class="ibox-content">
+						<h1 class="no-margins">@d.IncidentIncomplete</h1>
+						<small>@localizer["IncidentIncompleteHint"]</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-6">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["AwaitingReview"]</h5></div>
+					<div class="ibox-content">
+						<h1 class="no-margins">@(d.IncidentAwaitingReview + d.OperationalAwaitingReview)</h1>
+						<small>@localizer["AwaitingReviewHint"]</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-6">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["Rejected"]</h5></div>
+					<div class="ibox-content">
+						<h1 class="no-margins @(d.IncidentRejected > 0 ? "text-danger" : string.Empty)">@d.IncidentRejected</h1>
+						<small>@localizer["RejectedHint"]</small>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-6">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["Overdue"]</h5></div>
+					<div class="ibox-content">
+						<h1 class="no-margins @(d.Overdue > 0 ? "text-danger" : string.Empty)">@d.Overdue</h1>
+						<small>@localizer["OverdueHint"]</small>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-fire"></i> @localizer["IncidentReports"]</h5></div>
+					<div class="ibox-content">
+						<table class="table table-condensed">
+							<tbody>
+								<tr><td>@localizer["Incomplete"]</td><td class="text-right"><strong>@d.IncidentIncomplete</strong></td></tr>
+								<tr><td>@localizer["AwaitingReview"]</td><td class="text-right"><strong>@d.IncidentAwaitingReview</strong></td></tr>
+								<tr><td>@localizer["Submitted"]</td><td class="text-right"><strong>@d.IncidentSubmitted</strong></td></tr>
+								<tr><td>@localizer["Accepted"]</td><td class="text-right"><strong>@d.IncidentAccepted</strong></td></tr>
+								<tr class="@(d.IncidentRejected > 0 ? "danger" : string.Empty)"><td>@localizer["Rejected"]</td><td class="text-right"><strong>@d.IncidentRejected</strong></td></tr>
+								<tr><td>@localizer["AnalysesAwaitingFiling"]</td><td class="text-right"><strong>@d.AnalysesAwaitingFiling</strong></td></tr>
+							</tbody>
+						</table>
+						<a class="btn btn-white btn-sm" asp-controller="IncidentReports" asp-action="Index" asp-route-area="User">@localizer["OpenIncidentQueue"]</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-6">
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-folder-open-o"></i> @localizer["OperationalRecords"]</h5></div>
+					<div class="ibox-content">
+						<table class="table table-condensed">
+							<tbody>
+								<tr><td>@localizer["Drafts"]</td><td class="text-right"><strong>@d.OperationalDrafts</strong></td></tr>
+								<tr><td>@localizer["AwaitingReview"]</td><td class="text-right"><strong>@d.OperationalAwaitingReview</strong></td></tr>
+								<tr><td>@localizer["Returned"]</td><td class="text-right"><strong>@d.OperationalReturned</strong></td></tr>
+							</tbody>
+						</table>
+						<a class="btn btn-white btn-sm" asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["OpenRecordsQueue"]</a>
+					</div>
+				</div>
+
+				@if (Model.CanManageDisclosures)
+				{
+					<div class="ibox">
+						<div class="ibox-title"><h5><i class="fa fa-gavel"></i> @localizer["Disclosures"]</h5></div>
+						<div class="ibox-content">
+							<table class="table table-condensed">
+								<tbody>
+									<tr><td>@localizer["Open"]</td><td class="text-right"><strong>@d.DisclosuresOpen</strong></td></tr>
+									<tr class="@(d.DisclosuresOverdue > 0 ? "danger" : string.Empty)"><td>@localizer["Overdue"]</td><td class="text-right"><strong>@d.DisclosuresOverdue</strong></td></tr>
+								</tbody>
+							</table>
+							<a class="btn btn-white btn-sm" asp-controller="Disclosures" asp-action="Index" asp-route-area="User">@localizer["OpenDisclosureQueue"]</a>
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+	}
+
+	@if (coverage != null)
+	{
+		<div class="ibox">
+			<div class="ibox-title">
+				<h5><i class="fa fa-exchange"></i> @localizer["CrosswalkCoverage"]</h5>
+				<div class="ibox-tools">
+					<span class="label label-success">@coverage.MappedCount @localizer["Mapped"]</span>
+					<span class="label @(coverage.UnmappedCount > 0 ? "label-danger" : "label-default")">@coverage.UnmappedCount @localizer["Unmapped"]</span>
+					@if (coverage.StaleMappingCount > 0)
+					{
+						<span class="label label-warning">@coverage.StaleMappingCount @localizer["Stale"]</span>
+					}
+					<span class="label label-default">@coverage.ContractVersion</span>
+				</div>
+			</div>
+			<div class="ibox-content">
+				<p class="text-muted">@localizer["CrosswalkCoverageIntro"]</p>
+				@if (coverage.Warnings.Count > 0)
+				{
+					<div class="alert alert-warning">
+						<ul style="margin-bottom:0">
+							@foreach (var warning in coverage.Warnings)
+							{
+								<li>@warning</li>
+							}
+						</ul>
+					</div>
+				}
+				@if (coverage.Items.Count > 0)
+				{
+					<div class="table-responsive">
+						<table class="table table-condensed">
+							<thead><tr><th>@localizer["SetKey"]</th><th>@localizer["LocalCode"]</th><th>@localizer["NerisCode"]</th></tr></thead>
+							<tbody>
+								@foreach (var item in coverage.Items.OrderBy(i => i.Mapped).ThenBy(i => i.LocalCode))
+								{
+									<tr class="@(item.Mapped ? string.Empty : "warning")">
+										<td>@item.SetKey</td>
+										<td>@item.LocalCode</td>
+										<td>@(item.Mapped ? item.NerisCode : localizer["Unmapped"].Value)</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+				@if (Model.IsDepartmentAdmin)
+				{
+					<a class="btn btn-white btn-sm" asp-controller="IncidentReports" asp-action="Settings" asp-route-area="User">@localizer["EditCrosswalk"]</a>
+				}
+			</div>
+		</div>
+	}
+</div>

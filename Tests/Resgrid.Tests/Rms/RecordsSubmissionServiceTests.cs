@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -12,6 +12,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
+using Resgrid.Model.Services;
 using Resgrid.Services;
 using Resgrid.Services.Records;
 
@@ -58,8 +59,8 @@ namespace Resgrid.Tests.Rms
 			_outboundQueue.Setup(q => q.EnqueueNotification(It.IsAny<NotificationItem>())).Callback<NotificationItem>(n => _notifications.Add(n)).ReturnsAsync(true);
 
 			var outbox = new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, new Mock<IEventAggregator>().Object);
-			_service = new RecordsSubmissionService(_store.SubmissionsRepo.Object, _store.ReportsRepo.Object, _store.Shared.ProjectionsRepo.Object,
-				_store.Shared.AuditsRepo.Object, _profiles.Object, _delivery.Object, outbox, _outboundQueue.Object, _store.UnitOfWork.Object);
+			_service = new RecordsSubmissionService(_store.SubmissionsRepo.Object, _store.ReportsRepo.Object, _store.AnalysesRepo.Object, _store.Shared.ProjectionsRepo.Object,
+				_store.Shared.AuditsRepo.Object, _profiles.Object, _delivery.Object, outbox, _outboundQueue.Object, _store.UnitOfWork.Object, _store.Shared.CutoversRepo.Object, Mock.Of<IIncidentAnalysisService>());
 		}
 
 		[TearDown]
@@ -187,6 +188,27 @@ namespace Resgrid.Tests.Rms
 			_store.Outbox.Should().ContainSingle(o => o.TriggerEventType == (int)WorkflowTriggerEventType.RecordSubmissionFailed);
 			_store.Reports.Single().LastSubmissionState.Should().Be((int)RmsSubmissionState.Failed);
 			_notifications.Should().BeEmpty("a failed delivery is an operator concern, not the author's");
+		}
+
+		[Test]
+		public async Task A_transient_status_poll_never_spends_the_delivery_retry_budget()
+		{
+			// The row was delivered on its last allowed attempt and the destination now holds the revision. Status
+			// polls leave Attempts alone, so treating a poll error as an exhausted retry would fail a submission the
+			// destination may still accept.
+			var submission = Seed(RmsRecordState.Submitted, RmsSubmissionState.AwaitingDestination, maxAttempts: 2, externalId: "FD24027000I2026000123");
+			submission.Attempts = 2;
+			_delivery.Setup(d => d.CheckStatusAsync(_profile, "FD24027000I2026000123", It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new NerisSubmissionOutcome { Kind = NerisOutcomeKind.Transient, StatusCode = 503, Message = "NERIS returned 503." });
+
+			var result = await _service.ProcessAsync(submission);
+
+			result.State.Should().Be((int)RmsSubmissionState.AwaitingDestination);
+			result.Attempts.Should().Be(2, "a status poll is not a delivery attempt");
+			result.CompletedOn.Should().BeNull();
+			result.NextAttemptOn.Should().NotBeNull();
+			result.ErrorSummary.Should().Be("NERIS returned 503.");
+			_store.Outbox.Should().NotContain(o => o.TriggerEventType == (int)WorkflowTriggerEventType.RecordSubmissionFailed);
 		}
 
 		[Test]

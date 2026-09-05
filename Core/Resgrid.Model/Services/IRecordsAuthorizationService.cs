@@ -25,6 +25,14 @@ namespace Resgrid.Model.Services
 		/// <summary>Per-Record check applied on every detail, attachment and deep-link read.</summary>
 		Task<bool> CanUserViewRecordAsync(string userId, string recordId, int departmentId);
 
+		/// <summary>
+		/// Per-Record check for a system principal reading under a configured grant (Identifier Allocation
+		/// Registry section 4.4). A system principal is nobody: none of the always-visible author/owner/
+		/// reviewer/participant cases apply to it, so a non-department-wide grant sees exactly the groups it
+		/// names and nothing else.
+		/// </summary>
+		Task<bool> CanSystemPrincipalViewRecordAsync(SystemPrincipalRecordGrant grant, string recordId);
+
 		/// <summary>What GroupScoped would hide, by group, before an administrator confirms it (plan 5.7.1 "Turning it on").</summary>
 		Task<RecordsGroupScopePreview> PreviewGroupScopingAsync(int departmentId);
 	}

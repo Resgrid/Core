@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Resgrid.Web.Services.Models.v4.Records
@@ -154,6 +154,14 @@ namespace Resgrid.Web.Services.Models.v4.Records
 	{
 		public long Since { get; set; }
 		public long ServerTimestampMs { get; set; }
+
+		/// <summary>
+		/// Tie-breaker for the next call, sent back as <c>sinceId</c> alongside <c>since</c>. Several records routinely
+		/// share a modified timestamp; without it the rows that fall after a page break inside one timestamp are never
+		/// delivered.
+		/// </summary>
+		public string ServerCursorId { get; set; }
+
 		public bool HasMore { get; set; }
 		public List<RecordSummaryData> Records { get; set; } = new List<RecordSummaryData>();
 	}

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -343,4 +343,625 @@
   <data name="QueueCounts" xml:space="preserve"><value>قائمة انتظار الإرسال</value></data>
   <data name="NerisSettingsSaved" xml:space="preserve"><value>تم حفظ إعدادات NERIS.</value></data>
   <data name="SubmissionQueued" xml:space="preserve"><value>تمت إضافة الإرسال إلى قائمة انتظار NERIS.</value></data>
+  <data name="Accepted" xml:space="preserve">
+    <value>مقبول</value>
+  </data>
+  <data name="AllDefinitions" xml:space="preserve">
+    <value>كل التعريفات</value>
+  </data>
+  <data name="AnalysesAwaitingFiling" xml:space="preserve">
+    <value>تحليلات بانتظار الإيداع</value>
+  </data>
+  <data name="AnalysisAwaitingIncident" xml:space="preserve">
+    <value>اكتمل هذا التحليل وسيُودَع فور وصول الحادث نفسه إلى NERIS.</value>
+  </data>
+  <data name="AnalysisSections" xml:space="preserve">
+    <value>أقسام التحليل</value>
+  </data>
+  <data name="Applies" xml:space="preserve">
+    <value>ينطبق</value>
+  </data>
+  <data name="AssignedTo" xml:space="preserve">
+    <value>مُسند إلى</value>
+  </data>
+  <data name="Automobile" xml:space="preserve">
+    <value>سيارة</value>
+  </data>
+  <data name="AwaitingReview" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+  </data>
+  <data name="AwaitingReviewHint" xml:space="preserve">
+    <value>سجلات أُرسلت للمراجعة ولم تُعتمد بعد</value>
+  </data>
+  <data name="BackToReport" xml:space="preserve">
+    <value>العودة إلى تقرير الحادث</value>
+  </data>
+  <data name="BodyStyle" xml:space="preserve">
+    <value>طراز الهيكل</value>
+  </data>
+  <data name="CallId" xml:space="preserve">
+    <value>بلاغ</value>
+  </data>
+  <data name="Capture" xml:space="preserve">
+    <value>التقاط</value>
+  </data>
+  <data name="CaptureReason" xml:space="preserve">
+    <value>سبب التقاط هذا الدليل</value>
+  </data>
+  <data name="CapturedBy" xml:space="preserve">
+    <value>التقطه</value>
+  </data>
+  <data name="CapturedOn" xml:space="preserve">
+    <value>تاريخ الالتقاط</value>
+  </data>
+  <data name="CasualtiesAndRescues" xml:space="preserve">
+    <value>المصابون وعمليات الإنقاذ</value>
+  </data>
+  <data name="Casualty" xml:space="preserve">
+    <value>مصاب</value>
+  </data>
+  <data name="CasualtyAction" xml:space="preserve">
+    <value>النشاط وقت الإصابة</value>
+  </data>
+  <data name="CasualtyCause" xml:space="preserve">
+    <value>سبب الإصابة</value>
+  </data>
+  <data name="CasualtyTimeline" xml:space="preserve">
+    <value>توقيت الحدوث</value>
+  </data>
+  <data name="Civilian" xml:space="preserve">
+    <value>مدني</value>
+  </data>
+  <data name="CloseRequest" xml:space="preserve">
+    <value>إغلاق الطلب</value>
+  </data>
+  <data name="ClosedOn" xml:space="preserve">
+    <value>تاريخ الإغلاق</value>
+  </data>
+  <data name="ConditionalSections" xml:space="preserve">
+    <value>الأقسام المشروطة</value>
+  </data>
+  <data name="ConstructionType" xml:space="preserve">
+    <value>نوع البناء</value>
+  </data>
+  <data name="ContentsLoss" xml:space="preserve">
+    <value>خسارة المحتويات</value>
+  </data>
+  <data name="ContentsValue" xml:space="preserve">
+    <value>قيمة المحتويات</value>
+  </data>
+  <data name="CrosswalkCoverage" xml:space="preserve">
+    <value>تغطية مطابقة الرموز</value>
+  </data>
+  <data name="CrosswalkCoverageIntro" xml:space="preserve">
+    <value>كل نوع بلاغ محلي بلا رمز NERIS سيحتاج إلى تصنيف يدوي وقت الحادث.</value>
+  </data>
+  <data name="CurrencyCode" xml:space="preserve">
+    <value>العملة</value>
+  </data>
+  <data name="DamageType" xml:space="preserve">
+    <value>درجة الضرر</value>
+  </data>
+  <data name="DashboardDegraded" xml:space="preserve">
+    <value>تعذّر إنتاج بعض الإحصاءات:</value>
+  </data>
+  <data name="DefinitionKey" xml:space="preserve">
+    <value>التعريف</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="Disclosure" xml:space="preserve">
+    <value>طلب الاطلاع على السجلات</value>
+  </data>
+  <data name="DisclosureClosed" xml:space="preserve">
+    <value>أُغلق طلب الاطلاع على السجلات.</value>
+  </data>
+  <data name="DisclosureCreated" xml:space="preserve">
+    <value>تم تسجيل طلب الاطلاع على السجلات.</value>
+  </data>
+  <data name="DisclosureIntro" xml:space="preserve">
+    <value>لطلب الاطلاع مهلة قانونية، لذلك يُتابَع هنا بدل الرد عليه ارتجالاً.</value>
+  </data>
+  <data name="DisclosureOverdueNotice" xml:space="preserve">
+    <value>تجاوز هذا الطلب مهلته القانونية.</value>
+  </data>
+  <data name="DisclosureProduced" xml:space="preserve">
+    <value>أُعدّت نسخة منقّحة للتسليم.</value>
+  </data>
+  <data name="DisclosureQueue" xml:space="preserve">
+    <value>طلبات الاطلاع على السجلات</value>
+  </data>
+  <data name="DisclosureReasonRequired" xml:space="preserve">
+    <value>يلزم بيان السبب لإغلاق طلب الاطلاع.</value>
+  </data>
+  <data name="DisclosureReleased" xml:space="preserve">
+    <value>سُلِّمت النسخة إلى مقدّم الطلب.</value>
+  </data>
+  <data name="DisclosureScopeSaved" xml:space="preserve">
+    <value>تم حفظ النطاق.</value>
+  </data>
+  <data name="Disclosures" xml:space="preserve">
+    <value>الاطلاع على السجلات</value>
+  </data>
+  <data name="DispositionReason" xml:space="preserve">
+    <value>سبب القرار</value>
+  </data>
+  <data name="Drafts" xml:space="preserve">
+    <value>المسودات</value>
+  </data>
+  <data name="DutyType" xml:space="preserve">
+    <value>نوع المهمة حينها</value>
+  </data>
+  <data name="EditCrosswalk" xml:space="preserve">
+    <value>تحرير مطابقة الرموز</value>
+  </data>
+  <data name="EditIncidentAnalysis" xml:space="preserve">
+    <value>تحرير تحليل الحادث</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="EstimatedLoss" xml:space="preserve">
+    <value>الخسارة التقديرية</value>
+  </data>
+  <data name="EstimatedValue" xml:space="preserve">
+    <value>القيمة التقديرية</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>الأدلة</value>
+  </data>
+  <data name="EvidenceCaptured" xml:space="preserve">
+    <value>تم التقاط الدليل.</value>
+  </data>
+  <data name="EvidenceCertificationSnapshot" xml:space="preserve">
+    <value>الشهادات وقت الحادث</value>
+  </data>
+  <data name="EvidenceChatPromotion" xml:space="preserve">
+    <value>رسائل الحادث المُدرجة</value>
+  </data>
+  <data name="EvidenceIntro" xml:space="preserve">
+    <value>كل دليل لقطة محدودة تُلتقط مرة واحدة ولها بصمة تحقق ولا تُعدَّل أبداً؛ والتصحيح التقاط جديد.</value>
+  </data>
+  <data name="EvidenceInventoryUsage" xml:space="preserve">
+    <value>المستهلكات والمواد الخاضعة للرقابة المستخدمة</value>
+  </data>
+  <data name="EvidenceReadinessPacket" xml:space="preserve">
+    <value>الجاهزية وقت البلاغ</value>
+  </data>
+  <data name="EvidenceReasonRequired" xml:space="preserve">
+    <value>يلزم بيان السبب لإدراج دليل في سجل رسمي.</value>
+  </data>
+  <data name="EvidenceRunCardActivation" xml:space="preserve">
+    <value>قرار الإرسال</value>
+  </data>
+  <data name="EvidenceSource" xml:space="preserve">
+    <value>المصدر</value>
+  </data>
+  <data name="EvidenceTrackingFix" xml:space="preserve">
+    <value>مواقع الوحدات</value>
+  </data>
+  <data name="EvidenceUnavailable" xml:space="preserve">
+    <value>لم يكن لدى مصدر الأدلة هذا ما يلتقطه لهذا السجل.</value>
+  </data>
+  <data name="ExposureItem" xml:space="preserve">
+    <value>العنصر المعرَّض</value>
+  </data>
+  <data name="Exposures" xml:space="preserve">
+    <value>العناصر المعرَّضة</value>
+  </data>
+  <data name="Fatal" xml:space="preserve">
+    <value>قاتلة</value>
+  </data>
+  <data name="FinalizeAnalysisIntro" xml:space="preserve">
+    <value>الإنهاء يكتب النسخة غير القابلة للتغيير. ويظل الإيداع منتظراً معرّف NERIS للحادث إن لم يكن متاحاً بعد.</value>
+  </data>
+  <data name="FinalizedOn" xml:space="preserve">
+    <value>تاريخ الإنهاء</value>
+  </data>
+  <data name="FireSpread" xml:space="preserve">
+    <value>امتداد الحريق</value>
+  </data>
+  <data name="Firefighter" xml:space="preserve">
+    <value>رجل إطفاء</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>الجنس</value>
+  </data>
+  <data name="GeneralCause" xml:space="preserve">
+    <value>السبب العام</value>
+  </data>
+  <data name="IncidentAnalysis" xml:space="preserve">
+    <value>تحليل الحادث</value>
+  </data>
+  <data name="IncidentAnalysisIntro" xml:space="preserve">
+    <value>يُودع التحقيق في الحريق والمواد الخطرة بشكل منفصل عن الحادث بعد أن تصبح الجهة المستقبِلة تملكه.</value>
+  </data>
+  <data name="IncidentIncomplete" xml:space="preserve">
+    <value>تقارير غير مكتملة</value>
+  </data>
+  <data name="IncidentIncompleteHint" xml:space="preserve">
+    <value>تقارير حوادث لم تُنهَ بعد</value>
+  </data>
+  <data name="IncludeLegacy" xml:space="preserve">
+    <value>تضمين قيود السجل القديم</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>غير مكتمل</value>
+  </data>
+  <data name="Injured" xml:space="preserve">
+    <value>مصاب</value>
+  </data>
+  <data name="InvestigationTypes" xml:space="preserve">
+    <value>أنواع التحقيق</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>العناصر</value>
+  </data>
+  <data name="JurisdictionProfile" xml:space="preserve">
+    <value>الاختصاص القضائي</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="LicensePlate" xml:space="preserve">
+    <value>لوحة التسجيل</value>
+  </data>
+  <data name="LocalCode" xml:space="preserve">
+    <value>الرمز المحلي</value>
+  </data>
+  <data name="LogDisclosure" xml:space="preserve">
+    <value>تسجيل طلب اطلاع</value>
+  </data>
+  <data name="Make" xml:space="preserve">
+    <value>الصانع</value>
+  </data>
+  <data name="Manifest" xml:space="preserve">
+    <value>بيان المحتوى</value>
+  </data>
+  <data name="Mapped" xml:space="preserve">
+    <value>مطابَقة</value>
+  </data>
+  <data name="Matched" xml:space="preserve">
+    <value>مطابقة</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>الطراز</value>
+  </data>
+  <data name="ModelYear" xml:space="preserve">
+    <value>سنة الطراز</value>
+  </data>
+  <data name="NerisAnalysisId" xml:space="preserve">
+    <value>معرّف تحليل NERIS</value>
+  </data>
+  <data name="NerisCode" xml:space="preserve">
+    <value>رمز NERIS</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>لا توجد طلبات اطلاع مسجّلة.</value>
+  </data>
+  <data name="NoEvidenceCaptured" xml:space="preserve">
+    <value>لم يُلتقط أي دليل لهذا التقرير.</value>
+  </data>
+  <data name="NoProductions" xml:space="preserve">
+    <value>لم يُنتَج شيء بعد.</value>
+  </data>
+  <data name="NoSectionsYet" xml:space="preserve">
+    <value>لا تنطبق أي أقسام مشروطة قبل اختيار نوع الحادث.</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>مفتوحة</value>
+  </data>
+  <data name="OpenAnalysis" xml:space="preserve">
+    <value>فتح التحليل</value>
+  </data>
+  <data name="OpenDisclosureQueue" xml:space="preserve">
+    <value>فتح طلبات الاطلاع</value>
+  </data>
+  <data name="OpenIncidentQueue" xml:space="preserve">
+    <value>فتح قائمة الحوادث</value>
+  </data>
+  <data name="OpenRecordsQueue" xml:space="preserve">
+    <value>فتح قائمة السجلات</value>
+  </data>
+  <data name="OperationalRecords" xml:space="preserve">
+    <value>السجلات التشغيلية</value>
+  </data>
+  <data name="Overdue" xml:space="preserve">
+    <value>متأخرة</value>
+  </data>
+  <data name="OverdueHint" xml:space="preserve">
+    <value>التزامات تجاوزت موعدها</value>
+  </data>
+  <data name="PersonType" xml:space="preserve">
+    <value>نوع الشخص</value>
+  </data>
+  <data name="PersonnelMember" xml:space="preserve">
+    <value>عضو</value>
+  </data>
+  <data name="Powertrain" xml:space="preserve">
+    <value>نظام الدفع</value>
+  </data>
+  <data name="PreparedOn" xml:space="preserve">
+    <value>تاريخ الإعداد</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>في السجل</value>
+  </data>
+  <data name="PrimaryCode" xml:space="preserve">
+    <value>الرمز الأساسي</value>
+  </data>
+  <data name="Produce" xml:space="preserve">
+    <value>إعداد النسخة</value>
+  </data>
+  <data name="ProduceIntro" xml:space="preserve">
+    <value>النسخة المُعدّة وثيقة جديدة غير قابلة للتغيير؛ ولا يغيّر أي تعديل لاحق ما جرى تسليمه.</value>
+  </data>
+  <data name="Producible" xml:space="preserve">
+    <value>قابل للتسليم</value>
+  </data>
+  <data name="ProductionIntact" xml:space="preserve">
+    <value>لا تزال بصمة التحقق مطابقة؛ لم تُعدَّل النسخة.</value>
+  </data>
+  <data name="ProductionTampered" xml:space="preserve">
+    <value>بصمة التحقق لا تطابق ما هو مخزَّن.</value>
+  </data>
+  <data name="Productions" xml:space="preserve">
+    <value>النسخ المُعدّة</value>
+  </data>
+  <data name="ProfileVersion" xml:space="preserve">
+    <value>إصدار العقد</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>الممتلكات</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>الكمية</value>
+  </data>
+  <data name="QueueSubmission" xml:space="preserve">
+    <value>إدراج الإيداع في الطابور</value>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value>في الطابور</value>
+  </data>
+  <data name="Race" xml:space="preserve">
+    <value>العِرق</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>الرتبة</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+    <value>تاريخ الاستلام</value>
+  </data>
+  <data name="RecordCount" xml:space="preserve">
+    <value>السجلات</value>
+  </data>
+  <data name="RecordsDashboard" xml:space="preserve">
+    <value>لوحة السجلات</value>
+  </data>
+  <data name="RecordsNotActivated" xml:space="preserve">
+    <value>لم تُفعَّل وحدة السجلات لهذه الإدارة بعد.</value>
+  </data>
+  <data name="RedactionProfile" xml:space="preserve">
+    <value>ملف التنقيح</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>مرفوضة</value>
+  </data>
+  <data name="RejectedHint" xml:space="preserve">
+    <value>رُفضت من الجهة المستقبِلة ولم تُصحَّح بعد</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>تسليم</value>
+  </data>
+  <data name="ReleasedOn" xml:space="preserve">
+    <value>تاريخ التسليم</value>
+  </data>
+  <data name="Request" xml:space="preserve">
+    <value>الطلب</value>
+  </data>
+  <data name="RequestNumber" xml:space="preserve">
+    <value>الرقم المرجعي</value>
+  </data>
+  <data name="Requester" xml:space="preserve">
+    <value>مقدّم الطلب</value>
+  </data>
+  <data name="RequesterContact" xml:space="preserve">
+    <value>بيانات الاتصال</value>
+  </data>
+  <data name="RequesterIdentityWithheld" xml:space="preserve">
+    <value>هوية مقدّم الطلب محظورة ولا تُعرض هنا.</value>
+  </data>
+  <data name="RequesterName" xml:space="preserve">
+    <value>اسم مقدّم الطلب</value>
+  </data>
+  <data name="RequesterOrganization" xml:space="preserve">
+    <value>الجهة</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>إلزامي</value>
+  </data>
+  <data name="Rescue" xml:space="preserve">
+    <value>إنقاذ</value>
+  </data>
+  <data name="RescueElevation" xml:space="preserve">
+    <value>منسوب الإنقاذ</value>
+  </data>
+  <data name="RescueMode" xml:space="preserve">
+    <value>أسلوب الإنقاذ</value>
+  </data>
+  <data name="RescuePath" xml:space="preserve">
+    <value>مسار الإنقاذ</value>
+  </data>
+  <data name="RescueType" xml:space="preserve">
+    <value>نوع الإنقاذ</value>
+  </data>
+  <data name="ResourceCode" xml:space="preserve">
+    <value>المورد</value>
+  </data>
+  <data name="Resources" xml:space="preserve">
+    <value>الموارد</value>
+  </data>
+  <data name="ResourcesNotSubmitted" xml:space="preserve">
+    <value>تُحفظ في سجل الإدارة فقط ولا تُرسل إلى NERIS</value>
+  </data>
+  <data name="RestrictedFieldsHidden" xml:space="preserve">
+    <value>بعض الحقول محظورة ولا تُعرض لك.</value>
+  </data>
+  <data name="Returned" xml:space="preserve">
+    <value>أُعيدت للتصحيح</value>
+  </data>
+  <data name="SaveScope" xml:space="preserve">
+    <value>حفظ النطاق</value>
+  </data>
+  <data name="Scope" xml:space="preserve">
+    <value>النطاق</value>
+  </data>
+  <data name="ScopeFrozen" xml:space="preserve">
+    <value>النطاق مجمَّد لأنه سبق إعداد نسخة استناداً إليه.</value>
+  </data>
+  <data name="ScopeNarrative" xml:space="preserve">
+    <value>ما تم طلبه</value>
+  </data>
+  <data name="ScopePreview" xml:space="preserve">
+    <value>ما يشمله النطاق</value>
+  </data>
+  <data name="ScopePreviewTruncated" xml:space="preserve">
+    <value>عدد السجلات المطابقة أكبر مما هو مدرج هنا.</value>
+  </data>
+  <data name="SecondaryCode" xml:space="preserve">
+    <value>الرمز الثانوي</value>
+  </data>
+  <data name="SectionBattery" xml:space="preserve">
+    <value>البطارية المعنية</value>
+  </data>
+  <data name="SectionChemical" xml:space="preserve">
+    <value>المادة الكيميائية المتسربة</value>
+  </data>
+  <data name="SectionCookingFireSuppression" xml:space="preserve">
+    <value>نظام إطفاء المطابخ</value>
+  </data>
+  <data name="SectionCsstHazard" xml:space="preserve">
+    <value>أنابيب غاز فولاذية مموجة</value>
+  </data>
+  <data name="SectionElectricHazard" xml:space="preserve">
+    <value>خطر كهربائي</value>
+  </data>
+  <data name="SectionFire" xml:space="preserve">
+    <value>تفاصيل الحريق</value>
+  </data>
+  <data name="SectionFireAlarm" xml:space="preserve">
+    <value>نظام إنذار الحريق</value>
+  </data>
+  <data name="SectionFireSuppression" xml:space="preserve">
+    <value>نظام الإطفاء</value>
+  </data>
+  <data name="SectionHazsit" xml:space="preserve">
+    <value>الوضع الخطر</value>
+  </data>
+  <data name="SectionHazsitAnalysis" xml:space="preserve">
+    <value>تحليل الوضع الخطر</value>
+  </data>
+  <data name="SectionMedical" xml:space="preserve">
+    <value>رعاية المريض</value>
+  </data>
+  <data name="SectionMedicalOxygenHazard" xml:space="preserve">
+    <value>الأكسجين الطبي المنزلي</value>
+  </data>
+  <data name="SectionNoLongerApplies" xml:space="preserve">
+    <value>لم يعد هذا القسم ينطبق على أنواع الحوادث المختارة.</value>
+  </data>
+  <data name="SectionOtherAlarm" xml:space="preserve">
+    <value>إنذار آخر</value>
+  </data>
+  <data name="SectionOutsideFire" xml:space="preserve">
+    <value>تحليل الحريق في العراء</value>
+  </data>
+  <data name="SectionOutsideFireLocation" xml:space="preserve">
+    <value>موقع الحريق في العراء</value>
+  </data>
+  <data name="SectionPowergenHazard" xml:space="preserve">
+    <value>خطر توليد الطاقة</value>
+  </data>
+  <data name="SectionProduct" xml:space="preserve">
+    <value>المنتج المعني</value>
+  </data>
+  <data name="SectionSmokeAlarm" xml:space="preserve">
+    <value>جهاز إنذار الدخان</value>
+  </data>
+  <data name="SectionStructureFireLocation" xml:space="preserve">
+    <value>موقع حريق المبنى</value>
+  </data>
+  <data name="SectionStructureFireOrigin" xml:space="preserve">
+    <value>منشأ حريق المبنى</value>
+  </data>
+  <data name="Sent" xml:space="preserve">
+    <value>أُرسل</value>
+  </data>
+  <data name="SetKey" xml:space="preserve">
+    <value>مجموعة القيم</value>
+  </data>
+  <data name="Stale" xml:space="preserve">
+    <value>قديمة</value>
+  </data>
+  <data name="StartAnalysis" xml:space="preserve">
+    <value>بدء التحليل</value>
+  </data>
+  <data name="States" xml:space="preserve">
+    <value>الحالات</value>
+  </data>
+  <data name="StatutoryDueHint" xml:space="preserve">
+    <value>إذا تُرك فارغاً حدّدته المهلة القانونية للإدارة.</value>
+  </data>
+  <data name="StatutoryDueOn" xml:space="preserve">
+    <value>الموعد القانوني</value>
+  </data>
+  <data name="StoriesAbove" xml:space="preserve">
+    <value>طوابق فوق الأرض</value>
+  </data>
+  <data name="StoriesBelow" xml:space="preserve">
+    <value>طوابق تحت الأرض</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>إيداع</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>مُودعة</value>
+  </data>
+  <data name="Suggested" xml:space="preserve">
+    <value>مُقترح</value>
+  </data>
+  <data name="Superseded" xml:space="preserve">
+    <value>مُستبدَل</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Vacancy" xml:space="preserve">
+    <value>حالة الإشغال</value>
+  </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>المركبات</value>
+  </data>
+  <data name="VerifyProduction" xml:space="preserve">
+    <value>التحقق من بصمة السلامة</value>
+  </data>
+  <data name="Vin" xml:space="preserve">
+    <value>رقم هيكل المركبة</value>
+  </data>
+  <data name="WasOccupied" xml:space="preserve">
+    <value>كان مشغولاً حينها</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>السنة</value>
+  </data>
+  <data name="YearBuilt" xml:space="preserve">
+    <value>سنة البناء</value>
+  </data>
+  <data name="OtherVehicle" xml:space="preserve">
+    <value>مركبة أخرى</value>
+  </data>
+  <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
+    <value>يلزم إدخال بيانات اعتماد جديدة عند تغيير نوع منح الوصول في NERIS.</value>
+  </data>
 </root>

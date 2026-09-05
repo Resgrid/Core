@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -43,6 +43,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IRecordsSearchService> _search;
 		private Mock<IRecordAttachmentUploadService> _uploads;
 		private Mock<IRecordsApiIdempotencyService> _idempotency;
+		private Mock<IRecordsDashboardService> _dashboard;
 		private RecordsModuleState _moduleState;
 		private RecordsController _controller;
 		private DefaultHttpContext _http;
@@ -71,6 +72,7 @@ namespace Resgrid.Tests.Web.Services
 			_uploads = new Mock<IRecordAttachmentUploadService>();
 			_uploads.SetupGet(u => u.ChunkSize).Returns(512 * 1024);
 			_idempotency = new Mock<IRecordsApiIdempotencyService>();
+			_dashboard = new Mock<IRecordsDashboardService>();
 
 			_http = new DefaultHttpContext
 			{
@@ -87,7 +89,7 @@ namespace Resgrid.Tests.Web.Services
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = _http };
 			_activity = new Activity("RecordsApiControllerTests").Start();
 
-			_controller = new RecordsController(_records.Object, _cutover.Object, _authorization.Object, _flags.Object, _settings.Object, _adp.Object, _search.Object, _uploads.Object, _idempotency.Object)
+			_controller = new RecordsController(_records.Object, _cutover.Object, _authorization.Object, _flags.Object, _settings.Object, _adp.Object, _search.Object, _uploads.Object, _idempotency.Object, _dashboard.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = _http }
 			};
@@ -280,10 +282,10 @@ namespace Resgrid.Tests.Web.Services
 
 			var finalized = await _controller.Finalize(new RecordCommandInput { RecordId = RecordId, RowVersion = 5, Attested = true, IdempotencyKey = "fin-1" }, CancellationToken.None);
 			((RecordResult)((OkObjectResult)finalized.Result).Value).Data.StateName.Should().Be("Finalized");
-			_idempotency.Verify(i => i.RememberAsync(Dept, Me, "fin-1", RecordId), Times.Once);
+			_idempotency.Verify(i => i.RememberAsync(Dept, Me, "fin-1", "Finalize", RecordId), Times.Once);
 
 			// Replay: the remembered key short-circuits the transition.
-			_idempotency.Setup(i => i.TryGetRecordIdAsync(Dept, Me, "fin-1")).ReturnsAsync(RecordId);
+			_idempotency.Setup(i => i.TryGetRecordIdAsync(Dept, Me, "fin-1", "Finalize")).ReturnsAsync(RecordId);
 			var replayed = await _controller.Finalize(new RecordCommandInput { RecordId = RecordId, RowVersion = 99, Attested = true, IdempotencyKey = "fin-1" }, CancellationToken.None);
 			replayed.Result.Should().BeOfType<OkObjectResult>();
 			_records.Verify(r => r.FinalizeAsync(Dept, Me, RecordId, It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -308,7 +310,7 @@ namespace Resgrid.Tests.Web.Services
 			var t0 = new DateTime(2026, 9, 3, 10, 0, 0, DateTimeKind.Utc);
 			_authorization.Setup(a => a.GetVisibleGroupIdsAsync(Me, Dept)).ReturnsAsync(new List<int> { 1 });
 			_authorization.Setup(a => a.CanUserViewRecordAsync(Me, "hidden", Dept)).ReturnsAsync(false);
-			_records.Setup(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), 3)).ReturnsAsync(new List<RmsRecordSearchProjection>
+			_records.Setup(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), 3, It.IsAny<string>())).ReturnsAsync(new List<RmsRecordSearchProjection>
 			{
 				new RmsRecordSearchProjection { RmsRecordSearchProjectionId = "live", State = (int)RmsRecordState.Draft, ModifiedOn = t0, RecordCreatedOn = t0 },
 				new RmsRecordSearchProjection { RmsRecordSearchProjectionId = "hidden", State = (int)RmsRecordState.Draft, ModifiedOn = t0.AddMinutes(1), RecordCreatedOn = t0 },
@@ -322,7 +324,7 @@ namespace Resgrid.Tests.Web.Services
 			data.Records.Select(r => r.RecordId).Should().BeEquivalentTo(new[] { "live" }, "the hidden row is outside the caller's group scope");
 			data.ServerTimestampMs.Should().Be(new DateTimeOffset(t0.AddMinutes(1)).ToUnixTimeMilliseconds(), "the cursor stops at the last row of the page so nothing is skipped");
 
-			_records.Setup(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), 3)).ReturnsAsync(new List<RmsRecordSearchProjection>
+			_records.Setup(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), 3, It.IsAny<string>())).ReturnsAsync(new List<RmsRecordSearchProjection>
 			{
 				new RmsRecordSearchProjection { RmsRecordSearchProjectionId = "gone", State = (int)RmsRecordState.Voided, ModifiedOn = t0.AddMinutes(2), RecordCreatedOn = t0 }
 			});

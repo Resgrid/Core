@@ -22,6 +22,32 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void GenerateSampleData_IncludesTheSubmissionBlockForTheSubmissionTriggers()
+		{
+			// The dispatch switch previously stopped at RecordCancelled (107), so the submission triggers advertised
+			// submission.* in the variable catalog and rendered nothing in the preview.
+			foreach (var eventType in new[]
+			{
+				WorkflowTriggerEventType.RecordSubmissionQueued, WorkflowTriggerEventType.RecordSubmissionAccepted,
+				WorkflowTriggerEventType.RecordSubmissionRejected, WorkflowTriggerEventType.RecordSubmissionFailed
+			})
+			{
+				var data = (ScriptObject)WorkflowSampleDataGenerator.GenerateSampleData(eventType);
+				data["record"].Should().NotBeNull($"{eventType} advertises record.*");
+				data["submission"].Should().NotBeNull($"{eventType} advertises submission.*");
+			}
+		}
+
+		[Test]
+		public void GenerateSampleData_IncludesTheObligationBlockForRecordOverdue()
+		{
+			var data = (ScriptObject)WorkflowSampleDataGenerator.GenerateSampleData(WorkflowTriggerEventType.RecordOverdue);
+
+			data["record"].Should().NotBeNull();
+			data["obligation"].Should().NotBeNull();
+		}
+
+		[Test]
 		public void GenerateSampleData_IncludesDepartmentVariables()
 		{
 			var data = (ScriptObject)WorkflowSampleDataGenerator.GenerateSampleData(WorkflowTriggerEventType.CallAdded);

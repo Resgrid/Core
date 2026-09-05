@@ -99,7 +99,14 @@
 		RecordSubmissionRejected = 110,
 
 		/// <summary>Delivery exhausted its retries or requires operator attention.</summary>
-		RecordSubmissionFailed = 111
+		RecordSubmissionFailed = 111,
+
+		// RMS-3 obligation trigger (plan section 4.7). Emitted by the due-state evaluation worker (42) on the
+		// transition into overdue only, from a persisted RmsRecordDueState row, so a missed or repeated worker run
+		// can neither double-emit nor silently skip.
+
+		/// <summary>A Record passed the due time of a review, correction or resubmission obligation.</summary>
+		RecordOverdue = 112
 	}
 
 	public static class WorkflowTriggerEventTypes

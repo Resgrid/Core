@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
@@ -29,6 +29,30 @@ namespace Resgrid.Tests.Providers
 			var issues = Service().ValidateLocal(NerisMappingTests.Snapshot(), NerisMappingTests.Profile());
 
 			issues.Where(i => i.Severity == (int)RmsValidationSeverity.Error).Should().BeEmpty(string.Join("; ", issues.Select(i => i.RuleKey)));
+		}
+
+		[Test]
+		public void A_latitude_without_a_longitude_is_reported_rather_than_throwing()
+		{
+			var snapshot = NerisMappingTests.Snapshot();
+			snapshot.Location.Latitude = 41.88m;
+			snapshot.Location.Longitude = null;
+
+			var issues = Service().ValidateLocal(snapshot, NerisMappingTests.Profile());
+
+			issues.Select(i => i.RuleKey).Should().Contain("neris.location.point");
+			issues.Select(i => i.RuleKey).Should().NotContain("neris.location.point.range",
+				"the range check has nothing to compare and must not dereference the missing coordinate");
+		}
+
+		[Test]
+		public void Both_coordinates_present_and_out_of_range_is_still_reported()
+		{
+			var snapshot = NerisMappingTests.Snapshot();
+			snapshot.Location.Latitude = 91m;
+			snapshot.Location.Longitude = 10m;
+
+			Service().ValidateLocal(snapshot, NerisMappingTests.Profile()).Select(i => i.RuleKey).Should().Contain("neris.location.point.range");
 		}
 
 		[Test]

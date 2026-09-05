@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +32,17 @@ namespace Resgrid.Services.Records
 
 		private bool SafeConnected()
 		{
-			try { return _cache.IsConnected(); }
-			catch { return false; }
+			try
+			{
+				return _cache.IsConnected();
+			}
+			catch (Exception ex)
+			{
+				// Falling back to process-local state is correct, but the reason the cache is unreachable has to be
+				// recorded: without it the only symptom is idempotency keys that stop working across instances.
+				Logging.LogException(ex, "Records API state store could not reach the cache; using process-local state.");
+				return false;
+			}
 		}
 
 		public async Task<string> GetAsync(string key)
@@ -93,20 +102,25 @@ namespace Resgrid.Services.Records
 			_store = store;
 		}
 
-		public static string Key(int departmentId, string userId, string idempotencyKey) => $"RecordsApiCmd_{departmentId}_{userId}_{idempotencyKey}";
+		/// <summary>
+		/// The command is part of the key. A client that reuses one key for SubmitForReview and then Finalize would
+		/// otherwise match on the record alone and be told the second command succeeded without it ever running.
+		/// </summary>
+		public static string Key(int departmentId, string userId, string idempotencyKey, string command)
+			=> $"RecordsApiCmd_{departmentId}_{userId}_{(string.IsNullOrWhiteSpace(command) ? "any" : command.Trim())}_{idempotencyKey}";
 
-		public Task<string> TryGetRecordIdAsync(int departmentId, string userId, string idempotencyKey)
+		public Task<string> TryGetRecordIdAsync(int departmentId, string userId, string idempotencyKey, string command)
 		{
 			if (string.IsNullOrWhiteSpace(idempotencyKey) || string.IsNullOrWhiteSpace(userId))
 				return Task.FromResult<string>(null);
-			return _store.GetAsync(Key(departmentId, userId, idempotencyKey.Trim()));
+			return _store.GetAsync(Key(departmentId, userId, idempotencyKey.Trim(), command));
 		}
 
-		public Task RememberAsync(int departmentId, string userId, string idempotencyKey, string recordId)
+		public Task RememberAsync(int departmentId, string userId, string idempotencyKey, string command, string recordId)
 		{
 			if (string.IsNullOrWhiteSpace(idempotencyKey) || string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(recordId))
 				return Task.CompletedTask;
-			return _store.SetAsync(Key(departmentId, userId, idempotencyKey.Trim()), recordId, Retention);
+			return _store.SetAsync(Key(departmentId, userId, idempotencyKey.Trim(), command), recordId, Retention);
 		}
 	}
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -343,4 +343,625 @@
   <data name="QueueCounts" xml:space="preserve"><value>Kolejka wysyłek</value></data>
   <data name="NerisSettingsSaved" xml:space="preserve"><value>Zapisano ustawienia NERIS.</value></data>
   <data name="SubmissionQueued" xml:space="preserve"><value>Wysyłka do NERIS w kolejce.</value></data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Zaakceptowano</value>
+  </data>
+  <data name="AllDefinitions" xml:space="preserve">
+    <value>Wszystkie definicje</value>
+  </data>
+  <data name="AnalysesAwaitingFiling" xml:space="preserve">
+    <value>Analizy oczekujące na złożenie</value>
+  </data>
+  <data name="AnalysisAwaitingIncident" xml:space="preserve">
+    <value>Ta analiza jest sfinalizowana i zostanie złożona, gdy samo zdarzenie trafi do NERIS.</value>
+  </data>
+  <data name="AnalysisSections" xml:space="preserve">
+    <value>Sekcje analizy</value>
+  </data>
+  <data name="Applies" xml:space="preserve">
+    <value>Dotyczy</value>
+  </data>
+  <data name="AssignedTo" xml:space="preserve">
+    <value>Przypisano do</value>
+  </data>
+  <data name="Automobile" xml:space="preserve">
+    <value>Samochód osobowy</value>
+  </data>
+  <data name="AwaitingReview" xml:space="preserve">
+    <value>Oczekuje na przegląd</value>
+  </data>
+  <data name="AwaitingReviewHint" xml:space="preserve">
+    <value>Dokumenty przekazane do przeglądu i jeszcze niezatwierdzone</value>
+  </data>
+  <data name="BackToReport" xml:space="preserve">
+    <value>Powrót do raportu zdarzenia</value>
+  </data>
+  <data name="BodyStyle" xml:space="preserve">
+    <value>Typ nadwozia</value>
+  </data>
+  <data name="CallId" xml:space="preserve">
+    <value>Zgłoszenie</value>
+  </data>
+  <data name="Capture" xml:space="preserve">
+    <value>Zarejestruj</value>
+  </data>
+  <data name="CaptureReason" xml:space="preserve">
+    <value>Powód zarejestrowania tego dowodu</value>
+  </data>
+  <data name="CapturedBy" xml:space="preserve">
+    <value>Zarejestrował</value>
+  </data>
+  <data name="CapturedOn" xml:space="preserve">
+    <value>Zarejestrowano</value>
+  </data>
+  <data name="CasualtiesAndRescues" xml:space="preserve">
+    <value>Poszkodowani i ratowani</value>
+  </data>
+  <data name="Casualty" xml:space="preserve">
+    <value>Poszkodowany</value>
+  </data>
+  <data name="CasualtyAction" xml:space="preserve">
+    <value>Czynność w chwili zdarzenia</value>
+  </data>
+  <data name="CasualtyCause" xml:space="preserve">
+    <value>Przyczyna obrażeń</value>
+  </data>
+  <data name="CasualtyTimeline" xml:space="preserve">
+    <value>Moment wystąpienia</value>
+  </data>
+  <data name="Civilian" xml:space="preserve">
+    <value>Osoba cywilna</value>
+  </data>
+  <data name="CloseRequest" xml:space="preserve">
+    <value>Zamknij wniosek</value>
+  </data>
+  <data name="ClosedOn" xml:space="preserve">
+    <value>Zamknięto</value>
+  </data>
+  <data name="ConditionalSections" xml:space="preserve">
+    <value>Sekcje warunkowe</value>
+  </data>
+  <data name="ConstructionType" xml:space="preserve">
+    <value>Rodzaj konstrukcji</value>
+  </data>
+  <data name="ContentsLoss" xml:space="preserve">
+    <value>Strata zawartości</value>
+  </data>
+  <data name="ContentsValue" xml:space="preserve">
+    <value>Wartość zawartości</value>
+  </data>
+  <data name="CrosswalkCoverage" xml:space="preserve">
+    <value>Pokrycie mapowania kodów</value>
+  </data>
+  <data name="CrosswalkCoverageIntro" xml:space="preserve">
+    <value>Każdy lokalny typ zgłoszenia bez kodu NERIS trzeba będzie sklasyfikować ręcznie podczas akcji.</value>
+  </data>
+  <data name="CurrencyCode" xml:space="preserve">
+    <value>Waluta</value>
+  </data>
+  <data name="DamageType" xml:space="preserve">
+    <value>Stopień zniszczenia</value>
+  </data>
+  <data name="DashboardDegraded" xml:space="preserve">
+    <value>Nie udało się obliczyć niektórych liczników:</value>
+  </data>
+  <data name="DefinitionKey" xml:space="preserve">
+    <value>Definicja</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Szczegół</value>
+  </data>
+  <data name="Disclosure" xml:space="preserve">
+    <value>Wniosek o udostępnienie akt</value>
+  </data>
+  <data name="DisclosureClosed" xml:space="preserve">
+    <value>Wniosek o udostępnienie akt został zamknięty.</value>
+  </data>
+  <data name="DisclosureCreated" xml:space="preserve">
+    <value>Wniosek o udostępnienie akt został zarejestrowany.</value>
+  </data>
+  <data name="DisclosureIntro" xml:space="preserve">
+    <value>Wniosek o udostępnienie akt ma ustawowy termin, dlatego jest tu śledzony, a nie załatwiany doraźnie.</value>
+  </data>
+  <data name="DisclosureOverdueNotice" xml:space="preserve">
+    <value>Ten wniosek przekroczył ustawowy termin.</value>
+  </data>
+  <data name="DisclosureProduced" xml:space="preserve">
+    <value>Przygotowano wersję z utajnionymi danymi.</value>
+  </data>
+  <data name="DisclosureQueue" xml:space="preserve">
+    <value>Wnioski o udostępnienie akt</value>
+  </data>
+  <data name="DisclosureReasonRequired" xml:space="preserve">
+    <value>Do zamknięcia wniosku wymagane jest uzasadnienie.</value>
+  </data>
+  <data name="DisclosureReleased" xml:space="preserve">
+    <value>Materiały przekazano wnioskodawcy.</value>
+  </data>
+  <data name="DisclosureScopeSaved" xml:space="preserve">
+    <value>Zakres został zapisany.</value>
+  </data>
+  <data name="Disclosures" xml:space="preserve">
+    <value>Udostępnianie akt</value>
+  </data>
+  <data name="DispositionReason" xml:space="preserve">
+    <value>Uzasadnienie rozstrzygnięcia</value>
+  </data>
+  <data name="Drafts" xml:space="preserve">
+    <value>Wersje robocze</value>
+  </data>
+  <data name="DutyType" xml:space="preserve">
+    <value>Rodzaj służby</value>
+  </data>
+  <data name="EditCrosswalk" xml:space="preserve">
+    <value>Edytuj mapowanie kodów</value>
+  </data>
+  <data name="EditIncidentAnalysis" xml:space="preserve">
+    <value>Edytuj analizę zdarzenia</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Błąd</value>
+  </data>
+  <data name="EstimatedLoss" xml:space="preserve">
+    <value>Szacowana strata</value>
+  </data>
+  <data name="EstimatedValue" xml:space="preserve">
+    <value>Szacowana wartość</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>Materiał dowodowy</value>
+  </data>
+  <data name="EvidenceCaptured" xml:space="preserve">
+    <value>Dowód został zarejestrowany.</value>
+  </data>
+  <data name="EvidenceCertificationSnapshot" xml:space="preserve">
+    <value>Uprawnienia w chwili zdarzenia</value>
+  </data>
+  <data name="EvidenceChatPromotion" xml:space="preserve">
+    <value>Przeniesione wiadomości ze zdarzenia</value>
+  </data>
+  <data name="EvidenceIntro" xml:space="preserve">
+    <value>Każdy dowód to ograniczona migawka wykonana raz, z sumą kontrolną i nigdy niezmieniana; poprawka to nowa rejestracja.</value>
+  </data>
+  <data name="EvidenceInventoryUsage" xml:space="preserve">
+    <value>Zużyte materiały i środki kontrolowane</value>
+  </data>
+  <data name="EvidenceReadinessPacket" xml:space="preserve">
+    <value>Gotowość w chwili zgłoszenia</value>
+  </data>
+  <data name="EvidenceReasonRequired" xml:space="preserve">
+    <value>Dołączenie dowodu do dokumentu urzędowego wymaga uzasadnienia.</value>
+  </data>
+  <data name="EvidenceRunCardActivation" xml:space="preserve">
+    <value>Decyzja o zadysponowaniu</value>
+  </data>
+  <data name="EvidenceSource" xml:space="preserve">
+    <value>Źródło</value>
+  </data>
+  <data name="EvidenceTrackingFix" xml:space="preserve">
+    <value>Pozycje jednostek</value>
+  </data>
+  <data name="EvidenceUnavailable" xml:space="preserve">
+    <value>To źródło dowodów nie miało nic do zarejestrowania dla tego dokumentu.</value>
+  </data>
+  <data name="ExposureItem" xml:space="preserve">
+    <value>Obiekt narażony</value>
+  </data>
+  <data name="Exposures" xml:space="preserve">
+    <value>Obiekty narażone</value>
+  </data>
+  <data name="Fatal" xml:space="preserve">
+    <value>Śmiertelne</value>
+  </data>
+  <data name="FinalizeAnalysisIntro" xml:space="preserve">
+    <value>Sfinalizowanie zapisuje niezmienną wersję. Złożenie czeka na identyfikator NERIS zdarzenia, jeśli jeszcze go nie ma.</value>
+  </data>
+  <data name="FinalizedOn" xml:space="preserve">
+    <value>Sfinalizowano</value>
+  </data>
+  <data name="FireSpread" xml:space="preserve">
+    <value>Rozprzestrzenienie ognia</value>
+  </data>
+  <data name="Firefighter" xml:space="preserve">
+    <value>Strażak</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Płeć</value>
+  </data>
+  <data name="GeneralCause" xml:space="preserve">
+    <value>Przyczyna ogólna</value>
+  </data>
+  <data name="IncidentAnalysis" xml:space="preserve">
+    <value>Analiza zdarzenia</value>
+  </data>
+  <data name="IncidentAnalysisIntro" xml:space="preserve">
+    <value>Dochodzenie pożarowe i ratownictwa chemicznego składa się osobno od zdarzenia, gdy odbiorca już je posiada.</value>
+  </data>
+  <data name="IncidentIncomplete" xml:space="preserve">
+    <value>Niekompletne raporty</value>
+  </data>
+  <data name="IncidentIncompleteHint" xml:space="preserve">
+    <value>Raporty zdarzeń jeszcze niesfinalizowane</value>
+  </data>
+  <data name="IncludeLegacy" xml:space="preserve">
+    <value>Uwzględnij wpisy z dawnego dziennika</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>Niekompletne</value>
+  </data>
+  <data name="Injured" xml:space="preserve">
+    <value>Ranny</value>
+  </data>
+  <data name="InvestigationTypes" xml:space="preserve">
+    <value>Rodzaje dochodzenia</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Pozycje</value>
+  </data>
+  <data name="JurisdictionProfile" xml:space="preserve">
+    <value>Jurysdykcja</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Rodzaj</value>
+  </data>
+  <data name="LicensePlate" xml:space="preserve">
+    <value>Numer rejestracyjny</value>
+  </data>
+  <data name="LocalCode" xml:space="preserve">
+    <value>Kod lokalny</value>
+  </data>
+  <data name="LogDisclosure" xml:space="preserve">
+    <value>Zarejestruj wniosek o akta</value>
+  </data>
+  <data name="Make" xml:space="preserve">
+    <value>Marka</value>
+  </data>
+  <data name="Manifest" xml:space="preserve">
+    <value>Wykaz</value>
+  </data>
+  <data name="Mapped" xml:space="preserve">
+    <value>zmapowane</value>
+  </data>
+  <data name="Matched" xml:space="preserve">
+    <value>dopasowane</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Model</value>
+  </data>
+  <data name="ModelYear" xml:space="preserve">
+    <value>Rocznik</value>
+  </data>
+  <data name="NerisAnalysisId" xml:space="preserve">
+    <value>Identyfikator analizy NERIS</value>
+  </data>
+  <data name="NerisCode" xml:space="preserve">
+    <value>Kod NERIS</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>Nie zarejestrowano żadnych wniosków o akta.</value>
+  </data>
+  <data name="NoEvidenceCaptured" xml:space="preserve">
+    <value>Do tego raportu nie zarejestrowano żadnych dowodów.</value>
+  </data>
+  <data name="NoProductions" xml:space="preserve">
+    <value>Nic jeszcze nie przygotowano.</value>
+  </data>
+  <data name="NoSectionsYet" xml:space="preserve">
+    <value>Żadna sekcja warunkowa nie obowiązuje, dopóki nie wybrano typu zdarzenia.</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Otwarte</value>
+  </data>
+  <data name="OpenAnalysis" xml:space="preserve">
+    <value>Otwórz analizę</value>
+  </data>
+  <data name="OpenDisclosureQueue" xml:space="preserve">
+    <value>Otwórz wnioski o akta</value>
+  </data>
+  <data name="OpenIncidentQueue" xml:space="preserve">
+    <value>Otwórz kolejkę zdarzeń</value>
+  </data>
+  <data name="OpenRecordsQueue" xml:space="preserve">
+    <value>Otwórz kolejkę dokumentów</value>
+  </data>
+  <data name="OperationalRecords" xml:space="preserve">
+    <value>Dokumentacja operacyjna</value>
+  </data>
+  <data name="Overdue" xml:space="preserve">
+    <value>Po terminie</value>
+  </data>
+  <data name="OverdueHint" xml:space="preserve">
+    <value>Obowiązki po terminie</value>
+  </data>
+  <data name="PersonType" xml:space="preserve">
+    <value>Rodzaj osoby</value>
+  </data>
+  <data name="PersonnelMember" xml:space="preserve">
+    <value>Członek</value>
+  </data>
+  <data name="Powertrain" xml:space="preserve">
+    <value>Napęd</value>
+  </data>
+  <data name="PreparedOn" xml:space="preserve">
+    <value>Przygotowano</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>W dokumencie</value>
+  </data>
+  <data name="PrimaryCode" xml:space="preserve">
+    <value>Kod główny</value>
+  </data>
+  <data name="Produce" xml:space="preserve">
+    <value>Przygotuj materiały</value>
+  </data>
+  <data name="ProduceIntro" xml:space="preserve">
+    <value>Przygotowane materiały to nowy, niezmienny dokument; późniejsza zmiana nie zmieni tego, co wydano.</value>
+  </data>
+  <data name="Producible" xml:space="preserve">
+    <value>Do wydania</value>
+  </data>
+  <data name="ProductionIntact" xml:space="preserve">
+    <value>Suma kontrolna nadal się zgadza; materiały nie zostały zmienione.</value>
+  </data>
+  <data name="ProductionTampered" xml:space="preserve">
+    <value>Suma kontrolna nie zgadza się z zapisaną.</value>
+  </data>
+  <data name="Productions" xml:space="preserve">
+    <value>Wydane materiały</value>
+  </data>
+  <data name="ProfileVersion" xml:space="preserve">
+    <value>Wersja kontraktu</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>Nieruchomości</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Ilość</value>
+  </data>
+  <data name="QueueSubmission" xml:space="preserve">
+    <value>Zakolejkuj złożenie</value>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value>W kolejce</value>
+  </data>
+  <data name="Race" xml:space="preserve">
+    <value>Pochodzenie etniczne</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Stopień</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+    <value>Wpłynął</value>
+  </data>
+  <data name="RecordCount" xml:space="preserve">
+    <value>Dokumenty</value>
+  </data>
+  <data name="RecordsDashboard" xml:space="preserve">
+    <value>Pulpit dokumentacji</value>
+  </data>
+  <data name="RecordsNotActivated" xml:space="preserve">
+    <value>Moduł dokumentacji nie jest jeszcze aktywny dla tej jednostki.</value>
+  </data>
+  <data name="RedactionProfile" xml:space="preserve">
+    <value>Profil utajniania</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Odrzucone</value>
+  </data>
+  <data name="RejectedHint" xml:space="preserve">
+    <value>Odrzucone przez odbiorcę i jeszcze niepoprawione</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Wydaj</value>
+  </data>
+  <data name="ReleasedOn" xml:space="preserve">
+    <value>Wydano</value>
+  </data>
+  <data name="Request" xml:space="preserve">
+    <value>Wniosek</value>
+  </data>
+  <data name="RequestNumber" xml:space="preserve">
+    <value>Sygnatura</value>
+  </data>
+  <data name="Requester" xml:space="preserve">
+    <value>Wnioskodawca</value>
+  </data>
+  <data name="RequesterContact" xml:space="preserve">
+    <value>Dane kontaktowe</value>
+  </data>
+  <data name="RequesterIdentityWithheld" xml:space="preserve">
+    <value>Tożsamość wnioskodawcy jest chroniona i nie jest tu pokazywana.</value>
+  </data>
+  <data name="RequesterName" xml:space="preserve">
+    <value>Imię i nazwisko wnioskodawcy</value>
+  </data>
+  <data name="RequesterOrganization" xml:space="preserve">
+    <value>Organizacja</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Wymagana</value>
+  </data>
+  <data name="Rescue" xml:space="preserve">
+    <value>Ratowanie</value>
+  </data>
+  <data name="RescueElevation" xml:space="preserve">
+    <value>Poziom ratowania</value>
+  </data>
+  <data name="RescueMode" xml:space="preserve">
+    <value>Sposób ratowania</value>
+  </data>
+  <data name="RescuePath" xml:space="preserve">
+    <value>Droga ratowania</value>
+  </data>
+  <data name="RescueType" xml:space="preserve">
+    <value>Rodzaj ratowania</value>
+  </data>
+  <data name="ResourceCode" xml:space="preserve">
+    <value>Zasób</value>
+  </data>
+  <data name="Resources" xml:space="preserve">
+    <value>Zasoby</value>
+  </data>
+  <data name="ResourcesNotSubmitted" xml:space="preserve">
+    <value>przechowywane tylko w dokumentacji jednostki, nigdy nie wysyłane do NERIS</value>
+  </data>
+  <data name="RestrictedFieldsHidden" xml:space="preserve">
+    <value>Niektóre pola są chronione i nie są tu pokazywane.</value>
+  </data>
+  <data name="Returned" xml:space="preserve">
+    <value>Zwrócone do poprawy</value>
+  </data>
+  <data name="SaveScope" xml:space="preserve">
+    <value>Zapisz zakres</value>
+  </data>
+  <data name="Scope" xml:space="preserve">
+    <value>Zakres</value>
+  </data>
+  <data name="ScopeFrozen" xml:space="preserve">
+    <value>Zakres jest zamrożony, bo przygotowano już na jego podstawie materiały.</value>
+  </data>
+  <data name="ScopeNarrative" xml:space="preserve">
+    <value>Czego dotyczy wniosek</value>
+  </data>
+  <data name="ScopePreview" xml:space="preserve">
+    <value>Wynik zakresu</value>
+  </data>
+  <data name="ScopePreviewTruncated" xml:space="preserve">
+    <value>Pasuje więcej dokumentów, niż tu wymieniono.</value>
+  </data>
+  <data name="SecondaryCode" xml:space="preserve">
+    <value>Kod dodatkowy</value>
+  </data>
+  <data name="SectionBattery" xml:space="preserve">
+    <value>Akumulator, którego dotyczy zdarzenie</value>
+  </data>
+  <data name="SectionChemical" xml:space="preserve">
+    <value>Uwolniona substancja</value>
+  </data>
+  <data name="SectionCookingFireSuppression" xml:space="preserve">
+    <value>System gaśniczy w kuchni</value>
+  </data>
+  <data name="SectionCsstHazard" xml:space="preserve">
+    <value>Karbowana rura gazowa ze stali nierdzewnej</value>
+  </data>
+  <data name="SectionElectricHazard" xml:space="preserve">
+    <value>Zagrożenie elektryczne</value>
+  </data>
+  <data name="SectionFire" xml:space="preserve">
+    <value>Dane pożaru</value>
+  </data>
+  <data name="SectionFireAlarm" xml:space="preserve">
+    <value>System sygnalizacji pożarowej</value>
+  </data>
+  <data name="SectionFireSuppression" xml:space="preserve">
+    <value>System gaśniczy</value>
+  </data>
+  <data name="SectionHazsit" xml:space="preserve">
+    <value>Sytuacja niebezpieczna</value>
+  </data>
+  <data name="SectionHazsitAnalysis" xml:space="preserve">
+    <value>Analiza sytuacji niebezpiecznej</value>
+  </data>
+  <data name="SectionMedical" xml:space="preserve">
+    <value>Opieka nad pacjentem</value>
+  </data>
+  <data name="SectionMedicalOxygenHazard" xml:space="preserve">
+    <value>Domowy tlen medyczny</value>
+  </data>
+  <data name="SectionNoLongerApplies" xml:space="preserve">
+    <value>Ta sekcja nie dotyczy już wybranych typów zdarzenia.</value>
+  </data>
+  <data name="SectionOtherAlarm" xml:space="preserve">
+    <value>Inny alarm</value>
+  </data>
+  <data name="SectionOutsideFire" xml:space="preserve">
+    <value>Analiza pożaru na zewnątrz</value>
+  </data>
+  <data name="SectionOutsideFireLocation" xml:space="preserve">
+    <value>Miejsce pożaru na zewnątrz</value>
+  </data>
+  <data name="SectionPowergenHazard" xml:space="preserve">
+    <value>Zagrożenie od wytwarzania energii</value>
+  </data>
+  <data name="SectionProduct" xml:space="preserve">
+    <value>Wyrób, którego dotyczy zdarzenie</value>
+  </data>
+  <data name="SectionSmokeAlarm" xml:space="preserve">
+    <value>Czujka dymu</value>
+  </data>
+  <data name="SectionStructureFireLocation" xml:space="preserve">
+    <value>Miejsce pożaru w budynku</value>
+  </data>
+  <data name="SectionStructureFireOrigin" xml:space="preserve">
+    <value>Miejsce powstania pożaru budynku</value>
+  </data>
+  <data name="Sent" xml:space="preserve">
+    <value>Wysłano</value>
+  </data>
+  <data name="SetKey" xml:space="preserve">
+    <value>Zbiór wartości</value>
+  </data>
+  <data name="Stale" xml:space="preserve">
+    <value>nieaktualne</value>
+  </data>
+  <data name="StartAnalysis" xml:space="preserve">
+    <value>Rozpocznij analizę</value>
+  </data>
+  <data name="States" xml:space="preserve">
+    <value>Stany</value>
+  </data>
+  <data name="StatutoryDueHint" xml:space="preserve">
+    <value>Pozostawione puste, ustala je ustawowy termin jednostki.</value>
+  </data>
+  <data name="StatutoryDueOn" xml:space="preserve">
+    <value>Termin ustawowy</value>
+  </data>
+  <data name="StoriesAbove" xml:space="preserve">
+    <value>Kondygnacje nadziemne</value>
+  </data>
+  <data name="StoriesBelow" xml:space="preserve">
+    <value>Kondygnacje podziemne</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Złóż</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>Złożone</value>
+  </data>
+  <data name="Suggested" xml:space="preserve">
+    <value>Zalecana</value>
+  </data>
+  <data name="Superseded" xml:space="preserve">
+    <value>Zastąpiony</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Tytuł</value>
+  </data>
+  <data name="Vacancy" xml:space="preserve">
+    <value>Stan użytkowania</value>
+  </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>Pojazdy</value>
+  </data>
+  <data name="VerifyProduction" xml:space="preserve">
+    <value>Sprawdź sumę kontrolną</value>
+  </data>
+  <data name="Vin" xml:space="preserve">
+    <value>Numer VIN nadwozia</value>
+  </data>
+  <data name="WasOccupied" xml:space="preserve">
+    <value>Zajęty w chwili zdarzenia</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Rok</value>
+  </data>
+  <data name="YearBuilt" xml:space="preserve">
+    <value>Rok budowy</value>
+  </data>
+  <data name="OtherVehicle" xml:space="preserve">
+    <value>Inny pojazd</value>
+  </data>
+  <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
+    <value>Zmiana typu uprawnienia NERIS wymaga podania nowych poświadczeń.</value>
+  </data>
 </root>

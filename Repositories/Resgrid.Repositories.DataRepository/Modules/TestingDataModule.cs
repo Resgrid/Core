@@ -285,6 +285,20 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RmsNerisProfilesRepository>().As<IRmsNerisProfilesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsNerisValueSetsRepository>().As<IRmsNerisValueSetsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsNerisCrosswalksRepository>().As<IRmsNerisCrosswalksRepository>().InstancePerLifetimeScope();
+			// RMS-3 conditional sections, restricted casualty/exposure classes and the incident-analysis filing (registry M0167-M0168)
+			builder.RegisterType<RmsIncidentModulesRepository>().As<IRmsIncidentModulesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsIncidentResourcesRepository>().As<IRmsIncidentResourcesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsCasualtyRescuesRepository>().As<IRmsCasualtyRescuesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsExposuresRepository>().As<IRmsExposuresRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsIncidentAnalysesRepository>().As<IRmsIncidentAnalysesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsIncidentPropertiesRepository>().As<IRmsIncidentPropertiesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsIncidentVehiclesRepository>().As<IRmsIncidentVehiclesRepository>().InstancePerLifetimeScope();
+			// RMS-3 due state and legal holds (registry M0170)
+			builder.RegisterType<RmsRecordDueStatesRepository>().As<IRmsRecordDueStatesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordLegalHoldsRepository>().As<IRmsRecordLegalHoldsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsEvidenceArtifactsRepository>().As<IRmsEvidenceArtifactsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsDisclosureRequestsRepository>().As<IRmsDisclosureRequestsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsDisclosureProductionsRepository>().As<IRmsDisclosureProductionsRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

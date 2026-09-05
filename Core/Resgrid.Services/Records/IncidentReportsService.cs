@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -39,6 +39,10 @@ namespace Resgrid.Services.Records
 		private readonly IRmsLocationsRepository _locations;
 		private readonly IRmsNarrativesRepository _narratives;
 		private readonly IRmsValidationIssuesRepository _issues;
+		private readonly IRmsIncidentModulesRepository _modules;
+		private readonly IRmsIncidentResourcesRepository _resources;
+		private readonly IRmsCasualtyRescuesRepository _casualties;
+		private readonly IRmsExposuresRepository _exposures;
 		private readonly IRmsSubmissionsRepository _submissions;
 		private readonly IRmsSignaturesRepository _signatures;
 		private readonly IRmsRevisionsRepository _revisions;
@@ -62,6 +66,7 @@ namespace Resgrid.Services.Records
 		public IncidentReportsService(IRmsIncidentReportsRepository reports, IRmsSourceFactsRepository facts, IRmsUnitResponsesRepository units,
 			IRmsIncidentTypesRepository types, IRmsActionTacticsRepository tactics, IRmsAidsRepository aids, IRmsLocationsRepository locations,
 			IRmsNarrativesRepository narratives, IRmsValidationIssuesRepository issues, IRmsSubmissionsRepository submissions, IRmsSignaturesRepository signatures,
+			IRmsIncidentModulesRepository modules, IRmsIncidentResourcesRepository resources, IRmsCasualtyRescuesRepository casualties, IRmsExposuresRepository exposures,
 			IRmsRevisionsRepository revisions, IRmsAccessAuditsRepository audits, IRmsRecordGroupScopesRepository scopes, IRmsRecordSharesRepository shares,
 			IRmsRecordSearchProjectionsRepository projections, IDomainEventOutboxService outbox, IDepartmentSettingsService settings,
 			IDepartmentGroupsService groups, IUserProfileService profiles, IPersonnelRolesService roles, IUnitsService unitsService, ICallsService calls,
@@ -77,6 +82,10 @@ namespace Resgrid.Services.Records
 			_locations = locations;
 			_narratives = narratives;
 			_issues = issues;
+			_modules = modules;
+			_resources = resources;
+			_casualties = casualties;
+			_exposures = exposures;
 			_submissions = submissions;
 			_signatures = signatures;
 			_revisions = revisions;
@@ -108,8 +117,12 @@ namespace Resgrid.Services.Records
 			var profile = await _neris.GetProfileAsync(departmentId);
 			var entity = ReportingEntityFor(departmentId, profile);
 
-			// SingleAuthoritative (plan 5.2.1): a second start returns the existing report, never a duplicate.
-			var existing = await _reports.GetByCallAsync(departmentId, callId, entity);
+			// SingleAuthoritative (plan 5.2.1): a second start returns the existing report, never a duplicate. The
+			// entity-scoped lookup is not enough on its own — a report started before the NERIS profile was
+			// configured carries the placeholder entity, and matching only the current one would start a second
+			// authoritative report for the same call the moment the department sets its entity id.
+			var existing = await _reports.GetByCallAsync(departmentId, callId, entity)
+				?? (await _reports.GetByCallAnyEntityAsync(departmentId, callId))?.FirstOrDefault(r => !r.DeletedOn.HasValue);
 			if (existing != null && !existing.DeletedOn.HasValue)
 				return await GetAsync(departmentId, existing.RmsIncidentReportId, false);
 
@@ -238,6 +251,12 @@ namespace Resgrid.Services.Records
 			return report == null ? null : await HydrateAsync(report, null, false);
 		}
 
+		public async Task<List<NerisSectionRequirement>> GetSectionRequirementsAsync(int departmentId, string reportId)
+		{
+			var types = (await _types.GetForRecordAsync(departmentId, reportId, null))?.ToList() ?? new List<RmsIncidentType>();
+			return _validation.GetSectionRequirements(types.Select(t => t.TypeCode)).ToList();
+		}
+
 		public async Task<NerisIncidentSnapshot> BuildSnapshotAsync(int departmentId, string reportId, string revisionId = null)
 		{
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, reportId);
@@ -262,7 +281,11 @@ namespace Resgrid.Services.Records
 				Facts = aggregate.Facts,
 				DispatchComments = aggregate.Facts.Where(f => f.FactKey != null && f.FactKey.StartsWith(DispatchCommentFactPrefix, StringComparison.Ordinal))
 					.OrderBy(f => f.SourceTime).Select(f => new NerisDispatchComment { Timestamp = f.SourceTime, Comment = f.CurrentValue ?? f.SourceValue }).ToList(),
-				SpecialModifiers = SplitCsv(aggregate.Report.SpecialModifiersCsv)
+				SpecialModifiers = SplitCsv(aggregate.Report.SpecialModifiersCsv),
+				Modules = aggregate.Modules,
+				Resources = aggregate.Resources,
+				Casualties = aggregate.Casualties,
+				Exposures = aggregate.Exposures
 			};
 		}
 
@@ -270,7 +293,7 @@ namespace Resgrid.Services.Records
 
 		#region Draft / validate
 
-		public async Task<IncidentReportAggregate> SaveDraftAsync(int departmentId, string userId, string reportId, long expectedRowVersion, IncidentReportDraftInput input, CancellationToken cancellationToken = default)
+		public async Task<IncidentReportAggregate> SaveDraftAsync(int departmentId, string userId, string reportId, long expectedRowVersion, IncidentReportDraftInput input, bool canWriteRestricted = true, CancellationToken cancellationToken = default)
 		{
 			if (input == null) throw new ArgumentNullException(nameof(input));
 			var report = await LoadAsync(departmentId, reportId);
@@ -289,6 +312,10 @@ namespace Resgrid.Services.Records
 				var aids = await ReplaceAidsAsync(report, input.Aids, now, cancellationToken);
 				var tactics = await ReplaceTacticsAsync(report, input.Tactics, now, cancellationToken);
 				var narrative = await ReplaceNarrativeAsync(report, input, now, cancellationToken);
+				var modules = await ReplaceModulesAsync(report, input.Modules, report.ProfileVersion ?? _neris.ContractVersion, now, cancellationToken);
+				var resources = await ReplaceResourcesAsync(report, input.Resources, now, cancellationToken);
+				var casualties = await ReplaceCasualtiesAsync(report, input.Casualties, canWriteRestricted, now, cancellationToken);
+				var exposures = await ReplaceExposuresAsync(report, input.Exposures, now, cancellationToken);
 				foreach (var fact in facts.Where(f => f.CorrectedOn == now))
 					await _facts.UpdateAsync(fact, cancellationToken, true);
 
@@ -297,7 +324,11 @@ namespace Resgrid.Services.Records
 				report.ModifiedByUserId = userId;
 				await _reports.UpdateAsync(report, cancellationToken, true);
 
-				var aggregate = new IncidentReportAggregate { Report = report, Location = location, Types = types, Units = units, Aids = aids, Tactics = tactics, Narrative = narrative, Facts = facts };
+				var aggregate = new IncidentReportAggregate
+				{
+					Report = report, Location = location, Types = types, Units = units, Aids = aids, Tactics = tactics, Narrative = narrative, Facts = facts,
+					Modules = modules, Resources = resources, Casualties = casualties, Exposures = exposures
+				};
 				await RecomputeGroupScopeAsync(aggregate, null, cancellationToken);
 				await UpsertProjectionAsync(aggregate, cancellationToken);
 				await AuditAsync(departmentId, userId, reportId, null, RmsAccessAuditAction.Change, "Save draft", input.OriginClient, cancellationToken);
@@ -901,21 +932,26 @@ namespace Resgrid.Services.Records
 		private async Task<List<RmsIncidentType>> ReplaceTypesAsync(RmsIncidentReport report, List<IncidentTypeInput> inputs, DateTime now, CancellationToken cancellationToken)
 		{
 			await _types.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
+			var accepted = (inputs ?? new List<IncidentTypeInput>()).Where(i => !string.IsNullOrWhiteSpace(i.TypeCode)).ToList();
+
+			// Decide the primary before anything is written. Promoting the first row after the insert only fixed the
+			// in-memory copy the save returned: the stored rows all kept IsPrimary = false, and the next hydrate
+			// failed validation on a report the author had just been told was fine.
+			var promoteFirst = accepted.Count > 0 && !accepted.Any(i => i.IsPrimary);
+
 			var result = new List<RmsIncidentType>();
 			var ordinal = 0;
-			foreach (var input in (inputs ?? new List<IncidentTypeInput>()).Where(i => !string.IsNullOrWhiteSpace(i.TypeCode)))
+			foreach (var input in accepted)
 			{
 				var row = new RmsIncidentType
 				{
 					RmsIncidentTypeId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(), RecordId = report.RmsIncidentReportId,
-					TypeCode = input.TypeCode.Trim(), IsPrimary = input.IsPrimary, LocalCode = ordinal == 0 ? report.DispatchIncidentCode : null, ValueSetVersion = _neris.ContractVersion,
-					Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
+					TypeCode = input.TypeCode.Trim(), IsPrimary = input.IsPrimary || (promoteFirst && ordinal == 0), LocalCode = ordinal == 0 ? report.DispatchIncidentCode : null,
+					ValueSetVersion = _neris.ContractVersion, Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
 				};
 				await _types.InsertAsync(row, cancellationToken, true);
 				result.Add(row);
 			}
-			if (result.Count > 0 && !result.Any(t => t.IsPrimary))
-				result[0].IsPrimary = true;
 			return result;
 		}
 
@@ -986,6 +1022,172 @@ namespace Resgrid.Services.Records
 				result.Add(row);
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// RMS-3 conditional sections. A null list leaves the stored sections alone — a client that cannot render
+		/// a section must not delete what an officer authored on the Web — while an empty list clears them.
+		/// </summary>
+		private async Task<List<RmsIncidentModule>> ReplaceModulesAsync(RmsIncidentReport report, List<IncidentModuleInput> inputs, string profileVersion, DateTime now, CancellationToken cancellationToken)
+		{
+			if (inputs == null)
+				return (await _modules.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsIncidentModule>();
+
+			await _modules.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
+			var result = new List<RmsIncidentModule>();
+			var ordinal = 0;
+			foreach (var input in inputs)
+			{
+				var descriptor = RmsIncidentModuleCatalog.Get(input.Kind);
+				// An unknown or analysis-only section on the incident is dropped rather than stored: it could never
+				// be submitted, and keeping it would make the report look complete when it is not.
+				if (descriptor == null || descriptor.BelongsToAnalysis)
+					continue;
+
+				var row = new RmsIncidentModule
+				{
+					RmsIncidentModuleId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RecordId = report.RmsIncidentReportId, RecordKind = (int)RmsRecordKind.IncidentReport,
+					ModuleKind = (int)input.Kind, SchemaName = descriptor.SchemaName, ProfileVersion = profileVersion,
+					PrimaryCode = Trim(input.PrimaryCode)?.ToUpperInvariant(), SecondaryCode = Trim(input.SecondaryCode)?.ToUpperInvariant(),
+					Quantity = input.Quantity, QuantityUnit = Trim(input.QuantityUnit)?.ToUpperInvariant(), OccurredOn = input.OccurredOn,
+					DetailJson = Trim(input.DetailJson), Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
+				};
+				await _modules.InsertAsync(row, cancellationToken, true);
+				result.Add(row);
+			}
+			return result;
+		}
+
+		private async Task<List<RmsIncidentResource>> ReplaceResourcesAsync(RmsIncidentReport report, List<IncidentResourceInput> inputs, DateTime now, CancellationToken cancellationToken)
+		{
+			if (inputs == null)
+				return (await _resources.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsIncidentResource>();
+
+			await _resources.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
+			var result = new List<RmsIncidentResource>();
+			var ordinal = 0;
+			foreach (var input in inputs.Where(i => !string.IsNullOrWhiteSpace(i.ResourceCode)))
+			{
+				var row = new RmsIncidentResource
+				{
+					RmsIncidentResourceId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RecordId = report.RmsIncidentReportId, ResourceCode = input.ResourceCode.Trim().ToUpperInvariant(),
+					Quantity = input.Quantity, Detail = Trim(input.Detail), Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
+				};
+				await _resources.InsertAsync(row, cancellationToken, true);
+				result.Add(row);
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// Casualties and rescues. <paramref name="canWriteRestricted"/> false keeps the unrestricted half of each
+		/// entry and drops demographics, the personnel link and the injury detail, so a reviewer without the
+		/// restricted grant can still correct a report without silently erasing what they cannot see — the stored
+		/// restricted values are carried forward from the matching existing row instead.
+		/// </summary>
+		private async Task<List<RmsCasualtyRescue>> ReplaceCasualtiesAsync(RmsIncidentReport report, List<IncidentCasualtyRescueInput> inputs, bool canWriteRestricted, DateTime now, CancellationToken cancellationToken)
+		{
+			var existing = (await _casualties.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsCasualtyRescue>();
+			if (inputs == null)
+				return existing;
+
+			await _casualties.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
+			var result = new List<RmsCasualtyRescue>();
+			var ordinal = 0;
+			foreach (var input in inputs)
+			{
+				var prior = ordinal < existing.Count ? existing[ordinal] : null;
+				var row = new RmsCasualtyRescue
+				{
+					RmsCasualtyRescueId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RecordId = report.RmsIncidentReportId, Kind = (int)input.Kind,
+					PersonType = Trim(input.PersonType)?.ToUpperInvariant() ?? RmsCasualtyPersonTypes.Civilian,
+					WasInjured = input.WasInjured,
+					CasualtyCause = Trim(input.CasualtyCause)?.ToUpperInvariant(),
+					CasualtyAction = Trim(input.CasualtyAction)?.ToUpperInvariant(),
+					CasualtyTimeline = Trim(input.CasualtyTimeline)?.ToUpperInvariant(),
+					DutyType = Trim(input.DutyType)?.ToUpperInvariant(),
+					JobClassification = Trim(input.JobClassification)?.ToUpperInvariant(),
+					PpeCsv = JoinCodes(input.Ppe),
+					WasFatal = input.WasFatal,
+					RescueType = Trim(input.RescueType)?.ToUpperInvariant(),
+					RescueActionsCsv = JoinCodes(input.RescueActions),
+					RescueImpedimentsCsv = JoinCodes(input.RescueImpediments),
+					RescueMode = Trim(input.RescueMode)?.ToUpperInvariant(),
+					RescuePath = Trim(input.RescuePath)?.ToUpperInvariant(),
+					RescueElevation = Trim(input.RescueElevation)?.ToUpperInvariant(),
+					PresenceKnown = Trim(input.PresenceKnown)?.ToUpperInvariant(),
+					YearsOfService = input.YearsOfService,
+					DetailJson = Trim(input.DetailJson),
+					OccurredOn = input.OccurredOn,
+					Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
+				};
+
+				if (canWriteRestricted)
+				{
+					row.PersonnelUserId = Trim(input.PersonnelUserId);
+					row.Rank = Trim(input.Rank);
+					row.BirthMonthYear = Trim(input.BirthMonthYear);
+					row.Gender = Trim(input.Gender)?.ToUpperInvariant();
+					row.Race = Trim(input.Race)?.ToUpperInvariant();
+					row.InjuryDetailJson = Trim(input.InjuryDetailJson);
+				}
+				else
+				{
+					row.PersonnelUserId = prior?.PersonnelUserId;
+					row.Rank = prior?.Rank;
+					row.BirthMonthYear = prior?.BirthMonthYear;
+					row.Gender = prior?.Gender;
+					row.Race = prior?.Race;
+					row.InjuryDetailJson = prior?.InjuryDetailJson;
+				}
+
+				await _casualties.InsertAsync(row, cancellationToken, true);
+				result.Add(row);
+			}
+			return result;
+		}
+
+		private async Task<List<RmsExposure>> ReplaceExposuresAsync(RmsIncidentReport report, List<IncidentExposureInput> inputs, DateTime now, CancellationToken cancellationToken)
+		{
+			if (inputs == null)
+				return (await _exposures.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsExposure>();
+
+			await _exposures.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
+			var result = new List<RmsExposure>();
+			var ordinal = 0;
+			foreach (var input in inputs)
+			{
+				var row = new RmsExposure
+				{
+					RmsExposureId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RecordId = report.RmsIncidentReportId,
+					LocationKind = Trim(input.LocationKind)?.ToUpperInvariant(), ItemType = Trim(input.ItemType)?.ToUpperInvariant(),
+					DamageType = Trim(input.DamageType)?.ToUpperInvariant(), LocationUse = Trim(input.LocationUse)?.ToUpperInvariant(),
+					PeoplePresent = input.PeoplePresent, DisplacementCount = input.DisplacementCount,
+					DisplacementCausesCsv = JoinCodes(input.DisplacementCauses),
+					AddressText = Trim(input.AddressText), Street = Trim(input.Street), Municipality = Trim(input.Municipality),
+					State = Trim(input.State)?.ToUpperInvariant(), PostalCode = Trim(input.PostalCode),
+					Latitude = input.Latitude, Longitude = input.Longitude,
+					EstimatedValue = input.EstimatedValue, EstimatedLoss = input.EstimatedLoss, CurrencyCode = Trim(input.CurrencyCode)?.ToUpperInvariant(),
+					DetailJson = Trim(input.DetailJson), Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
+				};
+				await _exposures.InsertAsync(row, cancellationToken, true);
+				result.Add(row);
+			}
+			return result;
+		}
+
+		/// <summary>Upper-cased, de-duplicated value-set codes as the comma-separated form the columns store.</summary>
+		private static string JoinCodes(List<string> codes)
+		{
+			if (codes == null || codes.Count == 0)
+				return null;
+
+			var cleaned = codes.Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => c.Trim().ToUpperInvariant()).Distinct().ToList();
+			return cleaned.Count == 0 ? null : string.Join(",", cleaned);
 		}
 
 		private async Task<List<RmsActionTactic>> ReplaceTacticsAsync(RmsIncidentReport report, List<IncidentTacticInput> inputs, DateTime now, CancellationToken cancellationToken)
@@ -1079,6 +1281,10 @@ namespace Resgrid.Services.Records
 			foreach (var t in draft.Tactics) await _tactics.InsertAsync(Copy(t, x => x.RmsActionTacticId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
 			if (draft.Narrative != null) await _narratives.InsertAsync(Copy(draft.Narrative, n => n.RmsNarrativeId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
 			foreach (var f in draft.Facts) await _facts.InsertAsync(Copy(f, x => x.RmsSourceFactId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
+			foreach (var m in draft.Modules) await _modules.InsertAsync(Copy(m, x => x.RmsIncidentModuleId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
+			foreach (var r in draft.Resources) await _resources.InsertAsync(Copy(r, x => x.RmsIncidentResourceId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
+			foreach (var c in draft.Casualties) await _casualties.InsertAsync(Copy(c, x => x.RmsCasualtyRescueId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
+			foreach (var e in draft.Exposures) await _exposures.InsertAsync(Copy(e, x => x.RmsExposureId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
 
 			return revision;
 		}
@@ -1154,6 +1360,10 @@ namespace Resgrid.Services.Records
 				Tactics = (await _tactics.GetForRecordAsync(dept, id, revisionId))?.ToList() ?? new List<RmsActionTactic>(),
 				Narrative = (await _narratives.GetForRecordAsync(dept, id, revisionId))?.FirstOrDefault(),
 				Facts = (await _facts.GetForRecordAsync(dept, id, revisionId))?.ToList() ?? new List<RmsSourceFact>(),
+				Modules = (await _modules.GetForRecordAsync(dept, id, revisionId))?.ToList() ?? new List<RmsIncidentModule>(),
+				Resources = (await _resources.GetForRecordAsync(dept, id, revisionId))?.ToList() ?? new List<RmsIncidentResource>(),
+				Casualties = (await _casualties.GetForRecordAsync(dept, id, revisionId))?.ToList() ?? new List<RmsCasualtyRescue>(),
+				Exposures = (await _exposures.GetForRecordAsync(dept, id, revisionId))?.ToList() ?? new List<RmsExposure>(),
 				Issues = (await _issues.GetForRecordAsync(dept, id))?.ToList() ?? new List<RmsValidationIssue>(),
 				GroupScope = (await _scopes.GetForRecordAsync(dept, id))?.ToList() ?? new List<RmsRecordGroupScope>()
 			};

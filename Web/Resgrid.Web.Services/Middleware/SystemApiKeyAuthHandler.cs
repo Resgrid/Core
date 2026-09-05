@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Resgrid.Model;
 using Resgrid.Providers.Claims;
 
 namespace Resgrid.Web.Services.Middleware
@@ -19,6 +20,8 @@ namespace Resgrid.Web.Services.Middleware
 	/// Used by the SMTP Relay in hosted multi-department mode to bypass OAuth 2.0 entirely.
 	/// The handler creates a ClaimsPrincipal with full permissions across all departments.
 	/// Department scoping is achieved via the DepartmentId field on individual API request models.
+	/// Records (RMS) is the one exception to "full permissions": the principal gets Record_View only when a
+	/// department+purpose grant is configured, and never a mutating or restricted Record claim.
 	/// </summary>
 	public class SystemApiKeyAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 	{
@@ -126,6 +129,13 @@ namespace Resgrid.Web.Services.Middleware
 					claims.Add(new Claim(resource, action));
 				}
 			}
+
+			// Records (RMS) is deliberately absent from the blanket list above. A system principal reaches
+			// Records only through an explicitly configured department+purpose grant, and then only to read
+			// (Identifier Allocation Registry section 4.4). No configuration produces a mutating or
+			// restricted Record claim here; RecordsSystemPrincipalGuard re-checks the grant per request.
+			if (SystemPrincipalRecordGrant.AnyConfigured())
+				claims.Add(new Claim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View));
 
 			var identity = new ClaimsIdentity(claims, "SystemApiKey");
 			var principal = new ClaimsPrincipal(identity);

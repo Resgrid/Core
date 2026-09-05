@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -343,4 +343,625 @@
   <data name="QueueCounts" xml:space="preserve"><value>Ουρά υποβολών</value></data>
   <data name="NerisSettingsSaved" xml:space="preserve"><value>Οι ρυθμίσεις NERIS αποθηκεύτηκαν.</value></data>
   <data name="SubmissionQueued" xml:space="preserve"><value>Η υποβολή μπήκε στην ουρά για το NERIS.</value></data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Έγινε αποδεκτό</value>
+  </data>
+  <data name="AllDefinitions" xml:space="preserve">
+    <value>Όλοι οι ορισμοί</value>
+  </data>
+  <data name="AnalysesAwaitingFiling" xml:space="preserve">
+    <value>Αναλύσεις σε αναμονή υποβολής</value>
+  </data>
+  <data name="AnalysisAwaitingIncident" xml:space="preserve">
+    <value>Η ανάλυση οριστικοποιήθηκε και θα υποβληθεί μόλις το ίδιο το συμβάν φτάσει στο NERIS.</value>
+  </data>
+  <data name="AnalysisSections" xml:space="preserve">
+    <value>Ενότητες ανάλυσης</value>
+  </data>
+  <data name="Applies" xml:space="preserve">
+    <value>Ισχύει</value>
+  </data>
+  <data name="AssignedTo" xml:space="preserve">
+    <value>Ανατέθηκε σε</value>
+  </data>
+  <data name="Automobile" xml:space="preserve">
+    <value>Αυτοκίνητο</value>
+  </data>
+  <data name="AwaitingReview" xml:space="preserve">
+    <value>Σε αναμονή ελέγχου</value>
+  </data>
+  <data name="AwaitingReviewHint" xml:space="preserve">
+    <value>Αρχεία που υποβλήθηκαν για έλεγχο και δεν έχουν εγκριθεί</value>
+  </data>
+  <data name="BackToReport" xml:space="preserve">
+    <value>Επιστροφή στην αναφορά συμβάντος</value>
+  </data>
+  <data name="BodyStyle" xml:space="preserve">
+    <value>Τύπος αμαξώματος</value>
+  </data>
+  <data name="CallId" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="Capture" xml:space="preserve">
+    <value>Καταγραφή</value>
+  </data>
+  <data name="CaptureReason" xml:space="preserve">
+    <value>Λόγος καταγραφής αυτού του τεκμηρίου</value>
+  </data>
+  <data name="CapturedBy" xml:space="preserve">
+    <value>Καταγράφηκε από</value>
+  </data>
+  <data name="CapturedOn" xml:space="preserve">
+    <value>Καταγράφηκε στις</value>
+  </data>
+  <data name="CasualtiesAndRescues" xml:space="preserve">
+    <value>Τραυματίες και διασώσεις</value>
+  </data>
+  <data name="Casualty" xml:space="preserve">
+    <value>Τραυματίας</value>
+  </data>
+  <data name="CasualtyAction" xml:space="preserve">
+    <value>Ενέργεια τη στιγμή εκείνη</value>
+  </data>
+  <data name="CasualtyCause" xml:space="preserve">
+    <value>Αιτία τραυματισμού</value>
+  </data>
+  <data name="CasualtyTimeline" xml:space="preserve">
+    <value>Πότε συνέβη</value>
+  </data>
+  <data name="Civilian" xml:space="preserve">
+    <value>Πολίτης</value>
+  </data>
+  <data name="CloseRequest" xml:space="preserve">
+    <value>Κλείσιμο του αιτήματος</value>
+  </data>
+  <data name="ClosedOn" xml:space="preserve">
+    <value>Έκλεισε στις</value>
+  </data>
+  <data name="ConditionalSections" xml:space="preserve">
+    <value>Υπό όρους ενότητες</value>
+  </data>
+  <data name="ConstructionType" xml:space="preserve">
+    <value>Τύπος κατασκευής</value>
+  </data>
+  <data name="ContentsLoss" xml:space="preserve">
+    <value>Ζημιά περιεχομένου</value>
+  </data>
+  <data name="ContentsValue" xml:space="preserve">
+    <value>Αξία περιεχομένου</value>
+  </data>
+  <data name="CrosswalkCoverage" xml:space="preserve">
+    <value>Κάλυψη αντιστοίχισης κωδικών</value>
+  </data>
+  <data name="CrosswalkCoverageIntro" xml:space="preserve">
+    <value>Κάθε τοπικός τύπος κλήσης χωρίς κωδικό NERIS θα πρέπει να ταξινομηθεί χειροκίνητα την ίδια νύχτα.</value>
+  </data>
+  <data name="CurrencyCode" xml:space="preserve">
+    <value>Νόμισμα</value>
+  </data>
+  <data name="DamageType" xml:space="preserve">
+    <value>Βαθμός ζημιάς</value>
+  </data>
+  <data name="DashboardDegraded" xml:space="preserve">
+    <value>Ορισμένες μετρήσεις δεν ήταν δυνατό να παραχθούν:</value>
+  </data>
+  <data name="DefinitionKey" xml:space="preserve">
+    <value>Ορισμός</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Λεπτομέρεια</value>
+  </data>
+  <data name="Disclosure" xml:space="preserve">
+    <value>Αίτημα πρόσβασης σε αρχεία</value>
+  </data>
+  <data name="DisclosureClosed" xml:space="preserve">
+    <value>Το αίτημα πρόσβασης έκλεισε.</value>
+  </data>
+  <data name="DisclosureCreated" xml:space="preserve">
+    <value>Το αίτημα πρόσβασης καταχωρήθηκε.</value>
+  </data>
+  <data name="DisclosureIntro" xml:space="preserve">
+    <value>Ένα αίτημα πρόσβασης έχει νόμιμη προθεσμία, γι' αυτό παρακολουθείται εδώ αντί να απαντάται περιστασιακά.</value>
+  </data>
+  <data name="DisclosureOverdueNotice" xml:space="preserve">
+    <value>Το αίτημα αυτό έχει ξεπεράσει τη νόμιμη προθεσμία.</value>
+  </data>
+  <data name="DisclosureProduced" xml:space="preserve">
+    <value>Ετοιμάστηκε παραδοτέο με απαλείψεις.</value>
+  </data>
+  <data name="DisclosureQueue" xml:space="preserve">
+    <value>Αιτήματα πρόσβασης σε αρχεία</value>
+  </data>
+  <data name="DisclosureReasonRequired" xml:space="preserve">
+    <value>Απαιτείται αιτιολογία για το κλείσιμο ενός αιτήματος.</value>
+  </data>
+  <data name="DisclosureReleased" xml:space="preserve">
+    <value>Το παραδοτέο δόθηκε στον αιτούντα.</value>
+  </data>
+  <data name="DisclosureScopeSaved" xml:space="preserve">
+    <value>Το εύρος αποθηκεύτηκε.</value>
+  </data>
+  <data name="Disclosures" xml:space="preserve">
+    <value>Πρόσβαση σε αρχεία</value>
+  </data>
+  <data name="DispositionReason" xml:space="preserve">
+    <value>Αιτιολογία της έκβασης</value>
+  </data>
+  <data name="Drafts" xml:space="preserve">
+    <value>Πρόχειρα</value>
+  </data>
+  <data name="DutyType" xml:space="preserve">
+    <value>Υπηρεσία τη στιγμή εκείνη</value>
+  </data>
+  <data name="EditCrosswalk" xml:space="preserve">
+    <value>Επεξεργασία αντιστοίχισης</value>
+  </data>
+  <data name="EditIncidentAnalysis" xml:space="preserve">
+    <value>Επεξεργασία ανάλυσης συμβάντος</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Σφάλμα</value>
+  </data>
+  <data name="EstimatedLoss" xml:space="preserve">
+    <value>Εκτιμώμενη ζημιά</value>
+  </data>
+  <data name="EstimatedValue" xml:space="preserve">
+    <value>Εκτιμώμενη αξία</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>Τεκμήρια</value>
+  </data>
+  <data name="EvidenceCaptured" xml:space="preserve">
+    <value>Το τεκμήριο καταγράφηκε.</value>
+  </data>
+  <data name="EvidenceCertificationSnapshot" xml:space="preserve">
+    <value>Πιστοποιήσεις τη στιγμή του συμβάντος</value>
+  </data>
+  <data name="EvidenceChatPromotion" xml:space="preserve">
+    <value>Μηνύματα συμβάντος που εντάχθηκαν</value>
+  </data>
+  <data name="EvidenceIntro" xml:space="preserve">
+    <value>Κάθε τεκμήριο είναι ένα οριοθετημένο στιγμιότυπο που λαμβάνεται μία φορά, με άθροισμα ελέγχου και δεν αλλάζει ποτέ· η διόρθωση είναι νέα καταγραφή.</value>
+  </data>
+  <data name="EvidenceInventoryUsage" xml:space="preserve">
+    <value>Αναλώσιμα και ελεγχόμενες ουσίες που χρησιμοποιήθηκαν</value>
+  </data>
+  <data name="EvidenceReadinessPacket" xml:space="preserve">
+    <value>Ετοιμότητα τη στιγμή της κλήσης</value>
+  </data>
+  <data name="EvidenceReasonRequired" xml:space="preserve">
+    <value>Απαιτείται αιτιολογία για την ένταξη τεκμηρίου σε επίσημο αρχείο.</value>
+  </data>
+  <data name="EvidenceRunCardActivation" xml:space="preserve">
+    <value>Απόφαση κινητοποίησης</value>
+  </data>
+  <data name="EvidenceSource" xml:space="preserve">
+    <value>Πηγή</value>
+  </data>
+  <data name="EvidenceTrackingFix" xml:space="preserve">
+    <value>Στίγματα οχημάτων</value>
+  </data>
+  <data name="EvidenceUnavailable" xml:space="preserve">
+    <value>Αυτή η πηγή τεκμηρίων δεν είχε τίποτα να καταγράψει για το αρχείο αυτό.</value>
+  </data>
+  <data name="ExposureItem" xml:space="preserve">
+    <value>Εκτεθειμένο αντικείμενο</value>
+  </data>
+  <data name="Exposures" xml:space="preserve">
+    <value>Εκτεθειμένα αντικείμενα</value>
+  </data>
+  <data name="Fatal" xml:space="preserve">
+    <value>Θανατηφόρο</value>
+  </data>
+  <data name="FinalizeAnalysisIntro" xml:space="preserve">
+    <value>Η οριστικοποίηση γράφει την αμετάβλητη αναθεώρηση. Η υποβολή περιμένει το αναγνωριστικό NERIS του συμβάντος αν δεν υπάρχει ακόμη.</value>
+  </data>
+  <data name="FinalizedOn" xml:space="preserve">
+    <value>Οριστικοποιήθηκε στις</value>
+  </data>
+  <data name="FireSpread" xml:space="preserve">
+    <value>Εξάπλωση πυρκαγιάς</value>
+  </data>
+  <data name="Firefighter" xml:space="preserve">
+    <value>Πυροσβέστης</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Φύλο</value>
+  </data>
+  <data name="GeneralCause" xml:space="preserve">
+    <value>Γενική αιτία</value>
+  </data>
+  <data name="IncidentAnalysis" xml:space="preserve">
+    <value>Ανάλυση συμβάντος</value>
+  </data>
+  <data name="IncidentAnalysisIntro" xml:space="preserve">
+    <value>Η διερεύνηση πυρκαγιάς και επικίνδυνων υλικών υποβάλλεται χωριστά από το συμβάν, αφού ο παραλήπτης το έχει ήδη.</value>
+  </data>
+  <data name="IncidentIncomplete" xml:space="preserve">
+    <value>Ημιτελείς αναφορές</value>
+  </data>
+  <data name="IncidentIncompleteHint" xml:space="preserve">
+    <value>Αναφορές συμβάντων που δεν έχουν οριστικοποιηθεί</value>
+  </data>
+  <data name="IncludeLegacy" xml:space="preserve">
+    <value>Συμπερίληψη παλαιών καταχωρίσεων</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>Ημιτελείς</value>
+  </data>
+  <data name="Injured" xml:space="preserve">
+    <value>Τραυματισμένος</value>
+  </data>
+  <data name="InvestigationTypes" xml:space="preserve">
+    <value>Είδη διερεύνησης</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Στοιχεία</value>
+  </data>
+  <data name="JurisdictionProfile" xml:space="preserve">
+    <value>Δικαιοδοσία</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="LicensePlate" xml:space="preserve">
+    <value>Πινακίδα κυκλοφορίας</value>
+  </data>
+  <data name="LocalCode" xml:space="preserve">
+    <value>Τοπικός κωδικός</value>
+  </data>
+  <data name="LogDisclosure" xml:space="preserve">
+    <value>Καταχώριση αιτήματος πρόσβασης</value>
+  </data>
+  <data name="Make" xml:space="preserve">
+    <value>Μάρκα</value>
+  </data>
+  <data name="Manifest" xml:space="preserve">
+    <value>Κατάλογος περιεχομένου</value>
+  </data>
+  <data name="Mapped" xml:space="preserve">
+    <value>αντιστοιχισμένοι</value>
+  </data>
+  <data name="Matched" xml:space="preserve">
+    <value>αντιστοιχίες</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Μοντέλο</value>
+  </data>
+  <data name="ModelYear" xml:space="preserve">
+    <value>Έτος μοντέλου</value>
+  </data>
+  <data name="NerisAnalysisId" xml:space="preserve">
+    <value>Αναγνωριστικό ανάλυσης NERIS</value>
+  </data>
+  <data name="NerisCode" xml:space="preserve">
+    <value>Κωδικός NERIS</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>Δεν έχουν καταχωριστεί αιτήματα πρόσβασης.</value>
+  </data>
+  <data name="NoEvidenceCaptured" xml:space="preserve">
+    <value>Δεν έχουν καταγραφεί τεκμήρια για την αναφορά αυτή.</value>
+  </data>
+  <data name="NoProductions" xml:space="preserve">
+    <value>Δεν έχει παραχθεί τίποτα ακόμη.</value>
+  </data>
+  <data name="NoSectionsYet" xml:space="preserve">
+    <value>Καμία υπό όρους ενότητα δεν ισχύει έως ότου επιλεγεί τύπος συμβάντος.</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Ανοικτά</value>
+  </data>
+  <data name="OpenAnalysis" xml:space="preserve">
+    <value>Άνοιγμα ανάλυσης</value>
+  </data>
+  <data name="OpenDisclosureQueue" xml:space="preserve">
+    <value>Άνοιγμα αιτημάτων πρόσβασης</value>
+  </data>
+  <data name="OpenIncidentQueue" xml:space="preserve">
+    <value>Άνοιγμα ουράς συμβάντων</value>
+  </data>
+  <data name="OpenRecordsQueue" xml:space="preserve">
+    <value>Άνοιγμα ουράς αρχείων</value>
+  </data>
+  <data name="OperationalRecords" xml:space="preserve">
+    <value>Επιχειρησιακά αρχεία</value>
+  </data>
+  <data name="Overdue" xml:space="preserve">
+    <value>Εκπρόθεσμα</value>
+  </data>
+  <data name="OverdueHint" xml:space="preserve">
+    <value>Υποχρεώσεις που έχουν λήξει</value>
+  </data>
+  <data name="PersonType" xml:space="preserve">
+    <value>Τύπος προσώπου</value>
+  </data>
+  <data name="PersonnelMember" xml:space="preserve">
+    <value>Μέλος</value>
+  </data>
+  <data name="Powertrain" xml:space="preserve">
+    <value>Σύστημα κίνησης</value>
+  </data>
+  <data name="PreparedOn" xml:space="preserve">
+    <value>Ετοιμάστηκε στις</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>Στο αρχείο</value>
+  </data>
+  <data name="PrimaryCode" xml:space="preserve">
+    <value>Κύριος κωδικός</value>
+  </data>
+  <data name="Produce" xml:space="preserve">
+    <value>Παραγωγή</value>
+  </data>
+  <data name="ProduceIntro" xml:space="preserve">
+    <value>Το παραδοτέο είναι νέο αμετάβλητο τεκμήριο· μεταγενέστερη τροποποίηση δεν αλλάζει ό,τι δόθηκε.</value>
+  </data>
+  <data name="Producible" xml:space="preserve">
+    <value>Δυνατόν να δοθεί</value>
+  </data>
+  <data name="ProductionIntact" xml:space="preserve">
+    <value>Το άθροισμα ελέγχου εξακολουθεί να ταιριάζει· δεν έχει αλλοιωθεί.</value>
+  </data>
+  <data name="ProductionTampered" xml:space="preserve">
+    <value>Το άθροισμα ελέγχου δεν ταιριάζει με το αποθηκευμένο.</value>
+  </data>
+  <data name="Productions" xml:space="preserve">
+    <value>Παραδοτέα</value>
+  </data>
+  <data name="ProfileVersion" xml:space="preserve">
+    <value>Έκδοση συμβολαίου</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>Ακίνητα</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Ποσότητα</value>
+  </data>
+  <data name="QueueSubmission" xml:space="preserve">
+    <value>Προσθήκη υποβολής στην ουρά</value>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value>Σε ουρά</value>
+  </data>
+  <data name="Race" xml:space="preserve">
+    <value>Εθνοτική καταγωγή</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Βαθμός</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+    <value>Παραλήφθηκε στις</value>
+  </data>
+  <data name="RecordCount" xml:space="preserve">
+    <value>Αρχεία</value>
+  </data>
+  <data name="RecordsDashboard" xml:space="preserve">
+    <value>Πίνακας αρχείων</value>
+  </data>
+  <data name="RecordsNotActivated" xml:space="preserve">
+    <value>Το αρχείο δεν έχει ενεργοποιηθεί ακόμη για την υπηρεσία αυτή.</value>
+  </data>
+  <data name="RedactionProfile" xml:space="preserve">
+    <value>Προφίλ απαλείψεων</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Απορρίφθηκαν</value>
+  </data>
+  <data name="RejectedHint" xml:space="preserve">
+    <value>Απορρίφθηκαν από τον παραλήπτη και δεν διορθώθηκαν</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Χορήγηση</value>
+  </data>
+  <data name="ReleasedOn" xml:space="preserve">
+    <value>Χορηγήθηκε στις</value>
+  </data>
+  <data name="Request" xml:space="preserve">
+    <value>Αίτημα</value>
+  </data>
+  <data name="RequestNumber" xml:space="preserve">
+    <value>Αριθμός αναφοράς</value>
+  </data>
+  <data name="Requester" xml:space="preserve">
+    <value>Αιτών</value>
+  </data>
+  <data name="RequesterContact" xml:space="preserve">
+    <value>Στοιχεία επικοινωνίας</value>
+  </data>
+  <data name="RequesterIdentityWithheld" xml:space="preserve">
+    <value>Η ταυτότητα του αιτούντος είναι περιορισμένη και δεν εμφανίζεται εδώ.</value>
+  </data>
+  <data name="RequesterName" xml:space="preserve">
+    <value>Όνομα αιτούντος</value>
+  </data>
+  <data name="RequesterOrganization" xml:space="preserve">
+    <value>Οργανισμός</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Υποχρεωτική</value>
+  </data>
+  <data name="Rescue" xml:space="preserve">
+    <value>Διάσωση</value>
+  </data>
+  <data name="RescueElevation" xml:space="preserve">
+    <value>Υψόμετρο διάσωσης</value>
+  </data>
+  <data name="RescueMode" xml:space="preserve">
+    <value>Τρόπος διάσωσης</value>
+  </data>
+  <data name="RescuePath" xml:space="preserve">
+    <value>Διαδρομή διάσωσης</value>
+  </data>
+  <data name="RescueType" xml:space="preserve">
+    <value>Είδος διάσωσης</value>
+  </data>
+  <data name="ResourceCode" xml:space="preserve">
+    <value>Πόρος</value>
+  </data>
+  <data name="Resources" xml:space="preserve">
+    <value>Πόροι</value>
+  </data>
+  <data name="ResourcesNotSubmitted" xml:space="preserve">
+    <value>τηρούνται μόνο στο αρχείο της υπηρεσίας, δεν αποστέλλονται στο NERIS</value>
+  </data>
+  <data name="RestrictedFieldsHidden" xml:space="preserve">
+    <value>Ορισμένα πεδία είναι περιορισμένα και δεν σας εμφανίζονται.</value>
+  </data>
+  <data name="Returned" xml:space="preserve">
+    <value>Επιστράφηκαν για διόρθωση</value>
+  </data>
+  <data name="SaveScope" xml:space="preserve">
+    <value>Αποθήκευση εύρους</value>
+  </data>
+  <data name="Scope" xml:space="preserve">
+    <value>Εύρος</value>
+  </data>
+  <data name="ScopeFrozen" xml:space="preserve">
+    <value>Το εύρος έχει παγώσει επειδή έχει ήδη παραχθεί υλικό βάσει αυτού.</value>
+  </data>
+  <data name="ScopeNarrative" xml:space="preserve">
+    <value>Τι ζητήθηκε</value>
+  </data>
+  <data name="ScopePreview" xml:space="preserve">
+    <value>Τι αποδίδει το εύρος</value>
+  </data>
+  <data name="ScopePreviewTruncated" xml:space="preserve">
+    <value>Ταιριάζουν περισσότερα αρχεία από όσα εμφανίζονται εδώ.</value>
+  </data>
+  <data name="SecondaryCode" xml:space="preserve">
+    <value>Δευτερεύων κωδικός</value>
+  </data>
+  <data name="SectionBattery" xml:space="preserve">
+    <value>Εμπλεκόμενη μπαταρία</value>
+  </data>
+  <data name="SectionChemical" xml:space="preserve">
+    <value>Χημική ουσία που διέρρευσε</value>
+  </data>
+  <data name="SectionCookingFireSuppression" xml:space="preserve">
+    <value>Σύστημα κατάσβεσης κουζίνας</value>
+  </data>
+  <data name="SectionCsstHazard" xml:space="preserve">
+    <value>Κυματοειδής ανοξείδωτη σωλήνωση αερίου</value>
+  </data>
+  <data name="SectionElectricHazard" xml:space="preserve">
+    <value>Ηλεκτρικός κίνδυνος</value>
+  </data>
+  <data name="SectionFire" xml:space="preserve">
+    <value>Στοιχεία πυρκαγιάς</value>
+  </data>
+  <data name="SectionFireAlarm" xml:space="preserve">
+    <value>Σύστημα πυρανίχνευσης</value>
+  </data>
+  <data name="SectionFireSuppression" xml:space="preserve">
+    <value>Σύστημα κατάσβεσης</value>
+  </data>
+  <data name="SectionHazsit" xml:space="preserve">
+    <value>Επικίνδυνη κατάσταση</value>
+  </data>
+  <data name="SectionHazsitAnalysis" xml:space="preserve">
+    <value>Ανάλυση επικίνδυνης κατάστασης</value>
+  </data>
+  <data name="SectionMedical" xml:space="preserve">
+    <value>Φροντίδα ασθενούς</value>
+  </data>
+  <data name="SectionMedicalOxygenHazard" xml:space="preserve">
+    <value>Ιατρικό οξυγόνο κατ' οίκον</value>
+  </data>
+  <data name="SectionNoLongerApplies" xml:space="preserve">
+    <value>Η ενότητα αυτή δεν ισχύει πλέον για τους επιλεγμένους τύπους συμβάντος.</value>
+  </data>
+  <data name="SectionOtherAlarm" xml:space="preserve">
+    <value>Άλλος συναγερμός</value>
+  </data>
+  <data name="SectionOutsideFire" xml:space="preserve">
+    <value>Ανάλυση υπαίθριας πυρκαγιάς</value>
+  </data>
+  <data name="SectionOutsideFireLocation" xml:space="preserve">
+    <value>Θέση υπαίθριας πυρκαγιάς</value>
+  </data>
+  <data name="SectionPowergenHazard" xml:space="preserve">
+    <value>Κίνδυνος από παραγωγή ενέργειας</value>
+  </data>
+  <data name="SectionProduct" xml:space="preserve">
+    <value>Εμπλεκόμενο προϊόν</value>
+  </data>
+  <data name="SectionSmokeAlarm" xml:space="preserve">
+    <value>Ανιχνευτής καπνού</value>
+  </data>
+  <data name="SectionStructureFireLocation" xml:space="preserve">
+    <value>Θέση πυρκαγιάς σε κτίριο</value>
+  </data>
+  <data name="SectionStructureFireOrigin" xml:space="preserve">
+    <value>Εστία πυρκαγιάς κτιρίου</value>
+  </data>
+  <data name="Sent" xml:space="preserve">
+    <value>Στάλθηκε</value>
+  </data>
+  <data name="SetKey" xml:space="preserve">
+    <value>Σύνολο τιμών</value>
+  </data>
+  <data name="Stale" xml:space="preserve">
+    <value>παρωχημένοι</value>
+  </data>
+  <data name="StartAnalysis" xml:space="preserve">
+    <value>Έναρξη ανάλυσης</value>
+  </data>
+  <data name="States" xml:space="preserve">
+    <value>Καταστάσεις</value>
+  </data>
+  <data name="StatutoryDueHint" xml:space="preserve">
+    <value>Αν μείνει κενό, το ορίζει η νόμιμη προθεσμία της υπηρεσίας.</value>
+  </data>
+  <data name="StatutoryDueOn" xml:space="preserve">
+    <value>Νόμιμη προθεσμία</value>
+  </data>
+  <data name="StoriesAbove" xml:space="preserve">
+    <value>Όροφοι πάνω από το έδαφος</value>
+  </data>
+  <data name="StoriesBelow" xml:space="preserve">
+    <value>Όροφοι κάτω από το έδαφος</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Υποβολή</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>Υποβλήθηκαν</value>
+  </data>
+  <data name="Suggested" xml:space="preserve">
+    <value>Προτεινόμενη</value>
+  </data>
+  <data name="Superseded" xml:space="preserve">
+    <value>Αντικαταστάθηκε</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Τίτλος</value>
+  </data>
+  <data name="Vacancy" xml:space="preserve">
+    <value>Κατάσταση κατοίκησης</value>
+  </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>Οχήματα</value>
+  </data>
+  <data name="VerifyProduction" xml:space="preserve">
+    <value>Έλεγχος αθροίσματος ελέγχου</value>
+  </data>
+  <data name="Vin" xml:space="preserve">
+    <value>Αριθμός πλαισίου</value>
+  </data>
+  <data name="WasOccupied" xml:space="preserve">
+    <value>Κατειλημμένο τη στιγμή εκείνη</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Έτος</value>
+  </data>
+  <data name="YearBuilt" xml:space="preserve">
+    <value>Έτος κατασκευής</value>
+  </data>
+  <data name="OtherVehicle" xml:space="preserve">
+    <value>Άλλο όχημα</value>
+  </data>
+  <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
+    <value>Απαιτούνται νέα διαπιστευτήρια όταν αλλάζει ο τύπος παραχώρησης NERIS.</value>
+  </data>
 </root>

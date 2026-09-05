@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
@@ -124,6 +124,9 @@ namespace Resgrid.Model
 
 		/// <summary>Optimistic-concurrency counter (ETag). Incremented by the service on every draft save.</summary>
 		public long RowVersion { get; set; }
+
+		/// <summary>When the retention sweep purged the content (RMS-3, worker 43); the row itself survives as a tombstone.</summary>
+		public DateTime? PurgedOn { get; set; }
 
 		public DateTime? DeletedOn { get; set; }
 

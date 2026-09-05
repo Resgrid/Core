@@ -20,6 +20,13 @@ namespace Resgrid.Model
 	public static class RmsSubmissionDestinations
 	{
 		public const string Neris = "NERIS";
+
+		/// <summary>
+		/// The separate incident-analysis filing (RMS-3). It is its own destination string so an incident and its
+		/// analysis never collide on an idempotency key, and so worker 41 can tell which endpoint a claimed row
+		/// belongs to without reading the payload.
+		/// </summary>
+		public const string NerisIncidentAnalysis = "NERIS_ANALYSIS";
 	}
 
 	/// <summary>

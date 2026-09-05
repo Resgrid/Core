@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -46,6 +46,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsOperationalRecord>> GetOpenAsync(int departmentId);
 		/// <summary>Live Finalized/Amended Records whose FinalizedOn is at or after the instant.</summary>
 		Task<IEnumerable<RmsOperationalRecord>> GetFinalizedSinceAsync(int departmentId, DateTime sinceUtc);
+		/// <summary>Retention candidates (RMS-3, worker 43): live, closed Records finalized before the cutoff, oldest first.</summary>
+		Task<IEnumerable<RmsOperationalRecord>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take);
 		/// <summary>Live Records with no RmsRecordGroupScope row: they stay department-wide under group scoping (plan 5.7.1).</summary>
 		Task<int> CountWithoutGroupScopeAsync(int departmentId);
 		Task<IEnumerable<int>> GetYearsAsync(int departmentId);
@@ -91,6 +93,12 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsRecordAttachment>> GetMetadataForRecordAsync(int departmentId, string recordId);
 		/// <summary>Loads Data; authorized per Record by the caller on every request.</summary>
 		Task<RmsRecordAttachment> GetByIdForDepartmentAsync(int departmentId, string attachmentId);
+		/// <summary>
+		/// Attachments still sitting at <see cref="RmsAttachmentScanState.Pending"/> — stored because the scanner
+		/// was unreachable and the department chose availability over fail-closed. Worker 43 rescans them; without
+		/// this sweep a Pending attachment would stay unscanned forever (RMS-1 gap closed in RMS-3).
+		/// </summary>
+		Task<IEnumerable<RmsRecordAttachment>> GetPendingScanAsync(int departmentId, int take);
 	}
 
 	public interface IRmsExternalReferencesRepository : IRepository<RmsExternalReference>
@@ -142,7 +150,12 @@ namespace Resgrid.Model.Repositories
 		Task<int> CountAsync(int departmentId, RmsRecordQuery query);
 		Task<IEnumerable<int>> GetYearsAsync(int departmentId);
 		/// <summary>Projections (including soft-deleted ones) modified after <paramref name="since"/>, oldest first; the search index catch-up feed.</summary>
-		Task<IEnumerable<RmsRecordSearchProjection>> GetModifiedSinceAsync(int departmentId, DateTime? since, int take);
+		/// <summary>
+		/// Rows after the (ModifiedOn, id) cursor, oldest first. The id is part of the cursor because several rows
+		/// routinely share a modified timestamp: a timestamp-only cursor skips whatever sat after the page break
+		/// inside that group, and an offline client never learns those rows changed.
+		/// </summary>
+		Task<IEnumerable<RmsRecordSearchProjection>> GetModifiedSinceAsync(int departmentId, DateTime? since, int take, string sinceId = null);
 		/// <summary>Live projections by record id, for post-retrieval loading of search hits.</summary>
 		Task<IEnumerable<RmsRecordSearchProjection>> GetByIdsAsync(int departmentId, IEnumerable<string> recordIds);
 	}
@@ -165,5 +178,67 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsRecordSharesRepository : IRepository<RmsRecordShare>
 	{
 		Task<IEnumerable<RmsRecordShare>> GetForRecordAsync(int departmentId, string recordId);
+	}
+
+	/// <summary>
+	/// Persisted due state per (Record, obligation) — registry M0170, RMS-3. The uniqueness of that pair is what
+	/// makes worker 42's "at most once per due-state transition" guarantee hold across missed and repeated runs.
+	/// </summary>
+	/// <summary>
+	/// Immutable evidence artifacts (registry M0169, RMS-3). There is no update path by design: a correction
+	/// supersedes an artifact rather than editing it, so the checksum of what was attested to stays true.
+	/// </summary>
+	public interface IRmsEvidenceArtifactsRepository : IRepository<RmsEvidenceArtifact>
+	{
+		Task<RmsEvidenceArtifact> GetByIdForDepartmentAsync(int departmentId, string artifactId);
+		/// <summary><paramref name="revisionId"/> null returns the working-draft artifacts.</summary>
+		Task<IEnumerable<RmsEvidenceArtifact>> GetForRecordAsync(int departmentId, string recordId, string revisionId, bool includeSuperseded);
+		/// <summary>The current artifact of one kind on the draft, or null; capture supersedes it.</summary>
+		Task<RmsEvidenceArtifact> GetCurrentDraftOfKindAsync(int departmentId, string recordId, RmsEvidenceKind kind, string sourceEntityId);
+		/// <summary>Stamps every unbound draft artifact with the revision being written at finalize.</summary>
+		Task<int> BindDraftToRevisionAsync(int departmentId, string recordId, string revisionId, DateTime utcNow, CancellationToken cancellationToken = default);
+		Task<int> CountForRecordAsync(int departmentId, string recordId);
+	}
+
+	public interface IRmsRecordDueStatesRepository : IRepository<RmsRecordDueState>
+	{
+		Task<RmsRecordDueState> GetAsync(int departmentId, string recordId, RmsRecordObligation obligation);
+		Task<IEnumerable<RmsRecordDueState>> GetForRecordAsync(int departmentId, string recordId);
+		/// <summary>Open obligations (not yet cleared) for a department, oldest deadline first.</summary>
+		Task<IEnumerable<RmsRecordDueState>> GetOpenForDepartmentAsync(int departmentId, int take);
+		/// <summary>Count of obligations currently sitting overdue; the accountability view and dashboards read it.</summary>
+		Task<int> CountOverdueAsync(int departmentId);
+		Task<int> ClearForRecordAsync(int departmentId, string recordId, DateTime utcNow, CancellationToken cancellationToken = default);
+	}
+
+	/// <summary>Public-records requests (registry M0171, RMS-3); the statutory clock is what these are read by.</summary>
+	public interface IRmsDisclosureRequestsRepository : IRepository<RmsDisclosureRequest>
+	{
+		Task<RmsDisclosureRequest> GetByIdForDepartmentAsync(int departmentId, string requestId);
+		Task<IEnumerable<RmsDisclosureRequest>> GetForDepartmentAsync(int departmentId, IEnumerable<int> states, int skip, int take);
+		Task<int> CountByStateAsync(int departmentId, RmsDisclosureState state);
+		/// <summary>Open requests past their statutory due date; the number an officer is accountable for.</summary>
+		Task<int> CountOverdueAsync(int departmentId, DateTime utcNow);
+		Task<int> GetMaxRequestNumberSequenceAsync(int departmentId, string numberPrefix);
+	}
+
+	/// <summary>
+	/// Immutable produced sets (registry M0171, RMS-3). A production is never edited: a supplemental release is a
+	/// new production, so what was handed over stays exactly what was handed over.
+	/// </summary>
+	public interface IRmsDisclosureProductionsRepository : IRepository<RmsDisclosureProduction>
+	{
+		Task<RmsDisclosureProduction> GetByIdForDepartmentAsync(int departmentId, string productionId);
+		Task<IEnumerable<RmsDisclosureProduction>> GetForRequestAsync(int departmentId, string requestId);
+		Task<int> GetMaxProductionNumberAsync(int departmentId, string requestId);
+	}
+
+	public interface IRmsRecordLegalHoldsRepository : IRepository<RmsRecordLegalHold>
+	{
+		Task<RmsRecordLegalHold> GetByIdForDepartmentAsync(int departmentId, string holdId);
+		/// <summary>Every hold still in force for the department; the retention sweep loads them once per pass.</summary>
+		Task<IEnumerable<RmsRecordLegalHold>> GetActiveForDepartmentAsync(int departmentId);
+		Task<IEnumerable<RmsRecordLegalHold>> GetForRecordAsync(int departmentId, string recordId);
+		Task<IEnumerable<RmsRecordLegalHold>> GetAllForDepartmentAsync(int departmentId);
 	}
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -66,9 +66,15 @@ namespace Resgrid.Providers.Neris
 
 			target.NerisEntityId = string.IsNullOrWhiteSpace(profile.NerisEntityId) ? null : profile.NerisEntityId.Trim().ToUpperInvariant();
 			target.EntityName = profile.EntityName?.Trim();
-			target.Environment = profile.Environment == NerisEnvironments.Sandbox ? NerisEnvironments.Sandbox : NerisEnvironments.Production;
-			target.BaseUrlOverride = string.IsNullOrWhiteSpace(profile.BaseUrlOverride) ? null : profile.BaseUrlOverride.Trim();
-			target.GrantType = profile.GrantType == NerisGrantTypes.Password ? NerisGrantTypes.Password : NerisGrantTypes.ClientCredentials;
+			// The settings screen posts these as free strings, so canonicalize case-insensitively: "Sandbox" or a
+			// padded " sandbox " must not silently persist as Production and file a live incident against it.
+			target.Environment = string.Equals(profile.Environment?.Trim(), NerisEnvironments.Sandbox, StringComparison.OrdinalIgnoreCase)
+				? NerisEnvironments.Sandbox
+				: NerisEnvironments.Production;
+			target.BaseUrlOverride = NormalizeBaseUrl(profile.BaseUrlOverride);
+			target.GrantType = string.Equals(profile.GrantType?.Trim(), NerisGrantTypes.Password, StringComparison.OrdinalIgnoreCase)
+				? NerisGrantTypes.Password
+				: NerisGrantTypes.ClientCredentials;
 			target.ContractVersion = ContractVersion;
 			target.AutoSubmitOnFinalize = profile.AutoSubmitOnFinalize;
 			target.IsEnabled = profile.IsEnabled;
@@ -87,6 +93,26 @@ namespace Resgrid.Providers.Neris
 				return await _profiles.InsertAsync(target, cancellationToken, true);
 
 			return await _profiles.UpdateAsync(target, cancellationToken, true);
+		}
+
+		/// <summary>
+		/// The base URL is a server-side request destination, so an unchecked override is an SSRF sink: a department
+		/// administrator could point the submission worker at an internal host. Self-hosted and sandbox deployments
+		/// legitimately need their own host, so the rule is absolute HTTPS with no embedded credentials rather than a
+		/// fixed allow-list.
+		/// </summary>
+		private static string NormalizeBaseUrl(string value)
+		{
+			var trimmed = string.IsNullOrWhiteSpace(value) ? null : value.Trim().TrimEnd('/');
+			if (trimmed == null)
+				return null;
+
+			if (!Uri.TryCreate(trimmed, UriKind.Absolute, out var uri)
+				|| !string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
+				|| !string.IsNullOrEmpty(uri.UserInfo))
+				throw new ArgumentException("The NERIS base URL override must be an absolute https:// address without embedded credentials.", nameof(value));
+
+			return trimmed;
 		}
 
 		public async Task<NerisCredential> GetCredentialAsync(RmsNerisProfile profile)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ProtoBuf;
 
@@ -218,6 +218,10 @@ namespace Resgrid.Model
 
 		[ProtoMember(52)]
 		public DateTime? DeletedOn { get; set; }
+
+		/// <summary>When the retention sweep purged the content (RMS-3, worker 43); the row itself survives as a tombstone.</summary>
+		[ProtoMember(65)]
+		public DateTime? PurgedOn { get; set; }
 
 		public string RecordId => RmsIncidentReportId;
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +13,15 @@ namespace Resgrid.Model.Repositories
 		public int? CallId { get; set; }
 		public string OwnerUserId { get; set; }
 		public int? StationGroupId { get; set; }
+
+		/// <summary>
+		/// When non-null, restricts to reports whose group scope intersects these ids or whose author, owner or
+		/// reviewer is <see cref="ViewerUserId"/> — the same rule <c>CanUserViewRecordAsync</c> applies per record.
+		/// Filtering here rather than after paging is what keeps <c>CountAsync</c> and the page links honest.
+		/// </summary>
+		public IList<int> VisibleGroupIds { get; set; }
+
+		public string ViewerUserId { get; set; }
 		public int Skip { get; set; }
 		public int Take { get; set; } = 50;
 	}
@@ -30,6 +39,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<int>> GetYearsAsync(int departmentId);
 		Task<int> GetMaxRecordNumberSequenceAsync(int departmentId, string numberPrefix);
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string reportId, long expectedRowVersion, CancellationToken cancellationToken = default);
+		/// <summary>Retention candidates (RMS-3, worker 43): live, closed reports finalized before the cutoff, oldest first.</summary>
+		Task<IEnumerable<RmsIncidentReport>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take);
 	}
 
 	/// <summary>Shared contract of every per-report child row set: a working draft (RevisionId null) and immutable revision copies.</summary>
@@ -47,6 +58,30 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsLocationsRepository : IRmsIncidentChildRepository<RmsLocation> { }
 	public interface IRmsNarrativesRepository : IRmsIncidentChildRepository<RmsNarrative> { }
 
+	// RMS-3 conditional sections (registry M0167) and the restricted casualty/exposure classes (M0168). Each is
+	// the same draft/revision child shape, so nothing about revisioning, export or print needs a special case.
+	public interface IRmsIncidentModulesRepository : IRmsIncidentChildRepository<RmsIncidentModule>
+	{
+		/// <summary>The draft rows of one module kind, in ordinal order; the authoring surface edits a kind at a time.</summary>
+		Task<IEnumerable<RmsIncidentModule>> GetForRecordByKindAsync(int departmentId, string recordId, string revisionId, RmsIncidentModuleKind kind);
+	}
+
+	public interface IRmsIncidentResourcesRepository : IRmsIncidentChildRepository<RmsIncidentResource> { }
+	public interface IRmsCasualtyRescuesRepository : IRmsIncidentChildRepository<RmsCasualtyRescue> { }
+	public interface IRmsExposuresRepository : IRmsIncidentChildRepository<RmsExposure> { }
+	public interface IRmsIncidentPropertiesRepository : IRmsIncidentChildRepository<RmsIncidentProperty> { }
+	public interface IRmsIncidentVehiclesRepository : IRmsIncidentChildRepository<RmsIncidentVehicle> { }
+
+	public interface IRmsIncidentAnalysesRepository : IRepository<RmsIncidentAnalysis>
+	{
+		Task<RmsIncidentAnalysis> GetByIdForDepartmentAsync(int departmentId, string analysisId);
+		/// <summary>The analysis for an incident report; one per report, null when none has been started.</summary>
+		Task<RmsIncidentAnalysis> GetForReportAsync(int departmentId, string incidentReportId);
+		/// <summary>Analyses finalized but not yet filed because their incident had no NERIS id at the time.</summary>
+		Task<IEnumerable<RmsIncidentAnalysis>> GetAwaitingIncidentAsync(int departmentId, int take);
+		Task<int> CountByStateAsync(int departmentId, RmsIncidentAnalysisState state);
+	}
+
 	public interface IRmsValidationIssuesRepository : IRepository<RmsValidationIssue>
 	{
 		Task<IEnumerable<RmsValidationIssue>> GetForRecordAsync(int departmentId, string recordId);
@@ -61,7 +96,8 @@ namespace Resgrid.Model.Repositories
 		Task<RmsSubmission> GetByIdempotencyKeyAsync(string idempotencyKey);
 		/// <summary>Leases due Queued/AwaitingDestination submissions across departments for one worker sweep (plan 5.3: no transaction across the destination call).</summary>
 		Task<IEnumerable<RmsSubmission>> ClaimDueBatchAsync(string leaseOwner, TimeSpan leaseDuration, int batchSize, DateTime utcNow, CancellationToken cancellationToken = default);
-		Task<int> CountByStateAsync(int state);
+		/// <summary>Queue depth for one department; the settings screen must never show another department's rows.</summary>
+		Task<int> CountByStateAsync(int departmentId, int state);
 		/// <summary>Marks every non-terminal submission of the record Superseded (a new revision issued a new idempotency key).</summary>
 		Task<int> SupersedeOpenForRecordAsync(int departmentId, string recordId, string exceptSubmissionId, DateTime utcNow, CancellationToken cancellationToken = default);
 	}

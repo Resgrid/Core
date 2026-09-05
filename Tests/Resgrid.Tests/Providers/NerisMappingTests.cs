@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -55,7 +55,46 @@ namespace Resgrid.Tests.Providers
 				Tactics = new List<RmsActionTactic> { new RmsActionTactic { TacticCode = "COMMAND_AND_CONTROL||ESTABLISH_INCIDENT_COMMAND", OccurredOn = t0.AddMinutes(7), Ordinal = 0 } },
 				Narrative = new RmsNarrative { Narrative = "Dumpster fire extinguished with one line.", ImpedimentNarrative = "None", OutcomeNarrative = "Fire out, no extension.", SupplementalJson = "{\"dept_only\":\"never sent\"}" },
 				DispatchComments = new List<NerisDispatchComment> { new NerisDispatchComment { Timestamp = t0.AddSeconds(30), Comment = "Caller reports flames behind store" } },
-				SpecialModifiers = new List<string> { "MCI" }
+				SpecialModifiers = new List<string> { "MCI" },
+				// RMS-3 conditional sections. The primary type is an outside fire, so the progressive rules demand
+				// the fire section and the outside-fire location detail; both are present here.
+				Modules = new List<RmsIncidentModule>
+				{
+					new RmsIncidentModule
+					{
+						ModuleKind = (int)RmsIncidentModuleKind.Fire, SchemaName = "FirePayload", PrimaryCode = "HYDRANT_GREATER_500", SecondaryCode = "NO_CAUSE_OBVIOUS", Ordinal = 0,
+						DetailJson = "{\"water_supply\":\"HYDRANT_GREATER_500\",\"investigation_needed\":\"NO_CAUSE_OBVIOUS\",\"investigation_types\":[]}"
+					},
+					new RmsIncidentModule
+					{
+						ModuleKind = (int)RmsIncidentModuleKind.OutsideFireLocation, SchemaName = "OutsideFireLocationDetailPayload", PrimaryCode = "DEBRIS_OPEN_BURNING", Quantity = 0.1m, Ordinal = 1,
+						DetailJson = "{\"type\":\"OUTSIDE\",\"acres_burned\":0.1,\"cause\":\"DEBRIS_OPEN_BURNING\"}"
+					}
+				},
+				Resources = new List<RmsIncidentResource> { new RmsIncidentResource { ResourceCode = "FOAM_CLASS_A", Quantity = 5, Detail = "gallons", Ordinal = 0 } },
+				Exposures = new List<RmsExposure>
+				{
+					new RmsExposure
+					{
+						LocationKind = "EXTERNAL", ItemType = "STRUCTURE", DamageType = "MINOR_DAMAGE", LocationUse = "COMMERCIAL||RETAIL_WHOLESALE_TRADE",
+						PeoplePresent = false, DisplacementCount = 0, DisplacementCausesCsv = "SMOKE", Street = "102 Main St", Municipality = "Springfield", State = "IL", Ordinal = 0
+					}
+				},
+				Casualties = new List<RmsCasualtyRescue>
+				{
+					new RmsCasualtyRescue
+					{
+						Kind = (int)RmsCasualtyRescueKind.Casualty, PersonType = RmsCasualtyPersonTypes.Firefighter, WasInjured = true,
+						CasualtyCause = "EXPOSURE", CasualtyAction = "ADVANCING_OPERATING_HOSELINE", CasualtyTimeline = "INITIAL_RESPONSE",
+						DutyType = "WORKING_AT_SCENE_OF_FIRE_INCIDENT", PpeCsv = "HELMET,GLOVES", Gender = "MALE", Race = "ASIAN", BirthMonthYear = "1990-04", Ordinal = 0
+					},
+					new RmsCasualtyRescue
+					{
+						Kind = (int)RmsCasualtyRescueKind.Rescue, PersonType = RmsCasualtyPersonTypes.Civilian, RescueType = "RESCUED_BY_FIREFIGHTER",
+						RescueActionsCsv = "NONE", RescueImpedimentsCsv = "NONE", RescueMode = "REMOVAL_FROM_STRUCTURE", RescuePath = "REMOVAL_ALONG_PRIMARY_PATH",
+						RescueElevation = "ON_FLOOR", Ordinal = 1
+					}
+				}
 			};
 		}
 
@@ -197,8 +236,13 @@ namespace Resgrid.Tests.Providers
 			if (alternatives != null)
 			{
 				// Pick the alternative that matches the token shape (object ref, array, or scalar); null alternatives never apply to emitted values.
+				// Several of the contract's unions are discriminated on a "type" const/enum, so prefer the branch
+				// whose discriminator the payload actually carries — otherwise every union silently checks against
+				// its first branch and the gate proves nothing.
 				var candidates = alternatives.OfType<JObject>().Where(a => (string)a["type"] != "null").ToList();
-				var matching = candidates.FirstOrDefault(a => Matches(a, value)) ?? candidates.FirstOrDefault();
+				var matching = candidates.FirstOrDefault(a => Discriminates(spec, a, value))
+					?? candidates.FirstOrDefault(a => Matches(a, value))
+					?? candidates.FirstOrDefault();
 				if (matching != null)
 					CheckAgainst(spec, matching, value, path, problems);
 				return;
@@ -215,6 +259,30 @@ namespace Resgrid.Tests.Providers
 				foreach (var item in (JArray)value)
 					CheckAgainst(spec, (JObject)propertySchema["items"], item, $"{path}[{index++}]", problems);
 			}
+		}
+
+		/// <summary>True when the alternative is a schema whose "type" const/enum equals the value's own "type".</summary>
+		private static bool Discriminates(JObject spec, JObject alternative, JToken value)
+		{
+			var refName = RefName(alternative);
+			if (refName == null || !(value is JObject obj))
+				return false;
+
+			var discriminator = (string)obj["type"];
+			if (discriminator == null)
+				return false;
+
+			var schema = (JObject)spec["components"]?["schemas"]?[refName];
+			var typeSchema = (JObject)schema?["properties"]?["type"];
+			if (typeSchema == null)
+				return false;
+
+			var constant = (string)typeSchema["const"];
+			if (constant != null)
+				return constant == discriminator;
+
+			var values = (JArray)typeSchema["enum"];
+			return values != null && values.Select(v => (string)v).Contains(discriminator);
 		}
 
 		private static bool Matches(JObject alternative, JToken value)

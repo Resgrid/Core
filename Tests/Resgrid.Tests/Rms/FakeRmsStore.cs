@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -29,6 +29,11 @@ namespace Resgrid.Tests.Rms
 		public List<DomainEventOutboxEntry> Outbox { get; } = new List<DomainEventOutboxEntry>();
 		public List<RmsDepartmentCutover> Cutovers { get; } = new List<RmsDepartmentCutover>();
 		public List<RmsDepartmentCutoverEvent> CutoverEvents { get; } = new List<RmsDepartmentCutoverEvent>();
+		public List<RmsRecordDueState> DueStates { get; } = new List<RmsRecordDueState>();
+		public List<RmsRecordLegalHold> LegalHolds { get; } = new List<RmsRecordLegalHold>();
+		public List<RmsEvidenceArtifact> EvidenceArtifacts { get; } = new List<RmsEvidenceArtifact>();
+		public List<RmsDisclosureRequest> DisclosureRequests { get; } = new List<RmsDisclosureRequest>();
+		public List<RmsDisclosureProduction> DisclosureProductions { get; } = new List<RmsDisclosureProduction>();
 
 		public Mock<IRmsOperationalRecordsRepository> RecordsRepo { get; } = new Mock<IRmsOperationalRecordsRepository>();
 		public Mock<IRmsOperationalRecordDetailsRepository> DetailsRepo { get; } = new Mock<IRmsOperationalRecordDetailsRepository>();
@@ -43,6 +48,11 @@ namespace Resgrid.Tests.Rms
 		public Mock<IDomainEventOutboxRepository> OutboxRepo { get; } = new Mock<IDomainEventOutboxRepository>();
 		public Mock<IRmsDepartmentCutoversRepository> CutoversRepo { get; } = new Mock<IRmsDepartmentCutoversRepository>();
 		public Mock<IRmsDepartmentCutoverEventsRepository> CutoverEventsRepo { get; } = new Mock<IRmsDepartmentCutoverEventsRepository>();
+		public Mock<IRmsRecordDueStatesRepository> DueStatesRepo { get; } = new Mock<IRmsRecordDueStatesRepository>();
+		public Mock<IRmsRecordLegalHoldsRepository> LegalHoldsRepo { get; } = new Mock<IRmsRecordLegalHoldsRepository>();
+		public Mock<IRmsEvidenceArtifactsRepository> EvidenceRepo { get; } = new Mock<IRmsEvidenceArtifactsRepository>();
+		public Mock<IRmsDisclosureRequestsRepository> DisclosureRequestsRepo { get; } = new Mock<IRmsDisclosureRequestsRepository>();
+		public Mock<IRmsDisclosureProductionsRepository> DisclosureProductionsRepo { get; } = new Mock<IRmsDisclosureProductionsRepository>();
 		public Mock<IUnitOfWork> UnitOfWork { get; } = new Mock<IUnitOfWork>();
 
 		public int Commits { get; private set; }
@@ -85,6 +95,22 @@ namespace Resgrid.Tests.Rms
 			RecordsRepo.Setup(r => r.GetByOwnerAndStatesAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<IEnumerable<int>>()))
 				.ReturnsAsync((int d, string owner, IEnumerable<int> states) => Records.Where(x => x.DepartmentId == d && x.OwnerUserId == owner && states.Contains(x.State)).ToList());
 
+			RecordsRepo.Setup(r => r.GetByDepartmentAndStatesAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>(), It.IsAny<int?>(), It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, IEnumerable<int> states, int? year, int skip, int take) =>
+				{
+					var list = states?.ToList();
+					return (IEnumerable<RmsOperationalRecord>)Records
+						.Where(x => x.DepartmentId == d && x.DeletedOn == null
+							&& (list == null || list.Count == 0 || list.Contains(x.State))
+							&& (!year.HasValue || (x.StartedOn ?? x.CreatedOn).Year == year.Value))
+						.OrderByDescending(x => x.CreatedOn).Skip(skip).Take(take).ToList();
+				});
+			RecordsRepo.Setup(r => r.CountByDepartmentAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
+				.ReturnsAsync((int d, IEnumerable<int> states) =>
+				{
+					var list = states?.ToList();
+					return Records.Count(x => x.DepartmentId == d && x.DeletedOn == null && (list == null || list.Count == 0 || list.Contains(x.State)));
+				});
 			RecordsRepo.Setup(r => r.GetOpenAsync(It.IsAny<int>()))
 				.ReturnsAsync((int d) => Records.Where(x => x.DepartmentId == d && (x.State == 1 || x.State == 2 || x.State == 3 || x.State == 4)).ToList());
 			RecordsRepo.Setup(r => r.GetFinalizedSinceAsync(It.IsAny<int>(), It.IsAny<DateTime>()))
@@ -204,6 +230,116 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d) => Cutovers.FirstOrDefault(x => x.DepartmentId == d));
 			CutoverEventsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsDepartmentCutoverEvent>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((RmsDepartmentCutoverEvent e, CancellationToken c, bool f) => { CutoverEvents.Add(e); return e; });
+			CutoversRepo.Setup(r => r.GetActiveAsync())
+				.ReturnsAsync(() => Cutovers.Where(x => x.State == (int)RmsDepartmentCutoverState.Active).ToList());
+
+			// RMS-3 retention candidates and the Pending-attachment rescan queue
+			RecordsRepo.Setup(r => r.GetRetentionCandidatesAsync(It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, DateTime cutoff, int take) => Records
+					.Where(x => x.DepartmentId == d && x.DeletedOn == null && x.FinalizedOn.HasValue && x.FinalizedOn < cutoff)
+					.OrderBy(x => x.FinalizedOn).Take(take).ToList());
+			AttachmentsRepo.Setup(r => r.GetPendingScanAsync(It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, int take) => Attachments
+					.Where(x => x.DepartmentId == d && x.DeletedOn == null && x.ScanState == (int)RmsAttachmentScanState.Pending)
+					.OrderBy(x => x.UploadedOn).Take(take).ToList());
+
+			// RMS-3 due states (M0170): one row per (record, obligation) is what the emit-once guarantee rests on.
+			DueStatesRepo.Setup(r => r.InsertAsync(It.IsAny<RmsRecordDueState>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsRecordDueState e, CancellationToken c, bool f) => { DueStates.Add(e); return e; });
+			DueStatesRepo.Setup(r => r.UpdateAsync(It.IsAny<RmsRecordDueState>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsRecordDueState e, CancellationToken c, bool f) => { DueStates.RemoveAll(x => x.RmsRecordDueStateId == e.RmsRecordDueStateId); DueStates.Add(e); return e; });
+			DueStatesRepo.Setup(r => r.GetAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<RmsRecordObligation>()))
+				.ReturnsAsync((int d, string id, RmsRecordObligation o) => DueStates.FirstOrDefault(x => x.DepartmentId == d && x.RecordId == id && x.Obligation == (int)o));
+			DueStatesRepo.Setup(r => r.GetForRecordAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string id) => DueStates.Where(x => x.DepartmentId == d && x.RecordId == id).ToList());
+			DueStatesRepo.Setup(r => r.GetOpenForDepartmentAsync(It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, int take) => DueStates.Where(x => x.DepartmentId == d && x.LastEmittedState != (int)RmsDueState.Cleared).Take(take).ToList());
+			DueStatesRepo.Setup(r => r.CountOverdueAsync(It.IsAny<int>()))
+				.ReturnsAsync((int d) => DueStates.Count(x => x.DepartmentId == d && x.LastEmittedState == (int)RmsDueState.Overdue));
+			DueStatesRepo.Setup(r => r.ClearForRecordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, DateTime now, CancellationToken c) =>
+				{
+					var rows = DueStates.Where(x => x.DepartmentId == d && x.RecordId == id && x.LastEmittedState != (int)RmsDueState.Cleared).ToList();
+					foreach (var row in rows) { row.LastEmittedState = (int)RmsDueState.Cleared; row.ModifiedOn = now; }
+					return rows.Count;
+				});
+
+			// RMS-3 legal holds (M0170)
+			LegalHoldsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsRecordLegalHold>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsRecordLegalHold e, CancellationToken c, bool f) => { LegalHolds.Add(e); return e; });
+			LegalHoldsRepo.Setup(r => r.UpdateAsync(It.IsAny<RmsRecordLegalHold>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsRecordLegalHold e, CancellationToken c, bool f) => { LegalHolds.RemoveAll(x => x.RmsRecordLegalHoldId == e.RmsRecordLegalHoldId); LegalHolds.Add(e); return e; });
+			LegalHoldsRepo.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string id) => LegalHolds.FirstOrDefault(x => x.DepartmentId == d && x.RmsRecordLegalHoldId == id));
+			LegalHoldsRepo.Setup(r => r.GetActiveForDepartmentAsync(It.IsAny<int>()))
+				.ReturnsAsync((int d) => LegalHolds.Where(x => x.DepartmentId == d && x.ReleasedOn == null).ToList());
+			LegalHoldsRepo.Setup(r => r.GetForRecordAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string id) => LegalHolds.Where(x => x.DepartmentId == d && x.RecordId == id).ToList());
+			LegalHoldsRepo.Setup(r => r.GetAllForDepartmentAsync(It.IsAny<int>()))
+				.ReturnsAsync((int d) => LegalHolds.Where(x => x.DepartmentId == d).ToList());
+
+			// RMS-3c evidence artifacts (M0169): insert and supersede only; there is no update-in-place path.
+			EvidenceRepo.Setup(r => r.InsertAsync(It.IsAny<RmsEvidenceArtifact>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsEvidenceArtifact e, CancellationToken c, bool f) => { EvidenceArtifacts.Add(e); return e; });
+			EvidenceRepo.Setup(r => r.UpdateAsync(It.IsAny<RmsEvidenceArtifact>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsEvidenceArtifact e, CancellationToken c, bool f) => { EvidenceArtifacts.RemoveAll(x => x.RmsEvidenceArtifactId == e.RmsEvidenceArtifactId); EvidenceArtifacts.Add(e); return e; });
+			EvidenceRepo.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string id) => EvidenceArtifacts.FirstOrDefault(x => x.DepartmentId == d && x.RmsEvidenceArtifactId == id));
+			EvidenceRepo.Setup(r => r.GetForRecordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
+				.ReturnsAsync((int d, string rec, string rev, bool includeSuperseded) => (IEnumerable<RmsEvidenceArtifact>)EvidenceArtifacts
+					.Where(x => x.DepartmentId == d && x.RecordId == rec && x.RevisionId == rev && x.DeletedOn == null && (includeSuperseded || x.SupersededOn == null))
+					.OrderBy(x => x.Kind).ThenBy(x => x.CapturedOn).ToList());
+			EvidenceRepo.Setup(r => r.GetCurrentDraftOfKindAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<RmsEvidenceKind>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string rec, RmsEvidenceKind kind, string sourceId) => EvidenceArtifacts.FirstOrDefault(x =>
+					x.DepartmentId == d && x.RecordId == rec && x.RevisionId == null && x.Kind == (int)kind
+					&& x.SupersededOn == null && x.DeletedOn == null && (sourceId == null || x.SourceEntityId == sourceId)));
+			EvidenceRepo.Setup(r => r.BindDraftToRevisionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string rec, string rev, DateTime now, CancellationToken c) =>
+				{
+					var rows = EvidenceArtifacts.Where(x => x.DepartmentId == d && x.RecordId == rec && x.RevisionId == null && x.DeletedOn == null).ToList();
+					foreach (var row in rows) { row.RevisionId = rev; row.ModifiedOn = now; }
+					return rows.Count;
+				});
+			EvidenceRepo.Setup(r => r.CountForRecordAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string rec) => EvidenceArtifacts.Count(x => x.DepartmentId == d && x.RecordId == rec && x.DeletedOn == null));
+
+			// RMS-3d disclosures (M0171)
+			DisclosureRequestsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsDisclosureRequest>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsDisclosureRequest e, CancellationToken c, bool f) => { DisclosureRequests.Add(e); return e; });
+			DisclosureRequestsRepo.Setup(r => r.UpdateAsync(It.IsAny<RmsDisclosureRequest>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsDisclosureRequest e, CancellationToken c, bool f) => { DisclosureRequests.RemoveAll(x => x.RmsDisclosureRequestId == e.RmsDisclosureRequestId); DisclosureRequests.Add(e); return e; });
+			DisclosureRequestsRepo.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string id) => DisclosureRequests.FirstOrDefault(x => x.DepartmentId == d && x.RmsDisclosureRequestId == id));
+			DisclosureRequestsRepo.Setup(r => r.GetForDepartmentAsync(It.IsAny<int>(), It.IsAny<IEnumerable<int>>(), It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, IEnumerable<int> states, int skip, int take) =>
+				{
+					var list = states?.ToList();
+					return (IEnumerable<RmsDisclosureRequest>)DisclosureRequests
+						.Where(x => x.DepartmentId == d && x.DeletedOn == null && (list == null || list.Count == 0 || list.Contains(x.State)))
+						.OrderBy(x => x.StatutoryDueOn).Skip(skip).Take(take).ToList();
+				});
+			DisclosureRequestsRepo.Setup(r => r.CountByStateAsync(It.IsAny<int>(), It.IsAny<RmsDisclosureState>()))
+				.ReturnsAsync((int d, RmsDisclosureState state) => DisclosureRequests.Count(x => x.DepartmentId == d && x.State == (int)state && x.DeletedOn == null));
+			DisclosureRequestsRepo.Setup(r => r.CountOverdueAsync(It.IsAny<int>(), It.IsAny<DateTime>()))
+				.ReturnsAsync((int d, DateTime now) => DisclosureRequests.Count(x => x.DepartmentId == d && x.DeletedOn == null && x.ClosedOn == null && x.StatutoryDueOn.HasValue && x.StatutoryDueOn < now));
+			DisclosureRequestsRepo.Setup(r => r.GetMaxRequestNumberSequenceAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string prefix) => DisclosureRequests
+					.Where(x => x.DepartmentId == d && x.RequestNumber != null && x.RequestNumber.StartsWith(prefix, StringComparison.Ordinal))
+					.Select(x => int.TryParse(x.RequestNumber.Substring(prefix.Length), out var n) ? n : 0)
+					.DefaultIfEmpty(0).Max());
+
+			DisclosureProductionsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsDisclosureProduction>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsDisclosureProduction e, CancellationToken c, bool f) => { DisclosureProductions.Add(e); return e; });
+			DisclosureProductionsRepo.Setup(r => r.UpdateAsync(It.IsAny<RmsDisclosureProduction>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsDisclosureProduction e, CancellationToken c, bool f) => { DisclosureProductions.RemoveAll(x => x.RmsDisclosureProductionId == e.RmsDisclosureProductionId); DisclosureProductions.Add(e); return e; });
+			DisclosureProductionsRepo.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string id) => DisclosureProductions.FirstOrDefault(x => x.DepartmentId == d && x.RmsDisclosureProductionId == id));
+			DisclosureProductionsRepo.Setup(r => r.GetForRequestAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string requestId) => (IEnumerable<RmsDisclosureProduction>)DisclosureProductions
+					.Where(x => x.DepartmentId == d && x.DisclosureRequestId == requestId).OrderBy(x => x.ProductionNumber).ToList());
+			DisclosureProductionsRepo.Setup(r => r.GetMaxProductionNumberAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string requestId) => DisclosureProductions
+					.Where(x => x.DepartmentId == d && x.DisclosureRequestId == requestId).Select(x => x.ProductionNumber).DefaultIfEmpty(0).Max());
 		}
 
 		public void SeedActiveCutover(int departmentId, DateTime? activatedOn = null)

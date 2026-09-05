@@ -1,12 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -28,7 +30,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
-	public class IncidentReportsController : V4AuthenticatedApiControllerbase
+	public class IncidentReportsController : V4AuthenticatedApiControllerbase, IActionFilter
 	{
 		private readonly IIncidentReportsService _incidentReports;
 		private readonly IRecordsCutoverService _cutoverService;
@@ -36,9 +38,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly INerisProfileService _neris;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IRecordsApiIdempotencyService _idempotency;
+		private readonly IIncidentAnalysisService _analysis;
+
+		private SystemPrincipalRecordGrant _systemGrant;
+		private bool _systemGrantResolved;
 
 		public IncidentReportsController(IIncidentReportsService incidentReports, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
-			INerisProfileService neris, IFeatureToggleService featureToggleService, IRecordsApiIdempotencyService idempotency)
+			INerisProfileService neris, IFeatureToggleService featureToggleService, IRecordsApiIdempotencyService idempotency, IIncidentAnalysisService analysis)
 		{
 			_incidentReports = incidentReports;
 			_cutoverService = cutoverService;
@@ -46,6 +52,71 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_neris = neris;
 			_featureToggleService = featureToggleService;
 			_idempotency = idempotency;
+			_analysis = analysis;
+		}
+
+		/// <summary>
+		/// Same system-principal gate as <see cref="RecordsController"/>: a service account with no configured
+		/// Record grant for this department is refused before the action runs, and a granted one is confined to
+		/// reads because no mutating Record policy is ever issued to it (registry section 4.4).
+		/// </summary>
+		public void OnActionExecuting(ActionExecutingContext context)
+		{
+			if (!RecordsSystemPrincipal.IsSystemPrincipal(User))
+				return;
+
+			if (SystemGrant == null)
+				context.Result = Problem(statusCode: StatusCodes.Status403Forbidden,
+					title: "This system principal has no configured Record grant for this department.", type: "record_grant_missing");
+		}
+
+		public void OnActionExecuted(ActionExecutedContext context)
+		{
+		}
+
+		/// <summary>The configured grant this request runs under, or null for a user principal or an ungranted system one.</summary>
+		private SystemPrincipalRecordGrant SystemGrant
+		{
+			get
+			{
+				if (!_systemGrantResolved)
+				{
+					_systemGrant = RecordsSystemPrincipal.ResolveGrant(User, DepartmentId);
+					_systemGrantResolved = true;
+				}
+
+				return _systemGrant;
+			}
+		}
+
+		/// <summary>Group filter for the caller: the grant's groups for a system principal, the member's own otherwise.</summary>
+		private async Task<List<int>> VisibleGroupIdsAsync()
+		{
+			var grant = SystemGrant;
+			if (grant != null)
+				return grant.VisibleGroupIds();
+
+			return await _recordsAuthorizationService.GetVisibleGroupIdsAsync(UserId, DepartmentId);
+		}
+
+		/// <summary>Per-record visibility for the caller, routed to the grant rule for a system principal.</summary>
+		private async Task<bool> CanViewRecordAsync(string recordId)
+		{
+			var grant = SystemGrant;
+			if (grant != null)
+				return await _recordsAuthorizationService.CanSystemPrincipalViewRecordAsync(grant, recordId);
+
+			return await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, recordId, DepartmentId);
+		}
+
+		/// <summary>Audit purpose: the grant's stated purpose for a system principal, so a machine read is never anonymous.</summary>
+		private string AccessPurpose(string purpose = null)
+		{
+			var grant = SystemGrant;
+			if (grant == null)
+				return purpose;
+
+			return string.IsNullOrWhiteSpace(purpose) ? grant.Purpose : $"{grant.Purpose}: {purpose}";
 		}
 
 		#region Reads
@@ -62,6 +133,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new IncidentReportsResult();
 			if (moduleState.RecordsUsable)
 			{
+				// Visibility belongs in the query, not in a filter over the page. Filtering afterwards made the total
+				// the size of whatever survived this page, so a member with scoped visibility was told there was one
+				// page and could never reach older reports.
+				var visible = await VisibleGroupIdsAsync();
 				var query = new RmsIncidentReportQuery
 				{
 					Year = year,
@@ -69,16 +144,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 					CallId = callId,
 					OwnerUserId = string.IsNullOrWhiteSpace(owner) ? null : owner,
 					StationGroupId = group,
+					VisibleGroupIds = visible,
+					ViewerUserId = SystemGrant == null ? UserId : null,
 					Skip = Math.Max(0, skip),
 					Take = Math.Max(1, Math.Min(RecordsController.MaxPageSize, take))
 				};
-				var visible = await _recordsAuthorizationService.GetVisibleGroupIdsAsync(UserId, DepartmentId);
 				foreach (var report in await _incidentReports.QueryAsync(DepartmentId, query))
-				{
-					if (visible == null || await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, report.RmsIncidentReportId, DepartmentId))
-						result.Data.Add(IncidentReportsApiMapper.ToSummary(report));
-				}
-				result.Total = visible == null ? await _incidentReports.CountAsync(DepartmentId, query) : query.Skip + result.Data.Count;
+					result.Data.Add(IncidentReportsApiMapper.ToSummary(report));
+
+				result.Total = await _incidentReports.CountAsync(DepartmentId, query);
 				result.Page = query.Skip / query.Take;
 			}
 
@@ -101,7 +175,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (aggregate == null)
 				return NotFound();
 
-			await _incidentReports.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, null, IpAddressHelper.GetRequestIP(Request, true));
+			await _incidentReports.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, AccessPurpose(), IpAddressHelper.GetRequestIP(Request, true));
 			return Ok(await WrapAsync(aggregate));
 		}
 
@@ -191,7 +265,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				var saved = await _incidentReports.SaveDraftAsync(DepartmentId, UserId, input.ReportId, rowVersion.Value, IncidentReportsApiMapper.ToDraftInput(input, origin), cancellationToken);
+				var saved = await _incidentReports.SaveDraftAsync(DepartmentId, UserId, input.ReportId, rowVersion.Value, IncidentReportsApiMapper.ToDraftInput(input, origin), ClaimsAuthorizationHelper.CanViewRestrictedRecords(), cancellationToken);
 				return Ok(await WrapAsync(saved, ResponseHelper.Updated));
 			}
 			catch (RecordConcurrencyException ex)
@@ -320,7 +394,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return CommandAsync(input, false, _ => _incidentReports.CancelAsync(DepartmentId, UserId, input.ReportId, cancellationToken));
 		}
 
-		private async Task<ActionResult<IncidentReportResult>> CommandAsync(IncidentReportCommandInput input, bool requiresRowVersion, Func<long, Task<IncidentReportAggregate>> action)
+		/// <summary>
+		/// <paramref name="command"/> scopes the idempotency key to the calling action. Without it a client that
+		/// reused one key for SubmitForReview and then Finalize matched on the report alone and was told the second
+		/// command succeeded without it ever running.
+		/// </summary>
+		private async Task<ActionResult<IncidentReportResult>> CommandAsync(IncidentReportCommandInput input, bool requiresRowVersion, Func<long, Task<IncidentReportAggregate>> action,
+			[CallerMemberName] string command = null)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.ReportId))
 				return BadRequest();
@@ -340,7 +420,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var key = RecordsApiHelper.ResolveIdempotencyKey(input.IdempotencyKey, Request);
 			if (key != null)
 			{
-				var replayed = await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key);
+				var replayed = await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key, command);
 				if (string.Equals(replayed, input.ReportId, StringComparison.Ordinal))
 					return Ok(await WrapAsync(await _incidentReports.GetAsync(DepartmentId, input.ReportId, true), ResponseHelper.Success));
 			}
@@ -358,7 +438,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var aggregate = await action(rowVersion);
 				if (key != null)
-					await _idempotency.RememberAsync(DepartmentId, UserId, key, input.ReportId);
+					await _idempotency.RememberAsync(DepartmentId, UserId, key, command, input.ReportId);
 				return Ok(await WrapAsync(aggregate, ResponseHelper.Updated));
 			}
 			catch (RecordConcurrencyException ex)
@@ -414,9 +494,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (string.IsNullOrWhiteSpace(id))
 				return null;
 
-			if (!await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, id, DepartmentId))
+			if (!await CanViewRecordAsync(id))
 			{
-				await _incidentReports.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Denied, null, IpAddressHelper.GetRequestIP(Request, true));
+				await _incidentReports.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Denied, AccessPurpose(), IpAddressHelper.GetRequestIP(Request, true));
 				return null;
 			}
 
@@ -461,7 +541,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<IncidentReportResult> WrapAsync(IncidentReportAggregate aggregate, string status = ResponseHelper.Success)
 		{
-			var result = new IncidentReportResult { Data = IncidentReportsApiMapper.ToReport(aggregate, await _neris.IsSubmissionEnabledAsync(DepartmentId)), PageSize = 1, Status = status };
+			// The progressive section rules and the analysis link come from the server, so a client renders exactly
+			// what validation will enforce and never keeps its own copy of either.
+			var sections = await _incidentReports.GetSectionRequirementsAsync(DepartmentId, aggregate.Report.RmsIncidentReportId);
+			var analysis = await _analysis.GetForReportAsync(DepartmentId, aggregate.Report.RmsIncidentReportId);
+
+			var data = IncidentReportsApiMapper.ToReport(aggregate, await _neris.IsSubmissionEnabledAsync(DepartmentId),
+				ClaimsAuthorizationHelper.CanViewRestrictedRecords(), sections, analysis?.Analysis?.RmsIncidentAnalysisId);
+
+			var result = new IncidentReportResult { Data = data, PageSize = 1, Status = status };
 			ResponseHelper.PopulateV4ResponseData(result);
 			RecordsApiHelper.SetETag(Response, aggregate.Report.RowVersion);
 			return result;

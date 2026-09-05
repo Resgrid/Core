@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model.Repositories;
@@ -19,7 +19,12 @@ namespace Resgrid.Model.Services
 
 		Task<IncidentReportAggregate> GetForCallAsync(int departmentId, int callId);
 
-		Task<IncidentReportAggregate> SaveDraftAsync(int departmentId, string userId, string reportId, long expectedRowVersion, IncidentReportDraftInput input, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// ETag-guarded draft save. <paramref name="canWriteRestricted"/> false keeps the restricted halves of the
+		/// casualty rows as they stand instead of accepting or erasing them, so a reviewer without
+		/// RecordRestricted_View can still correct the rest of the report (RMS-3).
+		/// </summary>
+		Task<IncidentReportAggregate> SaveDraftAsync(int departmentId, string userId, string reportId, long expectedRowVersion, IncidentReportDraftInput input, bool canWriteRestricted = true, CancellationToken cancellationToken = default);
 
 		/// <summary>Runs local validation (and the destination's validate endpoint when asked and configured) and stores the issues on the report.</summary>
 		Task<List<RmsValidationIssue>> ValidateAsync(int departmentId, string reportId, bool includeDestination, CancellationToken cancellationToken = default);
@@ -50,6 +55,12 @@ namespace Resgrid.Model.Services
 		Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query);
 
 		Task<List<int>> GetYearsAsync(int departmentId);
+
+		/// <summary>
+		/// The conditional sections this report's selected incident types demand or suggest (RMS-3). The authoring
+		/// surfaces render exactly this, so a client never keeps its own copy of the progressive rules.
+		/// </summary>
+		Task<List<NerisSectionRequirement>> GetSectionRequirementsAsync(int departmentId, string reportId);
 
 		/// <summary>The snapshot the mapper consumes, from the draft rows or from a revision's copies.</summary>
 		Task<NerisIncidentSnapshot> BuildSnapshotAsync(int departmentId, string reportId, string revisionId = null);

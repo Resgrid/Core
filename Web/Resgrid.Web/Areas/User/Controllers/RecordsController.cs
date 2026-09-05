@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -52,13 +52,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentProfileMediaService _branding;
 		private readonly IRecordsPrintLayoutService _printLayouts;
 		private readonly IRecordsAccountabilityService _accountability;
+		private readonly IRecordsDashboardService _dashboard;
 
 		public RecordsController(IRecordsService recordsService, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer,
 			ICompositeViewEngine viewEngine, IPdfProvider pdfProvider, IRecordsSearchService recordsSearch, IDepartmentDataProtectionService dataProtection,
-			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability)
+			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard)
 		{
 			_accountability = accountability;
 			_recordsService = recordsService;
@@ -77,7 +78,45 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_dataProtection = dataProtection;
 			_branding = branding;
 			_printLayouts = printLayouts;
+			_dashboard = dashboard;
 		}
+
+		#region Dashboard
+
+		/// <summary>
+		/// The Records work queues an officer opens the module to look at (RMS-3): incomplete, awaiting review,
+		/// rejected, accepted, overdue, the disclosure clock, and the NERIS crosswalk gaps that decide whether a
+		/// filing will map cleanly at all. Counts are group-scope aware and degrade into warnings rather than
+		/// failing the page.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<IActionResult> Dashboard(CancellationToken cancellationToken)
+		{
+			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
+			if (!moduleState.FlagEnabled)
+				return NotFound();
+
+			var model = new RecordsDashboardView
+			{
+				ModuleState = moduleState,
+				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
+				CanManageDisclosures = ClaimsAuthorizationHelper.CanManageRecordDisclosures(),
+				IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin()
+			};
+
+			if (moduleState.RecordsUsable)
+			{
+				model.Dashboard = await _dashboard.GetAsync(DepartmentId, UserId, cancellationToken);
+				model.Coverage = await _dashboard.GetCrosswalkCoverageAsync(DepartmentId, cancellationToken);
+			}
+
+			if (TempData["RecordsMessage"] is string message)
+				model.Message = message;
+			return View(model);
+		}
+
+		#endregion
 
 		#region Queue
 

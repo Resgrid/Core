@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,36 +57,80 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId, NerisId = nerisIncidentId });
 		}
 
+		public Task<IEnumerable<RmsIncidentReport>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take)
+		{
+			// Closed states only: an open filing is never a retention candidate, however old.
+			var states = new[] { (int)RmsRecordState.Finalized, (int)RmsRecordState.Amended, (int)RmsRecordState.Accepted, (int)RmsRecordState.Voided, (int)RmsRecordState.Cancelled };
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("States", InListValue(states));
+			parameters.Add("Cutoff", cutoffUtc);
+			parameters.Add("Skip", 0);
+			parameters.Add("Take", Math.Clamp(take, 1, 10000));
+			return QueryAsync<RmsIncidentReport>(
+				$@"SELECT * FROM {Tbl("RmsIncidentReports")}
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")}
+					AND {Col("FinalizedOn")} IS NOT NULL AND {Col("FinalizedOn")} < {P}Cutoff AND {Col("DeletedOn")} IS NULL
+					ORDER BY {Col("FinalizedOn")} {Paging()}", parameters);
+		}
+
+		/// <summary>
+		/// The predicate for a report query. Columns are aliased to <c>r</c> so the group-scope EXISTS can correlate
+		/// back to the outer row: RmsRecordGroupScopes also has a DepartmentId, and an unqualified reference inside
+		/// the subquery would bind to the subquery's own column and quietly drop the department correlation.
+		/// </summary>
 		private (string where, DynamicParameters parameters) Filter(int departmentId, RmsIncidentReportQuery query)
 		{
-			var where = new StringBuilder($"{Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL");
+			const string R = "r";
+			string C(string column) => R + "." + Col(column);
+
+			var where = new StringBuilder($"{C("DepartmentId")} = {P}DepartmentId AND {C("DeletedOn")} IS NULL");
 			var parameters = new DynamicParameters();
 			parameters.Add("DepartmentId", departmentId);
 
 			if (query.States != null && query.States.Count > 0)
 			{
-				where.Append($" AND {InList("State", "States")}");
+				where.Append($" AND {InList("State", "States", R)}");
 				parameters.Add("States", InListValue(query.States));
 			}
 			if (query.Year.HasValue)
 			{
-				where.Append($" AND {YearOf(Col("CreatedOn"))} = {P}Year");
+				where.Append($" AND {YearOf(C("CreatedOn"))} = {P}Year");
 				parameters.Add("Year", query.Year.Value);
 			}
 			if (query.CallId.HasValue)
 			{
-				where.Append($" AND {Col("CallId")} = {P}CallId");
+				where.Append($" AND {C("CallId")} = {P}CallId");
 				parameters.Add("CallId", query.CallId.Value);
 			}
 			if (!string.IsNullOrWhiteSpace(query.OwnerUserId))
 			{
-				where.Append($" AND {Col("OwnerUserId")} = {P}OwnerUserId");
+				where.Append($" AND {C("OwnerUserId")} = {P}OwnerUserId");
 				parameters.Add("OwnerUserId", query.OwnerUserId);
 			}
 			if (query.StationGroupId.HasValue)
 			{
-				where.Append($" AND {Col("StationGroupId")} = {P}StationGroupId");
+				where.Append($" AND {C("StationGroupId")} = {P}StationGroupId");
 				parameters.Add("StationGroupId", query.StationGroupId.Value);
+			}
+
+			if (query.VisibleGroupIds != null)
+			{
+				// Mirrors RecordsAuthorizationService.CanUserViewRecordAsync for an incident report: always visible to
+				// the author, owner or reviewer, otherwise only through an intersecting group scope. A member in no
+				// groups still sees their own reports, which is why the group clause is appended conditionally.
+				var viewer = query.ViewerUserId ?? string.Empty;
+				where.Append(" AND (")
+					.Append($"{C("AuthorUserId")} = {P}Viewer OR {C("OwnerUserId")} = {P}Viewer OR {C("ReviewerUserId")} = {P}Viewer");
+				parameters.Add("Viewer", viewer);
+
+				if (query.VisibleGroupIds.Count > 0)
+				{
+					where.Append($" OR EXISTS (SELECT 1 FROM {Tbl("RmsRecordGroupScopes")} s WHERE s.{Col("DepartmentId")} = {C("DepartmentId")} AND s.{Col("RecordId")} = {C("RmsIncidentReportId")} AND {InList("DepartmentGroupId", "VisibleGroupIds", "s")})");
+					parameters.Add("VisibleGroupIds", InListValue(query.VisibleGroupIds));
+				}
+
+				where.Append(")");
 			}
 
 			return (where.ToString(), parameters);
@@ -99,13 +143,13 @@ namespace Resgrid.Repositories.DataRepository
 			parameters.Add("Skip", Math.Max(0, query.Skip));
 			parameters.Add("Take", Math.Clamp(query.Take, 1, 10000));
 			return QueryAsync<RmsIncidentReport>(
-				$"SELECT * FROM {Tbl("RmsIncidentReports")} WHERE {where} ORDER BY {Col("CreatedOn")} DESC {Paging()}", parameters);
+				$"SELECT r.* FROM {Tbl("RmsIncidentReports")} r WHERE {where} ORDER BY r.{Col("CreatedOn")} DESC {Paging()}", parameters);
 		}
 
 		public Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query)
 		{
 			var (where, parameters) = Filter(departmentId, query ?? new RmsIncidentReportQuery());
-			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsIncidentReports")} WHERE {where}", parameters);
+			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsIncidentReports")} r WHERE {where}", parameters);
 		}
 
 		public Task<IEnumerable<int>> GetYearsAsync(int departmentId)
@@ -198,6 +242,83 @@ namespace Resgrid.Repositories.DataRepository
 		public RmsNarrativesRepository(IConnectionProvider c, SqlConfiguration s, IUnitOfWork u, IQueryFactory q) : base("RmsNarratives", "CreatedOn", c, s, u, q) { }
 	}
 
+	public class RmsIncidentModulesRepository : RmsIncidentChildRepository<RmsIncidentModule>, IRmsIncidentModulesRepository
+	{
+		public RmsIncidentModulesRepository(IConnectionProvider c, SqlConfiguration s, IUnitOfWork u, IQueryFactory q) : base("RmsIncidentModules", "Ordinal", c, s, u, q) { }
+
+		public Task<IEnumerable<RmsIncidentModule>> GetForRecordByKindAsync(int departmentId, string recordId, string revisionId, RmsIncidentModuleKind kind)
+		{
+			var revisionClause = revisionId == null ? $"{Col("RevisionId")} IS NULL" : $"{Col("RevisionId")} = {P}RevisionId";
+			return QueryAsync<RmsIncidentModule>(
+				$"SELECT * FROM {Tbl("RmsIncidentModules")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {revisionClause} AND {Col("ModuleKind")} = {P}ModuleKind ORDER BY {Col("Ordinal")}",
+				new { DepartmentId = departmentId, RecordId = recordId, RevisionId = revisionId, ModuleKind = (int)kind });
+		}
+	}
+
+	public class RmsIncidentResourcesRepository : RmsIncidentChildRepository<RmsIncidentResource>, IRmsIncidentResourcesRepository
+	{
+		public RmsIncidentResourcesRepository(IConnectionProvider c, SqlConfiguration s, IUnitOfWork u, IQueryFactory q) : base("RmsIncidentResources", "Ordinal", c, s, u, q) { }
+	}
+
+	public class RmsCasualtyRescuesRepository : RmsIncidentChildRepository<RmsCasualtyRescue>, IRmsCasualtyRescuesRepository
+	{
+		public RmsCasualtyRescuesRepository(IConnectionProvider c, SqlConfiguration s, IUnitOfWork u, IQueryFactory q) : base("RmsCasualtyRescues", "Ordinal", c, s, u, q) { }
+	}
+
+	public class RmsExposuresRepository : RmsIncidentChildRepository<RmsExposure>, IRmsExposuresRepository
+	{
+		public RmsExposuresRepository(IConnectionProvider c, SqlConfiguration s, IUnitOfWork u, IQueryFactory q) : base("RmsExposures", "Ordinal", c, s, u, q) { }
+	}
+
+	public class RmsIncidentPropertiesRepository : RmsIncidentChildRepository<RmsIncidentProperty>, IRmsIncidentPropertiesRepository
+	{
+		public RmsIncidentPropertiesRepository(IConnectionProvider c, SqlConfiguration s, IUnitOfWork u, IQueryFactory q) : base("RmsIncidentProperties", "Ordinal", c, s, u, q) { }
+	}
+
+	public class RmsIncidentVehiclesRepository : RmsIncidentChildRepository<RmsIncidentVehicle>, IRmsIncidentVehiclesRepository
+	{
+		public RmsIncidentVehiclesRepository(IConnectionProvider c, SqlConfiguration s, IUnitOfWork u, IQueryFactory q) : base("RmsIncidentVehicles", "Ordinal", c, s, u, q) { }
+	}
+
+	/// <summary>The separate incident-analysis filing (registry M0167): one per incident report, own lifecycle and submissions.</summary>
+	public class RmsIncidentAnalysesRepository : RmsRepositoryBase<RmsIncidentAnalysis>, IRmsIncidentAnalysesRepository
+	{
+		public RmsIncidentAnalysesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public Task<RmsIncidentAnalysis> GetByIdForDepartmentAsync(int departmentId, string analysisId)
+		{
+			return QueryFirstOrDefaultAsync<RmsIncidentAnalysis>(
+				$"SELECT * FROM {Tbl("RmsIncidentAnalyses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsIncidentAnalysisId")} = {P}AnalysisId",
+				new { DepartmentId = departmentId, AnalysisId = analysisId });
+		}
+
+		public Task<RmsIncidentAnalysis> GetForReportAsync(int departmentId, string incidentReportId)
+		{
+			return QueryFirstOrDefaultAsync<RmsIncidentAnalysis>(
+				$"SELECT * FROM {Tbl("RmsIncidentAnalyses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IncidentReportId")} = {P}ReportId AND {Col("DeletedOn")} IS NULL",
+				new { DepartmentId = departmentId, ReportId = incidentReportId });
+		}
+
+		public Task<IEnumerable<RmsIncidentAnalysis>> GetAwaitingIncidentAsync(int departmentId, int take)
+		{
+			// Finalized but never filed: the incident had no NERIS id when the analysis was finalized.
+			return QueryAsync<RmsIncidentAnalysis>(
+				$@"SELECT * FROM {Tbl("RmsIncidentAnalyses")}
+					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("State")} = {P}State
+					AND {Col("NerisAnalysisId")} IS NULL AND {Col("DeletedOn")} IS NULL
+					ORDER BY {Col("FinalizedOn")} {Paging()}",
+				new { DepartmentId = departmentId, State = (int)RmsIncidentAnalysisState.Finalized, Skip = 0, Take = Math.Clamp(take, 1, 1000) });
+		}
+
+		public Task<int> CountByStateAsync(int departmentId, RmsIncidentAnalysisState state)
+		{
+			return ScalarAsync<int>(
+				$"SELECT COUNT(1) FROM {Tbl("RmsIncidentAnalyses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("State")} = {P}State AND {Col("DeletedOn")} IS NULL",
+				new { DepartmentId = departmentId, State = (int)state });
+		}
+	}
+
 	public class RmsValidationIssuesRepository : RmsRepositoryBase<RmsValidationIssue>, IRmsValidationIssuesRepository
 	{
 		public RmsValidationIssuesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -276,9 +397,11 @@ namespace Resgrid.Repositories.DataRepository
 			return claimed;
 		}
 
-		public Task<int> CountByStateAsync(int state)
+		public Task<int> CountByStateAsync(int departmentId, int state)
 		{
-			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsSubmissions")} WHERE {Col("State")} = {P}State", new { State = state });
+			return ScalarAsync<int>(
+				$"SELECT COUNT(1) FROM {Tbl("RmsSubmissions")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("State")} = {P}State",
+				new { DepartmentId = departmentId, State = state });
 		}
 
 		public Task<int> SupersedeOpenForRecordAsync(int departmentId, string recordId, string exceptSubmissionId, DateTime utcNow, CancellationToken cancellationToken = default)

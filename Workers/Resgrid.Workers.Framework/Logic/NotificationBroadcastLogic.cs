@@ -33,6 +33,18 @@ namespace Resgrid.Workers.Framework.Logic
 				return true;
 			}
 
+			if (ni?.Type == (int)EventTypes.RecordReviewOverdue)
+			{
+				// Records notification 32 (RMS-3, worker 42): targeted at whoever the obligation rests with, so it
+				// bypasses the department settings pipeline like 31 and 33. Value is "{recordId}|{obligation}" —
+				// a record id never contains a pipe, so the split is unambiguous.
+				var parts = (ni.Value ?? string.Empty).Split('|');
+				var obligation = parts.Length > 1 && int.TryParse(parts[1], out var parsed) ? (RmsRecordObligation)parsed : RmsRecordObligation.Review;
+				var recordsNotificationService = Bootstrapper.GetKernel().Resolve<IRecordsNotificationService>();
+				await recordsNotificationService.NotifyObligationOverdueAsync(ni.DepartmentId, parts[0], obligation, cancellationToken);
+				return true;
+			}
+
 			if (ni?.Type == (int)EventTypes.RecordSubmissionRejected)
 			{
 				// Records notification 33 (RMS-2): the destination rejected the author's incident report; author-targeted like 31.

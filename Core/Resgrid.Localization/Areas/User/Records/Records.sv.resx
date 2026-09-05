@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -343,4 +343,625 @@
   <data name="QueueCounts" xml:space="preserve"><value>Inlämningskö</value></data>
   <data name="NerisSettingsSaved" xml:space="preserve"><value>NERIS-inställningar sparade.</value></data>
   <data name="SubmissionQueued" xml:space="preserve"><value>Inlämning köad för NERIS.</value></data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Accepterad</value>
+  </data>
+  <data name="AllDefinitions" xml:space="preserve">
+    <value>Alla definitioner</value>
+  </data>
+  <data name="AnalysesAwaitingFiling" xml:space="preserve">
+    <value>Analyser som väntar på inlämning</value>
+  </data>
+  <data name="AnalysisAwaitingIncident" xml:space="preserve">
+    <value>Analysen är slutförd och skickas så snart själva händelsen når NERIS.</value>
+  </data>
+  <data name="AnalysisSections" xml:space="preserve">
+    <value>Analysavsnitt</value>
+  </data>
+  <data name="Applies" xml:space="preserve">
+    <value>Gäller</value>
+  </data>
+  <data name="AssignedTo" xml:space="preserve">
+    <value>Tilldelad till</value>
+  </data>
+  <data name="Automobile" xml:space="preserve">
+    <value>Personbil</value>
+  </data>
+  <data name="AwaitingReview" xml:space="preserve">
+    <value>Väntar på granskning</value>
+  </data>
+  <data name="AwaitingReviewHint" xml:space="preserve">
+    <value>Poster som skickats för granskning och ännu inte godkänts</value>
+  </data>
+  <data name="BackToReport" xml:space="preserve">
+    <value>Tillbaka till händelserapporten</value>
+  </data>
+  <data name="BodyStyle" xml:space="preserve">
+    <value>Karosserityp</value>
+  </data>
+  <data name="CallId" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="Capture" xml:space="preserve">
+    <value>Fånga</value>
+  </data>
+  <data name="CaptureReason" xml:space="preserve">
+    <value>Skäl till att detta underlag fångas</value>
+  </data>
+  <data name="CapturedBy" xml:space="preserve">
+    <value>Fångad av</value>
+  </data>
+  <data name="CapturedOn" xml:space="preserve">
+    <value>Fångad</value>
+  </data>
+  <data name="CasualtiesAndRescues" xml:space="preserve">
+    <value>Skadade och räddade</value>
+  </data>
+  <data name="Casualty" xml:space="preserve">
+    <value>Skadad</value>
+  </data>
+  <data name="CasualtyAction" xml:space="preserve">
+    <value>Aktivitet vid tillfället</value>
+  </data>
+  <data name="CasualtyCause" xml:space="preserve">
+    <value>Skadeorsak</value>
+  </data>
+  <data name="CasualtyTimeline" xml:space="preserve">
+    <value>När det inträffade</value>
+  </data>
+  <data name="Civilian" xml:space="preserve">
+    <value>Civilperson</value>
+  </data>
+  <data name="CloseRequest" xml:space="preserve">
+    <value>Avsluta begäran</value>
+  </data>
+  <data name="ClosedOn" xml:space="preserve">
+    <value>Avslutad</value>
+  </data>
+  <data name="ConditionalSections" xml:space="preserve">
+    <value>Villkorade avsnitt</value>
+  </data>
+  <data name="ConstructionType" xml:space="preserve">
+    <value>Byggnadstyp</value>
+  </data>
+  <data name="ContentsLoss" xml:space="preserve">
+    <value>Skada på lösöre</value>
+  </data>
+  <data name="ContentsValue" xml:space="preserve">
+    <value>Värde på lösöre</value>
+  </data>
+  <data name="CrosswalkCoverage" xml:space="preserve">
+    <value>Täckning för kodmappning</value>
+  </data>
+  <data name="CrosswalkCoverageIntro" xml:space="preserve">
+    <value>Varje lokal larmtyp utan NERIS-kod måste klassificeras för hand under insatsen.</value>
+  </data>
+  <data name="CurrencyCode" xml:space="preserve">
+    <value>Valuta</value>
+  </data>
+  <data name="DamageType" xml:space="preserve">
+    <value>Skadegrad</value>
+  </data>
+  <data name="DashboardDegraded" xml:space="preserve">
+    <value>Vissa värden kunde inte tas fram:</value>
+  </data>
+  <data name="DefinitionKey" xml:space="preserve">
+    <value>Definition</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detalj</value>
+  </data>
+  <data name="Disclosure" xml:space="preserve">
+    <value>Begäran om allmän handling</value>
+  </data>
+  <data name="DisclosureClosed" xml:space="preserve">
+    <value>Begäran om allmän handling har avslutats.</value>
+  </data>
+  <data name="DisclosureCreated" xml:space="preserve">
+    <value>Begäran om allmän handling har registrerats.</value>
+  </data>
+  <data name="DisclosureIntro" xml:space="preserve">
+    <value>En begäran om allmän handling har en lagstadgad frist och följs därför upp här i stället för att besvaras ad hoc.</value>
+  </data>
+  <data name="DisclosureOverdueNotice" xml:space="preserve">
+    <value>Denna begäran har passerat sin lagstadgade frist.</value>
+  </data>
+  <data name="DisclosureProduced" xml:space="preserve">
+    <value>En maskad leverans har tagits fram.</value>
+  </data>
+  <data name="DisclosureQueue" xml:space="preserve">
+    <value>Begäranden om allmän handling</value>
+  </data>
+  <data name="DisclosureReasonRequired" xml:space="preserve">
+    <value>Ett skäl krävs för att avsluta en begäran.</value>
+  </data>
+  <data name="DisclosureReleased" xml:space="preserve">
+    <value>Leveransen har lämnats ut till den som begärt den.</value>
+  </data>
+  <data name="DisclosureScopeSaved" xml:space="preserve">
+    <value>Omfattningen har sparats.</value>
+  </data>
+  <data name="Disclosures" xml:space="preserve">
+    <value>Allmänna handlingar</value>
+  </data>
+  <data name="DispositionReason" xml:space="preserve">
+    <value>Skäl till beslutet</value>
+  </data>
+  <data name="Drafts" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="DutyType" xml:space="preserve">
+    <value>Tjänstgöring vid tillfället</value>
+  </data>
+  <data name="EditCrosswalk" xml:space="preserve">
+    <value>Redigera kodmappningen</value>
+  </data>
+  <data name="EditIncidentAnalysis" xml:space="preserve">
+    <value>Redigera händelseanalysen</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Fel</value>
+  </data>
+  <data name="EstimatedLoss" xml:space="preserve">
+    <value>Uppskattad skada</value>
+  </data>
+  <data name="EstimatedValue" xml:space="preserve">
+    <value>Uppskattat värde</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>Underlag</value>
+  </data>
+  <data name="EvidenceCaptured" xml:space="preserve">
+    <value>Underlaget har fångats.</value>
+  </data>
+  <data name="EvidenceCertificationSnapshot" xml:space="preserve">
+    <value>Behörigheter vid händelsetillfället</value>
+  </data>
+  <data name="EvidenceChatPromotion" xml:space="preserve">
+    <value>Överförda händelsemeddelanden</value>
+  </data>
+  <data name="EvidenceIntro" xml:space="preserve">
+    <value>Varje underlag är en avgränsad ögonblicksbild som tas en gång, får en kontrollsumma och aldrig ändras; en rättelse är en ny fångst.</value>
+  </data>
+  <data name="EvidenceInventoryUsage" xml:space="preserve">
+    <value>Förbrukat material och narkotikaklassade preparat</value>
+  </data>
+  <data name="EvidenceReadinessPacket" xml:space="preserve">
+    <value>Beredskap vid larmtillfället</value>
+  </data>
+  <data name="EvidenceReasonRequired" xml:space="preserve">
+    <value>Ett skäl krävs för att föra in underlag i en officiell handling.</value>
+  </data>
+  <data name="EvidenceRunCardActivation" xml:space="preserve">
+    <value>Utlarmningsbeslut</value>
+  </data>
+  <data name="EvidenceSource" xml:space="preserve">
+    <value>Källa</value>
+  </data>
+  <data name="EvidenceTrackingFix" xml:space="preserve">
+    <value>Enheternas positioner</value>
+  </data>
+  <data name="EvidenceUnavailable" xml:space="preserve">
+    <value>Den underlagskällan hade inget att fånga för denna post.</value>
+  </data>
+  <data name="ExposureItem" xml:space="preserve">
+    <value>Utsatt objekt</value>
+  </data>
+  <data name="Exposures" xml:space="preserve">
+    <value>Utsatta objekt</value>
+  </data>
+  <data name="Fatal" xml:space="preserve">
+    <value>Dödlig</value>
+  </data>
+  <data name="FinalizeAnalysisIntro" xml:space="preserve">
+    <value>Slutförandet skriver den oföränderliga versionen. Inlämningen väntar på händelsens NERIS-id om det saknas.</value>
+  </data>
+  <data name="FinalizedOn" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="FireSpread" xml:space="preserve">
+    <value>Brandspridning</value>
+  </data>
+  <data name="Firefighter" xml:space="preserve">
+    <value>Brandman</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Kön</value>
+  </data>
+  <data name="GeneralCause" xml:space="preserve">
+    <value>Allmän orsak</value>
+  </data>
+  <data name="IncidentAnalysis" xml:space="preserve">
+    <value>Händelseanalys</value>
+  </data>
+  <data name="IncidentAnalysisIntro" xml:space="preserve">
+    <value>Brand- och farligt gods-utredningen lämnas in separat från händelsen, när mottagaren redan har den.</value>
+  </data>
+  <data name="IncidentIncomplete" xml:space="preserve">
+    <value>Ofullständiga rapporter</value>
+  </data>
+  <data name="IncidentIncompleteHint" xml:space="preserve">
+    <value>Händelserapporter som ännu inte slutförts</value>
+  </data>
+  <data name="IncludeLegacy" xml:space="preserve">
+    <value>Inkludera äldre loggposter</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>Ofullständig</value>
+  </data>
+  <data name="Injured" xml:space="preserve">
+    <value>Skadad</value>
+  </data>
+  <data name="InvestigationTypes" xml:space="preserve">
+    <value>Utredningstyper</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Poster</value>
+  </data>
+  <data name="JurisdictionProfile" xml:space="preserve">
+    <value>Jurisdiktion</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Slag</value>
+  </data>
+  <data name="LicensePlate" xml:space="preserve">
+    <value>Registreringsnummer</value>
+  </data>
+  <data name="LocalCode" xml:space="preserve">
+    <value>Lokal kod</value>
+  </data>
+  <data name="LogDisclosure" xml:space="preserve">
+    <value>Registrera en begäran</value>
+  </data>
+  <data name="Make" xml:space="preserve">
+    <value>Märke</value>
+  </data>
+  <data name="Manifest" xml:space="preserve">
+    <value>Innehållsförteckning</value>
+  </data>
+  <data name="Mapped" xml:space="preserve">
+    <value>mappade</value>
+  </data>
+  <data name="Matched" xml:space="preserve">
+    <value>träffar</value>
+  </data>
+  <data name="Model" xml:space="preserve">
+    <value>Modell</value>
+  </data>
+  <data name="ModelYear" xml:space="preserve">
+    <value>Årsmodell</value>
+  </data>
+  <data name="NerisAnalysisId" xml:space="preserve">
+    <value>NERIS analys-id</value>
+  </data>
+  <data name="NerisCode" xml:space="preserve">
+    <value>NERIS-kod</value>
+  </data>
+  <data name="NoDisclosures" xml:space="preserve">
+    <value>Inga begäranden är registrerade.</value>
+  </data>
+  <data name="NoEvidenceCaptured" xml:space="preserve">
+    <value>Inget underlag har fångats för denna rapport.</value>
+  </data>
+  <data name="NoProductions" xml:space="preserve">
+    <value>Inget har tagits fram ännu.</value>
+  </data>
+  <data name="NoSectionsYet" xml:space="preserve">
+    <value>Inga villkorade avsnitt gäller förrän en händelsetyp valts.</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Öppna</value>
+  </data>
+  <data name="OpenAnalysis" xml:space="preserve">
+    <value>Öppna analysen</value>
+  </data>
+  <data name="OpenDisclosureQueue" xml:space="preserve">
+    <value>Öppna begärandena</value>
+  </data>
+  <data name="OpenIncidentQueue" xml:space="preserve">
+    <value>Öppna händelsekön</value>
+  </data>
+  <data name="OpenRecordsQueue" xml:space="preserve">
+    <value>Öppna postkön</value>
+  </data>
+  <data name="OperationalRecords" xml:space="preserve">
+    <value>Operativa poster</value>
+  </data>
+  <data name="Overdue" xml:space="preserve">
+    <value>Försenad</value>
+  </data>
+  <data name="OverdueHint" xml:space="preserve">
+    <value>Skyldigheter som passerat sitt datum</value>
+  </data>
+  <data name="PersonType" xml:space="preserve">
+    <value>Persontyp</value>
+  </data>
+  <data name="PersonnelMember" xml:space="preserve">
+    <value>Medlem</value>
+  </data>
+  <data name="Powertrain" xml:space="preserve">
+    <value>Drivlina</value>
+  </data>
+  <data name="PreparedOn" xml:space="preserve">
+    <value>Framtagen</value>
+  </data>
+  <data name="Present" xml:space="preserve">
+    <value>I posten</value>
+  </data>
+  <data name="PrimaryCode" xml:space="preserve">
+    <value>Primär kod</value>
+  </data>
+  <data name="Produce" xml:space="preserve">
+    <value>Ta fram leverans</value>
+  </data>
+  <data name="ProduceIntro" xml:space="preserve">
+    <value>En leverans är en ny oföränderlig handling; en senare ändring kan inte påverka det som lämnats ut.</value>
+  </data>
+  <data name="Producible" xml:space="preserve">
+    <value>Kan lämnas ut</value>
+  </data>
+  <data name="ProductionIntact" xml:space="preserve">
+    <value>Kontrollsumman stämmer fortfarande; leveransen har inte ändrats.</value>
+  </data>
+  <data name="ProductionTampered" xml:space="preserve">
+    <value>Kontrollsumman stämmer inte med det lagrade värdet.</value>
+  </data>
+  <data name="Productions" xml:space="preserve">
+    <value>Leveranser</value>
+  </data>
+  <data name="ProfileVersion" xml:space="preserve">
+    <value>Kontraktsversion</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>Fastigheter</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Mängd</value>
+  </data>
+  <data name="QueueSubmission" xml:space="preserve">
+    <value>Köa inlämningen</value>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value>Köad</value>
+  </data>
+  <data name="Race" xml:space="preserve">
+    <value>Etnicitet</value>
+  </data>
+  <data name="Rank" xml:space="preserve">
+    <value>Grad</value>
+  </data>
+  <data name="ReceivedOn" xml:space="preserve">
+    <value>Mottagen</value>
+  </data>
+  <data name="RecordCount" xml:space="preserve">
+    <value>Poster</value>
+  </data>
+  <data name="RecordsDashboard" xml:space="preserve">
+    <value>Översikt för poster</value>
+  </data>
+  <data name="RecordsNotActivated" xml:space="preserve">
+    <value>Postmodulen är ännu inte aktiverad för denna kår.</value>
+  </data>
+  <data name="RedactionProfile" xml:space="preserve">
+    <value>Maskeringsprofil</value>
+  </data>
+  <data name="Rejected" xml:space="preserve">
+    <value>Avvisade</value>
+  </data>
+  <data name="RejectedHint" xml:space="preserve">
+    <value>Avvisade av mottagaren och ännu inte rättade</value>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Lämna ut</value>
+  </data>
+  <data name="ReleasedOn" xml:space="preserve">
+    <value>Utlämnad</value>
+  </data>
+  <data name="Request" xml:space="preserve">
+    <value>Begäran</value>
+  </data>
+  <data name="RequestNumber" xml:space="preserve">
+    <value>Referens</value>
+  </data>
+  <data name="Requester" xml:space="preserve">
+    <value>Sökande</value>
+  </data>
+  <data name="RequesterContact" xml:space="preserve">
+    <value>Kontaktuppgifter</value>
+  </data>
+  <data name="RequesterIdentityWithheld" xml:space="preserve">
+    <value>Vem som begärt uppgifterna är skyddat och visas inte här.</value>
+  </data>
+  <data name="RequesterName" xml:space="preserve">
+    <value>Sökandens namn</value>
+  </data>
+  <data name="RequesterOrganization" xml:space="preserve">
+    <value>Organisation</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Obligatorisk</value>
+  </data>
+  <data name="Rescue" xml:space="preserve">
+    <value>Räddning</value>
+  </data>
+  <data name="RescueElevation" xml:space="preserve">
+    <value>Räddningens nivå</value>
+  </data>
+  <data name="RescueMode" xml:space="preserve">
+    <value>Räddningssätt</value>
+  </data>
+  <data name="RescuePath" xml:space="preserve">
+    <value>Räddningsväg</value>
+  </data>
+  <data name="RescueType" xml:space="preserve">
+    <value>Räddningstyp</value>
+  </data>
+  <data name="ResourceCode" xml:space="preserve">
+    <value>Resurs</value>
+  </data>
+  <data name="Resources" xml:space="preserve">
+    <value>Resurser</value>
+  </data>
+  <data name="ResourcesNotSubmitted" xml:space="preserve">
+    <value>sparas endast i kårens post, skickas aldrig till NERIS</value>
+  </data>
+  <data name="RestrictedFieldsHidden" xml:space="preserve">
+    <value>Vissa fält är skyddade och visas inte för dig.</value>
+  </data>
+  <data name="Returned" xml:space="preserve">
+    <value>Återsända för rättelse</value>
+  </data>
+  <data name="SaveScope" xml:space="preserve">
+    <value>Spara omfattningen</value>
+  </data>
+  <data name="Scope" xml:space="preserve">
+    <value>Omfattning</value>
+  </data>
+  <data name="ScopeFrozen" xml:space="preserve">
+    <value>Omfattningen är låst eftersom en leverans redan tagits fram utifrån den.</value>
+  </data>
+  <data name="ScopeNarrative" xml:space="preserve">
+    <value>Vad som begärts</value>
+  </data>
+  <data name="ScopePreview" xml:space="preserve">
+    <value>Vad omfattningen ger</value>
+  </data>
+  <data name="ScopePreviewTruncated" xml:space="preserve">
+    <value>Fler poster matchar än de som listas här.</value>
+  </data>
+  <data name="SecondaryCode" xml:space="preserve">
+    <value>Sekundär kod</value>
+  </data>
+  <data name="SectionBattery" xml:space="preserve">
+    <value>Inblandat batteri</value>
+  </data>
+  <data name="SectionChemical" xml:space="preserve">
+    <value>Utsläppt kemikalie</value>
+  </data>
+  <data name="SectionCookingFireSuppression" xml:space="preserve">
+    <value>Släcksystem för kök</value>
+  </data>
+  <data name="SectionCsstHazard" xml:space="preserve">
+    <value>Korrugerad rostfri gasslang</value>
+  </data>
+  <data name="SectionElectricHazard" xml:space="preserve">
+    <value>Elrisk</value>
+  </data>
+  <data name="SectionFire" xml:space="preserve">
+    <value>Branduppgifter</value>
+  </data>
+  <data name="SectionFireAlarm" xml:space="preserve">
+    <value>Brandlarmsystem</value>
+  </data>
+  <data name="SectionFireSuppression" xml:space="preserve">
+    <value>Släcksystem</value>
+  </data>
+  <data name="SectionHazsit" xml:space="preserve">
+    <value>Farlig situation</value>
+  </data>
+  <data name="SectionHazsitAnalysis" xml:space="preserve">
+    <value>Analys av farlig situation</value>
+  </data>
+  <data name="SectionMedical" xml:space="preserve">
+    <value>Patientvård</value>
+  </data>
+  <data name="SectionMedicalOxygenHazard" xml:space="preserve">
+    <value>Medicinsk syrgas i hemmet</value>
+  </data>
+  <data name="SectionNoLongerApplies" xml:space="preserve">
+    <value>Detta avsnitt gäller inte längre för de valda händelsetyperna.</value>
+  </data>
+  <data name="SectionOtherAlarm" xml:space="preserve">
+    <value>Annat larm</value>
+  </data>
+  <data name="SectionOutsideFire" xml:space="preserve">
+    <value>Analys av utomhusbrand</value>
+  </data>
+  <data name="SectionOutsideFireLocation" xml:space="preserve">
+    <value>Brandplats utomhus</value>
+  </data>
+  <data name="SectionPowergenHazard" xml:space="preserve">
+    <value>Risk från elproduktion</value>
+  </data>
+  <data name="SectionProduct" xml:space="preserve">
+    <value>Inblandad produkt</value>
+  </data>
+  <data name="SectionSmokeAlarm" xml:space="preserve">
+    <value>Brandvarnare</value>
+  </data>
+  <data name="SectionStructureFireLocation" xml:space="preserve">
+    <value>Brandplats i byggnad</value>
+  </data>
+  <data name="SectionStructureFireOrigin" xml:space="preserve">
+    <value>Startpunkt för byggnadsbranden</value>
+  </data>
+  <data name="Sent" xml:space="preserve">
+    <value>Skickad</value>
+  </data>
+  <data name="SetKey" xml:space="preserve">
+    <value>Värdemängd</value>
+  </data>
+  <data name="Stale" xml:space="preserve">
+    <value>föråldrade</value>
+  </data>
+  <data name="StartAnalysis" xml:space="preserve">
+    <value>Starta analysen</value>
+  </data>
+  <data name="States" xml:space="preserve">
+    <value>Statusar</value>
+  </data>
+  <data name="StatutoryDueHint" xml:space="preserve">
+    <value>Lämnas det tomt sätts det av kårens lagstadgade frist.</value>
+  </data>
+  <data name="StatutoryDueOn" xml:space="preserve">
+    <value>Lagstadgad frist</value>
+  </data>
+  <data name="StoriesAbove" xml:space="preserve">
+    <value>Våningar ovan mark</value>
+  </data>
+  <data name="StoriesBelow" xml:space="preserve">
+    <value>Våningar under mark</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Lämna in</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>Inlämnade</value>
+  </data>
+  <data name="Suggested" xml:space="preserve">
+    <value>Rekommenderad</value>
+  </data>
+  <data name="Superseded" xml:space="preserve">
+    <value>Ersatt</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Rubrik</value>
+  </data>
+  <data name="Vacancy" xml:space="preserve">
+    <value>Nyttjandestatus</value>
+  </data>
+  <data name="Vehicles" xml:space="preserve">
+    <value>Fordon</value>
+  </data>
+  <data name="VerifyProduction" xml:space="preserve">
+    <value>Verifiera kontrollsumman</value>
+  </data>
+  <data name="Vin" xml:space="preserve">
+    <value>Chassinummer</value>
+  </data>
+  <data name="WasOccupied" xml:space="preserve">
+    <value>Upptaget vid tillfället</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>År</value>
+  </data>
+  <data name="YearBuilt" xml:space="preserve">
+    <value>Byggår</value>
+  </data>
+  <data name="OtherVehicle" xml:space="preserve">
+    <value>Annat fordon</value>
+  </data>
+  <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
+    <value>Nya inloggningsuppgifter krävs när NERIS-behörighetstypen ändras.</value>
+  </data>
 </root>

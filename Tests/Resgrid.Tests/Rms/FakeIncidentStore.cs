@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -30,6 +30,13 @@ namespace Resgrid.Tests.Rms
 		public List<RmsValidationIssue> Issues { get; } = new List<RmsValidationIssue>();
 		public List<RmsSubmission> Submissions { get; } = new List<RmsSubmission>();
 		public List<RmsSignature> Signatures { get; } = new List<RmsSignature>();
+		public List<RmsIncidentModule> Modules { get; } = new List<RmsIncidentModule>();
+		public List<RmsIncidentResource> Resources { get; } = new List<RmsIncidentResource>();
+		public List<RmsCasualtyRescue> Casualties { get; } = new List<RmsCasualtyRescue>();
+		public List<RmsExposure> Exposures { get; } = new List<RmsExposure>();
+		public List<RmsIncidentAnalysis> Analyses { get; } = new List<RmsIncidentAnalysis>();
+		public List<RmsIncidentProperty> Properties { get; } = new List<RmsIncidentProperty>();
+		public List<RmsIncidentVehicle> Vehicles { get; } = new List<RmsIncidentVehicle>();
 
 		public Mock<IRmsIncidentReportsRepository> ReportsRepo { get; } = new Mock<IRmsIncidentReportsRepository>();
 		public Mock<IRmsSourceFactsRepository> FactsRepo { get; } = new Mock<IRmsSourceFactsRepository>();
@@ -42,6 +49,13 @@ namespace Resgrid.Tests.Rms
 		public Mock<IRmsValidationIssuesRepository> IssuesRepo { get; } = new Mock<IRmsValidationIssuesRepository>();
 		public Mock<IRmsSubmissionsRepository> SubmissionsRepo { get; } = new Mock<IRmsSubmissionsRepository>();
 		public Mock<IRmsSignaturesRepository> SignaturesRepo { get; } = new Mock<IRmsSignaturesRepository>();
+		public Mock<IRmsIncidentModulesRepository> ModulesRepo { get; } = new Mock<IRmsIncidentModulesRepository>();
+		public Mock<IRmsIncidentResourcesRepository> ResourcesRepo { get; } = new Mock<IRmsIncidentResourcesRepository>();
+		public Mock<IRmsCasualtyRescuesRepository> CasualtiesRepo { get; } = new Mock<IRmsCasualtyRescuesRepository>();
+		public Mock<IRmsExposuresRepository> ExposuresRepo { get; } = new Mock<IRmsExposuresRepository>();
+		public Mock<IRmsIncidentAnalysesRepository> AnalysesRepo { get; } = new Mock<IRmsIncidentAnalysesRepository>();
+		public Mock<IRmsIncidentPropertiesRepository> PropertiesRepo { get; } = new Mock<IRmsIncidentPropertiesRepository>();
+		public Mock<IRmsIncidentVehiclesRepository> VehiclesRepo { get; } = new Mock<IRmsIncidentVehiclesRepository>();
 
 		public List<RmsRevision> Revisions => Shared.Revisions;
 		public List<RmsRecordGroupScope> Scopes => Shared.Scopes;
@@ -65,10 +79,11 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d, int call) => Reports.Where(x => x.DepartmentId == d && x.CallId == call).ToList());
 			ReportsRepo.Setup(r => r.GetByNerisIncidentIdAsync(It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, string id) => Reports.FirstOrDefault(x => x.DepartmentId == d && x.NerisIncidentId == id));
+			// The state filter is honoured: a fake that ignores it would let a queue-count bug pass unnoticed.
 			ReportsRepo.Setup(r => r.QueryAsync(It.IsAny<int>(), It.IsAny<RmsIncidentReportQuery>()))
-				.ReturnsAsync((int d, RmsIncidentReportQuery q) => Reports.Where(x => x.DepartmentId == d && x.DeletedOn == null).ToList());
+				.ReturnsAsync((int d, RmsIncidentReportQuery q) => MatchReports(d, q).ToList());
 			ReportsRepo.Setup(r => r.CountAsync(It.IsAny<int>(), It.IsAny<RmsIncidentReportQuery>()))
-				.ReturnsAsync((int d, RmsIncidentReportQuery q) => Reports.Count(x => x.DepartmentId == d && x.DeletedOn == null));
+				.ReturnsAsync((int d, RmsIncidentReportQuery q) => MatchReports(d, q).Count());
 			ReportsRepo.Setup(r => r.GetYearsAsync(It.IsAny<int>()))
 				.ReturnsAsync((int d) => Reports.Where(x => x.DepartmentId == d).Select(x => (x.CallCreatedOn ?? x.CreatedOn).Year).Distinct().ToList());
 			ReportsRepo.Setup(r => r.GetMaxRecordNumberSequenceAsync(It.IsAny<int>(), It.IsAny<string>()))
@@ -93,6 +108,31 @@ namespace Resgrid.Tests.Rms
 			Wire(AidsRepo, Aids, x => x.RmsAidId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
 			Wire(LocationsRepo, Locations, x => x.RmsLocationId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
 			Wire(NarrativesRepo, Narratives, x => x.RmsNarrativeId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
+			Wire(ModulesRepo, Modules, x => x.RmsIncidentModuleId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
+			Wire(ResourcesRepo, Resources, x => x.RmsIncidentResourceId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
+			Wire(CasualtiesRepo, Casualties, x => x.RmsCasualtyRescueId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
+			Wire(ExposuresRepo, Exposures, x => x.RmsExposureId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
+			Wire(PropertiesRepo, Properties, x => x.RmsIncidentPropertyId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
+			Wire(VehiclesRepo, Vehicles, x => x.RmsIncidentVehicleId, x => x.DepartmentId, x => x.RecordId, x => x.RevisionId);
+
+			ModulesRepo.Setup(r => r.GetForRecordByKindAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<RmsIncidentModuleKind>()))
+				.ReturnsAsync((int d, string rec, string rev, RmsIncidentModuleKind kind) => (IEnumerable<RmsIncidentModule>)Modules
+					.Where(x => x.DepartmentId == d && x.RecordId == rec && x.RevisionId == rev && x.ModuleKind == (int)kind).OrderBy(x => x.Ordinal).ToList());
+
+			// Incident analysis (RMS-3): its own aggregate root, one per report
+			AnalysesRepo.Setup(r => r.InsertAsync(It.IsAny<RmsIncidentAnalysis>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsIncidentAnalysis e, CancellationToken c, bool f) => { Analyses.Add(e); return e; });
+			AnalysesRepo.Setup(r => r.UpdateAsync(It.IsAny<RmsIncidentAnalysis>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsIncidentAnalysis e, CancellationToken c, bool f) => { Analyses.RemoveAll(x => x.RmsIncidentAnalysisId == e.RmsIncidentAnalysisId); Analyses.Add(e); return e; });
+			AnalysesRepo.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string id) => Analyses.FirstOrDefault(x => x.DepartmentId == d && x.RmsIncidentAnalysisId == id));
+			AnalysesRepo.Setup(r => r.GetForReportAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string reportId) => Analyses.FirstOrDefault(x => x.DepartmentId == d && x.IncidentReportId == reportId && x.DeletedOn == null));
+			AnalysesRepo.Setup(r => r.GetAwaitingIncidentAsync(It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, int take) => (IEnumerable<RmsIncidentAnalysis>)Analyses
+					.Where(x => x.DepartmentId == d && x.State == (int)RmsIncidentAnalysisState.Finalized && x.NerisAnalysisId == null && x.DeletedOn == null).Take(take).ToList());
+			AnalysesRepo.Setup(r => r.CountByStateAsync(It.IsAny<int>(), It.IsAny<RmsIncidentAnalysisState>()))
+				.ReturnsAsync((int d, RmsIncidentAnalysisState state) => Analyses.Count(x => x.DepartmentId == d && x.State == (int)state && x.DeletedOn == null));
 
 			// Validation issues: a run replaces every issue of its source
 			IssuesRepo.Setup(r => r.GetForRecordAsync(It.IsAny<int>(), It.IsAny<string>()))
@@ -123,8 +163,8 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d, string id) => Submissions.Where(x => x.DepartmentId == d && x.RecordId == id).OrderByDescending(x => x.QueuedOn).ToList());
 			SubmissionsRepo.Setup(r => r.GetByIdempotencyKeyAsync(It.IsAny<string>()))
 				.ReturnsAsync((string key) => Submissions.FirstOrDefault(x => x.IdempotencyKey == key));
-			SubmissionsRepo.Setup(r => r.CountByStateAsync(It.IsAny<int>()))
-				.ReturnsAsync((int state) => Submissions.Count(x => x.State == state));
+			SubmissionsRepo.Setup(r => r.CountByStateAsync(It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, int state) => Submissions.Count(x => x.DepartmentId == d && x.State == state));
 			SubmissionsRepo.Setup(r => r.SupersedeOpenForRecordAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((int d, string id, string except, DateTime now, CancellationToken c) =>
 				{
@@ -160,6 +200,20 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d, string id) => Signatures.Where(x => x.DepartmentId == d && x.RecordId == id).ToList());
 			SignaturesRepo.Setup(r => r.GetForRevisionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<RmsSignatureIntent>()))
 				.ReturnsAsync((int d, string rev, RmsSignatureIntent intent) => Signatures.FirstOrDefault(x => x.DepartmentId == d && x.RevisionId == rev && x.Intent == (int)intent));
+		}
+
+		private IEnumerable<RmsIncidentReport> MatchReports(int departmentId, RmsIncidentReportQuery query)
+		{
+			var rows = Reports.Where(x => x.DepartmentId == departmentId && x.DeletedOn == null);
+			if (query?.States != null && query.States.Count > 0)
+				rows = rows.Where(x => query.States.Contains(x.State));
+			if (query?.CallId != null)
+				rows = rows.Where(x => x.CallId == query.CallId.Value);
+			if (!string.IsNullOrWhiteSpace(query?.OwnerUserId))
+				rows = rows.Where(x => x.OwnerUserId == query.OwnerUserId);
+			if (query?.StationGroupId != null)
+				rows = rows.Where(x => x.StationGroupId == query.StationGroupId.Value);
+			return rows;
 		}
 
 		public static bool IsOpen(int state)

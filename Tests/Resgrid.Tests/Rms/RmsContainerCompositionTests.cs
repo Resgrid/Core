@@ -1,5 +1,7 @@
+﻿using System.Linq;
 using FluentAssertions;
 using NUnit.Framework;
+using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -41,6 +43,14 @@ namespace Resgrid.Tests.Rms
 			Resolve<Resgrid.Model.Providers.IRecordAttachmentScanner>().Should().BeOfType<Resgrid.Providers.Scanning.ClamAvAttachmentScanner>("the scanning module replaces the null scanner");
 			Resolve<IDepartmentProfileMediaService>().Should().NotBeNull();
 			Resolve<IRecordsPrintLayoutService>().Should().NotBeNull();
+			// RMS-3: worker 42 and worker 43
+			Resolve<IRecordsDueStateService>().Should().NotBeNull();
+			Resolve<IRecordsRetentionService>().Should().NotBeNull();
+			Resolve<IIncidentAnalysisService>().Should().NotBeNull();
+			// RMS-3c/3d
+			Resolve<IRecordsEvidenceService>().Should().NotBeNull();
+			Resolve<IRecordsDisclosureService>().Should().NotBeNull();
+			Resolve<IRecordsDashboardService>().Should().NotBeNull();
 		}
 
 		[Test]
@@ -80,6 +90,31 @@ namespace Resgrid.Tests.Rms
 			Resolve<IRmsNerisProfilesRepository>().Should().NotBeNull();
 			Resolve<IRmsNerisValueSetsRepository>().Should().NotBeNull();
 			Resolve<IRmsNerisCrosswalksRepository>().Should().NotBeNull();
+			// RMS-3 (M0167-M0168, M0170)
+			Resolve<IRmsIncidentModulesRepository>().Should().NotBeNull();
+			Resolve<IRmsIncidentResourcesRepository>().Should().NotBeNull();
+			Resolve<IRmsCasualtyRescuesRepository>().Should().NotBeNull();
+			Resolve<IRmsExposuresRepository>().Should().NotBeNull();
+			Resolve<IRmsIncidentAnalysesRepository>().Should().NotBeNull();
+			Resolve<IRmsIncidentPropertiesRepository>().Should().NotBeNull();
+			Resolve<IRmsIncidentVehiclesRepository>().Should().NotBeNull();
+			Resolve<IRmsRecordDueStatesRepository>().Should().NotBeNull();
+			Resolve<IRmsRecordLegalHoldsRepository>().Should().NotBeNull();
+			// RMS-3c/3d (M0169, M0171)
+			Resolve<IRmsEvidenceArtifactsRepository>().Should().NotBeNull();
+			Resolve<IRmsDisclosureRequestsRepository>().Should().NotBeNull();
+			Resolve<IRmsDisclosureProductionsRepository>().Should().NotBeNull();
+		}
+
+		[Test]
+		public void All_six_evidence_adapters_are_registered()
+		{
+			// The plan ships all six, none optional. A source that is not present in this build still registers an
+			// adapter, so the dashboard can say "unavailable" rather than leaving an author to infer "none".
+			var adapters = ResolveAll<Resgrid.Model.Services.IRecordEvidenceAdapter>().ToList();
+
+			adapters.Select(a => a.Kind).Should().BeEquivalentTo(
+				System.Enum.GetValues(typeof(RmsEvidenceKind)).Cast<RmsEvidenceKind>());
 		}
 
 		[Test]

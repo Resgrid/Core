@@ -18,7 +18,8 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			try
 			{
-				var service = Bootstrapper.GetKernel().Resolve<IRecordsDueStateService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var service = scope.Resolve<IRecordsDueStateService>();
 				var result = await service.SweepAsync(cancellationToken);
 
 				if (result.Errors > 0)

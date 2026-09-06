@@ -87,6 +87,29 @@ namespace Resgrid.Tests.Web.Services
 		#region Restricted withholding
 
 		[Test]
+		public void Omitted_restricted_grant_never_discloses_a_casualty()
+		{
+			var aggregate = Report();
+			aggregate.Casualties.Add(Casualty());
+			IncidentReportsApiMapper.ToReport(aggregate, false).Should().BeEquivalentTo(IncidentReportsApiMapper.ToReport(aggregate, false, false));
+		}
+
+		[Test]
+		public void Eviction_projection_contains_no_former_record_metadata()
+		{
+			var projection = new RmsRecordSearchProjection
+			{
+				RmsRecordSearchProjectionId = "gone", RowVersion = 7, ModifiedOn = DateTime.UtcNow,
+				DisplaySummary = "Restricted narrative", CallId = 123, CallNumber = "C-123", AuthorUserId = "author", OwnerUserId = "owner",
+				DefinitionKey = RmsDefinitionKeys.Coroner, RecordNumber = "COR-1", StationGroupId = 11
+			};
+			RecordsApiMapper.ToTombstone(projection).Should().BeEquivalentTo(new RecordSummaryData
+			{
+				RecordId = "gone", RowVersion = 7, ModifiedOn = projection.ModifiedOn, IsTombstone = true
+			});
+		}
+
+		[Test]
 		public void A_casualty_stays_visible_without_the_restricted_grant_but_its_identifying_half_is_withheld()
 		{
 			var aggregate = Report();
@@ -184,7 +207,8 @@ namespace Resgrid.Tests.Web.Services
 				.Should().BeNull("a list response carries the header only, however many artifacts it holds");
 
 			var withheld = RecordEvidenceApiMapper.ToArtifact(artifact, false, true);
-			withheld.Title.Should().Be("Unit tracking");
+			withheld.Title.Should().Be("Restricted evidence");
+			withheld.SourceEntityId.Should().BeNull(); withheld.CapturedByUserId.Should().BeNull(); withheld.Checksum.Should().BeNull();
 			withheld.ManifestJson.Should().BeNull();
 			withheld.ManifestWithheld.Should().BeTrue("the caller should know there is content they are not seeing");
 

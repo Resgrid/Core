@@ -13,8 +13,28 @@ using Resgrid.Repositories.DataRepository.Queries.Workflows;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class WorkflowRunRepository : RepositoryBase<WorkflowRun>, IWorkflowRunRepository
+	public class WorkflowRunRepository : RmsRepositoryBase<WorkflowRun>, IWorkflowRunRepository
 	{
+		public override Task<WorkflowRun> InsertAsync(WorkflowRun entity, System.Threading.CancellationToken cancellationToken, bool firstLevelOnly = false)
+			=> WriteRunAsync(entity, true, cancellationToken, firstLevelOnly);
+		public override Task<WorkflowRun> UpdateAsync(WorkflowRun entity, System.Threading.CancellationToken cancellationToken, bool firstLevelOnly = false)
+			=> WriteRunAsync(entity, false, cancellationToken, firstLevelOnly);
+		private async Task<WorkflowRun> WriteRunAsync(WorkflowRun entity, bool insert, System.Threading.CancellationToken cancellationToken, bool firstLevelOnly)
+		{
+			if (string.IsNullOrEmpty(entity.AggregateId)) return insert ? await base.InsertAsync(entity, cancellationToken, firstLevelOnly) : await base.UpdateAsync(entity, cancellationToken, firstLevelOnly);
+			var owns = UnitOfWork.Transaction == null;
+			UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				var key = new { DepartmentId = entity.DepartmentId, Id = entity.AggregateId };
+				var rms = await ScalarAsync<int>($"SELECT (SELECT COUNT(1) FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsOperationalRecordId")} = {P}Id) + (SELECT COUNT(1) FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsIncidentReportId")} = {P}Id) + (SELECT COUNT(1) FROM {Tbl("RmsIncidentAnalyses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsIncidentAnalysisId")} = {P}Id)", key, cancellationToken);
+				if (rms > 0) await LockLiveContentParentAsync(entity.DepartmentId, entity.AggregateId, cancellationToken);
+				var result = insert ? await base.InsertAsync(entity, cancellationToken, firstLevelOnly) : await base.UpdateAsync(entity, cancellationToken, firstLevelOnly);
+				if (owns) UnitOfWork.CommitChanges();
+				return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;

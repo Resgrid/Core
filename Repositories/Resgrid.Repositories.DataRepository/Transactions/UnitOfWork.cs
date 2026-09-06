@@ -21,23 +21,24 @@ namespace Resgrid.Repositories.DataRepository.Transactions
 
 		public DbConnection Connection { get; private set; }
 
-		public void CommitChanges() => Transaction?.Commit();
+		public void CommitChanges() => Complete(true);
 
 		public DbConnection CreateOrGetConnection()
 		{
 			_semaphore.Wait();
 
-			if (Connection == null)
+			try
 			{
-				Connection = _connectionProvider.Create();
-				Connection.Open();
-
-				Transaction = Connection.BeginTransaction();
+				if (Connection == null)
+				{
+					Connection = _connectionProvider.Create();
+					Connection.Open();
+					Transaction = Connection.BeginTransaction();
+				}
+				return Connection;
 			}
-
-			_semaphore.Release();
-
-			return Connection;
+			catch { Reset(); throw; }
+			finally { _semaphore.Release(); }
 		}
 
 		public async Task<DbConnection> CreateOrGetConnectionAsync(CancellationToken cancellationToken = default(CancellationToken))
@@ -56,19 +57,41 @@ namespace Resgrid.Repositories.DataRepository.Transactions
 
 				return Connection;
 			}
+			catch { Reset(); throw; }
 			finally
 			{
 				_semaphore.Release();
 			}
 		}
 
-		public void DiscardChanges() => Transaction?.Rollback();
+		public void DiscardChanges() => Complete(false);
+
+		private void Complete(bool commit)
+		{
+			_semaphore.Wait();
+			try
+			{
+				try { if (commit) Transaction?.Commit(); else Transaction?.Rollback(); }
+				finally { Reset(); }
+			}
+			finally { _semaphore.Release(); }
+		}
+
+		private void Reset()
+		{
+			var transaction = Transaction;
+			var connection = Connection;
+			Transaction = null;
+			Connection = null;
+			try { transaction?.Dispose(); }
+			finally { connection?.Dispose(); }
+		}
 
 		public void Dispose()
 		{
-			Transaction?.Dispose();
-			Connection?.Close();
-			Connection?.Dispose();
+			_semaphore.Wait();
+			try { Reset(); }
+			finally { _semaphore.Release(); }
 		}
 	}
 }

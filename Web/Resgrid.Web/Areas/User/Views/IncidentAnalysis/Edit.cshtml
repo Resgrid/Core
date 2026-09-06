@@ -1,4 +1,4 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Records.IncidentAnalysisEditView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
@@ -19,7 +19,7 @@
 	</div>
 </div>
 
-<form class="form-horizontal" method="post" asp-controller="IncidentAnalysis" asp-action="Edit" asp-route-area="User">
+<form data-neris-schema-url="@Url.Action("ContractSchema", "IncidentReports", new { area = "User" })" class="form-horizontal" method="post" asp-controller="IncidentAnalysis" asp-action="Edit" asp-route-area="User">
 	@Html.AntiForgeryToken()
 	@Html.HiddenFor(m => m.AnalysisId)
 	@Html.HiddenFor(m => m.ReportId)
@@ -37,7 +37,13 @@
 					<div class="alert alert-success">@Model.Message</div>
 				}
 
-				<div class="ibox float-e-margins">
+				@if (Model.Issues.Count > 0)
+                {
+                    <div class="alert alert-warning" role="alert"><strong>@localizer["ValidationIssues"]</strong><ul>
+                    @foreach (var issue in Model.Issues) { <li data-neris-issue="@issue.FieldPath"><span>@issue.FieldPath</span> @issue.Message</li> }
+                    </ul></div>
+                }
+                <div class="ibox float-e-margins">
 					<div class="ibox-title"><h5><i class="fa fa-search"></i> @localizer["IncidentAnalysis"] <small>@Model.Reference</small> <span class="label label-primary">@Model.State</span></h5></div>
 					<div class="ibox-content">
 						<div class="form-group">
@@ -51,7 +57,7 @@
 							<div class="col-sm-9">
 								@foreach (var c in Model.InvestigationTypeCodes)
 								{
-									<label class="checkbox-inline"><input type="checkbox" name="InvestigationTypes" value="@c.Value" @(Model.InvestigationTypes.Contains(c.Value) ? "checked" : string.Empty) /> @c.Text</label>
+									<label class="checkbox-inline"><input type="checkbox" name="InvestigationTypes" value="@c.Value" @(Model.InvestigationTypes?.Contains(c.Value) == true ? "checked" : string.Empty) /> @c.Text</label>
 								}
 							</div>
 						</div>
@@ -72,53 +78,24 @@
 							<h4>
 								@localizer["Section" + sectionView.Kind.ToString()]
 								<span class="label @(sectionView.Required ? "label-danger" : "label-warning")">@(sectionView.Required ? localizer["Required"] : localizer["Suggested"])</span>
-								<small><code>@sectionView.PayloadPath</code></small>
+
 							</h4>
 							<p class="text-muted">@sectionView.Reason</p>
 							@foreach (var i in indices)
 							{
 								var row = Model.Modules[i];
-								<div class="form-group">
-									<div class="col-sm-1">
-										<input type="hidden" name="Modules[@i].Kind" value="@row.Kind" />
-										<label class="checkbox-inline"><input type="checkbox" name="Modules[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /></label>
-									</div>
-									<div class="col-sm-3">
-										@if (sectionView.PrimaryCodes.Count > 0)
-										{
-											<select class="form-control input-sm" name="Modules[@i].PrimaryCode">
-												<option value="">@localizer["PrimaryCode"]</option>
-												@foreach (var c in sectionView.PrimaryCodes)
-												{
-													<option value="@c.Value" selected="@(c.Value == row.PrimaryCode)">@c.Text</option>
-												}
-											</select>
-										}
-										else
-										{
-											<input type="text" class="form-control input-sm" name="Modules[@i].PrimaryCode" value="@row.PrimaryCode" placeholder="@localizer["PrimaryCode"]" maxlength="64" />
-										}
-									</div>
-									<div class="col-sm-3">
-										@if (sectionView.SecondaryCodes.Count > 0)
-										{
-											<select class="form-control input-sm" name="Modules[@i].SecondaryCode">
-												<option value="">@localizer["SecondaryCode"]</option>
-												@foreach (var c in sectionView.SecondaryCodes)
-												{
-													<option value="@c.Value" selected="@(c.Value == row.SecondaryCode)">@c.Text</option>
-												}
-											</select>
-										}
-									</div>
-									<div class="col-sm-2"><input type="number" step="any" class="form-control input-sm" name="Modules[@i].Quantity" value="@row.Quantity" placeholder="@localizer["Quantity"]" /></div>
-									<div class="col-sm-1"><input type="text" class="form-control input-sm" name="Modules[@i].QuantityUnit" value="@row.QuantityUnit" placeholder="@localizer["Unit"]" maxlength="32" /></div>
-									<div class="col-sm-2"><input type="datetime-local" class="form-control input-sm" name="Modules[@i].OccurredOn" value="@Dt(row.OccurredOn)" /></div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-11"><textarea class="form-control input-sm" rows="2" name="Modules[@i].DetailJson" placeholder="@sectionView.SchemaName">@row.DetailJson</textarea></div>
-								</div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <input type="hidden" name="Modules[@i].Kind" value="@row.Kind" />
+                                        <input type="hidden" name="Modules[@i].PrimaryCode" value="@row.PrimaryCode" />
+                                        <input type="hidden" name="Modules[@i].SecondaryCode" value="@row.SecondaryCode" />
+                                        <input type="hidden" name="Modules[@i].Quantity" value="@row.Quantity" />
+                                        <input type="hidden" name="Modules[@i].QuantityUnit" value="@row.QuantityUnit" />
+                                        <input type="hidden" name="Modules[@i].OccurredOn" value="@Dt(row.OccurredOn)" />
+                                        <label class="checkbox-inline"><input type="checkbox" name="Modules[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /> @localizer["Section" + sectionView.Kind.ToString()]</label>
+                                        <input type="hidden" name="Modules[@i].DetailJson" value="@row.DetailJson" data-neris-schema="@sectionView.SchemaName" data-neris-root="@("/" + sectionView.PayloadPath.Replace('.', '/') + (sectionView.IsCollection ? "/" + indices.IndexOf(i) : string.Empty))" data-neris-exclude="@(sectionView.Kind == RmsIncidentModuleKind.Fire ? "/location_detail" : sectionView.Kind == RmsIncidentModuleKind.Hazsit ? "/chemicals" : string.Empty)" />
+                                    </div>
+                                </div>
 							}
 						}
 					</div>
@@ -130,73 +107,17 @@
 						@for (var i = 0; i < Model.Properties.Count + Resgrid.Web.Areas.User.Models.Records.IncidentAnalysisEditView.PropertyRows; i++)
 						{
 							var row = i < Model.Properties.Count ? Model.Properties[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentPropertyRow();
-							<div class="hr-line-dashed"></div>
-							<div class="form-group">
-								<div class="col-sm-1"><label class="checkbox-inline"><input type="checkbox" name="Properties[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /></label></div>
-								<div class="col-sm-4">
-									<select class="form-control input-sm" name="Properties[@i].LocationUse">
-										<option value="">@localizer["LocationUse"]</option>
-										@foreach (var c in Model.LocationUses)
-										{
-											<option value="@c.Value" selected="@(c.Value == row.LocationUse)">@c.Text</option>
-										}
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control input-sm" name="Properties[@i].ConstructionType">
-										<option value="">@localizer["ConstructionType"]</option>
-										@foreach (var c in Model.ConstructionTypes)
-										{
-											<option value="@c.Value" selected="@(c.Value == row.ConstructionType)">@c.Text</option>
-										}
-									</select>
-								</div>
-								<div class="col-sm-2">
-									<select class="form-control input-sm" name="Properties[@i].Vacancy">
-										<option value="">@localizer["Vacancy"]</option>
-										@foreach (var c in Model.Vacancies)
-										{
-											<option value="@c.Value" selected="@(c.Value == row.Vacancy)">@c.Text</option>
-										}
-									</select>
-								</div>
-								<div class="col-sm-2"><input type="number" class="form-control input-sm" name="Properties[@i].YearBuilt" value="@row.YearBuilt" placeholder="@localizer["YearBuilt"]" /></div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-1"></div>
-								<div class="col-sm-3">
-									<select class="form-control input-sm" name="Properties[@i].DamageType">
-										<option value="">@localizer["DamageType"]</option>
-										@foreach (var c in Model.BuildingDamageTypes)
-										{
-											<option value="@c.Value" selected="@(c.Value == row.DamageType)">@c.Text</option>
-										}
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control input-sm" name="Properties[@i].FireSpread">
-										<option value="">@localizer["FireSpread"]</option>
-										@foreach (var c in Model.FireSpreads)
-										{
-											<option value="@c.Value" selected="@(c.Value == row.FireSpread)">@c.Text</option>
-										}
-									</select>
-								</div>
-								<div class="col-sm-1"><input type="number" min="0" class="form-control input-sm" name="Properties[@i].StoriesAboveGrade" value="@row.StoriesAboveGrade" placeholder="@localizer["StoriesAbove"]" /></div>
-								<div class="col-sm-1"><input type="number" min="0" class="form-control input-sm" name="Properties[@i].StoriesBelowGrade" value="@row.StoriesBelowGrade" placeholder="@localizer["StoriesBelow"]" /></div>
-								<div class="col-sm-3">
-									<div class="input-group">
-										<input type="number" step="any" class="form-control input-sm" name="Properties[@i].EstimatedValue" value="@row.EstimatedValue" placeholder="@localizer["EstimatedValue"]" />
-										<input type="number" step="any" class="form-control input-sm" name="Properties[@i].EstimatedLoss" value="@row.EstimatedLoss" placeholder="@localizer["EstimatedLoss"]" />
-									</div>
-								</div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-1"></div>
-								<div class="col-sm-3"><input type="number" step="any" class="form-control input-sm" name="Properties[@i].ContentsValue" value="@row.ContentsValue" placeholder="@localizer["ContentsValue"]" /></div>
-								<div class="col-sm-3"><input type="number" step="any" class="form-control input-sm" name="Properties[@i].ContentsLoss" value="@row.ContentsLoss" placeholder="@localizer["ContentsLoss"]" /></div>
-								<div class="col-sm-5"><input type="text" class="form-control input-sm" name="Properties[@i].DetailJson" value="@row.DetailJson" placeholder="PropertyPayload" /></div>
-							</div>
+                            <div class="form-group"><div class="col-sm-12">
+                                <label class="checkbox-inline"><input type="checkbox" name="Properties[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /> @localizer["Properties"] @(i + 1)</label>
+                                <input type="hidden" name="Properties[@i].DetailJson" value="@row.DetailJson" data-neris-schema="PropertyAnalysisPayload" data-neris-root="/properties/@i" />
+                                <label>@localizer["StoriesAbove"] <input type="number" class="form-control" min="0" name="Properties[@i].StoriesAboveGrade" value="@row.StoriesAboveGrade" /></label>
+                                <label>@localizer["StoriesBelow"] <input type="number" class="form-control" min="0" name="Properties[@i].StoriesBelowGrade" value="@row.StoriesBelowGrade" /></label>
+                                <label>@localizer["FireSpread"]
+                                    <select class="form-control" name="Properties[@i].FireSpread"><option value=""></option>
+                                    @foreach (var c in Model.FireSpreads) { <option value="@c.Value" selected="@(c.Value == row.FireSpread)">@c.Text</option> }
+                                    </select>
+                                </label>
+                            </div></div>
 						}
 					</div>
 				</div>
@@ -211,14 +132,15 @@
 						@for (var i = 0; i < Model.Vehicles.Count + Resgrid.Web.Areas.User.Models.Records.IncidentAnalysisEditView.VehicleRows; i++)
 						{
 							var row = i < Model.Vehicles.Count ? Model.Vehicles[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentVehicleRow();
-							<div class="hr-line-dashed"></div>
+							<input type="hidden" name="Vehicles[@i].VehicleId" value="@row.VehicleId" />
+<div class="hr-line-dashed"></div>
 							<div class="form-group">
 								<div class="col-sm-1"><label class="checkbox-inline"><input type="checkbox" name="Vehicles[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /></label></div>
 								<div class="col-sm-2">
 									<select class="form-control input-sm" name="Vehicles[@i].VehicleKind">
-										<option value="AUTOMOBILE" selected="@(row.VehicleKind != "OTHER")">@localizer["Automobile"]</option>
-										<option value="OTHER" selected="@(row.VehicleKind == "OTHER")">@localizer["OtherVehicle"]</option>
-									</select>
+										@foreach (var kind in new[] { "AUTOMOBILE" }.Concat(Resgrid.Providers.Neris.NerisContractCatalog.Instance.GetSchema("VehicleOtherPayload")["properties"]["type"]["enum"].ToObject<string[]>()))
+                                        { <option value="@kind" selected="@(kind == (row.VehicleKind ?? "AUTOMOBILE"))">@kind.Replace('_', ' ')</option> }
+                                    </select>
 								</div>
 								<div class="col-sm-3">
 									<select class="form-control input-sm" name="Vehicles[@i].Make">
@@ -280,8 +202,8 @@
 				<div class="form-group">
 					<div class="col-sm-12">
 						<a class="btn btn-white" asp-controller="IncidentAnalysis" asp-action="Details" asp-route-area="User" asp-route-id="@Model.AnalysisId">@commonLocalizer["Cancel"]</a>
-						<button type="submit" class="btn btn-primary" name="ValidateAfterSave" value="false">@localizer["SaveDraft"]</button>
-						<button type="submit" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
+						<button type="submit" disabled data-neris-save="true" class="btn btn-primary" name="ValidateAfterSave" value="false">@localizer["SaveDraft"]</button>
+						<button type="submit" disabled data-neris-save="true" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
 					</div>
 				</div>
 			</div>
@@ -298,4 +220,8 @@
 			</div>
 		</div>
 	</div>
+<noscript><p role="alert">Enable JavaScript to load the report fields and save this form.</p></noscript>
 </form>
+
+<link rel="stylesheet" href="~/css/neris-guided-form.css" asp-append-version="true" />
+<script src="~/js/neris-guided-form.js" asp-append-version="true" defer></script>

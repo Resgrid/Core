@@ -38,6 +38,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	/// </summary>
 	public class IncidentCasualtyRow
 	{
+		public bool Guided { get; set; }
+		public string CasualtyId { get; set; }
 		public int Kind { get; set; }
 		public string PersonType { get; set; }
 		public string PersonnelUserId { get; set; }
@@ -113,6 +115,7 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	/// <summary>VIN, plate and registration state are restricted and only rendered to an author who may see them.</summary>
 	public class IncidentVehicleRow
 	{
+		public string VehicleId { get; set; }
 		public string VehicleKind { get; set; }
 		public string Make { get; set; }
 		public string Model { get; set; }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
@@ -96,6 +96,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Record_View)]
 		public async Task<ActionResult<RecordsDashboardResult>> Dashboard(CancellationToken cancellationToken)
 		{
+			if (!await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)) return Forbid();
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
 				return NotFound();
@@ -165,7 +166,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					CanExport = ClaimsAuthorizationHelper.CanExportRecords(),
 					CanShare = ClaimsAuthorizationHelper.CanShareRecords(),
 					CanReassign = ClaimsAuthorizationHelper.CanReassignRecordDrafts(),
-					CanViewRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords(),
+					CanViewRestricted = await CanViewRestrictedAsync(),
 					CanViewLegacy = ClaimsAuthorizationHelper.CanViewLegacyRecords(),
 					IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin()
 				},
@@ -265,7 +266,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				OwnerUserId = string.IsNullOrWhiteSpace(owner) ? null : owner,
 				StationGroupId = group,
 				VisibleGroupIds = await VisibleGroupIdsAsync(),
-				ViewerUserId = UserId,
+				ViewerUserId = RecordsSystemPrincipal.IsSystemPrincipal(User) ? null : UserId,
 				Skip = Math.Max(0, skip),
 				Take = Math.Max(1, Math.Min(MaxPageSize, take))
 			};
@@ -288,6 +289,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Record_View)]
 		public async Task<ActionResult<RecordsResult>> Search(string text, int? year, string definitionKey, int? state, int skip = 0, int take = 50)
 		{
+			if (!RecordsSystemPrincipal.IsSystemPrincipal(User) && !await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)) return Forbid();
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
 				return NotFound();
@@ -314,7 +316,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					search = await _recordsSearch.SearchAsync(DepartmentId, new RecordsSearchRequest
 					{
-						Text = text.Trim(), VisibleGroupIds = visible, ViewerUserId = UserId, States = states, DefinitionKey = string.IsNullOrWhiteSpace(definitionKey) ? null : definitionKey, Year = year, Skip = skip, Take = take
+						Text = text.Trim(), VisibleGroupIds = visible, ViewerUserId = RecordsSystemPrincipal.IsSystemPrincipal(User) ? null : UserId, States = states, DefinitionKey = string.IsNullOrWhiteSpace(definitionKey) ? null : definitionKey, Year = year, Skip = skip, Take = take
 					});
 				}
 				catch (Exception ex)
@@ -327,7 +329,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				// Never quietly reimplemented as LIKE (plan 5.10): the queue renders and the caller is told.
 				result.SearchDegraded = true;
-				var query = new RmsRecordQuery { Year = year, DefinitionKey = string.IsNullOrWhiteSpace(definitionKey) ? null : definitionKey, States = states, VisibleGroupIds = visible, ViewerUserId = UserId, Skip = skip, Take = take };
+				var query = new RmsRecordQuery { Year = year, DefinitionKey = string.IsNullOrWhiteSpace(definitionKey) ? null : definitionKey, States = states, VisibleGroupIds = visible, ViewerUserId = RecordsSystemPrincipal.IsSystemPrincipal(User) ? null : UserId, Skip = skip, Take = take };
 				result.Data = (await _recordsService.QueryAsync(DepartmentId, query)).Select(RecordsApiMapper.ToSummary).ToList();
 				result.Total = await _recordsService.CountAsync(DepartmentId, query);
 			}
@@ -361,13 +363,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>
 		/// Delta cursor (plan 5.3): records modified after <paramref name="since"/> (Unix epoch ms; 0 = full pull),
 		/// oldest first, with tombstones for cancelled, voided and deleted records so clients remove them locally.
-		/// Persist Data.ServerTimestampMs and pass it back as the next since; loop while HasMore.
+		/// Persist Data.ServerTimestampMs, ServerCursorId and ScopeStamp together; loop while HasMore.
+		/// ResetRequired requires clearing cached Records, revisions, attachments and evidence before a full pull.
 		/// </summary>
 		[HttpGet("Changes")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<ActionResult<RecordsChangesResult>> Changes(long since = 0, int take = 200, string sinceId = null)
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<ActionResult<RecordsChangesResult>> Changes(long since = 0, int take = 200, string sinceId = null, string scopeStamp = null)
 		{
+			if (since < 0 || since > DateTimeOffset.MaxValue.ToUnixTimeMilliseconds()) return BadRequest();
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
 				return NotFound();
@@ -378,16 +383,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (moduleState.RecordsUsable)
 			{
-				var visible = await VisibleGroupIdsAsync();
-				var rows = await _recordsService.GetChangesSinceAsync(DepartmentId, RecordsApiHelper.FromUnixMs(since), take + 1, sinceId);
+				result.Data.ScopeStamp = await ReadScopeStampAsync();
+				if (result.Data.ScopeStamp == null) return Forbid();
+				var resumeTime = RecordsApiHelper.FromUnixMs(since);
+				string resumeId = null;
+				var validCursor = string.IsNullOrEmpty(sinceId);
+				if (!validCursor && RecordsApiHelper.TryReadChangesCursor(sinceId, since, out var exactTime, out resumeId))
+				{
+					resumeTime = exactTime; validCursor = true;
+				}
+				if (!validCursor || since > 0 && !string.Equals(scopeStamp, result.Data.ScopeStamp, StringComparison.Ordinal))
+				{
+					result.Data.ResetRequired = true;
+					result.Data.ServerTimestampMs = 0;
+					result.Status = ResponseHelper.Success;
+					ResponseHelper.PopulateV4ResponseData(result);
+					return Ok(result);
+				}
+				var rows = await _recordsService.GetChangesSinceAsync(DepartmentId, resumeTime, take + 1, resumeId);
 				var hasMore = rows.Count > take;
 				var page = rows.Take(take).ToList();
 				foreach (var projection in page)
 				{
-					// Tombstones ride through regardless of scope (the client may hold the row); live rows pass the visibility rule.
+					// Even an inaccessible live row can have been cached before a scope change. Only eviction metadata may leave here.
 					var summary = RecordsApiMapper.ToSummary(projection);
-					if (!summary.IsTombstone && visible != null && !await CanViewRecordAsync(projection.RmsRecordSearchProjectionId))
-						continue;
+					if (summary.IsTombstone || !await CanViewRecordAsync(projection.RmsRecordSearchProjectionId))
+						summary = RecordsApiMapper.ToTombstone(projection);
 					result.Data.Records.Add(summary);
 				}
 				result.Data.HasMore = hasMore;
@@ -398,16 +419,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					var last = page[page.Count - 1];
 					result.Data.ServerTimestampMs = RecordsApiHelper.ToUnixMs(last.ModifiedOn);
-					result.Data.ServerCursorId = last.RmsRecordSearchProjectionId;
+					result.Data.ServerCursorId = RecordsApiHelper.ChangesCursor(last.ModifiedOn, last.RmsRecordSearchProjectionId);
 				}
 				else
 				{
-					result.Data.ServerTimestampMs = RecordsApiHelper.ToUnixMs(now);
+					// Replay the final millisecond so a concurrent write in that clock bucket is not skipped.
+					result.Data.ServerTimestampMs = RecordsApiHelper.ToUnixMs(now) - 1;
+				}
+				// A role, policy or membership change during hydration invalidates the entire page, including rows already authorized.
+				for (var index = 0; index < result.Data.Records.Count; index++)
+				{
+					if (!result.Data.Records[index].IsTombstone && !await CanViewRecordAsync(page[index].RmsRecordSearchProjectionId))
+						result.Data.Records[index] = RecordsApiMapper.ToTombstone(page[index]);
+				}
+				var finalScope = await ReadScopeStampAsync();
+				if (finalScope == null) return Forbid();
+				if (!string.Equals(result.Data.ScopeStamp, finalScope, StringComparison.Ordinal))
+				{
+					result.Data = new RecordsChangesData { Since = since, ScopeStamp = finalScope, ResetRequired = true, ServerTimestampMs = 0 };
 				}
 			}
 			else
 			{
-				result.Data.ServerTimestampMs = RecordsApiHelper.ToUnixMs(now);
+				result.Data.ResetRequired = since > 0;
+				result.Data.ServerTimestampMs = 0;
 			}
 
 			result.PageSize = result.Data.Records.Count;
@@ -435,7 +470,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, AccessPurpose(), IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
-			return Ok(Wrap(aggregate));
+			return Ok(await WrapAsync(aggregate));
 		}
 
 		[HttpGet("GetRevisions")]
@@ -478,7 +513,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, revisionId, RmsAccessAuditAction.Read, AccessPurpose("Revision " + revision.RevisionNumber), IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
 			var result = new RecordRevisionSnapshotResult
 			{
-				Data = new RecordRevisionSnapshotData { Revision = RecordsApiMapper.ToRevision(revision), Snapshot = RecordsApiMapper.ToRecord(snapshot, ClaimsAuthorizationHelper.CanViewRestrictedRecords()) },
+				Data = new RecordRevisionSnapshotData { Revision = RecordsApiMapper.ToRevision(revision), Snapshot = RecordsApiMapper.ToRecord(snapshot, await CanViewRestrictedAsync()) },
 				PageSize = 1,
 				Status = ResponseHelper.Success
 			};
@@ -500,7 +535,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!aggregate.Revisions.Any(r => r.RmsRevisionId == from) || !aggregate.Revisions.Any(r => r.RmsRevisionId == to))
 				return NotFound();
 
-			var diffs = await _recordsService.DiffRevisionsAsync(DepartmentId, from, to, ClaimsAuthorizationHelper.CanViewRestrictedRecords());
+			var diffs = await _recordsService.DiffRevisionsAsync(DepartmentId, from, to, await CanViewRestrictedAsync());
 			var result = new RecordDiffResult
 			{
 				Data = new RecordDiffData { RecordId = id, FromRevisionId = from, ToRevisionId = to, Diffs = diffs.Select(d => new RecordFieldDiffData { Section = d.Section, FieldKey = d.FieldKey, OldValue = d.OldValue, NewValue = d.NewValue, Withheld = d.Withheld }).ToList() },
@@ -540,13 +575,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return gate;
 
 			input.IdempotencyKey = RecordsApiHelper.ResolveIdempotencyKey(input.IdempotencyKey, Request);
+			if (input.CallId.HasValue && !ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
 			try
 			{
 				var aggregate = await _recordsService.CreateDraftAsync(DepartmentId, UserId, RecordsApiMapper.ToDraftInput(input, origin), cancellationToken);
 				var replayed = !string.IsNullOrWhiteSpace(input.IdempotencyKey) && aggregate.Record.RowVersion > 1;
-				var result = Wrap(aggregate, replayed ? ResponseHelper.Success : ResponseHelper.Created);
+				var result = await WrapAsync(aggregate, replayed ? ResponseHelper.Success : ResponseHelper.Created);
 				return replayed ? Ok(result) : StatusCode(StatusCodes.Status201Created, result);
 			}
+			catch (RecordIdempotencyException ex)
+			{
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: ex.Message, type: "record_idempotency_conflict");
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is RecordsLegacyWriteBlockedException)
 			{
 				return Problem(statusCode: StatusCodes.Status400BadRequest, title: ex.Message, type: "record_validation");
@@ -558,9 +599,37 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// ETag-guarded draft save. RowVersion (or If-Match) must equal the current row version; otherwise 409 with
-		/// the current record and the field paths the client's copy would have changed, for deliberate reconciliation.
+		/// Creates and links a closed historical Call to an existing Run draft. Source authorization and the
+		/// parent version prevent an unauthorized or duplicate Call from being created.
 		/// </summary>
+		[HttpPost("CreateRunCall")]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<ActionResult<RecordResult>> CreateRunCall(CreateRunCallInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.RecordId)) return BadRequest();
+			var usable = await UsableAsync(); if (usable != null) return usable;
+			var gate = await FieldClientGateAsync(RecordsApiHelper.ResolveOrigin(input.OriginClient)); if (gate != null) return gate;
+			var version = RecordsApiHelper.ResolveRowVersion(input.RowVersion, Request);
+			if (!version.HasValue) return Problem(statusCode: 428, title: "RowVersion or If-Match is required before creating the Call.");
+			var occurred = RecordsApiHelper.Utc(input.OccurredOnUtc);
+			if (!occurred.HasValue) return BadRequest("The Call occurrence time in UTC is required.");
+			if (await LoadAuthorizedAsync(input.RecordId) == null) return NotFound();
+			try
+			{
+				var saved = await _recordsService.CreateRunCallAsync(DepartmentId, UserId, input.RecordId, version.Value,
+					new RecordNewCallInput { Name = input.Name, Address = input.Address, Nature = input.Nature, OccurredOnUtc = occurred.Value }, cancellationToken);
+				var result = await WrapAsync(saved, ResponseHelper.Updated);
+				if (!await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, input.RecordId, DepartmentId)) return Forbid();
+				return Ok(result);
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (RecordConcurrencyException) { return Problem(statusCode: 409, title: "The draft changed. Reload it and check its Call before retrying."); }
+			catch (RecordTransitionException ex) { return Problem(statusCode: 409, title: ex.Message); }
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { return Problem(statusCode: 400, title: ex.Message); }
+		}
+
+		/// <summary>ETag-guarded draft save; conflicts require deliberate reconciliation.</summary>
 		[HttpPost("SaveDraft")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -591,16 +660,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Forbid();
 
 			var draft = RecordsApiMapper.ToDraftInput(input, origin);
+			if (draft.CallId.HasValue && draft.CallId != current.Record.CallId && !ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
 			draft.DefinitionKey = draft.DefinitionKey ?? current.Record.DefinitionKey;
 			try
 			{
 				var saved = await _recordsService.SaveDraftAsync(DepartmentId, UserId, input.RecordId, rowVersion.Value, draft, cancellationToken);
-				return Ok(Wrap(saved, ResponseHelper.Updated));
+				return Ok(await WrapAsync(saved, ResponseHelper.Updated));
 			}
 			catch (RecordConcurrencyException ex)
 			{
 				return await ConflictAsync(input.RecordId, ex.ExpectedRowVersion, draft);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is RecordsLegacyWriteBlockedException)
 			{
 				return Problem(statusCode: StatusCodes.Status400BadRequest, title: ex.Message, type: "record_validation");
@@ -713,29 +784,55 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			var key = RecordsApiHelper.ResolveIdempotencyKey(input.IdempotencyKey, Request);
-			if (key != null)
-			{
-				var replayed = await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key, command);
-				if (string.Equals(replayed, input.RecordId, StringComparison.Ordinal))
-					return Ok(Wrap(await _recordsService.GetAsync(DepartmentId, input.RecordId, true), ResponseHelper.Success));
-			}
-
 			long rowVersion = current.Record.RowVersion;
+			var supplied = RecordsApiHelper.ResolveRowVersion(input.RowVersion, Request);
 			if (requiresRowVersion)
 			{
-				var supplied = RecordsApiHelper.ResolveRowVersion(input.RowVersion, Request);
 				if (!supplied.HasValue)
 					return Problem(statusCode: StatusCodes.Status428PreconditionRequired, title: "RowVersion or If-Match is required for this command.", type: "precondition_required");
 				rowVersion = supplied.Value;
 			}
+			var requestChecksum = RecordSnapshotSerializer.Checksum(Newtonsoft.Json.JsonConvert.SerializeObject(new {
+				input.RecordId, RowVersion = supplied, input.ReasonCode, input.ReasonText, input.Attested,
+				AttestationStatementVersion = string.IsNullOrWhiteSpace(input.AttestationStatementVersion) ? "1" : input.AttestationStatementVersion,
+				input.NewOwnerUserId, Origin = origin
+			}));
+			if (key != null)
+			{
+				var replayed = await _idempotency.TryGetCommandAsync(DepartmentId, UserId, key, command);
+				if (replayed != null)
+				{
+					if (replayed.RecordId != input.RecordId || replayed.RequestChecksum != requestChecksum)
+						return Problem(statusCode: StatusCodes.Status409Conflict, title: "This key belongs to a different or unverified command. Review the record before issuing another command.", type: "record_idempotency_conflict");
+					if (replayed.IsPending)
+						return Problem(statusCode: StatusCodes.Status409Conflict, title: "This command is running or its outcome needs review. Refresh the record; do not automatically issue the command under a new key.", type: "record_command_pending");
+					var replay = await LoadAuthorizedAsync(input.RecordId, true);
+					if (replay == null) return NotFound();
+					var response = await WrapAsync(replay, ResponseHelper.Success);
+					if (!await CanViewRecordAsync(input.RecordId)) return Forbid();
+					return Ok(response);
+				}
+			}
 
 			try
 			{
+				if (key != null && !await _idempotency.TryReserveCommandAsync(DepartmentId, UserId, key, command, input.RecordId, requestChecksum))
+					return Problem(statusCode: StatusCodes.Status409Conflict, title: "Another request reserved this command. Refresh the record and retry the same key to check its outcome.", type: "record_command_pending");
 				var aggregate = await action(rowVersion);
 				if (key != null)
-					await _idempotency.RememberAsync(DepartmentId, UserId, key, command, input.RecordId);
-				return Ok(Wrap(aggregate, ResponseHelper.Updated));
+				{
+					try { await _idempotency.RememberCommandAsync(DepartmentId, UserId, key, command, input.RecordId, requestChecksum); }
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, "A Records command completed but its durable receipt could not be acknowledged.");
+						return Problem(statusCode: StatusCodes.Status503ServiceUnavailable, title: "The command may have completed. Refresh the record and review its history; do not automatically repeat it under a new key.", type: "record_command_outcome_unknown");
+					}
+				}
+				var response = await WrapAsync(aggregate, ResponseHelper.Updated);
+				if (!await CanViewRecordAsync(input.RecordId)) return Forbid();
+				return Ok(response);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (RecordConcurrencyException ex)
 			{
 				return await ConflictAsync(input.RecordId, ex.ExpectedRowVersion, null);
@@ -757,6 +854,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetAttachments")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Record_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<ActionResult<RecordAttachmentsResult>> GetAttachments(string id)
 		{
 			if (!await FlagOnAsync())
@@ -776,6 +874,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetAttachment")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Record_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<ActionResult<RecordAttachmentContentResult>> GetAttachment(string id, string attachmentId)
 		{
 			if (!await FlagOnAsync())
@@ -783,11 +882,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (await LoadAuthorizedAsync(id) == null)
 				return NotFound();
 
-			var attachment = await _recordsService.GetAttachmentAsync(DepartmentId, attachmentId);
+			var attachment = await _recordsService.GetAttachmentAsync(DepartmentId, UserId, attachmentId);
 			if (attachment == null || !string.Equals(attachment.RecordId, id, StringComparison.Ordinal) || attachment.Data == null || attachment.DeletedOn.HasValue)
 				return NotFound();
 
 			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, AccessPurpose("Attachment " + attachmentId), IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
+			// Audit may await external work. Reload the file and intersect current grants before any bytes leave the process.
+			attachment = await _recordsService.GetAttachmentAsync(DepartmentId, UserId, attachmentId);
+			if (attachment == null || attachment.DepartmentId != DepartmentId || attachment.RecordId != id || attachment.RmsRecordAttachmentId != attachmentId
+				|| attachment.DeletedOn.HasValue || attachment.Data == null || attachment.ScanState != (int)RmsAttachmentScanState.Clean
+				|| RecordSnapshotSerializer.Checksum(attachment.Data) != attachment.Checksum) return NotFound();
+			if (attachment.RequiresRestrictedAccess && !await CanViewRestrictedAsync()) return Forbid();
+			if (!await CanViewRecordAsync(id)) return NotFound();
 			var meta = RecordsApiMapper.ToAttachment(attachment);
 			var result = new RecordAttachmentContentResult
 			{
@@ -894,7 +1000,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				var attachment = await _uploads.CompleteAsync(DepartmentId, UserId, input.UploadId, input.Description, cancellationToken);
+				var attachment = await _uploads.CompleteAsync(DepartmentId, UserId, input.UploadId, input.Description, cancellationToken, input.Classification);
 				var result = new RecordAttachmentResult { Data = RecordsApiMapper.ToAttachment(attachment), PageSize = 1, Status = ResponseHelper.Created };
 				ResponseHelper.PopulateV4ResponseData(result);
 				return StatusCode(StatusCodes.Status201Created, result);
@@ -947,7 +1053,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				if (!await _recordsService.RemoveAttachmentAsync(DepartmentId, UserId, input.RecordId, input.AttachmentId, cancellationToken))
 					return NotFound();
-				return Ok(Wrap(await _recordsService.GetAsync(DepartmentId, input.RecordId, true), ResponseHelper.Deleted));
+				return Ok(await WrapAsync(await _recordsService.GetAsync(DepartmentId, input.RecordId, true), ResponseHelper.Deleted));
 			}
 			catch (RecordTransitionException ex)
 			{
@@ -1035,7 +1141,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (grant != null)
 				return await _recordsAuthorizationService.CanSystemPrincipalViewRecordAsync(grant, recordId);
 
-			return await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, recordId, DepartmentId);
+			return await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)
+				&& await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, recordId, DepartmentId);
+		}
+
+		private async Task<string> ReadScopeStampAsync()
+		{
+			try
+			{
+				var grant = SystemGrant;
+				string memberScope = null;
+				if (IsSystemPrincipal && grant == null) return null;
+				if (grant == null)
+				{
+					if (!await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)) return null;
+					memberScope = await _recordsAuthorizationService.GetReadScopeStampAsync(UserId, DepartmentId);
+					if (string.IsNullOrWhiteSpace(memberScope)) return null;
+				}
+				var policy = await _dataProtectionService.GetPolicyByDepartmentIdAsync(DepartmentId, true);
+				var visible = await VisibleGroupIdsAsync();
+				return RecordSnapshotSerializer.Checksum(Newtonsoft.Json.JsonConvert.SerializeObject(new
+				{
+					DepartmentId, UserId, MemberScope = memberScope, Groups = visible?.Distinct().OrderBy(g => g).ToArray(),
+					Restricted = await CanViewRestrictedAsync(), SystemPurpose = grant?.Purpose,
+					ProtectionState = policy?.State, ProtectionEpoch = policy?.PolicyEpoch, ProtectionCatalog = policy?.CatalogVersion
+				}));
+			}
+			catch (Exception ex) { Resgrid.Framework.Logging.LogException(ex); return null; }
 		}
 
 		/// <summary>Audit purpose: the grant's stated purpose for a system principal, so a machine read is never anonymous.</summary>
@@ -1084,7 +1216,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return null;
 			}
 
-			return await _recordsService.GetAsync(DepartmentId, id, includeRevisions);
+			var aggregate = await _recordsService.GetAsync(DepartmentId, id, includeRevisions);
+			if (aggregate?.Record == null || aggregate.Record.DepartmentId != DepartmentId || aggregate.Record.DeletedOn.HasValue || aggregate.Record.PurgedOn.HasValue) return null;
+			if (aggregate != null && !await CanViewRestrictedAsync()) aggregate.Attachments = aggregate.Attachments.Where(a => !a.RequiresRestrictedAccess).ToList();
+			if (!await CanViewRecordAsync(id)) return null;
+			return aggregate;
 		}
 
 		private bool CanEditRecord(RmsOperationalRecord record)
@@ -1105,20 +1241,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			var conflict = RecordDraftConflictResolver.Describe(attempted, current, expectedRowVersion);
-			var result = new RecordConflictResult { Data = RecordsApiMapper.ToConflict(conflict, current, ClaimsAuthorizationHelper.CanViewRestrictedRecords()), PageSize = 1, Status = ConflictStatus };
+			var result = new RecordConflictResult { Data = RecordsApiMapper.ToConflict(conflict, current, await CanViewRestrictedAsync()), PageSize = 1, Status = ConflictStatus };
 			ResponseHelper.PopulateV4ResponseData(result);
 			RecordsApiHelper.SetETag(Response, current.Record.RowVersion);
+			if (!await CanViewRecordAsync(recordId)) return Forbid();
 			return Conflict(result);
 		}
 
-		private RecordResult Wrap(RecordAggregate aggregate, string status = ResponseHelper.Success)
+		private async Task<RecordResult> WrapAsync(RecordAggregate aggregate, string status = ResponseHelper.Success)
 		{
-			var result = new RecordResult { Data = RecordsApiMapper.ToRecord(aggregate, ClaimsAuthorizationHelper.CanViewRestrictedRecords()), PageSize = 1, Status = status };
+			var result = new RecordResult { Data = RecordsApiMapper.ToRecord(aggregate, await CanViewRestrictedAsync()), PageSize = 1, Status = status };
 			ResponseHelper.PopulateV4ResponseData(result);
 			RecordsApiHelper.SetETag(Response, aggregate.Record.RowVersion);
 			return result;
 		}
 
 		#endregion
+
+        private async Task<bool> CanViewRestrictedAsync() => ClaimsAuthorizationHelper.CanViewRestrictedRecords()
+            && await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 	}
 }

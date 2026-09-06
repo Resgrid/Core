@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -90,6 +90,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var aggregate = await _analysis.StartForReportAsync(DepartmentId, UserId, reportId, RmsOriginClient.Web, cancellationToken);
 				return RedirectToAction("Edit", new { id = aggregate.Analysis.RmsIncidentAnalysisId });
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
 			{
 				TempData["RecordsError"] = ex.Message;
@@ -128,7 +129,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				await _analysis.SaveDraftAsync(DepartmentId, UserId, model.AnalysisId, model.RowVersion, BuildInput(model, department),
-					ClaimsAuthorizationHelper.CanViewRestrictedRecords(), cancellationToken);
+					await CanViewRestrictedAsync(), cancellationToken);
 
 				if (model.ValidateAfterSave)
 				{
@@ -144,6 +145,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				return await EditWithErrorAsync(aggregate, _localizer["ConcurrencyError"]);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException || ex is InvalidOperationException)
 			{
 				return await EditWithErrorAsync(aggregate, ex.Message);
@@ -164,6 +166,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				TempData["RecordsMessage"] = issues.Count == 0 ? _localizer["NoValidationIssues"].Value : string.Format(_localizer["ValidationRun"].Value, issues.Count);
 				return RedirectToAction("Details", new { id });
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
 			{
 				return await DetailsWithErrorAsync(id, ex.Message);
@@ -219,6 +222,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				return await DetailsWithErrorAsync(id, _localizer["ValidationBlocked"] + " " + ex.Message);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException || ex is InvalidOperationException)
 			{
 				return await DetailsWithErrorAsync(id, ex.Message);
@@ -281,7 +285,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CanFinalize = ClaimsAuthorizationHelper.CanFinalizeRecords(),
 				CanSubmit = ClaimsAuthorizationHelper.CanSubmitRecords(),
 				CanVoid = ClaimsAuthorizationHelper.CanVoidRecords(),
-				CanViewRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords(),
+				CanViewRestricted = await CanViewRestrictedAsync(),
 				IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin()
 			};
 		}
@@ -308,7 +312,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var model = new IncidentAnalysisEditView
 			{
-				AnalysisId = analysis.RmsIncidentAnalysisId,
+				AnalysisId = analysis.RmsIncidentAnalysisId, Issues = await _analysis.ValidateAsync(DepartmentId, analysis.RmsIncidentAnalysisId),
 				ReportId = analysis.IncidentReportId,
 				RowVersion = analysis.RowVersion,
 				Reference = aggregate.Report?.RecordNumber ?? aggregate.Report?.DraftReference,
@@ -316,14 +320,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				GeneralCause = analysis.GeneralCause,
 				InvestigationTypes = Split(analysis.InvestigationTypesCsv),
 				CurrencyCode = analysis.CurrencyCode,
-				CanEditRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords(),
+				CanEditRestricted = await CanViewRestrictedAsync(),
 				Department = department
 			};
 
 			// Only the analysis half of the progressive rules belongs here; the incident's own sections stay on the report.
 			var requirements = (await _incidentReports.GetSectionRequirementsAsync(DepartmentId, analysis.IncidentReportId))
 				.Where(r => RmsIncidentModuleCatalog.Get(r.Kind)?.BelongsToAnalysis == true).ToList();
-			var kinds = requirements.Select(r => r.Kind).ToList();
+			var kinds = requirements.Select(r => r.Kind).Concat(RmsIncidentModuleCatalog.AnalysisModules().Select(d => d.Kind)).Distinct().ToList();
 			foreach (var kind in aggregate.Modules.Select(m => (RmsIncidentModuleKind)m.ModuleKind).Distinct())
 			{
 				if (!kinds.Contains(kind))
@@ -340,7 +344,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					Kind = kind,
 					Required = requirement?.Required ?? false,
-					Reason = requirement?.Reason ?? _localizer["SectionNoLongerApplies"].Value,
+					Reason = requirement?.Reason ?? _localizer["Suggested"].Value,
 					Present = rows.Count > 0,
 					IsCollection = descriptor?.IsCollection ?? false,
 					PayloadPath = descriptor?.PayloadPath,
@@ -367,12 +371,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Included = true, LocationUse = p.LocationUse, ConstructionType = p.ConstructionType, Foundation = p.Foundation, ExteriorFinish = p.ExteriorFinish,
 				RoofMaterial = p.RoofMaterial, StoriesAboveGrade = p.StoriesAboveGrade, StoriesBelowGrade = p.StoriesBelowGrade, YearBuilt = p.YearBuilt,
 				Vacancy = p.Vacancy, DamageType = p.DamageType, FireSpread = p.FireSpread, EstimatedValue = p.EstimatedValue, EstimatedLoss = p.EstimatedLoss,
-				ContentsValue = p.ContentsValue, ContentsLoss = p.ContentsLoss, DetailJson = p.DetailJson
+				ContentsValue = p.ContentsValue, ContentsLoss = p.ContentsLoss, DetailJson = Resgrid.Providers.Neris.NerisMappingService.MapProperty(p).ToString(Newtonsoft.Json.Formatting.None)
 			}).ToList();
 
 			model.Vehicles = aggregate.Vehicles.OrderBy(v => v.Ordinal).Select(v => new IncidentVehicleRow
 			{
-				Included = true, VehicleKind = v.VehicleKind, Make = v.Make, Model = v.Model, ModelYear = v.ModelYear, BodyStyle = v.BodyStyle, Powertrain = v.Powertrain,
+				Included = true, VehicleId = v.RmsIncidentVehicleId, VehicleKind = v.VehicleKind, Make = v.Make, Model = v.Model, ModelYear = v.ModelYear, BodyStyle = v.BodyStyle, Powertrain = v.Powertrain,
 				DamageType = v.DamageType, Vin = v.Vin, LicensePlate = v.LicensePlate, LicenseState = v.LicenseState, WasOccupied = v.WasOccupied,
 				EstimatedValue = v.EstimatedValue, EstimatedLoss = v.EstimatedLoss, DetailJson = v.DetailJson
 			}).ToList();
@@ -403,22 +407,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Kind = (RmsIncidentModuleKind)m.Kind, PrimaryCode = m.PrimaryCode, SecondaryCode = m.SecondaryCode, Quantity = m.Quantity,
 					QuantityUnit = m.QuantityUnit, OccurredOn = ToUtc(m.OccurredOn, department), DetailJson = m.DetailJson
 				}).ToList(),
-				Properties = (model.Properties ?? new List<IncidentPropertyRow>()).Where(p => p.Included).Select(p => new IncidentPropertyInput
-				{
-					LocationUse = p.LocationUse, ConstructionType = p.ConstructionType, Foundation = p.Foundation, ExteriorFinish = p.ExteriorFinish,
-					RoofMaterial = p.RoofMaterial, StoriesAboveGrade = p.StoriesAboveGrade, StoriesBelowGrade = p.StoriesBelowGrade, YearBuilt = p.YearBuilt,
-					Vacancy = p.Vacancy, DamageType = p.DamageType, FireSpread = p.FireSpread, EstimatedValue = p.EstimatedValue, EstimatedLoss = p.EstimatedLoss,
-					ContentsValue = p.ContentsValue, ContentsLoss = p.ContentsLoss, DetailJson = p.DetailJson
-				}).ToList(),
+				Properties = (model.Properties ?? new List<IncidentPropertyRow>()).Where(p => p.Included).Select(IncidentGuidedFormMapper.Property).ToList(),
 				Vehicles = (model.Vehicles ?? new List<IncidentVehicleRow>()).Where(v => v.Included).Select(v => new IncidentVehicleInput
 				{
-					VehicleKind = v.VehicleKind, Make = v.Make, Model = v.Model, ModelYear = v.ModelYear, BodyStyle = v.BodyStyle, Powertrain = v.Powertrain,
+					VehicleId = v.VehicleId, VehicleKind = v.VehicleKind, Make = v.Make, Model = v.Model, ModelYear = v.ModelYear, BodyStyle = v.BodyStyle, Powertrain = v.Powertrain,
 					DamageType = v.DamageType, Vin = v.Vin, LicensePlate = v.LicensePlate, LicenseState = v.LicenseState, WasOccupied = v.WasOccupied,
 					EstimatedValue = v.EstimatedValue, EstimatedLoss = v.EstimatedLoss, DetailJson = v.DetailJson
 				}).ToList(),
 				OriginClient = RmsOriginClient.Web
 			};
 		}
+
+		private async Task<bool> CanViewRestrictedAsync() => ClaimsAuthorizationHelper.CanViewRestrictedRecords() && await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 
 		private List<SelectListItem> Codes(string setKey)
 		{

@@ -30,6 +30,7 @@ namespace Resgrid.Tests.Rms
 		private List<RmsNerisCrosswalk> _crosswalks;
 		private List<CallType> _callTypes;
 		private RecordsDashboardService _service;
+		private Mock<IRecordsAuthorizationService> _authorization;
 
 		[SetUp]
 		public void SetUp()
@@ -51,10 +52,14 @@ namespace Resgrid.Tests.Rms
 
 			_calls = new Mock<ICallsService>();
 			_calls.Setup(c => c.GetCallTypesForDepartmentAsync(Dept)).ReturnsAsync(() => _callTypes);
+			_authorization = new Mock<IRecordsAuthorizationService>();
+			_authorization.Setup(a => a.IsActiveMemberAsync(It.IsAny<string>(), Dept)).ReturnsAsync(true);
+			_authorization.Setup(a => a.GetVisibleGroupIdsAsync(It.IsAny<string>(), Dept)).ReturnsAsync((List<int>)null);
+			_authorization.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, PermissionTypes.ManageRecordDisclosures)).ReturnsAsync(true);
 
 			_service = new RecordsDashboardService(_store.RecordsRepo.Object, _incidents.ReportsRepo.Object,
 				_incidents.AnalysesRepo.Object, _store.DueStatesRepo.Object, _store.DisclosureRequestsRepo.Object,
-				_neris.Object, _calls.Object);
+				_neris.Object, _calls.Object, _authorization.Object);
 		}
 
 		private void SeedRecord(RmsRecordState state)
@@ -138,6 +143,8 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public async Task Overdue_comes_from_the_persisted_due_states()
 		{
+			SeedRecord(RmsRecordState.Draft);
+			_store.Records.Single().RmsOperationalRecordId = "r1";
 			_store.DueStates.Add(new RmsRecordDueState { RmsRecordDueStateId = Guid.NewGuid().ToString(), DepartmentId = Dept, RecordId = "r1", Obligation = (int)RmsRecordObligation.Review, LastEmittedState = (int)RmsDueState.Overdue });
 			_store.DueStates.Add(new RmsRecordDueState { RmsRecordDueStateId = Guid.NewGuid().ToString(), DepartmentId = Dept, RecordId = "r2", Obligation = (int)RmsRecordObligation.Review, LastEmittedState = (int)RmsDueState.NotDue });
 
@@ -163,7 +170,7 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public async Task A_broken_count_degrades_to_a_warning()
 		{
-			_store.DueStatesRepo.Setup(r => r.CountOverdueAsync(It.IsAny<int>())).ThrowsAsync(new InvalidOperationException("table missing"));
+			_store.DueStatesRepo.Setup(r => r.CountVisibleOverdueAsync(It.IsAny<int>(), It.IsAny<List<int>>(), It.IsAny<string>())).ThrowsAsync(new InvalidOperationException("table missing"));
 
 			SeedRecord(RmsRecordState.Draft);
 			var dashboard = await _service.GetAsync(Dept, "chief");
@@ -192,6 +199,58 @@ namespace Resgrid.Tests.Rms
 			coverage.UnmappedCount.Should().Be(1, "Service Call has no mapping and will need classifying by hand");
 			coverage.StaleMappingCount.Should().Be(1, "a mapping to a retired code is not an all-clear");
 			coverage.Items.Single(i => i.LocalCode == "Service Call").Mapped.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task A_member_sees_only_their_queues_and_no_unauthorized_disclosure_counts()
+		{
+			SeedRecord(RmsRecordState.Draft);
+			SeedRecord(RmsRecordState.Draft);
+			_store.Records[0].OwnerUserId = "officer";
+			SeedReport(RmsRecordState.Rejected);
+			SeedReport(RmsRecordState.Rejected);
+			_incidents.Reports[0].OwnerUserId = "officer";
+			_incidents.Analyses.Add(new RmsIncidentAnalysis { DepartmentId = Dept, IncidentReportId = _incidents.Reports[0].RmsIncidentReportId, State = (int)RmsIncidentAnalysisState.Finalized });
+			_incidents.Analyses.Add(new RmsIncidentAnalysis { DepartmentId = Dept, IncidentReportId = _incidents.Reports[1].RmsIncidentReportId, State = (int)RmsIncidentAnalysisState.Finalized });
+			foreach (var record in _store.Records) _store.DueStates.Add(new RmsRecordDueState { DepartmentId = Dept, RecordId = record.RmsOperationalRecordId, LastEmittedState = (int)RmsDueState.Overdue });
+			SeedDisclosure(RmsDisclosureState.Received, DateTime.UtcNow.AddDays(-1));
+			_authorization.Setup(a => a.GetVisibleGroupIdsAsync("officer", Dept)).ReturnsAsync(new List<int>());
+			_authorization.Setup(a => a.HasPermissionAsync("officer", Dept, PermissionTypes.ManageRecordDisclosures)).ReturnsAsync(false);
+			var dashboard = await _service.GetAsync(Dept, "officer");
+			dashboard.OperationalDrafts.Should().Be(1);
+			dashboard.IncidentRejected.Should().Be(1);
+			dashboard.AnalysesAwaitingFiling.Should().Be(1);
+			dashboard.Overdue.Should().Be(1);
+			dashboard.DisclosuresOpen.Should().Be(0);
+			dashboard.DisclosuresOverdue.Should().Be(0);
+			_store.DisclosureRequestsRepo.Invocations.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Scope_revoked_during_counts_cannot_return_the_former_department_totals()
+		{
+			SeedRecord(RmsRecordState.Draft);
+			_authorization.SetupSequence(a => a.GetVisibleGroupIdsAsync("officer", Dept)).ReturnsAsync((List<int>)null).ReturnsAsync(new List<int>());
+			Func<Task> read = () => _service.GetAsync(Dept, "officer");
+			await read.Should().ThrowAsync<UnauthorizedAccessException>();
+		}
+
+		[Test]
+		public async Task Disclosure_permission_revoked_during_counts_removes_only_the_protected_category()
+		{
+			SeedRecord(RmsRecordState.Draft); SeedDisclosure(RmsDisclosureState.Received, DateTime.UtcNow.AddDays(-1));
+			_authorization.SetupSequence(a => a.HasPermissionAsync("officer", Dept, PermissionTypes.ManageRecordDisclosures)).ReturnsAsync(true).ReturnsAsync(false);
+			var dashboard = await _service.GetAsync(Dept, "officer");
+			dashboard.OperationalDrafts.Should().Be(1); dashboard.DisclosuresOpen.Should().Be(0); dashboard.DisclosuresOverdue.Should().Be(0);
+		}
+
+		[Test]
+		public async Task A_removed_member_cannot_obtain_dashboard_counts()
+		{
+			_authorization.Setup(a => a.IsActiveMemberAsync("former-chief", Dept)).ReturnsAsync(false);
+			Func<Task> read = () => _service.GetAsync(Dept, "former-chief");
+			await read.Should().ThrowAsync<UnauthorizedAccessException>();
+			_store.RecordsRepo.Invocations.Should().BeEmpty();
 		}
 
 		[Test]

@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Services.Records;
 
@@ -25,6 +26,8 @@ namespace Resgrid.Tests.Rms
 		private Mock<IRmsExternalReferencesRepository> _referencesRepo;
 		private Mock<IRmsOperationalRecordsRepository> _records;
 		private RmsInventoryUsageAdapter _adapter;
+		private Mock<IInventoryService> _inventory;
+		private Mock<IRecordsAuthorizationService> _authorization;
 
 		[SetUp]
 		public void SetUp()
@@ -36,12 +39,50 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((RmsExternalReference e, CancellationToken c, bool f) => { _references.Add(e); return e; });
 
 			_records = new Mock<IRmsOperationalRecordsRepository>();
-			_records.Setup(r => r.GetByIdForDepartmentAsync(Dept, "rec-1")).ReturnsAsync(new RmsOperationalRecord { RmsOperationalRecordId = "rec-1", DepartmentId = Dept, State = (int)RmsRecordState.Draft });
+			_records.Setup(r => r.GetByIdForDepartmentAsync(Dept, "rec-1")).ReturnsAsync(new RmsOperationalRecord { RmsOperationalRecordId = "rec-1", DepartmentId = Dept, AuthorUserId = "u1", State = (int)RmsRecordState.Draft, RowVersion = 1 });
 			_records.Setup(r => r.GetByIdForDepartmentAsync(Dept, "rec-void")).ReturnsAsync(new RmsOperationalRecord { RmsOperationalRecordId = "rec-void", DepartmentId = Dept, State = (int)RmsRecordState.Voided });
 
-			_adapter = new RmsInventoryUsageAdapter(_referencesRepo.Object, _records.Object);
+			_records.Setup(r => r.TryBumpRowVersionAsync(Dept, "rec-1", 1, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			_inventory = new(); _authorization = new();
+			_authorization.Setup(a => a.CanUserViewRecordAsync("u1", It.IsAny<string>(), Dept)).ReturnsAsync(true);
+			_authorization.Setup(a => a.HasPermissionAsync("u1", Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
+			_authorization.Setup(a => a.CanUseSourceInventoryAsync("u1", Dept, It.IsAny<int?>())).ReturnsAsync(true);
+			_inventory.Setup(i => i.GetInventoryByIdAsync(It.IsIn(77,78))).ReturnsAsync((int id) => new Inventory { InventoryId = id, DepartmentId = Dept, TypeId = 1, GroupId = 2, Amount = -3 });
+			_inventory.Setup(i => i.GetTypeByIdAsync(1)).ReturnsAsync(new InventoryType { InventoryTypeId = 1, DepartmentId = Dept, Type = "Foam", UnitOfMesasure = "litres" });
+			var groups = new Mock<IDepartmentGroupsService>(); groups.Setup(g => g.GetGroupByIdAsync(2, true)).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 2, DepartmentId = Dept });
+			_adapter = new RmsInventoryUsageAdapter(_referencesRepo.Object, _records.Object, Mock.Of<IRmsIncidentReportsRepository>(), _inventory.Object, _authorization.Object, groups.Object, Mock.Of<IUnitsService>(), Mock.Of<IUnitOfWork>(), Mock.Of<IRmsAccessAuditsRepository>());
 		}
 
+		[Test]
+		public async Task Consumption_creates_a_negative_ledger_entry_and_frozen_named_evidence_once_under_the_parent_version()
+		{
+			_inventory.Setup(i => i.SaveInventoryAsync(It.IsAny<Inventory>(), It.IsAny<CancellationToken>())).ReturnsAsync((Inventory row, CancellationToken ct) => { row.InventoryId=901; return row; });
+			_records.SetupSequence(r => r.TryBumpRowVersionAsync(Dept,"rec-1",1,It.IsAny<CancellationToken>())).ReturnsAsync(true).ReturnsAsync(false);
+			Func<Task> stale = () => _adapter.ConsumeAsync(Dept,"u1","rec-1",RmsRecordKind.Operational,0,1,2,null,2.5m,"Foam used");
+			await stale.Should().ThrowAsync<RecordConcurrencyException>();
+			_inventory.Verify(i => i.SaveInventoryAsync(It.IsAny<Inventory>(),It.IsAny<CancellationToken>()),Times.Never);
+			var usage = await _adapter.ConsumeAsync(Dept,"u1","rec-1",RmsRecordKind.Operational,1,1,2,null,2.5m,"Foam used");
+			usage.InventoryId.Should().Be(901); usage.ItemName.Should().Be("Foam"); usage.UnitOfMeasure.Should().Be("litres"); usage.SourceChecksum.Should().HaveLength(64);
+			_inventory.Verify(i=>i.SaveInventoryAsync(It.Is<Inventory>(r=>r.Amount==-2.5 && r.DepartmentId==Dept && r.AddedByUserId=="u1"),It.IsAny<CancellationToken>()),Times.Once);
+			Func<Task> replay = () => _adapter.ConsumeAsync(Dept,"u1","rec-1",RmsRecordKind.Operational,1,1,2,null,2.5m,"Foam used"); await replay.Should().ThrowAsync<RecordConcurrencyException>();
+			var evidence = new Resgrid.Services.Records.Evidence.InventoryUsageEvidenceAdapter(_adapter,_authorization.Object);
+			var captured = await evidence.CaptureAsync(new RecordEvidenceCaptureRequest {DepartmentId=Dept,RecordId="rec-1",CapturedByUserId="u1"});
+			captured.Classification.Should().Be(RmsEvidenceClassification.Restricted); captured.SourceItemCount.Should().Be(1);
+			var frozen=RecordsEvidenceService.Serialize(captured.Manifest); frozen.Should().Contain("Foam").And.Contain("litres").And.Contain(usage.SourceChecksum);
+			_references.Single().SnapshotJson="{}";
+			Func<Task> tampered=()=>_adapter.GetUsageForRecordAsync(Dept,"rec-1"); await tampered.Should().ThrowAsync<InvalidOperationException>();
+			RecordsEvidenceService.Serialize(captured.Manifest).Should().Be(frozen);
+		}
+		[Test]
+		public async Task Inventory_permission_foreign_type_and_purged_parent_block_ledger_and_reference_writes()
+		{
+			_authorization.Setup(a=>a.CanUseSourceInventoryAsync("u1",Dept,2)).ReturnsAsync(false);
+			Func<Task> denied=()=>_adapter.ConsumeAsync(Dept,"u1","rec-1",RmsRecordKind.Operational,1,1,2,null,1,"Denied"); await denied.Should().ThrowAsync<UnauthorizedAccessException>();
+			_authorization.Setup(a=>a.CanUseSourceInventoryAsync("u1",Dept,2)).ReturnsAsync(true);
+			_inventory.Setup(i=>i.GetTypeByIdAsync(1)).ReturnsAsync(new InventoryType {InventoryTypeId=1,DepartmentId=99}); await denied.Should().ThrowAsync<UnauthorizedAccessException>();
+			_records.Setup(r=>r.GetByIdForDepartmentAsync(Dept,"rec-1")).ReturnsAsync(new RmsOperationalRecord {DepartmentId=Dept,PurgedOn=DateTime.UtcNow}); await denied.Should().ThrowAsync<InvalidOperationException>();
+			_inventory.Verify(i=>i.SaveInventoryAsync(It.IsAny<Inventory>(),It.IsAny<CancellationToken>()),Times.Never); _references.Should().BeEmpty();
+		}
 		[Test]
 		public async Task Usage_is_written_as_an_external_reference_without_a_legacy_row()
 		{

@@ -24,7 +24,8 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			try
 			{
-				var outboxService = Bootstrapper.GetKernel().Resolve<IDomainEventOutboxService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var outboxService = scope.Resolve<IDomainEventOutboxService>();
 				var leaseOwner = "worker40:" + Environment.MachineName;
 
 				var total = 0;

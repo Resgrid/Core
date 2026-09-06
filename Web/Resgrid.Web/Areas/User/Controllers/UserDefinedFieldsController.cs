@@ -30,15 +30,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		};
 
 		private readonly IUserDefinedFieldsService _udfService;
+		private readonly IRecordsUdfService _recordsUdf;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.UserDefinedFields.UserDefinedFields> _localizer;
 
 		public UserDefinedFieldsController(
 			IUserDefinedFieldsService udfService,
 			IEventAggregator eventAggregator,
-			IStringLocalizer<Resgrid.Localization.Areas.User.UserDefinedFields.UserDefinedFields> localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.UserDefinedFields.UserDefinedFields> localizer, IRecordsUdfService recordsUdf)
 		{
 			_udfService        = udfService;
+			_recordsUdf = recordsUdf;
 			_eventAggregator   = eventAggregator;
 			_localizer         = localizer;
 		}
@@ -111,23 +113,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Udf_Update)]
-		public async Task<IActionResult> Edit(int entityType, CancellationToken ct)
+		public async Task<IActionResult> Edit(int entityType, CancellationToken ct, string recordDefinitionKey = null, int recordDefinitionVersion = 1)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return RedirectToAction("Dashboard", "Home");
 
 			var parsedEntityType = (UdfEntityType)entityType;
-			var definition = await _udfService.GetActiveDefinitionAsync(DepartmentId, entityType);
+			var definition = parsedEntityType == UdfEntityType.Record
+				? await _recordsUdf.GetForDesignerAsync(DepartmentId, UserId, recordDefinitionKey, recordDefinitionVersion)
+				: await _udfService.GetActiveDefinitionAsync(DepartmentId, entityType);
 			List<UdfField> fields = new();
 
 			if (definition != null)
-				fields = await _udfService.GetFieldsForActiveDefinitionAsync(DepartmentId, entityType) ?? new();
+				fields = parsedEntityType == UdfEntityType.Record ? definition.Fields.ToList() : await _udfService.GetFieldsForActiveDefinitionAsync(DepartmentId, entityType) ?? new();
 
 			var model = new UdfDefinitionEditModel
 			{
 				EntityType           = parsedEntityType,
 				EntityTypeName       = parsedEntityType.ToString(),
 				ExistingDefinitionId = definition?.UdfDefinitionId,
+				RecordDefinitionKey = recordDefinitionKey,
+				RecordDefinitionVersion = recordDefinitionVersion,
 				Fields               = fields.Select(MapFieldToForm).ToList(),
 			};
 
@@ -194,7 +200,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			try
 			{
-				var saved = await _udfService.SaveDefinitionAsync(DepartmentId, (int)model.EntityType, domainFields, UserId, ct);
+				var saved = model.EntityType == UdfEntityType.Record
+					? await _recordsUdf.PublishAsync(DepartmentId, UserId, model.RecordDefinitionKey, model.RecordDefinitionVersion, model.ExistingDefinitionId, domainFields, ct)
+					: await _udfService.SaveDefinitionAsync(DepartmentId, (int)model.EntityType, domainFields, UserId, ct);
 
 				_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 				{
@@ -213,7 +221,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					UserAgent    = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}",
 				});
 			}
-			catch (InvalidOperationException ex)
+			catch (Exception ex) when (ex is InvalidOperationException || ex is ArgumentException)
 			{
 				// Service-layer domain rule violations (e.g. duplicate names from a non-web caller)
 				ModelState.AddModelError(string.Empty, ex.Message);
@@ -283,6 +291,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				IsVisibleOnMobile   = field.IsVisibleOnMobile,
 				IsVisibleOnReports  = field.IsVisibleOnReports,
 				Visibility          = field.Visibility,
+				RmsClassification = field.RmsClassification,
 				DefaultValue        = field.DefaultValue,
 				GroupName           = field.GroupName,
 				SortOrder           = field.SortOrder,
@@ -343,6 +352,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				IsVisibleOnMobile  = form.IsVisibleOnMobile,
 				IsVisibleOnReports = form.IsVisibleOnReports,
 				Visibility         = form.Visibility,
+				RmsClassification = form.RmsClassification,
 				DefaultValue       = form.DefaultValue,
 				GroupName          = form.GroupName,
 				SortOrder          = sortOrder,

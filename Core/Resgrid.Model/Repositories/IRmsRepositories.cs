@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,6 +38,7 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsOperationalRecord>> GetByOwnerAndStatesAsync(int departmentId, string ownerUserId, IEnumerable<int> states);
 		Task<IEnumerable<RmsOperationalRecord>> GetByDepartmentAndStatesAsync(int departmentId, IEnumerable<int> states, int? year, int skip, int take);
 		Task<int> CountByDepartmentAsync(int departmentId, IEnumerable<int> states);
+		Task<int> CountVisibleAsync(int departmentId, IEnumerable<int> states, List<int> visibleGroupIds, string userId);
 		Task<int> CountCreatedSinceAsync(int departmentId, DateTime sinceUtc);
 		Task<int> CountFinalizedSinceAsync(int departmentId, DateTime sinceUtc);
 		/// <summary>Every live Record in the department, any state.</summary>
@@ -47,7 +48,7 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Live Finalized/Amended Records whose FinalizedOn is at or after the instant.</summary>
 		Task<IEnumerable<RmsOperationalRecord>> GetFinalizedSinceAsync(int departmentId, DateTime sinceUtc);
 		/// <summary>Retention candidates (RMS-3, worker 43): live, closed Records finalized before the cutoff, oldest first.</summary>
-		Task<IEnumerable<RmsOperationalRecord>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take);
+		Task<IEnumerable<RmsOperationalRecord>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take, string afterId = null);
 		/// <summary>Live Records with no RmsRecordGroupScope row: they stay department-wide under group scoping (plan 5.7.1).</summary>
 		Task<int> CountWithoutGroupScopeAsync(int departmentId);
 		Task<IEnumerable<int>> GetYearsAsync(int departmentId);
@@ -89,6 +90,9 @@ namespace Resgrid.Model.Repositories
 
 	public interface IRmsRecordAttachmentsRepository : IRepository<RmsRecordAttachment>
 	{
+		/// <summary>Includes attachments removed from the draft. Caller must verify immutable revision membership and authorize the live parent.</summary>
+		Task<RmsRecordAttachment> GetHistoricalByIdForDepartmentAsync(int departmentId, string attachmentId);
+		Task<bool> ApplyScanResultAsync(int departmentId, string attachmentId, long expectedVersion, RmsAttachmentScanState state, DateTime now, CancellationToken cancellationToken = default);
 		/// <summary>Metadata only: never loads Data.</summary>
 		Task<IEnumerable<RmsRecordAttachment>> GetMetadataForRecordAsync(int departmentId, string recordId);
 		/// <summary>Loads Data; authorized per Record by the caller on every request.</summary>
@@ -134,6 +138,7 @@ namespace Resgrid.Model.Repositories
 
 	public interface IRmsRevisionsRepository : IRepository<RmsRevision>
 	{
+		Task<IEnumerable<RmsRevision>> GetByIdsForDepartmentAsync(int departmentId, IEnumerable<string> revisionIds);
 		Task<IEnumerable<RmsRevision>> GetForRecordAsync(int departmentId, string recordId);
 		Task<RmsRevision> GetByIdForDepartmentAsync(int departmentId, string revisionId);
 	}
@@ -167,6 +172,8 @@ namespace Resgrid.Model.Repositories
 
 	public interface IRmsRecordGroupScopesRepository : IRepository<RmsRecordGroupScope>
 	{
+		/// <summary>Live share identities for cache-scope invalidation. Excludes free-text reasons and expired/revoked grants.</summary>
+		Task<IEnumerable<RmsRecordShare>> GetEffectiveSharesAsync(int departmentId, IEnumerable<int> groupIds);
 		Task<IEnumerable<RmsRecordGroupScope>> GetForRecordAsync(int departmentId, string recordId);
 		Task<IEnumerable<RmsRecordGroupScope>> GetForRecordsAsync(int departmentId, IEnumerable<string> recordIds);
 		/// <summary>Deletes the Record's scope rows and inserts the supplied set; run inside the owning transaction.</summary>
@@ -190,6 +197,8 @@ namespace Resgrid.Model.Repositories
 	/// </summary>
 	public interface IRmsEvidenceArtifactsRepository : IRepository<RmsEvidenceArtifact>
 	{
+		/// <summary>Metadata-only history across draft and signed revisions, including superseded evidence.</summary>
+		Task<IEnumerable<RmsEvidenceArtifact>> GetHistoryAsync(int departmentId, string recordId, int skip, int take);
 		Task<RmsEvidenceArtifact> GetByIdForDepartmentAsync(int departmentId, string artifactId);
 		/// <summary><paramref name="revisionId"/> null returns the working-draft artifacts.</summary>
 		Task<IEnumerable<RmsEvidenceArtifact>> GetForRecordAsync(int departmentId, string recordId, string revisionId, bool includeSuperseded);
@@ -208,12 +217,14 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsRecordDueState>> GetOpenForDepartmentAsync(int departmentId, int take);
 		/// <summary>Count of obligations currently sitting overdue; the accountability view and dashboards read it.</summary>
 		Task<int> CountOverdueAsync(int departmentId);
+		Task<int> CountVisibleOverdueAsync(int departmentId, List<int> visibleGroupIds, string userId);
 		Task<int> ClearForRecordAsync(int departmentId, string recordId, DateTime utcNow, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>Public-records requests (registry M0171, RMS-3); the statutory clock is what these are read by.</summary>
 	public interface IRmsDisclosureRequestsRepository : IRepository<RmsDisclosureRequest>
 	{
+		Task<bool> TryBumpRowVersionAsync(int departmentId, string requestId, long expectedVersion, CancellationToken cancellationToken = default);
 		Task<RmsDisclosureRequest> GetByIdForDepartmentAsync(int departmentId, string requestId);
 		Task<IEnumerable<RmsDisclosureRequest>> GetForDepartmentAsync(int departmentId, IEnumerable<int> states, int skip, int take);
 		Task<int> CountByStateAsync(int departmentId, RmsDisclosureState state);
@@ -228,6 +239,7 @@ namespace Resgrid.Model.Repositories
 	/// </summary>
 	public interface IRmsDisclosureProductionsRepository : IRepository<RmsDisclosureProduction>
 	{
+		Task<bool> TryReleaseAsync(int departmentId, string productionId, long expectedVersion, string userId, DateTime releasedOn, string deliveryMethod, string deliveryReference, CancellationToken cancellationToken = default);
 		Task<RmsDisclosureProduction> GetByIdForDepartmentAsync(int departmentId, string productionId);
 		Task<IEnumerable<RmsDisclosureProduction>> GetForRequestAsync(int departmentId, string requestId);
 		Task<int> GetMaxProductionNumberAsync(int departmentId, string requestId);
@@ -235,6 +247,7 @@ namespace Resgrid.Model.Repositories
 
 	public interface IRmsRecordLegalHoldsRepository : IRepository<RmsRecordLegalHold>
 	{
+		Task<bool> TryReleaseAsync(int departmentId, string holdId, long expectedVersion, string userId, string reason, DateTime releasedOn, CancellationToken cancellationToken = default);
 		Task<RmsRecordLegalHold> GetByIdForDepartmentAsync(int departmentId, string holdId);
 		/// <summary>Every hold still in force for the department; the retention sweep loads them once per pass.</summary>
 		Task<IEnumerable<RmsRecordLegalHold>> GetActiveForDepartmentAsync(int departmentId);

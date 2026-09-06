@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
@@ -100,7 +100,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			await RecordReadAsync(aggregate.Analysis.IncidentReportId);
-			return Ok(Wrap(aggregate));
+			return Ok(await WrapAsync(aggregate));
 		}
 
 		/// <summary>The analysis for an incident report, if one has been started.</summary>
@@ -119,7 +119,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (aggregate?.Analysis == null)
 				return NotFound();
 
-			return Ok(Wrap(aggregate));
+			return Ok(await WrapAsync(aggregate));
 		}
 
 		#endregion
@@ -152,7 +152,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var existing = await _analysis.GetForReportAsync(DepartmentId, input.IncidentReportId);
 				var aggregate = await _analysis.StartForReportAsync(DepartmentId, UserId, input.IncidentReportId, origin, cancellationToken);
-				var result = Wrap(aggregate, existing?.Analysis != null ? ResponseHelper.Success : ResponseHelper.Created);
+				var result = await WrapAsync(aggregate, existing?.Analysis != null ? ResponseHelper.Success : ResponseHelper.Created);
 				return existing?.Analysis != null ? Ok(result) : StatusCode(StatusCodes.Status201Created, result);
 			}
 			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
@@ -193,8 +193,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				var saved = await _analysis.SaveDraftAsync(DepartmentId, UserId, input.AnalysisId, rowVersion.Value,
-					IncidentAnalysisApiMapper.ToDraftInput(input, origin), ClaimsAuthorizationHelper.CanViewRestrictedRecords(), cancellationToken);
-				return Ok(Wrap(saved, ResponseHelper.Updated));
+					IncidentAnalysisApiMapper.ToDraftInput(input, origin), await CanViewRestrictedAsync(), cancellationToken);
+				return Ok(await WrapAsync(saved, ResponseHelper.Updated));
 			}
 			catch (RecordConcurrencyException ex)
 			{
@@ -300,7 +300,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var replayed = await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key, command);
 				if (string.Equals(replayed, input.AnalysisId, StringComparison.Ordinal))
-					return Ok(Wrap(await _analysis.GetAsync(DepartmentId, input.AnalysisId, true)));
+					return Ok(await WrapAsync(await _analysis.GetAsync(DepartmentId, input.AnalysisId, true)));
 			}
 
 			long rowVersion = current.Analysis.RowVersion;
@@ -317,7 +317,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var aggregate = await action(rowVersion);
 				if (key != null)
 					await _idempotency.RememberAsync(DepartmentId, UserId, key, command, input.AnalysisId);
-				return Ok(Wrap(aggregate, ResponseHelper.Updated));
+				return Ok(await WrapAsync(aggregate, ResponseHelper.Updated));
 			}
 			catch (RecordConcurrencyException ex)
 			{
@@ -434,18 +434,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (current?.Analysis == null)
 				return NotFound();
 
-			var result = Wrap(current, RecordsController.ConflictStatus);
+			var result = await WrapAsync(current, RecordsController.ConflictStatus);
 			result.Data.ETag = RecordsApiContract.ToETag(current.Analysis.RowVersion);
 			// The expected row version is what the caller sent; the payload already carries the current one.
 			Response.Headers[RecordsApiContract.ETagHeader] = RecordsApiContract.ToETag(current.Analysis.RowVersion);
 			return Conflict(result);
 		}
 
-		private IncidentAnalysisResult Wrap(IncidentAnalysisAggregate aggregate, string status = ResponseHelper.Success)
+		private async Task<IncidentAnalysisResult> WrapAsync(IncidentAnalysisAggregate aggregate, string status = ResponseHelper.Success)
 		{
 			var result = new IncidentAnalysisResult
 			{
-				Data = IncidentAnalysisApiMapper.ToAnalysis(aggregate, ClaimsAuthorizationHelper.CanViewRestrictedRecords()),
+				Data = IncidentAnalysisApiMapper.ToAnalysis(aggregate, await CanViewRestrictedAsync()),
 				PageSize = 1,
 				Status = status
 			};
@@ -455,5 +455,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		#endregion
+
+        private async Task<bool> CanViewRestrictedAsync() => ClaimsAuthorizationHelper.CanViewRestrictedRecords()
+            && await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 	}
 }

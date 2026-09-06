@@ -146,6 +146,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class IncidentVehicleInputData
 	{
+		public string VehicleId { get; set; }
 		public string VehicleKind { get; set; }
 		public string Make { get; set; }
 		public string Model { get; set; }

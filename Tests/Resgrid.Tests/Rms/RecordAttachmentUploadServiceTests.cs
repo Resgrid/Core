@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +8,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services.Records;
 
@@ -58,8 +59,8 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync(new RecordAggregate { Record = new RmsOperationalRecord { RmsOperationalRecordId = RecordId, DepartmentId = Dept, State = (int)RmsRecordState.Draft } });
 			_records.Setup(r => r.GetAsync(Dept, "final", It.IsAny<bool>()))
 				.ReturnsAsync(new RecordAggregate { Record = new RmsOperationalRecord { RmsOperationalRecordId = "final", DepartmentId = Dept, State = (int)RmsRecordState.Finalized } });
-			_records.Setup(r => r.AddAttachmentAsync(Dept, "author", RecordId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((int d, string u, string rec, string name, string type, byte[] data, string desc, CancellationToken c) =>
+			_records.Setup(r => r.AddAttachmentAsync(Dept, "author", RecordId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, string u, string rec, string name, string type, byte[] data, string desc, CancellationToken c, int classification) =>
 				{
 					_stored.Add((name, data));
 					return new RmsRecordAttachment { RmsRecordAttachmentId = "att-1", RecordId = rec, FileName = name, ContentType = type, ByteSize = data.Length, Checksum = RecordSnapshotSerializer.Checksum(data), ScanState = (int)RmsAttachmentScanState.Skipped };
@@ -172,7 +173,7 @@ namespace Resgrid.Tests.Rms
 		public async Task Hygiene_rejection_surfaces_as_rejected_and_the_session_stays_open_for_a_retry()
 		{
 			var file = Bytes(10);
-			_records.Setup(r => r.AddAttachmentAsync(Dept, "author", RecordId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+			_records.Setup(r => r.AddAttachmentAsync(Dept, "author", RecordId, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<int>()))
 				.ThrowsAsync(new RecordAttachmentRejectedException("Attachment 'a.svg' is not an allowed type."));
 			var session = await _service.BeginAsync(Dept, "author", RecordId, "a.svg", "image/svg+xml", file.Length, RecordAttachmentUploadService.Sha256Hex(file));
 			await _service.AppendAsync(Dept, "author", session.UploadId, 0, file);
@@ -186,7 +187,7 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public async Task Idempotency_service_replays_by_department_user_command_and_key()
 		{
-			var idempotency = new RecordsApiIdempotencyService(_store);
+			var idempotency = new RecordsApiIdempotencyService(_store, Mock.Of<IRmsCommandReceiptsRepository>());
 
 			(await idempotency.TryGetRecordIdAsync(Dept, "u1", "k1", "Finalize")).Should().BeNull();
 			await idempotency.RememberAsync(Dept, "u1", "k1", "Finalize", "rec-9");
@@ -198,6 +199,25 @@ namespace Resgrid.Tests.Rms
 
 			// A client that reuses one key for a second command must not be told that command already succeeded.
 			(await idempotency.TryGetRecordIdAsync(Dept, "u1", "k1", "Void")).Should().BeNull("keys are scoped to the command");
+		}
+
+		[Test]
+		public async Task Legacy_command_receipts_keep_request_identity_and_unbound_entries_cannot_be_treated_as_unused_keys()
+		{
+			var repository = new Mock<IRmsCommandReceiptsRepository>(MockBehavior.Strict);
+			repository.Setup(r => r.GetAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync((RecordCommandReceipt)null);
+			var idempotency = new RecordsApiIdempotencyService(_store, repository.Object);
+			await _store.SetAsync(RecordsApiIdempotencyService.Key(Dept, "officer", "key", "Finalize"), Newtonsoft.Json.JsonConvert.SerializeObject(new RecordCommandReceipt { RecordId = "record", RequestChecksum = "checksum" }), TimeSpan.FromHours(1));
+			var receipt = await idempotency.TryGetCommandAsync(Dept, "officer", "key", "Finalize");
+			receipt.RecordId.Should().Be("record"); receipt.RequestChecksum.Should().Be("checksum");
+			(await idempotency.TryGetCommandAsync(Dept, "another-officer", "key", "Finalize")).Should().BeNull();
+			(await idempotency.TryGetCommandAsync(Dept + 1, "officer", "key", "Finalize")).Should().BeNull();
+			(await idempotency.TryGetCommandAsync(Dept, "officer", "key", "Cancel")).Should().BeNull();
+			await idempotency.RememberAsync(Dept, "officer", "legacy", "Finalize", "old-record");
+			var legacy = await idempotency.TryGetCommandAsync(Dept, "officer", "legacy", "Finalize");
+			legacy.Should().NotBeNull(); legacy.RecordId.Should().Be("old-record"); legacy.RequestChecksum.Should().BeNull();
+			(await idempotency.TryReserveCommandAsync(Dept, "officer", "key", "Finalize", "record", "checksum")).Should().BeFalse();
+			(await idempotency.TryReserveCommandAsync(Dept, "officer", "legacy", "Finalize", "old-record", "checksum")).Should().BeFalse();
 		}
 
 		[Test]

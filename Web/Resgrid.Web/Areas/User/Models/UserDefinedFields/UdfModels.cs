@@ -48,6 +48,7 @@ namespace Resgrid.Web.Areas.User.Models.UserDefinedFields
 	/// </summary>
 	public sealed class UdfFieldFormModel
 	{
+		public int? RmsClassification { get; set; } = 1;
 		/// <summary>Existing field ID; empty for new fields.</summary>
 		public string UdfFieldId { get; set; } = string.Empty;
 		public string Name { get; set; } = string.Empty;
@@ -90,6 +91,8 @@ namespace Resgrid.Web.Areas.User.Models.UserDefinedFields
 	/// </summary>
 	public sealed class UdfDefinitionEditModel
 	{
+		public string? RecordDefinitionKey { get; set; }
+		public int RecordDefinitionVersion { get; set; } = 1;
 		public UdfEntityType EntityType { get; set; }
 		public string EntityTypeName { get; set; } = string.Empty;
 

@@ -22,7 +22,8 @@ namespace Resgrid.Workers.Framework.Logic
 				if (!NerisConfig.Enabled)
 					return new Tuple<bool, string>(true, "NERIS submission disabled; nothing to do.");
 
-				var service = Bootstrapper.GetKernel().Resolve<IRecordsSubmissionService>();
+				using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+				var service = scope.Resolve<IRecordsSubmissionService>();
 				var result = await service.SweepAsync(cancellationToken);
 
 				if (result.Errors > 0)

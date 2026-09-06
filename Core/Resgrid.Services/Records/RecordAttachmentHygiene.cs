@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Resgrid.Framework;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Bmp;
@@ -61,7 +62,9 @@ namespace Resgrid.Services.Records
 			if (data.Length > MaxBytes)
 				throw new RecordAttachmentRejectedException($"Attachment '{fileName}' exceeds the {MaxBytes / (1024 * 1024)} MB limit.");
 
-			var safeName = Path.GetFileName(fileName ?? string.Empty);
+			// Path.GetFileName alone is host-relative: on Linux a backslash is an ordinary filename character, so
+			// "C:\temp\..\report.pdf" would survive whole. GetSafeFileName normalises the separator first.
+			var safeName = FileHelper.GetSafeFileName(fileName);
 			var extension = Path.GetExtension(safeName) ?? string.Empty;
 			var declaredType = (contentType ?? string.Empty).Trim();
 

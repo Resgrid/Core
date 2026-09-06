@@ -51,6 +51,8 @@ namespace Resgrid.Services.Records
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IOutboundQueueProvider _outboundQueue;
 		private readonly IRecordAttachmentScanner _attachmentScanner;
+		private readonly IRecordsAuthorizationService _authorization;
+		private readonly IRecordsUdfService _udf;
 
 		public RecordsService(IRmsOperationalRecordsRepository records, IRmsRecordValueService details,
 			IRmsRecordParticipantsRepository participants, IRmsRecordUnitResponsesRepository units, IRmsRecordAttachmentsRepository attachments,
@@ -58,7 +60,7 @@ namespace Resgrid.Services.Records
 			IRmsRecordSearchProjectionsRepository projections, IRmsAccessAuditsRepository audits, IDomainEventOutboxService outbox,
 			IRecordsCutoverService cutover, IDepartmentSettingsService settings, IDepartmentGroupsService groups, IUserProfileService profiles,
 			IUnitsService unitsService, ICallsService calls, IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork,
-			IOutboundQueueProvider outboundQueue, IRecordAttachmentScanner attachmentScanner)
+			IOutboundQueueProvider outboundQueue, IRecordAttachmentScanner attachmentScanner, IRecordsAuthorizationService authorization, IRecordsUdfService udf)
 		{
 			_records = records;
 			_details = details;
@@ -82,9 +84,39 @@ namespace Resgrid.Services.Records
 			_unitOfWork = unitOfWork;
 			_outboundQueue = outboundQueue;
 			_attachmentScanner = attachmentScanner;
+			_authorization = authorization;
+			_udf = udf;
 		}
 
 		#region Create / save
+
+		public async Task<RecordAggregate> CreateRunCallAsync(int departmentId, string userId, string recordId, long expectedRowVersion, RecordNewCallInput input, CancellationToken cancellationToken = default)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.Name) || input.Name.Length > 200 || input.Address?.Length > 500 || input.Nature?.Length > 16000 || input.OccurredOnUtc == default || input.OccurredOnUtc > DateTime.UtcNow.AddMinutes(5))
+				throw new ArgumentException("Enter a Call name and a valid past occurrence time; name, address and nature are limited to 200, 500 and 16,000 characters.");
+			await EnsureRecordsUsableAsync(departmentId);
+			await InTransactionAsync(async () =>
+			{
+				var record = await LoadRecordAsync(departmentId, recordId);
+				await RequireAttachmentWriteAsync(record, userId, false);
+				if (record.DefinitionKey != RmsDefinitionKeys.Run || record.CallId.HasValue) throw new ArgumentException("Create a Call from a Run draft that is not already linked to a Call.");
+				if (!await _authorization.CanCreateSourceCallAsync(userId, departmentId)) throw new UnauthorizedAccessException();
+				if (await _dataProtection.GetStateAsync(departmentId, true) != DepartmentDataProtectionState.Disabled) throw new InvalidOperationException("Creating a historical Call from RMS requires protected source capture support during Advanced Data Protection operation.");
+				await GuardVersionAsync(record, expectedRowVersion, cancellationToken);
+				var now = DateTime.UtcNow;
+				var call = await _calls.SaveCallAsync(new Call { DepartmentId = departmentId, ReportingUserId = userId, Name = input.Name.Trim(), Address = input.Address,
+					NatureOfCall = input.Nature, LoggedOn = DateTime.SpecifyKind(input.OccurredOnUtc, DateTimeKind.Utc), State = (int)CallStates.Closed, ClosedOn = now, ClosedByUserId = userId, Priority = (int)CallPriority.Low }, cancellationToken);
+				if (call == null || call.DepartmentId != departmentId || call.CallId <= 0) throw new InvalidOperationException("The Call could not be created.");
+				var details = await _details.GetDraftAsync(departmentId, recordId) ?? throw new InvalidOperationException("The Run draft is unavailable.");
+				await ApplyCallSnapshotAsync(departmentId, userId, details, call.CallId);
+				record.CallId = call.CallId; record.ModifiedByUserId = userId; record.ModifiedOn = now;
+				details.ModifiedOn = now; details.RowVersion++;
+				await _details.UpdateAsync(details, cancellationToken); await _records.UpdateAsync(record, cancellationToken, true);
+				await RefreshProjectionAsync(record, cancellationToken);
+				await AuditAsync(departmentId, userId, recordId, null, RmsAccessAuditAction.Change, "Created and linked historical Call " + call.CallId, RmsOriginClient.Web, cancellationToken);
+			});
+			return await GetAsync(departmentId, recordId, false);
+		}
 
 		public async Task<RecordAggregate> CreateDraftAsync(int departmentId, string userId, RecordDraftInput input, CancellationToken cancellationToken = default)
 		{
@@ -94,12 +126,19 @@ namespace Resgrid.Services.Records
 				throw new ArgumentException($"'{input.DefinitionKey}' is not a published definition.", nameof(input));
 
 			await EnsureRecordsUsableAsync(departmentId);
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.CreateRecord))
+				throw new UnauthorizedAccessException("Record creation is not authorized.");
 
-			if (!string.IsNullOrWhiteSpace(input.IdempotencyKey))
+			var scopedKey = string.IsNullOrWhiteSpace(input.IdempotencyKey) ? null
+				: RecordSnapshotSerializer.Checksum(JsonConvert.SerializeObject(new { departmentId, userId, operation = "CreateDraft", key = input.IdempotencyKey.Trim() }));
+			var request = Newtonsoft.Json.Linq.JObject.FromObject(input);
+			request.Remove(nameof(RecordDraftInput.IdempotencyKey));
+			var requestChecksum = RecordSnapshotSerializer.Checksum(request.ToString(Formatting.None));
+			if (scopedKey != null)
 			{
-				var existing = await _records.GetByIdempotencyKeyAsync(departmentId, input.IdempotencyKey);
+				var existing = await _records.GetByIdempotencyKeyAsync(departmentId, scopedKey);
 				if (existing != null)
-					return await HydrateAsync(existing, false);
+					return await ReplayCreateAsync(departmentId, userId, existing, requestChecksum);
 			}
 
 			var now = DateTime.UtcNow;
@@ -125,7 +164,8 @@ namespace Resgrid.Services.Records
 				OwnerUserId = userId,
 				StartedOn = input.StartedOn,
 				EndedOn = input.EndedOn,
-				IdempotencyKey = string.IsNullOrWhiteSpace(input.IdempotencyKey) ? null : input.IdempotencyKey,
+				IdempotencyKey = scopedKey,
+				OriginalRequestChecksum = scopedKey == null ? null : requestChecksum,
 				OriginClient = (int)input.OriginClient,
 				CreatedOn = now,
 				CreatedByUserId = userId,
@@ -144,8 +184,8 @@ namespace Resgrid.Services.Records
 				ModifiedOn = now,
 				RowVersion = 1
 			};
-			ApplyDetails(details, input.Details);
-			await ApplyCallSnapshotAsync(departmentId, details, input.CallId);
+			await ApplyAuthorizedDetailsAsync(departmentId, userId, record.DefinitionKey, details, input.Details);
+			await ApplyCallSnapshotAsync(departmentId, userId, details, input.CallId);
 			ValidateDefinitionRequirements(recordType, details);
 
 			var participants = await BuildParticipantsAsync(departmentId, recordId, input.Participants, now);
@@ -153,9 +193,13 @@ namespace Resgrid.Services.Records
 			record.DisplaySummary = BuildDisplaySummary(recordType, record, details, units);
 
 			var outboxIds = new List<long>();
+			try
+			{
 			await InTransactionAsync(async () =>
 			{
 				await _records.InsertAsync(record, cancellationToken, true);
+				record.UdfDefinitionId = await _udf.SaveInTransactionAsync(departmentId, userId, recordId, record.DefinitionKey, record.DefinitionVersion, null, input.CustomFields, cancellationToken);
+				await _records.UpdateAsync(record, cancellationToken, true);
 				await _details.InsertAsync(details, cancellationToken);
 				foreach (var participant in participants)
 					await _participants.InsertAsync(participant, cancellationToken, true);
@@ -170,15 +214,34 @@ namespace Resgrid.Services.Records
 				await AuditAsync(departmentId, userId, recordId, null, RmsAccessAuditAction.Change, "Create draft", input.OriginClient, cancellationToken,
 					string.IsNullOrWhiteSpace(input.DuplicateContinueReason) ? null : new { duplicateContinueReason = input.DuplicateContinueReason });
 			});
+			}
+			catch (DbException) when (scopedKey != null)
+			{
+				var winner = await _records.GetByIdempotencyKeyAsync(departmentId, scopedKey);
+				if (winner == null) throw;
+				return await ReplayCreateAsync(departmentId, userId, winner, requestChecksum);
+			}
 
 			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 			return await GetAsync(departmentId, recordId, false);
+		}
+
+		private async Task<RecordAggregate> ReplayCreateAsync(int departmentId, string userId, RmsOperationalRecord existing, string requestChecksum)
+		{
+			if (existing.DeletedOn.HasValue || existing.PurgedOn.HasValue || existing.AuthorUserId != userId
+				|| !await _authorization.CanUserViewRecordAsync(userId, existing.RmsOperationalRecordId, departmentId))
+				throw new UnauthorizedAccessException("The original record is not accessible.");
+			if (!string.Equals(existing.OriginalRequestChecksum, requestChecksum, StringComparison.Ordinal))
+				throw new RecordIdempotencyException("This idempotency key was already used for a different create request.");
+			return await HydrateAsync(existing, false);
 		}
 
 		public async Task<RecordAggregate> SaveDraftAsync(int departmentId, string userId, string recordId, long expectedRowVersion, RecordDraftInput input, CancellationToken cancellationToken = default)
 		{
 			if (input == null) throw new ArgumentNullException(nameof(input));
 			var record = await LoadRecordAsync(departmentId, recordId);
+			if (!await _authorization.CanUserViewRecordAsync(userId, recordId, departmentId))
+				throw new UnauthorizedAccessException("Record access is not authorized.");
 			var state = (RmsRecordState)record.State;
 
 			if (!RmsLifecycle.IsEditable(state) && record.AmendsRevisionId == null)
@@ -189,6 +252,7 @@ namespace Resgrid.Services.Records
 
 			await InTransactionAsync(async () =>
 			{
+				await RequireAttachmentWriteAsync(record, userId, false);
 				await GuardVersionAsync(record, expectedRowVersion, cancellationToken);
 
 				var details = await _details.GetDraftAsync(departmentId, recordId) ?? new RmsOperationalRecordDetail
@@ -200,18 +264,19 @@ namespace Resgrid.Services.Records
 					CreatedOn = now,
 					RowVersion = 0
 				};
-				ApplyDetails(details, input.Details);
+				await ApplyAuthorizedDetailsAsync(departmentId, userId, record.DefinitionKey, details, input.Details);
+				record.UdfDefinitionId = await _udf.SaveInTransactionAsync(departmentId, userId, recordId, record.DefinitionKey, record.DefinitionVersion, record.UdfDefinitionId, input.CustomFields, cancellationToken);
 				if (input.CallId != record.CallId)
-					await ApplyCallSnapshotAsync(departmentId, details, input.CallId);
+					await ApplyCallSnapshotAsync(departmentId, userId, details, input.CallId);
 				ValidateDefinitionRequirements(recordType, details);
 				details.ModifiedOn = now;
 				details.RowVersion += 1;
 				await _details.SaveOrUpdateAsync(details, cancellationToken);
 
-				await _participants.DeleteDraftForRecordAsync(departmentId, recordId, cancellationToken);
-				await _units.DeleteDraftForRecordAsync(departmentId, recordId, cancellationToken);
 				var participants = await BuildParticipantsAsync(departmentId, recordId, input.Participants, now);
 				var units = await BuildUnitsAsync(departmentId, recordId, input.Units, now);
+				await _participants.DeleteDraftForRecordAsync(departmentId, recordId, cancellationToken);
+				await _units.DeleteDraftForRecordAsync(departmentId, recordId, cancellationToken);
 				foreach (var participant in participants)
 					await _participants.InsertAsync(participant, cancellationToken, true);
 				foreach (var unit in units)
@@ -359,6 +424,7 @@ namespace Resgrid.Services.Records
 				var draft = await HydrateDraftAsync(record);
 				ValidateDefinitionRequirements(recordType, draft.Details);
 				ValidateForFinalization(recordType, draft);
+				_udf.ValidateForFinalization(draft.CustomFields);
 
 				if (string.IsNullOrWhiteSpace(record.RecordNumber))
 					record.RecordNumber = await AllocateRecordNumberAsync(record, cancellationToken);
@@ -573,12 +639,14 @@ namespace Resgrid.Services.Records
 
 		public async Task<List<RmsRecordSearchProjection>> QueryAsync(int departmentId, RmsRecordQuery query)
 		{
+			if (!string.IsNullOrEmpty(query?.ViewerUserId) && !await _authorization.IsActiveMemberAsync(query.ViewerUserId, departmentId)) return new List<RmsRecordSearchProjection>();
 			return (await _projections.QueryAsync(departmentId, query ?? new RmsRecordQuery()))?.ToList() ?? new List<RmsRecordSearchProjection>();
 		}
 
-		public Task<int> CountAsync(int departmentId, RmsRecordQuery query)
+		public async Task<int> CountAsync(int departmentId, RmsRecordQuery query)
 		{
-			return _projections.CountAsync(departmentId, query ?? new RmsRecordQuery());
+			if (!string.IsNullOrEmpty(query?.ViewerUserId) && !await _authorization.IsActiveMemberAsync(query.ViewerUserId, departmentId)) return 0;
+			return await _projections.CountAsync(departmentId, query ?? new RmsRecordQuery());
 		}
 
 		public async Task<List<int>> GetYearsAsync(int departmentId)
@@ -600,7 +668,10 @@ namespace Resgrid.Services.Records
 		public async Task<RecordSnapshot> GetRevisionSnapshotAsync(int departmentId, string revisionId)
 		{
 			var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, revisionId);
-			return revision == null ? null : RecordSnapshotSerializer.Deserialize(revision.SnapshotJson);
+			if (revision == null) return null;
+			var record = await _records.GetByIdForDepartmentAsync(departmentId, revision.RecordId);
+			if (record == null || record.PurgedOn.HasValue || record.DeletedOn.HasValue) return null;
+			return RecordSnapshotSerializer.Deserialize(revision.SnapshotJson);
 		}
 
 		public async Task<List<RecordFieldDiff>> DiffRevisionsAsync(int departmentId, string fromRevisionId, string toRevisionId, bool canViewRestricted)
@@ -639,10 +710,16 @@ namespace Resgrid.Services.Records
 
 		#region Attachments
 
-		public async Task<RmsRecordAttachment> AddAttachmentAsync(int departmentId, string userId, string recordId, string fileName, string contentType, byte[] data, string description, CancellationToken cancellationToken = default)
+		public async Task<RmsRecordAttachment> AddAttachmentAsync(int departmentId, string userId, string recordId, string fileName, string contentType, byte[] data, string description, CancellationToken cancellationToken = default, int classification = 1)
 		{
 			if (data == null || data.Length == 0) throw new ArgumentException("Attachment content is required.", nameof(data));
 			var record = await LoadRecordAsync(departmentId, recordId);
+			if (!Enum.IsDefined(typeof(RmsEvidenceClassification), classification)) throw new ArgumentException("Choose an attachment classification.");
+			if (RmsDefinitionKeys.RestrictedClass.Contains(record.DefinitionKey)) classification = Math.Max(1, classification);
+			await RequireAttachmentWriteAsync(record, userId, classification != 0);
+			if (RmsLifecycle.IsFinalizedFamily((RmsRecordState)record.State) && record.AmendsRevisionId == null)
+				throw new InvalidOperationException("Add attachments through an amendment to preserve the finalized record.");
+			var expectedVersion = record.RowVersion;
 			if (RmsLifecycle.IsTerminal((RmsRecordState)record.State))
 				throw new RecordTransitionException(recordId, (RmsRecordState)record.State, (RmsRecordState)record.State, "attachments cannot be added to a voided or cancelled Record");
 
@@ -661,6 +738,7 @@ namespace Resgrid.Services.Records
 				ProtectionId = Guid.NewGuid().ToString(),
 				RecordId = recordId,
 				FileName = hygiene.FileName,
+				Classification = classification,
 				ContentType = hygiene.ContentType,
 				ByteSize = hygiene.Data.LongLength,
 				Checksum = RecordSnapshotSerializer.Checksum(hygiene.Data),
@@ -677,6 +755,9 @@ namespace Resgrid.Services.Records
 
 			await InTransactionAsync(async () =>
 			{
+				record = await LoadRecordAsync(departmentId, recordId);
+				await RequireAttachmentWriteAsync(record, userId, classification != 0);
+				await GuardVersionAsync(record, expectedVersion, cancellationToken);
 				await _attachments.InsertAsync(attachment, cancellationToken, true);
 				record.ModifiedOn = now;
 				record.ModifiedByUserId = userId;
@@ -684,13 +765,24 @@ namespace Resgrid.Services.Records
 				await AuditAsync(departmentId, userId, recordId, null, RmsAccessAuditAction.Change, "Add attachment", RmsOriginClient.Web, cancellationToken, new { attachment.RmsRecordAttachmentId, attachment.ByteSize, attachment.Checksum });
 			});
 
-			attachment.Data = null;
-			return attachment;
+			var metadata = JsonConvert.DeserializeObject<RmsRecordAttachment>(JsonConvert.SerializeObject(attachment)); metadata.Data = null; return metadata;
 		}
 
-		public Task<RmsRecordAttachment> GetAttachmentAsync(int departmentId, string attachmentId)
+		public async Task<RmsRecordAttachment> GetAttachmentAsync(int departmentId, string userId, string attachmentId)
 		{
-			return _attachments.GetByIdForDepartmentAsync(departmentId, attachmentId);
+			var attachment = await _attachments.GetByIdForDepartmentAsync(departmentId, attachmentId);
+			if (attachment == null || attachment.DeletedOn.HasValue || !await _authorization.CanUserViewRecordAsync(userId, attachment.RecordId, departmentId)) return null;
+			if (attachment.RequiresRestrictedAccess && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords)) return null;
+			if (attachment.ScanState != (int)RmsAttachmentScanState.Clean || attachment.Data == null || RecordSnapshotSerializer.Checksum(attachment.Data) != attachment.Checksum) return null;
+			return attachment;
+		}
+		private async Task RequireAttachmentWriteAsync(RmsOperationalRecord record, string userId, bool restricted)
+		{
+			if (!await _authorization.CanUserViewRecordAsync(userId, record.RmsOperationalRecordId, record.DepartmentId) || !await _authorization.HasPermissionAsync(userId, record.DepartmentId, PermissionTypes.CreateRecord)) throw new UnauthorizedAccessException();
+			if (restricted && !await _authorization.HasPermissionAsync(userId, record.DepartmentId, PermissionTypes.ViewRestrictedRecords)) throw new UnauthorizedAccessException();
+			if (record.AuthorUserId != userId && record.OwnerUserId != userId && !await _authorization.IsDepartmentAdminAsync(userId, record.DepartmentId)
+				&& !(record.AmendsRevisionId != null && await _authorization.HasPermissionAsync(userId, record.DepartmentId, PermissionTypes.AmendRecords))) throw new UnauthorizedAccessException();
+			if (!(RmsLifecycle.IsEditable((RmsRecordState)record.State) || record.AmendsRevisionId != null) || RmsLifecycle.IsTerminal((RmsRecordState)record.State)) throw new RecordTransitionException(record.RmsOperationalRecordId, (RmsRecordState)record.State, (RmsRecordState)record.State, "change attachments through an editable draft or amendment");
 		}
 
 		public async Task<bool> RemoveAttachmentAsync(int departmentId, string userId, string recordId, string attachmentId, CancellationToken cancellationToken = default)
@@ -702,9 +794,14 @@ namespace Resgrid.Services.Records
 			var attachment = await _attachments.GetByIdForDepartmentAsync(departmentId, attachmentId);
 			if (attachment == null || !string.Equals(attachment.RecordId, recordId, StringComparison.Ordinal))
 				return false;
+			await RequireAttachmentWriteAsync(record, userId, attachment.RequiresRestrictedAccess);
+			var expectedVersion = record.RowVersion;
 
 			await InTransactionAsync(async () =>
 			{
+				record = await LoadRecordAsync(departmentId, recordId);
+				await RequireAttachmentWriteAsync(record, userId, attachment.RequiresRestrictedAccess);
+				await GuardVersionAsync(record, expectedVersion, cancellationToken);
 				attachment.DeletedOn = DateTime.UtcNow;
 				attachment.ModifiedOn = attachment.DeletedOn.Value;
 				attachment.RowVersion += 1;
@@ -729,7 +826,7 @@ namespace Resgrid.Services.Records
 		private async Task<RmsOperationalRecord> LoadRecordAsync(int departmentId, string recordId)
 		{
 			var record = await _records.GetByIdForDepartmentAsync(departmentId, recordId);
-			if (record == null || record.DeletedOn.HasValue)
+			if (record == null || record.DeletedOn.HasValue || record.PurgedOn.HasValue)
 				throw new KeyNotFoundException($"Record {recordId} does not exist in this department.");
 			return record;
 		}
@@ -780,6 +877,7 @@ namespace Resgrid.Services.Records
 		{
 			return new RecordAggregate
 			{
+				CustomFields = await _udf.CaptureAsync(record.DepartmentId, record.RmsOperationalRecordId, record.DefinitionKey, record.DefinitionVersion, record.UdfDefinitionId),
 				Record = record,
 				Details = await _details.GetDraftAsync(record.DepartmentId, record.RmsOperationalRecordId),
 				Participants = (await _participants.GetForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId, null))?.ToList() ?? new List<RmsRecordParticipant>(),
@@ -792,6 +890,18 @@ namespace Resgrid.Services.Records
 			string reasonCode, string reasonText, string attestationVersion, DateTime now, CancellationToken cancellationToken)
 		{
 			var snapshot = RecordSnapshotSerializer.Build(draft);
+			snapshot.SnapshotVersion = 2;
+			snapshot.Evidence = (await _evidence.GetForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId))?.ToList() ?? new List<RmsEvidenceArtifact>();
+			if (record.CurrentRevisionId != null)
+			{
+				var prior = await _revisions.GetByIdForDepartmentAsync(record.DepartmentId, record.CurrentRevisionId);
+				if (prior == null || prior.RecordId != record.RmsOperationalRecordId || RecordSnapshotSerializer.Checksum(prior.SnapshotJson) != prior.Checksum) throw new InvalidOperationException("The prior revision failed its integrity check.");
+				var priorSnapshot = RecordSnapshotSerializer.Deserialize(prior.SnapshotJson);
+				var priorEvidence = priorSnapshot.SnapshotVersion >= 2 ? priorSnapshot.Evidence : await _evidence.GetForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId, prior.RmsRevisionId, true);
+				snapshot.Evidence.AddRange((priorEvidence ?? new List<RmsEvidenceArtifact>()).Where(e => !snapshot.Evidence.Any(n => n.Kind == e.Kind && n.SourceEntityId == e.SourceEntityId)));
+			}
+			snapshot.Evidence = snapshot.Evidence.OrderBy(e => e.RmsEvidenceArtifactId, StringComparer.Ordinal).ToList();
+			if (transition != RmsRevisionTransition.Voided) await _evidence.RequireInventoryCoverageAsync(record.DepartmentId, record.RmsOperationalRecordId, snapshot.Evidence);
 			snapshot.RecordNumber = record.RecordNumber;
 			var json = RecordSnapshotSerializer.Serialize(snapshot);
 
@@ -856,6 +966,8 @@ namespace Resgrid.Services.Records
 
 		private async Task RestoreDraftFromSnapshotAsync(RmsOperationalRecord record, RecordSnapshot snapshot, DateTime now, CancellationToken cancellationToken)
 		{
+			await _udf.RestoreInTransactionAsync(record.DepartmentId, record.RmsOperationalRecordId, record.DefinitionKey, record.DefinitionVersion, snapshot.CustomFields, record.ModifiedByUserId, cancellationToken);
+			record.UdfDefinitionId = snapshot.CustomFields?.DefinitionId;
 			var details = await _details.GetDraftAsync(record.DepartmentId, record.RmsOperationalRecordId);
 			if (details != null && snapshot.Details != null)
 			{
@@ -1135,9 +1247,18 @@ namespace Resgrid.Services.Records
 		private async Task<List<RmsRecordParticipant>> BuildParticipantsAsync(int departmentId, string recordId, IEnumerable<RecordParticipantInput> inputs, DateTime now)
 		{
 			var result = new List<RmsRecordParticipant>();
+			var existing = (await _participants.GetForRecordAsync(departmentId, recordId, null))?.ToList() ?? new List<RmsRecordParticipant>();
 			var ordinal = 0;
 			foreach (var input in (inputs ?? Enumerable.Empty<RecordParticipantInput>()).Where(i => !string.IsNullOrWhiteSpace(i.UserId)))
 			{
+				if (result.Any(p => p.UserId == input.UserId)) throw new ArgumentException("List each participant only once.");
+				var prior = existing.FirstOrDefault(p => p.UserId == input.UserId);
+				if (prior == null && !await _authorization.IsActiveMemberAsync(input.UserId, departmentId)) throw new ArgumentException("The participant is not an active member of this department.");
+				if (input.UnitId.HasValue && (prior == null || input.UnitId != prior.UnitId))
+				{
+					var assigned = await _unitsService.GetUnitByIdAsync(input.UnitId.Value);
+					if (assigned == null || assigned.DepartmentId != departmentId) throw new ArgumentException("The participant's assigned unit does not belong to this department.");
+				}
 				var profile = await _profiles.GetProfileByUserIdAsync(input.UserId);
 				var group = await _groups.GetGroupForUserAsync(input.UserId, departmentId);
 				result.Add(new RmsRecordParticipant
@@ -1197,7 +1318,7 @@ namespace Resgrid.Services.Records
 			return result;
 		}
 
-		private async Task ApplyCallSnapshotAsync(int departmentId, RmsOperationalRecordDetail details, int? callId)
+		private async Task ApplyCallSnapshotAsync(int departmentId, string userId, RmsOperationalRecordDetail details, int? callId)
 		{
 			if (!callId.HasValue)
 			{
@@ -1214,6 +1335,8 @@ namespace Resgrid.Services.Records
 			var call = await _calls.GetCallByIdAsync(callId.Value);
 			if (call == null || call.DepartmentId != departmentId)
 				throw new ArgumentException($"Call {callId} does not belong to this department.");
+			if (!await _authorization.CanReadSourceCallAsync(userId, departmentId, call))
+				throw new UnauthorizedAccessException("Source Call access is not authorized.");
 
 			details.CallNumber = call.Number;
 			details.CallName = call.Name;
@@ -1224,12 +1347,30 @@ namespace Resgrid.Services.Records
 			details.CallNature = call.NatureOfCall;
 		}
 
+		private async Task ApplyAuthorizedDetailsAsync(int departmentId, string userId, string definitionKey, RmsOperationalRecordDetail target, RmsOperationalRecordDetail source)
+		{
+			if (source == null) return;
+			if (RmsDefinitionKeys.RestrictedClass.Contains(definitionKey) && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords))
+			{
+				var copy = JsonConvert.DeserializeObject<RmsOperationalRecordDetail>(JsonConvert.SerializeObject(source));
+				foreach (var name in RecordSnapshotSerializer.RestrictedDetailFields)
+				{
+					var property = typeof(RmsOperationalRecordDetail).GetProperty(name);
+					if (!string.IsNullOrEmpty(property.GetValue(source) as string))
+						throw new UnauthorizedAccessException("Restricted Record fields cannot be changed with your current permissions.");
+					property.SetValue(copy, property.GetValue(target));
+				}
+				source = copy;
+			}
+			ApplyDetails(target, source);
+		}
+
 		private static void ApplyDetails(RmsOperationalRecordDetail target, RmsOperationalRecordDetail source)
 		{
 			if (source == null)
 				return;
 
-			target.Narrative = source.Narrative;
+			target.Narrative = Resgrid.Framework.RecordNarrativeFormatter.ForStorage(source.Narrative);
 			target.InitialReport = source.InitialReport;
 			target.Type = source.Type;
 			target.Course = source.Course;
@@ -1261,7 +1402,7 @@ namespace Resgrid.Services.Records
 		/// <summary>Logs parity: a narrative is required on every legacy type; Unit Activity requires its timestamp.</summary>
 		private static void ValidateForFinalization(RmsOperationalRecordType type, RecordAggregate draft)
 		{
-			if (draft.Details == null || string.IsNullOrWhiteSpace(draft.Details.Narrative))
+			if (draft.Details == null || !Resgrid.Framework.RecordNarrativeFormatter.HasText(draft.Details.Narrative))
 				throw new ArgumentException("A narrative is required before a Record can be finalized.");
 			if (type == RmsOperationalRecordType.UnitActivity && !draft.Details.ActivityOn.HasValue)
 				throw new ArgumentException("A Unit Activity record requires an activity time before it can be finalized.");

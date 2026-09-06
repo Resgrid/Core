@@ -7,6 +7,8 @@ namespace Resgrid.Model.Providers
 	/// <summary>Department NERIS profile, credential, value sets and crosswalks (RMS plan section 5.5).</summary>
 	public interface INerisProfileService
 	{
+		/// <summary>Credential-free identity of the configured entity, environment and effective endpoint.</summary>
+		string GetDestinationIdentity(RmsNerisProfile profile);
 		Task<RmsNerisProfile> GetProfileAsync(int departmentId);
 
 		/// <summary>Saves the profile; a non-null credential replaces the stored one (encrypted per department), null keeps it.</summary>

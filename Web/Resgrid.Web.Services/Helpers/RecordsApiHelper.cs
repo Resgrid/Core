@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -70,11 +70,38 @@ namespace Resgrid.Web.Services.Helpers
 		public static long ToUnixMs(DateTime value) => new DateTimeOffset(DateTime.SpecifyKind(value, DateTimeKind.Utc)).ToUnixTimeMilliseconds();
 
 		public static DateTime? FromUnixMs(long since) => since <= 0 ? (DateTime?)null : DateTimeOffset.FromUnixTimeMilliseconds(since).UtcDateTime;
+
+		/// <summary>Opaque page cursor preserves sub-millisecond database precision independently of the display timestamp.</summary>
+		public static string ChangesCursor(DateTime modifiedOn, string recordId) => "rms1:" + modifiedOn.Ticks.ToString(System.Globalization.CultureInfo.InvariantCulture) + ":" + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(recordId));
+
+		public static bool TryReadChangesCursor(string cursor, long since, out DateTime modifiedOn, out string recordId)
+		{
+			modifiedOn = default; recordId = null;
+			if (string.IsNullOrWhiteSpace(cursor) || cursor.Length > 512) return false;
+			var parts = cursor.Split(':');
+			if (parts.Length != 3 || parts[0] != "rms1" || !long.TryParse(parts[1], System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out var ticks) || ticks < DateTime.UnixEpoch.Ticks || ticks > DateTime.MaxValue.Ticks) return false;
+			try
+			{
+				modifiedOn = new DateTime(ticks, DateTimeKind.Utc);
+				recordId = new System.Text.UTF8Encoding(false, true).GetString(Convert.FromBase64String(parts[2]));
+				return !string.IsNullOrWhiteSpace(recordId) && ToUnixMs(modifiedOn) == since;
+			}
+			catch (Exception ex) when (ex is FormatException || ex is System.Text.DecoderFallbackException) { return false; }
+		}
 	}
 
 	/// <summary>Entity to DTO mapping for the v4 Records controller. Restricted detail fields are withheld here, never downstream.</summary>
 	public static class RecordsApiMapper
 	{
+		/// <summary>Content-free eviction, including when a previously cached record is no longer visible.</summary>
+		public static RecordSummaryData ToTombstone(RmsRecordSearchProjection p) => new RecordSummaryData
+		{
+			RecordId = p.RmsRecordSearchProjectionId,
+			RowVersion = p.RowVersion,
+			ModifiedOn = p.ModifiedOn,
+			IsTombstone = true
+		};
+
 		public static RecordSummaryData ToSummary(RmsRecordSearchProjection p)
 		{
 			var state = (RmsRecordState)p.State;
@@ -165,7 +192,7 @@ namespace Resgrid.Web.Services.Helpers
 				WithheldFields = withheld,
 				Participants = aggregate.Participants.Select(p => new RecordParticipantData { UserId = p.UserId, DisplayName = p.DisplayNameSnapshot, GroupId = p.GroupIdSnapshot, GroupName = p.GroupNameSnapshot, UnitId = p.UnitId, Role = p.Role }).ToList(),
 				Units = aggregate.Units.Select(ToUnit).ToList(),
-				Attachments = aggregate.Attachments.Where(a => a.DeletedOn == null).Select(ToAttachment).ToList(),
+				Attachments = aggregate.Attachments.Where(a => a.DeletedOn == null && (canViewRestricted || !a.RequiresRestrictedAccess)).Select(ToAttachment).ToList(),
 				Revisions = aggregate.Revisions.OrderByDescending(x => x.RevisionNumber).Select(ToRevision).ToList(),
 				GroupScopeIds = aggregate.GroupScope.Select(g => g.DepartmentGroupId).Distinct().ToList()
 			};
@@ -196,7 +223,7 @@ namespace Resgrid.Web.Services.Helpers
 				WithheldFields = withheld,
 				Participants = snapshot.Participants.Select(p => new RecordParticipantData { UserId = p.UserId, DisplayName = p.DisplayNameSnapshot, GroupId = p.GroupIdSnapshot, GroupName = p.GroupNameSnapshot, UnitId = p.UnitId, Role = p.Role }).ToList(),
 				Units = snapshot.Units.Select(ToUnit).ToList(),
-				Attachments = snapshot.Attachments.Select(ToAttachment).ToList()
+				Attachments = snapshot.Attachments.Where(a => canViewRestricted || !a.RequiresRestrictedAccess).Select(ToAttachment).ToList()
 			};
 		}
 
@@ -235,7 +262,7 @@ namespace Resgrid.Web.Services.Helpers
 		{
 			return new RecordAttachmentData
 			{
-				AttachmentId = a.RmsRecordAttachmentId, RecordId = a.RecordId, FileName = a.FileName, ContentType = a.ContentType, ByteSize = a.ByteSize, Checksum = a.Checksum,
+				AttachmentId = a.RmsRecordAttachmentId, RecordId = a.RecordId, FileName = a.FileName, ContentType = a.ContentType, ByteSize = a.ByteSize, Checksum = a.Checksum, Classification = a.Classification,
 				Description = a.Description, UploadedByUserId = a.UploadedByUserId, UploadedOn = a.UploadedOn, ScanState = a.ScanState, ScanStateName = ((RmsAttachmentScanState)a.ScanState).ToString()
 			};
 		}
@@ -263,6 +290,7 @@ namespace Resgrid.Web.Services.Helpers
 			var d = input.Details ?? new RecordDetailsInput();
 			return new RecordDraftInput
 			{
+				CustomFields = input.CustomFields,
 				DefinitionKey = input.DefinitionKey,
 				CallId = input.CallId,
 				StationGroupId = input.StationGroupId,
@@ -330,7 +358,7 @@ namespace Resgrid.Web.Services.Helpers
 			};
 		}
 
-		public static IncidentReportData ToReport(IncidentReportAggregate a, bool submissionEnabled, bool canViewRestricted = true,
+		public static IncidentReportData ToReport(IncidentReportAggregate a, bool submissionEnabled, bool canViewRestricted = false,
 			IEnumerable<NerisSectionRequirement> sections = null, string incidentAnalysisId = null)
 		{
 			var withheld = new List<string>();
@@ -510,6 +538,7 @@ namespace Resgrid.Web.Services.Helpers
 		{
 			return new IncidentReportDraftInput
 			{
+				CustomFields = input.CustomFields,
 				IncidentNumber = input.IncidentNumber,
 				CallCreatedOn = RecordsApiHelper.Utc(input.CallCreatedOn),
 				CallAnsweredOn = RecordsApiHelper.Utc(input.CallAnsweredOn),
@@ -547,7 +576,7 @@ namespace Resgrid.Web.Services.Helpers
 				Resources = input.Resources?.Select(r => new IncidentResourceInput { ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList(),
 				Casualties = input.Casualties?.Select(c => new IncidentCasualtyRescueInput
 				{
-					Kind = (RmsCasualtyRescueKind)c.Kind, PersonType = c.PersonType, PersonnelUserId = c.PersonnelUserId, Rank = c.Rank,
+					CasualtyId = c.CasualtyId, Kind = (RmsCasualtyRescueKind)c.Kind, PersonType = c.PersonType, PersonnelUserId = c.PersonnelUserId, Rank = c.Rank,
 					YearsOfService = c.YearsOfService, JobClassification = c.JobClassification, BirthMonthYear = c.BirthMonthYear,
 					Gender = c.Gender, Race = c.Race, WasInjured = c.WasInjured, WasFatal = c.WasFatal,
 					CasualtyCause = c.CasualtyCause, CasualtyAction = c.CasualtyAction, CasualtyTimeline = c.CasualtyTimeline, DutyType = c.DutyType,

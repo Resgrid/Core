@@ -1,0 +1,37 @@
+@using Resgrid.Model
+@using Newtonsoft.Json
+@model RecordUdfSection
+@inject Resgrid.Model.Services.IUdfRenderingService UdfRenderer
+@if (Model != null)
+{
+    var definition = new UdfDefinition { UdfDefinitionId = Model.DefinitionId, EntityType = (int)UdfEntityType.Record, Version = Model.ExtensionVersion };
+    var fields = Model.Fields.Select(e => JsonConvert.DeserializeObject<UdfField>(JsonConvert.SerializeObject(e.Field))).ToList();
+    var values = Model.Fields.Select(e => new UdfFieldValue { UdfFieldId = e.Field.UdfFieldId, Value = e.Value }).ToList();
+    // Drafts can be incomplete. The service applies the pinned requiredness at finalization.
+    foreach (var field in fields) { if (field.IsRequired) field.Label += " (required before finalization)"; field.IsRequired = false; }
+    <section class="ibox rms-custom-fields"><div class="ibox-title"><h3>Department custom fields</h3></div><div class="ibox-content">
+        <p>Form version @Model.ExtensionVersion</p>
+        <input type="hidden" name="CustomFields.DefinitionId" value="@Model.DefinitionId" />
+        @Html.Raw(UdfRenderer.GenerateHtmlFormFields(definition, fields.Where(f => !f.IsReadOnly).ToList(), values))
+        @Html.Raw(UdfRenderer.GenerateReadOnlyHtml(definition, fields.Where(f => f.IsReadOnly).ToList(), values))
+    </div></section>
+    <script>
+        (function () {
+            var section = document.currentScript.previousElementSibling;
+            var form = section.closest('form');
+            function collect() {
+                section.querySelectorAll('[data-rms-udf-input]').forEach(function (input) { input.remove(); });
+                section.querySelectorAll('.udf-section .udf-field').forEach(function (row) {
+                    var control = row.querySelector('input:not([type=hidden]), select, textarea');
+                    if (!control) return;
+                    var input = document.createElement('input'); input.type = 'hidden'; input.dataset.rmsUdfInput = 'true';
+                    input.name = 'CustomFields.Values[' + row.dataset.fieldId + ']';
+                    input.value = control.type === 'checkbox' ? (control.checked ? 'true' : 'false') : control.multiple ? Array.from(control.selectedOptions).map(function(o) { return o.value; }).join(',') : control.value;
+                    section.appendChild(input);
+                });
+            }
+            form.addEventListener('submit', collect);
+            form.addEventListener('rms:collect', collect);
+        })();
+    </script>
+}

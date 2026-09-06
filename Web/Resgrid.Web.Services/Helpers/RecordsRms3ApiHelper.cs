@@ -15,7 +15,7 @@ namespace Resgrid.Web.Services.Helpers
 	/// </summary>
 	public static class IncidentAnalysisApiMapper
 	{
-		public static IncidentAnalysisData ToAnalysis(IncidentAnalysisAggregate a, bool canViewRestricted = true)
+		public static IncidentAnalysisData ToAnalysis(IncidentAnalysisAggregate a, bool canViewRestricted = false)
 		{
 			var withheld = new List<string>();
 			var analysis = a.Analysis;
@@ -113,7 +113,7 @@ namespace Resgrid.Web.Services.Helpers
 				}).ToList(),
 				Vehicles = input.Vehicles?.Select(v => new IncidentVehicleInput
 				{
-					VehicleKind = v.VehicleKind, Make = v.Make, Model = v.Model, ModelYear = v.ModelYear, BodyStyle = v.BodyStyle, Powertrain = v.Powertrain,
+					VehicleId = v.VehicleId, VehicleKind = v.VehicleKind, Make = v.Make, Model = v.Model, ModelYear = v.ModelYear, BodyStyle = v.BodyStyle, Powertrain = v.Powertrain,
 					DamageType = v.DamageType, Vin = v.Vin, LicensePlate = v.LicensePlate, LicenseState = v.LicenseState, WasOccupied = v.WasOccupied,
 					EstimatedValue = v.EstimatedValue, EstimatedLoss = v.EstimatedLoss, DetailJson = v.DetailJson
 				}).ToList(),
@@ -146,6 +146,7 @@ namespace Resgrid.Web.Services.Helpers
 		{
 			var classification = (RmsEvidenceClassification)a.Classification;
 			var mayReadContent = canViewRestricted || classification == RmsEvidenceClassification.Unrestricted;
+			if (!mayReadContent) return new RecordEvidenceArtifactData { ArtifactId = a.RmsEvidenceArtifactId, RecordId = a.RecordId, Title = "Restricted evidence", ManifestWithheld = true };
 
 			return new RecordEvidenceArtifactData
 			{
@@ -165,6 +166,7 @@ namespace Resgrid.Web.Services.Helpers
 		{
 			return new RecordEvidenceCaptureRequest
 			{
+				ExpectedRowVersion = input.ExpectedRowVersion,
 				DepartmentId = departmentId,
 				RecordId = input.RecordId,
 				RecordKind = input.RecordKind.HasValue ? (RmsRecordKind)input.RecordKind.Value : RmsRecordKind.Operational,
@@ -219,7 +221,7 @@ namespace Resgrid.Web.Services.Helpers
 				Truncated = preview.Truncated,
 				Items = preview.Items.Select(i => new DisclosureScopeItemData
 				{
-					RecordId = i.RecordId, RecordNumber = i.RecordNumber, DefinitionKey = i.DefinitionKey, Summary = i.Summary, OccurredOn = i.OccurredOn,
+					RecordId = i.RecordId, RecordKind = (int)i.RecordKind, RecordNumber = i.RecordNumber, DefinitionKey = i.DefinitionKey, Summary = i.Summary, OccurredOn = i.OccurredOn,
 					CurrentRevisionId = i.CurrentRevisionId, Producible = i.Producible, NotProducibleReason = i.NotProducibleReason
 				}).ToList()
 			};
@@ -233,7 +235,7 @@ namespace Resgrid.Web.Services.Helpers
 				ProductionId = p.RmsDisclosureProductionId, RequestId = p.DisclosureRequestId, ProductionNumber = p.ProductionNumber,
 				RedactionProfile = p.RedactionProfile, Checksum = p.Checksum, ByteSize = p.ByteSize, RecordCount = p.RecordCount,
 				WithheldFieldCount = p.WithheldFieldCount, PreparedByUserId = p.PreparedByUserId, PreparedOn = p.PreparedOn,
-				ReleasedByUserId = p.ReleasedByUserId, ReleasedOn = p.ReleasedOn, IsReleased = p.IsReleased,
+				ReleasedByUserId = p.ReleasedByUserId, ReleasedOn = p.ReleasedOn, IsReleased = p.IsReleased, DeliveryMethod = p.DeliveryMethod, DeliveryReference = p.DeliveryReference,
 				ProducedSetJson = p.ProducedSetJson, WithheldFieldsJson = p.WithheldFieldsJson,
 				ArtifactJson = includeArtifact ? p.ArtifactJson : null
 			};

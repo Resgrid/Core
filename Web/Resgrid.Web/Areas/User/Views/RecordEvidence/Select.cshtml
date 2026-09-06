@@ -1,0 +1,83 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordEvidenceSelectionView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | Select supporting evidence";
+	var selection = Model.Selection;
+	var context = selection.Context;
+	var source = selection.Sources.FirstOrDefault(s => s.Kind == selection.SourceKind);
+}
+<div class="wrapper wrapper-content">
+	<h2>Select supporting evidence — @context.RecordNumber</h2>
+	<p><a asp-action="Index" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind">Evidence history</a></p>
+	<form method="get" asp-action="Select" class="form-inline">
+		<input type="hidden" name="recordId" value="@context.RecordId" />
+		<input type="hidden" name="recordKind" value="@context.RecordKind" />
+		<label for="sourceKind">Source</label>
+		<select id="sourceKind" name="sourceKind" class="form-control">
+			@foreach (var item in selection.Sources)
+			{
+				var restricted = item.Kind == RmsEvidenceKind.ChatPromotion || item.Kind == RmsEvidenceKind.CertificationSnapshot || item.Kind == RmsEvidenceKind.InventoryUsage;
+				<option value="@item.Kind" selected="@(item.Kind == selection.SourceKind)" disabled="@(restricted && !context.CanViewRestricted)">@localizer["Evidence" + item.Kind]@(!item.Available ? " (unavailable)" : restricted && !context.CanViewRestricted ? " (restricted access required)" : "")</option>
+			}
+		</select>
+		<button type="submit" class="btn btn-default">Load source</button>
+	</form>
+	<hr />
+	@if (source?.Available != true)
+	{
+		<div class="alert alert-warning">@source?.Reason No evidence will be recorded for an unavailable source.</div>
+	}
+	else
+	{
+		@if (selection.SourceKind == RmsEvidenceKind.ChatPromotion)
+		{
+			<form method="get" asp-action="Select" class="form-inline">
+				<input type="hidden" name="recordId" value="@context.RecordId" /><input type="hidden" name="recordKind" value="@context.RecordKind" /><input type="hidden" name="sourceKind" value="@selection.SourceKind" />
+				<label for="channelId">Incident channel</label><select id="channelId" name="channelId" class="form-control" required>
+					<option value="">Choose a channel</option>
+					@foreach (var channel in selection.Channels) { <option value="@channel.Id" selected="@(channel.Id == selection.ChannelId)">@channel.Label</option> }
+				</select><button type="submit" class="btn btn-default">Load messages</button>
+			</form>
+			<p>Select the messages to preserve. Thread replies are included. Each page is a separate capture; capture this page before moving to the next. Message bodies are displayed as text.</p>
+		}
+		<form method="post" asp-action="Capture">
+			@Html.AntiForgeryToken()
+			<input type="hidden" asp-for="Input.RecordId" /><input type="hidden" asp-for="Input.RecordKind" /><input type="hidden" asp-for="Input.SourceKind" /><input type="hidden" asp-for="Input.RowVersion" />
+			@if (selection.SourceKind == RmsEvidenceKind.TrackingFix)
+			{
+				<p>Choose at most 20 units and a window of at most 24 hours. Up to 24 fixes per unit are sampled across that window. Capture additional windows separately.</p>
+				<div class="form-group"><label asp-for="Input.StartUtc">Coverage start (UTC)</label><input asp-for="Input.StartUtc" asp-format="{0:yyyy-MM-ddTHH:mm:ss}" type="datetime-local" step="1" class="form-control" required /></div>
+				<div class="form-group"><label asp-for="Input.EndUtc">Coverage end (UTC)</label><input asp-for="Input.EndUtc" asp-format="{0:yyyy-MM-ddTHH:mm:ss}" type="datetime-local" step="1" class="form-control" required /></div>
+			}
+			@if (selection.SourceKind == RmsEvidenceKind.CertificationSnapshot)
+			{
+				<p>Choose personnel whose qualification status belongs in this report. Certificate numbers and document files remain in Certifications.</p>
+				<div class="form-group"><label asp-for="Input.EndUtc">Incident time for validity (UTC)</label><input asp-for="Input.EndUtc" asp-format="{0:yyyy-MM-ddTHH:mm:ss}" type="datetime-local" step="1" class="form-control" required /></div>
+			}
+			@if (selection.SourceKind == RmsEvidenceKind.RunCardActivation) { <p>Capture the dispatch decisions recorded by Run Cards for this report’s Call. A missing recorded decision cannot be reconstructed by RMS.</p> }
+			@if (selection.SourceKind == RmsEvidenceKind.InventoryUsage) { <p>Refresh the evidence for all recorded inventory consumption. This action does not consume stock again.</p> }
+			@if (selection.SourceKind == RmsEvidenceKind.TrackingFix || selection.SourceKind == RmsEvidenceKind.CertificationSnapshot || selection.SourceKind == RmsEvidenceKind.ChatPromotion)
+			{
+				<fieldset><legend>@(selection.SourceKind == RmsEvidenceKind.TrackingFix ? "Units" : selection.SourceKind == RmsEvidenceKind.CertificationSnapshot ? "Personnel" : "Messages")</legend>
+				@if (selection.Choices.Count == 0) { <p>No accessible items on this page.</p> }
+				@foreach (var choice in selection.Choices)
+				{
+					var field = selection.SourceKind == RmsEvidenceKind.TrackingFix ? "Input.UnitIds" : selection.SourceKind == RmsEvidenceKind.CertificationSnapshot ? "Input.UserIds" : "Input.SourceIds";
+					<div class="checkbox"><label><input type="checkbox" name="@field" value="@choice.Id" />@choice.Label
+					@if (choice.Sequence.HasValue) { <span> · #@choice.Sequence · @choice.OccurredOn?.ToString("yyyy-MM-dd HH:mm:ss") UTC</span> }
+					@if (choice.EditedOn.HasValue) { <span> · edited @choice.EditedOn.Value.ToString("yyyy-MM-dd HH:mm:ss") UTC</span> }
+					@if (choice.Body != null) { <span style="display:block;white-space:pre-wrap;overflow-wrap:anywhere">@choice.Body</span> }
+					</label></div>
+				}
+				</fieldset>
+			}
+			<div class="form-group"><label asp-for="Input.CaptureReason">Reason for including this evidence</label><textarea asp-for="Input.CaptureReason" class="form-control" rows="3" maxlength="500" required></textarea></div>
+			<button type="submit" class="btn btn-primary">Capture selected evidence</button>
+		</form>
+		@if (selection.NextSequence.HasValue)
+		{
+			<p><a asp-action="Select" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-sourceKind="@selection.SourceKind" asp-route-channelId="@selection.ChannelId" asp-route-afterSequence="@selection.NextSequence">Next message page (uncaptured selections will be cleared)</a></p>
+		}
+	}
+</div>

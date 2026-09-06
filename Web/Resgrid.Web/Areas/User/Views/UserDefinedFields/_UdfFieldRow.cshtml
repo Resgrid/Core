@@ -47,6 +47,15 @@
     <input type="hidden" name="@(prefix).SortOrder" value="@Model.SortOrder" />
 
     <div class="field-detail">
+        @if (ViewData["RmsExtension"] as bool? == true)
+        {
+            <div class="form-group"><label>Information classification</label>
+                <select class="form-control" name="@(prefix).RmsClassification">
+                    <option value="1" selected="@(Model.RmsClassification != 0)">Restricted</option>
+                    <option value="0" selected="@(Model.RmsClassification == 0)">Unrestricted</option>
+                </select>
+            </div>
+        }
         <div class="row">
             <!-- Left column: core settings -->
             <div class="col-md-6">

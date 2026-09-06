@@ -29,6 +29,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
+	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 	public class RecordEvidenceController : V4AuthenticatedApiControllerbase, IActionFilter
 	{
 		private readonly IRecordsEvidenceService _evidence;
@@ -112,7 +113,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			var artifacts = await _evidence.GetForRecordAsync(DepartmentId, recordId, revisionId, includeSuperseded);
-			var canViewRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords();
+			if (!await CanViewRecordAsync(recordId)) return NotFound();
+			var canViewRestricted = await CanViewRestrictedAsync();
+			if (!await CanViewRecordAsync(recordId)) return NotFound();
 			var result = new RecordEvidenceListResult
 			{
 				Data = artifacts.Select(a => RecordEvidenceApiMapper.ToArtifact(a, canViewRestricted)).ToList(),
@@ -134,9 +137,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (artifact == null)
 				return NotFound();
 
+			var canViewRestricted = await CanViewRestrictedAsync();
+			if (!await CanViewRecordAsync(artifact.RecordId)) return NotFound();
 			var result = new RecordEvidenceResult
 			{
-				Data = RecordEvidenceApiMapper.ToArtifact(artifact, ClaimsAuthorizationHelper.CanViewRestrictedRecords(), true),
+				Data = RecordEvidenceApiMapper.ToArtifact(artifact, canViewRestricted, true),
 				PageSize = 1,
 				Status = ResponseHelper.Success
 			};
@@ -156,6 +161,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			var intact = await _evidence.VerifyAsync(DepartmentId, id);
+			if (artifact.Classification != (int)RmsEvidenceClassification.Unrestricted && !await CanViewRestrictedAsync()) return Forbid();
+			if (!await CanViewRecordAsync(artifact.RecordId)) return NotFound();
 			var result = new RecordEvidenceVerifyResult
 			{
 				Data = new RecordEvidenceVerifyData { ArtifactId = id, Intact = intact, Checksum = artifact.Checksum },
@@ -179,6 +186,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.RecordId) || string.IsNullOrWhiteSpace(input.CaptureReason))
 				return BadRequest();
+			input.ExpectedRowVersion = RecordsApiHelper.ResolveRowVersion(input.ExpectedRowVersion, Request);
+			if (!input.ExpectedRowVersion.HasValue) return Problem(statusCode: 428, title: "Supply the current record version in ExpectedRowVersion or If-Match.");
 			var usable = await UsableAsync();
 			if (usable != null)
 				return usable;
@@ -199,23 +208,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var replayed = await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key, nameof(Capture));
 				if (!string.IsNullOrWhiteSpace(replayed))
 				{
-					var existing = await _evidence.GetAsync(DepartmentId, replayed);
-					if (existing != null)
-						return Ok(Wrap(existing, ResponseHelper.Success));
+					var existing = await LoadAuthorizedAsync(replayed);
+					var checksum = Resgrid.Services.Records.RecordsEvidenceService.ComputeRequestChecksum(RecordEvidenceApiMapper.ToCaptureRequest(input, DepartmentId, UserId, origin));
+					if (existing == null || existing.RecordId != input.RecordId || existing.CapturedByUserId != UserId || existing.CaptureRequestChecksum != checksum)
+						return Conflict(new { error = "The idempotency key belongs to a different or unavailable capture request." });
+					var replay = await WrapAsync(existing, ResponseHelper.Success);
+					if (!await CanViewRecordAsync(existing.RecordId)) return NotFound();
+					return Ok(replay);
 				}
 			}
 
 			try
 			{
 				var request = RecordEvidenceApiMapper.ToCaptureRequest(input, DepartmentId, UserId, origin);
-				var artifact = await _evidence.CaptureAsync(request, ClaimsAuthorizationHelper.CanViewRestrictedRecords(), cancellationToken);
+				var artifact = await _evidence.CaptureAsync(request, await CanViewRestrictedAsync(), cancellationToken);
 				if (artifact == null)
 					return Problem(statusCode: StatusCodes.Status409Conflict, title: "That evidence source has nothing to capture for this record.", type: "evidence_unavailable");
 
 				if (key != null)
 					await _idempotency.RememberAsync(DepartmentId, UserId, key, nameof(Capture), artifact.RmsEvidenceArtifactId);
 
-				return StatusCode(StatusCodes.Status201Created, Wrap(artifact, ResponseHelper.Created));
+				var result = await WrapAsync(artifact, ResponseHelper.Created);
+				if (!await CanViewRecordAsync(artifact.RecordId)) return Forbid();
+				return StatusCode(StatusCodes.Status201Created, result);
 			}
 			catch (RecordTransitionException ex)
 			{
@@ -272,17 +287,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return null;
 
 			var artifact = await _evidence.GetAsync(DepartmentId, artifactId);
-			if (artifact == null || !await CanViewRecordAsync(artifact.RecordId))
+			if (artifact == null || artifact.DepartmentId != DepartmentId || !await CanViewRecordAsync(artifact.RecordId))
 				return null;
 
 			return artifact;
 		}
 
-		private RecordEvidenceResult Wrap(RmsEvidenceArtifact artifact, string status)
+		private async Task<RecordEvidenceResult> WrapAsync(RmsEvidenceArtifact artifact, string status)
 		{
 			var result = new RecordEvidenceResult
 			{
-				Data = RecordEvidenceApiMapper.ToArtifact(artifact, ClaimsAuthorizationHelper.CanViewRestrictedRecords(), true),
+				Data = RecordEvidenceApiMapper.ToArtifact(artifact, await CanViewRestrictedAsync(), true),
 				PageSize = 1,
 				Status = status
 			};
@@ -291,5 +306,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		#endregion
+		private Task<bool> CanViewRestrictedAsync() => _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 	}
 }

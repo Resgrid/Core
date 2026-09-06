@@ -48,7 +48,7 @@ namespace Resgrid.Providers.Neris
 		/// The sections that apply to a set of incident type codes, most specific first. The result is what the
 		/// authoring surface renders and what <see cref="NerisValidationService"/> checks; there is no second list.
 		/// </summary>
-		public static IReadOnlyList<SectionRequirement> For(IEnumerable<string> incidentTypeCodes)
+		public static IReadOnlyList<SectionRequirement> For(IEnumerable<string> incidentTypeCodes, bool supportAidOnly = false)
 		{
 			var codes = (incidentTypeCodes ?? Enumerable.Empty<string>())
 				.Where(c => !string.IsNullOrWhiteSpace(c))
@@ -70,9 +70,12 @@ namespace Resgrid.Providers.Neris
 			if (Any(StructureFirePrefix))
 			{
 				Add(RmsIncidentModuleKind.StructureFireLocation, true, "The fire was in a structure.");
-				Add(RmsIncidentModuleKind.SmokeAlarm, false, "Structure fires report whether a smoke alarm was present.");
-				Add(RmsIncidentModuleKind.FireAlarm, false, "Structure fires report whether a fire alarm system was present.");
-				Add(RmsIncidentModuleKind.FireSuppression, false, "Structure fires report whether automatic suppression was present.");
+				Add(RmsIncidentModuleKind.SmokeAlarm, !supportAidOnly, "Structure fires report whether a smoke alarm was present.");
+				Add(RmsIncidentModuleKind.FireAlarm, !supportAidOnly, "Structure fires report whether a fire alarm system was present.");
+				Add(RmsIncidentModuleKind.OtherAlarm, !supportAidOnly, "Structure fires report other alarm presence.");
+				Add(RmsIncidentModuleKind.FireSuppression, !supportAidOnly, "Structure fires report whether automatic suppression was present.");
+				if (codes.Contains("FIRE||STRUCTURE_FIRE||CONFINED_COOKING_APPLIANCE_FIRE"))
+					Add(RmsIncidentModuleKind.CookingFireSuppression, !supportAidOnly, "Confined cooking appliance fires report cooking-fire suppression.");
 			}
 
 			if (Any(OutsideFirePrefix) || Any(SpecialFirePrefix) || Any(TransportationFirePrefix))

@@ -10,6 +10,7 @@ namespace Resgrid.Model.Repositories
 	/// <seealso cref="Resgrid.Model.Repositories.IRepository{Resgrid.Model.DepartmentSetting}" />
 	public interface IDepartmentSettingsRepository: IRepository<DepartmentSetting>
 	{
+		Task<DepartmentSetting> SaveRecordsRetentionPolicyAsync(int departmentId, RecordsRetentionPolicy policy, System.Threading.CancellationToken cancellationToken = default);
 		/// <summary>
 		/// Gets the department setting by user identifier type asynchronous.
 		/// </summary>

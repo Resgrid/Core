@@ -29,6 +29,7 @@ namespace Resgrid.Tests.Rms
 		public List<RmsNarrative> Narratives { get; } = new List<RmsNarrative>();
 		public List<RmsValidationIssue> Issues { get; } = new List<RmsValidationIssue>();
 		public List<RmsSubmission> Submissions { get; } = new List<RmsSubmission>();
+		public List<RmsSubmissionExchange> Exchanges { get; } = new List<RmsSubmissionExchange>();
 		public List<RmsSignature> Signatures { get; } = new List<RmsSignature>();
 		public List<RmsIncidentModule> Modules { get; } = new List<RmsIncidentModule>();
 		public List<RmsIncidentResource> Resources { get; } = new List<RmsIncidentResource>();
@@ -48,6 +49,7 @@ namespace Resgrid.Tests.Rms
 		public Mock<IRmsNarrativesRepository> NarrativesRepo { get; } = new Mock<IRmsNarrativesRepository>();
 		public Mock<IRmsValidationIssuesRepository> IssuesRepo { get; } = new Mock<IRmsValidationIssuesRepository>();
 		public Mock<IRmsSubmissionsRepository> SubmissionsRepo { get; } = new Mock<IRmsSubmissionsRepository>();
+		public Mock<IRmsSubmissionExchangesRepository> ExchangesRepo { get; } = new Mock<IRmsSubmissionExchangesRepository>();
 		public Mock<IRmsSignaturesRepository> SignaturesRepo { get; } = new Mock<IRmsSignaturesRepository>();
 		public Mock<IRmsIncidentModulesRepository> ModulesRepo { get; } = new Mock<IRmsIncidentModulesRepository>();
 		public Mock<IRmsIncidentResourcesRepository> ResourcesRepo { get; } = new Mock<IRmsIncidentResourcesRepository>();
@@ -133,6 +135,9 @@ namespace Resgrid.Tests.Rms
 					.Where(x => x.DepartmentId == d && x.State == (int)RmsIncidentAnalysisState.Finalized && x.NerisAnalysisId == null && x.DeletedOn == null).Take(take).ToList());
 			AnalysesRepo.Setup(r => r.CountByStateAsync(It.IsAny<int>(), It.IsAny<RmsIncidentAnalysisState>()))
 				.ReturnsAsync((int d, RmsIncidentAnalysisState state) => Analyses.Count(x => x.DepartmentId == d && x.State == (int)state && x.DeletedOn == null));
+			AnalysesRepo.Setup(r => r.CountVisibleByStateAsync(It.IsAny<int>(), It.IsAny<RmsIncidentAnalysisState>(), It.IsAny<List<int>>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, RmsIncidentAnalysisState state, List<int> groups, string user) => Analyses.Count(x => x.DepartmentId == d && x.State == (int)state && x.DeletedOn == null
+					&& MatchReports(d, new RmsIncidentReportQuery { VisibleGroupIds = groups, ViewerUserId = user }).Any(r => r.RmsIncidentReportId == x.IncidentReportId)));
 
 			// Validation issues: a run replaces every issue of its source
 			IssuesRepo.Setup(r => r.GetForRecordAsync(It.IsAny<int>(), It.IsAny<string>()))
@@ -153,6 +158,62 @@ namespace Resgrid.Tests.Rms
 				});
 
 			// Submissions
+			SubmissionsRepo.Setup(r => r.TryConfirmNotCreatedAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, long version, string destination, DateTime now, CancellationToken c) =>
+				{
+					var row = Submissions.FirstOrDefault(s => s.DepartmentId == d && s.RmsSubmissionId == id && s.RowVersion == version && s.ExternalId == null
+						&& (s.LeaseExpiresOn == null || s.LeaseExpiresOn <= now) && (s.DestinationIdentity == null || s.DestinationIdentity == destination)
+						&& (s.RequiresReconciliation || s.CreatePendingReceipt || s.State == (int)RmsSubmissionState.Failed || s.State == (int)RmsSubmissionState.Rejected));
+					if (row == null) return false;
+					row.DestinationIdentity = destination; row.RequiresReconciliation = false; row.CreatePendingReceipt = false;
+					row.State = (int)RmsSubmissionState.Rejected; row.NextAttemptOn = null; row.LeaseOwner = null; row.LeaseExpiresOn = null;
+					row.CompletedOn = now; row.ModifiedOn = now; row.RowVersion++;
+					return true;
+				});
+			SubmissionsRepo.Setup(r => r.TryBindUnsentAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, long version, string destination, DateTime now, CancellationToken c) =>
+				{
+					var row = Submissions.FirstOrDefault(s => s.DepartmentId == d && s.RmsSubmissionId == id && s.RowVersion == version
+						&& (s.LeaseExpiresOn == null || s.LeaseExpiresOn <= now) && s.DestinationIdentity == null && s.SentOn == null && s.Attempts == 0
+						&& s.ExternalId == null && !s.RequiresReconciliation && !s.CreatePendingReceipt);
+					if (row == null) return false;
+					row.DestinationIdentity = destination; row.State = (int)RmsSubmissionState.Queued; row.NextAttemptOn = now;
+					row.CompletedOn = null; row.ModifiedOn = now; row.RowVersion++;
+					return true;
+				});
+			SubmissionsRepo.Setup(r => r.TryReconcileReceiptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, long version, string externalId, string destination, DateTime now, CancellationToken c) =>
+				{
+					var row = Submissions.FirstOrDefault(s => s.DepartmentId == d && s.RmsSubmissionId == id && s.RowVersion == version
+						&& (s.LeaseExpiresOn == null || s.LeaseExpiresOn <= now) && (s.RequiresReconciliation || s.CreatePendingReceipt));
+					if (row == null) return false;
+					row.ExternalId = externalId; row.DestinationIdentity = destination; row.RequiresReconciliation = false; row.CreatePendingReceipt = false;
+					row.State = (int)RmsSubmissionState.AwaitingDestination; row.NextAttemptOn = now; row.LeaseOwner = null; row.LeaseExpiresOn = null;
+					row.CompletedOn = null; row.ModifiedOn = now; row.RowVersion++;
+					return true;
+				});
+			ExchangesRepo.Setup(r => r.InsertAsync(It.IsAny<RmsSubmissionExchange>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsSubmissionExchange e, CancellationToken c, bool f) => { Exchanges.Add(e); return e; });
+			ExchangesRepo.Setup(r => r.GetForSubmissionAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string id) => Exchanges.Where(e => e.DepartmentId == d && e.SubmissionId == id).ToList());
+			AnalysesRepo.Setup(r => r.TryBumpRowVersionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, long expected, CancellationToken c) =>
+				{
+					var row = Analyses.FirstOrDefault(x => x.DepartmentId == d && x.RmsIncidentAnalysisId == id && x.RowVersion == expected);
+					if (row == null) return false;
+					row.RowVersion = expected + 1;
+					return true;
+				});
+			SubmissionsRepo.Setup(r => r.TryFenceLeaseAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, long version, string owner, DateTime now, CancellationToken c) =>
+				{
+					var row = Submissions.FirstOrDefault(x => x.DepartmentId == d && x.RmsSubmissionId == id && x.RowVersion == version
+						&& !string.IsNullOrEmpty(owner) && x.LeaseOwner == owner && x.LeaseExpiresOn > now
+						&& (x.State == (int)RmsSubmissionState.Queued || x.State == (int)RmsSubmissionState.AwaitingDestination || x.State == (int)RmsSubmissionState.Failed));
+					if (row == null) return false;
+					row.RowVersion++;
+					return true;
+				});
 			SubmissionsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsSubmission>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((RmsSubmission e, CancellationToken c, bool f) => { Submissions.Add(e); return e; });
 			SubmissionsRepo.Setup(r => r.UpdateAsync(It.IsAny<RmsSubmission>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -181,7 +242,9 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((string owner, TimeSpan lease, int batch, DateTime now, CancellationToken c) =>
 				{
 					var due = Submissions
-						.Where(x => (x.State == (int)RmsSubmissionState.Queued || x.State == (int)RmsSubmissionState.AwaitingDestination)
+						.Where(x => (x.State == (int)RmsSubmissionState.Queued || x.State == (int)RmsSubmissionState.AwaitingDestination ||
+							(x.State == (int)RmsSubmissionState.Failed && x.RequiresReconciliation && Exchanges.Any(e => e.SubmissionId == x.RmsSubmissionId && e.Stage == "Response"
+								&& !Exchanges.Any(a => a.ExchangeId == e.ExchangeId && a.Stage == "Applied"))))
 							&& (x.NextAttemptOn == null || x.NextAttemptOn <= now)
 							&& (x.LeaseExpiresOn == null || x.LeaseExpiresOn < now))
 						.OrderBy(x => x.QueuedOn).Take(batch).ToList();
@@ -189,6 +252,7 @@ namespace Resgrid.Tests.Rms
 					{
 						row.LeaseOwner = owner;
 						row.LeaseExpiresOn = now.Add(lease);
+						row.RowVersion++;
 					}
 					return due;
 				});
@@ -205,6 +269,8 @@ namespace Resgrid.Tests.Rms
 		private IEnumerable<RmsIncidentReport> MatchReports(int departmentId, RmsIncidentReportQuery query)
 		{
 			var rows = Reports.Where(x => x.DepartmentId == departmentId && x.DeletedOn == null);
+			if (query?.VisibleGroupIds != null) rows = rows.Where(r => r.AuthorUserId == query.ViewerUserId || r.OwnerUserId == query.ViewerUserId || r.ReviewerUserId == query.ViewerUserId
+				|| Scopes.Any(s => s.DepartmentId == departmentId && s.RecordId == r.RmsIncidentReportId && query.VisibleGroupIds.Contains(s.DepartmentGroupId)));
 			if (query?.States != null && query.States.Count > 0)
 				rows = rows.Where(x => query.States.Contains(x.State));
 			if (query?.CallId != null)

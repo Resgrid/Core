@@ -1,0 +1,61 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordSubmissionView
+@{
+    ViewBag.Title = "Submission history and recovery";
+    var submission = Model.Submission;
+    var canBind = submission.DestinationIdentity == null && submission.SentOn == null && submission.Attempts == 0 && submission.ExternalId == null && !submission.RequiresReconciliation && !submission.CreatePendingReceipt;
+    var ambiguous = submission.RequiresReconciliation || submission.CreatePendingReceipt;
+    var recoverable = ambiguous || submission.State == (int)RmsSubmissionState.Rejected || submission.State == (int)RmsSubmissionState.Failed;
+    var reportController = submission.Destination == RmsSubmissionDestinations.NerisIncidentAnalysis ? "IncidentAnalysis" : "IncidentReports";
+}
+<div class="wrapper wrapper-content">
+    <h2>Submission history and recovery</h2>
+    <p><a asp-controller="@reportController" asp-action="Details" asp-route-id="@submission.RecordId">Return to report</a></p>
+    @if (Model.Message != null) { <p class="alert alert-success" role="status">@Model.Message</p> }
+    @if (Model.Error != null) { <p class="alert alert-danger" role="alert">@Model.Error</p> }
+    <dl>
+        <dt>State</dt><dd>@((RmsSubmissionState)submission.State)</dd>
+        <dt>Destination</dt><dd>@submission.Destination · @submission.DestinationVersion</dd>
+        <dt>Filing identifier</dt><dd>@(submission.ExternalId ?? "No identifier recorded")</dd>
+        <dt>Attempts</dt><dd>@submission.Attempts / @submission.MaxAttempts</dd>
+        <dt>Latest issue</dt><dd>@submission.ErrorSummary</dd>
+    </dl>
+    <h3>Delivery and response history</h3>
+    <p>Times are UTC. Earlier responses remain available after rejection, retry and correction.</p>
+    @if (Model.Exchanges.Count == 0) { <p>No exchange history was recorded for this legacy submission. Its last stored response appears below.</p> }
+    @foreach (var exchange in Model.Exchanges.OrderBy(e => e.OccurredOn).ThenBy(e => e.RmsSubmissionExchangeId))
+    {
+        <details style="margin-bottom:12px">
+            <summary>@exchange.OccurredOn.ToString("u") — @exchange.Operation / @exchange.Stage · attempt @exchange.AttemptNumber</summary>
+            <p>Exchange @exchange.ExchangeId</p>
+            @if (exchange.OutcomeJson != null) { <pre style="white-space:pre-wrap;overflow-wrap:anywhere">@exchange.OutcomeJson</pre><p>Response checksum: @exchange.OutcomeChecksum</p> }
+        </details>
+    }
+    <details><summary>Exact queued payload</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">@submission.PayloadJson</pre><p>Payload checksum: @submission.PayloadChecksum</p></details>
+    @if (submission.ResponseJson != null) { <details><summary>Last stored destination response</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">@submission.ResponseJson</pre><p>Response checksum: @submission.ResponseChecksum</p></details> }
+    @if (canBind || ambiguous)
+    {
+        <h3>@(canBind ? "Bind an unsent submission" : "Verify an existing destination filing")</h3>
+        <p>@(canBind ? "Review the department's current NERIS entity and destination. Binding this unsent submission queues it for delivery." : "Locate the filing in the original destination. Its identifier is checked against the queued report before polling resumes.")</p>
+        <form method="post" asp-action="Reconcile">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="submissionId" value="@submission.RmsSubmissionId" /><input type="hidden" name="RowVersion" value="@submission.RowVersion" />
+            @if (!canBind) { <label for="external-id">Destination filing identifier</label><input id="external-id" name="ExternalId" class="form-control" value="@submission.ExternalId" maxlength="100" required /> }
+            <label for="receipt-reason">Reason</label><textarea id="receipt-reason" name="Reason" class="form-control" maxlength="2000" required></textarea>
+            <button type="submit" class="btn btn-primary">@(canBind ? "Bind and queue" : "Verify receipt")</button>
+        </form>
+    }
+    @if (Model.IsAdministrator && submission.ExternalId == null && recoverable)
+    {
+        <h3>Record externally verified absence of a filing</h3>
+        <p>Use only after the original destination or its support team confirms that this attempted filing was not created. An empty search result alone is insufficient. This records your verification and clears the recovery block; it sends nothing and does not schedule a retry.</p>
+        <form method="post" asp-action="Reconcile">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="submissionId" value="@submission.RmsSubmissionId" /><input type="hidden" name="RowVersion" value="@submission.RowVersion" />
+            <label for="verification-reference">Destination verification or support reference</label><input id="verification-reference" name="VerificationReference" class="form-control" maxlength="500" required />
+            <label for="absence-reason">What was verified, and by whom</label><textarea id="absence-reason" name="Reason" class="form-control" maxlength="2000" required></textarea>
+            <p><label><input type="checkbox" name="ConfirmedNotCreated" value="true" required /> I verified that the original destination did not create this filing.</label></p>
+            <button type="submit" class="btn btn-warning">Record verification without sending</button>
+        </form>
+    }
+</div>

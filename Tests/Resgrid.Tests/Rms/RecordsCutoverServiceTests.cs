@@ -140,7 +140,7 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
-		public async Task Preview_blocks_while_protected_data_is_mid_migration_and_passes_when_enabled()
+		public async Task Preview_blocks_protected_data_until_RMS_protection_is_supported()
 		{
 			FlagOn();
 			_adp.Setup(a => a.GetPolicyByDepartmentIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = Dept, State = (int)DepartmentDataProtectionState.Encrypting });
@@ -149,6 +149,33 @@ namespace Resgrid.Tests.Rms
 			_adp.Setup(a => a.GetPolicyByDepartmentIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = Dept, State = (int)DepartmentDataProtectionState.Enabled });
 			var preview = await _service.GetActivationPreviewAsync(Dept);
 			preview.ProtectedDataPreflight.Should().Be("Enabled");
+			preview.CanActivate.Should().BeFalse();
+			_adp.Verify(a => a.GetPolicyByDepartmentIdAsync(Dept, true), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task Unavailable_protection_policy_blocks_activation_without_writing_cutover_or_permissions()
+		{
+			FlagOn();
+			_adp.Setup(a => a.GetPolicyByDepartmentIdAsync(Dept, true)).ThrowsAsync(new InvalidOperationException("policy unavailable"));
+			var preview = await _service.GetActivationPreviewAsync(Dept);
+			preview.ProtectedDataPreflight.Should().Be("Unknown");
+			preview.CanActivate.Should().BeFalse();
+			var result = await _service.ActivateAsync(Dept, "admin", "go live", true);
+			result.Success.Should().BeFalse();
+			_store.Cutovers.Should().BeEmpty();
+			_store.CutoverEvents.Should().BeEmpty();
+			_rows.Should().BeEmpty();
+			_store.Commits.Should().Be(0);
+		}
+
+		[Test]
+		public async Task A_disabled_protection_policy_allows_activation()
+		{
+			FlagOn();
+			_adp.Setup(a => a.GetPolicyByDepartmentIdAsync(Dept, true)).ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = Dept, State = (int)DepartmentDataProtectionState.Disabled });
+			var preview = await _service.GetActivationPreviewAsync(Dept);
+			preview.ProtectedDataPreflight.Should().Be("NotApplicable");
 			preview.CanActivate.Should().BeTrue();
 		}
 

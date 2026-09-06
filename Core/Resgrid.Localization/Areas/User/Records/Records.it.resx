@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -258,7 +258,7 @@
   <data name="DispatchTimes" xml:space="preserve"><value>Tempi di dispatch</value></data>
   <data name="CallCreated" xml:space="preserve"><value>Chiamata creata</value></data>
   <data name="CallAnswered" xml:space="preserve"><value>Chiamata risposta</value></data>
-  <data name="CallArrival" xml:space="preserve"><value>Primo arrivo</value></data>
+  <data name="CallArrival" xml:space="preserve"><value>Ricezione della chiamata in centrale</value></data>
   <data name="IncidentCleared" xml:space="preserve"><value>Incidente concluso</value></data>
   <data name="DispatchCenter" xml:space="preserve"><value>Centrale operativa</value></data>
   <data name="DeterminantCode" xml:space="preserve"><value>Codice determinante</value></data>

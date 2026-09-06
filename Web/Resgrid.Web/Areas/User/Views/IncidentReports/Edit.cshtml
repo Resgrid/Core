@@ -1,4 +1,4 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Records.IncidentReportEditView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
@@ -33,11 +33,12 @@
 	</div>
 </div>
 
-<form class="form-horizontal" method="post" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User">
+<form data-neris-schema-url="@Url.Action("ContractSchema", "IncidentReports", new { area = "User" })" class="form-horizontal" method="post" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User">
 	@Html.AntiForgeryToken()
 	@Html.HiddenFor(m => m.ReportId)
 	@Html.HiddenFor(m => m.RowVersion)
 	@Html.HiddenFor(m => m.CallId)
+	@await Html.PartialAsync("~/Areas/User/Views/Records/_CustomFields.cshtml", Model.CustomFieldForm)
 
 	<div class="row">
 		<div class="col-lg-9">
@@ -61,7 +62,7 @@
 						<ul style="margin-bottom:0">
 							@foreach (var i in Model.Issues.OrderBy(i => i.Severity))
 							{
-								<li><span class="label @(i.Severity == (int)RmsValidationSeverity.Error ? "label-danger" : "label-warning")">@(((RmsValidationSeverity)i.Severity).ToString())</span> <code>@i.FieldPath</code> @i.Message</li>
+								<li data-neris-issue="@i.FieldPath"><span class="label @(i.Severity == (int)RmsValidationSeverity.Error ? "label-danger" : "label-warning")">@(((RmsValidationSeverity)i.Severity).ToString())</span> <code>@i.FieldPath</code> @i.Message</li>
 							}
 						</ul>
 					</div>
@@ -201,26 +202,30 @@
 							<table class="table table-condensed">
 								<thead><tr><th></th><th>@localizer["Unit"]</th><th>@localizer["UnitNerisId"]</th><th>@localizer["Staffing"]</th><th>@localizer["Dispatched"]</th><th>@localizer["Enroute"]</th><th>@localizer["OnScene"]</th><th>@localizer["Staged"]</th><th>@localizer["CanceledEnroute"]</th><th>@localizer["Cleared"]</th><th>@localizer["ResponseMode"]</th></tr></thead>
 								<tbody>
+									@{ var unitRow = 0; }
 									@for (var i = 0; i < Model.AvailableUnits.Count; i++)
 									{
 										if (!int.TryParse(Model.AvailableUnits[i].Value, out var unitId))
 										{
 											continue;
 										}
+										// The posted index has to be gapless: model binding stops at the first missing
+										// Units[n], so a skipped source row would silently drop every unit after it.
+										var index = unitRow++;
 										var existing = Model.Units.FirstOrDefault(u => u.UnitId == unitId);
 										<tr>
-											<td><input type="hidden" name="Units[@i].UnitId" value="@unitId" /><input type="checkbox" name="Units[@i].Selected" value="true" @(existing != null && existing.Selected ? "checked" : string.Empty) /></td>
+											<td><input type="hidden" name="Units[@index].UnitId" value="@unitId" /><input type="checkbox" name="Units[@index].Selected" value="true" @(existing != null && existing.Selected ? "checked" : string.Empty) /></td>
 											<td>@Model.AvailableUnits[i].Text @badge(NerisFactKeys.UnitTime(unitId, "dispatch"))</td>
-											<td><input type="text" class="form-control input-sm" name="Units[@i].UnitNerisId" value="@existing?.UnitNerisId" maxlength="32" /></td>
-											<td><input type="number" min="0" class="form-control input-sm" name="Units[@i].Staffing" value="@existing?.Staffing" style="width:70px" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].DispatchedOn" value="@Dt(existing?.DispatchedOn)" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].EnrouteOn" value="@Dt(existing?.EnrouteOn)" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].OnSceneOn" value="@Dt(existing?.OnSceneOn)" /> @badge(NerisFactKeys.UnitTime(unitId, "on_scene"))</td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].StagingOn" value="@Dt(existing?.StagingOn)" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].CanceledEnrouteOn" value="@Dt(existing?.CanceledEnrouteOn)" /></td>
-											<td><input type="datetime-local" class="form-control input-sm" name="Units[@i].ClearedOn" value="@Dt(existing?.ClearedOn)" /></td>
+											<td><input type="text" class="form-control input-sm" name="Units[@index].UnitNerisId" value="@existing?.UnitNerisId" maxlength="32" /></td>
+											<td><input type="number" min="0" class="form-control input-sm" name="Units[@index].Staffing" value="@existing?.Staffing" style="width:70px" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].DispatchedOn" value="@Dt(existing?.DispatchedOn)" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].EnrouteOn" value="@Dt(existing?.EnrouteOn)" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].OnSceneOn" value="@Dt(existing?.OnSceneOn)" /> @badge(NerisFactKeys.UnitTime(unitId, "on_scene"))</td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].StagingOn" value="@Dt(existing?.StagingOn)" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].CanceledEnrouteOn" value="@Dt(existing?.CanceledEnrouteOn)" /></td>
+											<td><input type="datetime-local" class="form-control input-sm" name="Units[@index].ClearedOn" value="@Dt(existing?.ClearedOn)" /></td>
 											<td>
-												<select class="form-control input-sm" name="Units[@i].ResponseMode">
+												<select class="form-control input-sm" name="Units[@index].ResponseMode">
 													@foreach (var m in Model.ResponseModes)
 													{
 														<option value="@m.Value" selected="@(m.Value == (existing?.ResponseMode ?? "EMERGENT"))">@m.Text</option>
@@ -331,53 +336,24 @@
 								{
 									<span class="label label-warning">@localizer["Suggested"]</span>
 								}
-								<small><code>@sectionView.PayloadPath</code></small>
+
 							</h4>
 							<p class="text-muted">@sectionView.Reason</p>
 							@foreach (var i in indices)
 							{
 								var row = Model.Modules[i];
-								<div class="form-group">
-									<div class="col-sm-1">
-										<input type="hidden" name="Modules[@i].Kind" value="@row.Kind" />
-										<label class="checkbox-inline"><input type="checkbox" name="Modules[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /></label>
-									</div>
-									<div class="col-sm-3">
-										@if (sectionView.PrimaryCodes.Count > 0)
-										{
-											<select class="form-control input-sm" name="Modules[@i].PrimaryCode">
-												<option value="">@localizer["PrimaryCode"]</option>
-												@foreach (var c in sectionView.PrimaryCodes)
-												{
-													<option value="@c.Value" selected="@(c.Value == row.PrimaryCode)">@c.Text</option>
-												}
-											</select>
-										}
-										else
-										{
-											<input type="text" class="form-control input-sm" name="Modules[@i].PrimaryCode" value="@row.PrimaryCode" placeholder="@localizer["PrimaryCode"]" maxlength="64" />
-										}
-									</div>
-									<div class="col-sm-3">
-										@if (sectionView.SecondaryCodes.Count > 0)
-										{
-											<select class="form-control input-sm" name="Modules[@i].SecondaryCode">
-												<option value="">@localizer["SecondaryCode"]</option>
-												@foreach (var c in sectionView.SecondaryCodes)
-												{
-													<option value="@c.Value" selected="@(c.Value == row.SecondaryCode)">@c.Text</option>
-												}
-											</select>
-										}
-									</div>
-									<div class="col-sm-2"><input type="number" step="any" class="form-control input-sm" name="Modules[@i].Quantity" value="@row.Quantity" placeholder="@localizer["Quantity"]" /></div>
-									<div class="col-sm-1"><input type="text" class="form-control input-sm" name="Modules[@i].QuantityUnit" value="@row.QuantityUnit" placeholder="@localizer["Unit"]" maxlength="32" /></div>
-									<div class="col-sm-2"><input type="datetime-local" class="form-control input-sm" name="Modules[@i].OccurredOn" value="@Dt(row.OccurredOn)" /></div>
-								</div>
-								<div class="form-group">
-									<div class="col-sm-1"></div>
-									<div class="col-sm-11"><textarea class="form-control input-sm" rows="2" name="Modules[@i].DetailJson" placeholder="@sectionView.SchemaName">@row.DetailJson</textarea></div>
-								</div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <input type="hidden" name="Modules[@i].Kind" value="@row.Kind" />
+                                        <input type="hidden" name="Modules[@i].PrimaryCode" value="@row.PrimaryCode" />
+                                        <input type="hidden" name="Modules[@i].SecondaryCode" value="@row.SecondaryCode" />
+                                        <input type="hidden" name="Modules[@i].Quantity" value="@row.Quantity" />
+                                        <input type="hidden" name="Modules[@i].QuantityUnit" value="@row.QuantityUnit" />
+                                        <input type="hidden" name="Modules[@i].OccurredOn" value="@Dt(row.OccurredOn)" />
+                                        <label class="checkbox-inline"><input type="checkbox" name="Modules[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /> @localizer["Section" + sectionView.Kind.ToString()]</label>
+                                        <input type="hidden" name="Modules[@i].DetailJson" value="@row.DetailJson" data-neris-schema="@sectionView.SchemaName" data-neris-root="@("/" + sectionView.PayloadPath.Replace('.', '/') + (sectionView.IsCollection ? "/" + indices.IndexOf(i) : string.Empty))" data-neris-exclude="@(sectionView.Kind == RmsIncidentModuleKind.Fire ? "/location_detail" : sectionView.Kind == RmsIncidentModuleKind.Hazsit ? "/chemicals" : string.Empty)" />
+                                    </div>
+                                </div>
 							}
 						}
 					</div>
@@ -394,7 +370,23 @@
 						{
 							var row = i < Model.Casualties.Count ? Model.Casualties[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentCasualtyRow();
 							var isRescue = row.Kind == (int)RmsCasualtyRescueKind.Rescue;
-							<div class="hr-line-dashed"></div>
+                            @if (Model.CanEditRestricted)
+                            {
+                                <div class="form-group"><div class="col-sm-12">
+                                    <input type="hidden" name="Casualties[@i].CasualtyId" value="@row.CasualtyId" />
+                                    <input type="hidden" name="Casualties[@i].Guided" value="true" />
+                                    <label class="checkbox-inline"><input type="checkbox" name="Casualties[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /> @localizer["CasualtiesAndRescues"] @(i + 1)</label>
+                                    <label>@localizer["PersonnelMember"] <select class="form-control" name="Casualties[@i].PersonnelUserId"><option value=""></option>
+                                    @foreach (var person in Model.Personnel) { <option value="@person.Value" selected="@(person.Value == row.PersonnelUserId)">@person.Text</option> }
+                                    </select></label>
+                                    <label>@localizer["OccurredOn"] <input class="form-control" type="datetime-local" name="Casualties[@i].OccurredOn" value="@Dt(row.OccurredOn)" /></label>
+                                    <input type="hidden" name="Casualties[@i].DetailJson" value="@row.DetailJson" data-neris-schema="CasualtyRescuePayload" data-neris-root="/casualty_rescues/@i" />
+                                </div></div>
+                            }
+                            else
+                            {
+							<input type="hidden" name="Casualties[@i].CasualtyId" value="@row.CasualtyId" />
+<div class="hr-line-dashed"></div>
 							<div class="form-group">
 								<div class="col-sm-1"><label class="checkbox-inline"><input type="checkbox" name="Casualties[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /></label></div>
 								<div class="col-sm-2">
@@ -511,6 +503,8 @@
 									<div class="col-sm-2"><input type="text" class="form-control input-sm" name="Casualties[@i].Race" value="@row.Race" placeholder="@localizer["Race"]" maxlength="32" /></div>
 								</div>
 							}
+
+                            }
 						}
 					</div>
 				</div>
@@ -521,57 +515,12 @@
 						@for (var i = 0; i < Model.Exposures.Count + Resgrid.Web.Areas.User.Models.Records.IncidentReportEditView.ExposureRows; i++)
 						{
 							var row = i < Model.Exposures.Count ? Model.Exposures[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentExposureRow();
-							<div class="hr-line-dashed"></div>
-							<div class="form-group">
-								<div class="col-sm-1"><label class="checkbox-inline"><input type="checkbox" name="Exposures[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /></label></div>
-								<div class="col-sm-3">
-									<select class="form-control input-sm" name="Exposures[@i].DamageType">
-										<option value="">@localizer["DamageType"]</option>
-										@foreach (var c in Model.ExposureDamageTypes)
-										{
-											<option value="@c.Value" selected="@(c.Value == row.DamageType)">@c.Text</option>
-										}
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control input-sm" name="Exposures[@i].ItemType">
-										<option value="">@localizer["ExposureItem"]</option>
-										@foreach (var c in Model.ExposureItemTypes)
-										{
-											<option value="@c.Value" selected="@(c.Value == row.ItemType)">@c.Text</option>
-										}
-									</select>
-								</div>
-								<div class="col-sm-3">
-									<select class="form-control input-sm" name="Exposures[@i].LocationUse">
-										<option value="">@localizer["LocationUse"]</option>
-										@foreach (var c in Model.LocationUses)
-										{
-											<option value="@c.Value" selected="@(c.Value == row.LocationUse)">@c.Text</option>
-										}
-									</select>
-								</div>
-								<div class="col-sm-2"><input type="number" min="0" class="form-control input-sm" name="Exposures[@i].DisplacementCount" value="@row.DisplacementCount" placeholder="@localizer["DisplacementCount"]" /></div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-1"></div>
-								<div class="col-sm-4"><input type="text" class="form-control input-sm" name="Exposures[@i].AddressText" value="@row.AddressText" placeholder="@localizer["AddressText"]" maxlength="512" /></div>
-								<div class="col-sm-3"><input type="text" class="form-control input-sm" name="Exposures[@i].Street" value="@row.Street" placeholder="@localizer["Street"]" maxlength="128" /></div>
-								<div class="col-sm-2"><input type="text" class="form-control input-sm" name="Exposures[@i].Municipality" value="@row.Municipality" placeholder="@localizer["Municipality"]" maxlength="128" /></div>
-								<div class="col-sm-1"><input type="text" class="form-control input-sm" name="Exposures[@i].State" value="@row.State" placeholder="@localizer["StateProvince"]" maxlength="2" /></div>
-								<div class="col-sm-1"><input type="text" class="form-control input-sm" name="Exposures[@i].PostalCode" value="@row.PostalCode" placeholder="@localizer["PostalCode"]" maxlength="16" /></div>
-							</div>
-							<div class="form-group">
-								<div class="col-sm-1"></div>
-								<div class="col-sm-3"><input type="number" step="any" class="form-control input-sm" name="Exposures[@i].EstimatedValue" value="@row.EstimatedValue" placeholder="@localizer["EstimatedValue"]" /></div>
-								<div class="col-sm-3"><input type="number" step="any" class="form-control input-sm" name="Exposures[@i].EstimatedLoss" value="@row.EstimatedLoss" placeholder="@localizer["EstimatedLoss"]" /></div>
-								<div class="col-sm-5">
-									@foreach (var c in Model.DisplacementCauseCodes)
-									{
-										<label class="checkbox-inline"><input type="checkbox" name="Exposures[@i].DisplacementCauses" value="@c.Value" @(row.DisplacementCauses.Contains(c.Value) ? "checked" : string.Empty) /> @c.Text</label>
-									}
-								</div>
-							</div>
+                            <div class="form-group"><div class="col-sm-12">
+                                <label class="checkbox-inline"><input type="checkbox" name="Exposures[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /> @localizer["Exposures"] @(i + 1)</label>
+                                <input type="hidden" name="Exposures[@i].DetailJson" value="@row.DetailJson" data-neris-schema="ExposurePayload" data-neris-root="/exposures/@i" />
+                                <label>@localizer["EstimatedValue"] <input type="number" step="any" class="form-control" name="Exposures[@i].EstimatedValue" value="@row.EstimatedValue" /></label>
+                                <label>@localizer["EstimatedLoss"] <input type="number" step="any" class="form-control" name="Exposures[@i].EstimatedLoss" value="@row.EstimatedLoss" /></label>
+                            </div></div>
 						}
 					</div>
 				</div>
@@ -615,8 +564,8 @@
 				<div class="form-group">
 					<div class="col-sm-12">
 						<a class="btn btn-white" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@Model.ReportId">@commonLocalizer["Cancel"]</a>
-						<button type="submit" class="btn btn-primary" name="ValidateAfterSave" value="false">@localizer["SaveDraft"]</button>
-						<button type="submit" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
+						<button type="submit" disabled data-neris-save="true" class="btn btn-primary" name="ValidateAfterSave" value="false">@localizer["SaveDraft"]</button>
+						<button type="submit" disabled data-neris-save="true" class="btn btn-success" name="ValidateAfterSave" value="true">@localizer["SaveAndValidate"]</button>
 					</div>
 				</div>
 			</div>
@@ -633,4 +582,8 @@
 			</div>
 		</div>
 	</div>
+<noscript><p role="alert">Enable JavaScript to load the report fields and save this form.</p></noscript>
 </form>
+
+<link rel="stylesheet" href="~/css/neris-guided-form.css" asp-append-version="true" />
+<script src="~/js/neris-guided-form.js" asp-append-version="true" defer></script>

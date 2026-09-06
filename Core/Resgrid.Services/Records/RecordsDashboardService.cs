@@ -28,10 +28,11 @@ namespace Resgrid.Services.Records
 		private readonly IRmsDisclosureRequestsRepository _disclosures;
 		private readonly INerisProfileService _neris;
 		private readonly ICallsService _calls;
+		private readonly IRecordsAuthorizationService _authorization;
 
 		public RecordsDashboardService(IRmsOperationalRecordsRepository records, IRmsIncidentReportsRepository incidentReports,
 			IRmsIncidentAnalysesRepository analyses, IRmsRecordDueStatesRepository dueStates, IRmsDisclosureRequestsRepository disclosures,
-			INerisProfileService neris, ICallsService calls)
+			INerisProfileService neris, ICallsService calls, IRecordsAuthorizationService authorization)
 		{
 			_records = records;
 			_incidentReports = incidentReports;
@@ -40,41 +41,45 @@ namespace Resgrid.Services.Records
 			_disclosures = disclosures;
 			_neris = neris;
 			_calls = calls;
+			_authorization = authorization;
 		}
 
 		public async Task<RecordsDashboard> GetAsync(int departmentId, string userId, CancellationToken cancellationToken = default)
 		{
 			var dashboard = new RecordsDashboard();
 			var now = DateTime.UtcNow;
+			if (!await _authorization.IsActiveMemberAsync(userId, departmentId)) throw new UnauthorizedAccessException();
+			var visible = (await _authorization.GetVisibleGroupIdsAsync(userId, departmentId))?.ToList();
 
 			await SafeAsync(dashboard, "operational queues", async () =>
 			{
-				dashboard.OperationalDrafts = await _records.CountByDepartmentAsync(departmentId, new[] { (int)RmsRecordState.Draft });
-				dashboard.OperationalAwaitingReview = await _records.CountByDepartmentAsync(departmentId, new[] { (int)RmsRecordState.ReadyForReview });
-				dashboard.OperationalReturned = await _records.CountByDepartmentAsync(departmentId, new[] { (int)RmsRecordState.Returned });
+				dashboard.OperationalDrafts = await _records.CountVisibleAsync(departmentId, new[] { (int)RmsRecordState.Draft }, visible, userId);
+				dashboard.OperationalAwaitingReview = await _records.CountVisibleAsync(departmentId, new[] { (int)RmsRecordState.ReadyForReview }, visible, userId);
+				dashboard.OperationalReturned = await _records.CountVisibleAsync(departmentId, new[] { (int)RmsRecordState.Returned }, visible, userId);
 			});
 
 			await SafeAsync(dashboard, "incident report queues", async () =>
 			{
-				dashboard.IncidentIncomplete = await CountReportsAsync(departmentId, RmsRecordState.Draft, RmsRecordState.Returned);
-				dashboard.IncidentAwaitingReview = await CountReportsAsync(departmentId, RmsRecordState.ReadyForReview, RmsRecordState.Approved);
-				dashboard.IncidentSubmitted = await CountReportsAsync(departmentId, RmsRecordState.Submitted);
-				dashboard.IncidentAccepted = await CountReportsAsync(departmentId, RmsRecordState.Accepted);
-				dashboard.IncidentRejected = await CountReportsAsync(departmentId, RmsRecordState.Rejected);
+				dashboard.IncidentIncomplete = await CountReportsAsync(departmentId, visible, userId, RmsRecordState.Draft, RmsRecordState.Returned);
+				dashboard.IncidentAwaitingReview = await CountReportsAsync(departmentId, visible, userId, RmsRecordState.ReadyForReview, RmsRecordState.Approved);
+				dashboard.IncidentSubmitted = await CountReportsAsync(departmentId, visible, userId, RmsRecordState.Submitted);
+				dashboard.IncidentAccepted = await CountReportsAsync(departmentId, visible, userId, RmsRecordState.Accepted);
+				dashboard.IncidentRejected = await CountReportsAsync(departmentId, visible, userId, RmsRecordState.Rejected);
 			});
 
 			await SafeAsync(dashboard, "overdue obligations", async () =>
 			{
-				dashboard.Overdue = await _dueStates.CountOverdueAsync(departmentId);
+				dashboard.Overdue = await _dueStates.CountVisibleOverdueAsync(departmentId, visible, userId);
 			});
 
 			await SafeAsync(dashboard, "incident analyses", async () =>
 			{
-				dashboard.AnalysesAwaitingFiling = await _analyses.CountByStateAsync(departmentId, RmsIncidentAnalysisState.Finalized);
+				dashboard.AnalysesAwaitingFiling = await _analyses.CountVisibleByStateAsync(departmentId, RmsIncidentAnalysisState.Finalized, visible, userId);
 			});
 
 			await SafeAsync(dashboard, "disclosure requests", async () =>
 			{
+				if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordDisclosures)) return;
 				var open = 0;
 				foreach (var state in new[] { RmsDisclosureState.Received, RmsDisclosureState.Scoping, RmsDisclosureState.InReview, RmsDisclosureState.Produced })
 					open += await _disclosures.CountByStateAsync(departmentId, state);
@@ -83,6 +88,12 @@ namespace Resgrid.Services.Records
 				dashboard.DisclosuresOverdue = await _disclosures.CountOverdueAsync(departmentId, now);
 			});
 
+			var currentScope = await _authorization.GetVisibleGroupIdsAsync(userId, departmentId);
+			if (!await _authorization.IsActiveMemberAsync(userId, departmentId)
+				|| (visible == null) != (currentScope == null) || visible != null && !visible.ToHashSet().SetEquals(currentScope))
+				throw new UnauthorizedAccessException("Record access changed while the dashboard was loading. Reload the dashboard.");
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordDisclosures))
+			{ dashboard.DisclosuresOpen = 0; dashboard.DisclosuresOverdue = 0; }
 			return dashboard;
 		}
 
@@ -152,11 +163,12 @@ namespace Resgrid.Services.Records
 			return coverage;
 		}
 
-		private async Task<int> CountReportsAsync(int departmentId, params RmsRecordState[] states)
+		private async Task<int> CountReportsAsync(int departmentId, List<int> visible, string userId, params RmsRecordState[] states)
 		{
 			return await _incidentReports.CountAsync(departmentId, new RmsIncidentReportQuery
 			{
 				States = states.Select(s => (int)s).ToList(),
+				VisibleGroupIds = visible, ViewerUserId = userId,
 				Take = 1
 			});
 		}

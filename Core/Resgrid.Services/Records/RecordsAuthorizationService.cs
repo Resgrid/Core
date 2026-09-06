@@ -19,9 +19,6 @@ namespace Resgrid.Services.Records
 	/// </summary>
 	public class RecordsAuthorizationService : IRecordsAuthorizationService
 	{
-		private const string VisibleGroupsCacheKey = "RmsVisibleGroups_{0}_{1}";
-		private static readonly TimeSpan VisibleGroupsCacheLength = TimeSpan.FromMinutes(2);
-
 		private readonly IPermissionsService _permissionsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
@@ -33,11 +30,13 @@ namespace Resgrid.Services.Records
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IRmsLegacyStatsRepository _legacyStats;
 		private readonly IRmsIncidentReportsRepository _incidentReports;
+		private readonly Lazy<IAuthorizationService> _sourceAuthorization;
 
 		public RecordsAuthorizationService(IPermissionsService permissionsService, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService,
 			IRmsOperationalRecordsRepository recordsRepository, IRmsRecordGroupScopesRepository groupScopesRepository,
-			IRmsRecordParticipantsRepository participantsRepository, ICacheProvider cacheProvider, IRmsLegacyStatsRepository legacyStats, IRmsIncidentReportsRepository incidentReports)
+			IRmsRecordParticipantsRepository participantsRepository, ICacheProvider cacheProvider, IRmsLegacyStatsRepository legacyStats, IRmsIncidentReportsRepository incidentReports,
+			Lazy<IAuthorizationService> sourceAuthorization)
 		{
 			_legacyStats = legacyStats;
 			_incidentReports = incidentReports;
@@ -50,11 +49,67 @@ namespace Resgrid.Services.Records
 			_groupScopesRepository = groupScopesRepository;
 			_participantsRepository = participantsRepository;
 			_cacheProvider = cacheProvider;
+			_sourceAuthorization = sourceAuthorization;
+		}
+
+		public async Task<bool> IsActiveMemberAsync(string userId, int departmentId)
+		{
+			if (string.IsNullOrWhiteSpace(userId)) return false;
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, true);
+			return member != null && !member.IsDeleted && !member.IsDisabled.GetValueOrDefault();
+		}
+
+		public async Task<bool> IsDepartmentAdminAsync(string userId, int departmentId)
+		{
+			try
+			{
+				var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, true);
+				if (member == null || member.IsDeleted || member.IsDisabled.GetValueOrDefault()) return false;
+				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, true);
+				return member.IsAdmin.GetValueOrDefault() || string.Equals(department?.ManagingUserId, userId, StringComparison.Ordinal);
+			}
+			catch (Exception ex) { Logging.LogException(ex); return false; }
+		}
+
+		public async Task<bool> HasPermissionAsync(string userId, int departmentId, PermissionTypes permissionType)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(userId)) return false;
+				var descriptor = RecordPermissionCatalog.Get(permissionType);
+				if (descriptor == null) return false;
+				var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, true);
+				if (member == null || member.IsDeleted || member.IsDisabled.GetValueOrDefault()) return false;
+				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, true);
+				var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, permissionType);
+				var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+				var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+				return RecordPermissionEvaluation.IsSatisfied(permission?.Action ?? (int)descriptor.NoRowDefault, permission?.Data,
+					member != null && !member.IsDeleted && !member.IsDisabled.GetValueOrDefault() && (member.IsAdmin.GetValueOrDefault() || string.Equals(department?.ManagingUserId, userId, StringComparison.Ordinal)),
+					group != null && group.IsUserGroupAdmin(userId), roles);
+			}
+			catch (Exception ex) { Logging.LogException(ex); return false; }
+		}
+
+		public async Task<bool> CanReadSourceCallAsync(string userId, int departmentId, Call call)
+		{
+			return call != null && call.DepartmentId == departmentId && await IsActiveMemberAsync(userId, departmentId)
+				&& await _sourceAuthorization.Value.CanUserViewCallAsync(userId, call.CallId);
+		}
+		public async Task<bool> CanCreateSourceCallAsync(string userId, int departmentId) =>
+			await IsActiveMemberAsync(userId, departmentId) && await _sourceAuthorization.Value.CanUserCreateCallAsync(userId, departmentId);
+		public async Task<bool> CanUseSourceInventoryAsync(string userId, int departmentId, int? groupId = null)
+		{
+			if (!await IsActiveMemberAsync(userId, departmentId)) return false;
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.AdjustInventory);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			return _permissionsService.IsUserAllowed(permission, departmentId, groupId, group?.DepartmentGroupId,
+				await IsDepartmentAdminAsync(userId, departmentId), group?.IsUserGroupAdmin(userId) == true, await _personnelRolesService.GetRolesForUserAsync(userId, departmentId));
 		}
 
 		public async Task<bool> IsGroupScopedAsync(int departmentId)
 		{
-			if (await _departmentSettingsService.GetRecordsGroupVisibilityModeAsync(departmentId) != RecordsGroupVisibilityMode.GroupScoped)
+			if (await _departmentSettingsService.GetRecordsGroupVisibilityModeAsync(departmentId, true) != RecordsGroupVisibilityMode.GroupScoped)
 				return false;
 
 			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ViewGroupRecords);
@@ -67,14 +122,15 @@ namespace Resgrid.Services.Records
 			{
 				try
 				{
+					if (!await IsActiveMemberAsync(userId, departmentId)) return new List<int>();
 					if (!await IsGroupScopedAsync(departmentId))
 						return null;
 
-					var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+					var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, true);
 					if (department == null)
 						return new List<int>();
 
-					if (department.IsUserAnAdmin(userId))
+					if (await IsDepartmentAdminAsync(userId, departmentId))
 						return null;
 
 					var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ViewGroupRecords);
@@ -96,35 +152,55 @@ namespace Resgrid.Services.Records
 				}
 			}
 
-			if (Config.SystemBehaviorConfig.CacheEnabled)
-			{
-				var cached = await _cacheProvider.RetrieveAsync<VisibleGroupsCacheEntry>(string.Format(VisibleGroupsCacheKey, departmentId, userId),
-					async () => new VisibleGroupsCacheEntry { DepartmentId = departmentId, Unrestricted = (await resolve()) == null, GroupIds = await resolve() ?? new List<int>() },
-					VisibleGroupsCacheLength);
-
-				if (cached != null && cached.DepartmentId == departmentId)
-					return cached.Unrestricted ? null : cached.GroupIds;
-			}
-
 			return await resolve();
+		}
+
+		public async Task<string> GetReadScopeStampAsync(string userId, int departmentId)
+		{
+			try
+			{
+				if (!await IsActiveMemberAsync(userId, departmentId)) return null;
+				var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+				var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId) ?? new List<PersonnelRole>();
+				var permissions = await _permissionsService.GetAllPermissionsForDepartmentAsync(departmentId) ?? new List<Permission>();
+				var visible = await GetVisibleGroupIdsAsync(userId, departmentId);
+				var shares = visible == null ? Enumerable.Empty<RmsRecordShare>()
+					: await _groupScopesRepository.GetEffectiveSharesAsync(departmentId, visible) ?? Enumerable.Empty<RmsRecordShare>();
+				var stamp = RecordSnapshotSerializer.Checksum(Newtonsoft.Json.JsonConvert.SerializeObject(new
+				{
+					DepartmentId = departmentId, UserId = userId,
+					Administrator = await IsDepartmentAdminAsync(userId, departmentId),
+					GroupId = group?.DepartmentGroupId, GroupAdministrator = group?.IsUserGroupAdmin(userId) == true,
+					Groups = visible?.Distinct().OrderBy(id => id).ToArray(),
+					Shares = shares.OrderBy(s => s.RmsRecordShareId, StringComparer.Ordinal)
+						.Select(s => new { s.RmsRecordShareId, s.RecordId, s.DepartmentGroupId, s.ExpiresOn, s.RowVersion }).ToArray(),
+					Roles = roles.Select(role => role.PersonnelRoleId).Distinct().OrderBy(id => id).ToArray(),
+					Permissions = permissions.Where(p => RecordPermissionCatalog.Get((PermissionTypes)p.PermissionType) != null)
+						.OrderBy(p => p.PermissionType).ThenBy(p => p.Action).ThenBy(p => p.Data, StringComparer.Ordinal)
+						.Select(p => new { p.PermissionType, p.Action, p.Data, p.LockToGroup }).ToArray()
+				}));
+				return await IsActiveMemberAsync(userId, departmentId) ? stamp : null;
+			}
+			catch (Exception ex) { Logging.LogException(ex, "Record cache scope evaluation failed; refusing synchronization."); return null; }
 		}
 
 		public async Task<bool> CanUserViewRecordAsync(string userId, string recordId, int departmentId)
 		{
 			try
 			{
+				if (!await IsActiveMemberAsync(userId, departmentId)) return false;
 				// Both aggregates share the id space, the group-scope table and this rule (RMS-2 incident reports have no participants).
 				string author, owner, reviewer, approver;
 				var isOperational = true;
 				var record = await _recordsRepository.GetByIdForDepartmentAsync(departmentId, recordId);
-				if (record != null && !record.DeletedOn.HasValue)
+				if (record != null && !record.DeletedOn.HasValue && !record.PurgedOn.HasValue)
 				{
 					author = record.AuthorUserId; owner = record.OwnerUserId; reviewer = record.ReviewerUserId; approver = record.ApproverUserId;
 				}
 				else
 				{
 					var report = await _incidentReports.GetByIdForDepartmentAsync(departmentId, recordId);
-					if (report == null || report.DeletedOn.HasValue)
+					if (report == null || report.DeletedOn.HasValue || report.PurgedOn.HasValue)
 						return false;
 					isOperational = false;
 					author = report.AuthorUserId; owner = report.OwnerUserId; reviewer = report.ReviewerUserId; approver = null;
@@ -167,11 +243,11 @@ namespace Resgrid.Services.Records
 			{
 				// The record must exist, live, in the granted department. Both aggregates share the id space.
 				var record = await _recordsRepository.GetByIdForDepartmentAsync(grant.DepartmentId, recordId);
-				var exists = record != null && !record.DeletedOn.HasValue;
+				var exists = record != null && !record.DeletedOn.HasValue && !record.PurgedOn.HasValue;
 				if (!exists)
 				{
 					var report = await _incidentReports.GetByIdForDepartmentAsync(grant.DepartmentId, recordId);
-					exists = report != null && !report.DeletedOn.HasValue;
+					exists = report != null && !report.DeletedOn.HasValue && !report.PurgedOn.HasValue;
 				}
 
 				if (!exists)

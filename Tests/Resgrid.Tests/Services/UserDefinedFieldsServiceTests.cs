@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
@@ -102,6 +103,7 @@ namespace Resgrid.Tests.Services
 				};
 
 				await _udfService.SaveDefinitionAsync(400, (int)UdfEntityType.Call, fields, "user1");
+				fieldId = (await _udfService.GetFieldsForActiveDefinitionAsync(400, (int)UdfEntityType.Call)).Single().UdfFieldId;
 
 				var values = new List<UdfFieldValue>
 				{
@@ -152,6 +154,7 @@ namespace Resgrid.Tests.Services
 				};
 
 				var v1 = await _udfService.SaveDefinitionAsync(500, (int)UdfEntityType.Unit, fields, "user1");
+				fieldToRemoveId = (await _udfService.GetFieldsForActiveDefinitionAsync(500, (int)UdfEntityType.Unit)).Single(f => f.Name == "fieldToRemove").UdfFieldId;
 
 				var v2 = await _udfService.DeleteFieldFromDefinitionAsync(fieldToRemoveId, 500, "user1");
 

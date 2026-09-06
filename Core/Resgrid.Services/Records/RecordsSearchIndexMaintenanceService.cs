@@ -27,10 +27,11 @@ namespace Resgrid.Services.Records
 		private readonly IRecordsSearchIndexer _indexer;
 		private readonly IDepartmentDataProtectionService _dataProtection;
 		private readonly IDepartmentSettingsService _departmentSettings;
+		private readonly IRmsRetentionRepository _retention;
 
 		public RecordsSearchIndexMaintenanceService(IRmsDepartmentCutoversRepository cutovers, IRmsRecordSearchProjectionsRepository projections,
 			IRmsSearchIndexStatesRepository states, IRmsOperationalRecordDetailsRepository details, IRecordsSearchIndexer indexer,
-			IDepartmentDataProtectionService dataProtection, IDepartmentSettingsService departmentSettings)
+			IDepartmentDataProtectionService dataProtection, IDepartmentSettingsService departmentSettings, IRmsRetentionRepository retention)
 		{
 			_cutovers = cutovers;
 			_projections = projections;
@@ -39,15 +40,17 @@ namespace Resgrid.Services.Records
 			_indexer = indexer;
 			_dataProtection = dataProtection;
 			_departmentSettings = departmentSettings;
+			_retention = retention;
 		}
 
 		public async Task<RecordsSearchIndexSweepResult> SweepAsync(CancellationToken cancellationToken = default)
 		{
 			var result = new RecordsSearchIndexSweepResult();
+			await ErasePurgedSourcesAsync(result, cancellationToken);
 			if (!SearchConfig.Enabled)
 			{
 				result.Skipped = true;
-				result.Message = "Search host disabled.";
+				result.Message = $"Search indexing disabled; committed erasure acknowledged for {result.SearchErasuresCompleted} report(s); errors {result.Errors}.";
 				return result;
 			}
 
@@ -89,11 +92,51 @@ namespace Resgrid.Services.Records
 				}
 			}
 
-			if (result.DocumentsIndexed > 0 || result.DocumentsDeleted > 0 || result.DepartmentsRebuilt > 0)
-				await _indexer.CommitAsync(cancellationToken);
-
-			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt}; indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; errors {result.Errors}.";
+			result.Message = $"Checked {result.DepartmentsChecked} department(s); rebuilt {result.DepartmentsRebuilt}; indexed {result.DocumentsIndexed}; deleted {result.DocumentsDeleted}; committed erasures {result.SearchErasuresCompleted}; errors {result.Errors}.";
 			return result;
+		}
+
+		private async Task ErasePurgedSourcesAsync(RecordsSearchIndexSweepResult result, CancellationToken cancellationToken)
+		{
+			RmsSearchErasureTarget after = null;
+			while (true)
+			{
+				var page = await _retention.GetPendingSearchErasuresAsync(100, after, cancellationToken) ?? new List<RmsSearchErasureTarget>();
+				if (page.Count == 0) return;
+				var completed = new List<RmsSearchErasureTarget>();
+				foreach (var target in page)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					try
+					{
+						foreach (var id in target.SourceIds.Append(target.RecordId).Distinct(StringComparer.Ordinal))
+							await _indexer.DeleteAsync(target.DepartmentId, (int)RmsSearchSourceType.Record, id, cancellationToken);
+						completed.Add(target);
+					}
+					catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+					catch (Exception ex) { result.Errors++; Logging.LogException(ex, "A purged record's search erasure remains pending."); }
+				}
+				if (completed.Count > 0)
+				{
+					var committed = false;
+					try
+					{
+						await _indexer.ExpungeDeletesAsync(cancellationToken);
+						committed = true;
+					}
+					catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+					catch (Exception ex) { result.Errors++; Logging.LogException(ex, "Search erasure commit failed; it will be retried."); }
+					if (committed) foreach (var target in completed)
+					{
+						try { if (await _retention.CompleteSearchErasureAsync(target, DateTime.UtcNow, cancellationToken)) result.SearchErasuresCompleted++; }
+						catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+						catch (Exception ex) { result.Errors++; Logging.LogException(ex, "A search erasure acknowledgement failed; it will be retried."); }
+					}
+				}
+				// Failure does not starve later parents. Unacknowledged targets remain durable for the next sweep.
+				after = page[page.Count - 1];
+				if (page.Count < 100) return;
+			}
 		}
 
 		public async Task<RecordsSearchIndexSweepResult> RebuildDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)
@@ -109,7 +152,6 @@ namespace Resgrid.Services.Records
 			var generation = await ComputeGenerationAsync(departmentId);
 			var state = await _states.GetAsync(departmentId, RmsSearchIndexState.RecordsIndexName);
 			await RebuildAsync(departmentId, generation, state, result, cancellationToken);
-			await _indexer.CommitAsync(cancellationToken);
 			result.Message = $"Rebuilt department {departmentId}: {result.DocumentsIndexed} document(s).";
 			return result;
 		}
@@ -150,10 +192,14 @@ namespace Resgrid.Services.Records
 						break;
 				}
 
+				// A durable database checkpoint must never lead the committed Lucene segments. Replaying committed
+				// documents after a failed state save is safe; advancing state before an index commit loses changes.
+				await _indexer.CommitAsync(cancellationToken);
 				state.State = (int)RmsSearchIndexBuildState.Ready;
 				state.DocumentCount = indexed;
 				state.LastRebuiltOn = DateTime.UtcNow;
-				state.LastIndexedModifiedOn = lastModified;
+				// Catch up writes made while rebuilding, including a row changed after its page was read.
+				state.LastIndexedModifiedOn = lastModified.HasValue && lastModified.Value > now ? now : lastModified;
 				state.ModifiedOn = DateTime.UtcNow;
 				await _states.SaveOrUpdateAsync(state, cancellationToken, true);
 
@@ -172,14 +218,18 @@ namespace Resgrid.Services.Records
 		private async Task CatchUpAsync(int departmentId, string generation, RmsSearchIndexState state, RecordsSearchIndexSweepResult result, CancellationToken cancellationToken)
 		{
 			var includeNarrative = await NarrativeAllowedAsync(departmentId);
-			var since = state.LastIndexedModifiedOn;
-			var batch = Math.Max(50, SearchConfig.IndexBatchSize);
+			// Replay the checkpoint's timestamp boundary to include rows committed at the same database timestamp
+			// after the preceding sweep drained it. Within a sweep use the repository's timestamp/id keyset.
+			var checkpoint = state.LastIndexedModifiedOn;
+			var since = checkpoint.HasValue && checkpoint.Value > DateTime.MinValue.AddSeconds(1) ? checkpoint.Value.AddSeconds(-1) : checkpoint;
+			string sinceId = null;
+			var batch = Math.Max(50, Math.Min(5000, SearchConfig.IndexBatchSize));
 			var touched = false;
 
 			while (true)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
-				var page = (await _projections.GetModifiedSinceAsync(departmentId, since, batch))?.ToList() ?? new List<RmsRecordSearchProjection>();
+				var page = (await _projections.GetModifiedSinceAsync(departmentId, since, batch, sinceId))?.ToList() ?? new List<RmsRecordSearchProjection>();
 				if (page.Count == 0)
 					break;
 
@@ -194,10 +244,12 @@ namespace Resgrid.Services.Records
 				result.DocumentsDeleted += deleted.Count;
 				touched = true;
 
-				var pageMax = page.Max(p => p.ModifiedOn);
-				if (since.HasValue && pageMax <= since.Value)
-					break;
-				since = pageMax;
+				var last = page[page.Count - 1];
+				if (since.HasValue && (last.ModifiedOn < since.Value || last.ModifiedOn == since.Value && string.Equals(last.RmsRecordSearchProjectionId, sinceId, StringComparison.Ordinal)))
+					throw new InvalidOperationException("The search change cursor did not advance; its checkpoint was not saved.");
+				since = last.ModifiedOn;
+				sinceId = last.RmsRecordSearchProjectionId;
+				checkpoint = Max(checkpoint, last.ModifiedOn);
 
 				if (page.Count < batch)
 					break;
@@ -205,7 +257,8 @@ namespace Resgrid.Services.Records
 
 			if (touched)
 			{
-				state.LastIndexedModifiedOn = since;
+				await _indexer.CommitAsync(cancellationToken);
+				state.LastIndexedModifiedOn = checkpoint;
 				state.DocumentCount = await _indexer.CountDocumentsAsync(departmentId);
 				state.ModifiedOn = DateTime.UtcNow;
 				await _states.SaveOrUpdateAsync(state, cancellationToken, true);

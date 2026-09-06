@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Services;
 using Resgrid.Providers.Neris;
 using Resgrid.Services.Records;
 
@@ -30,6 +31,7 @@ namespace Resgrid.Tests.Rms
 		private bool _submissionEnabled;
 		private IncidentAnalysisService _service;
 		private RmsIncidentReport _report;
+		private Mock<IRecordsAuthorizationService> _authorization;
 
 		[SetUp]
 		public void SetUp()
@@ -67,10 +69,19 @@ namespace Resgrid.Tests.Rms
 				_store.ModulesRepo.Object, _store.PropertiesRepo.Object, _store.VehiclesRepo.Object,
 				_store.IssuesRepo.Object, _store.SubmissionsRepo.Object, _store.Shared.RevisionsRepo.Object,
 				_store.Shared.AuditsRepo.Object, _store.UnitOfWork.Object, _neris.Object,
-				new NerisMappingService(), new NerisValidationService(Mock.Of<INerisApiClient>(), _neris.Object));
+				new NerisMappingService(), new NerisValidationService(Mock.Of<INerisApiClient>(), _neris.Object), Authorized());
 		}
 
-		private static IncidentAnalysisDraftInput CompleteDraft()
+		private IRecordsAuthorizationService Authorized()
+        {
+            var auth = new Mock<IRecordsAuthorizationService>();
+            auth.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
+            auth.Setup(a => a.CanUserViewRecordAsync(It.IsAny<string>(), It.IsAny<string>(), Dept)).ReturnsAsync(true);
+			_authorization = auth;
+            return auth.Object;
+        }
+
+        private static IncidentAnalysisDraftInput CompleteDraft()
 		{
 			return new IncidentAnalysisDraftInput
 			{
@@ -82,16 +93,16 @@ namespace Resgrid.Tests.Rms
 					new IncidentPropertyInput
 					{
 						LocationUse = "RESIDENTIAL||DETATCHED_SINGLE_FAMILY_DWELLING", ConstructionType = "TYPE_VB", DamageType = "MAJOR_DAMAGE",
-						FireSpread = "BUILDING", EstimatedValue = 300000m, EstimatedLoss = 120000m, ContentsValue = 50000m, ContentsLoss = 20000m
+						FireSpread = "BUILDING", EstimatedValue = 300000m, EstimatedLoss = 120000m, ContentsValue = 50000m, ContentsLoss = 20000m, DetailJson = "{\"parcel_id\":\"test-parcel\",\"structures\":[{\"ignition_source\":true,\"location\":{\"number\":100,\"street\":\"Main St\",\"incorporated_municipality\":\"Springfield\",\"state\":\"IL\"}}]}"
 					}
 				},
 				Vehicles = new List<IncidentVehicleInput>
 				{
-					new IncidentVehicleInput { VehicleKind = "AUTOMOBILE", Make = "FORD", Model = "F-150", ModelYear = 2019, DamageType = "DAMAGED_NOT_DRIVABLE", Vin = "1FTFW1E85KFA00000", LicensePlate = "ABC1234", LicenseState = "IL", EstimatedValue = 20000m, EstimatedLoss = 20000m }
+					new IncidentVehicleInput { VehicleKind = "AUTOMOBILE", Make = "FORD", Model = "F-150", ModelYear = 2019, BodyStyle = "PICKUP", DamageType = "DAMAGED_NOT_DRIVABLE", Vin = "1FTFW1E85KFA00000", LicensePlate = "ABC1234", LicenseState = "IL", EstimatedValue = 20000m, EstimatedLoss = 20000m }
 				},
 				Modules = new List<IncidentModuleInput>
 				{
-					new IncidentModuleInput { Kind = RmsIncidentModuleKind.StructureFireOrigin, PrimaryCode = "KITCHEN", DetailJson = "{\"room_of_origin\":\"KITCHEN\"}" }
+					new IncidentModuleInput { Kind = RmsIncidentModuleKind.StructureFireOrigin, PrimaryCode = "KITCHEN", DetailJson = "{\"room_of_origin\":\"KITCHEN\",\"cause\":\"COOKING||OIL_GREASE\"}" }
 				}
 			};
 		}
@@ -129,6 +140,7 @@ namespace Resgrid.Tests.Rms
 			saved.Vehicles.Single().Vin.Should().Be("1FTFW1E85KFA00000");
 
 			var input = CompleteDraft();
+			input.Vehicles[0].VehicleId = saved.Vehicles.Single().RmsIncidentVehicleId;
 			input.Vehicles[0].Vin = "SOMETHINGELSE";
 			input.Vehicles[0].LicensePlate = "ZZZ9999";
 			input.Vehicles[0].Model = "F-250";
@@ -154,9 +166,57 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Reordering_vehicles_keeps_hidden_identifiers_with_their_original_rows()
+		{
+			var started = await _service.StartForReportAsync(Dept, "author", _report.RmsIncidentReportId);
+			var input = CompleteDraft();
+			input.Vehicles.Add(new IncidentVehicleInput { VehicleKind = "AUTOMOBILE", Model = "Second", Vin = "SECOND-VIN", LicensePlate = "SECOND" });
+			var saved = await _service.SaveDraftAsync(Dept, "author", started.Analysis.RmsIncidentAnalysisId, started.Analysis.RowVersion, input, true);
+			input.Vehicles[0].VehicleId = saved.Vehicles[0].RmsIncidentVehicleId;
+			input.Vehicles[1].VehicleId = saved.Vehicles[1].RmsIncidentVehicleId;
+			input.Vehicles.ForEach(v => { v.Vin = null; v.LicensePlate = null; });
+			input.Vehicles.Reverse();
+			var reordered = await _service.SaveDraftAsync(Dept, "author", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion, input, false);
+			reordered.Vehicles[0].Model.Should().Be("Second");
+			reordered.Vehicles[0].Vin.Should().Be("SECOND-VIN");
+			reordered.Vehicles[1].Vin.Should().Be("1FTFW1E85KFA00000");
+		}
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task Hidden_vehicle_rows_cannot_be_erased_or_replaced_by_a_foreign_identifier(bool foreign)
+		{
+			var saved = await StartAndFillAsync();
+			var input = CompleteDraft();
+			if (foreign) input.Vehicles[0].VehicleId = "another-analysis-row"; else input.Vehicles.Clear();
+			var act = () => _service.SaveDraftAsync(Dept, "author", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion, input, false);
+			if (foreign) await act.Should().ThrowAsync<ArgumentException>(); else await act.Should().ThrowAsync<UnauthorizedAccessException>();
+			_store.Vehicles.Single(v => v.RevisionId == null).Vin.Should().Be("1FTFW1E85KFA00000");
+		}
+
+		[Test]
+		public async Task A_stale_restricted_flag_cannot_override_the_live_permission()
+		{
+			var saved = await StartAndFillAsync();
+			_authorization.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, PermissionTypes.ViewRestrictedRecords)).ReturnsAsync(false);
+			var input = CompleteDraft(); input.Vehicles[0].VehicleId = saved.Vehicles[0].RmsIncidentVehicleId; input.Vehicles[0].Vin = "FORGED";
+			var result = await _service.SaveDraftAsync(Dept, "author", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion, input, true);
+			result.Vehicles[0].Vin.Should().Be("1FTFW1E85KFA00000");
+		}
+
+		[Test]
+		public async Task Purged_parent_cannot_be_retrieved_as_an_analysis_or_built_into_a_new_snapshot()
+		{
+			var saved = await StartAndFillAsync(); _report.PurgedOn = DateTime.UtcNow;
+			(await _service.GetAsync(Dept, saved.Analysis.RmsIncidentAnalysisId, true)).Should().BeNull();
+			(await _service.GetForReportAsync(Dept, _report.RmsIncidentReportId, true)).Should().BeNull();
+			(await _service.BuildSnapshotAsync(Dept, saved.Analysis.RmsIncidentAnalysisId)).Should().BeNull();
+		}
+
+		[Test]
 		public async Task Finalizing_after_the_incident_is_filed_queues_the_analysis_with_its_own_key()
 		{
-			_report.NerisIncidentId = "FD24027000I2026000200";
+			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
 			var saved = await StartAndFillAsync();
 
 			var finalized = await _service.FinalizeAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion);
@@ -172,16 +232,36 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public async Task The_queued_payload_carries_the_incident_id_and_the_analysis_sections()
 		{
-			_report.NerisIncidentId = "FD24027000I2026000200";
+			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
 			var saved = await StartAndFillAsync();
 			await _service.FinalizeAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion);
 
 			var payload = JObject.Parse(_store.Submissions.Single().PayloadJson);
-			payload["base"].Value<string>("incident_neris_id").Should().Be("FD24027000I2026000200");
-			payload["base"].Value<string>("general_cause").Should().Be("ACCIDENTAL");
+			payload["base"].Value<string>("neris_id_incident").Should().Be("FD24027000|2026-000200|1788436800");
+			payload["base"].Value<string>("incident_number").Should().Be("2026-000200");
+			((JObject)payload["base"]).Properties().Select(p => p.Name).Should().BeEquivalentTo("neris_id_incident", "incident_number", "narrative");
+			payload["structure_fire_origin"].Value<string>("general_cause").Should().Be("ACCIDENTAL");
+			payload["base"].Value<string>("narrative").Should().Contain("INVESTIGATED_BY_ARSON_FIRE_INVESTIGATOR");
 			payload["properties"].Should().HaveCount(1);
 			payload["vehicles"].Should().HaveCount(1);
 			payload["structure_fire_origin"].Should().NotBeNull("the module lands at the payload path its catalog descriptor names");
+		}
+
+		[Test]
+		public async Task Historical_analysis_and_later_queue_keep_signed_headers_when_drafts_change()
+		{
+			var saved = await StartAndFillAsync();
+			var final = await _service.FinalizeAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion);
+			var revisionId = final.Analysis.CurrentRevisionId;
+			_store.Analyses.Single().GeneralCause = "UNAPPROVED"; _report.IncidentNumber = "UNAPPROVED";
+			var snapshot = await _service.BuildSnapshotAsync(Dept, final.Analysis.RmsIncidentAnalysisId, revisionId);
+			snapshot.Analysis.GeneralCause.Should().Be("ACCIDENTAL"); snapshot.Report.IncidentNumber.Should().Be("2026-000200");
+			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
+			(await _service.QueueAwaitingIncidentAsync(Dept)).Should().Be(1);
+			var payload = JObject.Parse(_store.Submissions.Single().PayloadJson);
+			payload["base"]["neris_id_incident"].Value<string>().Should().Be(_report.NerisIncidentId);
+			payload["base"]["incident_number"].Value<string>().Should().Be("2026-000200");
+			payload["structure_fire_origin"]["general_cause"].Value<string>().Should().Be("ACCIDENTAL");
 		}
 
 		[Test]
@@ -190,7 +270,7 @@ namespace Resgrid.Tests.Rms
 			var saved = await StartAndFillAsync();
 			var input = CompleteDraft();
 			input.GeneralCause = "NOT_A_NERIS_CAUSE";
-			var bad = await _service.SaveDraftAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion, input);
+			var bad = await _service.SaveDraftAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion, input, true);
 
 			Func<Task> act = () => _service.FinalizeAsync(Dept, "investigator", bad.Analysis.RmsIncidentAnalysisId, bad.Analysis.RowVersion);
 
@@ -207,7 +287,7 @@ namespace Resgrid.Tests.Rms
 			_store.Submissions.Should().BeEmpty();
 
 			// The incident's own submission landed; the analysis can now be filed against it.
-			_report.NerisIncidentId = "FD24027000I2026000200";
+			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
 			var queued = await _service.QueueAwaitingIncidentAsync(Dept);
 
 			queued.Should().Be(1);
@@ -221,7 +301,7 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public async Task An_analysis_in_flight_cannot_be_voided_until_it_settles()
 		{
-			_report.NerisIncidentId = "FD24027000I2026000200";
+			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
 			var saved = await StartAndFillAsync();
 			var finalized = await _service.FinalizeAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion);
 			finalized.State.Should().Be(RmsIncidentAnalysisState.Submitted);
@@ -234,7 +314,7 @@ namespace Resgrid.Tests.Rms
 		[Test]
 		public async Task Voiding_a_rejected_analysis_supersedes_its_open_submission()
 		{
-			_report.NerisIncidentId = "FD24027000I2026000200";
+			_report.NerisIncidentId = "FD24027000|2026-000200|1788436800";
 			var saved = await StartAndFillAsync();
 			var finalized = await _service.FinalizeAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion);
 
@@ -253,7 +333,7 @@ namespace Resgrid.Tests.Rms
 		{
 			var saved = await StartAndFillAsync();
 
-			Func<Task> act = () => _service.SaveDraftAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion - 1, CompleteDraft());
+			Func<Task> act = () => _service.SaveDraftAsync(Dept, "investigator", saved.Analysis.RmsIncidentAnalysisId, saved.Analysis.RowVersion - 1, CompleteDraft(), true);
 
 			await act.Should().ThrowAsync<RecordConcurrencyException>();
 		}

@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Resgrid | " + string.Format(localizer["EditDefinitionHeader"].Value, Model.EntityTypeName);
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    ViewData["RmsExtension"] = Model.EntityType == Resgrid.Model.UdfEntityType.Record;
 
     var dataTypes = Enum.GetValues(typeof(Resgrid.Model.UdfFieldDataType))
         .Cast<Resgrid.Model.UdfFieldDataType>()
@@ -49,6 +50,13 @@
                 <input type="hidden" asp-for="EntityType" />
                 <input type="hidden" asp-for="EntityTypeName" />
                 <input type="hidden" asp-for="ExistingDefinitionId" />
+                <input type="hidden" asp-for="RecordDefinitionKey" />
+                <input type="hidden" asp-for="RecordDefinitionVersion" />
+                @if (Model.EntityType == Resgrid.Model.UdfEntityType.Record)
+                {
+                    <p>Record type: @Model.RecordDefinitionKey · definition @Model.RecordDefinitionVersion. Publishing creates a new form version for new reports. Existing reports keep their captured form.</p>
+                    <p>Department custom fields appear on the departmental record. They are excluded from NERIS submissions and other standardized national exports.</p>
+                }
 
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display:@(ViewData.ModelState.IsValid ? "none" : "block")">
                 </div>

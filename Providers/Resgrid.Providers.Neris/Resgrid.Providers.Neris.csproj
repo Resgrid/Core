@@ -9,13 +9,14 @@
 
   <ItemGroup>
     <!-- The reviewed contract is pinned by version and date so a regeneration is reproducible without a network fetch. -->
-    <None Include="Contract\neris-openapi-v1.4.78-2026-09-03.json" />
+    <EmbeddedResource Include="Contract\neris-openapi-v1.4.78-2026-09-03.json" LogicalName="Resgrid.Providers.Neris.Contract.openapi.json" />
     <EmbeddedResource Include="Contract\neris-value-sets-v1.4.78-2026-09-03.json" LogicalName="Resgrid.Providers.Neris.Contract.value-sets.json" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="JsonSchema.Net" Version="9.4.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -492,7 +492,7 @@ namespace Resgrid.Workers.Console
 					stoppingToken);
 
 				// Worker ID 44 (Identifier Allocation Registry section 3.3, the Unified Search allocation absorbed by RMS-1): records search index maintenance. This
-				// process holds the single Lucene writer; the sweep is a no-op while SearchConfig.Enabled is off.
+				// process holds the single Lucene writer; retention erasure still runs while search indexing is disabled.
 				_logger.Log(LogLevel.Information, "Scheduling Records Search Index");
 				await Client.ScheduleAsync("Records Search Index",
 					new Commands.RecordsSearchIndexCommand(44),

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -27,6 +27,74 @@ namespace Resgrid.Repositories.DataRepository
 		protected readonly IConnectionProvider ConnectionProvider;
 		protected readonly SqlConfiguration SqlConfiguration;
 		protected readonly IUnitOfWork UnitOfWork;
+
+		public override async Task<T> InsertAsync(T entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+		{
+			if (entity is RmsOperationalRecord || entity is RmsIncidentReport) return await WritePreservingHoldsAsync(entity, true, firstLevelOnly, cancellationToken);
+			var guarded = RmsRetentionRepository.ContentTables.Contains(entity.TableName) || entity.TableName == "RmsRevisions" || entity.TableName == "RmsIncidentAnalyses" || entity.TableName == "RmsSubmissions" || entity.TableName == "RmsSubmissionExchanges";
+			if (!guarded) return await base.InsertAsync(entity, cancellationToken, firstLevelOnly);
+			var recordId = (string)entity.GetType().GetProperty(entity.TableName == "RmsIncidentAnalyses" ? "IncidentReportId" : "RecordId").GetValue(entity);
+			var departmentId = (int)entity.GetType().GetProperty("DepartmentId").GetValue(entity);
+			var owns = UnitOfWork.Transaction == null;
+			UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				await LockLiveContentParentAsync(departmentId, recordId, cancellationToken);
+				var result = await base.InsertAsync(entity, cancellationToken, firstLevelOnly);
+				if (owns) UnitOfWork.CommitChanges();
+				return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
+
+		public override Task<T> UpdateAsync(T entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+			=> entity is RmsOperationalRecord || entity is RmsIncidentReport ? WritePreservingHoldsAsync(entity, false, firstLevelOnly, cancellationToken) : base.UpdateAsync(entity, cancellationToken, firstLevelOnly);
+
+		private async Task<T> WritePreservingHoldsAsync(T entity, bool insert, bool firstLevelOnly, CancellationToken ct)
+		{
+			var op = entity as RmsOperationalRecord; var incident = entity as RmsIncidentReport;
+			var department = op?.DepartmentId ?? incident.DepartmentId; var id = op?.RmsOperationalRecordId ?? incident.RmsIncidentReportId;
+			var owns = UnitOfWork.Transaction == null; UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				await LockRecordsDepartmentAsync(department, ct);
+				if (!insert) await PreserveCurrentHoldMembershipAsync(department, id, op != null, ct);
+				var result = insert ? await base.InsertAsync(entity, ct, firstLevelOnly) : await base.UpdateAsync(entity, ct, firstLevelOnly);
+				await PreserveCurrentHoldMembershipAsync(department, id, op != null, ct);
+				if (owns) UnitOfWork.CommitChanges(); return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
+
+		protected async Task PreserveCurrentHoldMembershipAsync(int department, string recordId, bool operational, CancellationToken ct)
+		{
+			var table = operational ? "RmsOperationalRecords" : "RmsIncidentReports"; var id = operational ? "RmsOperationalRecordId" : "RmsIncidentReportId";
+			var occurred = $"COALESCE(r.{Col(operational ? "StartedOn" : "CallCreatedOn")}, r.{Col("CreatedOn")})";
+			var recordFilter = recordId == null ? "" : $" AND r.{Col(id)}={P}Id";
+			await ExecuteAsync($@"INSERT INTO {Tbl("RmsRecordLegalHoldMembers")} ({Cols("DepartmentId", "HoldId", "RecordId", "MatchedOn")})
+SELECT h.{Col("DepartmentId")},h.{Col("RmsRecordLegalHoldId")},r.{Col(id)},{P}Now FROM {Tbl("RmsRecordLegalHolds")} h JOIN {Tbl(table)} r ON r.{Col("DepartmentId")}=h.{Col("DepartmentId")}
+WHERE h.{Col("DepartmentId")}={P}DepartmentId {recordFilter} AND r.{Col("PurgedOn")} IS NULL AND r.{Col("DeletedOn")} IS NULL AND h.{Col("ReleasedOn")} IS NULL
+AND (h.{Col("RecordId")}=r.{Col(id)} OR (h.{Col("RecordId")} IS NULL AND (h.{Col("DefinitionKey")} IS NULL OR h.{Col("DefinitionKey")}=r.{Col("DefinitionKey")}) AND (h.{Col("PeriodStart")} IS NULL OR {occurred}>=h.{Col("PeriodStart")}) AND (h.{Col("PeriodEnd")} IS NULL OR {occurred}<=h.{Col("PeriodEnd")})))
+AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col("DepartmentId")}=h.{Col("DepartmentId")} AND m.{Col("HoldId")}=h.{Col("RmsRecordLegalHoldId")} AND m.{Col("RecordId")}=r.{Col(id)})", new { DepartmentId = department, Id = recordId, Now = DateTime.UtcNow }, ct);
+		}
+
+		protected async Task LockLiveContentParentAsync(int departmentId, string recordId, CancellationToken cancellationToken)
+		{
+			await LockRecordsDepartmentAsync(departmentId, cancellationToken);
+			var key = new { DepartmentId = departmentId, Id = recordId };
+			foreach (var table in new[] { "RmsOperationalRecords", "RmsIncidentReports" })
+			{
+				var id = table == "RmsOperationalRecords" ? "RmsOperationalRecordId" : "RmsIncidentReportId";
+				if (await ExecuteAsync($"UPDATE {Tbl(table)} SET {Col("RowVersion")} = {Col("RowVersion")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col(id)} = {P}Id AND {Col("PurgedOn")} IS NULL AND {Col("DeletedOn")} IS NULL", key, cancellationToken) == 1) return;
+			}
+			var parent = await QueryFirstOrDefaultAsync<RmsIncidentAnalysis>($"SELECT {Cols("IncidentReportId")} FROM {Tbl("RmsIncidentAnalyses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsIncidentAnalysisId")} = {P}Id AND {Col("DeletedOn")} IS NULL", key, cancellationToken);
+			if (parent != null)
+			{
+				await LockLiveContentParentAsync(departmentId, parent.IncidentReportId, cancellationToken);
+				if (await ExecuteAsync($"UPDATE {Tbl("RmsIncidentAnalyses")} SET {Col("RowVersion")} = {Col("RowVersion")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsIncidentAnalysisId")} = {P}Id AND {Col("DeletedOn")} IS NULL", key, cancellationToken) == 1) return;
+			}
+			throw new InvalidOperationException("Content cannot be written to a missing or purged RMS record.");
+		}
 
 		protected RmsRepositoryBase(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
@@ -69,12 +137,8 @@ namespace Resgrid.Repositories.DataRepository
 				: $"{col} IN {P}{parameterName}";
 		}
 
-		/// <summary>Parameter value for an IN-list: an array on PostgreSQL, an enumerable on SQL Server.</summary>
-		protected static object InListValue(IEnumerable<int> values)
-		{
-			var list = (values ?? Enumerable.Empty<int>()).ToArray();
-			return IsPostgres ? (object)list : list.ToList();
-		}
+		/// <summary>Keep the declared parameter type enumerable so Dapper expands SQL Server lists; Npgsql binds the same array to ANY.</summary>
+		protected static int[] InListValue(IEnumerable<int> values) => (values ?? Enumerable.Empty<int>()).ToArray();
 
 		protected static string Concat(params string[] parts)
 		{
@@ -89,6 +153,59 @@ namespace Resgrid.Repositories.DataRepository
 		protected static string Paging()
 		{
 			return IsPostgres ? "OFFSET @Skip LIMIT @Take" : "OFFSET @Skip ROWS FETCH NEXT @Take ROWS ONLY";
+		}
+
+		/// <summary>Serializes retention, policy changes, and legal-hold writes in the current transaction.</summary>
+		protected async Task LockRecordsDepartmentAsync(int departmentId, CancellationToken cancellationToken)
+		{
+			if (UnitOfWork?.Transaction == null) throw new InvalidOperationException("A transaction is required for the RMS retention lock.");
+			var sql = IsPostgres ? $"SELECT {Col("DepartmentId")} FROM {Tbl("Departments")} WHERE {Col("DepartmentId")} = {P}Id FOR UPDATE"
+				: $"SELECT {Col("DepartmentId")} FROM {Tbl("Departments")} WITH (UPDLOCK,HOLDLOCK) WHERE {Col("DepartmentId")} = {P}Id";
+			if (await ScalarAsync<int>(sql, new { Id = departmentId }, cancellationToken) != departmentId) throw new InvalidOperationException("The department does not exist.");
+		}
+
+		protected static string UtcNowSql => IsPostgres ? "(CURRENT_TIMESTAMP AT TIME ZONE 'UTC')" : "SYSUTCDATETIME()";
+
+		protected async Task<bool> HasTableAsync(string table, CancellationToken ct)
+		{
+			var result = await ScalarAsync<int>(IsPostgres ? "SELECT CASE WHEN to_regclass(@Name) IS NULL THEN 0 ELSE 1 END"
+				: "SELECT CASE WHEN OBJECT_ID(@Name, 'U') IS NOT NULL THEN 1 WHEN HAS_PERMS_BY_NAME(DB_NAME(), 'DATABASE', 'VIEW DEFINITION')=1 THEN 0 ELSE -1 END",
+				new { Name = SqlConfiguration.SchemaName + "." + (IsPostgres ? table.ToLowerInvariant() : table) }, ct);
+			if (result < 0) throw new InvalidOperationException("The database principal cannot verify whether the protection admission schema is absent.");
+			return result == 1;
+		}
+
+		/// <summary>Decision 18 admission barrier; a confirmed absent schema is different from a failed lookup.</summary>
+		protected async Task GuardUnprotectedRmsActivationAsync(int departmentId, CancellationToken ct)
+		{
+			await LockRecordsDepartmentAsync(departmentId, ct);
+			if (await HasTableAsync("DepartmentDataProtectionPolicies", ct) && await ScalarAsync<int>(
+				$"SELECT COUNT(*) FROM {Tbl("DepartmentDataProtectionPolicies")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("State")}<>{(int)DepartmentDataProtectionState.Disabled}", new { DepartmentId = departmentId }, ct) > 0)
+				throw new InvalidOperationException("RMS activation requires completed protected RMS support before this department can use Advanced Data Protection.");
+		}
+
+		protected async Task GuardProtectionEnrollmentWithoutRmsAsync(int departmentId, CancellationToken ct)
+		{
+			await LockRecordsDepartmentAsync(departmentId, ct);
+			var blocked = await HasTableAsync("RmsDepartmentCutovers", ct) && await ScalarAsync<int>(
+				$"SELECT COUNT(*) FROM {Tbl("RmsDepartmentCutovers")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("State")}={(int)RmsDepartmentCutoverState.Active}", new { DepartmentId = departmentId }, ct) > 0;
+			foreach (var table in new[] { "RmsOperationalRecords", "RmsIncidentReports" })
+				if (await HasTableAsync(table, ct) && await ScalarAsync<int>($"SELECT COUNT(*) FROM {Tbl(table)} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("PurgedOn")} IS NULL", new { DepartmentId = departmentId }, ct) > 0) blocked = true;
+			if (blocked) throw new InvalidOperationException("Advanced Data Protection enrollment requires protected RMS support for departments with active Records or retained RMS content.");
+		}
+
+		/// <summary>A materialized share anchor cannot outlive its live, tenant-bound grant.</summary>
+		protected string EffectiveGroupScope(string alias) =>
+			$"({alias}.{Col("AnchorType")} <> {(int)RmsGroupScopeAnchorType.Share} OR EXISTS (SELECT 1 FROM {Tbl("RmsRecordShares")} liveShare WHERE liveShare.{Col("DepartmentId")} = {alias}.{Col("DepartmentId")} AND liveShare.{Col("RecordId")} = {alias}.{Col("RecordId")} AND liveShare.{Col("DepartmentGroupId")} = {alias}.{Col("DepartmentGroupId")} AND liveShare.{Col("RevokedOn")} IS NULL AND (liveShare.{Col("ExpiresOn")} IS NULL OR liveShare.{Col("ExpiresOn")} > {UtcNowSql})))";
+
+		/// <summary>Same live header, participant, and effective group exceptions as RecordsAuthorizationService.</summary>
+		protected string VisibleRecord(string alias, string idColumn, List<int> groups, bool operational)
+		{
+			if (groups == null) return "1=1";
+			var identity = $"{alias}.{Col("AuthorUserId")} = {P}Viewer OR {alias}.{Col("OwnerUserId")} = {P}Viewer OR {alias}.{Col("ReviewerUserId")} = {P}Viewer";
+			if (operational) identity += $" OR {alias}.{Col("ApproverUserId")} = {P}Viewer OR EXISTS (SELECT 1 FROM {Tbl("RmsRecordParticipants")} v WHERE v.{Col("DepartmentId")} = {alias}.{Col("DepartmentId")} AND v.{Col("RecordId")} = {alias}.{Col(idColumn)} AND v.{Col("RevisionId")} IS NULL AND v.{Col("DeletedOn")} IS NULL AND v.{Col("UserId")} = {P}Viewer)";
+			if (groups.Count > 0) identity += $" OR EXISTS (SELECT 1 FROM {Tbl("RmsRecordGroupScopes")} g WHERE g.{Col("DepartmentId")} = {alias}.{Col("DepartmentId")} AND g.{Col("RecordId")} = {alias}.{Col(idColumn)} AND {InList("DepartmentGroupId", "VisibleGroupIds", "g")} AND {EffectiveGroupScope("g")})";
+			return "(" + identity + ")";
 		}
 
 		protected async Task<TResult> RunAsync<TResult>(Func<DbConnection, Task<TResult>> work, CancellationToken cancellationToken = default)
@@ -153,9 +270,10 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<IEnumerable<RmsOperationalRecord>> GetByCallAsync(int departmentId, int callId)
 		{
+			var snapshotCall = IsPostgres ? $"CAST(v.{Col("SnapshotJson")} AS jsonb)->>'CallId'" : $"JSON_VALUE(v.{Col("SnapshotJson")}, '$.CallId')";
 			return QueryAsync<RmsOperationalRecord>(
-				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CallId")} = {P}CallId AND {Col("DeletedOn")} IS NULL ORDER BY {Col("CreatedOn")} DESC",
-				new { DepartmentId = departmentId, CallId = callId });
+				$"SELECT r.* FROM {Tbl("RmsOperationalRecords")} r LEFT JOIN {Tbl("RmsRevisions")} v ON v.{Col("RmsRevisionId")} = r.{Col("CurrentRevisionId")} AND v.{Col("DepartmentId")} = r.{Col("DepartmentId")} WHERE r.{Col("DepartmentId")} = {P}DepartmentId AND (r.{Col("CallId")} = {P}CallId OR {snapshotCall} = {P}CallText) AND r.{Col("DeletedOn")} IS NULL ORDER BY r.{Col("CreatedOn")} DESC",
+				new { DepartmentId = departmentId, CallId = callId, CallText = callId.ToString(System.Globalization.CultureInfo.InvariantCulture) });
 		}
 
 		public Task<IEnumerable<RmsOperationalRecord>> GetByDefinitionAndStartedRangeAsync(int departmentId, string definitionKey, IEnumerable<int> states, DateTime start, DateTime end)
@@ -166,8 +284,9 @@ namespace Resgrid.Repositories.DataRepository
 			parameters.Add("States", InListValue(states));
 			parameters.Add("Start", start);
 			parameters.Add("End", end);
+			var finalizedStart = IsPostgres ? $"CAST(CAST(v.{Col("SnapshotJson")} AS jsonb)->>'StartedOn' AS timestamp)" : $"TRY_CONVERT(datetime2, JSON_VALUE(v.{Col("SnapshotJson")}, '$.StartedOn'), 127)";
 			return QueryAsync<RmsOperationalRecord>(
-				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DefinitionKey")} = {P}DefinitionKey AND {InList("State", "States")} AND {Col("StartedOn")} >= {P}Start AND {Col("StartedOn")} <= {P}End AND {Col("DeletedOn")} IS NULL ORDER BY {Col("StartedOn")}",
+				$"SELECT r.* FROM {Tbl("RmsOperationalRecords")} r JOIN {Tbl("RmsRevisions")} v ON v.{Col("RmsRevisionId")} = r.{Col("CurrentRevisionId")} AND v.{Col("DepartmentId")} = r.{Col("DepartmentId")} WHERE r.{Col("DepartmentId")} = {P}DepartmentId AND r.{Col("DefinitionKey")} = {P}DefinitionKey AND {InList("State", "States")} AND {finalizedStart} >= {P}Start AND {finalizedStart} <= {P}End AND r.{Col("DeletedOn")} IS NULL AND r.{Col("PurgedOn")} IS NULL ORDER BY {finalizedStart}",
 				parameters);
 		}
 
@@ -182,7 +301,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			var yearClause = year.HasValue ? $" AND {YearOf($"COALESCE({Col("StartedOn")}, {Col("CreatedOn")})")} = {P}Year" : string.Empty;
 			return QueryAsync<RmsOperationalRecord>(
-				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")}{yearClause} AND {Col("DeletedOn")} IS NULL ORDER BY {Col("CreatedOn")} DESC {Paging()}",
+				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")}{yearClause} AND {Col("DeletedOn")} IS NULL ORDER BY {Col("CreatedOn")} DESC, {Col("RmsOperationalRecordId")} {Paging()}",
 				new { DepartmentId = departmentId, States = InListValue(states), Year = year, Skip = skip, Take = take });
 		}
 
@@ -192,6 +311,10 @@ namespace Resgrid.Repositories.DataRepository
 				$"SELECT COUNT(1) FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")} AND {Col("DeletedOn")} IS NULL",
 				new { DepartmentId = departmentId, States = InListValue(states) });
 		}
+
+		public Task<int> CountVisibleAsync(int departmentId, IEnumerable<int> states, List<int> visibleGroupIds, string userId) =>
+			ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsOperationalRecords")} r WHERE r.{Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States", "r")} AND r.{Col("DeletedOn")} IS NULL AND r.{Col("PurgedOn")} IS NULL AND {VisibleRecord("r", "RmsOperationalRecordId", visibleGroupIds, true)}",
+				new { DepartmentId = departmentId, States = InListValue(states), VisibleGroupIds = InListValue(visibleGroupIds), Viewer = userId });
 
 		public Task<IEnumerable<RmsOperationalRecord>> GetOpenAsync(int departmentId)
 		{
@@ -209,7 +332,7 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId, States = InListValue(states), Since = sinceUtc });
 		}
 
-		public Task<IEnumerable<RmsOperationalRecord>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take)
+		public Task<IEnumerable<RmsOperationalRecord>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take, string afterId = null)
 		{
 			// Closed states only: a Record still being authored or reviewed is never a retention candidate, however old.
 			var states = new[] { (int)RmsRecordState.Finalized, (int)RmsRecordState.Amended, (int)RmsRecordState.Voided, (int)RmsRecordState.Cancelled };
@@ -217,8 +340,9 @@ namespace Resgrid.Repositories.DataRepository
 				$@"SELECT * FROM {Tbl("RmsOperationalRecords")}
 					WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")}
 					AND {Col("FinalizedOn")} IS NOT NULL AND {Col("FinalizedOn")} < {P}Cutoff AND {Col("DeletedOn")} IS NULL
-					ORDER BY {Col("FinalizedOn")} {Paging()}",
-				new { DepartmentId = departmentId, States = InListValue(states), Cutoff = cutoffUtc, Skip = 0, Take = Math.Clamp(take, 1, 10000) });
+					AND {Col("PurgedOn")} IS NULL AND ({P}AfterId IS NULL OR {Col("RmsOperationalRecordId")} > {P}AfterId)
+					ORDER BY {Col("RmsOperationalRecordId")} {Paging()}",
+				new { DepartmentId = departmentId, States = InListValue(states), Cutoff = cutoffUtc, AfterId = afterId, Skip = 0, Take = Math.Clamp(take, 1, 10000) });
 		}
 
 		public Task<int> CountAllAsync(int departmentId)
@@ -273,8 +397,10 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string recordId, long expectedRowVersion, CancellationToken cancellationToken = default)
 		{
+			await LockRecordsDepartmentAsync(departmentId, cancellationToken);
+			await PreserveCurrentHoldMembershipAsync(departmentId, recordId, true, cancellationToken);
 			var affected = await ExecuteAsync(
-				$"UPDATE {Tbl("RmsOperationalRecords")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1, {Col("ModifiedOn")} = {P}Now WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsOperationalRecordId")} = {P}RecordId AND {Col("RowVersion")} = {P}Expected",
+				$"UPDATE {Tbl("RmsOperationalRecords")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1, {Col("ModifiedOn")} = {P}Now WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsOperationalRecordId")} = {P}RecordId AND {Col("RowVersion")} = {P}Expected AND {Col("PurgedOn")} IS NULL AND {Col("DeletedOn")} IS NULL",
 				new { DepartmentId = departmentId, RecordId = recordId, Expected = expectedRowVersion, Now = DateTime.UtcNow }, cancellationToken);
 
 			return affected == 1;
@@ -401,11 +527,22 @@ namespace Resgrid.Repositories.DataRepository
 
 	public class RmsRecordAttachmentsRepository : RmsRepositoryBase<RmsRecordAttachment>, IRmsRecordAttachmentsRepository
 	{
+		public Task<RmsRecordAttachment> GetHistoricalByIdForDepartmentAsync(int departmentId, string attachmentId) => QueryFirstOrDefaultAsync<RmsRecordAttachment>(
+			$"SELECT * FROM {Tbl("RmsRecordAttachments")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsRecordAttachmentId")} = {P}AttachmentId",
+			new { DepartmentId = departmentId, AttachmentId = attachmentId });
+		public async Task<bool> ApplyScanResultAsync(int departmentId, string attachmentId, long expectedVersion, RmsAttachmentScanState state, DateTime now, CancellationToken cancellationToken = default)
+		{
+			if (state != RmsAttachmentScanState.Clean && state != RmsAttachmentScanState.Rejected) return false;
+			var rejected = state == RmsAttachmentScanState.Rejected;
+			var erase = rejected ? $", {Col("Data")} = NULL, {Col("StorageReference")} = NULL, {Col("DeletedOn")} = {P}Now" : string.Empty;
+			return await ExecuteAsync($"UPDATE {Tbl("RmsRecordAttachments")} SET {Col("ScanState")} = {P}State, {Col("ModifiedOn")} = {P}Now, {Col("RowVersion")} = {Col("RowVersion")} + 1 {erase} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsRecordAttachmentId")} = {P}Id AND {Col("RowVersion")} = {P}Version AND {Col("DeletedOn")} IS NULL AND {Col("ScanState")} = {(int)RmsAttachmentScanState.Pending}",
+				new { DepartmentId = departmentId, Id = attachmentId, Version = expectedVersion, State = (int)state, Now = now }, cancellationToken) == 1;
+		}
 		private static readonly string[] MetadataColumns =
 		{
 			"RmsRecordAttachmentId", "DepartmentId", "ProtectionId", "RecordId", "FileName", "ContentType", "ByteSize", "Checksum",
 			"StorageReference", "Description", "UploadedByUserId", "UploadedOn", "ScanState", "MetadataStripped", "IsProtected",
-			"ProtectedCatalogVersion", "CreatedOn", "ModifiedOn", "RowVersion", "DeletedOn"
+			"ProtectedCatalogVersion", "Classification", "CreatedOn", "ModifiedOn", "RowVersion", "DeletedOn"
 		};
 
 		public RmsRecordAttachmentsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -454,6 +591,24 @@ namespace Resgrid.Repositories.DataRepository
 		public DomainEventOutboxRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
+		public override async Task<DomainEventOutboxEntry> InsertAsync(DomainEventOutboxEntry entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+		{
+			if (entity?.ProducerSubsystem != DomainEventProducers.Records) return await base.InsertAsync(entity, cancellationToken, firstLevelOnly);
+			var owns = UnitOfWork.Transaction == null;
+			UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				await LockLiveContentParentAsync(entity.DepartmentId, entity.AggregateId, cancellationToken);
+				var result = await base.InsertAsync(entity, cancellationToken, firstLevelOnly);
+				if (owns) UnitOfWork.CommitChanges();
+				return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
+
+		public override Task<DomainEventOutboxEntry> UpdateAsync(DomainEventOutboxEntry entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+			=> throw new InvalidOperationException("Outbox payloads are immutable; use the dedicated delivery-state operations.");
+
 		public Task<long> GetNextSequenceAsync(int departmentId, string aggregateId)
 		{
 			return ScalarAsync<long>(
@@ -500,8 +655,8 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			var state = terminal ? (int)DomainEventOutboxState.Failed : (int)DomainEventOutboxState.Pending;
 			var affected = await ExecuteAsync(
-				$"UPDATE {Tbl("DomainEventOutbox")} SET {Col("State")} = {P}State, {Col("NextAttemptOn")} = {P}Next, {Col("LastError")} = {P}Error, {Col("LeaseOwner")} = NULL, {Col("LeaseExpiresOn")} = NULL WHERE {Col("DomainEventOutboxId")} = {P}Id",
-				new { Id = domainEventOutboxId, State = state, Next = nextAttemptOn, Error = error }, cancellationToken);
+				$"UPDATE {Tbl("DomainEventOutbox")} SET {Col("State")} = {P}State, {Col("NextAttemptOn")} = {P}Next, {Col("LastError")} = {P}Error, {Col("LeaseOwner")} = NULL, {Col("LeaseExpiresOn")} = NULL WHERE {Col("DomainEventOutboxId")} = {P}Id AND {Col("DispatchedOn")} IS NULL AND {Col("State")}={P}Pending",
+				new { Id = domainEventOutboxId, State = state, Pending = (int)DomainEventOutboxState.Pending, Next = nextAttemptOn, Error = error }, cancellationToken);
 			return affected == 1;
 		}
 
@@ -527,6 +682,22 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		public RmsDepartmentCutoversRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public override Task<RmsDepartmentCutover> InsertAsync(RmsDepartmentCutover entity, CancellationToken ct, bool firstLevelOnly = false) => WriteAdmittedAsync(entity, true, ct, firstLevelOnly);
+		public override Task<RmsDepartmentCutover> UpdateAsync(RmsDepartmentCutover entity, CancellationToken ct, bool firstLevelOnly = false) => WriteAdmittedAsync(entity, false, ct, firstLevelOnly);
+
+		private async Task<RmsDepartmentCutover> WriteAdmittedAsync(RmsDepartmentCutover entity, bool insert, CancellationToken ct, bool firstLevelOnly)
+		{
+			var owns = UnitOfWork.Transaction == null; UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				await LockRecordsDepartmentAsync(entity.DepartmentId, ct);
+				if (entity.IsActive) await GuardUnprotectedRmsActivationAsync(entity.DepartmentId, ct);
+				var result = insert ? await base.InsertAsync(entity, ct, firstLevelOnly) : await base.UpdateAsync(entity, ct, firstLevelOnly);
+				if (owns) UnitOfWork.CommitChanges(); return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
 
 		public Task<IEnumerable<RmsDepartmentCutover>> GetActiveAsync()
 		{
@@ -558,6 +729,14 @@ namespace Resgrid.Repositories.DataRepository
 
 	public class RmsRevisionsRepository : RmsRepositoryBase<RmsRevision>, IRmsRevisionsRepository
 	{
+		public async Task<IEnumerable<RmsRevision>> GetByIdsForDepartmentAsync(int departmentId, IEnumerable<string> revisionIds)
+		{
+			var rows = new List<RmsRevision>();
+			foreach (var ids in (revisionIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+				rows.AddRange(await QueryAsync<RmsRevision>($"SELECT * FROM {Tbl("RmsRevisions")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsRevisionId", "Ids")}", new { DepartmentId = departmentId, Ids = ids }));
+			return rows;
+		}
+
 		public RmsRevisionsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
@@ -580,6 +759,34 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		public RmsAccessAuditsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public override async Task<RmsAccessAudit> InsertAsync(RmsAccessAudit entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+		{
+			if (string.IsNullOrWhiteSpace(entity?.RecordId)) return await base.InsertAsync(entity, cancellationToken, firstLevelOnly);
+			var owns = UnitOfWork.Transaction == null;
+			UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				await LockRecordsDepartmentAsync(entity.DepartmentId, cancellationToken);
+				var key = new { entity.DepartmentId, Id = entity.RecordId };
+				var live = await ScalarAsync<int>($"SELECT COUNT(1) FROM (SELECT {Col("RmsOperationalRecordId")} AS id FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("RmsOperationalRecordId")}={P}Id AND {Col("PurgedOn")} IS NULL AND {Col("DeletedOn")} IS NULL UNION ALL SELECT {Col("RmsIncidentReportId")} AS id FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("RmsIncidentReportId")}={P}Id AND {Col("PurgedOn")} IS NULL AND {Col("DeletedOn")} IS NULL UNION ALL SELECT a.{Col("RmsIncidentAnalysisId")} AS id FROM {Tbl("RmsIncidentAnalyses")} a JOIN {Tbl("RmsIncidentReports")} r ON r.{Col("DepartmentId")}=a.{Col("DepartmentId")} AND r.{Col("RmsIncidentReportId")}=a.{Col("IncidentReportId")} WHERE a.{Col("DepartmentId")}={P}DepartmentId AND a.{Col("RmsIncidentAnalysisId")}={P}Id AND a.{Col("DeletedOn")} IS NULL AND r.{Col("PurgedOn")} IS NULL AND r.{Col("DeletedOn")} IS NULL) live", key, cancellationToken);
+				var stored = entity;
+				if (live == 0)
+				{
+					// A delayed audit cannot repopulate a purged record's free text after the purge inventory ran.
+					stored = new RmsAccessAudit { DepartmentId = entity.DepartmentId, RecordId = entity.RecordId, RevisionId = entity.RevisionId,
+						Action = entity.Action, ActorUserId = entity.ActorUserId, OriginClient = entity.OriginClient, Successful = entity.Successful,
+						OccurredOn = entity.OccurredOn, Purpose = "Audit for unavailable record" };
+				}
+				var result = await base.InsertAsync(stored, cancellationToken, firstLevelOnly);
+				if (owns) UnitOfWork.CommitChanges();
+				return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
+
+		public override Task<RmsAccessAudit> UpdateAsync(RmsAccessAudit entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+			=> throw new InvalidOperationException("RMS access audits are append-only; retention uses its explicit erasure inventory.");
 
 		public Task<IEnumerable<RmsAccessAudit>> GetForRecordAsync(int departmentId, string recordId, int take)
 		{
@@ -648,7 +855,7 @@ namespace Resgrid.Repositories.DataRepository
 					parameters.Add("SinceId", sinceId);
 				}
 
-				parameters.Add("Since", since.Value);
+				parameters.Add("Since", since.Value, System.Data.DbType.DateTime2);
 			}
 
 			return QueryAsync<RmsRecordSearchProjection>(
@@ -734,7 +941,7 @@ namespace Resgrid.Repositories.DataRepository
 				sb.Append(" AND (")
 					.Append($"p.{Col("AuthorUserId")} = {P}Viewer OR p.{Col("OwnerUserId")} = {P}Viewer OR p.{Col("ReviewerUserId")} = {P}Viewer")
 					.Append($" OR ({participantCsv}) LIKE {P}ViewerCsvPattern")
-					.Append($" OR EXISTS (SELECT 1 FROM {Tbl("RmsRecordGroupScopes")} s WHERE s.{Col("DepartmentId")} = p.{Col("DepartmentId")} AND s.{Col("RecordId")} = p.{Col("RmsRecordSearchProjectionId")} AND {InList("DepartmentGroupId", "VisibleGroupIds", "s")})")
+					.Append($" OR EXISTS (SELECT 1 FROM {Tbl("RmsRecordGroupScopes")} s WHERE s.{Col("DepartmentId")} = p.{Col("DepartmentId")} AND s.{Col("RecordId")} = p.{Col("RmsRecordSearchProjectionId")} AND {InList("DepartmentGroupId", "VisibleGroupIds", "s")} AND {EffectiveGroupScope("s")})")
 					.Append(")");
 				parameters.Add("Viewer", viewer);
 				parameters.Add("ViewerCsvPattern", "%," + viewer + ",%");
@@ -777,31 +984,35 @@ namespace Resgrid.Repositories.DataRepository
 			var rows = await QueryAsync<GroupCountRow>(
 				$"SELECT s.{Col("DepartmentGroupId")} AS {Col("DepartmentGroupId")}, COUNT(DISTINCT s.{Col("RecordId")}) AS {Col("RecordCount")} " +
 				$"FROM {Tbl("RmsRecordGroupScopes")} s INNER JOIN {Tbl("RmsOperationalRecords")} r ON r.{Col("RmsOperationalRecordId")} = s.{Col("RecordId")} AND r.{Col("DepartmentId")} = s.{Col("DepartmentId")} " +
-				$"WHERE s.{Col("DepartmentId")} = {P}DepartmentId AND r.{Col("DeletedOn")} IS NULL GROUP BY s.{Col("DepartmentGroupId")}",
+				$"WHERE s.{Col("DepartmentId")} = {P}DepartmentId AND r.{Col("DeletedOn")} IS NULL AND r.{Col("PurgedOn")} IS NULL AND {EffectiveGroupScope("s")} GROUP BY s.{Col("DepartmentGroupId")}",
 				new { DepartmentId = departmentId });
 
 			return (rows ?? Enumerable.Empty<GroupCountRow>()).ToDictionary(x => x.DepartmentGroupId, x => x.RecordCount);
 		}
 
-		public Task<IEnumerable<RmsRecordGroupScope>> GetForRecordsAsync(int departmentId, IEnumerable<string> recordIds)
+		public async Task<IEnumerable<RmsRecordGroupScope>> GetForRecordsAsync(int departmentId, IEnumerable<string> recordIds)
 		{
-			var ids = (recordIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().ToList();
-			if (ids.Count == 0)
-				return Task.FromResult<IEnumerable<RmsRecordGroupScope>>(new List<RmsRecordGroupScope>());
-
-			var parameters = new DynamicParameters();
-			parameters.Add("DepartmentId", departmentId);
-			parameters.Add("Ids", IsPostgres ? (object)ids.ToArray() : ids);
-			return QueryAsync<RmsRecordGroupScope>(
-				$"SELECT * FROM {Tbl("RmsRecordGroupScopes")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RecordId", "Ids")}",
-				parameters);
+			var rows = new List<RmsRecordGroupScope>();
+			foreach (var ids in (recordIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+				rows.AddRange(await QueryAsync<RmsRecordGroupScope>($"SELECT s.* FROM {Tbl("RmsRecordGroupScopes")} s WHERE s.{Col("DepartmentId")} = {P}DepartmentId AND {InList("RecordId", "Ids", "s")} AND {EffectiveGroupScope("s")}", new { DepartmentId = departmentId, Ids = ids }));
+			return rows;
 		}
 
 		public Task<IEnumerable<RmsRecordGroupScope>> GetForRecordAsync(int departmentId, string recordId)
 		{
 			return QueryAsync<RmsRecordGroupScope>(
-				$"SELECT * FROM {Tbl("RmsRecordGroupScopes")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId",
+				$"SELECT s.* FROM {Tbl("RmsRecordGroupScopes")} s WHERE s.{Col("DepartmentId")} = {P}DepartmentId AND s.{Col("RecordId")} = {P}RecordId AND {EffectiveGroupScope("s")}",
 				new { DepartmentId = departmentId, RecordId = recordId });
+		}
+
+		public async Task<IEnumerable<RmsRecordShare>> GetEffectiveSharesAsync(int departmentId, IEnumerable<int> groupIds)
+		{
+			var shares = new List<RmsRecordShare>();
+			foreach (var ids in (groupIds ?? Enumerable.Empty<int>()).Distinct().Chunk(1000))
+				shares.AddRange(await QueryAsync<RmsRecordShare>(
+					$"SELECT {Cols("RmsRecordShareId", "DepartmentId", "RecordId", "DepartmentGroupId", "ExpiresOn", "RowVersion")} FROM {Tbl("RmsRecordShares")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {InList("DepartmentGroupId", "Ids")} AND {Col("RevokedOn")} IS NULL AND ({Col("ExpiresOn")} IS NULL OR {Col("ExpiresOn")} > {UtcNowSql})",
+					new { DepartmentId = departmentId, Ids = ids }));
+			return shares;
 		}
 
 		public async Task ReplaceForRecordAsync(int departmentId, string recordId, IEnumerable<RmsRecordGroupScope> scopes, CancellationToken cancellationToken = default)
@@ -841,6 +1052,12 @@ namespace Resgrid.Repositories.DataRepository
 	/// </summary>
 	public class RmsEvidenceArtifactsRepository : RmsRepositoryBase<RmsEvidenceArtifact>, IRmsEvidenceArtifactsRepository
 	{
+		public Task<IEnumerable<RmsEvidenceArtifact>> GetHistoryAsync(int departmentId, string recordId, int skip, int take) => QueryAsync<RmsEvidenceArtifact>(
+			$@"SELECT {string.Join(",", new[] { "RmsEvidenceArtifactId", "DepartmentId", "RecordId", "RecordKind", "RevisionId", "Title", "CaptureReason", "Checksum", "SourceVersion", "CapturedOn", "SourceItemCount", "Classification", "SupersededOn" }.Select(Col))}
+			FROM {Tbl("RmsEvidenceArtifacts")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("DeletedOn")} IS NULL
+			ORDER BY {Col("CapturedOn")} DESC, {Col("RmsEvidenceArtifactId")} DESC {Paging()}",
+			new { DepartmentId = departmentId, RecordId = recordId, Skip = Math.Max(0, skip), Take = Math.Clamp(take, 1, 200) });
+
 		public RmsEvidenceArtifactsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
@@ -927,6 +1144,15 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId, Overdue = (int)RmsDueState.Overdue });
 		}
 
+		public Task<int> CountVisibleOverdueAsync(int departmentId, List<int> visibleGroupIds, string userId)
+		{
+			var operational = $"EXISTS (SELECT 1 FROM {Tbl("RmsOperationalRecords")} r WHERE r.{Col("DepartmentId")} = d.{Col("DepartmentId")} AND r.{Col("RmsOperationalRecordId")} = d.{Col("RecordId")} AND r.{Col("DeletedOn")} IS NULL AND r.{Col("PurgedOn")} IS NULL AND {VisibleRecord("r", "RmsOperationalRecordId", visibleGroupIds, true)})";
+			var incident = $"EXISTS (SELECT 1 FROM {Tbl("RmsIncidentReports")} r WHERE r.{Col("DepartmentId")} = d.{Col("DepartmentId")} AND r.{Col("RmsIncidentReportId")} = d.{Col("RecordId")} AND r.{Col("DeletedOn")} IS NULL AND r.{Col("PurgedOn")} IS NULL AND {VisibleRecord("r", "RmsIncidentReportId", visibleGroupIds, false)})";
+			var analysis = $"EXISTS (SELECT 1 FROM {Tbl("RmsIncidentAnalyses")} a JOIN {Tbl("RmsIncidentReports")} r ON r.{Col("DepartmentId")} = a.{Col("DepartmentId")} AND r.{Col("RmsIncidentReportId")} = a.{Col("IncidentReportId")} WHERE a.{Col("DepartmentId")} = d.{Col("DepartmentId")} AND a.{Col("RmsIncidentAnalysisId")} = d.{Col("RecordId")} AND a.{Col("DeletedOn")} IS NULL AND r.{Col("DeletedOn")} IS NULL AND r.{Col("PurgedOn")} IS NULL AND {VisibleRecord("r", "RmsIncidentReportId", visibleGroupIds, false)})";
+			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsRecordDueStates")} d WHERE d.{Col("DepartmentId")} = {P}DepartmentId AND d.{Col("LastEmittedState")} = {P}Overdue AND ({operational} OR {incident} OR {analysis})",
+				new { DepartmentId = departmentId, Overdue = (int)RmsDueState.Overdue, VisibleGroupIds = InListValue(visibleGroupIds), Viewer = userId });
+		}
+
 		public Task<int> ClearForRecordAsync(int departmentId, string recordId, DateTime utcNow, CancellationToken cancellationToken = default)
 		{
 			return ExecuteAsync(
@@ -939,6 +1165,8 @@ namespace Resgrid.Repositories.DataRepository
 	/// <summary>Public-records requests — registry M0171, RMS-3.</summary>
 	public class RmsDisclosureRequestsRepository : RmsRepositoryBase<RmsDisclosureRequest>, IRmsDisclosureRequestsRepository
 	{
+		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string requestId, long expectedVersion, CancellationToken cancellationToken = default) =>
+			await ExecuteAsync($"UPDATE {Tbl("RmsDisclosureRequests")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsDisclosureRequestId")} = {P}Id AND {Col("RowVersion")} = {P}Version AND {Col("DeletedOn")} IS NULL AND {Col("ClosedOn")} IS NULL", new { DepartmentId = departmentId, Id = requestId, Version = expectedVersion }, cancellationToken) == 1;
 		public RmsDisclosureRequestsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
@@ -987,10 +1215,13 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<int> GetMaxRequestNumberSequenceAsync(int departmentId, string numberPrefix)
 		{
+			// The allocated prefix ends in '-', so a row that is only the prefix, or that carries a non-numeric
+			// suffix, has no sequence. PostgreSQL's pattern skips it; SQL Server needs the CASE plus TRY_CAST or
+			// it raises a conversion error rather than skipping the row.
 			return ScalarAsync<int>(
 				IsPostgres
 					? $"SELECT COALESCE(MAX(CAST(SUBSTRING({Col("RequestNumber")} FROM '[0-9]+$') AS INTEGER)), 0) FROM {Tbl("RmsDisclosureRequests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RequestNumber")} LIKE {P}Prefix"
-					: $"SELECT ISNULL(MAX(CAST(RIGHT({Col("RequestNumber")}, CHARINDEX('-', REVERSE({Col("RequestNumber")})) - 1) AS INT)), 0) FROM {Tbl("RmsDisclosureRequests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RequestNumber")} LIKE {P}Prefix",
+					: $"SELECT ISNULL(MAX(CASE WHEN CHARINDEX('-', REVERSE({Col("RequestNumber")})) > 1 THEN TRY_CAST(RIGHT({Col("RequestNumber")}, CHARINDEX('-', REVERSE({Col("RequestNumber")})) - 1) AS INT) END), 0) FROM {Tbl("RmsDisclosureRequests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RequestNumber")} LIKE {P}Prefix",
 				new { DepartmentId = departmentId, Prefix = numberPrefix + "%" });
 		}
 	}
@@ -998,6 +1229,26 @@ namespace Resgrid.Repositories.DataRepository
 	/// <summary>Immutable produced sets — registry M0171, RMS-3.</summary>
 	public class RmsDisclosureProductionsRepository : RmsRepositoryBase<RmsDisclosureProduction>, IRmsDisclosureProductionsRepository
 	{
+		public async Task<bool> TryReleaseAsync(int departmentId, string productionId, long expectedVersion, string userId, DateTime releasedOn, string deliveryMethod, string deliveryReference, CancellationToken cancellationToken = default) =>
+			await ExecuteAsync($"UPDATE {Tbl("RmsDisclosureProductions")} SET {Col("ReleasedByUserId")} = {P}UserId, {Col("ReleasedOn")} = {P}Now, {Col("DeliveryMethod")} = {P}Method, {Col("DeliveryReference")} = {P}Reference, {Col("ModifiedOn")} = {P}Now, {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsDisclosureProductionId")} = {P}Id AND {Col("RowVersion")} = {P}Version AND {Col("ReleasedOn")} IS NULL", new { DepartmentId = departmentId, Id = productionId, Version = expectedVersion, UserId = userId, Now = releasedOn, Method = deliveryMethod, Reference = deliveryReference }, cancellationToken) == 1;
+
+		public override async Task<RmsDisclosureProduction> InsertAsync(RmsDisclosureProduction entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+		{
+			var owns = UnitOfWork.Transaction == null;
+			UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				await LockRecordsDepartmentAsync(entity.DepartmentId, cancellationToken);
+				var manifest = Newtonsoft.Json.Linq.JArray.Parse(entity.ProducedSetJson);
+				foreach (var id in manifest.Select(t => (string)t["record_id"]).Distinct().OrderBy(id => id, StringComparer.Ordinal))
+					await LockLiveContentParentAsync(entity.DepartmentId, id, cancellationToken);
+				entity.ProductionNumber = await GetMaxProductionNumberAsync(entity.DepartmentId, entity.DisclosureRequestId) + 1;
+				var result = await base.InsertAsync(entity, cancellationToken, true);
+				if (owns) UnitOfWork.CommitChanges();
+				return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
 		public RmsDisclosureProductionsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
@@ -1026,6 +1277,34 @@ namespace Resgrid.Repositories.DataRepository
 	/// <summary>Legal holds that suspend retention — registry M0170, RMS-3.</summary>
 	public class RmsRecordLegalHoldsRepository : RmsRepositoryBase<RmsRecordLegalHold>, IRmsRecordLegalHoldsRepository
 	{
+		public async Task<bool> TryReleaseAsync(int departmentId, string holdId, long expectedVersion, string userId, string reason, DateTime releasedOn, CancellationToken cancellationToken = default)
+		{
+			await LockRecordsDepartmentAsync(departmentId, cancellationToken);
+			return await ExecuteAsync($"UPDATE {Tbl("RmsRecordLegalHolds")} SET {Col("ReleasedByUserId")} = {P}UserId, {Col("ReleasedOn")} = {P}Now, {Col("ReleaseNotes")} = {P}Reason, {Col("ModifiedOn")} = {P}Now, {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsRecordLegalHoldId")} = {P}Id AND {Col("RowVersion")} = {P}Version AND {Col("ReleasedOn")} IS NULL", new { DepartmentId = departmentId, Id = holdId, Version = expectedVersion, UserId = userId, Reason = reason, Now = releasedOn }, cancellationToken) == 1;
+		}
+		public override Task<RmsRecordLegalHold> InsertAsync(RmsRecordLegalHold entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+			=> WriteHoldAsync(entity, true, cancellationToken);
+		public override Task<RmsRecordLegalHold> UpdateAsync(RmsRecordLegalHold entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+			=> WriteHoldAsync(entity, false, cancellationToken);
+		private async Task<RmsRecordLegalHold> WriteHoldAsync(RmsRecordLegalHold entity, bool insert, CancellationToken cancellationToken)
+		{
+			var owns = UnitOfWork.Transaction == null;
+			UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				await LockRecordsDepartmentAsync(entity.DepartmentId, cancellationToken);
+				if (insert && !string.IsNullOrEmpty(entity.RecordId)) await LockLiveContentParentAsync(entity.DepartmentId, entity.RecordId, cancellationToken);
+				var result = insert ? await base.InsertAsync(entity, cancellationToken, true) : await base.UpdateAsync(entity, cancellationToken, true);
+				if (insert)
+				{
+					await PreserveCurrentHoldMembershipAsync(entity.DepartmentId, null, true, cancellationToken);
+					await PreserveCurrentHoldMembershipAsync(entity.DepartmentId, null, false, cancellationToken);
+				}
+				if (owns) UnitOfWork.CommitChanges();
+				return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
 		public RmsRecordLegalHoldsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 

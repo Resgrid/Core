@@ -22,22 +22,18 @@ namespace Resgrid.Services.Records
 		private readonly IWorkLogsService _legacyLogs;
 		private readonly IRecordsCutoverService _cutover;
 		private readonly IRmsOperationalRecordsRepository _records;
-		private readonly IRmsRecordValueService _details;
-		private readonly IRmsRecordParticipantsRepository _participants;
-		private readonly IRmsRecordUnitResponsesRepository _units;
+		private readonly IRmsRevisionsRepository _revisions;
 		private readonly IRmsRecordGroupScopesRepository _scopes;
 		private readonly IRecordsAuthorizationService _authorization;
 
 		public RecordsReportingService(IWorkLogsService legacyLogs, IRecordsCutoverService cutover, IRmsOperationalRecordsRepository records,
-			IRmsRecordValueService details, IRmsRecordParticipantsRepository participants, IRmsRecordUnitResponsesRepository units,
+			IRmsRevisionsRepository revisions,
 			IRmsRecordGroupScopesRepository scopes, IRecordsAuthorizationService authorization)
 		{
 			_legacyLogs = legacyLogs;
 			_cutover = cutover;
 			_records = records;
-			_details = details;
-			_participants = participants;
-			_units = units;
+			_revisions = revisions;
 			_scopes = scopes;
 			_authorization = authorization;
 		}
@@ -66,7 +62,7 @@ namespace Resgrid.Services.Records
 			if (records.Count == 0)
 				return Order(entries);
 
-			entries.AddRange(await MapVisibleAsync(departmentId, viewerUserId, records));
+			entries.AddRange((await MapVisibleAsync(departmentId, viewerUserId, records)).Where(e => e.StartedOn >= start && e.StartedOn <= end));
 			return Order(entries);
 		}
 
@@ -76,22 +72,34 @@ namespace Resgrid.Services.Records
 			var ids = records.Select(r => r.RmsOperationalRecordId).ToList();
 			var visible = await _authorization.GetVisibleGroupIdsAsync(viewerUserId, departmentId);
 
-			var details = (await _details.GetDraftsForRecordsAsync(departmentId, ids) ?? Enumerable.Empty<RmsOperationalRecordDetail>())
-				.GroupBy(d => d.RecordId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
-			var participants = (await _participants.GetForRecordsAsync(departmentId, ids) ?? Enumerable.Empty<RmsRecordParticipant>()).ToLookup(p => p.RecordId, StringComparer.Ordinal);
-			var units = (await _units.GetForRecordsAsync(departmentId, ids) ?? Enumerable.Empty<RmsRecordUnitResponse>()).ToLookup(u => u.RecordId, StringComparer.Ordinal);
+			var revisionIds = records.Where(r => !r.PurgedOn.HasValue && !string.IsNullOrEmpty(r.CurrentRevisionId)).Select(r => r.CurrentRevisionId).Distinct().ToList();
+			if (revisionIds.Count == 0) return entries;
+			var revisions = (await _revisions.GetByIdsForDepartmentAsync(departmentId, revisionIds) ?? Enumerable.Empty<RmsRevision>())
+				.ToDictionary(r => r.RmsRevisionId, StringComparer.Ordinal);
 			var scopes = visible == null
 				? null
 				: (await _scopes.GetForRecordsAsync(departmentId, ids) ?? Enumerable.Empty<RmsRecordGroupScope>()).ToLookup(s => s.RecordId, StringComparer.Ordinal);
 
 			foreach (var record in records)
 			{
-				var recordParticipants = participants[record.RmsOperationalRecordId].ToList();
+				if (record.PurgedOn.HasValue || record.CurrentRevisionId == null || !revisions.TryGetValue(record.CurrentRevisionId, out var revision)
+					|| revision.DepartmentId != departmentId || revision.RecordId != record.RmsOperationalRecordId) continue;
+				if (string.IsNullOrWhiteSpace(revision.SnapshotJson) || revision.Checksum != RecordSnapshotSerializer.Checksum(revision.SnapshotJson))
+					throw new InvalidOperationException("An official revision failed its integrity check. Reporting cannot safely total this result set.");
+				var snapshot = RecordSnapshotSerializer.Deserialize(revision.SnapshotJson);
+				if (snapshot == null || snapshot.DepartmentId != departmentId || snapshot.RecordId != record.RmsOperationalRecordId) continue;
+				var recordParticipants = snapshot.Participants ?? new List<RmsRecordParticipant>();
 				if (!IsVisible(record, recordParticipants, scopes?[record.RmsOperationalRecordId], visible, viewerUserId))
 					continue;
 
-				details.TryGetValue(record.RmsOperationalRecordId, out var detail);
-				entries.Add(FromRecord(record, detail, recordParticipants, units[record.RmsOperationalRecordId]));
+				var entry = FromRecord(record, snapshot.Details, recordParticipants, snapshot.Units);
+				entry.StartedOn = snapshot.StartedOn;
+				entry.EndedOn = snapshot.EndedOn;
+				entry.CallId = snapshot.CallId;
+				entry.StationGroupId = snapshot.StationGroupId;
+				entry.LoggedByUserId = snapshot.AuthorUserId;
+				entry.LoggedOn = revision.CreatedOn;
+				entries.Add(entry);
 			}
 
 			return entries;
@@ -112,7 +120,7 @@ namespace Resgrid.Services.Records
 			if (records.Count == 0)
 				return Order(entries);
 
-			entries.AddRange(await MapVisibleAsync(departmentId, viewerUserId, records));
+			entries.AddRange((await MapVisibleAsync(departmentId, viewerUserId, records)).Where(e => e.CallId == callId));
 			return Order(entries);
 		}
 
@@ -179,7 +187,7 @@ namespace Resgrid.Services.Records
 				CallName = detail?.CallName,
 				StationGroupId = record.StationGroupId,
 				Participants = (participants ?? Enumerable.Empty<RmsRecordParticipant>()).Where(p => p != null && !string.IsNullOrWhiteSpace(p.UserId))
-					.Select(p => new ReportActivityParticipant { UserId = p.UserId }).ToList(),
+					.Select(p => new ReportActivityParticipant { UserId = p.UserId, UnitId = p.UnitId }).ToList(),
 				Units = (units ?? Enumerable.Empty<RmsRecordUnitResponse>()).Where(u => u != null).Select(u => new ReportActivityUnit
 				{
 					UnitId = u.UnitId, Dispatched = u.Dispatched, Enroute = u.Enroute, OnScene = u.OnScene, Released = u.Released, InQuarters = u.InQuarters

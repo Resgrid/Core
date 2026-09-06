@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
@@ -32,12 +32,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class DisclosuresController : V4AuthenticatedApiControllerbase
 	{
 		private readonly IRecordsDisclosureService _disclosures;
+		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRecordsCutoverService _cutoverService;
 		private readonly IRecordsApiIdempotencyService _idempotency;
 
-		public DisclosuresController(IRecordsDisclosureService disclosures, IRecordsCutoverService cutoverService, IRecordsApiIdempotencyService idempotency)
+		public DisclosuresController(IRecordsDisclosureService disclosures, IRecordsCutoverService cutoverService, IRecordsApiIdempotencyService idempotency, IRecordsAuthorizationService authorization)
 		{
 			_disclosures = disclosures;
+			_authorization = authorization;
 			_cutoverService = cutoverService;
 			_idempotency = idempotency;
 		}
@@ -53,8 +55,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			var states = state.HasValue ? new List<RmsDisclosureState> { (RmsDisclosureState)state.Value } : null;
-			var requests = await _disclosures.QueryAsync(DepartmentId, states, Math.Max(0, skip), Math.Max(1, Math.Min(RecordsController.MaxPageSize, take)));
-			var canViewRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords();
+			var requests = await _disclosures.QueryAsync(DepartmentId, UserId, states, Math.Max(0, skip), Math.Max(1, Math.Min(RecordsController.MaxPageSize, take)));
+			var canViewRestricted = await _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 
 			var result = new DisclosureRequestsResult
 			{
@@ -75,16 +77,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await FlagOnAsync())
 				return NotFound();
 
-			var request = await _disclosures.GetAsync(DepartmentId, id);
+			var request = await _disclosures.GetAsync(DepartmentId, UserId, id);
 			if (request == null)
 				return NotFound();
 
-			return Ok(Wrap(request));
+			return Ok(await WrapAsync(request));
 		}
 
 		/// <summary>
 		/// What the scope resolves to right now, through the same authorization path as the Records queue. Drafts
-		/// are listed but never producible: an unfinished report is not a public record.
+		/// are listed for separate review; automatic production requires a saved revision.
 		/// </summary>
 		[HttpGet("PreviewScope")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -93,7 +95,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await FlagOnAsync())
 				return NotFound();
-			if (await _disclosures.GetAsync(DepartmentId, id) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, id) == null)
 				return NotFound();
 
 			try
@@ -117,10 +119,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await FlagOnAsync())
 				return NotFound();
-			if (await _disclosures.GetAsync(DepartmentId, requestId) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, requestId) == null)
 				return NotFound();
 
-			var productions = await _disclosures.GetProductionsAsync(DepartmentId, requestId);
+			var productions = await _disclosures.GetProductionsAsync(DepartmentId, UserId, requestId);
 			var result = new DisclosureProductionsResult { Data = productions.Select(p => DisclosuresApiMapper.ToProduction(p)).ToList(), Status = ResponseHelper.Success };
 			result.PageSize = result.Data.Count;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -187,9 +189,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var replayed = await _idempotency.TryGetRecordIdAsync(DepartmentId, UserId, key, nameof(Create));
 				if (!string.IsNullOrWhiteSpace(replayed))
 				{
-					var existing = await _disclosures.GetAsync(DepartmentId, replayed);
+					var existing = await _disclosures.GetAsync(DepartmentId, UserId, replayed);
 					if (existing != null)
-						return Ok(Wrap(existing));
+						return Ok(await WrapAsync(existing));
 				}
 			}
 
@@ -211,7 +213,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (key != null)
 					await _idempotency.RememberAsync(DepartmentId, UserId, key, nameof(Create), created.RmsDisclosureRequestId);
 
-				return StatusCode(StatusCodes.Status201Created, Wrap(created, ResponseHelper.Created));
+				return StatusCode(StatusCodes.Status201Created, await WrapAsync(created, ResponseHelper.Created));
 			}
 			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException)
 			{
@@ -231,14 +233,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var usable = await UsableAsync();
 			if (usable != null)
 				return usable;
-			if (await _disclosures.GetAsync(DepartmentId, input.RequestId) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, input.RequestId) == null)
 				return NotFound();
 
 			try
 			{
 				var saved = await _disclosures.SaveScopeAsync(DepartmentId, UserId, input.RequestId, input.ScopeNarrative,
 					DisclosuresApiMapper.ToScopeQuery(input.Scope), input.RedactionProfile, cancellationToken);
-				return Ok(Wrap(saved, ResponseHelper.Updated));
+				return Ok(await WrapAsync(saved, ResponseHelper.Updated));
 			}
 			catch (RecordTransitionException ex)
 			{
@@ -250,8 +252,38 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 		}
 
+		[HttpGet("GetReview")]
+		public async Task<IActionResult> GetReview(string requestId, string profile = null)
+		{
+			var usable = await UsableAsync(); if (usable != null) return usable;
+			try { Response.Headers["Cache-Control"] = "no-store"; return Ok(await _disclosures.GetReviewAsync(DepartmentId, UserId, requestId, profile)); }
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { return Problem(ex.Message, statusCode: 409); }
+		}
+		[HttpGet("ReviewAttachment")]
+		public async Task<IActionResult> ReviewAttachment(string requestId, string recordId, string revisionId, string attachmentId, string profile)
+		{
+			var usable = await UsableAsync(); if (usable != null) return usable;
+			try
+			{
+				var file = await _disclosures.GetReviewAttachmentAsync(DepartmentId, UserId, requestId, recordId, revisionId, attachmentId, profile);
+				if (file == null) return NotFound(); Response.Headers["Cache-Control"] = "no-store"; Response.Headers["X-Content-Type-Options"] = "nosniff";
+				return File(file.Data, "application/octet-stream", file.FileName);
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { return Problem(ex.Message, statusCode: 409); }
+		}
+		[HttpGet("Download")]
+		public async Task<IActionResult> Download(string productionId, string format = "zip")
+		{
+			var usable = await UsableAsync(); if (usable != null) return usable;
+			try { var packet = await _disclosures.DownloadAsync(DepartmentId, UserId, productionId, format); Response.Headers["Cache-Control"] = "no-store"; return File(packet.Data, packet.ContentType, packet.FileName); }
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { return Problem(ex.Message, statusCode: 409); }
+		}
 		/// <summary>Builds a new immutable production: redacted content, produced-set snapshot, redaction log and checksum.</summary>
 		[HttpPost("Produce")]
+		[RequestSizeLimit(100 * 1024 * 1024)]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		public async Task<ActionResult<DisclosureProductionResult>> Produce(DisclosureCommandInput input, CancellationToken cancellationToken)
@@ -261,16 +293,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var usable = await UsableAsync();
 			if (usable != null)
 				return usable;
-			if (await _disclosures.GetAsync(DepartmentId, input.RequestId) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, input.RequestId) == null)
 				return NotFound();
 
 			try
 			{
-				var production = await _disclosures.ProduceAsync(DepartmentId, UserId, input.RequestId, input.RedactionProfile, cancellationToken);
+				var production = await _disclosures.ProduceAsync(DepartmentId, UserId, input.RequestId, input.RedactionProfile, cancellationToken, input.Review);
 				var result = new DisclosureProductionResult { Data = DisclosuresApiMapper.ToProduction(production), PageSize = 1, Status = ResponseHelper.Created };
 				ResponseHelper.PopulateV4ResponseData(result);
 				return StatusCode(StatusCodes.Status201Created, result);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (RecordTransitionException ex)
 			{
 				return Problem(statusCode: StatusCodes.Status409Conflict, title: ex.Message, type: "record_transition");
@@ -297,11 +330,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			try
 			{
-				var released = await _disclosures.ReleaseAsync(DepartmentId, UserId, input.ProductionId, cancellationToken);
+				var released = await _disclosures.ReleaseAsync(DepartmentId, UserId, input.ProductionId, cancellationToken, input.DeliveryMethod, input.DeliveryReference);
 				var result = new DisclosureProductionResult { Data = DisclosuresApiMapper.ToProduction(released), PageSize = 1, Status = ResponseHelper.Updated };
 				ResponseHelper.PopulateV4ResponseData(result);
 				return Ok(result);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (RecordTransitionException ex)
 			{
 				return Problem(statusCode: StatusCodes.Status409Conflict, title: ex.Message, type: "record_transition");
@@ -323,13 +357,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var usable = await UsableAsync();
 			if (usable != null)
 				return usable;
-			if (await _disclosures.GetAsync(DepartmentId, input.RequestId) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, input.RequestId) == null)
 				return NotFound();
 
 			try
 			{
 				var closed = await _disclosures.CloseAsync(DepartmentId, UserId, input.RequestId, (RmsDisclosureState)input.Disposition.Value, input.Reason, cancellationToken);
-				return Ok(Wrap(closed, ResponseHelper.Updated));
+				return Ok(await WrapAsync(closed, ResponseHelper.Updated));
 			}
 			catch (RecordTransitionException ex)
 			{
@@ -365,18 +399,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (string.IsNullOrWhiteSpace(requestId) || string.IsNullOrWhiteSpace(productionId) || !await FlagOnAsync())
 				return null;
-			if (await _disclosures.GetAsync(DepartmentId, requestId) == null)
+			if (await _disclosures.GetAsync(DepartmentId, UserId, requestId) == null)
 				return null;
 
-			var productions = await _disclosures.GetProductionsAsync(DepartmentId, requestId);
+			var productions = await _disclosures.GetProductionsAsync(DepartmentId, UserId, requestId);
 			return productions.FirstOrDefault(p => string.Equals(p.RmsDisclosureProductionId, productionId, StringComparison.Ordinal));
 		}
 
-		private DisclosureRequestResult Wrap(RmsDisclosureRequest request, string status = ResponseHelper.Success)
+		private async Task<DisclosureRequestResult> WrapAsync(RmsDisclosureRequest request, string status = ResponseHelper.Success)
 		{
 			var result = new DisclosureRequestResult
 			{
-				Data = DisclosuresApiMapper.ToRequest(request, ClaimsAuthorizationHelper.CanViewRestrictedRecords()),
+				Data = DisclosuresApiMapper.ToRequest(request, await _authorization.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords)),
 				PageSize = 1,
 				Status = status
 			};

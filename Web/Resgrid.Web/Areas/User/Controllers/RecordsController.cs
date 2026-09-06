@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -38,6 +39,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsService _recordsService;
 		private readonly IRecordsCutoverService _cutoverService;
 		private readonly IRecordsAuthorizationService _recordsAuthorizationService;
+		private readonly IRecordsUdfService _udf;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IUnitsService _unitsService;
@@ -59,12 +61,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer,
 			ICompositeViewEngine viewEngine, IPdfProvider pdfProvider, IRecordsSearchService recordsSearch, IDepartmentDataProtectionService dataProtection,
-			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard)
+			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard, IRecordsUdfService udf)
 		{
 			_accountability = accountability;
 			_recordsService = recordsService;
 			_cutoverService = cutoverService;
 			_recordsAuthorizationService = recordsAuthorizationService;
+			_udf = udf;
 			_departmentsService = departmentsService;
 			_departmentGroupsService = departmentGroupsService;
 			_unitsService = unitsService;
@@ -83,6 +86,59 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region Dashboard
 
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> NewRunCall(string id)
+		{
+			var aggregate = await LoadAuthorizedAsync(id);
+			if (aggregate == null) return NotFound();
+			if (!CanEditRecord(aggregate.Record) || !await _recordsAuthorizationService.CanCreateSourceCallAsync(UserId, DepartmentId)) return Forbid();
+			if (aggregate.Record.DefinitionKey != RmsDefinitionKeys.Run || aggregate.Record.CallId.HasValue) return BadRequest();
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			return View(new RecordNewCallView { RecordId = id, RowVersion = aggregate.Record.RowVersion, OccurredOn = aggregate.Record.StartedOn?.TimeConverter(department) });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> NewRunCall(RecordNewCallView model, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+				await _recordsService.CreateRunCallAsync(DepartmentId, UserId, model.RecordId, model.RowVersion,
+					new RecordNewCallInput { Name = model.Name, Address = model.Address, Nature = model.Nature, OccurredOnUtc = ToUtc(model.OccurredOn, department) ?? default }, cancellationToken);
+				return RedirectToAction("Edit", new { id = model.RecordId });
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (RecordConcurrencyException) { model.ErrorMessage = _localizer["ConcurrencyError"]; Response.StatusCode = 409; }
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { model.ErrorMessage = ex.Message; }
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> Autosave(RecordEditView model, CancellationToken cancellationToken)
+		{
+			Response.Headers.CacheControl = "no-store";
+			var module = await _cutoverService.GetModuleStateAsync(DepartmentId);
+			if (!module.RecordsUsable) return NotFound();
+			var aggregate = await LoadAuthorizedAsync(model.RecordId);
+			if (aggregate == null) return NotFound();
+			if (!CanEditRecord(aggregate.Record)) return Forbid();
+			model.DefinitionKey = aggregate.Record.DefinitionKey;
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			try
+			{
+				var saved = await _recordsService.SaveDraftAsync(DepartmentId, UserId, model.RecordId, model.RowVersion, BuildInput(model), cancellationToken);
+				return Json(new { rowVersion = saved.Record.RowVersion });
+			}
+			catch (RecordConcurrencyException) { return Conflict(new { error = "This draft changed elsewhere. Reload it before saving again; your unsaved text remains in this form." }); }
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (Exception ex) when (ex is ArgumentException || ex is RecordTransitionException) { return BadRequest(new { error = ex.Message }); }
+		}
+
 		/// <summary>
 		/// The Records work queues an officer opens the module to look at (RMS-3): incomplete, awaiting review,
 		/// rejected, accepted, overdue, the disclosure clock, and the NERIS crosswalk gaps that decide whether a
@@ -93,6 +149,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Record_View)]
 		public async Task<IActionResult> Dashboard(CancellationToken cancellationToken)
 		{
+			if (!await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)) return Forbid();
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
 				return NotFound();
@@ -124,6 +181,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Record_View)]
 		public async Task<IActionResult> Index(int? year, string definitionKey, string state, string q = null, string owner = null, int? group = null, int page = 1)
 		{
+			if (!await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)) return Forbid();
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.FlagEnabled)
 				return NotFound();
@@ -257,6 +315,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Record_Create)]
 		public async Task<IActionResult> New(string definitionKey, int? callId)
 		{
+			if (callId.HasValue && !ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.RecordsUsable)
 				return moduleState.FlagEnabled ? RedirectToAction("Index") : NotFound();
@@ -278,6 +337,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Record_Create)]
 		public async Task<IActionResult> Create(RecordEditView model, ICollection<IFormFile> files, CancellationToken cancellationToken)
 		{
+			if (model.CallId.HasValue && !ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
 			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
 			if (!moduleState.RecordsUsable)
 				return moduleState.FlagEnabled ? RedirectToAction("Index") : NotFound();
@@ -290,7 +350,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				var aggregate = await _recordsService.CreateDraftAsync(DepartmentId, UserId, BuildInput(model), cancellationToken);
-				await SaveUploadsAsync(aggregate.Record.RmsOperationalRecordId, files, cancellationToken);
+				await SaveUploadsAsync(aggregate.Record.RmsOperationalRecordId, files, cancellationToken, model.AttachmentClassification);
 
 				if (model.FinalizeAfterSave && model.CanFinalize)
 				{
@@ -308,6 +368,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return RedirectToAction("Details", new { id = aggregate.Record.RmsOperationalRecordId });
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (ArgumentException ex)
 			{
 				model.ErrorMessage = ex.Message;
@@ -351,6 +412,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				EndedOn = record.EndedOn?.TimeConverter(department),
 				Details = aggregate.Details ?? new RmsOperationalRecordDetail(),
 				ParticipantUserIds = aggregate.Participants.Select(p => p.UserId).ToList(),
+				ParticipantRows = aggregate.Participants.Select(p => new RecordParticipantEditRow { UserId = p.UserId, Selected = true, UnitId = p.UnitId, Role = p.Role }).ToList(),
 				Units = aggregate.Units.Select(u => new RecordUnitResponseInput
 				{
 					UnitId = u.UnitId,
@@ -361,6 +423,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					InQuarters = u.InQuarters?.TimeConverter(department)
 				}).ToList()
 			};
+			model.Details = JsonConvert.DeserializeObject<RmsOperationalRecordDetail>(JsonConvert.SerializeObject(model.Details));
+			if (!await CanViewRestrictedAsync() || !await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords))
+			{
+				if (RmsDefinitionKeys.RestrictedClass.Contains(model.DefinitionKey ?? string.Empty))
+					foreach (var name in RecordSnapshotSerializer.RestrictedDetailFields)
+						typeof(RmsOperationalRecordDetail).GetProperty(name).SetValue(model.Details, null);
+			}
 			if (model.Details.ActivityOn.HasValue)
 				model.Details.ActivityOn = model.Details.ActivityOn.Value.TimeConverter(department);
 
@@ -378,6 +447,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 			if (!CanEditRecord(aggregate.Record))
 				return Unauthorized();
+			if (model.CallId.HasValue && model.CallId != aggregate.Record.CallId && !ClaimsAuthorizationHelper.CanViewCalls()) return Forbid();
+			if (model.ParticipantRows == null)
+				model.ParticipantRows = (model.ParticipantUserIds ?? new List<string>()).Select(id => { var previous = aggregate.Participants.FirstOrDefault(p => p.UserId == id); return new RecordParticipantEditRow { UserId = id, Selected = true, UnitId = previous?.UnitId, Role = previous?.Role }; }).ToList();
 
 			await PopulateListsAsync(model);
 			model.RecordType = (RmsOperationalRecordType)aggregate.Record.RecordType.GetValueOrDefault();
@@ -386,7 +458,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				var saved = await _recordsService.SaveDraftAsync(DepartmentId, UserId, model.RecordId, model.RowVersion, BuildInput(model), cancellationToken);
-				await SaveUploadsAsync(model.RecordId, files, cancellationToken);
+				await SaveUploadsAsync(model.RecordId, files, cancellationToken, model.AttachmentClassification);
 
 				if (model.FinalizeAfterSave && model.CanFinalize)
 				{
@@ -408,6 +480,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ErrorMessage = _localizer["ConcurrencyError"];
 				return View(model);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (ArgumentException ex)
 			{
 				model.ErrorMessage = ex.Message;
@@ -556,27 +629,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<IActionResult> Revision(string id, string revisionId)
-		{
-			var model = await BuildRevisionViewAsync(id, revisionId);
-			if (model == null)
-				return NotFound();
-
-			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, revisionId, RmsAccessAuditAction.Read, "Revision view", IpAddressHelper.GetRequestIP(Request, true));
-			return View(model);
-		}
+		public IActionResult Revision(string id, string revisionId) => RedirectToAction("Revision", "RecordDocuments", new { id, kind=RmsRecordKind.Operational, revisionId });
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<IActionResult> Diff(string id, string from, string to)
-		{
-			var model = await BuildDiffViewAsync(id, from, to);
-			if (model == null)
-				return NotFound();
-
-			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, to, RmsAccessAuditAction.Read, "Revision diff", IpAddressHelper.GetRequestIP(Request, true));
-			return View(model);
-		}
+		public IActionResult Diff(string id, string from, string to) => RedirectToAction("Diff", "RecordDocuments", new { id, kind=RmsRecordKind.Operational, from, to });
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_View)]
@@ -585,7 +642,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (await LoadAuthorizedAsync(id) == null)
 				return NotFound();
 
-			var attachment = await _recordsService.GetAttachmentAsync(DepartmentId, attachmentId);
+			var attachment = await _recordsService.GetAttachmentAsync(DepartmentId, UserId, attachmentId);
 			if (attachment == null || !string.Equals(attachment.RecordId, id, StringComparison.Ordinal) || attachment.Data == null)
 				return NotFound();
 
@@ -596,7 +653,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Record_Create)]
-		public async Task<IActionResult> AddAttachment(string id, ICollection<IFormFile> files, CancellationToken cancellationToken)
+		public async Task<IActionResult> AddAttachment(string id, ICollection<IFormFile> files, CancellationToken cancellationToken, int classification = 1)
 		{
 			var aggregate = await LoadAuthorizedAsync(id);
 			if (aggregate == null)
@@ -606,7 +663,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			try
 			{
-				var rejected = await SaveUploadsAsync(id, files, cancellationToken);
+				var rejected = await SaveUploadsAsync(id, files, cancellationToken, classification);
 				if (rejected.Count > 0)
 					return await DetailsWithErrorAsync(id, string.Join(" ", rejected));
 				return RedirectToAction("Details", new { id });
@@ -625,9 +682,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var aggregate = await LoadAuthorizedAsync(id, includeRevisions: true);
 			if (aggregate == null)
 				return NotFound();
+			if (aggregate.Record.CurrentRevisionId != null)
+				return RedirectToAction("Export", "RecordDocuments", new { id, kind = RmsRecordKind.Operational, revisionId = aggregate.Record.CurrentRevisionId, format = "json" });
 
 			var snapshot = RecordSnapshotSerializer.Build(aggregate);
-			if (!ClaimsAuthorizationHelper.CanViewRestrictedRecords() && snapshot.Details != null)
+			snapshot.CustomFields = await _udf.ProjectAsync(DepartmentId, UserId, snapshot.CustomFields);
+			if (!await CanViewRestrictedAsync() && snapshot.Details != null)
 			{
 				foreach (var field in RecordSnapshotSerializer.RestrictedDetailFields)
 					typeof(RmsOperationalRecordDetail).GetProperty(field)?.SetValue(snapshot.Details, null);
@@ -660,6 +720,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 
 			var record = model.Aggregate.Record;
+			if (record.CurrentRevisionId != null)
+				return RedirectToAction("Export", "RecordDocuments", new { id, kind = RmsRecordKind.Operational, revisionId = record.CurrentRevisionId, format = "pdf" });
 			model.Provenance = await BuildProvenanceAsync(model.Department, model.PersonnelNames, record.RecordNumber ?? record.DraftReference, record.DefinitionKey, record.DefinitionVersion, record.RevisionCount > 0 ? record.RevisionCount : (int?)null);
 			var pdf = await RenderPdfAsync("Print", model);
 
@@ -670,33 +732,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// <summary>Single-revision print/PDF: the revision exactly as it stood (RMS plan sections 4.8 and 4.10).</summary>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_Export)]
-		public async Task<IActionResult> PrintRevision(string id, string revisionId)
-		{
-			var model = await BuildRevisionViewAsync(id, revisionId);
-			if (model == null)
-				return NotFound();
-
-			model.Provenance = await BuildProvenanceAsync(model.Department, model.PersonnelNames, model.Snapshot.RecordNumber ?? model.Snapshot.DraftReference, model.Snapshot.DefinitionKey, model.Snapshot.DefinitionVersion, model.Revision.RevisionNumber);
-			var pdf = await RenderPdfAsync("PrintRevision", model);
-
-			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, revisionId, RmsAccessAuditAction.Export, "PDF print (revision)", IpAddressHelper.GetRequestIP(Request, true));
-			return File(pdf, "application/pdf", SafeFileName(model.Provenance.RecordNumber) + "-r" + model.Revision.RevisionNumber + ".pdf");
-		}
+		public IActionResult PrintRevision(string id, string revisionId) => RedirectToAction("Export", "RecordDocuments", new { id, kind=RmsRecordKind.Operational, revisionId, format="pdf" });
 
 		/// <summary>Two-revision diff print/PDF (RMS plan sections 4.8 and 4.10); withheld fields stay withheld.</summary>
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_Export)]
-		public async Task<IActionResult> PrintDiff(string id, string from, string to)
-		{
-			var model = await BuildDiffViewAsync(id, from, to);
-			if (model == null)
-				return NotFound();
-
-			var pdf = await RenderPdfAsync("PrintDiff", model);
-
-			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, to, RmsAccessAuditAction.Export, "PDF print (diff)", IpAddressHelper.GetRequestIP(Request, true));
-			return File(pdf, "application/pdf", SafeFileName(model.Provenance.RecordNumber) + "-r" + model.From.RevisionNumber + "-r" + model.To.RevisionNumber + ".pdf");
-		}
+		public IActionResult PrintDiff(string id, string from, string to) => RedirectToAction("PrintDiff", "RecordDocuments", new { id, kind = RmsRecordKind.Operational, from, to });
 
 		/// <summary>
 		/// List/search tabular export (RMS plan section 4.10): CSV, or the same rows as JSON, of the authorized filtered
@@ -1043,6 +1084,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// </summary>
 		private async Task<AuthorizedSearchPage> SearchProjectionsAsync(string text, List<int> visibleGroups, List<int> states, string definitionKey, int? year, int skip, int take)
 		{
+			if (!await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)) throw new UnauthorizedAccessException("Records access is not authorized.");
 			RecordsSearchResult result;
 			try
 			{
@@ -1134,7 +1176,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CanAmend = ClaimsAuthorizationHelper.CanAmendRecords(),
 				CanVoid = ClaimsAuthorizationHelper.CanVoidRecords(),
 				CanExport = ClaimsAuthorizationHelper.CanExportRecords(),
-				CanViewRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords(),
+				CanViewRestricted = await CanViewRestrictedAsync(),
 				CanReassign = ClaimsAuthorizationHelper.CanReassignRecordDrafts()
 			};
 		}
@@ -1164,7 +1206,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return null;
 			}
 
-			return await _recordsService.GetAsync(DepartmentId, id, includeRevisions);
+			var aggregate = await _recordsService.GetAsync(DepartmentId, id, includeRevisions);
+			if (aggregate != null && !await CanViewRestrictedAsync()) aggregate.Attachments = aggregate.Attachments.Where(a => !a.RequiresRestrictedAccess).ToList();
+			return aggregate;
 		}
 
 		private bool CanEditRecord(RmsOperationalRecord record)
@@ -1183,6 +1227,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var department = model.Department;
 			return new RecordDraftInput
 			{
+				CustomFields = model.CustomFields,
 				DefinitionKey = model.DefinitionKey,
 				CallId = model.CallId,
 				StationGroupId = model.StationGroupId,
@@ -1213,7 +1258,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					UnitId = model.Details?.UnitId,
 					ActivityOn = ToUtc(model.Details?.ActivityOn, department)
 				},
-				Participants = (model.ParticipantUserIds ?? new List<string>()).Where(u => !string.IsNullOrWhiteSpace(u)).Select(u => new RecordParticipantInput { UserId = u }).ToList(),
+				Participants = BuildParticipantInput(model),
 				Units = (model.Units ?? new List<RecordUnitResponseInput>()).Where(u => u.UnitId > 0).Select(u => new RecordUnitResponseInput
 				{
 					UnitId = u.UnitId,
@@ -1238,8 +1283,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return DateTimeHelpers.ConvertToUtc(local.Value, department.TimeZone, true);
 		}
 
+		public static List<RecordParticipantInput> BuildParticipantInput(RecordEditView model) => model.ParticipantRows != null
+			? model.ParticipantRows.Where(p => p.Selected && !string.IsNullOrWhiteSpace(p.UserId)).Select(p => new RecordParticipantInput { UserId = p.UserId, UnitId = p.UnitId, Role = p.Role }).ToList()
+			: (model.ParticipantUserIds ?? new List<string>()).Where(u => !string.IsNullOrWhiteSpace(u)).Select(u => new RecordParticipantInput { UserId = u }).ToList();
+
 		/// <summary>Stores each upload; files that fail media hygiene or the scanner are skipped and their reasons returned.</summary>
-		private async Task<List<string>> SaveUploadsAsync(string recordId, ICollection<IFormFile> files, CancellationToken cancellationToken)
+		private async Task<List<string>> SaveUploadsAsync(string recordId, ICollection<IFormFile> files, CancellationToken cancellationToken, int classification = 1)
 		{
 			var rejected = new List<string>();
 			if (files == null)
@@ -1251,7 +1300,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await file.CopyToAsync(stream, cancellationToken);
 				try
 				{
-					await _recordsService.AddAttachmentAsync(DepartmentId, UserId, recordId, Path.GetFileName(file.FileName), file.ContentType, stream.ToArray(), null, cancellationToken);
+					await _recordsService.AddAttachmentAsync(DepartmentId, UserId, recordId, Path.GetFileName(file.FileName), file.ContentType, stream.ToArray(), null, cancellationToken, classification);
 				}
 				catch (ArgumentException ex)
 				{
@@ -1264,6 +1313,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private async Task PopulateListsAsync(RecordEditView model)
 		{
+			if (model.IsNew) model.CustomFieldForm = await _udf.GetNewFormAsync(DepartmentId, UserId, model.DefinitionKey, RmsDefinitionKeys.LockedDefinitionVersion);
+			if (!string.IsNullOrWhiteSpace(model.RecordId) && await _recordsAuthorizationService.CanUserViewRecordAsync(UserId, model.RecordId, DepartmentId))
+			{
+				var current = await _recordsService.GetAsync(DepartmentId, model.RecordId);
+				model.CustomFieldForm = await _udf.ProjectAsync(DepartmentId, UserId, current?.CustomFields);
+			}
+			if (model.CustomFieldForm != null && model.CustomFields?.DefinitionId == model.CustomFieldForm.DefinitionId)
+				foreach (var field in model.CustomFieldForm.Fields.Where(f=>!f.Field.IsReadOnly))
+					if (model.CustomFields.Values?.TryGetValue(field.Field.UdfFieldId,out var submitted)==true) field.Value=submitted;
+			model.CanViewRestricted = await CanViewRestrictedAsync()
+				&& await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			model.Definitions = DefinitionList();
 			model.CanFinalize = ClaimsAuthorizationHelper.CanFinalizeRecords();
@@ -1273,17 +1333,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
 			model.Personnel = names.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
+			model.ParticipantRows ??= model.ParticipantUserIds.Select(id => new RecordParticipantEditRow { UserId = id, Selected = true }).ToList();
+			if (model.ParticipantRows.All(p => !string.IsNullOrWhiteSpace(p.UserId))) model.ParticipantRows.Add(new RecordParticipantEditRow { Selected = true });
 
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
 			model.AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList();
 
-			var calls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId) ?? new List<Call>();
-			model.Calls = calls.OrderByDescending(c => c.LoggedOn).Select(c => new SelectListItem { Value = c.CallId.ToString(), Text = $"{c.Number} {c.Name}" }).ToList();
+			var calls = ClaimsAuthorizationHelper.CanViewCalls() ? await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId) ?? new List<Call>() : new List<Call>();
+			model.Calls = new List<SelectListItem>();
+			foreach (var call in calls.OrderByDescending(c => c.LoggedOn))
+				if (await _recordsAuthorizationService.CanReadSourceCallAsync(UserId, DepartmentId, call))
+					model.Calls.Add(new SelectListItem { Value = call.CallId.ToString(), Text = $"{call.Number} {call.Name}" });
 			if (model.CallId.HasValue && model.Calls.All(c => c.Value != model.CallId.Value.ToString()))
 			{
-				var call = await _callsService.GetCallByIdAsync(model.CallId.Value);
-				if (call != null && call.DepartmentId == DepartmentId)
-					model.Calls.Insert(0, new SelectListItem { Value = call.CallId.ToString(), Text = $"{call.Number} {call.Name}" });
+				// Retain the existing binding without reopening its source. Otherwise a browser posts the blank option
+				// after access is revoked and an unrelated edit would erase the authorized snapshot.
+				model.Calls.Insert(0, new SelectListItem { Value = model.CallId.Value.ToString(), Text = $"{model.Details?.CallNumber ?? model.CallId.Value.ToString()} {model.Details?.CallName}".Trim() });
 			}
 		}
 
@@ -1321,9 +1386,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Snapshot = await _recordsService.GetRevisionSnapshotAsync(DepartmentId, revisionId),
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				PersonnelNames = await PersonnelNamesAsync(),
-				CanViewRestricted = ClaimsAuthorizationHelper.CanViewRestrictedRecords()
+				CanViewRestricted = await CanViewRestrictedAsync()
 			};
 
+			if (model.Snapshot != null) model.Snapshot.CustomFields = await _udf.ProjectAsync(DepartmentId, UserId, model.Snapshot.CustomFields);
 			return model.Snapshot == null ? null : model;
 		}
 
@@ -1346,7 +1412,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				From = fromRevision,
 				To = toRevision,
 				Department = department,
-				Diffs = await _recordsService.DiffRevisionsAsync(DepartmentId, from, to, ClaimsAuthorizationHelper.CanViewRestrictedRecords()),
+				Diffs = await _recordsService.DiffRevisionsAsync(DepartmentId, from, to, await CanViewRestrictedAsync()),
 				Provenance = await BuildProvenanceAsync(department, await PersonnelNamesAsync(), aggregate.Record.RecordNumber ?? aggregate.Record.DraftReference, aggregate.Record.DefinitionKey, aggregate.Record.DefinitionVersion, toRevision.RevisionNumber)
 			};
 		}
@@ -1453,5 +1519,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion
+
+        private async Task<bool> CanViewRestrictedAsync() => ClaimsAuthorizationHelper.CanViewRestrictedRecords()
+            && await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 	}
 }

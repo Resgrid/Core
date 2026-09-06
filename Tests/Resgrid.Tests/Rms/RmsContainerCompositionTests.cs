@@ -49,6 +49,7 @@ namespace Resgrid.Tests.Rms
 			Resolve<IIncidentAnalysisService>().Should().NotBeNull();
 			// RMS-3c/3d
 			Resolve<IRecordsEvidenceService>().Should().NotBeNull();
+			Resolve<IRecordEvidenceSelectionService>().Should().NotBeNull();
 			Resolve<IRecordsDisclosureService>().Should().NotBeNull();
 			Resolve<IRecordsDashboardService>().Should().NotBeNull();
 		}
@@ -69,6 +70,8 @@ namespace Resgrid.Tests.Rms
 			Resolve<IRmsAccessAuditsRepository>().Should().NotBeNull();
 			Resolve<IRmsRecordSearchProjectionsRepository>().Should().NotBeNull();
 			Resolve<IRmsSearchIndexStatesRepository>().Should().NotBeNull();
+			Resolve<IRmsSearchWriteFence>().Should().NotBeNull();
+			Resolve<IRmsCommandReceiptsRepository>().Should().NotBeNull();
 			Resolve<IRmsRecordGroupScopesRepository>().Should().NotBeNull();
 			Resolve<IRmsRecordSharesRepository>().Should().NotBeNull();
 			Resolve<IRmsLegacyStatsRepository>().Should().NotBeNull();

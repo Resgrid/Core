@@ -40,11 +40,19 @@ namespace Resgrid.Providers.Neris
 
 		public static string BaseUrlFor(RmsNerisProfile profile)
 		{
-			if (!string.IsNullOrWhiteSpace(profile?.BaseUrlOverride))
-				return profile.BaseUrlOverride.TrimEnd('/');
-			if (profile?.Environment == NerisEnvironments.Sandbox && !string.IsNullOrWhiteSpace(NerisConfig.SandboxBaseUrl))
-				return NerisConfig.SandboxBaseUrl.TrimEnd('/');
-			return (NerisConfig.BaseUrl ?? string.Empty).TrimEnd('/');
+			if (profile == null || (profile.Environment != NerisEnvironments.Sandbox && profile.Environment != NerisEnvironments.Production))
+				throw new InvalidOperationException("A NERIS environment must be explicitly selected.");
+			var url = string.IsNullOrWhiteSpace(profile.BaseUrlOverride)
+				? (profile.Environment == NerisEnvironments.Sandbox ? NerisConfig.SandboxBaseUrl : NerisConfig.BaseUrl)
+				: profile.BaseUrlOverride;
+			if (!Uri.TryCreate(url?.Trim(), UriKind.Absolute, out var endpoint) || endpoint.Scheme != Uri.UriSchemeHttps
+				|| !string.IsNullOrEmpty(endpoint.UserInfo) || !string.IsNullOrEmpty(endpoint.Query) || !string.IsNullOrEmpty(endpoint.Fragment))
+				throw new InvalidOperationException("Configure an HTTPS NERIS endpoint for the selected environment before submitting.");
+			if (profile.Environment == NerisEnvironments.Sandbox &&
+				(endpoint.Host.Equals("api.neris.fsri.org", StringComparison.OrdinalIgnoreCase)
+				 || (Uri.TryCreate(NerisConfig.BaseUrl, UriKind.Absolute, out var production) && endpoint.Host.Equals(production.Host, StringComparison.OrdinalIgnoreCase))))
+				throw new InvalidOperationException("The NERIS sandbox endpoint must use a host distinct from production.");
+			return endpoint.AbsoluteUri.TrimEnd('/');
 		}
 
 		public Task<NerisSubmissionOutcome> ValidateAsync(RmsNerisProfile profile, NerisCredential credential, string payloadJson, CancellationToken cancellationToken = default)
@@ -80,7 +88,7 @@ namespace Resgrid.Providers.Neris
 
 		public Task<NerisSubmissionOutcome> GetIncidentAnalysisStatusAsync(RmsNerisProfile profile, NerisCredential credential, string nerisAnalysisId, CancellationToken cancellationToken = default)
 		{
-			return SendAsync(profile, credential, HttpMethod.Get, () => $"/incident_analysis/{Entity(profile)}/{Uri.EscapeDataString(nerisAnalysisId ?? string.Empty)}", null, StatusOutcome(nerisAnalysisId), cancellationToken);
+			return SendAsync(profile, credential, HttpMethod.Get, () => $"/incident_analysis/{Entity(profile)}?neris_id_ia={Uri.EscapeDataString(nerisAnalysisId ?? string.Empty)}", null, StatusOutcome(nerisAnalysisId, "incident_analysis_status"), cancellationToken);
 		}
 
 		private static string Entity(RmsNerisProfile profile) => Uri.EscapeDataString(profile.NerisEntityId);
@@ -92,6 +100,8 @@ namespace Resgrid.Providers.Neris
 				return Fatal("The department has no NERIS entity ID configured.");
 			if (credential == null)
 				return Fatal("The department has no NERIS credential configured.");
+			try { BaseUrlFor(profile); }
+			catch (InvalidOperationException ex) { return Fatal(ex.Message); }
 
 			var path = pathFactory();
 
@@ -112,6 +122,7 @@ namespace Resgrid.Providers.Neris
 			try
 			{
 				using var request = new HttpRequestMessage(method, BaseUrlFor(profile) + path);
+				request.Headers.UserAgent.ParseAdd("Resgrid-RMS/1.0 (+https://resgrid.com)");
 				request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 				request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 				if (body != null)
@@ -127,13 +138,25 @@ namespace Resgrid.Providers.Neris
 				}
 
 				if ((int)response.StatusCode == 429 || (int)response.StatusCode >= 500)
-					return WithStatus(Transient($"NERIS returned {(int)response.StatusCode}."), response.StatusCode, text);
+				{
+					var failure = WithStatus(Transient($"NERIS returned {(int)response.StatusCode}."), response.StatusCode, text);
+					failure.DeliveryUncertain = (int)response.StatusCode >= 500 && method == HttpMethod.Post && !path.EndsWith("/validate", StringComparison.Ordinal);
+					return failure;
+				}
 
-				return interpret(response.StatusCode, text);
+				var interpreted = interpret(response.StatusCode, text);
+				if (method == HttpMethod.Post && !path.EndsWith("/validate", StringComparison.Ordinal) && response.IsSuccessStatusCode && string.IsNullOrWhiteSpace(interpreted.ExternalId))
+				{
+					interpreted.DeliveryUncertain = true;
+					interpreted.Message = "The create reply has no usable destination identifier; reconciliation is required.";
+				}
+				return interpreted;
 			}
 			catch (Exception ex) when (IsTransientTransportFailure(ex, cancellationToken))
 			{
-				return Transient("NERIS unreachable: " + ex.Message);
+				var failure = Transient("NERIS unreachable: " + ex.Message);
+				failure.DeliveryUncertain = method == HttpMethod.Post && !path.EndsWith("/validate", StringComparison.Ordinal);
+				return failure;
 			}
 		}
 
@@ -194,12 +217,12 @@ namespace Resgrid.Providers.Neris
 				if ((int)status == 422)
 					return WithStatus(Rejected(text), status, text);
 				if (status == HttpStatusCode.NotFound)
-					return WithStatus(Fatal("NERIS no longer knows the incident; the next submission must create it again."), status, text);
+					return WithStatus(Fatal("NERIS could not locate the saved destination identifier. Reconcile the filing before retrying."), status, text);
 				return WithStatus(Transient($"Unexpected NERIS update reply {(int)status}."), status, text);
 			};
 		}
 
-		private static Func<HttpStatusCode, string, NerisSubmissionOutcome> StatusOutcome(string nerisIncidentId)
+		private static Func<HttpStatusCode, string, NerisSubmissionOutcome> StatusOutcome(string nerisIncidentId, string statusProperty = "incident_status")
 		{
 			return (status, text) =>
 			{
@@ -207,7 +230,7 @@ namespace Resgrid.Providers.Neris
 					return WithStatus(Transient($"Unexpected NERIS status reply {(int)status}."), status, text);
 
 				var json = TryParse(text);
-				var outcome = new NerisSubmissionOutcome { ExternalId = nerisIncidentId, ExternalStatus = (string)json?["incident_status"]?["status"], Kind = NerisOutcomeKind.Pending };
+				var outcome = new NerisSubmissionOutcome { ExternalId = nerisIncidentId, ExternalStatus = (string)json?[statusProperty]?["status"], Kind = NerisOutcomeKind.Pending };
 				return WithStatus(Promote(outcome), status, text);
 			};
 		}
@@ -303,6 +326,7 @@ namespace Resgrid.Providers.Neris
 			}
 
 			using var request = new HttpRequestMessage(HttpMethod.Post, BaseUrlFor(profile) + "/token") { Content = new FormUrlEncodedContent(form) };
+			request.Headers.UserAgent.ParseAdd("Resgrid-RMS/1.0 (+https://resgrid.com)");
 
 			// The pinned contract's TokenBody carries username/password for the password and MFA flows only; a
 			// client-credentials integration account authenticates with HTTP Basic, so sending the id and secret as
@@ -331,7 +355,7 @@ namespace Resgrid.Providers.Neris
 			throw new NerisAuthException($"NERIS did not issue a token ({error}).");
 		}
 
-		private static string TokenKey(RmsNerisProfile profile) => $"{profile.DepartmentId}:{profile.RmsNerisProfileId}:{profile.RowVersion}";
+		private static string TokenKey(RmsNerisProfile profile) => $"{profile.DepartmentId}:{profile.RmsNerisProfileId}:{profile.RowVersion}:{profile.Environment}:{BaseUrlFor(profile)}";
 
 		private static NerisSubmissionOutcome WithStatus(NerisSubmissionOutcome outcome, HttpStatusCode status, string text)
 		{

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
@@ -28,7 +28,7 @@ namespace Resgrid.Tests.Providers
 		{
 			var issues = Service().ValidateLocal(NerisMappingTests.Snapshot(), NerisMappingTests.Profile());
 
-			issues.Where(i => i.Severity == (int)RmsValidationSeverity.Error).Should().BeEmpty(string.Join("; ", issues.Select(i => i.RuleKey)));
+			issues.Where(i => i.Severity == (int)RmsValidationSeverity.Error).Should().BeEmpty(string.Join("; ", issues.Select(i => i.FieldPath + ":" + i.RuleKey)));
 		}
 
 		[Test]

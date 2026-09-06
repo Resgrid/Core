@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -37,6 +37,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<Resgrid.Model.Providers.IOutboundQueueProvider> _outboundQueue;
 		private RecordsService _service;
 		private Mock<IRecordsEvidenceService> _evidence;
+		private Mock<IRecordsAuthorizationService> _authorization;
 		/// <summary>Revisions the finalize path bound draft evidence to (RMS-3c).</summary>
 		private readonly List<string> _boundRevisions = new List<string>();
 
@@ -80,13 +81,109 @@ namespace Resgrid.Tests.Rms
 				.Callback<Resgrid.Model.Queue.NotificationItem>(n => _notifications.Add(n)).ReturnsAsync(true);
 
 			_evidence = new Mock<IRecordsEvidenceService>();
+			_authorization = new Mock<IRecordsAuthorizationService>();
+            _authorization.Setup(a => a.IsActiveMemberAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+			_authorization.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
+			_authorization.Setup(a => a.CanUserViewRecordAsync(It.IsAny<string>(), It.IsAny<string>(), Dept)).ReturnsAsync(true);
+			_authorization.Setup(a => a.CanReadSourceCallAsync(It.IsAny<string>(), Dept, It.IsAny<Call>())).ReturnsAsync(true);
 			_evidence.Setup(e => e.BindToRevisionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((int d, string r, string rev, CancellationToken c) => { _boundRevisions.Add(rev); return 0; });
 
 			_service = new RecordsService(_store.RecordsRepo.Object, new Resgrid.Services.Records.RmsRecordValueService(_store.DetailsRepo.Object), _store.ParticipantsRepo.Object, _store.UnitsRepo.Object,
 				_store.AttachmentsRepo.Object, _store.RevisionsRepo.Object, _evidence.Object, _store.ScopesRepo.Object, _store.SharesRepo.Object, _store.ProjectionsRepo.Object,
 				_store.AuditsRepo.Object, outbox, _cutover.Object, _settings.Object, _groups.Object, _profiles.Object, _units.Object, _calls.Object, _adp.Object,
-				_store.UnitOfWork.Object, _outboundQueue.Object, new Resgrid.Services.Records.NullRecordAttachmentScanner());
+				_store.UnitOfWork.Object, _outboundQueue.Object, new Resgrid.Services.Records.NullRecordAttachmentScanner(), _authorization.Object, Mock.Of<IRecordsUdfService>());
+		}
+
+		[Test]
+		public async Task Historical_call_creation_is_authorized_versioned_linked_once_and_captured_in_the_run_revision()
+		{
+			var input = TrainingInput(); input.DefinitionKey = RmsDefinitionKeys.Run;
+			var draft = await _service.CreateDraftAsync(Dept, "author", input); var id = draft.Record.RmsOperationalRecordId; var version = draft.Record.RowVersion;
+			var callInput = new RecordNewCallInput { Name = "Past incident", Address = "22 Test Lane", Nature = "Reported smoke", OccurredOnUtc = DateTime.UtcNow.AddHours(-2) };
+			Func<Task> denied = () => _service.CreateRunCallAsync(Dept, "author", id, version, callInput);
+			await denied.Should().ThrowAsync<UnauthorizedAccessException>();
+			_authorization.Setup(a => a.CanCreateSourceCallAsync("author", Dept)).ReturnsAsync(true);
+			Call created = null;
+			_calls.Setup(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ReturnsAsync((Call c, CancellationToken ct) => { c.CallId = 901; c.Number = "C-901"; created = c; return c; });
+			_calls.Setup(c => c.GetCallByIdAsync(901, It.IsAny<bool>())).ReturnsAsync(() => created);
+			Func<Task> stale = () => _service.CreateRunCallAsync(Dept, "author", id, version - 1, callInput);
+			await stale.Should().ThrowAsync<RecordConcurrencyException>(); _calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Never);
+			var linked = await _service.CreateRunCallAsync(Dept, "author", id, version, callInput);
+			linked.Record.CallId.Should().Be(901); linked.Details.CallName.Should().Be("Past incident"); linked.Record.RowVersion.Should().Be(version + 1);
+			created.State.Should().Be((int)CallStates.Closed); created.ReportingUserId.Should().Be("author"); created.DepartmentId.Should().Be(Dept);
+			Func<Task> replay = () => _service.CreateRunCallAsync(Dept, "author", id, linked.Record.RowVersion, callInput);
+			await replay.Should().ThrowAsync<ArgumentException>(); _calls.Verify(c => c.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>()), Times.Once);
+			await _service.FinalizeAsync(Dept, "author", id, linked.Record.RowVersion, "1", null, null);
+			_store.Revisions.Single().SnapshotJson.Should().Contain("Past incident").And.Contain("C-901");
+		}
+		[Test]
+		public async Task Viewing_a_draft_does_not_grant_service_level_authoring_or_autosave()
+		{
+			var input = TrainingInput(); var draft = await _service.CreateDraftAsync(Dept, "author", input); var before = draft.Details.Narrative;
+			input.Details.Narrative = "Unauthorized overwrite";
+			Func<Task> save = () => _service.SaveDraftAsync(Dept, "viewer", draft.Record.RmsOperationalRecordId, draft.Record.RowVersion, input);
+			await save.Should().ThrowAsync<UnauthorizedAccessException>(); _store.Details.Single(d => d.RevisionId == null).Narrative.Should().Be(before);
+		}
+		[Test]
+		public async Task Restricted_coroner_values_are_preserved_on_an_ordinary_edit_and_forged_writes_are_denied()
+		{
+			var input = TrainingInput();
+			input.DefinitionKey = RmsDefinitionKeys.Coroner;
+			input.Details.CaseNumber = "private-case";
+			input.Details.BodyLocation = "private-location";
+			var created = await _service.CreateDraftAsync(Dept, "author", input);
+			_authorization.Setup(a => a.HasPermissionAsync("author", Dept, PermissionTypes.ViewRestrictedRecords)).ReturnsAsync(false);
+			input.Details.CaseNumber = null;
+			input.Details.BodyLocation = null;
+			input.Details.Narrative = "Ordinary correction";
+			var saved = await _service.SaveDraftAsync(Dept, "author", created.Record.RmsOperationalRecordId, created.Record.RowVersion, input);
+			saved.Details.CaseNumber.Should().Be("private-case");
+			saved.Details.BodyLocation.Should().Be("private-location");
+			saved.Details.Narrative.Should().Be("Ordinary correction");
+			input.Details.CaseNumber = "forged";
+			Func<Task> forged = () => _service.SaveDraftAsync(Dept, "author", saved.Record.RmsOperationalRecordId, saved.Record.RowVersion, input);
+			await forged.Should().ThrowAsync<UnauthorizedAccessException>();
+			(await _service.GetAsync(Dept, saved.Record.RmsOperationalRecordId)).Details.CaseNumber.Should().Be("private-case");
+			Func<Task> forgedCreate = () => _service.CreateDraftAsync(Dept, "author", input);
+			await forgedCreate.Should().ThrowAsync<UnauthorizedAccessException>();
+		}
+
+		[Test]
+		public async Task Call_linking_is_denied_before_prefill_and_existing_snapshots_do_not_require_reopening_the_source()
+		{
+			var input = TrainingInput();
+			input.CallId = 77;
+			_authorization.Setup(a => a.CanReadSourceCallAsync("author", Dept, It.IsAny<Call>())).ReturnsAsync(false);
+			Func<Task> denied = () => _service.CreateDraftAsync(Dept, "author", input);
+			await denied.Should().ThrowAsync<UnauthorizedAccessException>();
+			_store.Records.Should().BeEmpty();
+			_authorization.Setup(a => a.CanReadSourceCallAsync("author", Dept, It.IsAny<Call>())).ReturnsAsync(true);
+			var created = await _service.CreateDraftAsync(Dept, "author", input);
+			_authorization.Setup(a => a.CanReadSourceCallAsync("author", Dept, It.IsAny<Call>())).ReturnsAsync(false);
+			var saved = await _service.SaveDraftAsync(Dept, "author", created.Record.RmsOperationalRecordId, created.Record.RowVersion, input);
+			saved.Details.CallAddress.Should().Be("1 Main St");
+		}
+
+		[Test]
+		public async Task Create_replay_is_actor_scoped_checks_original_input_and_survives_subsequent_edits()
+		{
+			var input = TrainingInput();
+			input.IdempotencyKey = "same-client-key";
+			var first = await _service.CreateDraftAsync(Dept, "author", input);
+			var other = await _service.CreateDraftAsync(Dept, "other", input);
+			other.Record.RmsOperationalRecordId.Should().NotBe(first.Record.RmsOperationalRecordId);
+			var changed = TrainingInput("later edit");
+			await _service.SaveDraftAsync(Dept, "author", first.Record.RmsOperationalRecordId, first.Record.RowVersion, changed);
+			var replay = await _service.CreateDraftAsync(Dept, "author", input);
+			replay.Record.RmsOperationalRecordId.Should().Be(first.Record.RmsOperationalRecordId);
+			changed.IdempotencyKey = input.IdempotencyKey;
+			Func<Task> conflict = () => _service.CreateDraftAsync(Dept, "author", changed);
+			await conflict.Should().ThrowAsync<RecordIdempotencyException>();
+			_store.Records.Should().HaveCount(2);
+			_authorization.Setup(a => a.CanUserViewRecordAsync("author", first.Record.RmsOperationalRecordId, Dept)).ReturnsAsync(false);
+			Func<Task> revoked = () => _service.CreateDraftAsync(Dept, "author", input);
+			await revoked.Should().ThrowAsync<UnauthorizedAccessException>();
 		}
 
 		private static RecordDraftInput TrainingInput(string narrative = "Hose evolutions")
@@ -100,6 +197,26 @@ namespace Resgrid.Tests.Rms
 				Participants = new List<RecordParticipantInput> { new RecordParticipantInput { UserId = "p2", Role = "Attendee" } },
 				Units = new List<RecordUnitResponseInput> { new RecordUnitResponseInput { UnitId = 5 } }
 			};
+		}
+
+		[Test]
+		public async Task Officer_form_preserves_participant_unit_and_role_during_an_unrelated_edit()
+		{
+			var input = TrainingInput(); input.Participants[0].UnitId = 5; input.Participants[0].Role = "Instructor";
+			var created = await _service.CreateDraftAsync(Dept, "author", input);
+			var model = new Resgrid.Web.Areas.User.Models.Records.RecordEditView { ParticipantRows = created.Participants.Select(p => new Resgrid.Web.Areas.User.Models.Records.RecordParticipantEditRow { Selected = true, UserId = p.UserId, UnitId = p.UnitId, Role = p.Role }).ToList() };
+			var updated = TrainingInput("Unrelated narrative correction"); updated.Participants = Resgrid.Web.Areas.User.Controllers.RecordsController.BuildParticipantInput(model);
+			var saved = await _service.SaveDraftAsync(Dept, "author", created.Record.RmsOperationalRecordId, created.Record.RowVersion, updated);
+			saved.Participants.Should().ContainSingle(p => p.UserId == "p2" && p.UnitId == 5 && p.Role == "Instructor");
+		}
+
+		[Test]
+		public async Task Participant_assignment_rejects_foreign_units_and_nonmembers()
+		{
+			var input = TrainingInput(); input.Participants[0].UnitId = 99;
+			Func<Task> create = () => _service.CreateDraftAsync(Dept, "author", input); await create.Should().ThrowAsync<ArgumentException>();
+			input.Participants[0].UnitId = 5; _authorization.Setup(a => a.IsActiveMemberAsync("p2", Dept)).ReturnsAsync(false);
+			await create.Should().ThrowAsync<ArgumentException>();
 		}
 
 		[Test]
@@ -518,6 +635,19 @@ namespace Resgrid.Tests.Rms
 
 			await _service.CancelAsync(Dept, "author", created.Record.RmsOperationalRecordId);
 			await _service.Invoking(s => s.AddAttachmentAsync(Dept, "author", created.Record.RmsOperationalRecordId, "x", "text/plain", bytes, null)).Should().ThrowAsync<RecordTransitionException>();
+		}
+
+		[Test]
+		public async Task Operational_revisions_capture_evidence_and_carry_it_forward_when_the_record_is_voided()
+		{
+			var created = await _service.CreateDraftAsync(Dept, "author", TrainingInput()); var id = created.Record.RmsOperationalRecordId;
+			_evidence.Setup(e => e.GetForRecordAsync(Dept, id, null, false)).ReturnsAsync(new List<RmsEvidenceArtifact> { new RmsEvidenceArtifact { RmsEvidenceArtifactId = "e1", RecordId = id, Classification = 0, ManifestJson = "{\"training\":\"original\"}", SourceEntityId = "training-1" } });
+			var final = await _service.FinalizeAsync(Dept, "author", id, created.Record.RowVersion, "1", null, null);
+			var snapshot = RecordSnapshotSerializer.Deserialize(_store.Revisions.Single().SnapshotJson);
+			snapshot.SnapshotVersion.Should().Be(2); snapshot.Evidence.Should().ContainSingle(e => e.RmsEvidenceArtifactId == "e1");
+			_evidence.Setup(e => e.GetForRecordAsync(Dept, id, null, false)).ReturnsAsync(new List<RmsEvidenceArtifact>());
+			await _service.VoidAsync(Dept, "author", id, "duplicate", "Duplicate training entry");
+			RecordSnapshotSerializer.Deserialize(_store.Revisions.OrderByDescending(r => r.RevisionNumber).First().SnapshotJson).Evidence.Single().ManifestJson.Should().Contain("original");
 		}
 
 		[Test]

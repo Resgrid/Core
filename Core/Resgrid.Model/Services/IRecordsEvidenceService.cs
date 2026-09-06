@@ -35,6 +35,7 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface IRecordsEvidenceService
 	{
+		Task<List<RmsEvidenceArtifact>> GetHistoryAsync(int departmentId, string recordId, int skip, int take);
 		/// <summary>Which of the six sources can actually produce evidence for this department right now.</summary>
 		Task<List<RecordEvidenceSourceState>> GetSourceStatesAsync(int departmentId);
 
@@ -54,6 +55,7 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Re-computes the checksum from the stored manifest; false means the artifact was tampered with.</summary>
 		Task<bool> VerifyAsync(int departmentId, string artifactId);
+		Task RequireInventoryCoverageAsync(int departmentId, string recordId, IEnumerable<RmsEvidenceArtifact> captured);
 	}
 
 	/// <summary>Whether one evidence source can produce anything for a department, and why not when it cannot.</summary>

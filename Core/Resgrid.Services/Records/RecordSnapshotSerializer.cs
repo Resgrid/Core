@@ -59,6 +59,7 @@ namespace Resgrid.Services.Records
 			var r = aggregate.Record;
 			return new RecordSnapshot
 			{
+				CustomFields = aggregate.CustomFields,
 				RecordId = r.RmsOperationalRecordId,
 				DepartmentId = r.DepartmentId,
 				DefinitionKey = r.DefinitionKey,
@@ -208,6 +209,7 @@ namespace Resgrid.Services.Records
 				UploadedOn = attachment.UploadedOn,
 				ScanState = attachment.ScanState,
 				MetadataStripped = attachment.MetadataStripped,
+				Classification = attachment.Classification,
 				IsProtected = attachment.IsProtected,
 				ProtectedCatalogVersion = attachment.ProtectedCatalogVersion,
 				CreatedOn = attachment.CreatedOn,

@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
@@ -62,6 +63,11 @@ namespace Resgrid.Services.Records
 		private readonly INerisProfileService _neris;
 		private readonly INerisMappingService _mapping;
 		private readonly INerisValidationService _validation;
+		private readonly IRecordsAuthorizationService _authorization;
+		private readonly IRecordsUdfService _udf;
+		private readonly IRmsRecordAttachmentsRepository _attachments;
+		private readonly IRmsEvidenceArtifactsRepository _evidence;
+		private readonly IRecordsEvidenceService _evidenceService;
 
 		public IncidentReportsService(IRmsIncidentReportsRepository reports, IRmsSourceFactsRepository facts, IRmsUnitResponsesRepository units,
 			IRmsIncidentTypesRepository types, IRmsActionTacticsRepository tactics, IRmsAidsRepository aids, IRmsLocationsRepository locations,
@@ -71,7 +77,7 @@ namespace Resgrid.Services.Records
 			IRmsRecordSearchProjectionsRepository projections, IDomainEventOutboxService outbox, IDepartmentSettingsService settings,
 			IDepartmentGroupsService groups, IUserProfileService profiles, IPersonnelRolesService roles, IUnitsService unitsService, ICallsService calls,
 			IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork, INerisProfileService neris, INerisMappingService mapping,
-			INerisValidationService validation)
+			INerisValidationService validation, IRecordsAuthorizationService authorization, IRmsRecordAttachmentsRepository attachments, IRmsEvidenceArtifactsRepository evidence, IRecordsUdfService udf, IRecordsEvidenceService evidenceService)
 		{
 			_reports = reports;
 			_facts = facts;
@@ -105,6 +111,11 @@ namespace Resgrid.Services.Records
 			_neris = neris;
 			_mapping = mapping;
 			_validation = validation;
+			_authorization = authorization;
+			_udf = udf;
+			_attachments = attachments;
+			_evidence = evidence;
+			_evidenceService = evidenceService;
 		}
 
 		#region Start / read
@@ -113,6 +124,8 @@ namespace Resgrid.Services.Records
 		{
 			if (callId <= 0) throw new ArgumentException("A call is required.", nameof(callId));
 			if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("A user is required.", nameof(userId));
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.CreateRecord))
+				throw new UnauthorizedAccessException("Incident report creation is not authorized.");
 
 			var profile = await _neris.GetProfileAsync(departmentId);
 			var entity = ReportingEntityFor(departmentId, profile);
@@ -124,11 +137,13 @@ namespace Resgrid.Services.Records
 			var existing = await _reports.GetByCallAsync(departmentId, callId, entity)
 				?? (await _reports.GetByCallAnyEntityAsync(departmentId, callId))?.FirstOrDefault(r => !r.DeletedOn.HasValue);
 			if (existing != null && !existing.DeletedOn.HasValue)
-				return await GetAsync(departmentId, existing.RmsIncidentReportId, false);
+				return await GetStartedReportAsync(departmentId, userId, existing.RmsIncidentReportId);
 
 			var call = await _calls.GetCallByIdAsync(callId);
 			if (call == null || call.DepartmentId != departmentId)
 				throw new ArgumentException($"Call {callId} does not belong to this department.");
+			if (!await _authorization.CanReadSourceCallAsync(userId, departmentId, call))
+				throw new UnauthorizedAccessException("Source Call access is not authorized.");
 			call = await _calls.PopulateCallData(call, true, false, true, false, true, false, false, false, false) ?? call;
 
 			var now = DateTime.UtcNow;
@@ -152,7 +167,6 @@ namespace Resgrid.Services.Records
 				IncidentNumber = string.IsNullOrWhiteSpace(call.Number) ? null : call.Number,
 				DispatchIncidentCode = string.IsNullOrWhiteSpace(call.Type) ? null : call.Type,
 				CallCreatedOn = call.LoggedOn,
-				CallAnsweredOn = call.LoggedOn,
 				IncidentClearedOn = call.ClosedOn,
 				StationGroupId = authorGroup?.DepartmentGroupId,
 				AuthorUserId = userId,
@@ -167,8 +181,8 @@ namespace Resgrid.Services.Records
 			facts.Add(Fact(report, NerisFactKeys.IncidentNumber, RmsSourceKind.Dispatch, "Calls", "Call", callId.ToString(), call.Number, call.LoggedOn, now));
 			facts.Add(Fact(report, NerisFactKeys.IncidentCode, RmsSourceKind.Dispatch, "Calls", "Call", callId.ToString(), call.Type, call.LoggedOn, now));
 			facts.Add(Fact(report, NerisFactKeys.CallCreate, RmsSourceKind.Dispatch, "Calls", "Call", callId.ToString(), Iso(call.LoggedOn), call.LoggedOn, now));
-			// Resgrid holds no PSAP answered time; the create time stands in and is marked Derived so the author sees it.
-			facts.Add(Fact(report, NerisFactKeys.CallAnswered, RmsSourceKind.Derived, "Calls", "Call", callId.ToString(), Iso(call.LoggedOn), call.LoggedOn, now));
+			// PSAP arrival and answer times are not held by the source Call. The officer must supply them;
+			// neither the record creation time nor a unit's on-scene time is a substitute.
 			if (call.ClosedOn.HasValue)
 				facts.Add(Fact(report, NerisFactKeys.IncidentClear, RmsSourceKind.Dispatch, "Calls", "Call", callId.ToString(), Iso(call.ClosedOn), call.ClosedOn, now));
 
@@ -181,9 +195,6 @@ namespace Resgrid.Services.Records
 			}
 
 			var units = await BuildUnitsFromCallAsync(report, call, facts, now);
-			report.CallArrivalOn = units.Where(u => u.OnSceneOn.HasValue).Select(u => u.OnSceneOn).OrderBy(t => t).FirstOrDefault();
-			if (report.CallArrivalOn.HasValue)
-				facts.Add(Fact(report, NerisFactKeys.CallArrival, RmsSourceKind.App, "UnitStates", "Call", callId.ToString(), Iso(report.CallArrivalOn), report.CallArrivalOn, now));
 
 			var types = new List<RmsIncidentType>();
 			var mappedType = await _neris.ResolveCrosswalkAsync(departmentId, "incident_type", NerisCrosswalkSources.CallType, call.Type);
@@ -210,9 +221,13 @@ namespace Resgrid.Services.Records
 			report.DisplaySummary = BuildSummary(report, types, call.Name);
 
 			var outboxIds = new List<long>();
+			try
+			{
 			await InTransactionAsync(async () =>
 			{
 				await _reports.InsertAsync(report, cancellationToken, true);
+				report.UdfDefinitionId = await _udf.SaveInTransactionAsync(departmentId, userId, reportId, report.DefinitionKey, report.DefinitionVersion, null, null, cancellationToken);
+				await _reports.UpdateAsync(report, cancellationToken, true);
 				if (location != null)
 					await _locations.InsertAsync(location, cancellationToken, true);
 				foreach (var unit in units)
@@ -229,15 +244,30 @@ namespace Resgrid.Services.Records
 				outboxIds.Add((await EnqueueLifecycleEventAsync(report, null, WorkflowTriggerEventType.RecordCreated, RmsRecordState.Draft, RmsRecordState.Draft, null, null, cancellationToken)).DomainEventOutboxId);
 				await AuditAsync(departmentId, userId, reportId, null, RmsAccessAuditAction.Change, "Start incident report from call", origin, cancellationToken, new { callId, prefilledFacts = facts.Count });
 			});
+			}
+			catch (DbException)
+			{
+				var winner = await _reports.GetByCallAsync(departmentId, callId, entity)
+					?? (await _reports.GetByCallAnyEntityAsync(departmentId, callId))?.FirstOrDefault(r => !r.DeletedOn.HasValue);
+				if (winner == null) throw;
+				return await GetStartedReportAsync(departmentId, userId, winner.RmsIncidentReportId);
+			}
 			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 
+			return await GetStartedReportAsync(departmentId, userId, reportId);
+		}
+
+		private async Task<IncidentReportAggregate> GetStartedReportAsync(int departmentId, string userId, string reportId)
+		{
+			if (!await _authorization.CanUserViewRecordAsync(userId, reportId, departmentId))
+				throw new UnauthorizedAccessException("Incident report access is not authorized.");
 			return await GetAsync(departmentId, reportId, false);
 		}
 
 		public async Task<IncidentReportAggregate> GetAsync(int departmentId, string reportId, bool includeHistory = false)
 		{
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, reportId);
-			if (report == null || report.DeletedOn.HasValue)
+			if (report == null || report.DeletedOn.HasValue || report.PurgedOn.HasValue)
 				return null;
 
 			return await HydrateAsync(report, null, includeHistory);
@@ -248,7 +278,7 @@ namespace Resgrid.Services.Records
 			var profile = await _neris.GetProfileAsync(departmentId);
 			var report = await _reports.GetByCallAsync(departmentId, callId, ReportingEntityFor(departmentId, profile))
 				?? (await _reports.GetByCallAnyEntityAsync(departmentId, callId))?.FirstOrDefault(r => !r.DeletedOn.HasValue);
-			return report == null ? null : await HydrateAsync(report, null, false);
+			return report == null || report.DeletedOn.HasValue || report.PurgedOn.HasValue ? null : await HydrateAsync(report, null, false);
 		}
 
 		public async Task<List<NerisSectionRequirement>> GetSectionRequirementsAsync(int departmentId, string reportId)
@@ -260,17 +290,35 @@ namespace Resgrid.Services.Records
 		public async Task<NerisIncidentSnapshot> BuildSnapshotAsync(int departmentId, string reportId, string revisionId = null)
 		{
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, reportId);
-			if (report == null)
+			if (report == null || report.DeletedOn.HasValue || report.PurgedOn.HasValue)
 				return null;
 
-			var aggregate = await HydrateAsync(report, revisionId, false);
-			return ToSnapshot(aggregate);
+			if (!string.IsNullOrWhiteSpace(revisionId))
+			{
+				var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, revisionId);
+				if (revision == null || revision.RecordId != reportId || revision.RecordKind != (int)RmsRecordKind.IncidentReport) return null;
+				if (RecordSnapshotSerializer.Checksum(revision.SnapshotJson) != revision.Checksum) throw new InvalidOperationException("The incident revision checksum does not match.");
+				var frozen = JsonConvert.DeserializeObject<IncidentReportAggregate>(revision.SnapshotJson);
+				if (frozen?.Report == null) throw new InvalidOperationException("The incident revision is incomplete.");
+				// Version 1 omitted RMS-3 sections from JSON, but stored revision-bound copies. Never use draft rows.
+				if (((int?)Newtonsoft.Json.Linq.JObject.Parse(revision.SnapshotJson)["SnapshotVersion"] ?? 1) < 2)
+				{
+					var copies = await HydrateAsync(frozen.Report, revisionId, false);
+					frozen.Modules = copies.Modules; frozen.Resources = copies.Resources;
+					frozen.Casualties = copies.Casualties; frozen.Exposures = copies.Exposures;
+				}
+				return ToSnapshot(frozen);
+			}
+			return ToSnapshot(await HydrateAsync(report, null, false));
 		}
 
 		public static NerisIncidentSnapshot ToSnapshot(IncidentReportAggregate aggregate)
 		{
 			return new NerisIncidentSnapshot
 			{
+				CustomFields = aggregate.CustomFields,
+				Attachments = aggregate.Attachments,
+				Evidence = aggregate.Evidence,
 				Report = aggregate.Report,
 				Location = aggregate.Location,
 				Types = aggregate.Types,
@@ -293,10 +341,13 @@ namespace Resgrid.Services.Records
 
 		#region Draft / validate
 
-		public async Task<IncidentReportAggregate> SaveDraftAsync(int departmentId, string userId, string reportId, long expectedRowVersion, IncidentReportDraftInput input, bool canWriteRestricted = true, CancellationToken cancellationToken = default)
+		public async Task<IncidentReportAggregate> SaveDraftAsync(int departmentId, string userId, string reportId, long expectedRowVersion, IncidentReportDraftInput input, bool canWriteRestricted = false, CancellationToken cancellationToken = default)
 		{
 			if (input == null) throw new ArgumentNullException(nameof(input));
 			var report = await LoadAsync(departmentId, reportId);
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.CreateRecord)
+				|| !await _authorization.CanUserViewRecordAsync(userId, reportId, departmentId)) throw new UnauthorizedAccessException("Incident report access is not authorized.");
+			canWriteRestricted = canWriteRestricted && await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords);
 			RequireEditable(report);
 
 			var now = DateTime.UtcNow;
@@ -306,6 +357,7 @@ namespace Resgrid.Services.Records
 				var facts = (await _facts.GetForRecordAsync(departmentId, reportId, null))?.ToList() ?? new List<RmsSourceFact>();
 
 				ApplyHeader(report, input, facts, userId, now);
+				report.UdfDefinitionId = await _udf.SaveInTransactionAsync(departmentId, userId, reportId, report.DefinitionKey, report.DefinitionVersion, report.UdfDefinitionId, input.CustomFields, cancellationToken);
 				var location = await ReplaceLocationAsync(report, input.Location, facts, userId, now, cancellationToken);
 				var types = await ReplaceTypesAsync(report, input.Types, now, cancellationToken);
 				var units = await ReplaceUnitsAsync(report, input.Units, facts, userId, now, cancellationToken);
@@ -467,6 +519,8 @@ namespace Resgrid.Services.Records
 			{
 				await GuardVersionAsync(report, expectedRowVersion, cancellationToken);
 				var draft = await HydrateAsync(report, null, false);
+				_udf.ValidateForFinalization(draft.CustomFields);
+				await _evidenceService.RequireInventoryCoverageAsync(departmentId, reportId, draft.Evidence);
 
 				// Validation blocks the signature (plan 4.2 "progressive validation"): the issues stay on the report for the author.
 				var local = _validation.ValidateLocal(ToSnapshot(draft), profile);
@@ -550,10 +604,18 @@ namespace Resgrid.Services.Records
 
 		private async Task<(RmsSubmission submission, long outboxId)> QueueSubmissionCoreAsync(RmsIncidentReport report, IncidentReportAggregate aggregate, RmsRevision revision, RmsNerisProfile profile, string userId, DateTime now, CancellationToken cancellationToken)
 		{
+			var priorSubmissions = (await _submissions.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId))?.ToList() ?? new List<RmsSubmission>();
+			RecordsSubmissionService.RequireResolvedCreates(priorSubmissions);
 			var payload = _mapping.BuildIncidentPayloadJson(ToSnapshot(aggregate), profile);
 			var key = IdempotencyKey(report.DepartmentId, report.RmsIncidentReportId, revision.RmsRevisionId);
 
 			var submission = await _submissions.GetByIdempotencyKeyAsync(key);
+			if (submission?.RequiresReconciliation == true)
+				throw new InvalidOperationException("Reconcile the prior destination delivery before retrying this revision.");
+			var destination = _neris.GetDestinationIdentity(profile);
+			var externalId = RecordsSubmissionService.ResolveDestinationId(priorSubmissions, destination, report.NerisIncidentId);
+			if (submission != null && submission.DestinationIdentity != destination)
+				throw new InvalidOperationException("This revision was queued for another destination. Correct the profile or finalize a new revision.");
 			if (submission != null && submission.State != (int)RmsSubmissionState.Failed && submission.State != (int)RmsSubmissionState.Superseded && submission.State != (int)RmsSubmissionState.Rejected)
 				throw new InvalidOperationException("This revision is already queued or delivered.");
 
@@ -569,6 +631,8 @@ namespace Resgrid.Services.Records
 					RevisionId = revision.RmsRevisionId,
 					Destination = RmsSubmissionDestinations.Neris,
 					DestinationVersion = profile?.ContractVersion ?? _neris.ContractVersion,
+					DestinationIdentity = destination,
+					ExternalId = externalId,
 					IdempotencyKey = key,
 					MaxAttempts = Math.Max(1, Config.NerisConfig.MaxAttempts),
 					PayloadJson = payload,
@@ -586,7 +650,7 @@ namespace Resgrid.Services.Records
 			{
 				// A failed or rejected delivery of the same revision is re-queued with the same key: retry, not a new payload.
 				submission.State = (int)RmsSubmissionState.Queued;
-				submission.Attempts = 0;
+				submission.MaxAttempts = submission.Attempts + Math.Max(1, Config.NerisConfig.MaxAttempts);
 				submission.NextAttemptOn = null;
 				submission.LeaseOwner = null;
 				submission.LeaseExpiresOn = null;
@@ -635,6 +699,7 @@ namespace Resgrid.Services.Records
 		public async Task<IncidentReportAggregate> AbandonAmendmentAsync(int departmentId, string userId, string reportId, CancellationToken cancellationToken = default)
 		{
 			var report = await LoadAsync(departmentId, reportId);
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.AmendRecords) || !await _authorization.CanUserViewRecordAsync(userId, reportId, departmentId)) throw new UnauthorizedAccessException();
 			if (report.AmendsRevisionId == null)
 				throw new RecordTransitionException(reportId, (RmsRecordState)report.State, (RmsRecordState)report.State, "no amendment draft is open");
 
@@ -643,13 +708,37 @@ namespace Resgrid.Services.Records
 			{
 				await GuardVersionAsync(report, report.RowVersion, cancellationToken);
 				// The draft rows are rebuilt from the current revision's copies so the finalized content is what the author sees again.
-				var current = await HydrateAsync(report, report.CurrentRevisionId, false);
+				var frozen = await BuildSnapshotAsync(departmentId, reportId, report.CurrentRevisionId) ?? throw new InvalidOperationException("The current revision is unavailable.");
+				var current = JsonConvert.DeserializeObject<IncidentReportAggregate>(JsonConvert.SerializeObject(frozen));
 				await ReplaceDraftRowsFromAsync(report, current, now, cancellationToken);
+				await _udf.RestoreInTransactionAsync(departmentId, reportId, report.DefinitionKey, report.DefinitionVersion, current.CustomFields, userId, cancellationToken);
+				report.UdfDefinitionId = current.CustomFields?.DefinitionId;
+				foreach (var field in new[] { "IncidentNumber", "DispatchIncidentCode", "CallCreatedOn", "CallAnsweredOn", "CallArrivalOn", "IncidentClearedOn", "DispatchCenterId", "DeterminantCode", "Disposition", "PeoplePresent", "DisplacementCount", "AnimalsRescued", "SpecialModifiersCsv", "StationGroupId", "DisplaySummary" })
+				{ var property = typeof(RmsIncidentReport).GetProperty(field); property.SetValue(report, property.GetValue(current.Report)); }
+				var savedRevision = await _revisions.GetByIdForDepartmentAsync(departmentId, report.CurrentRevisionId);
+				foreach (var savedAttachment in current.Attachments)
+				{
+					var stored = await _attachments.GetHistoricalByIdForDepartmentAsync(departmentId, savedAttachment.RmsRecordAttachmentId);
+					if (stored?.RecordId == reportId && stored.DeletedOn.HasValue && stored.Checksum == savedAttachment.Checksum && stored.ScanState == (int)RmsAttachmentScanState.Clean)
+					{ stored.DeletedOn = null; stored.ModifiedOn = now; stored.RowVersion++; await _attachments.UpdateAsync(stored, cancellationToken, true); }
+				}
+				foreach (var attachment in (await _attachments.GetMetadataForRecordAsync(departmentId, reportId)) ?? Enumerable.Empty<RmsRecordAttachment>())
+					if (!current.Attachments.Any(a => a.RmsRecordAttachmentId == attachment.RmsRecordAttachmentId) && attachment.UploadedOn > savedRevision.CreatedOn)
+					{
+						// Load bytes before the metadata-only row is updated; otherwise an abandoned upload would erase storage without its retention audit.
+						var stored = await _attachments.GetByIdForDepartmentAsync(departmentId, attachment.RmsRecordAttachmentId);
+						stored.DeletedOn = now; stored.ModifiedOn = now; stored.RowVersion++;
+						await _attachments.UpdateAsync(stored, cancellationToken, true);
+					}
+				foreach (var evidence in (await _evidence.GetForRecordAsync(departmentId, reportId, null, true)) ?? Enumerable.Empty<RmsEvidenceArtifact>())
+				{ evidence.DeletedOn = now; evidence.ModifiedOn = now; evidence.RowVersion++; await _evidence.UpdateAsync(evidence, cancellationToken, true); }
 				report.AmendsRevisionId = null;
 				report.ModifiedOn = now;
 				report.ModifiedByUserId = userId;
 				await _reports.UpdateAsync(report, cancellationToken, true);
 				await AuditAsync(departmentId, userId, reportId, report.CurrentRevisionId, RmsAccessAuditAction.Change, "Abandon amendment", RmsOriginClient.Web, cancellationToken);
+				await RecomputeGroupScopeAsync(await HydrateAsync(report, null, false), null, cancellationToken);
+				await RefreshProjectionAsync(report, cancellationToken);
 			});
 			return await GetAsync(departmentId, reportId, true);
 		}
@@ -668,7 +757,8 @@ namespace Resgrid.Services.Records
 			await InTransactionAsync(async () =>
 			{
 				await GuardVersionAsync(report, report.RowVersion, cancellationToken);
-				var current = await HydrateAsync(report, report.CurrentRevisionId, false);
+				var frozen = await BuildSnapshotAsync(departmentId, reportId, report.CurrentRevisionId) ?? throw new InvalidOperationException("The current revision is unavailable.");
+				var current = JsonConvert.DeserializeObject<IncidentReportAggregate>(JsonConvert.SerializeObject(frozen));
 				var revision = await WriteRevisionAsync(report, current, RmsRevisionTransition.Voided, userId, reasonCode, reasonText, null, now, cancellationToken);
 				report.State = (int)RmsRecordState.Voided;
 				report.VoidedOn = now;
@@ -720,12 +810,14 @@ namespace Resgrid.Services.Records
 
 		public async Task<List<RmsIncidentReport>> QueryAsync(int departmentId, RmsIncidentReportQuery query)
 		{
+			if (!string.IsNullOrEmpty(query?.ViewerUserId) && !await _authorization.IsActiveMemberAsync(query.ViewerUserId, departmentId)) return new List<RmsIncidentReport>();
 			return (await _reports.QueryAsync(departmentId, query ?? new RmsIncidentReportQuery()))?.ToList() ?? new List<RmsIncidentReport>();
 		}
 
-		public Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query)
+		public async Task<int> CountAsync(int departmentId, RmsIncidentReportQuery query)
 		{
-			return _reports.CountAsync(departmentId, query ?? new RmsIncidentReportQuery());
+			if (!string.IsNullOrEmpty(query?.ViewerUserId) && !await _authorization.IsActiveMemberAsync(query.ViewerUserId, departmentId)) return 0;
+			return await _reports.CountAsync(departmentId, query ?? new RmsIncidentReportQuery());
 		}
 
 		public async Task<List<int>> GetYearsAsync(int departmentId)
@@ -1093,15 +1185,21 @@ namespace Resgrid.Services.Records
 			if (inputs == null)
 				return existing;
 
+			var byId = existing.ToDictionary(c => c.RmsCasualtyRescueId, StringComparer.Ordinal);
+			var suppliedIds = inputs.Where(c => !string.IsNullOrWhiteSpace(c.CasualtyId)).Select(c => c.CasualtyId).ToList();
+			if (suppliedIds.Distinct(StringComparer.Ordinal).Count() != suppliedIds.Count || suppliedIds.Any(id => !byId.ContainsKey(id)))
+				throw new ArgumentException("A casualty row does not belong to this draft or was supplied more than once.");
+			if (!canWriteRestricted && existing.Any(c => !suppliedIds.Contains(c.RmsCasualtyRescueId)))
+				throw new UnauthorizedAccessException("Existing casualties must be retained by their row identifiers when restricted fields are hidden.");
 			await _casualties.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			var result = new List<RmsCasualtyRescue>();
 			var ordinal = 0;
 			foreach (var input in inputs)
 			{
-				var prior = ordinal < existing.Count ? existing[ordinal] : null;
+				var prior = !string.IsNullOrWhiteSpace(input.CasualtyId) ? byId[input.CasualtyId] : null;
 				var row = new RmsCasualtyRescue
 				{
-					RmsCasualtyRescueId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RmsCasualtyRescueId = prior?.RmsCasualtyRescueId ?? Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = prior?.ProtectionId ?? Guid.NewGuid().ToString(),
 					RecordId = report.RmsIncidentReportId, Kind = (int)input.Kind,
 					PersonType = Trim(input.PersonType)?.ToUpperInvariant() ?? RmsCasualtyPersonTypes.Civilian,
 					WasInjured = input.WasInjured,
@@ -1120,7 +1218,7 @@ namespace Resgrid.Services.Records
 					RescueElevation = Trim(input.RescueElevation)?.ToUpperInvariant(),
 					PresenceKnown = Trim(input.PresenceKnown)?.ToUpperInvariant(),
 					YearsOfService = input.YearsOfService,
-					DetailJson = Trim(input.DetailJson),
+					DetailJson = canWriteRestricted ? Trim(input.DetailJson) : prior?.DetailJson,
 					OccurredOn = input.OccurredOn,
 					Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
 				};
@@ -1224,6 +1322,10 @@ namespace Resgrid.Services.Records
 
 		private async Task ReplaceDraftRowsFromAsync(RmsIncidentReport report, IncidentReportAggregate source, DateTime now, CancellationToken cancellationToken)
 		{
+			await _modules.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
+			await _resources.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
+			await _casualties.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
+			await _exposures.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			await _locations.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			await _types.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			await _units.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
@@ -1239,6 +1341,10 @@ namespace Resgrid.Services.Records
 			foreach (var t in source.Tactics) await _tactics.InsertAsync(Copy(t, x => x.RmsActionTacticId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
 			if (source.Narrative != null) await _narratives.InsertAsync(Copy(source.Narrative, n => n.RmsNarrativeId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
 			foreach (var f in source.Facts) await _facts.InsertAsync(Copy(f, x => x.RmsSourceFactId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
+			foreach (var m in source.Modules) await _modules.InsertAsync(Copy(m, x => x.RmsIncidentModuleId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
+			foreach (var r in source.Resources) await _resources.InsertAsync(Copy(r, x => x.RmsIncidentResourceId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
+			foreach (var c in source.Casualties) await _casualties.InsertAsync(Copy(c, x => x.RmsCasualtyRescueId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
+			foreach (var e in source.Exposures) await _exposures.InsertAsync(Copy(e, x => x.RmsExposureId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
 		}
 
 		#endregion
@@ -1271,6 +1377,7 @@ namespace Resgrid.Services.Records
 				CreatedOn = now
 			};
 			await _revisions.InsertAsync(revision, cancellationToken, true);
+			await _evidence.BindDraftToRevisionAsync(report.DepartmentId, report.RmsIncidentReportId, revision.RmsRevisionId, now, cancellationToken);
 
 			// Revision-bound copies keep finalized data queryable without touching the draft rows.
 			var id = revision.RmsRevisionId;
@@ -1353,6 +1460,9 @@ namespace Resgrid.Services.Records
 			var aggregate = new IncidentReportAggregate
 			{
 				Report = report,
+				Attachments = revisionId == null ? ((await _attachments.GetMetadataForRecordAsync(dept, id))?.ToList() ?? new List<RmsRecordAttachment>()) : new List<RmsRecordAttachment>(),
+				CustomFields = revisionId == null ? await _udf.CaptureAsync(dept, id, report.DefinitionKey, report.DefinitionVersion, report.UdfDefinitionId) : null,
+				Evidence = (await _evidence.GetForRecordAsync(dept, id, revisionId, false))?.ToList() ?? new List<RmsEvidenceArtifact>(),
 				Location = (await _locations.GetForRecordAsync(dept, id, revisionId))?.FirstOrDefault(),
 				Types = (await _types.GetForRecordAsync(dept, id, revisionId))?.ToList() ?? new List<RmsIncidentType>(),
 				Units = (await _units.GetForRecordAsync(dept, id, revisionId))?.ToList() ?? new List<RmsUnitResponse>(),
@@ -1367,6 +1477,16 @@ namespace Resgrid.Services.Records
 				Issues = (await _issues.GetForRecordAsync(dept, id))?.ToList() ?? new List<RmsValidationIssue>(),
 				GroupScope = (await _scopes.GetForRecordAsync(dept, id))?.ToList() ?? new List<RmsRecordGroupScope>()
 			};
+			if (revisionId == null && report.CurrentRevisionId != null)
+			{
+				var revision = await _revisions.GetByIdForDepartmentAsync(dept, report.CurrentRevisionId);
+				if (revision != null && revision.RecordId == id && revision.Checksum == RecordSnapshotSerializer.Checksum(revision.SnapshotJson))
+				{
+					var previous = JsonConvert.DeserializeObject<IncidentReportAggregate>(revision.SnapshotJson)?.Evidence ?? new List<RmsEvidenceArtifact>();
+					aggregate.Evidence = previous.Where(p => !aggregate.Evidence.Any(e => e.Kind == p.Kind && e.SourceEntityId == p.SourceEntityId))
+						.Concat(aggregate.Evidence).GroupBy(e => e.RmsEvidenceArtifactId).Select(g => g.Last()).ToList();
+				}
+			}
 			if (includeHistory)
 			{
 				aggregate.Submissions = (await _submissions.GetForRecordAsync(dept, id))?.ToList() ?? new List<RmsSubmission>();
@@ -1547,7 +1667,7 @@ namespace Resgrid.Services.Records
 		private async Task<RmsIncidentReport> LoadAsync(int departmentId, string reportId)
 		{
 			var report = string.IsNullOrWhiteSpace(reportId) ? null : await _reports.GetByIdForDepartmentAsync(departmentId, reportId);
-			if (report == null || report.DeletedOn.HasValue)
+			if (report == null || report.DeletedOn.HasValue || report.PurgedOn.HasValue)
 				throw new ArgumentException($"Incident report {reportId} was not found.", nameof(reportId));
 			return report;
 		}
@@ -1648,7 +1768,8 @@ namespace Resgrid.Services.Records
 		{
 			var snapshot = new
 			{
-				SnapshotVersion = 1,
+				SnapshotVersion = 2,
+				aggregate.CustomFields,
 				aggregate.Report,
 				aggregate.Location,
 				aggregate.Types,
@@ -1656,7 +1777,13 @@ namespace Resgrid.Services.Records
 				aggregate.Aids,
 				aggregate.Tactics,
 				aggregate.Narrative,
-				aggregate.Facts
+				aggregate.Facts,
+				aggregate.Modules,
+				aggregate.Resources,
+				aggregate.Casualties,
+				aggregate.Exposures,
+				Attachments = aggregate.Attachments.Select(a => { var copy = JsonConvert.DeserializeObject<RmsRecordAttachment>(JsonConvert.SerializeObject(a)); copy.Data = null; copy.StorageReference = null; return copy; }).ToList(),
+				aggregate.Evidence
 			};
 			return JsonConvert.SerializeObject(snapshot, Formatting.None);
 		}

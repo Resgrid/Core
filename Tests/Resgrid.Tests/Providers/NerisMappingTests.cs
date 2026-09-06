@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,11 +29,12 @@ namespace Resgrid.Tests.Providers
 			var t0 = new DateTime(2026, 9, 3, 14, 0, 0, DateTimeKind.Utc);
 			return new NerisIncidentSnapshot
 			{
+				CustomFields = new RecordUdfSection {DefinitionId="department-only-form",ExtensionVersion=4,Fields=new List<RecordUdfField> {new RecordUdfField {Field=new UdfField {Name="dept_extension",Label="Department-only label",FieldDataType=0},Value="department-only-answer"}}},
 				Report = new RmsIncidentReport
 				{
 					RmsIncidentReportId = "rep-1", DepartmentId = 4, CallId = 77, ReportingEntityId = "FD24027000", DefinitionKey = RmsDefinitionKeys.NerisIncidentReport,
 					IncidentNumber = "2026-000123", DispatchIncidentCode = "STRUCT FIRE", DispatchCenterId = "PSAP-1", Disposition = "Extinguished",
-					CallCreatedOn = t0, CallAnsweredOn = t0.AddSeconds(-20), CallArrivalOn = t0.AddMinutes(6), IncidentClearedOn = t0.AddMinutes(90),
+					CallCreatedOn = t0, CallAnsweredOn = t0.AddSeconds(-20), CallArrivalOn = t0.AddSeconds(-30), IncidentClearedOn = t0.AddMinutes(90),
 					PeoplePresent = true, DisplacementCount = 2, AnimalsRescued = 1, SpecialModifiersCsv = "MCI", State = (int)RmsRecordState.Finalized
 				},
 				Location = new RmsLocation { Number = "100", Street = "Main St", Municipality = "Springfield", County = "Sangamon", State = "IL", PostalCode = "62701", Country = "US", PlaceType = "RESIDENCE", CrossStreet1 = "1st Ave", Latitude = 39.7817m, Longitude = -89.6501m, AddressText = "100 Main St, Springfield IL" },
@@ -151,6 +152,7 @@ namespace Resgrid.Tests.Providers
 
 			json.Should().NotContain("null");
 			json.Should().NotContain("dept_only", "supplemental department questions never enter the submission payload");
+			json.Should().NotContain("department-only-").And.NotContain("CustomFields").And.NotContain("dept_extension");
 			json.Should().NotContain("Dumpster fire extinguished", "the narrative body is not a NERIS field on this contract");
 			json.Should().Contain("\"outcome_narrative\":\"Fire out, no extension.\"");
 		}

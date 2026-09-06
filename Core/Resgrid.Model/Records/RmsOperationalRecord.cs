@@ -28,6 +28,7 @@ namespace Resgrid.Model
 		public string DefinitionKey { get; set; }
 
 		public int DefinitionVersion { get; set; }
+		public string UdfDefinitionId { get; set; }
 
 		/// <summary><see cref="RmsOperationalRecordType"/> for locked definitions; null for department-owned ones.</summary>
 		public int? RecordType { get; set; }
@@ -110,6 +111,9 @@ namespace Resgrid.Model
 
 		/// <summary>Scoped idempotency key for create; unique per department when present.</summary>
 		public string IdempotencyKey { get; set; }
+
+		/// <summary>Original create command fingerprint; never changed by subsequent draft edits.</summary>
+		public string OriginalRequestChecksum { get; set; }
 
 		/// <summary><see cref="RmsOriginClient"/>.</summary>
 		public int OriginClient { get; set; }

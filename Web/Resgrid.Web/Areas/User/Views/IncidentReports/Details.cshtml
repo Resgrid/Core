@@ -1,4 +1,4 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Records.IncidentReportDetailView
@@ -31,6 +31,7 @@
 			@if (Model.CanEdit && Model.IsEditable)
 			{
 				<a class="btn btn-primary" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@commonLocalizer["Edit"]</a>
+				<a class="btn btn-default" asp-controller="RecordsInventory" asp-action="Edit" asp-route-area="User" asp-route-recordId="@r.RmsIncidentReportId" asp-route-kind="IncidentReport">Inventory usage</a>
 				<form method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Validate" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default">@(Model.SubmissionEnabled ? localizer["ValidateWithDestination"] : localizer["Validate"])</button></form>
 			}
 			@if (Model.CanSubmit && Model.CanQueueSubmission)
@@ -45,15 +46,37 @@
 			{
 				<form method="post" style="display:inline" asp-controller="IncidentReports" asp-action="AbandonAmendment" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default">@localizer["AbandonAmendment"]</button></form>
 			}
-			@if (Model.CanExport)
+			@if (Model.CanExport && r.CurrentRevisionId != null)
 			{
-				<a class="btn btn-info" href="javascript:window.print()"><i class="fa fa-print"></i> @localizer["Print"]</a>
+				<a class="btn btn-info" asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="pdf"><i class="fa fa-print"></i> @localizer["Print"]</a>
+				<a class="btn btn-default" asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="json">JSON</a>
+				<a class="btn btn-default" asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="csv">CSV</a>
 			}
 		</div>
 	</div>
 </div>
 
 <div class="row">
+	<div class="col-lg-12">
+		<div class="ibox"><div class="ibox-title"><h5>@localizer["Attachments"]</h5></div><div class="ibox-content">
+			@foreach (var attachment in a.Attachments.Where(x => !x.IsProtected || Model.CanViewRestricted))
+			{
+				<p><a asp-controller="IncidentReports" asp-action="Attachment" asp-route-id="@r.RmsIncidentReportId" asp-route-attachmentId="@attachment.RmsRecordAttachmentId">@attachment.FileName</a> — @attachment.Description <small>@((RmsAttachmentScanState)attachment.ScanState) · @attachment.ByteSize bytes</small></p>
+				@if (Model.CanEdit && Model.IsEditable)
+				{ <form method="post" asp-controller="IncidentReports" asp-action="RemoveAttachment">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.RmsIncidentReportId" /><input type="hidden" name="attachmentId" value="@attachment.RmsRecordAttachmentId" /><input type="hidden" name="rowVersion" value="@r.RowVersion" /><button class="btn btn-default btn-sm" type="submit">Remove from draft</button></form> }
+			}
+			@if (Model.CanEdit && Model.IsEditable)
+			{
+				<form method="post" enctype="multipart/form-data" asp-controller="IncidentReports" asp-action="AddAttachment">
+					@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.RmsIncidentReportId" /><input type="hidden" name="rowVersion" value="@r.RowVersion" />
+					<label for="incident-attachment">File (up to 25 MB)</label><input id="incident-attachment" name="file" type="file" required />
+					<label for="attachment-description">Description</label><input id="attachment-description" name="description" class="form-control" maxlength="500" />
+					<label for="attachment-classification">File classification (including its name and description)</label><select id="attachment-classification" name="classification" class="form-control"><option value="1">Restricted</option><option value="0">Unrestricted operational content</option></select>
+					<button class="btn btn-primary" type="submit">Add attachment</button>
+				</form>
+			}
+		</div></div>
+	</div>
 	<div class="col-lg-8">
 		<div class="wrapper wrapper-content">
 			@if (!string.IsNullOrEmpty(Model.Message))
@@ -100,6 +123,7 @@
 								<dt>@localizer["Owner"]</dt><dd>@Name(r.OwnerUserId)</dd>
 								<dt>@localizer["Station"]</dt><dd>@(r.StationGroupId.HasValue && Model.GroupNames.TryGetValue(r.StationGroupId.Value, out var g) ? g : "-")</dd>
 							</dl>
+
 						</div>
 						<div class="col-md-6">
 							<dl class="dl-horizontal">
@@ -433,21 +457,9 @@
 
 					@if (Model.CanEdit && Model.IsEditable)
 					{
-						<form method="post" class="form-inline" asp-controller="IncidentReports" asp-action="CaptureEvidence" asp-route-area="User">
-							@Html.AntiForgeryToken()
-							<input type="hidden" name="id" value="@r.RmsIncidentReportId" />
-							<select class="form-control input-sm" name="kind">
-								@foreach (var source in Model.EvidenceSources)
-								{
-									<option value="@((int)source.Kind)" disabled="@(!source.Available)">
-										@localizer["Evidence" + source.Kind.ToString()]@(source.Available ? string.Empty : " — " + source.Reason)
-									</option>
-								}
-							</select>
-							<input type="text" class="form-control input-sm" name="captureReason" maxlength="256" placeholder="@localizer["CaptureReason"]" required />
-							<button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-camera"></i> @localizer["Capture"]</button>
-						</form>
+						<a class="btn btn-primary" asp-controller="RecordEvidence" asp-action="Select" asp-route-recordId="@r.RmsIncidentReportId" asp-route-recordKind="IncidentReport">Select and capture evidence</a>
 					}
+					<a class="btn btn-default" asp-controller="RecordEvidence" asp-action="Index" asp-route-recordId="@r.RmsIncidentReportId" asp-route-recordKind="IncidentReport">Evidence history</a>
 				</div>
 			</div>
 
@@ -610,6 +622,10 @@
 								<dt>@localizer["QueuedOn"]</dt><dd>@When(s.QueuedOn)</dd>
 								<dt>@localizer["SentOn"]</dt><dd>@When(s.SentOn)</dd>
 								<dt>@localizer["CompletedOn"]</dt><dd>@When(s.CompletedOn)</dd>
+								@if (Model.CanSubmit && Model.CanViewRestricted)
+								{
+									<dt>Exchange history</dt><dd><a asp-controller="RecordSubmissions" asp-action="Details" asp-route-submissionId="@s.RmsSubmissionId">View responses and recovery actions</a></dd>
+								}
 								@if (!string.IsNullOrWhiteSpace(s.ErrorSummary))
 								{
 									<dt>@localizer["ErrorSummary"]</dt><dd class="text-danger">@s.ErrorSummary</dd>
@@ -619,7 +635,27 @@
 									<dt>@localizer["Payload"]</dt><dd><a asp-controller="IncidentReports" asp-action="Payload" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId" asp-route-submissionId="@s.RmsSubmissionId"><i class="fa fa-download"></i> JSON</a> <small class="text-muted">@s.PayloadChecksum?.Substring(0, Math.Min(12, s.PayloadChecksum.Length))</small></dd>
 								}
 							</dl>
-							<hr style="margin:6px 0" />
+							@if (Model.CanSubmit && (s.RequiresReconciliation || s.CreatePendingReceipt || s.DestinationIdentity == null))
+							{
+								var canBind = s.DestinationIdentity == null && s.SentOn == null && s.Attempts == 0 && s.ExternalId == null && !s.RequiresReconciliation && !s.CreatePendingReceipt;
+								<form method="post" asp-controller="IncidentReports" asp-action="Reconcile" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">
+									@Html.AntiForgeryToken()
+									<input type="hidden" name="submissionId" value="@s.RmsSubmissionId" />
+									<input type="hidden" name="rowVersion" value="@s.RowVersion" />
+									@if (canBind)
+									{
+										<p>This submission has never been sent. Review the department's current NERIS entity and destination before binding it for delivery.</p>
+									}
+									else
+									{
+										<p>This delivery may already exist in NERIS. Locate its filing and enter its identifier to verify it against this report.</p>
+										<label for="receipt-@s.RmsSubmissionId">NERIS identifier</label><input class="form-control" id="receipt-@s.RmsSubmissionId" name="externalId" value="@s.ExternalId" required maxlength="100" />
+									}
+									<label for="reason-@s.RmsSubmissionId">Reconciliation reason</label><textarea class="form-control" id="reason-@s.RmsSubmissionId" name="reason" required maxlength="2000"></textarea>
+									<button type="submit" class="btn btn-default">@(canBind ? "Bind unsent submission" : "Verify destination receipt")</button>
+								</form>
+							}
+<hr style="margin:6px 0" />
 						}
 					}
 				</div>
@@ -639,7 +675,10 @@
 							<tbody>
 								@foreach (var rev in a.Revisions.OrderByDescending(x => x.RevisionNumber))
 								{
-									<tr><td>@rev.RevisionNumber</td><td>@(((RmsRevisionTransition)rev.Transition).ToString()) @(string.IsNullOrWhiteSpace(rev.ReasonCode) ? string.Empty : "(" + rev.ReasonCode + ")")</td><td>@Name(rev.ActorUserId)</td><td>@When(rev.CreatedOn)</td></tr>
+									<tr><td><a asp-controller="RecordDocuments" asp-action="Revision" asp-route-id="@r.RmsIncidentReportId" asp-route-kind="IncidentReport" asp-route-revisionId="@rev.RmsRevisionId">@rev.RevisionNumber</a>
+									@if (rev.PriorRevisionId != null) { <a asp-controller="RecordDocuments" asp-action="Diff" asp-route-id="@r.RmsIncidentReportId" asp-route-kind="IncidentReport" asp-route-from="@rev.PriorRevisionId" asp-route-to="@rev.RmsRevisionId">Compare</a> }
+									@if (Model.CanExport) { <a asp-controller="RecordDocuments" asp-action="Export" asp-route-id="@r.RmsIncidentReportId" asp-route-kind="IncidentReport" asp-route-revisionId="@rev.RmsRevisionId" asp-route-format="pdf">PDF</a> }
+									</td><td>@(((RmsRevisionTransition)rev.Transition).ToString()) @(string.IsNullOrWhiteSpace(rev.ReasonCode) ? string.Empty : "(" + rev.ReasonCode + ")")</td><td>@Name(rev.ActorUserId)</td><td>@When(rev.CreatedOn)</td></tr>
 								}
 							</tbody>
 						</table>

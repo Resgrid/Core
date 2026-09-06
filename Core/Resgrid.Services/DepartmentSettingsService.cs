@@ -1504,14 +1504,18 @@ namespace Resgrid.Services
 			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsSearchConfig, ObjectSerialization.Serialize(config ?? new RecordsSearchConfig()), cancellationToken);
 		}
 
-		public Task<RecordsRetentionPolicy> GetRecordsRetentionPolicyAsync(int departmentId, bool bypassCache = false)
+		public async Task<RecordsRetentionPolicy> GetRecordsRetentionPolicyAsync(int departmentId, bool bypassCache = false)
 		{
-			return GetRecordsSettingObjectAsync<RecordsRetentionPolicy>(departmentId, DepartmentSettingTypes.RecordsRetentionPolicy, bypassCache);
+			var value = await GetRecordsSettingStringAsync(departmentId, DepartmentSettingTypes.RecordsRetentionPolicy, bypassCache);
+			if (string.IsNullOrWhiteSpace(value)) return new RecordsRetentionPolicy();
+			return ObjectSerialization.Deserialize<RecordsRetentionPolicy>(value) ?? throw new InvalidOperationException("The retention policy cannot be read. Automatic purge is suspended.");
 		}
 
-		public Task<DepartmentSetting> SetRecordsRetentionPolicyAsync(int departmentId, RecordsRetentionPolicy policy, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<DepartmentSetting> SetRecordsRetentionPolicyAsync(int departmentId, RecordsRetentionPolicy policy, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return SetRecordsSettingAsync(departmentId, DepartmentSettingTypes.RecordsRetentionPolicy, ObjectSerialization.Serialize(policy ?? new RecordsRetentionPolicy()), cancellationToken);
+			var result = await _departmentSettingsRepository.SaveRecordsRetentionPolicyAsync(departmentId, policy ?? new RecordsRetentionPolicy(), cancellationToken);
+			_cacheProvider.Remove(string.Format(RecordsSettingCacheKey, (int)DepartmentSettingTypes.RecordsRetentionPolicy, departmentId));
+			return result;
 		}
 
 		public async Task<RecordsGroupVisibilityMode> GetRecordsGroupVisibilityModeAsync(int departmentId, bool bypassCache = false)

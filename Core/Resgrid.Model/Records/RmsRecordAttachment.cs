@@ -48,6 +48,11 @@ namespace Resgrid.Model
 		/// <summary>True when location/device metadata was stripped on upload (plan section 4.7, media hygiene).</summary>
 		public bool MetadataStripped { get; set; }
 
+		/// <summary>RmsEvidenceClassification. Null means legacy/unclassified and requires restricted access.</summary>
+		public int? Classification { get; set; }
+		[NotMapped, JsonIgnore]
+		public bool RequiresRestrictedAccess => IsProtected || Classification != (int)RmsEvidenceClassification.Unrestricted;
+
 		public bool IsProtected { get; set; }
 
 		public int ProtectedCatalogVersion { get; set; }
@@ -78,6 +83,6 @@ namespace Resgrid.Model
 		public int IdType => 1;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "RequiresRestrictedAccess" };
 	}
 }

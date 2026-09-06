@@ -30,6 +30,8 @@ namespace Resgrid.Tests.Rms
 		private FakeAdapter _adapter;
 		private RecordsEvidenceService _service;
 		private RmsOperationalRecord _record;
+		private Mock<IRecordsAuthorizationService> _authorization;
+		private Mock<Resgrid.Model.Repositories.IRmsExternalReferencesRepository> _references;
 
 		/// <summary>A stand-in source so the service's own rules can be tested without six real subsystems.</summary>
 		private sealed class FakeAdapter : IRecordEvidenceAdapter
@@ -38,12 +40,14 @@ namespace Resgrid.Tests.Rms
 			public bool Available { get; set; } = true;
 			public RecordEvidenceCapture Result { get; set; }
 			public int Calls { get; private set; }
+			public Action DuringCapture { get; set; }
 
 			public Task<bool> IsAvailableAsync(int departmentId) => Task.FromResult(Available);
 
 			public Task<RecordEvidenceCapture> CaptureAsync(RecordEvidenceCaptureRequest request, CancellationToken cancellationToken = default)
 			{
 				Calls++;
+				DuringCapture?.Invoke();
 				return Task.FromResult(Result);
 			}
 		}
@@ -85,8 +89,13 @@ namespace Resgrid.Tests.Rms
 				}
 			};
 
+			_authorization = new Mock<IRecordsAuthorizationService>();
+			_references = new();
+			_authorization.Setup(a => a.HasPermissionAsync("author", Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
+			_authorization.Setup(a => a.CanUserViewRecordAsync("author", It.IsAny<string>(), Dept)).ReturnsAsync(true);
+			_authorization.Setup(a => a.CanReadSourceCallAsync("author", Dept, It.IsAny<Call>())).ReturnsAsync(true);
 			_service = new RecordsEvidenceService(_store.EvidenceRepo.Object, _store.RecordsRepo.Object,
-				_incidents.ReportsRepo.Object, _store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { (IRecordEvidenceAdapter)_adapter });
+				_incidents.ReportsRepo.Object, _store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { (IRecordEvidenceAdapter)_adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object);
 		}
 
 		private RecordEvidenceCaptureRequest Request(RmsEvidenceKind kind = RmsEvidenceKind.RunCardActivation)
@@ -102,6 +111,79 @@ namespace Resgrid.Tests.Rms
 			};
 		}
 
+		[Test]
+		public async Task Separate_chat_selections_survive_signing_and_only_an_exact_selection_supersedes_its_draft_predecessor()
+		{
+			var channels = new Mock<Resgrid.Model.Repositories.IChatChannelRepository>();
+			var messages = new Mock<Resgrid.Model.Repositories.IChatMessageRepository>();
+			var permission = new Mock<IChatPermissionService>();
+			var channel = new ChatChannel { ChatChannelId = "incident-chat", DepartmentId = Dept, CallId = 501 };
+			channels.Setup(c => c.GetByCallIdAsync(501)).ReturnsAsync(new[] { channel });
+			permission.Setup(p => p.CanAccessChannelAsync(channel, "author", null)).ReturnsAsync(true);
+			messages.Setup(m => m.GetByIdAsync(It.IsAny<string>())).ReturnsAsync((string id) => new ChatMessage {
+				DepartmentId = Dept, ChatChannelId = channel.ChatChannelId, ChatMessageId = id, Body = "Message " + id, SentOn = DateTime.UtcNow });
+			var adapter = new ChatPromotionEvidenceAdapter(messages.Object, channels.Object, new Lazy<IChatPermissionService>(() => permission.Object));
+			var service = new RecordsEvidenceService(_store.EvidenceRepo.Object, _store.RecordsRepo.Object, _incidents.ReportsRepo.Object,
+				_store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object);
+			var request = Request(RmsEvidenceKind.ChatPromotion); request.SourceIds = new() { "one", "two" };
+			var first = await service.CaptureAsync(request); var original = first.ManifestJson;
+			request.SourceIds = new() { "three" }; var second = await service.CaptureAsync(request);
+			first.IsCurrent.Should().BeTrue(); second.IsCurrent.Should().BeTrue();
+			request.SourceIds = new() { "two", "one" }; var corrected = await service.CaptureAsync(request);
+			first.SupersededByArtifactId.Should().Be(corrected.RmsEvidenceArtifactId); first.ManifestJson.Should().Be(original);
+			second.IsCurrent.Should().BeTrue();
+			await service.BindToRevisionAsync(Dept, _record.RmsOperationalRecordId, "signed-revision");
+			var signed = await service.GetForRecordAsync(Dept, _record.RmsOperationalRecordId, "signed-revision");
+			signed.Select(a => a.RmsEvidenceArtifactId).Should().BeEquivalentTo(second.RmsEvidenceArtifactId, corrected.RmsEvidenceArtifactId);
+			(await service.VerifyAsync(Dept, first.RmsEvidenceArtifactId)).Should().BeTrue();
+		}
+
+		[Test]
+		public async Task Every_consumption_requires_matching_immutable_evidence_before_finalization()
+		{
+			var reference = new RmsExternalReference {DepartmentId=Dept,RecordId=_record.RmsOperationalRecordId,RmsExternalReferenceId="consumption",SemanticRole=RmsInventoryUsageAdapter.SemanticRole,SnapshotJson="{\"Quantity\":2}"};
+			reference.Checksum=RecordSnapshotSerializer.Checksum(reference.SnapshotJson);
+			_references.Setup(r=>r.GetForRecordAsync(Dept,_record.RmsOperationalRecordId)).ReturnsAsync(new[]{reference});
+			Func<Task> missing=()=>_service.RequireInventoryCoverageAsync(Dept,_record.RmsOperationalRecordId,Array.Empty<RmsEvidenceArtifact>()); await missing.Should().ThrowAsync<ArgumentException>();
+			var manifest=RecordsEvidenceService.Serialize(new {usage=new[]{new {reference_id="consumption",reference_checksum=reference.Checksum}}});
+			var artifact=new RmsEvidenceArtifact {DepartmentId=Dept,RecordId=_record.RmsOperationalRecordId,Kind=(int)RmsEvidenceKind.InventoryUsage,ManifestJson=manifest,Checksum=RecordSnapshotSerializer.Checksum(manifest)};
+			await _service.RequireInventoryCoverageAsync(Dept,_record.RmsOperationalRecordId,new[]{artifact});
+			reference.SnapshotJson="{\"Quantity\":3}";reference.Checksum=RecordSnapshotSerializer.Checksum(reference.SnapshotJson);
+			Func<Task> stale=()=>_service.RequireInventoryCoverageAsync(Dept,_record.RmsOperationalRecordId,new[]{artifact});await stale.Should().ThrowAsync<ArgumentException>();
+		}
+		[Test]
+		public async Task Forged_call_and_non_author_capture_are_denied_before_reading_the_source()
+		{
+			var request = Request(); request.CallId = 999;
+			Func<Task> forged = () => _service.CaptureAsync(request); await forged.Should().ThrowAsync<UnauthorizedAccessException>();
+			request = Request(); request.CapturedByUserId = "viewer";
+			_authorization.Setup(a => a.CanUserViewRecordAsync("viewer", It.IsAny<string>(), Dept)).ReturnsAsync(true);
+			_authorization.Setup(a => a.HasPermissionAsync("viewer", Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
+			Func<Task> viewer = () => _service.CaptureAsync(request); await viewer.Should().ThrowAsync<UnauthorizedAccessException>();
+			_adapter.Calls.Should().Be(0); _store.EvidenceArtifacts.Should().BeEmpty();
+		}
+		[Test]
+		public async Task Evidence_cannot_attach_to_a_finalized_record_without_an_amendment()
+		{
+			_record.State = (int)RmsRecordState.Finalized;
+			Func<Task> capture = () => _service.CaptureAsync(Request()); await capture.Should().ThrowAsync<InvalidOperationException>();
+			_adapter.Calls.Should().Be(0);
+		}
+		[Test]
+		public async Task Parent_edit_during_source_capture_invalidates_the_capture_without_storing_an_artifact()
+		{
+			_adapter.DuringCapture = () => _record.RowVersion++;
+			Func<Task> capture = () => _service.CaptureAsync(Request()); await capture.Should().ThrowAsync<RecordConcurrencyException>();
+			_store.EvidenceArtifacts.Should().BeEmpty();
+		}
+		[Test]
+		public async Task Restricted_boolean_cannot_override_live_permission_or_revocation_during_capture()
+		{
+			_adapter.Result.Classification = RmsEvidenceClassification.Restricted;
+			_adapter.DuringCapture = () => _authorization.Setup(a => a.HasPermissionAsync("author", Dept, PermissionTypes.ViewRestrictedRecords)).ReturnsAsync(false);
+			Func<Task> capture = () => _service.CaptureAsync(Request(), true); await capture.Should().ThrowAsync<UnauthorizedAccessException>();
+			_store.EvidenceArtifacts.Should().BeEmpty();
+		}
 		[Test]
 		public async Task A_capture_records_provenance_and_a_checksum_over_its_manifest()
 		{
@@ -156,7 +238,7 @@ namespace Resgrid.Tests.Rms
 
 			Func<Task> act = () => _service.CaptureAsync(Request(), canCaptureRestricted: false);
 
-			await act.Should().ThrowAsync<InvalidOperationException>();
+			await act.Should().ThrowAsync<UnauthorizedAccessException>("a missing grant is a refusal, not a bad request");
 			_store.EvidenceArtifacts.Should().BeEmpty();
 
 			var artifact = await _service.CaptureAsync(Request(), canCaptureRestricted: true);

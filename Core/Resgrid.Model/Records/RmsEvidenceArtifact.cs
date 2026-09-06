@@ -103,6 +103,8 @@ namespace Resgrid.Model
 
 		/// <summary>Version or schema of the source at capture time, where the source carries one.</summary>
 		public string SourceVersion { get; set; }
+		/// <summary>Identity of the original capture request for safe API replay.</summary>
+		public string CaptureRequestChecksum { get; set; }
 
 		/// <summary>Start of the period the artifact covers (a tracking window, a readiness period).</summary>
 		public DateTime? CoverageStart { get; set; }
@@ -172,6 +174,8 @@ namespace Resgrid.Model
 	/// <summary>What a caller asks an evidence adapter to capture. The adapter decides what it can honour.</summary>
 	public class RecordEvidenceCaptureRequest
 	{
+		/// <summary>Optional caller version; the service pins the observed parent version when omitted.</summary>
+		public long? ExpectedRowVersion { get; set; }
 		public int DepartmentId { get; set; }
 
 		public string RecordId { get; set; }

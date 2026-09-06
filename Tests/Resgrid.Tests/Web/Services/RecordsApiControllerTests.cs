@@ -58,8 +58,11 @@ namespace Resgrid.Tests.Web.Services
 			_cutover.Setup(c => c.GetModuleStateAsync(Dept, It.IsAny<bool>())).ReturnsAsync(() => _moduleState);
 
 			_authorization = new Mock<IRecordsAuthorizationService>();
+			_authorization.Setup(a => a.IsActiveMemberAsync(Me, Dept)).ReturnsAsync(true);
+			_authorization.Setup(a => a.HasPermissionAsync(Me, Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
 			_authorization.Setup(a => a.CanUserViewRecordAsync(Me, It.IsAny<string>(), Dept)).ReturnsAsync(true);
 			_authorization.Setup(a => a.GetVisibleGroupIdsAsync(Me, Dept)).ReturnsAsync((List<int>)null);
+			_authorization.Setup(a => a.GetReadScopeStampAsync(Me, Dept)).ReturnsAsync("membership-1");
 
 			_flags = new Mock<IFeatureToggleService>();
 			_flags.Setup(f => f.IsEnabledAsync(It.IsAny<string>(), Dept, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(false);
@@ -72,6 +75,7 @@ namespace Resgrid.Tests.Web.Services
 			_uploads = new Mock<IRecordAttachmentUploadService>();
 			_uploads.SetupGet(u => u.ChunkSize).Returns(512 * 1024);
 			_idempotency = new Mock<IRecordsApiIdempotencyService>();
+			_idempotency.Setup(i => i.TryReserveCommandAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
 			_dashboard = new Mock<IRecordsDashboardService>();
 
 			_http = new DefaultHttpContext
@@ -196,6 +200,145 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task A_stale_restricted_claim_cannot_disclose_fields_in_reads_or_conflicts()
+		{
+			((ClaimsIdentity)_http.User.Identity).AddClaim(new Claim(ResgridClaimTypes.Resources.RecordRestricted, ResgridClaimTypes.Actions.View));
+			_authorization.Setup(a => a.HasPermissionAsync(Me, Dept, PermissionTypes.ViewRestrictedRecords)).ReturnsAsync(false);
+			_records.Setup(r => r.GetAsync(Dept, RecordId, It.IsAny<bool>())).ReturnsAsync(Aggregate(5, RmsDefinitionKeys.Coroner));
+			var read = (RecordResult)((OkObjectResult)(await _controller.GetRecord(RecordId)).Result).Value;
+			read.Data.Details.CaseNumber.Should().BeNull();
+			_records.Setup(r => r.SaveDraftAsync(Dept, Me, RecordId, 4, It.IsAny<RecordDraftInput>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new RecordConcurrencyException(RecordId, 4, 5));
+			var conflict = await _controller.SaveDraft(new SaveRecordDraftInput { RecordId = RecordId, RowVersion = 4, DefinitionKey = RmsDefinitionKeys.Coroner, Details = new RecordDetailsInput { Narrative = "Changed" } }, CancellationToken.None);
+			Newtonsoft.Json.JsonConvert.SerializeObject(((ConflictObjectResult)conflict.Result).Value).Should().NotContain("C-1").And.NotContain("Room 2");
+		}
+
+		[Test]
+		public async Task Changing_visibility_without_modifying_a_record_forces_delta_cache_eviction()
+		{
+			_records.Setup(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new List<RmsRecordSearchProjection>());
+			var initial = (RecordsChangesResult)((OkObjectResult)(await _controller.Changes()).Result).Value;
+			_authorization.Setup(a => a.GetVisibleGroupIdsAsync(Me, Dept)).ReturnsAsync(new List<int> { 10 });
+			var response = (RecordsChangesResult)((OkObjectResult)(await _controller.Changes(initial.Data.ServerTimestampMs, 200, null, initial.Data.ScopeStamp)).Result).Value;
+			response.Data.ResetRequired.Should().BeTrue();
+			response.Data.ServerTimestampMs.Should().Be(0);
+			response.Data.Records.Should().BeEmpty();
+			_records.Verify(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Removed_members_cannot_use_the_delta_feed_with_a_still_valid_token()
+		{
+			_authorization.Setup(a => a.IsActiveMemberAsync(Me, Dept)).ReturnsAsync(false);
+			(await _controller.Changes()).Result.Should().BeOfType<ForbidResult>();
+			_records.Verify(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Revoked_membership_refuses_feed_and_deep_links_despite_valid_claims_and_ownership()
+		{
+			_authorization.Setup(a => a.IsActiveMemberAsync(Me, Dept)).ReturnsAsync(false);
+			(await _controller.Changes()).Result.Should().BeOfType<ForbidResult>();
+			(await _controller.GetRecord(RecordId)).Result.Should().BeOfType<NotFoundResult>();
+			_records.Verify(r => r.GetAsync(Dept, It.IsAny<string>(), It.IsAny<bool>()), Times.Never);
+			_records.Verify(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[TestCase("roles")]
+		[TestCase("protection")]
+		public async Task Policy_or_role_change_invalidates_unmodified_cached_rows(string change)
+		{
+			_records.Setup(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(new List<RmsRecordSearchProjection>());
+			var initial = ((RecordsChangesResult)((OkObjectResult)(await _controller.Changes()).Result).Value).Data;
+			if (change == "roles") _authorization.Setup(a => a.GetReadScopeStampAsync(Me, Dept)).ReturnsAsync("membership-2");
+			else _adp.Setup(a => a.GetPolicyByDepartmentIdAsync(Dept, true)).ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = Dept, PolicyEpoch = 2 });
+			var next = ((RecordsChangesResult)((OkObjectResult)(await _controller.Changes(initial.ServerTimestampMs, 200, null, initial.ScopeStamp)).Result).Value).Data;
+			next.ResetRequired.Should().BeTrue();
+			next.Records.Should().BeEmpty();
+			next.ServerTimestampMs.Should().Be(0);
+			_records.Verify(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Role_change_during_page_hydration_discards_all_previously_authorized_content()
+		{
+			_records.Setup(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()))
+				.Callback(() => _authorization.Setup(a => a.GetReadScopeStampAsync(Me, Dept)).ReturnsAsync("membership-2"))
+				.ReturnsAsync(new List<RmsRecordSearchProjection> { new RmsRecordSearchProjection { DepartmentId = Dept, RmsRecordSearchProjectionId = RecordId, DisplaySummary = "Secret report", ModifiedOn = DateTime.UtcNow } });
+			var response = (RecordsChangesResult)((OkObjectResult)(await _controller.Changes()).Result).Value;
+			response.Data.ResetRequired.Should().BeTrue();
+			response.Data.Records.Should().BeEmpty();
+			Newtonsoft.Json.JsonConvert.SerializeObject(response).Should().NotContain("Secret report");
+		}
+
+		[Test]
+		public async Task Unavailable_scope_or_protection_policy_fails_closed_before_reading_a_page()
+		{
+			_adp.Setup(a => a.GetPolicyByDepartmentIdAsync(Dept, true)).ThrowsAsync(new InvalidOperationException("unavailable"));
+			(await _controller.Changes()).Result.Should().BeOfType<ForbidResult>();
+			_adp.Setup(a => a.GetPolicyByDepartmentIdAsync(Dept, true)).ReturnsAsync((DepartmentDataProtectionPolicy)null);
+			_authorization.Setup(a => a.GetReadScopeStampAsync(Me, Dept)).ReturnsAsync((string)null);
+			(await _controller.Changes()).Result.Should().BeOfType<ForbidResult>();
+			_records.Verify(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[TestCase("restricted")]
+		[TestCase("view")]
+		[TestCase("removed")]
+		[TestCase("checksum")]
+		[TestCase("tenant")]
+		public async Task Attachment_egress_rechecks_permissions_and_file_after_audit(string attack)
+		{
+			((ClaimsIdentity)_http.User.Identity).AddClaim(new Claim(ResgridClaimTypes.Resources.RecordRestricted, ResgridClaimTypes.Actions.View));
+			_records.Setup(r => r.GetAsync(Dept, RecordId, It.IsAny<bool>())).ReturnsAsync(Aggregate());
+			var file = new RmsRecordAttachment { RmsRecordAttachmentId = "file", RecordId = RecordId, DepartmentId = Dept,
+				Data = System.Text.Encoding.UTF8.GetBytes("private file"), ScanState = (int)RmsAttachmentScanState.Clean, Classification = 1 };
+			file.Checksum = Resgrid.Services.Records.RecordSnapshotSerializer.Checksum(file.Data);
+			_records.Setup(r => r.GetAttachmentAsync(Dept, Me, "file")).ReturnsAsync(() => file);
+			_records.Setup(r => r.RecordAccessAsync(Dept, Me, RecordId, null, RmsAccessAuditAction.Read, It.IsAny<string>(), It.IsAny<string>(), RmsOriginClient.Api))
+				.Callback(() =>
+				{
+					if (attack == "restricted") _authorization.Setup(a => a.HasPermissionAsync(Me, Dept, PermissionTypes.ViewRestrictedRecords)).ReturnsAsync(false);
+					if (attack == "view") _authorization.Setup(a => a.IsActiveMemberAsync(Me, Dept)).ReturnsAsync(false);
+					if (attack == "removed") file.DeletedOn = DateTime.UtcNow;
+					if (attack == "checksum") file.Checksum = "corrupt";
+					if (attack == "tenant") file.DepartmentId++;
+				}).Returns(Task.CompletedTask);
+			var response = await _controller.GetAttachment(RecordId, "file");
+			response.Result.Should().Match<ActionResult>(result => result is ForbidResult || result is NotFoundResult);
+			_records.Verify(r => r.GetAttachmentAsync(Dept, Me, "file"), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task Run_Call_requires_a_version_and_maps_server_identity_and_UTC_time_to_the_same_authoring_service()
+		{
+			var input = new CreateRunCallInput { RecordId = RecordId, Name = "Historical response", Address = "5 Test Road", Nature = "Run documentation", OccurredOnUtc = new DateTime(2026, 9, 1, 10, 0, 0, DateTimeKind.Utc) };
+			(await _controller.CreateRunCall(input, default)).Result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(428);
+			_records.Verify(r => r.CreateRunCallAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<RecordNewCallInput>(), It.IsAny<CancellationToken>()), Times.Never);
+			_records.Setup(r => r.GetAsync(Dept, RecordId, It.IsAny<bool>())).ReturnsAsync(Aggregate(5, RmsDefinitionKeys.Run));
+			var saved = Aggregate(6, RmsDefinitionKeys.Run); saved.Record.CallId = 77;
+			_records.Setup(r => r.CreateRunCallAsync(Dept, Me, RecordId, 5, It.IsAny<RecordNewCallInput>(), It.IsAny<CancellationToken>())).ReturnsAsync(saved);
+			_http.Request.Headers.IfMatch = "\"5\"";
+			var result = (await _controller.CreateRunCall(input, default)).Result.Should().BeOfType<OkObjectResult>().Subject;
+			result.Value.Should().BeOfType<RecordResult>().Which.Data.CallId.Should().Be(77);
+			_http.Response.Headers.ETag.ToString().Should().Be("W/\"6\"");
+			_records.Verify(r => r.CreateRunCallAsync(Dept, Me, RecordId, 5, It.Is<RecordNewCallInput>(c => c.Name == input.Name && c.Address == input.Address && c.Nature == input.Nature && c.OccurredOnUtc == input.OccurredOnUtc && c.OccurredOnUtc.Kind == DateTimeKind.Utc), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task Run_Call_denial_or_stale_parent_never_returns_a_successful_call_binding(bool denied)
+		{
+			_records.Setup(r => r.GetAsync(Dept, RecordId, It.IsAny<bool>())).ReturnsAsync(Aggregate(5, RmsDefinitionKeys.Run));
+			_records.Setup(r => r.CreateRunCallAsync(Dept, Me, RecordId, 5, It.IsAny<RecordNewCallInput>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(denied ? new UnauthorizedAccessException() : new RecordConcurrencyException(RecordId, 5, 6));
+			var result = (await _controller.CreateRunCall(new CreateRunCallInput { RecordId = RecordId, RowVersion = 5, Name = "Historical response", OccurredOnUtc = new DateTime(2026, 9, 1, 10, 0, 0, DateTimeKind.Utc) }, default)).Result;
+			if (denied) result.Should().BeOfType<ForbidResult>();
+			else result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(409);
+			_idempotency.VerifyNoOtherCalls();
+		}
+
+		[Test]
 		public async Task Create_draft_returns_201_and_a_replayed_idempotency_key_returns_200_with_the_same_record()
 		{
 			RecordDraftInput captured = null;
@@ -279,16 +422,90 @@ namespace Resgrid.Tests.Web.Services
 
 			var unattested = await _controller.Finalize(new RecordCommandInput { RecordId = RecordId, RowVersion = 5 }, CancellationToken.None);
 			((ProblemDetails)((ObjectResult)unattested.Result).Value).Type.Should().Be("attestation_required");
+			RecordCommandReceipt receipt = null;
+			_idempotency.Setup(i => i.RememberCommandAsync(Dept, Me, "fin-1", "Finalize", RecordId, It.IsAny<string>()))
+				.Callback((int d, string u, string k, string c, string id, string checksum) => receipt = new RecordCommandReceipt { RecordId = id, RequestChecksum = checksum }).Returns(Task.CompletedTask);
 
 			var finalized = await _controller.Finalize(new RecordCommandInput { RecordId = RecordId, RowVersion = 5, Attested = true, IdempotencyKey = "fin-1" }, CancellationToken.None);
 			((RecordResult)((OkObjectResult)finalized.Result).Value).Data.StateName.Should().Be("Finalized");
-			_idempotency.Verify(i => i.RememberAsync(Dept, Me, "fin-1", "Finalize", RecordId), Times.Once);
+			_idempotency.Verify(i => i.RememberCommandAsync(Dept, Me, "fin-1", "Finalize", RecordId, It.IsAny<string>()), Times.Once);
 
 			// Replay: the remembered key short-circuits the transition.
-			_idempotency.Setup(i => i.TryGetRecordIdAsync(Dept, Me, "fin-1", "Finalize")).ReturnsAsync(RecordId);
-			var replayed = await _controller.Finalize(new RecordCommandInput { RecordId = RecordId, RowVersion = 99, Attested = true, IdempotencyKey = "fin-1" }, CancellationToken.None);
+			_idempotency.Setup(i => i.TryGetCommandAsync(Dept, Me, "fin-1", "Finalize")).ReturnsAsync(() => receipt);
+			var replayed = await _controller.Finalize(new RecordCommandInput { RecordId = RecordId, RowVersion = 5, Attested = true, IdempotencyKey = "fin-1" }, CancellationToken.None);
 			replayed.Result.Should().BeOfType<OkObjectResult>();
+			var changed = await _controller.Finalize(new RecordCommandInput { RecordId = RecordId, RowVersion = 99, Attested = true, IdempotencyKey = "fin-1" }, CancellationToken.None);
+			((ProblemDetails)((ObjectResult)changed.Result).Value).Type.Should().Be("record_idempotency_conflict");
 			_records.Verify(r => r.FinalizeAsync(Dept, Me, RecordId, It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[TestCase("reason")]
+		[TestCase("attestation")]
+		[TestCase("owner")]
+		[TestCase("record")]
+		[TestCase("legacy")]
+		public async Task Reused_command_keys_reject_changed_payloads_and_unbound_legacy_receipts(string changedField)
+		{
+			_records.Setup(r => r.GetAsync(Dept, It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync(Aggregate(5));
+			_records.Setup(r => r.FinalizeAsync(Dept, Me, RecordId, 5, "1", null, null, It.IsAny<CancellationToken>())).ReturnsAsync(Aggregate(6, RmsDefinitionKeys.Training, RmsRecordState.Finalized));
+			RecordCommandReceipt receipt = null;
+			_idempotency.Setup(i => i.RememberCommandAsync(Dept, Me, "fin-1", "Finalize", RecordId, It.IsAny<string>()))
+				.Callback((int d, string u, string k, string c, string id, string checksum) => receipt = new RecordCommandReceipt { RecordId = id, RequestChecksum = checksum }).Returns(Task.CompletedTask);
+			var input = new RecordCommandInput { RecordId = RecordId, RowVersion = 5, Attested = true, IdempotencyKey = "fin-1" };
+			await _controller.Finalize(input, default);
+			_idempotency.Setup(i => i.TryGetCommandAsync(Dept, Me, "fin-1", "Finalize")).ReturnsAsync(() => receipt);
+			if (changedField == "reason") input.ReasonText = "Different reason";
+			if (changedField == "attestation") input.AttestationStatementVersion = "another-statement";
+			if (changedField == "owner") input.NewOwnerUserId = "someone-else";
+			if (changedField == "record") receipt.RecordId = "different-record";
+			if (changedField == "legacy") receipt.RequestChecksum = null;
+			var result = await _controller.Finalize(input, default);
+			((ProblemDetails)((ObjectResult)result.Result).Value).Type.Should().Be("record_idempotency_conflict");
+			_records.Verify(r => r.FinalizeAsync(Dept, Me, It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Command_replay_does_not_return_a_record_when_access_is_revoked_during_replay_hydration()
+		{
+			_records.Setup(r => r.GetAsync(Dept, RecordId, It.IsAny<bool>())).ReturnsAsync(Aggregate(5));
+			_records.Setup(r => r.FinalizeAsync(Dept, Me, RecordId, 5, "1", null, null, It.IsAny<CancellationToken>())).ReturnsAsync(Aggregate(6, RmsDefinitionKeys.Training, RmsRecordState.Finalized));
+			RecordCommandReceipt receipt = null;
+			_idempotency.Setup(i => i.RememberCommandAsync(Dept, Me, "fin-1", "Finalize", RecordId, It.IsAny<string>()))
+				.Callback((int d, string u, string k, string c, string id, string checksum) => receipt = new RecordCommandReceipt { RecordId = id, RequestChecksum = checksum }).Returns(Task.CompletedTask);
+			var input = new RecordCommandInput { RecordId = RecordId, RowVersion = 5, Attested = true, IdempotencyKey = "fin-1" };
+			await _controller.Finalize(input, default);
+			_idempotency.Setup(i => i.TryGetCommandAsync(Dept, Me, "fin-1", "Finalize")).ReturnsAsync(() => receipt);
+			_records.Setup(r => r.GetAsync(Dept, RecordId, true)).Callback(() => _authorization.Setup(a => a.CanUserViewRecordAsync(Me, RecordId, Dept)).ReturnsAsync(false)).ReturnsAsync(Aggregate(6));
+			(await _controller.Finalize(input, default)).Result.Should().BeOfType<NotFoundResult>();
+		}
+
+		[Test]
+		public async Task Losing_a_concurrent_command_reservation_never_executes_the_transition()
+		{
+			_records.Setup(r => r.GetAsync(Dept, RecordId, It.IsAny<bool>())).ReturnsAsync(Aggregate(5));
+			_idempotency.Setup(i => i.TryReserveCommandAsync(Dept, Me, "same-key", "Finalize", RecordId, It.IsAny<string>())).ReturnsAsync(false);
+			var result = await _controller.Finalize(new RecordCommandInput { RecordId = RecordId, RowVersion = 5, Attested = true, IdempotencyKey = "same-key" }, default);
+			((ProblemDetails)((ObjectResult)result.Result).Value).Type.Should().Be("record_command_pending");
+			_records.Verify(r => r.FinalizeAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_post_commit_receipt_failure_reports_an_unknown_outcome_and_cannot_reexecute_on_retry()
+		{
+			_records.Setup(r => r.GetAsync(Dept, RecordId, It.IsAny<bool>())).ReturnsAsync(Aggregate(5));
+			_records.Setup(r => r.FinalizeAsync(Dept, Me, RecordId, 5, "1", null, null, It.IsAny<CancellationToken>())).ReturnsAsync(Aggregate(6, RmsDefinitionKeys.Training, RmsRecordState.Finalized));
+			RecordCommandReceipt pending = null;
+			_idempotency.Setup(i => i.TryGetCommandAsync(Dept, Me, "uncertain", "Finalize")).ReturnsAsync(() => pending);
+			_idempotency.Setup(i => i.TryReserveCommandAsync(Dept, Me, "uncertain", "Finalize", RecordId, It.IsAny<string>()))
+				.Callback((int d, string u, string k, string c, string id, string checksum) => pending = new RecordCommandReceipt { RecordId = id, RequestChecksum = checksum, IsPending = true }).ReturnsAsync(true);
+			_idempotency.Setup(i => i.RememberCommandAsync(Dept, Me, "uncertain", "Finalize", RecordId, It.IsAny<string>())).ThrowsAsync(new InvalidOperationException("receipt store unavailable"));
+			var input = new RecordCommandInput { RecordId = RecordId, RowVersion = 5, Attested = true, IdempotencyKey = "uncertain" };
+			var first = await _controller.Finalize(input, default);
+			((ObjectResult)first.Result).StatusCode.Should().Be(503);
+			((ProblemDetails)((ObjectResult)first.Result).Value).Type.Should().Be("record_command_outcome_unknown");
+			var retry = await _controller.Finalize(input, default);
+			((ProblemDetails)((ObjectResult)retry.Result).Value).Type.Should().Be("record_command_pending");
+			_records.Verify(r => r.FinalizeAsync(Dept, Me, RecordId, 5, "1", null, null, It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]
@@ -305,7 +522,7 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
-		public async Task Changes_returns_a_cursor_tombstones_and_drops_rows_outside_the_callers_scope()
+		public async Task Changes_returns_a_cursor_and_content_free_evictions_for_rows_outside_the_callers_scope()
 		{
 			var t0 = new DateTime(2026, 9, 3, 10, 0, 0, DateTimeKind.Utc);
 			_authorization.Setup(a => a.GetVisibleGroupIdsAsync(Me, Dept)).ReturnsAsync(new List<int> { 1 });
@@ -321,16 +538,39 @@ namespace Resgrid.Tests.Web.Services
 
 			var data = ((RecordsChangesResult)((OkObjectResult)response.Result).Value).Data;
 			data.HasMore.Should().BeTrue("three rows came back for a page of two");
-			data.Records.Select(r => r.RecordId).Should().BeEquivalentTo(new[] { "live" }, "the hidden row is outside the caller's group scope");
+			data.Records.Select(r => r.RecordId).Should().BeEquivalentTo(new[] { "live", "hidden" });
+			data.Records.Single(r => r.RecordId == "hidden").IsTombstone.Should().BeTrue("a previously cached live record must be evicted after loss of scope");
 			data.ServerTimestampMs.Should().Be(new DateTimeOffset(t0.AddMinutes(1)).ToUnixTimeMilliseconds(), "the cursor stops at the last row of the page so nothing is skipped");
 
 			_records.Setup(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), 3, It.IsAny<string>())).ReturnsAsync(new List<RmsRecordSearchProjection>
 			{
 				new RmsRecordSearchProjection { RmsRecordSearchProjectionId = "gone", State = (int)RmsRecordState.Voided, ModifiedOn = t0.AddMinutes(2), RecordCreatedOn = t0 }
 			});
-			var next = ((RecordsChangesResult)((OkObjectResult)(await _controller.Changes(data.ServerTimestampMs, 2)).Result).Value).Data;
+			var next = ((RecordsChangesResult)((OkObjectResult)(await _controller.Changes(data.ServerTimestampMs, 2, data.ServerCursorId, data.ScopeStamp)).Result).Value).Data;
 			next.HasMore.Should().BeFalse();
 			next.Records.Should().ContainSingle(r => r.RecordId == "gone" && r.IsTombstone, "tombstones ride through regardless of scope");
+		}
+
+		[Test]
+		public async Task Changes_preserves_sub_millisecond_cursor_precision_and_resets_old_id_only_cursors()
+		{
+			var exact = new DateTime(2026, 9, 4, 12, 0, 0, DateTimeKind.Utc).AddTicks(1234567);
+			var rows = new List<RmsRecordSearchProjection>
+			{
+				new RmsRecordSearchProjection { RmsRecordSearchProjectionId = "a", DepartmentId = Dept, State = 1, ModifiedOn = exact },
+				new RmsRecordSearchProjection { RmsRecordSearchProjectionId = "b", DepartmentId = Dept, State = 1, ModifiedOn = exact }
+			};
+			_records.Setup(r => r.GetChangesSinceAsync(Dept, It.IsAny<DateTime?>(), 2, It.IsAny<string>()))
+				.ReturnsAsync((int d, DateTime? time, int take, string id) => rows.Where(r => !time.HasValue || r.ModifiedOn > time || r.ModifiedOn == time && string.CompareOrdinal(r.RmsRecordSearchProjectionId, id) > 0).Take(take).ToList());
+			var first = ((RecordsChangesResult)((OkObjectResult)(await _controller.Changes(0, 1)).Result).Value).Data;
+			first.HasMore.Should().BeTrue(); first.ServerCursorId.Should().StartWith("rms1:");
+			var next = ((RecordsChangesResult)((OkObjectResult)(await _controller.Changes(first.ServerTimestampMs, 1, first.ServerCursorId, first.ScopeStamp)).Result).Value).Data;
+			next.HasMore.Should().BeFalse(); next.Records.Should().ContainSingle().Which.RecordId.Should().Be("b");
+			_records.Verify(r => r.GetChangesSinceAsync(Dept, exact, 2, "a"), Times.Once);
+			var legacy = ((RecordsChangesResult)((OkObjectResult)(await _controller.Changes(first.ServerTimestampMs, 1, "a", first.ScopeStamp)).Result).Value).Data;
+			legacy.ResetRequired.Should().BeTrue(); legacy.Records.Should().BeEmpty(); legacy.ServerTimestampMs.Should().Be(0);
+			var mismatched = ((RecordsChangesResult)((OkObjectResult)(await _controller.Changes(first.ServerTimestampMs + 1, 1, first.ServerCursorId, first.ScopeStamp)).Result).Value).Data;
+			mismatched.ResetRequired.Should().BeTrue(); mismatched.Records.Should().BeEmpty();
 		}
 
 		[Test]
@@ -369,7 +609,7 @@ namespace Resgrid.Tests.Web.Services
 			_records.Setup(r => r.GetAsync(Dept, RecordId, It.IsAny<bool>())).ReturnsAsync(Aggregate(5));
 			_uploads.Setup(u => u.BeginAsync(Dept, Me, RecordId, "a.png", "image/png", 10, "x")).ThrowsAsync(new RecordUploadSessionException("checksum_mismatch", "bad hash"));
 			_uploads.Setup(u => u.AppendAsync(Dept, Me, "s1", 0, It.IsAny<byte[]>())).ThrowsAsync(new RecordUploadSessionException("bad_offset", "order"));
-			_uploads.Setup(u => u.CompleteAsync(Dept, Me, "s2", null, It.IsAny<CancellationToken>())).ThrowsAsync(new RecordUploadSessionException("not_found", "gone"));
+			_uploads.Setup(u => u.CompleteAsync(Dept, Me, "s2", null, It.IsAny<CancellationToken>(), It.IsAny<int>())).ThrowsAsync(new RecordUploadSessionException("not_found", "gone"));
 
 			((ObjectResult)(await _controller.BeginUpload(new BeginRecordUploadInput { RecordId = RecordId, FileName = "a.png", ContentType = "image/png", ByteSize = 10, Sha256 = "x" })).Result).StatusCode.Should().Be(StatusCodes.Status422UnprocessableEntity);
 			((ObjectResult)(await _controller.UploadChunk(new RecordUploadChunkInput { UploadId = "s1", Offset = 0, Data = Convert.ToBase64String(new byte[] { 1 }) })).Result).StatusCode.Should().Be(StatusCodes.Status409Conflict);

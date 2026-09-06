@@ -104,7 +104,7 @@
 				<tr><td class="label">@localizer["OtherPersonnel"]</td><td>@Text(details.OtherPersonnel)</td></tr>
 			}
 		</table>
-		<p class="narrative">@details.Narrative</p>
+		<div class="narrative">@Html.Raw(Resgrid.Framework.RecordNarrativeFormatter.Render(details.Narrative))</div>
 	</div>
 
 	@if (isCoroner)

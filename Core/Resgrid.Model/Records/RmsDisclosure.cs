@@ -180,6 +180,8 @@ namespace Resgrid.Model
 		public DateTime PreparedOn { get; set; }
 
 		public string ReleasedByUserId { get; set; }
+		public string DeliveryMethod { get; set; }
+		public string DeliveryReference { get; set; }
 
 		public DateTime? ReleasedOn { get; set; }
 
@@ -207,13 +209,14 @@ namespace Resgrid.Model
 	/// <summary>One record in a disclosure scope preview, before anything is produced.</summary>
 	public class RmsDisclosureScopeItem
 	{
+		public RmsRecordKind RecordKind { get; set; } = RmsRecordKind.Operational;
 		public string RecordId { get; set; }
 		public string RecordNumber { get; set; }
 		public string DefinitionKey { get; set; }
 		public string Summary { get; set; }
 		public DateTime? OccurredOn { get; set; }
 		public string CurrentRevisionId { get; set; }
-		/// <summary>False when the record is not finalized; a draft is not a public record and is never produced.</summary>
+		/// <summary>False when no saved revision is available for automatic production.</summary>
 		public bool Producible { get; set; }
 		public string NotProducibleReason { get; set; }
 	}
@@ -231,10 +234,79 @@ namespace Resgrid.Model
 	/// <summary>One withheld field in a production's redaction log.</summary>
 	public class RmsRedactionEntry
 	{
+		public string Authority { get; set; }
 		public string RecordId { get; set; }
 		public string Section { get; set; }
 		public string Field { get; set; }
 		/// <summary>Why it was withheld — the classification or profile rule relied on.</summary>
 		public string Basis { get; set; }
+	}
+
+	public class RmsDisclosureFieldValue
+	{
+		public string Path { get; set; }
+		public string Value { get; set; }
+	}
+	public class RmsDisclosureFieldDecision
+	{
+		public string Path { get; set; }
+		public bool Withhold { get; set; }
+		public string Authority { get; set; }
+		public string Basis { get; set; }
+	}
+
+	public class RmsDisclosureDownload
+	{
+		public byte[] Data { get; set; }
+		public string ContentType { get; set; }
+		public string FileName { get; set; }
+	}
+	public class RmsDisclosureReview
+	{
+		public string RequestId { get; set; }
+		public string Profile { get; set; }
+		public string ScopeChecksum { get; set; }
+		public bool Reviewed { get; set; }
+		public string Authority { get; set; }
+		public string Basis { get; set; }
+		/// <summary>Recorded handling of unfinished or inaccessible scope items; never silently omitted.</summary>
+		public string UnresolvedScopeHandling { get; set; }
+		public List<RmsDisclosureRecordReview> Records { get; set; } = new List<RmsDisclosureRecordReview>();
+	}
+	public class RmsDisclosureRecordReview
+	{
+		public RmsRecordKind RecordKind { get; set; }
+		public string RecordId { get; set; }
+		public string RecordNumber { get; set; }
+		public string RevisionId { get; set; }
+		public string RevisionChecksum { get; set; }
+		public string ContentChecksum { get; set; }
+		public bool WithholdWhole { get; set; }
+		public string Authority { get; set; }
+		public string Basis { get; set; }
+		public List<string> AutomaticWithholds { get; set; } = new List<string>();
+		public List<RmsDisclosureFieldValue> Fields { get; set; } = new List<RmsDisclosureFieldValue>();
+		public List<RmsDisclosureFieldDecision> Decisions { get; set; } = new List<RmsDisclosureFieldDecision>();
+		public List<RmsDisclosureAttachmentDecision> Attachments { get; set; } = new List<RmsDisclosureAttachmentDecision>();
+	}
+	public class RmsDisclosureAttachmentDecision
+	{
+		public RmsDisclosureAttachmentDerivative Derivative { get; set; }
+		public List<RmsDisclosureFieldValue> Metadata { get; set; } = new List<RmsDisclosureFieldValue>();
+		public string AttachmentId { get; set; }
+		public string FileName { get; set; }
+		public string Checksum { get; set; }
+		public bool Include { get; set; }
+		public bool Reviewed { get; set; }
+		public string Authority { get; set; }
+		public string Basis { get; set; }
+	}
+	/// <summary>A custodian-reviewed replacement file; its source remains unchanged.</summary>
+	public class RmsDisclosureAttachmentDerivative
+	{
+		public string FileName { get; set; }
+		public string ContentType { get; set; }
+		public byte[] Data { get; set; }
+		public string Checksum { get; set; }
 	}
 }

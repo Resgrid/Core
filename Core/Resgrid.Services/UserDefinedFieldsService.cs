@@ -33,11 +33,13 @@ namespace Resgrid.Services
 
 		public async Task<UdfDefinition> GetActiveDefinitionAsync(int departmentId, int entityType)
 		{
+			if (entityType == (int)UdfEntityType.Record) throw new UnauthorizedAccessException("Record extensions require the RMS definition and record authorization workflow.");
 			return await _definitionRepository.GetActiveDefinitionByDepartmentAndEntityTypeAsync(departmentId, entityType);
 		}
 
 		public async Task<List<UdfField>> GetFieldsForActiveDefinitionAsync(int departmentId, int entityType)
 		{
+			if (entityType == (int)UdfEntityType.Record) throw new UnauthorizedAccessException("Record extensions require the RMS definition and record authorization workflow.");
 			var definition = await _definitionRepository.GetActiveDefinitionByDepartmentAndEntityTypeAsync(departmentId, entityType);
 			if (definition == null)
 				return new List<UdfField>();
@@ -49,6 +51,7 @@ namespace Resgrid.Services
 		public async Task<List<UdfField>> GetVisibleFieldsForActiveDefinitionAsync(int departmentId, int entityType,
 			bool isDepartmentAdmin, bool isGroupAdmin)
 		{
+			if (entityType == (int)UdfEntityType.Record) throw new UnauthorizedAccessException("Record extensions require the RMS definition and record authorization workflow.");
 			var allFields = await GetFieldsForActiveDefinitionAsync(departmentId, entityType);
 
 			return allFields.Where(f => IsFieldVisibleToRole(f, isDepartmentAdmin, isGroupAdmin)).ToList();
@@ -69,6 +72,7 @@ namespace Resgrid.Services
 		public async Task<UdfDefinition> SaveDefinitionAsync(int departmentId, int entityType,
 			List<UdfField> fields, string userId, CancellationToken cancellationToken = default)
 		{
+			if (entityType == (int)UdfEntityType.Record) throw new UnauthorizedAccessException("Record extensions require the RMS definition and record authorization workflow.");
 			// Enforce machine-name uniqueness at the service layer so callers (web, API, workers)
 			// all get the same guarantee.
 			if (fields != null && fields.Count > 0)
@@ -106,16 +110,14 @@ namespace Resgrid.Services
 
 				await _definitionRepository.SaveOrUpdateAsync(definition, cancellationToken);
 
-				// Save fields linked to the new definition version.
-				// Preserve any pre-set UdfFieldId so callers can reference fields by stable IDs.
-				// If no UdfFieldId is set, the repository will assign a new GUID.
-				// When cloning fields for a new version (e.g. DeleteFieldFromDefinitionAsync),
-				// the caller leaves UdfFieldId empty so fresh IDs are assigned there.
+				// A publication owns new field rows. A submitted ID must never move or update a field
+				// from an older definition, another entity type (including RMS), or another department.
 				if (fields != null)
 				{
 					for (int i = 0; i < fields.Count; i++)
 					{
-						var field = fields[i];
+						var field = Newtonsoft.Json.JsonConvert.DeserializeObject<UdfField>(Newtonsoft.Json.JsonConvert.SerializeObject(fields[i]));
+						field.UdfFieldId = null;
 						field.UdfDefinitionId = definition.UdfDefinitionId;
 						field.SortOrder = i;
 						await _fieldRepository.SaveOrUpdateAsync(field, cancellationToken);
@@ -135,6 +137,7 @@ namespace Resgrid.Services
 
 		public async Task<List<UdfFieldValue>> GetFieldValuesForEntityAsync(int departmentId, int entityType, string entityId)
 		{
+			if (entityType == (int)UdfEntityType.Record) throw new UnauthorizedAccessException("Record extensions require the RMS definition and record authorization workflow.");
 			var definition = await _definitionRepository.GetActiveDefinitionByDepartmentAndEntityTypeAsync(departmentId, entityType);
 			if (definition == null)
 				return new List<UdfFieldValue>();
@@ -145,6 +148,7 @@ namespace Resgrid.Services
 
 		public async Task<List<UdfFieldValue>> GetFieldValuesForEntitiesAsync(int departmentId, int entityType, IEnumerable<string> entityIds)
 		{
+			if (entityType == (int)UdfEntityType.Record) throw new UnauthorizedAccessException("Record extensions require the RMS definition and record authorization workflow.");
 			var idList = entityIds?.ToList() ?? new List<string>();
 			if (idList.Count == 0)
 				return new List<UdfFieldValue>();
@@ -162,6 +166,7 @@ namespace Resgrid.Services
 			bool isDepartmentAdmin = false, bool isGroupAdmin = false,
 			CancellationToken cancellationToken = default)
 		{
+			if (entityType == (int)UdfEntityType.Record) throw new UnauthorizedAccessException("Record extensions require the RMS definition and record authorization workflow.");
 			var definition = await _definitionRepository.GetActiveDefinitionByDepartmentAndEntityTypeAsync(departmentId, entityType);
 			if (definition == null)
 				return new Dictionary<string, List<string>>();

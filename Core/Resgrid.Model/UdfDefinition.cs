@@ -16,6 +16,9 @@ namespace Resgrid.Model
 		/// The entity type this definition applies to. See <see cref="UdfEntityType"/>.
 		/// </summary>
 		public int EntityType { get; set; }
+		/// <summary>Required for Record extensions; null for other entity types.</summary>
+		public string RecordDefinitionKey { get; set; }
+		public int? RecordDefinitionVersion { get; set; }
 
 		/// <summary>
 		/// Auto-incrementing version number per department + entity type. Each save creates a new version.

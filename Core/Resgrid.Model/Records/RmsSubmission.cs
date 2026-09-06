@@ -3,6 +3,14 @@ using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
+	public class RmsSubmissionReconciliationInput
+	{
+		public long RowVersion { get; set; }
+		public string ExternalId { get; set; }
+		public string Reason { get; set; }
+		public bool ConfirmedNotCreated { get; set; }
+		public string VerificationReference { get; set; }
+	}
 	public enum RmsSubmissionState
 	{
 		Queued = 0,
@@ -46,6 +54,11 @@ namespace Resgrid.Model
 		public string RevisionId { get; set; }
 		public string Destination { get; set; }
 		public string DestinationVersion { get; set; }
+		public string DestinationIdentity { get; set; }
+		/// <summary>A create may have reached the destination without a usable receipt; automatic create retries are blocked.</summary>
+		public bool RequiresReconciliation { get; set; }
+		/// <summary>A create was dispatched and has not received a definitive, applied outcome.</summary>
+		public bool CreatePendingReceipt { get; set; }
 		/// <summary>Scoped idempotency key: one per (record, revision); reused on every retry.</summary>
 		public string IdempotencyKey { get; set; }
 		/// <summary><see cref="RmsSubmissionState"/>.</summary>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Resgrid.Model
@@ -6,6 +6,9 @@ namespace Resgrid.Model
 	/// <summary>The incident report aggregate as the Web and the mapper read it: header plus the working-draft child rows (or a revision's copies).</summary>
 	public class IncidentReportAggregate
 	{
+		public RecordUdfSection CustomFields { get; set; }
+		public List<RmsRecordAttachment> Attachments { get; set; } = new List<RmsRecordAttachment>();
+		public List<RmsEvidenceArtifact> Evidence { get; set; } = new List<RmsEvidenceArtifact>();
 		public RmsIncidentReport Report { get; set; }
 		public RmsLocation Location { get; set; }
 		public List<RmsIncidentType> Types { get; set; } = new List<RmsIncidentType>();
@@ -101,6 +104,7 @@ namespace Resgrid.Model
 	/// </summary>
 	public class IncidentReportDraftInput
 	{
+		public RecordUdfInput CustomFields { get; set; }
 		public string IncidentNumber { get; set; }
 		public DateTime? CallCreatedOn { get; set; }
 		public DateTime? CallAnsweredOn { get; set; }
@@ -161,6 +165,7 @@ namespace Resgrid.Model
 	/// </summary>
 	public class IncidentCasualtyRescueInput
 	{
+		public string CasualtyId { get; set; }
 		public RmsCasualtyRescueKind Kind { get; set; }
 		public string PersonType { get; set; }
 		public string PersonnelUserId { get; set; }
@@ -264,6 +269,7 @@ namespace Resgrid.Model
 	/// <summary>VIN and plate are restricted; the service drops them from a caller without RecordRestricted_View.</summary>
 	public class IncidentVehicleInput
 	{
+		public string VehicleId { get; set; }
 		public string VehicleKind { get; set; }
 		public string Make { get; set; }
 		public string Model { get; set; }

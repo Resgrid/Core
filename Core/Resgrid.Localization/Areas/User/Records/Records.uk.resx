@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -258,7 +258,7 @@
   <data name="DispatchTimes" xml:space="preserve"><value>Часи диспетчеризації</value></data>
   <data name="CallCreated" xml:space="preserve"><value>Виклик створено</value></data>
   <data name="CallAnswered" xml:space="preserve"><value>Виклик прийнято</value></data>
-  <data name="CallArrival" xml:space="preserve"><value>Перше прибуття</value></data>
+  <data name="CallArrival" xml:space="preserve"><value>Надходження виклику до диспетчерської</value></data>
   <data name="IncidentCleared" xml:space="preserve"><value>Інцидент завершено</value></data>
   <data name="DispatchCenter" xml:space="preserve"><value>Диспетчерський центр</value></data>
   <data name="DeterminantCode" xml:space="preserve"><value>Код детермінанти</value></data>

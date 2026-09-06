@@ -192,6 +192,8 @@ namespace Resgrid.Model
 		public int DepartmentsEvaluated { get; set; }
 		public int RecordsEvaluated { get; set; }
 		public int RecordsPurged { get; set; }
+		/// <summary>SQL purges from this sweep still awaiting committed index erasure; not a total backlog count.</summary>
+		public int SearchErasuresPending { get; set; }
 		public int AttachmentsPurged { get; set; }
 		public int HeldByLegalHold { get; set; }
 		public int AttachmentsRescanned { get; set; }

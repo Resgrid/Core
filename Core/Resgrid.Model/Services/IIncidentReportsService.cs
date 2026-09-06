@@ -22,9 +22,10 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// ETag-guarded draft save. <paramref name="canWriteRestricted"/> false keeps the restricted halves of the
 		/// casualty rows as they stand instead of accepting or erasing them, so a reviewer without
-		/// RecordRestricted_View can still correct the rest of the report (RMS-3).
+		/// RecordRestricted_View can still correct the rest of the report (RMS-3). It defaults to false: a caller
+		/// that has not resolved the claim must not be granted restricted writes by omission.
 		/// </summary>
-		Task<IncidentReportAggregate> SaveDraftAsync(int departmentId, string userId, string reportId, long expectedRowVersion, IncidentReportDraftInput input, bool canWriteRestricted = true, CancellationToken cancellationToken = default);
+		Task<IncidentReportAggregate> SaveDraftAsync(int departmentId, string userId, string reportId, long expectedRowVersion, IncidentReportDraftInput input, bool canWriteRestricted = false, CancellationToken cancellationToken = default);
 
 		/// <summary>Runs local validation (and the destination's validate endpoint when asked and configured) and stores the issues on the report.</summary>
 		Task<List<RmsValidationIssue>> ValidateAsync(int departmentId, string reportId, bool includeDestination, CancellationToken cancellationToken = default);
@@ -88,6 +89,11 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface IRecordsSubmissionService
 	{
+		Task<List<RmsSubmissionExchange>> GetHistoryAsync(int departmentId, string userId, string submissionId, CancellationToken cancellationToken = default);
+		/// <summary>Bind an ambiguous create to a verified destination filing without issuing another POST.</summary>
+		Task ReconcileAsync(int departmentId, string userId, string submissionId, long expectedVersion, string externalId, string reason, CancellationToken cancellationToken = default);
+		/// <summary>Administrator records externally verified absence of a filing. Clears ambiguity without delivering or automatically retrying.</summary>
+		Task ConfirmNotCreatedAsync(int departmentId, string userId, string submissionId, long expectedVersion, string verificationReference, string reason, CancellationToken cancellationToken = default);
 		Task<RecordsSubmissionSweepResult> SweepAsync(CancellationToken cancellationToken = default);
 
 		/// <summary>Processes one claimed submission; public so a single delivery can be driven and tested directly.</summary>

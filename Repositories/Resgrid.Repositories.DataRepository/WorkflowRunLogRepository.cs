@@ -13,8 +13,34 @@ using Resgrid.Repositories.DataRepository.Queries.Workflows;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class WorkflowRunLogRepository : RepositoryBase<WorkflowRunLog>, IWorkflowRunLogRepository
+	public class WorkflowRunLogRepository : RmsRepositoryBase<WorkflowRunLog>, IWorkflowRunLogRepository
 	{
+		public override Task<WorkflowRunLog> InsertAsync(WorkflowRunLog entity, System.Threading.CancellationToken cancellationToken, bool firstLevelOnly = false)
+			=> WriteLogAsync(entity, true, cancellationToken, firstLevelOnly);
+		public override Task<WorkflowRunLog> UpdateAsync(WorkflowRunLog entity, System.Threading.CancellationToken cancellationToken, bool firstLevelOnly = false)
+			=> WriteLogAsync(entity, false, cancellationToken, firstLevelOnly);
+
+		private async Task<WorkflowRunLog> WriteLogAsync(WorkflowRunLog entity, bool insert, System.Threading.CancellationToken cancellationToken, bool firstLevelOnly)
+		{
+			var owns = UnitOfWork.Transaction == null;
+			UnitOfWork.CreateOrGetConnection();
+			try
+			{
+				var run = await QueryFirstOrDefaultAsync<WorkflowRun>($"SELECT {Cols("DepartmentId", "AggregateId")} FROM {Tbl("WorkflowRuns")} WHERE {Col("WorkflowRunId")} = {P}RunId", new { RunId = entity.WorkflowRunId }, cancellationToken);
+				if (run == null) throw new InvalidOperationException("The workflow run does not exist.");
+				if (!string.IsNullOrEmpty(run.AggregateId))
+				{
+					var key = new { DepartmentId = run.DepartmentId, Id = run.AggregateId };
+					var rms = await ScalarAsync<int>($"SELECT (SELECT COUNT(1) FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsOperationalRecordId")} = {P}Id) + (SELECT COUNT(1) FROM {Tbl("RmsIncidentReports")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsIncidentReportId")} = {P}Id) + (SELECT COUNT(1) FROM {Tbl("RmsIncidentAnalyses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsIncidentAnalysisId")} = {P}Id)", key, cancellationToken);
+					if (rms > 0) await LockLiveContentParentAsync(run.DepartmentId, run.AggregateId, cancellationToken);
+				}
+				var result = insert ? await base.InsertAsync(entity, cancellationToken, firstLevelOnly) : await base.UpdateAsync(entity, cancellationToken, firstLevelOnly);
+				if (owns) UnitOfWork.CommitChanges();
+				return result;
+			}
+			catch { if (owns) UnitOfWork.DiscardChanges(); throw; }
+		}
+
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;

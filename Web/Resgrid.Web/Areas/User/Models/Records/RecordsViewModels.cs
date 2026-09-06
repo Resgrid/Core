@@ -94,8 +94,47 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	}
 
 	/// <summary>Create / edit form for a locked Logs-parity definition.</summary>
+	public class RecordParticipantEditRow
+	{
+		public string UserId { get; set; }
+		public bool Selected { get; set; }
+		public int? UnitId { get; set; }
+		public string Role { get; set; }
+	}
+
+	public class RecordInventoryView : RecordsBaseView
+	{
+		public string RecordId { get; set; }
+		public RmsRecordKind Kind { get; set; }
+		public long RowVersion { get; set; }
+		public int TypeId { get; set; }
+		public int GroupId { get; set; }
+		public int? UnitId { get; set; }
+		public decimal Quantity { get; set; }
+		public string Note { get; set; }
+		public List<SelectListItem> Types { get; set; } = new();
+		public List<SelectListItem> Groups { get; set; } = new();
+		public List<SelectListItem> Units { get; set; } = new();
+		public List<Resgrid.Model.Services.RmsInventoryUsage> Usage { get; set; } = new();
+	}
+
+	public class RecordNewCallView : RecordsBaseView
+	{
+		public string RecordId { get; set; }
+		public long RowVersion { get; set; }
+		public string Name { get; set; }
+		public string Address { get; set; }
+		public string Nature { get; set; }
+		public DateTime? OccurredOn { get; set; }
+	}
+
 	public class RecordEditView : RecordsBaseView
 	{
+		public RecordUdfInput CustomFields { get; set; }
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public RecordUdfSection CustomFieldForm { get; set; }
+		public int AttachmentClassification { get; set; } = 1;
+		public bool CanViewRestricted { get; set; }
 		public string RecordId { get; set; }
 		public long RowVersion { get; set; }
 		public string DefinitionKey { get; set; }
@@ -112,6 +151,7 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public DateTime? EndedOn { get; set; }
 		public RmsOperationalRecordDetail Details { get; set; } = new RmsOperationalRecordDetail();
 		public List<string> ParticipantUserIds { get; set; } = new List<string>();
+		public List<RecordParticipantEditRow> ParticipantRows { get; set; }
 		public List<RecordUnitResponseInput> Units { get; set; } = new List<RecordUnitResponseInput>();
 		public string DuplicateContinueReason { get; set; }
 		public bool FinalizeAfterSave { get; set; }

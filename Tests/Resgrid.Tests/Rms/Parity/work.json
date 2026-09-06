@@ -1,0 +1,83 @@
+{
+  "recordType": "Work",
+  "definitionKey": "system.work",
+  "legacy": {
+    "source": "Logs",
+    "log": {
+      "LogId": 1003,
+      "DepartmentId": 9,
+      "Narrative": "Station 1 apparatus bay: replaced the compressor belt and flushed the hydrant on Elm St.",
+      "LogType": 4,
+      "ExternalId": null,
+      "InitialReport": null,
+      "Type": "Station maintenance",
+      "StationGroupId": 11,
+      "Course": null,
+      "CourseCode": null,
+      "Instructors": null,
+      "Cause": null,
+      "InvestigatedByUserId": null,
+      "ContactName": null,
+      "ContactNumber": null,
+      "StartedOn": "2026-03-05T13:00:00Z",
+      "EndedOn": "2026-03-05T16:15:00Z",
+      "LoggedOn": "2026-03-05T16:20:00Z",
+      "LoggedByUserId": "author",
+      "OfficerUserId": null,
+      "CallId": null,
+      "OtherPersonnel": null,
+      "Location": "Station 1",
+      "OtherAgencies": null,
+      "OtherUnits": null,
+      "BodyLocation": null,
+      "PronouncedDeceasedBy": null
+    },
+    "users": [
+      { "LogUserId": 4, "LogId": 1003, "UnitId": null, "UserId": "p2" },
+      { "LogUserId": 5, "LogId": 1003, "UnitId": 6, "UserId": "p3" }
+    ],
+    "units": [
+      { "LogUnitId": 4, "LogId": 1003, "UnitId": 6, "Dispatched": null, "Enroute": null, "OnScene": null, "Released": null, "InQuarters": null }
+    ],
+    "attachments": []
+  },
+  "expected": {
+    "numberPrefix": "WRK",
+    "list": {
+      "displaySummary": "Station maintenance",
+      "searchTextContains": [ "Station maintenance" ],
+      "searchTextExcludes": [ "compressor belt" ],
+      "occurredOn": "2026-03-05T13:00:00Z",
+      "callNumber": null,
+      "participantUserIds": [ "p2", "p3" ],
+      "unitIds": [ 6 ]
+    },
+    "detail": {
+      "stationGroupId": 11,
+      "startedOn": "2026-03-05T13:00:00Z",
+      "endedOn": "2026-03-05T16:15:00Z",
+      "details": {
+        "Narrative": "Station 1 apparatus bay: replaced the compressor belt and flushed the hydrant on Elm St.",
+        "Type": "Station maintenance",
+        "Location": "Station 1",
+        "Course": null
+      },
+      "participants": [
+        { "UserId": "p2", "UnitId": null },
+        { "UserId": "p3", "UnitId": 6 }
+      ],
+      "units": [
+        { "UnitId": 6, "UnitNameSnapshot": "Ladder 6", "Dispatched": null, "OnScene": null }
+      ],
+      "attachments": []
+    },
+    "export": {
+      "mustContain": [ "Station maintenance", "compressor belt", "Station 1" ],
+      "restrictedFields": []
+    },
+    "print": {
+      "contains": [ "Station maintenance", "compressor belt", "Ladder 6" ],
+      "withheldWithoutRestrictedAccess": []
+    }
+  }
+}

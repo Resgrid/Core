@@ -95,7 +95,7 @@ namespace Resgrid.Tests.Rms
 			_records.Invocations.Clear();
 			_revisions = new Mock<IRmsRevisionsRepository>();
 			_revisions.Setup(r => r.GetByIdsForDepartmentAsync(Dept, It.IsAny<IEnumerable<string>>())).ReturnsAsync((int d, IEnumerable<string> ids) => _finalized.Values.Where(r => ids.Contains(r.RmsRevisionId)).ToList());
-			_service = new RecordsReportingService(_legacy.Object, _cutover.Object, _records.Object, _revisions.Object, _scopes.Object, _authorization.Object);
+			_service = new RecordsReportingService(_legacy.Object, _cutover.Object, _records.Object, _revisions.Object, _scopes.Object, _authorization.Object, new PassthroughRecordsProtection());
 		}
 
 		[Test]

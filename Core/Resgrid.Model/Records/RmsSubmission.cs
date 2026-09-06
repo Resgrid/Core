@@ -80,6 +80,9 @@ namespace Resgrid.Model
 		public string ExternalStatus { get; set; }
 		/// <summary>Normalized, non-sensitive error codes and field paths; what workflows and notifications may see.</summary>
 		public string ErrorSummary { get; set; }
+		/// <summary>ADP row marker (catalog v10): true once PayloadJson/ResponseJson carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
+		public int ProtectedCatalogVersion { get; set; }
 		public DateTime QueuedOn { get; set; }
 		public DateTime? SentOn { get; set; }
 		public DateTime? CompletedOn { get; set; }
@@ -129,6 +132,9 @@ namespace Resgrid.Model
 		public string IpAddress { get; set; }
 		/// <summary>SHA-256 of the revision snapshot the signature covers.</summary>
 		public string ArtifactChecksum { get; set; }
+		/// <summary>ADP row marker (catalog v10): true once StatementText carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
+		public int ProtectedCatalogVersion { get; set; }
 		public DateTime CreatedOn { get; set; }
 		public long RowVersion { get; set; }
 

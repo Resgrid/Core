@@ -36,12 +36,12 @@ namespace Resgrid.Providers.Workflow.Executors
 					return WorkflowActionResult.Failed("FTP upload blocked.", ftpReason);
 				// ── End SSRF protection ──────────────────────────────────────────────
 
-				var remotePath = $"{config.RemotePath?.TrimEnd('/')}/{config.Filename ?? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt"}";
+				var remotePath = $"{config.RemotePath?.TrimEnd('/')}/{config.Filename ?? context.Attachment?.FileName ?? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt"}";
 
 				using var client = new AsyncFtpClient(cred.Host, cred.Username, cred.Password, cred.Port > 0 ? cred.Port : 21);
 				await client.Connect(cancellationToken);
 
-				var bytes = Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
+				var bytes = context.Attachment?.Data ?? Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
 				using var stream = new MemoryStream(bytes);
 				await client.UploadStream(stream, remotePath, FtpRemoteExists.Overwrite, true,null, cancellationToken);
 				await client.Disconnect(cancellationToken);

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
@@ -41,13 +42,17 @@ namespace Resgrid.Services.Records
 		private readonly INerisMappingService _mapping;
 		private readonly INerisValidationService _validation;
 		private readonly IRecordsAuthorizationService _authorization;
+		private readonly IRecordsProtectionService _protection;
+		private readonly IDomainEventOutboxService _outbox;
 
 		public IncidentAnalysisService(IRmsIncidentAnalysesRepository analyses, IRmsIncidentReportsRepository reports,
 			IRmsIncidentModulesRepository modules, IRmsIncidentPropertiesRepository properties, IRmsIncidentVehiclesRepository vehicles,
 			IRmsValidationIssuesRepository issues, IRmsSubmissionsRepository submissions, IRmsRevisionsRepository revisions,
 			IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork, INerisProfileService neris, INerisMappingService mapping,
-			INerisValidationService validation, IRecordsAuthorizationService authorization)
+			INerisValidationService validation, IRecordsAuthorizationService authorization, IRecordsProtectionService protection, IDomainEventOutboxService outbox)
 		{
+			_protection = protection;
+			_outbox = outbox;
 			_analyses = analyses;
 			_reports = reports;
 			_modules = modules;
@@ -95,11 +100,14 @@ namespace Resgrid.Services.Records
 				RowVersion = 1
 			};
 
+			var outboxIds = new List<long>();
 			await InTransactionAsync(async () =>
 			{
 				await _analyses.InsertAsync(analysis, cancellationToken, true);
+				outboxIds.Add(await EnqueueLifecycleEventAsync(analysis, report, null, WorkflowTriggerEventType.RecordCreated, RmsIncidentAnalysisState.Draft, RmsIncidentAnalysisState.Draft, null, null, cancellationToken));
 				await AuditAsync(departmentId, userId, analysis.RmsIncidentAnalysisId, null, RmsAccessAuditAction.Change, "Start incident analysis", origin, cancellationToken, new { incidentReportId });
 			});
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 
 			return await HydrateAsync(analysis, report, null, false);
 		}
@@ -196,6 +204,8 @@ namespace Resgrid.Services.Records
 					throw new RecordConcurrencyException(analysisId, expectedRowVersion, analysis.RowVersion);
 
 				var aggregate = await HydrateAsync(analysis, report, null, false);
+				aggregate.Protection.RequireRevealed("finalize analysis");
+				var priorState = (RmsIncidentAnalysisState)analysis.State;
 				var revision = await WriteRevisionAsync(analysis, aggregate, userId, now, cancellationToken);
 
 				analysis.State = (int)RmsIncidentAnalysisState.Finalized;
@@ -209,14 +219,15 @@ namespace Resgrid.Services.Records
 				await _analyses.UpdateAsync(analysis, cancellationToken, true);
 
 				// Queue immediately when the incident is already filed; otherwise worker 41 picks it up when it is.
+				outboxIds.Add(await EnqueueLifecycleEventAsync(analysis, report, revision, WorkflowTriggerEventType.RecordFinalized, priorState, RmsIncidentAnalysisState.Finalized, null, null, cancellationToken));
 				if (report != null && !string.IsNullOrWhiteSpace(report.NerisIncidentId) && await _neris.IsSubmissionEnabledAsync(departmentId))
-					await QueueCoreAsync(analysis, report, revision, userId, now, cancellationToken);
+					outboxIds.Add(await QueueCoreAsync(analysis, report, revision, userId, now, cancellationToken));
 				await _analyses.UpdateAsync(analysis, cancellationToken, true);
 
 				await AuditAsync(departmentId, userId, analysisId, revision.RmsRevisionId, RmsAccessAuditAction.Change, "Finalize incident analysis", RmsOriginClient.Web, cancellationToken, new { revision.Checksum });
 			});
 
-			await Task.CompletedTask;
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 			return await GetAsync(departmentId, analysisId, true);
 		}
 
@@ -234,18 +245,20 @@ namespace Resgrid.Services.Records
 				throw new InvalidOperationException("NERIS submission is not enabled for this department.");
 
 			var now = DateTime.UtcNow;
+			var outboxIds = new List<long>();
 			await InTransactionAsync(async () =>
 			{
 				var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, analysis.CurrentRevisionId)
 					?? throw new InvalidOperationException("The finalized revision this analysis points at is missing; it cannot be filed.");
 				if (!await _analyses.TryBumpRowVersionAsync(departmentId, analysisId, analysis.RowVersion, cancellationToken))
 					throw new RecordConcurrencyException(analysisId, analysis.RowVersion, analysis.RowVersion + 1);
-				await QueueCoreAsync(analysis, report, revision, userId, now, cancellationToken);
+				outboxIds.Add(await QueueCoreAsync(analysis, report, revision, userId, now, cancellationToken));
 				analysis.ModifiedOn = now;
 				analysis.ModifiedByUserId = userId;
 				analysis.RowVersion += 1;
 				await _analyses.UpdateAsync(analysis, cancellationToken, true);
 			});
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 
 			return await GetAsync(departmentId, analysisId, true);
 		}
@@ -295,6 +308,9 @@ namespace Resgrid.Services.Records
 				throw new InvalidOperationException("The analysis is in flight to the destination and cannot be voided until it settles.");
 
 			var now = DateTime.UtcNow;
+			var outboxIds = new List<long>();
+			var priorState = (RmsIncidentAnalysisState)analysis.State;
+			var report = await _reports.GetByIdForDepartmentAsync(departmentId, analysis.IncidentReportId);
 			await InTransactionAsync(async () =>
 			{
 				analysis.State = (int)RmsIncidentAnalysisState.Voided;
@@ -309,8 +325,10 @@ namespace Resgrid.Services.Records
 				analysis.RowVersion += 1;
 				await _analyses.UpdateAsync(analysis, cancellationToken, true);
 				await _submissions.SupersedeOpenForRecordAsync(departmentId, analysisId, null, now, cancellationToken);
+				outboxIds.Add(await EnqueueLifecycleEventAsync(analysis, report, null, WorkflowTriggerEventType.RecordVoided, priorState, RmsIncidentAnalysisState.Voided, reasonCode, null, cancellationToken));
 				await AuditAsync(departmentId, userId, analysisId, null, RmsAccessAuditAction.Change, "Void incident analysis", RmsOriginClient.Web, cancellationToken, new { reasonCode });
 			});
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 
 			return await GetAsync(departmentId, analysisId, true);
 		}
@@ -327,6 +345,7 @@ namespace Resgrid.Services.Records
 			{
 				var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, revisionId);
 				if (revision == null || revision.RecordId != analysisId || revision.RecordKind != (int)RmsRecordKind.IncidentAnalysis) return null;
+				(await _protection.RevealRevisionsAsync(departmentId, new[] { revision })).RequireRevealed("analysis revision");
 				if (RecordSnapshotSerializer.Checksum(revision.SnapshotJson) != revision.Checksum) throw new InvalidOperationException("The analysis revision checksum does not match.");
 				var frozen = JsonConvert.DeserializeObject<NerisIncidentAnalysisSnapshot>(revision.SnapshotJson);
 				if (frozen?.Analysis == null || frozen.Report == null) throw new InvalidOperationException("This legacy analysis revision did not capture its headers. Finalize a corrected revision before submitting it.");
@@ -385,6 +404,7 @@ namespace Resgrid.Services.Records
 				aggregate.Revisions = (await _revisions.GetForRecordAsync(dept, id))?.ToList() ?? new List<RmsRevision>();
 			}
 
+			aggregate.Protection = await _protection.RevealAsync(dept, aggregate);
 			return aggregate;
 		}
 
@@ -393,14 +413,16 @@ namespace Resgrid.Services.Records
 			if (inputs == null)
 				return (await _properties.GetForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, null))?.ToList() ?? new List<RmsIncidentProperty>();
 
+			var existingRows = (await _properties.GetForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, null))?.OrderBy(p => p.Ordinal).ToList() ?? new List<RmsIncidentProperty>();
 			await _properties.DeleteDraftForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, cancellationToken);
 			var result = new List<RmsIncidentProperty>();
 			var ordinal = 0;
 			foreach (var input in inputs)
 			{
+				var existing = existingRows.ElementAtOrDefault(ordinal);
 				var row = new RmsIncidentProperty
 				{
-					RmsIncidentPropertyId = Guid.NewGuid().ToString(), DepartmentId = analysis.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RmsIncidentPropertyId = existing?.RmsIncidentPropertyId ?? Guid.NewGuid().ToString(), DepartmentId = analysis.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(),
 					RecordId = analysis.RmsIncidentAnalysisId,
 					LocationUse = Trim(input.LocationUse)?.ToUpperInvariant(), ConstructionType = Trim(input.ConstructionType)?.ToUpperInvariant(),
 					Foundation = Trim(input.Foundation)?.ToUpperInvariant(), ExteriorFinish = Trim(input.ExteriorFinish)?.ToUpperInvariant(),
@@ -410,6 +432,7 @@ namespace Resgrid.Services.Records
 					ContentsValue = input.ContentsValue, ContentsLoss = input.ContentsLoss, CurrencyCode = analysis.CurrencyCode,
 					DetailJson = Trim(input.DetailJson), Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
 				};
+				await _protection.ProtectPropertyAsync(analysis.DepartmentId, row, existing, null, cancellationToken);
 				await _properties.InsertAsync(row, cancellationToken, true);
 				result.Add(row);
 			}
@@ -452,6 +475,7 @@ namespace Resgrid.Services.Records
 				row.LicensePlate = canWriteRestricted ? Trim(input.LicensePlate)?.ToUpperInvariant() : prior?.LicensePlate;
 				row.LicenseState = canWriteRestricted ? Trim(input.LicenseState)?.ToUpperInvariant() : prior?.LicenseState;
 
+				await _protection.ProtectVehicleAsync(analysis.DepartmentId, row, prior, null, cancellationToken);
 				await _vehicles.InsertAsync(row, cancellationToken, true);
 				result.Add(row);
 			}
@@ -463,6 +487,7 @@ namespace Resgrid.Services.Records
 			if (inputs == null)
 				return (await _modules.GetForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, null))?.ToList() ?? new List<RmsIncidentModule>();
 
+			var existingRows = (await _modules.GetForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, null))?.OrderBy(m => m.Ordinal).ToList() ?? new List<RmsIncidentModule>();
 			await _modules.DeleteDraftForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, cancellationToken);
 			var result = new List<RmsIncidentModule>();
 			var ordinal = 0;
@@ -473,15 +498,17 @@ namespace Resgrid.Services.Records
 				if (descriptor == null || !descriptor.BelongsToAnalysis)
 					continue;
 
+				var existing = existingRows.ElementAtOrDefault(ordinal);
 				var row = new RmsIncidentModule
 				{
-					RmsIncidentModuleId = Guid.NewGuid().ToString(), DepartmentId = analysis.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RmsIncidentModuleId = existing?.RmsIncidentModuleId ?? Guid.NewGuid().ToString(), DepartmentId = analysis.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(),
 					RecordId = analysis.RmsIncidentAnalysisId, RecordKind = (int)RmsRecordKind.IncidentAnalysis,
 					ModuleKind = (int)input.Kind, SchemaName = descriptor.SchemaName, ProfileVersion = analysis.ProfileVersion,
 					PrimaryCode = Trim(input.PrimaryCode)?.ToUpperInvariant(), SecondaryCode = Trim(input.SecondaryCode)?.ToUpperInvariant(),
 					Quantity = input.Quantity, QuantityUnit = Trim(input.QuantityUnit)?.ToUpperInvariant(), OccurredOn = input.OccurredOn,
 					DetailJson = Trim(input.DetailJson), Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
 				};
+				await _protection.ProtectModuleAsync(analysis.DepartmentId, row, existing, null, cancellationToken);
 				await _modules.InsertAsync(row, cancellationToken, true);
 				result.Add(row);
 			}
@@ -524,17 +551,19 @@ namespace Resgrid.Services.Records
 				OriginClient = (int)RmsOriginClient.Web,
 				CreatedOn = now
 			};
+			await _protection.ProtectRevisionAsync(analysis.DepartmentId, revision, userId, cancellationToken);
 			await _revisions.InsertAsync(revision, cancellationToken, true);
 
 			var id = revision.RmsRevisionId;
-			foreach (var m in draft.Modules) await _modules.InsertAsync(CopyTo(m, x => x.RmsIncidentModuleId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
-			foreach (var p in draft.Properties) await _properties.InsertAsync(CopyTo(p, x => x.RmsIncidentPropertyId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
-			foreach (var v in draft.Vehicles) await _vehicles.InsertAsync(CopyTo(v, x => x.RmsIncidentVehicleId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
+			var dept = analysis.DepartmentId;
+			foreach (var m in draft.Modules) { var row = CopyTo(m, x => x.RmsIncidentModuleId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectModuleAsync(dept, row, null, userId, cancellationToken); await _modules.InsertAsync(row, cancellationToken, true); }
+			foreach (var p in draft.Properties) { var row = CopyTo(p, x => x.RmsIncidentPropertyId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectPropertyAsync(dept, row, null, userId, cancellationToken); await _properties.InsertAsync(row, cancellationToken, true); }
+			foreach (var v in draft.Vehicles) { var row = CopyTo(v, x => x.RmsIncidentVehicleId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectVehicleAsync(dept, row, null, userId, cancellationToken); await _vehicles.InsertAsync(row, cancellationToken, true); }
 
 			return revision;
 		}
 
-		private async Task QueueCoreAsync(RmsIncidentAnalysis analysis, RmsIncidentReport report, RmsRevision revision, string userId, DateTime now, CancellationToken cancellationToken)
+		private async Task<long> QueueCoreAsync(RmsIncidentAnalysis analysis, RmsIncidentReport report, RmsRevision revision, string userId, DateTime now, CancellationToken cancellationToken)
 		{
 			var priorSubmissions = (await _submissions.GetForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId))?.ToList() ?? new List<RmsSubmission>();
 			RecordsSubmissionService.RequireResolvedCreates(priorSubmissions);
@@ -579,6 +608,7 @@ namespace Resgrid.Services.Records
 					ModifiedOn = now,
 					RowVersion = 1
 				};
+				await _protection.ProtectSubmissionAsync(analysis.DepartmentId, submission, userId, cancellationToken);
 				await _submissions.SupersedeOpenForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, submission.RmsSubmissionId, now, cancellationToken);
 				await _submissions.InsertAsync(submission, cancellationToken, true);
 			}
@@ -597,13 +627,82 @@ namespace Resgrid.Services.Records
 				await _submissions.UpdateAsync(submission, cancellationToken, true);
 			}
 
+			var priorState = (RmsIncidentAnalysisState)analysis.State;
 			analysis.State = (int)RmsIncidentAnalysisState.Submitted;
 			analysis.LastSubmissionId = submission.RmsSubmissionId;
 			analysis.LastSubmissionState = submission.State;
 			analysis.LastSubmittedOn = now;
 
+			var outboxId = await EnqueueLifecycleEventAsync(analysis, report, revision, WorkflowTriggerEventType.RecordSubmissionQueued, priorState, RmsIncidentAnalysisState.Submitted, null, IncidentReportsService.SubmissionBlock(submission), cancellationToken);
 			await AuditAsync(analysis.DepartmentId, userId, analysis.RmsIncidentAnalysisId, revision.RmsRevisionId, RmsAccessAuditAction.Submit,
 				"Queue analysis submission", RmsOriginClient.System, cancellationToken, new { submission.RmsSubmissionId, submission.IdempotencyKey, submission.PayloadChecksum });
+			return outboxId;
+		}
+
+		/// <summary>
+		/// The analysis rides the same Records triggers as its incident (100/104/106/108-111) with
+		/// <c>record.kind = "IncidentAnalysis"</c>; a subscriber filters on kind. The block mirrors the incident's,
+		/// so one template serves both.
+		/// </summary>
+		private async Task<long> EnqueueLifecycleEventAsync(RmsIncidentAnalysis analysis, RmsIncidentReport report, RmsRevision revision, WorkflowTriggerEventType trigger,
+			RmsIncidentAnalysisState from, RmsIncidentAnalysisState to, string reasonCode, object submission, CancellationToken cancellationToken)
+		{
+			var payload = new Dictionary<string, object>
+			{
+				["record"] = RecordBlock(analysis, report, revision, to),
+				["record_change"] = new { previous_state = from.ToString(), current_state = to.ToString(), prior_revision_id = revision?.PriorRevisionId, current_revision_id = revision?.RmsRevisionId ?? analysis.CurrentRevisionId, reason_code = reasonCode },
+				["protection"] = IncidentReportsService.ProtectionBlock(await _protection.GetCatalogVersionAsync(analysis.DepartmentId))
+			};
+			if (submission != null)
+				payload["submission"] = submission;
+
+			var entry = await _outbox.EnqueueAsync(analysis.DepartmentId, DomainEventProducers.Records, new DomainEventEnvelope
+			{
+				EventName = trigger.ToString(),
+				SchemaVersion = 1,
+				AggregateType = AnalysisAggregate,
+				AggregateId = analysis.RmsIncidentAnalysisId,
+				AggregateVersion = revision?.RevisionNumber ?? analysis.RevisionCount,
+				Trigger = trigger,
+				Payload = payload,
+				CorrelationId = analysis.IncidentReportId,
+				OriginClient = RmsOriginClient.Web
+			}, cancellationToken);
+			return entry.DomainEventOutboxId;
+		}
+
+		public static object RecordBlock(RmsIncidentAnalysis analysis, RmsIncidentReport report, RmsRevision revision, RmsIncidentAnalysisState state)
+		{
+			return new
+			{
+				id = analysis.RmsIncidentAnalysisId,
+				kind = "IncidentAnalysis",
+				record_number = report?.RecordNumber,
+				draft_reference = report?.DraftReference,
+				definition_key = RmsDefinitionKeys.NerisIncidentReport,
+				definition_version = 1,
+				type_key = "NerisIncidentAnalysis",
+				state = state.ToString(),
+				lifecycle_preset = (string)null,
+				department_id = analysis.DepartmentId,
+				station_group_id = report?.StationGroupId,
+				call_id = report?.CallId,
+				external_id = analysis.NerisAnalysisId,
+				author_user_id = analysis.AuthorUserId,
+				owner_user_id = analysis.OwnerUserId,
+				started_on = report?.CallCreatedOn,
+				ended_on = report?.IncidentClearedOn,
+				created_on = analysis.CreatedOn,
+				finalized_on = analysis.FinalizedOn,
+				revision_id = revision?.RmsRevisionId ?? analysis.CurrentRevisionId,
+				revision_number = revision?.RevisionNumber ?? analysis.RevisionCount,
+				checksum = revision?.Checksum,
+				summary = report?.DisplaySummary,
+				incident_number = report?.IncidentNumber,
+				neris_incident_id = report?.NerisIncidentId,
+				incident_report_id = analysis.IncidentReportId,
+				neris_analysis_id = analysis.NerisAnalysisId
+			};
 		}
 
 		private static T CopyTo<T>(T source, Action<T> assignId, string revisionId, DateTime now) where T : class

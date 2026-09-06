@@ -31,6 +31,21 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    # Headless browser tests for the web scripts (Tests/Resgrid.Tests/Web/*.test.cjs) run inside
+    # `dotnet test` through BrowserScriptTests; they need node, the pinned Playwright and a browser.
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: npm
+        cache-dependency-path: Tests/Resgrid.Tests/Web/package-lock.json
+
+    - name: Install browser test dependencies
+      working-directory: Tests/Resgrid.Tests/Web
+      run: |
+        npm ci --no-audit --no-fund
+        npx playwright install --with-deps chromium
+
     - name: Restore dependencies
       run: dotnet restore
 
@@ -38,6 +53,9 @@ jobs:
       run: dotnet build --no-restore --configuration Release
 
     - name: Test
+      env:
+        RESGRID_PLAYWRIGHT_CHANNEL: chromium
+        RESGRID_BROWSER_TESTS: required
       run: dotnet test --no-build --configuration Release --verbosity normal
 
   # ───────────────────────────────────────────────

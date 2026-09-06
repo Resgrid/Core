@@ -2039,6 +2039,13 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.GetForCall(System.Int32)">
             <summary>The authoritative report for a Call, if one exists.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.GetNfirsLegacy(System.Int32)">
+            <summary>
+            Read-only NFIRS Basic Module rendering and crosswalk for a Call (RMS-3). Values are read from what the department
+            already holds; nothing is imported or authored. A system principal is refused: this is a member-facing report, and
+            the source-Call rule inside the service is a member rule.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.Start(Resgrid.Web.Services.Models.v4.Records.StartIncidentReportInput,System.Threading.CancellationToken)">
             <summary>Starts the report for a Call with dispatch prefill (SingleAuthoritative): a second start returns the existing report with 200.</summary>
         </member>
@@ -2750,6 +2757,28 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.LoadAuthorizedAsync(System.String,System.Boolean)">
             <summary>Loads a record only when the caller passes the per-record visibility rule; a refusal is audited as Denied.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordSummariesController">
+            <summary>
+            RecordOperationalSummaryV1 over the v4 contract (RMS plan sections 5.1 and 4.7): the authorization-scoped,
+            paged, department-scoped read API that Billing, deployment and customer BI tools use instead of a database
+            credential. Same gates as Records: flag first, then per-record visibility for a member or the configured
+            grant for a system principal; a row the caller cannot see is omitted, never tombstoned, because the feed
+            carries facts rather than sync state.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordSummariesController.OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext)">
+            <summary>A system principal with no configured Record grant for the resolved department is refused before any action runs.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordSummariesController.Get(System.String,Resgrid.Model.RmsRecordKind,System.String)">
+            <summary>The summary for one record's official revision, or a specific revision a consumer pinned earlier.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordSummariesController.List(System.Int64,System.Int32,System.String,System.Nullable{Resgrid.Model.RmsRecordKind})">
+            <summary>
+            Summaries for records whose projection changed after <paramref name="since"/> (Unix ms), oldest first. Follow
+            <see cref="P:Resgrid.Web.Services.Models.v4.Records.RecordOperationalSummariesResult.NextCursor"/> until HasMore is false. Voided and superseded rows are
+            included so a consumer that pinned a revision learns it must re-read.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ReportingController">
              <summary>
@@ -5966,6 +5995,14 @@
             /health endpoint. Deliberately does NOT call the TTS /health/full endpoint — that
             spawns real synthesis work and belongs to the TTS service's own monitoring. Not
             part of the shallow /health liveness endpoint.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.HttpProtectedGrantContext">
+            <summary>
+            Request-bound <see cref="T:Resgrid.Model.Services.IProtectedGrantContext"/> (ADP plan 3.3 / 7.2): the caller's Protected Data
+            Grant is the <c>X-Resgrid-Protected-Grant</c> header of the current request, and a request without an
+            authenticated user is a workload (relay or system principal). Registered after ServicesModule so it
+            replaces the workload default the module ships for hosts without requests.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.LegacyZonelessUtcDateTimeConverter">
@@ -12243,6 +12280,9 @@
         <member name="T:Resgrid.Web.Services.Models.v4.Records.SaveIncidentAnalysisDraftInput">
             <summary>Draft save; every list replaces the draft rows, except a null list which leaves that set alone.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.NfirsLegacyResult">
+            <summary>Read-only NFIRS rendering and crosswalk for one Call (RMS-3); the model is the contract.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentReportData">
             <summary>A hydrated NERIS incident report: header, dispatch facts, sections, provenance, validation issues, sanitized submission history.</summary>
         </member>
@@ -12456,6 +12496,18 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.NerisCrosswalkCoverageData">
             <summary>Crosswalk gap report: an unmapped or stale local code is a filing that will need manual work.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordOperationalSummaryResult">
+            <summary>One RecordOperationalSummaryV1 (RMS plan section 5.1); the model class is the versioned contract.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordOperationalSummariesResult">
+            <summary>Paged summary feed for downstream consumers and customer analytics egress (RMS plan section 4.7).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordOperationalSummariesResult.NextCursor">
+            <summary>Opaque cursor for the next page; absent at the end of the feed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordOperationalSummariesResult.ContractVersion">
+            <summary>Contract version every row in <see cref="P:Resgrid.Web.Services.Models.v4.Records.RecordOperationalSummariesResult.Data"/> conforms to.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Reporting.DashboardReportResult">
             <summary>Composite dashboard report (scalar totals, dense series, breakdowns).</summary>

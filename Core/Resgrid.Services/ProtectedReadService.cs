@@ -2641,5 +2641,232 @@ namespace Resgrid.Services
 				slot.Owner.RedactedFields.Add(slot.FieldId);
 			slot.Owner.ProtectedReason ??= reason;
 		}
+
+		#region Records (RMS), catalog v10
+
+		// RMS entities are uniform (string PK, DepartmentId, text columns), so one generic seam driven by the
+		// RmsProtectedFields accessor maps replaces a method per entity. Sentinel policy, slot collection and the
+		// broker calls are the same private helpers every other family uses.
+
+		public async Task<ProtectedWriteResult> PrepareRecordsEntityWriteAsync<T>(int departmentId, T entity, T existing, string rowKey,
+			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, Action markProtected,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default) where T : class
+		{
+			if (entity == null || accessors == null || accessors.Count == 0)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(entity, existing, accessors);
+			var slots = CollectTextWriteSlots(accessors, entity, rowKey);
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots, markProtected, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareRecordsCompanionWriteAsync<T>(int departmentId, T entity, string rowKey,
+			IReadOnlyDictionary<string, (Func<T, decimal?> Get, Action<T, decimal?> Set, Func<T, string> GetEnvelope, Action<T, string> SetEnvelope)> companions,
+			Action markProtected, string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default) where T : class
+		{
+			if (entity == null || companions == null || companions.Count == 0)
+				return ProtectedWriteResult.Allowed();
+
+			var slots = new List<WriteSlot>();
+			foreach (var companion in companions)
+			{
+				var value = companion.Value.Get(entity);
+				if (!value.HasValue || ProtectedDataEnvelope.HasEnvelopePrefix(companion.Value.GetEnvelope(entity)))
+					continue;
+
+				var set = companion.Value.Set;
+				var setEnvelope = companion.Value.SetEnvelope;
+				slots.Add(new WriteSlot
+				{
+					FieldId = companion.Key,
+					RowKey = rowKey,
+					WireValue = value.Value.ToString(CultureInfo.InvariantCulture),
+					Apply = envelope => { setEnvelope(entity, envelope); set(entity, null); }
+				});
+			}
+
+			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, markProtected, cancellationToken);
+		}
+
+		public async Task<ProtectedWriteResult> PrepareRecordsAttachmentWriteAsync(int departmentId, RmsRecordAttachment attachment, RmsRecordAttachment existing,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (attachment == null)
+				return ProtectedWriteResult.Allowed();
+
+			var rowKey = attachment.RmsRecordAttachmentId;
+			var sentinelsHandled = ApplySentinelPolicy(attachment, existing, RmsProtectedFields.Attachments);
+			var slots = CollectTextWriteSlots(RmsProtectedFields.Attachments, attachment, rowKey);
+			AddBinaryWriteSlot(slots, RmsProtectedFields.AttachmentDataFieldId, rowKey, attachment.Data, bytes => attachment.Data = bytes);
+
+			return await FinishModerationWriteAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => attachment.IsProtected = true, sentinelsHandled, cancellationToken);
+		}
+
+		public async Task<ProtectedReadResult> ResolveRecordsEntitiesForReadAsync<T>(int departmentId, IReadOnlyList<(T Entity, string RowKey)> rows,
+			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors,
+			string grantToken, string userId, CancellationToken cancellationToken = default) where T : class
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var row in rows ?? Array.Empty<(T, string)>())
+			{
+				if (row.Entity != null)
+					CollectTextSlots(result, slots, accessors, row.Entity, row.RowKey);
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveRecordsCompanionsForReadAsync<T>(int departmentId, IReadOnlyList<(T Entity, string RowKey)> rows,
+			IReadOnlyDictionary<string, (Func<T, decimal?> Get, Action<T, decimal?> Set, Func<T, string> GetEnvelope, Action<T, string> SetEnvelope)> companions,
+			string grantToken, string userId, CancellationToken cancellationToken = default) where T : class
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var row in rows ?? Array.Empty<(T, string)>())
+			{
+				if (row.Entity == null)
+					continue;
+				foreach (var companion in companions)
+				{
+					var envelope = companion.Value.GetEnvelope(row.Entity);
+					if (!ProtectedDataEnvelope.HasEnvelopePrefix(envelope))
+						continue;
+
+					var entity = row.Entity;
+					var set = companion.Value.Set;
+					slots.Add(new Slot
+					{
+						FieldId = companion.Key,
+						RowKey = row.RowKey,
+						WireValue = envelope,
+						Owner = result,
+						Reveal = plaintext => set(entity, decimal.TryParse(plaintext, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : null),
+						Redact = () => set(entity, null)
+					});
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareRecordsBinaryWriteAsync(int departmentId, string fieldId, string rowKey, byte[] data, Action<byte[]> apply, Action markProtected,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			var slots = new List<WriteSlot>();
+			AddBinaryWriteSlot(slots, fieldId, rowKey, data, apply);
+			return await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots, markProtected, cancellationToken);
+		}
+
+		public async Task<ProtectedReadResult> ResolveRecordsBinaryForReadAsync(int departmentId, string fieldId, string rowKey, byte[] data, Action<byte[]> apply,
+			string grantToken, string userId, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			CollectBinarySlot(result, slots, fieldId, rowKey, data, true, apply);
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveRecordsAttachmentsForReadAsync(int departmentId, IReadOnlyList<RmsRecordAttachment> attachments,
+			string grantToken, string userId, bool includeData, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var attachment in (attachments ?? Array.Empty<RmsRecordAttachment>()).Where(a => a != null))
+			{
+				var current = attachment;
+				CollectTextSlots(result, slots, RmsProtectedFields.Attachments, current, current.RmsRecordAttachmentId);
+				CollectBinarySlot(result, slots, RmsProtectedFields.AttachmentDataFieldId, current.RmsRecordAttachmentId, current.Data, includeData, bytes => current.Data = bytes);
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveRecordsEntitiesForWorkloadAsync<T>(int departmentId, string purpose, IReadOnlyList<(T Entity, string RowKey)> rows,
+			IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors, CancellationToken cancellationToken = default) where T : class
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var row in rows ?? Array.Empty<(T, string)>())
+			{
+				if (row.Entity != null)
+					CollectTextSlots(result, slots, accessors, row.Entity, row.RowKey);
+			}
+
+			if (slots.Count == 0)
+				return result;
+
+			// An envelope is present, so the content is protected whatever the department's current state says;
+			// the only question is whether this purpose may read it. Nothing is ever redacted in place here: a
+			// refused workload read leaves the ciphertext exactly as stored and names the reason.
+			result.IsProtected = true;
+
+			int catalogVersion;
+			try
+			{
+				catalogVersion = (await _dataProtectionService.GetPolicyByDepartmentIdAsync(departmentId))?.CatalogVersion ?? 0;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Protection-state lookup failed for department {departmentId}; refusing the workload read.");
+				foreach (var slot in slots) RecordRedaction(slot, "broker_unavailable");
+				return result;
+			}
+
+			var items = slots.Select(s => new ProtectedFieldOperationItem
+			{
+				FieldId = s.FieldId,
+				RowKey = s.RowKey,
+				Value = s.WireValue,
+				IsBinary = s.IsBinary,
+				CatalogVersion = catalogVersion
+			}).ToList();
+
+			ProtectedDataBrokerResult brokerResult;
+			try
+			{
+				brokerResult = await _brokerClient.DecryptForWorkloadAsync(departmentId, purpose, Guid.NewGuid().ToString("N"), items, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Protected workload read broker call failed for department {departmentId} ({purpose}).");
+				brokerResult = null;
+			}
+
+			if (brokerResult == null || !brokerResult.Success)
+			{
+				var reason = brokerResult?.ErrorCode == "workload_purpose_denied" ? "workload_purpose_denied" : "broker_unavailable";
+				foreach (var slot in slots) RecordRedaction(slot, reason);
+				return result;
+			}
+
+			var decrypted = brokerResult.Items
+				.Where(i => i != null && i.FieldId != null && i.RowKey != null)
+				.GroupBy(i => (i.RowKey, i.FieldId))
+				.ToDictionary(g => g.Key, g => g.First());
+
+			foreach (var slot in slots)
+			{
+				if (decrypted.TryGetValue((slot.RowKey, slot.FieldId), out var item) && item.ErrorCode == null && item.Value != null)
+				{
+					try { slot.Reveal(item.Value); continue; }
+					catch (FormatException) { }
+				}
+				RecordRedaction(slot, "broker_unavailable");
+			}
+
+			return result;
+		}
+
+		#endregion
 	}
 }

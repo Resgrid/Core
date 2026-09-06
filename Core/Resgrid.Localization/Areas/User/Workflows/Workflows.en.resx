@@ -638,5 +638,8 @@
   <data name="SkippedRuns" xml:space="preserve">
     <value>Skipped</value>
   </data>
+  <data name="ExportTemplate" xml:space="preserve"><value>Records report export</value></data>
+  <data name="ExportTemplateNone" xml:space="preserve"><value>None (send the rendered template only)</value></data>
+  <data name="ExportTemplateHelp" xml:space="preserve"><value>Email steps attach the export; file-upload steps upload it under its file name instead of the rendered text. Exports are designed under Records &gt; Report exports.</value></data>
 </root>
 

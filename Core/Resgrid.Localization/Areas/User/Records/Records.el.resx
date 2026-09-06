@@ -964,4 +964,104 @@
   <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
     <value>Απαιτούνται νέα διαπιστευτήρια όταν αλλάζει ο τύπος παραχώρησης NERIS.</value>
   </data>
+  <data name="DisclosureSettingsHeader" xml:space="preserve"><value>Γνωστοποίηση δημόσιων αρχείων</value></data>
+  <data name="DisclosureSettingsIntro" xml:space="preserve"><value>Προεπιλογές για τη ροή γνωστοποίησης: η νόμιμη προθεσμία απάντησης, το προφίλ απόκρυψης με το οποίο ξεκινά ένα νέο αίτημα και ποιος εγκρίνει την έκδοση ενός πακέτου.</value></data>
+  <data name="StatutoryClockDays" xml:space="preserve"><value>Νόμιμη προθεσμία απάντησης (ημέρες)</value></data>
+  <data name="StatutoryClockDaysHelp" xml:space="preserve"><value>Ημέρες εντός των οποίων λήγει ένα νέο αίτημα, από την ημερομηνία παραλαβής. 1 έως 365.</value></data>
+  <data name="DefaultRedactionProfile" xml:space="preserve"><value>Προεπιλεγμένο προφίλ απόκρυψης</value></data>
+  <data name="DefaultRedactionProfileHelp" xml:space="preserve"><value>Εφαρμόζεται σε νέο αίτημα εκτός αν ο υπεύθυνος επιλέξει άλλο.</value></data>
+  <data name="DisclosureReleaseApprover" xml:space="preserve"><value>Εγκρίνων την έκδοση</value></data>
+  <data name="DisclosureReleaseApproverHelp" xml:space="preserve"><value>Το μέλος που εγκρίνει την έκδοση των πακέτων. Αφήστε κενό για οποιονδήποτε διαχειριστή τμήματος.</value></data>
+  <data name="DisclosureApproverAnyAdmin" xml:space="preserve"><value>Οποιοσδήποτε διαχειριστής τμήματος</value></data>
+  <data name="RedactionProfileStandard" xml:space="preserve"><value>Τυπικό - απόκρυψη περιορισμένου περιεχομένου</value></data>
+  <data name="RedactionProfileNoPersonalIdentifiers" xml:space="preserve"><value>Χωρίς προσωπικά στοιχεία - απόκρυψη και των ταυτοτήτων συμμετεχόντων</value></data>
+  <data name="RedactionProfileFullDisclosure" xml:space="preserve"><value>Πλήρης γνωστοποίηση - έκδοση όλων των στοιχείων</value></data>
+  <data name="NfirsLegacyHeader" xml:space="preserve"><value>Προβολή NFIRS (ιστορική)</value></data>
+  <data name="NfirsLegacyButton" xml:space="preserve"><value>Προβολή NFIRS</value></data>
+  <data name="NfirsLegacyIntro" xml:space="preserve"><value>Τα πεδία της βασικής ενότητας NFIRS όπως διαβάζονται από τα δεδομένα που ήδη τηρεί το τμήμα, και το στοιχείο ή η ενότητα NERIS που τα μεταφέρει στο εξής.</value></data>
+  <data name="NfirsLegacyReadOnlyNotice" xml:space="preserve"><value>Μόνο για ανάγνωση. Το NFIRS καταργήθηκε στις 31/01/2026· τίποτα σε αυτή τη σελίδα δεν εισάγεται, συντάσσεται ή υποβάλλεται.</value></data>
+  <data name="NfirsField" xml:space="preserve"><value>Πεδίο NFIRS</value></data>
+  <data name="NfirsStatus" xml:space="preserve"><value>Κατάσταση πεδίου</value></data>
+  <data name="NfirsStatusPopulated" xml:space="preserve"><value>Συμπληρωμένο</value></data>
+  <data name="NfirsStatusMissing" xml:space="preserve"><value>Λείπει</value></data>
+  <data name="NfirsStatusNotCaptured" xml:space="preserve"><value>Δεν καταγράφεται</value></data>
+  <data name="NfirsRequired" xml:space="preserve"><value>Απαιτείται στο NFIRS</value></data>
+  <data name="NfirsRequiredLegend" xml:space="preserve"><value>* Απαιτείται από τη βασική ενότητα NFIRS.</value></data>
+  <data name="NerisEquivalent" xml:space="preserve"><value>Αντίστοιχο NERIS</value></data>
+  <data name="NerisNoEquivalent" xml:space="preserve"><value>Χωρίς αντίστοιχο NERIS (μόνο για το τμήμα)</value></data>
+  <data name="NerisCarried" xml:space="preserve"><value>Περιλαμβάνεται στην αναφορά NERIS</value></data>
+  <data name="NerisNotYetCarried" xml:space="preserve"><value>Δεν υπάρχει ακόμη στην αναφορά NERIS</value></data>
+  <data name="NfirsCrosswalkSummary" xml:space="preserve"><value>Σύνοψη αντιστοίχισης</value></data>
+  <data name="NfirsNoNerisReport" xml:space="preserve"><value>Δεν έχει ξεκινήσει αναφορά NERIS για αυτή την κλήση.</value></data>
+  <data name="NfirsRequiredMissing" xml:space="preserve"><value>Απαιτούμενα πεδία που λείπουν</value></data>
+  <data name="NfirsCrosswalked" xml:space="preserve"><value>Πεδία με αντίστοιχο NERIS</value></data>
+  <data name="NfirsSunsetNote" xml:space="preserve"><value>Τα δεδομένα NFIRS εμφανίζονται μόνο για ιστορική συνέχεια. Οι νέες αναφορές πηγαίνουν στο NERIS.</value></data>
+  <data name="IncidentReport" xml:space="preserve"><value>Αναφορά συμβάντος</value></data>
+  <data name="Value" xml:space="preserve"><value>Τιμή</value></data>
+  <data name="GeneratedOn" xml:space="preserve"><value>Δημιουργήθηκε</value></data>
+  <data name="ExportTemplates" xml:space="preserve"><value>Εξαγωγές αναφορών</value></data>
+  <data name="ExportTemplatesIntro" xml:space="preserve"><value>Σχεδιάστε το αρχείο που λαμβάνει μια υπηρεσία χωρίς API: επιλέξτε στήλες, μορφή και εύρος και έπειτα επισυνάψτε την εξαγωγή σε βήμα ροής εργασίας ή προγραμματίστε την.</value></data>
+  <data name="NewExportTemplate" xml:space="preserve"><value>Νέα εξαγωγή</value></data>
+  <data name="EditExportTemplate" xml:space="preserve"><value>Επεξεργασία εξαγωγής</value></data>
+  <data name="ExportTemplateName" xml:space="preserve"><value>Όνομα εξαγωγής</value></data>
+  <data name="ExportTemplateKey" xml:space="preserve"><value>Κλειδί</value></data>
+  <data name="ExportTemplateKeyHelp" xml:space="preserve"><value>Πεζά γράμματα, ψηφία και παύλες. Ένα βήμα ροής εργασίας και η εισαγωγή της υπηρεσίας βασίζονται σε αυτό, οπότε δεν αλλάζει αφού χρησιμοποιηθεί.</value></data>
+  <data name="ExportTemplateDescription" xml:space="preserve"><value>Περιγραφή</value></data>
+  <data name="ExportFormat" xml:space="preserve"><value>Μορφή</value></data>
+  <data name="ExportScope" xml:space="preserve"><value>Εύρος</value></data>
+  <data name="ExportScopeTriggeringRecord" xml:space="preserve"><value>Η εγγραφή που ενεργοποιεί</value></data>
+  <data name="ExportScopeWindow" xml:space="preserve"><value>Όλες οι εγγραφές που οριστικοποιήθηκαν σε ένα διάστημα</value></data>
+  <data name="ExportDefinitions" xml:space="preserve"><value>Ορισμοί εγγραφών</value></data>
+  <data name="ExportDefinitionsHelp" xml:space="preserve"><value>Αφήστε όλους τους ορισμούς ανεπίλεκτους για να εξαχθούν όλοι.</value></data>
+  <data name="ExportColumns" xml:space="preserve"><value>Στήλες</value></data>
+  <data name="ExportColumnsHelp" xml:space="preserve"><value>Οι στήλες προέρχονται από σταθερό, ελεγμένο κατάλογο. Οι αφηγηματικές και οι περιορισμένες στήλες απαιτούν τον διακόπτη παρακάτω και επιβεβαίωση εξόδου.</value></data>
+  <data name="ExportIncludeNarrative" xml:space="preserve"><value>Συμπερίληψη αφήγησης και προσωπικών στοιχείων (Επίπεδο 2)</value></data>
+  <data name="ExportIncludeRestricted" xml:space="preserve"><value>Συμπερίληψη περιορισμένων ενοτήτων (Επίπεδο 1)</value></data>
+  <data name="ExportEgressAcknowledge" xml:space="preserve"><value>Αναγνωρίζω ότι αυτή η εξαγωγή στέλνει αφηγηματικό ή περιορισμένο περιεχόμενο εκτός Resgrid στον προορισμό που ορίζει η ροή εργασίας.</value></data>
+  <data name="ExportEgressAcknowledgedOn" xml:space="preserve"><value>Η έξοδος επιβεβαιώθηκε</value></data>
+  <data name="ExportFileNameTemplate" xml:space="preserve"><value>Όνομα αρχείου</value></data>
+  <data name="ExportFileNameHelp" xml:space="preserve"><value>Δείκτες: {template}, {date}, {record}. Η επέκταση ακολουθεί τη μορφή.</value></data>
+  <data name="ExportIncludeHeader" xml:space="preserve"><value>Συμπερίληψη γραμμής κεφαλίδας</value></data>
+  <data name="ExportDelimiter" xml:space="preserve"><value>Διαχωριστικό</value></data>
+  <data name="ExportSchedule" xml:space="preserve"><value>Πρόγραμμα</value></data>
+  <data name="ExportScheduleNone" xml:space="preserve"><value>Χωρίς πρόγραμμα (μόνο ροή εργασίας)</value></data>
+  <data name="ExportScheduleDaily" xml:space="preserve"><value>Καθημερινά</value></data>
+  <data name="ExportScheduleWeekly" xml:space="preserve"><value>Εβδομαδιαία</value></data>
+  <data name="ExportScheduleMonthly" xml:space="preserve"><value>Μηνιαία</value></data>
+  <data name="ExportScheduleHour" xml:space="preserve"><value>Ώρα (τοπική ώρα υπηρεσίας)</value></data>
+  <data name="ExportScheduleDayOfWeek" xml:space="preserve"><value>Ημέρα εβδομάδας (0 = Κυριακή)</value></data>
+  <data name="ExportScheduleDayOfMonth" xml:space="preserve"><value>Ημέρα μήνα (1-28)</value></data>
+  <data name="ExportWindowDays" xml:space="preserve"><value>Διάστημα (ημέρες)</value></data>
+  <data name="ExportWindowDaysHelp" xml:space="preserve"><value>Το 0 χρησιμοποιεί την περίοδο του προγράμματος: μία ημέρα, μία εβδομάδα ή έναν μήνα έως την εκτέλεση.</value></data>
+  <data name="ExportEnabled" xml:space="preserve"><value>Ενεργό</value></data>
+  <data name="ExportNextRun" xml:space="preserve"><value>Επόμενη εκτέλεση</value></data>
+  <data name="ExportLastRun" xml:space="preserve"><value>Τελευταία εκτέλεση</value></data>
+  <data name="ExportRuns" xml:space="preserve"><value>Εκτελέσεις</value></data>
+  <data name="ExportRunNow" xml:space="preserve"><value>Εκτέλεση τώρα</value></data>
+  <data name="ExportRunNowHelp" xml:space="preserve"><value>Δημιουργεί την εξαγωγή για έλεγχο πριν τη δει μια υπηρεσία. Κάθε εγγραφή που περιέχει καταγράφεται ως εξαγωγή.</value></data>
+  <data name="ExportRunNowNeedsRecord" xml:space="preserve"><value>Αυτή η εξαγωγή καλύπτει μία εγγραφή ενεργοποίησης: εισαγάγετε το αναγνωριστικό της εγγραφής.</value></data>
+  <data name="ExportRunGenerated" xml:space="preserve"><value>Δημιουργήθηκε</value></data>
+  <data name="ExportRunRecords" xml:space="preserve"><value>Εγγραφές</value></data>
+  <data name="ExportRunSize" xml:space="preserve"><value>Byte</value></data>
+  <data name="ExportRunRedacted" xml:space="preserve"><value>Προστατευμένα πεδία αφαιρέθηκαν από αυτό το αρχείο</value></data>
+  <data name="ExportRunDownload" xml:space="preserve"><value>Λήψη</value></data>
+  <data name="ExportRunTrigger" xml:space="preserve"><value>Έναυσμα</value></data>
+  <data name="ExportTemplateSaved" xml:space="preserve"><value>Η εξαγωγή αποθηκεύτηκε.</value></data>
+  <data name="ExportTemplateDeleted" xml:space="preserve"><value>Η εξαγωγή διαγράφηκε. Τα βήματα ροής εργασίας που τη χρησιμοποιούσαν θα αποτυγχάνουν μέχρι να ενημερωθούν.</value></data>
+  <data name="ExportTemplateDeleteConfirm" xml:space="preserve"><value>Διαγραφή αυτής της εξαγωγής;</value></data>
+  <data name="ExportNoTemplates" xml:space="preserve"><value>Δεν έχει σχεδιαστεί ακόμη καμία εξαγωγή.</value></data>
+  <data name="ExportWorkflowHint" xml:space="preserve"><value>Στον σχεδιαστή ροών εργασίας, ένα βήμα e-mail ή μεταφόρτωσης αρχείου σε έναυσμα εγγραφών μπορεί να επισυνάψει οποιαδήποτε εξαγωγή από εδώ· μια προγραμματισμένη εξαγωγή εγείρει δικό της έναυσμα όταν εκτελείται.</value></data>
+  <data name="ExportTierSafe" xml:space="preserve"><value>Ταυτότητα, ημερομηνίες, κωδικοί και πλήθη</value></data>
+  <data name="ExportTierNarrative" xml:space="preserve"><value>Αφήγηση και προσωπικά στοιχεία (Επίπεδο 2)</value></data>
+  <data name="ExportTierRestricted" xml:space="preserve"><value>Περιορισμένες ενότητες (Επίπεδο 1)</value></data>
+  <data name="ExportAdpWarning" xml:space="preserve"><value>Η Προηγμένη Προστασία Δεδομένων επιβάλλεται για αυτή την υπηρεσία. Οι προστατευμένες στήλες αφαιρούνται (REDACTED) από κάθε εκτέλεση έως ότου καταγραφεί η επιβεβαίωση εξόδου της εξαγωγής.</value></data>
+  <data name="ProtectedRecordBanner" xml:space="preserve"><value>Προστατευμένη εγγραφή</value></data>
+  <data name="ProtectedIncidentBanner" xml:space="preserve"><value>Προστατευμένη αναφορά συμβάντος</value></data>
+  <data name="ProtectedEditHint" xml:space="preserve"><value>Τα προστατευμένα πεδία παραμένουν κρυφά μέχρι να επαληθευτείτε. Η αποθήκευση αυτής της φόρμας απαιτεί επίσης επαλήθευση, οπότε επαληθευτείτε πριν από την επεξεργασία.</value></data>
+  <data name="ProtectedEditRevealed" xml:space="preserve"><value>Το προστατευμένο περιεχόμενο εμφανίζεται για αυτή τη συνεδρία επεξεργασίας. Η αποθήκευση το διατηρεί προστατευμένο.</value></data>
+  <data name="NerisProtectedEgress" xml:space="preserve"><value>Να επιτρέπεται η αποστολή προστατευμένου περιεχομένου συμβάντων στο NERIS</value></data>
+  <data name="NerisProtectedEgressHelp" xml:space="preserve"><value>Με την Προηγμένη Προστασία Δεδομένων το φορτίο στην ουρά είναι σφραγισμένο. Με αυτή την επιβεβαίωση η υπηρεσία υποβολής το ανοίγει μόνο για παράδοση μέσω του ειδικού καναλιού του μεσολαβητή· χωρίς αυτή, μια προστατευμένη υποβολή αποτυγχάνει με ασφάλεια.</value></data>
+  <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>Επιβεβαιώθηκε στις</value></data>
+  <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>Η Προηγμένη Προστασία Δεδομένων επιβάλλεται: οι προστατευμένες υποβολές θα αποτυγχάνουν μέχρι να καταγραφεί αυτή η επιβεβαίωση.</value></data>
+  <data name="RecordId" xml:space="preserve"><value>Αναγνωριστικό εγγραφής</value></data>
 </root>

@@ -77,6 +77,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IRecordsCutoverService _recordsCutoverService;
+		private readonly IRecordsProtectionService _recordsProtection;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -90,7 +91,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICallDispatchStatusService callDispatchStatusService, IModerationService moderationService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer,
 			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService,
-			IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService)
+			IProtectedReadService protectedReadService, IRecordsCutoverService recordsCutoverService, IRecordsProtectionService recordsProtection)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -126,6 +127,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_featureToggleService = featureToggleService;
 			_protectedReadService = protectedReadService;
 			_recordsCutoverService = recordsCutoverService;
+			_recordsProtection = recordsProtection;
 		}
 		#endregion Private Members and Constructors
 
@@ -3354,6 +3356,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// The Incident Report control posts to IncidentReports/Start, which 404s when Records is not usable for
 			// the department; the button has to know that as well as whether the member may create a record.
 			model.RecordsUsable = (await _recordsCutoverService.GetModuleStateAsync(model.Department.DepartmentId)).RecordsUsable;
+			model.ProtectionEnforced = model.RecordsUsable && await _recordsProtection.IsEnforcedAsync(model.Department.DepartmentId);
 			model.UnGroupedUsers = new List<IdentityUser>();
 
 			model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(model.Call.DepartmentId, model.Call.CallId)).OrderBy(y => y.Timestamp).ToList();

@@ -46,6 +46,9 @@ namespace Resgrid.Tests
 				builder.RegisterModule(new MarketingModule());
 				builder.RegisterModule(new MessagingProviderModule());
 				builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
+				// IncidentCommandService takes the incident weather provider; the RMS-3 incident source feed
+				// resolves it, so the composition test needs the real module here.
+				builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
 
 				// Override real repository registrations with in-memory mocks so that
 				// tests do not require a live database connection.
@@ -71,11 +74,22 @@ namespace Resgrid.Tests
 				builder.RegisterInstance(new Moq.Mock<IChatChannelRepository>().Object)
 					.As<IChatChannelRepository>();
 
+				// The RMS-3 incident source feed composes IIncidentReportingService, whose real graph reaches
+				// IncidentCommandService and the VoIP/voice transmission repositories that this container has
+				// never carried. A loose mock keeps the Records composition test about Records registrations.
+				builder.RegisterInstance(new Moq.Mock<Resgrid.Model.Services.IIncidentCommandService>().Object)
+					.As<Resgrid.Model.Services.IIncidentCommandService>();
+
 				// ADP repositories are not part of the testing data module; loose mocks keep the
 				// protection/projection/lock services resolvable. Un-setup members return null, which
 				// reads as "no policy row" = Disabled — every safe view is then the original value.
 				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionPolicyRepository>().Object)
 					.As<IDepartmentDataProtectionPolicyRepository>();
+				// The RMS protection seam (catalog v10) composes ProtectedReadService, whose broker client lives in
+				// the ProtectedData provider module the hosts register; a loose mock keeps the Records composition
+				// test about Records registrations.
+				builder.RegisterInstance(new Moq.Mock<Resgrid.Model.Providers.IProtectedDataBrokerClient>().Object)
+					.As<Resgrid.Model.Providers.IProtectedDataBrokerClient>();
 				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionKeyRepository>().Object)
 					.As<IDepartmentDataProtectionKeyRepository>();
 				builder.RegisterInstance(new Moq.Mock<IDepartmentDataProtectionMigrationRepository>().Object)

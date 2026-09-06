@@ -40,13 +40,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IRecordsApiIdempotencyService _idempotency;
 		private readonly IIncidentAnalysisService _analysis;
 		private readonly IRecordsSubmissionService _submissionWorker;
+		private readonly IRecordsNfirsLegacyService _nfirs;
 
 		private SystemPrincipalRecordGrant _systemGrant;
 		private bool _systemGrantResolved;
 
 		public IncidentReportsController(IIncidentReportsService incidentReports, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
-			INerisProfileService neris, IFeatureToggleService featureToggleService, IRecordsApiIdempotencyService idempotency, IIncidentAnalysisService analysis, IRecordsSubmissionService submissionWorker)
+			INerisProfileService neris, IFeatureToggleService featureToggleService, IRecordsApiIdempotencyService idempotency, IIncidentAnalysisService analysis, IRecordsSubmissionService submissionWorker,
+			IRecordsNfirsLegacyService nfirs)
 		{
+			_nfirs = nfirs;
 			_incidentReports = incidentReports;
 			_cutoverService = cutoverService;
 			_recordsAuthorizationService = recordsAuthorizationService;
@@ -231,6 +234,40 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (aggregate == null)
 				return NotFound();
 			return Ok(await WrapAsync(aggregate));
+		}
+
+		/// <summary>
+		/// Read-only NFIRS Basic Module rendering and crosswalk for a Call (RMS-3). Values are read from what the department
+		/// already holds; nothing is imported or authored. A system principal is refused: this is a member-facing report, and
+		/// the source-Call rule inside the service is a member rule.
+		/// </summary>
+		[HttpGet("GetNfirsLegacy")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<ActionResult<NfirsLegacyResult>> GetNfirsLegacy(int callId)
+		{
+			if (!await FlagOnAsync())
+				return NotFound();
+			if (RecordsSystemPrincipal.IsSystemPrincipal(User))
+				return Forbid();
+
+			NfirsLegacyRendering rendering;
+			try
+			{
+				rendering = await _nfirs.RenderAsync(DepartmentId, UserId, callId);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return Forbid();
+			}
+			if (rendering == null)
+				return NotFound();
+
+			var result = new NfirsLegacyResult { Data = rendering, PageSize = 1, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
 		}
 
 		#endregion

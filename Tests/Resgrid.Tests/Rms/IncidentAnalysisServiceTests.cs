@@ -69,7 +69,7 @@ namespace Resgrid.Tests.Rms
 				_store.ModulesRepo.Object, _store.PropertiesRepo.Object, _store.VehiclesRepo.Object,
 				_store.IssuesRepo.Object, _store.SubmissionsRepo.Object, _store.Shared.RevisionsRepo.Object,
 				_store.Shared.AuditsRepo.Object, _store.UnitOfWork.Object, _neris.Object,
-				new NerisMappingService(), new NerisValidationService(Mock.Of<INerisApiClient>(), _neris.Object), Authorized());
+				new NerisMappingService(), new NerisValidationService(Mock.Of<INerisApiClient>(), _neris.Object), Authorized(), new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
 		}
 
 		private IRecordsAuthorizationService Authorized()

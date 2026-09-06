@@ -180,6 +180,10 @@ namespace Resgrid.Model
 	/// <summary>A hydrated Record: header, working/revision details, participants, units, attachment metadata.</summary>
 	public class RecordAggregate
 	{
+		/// <summary>ADP read outcome for this hydration (RMS plan section 5.9): what was withheld and why. Never part of a snapshot.</summary>
+		[Newtonsoft.Json.JsonIgnore]
+		public ProtectedReadResult Protection { get; set; }
+
 		public RecordUdfSection CustomFields { get; set; }
 		public RmsOperationalRecord Record { get; set; }
 		public RmsOperationalRecordDetail Details { get; set; }

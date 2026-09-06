@@ -1,0 +1,84 @@
+{
+  "recordType": "Meeting",
+  "definitionKey": "system.meeting",
+  "legacy": {
+    "source": "Logs",
+    "log": {
+      "LogId": 1004,
+      "DepartmentId": 9,
+      "Narrative": "Monthly business meeting. Approved the apparatus replacement study; next meeting set for April.",
+      "LogType": 5,
+      "ExternalId": "MTG-2026-03",
+      "InitialReport": null,
+      "Type": "Business meeting",
+      "StationGroupId": null,
+      "Course": null,
+      "CourseCode": null,
+      "Instructors": "Chief Alvarez",
+      "Cause": null,
+      "InvestigatedByUserId": null,
+      "ContactName": null,
+      "ContactNumber": null,
+      "StartedOn": "2026-03-10T00:00:00Z",
+      "EndedOn": "2026-03-10T01:30:00Z",
+      "LoggedOn": "2026-03-10T01:40:00Z",
+      "LoggedByUserId": "author",
+      "OfficerUserId": null,
+      "CallId": null,
+      "OtherPersonnel": "Two guests from the auxiliary",
+      "Location": "Station 1 training room",
+      "OtherAgencies": null,
+      "OtherUnits": null,
+      "BodyLocation": null,
+      "PronouncedDeceasedBy": null
+    },
+    "users": [
+      { "LogUserId": 6, "LogId": 1004, "UnitId": null, "UserId": "p2" },
+      { "LogUserId": 7, "LogId": 1004, "UnitId": null, "UserId": "p3" }
+    ],
+    "units": [],
+    "attachments": [
+      { "LogAttachmentId": 3, "LogId": 1004, "FileName": "minutes.docx", "Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "Size": 2, "DataBase64": "UEs=", "UserId": "author", "Timestamp": "2026-03-10T01:41:00Z", "Description": "Meeting minutes" }
+    ]
+  },
+  "expected": {
+    "numberPrefix": "MTG",
+    "list": {
+      "displaySummary": "Business meeting",
+      "searchTextContains": [ "Business meeting", "MTG-2026-03" ],
+      "searchTextExcludes": [ "apparatus replacement", "auxiliary" ],
+      "occurredOn": "2026-03-10T00:00:00Z",
+      "callNumber": null,
+      "participantUserIds": [ "p2", "p3" ],
+      "unitIds": []
+    },
+    "detail": {
+      "externalId": "MTG-2026-03",
+      "startedOn": "2026-03-10T00:00:00Z",
+      "endedOn": "2026-03-10T01:30:00Z",
+      "details": {
+        "Narrative": "Monthly business meeting. Approved the apparatus replacement study; next meeting set for April.",
+        "Type": "Business meeting",
+        "Instructors": "Chief Alvarez",
+        "OtherPersonnel": "Two guests from the auxiliary",
+        "Location": "Station 1 training room"
+      },
+      "participants": [
+        { "UserId": "p2" },
+        { "UserId": "p3" }
+      ],
+      "units": [],
+      "attachments": [
+        { "FileName": "minutes.docx", "ContentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "ByteSize": 2, "Description": "Meeting minutes", "UploadedByUserId": "author" }
+      ]
+    },
+    "export": {
+      "mustContain": [ "Business meeting", "Chief Alvarez", "minutes.docx", "Station 1 training room" ],
+      "restrictedFields": [ "OtherPersonnel" ]
+    },
+    "print": {
+      "contains": [ "Business meeting", "Chief Alvarez", "Station 1 training room", "minutes.docx" ],
+      "withheldWithoutRestrictedAccess": [ "Two guests from the auxiliary" ]
+    }
+  }
+}

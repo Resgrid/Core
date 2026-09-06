@@ -38,6 +38,12 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		/// <summary>ADP: true when this call carries protected fields rendered as REDACTED (plan 7.2).</summary>
 		public bool IsProtectedCall { get; set; }
 		public string ProtectedReason { get; set; }
+
+		/// <summary>
+		/// True when the department enforces Protected Data over Records: starting an incident report from this
+		/// call seals the captured location and narrative, so the start form needs a grant (RMS plan section 5.9.3).
+		/// </summary>
+		public bool ProtectionEnforced { get; set; }
 		public List<string> RedactedFields { get; set; } = new List<string>();
 
 		public string IsMapTabActive()

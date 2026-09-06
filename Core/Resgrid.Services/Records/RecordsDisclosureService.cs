@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
@@ -38,12 +39,17 @@ namespace Resgrid.Services.Records
 		private readonly IRecordsUdfService _udf;
 		private readonly IDepartmentSettingsService _settings;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IRecordsProtectionService _protection;
+		private readonly IDomainEventOutboxService _outbox;
 
 		public RecordsDisclosureService(IRmsDisclosureRequestsRepository requests, IRmsDisclosureProductionsRepository productions,
 			IRmsOperationalRecordsRepository records, IRmsRevisionsRepository revisions, IRmsAccessAuditsRepository audits,
 			IRecordsAuthorizationService authorization, IDepartmentSettingsService settings, IUnitOfWork unitOfWork,
-			IRmsIncidentReportsRepository reports, IRecordsDocumentService documents, IRmsRecordAttachmentsRepository attachments, Resgrid.Model.Providers.IPdfProvider pdf, IRmsIncidentAnalysesRepository analyses, IRecordAttachmentScanner scanner, IRecordsUdfService udf)
+			IRmsIncidentReportsRepository reports, IRecordsDocumentService documents, IRmsRecordAttachmentsRepository attachments, Resgrid.Model.Providers.IPdfProvider pdf, IRmsIncidentAnalysesRepository analyses, IRecordAttachmentScanner scanner, IRecordsUdfService udf,
+			IRecordsProtectionService protection, IDomainEventOutboxService outbox)
 		{
+			_protection = protection;
+			_outbox = outbox;
 			_requests = requests;
 			_productions = productions;
 			_records = records;
@@ -81,21 +87,83 @@ namespace Resgrid.Services.Records
 			request.ModifiedByUserId = userId;
 			request.RowVersion = 1;
 
+			// The row is sealed in place for storage (ADP catalog v10) and the caller gets its plaintext back afterwards.
+			var plaintext = PlaintextSnapshot<RmsDisclosureRequest>.Take(request, RmsProtectedFields.DisclosureRequests);
+			var outboxIds = new List<long>();
 			await InTransactionAsync(async () =>
 			{
 				request.RequestNumber = await AllocateNumberAsync(departmentId, receivedOn);
+				await _protection.ProtectDisclosureRequestAsync(departmentId, request, null, userId, cancellationToken);
 				await _requests.InsertAsync(request, cancellationToken, true);
+				outboxIds.Add(await EnqueueDisclosureAsync(request, null, WorkflowTriggerEventType.RecordDisclosureRequested, cancellationToken));
 				await AuditAsync(departmentId, userId, null, RmsAccessAuditAction.Admin, "Disclosure request logged",
 					new { request.RmsDisclosureRequestId, request.RequestNumber, request.StatutoryDueOn, request.JurisdictionProfile }, cancellationToken);
 			});
-
+			plaintext.Restore();
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 			return request;
+		}
+
+		/// <summary>
+		/// disclosure.* (triggers 152-155): request identity, clock, profiles, assignment and counts, plus the
+		/// production's identity and checksum when one is involved. Never the requester, the scope narrative or
+		/// the packet (plan section 5.6).
+		/// </summary>
+		private async Task<long> EnqueueDisclosureAsync(RmsDisclosureRequest request, RmsDisclosureProduction production, WorkflowTriggerEventType trigger, CancellationToken cancellationToken)
+		{
+			var entry = await _outbox.EnqueueAsync(request.DepartmentId, DomainEventProducers.Records, new DomainEventEnvelope
+			{
+				EventName = trigger.ToString(),
+				SchemaVersion = 1,
+				AggregateType = "RmsDisclosureRequest",
+				AggregateId = request.RmsDisclosureRequestId,
+				AggregateVersion = (int)request.RowVersion,
+				Trigger = trigger,
+				Payload = new Dictionary<string, object>
+				{
+					["record"] = new { id = (string)null, kind = "Disclosure", department_id = request.DepartmentId, state = ((RmsDisclosureState)request.State).ToString() },
+					["disclosure"] = DisclosureBlock(request, production),
+					["protection"] = IncidentReportsService.ProtectionBlock(await _protection.GetCatalogVersionAsync(request.DepartmentId))
+				},
+				CorrelationId = request.RmsDisclosureRequestId,
+				OriginClient = RmsOriginClient.Web
+			}, cancellationToken);
+			return entry.DomainEventOutboxId;
+		}
+
+		public static object DisclosureBlock(RmsDisclosureRequest request, RmsDisclosureProduction production)
+		{
+			return new
+			{
+				request_id = request.RmsDisclosureRequestId,
+				request_number = request.RequestNumber,
+				state = ((RmsDisclosureState)request.State).ToString(),
+				received_on = request.ReceivedOn,
+				statutory_due_on = request.StatutoryDueOn,
+				jurisdiction_profile = request.JurisdictionProfile,
+				redaction_profile = request.RedactionProfile,
+				assigned_to_user_id = request.AssignedToUserId,
+				closed_on = request.ClosedOn,
+				closed_by_user_id = request.ClosedByUserId,
+				disposition = request.ClosedOn.HasValue ? ((RmsDisclosureState)request.State).ToString() : null,
+				production_id = production?.RmsDisclosureProductionId,
+				production_number = production?.ProductionNumber,
+				record_count = production?.RecordCount,
+				withheld_field_count = production?.WithheldFieldCount,
+				checksum = production?.Checksum,
+				byte_size = production?.ByteSize,
+				prepared_on = production?.PreparedOn,
+				released_on = production?.ReleasedOn,
+				released_by_user_id = production?.ReleasedByUserId,
+				delivery_method = production?.DeliveryMethod
+			};
 		}
 
 		public async Task<RmsDisclosureRequest> GetAsync(int departmentId, string userId, string requestId)
 		{
 			await RequireDisclosureAsync(departmentId, userId);
 			var row = await _requests.GetByIdForDepartmentAsync(departmentId, requestId);
+			if (row != null) await _protection.RevealDisclosureRequestsAsync(departmentId, new[] { row });
 			var restricted = await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords);
 			await RequireDisclosureAsync(departmentId, userId);
 			return row?.DeletedOn == null ? ProjectRequest(row, restricted) : null;
@@ -106,6 +174,7 @@ namespace Resgrid.Services.Records
 			await RequireDisclosureAsync(departmentId, userId);
 			var stateValues = states?.Select(s => (int)s).ToList();
 			var rows = (await _requests.GetForDepartmentAsync(departmentId, stateValues, skip, take))?.ToList() ?? new List<RmsDisclosureRequest>();
+			await _protection.RevealDisclosureRequestsAsync(departmentId, rows);
 			var restricted = await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords);
 			await RequireDisclosureAsync(departmentId, userId);
 			return rows.Select(r => ProjectRequest(r, restricted)).ToList();
@@ -140,13 +209,18 @@ namespace Resgrid.Services.Records
 			request.ModifiedByUserId = userId;
 			request.RowVersion += 1;
 
+			// The loaded row carries envelopes for the requester columns and plaintext for the scope the custodian
+			// just typed; sealing in place leaves the envelopes alone and seals the new text.
+			var plaintext = PlaintextSnapshot<RmsDisclosureRequest>.Take(request, RmsProtectedFields.DisclosureRequests);
 			await InTransactionAsync(async () =>
 			{
 				await GuardRequestAsync(request, request.RowVersion - 1, cancellationToken);
+				await _protection.ProtectDisclosureRequestAsync(departmentId, request, null, userId, cancellationToken);
 				await _requests.UpdateAsync(request, cancellationToken, true);
 				await AuditAsync(departmentId, userId, null, RmsAccessAuditAction.Admin, "Disclosure scope saved", new { requestId, request.RedactionProfile }, cancellationToken);
 			});
-
+			plaintext.Restore();
+			await _protection.RevealDisclosureRequestsAsync(departmentId, new[] { request });
 			return request;
 		}
 
@@ -164,6 +238,7 @@ namespace Resgrid.Services.Records
 			RequireOpen(request);
 			var unresolved = (bool?)JObject.Parse(production.ArtifactJson)["scope_fully_resolved"] == false;
 			var now = DateTime.UtcNow;
+			var outboxIds = new List<long>();
 
 			await InTransactionAsync(async () =>
 			{
@@ -185,10 +260,12 @@ namespace Resgrid.Services.Records
 				request.ModifiedByUserId = userId;
 				request.RowVersion += 1;
 				await _requests.UpdateAsync(request, cancellationToken, true);
+				outboxIds.Add(await EnqueueDisclosureAsync(request, production, WorkflowTriggerEventType.RecordDisclosureReleased, cancellationToken));
 
 				await AuditAsync(departmentId, userId, null, RmsAccessAuditAction.Share, "Disclosure released",
 					new { request.RmsDisclosureRequestId, request.RequestNumber, production.RmsDisclosureProductionId, production.Checksum, deliveryMethod = deliveryMethod.Trim(), deliveryReference = deliveryReference.Trim(), unresolvedScope = unresolved }, cancellationToken);
 			});
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 
 			return production;
 		}
@@ -199,7 +276,10 @@ namespace Resgrid.Services.Records
 			var visible = new List<RmsDisclosureProduction>();
 			foreach (var row in (await _productions.GetForRequestAsync(departmentId, requestId)) ?? Enumerable.Empty<RmsDisclosureProduction>())
 			{
-				var authorized = await GetAuthorizedProductionAsync(departmentId, userId, row.RmsDisclosureProductionId);
+				RmsDisclosureProduction authorized;
+				// A sealed packet the caller cannot open is simply absent from the list; the page shows the step-up banner.
+				try { authorized = await GetAuthorizedProductionAsync(departmentId, userId, row.RmsDisclosureProductionId); }
+				catch (RecordProtectedContentException) { continue; }
 				if (authorized?.DisclosureRequestId == requestId) visible.Add(authorized);
 			}
 			// Reading a later packet can outlive the permissions used for an earlier one. Re-project the
@@ -218,8 +298,10 @@ namespace Resgrid.Services.Records
 		{
 			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordDisclosures)) return null;
 			var production = await _productions.GetByIdForDepartmentAsync(departmentId, productionId);
-			if (production == null || production.DepartmentId != departmentId || string.IsNullOrEmpty(production.ArtifactJson)
-				|| production.Checksum != RecordSnapshotSerializer.Checksum(production.ArtifactJson)) return null;
+			if (production == null || production.DepartmentId != departmentId || string.IsNullOrEmpty(production.ArtifactJson)) return null;
+			// The packet is a generated copy of released content: sealed at rest, opened for the caller's grant (ADP).
+			(await _protection.RevealDisclosureProductionsAsync(departmentId, new[] { production })).RequireRevealed("disclosure production");
+			if (production.Checksum != RecordSnapshotSerializer.Checksum(production.ArtifactJson)) return null;
 			try
 			{
 				var artifact = JObject.Parse(production.ArtifactJson);
@@ -267,13 +349,20 @@ namespace Resgrid.Services.Records
 			request.ModifiedByUserId = userId;
 			request.RowVersion += 1;
 
+			var outboxIds = new List<long>();
+			var plainReason = request.DispositionReason;
+			var plaintext = PlaintextSnapshot<RmsDisclosureRequest>.Take(request, RmsProtectedFields.DisclosureRequests);
 			await InTransactionAsync(async () =>
 			{
 				await GuardRequestAsync(request, request.RowVersion - 1, cancellationToken);
+				await _protection.ProtectDisclosureRequestAsync(departmentId, request, null, userId, cancellationToken);
 				await _requests.UpdateAsync(request, cancellationToken, true);
-				await AuditAsync(departmentId, userId, null, RmsAccessAuditAction.Admin, "Disclosure closed: " + disposition, new { requestId, reason = request.DispositionReason }, cancellationToken);
+				outboxIds.Add(await EnqueueDisclosureAsync(request, null, WorkflowTriggerEventType.RecordDisclosureClosed, cancellationToken));
+				await AuditAsync(departmentId, userId, null, RmsAccessAuditAction.Admin, "Disclosure closed: " + disposition, new { requestId, reason = plainReason }, cancellationToken);
 			});
-
+			plaintext.Restore();
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
+			await _protection.RevealDisclosureRequestsAsync(departmentId, new[] { request });
 			return request;
 		}
 
@@ -283,6 +372,7 @@ namespace Resgrid.Services.Records
 			if (production == null || string.IsNullOrWhiteSpace(production.Checksum))
 				return false;
 
+			(await _protection.RevealDisclosureProductionsAsync(departmentId, new[] { production })).RequireRevealed("disclosure verification");
 			return string.Equals(production.Checksum, RecordSnapshotSerializer.Checksum(production.ArtifactJson ?? string.Empty), StringComparison.Ordinal);
 		}
 

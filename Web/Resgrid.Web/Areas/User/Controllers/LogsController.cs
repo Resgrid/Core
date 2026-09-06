@@ -564,7 +564,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!String.IsNullOrWhiteSpace(model.WorkLog.InvestigatedByUserId) && !model.PersonnelNames.ContainsKey(model.WorkLog.InvestigatedByUserId))
 				model.PersonnelNames[model.WorkLog.InvestigatedByUserId] = await UserHelper.GetFullNameForUser(model.WorkLog.InvestigatedByUserId);
 
-			if (ClaimsAuthorizationHelper.CanDeleteLog())
+			// After Records activation the delete path is denied at the controller and the service (RMS plan section
+			// 4.1); the page must not offer it either, whoever the viewer is.
+			if (ClaimsAuthorizationHelper.CanDeleteLog() && !await _recordsCutoverService.AreLegacyWritesBlockedAsync(DepartmentId))
 			{
 				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || model.WorkLog.LoggedByUserId == UserId ||
 				    (model.WorkLog.StationGroupId.HasValue && ClaimsAuthorizationHelper.IsUserGroupAdmin(model.WorkLog.StationGroupId.Value)))

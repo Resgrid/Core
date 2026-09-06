@@ -77,6 +77,14 @@ namespace Resgrid.Tests.Localization
 			"DataProtection|de|AddonStatusLabel",   // "Status" is the German word too.
 			"DataProtection|pl|AddonStatusLabel",   // Polish uses "Status" as well.
 			"DataProtection|sv|AddonStatusLabel",   // So does Swedish.
+			// Records report exports (2026-09-05): "Format", "Bytes" and "Description" are the target-language words.
+			"Records|de|ExportFormat",
+			"Records|de|ExportRunSize",
+			"Records|es|ExportRunSize",
+			"Records|fr|ExportFormat",
+			"Records|fr|ExportTemplateDescription",
+			"Records|pl|ExportFormat",
+			"Records|sv|ExportFormat",
 
 			// Brand and protocol names carry across every language.
 			"CommunicationTest|de|Push", "CommunicationTest|de|SMS",

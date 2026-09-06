@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
@@ -21,9 +22,12 @@ namespace Resgrid.Services.Records
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRecordAttachmentScanner _scanner;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IRecordsProtectionService _protection;
+		private readonly IDomainEventOutboxService _outbox;
 		public IncidentAttachmentsService(IRmsIncidentReportsRepository reports, IRmsRecordAttachmentsRepository attachments, IRmsRevisionsRepository revisions,
-			IRmsAccessAuditsRepository audits, IRecordsAuthorizationService authorization, IRecordAttachmentScanner scanner, IUnitOfWork unitOfWork)
-		{ _reports = reports; _attachments = attachments; _revisions = revisions; _audits = audits; _authorization = authorization; _scanner = scanner; _unitOfWork = unitOfWork; }
+			IRmsAccessAuditsRepository audits, IRecordsAuthorizationService authorization, IRecordAttachmentScanner scanner, IUnitOfWork unitOfWork,
+			IRecordsProtectionService protection, IDomainEventOutboxService outbox)
+		{ _reports = reports; _attachments = attachments; _revisions = revisions; _audits = audits; _authorization = authorization; _scanner = scanner; _unitOfWork = unitOfWork; _protection = protection; _outbox = outbox; }
 
 		private async Task<RmsIncidentReport> Authorize(int departmentId, string userId, string reportId, bool write)
 		{
@@ -57,6 +61,10 @@ namespace Resgrid.Services.Records
 				Checksum = RecordSnapshotSerializer.Checksum(clean.Data), Description = description, UploadedByUserId = userId, UploadedOn = now,
 				ScanState = (int)scan.State, MetadataStripped = clean.MetadataStripped, CreatedOn = now, ModifiedOn = now, RowVersion = 1 };
 			attachment.Classification = classification;
+			// Never clear the object handed to a repository: in-memory stores can retain that instance. The caller gets
+			// plaintext metadata; the stored row may carry envelopes (ADP catalog v10).
+			var metadata = JsonConvert.DeserializeObject<RmsRecordAttachment>(JsonConvert.SerializeObject(attachment)); metadata.Data = null;
+			long outboxId;
 			_unitOfWork.CreateOrGetConnection();
 			try
 			{
@@ -64,14 +72,36 @@ namespace Resgrid.Services.Records
 				if (classification != 0 && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords)) throw new UnauthorizedAccessException();
 				if (report.RowVersion != expectedVersion || !await _reports.TryBumpRowVersionAsync(departmentId, reportId, expectedVersion, cancellationToken))
 					throw new RecordConcurrencyException(reportId, expectedVersion, report.RowVersion);
+				await _protection.ProtectAttachmentAsync(departmentId, attachment, null, userId, cancellationToken);
 				await _attachments.InsertAsync(attachment, cancellationToken, true);
+				var count = (await _attachments.GetMetadataForRecordAsync(departmentId, reportId))?.Count() ?? 1;
+				var state = (RmsRecordState)report.State;
+				outboxId = (await _outbox.EnqueueAsync(departmentId, DomainEventProducers.Records, new DomainEventEnvelope
+				{
+					EventName = WorkflowTriggerEventType.RecordAttachmentAdded.ToString(),
+					SchemaVersion = 1,
+					AggregateType = IncidentReportsService.IncidentAggregate,
+					AggregateId = reportId,
+					AggregateVersion = report.RevisionCount,
+					Trigger = WorkflowTriggerEventType.RecordAttachmentAdded,
+					Payload = new Dictionary<string, object>
+					{
+						["record"] = IncidentReportsService.RecordBlock(report, null, state),
+						["record_change"] = new { previous_state = state.ToString(), current_state = state.ToString(), prior_revision_id = (string)null, current_revision_id = report.CurrentRevisionId, reason_code = (string)null },
+						["attachment"] = RecordsService.AttachmentBlock(attachment, count),
+						["protection"] = IncidentReportsService.ProtectionBlock(await _protection.GetCatalogVersionAsync(departmentId))
+					},
+					CorrelationId = reportId,
+					OriginClient = RmsOriginClient.Web
+				}, cancellationToken)).DomainEventOutboxId;
 				await _audits.InsertAsync(new RmsAccessAudit { DepartmentId = departmentId, RecordId = reportId, ActorUserId = userId, Action = (int)RmsAccessAuditAction.Change,
 					Purpose = "Incident attachment uploaded", Successful = true, OccurredOn = now, DetailJson = JsonConvert.SerializeObject(new { attachment.RmsRecordAttachmentId, attachment.Checksum, attachment.ByteSize }) }, cancellationToken, true);
 				_unitOfWork.CommitChanges();
 			}
 			catch { _unitOfWork.DiscardChanges(); throw; }
-			// Never clear the object handed to a repository: in-memory stores can retain that instance.
-			var metadata = JsonConvert.DeserializeObject<RmsRecordAttachment>(JsonConvert.SerializeObject(attachment)); metadata.Data = null; return metadata;
+			await _outbox.DispatchAfterCommitAsync(new[] { outboxId }, cancellationToken);
+			metadata.IsProtected = attachment.IsProtected; metadata.ProtectedCatalogVersion = attachment.ProtectedCatalogVersion;
+			return metadata;
 		}
 
 		public async Task<RmsRecordAttachment> GetAsync(int departmentId, string userId, string reportId, string attachmentId, string revisionId = null)
@@ -81,11 +111,14 @@ namespace Resgrid.Services.Records
 			if (attachment == null || attachment.RecordId != reportId || revisionId == null && attachment.DeletedOn.HasValue) return null;
 			if (attachment.ScanState != (int)RmsAttachmentScanState.Clean) throw new InvalidOperationException("The attachment has not passed scanning.");
 			if (attachment.RequiresRestrictedAccess && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords)) throw new UnauthorizedAccessException();
+			// ADP: bytes and file name resolve for the caller's grant; without one the download fails closed.
+			(await _protection.RevealAttachmentsAsync(departmentId, new[] { attachment }, true)).RequireRevealed("attachment download");
 			if (attachment.Data == null || RecordSnapshotSerializer.Checksum(attachment.Data) != attachment.Checksum) throw new InvalidOperationException("Attachment content is unavailable or its checksum does not match.");
 			if (revisionId != null)
 			{
 				var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, revisionId);
 				if (revision == null || revision.RecordId != reportId || revision.RecordKind != (int)RmsRecordKind.IncidentReport) return null;
+				(await _protection.RevealRevisionsAsync(departmentId, new[] { revision })).RequireRevealed("revision");
 				if (RecordSnapshotSerializer.Checksum(revision.SnapshotJson) != revision.Checksum) throw new InvalidOperationException("The revision checksum does not match.");
 				var snapshot = JsonConvert.DeserializeObject<IncidentReportAggregate>(revision.SnapshotJson);
 				if (snapshot?.Attachments?.Any(a => a.RmsRecordAttachmentId == attachmentId && a.Checksum == attachment.Checksum) != true) return null;

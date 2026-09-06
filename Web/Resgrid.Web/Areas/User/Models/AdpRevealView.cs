@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Resgrid.Web.Areas.User.Models
@@ -29,5 +30,19 @@ namespace Resgrid.Web.Areas.User.Models
 		/// they may read this particular record.
 		/// </summary>
 		public Dictionary<string, string> RevealData { get; set; } = new Dictionary<string, string>();
+
+		/// <summary>
+		/// UTC expiry of a grant the page already holds in a bound form's hidden field (the Records *Revealed
+		/// actions render this way). The module only needs the expiry: it drives the warning that offers an
+		/// in-place re-verification before the window closes, and the submit hold once it has.
+		/// </summary>
+		public DateTime? GrantExpiresOnUtc { get; set; }
+
+		/// <summary>
+		/// CSS selectors of forms whose submit must carry a live grant (RMS plan section 5.9.3). The module
+		/// writes the grant into the form's hidden fields on submit and, when none is live, runs the step-up in
+		/// place and re-dispatches the same submit afterwards so nothing typed is lost.
+		/// </summary>
+		public List<string> BindForms { get; set; } = new List<string>();
 	}
 }

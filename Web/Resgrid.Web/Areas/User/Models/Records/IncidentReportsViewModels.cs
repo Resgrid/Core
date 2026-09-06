@@ -30,6 +30,13 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	}
 
 	/// <summary>Incident report detail: header, NERIS status, validation issues, sections, provenance and history.</summary>
+	/// <summary>Read-only NFIRS rendering and per-incident crosswalk for one Call (RMS-3).</summary>
+	public class NfirsLegacyView : RecordsBaseView
+	{
+		public NfirsLegacyRendering Rendering { get; set; }
+		public Department Department { get; set; }
+	}
+
 	public class IncidentReportDetailView : RecordsBaseView
 	{
 		public IncidentReportAggregate Aggregate { get; set; }
@@ -254,6 +261,10 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public DateTime? LastSuccessfulCallOn { get; set; }
 		public string LastError { get; set; }
 		public bool SubmissionEnabled { get; set; }
+		public bool AllowProtectedContentEgress { get; set; }
+		public DateTime? ProtectedEgressAcknowledgedOn { get; set; }
+		public string ProtectedEgressAcknowledgedByUserId { get; set; }
+		public bool ProtectionEnforced { get; set; }
 		public List<SelectListItem> Environments { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> GrantTypes { get; set; } = new List<SelectListItem>();
 		public List<NerisCrosswalkRow> Crosswalk { get; set; } = new List<NerisCrosswalkRow>();

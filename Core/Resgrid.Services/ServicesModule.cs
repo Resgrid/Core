@@ -181,6 +181,7 @@ namespace Resgrid.Services
 			// ProtectedDataBrokerClientModule (client only — no key material).
 			builder.RegisterType<ProtectedReadService>()
 				.As<IProtectedReadService>().As<IProtectedWriteService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkloadProtectedGrantContext>().As<IProtectedGrantContext>().InstancePerLifetimeScope();
 
 			// The real engine is registered everywhere but only functions where a real key wrapping
 			// provider resolves (LocalDev for synthetic testing; the broker host in production). On
@@ -238,6 +239,7 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.DomainEventOutboxService>().As<IDomainEventOutboxService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsAuthorizationService>().As<IRecordsAuthorizationService>().InstancePerLifetimeScope();
 			// Value seam (plan 5.9.1): the only caller of the details repository; enrollment hooks in here.
+			builder.RegisterType<Records.RecordsProtectionService>().As<IRecordsProtectionService>().As<IRecordsProtectedReadService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RmsRecordValueService>().As<IRmsRecordValueService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsService>().As<IRecordsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RmsInventoryUsageAdapter>().As<IRmsInventoryUsageAdapter>().InstancePerLifetimeScope();
@@ -274,6 +276,13 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordsUdfService>().As<IRecordsUdfService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsDashboardService>().As<IRecordsDashboardService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsReportingService>().As<IRecordsReportingService>().InstancePerLifetimeScope();
+			// RMS-3: command key-time and contact/preplan feeds, the read-only NFIRS crosswalk rendering, and the
+			// RecordOperationalSummaryV1 contract for downstream consumers (plan sections 4.2, 4.3, 5.1, 4.7).
+			builder.RegisterType<Records.IncidentSourceFeedService>().As<IIncidentSourceFeedService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsNfirsLegacyService>().As<IRecordsNfirsLegacyService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordOperationalSummaryService>().As<IRecordOperationalSummaryService>().InstancePerLifetimeScope();
+			// Department report exports via the Workflow system (RMS plan section 5.6, registry M0177, worker 45)
+			builder.RegisterType<Records.RecordsExportService>().As<IRecordsExportService>().InstancePerLifetimeScope();
 			// Default attachment scanner: no engine, rows stay Skipped. A real scanner provider replaces this registration.
 			builder.RegisterType<Records.NullRecordAttachmentScanner>().As<Resgrid.Model.Providers.IRecordAttachmentScanner>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentProfileMediaService>().As<IDepartmentProfileMediaService>().InstancePerLifetimeScope();

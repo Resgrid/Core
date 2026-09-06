@@ -1,0 +1,89 @@
+{
+  "recordType": "Coroner",
+  "definitionKey": "system.coroner",
+  "legacy": {
+    "source": "Logs",
+    "log": {
+      "LogId": 1005,
+      "DepartmentId": 9,
+      "Narrative": "Crew assisted the county coroner at a residence; scene secured pending transport.",
+      "LogType": 6,
+      "ExternalId": null,
+      "InitialReport": null,
+      "Type": null,
+      "StationGroupId": 11,
+      "Course": null,
+      "CourseCode": null,
+      "Instructors": null,
+      "Cause": null,
+      "InvestigatedByUserId": "inv1",
+      "ContactName": "Deputy Coroner Lee",
+      "ContactNumber": "555-0177",
+      "StartedOn": "2026-03-12T03:10:00Z",
+      "EndedOn": "2026-03-12T05:00:00Z",
+      "LoggedOn": "2026-03-12T05:30:00Z",
+      "LoggedByUserId": "author",
+      "OfficerUserId": "officer1",
+      "CallId": 77,
+      "OtherPersonnel": "Neighbor who found the deceased",
+      "Location": "1 Main St",
+      "OtherAgencies": "County Coroner",
+      "OtherUnits": null,
+      "BodyLocation": "Rear bedroom, ground floor",
+      "PronouncedDeceasedBy": "Dr. Okafor"
+    },
+    "users": [
+      { "LogUserId": 8, "LogId": 1005, "UnitId": 5, "UserId": "p2" }
+    ],
+    "units": [
+      { "LogUnitId": 5, "LogId": 1005, "UnitId": 5, "Dispatched": "2026-03-12T03:05:00Z", "Enroute": "2026-03-12T03:07:00Z", "OnScene": "2026-03-12T03:15:00Z", "Released": "2026-03-12T05:00:00Z", "InQuarters": "2026-03-12T05:12:00Z" }
+    ],
+    "attachments": []
+  },
+  "expected": {
+    "numberPrefix": "COR",
+    "list": {
+      "displaySummary": "Coroner",
+      "searchTextContains": [ "C2026-0009" ],
+      "searchTextExcludes": [ "Rear bedroom", "Dr. Okafor", "Neighbor", "555-0177", "Deputy Coroner Lee" ],
+      "occurredOn": "2026-03-12T03:10:00Z",
+      "callNumber": "C2026-0009",
+      "participantUserIds": [ "officer1", "p2" ],
+      "unitIds": [ 5 ]
+    },
+    "detail": {
+      "stationGroupId": 11,
+      "callId": 77,
+      "startedOn": "2026-03-12T03:10:00Z",
+      "endedOn": "2026-03-12T05:00:00Z",
+      "details": {
+        "Narrative": "Crew assisted the county coroner at a residence; scene secured pending transport.",
+        "InvestigatedByUserId": "inv1",
+        "ContactName": "Deputy Coroner Lee",
+        "ContactNumber": "555-0177",
+        "OtherPersonnel": "Neighbor who found the deceased",
+        "Location": "1 Main St",
+        "OtherAgencies": "County Coroner",
+        "BodyLocation": "Rear bedroom, ground floor",
+        "PronouncedDeceasedBy": "Dr. Okafor",
+        "CallNumber": "C2026-0009"
+      },
+      "participants": [
+        { "UserId": "officer1", "Role": "Officer" },
+        { "UserId": "p2", "UnitId": 5 }
+      ],
+      "units": [
+        { "UnitId": 5, "UnitNameSnapshot": "Engine 5", "OnScene": "2026-03-12T03:15:00Z", "InQuarters": "2026-03-12T05:12:00Z" }
+      ],
+      "attachments": []
+    },
+    "export": {
+      "mustContain": [ "Rear bedroom, ground floor", "Dr. Okafor", "County Coroner" ],
+      "restrictedFields": [ "BodyLocation", "PronouncedDeceasedBy", "OtherPersonnel" ]
+    },
+    "print": {
+      "contains": [ "County Coroner", "Engine 5", "Crew assisted the county coroner" ],
+      "withheldWithoutRestrictedAccess": [ "Rear bedroom, ground floor", "Dr. Okafor", "Neighbor who found the deceased" ]
+    }
+  }
+}

@@ -74,6 +74,9 @@
 		/// <summary>A reviewer returned a Record with a reason code.</summary>
 		RecordReturnedForCorrection = 102,
 
+		/// <summary>An approver completed the Approval/Acknowledgement preset's approve step, before finalization.</summary>
+		RecordApproved = 103,
+
 		/// <summary>A Record revision was finalized/attested. One-step Records emit Created then Finalized.</summary>
 		RecordFinalized = 104,
 
@@ -106,7 +109,42 @@
 		// can neither double-emit nor silently skip.
 
 		/// <summary>A Record passed the due time of a review, correction or resubmission obligation.</summary>
-		RecordOverdue = 112
+		RecordOverdue = 112,
+
+		/// <summary>An attachment was added to a Record draft or amendment; carries safe metadata only, never bytes or names.</summary>
+		RecordAttachmentAdded = 115,
+
+		// -- Records (RMS) block 2, 152-163 -- Identifier Allocation Registry section 3.2 (allocated 2026-09-05). The
+		// first block ran out with 113/114 reserved for RMS-1B definitions; 116-151 belong to Incident Back Office
+		// and AI Dispatch. These cover the RMS-3 capabilities (disclosures, legal holds, evidence, retention) and the
+		// department-authored export schedule so every RMS capability has a subscribable outcome.
+
+		/// <summary>A public-records request was logged and its statutory clock started.</summary>
+		RecordDisclosureRequested = 152,
+
+		/// <summary>An immutable disclosure packet was produced for a request.</summary>
+		RecordDisclosureProduced = 153,
+
+		/// <summary>A produced packet was released to the requester.</summary>
+		RecordDisclosureReleased = 154,
+
+		/// <summary>A disclosure request was closed with a disposition.</summary>
+		RecordDisclosureClosed = 155,
+
+		/// <summary>A legal hold was placed on a record, a definition or a period.</summary>
+		RecordLegalHoldPlaced = 156,
+
+		/// <summary>A legal hold was released.</summary>
+		RecordLegalHoldReleased = 157,
+
+		/// <summary>An immutable evidence artifact was captured against a record.</summary>
+		RecordEvidenceCaptured = 158,
+
+		/// <summary>The retention sweep purged a record's content, leaving a tombstone.</summary>
+		RecordPurged = 159,
+
+		/// <summary>A department export template's schedule came due and its file was rendered for delivery.</summary>
+		RecordExportScheduled = 160
 	}
 
 	public static class WorkflowTriggerEventTypes
@@ -115,10 +153,14 @@
 		public const int RecordsBlockFirst = 100;
 		public const int RecordsBlockLast = 115;
 
+		/// <summary>The second Records block, 152-163 (registry section 3.2, allocated 2026-09-05); 161-163 are reserved.</summary>
+		public const int RecordsBlock2First = 152;
+		public const int RecordsBlock2Last = 163;
+
 		public static bool IsRecordsTrigger(WorkflowTriggerEventType type)
 		{
 			var value = (int)type;
-			return value >= RecordsBlockFirst && value <= RecordsBlockLast;
+			return value >= RecordsBlockFirst && value <= RecordsBlockLast || value >= RecordsBlock2First && value <= RecordsBlock2Last;
 		}
 	}
 }

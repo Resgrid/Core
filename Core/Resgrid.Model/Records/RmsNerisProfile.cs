@@ -40,6 +40,15 @@ namespace Resgrid.Model
 		public string ContractVersion { get; set; }
 		public bool AutoSubmitOnFinalize { get; set; }
 		public bool IsEnabled { get; set; }
+
+		/// <summary>
+		/// ADP egress acknowledgement (RMS plan section 5.9.2, ADP Appendix B item 8): a protected department's
+		/// narrative, location and casualty facts leave to the reporting destination only after an administrator
+		/// has acknowledged that egress. Off by default; without it worker 41 fails a protected submission closed.
+		/// </summary>
+		public bool AllowProtectedContentEgress { get; set; }
+		public DateTime? ProtectedEgressAcknowledgedOn { get; set; }
+		public string ProtectedEgressAcknowledgedByUserId { get; set; }
 		public DateTime? LastTokenIssuedOn { get; set; }
 		public DateTime? LastSuccessfulCallOn { get; set; }
 		public string LastError { get; set; }

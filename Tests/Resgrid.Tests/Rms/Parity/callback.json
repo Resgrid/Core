@@ -1,0 +1,83 @@
+{
+  "recordType": "Callback",
+  "definitionKey": "system.callback",
+  "legacy": {
+    "source": "Logs",
+    "log": {
+      "LogId": 1006,
+      "DepartmentId": 9,
+      "Narrative": "Off-duty crew called back to cover the station while first-due units were committed to the structure fire.",
+      "LogType": 7,
+      "ExternalId": "CB-0042",
+      "InitialReport": null,
+      "Type": "Station coverage",
+      "StationGroupId": 11,
+      "Course": null,
+      "CourseCode": null,
+      "Instructors": null,
+      "Cause": null,
+      "InvestigatedByUserId": null,
+      "ContactName": null,
+      "ContactNumber": null,
+      "StartedOn": "2026-03-04T17:50:00Z",
+      "EndedOn": "2026-03-04T19:30:00Z",
+      "LoggedOn": "2026-03-04T19:45:00Z",
+      "LoggedByUserId": "author",
+      "OfficerUserId": null,
+      "CallId": 77,
+      "OtherPersonnel": null,
+      "Location": null,
+      "OtherAgencies": null,
+      "OtherUnits": null,
+      "BodyLocation": null,
+      "PronouncedDeceasedBy": null
+    },
+    "users": [
+      { "LogUserId": 9, "LogId": 1006, "UnitId": 6, "UserId": "p3" }
+    ],
+    "units": [
+      { "LogUnitId": 6, "LogId": 1006, "UnitId": 6, "Dispatched": null, "Enroute": null, "OnScene": "2026-03-04T17:50:00Z", "Released": "2026-03-04T19:30:00Z", "InQuarters": null }
+    ],
+    "attachments": []
+  },
+  "expected": {
+    "numberPrefix": "CBK",
+    "list": {
+      "displaySummary": "C2026-0009 Structure fire",
+      "searchTextContains": [ "C2026-0009", "CB-0042", "Station coverage" ],
+      "searchTextExcludes": [ "Off-duty crew" ],
+      "occurredOn": "2026-03-04T17:50:00Z",
+      "callNumber": "C2026-0009",
+      "participantUserIds": [ "p3" ],
+      "unitIds": [ 6 ]
+    },
+    "detail": {
+      "externalId": "CB-0042",
+      "stationGroupId": 11,
+      "callId": 77,
+      "startedOn": "2026-03-04T17:50:00Z",
+      "endedOn": "2026-03-04T19:30:00Z",
+      "details": {
+        "Narrative": "Off-duty crew called back to cover the station while first-due units were committed to the structure fire.",
+        "Type": "Station coverage",
+        "CallNumber": "C2026-0009",
+        "CallName": "Structure fire"
+      },
+      "participants": [
+        { "UserId": "p3", "UnitId": 6 }
+      ],
+      "units": [
+        { "UnitId": 6, "UnitNameSnapshot": "Ladder 6", "OnScene": "2026-03-04T17:50:00Z", "Released": "2026-03-04T19:30:00Z" }
+      ],
+      "attachments": []
+    },
+    "export": {
+      "mustContain": [ "C2026-0009", "CB-0042", "Station coverage" ],
+      "restrictedFields": []
+    },
+    "print": {
+      "contains": [ "C2026-0009", "Station coverage", "Ladder 6" ],
+      "withheldWithoutRestrictedAccess": []
+    }
+  }
+}

@@ -196,5 +196,33 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<ProtectedReadResult> ResolveUdfFieldValuesForReadAsync(int departmentId,
 			IReadOnlyList<UdfFieldValue> values, string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		// ---- Records (RMS), catalog v10 ------------------------------------------------------------------
+
+		/// <summary>Resolves cataloged text columns on a batch of RMS rows for a grant-holding caller; REDACTED otherwise.</summary>
+		Task<ProtectedReadResult> ResolveRecordsEntitiesForReadAsync<T>(int departmentId, IReadOnlyList<(T Entity, string RowKey)> rows,
+			IReadOnlyDictionary<string, (System.Func<T, string> Get, System.Action<T, string> Set)> accessors,
+			string grantToken, string userId, CancellationToken cancellationToken = default) where T : class;
+
+		/// <summary>Resolves companion-enveloped coordinates back onto their typed columns; null otherwise.</summary>
+		Task<ProtectedReadResult> ResolveRecordsCompanionsForReadAsync<T>(int departmentId, IReadOnlyList<(T Entity, string RowKey)> rows,
+			IReadOnlyDictionary<string, (System.Func<T, decimal?> Get, System.Action<T, decimal?> Set, System.Func<T, string> GetEnvelope, System.Action<T, string> SetEnvelope)> companions,
+			string grantToken, string userId, CancellationToken cancellationToken = default) where T : class;
+
+		/// <summary>Resolves attachment metadata and, when asked, the bytes; enveloped bytes are stripped rather than served when not resolvable.</summary>
+		/// <summary>Resolves one cataloged binary column (RmsExportRuns.Data) for a grant-holding caller; the blob is nulled otherwise.</summary>
+		Task<ProtectedReadResult> ResolveRecordsBinaryForReadAsync(int departmentId, string fieldId, string rowKey, byte[] data, System.Action<byte[]> apply,
+			string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		Task<ProtectedReadResult> ResolveRecordsAttachmentsForReadAsync(int departmentId, IReadOnlyList<RmsRecordAttachment> attachments,
+			string grantToken, string userId, bool includeData, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Workload decrypt through the broker's purpose-bound lane (no grant). Returns true when every slot
+		/// resolved; false leaves every slot enveloped and names the reason on the result.
+		/// </summary>
+		Task<ProtectedReadResult> ResolveRecordsEntitiesForWorkloadAsync<T>(int departmentId, string purpose, IReadOnlyList<(T Entity, string RowKey)> rows,
+			IReadOnlyDictionary<string, (System.Func<T, string> Get, System.Action<T, string> Set)> accessors,
+			CancellationToken cancellationToken = default) where T : class;
 	}
 }

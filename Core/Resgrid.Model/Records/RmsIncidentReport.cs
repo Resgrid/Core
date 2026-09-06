@@ -271,6 +271,9 @@ namespace Resgrid.Model
 		public DateTime ImportedOn { get; set; }
 		public DateTime? CorrectedOn { get; set; }
 		public string CorrectedByUserId { get; set; }
+		/// <summary>ADP row marker (catalog v10): true once SourceValue/CurrentValue carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
+		public int ProtectedCatalogVersion { get; set; }
 		public DateTime CreatedOn { get; set; }
 		public DateTime ModifiedOn { get; set; }
 		public long RowVersion { get; set; }
@@ -424,6 +427,9 @@ namespace Resgrid.Model
 		public string CrossStreet2 { get; set; }
 		public decimal? Latitude { get; set; }
 		public decimal? Longitude { get; set; }
+		/// <summary>ADP companion envelope (catalog v10): carries the encrypted coordinate while Latitude is nulled.</summary>
+		public string ProtectedLatitudeEnvelope { get; set; }
+		public string ProtectedLongitudeEnvelope { get; set; }
 		public string Jurisdiction { get; set; }
 		public int SourceKind { get; set; }
 		public DateTime CreatedOn { get; set; }

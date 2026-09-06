@@ -130,6 +130,9 @@ namespace Resgrid.Model
 		public DateTime? ReleasedOn { get; set; }
 
 		public string ReleaseNotes { get; set; }
+		/// <summary>ADP row marker (catalog v10): true once the reference and notes carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
+		public int ProtectedCatalogVersion { get; set; }
 
 		public DateTime CreatedOn { get; set; }
 

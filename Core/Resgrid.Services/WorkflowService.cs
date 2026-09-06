@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -27,6 +29,7 @@ namespace Resgrid.Services
 		private readonly IWorkflowActionExecutorFactory _executorFactory;
 		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
 		private readonly ISubscriptionsService _subscriptionsService;
+		private readonly IRecordsExportService _recordsExportService;
 
 		public WorkflowService(
 			IWorkflowRepository workflowRepository,
@@ -38,8 +41,10 @@ namespace Resgrid.Services
 			IEncryptionService encryptionService,
 			IWorkflowActionExecutorFactory executorFactory,
 			IWorkflowTemplateContextBuilder contextBuilder,
-			ISubscriptionsService subscriptionsService)
+			ISubscriptionsService subscriptionsService,
+			IRecordsExportService recordsExportService)
 		{
+			_recordsExportService = recordsExportService;
 			_workflowRepository = workflowRepository;
 			_stepRepository = stepRepository;
 			_credentialRepository = credentialRepository;
@@ -234,6 +239,50 @@ namespace Resgrid.Services
 		}
 
 		// ── Execution ─────────────────────────────────────────────────────────────────
+
+		/// <summary>The export template a step's ActionConfig names (designer key <c>recordsExportTemplateId</c>), or null.</summary>
+		public static string ReadExportTemplateId(string actionConfigJson)
+		{
+			if (string.IsNullOrWhiteSpace(actionConfigJson))
+				return null;
+			try
+			{
+				var config = JObject.Parse(actionConfigJson);
+				var token = config.GetValue("recordsExportTemplateId", StringComparison.OrdinalIgnoreCase);
+				var value = token?.Type == JTokenType.String ? (string)token : null;
+				return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+			}
+			catch (JsonException)
+			{
+				return null;
+			}
+		}
+
+		/// <summary>record.id / record.kind / export.run_id from the dispatched Records payload, for the export render.</summary>
+		public static (string recordId, RmsRecordKind? recordKind, string scheduledRunId) ReadExportSubject(string eventPayloadJson)
+		{
+			try
+			{
+				var evt = string.IsNullOrWhiteSpace(eventPayloadJson) ? null : JsonConvert.DeserializeObject<RecordsWorkflowEvent>(eventPayloadJson);
+				var payload = evt?.Payload;
+				if (payload == null)
+					return (null, null, null);
+
+				var record = payload["record"] as JObject;
+				var recordId = record?["id"]?.Type == JTokenType.String ? (string)record["id"] : null;
+				RmsRecordKind? kind = null;
+				var kindName = record?["kind"]?.Type == JTokenType.String ? (string)record["kind"] : null;
+				if (Enum.TryParse<RmsRecordKind>(kindName, true, out var parsed))
+					kind = parsed;
+				var export = payload["export"] as JObject;
+				var runId = export?["run_id"]?.Type == JTokenType.String ? (string)export["run_id"] : null;
+				return (recordId, kind, runId);
+			}
+			catch (JsonException)
+			{
+				return (null, null, null);
+			}
+		}
 
 		public async Task<WorkflowRun> ExecuteWorkflowAsync(
 			string workflowId,
@@ -497,6 +546,54 @@ namespace Resgrid.Services
 								cred.EncryptedData, departmentId, departmentCode);
 					}
 
+					// ── Records report export attachment (RMS plan section 5.6) ─────
+					// A step that names an export template carries the rendered file: email actions attach it,
+					// file actions upload it. The render happens here, inside the run, so the run log records what
+					// was sent and an ADP-redacted export is visible as such.
+					WorkflowAttachment attachment = null;
+					var exportTemplateId = ReadExportTemplateId(renderedActionConfig);
+					if (!string.IsNullOrWhiteSpace(exportTemplateId))
+					{
+						if (!WorkflowTriggerEventTypes.IsRecordsTrigger(triggerEventType))
+						{
+							sw.Stop();
+							logEntry.Status       = (int)WorkflowRunStatus.Failed;
+							logEntry.ErrorMessage = "A report export can only be attached to a Records trigger.";
+							logEntry.DurationMs   = sw.ElapsedMilliseconds;
+							logEntry.CompletedOn  = DateTime.UtcNow;
+							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							anyFailure = true;
+							continue;
+						}
+
+						try
+						{
+							var (recordId, recordKind, scheduledRunId) = ReadExportSubject(eventPayloadJson);
+							var exportRun = await _recordsExportService.ResolveForWorkflowAsync(departmentId, exportTemplateId, recordId, recordKind, scheduledRunId, run.WorkflowRunId, cancellationToken);
+							attachment = new WorkflowAttachment
+							{
+								FileName    = exportRun.FileName,
+								ContentType = exportRun.ContentType,
+								Data        = exportRun.Data,
+								Redacted    = exportRun.Redacted,
+								ExportRunId = exportRun.RmsExportRunId
+							};
+						}
+						catch (Exception exportEx) when (!(exportEx is OperationCanceledException && cancellationToken.IsCancellationRequested))
+						{
+							sw.Stop();
+							logEntry.Status       = (int)WorkflowRunStatus.Failed;
+							logEntry.ErrorMessage = $"Report export failed: {exportEx.Message}";
+							logEntry.DurationMs   = sw.ElapsedMilliseconds;
+							logEntry.CompletedOn  = DateTime.UtcNow;
+							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							anyFailure = true;
+							Logging.LogException(exportEx);
+							continue;
+						}
+					}
+					// ── End export attachment ────────────────────────────────────────
+
 					var context = new WorkflowActionContext
 					{
 						RenderedContent        = renderedContent,
@@ -507,7 +604,8 @@ namespace Resgrid.Services
 						WorkflowRunId          = run.WorkflowRunId,
 						DepartmentId           = departmentId,
 						ActionType             = step.ActionType,
-						IsFreePlanDepartment   = isFreePlan
+						IsFreePlanDepartment   = isFreePlan,
+						Attachment             = attachment
 					};
 
 					var executor = _executorFactory.GetExecutor((WorkflowActionType)step.ActionType);
@@ -520,9 +618,12 @@ namespace Resgrid.Services
 					if (result.Success)
 					{
 						logEntry.Status       = (int)WorkflowRunStatus.Completed;
-						logEntry.ActionResult = result.ResultMessage?.Length > 4000
-							? result.ResultMessage.Substring(0, 4000)
-							: result.ResultMessage;
+						var resultMessage = attachment == null
+							? result.ResultMessage
+							: $"{result.ResultMessage} [export {attachment.ExportRunId}: {attachment.FileName}, {attachment.Data?.Length ?? 0} bytes{(attachment.Redacted ? ", protected fields withheld" : string.Empty)}]";
+						logEntry.ActionResult = resultMessage?.Length > 4000
+							? resultMessage.Substring(0, 4000)
+							: resultMessage;
 
 						// Record daily usage for outbound messaging actions
 						if (actionType == WorkflowActionType.SendEmail || actionType == WorkflowActionType.SendSms)

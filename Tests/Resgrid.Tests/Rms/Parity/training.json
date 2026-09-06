@@ -1,0 +1,91 @@
+{
+  "recordType": "Training",
+  "definitionKey": "system.training",
+  "legacy": {
+    "source": "Logs",
+    "log": {
+      "LogId": 1001,
+      "DepartmentId": 9,
+      "Narrative": "Hose evolutions and CPR refresher for A shift. All attendees completed the skills station.",
+      "LogType": 2,
+      "ExternalId": "EXT-TRN-1001",
+      "InitialReport": null,
+      "Type": null,
+      "StationGroupId": 11,
+      "Course": "CPR Refresher",
+      "CourseCode": "CPR-101",
+      "Instructors": "Capt. Reyes",
+      "Cause": null,
+      "InvestigatedByUserId": null,
+      "ContactName": null,
+      "ContactNumber": null,
+      "StartedOn": "2026-03-04T18:00:00Z",
+      "EndedOn": "2026-03-04T20:30:00Z",
+      "LoggedOn": "2026-03-04T21:05:00Z",
+      "LoggedByUserId": "author",
+      "OfficerUserId": null,
+      "CallId": null,
+      "OtherPersonnel": null,
+      "Location": null,
+      "OtherAgencies": null,
+      "OtherUnits": null,
+      "BodyLocation": null,
+      "PronouncedDeceasedBy": null
+    },
+    "users": [
+      { "LogUserId": 1, "LogId": 1001, "UnitId": 5, "UserId": "p2" },
+      { "LogUserId": 2, "LogId": 1001, "UnitId": null, "UserId": "p3" }
+    ],
+    "units": [
+      { "LogUnitId": 1, "LogId": 1001, "UnitId": 5, "Dispatched": null, "Enroute": null, "OnScene": "2026-03-04T18:00:00Z", "Released": "2026-03-04T20:30:00Z", "InQuarters": null }
+    ],
+    "attachments": [
+      { "LogAttachmentId": 1, "LogId": 1001, "FileName": "roster.pdf", "Type": "application/pdf", "Size": 3, "DataBase64": "AQID", "UserId": "author", "Timestamp": "2026-03-04T21:06:00Z", "Description": "Sign-in roster" }
+    ]
+  },
+  "expected": {
+    "numberPrefix": "TRN",
+    "list": {
+      "displaySummary": "CPR Refresher (CPR-101)",
+      "searchTextContains": [ "CPR Refresher", "CPR-101", "EXT-TRN-1001" ],
+      "searchTextExcludes": [ "Hose evolutions", "Capt. Reyes" ],
+      "occurredOn": "2026-03-04T18:00:00Z",
+      "callNumber": null,
+      "participantUserIds": [ "p2", "p3" ],
+      "unitIds": [ 5 ]
+    },
+    "detail": {
+      "externalId": "EXT-TRN-1001",
+      "stationGroupId": 11,
+      "startedOn": "2026-03-04T18:00:00Z",
+      "endedOn": "2026-03-04T20:30:00Z",
+      "details": {
+        "Narrative": "Hose evolutions and CPR refresher for A shift. All attendees completed the skills station.",
+        "Course": "CPR Refresher",
+        "CourseCode": "CPR-101",
+        "Instructors": "Capt. Reyes",
+        "InitialReport": null,
+        "Cause": null,
+        "ContactName": null
+      },
+      "participants": [
+        { "UserId": "p2", "UnitId": 5 },
+        { "UserId": "p3", "UnitId": null }
+      ],
+      "units": [
+        { "UnitId": 5, "UnitNameSnapshot": "Engine 5", "OnScene": "2026-03-04T18:00:00Z", "Released": "2026-03-04T20:30:00Z", "Dispatched": null }
+      ],
+      "attachments": [
+        { "FileName": "roster.pdf", "ContentType": "application/pdf", "ByteSize": 3, "Description": "Sign-in roster" }
+      ]
+    },
+    "export": {
+      "mustContain": [ "CPR Refresher", "CPR-101", "Capt. Reyes", "roster.pdf", "EXT-TRN-1001" ],
+      "restrictedFields": []
+    },
+    "print": {
+      "contains": [ "CPR Refresher", "CPR-101", "Capt. Reyes", "Engine 5", "roster.pdf" ],
+      "withheldWithoutRestrictedAccess": []
+    }
+  }
+}

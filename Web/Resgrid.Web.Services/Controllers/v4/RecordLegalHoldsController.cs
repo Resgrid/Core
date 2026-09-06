@@ -26,6 +26,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<IActionResult> Place([FromBody] RmsRecordLegalHold input, CancellationToken cancellationToken)
 		{
 			if (!(await _cutover.GetModuleStateAsync(DepartmentId)).FlagEnabled) return NotFound();
+			if (input == null) return BadRequest();
 			try { return StatusCode(201, await _holds.PlaceAsync(DepartmentId, UserId, input, cancellationToken)); }
 			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { return Problem(ex.Message, statusCode: 409); }

@@ -45,6 +45,10 @@
 			{
 				<a class="btn btn-default" asp-controller="Disclosures" asp-action="Index" asp-route-area="User"><i class="fa fa-gavel"></i> @localizer["Disclosures"]</a>
 			}
+			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanManageRecordReports())
+			{
+				<a class="btn btn-default" asp-controller="RecordsExportTemplates" asp-action="Index" asp-route-area="User"><i class="fa fa-paper-plane"></i> @localizer["ExportTemplates"]</a>
+			}
 			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanExportRecords())
 			{
 				<a class="btn btn-default" asp-controller="Records" asp-action="ExportList" asp-route-area="User" asp-route-year="@Model.Year" asp-route-definitionKey="@Model.DefinitionKey" asp-route-state="@Model.StateFilter" asp-route-q="@Model.Query" asp-route-format="csv"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>

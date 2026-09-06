@@ -10,6 +10,37 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	{
 		public string Message { get; set; }
 		public string ErrorMessage { get; set; }
+
+		/// <summary>True when the department enforces Protected Data over Records (the shield indicator).</summary>
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public bool ProtectionEnforced { get; set; }
+
+		/// <summary>True when this render carries REDACTED placeholders because no valid grant was presented.</summary>
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public bool ProtectionRedacted { get; set; }
+
+		/// <summary>Reason code behind <see cref="ProtectionRedacted"/> (step_up_required, grant_expired, ...).</summary>
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public string ProtectionReason { get; set; }
+
+		/// <summary>
+		/// The Protected Data Grant an edit page carries through its own form posts and autosaves after the reveal
+		/// module handed it over (RMS plan section 5.9.3). Set only by the *Revealed actions and the error re-renders
+		/// of a post that carried it; never bound from the request.
+		/// </summary>
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public string ProtectedGrant { get; set; }
+
+		/// <summary>Expiry of <see cref="ProtectedGrant"/> as the reveal module reported it; times the in-page expiry warning.</summary>
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]
+		public DateTime? ProtectedGrantExpiresOnUtc { get; set; }
+
+		public void ApplyProtection(ProtectedReadResult protection)
+		{
+			ProtectionEnforced = protection?.IsProtected == true;
+			ProtectionRedacted = protection?.RedactedFields?.Count > 0;
+			ProtectionReason = protection?.ProtectedReason;
+		}
 	}
 
 	/// <summary>
@@ -245,5 +276,12 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public RecordsPrintLayoutConfig PrintLayout { get; set; } = new RecordsPrintLayoutConfig();
 		public string PrintLayoutVersion { get; set; }
 		public bool HasLogo { get; set; }
+
+		// Setting 77 (RecordsDisclosureConfig, plan section 4.9): the public-records clock and production defaults.
+		public int DisclosureStatutoryClockDays { get; set; }
+		public string DisclosureDefaultRedactionProfile { get; set; }
+		public string DisclosureReleaseApproverUserId { get; set; }
+		public List<SelectListItem> RedactionProfiles { get; set; } = new List<SelectListItem>();
+		public List<SelectListItem> ReleaseApprovers { get; set; } = new List<SelectListItem>();
 	}
 }

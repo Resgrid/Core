@@ -614,4 +614,7 @@
   <data name="SkippedRuns" xml:space="preserve">
     <value>المتخطاة</value>
   </data>
+  <data name="ExportTemplate" xml:space="preserve"><value>تصدير تقرير السجلات</value></data>
+  <data name="ExportTemplateNone" xml:space="preserve"><value>لا شيء (إرسال القالب المُعالَج فقط)</value></data>
+  <data name="ExportTemplateHelp" xml:space="preserve"><value>تُرفق خطوات البريد الإلكتروني التصدير؛ وترفع خطوات رفع الملفات التصدير باسم ملفه بدلًا من النص المُعالَج. تُصمَّم التصديرات ضمن السجلات &gt; تصدير التقارير.</value></data>
 </root>

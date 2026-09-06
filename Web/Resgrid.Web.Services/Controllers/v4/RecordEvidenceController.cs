@@ -306,6 +306,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		#endregion
-		private Task<bool> CanViewRestrictedAsync() => _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
+		private async Task<bool> CanViewRestrictedAsync() => ClaimsAuthorizationHelper.CanViewRestrictedRecords()
+			&& await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 	}
 }

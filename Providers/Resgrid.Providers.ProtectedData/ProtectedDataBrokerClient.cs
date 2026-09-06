@@ -102,6 +102,19 @@ namespace Resgrid.Providers.ProtectedData
 			IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken = default) =>
 			SendAsync("api/v1/broker/encrypt", departmentId, grantToken, requestId, items, cancellationToken);
 
+		/// <summary>
+		/// The purpose-bound workload decrypt lane (RMS plan section 5.9.2): no grant, the workload key plus a
+		/// named purpose the broker must have been configured to allow for this department. A broker without
+		/// the lane answers 404 and the caller fails closed with <c>workload_purpose_denied</c>.
+		/// </summary>
+		public Task<ProtectedDataBrokerResult> DecryptForWorkloadAsync(int departmentId, string purpose, string requestId,
+			IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(purpose))
+				return Task.FromResult(Failed("workload_purpose_denied"));
+			return SendAsync("api/v1/broker/workload/decrypt?purpose=" + Uri.EscapeDataString(purpose.Trim()), departmentId, null, requestId, items, cancellationToken);
+		}
+
 		private async Task<ProtectedDataBrokerResult> SendAsync(string path, int departmentId, string grantToken,
 			string requestId, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken)
 		{

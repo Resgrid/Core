@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
@@ -33,11 +34,16 @@ namespace Resgrid.Services.Records
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly ICallsService _calls;
 		private readonly IRmsExternalReferencesRepository _references;
+		private readonly IRecordsProtectionService _protection;
+		private readonly IDomainEventOutboxService _outbox;
 
 		public RecordsEvidenceService(IRmsEvidenceArtifactsRepository artifacts, IRmsOperationalRecordsRepository records,
 			IRmsIncidentReportsRepository incidentReports, IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork,
-			IEnumerable<IRecordEvidenceAdapter> adapters, IRecordsAuthorizationService authorization, ICallsService calls, IRmsExternalReferencesRepository references)
+			IEnumerable<IRecordEvidenceAdapter> adapters, IRecordsAuthorizationService authorization, ICallsService calls, IRmsExternalReferencesRepository references,
+			IRecordsProtectionService protection, IDomainEventOutboxService outbox)
 		{
+			_protection = protection;
+			_outbox = outbox;
 			_artifacts = artifacts;
 			_records = records;
 			_incidentReports = incidentReports;
@@ -162,10 +168,14 @@ namespace Resgrid.Services.Records
 				RowVersion = 1
 			};
 
+			// The row is sealed in place for storage (ADP catalog v10) and the caller gets its plaintext back afterwards.
+			var plaintext = PlaintextSnapshot<RmsEvidenceArtifact>.Take(artifact, RmsProtectedFields.Evidence);
+			var outboxIds = new List<long>();
 			await InTransactionAsync(async () =>
 			{
 				await RequireOpenRecordAsync(request, fence: true, cancellationToken);
 				if (capture.Classification != RmsEvidenceClassification.Unrestricted && !await _authorization.HasPermissionAsync(request.CapturedByUserId, request.DepartmentId, PermissionTypes.ViewRestrictedRecords)) throw new UnauthorizedAccessException();
+				await _protection.ProtectEvidenceAsync(request.DepartmentId, artifact, request.CapturedByUserId, cancellationToken);
 				// A re-capture of the same source supersedes rather than replaces: the earlier artifact is what an
 				// earlier revision attested to, and deleting it would rewrite history.
 				var current = await _artifacts.GetCurrentDraftOfKindAsync(request.DepartmentId, request.RecordId, request.Kind, artifact.SourceEntityId);
@@ -179,10 +189,75 @@ namespace Resgrid.Services.Records
 				}
 
 				await _artifacts.InsertAsync(artifact, cancellationToken, true);
+				outboxIds.Add(await EnqueueCapturedAsync(request, artifact, cancellationToken));
 				await AuditAsync(artifact, RmsAccessAuditAction.Change, "Evidence captured: " + request.Kind, cancellationToken);
 			});
-
+			plaintext.Restore();
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 			return artifact;
+		}
+
+		/// <summary>RecordEvidenceCaptured (158): the artifact's identity, source and checksum; never its manifest, title or reason.</summary>
+		private async Task<long> EnqueueCapturedAsync(RecordEvidenceCaptureRequest request, RmsEvidenceArtifact artifact, CancellationToken cancellationToken)
+		{
+			object recordBlock;
+			string aggregateType;
+			int version;
+			if (request.RecordKind == RmsRecordKind.IncidentReport)
+			{
+				var report = await _incidentReports.GetByIdForDepartmentAsync(request.DepartmentId, request.RecordId);
+				recordBlock = IncidentReportsService.RecordBlock(report, null, (RmsRecordState)report.State);
+				aggregateType = IncidentReportsService.IncidentAggregate;
+				version = report.RevisionCount;
+			}
+			else
+			{
+				var record = await _records.GetByIdForDepartmentAsync(request.DepartmentId, request.RecordId);
+				recordBlock = RecordsService.RecordBlock(record, null, (RmsRecordState)record.State);
+				aggregateType = DomainEventProducers.RecordsAggregate;
+				version = record.RevisionCount;
+			}
+
+			var entry = await _outbox.EnqueueAsync(request.DepartmentId, DomainEventProducers.Records, new DomainEventEnvelope
+			{
+				EventName = WorkflowTriggerEventType.RecordEvidenceCaptured.ToString(),
+				SchemaVersion = 1,
+				AggregateType = aggregateType,
+				AggregateId = request.RecordId,
+				AggregateVersion = version,
+				Trigger = WorkflowTriggerEventType.RecordEvidenceCaptured,
+				Payload = new Dictionary<string, object>
+				{
+					["record"] = recordBlock,
+					["evidence"] = EvidenceBlock(artifact),
+					["protection"] = IncidentReportsService.ProtectionBlock(await _protection.GetCatalogVersionAsync(request.DepartmentId))
+				},
+				CorrelationId = request.RecordId,
+				OriginClient = (RmsOriginClient)artifact.OriginClient
+			}, cancellationToken);
+			return entry.DomainEventOutboxId;
+		}
+
+		public static object EvidenceBlock(RmsEvidenceArtifact artifact)
+		{
+			return new
+			{
+				id = artifact.RmsEvidenceArtifactId,
+				record_id = artifact.RecordId,
+				record_kind = ((RmsRecordKind)artifact.RecordKind).ToString(),
+				kind = ((RmsEvidenceKind)artifact.Kind).ToString(),
+				source_subsystem = artifact.SourceSubsystem,
+				source_entity_type = artifact.SourceEntityType,
+				source_entity_id = artifact.SourceEntityId,
+				classification = ((RmsEvidenceClassification)artifact.Classification).ToString(),
+				checksum = artifact.Checksum,
+				byte_size = artifact.ByteSize,
+				source_item_count = artifact.SourceItemCount,
+				coverage_start = artifact.CoverageStart,
+				coverage_end = artifact.CoverageEnd,
+				captured_by_user_id = artifact.CapturedByUserId,
+				captured_on = artifact.CapturedOn
+			};
 		}
 
 		public async Task<List<RmsEvidenceArtifact>> GetHistoryAsync(int departmentId, string recordId, int skip, int take) =>
@@ -190,12 +265,17 @@ namespace Resgrid.Services.Records
 
 		public async Task<List<RmsEvidenceArtifact>> GetForRecordAsync(int departmentId, string recordId, string revisionId = null, bool includeSuperseded = false)
 		{
-			return (await _artifacts.GetForRecordAsync(departmentId, recordId, revisionId, includeSuperseded))?.ToList() ?? new List<RmsEvidenceArtifact>();
+			var rows = (await _artifacts.GetForRecordAsync(departmentId, recordId, revisionId, includeSuperseded))?.ToList() ?? new List<RmsEvidenceArtifact>();
+			await _protection.RevealEvidenceAsync(departmentId, rows);
+			return rows;
 		}
 
-		public Task<RmsEvidenceArtifact> GetAsync(int departmentId, string artifactId)
+		public async Task<RmsEvidenceArtifact> GetAsync(int departmentId, string artifactId)
 		{
-			return _artifacts.GetByIdForDepartmentAsync(departmentId, artifactId);
+			var row = await _artifacts.GetByIdForDepartmentAsync(departmentId, artifactId);
+			if (row != null)
+				await _protection.RevealEvidenceAsync(departmentId, new[] { row });
+			return row;
 		}
 
 		public Task<int> BindToRevisionAsync(int departmentId, string recordId, string revisionId, CancellationToken cancellationToken = default)
@@ -212,6 +292,8 @@ namespace Resgrid.Services.Records
 			if (artifact == null || string.IsNullOrWhiteSpace(artifact.Checksum))
 				return false;
 
+			// The checksum attests the plaintext manifest; verification needs it revealed.
+			(await _protection.RevealEvidenceAsync(departmentId, new[] { artifact })).RequireRevealed("evidence verification");
 			return string.Equals(artifact.Checksum, RecordSnapshotSerializer.Checksum(artifact.ManifestJson ?? string.Empty), StringComparison.Ordinal);
 		}
 

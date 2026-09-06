@@ -1,0 +1,78 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordsExportTemplatesIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["ExportTemplates"];
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["ExportTemplates"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@localizer["ExportTemplates"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-primary" asp-controller="RecordsExportTemplates" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @localizer["NewExportTemplate"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox">
+		<div class="ibox-content">
+			<p class="text-muted">@localizer["ExportTemplatesIntro"]</p>
+			<p class="text-muted"><i class="fa fa-random"></i> @localizer["ExportWorkflowHint"]</p>
+			@if (Model.ProtectionEnforced)
+			{
+				<div class="alert alert-info"><i class="fa fa-shield"></i> @localizer["ExportAdpWarning"]</div>
+			}
+			@if (Model.Templates.Count == 0)
+			{
+				<p>@localizer["ExportNoTemplates"]</p>
+			}
+			else
+			{
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>@localizer["ExportTemplateName"]</th>
+							<th>@localizer["ExportTemplateKey"]</th>
+							<th>@localizer["ExportFormat"]</th>
+							<th>@localizer["ExportScope"]</th>
+							<th>@localizer["ExportSchedule"]</th>
+							<th>@localizer["ExportNextRun"]</th>
+							<th>@localizer["ExportLastRun"]</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var t in Model.Templates)
+						{
+							<tr>
+								<td><a asp-controller="RecordsExportTemplates" asp-action="Edit" asp-route-area="User" asp-route-id="@t.RmsExportTemplateId">@t.Name</a> @if (!t.IsEnabled) { <span class="label label-default">@commonLocalizer["Disabled"]</span> } @if (t.IncludeNarrative || t.IncludeRestricted) { <span class="label label-warning" title="@localizer["ExportEgressAcknowledgedOn"] @When(t.EgressAcknowledgedOn)"><i class="fa fa-exclamation-triangle"></i></span> }</td>
+								<td><code>@t.TemplateKey</code></td>
+								<td>@((RmsExportFormat)t.Format)</td>
+								<td>@((RmsExportScope)t.Scope == RmsExportScope.Window ? localizer["ExportScopeWindow"] : localizer["ExportScopeTriggeringRecord"])</td>
+								<td>@((RmsExportScheduleKind)t.ScheduleKind switch { RmsExportScheduleKind.Daily => localizer["ExportScheduleDaily"].Value, RmsExportScheduleKind.Weekly => localizer["ExportScheduleWeekly"].Value, RmsExportScheduleKind.Monthly => localizer["ExportScheduleMonthly"].Value, _ => localizer["ExportScheduleNone"].Value })</td>
+								<td>@When(t.NextRunOn)</td>
+								<td>@When(t.LastRunOn)</td>
+								<td class="text-right">
+									<a class="btn btn-xs btn-default" asp-controller="RecordsExportTemplates" asp-action="Runs" asp-route-area="User" asp-route-id="@t.RmsExportTemplateId"><i class="fa fa-history"></i> @localizer["ExportRuns"]</a>
+									<form method="post" style="display:inline" asp-controller="RecordsExportTemplates" asp-action="Delete" asp-route-area="User" asp-route-id="@t.RmsExportTemplateId" onsubmit="return confirm('@localizer["ExportTemplateDeleteConfirm"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></button></form>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+	</div>
+</div>

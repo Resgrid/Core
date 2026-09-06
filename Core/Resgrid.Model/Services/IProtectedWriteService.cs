@@ -175,5 +175,28 @@ namespace Resgrid.Model.Services
 		/// <summary>Prepares a user-defined field value (catalog v2).</summary>
 		Task<ProtectedWriteResult> PrepareUdfFieldValueWriteAsync(int departmentId, UdfFieldValue value,
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		// ---- Records (RMS), catalog v10 ------------------------------------------------------------------
+		// RMS entities are numerous and uniform (string PK, DepartmentId, text columns), so they share one
+		// generic seam driven by RmsProtectedFields accessor maps rather than a method per entity. Coordinates
+		// and attachment bytes have their own shapes.
+
+		/// <summary>Encrypts every cataloged text column named by <paramref name="accessors"/> in place, marking the row protected on success.</summary>
+		Task<ProtectedWriteResult> PrepareRecordsEntityWriteAsync<T>(int departmentId, T entity, T existing, string rowKey,
+			System.Collections.Generic.IReadOnlyDictionary<string, (System.Func<T, string> Get, System.Action<T, string> Set)> accessors,
+			System.Action markProtected, string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default) where T : class;
+
+		/// <summary>Encrypts typed coordinate columns into their companion envelopes (RmsLocations, RmsExposures).</summary>
+		Task<ProtectedWriteResult> PrepareRecordsCompanionWriteAsync<T>(int departmentId, T entity, string rowKey,
+			System.Collections.Generic.IReadOnlyDictionary<string, (System.Func<T, decimal?> Get, System.Action<T, decimal?> Set, System.Func<T, string> GetEnvelope, System.Action<T, string> SetEnvelope)> companions,
+			System.Action markProtected, string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default) where T : class;
+
+		/// <summary>Encrypts an attachment's file name/description and its bytes (rgdpb) in place.</summary>
+		/// <summary>One cataloged binary column (RmsExportRuns.Data) for a Records row; the text columns ride <see cref="PrepareRecordsEntityWriteAsync{T}"/>.</summary>
+		Task<ProtectedWriteResult> PrepareRecordsBinaryWriteAsync(int departmentId, string fieldId, string rowKey, byte[] data, System.Action<byte[]> apply, System.Action markProtected,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		Task<ProtectedWriteResult> PrepareRecordsAttachmentWriteAsync(int departmentId, RmsRecordAttachment attachment, RmsRecordAttachment existing,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
 	}
 }

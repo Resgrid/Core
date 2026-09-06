@@ -33,7 +33,7 @@ namespace Resgrid.Providers.Workflow.Executors
 					return WorkflowActionResult.Failed("Azure Blob upload failed.", "Azure Blob credential is missing a 'ContainerName'. Please update the credential with the target container name.");
 
 				var blobName = string.IsNullOrWhiteSpace(config.BlobName)
-					? $"workflow/{DateTime.UtcNow:yyyy/MM/dd}/{DateTime.UtcNow:HHmmss}.txt"
+					? $"workflow/{DateTime.UtcNow:yyyy/MM/dd}/{(context.Attachment?.FileName ?? $"{DateTime.UtcNow:HHmmss}.txt")}"
 					: config.BlobName;
 
 				var serviceClient = new BlobServiceClient(cred.ConnectionString);
@@ -41,12 +41,12 @@ namespace Resgrid.Providers.Workflow.Executors
 				await containerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
 				var blobClient = containerClient.GetBlobClient(blobName);
-				var bytes = Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
+				var bytes = context.Attachment?.Data ?? Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
 				using var stream = new MemoryStream(bytes);
 
 				var headers = new BlobHttpHeaders
 				{
-					ContentType = string.IsNullOrWhiteSpace(config.ContentType) ? "text/plain" : config.ContentType
+					ContentType = context.Attachment?.ContentType ?? (string.IsNullOrWhiteSpace(config.ContentType) ? "text/plain" : config.ContentType)
 				};
 				await blobClient.UploadAsync(stream, new BlobUploadOptions { HttpHeaders = headers }, cancellationToken);
 

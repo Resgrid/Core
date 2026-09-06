@@ -170,6 +170,118 @@ namespace Resgrid.Model
 			new TemplateVariableDescriptor("obligation.overdue_count", "How many times this obligation has gone overdue", "int", false),
 		};
 
+		// protection.* (RMS plan section 5.9.3) rides every Records trigger: the department's ADP posture, never a value.
+		private static readonly List<TemplateVariableDescriptor> ProtectionVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("protection.is_protected", "Whether the department protects record content (Advanced Data Protection)", "bool", false),
+			new TemplateVariableDescriptor("protection.is_redacted", "Whether any value in this payload was withheld (always false: payloads carry header facts only)", "bool", false),
+			new TemplateVariableDescriptor("protection.protected_catalog_version", "The department's pinned protection catalog version (0 when unprotected)", "int", false),
+		};
+
+		// attachment.* (trigger 115): identity, type, size and scan state of the file just added; never its name, description or bytes.
+		private static readonly List<TemplateVariableDescriptor> AttachmentVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("attachment.id", "Attachment ID", "string", false),
+			new TemplateVariableDescriptor("attachment.content_type", "MIME type", "string", false),
+			new TemplateVariableDescriptor("attachment.byte_size", "Size in bytes", "int", false),
+			new TemplateVariableDescriptor("attachment.checksum", "SHA-256 of the stored bytes", "string", false),
+			new TemplateVariableDescriptor("attachment.classification", "Unrestricted or Restricted", "string", false),
+			new TemplateVariableDescriptor("attachment.scan_state", "Malware scan state (Pending, Clean, Rejected)", "string", false),
+			new TemplateVariableDescriptor("attachment.uploaded_by_user_id", "Uploader user ID", "string", false),
+			new TemplateVariableDescriptor("attachment.uploaded_on", "When it was uploaded (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("attachment.count", "Attachments now on the record", "int", false),
+		};
+
+		// disclosure.* (triggers 152-155): the request's clock and profiles plus the production's identity; never the requester or the packet.
+		private static readonly List<TemplateVariableDescriptor> DisclosureVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("disclosure.request_id", "Disclosure request ID", "string", false),
+			new TemplateVariableDescriptor("disclosure.request_number", "Department request number", "string", false),
+			new TemplateVariableDescriptor("disclosure.state", "Request state (Received, Scoping, InReview, Produced, Released, Denied, Withdrawn, Closed)", "string", false),
+			new TemplateVariableDescriptor("disclosure.received_on", "When the request was received (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("disclosure.statutory_due_on", "Statutory deadline (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("disclosure.jurisdiction_profile", "Jurisdiction profile", "string", false),
+			new TemplateVariableDescriptor("disclosure.redaction_profile", "Redaction profile (Standard, NoPersonalIdentifiers, FullDisclosure)", "string", false),
+			new TemplateVariableDescriptor("disclosure.assigned_to_user_id", "Assigned custodian user ID", "string", false),
+			new TemplateVariableDescriptor("disclosure.closed_on", "When the request closed (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("disclosure.disposition", "Closing disposition (Released, Denied, Withdrawn, Closed)", "string", false),
+			new TemplateVariableDescriptor("disclosure.production_id", "Production ID (produce/release only)", "string", false),
+			new TemplateVariableDescriptor("disclosure.production_number", "Production number within the request", "int", false),
+			new TemplateVariableDescriptor("disclosure.record_count", "Records in the packet", "int", false),
+			new TemplateVariableDescriptor("disclosure.withheld_field_count", "Fields withheld in the packet", "int", false),
+			new TemplateVariableDescriptor("disclosure.checksum", "SHA-256 of the packet artifact", "string", false),
+			new TemplateVariableDescriptor("disclosure.byte_size", "Packet size in bytes", "int", false),
+			new TemplateVariableDescriptor("disclosure.released_on", "When the packet was released (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("disclosure.released_by_user_id", "Releasing user ID", "string", false),
+			new TemplateVariableDescriptor("disclosure.delivery_method", "How the packet was delivered", "string", false),
+		};
+
+		// legal_hold.* (triggers 156/157): scope, period, reason and actors; never the reference number or the notes.
+		private static readonly List<TemplateVariableDescriptor> LegalHoldVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("legal_hold.id", "Hold ID", "string", false),
+			new TemplateVariableDescriptor("legal_hold.record_id", "Held record ID (empty for a definition/date scope)", "string", false),
+			new TemplateVariableDescriptor("legal_hold.definition_key", "Held definition (empty for all)", "string", false),
+			new TemplateVariableDescriptor("legal_hold.period_start", "Scope period start (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("legal_hold.period_end", "Scope period end (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("legal_hold.reason", "Hold reason (Litigation, Investigation, Public records request, Other)", "string", false),
+			new TemplateVariableDescriptor("legal_hold.placed_by_user_id", "Who placed the hold", "string", false),
+			new TemplateVariableDescriptor("legal_hold.placed_on", "When it was placed (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("legal_hold.released_by_user_id", "Who released it", "string", false),
+			new TemplateVariableDescriptor("legal_hold.released_on", "When it was released (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("legal_hold.is_released", "Whether the hold is released", "bool", false),
+		};
+
+		// evidence.* (trigger 158): the captured artifact's identity, source and checksum; never its manifest, title or reason.
+		private static readonly List<TemplateVariableDescriptor> EvidenceVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("evidence.id", "Evidence artifact ID", "string", false),
+			new TemplateVariableDescriptor("evidence.record_id", "Record the evidence supports", "string", false),
+			new TemplateVariableDescriptor("evidence.record_kind", "Operational or IncidentReport", "string", false),
+			new TemplateVariableDescriptor("evidence.kind", "Evidence source (ReadinessPacket, RunCardActivation, TrackingFix, ChatPromotion, InventoryUsage, CertificationSnapshot)", "string", false),
+			new TemplateVariableDescriptor("evidence.source_subsystem", "Source subsystem", "string", false),
+			new TemplateVariableDescriptor("evidence.source_entity_type", "Source entity type", "string", false),
+			new TemplateVariableDescriptor("evidence.source_entity_id", "Source entity ID", "string", false),
+			new TemplateVariableDescriptor("evidence.classification", "Unrestricted or Restricted", "string", false),
+			new TemplateVariableDescriptor("evidence.checksum", "SHA-256 of the manifest", "string", false),
+			new TemplateVariableDescriptor("evidence.byte_size", "Manifest size in bytes", "int", false),
+			new TemplateVariableDescriptor("evidence.source_item_count", "Items the manifest covers", "int", false),
+			new TemplateVariableDescriptor("evidence.coverage_start", "Coverage window start (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("evidence.coverage_end", "Coverage window end (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("evidence.captured_by_user_id", "Capturing user ID", "string", false),
+			new TemplateVariableDescriptor("evidence.captured_on", "When it was captured (UTC)", "datetime", false),
+		};
+
+		// purge.* (trigger 159): what retention removed. The content is gone, so nothing else can be carried.
+		private static readonly List<TemplateVariableDescriptor> PurgeVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("purge.purged_on", "When the content was purged (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("purge.attachments_purged", "Attachments removed with the record", "int", false),
+			new TemplateVariableDescriptor("purge.search_erasure_pending", "Whether the search index erasure is still pending", "bool", false),
+			new TemplateVariableDescriptor("purge.reason", "Retention reason recorded by the sweep", "string", false),
+		};
+
+		// export.* (trigger 160): the scheduled export run a Workflow step can carry; never the rendered content.
+		private static readonly List<TemplateVariableDescriptor> ExportVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("export.run_id", "Export run ID (a step attaches this run)", "string", false),
+			new TemplateVariableDescriptor("export.template_id", "Export template ID", "string", false),
+			new TemplateVariableDescriptor("export.template_key", "Export template key", "string", false),
+			new TemplateVariableDescriptor("export.template_name", "Export template name", "string", false),
+			new TemplateVariableDescriptor("export.format", "Csv, Json or Pdf", "string", false),
+			new TemplateVariableDescriptor("export.scope", "TriggeringRecord or Window", "string", false),
+			new TemplateVariableDescriptor("export.window_start", "Finalized-on window start (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("export.window_end", "Finalized-on window end (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("export.record_count", "Records in the export", "int", false),
+			new TemplateVariableDescriptor("export.file_name", "File name", "string", false),
+			new TemplateVariableDescriptor("export.content_type", "MIME type", "string", false),
+			new TemplateVariableDescriptor("export.byte_size", "Size in bytes", "int", false),
+			new TemplateVariableDescriptor("export.checksum", "SHA-256 of the file", "string", false),
+			new TemplateVariableDescriptor("export.redacted", "Whether protected fields were withheld from the file", "bool", false),
+			new TemplateVariableDescriptor("export.generated_on", "When it was rendered (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("export.expires_on", "When the stored copy expires (UTC)", "datetime", false),
+		};
+
 		// review.* rides only on the two review-path triggers: review bookkeeping, never record content.
 		private static readonly List<TemplateVariableDescriptor> ReviewVariables = new List<TemplateVariableDescriptor>
 		{
@@ -655,17 +767,84 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.RecordCreated:
 				case WorkflowTriggerEventType.RecordSubmittedForReview:
 				case WorkflowTriggerEventType.RecordReturnedForCorrection:
+				case WorkflowTriggerEventType.RecordApproved:
 				case WorkflowTriggerEventType.RecordFinalized:
 				case WorkflowTriggerEventType.RecordAmended:
 				case WorkflowTriggerEventType.RecordVoided:
 				case WorkflowTriggerEventType.RecordCancelled:
 					list.AddRange(RecordEventVariables);
 					list.AddRange(RecordVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind (Operational, IncidentReport or IncidentAnalysis)", "string", false));
 					list.AddRange(RecordChangeVariables);
 					if (eventType == WorkflowTriggerEventType.RecordCancelled)
 						list.Add(new TemplateVariableDescriptor("record_change.number_disposition", "What happened to a reserved record number (none or voided)", "string", false));
 					if (eventType == WorkflowTriggerEventType.RecordSubmittedForReview || eventType == WorkflowTriggerEventType.RecordReturnedForCorrection)
 						list.AddRange(ReviewVariables);
+					if (eventType == WorkflowTriggerEventType.RecordApproved)
+					{
+						list.Add(new TemplateVariableDescriptor("review.reviewer_user_id", "Reviewer user ID", "string", false));
+						list.Add(new TemplateVariableDescriptor("review.approver_user_id", "Approving user ID", "string", false));
+						list.Add(new TemplateVariableDescriptor("review.approved_on", "When the record was approved (UTC)", "datetime", false));
+						list.Add(new TemplateVariableDescriptor("review.submitted_for_review_on", "When it was submitted for review (UTC)", "datetime", false));
+						list.Add(new TemplateVariableDescriptor("review.review_due_on", "When the review was due (UTC)", "datetime", false));
+						list.Add(new TemplateVariableDescriptor("review.return_count", "How many times it was returned", "int", false));
+					}
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordAttachmentAdded:
+					list.AddRange(RecordEventVariables);
+					list.AddRange(RecordVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind (Operational or IncidentReport)", "string", false));
+					list.AddRange(RecordChangeVariables);
+					list.AddRange(AttachmentVariables);
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordDisclosureRequested:
+				case WorkflowTriggerEventType.RecordDisclosureProduced:
+				case WorkflowTriggerEventType.RecordDisclosureReleased:
+				case WorkflowTriggerEventType.RecordDisclosureClosed:
+					list.AddRange(RecordEventVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Always Disclosure", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.department_id", "Department ID", "int", false));
+					list.AddRange(DisclosureVariables);
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordLegalHoldPlaced:
+				case WorkflowTriggerEventType.RecordLegalHoldReleased:
+					list.AddRange(RecordEventVariables);
+					list.AddRange(RecordVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind of the held record (empty for a definition/date scope)", "string", false));
+					list.AddRange(LegalHoldVariables);
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordEvidenceCaptured:
+					list.AddRange(RecordEventVariables);
+					list.AddRange(RecordVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind (Operational or IncidentReport)", "string", false));
+					list.AddRange(EvidenceVariables);
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordPurged:
+					list.AddRange(RecordEventVariables);
+					list.Add(new TemplateVariableDescriptor("record.id", "Purged record ID", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind (Operational or IncidentReport)", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.department_id", "Department ID", "int", false));
+					list.Add(new TemplateVariableDescriptor("record.state", "Always Purged", "string", false));
+					list.AddRange(PurgeVariables);
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordExportScheduled:
+					list.AddRange(RecordEventVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Always Export", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.department_id", "Department ID", "int", false));
+					list.AddRange(ExportVariables);
+					list.AddRange(ProtectionVariables);
 					break;
 
 				case WorkflowTriggerEventType.RecordSubmissionQueued:
@@ -674,11 +853,12 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.RecordSubmissionFailed:
 					list.AddRange(RecordEventVariables);
 					list.AddRange(RecordVariables);
-					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind (Operational or IncidentReport)", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind (Operational, IncidentReport or IncidentAnalysis)", "string", false));
 					list.Add(new TemplateVariableDescriptor("record.incident_number", "Department incident number sent to the destination", "string", false));
 					list.Add(new TemplateVariableDescriptor("record.neris_incident_id", "NERIS incident ID once assigned", "string", false));
 					list.AddRange(RecordChangeVariables);
 					list.AddRange(SubmissionVariables);
+					list.AddRange(ProtectionVariables);
 					break;
 
 				case WorkflowTriggerEventType.RecordOverdue:
@@ -686,6 +866,7 @@ namespace Resgrid.Model
 					list.AddRange(RecordVariables);
 					list.Add(new TemplateVariableDescriptor("record.kind", "Record kind (Operational or IncidentReport)", "string", false));
 					list.AddRange(ObligationVariables);
+					list.AddRange(ProtectionVariables);
 					break;
 			}
 

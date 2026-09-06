@@ -239,6 +239,16 @@
                         <!-- ── Action Config Panels ── -->
                         <div class="config-section-label">@localizer["ActionConfig"]</div>
 
+                        @if ((bool)(ViewBag.RecordsExportAvailable ?? false))
+                        {
+                            <!-- Records report export (RMS plan 5.6): email attaches it, file actions upload it -->
+                            <div class="form-group" id="cfg_export_group" style="display:none;">
+                                <label>@localizer["ExportTemplate"]</label>
+                                <select id="cfg_export_template" class="form-control"><option value="">@localizer["ExportTemplateNone"]</option></select>
+                                <span class="help-block">@localizer["ExportTemplateHelp"]</span>
+                            </div>
+                        }
+
                         <!-- 0 · SendEmail -->
                         <div class="action-config-panel" data-action="0">
                             <div class="row">
@@ -867,6 +877,7 @@
             });
             var panel = document.querySelector('.action-config-panel[data-action="' + actionType + '"]');
             if (panel) panel.classList.add('active');
+            showExportGroup(actionType);
         }
 
         sel.addEventListener('change', function () {
@@ -902,12 +913,36 @@
             });
         });
 
+        // ── Records report export selector (RMS plan 5.6) ─────────────────────
+        var exportTemplates = @Html.Raw(ViewBag.RecordsExportTemplatesJson ?? "[]");
+        var exportActionTypes = [0, 6, 7, 8, 12, 13, 14];
+        (function () {
+            var sel = document.getElementById('cfg_export_template');
+            if (!sel) return;
+            exportTemplates.forEach(function (t) {
+                var opt = document.createElement('option');
+                opt.value = t.id;
+                opt.textContent = t.name + ' (' + t.key + ' · ' + t.format + ' · ' + t.scope + ')';
+                sel.appendChild(opt);
+            });
+        })();
+        function showExportGroup(actionType) {
+            var group = document.getElementById('cfg_export_group');
+            if (!group) return;
+            group.style.display = exportActionTypes.indexOf(parseInt(actionType, 10)) >= 0 ? 'block' : 'none';
+        }
+        function withExport(config) {
+            var sel = document.getElementById('cfg_export_template');
+            if (sel && sel.value) config.recordsExportTemplateId = sel.value;
+            return JSON.stringify(config);
+        }
+
         // ── Build ActionConfig JSON from structured fields ─────────────────────
         function buildActionConfig(actionType) {
             var t = parseInt(actionType, 10);
             switch (t) {
                 case 0:  // SendEmail
-                    return JSON.stringify({
+                    return withExport({
                         to:      document.getElementById('cfg_email_to').value.trim(),
                         cc:      document.getElementById('cfg_email_cc').value.trim() || null,
                         subject: document.getElementById('cfg_email_subject').value.trim()
@@ -941,17 +976,17 @@
                         timeoutSeconds: parseInt(document.getElementById('cfg_apidel_timeout').value, 10) || 30
                     });
                 case 6:  // UploadFileFtp
-                    return JSON.stringify({
+                    return withExport({
                         remotePath: document.getElementById('cfg_ftp_path').value.trim() || '/',
                         filename:   document.getElementById('cfg_ftp_filename').value.trim() || null
                     });
                 case 7:  // UploadFileSftp
-                    return JSON.stringify({
+                    return withExport({
                         remotePath: document.getElementById('cfg_sftp_path').value.trim() || '/',
                         filename:   document.getElementById('cfg_sftp_filename').value.trim() || null
                     });
                 case 8:  // UploadFileS3
-                    return JSON.stringify({
+                    return withExport({
                         s3Key:       document.getElementById('cfg_s3_key').value.trim() || null,
                         contentType: document.getElementById('cfg_s3_ct').value.trim() || 'text/plain'
                     });
@@ -972,17 +1007,17 @@
                         avatarUrl: document.getElementById('cfg_discord_avatar').value.trim() || null
                     });
                 case 12: // UploadFileAzureBlob
-                    return JSON.stringify({
+                    return withExport({
                         blobName:    document.getElementById('cfg_azure_blob').value.trim() || null,
                         contentType: document.getElementById('cfg_azure_ct').value.trim() || 'text/plain'
                     });
                 case 13: // UploadFileBox
-                    return JSON.stringify({
+                    return withExport({
                         folderId: document.getElementById('cfg_box_folder').value.trim() || '0',
                         filename: document.getElementById('cfg_box_filename').value.trim() || null
                     });
                 case 14: // UploadFileDropbox
-                    return JSON.stringify({
+                    return withExport({
                         targetPath: document.getElementById('cfg_dropbox_path').value.trim() || '/',
                         filename:   document.getElementById('cfg_dropbox_filename').value.trim() || null,
                         writeMode:  document.getElementById('cfg_dropbox_mode').value
@@ -1001,6 +1036,8 @@
                 var el = document.getElementById(id);
                 if (el) el.value = v != null ? v : '';
             }
+            val('cfg_export_template', cfg.recordsExportTemplateId || cfg.RecordsExportTemplateId || '');
+            showExportGroup(t);
             switch (t) {
                 case 0:
                     val('cfg_email_to',      cfg.to || cfg.To || '');
@@ -1124,6 +1161,8 @@
             });
             var modeEl = document.getElementById('cfg_dropbox_mode');
             if (modeEl) modeEl.value = 'overwrite';
+            var exportEl = document.getElementById('cfg_export_template');
+            if (exportEl) exportEl.value = '';
         }
 
         // ── Open modal for ADD ────────────────────────────────────────────────

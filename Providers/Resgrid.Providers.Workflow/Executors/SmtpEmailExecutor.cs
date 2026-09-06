@@ -118,6 +118,14 @@ namespace Resgrid.Providers.Workflow.Executors
 					// one by stripping HTML (which can lose <br> → newline conversions).
 					TextBody = rawContent
 				};
+				// A Records report export rides as a real attachment (RMS plan section 5.6).
+				if (context.Attachment?.Data != null)
+				{
+					var attachmentType = MimeKit.ContentType.TryParse(context.Attachment.ContentType ?? string.Empty, out var parsedType)
+						? parsedType
+						: new MimeKit.ContentType("application", "octet-stream");
+					bodyBuilder.Attachments.Add(context.Attachment.FileName ?? "export.dat", context.Attachment.Data, attachmentType);
+				}
 				message.Body = bodyBuilder.ToMessageBody();
 
 				using var smtp = new SmtpClient();

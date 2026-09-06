@@ -27,6 +27,15 @@ namespace Resgrid.Model.Providers
 		Task<ProtectedDataBrokerResult> DecryptAsync(int departmentId, string grantToken, string requestId,
 			IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Decrypts for a WORKLOAD caller through the broker's purpose-bound lane (no grant): used only where a
+		/// department has acknowledged a specific egress of protected content, such as a NERIS submission from
+		/// worker 41 (RMS plan section 5.9.2). The broker records the purpose and refuses purposes it was not
+		/// configured for; a refusal reads as <c>workload_purpose_denied</c>.
+		/// </summary>
+		Task<ProtectedDataBrokerResult> DecryptForWorkloadAsync(int departmentId, string purpose, string requestId,
+			IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken = default);
+
 		/// <summary>Encrypts plaintext for an attended, granted caller. Items carry plaintext in Value.</summary>
 		Task<ProtectedDataBrokerResult> EncryptAsync(int departmentId, string grantToken, string requestId,
 			IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken cancellationToken = default);

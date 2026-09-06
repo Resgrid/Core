@@ -716,8 +716,18 @@
   <data name="AdpErrorGeneric" xml:space="preserve">
     <value>Die Anfrage ist fehlgeschlagen. Bitte erneut versuchen.</value>
   </data>
+  <data name="AdpExpiringWarning" xml:space="preserve">
+    <value>Ihre Verifizierung läuft in {0} ab. Verifizieren Sie sich jetzt erneut, um ohne Verlust Ihrer Änderungen weiterzuarbeiten.</value>
+  </data>
+  <data name="AdpExpiredWarning" xml:space="preserve">
+    <value>Ihre Verifizierung ist abgelaufen. Verifizieren Sie sich erneut, um fortzufahren; nicht gespeicherte Änderungen bleiben bis dahin auf dieser Seite.</value>
+  </data>
+  <data name="AdpReverify" xml:space="preserve">
+    <value>Erneut verifizieren</value>
+  </data>
   <data name="RecordsModule" xml:space="preserve"><value>Akten</value></data>
   <data name="DepartmentProfile" xml:space="preserve">
     <value>Abteilungsprofil</value>
   </data>
+  <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Aufbewahrungssperren für Akten</value></data>
 </root>

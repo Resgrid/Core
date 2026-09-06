@@ -82,7 +82,7 @@
 				</li>
 				@if (await recordsAuthorization.HasPermissionAsync(ClaimsAuthorizationHelper.GetUserId(), ClaimsAuthorizationHelper.GetDepartmentId(), Resgrid.Model.PermissionTypes.ManageRecordLegalHold))
 				{
-					<li><a asp-controller="RecordLegalHolds" asp-action="Index" asp-route-area="User"><i class="fa fa-lock"></i> Records preservation holds</a></li>
+					<li><a asp-controller="RecordLegalHolds" asp-action="Index" asp-route-area="User"><i class="fa fa-lock"></i> @commonLocalizer["RecordsLegalHoldsModule"]</a></li>
 				}
 			}
 			else if (SettingsHelper.IsLogsEnabled())

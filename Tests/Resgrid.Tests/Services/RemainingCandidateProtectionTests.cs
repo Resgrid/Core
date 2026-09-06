@@ -20,9 +20,12 @@ namespace Resgrid.Tests.Services
 		public void SetUp() => _catalog = new ProtectedFieldCatalog();
 
 		[Test]
-		public void The_catalog_is_at_version_nine_and_the_last_candidates_are_what_moved_it()
+		public void The_catalog_is_at_version_ten_and_the_last_candidates_are_what_moved_it()
 		{
-			_catalog.Version.Should().Be(9);
+			// v9 closed the remaining Protected Data candidates; v10 (2026-09-05) is the Records (RMS) family,
+			// pinned field-by-field in RmsProtectedFieldsCatalogTests.
+			_catalog.Version.Should().Be(10);
+			_catalog.GetAddedBetween(9, 10).Select(e => e.FieldId).Should().BeEquivalentTo(Resgrid.Model.RmsProtectedFields.AllFieldIds());
 
 			_catalog.GetAddedBetween(8, 9).Select(e => e.FieldId)
 				.Should().BeEquivalentTo(new[]

@@ -28,7 +28,8 @@ namespace Resgrid.Tests.Rms
 			_auth.Setup(a => a.CanUserViewRecordAsync("officer", "report", 1)).ReturnsAsync(true); _auth.Setup(a => a.HasPermissionAsync("officer", 1, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
 			_scanner.Setup(s => s.ScanAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>())).ReturnsAsync(new RecordAttachmentScanResult { State = RmsAttachmentScanState.Clean });
 			_store.Reports.Add(new RmsIncidentReport { DepartmentId = 1, RmsIncidentReportId = "report", AuthorUserId = "officer", State = (int)RmsRecordState.Draft, RowVersion = 1 });
-			_service = new IncidentAttachmentsService(_store.ReportsRepo.Object, _store.Shared.AttachmentsRepo.Object, _store.Shared.RevisionsRepo.Object, _store.Shared.AuditsRepo.Object, _auth.Object, _scanner.Object, _store.UnitOfWork.Object);
+			_service = new IncidentAttachmentsService(_store.ReportsRepo.Object, _store.Shared.AttachmentsRepo.Object, _store.Shared.RevisionsRepo.Object, _store.Shared.AuditsRepo.Object, _auth.Object, _scanner.Object, _store.UnitOfWork.Object,
+				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
 		}
 		private Task<RmsRecordAttachment> Add() => _service.AddAsync(1, "officer", "report", 1, "scene.txt", "text/plain", Encoding.UTF8.GetBytes("scene evidence"), "Scene notes");
 

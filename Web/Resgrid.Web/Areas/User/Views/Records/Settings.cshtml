@@ -193,6 +193,28 @@
 				</div>
 
 				<div class="ibox float-e-margins">
+					<div class="ibox-title"><h5>@localizer["DisclosureSettingsHeader"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["DisclosureSettingsIntro"]</p>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["StatutoryClockDays"]</label>
+							<div class="col-sm-2"><input type="number" min="1" max="365" class="form-control" asp-for="DisclosureStatutoryClockDays" /></div>
+							<div class="col-sm-7"><span class="help-block">@localizer["StatutoryClockDaysHelp"]</span></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["DefaultRedactionProfile"]</label>
+							<div class="col-sm-4"><select class="form-control" asp-for="DisclosureDefaultRedactionProfile" asp-items="Model.RedactionProfiles"></select></div>
+							<div class="col-sm-5"><span class="help-block">@localizer["DefaultRedactionProfileHelp"]</span></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["DisclosureReleaseApprover"]</label>
+							<div class="col-sm-4"><select class="form-control" asp-for="DisclosureReleaseApproverUserId" asp-items="Model.ReleaseApprovers"></select></div>
+							<div class="col-sm-5"><span class="help-block">@localizer["DisclosureReleaseApproverHelp"]</span></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox float-e-margins">
 					<div class="ibox-title"><h5>@localizer["SearchIndexStatus"]</h5></div>
 					<div class="ibox-content">
 						<dl class="dl-horizontal">

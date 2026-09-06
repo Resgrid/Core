@@ -521,6 +521,17 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordSubmissionRejected:
 				case WorkflowTriggerEventType.RecordSubmissionFailed:
 				case WorkflowTriggerEventType.RecordOverdue:
+				case WorkflowTriggerEventType.RecordApproved:
+				case WorkflowTriggerEventType.RecordAttachmentAdded:
+				case WorkflowTriggerEventType.RecordDisclosureRequested:
+				case WorkflowTriggerEventType.RecordDisclosureProduced:
+				case WorkflowTriggerEventType.RecordDisclosureReleased:
+				case WorkflowTriggerEventType.RecordDisclosureClosed:
+				case WorkflowTriggerEventType.RecordLegalHoldPlaced:
+				case WorkflowTriggerEventType.RecordLegalHoldReleased:
+				case WorkflowTriggerEventType.RecordEvidenceCaptured:
+				case WorkflowTriggerEventType.RecordPurged:
+				case WorkflowTriggerEventType.RecordExportScheduled:
 					AddRecordsSamples(obj, eventType);
 					break;
 			}
@@ -581,6 +592,25 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordCancelled:
 					currentState = "Cancelled";
 					break;
+				case WorkflowTriggerEventType.RecordApproved:
+					previousState = "ReadyForReview";
+					currentState = "Approved";
+					break;
+				case WorkflowTriggerEventType.RecordAttachmentAdded:
+				case WorkflowTriggerEventType.RecordEvidenceCaptured:
+				case WorkflowTriggerEventType.RecordLegalHoldPlaced:
+				case WorkflowTriggerEventType.RecordLegalHoldReleased:
+					recordNumber = "TRN-2026-0042";
+					revisionNumber = 1;
+					revisionId = "0f3c1d2e-5b6a-4c7d-8e9f-0a1b2c3d4e5f";
+					currentState = "Finalized";
+					previousState = "Finalized";
+					finalizedOn = DateTime.Now.AddDays(-1);
+					break;
+				case WorkflowTriggerEventType.RecordPurged:
+					previousState = "Finalized";
+					currentState = "Purged";
+					break;
 			}
 
 			var e = new ScriptObject();
@@ -597,6 +627,7 @@ namespace Resgrid.Services
 
 			var r = new ScriptObject();
 			r["id"] = "9d8c7b6a-5f4e-4d3c-b2a1-0f9e8d7c6b5a";
+			r["kind"] = "Operational";
 			r["record_number"] = recordNumber;
 			r["draft_reference"] = "D-7Q2MX";
 			r["definition_key"] = "system.training";
@@ -662,6 +693,142 @@ namespace Resgrid.Services
 				o["responsible_user_id"] = "00000000-0000-0000-0000-000000000000";
 				o["overdue_count"] = 1;
 				obj["obligation"] = o;
+			}
+
+			var protection = new ScriptObject();
+			protection["is_protected"] = false;
+			protection["is_redacted"] = false;
+			protection["redacted_fields"] = new ScriptArray();
+			protection["protected_catalog_version"] = 0;
+			obj["protection"] = protection;
+
+			if (eventType == WorkflowTriggerEventType.RecordApproved)
+			{
+				var approval = new ScriptObject();
+				approval["reviewer_user_id"] = "00000000-0000-0000-0000-000000000002";
+				approval["approver_user_id"] = "00000000-0000-0000-0000-000000000002";
+				approval["approved_on"] = DateTime.Now;
+				approval["submitted_for_review_on"] = DateTime.Now.AddHours(-5);
+				approval["review_due_on"] = DateTime.Now.AddHours(43);
+				approval["return_count"] = 0;
+				obj["review"] = approval;
+			}
+
+			if (eventType == WorkflowTriggerEventType.RecordAttachmentAdded)
+			{
+				var a = new ScriptObject();
+				a["id"] = "4e5f6a7b-8c9d-4e0f-a1b2-c3d4e5f6a7b8";
+				a["content_type"] = "application/pdf";
+				a["byte_size"] = 184320;
+				a["checksum"] = "9b74c9897bac770ffc029102a200c5de7cbb3d8bd2e6f9a5c14f1f2f8a1d0c11";
+				a["classification"] = "Unrestricted";
+				a["scan_state"] = "Clean";
+				a["uploaded_by_user_id"] = "00000000-0000-0000-0000-000000000001";
+				a["uploaded_on"] = DateTime.Now;
+				a["count"] = 2;
+				obj["attachment"] = a;
+			}
+
+			if (eventType >= WorkflowTriggerEventType.RecordDisclosureRequested && eventType <= WorkflowTriggerEventType.RecordDisclosureClosed)
+			{
+				r["kind"] = "Disclosure";
+				var produced = eventType != WorkflowTriggerEventType.RecordDisclosureRequested;
+				var d = new ScriptObject();
+				d["request_id"] = "6d7e8f9a-0b1c-4d2e-8f3a-4b5c6d7e8f9a";
+				d["request_number"] = "PRR-2026-0007";
+				d["state"] = eventType == WorkflowTriggerEventType.RecordDisclosureRequested ? "Received" : eventType == WorkflowTriggerEventType.RecordDisclosureProduced ? "Produced" : eventType == WorkflowTriggerEventType.RecordDisclosureReleased ? "Released" : "Closed";
+				d["received_on"] = DateTime.Now.AddDays(-6);
+				d["statutory_due_on"] = DateTime.Now.AddDays(4);
+				d["jurisdiction_profile"] = "State public records act";
+				d["redaction_profile"] = "Standard";
+				d["assigned_to_user_id"] = "00000000-0000-0000-0000-000000000003";
+				d["closed_on"] = eventType == WorkflowTriggerEventType.RecordDisclosureClosed || eventType == WorkflowTriggerEventType.RecordDisclosureReleased ? DateTime.Now : (DateTime?)null;
+				d["disposition"] = eventType == WorkflowTriggerEventType.RecordDisclosureClosed ? "Withdrawn" : eventType == WorkflowTriggerEventType.RecordDisclosureReleased ? "Released" : "";
+				d["production_id"] = produced ? "7e8f9a0b-1c2d-4e3f-9a4b-5c6d7e8f9a0b" : "";
+				d["production_number"] = produced ? 1 : (int?)null;
+				d["record_count"] = produced ? 3 : (int?)null;
+				d["withheld_field_count"] = produced ? 4 : (int?)null;
+				d["checksum"] = produced ? "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae" : "";
+				d["byte_size"] = produced ? 512000 : (int?)null;
+				d["released_on"] = eventType == WorkflowTriggerEventType.RecordDisclosureReleased ? DateTime.Now : (DateTime?)null;
+				d["released_by_user_id"] = eventType == WorkflowTriggerEventType.RecordDisclosureReleased ? "00000000-0000-0000-0000-000000000003" : "";
+				d["delivery_method"] = eventType == WorkflowTriggerEventType.RecordDisclosureReleased ? "Secure email" : "";
+				obj["disclosure"] = d;
+			}
+
+			if (eventType == WorkflowTriggerEventType.RecordLegalHoldPlaced || eventType == WorkflowTriggerEventType.RecordLegalHoldReleased)
+			{
+				r["kind"] = "Operational";
+				var released = eventType == WorkflowTriggerEventType.RecordLegalHoldReleased;
+				var h = new ScriptObject();
+				h["id"] = "8f9a0b1c-2d3e-4f4a-8b5c-6d7e8f9a0b1c";
+				h["record_id"] = "9d8c7b6a-5f4e-4d3c-b2a1-0f9e8d7c6b5a";
+				h["definition_key"] = "";
+				h["period_start"] = (DateTime?)null;
+				h["period_end"] = (DateTime?)null;
+				h["reason"] = "Litigation";
+				h["placed_by_user_id"] = "00000000-0000-0000-0000-000000000003";
+				h["placed_on"] = DateTime.Now.AddDays(released ? -30 : 0);
+				h["released_by_user_id"] = released ? "00000000-0000-0000-0000-000000000003" : "";
+				h["released_on"] = released ? DateTime.Now : (DateTime?)null;
+				h["is_released"] = released;
+				obj["legal_hold"] = h;
+			}
+
+			if (eventType == WorkflowTriggerEventType.RecordEvidenceCaptured)
+			{
+				r["kind"] = "Operational";
+				var ev = new ScriptObject();
+				ev["id"] = "0b1c2d3e-4f5a-4b6c-8d7e-8f9a0b1c2d3e";
+				ev["record_id"] = "9d8c7b6a-5f4e-4d3c-b2a1-0f9e8d7c6b5a";
+				ev["record_kind"] = "Operational";
+				ev["kind"] = "RunCardActivation";
+				ev["source_subsystem"] = "Dispatch";
+				ev["source_entity_type"] = "RunCardActivation";
+				ev["source_entity_id"] = "4471";
+				ev["classification"] = "Unrestricted";
+				ev["checksum"] = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+				ev["byte_size"] = 2048;
+				ev["source_item_count"] = 3;
+				ev["coverage_start"] = DateTime.Now.AddHours(-3);
+				ev["coverage_end"] = DateTime.Now.AddHours(-1);
+				ev["captured_by_user_id"] = "00000000-0000-0000-0000-000000000001";
+				ev["captured_on"] = DateTime.Now;
+				obj["evidence"] = ev;
+			}
+
+			if (eventType == WorkflowTriggerEventType.RecordPurged)
+			{
+				r["kind"] = "Operational";
+				var p = new ScriptObject();
+				p["purged_on"] = DateTime.Now;
+				p["attachments_purged"] = 2;
+				p["search_erasure_pending"] = true;
+				p["reason"] = "Retention period elapsed (7 years)";
+				obj["purge"] = p;
+			}
+
+			if (eventType == WorkflowTriggerEventType.RecordExportScheduled)
+			{
+				r["kind"] = "Export";
+				var x = new ScriptObject();
+				x["run_id"] = "1c2d3e4f-5a6b-4c7d-8e9f-0a1b2c3d4e5f";
+				x["template_id"] = "2d3e4f5a-6b7c-4d8e-9f0a-1b2c3d4e5f6a";
+				x["template_key"] = "state-monthly-runs";
+				x["template_name"] = "State monthly run report";
+				x["format"] = "Csv";
+				x["scope"] = "Window";
+				x["window_start"] = DateTime.Now.AddMonths(-1);
+				x["window_end"] = DateTime.Now;
+				x["record_count"] = 127;
+				x["file_name"] = "state-monthly-runs-20260901-0600.csv";
+				x["content_type"] = "text/csv";
+				x["byte_size"] = 48213;
+				x["checksum"] = "a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a";
+				x["redacted"] = false;
+				x["generated_on"] = DateTime.Now;
+				x["expires_on"] = DateTime.Now.AddDays(30);
+				obj["export"] = x;
 			}
 
 			if (eventType == WorkflowTriggerEventType.RecordSubmittedForReview || eventType == WorkflowTriggerEventType.RecordReturnedForCorrection)

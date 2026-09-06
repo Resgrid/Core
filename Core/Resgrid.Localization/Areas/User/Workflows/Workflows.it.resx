@@ -615,4 +615,7 @@
   <data name="SkippedRuns" xml:space="preserve">
     <value>Saltati</value>
   </data>
+  <data name="ExportTemplate" xml:space="preserve"><value>Esportazione report dei record</value></data>
+  <data name="ExportTemplateNone" xml:space="preserve"><value>Nessuna (invia solo il modello renderizzato)</value></data>
+  <data name="ExportTemplateHelp" xml:space="preserve"><value>I passaggi e-mail allegano l'esportazione; i passaggi di caricamento file la caricano con il suo nome file al posto del testo renderizzato. Le esportazioni si progettano in Record &gt; Esportazioni di report.</value></data>
 </root>

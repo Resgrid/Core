@@ -31,6 +31,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<IUnitsService> _units;
 		private Mock<ICallsService> _calls;
 		private Mock<IDepartmentDataProtectionService> _adp;
+		private PassthroughRecordsProtection _protection;
 		private Mock<IEventAggregator> _aggregator;
 		private List<Resgrid.Model.Events.DomainEventDispatchedEvent> _published;
 		private List<Resgrid.Model.Queue.NotificationItem> _notifications;
@@ -69,6 +70,7 @@ namespace Resgrid.Tests.Rms
 
 			_adp = new Mock<IDepartmentDataProtectionService>();
 			_adp.Setup(a => a.GetPinnedCatalogVersionAsync(Dept)).ReturnsAsync(0);
+			_protection = new PassthroughRecordsProtection();
 
 			_published = new List<Resgrid.Model.Events.DomainEventDispatchedEvent>();
 			_aggregator = new Mock<IEventAggregator>();
@@ -92,7 +94,7 @@ namespace Resgrid.Tests.Rms
 			_service = new RecordsService(_store.RecordsRepo.Object, new Resgrid.Services.Records.RmsRecordValueService(_store.DetailsRepo.Object), _store.ParticipantsRepo.Object, _store.UnitsRepo.Object,
 				_store.AttachmentsRepo.Object, _store.RevisionsRepo.Object, _evidence.Object, _store.ScopesRepo.Object, _store.SharesRepo.Object, _store.ProjectionsRepo.Object,
 				_store.AuditsRepo.Object, outbox, _cutover.Object, _settings.Object, _groups.Object, _profiles.Object, _units.Object, _calls.Object, _adp.Object,
-				_store.UnitOfWork.Object, _outboundQueue.Object, new Resgrid.Services.Records.NullRecordAttachmentScanner(), _authorization.Object, Mock.Of<IRecordsUdfService>());
+				_store.UnitOfWork.Object, _outboundQueue.Object, new Resgrid.Services.Records.NullRecordAttachmentScanner(), _authorization.Object, Mock.Of<IRecordsUdfService>(), _protection);
 		}
 
 		[Test]
@@ -619,6 +621,41 @@ namespace Resgrid.Tests.Rms
 			var finalized = await _service.FinalizeAsync(Dept, "author", created.Record.RmsOperationalRecordId, saved.Record.RowVersion, "1", null, null);
 			finalized.Record.RecordNumber.Should().StartWith("UNT-");
 			_store.Outbox.Should().NotContain(o => o.TriggerEventType == (int)WorkflowTriggerEventType.LogAdded, "Unit Activity never emitted LogAdded and must not start now");
+		}
+
+		[Test]
+		public async Task Approval_emits_record_approved_with_the_review_and_protection_blocks()
+		{
+			var created = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			_store.Records.Single(r => r.RmsOperationalRecordId == created.Record.RmsOperationalRecordId).LifecyclePreset = (int)RmsLifecyclePreset.ApprovalAcknowledgement;
+			await _service.SubmitForReviewAsync(Dept, "author", created.Record.RmsOperationalRecordId, created.Record.RowVersion);
+
+			await _service.ApproveAsync(Dept, "chief", created.Record.RmsOperationalRecordId);
+
+			_published.Last().EventName.Should().Be("RecordApproved");
+			var payload = Newtonsoft.Json.Linq.JObject.Parse(_store.Outbox.Single(o => o.EventName == "RecordApproved").PayloadJson);
+			((string)payload["record"]["state"]).Should().Be("Approved");
+			((string)payload["review"]["approver_user_id"]).Should().Be("chief");
+			((bool)payload["protection"]["is_redacted"]).Should().BeFalse();
+			((int)payload["protection"]["protected_catalog_version"]).Should().Be(0);
+			_store.Outbox.Single(o => o.EventName == "RecordApproved").TriggerEventType.Should().Be((int)WorkflowTriggerEventType.RecordApproved);
+		}
+
+		[Test]
+		public async Task Adding_an_attachment_emits_record_attachment_added_without_the_file_name()
+		{
+			var created = await _service.CreateDraftAsync(Dept, "author", TrainingInput());
+			await _service.AddAttachmentAsync(Dept, "author", created.Record.RmsOperationalRecordId, "private-roster.pdf", "application/pdf", new byte[] { 9, 8, 7 }, "Roster with names");
+
+			var entry = _store.Outbox.Single(o => o.EventName == "RecordAttachmentAdded");
+			entry.TriggerEventType.Should().Be((int)WorkflowTriggerEventType.RecordAttachmentAdded);
+			var payload = Newtonsoft.Json.Linq.JObject.Parse(entry.PayloadJson);
+			((string)payload["attachment"]["content_type"]).Should().Be("application/pdf");
+			((int)payload["attachment"]["byte_size"]).Should().Be(3);
+			((int)payload["attachment"]["count"]).Should().Be(1);
+			((string)payload["attachment"]["scan_state"]).Should().NotBeNullOrEmpty();
+			entry.PayloadJson.Should().NotContain("private-roster").And.NotContain("Roster with names", "file names and descriptions are record content");
+			_protection.Writes.Should().Contain("attachment", "the attachment passes the ADP seam before it is stored");
 		}
 
 		[Test]

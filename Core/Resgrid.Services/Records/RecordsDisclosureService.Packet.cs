@@ -40,6 +40,7 @@ namespace Resgrid.Services.Records
 				if (revisionId != null)
 				{
 					var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, revisionId);
+					if (revision != null) (await _protection.RevealRevisionsAsync(departmentId, new[] { revision })).RequireRevealed("disclosure scope");
 					if (revision == null || revision.RecordId != id || revision.RecordKind != (int)kind || RecordSnapshotSerializer.Checksum(revision.SnapshotJson) != revision.Checksum) throw new InvalidOperationException("A disclosure source failed its revision integrity check.");
 					var saved = JObject.Parse(revision.SnapshotJson); header = kind != RmsRecordKind.Operational ? (JObject)saved["Report"] ?? header : saved;
 				}
@@ -73,7 +74,12 @@ namespace Resgrid.Services.Records
 						var analysis = await _analyses.GetForReportAsync(departmentId, r.RmsIncidentReportId);
 						if (analysis == null || analysis.DeletedOn.HasValue) continue;
 						var parentHeader = JObject.FromObject(r);
-						if (r.CurrentRevisionId != null) parentHeader = (JObject)JObject.Parse((await _revisions.GetByIdForDepartmentAsync(departmentId, r.CurrentRevisionId)).SnapshotJson)["Report"] ?? parentHeader;
+						if (r.CurrentRevisionId != null)
+						{
+							var parentRevision = await _revisions.GetByIdForDepartmentAsync(departmentId, r.CurrentRevisionId);
+							(await _protection.RevealRevisionsAsync(departmentId, new[] { parentRevision })).RequireRevealed("disclosure scope");
+							parentHeader = (JObject)JObject.Parse(parentRevision.SnapshotJson)["Report"] ?? parentHeader;
+						}
 						await Add(analysis.RmsIncidentAnalysisId, (r.RecordNumber ?? r.DraftReference) + " · analysis", RmsDefinitionKeys.NerisIncidentReport, analysis.CurrentRevisionId, parentHeader, false, RmsRecordKind.IncidentAnalysis);
 					}
 					if (page.Count < 250 || result.Truncated) break;
@@ -156,6 +162,7 @@ namespace Resgrid.Services.Records
 							metadata.Replace(new JObject { ["Withheld"] = true }); continue;
 						}
 						var file = await _attachments.GetHistoricalByIdForDepartmentAsync(departmentId, id);
+						if (file != null) (await _protection.RevealAttachmentsAsync(departmentId, new[] { file }, true, cancellationToken)).RequireRevealed("disclosure production");
 						if (file == null || file.RecordId != expected.RecordId || file.Checksum != fileDecision.Checksum || file.ScanState != (int)RmsAttachmentScanState.Clean || file.Data == null || RecordSnapshotSerializer.Checksum(file.Data) != file.Checksum) throw new InvalidOperationException("A reviewed attachment is unavailable, changed, or has not passed scanning.");
 						if (file.RequiresRestrictedAccess && !restricted) throw new UnauthorizedAccessException();
 						byte[] releasedBytes = file.Data; var releasedName = (string)metadata["FileName"]; var releasedType = (string)metadata["ContentType"]; var releasedChecksum = file.Checksum;
@@ -195,6 +202,9 @@ namespace Resgrid.Services.Records
 			var production = new RmsDisclosureProduction { RmsDisclosureProductionId = Guid.NewGuid().ToString(), DepartmentId = departmentId, ProtectionId = Guid.NewGuid().ToString(), DisclosureRequestId = requestId,
 				RedactionProfile = profile, ProducedSetJson = produced.ToString(Formatting.None), ArtifactJson = json, Checksum = RecordSnapshotSerializer.Checksum(json), ByteSize = Encoding.UTF8.GetByteCount(json),
 				RecordCount = produced.Count, WithheldFieldsJson = JsonConvert.SerializeObject(withheld), WithheldFieldCount = withheld.Count, PreparedByUserId = userId, PreparedOn = now, CreatedOn = now, ModifiedOn = now, RowVersion = 1 };
+			// The row is sealed in place for storage (ADP catalog v10) and the caller gets its plaintext back afterwards.
+			var plaintext = PlaintextSnapshot<RmsDisclosureProduction>.Take(production, RmsProtectedFields.DisclosureProductions);
+			var outboxIds = new List<long>();
 			await InTransactionAsync(async () =>
 			{
 				await RequireDisclosureAsync(departmentId, userId);
@@ -203,11 +213,15 @@ namespace Resgrid.Services.Records
 				if (finalReview.ScopeChecksum != current.ScopeChecksum || finalReview.Records.Any(r => !current.Records.Any(c => c.RecordId == r.RecordId && c.RevisionId == r.RevisionId && c.ContentChecksum == r.ContentChecksum))) throw new InvalidOperationException("The scope or access changed during production. Reload the review.");
 				await GuardRequestAsync(request, request.RowVersion, cancellationToken);
 				production.ProductionNumber = await _productions.GetMaxProductionNumberAsync(departmentId, requestId) + 1;
+				await _protection.ProtectDisclosureProductionAsync(departmentId, production, userId, cancellationToken);
 				await _productions.InsertAsync(production, cancellationToken, true);
 				request.State = (int)RmsDisclosureState.Produced; request.ModifiedOn = now; request.ModifiedByUserId = userId; request.RowVersion++;
 				await _requests.UpdateAsync(request, cancellationToken, true);
+				outboxIds.Add(await EnqueueDisclosureAsync(request, production, WorkflowTriggerEventType.RecordDisclosureProduced, cancellationToken));
 				foreach (var record in current.Records) await AuditAsync(departmentId, userId, record.RecordId, RmsAccessAuditAction.Export, "Disclosure production reviewed", new { production.RmsDisclosureProductionId, production.Checksum }, cancellationToken);
 			});
+			plaintext.Restore();
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 			return production;
 		}
 

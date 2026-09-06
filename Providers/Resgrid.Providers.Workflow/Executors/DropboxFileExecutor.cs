@@ -36,7 +36,7 @@ namespace Resgrid.Providers.Workflow.Executors
 					return WorkflowActionResult.Failed("Dropbox upload failed.", "Dropbox credential is missing 'AppSecret'. Please update the credential.");
 
 				var filename = string.IsNullOrWhiteSpace(config.Filename)
-					? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt"
+					? context.Attachment?.FileName ?? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt"
 					: config.Filename;
 				var targetPath = $"{config.TargetPath?.TrimEnd('/')}/{filename}";
 
@@ -48,7 +48,7 @@ namespace Resgrid.Providers.Workflow.Executors
 					appKey: cred.AppKey, appSecret: cred.AppSecret,
 					new DropboxClientConfig("ResgridWorkflow/1.0"));
 
-				var bytes = Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
+				var bytes = context.Attachment?.Data ?? Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
 				using var stream = new MemoryStream(bytes);
 				var metadata = await client.Files.UploadAsync(targetPath, writeMode, body: stream);
 

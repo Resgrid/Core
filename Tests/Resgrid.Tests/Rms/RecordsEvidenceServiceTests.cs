@@ -95,7 +95,8 @@ namespace Resgrid.Tests.Rms
 			_authorization.Setup(a => a.CanUserViewRecordAsync("author", It.IsAny<string>(), Dept)).ReturnsAsync(true);
 			_authorization.Setup(a => a.CanReadSourceCallAsync("author", Dept, It.IsAny<Call>())).ReturnsAsync(true);
 			_service = new RecordsEvidenceService(_store.EvidenceRepo.Object, _store.RecordsRepo.Object,
-				_incidents.ReportsRepo.Object, _store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { (IRecordEvidenceAdapter)_adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object);
+				_incidents.ReportsRepo.Object, _store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { (IRecordEvidenceAdapter)_adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object,
+				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
 		}
 
 		private RecordEvidenceCaptureRequest Request(RmsEvidenceKind kind = RmsEvidenceKind.RunCardActivation)
@@ -112,6 +113,22 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Capturing_evidence_emits_record_evidence_captured_with_identity_and_checksum_only()
+		{
+			var artifact = await _service.CaptureAsync(Request());
+
+			var entry = _store.Outbox.Single(o => o.EventName == "RecordEvidenceCaptured");
+			entry.TriggerEventType.Should().Be((int)WorkflowTriggerEventType.RecordEvidenceCaptured);
+			var payload = Newtonsoft.Json.Linq.JObject.Parse(entry.PayloadJson);
+			((string)payload["evidence"]["id"]).Should().Be(artifact.RmsEvidenceArtifactId);
+			((string)payload["evidence"]["kind"]).Should().Be("RunCardActivation");
+			((string)payload["evidence"]["checksum"]).Should().Be(artifact.Checksum);
+			((string)payload["record"]["id"]).Should().Be(_record.RmsOperationalRecordId);
+			entry.PayloadJson.Should().NotContain("activations", "the manifest is record content").And.NotContain("Run card activation for call", "so is the title");
+			artifact.ManifestJson.Should().Contain("activation_id", "the caller keeps the plaintext artifact");
+		}
+
+		[Test]
 		public async Task Separate_chat_selections_survive_signing_and_only_an_exact_selection_supersedes_its_draft_predecessor()
 		{
 			var channels = new Mock<Resgrid.Model.Repositories.IChatChannelRepository>();
@@ -124,7 +141,8 @@ namespace Resgrid.Tests.Rms
 				DepartmentId = Dept, ChatChannelId = channel.ChatChannelId, ChatMessageId = id, Body = "Message " + id, SentOn = DateTime.UtcNow });
 			var adapter = new ChatPromotionEvidenceAdapter(messages.Object, channels.Object, new Lazy<IChatPermissionService>(() => permission.Object));
 			var service = new RecordsEvidenceService(_store.EvidenceRepo.Object, _store.RecordsRepo.Object, _incidents.ReportsRepo.Object,
-				_store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object);
+				_store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object,
+				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
 			var request = Request(RmsEvidenceKind.ChatPromotion); request.SourceIds = new() { "one", "two" };
 			var first = await service.CaptureAsync(request); var original = first.ManifestJson;
 			request.SourceIds = new() { "three" }; var second = await service.CaptureAsync(request);

@@ -1,0 +1,52 @@
+{
+  "recordType": "UnitActivity",
+  "definitionKey": "system.unit-activity",
+  "legacy": {
+    "source": "UnitLogs",
+    "unitLog": {
+      "UnitLogId": 501,
+      "UnitId": 5,
+      "Timestamp": "2026-03-06T14:20:00Z",
+      "Narrative": "Engine 5 pump test completed; 1,250 gpm at 150 psi for 20 minutes, no leaks.",
+      "IsProtected": false
+    },
+    "log": null,
+    "users": [],
+    "units": [],
+    "attachments": []
+  },
+  "expected": {
+    "numberPrefix": "UNT",
+    "list": {
+      "displaySummary": "Engine 5",
+      "searchTextContains": [ "Engine 5" ],
+      "searchTextExcludes": [ "pump test" ],
+      "occurredOn": "2026-03-06T14:20:00Z",
+      "callNumber": null,
+      "participantUserIds": [],
+      "unitIds": [ 5 ]
+    },
+    "detail": {
+      "details": {
+        "Narrative": "Engine 5 pump test completed; 1,250 gpm at 150 psi for 20 minutes, no leaks.",
+        "UnitId": 5,
+        "ActivityOn": "2026-03-06T14:20:00Z",
+        "IsProtected": false,
+        "ProtectedEnvelope": null
+      },
+      "participants": [],
+      "units": [
+        { "UnitId": 5, "UnitNameSnapshot": "Engine 5", "UnitTypeSnapshot": "Engine" }
+      ],
+      "attachments": []
+    },
+    "export": {
+      "mustContain": [ "pump test", "\"UnitId\":5", "2026-03-06T14:20:00Z" ],
+      "restrictedFields": []
+    },
+    "print": {
+      "contains": [ "Engine 5", "pump test" ],
+      "withheldWithoutRestrictedAccess": []
+    }
+  }
+}

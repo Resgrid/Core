@@ -53,6 +53,7 @@ namespace Resgrid.Services.Records
 		private readonly IRecordAttachmentScanner _attachmentScanner;
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRecordsUdfService _udf;
+		private readonly IRecordsProtectionService _protection;
 
 		public RecordsService(IRmsOperationalRecordsRepository records, IRmsRecordValueService details,
 			IRmsRecordParticipantsRepository participants, IRmsRecordUnitResponsesRepository units, IRmsRecordAttachmentsRepository attachments,
@@ -60,8 +61,10 @@ namespace Resgrid.Services.Records
 			IRmsRecordSearchProjectionsRepository projections, IRmsAccessAuditsRepository audits, IDomainEventOutboxService outbox,
 			IRecordsCutoverService cutover, IDepartmentSettingsService settings, IDepartmentGroupsService groups, IUserProfileService profiles,
 			IUnitsService unitsService, ICallsService calls, IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork,
-			IOutboundQueueProvider outboundQueue, IRecordAttachmentScanner attachmentScanner, IRecordsAuthorizationService authorization, IRecordsUdfService udf)
+			IOutboundQueueProvider outboundQueue, IRecordAttachmentScanner attachmentScanner, IRecordsAuthorizationService authorization, IRecordsUdfService udf,
+			IRecordsProtectionService protection)
 		{
+			_protection = protection;
 			_records = records;
 			_details = details;
 			_participants = participants;
@@ -384,6 +387,7 @@ namespace Resgrid.Services.Records
 				throw new RecordTransitionException(recordId, from, RmsRecordState.Approved, "the approver may not be the author");
 
 			var now = DateTime.UtcNow;
+			var outboxIds = new List<long>();
 			await InTransactionAsync(async () =>
 			{
 				await GuardVersionAsync(record, record.RowVersion, cancellationToken);
@@ -394,10 +398,12 @@ namespace Resgrid.Services.Records
 				record.ModifiedByUserId = userId;
 				await _records.UpdateAsync(record, cancellationToken, true);
 				await RefreshProjectionAsync(record, cancellationToken);
-				// RecordApproved (103) is an RMS-1B trigger; no event until it is appended.
+				outboxIds.Add((await EnqueueLifecycleEventAsync(record, null, WorkflowTriggerEventType.RecordApproved, from, RmsRecordState.Approved, null, cancellationToken, null,
+					new Dictionary<string, object> { ["review"] = new { reviewer_user_id = record.ReviewerUserId, approver_user_id = userId, approved_on = now, submitted_for_review_on = record.SubmittedForReviewOn, review_due_on = record.ReviewDueOn, return_count = record.ReturnCount } })).DomainEventOutboxId);
 				await AuditAsync(departmentId, userId, recordId, null, RmsAccessAuditAction.Sign, "Approve", RmsOriginClient.Web, cancellationToken);
 			});
 
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 			return await GetAsync(departmentId, recordId, false);
 		}
 
@@ -422,6 +428,7 @@ namespace Resgrid.Services.Records
 				await GuardVersionAsync(record, expectedRowVersion, cancellationToken);
 
 				var draft = await HydrateDraftAsync(record);
+				draft.Protection.RequireRevealed(isAmendment ? "finalize amendment" : "finalize");
 				ValidateDefinitionRequirements(recordType, draft.Details);
 				ValidateForFinalization(recordType, draft);
 				_udf.ValidateForFinalization(draft.CustomFields);
@@ -495,6 +502,8 @@ namespace Resgrid.Services.Records
 				return await GetAsync(departmentId, recordId, true);
 
 			var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, record.CurrentRevisionId);
+			if (revision != null)
+				(await _protection.RevealRevisionsAsync(departmentId, new[] { revision }, cancellationToken)).RequireRevealed("abandon amendment");
 			var snapshot = RecordSnapshotSerializer.Deserialize(revision?.SnapshotJson);
 			if (snapshot == null)
 				throw new InvalidOperationException($"Revision {record.CurrentRevisionId} has no snapshot to restore.");
@@ -532,6 +541,7 @@ namespace Resgrid.Services.Records
 			{
 				await GuardVersionAsync(record, record.RowVersion, cancellationToken);
 				var draft = await HydrateDraftAsync(record);
+				draft.Protection.RequireRevealed("void");
 				var revision = await WriteRevisionAsync(record, draft, RmsRevisionTransition.Voided, userId, reasonCode, reasonText, AttestationStatementVersion, now, cancellationToken);
 
 				record.State = (int)RmsRecordState.Voided;
@@ -671,6 +681,7 @@ namespace Resgrid.Services.Records
 			if (revision == null) return null;
 			var record = await _records.GetByIdForDepartmentAsync(departmentId, revision.RecordId);
 			if (record == null || record.PurgedOn.HasValue || record.DeletedOn.HasValue) return null;
+			(await _protection.RevealRevisionsAsync(departmentId, new[] { revision })).RequireRevealed("revision");
 			return RecordSnapshotSerializer.Deserialize(revision.SnapshotJson);
 		}
 
@@ -753,19 +764,46 @@ namespace Resgrid.Services.Records
 				RowVersion = 1
 			};
 
+			// The caller gets plaintext metadata back; the stored row may carry envelopes (ADP catalog v10).
+			var metadata = JsonConvert.DeserializeObject<RmsRecordAttachment>(JsonConvert.SerializeObject(attachment)); metadata.Data = null;
+			var outboxIds = new List<long>();
 			await InTransactionAsync(async () =>
 			{
 				record = await LoadRecordAsync(departmentId, recordId);
 				await RequireAttachmentWriteAsync(record, userId, classification != 0);
 				await GuardVersionAsync(record, expectedVersion, cancellationToken);
+				await _protection.ProtectAttachmentAsync(departmentId, attachment, null, userId, cancellationToken);
 				await _attachments.InsertAsync(attachment, cancellationToken, true);
 				record.ModifiedOn = now;
 				record.ModifiedByUserId = userId;
 				await _records.UpdateAsync(record, cancellationToken, true);
+				var state = (RmsRecordState)record.State;
+				outboxIds.Add((await EnqueueLifecycleEventAsync(record, null, WorkflowTriggerEventType.RecordAttachmentAdded, state, state, null, cancellationToken, null,
+					new Dictionary<string, object> { ["attachment"] = AttachmentBlock(attachment, (await _attachments.GetMetadataForRecordAsync(departmentId, recordId))?.Count() ?? 1) })).DomainEventOutboxId);
 				await AuditAsync(departmentId, userId, recordId, null, RmsAccessAuditAction.Change, "Add attachment", RmsOriginClient.Web, cancellationToken, new { attachment.RmsRecordAttachmentId, attachment.ByteSize, attachment.Checksum });
 			});
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 
-			var metadata = JsonConvert.DeserializeObject<RmsRecordAttachment>(JsonConvert.SerializeObject(attachment)); metadata.Data = null; return metadata;
+			metadata.IsProtected = attachment.IsProtected;
+			metadata.ProtectedCatalogVersion = attachment.ProtectedCatalogVersion;
+			return metadata;
+		}
+
+		/// <summary>The attachment.* block (plan section 5.6, trigger 115): identity, type, size, checksum and scan state; never the file name, description or bytes.</summary>
+		public static object AttachmentBlock(RmsRecordAttachment attachment, int count)
+		{
+			return new
+			{
+				id = attachment.RmsRecordAttachmentId,
+				content_type = attachment.ContentType,
+				byte_size = attachment.ByteSize,
+				checksum = attachment.Checksum,
+				classification = ((RmsEvidenceClassification)attachment.Classification).ToString(),
+				scan_state = ((RmsAttachmentScanState)attachment.ScanState).ToString(),
+				uploaded_by_user_id = attachment.UploadedByUserId,
+				uploaded_on = attachment.UploadedOn,
+				count
+			};
 		}
 
 		public async Task<RmsRecordAttachment> GetAttachmentAsync(int departmentId, string userId, string attachmentId)
@@ -773,6 +811,8 @@ namespace Resgrid.Services.Records
 			var attachment = await _attachments.GetByIdForDepartmentAsync(departmentId, attachmentId);
 			if (attachment == null || attachment.DeletedOn.HasValue || !await _authorization.CanUserViewRecordAsync(userId, attachment.RecordId, departmentId)) return null;
 			if (attachment.RequiresRestrictedAccess && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords)) return null;
+			// ADP: the bytes and the file name are resolved for the caller's grant; without one the download fails closed.
+			(await _protection.RevealAttachmentsAsync(departmentId, new[] { attachment }, true)).RequireRevealed("attachment download");
 			if (attachment.ScanState != (int)RmsAttachmentScanState.Clean || attachment.Data == null || RecordSnapshotSerializer.Checksum(attachment.Data) != attachment.Checksum) return null;
 			return attachment;
 		}
@@ -869,13 +909,21 @@ namespace Resgrid.Services.Records
 			var aggregate = await HydrateDraftAsync(record);
 			aggregate.GroupScope = (await _scopes.GetForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId))?.ToList() ?? new List<RmsRecordGroupScope>();
 			if (includeRevisions)
+			{
 				aggregate.Revisions = (await _revisions.GetForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId))?.ToList() ?? new List<RmsRevision>();
+				aggregate.Protection = aggregate.Protection.Merge(await _protection.RevealRevisionsAsync(record.DepartmentId, aggregate.Revisions));
+			}
 			return aggregate;
 		}
 
+		/// <summary>
+		/// The working draft, resolved for the ambient caller (ADP, RMS plan section 5.9): the details row and the
+		/// attachment metadata leave here as plaintext when the caller holds a grant and as the REDACTED sentinel
+		/// otherwise. Transitions that copy content into a revision require a fully revealed draft.
+		/// </summary>
 		private async Task<RecordAggregate> HydrateDraftAsync(RmsOperationalRecord record)
 		{
-			return new RecordAggregate
+			var aggregate = new RecordAggregate
 			{
 				CustomFields = await _udf.CaptureAsync(record.DepartmentId, record.RmsOperationalRecordId, record.DefinitionKey, record.DefinitionVersion, record.UdfDefinitionId),
 				Record = record,
@@ -884,6 +932,8 @@ namespace Resgrid.Services.Records
 				Units = (await _units.GetForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId, null))?.ToList() ?? new List<RmsRecordUnitResponse>(),
 				Attachments = (await _attachments.GetMetadataForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId))?.ToList() ?? new List<RmsRecordAttachment>()
 			};
+			aggregate.Protection = await _protection.RevealAsync(record.DepartmentId, aggregate);
+			return aggregate;
 		}
 
 		private async Task<RmsRevision> WriteRevisionAsync(RmsOperationalRecord record, RecordAggregate draft, RmsRevisionTransition transition, string userId,
@@ -895,7 +945,9 @@ namespace Resgrid.Services.Records
 			if (record.CurrentRevisionId != null)
 			{
 				var prior = await _revisions.GetByIdForDepartmentAsync(record.DepartmentId, record.CurrentRevisionId);
-				if (prior == null || prior.RecordId != record.RmsOperationalRecordId || RecordSnapshotSerializer.Checksum(prior.SnapshotJson) != prior.Checksum) throw new InvalidOperationException("The prior revision failed its integrity check.");
+				if (prior == null || prior.RecordId != record.RmsOperationalRecordId) throw new InvalidOperationException("The prior revision failed its integrity check.");
+				(await _protection.RevealRevisionsAsync(record.DepartmentId, new[] { prior }, cancellationToken)).RequireRevealed("finalize");
+				if (RecordSnapshotSerializer.Checksum(prior.SnapshotJson) != prior.Checksum) throw new InvalidOperationException("The prior revision failed its integrity check.");
 				var priorSnapshot = RecordSnapshotSerializer.Deserialize(prior.SnapshotJson);
 				var priorEvidence = priorSnapshot.SnapshotVersion >= 2 ? priorSnapshot.Evidence : await _evidence.GetForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId, prior.RmsRevisionId, true);
 				snapshot.Evidence.AddRange((priorEvidence ?? new List<RmsEvidenceArtifact>()).Where(e => !snapshot.Evidence.Any(n => n.Kind == e.Kind && n.SourceEntityId == e.SourceEntityId)));
@@ -927,6 +979,8 @@ namespace Resgrid.Services.Records
 				OriginClient = record.OriginClient,
 				CreatedOn = now
 			};
+			// The checksum attests the plaintext snapshot; under ADP the stored column carries its envelope (plan 5.9).
+			await _protection.ProtectRevisionAsync(record.DepartmentId, revision, userId, cancellationToken);
 			await _revisions.InsertAsync(revision, cancellationToken, true);
 
 			// Evidence captured against the draft becomes evidence of this revision (RMS-3c). Binding rather than
@@ -1111,6 +1165,17 @@ namespace Resgrid.Services.Records
 				await _projections.UpdateAsync(projection, cancellationToken, true);
 		}
 
+		/// <summary>
+		/// The protection.* block (plan section 5.9.3) every Records event carries: a subscriber learns that the
+		/// department protects record content and which catalog it is pinned to, never a value. Payloads are
+		/// built from header facts only, so nothing in them is ever redacted.
+		/// </summary>
+		private async Task<object> ProtectionBlockAsync(int departmentId)
+		{
+			var version = await SafeCatalogVersionAsync(departmentId);
+			return new { is_protected = version > 0, is_redacted = false, redacted_fields = Array.Empty<string>(), protected_catalog_version = version };
+		}
+
 		private async Task<int> SafeCatalogVersionAsync(int departmentId)
 		{
 			try { return await _dataProtection.GetPinnedCatalogVersionAsync(departmentId); }
@@ -1123,11 +1188,12 @@ namespace Resgrid.Services.Records
 			catch (Exception ex) { Logging.LogException(ex); return 0; }
 		}
 
-		private async Task<DomainEventOutboxEntry> EnqueueLifecycleEventAsync(RmsOperationalRecord record, RmsRevision revision, WorkflowTriggerEventType trigger, RmsRecordState from, RmsRecordState to, string reasonCode, CancellationToken cancellationToken, object extra = null)
+		private async Task<DomainEventOutboxEntry> EnqueueLifecycleEventAsync(RmsOperationalRecord record, RmsRevision revision, WorkflowTriggerEventType trigger, RmsRecordState from, RmsRecordState to, string reasonCode, CancellationToken cancellationToken, object extra = null, IDictionary<string, object> blocks = null)
 		{
 			var payload = new Dictionary<string, object>
 			{
 				["record"] = RecordBlock(record, revision, to),
+				["protection"] = await ProtectionBlockAsync(record.DepartmentId),
 				["record_change"] = new
 				{
 					previous_state = from.ToString(),
@@ -1139,6 +1205,9 @@ namespace Resgrid.Services.Records
 			};
 			if (extra != null)
 				payload["extra"] = extra;
+			if (blocks != null)
+				foreach (var block in blocks)
+					payload[block.Key] = block.Value;
 
 			// review.* (plan section 5.6): who reviewed, when it was due, how often it came back. Only the two
 			// review-path triggers carry it; the fields are review bookkeeping, never record content.

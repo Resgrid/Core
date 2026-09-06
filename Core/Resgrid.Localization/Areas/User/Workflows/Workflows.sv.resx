@@ -615,4 +615,7 @@
   <data name="SkippedRuns" xml:space="preserve">
     <value>Överhoppade</value>
   </data>
+  <data name="ExportTemplate" xml:space="preserve"><value>Rapportexport (poster)</value></data>
+  <data name="ExportTemplateNone" xml:space="preserve"><value>Ingen (skicka endast den renderade mallen)</value></data>
+  <data name="ExportTemplateHelp" xml:space="preserve"><value>E-poststeg bifogar exporten; filuppladdningssteg laddar upp den under sitt filnamn i stället för den renderade texten. Exporter utformas under Poster &gt; Rapportexporter.</value></data>
 </root>

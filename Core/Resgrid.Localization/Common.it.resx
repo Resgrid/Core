@@ -716,8 +716,18 @@
   <data name="AdpErrorGeneric" xml:space="preserve">
     <value>La richiesta non è riuscita. Riprova.</value>
   </data>
+  <data name="AdpExpiringWarning" xml:space="preserve">
+    <value>La verifica scade tra {0}. Esegui di nuovo la verifica ora per continuare senza perdere le modifiche.</value>
+  </data>
+  <data name="AdpExpiredWarning" xml:space="preserve">
+    <value>La verifica è scaduta. Esegui di nuovo la verifica per continuare; le modifiche non salvate restano in questa pagina fino ad allora.</value>
+  </data>
+  <data name="AdpReverify" xml:space="preserve">
+    <value>Verifica di nuovo</value>
+  </data>
   <data name="RecordsModule" xml:space="preserve"><value>Registri</value></data>
   <data name="DepartmentProfile" xml:space="preserve">
     <value>Profilo del dipartimento</value>
   </data>
+  <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Blocchi di conservazione dei registri</value></data>
 </root>

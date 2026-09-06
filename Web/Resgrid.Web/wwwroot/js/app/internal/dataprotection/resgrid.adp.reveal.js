@@ -3,26 +3,67 @@
 // the URL — and every revealed value is concealed again when the step-up window expires,
 // the page unloads, or the user conceals manually. Values are inserted with text() so
 // decrypted content can never execute as markup.
+//
+// Two additions cover the pages where a person can lose work (edit forms whose revealed
+// fields would be wiped at expiry, and the Records authoring pages whose save needs the
+// grant): an expiry warning that lets the user re-verify IN PLACE before the window closes,
+// and bound forms (bindForm) whose submit is held until a live grant can travel with it.
 (function (window, $) {
 	'use strict';
 
 	var REDACTED = 'REDACTED';
+	var GRANT_FIELD = '__ResgridProtectedGrant';
+	var EXPIRES_FIELD = '__ResgridProtectedGrantExpiresOn';
+	var DEFAULT_WARN_SECONDS = 120;
 
-	var settings = null;   // { verifyUrl, requestGrantUrl, revealUrl, revealData, antiForgeryToken, messages, onRevealed, onConcealed }
+	var settings = null;      // { verifyUrl, requestGrantUrl, revealUrl, revealData, antiForgeryToken, messages, onRevealed, onConcealed, onRenewed, grantExpiresOnUtc, bindForms, warnBeforeSeconds }
 	var grantToken = null;
+	var serverGrant = false;  // the page arrived holding a grant in a bound form's hidden field (the *Revealed actions)
+	var expiresAt = null;     // epoch milliseconds when known
 	var expiryTimer = null;
+	var warnTimer = null;
+	var tickTimer = null;
 	var revealed = false;
+	var boundForms = [];
+	var pendingAction = null; // what to do once a grant is acquired; the reveal when nothing else is waiting
+	var pendingForm = null;
+	var passThrough = null;   // the form whose submit is being re-dispatched with the grant attached
 
 	function fields() {
 		return $('[data-adp-field], [data-adp-name]');
 	}
 
-	function conceal() {
+	function clearTimers() {
 		if (expiryTimer) {
 			window.clearTimeout(expiryTimer);
 			expiryTimer = null;
 		}
+		if (warnTimer) {
+			window.clearTimeout(warnTimer);
+			warnTimer = null;
+		}
+		stopTick();
+	}
+
+	function stopTick() {
+		if (tickTimer) {
+			window.clearInterval(tickTimer);
+			tickTimer = null;
+		}
+	}
+
+	function hasLiveGrant() {
+		if (!grantToken && !serverGrant)
+			return false;
+
+		return expiresAt === null || Date.now() < expiresAt;
+	}
+
+	function conceal() {
+		clearTimers();
 		grantToken = null;
+		serverGrant = false;
+		expiresAt = null;
 
 		var wasRevealed = revealed;
 
@@ -37,6 +78,11 @@
 			revealed = false;
 		}
 
+		// A bound form no longer carries a token the server would refuse; its next submit asks again.
+		$.each(boundForms, function (_, form) {
+			clearGrantFields(form);
+		});
+
 		$('#adpRevealButton').show();
 		$('#adpConcealButton').hide();
 
@@ -47,11 +93,169 @@
 			settings.onConcealed();
 	}
 
-	function scheduleConceal(expiresOnUtc) {
-		var remaining = new Date(expiresOnUtc).getTime() - Date.now();
-		if (isNaN(remaining) || remaining <= 0)
+	// The window closed without a renewal. Revealed values leave the DOM as before; a page with a
+	// bound form keeps the user's typed work and tells them to re-verify before saving.
+	function onExpired() {
+		var hadForms = boundForms.length > 0;
+		conceal();
+		if (hadForms)
+			showWarning(true);
+		else
+			hideWarning();
+	}
+
+	function warnSeconds() {
+		var value = settings && Number(settings.warnBeforeSeconds);
+		return value > 0 ? value : DEFAULT_WARN_SECONDS;
+	}
+
+	function scheduleTimers(expiresOnUtc) {
+		clearTimers();
+
+		var at = new Date(expiresOnUtc).getTime();
+		if (isNaN(at)) {
+			expiresAt = null;
+			return;
+		}
+
+		expiresAt = at;
+		var remaining = at - Date.now();
+		if (remaining <= 0)
 			remaining = 1000;
-		expiryTimer = window.setTimeout(conceal, remaining);
+
+		expiryTimer = window.setTimeout(onExpired, remaining);
+		warnTimer = window.setTimeout(function () {
+			showWarning(false);
+		}, Math.max(0, remaining - warnSeconds() * 1000));
+	}
+
+	function formatRemaining(milliseconds) {
+		var seconds = Math.max(0, Math.ceil(milliseconds / 1000));
+		var minutes = Math.floor(seconds / 60);
+		var rest = seconds % 60;
+		return minutes + ':' + (rest < 10 ? '0' : '') + rest;
+	}
+
+	// The warning is a fixed toast built here rather than by each host view, so every page that
+	// initialises the module gets it. Text always goes through text(): never markup.
+	function warningElement() {
+		var $el = $('#adpExpiryWarning');
+		if ($el.length)
+			return $el;
+
+		$el = $('<div id="adpExpiryWarning" class="alert alert-warning" role="alert" aria-live="polite"></div>')
+			.css({ position: 'fixed', top: '70px', right: '20px', zIndex: 1060, maxWidth: '380px', boxShadow: '0 2px 8px rgba(0,0,0,0.25)', display: 'none' });
+		$el.append(
+			$('<i class="fa fa-shield"></i>'), ' ',
+			$('<span id="adpExpiryText"></span>'), ' ',
+			$('<button type="button" class="btn btn-primary btn-xs" id="adpRenewButton"></button>').text(messageText('renew')).on('click', renew), ' ',
+			$('<button type="button" class="btn btn-default btn-xs" id="adpExpiryDismiss" aria-label="Dismiss">&times;</button>').on('click', hideWarning));
+		$('body').append($el);
+		return $el;
+	}
+
+	function showWarning(expired) {
+		var $el = warningElement();
+		var $text = $el.find('#adpExpiryText');
+		stopTick();
+
+		if (expired) {
+			$text.text(messageText('expired'));
+			$el.show();
+			return;
+		}
+
+		function tick() {
+			var remaining = expiresAt === null ? 0 : expiresAt - Date.now();
+			$text.text(messageText('expiring').replace('{0}', formatRemaining(remaining)));
+		}
+
+		tick();
+		tickTimer = window.setInterval(tick, 1000);
+		$el.show();
+	}
+
+	function hideWarning() {
+		stopTick();
+		$('#adpExpiryWarning').hide();
+	}
+
+	function ensureField(form, name) {
+		var input = form.querySelector('input[name="' + name + '"]');
+		if (!input) {
+			input = window.document.createElement('input');
+			input.type = 'hidden';
+			input.name = name;
+			form.appendChild(input);
+		}
+		return input;
+	}
+
+	// Writes the grant into the form's hidden fields. A page that arrived holding a server-issued
+	// grant (grantToken null, serverGrant true) keeps the field it was rendered with.
+	function writeGrantFields(form) {
+		if (!form)
+			return;
+		if (grantToken)
+			ensureField(form, GRANT_FIELD).value = grantToken;
+		ensureField(form, EXPIRES_FIELD).value = expiresAt === null ? '' : new Date(expiresAt).toISOString();
+	}
+
+	function clearGrantFields(form) {
+		var grant = form && form.querySelector('input[name="' + GRANT_FIELD + '"]');
+		if (grant)
+			grant.value = '';
+		var expires = form && form.querySelector('input[name="' + EXPIRES_FIELD + '"]');
+		if (expires)
+			expires.value = '';
+	}
+
+	// A grant was just issued (first reveal or renewal). Bound forms get it straight away so a save
+	// that follows carries it, and the host is told so paused work (autosave) can resume.
+	function setGrant(token, expiresOnUtc) {
+		grantToken = token;
+		serverGrant = false;
+		if (expiresOnUtc)
+			scheduleTimers(expiresOnUtc);
+		else {
+			clearTimers();
+			expiresAt = null;
+		}
+		hideWarning();
+
+		$.each(boundForms, function (_, form) {
+			writeGrantFields(form);
+			form.dispatchEvent(new window.CustomEvent('adp:grant-renewed'));
+		});
+
+		if (settings && typeof settings.onRenewed === 'function')
+			settings.onRenewed();
+	}
+
+	function grantAcquired(token, expiresOnUtc) {
+		setGrant(token, expiresOnUtc);
+
+		var action = pendingAction || doReveal;
+		pendingAction = null;
+		pendingForm = null;
+		action();
+	}
+
+	// Runs the step-up flow (exempt-app grant first, then the prompt) and performs the action once
+	// a grant is live. Cancelling the prompt drops the action and tells the waiting form.
+	function acquire(action, form) {
+		pendingAction = action;
+		pendingForm = form || null;
+		requestGrantWithoutStepUp();
+	}
+
+	function renew() {
+		acquire(function () {
+			// Values wiped at expiry come back through the page's own reveal endpoint; a page without
+			// one (the Records edit pages) only needed the grant itself.
+			if (!revealed && settings && settings.revealUrl)
+				doReveal();
+		}, null);
 	}
 
 	function safeValue(values, key) {
@@ -146,14 +350,20 @@
 		grant_revoked: 'Access was revoked by a policy change. Verify again.',
 		protected_access_denied: 'You are not authorized to view this protected data.',
 		broker_unavailable: 'The protected data service is unavailable. Try again shortly.',
-		generic: 'The request failed. Try again.'
+		generic: 'The request failed. Try again.',
+		expiring: 'Your verification expires in {0}. Re-verify now to keep working without losing changes.',
+		expired: 'Your verification has expired. Re-verify to continue; unsaved changes stay on this page until you do.',
+		renew: 'Re-verify'
 	};
 
-	function errorText(code) {
+	function messageText(key) {
 		var messages = (settings && settings.messages) || {};
-		var key = code && Object.prototype.hasOwnProperty.call(DEFAULT_MESSAGES, code) ? code : 'generic';
-
 		return messages[key] || DEFAULT_MESSAGES[key];
+	}
+
+	function errorText(code) {
+		var key = code && Object.prototype.hasOwnProperty.call(DEFAULT_MESSAGES, code) ? code : 'generic';
+		return messageText(key);
 	}
 
 	function doReveal() {
@@ -212,11 +422,7 @@
 		$.post(settings.requestGrantUrl, { __RequestVerificationToken: settings.antiForgeryToken })
 			.done(function (response) {
 				if (response && response.success && response.grantToken) {
-					grantToken = response.grantToken;
-					if (response.expiresOnUtc)
-						scheduleConceal(response.expiresOnUtc);
-
-					doReveal();
+					grantAcquired(response.grantToken, response.expiresOnUtc);
 					return;
 				}
 
@@ -245,10 +451,9 @@
 		}).done(function (response) {
 			$('#adpStepUpSubmit').prop('disabled', false);
 			if (response && response.success) {
-				grantToken = response.grantToken;
-				scheduleConceal(response.expiresOnUtc);
+				// The waiting action runs before the modal closes so a cancel handler never sees it.
+				grantAcquired(response.grantToken, response.expiresOnUtc);
 				$('#adpStepUpModal').modal('hide');
-				doReveal();
 				return;
 			}
 
@@ -316,20 +521,95 @@
 			target.set('X-Resgrid-Protected-Grant', grantToken);
 	}
 
+	// A full-page form post cannot carry a header. The Records and incident-report edit pages hand
+	// the grant to the server through a hidden field written at the moment the form is submitted, so
+	// the token leaves this closure only for that one request (RMS plan section 5.9.3). The server
+	// re-renders the page revealed and carries the same field through the edit form's own posts.
+	function submitWithGrant(form) {
+		if (!grantToken || !form || typeof form.submit !== 'function')
+			return false;
+
+		writeGrantFields(form);
+		form.submit();
+		return true;
+	}
+
+	// Holds a form's submit until a live grant can travel with it. A submit with a live grant goes
+	// through with the hidden fields written; without one the step-up runs in place and the same
+	// submit (same button, same values) is re-dispatched afterwards, so nothing typed is lost.
+	// Cancelling the prompt leaves the form as it was and raises adp:submit-cancelled on it.
+	function bindForm(target) {
+		var form = typeof target === 'string' ? window.document.querySelector(target) : target;
+		if (!form || boundForms.indexOf(form) >= 0)
+			return;
+
+		boundForms.push(form);
+
+		form.addEventListener('submit', function (e) {
+			if (passThrough === form) {
+				passThrough = null;
+				return;
+			}
+			if (e.defaultPrevented)
+				return;
+
+			if (hasLiveGrant()) {
+				writeGrantFields(form);
+				return;
+			}
+
+			e.preventDefault();
+			var submitter = e.submitter || null;
+			acquire(function () {
+				writeGrantFields(form);
+				passThrough = form;
+				if (typeof form.requestSubmit === 'function')
+					form.requestSubmit(submitter);
+				else
+					form.submit();
+			}, form);
+		});
+
+		// The host's own save path (autosave) learned from the server that the grant is gone.
+		form.addEventListener('adp:grant-required', function () {
+			clearTimers();
+			grantToken = null;
+			serverGrant = false;
+			expiresAt = null;
+			clearGrantFields(form);
+			showWarning(true);
+		});
+	}
+
 	window.resgridAdpReveal = {
 		download: downloadProtected,
 		applyGrantHeader: applyGrantHeader,
+		submitWithGrant: submitWithGrant,
+		bindForm: bindForm,
+		renew: renew,
+		hasLiveGrant: hasLiveGrant,
 
 		init: function (options) {
-			settings = options;
+			settings = options || {};
+
+			// A page rendered by a *Revealed action already carries its grant in the bound form's
+			// hidden field; only the expiry is known here, for the warning and the submit hold.
+			if (settings.grantExpiresOnUtc) {
+				serverGrant = true;
+				scheduleTimers(settings.grantExpiresOnUtc);
+			}
+
+			$.each(settings.bindForms || [], function (_, form) {
+				bindForm(form);
+			});
 
 			$('#adpRevealButton').on('click', function () {
-				if (grantToken) {
+				if (hasLiveGrant() && grantToken) {
 					doReveal();
 					return;
 				}
 
-				requestGrantWithoutStepUp();
+				acquire(doReveal, null);
 			});
 
 			$('#adpConcealButton').on('click', conceal).hide();
@@ -342,10 +622,22 @@
 				}
 			});
 
+			// Closing the prompt without a code abandons whatever was waiting on the grant.
+			$('#adpStepUpModal').on('hidden.bs.modal', function () {
+				if (!pendingAction)
+					return;
+				var form = pendingForm;
+				pendingAction = null;
+				pendingForm = null;
+				if (form)
+					form.dispatchEvent(new window.CustomEvent('adp:submit-cancelled'));
+			});
+
 			// Belt-and-braces: nothing survives navigation anyway, but drop the token
 			// reference the moment the page starts unloading.
 			$(window).on('beforeunload', function () {
 				grantToken = null;
+				clearTimers();
 			});
 		}
 	};

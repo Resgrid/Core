@@ -43,7 +43,7 @@ namespace Resgrid.Providers.Workflow.Executors
 					return WorkflowActionResult.Failed("Box upload failed.", "Box credential is missing 'PublicKeyId'. Please update the credential.");
 
 				var filename = string.IsNullOrWhiteSpace(config.Filename)
-					? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt"
+					? context.Attachment?.FileName ?? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt"
 					: config.Filename;
 				var folderId = string.IsNullOrWhiteSpace(config.FolderId) ? "0" : config.FolderId;
 
@@ -53,7 +53,7 @@ namespace Resgrid.Providers.Workflow.Executors
 				var adminToken = await session.AdminTokenAsync();
 				var client = session.AdminClient(adminToken);
 
-				var bytes = Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
+				var bytes = context.Attachment?.Data ?? Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
 				using var stream = new MemoryStream(bytes);
 				var file = await client.FilesManager.UploadAsync(
 					new Box.V2.Models.BoxFileRequest { Name = filename, Parent = new Box.V2.Models.BoxRequestEntity { Id = folderId } },

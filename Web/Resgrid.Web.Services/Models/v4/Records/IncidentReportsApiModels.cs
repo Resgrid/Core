@@ -38,6 +38,12 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public IncidentReportData Data { get; set; }
 	}
 
+	/// <summary>Read-only NFIRS rendering and crosswalk for one Call (RMS-3); the model is the contract.</summary>
+	public class NfirsLegacyResult : StandardApiResponseV4Base
+	{
+		public NfirsLegacyRendering Data { get; set; }
+	}
+
 	/// <summary>A hydrated NERIS incident report: header, dispatch facts, sections, provenance, validation issues, sanitized submission history.</summary>
 	public class IncidentReportData
 	{

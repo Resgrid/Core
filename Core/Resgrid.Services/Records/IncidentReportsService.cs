@@ -68,6 +68,8 @@ namespace Resgrid.Services.Records
 		private readonly IRmsRecordAttachmentsRepository _attachments;
 		private readonly IRmsEvidenceArtifactsRepository _evidence;
 		private readonly IRecordsEvidenceService _evidenceService;
+		private readonly IIncidentSourceFeedService _feeds;
+		private readonly IRecordsProtectionService _protection;
 
 		public IncidentReportsService(IRmsIncidentReportsRepository reports, IRmsSourceFactsRepository facts, IRmsUnitResponsesRepository units,
 			IRmsIncidentTypesRepository types, IRmsActionTacticsRepository tactics, IRmsAidsRepository aids, IRmsLocationsRepository locations,
@@ -77,8 +79,11 @@ namespace Resgrid.Services.Records
 			IRmsRecordSearchProjectionsRepository projections, IDomainEventOutboxService outbox, IDepartmentSettingsService settings,
 			IDepartmentGroupsService groups, IUserProfileService profiles, IPersonnelRolesService roles, IUnitsService unitsService, ICallsService calls,
 			IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork, INerisProfileService neris, INerisMappingService mapping,
-			INerisValidationService validation, IRecordsAuthorizationService authorization, IRmsRecordAttachmentsRepository attachments, IRmsEvidenceArtifactsRepository evidence, IRecordsUdfService udf, IRecordsEvidenceService evidenceService)
+			INerisValidationService validation, IRecordsAuthorizationService authorization, IRmsRecordAttachmentsRepository attachments, IRmsEvidenceArtifactsRepository evidence, IRecordsUdfService udf, IRecordsEvidenceService evidenceService,
+			IIncidentSourceFeedService feeds, IRecordsProtectionService protection)
 		{
+			_protection = protection;
+			_feeds = feeds;
 			_reports = reports;
 			_facts = facts;
 			_units = units;
@@ -144,7 +149,7 @@ namespace Resgrid.Services.Records
 				throw new ArgumentException($"Call {callId} does not belong to this department.");
 			if (!await _authorization.CanReadSourceCallAsync(userId, departmentId, call))
 				throw new UnauthorizedAccessException("Source Call access is not authorized.");
-			call = await _calls.PopulateCallData(call, true, false, true, false, true, false, false, false, false) ?? call;
+			call = await _calls.PopulateCallData(call, true, false, true, false, true, false, false, false, true) ?? call;
 
 			var now = DateTime.UtcNow;
 			var reportId = Guid.NewGuid().ToString();
@@ -196,6 +201,12 @@ namespace Resgrid.Services.Records
 
 			var units = await BuildUnitsFromCallAsync(report, call, facts, now);
 
+			// RMS-3 feeds: command key times and the contact/place snapshot arrive as Derived facts with their source
+			// named, so the officer sees a tactical proxy for what it is. The only typed prefill they make is the clear
+			// time, and only when dispatch never recorded one (plan section 4.2).
+			await AddCommandKeyTimeFactsAsync(report, call, facts, now);
+			await AddPreplanFactsAsync(report, call, facts, now);
+
 			var types = new List<RmsIncidentType>();
 			var mappedType = await _neris.ResolveCrosswalkAsync(departmentId, "incident_type", NerisCrosswalkSources.CallType, call.Type);
 			if (!string.IsNullOrWhiteSpace(mappedType))
@@ -229,14 +240,21 @@ namespace Resgrid.Services.Records
 				report.UdfDefinitionId = await _udf.SaveInTransactionAsync(departmentId, userId, reportId, report.DefinitionKey, report.DefinitionVersion, null, null, cancellationToken);
 				await _reports.UpdateAsync(report, cancellationToken, true);
 				if (location != null)
+				{
+					await _protection.ProtectLocationAsync(departmentId, location, null, userId, cancellationToken);
 					await _locations.InsertAsync(location, cancellationToken, true);
+				}
 				foreach (var unit in units)
 					await _units.InsertAsync(unit, cancellationToken, true);
 				foreach (var type in types)
 					await _types.InsertAsync(type, cancellationToken, true);
+				await _protection.ProtectNarrativeAsync(departmentId, narrative, null, userId, cancellationToken);
 				await _narratives.InsertAsync(narrative, cancellationToken, true);
 				foreach (var fact in facts)
+				{
+					await _protection.ProtectSourceFactAsync(departmentId, fact, null, userId, cancellationToken);
 					await _facts.InsertAsync(fact, cancellationToken, true);
+				}
 
 				var aggregate = new IncidentReportAggregate { Report = report, Location = location, Units = units, Types = types, Narrative = narrative, Facts = facts };
 				await RecomputeGroupScopeAsync(aggregate, authorGroup?.DepartmentGroupId, cancellationToken);
@@ -297,6 +315,7 @@ namespace Resgrid.Services.Records
 			{
 				var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, revisionId);
 				if (revision == null || revision.RecordId != reportId || revision.RecordKind != (int)RmsRecordKind.IncidentReport) return null;
+				(await _protection.RevealRevisionsAsync(departmentId, new[] { revision })).RequireRevealed("revision");
 				if (RecordSnapshotSerializer.Checksum(revision.SnapshotJson) != revision.Checksum) throw new InvalidOperationException("The incident revision checksum does not match.");
 				var frozen = JsonConvert.DeserializeObject<IncidentReportAggregate>(revision.SnapshotJson);
 				if (frozen?.Report == null) throw new InvalidOperationException("The incident revision is incomplete.");
@@ -355,6 +374,9 @@ namespace Resgrid.Services.Records
 			{
 				await GuardVersionAsync(report, expectedRowVersion, cancellationToken);
 				var facts = (await _facts.GetForRecordAsync(departmentId, reportId, null))?.ToList() ?? new List<RmsSourceFact>();
+				// Corrections compare the officer's value with the stored one, so the stored one must be readable:
+				// editing a protected report needs the caller's grant (ADP plan 3.3 RequireStepUpForProtectedWrites).
+				(await _protection.RevealAsync(departmentId, new IncidentReportAggregate { Report = report, Facts = facts }, cancellationToken)).RequireRevealed("save draft");
 
 				ApplyHeader(report, input, facts, userId, now);
 				report.UdfDefinitionId = await _udf.SaveInTransactionAsync(departmentId, userId, reportId, report.DefinitionKey, report.DefinitionVersion, report.UdfDefinitionId, input.CustomFields, cancellationToken);
@@ -369,7 +391,10 @@ namespace Resgrid.Services.Records
 				var casualties = await ReplaceCasualtiesAsync(report, input.Casualties, canWriteRestricted, now, cancellationToken);
 				var exposures = await ReplaceExposuresAsync(report, input.Exposures, now, cancellationToken);
 				foreach (var fact in facts.Where(f => f.CorrectedOn == now))
+				{
+					await _protection.ProtectSourceFactAsync(departmentId, fact, null, userId, cancellationToken);
 					await _facts.UpdateAsync(fact, cancellationToken, true);
+				}
 
 				report.DisplaySummary = BuildSummary(report, types, null);
 				report.ModifiedOn = now;
@@ -393,6 +418,7 @@ namespace Resgrid.Services.Records
 		{
 			var report = await LoadAsync(departmentId, reportId);
 			var aggregate = await HydrateAsync(report, null, false);
+			aggregate.Protection.RequireRevealed("validate");
 			var profile = await _neris.GetProfileAsync(departmentId);
 			var snapshot = ToSnapshot(aggregate);
 
@@ -519,6 +545,7 @@ namespace Resgrid.Services.Records
 			{
 				await GuardVersionAsync(report, expectedRowVersion, cancellationToken);
 				var draft = await HydrateAsync(report, null, false);
+				draft.Protection.RequireRevealed(correction ? "correct and resubmit" : isAmendment ? "finalize amendment" : "finalize");
 				_udf.ValidateForFinalization(draft.CustomFields);
 				await _evidenceService.RequireInventoryCoverageAsync(departmentId, reportId, draft.Evidence);
 
@@ -591,6 +618,7 @@ namespace Resgrid.Services.Records
 				await GuardVersionAsync(report, report.RowVersion, cancellationToken);
 				var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, report.CurrentRevisionId);
 				var aggregate = await HydrateAsync(report, revision.RmsRevisionId, false);
+				aggregate.Protection.RequireRevealed("queue submission");
 				var queued = await QueueSubmissionCoreAsync(report, aggregate, revision, profile, userId, now, cancellationToken);
 				outboxIds.Add(queued.outboxId);
 				report.ModifiedOn = now;
@@ -643,6 +671,9 @@ namespace Resgrid.Services.Records
 					ModifiedOn = now,
 					RowVersion = 1
 				};
+				// The queued payload is a generated copy of protected content: sealed at rest, opened only by the
+				// worker's acknowledged egress lane (RMS plan section 5.9.4).
+				await _protection.ProtectSubmissionAsync(report.DepartmentId, submission, userId, cancellationToken);
 				await _submissions.SupersedeOpenForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, submission.RmsSubmissionId, now, cancellationToken);
 				await _submissions.InsertAsync(submission, cancellationToken, true);
 			}
@@ -872,6 +903,82 @@ namespace Resgrid.Services.Records
 		}
 
 		/// <summary>One unit response per dispatched unit; times come from the unit state log (App) and the dispatch row (Dispatch), each with a provenance fact.</summary>
+		private async Task AddCommandKeyTimeFactsAsync(RmsIncidentReport report, Call call, List<RmsSourceFact> facts, DateTime now)
+		{
+			IncidentCommandKeyTimes times;
+			try
+			{
+				times = await _feeds.GetCommandKeyTimesAsync(report.DepartmentId, call.CallId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"The command key-time feed failed for call {call.CallId}; the report starts without it.");
+				return;
+			}
+			if (times == null)
+				return;
+
+			var id = times.IncidentCommandId ?? call.CallId.ToString(CultureInfo.InvariantCulture);
+			void Time(string key, DateTime? value)
+			{
+				if (value.HasValue)
+					facts.Add(Fact(report, key, RmsSourceKind.Derived, "IncidentCommand", "IncidentCommand", id, Iso(value), value, now));
+			}
+
+			Time(NerisFactKeys.CommandEstablished, times.EstablishedOn);
+			Time(NerisFactKeys.CommandFirstAssignment, times.FirstResourceAssignedOn);
+			Time(NerisFactKeys.CommandFirstBenchmark, times.FirstBenchmarkCompletedOn);
+			Time(NerisFactKeys.CommandLastBenchmark, times.LastBenchmarkCompletedOn);
+			Time(NerisFactKeys.CommandClosed, times.ClosedOn);
+			if (times.MutualAidResourceCount > 0)
+				facts.Add(Fact(report, NerisFactKeys.CommandMutualAid, RmsSourceKind.Derived, "IncidentCommand", "IncidentCommand", id, times.MutualAidResourceCount.ToString(CultureInfo.InvariantCulture), times.ClosedOn ?? times.EstablishedOn, now));
+			var ordinal = 0;
+			foreach (var benchmark in times.Benchmarks ?? new List<IncidentCommandBenchmark>())
+			{
+				if (benchmark?.CompletedOn == null || string.IsNullOrWhiteSpace(benchmark.Name))
+					continue;
+				facts.Add(Fact(report, NerisFactKeys.CommandBenchmark(ordinal++), RmsSourceKind.Derived, "IncidentCommand", "TacticalObjective", id, benchmark.Name + " @ " + Iso(benchmark.CompletedOn), benchmark.CompletedOn, now));
+			}
+
+			// A dispatcher-entered clear time always wins; command close is the proxy only when dispatch never recorded one.
+			if (!call.ClosedOn.HasValue && !report.IncidentClearedOn.HasValue && times.ClosedOn.HasValue)
+			{
+				report.IncidentClearedOn = times.ClosedOn;
+				facts.Add(Fact(report, NerisFactKeys.IncidentClear, RmsSourceKind.Derived, "IncidentCommand", "IncidentCommand", id, Iso(times.ClosedOn), times.ClosedOn, now));
+			}
+		}
+
+		private async Task AddPreplanFactsAsync(RmsIncidentReport report, Call call, List<RmsSourceFact> facts, DateTime now)
+		{
+			IncidentPreplanSnapshot snapshot;
+			try
+			{
+				snapshot = await _feeds.GetPreplanSnapshotAsync(report.DepartmentId, call);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"The contact/preplan feed failed for call {call.CallId}; the report starts without it.");
+				return;
+			}
+			if (snapshot == null || snapshot.IsEmpty)
+				return;
+
+			foreach (var contact in snapshot.Contacts)
+			{
+				var value = string.Join(" · ", new[] { contact.DisplayName, contact.ContactType, contact.CategoryName, contact.Role }.Where(v => !string.IsNullOrWhiteSpace(v)));
+				facts.Add(Fact(report, NerisFactKeys.PreplanContact(contact.ContactId), RmsSourceKind.Derived, "Contacts", "Contact", contact.ContactId, value, null, now));
+			}
+
+			if (snapshot.Place != null)
+			{
+				var place = snapshot.Place;
+				var value = string.Join(" · ", new[] { place.Name, place.TypeName, place.Address,
+					place.Latitude.HasValue && place.Longitude.HasValue ? place.Latitude.Value.ToString(CultureInfo.InvariantCulture) + "," + place.Longitude.Value.ToString(CultureInfo.InvariantCulture) : null }
+					.Where(v => !string.IsNullOrWhiteSpace(v)));
+				facts.Add(Fact(report, NerisFactKeys.PreplanPlace, RmsSourceKind.Derived, "Mapping", "Poi", place.PoiId.ToString(CultureInfo.InvariantCulture), value, null, now));
+			}
+		}
+
 		private async Task<List<RmsUnitResponse>> BuildUnitsFromCallAsync(RmsIncidentReport report, Call call, List<RmsSourceFact> facts, DateTime now)
 		{
 			var result = new List<RmsUnitResponse>();
@@ -1002,13 +1109,16 @@ namespace Resgrid.Services.Records
 
 		private async Task<RmsLocation> ReplaceLocationAsync(RmsIncidentReport report, IncidentLocationInput input, List<RmsSourceFact> facts, string userId, DateTime now, CancellationToken cancellationToken)
 		{
+			// The draft row keeps its identity across saves: an ADP envelope is bound to the row key, so a REDACTED
+			// placeholder the editor never had revealed can only be restored onto the same row.
+			var existing = (await _locations.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.FirstOrDefault();
 			await _locations.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			if (input == null)
 				return null;
 
 			var location = new RmsLocation
 			{
-				RmsLocationId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(), RecordId = report.RmsIncidentReportId,
+				RmsLocationId = existing?.RmsLocationId ?? Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(), RecordId = report.RmsIncidentReportId,
 				AddressText = Trim(input.AddressText), Number = Trim(input.Number), NumberPrefix = Trim(input.NumberPrefix), NumberSuffix = Trim(input.NumberSuffix), Street = Trim(input.Street),
 				UnitValue = Trim(input.UnitValue), Municipality = Trim(input.Municipality), County = Trim(input.County), State = Trim(input.State)?.ToUpperInvariant(), PostalCode = Trim(input.PostalCode),
 				Country = Trim(input.Country)?.ToUpperInvariant(), PlaceType = Trim(input.PlaceType), LocationUse = Trim(input.LocationUse), CrossStreet1 = Trim(input.CrossStreet1), CrossStreet2 = Trim(input.CrossStreet2),
@@ -1017,6 +1127,7 @@ namespace Resgrid.Services.Records
 			};
 			Correct(facts, NerisFactKeys.Location, location.AddressText, userId, now);
 			Correct(facts, NerisFactKeys.Point, location.Latitude.HasValue ? $"{location.Latitude},{location.Longitude}" : null, userId, now);
+			await _protection.ProtectLocationAsync(report.DepartmentId, location, existing, userId, cancellationToken);
 			await _locations.InsertAsync(location, cancellationToken, true);
 			return location;
 		}
@@ -1125,6 +1236,7 @@ namespace Resgrid.Services.Records
 			if (inputs == null)
 				return (await _modules.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsIncidentModule>();
 
+			var existingRows = (await _modules.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.OrderBy(m => m.Ordinal).ToList() ?? new List<RmsIncidentModule>();
 			await _modules.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			var result = new List<RmsIncidentModule>();
 			var ordinal = 0;
@@ -1136,15 +1248,17 @@ namespace Resgrid.Services.Records
 				if (descriptor == null || descriptor.BelongsToAnalysis)
 					continue;
 
+				var existing = existingRows.ElementAtOrDefault(ordinal);
 				var row = new RmsIncidentModule
 				{
-					RmsIncidentModuleId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RmsIncidentModuleId = existing?.RmsIncidentModuleId ?? Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(),
 					RecordId = report.RmsIncidentReportId, RecordKind = (int)RmsRecordKind.IncidentReport,
 					ModuleKind = (int)input.Kind, SchemaName = descriptor.SchemaName, ProfileVersion = profileVersion,
 					PrimaryCode = Trim(input.PrimaryCode)?.ToUpperInvariant(), SecondaryCode = Trim(input.SecondaryCode)?.ToUpperInvariant(),
 					Quantity = input.Quantity, QuantityUnit = Trim(input.QuantityUnit)?.ToUpperInvariant(), OccurredOn = input.OccurredOn,
 					DetailJson = Trim(input.DetailJson), Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
 				};
+				await _protection.ProtectModuleAsync(report.DepartmentId, row, existing, null, cancellationToken);
 				await _modules.InsertAsync(row, cancellationToken, true);
 				result.Add(row);
 			}
@@ -1156,17 +1270,20 @@ namespace Resgrid.Services.Records
 			if (inputs == null)
 				return (await _resources.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsIncidentResource>();
 
+			var existingRows = (await _resources.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.OrderBy(r => r.Ordinal).ToList() ?? new List<RmsIncidentResource>();
 			await _resources.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			var result = new List<RmsIncidentResource>();
 			var ordinal = 0;
 			foreach (var input in inputs.Where(i => !string.IsNullOrWhiteSpace(i.ResourceCode)))
 			{
+				var existing = existingRows.ElementAtOrDefault(ordinal);
 				var row = new RmsIncidentResource
 				{
-					RmsIncidentResourceId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RmsIncidentResourceId = existing?.RmsIncidentResourceId ?? Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(),
 					RecordId = report.RmsIncidentReportId, ResourceCode = input.ResourceCode.Trim().ToUpperInvariant(),
 					Quantity = input.Quantity, Detail = Trim(input.Detail), Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
 				};
+				await _protection.ProtectResourceAsync(report.DepartmentId, row, existing, null, cancellationToken);
 				await _resources.InsertAsync(row, cancellationToken, true);
 				result.Add(row);
 			}
@@ -1242,6 +1359,7 @@ namespace Resgrid.Services.Records
 					row.InjuryDetailJson = prior?.InjuryDetailJson;
 				}
 
+				await _protection.ProtectCasualtyAsync(report.DepartmentId, row, prior, null, cancellationToken);
 				await _casualties.InsertAsync(row, cancellationToken, true);
 				result.Add(row);
 			}
@@ -1253,14 +1371,16 @@ namespace Resgrid.Services.Records
 			if (inputs == null)
 				return (await _exposures.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsExposure>();
 
+			var existingRows = (await _exposures.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.OrderBy(e => e.Ordinal).ToList() ?? new List<RmsExposure>();
 			await _exposures.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			var result = new List<RmsExposure>();
 			var ordinal = 0;
 			foreach (var input in inputs)
 			{
+				var existing = existingRows.ElementAtOrDefault(ordinal);
 				var row = new RmsExposure
 				{
-					RmsExposureId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(),
+					RmsExposureId = existing?.RmsExposureId ?? Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(),
 					RecordId = report.RmsIncidentReportId,
 					LocationKind = Trim(input.LocationKind)?.ToUpperInvariant(), ItemType = Trim(input.ItemType)?.ToUpperInvariant(),
 					DamageType = Trim(input.DamageType)?.ToUpperInvariant(), LocationUse = Trim(input.LocationUse)?.ToUpperInvariant(),
@@ -1272,6 +1392,7 @@ namespace Resgrid.Services.Records
 					EstimatedValue = input.EstimatedValue, EstimatedLoss = input.EstimatedLoss, CurrencyCode = Trim(input.CurrencyCode)?.ToUpperInvariant(),
 					DetailJson = Trim(input.DetailJson), Ordinal = ordinal++, CreatedOn = now, ModifiedOn = now, RowVersion = 1
 				};
+				await _protection.ProtectExposureAsync(report.DepartmentId, row, existing, null, cancellationToken);
 				await _exposures.InsertAsync(row, cancellationToken, true);
 				result.Add(row);
 			}
@@ -1309,13 +1430,15 @@ namespace Resgrid.Services.Records
 
 		private async Task<RmsNarrative> ReplaceNarrativeAsync(RmsIncidentReport report, IncidentReportDraftInput input, DateTime now, CancellationToken cancellationToken)
 		{
+			var existing = (await _narratives.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.FirstOrDefault();
 			await _narratives.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			var row = new RmsNarrative
 			{
-				RmsNarrativeId = Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = Guid.NewGuid().ToString(), RecordId = report.RmsIncidentReportId,
+				RmsNarrativeId = existing?.RmsNarrativeId ?? Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(), RecordId = report.RmsIncidentReportId,
 				Narrative = input.Narrative, ImpedimentNarrative = input.ImpedimentNarrative, OutcomeNarrative = input.OutcomeNarrative, SupplementalJson = input.SupplementalJson,
 				CreatedOn = now, ModifiedOn = now, RowVersion = 1
 			};
+			await _protection.ProtectNarrativeAsync(report.DepartmentId, row, existing, null, cancellationToken);
 			await _narratives.InsertAsync(row, cancellationToken, true);
 			return row;
 		}
@@ -1334,17 +1457,18 @@ namespace Resgrid.Services.Records
 			await _narratives.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			await _facts.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 
-			if (source.Location != null) await _locations.InsertAsync(Copy(source.Location, l => l.RmsLocationId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
+			var dept = report.DepartmentId;
+			if (source.Location != null) { var row = Copy(source.Location, l => l.RmsLocationId = Guid.NewGuid().ToString(), null, now); await _protection.ProtectLocationAsync(dept, row, null, null, cancellationToken); await _locations.InsertAsync(row, cancellationToken, true); }
 			foreach (var t in source.Types) await _types.InsertAsync(Copy(t, x => x.RmsIncidentTypeId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
 			foreach (var u in source.Units) await _units.InsertAsync(Copy(u, x => x.RmsUnitResponseId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
 			foreach (var a in source.Aids) await _aids.InsertAsync(Copy(a, x => x.RmsAidId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
 			foreach (var t in source.Tactics) await _tactics.InsertAsync(Copy(t, x => x.RmsActionTacticId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
-			if (source.Narrative != null) await _narratives.InsertAsync(Copy(source.Narrative, n => n.RmsNarrativeId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
-			foreach (var f in source.Facts) await _facts.InsertAsync(Copy(f, x => x.RmsSourceFactId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
-			foreach (var m in source.Modules) await _modules.InsertAsync(Copy(m, x => x.RmsIncidentModuleId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
-			foreach (var r in source.Resources) await _resources.InsertAsync(Copy(r, x => x.RmsIncidentResourceId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
-			foreach (var c in source.Casualties) await _casualties.InsertAsync(Copy(c, x => x.RmsCasualtyRescueId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
-			foreach (var e in source.Exposures) await _exposures.InsertAsync(Copy(e, x => x.RmsExposureId = Guid.NewGuid().ToString(), null, now), cancellationToken, true);
+			if (source.Narrative != null) { var row = Copy(source.Narrative, n => n.RmsNarrativeId = Guid.NewGuid().ToString(), null, now); await _protection.ProtectNarrativeAsync(dept, row, null, null, cancellationToken); await _narratives.InsertAsync(row, cancellationToken, true); }
+			foreach (var f in source.Facts) { var row = Copy(f, x => x.RmsSourceFactId = Guid.NewGuid().ToString(), null, now); await _protection.ProtectSourceFactAsync(dept, row, null, null, cancellationToken); await _facts.InsertAsync(row, cancellationToken, true); }
+			foreach (var m in source.Modules) { var row = Copy(m, x => x.RmsIncidentModuleId = Guid.NewGuid().ToString(), null, now); await _protection.ProtectModuleAsync(dept, row, null, null, cancellationToken); await _modules.InsertAsync(row, cancellationToken, true); }
+			foreach (var r in source.Resources) { var row = Copy(r, x => x.RmsIncidentResourceId = Guid.NewGuid().ToString(), null, now); await _protection.ProtectResourceAsync(dept, row, null, null, cancellationToken); await _resources.InsertAsync(row, cancellationToken, true); }
+			foreach (var c in source.Casualties) { var row = Copy(c, x => x.RmsCasualtyRescueId = Guid.NewGuid().ToString(), null, now); await _protection.ProtectCasualtyAsync(dept, row, null, null, cancellationToken); await _casualties.InsertAsync(row, cancellationToken, true); }
+			foreach (var e in source.Exposures) { var row = Copy(e, x => x.RmsExposureId = Guid.NewGuid().ToString(), null, now); await _protection.ProtectExposureAsync(dept, row, null, null, cancellationToken); await _exposures.InsertAsync(row, cancellationToken, true); }
 		}
 
 		#endregion
@@ -1376,22 +1500,26 @@ namespace Resgrid.Services.Records
 				OriginClient = report.OriginClient,
 				CreatedOn = now
 			};
+			// The checksum attests the plaintext snapshot; under ADP the stored column carries its envelope (plan 5.9).
+			await _protection.ProtectRevisionAsync(report.DepartmentId, revision, userId, cancellationToken);
 			await _revisions.InsertAsync(revision, cancellationToken, true);
 			await _evidence.BindDraftToRevisionAsync(report.DepartmentId, report.RmsIncidentReportId, revision.RmsRevisionId, now, cancellationToken);
 
-			// Revision-bound copies keep finalized data queryable without touching the draft rows.
+			// Revision-bound copies keep finalized data queryable without touching the draft rows. Each copy is a
+			// new row, so its cataloged columns are sealed again under the copy's own key.
 			var id = revision.RmsRevisionId;
-			if (draft.Location != null) await _locations.InsertAsync(Copy(draft.Location, l => l.RmsLocationId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
+			var dept = report.DepartmentId;
+			if (draft.Location != null) { var row = Copy(draft.Location, l => l.RmsLocationId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectLocationAsync(dept, row, null, userId, cancellationToken); await _locations.InsertAsync(row, cancellationToken, true); }
 			foreach (var t in draft.Types) await _types.InsertAsync(Copy(t, x => x.RmsIncidentTypeId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
 			foreach (var u in draft.Units) await _units.InsertAsync(Copy(u, x => x.RmsUnitResponseId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
 			foreach (var a in draft.Aids) await _aids.InsertAsync(Copy(a, x => x.RmsAidId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
 			foreach (var t in draft.Tactics) await _tactics.InsertAsync(Copy(t, x => x.RmsActionTacticId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
-			if (draft.Narrative != null) await _narratives.InsertAsync(Copy(draft.Narrative, n => n.RmsNarrativeId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
-			foreach (var f in draft.Facts) await _facts.InsertAsync(Copy(f, x => x.RmsSourceFactId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
-			foreach (var m in draft.Modules) await _modules.InsertAsync(Copy(m, x => x.RmsIncidentModuleId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
-			foreach (var r in draft.Resources) await _resources.InsertAsync(Copy(r, x => x.RmsIncidentResourceId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
-			foreach (var c in draft.Casualties) await _casualties.InsertAsync(Copy(c, x => x.RmsCasualtyRescueId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
-			foreach (var e in draft.Exposures) await _exposures.InsertAsync(Copy(e, x => x.RmsExposureId = Guid.NewGuid().ToString(), id, now), cancellationToken, true);
+			if (draft.Narrative != null) { var row = Copy(draft.Narrative, n => n.RmsNarrativeId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectNarrativeAsync(dept, row, null, userId, cancellationToken); await _narratives.InsertAsync(row, cancellationToken, true); }
+			foreach (var f in draft.Facts) { var row = Copy(f, x => x.RmsSourceFactId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectSourceFactAsync(dept, row, null, userId, cancellationToken); await _facts.InsertAsync(row, cancellationToken, true); }
+			foreach (var m in draft.Modules) { var row = Copy(m, x => x.RmsIncidentModuleId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectModuleAsync(dept, row, null, userId, cancellationToken); await _modules.InsertAsync(row, cancellationToken, true); }
+			foreach (var r in draft.Resources) { var row = Copy(r, x => x.RmsIncidentResourceId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectResourceAsync(dept, row, null, userId, cancellationToken); await _resources.InsertAsync(row, cancellationToken, true); }
+			foreach (var c in draft.Casualties) { var row = Copy(c, x => x.RmsCasualtyRescueId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectCasualtyAsync(dept, row, null, userId, cancellationToken); await _casualties.InsertAsync(row, cancellationToken, true); }
+			foreach (var e in draft.Exposures) { var row = Copy(e, x => x.RmsExposureId = Guid.NewGuid().ToString(), id, now); await _protection.ProtectExposureAsync(dept, row, null, userId, cancellationToken); await _exposures.InsertAsync(row, cancellationToken, true); }
 
 			return revision;
 		}
@@ -1400,7 +1528,7 @@ namespace Resgrid.Services.Records
 		{
 			var profile = await _profiles.GetProfileByUserIdAsync(userId, false);
 			var roles = await _roles.GetRolesForUserAsync(userId, report.DepartmentId);
-			await _signatures.InsertAsync(new RmsSignature
+			var signature = new RmsSignature
 			{
 				RmsSignatureId = Guid.NewGuid().ToString(),
 				DepartmentId = report.DepartmentId,
@@ -1420,7 +1548,9 @@ namespace Resgrid.Services.Records
 				ArtifactChecksum = revision.Checksum,
 				CreatedOn = now,
 				RowVersion = 1
-			}, cancellationToken, true);
+			};
+			await _protection.ProtectSignatureAsync(report.DepartmentId, signature, userId, cancellationToken);
+			await _signatures.InsertAsync(signature, cancellationToken, true);
 		}
 
 		public static string AttestationStatement(string version)
@@ -1480,7 +1610,10 @@ namespace Resgrid.Services.Records
 			if (revisionId == null && report.CurrentRevisionId != null)
 			{
 				var revision = await _revisions.GetByIdForDepartmentAsync(dept, report.CurrentRevisionId);
-				if (revision != null && revision.RecordId == id && revision.Checksum == RecordSnapshotSerializer.Checksum(revision.SnapshotJson))
+				// A concealed revision (no grant) simply contributes no prior evidence to the draft view; the
+				// transitions that need it require a revealed aggregate before they run.
+				var revealed = revision == null || (await _protection.RevealRevisionsAsync(dept, new[] { revision })).RedactedFields.Count == 0;
+				if (revealed && revision != null && revision.RecordId == id && revision.Checksum == RecordSnapshotSerializer.Checksum(revision.SnapshotJson))
 				{
 					var previous = JsonConvert.DeserializeObject<IncidentReportAggregate>(revision.SnapshotJson)?.Evidence ?? new List<RmsEvidenceArtifact>();
 					aggregate.Evidence = previous.Where(p => !aggregate.Evidence.Any(e => e.Kind == p.Kind && e.SourceEntityId == p.SourceEntityId))
@@ -1493,6 +1626,9 @@ namespace Resgrid.Services.Records
 				aggregate.Signatures = (await _signatures.GetForRecordAsync(dept, id))?.ToList() ?? new List<RmsSignature>();
 				aggregate.Revisions = (await _revisions.GetForRecordAsync(dept, id))?.ToList() ?? new List<RmsRevision>();
 			}
+			// ADP (RMS plan section 5.9): every cataloged column leaves here as plaintext for a grant-holding caller
+			// and as the REDACTED sentinel otherwise; the result on the aggregate drives the page banner.
+			aggregate.Protection = await _protection.RevealAsync(dept, aggregate);
 			return aggregate;
 		}
 
@@ -1574,11 +1710,12 @@ namespace Resgrid.Services.Records
 			aggregate.GroupScope = scopes;
 		}
 
-		private async Task<DomainEventOutboxEntry> EnqueueLifecycleEventAsync(RmsIncidentReport report, RmsRevision revision, WorkflowTriggerEventType trigger, RmsRecordState from, RmsRecordState to, string reasonCode, object submission, CancellationToken cancellationToken, object extra = null)
+		private async Task<DomainEventOutboxEntry> EnqueueLifecycleEventAsync(RmsIncidentReport report, RmsRevision revision, WorkflowTriggerEventType trigger, RmsRecordState from, RmsRecordState to, string reasonCode, object submission, CancellationToken cancellationToken, object extra = null, IDictionary<string, object> blocks = null)
 		{
 			var payload = new Dictionary<string, object>
 			{
 				["record"] = RecordBlock(report, revision, to),
+				["protection"] = ProtectionBlock(await SafeCatalogVersionAsync(report.DepartmentId)),
 				["record_change"] = new
 				{
 					previous_state = from.ToString(),
@@ -1592,6 +1729,9 @@ namespace Resgrid.Services.Records
 				payload["submission"] = submission;
 			if (extra != null)
 				payload["extra"] = extra;
+			if (blocks != null)
+				foreach (var block in blocks)
+					payload[block.Key] = block.Value;
 
 			return await _outbox.EnqueueAsync(report.DepartmentId, DomainEventProducers.Records, new DomainEventEnvelope
 			{
@@ -1605,6 +1745,12 @@ namespace Resgrid.Services.Records
 				CorrelationId = report.RmsIncidentReportId,
 				OriginClient = (RmsOriginClient)report.OriginClient
 			}, cancellationToken);
+		}
+
+		/// <summary>The protection.* block (plan section 5.9.3): the department protects record content at this catalog version; payloads carry header facts only, so nothing is ever redacted.</summary>
+		public static object ProtectionBlock(int catalogVersion)
+		{
+			return new { is_protected = catalogVersion > 0, is_redacted = false, redacted_fields = Array.Empty<string>(), protected_catalog_version = catalogVersion };
 		}
 
 		/// <summary>The record.* block for incident reports; kind and the NERIS ID distinguish it from operational records.</summary>

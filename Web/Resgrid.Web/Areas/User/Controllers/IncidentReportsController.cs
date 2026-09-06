@@ -47,13 +47,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IIncidentAnalysisService _analysis;
 		private readonly IRecordsEvidenceService _evidence;
 		private readonly IIncidentAttachmentsService _attachments;
+		private readonly IRecordsNfirsLegacyService _nfirs;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> _localizer;
+
+		private readonly IRecordsProtectionService _protection;
+		private readonly IProtectedGrantContext _grantContext;
 
 		public IncidentReportsController(IIncidentReportsService incidentReports, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
 			INerisProfileService neris, IRmsSubmissionsRepository submissions, IIncidentAnalysisService analysis, IRecordsEvidenceService evidence,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordsSubmissionService submissionWorker, IIncidentAttachmentsService attachments, IRecordsUdfService udf)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordsSubmissionService submissionWorker, IIncidentAttachmentsService attachments, IRecordsUdfService udf,
+			IRecordsNfirsLegacyService nfirs, IRecordsProtectionService protection, IProtectedGrantContext grantContext)
 		{
+			_protection = protection;
+			_grantContext = grantContext;
+			_nfirs = nfirs;
 			_incidentReports = incidentReports;
 			_cutoverService = cutoverService;
 			_recordsAuthorizationService = recordsAuthorizationService;
@@ -248,6 +256,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
+		/// <summary>
+		/// Read-only NFIRS Basic Module rendering and crosswalk for a Call (RMS-3, plan section 4.3). Rendered from data the
+		/// department already holds; there is no NFIRS import, authoring or submission path. Source-Call authorization is
+		/// applied inside the service, and the Call's department is checked before anything is read.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<IActionResult> NfirsLegacy(int callId)
+		{
+			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
+			if (!moduleState.FlagEnabled)
+				return NotFound();
+
+			NfirsLegacyRendering rendering;
+			try
+			{
+				rendering = await _nfirs.RenderAsync(DepartmentId, UserId, callId);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return Forbid();
+			}
+			if (rendering == null)
+				return NotFound();
+
+			return View(new NfirsLegacyView
+			{
+				Rendering = rendering,
+				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false)
+			});
+		}
+
 		#endregion
 
 		#region Reads
@@ -264,6 +304,46 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Message = message;
 			await _incidentReports.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, null, IpAddressHelper.GetRequestIP(Request, true));
 			return View(model);
+		}
+
+		/// <summary>ADP client-side reveal (plan 7.2; RMS plan 5.9.3): the resolved values keyed the way the Details page marks its cells.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<IActionResult> RevealIncident([FromForm] string id)
+		{
+			var aggregate = await LoadAuthorizedAsync(id);
+			if (aggregate == null)
+				return NotFound();
+
+			var protection = aggregate.Protection ?? new ProtectedReadResult();
+			if (protection.IsProtected && protection.ProtectedReason != null)
+				return Json(new { success = false, error = protection.ProtectedReason });
+
+			var fields = new Dictionary<string, string>();
+			void Add<T>(IEnumerable<T> rows, Func<T, string> key, IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors)
+			{
+				foreach (var row in rows ?? Enumerable.Empty<T>())
+					foreach (var accessor in accessors)
+						fields[$"{accessor.Key}:{key(row)}"] = accessor.Value.Get(row);
+			}
+			if (aggregate.Narrative != null) Add(new[] { aggregate.Narrative }, n => n.RmsNarrativeId, RmsProtectedFields.Narratives);
+			if (aggregate.Location != null)
+			{
+				Add(new[] { aggregate.Location }, l => l.RmsLocationId, RmsProtectedFields.Locations);
+				fields[$"rmslocations.coordinates:{aggregate.Location.RmsLocationId}"] = aggregate.Location.Latitude.HasValue ? aggregate.Location.Latitude + ", " + aggregate.Location.Longitude : "-";
+			}
+			Add(aggregate.Facts, f => f.RmsSourceFactId, RmsProtectedFields.SourceFacts);
+			Add(aggregate.Exposures, e => e.RmsExposureId, RmsProtectedFields.Exposures);
+			Add(aggregate.Resources, r => r.RmsIncidentResourceId, RmsProtectedFields.Resources);
+			Add(aggregate.Modules, m => m.RmsIncidentModuleId, RmsProtectedFields.Modules);
+			if (await CanViewRestrictedAsync())
+				Add(aggregate.Casualties, c => c.RmsCasualtyRescueId, RmsProtectedFields.Casualties);
+			foreach (var attachment in aggregate.Attachments ?? new List<RmsRecordAttachment>())
+				fields[$"rmsrecordattachments.filename:{attachment.RmsRecordAttachmentId}"] = attachment.FileName;
+
+			await _incidentReports.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, "Protected reveal", IpAddressHelper.GetRequestIP(Request, true));
+			return Json(new { success = true, fields });
 		}
 
 		/// <summary>The immutable submission artifact (the exact payload sent), for administrators auditing a delivery.</summary>
@@ -327,7 +407,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = await BuildEditAsync(aggregate);
 			if (TempData["RecordsMessage"] is string message)
 				model.Message = message;
+			if (TempData["RecordsError"] is string error)
+				model.ErrorMessage = error;
 			return View(model);
+		}
+
+		/// <summary>
+		/// Reveal-and-edit (RMS plan section 5.9.3): the reveal module posts the grant here after step-up. The report is
+		/// hydrated with that grant, so the form (guided sections included) renders plaintext, and the grant is carried
+		/// in the form's hidden field so the save presents it again.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> EditRevealed(string id)
+		{
+			var result = await Edit(id);
+			if (result is ViewResult view && view.Model is IncidentReportEditView model)
+				CarryGrant(model);
+			return result;
+		}
+
+		/// <summary>The grant the current request presented (header or form field) travels with the re-rendered form.</summary>
+		private void CarryGrant(RecordsBaseView model)
+		{
+			model.ProtectedGrant = _grantContext.GrantToken;
+			model.ProtectedGrantExpiresOnUtc = model.ProtectedGrant == null ? null : HttpProtectedGrantContext.ReadExpiry(Request);
 		}
 
 		[HttpPost]
@@ -562,6 +667,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				profile.GrantType = string.IsNullOrWhiteSpace(model.GrantType) ? NerisGrantTypes.Password : model.GrantType;
 				profile.AutoSubmitOnFinalize = model.AutoSubmitOnFinalize;
 				profile.IsEnabled = model.IsEnabled;
+				// Protected-egress acknowledgement (RMS plan 5.9.4): a named administrator's decision that sealed
+				// incident content may leave for this destination through the broker's workload lane.
+				profile.AllowProtectedContentEgress = model.AllowProtectedContentEgress;
 
 				// The credential is write-only: any filled field replaces the stored one; all blank keeps it.
 				NerisCredential credential = null;
@@ -621,6 +729,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				GrantType = profile?.GrantType ?? NerisGrantTypes.Password,
 				AutoSubmitOnFinalize = profile?.AutoSubmitOnFinalize ?? false,
 				IsEnabled = profile?.IsEnabled ?? false,
+				AllowProtectedContentEgress = profile?.AllowProtectedContentEgress ?? false,
+				ProtectedEgressAcknowledgedOn = profile?.ProtectedEgressAcknowledgedOn,
+				ProtectedEgressAcknowledgedByUserId = profile?.ProtectedEgressAcknowledgedByUserId,
+				ProtectionEnforced = await _protection.IsEnforcedAsync(DepartmentId),
 				HasCredential = !string.IsNullOrWhiteSpace(profile?.EncryptedCredentialJson),
 				LastTokenIssuedOn = profile?.LastTokenIssuedOn,
 				LastSuccessfulCallOn = profile?.LastSuccessfulCallOn,
@@ -703,6 +815,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				foreach (var field in model.CustomFieldForm.Fields.Where(f => !f.Field.IsReadOnly))
 					if (submittedFields.Values?.TryGetValue(field.Field.UdfFieldId, out var value) == true) field.Value = value;
 			model.ErrorMessage = error;
+			CarryGrant(model);
 			return View("Edit", model);
 		}
 
@@ -841,6 +954,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ExposureDamageTypes = Codes("exposure_damage");
 			model.DisplacementCauseCodes = Codes("displace_cause");
 			model.Personnel = (await PersonnelNamesAsync()).OrderBy(kvp => kvp.Value).Select(kvp => new SelectListItem { Value = kvp.Key, Text = kvp.Value }).ToList();
+			model.ApplyProtection(aggregate.Protection);
 			return model;
 		}
 

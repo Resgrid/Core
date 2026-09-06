@@ -65,10 +65,11 @@ namespace Resgrid.Tests.Rms
 			incidents.Setup(s => s.BuildSnapshotAsync(Dept, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((int d, string id, string revision) => JsonConvert.DeserializeObject<NerisIncidentSnapshot>(_store.Revisions.Single(r => r.RmsRevisionId == revision).SnapshotJson));
 			var udf = new RecordsUdfService(Mock.Of<IRmsUdfDefinitionsRepository>(), Mock.Of<IUdfFieldRepository>(), Mock.Of<IUdfFieldValueRepository>(), _authorization.Object, Mock.Of<IDepartmentGroupsService>(), _store.UnitOfWork.Object, Mock.Of<IDepartmentDataProtectionService>());
 			var documents = new RecordsDocumentService(_authorization.Object, _store.RecordsRepo.Object, _incidentStore.ReportsRepo.Object, _incidentStore.AnalysesRepo.Object, _store.RevisionsRepo.Object,
-				incidents.Object, Mock.Of<IDepartmentProfileMediaService>(), Mock.Of<IRecordsPrintLayoutService>(), _pdf.Object, Mock.Of<IRecordsEvidenceService>(), udf);
+				incidents.Object, Mock.Of<IDepartmentProfileMediaService>(), Mock.Of<IRecordsPrintLayoutService>(), _pdf.Object, Mock.Of<IRecordsEvidenceService>(), udf, new PassthroughRecordsProtection());
 			_service = new RecordsDisclosureService(_store.DisclosureRequestsRepo.Object, _store.DisclosureProductionsRepo.Object,
 				_store.RecordsRepo.Object, _store.RevisionsRepo.Object, _store.AuditsRepo.Object,
-				_authorization.Object, _settings.Object, _store.UnitOfWork.Object, _incidentStore.ReportsRepo.Object, documents, _store.AttachmentsRepo.Object, _pdf.Object, _incidentStore.AnalysesRepo.Object, _scanner.Object, udf);
+				_authorization.Object, _settings.Object, _store.UnitOfWork.Object, _incidentStore.ReportsRepo.Object, documents, _store.AttachmentsRepo.Object, _pdf.Object, _incidentStore.AnalysesRepo.Object, _scanner.Object, udf,
+				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
 		}
 
 		private async Task<RmsDisclosureProduction> ReviewedProduceAsync(int departmentId, string userId, string requestId)
@@ -434,6 +435,22 @@ namespace Resgrid.Tests.Rms
 
 			return await _service.SaveScopeAsync(Dept, "clerk", request.RmsDisclosureRequestId, "All run reports from last month",
 				new RmsRecordQuery { States = new List<int> { (int)RmsRecordState.Finalized }, DefinitionKey = RmsDefinitionKeys.Run }, profile);
+		}
+
+		[Test]
+		public async Task Logging_a_request_emits_record_disclosure_requested_without_the_requester()
+		{
+			var request = await _service.CreateRequestAsync(Dept, "clerk", new RmsDisclosureRequest { RequesterName = "A. Reporter", RequesterOrganization = "Local Paper", JurisdictionProfile = "US-IL", ReceivedOn = DateTime.UtcNow });
+
+			var entry = _store.Outbox.Single(o => o.EventName == "RecordDisclosureRequested");
+			entry.TriggerEventType.Should().Be((int)WorkflowTriggerEventType.RecordDisclosureRequested);
+			var payload = JObject.Parse(entry.PayloadJson);
+			((string)payload["disclosure"]["request_number"]).Should().Be(request.RequestNumber);
+			((string)payload["disclosure"]["state"]).Should().Be("Received");
+			((string)payload["disclosure"]["jurisdiction_profile"]).Should().Be("US-IL");
+			((string)payload["record"]["kind"]).Should().Be("Disclosure");
+			entry.PayloadJson.Should().NotContain("A. Reporter").And.NotContain("Local Paper");
+			request.RequesterName.Should().Be("A. Reporter", "the caller keeps the plaintext request");
 		}
 
 		[Test]

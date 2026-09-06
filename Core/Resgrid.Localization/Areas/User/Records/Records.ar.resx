@@ -1064,4 +1064,255 @@
   <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>تم الإقرار في</value></data>
   <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>يُطبَّق نظام حماية البيانات المتقدّمة: ستفشل عمليات الإرسال المحمية حتى يُسجَّل هذا الإقرار.</value></data>
   <data name="RecordId" xml:space="preserve"><value>معرّف السجل</value></data>
+  <data name="AddRow" xml:space="preserve"><value>إضافة صف</value></data>
+  <data name="RemoveRow" xml:space="preserve"><value>إزالة الصف</value></data>
+  <data name="WithheldField" xml:space="preserve"><value>محجوب</value></data>
+  <data name="CoordinatesHint" xml:space="preserve"><value>الإحداثيات (خط العرض، خط الطول) أو مرجع المكان</value></data>
+  <data name="SignatureAcknowledge" xml:space="preserve"><value>أوقّع هذا السجل بصفتي المؤلف</value></data>
+  <data name="Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="No" xml:space="preserve"><value>لا</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="Enabled" xml:space="preserve"><value>مفعّل</value></data>
+  <data name="PreviewPack" xml:space="preserve"><value>معاينة</value></data>
+  <data name="DefinitionFormHint" xml:space="preserve"><value>يتبع هذا السجل تعريفًا خاصًا بالقسم. الحقول المميزة بقفل مقيدة؛ وقد تُظهر القواعد حقولًا أو تطلبها أثناء الكتابة.</value></data>
+  <data name="Definitions" xml:space="preserve"><value>التعريفات</value></data>
+  <data name="DefinitionsIntro" xml:space="preserve"><value>تصف تعريفات السجلات النماذج التي يعبّئها قسمك: الأقسام والحقول والقواعد والترقيم ومن يراجع أو يعتمد. النشر يجمّد الإصدار؛ وتثبّت السجلات الإصدار الذي كُتبت به.</value></data>
+  <data name="NewDefinition" xml:space="preserve"><value>تعريف جديد</value></data>
+  <data name="CreateDefinition" xml:space="preserve"><value>إنشاء تعريف</value></data>
+  <data name="CreateFromTemplate" xml:space="preserve"><value>البدء من قالب</value></data>
+  <data name="CreateFromClone" xml:space="preserve"><value>استنساخ تعريف موجود</value></data>
+  <data name="CreateBlank" xml:space="preserve"><value>تعريف فارغ</value></data>
+  <data name="BrowseTemplates" xml:space="preserve"><value>استعراض القوالب</value></data>
+  <data name="TemplatesIntro" xml:space="preserve"><value>حزم القوالب هي نقاط انطلاق مُراجعة. تعرض كل حزمة مصادرها وتاريخ مراجعتها؛ وحزم المعاينة قابلة للاستخدام لكنها ما تزال قيد التحقق مع الأقسام.</value></data>
+  <data name="TemplateReviewedOn" xml:space="preserve"><value>تمت المراجعة</value></data>
+  <data name="TemplateSources" xml:space="preserve"><value>المصادر</value></data>
+  <data name="TemplateSections" xml:space="preserve"><value>الأقسام</value></data>
+  <data name="TemplateFields" xml:space="preserve"><value>الحقول</value></data>
+  <data name="TemplateUseThis" xml:space="preserve"><value>استخدام هذا القالب</value></data>
+  <data name="TemplateProfile" xml:space="preserve"><value>ملف الاختصاص</value></data>
+  <data name="TemplateLocale" xml:space="preserve"><value>الإعدادات الإقليمية</value></data>
+  <data name="TemplatePreview" xml:space="preserve"><value>معاينة القالب</value></data>
+  <data name="DefinitionKeyHelp" xml:space="preserve"><value>أحرف صغيرة وأرقام ونقاط وشرطات. لا يمكن تغييره بعد الإنشاء.</value></data>
+  <data name="DefinitionName" xml:space="preserve"><value>الاسم</value></data>
+  <data name="DefinitionCategory" xml:space="preserve"><value>الفئة</value></data>
+  <data name="DefinitionDescription" xml:space="preserve"><value>الوصف</value></data>
+  <data name="DefinitionOwner" xml:space="preserve"><value>المالك</value></data>
+  <data name="DefinitionLocked" xml:space="preserve"><value>المنتج (مقفل)</value></data>
+  <data name="DefinitionPublishedVersion" xml:space="preserve"><value>الإصدار المنشور</value></data>
+  <data name="DefinitionDraftVersion" xml:space="preserve"><value>إصدار المسودة</value></data>
+  <data name="DefinitionPreset" xml:space="preserve"><value>إعداد دورة الحياة</value></data>
+  <data name="DefinitionCapability" xml:space="preserve"><value>قدرة العميل</value></data>
+  <data name="DefinitionRetiredLabel" xml:space="preserve"><value>متقاعد</value></data>
+  <data name="DefinitionIncludeRetired" xml:space="preserve"><value>إظهار التعريفات المتقاعدة</value></data>
+  <data name="DefinitionHideRetired" xml:space="preserve"><value>إخفاء التعريفات المتقاعدة</value></data>
+  <data name="DefinitionHistory" xml:space="preserve"><value>السجل</value></data>
+  <data name="DefinitionVersion" xml:space="preserve"><value>الإصدار</value></data>
+  <data name="DefinitionState" xml:space="preserve"><value>الحالة</value></data>
+  <data name="DefinitionPublishedOn" xml:space="preserve"><value>نُشر في</value></data>
+  <data name="DefinitionChangeNotes" xml:space="preserve"><value>ملاحظات التغيير</value></data>
+  <data name="DefinitionSettings" xml:space="preserve"><value>الإعدادات</value></data>
+  <data name="DefinitionSubjects" xml:space="preserve"><value>الموضوعات المسموح بها</value></data>
+  <data name="DefinitionReviewerRoles" xml:space="preserve"><value>أدوار المراجع</value></data>
+  <data name="DefinitionApproverRoles" xml:space="preserve"><value>أدوار المعتمد</value></data>
+  <data name="DefinitionReviewDueHours" xml:space="preserve"><value>مهلة المراجعة (ساعات)</value></data>
+  <data name="DefinitionApproveDueHours" xml:space="preserve"><value>مهلة الاعتماد (ساعات)</value></data>
+  <data name="DefinitionAuthorAttestation" xml:space="preserve"><value>طلب إقرار المؤلف عند الإنهاء</value></data>
+  <data name="DefinitionNumbering" xml:space="preserve"><value>الترقيم</value></data>
+  <data name="DefinitionNumberPrefix" xml:space="preserve"><value>بادئة الرقم</value></data>
+  <data name="DefinitionSequenceWidth" xml:space="preserve"><value>عرض التسلسل</value></data>
+  <data name="DefinitionNumberAssignment" xml:space="preserve"><value>تعيين الرقم</value></data>
+  <data name="DefinitionPerGroup" xml:space="preserve"><value>تسلسل لكل محطة</value></data>
+  <data name="DefinitionResetYearly" xml:space="preserve"><value>إعادة تعيين سنويًا</value></data>
+  <data name="DefinitionClassification" xml:space="preserve"><value>التصنيف</value></data>
+  <data name="DefinitionRetention" xml:space="preserve"><value>الاحتفاظ (سنوات)</value></data>
+  <data name="DefinitionClientSurface" xml:space="preserve"><value>واجهات العميل</value></data>
+  <data name="DefinitionAllowOffline" xml:space="preserve"><value>السماح دون اتصال</value></data>
+  <data name="DefinitionAllowAttachments" xml:space="preserve"><value>السماح بالمرفقات</value></data>
+  <data name="DefinitionMigrationMap" xml:space="preserve"><value>خريطة الترحيل (JSON)</value></data>
+  <data name="DefinitionSchema" xml:space="preserve"><value>المخطط (JSON)</value></data>
+  <data name="DefinitionSchemaHelp" xml:space="preserve"><value>تحتوي الأقسام على حقول؛ لكل حقل مفتاح وتسمية ونوع وقواعد اختيارية. تحقق قبل النشر؛ يعكس جدول الحقول أدناه آخر مسودة محفوظة.</value></data>
+  <data name="DefinitionFieldTable" xml:space="preserve"><value>الحقول</value></data>
+  <data name="DefinitionRepeating" xml:space="preserve"><value>متكرر</value></data>
+  <data name="DefinitionRules" xml:space="preserve"><value>القواعد</value></data>
+  <data name="FieldKey" xml:space="preserve"><value>المفتاح</value></data>
+  <data name="FieldLabel" xml:space="preserve"><value>التسمية</value></data>
+  <data name="FieldType" xml:space="preserve"><value>نوع الحقل</value></data>
+  <data name="FieldRequired" xml:space="preserve"><value>مطلوب</value></data>
+  <data name="FieldClassification" xml:space="preserve"><value>التصنيف</value></data>
+  <data name="FieldFlags" xml:space="preserve"><value>العلامات</value></data>
+  <data name="DefinitionValidate" xml:space="preserve"><value>تحقق</value></data>
+  <data name="DefinitionSaveDraft" xml:space="preserve"><value>حفظ المسودة</value></data>
+  <data name="DefinitionImpactPublish" xml:space="preserve"><value>مراجعة الأثر والنشر</value></data>
+  <data name="DefinitionOpenDraft" xml:space="preserve"><value>فتح مسودة جديدة</value></data>
+  <data name="DefinitionDeleteDraft" xml:space="preserve"><value>حذف المسودة</value></data>
+  <data name="DefinitionDeleteDraftConfirm" xml:space="preserve"><value>هل تريد حذف هذه المسودة؟ لن تتأثر الإصدارات المنشورة.</value></data>
+  <data name="DefinitionPublishedReadOnly" xml:space="preserve"><value>هذا الإصدار منشور وللقراءة فقط. افتح مسودة جديدة لإجراء التغييرات.</value></data>
+  <data name="DefinitionIssues" xml:space="preserve"><value>مشكلات التحقق</value></data>
+  <data name="DefinitionTemplateDrift" xml:space="preserve"><value>الاختلافات عن القالب الذي أُنشئ منه هذا التعريف</value></data>
+  <data name="DefinitionImpact" xml:space="preserve"><value>أثر النشر</value></data>
+  <data name="DefinitionImpactIntro" xml:space="preserve"><value>النشر يجمّد هذا الإصدار. تحتفظ المسودات الحالية بإصدارها حتى ترحيلها؛ والسجلات المنتهية لا تتغير أبدًا.</value></data>
+  <data name="DefinitionOpenDrafts" xml:space="preserve"><value>المسودات المفتوحة على الإصدار الحالي</value></data>
+  <data name="DefinitionFinalizedEarlier" xml:space="preserve"><value>السجلات المنتهية على إصدارات سابقة</value></data>
+  <data name="DefinitionBreaking" xml:space="preserve"><value>تغيير جذري</value></data>
+  <data name="DefinitionClients" xml:space="preserve"><value>جاهزية العملاء</value></data>
+  <data name="DefinitionDiff" xml:space="preserve"><value>التغييرات</value></data>
+  <data name="DefinitionDiffFrom" xml:space="preserve"><value>مقارنة من</value></data>
+  <data name="DefinitionDiffTo" xml:space="preserve"><value>إلى</value></data>
+  <data name="DefinitionCompare" xml:space="preserve"><value>مقارنة</value></data>
+  <data name="DefinitionNoChanges" xml:space="preserve"><value>لا توجد اختلافات بين هذين الإصدارين.</value></data>
+  <data name="DefinitionPublishConfirm" xml:space="preserve"><value>هل تريد نشر هذا الإصدار؟ سيصبح للقراءة فقط وستستخدمه السجلات الجديدة.</value></data>
+  <data name="DefinitionPublishNow" xml:space="preserve"><value>نشر</value></data>
+  <data name="DefinitionPublishNeedsPermission" xml:space="preserve"><value>يتطلب النشر إذن إدارة تعريفات السجلات.</value></data>
+  <data name="DefinitionRetire" xml:space="preserve"><value>إيقاف</value></data>
+  <data name="DefinitionRetireReason" xml:space="preserve"><value>سبب إيقاف هذا التعريف</value></data>
+  <data name="DefinitionMigrateDrafts" xml:space="preserve"><value>ترحيل المسودات المفتوحة</value></data>
+  <data name="DefinitionMigratePreview" xml:space="preserve"><value>معاينة الترحيل</value></data>
+  <data name="DefinitionMigrateRun" xml:space="preserve"><value>الترحيل الآن</value></data>
+  <data name="DefinitionMigrateConfirm" xml:space="preserve"><value>هل تريد نقل جميع المسودات المفتوحة إلى الإصدار الأحدث؟ سيتم إسقاط القيم غير المعينة.</value></data>
+  <data name="DefinitionCreated" xml:space="preserve"><value>تم إنشاء التعريف. حرّر المخطط وتحقق منه ثم انشره.</value></data>
+  <data name="DefinitionSaved" xml:space="preserve"><value>تم حفظ المسودة.</value></data>
+  <data name="DefinitionValid" xml:space="preserve"><value>التعريف صالح.</value></data>
+  <data name="DefinitionInvalid" xml:space="preserve"><value>يحتوي التعريف على أخطاء. أصلحها قبل النشر.</value></data>
+  <data name="DefinitionDraftDeleted" xml:space="preserve"><value>تم حذف المسودة.</value></data>
+  <data name="DefinitionPublished" xml:space="preserve"><value>تم نشر الإصدار {0}.</value></data>
+  <data name="DefinitionRetired" xml:space="preserve"><value>تم إيقاف التعريف. تبقى السجلات الحالية قابلة للقراءة؛ ولا يمكن إنشاء سجلات جديدة.</value></data>
+  <data name="SavedReports" xml:space="preserve"><value>التقارير المحفوظة</value></data>
+  <data name="SavedReportsIntro" xml:space="preserve"><value>تستعلم التقارير المحفوظة عن سجلات تعريف واحد حسب الحقل وتجمعها وتلخصها وتصدّرها إلى CSV. تحترم النتائج رؤية السجلات والحقول المقيدة.</value></data>
+  <data name="NewReport" xml:space="preserve"><value>تقرير جديد</value></data>
+  <data name="ReportName" xml:space="preserve"><value>اسم التقرير</value></data>
+  <data name="ReportSettings" xml:space="preserve"><value>إعدادات التقرير</value></data>
+  <data name="ReportColumns" xml:space="preserve"><value>الأعمدة</value></data>
+  <data name="ReportBuiltInColumns" xml:space="preserve"><value>أعمدة السجل</value></data>
+  <data name="ReportPickDefinition" xml:space="preserve"><value>اختر تعريفًا لتحديد الأعمدة.</value></data>
+  <data name="ReportSort" xml:space="preserve"><value>ترتيب حسب</value></data>
+  <data name="ReportDescending" xml:space="preserve"><value>تنازلي</value></data>
+  <data name="ReportGroupBy" xml:space="preserve"><value>تجميع حسب</value></data>
+  <data name="ReportAggregates" xml:space="preserve"><value>التجميعات (JSON)</value></data>
+  <data name="ReportAggregatesHelp" xml:space="preserve"><value>Count وSum وAverage وMin وMax على الحقول القابلة للتجميع</value></data>
+  <data name="ReportFilters" xml:space="preserve"><value>عوامل التصفية (JSON)</value></data>
+  <data name="ReportFiltersHelp" xml:space="preserve"><value>الحقول القابلة للتصفية</value></data>
+  <data name="ReportVersionMappings" xml:space="preserve"><value>تعيينات الإصدارات (JSON)</value></data>
+  <data name="ReportMaxRows" xml:space="preserve"><value>الحد الأقصى للصفوف</value></data>
+  <data name="ReportIncludeDrafts" xml:space="preserve"><value>تضمين المسودات</value></data>
+  <data name="ReportIncludeRestricted" xml:space="preserve"><value>تضمين الحقول المقيدة</value></data>
+  <data name="ReportValidate" xml:space="preserve"><value>تحقق</value></data>
+  <data name="ReportRun" xml:space="preserve"><value>تشغيل</value></data>
+  <data name="ReportLastRun" xml:space="preserve"><value>آخر تشغيل</value></data>
+  <data name="ReportDeleteConfirm" xml:space="preserve"><value>هل تريد حذف هذا التقرير المحفوظ؟</value></data>
+  <data name="ReportRows" xml:space="preserve"><value>الصفوف</value></data>
+  <data name="ReportGroups" xml:space="preserve"><value>المجموعات</value></data>
+  <data name="ReportCount" xml:space="preserve"><value>العدد</value></data>
+  <data name="ReportTruncated" xml:space="preserve"><value>تم اقتطاع النتائج عند حد الصفوف؛ ضيّق عوامل التصفية أو صدّر إلى CSV.</value></data>
+  <data name="ReportUnmappedVersions" xml:space="preserve"><value>تم تضمين السجلات على إصدارات تعريف غير معينة مع خلايا فارغة</value></data>
+  <data name="ReportSaved" xml:space="preserve"><value>تم حفظ التقرير.</value></data>
+  <data name="ReportDeleted" xml:space="preserve"><value>تم حذف التقرير.</value></data>
+  <data name="ReportValid" xml:space="preserve"><value>التقرير صالح.</value></data>
+  <data name="ReportInvalid" xml:space="preserve"><value>يحتوي التقرير على أخطاء.</value></data>
+  <data name="Deployments" xml:space="preserve"><value>الانتشارات</value></data>
+  <data name="DeploymentsIntro" xml:space="preserve"><value>طلبات موارد خارجية يلبيها قسمك. يبقى نظام الطلب هو المرجع: تُخزَّن المستندات كلقطات ثابتة ولا يُكتب شيء إليه.</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>انتشار جديد</value></data>
+  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>الانتشارات ميزة معاينة: بُنيت النماذج من وثائق IROC وCIFFC وEMAC المنشورة وليس من تكاملات مباشرة. تحقق منها مقابل نظام الطلب لديك.</value></data>
+  <data name="DeploymentOrder" xml:space="preserve"><value>الطلب</value></data>
+  <data name="DeploymentOrderNumber" xml:space="preserve"><value>رقم الطلب</value></data>
+  <data name="DeploymentIncident" xml:space="preserve"><value>الحادث</value></data>
+  <data name="DeploymentLocation" xml:space="preserve"><value>الدولة / المنطقة</value></data>
+  <data name="DeploymentOffices" xml:space="preserve"><value>المكاتب</value></data>
+  <data name="DeploymentOrderingOffice" xml:space="preserve"><value>مكتب الطلب</value></data>
+  <data name="DeploymentDispatchOffice" xml:space="preserve"><value>مكتب الإرسال</value></data>
+  <data name="DeploymentAgencies" xml:space="preserve"><value>الجهات</value></data>
+  <data name="DeploymentRequestingAgency" xml:space="preserve"><value>الجهة الطالبة</value></data>
+  <data name="DeploymentReceivingAgency" xml:space="preserve"><value>الجهة المستلمة</value></data>
+  <data name="DeploymentSendingAgency" xml:space="preserve"><value>الجهة المرسلة</value></data>
+  <data name="DeploymentRole" xml:space="preserve"><value>دور القسم</value></data>
+  <data name="DeploymentRoleFilling" xml:space="preserve"><value>يلبي الطلب</value></data>
+  <data name="DeploymentRoleRequesting" xml:space="preserve"><value>يطلب الموارد</value></data>
+  <data name="DeploymentRoleHost" xml:space="preserve"><value>يستضيف الحادث</value></data>
+  <data name="DeploymentCost" xml:space="preserve"><value>التكلفة</value></data>
+  <data name="DeploymentCostCode" xml:space="preserve"><value>رمز التكلفة</value></data>
+  <data name="DeploymentAgreement" xml:space="preserve"><value>مرجع الاتفاقية</value></data>
+  <data name="DeploymentUnitsAndCurrency" xml:space="preserve"><value>العملة / الوحدات / المنطقة الزمنية</value></data>
+  <data name="DeploymentArtifact" xml:space="preserve"><value>مستند الطلب</value></data>
+  <data name="DeploymentArtifactHelp" xml:space="preserve"><value>ارفع مستند الطلب من النظام المصدر (PDF أو JSON أو CSV). يُخزَّن كلقطة ثابتة مع مجموع تحقق.</value></data>
+  <data name="DeploymentSource" xml:space="preserve"><value>المصدر</value></data>
+  <data name="DeploymentSourceSystem" xml:space="preserve"><value>النظام المصدر</value></data>
+  <data name="DeploymentSourceVersion" xml:space="preserve"><value>إصدار المصدر</value></data>
+  <data name="DeploymentSourceLink" xml:space="preserve"><value>فتح في النظام المصدر</value></data>
+  <data name="DeploymentStatus" xml:space="preserve"><value>الحالة</value></data>
+  <data name="DeploymentIncludeClosed" xml:space="preserve"><value>إظهار الانتشارات المغلقة</value></data>
+  <data name="DeploymentHideClosed" xml:space="preserve"><value>إخفاء الانتشارات المغلقة</value></data>
+  <data name="DeploymentMobilizedOn" xml:space="preserve"><value>تمت التعبئة</value></data>
+  <data name="DeploymentReleasedOn" xml:space="preserve"><value>تم الإفراج</value></data>
+  <data name="DeploymentClosedOutOn" xml:space="preserve"><value>تم الإغلاق</value></data>
+  <data name="DeploymentNewSnapshot" xml:space="preserve"><value>تسجيل لقطة جديدة</value></data>
+  <data name="DeploymentRecordSnapshot" xml:space="preserve"><value>حفظ اللقطة</value></data>
+  <data name="DeploymentCloseout" xml:space="preserve"><value>إغلاق الانتشار</value></data>
+  <data name="DeploymentCloseoutNotes" xml:space="preserve"><value>ملاحظات الإغلاق</value></data>
+  <data name="DeploymentCloseoutConfirm" xml:space="preserve"><value>هل تريد إغلاق هذا الانتشار؟ لن يمكن تغيير التلبيات بعد ذلك.</value></data>
+  <data name="DeploymentCloseoutBlocked" xml:space="preserve"><value>يجب أن تكون كل تلبية مقبولة بحالة عادت قبل الإغلاق.</value></data>
+  <data name="DeploymentFills" xml:space="preserve"><value>التلبيات</value></data>
+  <data name="DeploymentFirstFill" xml:space="preserve"><value>التلبية الأولى (اختياري)</value></data>
+  <data name="DeploymentFirstFillHelp" xml:space="preserve"><value>أضف أول طلب/تلبية الآن أو من صفحة الانتشار.</value></data>
+  <data name="DeploymentAddFill" xml:space="preserve"><value>إضافة تلبية</value></data>
+  <data name="DeploymentRequestNumber" xml:space="preserve"><value>رقم الطلب الفرعي</value></data>
+  <data name="DeploymentParentRequest" xml:space="preserve"><value>الطلب الأصل</value></data>
+  <data name="DeploymentResource" xml:space="preserve"><value>المورد</value></data>
+  <data name="DeploymentPosition" xml:space="preserve"><value>المنصب</value></data>
+  <data name="DeploymentTrainee" xml:space="preserve"><value>متدرب</value></data>
+  <data name="DeploymentAssigned" xml:space="preserve"><value>الشخص المعيّن</value></data>
+  <data name="DeploymentHomeUnit" xml:space="preserve"><value>الوحدة الأصلية</value></data>
+  <data name="DeploymentHostAgency" xml:space="preserve"><value>الجهة المضيفة</value></data>
+  <data name="DeploymentNeededOn" xml:space="preserve"><value>مطلوب في</value></data>
+  <data name="DeploymentRecord" xml:space="preserve"><value>سجل الانتشار</value></data>
+  <data name="DeploymentCreate" xml:space="preserve"><value>إنشاء انتشار</value></data>
+  <data name="DeploymentDeclineReason" xml:space="preserve"><value>سبب رفض هذا الطلب</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>تم إنشاء الانتشار.</value></data>
+  <data name="DeploymentFillAdded" xml:space="preserve"><value>تمت إضافة التلبية.</value></data>
+  <data name="DeploymentFillUpdated" xml:space="preserve"><value>تم تحديث التلبية.</value></data>
+  <data name="DeploymentSnapshotNeedsFile" xml:space="preserve"><value>اختر مستند الطلب لحفظه كلقطة.</value></data>
+  <data name="DeploymentSnapshotRecorded" xml:space="preserve"><value>تم حفظ اللقطة. تُحفظ اللقطة السابقة وتُستبدل.</value></data>
+  <data name="DeploymentClosedOut" xml:space="preserve"><value>تم إغلاق الانتشار.</value></data>
+  <data name="DefinitionLayout" xml:space="preserve"><value>تخطيط الطباعة</value></data>
+  <data name="DefinitionLayoutIntro" xml:space="preserve"><value>رتّب الأقسام والحقول أو أعد تسميتها أو أخفها للطباعة وملفات PDF، وأضف فواصل الصفحات، وحدد موضع كتلة التوقيع وقائمة المرفقات. كل حفظ ينشئ إصدار تخطيط جديدًا يُختم في تذييل المصدر.</value></data>
+  <data name="LayoutCurrentVersion" xml:space="preserve"><value>إصدار التخطيط</value></data>
+  <data name="LayoutDepartmentDefault" xml:space="preserve"><value>الافتراضي للقسم</value></data>
+  <data name="LayoutOrder" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="LayoutHeading" xml:space="preserve"><value>عنوان بديل</value></data>
+  <data name="LayoutVisible" xml:space="preserve"><value>مرئي</value></data>
+  <data name="LayoutPageBreak" xml:space="preserve"><value>فاصل صفحة قبل</value></data>
+  <data name="LayoutFields" xml:space="preserve"><value>الحقول</value></data>
+  <data name="LayoutAppliesToVersion" xml:space="preserve"><value>ينطبق على الإصدار</value></data>
+  <data name="LayoutAllVersions" xml:space="preserve"><value>جميع الإصدارات</value></data>
+  <data name="LayoutSignaturePlacement" xml:space="preserve"><value>كتلة التوقيع</value></data>
+  <data name="LayoutSignatureEnd" xml:space="preserve"><value>في النهاية</value></data>
+  <data name="LayoutSignatureInline" xml:space="preserve"><value>ضمن قسمه</value></data>
+  <data name="LayoutSignatureNone" xml:space="preserve"><value>مخفي</value></data>
+  <data name="LayoutAttachmentStyle" xml:space="preserve"><value>قائمة المرفقات</value></data>
+  <data name="LayoutAttachmentsTable" xml:space="preserve"><value>جدول</value></data>
+  <data name="LayoutAttachmentsList" xml:space="preserve"><value>قائمة بسيطة</value></data>
+  <data name="LayoutAttachmentsNone" xml:space="preserve"><value>مخفية</value></data>
+  <data name="LayoutBrandingOverride" xml:space="preserve"><value>تجاوز هوية القسم لهذا التعريف</value></data>
+  <data name="LayoutLetterhead" xml:space="preserve"><value>ترويسة</value></data>
+  <data name="LayoutSaved" xml:space="preserve"><value>تم حفظ تخطيط الطباعة.</value></data>
+  <data name="BulkSelected" xml:space="preserve"><value>محدد</value></data>
+  <data name="BulkSelectAll" xml:space="preserve"><value>تحديد الكل في هذه الصفحة</value></data>
+  <data name="BulkReviewer" xml:space="preserve"><value>المراجع…</value></data>
+  <data name="BulkReason" xml:space="preserve"><value>السبب</value></data>
+  <data name="BulkAssignReview" xml:space="preserve"><value>تعيين للمراجعة</value></data>
+  <data name="BulkTitle" xml:space="preserve"><value>عنوان الحزمة</value></data>
+  <data name="BulkPurpose" xml:space="preserve"><value>الغرض (مُدقّق)</value></data>
+  <data name="BulkDeliverTo" xml:space="preserve"><value>إرسال الحزمة بالبريد إلى (اختياري)</value></data>
+  <data name="BulkCompiledPdf" xml:space="preserve"><value>ملف PDF مجمّع</value></data>
+  <data name="BulkBundle" xml:space="preserve"><value>حزمة zip</value></data>
+  <data name="BulkLimit" xml:space="preserve"><value>حتى {0} سجلًا لكل حزمة. لا إلغاء أو حذف جماعي.</value></data>
+  <data name="BulkNothingSelected" xml:space="preserve"><value>حدد سجلًا واحدًا على الأقل.</value></data>
+  <data name="BulkAssigned" xml:space="preserve"><value>تم تعيين {0} سجل(ات) للمراجعة؛ تم تخطي {1}.</value></data>
+  <data name="BulkPacketCreated" xml:space="preserve"><value>تم تجميع الحزمة من {0} سجل(ات)؛ تم تخطي {1}. تبقى قابلة للتنزيل لمدة 30 يومًا.</value></data>
+  <data name="BulkDelivered" xml:space="preserve"><value>تم الإرسال بالبريد.</value></data>
+  <data name="EvidenceModuleProjection" xml:space="preserve"><value>إسقاط الوحدة</value></data>
+  <data name="ProjectionIntro" xml:space="preserve"><value>يُنشئ لقطة محدودة من الوحدة المالكة: المعرّفات والرموز والأعداد والحالات فقط مع مراجع المصدر. تبقى الوحدة هي نظام السجل.</value></data>
+  <data name="ProjectionKind" xml:space="preserve"><value>الإسقاط</value></data>
+  <data name="Projectionpersonnel-check-in" xml:space="preserve"><value>تسجيل حضور الأفراد</value></data>
+  <data name="Projectionresource-summary" xml:space="preserve"><value>ملخص الموارد</value></data>
+  <data name="Projectionqualifications" xml:space="preserve"><value>المؤهلات</value></data>
+  <data name="Projectioncommand-summary" xml:space="preserve"><value>ملخص القيادة</value></data>
 </root>

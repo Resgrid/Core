@@ -43,6 +43,20 @@ namespace Resgrid.Services.Records
 			catch (Exception ex) { Logging.LogException(ex, $"Pinned catalog version lookup failed for department {departmentId}."); return 0; }
 		}
 
+		/// <summary>
+		/// The catalog version stamped on a row that was just sealed. Unlike <see cref="GetCatalogVersionAsync"/>,
+		/// which reports 0 for the read-side callers that only decorate a projection, this fails the write: a row
+		/// carrying real envelopes but a recorded version of 0 is invisible to the enrollment upgrade sweep that
+		/// is supposed to migrate it, and the write has not been persisted yet when this runs.
+		/// </summary>
+		private async Task<int> RequiredCatalogVersionAsync(int departmentId, string operation)
+		{
+			var version = await GetCatalogVersionAsync(departmentId);
+			if (version <= 0)
+				throw new RecordProtectedContentException("catalog_version_unavailable", operation);
+			return version;
+		}
+
 		public async Task<bool> IsEnforcedAsync(int departmentId)
 		{
 			try { return await _dataProtection.IsProtectionEnforcedAsync(departmentId); }
@@ -67,7 +81,7 @@ namespace Resgrid.Services.Records
 			if (!result.Success)
 				throw new RecordProtectedContentException(result.Reason, operation);
 			if (marked)
-				mark(row, await GetCatalogVersionAsync(departmentId));
+				mark(row, await RequiredCatalogVersionAsync(departmentId, operation));
 		}
 
 		private async Task ApplyCompanionsAsync<T>(int departmentId, T row, string rowKey,
@@ -83,7 +97,7 @@ namespace Resgrid.Services.Records
 			if (!result.Success)
 				throw new RecordProtectedContentException(result.Reason, operation);
 			if (marked)
-				mark(row, await GetCatalogVersionAsync(departmentId));
+				mark(row, await RequiredCatalogVersionAsync(departmentId, operation));
 		}
 
 		public Task ProtectDetailsAsync(int departmentId, RmsOperationalRecordDetail row, RmsOperationalRecordDetail existing, string userId = null, CancellationToken cancellationToken = default)
@@ -97,7 +111,7 @@ namespace Resgrid.Services.Records
 			if (!result.Success)
 				throw new RecordProtectedContentException(result.Reason, "attachment");
 			if (row.IsProtected && row.ProtectedCatalogVersion == 0)
-				row.ProtectedCatalogVersion = await GetCatalogVersionAsync(departmentId);
+				row.ProtectedCatalogVersion = await RequiredCatalogVersionAsync(departmentId, "attachment");
 		}
 
 		public Task ProtectRevisionAsync(int departmentId, RmsRevision row, string userId = null, CancellationToken cancellationToken = default)
@@ -105,8 +119,8 @@ namespace Resgrid.Services.Records
 
 		public async Task ProtectLocationAsync(int departmentId, RmsLocation row, RmsLocation existing, string userId = null, CancellationToken cancellationToken = default)
 		{
-			await ApplyAsync(departmentId, row, existing, row?.RmsLocationId, RmsProtectedFields.Locations, (r, v) => { }, userId, "location", cancellationToken);
-			await ApplyCompanionsAsync(departmentId, row, row?.RmsLocationId, RmsProtectedFields.LocationCompanions, (r, v) => { }, userId, "location", cancellationToken);
+			await ApplyAsync(departmentId, row, existing, row?.RmsLocationId, RmsProtectedFields.Locations, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "location", cancellationToken);
+			await ApplyCompanionsAsync(departmentId, row, row?.RmsLocationId, RmsProtectedFields.LocationCompanions, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "location", cancellationToken);
 		}
 
 		public Task ProtectNarrativeAsync(int departmentId, RmsNarrative row, RmsNarrative existing, string userId = null, CancellationToken cancellationToken = default)
@@ -166,7 +180,7 @@ namespace Resgrid.Services.Records
 			if (marked)
 			{
 				row.IsProtected = true;
-				row.ProtectedCatalogVersion = await GetCatalogVersionAsync(departmentId);
+				row.ProtectedCatalogVersion = await RequiredCatalogVersionAsync(departmentId, "export run");
 			}
 		}
 
@@ -178,6 +192,18 @@ namespace Resgrid.Services.Records
 
 		private static IReadOnlyList<(T Entity, string RowKey)> Rows<T>(IEnumerable<T> rows, Func<T, string> key) where T : class
 			=> (rows ?? Enumerable.Empty<T>()).Where(r => r != null).Select(r => (r, key(r))).ToList();
+
+		public async Task ProtectValuesAsync(int departmentId, IReadOnlyList<RmsRecordValue> rows, string userId = null, CancellationToken cancellationToken = default)
+		{
+			foreach (var row in (rows ?? Array.Empty<RmsRecordValue>()).Where(r => r != null && r.ProtectionRequired))
+				await ApplyAsync(departmentId, row, null, row.RmsRecordValueId, RmsProtectedFields.Values, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "typed value", cancellationToken);
+		}
+
+		public Task<ProtectedReadResult> RevealValuesAsync(int departmentId, IReadOnlyList<RmsRecordValue> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsRecordValueId), RmsProtectedFields.Values, GrantToken, User, cancellationToken);
+
+		public Task<ProtectedReadResult> RevealValuesForWorkloadAsync(int departmentId, IReadOnlyList<RmsRecordValue> rows, string purpose, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForWorkloadAsync(departmentId, purpose, Rows(rows, r => r.RmsRecordValueId), RmsProtectedFields.Values, cancellationToken);
 
 		public Task<ProtectedReadResult> RevealAsync(int departmentId, RecordAggregate aggregate, CancellationToken cancellationToken = default)
 			=> ResolveAggregateAsync(departmentId, aggregate, GrantToken, User, cancellationToken);

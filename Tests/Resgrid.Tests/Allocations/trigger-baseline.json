@@ -63,6 +63,8 @@
   "RecordSubmissionRejected": 110,
   "RecordSubmissionFailed": 111,
   "RecordOverdue": 112,
+  "RecordDefinitionPublished": 113,
+  "RecordDefinitionRetired": 114,
   "RecordApproved": 103,
   "RecordAttachmentAdded": 115,
   "RecordDisclosureRequested": 152,

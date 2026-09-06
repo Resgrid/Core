@@ -63,6 +63,30 @@ namespace Resgrid.Tests.Rms
 			Resolve<IRecordsExportService>().Should().NotBeNull();
 			Resolve<IRmsExportTemplatesRepository>().Should().NotBeNull();
 			Resolve<IRmsExportRunsRepository>().Should().NotBeNull();
+			// RMS-1B/1C (2026-09-06): configurable definitions, typed values, saved reports, template packs, deployments, reveal
+			Resolve<IRecordDefinitionsService>().Should().NotBeNull();
+			Resolve<IRecordTypedValuesService>().Should().NotBeNull();
+			Resolve<IRecordSavedReportsService>().Should().NotBeNull();
+			Resolve<IRecordTemplatePacksService>().Should().NotBeNull();
+			Resolve<IRecordDeploymentsService>().Should().NotBeNull();
+			Resolve<IRecordsBulkPacketService>().Should().NotBeNull();
+			// RMS-1D Field Records
+			Resolve<IFieldRecordsService>().Should().NotBeNull();
+			Resolve<IRecordWorkAssignmentsService>().Should().NotBeNull();
+			Resolve<IRmsRecordWorkAssignmentsRepository>().Should().NotBeNull();
+			Resolve<System.Collections.Generic.IEnumerable<IRecordEvidenceAdapter>>().Should().Contain(a => a.Kind == RmsEvidenceKind.ModuleProjection);
+			Resolve<IRecordsRevealService>().Should().NotBeNull();
+			Resolve<IRmsRecordDefinitionsRepository>().Should().NotBeNull();
+			Resolve<IRmsRecordDefinitionVersionsRepository>().Should().NotBeNull();
+			Resolve<IRmsRecordSectionDefinitionsRepository>().Should().NotBeNull();
+			Resolve<IRmsRecordFieldDefinitionsRepository>().Should().NotBeNull();
+			Resolve<IRmsRecordValueGroupsRepository>().Should().NotBeNull();
+			Resolve<IRmsRecordValuesRepository>().Should().NotBeNull();
+			Resolve<IRmsSavedReportDefinitionsRepository>().Should().NotBeNull();
+			Resolve<IRmsTemplatePackVersionsRepository>().Should().NotBeNull();
+			Resolve<IRmsJurisdictionProfileVersionsRepository>().Should().NotBeNull();
+			Resolve<IRmsExternalOrdersRepository>().Should().NotBeNull();
+			Resolve<IRmsExternalOrderFillsRepository>().Should().NotBeNull();
 		}
 
 		[Test]

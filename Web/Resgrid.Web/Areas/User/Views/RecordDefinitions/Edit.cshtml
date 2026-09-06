@@ -1,0 +1,141 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordDefinitionEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + Model.Name;
+	var readOnly = !Model.IsDraft;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@Model.Name <small>v@(Model.Version) · @(Model.VersionRow == null ? "" : ((RmsDefinitionVersionState)Model.VersionRow.State).ToString())</small></h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User">@localizer["Definitions"]</a></li>
+			<li class="active"><strong>@Model.DefinitionKey</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="History" asp-route-area="User" asp-route-key="@Model.DefinitionKey"><i class="fa fa-history"></i> @localizer["DefinitionHistory"]</a>
+			<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="Layout" asp-route-area="User" asp-route-key="@Model.DefinitionKey"><i class="fa fa-print"></i> @localizer["DefinitionLayout"]</a>
+			@if (Model.IsDraft)
+			{
+				<a class="btn btn-success" asp-controller="RecordDefinitions" asp-action="Impact" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Version"><i class="fa fa-check"></i> @localizer["DefinitionImpactPublish"]</a>
+			}
+			else if (Model.Aggregate?.Draft == null && !(Model.Aggregate?.Definition.IsRetired ?? false))
+			{
+				<form method="post" asp-controller="RecordDefinitions" asp-action="OpenDraft" asp-route-area="User" asp-route-key="@Model.DefinitionKey" style="display:inline">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary"><i class="fa fa-pencil"></i> @localizer["DefinitionOpenDraft"]</button></form>
+			}
+			else if (Model.Aggregate?.Draft != null && !Model.IsDraft)
+			{
+				<a class="btn btn-primary" asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Aggregate.Draft.Version"><i class="fa fa-pencil"></i> @localizer["DefinitionDraftVersion"] @Model.Aggregate.Draft.Version</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (readOnly) { <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["DefinitionPublishedReadOnly"]</div> }
+	@if (Model.Issues.Count > 0)
+	{
+		<div class="alert @(Model.Issues.Any(i => i.Severity == "error") ? "alert-danger" : "alert-warning")">
+			<strong>@localizer["DefinitionIssues"]</strong>
+			<ul>@foreach (var issue in Model.Issues) { <li><span class="label @(issue.Severity == "error" ? "label-danger" : "label-warning")">@issue.Severity</span> <code>@issue.Path</code> @issue.Message</li> }</ul>
+		</div>
+	}
+	@if (Model.TemplateDiff != null && Model.TemplateDiff.Entries.Count > 0)
+	{
+		<div class="alert alert-info">
+			<strong>@localizer["DefinitionTemplateDrift"]</strong> (@Model.Aggregate.Definition.TemplateKey)
+			<ul>@foreach (var e in Model.TemplateDiff.Entries.Take(20)) { <li>@e.Kind @e.Change <code>@e.Key</code> @e.Detail</li> }</ul>
+		</div>
+	}
+
+	<form class="form-horizontal" method="post" asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" id="definition-edit-form">
+		@Html.AntiForgeryToken()
+		<input type="hidden" asp-for="DefinitionKey" /><input type="hidden" asp-for="Version" /><input type="hidden" asp-for="RowVersion" />
+		<div class="row">
+			<div class="col-md-5">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["DefinitionSettings"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group"><label class="col-sm-4 control-label required">@localizer["DefinitionName"]</label><div class="col-sm-8"><input type="text" class="form-control" asp-for="Name" maxlength="200" /></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionCategory"]</label><div class="col-sm-8"><input type="text" class="form-control" asp-for="Category" maxlength="200" /></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionDescription"]</label><div class="col-sm-8"><textarea class="form-control" rows="2" asp-for="Description"></textarea></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionSubjects"]</label><div class="col-sm-8"><input type="text" class="form-control" asp-for="PermittedSubjectTypes" placeholder="call,unit,contact" /></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionPreset"]</label><div class="col-sm-8"><select class="form-control" asp-for="LifecyclePreset"><option value="1">QuickEntry</option><option value="2">ReviewRequired</option><option value="3">ApprovalAcknowledgement</option></select></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionReviewerRoles"]</label><div class="col-sm-8"><select class="form-control" multiple asp-for="ReviewerRoleIds" asp-items="Model.Roles"></select></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionApproverRoles"]</label><div class="col-sm-8"><select class="form-control" multiple asp-for="ApproverRoleIds" asp-items="Model.Roles"></select></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionReviewDueHours"]</label><div class="col-sm-3"><input type="number" class="form-control" asp-for="ReviewDueHours" min="1" /></div><label class="col-sm-2 control-label">@localizer["DefinitionApproveDueHours"]</label><div class="col-sm-3"><input type="number" class="form-control" asp-for="ApproveDueHours" min="1" /></div></div>
+						<div class="form-group"><div class="col-sm-8 col-sm-offset-4"><label><input type="checkbox" asp-for="RequireAuthorAttestation" /> @localizer["DefinitionAuthorAttestation"]</label></div></div>
+						<h4>@localizer["DefinitionNumbering"]</h4>
+						<div class="form-group"><label class="col-sm-4 control-label required">@localizer["DefinitionNumberPrefix"]</label><div class="col-sm-3"><input type="text" class="form-control" asp-for="NumberPrefix" maxlength="6" style="text-transform:uppercase" /></div><label class="col-sm-2 control-label">@localizer["DefinitionSequenceWidth"]</label><div class="col-sm-3"><input type="number" class="form-control" asp-for="SequenceWidth" min="3" max="8" /></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionNumberAssignment"]</label><div class="col-sm-8"><select class="form-control" asp-for="NumberAssignment"><option value="1">OnFinalize</option><option value="2">OnCreate</option></select></div></div>
+						<div class="form-group"><div class="col-sm-8 col-sm-offset-4"><label class="checkbox-inline"><input type="checkbox" asp-for="PerGroupSequence" /> @localizer["DefinitionPerGroup"]</label> <label class="checkbox-inline"><input type="checkbox" asp-for="ResetYearly" /> @localizer["DefinitionResetYearly"]</label></div></div>
+						<h4>@localizer["DefinitionClassification"]</h4>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionClassification"]</label><div class="col-sm-4"><select class="form-control" asp-for="Classification"><option value="0">Standard</option><option value="1">Restricted</option><option value="2">Protected</option></select></div><label class="col-sm-2 control-label">@localizer["DefinitionRetention"]</label><div class="col-sm-2"><input type="number" class="form-control" asp-for="RetentionYears" min="0" max="100" /></div></div>
+						<h4>@localizer["DefinitionClientSurface"]</h4>
+						<div class="form-group"><div class="col-sm-12">
+							<label class="checkbox-inline"><input type="checkbox" asp-for="SurfaceResponder" /> Responder</label>
+							<label class="checkbox-inline"><input type="checkbox" asp-for="SurfaceUnit" /> Unit</label>
+							<label class="checkbox-inline"><input type="checkbox" asp-for="SurfaceIncidentCommand" /> IC</label>
+							<label class="checkbox-inline"><input type="checkbox" asp-for="SurfaceDispatch" /> Dispatch</label>
+							<label class="checkbox-inline"><input type="checkbox" asp-for="AllowOffline" /> @localizer["DefinitionAllowOffline"]</label>
+							<label class="checkbox-inline"><input type="checkbox" asp-for="AllowAttachments" /> @localizer["DefinitionAllowAttachments"]</label>
+						</div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionChangeNotes"]</label><div class="col-sm-8"><textarea class="form-control" rows="2" asp-for="ChangeNotes"></textarea></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionMigrationMap"]</label><div class="col-sm-8"><textarea class="form-control" rows="2" asp-for="MigrationMapJson" placeholder='[{"fromFieldKey":"old","toFieldKey":"new"}]'></textarea></div></div>
+						<p><code>@localizer["DefinitionCapability"]: @Model.MinimumClientCapability</code></p>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-7">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["DefinitionSchema"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["DefinitionSchemaHelp"]</p>
+						<textarea class="form-control" rows="28" name="SchemaJson" id="SchemaJson" style="font-family:monospace;font-size:12px" @(readOnly ? "readonly" : "")>@Model.SchemaJson</textarea>
+					</div>
+				</div>
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["DefinitionFieldTable"]</h5></div>
+					<div class="ibox-content">
+						@foreach (var sec in Model.Schema?.Sections ?? new List<RecordSectionSchema>())
+						{
+							<h4>@sec.Label <code>@sec.Key</code> @if (sec.Repeating) { <span class="label label-info">@localizer["DefinitionRepeating"]</span> } @if (sec.Rules.Count > 0) { <span class="label label-default">@localizer["DefinitionRules"]: @sec.Rules.Count</span> }</h4>
+							<table class="table table-condensed">
+								<thead><tr><th>@localizer["FieldKey"]</th><th>@localizer["FieldLabel"]</th><th>@localizer["FieldType"]</th><th>@localizer["FieldRequired"]</th><th>@localizer["FieldClassification"]</th><th>@localizer["FieldFlags"]</th></tr></thead>
+								<tbody>
+									@foreach (var field in sec.Fields)
+									{
+										<tr>
+											<td><code>@field.Key</code></td><td>@field.Label</td><td>@field.Type @if (field.Options.Count > 0) { <small class="text-muted">(@field.Options.Count)</small> }</td>
+											<td>@(field.Required || field.RequiredToFinalize ? localizer["Yes"] : localizer["No"])</td><td>@field.Classification</td>
+											<td><small>@string.Join(" ", new[] { field.Searchable ? "search" : null, field.Filterable ? "filter" : null, field.Sortable ? "sort" : null, field.Groupable ? "group" : null, field.Aggregatable ? "sum" : null, field.WorkflowExposed ? "workflow" : null, field.Exportable ? "export" : null, field.Rules.Count > 0 ? "rules:" + field.Rules.Count : null }.Where(s => s != null))</small></td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+		@if (!readOnly)
+		{
+			<div class="ibox"><div class="ibox-content">
+				<button type="submit" class="btn btn-default" name="action" value="validate"><i class="fa fa-check-circle-o"></i> @localizer["DefinitionValidate"]</button>
+				<button type="submit" class="btn btn-primary" name="action" value="save"><i class="fa fa-save"></i> @localizer["DefinitionSaveDraft"]</button>
+				<a class="btn btn-success" asp-controller="RecordDefinitions" asp-action="Impact" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Version"><i class="fa fa-arrow-right"></i> @localizer["DefinitionImpactPublish"]</a>
+				<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+			</div></div>
+		}
+	</form>
+	@if (!readOnly && Model.Version > 1 || !readOnly && Model.Aggregate?.Published == null)
+	{
+		<form method="post" asp-controller="RecordDefinitions" asp-action="DeleteDraft" asp-route-area="User" asp-route-key="@Model.DefinitionKey" asp-route-version="@Model.Version" onsubmit="return confirm('@localizer["DefinitionDeleteDraftConfirm"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-link text-danger">@localizer["DefinitionDeleteDraft"]</button></form>
+	}
+</div>

@@ -52,15 +52,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private readonly IRecordsProtectionService _protection;
 		private readonly IProtectedGrantContext _grantContext;
+		private readonly IRecordsRevealService _reveal;
 
 		public IncidentReportsController(IIncidentReportsService incidentReports, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
 			INerisProfileService neris, IRmsSubmissionsRepository submissions, IIncidentAnalysisService analysis, IRecordsEvidenceService evidence,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordsSubmissionService submissionWorker, IIncidentAttachmentsService attachments, IRecordsUdfService udf,
-			IRecordsNfirsLegacyService nfirs, IRecordsProtectionService protection, IProtectedGrantContext grantContext)
+			IRecordsNfirsLegacyService nfirs, IRecordsProtectionService protection, IProtectedGrantContext grantContext, IRecordsRevealService reveal)
 		{
 			_protection = protection;
 			_grantContext = grantContext;
+			_reveal = reveal;
 			_nfirs = nfirs;
 			_incidentReports = incidentReports;
 			_cutoverService = cutoverService;
@@ -281,6 +283,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (rendering == null)
 				return NotFound();
 
+			if (!string.IsNullOrWhiteSpace(rendering.IncidentReportId))
+				await _incidentReports.RecordAccessAsync(DepartmentId, UserId, rendering.IncidentReportId, null, RmsAccessAuditAction.Read, "NFIRS legacy rendering");
+
 			return View(new NfirsLegacyView
 			{
 				Rendering = rendering,
@@ -316,34 +321,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (aggregate == null)
 				return NotFound();
 
-			var protection = aggregate.Protection ?? new ProtectedReadResult();
-			if (protection.IsProtected && protection.ProtectedReason != null)
-				return Json(new { success = false, error = protection.ProtectedReason });
-
-			var fields = new Dictionary<string, string>();
-			void Add<T>(IEnumerable<T> rows, Func<T, string> key, IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> accessors)
-			{
-				foreach (var row in rows ?? Enumerable.Empty<T>())
-					foreach (var accessor in accessors)
-						fields[$"{accessor.Key}:{key(row)}"] = accessor.Value.Get(row);
-			}
-			if (aggregate.Narrative != null) Add(new[] { aggregate.Narrative }, n => n.RmsNarrativeId, RmsProtectedFields.Narratives);
-			if (aggregate.Location != null)
-			{
-				Add(new[] { aggregate.Location }, l => l.RmsLocationId, RmsProtectedFields.Locations);
-				fields[$"rmslocations.coordinates:{aggregate.Location.RmsLocationId}"] = aggregate.Location.Latitude.HasValue ? aggregate.Location.Latitude + ", " + aggregate.Location.Longitude : "-";
-			}
-			Add(aggregate.Facts, f => f.RmsSourceFactId, RmsProtectedFields.SourceFacts);
-			Add(aggregate.Exposures, e => e.RmsExposureId, RmsProtectedFields.Exposures);
-			Add(aggregate.Resources, r => r.RmsIncidentResourceId, RmsProtectedFields.Resources);
-			Add(aggregate.Modules, m => m.RmsIncidentModuleId, RmsProtectedFields.Modules);
-			if (await CanViewRestrictedAsync())
-				Add(aggregate.Casualties, c => c.RmsCasualtyRescueId, RmsProtectedFields.Casualties);
-			foreach (var attachment in aggregate.Attachments ?? new List<RmsRecordAttachment>())
-				fields[$"rmsrecordattachments.filename:{attachment.RmsRecordAttachmentId}"] = attachment.FileName;
-
-			await _incidentReports.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, "Protected reveal", IpAddressHelper.GetRequestIP(Request, true));
-			return Json(new { success = true, fields });
+			// Shared with the v4 Reveal endpoint (IRecordsRevealService): same keys, same withholding, same audit.
+			var outcome = await _reveal.RevealIncidentAsync(DepartmentId, UserId, aggregate, await CanViewRestrictedAsync(), IpAddressHelper.GetRequestIP(Request, true));
+			if (!outcome.Success)
+				return Json(new { success = false, error = outcome.Error });
+			return Json(new { success = true, fields = outcome.Fields });
 		}
 
 		/// <summary>The immutable submission artifact (the exact payload sent), for administrators auditing a delivery.</summary>
@@ -997,6 +979,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					model.Modules.Add(new IncidentModuleRow
 					{
+						ModuleId = row.RmsIncidentModuleId,
 						Kind = (int)kind, Included = true, PrimaryCode = row.PrimaryCode, SecondaryCode = row.SecondaryCode, Quantity = row.Quantity,
 						QuantityUnit = row.QuantityUnit, OccurredOn = row.OccurredOn?.TimeConverter(model.Department), DetailJson = row.DetailJson
 					});
@@ -1008,7 +991,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.Resources = aggregate.Resources.OrderBy(r => r.Ordinal)
-				.Select(r => new IncidentResourceRow { ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList();
+				.Select(r => new IncidentResourceRow { ResourceId = r.RmsIncidentResourceId, ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList();
 
 			model.Casualties = aggregate.Casualties.OrderBy(c => c.Ordinal).Select(c => new IncidentCasualtyRow
 			{
@@ -1022,6 +1005,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Exposures = aggregate.Exposures.OrderBy(e => e.Ordinal).Select(e => new IncidentExposureRow
 			{
+				ExposureId = e.RmsExposureId,
 				Included = true, LocationKind = e.LocationKind, ItemType = e.ItemType, DamageType = e.DamageType, LocationUse = e.LocationUse, PeoplePresent = e.PeoplePresent,
 				DisplacementCount = e.DisplacementCount, DisplacementCauses = Split(e.DisplacementCausesCsv), AddressText = e.AddressText, Street = e.Street,
 				Municipality = e.Municipality, State = e.State, PostalCode = e.PostalCode, Latitude = e.Latitude, Longitude = e.Longitude,
@@ -1072,11 +1056,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// means the author removed the rows, not that the client could not show them.
 				Modules = (model.Modules ?? new List<IncidentModuleRow>()).Where(m => m.Included && m.Kind > 0).Select(m => new IncidentModuleInput
 				{
+					ModuleId = m.ModuleId,
 					Kind = (RmsIncidentModuleKind)m.Kind, PrimaryCode = m.PrimaryCode, SecondaryCode = m.SecondaryCode, Quantity = m.Quantity,
 					QuantityUnit = m.QuantityUnit, OccurredOn = ToUtc(m.OccurredOn, department), DetailJson = m.DetailJson
 				}).ToList(),
 				Resources = (model.Resources ?? new List<IncidentResourceRow>()).Where(r => !string.IsNullOrWhiteSpace(r.ResourceCode))
-					.Select(r => new IncidentResourceInput { ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList(),
+					.Select(r => new IncidentResourceInput { ResourceId = r.ResourceId, ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList(),
 				Casualties = (model.Casualties ?? new List<IncidentCasualtyRow>()).Where(c => c.Included).Select(c => c.Guided ? IncidentGuidedFormMapper.Casualty(c, ToUtc(c.OccurredOn, department)) : new IncidentCasualtyRescueInput
 				{
 					CasualtyId = c.CasualtyId, Kind = (RmsCasualtyRescueKind)c.Kind, PersonType = c.PersonType, PersonnelUserId = c.PersonnelUserId, Rank = c.Rank, YearsOfService = c.YearsOfService,

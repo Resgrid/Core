@@ -20,6 +20,34 @@ namespace Resgrid.Tests.Rms
 	{
 		private static RecordEvidenceCaptureRequest Request() => new() { DepartmentId = 9, RecordId = "report", CapturedByUserId = "officer", CallId = 501, CaptureReason = "Officer selected supporting evidence", CoverageStart = new DateTime(2026,9,1,0,0,0,DateTimeKind.Utc), CoverageEnd = new DateTime(2026,9,1,1,0,0,DateTimeKind.Utc) };
 		[Test]
+		public async Task Pack_projection_composes_a_bounded_personnel_check_in_from_the_owning_modules_with_source_ids()
+		{
+			var records = new Mock<IRmsOperationalRecordsRepository>(); var participants = new Mock<IRmsRecordParticipantsRepository>(); var states = new Mock<IUserStateService>();
+			var departments = new Mock<IDepartmentsService>(); var auth = new Mock<IAuthorizationService>();
+			records.Setup(r => r.GetByIdForDepartmentAsync(9, "report")).ReturnsAsync(new RmsOperationalRecord { RmsOperationalRecordId = "report", DepartmentId = 9, CallId = 501 });
+			participants.Setup(p => p.GetForRecordAsync(9, "report", null)).ReturnsAsync(new List<RmsRecordParticipant> { new() { RecordId = "report", UserId = "member", Role = "Crew", GroupNameSnapshot = "Station 1" } });
+			states.Setup(s => s.GetLastUserStateByUserIdAsync("member")).ReturnsAsync(new UserState { UserId = "member", State = 3, Timestamp = new DateTime(2026, 9, 1, 0, 30, 0, DateTimeKind.Utc) });
+			departments.Setup(d => d.GetAllPersonnelNamesForDepartmentAsync(9)).ReturnsAsync(new List<PersonName> { new() { UserId = "member", FirstName = "Sam", LastName = "Rivera" } });
+			var adapter = new PackProjectionEvidenceAdapter(records.Object, participants.Object, Mock.Of<IRmsRecordUnitResponsesRepository>(), states.Object, departments.Object, Mock.Of<ICertificationService>(),
+				Mock.Of<IRmsInventoryUsageAdapter>(), Mock.Of<IUnitsService>(), Mock.Of<IIncidentCommandService>(), new Lazy<IAuthorizationService>(() => auth.Object));
+			adapter.Kind.Should().Be(RmsEvidenceKind.ModuleProjection);
+
+			var request = Request(); request.SourceIds = new() { "not-a-projection" };
+			Func<Task> unknown = () => adapter.CaptureAsync(request); await unknown.Should().ThrowAsync<ArgumentException>();
+
+			request.SourceIds = new() { RecordPackProjectionKinds.PersonnelCheckIn };
+			Func<Task> denied = () => adapter.CaptureAsync(request); await denied.Should().ThrowAsync<UnauthorizedAccessException>();
+			states.Verify(s => s.GetLastUserStateByUserIdAsync(It.IsAny<string>()), Times.Never, "no module is read before the person check passes");
+
+			auth.Setup(a => a.CanUserViewPersonAsync("officer", "member", 9)).ReturnsAsync(true);
+			var capture = await adapter.CaptureAsync(request);
+			capture.SourceEntityId.Should().Be(RecordPackProjectionKinds.PersonnelCheckIn);
+			capture.SourceItemCount.Should().Be(1);
+			var frozen = RecordsEvidenceService.Serialize(capture.Manifest);
+			frozen.Should().Contain("Sam Rivera").And.Contain("Station 1").And.Contain("\"state_id\":3").And.Contain("source_id");
+		}
+
+		[Test]
 		public async Task Tracking_requires_unit_tenant_and_location_permission_and_freezes_only_fixes_in_the_window()
 		{
 			var source = new Mock<IUnitLocationRepository>(); var units = new Mock<IUnitsService>(); var auth = new Mock<IAuthorizationService>();

@@ -26,7 +26,7 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>@localizer["ViewRecordHeader"]</h2>
+		<h2>@(Model.IsDefinitionRecord ? Model.DefinitionName : localizer["ViewRecordHeader"].Value)</h2>
 		<ol class="breadcrumb">
 			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
 			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
@@ -80,7 +80,7 @@
 			}
 
 			<div class="ibox">
-				<div class="ibox-title"><h5><i class="fa fa-info-circle"></i> @t.ToString() <span class="label label-primary">@Model.State</span></h5></div>
+				<div class="ibox-title"><h5><i class="fa fa-info-circle"></i> @(Model.IsDefinitionRecord ? Model.DefinitionName + " v" + Model.Aggregate.Record.DefinitionVersion : t.ToString()) <span class="label label-primary">@Model.State</span></h5></div>
 				<div class="ibox-content">
 					<div class="row">
 						<div class="col-md-6">
@@ -123,6 +123,12 @@
 				</div>
 			}
 
+			@if (Model.IsDefinitionRecord)
+			{
+				@await Html.PartialAsync("_DefinitionValues", Model)
+			}
+			else
+			{
 			<div class="ibox">
 				<div class="ibox-title"><h5><i class="fa fa-file-text-o"></i> @localizer["Narrative"]</h5></div>
 				<div class="ibox-content">
@@ -159,6 +165,7 @@
 					<div style="white-space:pre-wrap" data-adp-field="@Field("narrative")">@Html.Raw(Resgrid.Framework.RecordNarrativeFormatter.Render(details.Narrative))</div>
 				</div>
 			</div>
+			}
 
 			@if (isCoroner)
 			{

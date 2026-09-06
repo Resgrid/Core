@@ -1,0 +1,52 @@
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordSavedReportRunView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + Model.Report.Name;
+	var r = Model.Result;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@Model.Report.Name <small>@r.RanOn.TimeConverterToString(Model.Department)</small></h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="RecordSavedReports" asp-action="Index" asp-route-area="User">@localizer["SavedReports"]</a></li>
+			<li class="active"><strong>@Model.Report.Name</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="RecordSavedReports" asp-action="RunCsv" asp-route-area="User" asp-route-id="@Model.Report.RmsSavedReportDefinitionId"><i class="fa fa-download"></i> CSV</a>
+			<a class="btn btn-default" asp-controller="RecordSavedReports" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Report.RmsSavedReportDefinitionId"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@foreach (var w in r.Warnings) { <div class="alert alert-warning">@w</div> }
+	@if (r.Truncated) { <div class="alert alert-warning">@localizer["ReportTruncated"] (@r.TotalMatched)</div> }
+	@if (r.UnmappedVersions.Count > 0) { <div class="alert alert-info">@localizer["ReportUnmappedVersions"]: @string.Join(", ", r.UnmappedVersions)</div> }
+	@if (r.Groups.Count > 0)
+	{
+		<div class="ibox">
+			<div class="ibox-title"><h5>@localizer["ReportGroups"]</h5></div>
+			<div class="ibox-content">
+				<table class="table table-condensed">
+					<thead><tr><th>@localizer["ReportGroupBy"]</th><th>@localizer["ReportCount"]</th>@foreach (var k in r.Groups.SelectMany(g => g.Aggregates.Keys).Distinct()) { <th>@k</th> }</tr></thead>
+					<tbody>@foreach (var g in r.Groups) { <tr><td>@g.GroupLabel</td><td>@g.Count</td>@foreach (var k in r.Groups.SelectMany(x => x.Aggregates.Keys).Distinct()) { <td>@(g.Aggregates.TryGetValue(k, out var v) ? v : "")</td> }</tr> }</tbody>
+				</table>
+			</div>
+		</div>
+	}
+	<div class="ibox">
+		<div class="ibox-title"><h5>@localizer["ReportRows"] (@r.Rows.Count / @r.TotalMatched)</h5></div>
+		<div class="ibox-content" style="overflow-x:auto">
+			<table class="table table-striped table-condensed">
+				<thead><tr>@foreach (var c in r.ColumnLabels) { <th>@c</th> }</tr></thead>
+				<tbody>@foreach (var row in r.Rows) { <tr>@foreach (var cell in row) { <td>@cell</td> }</tr> }</tbody>
+			</table>
+		</div>
+	</div>
+</div>

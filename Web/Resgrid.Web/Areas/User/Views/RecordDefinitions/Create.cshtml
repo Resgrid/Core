@@ -1,0 +1,88 @@
+@model Resgrid.Web.Areas.User.Models.Records.RecordDefinitionCreateView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["CreateDefinition"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["CreateDefinition"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User">@localizer["Definitions"]</a></li>
+			<li class="active"><strong>@localizer["CreateDefinition"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-6">
+			<form class="form-horizontal" method="post" asp-controller="RecordDefinitions" asp-action="Create" asp-route-area="User">
+				@Html.AntiForgeryToken()
+				<div class="ibox">
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["CreateFromTemplate"]</label>
+							<div class="col-sm-9"><select class="form-control" asp-for="TemplateKey" asp-items="Model.Templates" onchange="this.form.method='get'; this.form.querySelector('[name=__RequestVerificationToken]').disabled = true; this.form.submit();"><option value="">@localizer["CreateBlank"]</option></select></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["CreateFromClone"]</label>
+							<div class="col-sm-9"><select class="form-control" asp-for="CloneFromDefinitionKey" asp-items="Model.DepartmentDefinitions"><option value="">-</option></select></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["TemplateProfile"]</label>
+							<div class="col-sm-4"><select class="form-control" asp-for="JurisdictionProfileKey" asp-items="Model.Profiles"></select></div>
+							<label class="col-sm-2 control-label">@localizer["TemplateLocale"]</label>
+							<div class="col-sm-3"><select class="form-control" asp-for="Locale" asp-items="Model.Locales"><option value="">-</option></select></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label required">@localizer["DefinitionKey"]</label>
+							<div class="col-sm-9"><input type="text" class="form-control" asp-for="DefinitionKey" maxlength="64" placeholder="security-patrol" /><span class="help-block">@localizer["DefinitionKeyHelp"]</span></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label required">@localizer["DefinitionName"]</label>
+							<div class="col-sm-9"><input type="text" class="form-control" asp-for="Name" maxlength="200" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["DefinitionCategory"]</label>
+							<div class="col-sm-9"><input type="text" class="form-control" asp-for="Category" maxlength="200" /></div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-9 col-sm-offset-3">
+								<button type="submit" class="btn btn-primary">@localizer["CreateDefinition"]</button>
+								<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="col-md-6">
+			@if (Model.Rendering != null)
+			{
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["TemplatePreview"]: @Model.Rendering.Template.Name</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@Model.Rendering.ProvenanceStatement</p>
+						<p><small>@localizer["DefinitionPreset"]: @Model.Rendering.Template.LifecyclePreset · @localizer["DefinitionNumberPrefix"]: @Model.Rendering.Template.NumberPrefix · @localizer["TemplateProfile"]: @Model.Rendering.ProfileKey (@Model.Rendering.Locale, @Model.Rendering.MeasurementSystem@(string.IsNullOrEmpty(Model.Rendering.CurrencyCode) ? "" : ", " + Model.Rendering.CurrencyCode))</small></p>
+						@foreach (var sec in Model.Rendering.Schema.Sections)
+						{
+							<h4>@sec.Label @if (sec.Repeating) { <span class="label label-info">@localizer["DefinitionRepeating"]</span> }</h4>
+							<table class="table table-condensed">
+								<thead><tr><th>@localizer["FieldKey"]</th><th>@localizer["FieldLabel"]</th><th>@localizer["FieldType"]</th><th>@localizer["FieldRequired"]</th><th>@localizer["FieldClassification"]</th></tr></thead>
+								<tbody>
+									@foreach (var field in sec.Fields)
+									{
+										<tr><td><code>@field.Key</code></td><td>@field.Label</td><td>@field.Type</td><td>@(field.Required || field.RequiredToFinalize ? localizer["Yes"] : localizer["No"])</td><td>@field.Classification</td></tr>
+									}
+								</tbody>
+							</table>
+						}
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>

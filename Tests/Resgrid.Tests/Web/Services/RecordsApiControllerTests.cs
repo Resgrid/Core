@@ -93,7 +93,7 @@ namespace Resgrid.Tests.Web.Services
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = _http };
 			_activity = new Activity("RecordsApiControllerTests").Start();
 
-			_controller = new RecordsController(_records.Object, _cutover.Object, _authorization.Object, _flags.Object, _settings.Object, _adp.Object, _search.Object, _uploads.Object, _idempotency.Object, _dashboard.Object)
+			_controller = new RecordsController(_records.Object, _cutover.Object, _authorization.Object, _flags.Object, _settings.Object, _adp.Object, _search.Object, _uploads.Object, _idempotency.Object, _dashboard.Object, Mock.Of<IRecordDefinitionsService>(), Mock.Of<IRecordsRevealService>(), Mock.Of<IRecordsBulkPacketService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = _http }
 			};

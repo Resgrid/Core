@@ -226,6 +226,8 @@ namespace Resgrid.Model
 	{
 		Scheduled = 1,
 		Record = 2,
-		Manual = 3
+		Manual = 3,
+		/// <summary>A bulk packet compiled over an authorized selection (RMS plan section 4.7).</summary>
+		Bulk = 4
 	}
 }

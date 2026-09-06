@@ -146,6 +146,12 @@ namespace Resgrid.Model
 	/// <summary>One conditional section instance being saved; <see cref="DetailJson"/> is the contract-shaped body.</summary>
 	public class IncidentModuleInput
 	{
+		/// <summary>
+		/// The stored row this input replaces, or null for a new section. Identity has to travel with the row:
+		/// matching by list position would hand one section's id, ProtectionId and sealed envelopes to another
+		/// section's content as soon as a client reorders or removes an entry.
+		/// </summary>
+		public string ModuleId { get; set; }
 		public RmsIncidentModuleKind Kind { get; set; }
 		public string PrimaryCode { get; set; }
 		public string SecondaryCode { get; set; }
@@ -157,6 +163,8 @@ namespace Resgrid.Model
 
 	public class IncidentResourceInput
 	{
+		/// <summary>The stored row this input replaces, or null for a new resource. See <see cref="IncidentModuleInput.ModuleId"/>.</summary>
+		public string ResourceId { get; set; }
 		public string ResourceCode { get; set; }
 		public int? Quantity { get; set; }
 		public string Detail { get; set; }
@@ -200,6 +208,8 @@ namespace Resgrid.Model
 
 	public class IncidentExposureInput
 	{
+		/// <summary>The stored row this input replaces, or null for a new exposure. See <see cref="IncidentModuleInput.ModuleId"/>.</summary>
+		public string ExposureId { get; set; }
 		public string LocationKind { get; set; }
 		public string ItemType { get; set; }
 		public string DamageType { get; set; }

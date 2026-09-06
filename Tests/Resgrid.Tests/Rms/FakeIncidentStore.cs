@@ -279,6 +279,10 @@ namespace Resgrid.Tests.Rms
 				rows = rows.Where(x => x.OwnerUserId == query.OwnerUserId);
 			if (query?.StationGroupId != null)
 				rows = rows.Where(x => x.StationGroupId == query.StationGroupId.Value);
+			if (query?.FinalizedOnStart != null)
+				rows = rows.Where(x => x.FinalizedOn != null && x.FinalizedOn.Value >= query.FinalizedOnStart.Value);
+			if (query?.FinalizedOnEnd != null)
+				rows = rows.Where(x => x.FinalizedOn != null && x.FinalizedOn.Value < query.FinalizedOnEnd.Value);
 			return rows;
 		}
 

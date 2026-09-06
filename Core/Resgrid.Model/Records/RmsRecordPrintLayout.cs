@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -45,6 +46,64 @@ namespace Resgrid.Model
 
 	/// <summary>Versioned print layout row (migration M0160). Only the DepartmentDefault scope is written in RMS-1.</summary>
 	[Table("RmsRecordPrintLayouts")]
+	/// <summary>
+	/// The Definition-scope print layout (RMS plan section 4.10.1): presentation over a department definition's approved
+	/// sections and fields — order, visibility, headings, page breaks, signature-block placement, attachment-list style
+	/// and an optional branding-block override. Presentation only: a hidden-by-layout field is still exported by data
+	/// exports per its flags, and no layout bypasses restricted/protected/group rules or the provenance footer.
+	/// </summary>
+	public class RecordsDefinitionLayoutConfig
+	{
+		public const string SignatureAtEnd = "end";
+		public const string SignatureInline = "inline";
+		public const string SignatureNone = "none";
+		public static readonly string[] SignaturePlacements = { SignatureAtEnd, SignatureInline, SignatureNone };
+
+		public const string AttachmentsTable = "table";
+		public const string AttachmentsList = "list";
+		public const string AttachmentsNone = "none";
+		public static readonly string[] AttachmentStyles = { AttachmentsTable, AttachmentsList, AttachmentsNone };
+
+		/// <summary>Null applies to every version of the definition; otherwise only Records pinned to this version use it.</summary>
+		public int? AppliesToVersion { get; set; }
+		public List<string> SectionOrder { get; set; } = new List<string>();
+		public List<string> HiddenSectionKeys { get; set; } = new List<string>();
+		public List<string> HiddenFieldKeys { get; set; } = new List<string>();
+		public Dictionary<string, string> SectionHeadings { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		public List<string> PageBreakBeforeSectionKeys { get; set; } = new List<string>();
+		public string SignatureBlockPlacement { get; set; } = SignatureAtEnd;
+		public string AttachmentListStyle { get; set; } = AttachmentsTable;
+		/// <summary>Null keeps the department default branding block; otherwise these values replace it for this definition.</summary>
+		public RecordsPrintLayoutConfig BrandingOverrides { get; set; }
+
+		public static RecordsDefinitionLayoutConfig Default() => new RecordsDefinitionLayoutConfig();
+
+		public bool AppliesTo(int definitionVersion) => !AppliesToVersion.HasValue || AppliesToVersion.Value == definitionVersion;
+		public bool IsSectionVisible(string sectionKey) => !HiddenSectionKeys.Contains(sectionKey ?? string.Empty, StringComparer.OrdinalIgnoreCase);
+		public bool IsFieldVisible(string fieldKey) => !HiddenFieldKeys.Contains(fieldKey ?? string.Empty, StringComparer.OrdinalIgnoreCase);
+		public bool PageBreakBefore(string sectionKey) => PageBreakBeforeSectionKeys.Contains(sectionKey ?? string.Empty, StringComparer.OrdinalIgnoreCase);
+		public string HeadingFor(string sectionKey, string fallback) => SectionHeadings.TryGetValue(sectionKey ?? string.Empty, out var heading) && !string.IsNullOrWhiteSpace(heading) ? heading : fallback;
+
+		/// <summary>Section keys in layout order: listed keys first in their order, then any the layout does not mention, hidden ones dropped.</summary>
+		public List<string> OrderedSectionKeys(IEnumerable<string> schemaSectionKeys)
+		{
+			var all = (schemaSectionKeys ?? Enumerable.Empty<string>()).ToList();
+			var ordered = SectionOrder.Where(k => all.Contains(k, StringComparer.OrdinalIgnoreCase)).ToList();
+			ordered.AddRange(all.Where(k => !ordered.Contains(k, StringComparer.OrdinalIgnoreCase)));
+			return ordered.Where(IsSectionVisible).ToList();
+		}
+	}
+
+	/// <summary>What print resolves for one Record: the branding block, the definition layout (if any) and the composite layout version stamped on the footer.</summary>
+	public class RecordsResolvedPrintLayout
+	{
+		public RecordsPrintLayoutConfig Branding { get; set; } = RecordsPrintLayoutConfig.Default();
+		public string BrandingLayoutVersion { get; set; } = RmsRecordPrintLayout.GeneratedLayoutVersion;
+		public RecordsDefinitionLayoutConfig Definition { get; set; }
+		public string DefinitionLayoutVersion { get; set; }
+		public string LayoutVersion => Definition == null ? BrandingLayoutVersion : DefinitionLayoutVersion + "+" + BrandingLayoutVersion;
+	}
+
 	public class RmsRecordPrintLayout : IEntity
 	{
 		public const string GeneratedLayoutVersion = "system-default/1";
@@ -85,6 +144,10 @@ namespace Resgrid.Model
 		[NotMapped]
 		public RecordsPrintLayoutConfig Config { get; set; }
 
+		/// <summary>Parsed Definition-scope config; null on a DepartmentDefault row.</summary>
+		[NotMapped]
+		public RecordsDefinitionLayoutConfig DefinitionConfig { get; set; }
+
 		[NotMapped]
 		public object IdValue
 		{
@@ -102,6 +165,6 @@ namespace Resgrid.Model
 		public int IdType => 1;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "LayoutVersion", "Config" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "LayoutVersion", "Config", "DefinitionConfig" };
 	}
 }

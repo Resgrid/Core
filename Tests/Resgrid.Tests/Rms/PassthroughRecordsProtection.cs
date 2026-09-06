@@ -42,6 +42,9 @@ namespace Resgrid.Tests.Rms
 		public Task ProtectDisclosureProductionAsync(int departmentId, RmsDisclosureProduction row, string userId = null, CancellationToken cancellationToken = default) => Write("disclosure-production");
 		public Task ProtectLegalHoldAsync(int departmentId, RmsRecordLegalHold row, RmsRecordLegalHold existing, string userId = null, CancellationToken cancellationToken = default) => Write("legal-hold");
 		public Task ProtectExportRunAsync(int departmentId, RmsExportRun row, string userId = null, CancellationToken cancellationToken = default) => Write("export-run");
+		public Task ProtectValuesAsync(int departmentId, IReadOnlyList<RmsRecordValue> rows, string userId = null, CancellationToken cancellationToken = default) => Write("values:" + (rows == null ? 0 : System.Linq.Enumerable.Count(rows, r => r.ProtectionRequired)));
+		public Task<ProtectedReadResult> RevealValuesAsync(int departmentId, IReadOnlyList<RmsRecordValue> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task<ProtectedReadResult> RevealValuesForWorkloadAsync(int departmentId, IReadOnlyList<RmsRecordValue> rows, string purpose, CancellationToken cancellationToken = default) => Empty();
 
 		public Task<ProtectedReadResult> RevealAsync(int departmentId, RecordAggregate aggregate, CancellationToken cancellationToken = default) { var r = new ProtectedReadResult(); if (aggregate != null) aggregate.Protection = r; return Task.FromResult(r); }
 		public Task<ProtectedReadResult> RevealAsync(int departmentId, IncidentReportAggregate aggregate, CancellationToken cancellationToken = default) { var r = new ProtectedReadResult(); if (aggregate != null) aggregate.Protection = r; return Task.FromResult(r); }

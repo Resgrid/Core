@@ -50,6 +50,15 @@ namespace Resgrid.Model.Services
 		Task ProtectLegalHoldAsync(int departmentId, RmsRecordLegalHold row, RmsRecordLegalHold existing, string userId = null, CancellationToken cancellationToken = default);
 		Task ProtectExportRunAsync(int departmentId, RmsExportRun row, string userId = null, CancellationToken cancellationToken = default);
 
+		/// <summary>Seals Protected-classified typed values (catalog v11): each row flagged ProtectionRequired packs its typed columns into its envelope; other rows pass through.</summary>
+		Task ProtectValuesAsync(int departmentId, IReadOnlyList<RmsRecordValue> rows, string userId = null, CancellationToken cancellationToken = default);
+
+		/// <summary>Reveals sealed typed values for the ambient caller; a refused row keeps its envelope and shapes as the withheld cell.</summary>
+		Task<ProtectedReadResult> RevealValuesAsync(int departmentId, IReadOnlyList<RmsRecordValue> rows, CancellationToken cancellationToken = default);
+
+		/// <summary>Reveals sealed typed values through the purpose-bound workload lane (records-export).</summary>
+		Task<ProtectedReadResult> RevealValuesForWorkloadAsync(int departmentId, IReadOnlyList<RmsRecordValue> rows, string purpose, CancellationToken cancellationToken = default);
+
 		Task<ProtectedReadResult> RevealAsync(int departmentId, RecordAggregate aggregate, CancellationToken cancellationToken = default);
 		Task<ProtectedReadResult> RevealAsync(int departmentId, IncidentReportAggregate aggregate, CancellationToken cancellationToken = default);
 		Task<ProtectedReadResult> RevealAsync(int departmentId, IncidentAnalysisAggregate aggregate, CancellationToken cancellationToken = default);

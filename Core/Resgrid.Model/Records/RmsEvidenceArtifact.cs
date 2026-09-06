@@ -30,7 +30,10 @@ namespace Resgrid.Model
 		InventoryUsage = 5,
 
 		/// <summary>Participant certification/qualification validity at the incident time.</summary>
-		CertificationSnapshot = 6
+		CertificationSnapshot = 6,
+
+		/// <summary>An operational pack's module projection (RMS-1C): personnel check-in, resource summary, qualifications or command summary composed from the owning module with source identifiers.</summary>
+		ModuleProjection = 7
 	}
 
 	/// <summary>

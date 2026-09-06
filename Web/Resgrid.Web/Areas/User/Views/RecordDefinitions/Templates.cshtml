@@ -1,0 +1,53 @@
+@model Resgrid.Web.Areas.User.Models.Records.RecordTemplatesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["BrowseTemplates"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["BrowseTemplates"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User">@localizer["Definitions"]</a></li>
+			<li class="active"><strong>@localizer["BrowseTemplates"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<p class="text-muted">@localizer["TemplatesIntro"]</p>
+	@foreach (var pack in Model.Packs)
+	{
+		<div class="ibox">
+			<div class="ibox-title"><h5>@pack.Name @if (pack.IsPreview) { <span class="label label-warning">@localizer["PreviewPack"]</span> } <small class="text-muted m-l-sm">@pack.Category · @localizer["TemplateReviewedOn"] @(pack.ReviewedOn?.ToString("yyyy-MM-dd") ?? "-") · @pack.ArtifactStatus</small></h5></div>
+			<div class="ibox-content">
+				<p>@pack.Description</p>
+				@if (pack.Sources.Count > 0)
+				{
+					<p class="text-muted"><strong>@localizer["TemplateSources"]:</strong> @string.Join("; ", pack.Sources.Select(s => s.Identifier + " (" + s.Publisher + ", " + s.Version + ")"))</p>
+				}
+				<table class="table table-condensed">
+					<thead><tr><th>@localizer["DefinitionName"]</th><th>@localizer["DefinitionCategory"]</th><th>@localizer["DefinitionPreset"]</th><th>@localizer["TemplateSections"]</th><th>@localizer["TemplateFields"]</th><th>@localizer["DefinitionCapability"]</th><th></th></tr></thead>
+					<tbody>
+						@foreach (var t in pack.Definitions)
+						{
+							<tr>
+								<td>@t.Name<br /><small class="text-muted">@t.Description</small></td>
+								<td>@t.Category</td>
+								<td>@t.LifecyclePreset</td>
+								<td>@t.SectionCount</td>
+								<td>@t.FieldCount</td>
+								<td><code>@t.MinimumClientCapability</code></td>
+								<td class="text-right"><a class="btn btn-xs btn-primary" asp-controller="RecordDefinitions" asp-action="Create" asp-route-area="User" asp-route-templateKey="@t.Key" asp-route-profile="@(pack.SupportedProfiles.FirstOrDefault() ?? "generic")">@localizer["TemplateUseThis"]</a></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+				<p class="text-muted"><small>@localizer["TemplateProfile"]: @string.Join(", ", pack.SupportedProfiles) · @localizer["TemplateLocale"]: @string.Join(", ", pack.SupportedLocales)</small></p>
+			</div>
+		</div>
+	}
+</div>

@@ -101,6 +101,7 @@ namespace Resgrid.Web.Services.Helpers
 				// Null stays null: the service reads absence as "leave this section alone".
 				Modules = input.Modules?.Select(m => new IncidentModuleInput
 				{
+					ModuleId = m.ModuleId,
 					Kind = (RmsIncidentModuleKind)m.Kind, PrimaryCode = m.PrimaryCode, SecondaryCode = m.SecondaryCode, Quantity = m.Quantity,
 					QuantityUnit = m.QuantityUnit, OccurredOn = RecordsApiHelper.Utc(m.OccurredOn), DetailJson = m.DetailJson
 				}).ToList(),

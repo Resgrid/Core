@@ -57,14 +57,15 @@
 			}
 			@if (selection.SourceKind == RmsEvidenceKind.RunCardActivation) { <p>Capture the dispatch decisions recorded by Run Cards for this report’s Call. A missing recorded decision cannot be reconstructed by RMS.</p> }
 			@if (selection.SourceKind == RmsEvidenceKind.InventoryUsage) { <p>Refresh the evidence for all recorded inventory consumption. This action does not consume stock again.</p> }
-			@if (selection.SourceKind == RmsEvidenceKind.TrackingFix || selection.SourceKind == RmsEvidenceKind.CertificationSnapshot || selection.SourceKind == RmsEvidenceKind.ChatPromotion)
+			@if (selection.SourceKind == RmsEvidenceKind.ModuleProjection) { <p>@localizer["ProjectionIntro"]</p> }
+			@if (selection.SourceKind == RmsEvidenceKind.TrackingFix || selection.SourceKind == RmsEvidenceKind.CertificationSnapshot || selection.SourceKind == RmsEvidenceKind.ChatPromotion || selection.SourceKind == RmsEvidenceKind.ModuleProjection)
 			{
-				<fieldset><legend>@(selection.SourceKind == RmsEvidenceKind.TrackingFix ? "Units" : selection.SourceKind == RmsEvidenceKind.CertificationSnapshot ? "Personnel" : "Messages")</legend>
+				<fieldset><legend>@(selection.SourceKind == RmsEvidenceKind.TrackingFix ? "Units" : selection.SourceKind == RmsEvidenceKind.CertificationSnapshot ? "Personnel" : selection.SourceKind == RmsEvidenceKind.ModuleProjection ? localizer["ProjectionKind"].Value : "Messages")</legend>
 				@if (selection.Choices.Count == 0) { <p>No accessible items on this page.</p> }
 				@foreach (var choice in selection.Choices)
 				{
 					var field = selection.SourceKind == RmsEvidenceKind.TrackingFix ? "Input.UnitIds" : selection.SourceKind == RmsEvidenceKind.CertificationSnapshot ? "Input.UserIds" : "Input.SourceIds";
-					<div class="checkbox"><label><input type="checkbox" name="@field" value="@choice.Id" />@choice.Label
+					<div class="checkbox"><label><input type="@(selection.SourceKind == RmsEvidenceKind.ModuleProjection ? "radio" : "checkbox")" name="@field" value="@choice.Id" />@(selection.SourceKind == RmsEvidenceKind.ModuleProjection ? localizer["Projection" + choice.Id].Value : choice.Label)
 					@if (choice.Sequence.HasValue) { <span> · #@choice.Sequence · @choice.OccurredOn?.ToString("yyyy-MM-dd HH:mm:ss") UTC</span> }
 					@if (choice.EditedOn.HasValue) { <span> · edited @choice.EditedOn.Value.ToString("yyyy-MM-dd HH:mm:ss") UTC</span> }
 					@if (choice.Body != null) { <span style="display:block;white-space:pre-wrap;overflow-wrap:anywhere">@choice.Body</span> }

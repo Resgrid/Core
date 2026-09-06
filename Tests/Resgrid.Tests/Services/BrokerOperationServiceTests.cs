@@ -366,5 +366,72 @@ namespace Resgrid.Tests.Services
 			nullRequest.Success.Should().BeFalse();
 			nullRequest.ErrorCode.Should().Be("invalid_request");
 		}
+		// ---- workload decrypt lane (RMS plan section 5.9.4) --------------------------------------------
+
+		private void EnrollDepartment(DepartmentDataProtectionState state) =>
+			_policyRepo.Setup(x => x.GetByDepartmentIdAsync(DeptId))
+				.ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = DeptId, PolicyEpoch = Epoch, State = (int)state });
+
+		[Test]
+		public async Task Workload_decrypt_lane_opens_an_allow_listed_purpose_without_a_grant()
+		{
+			EnrollDepartment(DepartmentDataProtectionState.Enabled);
+			var sealedResult = await _service.EncryptAsync(Request(null, "wl-enc", Item("Smoke showing from the rear", "rmsoperationalrecorddetails.narrative", "rec-1")), CancellationToken.None);
+			sealedResult.Success.Should().BeTrue();
+			var envelope = sealedResult.Items[0].Value;
+
+			var opened = await _service.DecryptForWorkloadAsync(Request(null, "wl-dec", Item(envelope, "rmsoperationalrecorddetails.narrative", "rec-1")), "NERIS-Submission", CancellationToken.None);
+			opened.Success.Should().BeTrue();
+			opened.Items.Should().ContainSingle().Which.Value.Should().Be("Smoke showing from the rear");
+
+			var export = await _service.DecryptForWorkloadAsync(Request(null, "wl-dec-2", Item(envelope, "rmsoperationalrecorddetails.narrative", "rec-1")), "records-export", CancellationToken.None);
+			export.Success.Should().BeTrue("both shipped lanes are on the default allow-list");
+		}
+
+		[Test]
+		public async Task Workload_decrypt_lane_refuses_unlisted_purposes_unprotected_departments_and_a_disabled_lane()
+		{
+			EnrollDepartment(DepartmentDataProtectionState.Enabled);
+			var sealedResult = await _service.EncryptAsync(Request(null, "wl-enc", Item("Sensitive")), CancellationToken.None);
+			var envelope = sealedResult.Items[0].Value;
+
+			(await _service.DecryptForWorkloadAsync(Request(null, "wl-1", Item(envelope)), "bulk-dump", CancellationToken.None)).ErrorCode.Should().Be("workload_purpose_denied");
+			(await _service.DecryptForWorkloadAsync(Request(null, "wl-2", Item(envelope)), "", CancellationToken.None)).ErrorCode.Should().Be("workload_purpose_denied");
+			(await _service.DecryptForWorkloadAsync(Request(null, "wl-3", Item(envelope)), null, CancellationToken.None)).ErrorCode.Should().Be("workload_purpose_denied");
+
+			// A denied purpose burns nothing: the same request id is still usable once the purpose is right.
+			(await _service.DecryptForWorkloadAsync(Request(null, "wl-1", Item(envelope)), "records-export", CancellationToken.None)).Success.Should().BeTrue();
+
+			EnrollDepartment(DepartmentDataProtectionState.Encrypting);
+			(await _service.DecryptForWorkloadAsync(Request(null, "wl-4", Item(envelope)), "records-export", CancellationToken.None)).ErrorCode.Should().Be("workload_purpose_denied", "an enrolling department has acknowledged no egress yet");
+			EnrollDepartment(DepartmentDataProtectionState.Disabled);
+			(await _service.DecryptForWorkloadAsync(Request(null, "wl-5", Item(envelope)), "records-export", CancellationToken.None)).ErrorCode.Should().Be("workload_purpose_denied");
+
+			var configured = Resgrid.Config.DataProtectionConfig.BrokerWorkloadPurposes;
+			try
+			{
+				Resgrid.Config.DataProtectionConfig.BrokerWorkloadPurposes = "";
+				EnrollDepartment(DepartmentDataProtectionState.Enabled);
+				(await _service.DecryptForWorkloadAsync(Request(null, "wl-6", Item(envelope)), "records-export", CancellationToken.None)).ErrorCode.Should().Be("workload_purpose_denied", "an empty allow-list disables the lane");
+			}
+			finally { Resgrid.Config.DataProtectionConfig.BrokerWorkloadPurposes = configured; }
+
+			// The attended decrypt path is untouched: no grant is still no decrypt.
+			(await _service.DecryptAsync(Request(null, "wl-7", Item(envelope)), CancellationToken.None)).Success.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task Workload_decrypt_lane_still_validates_a_presented_grant()
+		{
+			EnrollDepartment(DepartmentDataProtectionState.Enabled);
+			var sealedResult = await _service.EncryptAsync(Request(null, "wl-enc", Item("Sensitive")), CancellationToken.None);
+			var envelope = sealedResult.Items[0].Value;
+			var refused = await _service.DecryptForWorkloadAsync(Request("not-a-grant", "wl-8", Item(envelope)), "records-export", CancellationToken.None);
+			refused.Success.Should().BeFalse();
+			refused.ErrorCode.Should().Be("grant_invalid");
+			BrokerOperationService.IsAllowedWorkloadPurpose("records-export").Should().BeTrue();
+			BrokerOperationService.IsAllowedWorkloadPurpose("Records-Export").Should().BeFalse("purposes are normalized by the caller, not the allow-list");
+		}
+
 	}
 }

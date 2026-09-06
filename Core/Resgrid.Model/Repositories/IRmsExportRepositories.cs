@@ -17,6 +17,14 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsExportTemplate>> GetDueAsync(DateTime utcNow, int take);
 
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string templateId, long expectedVersion, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Claims a due template for one sweep by moving NextRunOn off <paramref name="expectedNextRunOn"/> in the
+		/// same statement that matches it. False means another sweep already took it, so this one must skip it:
+		/// bumping the row version alone would leave the row due and let a second sweep render it again.
+		/// </summary>
+		Task<bool> TryClaimDueAsync(int departmentId, string templateId, DateTime expectedNextRunOn, DateTime deferUntil, DateTime utcNow,
+			CancellationToken cancellationToken = default);
 	}
 
 	public interface IRmsExportRunsRepository : IRepository<RmsExportRun>

@@ -432,6 +432,10 @@ namespace Resgrid.Model
 		public string ProtectedLongitudeEnvelope { get; set; }
 		public string Jurisdiction { get; set; }
 		public int SourceKind { get; set; }
+		/// <summary>ADP marker (catalog v10, M0176). RmsLocations is bound with ProtectedMarkerColumn "IsProtected",
+		/// so the catalog-upgrade sweep reads these two columns to tell a sealed row from an unenrolled one.</summary>
+		public bool IsProtected { get; set; }
+		public int ProtectedCatalogVersion { get; set; }
 		public DateTime CreatedOn { get; set; }
 		public DateTime ModifiedOn { get; set; }
 		public long RowVersion { get; set; }

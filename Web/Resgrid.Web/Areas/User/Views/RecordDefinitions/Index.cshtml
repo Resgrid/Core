@@ -1,0 +1,75 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordDefinitionsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["Definitions"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["Definitions"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@localizer["Definitions"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-primary" asp-controller="RecordDefinitions" asp-action="Templates" asp-route-area="User"><i class="fa fa-th-large"></i> @localizer["BrowseTemplates"]</a>
+			<a class="btn btn-success" asp-controller="RecordDefinitions" asp-action="Create" asp-route-area="User"><i class="fa fa-plus"></i> @localizer["NewDefinition"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox">
+		<div class="ibox-content">
+			<p class="text-muted">@localizer["DefinitionsIntro"]</p>
+			<p><a asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User" asp-route-includeRetired="@(!Model.IncludeRetired)">@(Model.IncludeRetired ? localizer["DefinitionHideRetired"] : localizer["DefinitionIncludeRetired"])</a></p>
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>@localizer["DefinitionName"]</th>
+						<th>@localizer["DefinitionKey"]</th>
+						<th>@localizer["DefinitionCategory"]</th>
+						<th>@localizer["DefinitionOwner"]</th>
+						<th>@localizer["DefinitionPublishedVersion"]</th>
+						<th>@localizer["DefinitionDraftVersion"]</th>
+						<th>@localizer["DefinitionPreset"]</th>
+						<th>@localizer["DefinitionCapability"]</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var d in Model.Definitions)
+					{
+						<tr class="@(d.Retired ? "text-muted" : "")">
+							<td>@d.Name @if (d.Retired) { <span class="label label-default">@localizer["DefinitionRetiredLabel"]</span> } @if (d.ArtifactStatus == RmsArtifactStatus.Compatible.ToString()) { <span class="label label-info" title="@d.TemplateKey">@d.JurisdictionProfileKey</span> }</td>
+							<td><code>@d.Key</code></td>
+							<td>@d.Category</td>
+							<td>@(d.Locked ? localizer["DefinitionLocked"].Value : d.Owner)</td>
+							<td>@(d.PublishedVersion?.ToString() ?? "-")</td>
+							<td>@(d.DraftVersion?.ToString() ?? "-")</td>
+							<td>@d.LifecyclePreset</td>
+							<td><code>@d.MinimumClientCapability</code></td>
+							<td class="text-right">
+								@if (!d.Locked)
+								{
+									<a class="btn btn-xs btn-default" asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" asp-route-key="@d.Key">@localizer["Edit"]</a>
+									<a class="btn btn-xs btn-default" asp-controller="RecordDefinitions" asp-action="History" asp-route-area="User" asp-route-key="@d.Key">@localizer["DefinitionHistory"]</a>
+									@if (d.PublishedVersion.HasValue && !d.Retired)
+									{
+										<a class="btn btn-xs btn-default" asp-controller="Records" asp-action="New" asp-route-area="User" asp-route-definitionKey="@d.Key"><i class="icon-plus"></i> @localizer["NewRecord"]</a>
+									}
+								}
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

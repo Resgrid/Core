@@ -1,0 +1,196 @@
+@using Resgrid.Model
+@using Microsoft.AspNetCore.Html
+@model Resgrid.Web.Areas.User.Models.Records.RecordDefinitionFormView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	// Definition-driven authoring (RMS-1B): every field renders from the pinned schema; inputs post as Values[i].* and
+	// the server parses them against the version. Rules (Show/Require) are mirrored client-side by
+	// record-definition-form.js from the schema JSON below; the server evaluates them again at finalize.
+	var index = 0;
+	string NextIndex() => (index++).ToString();
+}
+
+@foreach (var sec in Model.Schema.Sections)
+{
+	var hidden = Model.Evaluation.HiddenSectionKeys.Contains(sec.Key);
+	<div class="ibox rms-def-section" data-section-key="@sec.Key" data-repeating="@(sec.Repeating ? "true" : "false")" hidden="@hidden">
+		<div class="ibox-title"><h5>@sec.Label</h5>@if (!string.IsNullOrWhiteSpace(sec.Help)) { <small class="m-l-sm text-muted">@sec.Help</small> }</div>
+		<div class="ibox-content">
+			@if (!sec.Repeating)
+			{
+				foreach (var field in sec.Fields)
+				{
+					@RenderField(sec, field, null, NextIndex, false)
+				}
+			}
+			else
+			{
+				var rowKeys = Model.RowKeys(sec.Key);
+				if (rowKeys.Count == 0) { rowKeys.Add("row-" + Guid.NewGuid().ToString("N").Substring(0, 8)); }
+				<div class="rms-def-rows">
+					@foreach (var rowKey in rowKeys)
+					{
+						<div class="rms-def-row well well-sm" data-row-key="@rowKey">
+							@foreach (var field in sec.Fields)
+							{
+								@RenderField(sec, field, rowKey, NextIndex, false)
+							}
+							<button type="button" class="btn btn-xs btn-danger rms-def-remove-row"><i class="fa fa-minus"></i> @localizer["RemoveRow"]</button>
+						</div>
+					}
+				</div>
+				<template class="rms-def-row-template">
+					<div class="rms-def-row well well-sm" data-row-key="__ROWKEY__">
+						@foreach (var field in sec.Fields)
+						{
+							@RenderField(sec, field, "__ROWKEY__", TemplateIndex, true)
+						}
+						<button type="button" class="btn btn-xs btn-danger rms-def-remove-row"><i class="fa fa-minus"></i> @localizer["RemoveRow"]</button>
+					</div>
+				</template>
+				<button type="button" class="btn btn-sm btn-default rms-def-add-row" data-max-rows="@sec.MaxRows"><i class="fa fa-plus"></i> @localizer["AddRow"]</button>
+			}
+			</div>
+		</div>
+}
+
+@functions {
+	private static string TemplateIndex() => "__INDEX__";
+	private string InputValue(string sectionKey, string rowKey, string fieldKey) => Model.Input(sectionKey, rowKey, fieldKey)?.Value;
+	private string InputReference(string sectionKey, string rowKey, string fieldKey) => Model.Input(sectionKey, rowKey, fieldKey)?.ReferenceId;
+	private string InputReferenceType(string sectionKey, string rowKey, string fieldKey) => Model.Input(sectionKey, rowKey, fieldKey)?.ReferenceType;
+	private string InputUnit(string sectionKey, string rowKey, string fieldKey) => Model.Input(sectionKey, rowKey, fieldKey)?.UnitCode;
+	private string InputCurrency(string sectionKey, string rowKey, string fieldKey) => Model.Input(sectionKey, rowKey, fieldKey)?.CurrencyCode;
+	private List<string> InputValues(string sectionKey, string rowKey, string fieldKey) { var i = Model.Input(sectionKey, rowKey, fieldKey); return i?.Values ?? (string.IsNullOrEmpty(i?.Value) ? new List<string>() : i.Value.Split(',').ToList()); }
+	private static string Local(DateTime? utc) => utc.HasValue ? utc.Value.ToString("yyyy-MM-ddTHH:mm") : string.Empty;
+
+	private IHtmlContent RenderField(RecordSectionSchema section, RecordFieldSchema field, string rowKey, Func<string> nextIndex, bool template)
+	{
+		var i = nextIndex();
+		var prefix = "Values[" + i + "]";
+		var withheld = !template && Model.IsWithheld(field.Key);
+		var hidden = !template && Model.Evaluation.IsHidden(section.Key, section.Repeating ? rowKey : null, field.Key);
+		var required = field.Required || field.RequiredToFinalize || !template && Model.Evaluation.IsRequired(section.Key, section.Repeating ? rowKey : null, field.Key);
+		var sb = new System.Text.StringBuilder();
+		string E(string s) => System.Net.WebUtility.HtmlEncode(s ?? string.Empty);
+		string Value = template ? string.Empty : InputValue(section.Key, rowKey, field.Key);
+		string Reference = template ? string.Empty : InputReference(section.Key, rowKey, field.Key);
+		string Unit = template ? field.DefaultUnit : (InputUnit(section.Key, rowKey, field.Key) ?? field.DefaultUnit);
+		string Currency = template ? field.DefaultCurrency : (InputCurrency(section.Key, rowKey, field.Key) ?? field.DefaultCurrency);
+		var values = template ? new List<string>() : InputValues(section.Key, rowKey, field.Key);
+
+		sb.Append("<div class=\"form-group rms-def-field\" data-field-key=\"").Append(E(field.Key)).Append("\" data-field-type=\"").Append(field.Type).Append("\"").Append(hidden ? " hidden" : "").Append(">");
+		sb.Append("<label class=\"col-sm-3 control-label").Append(required ? " required" : "").Append("\">").Append(E(field.Label ?? field.Key));
+		if (field.Classification != RmsFieldClassification.Standard) sb.Append(" <i class=\"fa fa-lock text-muted\" title=\"").Append(field.Classification).Append("\"></i>");
+		sb.Append("</label><div class=\"col-sm-9\">");
+		sb.Append("<input type=\"hidden\" name=\"").Append(prefix).Append(".SectionKey\" value=\"").Append(E(section.Key)).Append("\" />");
+		sb.Append("<input type=\"hidden\" name=\"").Append(prefix).Append(".FieldKey\" value=\"").Append(E(field.Key)).Append("\" />");
+		if (section.Repeating) sb.Append("<input type=\"hidden\" name=\"").Append(prefix).Append(".RowKey\" class=\"rms-def-rowkey\" value=\"").Append(E(rowKey)).Append("\" /><input type=\"hidden\" name=\"").Append(prefix).Append(".Ordinal\" class=\"rms-def-ordinal\" value=\"0\" />");
+		var disabled = withheld ? " disabled" : string.Empty;
+		var placeholder = withheld ? " placeholder=\"" + E(localizer["WithheldField"].Value) + "\"" : string.Empty;
+
+		switch (field.Type)
+		{
+			case RmsFieldType.LongText:
+				sb.Append("<textarea class=\"form-control\" rows=\"4\" name=\"").Append(prefix).Append(".Value\"").Append(disabled).Append(placeholder).Append(">").Append(withheld ? "" : E(Value)).Append("</textarea>");
+				break;
+			case RmsFieldType.Address:
+				sb.Append("<textarea class=\"form-control\" rows=\"2\" name=\"").Append(prefix).Append(".Value\"").Append(disabled).Append(placeholder).Append(">").Append(withheld ? "" : E(Value)).Append("</textarea>");
+				sb.Append("<input type=\"text\" class=\"form-control m-t-xs\" name=\"").Append(prefix).Append(".ReferenceId\" value=\"").Append(withheld ? "" : E(Reference)).Append("\" placeholder=\"").Append(E(localizer["CoordinatesHint"].Value)).Append("\"").Append(disabled).Append(" />");
+				break;
+			case RmsFieldType.Integer:
+				sb.Append("<input type=\"number\" step=\"1\" class=\"form-control\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(Value)).Append("\"").Append(field.Min.HasValue ? " min=\"" + field.Min + "\"" : "").Append(field.Max.HasValue ? " max=\"" + field.Max + "\"" : "").Append(disabled).Append(placeholder).Append(" />");
+				break;
+			case RmsFieldType.Decimal:
+				sb.Append("<div class=\"input-group\"><input type=\"number\" step=\"any\" class=\"form-control\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(Value)).Append("\"").Append(disabled).Append(placeholder).Append(" />");
+				if (!string.IsNullOrWhiteSpace(field.FixedUnitLabel)) sb.Append("<span class=\"input-group-addon\">").Append(E(field.FixedUnitLabel)).Append("</span>");
+				sb.Append("</div>");
+				break;
+			case RmsFieldType.Currency:
+				sb.Append("<div class=\"input-group\"><input type=\"number\" step=\"0.01\" class=\"form-control\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(Value)).Append("\"").Append(disabled).Append(placeholder).Append(" />");
+				sb.Append("<span class=\"input-group-btn\"><select class=\"form-control\" name=\"").Append(prefix).Append(".CurrencyCode\"").Append(disabled).Append(">");
+				foreach (var code in RmsCurrencies.Supported) sb.Append("<option value=\"").Append(code).Append("\"").Append(string.Equals(code, Currency, StringComparison.OrdinalIgnoreCase) ? " selected" : "").Append(">").Append(code).Append("</option>");
+				sb.Append("</select></span></div>");
+				break;
+			case RmsFieldType.Quantity:
+				sb.Append("<div class=\"input-group\"><input type=\"number\" step=\"any\" class=\"form-control\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(Value)).Append("\"").Append(disabled).Append(placeholder).Append(" />");
+				sb.Append("<span class=\"input-group-btn\"><select class=\"form-control\" name=\"").Append(prefix).Append(".UnitCode\"").Append(disabled).Append(">");
+				foreach (var unit in RmsUnits.ForFamily(field.UnitFamily ?? "count")) sb.Append("<option value=\"").Append(unit.Code).Append("\"").Append(string.Equals(unit.Code, Unit, StringComparison.Ordinal) ? " selected" : "").Append(">").Append(E(unit.Label)).Append("</option>");
+				sb.Append("</select></span></div>");
+				break;
+			case RmsFieldType.Boolean:
+				sb.Append("<select class=\"form-control\" name=\"").Append(prefix).Append(".Value\"").Append(disabled).Append("><option value=\"\"></option><option value=\"true\"").Append(Value == "true" ? " selected" : "").Append(">").Append(E(localizer["Yes"].Value)).Append("</option><option value=\"false\"").Append(Value == "false" ? " selected" : "").Append(">").Append(E(localizer["No"].Value)).Append("</option></select>");
+				break;
+			case RmsFieldType.Date:
+				sb.Append("<input type=\"date\" class=\"form-control\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(Value)).Append("\"").Append(disabled).Append(" />");
+				break;
+			case RmsFieldType.DateTime:
+				{
+					var local = DateTime.TryParse(Value, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var utc) ? Local(utc.TimeConverter(Model.Department)) : string.Empty;
+					sb.Append("<input type=\"datetime-local\" class=\"form-control rms-def-datetime\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(local)).Append("\"").Append(disabled).Append(" />");
+					sb.Append("<input type=\"hidden\" name=\"").Append(prefix).Append(".OffsetMinutes\" class=\"rms-def-offset\" value=\"\" />");
+					break;
+				}
+			case RmsFieldType.Duration:
+				sb.Append("<input type=\"text\" class=\"form-control\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(Value)).Append("\" placeholder=\"hh:mm\"").Append(disabled).Append(" />");
+				break;
+			case RmsFieldType.SingleSelect:
+				sb.Append("<select class=\"form-control\" name=\"").Append(prefix).Append(".Value\"").Append(disabled).Append("><option value=\"\"></option>");
+				foreach (var option in field.Options) sb.Append("<option value=\"").Append(E(option.Key)).Append("\"").Append(string.Equals(option.Key, Value, StringComparison.OrdinalIgnoreCase) ? " selected" : "").Append(">").Append(E(option.Label ?? option.Key)).Append("</option>");
+				sb.Append("</select>");
+				break;
+			case RmsFieldType.MultiSelect:
+				sb.Append("<select class=\"form-control\" multiple size=\"").Append(Math.Min(6, Math.Max(2, field.Options.Count))).Append("\" name=\"").Append(prefix).Append(".Values\"").Append(disabled).Append(">");
+				foreach (var option in field.Options) sb.Append("<option value=\"").Append(E(option.Key)).Append("\"").Append(values.Contains(option.Key, StringComparer.OrdinalIgnoreCase) ? " selected" : "").Append(">").Append(E(option.Label ?? option.Key)).Append("</option>");
+				sb.Append("</select>");
+				break;
+			case RmsFieldType.Person:
+			case RmsFieldType.Unit:
+			case RmsFieldType.Group:
+			case RmsFieldType.Contact:
+			case RmsFieldType.CallReference:
+			case RmsFieldType.Attachment:
+				{
+					var list = field.Type == RmsFieldType.Person ? Model.Personnel : field.Type == RmsFieldType.Unit ? Model.AvailableUnits : field.Type == RmsFieldType.Group ? Model.Stations : field.Type == RmsFieldType.Contact ? Model.Contacts : field.Type == RmsFieldType.CallReference ? Model.Calls : Model.Attachments;
+					sb.Append("<select class=\"form-control\" name=\"").Append(prefix).Append(".ReferenceId\"").Append(disabled).Append("><option value=\"\"></option>");
+					foreach (var item in list) sb.Append("<option value=\"").Append(E(item.Value)).Append("\"").Append(string.Equals(item.Value, Reference, StringComparison.OrdinalIgnoreCase) ? " selected" : "").Append(">").Append(E(item.Text)).Append("</option>");
+					sb.Append("</select>");
+					break;
+				}
+			case RmsFieldType.Signature:
+				sb.Append("<label class=\"checkbox-inline\"><input type=\"checkbox\" class=\"rms-def-signature\" data-target=\"").Append(prefix).Append(".Value\"").Append(!string.IsNullOrWhiteSpace(Value) ? " checked" : "").Append(disabled).Append(" /> ").Append(E(localizer["SignatureAcknowledge"].Value)).Append("</label>");
+				sb.Append("<input type=\"hidden\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(E(Value)).Append("\" />");
+				break;
+			case RmsFieldType.ExternalReference:
+				sb.Append("<input type=\"text\" class=\"form-control\" name=\"").Append(prefix).Append(".ReferenceId\" value=\"").Append(E(Reference)).Append("\" maxlength=\"200\"").Append(disabled).Append(placeholder).Append(" />");
+				sb.Append("<input type=\"hidden\" name=\"").Append(prefix).Append(".ReferenceType\" value=\"").Append(E(field.ReferenceType ?? "external")).Append("\" />");
+				break;
+			case RmsFieldType.CountrySubdivision:
+				sb.Append("<select class=\"form-control\" name=\"").Append(prefix).Append(".Value\"").Append(disabled).Append("><option value=\"\"></option>");
+				foreach (var country in RmsCountrySubdivisions.ByCountry)
+				{
+					sb.Append("<optgroup label=\"").Append(RmsCountrySubdivisions.Label(country.Key)).Append("\">");
+					foreach (var sub in country.Value.OrderBy(s => s.Value)) { var code = country.Key + "-" + sub.Key; sb.Append("<option value=\"").Append(code).Append("\"").Append(string.Equals(code, Value, StringComparison.OrdinalIgnoreCase) ? " selected" : "").Append(">").Append(E(sub.Value)).Append("</option>"); }
+					sb.Append("</optgroup>");
+				}
+				sb.Append("</select>");
+				break;
+			case RmsFieldType.InventoryReference:
+				sb.Append("<input type=\"number\" step=\"1\" class=\"form-control\" name=\"").Append(prefix).Append(".ReferenceId\" value=\"").Append(E(Reference)).Append("\"").Append(disabled).Append(placeholder).Append(" />");
+				break;
+			case RmsFieldType.ChecklistWorkOrderReference:
+				{
+					var kind = template ? (field.ReferenceType ?? "checklist") : (InputReferenceType(section.Key, rowKey, field.Key) ?? field.ReferenceType ?? "checklist");
+					sb.Append("<div class=\"input-group\"><span class=\"input-group-btn\"><select class=\"form-control\" name=\"").Append(prefix).Append(".ReferenceType\"").Append(disabled).Append("><option value=\"checklist\"").Append(kind == "checklist" ? " selected" : "").Append(">Checklist</option><option value=\"workorder\"").Append(kind == "workorder" ? " selected" : "").Append(">Work order</option></select></span>");
+					sb.Append("<input type=\"text\" class=\"form-control\" name=\"").Append(prefix).Append(".ReferenceId\" value=\"").Append(E(Reference)).Append("\" maxlength=\"64\"").Append(disabled).Append(placeholder).Append(" /></div>");
+					break;
+				}
+			default:
+				sb.Append("<input type=\"text\" class=\"form-control\" name=\"").Append(prefix).Append(".Value\" value=\"").Append(withheld ? "" : E(Value)).Append("\"").Append(field.MaxLength.HasValue ? " maxlength=\"" + field.MaxLength + "\"" : "").Append(disabled).Append(placeholder).Append(" />");
+				break;
+		}
+		if (!string.IsNullOrWhiteSpace(field.Help)) sb.Append("<span class=\"help-block\">").Append(E(field.Help)).Append("</span>");
+		sb.Append("</div></div>");
+		return new HtmlString(sb.ToString());
+	}
+}

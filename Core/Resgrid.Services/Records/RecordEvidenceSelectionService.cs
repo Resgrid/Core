@@ -92,6 +92,12 @@ namespace Resgrid.Services.Records
 						if (await _sourceAuthorization.Value.CanUserViewPersonAsync(userId, person.UserId, departmentId))
 							selection.Choices.Add(new RecordEvidenceChoice { Id = person.UserId, Label = person.Name });
 				}
+				else if (sourceKind == RmsEvidenceKind.ModuleProjection)
+				{
+					// RMS-1C pack projections: one choice per composable owning-module projection.
+					foreach (var projection in Evidence.RecordPackProjectionKinds.All)
+						selection.Choices.Add(new RecordEvidenceChoice { Id = projection, Label = projection });
+				}
 				else if (sourceKind == RmsEvidenceKind.ChatPromotion && context.CallId.HasValue)
 				{
 					foreach (var channel in (await _channels.GetByCallIdAsync(context.CallId.Value) ?? Enumerable.Empty<ChatChannel>())

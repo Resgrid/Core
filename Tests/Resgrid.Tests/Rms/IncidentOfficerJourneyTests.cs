@@ -99,7 +99,7 @@ namespace Resgrid.Tests.Rms
 			pdf.Setup(p => p.ConvertHtmlToPdf(It.IsAny<string>(), "Letter")).Returns((string html, string paper) => { rendered.Add(html); return Encoding.ASCII.GetBytes("%PDF-journey-fixture"); });
 			var branding = new Mock<IDepartmentProfileMediaService>(); branding.Setup(b => b.GetBrandingAsync(Dept)).ReturnsAsync(new DepartmentBranding { DisplayName = "Journey Fire Department" });
 			var documents = new RecordsDocumentService(_authorization.Object, _store.Shared.RecordsRepo.Object, _store.ReportsRepo.Object, _store.AnalysesRepo.Object,
-				_store.Shared.RevisionsRepo.Object, _service, branding.Object, Mock.Of<IRecordsPrintLayoutService>(), pdf.Object, evidence, udf, new PassthroughRecordsProtection());
+				_store.Shared.RevisionsRepo.Object, _service, branding.Object, Mock.Of<IRecordsPrintLayoutService>(), pdf.Object, evidence, udf, new PassthroughRecordsProtection(), Mock.Of<IRecordDefinitionsService>());
 			var original = await documents.GetAsync(Dept, "author", id, RmsRecordKind.IncidentReport, firstRevision.RmsRevisionId, true);
 			var corrected = await documents.GetAsync(Dept, "author", id, RmsRecordKind.IncidentReport, secondRevision.RmsRevisionId, true);
 			JObject.Parse(original.ContentJson)["CustomFields"]["Fields"][0]["Value"].Value<string>().Should().Be("23");

@@ -317,6 +317,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentProfileRepository>().As<IDepartmentProfileRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentProfileMediaRepository>().As<IDepartmentProfileMediaRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsRecordPrintLayoutsRepository>().As<IRmsRecordPrintLayoutsRepository>().InstancePerLifetimeScope();
+			// Field Records work assignments (RMS-1D, registry M0179)
+			builder.RegisterType<RmsRecordWorkAssignmentsRepository>().As<IRmsRecordWorkAssignmentsRepository>().InstancePerLifetimeScope();
 			// NERIS incident report aggregate (RMS-2, registry M0164-M0166)
 			builder.RegisterType<RmsIncidentReportsRepository>().As<IRmsIncidentReportsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsSourceFactsRepository>().As<IRmsSourceFactsRepository>().InstancePerLifetimeScope();
@@ -354,6 +356,18 @@ namespace Resgrid.Repositories.DataRepository
 			// RMS department report exports (registry M0177, worker 45)
 			builder.RegisterType<RmsExportTemplatesRepository>().As<IRmsExportTemplatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsExportRunsRepository>().As<IRmsExportRunsRepository>().InstancePerLifetimeScope();
+			// RMS-1B definitions, typed values, saved reports; RMS-1C packs, profiles, external orders (registry M0158-M0163)
+			builder.RegisterType<RmsRecordDefinitionsRepository>().As<IRmsRecordDefinitionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordDefinitionVersionsRepository>().As<IRmsRecordDefinitionVersionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordSectionDefinitionsRepository>().As<IRmsRecordSectionDefinitionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordFieldDefinitionsRepository>().As<IRmsRecordFieldDefinitionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordValueGroupsRepository>().As<IRmsRecordValueGroupsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsRecordValuesRepository>().As<IRmsRecordValuesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsSavedReportDefinitionsRepository>().As<IRmsSavedReportDefinitionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsTemplatePackVersionsRepository>().As<IRmsTemplatePackVersionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsJurisdictionProfileVersionsRepository>().As<IRmsJurisdictionProfileVersionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsExternalOrdersRepository>().As<IRmsExternalOrdersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsExternalOrderFillsRepository>().As<IRmsExternalOrderFillsRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

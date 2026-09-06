@@ -82,6 +82,8 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.RecordVoided).Should().Be(106);
 			((int)WorkflowTriggerEventType.RecordCancelled).Should().Be(107);
 			((int)WorkflowTriggerEventType.RecordOverdue).Should().Be(112);
+			((int)WorkflowTriggerEventType.RecordDefinitionPublished).Should().Be(113);
+			((int)WorkflowTriggerEventType.RecordDefinitionRetired).Should().Be(114);
 
 			foreach (var value in Enumerable.Range(52, 48))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");

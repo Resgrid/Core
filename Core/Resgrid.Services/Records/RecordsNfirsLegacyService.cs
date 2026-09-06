@@ -32,9 +32,10 @@ namespace Resgrid.Services.Records
 		private readonly IIncidentReportsService _incidents;
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly INerisProfileService _neris;
+		private readonly IProtectedReadService _protectedReads;
 
 		public RecordsNfirsLegacyService(ICallsService calls, IUnitsService units, IIncidentReportingService reporting, IIncidentReportsService incidents,
-			IRecordsAuthorizationService authorization, INerisProfileService neris)
+			IRecordsAuthorizationService authorization, INerisProfileService neris, IProtectedReadService protectedReads)
 		{
 			_calls = calls;
 			_units = units;
@@ -42,6 +43,7 @@ namespace Resgrid.Services.Records
 			_incidents = incidents;
 			_authorization = authorization;
 			_neris = neris;
+			_protectedReads = protectedReads;
 		}
 
 		public async Task<NfirsLegacyRendering> RenderAsync(int departmentId, string viewerUserId, int callId)
@@ -55,6 +57,12 @@ namespace Resgrid.Services.Records
 				return null;
 			if (string.IsNullOrWhiteSpace(viewerUserId) || !await _authorization.CanReadSourceCallAsync(viewerUserId, departmentId, call))
 				throw new UnauthorizedAccessException("Source Call access is not authorized.");
+
+			// Calls.Name, Address, NatureOfCall, Type and IncidentNumber are cataloged columns (ADP section 5.1).
+			// Every value below is copied straight off the Call, so the read has to be resolved here: without a
+			// grant the contract hands back the REDACTED sentinel, which is what the rendering should show. The
+			// egress filter behind this is a net for a missed resolve, not the resolve itself.
+			await _protectedReads.ResolveForReadAsync(departmentId, call, null, viewerUserId);
 
 			var rendering = new NfirsLegacyRendering
 			{

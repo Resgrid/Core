@@ -1,0 +1,73 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordDefinitionImpactView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["DefinitionImpact"];
+	var p = Model.Preview;
+	var canPublish = Model.CanPublish && Model.VersionRow.IsDraft && p.Issues.All(i => i.Severity != "error");
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["DefinitionImpact"]: @Model.Aggregate.Definition.Name v@(Model.VersionRow.Version)</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User">@localizer["Definitions"]</a></li>
+			<li><a asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" asp-route-key="@Model.Aggregate.Definition.DefinitionKey" asp-route-version="@Model.VersionRow.Version">@Model.Aggregate.Definition.DefinitionKey</a></li>
+			<li class="active"><strong>@localizer["DefinitionImpact"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox">
+		<div class="ibox-content">
+			<p class="text-muted">@localizer["DefinitionImpactIntro"]</p>
+			<dl class="dl-horizontal">
+				<dt>@localizer["DefinitionCapability"]</dt><dd><code>@p.MinimumClientCapability</code></dd>
+				<dt>@localizer["FieldType"]</dt><dd>@string.Join(", ", p.FieldTypesUsed) @if (p.UsesRepeatingGroups) { <span class="label label-info">@localizer["DefinitionRepeating"]</span> }</dd>
+				<dt>@localizer["DefinitionPublishedVersion"]</dt><dd>@(p.CurrentPublishedVersion?.ToString() ?? "-")</dd>
+				<dt>@localizer["DefinitionOpenDrafts"]</dt><dd>@p.OpenDraftsOnCurrentVersion</dd>
+				<dt>@localizer["DefinitionFinalizedEarlier"]</dt><dd>@p.FinalizedRecordsOnEarlierVersions</dd>
+				<dt>@localizer["DefinitionBreaking"]</dt><dd>@(p.BreakingChange ? localizer["Yes"] : localizer["No"])</dd>
+			</dl>
+			@if (p.Issues.Count > 0)
+			{
+				<div class="alert @(p.Issues.Any(i => i.Severity == "error") ? "alert-danger" : "alert-warning")">
+					<ul>@foreach (var issue in p.Issues) { <li><span class="label @(issue.Severity == "error" ? "label-danger" : "label-warning")">@issue.Severity</span> <code>@issue.Path</code> @issue.Message</li> }</ul>
+				</div>
+			}
+			<h4>@localizer["DefinitionClients"]</h4>
+			<table class="table table-condensed">
+				<thead><tr><th>App</th><th>@localizer["Enabled"]</th><th>@localizer["DefinitionClientSurface"]</th><th>@localizer["DefinitionCapability"]</th><th></th></tr></thead>
+				<tbody>
+					@foreach (var c in p.Clients)
+					{
+						<tr><td>@c.App</td><td>@(c.Enabled ? localizer["Yes"] : localizer["No"])</td><td>@(c.EligibleOnSurface ? localizer["Yes"] : localizer["No"])</td><td><code>@c.RequiredCapability</code></td><td class="text-muted">@c.Message</td></tr>
+					}
+				</tbody>
+			</table>
+			@if (Model.Diff != null && Model.Diff.Entries.Count > 0)
+			{
+				<h4>@localizer["DefinitionDiff"] v@(Model.Diff.FromVersion) → v@(Model.Diff.ToVersion)</h4>
+				<table class="table table-condensed">
+					<tbody>@foreach (var e in Model.Diff.Entries) { <tr class="@(e.Breaking ? "danger" : "")"><td>@e.Kind</td><td>@e.Change</td><td><code>@e.Key</code></td><td>@e.Detail</td></tr> }</tbody>
+				</table>
+			}
+			@if (canPublish)
+			{
+				<form method="post" asp-controller="RecordDefinitions" asp-action="Publish" asp-route-area="User" asp-route-key="@Model.Aggregate.Definition.DefinitionKey" asp-route-version="@Model.VersionRow.Version" onsubmit="return confirm('@localizer["DefinitionPublishConfirm"]');">
+					@Html.AntiForgeryToken()
+					<input type="hidden" name="rowVersion" value="@Model.VersionRow.RowVersion" />
+					<button type="submit" class="btn btn-success"><i class="fa fa-check"></i> @localizer["DefinitionPublishNow"]</button>
+					<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" asp-route-key="@Model.Aggregate.Definition.DefinitionKey" asp-route-version="@Model.VersionRow.Version">@commonLocalizer["Cancel"]</a>
+				</form>
+			}
+			else if (!Model.CanPublish)
+			{
+				<p class="text-muted"><i class="fa fa-lock"></i> @localizer["DefinitionPublishNeedsPermission"]</p>
+			}
+		</div>
+	</div>
+</div>

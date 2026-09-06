@@ -37,6 +37,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public class RecordsController : SecureBaseController
 	{
 		private readonly IRecordsService _recordsService;
+		private readonly IRecordsBulkPacketService _bulk;
 		private readonly IRecordsCutoverService _cutoverService;
 		private readonly IRecordsAuthorizationService _recordsAuthorizationService;
 		private readonly IRecordsUdfService _udf;
@@ -57,6 +58,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsDashboardService _dashboard;
 		private readonly IRecordsProtectionService _protection;
 		private readonly IProtectedGrantContext _grantContext;
+		private readonly IRecordsRevealService _reveal;
+		private readonly IRecordDefinitionsService _definitions;
+		private readonly IRecordTypedValuesService _typedValues;
+		private readonly IContactsService _contacts;
 
 		public RecordsController(IRecordsService recordsService, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
@@ -64,8 +69,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer,
 			ICompositeViewEngine viewEngine, IPdfProvider pdfProvider, IRecordsSearchService recordsSearch, IDepartmentDataProtectionService dataProtection,
 			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard, IRecordsUdfService udf,
-			IRecordsProtectionService protection, IProtectedGrantContext grantContext)
+			IRecordsProtectionService protection, IProtectedGrantContext grantContext, IRecordsRevealService reveal, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IContactsService contacts,
+			IRecordsBulkPacketService bulk)
 		{
+			_bulk = bulk;
+			_contacts = contacts;
+			_reveal = reveal;
+			_definitions = definitions;
+			_typedValues = typedValues;
 			_accountability = accountability;
 			_protection = protection;
 			_grantContext = grantContext;
@@ -206,7 +217,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (TempData["RecordsError"] is string recordsError)
 				model.ErrorMessage = recordsError;
 
-			model.Definitions = DefinitionList();
+			model.Definitions = await DefinitionListAsync();
 			model.States = Enum.GetValues(typeof(RmsRecordState)).Cast<RmsRecordState>()
 				.Select(s => new SelectListItem { Value = ((int)s).ToString(), Text = s.ToString() }).ToList();
 
@@ -214,6 +225,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 
 			model.Years = (await _recordsService.GetYearsAsync(DepartmentId)).Select(y => new SelectListItem { Value = y.ToString(), Text = y.ToString() }).ToList();
+			await PopulateBulkAsync(model);
 
 			var visibleGroups = await _recordsAuthorizationService.GetVisibleGroupIdsAsync(UserId, DepartmentId);
 			var states = int.TryParse(state, out var stateValue) ? new List<int> { stateValue } : null;
@@ -325,6 +337,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!moduleState.RecordsUsable)
 				return moduleState.FlagEnabled ? RedirectToAction("Index") : NotFound();
 
+			if (!string.IsNullOrWhiteSpace(definitionKey) && !RmsDefinitionKeys.LockedTypes.ContainsKey(definitionKey))
+			{
+				// Department definitions (RMS-1B) render through the definition-driven form, pinned to the published version.
+				var published = await _definitions.GetCurrentPublishedAsync(DepartmentId, definitionKey);
+				if (published != null)
+				{
+					var form = await BuildDefinitionFormAsync(null, published, callId, null);
+					form.ProtectionEnforced = await _protection.IsEnforcedAsync(DepartmentId);
+					ApplyTempDataError(form);
+					return View("EditDefinition", form);
+				}
+			}
 			if (string.IsNullOrWhiteSpace(definitionKey) || !RmsDefinitionKeys.LockedTypes.ContainsKey(definitionKey))
 				definitionKey = callId.HasValue ? RmsDefinitionKeys.Run : RmsDefinitionKeys.Training;
 
@@ -350,7 +374,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewRevealed(string definitionKey, int? callId)
 		{
 			var result = await New(definitionKey, callId);
-			if (result is ViewResult view && view.Model is RecordEditView model)
+			if (result is ViewResult view && view.Model is RecordsBaseView model)
 				CarryGrant(model);
 			return result;
 		}
@@ -366,8 +390,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return moduleState.FlagEnabled ? RedirectToAction("Index") : NotFound();
 
 			await PopulateListsAsync(model);
+			RmsRecordDefinitionVersion definitionVersion = null;
 			if (!RmsDefinitionKeys.LockedTypes.TryGetValue(model.DefinitionKey ?? string.Empty, out var recordType))
-				return BadRequest();
+			{
+				definitionVersion = await _definitions.GetCurrentPublishedAsync(DepartmentId, model.DefinitionKey ?? string.Empty);
+				if (definitionVersion == null)
+					return BadRequest();
+			}
 			model.RecordType = recordType;
 			CarryGrant(model);
 			model.ProtectionEnforced = await _protection.IsEnforcedAsync(DepartmentId);
@@ -383,8 +412,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						model.RecordId = aggregate.Record.RmsOperationalRecordId;
 						model.RowVersion = aggregate.Record.RowVersion;
-						model.ErrorMessage = _localizer["Attestation"];
-						return View("Edit", model);
+						return await EditErrorAsync(model, aggregate, definitionVersion, _localizer["Attestation"]);
 					}
 
 					var fresh = await _recordsService.GetAsync(DepartmentId, aggregate.Record.RmsOperationalRecordId);
@@ -396,13 +424,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (ArgumentException ex)
 			{
-				model.ErrorMessage = ex.Message;
-				return View("Edit", model);
+				return await EditErrorAsync(model, null, definitionVersion, ex.Message);
 			}
 			catch (RecordTransitionException ex)
 			{
-				model.ErrorMessage = ex.Message;
-				return View("Edit", model);
+				return await EditErrorAsync(model, null, definitionVersion, ex.Message);
 			}
 		}
 
@@ -420,6 +446,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanEditRecord(record))
 				return Unauthorized();
 
+			if (record.RecordType == null)
+			{
+				var version = aggregate.DefinitionVersionRow ?? await _definitions.GetVersionAsync(DepartmentId, record.DefinitionKey, record.DefinitionVersion);
+				if (version == null)
+					return NotFound();
+				var form = await BuildDefinitionFormAsync(aggregate, version, record.CallId, null);
+				ApplyTempDataError(form);
+				return View("EditDefinition", form);
+			}
+
 			var model = await BuildEditAsync(aggregate);
 			ApplyTempDataError(model);
 			return View(model);
@@ -436,7 +472,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditRevealed(string id)
 		{
 			var result = await Edit(id);
-			if (result is ViewResult view && view.Model is RecordEditView model)
+			if (result is ViewResult view && view.Model is RecordsBaseView model)
 				CarryGrant(model);
 			return result;
 		}
@@ -517,6 +553,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await PopulateListsAsync(model);
 			model.RecordType = (RmsOperationalRecordType)aggregate.Record.RecordType.GetValueOrDefault();
 			model.DefinitionKey = aggregate.Record.DefinitionKey;
+			var definitionVersion = aggregate.Record.RecordType == null ? aggregate.DefinitionVersionRow ?? await _definitions.GetVersionAsync(DepartmentId, aggregate.Record.DefinitionKey, aggregate.Record.DefinitionVersion) : null;
 			CarryGrant(model);
 			model.ApplyProtection(aggregate.Protection);
 
@@ -530,8 +567,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (!model.Attested)
 					{
 						model.RowVersion = saved.Record.RowVersion;
-						model.ErrorMessage = _localizer["Attestation"];
-						return View(model);
+						return await EditErrorAsync(model, saved, definitionVersion, _localizer["Attestation"]);
 					}
 
 					var fresh = await _recordsService.GetAsync(DepartmentId, model.RecordId);
@@ -542,19 +578,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			catch (RecordConcurrencyException)
 			{
-				model.ErrorMessage = _localizer["ConcurrencyError"];
-				return View(model);
+				return await EditErrorAsync(model, aggregate, definitionVersion, _localizer["ConcurrencyError"]);
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (ArgumentException ex)
 			{
-				model.ErrorMessage = ex.Message;
-				return View(model);
+				return await EditErrorAsync(model, aggregate, definitionVersion, ex.Message);
 			}
 			catch (RecordTransitionException ex)
 			{
-				model.ErrorMessage = ex.Message;
-				return View(model);
+				return await EditErrorAsync(model, aggregate, definitionVersion, ex.Message);
 			}
 		}
 
@@ -707,29 +740,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (aggregate == null)
 				return NotFound();
 
-			var protection = aggregate.Protection ?? new ProtectedReadResult();
-			if (protection.IsProtected && protection.ProtectedReason != null)
-				return Json(new { success = false, error = protection.ProtectedReason });
-
-			var fields = new Dictionary<string, string>();
-			var details = aggregate.Details;
-			if (details != null)
-			{
-				var restricted = await CanViewRestrictedAsync();
-				foreach (var accessor in RmsProtectedFields.Details)
-				{
-					// The reveal hides exactly what the page hides: restricted detail columns stay withheld without the grant.
-					var column = accessor.Key.Substring(accessor.Key.IndexOf('.') + 1);
-					if (!restricted && RecordSnapshotSerializer.RestrictedDetailFields.Any(f => string.Equals(f, column, StringComparison.OrdinalIgnoreCase)))
-						continue;
-					fields[$"{accessor.Key}:{details.RmsOperationalRecordDetailId}"] = accessor.Value.Get(details);
-				}
-			}
-			foreach (var attachment in aggregate.Attachments ?? new List<RmsRecordAttachment>())
-				fields[$"rmsrecordattachments.filename:{attachment.RmsRecordAttachmentId}"] = attachment.FileName;
-
-			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, "Protected reveal", IpAddressHelper.GetRequestIP(Request, true));
-			return Json(new { success = true, fields });
+			// Shared with the v4 Reveal endpoint (IRecordsRevealService): same keys, same withholding, same audit.
+			var outcome = await _reveal.RevealRecordAsync(DepartmentId, UserId, aggregate, await CanViewRestrictedAsync(), IpAddressHelper.GetRequestIP(Request, true));
+			if (!outcome.Success)
+				return Json(new { success = false, error = outcome.Error });
+			return Json(new { success = true, fields = outcome.Fields });
 		}
 
 		[HttpGet]
@@ -1302,7 +1317,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CanVoid = ClaimsAuthorizationHelper.CanVoidRecords(),
 				CanExport = ClaimsAuthorizationHelper.CanExportRecords(),
 				CanViewRestricted = await CanViewRestrictedAsync(),
-				CanReassign = ClaimsAuthorizationHelper.CanReassignRecordDrafts()
+				CanReassign = ClaimsAuthorizationHelper.CanReassignRecordDrafts(),
+				DefinitionName = await DefinitionNameAsync(aggregate.Record),
+				DefinitionLayout = aggregate.Record.RecordType == null ? (await _printLayouts.ResolveForDefinitionAsync(DepartmentId, aggregate.Record.DefinitionKey, aggregate.Record.DefinitionVersion)).Definition : null
 			};
 		}
 
@@ -1353,6 +1370,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new RecordDraftInput
 			{
 				CustomFields = model.CustomFields,
+				Values = model.Values ?? new List<RecordValueInput>(),
 				DefinitionKey = model.DefinitionKey,
 				CallId = model.CallId,
 				StationGroupId = model.StationGroupId,
@@ -1450,7 +1468,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CanViewRestricted = await CanViewRestrictedAsync()
 				&& await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ViewRestrictedRecords);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
-			model.Definitions = DefinitionList();
+			model.Definitions = await DefinitionListAsync();
 			model.CanFinalize = ClaimsAuthorizationHelper.CanFinalizeRecords();
 
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
@@ -1477,9 +1495,153 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 		}
 
-		private static List<SelectListItem> DefinitionList()
+		/// <summary>Locked Logs-parity definitions plus the department's published definitions (RMS-1B).</summary>
+		private async Task<List<SelectListItem>> DefinitionListAsync()
 		{
-			return RmsDefinitionKeys.LockedTypes.Select(kv => new SelectListItem { Value = kv.Key, Text = kv.Value.ToString() }).ToList();
+			var list = RmsDefinitionKeys.LockedTypes.Select(kv => new SelectListItem { Value = kv.Key, Text = kv.Value.ToString() }).ToList();
+			try
+			{
+				foreach (var definition in (await _definitions.ListAsync(DepartmentId)).Where(d => !d.Locked && d.PublishedVersion.HasValue && !d.Retired).OrderBy(d => d.Name, StringComparer.OrdinalIgnoreCase))
+					list.Add(new SelectListItem { Value = definition.Key, Text = definition.Name });
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Department definitions could not be listed for the Records chooser.");
+			}
+			return list;
+		}
+
+		private async Task<string> DefinitionNameAsync(RmsOperationalRecord record)
+		{
+			if (record?.RecordType != null) return null;
+			return (await _definitions.ListAsync(DepartmentId, true)).FirstOrDefault(d => string.Equals(d.Key, record?.DefinitionKey, StringComparison.OrdinalIgnoreCase))?.Name ?? record?.DefinitionKey;
+		}
+
+		/// <summary>The definition-driven authoring form (RMS-1B): pinned schema, stored or posted values, rule evaluation, reference lists.</summary>
+		private async Task<RecordDefinitionFormView> BuildDefinitionFormAsync(RecordAggregate aggregate, RmsRecordDefinitionVersion version, int? callId, RecordEditView posted)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var record = aggregate?.Record;
+			var definition = await _definitions.GetAsync(DepartmentId, version.DefinitionKey);
+			var form = new RecordDefinitionFormView
+			{
+				RecordId = record?.RmsOperationalRecordId, RowVersion = posted?.RowVersion ?? record?.RowVersion ?? 0, DefinitionKey = version.DefinitionKey, DefinitionName = definition?.Definition.Name ?? version.DefinitionKey, DefinitionVersion = version.Version,
+				DraftReference = record?.DraftReference, RecordNumber = record?.RecordNumber, IsAmendment = record?.AmendsRevisionId != null,
+				CallId = posted?.CallId ?? record?.CallId ?? callId, StationGroupId = posted?.StationGroupId ?? record?.StationGroupId, ExternalId = posted?.ExternalId ?? record?.ExternalId,
+				StartedOn = posted?.StartedOn ?? record?.StartedOn?.TimeConverter(department) ?? (record == null ? DateTime.UtcNow.TimeConverter(department) : (DateTime?)null), EndedOn = posted?.EndedOn ?? record?.EndedOn?.TimeConverter(department),
+				Schema = version.Schema, Values = aggregate?.Values, PostedValues = posted?.Values, LifecyclePreset = (RmsLifecyclePreset)version.LifecyclePreset, MinimumClientCapability = version.MinimumClientCapability,
+				CanViewRestricted = await CanViewRestrictedAsync(), CanFinalize = ClaimsAuthorizationHelper.CanFinalizeRecords(), Department = department,
+				FinalizeAfterSave = posted?.FinalizeAfterSave ?? false, Attested = posted?.Attested ?? false, ReasonCode = posted?.ReasonCode, ReasonText = posted?.ReasonText, AttachmentClassification = posted?.AttachmentClassification ?? 1
+			};
+			form.ApplyProtection(aggregate?.Protection);
+			form.Evaluation = _typedValues.EvaluateRules(version.Schema, aggregate?.Values ?? new RecordValueSet());
+			if (definition?.Definition.TemplateKey != null)
+			{
+				var template = RecordTemplateCatalog.Find(definition.Definition.TemplateKey);
+				var profile = RecordTemplateCatalog.FindProfile(definition.Definition.JurisdictionProfileKey ?? "generic") ?? RecordTemplateCatalog.FindProfile("generic");
+				if (template != null && profile != null)
+				{
+					var rendering = RecordTemplatePacksService.Render(template, profile, profile.ProfileKey, profile.DefaultLocale);
+					form.ProvenanceStatement = rendering.ProvenanceStatement;
+					form.IsPreview = RecordTemplateCatalog.PackOf(template.Key)?.IsPreview ?? false;
+				}
+			}
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
+			form.Stations = groups.OrderBy(g => g.Name).Select(g => new SelectListItem { Value = g.DepartmentGroupId.ToString(), Text = g.Name }).ToList();
+			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
+			form.Personnel = names.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList();
+			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId) ?? new List<Unit>();
+			form.AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList();
+			var calls = ClaimsAuthorizationHelper.CanViewCalls() ? await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId) ?? new List<Call>() : new List<Call>();
+			form.Calls = calls.OrderByDescending(c => c.LoggedOn).Select(c => new SelectListItem { Value = c.CallId.ToString(), Text = $"{c.Number} - {c.Name}" }).ToList();
+			try
+			{
+				var contacts = await _contacts.GetAllContactsForDepartmentAsync(DepartmentId) ?? new List<Contact>();
+				form.Contacts = contacts.Select(c => new SelectListItem { Value = c.ContactId, Text = string.Join(" ", new[] { c.FirstName, c.LastName }.Where(s => !string.IsNullOrWhiteSpace(s))) is var n && !string.IsNullOrWhiteSpace(n) ? n : c.CompanyName ?? c.ContactId }).OrderBy(i => i.Text).ToList();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Contacts could not be listed for the definition form.");
+			}
+			form.Attachments = (aggregate?.Attachments ?? new List<RmsRecordAttachment>()).Select(a => new SelectListItem { Value = a.RmsRecordAttachmentId, Text = a.FileName }).ToList();
+			if (record == null && callId.HasValue)
+				form.DuplicateCandidates = await _recordsService.GetDuplicateCandidatesAsync(DepartmentId, version.DefinitionKey, callId.Value);
+			return form;
+		}
+
+		/// <summary>Re-renders the right editor after a failed post: the definition form (with the posted values) or the locked-type Edit view.</summary>
+		private async Task<IActionResult> EditErrorAsync(RecordEditView model, RecordAggregate aggregate, RmsRecordDefinitionVersion definitionVersion, string error)
+		{
+			if (definitionVersion == null)
+			{
+				model.ErrorMessage = error;
+				return View("Edit", model);
+			}
+			var form = await BuildDefinitionFormAsync(aggregate, definitionVersion, model.CallId, model);
+			form.ErrorMessage = error;
+			CarryGrant(form);
+			form.ProtectionEnforced = aggregate?.Protection?.IsProtected ?? await _protection.IsEnforcedAsync(DepartmentId);
+			return View("EditDefinition", form);
+		}
+
+		private async Task PopulateBulkAsync(RecordsIndexView model)
+		{
+			model.CanBulkAssign = await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ReviewRecords);
+			model.CanBulkPacket = await _recordsAuthorizationService.HasPermissionAsync(UserId, DepartmentId, PermissionTypes.ExportRecords);
+			if (model.CanBulkAssign)
+			{
+				var names = await PersonnelNamesAsync();
+				model.Reviewers = names.OrderBy(n => n.Value, StringComparer.CurrentCultureIgnoreCase).Select(n => new SelectListItem { Value = n.Key, Text = n.Value }).ToList();
+			}
+		}
+
+		/// <summary>Bulk assign-for-review and bulk packets over the checked rows (RMS plan section 4.7). No bulk void, no bulk delete.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Bulk(string bulkAction, List<string> ids, string reviewerUserId, string reason, string title, string purpose, string deliverTo, CancellationToken cancellationToken)
+		{
+			if (!await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)) return Forbid();
+			if (!(await _cutoverService.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
+			ids = (ids ?? new List<string>()).Where(i => !string.IsNullOrWhiteSpace(i)).ToList();
+			if (ids.Count == 0) { TempData["RecordsError"] = _localizer["BulkNothingSelected"].Value; return RedirectToAction("Index"); }
+			try
+			{
+				switch ((bulkAction ?? string.Empty).ToLowerInvariant())
+				{
+					case "assign":
+					{
+						var result = await _bulk.AssignForReviewAsync(DepartmentId, UserId, new RecordsBulkAssignRequest { RecordIds = ids, ReviewerUserId = reviewerUserId, Reason = reason }, cancellationToken);
+						TempData["RecordsMessage"] = string.Format(_localizer["BulkAssigned"].Value, result.Processed, result.Skipped);
+						return RedirectToAction("Index");
+					}
+					case "packet":
+					case "bundle":
+					{
+						var result = await _bulk.BuildPacketAsync(DepartmentId, UserId, new RecordsBulkPacketRequest
+						{
+							RecordIds = ids, Mode = bulkAction.ToLowerInvariant() == "bundle" ? RecordsBulkPacketMode.Bundle : RecordsBulkPacketMode.CompiledPdf,
+							Title = title, Purpose = purpose, DeliverToEmail = deliverTo, OriginClient = RmsOriginClient.Web
+						}, cancellationToken);
+						TempData["RecordsMessage"] = string.Format(_localizer["BulkPacketCreated"].Value, result.Processed, result.Skipped) + (result.Delivered ? " " + _localizer["BulkDelivered"].Value : string.Empty);
+						return RedirectToAction("BulkDownload", new { id = result.Run.RmsExportRunId });
+					}
+					default:
+						return BadRequest();
+				}
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (Exception ex) when (ex is ArgumentException || ex is InvalidOperationException) { TempData["RecordsError"] = ex.Message; return RedirectToAction("Index"); }
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> BulkDownload(string id)
+		{
+			if (!await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)) return Forbid();
+			RmsExportRun run;
+			try { run = await _bulk.GetPacketAsync(DepartmentId, UserId, id); }
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			if (run?.Data == null) return NotFound();
+			return File(run.Data, run.ContentType ?? "application/octet-stream", run.FileName ?? "packet");
 		}
 
 		private async Task<Dictionary<string, string>> PersonnelNamesAsync()

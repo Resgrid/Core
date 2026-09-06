@@ -144,8 +144,50 @@ namespace Resgrid.Services.Records
 			DiffSet(diffs, "Units", from.Units.Select(u => $"{u.UnitId}|{Iso(u.Dispatched)}|{Iso(u.Enroute)}|{Iso(u.OnScene)}|{Iso(u.Released)}|{Iso(u.InQuarters)}"),
 				to.Units.Select(u => $"{u.UnitId}|{Iso(u.Dispatched)}|{Iso(u.Enroute)}|{Iso(u.OnScene)}|{Iso(u.Released)}|{Iso(u.InQuarters)}"));
 			DiffSet(diffs, "Attachments", from.Attachments.Select(a => a.RmsRecordAttachmentId + ":" + a.Checksum), to.Attachments.Select(a => a.RmsRecordAttachmentId + ":" + a.Checksum));
+			DiffValues(diffs, from.Values, to.Values, canViewRestricted);
 
 			return diffs;
+		}
+
+		/// <summary>Suffix ToSnapshot puts on a restricted typed value's label so history and diffs can withhold it without the schema.</summary>
+		public const string RestrictedValueSuffix = " [restricted]";
+
+		/// <summary>Department-definition values (RMS-1B): flattened "Section / Field" (or "Section / Item n / Field") paths, pinned to the version's labels.</summary>
+		public static void DiffValues(List<RecordFieldDiff> diffs, Dictionary<string, object> from, Dictionary<string, object> to, bool canViewRestricted)
+		{
+			var a = FlattenValues(from); var b = FlattenValues(to);
+			foreach (var key in a.Keys.Union(b.Keys, StringComparer.Ordinal).OrderBy(k => k, StringComparer.Ordinal))
+			{
+				a.TryGetValue(key, out var oldValue); b.TryGetValue(key, out var newValue);
+				var slash = key.IndexOf(" / ", StringComparison.Ordinal);
+				var section = slash < 0 ? key : key.Substring(0, slash);
+				var field = slash < 0 ? key : key.Substring(slash + 3);
+				Compare(diffs, section, field.EndsWith(RestrictedValueSuffix, StringComparison.Ordinal) ? field.Substring(0, field.Length - RestrictedValueSuffix.Length) : field, oldValue, newValue, field.EndsWith(RestrictedValueSuffix, StringComparison.Ordinal), canViewRestricted);
+			}
+		}
+
+		public static Dictionary<string, string> FlattenValues(Dictionary<string, object> values)
+		{
+			var flat = new Dictionary<string, string>(StringComparer.Ordinal);
+			if (values == null) return flat;
+			var token = Newtonsoft.Json.Linq.JToken.FromObject(values);
+			void Walk(Newtonsoft.Json.Linq.JToken node, string path)
+			{
+				switch (node)
+				{
+					case Newtonsoft.Json.Linq.JObject obj:
+						foreach (var property in obj.Properties()) Walk(property.Value, path.Length == 0 ? property.Name : path + " / " + property.Name);
+						break;
+					case Newtonsoft.Json.Linq.JArray array:
+						for (var i = 0; i < array.Count; i++) Walk(array[i], path + " / Item " + (i + 1));
+						break;
+					default:
+						flat[path] = node.Type == Newtonsoft.Json.Linq.JTokenType.Null ? null : node.ToString();
+						break;
+				}
+			}
+			Walk(token, string.Empty);
+			return flat;
 		}
 
 		private static void Compare(List<RecordFieldDiff> diffs, string section, string field, string oldValue, string newValue, bool restricted, bool canViewRestricted)

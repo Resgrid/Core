@@ -1064,4 +1064,255 @@
   <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>Bestätigt am</value></data>
   <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>Erweiterter Datenschutz ist erzwungen: Geschützte Übermittlungen schlagen fehl, bis diese Bestätigung erfasst ist.</value></data>
   <data name="RecordId" xml:space="preserve"><value>Datensatz-ID</value></data>
+  <data name="AddRow" xml:space="preserve"><value>Zeile hinzufügen</value></data>
+  <data name="RemoveRow" xml:space="preserve"><value>Zeile entfernen</value></data>
+  <data name="WithheldField" xml:space="preserve"><value>Zurückgehalten</value></data>
+  <data name="CoordinatesHint" xml:space="preserve"><value>Koordinaten (Breite, Länge) oder Ortsreferenz</value></data>
+  <data name="SignatureAcknowledge" xml:space="preserve"><value>Ich unterzeichne diesen Datensatz als Autor</value></data>
+  <data name="Yes" xml:space="preserve"><value>Ja</value></data>
+  <data name="No" xml:space="preserve"><value>Nein</value></data>
+  <data name="Edit" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Aktiviert</value></data>
+  <data name="PreviewPack" xml:space="preserve"><value>Vorschau</value></data>
+  <data name="DefinitionFormHint" xml:space="preserve"><value>Dieser Datensatz folgt einer Abteilungsdefinition. Mit einem Schloss markierte Felder sind eingeschränkt; Regeln können Felder während der Eingabe ein- oder ausblenden bzw. erfordern.</value></data>
+  <data name="Definitions" xml:space="preserve"><value>Definitionen</value></data>
+  <data name="DefinitionsIntro" xml:space="preserve"><value>Datensatzdefinitionen beschreiben die Formulare Ihrer Abteilung: Abschnitte, Felder, Regeln, Nummerierung und wer prüft oder genehmigt. Veröffentlichen friert eine Version ein; Datensätze binden sich an die Version, mit der sie erstellt wurden.</value></data>
+  <data name="NewDefinition" xml:space="preserve"><value>Neue Definition</value></data>
+  <data name="CreateDefinition" xml:space="preserve"><value>Definition erstellen</value></data>
+  <data name="CreateFromTemplate" xml:space="preserve"><value>Aus Vorlage starten</value></data>
+  <data name="CreateFromClone" xml:space="preserve"><value>Vorhandene Definition klonen</value></data>
+  <data name="CreateBlank" xml:space="preserve"><value>Leere Definition</value></data>
+  <data name="BrowseTemplates" xml:space="preserve"><value>Vorlagen durchsuchen</value></data>
+  <data name="TemplatesIntro" xml:space="preserve"><value>Vorlagenpakete sind geprüfte Ausgangspunkte. Jedes zeigt seine Quellen und das Prüfdatum; Vorschau-Pakete sind nutzbar, werden aber noch mit Abteilungen validiert.</value></data>
+  <data name="TemplateReviewedOn" xml:space="preserve"><value>Geprüft am</value></data>
+  <data name="TemplateSources" xml:space="preserve"><value>Quellen</value></data>
+  <data name="TemplateSections" xml:space="preserve"><value>Abschnitte</value></data>
+  <data name="TemplateFields" xml:space="preserve"><value>Felder</value></data>
+  <data name="TemplateUseThis" xml:space="preserve"><value>Diese Vorlage verwenden</value></data>
+  <data name="TemplateProfile" xml:space="preserve"><value>Zuständigkeitsprofil</value></data>
+  <data name="TemplateLocale" xml:space="preserve"><value>Sprachraum</value></data>
+  <data name="TemplatePreview" xml:space="preserve"><value>Vorlagenvorschau</value></data>
+  <data name="DefinitionKeyHelp" xml:space="preserve"><value>Kleinbuchstaben, Ziffern, Punkte und Bindestriche. Kann nach der Erstellung nicht geändert werden.</value></data>
+  <data name="DefinitionName" xml:space="preserve"><value>Name</value></data>
+  <data name="DefinitionCategory" xml:space="preserve"><value>Kategorie</value></data>
+  <data name="DefinitionDescription" xml:space="preserve"><value>Beschreibung</value></data>
+  <data name="DefinitionOwner" xml:space="preserve"><value>Eigentümer</value></data>
+  <data name="DefinitionLocked" xml:space="preserve"><value>Produkt (gesperrt)</value></data>
+  <data name="DefinitionPublishedVersion" xml:space="preserve"><value>Veröffentlichte Version</value></data>
+  <data name="DefinitionDraftVersion" xml:space="preserve"><value>Entwurfsversion</value></data>
+  <data name="DefinitionPreset" xml:space="preserve"><value>Lebenszyklus-Voreinstellung</value></data>
+  <data name="DefinitionCapability" xml:space="preserve"><value>Client-Fähigkeit</value></data>
+  <data name="DefinitionRetiredLabel" xml:space="preserve"><value>Ausgemustert</value></data>
+  <data name="DefinitionIncludeRetired" xml:space="preserve"><value>Ausgemusterte Definitionen anzeigen</value></data>
+  <data name="DefinitionHideRetired" xml:space="preserve"><value>Ausgemusterte Definitionen ausblenden</value></data>
+  <data name="DefinitionHistory" xml:space="preserve"><value>Verlauf</value></data>
+  <data name="DefinitionVersion" xml:space="preserve"><value>Version</value></data>
+  <data name="DefinitionState" xml:space="preserve"><value>Status</value></data>
+  <data name="DefinitionPublishedOn" xml:space="preserve"><value>Veröffentlicht am</value></data>
+  <data name="DefinitionChangeNotes" xml:space="preserve"><value>Änderungshinweise</value></data>
+  <data name="DefinitionSettings" xml:space="preserve"><value>Einstellungen</value></data>
+  <data name="DefinitionSubjects" xml:space="preserve"><value>Zulässige Betreffe</value></data>
+  <data name="DefinitionReviewerRoles" xml:space="preserve"><value>Prüferrollen</value></data>
+  <data name="DefinitionApproverRoles" xml:space="preserve"><value>Genehmigerrollen</value></data>
+  <data name="DefinitionReviewDueHours" xml:space="preserve"><value>Prüffrist (Stunden)</value></data>
+  <data name="DefinitionApproveDueHours" xml:space="preserve"><value>Genehmigungsfrist (Stunden)</value></data>
+  <data name="DefinitionAuthorAttestation" xml:space="preserve"><value>Autorbestätigung beim Abschließen verlangen</value></data>
+  <data name="DefinitionNumbering" xml:space="preserve"><value>Nummerierung</value></data>
+  <data name="DefinitionNumberPrefix" xml:space="preserve"><value>Nummernpräfix</value></data>
+  <data name="DefinitionSequenceWidth" xml:space="preserve"><value>Sequenzbreite</value></data>
+  <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Nummer vergeben</value></data>
+  <data name="DefinitionPerGroup" xml:space="preserve"><value>Sequenz pro Wache</value></data>
+  <data name="DefinitionResetYearly" xml:space="preserve"><value>Jährlich zurücksetzen</value></data>
+  <data name="DefinitionClassification" xml:space="preserve"><value>Klassifizierung</value></data>
+  <data name="DefinitionRetention" xml:space="preserve"><value>Aufbewahrung (Jahre)</value></data>
+  <data name="DefinitionClientSurface" xml:space="preserve"><value>Client-Oberflächen</value></data>
+  <data name="DefinitionAllowOffline" xml:space="preserve"><value>Offline erlauben</value></data>
+  <data name="DefinitionAllowAttachments" xml:space="preserve"><value>Anhänge erlauben</value></data>
+  <data name="DefinitionMigrationMap" xml:space="preserve"><value>Migrationszuordnung (JSON)</value></data>
+  <data name="DefinitionSchema" xml:space="preserve"><value>Schema (JSON)</value></data>
+  <data name="DefinitionSchemaHelp" xml:space="preserve"><value>Abschnitte enthalten Felder; jedes Feld hat Schlüssel, Bezeichnung, Typ und optionale Regeln. Vor dem Veröffentlichen validieren; die Feldtabelle unten zeigt den zuletzt gespeicherten Entwurf.</value></data>
+  <data name="DefinitionFieldTable" xml:space="preserve"><value>Felder</value></data>
+  <data name="DefinitionRepeating" xml:space="preserve"><value>Wiederholend</value></data>
+  <data name="DefinitionRules" xml:space="preserve"><value>Regeln</value></data>
+  <data name="FieldKey" xml:space="preserve"><value>Schlüssel</value></data>
+  <data name="FieldLabel" xml:space="preserve"><value>Bezeichnung</value></data>
+  <data name="FieldType" xml:space="preserve"><value>Feldtyp</value></data>
+  <data name="FieldRequired" xml:space="preserve"><value>Erforderlich</value></data>
+  <data name="FieldClassification" xml:space="preserve"><value>Klassifizierung</value></data>
+  <data name="FieldFlags" xml:space="preserve"><value>Merkmale</value></data>
+  <data name="DefinitionValidate" xml:space="preserve"><value>Validieren</value></data>
+  <data name="DefinitionSaveDraft" xml:space="preserve"><value>Entwurf speichern</value></data>
+  <data name="DefinitionImpactPublish" xml:space="preserve"><value>Auswirkungen prüfen &amp; veröffentlichen</value></data>
+  <data name="DefinitionOpenDraft" xml:space="preserve"><value>Neuen Entwurf öffnen</value></data>
+  <data name="DefinitionDeleteDraft" xml:space="preserve"><value>Entwurf löschen</value></data>
+  <data name="DefinitionDeleteDraftConfirm" xml:space="preserve"><value>Diese Entwurfsversion löschen? Veröffentlichte Versionen bleiben unberührt.</value></data>
+  <data name="DefinitionPublishedReadOnly" xml:space="preserve"><value>Diese Version ist veröffentlicht und schreibgeschützt. Öffnen Sie einen neuen Entwurf für Änderungen.</value></data>
+  <data name="DefinitionIssues" xml:space="preserve"><value>Validierungsprobleme</value></data>
+  <data name="DefinitionTemplateDrift" xml:space="preserve"><value>Abweichungen von der Vorlage, aus der diese Definition erstellt wurde</value></data>
+  <data name="DefinitionImpact" xml:space="preserve"><value>Auswirkungen der Veröffentlichung</value></data>
+  <data name="DefinitionImpactIntro" xml:space="preserve"><value>Veröffentlichen friert diese Version ein. Vorhandene Entwürfe behalten ihre Version bis zur Migration; abgeschlossene Datensätze ändern sich nie.</value></data>
+  <data name="DefinitionOpenDrafts" xml:space="preserve"><value>Offene Entwürfe der aktuellen Version</value></data>
+  <data name="DefinitionFinalizedEarlier" xml:space="preserve"><value>Abgeschlossene Datensätze auf früheren Versionen</value></data>
+  <data name="DefinitionBreaking" xml:space="preserve"><value>Inkompatible Änderung</value></data>
+  <data name="DefinitionClients" xml:space="preserve"><value>Client-Bereitschaft</value></data>
+  <data name="DefinitionDiff" xml:space="preserve"><value>Änderungen</value></data>
+  <data name="DefinitionDiffFrom" xml:space="preserve"><value>Vergleichen von</value></data>
+  <data name="DefinitionDiffTo" xml:space="preserve"><value>bis</value></data>
+  <data name="DefinitionCompare" xml:space="preserve"><value>Vergleichen</value></data>
+  <data name="DefinitionNoChanges" xml:space="preserve"><value>Keine Unterschiede zwischen diesen Versionen.</value></data>
+  <data name="DefinitionPublishConfirm" xml:space="preserve"><value>Diese Version veröffentlichen? Sie wird schreibgeschützt und neue Datensätze verwenden sie.</value></data>
+  <data name="DefinitionPublishNow" xml:space="preserve"><value>Veröffentlichen</value></data>
+  <data name="DefinitionPublishNeedsPermission" xml:space="preserve"><value>Veröffentlichen erfordert die Berechtigung zum Verwalten von Datensatzdefinitionen.</value></data>
+  <data name="DefinitionRetire" xml:space="preserve"><value>Ausmustern</value></data>
+  <data name="DefinitionRetireReason" xml:space="preserve"><value>Grund für das Ausmustern dieser Definition</value></data>
+  <data name="DefinitionMigrateDrafts" xml:space="preserve"><value>Offene Entwürfe migrieren</value></data>
+  <data name="DefinitionMigratePreview" xml:space="preserve"><value>Migration vorab anzeigen</value></data>
+  <data name="DefinitionMigrateRun" xml:space="preserve"><value>Jetzt migrieren</value></data>
+  <data name="DefinitionMigrateConfirm" xml:space="preserve"><value>Alle offenen Entwürfe auf die neuere Version verschieben? Nicht zugeordnete Werte gehen verloren.</value></data>
+  <data name="DefinitionCreated" xml:space="preserve"><value>Definition erstellt. Schema bearbeiten, validieren, dann veröffentlichen.</value></data>
+  <data name="DefinitionSaved" xml:space="preserve"><value>Entwurf gespeichert.</value></data>
+  <data name="DefinitionValid" xml:space="preserve"><value>Die Definition ist gültig.</value></data>
+  <data name="DefinitionInvalid" xml:space="preserve"><value>Die Definition enthält Fehler. Beheben Sie sie vor dem Veröffentlichen.</value></data>
+  <data name="DefinitionDraftDeleted" xml:space="preserve"><value>Entwurfsversion gelöscht.</value></data>
+  <data name="DefinitionPublished" xml:space="preserve"><value>Version {0} veröffentlicht.</value></data>
+  <data name="DefinitionRetired" xml:space="preserve"><value>Definition ausgemustert. Vorhandene Datensätze bleiben lesbar; neue können nicht erstellt werden.</value></data>
+  <data name="SavedReports" xml:space="preserve"><value>Gespeicherte Berichte</value></data>
+  <data name="SavedReportsIntro" xml:space="preserve"><value>Gespeicherte Berichte fragen die Datensätze einer Definition nach Feldern ab, gruppieren und aggregieren sie und exportieren nach CSV. Ergebnisse respektieren Sichtbarkeit und eingeschränkte Felder.</value></data>
+  <data name="NewReport" xml:space="preserve"><value>Neuer Bericht</value></data>
+  <data name="ReportName" xml:space="preserve"><value>Berichtsname</value></data>
+  <data name="ReportSettings" xml:space="preserve"><value>Berichtseinstellungen</value></data>
+  <data name="ReportColumns" xml:space="preserve"><value>Spalten</value></data>
+  <data name="ReportBuiltInColumns" xml:space="preserve"><value>Datensatzspalten</value></data>
+  <data name="ReportPickDefinition" xml:space="preserve"><value>Wählen Sie eine Definition, um Spalten auszuwählen.</value></data>
+  <data name="ReportSort" xml:space="preserve"><value>Sortieren nach</value></data>
+  <data name="ReportDescending" xml:space="preserve"><value>Absteigend</value></data>
+  <data name="ReportGroupBy" xml:space="preserve"><value>Gruppieren nach</value></data>
+  <data name="ReportAggregates" xml:space="preserve"><value>Aggregate (JSON)</value></data>
+  <data name="ReportAggregatesHelp" xml:space="preserve"><value>Count, Sum, Average, Min, Max auf aggregierbaren Feldern</value></data>
+  <data name="ReportFilters" xml:space="preserve"><value>Filter (JSON)</value></data>
+  <data name="ReportFiltersHelp" xml:space="preserve"><value>Filterbare Felder</value></data>
+  <data name="ReportVersionMappings" xml:space="preserve"><value>Versionszuordnungen (JSON)</value></data>
+  <data name="ReportMaxRows" xml:space="preserve"><value>Max. Zeilen</value></data>
+  <data name="ReportIncludeDrafts" xml:space="preserve"><value>Entwürfe einbeziehen</value></data>
+  <data name="ReportIncludeRestricted" xml:space="preserve"><value>Eingeschränkte Felder einbeziehen</value></data>
+  <data name="ReportValidate" xml:space="preserve"><value>Validieren</value></data>
+  <data name="ReportRun" xml:space="preserve"><value>Ausführen</value></data>
+  <data name="ReportLastRun" xml:space="preserve"><value>Letzte Ausführung</value></data>
+  <data name="ReportDeleteConfirm" xml:space="preserve"><value>Diesen gespeicherten Bericht löschen?</value></data>
+  <data name="ReportRows" xml:space="preserve"><value>Zeilen</value></data>
+  <data name="ReportGroups" xml:space="preserve"><value>Gruppen</value></data>
+  <data name="ReportCount" xml:space="preserve"><value>Anzahl</value></data>
+  <data name="ReportTruncated" xml:space="preserve"><value>Ergebnisse wurden am Zeilenlimit abgeschnitten; Filter einschränken oder als CSV exportieren.</value></data>
+  <data name="ReportUnmappedVersions" xml:space="preserve"><value>Datensätze auf nicht zugeordneten Definitionsversionen wurden mit leeren Zellen einbezogen</value></data>
+  <data name="ReportSaved" xml:space="preserve"><value>Bericht gespeichert.</value></data>
+  <data name="ReportDeleted" xml:space="preserve"><value>Bericht gelöscht.</value></data>
+  <data name="ReportValid" xml:space="preserve"><value>Der Bericht ist gültig.</value></data>
+  <data name="ReportInvalid" xml:space="preserve"><value>Der Bericht enthält Fehler.</value></data>
+  <data name="Deployments" xml:space="preserve"><value>Einsätze</value></data>
+  <data name="DeploymentsIntro" xml:space="preserve"><value>Externe Ressourcenanforderungen, die Ihre Abteilung erfüllt. Das anfordernde System bleibt maßgeblich: Artefakte werden als unveränderliche Snapshots gespeichert, nichts wird zurückgeschrieben.</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>Neuer Einsatz</value></data>
+  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>Einsätze sind eine Vorschaufunktion: Vorlagen wurden aus veröffentlichter IROC-, CIFFC- und EMAC-Dokumentation erstellt, nicht aus Live-Integrationen. Prüfen Sie gegen Ihr Anforderungssystem.</value></data>
+  <data name="DeploymentOrder" xml:space="preserve"><value>Anforderung</value></data>
+  <data name="DeploymentOrderNumber" xml:space="preserve"><value>Anforderungsnummer</value></data>
+  <data name="DeploymentIncident" xml:space="preserve"><value>Ereignis</value></data>
+  <data name="DeploymentLocation" xml:space="preserve"><value>Land / Region</value></data>
+  <data name="DeploymentOffices" xml:space="preserve"><value>Stellen</value></data>
+  <data name="DeploymentOrderingOffice" xml:space="preserve"><value>Anfordernde Stelle</value></data>
+  <data name="DeploymentDispatchOffice" xml:space="preserve"><value>Leitstelle</value></data>
+  <data name="DeploymentAgencies" xml:space="preserve"><value>Behörden</value></data>
+  <data name="DeploymentRequestingAgency" xml:space="preserve"><value>Anfordernde Behörde</value></data>
+  <data name="DeploymentReceivingAgency" xml:space="preserve"><value>Empfangende Behörde</value></data>
+  <data name="DeploymentSendingAgency" xml:space="preserve"><value>Entsendende Behörde</value></data>
+  <data name="DeploymentRole" xml:space="preserve"><value>Rolle der Abteilung</value></data>
+  <data name="DeploymentRoleFilling" xml:space="preserve"><value>Erfüllt die Anforderung</value></data>
+  <data name="DeploymentRoleRequesting" xml:space="preserve"><value>Fordert Ressourcen an</value></data>
+  <data name="DeploymentRoleHost" xml:space="preserve"><value>Ausrichter des Ereignisses</value></data>
+  <data name="DeploymentCost" xml:space="preserve"><value>Kosten</value></data>
+  <data name="DeploymentCostCode" xml:space="preserve"><value>Kostenstelle</value></data>
+  <data name="DeploymentAgreement" xml:space="preserve"><value>Vereinbarungsreferenz</value></data>
+  <data name="DeploymentUnitsAndCurrency" xml:space="preserve"><value>Währung / Einheiten / Zeitzone</value></data>
+  <data name="DeploymentArtifact" xml:space="preserve"><value>Anforderungsdokument</value></data>
+  <data name="DeploymentArtifactHelp" xml:space="preserve"><value>Laden Sie das Anforderungsdokument aus dem Quellsystem hoch (PDF, JSON oder CSV). Es wird als unveränderlicher Snapshot mit Prüfsumme gespeichert.</value></data>
+  <data name="DeploymentSource" xml:space="preserve"><value>Quelle</value></data>
+  <data name="DeploymentSourceSystem" xml:space="preserve"><value>Quellsystem</value></data>
+  <data name="DeploymentSourceVersion" xml:space="preserve"><value>Quellversion</value></data>
+  <data name="DeploymentSourceLink" xml:space="preserve"><value>Im Quellsystem öffnen</value></data>
+  <data name="DeploymentStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="DeploymentIncludeClosed" xml:space="preserve"><value>Abgeschlossene Einsätze anzeigen</value></data>
+  <data name="DeploymentHideClosed" xml:space="preserve"><value>Abgeschlossene Einsätze ausblenden</value></data>
+  <data name="DeploymentMobilizedOn" xml:space="preserve"><value>Mobilisiert</value></data>
+  <data name="DeploymentReleasedOn" xml:space="preserve"><value>Freigegeben</value></data>
+  <data name="DeploymentClosedOutOn" xml:space="preserve"><value>Abgeschlossen</value></data>
+  <data name="DeploymentNewSnapshot" xml:space="preserve"><value>Neuen Snapshot erfassen</value></data>
+  <data name="DeploymentRecordSnapshot" xml:space="preserve"><value>Snapshot speichern</value></data>
+  <data name="DeploymentCloseout" xml:space="preserve"><value>Einsatz abschließen</value></data>
+  <data name="DeploymentCloseoutNotes" xml:space="preserve"><value>Abschlussnotizen</value></data>
+  <data name="DeploymentCloseoutConfirm" xml:space="preserve"><value>Diesen Einsatz abschließen? Besetzungen können danach nicht mehr geändert werden.</value></data>
+  <data name="DeploymentCloseoutBlocked" xml:space="preserve"><value>Jede angenommene Besetzung muss vor dem Abschluss zurückgekehrt sein.</value></data>
+  <data name="DeploymentFills" xml:space="preserve"><value>Besetzungen</value></data>
+  <data name="DeploymentFirstFill" xml:space="preserve"><value>Erste Besetzung (optional)</value></data>
+  <data name="DeploymentFirstFillHelp" xml:space="preserve"><value>Fügen Sie die erste Anfrage/Besetzung jetzt hinzu oder später auf der Einsatzseite.</value></data>
+  <data name="DeploymentAddFill" xml:space="preserve"><value>Besetzung hinzufügen</value></data>
+  <data name="DeploymentRequestNumber" xml:space="preserve"><value>Anfragenummer</value></data>
+  <data name="DeploymentParentRequest" xml:space="preserve"><value>Übergeordnete Anfrage</value></data>
+  <data name="DeploymentResource" xml:space="preserve"><value>Ressource</value></data>
+  <data name="DeploymentPosition" xml:space="preserve"><value>Position</value></data>
+  <data name="DeploymentTrainee" xml:space="preserve"><value>Auszubildende/r</value></data>
+  <data name="DeploymentAssigned" xml:space="preserve"><value>Zugewiesene Person</value></data>
+  <data name="DeploymentHomeUnit" xml:space="preserve"><value>Heimateinheit</value></data>
+  <data name="DeploymentHostAgency" xml:space="preserve"><value>Gastgebende Behörde</value></data>
+  <data name="DeploymentNeededOn" xml:space="preserve"><value>Benötigt am</value></data>
+  <data name="DeploymentRecord" xml:space="preserve"><value>Einsatzdatensatz</value></data>
+  <data name="DeploymentCreate" xml:space="preserve"><value>Einsatz erstellen</value></data>
+  <data name="DeploymentDeclineReason" xml:space="preserve"><value>Grund für die Ablehnung dieser Anfrage</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>Einsatz erstellt.</value></data>
+  <data name="DeploymentFillAdded" xml:space="preserve"><value>Besetzung hinzugefügt.</value></data>
+  <data name="DeploymentFillUpdated" xml:space="preserve"><value>Besetzung aktualisiert.</value></data>
+  <data name="DeploymentSnapshotNeedsFile" xml:space="preserve"><value>Wählen Sie das Anforderungsdokument, das als Snapshot gespeichert werden soll.</value></data>
+  <data name="DeploymentSnapshotRecorded" xml:space="preserve"><value>Snapshot gespeichert. Der vorherige Snapshot bleibt erhalten und wird ersetzt.</value></data>
+  <data name="DeploymentClosedOut" xml:space="preserve"><value>Einsatz abgeschlossen.</value></data>
+  <data name="DefinitionLayout" xml:space="preserve"><value>Drucklayout</value></data>
+  <data name="DefinitionLayoutIntro" xml:space="preserve"><value>Abschnitte und Felder für Druck und PDF anordnen, umbenennen oder ausblenden, Seitenumbrüche hinzufügen und Unterschriftsblock sowie Anhangsliste platzieren. Jedes Speichern erzeugt eine neue Layoutversion, die in der Herkunftsfußzeile vermerkt wird.</value></data>
+  <data name="LayoutCurrentVersion" xml:space="preserve"><value>Layoutversion</value></data>
+  <data name="LayoutDepartmentDefault" xml:space="preserve"><value>Abteilungsstandard</value></data>
+  <data name="LayoutOrder" xml:space="preserve"><value>Reihenfolge</value></data>
+  <data name="LayoutHeading" xml:space="preserve"><value>Überschrift überschreiben</value></data>
+  <data name="LayoutVisible" xml:space="preserve"><value>Sichtbar</value></data>
+  <data name="LayoutPageBreak" xml:space="preserve"><value>Seitenumbruch davor</value></data>
+  <data name="LayoutFields" xml:space="preserve"><value>Felder</value></data>
+  <data name="LayoutAppliesToVersion" xml:space="preserve"><value>Gilt für Version</value></data>
+  <data name="LayoutAllVersions" xml:space="preserve"><value>Alle Versionen</value></data>
+  <data name="LayoutSignaturePlacement" xml:space="preserve"><value>Unterschriftsblock</value></data>
+  <data name="LayoutSignatureEnd" xml:space="preserve"><value>Am Ende</value></data>
+  <data name="LayoutSignatureInline" xml:space="preserve"><value>Innerhalb des Abschnitts</value></data>
+  <data name="LayoutSignatureNone" xml:space="preserve"><value>Ausgeblendet</value></data>
+  <data name="LayoutAttachmentStyle" xml:space="preserve"><value>Anhangsliste</value></data>
+  <data name="LayoutAttachmentsTable" xml:space="preserve"><value>Tabelle</value></data>
+  <data name="LayoutAttachmentsList" xml:space="preserve"><value>Einfache Liste</value></data>
+  <data name="LayoutAttachmentsNone" xml:space="preserve"><value>Ausgeblendet</value></data>
+  <data name="LayoutBrandingOverride" xml:space="preserve"><value>Abteilungsbranding für diese Definition überschreiben</value></data>
+  <data name="LayoutLetterhead" xml:space="preserve"><value>Briefkopf</value></data>
+  <data name="LayoutSaved" xml:space="preserve"><value>Drucklayout gespeichert.</value></data>
+  <data name="BulkSelected" xml:space="preserve"><value>ausgewählt</value></data>
+  <data name="BulkSelectAll" xml:space="preserve"><value>Alle auf dieser Seite auswählen</value></data>
+  <data name="BulkReviewer" xml:space="preserve"><value>Prüfer…</value></data>
+  <data name="BulkReason" xml:space="preserve"><value>Grund</value></data>
+  <data name="BulkAssignReview" xml:space="preserve"><value>Zur Prüfung zuweisen</value></data>
+  <data name="BulkTitle" xml:space="preserve"><value>Pakettitel</value></data>
+  <data name="BulkPurpose" xml:space="preserve"><value>Zweck (protokolliert)</value></data>
+  <data name="BulkDeliverTo" xml:space="preserve"><value>Paket per E-Mail an (optional)</value></data>
+  <data name="BulkCompiledPdf" xml:space="preserve"><value>Zusammengefasstes PDF</value></data>
+  <data name="BulkBundle" xml:space="preserve"><value>Zip-Paket</value></data>
+  <data name="BulkLimit" xml:space="preserve"><value>Bis zu {0} Datensätze pro Paket. Kein Massen-Stornieren oder -Löschen.</value></data>
+  <data name="BulkNothingSelected" xml:space="preserve"><value>Wählen Sie mindestens einen Datensatz aus.</value></data>
+  <data name="BulkAssigned" xml:space="preserve"><value>{0} Datensatz/Datensätze zur Prüfung zugewiesen; {1} übersprungen.</value></data>
+  <data name="BulkPacketCreated" xml:space="preserve"><value>Paket aus {0} Datensatz/Datensätzen erstellt; {1} übersprungen. 30 Tage lang herunterladbar.</value></data>
+  <data name="BulkDelivered" xml:space="preserve"><value>Per E-Mail gesendet.</value></data>
+  <data name="EvidenceModuleProjection" xml:space="preserve"><value>Modulprojektion</value></data>
+  <data name="ProjectionIntro" xml:space="preserve"><value>Erstellt einen begrenzten Schnappschuss aus dem zuständigen Modul: nur Kennungen, Codes, Zähler und Status mit Quellverweisen. Das Modul bleibt das führende System.</value></data>
+  <data name="ProjectionKind" xml:space="preserve"><value>Projektion</value></data>
+  <data name="Projectionpersonnel-check-in" xml:space="preserve"><value>Personal-Check-in</value></data>
+  <data name="Projectionresource-summary" xml:space="preserve"><value>Ressourcenübersicht</value></data>
+  <data name="Projectionqualifications" xml:space="preserve"><value>Qualifikationen</value></data>
+  <data name="Projectioncommand-summary" xml:space="preserve"><value>Führungsübersicht</value></data>
 </root>

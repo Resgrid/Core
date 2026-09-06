@@ -1237,6 +1237,7 @@ namespace Resgrid.Services.Records
 				return (await _modules.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsIncidentModule>();
 
 			var existingRows = (await _modules.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.OrderBy(m => m.Ordinal).ToList() ?? new List<RmsIncidentModule>();
+			var match = SectionMatcher(existingRows, inputs.Select(i => i.ModuleId), m => m.RmsIncidentModuleId, "section");
 			await _modules.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			var result = new List<RmsIncidentModule>();
 			var ordinal = 0;
@@ -1248,7 +1249,7 @@ namespace Resgrid.Services.Records
 				if (descriptor == null || descriptor.BelongsToAnalysis)
 					continue;
 
-				var existing = existingRows.ElementAtOrDefault(ordinal);
+				var existing = match(ordinal, input.ModuleId);
 				var row = new RmsIncidentModule
 				{
 					RmsIncidentModuleId = existing?.RmsIncidentModuleId ?? Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(),
@@ -1271,12 +1272,14 @@ namespace Resgrid.Services.Records
 				return (await _resources.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsIncidentResource>();
 
 			var existingRows = (await _resources.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.OrderBy(r => r.Ordinal).ToList() ?? new List<RmsIncidentResource>();
+			var kept = inputs.Where(i => !string.IsNullOrWhiteSpace(i.ResourceCode)).ToList();
+			var match = SectionMatcher(existingRows, kept.Select(i => i.ResourceId), r => r.RmsIncidentResourceId, "resource");
 			await _resources.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			var result = new List<RmsIncidentResource>();
 			var ordinal = 0;
-			foreach (var input in inputs.Where(i => !string.IsNullOrWhiteSpace(i.ResourceCode)))
+			foreach (var input in kept)
 			{
-				var existing = existingRows.ElementAtOrDefault(ordinal);
+				var existing = match(ordinal, input.ResourceId);
 				var row = new RmsIncidentResource
 				{
 					RmsIncidentResourceId = existing?.RmsIncidentResourceId ?? Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(),
@@ -1372,12 +1375,13 @@ namespace Resgrid.Services.Records
 				return (await _exposures.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.ToList() ?? new List<RmsExposure>();
 
 			var existingRows = (await _exposures.GetForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, null))?.OrderBy(e => e.Ordinal).ToList() ?? new List<RmsExposure>();
+			var match = SectionMatcher(existingRows, inputs.Select(i => i.ExposureId), e => e.RmsExposureId, "exposure");
 			await _exposures.DeleteDraftForRecordAsync(report.DepartmentId, report.RmsIncidentReportId, cancellationToken);
 			var result = new List<RmsExposure>();
 			var ordinal = 0;
 			foreach (var input in inputs)
 			{
-				var existing = existingRows.ElementAtOrDefault(ordinal);
+				var existing = match(ordinal, input.ExposureId);
 				var row = new RmsExposure
 				{
 					RmsExposureId = existing?.RmsExposureId ?? Guid.NewGuid().ToString(), DepartmentId = report.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(),
@@ -1397,6 +1401,27 @@ namespace Resgrid.Services.Records
 				result.Add(row);
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// Resolves the stored row a replaced RMS-3 section input stands for. When the client sends row
+		/// identifiers the match is by identity, and an identifier outside the draft (or sent twice) fails the
+		/// save the way <c>ReplaceCasualtiesAsync</c> does — reordering or deleting a row must never copy another
+		/// row's id, ProtectionId or sealed envelopes onto different content. A client that sends no identifiers
+		/// at all keeps the historical positional match, so an app build that predates the field still round-trips
+		/// its rows instead of re-keying every one of them on each save.
+		/// </summary>
+		internal static Func<int, string, T> SectionMatcher<T>(List<T> existingRows, IEnumerable<string> suppliedIds, Func<T, string> idOf, string what) where T : class
+		{
+			var supplied = (suppliedIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).ToList();
+			if (supplied.Count == 0)
+				return (ordinal, id) => existingRows.ElementAtOrDefault(ordinal);
+
+			var byId = existingRows.ToDictionary(idOf, StringComparer.Ordinal);
+			if (supplied.Distinct(StringComparer.Ordinal).Count() != supplied.Count || supplied.Any(id => !byId.ContainsKey(id)))
+				throw new ArgumentException($"A {what} row does not belong to this draft or was supplied more than once.");
+
+			return (ordinal, id) => string.IsNullOrWhiteSpace(id) ? null : byId[id];
 		}
 
 		/// <summary>Upper-cased, de-duplicated value-set codes as the comma-separated form the columns store.</summary>

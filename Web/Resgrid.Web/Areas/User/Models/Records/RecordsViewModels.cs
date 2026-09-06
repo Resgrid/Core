@@ -98,6 +98,10 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public int? GroupFilter { get; set; }
 		public bool SearchAvailable { get; set; }
 		public bool NarrativeSearchAvailable { get; set; }
+		/// <summary>Bulk bar (RMS plan section 4.7): reviewers for assign-for-review; the packet buttons need ExportRecords.</summary>
+		public bool CanBulkAssign { get; set; }
+		public bool CanBulkPacket { get; set; }
+		public List<SelectListItem> Reviewers { get; set; } = new List<SelectListItem>();
 		public bool SearchDegraded { get; set; }
 		public bool SearchTruncated { get; set; }
 	}
@@ -181,6 +185,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public DateTime? StartedOn { get; set; }
 		public DateTime? EndedOn { get; set; }
 		public RmsOperationalRecordDetail Details { get; set; } = new RmsOperationalRecordDetail();
+		/// <summary>Typed values posted by the definition-driven form (RMS-1B); empty for locked system definitions.</summary>
+		public List<RecordValueInput> Values { get; set; } = new List<RecordValueInput>();
 		public List<string> ParticipantUserIds { get; set; } = new List<string>();
 		public List<RecordParticipantEditRow> ParticipantRows { get; set; }
 		public List<RecordUnitResponseInput> Units { get; set; } = new List<RecordUnitResponseInput>();
@@ -217,6 +223,11 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public RecordPrintProvenance Provenance { get; set; }
 		public RmsOperationalRecordType RecordType => (RmsOperationalRecordType)Aggregate.Record.RecordType.GetValueOrDefault();
 		public RmsRecordState State => (RmsRecordState)Aggregate.Record.State;
+		/// <summary>Set for a Record on a department definition (RMS-1B); the type-specific detail boxes do not apply then.</summary>
+		public string DefinitionName { get; set; }
+		public bool IsDefinitionRecord => Aggregate?.Record?.RecordType == null;
+		/// <summary>The Definition-scope print layout when one applies to this Record's pinned version (presentation only).</summary>
+		public RecordsDefinitionLayoutConfig DefinitionLayout { get; set; }
 	}
 
 	/// <summary>A single revision rendered from its snapshot.</summary>

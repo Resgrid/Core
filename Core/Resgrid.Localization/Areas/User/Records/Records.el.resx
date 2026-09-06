@@ -1064,4 +1064,255 @@
   <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>Επιβεβαιώθηκε στις</value></data>
   <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>Η Προηγμένη Προστασία Δεδομένων επιβάλλεται: οι προστατευμένες υποβολές θα αποτυγχάνουν μέχρι να καταγραφεί αυτή η επιβεβαίωση.</value></data>
   <data name="RecordId" xml:space="preserve"><value>Αναγνωριστικό εγγραφής</value></data>
+  <data name="AddRow" xml:space="preserve"><value>Προσθήκη γραμμής</value></data>
+  <data name="RemoveRow" xml:space="preserve"><value>Αφαίρεση γραμμής</value></data>
+  <data name="WithheldField" xml:space="preserve"><value>Παρακρατήθηκε</value></data>
+  <data name="CoordinatesHint" xml:space="preserve"><value>Συντεταγμένες (γ. πλάτος, γ. μήκος) ή αναφορά τοποθεσίας</value></data>
+  <data name="SignatureAcknowledge" xml:space="preserve"><value>Υπογράφω αυτήν την εγγραφή ως συντάκτης</value></data>
+  <data name="Yes" xml:space="preserve"><value>Ναι</value></data>
+  <data name="No" xml:space="preserve"><value>Όχι</value></data>
+  <data name="Edit" xml:space="preserve"><value>Επεξεργασία</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Ενεργοποιημένο</value></data>
+  <data name="PreviewPack" xml:space="preserve"><value>Προεπισκόπηση</value></data>
+  <data name="DefinitionFormHint" xml:space="preserve"><value>Αυτή η εγγραφή ακολουθεί έναν ορισμό του τμήματος. Τα πεδία με κλειδαριά είναι περιορισμένα· κανόνες μπορεί να εμφανίζουν ή να απαιτούν πεδία καθώς πληκτρολογείτε.</value></data>
+  <data name="Definitions" xml:space="preserve"><value>Ορισμοί</value></data>
+  <data name="DefinitionsIntro" xml:space="preserve"><value>Οι ορισμοί εγγραφών περιγράφουν τις φόρμες του τμήματός σας: ενότητες, πεδία, κανόνες, αρίθμηση και ποιος ελέγχει ή εγκρίνει. Η δημοσίευση παγώνει μια έκδοση· οι εγγραφές δεσμεύονται στην έκδοση με την οποία γράφτηκαν.</value></data>
+  <data name="NewDefinition" xml:space="preserve"><value>Νέος ορισμός</value></data>
+  <data name="CreateDefinition" xml:space="preserve"><value>Δημιουργία ορισμού</value></data>
+  <data name="CreateFromTemplate" xml:space="preserve"><value>Έναρξη από πρότυπο</value></data>
+  <data name="CreateFromClone" xml:space="preserve"><value>Κλωνοποίηση υπάρχοντος ορισμού</value></data>
+  <data name="CreateBlank" xml:space="preserve"><value>Κενός ορισμός</value></data>
+  <data name="BrowseTemplates" xml:space="preserve"><value>Περιήγηση προτύπων</value></data>
+  <data name="TemplatesIntro" xml:space="preserve"><value>Τα πακέτα προτύπων είναι ελεγμένα σημεία εκκίνησης. Καθένα δείχνει τις πηγές και την ημερομηνία ελέγχου του· τα πακέτα προεπισκόπησης είναι χρησιμοποιήσιμα αλλά ακόμη επικυρώνονται με τμήματα.</value></data>
+  <data name="TemplateReviewedOn" xml:space="preserve"><value>Ελέγχθηκε</value></data>
+  <data name="TemplateSources" xml:space="preserve"><value>Πηγές</value></data>
+  <data name="TemplateSections" xml:space="preserve"><value>Ενότητες</value></data>
+  <data name="TemplateFields" xml:space="preserve"><value>Πεδία</value></data>
+  <data name="TemplateUseThis" xml:space="preserve"><value>Χρήση αυτού του προτύπου</value></data>
+  <data name="TemplateProfile" xml:space="preserve"><value>Προφίλ δικαιοδοσίας</value></data>
+  <data name="TemplateLocale" xml:space="preserve"><value>Τοπικές ρυθμίσεις</value></data>
+  <data name="TemplatePreview" xml:space="preserve"><value>Προεπισκόπηση προτύπου</value></data>
+  <data name="DefinitionKeyHelp" xml:space="preserve"><value>Πεζά γράμματα, ψηφία, τελείες και παύλες. Δεν αλλάζει μετά τη δημιουργία.</value></data>
+  <data name="DefinitionName" xml:space="preserve"><value>Όνομα</value></data>
+  <data name="DefinitionCategory" xml:space="preserve"><value>Κατηγορία</value></data>
+  <data name="DefinitionDescription" xml:space="preserve"><value>Περιγραφή</value></data>
+  <data name="DefinitionOwner" xml:space="preserve"><value>Κάτοχος</value></data>
+  <data name="DefinitionLocked" xml:space="preserve"><value>Προϊόν (κλειδωμένο)</value></data>
+  <data name="DefinitionPublishedVersion" xml:space="preserve"><value>Δημοσιευμένη έκδοση</value></data>
+  <data name="DefinitionDraftVersion" xml:space="preserve"><value>Πρόχειρη έκδοση</value></data>
+  <data name="DefinitionPreset" xml:space="preserve"><value>Προεπιλογή κύκλου ζωής</value></data>
+  <data name="DefinitionCapability" xml:space="preserve"><value>Δυνατότητα πελάτη</value></data>
+  <data name="DefinitionRetiredLabel" xml:space="preserve"><value>Αποσυρμένος</value></data>
+  <data name="DefinitionIncludeRetired" xml:space="preserve"><value>Εμφάνιση αποσυρμένων ορισμών</value></data>
+  <data name="DefinitionHideRetired" xml:space="preserve"><value>Απόκρυψη αποσυρμένων ορισμών</value></data>
+  <data name="DefinitionHistory" xml:space="preserve"><value>Ιστορικό</value></data>
+  <data name="DefinitionVersion" xml:space="preserve"><value>Έκδοση</value></data>
+  <data name="DefinitionState" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="DefinitionPublishedOn" xml:space="preserve"><value>Δημοσιεύθηκε</value></data>
+  <data name="DefinitionChangeNotes" xml:space="preserve"><value>Σημειώσεις αλλαγών</value></data>
+  <data name="DefinitionSettings" xml:space="preserve"><value>Ρυθμίσεις</value></data>
+  <data name="DefinitionSubjects" xml:space="preserve"><value>Επιτρεπόμενα θέματα</value></data>
+  <data name="DefinitionReviewerRoles" xml:space="preserve"><value>Ρόλοι ελεγκτή</value></data>
+  <data name="DefinitionApproverRoles" xml:space="preserve"><value>Ρόλοι εγκρίνοντος</value></data>
+  <data name="DefinitionReviewDueHours" xml:space="preserve"><value>Προθεσμία ελέγχου (ώρες)</value></data>
+  <data name="DefinitionApproveDueHours" xml:space="preserve"><value>Προθεσμία έγκρισης (ώρες)</value></data>
+  <data name="DefinitionAuthorAttestation" xml:space="preserve"><value>Απαίτηση βεβαίωσης συντάκτη κατά την οριστικοποίηση</value></data>
+  <data name="DefinitionNumbering" xml:space="preserve"><value>Αρίθμηση</value></data>
+  <data name="DefinitionNumberPrefix" xml:space="preserve"><value>Πρόθεμα αριθμού</value></data>
+  <data name="DefinitionSequenceWidth" xml:space="preserve"><value>Πλάτος ακολουθίας</value></data>
+  <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Ανάθεση αριθμού</value></data>
+  <data name="DefinitionPerGroup" xml:space="preserve"><value>Ακολουθία ανά σταθμό</value></data>
+  <data name="DefinitionResetYearly" xml:space="preserve"><value>Επαναφορά ετησίως</value></data>
+  <data name="DefinitionClassification" xml:space="preserve"><value>Ταξινόμηση</value></data>
+  <data name="DefinitionRetention" xml:space="preserve"><value>Διατήρηση (έτη)</value></data>
+  <data name="DefinitionClientSurface" xml:space="preserve"><value>Επιφάνειες πελάτη</value></data>
+  <data name="DefinitionAllowOffline" xml:space="preserve"><value>Επιτρέπεται εκτός σύνδεσης</value></data>
+  <data name="DefinitionAllowAttachments" xml:space="preserve"><value>Επιτρέπονται συνημμένα</value></data>
+  <data name="DefinitionMigrationMap" xml:space="preserve"><value>Χάρτης μετάβασης (JSON)</value></data>
+  <data name="DefinitionSchema" xml:space="preserve"><value>Σχήμα (JSON)</value></data>
+  <data name="DefinitionSchemaHelp" xml:space="preserve"><value>Οι ενότητες περιέχουν πεδία· κάθε πεδίο έχει κλειδί, ετικέτα, τύπο και προαιρετικούς κανόνες. Επικυρώστε πριν τη δημοσίευση· ο πίνακας πεδίων αντικατοπτρίζει το τελευταίο αποθηκευμένο προσχέδιο.</value></data>
+  <data name="DefinitionFieldTable" xml:space="preserve"><value>Πεδία</value></data>
+  <data name="DefinitionRepeating" xml:space="preserve"><value>Επαναλαμβανόμενη</value></data>
+  <data name="DefinitionRules" xml:space="preserve"><value>Κανόνες</value></data>
+  <data name="FieldKey" xml:space="preserve"><value>Κλειδί</value></data>
+  <data name="FieldLabel" xml:space="preserve"><value>Ετικέτα</value></data>
+  <data name="FieldType" xml:space="preserve"><value>Τύπος πεδίου</value></data>
+  <data name="FieldRequired" xml:space="preserve"><value>Υποχρεωτικό</value></data>
+  <data name="FieldClassification" xml:space="preserve"><value>Ταξινόμηση</value></data>
+  <data name="FieldFlags" xml:space="preserve"><value>Σημάνσεις</value></data>
+  <data name="DefinitionValidate" xml:space="preserve"><value>Επικύρωση</value></data>
+  <data name="DefinitionSaveDraft" xml:space="preserve"><value>Αποθήκευση προσχεδίου</value></data>
+  <data name="DefinitionImpactPublish" xml:space="preserve"><value>Έλεγχος επίπτωσης &amp; δημοσίευση</value></data>
+  <data name="DefinitionOpenDraft" xml:space="preserve"><value>Άνοιγμα νέου προσχεδίου</value></data>
+  <data name="DefinitionDeleteDraft" xml:space="preserve"><value>Διαγραφή προσχεδίου</value></data>
+  <data name="DefinitionDeleteDraftConfirm" xml:space="preserve"><value>Διαγραφή αυτής της πρόχειρης έκδοσης; Οι δημοσιευμένες εκδόσεις δεν επηρεάζονται.</value></data>
+  <data name="DefinitionPublishedReadOnly" xml:space="preserve"><value>Αυτή η έκδοση είναι δημοσιευμένη και μόνο για ανάγνωση. Ανοίξτε νέο προσχέδιο για αλλαγές.</value></data>
+  <data name="DefinitionIssues" xml:space="preserve"><value>Ζητήματα επικύρωσης</value></data>
+  <data name="DefinitionTemplateDrift" xml:space="preserve"><value>Διαφορές από το πρότυπο από το οποίο δημιουργήθηκε αυτός ο ορισμός</value></data>
+  <data name="DefinitionImpact" xml:space="preserve"><value>Επίπτωση δημοσίευσης</value></data>
+  <data name="DefinitionImpactIntro" xml:space="preserve"><value>Η δημοσίευση παγώνει αυτή την έκδοση. Τα υπάρχοντα προσχέδια κρατούν την έκδοσή τους μέχρι τη μετάβαση· οι οριστικοποιημένες εγγραφές δεν αλλάζουν ποτέ.</value></data>
+  <data name="DefinitionOpenDrafts" xml:space="preserve"><value>Ανοιχτά προσχέδια στην τρέχουσα έκδοση</value></data>
+  <data name="DefinitionFinalizedEarlier" xml:space="preserve"><value>Οριστικοποιημένες εγγραφές σε προηγούμενες εκδόσεις</value></data>
+  <data name="DefinitionBreaking" xml:space="preserve"><value>Ασύμβατη αλλαγή</value></data>
+  <data name="DefinitionClients" xml:space="preserve"><value>Ετοιμότητα πελατών</value></data>
+  <data name="DefinitionDiff" xml:space="preserve"><value>Αλλαγές</value></data>
+  <data name="DefinitionDiffFrom" xml:space="preserve"><value>Σύγκριση από</value></data>
+  <data name="DefinitionDiffTo" xml:space="preserve"><value>έως</value></data>
+  <data name="DefinitionCompare" xml:space="preserve"><value>Σύγκριση</value></data>
+  <data name="DefinitionNoChanges" xml:space="preserve"><value>Δεν υπάρχουν διαφορές μεταξύ αυτών των εκδόσεων.</value></data>
+  <data name="DefinitionPublishConfirm" xml:space="preserve"><value>Δημοσίευση αυτής της έκδοσης; Γίνεται μόνο για ανάγνωση και οι νέες εγγραφές θα τη χρησιμοποιούν.</value></data>
+  <data name="DefinitionPublishNow" xml:space="preserve"><value>Δημοσίευση</value></data>
+  <data name="DefinitionPublishNeedsPermission" xml:space="preserve"><value>Η δημοσίευση απαιτεί το δικαίωμα διαχείρισης ορισμών εγγραφών.</value></data>
+  <data name="DefinitionRetire" xml:space="preserve"><value>Απόσυρση</value></data>
+  <data name="DefinitionRetireReason" xml:space="preserve"><value>Λόγος απόσυρσης αυτού του ορισμού</value></data>
+  <data name="DefinitionMigrateDrafts" xml:space="preserve"><value>Μετάβαση ανοιχτών προσχεδίων</value></data>
+  <data name="DefinitionMigratePreview" xml:space="preserve"><value>Προεπισκόπηση μετάβασης</value></data>
+  <data name="DefinitionMigrateRun" xml:space="preserve"><value>Μετάβαση τώρα</value></data>
+  <data name="DefinitionMigrateConfirm" xml:space="preserve"><value>Μεταφορά όλων των ανοιχτών προσχεδίων στη νεότερη έκδοση; Οι μη αντιστοιχισμένες τιμές απορρίπτονται.</value></data>
+  <data name="DefinitionCreated" xml:space="preserve"><value>Ο ορισμός δημιουργήθηκε. Επεξεργαστείτε το σχήμα, επικυρώστε και έπειτα δημοσιεύστε.</value></data>
+  <data name="DefinitionSaved" xml:space="preserve"><value>Το προσχέδιο αποθηκεύτηκε.</value></data>
+  <data name="DefinitionValid" xml:space="preserve"><value>Ο ορισμός είναι έγκυρος.</value></data>
+  <data name="DefinitionInvalid" xml:space="preserve"><value>Ο ορισμός έχει σφάλματα. Διορθώστε τα πριν τη δημοσίευση.</value></data>
+  <data name="DefinitionDraftDeleted" xml:space="preserve"><value>Η πρόχειρη έκδοση διαγράφηκε.</value></data>
+  <data name="DefinitionPublished" xml:space="preserve"><value>Η έκδοση {0} δημοσιεύθηκε.</value></data>
+  <data name="DefinitionRetired" xml:space="preserve"><value>Ο ορισμός αποσύρθηκε. Οι υπάρχουσες εγγραφές παραμένουν αναγνώσιμες· δεν μπορούν να δημιουργηθούν νέες.</value></data>
+  <data name="SavedReports" xml:space="preserve"><value>Αποθηκευμένες αναφορές</value></data>
+  <data name="SavedReportsIntro" xml:space="preserve"><value>Οι αποθηκευμένες αναφορές ερωτούν τις εγγραφές ενός ορισμού ανά πεδίο, τις ομαδοποιούν και συγκεντρώνουν και εξάγουν σε CSV. Τα αποτελέσματα σέβονται την ορατότητα και τα περιορισμένα πεδία.</value></data>
+  <data name="NewReport" xml:space="preserve"><value>Νέα αναφορά</value></data>
+  <data name="ReportName" xml:space="preserve"><value>Όνομα αναφοράς</value></data>
+  <data name="ReportSettings" xml:space="preserve"><value>Ρυθμίσεις αναφοράς</value></data>
+  <data name="ReportColumns" xml:space="preserve"><value>Στήλες</value></data>
+  <data name="ReportBuiltInColumns" xml:space="preserve"><value>Στήλες εγγραφής</value></data>
+  <data name="ReportPickDefinition" xml:space="preserve"><value>Επιλέξτε ορισμό για να διαλέξετε στήλες.</value></data>
+  <data name="ReportSort" xml:space="preserve"><value>Ταξινόμηση κατά</value></data>
+  <data name="ReportDescending" xml:space="preserve"><value>Φθίνουσα</value></data>
+  <data name="ReportGroupBy" xml:space="preserve"><value>Ομαδοποίηση κατά</value></data>
+  <data name="ReportAggregates" xml:space="preserve"><value>Συγκεντρωτικά (JSON)</value></data>
+  <data name="ReportAggregatesHelp" xml:space="preserve"><value>Count, Sum, Average, Min, Max σε συγκεντρώσιμα πεδία</value></data>
+  <data name="ReportFilters" xml:space="preserve"><value>Φίλτρα (JSON)</value></data>
+  <data name="ReportFiltersHelp" xml:space="preserve"><value>Φιλτραρίσιμα πεδία</value></data>
+  <data name="ReportVersionMappings" xml:space="preserve"><value>Αντιστοιχίσεις εκδόσεων (JSON)</value></data>
+  <data name="ReportMaxRows" xml:space="preserve"><value>Μέγ. γραμμές</value></data>
+  <data name="ReportIncludeDrafts" xml:space="preserve"><value>Συμπερίληψη προσχεδίων</value></data>
+  <data name="ReportIncludeRestricted" xml:space="preserve"><value>Συμπερίληψη περιορισμένων πεδίων</value></data>
+  <data name="ReportValidate" xml:space="preserve"><value>Επικύρωση</value></data>
+  <data name="ReportRun" xml:space="preserve"><value>Εκτέλεση</value></data>
+  <data name="ReportLastRun" xml:space="preserve"><value>Τελευταία εκτέλεση</value></data>
+  <data name="ReportDeleteConfirm" xml:space="preserve"><value>Διαγραφή αυτής της αποθηκευμένης αναφοράς;</value></data>
+  <data name="ReportRows" xml:space="preserve"><value>Γραμμές</value></data>
+  <data name="ReportGroups" xml:space="preserve"><value>Ομάδες</value></data>
+  <data name="ReportCount" xml:space="preserve"><value>Πλήθος</value></data>
+  <data name="ReportTruncated" xml:space="preserve"><value>Τα αποτελέσματα περικόπηκαν στο όριο γραμμών· περιορίστε τα φίλτρα ή εξάγετε σε CSV.</value></data>
+  <data name="ReportUnmappedVersions" xml:space="preserve"><value>Εγγραφές σε μη αντιστοιχισμένες εκδόσεις ορισμού συμπεριλήφθηκαν με κενά κελιά</value></data>
+  <data name="ReportSaved" xml:space="preserve"><value>Η αναφορά αποθηκεύτηκε.</value></data>
+  <data name="ReportDeleted" xml:space="preserve"><value>Η αναφορά διαγράφηκε.</value></data>
+  <data name="ReportValid" xml:space="preserve"><value>Η αναφορά είναι έγκυρη.</value></data>
+  <data name="ReportInvalid" xml:space="preserve"><value>Η αναφορά έχει σφάλματα.</value></data>
+  <data name="Deployments" xml:space="preserve"><value>Αποστολές</value></data>
+  <data name="DeploymentsIntro" xml:space="preserve"><value>Εξωτερικές παραγγελίες πόρων που καλύπτει το τμήμα σας. Το σύστημα παραγγελίας παραμένει έγκυρο: τα τεχνουργήματα αποθηκεύονται ως αμετάβλητα στιγμιότυπα και τίποτα δεν γράφεται πίσω.</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>Νέα αποστολή</value></data>
+  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>Οι αποστολές είναι λειτουργία προεπισκόπησης: τα πρότυπα βασίστηκαν σε δημοσιευμένη τεκμηρίωση IROC, CIFFC και EMAC, όχι σε ζωντανές ενοποιήσεις. Επαληθεύστε με το σύστημα παραγγελίας σας.</value></data>
+  <data name="DeploymentOrder" xml:space="preserve"><value>Παραγγελία</value></data>
+  <data name="DeploymentOrderNumber" xml:space="preserve"><value>Αριθμός παραγγελίας</value></data>
+  <data name="DeploymentIncident" xml:space="preserve"><value>Συμβάν</value></data>
+  <data name="DeploymentLocation" xml:space="preserve"><value>Χώρα / υποδιαίρεση</value></data>
+  <data name="DeploymentOffices" xml:space="preserve"><value>Γραφεία</value></data>
+  <data name="DeploymentOrderingOffice" xml:space="preserve"><value>Γραφείο παραγγελίας</value></data>
+  <data name="DeploymentDispatchOffice" xml:space="preserve"><value>Γραφείο αποστολής</value></data>
+  <data name="DeploymentAgencies" xml:space="preserve"><value>Υπηρεσίες</value></data>
+  <data name="DeploymentRequestingAgency" xml:space="preserve"><value>Αιτούσα υπηρεσία</value></data>
+  <data name="DeploymentReceivingAgency" xml:space="preserve"><value>Παραλαμβάνουσα υπηρεσία</value></data>
+  <data name="DeploymentSendingAgency" xml:space="preserve"><value>Αποστέλλουσα υπηρεσία</value></data>
+  <data name="DeploymentRole" xml:space="preserve"><value>Ρόλος τμήματος</value></data>
+  <data name="DeploymentRoleFilling" xml:space="preserve"><value>Καλύπτει την παραγγελία</value></data>
+  <data name="DeploymentRoleRequesting" xml:space="preserve"><value>Ζητά πόρους</value></data>
+  <data name="DeploymentRoleHost" xml:space="preserve"><value>Φιλοξενεί το συμβάν</value></data>
+  <data name="DeploymentCost" xml:space="preserve"><value>Κόστος</value></data>
+  <data name="DeploymentCostCode" xml:space="preserve"><value>Κωδικός κόστους</value></data>
+  <data name="DeploymentAgreement" xml:space="preserve"><value>Αναφορά συμφωνίας</value></data>
+  <data name="DeploymentUnitsAndCurrency" xml:space="preserve"><value>Νόμισμα / μονάδες / ζώνη ώρας</value></data>
+  <data name="DeploymentArtifact" xml:space="preserve"><value>Έγγραφο παραγγελίας</value></data>
+  <data name="DeploymentArtifactHelp" xml:space="preserve"><value>Ανεβάστε το έγγραφο παραγγελίας από το σύστημα προέλευσης (PDF, JSON ή CSV). Αποθηκεύεται ως αμετάβλητο στιγμιότυπο με άθροισμα ελέγχου.</value></data>
+  <data name="DeploymentSource" xml:space="preserve"><value>Προέλευση</value></data>
+  <data name="DeploymentSourceSystem" xml:space="preserve"><value>Σύστημα προέλευσης</value></data>
+  <data name="DeploymentSourceVersion" xml:space="preserve"><value>Έκδοση προέλευσης</value></data>
+  <data name="DeploymentSourceLink" xml:space="preserve"><value>Άνοιγμα στο σύστημα προέλευσης</value></data>
+  <data name="DeploymentStatus" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="DeploymentIncludeClosed" xml:space="preserve"><value>Εμφάνιση κλειστών αποστολών</value></data>
+  <data name="DeploymentHideClosed" xml:space="preserve"><value>Απόκρυψη κλειστών αποστολών</value></data>
+  <data name="DeploymentMobilizedOn" xml:space="preserve"><value>Κινητοποιήθηκε</value></data>
+  <data name="DeploymentReleasedOn" xml:space="preserve"><value>Απελευθερώθηκε</value></data>
+  <data name="DeploymentClosedOutOn" xml:space="preserve"><value>Έκλεισε</value></data>
+  <data name="DeploymentNewSnapshot" xml:space="preserve"><value>Καταγραφή νέου στιγμιοτύπου</value></data>
+  <data name="DeploymentRecordSnapshot" xml:space="preserve"><value>Αποθήκευση στιγμιοτύπου</value></data>
+  <data name="DeploymentCloseout" xml:space="preserve"><value>Κλείσιμο αποστολής</value></data>
+  <data name="DeploymentCloseoutNotes" xml:space="preserve"><value>Σημειώσεις κλεισίματος</value></data>
+  <data name="DeploymentCloseoutConfirm" xml:space="preserve"><value>Κλείσιμο αυτής της αποστολής; Οι καλύψεις δεν θα μπορούν πλέον να αλλάξουν.</value></data>
+  <data name="DeploymentCloseoutBlocked" xml:space="preserve"><value>Κάθε αποδεκτή κάλυψη πρέπει να έχει Επιστρέψει πριν το κλείσιμο.</value></data>
+  <data name="DeploymentFills" xml:space="preserve"><value>Καλύψεις</value></data>
+  <data name="DeploymentFirstFill" xml:space="preserve"><value>Πρώτη κάλυψη (προαιρετικό)</value></data>
+  <data name="DeploymentFirstFillHelp" xml:space="preserve"><value>Προσθέστε το πρώτο αίτημα/κάλυψη τώρα ή από τη σελίδα αποστολής.</value></data>
+  <data name="DeploymentAddFill" xml:space="preserve"><value>Προσθήκη κάλυψης</value></data>
+  <data name="DeploymentRequestNumber" xml:space="preserve"><value>Αριθμός αιτήματος</value></data>
+  <data name="DeploymentParentRequest" xml:space="preserve"><value>Γονικό αίτημα</value></data>
+  <data name="DeploymentResource" xml:space="preserve"><value>Πόρος</value></data>
+  <data name="DeploymentPosition" xml:space="preserve"><value>Θέση</value></data>
+  <data name="DeploymentTrainee" xml:space="preserve"><value>Εκπαιδευόμενος</value></data>
+  <data name="DeploymentAssigned" xml:space="preserve"><value>Ανατεθειμένο άτομο</value></data>
+  <data name="DeploymentHomeUnit" xml:space="preserve"><value>Μονάδα προέλευσης</value></data>
+  <data name="DeploymentHostAgency" xml:space="preserve"><value>Υπηρεσία υποδοχής</value></data>
+  <data name="DeploymentNeededOn" xml:space="preserve"><value>Απαιτείται στις</value></data>
+  <data name="DeploymentRecord" xml:space="preserve"><value>Εγγραφή αποστολής</value></data>
+  <data name="DeploymentCreate" xml:space="preserve"><value>Δημιουργία αποστολής</value></data>
+  <data name="DeploymentDeclineReason" xml:space="preserve"><value>Λόγος απόρριψης αυτού του αιτήματος</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>Η αποστολή δημιουργήθηκε.</value></data>
+  <data name="DeploymentFillAdded" xml:space="preserve"><value>Η κάλυψη προστέθηκε.</value></data>
+  <data name="DeploymentFillUpdated" xml:space="preserve"><value>Η κάλυψη ενημερώθηκε.</value></data>
+  <data name="DeploymentSnapshotNeedsFile" xml:space="preserve"><value>Επιλέξτε το έγγραφο παραγγελίας για αποθήκευση ως στιγμιότυπο.</value></data>
+  <data name="DeploymentSnapshotRecorded" xml:space="preserve"><value>Το στιγμιότυπο αποθηκεύτηκε. Το προηγούμενο διατηρείται και αντικαθίσταται.</value></data>
+  <data name="DeploymentClosedOut" xml:space="preserve"><value>Η αποστολή έκλεισε.</value></data>
+  <data name="DefinitionLayout" xml:space="preserve"><value>Διάταξη εκτύπωσης</value></data>
+  <data name="DefinitionLayoutIntro" xml:space="preserve"><value>Ταξινομήστε, μετονομάστε ή αποκρύψτε ενότητες και πεδία για εκτύπωση και PDF, προσθέστε αλλαγές σελίδας και τοποθετήστε το μπλοκ υπογραφής και τη λίστα συνημμένων. Κάθε αποθήκευση δημιουργεί νέα έκδοση διάταξης που σφραγίζεται στο υποσέλιδο προέλευσης.</value></data>
+  <data name="LayoutCurrentVersion" xml:space="preserve"><value>Έκδοση διάταξης</value></data>
+  <data name="LayoutDepartmentDefault" xml:space="preserve"><value>Προεπιλογή τμήματος</value></data>
+  <data name="LayoutOrder" xml:space="preserve"><value>Σειρά</value></data>
+  <data name="LayoutHeading" xml:space="preserve"><value>Εναλλακτική επικεφαλίδα</value></data>
+  <data name="LayoutVisible" xml:space="preserve"><value>Ορατό</value></data>
+  <data name="LayoutPageBreak" xml:space="preserve"><value>Αλλαγή σελίδας πριν</value></data>
+  <data name="LayoutFields" xml:space="preserve"><value>Πεδία</value></data>
+  <data name="LayoutAppliesToVersion" xml:space="preserve"><value>Ισχύει για την έκδοση</value></data>
+  <data name="LayoutAllVersions" xml:space="preserve"><value>Όλες οι εκδόσεις</value></data>
+  <data name="LayoutSignaturePlacement" xml:space="preserve"><value>Μπλοκ υπογραφής</value></data>
+  <data name="LayoutSignatureEnd" xml:space="preserve"><value>Στο τέλος</value></data>
+  <data name="LayoutSignatureInline" xml:space="preserve"><value>Μέσα στην ενότητά του</value></data>
+  <data name="LayoutSignatureNone" xml:space="preserve"><value>Κρυφό</value></data>
+  <data name="LayoutAttachmentStyle" xml:space="preserve"><value>Λίστα συνημμένων</value></data>
+  <data name="LayoutAttachmentsTable" xml:space="preserve"><value>Πίνακας</value></data>
+  <data name="LayoutAttachmentsList" xml:space="preserve"><value>Απλή λίστα</value></data>
+  <data name="LayoutAttachmentsNone" xml:space="preserve"><value>Κρυφή</value></data>
+  <data name="LayoutBrandingOverride" xml:space="preserve"><value>Παράκαμψη της επωνυμίας του τμήματος για αυτόν τον ορισμό</value></data>
+  <data name="LayoutLetterhead" xml:space="preserve"><value>Επιστολόχαρτο</value></data>
+  <data name="LayoutSaved" xml:space="preserve"><value>Η διάταξη εκτύπωσης αποθηκεύτηκε.</value></data>
+  <data name="BulkSelected" xml:space="preserve"><value>επιλεγμένα</value></data>
+  <data name="BulkSelectAll" xml:space="preserve"><value>Επιλογή όλων σε αυτήν τη σελίδα</value></data>
+  <data name="BulkReviewer" xml:space="preserve"><value>Ελεγκτής…</value></data>
+  <data name="BulkReason" xml:space="preserve"><value>Αιτία</value></data>
+  <data name="BulkAssignReview" xml:space="preserve"><value>Ανάθεση για έλεγχο</value></data>
+  <data name="BulkTitle" xml:space="preserve"><value>Τίτλος πακέτου</value></data>
+  <data name="BulkPurpose" xml:space="preserve"><value>Σκοπός (ελέγχεται)</value></data>
+  <data name="BulkDeliverTo" xml:space="preserve"><value>Αποστολή πακέτου με e-mail σε (προαιρετικό)</value></data>
+  <data name="BulkCompiledPdf" xml:space="preserve"><value>Συγκεντρωτικό PDF</value></data>
+  <data name="BulkBundle" xml:space="preserve"><value>Πακέτο zip</value></data>
+  <data name="BulkLimit" xml:space="preserve"><value>Έως {0} εγγραφές ανά πακέτο. Χωρίς μαζική ακύρωση ή διαγραφή.</value></data>
+  <data name="BulkNothingSelected" xml:space="preserve"><value>Επιλέξτε τουλάχιστον μία εγγραφή.</value></data>
+  <data name="BulkAssigned" xml:space="preserve"><value>Ανατέθηκαν {0} εγγραφές για έλεγχο· {1} παραλείφθηκαν.</value></data>
+  <data name="BulkPacketCreated" xml:space="preserve"><value>Το πακέτο συντάχθηκε από {0} εγγραφές· {1} παραλείφθηκαν. Διαθέσιμο για λήψη για 30 ημέρες.</value></data>
+  <data name="BulkDelivered" xml:space="preserve"><value>Στάλθηκε με e-mail.</value></data>
+  <data name="EvidenceModuleProjection" xml:space="preserve"><value>Προβολή ενότητας</value></data>
+  <data name="ProjectionIntro" xml:space="preserve"><value>Συνθέτει ένα οριοθετημένο στιγμιότυπο από την ενότητα-κάτοχο: μόνο αναγνωριστικά, κωδικούς, πλήθη και καταστάσεις με αναφορές πηγής. Η ενότητα παραμένει το σύστημα αναφοράς.</value></data>
+  <data name="ProjectionKind" xml:space="preserve"><value>Προβολή</value></data>
+  <data name="Projectionpersonnel-check-in" xml:space="preserve"><value>Καταγραφή προσωπικού</value></data>
+  <data name="Projectionresource-summary" xml:space="preserve"><value>Σύνοψη πόρων</value></data>
+  <data name="Projectionqualifications" xml:space="preserve"><value>Προσόντα</value></data>
+  <data name="Projectioncommand-summary" xml:space="preserve"><value>Σύνοψη διοίκησης</value></data>
 </root>

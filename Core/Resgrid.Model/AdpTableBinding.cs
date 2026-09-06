@@ -60,6 +60,18 @@ namespace Resgrid.Model
 
 		/// <summary>Row-level protection marker column ("IsProtected"), when the table has one (companion pattern).</summary>
 		public string ProtectedMarkerColumn { get; init; }
+
+		/// <summary>
+		/// Non-cataloged sibling columns a PackedJson column packs and clears (ADP catalog v11). They are read and
+		/// written with the row but never counted as residue on their own.
+		/// </summary>
+		public IReadOnlyList<string> CarrierColumns { get; init; } = Array.Empty<string>();
+
+		/// <summary>
+		/// Optional boolean column that scopes the sweep to rows needing protection (RmsRecordValues.ProtectionRequired);
+		/// null sweeps every row of the table.
+		/// </summary>
+		public string RowFilterColumn { get; init; }
 	}
 
 	/// <summary>One cataloged column inside a binding.</summary>

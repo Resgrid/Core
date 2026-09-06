@@ -1,0 +1,102 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordDefinitionLayoutView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["DefinitionLayout"];
+	var order = 0;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["DefinitionLayout"]: @Model.DefinitionName</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User">@localizer["Definitions"]</a></li>
+			<li><a asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" asp-route-key="@Model.DefinitionKey">@Model.DefinitionKey</a></li>
+			<li class="active"><strong>@localizer["DefinitionLayout"]</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<p class="text-muted">@localizer["DefinitionLayoutIntro"] <small>@localizer["LayoutCurrentVersion"]: <code>@Model.LayoutVersion</code> · @localizer["LayoutDepartmentDefault"]: <code>@Model.DepartmentLayoutVersion</code></small></p>
+	<form class="form-horizontal" method="post" asp-controller="RecordDefinitions" asp-action="Layout" asp-route-area="User">
+		@Html.AntiForgeryToken()
+		<input type="hidden" asp-for="DefinitionKey" />
+		<div class="row">
+			<div class="col-md-8">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["TemplateSections"]</h5></div>
+					<div class="ibox-content">
+						<table class="table table-condensed">
+							<thead><tr><th style="width:70px">@localizer["LayoutOrder"]</th><th>@localizer["DefinitionName"]</th><th>@localizer["LayoutHeading"]</th><th>@localizer["LayoutVisible"]</th><th>@localizer["LayoutPageBreak"]</th></tr></thead>
+							<tbody>
+								@foreach (var key in Model.OrderedSectionKeys())
+								{
+									var sec = Model.Schema.FindSection(key);
+									if (sec == null) { continue; }
+									order += 10;
+									var visible = !Model.Visible.TryGetValue(key, out var v) || v;
+									var pageBreak = Model.PageBreak.TryGetValue(key, out var pb) && pb;
+									<tr>
+										<td><input type="number" class="form-control input-sm" name="Order[@key]" value="@order" min="0" /></td>
+										<td><strong>@sec.Label</strong> <code>@sec.Key</code> @if (sec.Repeating) { <span class="label label-info">@localizer["DefinitionRepeating"]</span> }</td>
+										<td><input type="text" class="form-control input-sm" name="Heading[@key]" value="@(Model.Heading.TryGetValue(key, out var h) ? h : string.Empty)" maxlength="120" placeholder="@sec.Label" /></td>
+										<td><input type="checkbox" name="Visible[@key]" value="true" checked="@visible" /><input type="hidden" name="Visible[@key]" value="false" /></td>
+										<td><input type="checkbox" name="PageBreak[@key]" value="true" checked="@pageBreak" /><input type="hidden" name="PageBreak[@key]" value="false" /></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td colspan="4">
+											<small class="text-muted">@localizer["LayoutFields"]:</small>
+											@foreach (var field in sec.Fields)
+											{
+												var fieldVisible = !Model.FieldVisible.TryGetValue(field.Key, out var fv) || fv;
+												<label class="checkbox-inline"><input type="checkbox" name="FieldVisible[@field.Key]" value="true" checked="@fieldVisible" /><input type="hidden" name="FieldVisible[@field.Key]" value="false" /> @field.Label @if (field.Type == RmsFieldType.Signature) { <i class="fa fa-pencil-square-o text-muted"></i> }</label>
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["DefinitionSettings"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group"><label class="col-sm-5 control-label">@localizer["LayoutAppliesToVersion"]</label><div class="col-sm-7"><select class="form-control" asp-for="AppliesToVersion" asp-items="Model.Versions"><option value="">@localizer["LayoutAllVersions"]</option></select></div></div>
+						<div class="form-group"><label class="col-sm-5 control-label">@localizer["LayoutSignaturePlacement"]</label><div class="col-sm-7"><select class="form-control" asp-for="SignatureBlockPlacement"><option value="end">@localizer["LayoutSignatureEnd"]</option><option value="inline">@localizer["LayoutSignatureInline"]</option><option value="none">@localizer["LayoutSignatureNone"]</option></select></div></div>
+						<div class="form-group"><label class="col-sm-5 control-label">@localizer["LayoutAttachmentStyle"]</label><div class="col-sm-7"><select class="form-control" asp-for="AttachmentListStyle"><option value="table">@localizer["LayoutAttachmentsTable"]</option><option value="list">@localizer["LayoutAttachmentsList"]</option><option value="none">@localizer["LayoutAttachmentsNone"]</option></select></div></div>
+						<div class="form-group"><div class="col-sm-12"><label><input type="checkbox" asp-for="OverrideBranding" /> @localizer["LayoutBrandingOverride"]</label></div></div>
+						<div id="layout-branding" hidden="@(!Model.OverrideBranding)">
+							<div class="form-group"><div class="col-sm-12">
+								<label class="checkbox-inline"><input type="checkbox" asp-for="Branding.ShowLogo" /> @localizer["PrintShowLogo"]</label>
+								<label class="checkbox-inline"><input type="checkbox" asp-for="Branding.UseShortName" /> @localizer["PrintUseShortName"]</label>
+								<label class="checkbox-inline"><input type="checkbox" asp-for="Branding.ShowAddress" /> @localizer["PrintShowAddress"]</label>
+								<label class="checkbox-inline"><input type="checkbox" asp-for="Branding.ShowPhone" /> @localizer["PrintShowPhone"]</label>
+								<label class="checkbox-inline"><input type="checkbox" asp-for="Branding.ShowWebsite" /> @localizer["PrintShowWebsite"]</label>
+							</div></div>
+							<div class="form-group"><label class="col-sm-5 control-label">@localizer["LayoutLetterhead"]</label><div class="col-sm-7"><input type="text" class="form-control" asp-for="Branding.LetterheadLine1" maxlength="200" /><input type="text" class="form-control m-t-xs" asp-for="Branding.LetterheadLine2" maxlength="200" /></div></div>
+							<div class="form-group"><label class="col-sm-5 control-label">@localizer["PrintFooterText"]</label><div class="col-sm-7"><textarea class="form-control" rows="2" asp-for="Branding.FooterText" maxlength="500"></textarea></div></div>
+							<div class="form-group"><label class="col-sm-5 control-label">@localizer["PrintWatermark"]</label><div class="col-sm-7"><input type="text" class="form-control" asp-for="Branding.WatermarkLabel" maxlength="40" /></div></div>
+							<div class="form-group"><label class="col-sm-5 control-label">@localizer["PrintPageSize"]</label><div class="col-sm-7"><select class="form-control" asp-for="Branding.PageSize"><option value="Letter">Letter</option><option value="A4">A4</option></select></div></div>
+						</div>
+					</div>
+				</div>
+				<div class="ibox"><div class="ibox-content">
+					<button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> @commonLocalizer["Save"]</button>
+					<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" asp-route-key="@Model.DefinitionKey">@commonLocalizer["Cancel"]</a>
+				</div></div>
+			</div>
+		</div>
+	</form>
+</div>
+@section Scripts {
+	<script>
+		document.getElementById('@Html.IdFor(m => m.OverrideBranding)').addEventListener('change', function () { document.getElementById('layout-branding').hidden = !this.checked; });
+	</script>
+}

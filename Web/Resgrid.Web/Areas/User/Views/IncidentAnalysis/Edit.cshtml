@@ -86,6 +86,7 @@
 								var row = Model.Modules[i];
                                 <div class="form-group">
                                     <div class="col-sm-12">
+                                        <input type="hidden" name="Modules[@i].ModuleId" value="@row.ModuleId" />
                                         <input type="hidden" name="Modules[@i].Kind" value="@row.Kind" />
                                         <input type="hidden" name="Modules[@i].PrimaryCode" value="@row.PrimaryCode" />
                                         <input type="hidden" name="Modules[@i].SecondaryCode" value="@row.SecondaryCode" />

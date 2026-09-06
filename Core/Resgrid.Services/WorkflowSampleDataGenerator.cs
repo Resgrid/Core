@@ -532,6 +532,8 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordEvidenceCaptured:
 				case WorkflowTriggerEventType.RecordPurged:
 				case WorkflowTriggerEventType.RecordExportScheduled:
+				case WorkflowTriggerEventType.RecordDefinitionPublished:
+				case WorkflowTriggerEventType.RecordDefinitionRetired:
 					AddRecordsSamples(obj, eventType);
 					break;
 			}
@@ -701,6 +703,42 @@ namespace Resgrid.Services
 			protection["redacted_fields"] = new ScriptArray();
 			protection["protected_catalog_version"] = 0;
 			obj["protection"] = protection;
+
+			// definition.* and fields.* (RMS-1B): shown for every Records trigger so a department-definition template previews.
+			var isDefinitionTrigger = eventType == WorkflowTriggerEventType.RecordDefinitionPublished || eventType == WorkflowTriggerEventType.RecordDefinitionRetired;
+			var definition = new ScriptObject();
+			definition["id"] = "2b3c4d5e-6f70-4a81-9b92-a3b4c5d6e7f8";
+			definition["key"] = "security-patrol";
+			definition["name"] = "Security Patrol Log";
+			definition["category"] = "Security";
+			definition["owner"] = "Department";
+			definition["version"] = 2;
+			definition["previous_version"] = eventType == WorkflowTriggerEventType.RecordDefinitionPublished ? 1 : (int?)null;
+			definition["state"] = eventType == WorkflowTriggerEventType.RecordDefinitionRetired ? "Retired" : "Published";
+			definition["lifecycle_preset"] = "QuickEntry";
+			definition["template_key"] = "template.security-patrol";
+			definition["jurisdiction_profile_key"] = "us";
+			definition["minimum_client_capability"] = "records.v1b";
+			definition["schema_checksum"] = "9f2c1e0d8b7a6f5e4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e";
+			definition["published_on"] = DateTime.Now.AddDays(-7);
+			definition["retired"] = eventType == WorkflowTriggerEventType.RecordDefinitionRetired;
+			definition["reason"] = eventType == WorkflowTriggerEventType.RecordDefinitionRetired ? "Replaced by security-patrol-v2" : "";
+			definition["exposed_field_keys"] = new ScriptArray { "client_site", "officer", "exception_reported" };
+			definition["section_keys"] = new ScriptArray { "assignment", "checkpoints", "observations", "exceptions", "handoff" };
+			obj["definition"] = definition;
+			if (!isDefinitionTrigger)
+			{
+				var fields = new ScriptObject();
+				fields["client_site"] = "Harbor Logistics — Pier 4";
+				fields["officer"] = "J. Alvarez";
+				fields["exception_reported"] = true;
+				var checkpoint = new ScriptObject();
+				checkpoint["checkpoint"] = "Gate B";
+				checkpoint["status"] = "Exception";
+				fields["checkpoints"] = new ScriptArray { checkpoint };
+				fields["checkpoints_count"] = 1;
+				obj["fields"] = fields;
+			}
 
 			if (eventType == WorkflowTriggerEventType.RecordApproved)
 			{

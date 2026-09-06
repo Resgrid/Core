@@ -37,7 +37,7 @@ namespace Resgrid.Providers.Workflow.Executors
 					return WorkflowActionResult.Failed("SFTP upload blocked.", sftpReason);
 				// ── End SSRF protection ──────────────────────────────────────────────
 
-				var filename = config.Filename ?? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt";
+				var filename = config.Filename ?? context.Attachment?.FileName ?? $"workflow_{DateTime.UtcNow:yyyyMMddHHmmss}.txt";
 				var remotePath = $"{config.RemotePath?.TrimEnd('/')}/{filename}";
 
 				ConnectionInfo connectionInfo;
@@ -62,7 +62,7 @@ namespace Resgrid.Providers.Workflow.Executors
 				{
 					using var client = new SftpClient(connectionInfo);
 					client.Connect();
-					var bytes = Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
+					var bytes = context.Attachment?.Data ?? Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
 					using var stream = new MemoryStream(bytes);
 					client.UploadFile(stream, remotePath, true);
 					client.Disconnect();

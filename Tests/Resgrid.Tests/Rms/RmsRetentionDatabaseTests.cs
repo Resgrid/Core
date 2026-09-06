@@ -203,7 +203,7 @@ UPDATE RmsOperationalRecords SET CurrentRevisionId=@Revision,AmendsRevisionId=@R
 			var scopes = new RmsRecordGroupScopesRepository(connections, new SqlServerConfiguration(), unit, WriteQueries());
 			var auth = new Mock<Resgrid.Model.Services.IRecordsAuthorizationService>(); auth.Setup(a => a.GetVisibleGroupIdsAsync("officer", 11)).ReturnsAsync((List<int>)null);
 			var cutover = new Mock<Resgrid.Model.Services.IRecordsCutoverService>(); cutover.Setup(c => c.GetModuleStateAsync(11, It.IsAny<bool>())).ReturnsAsync(new RecordsModuleState { FlagEnabled = true });
-			var reporting = new Resgrid.Services.Records.RecordsReportingService(Mock.Of<Resgrid.Model.Services.IWorkLogsService>(), cutover.Object, records, revisions, scopes, auth.Object);
+			var reporting = new Resgrid.Services.Records.RecordsReportingService(Mock.Of<Resgrid.Model.Services.IWorkLogsService>(), cutover.Object, records, revisions, scopes, auth.Object, new PassthroughRecordsProtection());
 			var activity = (await reporting.GetActivityAsync(11, "officer", RmsOperationalRecordType.Training, start.Date, start.Date.AddDays(1))).Single(e => e.SourceId == id);
 			activity.StartedOn.Should().Be(start); activity.EndedOn.Should().Be(start.AddHours(2)); activity.CallId.Should().Be(91021); activity.Course.Should().Be("Ropes");
 			(await reporting.GetActivityAsync(11, "officer", RmsOperationalRecordType.Training, start.AddYears(3).Date, start.AddYears(3).Date.AddDays(1))).Should().NotContain(e => e.SourceId == id);

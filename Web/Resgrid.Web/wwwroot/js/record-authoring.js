@@ -18,13 +18,23 @@
     var status = document.getElementById('record-autosave-status');
     var version = form.querySelector('[name="RowVersion"]');
     var url = form.dataset.autosaveUrl;
-    var generation = 0, savedGeneration = 0, timer, pending = null, blocked = false, manual = false, leaving = false;
+    var generation = 0, savedGeneration = 0, timer, pending = null, blocked = false, manual = false, leaving = false, needsGrant = false;
+    // Protected Data (RMS plan 5.9.3): a save refused for a missing or expired grant is not a stop. The
+    // text stays, autosave pauses, and the ADP reveal module bound to this form prompts for a fresh
+    // verification in place; adp:grant-renewed resumes saving with the new grant in the form's field.
+    var GRANT_CODES = { step_up_required: true, grant_expired: true, grant_revoked: true };
     function say(message) { if (status) status.textContent = message; }
-    function schedule() { clearTimeout(timer); if (url && !blocked && !manual) timer = setTimeout(save, 2000); }
+    function schedule() { clearTimeout(timer); if (url && !blocked && !manual && !needsGrant) timer = setTimeout(save, 2000); }
     form.addEventListener('input', function (event) { if (event.target.type === 'file') return; generation++; say('Unsaved changes'); schedule(); });
     form.addEventListener('change', function (event) { if (event.target.type === 'file') { say('Selected attachments will upload when you choose Save Draft.'); return; } generation++; schedule(); });
+    form.addEventListener('adp:grant-renewed', function () { if (!needsGrant) return; needsGrant = false; say(generation === savedGeneration ? 'Verification renewed.' : 'Unsaved changes'); schedule(); });
+    form.addEventListener('adp:submit-cancelled', function () { leaving = false; manual = false; schedule(); });
+    async function grantRefusal(response) {
+        if (response.status !== 403) return false;
+        try { var payload = await response.clone().json(); return !!(payload && GRANT_CODES[payload.error]); } catch (_) { return false; }
+    }
     async function save() {
-        if (pending || blocked || manual || generation === savedGeneration) return pending;
+        if (pending || blocked || manual || needsGrant || generation === savedGeneration) return pending;
         form.dispatchEvent(new Event('rms:collect'));
         var sentGeneration = generation, data = new FormData(form);
         Array.from(data.keys()).forEach(function (key) { if (data.get(key) instanceof File) data.delete(key); });
@@ -33,6 +43,7 @@
         pending = (async function () {
             try {
                 var response = await fetch(url, { method: 'POST', body: data, credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (await grantRefusal(response)) { needsGrant = true; say('Verification needed. Automatic saving is paused; your text stays here until you re-verify.'); form.dispatchEvent(new CustomEvent('adp:grant-required')); return; }
                 if (response.redirected || response.status === 401 || response.status === 403 || response.status === 404) { blocked = true; say('Automatic saving stopped. Your session or access changed. Keep your text and reload before continuing.'); return; }
                 var result = await response.json();
                 if (!response.ok) { blocked = response.status === 409; say(result.error || 'Draft could not be saved. Correct the form and try again.'); return; }
@@ -40,7 +51,7 @@
                 version.value = String(result.rowVersion); savedGeneration = sentGeneration;
                 say(generation === savedGeneration ? 'Draft saved. Attachments require Save Draft.' : 'Unsaved changes');
             } catch (_) { blocked = true; say('Save could not be confirmed. Your text remains here. Reload to check the saved draft before continuing.'); }
-            finally { pending = null; if (!manual && generation !== savedGeneration && !blocked && savedGeneration === sentGeneration) schedule(); }
+            finally { pending = null; if (!manual && generation !== savedGeneration && !blocked && !needsGrant && savedGeneration === sentGeneration) schedule(); }
         })();
         return pending;
     }

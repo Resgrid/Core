@@ -55,15 +55,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsPrintLayoutService _printLayouts;
 		private readonly IRecordsAccountabilityService _accountability;
 		private readonly IRecordsDashboardService _dashboard;
+		private readonly IRecordsProtectionService _protection;
+		private readonly IProtectedGrantContext _grantContext;
 
 		public RecordsController(IRecordsService recordsService, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, ICallsService callsService,
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer,
 			ICompositeViewEngine viewEngine, IPdfProvider pdfProvider, IRecordsSearchService recordsSearch, IDepartmentDataProtectionService dataProtection,
-			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard, IRecordsUdfService udf)
+			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard, IRecordsUdfService udf,
+			IRecordsProtectionService protection, IProtectedGrantContext grantContext)
 		{
 			_accountability = accountability;
+			_protection = protection;
+			_grantContext = grantContext;
 			_recordsService = recordsService;
 			_cutoverService = cutoverService;
 			_recordsAuthorizationService = recordsAuthorizationService;
@@ -328,8 +333,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.StartedOn = DateTime.UtcNow.TimeConverter(model.Department);
 			if (callId.HasValue)
 				model.DuplicateCandidates = await _recordsService.GetDuplicateCandidatesAsync(DepartmentId, definitionKey, callId.Value);
+			// A new record has nothing to reveal, but its first save seals the cataloged columns and needs the grant.
+			model.ProtectionEnforced = await _protection.IsEnforcedAsync(DepartmentId);
+			ApplyTempDataError(model);
 
 			return View("Edit", model);
+		}
+
+		/// <summary>
+		/// Reveal-and-edit for a new record under Protected Data enforcement (RMS plan section 5.9.3): the reveal module
+		/// posts the grant here after step-up, and the authoring form renders carrying it so the first save can seal.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> NewRevealed(string definitionKey, int? callId)
+		{
+			var result = await New(definitionKey, callId);
+			if (result is ViewResult view && view.Model is RecordEditView model)
+				CarryGrant(model);
+			return result;
 		}
 
 		[HttpPost]
@@ -346,6 +369,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!RmsDefinitionKeys.LockedTypes.TryGetValue(model.DefinitionKey ?? string.Empty, out var recordType))
 				return BadRequest();
 			model.RecordType = recordType;
+			CarryGrant(model);
+			model.ProtectionEnforced = await _protection.IsEnforcedAsync(DepartmentId);
 
 			try
 			{
@@ -395,6 +420,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!CanEditRecord(record))
 				return Unauthorized();
 
+			var model = await BuildEditAsync(aggregate);
+			ApplyTempDataError(model);
+			return View(model);
+		}
+
+		/// <summary>
+		/// Reveal-and-edit (RMS plan section 5.9.3): the reveal module posts the grant here after step-up. The draft is
+		/// hydrated through the value seam with that grant, so the form renders plaintext, and the grant is carried in
+		/// the form's hidden field so the save and every autosave present it again.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> EditRevealed(string id)
+		{
+			var result = await Edit(id);
+			if (result is ViewResult view && view.Model is RecordEditView model)
+				CarryGrant(model);
+			return result;
+		}
+
+		private async Task<RecordEditView> BuildEditAsync(RecordAggregate aggregate)
+		{
+			var record = aggregate.Record;
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var model = new RecordEditView
 			{
@@ -428,13 +477,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (RmsDefinitionKeys.RestrictedClass.Contains(model.DefinitionKey ?? string.Empty))
 					foreach (var name in RecordSnapshotSerializer.RestrictedDetailFields)
-						typeof(RmsOperationalRecordDetail).GetProperty(name).SetValue(model.Details, null);
+						typeof(RmsOperationalRecordDetail).GetProperty(name)?.SetValue(model.Details, null);
 			}
 			if (model.Details.ActivityOn.HasValue)
 				model.Details.ActivityOn = model.Details.ActivityOn.Value.TimeConverter(department);
 
 			await PopulateListsAsync(model);
-			return View(model);
+			model.ApplyProtection(aggregate.Protection);
+			return model;
+		}
+
+		/// <summary>The grant the current request presented (header or form field) travels with the re-rendered form.</summary>
+		private void CarryGrant(RecordsBaseView model)
+		{
+			model.ProtectedGrant = _grantContext.GrantToken;
+			model.ProtectedGrantExpiresOnUtc = model.ProtectedGrant == null ? null : HttpProtectedGrantContext.ReadExpiry(Request);
+		}
+
+		private void ApplyTempDataError(RecordsBaseView model)
+		{
+			if (TempData["RecordsError"] is string error && string.IsNullOrEmpty(model.ErrorMessage))
+				model.ErrorMessage = error;
 		}
 
 		[HttpPost]
@@ -454,6 +517,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await PopulateListsAsync(model);
 			model.RecordType = (RmsOperationalRecordType)aggregate.Record.RecordType.GetValueOrDefault();
 			model.DefinitionKey = aggregate.Record.DefinitionKey;
+			CarryGrant(model);
+			model.ApplyProtection(aggregate.Protection);
 
 			try
 			{
@@ -625,6 +690,46 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, null, IpAddressHelper.GetRequestIP(Request, true));
 			return View(model);
+		}
+
+		/// <summary>
+		/// ADP client-side reveal (plan 7.2; RMS plan 5.9.3). The grant rides the request header, so the ordinary
+		/// authorized load already resolves the aggregate for it; this returns the resolved values keyed the way the
+		/// Details page marks its cells. A grant proves the caller stepped up, never that they may read this record,
+		/// so the record is authorized exactly as the page is.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<IActionResult> RevealRecord([FromForm] string id)
+		{
+			var aggregate = await LoadAuthorizedAsync(id);
+			if (aggregate == null)
+				return NotFound();
+
+			var protection = aggregate.Protection ?? new ProtectedReadResult();
+			if (protection.IsProtected && protection.ProtectedReason != null)
+				return Json(new { success = false, error = protection.ProtectedReason });
+
+			var fields = new Dictionary<string, string>();
+			var details = aggregate.Details;
+			if (details != null)
+			{
+				var restricted = await CanViewRestrictedAsync();
+				foreach (var accessor in RmsProtectedFields.Details)
+				{
+					// The reveal hides exactly what the page hides: restricted detail columns stay withheld without the grant.
+					var column = accessor.Key.Substring(accessor.Key.IndexOf('.') + 1);
+					if (!restricted && RecordSnapshotSerializer.RestrictedDetailFields.Any(f => string.Equals(f, column, StringComparison.OrdinalIgnoreCase)))
+						continue;
+					fields[$"{accessor.Key}:{details.RmsOperationalRecordDetailId}"] = accessor.Value.Get(details);
+				}
+			}
+			foreach (var attachment in aggregate.Attachments ?? new List<RmsRecordAttachment>())
+				fields[$"rmsrecordattachments.filename:{attachment.RmsRecordAttachmentId}"] = attachment.FileName;
+
+			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, "Protected reveal", IpAddressHelper.GetRequestIP(Request, true));
+			return Json(new { success = true, fields });
 		}
 
 		[HttpGet]
@@ -998,6 +1103,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			searchConfig.IndexNarrative = model.IndexNarrative;
 			await _departmentSettingsService.SetRecordsSearchConfigAsync(DepartmentId, searchConfig, cancellationToken);
 
+			// Setting 77 (plan section 4.9): the statutory clock is bounded, the profile must be one the disclosure
+			// workflow knows, and the release approver must be a current member so a departed user is never the gate.
+			var disclosure = await _departmentSettingsService.GetRecordsDisclosureConfigAsync(DepartmentId, true) ?? new RecordsDisclosureConfig();
+			disclosure.StatutoryClockDays = Math.Max(1, Math.Min(365, model.DisclosureStatutoryClockDays));
+			disclosure.DefaultRedactionProfile = RmsRedactionProfiles.IsKnown(model.DisclosureDefaultRedactionProfile) ? model.DisclosureDefaultRedactionProfile : RmsRedactionProfiles.Standard;
+			var approver = string.IsNullOrWhiteSpace(model.DisclosureReleaseApproverUserId) ? null : model.DisclosureReleaseApproverUserId.Trim();
+			if (approver != null && !await _recordsAuthorizationService.IsActiveMemberAsync(approver, DepartmentId))
+				approver = null;
+			disclosure.ReleaseApproverUserId = approver;
+			await _departmentSettingsService.SetRecordsDisclosureConfigAsync(DepartmentId, disclosure, cancellationToken);
+
 			var after = await BuildSettingsAsync(moduleState);
 			SendAudit(AuditLogTypes.DepartmentSettingsChanged, before.CloneJsonToString(), after.CloneJsonToString());
 
@@ -1055,6 +1171,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.SearchHealth = await _recordsSearch.GetHealthAsync();
 			model.NarrativeSearchAvailable = model.SearchHealth.Online && await NarrativeSearchAvailableAsync();
+
+			var disclosure = await _departmentSettingsService.GetRecordsDisclosureConfigAsync(DepartmentId, true) ?? new RecordsDisclosureConfig();
+			model.DisclosureStatutoryClockDays = disclosure.StatutoryClockDays;
+			model.DisclosureDefaultRedactionProfile = RmsRedactionProfiles.IsKnown(disclosure.DefaultRedactionProfile) ? disclosure.DefaultRedactionProfile : RmsRedactionProfiles.Standard;
+			model.DisclosureReleaseApproverUserId = disclosure.ReleaseApproverUserId;
+			model.RedactionProfiles = RmsRedactionProfiles.All.Select(p => new SelectListItem { Value = p, Text = _localizer["RedactionProfile" + p] }).ToList();
+			model.ReleaseApprovers.Add(new SelectListItem { Value = string.Empty, Text = _localizer["DisclosureApproverAnyAdmin"] });
+			foreach (var person in (await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>()).OrderBy(p => p.Name))
+				model.ReleaseApprovers.Add(new SelectListItem { Value = person.UserId, Text = person.Name });
 
 			var layout = await _printLayouts.GetDepartmentDefaultAsync(DepartmentId);
 			model.PrintLayout = layout.Config ?? RecordsPrintLayoutConfig.Default();

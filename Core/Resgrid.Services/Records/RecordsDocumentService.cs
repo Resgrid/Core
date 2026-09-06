@@ -29,10 +29,13 @@ namespace Resgrid.Services.Records
 		private readonly IPdfProvider _pdf;
 		private readonly IRecordsEvidenceService _evidence;
 		private readonly IRecordsUdfService _udf;
+		private readonly IRecordsProtectionService _protection;
 		public RecordsDocumentService(IRecordsAuthorizationService authorization, IRmsOperationalRecordsRepository records, IRmsIncidentReportsRepository reports,
 			IRmsIncidentAnalysesRepository analyses, IRmsRevisionsRepository revisions, IIncidentReportsService incidents,
-			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService layouts, IPdfProvider pdf, IRecordsEvidenceService evidence, IRecordsUdfService udf)
-		{ _authorization = authorization; _records = records; _reports = reports; _analyses = analyses; _revisions = revisions; _incidents = incidents; _branding = branding; _layouts = layouts; _pdf = pdf; _evidence = evidence; _udf = udf; }
+			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService layouts, IPdfProvider pdf, IRecordsEvidenceService evidence, IRecordsUdfService udf,
+			IRecordsProtectionService protection)
+		{
+			_protection = protection; _authorization = authorization; _records = records; _reports = reports; _analyses = analyses; _revisions = revisions; _incidents = incidents; _branding = branding; _layouts = layouts; _pdf = pdf; _evidence = evidence; _udf = udf; }
 
 		public async Task<RecordDocument> GetAsync(int departmentId, string userId, string recordId, RmsRecordKind kind, string revisionId = null, bool exporting = false)
 		{
@@ -63,6 +66,7 @@ namespace Resgrid.Services.Records
 			if (string.IsNullOrWhiteSpace(revisionId)) return null;
 			var revision = await _revisions.GetByIdForDepartmentAsync(departmentId, revisionId);
 			if (revision == null || revision.RecordId != recordId || revision.RecordKind != (int)kind) return null;
+			(await _protection.RevealRevisionsAsync(departmentId, new[] { revision })).RequireRevealed("record document");
 			if (RecordSnapshotSerializer.Checksum(revision.SnapshotJson) != revision.Checksum) throw new InvalidOperationException("The revision checksum does not match.");
 			JObject content;
 			if (kind == RmsRecordKind.IncidentReport)

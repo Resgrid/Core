@@ -1,12 +1,12 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { chromium } = require(process.env.RESGRID_PLAYWRIGHT_PATH || 'playwright');
+const { chromium } = require('./browser-launch.cjs').playwright();
 const root = path.resolve(__dirname, '../../..');
 const script = fs.readFileSync(path.join(root, 'Web/Resgrid.Web/wwwroot/js/neris-guided-form.js'), 'utf8');
 const schemas = JSON.parse(fs.readFileSync(path.join(root, 'Providers/Resgrid.Providers.Neris/Contract/neris-openapi-v1.4.78-2026-09-03.json'), 'utf8')).components.schemas;
 (async () => {
-    const browser = await chromium.launch({ channel: 'msedge', headless: true });
+    const browser = await chromium.launch(require('./browser-launch.cjs').launchOptions());
     try {
         const page = await browser.newPage();
         await page.setContent('<main id="editor"></main>');

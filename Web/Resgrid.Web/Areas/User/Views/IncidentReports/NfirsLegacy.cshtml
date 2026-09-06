@@ -1,0 +1,151 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.NfirsLegacyView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["NfirsLegacyHeader"];
+	var r = Model.Rendering;
+	string StatusLabel(NfirsLegacyFieldStatus status)
+	{
+		switch (status)
+		{
+			case NfirsLegacyFieldStatus.Populated: return localizer["NfirsStatusPopulated"];
+			case NfirsLegacyFieldStatus.Missing: return localizer["NfirsStatusMissing"];
+			default: return localizer["NfirsStatusNotCaptured"];
+		}
+	}
+	string StatusCss(NfirsLegacyFieldStatus status)
+	{
+		switch (status)
+		{
+			case NfirsLegacyFieldStatus.Populated: return "label-primary";
+			case NfirsLegacyFieldStatus.Missing: return "label-warning";
+			default: return "label-default";
+		}
+	}
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["NfirsLegacyHeader"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li><a asp-controller="IncidentReports" asp-action="Index" asp-route-area="User">@localizer["IncidentReports"]</a></li>
+			<li class="active"><strong>@(r.CallNumber ?? r.CallId.ToString())</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@r.CallId"><i class="fa fa-phone"></i> @localizer["Call"]</a>
+			@if (!string.IsNullOrWhiteSpace(r.IncidentReportId))
+			{
+				<a class="btn btn-primary" asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@r.IncidentReportId"><i class="fa fa-file-text-o"></i> @localizer["IncidentReport"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	<div class="row">
+		<div class="col-lg-8">
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-history"></i> @r.Profile</h5></div>
+				<div class="ibox-content">
+					<p class="text-muted">@localizer["NfirsLegacyIntro"]</p>
+					<div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["NfirsLegacyReadOnlyNotice"]</div>
+					<div class="table-responsive">
+						<table class="table table-condensed table-striped">
+							<thead>
+								<tr>
+									<th>@localizer["NfirsField"]</th>
+									<th>@localizer["Value"]</th>
+									<th>@localizer["Source"]</th>
+									<th>@localizer["NfirsStatus"]</th>
+									<th>@localizer["NerisEquivalent"]</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var field in r.Fields)
+								{
+									<tr>
+										<td>
+											<code>@field.Code</code>
+											@if (field.Required)
+											{
+												<span class="text-danger" title="@localizer["NfirsRequired"]">*</span>
+											}
+										</td>
+										<td>@(field.Value ?? "-")</td>
+										<td>@(field.SourceSystem ?? "-")</td>
+										<td><span class="label @StatusCss(field.Status)">@StatusLabel(field.Status)</span></td>
+										<td>
+											@if (field.NerisFactKey == null && field.NerisSection == null)
+											{
+												<span class="text-muted">@localizer["NerisNoEquivalent"]</span>
+											}
+											else
+											{
+												<code>@(field.NerisFactKey ?? field.NerisSection)</code>
+												@if (field.NerisPopulated == true)
+												{
+													<span class="label label-primary">@localizer["NerisCarried"]</span>
+												}
+												else if (field.NerisPopulated == false)
+												{
+													<span class="label label-warning">@localizer["NerisNotYetCarried"]</span>
+												}
+											}
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+					<p class="text-muted small">@localizer["NfirsRequiredLegend"]</p>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4">
+			<div class="ibox">
+				<div class="ibox-title"><h5><i class="fa fa-exchange"></i> @localizer["NfirsCrosswalkSummary"]</h5></div>
+				<div class="ibox-content">
+					<dl class="dl-horizontal">
+						<dt>@localizer["Call"]</dt><dd>@(r.CallNumber ?? "-") @(string.IsNullOrWhiteSpace(r.CallName) ? string.Empty : "· " + r.CallName)</dd>
+						<dt>@localizer["IncidentReport"]</dt>
+						<dd>
+							@if (string.IsNullOrWhiteSpace(r.IncidentReportId))
+							{
+								<span class="text-muted">@localizer["NfirsNoNerisReport"]</span>
+							}
+							else
+							{
+								<a asp-controller="IncidentReports" asp-action="Details" asp-route-area="User" asp-route-id="@r.IncidentReportId">@r.IncidentReportNumber</a> <small class="text-muted">(@r.IncidentReportState)</small>
+							}
+						</dd>
+						<dt>@localizer["NfirsStatusPopulated"]</dt><dd>@r.Summary.Populated / @r.Summary.TotalFields</dd>
+						<dt>@localizer["NfirsStatusMissing"]</dt><dd>@r.Summary.Missing</dd>
+						<dt>@localizer["NfirsStatusNotCaptured"]</dt><dd>@r.Summary.NotCaptured</dd>
+						<dt>@localizer["NfirsRequiredMissing"]</dt><dd>@r.Summary.RequiredMissing</dd>
+						<dt>@localizer["NfirsCrosswalked"]</dt><dd>@r.Summary.CrosswalkedToNeris / @r.Summary.TotalFields</dd>
+						@if (!string.IsNullOrWhiteSpace(r.IncidentReportId))
+						{
+							<dt>@localizer["NerisCarried"]</dt><dd>@r.Summary.CrosswalkedAndPopulated / @r.Summary.CrosswalkedToNeris</dd>
+						}
+						<dt>@localizer["GeneratedOn"]</dt><dd>@r.GeneratedOn.TimeConverterToString(Model.Department)</dd>
+					</dl>
+					@if (r.Notes.Count > 0)
+					{
+						<ul class="text-warning">
+							@foreach (var note in r.Notes)
+							{
+								<li>@note</li>
+							}
+						</ul>
+					}
+					<p class="text-muted small">@localizer["NfirsSunsetNote"]</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

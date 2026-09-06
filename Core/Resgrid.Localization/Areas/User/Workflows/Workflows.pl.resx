@@ -615,4 +615,7 @@
   <data name="SkippedRuns" xml:space="preserve">
     <value>Pominięte</value>
   </data>
+  <data name="ExportTemplate" xml:space="preserve"><value>Eksport raportu rekordów</value></data>
+  <data name="ExportTemplateNone" xml:space="preserve"><value>Brak (wyślij tylko wyrenderowany szablon)</value></data>
+  <data name="ExportTemplateHelp" xml:space="preserve"><value>Kroki e-mail dołączają eksport; kroki przesyłania pliku wysyłają go pod jego nazwą pliku zamiast wyrenderowanego tekstu. Eksporty projektuje się w Rekordy &gt; Eksporty raportów.</value></data>
 </root>

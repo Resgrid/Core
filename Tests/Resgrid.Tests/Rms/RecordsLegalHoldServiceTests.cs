@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -22,7 +23,8 @@ namespace Resgrid.Tests.Rms
 			_auth.Setup(a => a.HasPermissionAsync("officer", 11, PermissionTypes.ManageRecordLegalHold)).ReturnsAsync(true);
 			_auth.Setup(a => a.CanUserViewRecordAsync("officer", "record", 11)).ReturnsAsync(true);
 			_store.Shared.Records.Add(new RmsOperationalRecord { DepartmentId = 11, RmsOperationalRecordId = "record" });
-			_service = new RecordsLegalHoldService(_store.Shared.LegalHoldsRepo.Object, _store.Shared.RecordsRepo.Object, _store.ReportsRepo.Object, _auth.Object, _store.Shared.AuditsRepo.Object, _store.Shared.UnitOfWork.Object);
+			_service = new RecordsLegalHoldService(_store.Shared.LegalHoldsRepo.Object, _store.Shared.RecordsRepo.Object, _store.ReportsRepo.Object, _auth.Object, _store.Shared.AuditsRepo.Object, _store.Shared.UnitOfWork.Object,
+				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
 		}
 		private RmsRecordLegalHold Input() => new RmsRecordLegalHold { RecordId = "record", Reason = "Litigation", ReferenceNumber = "Case-7", Notes = "Preserve source record, analyses and all evidence" };
 		[Test]
@@ -35,6 +37,27 @@ namespace Resgrid.Tests.Rms
 			Func<Task> repeated = () => _service.ReleaseAsync(11, "officer", hold.RmsRecordLegalHoldId, 1, "overwrite"); await repeated.Should().ThrowAsync<InvalidOperationException>();
 			hold.ReleaseNotes.Should().Be("Court order dated 2026-09-04"); _store.Shared.Audits.Should().HaveCount(2);
 		}
+		[Test]
+		public async Task Placing_and_releasing_a_hold_emit_the_legal_hold_events_without_the_reference_or_notes()
+		{
+			var hold = await _service.PlaceAsync(11, "officer", Input());
+			await _service.ReleaseAsync(11, "officer", hold.RmsRecordLegalHoldId, 1, "Court order dated 2026-09-04");
+
+			var outbox = _store.Shared.Outbox;
+			outbox.Select(o => o.EventName).Should().Equal("RecordLegalHoldPlaced", "RecordLegalHoldReleased");
+			outbox[0].TriggerEventType.Should().Be((int)WorkflowTriggerEventType.RecordLegalHoldPlaced);
+			outbox[1].TriggerEventType.Should().Be((int)WorkflowTriggerEventType.RecordLegalHoldReleased);
+			var placed = Newtonsoft.Json.Linq.JObject.Parse(outbox[0].PayloadJson);
+			((string)placed["legal_hold"]["reason"]).Should().Be("Litigation");
+			((string)placed["legal_hold"]["record_id"]).Should().Be("record");
+			((string)placed["record"]["id"]).Should().Be("record");
+			outbox[0].PayloadJson.Should().NotContain("Case-7").And.NotContain("Preserve source record");
+			var released = Newtonsoft.Json.Linq.JObject.Parse(outbox[1].PayloadJson);
+			((bool)released["legal_hold"]["is_released"]).Should().BeTrue();
+			released["legal_hold"]["released_on"].Type.Should().Be(Newtonsoft.Json.Linq.JTokenType.Date);
+			outbox[1].PayloadJson.Should().NotContain("Court order");
+		}
+
 		[Test]
 		public async Task Revoked_hold_authority_and_foreign_or_purged_records_cannot_be_held()
 		{

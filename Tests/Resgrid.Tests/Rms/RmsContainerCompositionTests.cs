@@ -52,6 +52,17 @@ namespace Resgrid.Tests.Rms
 			Resolve<IRecordEvidenceSelectionService>().Should().NotBeNull();
 			Resolve<IRecordsDisclosureService>().Should().NotBeNull();
 			Resolve<IRecordsDashboardService>().Should().NotBeNull();
+			// RMS-3 feeds, the read-only NFIRS crosswalk and the RecordOperationalSummaryV1 contract
+			Resolve<IIncidentSourceFeedService>().Should().NotBeNull();
+			Resolve<IRecordsNfirsLegacyService>().Should().NotBeNull();
+			Resolve<IRecordOperationalSummaryService>().Should().NotBeNull();
+			// RMS-3e (2026-09-05): ADP seam, ambient grant context and department report exports
+			Resolve<IProtectedGrantContext>().Should().NotBeNull();
+			Resolve<IRecordsProtectionService>().Should().NotBeNull();
+			Resolve<IRecordsProtectedReadService>().Should().NotBeNull();
+			Resolve<IRecordsExportService>().Should().NotBeNull();
+			Resolve<IRmsExportTemplatesRepository>().Should().NotBeNull();
+			Resolve<IRmsExportRunsRepository>().Should().NotBeNull();
 		}
 
 		[Test]

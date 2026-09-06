@@ -142,6 +142,12 @@ namespace Resgrid.Config
 		public static int StepUpMaximumMinutes = 480;
 
 		/// <summary>
+		/// Seconds before a Protected Data Grant expires at which the web reveal module warns the user and offers
+		/// an in-place re-verification, so revealed fields and typed work on an edit page are not lost at expiry.
+		/// </summary>
+		public static int StepUpExpiryWarningSeconds = 120;
+
+		/// <summary>
 		/// ADP migration worker: maximum departments whose night runs in one sweep
 		/// (BackOffice-adjustable). Executions are SEQUENTIAL within the sweep — this caps how many
 		/// departments a sweep picks up, it does not parallelize them.

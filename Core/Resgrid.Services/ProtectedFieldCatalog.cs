@@ -52,6 +52,13 @@ namespace Resgrid.Services
 		/// </summary>
 		private const int RemainingCandidatesCatalogVersion = 9;
 
+		/// <summary>
+		/// Catalog version the Records (RMS) family was added in (RMS plan section 5.9.2, ADP Appendix B). The
+		/// entries mirror RmsProtectedFields, which is the write/read seam; RmsProtectedDataParityTests pins the
+		/// two and the AdpTableBindings rows together.
+		/// </summary>
+		public const int RecordsCatalogVersion = 10;
+
 		private static readonly IReadOnlyList<ProtectedFieldDefinition> Entries = BuildV1();
 		private static readonly Dictionary<string, ProtectedFieldDefinition> ById =
 			Entries.ToDictionary(e => e.FieldId, StringComparer.OrdinalIgnoreCase);
@@ -435,6 +442,96 @@ namespace Resgrid.Services
 				PermissionTypes.ManageDepartmentDataProtection);
 			Remaining(CredentialsFamily, "DistributionLists", "Password", ProtectedFieldClassification.Sensitive,
 				PermissionTypes.ManageDepartmentDataProtection);
+
+			// ---- Records (RMS), catalog v10 -----------------------------------------------------
+			// The Logs catalog v3 classifications carry forward to the Records fields that replaced them
+			// (RMS plan section 5.9.2); the NERIS aggregate, evidence, disclosures, legal holds and the
+			// generated artifacts (revision snapshots, destination payloads, produced packets) inherit the
+			// highest source classification. View permission follows the operational family; who may
+			// SEE a restricted section is decided by RecordRestricted_View on top, exactly as for Logs.
+			void Records(string table, string column, ProtectedFieldClassification classification,
+				ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
+					RmsProtectedFields.Family, table, column, kind, classification,
+					PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData,
+					RecordsCatalogVersion));
+
+			Records("RmsOperationalRecordDetails", "Narrative", ProtectedFieldClassification.Phi);
+			Records("RmsOperationalRecordDetails", "InitialReport", ProtectedFieldClassification.Phi);
+			Records("RmsOperationalRecordDetails", "Cause", ProtectedFieldClassification.Sensitive);
+			Records("RmsOperationalRecordDetails", "ContactName", ProtectedFieldClassification.Pii);
+			Records("RmsOperationalRecordDetails", "ContactNumber", ProtectedFieldClassification.Pii);
+			Records("RmsOperationalRecordDetails", "OtherPersonnel", ProtectedFieldClassification.Sensitive);
+			Records("RmsOperationalRecordDetails", "Location", ProtectedFieldClassification.Sensitive);
+			Records("RmsOperationalRecordDetails", "BodyLocation", ProtectedFieldClassification.Phi);
+			Records("RmsOperationalRecordDetails", "PronouncedDeceasedBy", ProtectedFieldClassification.Phi);
+			Records("RmsOperationalRecordDetails", "CaseNumber", ProtectedFieldClassification.Sensitive);
+			Records("RmsOperationalRecordDetails", "Destination", ProtectedFieldClassification.Sensitive);
+			Records("RmsOperationalRecordDetails", "CallName", ProtectedFieldClassification.Sensitive);
+			Records("RmsOperationalRecordDetails", "CallAddress", ProtectedFieldClassification.Pii);
+			Records("RmsOperationalRecordDetails", "CallNature", ProtectedFieldClassification.Phi);
+
+			Records("RmsNarratives", "Narrative", ProtectedFieldClassification.Phi);
+			Records("RmsNarratives", "ImpedimentNarrative", ProtectedFieldClassification.Phi);
+			Records("RmsNarratives", "OutcomeNarrative", ProtectedFieldClassification.Phi);
+			Records("RmsNarratives", "SupplementalJson", ProtectedFieldClassification.Sensitive);
+
+			Records("RmsLocations", "AddressText", ProtectedFieldClassification.Pii);
+			Records("RmsLocations", "Number", ProtectedFieldClassification.Pii);
+			Records("RmsLocations", "NumberPrefix", ProtectedFieldClassification.Pii);
+			Records("RmsLocations", "NumberSuffix", ProtectedFieldClassification.Pii);
+			Records("RmsLocations", "Street", ProtectedFieldClassification.Pii);
+			Records("RmsLocations", "UnitValue", ProtectedFieldClassification.Pii);
+			Records("RmsLocations", "CrossStreet1", ProtectedFieldClassification.Pii);
+			Records("RmsLocations", "CrossStreet2", ProtectedFieldClassification.Pii);
+			Records("RmsLocations", "Latitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
+			Records("RmsLocations", "Longitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
+
+			Records("RmsSourceFacts", "SourceValue", ProtectedFieldClassification.Sensitive);
+			Records("RmsSourceFacts", "CurrentValue", ProtectedFieldClassification.Sensitive);
+
+			foreach (var column in new[] { "PersonnelUserId", "Rank", "JobClassification", "BirthMonthYear", "Gender", "Race", "CasualtyCause", "CasualtyAction", "CasualtyTimeline", "InjuryDetailJson", "DetailJson" })
+				Records("RmsCasualtyRescues", column, ProtectedFieldClassification.Phi);
+
+			Records("RmsExposures", "AddressText", ProtectedFieldClassification.Pii);
+			Records("RmsExposures", "Street", ProtectedFieldClassification.Pii);
+			Records("RmsExposures", "DetailJson", ProtectedFieldClassification.Sensitive);
+			Records("RmsExposures", "Latitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
+			Records("RmsExposures", "Longitude", ProtectedFieldClassification.Pii, ProtectedFieldStorageKind.CompanionColumn);
+
+			Records("RmsIncidentModules", "DetailJson", ProtectedFieldClassification.Sensitive);
+			Records("RmsIncidentProperties", "DetailJson", ProtectedFieldClassification.Sensitive);
+			Records("RmsIncidentVehicles", "Vin", ProtectedFieldClassification.Pii);
+			Records("RmsIncidentVehicles", "LicensePlate", ProtectedFieldClassification.Pii);
+			Records("RmsIncidentVehicles", "DetailJson", ProtectedFieldClassification.Sensitive);
+			Records("RmsIncidentResources", "Detail", ProtectedFieldClassification.Sensitive);
+
+			Records("RmsRevisions", "SnapshotJson", ProtectedFieldClassification.Phi);
+			Records("RmsSubmissions", "PayloadJson", ProtectedFieldClassification.Phi);
+			Records("RmsSubmissions", "ResponseJson", ProtectedFieldClassification.Sensitive);
+			Records("RmsSignatures", "StatementText", ProtectedFieldClassification.Sensitive);
+
+			Records("RmsEvidenceArtifacts", "Title", ProtectedFieldClassification.Sensitive);
+			Records("RmsEvidenceArtifacts", "CaptureReason", ProtectedFieldClassification.Sensitive);
+			Records("RmsEvidenceArtifacts", "ManifestJson", ProtectedFieldClassification.Phi);
+
+			Records("RmsDisclosureRequests", "RequesterName", ProtectedFieldClassification.Pii);
+			Records("RmsDisclosureRequests", "RequesterOrganization", ProtectedFieldClassification.Pii);
+			Records("RmsDisclosureRequests", "RequesterContact", ProtectedFieldClassification.Pii);
+			Records("RmsDisclosureRequests", "ScopeNarrative", ProtectedFieldClassification.Sensitive);
+			Records("RmsDisclosureRequests", "DispositionReason", ProtectedFieldClassification.Sensitive);
+			Records("RmsDisclosureProductions", "ArtifactJson", ProtectedFieldClassification.Phi);
+
+			Records("RmsRecordLegalHolds", "ReferenceNumber", ProtectedFieldClassification.Sensitive);
+			Records("RmsRecordLegalHolds", "Notes", ProtectedFieldClassification.Sensitive);
+			Records("RmsRecordLegalHolds", "ReleaseNotes", ProtectedFieldClassification.Sensitive);
+
+			Records("RmsRecordAttachments", "FileName", ProtectedFieldClassification.Sensitive);
+			Records("RmsRecordAttachments", "Description", ProtectedFieldClassification.Sensitive);
+			Records("RmsRecordAttachments", "Data", ProtectedFieldClassification.Phi, ProtectedFieldStorageKind.Binary);
+
+			// A rendered department export inherits the highest classification of what it carried.
+			Records("RmsExportRuns", "Data", ProtectedFieldClassification.Phi, ProtectedFieldStorageKind.Binary);
 
 			return list;
 		}

@@ -418,7 +418,13 @@ namespace Resgrid.Services.Records
 					return "NotApplicable";
 
 				var state = (DepartmentDataProtectionState)policy.State;
-				return state == DepartmentDataProtectionState.Disabled ? "NotApplicable" : state.ToString();
+				if (state == DepartmentDataProtectionState.Disabled)
+					return "NotApplicable";
+				// Catalog v10 seals every RMS column (RMS plan section 5.9): a department that is Enabled at that
+				// catalog or later runs Records under protection; anything mid-transition still blocks activation.
+				if (state == DepartmentDataProtectionState.Enabled && policy.CatalogVersion >= ProtectedFieldCatalog.RecordsCatalogVersion)
+					return "NotApplicable";
+				return state.ToString();
 			}
 			catch (Exception ex)
 			{

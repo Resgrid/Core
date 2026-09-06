@@ -282,7 +282,12 @@ namespace Resgrid.Tests.Services
 				"Messages", "MessageRecipients",
 				"ModerationRequests", "ModerationReports", "ModerationActions",
 				"ChatMessageFlags", "ChatModerationActions", "ChatExports",
-				"UnitLogs", "UserStates", "CalendarItems", "Documents", "DistributionLists"
+				"UnitLogs", "UserStates", "CalendarItems", "Documents", "DistributionLists",
+				// Records (RMS) family, catalog v10: read through the generic Records resolvers behind IRecordsProtectionService.
+				"RmsOperationalRecordDetails", "RmsNarratives", "RmsLocations", "RmsSourceFacts", "RmsCasualtyRescues", "RmsExposures",
+				"RmsIncidentModules", "RmsIncidentProperties", "RmsIncidentVehicles", "RmsIncidentResources", "RmsRevisions",
+				"RmsSubmissions", "RmsSignatures", "RmsEvidenceArtifacts", "RmsDisclosureRequests", "RmsDisclosureProductions",
+				"RmsRecordLegalHolds", "RmsRecordAttachments", "RmsExportRuns"
 			};
 
 			AdpTableBindings.V1.Select(b => b.TableName)

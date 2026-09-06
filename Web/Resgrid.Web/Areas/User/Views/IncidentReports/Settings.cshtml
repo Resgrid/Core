@@ -61,6 +61,16 @@
 							<div class="col-sm-offset-3 col-sm-9">
 								<div class="checkbox"><label><input type="checkbox" asp-for="IsEnabled" /> @localizer["NerisEnabled"]</label></div>
 								<div class="checkbox"><label><input type="checkbox" asp-for="AutoSubmitOnFinalize" /> @localizer["AutoSubmitOnFinalize"]</label></div>
+								<div class="checkbox"><label><input type="checkbox" asp-for="AllowProtectedContentEgress" /> <i class="fa fa-shield"></i> @localizer["NerisProtectedEgress"]</label></div>
+								<span class="help-block">@localizer["NerisProtectedEgressHelp"]</span>
+								@if (Model.ProtectedEgressAcknowledgedOn.HasValue)
+								{
+									<span class="help-block"><i class="fa fa-check"></i> @localizer["NerisProtectedEgressAcknowledged"] @Model.ProtectedEgressAcknowledgedOn.Value.TimeConverterToString(Model.Department)</span>
+								}
+								@if (Model.ProtectionEnforced && !Model.AllowProtectedContentEgress)
+								{
+									<span class="help-block text-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["NerisProtectedEgressRequired"]</span>
+								}
 							</div>
 						</div>
 					</div>

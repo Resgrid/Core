@@ -6,6 +6,10 @@ namespace Resgrid.Model
 	/// <summary>The incident report aggregate as the Web and the mapper read it: header plus the working-draft child rows (or a revision's copies).</summary>
 	public class IncidentReportAggregate
 	{
+		/// <summary>ADP read outcome for this hydration (RMS plan section 5.9): what was withheld and why. Never part of a snapshot.</summary>
+		[Newtonsoft.Json.JsonIgnore]
+		public ProtectedReadResult Protection { get; set; }
+
 		public RecordUdfSection CustomFields { get; set; }
 		public List<RmsRecordAttachment> Attachments { get; set; } = new List<RmsRecordAttachment>();
 		public List<RmsEvidenceArtifact> Evidence { get; set; } = new List<RmsEvidenceArtifact>();
@@ -219,6 +223,10 @@ namespace Resgrid.Model
 	/// <summary>The incident-analysis filing as its authoring surface and the mapper read it (RMS-3).</summary>
 	public class IncidentAnalysisAggregate
 	{
+		/// <summary>ADP read outcome for this hydration (RMS plan section 5.9). Never part of a snapshot.</summary>
+		[Newtonsoft.Json.JsonIgnore]
+		public ProtectedReadResult Protection { get; set; }
+
 		public RmsIncidentAnalysis Analysis { get; set; }
 		/// <summary>The incident this analysis files against; needed for the destination id and the base block.</summary>
 		public RmsIncidentReport Report { get; set; }
@@ -299,5 +307,21 @@ namespace Resgrid.Model
 		public const string Point = "base.point";
 		public const string IncidentType = "incident_types.primary";
 		public static string UnitTime(int unitId, string field) => $"unit.{unitId}.{field}";
+
+		// RMS-3 command key-time feed (plan section 4.2): Incident Command facts carry Derived provenance and are
+		// never a substitute for a dispatcher-entered time; the officer sees where each came from.
+		public const string CommandPrefix = "command.";
+		public const string CommandEstablished = "command.established";
+		public const string CommandFirstAssignment = "command.first_assignment";
+		public const string CommandFirstBenchmark = "command.first_benchmark";
+		public const string CommandLastBenchmark = "command.last_benchmark";
+		public const string CommandClosed = "command.closed";
+		public const string CommandMutualAid = "command.mutual_aid_resources";
+		public static string CommandBenchmark(int ordinal) => $"command.benchmark.{ordinal}";
+
+		// RMS-3 contact/preplan feed (plan section 4.3): identity and place only, never contact detail.
+		public const string PreplanPrefix = "preplan.";
+		public const string PreplanPlace = "preplan.place";
+		public static string PreplanContact(string contactId) => $"preplan.contact.{contactId}";
 	}
 }

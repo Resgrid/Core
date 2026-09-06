@@ -84,6 +84,20 @@ namespace Resgrid.Providers.Neris
 			target.ContractVersion = ContractVersion;
 			target.AutoSubmitOnFinalize = profile.AutoSubmitOnFinalize;
 			target.IsEnabled = profile.IsEnabled;
+			// The protected-egress acknowledgement (RMS plan 5.9.4) is stamped by whoever turns it on and cleared
+			// when it is turned off, so the audit trail names the decision maker rather than the last editor.
+			if (profile.AllowProtectedContentEgress && !target.AllowProtectedContentEgress)
+			{
+				target.AllowProtectedContentEgress = true;
+				target.ProtectedEgressAcknowledgedOn = now;
+				target.ProtectedEgressAcknowledgedByUserId = userId;
+			}
+			else if (!profile.AllowProtectedContentEgress)
+			{
+				target.AllowProtectedContentEgress = false;
+				target.ProtectedEgressAcknowledgedOn = null;
+				target.ProtectedEgressAcknowledgedByUserId = null;
+			}
 			target.UpdatedByUserId = userId;
 			target.ModifiedOn = now;
 			target.RowVersion += 1;

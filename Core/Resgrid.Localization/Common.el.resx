@@ -768,8 +768,18 @@
   <data name="AdpErrorGeneric" xml:space="preserve">
     <value>Το αίτημα απέτυχε. Δοκιμάστε ξανά.</value>
   </data>
+  <data name="AdpExpiringWarning" xml:space="preserve">
+    <value>Η επαλήθευσή σας λήγει σε {0}. Επαληθευτείτε ξανά τώρα για να συνεχίσετε χωρίς να χάσετε αλλαγές.</value>
+  </data>
+  <data name="AdpExpiredWarning" xml:space="preserve">
+    <value>Η επαλήθευσή σας έληξε. Επαληθευτείτε ξανά για να συνεχίσετε· οι μη αποθηκευμένες αλλαγές παραμένουν σε αυτή τη σελίδα μέχρι τότε.</value>
+  </data>
+  <data name="AdpReverify" xml:space="preserve">
+    <value>Επαλήθευση ξανά</value>
+  </data>
   <data name="RecordsModule" xml:space="preserve"><value>Αρχεία</value></data>
   <data name="DepartmentProfile" xml:space="preserve">
     <value>Προφίλ υπηρεσίας</value>
   </data>
+  <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Δεσμεύσεις διατήρησης αρχείων</value></data>
 </root>

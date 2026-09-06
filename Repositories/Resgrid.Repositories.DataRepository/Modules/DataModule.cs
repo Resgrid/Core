@@ -351,6 +351,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RmsEvidenceArtifactsRepository>().As<IRmsEvidenceArtifactsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsDisclosureRequestsRepository>().As<IRmsDisclosureRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsDisclosureProductionsRepository>().As<IRmsDisclosureProductionsRepository>().InstancePerLifetimeScope();
+			// RMS department report exports (registry M0177, worker 45)
+			builder.RegisterType<RmsExportTemplatesRepository>().As<IRmsExportTemplatesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsExportRunsRepository>().As<IRmsExportRunsRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

@@ -964,4 +964,104 @@
   <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
     <value>يلزم إدخال بيانات اعتماد جديدة عند تغيير نوع منح الوصول في NERIS.</value>
   </data>
+  <data name="DisclosureSettingsHeader" xml:space="preserve"><value>الإفصاح عن السجلات العامة</value></data>
+  <data name="DisclosureSettingsIntro" xml:space="preserve"><value>الإعدادات الافتراضية لسير عمل الإفصاح: مهلة الرد القانونية، وملف التنقيح الذي يبدأ به الطلب الجديد، ومن يصدر الحزمة المنتجة.</value></data>
+  <data name="StatutoryClockDays" xml:space="preserve"><value>مهلة الرد القانونية (أيام)</value></data>
+  <data name="StatutoryClockDaysHelp" xml:space="preserve"><value>عدد الأيام لاستحقاق الطلب الجديد، محسوبة من تاريخ الاستلام. من 1 إلى 365.</value></data>
+  <data name="DefaultRedactionProfile" xml:space="preserve"><value>ملف التنقيح الافتراضي</value></data>
+  <data name="DefaultRedactionProfileHelp" xml:space="preserve"><value>يُطبَّق على الطلب الجديد ما لم يختر الضابط ملفاً آخر.</value></data>
+  <data name="DisclosureReleaseApprover" xml:space="preserve"><value>الموافق على الإصدار</value></data>
+  <data name="DisclosureReleaseApproverHelp" xml:space="preserve"><value>العضو الذي يصدر الحزم المنتجة. اتركه فارغاً لأي مسؤول قسم.</value></data>
+  <data name="DisclosureApproverAnyAdmin" xml:space="preserve"><value>أي مسؤول قسم</value></data>
+  <data name="RedactionProfileStandard" xml:space="preserve"><value>قياسي - حجب المحتوى المقيد</value></data>
+  <data name="RedactionProfileNoPersonalIdentifiers" xml:space="preserve"><value>بدون معرفات شخصية - حجب هويات المشاركين أيضاً</value></data>
+  <data name="RedactionProfileFullDisclosure" xml:space="preserve"><value>إفصاح كامل - إصدار كل ما هو محفوظ</value></data>
+  <data name="NfirsLegacyHeader" xml:space="preserve"><value>عرض NFIRS (تاريخي)</value></data>
+  <data name="NfirsLegacyButton" xml:space="preserve"><value>عرض NFIRS</value></data>
+  <data name="NfirsLegacyIntro" xml:space="preserve"><value>حقول وحدة NFIRS الأساسية كما يمكن قراءتها من البيانات التي يحتفظ بها هذا القسم بالفعل، وحقيقة أو قسم NERIS الذي يحمل كلاً منها لاحقاً.</value></data>
+  <data name="NfirsLegacyReadOnlyNotice" xml:space="preserve"><value>للقراءة فقط. توقف NFIRS في 2026-01-31؛ لا يتم استيراد أو تحرير أو إرسال أي شيء في هذه الصفحة.</value></data>
+  <data name="NfirsField" xml:space="preserve"><value>حقل NFIRS</value></data>
+  <data name="NfirsStatus" xml:space="preserve"><value>حالة الحقل</value></data>
+  <data name="NfirsStatusPopulated" xml:space="preserve"><value>معبأ</value></data>
+  <data name="NfirsStatusMissing" xml:space="preserve"><value>مفقود</value></data>
+  <data name="NfirsStatusNotCaptured" xml:space="preserve"><value>غير مسجل</value></data>
+  <data name="NfirsRequired" xml:space="preserve"><value>مطلوب في NFIRS</value></data>
+  <data name="NfirsRequiredLegend" xml:space="preserve"><value>* مطلوب بموجب وحدة NFIRS الأساسية.</value></data>
+  <data name="NerisEquivalent" xml:space="preserve"><value>المكافئ في NERIS</value></data>
+  <data name="NerisNoEquivalent" xml:space="preserve"><value>لا يوجد مكافئ في NERIS (للقسم فقط)</value></data>
+  <data name="NerisCarried" xml:space="preserve"><value>محمول في تقرير NERIS</value></data>
+  <data name="NerisNotYetCarried" xml:space="preserve"><value>ليس بعد في تقرير NERIS</value></data>
+  <data name="NfirsCrosswalkSummary" xml:space="preserve"><value>ملخص المطابقة</value></data>
+  <data name="NfirsNoNerisReport" xml:space="preserve"><value>لم يبدأ أي تقرير NERIS لهذه المكالمة.</value></data>
+  <data name="NfirsRequiredMissing" xml:space="preserve"><value>الحقول المطلوبة المفقودة</value></data>
+  <data name="NfirsCrosswalked" xml:space="preserve"><value>الحقول التي لها مكافئ في NERIS</value></data>
+  <data name="NfirsSunsetNote" xml:space="preserve"><value>تُعرض بيانات NFIRS للاستمرارية التاريخية فقط. التقارير الجديدة تذهب إلى NERIS.</value></data>
+  <data name="IncidentReport" xml:space="preserve"><value>تقرير الحادث</value></data>
+  <data name="Value" xml:space="preserve"><value>القيمة</value></data>
+  <data name="GeneratedOn" xml:space="preserve"><value>تم الإنشاء</value></data>
+  <data name="ExportTemplates" xml:space="preserve"><value>تصدير التقارير</value></data>
+  <data name="ExportTemplatesIntro" xml:space="preserve"><value>صمّم الملف الذي تستلمه جهة لا تملك واجهة برمجية: اختر الأعمدة والتنسيق والنطاق، ثم أرفق التصدير بخطوة سير عمل أو ضعه في جدول زمني.</value></data>
+  <data name="NewExportTemplate" xml:space="preserve"><value>تصدير جديد</value></data>
+  <data name="EditExportTemplate" xml:space="preserve"><value>تعديل التصدير</value></data>
+  <data name="ExportTemplateName" xml:space="preserve"><value>اسم التصدير</value></data>
+  <data name="ExportTemplateKey" xml:space="preserve"><value>المفتاح</value></data>
+  <data name="ExportTemplateKeyHelp" xml:space="preserve"><value>أحرف صغيرة وأرقام وشرطات. تعتمد عليه خطوة سير العمل واستيراد الجهة، لذا لا يتغيّر بعد استخدامه.</value></data>
+  <data name="ExportTemplateDescription" xml:space="preserve"><value>الوصف</value></data>
+  <data name="ExportFormat" xml:space="preserve"><value>التنسيق</value></data>
+  <data name="ExportScope" xml:space="preserve"><value>النطاق</value></data>
+  <data name="ExportScopeTriggeringRecord" xml:space="preserve"><value>السجل المُطلِق</value></data>
+  <data name="ExportScopeWindow" xml:space="preserve"><value>جميع السجلات المُنهاة ضمن فترة</value></data>
+  <data name="ExportDefinitions" xml:space="preserve"><value>تعريفات السجلات</value></data>
+  <data name="ExportDefinitionsHelp" xml:space="preserve"><value>اترك جميع التعريفات دون تحديد لتصديرها كلها.</value></data>
+  <data name="ExportColumns" xml:space="preserve"><value>الأعمدة</value></data>
+  <data name="ExportColumnsHelp" xml:space="preserve"><value>تُؤخذ الأعمدة من فهرس ثابت ومُراجَع. تحتاج أعمدة السرد والأعمدة المقيّدة إلى مفتاحها أدناه وإقرار بالإخراج.</value></data>
+  <data name="ExportIncludeNarrative" xml:space="preserve"><value>تضمين السرد والبيانات الشخصية (المستوى 2)</value></data>
+  <data name="ExportIncludeRestricted" xml:space="preserve"><value>تضمين الأقسام المقيّدة (المستوى 1)</value></data>
+  <data name="ExportEgressAcknowledge" xml:space="preserve"><value>أقرّ بأن هذا التصدير يرسل محتوى سرديًا أو مقيّدًا خارج Resgrid إلى الوجهة التي يحددها سير العمل.</value></data>
+  <data name="ExportEgressAcknowledgedOn" xml:space="preserve"><value>تم الإقرار بالإخراج</value></data>
+  <data name="ExportFileNameTemplate" xml:space="preserve"><value>اسم الملف</value></data>
+  <data name="ExportFileNameHelp" xml:space="preserve"><value>الرموز: {template} و{date} و{record}. يتبع الامتداد التنسيق.</value></data>
+  <data name="ExportIncludeHeader" xml:space="preserve"><value>تضمين صف العناوين</value></data>
+  <data name="ExportDelimiter" xml:space="preserve"><value>الفاصل</value></data>
+  <data name="ExportSchedule" xml:space="preserve"><value>الجدول الزمني</value></data>
+  <data name="ExportScheduleNone" xml:space="preserve"><value>بدون جدول زمني (سير العمل فقط)</value></data>
+  <data name="ExportScheduleDaily" xml:space="preserve"><value>يوميًا</value></data>
+  <data name="ExportScheduleWeekly" xml:space="preserve"><value>أسبوعيًا</value></data>
+  <data name="ExportScheduleMonthly" xml:space="preserve"><value>شهريًا</value></data>
+  <data name="ExportScheduleHour" xml:space="preserve"><value>الساعة (التوقيت المحلي للقسم)</value></data>
+  <data name="ExportScheduleDayOfWeek" xml:space="preserve"><value>يوم الأسبوع (0 = الأحد)</value></data>
+  <data name="ExportScheduleDayOfMonth" xml:space="preserve"><value>يوم الشهر (1-28)</value></data>
+  <data name="ExportWindowDays" xml:space="preserve"><value>الفترة (أيام)</value></data>
+  <data name="ExportWindowDaysHelp" xml:space="preserve"><value>يستخدم 0 فترة الجدول: يوم أو أسبوع أو شهر ينتهي عند التشغيل.</value></data>
+  <data name="ExportEnabled" xml:space="preserve"><value>مفعّل</value></data>
+  <data name="ExportNextRun" xml:space="preserve"><value>التشغيل التالي</value></data>
+  <data name="ExportLastRun" xml:space="preserve"><value>آخر تشغيل</value></data>
+  <data name="ExportRuns" xml:space="preserve"><value>عمليات التشغيل</value></data>
+  <data name="ExportRunNow" xml:space="preserve"><value>تشغيل الآن</value></data>
+  <data name="ExportRunNowHelp" xml:space="preserve"><value>يُنشئ التصدير لمراجعته قبل أن تراه الجهة. يُسجَّل كل سجل فيه كتصدير في سجل التدقيق.</value></data>
+  <data name="ExportRunNowNeedsRecord" xml:space="preserve"><value>يغطي هذا التصدير سجلًا مُطلِقًا واحدًا: أدخل معرّف السجل.</value></data>
+  <data name="ExportRunGenerated" xml:space="preserve"><value>تم الإنشاء</value></data>
+  <data name="ExportRunRecords" xml:space="preserve"><value>السجلات</value></data>
+  <data name="ExportRunSize" xml:space="preserve"><value>بايت</value></data>
+  <data name="ExportRunRedacted" xml:space="preserve"><value>حُجبت الحقول المحمية من هذا الملف</value></data>
+  <data name="ExportRunDownload" xml:space="preserve"><value>تنزيل</value></data>
+  <data name="ExportRunTrigger" xml:space="preserve"><value>المُطلِق</value></data>
+  <data name="ExportTemplateSaved" xml:space="preserve"><value>تم حفظ التصدير.</value></data>
+  <data name="ExportTemplateDeleted" xml:space="preserve"><value>تم حذف التصدير. ستفشل خطوات سير العمل التي كانت تستخدمه حتى يتم تحديثها.</value></data>
+  <data name="ExportTemplateDeleteConfirm" xml:space="preserve"><value>هل تريد حذف هذا التصدير؟</value></data>
+  <data name="ExportNoTemplates" xml:space="preserve"><value>لم يتم تصميم أي تصدير بعد.</value></data>
+  <data name="ExportWorkflowHint" xml:space="preserve"><value>في مصمّم سير العمل، يمكن لخطوة بريد إلكتروني أو رفع ملف على مُطلِق السجلات إرفاق أي تصدير مدرج هنا؛ ويُطلق التصدير المجدول مُطلِقه الخاص عند تشغيله.</value></data>
+  <data name="ExportTierSafe" xml:space="preserve"><value>الهوية والتواريخ والرموز والأعداد</value></data>
+  <data name="ExportTierNarrative" xml:space="preserve"><value>السرد والبيانات الشخصية (المستوى 2)</value></data>
+  <data name="ExportTierRestricted" xml:space="preserve"><value>الأقسام المقيّدة (المستوى 1)</value></data>
+  <data name="ExportAdpWarning" xml:space="preserve"><value>يُطبَّق نظام حماية البيانات المتقدّمة على هذا القسم. تُحجب الأعمدة المحمية (REDACTED) في كل تشغيل ما لم يُسجَّل إقرار الإخراج للتصدير.</value></data>
+  <data name="ProtectedRecordBanner" xml:space="preserve"><value>سجل محمي</value></data>
+  <data name="ProtectedIncidentBanner" xml:space="preserve"><value>تقرير حادث محمي</value></data>
+  <data name="ProtectedEditHint" xml:space="preserve"><value>تبقى الحقول المحمية مخفية حتى تتحقق من هويتك. يتطلب حفظ هذا النموذج التحقق أيضًا، لذا تحقق قبل التحرير.</value></data>
+  <data name="ProtectedEditRevealed" xml:space="preserve"><value>المحتوى المحمي ظاهر لجلسة التحرير هذه. يبقى محميًا عند الحفظ.</value></data>
+  <data name="NerisProtectedEgress" xml:space="preserve"><value>السماح بإرسال محتوى الحوادث المحمي إلى NERIS</value></data>
+  <data name="NerisProtectedEgressHelp" xml:space="preserve"><value>بموجب حماية البيانات المتقدّمة تكون الحمولة الموضوعة في الطابور مختومة. بهذا الإقرار تفتحها خدمة الإرسال للتسليم فقط عبر قناة الوسيط المخصصة؛ وبدونه يفشل الإرسال المحمي بأمان.</value></data>
+  <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>تم الإقرار في</value></data>
+  <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>يُطبَّق نظام حماية البيانات المتقدّمة: ستفشل عمليات الإرسال المحمية حتى يُسجَّل هذا الإقرار.</value></data>
+  <data name="RecordId" xml:space="preserve"><value>معرّف السجل</value></data>
 </root>

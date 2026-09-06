@@ -1,0 +1,73 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordsExportRunsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["ExportRuns"];
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	var byRecord = (RmsExportScope)Model.Template.Scope == RmsExportScope.TriggeringRecord;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["ExportRuns"]: @Model.Template.Name</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordsExportTemplates" asp-action="Index" asp-route-area="User">@localizer["ExportTemplates"]</a></li>
+			<li class="active"><strong>@Model.Template.Name</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="RecordsExportTemplates" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.Template.RmsExportTemplateId"><i class="fa fa-pencil"></i> @commonLocalizer["Edit"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox">
+		<div class="ibox-title"><h5>@localizer["ExportRunNow"]</h5></div>
+		<div class="ibox-content">
+			<p class="text-muted">@localizer["ExportRunNowHelp"]</p>
+			<form class="form-inline" method="post" asp-controller="RecordsExportTemplates" asp-action="RunNow" asp-route-area="User" asp-route-id="@Model.Template.RmsExportTemplateId">
+				@Html.AntiForgeryToken()
+				@if (byRecord)
+				{
+					<input type="text" class="form-control" name="recordId" placeholder="@localizer["RecordId"]" maxlength="36" style="width:320px" />
+				}
+				<button type="submit" class="btn btn-primary"><i class="fa fa-play"></i> @localizer["ExportRunNow"]</button>
+			</form>
+		</div>
+	</div>
+	<div class="ibox">
+		<div class="ibox-title"><h5>@localizer["ExportRuns"]</h5></div>
+		<div class="ibox-content">
+			@if (Model.Runs.Count == 0)
+			{
+				<p class="text-muted">-</p>
+			}
+			else
+			{
+				<table class="table table-striped">
+					<thead><tr><th>@localizer["ExportRunGenerated"]</th><th>@localizer["ExportRunTrigger"]</th><th>@localizer["ExportRunRecords"]</th><th>@localizer["ExportRunSize"]</th><th>@localizer["Checksum"]</th><th></th></tr></thead>
+					<tbody>
+						@foreach (var run in Model.Runs)
+						{
+							<tr>
+								<td>@When(run.GeneratedOn) <small class="text-muted">@run.FileName</small></td>
+								<td>@((RmsExportTrigger)run.Trigger) @if (run.Redacted) { <span class="label label-warning" title="@localizer["ExportRunRedacted"]"><i class="fa fa-shield"></i></span> }</td>
+								<td>@run.RecordCount</td>
+								<td>@run.ByteSize</td>
+								<td><small>@run.Checksum?.Substring(0, Math.Min(12, run.Checksum.Length))</small></td>
+								<td class="text-right"><a class="btn btn-xs btn-default" asp-controller="RecordsExportTemplates" asp-action="Download" asp-route-area="User" asp-route-id="@run.RmsExportRunId"><i class="fa fa-download"></i> @localizer["ExportRunDownload"]</a></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+	</div>
+</div>

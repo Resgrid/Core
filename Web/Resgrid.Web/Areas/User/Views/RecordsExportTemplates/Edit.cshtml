@@ -1,0 +1,193 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordsExportTemplateEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + (Model.IsNew ? localizer["NewExportTemplate"] : localizer["EditExportTemplate"]);
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	var tiers = new[] { RmsExportFieldTier.Safe, RmsExportFieldTier.Narrative, RmsExportFieldTier.Restricted };
+	string TierLabel(RmsExportFieldTier tier) => tier == RmsExportFieldTier.Safe ? localizer["ExportTierSafe"].Value : tier == RmsExportFieldTier.Narrative ? localizer["ExportTierNarrative"].Value : localizer["ExportTierRestricted"].Value;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@(Model.IsNew ? localizer["NewExportTemplate"] : localizer["EditExportTemplate"])</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordsExportTemplates" asp-action="Index" asp-route-area="User">@localizer["ExportTemplates"]</a></li>
+			<li class="active"><strong>@(Model.Name ?? localizer["NewExportTemplate"].Value)</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		@if (!Model.IsNew)
+		{
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a class="btn btn-default" asp-controller="RecordsExportTemplates" asp-action="Runs" asp-route-area="User" asp-route-id="@Model.RmsExportTemplateId"><i class="fa fa-history"></i> @localizer["ExportRuns"]</a>
+			</div>
+		}
+	</div>
+</div>
+
+<form class="form-horizontal" method="post" asp-controller="RecordsExportTemplates" asp-action="Edit" asp-route-area="User" autocomplete="off">
+	@Html.AntiForgeryToken()
+	<input type="hidden" asp-for="RmsExportTemplateId" />
+	<input type="hidden" asp-for="RowVersion" />
+	<input type="hidden" asp-for="EgressAcknowledgedOn" />
+	<input type="hidden" asp-for="EgressAcknowledgedByUserId" />
+	<div class="wrapper wrapper-content">
+		@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+		@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+		@foreach (var warning in Model.Warnings) { <div class="alert alert-warning">@warning</div> }
+		<div class="row">
+			<div class="col-lg-8">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["ExportTemplates"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ExportTemplateName"]</label>
+							<div class="col-sm-9"><input type="text" class="form-control" asp-for="Name" maxlength="200" required /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ExportTemplateKey"]</label>
+							<div class="col-sm-9"><input type="text" class="form-control" asp-for="TemplateKey" maxlength="63" pattern="[a-z0-9][a-z0-9-]{1,62}" required /><span class="help-block">@localizer["ExportTemplateKeyHelp"]</span></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ExportTemplateDescription"]</label>
+							<div class="col-sm-9"><textarea class="form-control" asp-for="Description" maxlength="1000" rows="2"></textarea></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ExportFormat"]</label>
+							<div class="col-sm-3">
+								<select class="form-control" asp-for="Format">
+									<option value="@((int)RmsExportFormat.Csv)">CSV</option>
+									<option value="@((int)RmsExportFormat.Json)">JSON</option>
+									<option value="@((int)RmsExportFormat.Pdf)">PDF</option>
+								</select>
+							</div>
+							<label class="col-sm-2 control-label">@localizer["ExportScope"]</label>
+							<div class="col-sm-4">
+								<select class="form-control" asp-for="Scope">
+									<option value="@((int)RmsExportScope.TriggeringRecord)">@localizer["ExportScopeTriggeringRecord"]</option>
+									<option value="@((int)RmsExportScope.Window)">@localizer["ExportScopeWindow"]</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ExportDefinitions"]</label>
+							<div class="col-sm-9">
+								@foreach (var definition in Model.Definitions)
+								{
+									<label class="checkbox-inline"><input type="checkbox" name="DefinitionKeys" value="@definition.Key" @(Model.DefinitionKeys.Contains(definition.Key) ? "checked" : "") /> @definition.Value</label>
+								}
+								<span class="help-block">@localizer["ExportDefinitionsHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ExportFileNameTemplate"]</label>
+							<div class="col-sm-5"><input type="text" class="form-control" asp-for="FileNameTemplate" maxlength="120" placeholder="{template}-{date}" /><span class="help-block">@localizer["ExportFileNameHelp"]</span></div>
+							<label class="col-sm-2 control-label">@localizer["ExportDelimiter"]</label>
+							<div class="col-sm-2">
+								<select class="form-control" asp-for="Delimiter">
+									<option value=",">,</option>
+									<option value=";">;</option>
+									<option value="|">|</option>
+									<option value="tab">Tab</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9">
+								<label><input type="checkbox" asp-for="IncludeHeader" /> @localizer["ExportIncludeHeader"]</label>
+								&nbsp; <label><input type="checkbox" asp-for="IsEnabled" /> @localizer["ExportEnabled"]</label>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["ExportColumns"]</h5></div>
+					<div class="ibox-content">
+						<p class="text-muted">@localizer["ExportColumnsHelp"]</p>
+						@foreach (var tier in tiers)
+						{
+							<h4>@TierLabel(tier)</h4>
+							<div class="row">
+								@foreach (var field in Model.Catalog.Where(f => f.Tier == tier))
+								{
+									<div class="col-sm-4">
+										<label class="checkbox-inline" title="@field.Key">
+											<input type="checkbox" name="Columns" value="@field.Key" @(Model.Columns.Contains(field.Key) ? "checked" : "") @(tier == RmsExportFieldTier.Restricted && !Model.CanIncludeRestricted ? "disabled" : "") />
+											@field.Label <small class="text-muted">@(field.Operational && field.Incident ? "" : field.Operational ? "(records)" : "(NERIS)")</small>
+										</label>
+									</div>
+								}
+							</div>
+						}
+						<hr />
+						<div class="checkbox"><label><input type="checkbox" asp-for="IncludeNarrative" /> @localizer["ExportIncludeNarrative"]</label></div>
+						<div class="checkbox"><label><input type="checkbox" asp-for="IncludeRestricted" disabled="@(!Model.CanIncludeRestricted)" /> @localizer["ExportIncludeRestricted"]</label></div>
+						<div class="checkbox"><label><input type="checkbox" asp-for="AcknowledgeEgress" /> <strong>@localizer["ExportEgressAcknowledge"]</strong></label></div>
+						@if (Model.EgressAcknowledgedOn.HasValue)
+						{
+							<p class="text-muted"><i class="fa fa-check"></i> @localizer["ExportEgressAcknowledgedOn"] @When(Model.EgressAcknowledgedOn)</p>
+						}
+						@if (Model.ProtectionEnforced)
+						{
+							<div class="alert alert-info"><i class="fa fa-shield"></i> @localizer["ExportAdpWarning"]</div>
+						}
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-4">
+				<div class="ibox">
+					<div class="ibox-title"><h5><i class="fa fa-clock-o"></i> @localizer["ExportSchedule"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-5 control-label">@localizer["ExportSchedule"]</label>
+							<div class="col-sm-7">
+								<select class="form-control" asp-for="ScheduleKind">
+									<option value="@((int)RmsExportScheduleKind.None)">@localizer["ExportScheduleNone"]</option>
+									<option value="@((int)RmsExportScheduleKind.Daily)">@localizer["ExportScheduleDaily"]</option>
+									<option value="@((int)RmsExportScheduleKind.Weekly)">@localizer["ExportScheduleWeekly"]</option>
+									<option value="@((int)RmsExportScheduleKind.Monthly)">@localizer["ExportScheduleMonthly"]</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-5 control-label">@localizer["ExportScheduleHour"]</label>
+							<div class="col-sm-7"><input type="number" class="form-control" asp-for="ScheduleHourLocal" min="0" max="23" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-5 control-label">@localizer["ExportScheduleDayOfWeek"]</label>
+							<div class="col-sm-7"><input type="number" class="form-control" asp-for="ScheduleDayOfWeek" min="0" max="6" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-5 control-label">@localizer["ExportScheduleDayOfMonth"]</label>
+							<div class="col-sm-7"><input type="number" class="form-control" asp-for="ScheduleDayOfMonth" min="1" max="28" /></div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-5 control-label">@localizer["ExportWindowDays"]</label>
+							<div class="col-sm-7"><input type="number" class="form-control" asp-for="WindowDays" min="0" max="366" /><span class="help-block">@localizer["ExportWindowDaysHelp"]</span></div>
+						</div>
+						@if (!Model.IsNew)
+						{
+							<dl class="dl-horizontal">
+								<dt>@localizer["ExportNextRun"]</dt><dd>@When(Model.NextRunOn)</dd>
+								<dt>@localizer["ExportLastRun"]</dt><dd>@When(Model.LastRunOn)</dd>
+							</dl>
+						}
+						<p class="text-muted"><i class="fa fa-random"></i> @localizer["ExportWorkflowHint"]</p>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-12">
+						<button type="submit" class="btn btn-primary">@commonLocalizer["Save"]</button>
+						<a class="btn btn-white" asp-controller="RecordsExportTemplates" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>

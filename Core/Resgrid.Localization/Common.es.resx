@@ -756,8 +756,18 @@
   <data name="AdpErrorGeneric" xml:space="preserve">
     <value>La solicitud falló. Inténtelo de nuevo.</value>
   </data>
+  <data name="AdpExpiringWarning" xml:space="preserve">
+    <value>Su verificación caduca en {0}. Vuelva a verificarse ahora para seguir trabajando sin perder cambios.</value>
+  </data>
+  <data name="AdpExpiredWarning" xml:space="preserve">
+    <value>Su verificación ha caducado. Vuelva a verificarse para continuar; los cambios sin guardar permanecen en esta página hasta entonces.</value>
+  </data>
+  <data name="AdpReverify" xml:space="preserve">
+    <value>Volver a verificar</value>
+  </data>
   <data name="RecordsModule" xml:space="preserve"><value>Registros</value></data>
   <data name="DepartmentProfile" xml:space="preserve">
     <value>Perfil del departamento</value>
   </data>
+  <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Retenciones de conservación de registros</value></data>
 </root>

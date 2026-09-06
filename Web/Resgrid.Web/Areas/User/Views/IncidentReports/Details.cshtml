@@ -14,6 +14,14 @@
 	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
 	string Source(int kind) => ((RmsSourceKind)kind).ToString();
 	var errors = a.Issues.Count(i => i.Severity == (int)RmsValidationSeverity.Error);
+	var isProtected = a.Protection?.IsProtected == true;
+	var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+	{
+		BannerTitle = localizer["ProtectedIncidentBanner"],
+		RevealController = "IncidentReports",
+		RevealAction = "RevealIncident",
+		RevealData = new Dictionary<string, string> { { "id", r.RmsIncidentReportId } }
+	};
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -30,7 +38,7 @@
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
 			@if (Model.CanEdit && Model.IsEditable)
 			{
-				<a class="btn btn-primary" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@commonLocalizer["Edit"]</a>
+				<a class="btn btn-primary" id="adp-edit-link" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@commonLocalizer["Edit"]</a>
 				<a class="btn btn-default" asp-controller="RecordsInventory" asp-action="Edit" asp-route-area="User" asp-route-recordId="@r.RmsIncidentReportId" asp-route-kind="IncidentReport">Inventory usage</a>
 				<form method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Validate" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default">@(Model.SubmissionEnabled ? localizer["ValidateWithDestination"] : localizer["Validate"])</button></form>
 			}
@@ -52,14 +60,20 @@
 				<a class="btn btn-default" asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="json">JSON</a>
 				<a class="btn btn-default" asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="csv">CSV</a>
 			}
+			<a class="btn btn-default" asp-controller="IncidentReports" asp-action="NfirsLegacy" asp-route-area="User" asp-route-callId="@r.CallId" title="@localizer["NfirsLegacyIntro"]"><i class="fa fa-history"></i> @localizer["NfirsLegacyButton"]</a>
 		</div>
 	</div>
 </div>
 
+@if (isProtected)
+{
+	<div class="row"><div class="col-lg-12"><partial name="_AdpRevealBanner" model="adpReveal" /></div></div>
+}
+
 <div class="row">
 	<div class="col-lg-12">
 		<div class="ibox"><div class="ibox-title"><h5>@localizer["Attachments"]</h5></div><div class="ibox-content">
-			@foreach (var attachment in a.Attachments.Where(x => !x.IsProtected || Model.CanViewRestricted))
+			@foreach (var attachment in a.Attachments.Where(x => !x.RequiresRestrictedAccess || Model.CanViewRestricted))
 			{
 				<p><a asp-controller="IncidentReports" asp-action="Attachment" asp-route-id="@r.RmsIncidentReportId" asp-route-attachmentId="@attachment.RmsRecordAttachmentId">@attachment.FileName</a> — @attachment.Description <small>@((RmsAttachmentScanState)attachment.ScanState) · @attachment.ByteSize bytes</small></p>
 				@if (Model.CanEdit && Model.IsEditable)
@@ -186,13 +200,13 @@
 					else
 					{
 						<dl class="dl-horizontal">
-							<dt>@localizer["AddressText"]</dt><dd>@(a.Location.AddressText ?? "-")</dd>
+							<dt>@localizer["AddressText"]</dt><dd data-adp-field="rmslocations.addresstext:@a.Location.RmsLocationId">@(a.Location.AddressText ?? "-")</dd>
 							<dt>@localizer["Street"]</dt><dd>@string.Join(" ", new[] { a.Location.NumberPrefix, a.Location.Number, a.Location.NumberSuffix, a.Location.Street, a.Location.UnitValue }.Where(s => !string.IsNullOrWhiteSpace(s)))</dd>
 							<dt>@localizer["Municipality"]</dt><dd>@string.Join(", ", new[] { a.Location.Municipality, a.Location.County, a.Location.State, a.Location.PostalCode, a.Location.Country }.Where(s => !string.IsNullOrWhiteSpace(s)))</dd>
 							<dt>@localizer["PlaceType"]</dt><dd>@(a.Location.PlaceType ?? "-")</dd>
 							<dt>@localizer["LocationUse"]</dt><dd>@(a.Location.LocationUse ?? "-")</dd>
 							<dt>@localizer["CrossStreet"]</dt><dd>@string.Join(" / ", new[] { a.Location.CrossStreet1, a.Location.CrossStreet2 }.Where(s => !string.IsNullOrWhiteSpace(s)))</dd>
-							<dt>@localizer["Coordinates"]</dt><dd>@(a.Location.Latitude.HasValue ? a.Location.Latitude + ", " + a.Location.Longitude : "-")</dd>
+							<dt>@localizer["Coordinates"]</dt><dd data-adp-field="rmslocations.coordinates:@a.Location.RmsLocationId">@(a.Location.Latitude.HasValue ? a.Location.Latitude + ", " + a.Location.Longitude : "-")</dd>
 							<dt>@localizer["Source"]</dt><dd>@Source(a.Location.SourceKind)</dd>
 						</dl>
 					}
@@ -350,7 +364,7 @@
 												<td>@exposure.DamageType</td>
 												<td>@exposure.ItemType</td>
 												<td>@exposure.LocationUse</td>
-												<td>@(exposure.AddressText ?? exposure.Street)</td>
+												<td data-adp-field="rmsexposures.addresstext:@exposure.RmsExposureId">@(exposure.AddressText ?? exposure.Street)</td>
 												<td>@(exposure.EstimatedLoss?.ToString("0.##") ?? "-")</td>
 											</tr>
 										}
@@ -466,14 +480,14 @@
 			<div class="ibox">
 				<div class="ibox-title"><h5><i class="fa fa-file-text-o"></i> @localizer["Narrative"]</h5></div>
 				<div class="ibox-content">
-					<p style="white-space:pre-wrap">@(a.Narrative?.Narrative ?? "-")</p>
+					<p style="white-space:pre-wrap" data-adp-field="rmsnarratives.narrative:@a.Narrative?.RmsNarrativeId">@(a.Narrative?.Narrative ?? "-")</p>
 					@if (!string.IsNullOrWhiteSpace(a.Narrative?.ImpedimentNarrative))
 					{
-						<h4>@localizer["ImpedimentNarrative"]</h4><p style="white-space:pre-wrap">@a.Narrative.ImpedimentNarrative</p>
+						<h4>@localizer["ImpedimentNarrative"]</h4><p style="white-space:pre-wrap" data-adp-field="rmsnarratives.impedimentnarrative:@a.Narrative.RmsNarrativeId">@a.Narrative.ImpedimentNarrative</p>
 					}
 					@if (!string.IsNullOrWhiteSpace(a.Narrative?.OutcomeNarrative))
 					{
-						<h4>@localizer["OutcomeNarrative"]</h4><p style="white-space:pre-wrap">@a.Narrative.OutcomeNarrative</p>
+						<h4>@localizer["OutcomeNarrative"]</h4><p style="white-space:pre-wrap" data-adp-field="rmsnarratives.outcomenarrative:@a.Narrative.RmsNarrativeId">@a.Narrative.OutcomeNarrative</p>
 					}
 				</div>
 			</div>
@@ -701,3 +715,18 @@
 		</div>
 	</div>
 </div>
+
+@section Scripts {
+	@if (isProtected)
+	{
+		<partial name="_AdpRevealScripts" model="adpReveal" />
+		@* A grant held here travels into the edit page (RMS plan section 5.9.3) so the form opens revealed instead of asking again. *@
+		<form id="adp-edit-form" method="post" action="@Url.Action("EditRevealed", "IncidentReports", new { area = "User", id = r.RmsIncidentReportId })">@Html.AntiForgeryToken()</form>
+		<script type="text/javascript">
+			$('#adp-edit-link').on('click', function (e) {
+				if (resgridAdpReveal.submitWithGrant(document.getElementById('adp-edit-form')))
+					e.preventDefault();
+			});
+		</script>
+	}
+}

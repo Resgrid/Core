@@ -615,4 +615,7 @@
   <data name="SkippedRuns" xml:space="preserve">
     <value>Пропущені</value>
   </data>
+  <data name="ExportTemplate" xml:space="preserve"><value>Експорт звіту записів</value></data>
+  <data name="ExportTemplateNone" xml:space="preserve"><value>Немає (надіслати лише сформований шаблон)</value></data>
+  <data name="ExportTemplateHelp" xml:space="preserve"><value>Кроки електронної пошти прикріплюють експорт; кроки завантаження файлу надсилають його під назвою файлу замість сформованого тексту. Експорти створюються в розділі Записи &gt; Експорт звітів.</value></data>
 </root>

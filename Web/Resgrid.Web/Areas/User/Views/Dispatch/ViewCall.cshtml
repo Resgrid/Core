@@ -53,7 +53,7 @@
                 }
                 @if (Model.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord())
                 {
-                    <form method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default"><i class="fa fa-fire"></i> @localizer["IncidentReport"]</button></form>
+                    <form id="start-incident-report-form" method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Start" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default"><i class="fa fa-fire"></i> @localizer["IncidentReport"]</button></form>
                 }
             </div>
         </div>
@@ -69,7 +69,12 @@
         BannerTitle = commonLocalizer["AdpProtectedCall"],
         RevealController = "Dispatch",
         RevealAction = "RevealCall",
-        RevealData = new Dictionary<string, string> { { "callId", Model.Call.CallId.ToString() } }
+        RevealData = new Dictionary<string, string> { { "callId", Model.Call.CallId.ToString() } },
+        // Starting an incident report seals the captured call facts under Records protection (RMS plan
+        // section 5.9.3): the start form is bound so the submit runs the step-up in place when no grant is held.
+        BindForms = Model.ProtectionEnforced && Model.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord()
+            ? new List<string> { "#start-incident-report-form" }
+            : new List<string>()
     };
 }
 
@@ -982,7 +987,7 @@
 
 @section Scripts
     {
-    @if (Model.IsProtectedCall)
+    @if (Model.IsProtectedCall || Model.ProtectionEnforced)
     {
         <partial name="_AdpRevealScripts" model="adpReveal" />
     }

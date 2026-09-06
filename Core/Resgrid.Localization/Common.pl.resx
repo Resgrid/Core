@@ -716,8 +716,18 @@
   <data name="AdpErrorGeneric" xml:space="preserve">
     <value>Żądanie nie powiodło się. Spróbuj ponownie.</value>
   </data>
+  <data name="AdpExpiringWarning" xml:space="preserve">
+    <value>Twoja weryfikacja wygasa za {0}. Zweryfikuj się ponownie teraz, aby kontynuować pracę bez utraty zmian.</value>
+  </data>
+  <data name="AdpExpiredWarning" xml:space="preserve">
+    <value>Twoja weryfikacja wygasła. Zweryfikuj się ponownie, aby kontynuować; niezapisane zmiany pozostają na tej stronie do tego czasu.</value>
+  </data>
+  <data name="AdpReverify" xml:space="preserve">
+    <value>Zweryfikuj ponownie</value>
+  </data>
   <data name="RecordsModule" xml:space="preserve"><value>Rejestry</value></data>
   <data name="DepartmentProfile" xml:space="preserve">
     <value>Profil wydziału</value>
   </data>
+  <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Blokady zachowania rejestrów</value></data>
 </root>

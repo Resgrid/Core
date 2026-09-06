@@ -68,7 +68,7 @@ namespace Resgrid.Tests.Rms
 			_service = new RecordsRetentionService(_store.CutoversRepo.Object, _store.RecordsRepo.Object,
 				_incidents.ReportsRepo.Object, _store.DetailsRepo.Object, _store.AttachmentsRepo.Object,
 				_store.LegalHoldsRepo.Object, _store.AuditsRepo.Object, _store.ProjectionsRepo.Object,
-				_scanner.Object, _settings.Object, _purge.Object);
+				_scanner.Object, _settings.Object, _purge.Object, new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
 		}
 
 		private RmsOperationalRecord SeedFinalized(DateTime finalizedOn, string definitionKey = null)
@@ -222,6 +222,14 @@ namespace Resgrid.Tests.Rms
 			_store.Projections.Single().SearchText.Should().BeNull();
 
 			_store.Audits.Should().Contain(a => a.Purpose == RecordsRetentionService.PurgeAuditPurpose);
+
+			// RecordPurged (159): the identity that went away and what went with it; never content.
+			var entry = _store.Outbox.Single(o => o.EventName == "RecordPurged");
+			entry.TriggerEventType.Should().Be((int)WorkflowTriggerEventType.RecordPurged);
+			var payload = Newtonsoft.Json.Linq.JObject.Parse(entry.PayloadJson);
+			((string)payload["record"]["id"]).Should().Be(record.RmsOperationalRecordId);
+			((string)payload["record"]["kind"]).Should().Be("Operational");
+			((int)payload["purge"]["attachments_purged"]).Should().Be(1);
 		}
 
 		[Test]

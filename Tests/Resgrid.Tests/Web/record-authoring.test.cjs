@@ -1,9 +1,9 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
-const { chromium } = require(process.env.RESGRID_PLAYWRIGHT_PATH || 'playwright');
+const { chromium } = require('./browser-launch.cjs').playwright();
 const root = path.resolve(__dirname, '../../..');
 (async () => {
-    const browser = await chromium.launch({ channel: 'msedge', headless: true });
+    const browser = await chromium.launch(require('./browser-launch.cjs').launchOptions());
     try {
         const page = await browser.newPage();
         await page.clock.install();

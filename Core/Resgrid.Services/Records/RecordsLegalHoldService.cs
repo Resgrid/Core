@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
@@ -19,9 +20,11 @@ namespace Resgrid.Services.Records
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRmsAccessAuditsRepository _audits;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IRecordsProtectionService _protection;
+		private readonly IDomainEventOutboxService _outbox;
 		public RecordsLegalHoldService(IRmsRecordLegalHoldsRepository holds, IRmsOperationalRecordsRepository records, IRmsIncidentReportsRepository reports,
-			IRecordsAuthorizationService authorization, IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork)
-		{ _holds = holds; _records = records; _reports = reports; _authorization = authorization; _audits = audits; _unitOfWork = unitOfWork; }
+			IRecordsAuthorizationService authorization, IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork, IRecordsProtectionService protection, IDomainEventOutboxService outbox)
+		{ _holds = holds; _records = records; _reports = reports; _authorization = authorization; _audits = audits; _unitOfWork = unitOfWork; _protection = protection; _outbox = outbox; }
 		private async Task RequireAsync(int departmentId, string userId, string recordId = null)
 		{
 			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ManageRecordLegalHold)
@@ -34,6 +37,7 @@ namespace Resgrid.Services.Records
 				if (hold.RecordId == null || await _authorization.CanUserViewRecordAsync(userId, hold.RecordId, departmentId)) result.Add(hold);
 			await RequireAsync(departmentId, userId);
 			foreach (var hold in result) await RequireAsync(departmentId, userId, hold.RecordId);
+			await _protection.RevealLegalHoldsAsync(departmentId, result);
 			return result;
 		}
 		public async Task<RmsRecordLegalHold> PlaceAsync(int departmentId, string userId, RmsRecordLegalHold input, CancellationToken cancellationToken = default)
@@ -55,15 +59,24 @@ namespace Resgrid.Services.Records
 			var now = DateTime.UtcNow;
 			var hold = new RmsRecordLegalHold { RmsRecordLegalHoldId = Guid.NewGuid().ToString(), DepartmentId = departmentId, RecordId = recordId, DefinitionKey = definition,
 				PeriodStart = input.PeriodStart, PeriodEnd = input.PeriodEnd, Reason = input.Reason.Trim(), ReferenceNumber = input.ReferenceNumber.Trim(), Notes = input.Notes.Trim(), PlacedByUserId = userId, PlacedOn = now, CreatedOn = now, ModifiedOn = now, RowVersion = 1 };
+			// The row is sealed in place for storage (ADP catalog v10) and the caller gets its plaintext back afterwards.
+			var plaintext = PlaintextSnapshot<RmsRecordLegalHold>.Take(hold, RmsProtectedFields.LegalHolds);
+			var notes = hold.Notes;
+			long outboxId;
 			_unitOfWork.CreateOrGetConnection();
 			try
 			{
 				await RequireAsync(departmentId, userId, recordId);
+				await _protection.ProtectLegalHoldAsync(departmentId, hold, null, userId, cancellationToken);
 				// Repository shares the retention department/parent lock; placement cannot race a content purge.
 				await _holds.InsertAsync(hold, cancellationToken, true);
-				await AuditAsync(hold, userId, "Legal hold placed", hold.Notes, cancellationToken); _unitOfWork.CommitChanges(); return hold;
+				outboxId = await EnqueueAsync(hold, WorkflowTriggerEventType.RecordLegalHoldPlaced, cancellationToken);
+				await AuditAsync(hold, userId, "Legal hold placed", notes, cancellationToken); _unitOfWork.CommitChanges();
 			}
 			catch { _unitOfWork.DiscardChanges(); throw; }
+			plaintext.Restore();
+			await _outbox.DispatchAfterCommitAsync(new[] { outboxId }, cancellationToken);
+			return hold;
 		}
 		public async Task ReleaseAsync(int departmentId, string userId, string holdId, long expectedVersion, string reason, CancellationToken cancellationToken = default)
 		{
@@ -71,14 +84,55 @@ namespace Resgrid.Services.Records
 			if (string.IsNullOrWhiteSpace(reason) || reason.Length > 4000) throw new ArgumentException("Record the authority and reason for releasing preservation (up to 4,000 characters).");
 			var hold = await _holds.GetByIdForDepartmentAsync(departmentId, holdId) ?? throw new ArgumentException("The hold does not exist.");
 			await RequireAsync(departmentId, userId, hold.RecordId);
+			// ReleaseNotes is a cataloged column written by a targeted UPDATE, so it is sealed on a throwaway row first.
+			var sealedNotes = new RmsRecordLegalHold { RmsRecordLegalHoldId = holdId, DepartmentId = departmentId, ReleaseNotes = reason.Trim() };
+			await _protection.ProtectLegalHoldAsync(departmentId, sealedNotes, null, userId, cancellationToken);
+			var releasedOn = DateTime.UtcNow;
+			long outboxId;
 			_unitOfWork.CreateOrGetConnection();
 			try
 			{
 				await RequireAsync(departmentId, userId, hold.RecordId);
-				if (!await _holds.TryReleaseAsync(departmentId, holdId, expectedVersion, userId, reason.Trim(), DateTime.UtcNow, cancellationToken)) throw new InvalidOperationException("The hold changed or was already released. Reload it before continuing.");
+				if (!await _holds.TryReleaseAsync(departmentId, holdId, expectedVersion, userId, sealedNotes.ReleaseNotes, releasedOn, cancellationToken)) throw new InvalidOperationException("The hold changed or was already released. Reload it before continuing.");
+				hold.ReleasedByUserId = userId; hold.ReleasedOn = releasedOn;
+				outboxId = await EnqueueAsync(hold, WorkflowTriggerEventType.RecordLegalHoldReleased, cancellationToken);
 				await AuditAsync(hold, userId, "Legal hold released", reason.Trim(), cancellationToken); _unitOfWork.CommitChanges();
 			}
 			catch { _unitOfWork.DiscardChanges(); throw; }
+			await _outbox.DispatchAfterCommitAsync(new[] { outboxId }, cancellationToken);
+		}
+
+		/// <summary>legal_hold.* (triggers 156/157): scope, period, reason and actors; never the reference number or the preservation notes.</summary>
+		private async Task<long> EnqueueAsync(RmsRecordLegalHold hold, WorkflowTriggerEventType trigger, CancellationToken cancellationToken)
+		{
+			object recordBlock = new { id = hold.RecordId, kind = (string)null, department_id = hold.DepartmentId };
+			var aggregateType = DomainEventProducers.RecordsAggregate;
+			if (hold.RecordId != null)
+			{
+				var record = await _records.GetByIdForDepartmentAsync(hold.DepartmentId, hold.RecordId);
+				if (record != null) recordBlock = RecordsService.RecordBlock(record, null, (RmsRecordState)record.State);
+				else
+				{
+					var report = await _reports.GetByIdForDepartmentAsync(hold.DepartmentId, hold.RecordId);
+					if (report != null) { recordBlock = IncidentReportsService.RecordBlock(report, null, (RmsRecordState)report.State); aggregateType = IncidentReportsService.IncidentAggregate; }
+				}
+			}
+			var entry = await _outbox.EnqueueAsync(hold.DepartmentId, DomainEventProducers.Records, new DomainEventEnvelope
+			{
+				EventName = trigger.ToString(), SchemaVersion = 1, AggregateType = aggregateType, AggregateId = hold.RecordId ?? hold.RmsRecordLegalHoldId, AggregateVersion = (int)hold.RowVersion, Trigger = trigger,
+				Payload = new Dictionary<string, object>
+				{
+					["record"] = recordBlock,
+					["legal_hold"] = new
+					{
+						id = hold.RmsRecordLegalHoldId, record_id = hold.RecordId, definition_key = hold.DefinitionKey, period_start = hold.PeriodStart, period_end = hold.PeriodEnd, reason = hold.Reason,
+						placed_by_user_id = hold.PlacedByUserId, placed_on = hold.PlacedOn, released_by_user_id = hold.ReleasedByUserId, released_on = hold.ReleasedOn, is_released = hold.ReleasedOn.HasValue
+					},
+					["protection"] = IncidentReportsService.ProtectionBlock(await _protection.GetCatalogVersionAsync(hold.DepartmentId))
+				},
+				CorrelationId = hold.RmsRecordLegalHoldId, OriginClient = RmsOriginClient.Web
+			}, cancellationToken);
+			return entry.DomainEventOutboxId;
 		}
 		private Task AuditAsync(RmsRecordLegalHold hold, string userId, string purpose, string reason, CancellationToken ct) => _audits.InsertAsync(new RmsAccessAudit { DepartmentId = hold.DepartmentId, RecordId = hold.RecordId,
 			ActorUserId = userId, Action = (int)RmsAccessAuditAction.Admin, Successful = true, OccurredOn = DateTime.UtcNow, Purpose = purpose, DetailJson = JsonConvert.SerializeObject(new { hold.RmsRecordLegalHoldId, hold.ReferenceNumber, reason }) }, ct, true);

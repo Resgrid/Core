@@ -29,13 +29,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
 		private readonly IRecordsCutoverService _recordsCutoverService;
+		private readonly IRecordsExportService _recordsExportService;
 
 		public WorkflowsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, IAuditService auditService,
 			IEventAggregator eventAggregator, ISubscriptionsService subscriptionsService,
-			IWorkflowTemplateContextBuilder contextBuilder, IRecordsCutoverService recordsCutoverService)
+			IWorkflowTemplateContextBuilder contextBuilder, IRecordsCutoverService recordsCutoverService, IRecordsExportService recordsExportService)
 		{
+			_recordsExportService    = recordsExportService;
 			_workflowService         = workflowService;
 			_departmentsService      = departmentsService;
 			_permissionsService      = permissionsService;
@@ -169,6 +171,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			ViewBag.TriggerEventTypeName = ((WorkflowTriggerEventType)workflow.TriggerEventType).ToString();
 			ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
+			await AddExportTemplatesAsync((WorkflowTriggerEventType)workflow.TriggerEventType);
 
 			return View(workflow);
 		}
@@ -185,6 +188,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				ViewBag.TriggerEventTypeName = ((WorkflowTriggerEventType)model.TriggerEventType).ToString();
 				ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
+				await AddExportTemplatesAsync((WorkflowTriggerEventType)model.TriggerEventType);
 				return View(model);
 			}
 
@@ -627,6 +631,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// Records (RMS) triggers 100-115 are only offered once Records is usable for the department (plan section
 		/// 5.6). A workflow already bound to one keeps working; the outbox simply never fires before activation.
 		/// </summary>
+		/// <summary>
+		/// Department report exports a step on a Records trigger may attach (RMS plan section 5.6). Only the
+		/// designer for a Records workflow gets the list; other triggers never carry a record to export.
+		/// </summary>
+		private async Task AddExportTemplatesAsync(WorkflowTriggerEventType trigger)
+		{
+			ViewBag.RecordsExportAvailable = false;
+			ViewBag.RecordsExportTemplatesJson = "[]";
+			if (!WorkflowTriggerEventTypes.IsRecordsTrigger(trigger) || !await RecordsTriggersAvailableAsync())
+				return;
+
+			var templates = await _recordsExportService.GetTemplatesAsync(DepartmentId);
+			ViewBag.RecordsExportAvailable = true;
+			ViewBag.RecordsExportTemplatesJson = JsonSerializer.Serialize(templates.Where(t => t.IsEnabled)
+				.Select(t => new { id = t.RmsExportTemplateId, name = t.Name, key = t.TemplateKey, format = ((RmsExportFormat)t.Format).ToString(), scope = ((RmsExportScope)t.Scope).ToString() }));
+		}
+
 		private async Task<bool> RecordsTriggersAvailableAsync()
 		{
 			var state = await _recordsCutoverService.GetModuleStateAsync(DepartmentId);

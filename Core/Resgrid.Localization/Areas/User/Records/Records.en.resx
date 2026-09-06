@@ -964,4 +964,104 @@
   <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
     <value>A new credential is required when the NERIS grant type changes.</value>
   </data>
+  <data name="DisclosureSettingsHeader" xml:space="preserve"><value>Public-records disclosure</value></data>
+  <data name="DisclosureSettingsIntro" xml:space="preserve"><value>Defaults for the disclosure workflow: the statutory response clock, the redaction profile a new request starts with, and who releases a produced packet.</value></data>
+  <data name="StatutoryClockDays" xml:space="preserve"><value>Statutory response clock (days)</value></data>
+  <data name="StatutoryClockDaysHelp" xml:space="preserve"><value>Days a new request is due in, counted from the received date. 1 to 365.</value></data>
+  <data name="DefaultRedactionProfile" xml:space="preserve"><value>Default redaction profile</value></data>
+  <data name="DefaultRedactionProfileHelp" xml:space="preserve"><value>Applied to a new request unless the officer chooses another.</value></data>
+  <data name="DisclosureReleaseApprover" xml:space="preserve"><value>Release approver</value></data>
+  <data name="DisclosureReleaseApproverHelp" xml:space="preserve"><value>The member who releases produced packets. Leave unset for any department administrator.</value></data>
+  <data name="DisclosureApproverAnyAdmin" xml:space="preserve"><value>Any department administrator</value></data>
+  <data name="RedactionProfileStandard" xml:space="preserve"><value>Standard - withhold restricted content</value></data>
+  <data name="RedactionProfileNoPersonalIdentifiers" xml:space="preserve"><value>No personal identifiers - also withhold participant identities</value></data>
+  <data name="RedactionProfileFullDisclosure" xml:space="preserve"><value>Full disclosure - release everything held</value></data>
+  <data name="NfirsLegacyHeader" xml:space="preserve"><value>NFIRS (historical) view</value></data>
+  <data name="NfirsLegacyButton" xml:space="preserve"><value>NFIRS view</value></data>
+  <data name="NfirsLegacyIntro" xml:space="preserve"><value>The NFIRS Basic Module fields as they can be read from data this department already holds, and the NERIS fact or section that carries each one going forward.</value></data>
+  <data name="NfirsLegacyReadOnlyNotice" xml:space="preserve"><value>Read-only. NFIRS retired on 2026-01-31; nothing on this page is imported, authored or submitted.</value></data>
+  <data name="NfirsField" xml:space="preserve"><value>NFIRS field</value></data>
+  <data name="NfirsStatus" xml:space="preserve"><value>Field status</value></data>
+  <data name="NfirsStatusPopulated" xml:space="preserve"><value>Populated</value></data>
+  <data name="NfirsStatusMissing" xml:space="preserve"><value>Missing</value></data>
+  <data name="NfirsStatusNotCaptured" xml:space="preserve"><value>Not captured</value></data>
+  <data name="NfirsRequired" xml:space="preserve"><value>Required in NFIRS</value></data>
+  <data name="NfirsRequiredLegend" xml:space="preserve"><value>* Required by the NFIRS Basic Module.</value></data>
+  <data name="NerisEquivalent" xml:space="preserve"><value>NERIS equivalent</value></data>
+  <data name="NerisNoEquivalent" xml:space="preserve"><value>No NERIS equivalent (department-only)</value></data>
+  <data name="NerisCarried" xml:space="preserve"><value>Carried in the NERIS report</value></data>
+  <data name="NerisNotYetCarried" xml:space="preserve"><value>Not yet in the NERIS report</value></data>
+  <data name="NfirsCrosswalkSummary" xml:space="preserve"><value>Crosswalk summary</value></data>
+  <data name="NfirsNoNerisReport" xml:space="preserve"><value>No NERIS report has been started for this call.</value></data>
+  <data name="NfirsRequiredMissing" xml:space="preserve"><value>Required fields missing</value></data>
+  <data name="NfirsCrosswalked" xml:space="preserve"><value>Fields with a NERIS equivalent</value></data>
+  <data name="NfirsSunsetNote" xml:space="preserve"><value>NFIRS data is rendered for historical continuity only. New reporting goes to NERIS.</value></data>
+  <data name="IncidentReport" xml:space="preserve"><value>Incident report</value></data>
+  <data name="Value" xml:space="preserve"><value>Value</value></data>
+  <data name="GeneratedOn" xml:space="preserve"><value>Generated</value></data>
+  <data name="ExportTemplates" xml:space="preserve"><value>Report exports</value></data>
+  <data name="ExportTemplatesIntro" xml:space="preserve"><value>Design the file an agency without an API receives: choose the columns, the format and the scope, then attach the export to a Workflow step or put it on a schedule.</value></data>
+  <data name="NewExportTemplate" xml:space="preserve"><value>New export</value></data>
+  <data name="EditExportTemplate" xml:space="preserve"><value>Edit export</value></data>
+  <data name="ExportTemplateName" xml:space="preserve"><value>Export name</value></data>
+  <data name="ExportTemplateKey" xml:space="preserve"><value>Key</value></data>
+  <data name="ExportTemplateKeyHelp" xml:space="preserve"><value>Lower-case letters, digits and hyphens. A Workflow step and an agency import rely on it, so it never changes once in use.</value></data>
+  <data name="ExportTemplateDescription" xml:space="preserve"><value>Description</value></data>
+  <data name="ExportFormat" xml:space="preserve"><value>Format</value></data>
+  <data name="ExportScope" xml:space="preserve"><value>Scope</value></data>
+  <data name="ExportScopeTriggeringRecord" xml:space="preserve"><value>The triggering record</value></data>
+  <data name="ExportScopeWindow" xml:space="preserve"><value>All records finalized in a window</value></data>
+  <data name="ExportDefinitions" xml:space="preserve"><value>Record definitions</value></data>
+  <data name="ExportDefinitionsHelp" xml:space="preserve"><value>Leave every definition unchecked to export all of them.</value></data>
+  <data name="ExportColumns" xml:space="preserve"><value>Columns</value></data>
+  <data name="ExportColumnsHelp" xml:space="preserve"><value>Columns are taken from a fixed, reviewed catalog. Narrative and restricted columns need their switch below and an egress acknowledgement.</value></data>
+  <data name="ExportIncludeNarrative" xml:space="preserve"><value>Include narrative and personal detail (Tier 2)</value></data>
+  <data name="ExportIncludeRestricted" xml:space="preserve"><value>Include restricted sections (Tier 1)</value></data>
+  <data name="ExportEgressAcknowledge" xml:space="preserve"><value>I acknowledge this export sends narrative or restricted record content outside Resgrid to the destination the Workflow names.</value></data>
+  <data name="ExportEgressAcknowledgedOn" xml:space="preserve"><value>Egress acknowledged</value></data>
+  <data name="ExportFileNameTemplate" xml:space="preserve"><value>File name</value></data>
+  <data name="ExportFileNameHelp" xml:space="preserve"><value>Tokens: {template}, {date}, {record}. The extension follows the format.</value></data>
+  <data name="ExportIncludeHeader" xml:space="preserve"><value>Include a header row</value></data>
+  <data name="ExportDelimiter" xml:space="preserve"><value>Delimiter</value></data>
+  <data name="ExportSchedule" xml:space="preserve"><value>Schedule</value></data>
+  <data name="ExportScheduleNone" xml:space="preserve"><value>No schedule (Workflow only)</value></data>
+  <data name="ExportScheduleDaily" xml:space="preserve"><value>Daily</value></data>
+  <data name="ExportScheduleWeekly" xml:space="preserve"><value>Weekly</value></data>
+  <data name="ExportScheduleMonthly" xml:space="preserve"><value>Monthly</value></data>
+  <data name="ExportScheduleHour" xml:space="preserve"><value>Hour (department local time)</value></data>
+  <data name="ExportScheduleDayOfWeek" xml:space="preserve"><value>Weekday (0 = Sunday)</value></data>
+  <data name="ExportScheduleDayOfMonth" xml:space="preserve"><value>Day of month (1-28)</value></data>
+  <data name="ExportWindowDays" xml:space="preserve"><value>Window (days)</value></data>
+  <data name="ExportWindowDaysHelp" xml:space="preserve"><value>0 uses the schedule period: one day, one week or one month ending at the run.</value></data>
+  <data name="ExportEnabled" xml:space="preserve"><value>Enabled</value></data>
+  <data name="ExportNextRun" xml:space="preserve"><value>Next run</value></data>
+  <data name="ExportLastRun" xml:space="preserve"><value>Last run</value></data>
+  <data name="ExportRuns" xml:space="preserve"><value>Runs</value></data>
+  <data name="ExportRunNow" xml:space="preserve"><value>Run now</value></data>
+  <data name="ExportRunNowHelp" xml:space="preserve"><value>Renders the export for you to check before an agency sees it. Every record it contains is audited as an export.</value></data>
+  <data name="ExportRunNowNeedsRecord" xml:space="preserve"><value>This export covers one triggering record: enter the record ID to render.</value></data>
+  <data name="ExportRunGenerated" xml:space="preserve"><value>Generated</value></data>
+  <data name="ExportRunRecords" xml:space="preserve"><value>Records</value></data>
+  <data name="ExportRunSize" xml:space="preserve"><value>Bytes</value></data>
+  <data name="ExportRunRedacted" xml:space="preserve"><value>Protected fields were withheld from this file</value></data>
+  <data name="ExportRunDownload" xml:space="preserve"><value>Download</value></data>
+  <data name="ExportRunTrigger" xml:space="preserve"><value>Trigger</value></data>
+  <data name="ExportTemplateSaved" xml:space="preserve"><value>The export was saved.</value></data>
+  <data name="ExportTemplateDeleted" xml:space="preserve"><value>The export was deleted. Workflow steps that named it will fail until they are updated.</value></data>
+  <data name="ExportTemplateDeleteConfirm" xml:space="preserve"><value>Delete this export?</value></data>
+  <data name="ExportNoTemplates" xml:space="preserve"><value>No exports have been designed yet.</value></data>
+  <data name="ExportWorkflowHint" xml:space="preserve"><value>In the Workflow designer, an email or file-upload step on a Records trigger can attach any export listed here; a scheduled export raises its own trigger when it runs.</value></data>
+  <data name="ExportTierSafe" xml:space="preserve"><value>Identity, dates, codes and counts</value></data>
+  <data name="ExportTierNarrative" xml:space="preserve"><value>Narrative and personal detail (Tier 2)</value></data>
+  <data name="ExportTierRestricted" xml:space="preserve"><value>Restricted sections (Tier 1)</value></data>
+  <data name="ExportAdpWarning" xml:space="preserve"><value>Advanced Data Protection is enforced for this department. Protected columns are withheld (REDACTED) from every run unless the export's egress acknowledgement is recorded.</value></data>
+  <data name="ProtectedRecordBanner" xml:space="preserve"><value>Protected record</value></data>
+  <data name="ProtectedIncidentBanner" xml:space="preserve"><value>Protected incident report</value></data>
+  <data name="ProtectedEditHint" xml:space="preserve"><value>Protected fields stay hidden until you verify. Saving this form also needs verification, so verify before you edit.</value></data>
+  <data name="ProtectedEditRevealed" xml:space="preserve"><value>Protected content is revealed for this editing session. Saving keeps it protected.</value></data>
+  <data name="NerisProtectedEgress" xml:space="preserve"><value>Allow protected incident content to be sent to NERIS</value></data>
+  <data name="NerisProtectedEgressHelp" xml:space="preserve"><value>Under Advanced Data Protection the queued payload is sealed. With this acknowledgement the submission worker opens it through the broker's purpose-bound lane for delivery only; without it a protected submission fails closed.</value></data>
+  <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>Acknowledged on</value></data>
+  <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>Advanced Data Protection is enforced: protected submissions will fail until this acknowledgement is recorded.</value></data>
+  <data name="RecordId" xml:space="preserve"><value>Record ID</value></data>
 </root>

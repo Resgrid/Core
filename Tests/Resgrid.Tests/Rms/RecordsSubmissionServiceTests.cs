@@ -39,6 +39,7 @@ namespace Resgrid.Tests.Rms
 		private bool _enabled;
 		private bool _previousEnabled;
 		private RecordsSubmissionService _service;
+		protected PassthroughRecordsProtection Protection { get; } = new PassthroughRecordsProtection();
 
 		[SetUp]
 		public void SetUp()
@@ -73,7 +74,7 @@ namespace Resgrid.Tests.Rms
 
 			var outbox = new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, new Mock<IEventAggregator>().Object);
 			_service = new RecordsSubmissionService(_store.SubmissionsRepo.Object, _store.ReportsRepo.Object, _store.AnalysesRepo.Object, _store.Shared.ProjectionsRepo.Object,
-				_store.Shared.AuditsRepo.Object, _profiles.Object, _delivery.Object, outbox, _outboundQueue.Object, _store.UnitOfWork.Object, _store.Shared.CutoversRepo.Object, Mock.Of<IIncidentAnalysisService>(), _store.ExchangesRepo.Object, _authorization.Object);
+				_store.Shared.AuditsRepo.Object, _profiles.Object, _delivery.Object, outbox, _outboundQueue.Object, _store.UnitOfWork.Object, _store.Shared.CutoversRepo.Object, Mock.Of<IIncidentAnalysisService>(), _store.ExchangesRepo.Object, _authorization.Object, Protection);
 		}
 
 		[TearDown]

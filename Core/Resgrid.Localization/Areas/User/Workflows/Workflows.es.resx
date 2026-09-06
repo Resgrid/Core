@@ -636,5 +636,8 @@
   <data name="SkippedRuns" xml:space="preserve">
     <value>Omitidos</value>
   </data>
+  <data name="ExportTemplate" xml:space="preserve"><value>Exportación de informe de registros</value></data>
+  <data name="ExportTemplateNone" xml:space="preserve"><value>Ninguna (enviar solo la plantilla renderizada)</value></data>
+  <data name="ExportTemplateHelp" xml:space="preserve"><value>Los pasos de correo adjuntan la exportación; los pasos de carga de archivos la suben con su nombre de archivo en lugar del texto renderizado. Las exportaciones se diseñan en Registros &gt; Exportaciones de informes.</value></data>
 </root>
 

@@ -964,4 +964,104 @@
   <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
     <value>Після зміни типу надання доступу NERIS потрібні нові облікові дані.</value>
   </data>
+  <data name="DisclosureSettingsHeader" xml:space="preserve"><value>Розкриття публічних записів</value></data>
+  <data name="DisclosureSettingsIntro" xml:space="preserve"><value>Значення за замовчуванням для процесу розкриття: законодавчий строк відповіді, профіль редагування, з якого починається новий запит, і хто випускає підготовлений пакет.</value></data>
+  <data name="StatutoryClockDays" xml:space="preserve"><value>Законодавчий строк відповіді (днів)</value></data>
+  <data name="StatutoryClockDaysHelp" xml:space="preserve"><value>Кількість днів на виконання нового запиту, рахуючи від дати отримання. Від 1 до 365.</value></data>
+  <data name="DefaultRedactionProfile" xml:space="preserve"><value>Профіль редагування за замовчуванням</value></data>
+  <data name="DefaultRedactionProfileHelp" xml:space="preserve"><value>Застосовується до нового запиту, якщо посадовець не обере інший.</value></data>
+  <data name="DisclosureReleaseApprover" xml:space="preserve"><value>Особа, що затверджує випуск</value></data>
+  <data name="DisclosureReleaseApproverHelp" xml:space="preserve"><value>Учасник, який випускає підготовлені пакети. Залиште порожнім для будь-якого адміністратора підрозділу.</value></data>
+  <data name="DisclosureApproverAnyAdmin" xml:space="preserve"><value>Будь-який адміністратор підрозділу</value></data>
+  <data name="RedactionProfileStandard" xml:space="preserve"><value>Стандартний - приховати обмежений вміст</value></data>
+  <data name="RedactionProfileNoPersonalIdentifiers" xml:space="preserve"><value>Без персональних ідентифікаторів - також приховати особи учасників</value></data>
+  <data name="RedactionProfileFullDisclosure" xml:space="preserve"><value>Повне розкриття - випустити все, що зберігається</value></data>
+  <data name="NfirsLegacyHeader" xml:space="preserve"><value>Перегляд NFIRS (історичний)</value></data>
+  <data name="NfirsLegacyButton" xml:space="preserve"><value>Перегляд NFIRS</value></data>
+  <data name="NfirsLegacyIntro" xml:space="preserve"><value>Поля базового модуля NFIRS, які можна прочитати з даних, що вже є у підрозділу, і факт або розділ NERIS, який їх переносить надалі.</value></data>
+  <data name="NfirsLegacyReadOnlyNotice" xml:space="preserve"><value>Лише для читання. NFIRS припинено 31.01.2026; ніщо на цій сторінці не імпортується, не створюється й не надсилається.</value></data>
+  <data name="NfirsField" xml:space="preserve"><value>Поле NFIRS</value></data>
+  <data name="NfirsStatus" xml:space="preserve"><value>Стан поля</value></data>
+  <data name="NfirsStatusPopulated" xml:space="preserve"><value>Заповнено</value></data>
+  <data name="NfirsStatusMissing" xml:space="preserve"><value>Відсутнє</value></data>
+  <data name="NfirsStatusNotCaptured" xml:space="preserve"><value>Не фіксується</value></data>
+  <data name="NfirsRequired" xml:space="preserve"><value>Обов'язкове в NFIRS</value></data>
+  <data name="NfirsRequiredLegend" xml:space="preserve"><value>* Вимагається базовим модулем NFIRS.</value></data>
+  <data name="NerisEquivalent" xml:space="preserve"><value>Еквівалент NERIS</value></data>
+  <data name="NerisNoEquivalent" xml:space="preserve"><value>Немає еквівалента NERIS (лише для підрозділу)</value></data>
+  <data name="NerisCarried" xml:space="preserve"><value>Внесено до звіту NERIS</value></data>
+  <data name="NerisNotYetCarried" xml:space="preserve"><value>Ще не внесено до звіту NERIS</value></data>
+  <data name="NfirsCrosswalkSummary" xml:space="preserve"><value>Зведення відповідності</value></data>
+  <data name="NfirsNoNerisReport" xml:space="preserve"><value>Для цього виклику звіт NERIS ще не розпочато.</value></data>
+  <data name="NfirsRequiredMissing" xml:space="preserve"><value>Відсутні обов'язкові поля</value></data>
+  <data name="NfirsCrosswalked" xml:space="preserve"><value>Поля з еквівалентом NERIS</value></data>
+  <data name="NfirsSunsetNote" xml:space="preserve"><value>Дані NFIRS відображаються лише для історичної безперервності. Нова звітність надходить до NERIS.</value></data>
+  <data name="IncidentReport" xml:space="preserve"><value>Звіт про інцидент</value></data>
+  <data name="Value" xml:space="preserve"><value>Значення</value></data>
+  <data name="GeneratedOn" xml:space="preserve"><value>Згенеровано</value></data>
+  <data name="ExportTemplates" xml:space="preserve"><value>Експорт звітів</value></data>
+  <data name="ExportTemplatesIntro" xml:space="preserve"><value>Створіть файл, який отримує установа без API: оберіть стовпці, формат і обсяг, а потім прикріпіть експорт до кроку робочого процесу або заплануйте його.</value></data>
+  <data name="NewExportTemplate" xml:space="preserve"><value>Новий експорт</value></data>
+  <data name="EditExportTemplate" xml:space="preserve"><value>Редагувати експорт</value></data>
+  <data name="ExportTemplateName" xml:space="preserve"><value>Назва експорту</value></data>
+  <data name="ExportTemplateKey" xml:space="preserve"><value>Ключ</value></data>
+  <data name="ExportTemplateKeyHelp" xml:space="preserve"><value>Малі літери, цифри та дефіси. На нього покладаються крок робочого процесу та імпорт установи, тому після використання він не змінюється.</value></data>
+  <data name="ExportTemplateDescription" xml:space="preserve"><value>Опис</value></data>
+  <data name="ExportFormat" xml:space="preserve"><value>Формат</value></data>
+  <data name="ExportScope" xml:space="preserve"><value>Обсяг</value></data>
+  <data name="ExportScopeTriggeringRecord" xml:space="preserve"><value>Запис-ініціатор</value></data>
+  <data name="ExportScopeWindow" xml:space="preserve"><value>Усі записи, завершені за період</value></data>
+  <data name="ExportDefinitions" xml:space="preserve"><value>Визначення записів</value></data>
+  <data name="ExportDefinitionsHelp" xml:space="preserve"><value>Не позначайте жодного визначення, щоб експортувати всі.</value></data>
+  <data name="ExportColumns" xml:space="preserve"><value>Стовпці</value></data>
+  <data name="ExportColumnsHelp" xml:space="preserve"><value>Стовпці беруться з фіксованого, перевіреного каталогу. Стовпці з описом та обмежені стовпці потребують перемикача нижче та підтвердження вивантаження.</value></data>
+  <data name="ExportIncludeNarrative" xml:space="preserve"><value>Включити опис та персональні дані (рівень 2)</value></data>
+  <data name="ExportIncludeRestricted" xml:space="preserve"><value>Включити обмежені розділи (рівень 1)</value></data>
+  <data name="ExportEgressAcknowledge" xml:space="preserve"><value>Я підтверджую, що цей експорт надсилає опис або обмежений вміст записів за межі Resgrid до призначення, вказаного в робочому процесі.</value></data>
+  <data name="ExportEgressAcknowledgedOn" xml:space="preserve"><value>Вивантаження підтверджено</value></data>
+  <data name="ExportFileNameTemplate" xml:space="preserve"><value>Назва файлу</value></data>
+  <data name="ExportFileNameHelp" xml:space="preserve"><value>Маркери: {template}, {date}, {record}. Розширення відповідає формату.</value></data>
+  <data name="ExportIncludeHeader" xml:space="preserve"><value>Включити рядок заголовка</value></data>
+  <data name="ExportDelimiter" xml:space="preserve"><value>Роздільник</value></data>
+  <data name="ExportSchedule" xml:space="preserve"><value>Розклад</value></data>
+  <data name="ExportScheduleNone" xml:space="preserve"><value>Без розкладу (лише робочий процес)</value></data>
+  <data name="ExportScheduleDaily" xml:space="preserve"><value>Щодня</value></data>
+  <data name="ExportScheduleWeekly" xml:space="preserve"><value>Щотижня</value></data>
+  <data name="ExportScheduleMonthly" xml:space="preserve"><value>Щомісяця</value></data>
+  <data name="ExportScheduleHour" xml:space="preserve"><value>Година (місцевий час підрозділу)</value></data>
+  <data name="ExportScheduleDayOfWeek" xml:space="preserve"><value>День тижня (0 = неділя)</value></data>
+  <data name="ExportScheduleDayOfMonth" xml:space="preserve"><value>День місяця (1-28)</value></data>
+  <data name="ExportWindowDays" xml:space="preserve"><value>Період (днів)</value></data>
+  <data name="ExportWindowDaysHelp" xml:space="preserve"><value>0 використовує період розкладу: день, тиждень або місяць, що закінчується на момент запуску.</value></data>
+  <data name="ExportEnabled" xml:space="preserve"><value>Увімкнено</value></data>
+  <data name="ExportNextRun" xml:space="preserve"><value>Наступний запуск</value></data>
+  <data name="ExportLastRun" xml:space="preserve"><value>Останній запуск</value></data>
+  <data name="ExportRuns" xml:space="preserve"><value>Запуски</value></data>
+  <data name="ExportRunNow" xml:space="preserve"><value>Запустити зараз</value></data>
+  <data name="ExportRunNowHelp" xml:space="preserve"><value>Формує експорт для перевірки, перш ніж його побачить установа. Кожен запис у ньому фіксується в аудиті як експорт.</value></data>
+  <data name="ExportRunNowNeedsRecord" xml:space="preserve"><value>Цей експорт охоплює один запис-ініціатор: введіть ідентифікатор запису.</value></data>
+  <data name="ExportRunGenerated" xml:space="preserve"><value>Створено</value></data>
+  <data name="ExportRunRecords" xml:space="preserve"><value>Записи</value></data>
+  <data name="ExportRunSize" xml:space="preserve"><value>Байти</value></data>
+  <data name="ExportRunRedacted" xml:space="preserve"><value>Захищені поля вилучено з цього файлу</value></data>
+  <data name="ExportRunDownload" xml:space="preserve"><value>Завантажити</value></data>
+  <data name="ExportRunTrigger" xml:space="preserve"><value>Тригер</value></data>
+  <data name="ExportTemplateSaved" xml:space="preserve"><value>Експорт збережено.</value></data>
+  <data name="ExportTemplateDeleted" xml:space="preserve"><value>Експорт видалено. Кроки робочого процесу, що його використовували, не працюватимуть до оновлення.</value></data>
+  <data name="ExportTemplateDeleteConfirm" xml:space="preserve"><value>Видалити цей експорт?</value></data>
+  <data name="ExportNoTemplates" xml:space="preserve"><value>Ще не створено жодного експорту.</value></data>
+  <data name="ExportWorkflowHint" xml:space="preserve"><value>У конструкторі робочих процесів крок електронної пошти або завантаження файлу на тригері записів може прикріпити будь-який експорт із цього списку; запланований експорт створює власний тригер під час запуску.</value></data>
+  <data name="ExportTierSafe" xml:space="preserve"><value>Ідентифікатори, дати, коди та лічильники</value></data>
+  <data name="ExportTierNarrative" xml:space="preserve"><value>Опис та персональні дані (рівень 2)</value></data>
+  <data name="ExportTierRestricted" xml:space="preserve"><value>Обмежені розділи (рівень 1)</value></data>
+  <data name="ExportAdpWarning" xml:space="preserve"><value>Для цього підрозділу застосовано Розширений захист даних. Захищені стовпці вилучаються (REDACTED) з кожного запуску, доки не зафіксовано підтвердження вивантаження експорту.</value></data>
+  <data name="ProtectedRecordBanner" xml:space="preserve"><value>Захищений запис</value></data>
+  <data name="ProtectedIncidentBanner" xml:space="preserve"><value>Захищений звіт про інцидент</value></data>
+  <data name="ProtectedEditHint" xml:space="preserve"><value>Захищені поля приховані, доки ви не пройдете перевірку. Збереження цієї форми також потребує перевірки, тому пройдіть її перед редагуванням.</value></data>
+  <data name="ProtectedEditRevealed" xml:space="preserve"><value>Захищений вміст відкрито для цього сеансу редагування. Після збереження він залишається захищеним.</value></data>
+  <data name="NerisProtectedEgress" xml:space="preserve"><value>Дозволити надсилання захищеного вмісту інцидентів до NERIS</value></data>
+  <data name="NerisProtectedEgressHelp" xml:space="preserve"><value>За Розширеного захисту даних вміст у черзі запечатано. З цим підтвердженням служба надсилання відкриває його лише для доставки через цільовий канал брокера; без нього захищене надсилання безпечно завершується помилкою.</value></data>
+  <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>Підтверджено</value></data>
+  <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>Застосовано Розширений захист даних: захищені надсилання не працюватимуть, доки не зафіксовано це підтвердження.</value></data>
+  <data name="RecordId" xml:space="preserve"><value>Ідентифікатор запису</value></data>
 </root>

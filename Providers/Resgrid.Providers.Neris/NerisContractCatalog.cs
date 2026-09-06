@@ -119,7 +119,8 @@ namespace Resgrid.Providers.Neris
 			var contract = JObject.Parse(reader.ReadToEnd());
 			if ((string)contract["info"]?["version"] != NerisValueSetCatalog.Instance.ContractVersion)
 				throw new InvalidOperationException("The NERIS schema and value-set versions do not match.");
-			return new NerisContractCatalog((JObject)contract["components"]["schemas"]);
+			return new NerisContractCatalog(contract["components"]?["schemas"] as JObject
+				?? throw new InvalidOperationException("The pinned NERIS contract does not declare component schemas."));
 		}
 	}
 }

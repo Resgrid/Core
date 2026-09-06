@@ -115,6 +115,13 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<IncidentAdHocUnitRepository>().As<IIncidentAdHocUnitRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentAdHocPersonnelRepository>().As<IIncidentAdHocPersonnelRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentRoleAssignmentRepository>().As<IIncidentRoleAssignmentRepository>().InstancePerLifetimeScope();
+			// Kept in step with DataModule: the RMS-3 incident source feed resolves IncidentCommandService, which needs these.
+			builder.RegisterType<IncidentNeedRepository>().As<IIncidentNeedRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentNeedUpdateRepository>().As<IIncidentNeedUpdateRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentMapRepository>().As<IIncidentMapRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentNeedEntityRepository>().As<IIncidentNeedEntityRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentNoteRepository>().As<IIncidentNoteRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentAttachmentRepository>().As<IIncidentAttachmentRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatChannelRepository>().As<IChatChannelRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatChannelAccessRuleRepository>().As<IChatChannelAccessRuleRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatChannelMemberRepository>().As<IChatChannelMemberRepository>().InstancePerLifetimeScope();
@@ -304,6 +311,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RmsEvidenceArtifactsRepository>().As<IRmsEvidenceArtifactsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsDisclosureRequestsRepository>().As<IRmsDisclosureRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsDisclosureProductionsRepository>().As<IRmsDisclosureProductionsRepository>().InstancePerLifetimeScope();
+			// RMS department report exports (registry M0177, worker 45)
+			builder.RegisterType<RmsExportTemplatesRepository>().As<IRmsExportTemplatesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsExportRunsRepository>().As<IRmsExportRunsRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

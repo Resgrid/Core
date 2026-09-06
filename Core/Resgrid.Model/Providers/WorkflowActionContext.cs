@@ -27,5 +27,26 @@
 		/// recipient caps and per-action send limits.
 		/// </summary>
 		public bool IsFreePlanDepartment { get; init; }
+
+		/// <summary>
+		/// A file the step carries alongside its rendered content (RMS plan section 5.6: department report
+		/// exports). Email actions attach it; file-upload actions upload its bytes under its file name instead
+		/// of the rendered text. Null for every other step.
+		/// </summary>
+		public WorkflowAttachment Attachment { get; init; }
+	}
+
+	/// <summary>A rendered export handed to an executor: bytes, name and content type; never a path.</summary>
+	public sealed class WorkflowAttachment
+	{
+		public string FileName { get; init; }
+		public string ContentType { get; init; }
+		public byte[] Data { get; init; }
+
+		/// <summary>True when protected fields were withheld from the export (ADP enforcement without an acknowledged egress).</summary>
+		public bool Redacted { get; init; }
+
+		/// <summary>The stored RmsExportRun this attachment came from, for the run log.</summary>
+		public string ExportRunId { get; init; }
 	}
 }

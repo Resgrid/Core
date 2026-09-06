@@ -44,6 +44,7 @@ namespace Resgrid.Tests.Rms
 		private Call _call;
 		private IncidentReportsService _service;
 		private Mock<IRecordsAuthorizationService> _authorization;
+		private Mock<IIncidentSourceFeedService> _feeds;
 
 		[Test]
 		public async Task Starting_an_existing_report_rechecks_current_record_visibility()
@@ -115,6 +116,9 @@ namespace Resgrid.Tests.Rms
 			_neris.Setup(n => n.IsSubmissionEnabledAsync(Dept)).ReturnsAsync(() => _submissionEnabled);
 			_neris.Setup(n => n.ResolveCrosswalkAsync(Dept, "incident_type", NerisCrosswalkSources.CallType, "Fire")).ReturnsAsync("FIRE||STRUCTURE_FIRE||RESIDENTIAL");
 
+			_feeds = new Mock<IIncidentSourceFeedService>();
+			_feeds.Setup(f => f.GetPreplanSnapshotAsync(Dept, It.IsAny<Call>())).ReturnsAsync((int d, Call c) => new IncidentPreplanSnapshot { CallId = c?.CallId ?? 0 });
+
 			_localIssues = new List<RmsValidationIssue>();
 			_validation = new Mock<INerisValidationService>();
 			_validation.Setup(v => v.ValidateLocal(It.IsAny<NerisIncidentSnapshot>(), It.IsAny<RmsNerisProfile>())).Returns(() => _localIssues.ToList());
@@ -128,6 +132,8 @@ namespace Resgrid.Tests.Rms
 			_service = BuildService();
 		}
 
+		protected PassthroughRecordsProtection Protection { get; } = new PassthroughRecordsProtection();
+
 		private IncidentReportsService BuildService(IRecordsUdfService udf = null, IRecordsEvidenceService evidence = null)
 		{
 			var outbox = new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object);
@@ -138,7 +144,8 @@ namespace Resgrid.Tests.Rms
 				_store.Shared.RevisionsRepo.Object, _store.Shared.AuditsRepo.Object,
 				_store.Shared.ScopesRepo.Object, _store.Shared.SharesRepo.Object, _store.Shared.ProjectionsRepo.Object, outbox, _settings.Object,
 				_groups.Object, _profiles.Object, _roles.Object, _units.Object, _calls.Object, _adp.Object, _store.UnitOfWork.Object,
-				_neris.Object, new NerisMappingService(), _validation.Object, _authorization.Object, _store.Shared.AttachmentsRepo.Object, _store.Shared.EvidenceRepo.Object, udf ?? Mock.Of<IRecordsUdfService>(), evidence ?? Mock.Of<IRecordsEvidenceService>());
+				_neris.Object, new NerisMappingService(), _validation.Object, _authorization.Object, _store.Shared.AttachmentsRepo.Object, _store.Shared.EvidenceRepo.Object, udf ?? Mock.Of<IRecordsUdfService>(), evidence ?? Mock.Of<IRecordsEvidenceService>(),
+				_feeds.Object, Protection);
 		}
 
 		[Test]

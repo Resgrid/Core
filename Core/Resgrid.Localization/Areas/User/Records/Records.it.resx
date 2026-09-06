@@ -964,4 +964,104 @@
   <data name="CredentialRequiredForGrantTypeChange" xml:space="preserve">
     <value>Quando cambia il tipo di concessione NERIS sono necessarie nuove credenziali.</value>
   </data>
+  <data name="DisclosureSettingsHeader" xml:space="preserve"><value>Divulgazione dei registri pubblici</value></data>
+  <data name="DisclosureSettingsIntro" xml:space="preserve"><value>Impostazioni predefinite del flusso di divulgazione: il termine legale di risposta, il profilo di oscuramento con cui inizia una nuova richiesta e chi rilascia un pacchetto prodotto.</value></data>
+  <data name="StatutoryClockDays" xml:space="preserve"><value>Termine legale di risposta (giorni)</value></data>
+  <data name="StatutoryClockDaysHelp" xml:space="preserve"><value>Giorni entro cui scade una nuova richiesta, contati dalla data di ricezione. Da 1 a 365.</value></data>
+  <data name="DefaultRedactionProfile" xml:space="preserve"><value>Profilo di oscuramento predefinito</value></data>
+  <data name="DefaultRedactionProfileHelp" xml:space="preserve"><value>Applicato a una nuova richiesta a meno che il responsabile ne scelga un altro.</value></data>
+  <data name="DisclosureReleaseApprover" xml:space="preserve"><value>Approvatore del rilascio</value></data>
+  <data name="DisclosureReleaseApproverHelp" xml:space="preserve"><value>Il membro che rilascia i pacchetti prodotti. Lasciare vuoto per qualsiasi amministratore del dipartimento.</value></data>
+  <data name="DisclosureApproverAnyAdmin" xml:space="preserve"><value>Qualsiasi amministratore del dipartimento</value></data>
+  <data name="RedactionProfileStandard" xml:space="preserve"><value>Standard - trattenere il contenuto riservato</value></data>
+  <data name="RedactionProfileNoPersonalIdentifiers" xml:space="preserve"><value>Senza identificativi personali - trattenere anche le identità dei partecipanti</value></data>
+  <data name="RedactionProfileFullDisclosure" xml:space="preserve"><value>Divulgazione completa - rilasciare tutto ciò che è conservato</value></data>
+  <data name="NfirsLegacyHeader" xml:space="preserve"><value>Vista NFIRS (storica)</value></data>
+  <data name="NfirsLegacyButton" xml:space="preserve"><value>Vista NFIRS</value></data>
+  <data name="NfirsLegacyIntro" xml:space="preserve"><value>I campi del modulo base NFIRS così come possono essere letti dai dati che questo dipartimento già conserva, e il fatto o la sezione NERIS che li porta in avanti.</value></data>
+  <data name="NfirsLegacyReadOnlyNotice" xml:space="preserve"><value>Sola lettura. NFIRS è stato ritirato il 31/01/2026; nulla in questa pagina viene importato, redatto o inviato.</value></data>
+  <data name="NfirsField" xml:space="preserve"><value>Campo NFIRS</value></data>
+  <data name="NfirsStatus" xml:space="preserve"><value>Stato del campo</value></data>
+  <data name="NfirsStatusPopulated" xml:space="preserve"><value>Compilato</value></data>
+  <data name="NfirsStatusMissing" xml:space="preserve"><value>Mancante</value></data>
+  <data name="NfirsStatusNotCaptured" xml:space="preserve"><value>Non rilevato</value></data>
+  <data name="NfirsRequired" xml:space="preserve"><value>Obbligatorio in NFIRS</value></data>
+  <data name="NfirsRequiredLegend" xml:space="preserve"><value>* Richiesto dal modulo base NFIRS.</value></data>
+  <data name="NerisEquivalent" xml:space="preserve"><value>Equivalente NERIS</value></data>
+  <data name="NerisNoEquivalent" xml:space="preserve"><value>Nessun equivalente NERIS (solo dipartimento)</value></data>
+  <data name="NerisCarried" xml:space="preserve"><value>Presente nel rapporto NERIS</value></data>
+  <data name="NerisNotYetCarried" xml:space="preserve"><value>Non ancora nel rapporto NERIS</value></data>
+  <data name="NfirsCrosswalkSummary" xml:space="preserve"><value>Riepilogo della corrispondenza</value></data>
+  <data name="NfirsNoNerisReport" xml:space="preserve"><value>Nessun rapporto NERIS è stato avviato per questa chiamata.</value></data>
+  <data name="NfirsRequiredMissing" xml:space="preserve"><value>Campi obbligatori mancanti</value></data>
+  <data name="NfirsCrosswalked" xml:space="preserve"><value>Campi con equivalente NERIS</value></data>
+  <data name="NfirsSunsetNote" xml:space="preserve"><value>I dati NFIRS sono mostrati solo per continuità storica. Le nuove segnalazioni vanno a NERIS.</value></data>
+  <data name="IncidentReport" xml:space="preserve"><value>Rapporto di incidente</value></data>
+  <data name="Value" xml:space="preserve"><value>Valore</value></data>
+  <data name="GeneratedOn" xml:space="preserve"><value>Generato</value></data>
+  <data name="ExportTemplates" xml:space="preserve"><value>Esportazioni di report</value></data>
+  <data name="ExportTemplatesIntro" xml:space="preserve"><value>Progetta il file che riceve un ente senza API: scegli colonne, formato e ambito, poi allega l'esportazione a un passaggio del flusso di lavoro o pianificala.</value></data>
+  <data name="NewExportTemplate" xml:space="preserve"><value>Nuova esportazione</value></data>
+  <data name="EditExportTemplate" xml:space="preserve"><value>Modifica esportazione</value></data>
+  <data name="ExportTemplateName" xml:space="preserve"><value>Nome esportazione</value></data>
+  <data name="ExportTemplateKey" xml:space="preserve"><value>Chiave</value></data>
+  <data name="ExportTemplateKeyHelp" xml:space="preserve"><value>Lettere minuscole, cifre e trattini. Un passaggio del flusso di lavoro e l'importazione dell'ente vi fanno affidamento: non cambia più una volta in uso.</value></data>
+  <data name="ExportTemplateDescription" xml:space="preserve"><value>Descrizione</value></data>
+  <data name="ExportFormat" xml:space="preserve"><value>Formato</value></data>
+  <data name="ExportScope" xml:space="preserve"><value>Ambito</value></data>
+  <data name="ExportScopeTriggeringRecord" xml:space="preserve"><value>Il record scatenante</value></data>
+  <data name="ExportScopeWindow" xml:space="preserve"><value>Tutti i record finalizzati in una finestra</value></data>
+  <data name="ExportDefinitions" xml:space="preserve"><value>Definizioni di record</value></data>
+  <data name="ExportDefinitionsHelp" xml:space="preserve"><value>Lascia deselezionate tutte le definizioni per esportarle tutte.</value></data>
+  <data name="ExportColumns" xml:space="preserve"><value>Colonne</value></data>
+  <data name="ExportColumnsHelp" xml:space="preserve"><value>Le colonne provengono da un catalogo fisso e verificato. Le colonne narrative e riservate richiedono l'interruttore sottostante e una conferma di uscita.</value></data>
+  <data name="ExportIncludeNarrative" xml:space="preserve"><value>Includi narrativa e dettagli personali (Livello 2)</value></data>
+  <data name="ExportIncludeRestricted" xml:space="preserve"><value>Includi sezioni riservate (Livello 1)</value></data>
+  <data name="ExportEgressAcknowledge" xml:space="preserve"><value>Riconosco che questa esportazione invia contenuti narrativi o riservati fuori da Resgrid alla destinazione indicata dal flusso di lavoro.</value></data>
+  <data name="ExportEgressAcknowledgedOn" xml:space="preserve"><value>Uscita confermata</value></data>
+  <data name="ExportFileNameTemplate" xml:space="preserve"><value>Nome file</value></data>
+  <data name="ExportFileNameHelp" xml:space="preserve"><value>Segnaposto: {template}, {date}, {record}. L'estensione segue il formato.</value></data>
+  <data name="ExportIncludeHeader" xml:space="preserve"><value>Includi riga di intestazione</value></data>
+  <data name="ExportDelimiter" xml:space="preserve"><value>Delimitatore</value></data>
+  <data name="ExportSchedule" xml:space="preserve"><value>Pianificazione</value></data>
+  <data name="ExportScheduleNone" xml:space="preserve"><value>Nessuna pianificazione (solo flusso di lavoro)</value></data>
+  <data name="ExportScheduleDaily" xml:space="preserve"><value>Giornaliero</value></data>
+  <data name="ExportScheduleWeekly" xml:space="preserve"><value>Settimanale</value></data>
+  <data name="ExportScheduleMonthly" xml:space="preserve"><value>Mensile</value></data>
+  <data name="ExportScheduleHour" xml:space="preserve"><value>Ora (ora locale del dipartimento)</value></data>
+  <data name="ExportScheduleDayOfWeek" xml:space="preserve"><value>Giorno della settimana (0 = domenica)</value></data>
+  <data name="ExportScheduleDayOfMonth" xml:space="preserve"><value>Giorno del mese (1-28)</value></data>
+  <data name="ExportWindowDays" xml:space="preserve"><value>Finestra (giorni)</value></data>
+  <data name="ExportWindowDaysHelp" xml:space="preserve"><value>0 usa il periodo della pianificazione: un giorno, una settimana o un mese fino all'esecuzione.</value></data>
+  <data name="ExportEnabled" xml:space="preserve"><value>Abilitato</value></data>
+  <data name="ExportNextRun" xml:space="preserve"><value>Prossima esecuzione</value></data>
+  <data name="ExportLastRun" xml:space="preserve"><value>Ultima esecuzione</value></data>
+  <data name="ExportRuns" xml:space="preserve"><value>Esecuzioni</value></data>
+  <data name="ExportRunNow" xml:space="preserve"><value>Esegui ora</value></data>
+  <data name="ExportRunNowHelp" xml:space="preserve"><value>Genera l'esportazione per verificarla prima che la veda un ente. Ogni record incluso viene registrato come esportazione.</value></data>
+  <data name="ExportRunNowNeedsRecord" xml:space="preserve"><value>Questa esportazione copre un record scatenante: inserisci l'ID del record.</value></data>
+  <data name="ExportRunGenerated" xml:space="preserve"><value>Generato</value></data>
+  <data name="ExportRunRecords" xml:space="preserve"><value>Record</value></data>
+  <data name="ExportRunSize" xml:space="preserve"><value>Byte</value></data>
+  <data name="ExportRunRedacted" xml:space="preserve"><value>Campi protetti esclusi da questo file</value></data>
+  <data name="ExportRunDownload" xml:space="preserve"><value>Scarica</value></data>
+  <data name="ExportRunTrigger" xml:space="preserve"><value>Attivazione</value></data>
+  <data name="ExportTemplateSaved" xml:space="preserve"><value>L'esportazione è stata salvata.</value></data>
+  <data name="ExportTemplateDeleted" xml:space="preserve"><value>L'esportazione è stata eliminata. I passaggi del flusso di lavoro che la usavano falliranno finché non saranno aggiornati.</value></data>
+  <data name="ExportTemplateDeleteConfirm" xml:space="preserve"><value>Eliminare questa esportazione?</value></data>
+  <data name="ExportNoTemplates" xml:space="preserve"><value>Nessuna esportazione è stata ancora progettata.</value></data>
+  <data name="ExportWorkflowHint" xml:space="preserve"><value>Nel designer del flusso di lavoro, un passaggio e-mail o di caricamento file su un'attivazione dei record può allegare qualsiasi esportazione qui elencata; un'esportazione pianificata genera la propria attivazione quando viene eseguita.</value></data>
+  <data name="ExportTierSafe" xml:space="preserve"><value>Identità, date, codici e conteggi</value></data>
+  <data name="ExportTierNarrative" xml:space="preserve"><value>Narrativa e dettagli personali (Livello 2)</value></data>
+  <data name="ExportTierRestricted" xml:space="preserve"><value>Sezioni riservate (Livello 1)</value></data>
+  <data name="ExportAdpWarning" xml:space="preserve"><value>La Protezione avanzata dei dati è applicata a questo dipartimento. Le colonne protette vengono escluse (REDACTED) da ogni esecuzione finché non viene registrata la conferma di uscita dell'esportazione.</value></data>
+  <data name="ProtectedRecordBanner" xml:space="preserve"><value>Record protetto</value></data>
+  <data name="ProtectedIncidentBanner" xml:space="preserve"><value>Rapporto di intervento protetto</value></data>
+  <data name="ProtectedEditHint" xml:space="preserve"><value>I campi protetti restano nascosti finché non esegui la verifica. Anche il salvataggio di questo modulo richiede la verifica, quindi verifica prima di modificare.</value></data>
+  <data name="ProtectedEditRevealed" xml:space="preserve"><value>Il contenuto protetto è visibile per questa sessione di modifica. Il salvataggio lo mantiene protetto.</value></data>
+  <data name="NerisProtectedEgress" xml:space="preserve"><value>Consenti l'invio di contenuti di intervento protetti a NERIS</value></data>
+  <data name="NerisProtectedEgressHelp" xml:space="preserve"><value>Con la Protezione avanzata dei dati il payload in coda è sigillato. Con questa conferma il servizio di invio lo apre solo per la consegna tramite il canale dedicato del broker; senza di essa un invio protetto fallisce in sicurezza.</value></data>
+  <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>Confermato il</value></data>
+  <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>La Protezione avanzata dei dati è applicata: gli invii protetti falliranno finché non viene registrata questa conferma.</value></data>
+  <data name="RecordId" xml:space="preserve"><value>ID record</value></data>
 </root>

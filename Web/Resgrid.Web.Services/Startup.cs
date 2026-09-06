@@ -680,6 +680,7 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterModule(new DataModule());
 			builder.RegisterModule(new NoSqlDataModule());
 			builder.RegisterModule(new ServicesModule());
+			builder.RegisterType<Resgrid.Web.Services.Helpers.HttpProtectedGrantContext>().As<IProtectedGrantContext>().InstancePerLifetimeScope();
 			builder.RegisterModule(new Resgrid.Search.SearchModule());
 			builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Neris.NerisProviderModule());

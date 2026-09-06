@@ -615,4 +615,7 @@
   <data name="SkippedRuns" xml:space="preserve">
     <value>Übersprungen</value>
   </data>
+  <data name="ExportTemplate" xml:space="preserve"><value>Berichtsexport (Datensätze)</value></data>
+  <data name="ExportTemplateNone" xml:space="preserve"><value>Keiner (nur die gerenderte Vorlage senden)</value></data>
+  <data name="ExportTemplateHelp" xml:space="preserve"><value>E-Mail-Schritte hängen den Export an; Datei-Upload-Schritte laden ihn unter seinem Dateinamen statt des gerenderten Textes hoch. Exporte werden unter Datensätze &gt; Berichtsexporte angelegt.</value></data>
 </root>

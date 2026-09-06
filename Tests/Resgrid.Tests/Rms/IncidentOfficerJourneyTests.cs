@@ -40,7 +40,7 @@ namespace Resgrid.Tests.Rms
 				ResultJson = "{\"decision\":\"Engine 5 selected\",\"caller\":\"Private caller identity\"}" } });
 			var evidence = new RecordsEvidenceService(_store.Shared.EvidenceRepo.Object, _store.Shared.RecordsRepo.Object, _store.ReportsRepo.Object,
 				_store.Shared.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { new RunCardActivationEvidenceAdapter(activations.Object) },
-				_authorization.Object, _calls.Object, Mock.Of<IRmsExternalReferencesRepository>());
+				_authorization.Object, _calls.Object, Mock.Of<IRmsExternalReferencesRepository>(), new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object));
 			_service = BuildService(udf, evidence);
 			var started = await _service.StartFromCallAsync(Dept, "author", CallId); var id = started.Report.RmsIncidentReportId;
 			var sample = Resgrid.Tests.Providers.NerisMappingTests.Snapshot();
@@ -57,7 +57,7 @@ namespace Resgrid.Tests.Rms
 			var scanner = new Mock<IRecordAttachmentScanner>(); scanner.Setup(s => s.ScanAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new RecordAttachmentScanResult { State = RmsAttachmentScanState.Clean });
 			var files = new IncidentAttachmentsService(_store.ReportsRepo.Object, _store.Shared.AttachmentsRepo.Object, _store.Shared.RevisionsRepo.Object,
-				_store.Shared.AuditsRepo.Object, _authorization.Object, scanner.Object, _store.UnitOfWork.Object);
+				_store.Shared.AuditsRepo.Object, _authorization.Object, scanner.Object, _store.UnitOfWork.Object, new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object));
 			var file = await files.AddAsync(Dept, "author", id, (await _service.GetAsync(Dept, id)).Report.RowVersion, "scene.txt", "text/plain",
 				Encoding.UTF8.GetBytes("Officer's reviewed scene notes"), "Scene observations", classification: 0);
 			var captured = await evidence.CaptureAsync(new RecordEvidenceCaptureRequest { DepartmentId = Dept, CapturedByUserId = "author", RecordId = id,
@@ -77,7 +77,7 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync(new NerisSubmissionOutcome { Kind = NerisOutcomeKind.Rejected, StatusCode = 422, ResponseJson = "{\"detail\":\"Review outcome narrative\"}" });
 			var worker = new RecordsSubmissionService(_store.SubmissionsRepo.Object, _store.ReportsRepo.Object, _store.AnalysesRepo.Object, _store.Shared.ProjectionsRepo.Object,
 				_store.Shared.AuditsRepo.Object, _neris.Object, delivery.Object, new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object),
-				Mock.Of<IOutboundQueueProvider>(), _store.UnitOfWork.Object, _store.Shared.CutoversRepo.Object, Mock.Of<IIncidentAnalysisService>(), _store.ExchangesRepo.Object, _authorization.Object);
+				Mock.Of<IOutboundQueueProvider>(), _store.UnitOfWork.Object, _store.Shared.CutoversRepo.Object, Mock.Of<IIncidentAnalysisService>(), _store.ExchangesRepo.Object, _authorization.Object, new PassthroughRecordsProtection());
 			void Lease(RmsSubmission submission) { submission.LeaseOwner = "journey-worker"; submission.LeaseExpiresOn = DateTime.UtcNow.AddMinutes(5); submission.RowVersion++; }
 			Lease(firstSubmission); (await worker.ProcessAsync(firstSubmission)).State.Should().Be((int)RmsSubmissionState.Rejected);
 			var rejected = await _service.GetAsync(Dept, id); rejected.State.Should().Be(RmsRecordState.Rejected);
@@ -99,7 +99,7 @@ namespace Resgrid.Tests.Rms
 			pdf.Setup(p => p.ConvertHtmlToPdf(It.IsAny<string>(), "Letter")).Returns((string html, string paper) => { rendered.Add(html); return Encoding.ASCII.GetBytes("%PDF-journey-fixture"); });
 			var branding = new Mock<IDepartmentProfileMediaService>(); branding.Setup(b => b.GetBrandingAsync(Dept)).ReturnsAsync(new DepartmentBranding { DisplayName = "Journey Fire Department" });
 			var documents = new RecordsDocumentService(_authorization.Object, _store.Shared.RecordsRepo.Object, _store.ReportsRepo.Object, _store.AnalysesRepo.Object,
-				_store.Shared.RevisionsRepo.Object, _service, branding.Object, Mock.Of<IRecordsPrintLayoutService>(), pdf.Object, evidence, udf);
+				_store.Shared.RevisionsRepo.Object, _service, branding.Object, Mock.Of<IRecordsPrintLayoutService>(), pdf.Object, evidence, udf, new PassthroughRecordsProtection());
 			var original = await documents.GetAsync(Dept, "author", id, RmsRecordKind.IncidentReport, firstRevision.RmsRevisionId, true);
 			var corrected = await documents.GetAsync(Dept, "author", id, RmsRecordKind.IncidentReport, secondRevision.RmsRevisionId, true);
 			JObject.Parse(original.ContentJson)["CustomFields"]["Fields"][0]["Value"].Value<string>().Should().Be("23");
@@ -112,7 +112,7 @@ namespace Resgrid.Tests.Rms
 
 			var disclosures = new RecordsDisclosureService(_store.Shared.DisclosureRequestsRepo.Object, _store.Shared.DisclosureProductionsRepo.Object,
 				_store.Shared.RecordsRepo.Object, _store.Shared.RevisionsRepo.Object, _store.Shared.AuditsRepo.Object, _authorization.Object, _settings.Object,
-				_store.UnitOfWork.Object, _store.ReportsRepo.Object, documents, _store.Shared.AttachmentsRepo.Object, pdf.Object, _store.AnalysesRepo.Object, scanner.Object, udf);
+				_store.UnitOfWork.Object, _store.ReportsRepo.Object, documents, _store.Shared.AttachmentsRepo.Object, pdf.Object, _store.AnalysesRepo.Object, scanner.Object, udf, new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object));
 			var request = await disclosures.CreateRequestAsync(Dept, "custodian", new RmsDisclosureRequest { RequesterName = "Training requester", JurisdictionProfile = "Fixture jurisdiction", ReceivedOn = DateTime.UtcNow });
 			await disclosures.SaveScopeAsync(Dept, "custodian", request.RmsDisclosureRequestId, "Incident and supporting file", new RmsRecordQuery { CallId = CallId, DefinitionKey = RmsDefinitionKeys.NerisIncidentReport }, RmsRedactionProfiles.Standard);
 			var review = await disclosures.GetReviewAsync(Dept, "custodian", request.RmsDisclosureRequestId);

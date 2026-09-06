@@ -200,6 +200,9 @@ namespace Resgrid.Model
 		public decimal? Latitude { get; set; }
 
 		public decimal? Longitude { get; set; }
+		/// <summary>ADP companion envelopes (catalog v10) for the exposure coordinates.</summary>
+		public string ProtectedLatitudeEnvelope { get; set; }
+		public string ProtectedLongitudeEnvelope { get; set; }
 
 		public decimal? EstimatedValue { get; set; }
 

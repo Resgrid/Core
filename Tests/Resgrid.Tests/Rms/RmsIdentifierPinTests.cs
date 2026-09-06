@@ -98,6 +98,31 @@ namespace Resgrid.Tests.Rms
 			program.Should().Contain("new Commands.RmsDueStateEvaluationCommand(42)");
 			program.Should().Contain("new Commands.RmsRetentionAndPurgeCommand(43)");
 			program.Should().Contain("new Commands.RecordsSearchIndexCommand(44)");
+			// RMS-3e (2026-09-05): department report exports on a schedule.
+			program.Should().Contain("new Commands.RmsScheduledExportCommand(45)");
+		}
+
+		[Test]
+		public void Workflow_triggers_in_the_rms_3e_block_are_the_registry_values()
+		{
+			// Block 1 gaps filled (103 approved, 115 attachment added) and block 2 (152-163) opened for the
+			// disclosure, legal hold, evidence, purge and export events (registry section 1, 2026-09-05).
+			((int)WorkflowTriggerEventType.RecordApproved).Should().Be(103);
+			((int)WorkflowTriggerEventType.RecordAttachmentAdded).Should().Be(115);
+			((int)WorkflowTriggerEventType.RecordDisclosureRequested).Should().Be(152);
+			((int)WorkflowTriggerEventType.RecordDisclosureProduced).Should().Be(153);
+			((int)WorkflowTriggerEventType.RecordDisclosureReleased).Should().Be(154);
+			((int)WorkflowTriggerEventType.RecordDisclosureClosed).Should().Be(155);
+			((int)WorkflowTriggerEventType.RecordLegalHoldPlaced).Should().Be(156);
+			((int)WorkflowTriggerEventType.RecordLegalHoldReleased).Should().Be(157);
+			((int)WorkflowTriggerEventType.RecordEvidenceCaptured).Should().Be(158);
+			((int)WorkflowTriggerEventType.RecordPurged).Should().Be(159);
+			((int)WorkflowTriggerEventType.RecordExportScheduled).Should().Be(160);
+
+			foreach (var value in Enumerable.Range(161, 3))
+				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved in the RMS block 2");
+			WorkflowTriggerEventTypes.IsRecordsTrigger(WorkflowTriggerEventType.RecordExportScheduled).Should().BeTrue();
+			WorkflowTriggerEventTypes.IsRecordsTrigger((WorkflowTriggerEventType)151).Should().BeFalse("151 belongs to AI Dispatch");
 		}
 
 		private static string ProgramSource()

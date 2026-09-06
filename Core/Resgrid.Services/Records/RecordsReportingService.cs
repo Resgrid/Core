@@ -26,10 +26,13 @@ namespace Resgrid.Services.Records
 		private readonly IRmsRecordGroupScopesRepository _scopes;
 		private readonly IRecordsAuthorizationService _authorization;
 
+		private readonly IRecordsProtectionService _protection;
+
 		public RecordsReportingService(IWorkLogsService legacyLogs, IRecordsCutoverService cutover, IRmsOperationalRecordsRepository records,
 			IRmsRevisionsRepository revisions,
-			IRmsRecordGroupScopesRepository scopes, IRecordsAuthorizationService authorization)
+			IRmsRecordGroupScopesRepository scopes, IRecordsAuthorizationService authorization, IRecordsProtectionService protection)
 		{
+			_protection = protection;
 			_legacyLogs = legacyLogs;
 			_cutover = cutover;
 			_records = records;
@@ -80,6 +83,8 @@ namespace Resgrid.Services.Records
 				? null
 				: (await _scopes.GetForRecordsAsync(departmentId, ids) ?? Enumerable.Empty<RmsRecordGroupScope>()).ToLookup(s => s.RecordId, StringComparer.Ordinal);
 
+			// Reporting totals participants from the attested snapshots, so a protected department needs the caller's grant (ADP).
+			(await _protection.RevealRevisionsAsync(departmentId, revisions.Values.ToList())).RequireRevealed("reporting");
 			foreach (var record in records)
 			{
 				if (record.PurgedOn.HasValue || record.CurrentRevisionId == null || !revisions.TryGetValue(record.CurrentRevisionId, out var revision)

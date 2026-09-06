@@ -43,12 +43,14 @@ namespace Resgrid.Services.Records
 		private readonly IDomainEventOutboxService _outbox;
 		private readonly IOutboundQueueProvider _outboundQueue;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IRecordsProtectionService _protection;
 
 		public RecordsSubmissionService(IRmsSubmissionsRepository submissions, IRmsIncidentReportsRepository reports, IRmsIncidentAnalysesRepository analyses, IRmsRecordSearchProjectionsRepository projections,
 			IRmsAccessAuditsRepository audits, INerisProfileService profiles, INerisSubmissionService delivery, IDomainEventOutboxService outbox,
 			IOutboundQueueProvider outboundQueue, IUnitOfWork unitOfWork, IRmsDepartmentCutoversRepository cutovers, IIncidentAnalysisService analysisService,
-			IRmsSubmissionExchangesRepository exchanges, IRecordsAuthorizationService authorization)
+			IRmsSubmissionExchangesRepository exchanges, IRecordsAuthorizationService authorization, IRecordsProtectionService protection)
 		{
+			_protection = protection;
 			_submissions = submissions;
 			_exchanges = exchanges;
 			_authorization = authorization;
@@ -329,11 +331,17 @@ namespace Resgrid.Services.Records
 			try { externalId = ResolveDestinationId(await _submissions.GetForRecordAsync(submission.DepartmentId, submission.RecordId), submission.DestinationIdentity, submission.ExternalId ?? report.NerisIncidentId); }
 			catch (InvalidOperationException ex) { return await PersistAsync(submission, report, Fatal(ex.Message), now, false, cancellationToken); }
 			var operation = !wasDelivery ? "Poll" : string.IsNullOrEmpty(externalId) ? "Create" : "Update";
+			// ADP (RMS plan section 5.9.4): the queued payload is sealed at rest. It is opened onto a wire copy through
+			// the broker's purpose-bound workload lane only when the department acknowledged protected egress to
+			// this destination; the persisted row never sees plaintext, and a refusal fails the delivery closed.
+			var wire = Copy(submission);
+			if (wasDelivery && !await _protection.ResolveSubmissionForWorkloadAsync(wire.DepartmentId, wire, RecordsProtectionService.NerisSubmissionPurpose, cancellationToken))
+				return await PersistAsync(submission, report, Fatal(ProtectedEgressUnavailable), now, false, cancellationToken);
 			try
 			{
-				var exchange = await ExchangeAsync(submission, profile, operation, () => !wasDelivery
+				var exchange = await ExchangeAsync(submission, wire.PayloadJson, profile, operation, () => !wasDelivery
 					? _delivery.CheckStatusAsync(profile, externalId, cancellationToken)
-					: _delivery.DeliverAsync(profile, submission, externalId, cancellationToken), cancellationToken);
+					: _delivery.DeliverAsync(profile, wire, externalId, cancellationToken), cancellationToken);
 				return await PersistAsync(submission, report, exchange.outcome, DateTime.UtcNow, wasDelivery, cancellationToken, exchange.entry);
 			}
 			catch (SubmissionLeaseLostException) { return await _submissions.GetByIdForDepartmentAsync(submission.DepartmentId, submission.RmsSubmissionId) ?? submission; }
@@ -375,11 +383,14 @@ namespace Resgrid.Services.Records
 			}
 			catch (InvalidOperationException ex) { return await PersistAnalysisAsync(submission, analysis, Fatal(ex.Message), now, false, cancellationToken); }
 			var operation = !wasDelivery ? "Poll" : string.IsNullOrEmpty(externalId) ? "Create" : "Update";
+			var wire = Copy(submission);
+			if (wasDelivery && !await _protection.ResolveSubmissionForWorkloadAsync(wire.DepartmentId, wire, RecordsProtectionService.NerisSubmissionPurpose, cancellationToken))
+				return await PersistAnalysisAsync(submission, analysis, Fatal(ProtectedEgressUnavailable), now, false, cancellationToken);
 			try
 			{
-				var exchange = await ExchangeAsync(submission, profile, operation, () => !wasDelivery
+				var exchange = await ExchangeAsync(submission, wire.PayloadJson, profile, operation, () => !wasDelivery
 					? _delivery.CheckAnalysisStatusAsync(profile, externalId, cancellationToken)
-					: _delivery.DeliverAnalysisAsync(profile, submission, parentExternalId, externalId, cancellationToken), cancellationToken);
+					: _delivery.DeliverAnalysisAsync(profile, wire, parentExternalId, externalId, cancellationToken), cancellationToken);
 				return await PersistAnalysisAsync(submission, analysis, exchange.outcome, DateTime.UtcNow, wasDelivery, cancellationToken, exchange.entry);
 			}
 			catch (SubmissionLeaseLostException) { return await _submissions.GetByIdForDepartmentAsync(submission.DepartmentId, submission.RmsSubmissionId) ?? submission; }
@@ -387,6 +398,7 @@ namespace Resgrid.Services.Records
 
 		private async Task<RmsSubmission> PersistAnalysisAsync(RmsSubmission submission, RmsIncidentAnalysis analysis, NerisSubmissionOutcome outcome, DateTime now, bool wasDelivery, CancellationToken cancellationToken, RmsSubmissionExchange exchange = null)
 		{
+			var outboxIds = new List<long>();
 			await InTransactionAsync(async () =>
 			{
 				await FenceAsync(submission, cancellationToken);
@@ -405,6 +417,7 @@ namespace Resgrid.Services.Records
 					submission.ExternalStatus = outcome.ExternalStatus;
 
 				RmsIncidentAnalysisState? analysisState = null;
+				WorkflowTriggerEventType? trigger = null;
 				string auditPurpose;
 
 				switch (outcome.Kind)
@@ -425,6 +438,7 @@ namespace Resgrid.Services.Records
 						submission.NextAttemptOn = null;
 						submission.ErrorSummary = null;
 						analysisState = RmsIncidentAnalysisState.Accepted;
+						trigger = WorkflowTriggerEventType.RecordSubmissionAccepted;
 						auditPurpose = "Analysis accepted";
 						break;
 
@@ -434,6 +448,7 @@ namespace Resgrid.Services.Records
 						submission.NextAttemptOn = null;
 						submission.ErrorSummary = Summarize(outcome);
 						analysisState = RmsIncidentAnalysisState.Rejected;
+						trigger = WorkflowTriggerEventType.RecordSubmissionRejected;
 						auditPurpose = "Analysis rejected";
 						break;
 
@@ -447,6 +462,7 @@ namespace Resgrid.Services.Records
 							submission.CompletedOn = now;
 							submission.NextAttemptOn = null;
 							submission.ErrorSummary = "Delivery exhausted its retries: " + (outcome.Message ?? "destination unavailable");
+							trigger = WorkflowTriggerEventType.RecordSubmissionFailed;
 							auditPurpose = "Analysis submission failed (retries exhausted)";
 						}
 						else
@@ -464,6 +480,7 @@ namespace Resgrid.Services.Records
 						submission.CompletedOn = now;
 						submission.NextAttemptOn = null;
 						submission.ErrorSummary = outcome.Message ?? "Delivery needs operator attention.";
+						trigger = WorkflowTriggerEventType.RecordSubmissionFailed;
 						auditPurpose = "Analysis submission failed";
 						break;
 				}
@@ -472,6 +489,7 @@ namespace Resgrid.Services.Records
 				submission.LeaseExpiresOn = null;
 				submission.ModifiedOn = now;
 				submission.RowVersion += 1;
+				await _protection.ProtectSubmissionAsync(submission.DepartmentId, submission, null, cancellationToken);
 				await _submissions.UpdateAsync(submission, cancellationToken, true);
 				if (exchange?.Stage == "Response") await AppendExchangeAsync(exchange, "Applied", null, cancellationToken);
 
@@ -491,6 +509,32 @@ namespace Resgrid.Services.Records
 					analysis.RowVersion += 1;
 					await _analyses.UpdateAsync(analysis, cancellationToken, true);
 
+					if (trigger.HasValue)
+					{
+						// Same triggers as the incident (109-111) with record.kind = "IncidentAnalysis" and
+						// submission.destination = NerisIncidentAnalysis, so a subscriber can tell the two filings apart.
+						var parent = await _reports.GetByIdForDepartmentAsync(analysis.DepartmentId, analysis.IncidentReportId);
+						var entry = await _outbox.EnqueueAsync(analysis.DepartmentId, DomainEventProducers.Records, new DomainEventEnvelope
+						{
+							EventName = trigger.Value.ToString(),
+							SchemaVersion = 1,
+							AggregateType = IncidentAnalysisService.AnalysisAggregate,
+							AggregateId = analysis.RmsIncidentAnalysisId,
+							AggregateVersion = analysis.RevisionCount,
+							Trigger = trigger.Value,
+							Payload = new Dictionary<string, object>
+							{
+								["record"] = IncidentAnalysisService.RecordBlock(analysis, parent, null, (RmsIncidentAnalysisState)analysis.State),
+								["record_change"] = new { previous_state = "Submitted", current_state = ((RmsIncidentAnalysisState)analysis.State).ToString(), prior_revision_id = (string)null, current_revision_id = analysis.CurrentRevisionId, reason_code = (string)null },
+								["submission"] = IncidentReportsService.SubmissionBlock(submission),
+								["protection"] = IncidentReportsService.ProtectionBlock(await _protection.GetCatalogVersionAsync(analysis.DepartmentId))
+							},
+							CorrelationId = analysis.IncidentReportId,
+							OriginClient = RmsOriginClient.System
+						}, cancellationToken);
+						outboxIds.Add(entry.DomainEventOutboxId);
+					}
+
 					await _audits.InsertAsync(new RmsAccessAudit
 					{
 						DepartmentId = analysis.DepartmentId,
@@ -505,6 +549,7 @@ namespace Resgrid.Services.Records
 					}, cancellationToken, true);
 				}
 			});
+			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 
 			return submission;
 		}
@@ -604,6 +649,7 @@ namespace Resgrid.Services.Records
 				submission.LeaseExpiresOn = null;
 				submission.ModifiedOn = now;
 				submission.RowVersion += 1;
+				await _protection.ProtectSubmissionAsync(submission.DepartmentId, submission, null, cancellationToken);
 				await _submissions.UpdateAsync(submission, cancellationToken, true);
 				if (exchange?.Stage == "Response") await AppendExchangeAsync(exchange, "Applied", null, cancellationToken);
 
@@ -764,13 +810,16 @@ namespace Resgrid.Services.Records
 			return analysis;
 		}
 
-		private async Task<(NerisSubmissionOutcome outcome, RmsSubmissionExchange entry)> ExchangeAsync(RmsSubmission submission, RmsNerisProfile profile, string operation,
+		public const string ProtectedEgressUnavailable = "protected_egress_unavailable: the department has not acknowledged protected content egress to this destination, or the broker refused the workload purpose.";
+
+		private async Task<(NerisSubmissionOutcome outcome, RmsSubmissionExchange entry)> ExchangeAsync(RmsSubmission submission, string payloadJson, RmsNerisProfile profile, string operation,
 			Func<Task<NerisSubmissionOutcome>> send, CancellationToken cancellationToken)
 		{
 			if (profile == null || string.IsNullOrWhiteSpace(submission.DestinationIdentity)
 				|| submission.DestinationIdentity != _profiles.GetDestinationIdentity(profile))
 				return (Fatal("The queued destination does not match the current profile. Restore the pinned profile before retrying."), null);
-			if (string.IsNullOrWhiteSpace(submission.PayloadJson) || submission.PayloadChecksum != RecordSnapshotSerializer.Checksum(submission.PayloadJson))
+			// The checksum attests the plaintext payload; a poll never opens the envelope, so only a delivery verifies it.
+			if (operation != "Poll" && (string.IsNullOrWhiteSpace(payloadJson) || submission.PayloadChecksum != RecordSnapshotSerializer.Checksum(payloadJson)))
 				return (Fatal("The queued payload failed its integrity check."), null);
 
 			var history = (await _exchanges.GetForSubmissionAsync(submission.DepartmentId, submission.RmsSubmissionId))?.ToList() ?? new List<RmsSubmissionExchange>();

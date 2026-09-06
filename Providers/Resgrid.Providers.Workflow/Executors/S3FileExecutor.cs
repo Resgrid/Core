@@ -38,14 +38,14 @@ namespace Resgrid.Providers.Workflow.Executors
 					return WorkflowActionResult.Failed("S3 upload failed.", "S3 credential is missing 'BucketName'. Please update the credential with the target S3 bucket name.");
 
 				var key = string.IsNullOrWhiteSpace(config.S3Key)
-					? $"workflow/{DateTime.UtcNow:yyyy/MM/dd}/{DateTime.UtcNow:HHmmss}.txt"
+					? $"workflow/{DateTime.UtcNow:yyyy/MM/dd}/{(context.Attachment?.FileName ?? $"{DateTime.UtcNow:HHmmss}.txt")}"
 					: config.S3Key;
 
 				var awsCreds = new BasicAWSCredentials(cred.AccessKey, cred.SecretKey);
 				var region = RegionEndpoint.GetBySystemName(string.IsNullOrWhiteSpace(cred.Region) ? "us-east-1" : cred.Region);
 
 				using var s3Client = new AmazonS3Client(awsCreds, region);
-				var bytes = Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
+				var bytes = context.Attachment?.Data ?? Encoding.UTF8.GetBytes(context.RenderedContent ?? string.Empty);
 				using var stream = new MemoryStream(bytes);
 
 				var uploadRequest = new TransferUtilityUploadRequest
@@ -53,7 +53,7 @@ namespace Resgrid.Providers.Workflow.Executors
 					BucketName = cred.BucketName,
 					Key = key,
 					InputStream = stream,
-					ContentType = string.IsNullOrWhiteSpace(config.ContentType) ? "text/plain" : config.ContentType
+					ContentType = context.Attachment?.ContentType ?? (string.IsNullOrWhiteSpace(config.ContentType) ? "text/plain" : config.ContentType)
 				};
 
 				var transferUtility = new TransferUtility(s3Client);

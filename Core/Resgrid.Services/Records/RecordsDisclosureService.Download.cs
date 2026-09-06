@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Resgrid.Model;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Services.Records
 {
@@ -19,6 +20,7 @@ namespace Resgrid.Services.Records
 			var expected = review.Records.SingleOrDefault(r => r.RecordId == recordId && r.RevisionId == revisionId)?.Attachments.SingleOrDefault(a => a.AttachmentId == attachmentId);
 			if (expected == null) return null;
 			var file = await _attachments.GetHistoricalByIdForDepartmentAsync(departmentId, attachmentId);
+			if (file != null) (await _protection.RevealAttachmentsAsync(departmentId, new[] { file }, true)).RequireRevealed("disclosure attachment");
 			if (file == null || file.RecordId != recordId || file.Checksum != expected.Checksum || file.Data == null || file.ScanState != (int)RmsAttachmentScanState.Clean || RecordSnapshotSerializer.Checksum(file.Data) != file.Checksum) return null;
 			if (file.RequiresRestrictedAccess && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords)) throw new UnauthorizedAccessException();
 			await RequireDisclosureAsync(departmentId, userId);

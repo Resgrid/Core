@@ -524,6 +524,15 @@ namespace Resgrid.Workers.Console
 					Cron.Daily(3, 30),
 					stoppingToken);
 
+				// Worker ID 45 (Identifier Allocation Registry section 3.3, RMS-3e): department report exports on a
+				// schedule. Hourly so a template due at its local hour renders within the hour; each template is due
+				// once per period, and the run raises RecordExportScheduled (160) for the Workflow that carries it.
+				_logger.Log(LogLevel.Information, "Scheduling RMS Scheduled Exports");
+				await Client.ScheduleAsync("RMS Scheduled Exports",
+					new Commands.RmsScheduledExportCommand(45),
+					Cron.MinuteIntervals(60),
+					stoppingToken);
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

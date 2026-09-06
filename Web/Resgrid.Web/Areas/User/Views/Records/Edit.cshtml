@@ -10,6 +10,17 @@
 	var isTraining = t == RmsOperationalRecordType.Training;
 	var isMeeting = t == RmsOperationalRecordType.Meeting;
 	var isCoroner = t == RmsOperationalRecordType.Coroner;
+	// ADP (RMS plan section 5.9.3): under enforcement the form needs the grant both to show sealed columns and to
+	// save them. Step-up alone is the whole job here: the reveal module posts the grant to EditRevealed/NewRevealed,
+	// which renders this same view with the grant in the form's hidden field.
+	var holdsGrant = !string.IsNullOrEmpty(Model.ProtectedGrant);
+	var needsGrant = Model.ProtectionEnforced && !holdsGrant;
+	var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+	{
+		BannerTitle = localizer["ProtectedRecordBanner"],
+		GrantExpiresOnUtc = Model.ProtectedGrantExpiresOnUtc,
+		BindForms = new List<string> { "#record-edit-form" }
+	};
 	var isUnitActivity = t == RmsOperationalRecordType.UnitActivity;
 }
 
@@ -27,6 +38,10 @@
 <link rel="stylesheet" href="~/lib/quill/dist/quill.snow.css" />
 <form id="record-edit-form" data-autosave-url="@(Model.IsNew ? "" : Url.Action("Autosave", "Records", new { area = "User" }))" class="form-horizontal" method="post" enctype="multipart/form-data" asp-controller="Records" asp-action="@(Model.IsNew ? "Create" : "Edit")" asp-route-area="User">
 	@Html.AntiForgeryToken()
+	@if (holdsGrant)
+	{
+		<input type="hidden" name="@HttpProtectedGrantContext.FormFieldName" value="@Model.ProtectedGrant" />
+	}
 	@Html.HiddenFor(m => m.RecordId)
 	@Html.HiddenFor(m => m.RowVersion)
 	@Html.HiddenFor(m => m.DefinitionKey)
@@ -44,6 +59,15 @@
 						@if (!string.IsNullOrEmpty(Model.ErrorMessage))
 						{
 							<div class="alert alert-danger">@Model.ErrorMessage</div>
+						}
+						@if (needsGrant)
+						{
+							<partial name="_AdpRevealBanner" model="adpReveal" />
+							<p class="help-block">@localizer["ProtectedEditHint"]</p>
+						}
+						else if (holdsGrant)
+						{
+							<div class="alert alert-success"><i class="fa fa-shield"></i> @localizer["ProtectedEditRevealed"]</div>
 						}
 						@if (Model.IsAmendment)
 						{
@@ -302,7 +326,28 @@
 		</div>
 	</div>
 </form>
+@if (needsGrant)
+{
+	<form id="adp-reveal-form" method="post" action="@(Model.IsNew ? Url.Action("NewRevealed", "Records", new { area = "User", definitionKey = Model.DefinitionKey, callId = Model.CallId }) : Url.Action("EditRevealed", "Records", new { area = "User", id = Model.RecordId }))">@Html.AntiForgeryToken()</form>
+}
 @section Scripts {
     <script src="~/lib/quill/dist/quill.min.js"></script>
     <script src="~/js/record-authoring.js" asp-append-version="true"></script>
+    @if (Model.ProtectionEnforced)
+    {
+        @if (needsGrant)
+        {
+            <script type="text/javascript">
+                // The reveal module holds the grant in its closure; on reveal it writes the token into the hidden
+                // form below and posts it, and the page comes back rendered with plaintext (RMS plan section 5.9.3).
+                window.resgridAdpPageRevealed = function () {
+                    resgridAdpReveal.submitWithGrant(document.getElementById('adp-reveal-form'));
+                };
+            </script>
+        }
+        @* Always under enforcement: the edit form is bound, so a save without a live grant runs the step-up in
+           place and continues with the same submit, and the expiry warning offers a renewal before the window
+           closes. Nothing typed is lost either way. *@
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
 }

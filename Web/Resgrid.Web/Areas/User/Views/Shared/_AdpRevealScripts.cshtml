@@ -1,3 +1,4 @@
+@using System.Collections.Generic
 @model Resgrid.Web.Areas.User.Models.AdpRevealView
 @*
 	Step-up modal + reveal module wiring (plan 7.2). Render inside the host view's Scripts
@@ -6,7 +7,14 @@
 
 	A host page that needs to react to a reveal (re-fetching a client-rendered list with the
 	grant attached, for example) defines window.resgridAdpPageRevealed / ...PageConcealed before
-	this block runs; the module calls them and nothing else changes.
+	this block runs; the module calls them and nothing else changes. ...PageRenewed runs after an
+	in-place re-verification.
+
+	Every page that renders this block gets the expiry warning: a fixed toast shown
+	DataProtectionConfig.StepUpExpiryWarningSeconds before the grant window closes, with a
+	re-verify button that renews the grant without leaving the page (revealed fields and typed
+	work stay). Model.BindForms names the forms whose submit must carry the grant; Model.GrantExpiresOnUtc
+	is set when the page was rendered by a *Revealed action and already holds the grant in that form.
 *@
 <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="adpStepUpModal">
     <div class="modal-dialog">
@@ -47,6 +55,9 @@
                 ? "null"
                 : "'" + Url.Action(Model.RevealAction, Model.RevealController, new { area = "User" }) + "'"),
             revealData: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RevealData)),
+            grantExpiresOnUtc: @Html.Raw(Model.GrantExpiresOnUtc.HasValue ? "'" + Model.GrantExpiresOnUtc.Value.ToUniversalTime().ToString("O") + "'" : "null"),
+            bindForms: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BindForms ?? new List<string>())),
+            warnBeforeSeconds: @Resgrid.Config.DataProtectionConfig.StepUpExpiryWarningSeconds,
             messages: {
                 invalid_totp: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorInvalidCode"].Value)),
                 too_many_attempts: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorTooManyAttempts"].Value)),
@@ -57,7 +68,10 @@
                 grant_revoked: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGrantRevoked"].Value)),
                 protected_access_denied: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorAccessDenied"].Value)),
                 broker_unavailable: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorBrokerUnavailable"].Value)),
-                generic: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGeneric"].Value))
+                generic: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpErrorGeneric"].Value)),
+                expiring: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpExpiringWarning"].Value)),
+                expired: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpExpiredWarning"].Value)),
+                renew: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(commonLocalizer["AdpReverify"].Value))
             },
             onRevealed: function (values) {
                 if (typeof window.resgridAdpPageRevealed === 'function')
@@ -66,6 +80,10 @@
             onConcealed: function () {
                 if (typeof window.resgridAdpPageConcealed === 'function')
                     window.resgridAdpPageConcealed();
+            },
+            onRenewed: function () {
+                if (typeof window.resgridAdpPageRenewed === 'function')
+                    window.resgridAdpPageRenewed();
             },
             antiForgeryToken: $('#adpAntiForgeryForm input[name="__RequestVerificationToken"]').val()
         });

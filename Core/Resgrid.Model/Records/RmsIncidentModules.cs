@@ -264,6 +264,9 @@ namespace Resgrid.Model
 		public string ResourceCode { get; set; }
 		public int? Quantity { get; set; }
 		public string Detail { get; set; }
+		/// <summary>ADP row marker (catalog v10): true once Detail carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
+		public int ProtectedCatalogVersion { get; set; }
 		public int Ordinal { get; set; }
 		public DateTime CreatedOn { get; set; }
 		public DateTime ModifiedOn { get; set; }

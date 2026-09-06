@@ -1,0 +1,103 @@
+{
+  "recordType": "Run",
+  "definitionKey": "system.run",
+  "legacy": {
+    "source": "Logs",
+    "log": {
+      "LogId": 1002,
+      "DepartmentId": 9,
+      "Narrative": "Engine 5 arrived to find light smoke from the kitchen. Fire confined to the stove; extinguished with a dry chemical extinguisher.",
+      "LogType": 1,
+      "ExternalId": "EXT-RUN-1002",
+      "InitialReport": "Caller reported smoke from a residence.",
+      "Type": "Structure fire",
+      "StationGroupId": 11,
+      "Course": null,
+      "CourseCode": null,
+      "Instructors": null,
+      "Cause": "Unattended cooking",
+      "InvestigatedByUserId": "inv1",
+      "ContactName": "Resident Occupant",
+      "ContactNumber": "555-0142",
+      "StartedOn": "2026-03-04T17:45:00Z",
+      "EndedOn": "2026-03-04T18:40:00Z",
+      "LoggedOn": "2026-03-04T19:10:00Z",
+      "LoggedByUserId": "author",
+      "OfficerUserId": "officer1",
+      "CallId": 77,
+      "OtherPersonnel": null,
+      "Location": "1 Main St",
+      "OtherAgencies": "County Sheriff",
+      "OtherUnits": "Mutual aid Ladder 12",
+      "BodyLocation": null,
+      "PronouncedDeceasedBy": null
+    },
+    "users": [
+      { "LogUserId": 3, "LogId": 1002, "UnitId": 5, "UserId": "p2" }
+    ],
+    "units": [
+      { "LogUnitId": 2, "LogId": 1002, "UnitId": 5, "Dispatched": "2026-03-04T17:43:00Z", "Enroute": "2026-03-04T17:45:00Z", "OnScene": "2026-03-04T17:52:00Z", "Released": "2026-03-04T18:35:00Z", "InQuarters": "2026-03-04T18:48:00Z" },
+      { "LogUnitId": 3, "LogId": 1002, "UnitId": 6, "Dispatched": "2026-03-04T17:43:00Z", "Enroute": "2026-03-04T17:46:00Z", "OnScene": "2026-03-04T17:55:00Z", "Released": "2026-03-04T18:20:00Z", "InQuarters": null }
+    ],
+    "attachments": [
+      { "LogAttachmentId": 2, "LogId": 1002, "FileName": "scene-notes.txt", "Type": "text/plain", "Size": 22, "DataBase64": "UG9pbnQgb2Ygb3JpZ2luOiBzdG92ZQ==", "UserId": "author", "Timestamp": "2026-03-04T19:11:00Z", "Description": "Point of origin" }
+    ]
+  },
+  "expected": {
+    "numberPrefix": "RUN",
+    "list": {
+      "displaySummary": "C2026-0009 Structure fire",
+      "searchTextContains": [ "C2026-0009", "Structure fire", "EXT-RUN-1002" ],
+      "searchTextExcludes": [ "light smoke", "555-0142", "Resident Occupant", "Unattended cooking" ],
+      "occurredOn": "2026-03-04T17:45:00Z",
+      "callNumber": "C2026-0009",
+      "participantUserIds": [ "officer1", "p2" ],
+      "unitIds": [ 5, 6 ]
+    },
+    "detail": {
+      "externalId": "EXT-RUN-1002",
+      "stationGroupId": 11,
+      "callId": 77,
+      "startedOn": "2026-03-04T17:45:00Z",
+      "endedOn": "2026-03-04T18:40:00Z",
+      "details": {
+        "Narrative": "Engine 5 arrived to find light smoke from the kitchen. Fire confined to the stove; extinguished with a dry chemical extinguisher.",
+        "InitialReport": "Caller reported smoke from a residence.",
+        "Type": "Structure fire",
+        "Cause": "Unattended cooking",
+        "InvestigatedByUserId": "inv1",
+        "ContactName": "Resident Occupant",
+        "ContactNumber": "555-0142",
+        "Location": "1 Main St",
+        "OtherAgencies": "County Sheriff",
+        "OtherUnits": "Mutual aid Ladder 12",
+        "CallNumber": "C2026-0009",
+        "CallName": "Structure fire",
+        "CallType": "Fire",
+        "CallPriority": 3,
+        "CallLoggedOn": "2026-03-04T17:42:00Z",
+        "CallAddress": "1 Main St",
+        "CallNature": "Smoke showing"
+      },
+      "participants": [
+        { "UserId": "officer1", "Role": "Officer" },
+        { "UserId": "p2", "UnitId": 5 }
+      ],
+      "units": [
+        { "UnitId": 5, "UnitNameSnapshot": "Engine 5", "Dispatched": "2026-03-04T17:43:00Z", "Enroute": "2026-03-04T17:45:00Z", "OnScene": "2026-03-04T17:52:00Z", "Released": "2026-03-04T18:35:00Z", "InQuarters": "2026-03-04T18:48:00Z" },
+        { "UnitId": 6, "UnitNameSnapshot": "Ladder 6", "Dispatched": "2026-03-04T17:43:00Z", "Enroute": "2026-03-04T17:46:00Z", "OnScene": "2026-03-04T17:55:00Z", "Released": "2026-03-04T18:20:00Z", "InQuarters": null }
+      ],
+      "attachments": [
+        { "FileName": "scene-notes.txt", "ContentType": "text/plain", "ByteSize": 22, "Description": "Point of origin" }
+      ]
+    },
+    "export": {
+      "mustContain": [ "C2026-0009", "Unattended cooking", "County Sheriff", "scene-notes.txt", "Mutual aid Ladder 12" ],
+      "restrictedFields": []
+    },
+    "print": {
+      "contains": [ "C2026-0009", "Structure fire", "Unattended cooking", "Engine 5", "Ladder 6", "County Sheriff" ],
+      "withheldWithoutRestrictedAccess": []
+    }
+  }
+}

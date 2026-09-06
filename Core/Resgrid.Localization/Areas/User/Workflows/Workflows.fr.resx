@@ -615,4 +615,7 @@
   <data name="SkippedRuns" xml:space="preserve">
     <value>Ignorés</value>
   </data>
+  <data name="ExportTemplate" xml:space="preserve"><value>Export de rapport (enregistrements)</value></data>
+  <data name="ExportTemplateNone" xml:space="preserve"><value>Aucun (envoyer uniquement le modèle rendu)</value></data>
+  <data name="ExportTemplateHelp" xml:space="preserve"><value>Les étapes e-mail joignent l'export ; les étapes d'envoi de fichier le téléversent sous son nom de fichier à la place du texte rendu. Les exports se conçoivent dans Enregistrements &gt; Exports de rapports.</value></data>
 </root>

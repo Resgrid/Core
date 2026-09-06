@@ -412,6 +412,17 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordSubmissionRejected:
 				case WorkflowTriggerEventType.RecordSubmissionFailed:
 				case WorkflowTriggerEventType.RecordOverdue:
+				case WorkflowTriggerEventType.RecordApproved:
+				case WorkflowTriggerEventType.RecordAttachmentAdded:
+				case WorkflowTriggerEventType.RecordDisclosureRequested:
+				case WorkflowTriggerEventType.RecordDisclosureProduced:
+				case WorkflowTriggerEventType.RecordDisclosureReleased:
+				case WorkflowTriggerEventType.RecordDisclosureClosed:
+				case WorkflowTriggerEventType.RecordLegalHoldPlaced:
+				case WorkflowTriggerEventType.RecordLegalHoldReleased:
+				case WorkflowTriggerEventType.RecordEvidenceCaptured:
+				case WorkflowTriggerEventType.RecordPurged:
+				case WorkflowTriggerEventType.RecordExportScheduled:
 				{
 					// Records (RMS): the payload is the outbox snapshot carried by RecordsWorkflowEvent; it is never
 					// rehydrated from current record state, so a retry sees exactly what the original run saw.
@@ -1206,6 +1217,20 @@ namespace Resgrid.Services
 
 			if (payload["obligation"] is JObject obligation)
 				obj["obligation"] = ToScriptObject(obligation);
+
+			// RMS-3e blocks (plan section 5.6): each is present only on the triggers that carry it.
+			foreach (var name in new[] { "attachment", "disclosure", "legal_hold", "evidence", "purge", "export" })
+			{
+				if (payload[name] is JObject block)
+					obj[name] = ToScriptObject(block);
+			}
+
+			// protection.* is on every Records event since ADP catalog v10; older outbox rows carry none, so the
+			// template sees the unprotected shape rather than a missing namespace.
+			var protection = payload["protection"] as JObject;
+			obj["protection"] = protection != null
+				? ToScriptObject(protection)
+				: new ScriptObject { ["is_protected"] = false, ["is_redacted"] = false, ["redacted_fields"] = new ScriptArray(), ["protected_catalog_version"] = 0 };
 
 			return recordToken?["author_user_id"]?.Type == JTokenType.String ? (string)recordToken["author_user_id"] : null;
 		}

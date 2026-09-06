@@ -44,6 +44,14 @@ namespace Resgrid.Model
 
 		/// <summary>Releases everything the department holds; used for an internal or litigation production.</summary>
 		public const string FullDisclosure = "FullDisclosure";
+
+		/// <summary>Every profile the disclosure workflow accepts, in the order the Records Settings screen offers them.</summary>
+		public static readonly string[] All = { Standard, NoPersonalIdentifiers, FullDisclosure };
+
+		public static bool IsKnown(string profile)
+		{
+			return profile == Standard || profile == NoPersonalIdentifiers || profile == FullDisclosure;
+		}
 	}
 
 	/// <summary>
@@ -106,6 +114,9 @@ namespace Resgrid.Model
 
 		/// <summary>Why it closed the way it did — the exemption relied on, or the requester's withdrawal.</summary>
 		public string DispositionReason { get; set; }
+		/// <summary>ADP row marker (catalog v10): true once the requester identity and scope narrative carry rgdp envelopes.</summary>
+		public bool IsProtected { get; set; }
+		public int ProtectedCatalogVersion { get; set; }
 
 		public DateTime CreatedOn { get; set; }
 

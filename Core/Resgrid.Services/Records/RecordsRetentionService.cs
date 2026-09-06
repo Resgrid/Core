@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -46,12 +47,14 @@ namespace Resgrid.Services.Records
 		private readonly IRecordAttachmentScanner _scanner;
 		private readonly IDepartmentSettingsService _settings;
 		private readonly IRmsRetentionRepository _purge;
+		private readonly IDomainEventOutboxService _outbox;
 
 		public RecordsRetentionService(IRmsDepartmentCutoversRepository cutovers, IRmsOperationalRecordsRepository records,
 			IRmsIncidentReportsRepository incidentReports, IRmsOperationalRecordDetailsRepository details, IRmsRecordAttachmentsRepository attachments,
 			IRmsRecordLegalHoldsRepository legalHolds, IRmsAccessAuditsRepository audits, IRmsRecordSearchProjectionsRepository projections,
-			IRecordAttachmentScanner scanner, IDepartmentSettingsService settings, IRmsRetentionRepository purge)
+			IRecordAttachmentScanner scanner, IDepartmentSettingsService settings, IRmsRetentionRepository purge, IDomainEventOutboxService outbox)
 		{
+			_outbox = outbox;
 			_cutovers = cutovers;
 			_records = records;
 			_incidentReports = incidentReports;
@@ -154,7 +157,11 @@ namespace Resgrid.Services.Records
 			try
 			{
 				var outcome = await _purge.PurgeAsync(departmentId, recordId, kind, version, now, cancellationToken);
-				if (outcome.Purged) { result.RecordsPurged++; result.AttachmentsPurged += outcome.AttachmentsPurged; }
+				if (outcome.Purged)
+				{
+					result.RecordsPurged++; result.AttachmentsPurged += outcome.AttachmentsPurged;
+					await EnqueuePurgedAsync(departmentId, recordId, kind, version, outcome, now, cancellationToken);
+				}
 				if (outcome.SearchErasurePending) result.SearchErasuresPending++;
 				if (outcome.Held)
 				{
@@ -165,6 +172,34 @@ namespace Resgrid.Services.Records
 			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
 			catch (Exception ex) { Logging.LogException(ex, "RMS retention purge failed."); result.Errors++; }
 		}
+		/// <summary>RecordPurged (159): the identity that was purged and what went with it; the content is gone, so nothing else can be carried.</summary>
+		private async Task EnqueuePurgedAsync(int departmentId, string recordId, RmsRecordKind kind, long version, RmsPurgeResult outcome, DateTime now, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var entry = await _outbox.EnqueueAsync(departmentId, DomainEventProducers.Records, new DomainEventEnvelope
+				{
+					EventName = WorkflowTriggerEventType.RecordPurged.ToString(),
+					SchemaVersion = 1,
+					AggregateType = kind == RmsRecordKind.IncidentReport ? IncidentReportsService.IncidentAggregate : DomainEventProducers.RecordsAggregate,
+					AggregateId = recordId,
+					AggregateVersion = (int)version,
+					Trigger = WorkflowTriggerEventType.RecordPurged,
+					Payload = new Dictionary<string, object>
+					{
+						["record"] = new { id = recordId, kind = kind.ToString(), department_id = departmentId, state = "Purged" },
+						["purge"] = new { purged_on = now, attachments_purged = outcome.AttachmentsPurged, search_erasure_pending = outcome.SearchErasurePending, reason = outcome.Reason },
+						["protection"] = new { is_protected = false, is_redacted = false, redacted_fields = Array.Empty<string>(), protected_catalog_version = 0 }
+					},
+					CorrelationId = recordId,
+					OriginClient = RmsOriginClient.System
+				}, cancellationToken);
+				await _outbox.DispatchAfterCommitAsync(new[] { entry.DomainEventOutboxId }, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+			catch (Exception ex) { Logging.LogException(ex, $"RecordPurged event for {recordId} could not be queued."); }
+		}
+
 		/// <summary>
 		/// Re-submits Pending attachments to the scanner. A clean result promotes the row; a rejection deletes the
 		/// bytes and marks it Rejected, because a Pending attachment that turns out to be malware has been

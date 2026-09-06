@@ -12,6 +12,16 @@
 	var isEditable = RmsLifecycle.IsEditable(Model.State) || record.AmendsRevisionId != null;
 	string Name(string userId) => string.IsNullOrEmpty(userId) ? "-" : (Model.PersonnelNames.TryGetValue(userId, out var n) ? n : userId);
 	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	var isProtected = Model.Aggregate.Protection?.IsProtected == true;
+	var detailId = details.RmsOperationalRecordDetailId ?? string.Empty;
+	string Field(string column) => "rmsoperationalrecorddetails." + column + ":" + detailId;
+	var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+	{
+		BannerTitle = localizer["ProtectedRecordBanner"],
+		RevealController = "Records",
+		RevealAction = "RevealRecord",
+		RevealData = new Dictionary<string, string> { { "id", record.RmsOperationalRecordId } }
+	};
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -28,7 +38,7 @@
 			<a class="btn btn-default" asp-controller="RecordEvidence" asp-action="Index" asp-route-recordId="@record.RmsOperationalRecordId" asp-route-recordKind="Operational">Supporting evidence</a>
 			@if (Model.CanEdit && isEditable)
 			{
-				<a class="btn btn-primary" asp-controller="Records" asp-action="Edit" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@commonLocalizer["Edit"]</a>
+				<a class="btn btn-primary" id="adp-edit-link" asp-controller="Records" asp-action="Edit" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">@commonLocalizer["Edit"]</a>
 				<a class="btn btn-default" asp-controller="RecordsInventory" asp-action="Edit" asp-route-area="User" asp-route-recordId="@record.RmsOperationalRecordId" asp-route-kind="Operational">Inventory usage</a>
 			}
 			@if (Model.CanAmend && RmsLifecycle.CanTransition((RmsLifecyclePreset)record.LifecyclePreset, Model.State, RmsRecordState.Amended) && record.AmendsRevisionId == null)
@@ -52,6 +62,10 @@
 <div class="row">
 	<div class="col-lg-8">
 		<div class="wrapper wrapper-content">
+			@if (isProtected)
+			{
+				<partial name="_AdpRevealBanner" model="adpReveal" />
+			}
 			@if (!string.IsNullOrEmpty(Model.Message))
 			{
 				<div class="alert alert-success">@Model.Message</div>
@@ -100,10 +114,10 @@
 					<div class="ibox-title"><h5><i class="fa fa-phone"></i> @localizer["CallSnapshot"]</h5></div>
 					<div class="ibox-content">
 						<dl class="dl-horizontal">
-							<dt>@localizer["Call"]</dt><dd><a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@record.CallId">@details.CallNumber @details.CallName</a></dd>
+							<dt>@localizer["Call"]</dt><dd><a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@record.CallId">@details.CallNumber <span data-adp-field="@Field("callname")">@details.CallName</span></a></dd>
 							<dt>@commonLocalizer["Type"]</dt><dd>@details.CallType</dd>
-							<dt>@localizer["Location"]</dt><dd>@details.CallAddress</dd>
-							<dt>@commonLocalizer["Nature"]</dt><dd>@details.CallNature</dd>
+							<dt>@localizer["Location"]</dt><dd data-adp-field="@Field("calladdress")">@details.CallAddress</dd>
+							<dt>@commonLocalizer["Nature"]</dt><dd data-adp-field="@Field("callnature")">@details.CallNature</dd>
 						</dl>
 					</div>
 				</div>
@@ -125,8 +139,8 @@
 						}
 						@if (t == RmsOperationalRecordType.Run || t == RmsOperationalRecordType.Callback)
 						{
-							<dt>@localizer["InitialReport"]</dt><dd>@details.InitialReport</dd>
-							<dt>@localizer["Cause"]</dt><dd>@details.Cause</dd>
+							<dt>@localizer["InitialReport"]</dt><dd data-adp-field="@Field("initialreport")">@details.InitialReport</dd>
+							<dt>@localizer["Cause"]</dt><dd data-adp-field="@Field("cause")">@details.Cause</dd>
 							<dt>@localizer["Investigator"]</dt><dd>@Name(details.InvestigatedByUserId)</dd>
 							<dt>@localizer["OtherAgencies"]</dt><dd>@details.OtherAgencies</dd>
 							<dt>@localizer["OtherUnits"]</dt><dd>@details.OtherUnits</dd>
@@ -138,11 +152,11 @@
 						}
 						@if (!isCoroner)
 						{
-							<dt>@localizer["Location"]</dt><dd>@details.Location</dd>
-							<dt>@localizer["OtherPersonnel"]</dt><dd>@details.OtherPersonnel</dd>
+							<dt>@localizer["Location"]</dt><dd data-adp-field="@Field("location")">@details.Location</dd>
+							<dt>@localizer["OtherPersonnel"]</dt><dd data-adp-field="@Field("otherpersonnel")">@details.OtherPersonnel</dd>
 						}
 					</dl>
-					<div style="white-space:pre-wrap">@Html.Raw(Resgrid.Framework.RecordNarrativeFormatter.Render(details.Narrative))</div>
+					<div style="white-space:pre-wrap" data-adp-field="@Field("narrative")">@Html.Raw(Resgrid.Framework.RecordNarrativeFormatter.Render(details.Narrative))</div>
 				</div>
 			</div>
 
@@ -154,13 +168,13 @@
 						@if (Model.CanViewRestricted)
 						{
 							<dl class="dl-horizontal">
-								<dt>@localizer["CaseNumber"]</dt><dd>@details.CaseNumber</dd>
-								<dt>@localizer["PronouncedDeceasedBy"]</dt><dd>@details.PronouncedDeceasedBy</dd>
-								<dt>@localizer["BodyLocation"]</dt><dd>@details.BodyLocation</dd>
-								<dt>@localizer["Destination"]</dt><dd>@details.Destination</dd>
-								<dt>@localizer["OtherPersonnel"]</dt><dd>@details.OtherPersonnel</dd>
-								<dt>@localizer["ContactName"]</dt><dd>@details.ContactName</dd>
-								<dt>@localizer["ContactNumber"]</dt><dd>@details.ContactNumber</dd>
+								<dt>@localizer["CaseNumber"]</dt><dd data-adp-field="@Field("casenumber")">@details.CaseNumber</dd>
+								<dt>@localizer["PronouncedDeceasedBy"]</dt><dd data-adp-field="@Field("pronounceddeceasedby")">@details.PronouncedDeceasedBy</dd>
+								<dt>@localizer["BodyLocation"]</dt><dd data-adp-field="@Field("bodylocation")">@details.BodyLocation</dd>
+								<dt>@localizer["Destination"]</dt><dd data-adp-field="@Field("destination")">@details.Destination</dd>
+								<dt>@localizer["OtherPersonnel"]</dt><dd data-adp-field="@Field("otherpersonnel")">@details.OtherPersonnel</dd>
+								<dt>@localizer["ContactName"]</dt><dd data-adp-field="@Field("contactname")">@details.ContactName</dd>
+								<dt>@localizer["ContactNumber"]</dt><dd data-adp-field="@Field("contactnumber")">@details.ContactNumber</dd>
 							</dl>
 						}
 						else
@@ -339,3 +353,18 @@
 		</div>
 	</div>
 </div>
+
+@section Scripts {
+	@if (isProtected)
+	{
+		<partial name="_AdpRevealScripts" model="adpReveal" />
+		@* A grant held here travels into the edit page (RMS plan section 5.9.3) so the form opens revealed instead of asking again. *@
+		<form id="adp-edit-form" method="post" action="@Url.Action("EditRevealed", "Records", new { area = "User", id = record.RmsOperationalRecordId })">@Html.AntiForgeryToken()</form>
+		<script type="text/javascript">
+			$('#adp-edit-link').on('click', function (e) {
+				if (resgridAdpReveal.submitWithGrant(document.getElementById('adp-edit-form')))
+					e.preventDefault();
+			});
+		</script>
+	}
+}

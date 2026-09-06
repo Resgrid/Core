@@ -1,0 +1,12 @@
+{
+  "name": "resgrid-web-browser-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Headless browser tests for Resgrid.Web scripts (record authoring, NERIS guided form, ADP reveal). Run through BrowserScriptTests in Resgrid.Tests or directly with npm test.",
+  "scripts": {
+    "test": "node browser-tests.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

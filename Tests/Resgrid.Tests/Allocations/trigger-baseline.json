@@ -62,5 +62,16 @@
   "RecordSubmissionAccepted": 109,
   "RecordSubmissionRejected": 110,
   "RecordSubmissionFailed": 111,
-  "RecordOverdue": 112
+  "RecordOverdue": 112,
+  "RecordApproved": 103,
+  "RecordAttachmentAdded": 115,
+  "RecordDisclosureRequested": 152,
+  "RecordDisclosureProduced": 153,
+  "RecordDisclosureReleased": 154,
+  "RecordDisclosureClosed": 155,
+  "RecordLegalHoldPlaced": 156,
+  "RecordLegalHoldReleased": 157,
+  "RecordEvidenceCaptured": 158,
+  "RecordPurged": 159,
+  "RecordExportScheduled": 160
 }

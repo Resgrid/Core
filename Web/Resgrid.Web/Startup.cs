@@ -463,6 +463,8 @@ namespace Resgrid.Web
 				// reached the response still carrying an envelope, and logs the surface that missed
 				// its resolve call. Defence in depth, not a substitute for resolving.
 				options.Filters.Add<Filters.ProtectedDataEgressFilter>();
+				// RMS protected content (plan 5.9.3): a refused reveal becomes a step-up prompt, never a 500.
+				options.Filters.Add<Filters.RecordProtectedContentExceptionFilter>();
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
@@ -542,6 +544,7 @@ namespace Resgrid.Web
 			builder.RegisterModule(new DataModule());
 			builder.RegisterModule(new NoSqlDataModule());
 			builder.RegisterModule(new ServicesModule());
+			builder.RegisterType<Resgrid.Web.Helpers.HttpProtectedGrantContext>().As<IProtectedGrantContext>().InstancePerLifetimeScope();
 			builder.RegisterModule(new Resgrid.Search.SearchModule());
 			builder.RegisterModule(new Resgrid.Providers.Scanning.ScanningProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Neris.NerisProviderModule());

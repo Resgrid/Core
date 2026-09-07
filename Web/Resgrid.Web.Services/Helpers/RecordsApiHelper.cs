@@ -142,6 +142,7 @@ namespace Resgrid.Web.Services.Helpers
 			var restricted = RmsDefinitionKeys.RestrictedClass.Contains(r.DefinitionKey ?? string.Empty);
 			var data = new RecordData
 			{
+				Values = RecordsRms1bApiMapper.ToValues(aggregate.Values, aggregate.DefinitionVersionRow?.Schema, canViewRestricted),
 				RecordId = r.RmsOperationalRecordId,
 				RecordKind = RmsRecordKind.Operational.ToString(),
 				DefinitionKey = r.DefinitionKey,
@@ -309,6 +310,7 @@ namespace Resgrid.Web.Services.Helpers
 				{
 					UnitId = u.UnitId, Dispatched = RecordsApiHelper.Utc(u.Dispatched), Enroute = RecordsApiHelper.Utc(u.Enroute), OnScene = RecordsApiHelper.Utc(u.OnScene), Released = RecordsApiHelper.Utc(u.Released), InQuarters = RecordsApiHelper.Utc(u.InQuarters)
 				}).ToList(),
+				Values = RecordsRms1bApiMapper.ToValueInputs(input.Values),
 				ClientRecordId = input.ClientRecordId,
 				IdempotencyKey = input.IdempotencyKey,
 				OriginClient = origin,
@@ -570,10 +572,11 @@ namespace Resgrid.Web.Services.Helpers
 				// Null stays null: the service reads absence as "leave this section alone".
 				Modules = input.Modules?.Select(m => new IncidentModuleInput
 				{
+					ModuleId = m.ModuleId,
 					Kind = (RmsIncidentModuleKind)m.Kind, PrimaryCode = m.PrimaryCode, SecondaryCode = m.SecondaryCode,
 					Quantity = m.Quantity, QuantityUnit = m.QuantityUnit, OccurredOn = RecordsApiHelper.Utc(m.OccurredOn), DetailJson = m.DetailJson
 				}).ToList(),
-				Resources = input.Resources?.Select(r => new IncidentResourceInput { ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList(),
+				Resources = input.Resources?.Select(r => new IncidentResourceInput { ResourceId = r.ResourceId, ResourceCode = r.ResourceCode, Quantity = r.Quantity, Detail = r.Detail }).ToList(),
 				Casualties = input.Casualties?.Select(c => new IncidentCasualtyRescueInput
 				{
 					CasualtyId = c.CasualtyId, Kind = (RmsCasualtyRescueKind)c.Kind, PersonType = c.PersonType, PersonnelUserId = c.PersonnelUserId, Rank = c.Rank,
@@ -587,6 +590,7 @@ namespace Resgrid.Web.Services.Helpers
 				}).ToList(),
 				Exposures = input.Exposures?.Select(e => new IncidentExposureInput
 				{
+					ExposureId = e.ExposureId,
 					LocationKind = e.LocationKind, ItemType = e.ItemType, DamageType = e.DamageType, LocationUse = e.LocationUse,
 					PeoplePresent = e.PeoplePresent, DisplacementCount = e.DisplacementCount, DisplacementCauses = e.DisplacementCauses ?? new List<string>(),
 					AddressText = e.AddressText, Street = e.Street, Municipality = e.Municipality, State = e.State, PostalCode = e.PostalCode,

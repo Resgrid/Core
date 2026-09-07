@@ -41,14 +41,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IIncidentAnalysisService _analysis;
 		private readonly IRecordsSubmissionService _submissionWorker;
 		private readonly IRecordsNfirsLegacyService _nfirs;
+		private readonly IRecordsRevealService _reveal;
 
 		private SystemPrincipalRecordGrant _systemGrant;
 		private bool _systemGrantResolved;
 
 		public IncidentReportsController(IIncidentReportsService incidentReports, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			INerisProfileService neris, IFeatureToggleService featureToggleService, IRecordsApiIdempotencyService idempotency, IIncidentAnalysisService analysis, IRecordsSubmissionService submissionWorker,
-			IRecordsNfirsLegacyService nfirs)
+			IRecordsNfirsLegacyService nfirs, IRecordsRevealService reveal)
 		{
+			_reveal = reveal;
 			_nfirs = nfirs;
 			_incidentReports = incidentReports;
 			_cutoverService = cutoverService;
@@ -217,6 +219,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(await WrapAsync(aggregate));
 		}
 
+		/// <summary>Protected reveal of an incident report (RMS plan section 5.9.3): the grant travels in X-Resgrid-Protected-Grant.</summary>
+		[HttpPost("Reveal")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<RecordRevealApiResult>> Reveal([FromBody] RecordRevealInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.Id)) return BadRequest();
+			if (!await FlagOnAsync()) return NotFound();
+			var aggregate = await LoadAuthorizedAsync(input.Id);
+			if (aggregate == null) return NotFound();
+			var outcome = await _reveal.RevealIncidentAsync(DepartmentId, UserId, aggregate, await CanViewRestrictedAsync(), IpAddressHelper.GetRequestIP(Request, true));
+			var result = new RecordRevealApiResult { Data = new RecordRevealData { Success = outcome.Success, Error = outcome.Error, Fields = outcome.Fields }, Status = ResponseHelper.Success, PageSize = 1 };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
 		/// <summary>The authoritative report for a Call, if one exists.</summary>
 		[HttpGet("GetForCall")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -264,6 +284,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 			if (rendering == null)
 				return NotFound();
+
+			// The rendering reads the department's own report to report crosswalk coverage, so the read belongs in
+			// the access audit alongside every other report read on this controller.
+			if (!string.IsNullOrWhiteSpace(rendering.IncidentReportId))
+				await _incidentReports.RecordAccessAsync(DepartmentId, UserId, rendering.IncidentReportId, null, RmsAccessAuditAction.Read,
+					AccessPurpose("NFIRS legacy rendering"), IpAddressHelper.GetRequestIP(Request, true));
 
 			var result = new NfirsLegacyResult { Data = rendering, PageSize = 1, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);

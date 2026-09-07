@@ -287,7 +287,9 @@ namespace Resgrid.Tests.Services
 				"RmsOperationalRecordDetails", "RmsNarratives", "RmsLocations", "RmsSourceFacts", "RmsCasualtyRescues", "RmsExposures",
 				"RmsIncidentModules", "RmsIncidentProperties", "RmsIncidentVehicles", "RmsIncidentResources", "RmsRevisions",
 				"RmsSubmissions", "RmsSignatures", "RmsEvidenceArtifacts", "RmsDisclosureRequests", "RmsDisclosureProductions",
-				"RmsRecordLegalHolds", "RmsRecordAttachments", "RmsExportRuns"
+				"RmsRecordLegalHolds", "RmsRecordAttachments", "RmsExportRuns",
+				// Typed values of department definitions, catalog v11: read through the same Records resolvers.
+				"RmsRecordValues"
 			};
 
 			AdpTableBindings.V1.Select(b => b.TableName)

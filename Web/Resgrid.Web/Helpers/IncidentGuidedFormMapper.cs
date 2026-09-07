@@ -51,6 +51,7 @@ namespace Resgrid.Web.Helpers
                 var coordinates = body["point"]?["geometry"]?["coordinates"] as JArray;
                 return new IncidentExposureInput
                 {
+                    ExposureId = row.ExposureId,
                     LocationKind = (string)body["location_detail"]?["type"], ItemType = (string)body["location_detail"]?["item_type"],
                     DamageType = (string)body["damage_type"], LocationUse = (string)body["location_use"]?["use_type"],
                     PeoplePresent = (bool?)body["people_present"], DisplacementCount = (int?)body["displacement_count"],

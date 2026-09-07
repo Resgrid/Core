@@ -41,6 +41,18 @@ namespace Resgrid.Web.Broker.Controllers
 			return StatusCode(MapStatusCode(result), result);
 		}
 
+		/// <summary>
+		/// Purpose-bound workload decrypt (RMS plan section 5.9.4): no grant, the workload key plus an allow-listed
+		/// purpose for an actively protected department. Refusals answer 403 workload_purpose_denied.
+		/// </summary>
+		[HttpPost("workload/decrypt")]
+		public async Task<ActionResult<ProtectedDataBrokerResult>> DecryptForWorkload([FromQuery] string purpose,
+			[FromBody] BrokerFieldOperationRequest request, CancellationToken cancellationToken)
+		{
+			var result = await _operationService.DecryptForWorkloadAsync(request, purpose, cancellationToken);
+			return StatusCode(MapStatusCode(result), result);
+		}
+
 		private static int MapStatusCode(ProtectedDataBrokerResult result)
 		{
 			if (result.Success)
@@ -58,6 +70,7 @@ namespace Resgrid.Web.Broker.Controllers
 				case "grant_invalid":
 					return StatusCodes.Status401Unauthorized;
 				case "grant_revoked":
+				case "workload_purpose_denied":
 					return StatusCodes.Status403Forbidden;
 				case "no_active_key":
 					return StatusCodes.Status409Conflict;

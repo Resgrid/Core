@@ -52,12 +52,40 @@ namespace Resgrid.Web.Broker.Services
 		public Task<ProtectedDataBrokerResult> EncryptAsync(BrokerFieldOperationRequest request, CancellationToken cancellationToken) =>
 			ProcessAsync(request, decrypt: false, cancellationToken);
 
+		/// <summary>
+		/// The purpose-bound workload decrypt lane (RMS plan section 5.9.4, ADP plan 3.4): no grant, the workload key
+		/// plus a purpose on the broker's allow-list (DataProtectionConfig.BrokerWorkloadPurposes) for a department
+		/// that is actively protected. The application enforces the department's per-purpose acknowledgement before it
+		/// calls; the broker records the purpose on every use and refuses anything it was not configured for.
+		/// </summary>
+		public Task<ProtectedDataBrokerResult> DecryptForWorkloadAsync(BrokerFieldOperationRequest request, string purpose,
+			CancellationToken cancellationToken) =>
+			ProcessAsync(request, decrypt: true, cancellationToken, workloadPurpose: NormalizePurpose(purpose));
+
+		private static string NormalizePurpose(string purpose) =>
+			string.IsNullOrWhiteSpace(purpose) ? string.Empty : purpose.Trim().ToLowerInvariant();
+
+		/// <summary>True when the purpose is on the configured allow-list; an empty list or purpose allows nothing.</summary>
+		public static bool IsAllowedWorkloadPurpose(string purpose)
+		{
+			if (string.IsNullOrEmpty(purpose))
+				return false;
+			return (Config.DataProtectionConfig.BrokerWorkloadPurposes ?? string.Empty)
+				.Split(',')
+				.Select(p => p.Trim().ToLowerInvariant())
+				.Any(p => p.Length > 0 && p == purpose);
+		}
+
 		private async Task<ProtectedDataBrokerResult> ProcessAsync(BrokerFieldOperationRequest request, bool decrypt,
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken, string workloadPurpose = null)
 		{
 			if (request == null || request.DepartmentId <= 0 || string.IsNullOrWhiteSpace(request.RequestId) ||
 				request.Items == null || request.Items.Count == 0)
 				return Fail("invalid_request");
+
+			// Workload lane: the purpose gate runs before anything is consumed (no request id burned, no key touched).
+			if (workloadPurpose != null && !IsAllowedWorkloadPurpose(workloadPurpose))
+				return Fail("workload_purpose_denied");
 
 			var maxItems = Math.Max(1, Config.DataProtectionConfig.BrokerMaxItemsPerRequest);
 			if (request.Items.Count > maxItems)
@@ -76,6 +104,12 @@ namespace Resgrid.Web.Broker.Services
 			var policy = await policyRepository.GetByDepartmentIdAsync(request.DepartmentId);
 			var currentEpoch = policy?.PolicyEpoch ?? 0;
 
+			// A workload purpose only ever opens data of a department that is actively protected; an unenrolled,
+			// enrolling or offboarding department has no acknowledged egress to honor.
+			if (workloadPurpose != null && (policy == null ||
+				policy.State != (int)DepartmentDataProtectionState.Enabled && policy.State != (int)DepartmentDataProtectionState.Rotating))
+				return Fail("workload_purpose_denied");
+
 			// DECRYPT always requires a valid attended grant. ENCRYPT has a workload lane (plan 3.4
 			// "required protected submissions"): a request WITHOUT a grant — already past the
 			// workload-key middleware — may encrypt, because encryption discloses nothing; system
@@ -83,7 +117,7 @@ namespace Resgrid.Web.Broker.Services
 			// grant that IS presented is still fully validated, so a stolen/stale token cannot be
 			// laundered through the encrypt path either.
 			ProtectedDataGrant grant = null;
-			if (decrypt || !string.IsNullOrWhiteSpace(request.GrantToken))
+			if (decrypt && workloadPurpose == null || !string.IsNullOrWhiteSpace(request.GrantToken))
 			{
 				var requiredScope = decrypt ? ProtectedDataGrantScopes.Read : ProtectedDataGrantScopes.Write;
 				var outcome = _grantService.ValidateGrant(request.GrantToken, request.DepartmentId, currentEpoch,
@@ -113,7 +147,7 @@ namespace Resgrid.Web.Broker.Services
 					CryptographicOperations.ZeroMemory(dek);
 			}
 
-			Audit(decrypt ? "decrypt" : "encrypt", request, grant, result);
+			Audit(workloadPurpose != null ? "workload-decrypt" : decrypt ? "decrypt" : "encrypt", request, grant, result, workloadPurpose);
 			return result;
 		}
 
@@ -348,11 +382,11 @@ namespace Resgrid.Web.Broker.Services
 
 		/// <summary>Value-free audit line: identifiers and counts only, never field values.</summary>
 		private static void Audit(string operation, BrokerFieldOperationRequest request, ProtectedDataGrant grant,
-			ProtectedDataBrokerResult result)
+			ProtectedDataBrokerResult result, string workloadPurpose = null)
 		{
 			var failed = result.Items.Count(i => i.ErrorCode != null);
 			var fields = string.Join(",", request.Items.Where(i => i?.FieldId != null).Select(i => i.FieldId).Distinct());
-			var identity = grant == null ? "workload" : $"user {grant.UserId}, grant {grant.GrantId}";
+			var identity = grant == null ? (workloadPurpose == null ? "workload" : $"workload purpose {workloadPurpose}") : $"user {grant.UserId}, grant {grant.GrantId}";
 			Logging.LogInfo($"ADP broker {operation}: department {request.DepartmentId}, {identity}, request {request.RequestId}, items {result.Items.Count}, failed {failed}, fields [{fields}]");
 		}
 	}

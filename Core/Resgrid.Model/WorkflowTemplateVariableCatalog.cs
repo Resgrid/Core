@@ -282,6 +282,39 @@ namespace Resgrid.Model
 			new TemplateVariableDescriptor("export.expires_on", "When the stored copy expires (UTC)", "datetime", false),
 		};
 
+		// definition.* (RMS-1B): stable definition identity on every department-definition Record event and on the
+		// definition lifecycle triggers 113/114. Never field values.
+		private static readonly List<TemplateVariableDescriptor> DefinitionVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("definition.id", "Definition ID", "string", false),
+			new TemplateVariableDescriptor("definition.key", "Definition key, e.g. security-patrol", "string", false),
+			new TemplateVariableDescriptor("definition.name", "Definition name", "string", false),
+			new TemplateVariableDescriptor("definition.category", "Definition category", "string", false),
+			new TemplateVariableDescriptor("definition.owner", "System or Department", "string", false),
+			new TemplateVariableDescriptor("definition.version", "Definition version", "int", false),
+			new TemplateVariableDescriptor("definition.previous_version", "Previously published version (publish trigger)", "int", false),
+			new TemplateVariableDescriptor("definition.state", "Draft, Published or Retired", "string", false),
+			new TemplateVariableDescriptor("definition.lifecycle_preset", "Lifecycle preset", "string", false),
+			new TemplateVariableDescriptor("definition.template_key", "Product template the definition was cloned from", "string", false),
+			new TemplateVariableDescriptor("definition.jurisdiction_profile_key", "Jurisdiction profile (generic, us, ca, us-ca)", "string", false),
+			new TemplateVariableDescriptor("definition.minimum_client_capability", "Client capability floor", "string", false),
+			new TemplateVariableDescriptor("definition.schema_checksum", "Published schema checksum", "string", false),
+			new TemplateVariableDescriptor("definition.published_on", "When the version was published (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("definition.retired", "Whether the definition is retired", "bool", false),
+			new TemplateVariableDescriptor("definition.reason", "Retirement reason (retire trigger)", "string", false),
+			new TemplateVariableDescriptor("definition.exposed_field_keys", "Field keys available under fields.*", "array", false),
+			new TemplateVariableDescriptor("definition.section_keys", "Section keys", "array", false),
+		};
+
+		// fields.* (RMS-1B): the values of fields the definition author marked WorkflowExposed; restricted and
+		// protected fields never appear. Repeating sections arrive as fields.<section> (an array of rows) plus
+		// fields.<section>_count.
+		private static readonly List<TemplateVariableDescriptor> FieldsVariables = new List<TemplateVariableDescriptor>
+		{
+			// Keys are the definition's own field keys (definition.exposed_field_keys); repeating sections add <section_key> (rows) and <section_key>_count.
+			new TemplateVariableDescriptor("fields", "Workflow-exposed field values of the department definition, keyed by field key; repeating sections appear as arrays plus a <section_key>_count", "object", false),
+		};
+
 		// review.* rides only on the two review-path triggers: review bookkeeping, never record content.
 		private static readonly List<TemplateVariableDescriptor> ReviewVariables = new List<TemplateVariableDescriptor>
 		{
@@ -789,6 +822,15 @@ namespace Resgrid.Model
 						list.Add(new TemplateVariableDescriptor("review.review_due_on", "When the review was due (UTC)", "datetime", false));
 						list.Add(new TemplateVariableDescriptor("review.return_count", "How many times it was returned", "int", false));
 					}
+					list.AddRange(DefinitionVariables);
+					list.AddRange(FieldsVariables);
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordDefinitionPublished:
+				case WorkflowTriggerEventType.RecordDefinitionRetired:
+					list.AddRange(RecordEventVariables);
+					list.AddRange(DefinitionVariables);
 					list.AddRange(ProtectionVariables);
 					break;
 

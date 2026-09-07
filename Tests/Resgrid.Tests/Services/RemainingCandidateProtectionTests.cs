@@ -22,10 +22,11 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public void The_catalog_is_at_version_ten_and_the_last_candidates_are_what_moved_it()
 		{
-			// v9 closed the remaining Protected Data candidates; v10 (2026-09-05) is the Records (RMS) family,
-			// pinned field-by-field in RmsProtectedFieldsCatalogTests.
-			_catalog.Version.Should().Be(10);
-			_catalog.GetAddedBetween(9, 10).Select(e => e.FieldId).Should().BeEquivalentTo(Resgrid.Model.RmsProtectedFields.AllFieldIds());
+			// v9 closed the remaining Protected Data candidates; v10 (2026-09-05) is the Records (RMS) family and
+			// v11 (2026-09-06) the typed values of department definitions, pinned in RmsProtectedFieldsCatalogTests.
+			_catalog.Version.Should().Be(11);
+			_catalog.GetAddedBetween(9, 11).Select(e => e.FieldId).Should().BeEquivalentTo(Resgrid.Model.RmsProtectedFields.AllFieldIds());
+			_catalog.GetAddedBetween(10, 11).Select(e => e.FieldId).Should().BeEquivalentTo(new[] { Resgrid.Model.RmsProtectedFields.ValueFieldId });
 
 			_catalog.GetAddedBetween(8, 9).Select(e => e.FieldId)
 				.Should().BeEquivalentTo(new[]

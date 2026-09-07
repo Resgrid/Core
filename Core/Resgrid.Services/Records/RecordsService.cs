@@ -54,6 +54,9 @@ namespace Resgrid.Services.Records
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRecordsUdfService _udf;
 		private readonly IRecordsProtectionService _protection;
+		private readonly IRecordDefinitionsService _definitions;
+		private readonly IRecordTypedValuesService _typedValues;
+		private readonly IPersonnelRolesService _roles;
 
 		public RecordsService(IRmsOperationalRecordsRepository records, IRmsRecordValueService details,
 			IRmsRecordParticipantsRepository participants, IRmsRecordUnitResponsesRepository units, IRmsRecordAttachmentsRepository attachments,
@@ -62,9 +65,12 @@ namespace Resgrid.Services.Records
 			IRecordsCutoverService cutover, IDepartmentSettingsService settings, IDepartmentGroupsService groups, IUserProfileService profiles,
 			IUnitsService unitsService, ICallsService calls, IDepartmentDataProtectionService dataProtection, IUnitOfWork unitOfWork,
 			IOutboundQueueProvider outboundQueue, IRecordAttachmentScanner attachmentScanner, IRecordsAuthorizationService authorization, IRecordsUdfService udf,
-			IRecordsProtectionService protection)
+			IRecordsProtectionService protection, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IPersonnelRolesService roles)
 		{
 			_protection = protection;
+			_definitions = definitions;
+			_typedValues = typedValues;
+			_roles = roles;
 			_records = records;
 			_details = details;
 			_participants = participants;
@@ -125,8 +131,14 @@ namespace Resgrid.Services.Records
 		{
 			if (input == null) throw new ArgumentNullException(nameof(input));
 			if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("An acting user is required.", nameof(userId));
+			RmsRecordDefinitionVersion definitionVersion = null;
 			if (!RmsDefinitionKeys.LockedTypes.TryGetValue(input.DefinitionKey ?? string.Empty, out var recordType))
-				throw new ArgumentException($"'{input.DefinitionKey}' is not a published definition.", nameof(input));
+			{
+				// Department definitions (RMS-1B): the current published version is pinned on the Record for life.
+				definitionVersion = await _definitions.GetCurrentPublishedAsync(departmentId, input.DefinitionKey ?? string.Empty);
+				if (definitionVersion == null)
+					throw new ArgumentException($"'{input.DefinitionKey}' is not a published definition.", nameof(input));
+			}
 
 			await EnsureRecordsUsableAsync(departmentId);
 			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.CreateRecord))
@@ -154,9 +166,9 @@ namespace Resgrid.Services.Records
 				DepartmentId = departmentId,
 				ProtectionId = Guid.NewGuid().ToString(),
 				DefinitionKey = input.DefinitionKey,
-				DefinitionVersion = RmsDefinitionKeys.LockedDefinitionVersion,
-				RecordType = (int)recordType,
-				LifecyclePreset = (int)RmsDefinitionKeys.LockedDefaultPreset,
+				DefinitionVersion = definitionVersion?.Version ?? RmsDefinitionKeys.LockedDefinitionVersion,
+				RecordType = definitionVersion == null ? (int)recordType : (int?)null,
+				LifecyclePreset = definitionVersion?.LifecyclePreset ?? (int)RmsDefinitionKeys.LockedDefaultPreset,
 				State = (int)RmsRecordState.Draft,
 				DraftReference = NewDraftReference(),
 				StationGroupId = input.StationGroupId ?? authorGroup?.DepartmentGroupId,
@@ -189,18 +201,32 @@ namespace Resgrid.Services.Records
 			};
 			await ApplyAuthorizedDetailsAsync(departmentId, userId, record.DefinitionKey, details, input.Details);
 			await ApplyCallSnapshotAsync(departmentId, userId, details, input.CallId);
-			ValidateDefinitionRequirements(recordType, details);
+			if (definitionVersion == null) ValidateDefinitionRequirements(recordType, details);
 
 			var participants = await BuildParticipantsAsync(departmentId, recordId, input.Participants, now);
 			var units = await BuildUnitsAsync(departmentId, recordId, input.Units, now);
-			record.DisplaySummary = BuildDisplaySummary(recordType, record, details, units);
+			RecordValueSet values = null;
+			if (definitionVersion != null)
+			{
+				var validation = await _typedValues.ValidateAsync(departmentId, definitionVersion, input.Values, false);
+				if (!validation.IsValid) throw new ArgumentException(string.Join(" ", validation.Issues.Where(i => i.Severity == "error").Select(i => i.Message)));
+			}
+			record.DisplaySummary = definitionVersion == null ? BuildDisplaySummary(recordType, record, details, units) : definitionVersion.DefinitionKey;
 
 			var outboxIds = new List<long>();
 			try
 			{
 			await InTransactionAsync(async () =>
 			{
+				// OnCreate numbering (plan 4.1): the number is reserved now; a cancelled draft records it as voided, never reused.
+				if (definitionVersion != null && definitionVersion.Numbering.Assignment == RmsNumberAssignment.OnCreate)
+					record.RecordNumber = await AllocateRecordNumberAsync(record, cancellationToken);
 				await _records.InsertAsync(record, cancellationToken, true);
+				if (definitionVersion != null)
+				{
+					values = await _typedValues.SaveDraftValuesAsync(departmentId, userId, recordId, definitionVersion, input.Values, cancellationToken);
+					record.DisplaySummary = _typedValues.ToDisplaySummary(definitionVersion.Schema, values) ?? definitionVersion.DefinitionKey;
+				}
 				record.UdfDefinitionId = await _udf.SaveInTransactionAsync(departmentId, userId, recordId, record.DefinitionKey, record.DefinitionVersion, null, input.CustomFields, cancellationToken);
 				await _records.UpdateAsync(record, cancellationToken, true);
 				await _details.InsertAsync(details, cancellationToken);
@@ -209,7 +235,7 @@ namespace Resgrid.Services.Records
 				foreach (var unit in units)
 					await _units.InsertAsync(unit, cancellationToken, true);
 
-				var aggregate = new RecordAggregate { Record = record, Details = details, Participants = participants, Units = units };
+				var aggregate = new RecordAggregate { Record = record, Details = details, Participants = participants, Units = units, Values = values, DefinitionVersionRow = definitionVersion };
 				await RecomputeGroupScopeAsync(aggregate, cancellationToken);
 				await UpsertProjectionAsync(aggregate, cancellationToken);
 
@@ -251,6 +277,13 @@ namespace Resgrid.Services.Records
 				throw new RecordTransitionException(recordId, state, state, "the Record is not editable in this state");
 
 			var recordType = (RmsOperationalRecordType)record.RecordType.GetValueOrDefault();
+			var definitionVersion = await DefinitionVersionForAsync(record);
+			if (definitionVersion != null)
+			{
+				var validation = await _typedValues.ValidateAsync(departmentId, definitionVersion, input.Values, false);
+				if (!validation.IsValid) throw new ArgumentException(string.Join(" ", validation.Issues.Where(i => i.Severity == "error").Select(i => i.Message)));
+			}
+			RecordValueSet values = null;
 			var now = DateTime.UtcNow;
 
 			await InTransactionAsync(async () =>
@@ -271,7 +304,8 @@ namespace Resgrid.Services.Records
 				record.UdfDefinitionId = await _udf.SaveInTransactionAsync(departmentId, userId, recordId, record.DefinitionKey, record.DefinitionVersion, record.UdfDefinitionId, input.CustomFields, cancellationToken);
 				if (input.CallId != record.CallId)
 					await ApplyCallSnapshotAsync(departmentId, userId, details, input.CallId);
-				ValidateDefinitionRequirements(recordType, details);
+				if (definitionVersion == null) ValidateDefinitionRequirements(recordType, details);
+				if (definitionVersion != null) values = await _typedValues.SaveDraftValuesAsync(departmentId, userId, recordId, definitionVersion, input.Values, cancellationToken);
 				details.ModifiedOn = now;
 				details.RowVersion += 1;
 				await _details.SaveOrUpdateAsync(details, cancellationToken);
@@ -290,14 +324,14 @@ namespace Resgrid.Services.Records
 				record.ExternalId = input.ExternalId;
 				record.StartedOn = input.StartedOn;
 				record.EndedOn = input.EndedOn;
-				record.DisplaySummary = BuildDisplaySummary(recordType, record, details, units);
+				record.DisplaySummary = definitionVersion == null ? BuildDisplaySummary(recordType, record, details, units) : _typedValues.ToDisplaySummary(definitionVersion.Schema, values) ?? definitionVersion.DefinitionKey;
 				record.ModifiedOn = now;
 				record.ModifiedByUserId = userId;
 				if (state == RmsRecordState.Returned)
 					record.State = (int)RmsRecordState.Draft;
 				await _records.UpdateAsync(record, cancellationToken, true);
 
-				var aggregate = new RecordAggregate { Record = record, Details = details, Participants = participants, Units = units };
+				var aggregate = new RecordAggregate { Record = record, Details = details, Participants = participants, Units = units, Values = values, DefinitionVersionRow = definitionVersion };
 				await RecomputeGroupScopeAsync(aggregate, cancellationToken);
 				await UpsertProjectionAsync(aggregate, cancellationToken);
 				// Draft autosaves emit no Workflow event (RMS plan section 5.6).
@@ -323,7 +357,7 @@ namespace Resgrid.Services.Records
 				await GuardVersionAsync(record, expectedRowVersion, cancellationToken);
 				record.State = (int)RmsRecordState.ReadyForReview;
 				record.SubmittedForReviewOn = now;
-				record.ReviewDueOn = now.AddHours(await _settings.GetRecordsReviewDueHoursAsync(departmentId));
+				record.ReviewDueOn = now.AddHours((await DefinitionVersionForAsync(record))?.ReviewDueHours ?? await _settings.GetRecordsReviewDueHoursAsync(departmentId));
 				record.ModifiedOn = now;
 				record.ModifiedByUserId = userId;
 				await _records.UpdateAsync(record, cancellationToken, true);
@@ -342,6 +376,7 @@ namespace Resgrid.Services.Records
 			var record = await LoadRecordAsync(departmentId, recordId);
 			var from = (RmsRecordState)record.State;
 			RequireTransition(record, from, RmsRecordState.Returned);
+			await RequireDefinitionRoleAsync(record, userId, from == RmsRecordState.Approved);
 
 			var now = DateTime.UtcNow;
 			var outboxIds = new List<long>();
@@ -385,6 +420,7 @@ namespace Resgrid.Services.Records
 			RequireTransition(record, from, RmsRecordState.Approved);
 			if (string.Equals(record.AuthorUserId, userId, StringComparison.Ordinal))
 				throw new RecordTransitionException(recordId, from, RmsRecordState.Approved, "the approver may not be the author");
+			await RequireDefinitionRoleAsync(record, userId, true);
 
 			var now = DateTime.UtcNow;
 			var outboxIds = new List<long>();
@@ -417,6 +453,8 @@ namespace Resgrid.Services.Records
 
 			if (isAmendment && string.IsNullOrWhiteSpace(reasonCode))
 				throw new ArgumentException("A reason code is required to finalize an amendment.", nameof(reasonCode));
+			if (from == RmsRecordState.ReadyForReview)
+				await RequireDefinitionRoleAsync(record, userId, false);
 
 			var now = DateTime.UtcNow;
 			var recordType = (RmsOperationalRecordType)record.RecordType.GetValueOrDefault();
@@ -429,8 +467,17 @@ namespace Resgrid.Services.Records
 
 				var draft = await HydrateDraftAsync(record);
 				draft.Protection.RequireRevealed(isAmendment ? "finalize amendment" : "finalize");
-				ValidateDefinitionRequirements(recordType, draft.Details);
-				ValidateForFinalization(recordType, draft);
+				if (draft.DefinitionVersionRow == null)
+				{
+					ValidateDefinitionRequirements(recordType, draft.Details);
+					ValidateForFinalization(recordType, draft);
+				}
+				else
+				{
+					// Department definitions: requiredness and Show/Require rules apply now, never on autosave (plan 4.1).
+					var validation = await _typedValues.ValidateAsync(departmentId, draft.DefinitionVersionRow, draft.Values?.ToInputs() ?? new List<RecordValueInput>(), true);
+					if (!validation.IsValid) throw new ArgumentException(string.Join(" ", validation.Issues.Where(i => i.Severity == "error").Select(i => i.Message)));
+				}
 				_udf.ValidateForFinalization(draft.CustomFields);
 
 				if (string.IsNullOrWhiteSpace(record.RecordNumber))
@@ -611,6 +658,35 @@ namespace Resgrid.Services.Records
 				await _records.UpdateAsync(record, cancellationToken, true);
 				await RefreshProjectionAsync(record, cancellationToken);
 				await AuditAsync(departmentId, userId, recordId, null, RmsAccessAuditAction.Admin, "Reassign draft", RmsOriginClient.Web, cancellationToken, new { previousOwner, newOwnerUserId, reason });
+			});
+
+			return await GetAsync(departmentId, recordId, false);
+		}
+
+		public async Task<RecordAggregate> AssignReviewerAsync(int departmentId, string userId, string recordId, string reviewerUserId, string reason, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(reviewerUserId)) throw new ArgumentException("A reviewer is required.", nameof(reviewerUserId));
+			var record = await LoadRecordAsync(departmentId, recordId);
+			var state = (RmsRecordState)record.State;
+			if (state != RmsRecordState.ReadyForReview)
+				throw new RecordTransitionException(recordId, state, state, "only a Record awaiting review can be assigned a reviewer");
+			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ReviewRecords))
+				throw new UnauthorizedAccessException("Assigning a reviewer requires the ReviewRecords permission.");
+			if (!await _authorization.CanUserViewRecordAsync(userId, recordId, departmentId))
+				throw new UnauthorizedAccessException("Record access is not authorized.");
+			if (!await _authorization.HasPermissionAsync(reviewerUserId, departmentId, PermissionTypes.ReviewRecords))
+				throw new ArgumentException("The chosen reviewer does not hold the ReviewRecords permission.", nameof(reviewerUserId));
+
+			await InTransactionAsync(async () =>
+			{
+				await GuardVersionAsync(record, record.RowVersion, cancellationToken);
+				var previousReviewer = record.ReviewerUserId;
+				record.ReviewerUserId = reviewerUserId;
+				record.ModifiedOn = DateTime.UtcNow;
+				record.ModifiedByUserId = userId;
+				await _records.UpdateAsync(record, cancellationToken, true);
+				await RefreshProjectionAsync(record, cancellationToken);
+				await AuditAsync(departmentId, userId, recordId, null, RmsAccessAuditAction.Admin, "Assign reviewer", RmsOriginClient.Web, cancellationToken, new { previousReviewer, reviewerUserId, reason });
 			});
 
 			return await GetAsync(departmentId, recordId, false);
@@ -889,6 +965,24 @@ namespace Resgrid.Services.Records
 			record.RowVersion = expectedRowVersion + 1;
 		}
 
+		/// <summary>The pinned definition version of a department-definition Record; null for locked system definitions.</summary>
+		private async Task<RmsRecordDefinitionVersion> DefinitionVersionForAsync(RmsOperationalRecord record)
+		{
+			if (record == null || record.RecordType != null || RmsDefinitionKeys.IsSystemKey(record.DefinitionKey)) return null;
+			return await _definitions.GetVersionAsync(record.DepartmentId, record.DefinitionKey, record.DefinitionVersion);
+		}
+
+		/// <summary>Roles assigned per definition narrow the underlying permission, never widen it (plan 4.1 presets table).</summary>
+		private async Task RequireDefinitionRoleAsync(RmsOperationalRecord record, string userId, bool approver)
+		{
+			var version = await DefinitionVersionForAsync(record);
+			var roleIds = RecordDefinitionsService.ParseIds(approver ? version?.ApproverRoleIds : version?.ReviewerRoleIds);
+			if (roleIds.Count == 0) return;
+			var roles = await _roles.GetRolesForUserAsync(userId, record.DepartmentId) ?? new List<PersonnelRole>();
+			if (!roles.Any(r => roleIds.Contains(r.PersonnelRoleId)))
+				throw new UnauthorizedAccessException(approver ? "This definition limits approval to selected roles." : "This definition limits review to selected roles.");
+		}
+
 		private async Task InTransactionAsync(Func<Task> work)
 		{
 			_unitOfWork.CreateOrGetConnection();
@@ -932,6 +1026,11 @@ namespace Resgrid.Services.Records
 				Units = (await _units.GetForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId, null))?.ToList() ?? new List<RmsRecordUnitResponse>(),
 				Attachments = (await _attachments.GetMetadataForRecordAsync(record.DepartmentId, record.RmsOperationalRecordId))?.ToList() ?? new List<RmsRecordAttachment>()
 			};
+			if (record.RecordType == null)
+			{
+				aggregate.DefinitionVersionRow = await DefinitionVersionForAsync(record);
+				aggregate.Values = await _typedValues.HydrateAsync(record.DepartmentId, record.RmsOperationalRecordId, null, aggregate.DefinitionVersionRow, true);
+			}
 			aggregate.Protection = await _protection.RevealAsync(record.DepartmentId, aggregate);
 			return aggregate;
 		}
@@ -955,6 +1054,8 @@ namespace Resgrid.Services.Records
 			snapshot.Evidence = snapshot.Evidence.OrderBy(e => e.RmsEvidenceArtifactId, StringComparer.Ordinal).ToList();
 			if (transition != RmsRevisionTransition.Voided) await _evidence.RequireInventoryCoverageAsync(record.DepartmentId, record.RmsOperationalRecordId, snapshot.Evidence);
 			snapshot.RecordNumber = record.RecordNumber;
+			if (draft.DefinitionVersionRow != null && draft.Values != null)
+				snapshot.Values = _typedValues.ToSnapshot(draft.DefinitionVersionRow.Schema, draft.Values);
 			var json = RecordSnapshotSerializer.Serialize(snapshot);
 
 			var revision = new RmsRevision
@@ -998,6 +1099,8 @@ namespace Resgrid.Services.Records
 				copy.RowVersion = 1;
 				await _details.InsertAsync(copy, cancellationToken);
 			}
+			if (record.RecordType == null)
+				await _typedValues.CopyDraftToRevisionAsync(record.DepartmentId, record.RmsOperationalRecordId, revision.RmsRevisionId, cancellationToken);
 
 			foreach (var participant in draft.Participants)
 			{
@@ -1020,6 +1123,8 @@ namespace Resgrid.Services.Records
 
 		private async Task RestoreDraftFromSnapshotAsync(RmsOperationalRecord record, RecordSnapshot snapshot, DateTime now, CancellationToken cancellationToken)
 		{
+			if (record.RecordType == null)
+				await _typedValues.RestoreDraftFromRevisionAsync(record.DepartmentId, record.ModifiedByUserId, record.RmsOperationalRecordId, record.CurrentRevisionId, await DefinitionVersionForAsync(record), cancellationToken);
 			await _udf.RestoreInTransactionAsync(record.DepartmentId, record.RmsOperationalRecordId, record.DefinitionKey, record.DefinitionVersion, snapshot.CustomFields, record.ModifiedByUserId, cancellationToken);
 			record.UdfDefinitionId = snapshot.CustomFields?.DefinitionId;
 			var details = await _details.GetDraftAsync(record.DepartmentId, record.RmsOperationalRecordId);
@@ -1066,13 +1171,28 @@ namespace Resgrid.Services.Records
 			var config = await _settings.GetRecordsNumberingConfigAsync(record.DepartmentId);
 			var prefixBase = RmsDefinitionKeys.DefaultNumberPrefix(record.DefinitionKey);
 			var year = (record.StartedOn ?? DateTime.UtcNow).Year;
+			var perGroup = config.PerGroupSequence;
+			var includeYear = config.IncludeYear;
+			var configuredWidth = config.SequenceWidth;
+			if (record.RecordType == null)
+			{
+				// Department definitions carry their own numbering policy (plan 4.1 "Numbering"); the department setting is the fallback.
+				var numbering = (await DefinitionVersionForAsync(record))?.Numbering;
+				if (numbering != null)
+				{
+					if (!string.IsNullOrWhiteSpace(numbering.Prefix)) prefixBase = numbering.Prefix;
+					perGroup = numbering.PerGroupSequence;
+					includeYear = numbering.ResetYearly;
+					configuredWidth = numbering.SequenceWidth;
+				}
+			}
 			var prefix = prefixBase + "-";
-			if (config.PerGroupSequence && record.StationGroupId.HasValue)
+			if (perGroup && record.StationGroupId.HasValue)
 				prefix += "G" + record.StationGroupId.Value + "-";
-			if (config.IncludeYear)
+			if (includeYear)
 				prefix += year + "-";
 
-			var width = Math.Max(3, Math.Min(8, config.SequenceWidth <= 0 ? 4 : config.SequenceWidth));
+			var width = Math.Max(3, Math.Min(8, configuredWidth <= 0 ? 4 : configuredWidth));
 			var sequence = await _records.GetMaxRecordNumberSequenceAsync(record.DepartmentId, prefix) + 1;
 			return prefix + sequence.ToString("D" + width);
 		}
@@ -1150,7 +1270,8 @@ namespace Resgrid.Services.Records
 			projection.GroupScopeIds = string.Join(",", (aggregate.GroupScope ?? new List<RmsRecordGroupScope>()).Select(s => s.DepartmentGroupId).Distinct());
 			projection.DisplaySummary = record.DisplaySummary;
 			// Safe fields only: never narrative, address detail, contact or restricted sections (plan section 5.10).
-			projection.SearchText = string.Join(" ", new[] { record.RecordNumber, record.DraftReference, record.DisplaySummary, details.Course, details.CourseCode, details.CallNumber, details.CallName, details.Type, record.ExternalId }.Where(s => !string.IsNullOrWhiteSpace(s)));
+			projection.SearchText = string.Join(" ", new[] { record.RecordNumber, record.DraftReference, record.DisplaySummary, details.Course, details.CourseCode, details.CallNumber, details.CallName, details.Type, record.ExternalId,
+				aggregate.DefinitionVersionRow == null || aggregate.Values == null ? null : _typedValues.ToSearchText(aggregate.DefinitionVersionRow.Schema, aggregate.Values) }.Where(s => !string.IsNullOrWhiteSpace(s)));
 			projection.IsLegacy = false;
 			projection.ProjectionVersion = RmsRecordSearchProjection.CurrentProjectionVersion;
 			projection.ProtectedCatalogVersion = await SafeCatalogVersionAsync(record.DepartmentId);
@@ -1205,6 +1326,18 @@ namespace Resgrid.Services.Records
 			};
 			if (extra != null)
 				payload["extra"] = extra;
+			if (record.RecordType == null)
+			{
+				// Department definitions (RMS-1B): stable definition identity plus the explicitly Workflow-exposed field values.
+				var definitionVersion = await DefinitionVersionForAsync(record);
+				if (definitionVersion != null)
+				{
+					var definition = await _definitions.GetAsync(record.DepartmentId, record.DefinitionKey);
+					payload["definition"] = RecordDefinitionsService.DefinitionBlock(definition?.Definition ?? new RmsRecordDefinition { DefinitionKey = record.DefinitionKey, DepartmentId = record.DepartmentId, Owner = (int)RmsDefinitionOwner.Department }, definitionVersion, null, null);
+					var values = await _typedValues.HydrateAsync(record.DepartmentId, record.RmsOperationalRecordId, revision?.RmsRevisionId, definitionVersion, true);
+					payload["fields"] = _typedValues.ToWorkflowBlock(definitionVersion.Schema, values);
+				}
+			}
 			if (blocks != null)
 				foreach (var block in blocks)
 					payload[block.Key] = block.Value;

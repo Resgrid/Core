@@ -67,7 +67,7 @@ namespace Resgrid.Tests.Rms
 			_records = new RecordsService(_store.RecordsRepo.Object, new RmsRecordValueService(_store.DetailsRepo.Object), _store.ParticipantsRepo.Object, _store.UnitsRepo.Object,
 				_store.AttachmentsRepo.Object, _store.RevisionsRepo.Object, evidence.Object, _store.ScopesRepo.Object, _store.SharesRepo.Object, _store.ProjectionsRepo.Object,
 				_store.AuditsRepo.Object, outbox, cutover.Object, settings.Object, groups.Object, profiles.Object, units.Object, calls.Object, adp.Object,
-				_store.UnitOfWork.Object, queue.Object, new NullRecordAttachmentScanner(), _authorization.Object, Mock.Of<IRecordsUdfService>(), new PassthroughRecordsProtection());
+				_store.UnitOfWork.Object, queue.Object, new NullRecordAttachmentScanner(), _authorization.Object, Mock.Of<IRecordsUdfService>(), new PassthroughRecordsProtection(), Mock.Of<IRecordDefinitionsService>(), Mock.Of<IRecordTypedValuesService>(), Mock.Of<IPersonnelRolesService>());
 
 			_store.ProjectionsRepo.Setup(r => r.GetModifiedSinceAsync(Dept, It.IsAny<DateTime?>(), It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, DateTime? since, int take, string sinceId) => _store.Projections

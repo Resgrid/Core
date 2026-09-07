@@ -1064,4 +1064,255 @@
   <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>Підтверджено</value></data>
   <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>Застосовано Розширений захист даних: захищені надсилання не працюватимуть, доки не зафіксовано це підтвердження.</value></data>
   <data name="RecordId" xml:space="preserve"><value>Ідентифікатор запису</value></data>
+  <data name="AddRow" xml:space="preserve"><value>Додати рядок</value></data>
+  <data name="RemoveRow" xml:space="preserve"><value>Видалити рядок</value></data>
+  <data name="WithheldField" xml:space="preserve"><value>Приховано</value></data>
+  <data name="CoordinatesHint" xml:space="preserve"><value>Координати (шир., довг.) або посилання на місце</value></data>
+  <data name="SignatureAcknowledge" xml:space="preserve"><value>Я підписую цей запис як автор</value></data>
+  <data name="Yes" xml:space="preserve"><value>Так</value></data>
+  <data name="No" xml:space="preserve"><value>Ні</value></data>
+  <data name="Edit" xml:space="preserve"><value>Редагувати</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Увімкнено</value></data>
+  <data name="PreviewPack" xml:space="preserve"><value>Попередній перегляд</value></data>
+  <data name="DefinitionFormHint" xml:space="preserve"><value>Цей запис відповідає визначенню підрозділу. Поля з замком обмежені; правила можуть показувати або вимагати поля під час введення.</value></data>
+  <data name="Definitions" xml:space="preserve"><value>Визначення</value></data>
+  <data name="DefinitionsIntro" xml:space="preserve"><value>Визначення записів описують форми вашого підрозділу: розділи, поля, правила, нумерацію та хто перевіряє чи затверджує. Публікація заморожує версію; записи закріплюються за версією, в якій їх створено.</value></data>
+  <data name="NewDefinition" xml:space="preserve"><value>Нове визначення</value></data>
+  <data name="CreateDefinition" xml:space="preserve"><value>Створити визначення</value></data>
+  <data name="CreateFromTemplate" xml:space="preserve"><value>Почати з шаблону</value></data>
+  <data name="CreateFromClone" xml:space="preserve"><value>Клонувати наявне визначення</value></data>
+  <data name="CreateBlank" xml:space="preserve"><value>Порожнє визначення</value></data>
+  <data name="BrowseTemplates" xml:space="preserve"><value>Переглянути шаблони</value></data>
+  <data name="TemplatesIntro" xml:space="preserve"><value>Пакети шаблонів є перевіреними відправними точками. Кожен показує джерела та дату перегляду; пакети попереднього перегляду можна використовувати, але вони ще перевіряються з підрозділами.</value></data>
+  <data name="TemplateReviewedOn" xml:space="preserve"><value>Переглянуто</value></data>
+  <data name="TemplateSources" xml:space="preserve"><value>Джерела</value></data>
+  <data name="TemplateSections" xml:space="preserve"><value>Розділи</value></data>
+  <data name="TemplateFields" xml:space="preserve"><value>Поля</value></data>
+  <data name="TemplateUseThis" xml:space="preserve"><value>Використати цей шаблон</value></data>
+  <data name="TemplateProfile" xml:space="preserve"><value>Профіль юрисдикції</value></data>
+  <data name="TemplateLocale" xml:space="preserve"><value>Локаль</value></data>
+  <data name="TemplatePreview" xml:space="preserve"><value>Попередній перегляд шаблону</value></data>
+  <data name="DefinitionKeyHelp" xml:space="preserve"><value>Малі літери, цифри, крапки та дефіси. Не можна змінити після створення.</value></data>
+  <data name="DefinitionName" xml:space="preserve"><value>Назва</value></data>
+  <data name="DefinitionCategory" xml:space="preserve"><value>Категорія</value></data>
+  <data name="DefinitionDescription" xml:space="preserve"><value>Опис</value></data>
+  <data name="DefinitionOwner" xml:space="preserve"><value>Власник</value></data>
+  <data name="DefinitionLocked" xml:space="preserve"><value>Продукт (заблоковано)</value></data>
+  <data name="DefinitionPublishedVersion" xml:space="preserve"><value>Опублікована версія</value></data>
+  <data name="DefinitionDraftVersion" xml:space="preserve"><value>Чернетка версії</value></data>
+  <data name="DefinitionPreset" xml:space="preserve"><value>Шаблон життєвого циклу</value></data>
+  <data name="DefinitionCapability" xml:space="preserve"><value>Можливість клієнта</value></data>
+  <data name="DefinitionRetiredLabel" xml:space="preserve"><value>Виведено з ужитку</value></data>
+  <data name="DefinitionIncludeRetired" xml:space="preserve"><value>Показати виведені визначення</value></data>
+  <data name="DefinitionHideRetired" xml:space="preserve"><value>Приховати виведені визначення</value></data>
+  <data name="DefinitionHistory" xml:space="preserve"><value>Історія</value></data>
+  <data name="DefinitionVersion" xml:space="preserve"><value>Версія</value></data>
+  <data name="DefinitionState" xml:space="preserve"><value>Стан</value></data>
+  <data name="DefinitionPublishedOn" xml:space="preserve"><value>Опубліковано</value></data>
+  <data name="DefinitionChangeNotes" xml:space="preserve"><value>Примітки до змін</value></data>
+  <data name="DefinitionSettings" xml:space="preserve"><value>Налаштування</value></data>
+  <data name="DefinitionSubjects" xml:space="preserve"><value>Дозволені суб'єкти</value></data>
+  <data name="DefinitionReviewerRoles" xml:space="preserve"><value>Ролі рецензентів</value></data>
+  <data name="DefinitionApproverRoles" xml:space="preserve"><value>Ролі затверджувачів</value></data>
+  <data name="DefinitionReviewDueHours" xml:space="preserve"><value>Термін перевірки (год.)</value></data>
+  <data name="DefinitionApproveDueHours" xml:space="preserve"><value>Термін затвердження (год.)</value></data>
+  <data name="DefinitionAuthorAttestation" xml:space="preserve"><value>Вимагати підтвердження автора під час завершення</value></data>
+  <data name="DefinitionNumbering" xml:space="preserve"><value>Нумерація</value></data>
+  <data name="DefinitionNumberPrefix" xml:space="preserve"><value>Префікс номера</value></data>
+  <data name="DefinitionSequenceWidth" xml:space="preserve"><value>Ширина послідовності</value></data>
+  <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Призначити номер</value></data>
+  <data name="DefinitionPerGroup" xml:space="preserve"><value>Послідовність на станцію</value></data>
+  <data name="DefinitionResetYearly" xml:space="preserve"><value>Скидати щороку</value></data>
+  <data name="DefinitionClassification" xml:space="preserve"><value>Класифікація</value></data>
+  <data name="DefinitionRetention" xml:space="preserve"><value>Зберігання (роки)</value></data>
+  <data name="DefinitionClientSurface" xml:space="preserve"><value>Клієнтські поверхні</value></data>
+  <data name="DefinitionAllowOffline" xml:space="preserve"><value>Дозволити офлайн</value></data>
+  <data name="DefinitionAllowAttachments" xml:space="preserve"><value>Дозволити вкладення</value></data>
+  <data name="DefinitionMigrationMap" xml:space="preserve"><value>Карта міграції (JSON)</value></data>
+  <data name="DefinitionSchema" xml:space="preserve"><value>Схема (JSON)</value></data>
+  <data name="DefinitionSchemaHelp" xml:space="preserve"><value>Розділи містять поля; кожне поле має ключ, підпис, тип і необов'язкові правила. Перевірте перед публікацією; таблиця полів нижче відображає останню збережену чернетку.</value></data>
+  <data name="DefinitionFieldTable" xml:space="preserve"><value>Поля</value></data>
+  <data name="DefinitionRepeating" xml:space="preserve"><value>Повторювана</value></data>
+  <data name="DefinitionRules" xml:space="preserve"><value>Правила</value></data>
+  <data name="FieldKey" xml:space="preserve"><value>Ключ</value></data>
+  <data name="FieldLabel" xml:space="preserve"><value>Підпис</value></data>
+  <data name="FieldType" xml:space="preserve"><value>Тип поля</value></data>
+  <data name="FieldRequired" xml:space="preserve"><value>Обов'язкове</value></data>
+  <data name="FieldClassification" xml:space="preserve"><value>Класифікація</value></data>
+  <data name="FieldFlags" xml:space="preserve"><value>Прапорці</value></data>
+  <data name="DefinitionValidate" xml:space="preserve"><value>Перевірити</value></data>
+  <data name="DefinitionSaveDraft" xml:space="preserve"><value>Зберегти чернетку</value></data>
+  <data name="DefinitionImpactPublish" xml:space="preserve"><value>Переглянути вплив і опублікувати</value></data>
+  <data name="DefinitionOpenDraft" xml:space="preserve"><value>Відкрити нову чернетку</value></data>
+  <data name="DefinitionDeleteDraft" xml:space="preserve"><value>Видалити чернетку</value></data>
+  <data name="DefinitionDeleteDraftConfirm" xml:space="preserve"><value>Видалити цю чернетку версії? Опубліковані версії не зачіпаються.</value></data>
+  <data name="DefinitionPublishedReadOnly" xml:space="preserve"><value>Ця версія опублікована й доступна лише для читання. Відкрийте нову чернетку для змін.</value></data>
+  <data name="DefinitionIssues" xml:space="preserve"><value>Проблеми перевірки</value></data>
+  <data name="DefinitionTemplateDrift" xml:space="preserve"><value>Відмінності від шаблону, з якого створено це визначення</value></data>
+  <data name="DefinitionImpact" xml:space="preserve"><value>Вплив публікації</value></data>
+  <data name="DefinitionImpactIntro" xml:space="preserve"><value>Публікація заморожує цю версію. Наявні чернетки зберігають свою версію до міграції; завершені записи ніколи не змінюються.</value></data>
+  <data name="DefinitionOpenDrafts" xml:space="preserve"><value>Відкриті чернетки поточної версії</value></data>
+  <data name="DefinitionFinalizedEarlier" xml:space="preserve"><value>Завершені записи в попередніх версіях</value></data>
+  <data name="DefinitionBreaking" xml:space="preserve"><value>Несумісна зміна</value></data>
+  <data name="DefinitionClients" xml:space="preserve"><value>Готовність клієнтів</value></data>
+  <data name="DefinitionDiff" xml:space="preserve"><value>Зміни</value></data>
+  <data name="DefinitionDiffFrom" xml:space="preserve"><value>Порівняти від</value></data>
+  <data name="DefinitionDiffTo" xml:space="preserve"><value>до</value></data>
+  <data name="DefinitionCompare" xml:space="preserve"><value>Порівняти</value></data>
+  <data name="DefinitionNoChanges" xml:space="preserve"><value>Між цими версіями немає відмінностей.</value></data>
+  <data name="DefinitionPublishConfirm" xml:space="preserve"><value>Опублікувати цю версію? Вона стане лише для читання, і нові записи використовуватимуть її.</value></data>
+  <data name="DefinitionPublishNow" xml:space="preserve"><value>Опублікувати</value></data>
+  <data name="DefinitionPublishNeedsPermission" xml:space="preserve"><value>Публікація потребує дозволу на керування визначеннями записів.</value></data>
+  <data name="DefinitionRetire" xml:space="preserve"><value>Вивести з ужитку</value></data>
+  <data name="DefinitionRetireReason" xml:space="preserve"><value>Причина виведення цього визначення</value></data>
+  <data name="DefinitionMigrateDrafts" xml:space="preserve"><value>Мігрувати відкриті чернетки</value></data>
+  <data name="DefinitionMigratePreview" xml:space="preserve"><value>Попередній перегляд міграції</value></data>
+  <data name="DefinitionMigrateRun" xml:space="preserve"><value>Мігрувати зараз</value></data>
+  <data name="DefinitionMigrateConfirm" xml:space="preserve"><value>Перенести всі відкриті чернетки на новішу версію? Незіставлені значення буде відкинуто.</value></data>
+  <data name="DefinitionCreated" xml:space="preserve"><value>Визначення створено. Відредагуйте схему, перевірте, потім опублікуйте.</value></data>
+  <data name="DefinitionSaved" xml:space="preserve"><value>Чернетку збережено.</value></data>
+  <data name="DefinitionValid" xml:space="preserve"><value>Визначення дійсне.</value></data>
+  <data name="DefinitionInvalid" xml:space="preserve"><value>Визначення містить помилки. Виправте їх перед публікацією.</value></data>
+  <data name="DefinitionDraftDeleted" xml:space="preserve"><value>Чернетку версії видалено.</value></data>
+  <data name="DefinitionPublished" xml:space="preserve"><value>Версію {0} опубліковано.</value></data>
+  <data name="DefinitionRetired" xml:space="preserve"><value>Визначення виведено з ужитку. Наявні записи залишаються доступними; нові створити не можна.</value></data>
+  <data name="SavedReports" xml:space="preserve"><value>Збережені звіти</value></data>
+  <data name="SavedReportsIntro" xml:space="preserve"><value>Збережені звіти запитують записи одного визначення за полями, групують і агрегують їх та експортують у CSV. Результати враховують видимість і обмежені поля.</value></data>
+  <data name="NewReport" xml:space="preserve"><value>Новий звіт</value></data>
+  <data name="ReportName" xml:space="preserve"><value>Назва звіту</value></data>
+  <data name="ReportSettings" xml:space="preserve"><value>Налаштування звіту</value></data>
+  <data name="ReportColumns" xml:space="preserve"><value>Стовпці</value></data>
+  <data name="ReportBuiltInColumns" xml:space="preserve"><value>Стовпці запису</value></data>
+  <data name="ReportPickDefinition" xml:space="preserve"><value>Виберіть визначення, щоб обрати стовпці.</value></data>
+  <data name="ReportSort" xml:space="preserve"><value>Сортувати за</value></data>
+  <data name="ReportDescending" xml:space="preserve"><value>За спаданням</value></data>
+  <data name="ReportGroupBy" xml:space="preserve"><value>Групувати за</value></data>
+  <data name="ReportAggregates" xml:space="preserve"><value>Агрегати (JSON)</value></data>
+  <data name="ReportAggregatesHelp" xml:space="preserve"><value>Count, Sum, Average, Min, Max для агрегованих полів</value></data>
+  <data name="ReportFilters" xml:space="preserve"><value>Фільтри (JSON)</value></data>
+  <data name="ReportFiltersHelp" xml:space="preserve"><value>Поля для фільтрації</value></data>
+  <data name="ReportVersionMappings" xml:space="preserve"><value>Зіставлення версій (JSON)</value></data>
+  <data name="ReportMaxRows" xml:space="preserve"><value>Макс. рядків</value></data>
+  <data name="ReportIncludeDrafts" xml:space="preserve"><value>Включити чернетки</value></data>
+  <data name="ReportIncludeRestricted" xml:space="preserve"><value>Включити обмежені поля</value></data>
+  <data name="ReportValidate" xml:space="preserve"><value>Перевірити</value></data>
+  <data name="ReportRun" xml:space="preserve"><value>Запустити</value></data>
+  <data name="ReportLastRun" xml:space="preserve"><value>Останній запуск</value></data>
+  <data name="ReportDeleteConfirm" xml:space="preserve"><value>Видалити цей збережений звіт?</value></data>
+  <data name="ReportRows" xml:space="preserve"><value>Рядки</value></data>
+  <data name="ReportGroups" xml:space="preserve"><value>Групи</value></data>
+  <data name="ReportCount" xml:space="preserve"><value>Кількість</value></data>
+  <data name="ReportTruncated" xml:space="preserve"><value>Результати обрізано за лімітом рядків; звузьте фільтри або експортуйте в CSV.</value></data>
+  <data name="ReportUnmappedVersions" xml:space="preserve"><value>Записи на незіставлених версіях визначення включено з порожніми комірками</value></data>
+  <data name="ReportSaved" xml:space="preserve"><value>Звіт збережено.</value></data>
+  <data name="ReportDeleted" xml:space="preserve"><value>Звіт видалено.</value></data>
+  <data name="ReportValid" xml:space="preserve"><value>Звіт дійсний.</value></data>
+  <data name="ReportInvalid" xml:space="preserve"><value>Звіт містить помилки.</value></data>
+  <data name="Deployments" xml:space="preserve"><value>Розгортання</value></data>
+  <data name="DeploymentsIntro" xml:space="preserve"><value>Зовнішні замовлення ресурсів, які виконує ваш підрозділ. Система замовлення залишається авторитетною: артефакти зберігаються як незмінні знімки, і нічого не записується назад.</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>Нове розгортання</value></data>
+  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>Розгортання є функцією попереднього перегляду: шаблони побудовано з опублікованої документації IROC, CIFFC та EMAC, а не з живих інтеграцій. Перевірте у своїй системі замовлення.</value></data>
+  <data name="DeploymentOrder" xml:space="preserve"><value>Замовлення</value></data>
+  <data name="DeploymentOrderNumber" xml:space="preserve"><value>Номер замовлення</value></data>
+  <data name="DeploymentIncident" xml:space="preserve"><value>Інцидент</value></data>
+  <data name="DeploymentLocation" xml:space="preserve"><value>Країна / регіон</value></data>
+  <data name="DeploymentOffices" xml:space="preserve"><value>Офіси</value></data>
+  <data name="DeploymentOrderingOffice" xml:space="preserve"><value>Офіс замовлення</value></data>
+  <data name="DeploymentDispatchOffice" xml:space="preserve"><value>Диспетчерський офіс</value></data>
+  <data name="DeploymentAgencies" xml:space="preserve"><value>Агенції</value></data>
+  <data name="DeploymentRequestingAgency" xml:space="preserve"><value>Агенція-замовник</value></data>
+  <data name="DeploymentReceivingAgency" xml:space="preserve"><value>Агенція-отримувач</value></data>
+  <data name="DeploymentSendingAgency" xml:space="preserve"><value>Агенція-відправник</value></data>
+  <data name="DeploymentRole" xml:space="preserve"><value>Роль підрозділу</value></data>
+  <data name="DeploymentRoleFilling" xml:space="preserve"><value>Виконує замовлення</value></data>
+  <data name="DeploymentRoleRequesting" xml:space="preserve"><value>Запитує ресурси</value></data>
+  <data name="DeploymentRoleHost" xml:space="preserve"><value>Приймає інцидент</value></data>
+  <data name="DeploymentCost" xml:space="preserve"><value>Вартість</value></data>
+  <data name="DeploymentCostCode" xml:space="preserve"><value>Код витрат</value></data>
+  <data name="DeploymentAgreement" xml:space="preserve"><value>Посилання на угоду</value></data>
+  <data name="DeploymentUnitsAndCurrency" xml:space="preserve"><value>Валюта / одиниці / часовий пояс</value></data>
+  <data name="DeploymentArtifact" xml:space="preserve"><value>Документ замовлення</value></data>
+  <data name="DeploymentArtifactHelp" xml:space="preserve"><value>Завантажте документ замовлення з вихідної системи (PDF, JSON або CSV). Він зберігається як незмінний знімок із контрольною сумою.</value></data>
+  <data name="DeploymentSource" xml:space="preserve"><value>Джерело</value></data>
+  <data name="DeploymentSourceSystem" xml:space="preserve"><value>Вихідна система</value></data>
+  <data name="DeploymentSourceVersion" xml:space="preserve"><value>Версія джерела</value></data>
+  <data name="DeploymentSourceLink" xml:space="preserve"><value>Відкрити у вихідній системі</value></data>
+  <data name="DeploymentStatus" xml:space="preserve"><value>Статус</value></data>
+  <data name="DeploymentIncludeClosed" xml:space="preserve"><value>Показати закриті розгортання</value></data>
+  <data name="DeploymentHideClosed" xml:space="preserve"><value>Приховати закриті розгортання</value></data>
+  <data name="DeploymentMobilizedOn" xml:space="preserve"><value>Мобілізовано</value></data>
+  <data name="DeploymentReleasedOn" xml:space="preserve"><value>Звільнено</value></data>
+  <data name="DeploymentClosedOutOn" xml:space="preserve"><value>Закрито</value></data>
+  <data name="DeploymentNewSnapshot" xml:space="preserve"><value>Записати новий знімок</value></data>
+  <data name="DeploymentRecordSnapshot" xml:space="preserve"><value>Зберегти знімок</value></data>
+  <data name="DeploymentCloseout" xml:space="preserve"><value>Закрити розгортання</value></data>
+  <data name="DeploymentCloseoutNotes" xml:space="preserve"><value>Примітки закриття</value></data>
+  <data name="DeploymentCloseoutConfirm" xml:space="preserve"><value>Закрити це розгортання? Заповнення більше не можна змінювати.</value></data>
+  <data name="DeploymentCloseoutBlocked" xml:space="preserve"><value>Кожне прийняте заповнення має бути повернуте перед закриттям.</value></data>
+  <data name="DeploymentFills" xml:space="preserve"><value>Заповнення</value></data>
+  <data name="DeploymentFirstFill" xml:space="preserve"><value>Перше заповнення (необов'язково)</value></data>
+  <data name="DeploymentFirstFillHelp" xml:space="preserve"><value>Додайте перший запит/заповнення зараз або зі сторінки розгортання.</value></data>
+  <data name="DeploymentAddFill" xml:space="preserve"><value>Додати заповнення</value></data>
+  <data name="DeploymentRequestNumber" xml:space="preserve"><value>Номер запиту</value></data>
+  <data name="DeploymentParentRequest" xml:space="preserve"><value>Батьківський запит</value></data>
+  <data name="DeploymentResource" xml:space="preserve"><value>Ресурс</value></data>
+  <data name="DeploymentPosition" xml:space="preserve"><value>Посада</value></data>
+  <data name="DeploymentTrainee" xml:space="preserve"><value>Стажер</value></data>
+  <data name="DeploymentAssigned" xml:space="preserve"><value>Призначена особа</value></data>
+  <data name="DeploymentHomeUnit" xml:space="preserve"><value>Домашній підрозділ</value></data>
+  <data name="DeploymentHostAgency" xml:space="preserve"><value>Приймаюча агенція</value></data>
+  <data name="DeploymentNeededOn" xml:space="preserve"><value>Потрібно на</value></data>
+  <data name="DeploymentRecord" xml:space="preserve"><value>Запис розгортання</value></data>
+  <data name="DeploymentCreate" xml:space="preserve"><value>Створити розгортання</value></data>
+  <data name="DeploymentDeclineReason" xml:space="preserve"><value>Причина відхилення цього запиту</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>Розгортання створено.</value></data>
+  <data name="DeploymentFillAdded" xml:space="preserve"><value>Заповнення додано.</value></data>
+  <data name="DeploymentFillUpdated" xml:space="preserve"><value>Заповнення оновлено.</value></data>
+  <data name="DeploymentSnapshotNeedsFile" xml:space="preserve"><value>Виберіть документ замовлення для збереження як знімок.</value></data>
+  <data name="DeploymentSnapshotRecorded" xml:space="preserve"><value>Знімок збережено. Попередній збережено та замінено.</value></data>
+  <data name="DeploymentClosedOut" xml:space="preserve"><value>Розгортання закрито.</value></data>
+  <data name="DefinitionLayout" xml:space="preserve"><value>Макет друку</value></data>
+  <data name="DefinitionLayoutIntro" xml:space="preserve"><value>Упорядковуйте, перейменовуйте або приховуйте розділи та поля для друку і PDF, додавайте розриви сторінок і розміщуйте блок підпису та список вкладень. Кожне збереження створює нову версію макета, зазначену в нижньому колонтитулі походження.</value></data>
+  <data name="LayoutCurrentVersion" xml:space="preserve"><value>Версія макета</value></data>
+  <data name="LayoutDepartmentDefault" xml:space="preserve"><value>Типовий для підрозділу</value></data>
+  <data name="LayoutOrder" xml:space="preserve"><value>Порядок</value></data>
+  <data name="LayoutHeading" xml:space="preserve"><value>Заміна заголовка</value></data>
+  <data name="LayoutVisible" xml:space="preserve"><value>Видимий</value></data>
+  <data name="LayoutPageBreak" xml:space="preserve"><value>Розрив сторінки перед</value></data>
+  <data name="LayoutFields" xml:space="preserve"><value>Поля</value></data>
+  <data name="LayoutAppliesToVersion" xml:space="preserve"><value>Застосовується до версії</value></data>
+  <data name="LayoutAllVersions" xml:space="preserve"><value>Усі версії</value></data>
+  <data name="LayoutSignaturePlacement" xml:space="preserve"><value>Блок підпису</value></data>
+  <data name="LayoutSignatureEnd" xml:space="preserve"><value>Наприкінці</value></data>
+  <data name="LayoutSignatureInline" xml:space="preserve"><value>У своєму розділі</value></data>
+  <data name="LayoutSignatureNone" xml:space="preserve"><value>Приховано</value></data>
+  <data name="LayoutAttachmentStyle" xml:space="preserve"><value>Список вкладень</value></data>
+  <data name="LayoutAttachmentsTable" xml:space="preserve"><value>Таблиця</value></data>
+  <data name="LayoutAttachmentsList" xml:space="preserve"><value>Простий список</value></data>
+  <data name="LayoutAttachmentsNone" xml:space="preserve"><value>Приховано</value></data>
+  <data name="LayoutBrandingOverride" xml:space="preserve"><value>Перевизначити брендинг підрозділу для цього визначення</value></data>
+  <data name="LayoutLetterhead" xml:space="preserve"><value>Бланк</value></data>
+  <data name="LayoutSaved" xml:space="preserve"><value>Макет друку збережено.</value></data>
+  <data name="BulkSelected" xml:space="preserve"><value>вибрано</value></data>
+  <data name="BulkSelectAll" xml:space="preserve"><value>Вибрати всі на цій сторінці</value></data>
+  <data name="BulkReviewer" xml:space="preserve"><value>Рецензент…</value></data>
+  <data name="BulkReason" xml:space="preserve"><value>Причина</value></data>
+  <data name="BulkAssignReview" xml:space="preserve"><value>Призначити на перевірку</value></data>
+  <data name="BulkTitle" xml:space="preserve"><value>Назва пакета</value></data>
+  <data name="BulkPurpose" xml:space="preserve"><value>Мета (аудит)</value></data>
+  <data name="BulkDeliverTo" xml:space="preserve"><value>Надіслати пакет на e-mail (необов'язково)</value></data>
+  <data name="BulkCompiledPdf" xml:space="preserve"><value>Зведений PDF</value></data>
+  <data name="BulkBundle" xml:space="preserve"><value>Zip-пакет</value></data>
+  <data name="BulkLimit" xml:space="preserve"><value>До {0} записів у пакеті. Без масового анулювання чи видалення.</value></data>
+  <data name="BulkNothingSelected" xml:space="preserve"><value>Виберіть принаймні один запис.</value></data>
+  <data name="BulkAssigned" xml:space="preserve"><value>Призначено {0} запис(ів) на перевірку; пропущено {1}.</value></data>
+  <data name="BulkPacketCreated" xml:space="preserve"><value>Пакет зібрано з {0} запис(ів); пропущено {1}. Доступний для завантаження 30 днів.</value></data>
+  <data name="BulkDelivered" xml:space="preserve"><value>Надіслано на e-mail.</value></data>
+  <data name="EvidenceModuleProjection" xml:space="preserve"><value>Проєкція модуля</value></data>
+  <data name="ProjectionIntro" xml:space="preserve"><value>Складає обмежений знімок з модуля-власника: лише ідентифікатори, коди, кількості та статуси з посиланнями на джерело. Модуль залишається системою обліку.</value></data>
+  <data name="ProjectionKind" xml:space="preserve"><value>Проєкція</value></data>
+  <data name="Projectionpersonnel-check-in" xml:space="preserve"><value>Реєстрація особового складу</value></data>
+  <data name="Projectionresource-summary" xml:space="preserve"><value>Зведення ресурсів</value></data>
+  <data name="Projectionqualifications" xml:space="preserve"><value>Кваліфікації</value></data>
+  <data name="Projectioncommand-summary" xml:space="preserve"><value>Зведення командування</value></data>
 </root>

@@ -1,0 +1,146 @@
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordDefinitionFormView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	var header = (Model.IsNew ? localizer["NewRecord"].Value : localizer["EditRecordHeader"].Value) + " — " + Model.DefinitionName;
+	ViewBag.Title = "Resgrid | " + header;
+	// ADP (RMS plan section 5.9.3): same reveal/bound-form contract as the locked-type editor.
+	var holdsGrant = !string.IsNullOrEmpty(Model.ProtectedGrant);
+	var needsGrant = Model.ProtectionEnforced && !holdsGrant;
+	var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+	{
+		BannerTitle = localizer["ProtectedRecordBanner"],
+		GrantExpiresOnUtc = Model.ProtectedGrantExpiresOnUtc,
+		BindForms = new List<string> { "#record-edit-form" }
+	};
+	var schemaJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Schema, new Newtonsoft.Json.JsonSerializerSettings { NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() });
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@header</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@header</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<span class="label label-default" title="@localizer["DefinitionVersion"]">v@(Model.DefinitionVersion) · @Model.LifecyclePreset</span>
+			@if (Model.IsPreview) { <span class="label label-warning m-l-xs">@localizer["PreviewPack"]</span> }
+		</div>
+	</div>
+</div>
+
+<form id="record-edit-form" data-autosave-url="@(Model.IsNew ? "" : Url.Action("Autosave", "Records", new { area = "User" }))" class="form-horizontal" method="post" enctype="multipart/form-data" asp-controller="Records" asp-action="@(Model.IsNew ? "Create" : "Edit")" asp-route-area="User">
+	@Html.AntiForgeryToken()
+	@if (holdsGrant)
+	{
+		<input type="hidden" name="@HttpProtectedGrantContext.FormFieldName" value="@Model.ProtectedGrant" />
+	}
+	<input type="hidden" name="RecordId" value="@Model.RecordId" />
+	<input type="hidden" name="RowVersion" value="@Model.RowVersion" />
+	<input type="hidden" name="DefinitionKey" value="@Model.DefinitionKey" />
+	<input type="hidden" name="IsAmendment" value="@(Model.IsAmendment ? "true" : "false")" />
+	<script type="application/json" id="record-definition-schema">@Html.Raw(schemaJson)</script>
+
+	<div class="wrapper wrapper-content">
+		@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+		@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+		@if (needsGrant)
+		{
+			<partial name="_AdpRevealBanner" model="adpReveal" />
+			<p class="help-block">@localizer["ProtectedEditHint"]</p>
+		}
+		else if (holdsGrant)
+		{
+			<div class="alert alert-success"><i class="fa fa-shield"></i> @localizer["ProtectedEditRevealed"]</div>
+		}
+		@if (Model.IsAmendment) { <div class="alert alert-info">@localizer["AmendmentOpen"]</div> }
+		@if (!string.IsNullOrWhiteSpace(Model.ProvenanceStatement)) { <div class="alert alert-info"><i class="fa fa-info-circle"></i> @Model.ProvenanceStatement</div> }
+		@if (Model.DuplicateCandidates.Count > 0)
+		{
+			<div class="alert alert-warning">
+				@localizer["DuplicateWarning"]
+				<ul>@foreach (var d in Model.DuplicateCandidates) { <li><a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@d.RmsOperationalRecordId">@(d.RecordNumber ?? d.DraftReference)</a></li> }</ul>
+			</div>
+		}
+
+		<div class="ibox">
+			<div class="ibox-title"><h5>@(Model.RecordNumber ?? Model.DraftReference ?? localizer["NewRecord"].Value)</h5></div>
+			<div class="ibox-content">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">@localizer["Station"]</label>
+					<div class="col-sm-3"><select class="form-control" name="StationGroupId" asp-items="Model.Stations"><option value="">@commonLocalizer["None"]</option></select></div>
+					<label class="col-sm-2 control-label">@localizer["Call"]</label>
+					<div class="col-sm-4"><select class="form-control" name="CallId" asp-items="Model.Calls"><option value="">@commonLocalizer["None"]</option></select></div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">@localizer["Start"]</label>
+					<div class="col-sm-3"><input type="datetime-local" class="form-control" name="StartedOn" value="@(Model.StartedOn?.ToString("yyyy-MM-ddTHH:mm"))" /></div>
+					<label class="col-sm-2 control-label">@localizer["End"]</label>
+					<div class="col-sm-4"><input type="datetime-local" class="form-control" name="EndedOn" value="@(Model.EndedOn?.ToString("yyyy-MM-ddTHH:mm"))" /></div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">@localizer["ExternalId"]</label>
+					<div class="col-sm-9"><input type="text" class="form-control" name="ExternalId" value="@Model.ExternalId" maxlength="200" /></div>
+				</div>
+			</div>
+		</div>
+
+		<partial name="_DefinitionFields" model="Model" />
+
+		<div class="ibox">
+			<div class="ibox-content">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">@localizer["Attachments"]</label>
+					<div class="col-sm-9"><input type="file" name="files" multiple /> <select name="AttachmentClassification" class="form-control m-t-xs" style="width:auto"><option value="1" selected>Unrestricted</option><option value="2">Restricted</option></select></div>
+				</div>
+				@if (Model.IsAmendment)
+				{
+					<div class="form-group">
+						<label class="col-sm-3 control-label required">@localizer["ReasonCode"]</label>
+						<div class="col-sm-3"><input type="text" class="form-control" name="ReasonCode" value="@Model.ReasonCode" maxlength="50" /></div>
+						<label class="col-sm-2 control-label">@localizer["ReasonText"]</label>
+						<div class="col-sm-4"><input type="text" class="form-control" name="ReasonText" value="@Model.ReasonText" /></div>
+					</div>
+				}
+				@if (Model.CanFinalize)
+				{
+					<div class="form-group"><div class="col-sm-12"><label><input type="checkbox" name="Attested" value="true" @(Model.Attested ? "checked" : "") /> @localizer["Attestation"]</label></div></div>
+				}
+				<div class="form-group">
+					<div class="col-sm-12">
+						<p id="record-autosave-status" role="status">@(Model.IsNew ? localizer["DefinitionFormHint"].Value : "")</p>
+						<button type="submit" class="btn btn-primary" name="FinalizeAfterSave" value="false">@localizer["SaveDraft"]</button>
+						@if (Model.CanFinalize)
+						{
+							<button type="submit" class="btn btn-success" name="FinalizeAfterSave" value="true">@localizer["SaveAndFinalize"]</button>
+						}
+						<a class="btn btn-default" asp-controller="Records" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+@if (needsGrant)
+{
+	<form id="adp-reveal-form" method="post" action="@(Model.IsNew ? Url.Action("NewRevealed", "Records", new { area = "User", definitionKey = Model.DefinitionKey, callId = Model.CallId }) : Url.Action("EditRevealed", "Records", new { area = "User", id = Model.RecordId }))">@Html.AntiForgeryToken()</form>
+}
+@section Scripts {
+	<script src="~/js/record-definition-form.js" asp-append-version="true"></script>
+	<script src="~/js/record-authoring.js" asp-append-version="true"></script>
+	@if (Model.ProtectionEnforced)
+	{
+		@if (needsGrant)
+		{
+			<script type="text/javascript">
+				window.resgridAdpPageRevealed = function () { resgridAdpReveal.submitWithGrant(document.getElementById('adp-reveal-form')); };
+			</script>
+		}
+		<partial name="_AdpRevealScripts" model="adpReveal" />
+	}
+}

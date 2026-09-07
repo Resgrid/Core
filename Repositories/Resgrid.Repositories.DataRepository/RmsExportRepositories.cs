@@ -52,6 +52,16 @@ namespace Resgrid.Repositories.DataRepository
 				$"UPDATE {Tbl("RmsExportTemplates")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExportTemplateId")} = {P}Id AND {Col("RowVersion")} = {P}Version AND {Col("DeletedOn")} IS NULL",
 				new { DepartmentId = departmentId, Id = templateId, Version = expectedVersion }, cancellationToken) == 1;
 		}
+
+		public async Task<bool> TryClaimDueAsync(int departmentId, string templateId, DateTime expectedNextRunOn, DateTime deferUntil, DateTime utcNow,
+			CancellationToken cancellationToken = default)
+		{
+			// NextRunOn is both the due marker and the claim: matching and moving it in one statement means a
+			// concurrent sweep reading the same due row loses the race and skips the template.
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("RmsExportTemplates")} SET {Col("NextRunOn")} = {P}Defer, {Col("ModifiedOn")} = {P}Now, {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExportTemplateId")} = {P}Id AND {Col("NextRunOn")} = {P}Expected AND {Col("DeletedOn")} IS NULL",
+				new { DepartmentId = departmentId, Id = templateId, Expected = expectedNextRunOn, Defer = deferUntil, Now = utcNow }, cancellationToken) == 1;
+		}
 	}
 
 	/// <summary>Rendered export artifacts (registry M0177). The Data column is read only by the endpoints that serve the file.</summary>

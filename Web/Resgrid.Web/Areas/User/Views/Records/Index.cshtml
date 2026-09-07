@@ -49,6 +49,18 @@
 			{
 				<a class="btn btn-default" asp-controller="RecordsExportTemplates" asp-action="Index" asp-route-area="User"><i class="fa fa-paper-plane"></i> @localizer["ExportTemplates"]</a>
 			}
+			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanManageRecordDefinitions())
+			{
+				<a class="btn btn-default" asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User"><i class="fa fa-cubes"></i> @localizer["Definitions"]</a>
+			}
+			@if (Model.ModuleState.RecordsUsable)
+			{
+				<a class="btn btn-default" asp-controller="RecordSavedReports" asp-action="Index" asp-route-area="User"><i class="fa fa-table"></i> @localizer["SavedReports"]</a>
+			}
+			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanCreateRecord())
+			{
+				<a class="btn btn-default" asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User"><i class="fa fa-globe"></i> @localizer["Deployments"]</a>
+			}
 			@if (Model.ModuleState.RecordsUsable && ClaimsAuthorizationHelper.CanExportRecords())
 			{
 				<a class="btn btn-default" asp-controller="Records" asp-action="ExportList" asp-route-area="User" asp-route-year="@Model.Year" asp-route-definitionKey="@Model.DefinitionKey" asp-route-state="@Model.StateFilter" asp-route-q="@Model.Query" asp-route-format="csv"><i class="fa fa-download"></i> @localizer["ExportCsv"]</a>
@@ -133,9 +145,38 @@
 						}
 						else
 						{
+							var bulk = Model.CanBulkAssign || Model.CanBulkPacket;
+							<form method="post" asp-controller="Records" asp-action="Bulk" asp-route-area="User" id="records-bulk">
+							@Html.AntiForgeryToken()
+							@if (bulk)
+							{
+								<div class="well well-sm form-inline m-b-sm" id="records-bulk-bar">
+									<span class="m-r-sm"><strong id="records-bulk-count">0</strong> @localizer["BulkSelected"]</span>
+									@if (Model.CanBulkAssign)
+									{
+										<span class="m-r-sm">
+											<select name="reviewerUserId" class="form-control input-sm"><option value="">@localizer["BulkReviewer"]</option>@foreach (var reviewer in Model.Reviewers) { <option value="@reviewer.Value">@reviewer.Text</option> }</select>
+											<input type="text" name="reason" class="form-control input-sm" placeholder="@localizer["BulkReason"]" maxlength="200" />
+											<button type="submit" name="bulkAction" value="assign" class="btn btn-sm btn-info"><i class="fa fa-user-plus"></i> @localizer["BulkAssignReview"]</button>
+										</span>
+									}
+									@if (Model.CanBulkPacket)
+									{
+										<span>
+											<input type="text" name="title" class="form-control input-sm" placeholder="@localizer["BulkTitle"]" maxlength="120" />
+											<input type="text" name="purpose" class="form-control input-sm" placeholder="@localizer["BulkPurpose"]" maxlength="200" />
+											<input type="email" name="deliverTo" class="form-control input-sm" placeholder="@localizer["BulkDeliverTo"]" maxlength="200" />
+											<button type="submit" name="bulkAction" value="packet" class="btn btn-sm btn-primary"><i class="fa fa-file-pdf-o"></i> @localizer["BulkCompiledPdf"]</button>
+											<button type="submit" name="bulkAction" value="bundle" class="btn btn-sm btn-default"><i class="fa fa-file-archive-o"></i> @localizer["BulkBundle"]</button>
+										</span>
+									}
+									<small class="text-muted m-l-sm">@string.Format(localizer["BulkLimit"].Value, RecordsBulkPacketRequest.MaxRecords)</small>
+								</div>
+							}
 							<table class="table table-striped table-bordered table-hover">
 								<thead>
 									<tr>
+										@if (bulk) { <th style="width:28px"><input type="checkbox" id="records-bulk-all" title="@localizer["BulkSelectAll"]" /></th> }
 										<th>@localizer["RecordNumber"]</th>
 										<th>@localizer["Type"]</th>
 										<th>@localizer["State"]</th>
@@ -149,6 +190,7 @@
 									@foreach (var r in Model.Records)
 									{
 										<tr>
+											@if (bulk) { <td><input type="checkbox" name="ids" value="@r.RmsRecordSearchProjectionId" class="records-bulk-row" /></td> }
 											<td>
 												@if (!string.IsNullOrWhiteSpace(r.RecordNumber))
 												{
@@ -171,6 +213,7 @@
 									}
 								</tbody>
 							</table>
+							</form>
 							@if (Model.TotalPages > 1)
 							{
 								<ul class="pagination pagination-sm">
@@ -189,3 +232,17 @@
 		</div>
 	</div>
 </div>
+
+@section Scripts {
+	<script>
+		(function () {
+			var all = document.getElementById('records-bulk-all'), count = document.getElementById('records-bulk-count');
+			if (!all) return;
+			var rows = function () { return Array.prototype.slice.call(document.querySelectorAll('.records-bulk-row')); };
+			var refresh = function () { count.textContent = rows().filter(function (r) { return r.checked; }).length; };
+			all.addEventListener('change', function () { rows().forEach(function (r) { r.checked = all.checked; }); refresh(); });
+			rows().forEach(function (r) { r.addEventListener('change', refresh); });
+			refresh();
+		})();
+	</script>
+}

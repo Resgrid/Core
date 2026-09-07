@@ -21,6 +21,14 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		public IList<int> VisibleGroupIds { get; set; }
 
+		/// <summary>
+		/// Half-open finalized-on window [FinalizedOnStart, FinalizedOnEnd). Filtering in the query rather than
+		/// after paging is what keeps a windowed export honest: out-of-window rows would otherwise eat the page
+		/// budget and silently drop reports that belong in the window.
+		/// </summary>
+		public DateTime? FinalizedOnStart { get; set; }
+		public DateTime? FinalizedOnEnd { get; set; }
+
 		public string ViewerUserId { get; set; }
 		public int Skip { get; set; }
 		public int Take { get; set; } = 50;

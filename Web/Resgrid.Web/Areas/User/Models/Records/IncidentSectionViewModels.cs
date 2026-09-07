@@ -12,6 +12,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	/// </summary>
 	public class IncidentModuleRow
 	{
+		/// <summary>The stored row this form row edits; posted back so the save matches by identity, not position.</summary>
+		public string ModuleId { get; set; }
 		public int Kind { get; set; }
 		public string PrimaryCode { get; set; }
 		public string SecondaryCode { get; set; }
@@ -26,6 +28,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 
 	public class IncidentResourceRow
 	{
+		/// <summary>The stored row this form row edits; posted back so the save matches by identity, not position.</summary>
+		public string ResourceId { get; set; }
 		public string ResourceCode { get; set; }
 		public int? Quantity { get; set; }
 		public string Detail { get; set; }
@@ -71,6 +75,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 
 	public class IncidentExposureRow
 	{
+		/// <summary>The stored row this form row edits; posted back so the save matches by identity, not position.</summary>
+		public string ExposureId { get; set; }
 		public string LocationKind { get; set; }
 		public string ItemType { get; set; }
 		public string DamageType { get; set; }

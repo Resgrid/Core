@@ -297,6 +297,23 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				new { DepartmentId = departmentId, OwnerUserId = ownerUserId, States = InListValue(states) });
 		}
 
+		public Task<IEnumerable<RmsOperationalRecord>> GetByDefinitionVersionAsync(int departmentId, string definitionKey, int definitionVersion, IEnumerable<int> states)
+		{
+			return QueryAsync<RmsOperationalRecord>(
+				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DefinitionKey")} = {P}DefinitionKey AND {Col("DefinitionVersion")} = {P}DefinitionVersion AND {InList("State", "States")} AND {Col("DeletedOn")} IS NULL AND {Col("PurgedOn")} IS NULL ORDER BY {Col("CreatedOn")}",
+				new { DepartmentId = departmentId, DefinitionKey = definitionKey, DefinitionVersion = definitionVersion, States = InListValue(states) });
+		}
+
+		public Task<IEnumerable<RmsOperationalRecord>> GetByIdsAsync(int departmentId, IEnumerable<string> recordIds)
+		{
+			var ids = (recordIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().ToArray();
+			if (ids.Length == 0)
+				return Task.FromResult<IEnumerable<RmsOperationalRecord>>(new List<RmsOperationalRecord>());
+			return QueryAsync<RmsOperationalRecord>(
+				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsOperationalRecordId", "Ids")} AND {Col("DeletedOn")} IS NULL AND {Col("PurgedOn")} IS NULL",
+				new { DepartmentId = departmentId, Ids = ids });
+		}
+
 		public Task<IEnumerable<RmsOperationalRecord>> GetByDepartmentAndStatesAsync(int departmentId, IEnumerable<int> states, int? year, int skip, int take)
 		{
 			var yearClause = year.HasValue ? $" AND {YearOf($"COALESCE({Col("StartedOn")}, {Col("CreatedOn")})")} = {P}Year" : string.Empty;

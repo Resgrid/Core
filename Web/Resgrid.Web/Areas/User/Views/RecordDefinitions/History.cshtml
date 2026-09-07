@@ -1,0 +1,85 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordDefinitionHistoryView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["DefinitionHistory"];
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	var key = Model.Aggregate.Definition.DefinitionKey;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["DefinitionHistory"]: @Model.Aggregate.Definition.Name</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="RecordDefinitions" asp-action="Index" asp-route-area="User">@localizer["Definitions"]</a></li>
+			<li class="active"><strong>@key</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (!Model.Aggregate.Definition.IsRetired)
+			{
+				<form method="post" asp-controller="RecordDefinitions" asp-action="Retire" asp-route-area="User" asp-route-key="@key" style="display:inline" onsubmit="var r = prompt('@localizer["DefinitionRetireReason"]'); if (!r) return false; this.querySelector('[name=reason]').value = r; return true;">
+					@Html.AntiForgeryToken()<input type="hidden" name="rowVersion" value="@Model.Aggregate.Definition.RowVersion" /><input type="hidden" name="reason" value="" />
+					<button type="submit" class="btn btn-danger"><i class="fa fa-ban"></i> @localizer["DefinitionRetire"]</button>
+				</form>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (Model.Aggregate.Definition.IsRetired) { <div class="alert alert-warning">@localizer["DefinitionRetiredLabel"]: @Model.Aggregate.Definition.RetiredReason (@When(Model.Aggregate.Definition.RetiredOn))</div> }
+	<div class="ibox">
+		<div class="ibox-content">
+			<table class="table table-striped">
+				<thead><tr><th>@localizer["DefinitionVersion"]</th><th>@localizer["DefinitionState"]</th><th>@localizer["DefinitionPreset"]</th><th>@localizer["DefinitionCapability"]</th><th>@localizer["DefinitionPublishedOn"]</th><th>@localizer["DefinitionChangeNotes"]</th><th></th></tr></thead>
+				<tbody>
+					@foreach (var v in Model.Versions)
+					{
+						<tr>
+							<td>v@(v.Version) @if (Model.Aggregate.Definition.CurrentPublishedVersion == v.Version) { <span class="label label-primary">current</span> }</td>
+							<td>@((RmsDefinitionVersionState)v.State)</td>
+							<td>@((RmsLifecyclePreset)v.LifecyclePreset)</td>
+							<td><code>@v.MinimumClientCapability</code></td>
+							<td>@When(v.PublishedOn)</td>
+							<td>@v.ChangeNotes</td>
+							<td class="text-right"><a class="btn btn-xs btn-default" asp-controller="RecordDefinitions" asp-action="Edit" asp-route-area="User" asp-route-key="@key" asp-route-version="@v.Version">@(v.IsDraft ? localizer["Edit"] : commonLocalizer["View"])</a></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<form class="form-inline" method="get" asp-controller="RecordDefinitions" asp-action="History" asp-route-area="User">
+				<input type="hidden" name="key" value="@key" />
+				<label>@localizer["DefinitionDiffFrom"] <select class="form-control" name="from">@foreach (var v in Model.Versions.OrderBy(v => v.Version)) { <option value="@v.Version" selected="@(Model.From == v.Version)">v@(v.Version)</option> }</select></label>
+				<label class="m-l-sm">@localizer["DefinitionDiffTo"] <select class="form-control" name="to">@foreach (var v in Model.Versions.OrderBy(v => v.Version)) { <option value="@v.Version" selected="@(Model.To == v.Version)">v@(v.Version)</option> }</select></label>
+				<button type="submit" class="btn btn-default m-l-sm">@localizer["DefinitionCompare"]</button>
+			</form>
+			@if (Model.Diff != null)
+			{
+				<h4>@localizer["DefinitionDiff"] v@(Model.Diff.FromVersion) → v@(Model.Diff.ToVersion) @if (Model.Diff.Breaking) { <span class="label label-danger">@localizer["DefinitionBreaking"]</span> }</h4>
+				@if (Model.Diff.Entries.Count == 0) { <p class="text-muted">@localizer["DefinitionNoChanges"]</p> }
+				else
+				{
+					<table class="table table-condensed"><tbody>@foreach (var e in Model.Diff.Entries) { <tr class="@(e.Breaking ? "danger" : "")"><td>@e.Kind</td><td>@e.Change</td><td><code>@e.Key</code></td><td>@e.Detail</td></tr> }</tbody></table>
+				}
+				@if (Model.Diff.ToVersion > Model.Diff.FromVersion && Model.Versions.Any(v => v.Version == Model.Diff.ToVersion && v.IsPublished))
+				{
+					<form class="form-horizontal" method="post" asp-controller="RecordDefinitions" asp-action="Migrate" asp-route-area="User" asp-route-key="@key" asp-route-from="@Model.Diff.FromVersion" asp-route-to="@Model.Diff.ToVersion">
+						@Html.AntiForgeryToken()
+						<h4>@localizer["DefinitionMigrateDrafts"]</h4>
+						<div class="form-group"><label class="col-sm-2 control-label">@localizer["DefinitionMigrationMap"]</label><div class="col-sm-8"><textarea class="form-control" rows="2" name="mappingJson" placeholder='[{"fromFieldKey":"old","toFieldKey":"new"}]'></textarea></div></div>
+						<div class="form-group"><div class="col-sm-8 col-sm-offset-2">
+							<button type="submit" class="btn btn-default" name="preview" value="true">@localizer["DefinitionMigratePreview"]</button>
+							<button type="submit" class="btn btn-warning" name="preview" value="false" onclick="return confirm('@localizer["DefinitionMigrateConfirm"]');">@localizer["DefinitionMigrateRun"]</button>
+						</div></div>
+					</form>
+				}
+			}
+		</div>
+	</div>
+</div>

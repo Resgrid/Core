@@ -115,6 +115,16 @@ namespace Resgrid.Repositories.DataRepository
 				where.Append($" AND {C("StationGroupId")} = {P}StationGroupId");
 				parameters.Add("StationGroupId", query.StationGroupId.Value);
 			}
+			if (query.FinalizedOnStart.HasValue)
+			{
+				where.Append($" AND {C("FinalizedOn")} IS NOT NULL AND {C("FinalizedOn")} >= {P}FinalizedOnStart");
+				parameters.Add("FinalizedOnStart", query.FinalizedOnStart.Value);
+			}
+			if (query.FinalizedOnEnd.HasValue)
+			{
+				where.Append($" AND {C("FinalizedOn")} IS NOT NULL AND {C("FinalizedOn")} < {P}FinalizedOnEnd");
+				parameters.Add("FinalizedOnEnd", query.FinalizedOnEnd.Value);
+			}
 
 			if (query.VisibleGroupIds != null)
 			{

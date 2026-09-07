@@ -52,6 +52,14 @@ namespace Resgrid.Config
 		/// <summary>Maximum field items one broker request may carry; larger requests are refused.</summary>
 		public static int BrokerMaxItemsPerRequest = 200;
 
+		/// <summary>
+		/// Purposes the broker's workload decrypt lane (POST api/v1/broker/workload/decrypt?purpose=) accepts, comma
+		/// separated (RMS plan section 5.9.4). Each purpose is an egress the department acknowledged in the
+		/// application before the caller reaches the broker: neris-submission (worker 41) and records-export
+		/// (worker 45 / Workflow renders). Empty disables the lane; callers fail closed with workload_purpose_denied.
+		/// </summary>
+		public static string BrokerWorkloadPurposes = "neris-submission,records-export";
+
 		/// <summary>True on the broker host to run the ADP migration coordinator sweep there (the only
 		/// host with a real KMS adapter). Workers.Console keeps its sweep for liveness/offboarding
 		/// flips but never runs nights — its engine reports unavailable.</summary>

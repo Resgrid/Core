@@ -1,0 +1,90 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordSavedReportEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + (string.IsNullOrEmpty(Model.ReportId) ? localizer["NewReport"].Value : Model.Name);
+	var builtIn = new[] { "record.number", "record.state", "record.author", "record.group", "record.station", "record.finalizedOn", "record.createdOn", "record.definitionVersion" };
+	var fields = (Model.Schema?.Sections ?? new List<RecordSectionSchema>()).SelectMany(s => s.Fields.Select(f => new { Section = s, Field = f })).ToList();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@(string.IsNullOrEmpty(Model.ReportId) ? localizer["NewReport"].Value : Model.Name)</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="RecordSavedReports" asp-action="Index" asp-route-area="User">@localizer["SavedReports"]</a></li>
+			<li class="active"><strong>@(string.IsNullOrEmpty(Model.ReportId) ? localizer["NewReport"].Value : Model.Name)</strong></li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (Model.Issues.Count > 0)
+	{
+		<div class="alert @(Model.Issues.Any(i => i.Severity == "error") ? "alert-danger" : "alert-warning")"><ul>@foreach (var issue in Model.Issues) { <li><code>@issue.Path</code> @issue.Message</li> }</ul></div>
+	}
+	<form class="form-horizontal" method="post" asp-controller="RecordSavedReports" asp-action="Edit" asp-route-area="User">
+		@Html.AntiForgeryToken()
+		<input type="hidden" asp-for="ReportId" /><input type="hidden" asp-for="RowVersion" />
+		<div class="row">
+			<div class="col-md-6">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["ReportSettings"]</h5></div>
+					<div class="ibox-content">
+						<div class="form-group"><label class="col-sm-3 control-label required">@localizer["ReportName"]</label><div class="col-sm-9"><input type="text" class="form-control" asp-for="Name" maxlength="200" /></div></div>
+						<div class="form-group"><label class="col-sm-3 control-label">@localizer["DefinitionDescription"]</label><div class="col-sm-9"><input type="text" class="form-control" asp-for="Description" maxlength="1000" /></div></div>
+						<div class="form-group"><label class="col-sm-3 control-label required">@localizer["DefinitionKey"]</label><div class="col-sm-9">
+							@if (string.IsNullOrEmpty(Model.ReportId) && Model.Schema == null)
+							{
+								<select class="form-control" asp-for="DefinitionKey" asp-items="Model.Definitions" onchange="window.location = '@Url.Action("Edit", "RecordSavedReports", new { area = "User" })?definitionKey=' + encodeURIComponent(this.value);"><option value="">-</option></select>
+							}
+							else
+							{
+								<input type="hidden" asp-for="DefinitionKey" /><p class="form-control-static"><code>@Model.DefinitionKey</code></p>
+							}
+						</div></div>
+						<div class="form-group"><label class="col-sm-3 control-label">@localizer["ReportSort"]</label><div class="col-sm-6"><select class="form-control" asp-for="SortFieldKey"><option value="">-</option>@foreach (var c in builtIn) { <option value="@c">@c</option> }@foreach (var f in fields.Where(f => f.Field.Sortable)) { <option value="@f.Field.Key">@f.Field.Label (@f.Section.Label)</option> }</select></div><div class="col-sm-3"><label><input type="checkbox" asp-for="SortDescending" /> @localizer["ReportDescending"]</label></div></div>
+						<div class="form-group"><label class="col-sm-3 control-label">@localizer["ReportGroupBy"]</label><div class="col-sm-9"><select class="form-control" asp-for="GroupByFieldKey"><option value="">-</option>@foreach (var c in new[] { "record.state", "record.author", "record.group", "record.station" }) { <option value="@c">@c</option> }@foreach (var f in fields.Where(f => f.Field.Groupable)) { <option value="@f.Field.Key">@f.Field.Label (@f.Section.Label)</option> }</select></div></div>
+						<div class="form-group"><label class="col-sm-3 control-label">@localizer["ReportAggregates"]</label><div class="col-sm-9"><textarea class="form-control" rows="2" asp-for="AggregatesJson" placeholder='[{"aggregate":"Sum","fieldKey":"hours"}]'></textarea><span class="help-block">@localizer["ReportAggregatesHelp"]: @string.Join(", ", fields.Where(f => f.Field.Aggregatable).Select(f => f.Field.Key))</span></div></div>
+						<div class="form-group"><label class="col-sm-3 control-label">@localizer["ReportFilters"]</label><div class="col-sm-9"><textarea class="form-control" rows="3" asp-for="FiltersJson" placeholder='[{"fieldKey":"status","operator":"Equals","value":"open"}]'></textarea><span class="help-block">@localizer["ReportFiltersHelp"]: @string.Join(", ", fields.Where(f => f.Field.Filterable).Select(f => f.Field.Key))</span></div></div>
+						<div class="form-group"><label class="col-sm-3 control-label">@localizer["ReportVersionMappings"]</label><div class="col-sm-9"><textarea class="form-control" rows="2" asp-for="VersionMappingsJson" placeholder='{"1":{"oldKey":"newKey"}}'></textarea></div></div>
+						<div class="form-group"><label class="col-sm-3 control-label">@localizer["ReportMaxRows"]</label><div class="col-sm-3"><input type="number" class="form-control" asp-for="MaxRowsPerRun" min="1" max="@RmsSavedReportDefinition.MaxRows" /></div>
+							<div class="col-sm-6"><label class="checkbox-inline"><input type="checkbox" asp-for="IncludeDrafts" /> @localizer["ReportIncludeDrafts"]</label>
+							@if (Model.CanIncludeRestricted) { <label class="checkbox-inline"><input type="checkbox" asp-for="IncludeRestricted" /> @localizer["ReportIncludeRestricted"]</label> }</div></div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["ReportColumns"]</h5></div>
+					<div class="ibox-content">
+						@if (Model.Schema == null) { <p class="text-muted">@localizer["ReportPickDefinition"]</p> }
+						else
+						{
+							<h4>@localizer["ReportBuiltInColumns"]</h4>
+							@foreach (var c in builtIn)
+							{
+								<label class="checkbox-inline"><input type="checkbox" name="Columns" value="@c" checked="@Model.Columns.Contains(c)" /> @c</label>
+							}
+							@foreach (var sec in Model.Schema.Sections)
+							{
+								<h4>@sec.Label @if (sec.Repeating) { <span class="label label-info">@localizer["DefinitionRepeating"]</span> }</h4>
+								@foreach (var field in sec.Fields.Where(f => f.Exportable))
+								{
+									<label class="checkbox-inline"><input type="checkbox" name="Columns" value="@field.Key" checked="@Model.Columns.Contains(field.Key)" /> @field.Label @if (field.Classification != RmsFieldClassification.Standard) { <i class="fa fa-lock text-muted"></i> }</label>
+								}
+							}
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="ibox"><div class="ibox-content">
+			<button type="submit" class="btn btn-default" name="action" value="validate"><i class="fa fa-check-circle-o"></i> @localizer["ReportValidate"]</button>
+			<button type="submit" class="btn btn-primary" name="action" value="save"><i class="fa fa-save"></i> @commonLocalizer["Save"]</button>
+			<a class="btn btn-default" asp-controller="RecordSavedReports" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+		</div></div>
+	</form>
+</div>

@@ -46,14 +46,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IRecordAttachmentUploadService _uploads;
 		private readonly IRecordsApiIdempotencyService _idempotency;
 		private readonly IRecordsDashboardService _dashboard;
+		private readonly IRecordDefinitionsService _definitions;
+		private readonly IRecordsRevealService _reveal;
+		private readonly IRecordsBulkPacketService _bulk;
 
 		private SystemPrincipalRecordGrant _systemGrant;
 		private bool _systemGrantResolved;
 
 		public RecordsController(IRecordsService recordsService, IRecordsCutoverService cutoverService, IRecordsAuthorizationService recordsAuthorizationService,
 			IFeatureToggleService featureToggleService, IDepartmentSettingsService departmentSettingsService, IDepartmentDataProtectionService dataProtectionService,
-			IRecordsSearchService recordsSearch, IRecordAttachmentUploadService uploads, IRecordsApiIdempotencyService idempotency, IRecordsDashboardService dashboard)
+			IRecordsSearchService recordsSearch, IRecordAttachmentUploadService uploads, IRecordsApiIdempotencyService idempotency, IRecordsDashboardService dashboard,
+			IRecordDefinitionsService definitions, IRecordsRevealService reveal, IRecordsBulkPacketService bulk)
 		{
+			_bulk = bulk;
+			_definitions = definitions;
+			_reveal = reveal;
 			_recordsService = recordsService;
 			_cutoverService = cutoverService;
 			_recordsAuthorizationService = recordsAuthorizationService;
@@ -192,6 +199,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+			}
+
+			// Department definitions (RMS-1B) sit beside the locked ones with their own capability floor (plan 5.4).
+			try
+			{
+				var names = (await _definitions.ListAsync(DepartmentId)).Where(s => !s.Locked).ToDictionary(s => s.Key, s => s.Name, StringComparer.OrdinalIgnoreCase);
+				foreach (var version in await _definitions.GetPublishedAsync(DepartmentId))
+					data.Definitions.Add(RecordsRms1bApiMapper.ToDefinitionData(version, new RmsRecordDefinition { DefinitionKey = version.DefinitionKey, Name = names.TryGetValue(version.DefinitionKey, out var name) ? name : version.DefinitionKey }));
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Department definitions could not be listed for the capability manifest.");
 			}
 
 			var result = new RecordsCapabilitiesResult { Data = data, PageSize = 1, Status = ResponseHelper.Success };
@@ -471,6 +490,28 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			await _recordsService.RecordAccessAsync(DepartmentId, UserId, id, null, RmsAccessAuditAction.Read, AccessPurpose(), IpAddressHelper.GetRequestIP(Request, true), RmsOriginClient.Api);
 			return Ok(await WrapAsync(aggregate));
+		}
+
+		/// <summary>
+		/// Protected reveal (RMS plan section 5.9.3): the grant travels in X-Resgrid-Protected-Grant; the aggregate is
+		/// hydrated through the seam with it and the cataloged columns come back keyed "{table}.{column}:{rowId}".
+		/// A refused reveal answers Success = false with the step-up reason; never ciphertext.
+		/// </summary>
+		[HttpPost("Reveal")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<RecordRevealApiResult>> Reveal([FromBody] RecordRevealInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.Id)) return BadRequest();
+			if (!await FlagOnAsync()) return NotFound();
+			var aggregate = await LoadAuthorizedAsync(input.Id);
+			if (aggregate == null) return NotFound();
+			var outcome = await _reveal.RevealRecordAsync(DepartmentId, UserId, aggregate, await CanViewRestrictedAsync(), IpAddressHelper.GetRequestIP(Request, true));
+			var result = new RecordRevealApiResult { Data = new RecordRevealData { Success = outcome.Success, Error = outcome.Error, Fields = outcome.Fields }, Status = ResponseHelper.Success, PageSize = 1 };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
 		}
 
 		[HttpGet("GetRevisions")]
@@ -1059,6 +1100,63 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				return Problem(statusCode: StatusCodes.Status409Conflict, title: ex.Message, type: "record_transition");
 			}
+		}
+
+		/// <summary>
+		/// Compiles an authorized selection into one stored packet (compiled PDF or zip bundle; RMS plan section 4.7).
+		/// Every record renders from its pinned revision through the document service; unauthorized or unfinalized
+		/// selections are reported as skips, never silently dropped. Bulk void and bulk delete do not exist.
+		/// </summary>
+		[HttpPost("BulkPacket")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Record_Export)]
+		public async Task<ActionResult<RecordsBulkResultApi>> BulkPacket([FromBody] RecordsBulkPacketInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || input.RecordIds == null || input.RecordIds.Count == 0) return BadRequest();
+			var usable = await UsableAsync();
+			if (usable != null) return usable;
+			try
+			{
+				var result = await _bulk.BuildPacketAsync(DepartmentId, UserId, new RecordsBulkPacketRequest
+				{
+					RecordIds = input.RecordIds, Mode = input.Mode == (int)RecordsBulkPacketMode.Bundle ? RecordsBulkPacketMode.Bundle : RecordsBulkPacketMode.CompiledPdf,
+					Title = input.Title, Purpose = input.Purpose, DeliverToEmail = input.DeliverToEmail, OriginClient = RecordsApiHelper.ResolveOrigin(input.OriginClient)
+				}, cancellationToken);
+				return Ok(WrapBulk(result));
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (ArgumentException ex) { return Problem(statusCode: StatusCodes.Status400BadRequest, title: ex.Message, type: "bulk_validation"); }
+			catch (InvalidOperationException ex) { return Problem(statusCode: StatusCodes.Status422UnprocessableEntity, title: ex.Message, type: "bulk_empty"); }
+		}
+
+		/// <summary>Assigns one reviewer to every selected Record awaiting review; other states are reported as skips.</summary>
+		[HttpPost("BulkAssignReview")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Record_Review)]
+		public async Task<ActionResult<RecordsBulkResultApi>> BulkAssignReview([FromBody] RecordsBulkAssignInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || input.RecordIds == null || input.RecordIds.Count == 0 || string.IsNullOrWhiteSpace(input.ReviewerUserId)) return BadRequest();
+			var usable = await UsableAsync();
+			if (usable != null) return usable;
+			try
+			{
+				return Ok(WrapBulk(await _bulk.AssignForReviewAsync(DepartmentId, UserId, new RecordsBulkAssignRequest { RecordIds = input.RecordIds, ReviewerUserId = input.ReviewerUserId, Reason = input.Reason }, cancellationToken)));
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (ArgumentException ex) { return Problem(statusCode: StatusCodes.Status400BadRequest, title: ex.Message, type: "bulk_validation"); }
+		}
+
+		private RecordsBulkResultApi WrapBulk(RecordsBulkResult bulk)
+		{
+			var result = new RecordsBulkResultApi
+			{
+				Data = new RecordsBulkData { Processed = bulk.Processed, Skipped = bulk.Skipped, Skips = bulk.Skips, Delivered = bulk.Delivered, Run = bulk.Run == null ? null : RecordsRms1bApiMapper.ToRun(bulk.Run) },
+				Status = ResponseHelper.Success, PageSize = 1
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
 		}
 
 		private ActionResult UploadProblem(RecordUploadSessionException ex)

@@ -1064,4 +1064,255 @@
   <data name="NerisProtectedEgressAcknowledged" xml:space="preserve"><value>Acknowledged on</value></data>
   <data name="NerisProtectedEgressRequired" xml:space="preserve"><value>Advanced Data Protection is enforced: protected submissions will fail until this acknowledgement is recorded.</value></data>
   <data name="RecordId" xml:space="preserve"><value>Record ID</value></data>
+  <data name="AddRow" xml:space="preserve"><value>Add row</value></data>
+  <data name="RemoveRow" xml:space="preserve"><value>Remove row</value></data>
+  <data name="WithheldField" xml:space="preserve"><value>Withheld</value></data>
+  <data name="CoordinatesHint" xml:space="preserve"><value>Coordinates (lat, lon) or place reference</value></data>
+  <data name="SignatureAcknowledge" xml:space="preserve"><value>I sign this record as the author</value></data>
+  <data name="Yes" xml:space="preserve"><value>Yes</value></data>
+  <data name="No" xml:space="preserve"><value>No</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Enabled</value></data>
+  <data name="PreviewPack" xml:space="preserve"><value>Preview</value></data>
+  <data name="DefinitionFormHint" xml:space="preserve"><value>This record follows a department definition. Fields marked with a lock are restricted; rules may show or require fields as you type.</value></data>
+  <data name="Definitions" xml:space="preserve"><value>Definitions</value></data>
+  <data name="DefinitionsIntro" xml:space="preserve"><value>Record definitions describe the forms your department fills out: sections, fields, rules, numbering and who reviews or approves. Publishing freezes a version; records pin the version they were written on.</value></data>
+  <data name="NewDefinition" xml:space="preserve"><value>New definition</value></data>
+  <data name="CreateDefinition" xml:space="preserve"><value>Create definition</value></data>
+  <data name="CreateFromTemplate" xml:space="preserve"><value>Start from template</value></data>
+  <data name="CreateFromClone" xml:space="preserve"><value>Clone existing definition</value></data>
+  <data name="CreateBlank" xml:space="preserve"><value>Blank definition</value></data>
+  <data name="BrowseTemplates" xml:space="preserve"><value>Browse templates</value></data>
+  <data name="TemplatesIntro" xml:space="preserve"><value>Template packs are reviewed starting points. Each shows its sources and review date; Preview packs are usable but still being validated with departments.</value></data>
+  <data name="TemplateReviewedOn" xml:space="preserve"><value>Reviewed</value></data>
+  <data name="TemplateSources" xml:space="preserve"><value>Sources</value></data>
+  <data name="TemplateSections" xml:space="preserve"><value>Sections</value></data>
+  <data name="TemplateFields" xml:space="preserve"><value>Fields</value></data>
+  <data name="TemplateUseThis" xml:space="preserve"><value>Use this template</value></data>
+  <data name="TemplateProfile" xml:space="preserve"><value>Jurisdiction profile</value></data>
+  <data name="TemplateLocale" xml:space="preserve"><value>Locale</value></data>
+  <data name="TemplatePreview" xml:space="preserve"><value>Template preview</value></data>
+  <data name="DefinitionKeyHelp" xml:space="preserve"><value>Lower-case letters, digits, dots and dashes. Cannot change after creation.</value></data>
+  <data name="DefinitionName" xml:space="preserve"><value>Name</value></data>
+  <data name="DefinitionCategory" xml:space="preserve"><value>Category</value></data>
+  <data name="DefinitionDescription" xml:space="preserve"><value>Description</value></data>
+  <data name="DefinitionOwner" xml:space="preserve"><value>Owner</value></data>
+  <data name="DefinitionLocked" xml:space="preserve"><value>Product (locked)</value></data>
+  <data name="DefinitionPublishedVersion" xml:space="preserve"><value>Published version</value></data>
+  <data name="DefinitionDraftVersion" xml:space="preserve"><value>Draft version</value></data>
+  <data name="DefinitionPreset" xml:space="preserve"><value>Lifecycle preset</value></data>
+  <data name="DefinitionCapability" xml:space="preserve"><value>Client capability</value></data>
+  <data name="DefinitionRetiredLabel" xml:space="preserve"><value>Retired</value></data>
+  <data name="DefinitionIncludeRetired" xml:space="preserve"><value>Show retired definitions</value></data>
+  <data name="DefinitionHideRetired" xml:space="preserve"><value>Hide retired definitions</value></data>
+  <data name="DefinitionHistory" xml:space="preserve"><value>History</value></data>
+  <data name="DefinitionVersion" xml:space="preserve"><value>Version</value></data>
+  <data name="DefinitionState" xml:space="preserve"><value>State</value></data>
+  <data name="DefinitionPublishedOn" xml:space="preserve"><value>Published on</value></data>
+  <data name="DefinitionChangeNotes" xml:space="preserve"><value>Change notes</value></data>
+  <data name="DefinitionSettings" xml:space="preserve"><value>Settings</value></data>
+  <data name="DefinitionSubjects" xml:space="preserve"><value>Permitted subjects</value></data>
+  <data name="DefinitionReviewerRoles" xml:space="preserve"><value>Reviewer roles</value></data>
+  <data name="DefinitionApproverRoles" xml:space="preserve"><value>Approver roles</value></data>
+  <data name="DefinitionReviewDueHours" xml:space="preserve"><value>Review due (hours)</value></data>
+  <data name="DefinitionApproveDueHours" xml:space="preserve"><value>Approval due (hours)</value></data>
+  <data name="DefinitionAuthorAttestation" xml:space="preserve"><value>Require author attestation at finalize</value></data>
+  <data name="DefinitionNumbering" xml:space="preserve"><value>Numbering</value></data>
+  <data name="DefinitionNumberPrefix" xml:space="preserve"><value>Number prefix</value></data>
+  <data name="DefinitionSequenceWidth" xml:space="preserve"><value>Sequence width</value></data>
+  <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Assign number</value></data>
+  <data name="DefinitionPerGroup" xml:space="preserve"><value>Sequence per station</value></data>
+  <data name="DefinitionResetYearly" xml:space="preserve"><value>Reset yearly</value></data>
+  <data name="DefinitionClassification" xml:space="preserve"><value>Classification</value></data>
+  <data name="DefinitionRetention" xml:space="preserve"><value>Retention (years)</value></data>
+  <data name="DefinitionClientSurface" xml:space="preserve"><value>Client surfaces</value></data>
+  <data name="DefinitionAllowOffline" xml:space="preserve"><value>Allow offline</value></data>
+  <data name="DefinitionAllowAttachments" xml:space="preserve"><value>Allow attachments</value></data>
+  <data name="DefinitionMigrationMap" xml:space="preserve"><value>Migration map (JSON)</value></data>
+  <data name="DefinitionSchema" xml:space="preserve"><value>Schema (JSON)</value></data>
+  <data name="DefinitionSchemaHelp" xml:space="preserve"><value>Sections hold fields; each field has a key, label, type and optional rules. Validate before publishing; the field table below reflects the last saved draft.</value></data>
+  <data name="DefinitionFieldTable" xml:space="preserve"><value>Fields</value></data>
+  <data name="DefinitionRepeating" xml:space="preserve"><value>Repeating</value></data>
+  <data name="DefinitionRules" xml:space="preserve"><value>Rules</value></data>
+  <data name="FieldKey" xml:space="preserve"><value>Key</value></data>
+  <data name="FieldLabel" xml:space="preserve"><value>Label</value></data>
+  <data name="FieldType" xml:space="preserve"><value>Field type</value></data>
+  <data name="FieldRequired" xml:space="preserve"><value>Required</value></data>
+  <data name="FieldClassification" xml:space="preserve"><value>Classification</value></data>
+  <data name="FieldFlags" xml:space="preserve"><value>Flags</value></data>
+  <data name="DefinitionValidate" xml:space="preserve"><value>Validate</value></data>
+  <data name="DefinitionSaveDraft" xml:space="preserve"><value>Save draft</value></data>
+  <data name="DefinitionImpactPublish" xml:space="preserve"><value>Review impact &amp; publish</value></data>
+  <data name="DefinitionOpenDraft" xml:space="preserve"><value>Open new draft</value></data>
+  <data name="DefinitionDeleteDraft" xml:space="preserve"><value>Delete draft</value></data>
+  <data name="DefinitionDeleteDraftConfirm" xml:space="preserve"><value>Delete this draft version? Published versions are not affected.</value></data>
+  <data name="DefinitionPublishedReadOnly" xml:space="preserve"><value>This version is published and read-only. Open a new draft to make changes.</value></data>
+  <data name="DefinitionIssues" xml:space="preserve"><value>Validation issues</value></data>
+  <data name="DefinitionTemplateDrift" xml:space="preserve"><value>Differences from the template this definition was created from</value></data>
+  <data name="DefinitionImpact" xml:space="preserve"><value>Publish impact</value></data>
+  <data name="DefinitionImpactIntro" xml:space="preserve"><value>Publishing freezes this version. Existing drafts keep their version until migrated; finalized records never change.</value></data>
+  <data name="DefinitionOpenDrafts" xml:space="preserve"><value>Open drafts on current version</value></data>
+  <data name="DefinitionFinalizedEarlier" xml:space="preserve"><value>Finalized records on earlier versions</value></data>
+  <data name="DefinitionBreaking" xml:space="preserve"><value>Breaking change</value></data>
+  <data name="DefinitionClients" xml:space="preserve"><value>Client readiness</value></data>
+  <data name="DefinitionDiff" xml:space="preserve"><value>Changes</value></data>
+  <data name="DefinitionDiffFrom" xml:space="preserve"><value>Compare from</value></data>
+  <data name="DefinitionDiffTo" xml:space="preserve"><value>to</value></data>
+  <data name="DefinitionCompare" xml:space="preserve"><value>Compare</value></data>
+  <data name="DefinitionNoChanges" xml:space="preserve"><value>No differences between these versions.</value></data>
+  <data name="DefinitionPublishConfirm" xml:space="preserve"><value>Publish this version? It becomes read-only and new records will use it.</value></data>
+  <data name="DefinitionPublishNow" xml:space="preserve"><value>Publish</value></data>
+  <data name="DefinitionPublishNeedsPermission" xml:space="preserve"><value>Publishing requires the manage record definitions permission.</value></data>
+  <data name="DefinitionRetire" xml:space="preserve"><value>Retire</value></data>
+  <data name="DefinitionRetireReason" xml:space="preserve"><value>Reason for retiring this definition</value></data>
+  <data name="DefinitionMigrateDrafts" xml:space="preserve"><value>Migrate open drafts</value></data>
+  <data name="DefinitionMigratePreview" xml:space="preserve"><value>Preview migration</value></data>
+  <data name="DefinitionMigrateRun" xml:space="preserve"><value>Migrate now</value></data>
+  <data name="DefinitionMigrateConfirm" xml:space="preserve"><value>Move all open drafts to the newer version? Unmapped values are dropped.</value></data>
+  <data name="DefinitionCreated" xml:space="preserve"><value>Definition created. Edit the schema, validate, then publish.</value></data>
+  <data name="DefinitionSaved" xml:space="preserve"><value>Draft saved.</value></data>
+  <data name="DefinitionValid" xml:space="preserve"><value>The definition is valid.</value></data>
+  <data name="DefinitionInvalid" xml:space="preserve"><value>The definition has errors. Fix them before publishing.</value></data>
+  <data name="DefinitionDraftDeleted" xml:space="preserve"><value>Draft version deleted.</value></data>
+  <data name="DefinitionPublished" xml:space="preserve"><value>Version {0} published.</value></data>
+  <data name="DefinitionRetired" xml:space="preserve"><value>Definition retired. Existing records stay readable; no new records can be created.</value></data>
+  <data name="SavedReports" xml:space="preserve"><value>Saved reports</value></data>
+  <data name="SavedReportsIntro" xml:space="preserve"><value>Saved reports query one definition's records by field, group and aggregate them, and export to CSV. Results respect record visibility and restricted fields.</value></data>
+  <data name="NewReport" xml:space="preserve"><value>New report</value></data>
+  <data name="ReportName" xml:space="preserve"><value>Report name</value></data>
+  <data name="ReportSettings" xml:space="preserve"><value>Report settings</value></data>
+  <data name="ReportColumns" xml:space="preserve"><value>Columns</value></data>
+  <data name="ReportBuiltInColumns" xml:space="preserve"><value>Record columns</value></data>
+  <data name="ReportPickDefinition" xml:space="preserve"><value>Pick a definition to choose columns.</value></data>
+  <data name="ReportSort" xml:space="preserve"><value>Sort by</value></data>
+  <data name="ReportDescending" xml:space="preserve"><value>Descending</value></data>
+  <data name="ReportGroupBy" xml:space="preserve"><value>Group by</value></data>
+  <data name="ReportAggregates" xml:space="preserve"><value>Aggregates (JSON)</value></data>
+  <data name="ReportAggregatesHelp" xml:space="preserve"><value>Count, Sum, Average, Min, Max on aggregatable fields</value></data>
+  <data name="ReportFilters" xml:space="preserve"><value>Filters (JSON)</value></data>
+  <data name="ReportFiltersHelp" xml:space="preserve"><value>Filterable fields</value></data>
+  <data name="ReportVersionMappings" xml:space="preserve"><value>Version mappings (JSON)</value></data>
+  <data name="ReportMaxRows" xml:space="preserve"><value>Max rows</value></data>
+  <data name="ReportIncludeDrafts" xml:space="preserve"><value>Include drafts</value></data>
+  <data name="ReportIncludeRestricted" xml:space="preserve"><value>Include restricted fields</value></data>
+  <data name="ReportValidate" xml:space="preserve"><value>Validate</value></data>
+  <data name="ReportRun" xml:space="preserve"><value>Run</value></data>
+  <data name="ReportLastRun" xml:space="preserve"><value>Last run</value></data>
+  <data name="ReportDeleteConfirm" xml:space="preserve"><value>Delete this saved report?</value></data>
+  <data name="ReportRows" xml:space="preserve"><value>Rows</value></data>
+  <data name="ReportGroups" xml:space="preserve"><value>Groups</value></data>
+  <data name="ReportCount" xml:space="preserve"><value>Count</value></data>
+  <data name="ReportTruncated" xml:space="preserve"><value>Results were truncated at the row limit; narrow the filters or export to CSV.</value></data>
+  <data name="ReportUnmappedVersions" xml:space="preserve"><value>Records on unmapped definition versions were included with blank cells</value></data>
+  <data name="ReportSaved" xml:space="preserve"><value>Report saved.</value></data>
+  <data name="ReportDeleted" xml:space="preserve"><value>Report deleted.</value></data>
+  <data name="ReportValid" xml:space="preserve"><value>The report is valid.</value></data>
+  <data name="ReportInvalid" xml:space="preserve"><value>The report has errors.</value></data>
+  <data name="Deployments" xml:space="preserve"><value>Deployments</value></data>
+  <data name="DeploymentsIntro" xml:space="preserve"><value>External resource orders your department is filling. The ordering system stays authoritative: artifacts are stored as immutable snapshots and nothing is written back.</value></data>
+  <data name="NewDeployment" xml:space="preserve"><value>New deployment</value></data>
+  <data name="DeploymentPreviewStatement" xml:space="preserve"><value>Deployments are a Preview feature: fixtures were built from published IROC, CIFFC and EMAC documentation, not from live integrations. Verify against your ordering system.</value></data>
+  <data name="DeploymentOrder" xml:space="preserve"><value>Order</value></data>
+  <data name="DeploymentOrderNumber" xml:space="preserve"><value>Order number</value></data>
+  <data name="DeploymentIncident" xml:space="preserve"><value>Incident</value></data>
+  <data name="DeploymentLocation" xml:space="preserve"><value>Country / subdivision</value></data>
+  <data name="DeploymentOffices" xml:space="preserve"><value>Offices</value></data>
+  <data name="DeploymentOrderingOffice" xml:space="preserve"><value>Ordering office</value></data>
+  <data name="DeploymentDispatchOffice" xml:space="preserve"><value>Dispatch office</value></data>
+  <data name="DeploymentAgencies" xml:space="preserve"><value>Agencies</value></data>
+  <data name="DeploymentRequestingAgency" xml:space="preserve"><value>Requesting agency</value></data>
+  <data name="DeploymentReceivingAgency" xml:space="preserve"><value>Receiving agency</value></data>
+  <data name="DeploymentSendingAgency" xml:space="preserve"><value>Sending agency</value></data>
+  <data name="DeploymentRole" xml:space="preserve"><value>Department role</value></data>
+  <data name="DeploymentRoleFilling" xml:space="preserve"><value>Filling the order</value></data>
+  <data name="DeploymentRoleRequesting" xml:space="preserve"><value>Requesting resources</value></data>
+  <data name="DeploymentRoleHost" xml:space="preserve"><value>Hosting incident</value></data>
+  <data name="DeploymentCost" xml:space="preserve"><value>Cost</value></data>
+  <data name="DeploymentCostCode" xml:space="preserve"><value>Cost code</value></data>
+  <data name="DeploymentAgreement" xml:space="preserve"><value>Agreement reference</value></data>
+  <data name="DeploymentUnitsAndCurrency" xml:space="preserve"><value>Currency / units / time zone</value></data>
+  <data name="DeploymentArtifact" xml:space="preserve"><value>Order artifact</value></data>
+  <data name="DeploymentArtifactHelp" xml:space="preserve"><value>Upload the order document from the source system (PDF, JSON or CSV). It is stored as an immutable, checksummed snapshot.</value></data>
+  <data name="DeploymentSource" xml:space="preserve"><value>Source</value></data>
+  <data name="DeploymentSourceSystem" xml:space="preserve"><value>Source system</value></data>
+  <data name="DeploymentSourceVersion" xml:space="preserve"><value>Source version</value></data>
+  <data name="DeploymentSourceLink" xml:space="preserve"><value>Open in source system</value></data>
+  <data name="DeploymentStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="DeploymentIncludeClosed" xml:space="preserve"><value>Show closed-out deployments</value></data>
+  <data name="DeploymentHideClosed" xml:space="preserve"><value>Hide closed-out deployments</value></data>
+  <data name="DeploymentMobilizedOn" xml:space="preserve"><value>Mobilized</value></data>
+  <data name="DeploymentReleasedOn" xml:space="preserve"><value>Released</value></data>
+  <data name="DeploymentClosedOutOn" xml:space="preserve"><value>Closed out</value></data>
+  <data name="DeploymentNewSnapshot" xml:space="preserve"><value>Record a new snapshot</value></data>
+  <data name="DeploymentRecordSnapshot" xml:space="preserve"><value>Store snapshot</value></data>
+  <data name="DeploymentCloseout" xml:space="preserve"><value>Close out deployment</value></data>
+  <data name="DeploymentCloseoutNotes" xml:space="preserve"><value>Closeout notes</value></data>
+  <data name="DeploymentCloseoutConfirm" xml:space="preserve"><value>Close out this deployment? Fills can no longer change.</value></data>
+  <data name="DeploymentCloseoutBlocked" xml:space="preserve"><value>Every accepted fill must be Returned before closeout.</value></data>
+  <data name="DeploymentFills" xml:space="preserve"><value>Fills</value></data>
+  <data name="DeploymentFirstFill" xml:space="preserve"><value>First fill (optional)</value></data>
+  <data name="DeploymentFirstFillHelp" xml:space="preserve"><value>Add the first request/fill now or add fills from the deployment page.</value></data>
+  <data name="DeploymentAddFill" xml:space="preserve"><value>Add fill</value></data>
+  <data name="DeploymentRequestNumber" xml:space="preserve"><value>Request number</value></data>
+  <data name="DeploymentParentRequest" xml:space="preserve"><value>Parent request</value></data>
+  <data name="DeploymentResource" xml:space="preserve"><value>Resource</value></data>
+  <data name="DeploymentPosition" xml:space="preserve"><value>Position</value></data>
+  <data name="DeploymentTrainee" xml:space="preserve"><value>Trainee</value></data>
+  <data name="DeploymentAssigned" xml:space="preserve"><value>Assigned person</value></data>
+  <data name="DeploymentHomeUnit" xml:space="preserve"><value>Home unit</value></data>
+  <data name="DeploymentHostAgency" xml:space="preserve"><value>Host agency</value></data>
+  <data name="DeploymentNeededOn" xml:space="preserve"><value>Needed on</value></data>
+  <data name="DeploymentRecord" xml:space="preserve"><value>Deployment record</value></data>
+  <data name="DeploymentCreate" xml:space="preserve"><value>Create deployment</value></data>
+  <data name="DeploymentDeclineReason" xml:space="preserve"><value>Reason for declining this request</value></data>
+  <data name="DeploymentCreated" xml:space="preserve"><value>Deployment created.</value></data>
+  <data name="DeploymentFillAdded" xml:space="preserve"><value>Fill added.</value></data>
+  <data name="DeploymentFillUpdated" xml:space="preserve"><value>Fill updated.</value></data>
+  <data name="DeploymentSnapshotNeedsFile" xml:space="preserve"><value>Choose the order document to store as a snapshot.</value></data>
+  <data name="DeploymentSnapshotRecorded" xml:space="preserve"><value>Snapshot stored. The previous snapshot is kept and superseded.</value></data>
+  <data name="DeploymentClosedOut" xml:space="preserve"><value>Deployment closed out.</value></data>
+  <data name="DefinitionLayout" xml:space="preserve"><value>Print layout</value></data>
+  <data name="DefinitionLayoutIntro" xml:space="preserve"><value>Order, rename or hide sections and fields for print and PDF, add page breaks, and place the signature block and attachment list. Every save is a new layout version stamped in the provenance footer.</value></data>
+  <data name="LayoutCurrentVersion" xml:space="preserve"><value>Layout version</value></data>
+  <data name="LayoutDepartmentDefault" xml:space="preserve"><value>Department default</value></data>
+  <data name="LayoutOrder" xml:space="preserve"><value>Order</value></data>
+  <data name="LayoutHeading" xml:space="preserve"><value>Heading override</value></data>
+  <data name="LayoutVisible" xml:space="preserve"><value>Visible</value></data>
+  <data name="LayoutPageBreak" xml:space="preserve"><value>Page break before</value></data>
+  <data name="LayoutFields" xml:space="preserve"><value>Fields</value></data>
+  <data name="LayoutAppliesToVersion" xml:space="preserve"><value>Applies to version</value></data>
+  <data name="LayoutAllVersions" xml:space="preserve"><value>All versions</value></data>
+  <data name="LayoutSignaturePlacement" xml:space="preserve"><value>Signature block</value></data>
+  <data name="LayoutSignatureEnd" xml:space="preserve"><value>At the end</value></data>
+  <data name="LayoutSignatureInline" xml:space="preserve"><value>Inline with its section</value></data>
+  <data name="LayoutSignatureNone" xml:space="preserve"><value>Hidden</value></data>
+  <data name="LayoutAttachmentStyle" xml:space="preserve"><value>Attachment list</value></data>
+  <data name="LayoutAttachmentsTable" xml:space="preserve"><value>Table</value></data>
+  <data name="LayoutAttachmentsList" xml:space="preserve"><value>Simple list</value></data>
+  <data name="LayoutAttachmentsNone" xml:space="preserve"><value>Hidden</value></data>
+  <data name="LayoutBrandingOverride" xml:space="preserve"><value>Override the department branding for this definition</value></data>
+  <data name="LayoutLetterhead" xml:space="preserve"><value>Letterhead</value></data>
+  <data name="LayoutSaved" xml:space="preserve"><value>Print layout saved.</value></data>
+  <data name="BulkSelected" xml:space="preserve"><value>selected</value></data>
+  <data name="BulkSelectAll" xml:space="preserve"><value>Select all on this page</value></data>
+  <data name="BulkReviewer" xml:space="preserve"><value>Reviewer…</value></data>
+  <data name="BulkReason" xml:space="preserve"><value>Reason</value></data>
+  <data name="BulkAssignReview" xml:space="preserve"><value>Assign for review</value></data>
+  <data name="BulkTitle" xml:space="preserve"><value>Packet title</value></data>
+  <data name="BulkPurpose" xml:space="preserve"><value>Purpose (audited)</value></data>
+  <data name="BulkDeliverTo" xml:space="preserve"><value>Email packet to (optional)</value></data>
+  <data name="BulkCompiledPdf" xml:space="preserve"><value>Compiled PDF</value></data>
+  <data name="BulkBundle" xml:space="preserve"><value>Zip bundle</value></data>
+  <data name="BulkLimit" xml:space="preserve"><value>Up to {0} records per packet. No bulk void or delete.</value></data>
+  <data name="BulkNothingSelected" xml:space="preserve"><value>Select at least one record.</value></data>
+  <data name="BulkAssigned" xml:space="preserve"><value>Assigned {0} record(s) for review; {1} skipped.</value></data>
+  <data name="BulkPacketCreated" xml:space="preserve"><value>Packet compiled from {0} record(s); {1} skipped. It stays downloadable for 30 days.</value></data>
+  <data name="BulkDelivered" xml:space="preserve"><value>Emailed.</value></data>
+  <data name="EvidenceModuleProjection" xml:space="preserve"><value>Module projection</value></data>
+  <data name="ProjectionIntro" xml:space="preserve"><value>Compose a bounded snapshot from the owning module: identifiers, codes, counts and statuses only, with source references. The module stays the system of record.</value></data>
+  <data name="ProjectionKind" xml:space="preserve"><value>Projection</value></data>
+  <data name="Projectionpersonnel-check-in" xml:space="preserve"><value>Personnel check-in</value></data>
+  <data name="Projectionresource-summary" xml:space="preserve"><value>Resource summary</value></data>
+  <data name="Projectionqualifications" xml:space="preserve"><value>Qualifications</value></data>
+  <data name="Projectioncommand-summary" xml:space="preserve"><value>Command summary</value></data>
 </root>

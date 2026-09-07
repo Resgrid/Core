@@ -26,6 +26,7 @@ namespace Resgrid.Services.Records
 		private readonly IIncidentReportsService _incidents;
 		private readonly IDepartmentProfileMediaService _branding;
 		private readonly IRecordsPrintLayoutService _layouts;
+		private readonly IRecordDefinitionsService _definitions;
 		private readonly IPdfProvider _pdf;
 		private readonly IRecordsEvidenceService _evidence;
 		private readonly IRecordsUdfService _udf;
@@ -33,8 +34,9 @@ namespace Resgrid.Services.Records
 		public RecordsDocumentService(IRecordsAuthorizationService authorization, IRmsOperationalRecordsRepository records, IRmsIncidentReportsRepository reports,
 			IRmsIncidentAnalysesRepository analyses, IRmsRevisionsRepository revisions, IIncidentReportsService incidents,
 			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService layouts, IPdfProvider pdf, IRecordsEvidenceService evidence, IRecordsUdfService udf,
-			IRecordsProtectionService protection)
+			IRecordsProtectionService protection, IRecordDefinitionsService definitions)
 		{
+			_definitions = definitions;
 			_protection = protection; _authorization = authorization; _records = records; _reports = reports; _analyses = analyses; _revisions = revisions; _incidents = incidents; _branding = branding; _layouts = layouts; _pdf = pdf; _evidence = evidence; _udf = udf; }
 
 		public async Task<RecordDocument> GetAsync(int departmentId, string userId, string recordId, RmsRecordKind kind, string revisionId = null, bool exporting = false)
@@ -97,6 +99,8 @@ namespace Resgrid.Services.Records
 				foreach (var field in ((content["CustomFields"] as JObject)?["Fields"] as JArray ?? new JArray()).OfType<JObject>().ToList())
 					if ((int?)(field["Field"] as JObject)?["RmsClassification"] != 0) { withheld.Add(field.Path); field.Remove(); }
 				foreach (var field in RecordSnapshotSerializer.RestrictedDetailFields) Hide(content["Details"] as JObject, field);
+				// Department-definition values (RMS-1B): a restricted cell is keyed with the restricted suffix by the snapshot.
+				foreach (var property in (content["Values"] as JObject ?? new JObject()).Descendants().OfType<JProperty>().Where(p => p.Name.EndsWith(RecordSnapshotSerializer.RestrictedValueSuffix, StringComparison.Ordinal)).ToList()) { withheld.Add(property.Path); property.Remove(); }
 				foreach (var casualty in (content["Casualties"] as JArray ?? new JArray()).OfType<JObject>())
 					foreach (var field in new[] { "PersonnelUserId", "Rank", "BirthMonthYear", "Gender", "Race", "InjuryDetailJson", "DetailJson" }) Hide(casualty, field);
 				foreach (var vehicle in (content["Vehicles"] as JArray ?? new JArray()).OfType<JObject>())
@@ -117,7 +121,9 @@ namespace Resgrid.Services.Records
 			if (current == null || current.ContentChecksum != document.ContentChecksum) throw new UnauthorizedAccessException("Record access or content changed; reload the revision.");
 			document = current;
 			var branding = await _branding.GetBrandingAsync(departmentId);
-			var layout = await _layouts.GetDepartmentDefaultAsync(departmentId); var config = layout?.Config ?? RecordsPrintLayoutConfig.Default();
+			var content = JObject.Parse(document.ContentJson);
+			var resolved = await ResolveLayoutAsync(departmentId, content);
+			var config = resolved.Layout.Branding ?? RecordsPrintLayoutConfig.Default();
 			var html = new StringBuilder("<!doctype html><html><head><meta charset=\"utf-8\"><title>Department record</title><style>@page{size:" + RecordsPrintLayoutConfig.NormalizePageSize(config.PageSize) + ";margin:18mm}body{font:12px Arial,sans-serif;color:#142235}h1{font-size:23px}h2{margin-top:16px;font-size:16px}table{width:100%;border-collapse:collapse}th,td{padding:4px;border:1px solid #ccd2da;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{width:32%}tr{page-break-inside:avoid}pre{white-space:pre-wrap}footer{font-size:10px;margin-top:16px;page-break-inside:avoid}.withheld{border:1px solid #b65;padding:10px}.watermark{color:#777;font-weight:bold}</style></head><body>");
 			if (config.ShowLogo && branding?.HasLogo == true)
 			{
@@ -130,15 +136,121 @@ namespace Resgrid.Services.Records
 			html.Append("<h2>Complete department record ").Append(E(document.RecordNumber)).Append(" — revision ").Append(document.RevisionNumber).Append("</h2><p>Saved ").Append(E(document.FinalizedOn.ToString("u"))).Append(" · Attested by ").Append(E(document.AttestedBy)).Append(" · Statement ").Append(E(document.AttestationVersion)).Append("</p>");
 			if (document.WithheldFields.Count > 0) html.Append("<p class=\"withheld\">Some fields are withheld under your current access permissions.</p>");
 			if (!string.IsNullOrWhiteSpace(config.WatermarkLabel)) html.Append("<p class=\"watermark\">").Append(E(config.WatermarkLabel)).Append("</p>");
-			RenderSections(html, JObject.Parse(document.ContentJson));
-			html.Append("<footer>").Append(E(config.FooterText)).Append("<p>Revision ").Append(E(document.RevisionId)).Append(" · Original checksum ").Append(E(document.OriginalChecksum)).Append("</p><p>Copy checksum ").Append(E(document.ContentChecksum)).Append(" · Layout ").Append(E(layout?.LayoutVersion)).Append(" · Printed by ").Append(E(userId)).Append(" at ").Append(DateTime.UtcNow.ToString("u")).Append("</p></footer></body></html>");
+			if (resolved.Layout.Definition != null && resolved.Schema != null)
+			{
+				// Definition layout (plan 4.10.1): the definition's own sections render first in layout order; the rest of the
+				// aggregate (participants, units, evidence, attachments) follows the generated order.
+				var values = content["Values"] as JObject;
+				content.Remove("Values");
+				RenderValuesWithLayout(html, values, resolved.Schema, resolved.Layout.Definition);
+				var attachments = content["Attachments"] as JArray;
+				if (attachments != null && resolved.Layout.Definition.AttachmentListStyle != RecordsDefinitionLayoutConfig.AttachmentsTable)
+				{
+					content.Remove("Attachments");
+					if (resolved.Layout.Definition.AttachmentListStyle == RecordsDefinitionLayoutConfig.AttachmentsList && attachments.Count > 0)
+					{
+						html.Append("<h2>Attachments</h2><ul>");
+						foreach (var attachment in attachments.OfType<JObject>())
+							html.Append("<li>").Append(E((string)attachment["FileName"] ?? "attachment")).Append(attachment["ByteSize"] != null ? " (" + attachment["ByteSize"] + " bytes)" : string.Empty).Append("</li>");
+						html.Append("</ul>");
+					}
+				}
+			}
+			RenderSections(html, content);
+			html.Append("<footer>").Append(E(config.FooterText)).Append("<p>Layout ").Append(E(resolved.Layout.LayoutVersion)).Append("</p>").Append("<p>Revision ").Append(E(document.RevisionId)).Append(" · Original checksum ").Append(E(document.OriginalChecksum)).Append("</p><p>Copy checksum ").Append(E(document.ContentChecksum)).Append(" · Printed by ").Append(E(userId)).Append(" at ").Append(DateTime.UtcNow.ToString("u")).Append("</p></footer></body></html>");
 			await RequireCurrentDocumentAsync(departmentId, userId, document);
 			return html.ToString();
 		}
+		/// <summary>Definition layout resolution for a department-definition Record; locked definitions resolve to the department default alone.</summary>
+		private async Task<(RecordsResolvedPrintLayout Layout, RecordDefinitionSchema Schema)> ResolveLayoutAsync(int departmentId, JObject content)
+		{
+			var definitionKey = (string)content["DefinitionKey"];
+			var definitionVersion = (int?)content["DefinitionVersion"] ?? 0;
+			var isDepartmentDefinition = content["RecordType"] == null || content["RecordType"].Type == JTokenType.Null;
+			if (!isDepartmentDefinition || string.IsNullOrWhiteSpace(definitionKey) || RmsDefinitionKeys.LockedTypes.ContainsKey(definitionKey))
+			{
+				var department = await _layouts.GetDepartmentDefaultAsync(departmentId);
+				return (new RecordsResolvedPrintLayout { Branding = department?.Config ?? RecordsPrintLayoutConfig.Default(), BrandingLayoutVersion = department?.LayoutVersion ?? RmsRecordPrintLayout.GeneratedLayoutVersion }, null);
+			}
+			var resolved = await _layouts.ResolveForDefinitionAsync(departmentId, definitionKey, definitionVersion);
+			RecordDefinitionSchema schema = null;
+			if (resolved.Definition != null)
+				schema = (await _definitions.GetVersionAsync(departmentId, definitionKey, definitionVersion))?.Schema;
+			return (resolved, schema);
+		}
+
+		/// <summary>
+		/// The snapshot's Values block ({section label: {field label: display}} or rows) rendered per the definition layout:
+		/// section order and visibility, headings, page breaks, hidden fields, signature placement. Labels map back to the
+		/// pinned version's schema; a value whose field the schema no longer names prints under its stored label.
+		/// </summary>
+		public static void RenderValuesWithLayout(StringBuilder html, JObject values, RecordDefinitionSchema schema, RecordsDefinitionLayoutConfig layout)
+		{
+			if (values == null) return;
+			var signatures = new List<(string Label, string Value)>();
+			foreach (var sectionKey in layout.OrderedSectionKeys(schema.Sections.Select(s => s.Key)))
+			{
+				var section = schema.FindSection(sectionKey);
+				if (section == null) continue;
+				var block = values.Properties().FirstOrDefault(p => string.Equals(p.Name, section.Label ?? section.Key, StringComparison.Ordinal) || string.Equals(p.Name, section.Key, StringComparison.OrdinalIgnoreCase))?.Value;
+				if (block == null || block.Type == JTokenType.Null) continue;
+				var heading = layout.HeadingFor(section.Key, section.Label ?? section.Key);
+				var rows = block is JArray array ? array.OfType<JObject>().ToList() : new List<JObject> { block as JObject ?? new JObject() };
+				var printable = new List<List<(string Label, string Value)>>();
+				foreach (var row in rows)
+				{
+					var cells = new List<(string Label, string Value)>();
+					foreach (var property in row.Properties())
+					{
+						var label = property.Name.EndsWith(RecordSnapshotSerializer.RestrictedValueSuffix, StringComparison.Ordinal) ? property.Name.Substring(0, property.Name.Length - RecordSnapshotSerializer.RestrictedValueSuffix.Length) : property.Name;
+						var field = section.Fields.FirstOrDefault(f => string.Equals(f.Label ?? f.Key, label, StringComparison.Ordinal)) ?? section.Fields.FirstOrDefault(f => string.Equals(f.Key, label, StringComparison.OrdinalIgnoreCase));
+						if (field != null && !layout.IsFieldVisible(field.Key)) continue;
+						var text = property.Value?.Type == JTokenType.Null ? null : property.Value?.ToString();
+						if (string.IsNullOrWhiteSpace(text)) continue;
+						if (field?.Type == RmsFieldType.Signature && layout.SignatureBlockPlacement != RecordsDefinitionLayoutConfig.SignatureInline)
+						{
+							if (layout.SignatureBlockPlacement == RecordsDefinitionLayoutConfig.SignatureAtEnd) signatures.Add((heading + " / " + label, text));
+							continue;
+						}
+						cells.Add((label, text));
+					}
+					if (cells.Count > 0) printable.Add(cells);
+				}
+				if (printable.Count == 0) continue;
+				html.Append(layout.PageBreakBefore(section.Key) ? "<h2 style=\"page-break-before:always\">" : "<h2>").Append(E(heading)).Append("</h2>");
+				if (block is JArray)
+				{
+					var columns = printable.SelectMany(r => r.Select(c => c.Label)).Distinct(StringComparer.Ordinal).ToList();
+					html.Append("<table><thead><tr><th>#</th>");
+					foreach (var column in columns) html.Append("<th>").Append(E(column)).Append("</th>");
+					html.Append("</tr></thead><tbody>");
+					for (var i = 0; i < printable.Count; i++)
+					{
+						html.Append("<tr><td>").Append(i + 1).Append("</td>");
+						foreach (var column in columns) html.Append("<td style=\"white-space:pre-wrap\">").Append(E(printable[i].FirstOrDefault(c => c.Label == column).Value ?? string.Empty)).Append("</td>");
+						html.Append("</tr>");
+					}
+					html.Append("</tbody></table>");
+				}
+				else
+				{
+					html.Append("<table><tbody>");
+					foreach (var cell in printable[0]) html.Append("<tr><th>").Append(E(cell.Label)).Append("</th><td style=\"white-space:pre-wrap\">").Append(E(cell.Value)).Append("</td></tr>");
+					html.Append("</tbody></table>");
+				}
+			}
+			if (signatures.Count > 0)
+			{
+				html.Append("<h2>Signatures</h2><table><tbody>");
+				foreach (var signature in signatures) html.Append("<tr><th>").Append(E(signature.Label)).Append("</th><td>").Append(E(signature.Value)).Append("</td></tr>");
+				html.Append("</tbody></table>");
+			}
+		}
+
 		public async Task<byte[]> RenderPdfAsync(int departmentId, string userId, RecordDocument document)
 		{
 			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ExportRecords)) throw new UnauthorizedAccessException();
-			var pageSize = (await _layouts.GetDepartmentDefaultAsync(departmentId))?.Config?.PageSize;
+			var pageSize = (await ResolveLayoutAsync(departmentId, JObject.Parse(document.ContentJson))).Layout.Branding?.PageSize;
 			var bytes = _pdf.ConvertHtmlToPdf(await RenderHtmlAsync(departmentId, userId, document), RecordsPrintLayoutConfig.NormalizePageSize(pageSize));
 			await RequireCurrentDocumentAsync(departmentId, userId, document, true);
 			return bytes;

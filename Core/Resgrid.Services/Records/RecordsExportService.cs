@@ -85,12 +85,26 @@ namespace Resgrid.Services.Records
 
 		public async Task<RecordsExportTemplateValidation> ValidateAsync(int departmentId, string userId, RmsExportTemplate template)
 		{
-			var result = new RecordsExportTemplateValidation();
 			if (template == null)
 			{
-				result.Errors.Add("A template is required.");
-				return result;
+				var empty = new RecordsExportTemplateValidation();
+				empty.Errors.Add("A template is required.");
+				return empty;
 			}
+
+			return await ValidateCoreAsync(departmentId, userId, template, StoredColumns(string.IsNullOrWhiteSpace(template.RmsExportTemplateId)
+				? null
+				: await _templates.GetByIdForDepartmentAsync(departmentId, template.RmsExportTemplateId)));
+		}
+
+		/// <summary>
+		/// <paramref name="storedColumns"/> is the column set the stored template carries. SaveAsync passes the
+		/// snapshot it took before overwriting the row (target IS existing on an update, so re-reading afterwards
+		/// would compare the incoming set against itself).
+		/// </summary>
+		private async Task<RecordsExportTemplateValidation> ValidateCoreAsync(int departmentId, string userId, RmsExportTemplate template, List<string> storedColumns)
+		{
+			var result = new RecordsExportTemplateValidation();
 
 			if (string.IsNullOrWhiteSpace(template.Name) || template.Name.Trim().Length > 200)
 				result.Errors.Add("Give the export a name of up to 200 characters.");
@@ -165,7 +179,13 @@ namespace Resgrid.Services.Records
 				result.Errors.Add("Restricted columns need 'Include restricted sections' switched on.");
 			if ((needsNarrative || needsRestricted) && !template.EgressAcknowledgedOn.HasValue)
 				result.Errors.Add("Acknowledge that this export sends narrative or restricted content outside Resgrid before saving it.");
-			if (needsRestricted && !string.IsNullOrWhiteSpace(userId) && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords))
+			// The grant gates CHANGING the restricted half, not merely saving a template that already carries it:
+			// SaveAsync carries the stored restricted columns forward for an author who cannot see them, and that
+			// carried-forward set must not then fail its own validation.
+			var storedRestricted = storedColumns.Where(IsRestrictedColumn).ToList();
+			var restrictedChanged = !columns.Where(IsRestrictedColumn).OrderBy(c => c, StringComparer.Ordinal)
+				.SequenceEqual(storedRestricted.OrderBy(c => c, StringComparer.Ordinal), StringComparer.Ordinal);
+			if (needsRestricted && restrictedChanged && !string.IsNullOrWhiteSpace(userId) && !await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords))
 				result.Errors.Add("Only a member with the restricted-records grant can author an export that carries restricted columns.");
 
 			if ((needsNarrative || needsRestricted) && await _protection.IsEnforcedAsync(departmentId))
@@ -183,6 +203,11 @@ namespace Resgrid.Services.Records
 			var now = DateTime.UtcNow;
 			var existing = string.IsNullOrWhiteSpace(template.RmsExportTemplateId) ? null : await _templates.GetByIdForDepartmentAsync(departmentId, template.RmsExportTemplateId);
 			var target = existing ?? new RmsExportTemplate { RmsExportTemplateId = Guid.NewGuid().ToString(), DepartmentId = departmentId, ProtectionId = Guid.NewGuid().ToString(), CreatedOn = now, CreatedByUserId = userId, RowVersion = 0 };
+			// target IS existing on an update, so everything the stored row is compared against below has to be
+			// taken before the posted values overwrite it.
+			var storedColumns = StoredColumns(existing);
+			var storedIncludeRestricted = existing != null && existing.IncludeRestricted;
+			var canAuthorRestricted = await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.ViewRestrictedRecords);
 
 			target.TemplateKey = (template.TemplateKey ?? string.Empty).Trim().ToLowerInvariant();
 			target.Name = template.Name?.Trim();
@@ -190,9 +215,16 @@ namespace Resgrid.Services.Records
 			target.Format = template.Format;
 			target.Scope = template.Scope;
 			target.DefinitionKeysCsv = string.Join(",", SplitCsv(template.DefinitionKeysCsv));
-			target.ColumnsJson = JsonConvert.SerializeObject(ParseColumns(template.ColumnsJson));
+			// An author without the restricted grant never sees the restricted switches (they render disabled, so
+			// the browser posts nothing for them). Taking the post at face value would silently strip restricted
+			// columns off a template somebody else authored, so the stored restricted half is carried forward.
+			var postedColumns = ParseColumns(template.ColumnsJson);
+			if (!canAuthorRestricted)
+				postedColumns = postedColumns.Where(c => !IsRestrictedColumn(c))
+					.Concat(storedColumns.Where(IsRestrictedColumn)).Distinct(StringComparer.Ordinal).ToList();
+			target.ColumnsJson = JsonConvert.SerializeObject(postedColumns);
 			target.IncludeNarrative = template.IncludeNarrative;
-			target.IncludeRestricted = template.IncludeRestricted;
+			target.IncludeRestricted = canAuthorRestricted ? template.IncludeRestricted : storedIncludeRestricted;
 			target.FileNameTemplate = string.IsNullOrWhiteSpace(template.FileNameTemplate) ? null : template.FileNameTemplate.Trim();
 			target.IncludeHeader = template.IncludeHeader;
 			target.Delimiter = string.IsNullOrEmpty(template.Delimiter) ? "," : template.Delimiter;
@@ -207,19 +239,23 @@ namespace Resgrid.Services.Records
 
 			// The acknowledgement is a recorded decision by a named member; it is never carried over silently
 			// when the content the export carries widens.
-			var carriesSensitive = ParseColumns(target.ColumnsJson).Select(RecordsExportFieldCatalog.Get).Any(f => f != null && f.Tier != RmsExportFieldTier.Safe);
+			var carriedTiers = Tiers(ParseColumns(target.ColumnsJson));
+			var carriesSensitive = carriedTiers.Any(t => t != RmsExportFieldTier.Safe);
+			// Widened means the column set now carries a sensitive tier the acknowledged set did not: a Restricted
+			// column added to a template a member acknowledged for Narrative content only is a new decision.
+			var widened = carriedTiers.Any(t => t != RmsExportFieldTier.Safe && !Tiers(storedColumns).Contains(t));
 			if (acknowledgeEgress && carriesSensitive)
 			{
 				target.EgressAcknowledgedOn = now;
 				target.EgressAcknowledgedByUserId = userId;
 			}
-			else if (!carriesSensitive || !target.IncludeNarrative && !target.IncludeRestricted)
+			else if (!carriesSensitive || widened || !target.IncludeNarrative && !target.IncludeRestricted)
 			{
 				target.EgressAcknowledgedOn = null;
 				target.EgressAcknowledgedByUserId = null;
 			}
 
-			var validation = await ValidateAsync(departmentId, userId, target);
+			var validation = await ValidateCoreAsync(departmentId, userId, target, storedColumns);
 			if (!validation.IsValid)
 				throw new ArgumentException(string.Join(" ", validation.Errors));
 
@@ -471,7 +507,9 @@ namespace Resgrid.Services.Records
 
 			if (wantIncident)
 			{
-				var query = new RmsIncidentReportQuery { States = FinalizedStates.ToList(), Skip = 0, Take = 250 };
+				// The window is applied in the query, not after paging: MaxWindowRecords caps how many rows the
+				// sweep will read, and out-of-window rows must not spend that budget.
+				var query = new RmsIncidentReportQuery { States = FinalizedStates.ToList(), FinalizedOnStart = start, FinalizedOnEnd = end, Skip = 0, Take = 250 };
 				for (var skip = 0; skip < MaxWindowRecords; skip += 250)
 				{
 					query.Skip = skip;
@@ -549,10 +587,17 @@ namespace Resgrid.Services.Records
 			foreach (var template in due)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
+				var scheduledFor = template.NextRunOn ?? now;
+				// Claim the template before any work: the claim moves NextRunOn off the due value, so a second
+				// sweep reading the same row skips it instead of rendering and recording a duplicate run. The
+				// deferred value is the same hour a failure would use; the success path overwrites it below.
+				if (!await _templates.TryClaimDueAsync(template.DepartmentId, template.RmsExportTemplateId, scheduledFor, now.AddHours(1), now, cancellationToken))
+					continue;
+				template.RowVersion += 1;
 				result.TemplatesEvaluated++;
 				try
 				{
-					var window = ScheduleWindow(template, template.NextRunOn ?? now);
+					var window = ScheduleWindow(template, scheduledFor);
 					var run = await RenderCoreAsync(template.DepartmentId, template,
 						new RecordsExportRequest { Trigger = RmsExportTrigger.Scheduled, WindowStart = window.start, WindowEnd = window.end, Purpose = "Scheduled export " + template.Name },
 						true, cancellationToken);
@@ -704,6 +749,15 @@ namespace Resgrid.Services.Records
 		#endregion
 
 		#region Small helpers
+
+		/// <summary>The columns a stored template carries; empty for a template that does not exist yet.</summary>
+		private static List<string> StoredColumns(RmsExportTemplate stored) => stored == null ? new List<string>() : ParseColumns(stored.ColumnsJson);
+
+		private static bool IsRestrictedColumn(string column) => RecordsExportFieldCatalog.Get(column)?.Tier == RmsExportFieldTier.Restricted;
+
+		/// <summary>The distinct tiers a column set carries; an unknown column contributes nothing.</summary>
+		private static HashSet<RmsExportFieldTier> Tiers(IEnumerable<string> columns)
+			=> new HashSet<RmsExportFieldTier>((columns ?? Enumerable.Empty<string>()).Select(RecordsExportFieldCatalog.Get).Where(f => f != null).Select(f => f.Tier));
 
 		public static List<string> ParseColumns(string json)
 		{

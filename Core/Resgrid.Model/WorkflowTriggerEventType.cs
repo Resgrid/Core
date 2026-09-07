@@ -111,6 +111,15 @@
 		/// <summary>A Record passed the due time of a review, correction or resubmission obligation.</summary>
 		RecordOverdue = 112,
 
+		// RMS-1B definition lifecycle (plan section 4.1). One trigger per lifecycle outcome, never a trigger per
+		// department definition; the definition key/version travels in the definition.* block.
+
+		/// <summary>A department Record definition version was published and new Records may start on it.</summary>
+		RecordDefinitionPublished = 113,
+
+		/// <summary>A department Record definition was retired; historical Records stay usable, new ones cannot start.</summary>
+		RecordDefinitionRetired = 114,
+
 		/// <summary>An attachment was added to a Record draft or amendment; carries safe metadata only, never bytes or names.</summary>
 		RecordAttachmentAdded = 115,
 

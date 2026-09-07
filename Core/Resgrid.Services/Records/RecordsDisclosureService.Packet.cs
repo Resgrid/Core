@@ -77,6 +77,9 @@ namespace Resgrid.Services.Records
 						if (r.CurrentRevisionId != null)
 						{
 							var parentRevision = await _revisions.GetByIdForDepartmentAsync(departmentId, r.CurrentRevisionId);
+							// A report pointing at a revision that is gone is an integrity failure, not a null reference:
+							// fail it the way Add does instead of dereferencing the missing row below.
+							if (parentRevision == null) throw new InvalidOperationException("A disclosure source failed its revision integrity check.");
 							(await _protection.RevealRevisionsAsync(departmentId, new[] { parentRevision })).RequireRevealed("disclosure scope");
 							parentHeader = (JObject)JObject.Parse(parentRevision.SnapshotJson)["Report"] ?? parentHeader;
 						}

@@ -52,7 +52,7 @@ namespace Resgrid.Tests.Rms
 			var brand = new Mock<IDepartmentProfileMediaService>(); brand.Setup(b => b.GetBrandingAsync(1)).ReturnsAsync(new DepartmentBranding { DisplayName = "Example Fire Department", AddressText = "100 Example Street", PhoneNumber = "555-0100", Website = "example.invalid" });
 			var layouts = new Mock<IRecordsPrintLayoutService>(); layouts.Setup(l => l.GetDepartmentDefaultAsync(1)).ReturnsAsync(new RmsRecordPrintLayout { Version = 3, Scope = 1, Config = new RecordsPrintLayoutConfig { LetterheadLine1 = "Fire Prevention and Emergency Response", FooterText = "Departmental record copy", WatermarkLabel = "TRAINING FIXTURE" } });
 			var udf = new RecordsUdfService(Mock.Of<IRmsUdfDefinitionsRepository>(), Mock.Of<IUdfFieldRepository>(), Mock.Of<IUdfFieldValueRepository>(), _auth.Object, _groups.Object, Mock.Of<IUnitOfWork>(), Mock.Of<IDepartmentDataProtectionService>());
-			_service = new RecordsDocumentService(_auth.Object, _store.Shared.RecordsRepo.Object, _store.ReportsRepo.Object, _store.AnalysesRepo.Object, _store.Shared.RevisionsRepo.Object, _incidents.Object, brand.Object, layouts.Object, _pdf.Object, Mock.Of<IRecordsEvidenceService>(), udf, new PassthroughRecordsProtection());
+			_service = new RecordsDocumentService(_auth.Object, _store.Shared.RecordsRepo.Object, _store.ReportsRepo.Object, _store.AnalysesRepo.Object, _store.Shared.RevisionsRepo.Object, _incidents.Object, brand.Object, layouts.Object, _pdf.Object, Mock.Of<IRecordsEvidenceService>(), udf, new PassthroughRecordsProtection(), Mock.Of<IRecordDefinitionsService>());
 		}
 
 		private void CaptureCustomFields()

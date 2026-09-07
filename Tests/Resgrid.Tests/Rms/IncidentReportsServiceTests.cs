@@ -242,6 +242,42 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Reordering_sections_carries_each_row_identity_with_its_own_content()
+		{
+			var started = await _service.StartFromCallAsync(Dept, "author", CallId);
+			var reportId = started.Report.RmsIncidentReportId;
+			var input = DraftFrom(started);
+			input.Resources = new List<IncidentResourceInput>
+			{
+				new IncidentResourceInput { ResourceCode = "FOAM", Detail = "Class A foam" },
+				new IncidentResourceInput { ResourceCode = "LADDER", Detail = "35 foot" }
+			};
+			var saved = await _service.SaveDraftAsync(Dept, "author", reportId, started.Report.RowVersion, input, true);
+			var foam = saved.Resources.Single(r => r.ResourceCode == "FOAM");
+			var ladder = saved.Resources.Single(r => r.ResourceCode == "LADDER");
+
+			// The client sends the rows back in the other order, each carrying its own id.
+			input = DraftFrom(saved);
+			input.Resources = new List<IncidentResourceInput>
+			{
+				new IncidentResourceInput { ResourceId = ladder.RmsIncidentResourceId, ResourceCode = "LADDER", Detail = "35 foot" },
+				new IncidentResourceInput { ResourceId = foam.RmsIncidentResourceId, ResourceCode = "FOAM", Detail = "Class A foam" }
+			};
+			var reordered = await _service.SaveDraftAsync(Dept, "author", reportId, saved.Report.RowVersion, input, true);
+
+			reordered.Resources.Single(r => r.RmsIncidentResourceId == foam.RmsIncidentResourceId).ResourceCode.Should().Be("FOAM",
+				"identity travels with the row, so reordering cannot hand one row's id and ProtectionId to another row's content");
+			reordered.Resources.Single(r => r.RmsIncidentResourceId == ladder.RmsIncidentResourceId).ResourceCode.Should().Be("LADDER");
+			reordered.Resources.Single(r => r.RmsIncidentResourceId == foam.RmsIncidentResourceId).ProtectionId.Should().Be(foam.ProtectionId);
+
+			// An identifier from outside the draft is refused rather than silently treated as a new row.
+			input = DraftFrom(reordered);
+			input.Resources = new List<IncidentResourceInput> { new IncidentResourceInput { ResourceId = "not-in-this-draft", ResourceCode = "FOAM" } };
+			var act = async () => await _service.SaveDraftAsync(Dept, "author", reportId, reordered.Report.RowVersion, input, true);
+			await act.Should().ThrowAsync<ArgumentException>();
+		}
+
+		[Test]
 		public async Task Save_draft_records_corrections_on_the_provenance_row()
 		{
 			var started = await _service.StartFromCallAsync(Dept, "author", CallId);

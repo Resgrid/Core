@@ -270,6 +270,7 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.Evidence.ChatPromotionEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.Evidence.InventoryUsageEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.Evidence.CertificationSnapshotEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.Evidence.PackProjectionEvidenceAdapter>().As<IRecordEvidenceAdapter>().InstancePerLifetimeScope();
 			// RMS-3d: public-records workflow (M0171) and the Records queue dashboards.
 			builder.RegisterType<Records.RecordsDisclosureService>().As<IRecordsDisclosureService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsLegalHoldService>().As<IRecordsLegalHoldService>().InstancePerLifetimeScope();
@@ -283,6 +284,17 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordOperationalSummaryService>().As<IRecordOperationalSummaryService>().InstancePerLifetimeScope();
 			// Department report exports via the Workflow system (RMS plan section 5.6, registry M0177, worker 45)
 			builder.RegisterType<Records.RecordsExportService>().As<IRecordsExportService>().InstancePerLifetimeScope();
+			// RMS-1B configurable definitions and RMS-1C packs (registry M0158-M0163)
+			builder.RegisterType<Records.RecordTypedValuesService>().As<IRecordTypedValuesService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordTemplatePacksService>().As<IRecordTemplatePacksService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordDefinitionsService>().As<IRecordDefinitionsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordSavedReportsService>().As<IRecordSavedReportsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordDeploymentsService>().As<IRecordDeploymentsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsRevealService>().As<IRecordsRevealService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsBulkPacketService>().As<IRecordsBulkPacketService>().InstancePerLifetimeScope();
+			// Field Records for the operational apps (RMS-1D)
+			builder.RegisterType<Records.RecordWorkAssignmentsService>().As<IRecordWorkAssignmentsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.FieldRecordsService>().As<IFieldRecordsService>().InstancePerLifetimeScope();
 			// Default attachment scanner: no engine, rows stay Skipped. A real scanner provider replaces this registration.
 			builder.RegisterType<Records.NullRecordAttachmentScanner>().As<Resgrid.Model.Providers.IRecordAttachmentScanner>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentProfileMediaService>().As<IDepartmentProfileMediaService>().InstancePerLifetimeScope();

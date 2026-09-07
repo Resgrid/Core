@@ -72,7 +72,11 @@
 		</div>
 	}
 
-	<div class="section">
+	@if (Model.IsDefinitionRecord)
+	{
+		<partial name="_DefinitionValues" model="Model" />
+	}
+	<div class="section" hidden="@Model.IsDefinitionRecord">
 		<h3>@localizer["Narrative"]</h3>
 		<table class="fields">
 			@if (t == RmsOperationalRecordType.Training)

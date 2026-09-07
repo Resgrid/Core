@@ -43,7 +43,7 @@ namespace Resgrid.Services
 				// carry the init-only marker column across.
 				scoped.Add(new AdpTableBinding(binding.TableName, binding.PkColumn, binding.PkIsNumeric,
 					binding.DepartmentColumn, binding.ParentFkColumn, binding.ParentTable, binding.ParentPkColumn,
-					columns) with { ProtectedMarkerColumn = binding.ProtectedMarkerColumn });
+					columns) with { ProtectedMarkerColumn = binding.ProtectedMarkerColumn, CarrierColumns = binding.CarrierColumns, RowFilterColumn = binding.RowFilterColumn });
 			}
 
 			return scoped;
@@ -55,6 +55,8 @@ namespace Resgrid.Services
 				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ProtectedFieldStorageKind.Text);
 			AdpColumnSpec Binary(string table, string column) =>
 				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ProtectedFieldStorageKind.Binary);
+			AdpColumnSpec Packed(string table, string column) =>
+				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ProtectedFieldStorageKind.PackedJson);
 			AdpColumnSpec Companion(string table, string column) =>
 				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
 					ProtectedFieldStorageKind.CompanionColumn, $"Protected{column}Envelope");
@@ -383,7 +385,15 @@ namespace Resgrid.Services
 				AdpTableBinding.Direct("RmsExportRuns", "RmsExportRunId", pkIsNumeric: false, "DepartmentId", new[]
 				{
 					Binary("RmsExportRuns", "Data")
-				}) with { ProtectedMarkerColumn = "IsProtected" }
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				// Catalog v11: typed values of department definitions (RMS-1B). Only rows flagged ProtectionRequired
+				// (a Protected-classified field) are swept; the typed siblings are packed into ProtectedEnvelope and
+				// cleared while sealed, so Standard/Restricted values stay plaintext for search and reports.
+				AdpTableBinding.Direct("RmsRecordValues", "RmsRecordValueId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Packed("RmsRecordValues", "ProtectedEnvelope")
+				}) with { ProtectedMarkerColumn = "IsProtected", CarrierColumns = RmsRecordValuePack.CarrierColumns, RowFilterColumn = "ProtectionRequired" }
 			};
 		}
 	}

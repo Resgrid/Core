@@ -441,6 +441,9 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class IncidentModuleInputData
 	{
+		/// <summary>The stored section this entry replaces; omit for a new one. Sending it is what lets a client
+		/// reorder or remove sections without the save matching rows by list position.</summary>
+		public string ModuleId { get; set; }
 		public int Kind { get; set; }
 		public string PrimaryCode { get; set; }
 		public string SecondaryCode { get; set; }
@@ -452,6 +455,8 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class IncidentResourceInputData
 	{
+		/// <summary>The stored resource this entry replaces; omit for a new one.</summary>
+		public string ResourceId { get; set; }
 		public string ResourceCode { get; set; }
 		public int? Quantity { get; set; }
 		public string Detail { get; set; }
@@ -490,6 +495,8 @@ namespace Resgrid.Web.Services.Models.v4.Records
 
 	public class IncidentExposureInputData
 	{
+		/// <summary>The stored exposure this entry replaces; omit for a new one.</summary>
+		public string ExposureId { get; set; }
 		public string LocationKind { get; set; }
 		public string ItemType { get; set; }
 		public string DamageType { get; set; }

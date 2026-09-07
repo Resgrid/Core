@@ -16,6 +16,14 @@ namespace Resgrid.Model
 		/// while protected and a Protected{Name}Envelope companion column carries the value
 		/// (Appendix B pattern).
 		/// </summary>
-		CompanionColumn = 3
+		CompanionColumn = 3,
+
+		/// <summary>
+		/// A JSON pack of a row's sibling typed columns carried as a text envelope in a dedicated column
+		/// (RmsRecordValues.ProtectedEnvelope, ADP catalog v11). While sealed the siblings are null, so the row still
+		/// populates exactly one column group; the binding names the siblings as carrier columns and a boolean row
+		/// filter scopes the sweep to rows whose field is Protected-classified.
+		/// </summary>
+		PackedJson = 4
 	}
 }

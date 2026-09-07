@@ -85,6 +85,27 @@ namespace Resgrid.Tests.Localization
 			"Records|fr|ExportTemplateDescription",
 			"Records|pl|ExportFormat",
 			"Records|sv|ExportFormat",
+			// Records definitions/deployments (2026-09-06): single words that are the same in the target language.
+			"Records|de|DefinitionName",        // "Name"
+			"Records|de|DefinitionVersion",     // "Version"
+			"Records|de|DefinitionSchema",      // "Schema (JSON)"
+			"Records|de|DeploymentStatus",      // "Status"
+			"Records|de|DeploymentPosition",    // "Position"
+			"Records|es|No",
+			"Records|it|No",
+			"Records|it|DefinitionSchema",      // "Schema (JSON)"
+			"Records|fr|TemplateSources",       // "Sources"
+			"Records|fr|TemplateSections",      // "Sections"
+			"Records|fr|DefinitionDescription", // "Description"
+			"Records|fr|DefinitionVersion",     // "Version"
+			"Records|fr|DefinitionClassification",
+			"Records|fr|FieldClassification",
+			"Records|fr|DeploymentIncident",    // "Incident"
+			"Records|fr|DeploymentSource",      // "Source"
+			"Records|pl|DeploymentStatus",      // "Status"
+			"Records|sv|DefinitionVersion",     // "Version"
+			"Records|sv|DefinitionSchema",      // "Schema (JSON)"
+			"Records|sv|DeploymentStatus",      // "Status"
 
 			// Brand and protocol names carry across every language.
 			"CommunicationTest|de|Push", "CommunicationTest|de|SMS",
@@ -129,6 +150,10 @@ namespace Resgrid.Tests.Localization
 			"Records|de|RequesterOrganization",  // "Organisation" is German as well.
 			"Records|sv|RequesterOrganization",  // And Swedish.
 			"Records|es|Error",                  // "Error" is the Spanish word.
+			"Records|es|LayoutVisible",          // "Visible" is the Spanish word.
+			"Records|fr|LayoutVisible",          // "Visible" is the French word too.
+			"Records|fr|ProjectionKind",         // "Projection" is French as well.
+			"Records|fr|Projectionqualifications", // "Qualifications" is French as well.
 			"Records|fr|EvidenceSource",         // "Source" is French to begin with.
 			"Records|pl|Model",                  // Polish spells it "Model" as well.
 			"Records|pl|SearchOnline", "Records|pl|SearchOffline",   // Polish uses them verbatim.

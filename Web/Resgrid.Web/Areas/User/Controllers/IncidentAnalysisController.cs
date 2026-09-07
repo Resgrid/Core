@@ -357,6 +357,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					model.Modules.Add(new IncidentModuleRow
 					{
+						ModuleId = row.RmsIncidentModuleId,
 						Kind = (int)kind, Included = true, PrimaryCode = row.PrimaryCode, SecondaryCode = row.SecondaryCode, Quantity = row.Quantity,
 						QuantityUnit = row.QuantityUnit, OccurredOn = row.OccurredOn?.TimeConverter(department), DetailJson = row.DetailJson
 					});
@@ -404,6 +405,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CurrencyCode = model.CurrencyCode,
 				Modules = (model.Modules ?? new List<IncidentModuleRow>()).Where(m => m.Included && m.Kind > 0).Select(m => new IncidentModuleInput
 				{
+					ModuleId = m.ModuleId,
 					Kind = (RmsIncidentModuleKind)m.Kind, PrimaryCode = m.PrimaryCode, SecondaryCode = m.SecondaryCode, Quantity = m.Quantity,
 					QuantityUnit = m.QuantityUnit, OccurredOn = ToUtc(m.OccurredOn, department), DetailJson = m.DetailJson
 				}).ToList(),

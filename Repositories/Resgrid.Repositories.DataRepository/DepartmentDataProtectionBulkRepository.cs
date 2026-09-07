@@ -153,7 +153,8 @@ namespace Resgrid.Repositories.DataRepository
 			CancellationToken cancellationToken = default)
 		{
 			var textColumns = binding.Columns.Where(c => c.StorageKind == ProtectedFieldStorageKind.Text).ToList();
-			if (textColumns.Count == 0)
+			var packedColumns = binding.Columns.Where(c => c.StorageKind == ProtectedFieldStorageKind.PackedJson).ToList();
+			if (textColumns.Count == 0 && packedColumns.Count == 0)
 				return 0;
 
 			// Note: citext makes LIKE case-insensitive on PostgreSQL. Envelopes are always written
@@ -162,7 +163,14 @@ namespace Resgrid.Repositories.DataRepository
 			// suspect. Acceptable for a residue gate that requires zero.
 			var predicates = textColumns.Select(c => enveloped
 				? $"({Ident(c.ColumnName)} LIKE 'rgdp:%')"
-				: $"({Ident(c.ColumnName)} IS NOT NULL AND {Ident(c.ColumnName)} <> '' AND {Ident(c.ColumnName)} NOT LIKE 'rgdp:%')");
+				: $"({Ident(c.ColumnName)} IS NOT NULL AND {Ident(c.ColumnName)} <> '' AND {Ident(c.ColumnName)} NOT LIKE 'rgdp:%')").ToList();
+
+			// PackedJson (catalog v11): enrollment residue is a row still carrying its typed siblings (no envelope yet);
+			// offboarding residue is a row still carrying an envelope. The row filter in Scope() keeps this to the rows
+			// that need protection at all.
+			predicates.AddRange(packedColumns.Select(c => enveloped
+				? $"({Ident(c.ColumnName)} LIKE 'rgdp:%')"
+				: $"({Ident(c.ColumnName)} IS NULL)"));
 
 			return await CountWhereAsync(binding, departmentId, string.Join(" OR ", predicates), cancellationToken);
 		}
@@ -210,6 +218,7 @@ namespace Resgrid.Repositories.DataRepository
 				switch (column.StorageKind)
 				{
 					case ProtectedFieldStorageKind.Text:
+					case ProtectedFieldStorageKind.PackedJson:
 						predicates.Add(TextSupersededPredicate(Ident(column.ColumnName), textTargetPrefix));
 						break;
 
@@ -283,15 +292,25 @@ namespace Resgrid.Repositories.DataRepository
 			if (!string.IsNullOrEmpty(binding.ProtectedMarkerColumn))
 				columns.Add(binding.ProtectedMarkerColumn);
 
+			// PackedJson carriers ride along so the engine can pack them on the way in and unpack on the way out.
+			if (binding.CarrierColumns != null)
+				columns.AddRange(binding.CarrierColumns);
+
 			return columns.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 		}
 
 		private string Scope(AdpTableBinding binding)
 		{
-			if (!string.IsNullOrEmpty(binding.DepartmentColumn))
-				return $"{Ident(binding.DepartmentColumn)} = @DepartmentId";
+			var scope = !string.IsNullOrEmpty(binding.DepartmentColumn)
+				? $"{Ident(binding.DepartmentColumn)} = @DepartmentId"
+				: $"{Ident(binding.ParentFkColumn)} IN (SELECT {Ident(binding.ParentPkColumn)} FROM {Table(binding.ParentTable)} WHERE {Ident("DepartmentId")} = @DepartmentId)";
 
-			return $"{Ident(binding.ParentFkColumn)} IN (SELECT {Ident(binding.ParentPkColumn)} FROM {Table(binding.ParentTable)} WHERE {Ident("DepartmentId")} = @DepartmentId)";
+			// A boolean row filter narrows the sweep (RmsRecordValues.ProtectionRequired): rows outside it are never
+			// read, counted or verified, so a Standard-classified value stays plaintext by construction.
+			if (!string.IsNullOrEmpty(binding.RowFilterColumn))
+				scope = $"({scope} AND {Ident(binding.RowFilterColumn)} = {(_isPostgres ? "TRUE" : "1")})";
+
+			return scope;
 		}
 
 		private string Table(string name) =>

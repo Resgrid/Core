@@ -134,7 +134,14 @@ namespace Resgrid.Services.Records
 			}, cancellationToken);
 			return entry.DomainEventOutboxId;
 		}
-		private Task AuditAsync(RmsRecordLegalHold hold, string userId, string purpose, string reason, CancellationToken ct) => _audits.InsertAsync(new RmsAccessAudit { DepartmentId = hold.DepartmentId, RecordId = hold.RecordId,
-			ActorUserId = userId, Action = (int)RmsAccessAuditAction.Admin, Successful = true, OccurredOn = DateTime.UtcNow, Purpose = purpose, DetailJson = JsonConvert.SerializeObject(new { hold.RmsRecordLegalHoldId, hold.ReferenceNumber, reason }) }, ct, true);
+		/// <summary>
+		/// The audit row records WHICH hold and WHY in the terms the workflow event already publishes. It never
+		/// carries the cataloged text (ReferenceNumber, Notes, ReleaseNotes): RmsAccessAudits is not an ADP-bound
+		/// table, so copying that text here would leave the content this service just sealed sitting in the clear
+		/// in a second table. The detail checksum still ties the audit row to the exact text that was recorded.
+		/// </summary>
+		private Task AuditAsync(RmsRecordLegalHold hold, string userId, string purpose, string protectedDetail, CancellationToken ct) => _audits.InsertAsync(new RmsAccessAudit { DepartmentId = hold.DepartmentId, RecordId = hold.RecordId,
+			ActorUserId = userId, Action = (int)RmsAccessAuditAction.Admin, Successful = true, OccurredOn = DateTime.UtcNow, Purpose = purpose,
+			DetailJson = JsonConvert.SerializeObject(new { hold.RmsRecordLegalHoldId, hold.Reason, detail_checksum = string.IsNullOrEmpty(protectedDetail) ? null : RecordSnapshotSerializer.Checksum(protectedDetail) }) }, ct, true);
 	}
 }

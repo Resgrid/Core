@@ -488,6 +488,7 @@ namespace Resgrid.Services.Records
 				return (await _modules.GetForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, null))?.ToList() ?? new List<RmsIncidentModule>();
 
 			var existingRows = (await _modules.GetForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, null))?.OrderBy(m => m.Ordinal).ToList() ?? new List<RmsIncidentModule>();
+			var match = IncidentReportsService.SectionMatcher(existingRows, inputs.Select(i => i.ModuleId), m => m.RmsIncidentModuleId, "section");
 			await _modules.DeleteDraftForRecordAsync(analysis.DepartmentId, analysis.RmsIncidentAnalysisId, cancellationToken);
 			var result = new List<RmsIncidentModule>();
 			var ordinal = 0;
@@ -498,7 +499,7 @@ namespace Resgrid.Services.Records
 				if (descriptor == null || !descriptor.BelongsToAnalysis)
 					continue;
 
-				var existing = existingRows.ElementAtOrDefault(ordinal);
+				var existing = match(ordinal, input.ModuleId);
 				var row = new RmsIncidentModule
 				{
 					RmsIncidentModuleId = existing?.RmsIncidentModuleId ?? Guid.NewGuid().ToString(), DepartmentId = analysis.DepartmentId, ProtectionId = existing?.ProtectionId ?? Guid.NewGuid().ToString(),

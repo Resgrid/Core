@@ -1,0 +1,136 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordDeploymentDetailsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	var o = Model.Deployment.Order;
+	ViewBag.Title = "Resgrid | " + o.OrderNumber;
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	string Who(string userId) => string.IsNullOrEmpty(userId) ? "-" : (Model.PersonnelNames.TryGetValue(userId, out var n) ? n : userId);
+	var closed = o.Status == (int)RmsExternalOrderStatus.ClosedOut;
+	var canAct = Model.CanEdit && !closed;
+	RmsDeploymentFillStatus[] Next(int status)
+	{
+		switch ((RmsDeploymentFillStatus)status)
+		{
+			case RmsDeploymentFillStatus.Requested: return new[] { RmsDeploymentFillStatus.Accepted, RmsDeploymentFillStatus.Declined };
+			case RmsDeploymentFillStatus.Accepted: return new[] { RmsDeploymentFillStatus.Mobilized };
+			case RmsDeploymentFillStatus.Mobilized: return new[] { RmsDeploymentFillStatus.CheckedIn };
+			case RmsDeploymentFillStatus.CheckedIn: return new[] { RmsDeploymentFillStatus.Assigned, RmsDeploymentFillStatus.Released };
+			case RmsDeploymentFillStatus.Assigned: return new[] { RmsDeploymentFillStatus.Released };
+			case RmsDeploymentFillStatus.Released: return new[] { RmsDeploymentFillStatus.Demobilized };
+			case RmsDeploymentFillStatus.Demobilized: return new[] { RmsDeploymentFillStatus.Returned };
+			default: return new RmsDeploymentFillStatus[0];
+		}
+	}
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@o.OrderNumber <small>@o.IncidentName @o.IncidentNumber</small> <span class="label label-@(closed ? "default" : "primary")">@((RmsExternalOrderStatus)o.Status)</span> <span class="label label-warning">@localizer["PreviewPack"]</span></h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User">@localizer["Deployments"]</a></li>
+			<li class="active"><strong>@o.OrderNumber</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.Deployment.Record != null) { <a class="btn btn-default" asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@Model.Deployment.Record.Record.RmsOperationalRecordId"><i class="fa fa-file-text-o"></i> @localizer["DeploymentRecord"]</a> }
+			@if (!string.IsNullOrEmpty(o.ArtifactFileName)) { <a class="btn btn-default" asp-controller="RecordDeployments" asp-action="Artifact" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId"><i class="fa fa-download"></i> @localizer["DeploymentArtifact"]</a> }
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="alert alert-info">@Model.ProvenanceStatement</div>
+	<div class="row">
+		<div class="col-md-5">
+			<div class="ibox">
+				<div class="ibox-title"><h5>@localizer["DeploymentOrder"]</h5></div>
+				<div class="ibox-content">
+					<dl class="dl-horizontal">
+						<dt>@localizer["TemplateProfile"]</dt><dd><code>@o.ProfileKey</code> v@(o.ProfileVersion) @if (!string.IsNullOrEmpty(o.HomeProfileKey)) { <small class="text-muted">(@o.HomeProfileKey ⇄ @o.HostProfileKey)</small> }</dd>
+						<dt>@localizer["DeploymentSource"]</dt><dd>@o.SourceScheme @o.SourceSystem @if (!string.IsNullOrEmpty(o.SourceVersion)) { <small>v@(o.SourceVersion)</small> }</dd>
+						<dt>@localizer["DeploymentLocation"]</dt><dd>@o.IncidentCountry @o.IncidentSubdivision</dd>
+						<dt>@localizer["DeploymentOffices"]</dt><dd>@o.OrderingOffice / @o.DispatchOffice</dd>
+						<dt>@localizer["DeploymentAgencies"]</dt><dd>@o.RequestingAgency · @o.ReceivingAgency · @o.SendingAgency</dd>
+						<dt>@localizer["DeploymentRole"]</dt><dd>@o.DepartmentRole</dd>
+						<dt>@localizer["DeploymentCost"]</dt><dd>@o.CostCode @o.AgreementReference</dd>
+						<dt>@localizer["DeploymentUnitsAndCurrency"]</dt><dd>@o.CurrencyCode @o.MeasurementSystem @o.TimeZoneId</dd>
+						<dt>@localizer["DeploymentArtifact"]</dt><dd>@(o.ArtifactFileName ?? "-") @if (!string.IsNullOrEmpty(o.ArtifactChecksum)) { <small class="text-muted">@o.ArtifactChecksum.Substring(0, Math.Min(12, o.ArtifactChecksum.Length))</small> } @if (!string.IsNullOrEmpty(o.ArtifactSafeUrl)) { <a href="@o.ArtifactSafeUrl" target="_blank" rel="noopener">@localizer["DeploymentSourceLink"]</a> }</dd>
+						<dt>@localizer["Created"]</dt><dd>@When(o.CreatedOn) · @Who(o.CreatedByUserId)</dd>
+						<dt>@localizer["DeploymentMobilizedOn"]</dt><dd>@When(o.MobilizedOn)</dd>
+						<dt>@localizer["DeploymentReleasedOn"]</dt><dd>@When(o.ReleasedOn)</dd>
+						@if (closed) { <dt>@localizer["DeploymentClosedOutOn"]</dt><dd>@When(o.ClosedOutOn) · @Who(o.ClosedOutByUserId)<br />@o.CloseoutNotes</dd> }
+					</dl>
+					@if (canAct)
+					{
+						<form class="form-inline" method="post" enctype="multipart/form-data" asp-controller="RecordDeployments" asp-action="Snapshot" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">
+							@Html.AntiForgeryToken()
+							<h4>@localizer["DeploymentNewSnapshot"]</h4>
+							<input type="file" name="artifact" /> <input type="text" class="form-control" name="sourceVersion" placeholder="@localizer["DeploymentSourceVersion"]" />
+							<button type="submit" class="btn btn-sm btn-default"><i class="fa fa-upload"></i> @localizer["DeploymentRecordSnapshot"]</button>
+						</form>
+						<hr />
+						<form method="post" asp-controller="RecordDeployments" asp-action="Closeout" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId" onsubmit="return confirm('@localizer["DeploymentCloseoutConfirm"]');">
+							@Html.AntiForgeryToken()<input type="hidden" name="rowVersion" value="@o.RowVersion" />
+							<div class="form-group"><textarea class="form-control" rows="2" name="notes" placeholder="@localizer["DeploymentCloseoutNotes"]"></textarea></div>
+							<button type="submit" class="btn btn-warning" @(Model.Deployment.AllReturned ? "" : "disabled") title="@(Model.Deployment.AllReturned ? "" : localizer["DeploymentCloseoutBlocked"].Value)"><i class="fa fa-check"></i> @localizer["DeploymentCloseout"]</button>
+							@if (!Model.Deployment.AllReturned) { <span class="text-muted m-l-sm">@localizer["DeploymentCloseoutBlocked"]</span> }
+						</form>
+					}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-7">
+			<div class="ibox">
+				<div class="ibox-title"><h5>@localizer["DeploymentFills"] (@Model.Deployment.Fills.Count)</h5></div>
+				<div class="ibox-content">
+					<table class="table table-condensed">
+						<thead><tr><th>@localizer["DeploymentRequestNumber"]</th><th>@localizer["DeploymentResource"]</th><th>@localizer["DeploymentPosition"]</th><th>@localizer["DeploymentAssigned"]</th><th>@localizer["DeploymentStatus"]</th><th></th></tr></thead>
+						<tbody>
+							@foreach (var f in Model.Deployment.Fills)
+							{
+								var status = (RmsDeploymentFillStatus)f.Status;
+								<tr>
+									<td>@f.RequestNumber @if (!string.IsNullOrEmpty(f.ParentRequestNumber)) { <small class="text-muted">↳ @f.ParentRequestNumber</small> }<br /><small class="text-muted">@f.RequestCategory @f.FillNumber</small></td>
+									<td>@f.ResourceKind @f.ResourceType @if (!string.IsNullOrEmpty(f.ResourceTypeScheme)) { <small class="text-muted">(@f.ResourceTypeScheme)</small> }</td>
+									<td>@f.Position @if (f.IsTrainee) { <span class="label label-info">(t)</span> }</td>
+									<td>@Who(f.AssignedUserId)<br /><small class="text-muted">@f.HomeUnit @f.HostAgency</small></td>
+									<td>@status<br /><small class="text-muted">@When(f.Status switch { 9 => f.ReturnedOn, 8 => f.DemobilizedOn, 7 => f.ReleasedOn, 6 => f.AssignedOn, 5 => f.CheckedInOn, 4 => f.MobilizedOn, 3 => f.FilledOn, 2 => f.FilledOn, _ => f.RequestedOn })</small>@if (status == RmsDeploymentFillStatus.Declined) { <br /><small>@f.DeclineReason</small> }</td>
+									<td class="text-right">
+										@if (canAct)
+										{
+											foreach (var next in Next(f.Status))
+											{
+												<form method="post" asp-controller="RecordDeployments" asp-action="Transition" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId" style="display:inline" onsubmit="@(next == RmsDeploymentFillStatus.Declined ? "var r = prompt('" + localizer["DeploymentDeclineReason"] + "'); if (!r) return false; this.querySelector('[name=reason]').value = r; return true;" : "return true;")">
+													@Html.AntiForgeryToken()<input type="hidden" name="fillId" value="@f.RmsExternalOrderFillId" /><input type="hidden" name="status" value="@((int)next)" /><input type="hidden" name="reason" value="" />
+													<button type="submit" class="btn btn-xs @(next == RmsDeploymentFillStatus.Declined ? "btn-danger" : "btn-default")">@next</button>
+												</form>
+											}
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+					@if (canAct)
+					{
+						<form class="form-horizontal" method="post" asp-controller="RecordDeployments" asp-action="AddFill" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">
+							@Html.AntiForgeryToken()
+							<h4>@localizer["DeploymentAddFill"]</h4>
+							<div class="form-group"><label class="col-sm-3 control-label">@localizer["DeploymentRequestNumber"]</label><div class="col-sm-3"><input type="text" class="form-control" name="newFill.RequestNumber" /></div><div class="col-sm-3"><input type="text" class="form-control" name="newFill.ParentRequestNumber" placeholder="@localizer["DeploymentParentRequest"]" /></div><div class="col-sm-3"><input type="text" class="form-control" name="newFill.RequestCategory" placeholder="overhead / crew" /></div></div>
+							<div class="form-group"><label class="col-sm-3 control-label">@localizer["DeploymentResource"]</label><div class="col-sm-3"><select class="form-control" name="newFill.ResourceKind"><option value="">-</option><option value="person">person</option><option value="unit">unit</option><option value="crew">crew</option><option value="equipment">equipment</option></select></div><div class="col-sm-3"><input type="text" class="form-control" name="newFill.ResourceType" /></div><div class="col-sm-3"><input type="text" class="form-control" name="newFill.Position" placeholder="@localizer["DeploymentPosition"]" /></div></div>
+							<div class="form-group"><label class="col-sm-3 control-label">@localizer["DeploymentAssigned"]</label><div class="col-sm-5"><select class="form-control" name="newFill.AssignedUserId" asp-items="Model.Personnel"><option value="">-</option></select></div><div class="col-sm-4"><label><input type="checkbox" name="newFill.IsTrainee" value="true" /> @localizer["DeploymentTrainee"]</label></div></div>
+							<div class="form-group"><label class="col-sm-3 control-label">@localizer["DeploymentNeededOn"]</label><div class="col-sm-4"><input type="datetime-local" class="form-control" name="newFill.NeededOn" /></div><div class="col-sm-5"><input type="text" class="form-control" name="newFill.Notes" placeholder="@commonLocalizer["Notes"]" /></div></div>
+							<div class="form-group"><div class="col-sm-9 col-sm-offset-3"><button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> @localizer["DeploymentAddFill"]</button></div></div>
+						</form>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -36,6 +36,10 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Records of one definition whose StartedOn falls in [start, end], in the given states; the report feed.</summary>
 		Task<IEnumerable<RmsOperationalRecord>> GetByDefinitionAndStartedRangeAsync(int departmentId, string definitionKey, IEnumerable<int> states, DateTime start, DateTime end);
 		Task<IEnumerable<RmsOperationalRecord>> GetByOwnerAndStatesAsync(int departmentId, string ownerUserId, IEnumerable<int> states);
+		/// <summary>Records pinned to one definition version in the given states (RMS-1B draft migration, impact preview).</summary>
+		Task<IEnumerable<RmsOperationalRecord>> GetByDefinitionVersionAsync(int departmentId, string definitionKey, int definitionVersion, IEnumerable<int> states);
+		/// <summary>Live Records by id, department-scoped (saved reports resolve current revisions this way).</summary>
+		Task<IEnumerable<RmsOperationalRecord>> GetByIdsAsync(int departmentId, IEnumerable<string> recordIds);
 		Task<IEnumerable<RmsOperationalRecord>> GetByDepartmentAndStatesAsync(int departmentId, IEnumerable<int> states, int? year, int skip, int take);
 		Task<int> CountByDepartmentAsync(int departmentId, IEnumerable<int> states);
 		Task<int> CountVisibleAsync(int departmentId, IEnumerable<int> states, List<int> visibleGroupIds, string userId);

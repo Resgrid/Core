@@ -45,6 +45,9 @@ namespace Resgrid.Model.Services
 
 		Task<RecordAggregate> ReassignDraftAsync(int departmentId, string userId, string recordId, string newOwnerUserId, string reason, CancellationToken cancellationToken = default);
 
+		/// <summary>Assigns the reviewer of a Record awaiting review (bulk assign-for-review, plan 4.7); audited, never a lifecycle transition.</summary>
+		Task<RecordAggregate> AssignReviewerAsync(int departmentId, string userId, string recordId, string reviewerUserId, string reason, CancellationToken cancellationToken = default);
+
 		Task<RecordAggregate> GetAsync(int departmentId, string recordId, bool includeRevisions = false);
 
 		/// <summary>Records of the same definition already linked to the Call (duplicate warning, RMS plan section 4.7).</summary>

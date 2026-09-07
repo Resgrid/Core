@@ -55,6 +55,15 @@ namespace Resgrid.Tests.Rms
 			_templatesRepo.Setup(r => r.GetByKeyAsync(Dept, It.IsAny<string>())).ReturnsAsync((int d, string key) => _templates.FirstOrDefault(t => t.TemplateKey == key && t.DeletedOn == null));
 			_templatesRepo.Setup(r => r.GetForDepartmentAsync(Dept)).ReturnsAsync(() => _templates.Where(t => t.DeletedOn == null).ToList());
 			_templatesRepo.Setup(r => r.GetDueAsync(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync((DateTime now, int take) => _templates.Where(t => t.IsEnabled && t.ScheduleKind != 0 && t.NextRunOn <= now && t.DeletedOn == null).ToList());
+			// The claim is the real conditional UPDATE: it only succeeds while the stored NextRunOn still matches.
+			_templatesRepo.Setup(r => r.TryClaimDueAsync(Dept, It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, DateTime expected, DateTime defer, DateTime now, CancellationToken c) =>
+				{
+					var row = _templates.FirstOrDefault(t => t.RmsExportTemplateId == id && t.DeletedOn == null && t.NextRunOn == expected);
+					if (row == null) return false;
+					row.NextRunOn = defer; row.ModifiedOn = now; row.RowVersion += 1;
+					return true;
+				});
 
 			_runsRepo = new Mock<IRmsExportRunsRepository>();
 			_runsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsExportRun>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((RmsExportRun run, CancellationToken c, bool f) => { _runs.Add(run); return run; });
@@ -170,6 +179,50 @@ namespace Resgrid.Tests.Rms
 			saved.ColumnsJson = JsonConvert.SerializeObject(new[] { "record.number" });
 			var narrowed = await _service.SaveAsync(Dept, "admin", saved, acknowledgeEgress: false);
 			narrowed.EgressAcknowledgedOn.Should().BeNull();
+		}
+
+		[Test]
+		public async Task Widening_the_carried_tiers_drops_the_acknowledgement_and_a_clerk_keeps_the_restricted_half()
+		{
+			// The edit form posts a freshly bound template every time, never the stored instance.
+			RmsExportTemplate Post(string id, bool restricted, params string[] columns) => new RmsExportTemplate
+			{
+				RmsExportTemplateId = id, TemplateKey = "state-runs", Name = "State runs", Format = (int)RmsExportFormat.Csv,
+				Scope = (int)RmsExportScope.Window, IncludeHeader = true, Delimiter = ",", ScheduleKind = (int)RmsExportScheduleKind.Daily,
+				ScheduleHourLocal = 6, IsEnabled = true, IncludeNarrative = true, IncludeRestricted = restricted,
+				ColumnsJson = JsonConvert.SerializeObject(columns)
+			};
+
+			var saved = await _service.SaveAsync(Dept, "admin", Post(null, false, "record.number", "details.narrative"), acknowledgeEgress: true);
+			saved.EgressAcknowledgedOn.Should().NotBeNull();
+			var id = saved.RmsExportTemplateId;
+
+			// Adding a Restricted column to a set acknowledged for Narrative content is a new decision, so the
+			// acknowledgement recorded against the narrower set does not carry over — and without it the save is
+			// refused rather than quietly reusing the older, narrower consent.
+			var widen = async () => await _service.SaveAsync(Dept, "admin", Post(id, true, "record.number", "details.narrative", "details.case_number"), acknowledgeEgress: false);
+			(await widen.Should().ThrowAsync<ArgumentException>()).WithMessage("*Acknowledge*");
+
+			var reacknowledged = await _service.SaveAsync(Dept, "admin", Post(id, true, "record.number", "details.narrative", "details.case_number"), acknowledgeEgress: true);
+			reacknowledged.EgressAcknowledgedOn.Should().NotBeNull();
+
+			// A member without the restricted grant edits the rest of the template: the disabled restricted
+			// inputs post nothing, and the stored restricted half has to survive rather than be stripped.
+			_restricted = false;
+			var clerkPost = Post(id, false, "record.number", "details.narrative");
+			clerkPost.Name = "Renamed";
+			var clerkSaved = await _service.SaveAsync(Dept, "clerk", clerkPost, acknowledgeEgress: false);
+			clerkSaved.Name.Should().Be("Renamed");
+			clerkSaved.IncludeRestricted.Should().BeTrue("a member who cannot see the restricted switches cannot turn them off either");
+			RecordsExportService.ParseColumns(clerkSaved.ColumnsJson).Should().Contain("details.case_number");
+			clerkSaved.EgressAcknowledgedOn.Should().NotBeNull("nothing widened, so the recorded decision stands");
+
+			// The grant still gates CHANGING the restricted half.
+			var clerkAdds = Post(id, true, "record.number", "details.narrative", "details.case_number", "details.destination");
+			var act = async () => await _service.SaveAsync(Dept, "clerk", clerkAdds, acknowledgeEgress: true);
+			await act.Should().NotThrowAsync("the clerk's posted restricted half is replaced by the stored one before validation");
+			RecordsExportService.ParseColumns((await _service.GetTemplateAsync(Dept, id)).ColumnsJson)
+				.Should().NotContain("details.destination", "an author without the grant cannot add a restricted column");
 		}
 
 		[Test]

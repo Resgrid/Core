@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -30,6 +31,7 @@ namespace Resgrid.Tests.Rms
 		private Mock<IIncidentReportsService> _incidents;
 		private Mock<IRecordsAuthorizationService> _authorization;
 		private Mock<INerisProfileService> _neris;
+		private Mock<IProtectedReadService> _protectedReads;
 		private Call _call;
 		private RecordsNfirsLegacyService _service;
 
@@ -55,7 +57,10 @@ namespace Resgrid.Tests.Rms
 			_neris = new Mock<INerisProfileService>();
 			_neris.Setup(n => n.GetProfileAsync(Dept)).ReturnsAsync(new RmsNerisProfile { DepartmentId = Dept, NerisEntityId = "FD24027000" });
 			_neris.Setup(n => n.ResolveCrosswalkAsync(Dept, "incident_type", NerisCrosswalkSources.CallType, "Fire")).ReturnsAsync("FIRE||STRUCTURE_FIRE||RESIDENTIAL");
-			_service = new RecordsNfirsLegacyService(_calls.Object, _units.Object, _reporting.Object, _incidents.Object, _authorization.Object, _neris.Object);
+			_protectedReads = new Mock<IProtectedReadService>();
+			_protectedReads.Setup(p => p.ResolveForReadAsync(Dept, It.IsAny<Call>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtectedReadResult());
+			_service = new RecordsNfirsLegacyService(_calls.Object, _units.Object, _reporting.Object, _incidents.Object, _authorization.Object, _neris.Object, _protectedReads.Object);
 		}
 
 		private NfirsLegacyField Field(NfirsLegacyRendering r, string name) => r.Fields.Single(f => f.Name == name);

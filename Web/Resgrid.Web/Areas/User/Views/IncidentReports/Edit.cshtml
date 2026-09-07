@@ -368,6 +368,7 @@
 								var row = Model.Modules[i];
                                 <div class="form-group">
                                     <div class="col-sm-12">
+                                        <input type="hidden" name="Modules[@i].ModuleId" value="@row.ModuleId" />
                                         <input type="hidden" name="Modules[@i].Kind" value="@row.Kind" />
                                         <input type="hidden" name="Modules[@i].PrimaryCode" value="@row.PrimaryCode" />
                                         <input type="hidden" name="Modules[@i].SecondaryCode" value="@row.SecondaryCode" />
@@ -540,6 +541,7 @@
 						{
 							var row = i < Model.Exposures.Count ? Model.Exposures[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentExposureRow();
                             <div class="form-group"><div class="col-sm-12">
+                                <input type="hidden" name="Exposures[@i].ExposureId" value="@row.ExposureId" />
                                 <label class="checkbox-inline"><input type="checkbox" name="Exposures[@i].Included" value="true" @(row.Included ? "checked" : string.Empty) /> @localizer["Exposures"] @(i + 1)</label>
                                 <input type="hidden" name="Exposures[@i].DetailJson" value="@row.DetailJson" data-neris-schema="ExposurePayload" data-neris-root="/exposures/@i" />
                                 <label>@localizer["EstimatedValue"] <input type="number" step="any" class="form-control" name="Exposures[@i].EstimatedValue" value="@row.EstimatedValue" /></label>
@@ -559,7 +561,7 @@
 						{
 							var row = i < Model.Resources.Count ? Model.Resources[i] : new Resgrid.Web.Areas.User.Models.Records.IncidentResourceRow();
 							<div class="form-group">
-								<div class="col-sm-3"><input type="text" class="form-control input-sm" name="Resources[@i].ResourceCode" value="@row.ResourceCode" placeholder="@localizer["ResourceCode"]" maxlength="64" /></div>
+								<div class="col-sm-3"><input type="hidden" name="Resources[@i].ResourceId" value="@row.ResourceId" /><input type="text" class="form-control input-sm" name="Resources[@i].ResourceCode" value="@row.ResourceCode" placeholder="@localizer["ResourceCode"]" maxlength="64" /></div>
 								<div class="col-sm-2"><input type="number" min="0" class="form-control input-sm" name="Resources[@i].Quantity" value="@row.Quantity" placeholder="@localizer["Quantity"]" /></div>
 								<div class="col-sm-7"><input type="text" class="form-control input-sm" name="Resources[@i].Detail" value="@row.Detail" placeholder="@localizer["Detail"]" maxlength="512" /></div>
 							</div>

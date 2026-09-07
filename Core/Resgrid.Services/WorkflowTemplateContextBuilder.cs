@@ -413,6 +413,8 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordSubmissionFailed:
 				case WorkflowTriggerEventType.RecordOverdue:
 				case WorkflowTriggerEventType.RecordApproved:
+				case WorkflowTriggerEventType.RecordDefinitionPublished:
+				case WorkflowTriggerEventType.RecordDefinitionRetired:
 				case WorkflowTriggerEventType.RecordAttachmentAdded:
 				case WorkflowTriggerEventType.RecordDisclosureRequested:
 				case WorkflowTriggerEventType.RecordDisclosureProduced:
@@ -1219,7 +1221,7 @@ namespace Resgrid.Services
 				obj["obligation"] = ToScriptObject(obligation);
 
 			// RMS-3e blocks (plan section 5.6): each is present only on the triggers that carry it.
-			foreach (var name in new[] { "attachment", "disclosure", "legal_hold", "evidence", "purge", "export" })
+			foreach (var name in new[] { "attachment", "disclosure", "legal_hold", "evidence", "purge", "export", "definition", "fields" })
 			{
 				if (payload[name] is JObject block)
 					obj[name] = ToScriptObject(block);

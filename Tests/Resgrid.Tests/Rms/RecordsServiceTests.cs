@@ -94,7 +94,7 @@ namespace Resgrid.Tests.Rms
 			_service = new RecordsService(_store.RecordsRepo.Object, new Resgrid.Services.Records.RmsRecordValueService(_store.DetailsRepo.Object), _store.ParticipantsRepo.Object, _store.UnitsRepo.Object,
 				_store.AttachmentsRepo.Object, _store.RevisionsRepo.Object, _evidence.Object, _store.ScopesRepo.Object, _store.SharesRepo.Object, _store.ProjectionsRepo.Object,
 				_store.AuditsRepo.Object, outbox, _cutover.Object, _settings.Object, _groups.Object, _profiles.Object, _units.Object, _calls.Object, _adp.Object,
-				_store.UnitOfWork.Object, _outboundQueue.Object, new Resgrid.Services.Records.NullRecordAttachmentScanner(), _authorization.Object, Mock.Of<IRecordsUdfService>(), _protection);
+				_store.UnitOfWork.Object, _outboundQueue.Object, new Resgrid.Services.Records.NullRecordAttachmentScanner(), _authorization.Object, Mock.Of<IRecordsUdfService>(), _protection, Mock.Of<IRecordDefinitionsService>(), Mock.Of<IRecordTypedValuesService>(), Mock.Of<IPersonnelRolesService>());
 		}
 
 		[Test]

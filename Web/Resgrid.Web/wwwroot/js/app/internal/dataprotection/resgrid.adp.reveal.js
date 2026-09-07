@@ -244,6 +244,11 @@
 	// Runs the step-up flow (exempt-app grant first, then the prompt) and performs the action once
 	// a grant is live. Cancelling the prompt drops the action and tells the waiting form.
 	function acquire(action, form) {
+		// A second request displaces the first: the reveal button stays live while a bound form waits for its
+		// grant. Tell the displaced form so it is not left silently waiting for a submit that never comes.
+		if (pendingForm && pendingForm !== form)
+			pendingForm.dispatchEvent(new window.CustomEvent('adp:submit-cancelled'));
+
 		pendingAction = action;
 		pendingForm = form || null;
 		requestGrantWithoutStepUp();

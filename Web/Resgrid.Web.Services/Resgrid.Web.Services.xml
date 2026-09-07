@@ -1638,6 +1638,42 @@
             Gets calls and other data formatted for different feed formats, like RSS.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.FieldRecordsController">
+            <summary>
+            Field Records for the Responder, Unit, Incident Command and Dispatch apps (RMS plan RMS-1D): minimum-version
+            preflight, the FieldRecordCatalogV1 manifest, server-calculated prefill with provenance, the bounded sync
+            bundle, and work assignments. Every filter is derived server-side from the authenticated principal, the
+            department, the app flag and the verified context; a forged origin, context or capability value can only
+            narrow the response. Authoring itself stays on the Records controller.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.Preflight(System.Nullable{System.Int32},System.String,System.String)">
+            <summary>Whether this app, at this version, may show Records at all in this department.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.Catalog(Resgrid.Web.Services.Models.v4.Records.FieldRecordCatalogInput)">
+            <summary>The definitions this app may start right now, plus a coded reason for each one withheld.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.Prefill(Resgrid.Web.Services.Models.v4.Records.FieldRecordPrefillInput)">
+            <summary>Server-calculated prefill for one catalog entry; refused when that entry is not in this client's catalog.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.Sync(Resgrid.Web.Services.Models.v4.Records.FieldRecordSyncInput,System.Threading.CancellationToken)">
+            <summary>
+            The bounded working set: catalog, authorized change delta with tombstones, the caller's own drafts and
+            returned Records, and their open assignments. A scope change answers ResetRequired instead of a page.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.Assignments(Resgrid.Web.Services.Models.v4.Records.FieldRecordCatalogInput)">
+            <summary>The caller's open work queue, narrowed by assignment and re-authorized per Record.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.RecordAssignments(System.String)">
+            <summary>Assignments on one Record; empty when the caller cannot read that Record.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.Origin(System.Nullable{System.Int32})">
+            <summary>The claimed origin, normalized: a non-field value is System, which every field gate refuses.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.AppVersion(System.String)">
+            <summary>The body value when present, otherwise the standard app header.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.FormsController">
             <summary>
             User generated forms that are displayed to get custom information for New Calls, Unit Checks, etc
@@ -2035,6 +2071,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.GetIncidentReport(System.String)">
             <summary>One report with all sections, provenance facts, validation issues and sanitized submission history. Sets a weak ETag.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.Reveal(Resgrid.Web.Services.Models.v4.Records.RecordRevealInput)">
+            <summary>Protected reveal of an incident report (RMS plan section 5.9.3): the grant travels in X-Resgrid-Protected-Grant.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportsController.GetForCall(System.Int32)">
             <summary>The authoritative report for a Call, if one exists.</summary>
@@ -2582,6 +2621,49 @@
             while the Incident Commander/PIO has public sharing enabled. Disabling sharing revokes the token immediately.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController">
+            <summary>
+            Definition management and runtime catalog over v4 (RMS plan section 5.4, RMS-1B): template browse, clone/new
+            draft, ETag-guarded draft saves, validation, impact preview, publish, retire, history, safe diff and draft
+            migration. Reads need Record_View; authoring needs RecordDefinition_Update; publish/retire RecordDefinition_Publish.
+            Locked system definitions are listed but never editable here.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController.Published">
+            <summary>Published department definitions with their schemas: what a client offers on New Record and renders against.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController.Template(System.String,System.String,System.String)">
+            <summary>A product template rendered for a profile and locale: what a clone would start from, with its provenance statement.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController.SaveDraft(System.String,System.Int32,Resgrid.Web.Services.Models.v4.Records.SaveRecordDefinitionDraftInput,System.Threading.CancellationToken)">
+            <summary>ETag-guarded save of a draft version (send the version's RowVersion). A published version refuses edits.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController.MigrateDrafts(System.String,Resgrid.Web.Services.Models.v4.Records.MigrateRecordDraftsInput,System.Threading.CancellationToken)">
+            <summary>Migrates compatible drafts to a newer version through an explicit mapping (Preview = true only counts). Finalized Records never move.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController.Layout(System.String,System.Nullable{System.Int32})">
+            <summary>
+            The print layout that applies to one definition version (RMS plan section 4.10.1): the definition-scope config
+            when one is saved and applies, plus the branding block it resolves to and the composite layout version that
+            the provenance footer stamps. Locked system definitions resolve to the department default only.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController.SaveLayout(System.String,Resgrid.Model.RecordsDefinitionLayoutConfig,System.Threading.CancellationToken)">
+            <summary>Saves the definition-scope print layout; every save is a new layout version the footer names.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordDeploymentsController">
+            <summary>
+            Create Deployment from External Order over v4 (RMS plan section 4.1 external-order fill contract, RMS-1C,
+            Preview). Manual entry and artifact snapshots only; no ordering-system connector and no write-back. Creating
+            or changing a deployment needs Record_Create; reading needs Record_View plus visibility of its Record.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDeploymentsController.TransitionFill(System.String,Resgrid.Model.RecordDeploymentFillTransitionInput,System.Threading.CancellationToken)">
+            <summary>Moves one fill through accept/decline, mobilize, check-in, assign, release, demobilize and return.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDeploymentsController.Snapshot(System.String,Resgrid.Web.Services.Models.v4.Records.RecordDeploymentSnapshotInput,System.Threading.CancellationToken)">
+            <summary>Records a later snapshot of the same external order; the previous artifact stays on record as a superseded reference.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController">
             <summary>
             Evidence capture over the v4 Records contract (RMS plan section 4.5, RMS-3): readiness, run-card activation,
@@ -2620,6 +2702,32 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController.LoadAuthorizedAsync(System.String)">
             <summary>An artifact is only as visible as the Record it supports.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordExportTemplatesController">
+            <summary>
+            Department report exports over v4 (RMS plan section 5.6, RMS-3e): the templates a Workflow step or the hourly
+            sweep (worker 45) renders for agencies without an API, their runs, and on-demand renders. Authoring needs
+            ManageRecordReports (checked by the service); every render is an Export audit against each record it contains.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordExportTemplatesController.Save(Resgrid.Web.Services.Models.v4.Records.SaveRecordExportTemplateInput,System.Threading.CancellationToken)">
+            <summary>Creates (no TemplateId) or updates (TemplateId + RowVersion / If-Match). Narrative or restricted columns need AcknowledgeEgress.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordExportTemplatesController.Run(System.String,Resgrid.Web.Services.Models.v4.Records.RunRecordExportInput,System.Threading.CancellationToken)">
+            <summary>Renders the template now and stores the run; the file comes from Download. TriggeringRecord scope needs RecordId.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordExportTemplatesController.Download(System.String)">
+            <summary>The stored file of a run; under ADP the bytes are opened through the seam for this caller.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordSavedReportsController">
+            <summary>
+            Department saved reports over v4 (RMS plan section 4.1, RMS-1B): allowlisted typed columns, bounded filters,
+            one group-by and count/sum/avg/min/max. Managing needs RecordReport_Update; running needs Record_View and
+            honors the runner's group scope and restricted permission.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordSavedReportsController.Save(Resgrid.Web.Services.Models.v4.Records.SaveRecordSavedReportInput,System.Threading.CancellationToken)">
+            <summary>Creates (no ReportId) or updates (ReportId + RowVersion / If-Match) a saved report.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordsController">
             <summary>
@@ -2683,6 +2791,13 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.GetRecord(System.String)">
             <summary>One record with its working details, participants, units, attachment metadata and revision summaries. Sets a weak ETag.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.Reveal(Resgrid.Web.Services.Models.v4.Records.RecordRevealInput)">
+            <summary>
+            Protected reveal (RMS plan section 5.9.3): the grant travels in X-Resgrid-Protected-Grant; the aggregate is
+            hydrated through the seam with it and the cataloged columns come back keyed "{table}.{column}:{rowId}".
+            A refused reveal answers Success = false with the step-up reason; never ciphertext.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.GetRevision(System.String,System.String)">
             <summary>A revision rendered from its own snapshot; restricted fields withheld without RecordRestricted_View.</summary>
         </member>
@@ -2727,6 +2842,16 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.CompleteUpload(Resgrid.Web.Services.Models.v4.Records.CompleteRecordUploadInput,System.Threading.CancellationToken)">
             <summary>Verifies size and SHA-256, then stores the attachment through hygiene and the scanner. 422 on checksum mismatch or rejection.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.BulkPacket(Resgrid.Web.Services.Models.v4.Records.RecordsBulkPacketInput,System.Threading.CancellationToken)">
+            <summary>
+            Compiles an authorized selection into one stored packet (compiled PDF or zip bundle; RMS plan section 4.7).
+            Every record renders from its pinned revision through the document service; unauthorized or unfinalized
+            selections are reported as skips, never silently dropped. Bulk void and bulk delete do not exist.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.BulkAssignReview(Resgrid.Web.Services.Models.v4.Records.RecordsBulkAssignInput,System.Threading.CancellationToken)">
+            <summary>Assigns one reviewer to every selected Record awaiting review; other states are reported as skips.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Controllers.v4.RecordsController.IsSystemPrincipal">
             <summary>True when the caller is the relay key or a client_credentials service account, not a member.</summary>
@@ -6055,6 +6180,12 @@
             but demographics, the personnel link and the injury detail are restricted, so they are dropped and named
             rather than the whole row disappearing, which would misrepresent the incident.
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Helpers.RecordsRms1bApiMapper">
+            <summary>Entity to DTO mapping for the RMS-1B/1C v4 surfaces. Restricted typed values are withheld here, never in the client.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.RecordsRms1bApiMapper.ToDefinitionData(Resgrid.Model.RmsRecordDefinitionVersion,Resgrid.Model.RmsRecordDefinition)">
+            <summary>Department definitions as the capability manifest lists them (plan 5.4), beside the locked ones.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Helpers.IncidentAnalysisApiMapper">
             <summary>
@@ -12258,6 +12389,15 @@
             Response Data
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.FieldRecordCatalogInput.OriginClient">
+            <summary><see cref="T:Resgrid.Model.RmsOriginClient"/>: 2 Responder, 3 Unit, 4 IncidentCommand, 5 Dispatch.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.FieldRecordCatalogInput.ClientCapability">
+            <summary>records.v1 / records.v1b / records.v1c; an unknown value is treated as the oldest.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.FieldRecordAssignInput.AssigneeKind">
+            <summary><see cref="T:Resgrid.Model.RmsWorkAssigneeKind"/>: 1 Person, 2 Unit, 3 Group, 4 CommandRole, 5 DispatchRole.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentAnalysisData">
             <summary>
             The NERIS incident-analysis filing (RMS-3): the fire/hazmat investigation posted separately from the
@@ -12331,6 +12471,16 @@
             without RecordRestricted_View gets the entry with those fields absent and named in WithheldFields.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentModuleInputData.ModuleId">
+            <summary>The stored section this entry replaces; omit for a new one. Sending it is what lets a client
+            reorder or remove sections without the save matching rows by list position.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentResourceInputData.ResourceId">
+            <summary>The stored resource this entry replaces; omit for a new one.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.IncidentExposureInputData.ExposureId">
+            <summary>The stored exposure this entry replaces; omit for a new one.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentReportConflictResult">
             <summary>409 on a stale incident report save.</summary>
         </member>
@@ -12383,6 +12533,9 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordData.ETag">
             <summary>Weak ETag of the header row (<c>W/"{RowVersion}"</c>); send it back as If-Match or RowVersion on saves and commands.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordData.Values">
+            <summary>Department-definition typed values rendered against the pinned version (RMS-1B); null for locked system definitions.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput">
             <summary>Create or save a draft. Dates are UTC. Every list replaces the draft rows wholesale.</summary>
         </member>
@@ -12397,6 +12550,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.ClientRecordId">
             <summary>Client-generated GUID for an offline-created draft; server-assigned when null.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.Values">
+            <summary>Typed values for a department definition (RMS-1B); ignored for locked system definitions.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.OriginClient">
             <summary>RmsOriginClient: 2 Responder, 3 Unit, 4 IncidentCommand, 5 Dispatch, 6 Api (default). Field clients are gated by their Records.Field.* flag.</summary>
@@ -12434,6 +12590,39 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordUploadChunkInput.Data">
             <summary>Base64 chunk, at most ChunkSize bytes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordValuesData.RowRules">
+            <summary>Per-row rule outcomes for repeating sections (a field rule may look at its own row).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordDefinitionLayoutResult">
+            <summary>The print layout for one definition version (RMS plan section 4.10.1).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDefinitionLayoutData.StoredLayoutVersion">
+            <summary>"{definition-key}/{n}" for the saved definition layout; null when none has been saved.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDefinitionLayoutData.Config">
+            <summary>The saved definition-scope configuration, or null.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDefinitionLayoutData.AppliesToVersion">
+            <summary>True when the saved layout applies to the requested definition version.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDefinitionLayoutData.ResolvedLayoutVersion">
+            <summary>The composite layout version the provenance footer stamps for this version.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDefinitionLayoutData.Branding">
+            <summary>The branding block print resolves to (definition override or department default).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsBulkPacketInput">
+            <summary>Bulk packet / bulk assign-for-review over an authorized selection (RMS plan section 4.7).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsBulkPacketInput.Mode">
+            <summary>1 = compiled PDF, 2 = zip bundle of per-record PDFs plus manifest.json.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsBulkData.Run">
+            <summary>The stored packet run (download through RecordExportTemplates/DownloadRun); null for an assignment.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.CreateRecordDeploymentInput.ArtifactBase64">
+            <summary>Base64 of the order artifact (PDF, image, export); at most 25 MB decoded.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordEvidenceSourceData">
             <summary>

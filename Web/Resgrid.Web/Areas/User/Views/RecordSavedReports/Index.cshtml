@@ -1,0 +1,59 @@
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordSavedReportsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["SavedReports"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["SavedReports"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@localizer["SavedReports"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanManage)
+			{
+				<a class="btn btn-success" asp-controller="RecordSavedReports" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @localizer["NewReport"]</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox">
+		<div class="ibox-content">
+			<p class="text-muted">@localizer["SavedReportsIntro"]</p>
+			<table class="table table-striped">
+				<thead><tr><th>@localizer["ReportName"]</th><th>@localizer["DefinitionKey"]</th><th>@localizer["ReportColumns"]</th><th>@localizer["ReportLastRun"]</th><th></th></tr></thead>
+				<tbody>
+					@foreach (var r in Model.Reports)
+					{
+						var spec = r.Spec;
+						<tr>
+							<td>@r.Name<br /><small class="text-muted">@r.Description</small></td>
+							<td><code>@r.DefinitionKey</code></td>
+							<td>@spec.Columns.Count @if (!string.IsNullOrEmpty(spec.GroupByFieldKey)) { <small class="text-muted">· @localizer["ReportGroupBy"] @spec.GroupByFieldKey</small> } @if (r.IncludeRestricted) { <i class="fa fa-lock text-muted" title="@localizer["ReportIncludeRestricted"]"></i> }</td>
+							<td>@(r.LastRunOn.HasValue ? r.LastRunOn.Value.TimeConverterToString(Model.Department) : "-")</td>
+							<td class="text-right">
+								<a class="btn btn-xs btn-primary" asp-controller="RecordSavedReports" asp-action="Run" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId"><i class="fa fa-play"></i> @localizer["ReportRun"]</a>
+								<a class="btn btn-xs btn-default" asp-controller="RecordSavedReports" asp-action="RunCsv" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId"><i class="fa fa-download"></i> CSV</a>
+								@if (Model.CanManage)
+								{
+									<a class="btn btn-xs btn-default" asp-controller="RecordSavedReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId">@localizer["Edit"]</a>
+									<form method="post" asp-controller="RecordSavedReports" asp-action="Delete" asp-route-area="User" asp-route-id="@r.RmsSavedReportDefinitionId" style="display:inline" onsubmit="return confirm('@localizer["ReportDeleteConfirm"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger">@commonLocalizer["Delete"]</button></form>
+								}
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

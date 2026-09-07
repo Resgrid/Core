@@ -1,0 +1,49 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	// Definition-driven values on the detail page (RMS-1B): rendered against the pinned version's labels; restricted
+	// cells are withheld here for viewers without RecordRestricted_View.
+	var values = Model.Aggregate.Values;
+	var layout = Model.DefinitionLayout;
+	var sections = values == null ? new List<RecordValueSectionSet>() : (layout == null ? values.Sections : layout.OrderedSectionKeys(values.Sections.Select(s => s.SectionKey)).Select(k => values.Section(k)).Where(s => s != null).ToList());
+	bool Visible(RecordValueCell c) => layout == null || layout.IsFieldVisible(c.FieldKey);
+	string Cell(RecordValueCell c) => c == null || c.Display == null ? "-" : (c.Withheld || (c.Classification == RmsFieldClassification.Restricted && !Model.CanViewRestricted)) ? localizer["WithheldField"].Value : c.Display;
+}
+@if (values != null)
+{
+	foreach (var sec in sections)
+	{
+		var rows = sec.Rows.Where(r => r.Cells.Any(c => c.Display != null && Visible(c))).ToList();
+		if (rows.Count == 0 && sec.Repeating) { continue; }
+		<div class="ibox">
+			<div class="ibox-title"><h5><i class="fa fa-list-alt"></i> @(layout?.HeadingFor(sec.SectionKey, sec.Label) ?? sec.Label)</h5></div>
+			<div class="ibox-content">
+				@if (!sec.Repeating)
+				{
+					<dl class="dl-horizontal">
+						@foreach (var cell in sec.Rows.SelectMany(r => r.Cells).Where(Visible))
+						{
+							<dt>@cell.Label</dt><dd style="white-space:pre-wrap">@Cell(cell)</dd>
+						}
+					</dl>
+				}
+				else
+				{
+					var fields = rows.First().Cells.Where(Visible).Select(c => c.Label).ToList();
+					<div style="overflow-x:auto">
+						<table class="table table-striped table-condensed">
+							<thead><tr><th>#</th>@foreach (var f in fields) { <th>@f</th> }</tr></thead>
+							<tbody>
+								@foreach (var row in rows)
+								{
+									<tr><td>@(row.Ordinal + 1)</td>@foreach (var cell in row.Cells.Where(Visible)) { <td style="white-space:pre-wrap">@Cell(cell)</td> }</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				}
+			</div>
+		</div>
+	}
+}

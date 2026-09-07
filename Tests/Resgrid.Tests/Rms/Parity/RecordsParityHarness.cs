@@ -85,14 +85,14 @@ namespace Resgrid.Tests.Rms.Parity
 			Records = new RecordsService(Store.RecordsRepo.Object, new RmsRecordValueService(Store.DetailsRepo.Object), Store.ParticipantsRepo.Object, Store.UnitsRepo.Object,
 				Store.AttachmentsRepo.Object, Store.RevisionsRepo.Object, evidence.Object, Store.ScopesRepo.Object, Store.SharesRepo.Object, Store.ProjectionsRepo.Object,
 				Store.AuditsRepo.Object, outbox, cutover.Object, settings.Object, groups.Object, profiles.Object, units.Object, calls.Object, adp.Object,
-				Store.UnitOfWork.Object, queue.Object, new NullRecordAttachmentScanner(), Authorization.Object, udf, new PassthroughRecordsProtection());
+				Store.UnitOfWork.Object, queue.Object, new NullRecordAttachmentScanner(), Authorization.Object, udf, new PassthroughRecordsProtection(), Mock.Of<IRecordDefinitionsService>(), Mock.Of<IRecordTypedValuesService>(), Mock.Of<IPersonnelRolesService>());
 
 			var branding = new Mock<IDepartmentProfileMediaService>();
 			branding.Setup(b => b.GetBrandingAsync(Dept)).ReturnsAsync(new DepartmentBranding { DisplayName = "Parity Fire Department", ShortName = "PFD", AddressText = "100 Station Road" });
 			var layouts = new Mock<IRecordsPrintLayoutService>();
 			layouts.Setup(l => l.GetDepartmentDefaultAsync(Dept)).ReturnsAsync(new RmsRecordPrintLayout { Version = 1, Scope = 1, Config = RecordsPrintLayoutConfig.Default() });
 			Documents = new RecordsDocumentService(Authorization.Object, Store.RecordsRepo.Object, IncidentStore.ReportsRepo.Object, IncidentStore.AnalysesRepo.Object, Store.RevisionsRepo.Object,
-				Mock.Of<IIncidentReportsService>(), branding.Object, layouts.Object, Mock.Of<IPdfProvider>(), evidence.Object, udf, new PassthroughRecordsProtection());
+				Mock.Of<IIncidentReportsService>(), branding.Object, layouts.Object, Mock.Of<IPdfProvider>(), evidence.Object, udf, new PassthroughRecordsProtection(), Mock.Of<IRecordDefinitionsService>());
 		}
 
 		#region Fixtures

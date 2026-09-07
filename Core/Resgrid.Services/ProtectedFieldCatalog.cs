@@ -59,6 +59,12 @@ namespace Resgrid.Services
 		/// </summary>
 		public const int RecordsCatalogVersion = 10;
 
+		/// <summary>
+		/// Catalog version the typed values of department definitions were added in (RMS-1B, plan section 5.9.4 (e)):
+		/// one PackedJson field per RmsRecordValues row, sealed only where the field is Protected-classified.
+		/// </summary>
+		public const int RecordsTypedValuesCatalogVersion = 11;
+
 		private static readonly IReadOnlyList<ProtectedFieldDefinition> Entries = BuildV1();
 		private static readonly Dictionary<string, ProtectedFieldDefinition> ById =
 			Entries.ToDictionary(e => e.FieldId, StringComparer.OrdinalIgnoreCase);
@@ -532,6 +538,15 @@ namespace Resgrid.Services
 
 			// A rendered department export inherits the highest classification of what it carried.
 			Records("RmsExportRuns", "Data", ProtectedFieldClassification.Phi, ProtectedFieldStorageKind.Binary);
+
+			// ---- Records typed values (RMS-1B), catalog v11 -------------------------------------
+			// A department definition's Protected-classified field values: the row's typed columns are packed into one
+			// sealed envelope (PackedJson). Standard and Restricted values stay plaintext; ProtectionRequired scopes the
+			// sweep. Classification is Sensitive at the catalog level because the definition author picked Protected
+			// without naming PII/PHI; RecordRestricted_View still decides who sees the revealed cell.
+			list.Add(new ProtectedFieldDefinition(RmsProtectedFields.ValueFieldId, RmsProtectedFields.Family, "RmsRecordValues", "ProtectedEnvelope",
+				ProtectedFieldStorageKind.PackedJson, ProtectedFieldClassification.Sensitive,
+				PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, RecordsTypedValuesCatalogVersion));
 
 			return list;
 		}

@@ -158,6 +158,8 @@ namespace Resgrid.Model
 	public class RecordDraftInput
 	{
 		public RecordUdfInput CustomFields { get; set; }
+		/// <summary>Typed values for a department definition (RMS-1B, plan section 5.3); ignored for locked system definitions.</summary>
+		public List<RecordValueInput> Values { get; set; } = new List<RecordValueInput>();
 		/// <summary>One of <see cref="RmsDefinitionKeys"/>; required on create.</summary>
 		public string DefinitionKey { get; set; }
 		public int? CallId { get; set; }
@@ -185,6 +187,11 @@ namespace Resgrid.Model
 		public ProtectedReadResult Protection { get; set; }
 
 		public RecordUdfSection CustomFields { get; set; }
+		/// <summary>Typed values rendered against the pinned definition version (department definitions only).</summary>
+		public RecordValueSet Values { get; set; }
+		/// <summary>The pinned definition version for a department definition; null for locked system definitions.</summary>
+		[Newtonsoft.Json.JsonIgnore]
+		public RmsRecordDefinitionVersion DefinitionVersionRow { get; set; }
 		public RmsOperationalRecord Record { get; set; }
 		public RmsOperationalRecordDetail Details { get; set; }
 		public List<RmsRecordParticipant> Participants { get; set; } = new List<RmsRecordParticipant>();
@@ -201,6 +208,8 @@ namespace Resgrid.Model
 	public class RecordSnapshot
 	{
 		public RecordUdfSection CustomFields { get; set; }
+		/// <summary>Department-definition typed values pinned to the version's labels: section label -> field label -> display, or a row array for repeating sections.</summary>
+		public Dictionary<string, object> Values { get; set; }
 		public int SnapshotVersion { get; set; } = 1;
 		public List<RmsEvidenceArtifact> Evidence { get; set; } = new List<RmsEvidenceArtifact>();
 		public string RecordId { get; set; }

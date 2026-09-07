@@ -232,6 +232,8 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public List<RecordAttachmentData> Attachments { get; set; } = new List<RecordAttachmentData>();
 		public List<RecordRevisionData> Revisions { get; set; } = new List<RecordRevisionData>();
 		public List<int> GroupScopeIds { get; set; } = new List<int>();
+		/// <summary>Department-definition typed values rendered against the pinned version (RMS-1B); null for locked system definitions.</summary>
+		public RecordValuesData Values { get; set; }
 	}
 
 	public class RecordDetailsData
@@ -342,6 +344,8 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public RecordDetailsInput Details { get; set; } = new RecordDetailsInput();
 		public List<RecordParticipantInputData> Participants { get; set; } = new List<RecordParticipantInputData>();
 		public List<RecordUnitResponseInputData> Units { get; set; } = new List<RecordUnitResponseInputData>();
+		/// <summary>Typed values for a department definition (RMS-1B); ignored for locked system definitions.</summary>
+		public List<RecordValueInputData> Values { get; set; } = new List<RecordValueInputData>();
 		public string DuplicateContinueReason { get; set; }
 		/// <summary>RmsOriginClient: 2 Responder, 3 Unit, 4 IncidentCommand, 5 Dispatch, 6 Api (default). Field clients are gated by their Records.Field.* flag.</summary>
 		public int? OriginClient { get; set; }

@@ -372,6 +372,33 @@ namespace Resgrid.Services
 					return ColumnOutcome.Changed;
 				}
 
+				case ProtectedFieldStorageKind.PackedJson:
+				{
+					// Catalog v11 typed values: an existing envelope validates/re-keys exactly like Text; a plaintext row
+					// packs its carrier columns into the envelope and clears them (one column group stays populated).
+					var envelope = row.Values.TryGetValue(spec.ColumnName, out var rawEnvelope) ? rawEnvelope as string : null;
+					if (ProtectedDataEnvelope.HasEnvelopePrefix(envelope))
+					{
+						var (validationDek, envelopeKeyVersion) = await ValidationDekForTextAsync(envelope);
+						var plaintext = _cryptoService.DecryptText(validationDek, envelope, context.DepartmentId, spec.FieldId, row.RowKey);
+						if (isRekeying && envelopeKeyVersion != keyVersion)
+						{
+							setValues[spec.ColumnName] = _cryptoService.EncryptText(targetDek, keyVersion, plaintext, context.DepartmentId, spec.FieldId, row.RowKey);
+							return ColumnOutcome.Changed;
+						}
+						return ColumnOutcome.AlreadyInTargetState;
+					}
+
+					var packed = RmsRecordValuePack.PackColumns(row.Values);
+					if (string.IsNullOrEmpty(packed))
+						return ColumnOutcome.Skipped;
+
+					setValues[spec.ColumnName] = _cryptoService.EncryptText(targetDek, keyVersion, packed, context.DepartmentId, spec.FieldId, row.RowKey);
+					foreach (var carrier in RmsRecordValuePack.CarrierColumns)
+						setValues[carrier] = null;
+					return ColumnOutcome.Changed;
+				}
+
 				case ProtectedFieldStorageKind.Binary:
 				{
 					var value = row.Values.TryGetValue(spec.ColumnName, out var raw) ? raw as byte[] : null;
@@ -467,6 +494,29 @@ namespace Resgrid.Services
 
 					setValues[spec.ColumnName] = _cryptoService.DecryptText(dek, value,
 						context.DepartmentId, spec.FieldId, row.RowKey);
+					return ColumnOutcome.Changed;
+				}
+
+				case ProtectedFieldStorageKind.PackedJson:
+				{
+					// Offboarding: the envelope opens back into its typed carrier columns and is cleared.
+					var envelope = row.Values.TryGetValue(spec.ColumnName, out var rawEnvelope) ? rawEnvelope as string : null;
+					if (string.IsNullOrEmpty(envelope))
+						return ColumnOutcome.Skipped;
+
+					if (!ProtectedDataEnvelope.TryParse(envelope, out _, out var packedKeyVersion, out _))
+						return ProtectedDataEnvelope.HasEnvelopePrefix(envelope)
+							? throw new CryptographicException("Corrupt envelope on the decrypt path.")
+							: ColumnOutcome.Anomalous;
+
+					var packedDek = await resolveDekAsync(packedKeyVersion);
+					if (packedDek == null)
+						throw new InvalidOperationException($"No key row for envelope version {packedKeyVersion}.");
+
+					var plaintext = _cryptoService.DecryptText(packedDek, envelope, context.DepartmentId, spec.FieldId, row.RowKey);
+					foreach (var column in RmsRecordValuePack.UnpackColumns(plaintext))
+						setValues[column.Key] = column.Value;
+					setValues[spec.ColumnName] = null;
 					return ColumnOutcome.Changed;
 				}
 

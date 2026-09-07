@@ -82,7 +82,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (context.RowVersion != input.RowVersion.Value) throw new RecordConcurrencyException(input.RecordId, input.RowVersion.Value, context.RowVersion);
 				if (input.SourceKind == RmsEvidenceKind.TrackingFix && input.UnitIds?.Count is not > 0
 					|| input.SourceKind == RmsEvidenceKind.CertificationSnapshot && input.UserIds?.Count is not > 0
-					|| input.SourceKind == RmsEvidenceKind.ChatPromotion && input.SourceIds?.Count is not > 0) return BadRequest("Select at least one source item.");
+					|| input.SourceKind == RmsEvidenceKind.ChatPromotion && input.SourceIds?.Count is not > 0
+					|| input.SourceKind == RmsEvidenceKind.ModuleProjection && input.SourceIds?.Count != 1) return BadRequest("Select at least one source item.");
 				if (input.SourceKind == RmsEvidenceKind.TrackingFix && (!input.StartUtc.HasValue || !input.EndUtc.HasValue)) return BadRequest("Enter both UTC tracking times.");
 				if (input.SourceKind == RmsEvidenceKind.CertificationSnapshot && !input.EndUtc.HasValue) return BadRequest("Enter the UTC incident time for certification validity.");
 				await _evidence.CaptureAsync(new RecordEvidenceCaptureRequest { DepartmentId = DepartmentId, CapturedByUserId = UserId,

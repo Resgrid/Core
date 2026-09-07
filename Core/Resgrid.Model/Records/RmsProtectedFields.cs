@@ -168,6 +168,23 @@ namespace Resgrid.Model
 
 		public static readonly string AttachmentDataFieldId = FieldId("RmsRecordAttachments", "Data");
 
+		/// <summary>
+		/// Typed values of department definitions (catalog v11): one virtual field per row. The accessor packs the
+		/// typed sibling columns to seal and unpacks them to reveal, so the seam's generic text path needs nothing new.
+		/// A REDACTED sentinel leaves a sealed row exactly as stored (its siblings are already null), which is what
+		/// RecordTypedValuesService.Shape renders as the withheld cell.
+		/// </summary>
+		public static readonly IReadOnlyDictionary<string, (Func<RmsRecordValue, string> Get, Action<RmsRecordValue, string> Set)> Values = Map<RmsRecordValue>(
+			("ProtectedEnvelope",
+				v => !string.IsNullOrEmpty(v.ProtectedEnvelope) ? v.ProtectedEnvelope : (v.ProtectionRequired ? RmsRecordValuePack.Pack(v) : null),
+				(v, text) =>
+				{
+					if (ProtectedDataEnvelope.HasEnvelopePrefix(text)) { v.ProtectedEnvelope = text; RmsRecordValuePack.Clear(v); }
+					else if (text != null && text != ProtectedDataEnvelope.RedactionValue) { RmsRecordValuePack.Unpack(v, text); v.ProtectedEnvelope = null; }
+				}));
+
+		public static readonly string ValueFieldId = FieldId("RmsRecordValues", "ProtectedEnvelope");
+
 		/// <summary>The rendered export artifact (RmsExportRuns.Data) is a generated copy of record content.</summary>
 		public static readonly string ExportRunDataFieldId = FieldId("RmsExportRuns", "Data");
 
@@ -196,6 +213,7 @@ namespace Resgrid.Model
 			foreach (var k in Attachments.Keys) yield return k;
 			yield return AttachmentDataFieldId;
 			yield return ExportRunDataFieldId;
+			foreach (var k in Values.Keys) yield return k;
 		}
 	}
 }

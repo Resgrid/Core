@@ -14,7 +14,9 @@
 		GrantExpiresOnUtc = Model.ProtectedGrantExpiresOnUtc,
 		BindForms = new List<string> { "#record-edit-form" }
 	};
-	var schemaJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Schema, new Newtonsoft.Json.JsonSerializerSettings { NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver() });
+	// Written unencoded into a JSON script block below: escape the HTML-sensitive characters so authored schema text
+	// containing "</script>" cannot close the element early.
+	var schemaJson = Newtonsoft.Json.JsonConvert.SerializeObject(Model.Schema, new Newtonsoft.Json.JsonSerializerSettings { NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(), StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml });
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">

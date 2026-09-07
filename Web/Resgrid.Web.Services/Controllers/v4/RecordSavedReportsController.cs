@@ -99,7 +99,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var usable = await UsableAsync();
 			if (usable != null) return usable;
-			try { return await _reports.DeleteAsync(DepartmentId, UserId, id, cancellationToken) ? NoContent() : NotFound(); }
+			var expected = RecordsApiContract.ParseETag(Request.Headers[RecordsApiContract.IfMatchHeader]);
+			try { return await _reports.DeleteAsync(DepartmentId, UserId, id, expected, cancellationToken) ? NoContent() : NotFound(); }
 			catch (Exception ex) { return Fail(ex); }
 		}
 

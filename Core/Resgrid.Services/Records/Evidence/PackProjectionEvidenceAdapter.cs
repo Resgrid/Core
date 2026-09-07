@@ -197,6 +197,9 @@ namespace Resgrid.Services.Records.Evidence
 			var board = await _command.GetCommandBoardAsync(request.DepartmentId, callId.Value);
 			if (board?.Command == null) return RecordEvidenceCapture.Unavailable("No incident command was established for this Call.");
 			var command = board.Command;
+			// Both identifiers go into an Unrestricted manifest, so the capturing user has to be cleared for them the
+			// same way the participant projections require.
+			await RequirePeopleAsync(request, new[] { command.EstablishedByUserId, command.CurrentCommanderUserId }.Where(id => !string.IsNullOrWhiteSpace(id)));
 			var now = DateTime.UtcNow;
 			return new RecordEvidenceCapture
 			{

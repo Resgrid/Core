@@ -295,6 +295,12 @@ namespace Resgrid.Services
 			// Field Records for the operational apps (RMS-1D)
 			builder.RegisterType<Records.RecordWorkAssignmentsService>().As<IRecordWorkAssignmentsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.FieldRecordsService>().As<IFieldRecordsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsFieldRolloutService>().As<IRecordsFieldRolloutService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.Connectors.RecordDeploymentConnectorsService>().As<IRecordDeploymentConnectorsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.Connectors.GenericOrderFeedProvider>().As<IExternalOrderFeedProvider>().SingleInstance();
+			builder.RegisterType<Records.Connectors.AgencyOrderFeedProvider>().As<IExternalOrderFeedProvider>().SingleInstance();
+			builder.RegisterType<Records.Connectors.IrocOrderFeedProvider>().As<IExternalOrderFeedProvider>().SingleInstance();
+			builder.RegisterType<Records.Connectors.CiffcOrderFeedProvider>().As<IExternalOrderFeedProvider>().SingleInstance();
 			// Default attachment scanner: no engine, rows stay Skipped. A real scanner provider replaces this registration.
 			builder.RegisterType<Records.NullRecordAttachmentScanner>().As<Resgrid.Model.Providers.IRecordAttachmentScanner>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentProfileMediaService>().As<IDepartmentProfileMediaService>().InstancePerLifetimeScope();

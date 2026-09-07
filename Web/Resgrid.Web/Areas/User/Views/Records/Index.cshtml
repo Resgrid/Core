@@ -72,6 +72,7 @@
 			}
 			@if (Model.IsDepartmentAdmin)
 			{
+				<a class="btn btn-default" asp-controller="Records" asp-action="FieldRollout" asp-route-area="User"><i class="fa fa-mobile"></i> @localizer["FieldRollout"]</a>
 				<a class="btn btn-inverse" asp-controller="Records" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @localizer["Settings"]</a>
 			}
 		</div>

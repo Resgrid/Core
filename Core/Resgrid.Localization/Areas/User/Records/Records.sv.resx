@@ -1122,6 +1122,7 @@
   <data name="DefinitionSequenceWidth" xml:space="preserve"><value>Sekvensbredd</value></data>
   <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Tilldela nummer</value></data>
   <data name="DefinitionPerGroup" xml:space="preserve"><value>Sekvens per station</value></data>
+  <data name="DefinitionPerIncident" xml:space="preserve"><value>Sekvens per insats</value></data>
   <data name="DefinitionResetYearly" xml:space="preserve"><value>Återställ årligen</value></data>
   <data name="DefinitionClassification" xml:space="preserve"><value>Klassificering</value></data>
   <data name="DefinitionRetention" xml:space="preserve"><value>Bevarande (år)</value></data>
@@ -1315,4 +1316,106 @@
   <data name="Projectionresource-summary" xml:space="preserve"><value>Resurssammanfattning</value></data>
   <data name="Projectionqualifications" xml:space="preserve"><value>Kvalifikationer</value></data>
   <data name="Projectioncommand-summary" xml:space="preserve"><value>Ledningssammanfattning</value></data>
+  <data name="FieldRollout" xml:space="preserve"><value>Utrullning av fältposter</value></data>
+  <data name="FieldRolloutIntro" xml:space="preserve"><value>Hur varje operativ app klarar poster: vem som har en användbar version, vad apparna nekades och var författandet stannade. Endast antal — sidan visar aldrig vad någon skrivit.</value></data>
+  <data name="RolloutUnavailable" xml:space="preserve"><value>Utrullningsvyn är inte tillgänglig för ditt konto.</value></data>
+  <data name="RolloutNoAppsEnabled" xml:space="preserve"><value>Ingen operativ app har fältposter påslaget ännu.</value></data>
+  <data name="RolloutWindowDays" xml:space="preserve"><value>{0} dagar</value></data>
+  <data name="RolloutFlagOn" xml:space="preserve"><value>På</value></data>
+  <data name="RolloutFlagOff" xml:space="preserve"><value>Av</value></data>
+  <data name="RolloutActiveUsers" xml:space="preserve"><value>Personer som använder</value></data>
+  <data name="RolloutCompatible" xml:space="preserve"><value>På en användbar version</value></data>
+  <data name="RolloutMinimumVersion" xml:space="preserve"><value>minst {0}</value></data>
+  <data name="RolloutRecords" xml:space="preserve"><value>Poster</value></data>
+  <data name="RolloutRecordsValue" xml:space="preserve"><value>{0} påbörjade, {1} slutförda</value></data>
+  <data name="RolloutCatalog" xml:space="preserve"><value>Katalogförfrågningar</value></data>
+  <data name="RolloutFailures" xml:space="preserve"><value>{0} nekade</value></data>
+  <data name="RolloutAuthoring" xml:space="preserve"><value>Författande</value></data>
+  <data name="RolloutAuthoringValue" xml:space="preserve"><value>{0} påbörjade, {1} skickade, {2} misslyckades</value></data>
+  <data name="RolloutSync" xml:space="preserve"><value>Synkroniseringar</value></data>
+  <data name="RolloutConflicts" xml:space="preserve"><value>Visade konflikter</value></data>
+  <data name="RolloutAttachments" xml:space="preserve"><value>Bilagor</value></data>
+  <data name="RolloutAttachmentsValue" xml:space="preserve"><value>{0} uppladdade, {1} misslyckades</value></data>
+  <data name="RolloutCompleted" xml:space="preserve"><value>Slutförda i appen</value></data>
+  <data name="RolloutCompletedValue" xml:space="preserve"><value>{0}, median {1} minuter</value></data>
+  <data name="RolloutAbandoned" xml:space="preserve"><value>Lämnade oavslutade</value></data>
+  <data name="RolloutWebHandoff" xml:space="preserve"><value>Skickade till webbappen</value></data>
+  <data name="RolloutVersions" xml:space="preserve"><value>Versioner i bruk</value></data>
+  <data name="RolloutVersion" xml:space="preserve"><value>Version</value></data>
+  <data name="RolloutUsers" xml:space="preserve"><value>Personer</value></data>
+  <data name="RolloutTooOld" xml:space="preserve"><value>För gammal</value></data>
+  <data name="RolloutRefusals" xml:space="preserve"><value>Varför katalogen nekades</value></data>
+  <data name="RolloutGeneratedOn" xml:space="preserve"><value>Genererad {0}.</value></data>
+  <data name="AppResponder" xml:space="preserve"><value>Responder</value></data>
+  <data name="AppUnit" xml:space="preserve"><value>Enhet</value></data>
+  <data name="AppIncidentCommand" xml:space="preserve"><value>Insatsledning</value></data>
+  <data name="AppDispatch" xml:space="preserve"><value>Larmcentral</value></data>
+  <data name="MediaLocationRetained" xml:space="preserve"><value>Fotots plats behållen</value></data>
+  <data name="MediaLocationStripped" xml:space="preserve"><value>Fotots plats borttagen</value></data>
+  <data name="DefinitionRetainMediaLocation" xml:space="preserve"><value>Behåll fotokoordinater på bilagor</value></data>
+  <data name="DefinitionRetainMediaLocationHelp" xml:space="preserve"><value>Av som standard: fotots plats och enhetsdata tas bort vid uppladdning. Slå på detta endast när formuläret verkligen behöver var fotot togs, till exempel en skadebedömning eller en spårrapport.</value></data>
+  <data name="Connectors" xml:space="preserve"><value>Externa kopplingar</value></data>
+  <data name="ConnectorsIntro" xml:space="preserve"><value>Läser resursbeställningar från ett externt beställningssystem via ett dokumenterat flöde, en krypterad behörighet, en begärandegräns och källans villkor. Källan förblir auktoritativ: varje ändring sparas som en ny ögonblicksbild och inget lokalt ändras automatiskt.</value></data>
+  <data name="NewConnector" xml:space="preserve"><value>Ny koppling</value></data>
+  <data name="ConnectorName" xml:space="preserve"><value>Kopplingens namn</value></data>
+  <data name="ConnectorProvider" xml:space="preserve"><value>Flödesleverantör</value></data>
+  <data name="ConnectorSourceSystem" xml:space="preserve"><value>Källsystem</value></data>
+  <data name="ConnectorBaseUrl" xml:space="preserve"><value>Flödets rotadress (https)</value></data>
+  <data name="ConnectorFeedContract" xml:space="preserve"><value>Källan måste tillhandahålla Resgrid Mutual-Aid Order Feed v1 (JSON). Skärmskrapning och härledda uppdateringar stöds inte.</value></data>
+  <data name="ConnectorCredentialKind" xml:space="preserve"><value>Typ av behörighet</value></data>
+  <data name="ConnectorCredentialHeaderName" xml:space="preserve"><value>Rubriknamn</value></data>
+  <data name="ConnectorCredential" xml:space="preserve"><value>Behörighet</value></data>
+  <data name="ConnectorCredentialHelp" xml:space="preserve"><value>Krypteras i vila och visas aldrig igen. Lämna tomt för att behålla den sparade behörigheten.</value></data>
+  <data name="ConnectorCredentialStored" xml:space="preserve"><value>Behörighet sparad</value></data>
+  <data name="ConnectorReadEnabled" xml:space="preserve"><value>Läsbehörighet beviljad</value></data>
+  <data name="ConnectorWriteRefused" xml:space="preserve"><value>Skrivbehörighet beviljas inte i denna version. Ingenting skrivs någonsin tillbaka till beställningssystemet.</value></data>
+  <data name="ConnectorPollInterval" xml:space="preserve"><value>Avfrågningsintervall (minuter)</value></data>
+  <data name="ConnectorMaxRequestsPerHour" xml:space="preserve"><value>Begäranden per timme</value></data>
+  <data name="ConnectorTermsReference" xml:space="preserve"><value>Källans villkor</value></data>
+  <data name="ConnectorTermsAcknowledge" xml:space="preserve"><value>Bekräfta källans villkor</value></data>
+  <data name="ConnectorTermsAcknowledged" xml:space="preserve"><value>Villkor bekräftade</value></data>
+  <data name="ConnectorTermsNotAcknowledged" xml:space="preserve"><value>Villkor ännu inte bekräftade</value></data>
+  <data name="ConnectorEnable" xml:space="preserve"><value>Aktivera koppling</value></data>
+  <data name="ConnectorDisable" xml:space="preserve"><value>Inaktivera koppling</value></data>
+  <data name="ConnectorEnabled" xml:space="preserve"><value>Aktiverad</value></data>
+  <data name="ConnectorDisabled" xml:space="preserve"><value>Inaktiverad</value></data>
+  <data name="ConnectorEnabledMessage" xml:space="preserve"><value>Kopplingen aktiverad.</value></data>
+  <data name="ConnectorDisabledMessage" xml:space="preserve"><value>Kopplingen inaktiverad.</value></data>
+  <data name="ConnectorTermsAcknowledgedMessage" xml:space="preserve"><value>Källans villkor bekräftades.</value></data>
+  <data name="ConnectorRunNow" xml:space="preserve"><value>Läs flödet nu</value></data>
+  <data name="ConnectorRotateToken" xml:space="preserve"><value>Utfärda en ny inkommande token</value></data>
+  <data name="ConnectorInboundToken" xml:space="preserve"><value>Inkommande token</value></data>
+  <data name="ConnectorInboundTokenOnce" xml:space="preserve"><value>Kopiera denna token nu. Den visas en gång; servern sparar bara en hash.</value></data>
+  <data name="ConnectorInboundEndpoint" xml:space="preserve"><value>Inkommande mottagningspunkt</value></data>
+  <data name="ConnectorDelete" xml:space="preserve"><value>Ta bort koppling</value></data>
+  <data name="ConnectorDeleteConfirm" xml:space="preserve"><value>Ta bort denna koppling? Importerade insatser och deras ögonblicksbilder behålls.</value></data>
+  <data name="ConnectorRuns" xml:space="preserve"><value>Körningslogg</value></data>
+  <data name="ConnectorRunTrigger" xml:space="preserve"><value>Utlösare</value></data>
+  <data name="ConnectorRunOutcome" xml:space="preserve"><value>Utfall</value></data>
+  <data name="ConnectorRunCounts" xml:space="preserve"><value>Sedda / skapade / ögonblicksbilder / begäranden / oförändrade / avvisade / konflikter</value></data>
+  <data name="ConnectorLastPolled" xml:space="preserve"><value>Senast läst</value></data>
+  <data name="ConnectorLastSuccess" xml:space="preserve"><value>Senaste lyckade</value></data>
+  <data name="ConnectorLastError" xml:space="preserve"><value>Senaste fel</value></data>
+  <data name="ConnectorSaved" xml:space="preserve"><value>Kopplingen sparad.</value></data>
+  <data name="ConnectorCreated" xml:space="preserve"><value>Kopplingen skapad. Den förblir inaktiverad tills källans villkor bekräftats och den aktiverats.</value></data>
+  <data name="ConnectorDeleted" xml:space="preserve"><value>Kopplingen borttagen.</value></data>
+  <data name="ConnectorRunFinished" xml:space="preserve"><value>Flödesläsning klar (skapade / ögonblicksbilder / begäranden / konflikter).</value></data>
+  <data name="ConnectorTokenRotated" xml:space="preserve"><value>En ny inkommande token utfärdades; den gamla fungerar inte längre.</value></data>
+  <data name="ConnectorsOff" xml:space="preserve"><value>Externa kopplingar är avstängda för denna installation.</value></data>
+  <data name="ConnectorState" xml:space="preserve"><value>Kopplingens tillstånd</value></data>
+  <data name="ConnectorReady" xml:space="preserve"><value>Redo</value></data>
+  <data name="ConnectorNotReady" xml:space="preserve"><value>Inte redo</value></data>
+  <data name="Reconciliation" xml:space="preserve"><value>Avstämning</value></data>
+  <data name="ReconciliationIntro" xml:space="preserve"><value>Där källans senaste ögonblicksbild och denna avdelnings insatspost skiljer sig åt. Inget tillämpas automatiskt; en samordnare avgör.</value></data>
+  <data name="ReconciliationNone" xml:space="preserve"><value>Inga avvikelser mellan källan och dina poster.</value></data>
+  <data name="ReconciliationKind" xml:space="preserve"><value>Avvikelse</value></data>
+  <data name="ReconciliationSourceStatus" xml:space="preserve"><value>Källan anger</value></data>
+  <data name="ReconciliationLocalStatus" xml:space="preserve"><value>Din post anger</value></data>
+  <data name="ReconciliationSourceReleased" xml:space="preserve"><value>Källan frigav beställningen, men en tillsättning har ännu inte återvänt</value></data>
+  <data name="ReconciliationSourceClosed" xml:space="preserve"><value>Källan stängde beställningen, men tillsättningar är fortfarande öppna</value></data>
+  <data name="ReconciliationSourceRequestMissing" xml:space="preserve"><value>Begäran finns i källan men inte lokalt</value></data>
+  <data name="ReconciliationLocalFillMissing" xml:space="preserve"><value>Tillsättningen finns lokalt men inte i källan</value></data>
+  <data name="ReconciliationSourceAhead" xml:space="preserve"><value>Källans status ligger före den lokala tillsättningen</value></data>
+  <data name="ReconciliationSourceBehind" xml:space="preserve"><value>Källans status ligger efter den lokala tillsättningen</value></data>
+  <data name="DeploymentOwnedByConnector" xml:space="preserve"><value>Underhålls av en koppling</value></data>
 </root>

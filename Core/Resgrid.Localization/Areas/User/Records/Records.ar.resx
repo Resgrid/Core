@@ -1122,6 +1122,7 @@
   <data name="DefinitionSequenceWidth" xml:space="preserve"><value>عرض التسلسل</value></data>
   <data name="DefinitionNumberAssignment" xml:space="preserve"><value>تعيين الرقم</value></data>
   <data name="DefinitionPerGroup" xml:space="preserve"><value>تسلسل لكل محطة</value></data>
+  <data name="DefinitionPerIncident" xml:space="preserve"><value>تسلسل لكل حادث</value></data>
   <data name="DefinitionResetYearly" xml:space="preserve"><value>إعادة تعيين سنويًا</value></data>
   <data name="DefinitionClassification" xml:space="preserve"><value>التصنيف</value></data>
   <data name="DefinitionRetention" xml:space="preserve"><value>الاحتفاظ (سنوات)</value></data>
@@ -1315,4 +1316,106 @@
   <data name="Projectionresource-summary" xml:space="preserve"><value>ملخص الموارد</value></data>
   <data name="Projectionqualifications" xml:space="preserve"><value>المؤهلات</value></data>
   <data name="Projectioncommand-summary" xml:space="preserve"><value>ملخص القيادة</value></data>
+  <data name="FieldRollout" xml:space="preserve"><value>طرح سجلات الميدان</value></data>
+  <data name="FieldRolloutIntro" xml:space="preserve"><value>كيف يسير كل تطبيق تشغيلي مع السجلات: من لديه إصدار صالح، وما الذي رُفض للتطبيقات، وأين توقفت الكتابة. أعداد فقط — لا تعرض هذه الصفحة أبدًا ما كتبه أحد.</value></data>
+  <data name="RolloutUnavailable" xml:space="preserve"><value>عرض الطرح غير متاح لحسابك.</value></data>
+  <data name="RolloutNoAppsEnabled" xml:space="preserve"><value>لا يوجد تطبيق تشغيلي مفعّل به سجلات الميدان بعد.</value></data>
+  <data name="RolloutWindowDays" xml:space="preserve"><value>{0} يوم</value></data>
+  <data name="RolloutFlagOn" xml:space="preserve"><value>مفعّل</value></data>
+  <data name="RolloutFlagOff" xml:space="preserve"><value>معطّل</value></data>
+  <data name="RolloutActiveUsers" xml:space="preserve"><value>الأشخاص المستخدمون</value></data>
+  <data name="RolloutCompatible" xml:space="preserve"><value>على إصدار صالح</value></data>
+  <data name="RolloutMinimumVersion" xml:space="preserve"><value>الحد الأدنى {0}</value></data>
+  <data name="RolloutRecords" xml:space="preserve"><value>السجلات</value></data>
+  <data name="RolloutRecordsValue" xml:space="preserve"><value>{0} بدأت، {1} أُنهيت</value></data>
+  <data name="RolloutCatalog" xml:space="preserve"><value>طلبات الكتالوج</value></data>
+  <data name="RolloutFailures" xml:space="preserve"><value>{0} مرفوضة</value></data>
+  <data name="RolloutAuthoring" xml:space="preserve"><value>الكتابة</value></data>
+  <data name="RolloutAuthoringValue" xml:space="preserve"><value>{0} بدأت، {1} أُرسلت، {2} فشل إرسالها</value></data>
+  <data name="RolloutSync" xml:space="preserve"><value>المزامنات</value></data>
+  <data name="RolloutConflicts" xml:space="preserve"><value>التعارضات المعروضة</value></data>
+  <data name="RolloutAttachments" xml:space="preserve"><value>المرفقات</value></data>
+  <data name="RolloutAttachmentsValue" xml:space="preserve"><value>{0} تم رفعها، {1} فشلت</value></data>
+  <data name="RolloutCompleted" xml:space="preserve"><value>أُنجزت في التطبيق</value></data>
+  <data name="RolloutCompletedValue" xml:space="preserve"><value>{0}، الوسيط {1} دقيقة</value></data>
+  <data name="RolloutAbandoned" xml:space="preserve"><value>تُركت غير مكتملة</value></data>
+  <data name="RolloutWebHandoff" xml:space="preserve"><value>أُحيلت إلى تطبيق الويب</value></data>
+  <data name="RolloutVersions" xml:space="preserve"><value>الإصدارات المستخدمة</value></data>
+  <data name="RolloutVersion" xml:space="preserve"><value>الإصدار</value></data>
+  <data name="RolloutUsers" xml:space="preserve"><value>الأشخاص</value></data>
+  <data name="RolloutTooOld" xml:space="preserve"><value>قديم جدًا</value></data>
+  <data name="RolloutRefusals" xml:space="preserve"><value>لماذا رُفض الكتالوج</value></data>
+  <data name="RolloutGeneratedOn" xml:space="preserve"><value>أُنشئ {0}.</value></data>
+  <data name="AppResponder" xml:space="preserve"><value>Responder</value></data>
+  <data name="AppUnit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="AppIncidentCommand" xml:space="preserve"><value>قيادة الحادث</value></data>
+  <data name="AppDispatch" xml:space="preserve"><value>الإرسال</value></data>
+  <data name="MediaLocationRetained" xml:space="preserve"><value>تم الاحتفاظ بموقع الصورة</value></data>
+  <data name="MediaLocationStripped" xml:space="preserve"><value>تمت إزالة موقع الصورة</value></data>
+  <data name="DefinitionRetainMediaLocation" xml:space="preserve"><value>الاحتفاظ بإحداثيات الصور في المرفقات</value></data>
+  <data name="DefinitionRetainMediaLocationHelp" xml:space="preserve"><value>معطّل افتراضيًا: تُزال بيانات موقع الصورة وتفاصيل الجهاز عند الرفع. فعّله فقط عندما يحتاج النموذج فعليًا إلى مكان التقاط الصورة، مثل تقييم الأضرار أو تقرير الأدلة.</value></data>
+  <data name="Connectors" xml:space="preserve"><value>الموصلات الخارجية</value></data>
+  <data name="ConnectorsIntro" xml:space="preserve"><value>يقرأ طلبات الموارد من نظام طلبات خارجي عبر تغذية موثقة وبيانات اعتماد مشفرة وحد للطلبات وشروط المصدر. يبقى المصدر هو المرجع: كل تغيير يُحفظ كلقطة جديدة ولا يتغير أي شيء محلي تلقائيًا.</value></data>
+  <data name="NewConnector" xml:space="preserve"><value>موصل جديد</value></data>
+  <data name="ConnectorName" xml:space="preserve"><value>اسم الموصل</value></data>
+  <data name="ConnectorProvider" xml:space="preserve"><value>مزود التغذية</value></data>
+  <data name="ConnectorSourceSystem" xml:space="preserve"><value>النظام المصدر</value></data>
+  <data name="ConnectorBaseUrl" xml:space="preserve"><value>جذر التغذية (https)</value></data>
+  <data name="ConnectorFeedContract" xml:space="preserve"><value>يجب أن يوفر المصدر Resgrid Mutual-Aid Order Feed v1 (JSON). لا يُدعم كشط الشاشة ولا التحديثات المستنتجة.</value></data>
+  <data name="ConnectorCredentialKind" xml:space="preserve"><value>نوع بيانات الاعتماد</value></data>
+  <data name="ConnectorCredentialHeaderName" xml:space="preserve"><value>اسم الترويسة</value></data>
+  <data name="ConnectorCredential" xml:space="preserve"><value>بيانات الاعتماد</value></data>
+  <data name="ConnectorCredentialHelp" xml:space="preserve"><value>مشفرة أثناء التخزين ولا تُعرض مرة أخرى. اتركه فارغًا للاحتفاظ ببيانات الاعتماد المخزنة.</value></data>
+  <data name="ConnectorCredentialStored" xml:space="preserve"><value>تم تخزين بيانات الاعتماد</value></data>
+  <data name="ConnectorReadEnabled" xml:space="preserve"><value>تم منح صلاحية القراءة</value></data>
+  <data name="ConnectorWriteRefused" xml:space="preserve"><value>لا تُمنح صلاحية الكتابة في هذا الإصدار. لا يُكتب أي شيء أبدًا إلى نظام الطلبات.</value></data>
+  <data name="ConnectorPollInterval" xml:space="preserve"><value>فترة الاستطلاع (دقائق)</value></data>
+  <data name="ConnectorMaxRequestsPerHour" xml:space="preserve"><value>طلبات في الساعة</value></data>
+  <data name="ConnectorTermsReference" xml:space="preserve"><value>شروط المصدر</value></data>
+  <data name="ConnectorTermsAcknowledge" xml:space="preserve"><value>الإقرار بشروط المصدر</value></data>
+  <data name="ConnectorTermsAcknowledged" xml:space="preserve"><value>تم الإقرار بالشروط</value></data>
+  <data name="ConnectorTermsNotAcknowledged" xml:space="preserve"><value>لم يتم الإقرار بالشروط بعد</value></data>
+  <data name="ConnectorEnable" xml:space="preserve"><value>تفعيل الموصل</value></data>
+  <data name="ConnectorDisable" xml:space="preserve"><value>تعطيل الموصل</value></data>
+  <data name="ConnectorEnabled" xml:space="preserve"><value>مفعّل</value></data>
+  <data name="ConnectorDisabled" xml:space="preserve"><value>معطّل</value></data>
+  <data name="ConnectorEnabledMessage" xml:space="preserve"><value>تم تفعيل الموصل.</value></data>
+  <data name="ConnectorDisabledMessage" xml:space="preserve"><value>تم تعطيل الموصل.</value></data>
+  <data name="ConnectorTermsAcknowledgedMessage" xml:space="preserve"><value>تم الإقرار بشروط المصدر.</value></data>
+  <data name="ConnectorRunNow" xml:space="preserve"><value>قراءة التغذية الآن</value></data>
+  <data name="ConnectorRotateToken" xml:space="preserve"><value>إصدار رمز وارد جديد</value></data>
+  <data name="ConnectorInboundToken" xml:space="preserve"><value>الرمز الوارد</value></data>
+  <data name="ConnectorInboundTokenOnce" xml:space="preserve"><value>انسخ هذا الرمز الآن. يُعرض مرة واحدة فقط؛ يحتفظ الخادم بالتجزئة فقط.</value></data>
+  <data name="ConnectorInboundEndpoint" xml:space="preserve"><value>نقطة الاستلام الواردة</value></data>
+  <data name="ConnectorDelete" xml:space="preserve"><value>حذف الموصل</value></data>
+  <data name="ConnectorDeleteConfirm" xml:space="preserve"><value>هل تريد حذف هذا الموصل؟ يتم الاحتفاظ بعمليات النشر المستوردة ولقطاتها.</value></data>
+  <data name="ConnectorRuns" xml:space="preserve"><value>سجل التشغيل</value></data>
+  <data name="ConnectorRunTrigger" xml:space="preserve"><value>المُشغِّل</value></data>
+  <data name="ConnectorRunOutcome" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="ConnectorRunCounts" xml:space="preserve"><value>المرئية / المنشأة / اللقطات / الطلبات / بدون تغيير / المرفوضة / التعارضات</value></data>
+  <data name="ConnectorLastPolled" xml:space="preserve"><value>آخر قراءة</value></data>
+  <data name="ConnectorLastSuccess" xml:space="preserve"><value>آخر نجاح</value></data>
+  <data name="ConnectorLastError" xml:space="preserve"><value>آخر خطأ</value></data>
+  <data name="ConnectorSaved" xml:space="preserve"><value>تم حفظ الموصل.</value></data>
+  <data name="ConnectorCreated" xml:space="preserve"><value>تم إنشاء الموصل. يبقى معطّلاً حتى يتم الإقرار بشروط المصدر وتفعيله.</value></data>
+  <data name="ConnectorDeleted" xml:space="preserve"><value>تم حذف الموصل.</value></data>
+  <data name="ConnectorRunFinished" xml:space="preserve"><value>انتهت قراءة التغذية (المنشأة / اللقطات / الطلبات / التعارضات).</value></data>
+  <data name="ConnectorTokenRotated" xml:space="preserve"><value>تم إصدار رمز وارد جديد؛ لم يعد الرمز القديم يعمل.</value></data>
+  <data name="ConnectorsOff" xml:space="preserve"><value>الموصلات الخارجية معطّلة في هذا التثبيت.</value></data>
+  <data name="ConnectorState" xml:space="preserve"><value>حالة الموصل</value></data>
+  <data name="ConnectorReady" xml:space="preserve"><value>جاهز</value></data>
+  <data name="ConnectorNotReady" xml:space="preserve"><value>غير جاهز</value></data>
+  <data name="Reconciliation" xml:space="preserve"><value>المطابقة</value></data>
+  <data name="ReconciliationIntro" xml:space="preserve"><value>حيث تختلف أحدث لقطة من المصدر عن سجل النشر لهذا القسم. لا يُطبق أي شيء هنا تلقائيًا؛ يقرر المنسق.</value></data>
+  <data name="ReconciliationNone" xml:space="preserve"><value>لا توجد اختلافات بين المصدر وسجلاتك.</value></data>
+  <data name="ReconciliationKind" xml:space="preserve"><value>الاختلاف</value></data>
+  <data name="ReconciliationSourceStatus" xml:space="preserve"><value>يقول المصدر</value></data>
+  <data name="ReconciliationLocalStatus" xml:space="preserve"><value>يقول سجلك</value></data>
+  <data name="ReconciliationSourceReleased" xml:space="preserve"><value>أفرج المصدر عن الطلب، لكن أحد التعيينات لم يعد بعد</value></data>
+  <data name="ReconciliationSourceClosed" xml:space="preserve"><value>أغلق المصدر الطلب، لكن التعيينات لا تزال مفتوحة</value></data>
+  <data name="ReconciliationSourceRequestMissing" xml:space="preserve"><value>الطلب موجود في المصدر لكن ليس محليًا</value></data>
+  <data name="ReconciliationLocalFillMissing" xml:space="preserve"><value>التعيين موجود محليًا لكن ليس في المصدر</value></data>
+  <data name="ReconciliationSourceAhead" xml:space="preserve"><value>حالة المصدر متقدمة على التعيين المحلي</value></data>
+  <data name="ReconciliationSourceBehind" xml:space="preserve"><value>حالة المصدر متأخرة عن التعيين المحلي</value></data>
+  <data name="DeploymentOwnedByConnector" xml:space="preserve"><value>يُدار بواسطة موصل</value></data>
 </root>

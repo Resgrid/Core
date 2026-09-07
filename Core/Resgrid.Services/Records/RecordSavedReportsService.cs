@@ -20,6 +20,12 @@ namespace Resgrid.Services.Records
 	/// </summary>
 	public class RecordSavedReportsService : IRecordSavedReportsService
 	{
+		/// <summary>Matches the projection repository's own Take ceiling, so a page is never silently shortened.</summary>
+		private const int ProjectionPageSize = 500;
+
+		/// <summary>Upper bound on Records examined in one run; a very selective filter must not scan without limit.</summary>
+		private const int MaxProjectionsScanned = 50000;
+
 		public static readonly IReadOnlyDictionary<string, string> BuiltInColumns = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 		{
 			["record.number"] = "Record number", ["record.draft_reference"] = "Draft reference", ["record.state"] = "State", ["record.definition_version"] = "Definition version",
@@ -71,6 +77,9 @@ namespace Resgrid.Services.Records
 			if (report.MaxRowsPerRun < 1 || report.MaxRowsPerRun > RmsSavedReportDefinition.MaxRows) issues.Add(RecordDefinitionIssue.Error("maxRowsPerRun", "out_of_range", $"Rows per run is 1 to {RmsSavedReportDefinition.MaxRows}."));
 			foreach (var column in spec.Columns)
 			{
+				// Spec keys come from client JSON, so a null entry has to become a validation issue rather than the
+				// ArgumentNullException that Dictionary.ContainsKey(null) would raise.
+				if (string.IsNullOrWhiteSpace(column)) { issues.Add(RecordDefinitionIssue.Error("columns", "unknown_field", "A column key is required.")); continue; }
 				if (BuiltInColumns.ContainsKey(column)) continue;
 				var field = schema.FindField(column);
 				if (field == null) { issues.Add(RecordDefinitionIssue.Error("columns", "unknown_field", $"'{column}' is not a field of version {version.Version}.")); continue; }
@@ -125,21 +134,28 @@ namespace Resgrid.Services.Records
 				await AuditAsync(departmentId, userId, report, "Create saved report", cancellationToken);
 				return report;
 			}
-			if (existing.RowVersion != report.RowVersion) throw new RecordConcurrencyException(existing.RmsSavedReportDefinitionId, report.RowVersion, existing.RowVersion);
+			// Comparing the loaded version in memory lets two writers both pass and the second overwrite the first, so
+			// the claim is staked with the repository's conditional bump and the write follows the version it won.
+			if (!await _reports.TryBumpRowVersionAsync(departmentId, existing.RmsSavedReportDefinitionId, report.RowVersion, cancellationToken))
+				throw new RecordConcurrencyException(existing.RmsSavedReportDefinitionId, report.RowVersion, existing.RowVersion);
 			existing.Name = report.Name; existing.Description = report.Description; existing.DefinitionKey = report.DefinitionKey; existing.DefinitionVersion = report.DefinitionVersion;
 			existing.SpecJson = report.SpecJson; existing.MaxRowsPerRun = report.MaxRowsPerRun; existing.IncludeRestricted = report.IncludeRestricted;
-			existing.ModifiedOn = now; existing.ModifiedByUserId = userId; existing.RowVersion += 1;
+			existing.ModifiedOn = now; existing.ModifiedByUserId = userId; existing.RowVersion = report.RowVersion + 1;
 			await _reports.UpdateAsync(existing, cancellationToken, true);
 			await AuditAsync(departmentId, userId, existing, "Update saved report", cancellationToken);
 			return existing;
 		}
 
-		public async Task<bool> DeleteAsync(int departmentId, string userId, string reportId, CancellationToken cancellationToken = default)
+		public async Task<bool> DeleteAsync(int departmentId, string userId, string reportId, long? expectedRowVersion = null, CancellationToken cancellationToken = default)
 		{
 			await RequireManageAsync(userId, departmentId);
 			var report = await _reports.GetByIdForDepartmentAsync(departmentId, reportId);
 			if (report == null) return false;
-			report.DeletedOn = DateTime.UtcNow; report.ModifiedOn = report.DeletedOn.Value; report.ModifiedByUserId = userId; report.RowVersion += 1;
+			// A caller that supplies the version it saw must not delete a report somebody else just edited.
+			var expected = expectedRowVersion ?? report.RowVersion;
+			if (!await _reports.TryBumpRowVersionAsync(departmentId, report.RmsSavedReportDefinitionId, expected, cancellationToken))
+				throw new RecordConcurrencyException(report.RmsSavedReportDefinitionId, expected, report.RowVersion);
+			report.DeletedOn = DateTime.UtcNow; report.ModifiedOn = report.DeletedOn.Value; report.ModifiedByUserId = userId; report.RowVersion = expected + 1;
 			await _reports.UpdateAsync(report, cancellationToken, true);
 			await AuditAsync(departmentId, userId, report, "Delete saved report", cancellationToken);
 			return true;
@@ -166,47 +182,71 @@ namespace Resgrid.Services.Records
 				: new[] { RmsRecordState.Finalized, RmsRecordState.Amended, RmsRecordState.Submitted, RmsRecordState.Accepted, RmsRecordState.Rejected, RmsRecordState.Corrected };
 			var query = new RmsRecordQuery
 			{
-				DefinitionKey = aggregate.Definition.DefinitionKey, States = states.Select(s => (int)s).ToList(), ViewerUserId = userId, Skip = 0, Take = take + 1,
+				DefinitionKey = aggregate.Definition.DefinitionKey, States = states.Select(s => (int)s).ToList(), ViewerUserId = userId, Skip = 0, Take = ProjectionPageSize,
+				OccurredSince = spec.WindowDays.HasValue ? DateTime.UtcNow.AddDays(-spec.WindowDays.Value) : (DateTime?)null,
 				VisibleGroupIds = await _authorization.IsGroupScopedAsync(departmentId) ? await _authorization.GetVisibleGroupIdsAsync(userId, departmentId) : null
 			};
-			var projections = await _records.QueryAsync(departmentId, query);
-			var since = spec.WindowDays.HasValue ? DateTime.UtcNow.AddDays(-spec.WindowDays.Value) : (DateTime?)null;
-			if (since.HasValue) projections = projections.Where(p => (p.FinalizedOn ?? p.OccurredOn ?? p.RecordCreatedOn) >= since.Value).ToList();
-			var truncated = projections.Count > take;
-			projections = projections.Take(take).ToList();
 
-			var rows = (await _recordRows.GetByIdsAsync(departmentId, projections.Select(p => p.SourceId)))?.ToList() ?? new List<RmsOperationalRecord>();
-			var revisionIds = rows.Where(r => r.CurrentRevisionId != null && !RmsLifecycle.IsEditable((RmsRecordState)r.State)).Select(r => r.CurrentRevisionId).ToList();
-			var draftIds = rows.Where(r => r.CurrentRevisionId == null || RmsLifecycle.IsEditable((RmsRecordState)r.State)).Select(r => r.RmsOperationalRecordId).ToList();
-			var valueRows = new List<RmsRecordValue>(); var groupRows = new List<RmsRecordValueGroup>();
-			if (revisionIds.Count > 0) { valueRows.AddRange(await _values.GetForRevisionsAsync(departmentId, revisionIds) ?? Enumerable.Empty<RmsRecordValue>()); groupRows.AddRange(await _groups.GetForRevisionsAsync(departmentId, revisionIds) ?? Enumerable.Empty<RmsRecordValueGroup>()); }
-			if (draftIds.Count > 0) { valueRows.AddRange(await _values.GetForRecordsAsync(departmentId, draftIds, true) ?? Enumerable.Empty<RmsRecordValue>()); groupRows.AddRange(await _groups.GetForRecordsAsync(departmentId, draftIds, true) ?? Enumerable.Empty<RmsRecordValueGroup>()); }
+			var result = new RecordReportResult { ReportId = report.RmsSavedReportDefinitionId, Name = report.Name, DefinitionKey = report.DefinitionKey, DefinitionVersion = reportVersion?.Version, RanOn = DateTime.UtcNow, Columns = spec.Columns.ToList() };
+			result.ColumnLabels = spec.Columns.Select(c => c != null && BuiltInColumns.TryGetValue(c, out var l) ? l : reportVersion?.Schema.FindField(c)?.Label ?? c).ToList();
 
-			var result = new RecordReportResult { ReportId = report.RmsSavedReportDefinitionId, Name = report.Name, DefinitionKey = report.DefinitionKey, DefinitionVersion = reportVersion?.Version, RanOn = DateTime.UtcNow, Columns = spec.Columns.ToList(), Truncated = truncated };
-			result.ColumnLabels = spec.Columns.Select(c => BuiltInColumns.TryGetValue(c, out var l) ? l : reportVersion?.Schema.FindField(c)?.Label ?? c).ToList();
-
-			var shaped = new List<(RmsOperationalRecord Record, RecordValueSet Values, RecordDefinitionSchema Schema, Dictionary<string, string> Map)>();
-			foreach (var record in rows)
+			// The window rides the query now, but spec.Filters run against typed values and cannot, so the page has to
+			// be filled from as many projection pages as it takes. Cutting one page and filtering afterwards silently
+			// drops matching Records whenever non-matching ones happen to sort first.
+			var matched = new List<(RmsOperationalRecord Record, RecordValueSet Values, RecordDefinitionSchema Schema, Dictionary<string, string> Map)>();
+			var scanned = 0;
+			var scanCapReached = false;
+			while (matched.Count <= take)
 			{
-				if (!versions.TryGetValue(record.DefinitionVersion, out var version)) { if (!result.UnmappedVersions.Contains(record.DefinitionVersion)) result.UnmappedVersions.Add(record.DefinitionVersion); continue; }
-				var isDraft = draftIds.Contains(record.RmsOperationalRecordId);
-				var set = RecordTypedValuesService.Shape(version.Schema,
-					groupRows.Where(g => g.RecordId == record.RmsOperationalRecordId && (isDraft ? g.RevisionId == null : g.RevisionId == record.CurrentRevisionId)),
-					valueRows.Where(v => v.RecordId == record.RmsOperationalRecordId && (isDraft ? v.RevisionId == null : v.RevisionId == record.CurrentRevisionId)), canViewRestricted && report.IncludeRestricted);
-				Dictionary<string, string> map = null;
-				if (reportVersion != null && record.DefinitionVersion != reportVersion.Version)
+				cancellationToken.ThrowIfCancellationRequested();
+				// A filter that matches almost nothing would otherwise walk the whole definition on a request thread,
+				// so the scan is bounded too and the run reports itself as truncated when it stops early.
+				if (scanned >= MaxProjectionsScanned) { scanCapReached = true; break; }
+				var projections = await _records.QueryAsync(departmentId, query);
+				if (projections.Count == 0) break;
+				query.Skip += projections.Count;
+				scanned += projections.Count;
+
+				var rows = (await _recordRows.GetByIdsAsync(departmentId, projections.Select(p => p.SourceId)))?.ToList() ?? new List<RmsOperationalRecord>();
+				var revisionIds = rows.Where(r => r.CurrentRevisionId != null && !RmsLifecycle.IsEditable((RmsRecordState)r.State)).Select(r => r.CurrentRevisionId).ToList();
+				var draftIds = rows.Where(r => r.CurrentRevisionId == null || RmsLifecycle.IsEditable((RmsRecordState)r.State)).Select(r => r.RmsOperationalRecordId).ToList();
+				var valueRows = new List<RmsRecordValue>(); var groupRows = new List<RmsRecordValueGroup>();
+				if (revisionIds.Count > 0) { valueRows.AddRange(await _values.GetForRevisionsAsync(departmentId, revisionIds) ?? Enumerable.Empty<RmsRecordValue>()); groupRows.AddRange(await _groups.GetForRevisionsAsync(departmentId, revisionIds) ?? Enumerable.Empty<RmsRecordValueGroup>()); }
+				if (draftIds.Count > 0) { valueRows.AddRange(await _values.GetForRecordsAsync(departmentId, draftIds, true) ?? Enumerable.Empty<RmsRecordValue>()); groupRows.AddRange(await _groups.GetForRecordsAsync(departmentId, draftIds, true) ?? Enumerable.Empty<RmsRecordValueGroup>()); }
+
+				// Indexed once per page; the shaping loop below is otherwise a linear scan of every value row per Record.
+				var draftIdSet = new HashSet<string>(draftIds, StringComparer.Ordinal);
+				var valuesByRecord = valueRows.ToLookup(v => v.RecordId, StringComparer.Ordinal);
+				var groupsByRecord = groupRows.ToLookup(g => g.RecordId, StringComparer.Ordinal);
+
+				foreach (var record in rows)
 				{
-					if (!spec.VersionMappings.TryGetValue(record.DefinitionVersion, out map))
+					if (!versions.TryGetValue(record.DefinitionVersion, out var version)) { if (!result.UnmappedVersions.Contains(record.DefinitionVersion)) result.UnmappedVersions.Add(record.DefinitionVersion); continue; }
+					var isDraft = draftIdSet.Contains(record.RmsOperationalRecordId);
+					var set = RecordTypedValuesService.Shape(version.Schema,
+						groupsByRecord[record.RmsOperationalRecordId].Where(g => isDraft ? g.RevisionId == null : g.RevisionId == record.CurrentRevisionId),
+						valuesByRecord[record.RmsOperationalRecordId].Where(v => isDraft ? v.RevisionId == null : v.RevisionId == record.CurrentRevisionId), canViewRestricted && report.IncludeRestricted);
+					Dictionary<string, string> map = null;
+					if (reportVersion != null && record.DefinitionVersion != reportVersion.Version)
 					{
-						// Same keys carry over; anything else is unmapped and the version is reported.
-						map = spec.Columns.Concat(spec.Filters.Select(f => f.FieldKey)).Concat(new[] { spec.GroupByFieldKey }).Concat(spec.Aggregates.Select(a => a.FieldKey)).Where(k => k != null && version.Schema.FindField(k) != null).Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(k => k, k => k, StringComparer.OrdinalIgnoreCase);
-						if (spec.Columns.Any(c => !BuiltInColumns.ContainsKey(c) && !map.ContainsKey(c)) && !result.UnmappedVersions.Contains(record.DefinitionVersion)) result.UnmappedVersions.Add(record.DefinitionVersion);
+						if (!spec.VersionMappings.TryGetValue(record.DefinitionVersion, out map))
+						{
+							// Same keys carry over; anything else is unmapped and the version is reported.
+							map = spec.Columns.Concat(spec.Filters.Select(f => f.FieldKey)).Concat(new[] { spec.GroupByFieldKey }).Concat(spec.Aggregates.Select(a => a.FieldKey)).Where(k => k != null && version.Schema.FindField(k) != null).Distinct(StringComparer.OrdinalIgnoreCase).ToDictionary(k => k, k => k, StringComparer.OrdinalIgnoreCase);
+							if (spec.Columns.Any(c => c != null && !BuiltInColumns.ContainsKey(c) && !map.ContainsKey(c)) && !result.UnmappedVersions.Contains(record.DefinitionVersion)) result.UnmappedVersions.Add(record.DefinitionVersion);
+						}
 					}
+
+					var candidate = (Record: record, Values: set, Schema: version.Schema, Map: map);
+					if (spec.Filters.All(f => Matches(f, Cell(candidate, f.FieldKey), record))) matched.Add(candidate);
 				}
-				shaped.Add((record, set, version.Schema, map));
+
+				if (projections.Count < ProjectionPageSize) break;
 			}
 
-			var matched = shaped.Where(s => spec.Filters.All(f => Matches(f, Cell(s, f.FieldKey), s.Record))).ToList();
+			var truncated = matched.Count > take || scanCapReached;
+			if (matched.Count > take) matched = matched.Take(take).ToList();
+			result.Truncated = truncated;
 			result.TotalMatched = matched.Count;
 			IEnumerable<(RmsOperationalRecord Record, RecordValueSet Values, RecordDefinitionSchema Schema, Dictionary<string, string> Map)> ordered = matched;
 			if (!string.IsNullOrWhiteSpace(spec.SortFieldKey))
@@ -244,11 +284,15 @@ namespace Resgrid.Services.Records
 				}
 			}
 			if (result.UnmappedVersions.Count > 0) result.Warnings.Add("Definition versions without a column mapping: " + string.Join(", ", result.UnmappedVersions.OrderBy(v => v)) + ". Declare a mapping to include them.");
-			if (truncated) result.Warnings.Add($"The run stopped at {take} records; narrow the window or filters.");
+			if (scanCapReached) result.Warnings.Add($"The run stopped after examining {MaxProjectionsScanned} Records; narrow the window or filters.");
+			else if (truncated) result.Warnings.Add($"The run stopped at {take} records; narrow the window or filters.");
 
-			report.LastRunOn = result.RanOn; report.LastRunByUserId = userId;
-			await _reports.UpdateAsync(report, cancellationToken, true);
-			await AuditAsync(departmentId, userId, report, $"Run saved report ({result.TotalMatched} records)", cancellationToken);
+			// Only the run-tracking columns: the row was loaded before a potentially long run, so writing it whole
+			// would revert any Name, SpecJson or MaxRowsPerRun edit made while the run was in flight.
+			var current = await _reports.GetByIdForDepartmentAsync(departmentId, reportId) ?? report;
+			current.LastRunOn = result.RanOn; current.LastRunByUserId = userId;
+			await _reports.UpdateAsync(current, cancellationToken, true);
+			await AuditAsync(departmentId, userId, current, $"Run saved report ({result.TotalMatched} records)", cancellationToken);
 			return result;
 		}
 
@@ -284,8 +328,10 @@ namespace Resgrid.Services.Records
 			var values = cell?.Values ?? (value == null ? new List<string>() : new List<string> { value });
 			switch (filter.Operator)
 			{
-				case RmsRuleOperator.IsEmpty: return values.Count == 0 && string.IsNullOrWhiteSpace(value);
-				case RmsRuleOperator.IsNotEmpty: return values.Count > 0 && !string.IsNullOrWhiteSpace(value);
+				// A scalar cell has no Values collection, so values falls back to a one-element list holding value:
+				// counting entries called a blank cell non-empty, and called a multi-select cell neither.
+				case RmsRuleOperator.IsEmpty: return string.IsNullOrWhiteSpace(value) && values.All(string.IsNullOrWhiteSpace);
+				case RmsRuleOperator.IsNotEmpty: return !string.IsNullOrWhiteSpace(value) || values.Any(v => !string.IsNullOrWhiteSpace(v));
 				case RmsRuleOperator.Equals: return values.Any(v => string.Equals(v, filter.Value, StringComparison.OrdinalIgnoreCase)) || cell != null && string.Equals(cell.Display, filter.Value, StringComparison.OrdinalIgnoreCase);
 				case RmsRuleOperator.NotEquals: return !(values.Any(v => string.Equals(v, filter.Value, StringComparison.OrdinalIgnoreCase)) || cell != null && string.Equals(cell.Display, filter.Value, StringComparison.OrdinalIgnoreCase));
 				case RmsRuleOperator.InSet: return values.Any(v => (filter.Values ?? new List<string>()).Contains(v, StringComparer.OrdinalIgnoreCase));

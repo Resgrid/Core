@@ -264,7 +264,8 @@ namespace Resgrid.Web.Services.Helpers
 			return new RecordAttachmentData
 			{
 				AttachmentId = a.RmsRecordAttachmentId, RecordId = a.RecordId, FileName = a.FileName, ContentType = a.ContentType, ByteSize = a.ByteSize, Checksum = a.Checksum, Classification = a.Classification,
-				Description = a.Description, UploadedByUserId = a.UploadedByUserId, UploadedOn = a.UploadedOn, ScanState = a.ScanState, ScanStateName = ((RmsAttachmentScanState)a.ScanState).ToString()
+				Description = a.Description, UploadedByUserId = a.UploadedByUserId, UploadedOn = a.UploadedOn, ScanState = a.ScanState, ScanStateName = ((RmsAttachmentScanState)a.ScanState).ToString(),
+				MetadataStripped = a.MetadataStripped, MediaLocationRetained = a.MediaLocationRetained
 			};
 		}
 
@@ -310,7 +311,7 @@ namespace Resgrid.Web.Services.Helpers
 				{
 					UnitId = u.UnitId, Dispatched = RecordsApiHelper.Utc(u.Dispatched), Enroute = RecordsApiHelper.Utc(u.Enroute), OnScene = RecordsApiHelper.Utc(u.OnScene), Released = RecordsApiHelper.Utc(u.Released), InQuarters = RecordsApiHelper.Utc(u.InQuarters)
 				}).ToList(),
-				Values = RecordsRms1bApiMapper.ToValueInputs(input.Values),
+				Values = input.Values == null ? null : RecordsRms1bApiMapper.ToValueInputs(input.Values),
 				ClientRecordId = input.ClientRecordId,
 				IdempotencyKey = input.IdempotencyKey,
 				OriginClient = origin,

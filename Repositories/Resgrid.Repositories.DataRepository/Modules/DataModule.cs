@@ -319,6 +319,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RmsRecordPrintLayoutsRepository>().As<IRmsRecordPrintLayoutsRepository>().InstancePerLifetimeScope();
 			// Field Records work assignments (RMS-1D, registry M0179)
 			builder.RegisterType<RmsRecordWorkAssignmentsRepository>().As<IRmsRecordWorkAssignmentsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsFieldRolloutEventsRepository>().As<IRmsFieldRolloutEventsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsExternalOrderConnectorsRepository>().As<IRmsExternalOrderConnectorsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsExternalOrderConnectorRunsRepository>().As<IRmsExternalOrderConnectorRunsRepository>().InstancePerLifetimeScope();
 			// NERIS incident report aggregate (RMS-2, registry M0164-M0166)
 			builder.RegisterType<RmsIncidentReportsRepository>().As<IRmsIncidentReportsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsSourceFactsRepository>().As<IRmsSourceFactsRepository>().InstancePerLifetimeScope();

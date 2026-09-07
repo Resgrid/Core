@@ -157,8 +157,11 @@ namespace Resgrid.Services.Records
 			config.HiddenSectionKeys = Keys(config.HiddenSectionKeys);
 			config.HiddenFieldKeys = Keys(config.HiddenFieldKeys);
 			config.PageBreakBeforeSectionKeys = Keys(config.PageBreakBeforeSectionKeys);
+			// "Order", "order" and "order " all normalize to the same key, and ToDictionary would throw on the second
+			// one — turning a client-supplied layout into an unhandled failure on save. Keep the first and move on.
 			config.SectionHeadings = (config.SectionHeadings ?? new Dictionary<string, string>()).Where(p => !string.IsNullOrWhiteSpace(p.Key) && !string.IsNullOrWhiteSpace(p.Value))
-				.ToDictionary(p => p.Key.Trim().ToLowerInvariant(), p => Trim(p.Value, 120), StringComparer.OrdinalIgnoreCase);
+				.GroupBy(p => p.Key.Trim().ToLowerInvariant(), StringComparer.Ordinal)
+				.ToDictionary(g => g.Key, g => Trim(g.First().Value, 120), StringComparer.OrdinalIgnoreCase);
 			config.SignatureBlockPlacement = RecordsDefinitionLayoutConfig.SignaturePlacements.Contains((config.SignatureBlockPlacement ?? string.Empty).Trim().ToLowerInvariant())
 				? config.SignatureBlockPlacement.Trim().ToLowerInvariant() : RecordsDefinitionLayoutConfig.SignatureAtEnd;
 			config.AttachmentListStyle = RecordsDefinitionLayoutConfig.AttachmentStyles.Contains((config.AttachmentListStyle ?? string.Empty).Trim().ToLowerInvariant())

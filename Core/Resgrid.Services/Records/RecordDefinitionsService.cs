@@ -21,7 +21,17 @@ namespace Resgrid.Services.Records
 	public class RecordDefinitionsService : IRecordDefinitionsService
 	{
 		public const string DefinitionAggregate = "RmsRecordDefinition";
-		private static readonly string[] KnownSubjectTypes = { "call", "unit", "group", "contact", "person", "checklist", "workorder", "inventory", "none" };
+		/// <summary>
+		/// Subject/reference types a definition may permit. The incident.* group and "vendor" are the incident-support
+		/// subjects (Back Office plan E1): a Record scoped to a command instance, an operational period, a checked-in
+		/// participant, a supplied resource, a facility, an external resource request, or a vendor. RMS-1C's EOC, SAR
+		/// and Mutual Aid packs need period- and participant-scoped records whether or not the Back Office ships.
+		/// </summary>
+		private static readonly string[] KnownSubjectTypes =
+		{
+			"call", "unit", "group", "contact", "person", "checklist", "workorder", "inventory", "none",
+			"incidentcommand", "incidentoperationalperiod", "incidentparticipant", "incidentresource", "incidentfacility", "incidentresourcerequest", "vendor"
+		};
 
 		private readonly IRmsRecordDefinitionsRepository _definitions;
 		private readonly IRmsRecordDefinitionVersionsRepository _versions;
@@ -149,7 +159,7 @@ namespace Resgrid.Services.Records
 				profileKey = rendering.ProfileKey;
 				draft.Schema = rendering.Schema;
 				draft.LifecyclePreset = rendering.Template.LifecyclePreset;
-				draft.Numbering = new RecordDefinitionNumbering { Prefix = rendering.Template.NumberPrefix };
+				draft.Numbering = new RecordDefinitionNumbering { Prefix = rendering.Template.NumberPrefix, PerIncidentSequence = rendering.Template.PerIncidentSequence };
 				draft.PermittedSubjectTypes = rendering.Template.PermittedSubjectTypes;
 				draft.Classification = rendering.Template.Classification;
 				draft.RetentionYears = rendering.Template.RetentionYears;
@@ -312,6 +322,10 @@ namespace Resgrid.Services.Records
 			if (string.IsNullOrWhiteSpace(numbering.Prefix) || numbering.Prefix.Length < 2 || numbering.Prefix.Length > 6 || !numbering.Prefix.All(c => char.IsLetterOrDigit(c) && !char.IsLower(c)))
 				issues.Add(RecordDefinitionIssue.Error("numbering.prefix", "bad_prefix", "The number prefix is 2 to 6 upper-case letters or digits."));
 			if (numbering.SequenceWidth < 3 || numbering.SequenceWidth > 8) issues.Add(RecordDefinitionIssue.Error("numbering.sequenceWidth", "out_of_range", "The sequence width is 3 to 8 digits."));
+			// Incident-scoped numbering only reaches its scope through a Call; without the subject every Record falls
+			// back to the department sequence, which is a surprise rather than an error worth blocking a publish on.
+			if (numbering.PerIncidentSequence && !(input.PermittedSubjectTypes ?? string.Empty).Split(',').Select(s => s.Trim()).Contains("call", StringComparer.OrdinalIgnoreCase))
+				issues.Add(RecordDefinitionIssue.Warning("numbering.perIncidentSequence", "no_call_subject", "Incident-scoped numbering needs the 'call' subject; Records without a Call use the department sequence."));
 			if (!Enum.IsDefined(typeof(RmsNumberAssignment), numbering.Assignment)) issues.Add(RecordDefinitionIssue.Error("numbering.assignment", "unknown", "Numbers are assigned OnFinalize or OnCreate."));
 
 			if (schema.Sections.Count == 0) issues.Add(RecordDefinitionIssue.Error("schema", "no_sections", "A definition needs at least one section."));

@@ -72,6 +72,16 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	}
 
 	/// <summary>Records work queue / list (RMS plan section 4.1, unified queue).</summary>
+	/// <summary>Per-app Field Records rollout (RMS plan RMS-1D): adoption, outcomes and where people gave up.</summary>
+	public class RecordsFieldRolloutView : RecordsBaseView
+	{
+		public RecordsModuleState ModuleState { get; set; }
+		public Department Department { get; set; }
+		public bool IsDepartmentAdmin { get; set; }
+		public RecordsFieldRollout Rollout { get; set; }
+		public int WindowDays { get; set; } = 30;
+	}
+
 	public class RecordsIndexView : RecordsBaseView
 	{
 		public RecordsModuleState ModuleState { get; set; }

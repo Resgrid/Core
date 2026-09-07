@@ -87,6 +87,10 @@ namespace Resgrid.Model
 		public string ArtifactChecksum { get; set; }
 		public byte[] ArtifactData { get; set; }
 		public string ArtifactSafeUrl { get; set; }
+		/// <summary>Connector that provisioned and maintains this order's snapshots; null for orders a person captured.</summary>
+		public string ConnectorId { get; set; }
+		/// <summary><see cref="RmsExternalOrderOwnership"/>: who owns the source view of the order.</summary>
+		public string OwnershipMarker { get; set; } = RmsExternalOrderOwnership.Manual;
 		public int Status { get; set; }
 		public DateTime? MobilizedOn { get; set; }
 		public DateTime? ReleasedOn { get; set; }
@@ -220,6 +224,9 @@ namespace Resgrid.Model
 		public int? StationGroupId { get; set; }
 		public string IdempotencyKey { get; set; }
 		public RmsOriginClient OriginClient { get; set; } = RmsOriginClient.Web;
+		/// <summary>Set only by a connector import.</summary>
+		public string ConnectorId { get; set; }
+		public string OwnershipMarker { get; set; }
 		public List<RecordDeploymentFillInput> Fills { get; set; } = new List<RecordDeploymentFillInput>();
 	}
 
@@ -253,6 +260,8 @@ namespace Resgrid.Model
 	/// <summary>A lifecycle step on one fill (accept/decline/mobilize/check-in/assign/release/demobilize/return).</summary>
 	public class RecordDeploymentFillTransitionInput
 	{
+		/// <summary>The fill row version the caller last saw; a mismatch rejects the step instead of losing a concurrent one.</summary>
+		public long? ExpectedRowVersion { get; set; }
 		public RmsDeploymentFillStatus Status { get; set; }
 		public DateTime? OccurredOn { get; set; }
 		public int? CapturedOffsetMinutes { get; set; }

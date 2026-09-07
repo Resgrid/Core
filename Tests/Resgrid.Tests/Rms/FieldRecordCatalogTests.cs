@@ -87,7 +87,7 @@ namespace Resgrid.Tests.Rms
 			_command = new Mock<IIncidentCommandService>();
 
 			_service = new FieldRecordsService(_cutover.Object, _authorization.Object, _flags.Object, _definitions.Object, _protection.Object, _records.Object,
-				_assignments.Object, _units.Object, _groups.Object, _calls.Object, _command.Object);
+				_assignments.Object, _units.Object, _groups.Object, _calls.Object, _command.Object, Mock.Of<IRecordsFieldRolloutService>());
 		}
 
 		[TearDown]

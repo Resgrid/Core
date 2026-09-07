@@ -533,6 +533,18 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(60),
 					stoppingToken);
 
+				// Worker ID 46 (Identifier Allocation Registry section 3.3, RMS-1C): external ordering-system
+				// connectors. Every fifteen minutes the sweep runs each enabled connector whose own poll interval
+				// has elapsed; the connector's hourly request limit and terms acknowledgement gate every read.
+				if (RecordsConnectorConfig.Enabled)
+				{
+					_logger.Log(LogLevel.Information, "Scheduling RMS Connector Poll");
+					await Client.ScheduleAsync("RMS Connector Poll",
+						new Commands.RmsConnectorPollCommand(46),
+						Cron.MinuteIntervals(15),
+						stoppingToken);
+				}
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

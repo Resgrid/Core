@@ -214,12 +214,19 @@ namespace Resgrid.Services.Records
 			record.DisplaySummary = definitionVersion == null ? BuildDisplaySummary(recordType, record, details, units) : definitionVersion.DefinitionKey;
 
 			var outboxIds = new List<long>();
+			// Concurrent creates can read the same maximum before either has inserted, and
+			// UX_RmsOperationalRecords_Department_RecordNumber then rejects the loser. Its number was never used, so
+			// the losing create takes a fresh one and tries again rather than failing the caller.
+			var allocatesOnCreate = definitionVersion != null && definitionVersion.Numbering.Assignment == RmsNumberAssignment.OnCreate;
+			for (var attempt = 0; ; attempt++)
+			{
+			outboxIds.Clear();
 			try
 			{
 			await InTransactionAsync(async () =>
 			{
 				// OnCreate numbering (plan 4.1): the number is reserved now; a cancelled draft records it as voided, never reused.
-				if (definitionVersion != null && definitionVersion.Numbering.Assignment == RmsNumberAssignment.OnCreate)
+				if (allocatesOnCreate)
 					record.RecordNumber = await AllocateRecordNumberAsync(record, cancellationToken);
 				await _records.InsertAsync(record, cancellationToken, true);
 				if (definitionVersion != null)
@@ -249,6 +256,14 @@ namespace Resgrid.Services.Records
 				var winner = await _records.GetByIdempotencyKeyAsync(departmentId, scopedKey);
 				if (winner == null) throw;
 				return await ReplayCreateAsync(departmentId, userId, winner, requestChecksum);
+			}
+			catch (DbException) when (allocatesOnCreate && attempt < NumberAllocationRetries)
+			{
+				// The transaction rolled back, so nothing of this attempt survives; reallocate and go round again.
+				record.RecordNumber = null;
+				continue;
+			}
+			break;
 			}
 
 			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
@@ -810,9 +825,11 @@ namespace Resgrid.Services.Records
 			if (RmsLifecycle.IsTerminal((RmsRecordState)record.State))
 				throw new RecordTransitionException(recordId, (RmsRecordState)record.State, (RmsRecordState)record.State, "attachments cannot be added to a voided or cancelled Record");
 
-			// Media hygiene (plan section 4.7): images are re-encoded so EXIF/XMP/IPTC never reach storage, active
-			// content is refused, and the bytes pass the configured scanner before they are stored.
-			var hygiene = RecordAttachmentHygiene.Sanitize(fileName, contentType, data);
+			// Media hygiene (plan section 4.7 and RMS-1D): images are re-encoded so EXIF/XMP/IPTC never reach storage,
+			// active content is refused, and the bytes pass the configured scanner before they are stored. Location
+			// survives only for a definition whose profile needs the coordinates, and either way the decision is
+			// recorded on the attachment rather than left to be inferred from the definition later.
+			var hygiene = RecordAttachmentHygiene.Sanitize(fileName, contentType, data, await RetainsMediaLocationAsync(record));
 			var scan = await _attachmentScanner.ScanAsync(hygiene.FileName, hygiene.ContentType, hygiene.Data, cancellationToken) ?? new RecordAttachmentScanResult();
 			if (scan.State == RmsAttachmentScanState.Rejected)
 				throw new RecordAttachmentRejectedException($"Attachment '{hygiene.FileName}' was rejected by the scanner: {scan.Detail}");
@@ -835,6 +852,7 @@ namespace Resgrid.Services.Records
 				UploadedOn = now,
 				ScanState = (int)scan.State,
 				MetadataStripped = hygiene.MetadataStripped,
+				MediaLocationRetained = hygiene.LocationRetained,
 				CreatedOn = now,
 				ModifiedOn = now,
 				RowVersion = 1
@@ -856,7 +874,7 @@ namespace Resgrid.Services.Records
 				var state = (RmsRecordState)record.State;
 				outboxIds.Add((await EnqueueLifecycleEventAsync(record, null, WorkflowTriggerEventType.RecordAttachmentAdded, state, state, null, cancellationToken, null,
 					new Dictionary<string, object> { ["attachment"] = AttachmentBlock(attachment, (await _attachments.GetMetadataForRecordAsync(departmentId, recordId))?.Count() ?? 1) })).DomainEventOutboxId);
-				await AuditAsync(departmentId, userId, recordId, null, RmsAccessAuditAction.Change, "Add attachment", RmsOriginClient.Web, cancellationToken, new { attachment.RmsRecordAttachmentId, attachment.ByteSize, attachment.Checksum });
+				await AuditAsync(departmentId, userId, recordId, null, RmsAccessAuditAction.Change, "Add attachment", RmsOriginClient.Web, cancellationToken, new { attachment.RmsRecordAttachmentId, attachment.ByteSize, attachment.Checksum, attachment.MetadataStripped, attachment.MediaLocationRetained });
 			});
 			await _outbox.DispatchAfterCommitAsync(outboxIds, cancellationToken);
 
@@ -876,6 +894,8 @@ namespace Resgrid.Services.Records
 				checksum = attachment.Checksum,
 				classification = ((RmsEvidenceClassification)attachment.Classification).ToString(),
 				scan_state = ((RmsAttachmentScanState)attachment.ScanState).ToString(),
+				metadata_stripped = attachment.MetadataStripped,
+				media_location_retained = attachment.MediaLocationRetained,
 				uploaded_by_user_id = attachment.UploadedByUserId,
 				uploaded_on = attachment.UploadedOn,
 				count
@@ -1172,6 +1192,7 @@ namespace Resgrid.Services.Records
 			var prefixBase = RmsDefinitionKeys.DefaultNumberPrefix(record.DefinitionKey);
 			var year = (record.StartedOn ?? DateTime.UtcNow).Year;
 			var perGroup = config.PerGroupSequence;
+			var perIncident = false;
 			var includeYear = config.IncludeYear;
 			var configuredWidth = config.SequenceWidth;
 			if (record.RecordType == null)
@@ -1182,14 +1203,20 @@ namespace Resgrid.Services.Records
 				{
 					if (!string.IsNullOrWhiteSpace(numbering.Prefix)) prefixBase = numbering.Prefix;
 					perGroup = numbering.PerGroupSequence;
+					perIncident = numbering.PerIncidentSequence;
 					includeYear = numbering.ResetYearly;
 					configuredWidth = numbering.SequenceWidth;
 				}
 			}
 			var prefix = prefixBase + "-";
+			// Incident scope is the narrowest and comes first: ICS-style forms number per incident, and the sequence
+			// resets with the Call rather than with the year. A Record with no Call keeps the wider scope.
+			var incidentScoped = perIncident && record.CallId.HasValue;
+			if (incidentScoped)
+				prefix += "C" + record.CallId.Value + "-";
 			if (perGroup && record.StationGroupId.HasValue)
 				prefix += "G" + record.StationGroupId.Value + "-";
-			if (includeYear)
+			if (includeYear && !incidentScoped)
 				prefix += year + "-";
 
 			var width = Math.Max(3, Math.Min(8, configuredWidth <= 0 ? 4 : configuredWidth));
@@ -1379,6 +1406,24 @@ namespace Resgrid.Services.Records
 		/// participants and nothing restricted. Shared so the lifecycle events and the RMS-3 overdue event
 		/// (worker 42) describe a Record identically.
 		/// </summary>
+		/// <summary>Whether this Record's definition version asks for photo coordinates to survive upload.</summary>
+		private async Task<bool> RetainsMediaLocationAsync(RmsOperationalRecord record)
+		{
+			if (record?.RecordType != null || string.IsNullOrWhiteSpace(record?.DefinitionKey))
+				return false;
+			try
+			{
+				var version = await _definitions.GetVersionAsync(record.DepartmentId, record.DefinitionKey, record.DefinitionVersion);
+				return version?.ClientSurface?.RetainMediaLocation == true;
+			}
+			catch (Exception ex)
+			{
+				// A definition that cannot be read is not a licence to keep coordinates; strip and carry on.
+				Logging.LogException(ex, "Media location policy could not be read; stripping location.");
+				return false;
+			}
+		}
+
 		public static object RecordBlock(RmsOperationalRecord record, RmsRevision revision, RmsRecordState state)
 		{
 			return new

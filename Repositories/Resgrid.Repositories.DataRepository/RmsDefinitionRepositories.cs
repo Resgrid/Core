@@ -226,6 +226,16 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<IEnumerable<RmsExternalOrderFill>> GetForOrderAsync(int departmentId, string orderId)
 			=> QueryAsync<RmsExternalOrderFill>($"SELECT * FROM {Tbl("RmsExternalOrderFills")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExternalOrderId")} = {P}OrderId AND {Col("DeletedOn")} IS NULL ORDER BY {Col("RequestNumber")}", new { DepartmentId = departmentId, OrderId = orderId });
 
+		public async Task<IEnumerable<RmsExternalOrderFill>> GetForOrdersAsync(int departmentId, IEnumerable<string> orderIds)
+		{
+			var rows = new List<RmsExternalOrderFill>();
+			foreach (var ids in (orderIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+				rows.AddRange(await QueryAsync<RmsExternalOrderFill>(
+					$"SELECT * FROM {Tbl("RmsExternalOrderFills")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsExternalOrderId", "Ids")} AND {Col("DeletedOn")} IS NULL ORDER BY {Col("RequestNumber")}",
+					new { DepartmentId = departmentId, Ids = ids }));
+			return rows;
+		}
+
 		public Task<RmsExternalOrderFill> GetByIdForDepartmentAsync(int departmentId, string fillId)
 			=> QueryFirstOrDefaultAsync<RmsExternalOrderFill>($"SELECT * FROM {Tbl("RmsExternalOrderFills")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExternalOrderFillId")} = {P}Id AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, Id = fillId });
 	}

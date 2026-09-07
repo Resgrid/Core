@@ -185,6 +185,45 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public int? OriginClient { get; set; }
 	}
 
+	/// <summary>A batch of safe rollout datapoints from one app (RMS plan RMS-1D). Counts and codes only.</summary>
+	public class FieldRecordTelemetryInput
+	{
+		public int? OriginClient { get; set; }
+		public string AppVersion { get; set; }
+		public string ClientCapability { get; set; }
+		public List<FieldRecordTelemetryEventInput> Events { get; set; } = new List<FieldRecordTelemetryEventInput>();
+	}
+
+	public class FieldRecordTelemetryEventInput
+	{
+		/// <summary>One of RmsFieldRolloutEventTypes; anything else is dropped rather than stored.</summary>
+		public string EventType { get; set; }
+		/// <summary>"ok" or the coded refusal/conflict the client was given.</summary>
+		public string Outcome { get; set; }
+		public string DefinitionKey { get; set; }
+		public int? DefinitionVersion { get; set; }
+		public string RecordId { get; set; }
+		public long? DurationMs { get; set; }
+		public int? ItemCount { get; set; }
+		public DateTime? OccurredOn { get; set; }
+	}
+
+	public class FieldRecordTelemetryResult : StandardApiResponseV4Base
+	{
+		public FieldRecordTelemetryData Data { get; set; }
+	}
+
+	public class FieldRecordTelemetryData
+	{
+		/// <summary>How many events were kept after validation and truncation.</summary>
+		public int Accepted { get; set; }
+	}
+
+	public class FieldRecordRolloutResult : StandardApiResponseV4Base
+	{
+		public RecordsFieldRollout Data { get; set; }
+	}
+
 	public class FieldRecordAssignmentCommandInput
 	{
 		public string AssignmentId { get; set; }

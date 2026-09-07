@@ -22,7 +22,7 @@ namespace Resgrid.Tests.Rms
 		public async Task Every_template_validates_under_every_supported_profile_and_locale()
 		{
 			var catalog = await _h.Templates.GetCatalogAsync();
-			catalog.Select(p => p.PackKey).Should().BeEquivalentTo(new[] { "template.launch", "pack.cert", "pack.sar", "pack.disaster-assessment", "pack.eoc", "pack.hazmat", "pack.industrial", "pack.exercise", "pack.mutual-aid" });
+			catalog.Select(p => p.PackKey).Should().BeEquivalentTo(new[] { "template.launch", "pack.cert", "pack.sar", "pack.disaster-assessment", "pack.eoc", "pack.hazmat", "pack.industrial", "pack.exercise", "pack.mutual-aid", "pack.incident-support" });
 			catalog.Single(p => p.PackKey == "template.launch").Definitions.Select(d => d.Key).Should().BeEquivalentTo(new[]
 			{
 				"template.security-patrol", "template.security-incident", "template.delivery-run", "template.bus-route-eod", "template.shift-summary", "template.job-completion"
@@ -81,7 +81,7 @@ namespace Resgrid.Tests.Rms
 		public async Task Preview_packs_are_labeled_and_locked_classification_floors_apply()
 		{
 			var catalog = await _h.Templates.GetCatalogAsync();
-			catalog.Where(p => p.IsPreview).Select(p => p.PackKey).Should().BeEquivalentTo(new[] { "pack.cert", "pack.mutual-aid" });
+			catalog.Where(p => p.IsPreview).Select(p => p.PackKey).Should().BeEquivalentTo(new[] { "pack.cert", "pack.mutual-aid", "pack.incident-support" });
 			catalog.Single(p => p.PackKey == "pack.hazmat").IsPreview.Should().BeFalse();
 			var incident = await _h.Templates.RenderAsync("template.security-incident", "generic", null);
 			incident.Schema.FindField("name").Classification.Should().Be(RmsFieldClassification.Restricted, "involved-person names carry the pack's restricted floor");
@@ -141,7 +141,7 @@ namespace Resgrid.Tests.Rms
 			var written = await _h.Templates.EnsureCatalogAsync();
 			written.Should().BeGreaterThan(0);
 			_h.Defs.Packs.Should().HaveCount(RecordTemplateCatalog.Packs.Count).And.OnlyContain(p => p.DepartmentId == RmsTemplatePackVersion.ProductDepartmentId && p.ContentChecksum != null);
-			_h.Defs.Profiles.Select(p => p.ProfileKey).Should().BeEquivalentTo(new[] { "generic", "us", "ca", "us-ca" });
+			_h.Defs.Profiles.Select(p => p.ProfileKey).Should().BeEquivalentTo(new[] { "generic", "us", "ca", "us-ca", "us-nwcg", "us-nims", "us-calif" });
 			(await _h.Templates.EnsureCatalogAsync()).Should().Be(0, "a second call is a no-op within the process");
 			var profiles = await _h.Templates.GetProfilesAsync();
 			profiles.Single(p => p.ProfileKey == "us").CurrencyCode.Should().Be("USD");

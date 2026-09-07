@@ -30,11 +30,13 @@ namespace Resgrid.Services.Records
 		private readonly IDepartmentGroupsService _groups;
 		private readonly ICallsService _calls;
 		private readonly IIncidentCommandService _command;
+		private readonly IRecordsFieldRolloutService _rollout;
 
 		public FieldRecordsService(IRecordsCutoverService cutover, IRecordsAuthorizationService authorization, IFeatureToggleService flags, IRecordDefinitionsService definitions,
 			IDepartmentDataProtectionService protection, IRecordsService records, IRecordWorkAssignmentsService assignments, IUnitsService units, IDepartmentGroupsService groups,
-			ICallsService calls, IIncidentCommandService command)
+			ICallsService calls, IIncidentCommandService command, IRecordsFieldRolloutService rollout)
 		{
+			_rollout = rollout;
 			_cutover = cutover;
 			_authorization = authorization;
 			_flags = flags;
@@ -172,7 +174,7 @@ namespace Resgrid.Services.Records
 			if (!preflight.Ok)
 			{
 				catalog.Reasons.AddRange(preflight.Reasons);
-				return catalog;
+				return await RecordCatalogOutcomeAsync(departmentId, userId, request, capability, catalog);
 			}
 
 			var verification = await VerifyContextAsync(departmentId, userId, request.Origin, context);
@@ -180,14 +182,14 @@ namespace Resgrid.Services.Records
 			if (!verification.Ok)
 			{
 				catalog.Reasons.AddRange(verification.Reasons);
-				return catalog;
+				return await RecordCatalogOutcomeAsync(departmentId, userId, request, capability, catalog);
 			}
 
 			catalog.ScopeStamp = await _authorization.GetReadScopeStampAsync(userId, departmentId);
 			if (catalog.ScopeStamp == null)
 			{
 				catalog.Reasons.Add(FieldRecordCatalogV1.ExclusionReasons.NotMember);
-				return catalog;
+				return await RecordCatalogOutcomeAsync(departmentId, userId, request, capability, catalog);
 			}
 
 			if (!await _authorization.HasPermissionAsync(userId, departmentId, PermissionTypes.CreateRecord))
@@ -201,10 +203,35 @@ namespace Resgrid.Services.Records
 				|| string.Equals(preflight.ProtectionState, DepartmentDataProtectionState.Rotating.ToString(), StringComparison.Ordinal);
 
 			AddLockedStarters(catalog, request.Origin, context, capability);
-			await AddDepartmentDefinitionsAsync(departmentId, catalog, request.Origin, request.AppVersion, capability, context, enforced);
+			// A transient listing failure and a department with nothing published look identical to the app, and the
+			// app caches what it is told, so say the catalog is unusable rather than handing back the starters alone.
+			if (!await AddDepartmentDefinitionsAsync(departmentId, catalog, request.Origin, request.AppVersion, capability, context, enforced))
+			{
+				catalog.Reasons.Add(FieldRecordCatalogV1.ExclusionReasons.RecordsNotUsable);
+				return await RecordCatalogOutcomeAsync(departmentId, userId, request, capability, catalog);
+			}
 
 			catalog.Definitions = catalog.Definitions.OrderBy(d => d.Locked ? 1 : 0).ThenBy(d => d.Name, StringComparer.CurrentCultureIgnoreCase).ToList();
 			catalog.Ok = true;
+			return await RecordCatalogOutcomeAsync(departmentId, userId, request, capability, catalog);
+		}
+
+		/// <summary>
+		/// A catalog refusal is the one rollout outcome a client cannot report faithfully — it may not have been
+		/// given a reason it understands, and a refused client is exactly the one whose telemetry is unreliable.
+		/// So the server records it (RMS plan RMS-1D rollout dashboards) and never lets that recording fail a read.
+		/// </summary>
+		private async Task<FieldRecordCatalog> RecordCatalogOutcomeAsync(int departmentId, string userId, FieldRecordCatalogRequest request, string capability, FieldRecordCatalog catalog)
+		{
+			try
+			{
+				var outcome = catalog.Ok ? "ok" : (catalog.Reasons.FirstOrDefault() ?? "denied");
+				await _rollout.RecordAsync(departmentId, userId, request.Origin, request.AppVersion, capability, RmsFieldRolloutEventTypes.Catalog, outcome);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, "Field Records catalog outcome could not be recorded.");
+			}
 			return catalog;
 		}
 
@@ -245,7 +272,8 @@ namespace Resgrid.Services.Records
 			}
 		}
 
-		private async Task AddDepartmentDefinitionsAsync(int departmentId, FieldRecordCatalog catalog, RmsOriginClient origin, string appVersion, string capability, FieldRecordContext context, bool protectionEnforced)
+		/// <summary>False when the definitions could not be listed; the caller must not report that as an empty catalog.</summary>
+		private async Task<bool> AddDepartmentDefinitionsAsync(int departmentId, FieldRecordCatalog catalog, RmsOriginClient origin, string appVersion, string capability, FieldRecordContext context, bool protectionEnforced)
 		{
 			List<RmsRecordDefinitionVersion> published;
 			List<RecordDefinitionSummary> summaries;
@@ -257,7 +285,7 @@ namespace Resgrid.Services.Records
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex, "Field Records catalog could not list department definitions.");
-				return;
+				return false;
 			}
 
 			var byKey = summaries.ToDictionary(s => s.Key, StringComparer.OrdinalIgnoreCase);
@@ -328,6 +356,8 @@ namespace Resgrid.Services.Records
 					PrefillVersion = version.Version
 				});
 			}
+
+			return true;
 		}
 
 		private static bool SurfaceAllows(RecordDefinitionClientSurface surface, RmsOriginClient origin)

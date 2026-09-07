@@ -43,8 +43,13 @@ namespace Resgrid.Services.Records
 					fields[$"{accessor.Key}:{details.RmsOperationalRecordDetailId}"] = accessor.Value.Get(details);
 				}
 			}
+			// RecordsDocumentService.Project drops a protected or classified attachment outright for a caller without
+			// RecordRestricted_View; the reveal has to agree, or the file name leaks through the other door.
 			foreach (var attachment in aggregate.Attachments ?? new List<RmsRecordAttachment>())
+			{
+				if (!canViewRestricted && attachment.RequiresRestrictedAccess) continue;
 				fields[$"rmsrecordattachments.filename:{attachment.RmsRecordAttachmentId}"] = attachment.FileName;
+			}
 
 			// Department-definition values are not cataloged yet (catalog v11); withheld cells stay withheld here too.
 			await _records.RecordAccessAsync(departmentId, userId, aggregate.Record.RmsOperationalRecordId, null, RmsAccessAuditAction.Read, "Protected reveal", ipAddress);
@@ -78,7 +83,10 @@ namespace Resgrid.Services.Records
 			if (canViewRestricted)
 				Add(aggregate.Casualties, c => c.RmsCasualtyRescueId, RmsProtectedFields.Casualties);
 			foreach (var attachment in aggregate.Attachments ?? new List<RmsRecordAttachment>())
+			{
+				if (!canViewRestricted && attachment.RequiresRestrictedAccess) continue;
 				fields[$"rmsrecordattachments.filename:{attachment.RmsRecordAttachmentId}"] = attachment.FileName;
+			}
 
 			await _incidents.RecordAccessAsync(departmentId, userId, aggregate.Report.RmsIncidentReportId, null, RmsAccessAuditAction.Read, "Protected reveal", ipAddress);
 			return new RecordRevealResult { Success = true, Fields = fields };

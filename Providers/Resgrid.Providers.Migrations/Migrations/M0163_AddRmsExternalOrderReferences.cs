@@ -62,7 +62,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("ModifiedByUserId").AsString(128).Nullable()
 					.WithColumn("RowVersion").AsInt64().NotNullable().WithDefaultValue(1L)
 					.WithColumn("DeletedOn").AsDateTime2().Nullable();
-				Execute.Sql("CREATE NONCLUSTERED INDEX IX_RmsExternalOrders_Department_Record ON RmsExternalOrders (DepartmentId, RecordId);");
+				Execute.Sql("CREATE UNIQUE NONCLUSTERED INDEX UX_RmsExternalOrders_Department_Record ON RmsExternalOrders (DepartmentId, RecordId) WHERE DeletedOn IS NULL;");
 				Execute.Sql("CREATE NONCLUSTERED INDEX IX_RmsExternalOrders_Department_Order ON RmsExternalOrders (DepartmentId, OrderNumber);");
 			}
 

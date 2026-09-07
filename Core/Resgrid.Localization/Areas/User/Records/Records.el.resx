@@ -1122,6 +1122,7 @@
   <data name="DefinitionSequenceWidth" xml:space="preserve"><value>Πλάτος ακολουθίας</value></data>
   <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Ανάθεση αριθμού</value></data>
   <data name="DefinitionPerGroup" xml:space="preserve"><value>Ακολουθία ανά σταθμό</value></data>
+  <data name="DefinitionPerIncident" xml:space="preserve"><value>Ακολουθία ανά συμβάν</value></data>
   <data name="DefinitionResetYearly" xml:space="preserve"><value>Επαναφορά ετησίως</value></data>
   <data name="DefinitionClassification" xml:space="preserve"><value>Ταξινόμηση</value></data>
   <data name="DefinitionRetention" xml:space="preserve"><value>Διατήρηση (έτη)</value></data>
@@ -1315,4 +1316,106 @@
   <data name="Projectionresource-summary" xml:space="preserve"><value>Σύνοψη πόρων</value></data>
   <data name="Projectionqualifications" xml:space="preserve"><value>Προσόντα</value></data>
   <data name="Projectioncommand-summary" xml:space="preserve"><value>Σύνοψη διοίκησης</value></data>
+  <data name="FieldRollout" xml:space="preserve"><value>Ανάπτυξη εγγραφών πεδίου</value></data>
+  <data name="FieldRolloutIntro" xml:space="preserve"><value>Πώς τα πάει κάθε επιχειρησιακή εφαρμογή με τις εγγραφές: ποιος έχει χρησιμοποιήσιμη έκδοση, τι απορρίφθηκε και πού σταμάτησε η σύνταξη. Μόνο μετρήσεις — η σελίδα δεν δείχνει ποτέ τι έγραψε κάποιος.</value></data>
+  <data name="RolloutUnavailable" xml:space="preserve"><value>Η προβολή ανάπτυξης δεν είναι διαθέσιμη για τον λογαριασμό σας.</value></data>
+  <data name="RolloutNoAppsEnabled" xml:space="preserve"><value>Καμία επιχειρησιακή εφαρμογή δεν έχει ενεργές εγγραφές πεδίου.</value></data>
+  <data name="RolloutWindowDays" xml:space="preserve"><value>{0} ημέρες</value></data>
+  <data name="RolloutFlagOn" xml:space="preserve"><value>Ενεργό</value></data>
+  <data name="RolloutFlagOff" xml:space="preserve"><value>Ανενεργό</value></data>
+  <data name="RolloutActiveUsers" xml:space="preserve"><value>Άτομα που το χρησιμοποιούν</value></data>
+  <data name="RolloutCompatible" xml:space="preserve"><value>Σε χρησιμοποιήσιμη έκδοση</value></data>
+  <data name="RolloutMinimumVersion" xml:space="preserve"><value>ελάχιστη {0}</value></data>
+  <data name="RolloutRecords" xml:space="preserve"><value>Εγγραφές</value></data>
+  <data name="RolloutRecordsValue" xml:space="preserve"><value>{0} ξεκίνησαν, {1} οριστικοποιήθηκαν</value></data>
+  <data name="RolloutCatalog" xml:space="preserve"><value>Αιτήματα καταλόγου</value></data>
+  <data name="RolloutFailures" xml:space="preserve"><value>{0} απορρίφθηκαν</value></data>
+  <data name="RolloutAuthoring" xml:space="preserve"><value>Σύνταξη</value></data>
+  <data name="RolloutAuthoringValue" xml:space="preserve"><value>{0} ξεκίνησαν, {1} στάλθηκαν, {2} απέτυχαν</value></data>
+  <data name="RolloutSync" xml:space="preserve"><value>Συγχρονισμοί</value></data>
+  <data name="RolloutConflicts" xml:space="preserve"><value>Εμφανισμένες συγκρούσεις</value></data>
+  <data name="RolloutAttachments" xml:space="preserve"><value>Συνημμένα</value></data>
+  <data name="RolloutAttachmentsValue" xml:space="preserve"><value>{0} μεταφορτώθηκαν, {1} απέτυχαν</value></data>
+  <data name="RolloutCompleted" xml:space="preserve"><value>Ολοκληρώθηκαν στην εφαρμογή</value></data>
+  <data name="RolloutCompletedValue" xml:space="preserve"><value>{0}, διάμεσος {1} λεπτά</value></data>
+  <data name="RolloutAbandoned" xml:space="preserve"><value>Έμειναν ημιτελείς</value></data>
+  <data name="RolloutWebHandoff" xml:space="preserve"><value>Στάλθηκαν στην εφαρμογή web</value></data>
+  <data name="RolloutVersions" xml:space="preserve"><value>Εκδόσεις σε χρήση</value></data>
+  <data name="RolloutVersion" xml:space="preserve"><value>Έκδοση</value></data>
+  <data name="RolloutUsers" xml:space="preserve"><value>Άτομα</value></data>
+  <data name="RolloutTooOld" xml:space="preserve"><value>Πολύ παλιά</value></data>
+  <data name="RolloutRefusals" xml:space="preserve"><value>Γιατί απορρίφθηκε ο κατάλογος</value></data>
+  <data name="RolloutGeneratedOn" xml:space="preserve"><value>Δημιουργήθηκε {0}.</value></data>
+  <data name="AppResponder" xml:space="preserve"><value>Responder</value></data>
+  <data name="AppUnit" xml:space="preserve"><value>Μονάδα</value></data>
+  <data name="AppIncidentCommand" xml:space="preserve"><value>Διοίκηση συμβάντος</value></data>
+  <data name="AppDispatch" xml:space="preserve"><value>Αποστολή</value></data>
+  <data name="MediaLocationRetained" xml:space="preserve"><value>Διατηρήθηκε η τοποθεσία της φωτογραφίας</value></data>
+  <data name="MediaLocationStripped" xml:space="preserve"><value>Αφαιρέθηκε η τοποθεσία της φωτογραφίας</value></data>
+  <data name="DefinitionRetainMediaLocation" xml:space="preserve"><value>Διατήρηση συντεταγμένων φωτογραφιών στα συνημμένα</value></data>
+  <data name="DefinitionRetainMediaLocationHelp" xml:space="preserve"><value>Απενεργοποιημένο από προεπιλογή: η τοποθεσία και τα στοιχεία συσκευής αφαιρούνται κατά τη μεταφόρτωση. Ενεργοποιήστε το μόνο όταν η φόρμα χρειάζεται πραγματικά το σημείο λήψης, όπως εκτίμηση ζημιών ή αναφορά ίχνους.</value></data>
+  <data name="Connectors" xml:space="preserve"><value>Εξωτερικοί σύνδεσμοι</value></data>
+  <data name="ConnectorsIntro" xml:space="preserve"><value>Διαβάζει παραγγελίες πόρων από εξωτερικό σύστημα παραγγελιών μέσω τεκμηριωμένης ροής, κρυπτογραφημένου διαπιστευτηρίου, ορίου αιτημάτων και των όρων της πηγής. Η πηγή παραμένει αυθεντική: κάθε αλλαγή καταγράφεται ως νέο στιγμιότυπο και τίποτα τοπικό δεν αλλάζει αυτόματα.</value></data>
+  <data name="NewConnector" xml:space="preserve"><value>Νέος σύνδεσμος</value></data>
+  <data name="ConnectorName" xml:space="preserve"><value>Όνομα συνδέσμου</value></data>
+  <data name="ConnectorProvider" xml:space="preserve"><value>Πάροχος ροής</value></data>
+  <data name="ConnectorSourceSystem" xml:space="preserve"><value>Σύστημα πηγής</value></data>
+  <data name="ConnectorBaseUrl" xml:space="preserve"><value>Ρίζα ροής (https)</value></data>
+  <data name="ConnectorFeedContract" xml:space="preserve"><value>Η πηγή πρέπει να παρέχει το Resgrid Mutual-Aid Order Feed v1 (JSON). Η απόξεση οθόνης και οι συναγόμενες ενημερώσεις δεν υποστηρίζονται.</value></data>
+  <data name="ConnectorCredentialKind" xml:space="preserve"><value>Είδος διαπιστευτηρίου</value></data>
+  <data name="ConnectorCredentialHeaderName" xml:space="preserve"><value>Όνομα κεφαλίδας</value></data>
+  <data name="ConnectorCredential" xml:space="preserve"><value>Διαπιστευτήριο</value></data>
+  <data name="ConnectorCredentialHelp" xml:space="preserve"><value>Κρυπτογραφείται σε ηρεμία και δεν εμφανίζεται ξανά. Αφήστε το κενό για να διατηρηθεί το αποθηκευμένο διαπιστευτήριο.</value></data>
+  <data name="ConnectorCredentialStored" xml:space="preserve"><value>Διαπιστευτήριο αποθηκευμένο</value></data>
+  <data name="ConnectorReadEnabled" xml:space="preserve"><value>Χορηγήθηκε εξουσιοδότηση ανάγνωσης</value></data>
+  <data name="ConnectorWriteRefused" xml:space="preserve"><value>Σε αυτήν την έκδοση δεν χορηγείται εξουσιοδότηση εγγραφής. Τίποτα δεν γράφεται ποτέ πίσω στο σύστημα παραγγελιών.</value></data>
+  <data name="ConnectorPollInterval" xml:space="preserve"><value>Διάστημα ελέγχου (λεπτά)</value></data>
+  <data name="ConnectorMaxRequestsPerHour" xml:space="preserve"><value>Αιτήματα ανά ώρα</value></data>
+  <data name="ConnectorTermsReference" xml:space="preserve"><value>Όροι πηγής</value></data>
+  <data name="ConnectorTermsAcknowledge" xml:space="preserve"><value>Αποδοχή των όρων της πηγής</value></data>
+  <data name="ConnectorTermsAcknowledged" xml:space="preserve"><value>Όροι αποδεκτοί</value></data>
+  <data name="ConnectorTermsNotAcknowledged" xml:space="preserve"><value>Οι όροι δεν έχουν γίνει ακόμη αποδεκτοί</value></data>
+  <data name="ConnectorEnable" xml:space="preserve"><value>Ενεργοποίηση συνδέσμου</value></data>
+  <data name="ConnectorDisable" xml:space="preserve"><value>Απενεργοποίηση συνδέσμου</value></data>
+  <data name="ConnectorEnabled" xml:space="preserve"><value>Ενεργός</value></data>
+  <data name="ConnectorDisabled" xml:space="preserve"><value>Ανενεργός</value></data>
+  <data name="ConnectorEnabledMessage" xml:space="preserve"><value>Ο σύνδεσμος ενεργοποιήθηκε.</value></data>
+  <data name="ConnectorDisabledMessage" xml:space="preserve"><value>Ο σύνδεσμος απενεργοποιήθηκε.</value></data>
+  <data name="ConnectorTermsAcknowledgedMessage" xml:space="preserve"><value>Οι όροι της πηγής έγιναν αποδεκτοί.</value></data>
+  <data name="ConnectorRunNow" xml:space="preserve"><value>Ανάγνωση ροής τώρα</value></data>
+  <data name="ConnectorRotateToken" xml:space="preserve"><value>Έκδοση νέου εισερχόμενου διακριτικού</value></data>
+  <data name="ConnectorInboundToken" xml:space="preserve"><value>Εισερχόμενο διακριτικό</value></data>
+  <data name="ConnectorInboundTokenOnce" xml:space="preserve"><value>Αντιγράψτε αυτό το διακριτικό τώρα. Εμφανίζεται μία φορά· ο διακομιστής κρατά μόνο ένα hash.</value></data>
+  <data name="ConnectorInboundEndpoint" xml:space="preserve"><value>Σημείο εισερχόμενης παράδοσης</value></data>
+  <data name="ConnectorDelete" xml:space="preserve"><value>Διαγραφή συνδέσμου</value></data>
+  <data name="ConnectorDeleteConfirm" xml:space="preserve"><value>Διαγραφή αυτού του συνδέσμου; Οι εισαγόμενες αναπτύξεις και τα στιγμιότυπά τους διατηρούνται.</value></data>
+  <data name="ConnectorRuns" xml:space="preserve"><value>Ημερολόγιο εκτελέσεων</value></data>
+  <data name="ConnectorRunTrigger" xml:space="preserve"><value>Έναυσμα</value></data>
+  <data name="ConnectorRunOutcome" xml:space="preserve"><value>Αποτέλεσμα</value></data>
+  <data name="ConnectorRunCounts" xml:space="preserve"><value>Είδαμε / δημιουργήθηκαν / στιγμιότυπα / αιτήματα / αμετάβλητα / απορρίφθηκαν / συγκρούσεις</value></data>
+  <data name="ConnectorLastPolled" xml:space="preserve"><value>Τελευταία ανάγνωση</value></data>
+  <data name="ConnectorLastSuccess" xml:space="preserve"><value>Τελευταία επιτυχία</value></data>
+  <data name="ConnectorLastError" xml:space="preserve"><value>Τελευταίο σφάλμα</value></data>
+  <data name="ConnectorSaved" xml:space="preserve"><value>Ο σύνδεσμος αποθηκεύτηκε.</value></data>
+  <data name="ConnectorCreated" xml:space="preserve"><value>Ο σύνδεσμος δημιουργήθηκε. Παραμένει ανενεργός μέχρι να γίνουν αποδεκτοί οι όροι της πηγής και να ενεργοποιηθεί.</value></data>
+  <data name="ConnectorDeleted" xml:space="preserve"><value>Ο σύνδεσμος διαγράφηκε.</value></data>
+  <data name="ConnectorRunFinished" xml:space="preserve"><value>Η ανάγνωση της ροής ολοκληρώθηκε (δημιουργήθηκαν / στιγμιότυπα / αιτήματα / συγκρούσεις).</value></data>
+  <data name="ConnectorTokenRotated" xml:space="preserve"><value>Εκδόθηκε νέο εισερχόμενο διακριτικό· το παλιό δεν λειτουργεί πλέον.</value></data>
+  <data name="ConnectorsOff" xml:space="preserve"><value>Οι εξωτερικοί σύνδεσμοι είναι απενεργοποιημένοι για αυτήν την εγκατάσταση.</value></data>
+  <data name="ConnectorState" xml:space="preserve"><value>Κατάσταση συνδέσμου</value></data>
+  <data name="ConnectorReady" xml:space="preserve"><value>Έτοιμος</value></data>
+  <data name="ConnectorNotReady" xml:space="preserve"><value>Μη έτοιμος</value></data>
+  <data name="Reconciliation" xml:space="preserve"><value>Συμφωνία</value></data>
+  <data name="ReconciliationIntro" xml:space="preserve"><value>Όπου το τελευταίο στιγμιότυπο της πηγής και η εγγραφή ανάπτυξης αυτού του τμήματος διαφωνούν. Τίποτα δεν εφαρμόζεται αυτόματα· αποφασίζει ένας συντονιστής.</value></data>
+  <data name="ReconciliationNone" xml:space="preserve"><value>Καμία διαφωνία μεταξύ της πηγής και των εγγραφών σας.</value></data>
+  <data name="ReconciliationKind" xml:space="preserve"><value>Διαφωνία</value></data>
+  <data name="ReconciliationSourceStatus" xml:space="preserve"><value>Η πηγή αναφέρει</value></data>
+  <data name="ReconciliationLocalStatus" xml:space="preserve"><value>Η εγγραφή σας αναφέρει</value></data>
+  <data name="ReconciliationSourceReleased" xml:space="preserve"><value>Η πηγή αποδέσμευσε την παραγγελία, αλλά μια κάλυψη δεν έχει επιστρέψει ακόμη</value></data>
+  <data name="ReconciliationSourceClosed" xml:space="preserve"><value>Η πηγή έκλεισε την παραγγελία, αλλά υπάρχουν ακόμη ανοιχτές καλύψεις</value></data>
+  <data name="ReconciliationSourceRequestMissing" xml:space="preserve"><value>Το αίτημα υπάρχει στην πηγή αλλά όχι τοπικά</value></data>
+  <data name="ReconciliationLocalFillMissing" xml:space="preserve"><value>Η κάλυψη υπάρχει τοπικά αλλά όχι στην πηγή</value></data>
+  <data name="ReconciliationSourceAhead" xml:space="preserve"><value>Η κατάσταση της πηγής προηγείται της τοπικής κάλυψης</value></data>
+  <data name="ReconciliationSourceBehind" xml:space="preserve"><value>Η κατάσταση της πηγής υστερεί της τοπικής κάλυψης</value></data>
+  <data name="DeploymentOwnedByConnector" xml:space="preserve"><value>Συντηρείται από σύνδεσμο</value></data>
 </root>

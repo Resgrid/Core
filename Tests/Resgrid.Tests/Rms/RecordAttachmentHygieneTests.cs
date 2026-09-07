@@ -80,6 +80,79 @@ namespace Resgrid.Tests.Rms
 			RecordAttachmentHygiene.Sanitize("/var/tmp/../report.pdf", "application/pdf", new byte[] { 1 }).FileName.Should().Be("report.pdf");
 		}
 
+		[Test]
+		public void Photo_location_is_stripped_by_default_and_kept_only_when_the_definition_asks_for_it()
+		{
+			var bytes = GeoTaggedJpeg();
+
+			var stripped = RecordAttachmentHygiene.Sanitize("scene.jpg", "image/jpeg", bytes);
+
+			stripped.MetadataStripped.Should().BeTrue();
+			stripped.LocationRetained.Should().BeFalse();
+			using (var decoded = Image.Load(stripped.Data))
+			{
+				decoded.Metadata.ExifProfile.Should().BeNull("a photo's location is a disclosure nobody asked for");
+			}
+
+			var kept = RecordAttachmentHygiene.Sanitize("scene.jpg", "image/jpeg", bytes, true);
+
+			kept.LocationRetained.Should().BeTrue();
+			using var withLocation = Image.Load(kept.Data);
+			withLocation.Metadata.ExifProfile.Should().NotBeNull();
+			withLocation.Metadata.ExifProfile.TryGetValue(ExifTag.GPSLatitudeRef, out var latitudeRef).Should().BeTrue();
+			latitudeRef.Value.Should().Be("N");
+			withLocation.Metadata.ExifProfile.TryGetValue(ExifTag.GPSLatitude, out var latitude).Should().BeTrue();
+			latitude.Value.Should().NotBeNull();
+		}
+
+		[Test]
+		public void Keeping_the_location_never_keeps_device_or_person_identity()
+		{
+			var kept = RecordAttachmentHygiene.Sanitize("scene.jpg", "image/jpeg", GeoTaggedJpeg(), true);
+
+			using var decoded = Image.Load(kept.Data);
+			var profile = decoded.Metadata.ExifProfile;
+			profile.Should().NotBeNull();
+			profile.TryGetValue(ExifTag.Make, out _).Should().BeFalse();
+			profile.TryGetValue(ExifTag.Model, out _).Should().BeFalse();
+			profile.TryGetValue(ExifTag.Software, out _).Should().BeFalse();
+			profile.TryGetValue(ExifTag.Artist, out _).Should().BeFalse();
+			profile.TryGetValue(ExifTag.ImageUniqueID, out _).Should().BeFalse();
+			profile.TryGetValue(ExifTag.DateTimeOriginal, out _).Should().BeFalse();
+		}
+
+		[Test]
+		public void An_image_with_no_location_reports_none_kept_even_when_the_definition_allows_it()
+		{
+			var kept = RecordAttachmentHygiene.Sanitize("photo.jpg", "image/jpeg", ImageWithMetadata(null, "jpeg"), true);
+
+			kept.LocationRetained.Should().BeFalse();
+			using var decoded = Image.Load(kept.Data);
+			decoded.Metadata.ExifProfile.Should().BeNull();
+		}
+
+		/// <summary>A JPEG carrying both a GPS fix and the device/person tags that must never survive it.</summary>
+		private static byte[] GeoTaggedJpeg()
+		{
+			using var image = new Image<Rgba32>(6, 4);
+			var exif = new ExifProfile();
+			exif.SetValue(ExifTag.Make, "TestCam");
+			exif.SetValue(ExifTag.Model, "TC-1");
+			exif.SetValue(ExifTag.Software, "hygiene-test");
+			exif.SetValue(ExifTag.Artist, "A Responder");
+			exif.SetValue(ExifTag.ImageUniqueID, "SERIAL-123");
+			exif.SetValue(ExifTag.DateTimeOriginal, "2026:09:06 03:15:00");
+			exif.SetValue(ExifTag.GPSLatitudeRef, "N");
+			exif.SetValue(ExifTag.GPSLatitude, new[] { new Rational(39, 1), new Rational(45, 1), new Rational(0, 1) });
+			exif.SetValue(ExifTag.GPSLongitudeRef, "W");
+			exif.SetValue(ExifTag.GPSLongitude, new[] { new Rational(104, 1), new Rational(59, 1), new Rational(0, 1) });
+			image.Metadata.ExifProfile = exif;
+
+			using var stream = new MemoryStream();
+			image.Save(stream, new JpegEncoder());
+			return stream.ToArray();
+		}
+
 		private static byte[] ImageWithMetadata(Action<Image<Rgba32>> unused, string format)
 		{
 			using var image = new Image<Rgba32>(6, 4);

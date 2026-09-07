@@ -192,6 +192,10 @@ namespace Resgrid.Services.Records
 			var run = await _runs.GetWithDataAsync(departmentId, runId);
 			if (run == null || run.DeletedOn.HasValue || run.ExpiresOn <= DateTime.UtcNow || !string.Equals(run.TemplateKey, PacketTemplateKey, StringComparison.Ordinal))
 				return null;
+			// A packet is the requester's own assembled copy of records they were cleared for at build time, so the
+			// download belongs to whoever built it — ExportRecords alone must not open somebody else's packet.
+			if (!string.Equals(run.GeneratedByUserId, userId, StringComparison.Ordinal))
+				return null;
 			(await _protection.RevealExportRunsAsync(departmentId, new[] { run }, true, cancellationToken)).RequireRevealed("packet download");
 			await _audits.InsertAsync(new RmsAccessAudit
 			{

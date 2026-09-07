@@ -151,6 +151,21 @@ namespace Resgrid.Tests.Localization
 			"Records|sv|RequesterOrganization",  // And Swedish.
 			"Records|es|Error",                  // "Error" is the Spanish word.
 			"Records|es|LayoutVisible",          // "Visible" is the Spanish word.
+			"Records|de|RolloutVersion",         // "Version" is the German word too.
+			"Records|sv|RolloutVersion",         // Swedish uses "Version" as well.
+			"Records|fr|RolloutVersion",         // "Version" is French as well.
+			"Records|fr|RolloutMinimumVersion",  // "minimum" is the French word too.
+			"Records|pl|RolloutMinimumVersion",  // Polish uses "minimum" as well.
+			// The Responder app is a product name; it is not translated in any locale.
+			"Records|de|AppResponder",
+			"Records|es|AppResponder",
+			"Records|fr|AppResponder",
+			"Records|it|AppResponder",
+			"Records|pl|AppResponder",
+			"Records|sv|AppResponder",
+			"Records|uk|AppResponder",
+			"Records|el|AppResponder",
+			"Records|ar|AppResponder",
 			"Records|fr|LayoutVisible",          // "Visible" is the French word too.
 			"Records|fr|ProjectionKind",         // "Projection" is French as well.
 			"Records|fr|Projectionqualifications", // "Qualifications" is French as well.

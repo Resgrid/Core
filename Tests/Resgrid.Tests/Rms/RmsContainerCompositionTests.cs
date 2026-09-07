@@ -74,6 +74,13 @@ namespace Resgrid.Tests.Rms
 			Resolve<IFieldRecordsService>().Should().NotBeNull();
 			Resolve<IRecordWorkAssignmentsService>().Should().NotBeNull();
 			Resolve<IRmsRecordWorkAssignmentsRepository>().Should().NotBeNull();
+			Resolve<IRecordsFieldRolloutService>().Should().NotBeNull();
+			Resolve<IRmsFieldRolloutEventsRepository>().Should().NotBeNull();
+			// RMS-1C external ordering-system connectors (2026-09-06)
+			Resolve<IRecordDeploymentConnectorsService>().Should().NotBeNull();
+			Resolve<IRmsExternalOrderConnectorsRepository>().Should().NotBeNull();
+			Resolve<IRmsExternalOrderConnectorRunsRepository>().Should().NotBeNull();
+			Resolve<System.Collections.Generic.IEnumerable<IExternalOrderFeedProvider>>().Select(p => p.Key).Should().BeEquivalentTo(RmsExternalOrderConnectorProviders.All);
 			Resolve<System.Collections.Generic.IEnumerable<IRecordEvidenceAdapter>>().Should().Contain(a => a.Kind == RmsEvidenceKind.ModuleProjection);
 			Resolve<IRecordsRevealService>().Should().NotBeNull();
 			Resolve<IRmsRecordDefinitionsRepository>().Should().NotBeNull();

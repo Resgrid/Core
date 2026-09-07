@@ -32,6 +32,7 @@ namespace Resgrid.Tests.Web.Services
 
 		private Mock<IFieldRecordsService> _field;
 		private Mock<IRecordWorkAssignmentsService> _assignments;
+		private Mock<IRecordsFieldRolloutService> _rollout;
 		private FieldRecordsController _controller;
 		private DefaultHttpContext _http;
 		private Activity _activity;
@@ -53,7 +54,8 @@ namespace Resgrid.Tests.Web.Services
 			};
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = _http };
 			_activity = new Activity(nameof(FieldRecordsApiControllerTests)).Start();
-			_controller = new FieldRecordsController(_field.Object, _assignments.Object) { ControllerContext = new ControllerContext { HttpContext = _http } };
+			_rollout = new Mock<IRecordsFieldRolloutService>();
+			_controller = new FieldRecordsController(_field.Object, _assignments.Object, _rollout.Object) { ControllerContext = new ControllerContext { HttpContext = _http } };
 		}
 
 		[TearDown]

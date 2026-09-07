@@ -62,7 +62,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("modifiedbyuserid").AsCustom("citext").Nullable()
 					.WithColumn("rowversion").AsInt64().NotNullable().WithDefaultValue(1L)
 					.WithColumn("deletedon").AsDateTime2().Nullable();
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsexternalorders_department_record ON rmsexternalorders (departmentid, recordid);");
+				Execute.Sql("CREATE UNIQUE INDEX IF NOT EXISTS ux_rmsexternalorders_department_record ON rmsexternalorders (departmentid, recordid) WHERE deletedon IS NULL;");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsexternalorders_department_order ON rmsexternalorders (departmentid, ordernumber);");
 			}
 

@@ -28,7 +28,7 @@ namespace Resgrid.Services.Records
 	/// packs) and the locked jurisdiction profiles. Content lives here, in code, so a pack update ships as a product
 	/// release with a diff; it never mutates a department clone. Nothing here is labeled an exact named form.
 	/// </summary>
-	public static class RecordTemplateCatalog
+	public static partial class RecordTemplateCatalog
 	{
 		public const int CatalogVersion = 1;
 
@@ -56,7 +56,51 @@ namespace Resgrid.Services.Records
 				Source("CIFFC MARS", "Mutual Aid and Resource Sharing agreement and guidelines", "CIFFC", "2025", "https://dev.ciffc.ca/download/mutual-aid-and-resource-sharing/")),
 			Profile("us-ca", "U.S.–Canada cross-border", "US-CA", null, "en-US", "en-US,en-CA,fr-CA", "metric", null, RmsArtifactStatus.Compatible,
 				new Dictionary<string, Dictionary<string, string>>(),
-				Source("International Mobilization Guide", "NIFC International Mobilization Guide", "NIFC", "2026", "https://www.nifc.gov/sites/default/files/NICC/3-Logistics/Reference%20Documents/2026_International_Mobilization_Guide_FINAL.pdf"))
+				Source("International Mobilization Guide", "NIFC International Mobilization Guide", "NIFC", "2026", "https://www.nifc.gov/sites/default/files/NICC/3-Logistics/Reference%20Documents/2026_International_Mobilization_Guide_FINAL.pdf")),
+
+			// Incident Support profiles (Back Office plan E5). "us-calif" is California, spelled out rather than
+			// "us-ca" — that key already means the U.S.–Canada cross-border pair above, and two profiles that read
+			// the same in a URL is exactly the confusion an opaque identifier is supposed to prevent.
+			Profile("us-nwcg", "United States — wildland (NWCG)", "US", null, "en-US", "en-US", "customary", "USD", RmsArtifactStatus.Compatible,
+				new Dictionary<string, Dictionary<string, string>>
+				{
+					["en-US"] = new Dictionary<string, string>
+					{
+						["subdivision"] = "State", ["area"] = "Area (acres)", ["incident_number"] = "Incident number", ["incident_name"] = "Incident name",
+						["order_number"] = "Resource order number", ["request_number"] = "Request number", ["agency"] = "Home agency/unit",
+						["position"] = "ICS position (PMS 310-1)", ["operational_period"] = "Operational period"
+					}
+				},
+				Source("NWCG PMS 902", "NWCG Incident Business Committee — Interagency Incident Business Management Handbook", "NWCG", "2025", "https://www.nwcg.gov/publications/902"),
+				Source("NWCG PMS 310-1", "NWCG Standards for Wildland Fire Position Qualifications", "NWCG", "2025", "https://www.nwcg.gov/publications/pms310-1"),
+				Source("NIFC mobilization guide", "NIFC mobilization and resource-order guidance", "NIFC", "2026", "https://www.nifc.gov/nicc/logistics/reference-documents")),
+
+			Profile("us-nims", "United States — all-hazards (FEMA NIMS)", "US", null, "en-US", "en-US", "customary", "USD", RmsArtifactStatus.Compatible,
+				new Dictionary<string, Dictionary<string, string>>
+				{
+					["en-US"] = new Dictionary<string, string>
+					{
+						["subdivision"] = "State", ["area"] = "Area (acres)", ["incident_number"] = "Incident number", ["incident_name"] = "Incident name",
+						["order_number"] = "Mission/task number", ["request_number"] = "Resource request number", ["agency"] = "Home agency/jurisdiction",
+						["position"] = "ICS position (NIMS)", ["operational_period"] = "Operational period"
+					}
+				},
+				Source("NIMS/ICS forms", "FEMA National Incident Management System ICS forms", "FEMA", "2023", "https://www.fema.gov/emergency-managers/nims/components"),
+				Source("NIMS resource management", "NIMS Resource Management supplemental guidance", "FEMA", "2023", "https://www.fema.gov/emergency-managers/nims/components")),
+
+			Profile("us-calif", "United States — California (Cal OES / CAL FIRE / FIRESCOPE)", "US", "CA", "en-US", "en-US", "customary", "USD", RmsArtifactStatus.Compatible,
+				new Dictionary<string, Dictionary<string, string>>
+				{
+					["en-US"] = new Dictionary<string, string>
+					{
+						["subdivision"] = "State", ["area"] = "Area (acres)", ["incident_number"] = "Incident number", ["incident_name"] = "Incident name",
+						["order_number"] = "Resource order number", ["request_number"] = "Request number", ["agency"] = "Home agency/unit",
+						["position"] = "ICS position (CICCS)", ["operational_period"] = "Operational period"
+					}
+				},
+				Source("FIRESCOPE FOG", "FIRESCOPE Field Operations Guide ICS 420-1", "FIRESCOPE", "2024", "https://firescope.caloes.ca.gov/ics-documents"),
+				Source("CICCS", "California Incident Command Certification System qualification guide", "Cal OES / FIRESCOPE", "2024", "https://firescope.caloes.ca.gov/ics-documents"),
+				Source("Cal OES mutual aid plan", "California Fire Service and Rescue Emergency Mutual Aid Plan", "Cal OES", "2024", "https://www.caloes.ca.gov/office-of-the-director/operations/response-operations/fire-rescue/"))
 		};
 
 		// ---- packs ------------------------------------------------------------------------------------
@@ -71,7 +115,8 @@ namespace Resgrid.Services.Records
 			HazmatPack(),
 			IndustrialPack(),
 			ExercisePack(),
-			MutualAidPack()
+			MutualAidPack(),
+			IncidentSupportPack()
 		};
 
 		public static IEnumerable<RecordTemplateDefinition> AllTemplates => Packs.SelectMany(p => p.Definitions);

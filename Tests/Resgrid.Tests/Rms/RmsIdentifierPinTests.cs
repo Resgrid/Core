@@ -102,6 +102,8 @@ namespace Resgrid.Tests.Rms
 			program.Should().Contain("new Commands.RecordsSearchIndexCommand(44)");
 			// RMS-3e (2026-09-05): department report exports on a schedule.
 			program.Should().Contain("new Commands.RmsScheduledExportCommand(45)");
+			// RMS-1C connectors (2026-09-06): the external order feed poll took the last free ID of the released pair.
+			program.Should().Contain("new Commands.RmsConnectorPollCommand(46)");
 		}
 
 		[Test]

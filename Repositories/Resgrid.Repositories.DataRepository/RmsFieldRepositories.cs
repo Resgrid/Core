@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Model;
@@ -84,6 +85,47 @@ namespace Resgrid.Repositories.DataRepository
 			return QueryAsync<RmsRecordWorkAssignment>(
 				$"SELECT * FROM {Tbl("RmsRecordWorkAssignments")} WHERE {Col("DepartmentId")} = {P}DepartmentId{sinceClause} ORDER BY {Col("ModifiedOn")}, {Col("RmsRecordWorkAssignmentId")} {Paging()}",
 				parameters);
+		}
+	}
+
+	/// <summary>
+	/// Field Records rollout telemetry (RMS-1D, registry M0180). Counts and coded outcomes only; the table is
+	/// operational and is pruned by window, so nothing here is a record of what anybody wrote.
+	/// </summary>
+	public class RmsFieldRolloutEventsRepository : RmsRepositoryBase<RmsFieldRolloutEvent>, IRmsFieldRolloutEventsRepository
+	{
+		public RmsFieldRolloutEventsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public Task<IEnumerable<RmsFieldRolloutEvent>> GetForWindowAsync(int departmentId, DateTime sinceUtc, int take)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Since", sinceUtc);
+			parameters.Add("Skip", 0);
+			parameters.Add("Take", take <= 0 ? 20000 : Math.Min(take, 200000));
+			return QueryAsync<RmsFieldRolloutEvent>(
+				$"SELECT * FROM {Tbl("RmsFieldRolloutEvents")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("OccurredOn")} >= {P}Since ORDER BY {Col("OccurredOn")}, {Col("RmsFieldRolloutEventId")} {Paging()}",
+				parameters);
+		}
+
+		public async Task<int> InsertBatchAsync(IEnumerable<RmsFieldRolloutEvent> events, CancellationToken cancellationToken = default)
+		{
+			var rows = (events ?? Enumerable.Empty<RmsFieldRolloutEvent>()).ToList();
+			if (rows.Count == 0)
+				return 0;
+
+			var sql = $@"INSERT INTO {Tbl("RmsFieldRolloutEvents")} ({Cols("RmsFieldRolloutEventId", "DepartmentId", "OriginClient", "AppVersion", "ClientCapability", "EventType", "Outcome", "DefinitionKey", "DefinitionVersion", "RecordId", "UserId", "DurationMs", "ItemCount", "OccurredOn", "RecordedOn")})
+				VALUES ({P}RmsFieldRolloutEventId, {P}DepartmentId, {P}OriginClient, {P}AppVersion, {P}ClientCapability, {P}EventType, {P}Outcome, {P}DefinitionKey, {P}DefinitionVersion, {P}RecordId, {P}UserId, {P}DurationMs, {P}ItemCount, {P}OccurredOn, {P}RecordedOn)";
+			// Dapper expands the list into one multi-statement command; the whole batch lands in a single round trip.
+			return await ExecuteAsync(sql, rows, cancellationToken);
+		}
+
+		public Task<int> DeleteOlderThanAsync(int departmentId, DateTime cutoffUtc, CancellationToken cancellationToken = default)
+		{
+			return ExecuteAsync(
+				$"DELETE FROM {Tbl("RmsFieldRolloutEvents")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("OccurredOn")} < {P}Cutoff",
+				new { DepartmentId = departmentId, Cutoff = cutoffUtc }, cancellationToken);
 		}
 	}
 }

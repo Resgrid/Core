@@ -1,4 +1,4 @@
-using FluentMigrator;
+﻿using FluentMigrator;
 
 namespace Resgrid.Providers.MigrationsPg.Migrations
 {
@@ -66,11 +66,11 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("modifiedon").AsDateTime2().NotNullable()
 					.WithColumn("rowversion").AsInt64().NotNullable().WithDefaultValue(1L);
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsrecordvalues_department_record_revision ON rmsrecordvalues (departmentid, recordid, revisionid);");
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsrecordvalues_department_version_field_text ON rmsrecordvalues (departmentid, rmsrecorddefinitionversionid, fieldkey, textvalue) WHERE isprotected = 0;");
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsrecordvalues_department_version_field_number ON rmsrecordvalues (departmentid, rmsrecorddefinitionversionid, fieldkey, numbervalue) WHERE isprotected = 0;");
-				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsrecordvalues_department_version_field_datetime ON rmsrecordvalues (departmentid, rmsrecorddefinitionversionid, fieldkey, datetimevalue) WHERE isprotected = 0;");
+				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsrecordvalues_department_version_field_text ON rmsrecordvalues (departmentid, rmsrecorddefinitionversionid, fieldkey, textvalue) WHERE isprotected = false;");
+				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsrecordvalues_department_version_field_number ON rmsrecordvalues (departmentid, rmsrecorddefinitionversionid, fieldkey, numbervalue) WHERE isprotected = false;");
+				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsrecordvalues_department_version_field_datetime ON rmsrecordvalues (departmentid, rmsrecorddefinitionversionid, fieldkey, datetimevalue) WHERE isprotected = false;");
 				Execute.Sql("CREATE INDEX IF NOT EXISTS ix_rmsrecordvalues_department_revision ON rmsrecordvalues (departmentid, revisionid);");
-				Execute.Sql("ALTER TABLE rmsrecordvalues ADD CONSTRAINT ck_rmsrecordvalues_onecolumngroup CHECK ((CASE WHEN textvalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN longtextvalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN numbervalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN boolvalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN datetimevalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN durationseconds IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN referenceid IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN optionkey IS NOT NULL THEN 1 ELSE 0 END) = 1 OR protectedenvelope IS NOT NULL);");
+				Execute.Sql("ALTER TABLE rmsrecordvalues ADD CONSTRAINT ck_rmsrecordvalues_onecolumngroup CHECK ((CASE WHEN textvalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN longtextvalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN numbervalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN boolvalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN datetimevalue IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN durationseconds IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN referenceid IS NOT NULL THEN 1 ELSE 0 END) + (CASE WHEN optionkey IS NOT NULL THEN 1 ELSE 0 END) = CASE WHEN protectedenvelope IS NULL THEN 1 ELSE 0 END);");
 			}
 
 		}

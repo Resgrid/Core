@@ -95,7 +95,16 @@
 			points.forEach(function (p) {
 				var color = p.InService ? colors[p.FlowClass] || '#999' : '#000';
 				var m = L.circleMarker([p.Lat, p.Lon], { radius: 7, color: color, fillColor: color, fillOpacity: 0.8 }).addTo(map);
-				m.bindPopup('<a href="@Url.Action("Details", "RecordHydrants", new { area = "User" })?id=' + p.HydrantId + '">' + p.HydrantNumber + '</a>' + (p.FlowGpm ? '<br/>' + p.FlowGpm + ' gpm' : '') + (p.InService ? '' : '<br/><b>@L["OutOfService"]</b>'));
+				// Hydrant numbers are department-entered, so the popup is built from text nodes: markup in stored
+				// data renders as the characters it is instead of executing inside the popup.
+				var popup = document.createElement('div');
+				var link = document.createElement('a');
+				link.href = '@Url.Action("Details", "RecordHydrants", new { area = "User" })?id=' + encodeURIComponent(p.HydrantId);
+				link.textContent = p.HydrantNumber || '';
+				popup.appendChild(link);
+				if (p.FlowGpm) { popup.appendChild(document.createElement('br')); popup.appendChild(document.createTextNode(p.FlowGpm + ' gpm')); }
+				if (!p.InService) { popup.appendChild(document.createElement('br')); var outOfService = document.createElement('b'); outOfService.textContent = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(L["OutOfService"].Value)); popup.appendChild(outOfService); }
+				m.bindPopup(popup);
 				bounds.push([p.Lat, p.Lon]);
 			});
 			if (bounds.length) { map.fitBounds(bounds, { padding: [20, 20] }); } else { map.setView([39.5, -98.35], 4); }

@@ -1,0 +1,46 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordsResponsePerformanceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["AnalyticsHeader"] + " - " + L["AnalyticsResponse"];
+	var p = Model.Performance;
+	var stats = p == null ? new (string, RecordsResponseTimeStat)[0] : new[] { (L["AnalyticsTurnout"].Value, p.Turnout), (L["AnalyticsTravel"].Value, p.Travel), (L["AnalyticsTotalResponse"].Value, p.TotalResponse), (L["AnalyticsFirstArrival"].Value, p.FirstArrival), (L["AnalyticsOnScene"].Value, p.OnScene) };
+}
+@await Html.PartialAsync("_AnalyticsShell", Model)
+<div class="wrapper wrapper-content" style="padding-top:0">
+	@if (p != null)
+	{
+		<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsResponse"]</h5><span class="text-muted pull-right">@L["AnalyticsResponses"]: @p.Responses · @L["AnalyticsRecordsWithResponses"]: @p.RecordsWithResponses</span></div><div class="ibox-content">
+			@if (p.Responses == 0) { <p class="text-muted">@L["AnalyticsNoData"]</p> }
+			else
+			{
+				<table class="table table-condensed table-striped m-b-none">
+					<thead><tr><th></th><th class="text-right">@L["AnalyticsSamples"]</th><th class="text-right">@L["AnalyticsAverage"]</th><th class="text-right">@L["AnalyticsMedian"]</th><th class="text-right">@L["AnalyticsP90"]</th><th class="text-right">@L["AnalyticsMax"]</th><th class="text-right">@L["AnalyticsWithinTarget"]</th></tr></thead>
+					<tbody>
+						@foreach (var (label, stat) in stats)
+						{
+							<tr>
+								<td>@label @if (stat.TargetSeconds.HasValue) { <small class="text-muted">(≤ @RmsAnalyticsDisplay.Seconds(stat.TargetSeconds))</small> }</td>
+								<td class="text-right">@stat.Samples</td><td class="text-right">@RmsAnalyticsDisplay.Seconds(stat.AverageSeconds)</td><td class="text-right">@RmsAnalyticsDisplay.Seconds(stat.MedianSeconds)</td>
+								<td class="text-right"><strong>@RmsAnalyticsDisplay.Seconds(stat.P90Seconds)</strong></td><td class="text-right">@RmsAnalyticsDisplay.Seconds(stat.MaxSeconds)</td>
+								<td class="text-right">@(stat.TargetSeconds.HasValue ? RmsAnalyticsDisplay.Percent(stat.WithinTargetPercent) + " (" + stat.WithinTarget + ")" : "-")</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div></div>
+		<div class="row">
+			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsTimeRows", p.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "line" } })</div>
+			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsTimeRows", p.ByHourOfDay, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByHour"].Value }, { "Chart", "bar" } })</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsTimeRows", p.ByUnit, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ByUnit"].Value }, { "Chart", "none" } })</div>
+			<div class="col-md-6">
+				@await Html.PartialAsync("_AnalyticsTimeRows", p.ByStationGroup, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByStationGroup"].Value }, { "Chart", "none" } })
+				@await Html.PartialAsync("_AnalyticsTimeRows", p.BySource, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsBySource"].Value }, { "Chart", "none" } })
+			</div>
+		</div>
+	}
+</div>

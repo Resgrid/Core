@@ -217,7 +217,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				byte[] bytes;
 				using (var stream = new System.IO.MemoryStream()) { await file.CopyToAsync(stream, cancellationToken); bytes = stream.ToArray(); }
-				await _attachments.AddAsync(DepartmentId, UserId, (RmsPreventionParentKind)parentKind, parentId, file.FileName, file.ContentType, bytes, description, restricted, cancellationToken);
+				await _attachments.AddAsync(DepartmentId, UserId, (RmsPreventionParentKind)parentKind, parentId, System.IO.Path.GetFileName(file.FileName), file.ContentType, bytes, description, restricted, cancellationToken);
 				Notify("AttachmentAdded");
 			}
 			catch (Exception ex) { var f = Fail(ex); if (f != null) return f; }

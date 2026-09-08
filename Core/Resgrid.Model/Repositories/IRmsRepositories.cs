@@ -54,6 +54,11 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsOperationalRecord>> GetOpenAsync(int departmentId);
 		/// <summary>Live Finalized/Amended Records whose FinalizedOn is at or after the instant.</summary>
 		Task<IEnumerable<RmsOperationalRecord>> GetFinalizedSinceAsync(int departmentId, DateTime sinceUtc);
+		/// <summary>
+		/// Live Records in the given states whose occurrence (StartedOn, else FinalizedOn) falls in [start, end), oldest
+		/// first, at most <paramref name="take"/> rows (RMS-6 analytics; the caller treats a full page as truncation).
+		/// </summary>
+		Task<IEnumerable<RmsOperationalRecord>> GetFinalizedInRangeAsync(int departmentId, IEnumerable<int> states, DateTime startUtc, DateTime endUtc, int take);
 
 		/// <summary>Records created in the window, newest first. Bounded; used by the Field Records rollout dashboard (RMS-1D).</summary>
 		Task<IEnumerable<RmsOperationalRecord>> GetCreatedSinceAsync(int departmentId, DateTime sinceUtc, int take);
@@ -77,6 +82,8 @@ namespace Resgrid.Model.Repositories
 		Task<RmsOperationalRecordDetail> GetByRevisionAsync(int departmentId, string recordId, string revisionId);
 		/// <summary>Working-draft detail rows for many records at once.</summary>
 		Task<IEnumerable<RmsOperationalRecordDetail>> GetDraftsForRecordsAsync(int departmentId, IEnumerable<string> recordIds);
+		/// <summary>Call context columns only (never narrative or the restricted section) for the revision-bound detail rows of many revisions.</summary>
+		Task<IEnumerable<RmsRecordCallContext>> GetCallContextForRevisionsAsync(int departmentId, IEnumerable<string> revisionIds);
 	}
 
 	public interface IRmsRecordParticipantsRepository : IRepository<RmsRecordParticipant>
@@ -86,12 +93,16 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsRecordParticipant>> GetByUserAsync(int departmentId, string userId);
 		/// <summary>Working-draft participant rows for many records at once.</summary>
 		Task<IEnumerable<RmsRecordParticipant>> GetForRecordsAsync(int departmentId, IEnumerable<string> recordIds);
+		/// <summary>Revision-bound participant rows for many revisions at once (the attested set of a finalized Record).</summary>
+		Task<IEnumerable<RmsRecordParticipant>> GetForRevisionsAsync(int departmentId, IEnumerable<string> revisionIds);
 		Task<int> DeleteDraftForRecordAsync(int departmentId, string recordId, CancellationToken cancellationToken = default);
 	}
 
 	public interface IRmsRecordUnitResponsesRepository : IRepository<RmsRecordUnitResponse>
 	{
 		Task<IEnumerable<RmsRecordUnitResponse>> GetForRecordAsync(int departmentId, string recordId, string revisionId);
+		/// <summary>Revision-bound unit rows for many revisions at once (the attested set of a finalized Record).</summary>
+		Task<IEnumerable<RmsRecordUnitResponse>> GetForRevisionsAsync(int departmentId, IEnumerable<string> revisionIds);
 		Task<IEnumerable<RmsRecordUnitResponse>> GetByUnitAsync(int departmentId, int unitId);
 		/// <summary>Working-draft unit response rows for many records at once.</summary>
 		Task<IEnumerable<RmsRecordUnitResponse>> GetForRecordsAsync(int departmentId, IEnumerable<string> recordIds);
@@ -155,6 +166,8 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsRevisionsRepository : IRepository<RmsRevision>
 	{
 		Task<IEnumerable<RmsRevision>> GetByIdsForDepartmentAsync(int departmentId, IEnumerable<string> revisionIds);
+		/// <summary>Revision headers (never the snapshot) created in [start, end), oldest first, at most <paramref name="take"/> rows.</summary>
+		Task<IEnumerable<RmsRevisionTransitionRow>> GetTransitionsInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take);
 		Task<IEnumerable<RmsRevision>> GetForRecordAsync(int departmentId, string recordId);
 		Task<RmsRevision> GetByIdForDepartmentAsync(int departmentId, string revisionId);
 	}
@@ -238,6 +251,8 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Count of obligations currently sitting overdue; the accountability view and dashboards read it.</summary>
 		Task<int> CountOverdueAsync(int departmentId);
 		Task<int> CountVisibleOverdueAsync(int departmentId, List<int> visibleGroupIds, string userId);
+		/// <summary>Due-state rows modified in [start, end) - the due-state history the RMS-6 dashboards read - at most <paramref name="take"/> rows.</summary>
+		Task<IEnumerable<RmsRecordDueState>> GetChangedInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take);
 		Task<int> ClearForRecordAsync(int departmentId, string recordId, DateTime utcNow, CancellationToken cancellationToken = default);
 	}
 

@@ -282,6 +282,13 @@ namespace Resgrid.Repositories.DataRepository
 		public Task<IEnumerable<RmsInspection>> GetOpenForProgramAsync(int departmentId, string programId)
 			=> QueryAsync<RmsInspection>($"SELECT * FROM {Tbl("RmsInspections")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsInspectionProgramId")} = {P}ProgramId AND {Col("State")} IN ({(int)RmsInspectionState.Scheduled}, {(int)RmsInspectionState.InProgress}, {(int)RmsInspectionState.ReinspectionRequired}) AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, ProgramId = programId });
 
+		public Task<IEnumerable<RmsInspection>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take)
+		{
+			var activity = $"COALESCE({Col("CompletedOn")}, {Col("ScheduledOn")}, {Col("CreatedOn")})";
+			var p = RmsPreventionSql.Paged(departmentId, 0, take, 50000); p.Add("Start", startUtc); p.Add("End", endUtc);
+			return QueryAsync<RmsInspection>($"SELECT * FROM {Tbl("RmsInspections")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {activity} >= {P}Start AND {activity} < {P}End AND {Col("DeletedOn")} IS NULL ORDER BY {activity}, {Col("RmsInspectionId")} {Paging()}", p);
+		}
+
 		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string inspectionId, long expectedVersion, CancellationToken cancellationToken = default)
 			=> await ExecuteAsync($"UPDATE {Tbl("RmsInspections")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1, {Col("ModifiedOn")} = {P}Now WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsInspectionId")} = {P}Id AND {Col("RowVersion")} = {P}Expected",
 				new { DepartmentId = departmentId, Id = inspectionId, Expected = expectedVersion, Now = DateTime.UtcNow }, cancellationToken) == 1;
@@ -330,6 +337,12 @@ namespace Resgrid.Repositories.DataRepository
 				new { DepartmentId = departmentId, Ids = ids });
 			return rows.ToDictionary(r => r.OccupancyId, r => r.Open, StringComparer.Ordinal);
 		}
+
+		public Task<IEnumerable<RmsViolation>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take)
+		{
+			var p = RmsPreventionSql.Paged(departmentId, 0, take, 50000); p.Add("Start", startUtc); p.Add("End", endUtc);
+			return QueryAsync<RmsViolation>($"SELECT * FROM {Tbl("RmsViolations")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CreatedOn")} >= {P}Start AND {Col("CreatedOn")} < {P}End AND {Col("DeletedOn")} IS NULL ORDER BY {Col("CreatedOn")}, {Col("RmsViolationId")} {Paging()}", p);
+		}
 	}
 
 	public class RmsHydrantsRepository : RmsRepositoryBase<RmsHydrant>, IRmsHydrantsRepository
@@ -377,6 +390,12 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<IEnumerable<RmsHydrantFlowTest>> GetForHydrantAsync(int departmentId, string hydrantId)
 			=> QueryAsync<RmsHydrantFlowTest>($"SELECT * FROM {Tbl("RmsHydrantFlowTests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsHydrantId")} = {P}Id ORDER BY {Col("TestedOn")} DESC", new { DepartmentId = departmentId, Id = hydrantId });
+
+		public Task<IEnumerable<RmsHydrantFlowTest>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take)
+		{
+			var p = RmsPreventionSql.Paged(departmentId, 0, take, 50000); p.Add("Start", startUtc); p.Add("End", endUtc);
+			return QueryAsync<RmsHydrantFlowTest>($"SELECT * FROM {Tbl("RmsHydrantFlowTests")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("TestedOn")} >= {P}Start AND {Col("TestedOn")} < {P}End ORDER BY {Col("TestedOn")}, {Col("RmsHydrantFlowTestId")} {Paging()}", p);
+		}
 	}
 
 	public class RmsHydrantMaintenancesRepository : RmsRepositoryBase<RmsHydrantMaintenance>, IRmsHydrantMaintenancesRepository
@@ -443,6 +462,12 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<int> CountExpiringAsync(int departmentId, DateTime utcNow, DateTime horizonUtc)
 			=> ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsPermits")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("State")} = {(int)RmsPermitState.Issued} AND {Col("ExpiresOn")} > {P}Now AND {Col("ExpiresOn")} <= {P}Horizon AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, Now = utcNow, Horizon = horizonUtc });
+
+		public Task<IEnumerable<RmsPermit>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take)
+		{
+			var p = RmsPreventionSql.Paged(departmentId, 0, take, 50000); p.Add("Start", startUtc); p.Add("End", endUtc);
+			return QueryAsync<RmsPermit>($"SELECT * FROM {Tbl("RmsPermits")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("AppliedOn")} >= {P}Start AND {Col("AppliedOn")} < {P}End AND {Col("DeletedOn")} IS NULL ORDER BY {Col("AppliedOn")}, {Col("RmsPermitId")} {Paging()}", p);
+		}
 
 		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string permitId, long expectedVersion, CancellationToken cancellationToken = default)
 			=> await ExecuteAsync($"UPDATE {Tbl("RmsPermits")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1, {Col("ModifiedOn")} = {P}Now WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsPermitId")} = {P}Id AND {Col("RowVersion")} = {P}Expected",

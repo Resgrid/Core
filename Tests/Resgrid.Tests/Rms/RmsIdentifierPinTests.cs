@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -161,6 +161,8 @@ namespace Resgrid.Tests.Rms
 			FeatureFlagKeys.RecordsPreventionCrr.Should().Be("Records.Prevention.Crr");
 			FeatureFlagKeys.RecordsInvestigations.Should().Be("Records.Investigations");
 			FeatureFlagKeys.RecordsQualityReview.Should().Be("Records.QualityReview");
+			FeatureFlagKeys.RecordsAnalytics.Should().Be("Records.Analytics");
+			RecordsPreventionModules.FlagKey(RecordsPreventionModule.Analytics).Should().Be("Records.Analytics");
 		}
 
 		[Test]

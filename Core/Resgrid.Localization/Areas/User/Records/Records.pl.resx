@@ -1833,4 +1833,117 @@
   <data name="WaterShutoff" xml:space="preserve"><value>Zawór wody</value></data>
   <data name="WaterSupplyNotes" xml:space="preserve"><value>Uwagi o zaopatrzeniu w wodę</value></data>
   <data name="WorkflowRuns" xml:space="preserve"><value>Uruchomienia Workflow</value></data>
+  <data name="AnalyticsAccreditation" xml:space="preserve"><value>Akredytacja</value></data>
+  <data name="AnalyticsActiveNow" xml:space="preserve"><value>Aktywne teraz</value></data>
+  <data name="AnalyticsActivities" xml:space="preserve"><value>Działania</value></data>
+  <data name="AnalyticsAllGroups" xml:space="preserve"><value>Wszystkie grupy stacji</value></data>
+  <data name="AnalyticsAmended" xml:space="preserve"><value>Poprawki</value></data>
+  <data name="AnalyticsApplied" xml:space="preserve"><value>Złożone</value></data>
+  <data name="AnalyticsAudience" xml:space="preserve"><value>Dotarto do osób</value></data>
+  <data name="AnalyticsAverage" xml:space="preserve"><value>Średnia</value></data>
+  <data name="AnalyticsAwaitingReview" xml:space="preserve"><value>Oczekujące na przegląd</value></data>
+  <data name="AnalyticsByCallType" xml:space="preserve"><value>Według typu wezwania</value></data>
+  <data name="AnalyticsByFlowClass" xml:space="preserve"><value>Według klasy wydajności</value></data>
+  <data name="AnalyticsByHour" xml:space="preserve"><value>Według godziny dnia</value></data>
+  <data name="AnalyticsByIncidentType" xml:space="preserve"><value>Według typu zdarzenia</value></data>
+  <data name="AnalyticsByKind" xml:space="preserve"><value>Według rodzaju</value></data>
+  <data name="AnalyticsByMonth" xml:space="preserve"><value>Według miesiąca</value></data>
+  <data name="AnalyticsByPerson" xml:space="preserve"><value>Według osoby</value></data>
+  <data name="AnalyticsByProgram" xml:space="preserve"><value>Według programu</value></data>
+  <data name="AnalyticsBySeverity" xml:space="preserve"><value>Według wagi</value></data>
+  <data name="AnalyticsBySource" xml:space="preserve"><value>Według źródła</value></data>
+  <data name="AnalyticsByStationGroup" xml:space="preserve"><value>Według grupy stacji</value></data>
+  <data name="AnalyticsByType" xml:space="preserve"><value>Według typu</value></data>
+  <data name="AnalyticsCancelled" xml:space="preserve"><value>Anulowane</value></data>
+  <data name="AnalyticsCommunityRisk" xml:space="preserve"><value>Ryzyko społeczności</value></data>
+  <data name="AnalyticsCompleted" xml:space="preserve"><value>Ukończone</value></data>
+  <data name="AnalyticsConditional" xml:space="preserve"><value>Warunkowe</value></data>
+  <data name="AnalyticsCorrected" xml:space="preserve"><value>Usunięte</value></data>
+  <data name="AnalyticsCount" xml:space="preserve"><value>Liczba</value></data>
+  <data name="AnalyticsCrr" xml:space="preserve"><value>Ograniczanie ryzyka społeczności</value></data>
+  <data name="AnalyticsDaysScheduledToCompleted" xml:space="preserve"><value>Śr. dni od zaplanowania do ukończenia</value></data>
+  <data name="AnalyticsDaysToCorrection" xml:space="preserve"><value>Śr. dni do usunięcia</value></data>
+  <data name="AnalyticsDaysToIssue" xml:space="preserve"><value>Śr. dni od złożenia do wydania</value></data>
+  <data name="AnalyticsDenied" xml:space="preserve"><value>Odrzucone</value></data>
+  <data name="AnalyticsEscalated" xml:space="preserve"><value>Eskalowane</value></data>
+  <data name="AnalyticsExecutive" xml:space="preserve"><value>Podsumowanie dla kierownictwa</value></data>
+  <data name="AnalyticsExpired" xml:space="preserve"><value>Wygasłe</value></data>
+  <data name="AnalyticsFailed" xml:space="preserve"><value>Niezaliczone</value></data>
+  <data name="AnalyticsFirstArrival" xml:space="preserve"><value>Pierwsze przybycie</value></data>
+  <data name="AnalyticsFlowTests" xml:space="preserve"><value>Testy wydajności w okresie</value></data>
+  <data name="AnalyticsFrom" xml:space="preserve"><value>Od</value></data>
+  <data name="AnalyticsGroupScoped" xml:space="preserve"><value>Liczby obejmują tylko rekordy, które możesz otworzyć; administratorzy jednostki widzą sumy dla jednostki.</value></data>
+  <data name="AnalyticsHazmat" xml:space="preserve"><value>Materiały niebezpieczne na miejscu</value></data>
+  <data name="AnalyticsHeader" xml:space="preserve"><value>Analityka</value></data>
+  <data name="AnalyticsHeadline" xml:space="preserve"><value>Kluczowe liczby</value></data>
+  <data name="AnalyticsHeatMap" xml:space="preserve"><value>Rekordy według dnia tygodnia i godziny</value></data>
+  <data name="AnalyticsHours" xml:space="preserve"><value>Godziny</value></data>
+  <data name="AnalyticsHoursPerMember" xml:space="preserve"><value>Godziny na członka</value></data>
+  <data name="AnalyticsInService" xml:space="preserve"><value>Sprawne</value></data>
+  <data name="AnalyticsIncidentReports" xml:space="preserve"><value>Raporty ze zdarzeń</value></data>
+  <data name="AnalyticsIncidents" xml:space="preserve"><value>Zdarzenia</value></data>
+  <data name="AnalyticsInspectedWithin12Months" xml:space="preserve"><value>Skontrolowane w ostatnich 12 miesiącach</value></data>
+  <data name="AnalyticsIntro" xml:space="preserve"><value>Pulpity obliczane na żądanie na podstawie sfinalizowanych rekordów. Użytkownik ograniczony do grupy widzi tylko rekordy, które może otworzyć; administratorzy jednostki widzą całą jednostkę.</value></data>
+  <data name="AnalyticsIssued" xml:space="preserve"><value>Wydane</value></data>
+  <data name="AnalyticsLifecycle" xml:space="preserve"><value>Cykl życia</value></data>
+  <data name="AnalyticsMax" xml:space="preserve"><value>Maksimum</value></data>
+  <data name="AnalyticsMedian" xml:space="preserve"><value>Mediana</value></data>
+  <data name="AnalyticsMedianHoursToFinalize" xml:space="preserve"><value>Mediana godzin do finalizacji</value></data>
+  <data name="AnalyticsMedianReviewHours" xml:space="preserve"><value>Mediana czasu przeglądu (h)</value></data>
+  <data name="AnalyticsMembersTrained" xml:space="preserve"><value>Przeszkoleni członkowie</value></data>
+  <data name="AnalyticsModuleOff" xml:space="preserve"><value>Ten moduł nie jest włączony dla jednostki.</value></data>
+  <data name="AnalyticsNeedingAssistance" xml:space="preserve"><value>Osoby wymagające pomocy</value></data>
+  <data name="AnalyticsNerisAcceptance" xml:space="preserve"><value>Wskaźnik akceptacji NERIS</value></data>
+  <data name="AnalyticsNerisAccepted" xml:space="preserve"><value>Zaakceptowane przez NERIS</value></data>
+  <data name="AnalyticsNerisRejected" xml:space="preserve"><value>Odrzucone przez NERIS</value></data>
+  <data name="AnalyticsNoData" xml:space="preserve"><value>Brak sfinalizowanych rekordów w tym okresie.</value></data>
+  <data name="AnalyticsNoSprinklers" xml:space="preserve"><value>Bez tryskaczy</value></data>
+  <data name="AnalyticsOccupancyRisk" xml:space="preserve"><value>Profil ryzyka obiektów</value></data>
+  <data name="AnalyticsOnScene" xml:space="preserve"><value>Czas na miejscu</value></data>
+  <data name="AnalyticsOnSchedule" xml:space="preserve"><value>Ukończone w terminie</value></data>
+  <data name="AnalyticsOpenDrafts" xml:space="preserve"><value>Otwarte wersje robocze</value></data>
+  <data name="AnalyticsOpenNow" xml:space="preserve"><value>Otwarte teraz</value></data>
+  <data name="AnalyticsOpenViolations" xml:space="preserve"><value>Otwarte naruszenia</value></data>
+  <data name="AnalyticsOpened" xml:space="preserve"><value>Otwarte</value></data>
+  <data name="AnalyticsOverdueNow" xml:space="preserve"><value>Zobowiązania zaległe teraz</value></data>
+  <data name="AnalyticsP90" xml:space="preserve"><value>90. percentyl</value></data>
+  <data name="AnalyticsPassRate" xml:space="preserve"><value>Wskaźnik zaliczeń</value></data>
+  <data name="AnalyticsPassed" xml:space="preserve"><value>Zaliczone</value></data>
+  <data name="AnalyticsPersonnelHours" xml:space="preserve"><value>Godziny personelu</value></data>
+  <data name="AnalyticsPriorPeriod" xml:space="preserve"><value>Poprzedni okres</value></data>
+  <data name="AnalyticsQueues" xml:space="preserve"><value>Kolejki i zobowiązania</value></data>
+  <data name="AnalyticsRecordHours" xml:space="preserve"><value>Godziny rekordów</value></data>
+  <data name="AnalyticsRecordsFinalized" xml:space="preserve"><value>Sfinalizowane rekordy</value></data>
+  <data name="AnalyticsRecordsRead" xml:space="preserve"><value>Odczytane rekordy</value></data>
+  <data name="AnalyticsRecordsWithResponses" xml:space="preserve"><value>Rekordy z czasami jednostek</value></data>
+  <data name="AnalyticsReinspections" xml:space="preserve"><value>Wymagane ponowne kontrole</value></data>
+  <data name="AnalyticsResponse" xml:space="preserve"><value>Wydajność reagowania</value></data>
+  <data name="AnalyticsResponseSummary" xml:space="preserve"><value>Podsumowanie reagowania</value></data>
+  <data name="AnalyticsResponses" xml:space="preserve"><value>Wyjazdy jednostek</value></data>
+  <data name="AnalyticsReturnRate" xml:space="preserve"><value>Wskaźnik zwrotów</value></data>
+  <data name="AnalyticsReviewCurrent" xml:space="preserve"><value>Przegląd aktualny</value></data>
+  <data name="AnalyticsReviewOverdue" xml:space="preserve"><value>Przegląd zaległy</value></data>
+  <data name="AnalyticsRevoked" xml:space="preserve"><value>Cofnięte</value></data>
+  <data name="AnalyticsRunRecords" xml:space="preserve"><value>Rekordy wyjazdów</value></data>
+  <data name="AnalyticsSamples" xml:space="preserve"><value>Próbki</value></data>
+  <data name="AnalyticsShare" xml:space="preserve"><value>Udział</value></data>
+  <data name="AnalyticsTestedWithin12Months" xml:space="preserve"><value>Sprawdzone w ostatnich 12 miesiącach</value></data>
+  <data name="AnalyticsTo" xml:space="preserve"><value>Do</value></data>
+  <data name="AnalyticsTotal" xml:space="preserve"><value>Razem</value></data>
+  <data name="AnalyticsTotalResponse" xml:space="preserve"><value>Łączny czas reakcji</value></data>
+  <data name="AnalyticsTraining" xml:space="preserve"><value>Szkolenia</value></data>
+  <data name="AnalyticsTrainingHours" xml:space="preserve"><value>Godziny szkoleń</value></data>
+  <data name="AnalyticsTrainingRecords" xml:space="preserve"><value>Rekordy szkoleń</value></data>
+  <data name="AnalyticsTravel" xml:space="preserve"><value>Dojazd</value></data>
+  <data name="AnalyticsTravelTarget" xml:space="preserve"><value>Cel czasu dojazdu (s)</value></data>
+  <data name="AnalyticsTurnout" xml:space="preserve"><value>Czas wyjazdu</value></data>
+  <data name="AnalyticsTurnoutTarget" xml:space="preserve"><value>Cel czasu wyjazdu (s)</value></data>
+  <data name="AnalyticsUnitOnSceneHours" xml:space="preserve"><value>godziny jednostek na miejscu</value></data>
+  <data name="AnalyticsVacant" xml:space="preserve"><value>Puste</value></data>
+  <data name="AnalyticsVerified" xml:space="preserve"><value>Zweryfikowane</value></data>
+  <data name="AnalyticsVoided" xml:space="preserve"><value>Unieważnione</value></data>
+  <data name="AnalyticsWaived" xml:space="preserve"><value>Odstąpiono</value></data>
+  <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Przeterminowane w okresie</value></data>
+  <data name="AnalyticsWithinTarget" xml:space="preserve"><value>W granicach celu</value></data>
+  <data name="AnalyticsWorkload" xml:space="preserve"><value>Obciążenie pracą</value></data>
 </root>

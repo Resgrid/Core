@@ -1833,4 +1833,117 @@
   <data name="WaterShutoff" xml:space="preserve"><value>قاطع الماء</value></data>
   <data name="WaterSupplyNotes" xml:space="preserve"><value>ملاحظات إمداد المياه</value></data>
   <data name="WorkflowRuns" xml:space="preserve"><value>تشغيلات Workflow</value></data>
+  <data name="AnalyticsAccreditation" xml:space="preserve"><value>الاعتماد</value></data>
+  <data name="AnalyticsActiveNow" xml:space="preserve"><value>نشطة الآن</value></data>
+  <data name="AnalyticsActivities" xml:space="preserve"><value>الأنشطة</value></data>
+  <data name="AnalyticsAllGroups" xml:space="preserve"><value>كل مجموعات المحطات</value></data>
+  <data name="AnalyticsAmended" xml:space="preserve"><value>التعديلات</value></data>
+  <data name="AnalyticsApplied" xml:space="preserve"><value>مقدمة</value></data>
+  <data name="AnalyticsAudience" xml:space="preserve"><value>الجمهور المستهدف</value></data>
+  <data name="AnalyticsAverage" xml:space="preserve"><value>المتوسط</value></data>
+  <data name="AnalyticsAwaitingReview" xml:space="preserve"><value>بانتظار المراجعة</value></data>
+  <data name="AnalyticsByCallType" xml:space="preserve"><value>حسب نوع النداء</value></data>
+  <data name="AnalyticsByFlowClass" xml:space="preserve"><value>حسب فئة التدفق</value></data>
+  <data name="AnalyticsByHour" xml:space="preserve"><value>حسب ساعة اليوم</value></data>
+  <data name="AnalyticsByIncidentType" xml:space="preserve"><value>حسب نوع الحادث</value></data>
+  <data name="AnalyticsByKind" xml:space="preserve"><value>حسب الصنف</value></data>
+  <data name="AnalyticsByMonth" xml:space="preserve"><value>حسب الشهر</value></data>
+  <data name="AnalyticsByPerson" xml:space="preserve"><value>حسب الشخص</value></data>
+  <data name="AnalyticsByProgram" xml:space="preserve"><value>حسب البرنامج</value></data>
+  <data name="AnalyticsBySeverity" xml:space="preserve"><value>حسب الخطورة</value></data>
+  <data name="AnalyticsBySource" xml:space="preserve"><value>حسب المصدر</value></data>
+  <data name="AnalyticsByStationGroup" xml:space="preserve"><value>حسب مجموعة المحطة</value></data>
+  <data name="AnalyticsByType" xml:space="preserve"><value>حسب النوع</value></data>
+  <data name="AnalyticsCancelled" xml:space="preserve"><value>ملغاة</value></data>
+  <data name="AnalyticsCommunityRisk" xml:space="preserve"><value>مخاطر المجتمع</value></data>
+  <data name="AnalyticsCompleted" xml:space="preserve"><value>مكتملة</value></data>
+  <data name="AnalyticsConditional" xml:space="preserve"><value>مشروطة</value></data>
+  <data name="AnalyticsCorrected" xml:space="preserve"><value>مصححة</value></data>
+  <data name="AnalyticsCount" xml:space="preserve"><value>العدد</value></data>
+  <data name="AnalyticsCrr" xml:space="preserve"><value>الحد من مخاطر المجتمع</value></data>
+  <data name="AnalyticsDaysScheduledToCompleted" xml:space="preserve"><value>متوسط الأيام من الجدولة إلى الإكمال</value></data>
+  <data name="AnalyticsDaysToCorrection" xml:space="preserve"><value>متوسط الأيام حتى التصحيح</value></data>
+  <data name="AnalyticsDaysToIssue" xml:space="preserve"><value>متوسط الأيام من الطلب إلى الإصدار</value></data>
+  <data name="AnalyticsDenied" xml:space="preserve"><value>مرفوضة</value></data>
+  <data name="AnalyticsEscalated" xml:space="preserve"><value>مصعّدة</value></data>
+  <data name="AnalyticsExecutive" xml:space="preserve"><value>الملخص التنفيذي</value></data>
+  <data name="AnalyticsExpired" xml:space="preserve"><value>منتهية</value></data>
+  <data name="AnalyticsFailed" xml:space="preserve"><value>راسبة</value></data>
+  <data name="AnalyticsFirstArrival" xml:space="preserve"><value>أول وصول</value></data>
+  <data name="AnalyticsFlowTests" xml:space="preserve"><value>اختبارات التدفق في الفترة</value></data>
+  <data name="AnalyticsFrom" xml:space="preserve"><value>من</value></data>
+  <data name="AnalyticsGroupScoped" xml:space="preserve"><value>تغطي الأرقام السجلات التي يمكنك فتحها فقط؛ يرى مسؤولو الإدارة إجماليات الإدارة.</value></data>
+  <data name="AnalyticsHazmat" xml:space="preserve"><value>مواد خطرة في الموقع</value></data>
+  <data name="AnalyticsHeader" xml:space="preserve"><value>التحليلات</value></data>
+  <data name="AnalyticsHeadline" xml:space="preserve"><value>الأرقام الرئيسية</value></data>
+  <data name="AnalyticsHeatMap" xml:space="preserve"><value>السجلات حسب يوم الأسبوع والساعة</value></data>
+  <data name="AnalyticsHours" xml:space="preserve"><value>الساعات</value></data>
+  <data name="AnalyticsHoursPerMember" xml:space="preserve"><value>الساعات لكل عضو</value></data>
+  <data name="AnalyticsInService" xml:space="preserve"><value>في الخدمة</value></data>
+  <data name="AnalyticsIncidentReports" xml:space="preserve"><value>تقارير الحوادث</value></data>
+  <data name="AnalyticsIncidents" xml:space="preserve"><value>الحوادث</value></data>
+  <data name="AnalyticsInspectedWithin12Months" xml:space="preserve"><value>تم تفتيشها خلال 12 شهرًا</value></data>
+  <data name="AnalyticsIntro" xml:space="preserve"><value>لوحات تُحسب عند الطلب من السجلات النهائية. المستخدم المقيّد بمجموعة يرى فقط السجلات التي يمكنه فتحها؛ مسؤولو الإدارة يرون الإدارة كاملة.</value></data>
+  <data name="AnalyticsIssued" xml:space="preserve"><value>صادرة</value></data>
+  <data name="AnalyticsLifecycle" xml:space="preserve"><value>دورة الحياة</value></data>
+  <data name="AnalyticsMax" xml:space="preserve"><value>الحد الأقصى</value></data>
+  <data name="AnalyticsMedian" xml:space="preserve"><value>الوسيط</value></data>
+  <data name="AnalyticsMedianHoursToFinalize" xml:space="preserve"><value>وسيط الساعات حتى الإنهاء</value></data>
+  <data name="AnalyticsMedianReviewHours" xml:space="preserve"><value>وسيط مدة المراجعة (س)</value></data>
+  <data name="AnalyticsMembersTrained" xml:space="preserve"><value>الأعضاء المدرَّبون</value></data>
+  <data name="AnalyticsModuleOff" xml:space="preserve"><value>هذه الوحدة غير مفعّلة للإدارة.</value></data>
+  <data name="AnalyticsNeedingAssistance" xml:space="preserve"><value>شاغلون يحتاجون مساعدة</value></data>
+  <data name="AnalyticsNerisAcceptance" xml:space="preserve"><value>معدل قبول NERIS</value></data>
+  <data name="AnalyticsNerisAccepted" xml:space="preserve"><value>مقبولة في NERIS</value></data>
+  <data name="AnalyticsNerisRejected" xml:space="preserve"><value>مرفوضة في NERIS</value></data>
+  <data name="AnalyticsNoData" xml:space="preserve"><value>لا توجد سجلات نهائية في هذه الفترة.</value></data>
+  <data name="AnalyticsNoSprinklers" xml:space="preserve"><value>بدون رشاشات</value></data>
+  <data name="AnalyticsOccupancyRisk" xml:space="preserve"><value>ملف مخاطر المنشآت</value></data>
+  <data name="AnalyticsOnScene" xml:space="preserve"><value>الوقت في الموقع</value></data>
+  <data name="AnalyticsOnSchedule" xml:space="preserve"><value>مكتملة في الموعد</value></data>
+  <data name="AnalyticsOpenDrafts" xml:space="preserve"><value>المسودات المفتوحة</value></data>
+  <data name="AnalyticsOpenNow" xml:space="preserve"><value>مفتوحة الآن</value></data>
+  <data name="AnalyticsOpenViolations" xml:space="preserve"><value>المخالفات المفتوحة</value></data>
+  <data name="AnalyticsOpened" xml:space="preserve"><value>مفتوحة</value></data>
+  <data name="AnalyticsOverdueNow" xml:space="preserve"><value>الالتزامات المتأخرة الآن</value></data>
+  <data name="AnalyticsP90" xml:space="preserve"><value>المئين 90</value></data>
+  <data name="AnalyticsPassRate" xml:space="preserve"><value>معدل النجاح</value></data>
+  <data name="AnalyticsPassed" xml:space="preserve"><value>ناجحة</value></data>
+  <data name="AnalyticsPersonnelHours" xml:space="preserve"><value>ساعات الأفراد</value></data>
+  <data name="AnalyticsPriorPeriod" xml:space="preserve"><value>الفترة السابقة</value></data>
+  <data name="AnalyticsQueues" xml:space="preserve"><value>قوائم الانتظار والالتزامات</value></data>
+  <data name="AnalyticsRecordHours" xml:space="preserve"><value>ساعات السجلات</value></data>
+  <data name="AnalyticsRecordsFinalized" xml:space="preserve"><value>السجلات النهائية</value></data>
+  <data name="AnalyticsRecordsRead" xml:space="preserve"><value>السجلات المقروءة</value></data>
+  <data name="AnalyticsRecordsWithResponses" xml:space="preserve"><value>سجلات بأوقات الوحدات</value></data>
+  <data name="AnalyticsReinspections" xml:space="preserve"><value>إعادة تفتيش مطلوبة</value></data>
+  <data name="AnalyticsResponse" xml:space="preserve"><value>أداء الاستجابة</value></data>
+  <data name="AnalyticsResponseSummary" xml:space="preserve"><value>ملخص الاستجابة</value></data>
+  <data name="AnalyticsResponses" xml:space="preserve"><value>استجابات الوحدات</value></data>
+  <data name="AnalyticsReturnRate" xml:space="preserve"><value>معدل الإرجاع</value></data>
+  <data name="AnalyticsReviewCurrent" xml:space="preserve"><value>المراجعة سارية</value></data>
+  <data name="AnalyticsReviewOverdue" xml:space="preserve"><value>المراجعة متأخرة</value></data>
+  <data name="AnalyticsRevoked" xml:space="preserve"><value>ملغاة</value></data>
+  <data name="AnalyticsRunRecords" xml:space="preserve"><value>سجلات الخروج</value></data>
+  <data name="AnalyticsSamples" xml:space="preserve"><value>العينات</value></data>
+  <data name="AnalyticsShare" xml:space="preserve"><value>الحصة</value></data>
+  <data name="AnalyticsTestedWithin12Months" xml:space="preserve"><value>مختبرة خلال 12 شهرًا</value></data>
+  <data name="AnalyticsTo" xml:space="preserve"><value>إلى</value></data>
+  <data name="AnalyticsTotal" xml:space="preserve"><value>الإجمالي</value></data>
+  <data name="AnalyticsTotalResponse" xml:space="preserve"><value>إجمالي الاستجابة</value></data>
+  <data name="AnalyticsTraining" xml:space="preserve"><value>التدريب</value></data>
+  <data name="AnalyticsTrainingHours" xml:space="preserve"><value>ساعات التدريب</value></data>
+  <data name="AnalyticsTrainingRecords" xml:space="preserve"><value>سجلات التدريب</value></data>
+  <data name="AnalyticsTravel" xml:space="preserve"><value>الانتقال</value></data>
+  <data name="AnalyticsTravelTarget" xml:space="preserve"><value>هدف الانتقال (ث)</value></data>
+  <data name="AnalyticsTurnout" xml:space="preserve"><value>الانطلاق</value></data>
+  <data name="AnalyticsTurnoutTarget" xml:space="preserve"><value>هدف الانطلاق (ث)</value></data>
+  <data name="AnalyticsUnitOnSceneHours" xml:space="preserve"><value>ساعات الوحدات في الموقع</value></data>
+  <data name="AnalyticsVacant" xml:space="preserve"><value>شاغر</value></data>
+  <data name="AnalyticsVerified" xml:space="preserve"><value>تم التحقق</value></data>
+  <data name="AnalyticsVoided" xml:space="preserve"><value>ملغاة</value></data>
+  <data name="AnalyticsWaived" xml:space="preserve"><value>متنازل عنها</value></data>
+  <data name="AnalyticsWentOverdue" xml:space="preserve"><value>أصبحت متأخرة خلال الفترة</value></data>
+  <data name="AnalyticsWithinTarget" xml:space="preserve"><value>ضمن الهدف</value></data>
+  <data name="AnalyticsWorkload" xml:space="preserve"><value>عبء العمل</value></data>
 </root>

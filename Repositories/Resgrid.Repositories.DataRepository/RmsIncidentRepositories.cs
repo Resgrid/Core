@@ -125,6 +125,16 @@ namespace Resgrid.Repositories.DataRepository
 				where.Append($" AND {C("FinalizedOn")} IS NOT NULL AND {C("FinalizedOn")} < {P}FinalizedOnEnd");
 				parameters.Add("FinalizedOnEnd", query.FinalizedOnEnd.Value);
 			}
+			if (query.OccurredOnStart.HasValue)
+			{
+				where.Append($" AND COALESCE({C("CallCreatedOn")}, {C("FinalizedOn")}) >= {P}OccurredOnStart");
+				parameters.Add("OccurredOnStart", query.OccurredOnStart.Value);
+			}
+			if (query.OccurredOnEnd.HasValue)
+			{
+				where.Append($" AND COALESCE({C("CallCreatedOn")}, {C("FinalizedOn")}) < {P}OccurredOnEnd");
+				parameters.Add("OccurredOnEnd", query.OccurredOnEnd.Value);
+			}
 
 			if (query.VisibleGroupIds != null)
 			{
@@ -213,6 +223,16 @@ namespace Resgrid.Repositories.DataRepository
 			return QueryAsync<T>(
 				$"SELECT * FROM {Tbl(_table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {revisionClause} ORDER BY {Col(_orderBy)}",
 				new { DepartmentId = departmentId, RecordId = recordId, RevisionId = revisionId });
+		}
+
+		public async Task<IEnumerable<T>> GetForRevisionsAsync(int departmentId, IEnumerable<string> revisionIds)
+		{
+			var rows = new List<T>();
+			foreach (var ids in (revisionIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+				rows.AddRange(await QueryAsync<T>(
+					$"SELECT * FROM {Tbl(_table)} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RevisionId", "Ids")} ORDER BY {Col("RecordId")}, {Col(_orderBy)}",
+					new { DepartmentId = departmentId, Ids = InListValue(ids) }));
+			return rows;
 		}
 
 		public Task<int> DeleteDraftForRecordAsync(int departmentId, string recordId, CancellationToken cancellationToken = default)

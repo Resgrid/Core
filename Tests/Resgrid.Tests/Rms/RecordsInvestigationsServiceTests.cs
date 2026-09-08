@@ -160,6 +160,30 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task Only_a_lead_reassigns_the_lead_investigator()
+		{
+			var investigation = await _h.InvestigationsService.OpenAsync(Dept, Admin, "Warehouse fire", null, null, "Summary");
+			var caseId = investigation.RmsInvestigationCaseId;
+			await _h.InvestigationsService.AddMemberAsync(Dept, Admin, caseId, Investigator, RmsInvestigationRole.Investigator);
+
+			// An investigator edits the case body, so the posted lead field reaches the service; it must not be applied.
+			Func<Task> steal = () => _h.InvestigationsService.UpdateAsync(Dept, Investigator,
+				new RmsInvestigationCase { RmsInvestigationCaseId = caseId, Title = "Warehouse fire", LeadInvestigatorUserId = Investigator });
+			await steal.Should().ThrowAsync<UnauthorizedAccessException>();
+			investigation.LeadInvestigatorUserId.Should().Be(Admin);
+			_h.Audits.Rows.Should().Contain(a => a.Action == (int)RmsAccessAuditAction.Denied && a.CorrelationId == caseId && !a.Successful);
+
+			// Resending the current lead is the ordinary no-op an unchanged form posts.
+			await _h.InvestigationsService.UpdateAsync(Dept, Investigator,
+				new RmsInvestigationCase { RmsInvestigationCaseId = caseId, Title = "Warehouse fire, dock", LeadInvestigatorUserId = Admin });
+			investigation.Title.Should().Be("Warehouse fire, dock");
+
+			await _h.InvestigationsService.UpdateAsync(Dept, Admin,
+				new RmsInvestigationCase { RmsInvestigationCaseId = caseId, Title = "Warehouse fire, dock", LeadInvestigatorUserId = Investigator });
+			investigation.LeadInvestigatorUserId.Should().Be(Investigator);
+		}
+
+		[Test]
 		public async Task Investigation_files_are_restricted_and_readable_only_by_members()
 		{
 			var investigation = await _h.InvestigationsService.OpenAsync(Dept, Admin, "Warehouse fire", null, null, null);

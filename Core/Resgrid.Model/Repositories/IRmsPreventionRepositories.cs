@@ -107,6 +107,8 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Latest completed inspection per occupancy for a program; the scheduler's frequency anchor.</summary>
 		Task<IDictionary<string, DateTime>> GetLastCompletedByOccupancyAsync(int departmentId, string programId);
 		Task<IEnumerable<RmsInspection>> GetOpenForProgramAsync(int departmentId, string programId);
+		/// <summary>Live inspections whose activity date (CompletedOn, else ScheduledOn, else CreatedOn) is in [start, end), at most <paramref name="take"/> rows.</summary>
+		Task<IEnumerable<RmsInspection>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take);
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string inspectionId, long expectedVersion, CancellationToken cancellationToken = default);
 	}
 
@@ -120,6 +122,8 @@ namespace Resgrid.Model.Repositories
 		Task<int> CountOpenAsync(int departmentId);
 		Task<int> CountOverdueAsync(int departmentId, DateTime utcNow);
 		Task<IDictionary<string, int>> CountOpenByOccupancyAsync(int departmentId, IEnumerable<string> occupancyIds);
+		/// <summary>Live violations opened (CreatedOn) in [start, end), at most <paramref name="take"/> rows.</summary>
+		Task<IEnumerable<RmsViolation>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take);
 	}
 
 	public interface IRmsHydrantsRepository : IRepository<RmsHydrant>
@@ -137,6 +141,8 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsHydrantFlowTestsRepository : IRepository<RmsHydrantFlowTest>
 	{
 		Task<IEnumerable<RmsHydrantFlowTest>> GetForHydrantAsync(int departmentId, string hydrantId);
+		/// <summary>Flow tests performed in [start, end) across the department, at most <paramref name="take"/> rows.</summary>
+		Task<IEnumerable<RmsHydrantFlowTest>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take);
 	}
 
 	public interface IRmsHydrantMaintenancesRepository : IRepository<RmsHydrantMaintenance>
@@ -168,6 +174,8 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsPermit>> GetForOccupancyAsync(int departmentId, string occupancyId);
 		Task<IEnumerable<RmsPermit>> GetExpiringAsync(int departmentId, DateTime utcNow, DateTime horizonUtc, int take);
 		Task<int> CountExpiringAsync(int departmentId, DateTime utcNow, DateTime horizonUtc);
+		/// <summary>Live permits applied for (AppliedOn) in [start, end), at most <paramref name="take"/> rows.</summary>
+		Task<IEnumerable<RmsPermit>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take);
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string permitId, long expectedVersion, CancellationToken cancellationToken = default);
 	}
 

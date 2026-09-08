@@ -1833,4 +1833,117 @@
   <data name="WaterShutoff" xml:space="preserve"><value>Перекриття води</value></data>
   <data name="WaterSupplyNotes" xml:space="preserve"><value>Примітки про водопостачання</value></data>
   <data name="WorkflowRuns" xml:space="preserve"><value>Запуски Workflow</value></data>
+  <data name="AnalyticsAccreditation" xml:space="preserve"><value>Акредитація</value></data>
+  <data name="AnalyticsActiveNow" xml:space="preserve"><value>Активні зараз</value></data>
+  <data name="AnalyticsActivities" xml:space="preserve"><value>Заходи</value></data>
+  <data name="AnalyticsAllGroups" xml:space="preserve"><value>Усі групи станцій</value></data>
+  <data name="AnalyticsAmended" xml:space="preserve"><value>Поправки</value></data>
+  <data name="AnalyticsApplied" xml:space="preserve"><value>Подано</value></data>
+  <data name="AnalyticsAudience" xml:space="preserve"><value>Охоплена аудиторія</value></data>
+  <data name="AnalyticsAverage" xml:space="preserve"><value>Середнє</value></data>
+  <data name="AnalyticsAwaitingReview" xml:space="preserve"><value>Очікують перевірки</value></data>
+  <data name="AnalyticsByCallType" xml:space="preserve"><value>За типом виклику</value></data>
+  <data name="AnalyticsByFlowClass" xml:space="preserve"><value>За класом витрати</value></data>
+  <data name="AnalyticsByHour" xml:space="preserve"><value>За годиною доби</value></data>
+  <data name="AnalyticsByIncidentType" xml:space="preserve"><value>За типом інциденту</value></data>
+  <data name="AnalyticsByKind" xml:space="preserve"><value>За видом</value></data>
+  <data name="AnalyticsByMonth" xml:space="preserve"><value>За місяцем</value></data>
+  <data name="AnalyticsByPerson" xml:space="preserve"><value>За особою</value></data>
+  <data name="AnalyticsByProgram" xml:space="preserve"><value>За програмою</value></data>
+  <data name="AnalyticsBySeverity" xml:space="preserve"><value>За серйозністю</value></data>
+  <data name="AnalyticsBySource" xml:space="preserve"><value>За джерелом</value></data>
+  <data name="AnalyticsByStationGroup" xml:space="preserve"><value>За групою станцій</value></data>
+  <data name="AnalyticsByType" xml:space="preserve"><value>За типом</value></data>
+  <data name="AnalyticsCancelled" xml:space="preserve"><value>Скасовано</value></data>
+  <data name="AnalyticsCommunityRisk" xml:space="preserve"><value>Ризики громади</value></data>
+  <data name="AnalyticsCompleted" xml:space="preserve"><value>Завершено</value></data>
+  <data name="AnalyticsConditional" xml:space="preserve"><value>Умовно</value></data>
+  <data name="AnalyticsCorrected" xml:space="preserve"><value>Виправлено</value></data>
+  <data name="AnalyticsCount" xml:space="preserve"><value>Кількість</value></data>
+  <data name="AnalyticsCrr" xml:space="preserve"><value>Зниження ризиків громади</value></data>
+  <data name="AnalyticsDaysScheduledToCompleted" xml:space="preserve"><value>Сер. днів від запланованої до завершення</value></data>
+  <data name="AnalyticsDaysToCorrection" xml:space="preserve"><value>Сер. днів до виправлення</value></data>
+  <data name="AnalyticsDaysToIssue" xml:space="preserve"><value>Сер. днів від подання до видачі</value></data>
+  <data name="AnalyticsDenied" xml:space="preserve"><value>Відмовлено</value></data>
+  <data name="AnalyticsEscalated" xml:space="preserve"><value>Ескальовано</value></data>
+  <data name="AnalyticsExecutive" xml:space="preserve"><value>Зведення для керівництва</value></data>
+  <data name="AnalyticsExpired" xml:space="preserve"><value>Прострочено</value></data>
+  <data name="AnalyticsFailed" xml:space="preserve"><value>Не пройдено</value></data>
+  <data name="AnalyticsFirstArrival" xml:space="preserve"><value>Перше прибуття</value></data>
+  <data name="AnalyticsFlowTests" xml:space="preserve"><value>Тести витрати за період</value></data>
+  <data name="AnalyticsFrom" xml:space="preserve"><value>Від</value></data>
+  <data name="AnalyticsGroupScoped" xml:space="preserve"><value>Показники охоплюють лише записи, які ви можете відкрити; адміністратори підрозділу бачать підсумки підрозділу.</value></data>
+  <data name="AnalyticsHazmat" xml:space="preserve"><value>Небезпечні матеріали на об'єкті</value></data>
+  <data name="AnalyticsHeader" xml:space="preserve"><value>Аналітика</value></data>
+  <data name="AnalyticsHeadline" xml:space="preserve"><value>Ключові показники</value></data>
+  <data name="AnalyticsHeatMap" xml:space="preserve"><value>Записи за днем тижня та годиною</value></data>
+  <data name="AnalyticsHours" xml:space="preserve"><value>Години</value></data>
+  <data name="AnalyticsHoursPerMember" xml:space="preserve"><value>Годин на члена</value></data>
+  <data name="AnalyticsInService" xml:space="preserve"><value>У роботі</value></data>
+  <data name="AnalyticsIncidentReports" xml:space="preserve"><value>Звіти про інциденти</value></data>
+  <data name="AnalyticsIncidents" xml:space="preserve"><value>Інциденти</value></data>
+  <data name="AnalyticsInspectedWithin12Months" xml:space="preserve"><value>Проінспектовано за останні 12 місяців</value></data>
+  <data name="AnalyticsIntro" xml:space="preserve"><value>Панелі, що обчислюються на вимогу за фіналізованими записами. Користувач, обмежений групою, бачить лише записи, які може відкрити; адміністратори підрозділу бачать увесь підрозділ.</value></data>
+  <data name="AnalyticsIssued" xml:space="preserve"><value>Видано</value></data>
+  <data name="AnalyticsLifecycle" xml:space="preserve"><value>Життєвий цикл</value></data>
+  <data name="AnalyticsMax" xml:space="preserve"><value>Максимум</value></data>
+  <data name="AnalyticsMedian" xml:space="preserve"><value>Медіана</value></data>
+  <data name="AnalyticsMedianHoursToFinalize" xml:space="preserve"><value>Медіана годин до фіналізації</value></data>
+  <data name="AnalyticsMedianReviewHours" xml:space="preserve"><value>Медіана часу перевірки (год)</value></data>
+  <data name="AnalyticsMembersTrained" xml:space="preserve"><value>Навчено членів</value></data>
+  <data name="AnalyticsModuleOff" xml:space="preserve"><value>Цей модуль не ввімкнено для підрозділу.</value></data>
+  <data name="AnalyticsNeedingAssistance" xml:space="preserve"><value>Мешканці, що потребують допомоги</value></data>
+  <data name="AnalyticsNerisAcceptance" xml:space="preserve"><value>Частка прийняття NERIS</value></data>
+  <data name="AnalyticsNerisAccepted" xml:space="preserve"><value>Прийнято NERIS</value></data>
+  <data name="AnalyticsNerisRejected" xml:space="preserve"><value>Відхилено NERIS</value></data>
+  <data name="AnalyticsNoData" xml:space="preserve"><value>Немає фіналізованих записів у цьому періоді.</value></data>
+  <data name="AnalyticsNoSprinklers" xml:space="preserve"><value>Без спринклерів</value></data>
+  <data name="AnalyticsOccupancyRisk" xml:space="preserve"><value>Профіль ризику об'єктів</value></data>
+  <data name="AnalyticsOnScene" xml:space="preserve"><value>Час на місці</value></data>
+  <data name="AnalyticsOnSchedule" xml:space="preserve"><value>Завершено вчасно</value></data>
+  <data name="AnalyticsOpenDrafts" xml:space="preserve"><value>Відкриті чернетки</value></data>
+  <data name="AnalyticsOpenNow" xml:space="preserve"><value>Відкриті зараз</value></data>
+  <data name="AnalyticsOpenViolations" xml:space="preserve"><value>Відкриті порушення</value></data>
+  <data name="AnalyticsOpened" xml:space="preserve"><value>Відкрито</value></data>
+  <data name="AnalyticsOverdueNow" xml:space="preserve"><value>Прострочені зобов'язання зараз</value></data>
+  <data name="AnalyticsP90" xml:space="preserve"><value>90-й перцентиль</value></data>
+  <data name="AnalyticsPassRate" xml:space="preserve"><value>Частка проходження</value></data>
+  <data name="AnalyticsPassed" xml:space="preserve"><value>Пройдено</value></data>
+  <data name="AnalyticsPersonnelHours" xml:space="preserve"><value>Години персоналу</value></data>
+  <data name="AnalyticsPriorPeriod" xml:space="preserve"><value>Попередній період</value></data>
+  <data name="AnalyticsQueues" xml:space="preserve"><value>Черги та зобов'язання</value></data>
+  <data name="AnalyticsRecordHours" xml:space="preserve"><value>Години записів</value></data>
+  <data name="AnalyticsRecordsFinalized" xml:space="preserve"><value>Фіналізовані записи</value></data>
+  <data name="AnalyticsRecordsRead" xml:space="preserve"><value>Прочитано записів</value></data>
+  <data name="AnalyticsRecordsWithResponses" xml:space="preserve"><value>Записи з часами підрозділів</value></data>
+  <data name="AnalyticsReinspections" xml:space="preserve"><value>Потрібні повторні перевірки</value></data>
+  <data name="AnalyticsResponse" xml:space="preserve"><value>Ефективність реагування</value></data>
+  <data name="AnalyticsResponseSummary" xml:space="preserve"><value>Зведення реагування</value></data>
+  <data name="AnalyticsResponses" xml:space="preserve"><value>Виїзди підрозділів</value></data>
+  <data name="AnalyticsReturnRate" xml:space="preserve"><value>Частка повернень</value></data>
+  <data name="AnalyticsReviewCurrent" xml:space="preserve"><value>Перегляд актуальний</value></data>
+  <data name="AnalyticsReviewOverdue" xml:space="preserve"><value>Перегляд прострочено</value></data>
+  <data name="AnalyticsRevoked" xml:space="preserve"><value>Відкликано</value></data>
+  <data name="AnalyticsRunRecords" xml:space="preserve"><value>Записи виїздів</value></data>
+  <data name="AnalyticsSamples" xml:space="preserve"><value>Вибірка</value></data>
+  <data name="AnalyticsShare" xml:space="preserve"><value>Частка</value></data>
+  <data name="AnalyticsTestedWithin12Months" xml:space="preserve"><value>Перевірено за останні 12 місяців</value></data>
+  <data name="AnalyticsTo" xml:space="preserve"><value>До</value></data>
+  <data name="AnalyticsTotal" xml:space="preserve"><value>Усього</value></data>
+  <data name="AnalyticsTotalResponse" xml:space="preserve"><value>Загальний час реагування</value></data>
+  <data name="AnalyticsTraining" xml:space="preserve"><value>Навчання</value></data>
+  <data name="AnalyticsTrainingHours" xml:space="preserve"><value>Години навчання</value></data>
+  <data name="AnalyticsTrainingRecords" xml:space="preserve"><value>Записи навчання</value></data>
+  <data name="AnalyticsTravel" xml:space="preserve"><value>Час у дорозі</value></data>
+  <data name="AnalyticsTravelTarget" xml:space="preserve"><value>Ціль часу в дорозі (с)</value></data>
+  <data name="AnalyticsTurnout" xml:space="preserve"><value>Час виїзду</value></data>
+  <data name="AnalyticsTurnoutTarget" xml:space="preserve"><value>Ціль часу виїзду (с)</value></data>
+  <data name="AnalyticsUnitOnSceneHours" xml:space="preserve"><value>годин підрозділів на місці</value></data>
+  <data name="AnalyticsVacant" xml:space="preserve"><value>Порожні</value></data>
+  <data name="AnalyticsVerified" xml:space="preserve"><value>Перевірено</value></data>
+  <data name="AnalyticsVoided" xml:space="preserve"><value>Анульовані</value></data>
+  <data name="AnalyticsWaived" xml:space="preserve"><value>Скасовано вимогу</value></data>
+  <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Стали простроченими за період</value></data>
+  <data name="AnalyticsWithinTarget" xml:space="preserve"><value>У межах цілі</value></data>
+  <data name="AnalyticsWorkload" xml:space="preserve"><value>Навантаження</value></data>
 </root>

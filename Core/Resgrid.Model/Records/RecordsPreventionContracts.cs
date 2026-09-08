@@ -15,7 +15,9 @@ namespace Resgrid.Model
 		Permits = 4,
 		Crr = 5,
 		Investigations = 6,
-		QualityReview = 7
+		QualityReview = 7,
+		/// <summary>RMS-6 records analytics dashboards (read-only; Records.Analytics).</summary>
+		Analytics = 8
 	}
 
 	public static class RecordsPreventionModules
@@ -31,6 +33,7 @@ namespace Resgrid.Model
 				case RecordsPreventionModule.Crr: return FeatureFlagKeys.RecordsPreventionCrr;
 				case RecordsPreventionModule.Investigations: return FeatureFlagKeys.RecordsInvestigations;
 				case RecordsPreventionModule.QualityReview: return FeatureFlagKeys.RecordsQualityReview;
+				case RecordsPreventionModule.Analytics: return FeatureFlagKeys.RecordsAnalytics;
 				default: throw new ArgumentOutOfRangeException(nameof(module));
 			}
 		}
@@ -38,7 +41,8 @@ namespace Resgrid.Model
 		public static readonly IReadOnlyList<RecordsPreventionModule> All = new[]
 		{
 			RecordsPreventionModule.Occupancy, RecordsPreventionModule.Inspections, RecordsPreventionModule.Hydrants,
-			RecordsPreventionModule.Permits, RecordsPreventionModule.Crr, RecordsPreventionModule.Investigations, RecordsPreventionModule.QualityReview
+			RecordsPreventionModule.Permits, RecordsPreventionModule.Crr, RecordsPreventionModule.Investigations, RecordsPreventionModule.QualityReview,
+			RecordsPreventionModule.Analytics
 		};
 	}
 

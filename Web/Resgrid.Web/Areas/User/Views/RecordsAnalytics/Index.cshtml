@@ -1,0 +1,71 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordsExecutiveView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["AnalyticsHeader"] + " - " + L["AnalyticsExecutive"];
+	var s = Model.Summary;
+	string KpiLabel(string key)
+	{
+		switch (key)
+		{
+			case "finalized": return L["AnalyticsRecordsFinalized"].Value;
+			case "incidentReports": return L["AnalyticsIncidentReports"].Value;
+			case "nerisAccepted": return L["AnalyticsNerisAccepted"].Value;
+			case "nerisRejected": return L["AnalyticsNerisRejected"].Value;
+			case "unitResponses": return L["AnalyticsResponses"].Value;
+			case "personnelHours": return L["AnalyticsPersonnelHours"].Value;
+			case "trainingHours": return L["AnalyticsTrainingHours"].Value;
+			case "amended": return L["AnalyticsAmended"].Value;
+			case "voided": return L["AnalyticsVoided"].Value;
+			default: return key;
+		}
+	}
+}
+@await Html.PartialAsync("_AnalyticsShell", Model)
+<div class="wrapper wrapper-content" style="padding-top:0">
+	@if (s != null)
+	{
+		<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsHeadline"]</h5><span class="text-muted pull-right">@L["AnalyticsPriorPeriod"]: @s.PriorStart.ToString("yyyy-MM-dd") - @s.PriorEnd.AddDays(-1).ToString("yyyy-MM-dd")</span></div><div class="ibox-content">
+			<div class="row">
+				@foreach (var k in s.Kpis)
+				{
+					<div class="col-md-2 col-sm-4 col-xs-6 rms-kpi">
+						<div class="value">@RmsAnalyticsDisplay.Number(k.Current)</div>
+						<div class="label">@KpiLabel(k.Key)</div>
+						<div class="@RmsAnalyticsDisplay.DeltaClass(k.ChangePercent)"><small>@RmsAnalyticsDisplay.Delta(k.ChangePercent) <span class="text-muted">(@RmsAnalyticsDisplay.Number(k.Prior))</span></small></div>
+					</div>
+				}
+			</div>
+		</div></div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsLifecycle"]</h5></div><div class="ibox-content">
+					<dl class="dl-horizontal m-b-none">
+						<dt>@L["AnalyticsMedianHoursToFinalize"]</dt><dd>@RmsAnalyticsDisplay.Number(s.MedianHoursToFinalize)</dd>
+						<dt>@L["AnalyticsMedianReviewHours"]</dt><dd>@RmsAnalyticsDisplay.Number(s.MedianReviewHours)</dd>
+						<dt>@L["AnalyticsReturnRate"]</dt><dd>@RmsAnalyticsDisplay.Percent(s.ReturnRatePercent)</dd>
+						<dt>@L["AnalyticsNerisAcceptance"]</dt><dd>@RmsAnalyticsDisplay.Percent(s.NerisAcceptanceRatePercent)</dd>
+						<dt>@L["AnalyticsTurnout"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(s.TurnoutP90Seconds)</dd>
+						<dt>@L["AnalyticsTotalResponse"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(s.TotalResponseP90Seconds)</dd>
+						<dt>@L["AnalyticsFirstArrival"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(s.FirstArrivalP90Seconds)</dd>
+					</dl>
+				</div></div>
+				<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsQueues"]</h5></div><div class="ibox-content">
+					<dl class="dl-horizontal m-b-none">
+						<dt>@L["AnalyticsOpenDrafts"]</dt><dd>@s.OpenDrafts</dd>
+						<dt>@L["AnalyticsAwaitingReview"]</dt><dd>@s.AwaitingReview</dd>
+						<dt>@L["AnalyticsOverdueNow"]</dt><dd class="@(s.OverdueNow > 0 ? "text-danger" : "")">@s.OverdueNow</dd>
+						<dt>@L["AnalyticsWentOverdue"]</dt><dd>@s.WentOverdue</dd>
+					</dl>
+				</div></div>
+			</div>
+			<div class="col-md-4">
+				@await Html.PartialAsync("_AnalyticsCounts", s.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "line" }, { "Take", 24 } })
+			</div>
+			<div class="col-md-4">
+				@await Html.PartialAsync("_AnalyticsCounts", s.ByDefinition, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ByDefinition"].Value }, { "Chart", "doughnut" }, { "ShowHours", true } })
+			</div>
+		</div>
+	}
+</div>

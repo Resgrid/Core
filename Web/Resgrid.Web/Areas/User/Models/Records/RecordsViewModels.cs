@@ -87,6 +87,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public RecordsModuleState ModuleState { get; set; }
 		/// <summary>RMS-4 quality review flag (Records.QualityReview); shows the button on the index only.</summary>
 		public bool QualityReviewOn { get; set; }
+		/// <summary>RMS-6 analytics flag (Records.Analytics); shows the button on the index only.</summary>
+		public bool AnalyticsOn { get; set; }
 		public Department Department { get; set; }
 		public bool IsDepartmentAdmin { get; set; }
 		public List<RmsRecordSearchProjection> Records { get; set; } = new List<RmsRecordSearchProjection>();

@@ -1,0 +1,34 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model List<RecordsAnalyticsCount>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	// ViewData: Title, ShowHours (bool), Chart (bar|line|doughnut|none), Take (int)
+	var title = ViewData["Title"] as string ?? "";
+	var showHours = ViewData["ShowHours"] as bool? ?? false;
+	var chart = ViewData["Chart"] as string ?? "none";
+	var take = ViewData["Take"] as int? ?? 15;
+	var id = "c" + Guid.NewGuid().ToString("N");
+	var rows = (Model ?? new List<RecordsAnalyticsCount>()).Take(take).ToList();
+	var showPercent = rows.Any(r => r.Percent.HasValue);
+}
+<div class="ibox"><div class="ibox-title"><h5>@title</h5></div><div class="ibox-content">
+	@if (rows.Count == 0) { <p class="text-muted">@L["AnalyticsNoData"]</p> }
+	else
+	{
+		if (chart != "none")
+		{
+			<div class="rms-chart m-b-sm"><canvas id="@id"></canvas></div>
+			<script>document.addEventListener('DOMContentLoaded', function () { rmsChart('@id', @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.Label))), @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.Count))), '@chart', '@L["AnalyticsCount"]'); });</script>
+		}
+		<table class="table table-condensed table-striped m-b-none">
+			<thead><tr><th></th><th class="text-right">@L["AnalyticsCount"]</th>@if (showHours) { <th class="text-right">@L["AnalyticsHours"]</th> }@if (showPercent) { <th class="text-right">@L["AnalyticsShare"]</th> }</tr></thead>
+			<tbody>
+				@foreach (var row in rows)
+				{
+					<tr><td>@row.Label</td><td class="text-right">@row.Count</td>@if (showHours) { <td class="text-right">@RmsAnalyticsDisplay.Hours(row.Hours)</td> }@if (showPercent) { <td class="text-right">@RmsAnalyticsDisplay.Percent(row.Percent)</td> }</tr>
+				}
+			</tbody>
+		</table>
+	}
+</div></div>

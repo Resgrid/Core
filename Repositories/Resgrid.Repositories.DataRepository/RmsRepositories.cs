@@ -353,6 +353,23 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				new { DepartmentId = departmentId, States = InListValue(states), Since = sinceUtc });
 		}
 
+		public Task<IEnumerable<RmsOperationalRecord>> GetFinalizedInRangeAsync(int departmentId, IEnumerable<int> states, DateTime startUtc, DateTime endUtc, int take)
+		{
+			// Occurrence = StartedOn when the author recorded one, else the finalization instant: a Record with no
+			// start still belongs to the period it was filed in rather than vanishing from every dashboard.
+			var occurred = $"COALESCE({Col("StartedOn")}, {Col("FinalizedOn")})";
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("States", InListValue(states));
+			parameters.Add("Start", startUtc);
+			parameters.Add("End", endUtc);
+			parameters.Add("Skip", 0);
+			parameters.Add("Take", take <= 0 ? 5000 : Math.Min(take, 200000));
+			return QueryAsync<RmsOperationalRecord>(
+				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")} AND {occurred} >= {P}Start AND {occurred} < {P}End AND {Col("DeletedOn")} IS NULL AND {Col("PurgedOn")} IS NULL ORDER BY {occurred}, {Col("RmsOperationalRecordId")} {Paging()}",
+				parameters);
+		}
+
 		public Task<IEnumerable<RmsOperationalRecord>> GetCreatedSinceAsync(int departmentId, DateTime sinceUtc, int take)
 		{
 			var parameters = new DynamicParameters();
@@ -472,6 +489,17 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				$"SELECT * FROM {Tbl("RmsOperationalRecordDetails")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("RevisionId")} = {P}RevisionId",
 				new { DepartmentId = departmentId, RecordId = recordId, RevisionId = revisionId });
 		}
+
+		public async Task<IEnumerable<RmsRecordCallContext>> GetCallContextForRevisionsAsync(int departmentId, IEnumerable<string> revisionIds)
+		{
+			// Explicit column list: the narrative and the Coroner restricted section never leave the table for analytics.
+			var rows = new List<RmsRecordCallContext>();
+			foreach (var ids in (revisionIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+				rows.AddRange(await QueryAsync<RmsRecordCallContext>(
+					$"SELECT {Col("RecordId")} AS RecordId, {Col("RevisionId")} AS RevisionId, {Col("CallType")} AS CallType, {Col("CallPriority")} AS CallPriority, {Col("CallLoggedOn")} AS CallLoggedOn, {Col("UnitId")} AS UnitId, {Col("ActivityOn")} AS ActivityOn FROM {Tbl("RmsOperationalRecordDetails")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RevisionId", "Ids")}",
+					new { DepartmentId = departmentId, Ids = InListValue(ids) }));
+			return rows;
+		}
 	}
 
 	public class RmsRecordParticipantsRepository : RmsRepositoryBase<RmsRecordParticipant>, IRmsRecordParticipantsRepository
@@ -491,6 +519,16 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			return QueryAsync<RmsRecordParticipant>(
 				$"SELECT * FROM {Tbl("RmsRecordParticipants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RecordId", "Ids")} AND {Col("RevisionId")} IS NULL AND {Col("DeletedOn")} IS NULL ORDER BY {Col("RecordId")}, {Col("Ordinal")}",
 				parameters);
+		}
+
+		public async Task<IEnumerable<RmsRecordParticipant>> GetForRevisionsAsync(int departmentId, IEnumerable<string> revisionIds)
+		{
+			var rows = new List<RmsRecordParticipant>();
+			foreach (var ids in (revisionIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+				rows.AddRange(await QueryAsync<RmsRecordParticipant>(
+					$"SELECT * FROM {Tbl("RmsRecordParticipants")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RevisionId", "Ids")} AND {Col("DeletedOn")} IS NULL ORDER BY {Col("RecordId")}, {Col("Ordinal")}",
+					new { DepartmentId = departmentId, Ids = InListValue(ids) }));
+			return rows;
 		}
 
 		public Task<IEnumerable<RmsRecordParticipant>> GetForRecordAsync(int departmentId, string recordId, string revisionId)
@@ -533,6 +571,16 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			return QueryAsync<RmsRecordUnitResponse>(
 				$"SELECT * FROM {Tbl("RmsRecordUnitResponses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RecordId", "Ids")} AND {Col("RevisionId")} IS NULL AND {Col("DeletedOn")} IS NULL ORDER BY {Col("RecordId")}",
 				parameters);
+		}
+
+		public async Task<IEnumerable<RmsRecordUnitResponse>> GetForRevisionsAsync(int departmentId, IEnumerable<string> revisionIds)
+		{
+			var rows = new List<RmsRecordUnitResponse>();
+			foreach (var ids in (revisionIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+				rows.AddRange(await QueryAsync<RmsRecordUnitResponse>(
+					$"SELECT * FROM {Tbl("RmsRecordUnitResponses")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RevisionId", "Ids")} AND {Col("DeletedOn")} IS NULL ORDER BY {Col("RecordId")}, {Col("Ordinal")}",
+					new { DepartmentId = departmentId, Ids = InListValue(ids) }));
+			return rows;
 		}
 
 		public Task<IEnumerable<RmsRecordUnitResponse>> GetForRecordAsync(int departmentId, string recordId, string revisionId)
@@ -795,6 +843,20 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				new { DepartmentId = departmentId, RecordId = recordId });
 		}
 
+		public Task<IEnumerable<RmsRevisionTransitionRow>> GetTransitionsInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take)
+		{
+			// Header columns only: the snapshot is the attested content and analytics never needs it.
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Start", startUtc);
+			parameters.Add("End", endUtc);
+			parameters.Add("Skip", 0);
+			parameters.Add("Take", take <= 0 ? 5000 : Math.Min(take, 200000));
+			return QueryAsync<RmsRevisionTransitionRow>(
+				$"SELECT {Col("RmsRevisionId")} AS RmsRevisionId, {Col("RecordId")} AS RecordId, {Col("RecordKind")} AS RecordKind, {Col("Transition")} AS Transition, {Col("DefinitionKey")} AS DefinitionKey, {Col("ActorUserId")} AS ActorUserId, {Col("CreatedOn")} AS CreatedOn FROM {Tbl("RmsRevisions")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CreatedOn")} >= {P}Start AND {Col("CreatedOn")} < {P}End ORDER BY {Col("CreatedOn")}, {Col("RmsRevisionId")} {Paging()}",
+				parameters);
+		}
+
 		public Task<RmsRevision> GetByIdForDepartmentAsync(int departmentId, string revisionId)
 		{
 			return QueryFirstOrDefaultAsync<RmsRevision>(
@@ -841,9 +903,13 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsAccessAudits")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Action")} = {P}Action AND {Col("OccurredOn")} >= {P}Since", new { DepartmentId = departmentId, Action = action, Since = sinceUtc });
 		}
 
+		/// <summary>
+		/// Prevention and investigation aggregates are not Records, so RecordsPreventionGate.AuditAsync leaves RecordId
+		/// null and rides the aggregate id on CorrelationId. Match on that column: RecordId never carries a case id.
+		/// </summary>
 		public Task<IEnumerable<RmsAccessAudit>> GetForAggregateAsync(int departmentId, string aggregateId, int take)
 		{
-			return QueryAsync<RmsAccessAudit>($"SELECT * FROM {Tbl("RmsAccessAudits")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}Id ORDER BY {Col("OccurredOn")} DESC, {Col("RmsAccessAuditId")} DESC {Paging()}", new { DepartmentId = departmentId, Id = aggregateId, Skip = 0, Take = Math.Clamp(take, 1, 1000) });
+			return QueryAsync<RmsAccessAudit>($"SELECT * FROM {Tbl("RmsAccessAudits")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CorrelationId")} = {P}Id ORDER BY {Col("OccurredOn")} DESC, {Col("RmsAccessAuditId")} DESC {Paging()}", new { DepartmentId = departmentId, Id = aggregateId, Skip = 0, Take = Math.Clamp(take, 1, 1000) });
 		}
 
 		public Task<IEnumerable<RmsAccessAudit>> GetForRecordAsync(int departmentId, string recordId, int take)
@@ -1216,6 +1282,19 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			var analysis = $"EXISTS (SELECT 1 FROM {Tbl("RmsIncidentAnalyses")} a JOIN {Tbl("RmsIncidentReports")} r ON r.{Col("DepartmentId")} = a.{Col("DepartmentId")} AND r.{Col("RmsIncidentReportId")} = a.{Col("IncidentReportId")} WHERE a.{Col("DepartmentId")} = d.{Col("DepartmentId")} AND a.{Col("RmsIncidentAnalysisId")} = d.{Col("RecordId")} AND a.{Col("DeletedOn")} IS NULL AND r.{Col("DeletedOn")} IS NULL AND r.{Col("PurgedOn")} IS NULL AND {VisibleRecord("r", "RmsIncidentReportId", visibleGroupIds, false)})";
 			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsRecordDueStates")} d WHERE d.{Col("DepartmentId")} = {P}DepartmentId AND d.{Col("LastEmittedState")} = {P}Overdue AND ({operational} OR {incident} OR {analysis})",
 				new { DepartmentId = departmentId, Overdue = (int)RmsDueState.Overdue, VisibleGroupIds = InListValue(visibleGroupIds), Viewer = userId });
+		}
+
+		public Task<IEnumerable<RmsRecordDueState>> GetChangedInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Start", startUtc);
+			parameters.Add("End", endUtc);
+			parameters.Add("Skip", 0);
+			parameters.Add("Take", take <= 0 ? 5000 : Math.Min(take, 200000));
+			return QueryAsync<RmsRecordDueState>(
+				$"SELECT * FROM {Tbl("RmsRecordDueStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ModifiedOn")} >= {P}Start AND {Col("ModifiedOn")} < {P}End ORDER BY {Col("ModifiedOn")}, {Col("RmsRecordDueStateId")} {Paging()}",
+				parameters);
 		}
 
 		public Task<int> ClearForRecordAsync(int departmentId, string recordId, DateTime utcNow, CancellationToken cancellationToken = default)

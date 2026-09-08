@@ -1,0 +1,38 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model List<RecordsResponseTimeRow>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	// ViewData: Title, Chart (bar|line|none) - the chart plots total-response p90 per row
+	var title = ViewData["Title"] as string ?? "";
+	var chart = ViewData["Chart"] as string ?? "none";
+	var id = "t" + Guid.NewGuid().ToString("N");
+	var rows = (Model ?? new List<RecordsResponseTimeRow>()).Where(r => r.Responses > 0).ToList();
+}
+<div class="ibox"><div class="ibox-title"><h5>@title</h5></div><div class="ibox-content">
+	@if (rows.Count == 0) { <p class="text-muted">@L["AnalyticsNoData"]</p> }
+	else
+	{
+		if (chart != "none")
+		{
+			<div class="rms-chart m-b-sm"><canvas id="@id"></canvas></div>
+			<script>document.addEventListener('DOMContentLoaded', function () { rmsChart('@id', @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.Label))), @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.TotalResponse.P90Seconds ?? 0))), '@chart', '@L["AnalyticsTotalResponse"] @L["AnalyticsP90"] (s)'); });</script>
+		}
+		<div class="table-responsive">
+			<table class="table table-condensed table-striped m-b-none">
+				<thead><tr><th></th><th class="text-right">@L["AnalyticsResponses"]</th><th class="text-right">@L["AnalyticsTurnout"] @L["AnalyticsP90"]</th><th class="text-right">@L["AnalyticsWithinTarget"]</th><th class="text-right">@L["AnalyticsTravel"] @L["AnalyticsP90"]</th><th class="text-right">@L["AnalyticsWithinTarget"]</th><th class="text-right">@L["AnalyticsTotalResponse"] @L["AnalyticsP90"]</th><th class="text-right">@L["AnalyticsOnScene"] @L["AnalyticsMedian"]</th></tr></thead>
+				<tbody>
+					@foreach (var row in rows)
+					{
+						<tr>
+							<td>@row.Label</td><td class="text-right">@row.Responses</td>
+							<td class="text-right">@RmsAnalyticsDisplay.Seconds(row.Turnout.P90Seconds)</td><td class="text-right">@RmsAnalyticsDisplay.Percent(row.Turnout.WithinTargetPercent)</td>
+							<td class="text-right">@RmsAnalyticsDisplay.Seconds(row.Travel.P90Seconds)</td><td class="text-right">@RmsAnalyticsDisplay.Percent(row.Travel.WithinTargetPercent)</td>
+							<td class="text-right">@RmsAnalyticsDisplay.Seconds(row.TotalResponse.P90Seconds)</td><td class="text-right">@RmsAnalyticsDisplay.Seconds(row.OnScene.MedianSeconds)</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+</div></div>

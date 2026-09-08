@@ -22,6 +22,7 @@ namespace Resgrid.Tests.Rms
 
 		private static readonly PermissionTypes[] AdminAnchored =
 		{
+			PermissionTypes.RecordsPreventionAdmin,
 			PermissionTypes.SubmitRecords,
 			PermissionTypes.ShareRecordsExternally,
 			PermissionTypes.ViewRestrictedRecords,

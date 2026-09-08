@@ -174,6 +174,24 @@ namespace Resgrid.Tests.Localization
 			"Records|pl|SearchOnline", "Records|pl|SearchOffline",   // Polish uses them verbatim.
 			"Records|sv|SearchOnline", "Records|sv|SearchOffline",   // So does Swedish.
 
+			// RMS-4/RMS-5 prevention, investigation, quality and health pages (2026-09-07): same word in the target language.
+			"Records|de|PitotPressure", "Records|es|PitotPressure", "Records|fr|PitotPressure", "Records|it|PitotPressure",
+			"Records|pl|PitotPressure", "Records|sv|PitotPressure", "Records|el|PitotPressure", // "Pitot (psi)" is a proper name plus a unit.
+			"Records|de|ScanState",             // "Scan"
+			"Records|de|Trends",                // "Trends"
+			"Records|es|Inspector",             // "Inspector"
+			"Records|es|ResidualPressure",      // "Residual (psi)"
+			"Records|fr|Conditions",            // "Conditions"
+			"Records|fr|CriterionScore",        // "Score (0-4)"
+			"Records|fr|InspectionNotes",       // "Notes"
+			"Records|fr|Inspections",           // "Inspections"
+			"Records|fr|ItemNote",              // "Note"
+			"Records|fr|OccupancyStructure",    // "Structure"
+			"Records|fr|PermitCode",            // "Code"
+			"Records|fr|ReviewCycle",           // "Cycle"
+			"Records|fr|SectionNumber",         // "Section"
+			"Records|it|FileName",              // "File"
+
 			// Counted phrases whose wording matches English.
 			"CommunicationTest|es|ScopeRoles",    // {0} roles
 			"CommunicationTest|sv|ScopePerson",   // 1 person

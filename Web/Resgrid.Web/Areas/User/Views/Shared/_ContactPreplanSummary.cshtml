@@ -1,0 +1,98 @@
+@model Resgrid.Model.ContactPreplan
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@{
+    // Read-only NFPA 1620 pre-plan summary shared by the contact View page and the call Site Info tab
+    // (Contacts plan Phase A, A6). Only populated fields render. ViewData["Department"] formats dates.
+    var department = ViewData["Department"] as Resgrid.Model.Department;
+    string EnumText<TEnum>(int value) where TEnum : struct, Enum
+        => Enum.IsDefined(typeof(TEnum), value) ? Resgrid.Web.Areas.User.Controllers.ContactsController.SplitPascalCase(Enum.GetName(typeof(TEnum), value)) : value.ToString();
+    bool Has(string value) => !string.IsNullOrWhiteSpace(value);
+    var reviewOverdue = Model.IsReviewOverdue(DateTime.UtcNow);
+    // ADP catalog v12: every text value is marked "<fieldId>:<preplanId>" so the host page's reveal
+    // (RevealContact / RevealCall) can write the decrypted value in place; several pre-plans can share a page.
+    string Adp(string column) => "contactpreplans." + column + ":" + Model.ContactPreplanId;
+}
+
+@if (reviewOverdue)
+{
+    <div class="alert alert-warning"><i class="fa fa-calendar-times-o"></i> @localizer["PreplanReviewOverdue"]</div>
+}
+
+@if (Has(Model.TacticalSummary))
+{
+    <div class="alert alert-info"><strong>@localizer["TacticalSummary"]:</strong> <span data-adp-field="@Adp("tacticalsummary")">@Model.TacticalSummary</span></div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h4><i class="fa fa-building"></i> @localizer["PreplanOccupancySection"]</h4>
+        <dl class="dl-horizontal">
+            <dt>@localizer["ConstructionType"]</dt><dd>@(EnumText<Resgrid.Model.ContactPreplanConstructionTypes>(Model.ConstructionType))</dd>
+            <dt>@localizer["RoofType"]</dt><dd>@(EnumText<Resgrid.Model.ContactPreplanRoofTypes>(Model.RoofType))</dd>
+            <dt>@localizer["OccupancyType"]</dt><dd>@(EnumText<Resgrid.Model.ContactPreplanOccupancyTypes>(Model.OccupancyType))</dd>
+            @if (Has(Model.OccupancyHours)) { <dt>@localizer["OccupancyHours"]</dt><dd data-adp-field="@Adp("occupancyhours")">@Model.OccupancyHours</dd> }
+            @if (Model.OccupantLoad.HasValue) { <dt>@localizer["OccupantLoad"]</dt><dd>@Model.OccupantLoad</dd> }
+            @if (Model.HasOccupantsNeedingAssistance)
+            {
+                <dt>@localizer["OccupantsNeedingAssistance"]</dt>
+                <dd><span class="label label-danger">@localizer["OccupantsNeedingAssistanceYes"]</span> <span data-adp-field="@Adp("occupantsneedingassistancenotes")">@Model.OccupantsNeedingAssistanceNotes</span></dd>
+            }
+            @if (Has(Model.OccupancyNotes)) { <dt>@localizer["OccupancyNotes"]</dt><dd data-adp-field="@Adp("occupancynotes")">@Model.OccupancyNotes</dd> }
+        </dl>
+
+        <h4><i class="fa fa-bolt"></i> @localizer["PreplanUtilitiesSection"]</h4>
+        <dl class="dl-horizontal">
+            @if (Has(Model.GasShutoffLocation)) { <dt>@localizer["GasShutoff"]</dt><dd data-adp-field="@Adp("gasshutofflocation")">@Model.GasShutoffLocation</dd> }
+            @if (Has(Model.ElectricShutoffLocation)) { <dt>@localizer["ElectricShutoff"]</dt><dd data-adp-field="@Adp("electricshutofflocation")">@Model.ElectricShutoffLocation</dd> }
+            @if (Has(Model.WaterShutoffLocation)) { <dt>@localizer["WaterShutoff"]</dt><dd data-adp-field="@Adp("watershutofflocation")">@Model.WaterShutoffLocation</dd> }
+            @if (Has(Model.UtilityNotes)) { <dt>@localizer["UtilityNotes"]</dt><dd data-adp-field="@Adp("utilitynotes")">@Model.UtilityNotes</dd> }
+        </dl>
+
+        <h4><i class="fa fa-tint"></i> @localizer["PreplanWaterSection"]</h4>
+        <dl class="dl-horizontal">
+            @if (Has(Model.NearestHydrantLocation)) { <dt>@localizer["NearestHydrant"]</dt><dd data-adp-field="@Adp("nearesthydrantlocation")">@Model.NearestHydrantLocation</dd> }
+            @if (Model.RequiredFireFlowGpm.HasValue) { <dt>@localizer["RequiredFireFlow"]</dt><dd>@Model.RequiredFireFlowGpm GPM</dd> }
+            @if (Has(Model.WaterSupplyNotes)) { <dt>@localizer["WaterSupplyNotes"]</dt><dd data-adp-field="@Adp("watersupplynotes")">@Model.WaterSupplyNotes</dd> }
+        </dl>
+    </div>
+    <div class="col-md-6">
+        <h4><i class="fa fa-key"></i> @localizer["PreplanAccessSection"]</h4>
+        <dl class="dl-horizontal">
+            @if (Has(Model.KnoxBoxLocation)) { <dt>@localizer["KnoxBox"]</dt><dd data-adp-field="@Adp("knoxboxlocation")">@Model.KnoxBoxLocation</dd> }
+            @if (Has(Model.GateCode)) { <dt>@localizer["GateCode"]</dt><dd><code data-adp-field="@Adp("gatecode")">@Model.GateCode</code></dd> }
+            @if (Has(Model.AlarmPanelLocation)) { <dt>@localizer["AlarmPanel"]</dt><dd data-adp-field="@Adp("alarmpanellocation")">@Model.AlarmPanelLocation</dd> }
+            @if (Has(Model.AlarmCompany) || Has(Model.AlarmCompanyPhone)) { <dt>@localizer["AlarmCompany"]</dt><dd><span data-adp-field="@Adp("alarmcompany")">@Model.AlarmCompany</span> <span data-adp-field="@Adp("alarmcompanyphone")">@Model.AlarmCompanyPhone</span></dd> }
+            @if (Has(Model.AccessNotes)) { <dt>@localizer["AccessNotes"]</dt><dd data-adp-field="@Adp("accessnotes")">@Model.AccessNotes</dd> }
+        </dl>
+
+        <h4><i class="fa fa-phone"></i> @localizer["PreplanContactsSection"]</h4>
+        <dl class="dl-horizontal">
+            @if (Has(Model.EmergencyContactName) || Has(Model.EmergencyContactPhone)) { <dt>@localizer["EmergencyContact"]</dt><dd><span data-adp-field="@Adp("emergencycontactname")">@Model.EmergencyContactName</span> <span data-adp-field="@Adp("emergencycontactphone")">@Model.EmergencyContactPhone</span></dd> }
+            @if (Has(Model.SecondaryContactName) || Has(Model.SecondaryContactPhone)) { <dt>@localizer["SecondaryContact"]</dt><dd><span data-adp-field="@Adp("secondarycontactname")">@Model.SecondaryContactName</span> <span data-adp-field="@Adp("secondarycontactphone")">@Model.SecondaryContactPhone</span></dd> }
+        </dl>
+
+        <h4><i class="fa fa-exclamation-triangle"></i> @localizer["PreplanTacticalSection"]</h4>
+        <dl class="dl-horizontal">
+            <dt>@localizer["HazmatOnSite"]</dt>
+            <dd>@if (Model.HazmatOnSite) { <span class="label label-danger">@localizer["HazmatOnSiteYes"]</span> } else { <span class="text-muted">@localizer["No"]</span> }</dd>
+            @if (Has(Model.GeneralHazardNotes)) { <dt>@localizer["GeneralHazardNotes"]</dt><dd data-adp-field="@Adp("generalhazardnotes")">@Model.GeneralHazardNotes</dd> }
+        </dl>
+
+        <h4><i class="fa fa-calendar-check-o"></i> @localizer["PreplanReviewSection"]</h4>
+        <dl class="dl-horizontal">
+            <dt>@localizer["LastReviewed"]</dt>
+            <dd>
+                @if (Model.LastReviewedOn.HasValue && department != null) { @Model.LastReviewedOn.Value.TimeConverter(department).FormatForDepartment(department) }
+                else if (Model.LastReviewedOn.HasValue) { @Model.LastReviewedOn.Value.ToString("g") }
+                else { <span class="text-muted">@localizer["NeverReviewed"]</span> }
+            </dd>
+            @if (Model.NextReviewDue.HasValue)
+            {
+                <dt>@localizer["NextReviewDue"]</dt>
+                <dd class="@(reviewOverdue ? "text-danger" : "")">
+                    @if (department != null) { @Model.NextReviewDue.Value.TimeConverter(department).FormatForDepartment(department) } else { @Model.NextReviewDue.Value.ToString("d") }
+                </dd>
+            }
+        </dl>
+    </div>
+</div>

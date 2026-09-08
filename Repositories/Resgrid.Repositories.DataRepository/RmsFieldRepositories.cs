@@ -97,7 +97,7 @@ namespace Resgrid.Repositories.DataRepository
 		public RmsFieldRolloutEventsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
-		public Task<IEnumerable<RmsFieldRolloutEvent>> GetForWindowAsync(int departmentId, DateTime sinceUtc, int take)
+		public Task<IEnumerable<RmsFieldRolloutEvent>> GetForWindowAsync(int departmentId, DateTime sinceUtc, int take, CancellationToken cancellationToken = default)
 		{
 			var parameters = new DynamicParameters();
 			parameters.Add("DepartmentId", departmentId);
@@ -106,7 +106,7 @@ namespace Resgrid.Repositories.DataRepository
 			parameters.Add("Take", take <= 0 ? 20000 : Math.Min(take, 200000));
 			return QueryAsync<RmsFieldRolloutEvent>(
 				$"SELECT * FROM {Tbl("RmsFieldRolloutEvents")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("OccurredOn")} >= {P}Since ORDER BY {Col("OccurredOn")}, {Col("RmsFieldRolloutEventId")} {Paging()}",
-				parameters);
+				parameters, cancellationToken);
 		}
 
 		public async Task<int> InsertBatchAsync(IEnumerable<RmsFieldRolloutEvent> events, CancellationToken cancellationToken = default)

@@ -296,6 +296,18 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordWorkAssignmentsService>().As<IRecordWorkAssignmentsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.FieldRecordsService>().As<IFieldRecordsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsFieldRolloutService>().As<IRecordsFieldRolloutService>().InstancePerLifetimeScope();
+			// RMS-5 prevention + investigations, RMS-4 quality review and release telemetry
+			builder.RegisterType<Records.RecordsPreventionGate>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsOccupancyService>().As<IRecordsOccupancyService>().As<IContactPreplanOwnershipGate>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsInspectionsService>().As<IRecordsInspectionsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsHydrantsService>().As<IRecordsHydrantsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsPermitsService>().As<IRecordsPermitsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsCrrService>().As<IRecordsCrrService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsPreventionAttachmentsService>().As<IRecordsPreventionAttachmentsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsInvestigationsService>().As<IRecordsInvestigationsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsQualityReviewService>().As<IRecordsQualityReviewService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsReleaseTelemetryService>().As<IRecordsReleaseTelemetryService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordsPreventionSweepService>().As<IRecordsPreventionSweepService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.Connectors.RecordDeploymentConnectorsService>().As<IRecordDeploymentConnectorsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.Connectors.GenericOrderFeedProvider>().As<IExternalOrderFeedProvider>().SingleInstance();
 			builder.RegisterType<Records.Connectors.AgencyOrderFeedProvider>().As<IExternalOrderFeedProvider>().SingleInstance();

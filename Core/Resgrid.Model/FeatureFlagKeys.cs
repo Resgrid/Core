@@ -54,5 +54,26 @@ namespace Resgrid.Model
 
 		/// <summary>Field Records surface in the Dispatch app. Depends on Records.System. Seeded off by M0152.</summary>
 		public const string RecordsFieldDispatch = "Records.Field.Dispatch";
+
+		/// <summary>RMS-5 occupancy/property master and the Contacts pre-plan crosswalk. Depends on Records.System. Seeded off by M0186.</summary>
+		public const string RecordsPreventionOccupancy = "Records.Prevention.Occupancy";
+
+		/// <summary>RMS-5 inspection programs, code sets, inspections and violations. Depends on Records.Prevention.Occupancy. Seeded off by M0186.</summary>
+		public const string RecordsPreventionInspections = "Records.Prevention.Inspections";
+
+		/// <summary>RMS-5 hydrants and water sources. Depends on Records.System. Seeded off by M0186.</summary>
+		public const string RecordsPreventionHydrants = "Records.Prevention.Hydrants";
+
+		/// <summary>RMS-5 permits and plan review. Depends on Records.Prevention.Occupancy. Seeded off by M0186.</summary>
+		public const string RecordsPreventionPermits = "Records.Prevention.Permits";
+
+		/// <summary>RMS-5 community risk reduction activities. Depends on Records.System. Seeded off by M0186.</summary>
+		public const string RecordsPreventionCrr = "Records.Prevention.Crr";
+
+		/// <summary>RMS-5 investigation cases (restricted, case-level authorization). Depends on Records.System. Seeded off by M0186.</summary>
+		public const string RecordsInvestigations = "Records.Investigations";
+
+		/// <summary>RMS-4 optional post-finalization quality review. Depends on Records.System. Seeded off by M0186.</summary>
+		public const string RecordsQualityReview = "Records.QualityReview";
 	}
 }

@@ -1,0 +1,54 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordInvestigationsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["Investigations"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@L["Investigations"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li class="active"><strong>@L["Investigations"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-success" asp-controller="RecordInvestigations" asp-action="Open" asp-route-area="User"><i class="fa fa-plus"></i> @L["OpenCase"]</a>
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox"><div class="ibox-content">
+		<p class="text-muted">@L["InvestigationsIntro"]</p>
+		<form method="get" class="form-inline" asp-controller="RecordInvestigations" asp-action="Index" asp-route-area="User">
+			<label class="checkbox-inline"><input type="checkbox" name="includeClosed" value="true" @(Model.IncludeClosed ? "checked" : "") /> @L["IncludeClosed"]</label>
+			<button class="btn btn-default">@L["Filter"]</button>
+		</form>
+		@if (Model.Cases.Count == 0) { <p class="m-t-sm">@L["NoCases"]</p> }
+		else
+		{
+			<table class="table table-striped table-hover m-t-sm">
+				<thead><tr><th>@L["CaseNumber"]</th><th>@L["Title"]</th><th>@L["State"]</th><th>@L["CauseClassification"]</th><th>@L["OpenedOn"]</th><th>@L["ClosedOn"]</th><th></th></tr></thead>
+				<tbody>
+				@foreach (var c in Model.Cases)
+				{
+					<tr>
+						<td>@c.CaseNumber</td>
+						<td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.Title)</td>
+						<td><span class="label label-@RmsEnumDisplay.StateClass((RmsInvestigationCaseState)c.State)">@(RmsEnumDisplay.Label<RmsInvestigationCaseState>(c.State))</span></td>
+						<td>@(RmsEnumDisplay.Label<RmsFireCauseClassification>(c.CauseClassification))</td>
+						<td>@RmsEnumDisplay.Day(c.OpenedOn)</td>
+						<td>@RmsEnumDisplay.Day(c.ClosedOn)</td>
+						<td><a class="btn btn-xs btn-default" asp-controller="RecordInvestigations" asp-action="Details" asp-route-area="User" asp-route-id="@c.RmsInvestigationCaseId">@L["ViewRecordHeader"]</a></td>
+					</tr>
+				}
+				</tbody>
+			</table>
+		}
+	</div></div>
+</div>

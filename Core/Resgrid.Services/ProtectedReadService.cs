@@ -152,6 +152,54 @@ namespace Resgrid.Services
 				["contactnotes.note"] = (n => n.Note, (n, v) => n.Note = v)
 			};
 
+		/// <summary>ContactPreplans text columns (catalog v12, Contacts plan Phase A; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<ContactPreplan, string> Get, Action<ContactPreplan, string> Set)> ContactPreplanFieldAccessors =
+			new Dictionary<string, (Func<ContactPreplan, string>, Action<ContactPreplan, string>)>
+			{
+				["contactpreplans.occupancynotes"] = (p => p.OccupancyNotes, (p, v) => p.OccupancyNotes = v),
+				["contactpreplans.occupancyhours"] = (p => p.OccupancyHours, (p, v) => p.OccupancyHours = v),
+				["contactpreplans.occupantsneedingassistancenotes"] = (p => p.OccupantsNeedingAssistanceNotes, (p, v) => p.OccupantsNeedingAssistanceNotes = v),
+				["contactpreplans.gasshutofflocation"] = (p => p.GasShutoffLocation, (p, v) => p.GasShutoffLocation = v),
+				["contactpreplans.electricshutofflocation"] = (p => p.ElectricShutoffLocation, (p, v) => p.ElectricShutoffLocation = v),
+				["contactpreplans.watershutofflocation"] = (p => p.WaterShutoffLocation, (p, v) => p.WaterShutoffLocation = v),
+				["contactpreplans.utilitynotes"] = (p => p.UtilityNotes, (p, v) => p.UtilityNotes = v),
+				["contactpreplans.knoxboxlocation"] = (p => p.KnoxBoxLocation, (p, v) => p.KnoxBoxLocation = v),
+				["contactpreplans.gatecode"] = (p => p.GateCode, (p, v) => p.GateCode = v),
+				["contactpreplans.alarmpanellocation"] = (p => p.AlarmPanelLocation, (p, v) => p.AlarmPanelLocation = v),
+				["contactpreplans.alarmcompany"] = (p => p.AlarmCompany, (p, v) => p.AlarmCompany = v),
+				["contactpreplans.alarmcompanyphone"] = (p => p.AlarmCompanyPhone, (p, v) => p.AlarmCompanyPhone = v),
+				["contactpreplans.accessnotes"] = (p => p.AccessNotes, (p, v) => p.AccessNotes = v),
+				["contactpreplans.nearesthydrantlocation"] = (p => p.NearestHydrantLocation, (p, v) => p.NearestHydrantLocation = v),
+				["contactpreplans.watersupplynotes"] = (p => p.WaterSupplyNotes, (p, v) => p.WaterSupplyNotes = v),
+				["contactpreplans.emergencycontactname"] = (p => p.EmergencyContactName, (p, v) => p.EmergencyContactName = v),
+				["contactpreplans.emergencycontactphone"] = (p => p.EmergencyContactPhone, (p, v) => p.EmergencyContactPhone = v),
+				["contactpreplans.secondarycontactname"] = (p => p.SecondaryContactName, (p, v) => p.SecondaryContactName = v),
+				["contactpreplans.secondarycontactphone"] = (p => p.SecondaryContactPhone, (p, v) => p.SecondaryContactPhone = v),
+				["contactpreplans.generalhazardnotes"] = (p => p.GeneralHazardNotes, (p, v) => p.GeneralHazardNotes = v),
+				["contactpreplans.tacticalsummary"] = (p => p.TacticalSummary, (p, v) => p.TacticalSummary = v)
+			};
+
+		/// <summary>ContactPreplanHazards text columns (catalog v12; parity-pinned).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<ContactPreplanHazard, string> Get, Action<ContactPreplanHazard, string> Set)> ContactPreplanHazardFieldAccessors =
+			new Dictionary<string, (Func<ContactPreplanHazard, string>, Action<ContactPreplanHazard, string>)>
+			{
+				["contactpreplanhazards.title"] = (h => h.Title, (h, v) => h.Title = v),
+				["contactpreplanhazards.description"] = (h => h.Description, (h, v) => h.Description = v),
+				["contactpreplanhazards.locationdescription"] = (h => h.LocationDescription, (h, v) => h.LocationDescription = v),
+				["contactpreplanhazards.gpscoordinates"] = (h => h.GpsCoordinates, (h, v) => h.GpsCoordinates = v)
+			};
+
+		/// <summary>ContactAttachments text columns (catalog v12; parity-pinned with <see cref="ContactAttachmentDataFieldId"/>).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<ContactAttachment, string> Get, Action<ContactAttachment, string> Set)> ContactAttachmentFieldAccessors =
+			new Dictionary<string, (Func<ContactAttachment, string>, Action<ContactAttachment, string>)>
+			{
+				["contactattachments.name"] = (a => a.Name, (a, v) => a.Name = v),
+				["contactattachments.filename"] = (a => a.FileName, (a, v) => a.FileName = v)
+			};
+
+		/// <summary>The rgdpb binary contact attachment payload field id.</summary>
+		public const string ContactAttachmentDataFieldId = "contactattachments.data";
+
 		/// <summary>UnitStates text columns (catalog v2 operational family; parity-pinned).</summary>
 		public static readonly IReadOnlyDictionary<string, (Func<UnitState, string> Get, Action<UnitState, string> Set)> UnitStateFieldAccessors =
 			new Dictionary<string, (Func<UnitState, string>, Action<UnitState, string>)>
@@ -1477,6 +1525,124 @@ namespace Resgrid.Services
 			return result;
 		}
 
+		public async Task<ProtectedReadResult> ResolveContactPreplansForReadAsync(int departmentId,
+			IReadOnlyList<ContactPreplan> preplans, string grantToken, string userId, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var preplan in (preplans ?? Array.Empty<ContactPreplan>()).Where(p => p != null))
+			{
+				var rowKey = preplan.ContactPreplanId;
+				foreach (var accessor in ContactPreplanFieldAccessors)
+				{
+					var value = accessor.Value.Get(preplan);
+					if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+						continue;
+
+					var set = accessor.Value.Set;
+					var target = preplan;
+					slots.Add(new Slot
+					{
+						FieldId = accessor.Key,
+						RowKey = rowKey,
+						WireValue = value,
+						Owner = result,
+						Reveal = plaintext => set(target, plaintext),
+						Redact = () => set(target, ProtectedDataEnvelope.RedactionValue)
+					});
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveContactPreplanHazardsForReadAsync(int departmentId,
+			IReadOnlyList<ContactPreplanHazard> hazards, string grantToken, string userId, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var hazard in (hazards ?? Array.Empty<ContactPreplanHazard>()).Where(h => h != null))
+			{
+				var rowKey = hazard.ContactPreplanHazardId;
+				foreach (var accessor in ContactPreplanHazardFieldAccessors)
+				{
+					var value = accessor.Value.Get(hazard);
+					if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+						continue;
+
+					var set = accessor.Value.Set;
+					var target = hazard;
+					slots.Add(new Slot
+					{
+						FieldId = accessor.Key,
+						RowKey = rowKey,
+						WireValue = value,
+						Owner = result,
+						Reveal = plaintext => set(target, plaintext),
+						Redact = () => set(target, ProtectedDataEnvelope.RedactionValue)
+					});
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
+		public async Task<ProtectedReadResult> ResolveContactAttachmentsForReadAsync(int departmentId,
+			IReadOnlyList<ContactAttachment> attachments, string grantToken, string userId,
+			bool includeData = false, CancellationToken cancellationToken = default)
+		{
+			var result = new ProtectedReadResult();
+			var slots = new List<Slot>();
+			foreach (var attachment in (attachments ?? Array.Empty<ContactAttachment>()).Where(a => a != null))
+			{
+				var rowKey = attachment.ContactAttachmentId.ToString(CultureInfo.InvariantCulture);
+				foreach (var accessor in ContactAttachmentFieldAccessors)
+				{
+					var value = accessor.Value.Get(attachment);
+					if (!ProtectedDataEnvelope.HasEnvelopePrefix(value))
+						continue;
+
+					var set = accessor.Value.Set;
+					var target = attachment;
+					slots.Add(new Slot
+					{
+						FieldId = accessor.Key,
+						RowKey = rowKey,
+						WireValue = value,
+						Owner = result,
+						Reveal = plaintext => set(target, plaintext),
+						Redact = () => set(target, ProtectedDataEnvelope.RedactionValue)
+					});
+				}
+
+				if (includeData && IsBinaryEnveloped(attachment.Data))
+				{
+					var target = attachment;
+					slots.Add(new Slot
+					{
+						FieldId = ContactAttachmentDataFieldId,
+						RowKey = rowKey,
+						IsBinary = true,
+						WireValue = Convert.ToBase64String(attachment.Data),
+						Owner = result,
+						Reveal = base64 => target.Data = Convert.FromBase64String(base64),
+						// A concealed binary payload is NULL — ciphertext bytes are never served.
+						Redact = () => target.Data = null
+					});
+				}
+				else if (!includeData && IsBinaryEnveloped(attachment.Data))
+				{
+					// Metadata-only resolution: strip the ciphertext bytes so a serializer can never carry them out.
+					attachment.Data = null;
+				}
+			}
+
+			await ResolveSlotsAsync(departmentId, grantToken, userId, new List<ProtectedReadResult> { result }, slots, cancellationToken);
+			return result;
+		}
+
 		private static void CollectContactSlots(ProtectedReadResult owner, Contact contact, List<Slot> slots)
 		{
 			var rowKey = contact.ContactId;
@@ -1880,6 +2046,109 @@ namespace Resgrid.Services
 
 			// A restore or neutralization mutates the entity without producing a broker slot,
 			// so EncryptSlotsAsync has nothing to report. The caller re-persists only on Changed.
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareContactPreplanWriteAsync(int departmentId, ContactPreplan preplan,
+			ContactPreplan existingPreplan, string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (preplan == null)
+				return ProtectedWriteResult.Allowed();
+
+			// Sentinel policy first: a value the editor never had revealed must not survive into the
+			// row, and this net runs AFTER the entity was saved, so skipping it would leave the
+			// literal placeholder stored. The stored row restores it.
+			var sentinelsHandled = ApplySentinelPolicy(preplan, existingPreplan, ContactPreplanFieldAccessors);
+
+			var slots = new List<WriteSlot>();
+			var rowKey = preplan.ContactPreplanId;
+			foreach (var accessor in ContactPreplanFieldAccessors)
+			{
+				var value = accessor.Value.Get(preplan);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(preplan, envelope) });
+			}
+
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => preplan.IsProtected = true, cancellationToken);
+
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareContactPreplanHazardWriteAsync(int departmentId, ContactPreplanHazard hazard,
+			ContactPreplanHazard existingHazard, string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (hazard == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(hazard, existingHazard, ContactPreplanHazardFieldAccessors);
+
+			var slots = new List<WriteSlot>();
+			var rowKey = hazard.ContactPreplanHazardId;
+			foreach (var accessor in ContactPreplanHazardFieldAccessors)
+			{
+				var value = accessor.Value.Get(hazard);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(hazard, envelope) });
+			}
+
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => hazard.IsProtected = true, cancellationToken);
+
+			if (sentinelsHandled && result.Success && !result.Changed)
+				result.Changed = true;
+
+			return result;
+		}
+
+		public async Task<ProtectedWriteResult> PrepareContactAttachmentWriteAsync(int departmentId, ContactAttachment attachment,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default)
+		{
+			if (attachment == null)
+				return ProtectedWriteResult.Allowed();
+
+			var sentinelsHandled = ApplySentinelPolicy(attachment, null, ContactAttachmentFieldAccessors);
+
+			var slots = new List<WriteSlot>();
+			var rowKey = attachment.ContactAttachmentId.ToString(CultureInfo.InvariantCulture);
+			foreach (var accessor in ContactAttachmentFieldAccessors)
+			{
+				var value = accessor.Value.Get(attachment);
+				if (string.IsNullOrEmpty(value) || ProtectedDataEnvelope.HasEnvelopePrefix(value) ||
+					value == ProtectedDataEnvelope.RedactionValue)
+					continue;
+
+				var set = accessor.Value.Set;
+				slots.Add(new WriteSlot { FieldId = accessor.Key, RowKey = rowKey, WireValue = value, Apply = envelope => set(attachment, envelope) });
+			}
+
+			if (attachment.Data != null && attachment.Data.Length > 0 && !IsBinaryEnveloped(attachment.Data))
+				slots.Add(new WriteSlot
+				{
+					FieldId = ContactAttachmentDataFieldId,
+					RowKey = rowKey,
+					IsBinary = true,
+					WireValue = Convert.ToBase64String(attachment.Data),
+					Apply = envelopeBase64 => attachment.Data = Convert.FromBase64String(envelopeBase64)
+				});
+
+			var result = await EncryptSlotsAsync(departmentId, grantToken, userId, workloadCaller, slots,
+				() => attachment.IsProtected = true, cancellationToken);
+
 			if (sentinelsHandled && result.Success && !result.Changed)
 				result.Changed = true;
 

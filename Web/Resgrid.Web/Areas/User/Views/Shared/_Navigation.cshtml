@@ -1,5 +1,6 @@
 ﻿@inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject Resgrid.Model.Services.IRecordsAuthorizationService recordsAuthorization
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
 @{
 	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
 	// the nav items are hidden entirely; the API 404s the endpoints regardless.
@@ -83,6 +84,38 @@
 				@if (await recordsAuthorization.HasPermissionAsync(ClaimsAuthorizationHelper.GetUserId(), ClaimsAuthorizationHelper.GetDepartmentId(), Resgrid.Model.PermissionTypes.ManageRecordLegalHold))
 				{
 					<li><a asp-controller="RecordLegalHolds" asp-action="Index" asp-route-area="User"><i class="fa fa-lock"></i> @commonLocalizer["RecordsLegalHoldsModule"]</a></li>
+				}
+				// RMS-5 prevention and investigation modules: each link only when its own flag is on (RMS plan section 4.3/4.4).
+				var navDepartmentId = ClaimsAuthorizationHelper.GetDepartmentId();
+				var preventionOccupancyOn = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionOccupancy, navDepartmentId);
+				var preventionInspectionsOn = preventionOccupancyOn && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionInspections, navDepartmentId);
+				var preventionHydrantsOn = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionHydrants, navDepartmentId);
+				var preventionPermitsOn = preventionOccupancyOn && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionPermits, navDepartmentId);
+				var preventionCrrOn = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionCrr, navDepartmentId);
+				var investigationsOn = ClaimsAuthorizationHelper.CanViewRestrictedRecords() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsInvestigations, navDepartmentId);
+				@if (preventionOccupancyOn)
+				{
+					<li class="@Html.IsSelected(controller: "RecordOccupancies")"><a asp-controller="RecordOccupancies" asp-action="Index" asp-route-area="User"><i class="fa fa-building-o"></i> @recordsLocalizer["Occupancies"]</a></li>
+				}
+				@if (preventionInspectionsOn)
+				{
+					<li class="@Html.IsSelected(controller: "RecordInspections")"><a asp-controller="RecordInspections" asp-action="Index" asp-route-area="User"><i class="fa fa-clipboard"></i> @recordsLocalizer["Inspections"]</a></li>
+				}
+				@if (preventionHydrantsOn)
+				{
+					<li class="@Html.IsSelected(controller: "RecordHydrants")"><a asp-controller="RecordHydrants" asp-action="Index" asp-route-area="User"><i class="fa fa-tint"></i> @recordsLocalizer["Hydrants"]</a></li>
+				}
+				@if (preventionPermitsOn)
+				{
+					<li class="@Html.IsSelected(controller: "RecordPermits")"><a asp-controller="RecordPermits" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text-o"></i> @recordsLocalizer["Permits"]</a></li>
+				}
+				@if (preventionCrrOn)
+				{
+					<li class="@Html.IsSelected(controller: "RecordCrr")"><a asp-controller="RecordCrr" asp-action="Index" asp-route-area="User"><i class="fa fa-bullhorn"></i> @recordsLocalizer["CrrActivities"]</a></li>
+				}
+				@if (investigationsOn)
+				{
+					<li class="@Html.IsSelected(controller: "RecordInvestigations")"><a asp-controller="RecordInvestigations" asp-action="Index" asp-route-area="User"><i class="fa fa-search"></i> @recordsLocalizer["Investigations"]</a></li>
 				}
 			}
 			else if (SettingsHelper.IsLogsEnabled())

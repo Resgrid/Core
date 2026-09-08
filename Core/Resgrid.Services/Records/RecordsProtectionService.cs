@@ -263,6 +263,125 @@ namespace Resgrid.Services.Records
 
 		#endregion
 
+
+		#region RMS-5 prevention and investigations (catalog v13)
+
+		public Task ProtectOccupancyAsync(int departmentId, RmsOccupancy row, RmsOccupancy existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsOccupancyId, RmsProtectedFields.Occupancies, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "occupancy", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealOccupanciesAsync(int departmentId, IReadOnlyList<RmsOccupancy> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsOccupancyId), RmsProtectedFields.Occupancies, GrantToken, User, cancellationToken);
+
+		public Task ProtectOccupancyHazardAsync(int departmentId, RmsOccupancyHazard row, RmsOccupancyHazard existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsOccupancyHazardId, RmsProtectedFields.OccupancyHazards, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "occupancy hazard", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealOccupancyHazardsAsync(int departmentId, IReadOnlyList<RmsOccupancyHazard> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsOccupancyHazardId), RmsProtectedFields.OccupancyHazards, GrantToken, User, cancellationToken);
+
+		public Task ProtectInspectionAsync(int departmentId, RmsInspection row, RmsInspection existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsInspectionId, RmsProtectedFields.Inspections, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "inspection", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealInspectionsAsync(int departmentId, IReadOnlyList<RmsInspection> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsInspectionId), RmsProtectedFields.Inspections, GrantToken, User, cancellationToken);
+
+		public Task ProtectViolationAsync(int departmentId, RmsViolation row, RmsViolation existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsViolationId, RmsProtectedFields.Violations, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "violation", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealViolationsAsync(int departmentId, IReadOnlyList<RmsViolation> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsViolationId), RmsProtectedFields.Violations, GrantToken, User, cancellationToken);
+
+		public Task ProtectPermitAsync(int departmentId, RmsPermit row, RmsPermit existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsPermitId, RmsProtectedFields.Permits, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "permit", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealPermitsAsync(int departmentId, IReadOnlyList<RmsPermit> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsPermitId), RmsProtectedFields.Permits, GrantToken, User, cancellationToken);
+
+		public Task ProtectPlanReviewAsync(int departmentId, RmsPlanReview row, RmsPlanReview existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsPlanReviewId, RmsProtectedFields.PlanReviews, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "plan review", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealPlanReviewsAsync(int departmentId, IReadOnlyList<RmsPlanReview> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsPlanReviewId), RmsProtectedFields.PlanReviews, GrantToken, User, cancellationToken);
+
+		public Task ProtectInvestigationCaseAsync(int departmentId, RmsInvestigationCase row, RmsInvestigationCase existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsInvestigationCaseId, RmsProtectedFields.InvestigationCases, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "investigation case", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealInvestigationCasesAsync(int departmentId, IReadOnlyList<RmsInvestigationCase> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsInvestigationCaseId), RmsProtectedFields.InvestigationCases, GrantToken, User, cancellationToken);
+
+		public Task ProtectInvestigationNoteAsync(int departmentId, RmsInvestigationNote row, RmsInvestigationNote existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsInvestigationNoteId, RmsProtectedFields.InvestigationNotes, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "investigation note", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealInvestigationNotesAsync(int departmentId, IReadOnlyList<RmsInvestigationNote> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsInvestigationNoteId), RmsProtectedFields.InvestigationNotes, GrantToken, User, cancellationToken);
+
+		public Task ProtectInvestigationEvidenceAsync(int departmentId, RmsInvestigationEvidence row, RmsInvestigationEvidence existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsInvestigationEvidenceId, RmsProtectedFields.InvestigationEvidence, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "investigation evidence", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealInvestigationEvidenceAsync(int departmentId, IReadOnlyList<RmsInvestigationEvidence> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsInvestigationEvidenceId), RmsProtectedFields.InvestigationEvidence, GrantToken, User, cancellationToken);
+
+		public Task ProtectInvestigationCustodyAsync(int departmentId, RmsInvestigationCustody row, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, null, row?.RmsInvestigationCustodyId, RmsProtectedFields.InvestigationCustody, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "custody transfer", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealInvestigationCustodyAsync(int departmentId, IReadOnlyList<RmsInvestigationCustody> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsInvestigationCustodyId), RmsProtectedFields.InvestigationCustody, GrantToken, User, cancellationToken);
+
+		public Task ProtectInvestigationReferralAsync(int departmentId, RmsInvestigationReferral row, RmsInvestigationReferral existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsInvestigationReferralId, RmsProtectedFields.InvestigationReferrals, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "referral", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealInvestigationReferralsAsync(int departmentId, IReadOnlyList<RmsInvestigationReferral> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsInvestigationReferralId), RmsProtectedFields.InvestigationReferrals, GrantToken, User, cancellationToken);
+
+		public Task ProtectQualityReviewAsync(int departmentId, RmsQualityReview row, RmsQualityReview existing, string userId = null, CancellationToken cancellationToken = default)
+			=> ApplyAsync(departmentId, row, existing, row?.RmsQualityReviewId, RmsProtectedFields.QualityReviews, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "quality review", cancellationToken);
+
+		public Task<ProtectedReadResult> RevealQualityReviewsAsync(int departmentId, IReadOnlyList<RmsQualityReview> rows, CancellationToken cancellationToken = default)
+			=> _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsQualityReviewId), RmsProtectedFields.QualityReviews, GrantToken, User, cancellationToken);
+
+		public async Task ProtectPreventionAttachmentAsync(int departmentId, RmsPreventionAttachment row, RmsPreventionAttachment existing, string userId = null, CancellationToken cancellationToken = default)
+		{
+			if (row == null)
+				return;
+			await ApplyAsync(departmentId, row, existing, row.RmsPreventionAttachmentId, RmsProtectedFields.PreventionAttachments, (r, v) => { r.IsProtected = true; r.ProtectedCatalogVersion = v; }, userId, "prevention attachment", cancellationToken);
+			if (row.Data == null || row.Data.Length == 0 || ProtectedReadService.IsBinaryEnveloped(row.Data))
+				return;
+			var marked = false;
+			var current = row;
+			var result = await _writes.PrepareRecordsBinaryWriteAsync(departmentId, RmsProtectedFields.PreventionAttachmentDataFieldId, row.RmsPreventionAttachmentId, row.Data,
+				bytes => current.Data = bytes, () => marked = true, GrantToken, userId ?? _grant.UserId, Workload, cancellationToken);
+			if (!result.Success)
+				throw new RecordProtectedContentException(result.Reason, "prevention attachment");
+			if (marked)
+			{
+				row.IsProtected = true;
+				if (row.ProtectedCatalogVersion == 0)
+					row.ProtectedCatalogVersion = await RequiredCatalogVersionAsync(departmentId, "prevention attachment");
+			}
+		}
+
+		public async Task<ProtectedReadResult> RevealPreventionAttachmentsAsync(int departmentId, IReadOnlyList<RmsPreventionAttachment> rows, bool includeData, CancellationToken cancellationToken = default)
+		{
+			var result = await _reads.ResolveRecordsEntitiesForReadAsync(departmentId, Rows(rows, r => r.RmsPreventionAttachmentId), RmsProtectedFields.PreventionAttachments, GrantToken, User, cancellationToken);
+			foreach (var attachment in (rows ?? Array.Empty<RmsPreventionAttachment>()).Where(r => r != null))
+			{
+				if (attachment.Data == null || !ProtectedReadService.IsBinaryEnveloped(attachment.Data))
+					continue;
+				if (!includeData)
+				{
+					attachment.Data = null;
+					result.IsProtected = true;
+					result.RedactedFields.Add(RmsProtectedFields.PreventionAttachmentDataFieldId);
+					continue;
+				}
+				var current = attachment;
+				result.Merge(await _reads.ResolveRecordsBinaryForReadAsync(departmentId, RmsProtectedFields.PreventionAttachmentDataFieldId, current.RmsPreventionAttachmentId, current.Data,
+					bytes => current.Data = bytes, GrantToken, User, cancellationToken));
+			}
+			return result;
+		}
+
+		#endregion
+
 		#region Explicit-grant reads (IRecordsProtectedReadService)
 
 		public async Task<ProtectedReadResult> ResolveAggregateAsync(int departmentId, RecordAggregate aggregate, string grantToken, string userId, CancellationToken cancellationToken = default)

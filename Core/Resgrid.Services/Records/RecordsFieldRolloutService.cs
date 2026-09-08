@@ -133,7 +133,8 @@ namespace Resgrid.Services.Records
 				rollout.MinimumAppVersions[app.ToString()] = MinimumVersionFor(app) ?? string.Empty;
 			}
 
-			var events = (await _events.GetForWindowAsync(departmentId, since, MaxWindowEvents))?.ToList() ?? new List<RmsFieldRolloutEvent>();
+			// The window read is the large one: an abandoned dashboard should stop it rather than run it out.
+			var events = (await _events.GetForWindowAsync(departmentId, since, MaxWindowEvents, cancellationToken))?.ToList() ?? new List<RmsFieldRolloutEvent>();
 			// Records are the ground truth for adoption: an app that reports nothing still shows the work it did.
 			var created = (await _records.GetCreatedSinceAsync(departmentId, since, MaxWindowEvents))?.ToList() ?? new List<RmsOperationalRecord>();
 			var finalized = (await _records.GetFinalizedSinceAsync(departmentId, since))?.ToList() ?? new List<RmsOperationalRecord>();
@@ -168,7 +169,7 @@ namespace Resgrid.Services.Records
 					Users = group.Where(e => !string.IsNullOrWhiteSpace(e.UserId)).Select(e => e.UserId).Distinct(StringComparer.OrdinalIgnoreCase).Count(),
 					Events = group.Count()
 				})
-				.OrderByDescending(version => FieldRecordCatalogV1.CompareVersions(version.AppVersion, "0"))
+				.OrderByDescending(version => version.AppVersion, Comparer<string>.Create(FieldRecordCatalogV1.CompareVersions))
 				.ThenByDescending(version => version.Users)
 				.ToList();
 

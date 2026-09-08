@@ -199,5 +199,6 @@
 		public const string RecordReport_Update = "RecordReport_Update";
 		public const string RecordDisclosure_Update = "RecordDisclosure_Update";
 		public const string RecordLegalHold_Update = "RecordLegalHold_Update";
+		public const string Record_PreventionAdmin = "Record_PreventionAdmin";
 	}
 }

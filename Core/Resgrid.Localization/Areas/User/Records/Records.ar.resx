@@ -1123,6 +1123,11 @@
   <data name="DefinitionNumberAssignment" xml:space="preserve"><value>تعيين الرقم</value></data>
   <data name="DefinitionPerGroup" xml:space="preserve"><value>تسلسل لكل محطة</value></data>
   <data name="DefinitionPerIncident" xml:space="preserve"><value>تسلسل لكل حادث</value></data>
+  <data name="DefinitionCardinality" xml:space="preserve"><value>السجلات لكل نداء</value></data>
+  <data name="DefinitionCardinalityMultiple" xml:space="preserve"><value>عدة سجلات لكل نداء</value></data>
+  <data name="DefinitionCardinalitySingle" xml:space="preserve"><value>سجل معتمد واحد لكل نداء</value></data>
+  <data name="DefinitionCardinalityPerSubject" xml:space="preserve"><value>سجل واحد لكل موضوع لكل نداء</value></data>
+  <data name="DefinitionCardinalityHelp" xml:space="preserve"><value>كم سجلاً من هذا التعريف يمكن أن يحمله النداء الواحد. يُطبَّق عند الإنشاء؛ والسجل المُلغى أو المتروك يحرّر مكانه.</value></data>
   <data name="DefinitionResetYearly" xml:space="preserve"><value>إعادة تعيين سنويًا</value></data>
   <data name="DefinitionClassification" xml:space="preserve"><value>التصنيف</value></data>
   <data name="DefinitionRetention" xml:space="preserve"><value>الاحتفاظ (سنوات)</value></data>
@@ -1418,4 +1423,414 @@
   <data name="ReconciliationSourceAhead" xml:space="preserve"><value>حالة المصدر متقدمة على التعيين المحلي</value></data>
   <data name="ReconciliationSourceBehind" xml:space="preserve"><value>حالة المصدر متأخرة عن التعيين المحلي</value></data>
   <data name="DeploymentOwnedByConnector" xml:space="preserve"><value>يُدار بواسطة موصل</value></data>
+  <data name="AccessAudit" xml:space="preserve"><value>سجل الوصول</value></data>
+  <data name="AccessNotes" xml:space="preserve"><value>ملاحظات الوصول</value></data>
+  <data name="AddEvidence" xml:space="preserve"><value>إضافة دليل</value></data>
+  <data name="AddHazard" xml:space="preserve"><value>إضافة خطر</value></data>
+  <data name="AddMember" xml:space="preserve"><value>إضافة عضو</value></data>
+  <data name="AddNote" xml:space="preserve"><value>إضافة ملاحظة</value></data>
+  <data name="AddReferral" xml:space="preserve"><value>إضافة إحالة</value></data>
+  <data name="AddViolation" xml:space="preserve"><value>إضافة مخالفة</value></data>
+  <data name="Agency" xml:space="preserve"><value>الجهة</value></data>
+  <data name="AlarmCompany" xml:space="preserve"><value>شركة الإنذار</value></data>
+  <data name="AlarmPanel" xml:space="preserve"><value>لوحة الإنذار</value></data>
+  <data name="AllPrograms" xml:space="preserve"><value>جميع البرامج</value></data>
+  <data name="AmendmentsRecommended" xml:space="preserve"><value>التعديلات الموصى بها</value></data>
+  <data name="Applicant" xml:space="preserve"><value>مقدم الطلب</value></data>
+  <data name="ApplicantEmail" xml:space="preserve"><value>بريد مقدم الطلب</value></data>
+  <data name="ApplicantPhone" xml:space="preserve"><value>هاتف مقدم الطلب</value></data>
+  <data name="AppliedOn" xml:space="preserve"><value>تاريخ التقديم</value></data>
+  <data name="ApplyPermit" xml:space="preserve"><value>تقديم الطلب</value></data>
+  <data name="ApproveFindings" xml:space="preserve"><value>اعتماد النتائج</value></data>
+  <data name="ApproveFindingsHint" xml:space="preserve"><value>يجب أن يعتمد النتائج مراجع أو مسؤول غير كاتبها.</value></data>
+  <data name="AttachmentAdded" xml:space="preserve"><value>تمت إضافة المرفق.</value></data>
+  <data name="AttachmentFileRequired" xml:space="preserve"><value>اختر ملفًا لإرفاقه.</value></data>
+  <data name="AttachmentRemoved" xml:space="preserve"><value>تمت إزالة المرفق.</value></data>
+  <data name="AudienceCount" xml:space="preserve"><value>الحضور</value></data>
+  <data name="AuthorizationDenials" xml:space="preserve"><value>حالات رفض التفويض</value></data>
+  <data name="AverageScore" xml:space="preserve"><value>متوسط الدرجة</value></data>
+  <data name="ByAuthor" xml:space="preserve"><value>حسب الكاتب</value></data>
+  <data name="ByCriterion" xml:space="preserve"><value>حسب المعيار</value></data>
+  <data name="ByDefinition" xml:space="preserve"><value>حسب التعريف</value></data>
+  <data name="ByUnit" xml:space="preserve"><value>حسب الوحدة</value></data>
+  <data name="CancelInspection" xml:space="preserve"><value>إلغاء التفتيش</value></data>
+  <data name="CancelInspectionConfirm" xml:space="preserve"><value>إلغاء هذا التفتيش؟ يبقى السجل في السجل التاريخي.</value></data>
+  <data name="CandidateLinked" xml:space="preserve"><value>تم ربط المرشح.</value></data>
+  <data name="CandidateRejected" xml:space="preserve"><value>تم رفض المرشح.</value></data>
+  <data name="Candidates" xml:space="preserve"><value>المرشحون</value></data>
+  <data name="CaseAccessNotice" xml:space="preserve"><value>الوصول إلى هذه القضية مقصور على أعضائها وتُسجل كل قراءة.</value></data>
+  <data name="CaseClosed" xml:space="preserve"><value>تم إغلاق القضية.</value></data>
+  <data name="CaseMembers" xml:space="preserve"><value>أعضاء القضية</value></data>
+  <data name="CaseNotes" xml:space="preserve"><value>ملاحظات القضية</value></data>
+  <data name="CaseOpened" xml:space="preserve"><value>تم فتح القضية {0}.</value></data>
+  <data name="CaseReopened" xml:space="preserve"><value>أعيد فتح القضية.</value></data>
+  <data name="CaseSaved" xml:space="preserve"><value>تم حفظ القضية.</value></data>
+  <data name="CatalogVersion" xml:space="preserve"><value>إصدار الفهرس</value></data>
+  <data name="CauseClassification" xml:space="preserve"><value>تصنيف السبب</value></data>
+  <data name="CauseDetail" xml:space="preserve"><value>تفاصيل السبب</value></data>
+  <data name="Checklist" xml:space="preserve"><value>قائمة التحقق</value></data>
+  <data name="ChecklistHelp" xml:space="preserve"><value>عنصر واحد في كل سطر: المفتاح | النص | إلزامي (y/n) | معرّف بند القانون.</value></data>
+  <data name="ChecklistItem" xml:space="preserve"><value>بند التحقق</value></data>
+  <data name="CloseCase" xml:space="preserve"><value>إغلاق القضية</value></data>
+  <data name="CloseCaseConfirm" xml:space="preserve"><value>إغلاق هذه القضية؟ تصبح الملاحظات للقراءة فقط.</value></data>
+  <data name="CloseInspection" xml:space="preserve"><value>إغلاق التفتيش</value></data>
+  <data name="ClosureReason" xml:space="preserve"><value>سبب الإغلاق</value></data>
+  <data name="CodeEdition" xml:space="preserve"><value>الإصدار</value></data>
+  <data name="CodeSectionSaved" xml:space="preserve"><value>تم حفظ بند القانون.</value></data>
+  <data name="CodeSectionText" xml:space="preserve"><value>نص البند</value></data>
+  <data name="CodeSections" xml:space="preserve"><value>بنود القانون</value></data>
+  <data name="CodeSetSaved" xml:space="preserve"><value>تم حفظ مجموعة القوانين.</value></data>
+  <data name="CodeSets" xml:space="preserve"><value>مجموعات القوانين</value></data>
+  <data name="CodeSetsIntro" xml:space="preserve"><value>قوانين الحريق والبناء التي تفتش الإدارة وفقًا لها. تحمل البنود درجة خطورة ومهلة تصحيح افتراضيتين للمخالفات.</value></data>
+  <data name="CollectedFrom" xml:space="preserve"><value>جُمع من</value></data>
+  <data name="CollectedOn" xml:space="preserve"><value>تاريخ الجمع</value></data>
+  <data name="Comments" xml:space="preserve"><value>التعليقات</value></data>
+  <data name="CompleteInspection" xml:space="preserve"><value>إكمال التفتيش</value></data>
+  <data name="Conditions" xml:space="preserve"><value>الشروط</value></data>
+  <data name="ConditionsTemplate" xml:space="preserve"><value>قالب الشروط</value></data>
+  <data name="ContactId" xml:space="preserve"><value>معرّف جهة الاتصال</value></data>
+  <data name="ContactLinked" xml:space="preserve"><value>تم ربط جهة الاتصال.</value></data>
+  <data name="ContactUnlinked" xml:space="preserve"><value>تم فك ربط جهة الاتصال.</value></data>
+  <data name="CorrectiveAction" xml:space="preserve"><value>الإجراء التصحيحي</value></data>
+  <data name="CreateOccupancyFromSource" xml:space="preserve"><value>إنشاء مبنى جديد من هذا المصدر</value></data>
+  <data name="Criteria" xml:space="preserve"><value>المعايير</value></data>
+  <data name="CriteriaHelp" xml:space="preserve"><value>معيار واحد في كل سطر: المفتاح | النص | الوزن.</value></data>
+  <data name="CriterionScore" xml:space="preserve"><value>الدرجة (0-4)</value></data>
+  <data name="CriterionWeight" xml:space="preserve"><value>الوزن</value></data>
+  <data name="CrosswalkIntroText" xml:space="preserve"><value>يعثر الجرد على الخطط المسبقة وجهات الاتصال ذات العناوين ونقاط الاهتمام، ويجمعها حسب العنوان والقرب، ويقترح المباني. احسم كل مرشح قبل نقل ملكية الكتابة إلى السجلات.</value></data>
+  <data name="CrrActivities" xml:space="preserve"><value>الحد من مخاطر المجتمع</value></data>
+  <data name="CrrDeleted" xml:space="preserve"><value>تم حذف النشاط.</value></data>
+  <data name="CrrSaved" xml:space="preserve"><value>تم حفظ النشاط.</value></data>
+  <data name="CrrSummary" xml:space="preserve"><value>ملخص الفترة</value></data>
+  <data name="Custodian" xml:space="preserve"><value>الحافظ</value></data>
+  <data name="CustodyChain" xml:space="preserve"><value>سلسلة الحيازة</value></data>
+  <data name="CustodyChainHelp" xml:space="preserve"><value>عمليات النقل تُضاف فقط؛ يذكر كل تسليم من سلّم ومن استلم والسبب والحالة الناتجة.</value></data>
+  <data name="CustodyTransferred" xml:space="preserve"><value>تم نقل الحيازة.</value></data>
+  <data name="DecisionReason" xml:space="preserve"><value>سبب القرار</value></data>
+  <data name="DefaultCorrectionDays" xml:space="preserve"><value>أيام التصحيح</value></data>
+  <data name="DefaultSeverity" xml:space="preserve"><value>الخطورة الافتراضية</value></data>
+  <data name="DeleteCrr" xml:space="preserve"><value>حذف النشاط</value></data>
+  <data name="DeleteCrrConfirm" xml:space="preserve"><value>حذف هذا النشاط؟</value></data>
+  <data name="DeleteHydrant" xml:space="preserve"><value>حذف الصنبور</value></data>
+  <data name="DeleteHydrantConfirm" xml:space="preserve"><value>حذف هذا الصنبور؟ ستُحذف معه اختبارات التدفق وسجل الصيانة.</value></data>
+  <data name="DeleteOccupancy" xml:space="preserve"><value>حذف المبنى</value></data>
+  <data name="DeleteOccupancyConfirm" xml:space="preserve"><value>حذف هذا المبنى؟ تحتفظ عمليات التفتيش والتصاريح والمخاطر بسجلها لكنها تفقد العنصر الأصل.</value></data>
+  <data name="DueOn" xml:space="preserve"><value>موعد الاستحقاق</value></data>
+  <data name="EditHydrant" xml:space="preserve"><value>تعديل الصنبور</value></data>
+  <data name="EditOccupancy" xml:space="preserve"><value>تعديل المبنى</value></data>
+  <data name="EditPermit" xml:space="preserve"><value>تعديل التصريح</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>ساري من</value></data>
+  <data name="ElectricShutoff" xml:space="preserve"><value>قاطع الكهرباء</value></data>
+  <data name="EmergencyContact" xml:space="preserve"><value>جهة اتصال الطوارئ</value></data>
+  <data name="EvidenceAdded" xml:space="preserve"><value>تمت إضافة الدليل.</value></data>
+  <data name="EvidenceItems" xml:space="preserve"><value>الأدلة</value></data>
+  <data name="EvidenceNumber" xml:space="preserve"><value>رقم الدليل</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>تاريخ الانتهاء</value></data>
+  <data name="ExpiresOnHelp" xml:space="preserve"><value>اتركه فارغًا لاستخدام مدة صلاحية نوع التصريح من تاريخ الإصدار.</value></data>
+  <data name="ExpiringSoon" xml:space="preserve"><value>ينتهي قريبًا</value></data>
+  <data name="ExportCase" xml:space="preserve"><value>تصدير الحزمة</value></data>
+  <data name="Failed" xml:space="preserve"><value>غير مطابق</value></data>
+  <data name="FdcLocation" xml:space="preserve"><value>موقع وصلة الإطفاء</value></data>
+  <data name="FeeAmount" xml:space="preserve"><value>الرسوم</value></data>
+  <data name="FeeAmountHelp" xml:space="preserve"><value>للإشارة فقط؛ تُسجل الفاتورة هنا ولا تُحصّل.</value></data>
+  <data name="FeePaidOn" xml:space="preserve"><value>تاريخ سداد الرسوم</value></data>
+  <data name="FeeRecorded" xml:space="preserve"><value>تم تسجيل الرسوم.</value></data>
+  <data name="FileName" xml:space="preserve"><value>الملف</value></data>
+  <data name="Findings" xml:space="preserve"><value>النتائج</value></data>
+  <data name="FindingsApproved" xml:space="preserve"><value>تم اعتماد النتائج.</value></data>
+  <data name="FindingsApprovedNotice" xml:space="preserve"><value>معتمدة</value></data>
+  <data name="FindingsPendingNotice" xml:space="preserve"><value>بانتظار الاعتماد، سُجلت</value></data>
+  <data name="FindingsRecorded" xml:space="preserve"><value>تم تسجيل النتائج وإرسالها للاعتماد.</value></data>
+  <data name="FindingsReturned" xml:space="preserve"><value>أُعيدت النتائج إلى كاتبها.</value></data>
+  <data name="FireAlarm" xml:space="preserve"><value>إنذار الحريق</value></data>
+  <data name="FlowClass" xml:space="preserve"><value>فئة التدفق</value></data>
+  <data name="FlowGpm" xml:space="preserve"><value>التدفق (غالون/دقيقة)</value></data>
+  <data name="FlowGpmHelp" xml:space="preserve"><value>تحدّث اختبارات التدفق المسجلة هذه القيمة وفئة NFPA 291 تلقائيًا.</value></data>
+  <data name="FlowTestHelp" xml:space="preserve"><value>يُحسب التدفق كـ 29.83 × c × d² × √pitot ويُقرّب إلى 10 غالون/دقيقة؛ الفئة وفق NFPA 291.</value></data>
+  <data name="FlowTestRecorded" xml:space="preserve"><value>تم تسجيل اختبار التدفق.</value></data>
+  <data name="FlowTests" xml:space="preserve"><value>اختبارات التدفق</value></data>
+  <data name="FrequencyMonths" xml:space="preserve"><value>التكرار (بالأشهر)</value></data>
+  <data name="FromCustodian" xml:space="preserve"><value>من</value></data>
+  <data name="GasShutoff" xml:space="preserve"><value>قاطع الغاز</value></data>
+  <data name="GateCode" xml:space="preserve"><value>رمز البوابة</value></data>
+  <data name="GeneralHazardNotes" xml:space="preserve"><value>ملاحظات عامة عن المخاطر</value></data>
+  <data name="GenerateDue" xml:space="preserve"><value>إنشاء عمليات التفتيش المستحقة</value></data>
+  <data name="GenerateDueResult" xml:space="preserve"><value>تم إنشاء {0} عملية تفتيش.</value></data>
+  <data name="HazardRemoved" xml:space="preserve"><value>تمت إزالة الخطر.</value></data>
+  <data name="HazardSaved" xml:space="preserve"><value>تم حفظ الخطر.</value></data>
+  <data name="Hazards" xml:space="preserve"><value>المخاطر</value></data>
+  <data name="HazmatOnSite" xml:space="preserve"><value>مواد خطرة في الموقع</value></data>
+  <data name="HoursSpent" xml:space="preserve"><value>الساعات</value></data>
+  <data name="HydrantCounts" xml:space="preserve"><value>{0} صنبورًا، {1} خارج الخدمة، {2} يستحق اختبار تدفق.</value></data>
+  <data name="HydrantDeleted" xml:space="preserve"><value>تم حذف الصنبور.</value></data>
+  <data name="HydrantMap" xml:space="preserve"><value>الخريطة</value></data>
+  <data name="HydrantMapHint" xml:space="preserve"><value>يتبع اللون فئة التدفق NFPA 291؛ الأسود يعني خارج الخدمة.</value></data>
+  <data name="HydrantNumber" xml:space="preserve"><value>رقم الصنبور</value></data>
+  <data name="HydrantOwner" xml:space="preserve"><value>المالك</value></data>
+  <data name="HydrantSaved" xml:space="preserve"><value>تم حفظ الصنبور.</value></data>
+  <data name="Hydrants" xml:space="preserve"><value>صنابير الإطفاء</value></data>
+  <data name="ImportHydrants" xml:space="preserve"><value>استيراد الصنابير</value></data>
+  <data name="ImportHydrantsHelp" xml:space="preserve"><value>ملف CSV بصف عناوين: number, latitude, longitude, type, address, main_size, flow_gpm, owner. تُحدّث الأرقام الموجودة.</value></data>
+  <data name="ImportRejectedRows" xml:space="preserve"><value>صفوف لم تُستورد</value></data>
+  <data name="ImportResult" xml:space="preserve"><value>تمت قراءة {0} صفًا، أُنشئ {1}، حُدّث {2}، رُفض {3}.</value></data>
+  <data name="ImportSections" xml:space="preserve"><value>استيراد البنود</value></data>
+  <data name="ImportSectionsHelp" xml:space="preserve"><value>ملف CSV بصف عناوين: section, title, text, severity (1-4), correction_days.</value></data>
+  <data name="InService" xml:space="preserve"><value>في الخدمة</value></data>
+  <data name="IncidentLinked" xml:space="preserve"><value>تم ربط الحادث؛ المراجعة الحالية مثبتة.</value></data>
+  <data name="IncidentSummary" xml:space="preserve"><value>ملخص الحادث</value></data>
+  <data name="IncidentUnlinked" xml:space="preserve"><value>تم فك ربط الحادث.</value></data>
+  <data name="IncludeClosed" xml:space="preserve"><value>تضمين المغلقة</value></data>
+  <data name="InspectionCancelled" xml:space="preserve"><value>تم إلغاء التفتيش.</value></data>
+  <data name="InspectionClosed" xml:space="preserve"><value>تم إغلاق التفتيش.</value></data>
+  <data name="InspectionCompleted" xml:space="preserve"><value>اكتمل التفتيش؛ أنشأت البنود غير المطابقة مخالفات.</value></data>
+  <data name="InspectionNotes" xml:space="preserve"><value>الملاحظات</value></data>
+  <data name="InspectionNumber" xml:space="preserve"><value>رقم التفتيش</value></data>
+  <data name="InspectionPrograms" xml:space="preserve"><value>برامج التفتيش</value></data>
+  <data name="InspectionProgramsIntro" xml:space="preserve"><value>يربط البرنامج قائمة تحقق بتكرار وأنواع المباني التي ينطبق عليها؛ وتُنشأ منه عمليات التفتيش المستحقة.</value></data>
+  <data name="InspectionResult" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="InspectionScheduled" xml:space="preserve"><value>تمت جدولة التفتيش.</value></data>
+  <data name="InspectionStarted" xml:space="preserve"><value>بدأ التفتيش.</value></data>
+  <data name="Inspections" xml:space="preserve"><value>عمليات التفتيش</value></data>
+  <data name="Inspector" xml:space="preserve"><value>المفتش</value></data>
+  <data name="InventoriedOn" xml:space="preserve"><value>تاريخ الجرد</value></data>
+  <data name="InventoryResult" xml:space="preserve"><value>تم فحص {0} مصدرًا، أُنشئ {1} مرشحًا، حُدّث {2}، {3} محسومة مسبقًا.</value></data>
+  <data name="Investigations" xml:space="preserve"><value>التحقيقات</value></data>
+  <data name="InvestigationsIntro" xml:space="preserve"><value>تُعرض فقط القضايا التي أنت عضو فيها. تُسجل كل قراءة لقضية في سجل الوصول.</value></data>
+  <data name="InvoiceReference" xml:space="preserve"><value>مرجع الفاتورة</value></data>
+  <data name="IssueNotice" xml:space="preserve"><value>إصدار إشعار</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>تاريخ الإصدار</value></data>
+  <data name="ItemNote" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>الاختصاص</value></data>
+  <data name="KnoxBox" xml:space="preserve"><value>صندوق المفاتيح</value></data>
+  <data name="LastInspectedOn" xml:space="preserve"><value>آخر تفتيش</value></data>
+  <data name="LastMaintainedOn" xml:space="preserve"><value>آخر صيانة</value></data>
+  <data name="LastReviewedOn" xml:space="preserve"><value>آخر مراجعة</value></data>
+  <data name="LastTestedOn" xml:space="preserve"><value>آخر اختبار</value></data>
+  <data name="LeadInvestigator" xml:space="preserve"><value>المحقق الرئيسي</value></data>
+  <data name="LegacyWriteAttempts" xml:space="preserve"><value>محاولات الكتابة في النظام القديم</value></data>
+  <data name="LinkCandidate" xml:space="preserve"><value>ربط</value></data>
+  <data name="LinkContact" xml:space="preserve"><value>ربط جهة اتصال</value></data>
+  <data name="LinkIncident" xml:space="preserve"><value>ربط حادث</value></data>
+  <data name="LinkedContacts" xml:space="preserve"><value>جهات الاتصال المرتبطة</value></data>
+  <data name="LinkedCount" xml:space="preserve"><value>مرتبط</value></data>
+  <data name="LinkedIncidents" xml:space="preserve"><value>الحوادث المرتبطة</value></data>
+  <data name="LinkedIncidentsHelp" xml:space="preserve"><value>يثبّت الربط مراجعة الحادث في تلك اللحظة؛ لا تغيّر النتائج تقرير الحادث أبدًا.</value></data>
+  <data name="MainSize" xml:space="preserve"><value>قطر الأنبوب (بوصة)</value></data>
+  <data name="MaintenanceLog" xml:space="preserve"><value>سجل الصيانة</value></data>
+  <data name="MaintenanceRecorded" xml:space="preserve"><value>تم تسجيل الصيانة.</value></data>
+  <data name="MarkReviewed" xml:space="preserve"><value>وضع علامة تمت المراجعة</value></data>
+  <data name="MatchConfidence" xml:space="preserve"><value>درجة ثقة المطابقة</value></data>
+  <data name="MemberAdded" xml:space="preserve"><value>تمت إضافة العضو.</value></data>
+  <data name="MemberRemoved" xml:space="preserve"><value>تمت إزالة العضو.</value></data>
+  <data name="MergeConfirm" xml:space="preserve"><value>دمج هذا المبنى في المبنى الهدف؟ تنتقل المخاطر والروابط والسجل؛ ويصبح هذا السجل مؤشرًا.</value></data>
+  <data name="MergeInto" xml:space="preserve"><value>دمج في</value></data>
+  <data name="MergeTargetId" xml:space="preserve"><value>معرّف المبنى الهدف</value></data>
+  <data name="NearestHydrant" xml:space="preserve"><value>أقرب صنبور</value></data>
+  <data name="NewCodeSet" xml:space="preserve"><value>مجموعة قوانين جديدة</value></data>
+  <data name="NewCrrActivity" xml:space="preserve"><value>نشاط جديد</value></data>
+  <data name="NewHydrant" xml:space="preserve"><value>صنبور جديد</value></data>
+  <data name="NewOccupancy" xml:space="preserve"><value>مبنى جديد</value></data>
+  <data name="NewPermit" xml:space="preserve"><value>تصريح جديد</value></data>
+  <data name="NewPermitType" xml:space="preserve"><value>نوع تصريح جديد</value></data>
+  <data name="NewProgram" xml:space="preserve"><value>برنامج جديد</value></data>
+  <data name="NewRubric" xml:space="preserve"><value>معيار تقييم جديد</value></data>
+  <data name="NoAlerts" xml:space="preserve"><value>لا تنبيهات أو تحذيرات في هذه الفترة.</value></data>
+  <data name="NoAttachments" xml:space="preserve"><value>لا مرفقات.</value></data>
+  <data name="NoCandidates" xml:space="preserve"><value>لا مرشحين بانتظار القرار. شغّل الجرد للعثور على خطط مسبقة وجهات اتصال للمطابقة.</value></data>
+  <data name="NoCases" xml:space="preserve"><value>لا قضايا.</value></data>
+  <data name="NoChecklist" xml:space="preserve"><value>لا يحتوي هذا البرنامج على بنود تحقق.</value></data>
+  <data name="NoCrr" xml:space="preserve"><value>لا أنشطة في هذه الفترة.</value></data>
+  <data name="NoFlowTests" xml:space="preserve"><value>لا اختبارات تدفق مسجلة.</value></data>
+  <data name="NoHazards" xml:space="preserve"><value>لا مخاطر مسجلة.</value></data>
+  <data name="NoHydrants" xml:space="preserve"><value>لا صنابير بعد.</value></data>
+  <data name="NoInspections" xml:space="preserve"><value>لا عمليات تفتيش.</value></data>
+  <data name="NoLinkedContacts" xml:space="preserve"><value>لا جهات اتصال مرتبطة.</value></data>
+  <data name="NoMaintenance" xml:space="preserve"><value>لا صيانة مسجلة.</value></data>
+  <data name="NoOccupancies" xml:space="preserve"><value>لا مبانٍ مطابقة.</value></data>
+  <data name="NoPendingReviews" xml:space="preserve"><value>لا مراجعات بانتظار التقييم.</value></data>
+  <data name="NoPermits" xml:space="preserve"><value>لا تصاريح مطابقة.</value></data>
+  <data name="NoPlanReviews" xml:space="preserve"><value>لا دورات مراجعة مخططات بعد.</value></data>
+  <data name="NoReviewsYet" xml:space="preserve"><value>لا مراجعات مقيّمة في هذه الفترة.</value></data>
+  <data name="NoRubrics" xml:space="preserve"><value>لا معايير تقييم بعد. ينشئ مدير الإدارة المعيار الأول.</value></data>
+  <data name="NoViolations" xml:space="preserve"><value>لا مخالفات.</value></data>
+  <data name="NotRecordedShort" xml:space="preserve"><value>غير منطبق</value></data>
+  <data name="NoteBody" xml:space="preserve"><value>نص الملاحظة</value></data>
+  <data name="NoteSaved" xml:space="preserve"><value>تم حفظ الملاحظة.</value></data>
+  <data name="NoteSubject" xml:space="preserve"><value>الموضوع</value></data>
+  <data name="NoticeIssued" xml:space="preserve"><value>تم إصدار الإشعار.</value></data>
+  <data name="NoticeReference" xml:space="preserve"><value>مرجع الإشعار</value></data>
+  <data name="Occupancies" xml:space="preserve"><value>المباني</value></data>
+  <data name="OccupancyAccess" xml:space="preserve"><value>الوصول</value></data>
+  <data name="OccupancyCount" xml:space="preserve"><value>{0} مبنى</value></data>
+  <data name="OccupancyDeleted" xml:space="preserve"><value>تم حذف المبنى.</value></data>
+  <data name="OccupancyHours" xml:space="preserve"><value>ساعات الإشغال</value></data>
+  <data name="OccupancyIdentity" xml:space="preserve"><value>الهوية والموقع</value></data>
+  <data name="OccupancyMerged" xml:space="preserve"><value>تم دمج المبنى.</value></data>
+  <data name="OccupancyMergedNotice" xml:space="preserve"><value>تم دمج هذا المبنى في</value></data>
+  <data name="OccupancyNumber" xml:space="preserve"><value>رقم المبنى</value></data>
+  <data name="OccupancyProtection" xml:space="preserve"><value>الحماية من الحريق والمرافق</value></data>
+  <data name="OccupancyReviewed" xml:space="preserve"><value>تم وضع علامة تمت المراجعة على المبنى.</value></data>
+  <data name="OccupancySaved" xml:space="preserve"><value>تم حفظ المبنى.</value></data>
+  <data name="OccupancySearchPlaceholder" xml:space="preserve"><value>ابحث بالرقم أو الاسم أو العنوان</value></data>
+  <data name="OccupancyStructure" xml:space="preserve"><value>الهيكل</value></data>
+  <data name="OccupancyTactical" xml:space="preserve"><value>المخاطر والتكتيكات</value></data>
+  <data name="OccupancyType" xml:space="preserve"><value>نوع المبنى</value></data>
+  <data name="OccupancyTypesApply" xml:space="preserve"><value>ينطبق على أنواع المباني</value></data>
+  <data name="OccupancyTypesApplyHelp" xml:space="preserve"><value>أرقام الأنواع مفصولة بفواصل؛ الفراغ يعني كل الأنواع.</value></data>
+  <data name="OccupantLoad" xml:space="preserve"><value>الحمل الإشغالي</value></data>
+  <data name="OccupantsNeedingAssistance" xml:space="preserve"><value>شاغلون يحتاجون إلى مساعدة</value></data>
+  <data name="OpenCase" xml:space="preserve"><value>فتح قضية</value></data>
+  <data name="OpenCaseIntro" xml:space="preserve"><value>ستصبح المحقق الرئيسي. أضف الأعضاء بعد الفتح؛ الأعضاء فقط يمكنهم قراءة القضية.</value></data>
+  <data name="OpenViolations" xml:space="preserve"><value>المخالفات المفتوحة</value></data>
+  <data name="OpenedOn" xml:space="preserve"><value>تاريخ الفتح</value></data>
+  <data name="OriginDescription" xml:space="preserve"><value>وصف نقطة الاندلاع</value></data>
+  <data name="OutOfService" xml:space="preserve"><value>خارج الخدمة</value></data>
+  <data name="OutOfServiceReason" xml:space="preserve"><value>سبب الخروج من الخدمة</value></data>
+  <data name="OutboxFailed" xml:space="preserve"><value>أحداث فاشلة</value></data>
+  <data name="OutboxHeader" xml:space="preserve"><value>صندوق الأحداث الصادرة</value></data>
+  <data name="OutboxOldest" xml:space="preserve"><value>الأقدم قيد الانتظار</value></data>
+  <data name="OutboxPending" xml:space="preserve"><value>أحداث قيد الانتظار</value></data>
+  <data name="Outcome" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="OutletDiameter" xml:space="preserve"><value>المخرج (بوصة)</value></data>
+  <data name="OwnerName" xml:space="preserve"><value>اسم المالك</value></data>
+  <data name="OwnershipContactsOwnedNotice" xml:space="preserve"><value>لا تزال الخطط المسبقة تُكتب ضمن جهات الاتصال. طابق جدول الربط لنقل ملكية الكتابة إلى المباني.</value></data>
+  <data name="OwnershipRecordsOwnedNotice" xml:space="preserve"><value>مباني السجلات تملك الخطط المسبقة. تقرأ صفحات جهات الاتصال والتطبيقات الإسقاطات من هنا.</value></data>
+  <data name="OwnershipSwitched" xml:space="preserve"><value>تم نقل ملكية الكتابة إلى مباني السجلات.</value></data>
+  <data name="ParcelId" xml:space="preserve"><value>رقم القطعة</value></data>
+  <data name="Passed" xml:space="preserve"><value>مطابق</value></data>
+  <data name="PendingReviews" xml:space="preserve"><value>مراجعات للتقييم</value></data>
+  <data name="PerformedOn" xml:space="preserve"><value>تاريخ التنفيذ</value></data>
+  <data name="PermitCode" xml:space="preserve"><value>الرمز</value></data>
+  <data name="PermitNumber" xml:space="preserve"><value>رقم التصريح</value></data>
+  <data name="PermitSaved" xml:space="preserve"><value>تم حفظ التصريح.</value></data>
+  <data name="PermitTransitioned" xml:space="preserve"><value>تم تحديث حالة التصريح.</value></data>
+  <data name="PermitType" xml:space="preserve"><value>نوع التصريح</value></data>
+  <data name="PermitTypeSaved" xml:space="preserve"><value>تم حفظ نوع التصريح.</value></data>
+  <data name="PermitTypes" xml:space="preserve"><value>أنواع التصاريح</value></data>
+  <data name="Permits" xml:space="preserve"><value>التصاريح</value></data>
+  <data name="PinnedRevision" xml:space="preserve"><value>مراجعة مثبتة</value></data>
+  <data name="PitotPressure" xml:space="preserve"><value>بيتو (psi)</value></data>
+  <data name="PlanReviewOutcome" xml:space="preserve"><value>نتيجة المراجعة</value></data>
+  <data name="PlanReviewRecorded" xml:space="preserve"><value>تم تسجيل مراجعة المخططات.</value></data>
+  <data name="PlanReviews" xml:space="preserve"><value>مراجعة المخططات</value></data>
+  <data name="PoiId" xml:space="preserve"><value>معرّف نقطة الاهتمام</value></data>
+  <data name="PreplanCrosswalk" xml:space="preserve"><value>مطابقة الخطط المسبقة</value></data>
+  <data name="PreplanOwnership" xml:space="preserve"><value>ملكية كتابة الخطط المسبقة</value></data>
+  <data name="PreplanReviewOverdue" xml:space="preserve"><value>انقضى موعد مراجعة هذا المبنى.</value></data>
+  <data name="PreventionHeader" xml:space="preserve"><value>الوقاية</value></data>
+  <data name="ProgramSaved" xml:space="preserve"><value>تم حفظ البرنامج.</value></data>
+  <data name="ProtectedContentBlocked" xml:space="preserve"><value>المحتوى المحمي مخفي؛ اكشفه قبل هذا الإجراء.</value></data>
+  <data name="ProtectionEnforced" xml:space="preserve"><value>حماية البيانات مفعّلة</value></data>
+  <data name="QualityReview" xml:space="preserve"><value>مراجعة الجودة</value></data>
+  <data name="QualityReviewIntro" xml:space="preserve"><value>يختار الاعتيان السجلات المكتملة بشكل حتمي لكل معيار؛ التقييم مرجّح ويغذي الاتجاهات.</value></data>
+  <data name="RecommendAmendment" xml:space="preserve"><value>التوصية بتعديل</value></data>
+  <data name="RecommendsAmendment" xml:space="preserve"><value>يوصي بتعديل تقرير الحادث</value></data>
+  <data name="RecommendsAmendmentHelp" xml:space="preserve"><value>لا تعدّل النتائج الحادث أبدًا. تُمرر التوصية عبر مسار تعديل السجل.</value></data>
+  <data name="RecordFee" xml:space="preserve"><value>تسجيل الرسوم</value></data>
+  <data name="RecordFindings" xml:space="preserve"><value>تسجيل النتائج</value></data>
+  <data name="RecordFlowTest" xml:space="preserve"><value>تسجيل اختبار التدفق</value></data>
+  <data name="RecordMaintenance" xml:space="preserve"><value>تسجيل الصيانة</value></data>
+  <data name="RecordPlanReview" xml:space="preserve"><value>تسجيل مراجعة المخططات</value></data>
+  <data name="RecordedBy" xml:space="preserve"><value>سجّله</value></data>
+  <data name="RecordsCreated" xml:space="preserve"><value>السجلات المنشأة</value></data>
+  <data name="RecordsFinalized" xml:space="preserve"><value>السجلات المكتملة</value></data>
+  <data name="RecordsHealth" xml:space="preserve"><value>صحة الإصدار</value></data>
+  <data name="RecordsHealthIntro" xml:space="preserve"><value>قياسات أساسية لتفعيل السجلات: محاولات الكتابة في النظام القديم، تأخر صندوق الصادر، تشغيلات Workflow، الفحوص وعدادات الوقاية. يتحول كل مصدر إلى تحذير بدلاً من إفشال الصفحة.</value></data>
+  <data name="RecordsModuleActive" xml:space="preserve"><value>السجلات مفعّلة</value></data>
+  <data name="RecordsOverdue" xml:space="preserve"><value>سجلات متأخرة عن المراجعة</value></data>
+  <data name="ReferenceNumber" xml:space="preserve"><value>الرقم المرجعي</value></data>
+  <data name="ReferralAdded" xml:space="preserve"><value>تمت إضافة الإحالة.</value></data>
+  <data name="ReferralUpdated" xml:space="preserve"><value>تم تحديث الإحالة.</value></data>
+  <data name="Referrals" xml:space="preserve"><value>الإحالات</value></data>
+  <data name="ReinspectionOf" xml:space="preserve"><value>إعادة تفتيش لـ</value></data>
+  <data name="RejectCandidate" xml:space="preserve"><value>رفض</value></data>
+  <data name="RemoveAttachmentConfirm" xml:space="preserve"><value>إزالة هذا المرفق؟</value></data>
+  <data name="ReopenCase" xml:space="preserve"><value>إعادة فتح القضية</value></data>
+  <data name="RequiredFireFlow" xml:space="preserve"><value>التدفق المطلوب (غالون/دقيقة)</value></data>
+  <data name="RequiresPlanReview" xml:space="preserve"><value>يتطلب مراجعة المخططات</value></data>
+  <data name="ResidualPressure" xml:space="preserve"><value>المتبقي (psi)</value></data>
+  <data name="ResultingState" xml:space="preserve"><value>الحالة الناتجة</value></data>
+  <data name="ReturnFindings" xml:space="preserve"><value>إعادة إلى الكاتب</value></data>
+  <data name="ReturnedToService" xml:space="preserve"><value>أُعيد إلى الخدمة</value></data>
+  <data name="ReviewCount" xml:space="preserve"><value>المراجعات</value></data>
+  <data name="ReviewCycle" xml:space="preserve"><value>الدورة</value></data>
+  <data name="ReviewNote" xml:space="preserve"><value>ملاحظة المراجع</value></data>
+  <data name="ReviewNotes" xml:space="preserve"><value>ملاحظات المراجعة</value></data>
+  <data name="ReviewOverdueOnly" xml:space="preserve"><value>مراجعة متأخرة</value></data>
+  <data name="ReviewScored" xml:space="preserve"><value>تم تقييم المراجعة.</value></data>
+  <data name="ReviewedOn" xml:space="preserve"><value>تاريخ المراجعة</value></data>
+  <data name="RoofType" xml:space="preserve"><value>نوع السقف</value></data>
+  <data name="RubricSaved" xml:space="preserve"><value>تم حفظ معيار التقييم.</value></data>
+  <data name="Rubrics" xml:space="preserve"><value>معايير التقييم</value></data>
+  <data name="RunInventory" xml:space="preserve"><value>تشغيل الجرد</value></data>
+  <data name="RunSample" xml:space="preserve"><value>اعتيان</value></data>
+  <data name="RunsCompleted" xml:space="preserve"><value>مكتملة</value></data>
+  <data name="RunsFailed" xml:space="preserve"><value>فاشلة</value></data>
+  <data name="RunsRunning" xml:space="preserve"><value>قيد التشغيل</value></data>
+  <data name="RunsSkipped" xml:space="preserve"><value>متخطاة</value></data>
+  <data name="SampleCreated" xml:space="preserve"><value>تم اعتيان {0} سجلًا للمراجعة.</value></data>
+  <data name="SampleSize" xml:space="preserve"><value>حجم العينة</value></data>
+  <data name="SampleSizeHelp" xml:space="preserve"><value>عدد السجلات لكل عملية اعتيان؛ الاختيار حتمي للمعيار والفترة.</value></data>
+  <data name="Sampled" xml:space="preserve"><value>المعتانة</value></data>
+  <data name="SampledOn" xml:space="preserve"><value>تاريخ الاعتيان</value></data>
+  <data name="ScanPending" xml:space="preserve"><value>مرفقات بانتظار الفحص</value></data>
+  <data name="ScanRejected" xml:space="preserve"><value>مرفقات رفضها الفحص</value></data>
+  <data name="ScanState" xml:space="preserve"><value>الفحص</value></data>
+  <data name="ScheduleInspection" xml:space="preserve"><value>جدولة تفتيش</value></data>
+  <data name="ScheduleReinspection" xml:space="preserve"><value>جدولة إعادة تفتيش</value></data>
+  <data name="ScheduledOn" xml:space="preserve"><value>مجدولة</value></data>
+  <data name="ScoreHelp" xml:space="preserve"><value>قيّم كل معيار من 0 إلى 4؛ يتحول المجموع المرجّح إلى نسبة مئوية.</value></data>
+  <data name="ScoreReview" xml:space="preserve"><value>تقييم المراجعة</value></data>
+  <data name="Scored" xml:space="preserve"><value>المقيّمة</value></data>
+  <data name="ScoredOn" xml:space="preserve"><value>تاريخ التقييم</value></data>
+  <data name="SectionNumber" xml:space="preserve"><value>البند</value></data>
+  <data name="SectionsImported" xml:space="preserve"><value>تم استيراد {0} بندًا.</value></data>
+  <data name="SetInService" xml:space="preserve"><value>إعادة إلى الخدمة</value></data>
+  <data name="SetOutOfService" xml:space="preserve"><value>إخراج من الخدمة</value></data>
+  <data name="ShouldAlert" xml:space="preserve"><value>تنبيه الأطقم</value></data>
+  <data name="SignatureName" xml:space="preserve"><value>اسم الموقّع</value></data>
+  <data name="SignatureNameHint" xml:space="preserve"><value>الاسم المكتوب للشخص الذي يشهد على التفتيش</value></data>
+  <data name="SmokeAlarmsInstalled" xml:space="preserve"><value>كاشفات الدخان المركّبة</value></data>
+  <data name="SprinklerType" xml:space="preserve"><value>المرشات</value></data>
+  <data name="SquareFeet" xml:space="preserve"><value>قدم مربع</value></data>
+  <data name="Staff" xml:space="preserve"><value>الطاقم</value></data>
+  <data name="StaffHelp" xml:space="preserve"><value>معرّفات المستخدمين مفصولة بفواصل للأعضاء المشاركين.</value></data>
+  <data name="Standpipe" xml:space="preserve"><value>أنبوب قائم</value></data>
+  <data name="StartInspection" xml:space="preserve"><value>بدء التفتيش</value></data>
+  <data name="StartedOn" xml:space="preserve"><value>بدأت</value></data>
+  <data name="StaticPressure" xml:space="preserve"><value>الساكن (psi)</value></data>
+  <data name="StorageLocation" xml:space="preserve"><value>موقع التخزين</value></data>
+  <data name="Stories" xml:space="preserve"><value>الطوابق</value></data>
+  <data name="SubmissionsAwaiting" xml:space="preserve"><value>إرسالات قيد الانتظار</value></data>
+  <data name="SubmissionsFailed" xml:space="preserve"><value>إرسالات فاشلة</value></data>
+  <data name="SubmittedOn" xml:space="preserve"><value>تاريخ التقديم</value></data>
+  <data name="SuggestedOccupancy" xml:space="preserve"><value>المبنى المقترح</value></data>
+  <data name="SwitchBlocked" xml:space="preserve"><value>التبديل محظور حتى يُشغّل الجرد ويُحسم كل مرشح ولا تبقى خطة مسبقة غير مطابقة.</value></data>
+  <data name="SwitchOwnership" xml:space="preserve"><value>نقل ملكية الكتابة إلى السجلات</value></data>
+  <data name="SwitchOwnershipAcknowledge" xml:space="preserve"><value>أفهم أن صفحات الخطط المسبقة في جهات الاتصال والتطبيقات ستصبح إسقاطات للقراءة فقط من المباني.</value></data>
+  <data name="SwitchOwnershipConfirm" xml:space="preserve"><value>نقل ملكية الكتابة الآن؟ يتوقف تحرير الخطط المسبقة في جهات الاتصال فورًا.</value></data>
+  <data name="SwitchOwnershipIntro" xml:space="preserve"><value>بعد التبديل، تُحرر الخطط المسبقة كمبانٍ فقط. تستمر جهات الاتصال والتطبيقات في العمل من الإسقاطات؛ التراجع هو استعادة لقاعدة البيانات وليس مفتاحًا.</value></data>
+  <data name="SwitchedOn" xml:space="preserve"><value>تاريخ التبديل</value></data>
+  <data name="TacticalSummary" xml:space="preserve"><value>ملخص تكتيكي</value></data>
+  <data name="TelemetryWindow" xml:space="preserve"><value>النافذة الزمنية</value></data>
+  <data name="TestDue" xml:space="preserve"><value>اختبار مستحق</value></data>
+  <data name="TestedOn" xml:space="preserve"><value>تاريخ الاختبار</value></data>
+  <data name="TransferCustody" xml:space="preserve"><value>نقل الحيازة</value></data>
+  <data name="TransferTo" xml:space="preserve"><value>إلى</value></data>
+  <data name="TransferToExternal" xml:space="preserve"><value>إلى جهة خارجية</value></data>
+  <data name="TransferredOn" xml:space="preserve"><value>تاريخ النقل</value></data>
+  <data name="TransitionPermit" xml:space="preserve"><value>تغيير الحالة</value></data>
+  <data name="Trends" xml:space="preserve"><value>الاتجاهات</value></data>
+  <data name="TrendsSince" xml:space="preserve"><value>منذ</value></data>
+  <data name="Unlink" xml:space="preserve"><value>فك الربط</value></data>
+  <data name="UnreconciledPreplans" xml:space="preserve"><value>خطط مسبقة غير مطابقة</value></data>
+  <data name="UploadedOn" xml:space="preserve"><value>تاريخ الرفع</value></data>
+  <data name="UtilityNotes" xml:space="preserve"><value>ملاحظات المرافق</value></data>
+  <data name="ValidityDays" xml:space="preserve"><value>الصلاحية (أيام)</value></data>
+  <data name="ViolationSaved" xml:space="preserve"><value>تم حفظ المخالفة.</value></data>
+  <data name="ViolationUpdated" xml:space="preserve"><value>تم تحديث المخالفة.</value></data>
+  <data name="Violations" xml:space="preserve"><value>المخالفات</value></data>
+  <data name="WaterShutoff" xml:space="preserve"><value>قاطع الماء</value></data>
+  <data name="WaterSupplyNotes" xml:space="preserve"><value>ملاحظات إمداد المياه</value></data>
+  <data name="WorkflowRuns" xml:space="preserve"><value>تشغيلات Workflow</value></data>
 </root>

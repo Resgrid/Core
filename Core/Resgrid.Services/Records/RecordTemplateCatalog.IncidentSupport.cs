@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Resgrid.Model;
@@ -37,6 +38,24 @@ namespace Resgrid.Services.Records
 			template.RetentionYears = 7;
 			return template;
 		}
+
+		/// <summary>
+		/// The plan products a period has exactly one of (§10A.2). A second ICS 202 for the same operational period
+		/// is an error rather than a second opinion, so these declare `OnePerSubjectPerCall`; everything else in the
+		/// pack — messages, tickets, activity logs, time reports — is legitimately many per incident.
+		/// </summary>
+		/// <summary>
+		/// A local rather than a static field on purpose: static initializers across the two halves of this partial
+		/// class run in an order the compiler picks, and `Packs` in the other half would read this one while it was
+		/// still null.
+		/// </summary>
+		private static string[] OnePerOperationalPeriod() => new[]
+		{
+			"ics-202-objectives", "ics-203-organization", "ics-204-assignment", "ics-207-org-chart", "iap-package",
+			"ics-205-comms-plan", "ics-205a-comms-list", "ics-217a-frequency-inventory",
+			"ics-206-medical-plan", "ics-208-safety-message", "ics-215a-hazard-analysis",
+			"ics-215-planning-worksheet", "ics-220-air-operations"
+		};
 
 		/// <summary>The header every incident product carries: which incident, which operational period, who prepared it.</summary>
 		private static RecordSectionSchema Header(bool withPeriod = true)
@@ -98,6 +117,13 @@ namespace Resgrid.Services.Records
 			foreach (var definition in IapCore().Concat(StatusReporting()).Concat(Communications()).Concat(MedicalAndSafety())
 				.Concat(ResourceForms()).Concat(ActivityAndPlanning()).Concat(IncidentBusinessForms()).Concat(SupportOperations()).Concat(BusinessAdministration()))
 				pack.Definitions.Add(definition);
+
+			foreach (var key in OnePerOperationalPeriod())
+			{
+				var definition = pack.Definitions.SingleOrDefault(d => d.Key == IncidentSupportPackKey + "." + key)
+					?? throw new InvalidOperationException($"'{key}' is not in the Incident Support pack.");
+				definition.Cardinality = RmsRecordCardinality.OnePerSubjectPerCall;
+			}
 
 			return pack;
 		}

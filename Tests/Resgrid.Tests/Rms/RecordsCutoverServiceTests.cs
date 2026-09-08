@@ -136,7 +136,7 @@ namespace Resgrid.Tests.Rms
 			preview.PermissionMapping.Single(r => r.Target == PermissionTypes.FinalizeRecords).Source.Should().Be(PermissionTypes.CreateLog);
 			preview.PermissionMapping.Single(r => r.Target == PermissionTypes.DeleteRecord).EffectiveAction.Should().Be(PermissionActions.Everyone, "no DeleteLog row: everyone, matching AddDeleteLogClaims");
 			preview.PermissionMapping.Single(r => r.Target == PermissionTypes.ReviewRecords).EffectiveAction.Should().Be(PermissionActions.DepartmentAndGroupAdmins);
-			preview.PermissionMapping.Select(r => r.Target).Distinct().Should().HaveCount(18);
+			preview.PermissionMapping.Select(r => r.Target).Distinct().Should().HaveCount(19, "18 RMS-1 permissions plus RMS-5's PreventionAdmin");
 		}
 
 		[Test]

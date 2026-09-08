@@ -145,6 +145,12 @@ namespace Resgrid.Model
 		public int Version { get; set; }
 		public int State { get; set; }
 		public int LifecyclePreset { get; set; }
+		/// <summary>
+		/// <see cref="RmsRecordCardinality"/> — how many Records of this definition may exist on one Call
+		/// (plan section 5.2.1). Immutable once published, like everything else on a version: a Record created
+		/// under the old rule is never retrospectively a duplicate.
+		/// </summary>
+		public int Cardinality { get; set; } = (int)RmsRecordCardinality.MultiplePerCall;
 		/// <summary>Comma-separated PersonnelRole ids that narrow Record_Review for this definition; empty = anyone holding it.</summary>
 		public string ReviewerRoleIds { get; set; }
 		/// <summary>Comma-separated PersonnelRole ids that narrow Record_Approve; empty = anyone holding it.</summary>
@@ -575,6 +581,8 @@ namespace Resgrid.Model
 		public string Description { get; set; }
 		public string PermittedSubjectTypes { get; set; }
 		public RmsLifecyclePreset LifecyclePreset { get; set; } = RmsLifecyclePreset.QuickEntry;
+		/// <summary>How many Records of this definition may exist on one Call (plan section 5.2.1).</summary>
+		public RmsRecordCardinality Cardinality { get; set; } = RmsRecordCardinality.MultiplePerCall;
 		public List<int> ReviewerRoleIds { get; set; } = new List<int>();
 		public List<int> ApproverRoleIds { get; set; } = new List<int>();
 		public int? ReviewDueHours { get; set; }
@@ -681,6 +689,7 @@ namespace Resgrid.Model
 		public int? DraftVersion { get; set; }
 		public bool Retired { get; set; }
 		public string LifecyclePreset { get; set; }
+		public string Cardinality { get; set; }
 		public string MinimumClientCapability { get; set; }
 		public string TemplateKey { get; set; }
 		public string JurisdictionProfileKey { get; set; }

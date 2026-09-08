@@ -1,0 +1,123 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordHydrantDetailsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var h = Model.Hydrant;
+	ViewBag.Title = "Resgrid | " + L["Hydrants"] + " | " + h.HydrantNumber;
+	var returnUrl = Url.Action("Details", "RecordHydrants", new { area = "User", id = h.RmsHydrantId });
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@h.HydrantNumber @(h.InService ? Html.Raw("") : Html.Raw("<span class=\"label label-danger\">" + L["OutOfService"] + "</span>"))</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordHydrants" asp-action="Index" asp-route-area="User">@L["Hydrants"]</a></li>
+			<li class="active"><strong>@h.HydrantNumber</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanAdminister)
+			{
+				<a class="btn btn-primary" asp-controller="RecordHydrants" asp-action="Edit" asp-route-area="User" asp-route-id="@h.RmsHydrantId"><i class="fa fa-pencil"></i> @L["Edit"]</a>
+			}
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-5">
+			<div class="ibox"><div class="ibox-title"><h5>@L["Summary"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["Type"]</dt><dd>@(RmsEnumDisplay.Label<RmsHydrantType>(h.Type))</dd>
+					<dt>@L["AddressText"]</dt><dd>@h.AddressText<br /><small>@h.Latitude, @h.Longitude</small></dd>
+					<dt>@L["HydrantOwner"]</dt><dd>@(RmsEnumDisplay.Label<RmsHydrantOwnerKind>(h.OwnerKind)) @h.OwnerName</dd>
+					<dt>@L["MainSize"]</dt><dd>@h.MainSizeInches</dd>
+					<dt>@L["FlowClass"]</dt><dd>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(h.FlowClass)) · @h.FlowGpm gpm</dd>
+					<dt>@L["StaticPressure"]</dt><dd>@h.StaticPressurePsi psi · @L["ResidualPressure"] @h.ResidualPressurePsi psi</dd>
+					<dt>@L["LastTestedOn"]</dt><dd>@RmsEnumDisplay.Day(h.LastTestedOn)</dd>
+					<dt>@L["LastMaintainedOn"]</dt><dd>@RmsEnumDisplay.Day(h.LastMaintainedOn)</dd>
+					<dt>@L["Source"]</dt><dd>@h.Source</dd>
+					@if (!h.InService) { <dt>@L["OutOfServiceReason"]</dt><dd>@h.OutOfServiceReason (@RmsEnumDisplay.Utc(h.OutOfServiceSince))</dd> }
+				</dl>
+				@if (!string.IsNullOrWhiteSpace(h.Notes)) { <p style="white-space:pre-wrap">@h.Notes</p> }
+				@if (Model.CanAdminister)
+				{
+					<form method="post" class="form-inline" asp-controller="RecordHydrants" asp-action="ServiceState" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@h.RmsHydrantId" /><input type="hidden" name="inService" value="@((!h.InService).ToString().ToLowerInvariant())" />
+						@if (h.InService) { <input class="form-control input-sm" name="reason" maxlength="500" placeholder="@L["ReasonText"]" required /> }
+						<button class="btn btn-sm @(h.InService ? "btn-danger" : "btn-success")">@(h.InService ? L["SetOutOfService"].Value : L["SetInService"].Value)</button>
+					</form>
+					<form method="post" class="m-t-sm" asp-controller="RecordHydrants" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@L["DeleteHydrantConfirm"]');">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@h.RmsHydrantId" />
+						<button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> @L["DeleteHydrant"]</button>
+					</form>
+				}
+			</div></div>
+			<partial name="_PreventionAttachments" model="new PreventionAttachmentsPartialView { ParentKind = RmsPreventionParentKind.Hydrant, ParentId = h.RmsHydrantId, Attachments = Model.Aggregate.Attachments, CanWrite = Model.CanAdminister, ReturnUrl = returnUrl }" />
+		</div>
+		<div class="col-md-7">
+			<div class="ibox"><div class="ibox-title"><h5>@L["FlowTests"]</h5></div><div class="ibox-content">
+				@if (Model.Aggregate.FlowTests.Count == 0) { <p class="text-muted">@L["NoFlowTests"]</p> }
+				else
+				{
+					<table class="table table-condensed">
+						<thead><tr><th>@L["TestedOn"]</th><th>@L["StaticPressure"]</th><th>@L["ResidualPressure"]</th><th>@L["PitotPressure"]</th><th>@L["OutletDiameter"]</th><th>@L["FlowGpm"]</th><th>@L["FlowClass"]</th></tr></thead>
+						<tbody>
+						@foreach (var t in Model.Aggregate.FlowTests.OrderByDescending(t => t.TestedOn))
+						{
+							<tr><td>@RmsEnumDisplay.Day(t.TestedOn)</td><td>@t.StaticPressurePsi</td><td>@t.ResidualPressurePsi</td><td>@t.PitotPressurePsi</td><td>@t.OutletDiameterInches (c=@t.Coefficient)</td><td>@t.FlowGpm</td><td>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(t.FlowClass))</td></tr>
+						}
+						</tbody>
+					</table>
+				}
+				@if (Model.CanAdminister)
+				{
+					<form method="post" asp-controller="RecordHydrants" asp-action="FlowTest" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@h.RmsHydrantId" />
+						<div class="row">
+							<div class="col-sm-3"><input type="date" class="form-control" name="testedOn" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" /></div>
+							<div class="col-sm-2"><input class="form-control" type="number" name="test.StaticPressurePsi" placeholder="@L["StaticPressure"]" required /></div>
+							<div class="col-sm-2"><input class="form-control" type="number" name="test.ResidualPressurePsi" placeholder="@L["ResidualPressure"]" required /></div>
+							<div class="col-sm-2"><input class="form-control" type="number" name="test.PitotPressurePsi" placeholder="@L["PitotPressure"]" required /></div>
+							<div class="col-sm-2"><input class="form-control" type="number" step="0.01" name="test.OutletDiameterInches" value="2.5" required /></div>
+							<div class="col-sm-1"><input class="form-control" type="number" step="0.01" name="test.Coefficient" value="0.9" /></div>
+						</div>
+						<div class="row m-t-xs"><div class="col-sm-10"><input class="form-control" name="test.Notes" maxlength="1000" placeholder="@L["ItemNote"]" /></div><div class="col-sm-2"><button class="btn btn-primary btn-block">@L["RecordFlowTest"]</button></div></div>
+						<p class="help-block">@L["FlowTestHelp"]</p>
+					</form>
+				}
+			</div></div>
+			<div class="ibox"><div class="ibox-title"><h5>@L["MaintenanceLog"]</h5></div><div class="ibox-content">
+				@if (Model.Aggregate.Maintenance.Count == 0) { <p class="text-muted">@L["NoMaintenance"]</p> }
+				else
+				{
+					<table class="table table-condensed">
+						<thead><tr><th>@L["PerformedOn"]</th><th>@L["Kind"]</th><th>@L["ItemNote"]</th><th>@L["ReturnedToService"]</th></tr></thead>
+						<tbody>
+						@foreach (var m in Model.Aggregate.Maintenance.OrderByDescending(m => m.PerformedOn))
+						{
+							<tr><td>@RmsEnumDisplay.Day(m.PerformedOn)</td><td>@(RmsEnumDisplay.Label<RmsHydrantMaintenanceKind>(m.Kind))</td><td>@m.Notes</td><td>@(m.ReturnedToService ? L["Yes"].Value : "")</td></tr>
+						}
+						</tbody>
+					</table>
+				}
+				@if (Model.CanAdminister)
+				{
+					<form method="post" class="form-inline" asp-controller="RecordHydrants" asp-action="Maintenance" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@h.RmsHydrantId" />
+						<input type="date" class="form-control" name="performedOn" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" />
+						<select class="form-control" name="row.Kind" asp-items="Model.MaintenanceKinds"></select>
+						<input class="form-control" name="row.Notes" maxlength="1000" placeholder="@L["ItemNote"]" />
+						<label class="checkbox-inline"><input type="checkbox" name="row.ReturnedToService" value="true" /> @L["ReturnedToService"]</label>
+						<button class="btn btn-sm btn-primary">@L["RecordMaintenance"]</button>
+					</form>
+				}
+			</div></div>
+		</div>
+	</div>
+</div>

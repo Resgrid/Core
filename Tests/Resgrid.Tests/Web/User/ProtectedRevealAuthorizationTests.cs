@@ -116,6 +116,11 @@ namespace Resgrid.Tests.Web.User
 		{
 			"ContactsController.cs:RevealContact",
 
+			// The contact pre-plan (Contacts plan Phase A, ADP catalog v12) is the same department-level
+			// record as the contact: the editor and the call Site Info tab both authorize through the
+			// Contacts resource policy plus the department comparison, and the reveal repeats that check.
+			"ContactsController.cs:RevealContactPreplan",
+
 			// A document and a calendar entry belong to the department, not to a member. There is no
 			// per-record ACL to consult beyond the resource policy and, for documents, the
 			// admins-only flag - which is the same model the pages hosting these reveals use.

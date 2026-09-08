@@ -22,6 +22,8 @@
 			public const string Publish = "Publish";
 			public const string Share = "Share";
 			public const string Reassign = "Reassign";
+			/// <summary>RMS-5: administer prevention data (occupancies, inspections, hydrants, permits, CRR).</summary>
+			public const string PreventionAdmin = "PreventionAdmin";
 		}
 
 		public static class Memberships

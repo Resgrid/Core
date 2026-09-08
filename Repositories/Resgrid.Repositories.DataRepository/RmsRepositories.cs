@@ -574,7 +574,7 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 		private static readonly string[] MetadataColumns =
 		{
 			"RmsRecordAttachmentId", "DepartmentId", "ProtectionId", "RecordId", "FileName", "ContentType", "ByteSize", "Checksum",
-			"StorageReference", "Description", "UploadedByUserId", "UploadedOn", "ScanState", "MetadataStripped", "IsProtected",
+			"StorageReference", "Description", "UploadedByUserId", "UploadedOn", "ScanState", "MetadataStripped", "MediaLocationRetained", "IsProtected",
 			"ProtectedCatalogVersion", "Classification", "CreatedOn", "ModifiedOn", "RowVersion", "DeletedOn"
 		};
 
@@ -586,6 +586,11 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			return QueryAsync<RmsRecordAttachment>(
 				$"SELECT {Cols(MetadataColumns)} FROM {Tbl("RmsRecordAttachments")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("DeletedOn")} IS NULL ORDER BY {Col("UploadedOn")}",
 				new { DepartmentId = departmentId, RecordId = recordId });
+		}
+
+		public Task<int> CountByScanStateAsync(int departmentId, int scanState)
+		{
+			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsRecordAttachments")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ScanState")} = {P}ScanState AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, ScanState = scanState });
 		}
 
 		public Task<IEnumerable<RmsRecordAttachment>> GetPendingScanAsync(int departmentId, int take)
@@ -701,6 +706,16 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 		public Task<DateTime?> GetOldestPendingCreatedOnAsync()
 		{
 			return ScalarAsync<DateTime?>($"SELECT MIN({Col("CreatedOn")}) FROM {Tbl("DomainEventOutbox")} WHERE {Col("State")} = {P}State", new { State = (int)DomainEventOutboxState.Pending });
+		}
+
+		public Task<int> CountByStateForDepartmentAsync(int departmentId, int state)
+		{
+			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("DomainEventOutbox")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("State")} = {P}State", new { DepartmentId = departmentId, State = state });
+		}
+
+		public Task<DateTime?> GetOldestPendingCreatedOnForDepartmentAsync(int departmentId)
+		{
+			return ScalarAsync<DateTime?>($"SELECT MIN({Col("CreatedOn")}) FROM {Tbl("DomainEventOutbox")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("State")} = {P}State", new { DepartmentId = departmentId, State = (int)DomainEventOutboxState.Pending });
 		}
 
 		public Task<int> PurgeDispatchedOlderThanAsync(DateTime cutoffUtc, CancellationToken cancellationToken = default)
@@ -820,6 +835,16 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 
 		public override Task<RmsAccessAudit> UpdateAsync(RmsAccessAudit entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
 			=> throw new InvalidOperationException("RMS access audits are append-only; retention uses its explicit erasure inventory.");
+
+		public Task<int> CountByActionSinceAsync(int departmentId, int action, DateTime sinceUtc)
+		{
+			return ScalarAsync<int>($"SELECT COUNT(1) FROM {Tbl("RmsAccessAudits")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Action")} = {P}Action AND {Col("OccurredOn")} >= {P}Since", new { DepartmentId = departmentId, Action = action, Since = sinceUtc });
+		}
+
+		public Task<IEnumerable<RmsAccessAudit>> GetForAggregateAsync(int departmentId, string aggregateId, int take)
+		{
+			return QueryAsync<RmsAccessAudit>($"SELECT * FROM {Tbl("RmsAccessAudits")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}Id ORDER BY {Col("OccurredOn")} DESC, {Col("RmsAccessAuditId")} DESC {Paging()}", new { DepartmentId = departmentId, Id = aggregateId, Skip = 0, Take = Math.Clamp(take, 1, 1000) });
+		}
 
 		public Task<IEnumerable<RmsAccessAudit>> GetForRecordAsync(int departmentId, string recordId, int take)
 		{

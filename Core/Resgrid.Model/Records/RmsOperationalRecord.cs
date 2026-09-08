@@ -109,6 +109,15 @@ namespace Resgrid.Model
 
 		public string CancelledByUserId { get; set; }
 
+		/// <summary>
+		/// The uniqueness key the definition's <see cref="RmsRecordCardinality"/> demands (plan section 5.2.1), or
+		/// null when the definition allows multiples, the Record has no Call, or the Record reached a terminal
+		/// state. A filtered unique index on (DepartmentId, CardinalityKey) is what actually enforces the rule;
+		/// the service checks first only so the author gets the existing Record instead of a database error.
+		/// Clearing it on Void/Cancel is deliberate — an abandoned Record must not block the replacement.
+		/// </summary>
+		public string CardinalityKey { get; set; }
+
 		/// <summary>Scoped idempotency key for create; unique per department when present.</summary>
 		public string IdempotencyKey { get; set; }
 

@@ -1123,6 +1123,11 @@
   <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Ανάθεση αριθμού</value></data>
   <data name="DefinitionPerGroup" xml:space="preserve"><value>Ακολουθία ανά σταθμό</value></data>
   <data name="DefinitionPerIncident" xml:space="preserve"><value>Ακολουθία ανά συμβάν</value></data>
+  <data name="DefinitionCardinality" xml:space="preserve"><value>Εγγραφές ανά κλήση</value></data>
+  <data name="DefinitionCardinalityMultiple" xml:space="preserve"><value>Πολλές ανά κλήση</value></data>
+  <data name="DefinitionCardinalitySingle" xml:space="preserve"><value>Μία έγκυρη ανά κλήση</value></data>
+  <data name="DefinitionCardinalityPerSubject" xml:space="preserve"><value>Μία ανά υποκείμενο ανά κλήση</value></data>
+  <data name="DefinitionCardinalityHelp" xml:space="preserve"><value>Πόσες εγγραφές αυτού του ορισμού μπορεί να έχει μία κλήση. Επιβάλλεται κατά τη δημιουργία· μια ακυρωμένη ή εγκαταλελειμμένη εγγραφή απελευθερώνει τη θέση της.</value></data>
   <data name="DefinitionResetYearly" xml:space="preserve"><value>Επαναφορά ετησίως</value></data>
   <data name="DefinitionClassification" xml:space="preserve"><value>Ταξινόμηση</value></data>
   <data name="DefinitionRetention" xml:space="preserve"><value>Διατήρηση (έτη)</value></data>
@@ -1418,4 +1423,414 @@
   <data name="ReconciliationSourceAhead" xml:space="preserve"><value>Η κατάσταση της πηγής προηγείται της τοπικής κάλυψης</value></data>
   <data name="ReconciliationSourceBehind" xml:space="preserve"><value>Η κατάσταση της πηγής υστερεί της τοπικής κάλυψης</value></data>
   <data name="DeploymentOwnedByConnector" xml:space="preserve"><value>Συντηρείται από σύνδεσμο</value></data>
+  <data name="AccessAudit" xml:space="preserve"><value>Έλεγχος πρόσβασης</value></data>
+  <data name="AccessNotes" xml:space="preserve"><value>Σημειώσεις πρόσβασης</value></data>
+  <data name="AddEvidence" xml:space="preserve"><value>Προσθήκη τεκμηρίου</value></data>
+  <data name="AddHazard" xml:space="preserve"><value>Προσθήκη κινδύνου</value></data>
+  <data name="AddMember" xml:space="preserve"><value>Προσθήκη μέλους</value></data>
+  <data name="AddNote" xml:space="preserve"><value>Προσθήκη σημείωσης</value></data>
+  <data name="AddReferral" xml:space="preserve"><value>Προσθήκη παραπομπής</value></data>
+  <data name="AddViolation" xml:space="preserve"><value>Προσθήκη παράβασης</value></data>
+  <data name="Agency" xml:space="preserve"><value>Υπηρεσία</value></data>
+  <data name="AlarmCompany" xml:space="preserve"><value>Εταιρεία συναγερμού</value></data>
+  <data name="AlarmPanel" xml:space="preserve"><value>Πίνακας συναγερμού</value></data>
+  <data name="AllPrograms" xml:space="preserve"><value>Όλα τα προγράμματα</value></data>
+  <data name="AmendmentsRecommended" xml:space="preserve"><value>Συνιστώμενες τροποποιήσεις</value></data>
+  <data name="Applicant" xml:space="preserve"><value>Αιτών</value></data>
+  <data name="ApplicantEmail" xml:space="preserve"><value>E-mail αιτούντος</value></data>
+  <data name="ApplicantPhone" xml:space="preserve"><value>Τηλέφωνο αιτούντος</value></data>
+  <data name="AppliedOn" xml:space="preserve"><value>Υποβλήθηκε</value></data>
+  <data name="ApplyPermit" xml:space="preserve"><value>Υποβολή αίτησης</value></data>
+  <data name="ApproveFindings" xml:space="preserve"><value>Έγκριση πορισμάτων</value></data>
+  <data name="ApproveFindingsHint" xml:space="preserve"><value>Τα πορίσματα πρέπει να εγκριθούν από ελεγκτή ή επικεφαλής διαφορετικό από τον συντάκτη τους.</value></data>
+  <data name="AttachmentAdded" xml:space="preserve"><value>Το συνημμένο προστέθηκε.</value></data>
+  <data name="AttachmentFileRequired" xml:space="preserve"><value>Επιλέξτε αρχείο για επισύναψη.</value></data>
+  <data name="AttachmentRemoved" xml:space="preserve"><value>Το συνημμένο αφαιρέθηκε.</value></data>
+  <data name="AudienceCount" xml:space="preserve"><value>Κοινό</value></data>
+  <data name="AuthorizationDenials" xml:space="preserve"><value>Απορρίψεις εξουσιοδότησης</value></data>
+  <data name="AverageScore" xml:space="preserve"><value>Μέση βαθμολογία</value></data>
+  <data name="ByAuthor" xml:space="preserve"><value>Ανά συντάκτη</value></data>
+  <data name="ByCriterion" xml:space="preserve"><value>Ανά κριτήριο</value></data>
+  <data name="ByDefinition" xml:space="preserve"><value>Ανά ορισμό</value></data>
+  <data name="ByUnit" xml:space="preserve"><value>Ανά μονάδα</value></data>
+  <data name="CancelInspection" xml:space="preserve"><value>Ακύρωση επιθεώρησης</value></data>
+  <data name="CancelInspectionConfirm" xml:space="preserve"><value>Ακύρωση αυτής της επιθεώρησης; Η εγγραφή παραμένει στο ιστορικό.</value></data>
+  <data name="CandidateLinked" xml:space="preserve"><value>Ο υποψήφιος συνδέθηκε.</value></data>
+  <data name="CandidateRejected" xml:space="preserve"><value>Ο υποψήφιος απορρίφθηκε.</value></data>
+  <data name="Candidates" xml:space="preserve"><value>Υποψήφιοι</value></data>
+  <data name="CaseAccessNotice" xml:space="preserve"><value>Η πρόσβαση στην υπόθεση περιορίζεται στα μέλη της και κάθε ανάγνωση καταγράφεται.</value></data>
+  <data name="CaseClosed" xml:space="preserve"><value>Η υπόθεση έκλεισε.</value></data>
+  <data name="CaseMembers" xml:space="preserve"><value>Μέλη υπόθεσης</value></data>
+  <data name="CaseNotes" xml:space="preserve"><value>Σημειώσεις υπόθεσης</value></data>
+  <data name="CaseOpened" xml:space="preserve"><value>Η υπόθεση {0} άνοιξε.</value></data>
+  <data name="CaseReopened" xml:space="preserve"><value>Η υπόθεση άνοιξε ξανά.</value></data>
+  <data name="CaseSaved" xml:space="preserve"><value>Η υπόθεση αποθηκεύτηκε.</value></data>
+  <data name="CatalogVersion" xml:space="preserve"><value>Έκδοση καταλόγου</value></data>
+  <data name="CauseClassification" xml:space="preserve"><value>Ταξινόμηση αιτίας</value></data>
+  <data name="CauseDetail" xml:space="preserve"><value>Λεπτομέρεια αιτίας</value></data>
+  <data name="Checklist" xml:space="preserve"><value>Λίστα ελέγχου</value></data>
+  <data name="ChecklistHelp" xml:space="preserve"><value>Ένα στοιχείο ανά γραμμή: κλειδί | κείμενο | υποχρεωτικό (y/n) | id ενότητας κώδικα.</value></data>
+  <data name="ChecklistItem" xml:space="preserve"><value>Στοιχείο ελέγχου</value></data>
+  <data name="CloseCase" xml:space="preserve"><value>Κλείσιμο υπόθεσης</value></data>
+  <data name="CloseCaseConfirm" xml:space="preserve"><value>Κλείσιμο της υπόθεσης; Οι σημειώσεις γίνονται μόνο για ανάγνωση.</value></data>
+  <data name="CloseInspection" xml:space="preserve"><value>Κλείσιμο επιθεώρησης</value></data>
+  <data name="ClosureReason" xml:space="preserve"><value>Λόγος κλεισίματος</value></data>
+  <data name="CodeEdition" xml:space="preserve"><value>Έκδοση</value></data>
+  <data name="CodeSectionSaved" xml:space="preserve"><value>Η ενότητα κώδικα αποθηκεύτηκε.</value></data>
+  <data name="CodeSectionText" xml:space="preserve"><value>Κείμενο ενότητας</value></data>
+  <data name="CodeSections" xml:space="preserve"><value>Ενότητες κώδικα</value></data>
+  <data name="CodeSetSaved" xml:space="preserve"><value>Το σύνολο κωδίκων αποθηκεύτηκε.</value></data>
+  <data name="CodeSets" xml:space="preserve"><value>Σύνολα κωδίκων</value></data>
+  <data name="CodeSetsIntro" xml:space="preserve"><value>Κώδικες πυρασφάλειας και δόμησης βάσει των οποίων επιθεωρεί η υπηρεσία. Οι ενότητες φέρουν προεπιλεγμένη σοβαρότητα και προθεσμία διόρθωσης.</value></data>
+  <data name="CollectedFrom" xml:space="preserve"><value>Συλλέχθηκε από</value></data>
+  <data name="CollectedOn" xml:space="preserve"><value>Συλλέχθηκε στις</value></data>
+  <data name="Comments" xml:space="preserve"><value>Σχόλια</value></data>
+  <data name="CompleteInspection" xml:space="preserve"><value>Ολοκλήρωση επιθεώρησης</value></data>
+  <data name="Conditions" xml:space="preserve"><value>Όροι</value></data>
+  <data name="ConditionsTemplate" xml:space="preserve"><value>Πρότυπο όρων</value></data>
+  <data name="ContactId" xml:space="preserve"><value>ID επαφής</value></data>
+  <data name="ContactLinked" xml:space="preserve"><value>Η επαφή συνδέθηκε.</value></data>
+  <data name="ContactUnlinked" xml:space="preserve"><value>Η επαφή αποσυνδέθηκε.</value></data>
+  <data name="CorrectiveAction" xml:space="preserve"><value>Διορθωτική ενέργεια</value></data>
+  <data name="CreateOccupancyFromSource" xml:space="preserve"><value>Δημιουργία νέου κτιρίου από αυτή την πηγή</value></data>
+  <data name="Criteria" xml:space="preserve"><value>Κριτήρια</value></data>
+  <data name="CriteriaHelp" xml:space="preserve"><value>Ένα κριτήριο ανά γραμμή: κλειδί | κείμενο | βάρος.</value></data>
+  <data name="CriterionScore" xml:space="preserve"><value>Βαθμός (0-4)</value></data>
+  <data name="CriterionWeight" xml:space="preserve"><value>Βάρος</value></data>
+  <data name="CrosswalkIntroText" xml:space="preserve"><value>Η απογραφή εντοπίζει προσχέδια, επαφές με διεύθυνση και σημεία ενδιαφέροντος, τα ομαδοποιεί κατά διεύθυνση και εγγύτητα και προτείνει κτίρια. Αποφασίστε για κάθε υποψήφιο πριν μεταφέρετε την κυριότητα εγγραφής στα Αρχεία.</value></data>
+  <data name="CrrActivities" xml:space="preserve"><value>Μείωση κοινοτικού κινδύνου</value></data>
+  <data name="CrrDeleted" xml:space="preserve"><value>Η δραστηριότητα διαγράφηκε.</value></data>
+  <data name="CrrSaved" xml:space="preserve"><value>Η δραστηριότητα αποθηκεύτηκε.</value></data>
+  <data name="CrrSummary" xml:space="preserve"><value>Σύνοψη περιόδου</value></data>
+  <data name="Custodian" xml:space="preserve"><value>Θεματοφύλακας</value></data>
+  <data name="CustodyChain" xml:space="preserve"><value>Αλυσίδα φύλαξης</value></data>
+  <data name="CustodyChainHelp" xml:space="preserve"><value>Οι μεταβιβάσεις μόνο προστίθενται· κάθε παράδοση αναφέρει ποιος έδωσε, ποιος παρέλαβε, γιατί και την τελική κατάσταση.</value></data>
+  <data name="CustodyTransferred" xml:space="preserve"><value>Η φύλαξη μεταβιβάστηκε.</value></data>
+  <data name="DecisionReason" xml:space="preserve"><value>Αιτιολογία απόφασης</value></data>
+  <data name="DefaultCorrectionDays" xml:space="preserve"><value>Ημέρες διόρθωσης</value></data>
+  <data name="DefaultSeverity" xml:space="preserve"><value>Προεπιλεγμένη σοβαρότητα</value></data>
+  <data name="DeleteCrr" xml:space="preserve"><value>Διαγραφή δραστηριότητας</value></data>
+  <data name="DeleteCrrConfirm" xml:space="preserve"><value>Διαγραφή αυτής της δραστηριότητας;</value></data>
+  <data name="DeleteHydrant" xml:space="preserve"><value>Διαγραφή κρουνού</value></data>
+  <data name="DeleteHydrantConfirm" xml:space="preserve"><value>Διαγραφή του κρουνού; Οι δοκιμές ροής και το ιστορικό συντήρησης χάνονται.</value></data>
+  <data name="DeleteOccupancy" xml:space="preserve"><value>Διαγραφή κτιρίου</value></data>
+  <data name="DeleteOccupancyConfirm" xml:space="preserve"><value>Διαγραφή του κτιρίου; Επιθεωρήσεις, άδειες και κίνδυνοι κρατούν το ιστορικό αλλά χάνουν τον γονέα.</value></data>
+  <data name="DueOn" xml:space="preserve"><value>Προθεσμία</value></data>
+  <data name="EditHydrant" xml:space="preserve"><value>Επεξεργασία κρουνού</value></data>
+  <data name="EditOccupancy" xml:space="preserve"><value>Επεξεργασία κτιρίου</value></data>
+  <data name="EditPermit" xml:space="preserve"><value>Επεξεργασία άδειας</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>Ισχύει από</value></data>
+  <data name="ElectricShutoff" xml:space="preserve"><value>Διακοπή ρεύματος</value></data>
+  <data name="EmergencyContact" xml:space="preserve"><value>Επαφή έκτακτης ανάγκης</value></data>
+  <data name="EvidenceAdded" xml:space="preserve"><value>Το τεκμήριο προστέθηκε.</value></data>
+  <data name="EvidenceItems" xml:space="preserve"><value>Τεκμήρια</value></data>
+  <data name="EvidenceNumber" xml:space="preserve"><value>Αρ. τεκμηρίου</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Λήγει στις</value></data>
+  <data name="ExpiresOnHelp" xml:space="preserve"><value>Αφήστε κενό για να ισχύσει η διάρκεια του τύπου άδειας από την έκδοση.</value></data>
+  <data name="ExpiringSoon" xml:space="preserve"><value>Λήγει σύντομα</value></data>
+  <data name="ExportCase" xml:space="preserve"><value>Εξαγωγή φακέλου</value></data>
+  <data name="Failed" xml:space="preserve"><value>Απέτυχε</value></data>
+  <data name="FdcLocation" xml:space="preserve"><value>Θέση σύνδεσης πυροσβεστικής</value></data>
+  <data name="FeeAmount" xml:space="preserve"><value>Τέλος</value></data>
+  <data name="FeeAmountHelp" xml:space="preserve"><value>Μόνο για αναφορά· η τιμολόγηση καταγράφεται εδώ, δεν εισπράττεται.</value></data>
+  <data name="FeePaidOn" xml:space="preserve"><value>Τέλος πληρώθηκε στις</value></data>
+  <data name="FeeRecorded" xml:space="preserve"><value>Το τέλος καταχωρήθηκε.</value></data>
+  <data name="FileName" xml:space="preserve"><value>Αρχείο</value></data>
+  <data name="Findings" xml:space="preserve"><value>Πορίσματα</value></data>
+  <data name="FindingsApproved" xml:space="preserve"><value>Τα πορίσματα εγκρίθηκαν.</value></data>
+  <data name="FindingsApprovedNotice" xml:space="preserve"><value>Εγκρίθηκαν</value></data>
+  <data name="FindingsPendingNotice" xml:space="preserve"><value>Αναμονή έγκρισης, καταχωρήθηκαν</value></data>
+  <data name="FindingsRecorded" xml:space="preserve"><value>Τα πορίσματα καταχωρήθηκαν και στάλθηκαν για έγκριση.</value></data>
+  <data name="FindingsReturned" xml:space="preserve"><value>Τα πορίσματα επιστράφηκαν στον συντάκτη.</value></data>
+  <data name="FireAlarm" xml:space="preserve"><value>Συναγερμός πυρκαγιάς</value></data>
+  <data name="FlowClass" xml:space="preserve"><value>Κλάση ροής</value></data>
+  <data name="FlowGpm" xml:space="preserve"><value>Ροή (gpm)</value></data>
+  <data name="FlowGpmHelp" xml:space="preserve"><value>Οι καταχωρημένες δοκιμές ροής ενημερώνουν αυτόματα την τιμή και την κλάση NFPA 291.</value></data>
+  <data name="FlowTestHelp" xml:space="preserve"><value>Η ροή υπολογίζεται ως 29,83 × c × d² × √pitot και στρογγυλοποιείται στα 10 gpm· η κλάση ακολουθεί το NFPA 291.</value></data>
+  <data name="FlowTestRecorded" xml:space="preserve"><value>Η δοκιμή ροής καταχωρήθηκε.</value></data>
+  <data name="FlowTests" xml:space="preserve"><value>Δοκιμές ροής</value></data>
+  <data name="FrequencyMonths" xml:space="preserve"><value>Συχνότητα (μήνες)</value></data>
+  <data name="FromCustodian" xml:space="preserve"><value>Από</value></data>
+  <data name="GasShutoff" xml:space="preserve"><value>Διακοπή αερίου</value></data>
+  <data name="GateCode" xml:space="preserve"><value>Κωδικός πύλης</value></data>
+  <data name="GeneralHazardNotes" xml:space="preserve"><value>Γενικές σημειώσεις κινδύνων</value></data>
+  <data name="GenerateDue" xml:space="preserve"><value>Δημιουργία οφειλόμενων επιθεωρήσεων</value></data>
+  <data name="GenerateDueResult" xml:space="preserve"><value>Δημιουργήθηκαν {0} επιθεωρήσεις.</value></data>
+  <data name="HazardRemoved" xml:space="preserve"><value>Ο κίνδυνος αφαιρέθηκε.</value></data>
+  <data name="HazardSaved" xml:space="preserve"><value>Ο κίνδυνος αποθηκεύτηκε.</value></data>
+  <data name="Hazards" xml:space="preserve"><value>Κίνδυνοι</value></data>
+  <data name="HazmatOnSite" xml:space="preserve"><value>Επικίνδυνα υλικά στον χώρο</value></data>
+  <data name="HoursSpent" xml:space="preserve"><value>Ώρες</value></data>
+  <data name="HydrantCounts" xml:space="preserve"><value>{0} κρουνοί, {1} εκτός λειτουργίας, {2} με οφειλόμενη δοκιμή ροής.</value></data>
+  <data name="HydrantDeleted" xml:space="preserve"><value>Ο κρουνός διαγράφηκε.</value></data>
+  <data name="HydrantMap" xml:space="preserve"><value>Χάρτης</value></data>
+  <data name="HydrantMapHint" xml:space="preserve"><value>Το χρώμα ακολουθεί την κλάση ροής NFPA 291· το μαύρο σημαίνει εκτός λειτουργίας.</value></data>
+  <data name="HydrantNumber" xml:space="preserve"><value>Αρ. κρουνού</value></data>
+  <data name="HydrantOwner" xml:space="preserve"><value>Ιδιοκτήτης</value></data>
+  <data name="HydrantSaved" xml:space="preserve"><value>Ο κρουνός αποθηκεύτηκε.</value></data>
+  <data name="Hydrants" xml:space="preserve"><value>Πυροσβεστικοί κρουνοί</value></data>
+  <data name="ImportHydrants" xml:space="preserve"><value>Εισαγωγή κρουνών</value></data>
+  <data name="ImportHydrantsHelp" xml:space="preserve"><value>CSV με γραμμή κεφαλίδας: number, latitude, longitude, type, address, main_size, flow_gpm, owner. Οι υπάρχοντες αριθμοί ενημερώνονται.</value></data>
+  <data name="ImportRejectedRows" xml:space="preserve"><value>Γραμμές που δεν εισήχθησαν</value></data>
+  <data name="ImportResult" xml:space="preserve"><value>{0} γραμμές διαβάστηκαν, {1} δημιουργήθηκαν, {2} ενημερώθηκαν, {3} απορρίφθηκαν.</value></data>
+  <data name="ImportSections" xml:space="preserve"><value>Εισαγωγή ενοτήτων</value></data>
+  <data name="ImportSectionsHelp" xml:space="preserve"><value>CSV με γραμμή κεφαλίδας: section, title, text, severity (1-4), correction_days.</value></data>
+  <data name="InService" xml:space="preserve"><value>Σε λειτουργία</value></data>
+  <data name="IncidentLinked" xml:space="preserve"><value>Το συμβάν συνδέθηκε· η τρέχουσα αναθεώρηση καρφιτσώθηκε.</value></data>
+  <data name="IncidentSummary" xml:space="preserve"><value>Σύνοψη συμβάντος</value></data>
+  <data name="IncidentUnlinked" xml:space="preserve"><value>Το συμβάν αποσυνδέθηκε.</value></data>
+  <data name="IncludeClosed" xml:space="preserve"><value>Συμπερίληψη κλειστών</value></data>
+  <data name="InspectionCancelled" xml:space="preserve"><value>Η επιθεώρηση ακυρώθηκε.</value></data>
+  <data name="InspectionClosed" xml:space="preserve"><value>Η επιθεώρηση έκλεισε.</value></data>
+  <data name="InspectionCompleted" xml:space="preserve"><value>Η επιθεώρηση ολοκληρώθηκε· τα αποτυχημένα στοιχεία δημιούργησαν παραβάσεις.</value></data>
+  <data name="InspectionNotes" xml:space="preserve"><value>Σημειώσεις</value></data>
+  <data name="InspectionNumber" xml:space="preserve"><value>Αρ. επιθεώρησης</value></data>
+  <data name="InspectionPrograms" xml:space="preserve"><value>Προγράμματα επιθεώρησης</value></data>
+  <data name="InspectionProgramsIntro" xml:space="preserve"><value>Ένα πρόγραμμα συνδυάζει λίστα ελέγχου με συχνότητα και τους τύπους κτιρίων που αφορά· από αυτό δημιουργούνται οι οφειλόμενες επιθεωρήσεις.</value></data>
+  <data name="InspectionResult" xml:space="preserve"><value>Αποτέλεσμα</value></data>
+  <data name="InspectionScheduled" xml:space="preserve"><value>Η επιθεώρηση προγραμματίστηκε.</value></data>
+  <data name="InspectionStarted" xml:space="preserve"><value>Η επιθεώρηση ξεκίνησε.</value></data>
+  <data name="Inspections" xml:space="preserve"><value>Επιθεωρήσεις</value></data>
+  <data name="Inspector" xml:space="preserve"><value>Επιθεωρητής</value></data>
+  <data name="InventoriedOn" xml:space="preserve"><value>Απογράφηκε στις</value></data>
+  <data name="InventoryResult" xml:space="preserve"><value>{0} πηγές σαρώθηκαν, {1} υποψήφιοι δημιουργήθηκαν, {2} ενημερώθηκαν, {3} ήδη αποφασισμένοι.</value></data>
+  <data name="Investigations" xml:space="preserve"><value>Έρευνες</value></data>
+  <data name="InvestigationsIntro" xml:space="preserve"><value>Εμφανίζονται μόνο οι υποθέσεις στις οποίες είστε μέλος. Κάθε ανάγνωση υπόθεσης καταγράφεται στον έλεγχο πρόσβασης.</value></data>
+  <data name="InvoiceReference" xml:space="preserve"><value>Αναφορά τιμολογίου</value></data>
+  <data name="IssueNotice" xml:space="preserve"><value>Έκδοση ειδοποίησης</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Εκδόθηκε στις</value></data>
+  <data name="ItemNote" xml:space="preserve"><value>Σημείωση</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>Δικαιοδοσία</value></data>
+  <data name="KnoxBox" xml:space="preserve"><value>Κλειδοθήκη</value></data>
+  <data name="LastInspectedOn" xml:space="preserve"><value>Τελευταία επιθεώρηση</value></data>
+  <data name="LastMaintainedOn" xml:space="preserve"><value>Τελευταία συντήρηση</value></data>
+  <data name="LastReviewedOn" xml:space="preserve"><value>Τελευταία αναθεώρηση</value></data>
+  <data name="LastTestedOn" xml:space="preserve"><value>Τελευταία δοκιμή</value></data>
+  <data name="LeadInvestigator" xml:space="preserve"><value>Επικεφαλής ερευνητής</value></data>
+  <data name="LegacyWriteAttempts" xml:space="preserve"><value>Απόπειρες εγγραφής στο παλαιό σύστημα</value></data>
+  <data name="LinkCandidate" xml:space="preserve"><value>Σύνδεση</value></data>
+  <data name="LinkContact" xml:space="preserve"><value>Σύνδεση επαφής</value></data>
+  <data name="LinkIncident" xml:space="preserve"><value>Σύνδεση συμβάντος</value></data>
+  <data name="LinkedContacts" xml:space="preserve"><value>Συνδεδεμένες επαφές</value></data>
+  <data name="LinkedCount" xml:space="preserve"><value>Συνδεδεμένα</value></data>
+  <data name="LinkedIncidents" xml:space="preserve"><value>Συνδεδεμένα συμβάντα</value></data>
+  <data name="LinkedIncidentsHelp" xml:space="preserve"><value>Η σύνδεση καρφιτσώνει την αναθεώρηση του συμβάντος εκείνη τη στιγμή· τα πορίσματα δεν αλλάζουν ποτέ την αναφορά.</value></data>
+  <data name="MainSize" xml:space="preserve"><value>Διάμετρος αγωγού (ίντσες)</value></data>
+  <data name="MaintenanceLog" xml:space="preserve"><value>Ημερολόγιο συντήρησης</value></data>
+  <data name="MaintenanceRecorded" xml:space="preserve"><value>Η συντήρηση καταχωρήθηκε.</value></data>
+  <data name="MarkReviewed" xml:space="preserve"><value>Σήμανση ως αναθεωρημένο</value></data>
+  <data name="MatchConfidence" xml:space="preserve"><value>Βεβαιότητα αντιστοίχισης</value></data>
+  <data name="MemberAdded" xml:space="preserve"><value>Το μέλος προστέθηκε.</value></data>
+  <data name="MemberRemoved" xml:space="preserve"><value>Το μέλος αφαιρέθηκε.</value></data>
+  <data name="MergeConfirm" xml:space="preserve"><value>Συγχώνευση του κτιρίου στον στόχο; Κίνδυνοι, σύνδεσμοι και ιστορικό μεταφέρονται· η εγγραφή γίνεται δείκτης.</value></data>
+  <data name="MergeInto" xml:space="preserve"><value>Συγχώνευση σε</value></data>
+  <data name="MergeTargetId" xml:space="preserve"><value>ID κτιρίου-στόχου</value></data>
+  <data name="NearestHydrant" xml:space="preserve"><value>Πλησιέστερος κρουνός</value></data>
+  <data name="NewCodeSet" xml:space="preserve"><value>Νέο σύνολο κωδίκων</value></data>
+  <data name="NewCrrActivity" xml:space="preserve"><value>Νέα δραστηριότητα</value></data>
+  <data name="NewHydrant" xml:space="preserve"><value>Νέος κρουνός</value></data>
+  <data name="NewOccupancy" xml:space="preserve"><value>Νέο κτίριο</value></data>
+  <data name="NewPermit" xml:space="preserve"><value>Νέα άδεια</value></data>
+  <data name="NewPermitType" xml:space="preserve"><value>Νέος τύπος άδειας</value></data>
+  <data name="NewProgram" xml:space="preserve"><value>Νέο πρόγραμμα</value></data>
+  <data name="NewRubric" xml:space="preserve"><value>Νέα κλίμακα</value></data>
+  <data name="NoAlerts" xml:space="preserve"><value>Καμία ειδοποίηση ή προειδοποίηση σε αυτό το διάστημα.</value></data>
+  <data name="NoAttachments" xml:space="preserve"><value>Χωρίς συνημμένα.</value></data>
+  <data name="NoCandidates" xml:space="preserve"><value>Δεν εκκρεμούν υποψήφιοι. Εκτελέστε την απογραφή για να βρείτε προσχέδια και επαφές προς συμφωνία.</value></data>
+  <data name="NoCases" xml:space="preserve"><value>Χωρίς υποθέσεις.</value></data>
+  <data name="NoChecklist" xml:space="preserve"><value>Το πρόγραμμα δεν έχει στοιχεία ελέγχου.</value></data>
+  <data name="NoCrr" xml:space="preserve"><value>Καμία δραστηριότητα στην περίοδο.</value></data>
+  <data name="NoFlowTests" xml:space="preserve"><value>Δεν έχουν καταχωρηθεί δοκιμές ροής.</value></data>
+  <data name="NoHazards" xml:space="preserve"><value>Δεν έχουν καταχωρηθεί κίνδυνοι.</value></data>
+  <data name="NoHydrants" xml:space="preserve"><value>Δεν υπάρχουν κρουνοί ακόμη.</value></data>
+  <data name="NoInspections" xml:space="preserve"><value>Χωρίς επιθεωρήσεις.</value></data>
+  <data name="NoLinkedContacts" xml:space="preserve"><value>Χωρίς συνδεδεμένες επαφές.</value></data>
+  <data name="NoMaintenance" xml:space="preserve"><value>Δεν έχει καταχωρηθεί συντήρηση.</value></data>
+  <data name="NoOccupancies" xml:space="preserve"><value>Κανένα κτίριο δεν ταιριάζει.</value></data>
+  <data name="NoPendingReviews" xml:space="preserve"><value>Δεν εκκρεμούν αξιολογήσεις προς βαθμολόγηση.</value></data>
+  <data name="NoPermits" xml:space="preserve"><value>Καμία άδεια δεν ταιριάζει.</value></data>
+  <data name="NoPlanReviews" xml:space="preserve"><value>Δεν υπάρχουν κύκλοι ελέγχου σχεδίων ακόμη.</value></data>
+  <data name="NoReviewsYet" xml:space="preserve"><value>Καμία βαθμολογημένη αξιολόγηση στην περίοδο.</value></data>
+  <data name="NoRubrics" xml:space="preserve"><value>Δεν υπάρχουν κλίμακες ακόμη. Ένας διαχειριστής της υπηρεσίας δημιουργεί την πρώτη.</value></data>
+  <data name="NoViolations" xml:space="preserve"><value>Χωρίς παραβάσεις.</value></data>
+  <data name="NotRecordedShort" xml:space="preserve"><value>Δ/Ε</value></data>
+  <data name="NoteBody" xml:space="preserve"><value>Κείμενο σημείωσης</value></data>
+  <data name="NoteSaved" xml:space="preserve"><value>Η σημείωση αποθηκεύτηκε.</value></data>
+  <data name="NoteSubject" xml:space="preserve"><value>Θέμα</value></data>
+  <data name="NoticeIssued" xml:space="preserve"><value>Η ειδοποίηση εκδόθηκε.</value></data>
+  <data name="NoticeReference" xml:space="preserve"><value>Αναφορά ειδοποίησης</value></data>
+  <data name="Occupancies" xml:space="preserve"><value>Κτίρια</value></data>
+  <data name="OccupancyAccess" xml:space="preserve"><value>Πρόσβαση</value></data>
+  <data name="OccupancyCount" xml:space="preserve"><value>{0} κτίρια</value></data>
+  <data name="OccupancyDeleted" xml:space="preserve"><value>Το κτίριο διαγράφηκε.</value></data>
+  <data name="OccupancyHours" xml:space="preserve"><value>Ώρες χρήσης</value></data>
+  <data name="OccupancyIdentity" xml:space="preserve"><value>Ταυτότητα και τοποθεσία</value></data>
+  <data name="OccupancyMerged" xml:space="preserve"><value>Το κτίριο συγχωνεύθηκε.</value></data>
+  <data name="OccupancyMergedNotice" xml:space="preserve"><value>Το κτίριο συγχωνεύθηκε σε</value></data>
+  <data name="OccupancyNumber" xml:space="preserve"><value>Αρ. κτιρίου</value></data>
+  <data name="OccupancyProtection" xml:space="preserve"><value>Πυροπροστασία και δίκτυα</value></data>
+  <data name="OccupancyReviewed" xml:space="preserve"><value>Το κτίριο σημάνθηκε ως αναθεωρημένο.</value></data>
+  <data name="OccupancySaved" xml:space="preserve"><value>Το κτίριο αποθηκεύτηκε.</value></data>
+  <data name="OccupancySearchPlaceholder" xml:space="preserve"><value>Αναζήτηση αριθμού, ονόματος ή διεύθυνσης</value></data>
+  <data name="OccupancyStructure" xml:space="preserve"><value>Κατασκευή</value></data>
+  <data name="OccupancyTactical" xml:space="preserve"><value>Κίνδυνοι και τακτική</value></data>
+  <data name="OccupancyType" xml:space="preserve"><value>Τύπος κτιρίου</value></data>
+  <data name="OccupancyTypesApply" xml:space="preserve"><value>Ισχύει για τύπους κτιρίων</value></data>
+  <data name="OccupancyTypesApplyHelp" xml:space="preserve"><value>Αριθμοί τύπων χωρισμένοι με κόμμα· κενό σημαίνει όλοι οι τύποι.</value></data>
+  <data name="OccupantLoad" xml:space="preserve"><value>Χωρητικότητα</value></data>
+  <data name="OccupantsNeedingAssistance" xml:space="preserve"><value>Ένοικοι που χρειάζονται βοήθεια</value></data>
+  <data name="OpenCase" xml:space="preserve"><value>Άνοιγμα υπόθεσης</value></data>
+  <data name="OpenCaseIntro" xml:space="preserve"><value>Γίνεστε επικεφαλής ερευνητής. Προσθέστε μέλη μετά το άνοιγμα· μόνο τα μέλη μπορούν να διαβάσουν την υπόθεση.</value></data>
+  <data name="OpenViolations" xml:space="preserve"><value>Ανοικτές παραβάσεις</value></data>
+  <data name="OpenedOn" xml:space="preserve"><value>Άνοιξε στις</value></data>
+  <data name="OriginDescription" xml:space="preserve"><value>Περιγραφή εστίας</value></data>
+  <data name="OutOfService" xml:space="preserve"><value>Εκτός λειτουργίας</value></data>
+  <data name="OutOfServiceReason" xml:space="preserve"><value>Λόγος εκτός λειτουργίας</value></data>
+  <data name="OutboxFailed" xml:space="preserve"><value>Αποτυχημένα συμβάντα</value></data>
+  <data name="OutboxHeader" xml:space="preserve"><value>Εξερχόμενα συμβάντα</value></data>
+  <data name="OutboxOldest" xml:space="preserve"><value>Παλαιότερο σε εκκρεμότητα</value></data>
+  <data name="OutboxPending" xml:space="preserve"><value>Εκκρεμή συμβάντα</value></data>
+  <data name="Outcome" xml:space="preserve"><value>Έκβαση</value></data>
+  <data name="OutletDiameter" xml:space="preserve"><value>Στόμιο (ίντσες)</value></data>
+  <data name="OwnerName" xml:space="preserve"><value>Όνομα ιδιοκτήτη</value></data>
+  <data name="OwnershipContactsOwnedNotice" xml:space="preserve"><value>Τα προσχέδια γράφονται ακόμη στις Επαφές. Συμφωνήστε την αντιστοίχιση για να μεταφέρετε την κυριότητα εγγραφής στα κτίρια.</value></data>
+  <data name="OwnershipRecordsOwnedNotice" xml:space="preserve"><value>Τα κτίρια των Αρχείων κατέχουν τα προσχέδια. Οι σελίδες Επαφών και οι εφαρμογές διαβάζουν προβολές από εδώ.</value></data>
+  <data name="OwnershipSwitched" xml:space="preserve"><value>Η κυριότητα εγγραφής μεταφέρθηκε στα κτίρια των Αρχείων.</value></data>
+  <data name="ParcelId" xml:space="preserve"><value>Αρ. οικοπέδου</value></data>
+  <data name="Passed" xml:space="preserve"><value>Επιτυχία</value></data>
+  <data name="PendingReviews" xml:space="preserve"><value>Αξιολογήσεις προς βαθμολόγηση</value></data>
+  <data name="PerformedOn" xml:space="preserve"><value>Εκτελέστηκε στις</value></data>
+  <data name="PermitCode" xml:space="preserve"><value>Κωδικός</value></data>
+  <data name="PermitNumber" xml:space="preserve"><value>Αρ. άδειας</value></data>
+  <data name="PermitSaved" xml:space="preserve"><value>Η άδεια αποθηκεύτηκε.</value></data>
+  <data name="PermitTransitioned" xml:space="preserve"><value>Η κατάσταση της άδειας ενημερώθηκε.</value></data>
+  <data name="PermitType" xml:space="preserve"><value>Τύπος άδειας</value></data>
+  <data name="PermitTypeSaved" xml:space="preserve"><value>Ο τύπος άδειας αποθηκεύτηκε.</value></data>
+  <data name="PermitTypes" xml:space="preserve"><value>Τύποι αδειών</value></data>
+  <data name="Permits" xml:space="preserve"><value>Άδειες</value></data>
+  <data name="PinnedRevision" xml:space="preserve"><value>καρφιτσωμένη αναθεώρηση</value></data>
+  <data name="PitotPressure" xml:space="preserve"><value>Pitot (psi)</value></data>
+  <data name="PlanReviewOutcome" xml:space="preserve"><value>Αποτέλεσμα ελέγχου</value></data>
+  <data name="PlanReviewRecorded" xml:space="preserve"><value>Ο έλεγχος σχεδίων καταχωρήθηκε.</value></data>
+  <data name="PlanReviews" xml:space="preserve"><value>Έλεγχος σχεδίων</value></data>
+  <data name="PoiId" xml:space="preserve"><value>ID σημείου ενδιαφέροντος</value></data>
+  <data name="PreplanCrosswalk" xml:space="preserve"><value>Αντιστοίχιση προσχεδίων</value></data>
+  <data name="PreplanOwnership" xml:space="preserve"><value>Κυριότητα εγγραφής προσχεδίων</value></data>
+  <data name="PreplanReviewOverdue" xml:space="preserve"><value>Η ημερομηνία αναθεώρησης του κτιρίου έχει παρέλθει.</value></data>
+  <data name="PreventionHeader" xml:space="preserve"><value>Πρόληψη</value></data>
+  <data name="ProgramSaved" xml:space="preserve"><value>Το πρόγραμμα αποθηκεύτηκε.</value></data>
+  <data name="ProtectedContentBlocked" xml:space="preserve"><value>Το προστατευμένο περιεχόμενο είναι κρυφό· αποκαλύψτε το πριν από την ενέργεια.</value></data>
+  <data name="ProtectionEnforced" xml:space="preserve"><value>Επιβολή προστασίας δεδομένων</value></data>
+  <data name="QualityReview" xml:space="preserve"><value>Έλεγχος ποιότητας</value></data>
+  <data name="QualityReviewIntro" xml:space="preserve"><value>Η δειγματοληψία επιλέγει ντετερμινιστικά οριστικοποιημένες εγγραφές ανά κλίμακα· η βαθμολόγηση είναι σταθμισμένη και τροφοδοτεί τις τάσεις.</value></data>
+  <data name="RecommendAmendment" xml:space="preserve"><value>Σύσταση τροποποίησης</value></data>
+  <data name="RecommendsAmendment" xml:space="preserve"><value>Συνιστά τροποποίηση της αναφοράς συμβάντος</value></data>
+  <data name="RecommendsAmendmentHelp" xml:space="preserve"><value>Τα πορίσματα δεν επεξεργάζονται ποτέ το συμβάν. Η σύσταση περνά από τη ροή τροποποίησης της εγγραφής.</value></data>
+  <data name="RecordFee" xml:space="preserve"><value>Καταχώρηση τέλους</value></data>
+  <data name="RecordFindings" xml:space="preserve"><value>Καταχώρηση πορισμάτων</value></data>
+  <data name="RecordFlowTest" xml:space="preserve"><value>Καταχώρηση δοκιμής ροής</value></data>
+  <data name="RecordMaintenance" xml:space="preserve"><value>Καταχώρηση συντήρησης</value></data>
+  <data name="RecordPlanReview" xml:space="preserve"><value>Καταχώρηση ελέγχου σχεδίων</value></data>
+  <data name="RecordedBy" xml:space="preserve"><value>Καταχωρήθηκε από</value></data>
+  <data name="RecordsCreated" xml:space="preserve"><value>Εγγραφές που δημιουργήθηκαν</value></data>
+  <data name="RecordsFinalized" xml:space="preserve"><value>Εγγραφές που οριστικοποιήθηκαν</value></data>
+  <data name="RecordsHealth" xml:space="preserve"><value>Υγεία έκδοσης</value></data>
+  <data name="RecordsHealthIntro" xml:space="preserve"><value>Βασική τηλεμετρία για την ενεργοποίηση των Αρχείων: απόπειρες εγγραφής στο παλαιό σύστημα, καθυστέρηση εξερχομένων, εκτελέσεις Workflow, σαρώσεις και μετρητές πρόληψης. Κάθε πηγή υποβαθμίζεται σε προειδοποίηση αντί να αποτύχει η σελίδα.</value></data>
+  <data name="RecordsModuleActive" xml:space="preserve"><value>Αρχεία ενεργοποιημένα</value></data>
+  <data name="RecordsOverdue" xml:space="preserve"><value>Εγγραφές με εκπρόθεσμη αναθεώρηση</value></data>
+  <data name="ReferenceNumber" xml:space="preserve"><value>Αριθμός αναφοράς</value></data>
+  <data name="ReferralAdded" xml:space="preserve"><value>Η παραπομπή προστέθηκε.</value></data>
+  <data name="ReferralUpdated" xml:space="preserve"><value>Η παραπομπή ενημερώθηκε.</value></data>
+  <data name="Referrals" xml:space="preserve"><value>Παραπομπές</value></data>
+  <data name="ReinspectionOf" xml:space="preserve"><value>Επανεπιθεώρηση του</value></data>
+  <data name="RejectCandidate" xml:space="preserve"><value>Απόρριψη</value></data>
+  <data name="RemoveAttachmentConfirm" xml:space="preserve"><value>Αφαίρεση του συνημμένου;</value></data>
+  <data name="ReopenCase" xml:space="preserve"><value>Επανάνοιγμα υπόθεσης</value></data>
+  <data name="RequiredFireFlow" xml:space="preserve"><value>Απαιτούμενη παροχή (gpm)</value></data>
+  <data name="RequiresPlanReview" xml:space="preserve"><value>Απαιτεί έλεγχο σχεδίων</value></data>
+  <data name="ResidualPressure" xml:space="preserve"><value>Υπολειπόμενη (psi)</value></data>
+  <data name="ResultingState" xml:space="preserve"><value>Τελική κατάσταση</value></data>
+  <data name="ReturnFindings" xml:space="preserve"><value>Επιστροφή στον συντάκτη</value></data>
+  <data name="ReturnedToService" xml:space="preserve"><value>Επαναφορά σε λειτουργία</value></data>
+  <data name="ReviewCount" xml:space="preserve"><value>Αξιολογήσεις</value></data>
+  <data name="ReviewCycle" xml:space="preserve"><value>Κύκλος</value></data>
+  <data name="ReviewNote" xml:space="preserve"><value>Σημείωση ελεγκτή</value></data>
+  <data name="ReviewNotes" xml:space="preserve"><value>Σημειώσεις ελέγχου</value></data>
+  <data name="ReviewOverdueOnly" xml:space="preserve"><value>Εκπρόθεσμη αναθεώρηση</value></data>
+  <data name="ReviewScored" xml:space="preserve"><value>Η αξιολόγηση βαθμολογήθηκε.</value></data>
+  <data name="ReviewedOn" xml:space="preserve"><value>Ελέγχθηκε στις</value></data>
+  <data name="RoofType" xml:space="preserve"><value>Τύπος στέγης</value></data>
+  <data name="RubricSaved" xml:space="preserve"><value>Η κλίμακα αποθηκεύτηκε.</value></data>
+  <data name="Rubrics" xml:space="preserve"><value>Κλίμακες</value></data>
+  <data name="RunInventory" xml:space="preserve"><value>Εκτέλεση απογραφής</value></data>
+  <data name="RunSample" xml:space="preserve"><value>Δειγματοληψία</value></data>
+  <data name="RunsCompleted" xml:space="preserve"><value>Ολοκληρώθηκαν</value></data>
+  <data name="RunsFailed" xml:space="preserve"><value>Απέτυχαν</value></data>
+  <data name="RunsRunning" xml:space="preserve"><value>Σε εξέλιξη</value></data>
+  <data name="RunsSkipped" xml:space="preserve"><value>Παραλείφθηκαν</value></data>
+  <data name="SampleCreated" xml:space="preserve"><value>{0} εγγραφές επιλέχθηκαν για αξιολόγηση.</value></data>
+  <data name="SampleSize" xml:space="preserve"><value>Μέγεθος δείγματος</value></data>
+  <data name="SampleSizeHelp" xml:space="preserve"><value>Εγγραφές ανά εκτέλεση δειγματοληψίας· η επιλογή είναι ντετερμινιστική για την κλίμακα και την περίοδο.</value></data>
+  <data name="Sampled" xml:space="preserve"><value>Δειγματοληπτήθηκαν</value></data>
+  <data name="SampledOn" xml:space="preserve"><value>Δειγματοληπτήθηκε στις</value></data>
+  <data name="ScanPending" xml:space="preserve"><value>Συνημμένα σε αναμονή σάρωσης</value></data>
+  <data name="ScanRejected" xml:space="preserve"><value>Συνημμένα που απορρίφθηκαν από τη σάρωση</value></data>
+  <data name="ScanState" xml:space="preserve"><value>Σάρωση</value></data>
+  <data name="ScheduleInspection" xml:space="preserve"><value>Προγραμματισμός επιθεώρησης</value></data>
+  <data name="ScheduleReinspection" xml:space="preserve"><value>Προγραμματισμός επανεπιθεώρησης</value></data>
+  <data name="ScheduledOn" xml:space="preserve"><value>Προγραμματισμένη</value></data>
+  <data name="ScoreHelp" xml:space="preserve"><value>Βαθμολογήστε κάθε κριτήριο 0-4· το σταθμισμένο σύνολο γίνεται ποσοστό.</value></data>
+  <data name="ScoreReview" xml:space="preserve"><value>Βαθμολόγηση αξιολόγησης</value></data>
+  <data name="Scored" xml:space="preserve"><value>Βαθμολογήθηκαν</value></data>
+  <data name="ScoredOn" xml:space="preserve"><value>Βαθμολογήθηκε στις</value></data>
+  <data name="SectionNumber" xml:space="preserve"><value>Ενότητα</value></data>
+  <data name="SectionsImported" xml:space="preserve"><value>Εισήχθησαν {0} ενότητες.</value></data>
+  <data name="SetInService" xml:space="preserve"><value>Επαναφορά σε λειτουργία</value></data>
+  <data name="SetOutOfService" xml:space="preserve"><value>Θέση εκτός λειτουργίας</value></data>
+  <data name="ShouldAlert" xml:space="preserve"><value>Ειδοποίηση πληρωμάτων</value></data>
+  <data name="SignatureName" xml:space="preserve"><value>Όνομα υπογραφής</value></data>
+  <data name="SignatureNameHint" xml:space="preserve"><value>Πληκτρολογημένο όνομα του ατόμου που βεβαιώνει την επιθεώρηση</value></data>
+  <data name="SmokeAlarmsInstalled" xml:space="preserve"><value>Ανιχνευτές καπνού που εγκαταστάθηκαν</value></data>
+  <data name="SprinklerType" xml:space="preserve"><value>Καταιονιστήρες</value></data>
+  <data name="SquareFeet" xml:space="preserve"><value>Τετραγωνικά πόδια</value></data>
+  <data name="Staff" xml:space="preserve"><value>Προσωπικό</value></data>
+  <data name="StaffHelp" xml:space="preserve"><value>Αναγνωριστικά χρηστών χωρισμένα με κόμμα για τα μέλη που συμμετείχαν.</value></data>
+  <data name="Standpipe" xml:space="preserve"><value>Στήλη ανύψωσης</value></data>
+  <data name="StartInspection" xml:space="preserve"><value>Έναρξη επιθεώρησης</value></data>
+  <data name="StartedOn" xml:space="preserve"><value>Ξεκίνησε</value></data>
+  <data name="StaticPressure" xml:space="preserve"><value>Στατική (psi)</value></data>
+  <data name="StorageLocation" xml:space="preserve"><value>Θέση αποθήκευσης</value></data>
+  <data name="Stories" xml:space="preserve"><value>Όροφοι</value></data>
+  <data name="SubmissionsAwaiting" xml:space="preserve"><value>Υποβολές σε αναμονή</value></data>
+  <data name="SubmissionsFailed" xml:space="preserve"><value>Αποτυχημένες υποβολές</value></data>
+  <data name="SubmittedOn" xml:space="preserve"><value>Υποβλήθηκε στις</value></data>
+  <data name="SuggestedOccupancy" xml:space="preserve"><value>Προτεινόμενο κτίριο</value></data>
+  <data name="SwitchBlocked" xml:space="preserve"><value>Η αλλαγή είναι μπλοκαρισμένη μέχρι να εκτελεστεί η απογραφή, να αποφασιστεί κάθε υποψήφιος και να μη μείνει ασυμφώνητο προσχέδιο.</value></data>
+  <data name="SwitchOwnership" xml:space="preserve"><value>Μεταφορά κυριότητας εγγραφής στα Αρχεία</value></data>
+  <data name="SwitchOwnershipAcknowledge" xml:space="preserve"><value>Κατανοώ ότι οι σελίδες προσχεδίων στις Επαφές και οι εφαρμογές γίνονται προβολές κτιρίων μόνο για ανάγνωση.</value></data>
+  <data name="SwitchOwnershipConfirm" xml:space="preserve"><value>Μεταφορά κυριότητας εγγραφής τώρα; Η επεξεργασία προσχεδίων στις Επαφές σταματά αμέσως.</value></data>
+  <data name="SwitchOwnershipIntro" xml:space="preserve"><value>Μετά την αλλαγή, τα προσχέδια επεξεργάζονται μόνο ως κτίρια. Οι Επαφές και οι εφαρμογές συνεχίζουν με προβολές· η αναίρεση είναι επαναφορά βάσης δεδομένων, όχι διακόπτης.</value></data>
+  <data name="SwitchedOn" xml:space="preserve"><value>Άλλαξε στις</value></data>
+  <data name="TacticalSummary" xml:space="preserve"><value>Τακτική σύνοψη</value></data>
+  <data name="TelemetryWindow" xml:space="preserve"><value>Παράθυρο</value></data>
+  <data name="TestDue" xml:space="preserve"><value>οφειλόμενη δοκιμή</value></data>
+  <data name="TestedOn" xml:space="preserve"><value>Δοκιμάστηκε στις</value></data>
+  <data name="TransferCustody" xml:space="preserve"><value>Μεταβίβαση φύλαξης</value></data>
+  <data name="TransferTo" xml:space="preserve"><value>Προς</value></data>
+  <data name="TransferToExternal" xml:space="preserve"><value>Σε εξωτερικό φορέα</value></data>
+  <data name="TransferredOn" xml:space="preserve"><value>Μεταβιβάστηκε στις</value></data>
+  <data name="TransitionPermit" xml:space="preserve"><value>Αλλαγή κατάστασης</value></data>
+  <data name="Trends" xml:space="preserve"><value>Τάσεις</value></data>
+  <data name="TrendsSince" xml:space="preserve"><value>Από</value></data>
+  <data name="Unlink" xml:space="preserve"><value>Αποσύνδεση</value></data>
+  <data name="UnreconciledPreplans" xml:space="preserve"><value>Ασυμφώνητα προσχέδια</value></data>
+  <data name="UploadedOn" xml:space="preserve"><value>Μεταφορτώθηκε</value></data>
+  <data name="UtilityNotes" xml:space="preserve"><value>Σημειώσεις δικτύων</value></data>
+  <data name="ValidityDays" xml:space="preserve"><value>Ισχύς (ημέρες)</value></data>
+  <data name="ViolationSaved" xml:space="preserve"><value>Η παράβαση αποθηκεύτηκε.</value></data>
+  <data name="ViolationUpdated" xml:space="preserve"><value>Η παράβαση ενημερώθηκε.</value></data>
+  <data name="Violations" xml:space="preserve"><value>Παραβάσεις</value></data>
+  <data name="WaterShutoff" xml:space="preserve"><value>Διακοπή νερού</value></data>
+  <data name="WaterSupplyNotes" xml:space="preserve"><value>Σημειώσεις υδροδότησης</value></data>
+  <data name="WorkflowRuns" xml:space="preserve"><value>Εκτελέσεις Workflow</value></data>
 </root>

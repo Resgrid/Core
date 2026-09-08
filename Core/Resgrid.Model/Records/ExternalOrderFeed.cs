@@ -80,6 +80,19 @@ namespace Resgrid.Model
 			}
 		}
 
+		/// <summary>
+		/// A value the source controls, made safe to repeat back. A parse problem is stored on the run and shown
+		/// to an administrator, so a source cannot use it to put arbitrary text or length in front of a person:
+		/// what comes back is a short token of plain characters, or a placeholder.
+		/// </summary>
+		private static string Safe(string sourceValue)
+		{
+			if (string.IsNullOrWhiteSpace(sourceValue))
+				return "(none)";
+			var kept = new string(sourceValue.Trim().Where(c => char.IsLetterOrDigit(c) || c == '.' || c == '-' || c == '_').Take(32).ToArray());
+			return kept.Length == 0 ? "(unreadable)" : kept;
+		}
+
 		/// <summary>Parses and validates one feed document. Problems are returned, never thrown, so a run can log them.</summary>
 		public static ExternalOrderFeed Parse(string json, out List<string> problems)
 		{
@@ -108,7 +121,7 @@ namespace Resgrid.Model
 			}
 			if (!string.Equals(feed.Contract, Version, StringComparison.Ordinal))
 			{
-				problems.Add($"The feed declares contract '{feed.Contract}'; this connector speaks '{Version}'.");
+				problems.Add($"The feed declares contract '{Safe(feed.Contract)}'; this connector speaks '{Version}'.");
 				return null;
 			}
 			feed.Orders ??= new List<ExternalOrderFeedOrder>();

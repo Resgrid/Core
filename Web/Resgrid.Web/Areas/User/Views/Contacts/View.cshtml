@@ -46,6 +46,20 @@
                         <i class="fa fa-phone"></i> @localizer["Calls"]
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#preplan" role="tab">
+                        <i class="fa fa-fire-extinguisher"></i> @localizer["PreplanTab"]
+                        @if (Model.Preplan != null && Model.Preplan.IsReviewOverdue(DateTime.UtcNow))
+                        {
+                            <span class="badge badge-warning" title="@localizer["PreplanReviewOverdue"]">!</span>
+                        }
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#files" role="tab">
+                        <i class="fa fa-paperclip"></i> @localizer["SiteFiles"] <span class="badge">@(Model.Attachments?.Count ?? 0)</span>
+                    </a>
+                </li>
                 @if (Model.RouteStops != null && Model.RouteStops.Count > 0)
                 {
                     <li class="nav-item">
@@ -469,6 +483,108 @@
                                                 <i class="fa fa-search-minus"></i> @localizer["NoCallsFound"]
                                             </h3>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pre-Plan Tab (Contacts plan Phase A) -->
+                        <div class="tab-pane fade" id="preplan" role="tabpanel">
+                            <div class="row m-t-sm">
+                                <div class="col-md-12">
+                                    <div class="panel-body">
+                                        @if (ClaimsAuthorizationHelper.CanEditContacts())
+                                        {
+                                            <div class="m-b-sm">
+                                                <a asp-controller="Contacts" asp-action="Preplan" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-primary btn-sm">
+                                                    <i class="fa fa-pencil"></i> @(Model.Preplan == null ? localizer["CreatePreplan"] : localizer["EditPreplan"])
+                                                </a>
+                                            </div>
+                                        }
+                                        @if (Model.Preplan == null)
+                                        {
+                                            <p class="text-muted">@localizer["NoPreplan"]</p>
+                                        }
+                                        else
+                                        {
+                                            ViewData["Department"] = Model.Department;
+                                            <partial name="_ContactPreplanSummary" model="Model.Preplan" />
+                                        }
+                                        <h4><i class="fa fa-warning"></i> @localizer["PremiseHazards"]</h4>
+                                        @if (Model.Hazards == null || Model.Hazards.Count == 0)
+                                        {
+                                            <p class="text-muted">@localizer["NoHazards"]</p>
+                                        }
+                                        else
+                                        {
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>@localizer["Severity"]</th>
+                                                        <th>@commonLocalizer["Type"]</th>
+                                                        <th>@localizer["Title"]</th>
+                                                        <th>@localizer["Location"]</th>
+                                                        <th>@localizer["Alert"]</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var hazard in Model.Hazards)
+                                                    {
+                                                        <tr style="background-color:@Resgrid.Web.Areas.User.Controllers.ContactsController.HazardSeverityColor(hazard.Severity)">
+                                                            <td>@((Resgrid.Model.ContactPreplanHazardSeverities)hazard.Severity)</td>
+                                                            <td>@Resgrid.Web.Areas.User.Controllers.ContactsController.SplitPascalCase(((Resgrid.Model.ContactPreplanHazardTypes)hazard.HazardType).ToString())</td>
+                                                            <td><strong data-adp-field="contactpreplanhazards.title:@hazard.ContactPreplanHazardId">@hazard.Title</strong>@if (!string.IsNullOrWhiteSpace(hazard.Description)) { <br /><small data-adp-field="contactpreplanhazards.description:@hazard.ContactPreplanHazardId">@hazard.Description</small> }</td>
+                                                            <td><span data-adp-field="contactpreplanhazards.locationdescription:@hazard.ContactPreplanHazardId">@hazard.LocationDescription</span> @if (!string.IsNullOrWhiteSpace(hazard.GpsCoordinates)) { <small>(<span data-adp-field="contactpreplanhazards.gpscoordinates:@hazard.ContactPreplanHazardId">@hazard.GpsCoordinates</span>)</small> }</td>
+                                                            <td>@if (hazard.ShouldAlert) { <i class="fa fa-bell text-danger"></i> }</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Files Tab (Contacts plan Phase A) -->
+                        <div class="tab-pane fade" id="files" role="tabpanel">
+                            <div class="row m-t-sm">
+                                <div class="col-md-12">
+                                    <div class="panel-body">
+                                        @if (ClaimsAuthorizationHelper.CanEditContacts())
+                                        {
+                                            <div class="m-b-sm">
+                                                <a asp-controller="Contacts" asp-action="Attachments" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-primary btn-sm"><i class="fa fa-upload"></i> @localizer["ManageFiles"]</a>
+                                            </div>
+                                        }
+                                        @if (Model.Attachments == null || Model.Attachments.Count == 0)
+                                        {
+                                            <p class="text-muted">@localizer["NoFiles"]</p>
+                                        }
+                                        else
+                                        {
+                                            <table class="table table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>@commonLocalizer["Type"]</th>
+                                                        <th>@commonLocalizer["Name"]</th>
+                                                        <th>@localizer["FileName"]</th>
+                                                        <th>@localizer["AddedOn"]</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var attachment in Model.Attachments)
+                                                    {
+                                                        <tr>
+                                                            <td>@Resgrid.Web.Areas.User.Controllers.ContactsController.SplitPascalCase(((Resgrid.Model.ContactAttachmentTypes)attachment.ContactAttachmentType).ToString())</td>
+                                                            <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(attachment.Name)</td>
+                                                            <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(attachment.FileName)</td>
+                                                            <td>@attachment.AddedOn.TimeConverter(Model.Department).FormatForDepartment(Model.Department)</td>
+                                                            <td class="text-right"><a class="btn btn-xs btn-primary" asp-controller="Contacts" asp-action="GetContactAttachment" asp-route-area="User" asp-route-contactAttachmentId="@attachment.ContactAttachmentId"><i class="fa fa-download"></i> @localizer["Download"]</a></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        }
                                     </div>
                                 </div>
                             </div>

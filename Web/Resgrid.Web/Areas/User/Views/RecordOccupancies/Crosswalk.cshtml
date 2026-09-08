@@ -1,0 +1,116 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordOccupancyCrosswalkView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["PreplanCrosswalk"];
+	var s = Model.Status;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["PreplanCrosswalk"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordOccupancies" asp-action="Index" asp-route-area="User">@L["Occupancies"]</a></li>
+			<li class="active"><strong>@L["PreplanCrosswalk"]</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-5">
+			<div class="ibox"><div class="ibox-title"><h5>@L["PreplanOwnership"]</h5></div><div class="ibox-content">
+				<p>@L["CrosswalkIntroText"]</p>
+				<dl class="dl-horizontal">
+					<dt>@L["DeploymentStatus"]</dt><dd><strong>@(RmsEnumDisplay.Label<RmsOccupancyOwnershipState>((int)s.State))</strong></dd>
+					<dt>@L["InventoriedOn"]</dt><dd>@RmsEnumDisplay.Utc(s.InventoriedOn)</dd>
+					<dt>@L["Occupancies"]</dt><dd>@s.Occupancies</dd>
+					<dt>@L["Candidates"]</dt><dd>@s.Candidates</dd>
+					<dt>@L["LinkedCount"]</dt><dd>@s.Linked</dd>
+					<dt>@L["Rejected"]</dt><dd>@s.Rejected</dd>
+					<dt>@L["UnreconciledPreplans"]</dt><dd>@s.UnreconciledPreplans</dd>
+					<dt>@L["SwitchedOn"]</dt><dd>@RmsEnumDisplay.Utc(s.SwitchedOn)</dd>
+				</dl>
+				@if (s.State != RmsOccupancyOwnershipState.RecordsOwned)
+				{
+					<form method="post" asp-controller="RecordOccupancies" asp-action="Inventory" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<button class="btn btn-default"><i class="fa fa-search"></i> @L["RunInventory"]</button>
+					</form>
+					<hr />
+					<h4>@L["SwitchOwnership"]</h4>
+					<p>@L["SwitchOwnershipIntro"]</p>
+					@if (s.CanSwitchToRecords)
+					{
+						<form method="post" asp-controller="RecordOccupancies" asp-action="SwitchOwnership" asp-route-area="User" onsubmit="return confirm('@L["SwitchOwnershipConfirm"]');">
+							@Html.AntiForgeryToken()
+							<div class="form-group"><label>@L["ReasonText"]</label><textarea class="form-control" name="reason" rows="2" maxlength="1000" required></textarea></div>
+							<div class="checkbox"><label><input type="checkbox" name="acknowledge" value="true" required /> @L["SwitchOwnershipAcknowledge"]</label></div>
+							<button class="btn btn-warning"><i class="fa fa-exchange"></i> @L["SwitchOwnership"]</button>
+						</form>
+					}
+					else
+					{
+						<p class="text-warning">@L["SwitchBlocked"]</p>
+					}
+				}
+				else
+				{
+					<p class="text-success">@L["OwnershipRecordsOwnedNotice"]</p>
+				}
+			</div></div>
+		</div>
+		<div class="col-md-7">
+			<div class="ibox"><div class="ibox-title"><h5>@L["Candidates"] (@Model.Candidates.Count)</h5></div><div class="ibox-content">
+				@if (Model.Candidates.Count == 0) { <p class="text-muted">@L["NoCandidates"]</p> }
+				@foreach (var group in Model.Candidates.GroupBy(c => c.GroupKey ?? c.RmsOccupancyCrosswalkId))
+				{
+					<div class="panel panel-default"><div class="panel-body">
+						@foreach (var c in group)
+						{
+							<div class="row m-b-xs">
+								<div class="col-sm-5">
+									<strong>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.SourceDisplayName)</strong><br />
+									<small>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkSourceKind>(c.SourceKind)) · @c.NormalizedAddress</small><br />
+									<small class="text-muted">@L["MatchConfidence"] @c.MatchConfidence% · @c.MatchReason</small>
+									@if (!string.IsNullOrWhiteSpace(c.SuggestedOccupancyId)) { <br /><small>@L["SuggestedOccupancy"]: @(Model.OccupancyNames.TryGetValue(c.SuggestedOccupancyId, out var sn) ? sn : c.SuggestedOccupancyId)</small> }
+								</div>
+								<div class="col-sm-7">
+									<form method="post" class="form-inline" asp-controller="RecordOccupancies" asp-action="Link" asp-route-area="User">
+										@Html.AntiForgeryToken()<input type="hidden" name="crosswalkId" value="@c.RmsOccupancyCrosswalkId" />
+										<select class="form-control input-sm" name="occupancyId">
+											<option value="">@L["CreateOccupancyFromSource"]</option>
+											@foreach (var item in Model.Occupancies) { <option value="@item.Value" selected="@(item.Value == c.SuggestedOccupancyId)">@item.Text</option> }
+										</select>
+										<button class="btn btn-sm btn-primary">@L["LinkCandidate"]</button>
+									</form>
+									<form method="post" class="form-inline m-t-xs" asp-controller="RecordOccupancies" asp-action="Reject" asp-route-area="User">
+										@Html.AntiForgeryToken()<input type="hidden" name="crosswalkId" value="@c.RmsOccupancyCrosswalkId" />
+										<input class="form-control input-sm" name="reason" placeholder="@L["ReasonText"]" maxlength="500" required />
+										<button class="btn btn-sm btn-default">@L["RejectCandidate"]</button>
+									</form>
+								</div>
+							</div>
+						}
+					</div></div>
+				}
+			</div></div>
+			@if (Model.Decided.Count > 0)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["History"]</h5></div><div class="ibox-content">
+					<table class="table table-condensed">
+						<tbody>
+						@foreach (var c in Model.Decided)
+						{
+							<tr><td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.SourceDisplayName)</td><td>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkState>(c.State))</td><td>@(c.RmsOccupancyId != null && Model.OccupancyNames.TryGetValue(c.RmsOccupancyId, out var n) ? n : "")</td><td>@RmsEnumDisplay.Utc(c.DecidedOn)</td></tr>
+						}
+						</tbody>
+					</table>
+				</div></div>
+			}
+		</div>
+	</div>
+</div>

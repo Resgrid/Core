@@ -390,4 +390,6 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>من يمكنه فرض الحجز القانوني ورفعه، وهو ما يعلّق مدة الاحتفاظ ويمنع إبطال السجل.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>إعادة إسناد مسودات السجلات</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>من يمكنه نقل مسودة سجل إلى مؤلف آخر، مثلاً عندما يكون المؤلف الأصلي غير متاح.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>إدارة بيانات الوقاية</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>من يستطيع إنشاء وتعديل المباني وبرامج التفتيش ومجموعات القوانين وصنابير الإطفاء والتصاريح وأنشطة الحد من مخاطر المجتمع. تتطلب قراءة بيانات الوقاية الوصول إلى السجلات فقط؛ أما التحقيقات فتخضع لصلاحية السجلات المقيدة وعضوية القضية.</value></data>
 </root>

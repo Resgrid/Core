@@ -28,11 +28,14 @@ namespace Resgrid.Tests.Rms
 				{ 58, "ShareRecordsExternally" }, { 59, "ViewRestrictedRecords" }, { 60, "ViewLegacyRecords" },
 				{ 61, "ViewGroupRecords" }, { 62, "ManageRecordDefinitions" }, { 63, "PublishRecordDefinitions" },
 				{ 64, "ManageRecordReports" }, { 65, "ManageRecordDisclosures" }, { 66, "ManageRecordLegalHold" },
-				{ 67, "ReassignRecordDrafts" }
+				{ 67, "ReassignRecordDrafts" }, { 69, "RecordsPreventionAdmin" }
 			};
 
 			foreach (var kv in expected)
 				Enum.GetName(typeof(PermissionTypes), kv.Key).Should().Be(kv.Value);
+
+			// 68 is Unified Search's ManageSearchIndex; RMS-5 took 69 from the pool released on 2026-08-27.
+			Enum.IsDefined(typeof(PermissionTypes), 68).Should().BeFalse("68 is reserved for Unified Search's ManageSearchIndex, which is not authored yet");
 
 			// 40-49 belong to other pending plans; RMS must not have taken any of them.
 			foreach (var value in Enumerable.Range(40, 10))
@@ -123,8 +126,11 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.RecordPurged).Should().Be(159);
 			((int)WorkflowTriggerEventType.RecordExportScheduled).Should().Be(160);
 
-			foreach (var value in Enumerable.Range(161, 3))
-				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved in the RMS block 2");
+			// 161-163 were the block 2 buffer until RMS-5 took them on 2026-09-07 (registry section 3.2).
+			((int)WorkflowTriggerEventType.RecordInspectionCompleted).Should().Be(161);
+			((int)WorkflowTriggerEventType.RecordViolationOverdue).Should().Be(162);
+			((int)WorkflowTriggerEventType.RecordPermitExpiring).Should().Be(163);
+			WorkflowTriggerEventTypes.IsRecordsTrigger(WorkflowTriggerEventType.RecordPermitExpiring).Should().BeTrue();
 			WorkflowTriggerEventTypes.IsRecordsTrigger(WorkflowTriggerEventType.RecordExportScheduled).Should().BeTrue();
 			WorkflowTriggerEventTypes.IsRecordsTrigger((WorkflowTriggerEventType)151).Should().BeFalse("151 belongs to AI Dispatch");
 		}
@@ -148,6 +154,13 @@ namespace Resgrid.Tests.Rms
 			FeatureFlagKeys.RecordsFieldUnit.Should().Be("Records.Field.Unit");
 			FeatureFlagKeys.RecordsFieldIncidentCommand.Should().Be("Records.Field.IncidentCommand");
 			FeatureFlagKeys.RecordsFieldDispatch.Should().Be("Records.Field.Dispatch");
+			FeatureFlagKeys.RecordsPreventionOccupancy.Should().Be("Records.Prevention.Occupancy");
+			FeatureFlagKeys.RecordsPreventionInspections.Should().Be("Records.Prevention.Inspections");
+			FeatureFlagKeys.RecordsPreventionHydrants.Should().Be("Records.Prevention.Hydrants");
+			FeatureFlagKeys.RecordsPreventionPermits.Should().Be("Records.Prevention.Permits");
+			FeatureFlagKeys.RecordsPreventionCrr.Should().Be("Records.Prevention.Crr");
+			FeatureFlagKeys.RecordsInvestigations.Should().Be("Records.Investigations");
+			FeatureFlagKeys.RecordsQualityReview.Should().Be("Records.QualityReview");
 		}
 
 		[Test]

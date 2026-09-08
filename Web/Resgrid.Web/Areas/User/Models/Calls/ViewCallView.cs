@@ -27,6 +27,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<DispatchProtocol> Protocols { get; set; }
 		public List<CallReference> ChildCalls { get; set; }
 		public List<Contact> Contacts { get; set; }
+
+		/// <summary>Pre-plans, hazards, alert notes and file metadata for the linked contacts (Contacts plan Phase A, A6 Site Info panel).</summary>
+		public CallSiteInfo SiteInfo { get; set; }
 		public List<CallVideoFeed> VideoFeeds { get; set; } = new List<CallVideoFeed>();
 		public string DestinationName { get; set; }
 		public string DestinationAddress { get; set; }

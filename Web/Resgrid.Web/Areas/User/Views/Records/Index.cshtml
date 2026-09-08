@@ -70,8 +70,13 @@
 			{
 				<a class="btn btn-default" asp-controller="Records" asp-action="Accountability" asp-route-area="User"><i class="fa fa-users"></i> @localizer["Accountability"]</a>
 			}
+			@if (Model.ModuleState.RecordsUsable && Model.QualityReviewOn && ClaimsAuthorizationHelper.CanReviewRecords())
+			{
+				<a class="btn btn-default" asp-controller="RecordsQuality" asp-action="Index" asp-route-area="User"><i class="fa fa-check-square-o"></i> @localizer["QualityReview"]</a>
+			}
 			@if (Model.IsDepartmentAdmin)
 			{
+				<a class="btn btn-default" asp-controller="RecordsHealth" asp-action="Index" asp-route-area="User"><i class="fa fa-heartbeat"></i> @localizer["RecordsHealth"]</a>
 				<a class="btn btn-default" asp-controller="Records" asp-action="FieldRollout" asp-route-area="User"><i class="fa fa-mobile"></i> @localizer["FieldRollout"]</a>
 				<a class="btn btn-inverse" asp-controller="Records" asp-action="Settings" asp-route-area="User"><i class="fa fa-cog"></i> @localizer["Settings"]</a>
 			}

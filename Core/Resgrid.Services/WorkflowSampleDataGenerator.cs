@@ -532,6 +532,9 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordEvidenceCaptured:
 				case WorkflowTriggerEventType.RecordPurged:
 				case WorkflowTriggerEventType.RecordExportScheduled:
+				case WorkflowTriggerEventType.RecordInspectionCompleted:
+				case WorkflowTriggerEventType.RecordViolationOverdue:
+				case WorkflowTriggerEventType.RecordPermitExpiring:
 				case WorkflowTriggerEventType.RecordDefinitionPublished:
 				case WorkflowTriggerEventType.RecordDefinitionRetired:
 					AddRecordsSamples(obj, eventType);
@@ -867,6 +870,68 @@ namespace Resgrid.Services
 				x["generated_on"] = DateTime.Now;
 				x["expires_on"] = DateTime.Now.AddDays(30);
 				obj["export"] = x;
+			}
+
+			if (eventType == WorkflowTriggerEventType.RecordInspectionCompleted)
+			{
+				r["kind"] = "Prevention";
+				var i = new ScriptObject();
+				i["id"] = "3e4f5a6b-7c8d-4e9f-a0b1-c2d3e4f5a6b7";
+				i["number"] = "INSP-2026-0031";
+				i["occupancy_id"] = "4f5a6b7c-8d9e-4f0a-b1c2-d3e4f5a6b7c8";
+				i["occupancy_number"] = "OCC-2026-0012";
+				i["occupancy_name"] = "Riverside Assisted Living";
+				i["program_id"] = "5a6b7c8d-9e0f-4a1b-c2d3-e4f5a6b7c8d9";
+				i["program_name"] = "Annual life-safety inspection";
+				i["state"] = "ReinspectionRequired";
+				i["result"] = "Fail";
+				i["scheduled_on"] = DateTime.Now.AddDays(-3);
+				i["completed_on"] = DateTime.Now;
+				i["inspector_user_id"] = "00000000-0000-0000-0000-000000000003";
+				i["violation_count"] = 2;
+				i["critical_violation_count"] = 1;
+				i["is_reinspection"] = false;
+				obj["inspection"] = i;
+			}
+
+			if (eventType == WorkflowTriggerEventType.RecordViolationOverdue)
+			{
+				r["kind"] = "Prevention";
+				var v = new ScriptObject();
+				v["id"] = "6b7c8d9e-0f1a-4b2c-d3e4-f5a6b7c8d9e0";
+				v["inspection_id"] = "3e4f5a6b-7c8d-4e9f-a0b1-c2d3e4f5a6b7";
+				v["occupancy_id"] = "4f5a6b7c-8d9e-4f0a-b1c2-d3e4f5a6b7c8";
+				v["occupancy_number"] = "OCC-2026-0012";
+				v["occupancy_name"] = "Riverside Assisted Living";
+				v["code_set_id"] = "7c8d9e0f-1a2b-4c3d-e4f5-a6b7c8d9e0f1";
+				v["code_section_id"] = "8d9e0f1a-2b3c-4d4e-f5a6-b7c8d9e0f1a2";
+				v["code_section_number"] = "IFC 1031.2";
+				v["severity"] = "Serious";
+				v["state"] = "Open";
+				v["due_on"] = DateTime.Now.AddDays(-4);
+				v["days_overdue"] = 4;
+				obj["violation"] = v;
+			}
+
+			if (eventType == WorkflowTriggerEventType.RecordPermitExpiring)
+			{
+				r["kind"] = "Prevention";
+				var p = new ScriptObject();
+				p["id"] = "9e0f1a2b-3c4d-4e5f-a6b7-c8d9e0f1a2b3";
+				p["number"] = "PRM-2026-0107";
+				p["type_id"] = "0f1a2b3c-4d5e-4f6a-b7c8-d9e0f1a2b3c4";
+				p["type_name"] = "Hot work";
+				p["type_code"] = "HW";
+				p["occupancy_id"] = "4f5a6b7c-8d9e-4f0a-b1c2-d3e4f5a6b7c8";
+				p["occupancy_number"] = "OCC-2026-0012";
+				p["occupancy_name"] = "Riverside Assisted Living";
+				p["state"] = "Issued";
+				p["issued_on"] = DateTime.Now.AddDays(-335);
+				p["effective_on"] = DateTime.Now.AddDays(-335);
+				p["expires_on"] = DateTime.Now.AddDays(30);
+				p["days_until_expiry"] = 30;
+				p["fee_paid"] = true;
+				obj["permit"] = p;
 			}
 
 			if (eventType == WorkflowTriggerEventType.RecordSubmittedForReview || eventType == WorkflowTriggerEventType.RecordReturnedForCorrection)

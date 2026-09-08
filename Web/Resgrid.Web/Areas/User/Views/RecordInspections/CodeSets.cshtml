@@ -1,0 +1,97 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordCodeSetsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["CodeSets"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["CodeSets"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordInspections" asp-action="Index" asp-route-area="User">@L["Inspections"]</a></li>
+			<li class="active"><strong>@L["CodeSets"]</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-4">
+			<div class="ibox"><div class="ibox-title"><h5>@L["CodeSets"]</h5></div><div class="ibox-content">
+				<p class="text-muted">@L["CodeSetsIntro"]</p>
+				<ul class="list-group">
+					@foreach (var c in Model.CodeSets)
+					{
+						<li class="list-group-item @(Model.Selected?.RmsCodeSetId == c.RmsCodeSetId ? "active" : "")"><a asp-controller="RecordInspections" asp-action="CodeSets" asp-route-area="User" asp-route-id="@c.RmsCodeSetId" style="@(Model.Selected?.RmsCodeSetId == c.RmsCodeSetId ? "color:#fff" : "")">@c.Name @c.Edition</a> @(c.IsActive ? "" : "(" + L["DefinitionRetiredLabel"] + ")")</li>
+					}
+				</ul>
+				@if (Model.CanAdminister)
+				{
+					<h4>@L["NewCodeSet"]</h4>
+					<form method="post" asp-controller="RecordInspections" asp-action="SaveCodeSet" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<div class="form-group"><input class="form-control" name="codeSet.Name" maxlength="200" placeholder="@L["DefinitionName"]" required /></div>
+						<div class="form-group"><input class="form-control" name="codeSet.Edition" maxlength="50" placeholder="@L["CodeEdition"]" /></div>
+						<div class="form-group"><input class="form-control" name="codeSet.Jurisdiction" maxlength="200" placeholder="@L["Jurisdiction"]" /></div>
+						<input type="hidden" name="codeSet.IsActive" value="true" />
+						<button class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> @L["Save"]</button>
+					</form>
+				}
+			</div></div>
+		</div>
+		<div class="col-md-8">
+			@if (Model.Selected != null)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@Model.Selected.Name @Model.Selected.Edition · @L["CodeSections"] (@Model.Sections.Count)</h5></div><div class="ibox-content">
+					@if (Model.CanAdminister)
+					{
+						<form method="post" class="form-inline" asp-controller="RecordInspections" asp-action="SaveCodeSet" asp-route-area="User">
+							@Html.AntiForgeryToken()<input type="hidden" name="codeSet.RmsCodeSetId" value="@Model.Selected.RmsCodeSetId" /><input type="hidden" name="codeSet.RowVersion" value="@Model.Selected.RowVersion" />
+							<input class="form-control input-sm" name="codeSet.Name" value="@Model.Selected.Name" maxlength="200" required />
+							<input class="form-control input-sm" name="codeSet.Edition" value="@Model.Selected.Edition" maxlength="50" />
+							<input class="form-control input-sm" name="codeSet.Jurisdiction" value="@Model.Selected.Jurisdiction" maxlength="200" />
+							<label class="checkbox-inline"><input type="checkbox" name="codeSet.IsActive" value="true" checked="@Model.Selected.IsActive" /> @L["Enabled"]</label>
+							<button class="btn btn-xs btn-default">@L["Save"]</button>
+						</form>
+						<hr />
+					}
+					<table class="table table-condensed table-striped">
+						<thead><tr><th>@L["SectionNumber"]</th><th>@L["Title"]</th><th>@L["DefaultSeverity"]</th><th>@L["DefaultCorrectionDays"]</th></tr></thead>
+						<tbody>
+						@foreach (var s in Model.Sections)
+						{
+							<tr><td>@s.SectionNumber</td><td>@s.Title<br /><small class="text-muted">@s.Text</small></td><td>@(RmsEnumDisplay.Label<RmsViolationSeverity>(s.DefaultSeverity))</td><td>@s.DefaultCorrectionDays</td></tr>
+						}
+						</tbody>
+					</table>
+					@if (Model.CanAdminister)
+					{
+						<form method="post" asp-controller="RecordInspections" asp-action="SaveCodeSection" asp-route-area="User">
+							@Html.AntiForgeryToken()<input type="hidden" name="section.RmsCodeSetId" value="@Model.Selected.RmsCodeSetId" />
+							<div class="row">
+								<div class="col-sm-2"><input class="form-control" name="section.SectionNumber" maxlength="50" placeholder="@L["SectionNumber"]" required /></div>
+								<div class="col-sm-4"><input class="form-control" name="section.Title" maxlength="200" placeholder="@L["Title"]" required /></div>
+								<div class="col-sm-2"><select class="form-control" name="section.DefaultSeverity" asp-items="Model.Severities"></select></div>
+								<div class="col-sm-2"><input class="form-control" type="number" name="section.DefaultCorrectionDays" value="30" min="0" /></div>
+								<div class="col-sm-2"><button class="btn btn-primary btn-block">@L["AddRow"]</button></div>
+							</div>
+							<div class="row m-t-xs"><div class="col-sm-12"><input class="form-control" name="section.Text" maxlength="4000" placeholder="@L["CodeSectionText"]" /></div></div>
+						</form>
+						<hr />
+						<h4>@L["ImportSections"]</h4>
+						<p class="text-muted">@L["ImportSectionsHelp"]</p>
+						<form method="post" asp-controller="RecordInspections" asp-action="ImportSections" asp-route-area="User">
+							@Html.AntiForgeryToken()<input type="hidden" name="codeSetId" value="@Model.Selected.RmsCodeSetId" />
+							<textarea class="form-control" name="csv" rows="6" style="font-family:monospace" placeholder="section,title,text,severity,correction_days"></textarea>
+							<button class="btn btn-sm btn-default m-t-xs"><i class="fa fa-upload"></i> @L["ImportSections"]</button>
+						</form>
+					}
+				</div></div>
+			}
+		</div>
+	</div>
+</div>

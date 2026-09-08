@@ -62,7 +62,8 @@ namespace Resgrid.Web.Services.Helpers
 			return new RecordDefinitionVersionData
 			{
 				VersionId = v.RmsRecordDefinitionVersionId, DefinitionKey = v.DefinitionKey, Version = v.Version, State = ((RmsDefinitionVersionState)v.State).ToString(),
-				LifecyclePreset = ((RmsLifecyclePreset)v.LifecyclePreset).ToString(), ReviewerRoleIds = RecordDefinitionsService.ParseIds(v.ReviewerRoleIds), ApproverRoleIds = RecordDefinitionsService.ParseIds(v.ApproverRoleIds),
+				LifecyclePreset = ((RmsLifecyclePreset)v.LifecyclePreset).ToString(), Cardinality = ((RmsRecordCardinality)v.Cardinality).ToString(),
+				ReviewerRoleIds = RecordDefinitionsService.ParseIds(v.ReviewerRoleIds), ApproverRoleIds = RecordDefinitionsService.ParseIds(v.ApproverRoleIds),
 				ReviewDueHours = v.ReviewDueHours, ApproveDueHours = v.ApproveDueHours, RequireAuthorAttestation = v.RequireAuthorAttestation, Numbering = v.Numbering, RetentionYears = v.RetentionYears,
 				Classification = ((RmsFieldClassification)v.Classification).ToString(), Schema = v.Schema, SchemaChecksum = v.SchemaChecksum, MinimumClientCapability = v.MinimumClientCapability, ClientSurface = v.ClientSurface,
 				MigrationMap = RecordDefinitionsService.ToDraftInput(v).MigrationMap, ChangeNotes = v.ChangeNotes, PublishedOn = v.PublishedOn, PublishedByUserId = v.PublishedByUserId, RetiredOn = v.RetiredOn,
@@ -89,7 +90,7 @@ namespace Resgrid.Web.Services.Helpers
 			return new RecordDefinitionData
 			{
 				Key = version.DefinitionKey, Version = version.Version, Name = definition?.Name ?? version.DefinitionKey, RecordType = null, RecordKind = RmsRecordKind.Operational.ToString(),
-				LifecyclePreset = version.LifecyclePreset, LifecyclePresetName = ((RmsLifecyclePreset)version.LifecyclePreset).ToString(), Cardinality = RmsRecordCardinality.MultiplePerCall.ToString(),
+				LifecyclePreset = version.LifecyclePreset, LifecyclePresetName = ((RmsLifecyclePreset)version.LifecyclePreset).ToString(), Cardinality = ((RmsRecordCardinality)version.Cardinality).ToString(),
 				Restricted = version.Classification != (int)RmsFieldClassification.Standard || schema.AllFields().Any(f => f.Classification != RmsFieldClassification.Standard),
 				NumberPrefix = version.Numbering.Prefix, RequiresCall = false, SupportsParticipants = true, SupportsUnits = true, SupportsAttachments = version.ClientSurface.AllowAttachments,
 				MinimumClientCapability = version.MinimumClientCapability ?? RecordsClientCapabilities.Derive(schema), Locked = false,
@@ -102,7 +103,7 @@ namespace Resgrid.Web.Services.Helpers
 			var t = rendering.Template;
 			return new RecordTemplateRenderingData
 			{
-				TemplateKey = t.Key, Name = t.Name, Category = t.Category, Description = t.Description, PackKey = t.PackKey, LifecyclePreset = t.LifecyclePreset.ToString(), NumberPrefix = t.NumberPrefix, PermittedSubjectTypes = t.PermittedSubjectTypes,
+				TemplateKey = t.Key, Name = t.Name, Category = t.Category, Description = t.Description, PackKey = t.PackKey, LifecyclePreset = t.LifecyclePreset.ToString(), Cardinality = t.Cardinality.ToString(), NumberPrefix = t.NumberPrefix, PermittedSubjectTypes = t.PermittedSubjectTypes,
 				ProfileKey = rendering.ProfileKey, Locale = rendering.Locale, MeasurementSystem = rendering.MeasurementSystem, CurrencyCode = rendering.CurrencyCode, ArtifactStatus = rendering.ArtifactStatus.ToString(),
 				ProvenanceStatement = rendering.ProvenanceStatement, Sources = rendering.Sources, MinimumClientCapability = RecordsClientCapabilities.Derive(rendering.Schema), Schema = rendering.Schema
 			};

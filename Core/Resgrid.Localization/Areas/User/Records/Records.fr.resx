@@ -1123,6 +1123,11 @@
   <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Attribuer le numéro</value></data>
   <data name="DefinitionPerGroup" xml:space="preserve"><value>Séquence par caserne</value></data>
   <data name="DefinitionPerIncident" xml:space="preserve"><value>Séquence par incident</value></data>
+  <data name="DefinitionCardinality" xml:space="preserve"><value>Enregistrements par appel</value></data>
+  <data name="DefinitionCardinalityMultiple" xml:space="preserve"><value>Plusieurs par appel</value></data>
+  <data name="DefinitionCardinalitySingle" xml:space="preserve"><value>Un seul faisant foi par appel</value></data>
+  <data name="DefinitionCardinalityPerSubject" xml:space="preserve"><value>Un par sujet par appel</value></data>
+  <data name="DefinitionCardinalityHelp" xml:space="preserve"><value>Combien d'enregistrements de cette définition un appel peut avoir. Appliqué à la création ; un enregistrement annulé ou abandonné libère sa place.</value></data>
   <data name="DefinitionResetYearly" xml:space="preserve"><value>Réinitialiser chaque année</value></data>
   <data name="DefinitionClassification" xml:space="preserve"><value>Classification</value></data>
   <data name="DefinitionRetention" xml:space="preserve"><value>Conservation (années)</value></data>
@@ -1418,4 +1423,414 @@
   <data name="ReconciliationSourceAhead" xml:space="preserve"><value>Le statut de la source est en avance sur l'affectation locale</value></data>
   <data name="ReconciliationSourceBehind" xml:space="preserve"><value>Le statut de la source est en retard sur l'affectation locale</value></data>
   <data name="DeploymentOwnedByConnector" xml:space="preserve"><value>Maintenu par un connecteur</value></data>
+  <data name="AccessAudit" xml:space="preserve"><value>Journal d'accès</value></data>
+  <data name="AccessNotes" xml:space="preserve"><value>Notes d'accès</value></data>
+  <data name="AddEvidence" xml:space="preserve"><value>Ajouter une pièce</value></data>
+  <data name="AddHazard" xml:space="preserve"><value>Ajouter un danger</value></data>
+  <data name="AddMember" xml:space="preserve"><value>Ajouter un membre</value></data>
+  <data name="AddNote" xml:space="preserve"><value>Ajouter une note</value></data>
+  <data name="AddReferral" xml:space="preserve"><value>Ajouter un renvoi</value></data>
+  <data name="AddViolation" xml:space="preserve"><value>Ajouter une infraction</value></data>
+  <data name="Agency" xml:space="preserve"><value>Organisme</value></data>
+  <data name="AlarmCompany" xml:space="preserve"><value>Société d'alarme</value></data>
+  <data name="AlarmPanel" xml:space="preserve"><value>Centrale d'alarme</value></data>
+  <data name="AllPrograms" xml:space="preserve"><value>Tous les programmes</value></data>
+  <data name="AmendmentsRecommended" xml:space="preserve"><value>Modifications recommandées</value></data>
+  <data name="Applicant" xml:space="preserve"><value>Demandeur</value></data>
+  <data name="ApplicantEmail" xml:space="preserve"><value>Courriel du demandeur</value></data>
+  <data name="ApplicantPhone" xml:space="preserve"><value>Téléphone du demandeur</value></data>
+  <data name="AppliedOn" xml:space="preserve"><value>Demandé le</value></data>
+  <data name="ApplyPermit" xml:space="preserve"><value>Soumettre la demande</value></data>
+  <data name="ApproveFindings" xml:space="preserve"><value>Approuver les conclusions</value></data>
+  <data name="ApproveFindingsHint" xml:space="preserve"><value>Les conclusions doivent être approuvées par un relecteur ou un responsable autre que leur auteur.</value></data>
+  <data name="AttachmentAdded" xml:space="preserve"><value>Pièce jointe ajoutée.</value></data>
+  <data name="AttachmentFileRequired" xml:space="preserve"><value>Choisissez un fichier à joindre.</value></data>
+  <data name="AttachmentRemoved" xml:space="preserve"><value>Pièce jointe supprimée.</value></data>
+  <data name="AudienceCount" xml:space="preserve"><value>Public touché</value></data>
+  <data name="AuthorizationDenials" xml:space="preserve"><value>Refus d'autorisation</value></data>
+  <data name="AverageScore" xml:space="preserve"><value>Score moyen</value></data>
+  <data name="ByAuthor" xml:space="preserve"><value>Par auteur</value></data>
+  <data name="ByCriterion" xml:space="preserve"><value>Par critère</value></data>
+  <data name="ByDefinition" xml:space="preserve"><value>Par définition</value></data>
+  <data name="ByUnit" xml:space="preserve"><value>Par unité</value></data>
+  <data name="CancelInspection" xml:space="preserve"><value>Annuler l'inspection</value></data>
+  <data name="CancelInspectionConfirm" xml:space="preserve"><value>Annuler cette inspection ? L'enregistrement reste dans l'historique.</value></data>
+  <data name="CandidateLinked" xml:space="preserve"><value>Candidat lié.</value></data>
+  <data name="CandidateRejected" xml:space="preserve"><value>Candidat rejeté.</value></data>
+  <data name="Candidates" xml:space="preserve"><value>Candidats</value></data>
+  <data name="CaseAccessNotice" xml:space="preserve"><value>L'accès à ce dossier est limité à ses membres et chaque lecture est journalisée.</value></data>
+  <data name="CaseClosed" xml:space="preserve"><value>Dossier clos.</value></data>
+  <data name="CaseMembers" xml:space="preserve"><value>Membres du dossier</value></data>
+  <data name="CaseNotes" xml:space="preserve"><value>Notes du dossier</value></data>
+  <data name="CaseOpened" xml:space="preserve"><value>Dossier {0} ouvert.</value></data>
+  <data name="CaseReopened" xml:space="preserve"><value>Dossier rouvert.</value></data>
+  <data name="CaseSaved" xml:space="preserve"><value>Dossier enregistré.</value></data>
+  <data name="CatalogVersion" xml:space="preserve"><value>Version du catalogue</value></data>
+  <data name="CauseClassification" xml:space="preserve"><value>Classification de la cause</value></data>
+  <data name="CauseDetail" xml:space="preserve"><value>Détail de la cause</value></data>
+  <data name="Checklist" xml:space="preserve"><value>Liste de contrôle</value></data>
+  <data name="ChecklistHelp" xml:space="preserve"><value>Un élément par ligne : clé | texte | obligatoire (y/n) | identifiant de section de code.</value></data>
+  <data name="ChecklistItem" xml:space="preserve"><value>Élément de contrôle</value></data>
+  <data name="CloseCase" xml:space="preserve"><value>Clore le dossier</value></data>
+  <data name="CloseCaseConfirm" xml:space="preserve"><value>Clore ce dossier ? Les notes deviennent en lecture seule.</value></data>
+  <data name="CloseInspection" xml:space="preserve"><value>Clore l'inspection</value></data>
+  <data name="ClosureReason" xml:space="preserve"><value>Motif de clôture</value></data>
+  <data name="CodeEdition" xml:space="preserve"><value>Édition</value></data>
+  <data name="CodeSectionSaved" xml:space="preserve"><value>Section de code enregistrée.</value></data>
+  <data name="CodeSectionText" xml:space="preserve"><value>Texte de la section</value></data>
+  <data name="CodeSections" xml:space="preserve"><value>Sections de code</value></data>
+  <data name="CodeSetSaved" xml:space="preserve"><value>Recueil de codes enregistré.</value></data>
+  <data name="CodeSets" xml:space="preserve"><value>Recueils de codes</value></data>
+  <data name="CodeSetsIntro" xml:space="preserve"><value>Codes incendie et bâtiment servant de référence aux inspections. Les sections portent une gravité et un délai de correction par défaut.</value></data>
+  <data name="CollectedFrom" xml:space="preserve"><value>Prélevé sur</value></data>
+  <data name="CollectedOn" xml:space="preserve"><value>Prélevé le</value></data>
+  <data name="Comments" xml:space="preserve"><value>Commentaires</value></data>
+  <data name="CompleteInspection" xml:space="preserve"><value>Terminer l'inspection</value></data>
+  <data name="Conditions" xml:space="preserve"><value>Conditions</value></data>
+  <data name="ConditionsTemplate" xml:space="preserve"><value>Modèle de conditions</value></data>
+  <data name="ContactId" xml:space="preserve"><value>Identifiant du contact</value></data>
+  <data name="ContactLinked" xml:space="preserve"><value>Contact lié.</value></data>
+  <data name="ContactUnlinked" xml:space="preserve"><value>Contact dissocié.</value></data>
+  <data name="CorrectiveAction" xml:space="preserve"><value>Mesure corrective</value></data>
+  <data name="CreateOccupancyFromSource" xml:space="preserve"><value>Créer une nouvelle occupation à partir de cette source</value></data>
+  <data name="Criteria" xml:space="preserve"><value>Critères</value></data>
+  <data name="CriteriaHelp" xml:space="preserve"><value>Un critère par ligne : clé | texte | poids.</value></data>
+  <data name="CriterionScore" xml:space="preserve"><value>Score (0-4)</value></data>
+  <data name="CriterionWeight" xml:space="preserve"><value>Poids</value></data>
+  <data name="CrosswalkIntroText" xml:space="preserve"><value>L'inventaire repère les plans d'intervention, les contacts avec adresse et les points d'intérêt, les regroupe par adresse et proximité et propose des occupations. Statuez sur chaque candidat avant de transférer la propriété en écriture aux Dossiers.</value></data>
+  <data name="CrrActivities" xml:space="preserve"><value>Réduction des risques communautaires</value></data>
+  <data name="CrrDeleted" xml:space="preserve"><value>Activité supprimée.</value></data>
+  <data name="CrrSaved" xml:space="preserve"><value>Activité enregistrée.</value></data>
+  <data name="CrrSummary" xml:space="preserve"><value>Synthèse de la période</value></data>
+  <data name="Custodian" xml:space="preserve"><value>Dépositaire</value></data>
+  <data name="CustodyChain" xml:space="preserve"><value>Chaîne de possession</value></data>
+  <data name="CustodyChainHelp" xml:space="preserve"><value>Les transferts sont en ajout seul ; chaque remise indique qui a remis, qui a reçu, pourquoi et l'état résultant.</value></data>
+  <data name="CustodyTransferred" xml:space="preserve"><value>Possession transférée.</value></data>
+  <data name="DecisionReason" xml:space="preserve"><value>Motif de la décision</value></data>
+  <data name="DefaultCorrectionDays" xml:space="preserve"><value>Délai de correction (jours)</value></data>
+  <data name="DefaultSeverity" xml:space="preserve"><value>Gravité par défaut</value></data>
+  <data name="DeleteCrr" xml:space="preserve"><value>Supprimer l'activité</value></data>
+  <data name="DeleteCrrConfirm" xml:space="preserve"><value>Supprimer cette activité ?</value></data>
+  <data name="DeleteHydrant" xml:space="preserve"><value>Supprimer la borne</value></data>
+  <data name="DeleteHydrantConfirm" xml:space="preserve"><value>Supprimer cette borne ? Les essais de débit et l'historique de maintenance disparaissent.</value></data>
+  <data name="DeleteOccupancy" xml:space="preserve"><value>Supprimer l'occupation</value></data>
+  <data name="DeleteOccupancyConfirm" xml:space="preserve"><value>Supprimer cette occupation ? Inspections, permis et dangers conservent leur historique mais perdent leur parent.</value></data>
+  <data name="DueOn" xml:space="preserve"><value>Échéance</value></data>
+  <data name="EditHydrant" xml:space="preserve"><value>Modifier la borne</value></data>
+  <data name="EditOccupancy" xml:space="preserve"><value>Modifier l'occupation</value></data>
+  <data name="EditPermit" xml:space="preserve"><value>Modifier le permis</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>Effectif le</value></data>
+  <data name="ElectricShutoff" xml:space="preserve"><value>Coupure électrique</value></data>
+  <data name="EmergencyContact" xml:space="preserve"><value>Contact d'urgence</value></data>
+  <data name="EvidenceAdded" xml:space="preserve"><value>Pièce ajoutée.</value></data>
+  <data name="EvidenceItems" xml:space="preserve"><value>Pièces à conviction</value></data>
+  <data name="EvidenceNumber" xml:space="preserve"><value>N° de pièce</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Expire le</value></data>
+  <data name="ExpiresOnHelp" xml:space="preserve"><value>Laisser vide pour appliquer la validité du type de permis à partir de l'émission.</value></data>
+  <data name="ExpiringSoon" xml:space="preserve"><value>Expire bientôt</value></data>
+  <data name="ExportCase" xml:space="preserve"><value>Exporter le dossier</value></data>
+  <data name="Failed" xml:space="preserve"><value>Non conforme</value></data>
+  <data name="FdcLocation" xml:space="preserve"><value>Emplacement du raccord pompiers</value></data>
+  <data name="FeeAmount" xml:space="preserve"><value>Redevance</value></data>
+  <data name="FeeAmountHelp" xml:space="preserve"><value>Pour référence seulement ; la facturation est consignée ici, pas encaissée.</value></data>
+  <data name="FeePaidOn" xml:space="preserve"><value>Redevance réglée le</value></data>
+  <data name="FeeRecorded" xml:space="preserve"><value>Redevance enregistrée.</value></data>
+  <data name="FileName" xml:space="preserve"><value>Fichier</value></data>
+  <data name="Findings" xml:space="preserve"><value>Conclusions</value></data>
+  <data name="FindingsApproved" xml:space="preserve"><value>Conclusions approuvées.</value></data>
+  <data name="FindingsApprovedNotice" xml:space="preserve"><value>Approuvées</value></data>
+  <data name="FindingsPendingNotice" xml:space="preserve"><value>En attente d'approbation, enregistrées</value></data>
+  <data name="FindingsRecorded" xml:space="preserve"><value>Conclusions enregistrées et envoyées pour approbation.</value></data>
+  <data name="FindingsReturned" xml:space="preserve"><value>Conclusions renvoyées à l'auteur.</value></data>
+  <data name="FireAlarm" xml:space="preserve"><value>Alarme incendie</value></data>
+  <data name="FlowClass" xml:space="preserve"><value>Classe de débit</value></data>
+  <data name="FlowGpm" xml:space="preserve"><value>Débit (gpm)</value></data>
+  <data name="FlowGpmHelp" xml:space="preserve"><value>Les essais de débit enregistrés mettent à jour cette valeur et la classe NFPA 291 automatiquement.</value></data>
+  <data name="FlowTestHelp" xml:space="preserve"><value>Le débit est calculé comme 29,83 × c × d² × √pitot et arrondi à 10 gpm ; la classe suit la NFPA 291.</value></data>
+  <data name="FlowTestRecorded" xml:space="preserve"><value>Essai de débit enregistré.</value></data>
+  <data name="FlowTests" xml:space="preserve"><value>Essais de débit</value></data>
+  <data name="FrequencyMonths" xml:space="preserve"><value>Fréquence (mois)</value></data>
+  <data name="FromCustodian" xml:space="preserve"><value>De</value></data>
+  <data name="GasShutoff" xml:space="preserve"><value>Coupure de gaz</value></data>
+  <data name="GateCode" xml:space="preserve"><value>Code du portail</value></data>
+  <data name="GeneralHazardNotes" xml:space="preserve"><value>Notes générales sur les dangers</value></data>
+  <data name="GenerateDue" xml:space="preserve"><value>Générer les inspections dues</value></data>
+  <data name="GenerateDueResult" xml:space="preserve"><value>{0} inspections générées.</value></data>
+  <data name="HazardRemoved" xml:space="preserve"><value>Danger supprimé.</value></data>
+  <data name="HazardSaved" xml:space="preserve"><value>Danger enregistré.</value></data>
+  <data name="Hazards" xml:space="preserve"><value>Dangers</value></data>
+  <data name="HazmatOnSite" xml:space="preserve"><value>Matières dangereuses sur place</value></data>
+  <data name="HoursSpent" xml:space="preserve"><value>Heures</value></data>
+  <data name="HydrantCounts" xml:space="preserve"><value>{0} bornes, {1} hors service, {2} avec essai de débit à faire.</value></data>
+  <data name="HydrantDeleted" xml:space="preserve"><value>Borne supprimée.</value></data>
+  <data name="HydrantMap" xml:space="preserve"><value>Carte</value></data>
+  <data name="HydrantMapHint" xml:space="preserve"><value>La couleur suit la classe de débit NFPA 291 ; le noir signale hors service.</value></data>
+  <data name="HydrantNumber" xml:space="preserve"><value>N° de borne</value></data>
+  <data name="HydrantOwner" xml:space="preserve"><value>Propriétaire</value></data>
+  <data name="HydrantSaved" xml:space="preserve"><value>Borne enregistrée.</value></data>
+  <data name="Hydrants" xml:space="preserve"><value>Bornes d'incendie</value></data>
+  <data name="ImportHydrants" xml:space="preserve"><value>Importer des bornes</value></data>
+  <data name="ImportHydrantsHelp" xml:space="preserve"><value>CSV avec ligne d'en-tête : number, latitude, longitude, type, address, main_size, flow_gpm, owner. Les numéros existants sont mis à jour.</value></data>
+  <data name="ImportRejectedRows" xml:space="preserve"><value>Lignes non importées</value></data>
+  <data name="ImportResult" xml:space="preserve"><value>{0} lignes lues, {1} créées, {2} mises à jour, {3} rejetées.</value></data>
+  <data name="ImportSections" xml:space="preserve"><value>Importer des sections</value></data>
+  <data name="ImportSectionsHelp" xml:space="preserve"><value>CSV avec ligne d'en-tête : section, title, text, severity (1-4), correction_days.</value></data>
+  <data name="InService" xml:space="preserve"><value>En service</value></data>
+  <data name="IncidentLinked" xml:space="preserve"><value>Incident lié ; la révision actuelle est figée.</value></data>
+  <data name="IncidentSummary" xml:space="preserve"><value>Résumé de l'incident</value></data>
+  <data name="IncidentUnlinked" xml:space="preserve"><value>Incident dissocié.</value></data>
+  <data name="IncludeClosed" xml:space="preserve"><value>Inclure les dossiers clos</value></data>
+  <data name="InspectionCancelled" xml:space="preserve"><value>Inspection annulée.</value></data>
+  <data name="InspectionClosed" xml:space="preserve"><value>Inspection close.</value></data>
+  <data name="InspectionCompleted" xml:space="preserve"><value>Inspection terminée ; les éléments non conformes ont créé des infractions.</value></data>
+  <data name="InspectionNotes" xml:space="preserve"><value>Notes</value></data>
+  <data name="InspectionNumber" xml:space="preserve"><value>N° d'inspection</value></data>
+  <data name="InspectionPrograms" xml:space="preserve"><value>Programmes d'inspection</value></data>
+  <data name="InspectionProgramsIntro" xml:space="preserve"><value>Un programme associe une liste de contrôle à une fréquence et aux types d'occupation concernés ; les inspections dues en sont générées.</value></data>
+  <data name="InspectionResult" xml:space="preserve"><value>Résultat</value></data>
+  <data name="InspectionScheduled" xml:space="preserve"><value>Inspection planifiée.</value></data>
+  <data name="InspectionStarted" xml:space="preserve"><value>Inspection commencée.</value></data>
+  <data name="Inspections" xml:space="preserve"><value>Inspections</value></data>
+  <data name="Inspector" xml:space="preserve"><value>Inspecteur</value></data>
+  <data name="InventoriedOn" xml:space="preserve"><value>Inventorié le</value></data>
+  <data name="InventoryResult" xml:space="preserve"><value>{0} sources analysées, {1} candidats créés, {2} mis à jour, {3} déjà tranchés.</value></data>
+  <data name="Investigations" xml:space="preserve"><value>Enquêtes</value></data>
+  <data name="InvestigationsIntro" xml:space="preserve"><value>Seuls les dossiers dont vous êtes membre sont listés. Chaque lecture d'un dossier est consignée dans le journal d'accès.</value></data>
+  <data name="InvoiceReference" xml:space="preserve"><value>Référence de facture</value></data>
+  <data name="IssueNotice" xml:space="preserve"><value>Émettre un avis</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Délivré le</value></data>
+  <data name="ItemNote" xml:space="preserve"><value>Note</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>Juridiction</value></data>
+  <data name="KnoxBox" xml:space="preserve"><value>Boîte à clés</value></data>
+  <data name="LastInspectedOn" xml:space="preserve"><value>Dernière inspection</value></data>
+  <data name="LastMaintainedOn" xml:space="preserve"><value>Dernière maintenance</value></data>
+  <data name="LastReviewedOn" xml:space="preserve"><value>Dernière revue</value></data>
+  <data name="LastTestedOn" xml:space="preserve"><value>Dernier essai</value></data>
+  <data name="LeadInvestigator" xml:space="preserve"><value>Enquêteur principal</value></data>
+  <data name="LegacyWriteAttempts" xml:space="preserve"><value>Tentatives d'écriture héritées</value></data>
+  <data name="LinkCandidate" xml:space="preserve"><value>Lier</value></data>
+  <data name="LinkContact" xml:space="preserve"><value>Lier un contact</value></data>
+  <data name="LinkIncident" xml:space="preserve"><value>Lier un incident</value></data>
+  <data name="LinkedContacts" xml:space="preserve"><value>Contacts liés</value></data>
+  <data name="LinkedCount" xml:space="preserve"><value>Liés</value></data>
+  <data name="LinkedIncidents" xml:space="preserve"><value>Incidents liés</value></data>
+  <data name="LinkedIncidentsHelp" xml:space="preserve"><value>Le lien fige la révision de l'incident à cet instant ; les conclusions ne modifient jamais le rapport d'incident.</value></data>
+  <data name="MainSize" xml:space="preserve"><value>Diamètre de conduite (po)</value></data>
+  <data name="MaintenanceLog" xml:space="preserve"><value>Journal de maintenance</value></data>
+  <data name="MaintenanceRecorded" xml:space="preserve"><value>Maintenance enregistrée.</value></data>
+  <data name="MarkReviewed" xml:space="preserve"><value>Marquer comme revu</value></data>
+  <data name="MatchConfidence" xml:space="preserve"><value>Confiance de correspondance</value></data>
+  <data name="MemberAdded" xml:space="preserve"><value>Membre ajouté.</value></data>
+  <data name="MemberRemoved" xml:space="preserve"><value>Membre retiré.</value></data>
+  <data name="MergeConfirm" xml:space="preserve"><value>Fusionner cette occupation dans la cible ? Dangers, liens et historique sont déplacés ; cet enregistrement devient un renvoi.</value></data>
+  <data name="MergeInto" xml:space="preserve"><value>Fusionner dans</value></data>
+  <data name="MergeTargetId" xml:space="preserve"><value>Identifiant de l'occupation cible</value></data>
+  <data name="NearestHydrant" xml:space="preserve"><value>Borne la plus proche</value></data>
+  <data name="NewCodeSet" xml:space="preserve"><value>Nouveau recueil de codes</value></data>
+  <data name="NewCrrActivity" xml:space="preserve"><value>Nouvelle activité</value></data>
+  <data name="NewHydrant" xml:space="preserve"><value>Nouvelle borne</value></data>
+  <data name="NewOccupancy" xml:space="preserve"><value>Nouvelle occupation</value></data>
+  <data name="NewPermit" xml:space="preserve"><value>Nouveau permis</value></data>
+  <data name="NewPermitType" xml:space="preserve"><value>Nouveau type de permis</value></data>
+  <data name="NewProgram" xml:space="preserve"><value>Nouveau programme</value></data>
+  <data name="NewRubric" xml:space="preserve"><value>Nouvelle grille</value></data>
+  <data name="NoAlerts" xml:space="preserve"><value>Aucune alerte ni avertissement sur cette période.</value></data>
+  <data name="NoAttachments" xml:space="preserve"><value>Aucune pièce jointe.</value></data>
+  <data name="NoCandidates" xml:space="preserve"><value>Aucun candidat en attente. Lancez l'inventaire pour trouver les plans d'intervention et contacts à rapprocher.</value></data>
+  <data name="NoCases" xml:space="preserve"><value>Aucun dossier.</value></data>
+  <data name="NoChecklist" xml:space="preserve"><value>Ce programme n'a aucun élément de contrôle.</value></data>
+  <data name="NoCrr" xml:space="preserve"><value>Aucune activité sur cette période.</value></data>
+  <data name="NoFlowTests" xml:space="preserve"><value>Aucun essai de débit enregistré.</value></data>
+  <data name="NoHazards" xml:space="preserve"><value>Aucun danger enregistré.</value></data>
+  <data name="NoHydrants" xml:space="preserve"><value>Aucune borne pour le moment.</value></data>
+  <data name="NoInspections" xml:space="preserve"><value>Aucune inspection.</value></data>
+  <data name="NoLinkedContacts" xml:space="preserve"><value>Aucun contact lié.</value></data>
+  <data name="NoMaintenance" xml:space="preserve"><value>Aucune maintenance enregistrée.</value></data>
+  <data name="NoOccupancies" xml:space="preserve"><value>Aucune occupation ne correspond.</value></data>
+  <data name="NoPendingReviews" xml:space="preserve"><value>Aucune revue en attente de notation.</value></data>
+  <data name="NoPermits" xml:space="preserve"><value>Aucun permis ne correspond.</value></data>
+  <data name="NoPlanReviews" xml:space="preserve"><value>Aucun cycle d'examen des plans pour le moment.</value></data>
+  <data name="NoReviewsYet" xml:space="preserve"><value>Aucune revue notée sur cette période.</value></data>
+  <data name="NoRubrics" xml:space="preserve"><value>Aucune grille pour le moment. Un administrateur du service crée la première.</value></data>
+  <data name="NoViolations" xml:space="preserve"><value>Aucune infraction.</value></data>
+  <data name="NotRecordedShort" xml:space="preserve"><value>S. O.</value></data>
+  <data name="NoteBody" xml:space="preserve"><value>Texte de la note</value></data>
+  <data name="NoteSaved" xml:space="preserve"><value>Note enregistrée.</value></data>
+  <data name="NoteSubject" xml:space="preserve"><value>Objet</value></data>
+  <data name="NoticeIssued" xml:space="preserve"><value>Avis émis.</value></data>
+  <data name="NoticeReference" xml:space="preserve"><value>Référence de l'avis</value></data>
+  <data name="Occupancies" xml:space="preserve"><value>Occupations</value></data>
+  <data name="OccupancyAccess" xml:space="preserve"><value>Accès</value></data>
+  <data name="OccupancyCount" xml:space="preserve"><value>{0} occupations</value></data>
+  <data name="OccupancyDeleted" xml:space="preserve"><value>Occupation supprimée.</value></data>
+  <data name="OccupancyHours" xml:space="preserve"><value>Horaires d'occupation</value></data>
+  <data name="OccupancyIdentity" xml:space="preserve"><value>Identité et emplacement</value></data>
+  <data name="OccupancyMerged" xml:space="preserve"><value>Occupation fusionnée.</value></data>
+  <data name="OccupancyMergedNotice" xml:space="preserve"><value>Cette occupation a été fusionnée dans</value></data>
+  <data name="OccupancyNumber" xml:space="preserve"><value>N° d'occupation</value></data>
+  <data name="OccupancyProtection" xml:space="preserve"><value>Protection incendie et réseaux</value></data>
+  <data name="OccupancyReviewed" xml:space="preserve"><value>Occupation marquée comme revue.</value></data>
+  <data name="OccupancySaved" xml:space="preserve"><value>Occupation enregistrée.</value></data>
+  <data name="OccupancySearchPlaceholder" xml:space="preserve"><value>Rechercher un numéro, un nom ou une adresse</value></data>
+  <data name="OccupancyStructure" xml:space="preserve"><value>Structure</value></data>
+  <data name="OccupancyTactical" xml:space="preserve"><value>Dangers et tactique</value></data>
+  <data name="OccupancyType" xml:space="preserve"><value>Type d'occupation</value></data>
+  <data name="OccupancyTypesApply" xml:space="preserve"><value>S'applique aux types d'occupation</value></data>
+  <data name="OccupancyTypesApplyHelp" xml:space="preserve"><value>Numéros de type séparés par des virgules ; vide signifie tous les types.</value></data>
+  <data name="OccupantLoad" xml:space="preserve"><value>Effectif admissible</value></data>
+  <data name="OccupantsNeedingAssistance" xml:space="preserve"><value>Occupants nécessitant une assistance</value></data>
+  <data name="OpenCase" xml:space="preserve"><value>Ouvrir un dossier</value></data>
+  <data name="OpenCaseIntro" xml:space="preserve"><value>Vous devenez l'enquêteur principal. Ajoutez des membres après l'ouverture ; seuls les membres peuvent lire le dossier.</value></data>
+  <data name="OpenViolations" xml:space="preserve"><value>Infractions ouvertes</value></data>
+  <data name="OpenedOn" xml:space="preserve"><value>Ouvert le</value></data>
+  <data name="OriginDescription" xml:space="preserve"><value>Description de l'origine</value></data>
+  <data name="OutOfService" xml:space="preserve"><value>Hors service</value></data>
+  <data name="OutOfServiceReason" xml:space="preserve"><value>Motif de mise hors service</value></data>
+  <data name="OutboxFailed" xml:space="preserve"><value>Événements en échec</value></data>
+  <data name="OutboxHeader" xml:space="preserve"><value>Boîte d'envoi des événements</value></data>
+  <data name="OutboxOldest" xml:space="preserve"><value>Plus ancien en attente</value></data>
+  <data name="OutboxPending" xml:space="preserve"><value>Événements en attente</value></data>
+  <data name="Outcome" xml:space="preserve"><value>Résultat</value></data>
+  <data name="OutletDiameter" xml:space="preserve"><value>Sortie (po)</value></data>
+  <data name="OwnerName" xml:space="preserve"><value>Nom du propriétaire</value></data>
+  <data name="OwnershipContactsOwnedNotice" xml:space="preserve"><value>Les plans d'intervention sont encore rédigés sous Contacts. Rapprochez la table de correspondance pour transférer la propriété en écriture aux occupations.</value></data>
+  <data name="OwnershipRecordsOwnedNotice" xml:space="preserve"><value>Les occupations des Dossiers possèdent les plans d'intervention. Les pages Contacts et les applications lisent les projections depuis ici.</value></data>
+  <data name="OwnershipSwitched" xml:space="preserve"><value>Propriété en écriture transférée aux occupations des Dossiers.</value></data>
+  <data name="ParcelId" xml:space="preserve"><value>Identifiant cadastral</value></data>
+  <data name="Passed" xml:space="preserve"><value>Conforme</value></data>
+  <data name="PendingReviews" xml:space="preserve"><value>Revues à noter</value></data>
+  <data name="PerformedOn" xml:space="preserve"><value>Effectué le</value></data>
+  <data name="PermitCode" xml:space="preserve"><value>Code</value></data>
+  <data name="PermitNumber" xml:space="preserve"><value>N° de permis</value></data>
+  <data name="PermitSaved" xml:space="preserve"><value>Permis enregistré.</value></data>
+  <data name="PermitTransitioned" xml:space="preserve"><value>État du permis mis à jour.</value></data>
+  <data name="PermitType" xml:space="preserve"><value>Type de permis</value></data>
+  <data name="PermitTypeSaved" xml:space="preserve"><value>Type de permis enregistré.</value></data>
+  <data name="PermitTypes" xml:space="preserve"><value>Types de permis</value></data>
+  <data name="Permits" xml:space="preserve"><value>Permis</value></data>
+  <data name="PinnedRevision" xml:space="preserve"><value>révision figée</value></data>
+  <data name="PitotPressure" xml:space="preserve"><value>Pitot (psi)</value></data>
+  <data name="PlanReviewOutcome" xml:space="preserve"><value>Résultat de l'examen</value></data>
+  <data name="PlanReviewRecorded" xml:space="preserve"><value>Examen des plans enregistré.</value></data>
+  <data name="PlanReviews" xml:space="preserve"><value>Examen des plans</value></data>
+  <data name="PoiId" xml:space="preserve"><value>Identifiant du point d'intérêt</value></data>
+  <data name="PreplanCrosswalk" xml:space="preserve"><value>Correspondance des plans d'intervention</value></data>
+  <data name="PreplanOwnership" xml:space="preserve"><value>Propriété en écriture des plans d'intervention</value></data>
+  <data name="PreplanReviewOverdue" xml:space="preserve"><value>La date de revue de cette occupation est dépassée.</value></data>
+  <data name="PreventionHeader" xml:space="preserve"><value>Prévention</value></data>
+  <data name="ProgramSaved" xml:space="preserve"><value>Programme enregistré.</value></data>
+  <data name="ProtectedContentBlocked" xml:space="preserve"><value>Le contenu protégé est masqué ; révélez-le avant cette action.</value></data>
+  <data name="ProtectionEnforced" xml:space="preserve"><value>Protection des données appliquée</value></data>
+  <data name="QualityReview" xml:space="preserve"><value>Revue qualité</value></data>
+  <data name="QualityReviewIntro" xml:space="preserve"><value>L'échantillonnage sélectionne de façon déterministe des dossiers finalisés par grille ; la notation est pondérée et alimente les tendances.</value></data>
+  <data name="RecommendAmendment" xml:space="preserve"><value>Recommander une modification</value></data>
+  <data name="RecommendsAmendment" xml:space="preserve"><value>Recommande de modifier le rapport d'incident</value></data>
+  <data name="RecommendsAmendmentHelp" xml:space="preserve"><value>Les conclusions ne modifient jamais l'incident. La recommandation passe par le flux de modification du dossier.</value></data>
+  <data name="RecordFee" xml:space="preserve"><value>Enregistrer la redevance</value></data>
+  <data name="RecordFindings" xml:space="preserve"><value>Enregistrer les conclusions</value></data>
+  <data name="RecordFlowTest" xml:space="preserve"><value>Enregistrer l'essai de débit</value></data>
+  <data name="RecordMaintenance" xml:space="preserve"><value>Enregistrer la maintenance</value></data>
+  <data name="RecordPlanReview" xml:space="preserve"><value>Enregistrer l'examen des plans</value></data>
+  <data name="RecordedBy" xml:space="preserve"><value>Enregistré par</value></data>
+  <data name="RecordsCreated" xml:space="preserve"><value>Dossiers créés</value></data>
+  <data name="RecordsFinalized" xml:space="preserve"><value>Dossiers finalisés</value></data>
+  <data name="RecordsHealth" xml:space="preserve"><value>Santé du déploiement</value></data>
+  <data name="RecordsHealthIntro" xml:space="preserve"><value>Télémétrie de référence pour l'activation des Dossiers : tentatives d'écriture héritées, retard de la boîte d'envoi, exécutions de Workflow, analyses et compteurs de prévention. Chaque source se dégrade en avertissement au lieu de faire échouer la page.</value></data>
+  <data name="RecordsModuleActive" xml:space="preserve"><value>Dossiers activés</value></data>
+  <data name="RecordsOverdue" xml:space="preserve"><value>Dossiers en retard de revue</value></data>
+  <data name="ReferenceNumber" xml:space="preserve"><value>Numéro de référence</value></data>
+  <data name="ReferralAdded" xml:space="preserve"><value>Renvoi ajouté.</value></data>
+  <data name="ReferralUpdated" xml:space="preserve"><value>Renvoi mis à jour.</value></data>
+  <data name="Referrals" xml:space="preserve"><value>Renvois</value></data>
+  <data name="ReinspectionOf" xml:space="preserve"><value>Réinspection de</value></data>
+  <data name="RejectCandidate" xml:space="preserve"><value>Rejeter</value></data>
+  <data name="RemoveAttachmentConfirm" xml:space="preserve"><value>Supprimer cette pièce jointe ?</value></data>
+  <data name="ReopenCase" xml:space="preserve"><value>Rouvrir le dossier</value></data>
+  <data name="RequiredFireFlow" xml:space="preserve"><value>Débit requis (gpm)</value></data>
+  <data name="RequiresPlanReview" xml:space="preserve"><value>Examen des plans requis</value></data>
+  <data name="ResidualPressure" xml:space="preserve"><value>Résiduelle (psi)</value></data>
+  <data name="ResultingState" xml:space="preserve"><value>État résultant</value></data>
+  <data name="ReturnFindings" xml:space="preserve"><value>Renvoyer à l'auteur</value></data>
+  <data name="ReturnedToService" xml:space="preserve"><value>Remis en service</value></data>
+  <data name="ReviewCount" xml:space="preserve"><value>Revues</value></data>
+  <data name="ReviewCycle" xml:space="preserve"><value>Cycle</value></data>
+  <data name="ReviewNote" xml:space="preserve"><value>Note du relecteur</value></data>
+  <data name="ReviewNotes" xml:space="preserve"><value>Notes d'examen</value></data>
+  <data name="ReviewOverdueOnly" xml:space="preserve"><value>Revue en retard</value></data>
+  <data name="ReviewScored" xml:space="preserve"><value>Revue notée.</value></data>
+  <data name="ReviewedOn" xml:space="preserve"><value>Examiné le</value></data>
+  <data name="RoofType" xml:space="preserve"><value>Type de toiture</value></data>
+  <data name="RubricSaved" xml:space="preserve"><value>Grille enregistrée.</value></data>
+  <data name="Rubrics" xml:space="preserve"><value>Grilles</value></data>
+  <data name="RunInventory" xml:space="preserve"><value>Lancer l'inventaire</value></data>
+  <data name="RunSample" xml:space="preserve"><value>Échantillonner</value></data>
+  <data name="RunsCompleted" xml:space="preserve"><value>Terminées</value></data>
+  <data name="RunsFailed" xml:space="preserve"><value>En échec</value></data>
+  <data name="RunsRunning" xml:space="preserve"><value>En cours</value></data>
+  <data name="RunsSkipped" xml:space="preserve"><value>Ignorées</value></data>
+  <data name="SampleCreated" xml:space="preserve"><value>{0} dossiers échantillonnés pour revue.</value></data>
+  <data name="SampleSize" xml:space="preserve"><value>Taille de l'échantillon</value></data>
+  <data name="SampleSizeHelp" xml:space="preserve"><value>Dossiers par passage d'échantillonnage ; la sélection est déterministe pour la grille et la période.</value></data>
+  <data name="Sampled" xml:space="preserve"><value>Échantillonnés</value></data>
+  <data name="SampledOn" xml:space="preserve"><value>Échantillonné le</value></data>
+  <data name="ScanPending" xml:space="preserve"><value>Pièces jointes en attente d'analyse</value></data>
+  <data name="ScanRejected" xml:space="preserve"><value>Pièces jointes rejetées par l'analyse</value></data>
+  <data name="ScanState" xml:space="preserve"><value>Analyse</value></data>
+  <data name="ScheduleInspection" xml:space="preserve"><value>Planifier une inspection</value></data>
+  <data name="ScheduleReinspection" xml:space="preserve"><value>Planifier une réinspection</value></data>
+  <data name="ScheduledOn" xml:space="preserve"><value>Planifiée</value></data>
+  <data name="ScoreHelp" xml:space="preserve"><value>Notez chaque critère de 0 à 4 ; le total pondéré devient un pourcentage.</value></data>
+  <data name="ScoreReview" xml:space="preserve"><value>Noter la revue</value></data>
+  <data name="Scored" xml:space="preserve"><value>Notés</value></data>
+  <data name="ScoredOn" xml:space="preserve"><value>Noté le</value></data>
+  <data name="SectionNumber" xml:space="preserve"><value>Section</value></data>
+  <data name="SectionsImported" xml:space="preserve"><value>{0} sections importées.</value></data>
+  <data name="SetInService" xml:space="preserve"><value>Remettre en service</value></data>
+  <data name="SetOutOfService" xml:space="preserve"><value>Mettre hors service</value></data>
+  <data name="ShouldAlert" xml:space="preserve"><value>Alerter les équipages</value></data>
+  <data name="SignatureName" xml:space="preserve"><value>Nom du signataire</value></data>
+  <data name="SignatureNameHint" xml:space="preserve"><value>Nom saisi de la personne attestant l'inspection</value></data>
+  <data name="SmokeAlarmsInstalled" xml:space="preserve"><value>Détecteurs de fumée installés</value></data>
+  <data name="SprinklerType" xml:space="preserve"><value>Sprinkleurs</value></data>
+  <data name="SquareFeet" xml:space="preserve"><value>Pieds carrés</value></data>
+  <data name="Staff" xml:space="preserve"><value>Personnel</value></data>
+  <data name="StaffHelp" xml:space="preserve"><value>Identifiants utilisateur séparés par des virgules des membres ayant participé.</value></data>
+  <data name="Standpipe" xml:space="preserve"><value>Colonne sèche</value></data>
+  <data name="StartInspection" xml:space="preserve"><value>Commencer l'inspection</value></data>
+  <data name="StartedOn" xml:space="preserve"><value>Commencée</value></data>
+  <data name="StaticPressure" xml:space="preserve"><value>Statique (psi)</value></data>
+  <data name="StorageLocation" xml:space="preserve"><value>Lieu de stockage</value></data>
+  <data name="Stories" xml:space="preserve"><value>Niveaux</value></data>
+  <data name="SubmissionsAwaiting" xml:space="preserve"><value>Soumissions en attente</value></data>
+  <data name="SubmissionsFailed" xml:space="preserve"><value>Soumissions en échec</value></data>
+  <data name="SubmittedOn" xml:space="preserve"><value>Soumis le</value></data>
+  <data name="SuggestedOccupancy" xml:space="preserve"><value>Occupation suggérée</value></data>
+  <data name="SwitchBlocked" xml:space="preserve"><value>Le transfert est bloqué tant que l'inventaire n'a pas été exécuté, que chaque candidat n'a pas été tranché et qu'un plan d'intervention reste non rapproché.</value></data>
+  <data name="SwitchOwnership" xml:space="preserve"><value>Transférer la propriété en écriture aux Dossiers</value></data>
+  <data name="SwitchOwnershipAcknowledge" xml:space="preserve"><value>Je comprends que les pages de plans d'intervention des Contacts et les applications deviennent des projections en lecture seule des occupations.</value></data>
+  <data name="SwitchOwnershipConfirm" xml:space="preserve"><value>Transférer la propriété en écriture maintenant ? La modification des plans d'intervention dans Contacts s'arrête immédiatement.</value></data>
+  <data name="SwitchOwnershipIntro" xml:space="preserve"><value>Après le transfert, les plans d'intervention ne sont modifiés que comme occupations. Contacts et les applications continuent via des projections ; le retour arrière est une restauration de base de données, pas un simple bouton.</value></data>
+  <data name="SwitchedOn" xml:space="preserve"><value>Transféré le</value></data>
+  <data name="TacticalSummary" xml:space="preserve"><value>Synthèse tactique</value></data>
+  <data name="TelemetryWindow" xml:space="preserve"><value>Fenêtre</value></data>
+  <data name="TestDue" xml:space="preserve"><value>essai à faire</value></data>
+  <data name="TestedOn" xml:space="preserve"><value>Testé le</value></data>
+  <data name="TransferCustody" xml:space="preserve"><value>Transférer la possession</value></data>
+  <data name="TransferTo" xml:space="preserve"><value>À</value></data>
+  <data name="TransferToExternal" xml:space="preserve"><value>À un tiers</value></data>
+  <data name="TransferredOn" xml:space="preserve"><value>Transféré le</value></data>
+  <data name="TransitionPermit" xml:space="preserve"><value>Changer l'état</value></data>
+  <data name="Trends" xml:space="preserve"><value>Tendances</value></data>
+  <data name="TrendsSince" xml:space="preserve"><value>Depuis</value></data>
+  <data name="Unlink" xml:space="preserve"><value>Dissocier</value></data>
+  <data name="UnreconciledPreplans" xml:space="preserve"><value>Plans d'intervention non rapprochés</value></data>
+  <data name="UploadedOn" xml:space="preserve"><value>Téléversé</value></data>
+  <data name="UtilityNotes" xml:space="preserve"><value>Notes sur les réseaux</value></data>
+  <data name="ValidityDays" xml:space="preserve"><value>Validité (jours)</value></data>
+  <data name="ViolationSaved" xml:space="preserve"><value>Infraction enregistrée.</value></data>
+  <data name="ViolationUpdated" xml:space="preserve"><value>Infraction mise à jour.</value></data>
+  <data name="Violations" xml:space="preserve"><value>Infractions</value></data>
+  <data name="WaterShutoff" xml:space="preserve"><value>Coupure d'eau</value></data>
+  <data name="WaterSupplyNotes" xml:space="preserve"><value>Notes sur l'alimentation en eau</value></data>
+  <data name="WorkflowRuns" xml:space="preserve"><value>Exécutions de Workflow</value></data>
 </root>

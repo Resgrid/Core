@@ -393,7 +393,109 @@ namespace Resgrid.Services
 				AdpTableBinding.Direct("RmsRecordValues", "RmsRecordValueId", pkIsNumeric: false, "DepartmentId", new[]
 				{
 					Packed("RmsRecordValues", "ProtectedEnvelope")
-				}) with { ProtectedMarkerColumn = "IsProtected", CarrierColumns = RmsRecordValuePack.CarrierColumns, RowFilterColumn = "ProtectionRequired" }
+				}) with { ProtectedMarkerColumn = "IsProtected", CarrierColumns = RmsRecordValuePack.CarrierColumns, RowFilterColumn = "ProtectionRequired" },
+
+				// Catalog v12: Contacts pre-plans (Contacts plan Phase A). All three tables carry their own
+				// DepartmentId, and each was created with the IsProtected marker (M0183/M0184).
+				AdpTableBinding.Direct("ContactPreplans", "ContactPreplanId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("ContactPreplans", "OccupancyNotes"), Text("ContactPreplans", "OccupancyHours"),
+					Text("ContactPreplans", "OccupantsNeedingAssistanceNotes"),
+					Text("ContactPreplans", "GasShutoffLocation"), Text("ContactPreplans", "ElectricShutoffLocation"),
+					Text("ContactPreplans", "WaterShutoffLocation"), Text("ContactPreplans", "UtilityNotes"),
+					Text("ContactPreplans", "KnoxBoxLocation"), Text("ContactPreplans", "GateCode"),
+					Text("ContactPreplans", "AlarmPanelLocation"), Text("ContactPreplans", "AlarmCompany"),
+					Text("ContactPreplans", "AlarmCompanyPhone"), Text("ContactPreplans", "AccessNotes"),
+					Text("ContactPreplans", "NearestHydrantLocation"), Text("ContactPreplans", "WaterSupplyNotes"),
+					Text("ContactPreplans", "EmergencyContactName"), Text("ContactPreplans", "EmergencyContactPhone"),
+					Text("ContactPreplans", "SecondaryContactName"), Text("ContactPreplans", "SecondaryContactPhone"),
+					Text("ContactPreplans", "GeneralHazardNotes"), Text("ContactPreplans", "TacticalSummary")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("ContactPreplanHazards", "ContactPreplanHazardId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("ContactPreplanHazards", "Title"), Text("ContactPreplanHazards", "Description"),
+					Text("ContactPreplanHazards", "LocationDescription"), Text("ContactPreplanHazards", "GpsCoordinates")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("ContactAttachments", "ContactAttachmentId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("ContactAttachments", "Name"), Text("ContactAttachments", "FileName"), Binary("ContactAttachments", "Data")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				// Catalog v13: RMS-5 prevention and investigations plus the RMS-4 quality review (M0185/M0186). Every
+				// table carries its own DepartmentId, a string GUID key and the IsProtected marker.
+				AdpTableBinding.Direct("RmsOccupancies", "RmsOccupancyId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsOccupancies", "OccupantsNeedingAssistanceNotes"), Text("RmsOccupancies", "UtilityNotes"),
+					Text("RmsOccupancies", "KnoxBoxLocation"), Text("RmsOccupancies", "GateCode"),
+					Text("RmsOccupancies", "AlarmPanelLocation"), Text("RmsOccupancies", "AlarmCompany"),
+					Text("RmsOccupancies", "AlarmCompanyPhone"), Text("RmsOccupancies", "AccessNotes"),
+					Text("RmsOccupancies", "WaterSupplyNotes"), Text("RmsOccupancies", "EmergencyContactName"),
+					Text("RmsOccupancies", "EmergencyContactPhone"), Text("RmsOccupancies", "GeneralHazardNotes"),
+					Text("RmsOccupancies", "TacticalSummary")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsOccupancyHazards", "RmsOccupancyHazardId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsOccupancyHazards", "Description"), Text("RmsOccupancyHazards", "LocationDescription"), Text("RmsOccupancyHazards", "GpsCoordinates")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsInspections", "RmsInspectionId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsInspections", "Notes"), Text("RmsInspections", "SignatureName")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsViolations", "RmsViolationId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsViolations", "Description"), Text("RmsViolations", "CorrectiveAction")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsPermits", "RmsPermitId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsPermits", "ApplicantName"), Text("RmsPermits", "ApplicantPhone"), Text("RmsPermits", "ApplicantEmail"), Text("RmsPermits", "ReviewNotes")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsPlanReviews", "RmsPlanReviewId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsPlanReviews", "Comments")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsInvestigationCases", "RmsInvestigationCaseId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsInvestigationCases", "IncidentSummary"), Text("RmsInvestigationCases", "CauseDetail"),
+					Text("RmsInvestigationCases", "OriginDescription"), Text("RmsInvestigationCases", "Findings"), Text("RmsInvestigationCases", "ClosureReason")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsInvestigationNotes", "RmsInvestigationNoteId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsInvestigationNotes", "Subject"), Text("RmsInvestigationNotes", "Body")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsInvestigationEvidence", "RmsInvestigationEvidenceId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsInvestigationEvidence", "Description"), Text("RmsInvestigationEvidence", "CollectedFrom"), Text("RmsInvestigationEvidence", "CurrentCustodianExternal")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsInvestigationCustody", "RmsInvestigationCustodyId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsInvestigationCustody", "FromExternal"), Text("RmsInvestigationCustody", "ToExternal"), Text("RmsInvestigationCustody", "Reason")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsInvestigationReferrals", "RmsInvestigationReferralId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsInvestigationReferrals", "Reason")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsQualityReviews", "RmsQualityReviewId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsQualityReviews", "FindingsJson"), Text("RmsQualityReviews", "Note")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				AdpTableBinding.Direct("RmsPreventionAttachments", "RmsPreventionAttachmentId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("RmsPreventionAttachments", "FileName"), Text("RmsPreventionAttachments", "Description"), Binary("RmsPreventionAttachments", "Data")
+				}) with { ProtectedMarkerColumn = "IsProtected" }
 			};
 		}
 	}

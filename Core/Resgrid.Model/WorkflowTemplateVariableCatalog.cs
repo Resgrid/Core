@@ -282,6 +282,59 @@ namespace Resgrid.Model
 			new TemplateVariableDescriptor("export.expires_on", "When the stored copy expires (UTC)", "datetime", false),
 		};
 
+		private static readonly List<TemplateVariableDescriptor> InspectionVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("inspection.id", "Inspection ID", "string", false),
+			new TemplateVariableDescriptor("inspection.number", "Inspection number (INSP-yyyy-nnnn)", "string", false),
+			new TemplateVariableDescriptor("inspection.occupancy_id", "Occupancy ID", "string", false),
+			new TemplateVariableDescriptor("inspection.occupancy_number", "Occupancy number", "string", false),
+			new TemplateVariableDescriptor("inspection.occupancy_name", "Occupancy name", "string", false),
+			new TemplateVariableDescriptor("inspection.program_id", "Inspection program ID", "string", false),
+			new TemplateVariableDescriptor("inspection.program_name", "Inspection program name", "string", false),
+			new TemplateVariableDescriptor("inspection.state", "Completed or ReinspectionRequired", "string", false),
+			new TemplateVariableDescriptor("inspection.result", "Pass, Fail or Conditional", "string", false),
+			new TemplateVariableDescriptor("inspection.scheduled_on", "When it was scheduled (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("inspection.completed_on", "When it was completed (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("inspection.inspector_user_id", "Inspector user ID", "string", false),
+			new TemplateVariableDescriptor("inspection.violation_count", "Violations opened by this inspection", "int", false),
+			new TemplateVariableDescriptor("inspection.critical_violation_count", "Critical violations opened", "int", false),
+			new TemplateVariableDescriptor("inspection.is_reinspection", "Whether this re-checks an earlier inspection", "bool", false),
+		};
+
+		private static readonly List<TemplateVariableDescriptor> ViolationVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("violation.id", "Violation ID", "string", false),
+			new TemplateVariableDescriptor("violation.inspection_id", "Inspection ID", "string", false),
+			new TemplateVariableDescriptor("violation.occupancy_id", "Occupancy ID", "string", false),
+			new TemplateVariableDescriptor("violation.occupancy_number", "Occupancy number", "string", false),
+			new TemplateVariableDescriptor("violation.occupancy_name", "Occupancy name", "string", false),
+			new TemplateVariableDescriptor("violation.code_set_id", "Adopted code set ID", "string", false),
+			new TemplateVariableDescriptor("violation.code_section_id", "Code section ID", "string", false),
+			new TemplateVariableDescriptor("violation.code_section_number", "Cited code section", "string", false),
+			new TemplateVariableDescriptor("violation.severity", "Minor, Moderate, Serious or Critical", "string", false),
+			new TemplateVariableDescriptor("violation.state", "Open or Escalated", "string", false),
+			new TemplateVariableDescriptor("violation.due_on", "Correction due date (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("violation.days_overdue", "Whole days past the due date", "int", false),
+		};
+
+		private static readonly List<TemplateVariableDescriptor> PermitVariables = new List<TemplateVariableDescriptor>
+		{
+			new TemplateVariableDescriptor("permit.id", "Permit ID", "string", false),
+			new TemplateVariableDescriptor("permit.number", "Permit number (PRM-yyyy-nnnn)", "string", false),
+			new TemplateVariableDescriptor("permit.type_id", "Permit type ID", "string", false),
+			new TemplateVariableDescriptor("permit.type_name", "Permit type", "string", false),
+			new TemplateVariableDescriptor("permit.type_code", "Permit type code", "string", false),
+			new TemplateVariableDescriptor("permit.occupancy_id", "Occupancy ID", "string", false),
+			new TemplateVariableDescriptor("permit.occupancy_number", "Occupancy number", "string", false),
+			new TemplateVariableDescriptor("permit.occupancy_name", "Occupancy name", "string", false),
+			new TemplateVariableDescriptor("permit.state", "Always Issued", "string", false),
+			new TemplateVariableDescriptor("permit.issued_on", "Issue date (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("permit.effective_on", "Effective date (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("permit.expires_on", "Expiry date (UTC)", "datetime", false),
+			new TemplateVariableDescriptor("permit.days_until_expiry", "Whole days until expiry", "int", false),
+			new TemplateVariableDescriptor("permit.fee_paid", "Whether the fee was recorded as paid", "bool", false),
+		};
+
 		// definition.* (RMS-1B): stable definition identity on every department-definition Record event and on the
 		// definition lifecycle triggers 113/114. Never field values.
 		private static readonly List<TemplateVariableDescriptor> DefinitionVariables = new List<TemplateVariableDescriptor>
@@ -886,6 +939,30 @@ namespace Resgrid.Model
 					list.Add(new TemplateVariableDescriptor("record.kind", "Always Export", "string", false));
 					list.Add(new TemplateVariableDescriptor("record.department_id", "Department ID", "int", false));
 					list.AddRange(ExportVariables);
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordInspectionCompleted:
+					list.AddRange(RecordEventVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Always Prevention", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.department_id", "Department ID", "int", false));
+					list.AddRange(InspectionVariables);
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordViolationOverdue:
+					list.AddRange(RecordEventVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Always Prevention", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.department_id", "Department ID", "int", false));
+					list.AddRange(ViolationVariables);
+					list.AddRange(ProtectionVariables);
+					break;
+
+				case WorkflowTriggerEventType.RecordPermitExpiring:
+					list.AddRange(RecordEventVariables);
+					list.Add(new TemplateVariableDescriptor("record.kind", "Always Prevention", "string", false));
+					list.Add(new TemplateVariableDescriptor("record.department_id", "Department ID", "int", false));
+					list.AddRange(PermitVariables);
 					list.AddRange(ProtectionVariables);
 					break;
 

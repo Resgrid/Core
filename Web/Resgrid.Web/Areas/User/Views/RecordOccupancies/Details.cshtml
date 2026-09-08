@@ -1,0 +1,232 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordOccupancyDetailsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var o = Model.Occupancy;
+	var name = Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(o.Name);
+	ViewBag.Title = "Resgrid | " + L["Occupancies"] + " | " + o.OccupancyNumber;
+	var returnUrl = Url.Action("Details", "RecordOccupancies", new { area = "User", id = o.RmsOccupancyId });
+	string Text(string v) => Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(v);
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@o.OccupancyNumber · @name</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordOccupancies" asp-action="Index" asp-route-area="User">@L["Occupancies"]</a></li>
+			<li class="active"><strong>@o.OccupancyNumber</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanAdminister)
+			{
+				<a class="btn btn-primary" asp-controller="RecordOccupancies" asp-action="Edit" asp-route-area="User" asp-route-id="@o.RmsOccupancyId"><i class="fa fa-pencil"></i> @L["Edit"]</a>
+				if (Model.PermitsOn) { <a class="btn btn-default" asp-controller="RecordPermits" asp-action="Edit" asp-route-area="User" asp-route-occupancyId="@o.RmsOccupancyId"><i class="fa fa-file-text-o"></i> @L["NewPermit"]</a> }
+			}
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (Model.Aggregate.Protection.IsProtected) { <div class="alert alert-warning">@L["ProtectedRecordBanner"]</div> }
+	@if (o.Status == (int)RmsOccupancyStatus.Merged) { <div class="alert alert-info">@L["OccupancyMergedNotice"] <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@o.MergedIntoOccupancyId">@o.MergedIntoOccupancyId</a></div> }
+	@if (o.IsReviewOverdue(DateTime.UtcNow)) { <div class="alert alert-warning">@L["PreplanReviewOverdue"] (@RmsEnumDisplay.Day(o.NextReviewDue))</div> }
+	<div class="row">
+		<div class="col-md-6">
+			<div class="ibox"><div class="ibox-title"><h5>@L["OccupancyIdentity"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["DeploymentStatus"]</dt><dd>@(RmsEnumDisplay.Label<RmsOccupancyStatus>(o.Status))</dd>
+					<dt>@L["AddressText"]</dt><dd>@Text(o.AddressText)<br />@o.City @o.StateProvince @o.PostalCode @o.Country</dd>
+					<dt>@L["Coordinates"]</dt><dd>@(o.Latitude.HasValue ? o.Latitude + ", " + o.Longitude : "")</dd>
+					<dt>@L["ParcelId"]</dt><dd>@o.ParcelId</dd>
+					<dt>@L["OccupancyType"]</dt><dd>@(RmsEnumDisplay.Label<ContactPreplanOccupancyTypes>(o.OccupancyType))</dd>
+					<dt>@L["ConstructionType"]</dt><dd>@(RmsEnumDisplay.Label<ContactPreplanConstructionTypes>(o.ConstructionType)) · @(RmsEnumDisplay.Label<ContactPreplanRoofTypes>(o.RoofType))</dd>
+					<dt>@L["Stories"]</dt><dd>@o.Stories · @L["YearBuilt"] @o.YearBuilt · @o.SquareFeet ft² · @L["OccupantLoad"] @o.OccupantLoad</dd>
+					<dt>@L["OccupancyHours"]</dt><dd>@Text(o.OccupancyHours)</dd>
+					<dt>@L["OccupantsNeedingAssistance"]</dt><dd>@(o.HasOccupantsNeedingAssistance ? L["Yes"].Value : L["No"].Value) @Text(o.OccupantsNeedingAssistanceNotes)</dd>
+					<dt>@L["ReviewDue"]</dt><dd>@RmsEnumDisplay.Day(o.NextReviewDue) · @L["LastReviewedOn"] @RmsEnumDisplay.Day(o.LastReviewedOn)</dd>
+					<dt>@L["LastInspectedOn"]</dt><dd>@RmsEnumDisplay.Day(o.LastInspectedOn)</dd>
+				</dl>
+				@if (Model.CanAdminister && o.Status != (int)RmsOccupancyStatus.Merged)
+				{
+					<form method="post" class="form-inline" asp-controller="RecordOccupancies" asp-action="MarkReviewed" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.RmsOccupancyId" />
+						<select class="form-control" name="nextReviewMonths"><option value="6">6</option><option value="12" selected>12</option><option value="24">24</option><option value="36">36</option></select>
+						<button class="btn btn-sm btn-default"><i class="fa fa-check"></i> @L["MarkReviewed"]</button>
+					</form>
+				}
+			</div></div>
+			<div class="ibox"><div class="ibox-title"><h5>@L["OccupancyProtection"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["SprinklerType"]</dt><dd>@(RmsEnumDisplay.Label<RmsSprinklerType>(o.SprinklerType)) · @L["Standpipe"]: @(o.HasStandpipe ? L["Yes"].Value : L["No"].Value) · @L["FireAlarm"]: @(o.HasFireAlarm ? L["Yes"].Value : L["No"].Value)</dd>
+					<dt>@L["FdcLocation"]</dt><dd>@Text(o.FdcLocation)</dd>
+					<dt>@L["GasShutoff"]</dt><dd>@Text(o.GasShutoffLocation)</dd>
+					<dt>@L["ElectricShutoff"]</dt><dd>@Text(o.ElectricShutoffLocation)</dd>
+					<dt>@L["WaterShutoff"]</dt><dd>@Text(o.WaterShutoffLocation)</dd>
+					<dt>@L["UtilityNotes"]</dt><dd style="white-space:pre-wrap">@Text(o.UtilityNotes)</dd>
+					<dt>@L["NearestHydrant"]</dt><dd>@o.NearestHydrantId · @L["RequiredFireFlow"] @o.RequiredFireFlowGpm</dd>
+					<dt>@L["WaterSupplyNotes"]</dt><dd style="white-space:pre-wrap">@Text(o.WaterSupplyNotes)</dd>
+				</dl>
+			</div></div>
+			<div class="ibox"><div class="ibox-title"><h5>@L["OccupancyAccess"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["KnoxBox"]</dt><dd>@Text(o.KnoxBoxLocation)</dd>
+					<dt>@L["GateCode"]</dt><dd>@Text(o.GateCode)</dd>
+					<dt>@L["AlarmPanel"]</dt><dd>@Text(o.AlarmPanelLocation)</dd>
+					<dt>@L["AlarmCompany"]</dt><dd>@Text(o.AlarmCompany) @Text(o.AlarmCompanyPhone)</dd>
+					<dt>@L["AccessNotes"]</dt><dd style="white-space:pre-wrap">@Text(o.AccessNotes)</dd>
+					<dt>@L["EmergencyContact"]</dt><dd>@Text(o.EmergencyContactName) @Text(o.EmergencyContactPhone)</dd>
+				</dl>
+			</div></div>
+			<div class="ibox"><div class="ibox-title"><h5>@L["OccupancyTactical"]</h5></div><div class="ibox-content">
+				@if (o.HazmatOnSite) { <p><span class="label label-danger">HAZMAT</span></p> }
+				<dl class="dl-horizontal">
+					<dt>@L["GeneralHazardNotes"]</dt><dd style="white-space:pre-wrap">@Text(o.GeneralHazardNotes)</dd>
+					<dt>@L["TacticalSummary"]</dt><dd style="white-space:pre-wrap">@Text(o.TacticalSummary)</dd>
+				</dl>
+			</div></div>
+		</div>
+		<div class="col-md-6">
+			<div class="ibox"><div class="ibox-title"><h5>@L["Hazards"]</h5></div><div class="ibox-content">
+				@if (Model.Aggregate.Hazards.Count == 0) { <p class="text-muted">@L["NoHazards"]</p> }
+				else
+				{
+					<table class="table table-condensed">
+						<thead><tr><th>@L["Severity"]</th><th>@L["Type"]</th><th>@L["Title"]</th><th>@L["Location"]</th><th></th></tr></thead>
+						<tbody>
+						@foreach (var h in Model.Aggregate.Hazards.OrderByDescending(h => h.Severity))
+						{
+							<tr>
+								<td>@(RmsEnumDisplay.Label<ContactPreplanHazardSeverities>(h.Severity))</td>
+								<td>@(RmsEnumDisplay.Label<ContactPreplanHazardTypes>(h.HazardType))</td>
+								<td>@Text(h.Title)@(h.ShouldAlert ? " " : "")@(h.ShouldAlert ? Html.Raw("<i class=\"fa fa-bell\"></i>") : null)<br /><small>@Text(h.Description)</small></td>
+								<td>@Text(h.LocationDescription) @h.GpsCoordinates</td>
+								<td>@if (Model.CanAdminister) { <form method="post" asp-controller="RecordOccupancies" asp-action="DeleteHazard" asp-route-area="User" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.RmsOccupancyId" /><input type="hidden" name="hazardId" value="@h.RmsOccupancyHazardId" /><button class="btn btn-xs btn-danger">@L["RemoveRow"]</button></form> }</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				}
+				@if (Model.CanAdminister)
+				{
+					<form method="post" asp-controller="RecordOccupancies" asp-action="SaveHazard" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.RmsOccupancyId" />
+						<div class="row">
+							<div class="col-sm-3"><select class="form-control" name="hazard.HazardType" asp-items="Model.HazardTypes"></select></div>
+							<div class="col-sm-3"><select class="form-control" name="hazard.Severity" asp-items="Model.HazardSeverities"></select></div>
+							<div class="col-sm-6"><input class="form-control" name="hazard.Title" maxlength="200" placeholder="@L["Title"]" required /></div>
+						</div>
+						<div class="row m-t-xs">
+							<div class="col-sm-6"><input class="form-control" name="hazard.Description" maxlength="2000" placeholder="@L["DefinitionDescription"]" /></div>
+							<div class="col-sm-4"><input class="form-control" name="hazard.LocationDescription" maxlength="500" placeholder="@L["Location"]" /></div>
+							<div class="col-sm-2"><label class="checkbox-inline"><input type="checkbox" name="hazard.ShouldAlert" value="true" /> @L["ShouldAlert"]</label></div>
+						</div>
+						<button class="btn btn-sm btn-primary m-t-xs"><i class="fa fa-plus"></i> @L["AddHazard"]</button>
+					</form>
+				}
+			</div></div>
+			<div class="ibox"><div class="ibox-title"><h5>@L["LinkedContacts"]</h5></div><div class="ibox-content">
+				@if (Model.Aggregate.ContactLinks.Count == 0) { <p class="text-muted">@L["NoLinkedContacts"]</p> }
+				else
+				{
+					<table class="table table-condensed">
+						<tbody>
+						@foreach (var link in Model.Aggregate.ContactLinks)
+						{
+							<tr>
+								<td><a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@link.ContactId">@(Model.ContactNames.TryGetValue(link.ContactId, out var cn) ? cn : link.ContactId)</a></td>
+								<td>@(RmsEnumDisplay.Label<RmsOccupancyContactRole>(link.Role)) @(link.IsPrimary ? Html.Raw("<span class=\"label label-primary\">" + L["Primary"] + "</span>") : null)</td>
+								<td>@if (Model.CanAdminister) { <form method="post" asp-controller="RecordOccupancies" asp-action="UnlinkContact" asp-route-area="User" style="display:inline">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.RmsOccupancyId" /><input type="hidden" name="linkId" value="@link.RmsOccupancyContactLinkId" /><button class="btn btn-xs btn-danger">@L["RemoveRow"]</button></form> }</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				}
+				@if (Model.CanAdminister)
+				{
+					<form method="post" class="form-inline" asp-controller="RecordOccupancies" asp-action="LinkContact" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.RmsOccupancyId" />
+						<select class="form-control" name="contactId" asp-items="Model.Contacts" required></select>
+						<select class="form-control" name="role" asp-items="Model.ContactRoles"></select>
+						<label class="checkbox-inline"><input type="checkbox" name="isPrimary" value="true" /> @L["Primary"]</label>
+						<button class="btn btn-sm btn-primary"><i class="fa fa-link"></i> @L["LinkContact"]</button>
+					</form>
+				}
+			</div></div>
+			@if (Model.InspectionsOn)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["Inspections"] <span class="badge">@Model.OpenViolations.Count @L["OpenViolations"]</span></h5></div><div class="ibox-content">
+					@if (Model.Inspections.Count == 0) { <p class="text-muted">@L["NoInspections"]</p> }
+					else
+					{
+						<table class="table table-condensed">
+							<thead><tr><th>@L["InspectionNumber"]</th><th>@L["State"]</th><th>@L["ScheduledOn"]</th><th>@L["InspectionResult"]</th></tr></thead>
+							<tbody>
+							@foreach (var i in Model.Inspections.OrderByDescending(i => i.ScheduledOn))
+							{
+								<tr><td><a asp-controller="RecordInspections" asp-action="Details" asp-route-area="User" asp-route-id="@i.RmsInspectionId">@i.InspectionNumber</a></td><td><span class="label label-@RmsEnumDisplay.StateClass((RmsInspectionState)i.State)">@(RmsEnumDisplay.Label<RmsInspectionState>(i.State))</span></td><td>@RmsEnumDisplay.Day(i.ScheduledOn)</td><td>@(RmsEnumDisplay.Label<RmsInspectionResult>(i.Result))</td></tr>
+							}
+							</tbody>
+						</table>
+					}
+					@if (Model.CanAdminister && Model.Programs.Count > 0)
+					{
+						<form method="post" class="form-inline" asp-controller="RecordInspections" asp-action="Schedule" asp-route-area="User">
+							@Html.AntiForgeryToken()<input type="hidden" name="occupancyId" value="@o.RmsOccupancyId" />
+							<select class="form-control" name="programId" asp-items="Model.Programs"></select>
+							<input type="date" class="form-control" name="scheduledOn" value="@DateTime.UtcNow.Date.AddDays(7).ToString("yyyy-MM-dd")" />
+							<button class="btn btn-sm btn-primary"><i class="fa fa-calendar"></i> @L["ScheduleInspection"]</button>
+						</form>
+					}
+				</div></div>
+			}
+			@if (Model.PermitsOn && Model.Permits.Count > 0)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["Permits"]</h5></div><div class="ibox-content">
+					<table class="table table-condensed">
+						<tbody>
+						@foreach (var p in Model.Permits)
+						{
+							<tr><td><a asp-controller="RecordPermits" asp-action="Details" asp-route-area="User" asp-route-id="@p.RmsPermitId">@p.PermitNumber</a></td><td><span class="label label-@RmsEnumDisplay.StateClass((RmsPermitState)p.State)">@(RmsEnumDisplay.Label<RmsPermitState>(p.State))</span></td><td>@Text(p.Description)</td><td>@RmsEnumDisplay.Day(p.ExpiresOn)</td></tr>
+						}
+						</tbody>
+					</table>
+				</div></div>
+			}
+			<partial name="_PreventionAttachments" model="new PreventionAttachmentsPartialView { ParentKind = RmsPreventionParentKind.Occupancy, ParentId = o.RmsOccupancyId, Attachments = Model.Attachments, CanWrite = Model.CanAdminister, ReturnUrl = returnUrl }" />
+			@if (Model.Aggregate.Crosswalks.Count > 0 || Model.Aggregate.Provenance.Count > 0)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["Provenance"]</h5></div><div class="ibox-content">
+					@foreach (var c in Model.Aggregate.Crosswalks)
+					{
+						<p><small>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkSourceKind>(c.SourceKind)) @c.SourceId · @(RmsEnumDisplay.Label<RmsOccupancyCrosswalkState>(c.State)) · @RmsEnumDisplay.Utc(c.DecidedOn)</small></p>
+					}
+					@if (Model.Aggregate.Provenance.Count > 0)
+					{
+						<table class="table table-condensed"><thead><tr><th>@L["FieldKey"]</th><th>@L["Source"]</th><th>@L["CapturedOn"]</th></tr></thead><tbody>
+						@foreach (var p in Model.Aggregate.Provenance.OrderBy(p => p.FieldKey)) { <tr><td>@p.FieldKey</td><td>@(RmsEnumDisplay.Label<RmsOccupancyCrosswalkSourceKind>(p.SourceKind)) @p.SourceId</td><td>@RmsEnumDisplay.Utc(p.CapturedOn)</td></tr> }
+						</tbody></table>
+					}
+				</div></div>
+			}
+			@if (Model.CanAdminister && o.Status != (int)RmsOccupancyStatus.Merged)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["Actions"]</h5></div><div class="ibox-content">
+					<form method="post" class="form-inline" asp-controller="RecordOccupancies" asp-action="Merge" asp-route-area="User" onsubmit="return confirm('@L["MergeConfirm"]');">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.RmsOccupancyId" />
+						<input class="form-control" name="targetOccupancyId" placeholder="@L["MergeTargetId"]" maxlength="36" required />
+						<button class="btn btn-sm btn-warning"><i class="fa fa-compress"></i> @L["MergeInto"]</button>
+					</form>
+					<form method="post" class="m-t-sm" asp-controller="RecordOccupancies" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@L["DeleteOccupancyConfirm"]');">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.RmsOccupancyId" />
+						<button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> @L["DeleteOccupancy"]</button>
+					</form>
+				</div></div>
+			}
+		</div>
+	</div>
+</div>

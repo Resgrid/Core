@@ -239,6 +239,20 @@ namespace Resgrid.Tests.Services
 			ProtectedReadService.ContactNoteFieldAccessors.Keys
 				.Should().BeEquivalentTo(contactNotesBinding.Columns.Select(c => c.FieldId));
 
+			// Catalog v12: Contacts pre-plans, hazards and site attachments (Contacts plan Phase A).
+			var preplansBinding = AdpTableBindings.V1.Single(b => b.TableName == "ContactPreplans");
+			ProtectedReadService.ContactPreplanFieldAccessors.Keys
+				.Should().BeEquivalentTo(preplansBinding.Columns.Select(c => c.FieldId));
+
+			var hazardsBinding = AdpTableBindings.V1.Single(b => b.TableName == "ContactPreplanHazards");
+			ProtectedReadService.ContactPreplanHazardFieldAccessors.Keys
+				.Should().BeEquivalentTo(hazardsBinding.Columns.Select(c => c.FieldId));
+
+			var contactAttachmentsBinding = AdpTableBindings.V1.Single(b => b.TableName == "ContactAttachments");
+			ProtectedReadService.ContactAttachmentFieldAccessors.Keys
+				.Concat(new[] { ProtectedReadService.ContactAttachmentDataFieldId })
+				.Should().BeEquivalentTo(contactAttachmentsBinding.Columns.Select(c => c.FieldId));
+
 			var unitStatesBinding = AdpTableBindings.V1.Single(b => b.TableName == "UnitStates");
 			ProtectedReadService.UnitStateFieldAccessors.Keys
 				.Concat(ProtectedReadService.UnitStateCompanionAccessors.Keys)
@@ -289,7 +303,13 @@ namespace Resgrid.Tests.Services
 				"RmsSubmissions", "RmsSignatures", "RmsEvidenceArtifacts", "RmsDisclosureRequests", "RmsDisclosureProductions",
 				"RmsRecordLegalHolds", "RmsRecordAttachments", "RmsExportRuns",
 				// Typed values of department definitions, catalog v11: read through the same Records resolvers.
-				"RmsRecordValues"
+				"RmsRecordValues",
+				// Contacts pre-plans, catalog v12 (Contacts plan Phase A).
+				"ContactPreplans", "ContactPreplanHazards", "ContactAttachments",
+				// RMS-5 prevention and investigations plus the RMS-4 quality review, catalog v13: read through the generic Records resolvers.
+				"RmsOccupancies", "RmsOccupancyHazards", "RmsInspections", "RmsViolations", "RmsPermits", "RmsPlanReviews",
+				"RmsInvestigationCases", "RmsInvestigationNotes", "RmsInvestigationEvidence", "RmsInvestigationCustody", "RmsInvestigationReferrals",
+				"RmsQualityReviews", "RmsPreventionAttachments"
 			};
 
 			AdpTableBindings.V1.Select(b => b.TableName)
@@ -1224,6 +1244,66 @@ namespace Resgrid.Tests.Services
 			var workload = await _service.PreflightWriteAsync(DeptId, null, UserId, workloadCaller: true);
 			workload.Success.Should().BeTrue();
 			workload.IsProtected.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task Contact_preplans_hazards_and_attachments_redact_without_a_grant_and_strip_binary_ciphertext()
+		{
+			var preplan = new ContactPreplan { ContactPreplanId = "pp-1", ContactId = "c-1", GateCode = "rgdp:1:1:gate==", KnoxBoxLocation = "North door", OccupantLoad = 40 };
+			var hazard = new ContactPreplanHazard { ContactPreplanHazardId = "h-1", ContactId = "c-1", Title = "rgdp:1:1:title==", Severity = 2 };
+			var attachment = new ContactAttachment { ContactAttachmentId = 9, ContactId = "c-1", FileName = "rgdp:1:1:file==", Data = new byte[] { (byte)'r', (byte)'g', (byte)'d', (byte)'p', (byte)'b', (byte)':', 1, 2 } };
+
+			var preplanRead = await _service.ResolveContactPreplansForReadAsync(DeptId, new[] { preplan }, null, UserId);
+			var hazardRead = await _service.ResolveContactPreplanHazardsForReadAsync(DeptId, new[] { hazard }, null, UserId);
+			var attachmentRead = await _service.ResolveContactAttachmentsForReadAsync(DeptId, new[] { attachment }, null, UserId, includeData: false);
+
+			preplanRead.ProtectedReason.Should().Be("step_up_required");
+			preplanRead.RedactedFields.Should().BeEquivalentTo("contactpreplans.gatecode");
+			preplan.GateCode.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			preplan.KnoxBoxLocation.Should().Be("North door", "a plaintext column (unprotected department, or pre-upgrade row) passes through");
+			preplan.OccupantLoad.Should().Be(40, "structural columns are never cataloged");
+
+			hazardRead.RedactedFields.Should().BeEquivalentTo("contactpreplanhazards.title");
+			hazard.Title.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			hazard.Severity.Should().Be(2);
+
+			attachmentRead.RedactedFields.Should().BeEquivalentTo("contactattachments.filename");
+			attachment.FileName.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			attachment.Data.Should().BeNull("a metadata-only resolution never carries ciphertext bytes out");
+		}
+
+		[Test]
+		public async Task Contact_preplan_write_envelopes_the_cataloged_text_and_stamps_the_row_marker()
+		{
+			SetupWriteEnforced();
+			SetupCurrentCatalogVersion();
+			SetupEncryptEcho();
+			var preplan = new ContactPreplan { ContactPreplanId = "pp-guid-1", ContactId = "c-1", DepartmentId = DeptId, GateCode = "4411#", TacticalSummary = "Defensive only", OccupantLoad = 12 };
+
+			var result = await _service.PrepareContactPreplanWriteAsync(DeptId, preplan, null, IssueGrant(), UserId, workloadCaller: false);
+
+			result.Success.Should().BeTrue();
+			preplan.GateCode.Should().Be("rgdp:1:1:contactpreplans.gatecode==");
+			preplan.TacticalSummary.Should().Be("rgdp:1:1:contactpreplans.tacticalsummary==");
+			preplan.OccupantLoad.Should().Be(12);
+			preplan.IsProtected.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task Contact_preplan_write_restores_a_round_tripped_sentinel_from_the_stored_row()
+		{
+			SetupWriteEnforced();
+			SetupCurrentCatalogVersion();
+			SetupEncryptEcho();
+			var stored = new ContactPreplan { ContactPreplanId = "pp-guid-1", ContactId = "c-1", DepartmentId = DeptId, GateCode = "rgdp:1:1:stored==" };
+			var edited = new ContactPreplan { ContactPreplanId = "pp-guid-1", ContactId = "c-1", DepartmentId = DeptId, GateCode = ProtectedDataEnvelope.RedactionValue, AccessNotes = "Use side gate" };
+
+			var result = await _service.PrepareContactPreplanWriteAsync(DeptId, edited, stored, IssueGrant(), UserId, workloadCaller: false);
+
+			result.Success.Should().BeTrue();
+			result.Changed.Should().BeTrue();
+			edited.GateCode.Should().Be("rgdp:1:1:stored==", "an editor who never had the gate code revealed must not overwrite it with the placeholder");
+			edited.AccessNotes.Should().Be("rgdp:1:1:contactpreplans.accessnotes==");
 		}
 
 		[Test]

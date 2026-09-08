@@ -504,4 +504,253 @@
   <data name="PriorityOptional" xml:space="preserve">
     <value>Optional</value>
   </data>
+  <data name="PreplanTitle" xml:space="preserve">
+    <value>Pre-Incident Plan</value>
+  </data>
+  <data name="PreplanTab" xml:space="preserve">
+    <value>Pre-Plan</value>
+  </data>
+  <data name="SiteFiles" xml:space="preserve">
+    <value>Site Files</value>
+  </data>
+  <data name="ManageFiles" xml:space="preserve">
+    <value>Manage Files</value>
+  </data>
+  <data name="PreplanOccupancySection" xml:space="preserve">
+    <value>Construction &amp; Occupancy</value>
+  </data>
+  <data name="ConstructionType" xml:space="preserve">
+    <value>Construction Type</value>
+  </data>
+  <data name="RoofType" xml:space="preserve">
+    <value>Roof Type</value>
+  </data>
+  <data name="OccupancyType" xml:space="preserve">
+    <value>Occupancy Type</value>
+  </data>
+  <data name="OccupancyHours" xml:space="preserve">
+    <value>Hours of Occupancy</value>
+  </data>
+  <data name="OccupancyHoursPlaceholder" xml:space="preserve">
+    <value>e.g. Mon-Fri 08:00-17:00, staffed overnight</value>
+  </data>
+  <data name="OccupantLoad" xml:space="preserve">
+    <value>Occupant Load</value>
+  </data>
+  <data name="OccupantsNeedingAssistance" xml:space="preserve">
+    <value>Occupants Needing Assistance</value>
+  </data>
+  <data name="OccupantsNeedingAssistanceYes" xml:space="preserve">
+    <value>Occupants on site may need evacuation assistance</value>
+  </data>
+  <data name="OccupantsNeedingAssistanceNotes" xml:space="preserve">
+    <value>Who, where and what assistance is needed</value>
+  </data>
+  <data name="OccupancyNotes" xml:space="preserve">
+    <value>Occupancy Notes</value>
+  </data>
+  <data name="PreplanUtilitiesSection" xml:space="preserve">
+    <value>Utility Shutoffs</value>
+  </data>
+  <data name="GasShutoff" xml:space="preserve">
+    <value>Gas Shutoff</value>
+  </data>
+  <data name="ElectricShutoff" xml:space="preserve">
+    <value>Electric Shutoff</value>
+  </data>
+  <data name="WaterShutoff" xml:space="preserve">
+    <value>Water Shutoff</value>
+  </data>
+  <data name="UtilityNotes" xml:space="preserve">
+    <value>Utility Notes</value>
+  </data>
+  <data name="PreplanWaterSection" xml:space="preserve">
+    <value>Water Supply</value>
+  </data>
+  <data name="NearestHydrant" xml:space="preserve">
+    <value>Nearest Hydrant</value>
+  </data>
+  <data name="RequiredFireFlow" xml:space="preserve">
+    <value>Required Fire Flow (GPM)</value>
+  </data>
+  <data name="WaterSupplyNotes" xml:space="preserve">
+    <value>Water Supply Notes</value>
+  </data>
+  <data name="PreplanAccessSection" xml:space="preserve">
+    <value>Access</value>
+  </data>
+  <data name="KnoxBox" xml:space="preserve">
+    <value>Knox Box Location</value>
+  </data>
+  <data name="GateCode" xml:space="preserve">
+    <value>Gate Code</value>
+  </data>
+  <data name="GateCodeInfo" xml:space="preserve">
+    <value>Stored encrypted. Shown to members who can view this contact and to responders on linked calls.</value>
+  </data>
+  <data name="AlarmPanel" xml:space="preserve">
+    <value>Alarm Panel Location</value>
+  </data>
+  <data name="AlarmCompany" xml:space="preserve">
+    <value>Alarm Company</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="AccessNotes" xml:space="preserve">
+    <value>Access Notes</value>
+  </data>
+  <data name="PreplanContactsSection" xml:space="preserve">
+    <value>On-Site Contacts</value>
+  </data>
+  <data name="EmergencyContact" xml:space="preserve">
+    <value>Emergency Contact</value>
+  </data>
+  <data name="SecondaryContact" xml:space="preserve">
+    <value>Secondary Contact</value>
+  </data>
+  <data name="PreplanTacticalSection" xml:space="preserve">
+    <value>Hazards &amp; Tactics</value>
+  </data>
+  <data name="HazmatOnSite" xml:space="preserve">
+    <value>Hazmat On Site</value>
+  </data>
+  <data name="HazmatOnSiteYes" xml:space="preserve">
+    <value>Hazardous materials are stored or used on site</value>
+  </data>
+  <data name="GeneralHazardNotes" xml:space="preserve">
+    <value>General Hazard Notes</value>
+  </data>
+  <data name="TacticalSummary" xml:space="preserve">
+    <value>Tactical Summary</value>
+  </data>
+  <data name="PreplanReviewSection" xml:space="preserve">
+    <value>Review Cycle</value>
+  </data>
+  <data name="LastReviewed" xml:space="preserve">
+    <value>Last Reviewed</value>
+  </data>
+  <data name="NeverReviewed" xml:space="preserve">
+    <value>Never reviewed</value>
+  </data>
+  <data name="MarkReviewedNow" xml:space="preserve">
+    <value>Mark this pre-plan as reviewed now</value>
+  </data>
+  <data name="NextReviewDue" xml:space="preserve">
+    <value>Next Review Due</value>
+  </data>
+  <data name="SavePreplan" xml:space="preserve">
+    <value>Save Pre-Plan</value>
+  </data>
+  <data name="PremiseHazards" xml:space="preserve">
+    <value>Premise Hazards</value>
+  </data>
+  <data name="PremiseHazardsInfo" xml:space="preserve">
+    <value>Typed hazards with a severity. Hazards marked as alerts are shown to dispatchers when this contact is added to a call.</value>
+  </data>
+  <data name="AddHazard" xml:space="preserve">
+    <value>Add Hazard</value>
+  </data>
+  <data name="EditHazard" xml:space="preserve">
+    <value>Edit Hazard</value>
+  </data>
+  <data name="SaveHazard" xml:space="preserve">
+    <value>Save Hazard</value>
+  </data>
+  <data name="DeleteHazardConfirm" xml:space="preserve">
+    <value>Remove this hazard?</value>
+  </data>
+  <data name="HazardSaveError" xml:space="preserve">
+    <value>The hazard could not be saved.</value>
+  </data>
+  <data name="HazardTitleRequired" xml:space="preserve">
+    <value>A hazard needs a title.</value>
+  </data>
+  <data name="HazardShouldAlert" xml:space="preserve">
+    <value>Alert dispatchers when this contact is added to a call</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Severity</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Alert" xml:space="preserve">
+    <value>Alert</value>
+  </data>
+  <data name="NoHazards" xml:space="preserve">
+    <value>No premise hazards recorded.</value>
+  </data>
+  <data name="GpsCoordinates" xml:space="preserve">
+    <value>GPS Coordinates</value>
+  </data>
+  <data name="PreplanReviewOverdue" xml:space="preserve">
+    <value>The pre-plan review date has passed.</value>
+  </data>
+  <data name="PreplanReviewDue" xml:space="preserve">
+    <value>Pre-Plan Review Due</value>
+  </data>
+  <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
+    <value>Pre-plans for this department are now maintained as Records occupancies. This page is read-only; edit the occupancy under Records.</value>
+  </data>
+  <data name="PreplanOpenOccupancy" xml:space="preserve">
+    <value>Open occupancy</value>
+  </data>
+  <data name="CreatePreplan" xml:space="preserve">
+    <value>Create Pre-Plan</value>
+  </data>
+  <data name="EditPreplan" xml:space="preserve">
+    <value>Edit Pre-Plan</value>
+  </data>
+  <data name="NoPreplan" xml:space="preserve">
+    <value>No pre-incident plan has been recorded for this contact.</value>
+  </data>
+  <data name="NoFiles" xml:space="preserve">
+    <value>No files have been attached to this contact.</value>
+  </data>
+  <data name="UploadFile" xml:space="preserve">
+    <value>Upload File</value>
+  </data>
+  <data name="UploadFileInfo" xml:space="preserve">
+    <value>Images, PDF, Office documents, text, CSV, DWG or DXF up to 30MB.</value>
+  </data>
+  <data name="FileType" xml:space="preserve">
+    <value>File Type</value>
+  </data>
+  <data name="FileTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="FileTitlePlaceholder" xml:space="preserve">
+    <value>Optional title (defaults to the file name)</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Upload</value>
+  </data>
+  <data name="DeleteFileConfirm" xml:space="preserve">
+    <value>Remove this file?</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="AddedOn" xml:space="preserve">
+    <value>Added On</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Calls</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
 </root>

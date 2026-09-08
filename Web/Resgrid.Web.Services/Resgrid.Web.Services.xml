@@ -357,6 +357,15 @@
             <param name="callId">Id of the call trying to be retrived</param>
             <returns>CallResult of the call in the Resgrid system</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallSiteInfo(System.String)">
+            <summary>
+            Gets the site information for every contact linked to a call in one round trip: the contact,
+            its pre-incident plan, premise hazards, live alert notes and file metadata with signed download
+            links (Contacts plan Phase A, decision 3b). This is the RMS/NERIS authoring prefill contract for
+            calls linked to a Contact: additive changes only. Signed file links expire; do not persist them.
+            </summary>
+            <param name="callId">Id of the call</param>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetCallExtraData(System.Int32)">
             <summary>
             Gets all the meta-data around a call, dispatched personnel, units, groups and responses
@@ -439,6 +448,18 @@
             <param name="startDate">Start date as UTC to get calls for</param>
             <param name="endDate">End date as UTC to get calls for</param>
             <returns>Array of CallResult objects for each call in the department within the range</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.BuildCallContactLinksAsync(System.Int32,System.String,System.Collections.Generic.List{System.String})">
+            <summary>Validates the requested contact links belong to the department; null when any does not, empty when none were requested.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.ApplyCallContactsAsync(System.Int32,System.Collections.Generic.IReadOnlyList{System.Collections.Generic.KeyValuePair{Resgrid.Model.Call,Resgrid.Web.Services.Models.v4.Calls.CallResultData}})">
+            <summary>
+            Fills CallResultData.Contacts for the given calls (Contacts plan Phase A, decision 3a). Contact
+            names honor the caller's protected-read grant: plaintext with a grant, REDACTED without.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.SafeContactName(Resgrid.Model.Contact)">
+            <summary>A redacted name part collapses the whole display name to the REDACTED placeholder.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallTypesController">
             <summary>
@@ -1326,6 +1347,60 @@
             Performs a timing-safe comparison of two secret strings to prevent timing attacks.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ContactFilesController">
+            <summary>
+            Files attached to Contacts: site documents, pre-plans, floor plans, site photos and drawings
+            (Contacts plan Phase A). Mirrors CallFiles: metadata lists carry a signed, expiring anonymous
+            download URL; uploads are base64.
+            </summary>
+        </member>
+        <member name="F:Resgrid.Web.Services.Controllers.v4.ContactFilesController.SignedLinkKind">
+            <summary>Signed-link kind marker; keeps a contact-file link from validating as a call-file link and vice versa.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ContactFilesController.ProtectedGrantToken">
+            <summary>The caller's Protected Data Grant, when presented (plan section 3.1 step 6).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactFilesController.GetFilesForContact(System.String,System.Boolean,System.Nullable{System.Int32})">
+            <summary>
+            Gets the files attached to a contact
+            </summary>
+            <param name="contactId">Contact to list files for</param>
+            <param name="includeData">Include the base64 data in the result (metadata only otherwise)</param>
+            <param name="type">Optional type filter (Document = 0, PrePlan = 1, FloorPlan = 2, SitePhoto = 3, SiteDrawing = 4, Other = 5); omit for all</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactFilesController.GetFile(System.String)">
+            <summary>
+            Streams a contact file from a signed link (as issued by GetFilesForContact / GetCallSiteInfo)
+            </summary>
+            <param name="query">Signed link token</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactFilesController.GetFileHead(System.String)">
+            <summary>
+            Existence check for a signed contact file link
+            </summary>
+            <param name="query">Signed link token</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactFilesController.UploadContactFile(Resgrid.Web.Services.Models.v4.ContactFiles.UploadContactFileInput,System.Threading.CancellationToken)">
+            <summary>
+            Attaches a file to a contact
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactFilesController.DeleteContactFile(System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Removes a file from a contact
+            </summary>
+            <param name="contactFileId">Id of the contact file</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactFilesController.TryValidateSignedContactFileQuery(System.String,System.Int32@,System.Int32@)">
+            <summary>
+            Validates the decrypted signed-link payload "c|dept|attachmentId|expiresUtcTicks". The leading kind
+            marker means a call-file link never resolves here and a contact-file link never resolves on CallFiles.
+            Expired or malformed reads as not-found.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactFilesController.BuildSignedUrl(System.Int32,System.Int32)">
+            <summary>Builds the signed, expiring anonymous download URL for a contact attachment.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ContactsController">
             <summary>
             Contacts, which are people, entities, and things that can be contacted (i.e. people, departments, groups, etc.) to dispatch a call to.
@@ -1354,6 +1429,49 @@
             Gets all the Notes for a Contact by the contact id
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactPreplan(System.String)">
+            <summary>
+            Gets the pre-incident plan for a contact (with its hazards). Data is null when the contact has none.
+            </summary>
+            <param name="contactId">Id of the contact</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.SaveContactPreplan(Resgrid.Web.Services.Models.v4.Contacts.SaveContactPreplanInput,System.Threading.CancellationToken)">
+            <summary>
+            Creates or replaces the pre-incident plan for a contact
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.DeleteContactPreplan(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Removes the pre-incident plan (and its hazards) from a contact
+            </summary>
+            <param name="contactId">Id of the contact</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.GetContactHazards(System.String)">
+            <summary>
+            Gets the premise hazards for a contact, most severe first
+            </summary>
+            <param name="contactId">Id of the contact</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.SaveContactHazard(Resgrid.Web.Services.Models.v4.Contacts.SaveContactHazardInput,System.Threading.CancellationToken)">
+            <summary>
+            Creates (no id) or updates (with id) a premise hazard on a contact
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.DeleteContactHazard(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Removes a premise hazard from a contact
+            </summary>
+            <param name="contactPreplanHazardId">Id of the hazard</param>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ContactsController.ProtectedGrantToken">
+            <summary>The caller's Protected Data Grant, when presented (plan section 3.1 step 6).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.ProtectedWriteProblem(Resgrid.Model.ProtectedWriteResult)">
+            <summary>Maps a blocked protected write to its value-free problem response (plan 3.3/19.2).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.ApplyProtection(Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData,Resgrid.Model.ProtectedReadResult,Resgrid.Model.ProtectedReadResult)">
+            <summary>Stamps the batch-level protection metadata onto a pre-plan DTO and its hazards (per-row redaction ids come from the converters).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.IsCallerGroupAdmin">
             <summary>
@@ -2750,6 +2868,74 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordExportTemplatesController.Download(System.String)">
             <summary>The stored file of a run; under ADP the bytes are opened through the seam for this caller.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController">
+            <summary>RMS-5 hydrants and water sources (RMS plan section 4.3): flow tests, maintenance, service state, CSV import and the response-map layer.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController.Import(Resgrid.Web.Services.Models.v4.Records.HydrantImportInput,System.Threading.CancellationToken)">
+            <summary>CSV import (number, latitude, longitude, type, address, main_size, flow_gpm, owner).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordHydrantsController.MapLayer(System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
+            <summary>Map layer for the response map and the apps; bounded to a viewport when bounds are given.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordInspectionsController">
+            <summary>RMS-5 inspection programs, adopted code sets, inspections, violations and re-inspection (RMS plan section 4.3).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordInspectionsController.ImportCodeSections(System.String,Resgrid.Web.Services.Models.v4.Records.HydrantImportInput,System.Threading.CancellationToken)">
+            <summary>CSV import of code sections: section,title,text,severity,days.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordInvestigationsController">
+            <summary>
+            RMS-5 investigation cases (RMS plan section 4.4). RecordRestricted_View is the policy; the service enforces
+            case membership on top of it and audits every read, so a department administrator without a membership sees
+            nothing here. Findings never touch the linked incident revision.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordInvestigationsController.Export(System.String,System.Threading.CancellationToken)">
+            <summary>The case packet (JSON); audited as an export and refused while any content is concealed.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordOccupanciesController">
+            <summary>
+            RMS-5 occupancy/property master (RMS plan section 4.3): the structure the department pre-plans, inspects and
+            permits, the ContactPreplan/Contact/POI crosswalk, the structure-write ownership switch and
+            OccupancyDispatchProjectionV1. Reads need Record_View; changes need Record_PreventionAdmin.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordOccupanciesController.Inventory(System.Threading.CancellationToken)">
+            <summary>Runs the ContactPreplan/Contact/POI inventory into crosswalk candidates.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordOccupanciesController.LinkCandidate(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>Binds a candidate to an occupancy, or creates one from the source when occupancyId is empty.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordOccupanciesController.SwitchOwnership(System.String,System.Threading.CancellationToken)">
+            <summary>Switches structure writes from Contacts pre-plans to RMS. Refused until every candidate and pre-plan is decided.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordOccupanciesController.DispatchProjection(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>OccupancyDispatchProjectionV1 for an occupancy, or for the occupancy a contact is linked to.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordPermitsController">
+            <summary>RMS-5 permits, plan review, conditions, expiration and the optional fee reference (RMS plan section 4.3).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordCrrController">
+            <summary>RMS-5 community risk reduction activities (RMS plan section 4.3).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordQualityController">
+            <summary>RMS-4 optional post-finalization quality review (RMS plan section 4.7): rubrics, sampling, scoring and trends. Rubrics are department-administrator work; sampling and scoring need Record_Review.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordQualityController.ForRecord(System.String)">
+            <summary>QA notes attached to a record, for the record detail view. Needs only visibility of the record.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordPreventionAttachmentsController">
+            <summary>Files on prevention and investigation aggregates. Authorization follows the parent (see the service).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordPreventionAttachmentsController.Add(Resgrid.Web.Services.Models.v4.Records.PreventionAttachmentInput,System.Threading.CancellationToken)">
+            <summary>Uploads a base64 file through the record-attachment hygiene and scanner pipeline.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordsHealthController">
+            <summary>RMS-4 release telemetry and the prevention summary (plan section 6, RMS-4 "baseline telemetry").</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsHealthController.Telemetry(System.Int32)">
+            <summary>Department-administrator only: legacy-write attempts, outbox lag, Workflow run outcomes, scan states and the prevention counters.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordSavedReportsController">
             <summary>
             Department saved reports over v4 (RMS plan section 4.1, RMS-1B): allowlisted typed columns, bounded filters,
@@ -2913,6 +3099,13 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordsController.LoadAuthorizedAsync(System.String,System.Boolean)">
             <summary>Loads a record only when the caller passes the per-record visibility rule; a refusal is audited as Denied.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordsPreventionApiControllerBase">
+            <summary>
+            Shared gate for the RMS-5 prevention/investigation and RMS-4 quality/health surfaces: the Records flag first, member
+            principals only (a system principal's department-scoped Record_View grant covers Records, never prevention data or
+            investigation cases), and one exception-to-status mapping so every module answers the same way.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordSummariesController">
             <summary>
@@ -7535,6 +7728,101 @@
             Whether check-in timers are enabled for this call
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.Contacts">
+            <summary>
+            Contacts linked to this call (primary first) with pre-plan / alert / hazard indicators.
+            Populated by GetCall and GetActiveCalls; empty on other list endpoints. Use
+            GetCallSiteInfo for the full site knowledge. Contacts plan Phase A, decision 3a.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallContactResultData">
+            <summary>
+            A contact linked to a call, as carried on the call payload (Contacts plan Phase A, decision 3a).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallContactResultData.ContactId">
+            <summary>Id of the contact</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallContactResultData.Name">
+            <summary>Display name (person or company). REDACTED in a protected department without a grant.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallContactResultData.ContactType">
+            <summary>0 = Person, 1 = Company</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallContactResultData.CallContactType">
+            <summary>0 = Primary, 1 = Additional</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallContactResultData.HasPreplan">
+            <summary>True when the contact has a pre-incident plan</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallContactResultData.AlertNoteCount">
+            <summary>Count of live ShouldAlert notes</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallContactResultData.HazardCount">
+            <summary>Count of live premise hazards</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.CallSiteInfoResult">
+            <summary>
+            Site information for every contact linked to a call, composed in one round trip
+            (Contacts plan Phase A, decision 3b). Also the RMS NERIS authoring prefill source (A8): additive changes only.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteInfoResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteInfoData.CallId">
+            <summary>Id of the call</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteInfoData.IsProtected">
+            <summary>
+            ADP: true when the department enforces protection; contact identity fields are then decrypted
+            (valid grant) or the exact "REDACTED" placeholder. Pre-plan and hazard text is not cataloged.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteInfoData.ProtectedReason">
+            <summary>ADP: machine-readable reason when contact fields are redacted; null when nothing is redacted.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteInfoData.Contacts">
+            <summary>Linked contacts, primary first</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.ContactId">
+            <summary>Id of the contact</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.Name">
+            <summary>Display name (person or company)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.ContactType">
+            <summary>0 = Person, 1 = Company</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.CallContactType">
+            <summary>0 = Primary, 1 = Additional</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.LocationGpsCoordinates">
+            <summary>Physical location coordinates ("lat,lng") when known</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.EntranceGpsCoordinates">
+            <summary>Entrance coordinates ("lat,lng") when known</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.PhoneNumber">
+            <summary>Best phone number on file (cell, then office, then home)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.Preplan">
+            <summary>The pre-incident plan, null when none</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.OccupancyId">
+            <summary>RMS-5: the Records occupancy the pre-plan is projected from, when the department has switched pre-plan ownership to Records. Null otherwise (additive, contract unchanged).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.Hazards">
+            <summary>Live premise hazards, most severe first</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.AlertNotes">
+            <summary>Live ShouldAlert notes (not expired)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallSiteContactData.Attachments">
+            <summary>Attachment metadata with signed download URLs (no Data)</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CloseCallInput">
             <summary>
             Input information to close a call
@@ -7633,6 +7921,18 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ContactInfo">
             <summary>
             Contact Info
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ContactId">
+            <summary>
+            Id of the primary Contact (the premises/customer record) to link to the call. Optional;
+            the contact must belong to the department. Contacts plan Phase A (A5).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.AdditionalContactIds">
+            <summary>
+            Ids of additional Contacts to link to the call. Optional. On EditCall, supplying ContactId or
+            AdditionalContactIds (even empty) replaces the call's existing contact links; omitting both leaves them unchanged.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.ExternalId">
@@ -7802,6 +8102,18 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ContactInfo">
             <summary>
             Contact Info (phone number, email, etc)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ContactId">
+            <summary>
+            Id of the primary Contact (the premises/customer record) to link to the call. Optional;
+            the contact must belong to the department. Contacts plan Phase A (A5).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.AdditionalContactIds">
+            <summary>
+            Ids of additional Contacts to link to the call. Optional. On EditCall, supplying ContactId or
+            AdditionalContactIds (even empty) replaces the call's existing contact links; omitting both leaves them unchanged.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.ExternalId">
@@ -10178,6 +10490,150 @@
             Resgrid Datacenter Locations
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFilesResult">
+            <summary>
+            Files attached to a contact (site documents, pre-plans, floor plans, photos, drawings).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFilesResult.Data">
+            <summary>
+            Data payload
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData">
+            <summary>
+            One file attached to a contact. Metadata always; Data only when requested.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.IsProtected">
+            <summary>
+            ADP: true when this row belongs to a protection-enforced department (shield indicator).
+            Protected values here are broker-decrypted plaintext or the exact "REDACTED" placeholder
+            — never ciphertext.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.ProtectedReason">
+            <summary>ADP: machine-readable reason when values are redacted (step_up_required,
+            grant_expired, grant_revoked, protected_access_denied, broker_unavailable); null when
+            nothing is redacted.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.RedactedFields">
+            <summary>ADP: stable catalog field ids (catalog v12) whose values are REDACTED on this row.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.Id">
+            <summary>Id of the contact file</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.ContactId">
+            <summary>Id of the Contact</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.Type">
+            <summary>Type of the file (Document = 0, PrePlan = 1, FloorPlan = 2, SitePhoto = 3, SiteDrawing = 4, Other = 5)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.TypeName">
+            <summary>Type display name</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.Name">
+            <summary>User friendly title of the file</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.FileName">
+            <summary>Original file name</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.Mime">
+            <summary>Mime type</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.Size">
+            <summary>Size in bytes</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.Data">
+            <summary>Base64 file data (only when includeData was requested)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.Url">
+            <summary>
+            Signed, expiring anonymous URL to download the file instead of using Data. Regenerated on every
+            authenticated list call; do not persist it (RMS plan: an authorized capture copies the evidence).
+            Null for a protected department's enveloped file: the anonymous route can never carry a grant, so
+            attended clients fetch the bytes through GetFilesForContact with includeData and their grant instead.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.UserId">
+            <summary>User Id of the person who uploaded the file</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.ContactFileResultData.Timestamp">
+            <summary>When the file was added (department time)</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.ContactFiles.UploadContactFileInput">
+            <summary>
+            Input to attach a file to a contact
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.UploadContactFileInput.Type">
+            <summary>Type of the file (Document = 0, PrePlan = 1, FloorPlan = 2, SitePhoto = 3, SiteDrawing = 4, Other = 5)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.UploadContactFileInput.Name">
+            <summary>User friendly title (defaults to the file name)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.UploadContactFileInput.FileName">
+            <summary>Original file name, with extension</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.UploadContactFileInput.Data">
+            <summary>Base64 encoded file contents</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.ContactFiles.UploadContactFileResult.Id">
+            <summary>Id of the new contact file</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardsResult">
+            <summary>
+            Premise hazards on a contact's pre-plan (Contacts plan Phase A).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardData">
+            <summary>
+            A single premise hazard.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardData.IsProtected">
+            <summary>
+            ADP: true when this row belongs to a protection-enforced department (shield indicator).
+            Protected values here are broker-decrypted plaintext or the exact "REDACTED" placeholder
+            — never ciphertext.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardData.ProtectedReason">
+            <summary>ADP: machine-readable reason when values are redacted (step_up_required,
+            grant_expired, grant_revoked, protected_access_denied, broker_unavailable); null when
+            nothing is redacted.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardData.RedactedFields">
+            <summary>ADP: stable catalog field ids (catalog v12) whose values are REDACTED on this row.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardData.HazardType">
+            <summary>ContactPreplanHazardTypes value (General = 0, Hazmat = 1, Structural = 2, Electrical = 3, Biological = 4, Animal = 5, Occupant = 6, Other = 7)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardData.Severity">
+            <summary>ContactPreplanHazardSeverities value (Info = 0, Caution = 1, Danger = 2)</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardData.GpsCoordinates">
+            <summary>"lat,lng"</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactHazardData.ShouldAlert">
+            <summary>Surfaces in the dispatch alert banner when true.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.SaveContactHazardInput">
+            <summary>
+            Input to create (no id) or update (with id) a hazard. A contact without a pre-plan gets an empty one created.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.SaveContactHazardInput.ContactPreplanHazardId">
+            <summary>Omit to create a new hazard.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.SaveContactHazardResult.Id">
+            <summary>Id of the hazard row</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactNotesResult">
             <summary>
             Gets the notes for a contact
@@ -10209,6 +10665,69 @@
             <summary>ADP: machine-readable reason when values are redacted (step_up_required,
             grant_expired, grant_revoked, protected_access_denied, broker_unavailable); null when
             nothing is redacted.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanResult">
+            <summary>
+            A contact's pre-incident plan (Contacts plan Phase A).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanResult.Data">
+            <summary>
+            Response Data (null when the contact has no pre-plan)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData">
+            <summary>
+            Structured NFPA 1620 pre-incident plan for a contact. Enum-valued fields carry the integer value;
+            see ContactPreplanConstructionTypes / ContactPreplanRoofTypes / ContactPreplanOccupancyTypes.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData.IsProtected">
+            <summary>
+            ADP: true when this row belongs to a protection-enforced department (shield indicator).
+            Protected values here are broker-decrypted plaintext or the exact "REDACTED" placeholder
+            — never ciphertext.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData.ProtectedReason">
+            <summary>ADP: machine-readable reason when values are redacted (step_up_required,
+            grant_expired, grant_revoked, protected_access_denied, broker_unavailable); null when
+            nothing is redacted.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData.RedactedFields">
+            <summary>ADP: stable catalog field ids (catalog v12) whose values are REDACTED on this row.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData.ConstructionType">
+            <summary>ContactPreplanConstructionTypes value</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData.RoofType">
+            <summary>ContactPreplanRoofTypes value</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData.OccupancyType">
+            <summary>ContactPreplanOccupancyTypes value</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData.GateCode">
+            <summary>ADP catalog v12 field: decrypted with a valid grant, otherwise the REDACTED placeholder.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData.IsReviewOverdue">
+            <summary>True when NextReviewDue has passed.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.ContactPreplanData.Hazards">
+            <summary>Live hazards on this pre-plan.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Contacts.SaveContactPreplanInput">
+            <summary>
+            Input to create or replace a contact's pre-plan. The whole plan is written; omitted text fields clear.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.SaveContactPreplanInput.MarkReviewed">
+            <summary>When true, LastReviewedOn is stamped now and ReviewedByUserId is the caller.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.SaveContactPreplanInput.NextReviewDueUtc">
+            <summary>Next scheduled review (UTC). Null leaves no review scheduled.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Contacts.SaveContactPreplanResult.Id">
+            <summary>Id of the pre-plan row</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Contacts.ContactsCategoriesResult">
             <summary>
@@ -12675,6 +13194,9 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordValuesData.RowRules">
             <summary>Per-row rule outcomes for repeating sections (a field rule may look at its own row).</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDefinitionVersionData.Cardinality">
+            <summary>How many Records of this definition may exist on one Call (plan section 5.2.1).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordDefinitionLayoutResult">
             <summary>The print layout for one definition version (RMS plan section 4.10.1).</summary>
         </member>
@@ -12769,6 +13291,9 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.NerisCrosswalkCoverageData">
             <summary>Crosswalk gap report: an unmapped or stale local code is a filing that will need manual work.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsRms5ApiMapper">
+            <summary>Model → v4 mapping. Entities never cross the wire (IEntity metadata, ProtectionId and attachment bytes stay server-side).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordOperationalSummaryResult">
             <summary>One RecordOperationalSummaryV1 (RMS plan section 5.1); the model class is the versioned contract.</summary>

@@ -94,6 +94,7 @@ namespace Resgrid.Services.Records
 					Key = definition.DefinitionKey, Name = definition.Name, Category = definition.Category, Owner = RmsDefinitionOwner.Department.ToString(), Locked = false,
 					PublishedVersion = published?.Version, DraftVersion = draft?.Version, Retired = definition.IsRetired,
 					LifecyclePreset = latest == null ? null : ((RmsLifecyclePreset)latest.LifecyclePreset).ToString(),
+					Cardinality = latest == null ? null : ((RmsRecordCardinality)latest.Cardinality).ToString(),
 					MinimumClientCapability = published?.MinimumClientCapability ?? latest?.MinimumClientCapability ?? RecordsClientCapabilities.Derive(latest?.Schema),
 					TemplateKey = definition.TemplateKey, JurisdictionProfileKey = definition.JurisdictionProfileKey,
 					ArtifactStatus = template == null ? RmsArtifactStatus.DepartmentLocal.ToString() : (template.Overlays.TryGetValue(definition.JurisdictionProfileKey ?? "generic", out var overlay) ? overlay.ArtifactStatus : RmsArtifactStatus.Compatible).ToString()
@@ -159,6 +160,7 @@ namespace Resgrid.Services.Records
 				profileKey = rendering.ProfileKey;
 				draft.Schema = rendering.Schema;
 				draft.LifecyclePreset = rendering.Template.LifecyclePreset;
+				draft.Cardinality = rendering.Template.Cardinality;
 				draft.Numbering = new RecordDefinitionNumbering { Prefix = rendering.Template.NumberPrefix, PerIncidentSequence = rendering.Template.PerIncidentSequence };
 				draft.PermittedSubjectTypes = rendering.Template.PermittedSubjectTypes;
 				draft.Classification = rendering.Template.Classification;
@@ -310,6 +312,12 @@ namespace Resgrid.Services.Records
 			if (input.Name != null && string.IsNullOrWhiteSpace(input.Name)) issues.Add(RecordDefinitionIssue.Error("name", "required", "A definition name is required."));
 			if (input.Name?.Length > 200) issues.Add(RecordDefinitionIssue.Error("name", "too_long", "The name is limited to 200 characters."));
 			if (!Enum.IsDefined(typeof(RmsLifecyclePreset), input.LifecyclePreset)) issues.Add(RecordDefinitionIssue.Error("lifecyclePreset", "unknown", "Choose one of the governed lifecycle presets."));
+			if (!Enum.IsDefined(typeof(RmsRecordCardinality), input.Cardinality)) issues.Add(RecordDefinitionIssue.Error("cardinality", "unknown", "Choose one of the governed cardinality rules."));
+			// A cardinality rule other than MultiplePerCall is keyed on the Call, so a definition that cannot name
+			// one has written a rule that never fires (plan 5.2.1).
+			else if (input.Cardinality != RmsRecordCardinality.MultiplePerCall
+				&& !(input.PermittedSubjectTypes ?? string.Empty).Split(',').Select(t => t.Trim()).Contains("call", StringComparer.OrdinalIgnoreCase))
+				issues.Add(RecordDefinitionIssue.Error("cardinality", "no_call_subject", $"{input.Cardinality} is enforced per Call; add the 'call' subject or choose MultiplePerCall."));
 			if (input.LifecyclePreset == RmsLifecyclePreset.ApprovalAcknowledgement && input.ApproverRoleIds != null && input.ReviewerRoleIds != null && input.ApproverRoleIds.Count > 0 && input.ReviewerRoleIds.Count > 0 && input.ApproverRoleIds.All(input.ReviewerRoleIds.Contains))
 				issues.Add(RecordDefinitionIssue.Warning("approverRoleIds", "same_roles", "Approvers and reviewers are the same roles; the approver may still never be the author."));
 			if (input.ReviewDueHours.HasValue && (input.ReviewDueHours <= 0 || input.ReviewDueHours > 24 * 365)) issues.Add(RecordDefinitionIssue.Error("reviewDueHours", "out_of_range", "Review due hours must be between 1 and 8760."));
@@ -630,6 +638,9 @@ namespace Resgrid.Services.Records
 			var diff = new RecordDefinitionDiff { DefinitionKey = definitionKey, FromVersion = from.Version, ToVersion = to.Version };
 			DiffSchemas(diff, from.Schema, to.Schema);
 			if (from.LifecyclePreset != to.LifecyclePreset) diff.Entries.Add(new RecordDefinitionDiffEntry { Kind = "policy", Change = "changed", Key = "lifecyclePreset", Detail = $"{(RmsLifecyclePreset)from.LifecyclePreset} -> {(RmsLifecyclePreset)to.LifecyclePreset}", Breaking = false });
+			// Tightening cardinality is breaking: Records that were legal under the old rule already exist, and the
+			// new rule refuses the next one on a Call that already has them.
+			if (from.Cardinality != to.Cardinality) diff.Entries.Add(new RecordDefinitionDiffEntry { Kind = "policy", Change = "changed", Key = "cardinality", Detail = $"{(RmsRecordCardinality)from.Cardinality} -> {(RmsRecordCardinality)to.Cardinality}", Breaking = (RmsRecordCardinality)to.Cardinality != RmsRecordCardinality.MultiplePerCall });
 			if (!string.Equals(from.NumberingJson, to.NumberingJson, StringComparison.Ordinal)) diff.Entries.Add(new RecordDefinitionDiffEntry { Kind = "policy", Change = "changed", Key = "numbering", Detail = "Numbering policy changed; issued numbers never change.", Breaking = false });
 			if (from.RetentionYears != to.RetentionYears) diff.Entries.Add(new RecordDefinitionDiffEntry { Kind = "policy", Change = "changed", Key = "retentionYears", Detail = $"{from.RetentionYears?.ToString() ?? "class default"} -> {to.RetentionYears?.ToString() ?? "class default"}", Breaking = false });
 			if (from.Classification != to.Classification) diff.Entries.Add(new RecordDefinitionDiffEntry { Kind = "policy", Change = "changed", Key = "classification", Detail = $"{(RmsFieldClassification)from.Classification} -> {(RmsFieldClassification)to.Classification}", Breaking = to.Classification < from.Classification });
@@ -746,6 +757,7 @@ namespace Resgrid.Services.Records
 		private static void Apply(RmsRecordDefinitionVersion version, RecordDefinitionDraftInput input, string capability)
 		{
 			version.LifecyclePreset = (int)input.LifecyclePreset;
+			version.Cardinality = (int)input.Cardinality;
 			version.ReviewerRoleIds = string.Join(",", (input.ReviewerRoleIds ?? new List<int>()).Distinct());
 			version.ApproverRoleIds = string.Join(",", (input.ApproverRoleIds ?? new List<int>()).Distinct());
 			version.ReviewDueHours = input.ReviewDueHours;
@@ -783,7 +795,7 @@ namespace Resgrid.Services.Records
 			return new RecordDefinitionDraftInput
 			{
 				Name = definition?.Name, Category = definition?.Category, Description = definition?.Description, PermittedSubjectTypes = definition?.PermittedSubjectTypes,
-				LifecyclePreset = (RmsLifecyclePreset)version.LifecyclePreset,
+				LifecyclePreset = (RmsLifecyclePreset)version.LifecyclePreset, Cardinality = (RmsRecordCardinality)version.Cardinality,
 				ReviewerRoleIds = ParseIds(version.ReviewerRoleIds), ApproverRoleIds = ParseIds(version.ApproverRoleIds),
 				ReviewDueHours = version.ReviewDueHours, ApproveDueHours = version.ApproveDueHours, RequireAuthorAttestation = version.RequireAuthorAttestation,
 				Numbering = version.Numbering, RetentionYears = version.RetentionYears, Classification = (RmsFieldClassification)version.Classification,
@@ -902,6 +914,7 @@ namespace Resgrid.Services.Records
 				previous_version = previousVersion,
 				state = version == null ? null : ((RmsDefinitionVersionState)version.State).ToString(),
 				lifecycle_preset = version == null ? null : ((RmsLifecyclePreset)version.LifecyclePreset).ToString(),
+				cardinality = version == null ? null : ((RmsRecordCardinality)version.Cardinality).ToString(),
 				template_key = definition.TemplateKey,
 				jurisdiction_profile_key = definition.JurisdictionProfileKey,
 				minimum_client_capability = version?.MinimumClientCapability,

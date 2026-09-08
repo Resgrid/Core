@@ -42,8 +42,8 @@ namespace Resgrid.Tests.Rms
 			_events = new Mock<IRmsFieldRolloutEventsRepository>();
 			_events.Setup(e => e.InsertBatchAsync(It.IsAny<IEnumerable<RmsFieldRolloutEvent>>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((IEnumerable<RmsFieldRolloutEvent> rows, CancellationToken c) => { _stored.AddRange(rows); return _stored.Count; });
-			_events.Setup(e => e.GetForWindowAsync(Dept, It.IsAny<DateTime>(), It.IsAny<int>()))
-				.ReturnsAsync((int d, DateTime since, int take) => _stored.Where(row => row.OccurredOn >= since).ToList());
+			_events.Setup(e => e.GetForWindowAsync(Dept, It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, DateTime since, int take, CancellationToken c) => _stored.Where(row => row.OccurredOn >= since).ToList());
 
 			_authorization = new Mock<IRecordsAuthorizationService>();
 			_authorization.Setup(a => a.IsActiveMemberAsync(It.IsAny<string>(), Dept)).ReturnsAsync(true);
@@ -166,6 +166,24 @@ namespace Resgrid.Tests.Rms
 			summary.AbandonmentRate.Should().Be(0.5);
 			summary.WebHandoffs.Should().Be(1);
 			summary.Versions.Should().Contain(version => version.AppVersion == "5.4.0" && version.Users == 1);
+		}
+
+		[Test]
+		public void Versions_are_listed_newest_first_by_version_rather_than_by_text()
+		{
+			var now = DateTime.UtcNow;
+			var events = new List<RmsFieldRolloutEvent>
+			{
+				Event("a", "5.2.0", RmsFieldRolloutEventTypes.Sync, "ok", now),
+				Event("b", "5.10.0", RmsFieldRolloutEventTypes.Sync, "ok", now),
+				Event("c", "5.9.1", RmsFieldRolloutEventTypes.Sync, "ok", now),
+				Event("d", "6.0.0", RmsFieldRolloutEventTypes.Sync, "ok", now)
+			};
+
+			var summary = RecordsFieldRolloutService.Summarize(RmsOriginClient.Responder, events, "5.2.0");
+
+			// 5.10 is a later version than 5.9 even though it sorts earlier as text.
+			summary.Versions.Select(v => v.AppVersion).Should().Equal("6.0.0", "5.10.0", "5.9.1", "5.2.0");
 		}
 
 		[Test]

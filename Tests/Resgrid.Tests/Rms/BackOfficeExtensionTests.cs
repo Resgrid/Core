@@ -108,6 +108,122 @@ namespace Resgrid.Tests.Rms
 			validation.Issues.Should().Contain(i => i.Code == "no_call_subject" && i.Severity == "warning");
 		}
 
+		// ---- Per-definition cardinality (plan 5.2.1) ------------------------------------------------------------
+
+		private void RegisterCall(int callId) => _h.Calls.Setup(c => c.GetCallByIdAsync(callId, It.IsAny<bool>()))
+			.ReturnsAsync(new Call { CallId = callId, DepartmentId = Dept, Number = "C-" + callId, Name = "Incident " + callId, Type = "Fire", LoggedOn = new DateTime(2026, 9, 1, 8, 0, 0, DateTimeKind.Utc) });
+
+		[Test]
+		public async Task SingleAuthoritative_allows_one_record_per_call_and_hands_back_the_one_that_exists()
+		{
+			RegisterCall(5100);
+			RegisterCall(5200);
+			await _h.CreateAndPublishAsync("ics-209", "Status summary", Simple(), d =>
+			{
+				d.PermittedSubjectTypes = "call,incidentcommand";
+				d.Cardinality = RmsRecordCardinality.SingleAuthoritative;
+			});
+
+			var first = await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput { DefinitionKey = "ics-209", CallId = 5100 });
+			first.Record.CardinalityKey.Should().Be("single:5100:ics-209");
+
+			Func<Task> second = () => _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput { DefinitionKey = "ics-209", CallId = 5100 });
+			var thrown = await second.Should().ThrowAsync<RecordCardinalityException>();
+			thrown.Which.ExistingRecordId.Should().Be(first.Record.RmsOperationalRecordId, "the author is pointed at the Record that exists, not shown an error");
+			thrown.Which.Cardinality.Should().Be(RmsRecordCardinality.SingleAuthoritative);
+
+			var otherCall = await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput { DefinitionKey = "ics-209", CallId = 5200 });
+			otherCall.Record.CardinalityKey.Should().Be("single:5200:ics-209", "the rule is per Call, not per department");
+
+			var noCall = await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput { DefinitionKey = "ics-209" });
+			noCall.Record.CardinalityKey.Should().BeNull("every rule is keyed on the Call; without one there is nothing to enforce");
+		}
+
+		[Test]
+		public async Task A_cancelled_or_voided_record_releases_its_slot()
+		{
+			RegisterCall(5300);
+			await _h.CreateAndPublishAsync("ics-209", "Status summary", Simple(), d =>
+			{
+				d.PermittedSubjectTypes = "call";
+				d.Cardinality = RmsRecordCardinality.SingleAuthoritative;
+			});
+
+			var first = await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput { DefinitionKey = "ics-209", CallId = 5300 });
+			var cancelled = await _h.Records.CancelAsync(Dept, Author, first.Record.RmsOperationalRecordId);
+			cancelled.Record.CardinalityKey.Should().BeNull();
+
+			var replacement = await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput { DefinitionKey = "ics-209", CallId = 5300 });
+			replacement.Record.CardinalityKey.Should().Be("single:5300:ics-209", "an abandoned Record must not block the one that replaces it");
+		}
+
+		[Test]
+		public async Task OnePerSubjectPerCall_keys_on_the_unit_and_falls_back_to_the_author()
+		{
+			RegisterCall(5400);
+			await _h.CreateAndPublishAsync("unit-report", "Unit report", Simple(), d =>
+			{
+				d.PermittedSubjectTypes = "call,unit";
+				d.Cardinality = RmsRecordCardinality.OnePerSubjectPerCall;
+			});
+
+			var engine1 = await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput
+			{
+				DefinitionKey = "unit-report", CallId = 5400, Details = new RmsOperationalRecordDetail { UnitId = 11 }
+			});
+			var engine2 = await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput
+			{
+				DefinitionKey = "unit-report", CallId = 5400, Details = new RmsOperationalRecordDetail { UnitId = 12 }
+			});
+
+			engine1.Record.CardinalityKey.Should().Be("subject:5400:unit-report:unit:11");
+			engine2.Record.CardinalityKey.Should().Be("subject:5400:unit-report:unit:12", "two engine companies on one fire produce two company-level records");
+
+			Func<Task> duplicate = () => _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput
+			{
+				DefinitionKey = "unit-report", CallId = 5400, Details = new RmsOperationalRecordDetail { UnitId = 11 }
+			});
+			(await duplicate.Should().ThrowAsync<RecordCardinalityException>()).Which.ExistingRecordId.Should().Be(engine1.Record.RmsOperationalRecordId);
+
+			// With no unit named, the subject is the author — which is what a per-person record is keyed on.
+			var self = await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput { DefinitionKey = "unit-report", CallId = 5400 });
+			self.Record.CardinalityKey.Should().Be("subject:5400:unit-report:person:" + Author);
+		}
+
+		[Test]
+		public async Task MultiplePerCall_is_the_default_and_constrains_nothing()
+		{
+			RegisterCall(5500);
+			await _h.CreateAndPublishAsync("ics-214", "Activity log", Simple(), d => d.PermittedSubjectTypes = "call");
+			_h.Version("ics-214", 1).Cardinality.Should().Be((int)RmsRecordCardinality.MultiplePerCall, "a definition that says nothing allows multiples");
+
+			for (var i = 0; i < 3; i++)
+				(await _h.Records.CreateDraftAsync(Dept, Author, new RecordDraftInput { DefinitionKey = "ics-214", CallId = 5500 }))
+					.Record.CardinalityKey.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_cardinality_rule_without_the_call_subject_is_refused_and_a_tightening_change_is_breaking()
+		{
+			var validation = await _h.Definitions.ValidateAsync(Dept, new RecordDefinitionDraftInput
+			{
+				Name = "Single, no call subject", Schema = Simple(), PermittedSubjectTypes = "unit",
+				Cardinality = RmsRecordCardinality.SingleAuthoritative, Numbering = new RecordDefinitionNumbering { Prefix = "SNG" }
+			});
+			validation.Issues.Should().Contain(i => i.Code == "no_call_subject" && i.Severity == "error",
+				"a rule keyed on the Call that can never see one is a rule that never fires");
+
+			await _h.CreateAndPublishAsync("tightening", "Tightening", Simple(), d => d.PermittedSubjectTypes = "call");
+			var draft = await _h.Definitions.OpenDraftAsync(Dept, Admin, "tightening");
+			var input = RecordDefinitionsService.ToDraftInput(draft, (await _h.Definitions.GetAsync(Dept, "tightening")).Definition);
+			input.Cardinality = RmsRecordCardinality.SingleAuthoritative;
+			await _h.Definitions.SaveDraftAsync(Dept, Admin, "tightening", draft.Version, draft.RowVersion, input);
+
+			var diff = await _h.Definitions.DiffAsync(Dept, "tightening", 1, 2);
+			diff.Entries.Should().Contain(e => e.Key == "cardinality" && e.Breaking,
+				"Records legal under the old rule already exist, so tightening is a breaking change the publisher must see");
+		}
+
 		// ---- E3: external identifier schemes --------------------------------------------------------------------
 
 		[Test]

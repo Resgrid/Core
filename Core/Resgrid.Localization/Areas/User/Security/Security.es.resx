@@ -396,6 +396,8 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Quién puede aplicar y levantar retenciones legales, que suspenden la retención e impiden anular un registro.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Reasignar borradores de registro</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Quién puede trasladar un borrador de registro a otro autor, por ejemplo cuando el autor original no está disponible.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Gestionar datos de prevención</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Quién puede crear y modificar ocupaciones, programas de inspección y conjuntos de códigos, hidrantes, permisos y actividades de reducción de riesgos comunitarios. Leer datos de prevención solo requiere acceso a Registros; las investigaciones se rigen por el permiso de registros restringidos y la pertenencia al caso.</value></data>
 </root>
 
 

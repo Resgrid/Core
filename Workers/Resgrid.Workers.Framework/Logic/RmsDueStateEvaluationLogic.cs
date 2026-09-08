@@ -22,6 +22,17 @@ namespace Resgrid.Workers.Framework.Logic
 				var service = scope.Resolve<IRecordsDueStateService>();
 				var result = await service.SweepAsync(cancellationToken);
 
+				// RMS-5 prevention sweep rides the same daily slot: due inspections, overdue violations (162), permit expiry (163) and the RMS-4 telemetry line.
+				try
+				{
+					var prevention = await scope.Resolve<IRecordsPreventionSweepService>().SweepAsync(cancellationToken);
+					Logging.LogInfo($"Prevention sweep: departments={prevention.DepartmentsEvaluated} inspections={prevention.InspectionsGenerated} violationsOverdue={prevention.ViolationsBecameOverdue} permitsNotified={prevention.PermitsExpiringNotified} permitsExpired={prevention.PermitsExpired} errors={prevention.Errors}");
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, "Prevention sweep failed; the due-state result still stands.");
+				}
+
 				if (result.Errors > 0)
 					Logging.LogError($"Records due-state sweep finished with {result.Errors} error(s): {result.Message}");
 

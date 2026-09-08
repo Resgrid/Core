@@ -113,6 +113,8 @@ namespace Resgrid.Model.Repositories
 		/// this sweep a Pending attachment would stay unscanned forever (RMS-1 gap closed in RMS-3).
 		/// </summary>
 		Task<IEnumerable<RmsRecordAttachment>> GetPendingScanAsync(int departmentId, int take);
+		/// <summary>Attachments in a scan state (RMS-4 release telemetry).</summary>
+		Task<int> CountByScanStateAsync(int departmentId, int scanState);
 	}
 
 	public interface IRmsExternalReferencesRepository : IRepository<RmsExternalReference>
@@ -130,6 +132,10 @@ namespace Resgrid.Model.Repositories
 		Task<bool> MarkDispatchedAsync(long domainEventOutboxId, DateTime utcNow, CancellationToken cancellationToken = default);
 		Task<bool> MarkFailedAsync(long domainEventOutboxId, string error, DateTime? nextAttemptOn, bool terminal, CancellationToken cancellationToken = default);
 		Task<int> CountByStateAsync(int state);
+		/// <summary>Per-department outbox rows in a state (RMS-4 release telemetry).</summary>
+		Task<int> CountByStateForDepartmentAsync(int departmentId, int state);
+		/// <summary>Age anchor of the department's oldest undispatched row (RMS-4 release telemetry).</summary>
+		Task<DateTime?> GetOldestPendingCreatedOnForDepartmentAsync(int departmentId);
 		Task<DateTime?> GetOldestPendingCreatedOnAsync();
 		Task<int> PurgeDispatchedOlderThanAsync(DateTime cutoffUtc, CancellationToken cancellationToken = default);
 	}
@@ -156,6 +162,10 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsAccessAuditsRepository : IRepository<RmsAccessAudit>
 	{
 		Task<IEnumerable<RmsAccessAudit>> GetForRecordAsync(int departmentId, string recordId, int take);
+		/// <summary>Audit rows of one action inside a window (RMS-4 release telemetry: legacy-write denials, authorization denials).</summary>
+		Task<int> CountByActionSinceAsync(int departmentId, int action, DateTime sinceUtc);
+		/// <summary>Audit rows for an aggregate that is not a Record (investigation cases), newest first.</summary>
+		Task<IEnumerable<RmsAccessAudit>> GetForAggregateAsync(int departmentId, string aggregateId, int take);
 	}
 
 	public interface IRmsRecordSearchProjectionsRepository : IRepository<RmsRecordSearchProjection>

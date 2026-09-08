@@ -111,7 +111,7 @@
 							<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="AcknowledgeTerms" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-success btn-sm"><i class="fa fa-check"></i> @localizer["ConnectorTermsAcknowledge"]</button></form>
 						}
 						<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="RotateToken" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default btn-sm"><i class="fa fa-key"></i> @localizer["ConnectorRotateToken"]</button></form>
-						<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="Delete" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId" onsubmit="return confirm('@localizer["ConnectorDeleteConfirm"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> @localizer["ConnectorDelete"]</button></form>
+						<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="Delete" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId" onsubmit="return confirm('@(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(localizer["ConnectorDeleteConfirm"].Value))');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> @localizer["ConnectorDelete"]</button></form>
 					</div>
 				</div>
 				<div class="ibox">

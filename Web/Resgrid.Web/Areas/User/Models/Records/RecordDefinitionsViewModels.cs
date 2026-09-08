@@ -55,6 +55,7 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public string Description { get; set; }
 		public string PermittedSubjectTypes { get; set; }
 		public int LifecyclePreset { get; set; } = (int)RmsLifecyclePreset.QuickEntry;
+		public int Cardinality { get; set; } = (int)RmsRecordCardinality.MultiplePerCall;
 		public List<int> ReviewerRoleIds { get; set; } = new List<int>();
 		public List<int> ApproverRoleIds { get; set; } = new List<int>();
 		public int? ReviewDueHours { get; set; }
@@ -105,7 +106,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 			return new RecordDefinitionDraftInput
 			{
 				Name = Name, Category = Category, Description = Description, PermittedSubjectTypes = PermittedSubjectTypes,
-				LifecyclePreset = (RmsLifecyclePreset)LifecyclePreset, ReviewerRoleIds = ReviewerRoleIds ?? new List<int>(), ApproverRoleIds = ApproverRoleIds ?? new List<int>(),
+				LifecyclePreset = (RmsLifecyclePreset)LifecyclePreset, Cardinality = (RmsRecordCardinality)Cardinality,
+				ReviewerRoleIds = ReviewerRoleIds ?? new List<int>(), ApproverRoleIds = ApproverRoleIds ?? new List<int>(),
 				ReviewDueHours = ReviewDueHours, ApproveDueHours = ApproveDueHours, RequireAuthorAttestation = RequireAuthorAttestation,
 				Numbering = new RecordDefinitionNumbering { Prefix = NumberPrefix?.Trim().ToUpperInvariant(), Assignment = (RmsNumberAssignment)NumberAssignment, PerGroupSequence = PerGroupSequence, PerIncidentSequence = PerIncidentSequence, ResetYearly = ResetYearly, SequenceWidth = SequenceWidth },
 				RetentionYears = RetentionYears, Classification = (RmsFieldClassification)Classification,
@@ -123,7 +125,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 			{
 				Aggregate = aggregate, VersionRow = version, DefinitionKey = aggregate.Definition.DefinitionKey, Version = version.Version, RowVersion = version.RowVersion,
 				Name = aggregate.Definition.Name, Category = aggregate.Definition.Category, Description = aggregate.Definition.Description, PermittedSubjectTypes = aggregate.Definition.PermittedSubjectTypes,
-				LifecyclePreset = version.LifecyclePreset, ReviewerRoleIds = Resgrid.Services.Records.RecordDefinitionsService.ParseIds(version.ReviewerRoleIds), ApproverRoleIds = Resgrid.Services.Records.RecordDefinitionsService.ParseIds(version.ApproverRoleIds),
+				LifecyclePreset = version.LifecyclePreset, Cardinality = version.Cardinality,
+				ReviewerRoleIds = Resgrid.Services.Records.RecordDefinitionsService.ParseIds(version.ReviewerRoleIds), ApproverRoleIds = Resgrid.Services.Records.RecordDefinitionsService.ParseIds(version.ApproverRoleIds),
 				ReviewDueHours = version.ReviewDueHours, ApproveDueHours = version.ApproveDueHours, RequireAuthorAttestation = version.RequireAuthorAttestation,
 				NumberPrefix = numbering.Prefix, NumberAssignment = (int)numbering.Assignment, PerGroupSequence = numbering.PerGroupSequence, PerIncidentSequence = numbering.PerIncidentSequence, ResetYearly = numbering.ResetYearly, SequenceWidth = numbering.SequenceWidth,
 				RetentionYears = version.RetentionYears, Classification = version.Classification,

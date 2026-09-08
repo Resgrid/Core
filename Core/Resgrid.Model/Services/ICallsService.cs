@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -433,6 +433,9 @@ namespace Resgrid.Model.Services
 		Task<List<Call>> GetCallsByContactIdAsync(string contactId, int departmentId);
 
 		Task<bool> DeleteCallContactsAsync(int callId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Direct accessor for the Call/Contact links of a call (Contacts plan Phase A, A4).</summary>
+		Task<List<CallContact>> GetCallContactsByCallIdAsync(int callId);
 
 		Task<CallVideoFeed> SaveCallVideoFeedAsync(CallVideoFeed feed, CancellationToken cancellationToken = default(CancellationToken));
 

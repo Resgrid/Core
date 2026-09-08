@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Providers;
@@ -14,6 +14,10 @@ using Resgrid.Web.Services.Models.v4.Contacts;
 using System;
 using Resgrid.Model.Helpers;
 using Resgrid.Web.ServicesCore.Helpers;
+using System.Collections.Generic;
+using System.Threading;
+using System.Net.Mime;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -33,6 +37,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly IProtectedWriteService _protectedWriteService;
 
 		public ContactsController(
 			IContactsService contactsService,
@@ -41,10 +46,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			Model.Services.IAuthorizationService authorizationService,
 			IEventAggregator eventAggregator,
 			IUserDefinedFieldsService userDefinedFieldsService,
-			IProtectedReadService protectedReadService
+			IProtectedReadService protectedReadService,
+			IProtectedWriteService protectedWriteService
 			)
 		{
 			_protectedReadService = protectedReadService;
+			_protectedWriteService = protectedWriteService;
 			_contactsService = contactsService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
@@ -273,7 +280,378 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
+		// ── Pre-plans and hazards (Contacts plan Phase A, A5) ─────────────────────
+
+		/// <summary>
+		/// Gets the pre-incident plan for a contact (with its hazards). Data is null when the contact has none.
+		/// </summary>
+		/// <param name="contactId">Id of the contact</param>
+		[HttpGet("GetContactPreplan")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<ActionResult<ContactPreplanResult>> GetContactPreplan(string contactId)
+		{
+			var result = new ContactPreplanResult();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.IsDeleted)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (contact.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var preplan = await _contactsService.GetPreplanByContactIdAsync(contactId, DepartmentId);
+
+			if (preplan != null)
+			{
+				// Attended protected read (catalog v12): pre-plan and hazard text decrypt with a valid grant
+				// or read as REDACTED — never an envelope.
+				var preplanRead = await _protectedReadService.ResolveContactPreplansForReadAsync(DepartmentId, new[] { preplan }, ProtectedGrantToken, UserId);
+				var hazardRead = await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, preplan.Hazards, ProtectedGrantToken, UserId);
+
+				result.Data = ConvertPreplanData(preplan, department);
+				ApplyProtection(result.Data, preplanRead, hazardRead);
+				result.PageSize = 1;
+			}
+			else
+			{
+				result.PageSize = 0;
+			}
+
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Creates or replaces the pre-incident plan for a contact
+		/// </summary>
+		[HttpPost("SaveContactPreplan")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		public async Task<ActionResult<SaveContactPreplanResult>> SaveContactPreplan([FromBody] SaveContactPreplanInput input, CancellationToken cancellationToken)
+		{
+			var result = new SaveContactPreplanResult();
+
+			if (input == null || !ModelState.IsValid)
+				return BadRequest();
+
+			var contact = await _contactsService.GetContactByIdAsync(input.ContactId);
+			if (contact == null || contact.IsDeleted)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (contact.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!Enum.IsDefined(typeof(ContactPreplanConstructionTypes), input.ConstructionType) ||
+				!Enum.IsDefined(typeof(ContactPreplanRoofTypes), input.RoofType) ||
+				!Enum.IsDefined(typeof(ContactPreplanOccupancyTypes), input.OccupancyType))
+				return BadRequest("Unknown construction, roof or occupancy type.");
+
+			// ADP write preflight (plan 3.3): an attended caller in a protected department needs a current grant
+			// BEFORE the transient plaintext row is inserted; the service's write net then envelopes it.
+			var writePreflight = await _protectedWriteService.PreflightWriteAsync(DepartmentId, ProtectedGrantToken, UserId, false, cancellationToken);
+			if (!writePreflight.Success)
+				return ProtectedWriteProblem(writePreflight);
+
+			var existing = await _contactsService.GetPreplanByContactIdAsync(contact.ContactId, DepartmentId);
+
+			var preplan = new ContactPreplan
+			{
+				ContactId = contact.ContactId,
+				DepartmentId = DepartmentId,
+				ConstructionType = input.ConstructionType,
+				RoofType = input.RoofType,
+				OccupancyType = input.OccupancyType,
+				OccupancyNotes = input.OccupancyNotes,
+				OccupancyHours = input.OccupancyHours,
+				OccupantLoad = input.OccupantLoad,
+				HasOccupantsNeedingAssistance = input.HasOccupantsNeedingAssistance,
+				OccupantsNeedingAssistanceNotes = input.OccupantsNeedingAssistanceNotes,
+				GasShutoffLocation = input.GasShutoffLocation,
+				ElectricShutoffLocation = input.ElectricShutoffLocation,
+				WaterShutoffLocation = input.WaterShutoffLocation,
+				UtilityNotes = input.UtilityNotes,
+				KnoxBoxLocation = input.KnoxBoxLocation,
+				GateCode = input.GateCode,
+				AlarmPanelLocation = input.AlarmPanelLocation,
+				AlarmCompany = input.AlarmCompany,
+				AlarmCompanyPhone = input.AlarmCompanyPhone,
+				AccessNotes = input.AccessNotes,
+				NearestHydrantLocation = input.NearestHydrantLocation,
+				RequiredFireFlowGpm = input.RequiredFireFlowGpm,
+				WaterSupplyNotes = input.WaterSupplyNotes,
+				EmergencyContactName = input.EmergencyContactName,
+				EmergencyContactPhone = input.EmergencyContactPhone,
+				SecondaryContactName = input.SecondaryContactName,
+				SecondaryContactPhone = input.SecondaryContactPhone,
+				HazmatOnSite = input.HazmatOnSite,
+				GeneralHazardNotes = input.GeneralHazardNotes,
+				TacticalSummary = input.TacticalSummary,
+				NextReviewDue = input.NextReviewDueUtc,
+				LastReviewedOn = existing?.LastReviewedOn,
+				ReviewedByUserId = existing?.ReviewedByUserId
+			};
+
+			if (input.MarkReviewed)
+			{
+				preplan.LastReviewedOn = DateTime.UtcNow;
+				preplan.ReviewedByUserId = UserId;
+			}
+
+			ContactPreplan saved;
+			try
+			{
+				saved = await _contactsService.SavePreplanAsync(preplan, UserId, IpAddressHelper.GetRequestIP(Request, true),
+					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+			}
+			catch (InvalidOperationException ex) when (ex.Message == IContactPreplanOwnershipGate.RecordsOwnedReason)
+			{
+				// RMS-5 write cutover: the occupancy master owns this pre-plan now; edit it under Records.
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: "Pre-plans for this department are owned by Records occupancies.", type: "contacts_preplan_records_owned");
+			}
+
+			result.Id = saved.ContactPreplanId;
+			result.PageSize = 0;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Removes the pre-incident plan (and its hazards) from a contact
+		/// </summary>
+		/// <param name="contactId">Id of the contact</param>
+		[HttpDelete("DeleteContactPreplan")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Contacts_Delete)]
+		public async Task<ActionResult<DeleteContactPreplanResult>> DeleteContactPreplan(string contactId, CancellationToken cancellationToken)
+		{
+			var result = new DeleteContactPreplanResult();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.DepartmentId != DepartmentId)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			bool deleted;
+			try
+			{
+				deleted = await _contactsService.DeletePreplanAsync(contactId, DepartmentId, UserId, IpAddressHelper.GetRequestIP(Request, true),
+					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+			}
+			catch (InvalidOperationException ex) when (ex.Message == IContactPreplanOwnershipGate.RecordsOwnedReason)
+			{
+				// RMS-5 write cutover: the occupancy master owns this pre-plan now; edit it under Records.
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: "Pre-plans for this department are owned by Records occupancies.", type: "contacts_preplan_records_owned");
+			}
+
+			if (!deleted)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			result.PageSize = 0;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the premise hazards for a contact, most severe first
+		/// </summary>
+		/// <param name="contactId">Id of the contact</param>
+		[HttpGet("GetContactHazards")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<ActionResult<ContactHazardsResult>> GetContactHazards(string contactId)
+		{
+			var result = new ContactHazardsResult();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.IsDeleted)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (contact.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var hazards = await _contactsService.GetHazardsByContactIdAsync(contactId, DepartmentId);
+
+			// Attended protected read (catalog v12).
+			var hazardRead = await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, hazards, ProtectedGrantToken, UserId);
+
+			foreach (var hazard in hazards)
+			{
+				var data = ConvertHazardData(hazard, department);
+				data.IsProtected = hazardRead.IsProtected;
+				data.ProtectedReason = hazardRead.ProtectedReason;
+				result.Data.Add(data);
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Creates (no id) or updates (with id) a premise hazard on a contact
+		/// </summary>
+		[HttpPost("SaveContactHazard")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		public async Task<ActionResult<SaveContactHazardResult>> SaveContactHazard([FromBody] SaveContactHazardInput input, CancellationToken cancellationToken)
+		{
+			var result = new SaveContactHazardResult();
+
+			if (input == null || !ModelState.IsValid)
+				return BadRequest();
+
+			var contact = await _contactsService.GetContactByIdAsync(input.ContactId);
+			if (contact == null || contact.IsDeleted)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (contact.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!Enum.IsDefined(typeof(ContactPreplanHazardTypes), input.HazardType) ||
+				!Enum.IsDefined(typeof(ContactPreplanHazardSeverities), input.Severity))
+				return BadRequest("Unknown hazard type or severity.");
+
+			// ADP write preflight (plan 3.3); see SaveContactPreplan.
+			var writePreflight = await _protectedWriteService.PreflightWriteAsync(DepartmentId, ProtectedGrantToken, UserId, false, cancellationToken);
+			if (!writePreflight.Success)
+				return ProtectedWriteProblem(writePreflight);
+
+			var hazard = new ContactPreplanHazard
+			{
+				ContactPreplanHazardId = string.IsNullOrWhiteSpace(input.ContactPreplanHazardId) ? null : input.ContactPreplanHazardId,
+				ContactId = contact.ContactId,
+				DepartmentId = DepartmentId,
+				HazardType = input.HazardType,
+				Severity = input.Severity,
+				Title = input.Title,
+				Description = input.Description,
+				LocationDescription = input.LocationDescription,
+				GpsCoordinates = input.GpsCoordinates,
+				ShouldAlert = input.ShouldAlert
+			};
+
+			ContactPreplanHazard saved;
+			try
+			{
+				saved = await _contactsService.SaveHazardAsync(hazard, UserId, IpAddressHelper.GetRequestIP(Request, true),
+					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+			}
+			catch (InvalidOperationException ex) when (ex.Message == IContactPreplanOwnershipGate.RecordsOwnedReason)
+			{
+				// RMS-5 write cutover: the occupancy master owns this pre-plan now; edit it under Records.
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: "Pre-plans for this department are owned by Records occupancies.", type: "contacts_preplan_records_owned");
+			}
+			catch (InvalidOperationException)
+			{
+				// The hazard id belongs to another contact/department: value-free not found.
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			result.Id = saved.ContactPreplanHazardId;
+			result.PageSize = 0;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Removes a premise hazard from a contact
+		/// </summary>
+		/// <param name="contactPreplanHazardId">Id of the hazard</param>
+		[HttpDelete("DeleteContactHazard")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		public async Task<ActionResult<DeleteContactHazardResult>> DeleteContactHazard(string contactPreplanHazardId, CancellationToken cancellationToken)
+		{
+			var result = new DeleteContactHazardResult();
+
+			bool deleted;
+			try
+			{
+				deleted = await _contactsService.DeleteHazardAsync(contactPreplanHazardId, DepartmentId, UserId, IpAddressHelper.GetRequestIP(Request, true),
+					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+			}
+			catch (InvalidOperationException ex) when (ex.Message == IContactPreplanOwnershipGate.RecordsOwnedReason)
+			{
+				// RMS-5 write cutover: the occupancy master owns this pre-plan now; edit it under Records.
+				return Problem(statusCode: StatusCodes.Status409Conflict, title: "Pre-plans for this department are owned by Records occupancies.", type: "contacts_preplan_records_owned");
+			}
+
+			if (!deleted)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			result.PageSize = 0;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
 		// ── Private helpers ──────────────────────────────────────────────────────
+
+		/// <summary>The caller's Protected Data Grant, when presented (plan section 3.1 step 6).</summary>
+		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
+
+		/// <summary>Maps a blocked protected write to its value-free problem response (plan 3.3/19.2).</summary>
+		private ObjectResult ProtectedWriteProblem(ProtectedWriteResult write) =>
+			Problem(type: write.Reason,
+				title: write.Reason == "broker_unavailable"
+					? "Protected storage is temporarily unavailable; the change was not saved."
+					: "Recent multi-factor verification is required to modify protected data.",
+				statusCode: write.Reason == "broker_unavailable" ? StatusCodes.Status503ServiceUnavailable : StatusCodes.Status403Forbidden);
+
+		/// <summary>Stamps the batch-level protection metadata onto a pre-plan DTO and its hazards (per-row redaction ids come from the converters).</summary>
+		public static void ApplyProtection(ContactPreplanData data, ProtectedReadResult preplanRead, ProtectedReadResult hazardRead)
+		{
+			if (data == null)
+				return;
+
+			data.IsProtected = (preplanRead?.IsProtected ?? false) || (hazardRead?.IsProtected ?? false);
+			data.ProtectedReason = preplanRead?.ProtectedReason ?? hazardRead?.ProtectedReason;
+
+			foreach (var hazard in data.Hazards)
+			{
+				hazard.IsProtected = hazardRead?.IsProtected ?? false;
+				hazard.ProtectedReason = hazardRead?.ProtectedReason;
+			}
+		}
 
 		/// <summary>
 		/// Returns true if the current caller holds a group-admin claim for any group.
@@ -403,6 +781,109 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			return conNote;
+		}
+
+		public static ContactPreplanData ConvertPreplanData(ContactPreplan preplan, Department department)
+		{
+			var data = new ContactPreplanData();
+			data.ContactPreplanId = preplan.ContactPreplanId;
+			data.ContactId = preplan.ContactId;
+			data.ConstructionType = preplan.ConstructionType;
+			data.ConstructionTypeName = EnumName<ContactPreplanConstructionTypes>(preplan.ConstructionType);
+			data.RoofType = preplan.RoofType;
+			data.RoofTypeName = EnumName<ContactPreplanRoofTypes>(preplan.RoofType);
+			data.OccupancyType = preplan.OccupancyType;
+			data.OccupancyTypeName = EnumName<ContactPreplanOccupancyTypes>(preplan.OccupancyType);
+			data.OccupancyNotes = preplan.OccupancyNotes;
+			data.OccupancyHours = preplan.OccupancyHours;
+			data.OccupantLoad = preplan.OccupantLoad;
+			data.HasOccupantsNeedingAssistance = preplan.HasOccupantsNeedingAssistance;
+			data.OccupantsNeedingAssistanceNotes = preplan.OccupantsNeedingAssistanceNotes;
+			data.GasShutoffLocation = preplan.GasShutoffLocation;
+			data.ElectricShutoffLocation = preplan.ElectricShutoffLocation;
+			data.WaterShutoffLocation = preplan.WaterShutoffLocation;
+			data.UtilityNotes = preplan.UtilityNotes;
+			data.KnoxBoxLocation = preplan.KnoxBoxLocation;
+			data.GateCode = preplan.GateCode;
+			data.AlarmPanelLocation = preplan.AlarmPanelLocation;
+			data.AlarmCompany = preplan.AlarmCompany;
+			data.AlarmCompanyPhone = preplan.AlarmCompanyPhone;
+			data.AccessNotes = preplan.AccessNotes;
+			data.NearestHydrantLocation = preplan.NearestHydrantLocation;
+			data.RequiredFireFlowGpm = preplan.RequiredFireFlowGpm;
+			data.WaterSupplyNotes = preplan.WaterSupplyNotes;
+			data.EmergencyContactName = preplan.EmergencyContactName;
+			data.EmergencyContactPhone = preplan.EmergencyContactPhone;
+			data.SecondaryContactName = preplan.SecondaryContactName;
+			data.SecondaryContactPhone = preplan.SecondaryContactPhone;
+			data.HazmatOnSite = preplan.HazmatOnSite;
+			data.GeneralHazardNotes = preplan.GeneralHazardNotes;
+			data.TacticalSummary = preplan.TacticalSummary;
+
+			data.LastReviewedOnUtc = preplan.LastReviewedOn;
+			if (preplan.LastReviewedOn.HasValue)
+				data.LastReviewedOn = preplan.LastReviewedOn.Value.FormatForDepartment(department);
+			data.ReviewedByUserId = preplan.ReviewedByUserId;
+
+			data.NextReviewDueUtc = preplan.NextReviewDue;
+			if (preplan.NextReviewDue.HasValue)
+				data.NextReviewDue = preplan.NextReviewDue.Value.FormatForDepartment(department);
+			data.IsReviewOverdue = preplan.IsReviewOverdue(DateTime.UtcNow);
+
+			data.AddedOnUtc = preplan.AddedOn;
+			data.AddedOn = preplan.AddedOn.FormatForDepartment(department);
+			data.AddedByUserId = preplan.AddedByUserId;
+
+			data.EditedOnUtc = preplan.EditedOn;
+			if (preplan.EditedOn.HasValue)
+				data.EditedOn = preplan.EditedOn.Value.FormatForDepartment(department);
+			data.EditedByUserId = preplan.EditedByUserId;
+
+			if (preplan.Hazards != null)
+			{
+				foreach (var hazard in preplan.Hazards)
+					data.Hazards.Add(ConvertHazardData(hazard, department));
+			}
+
+			// Per ROW, not the batch union (ProtectedRedactedFieldIdsTests): only the fields this plan actually had withheld.
+			data.RedactedFields = Resgrid.Services.ProtectedReadService.GetRedactedFieldIds(preplan, Resgrid.Services.ProtectedReadService.ContactPreplanFieldAccessors);
+
+			return data;
+		}
+
+		public static ContactHazardData ConvertHazardData(ContactPreplanHazard hazard, Department department)
+		{
+			var data = new ContactHazardData();
+			data.ContactPreplanHazardId = hazard.ContactPreplanHazardId;
+			data.ContactPreplanId = hazard.ContactPreplanId;
+			data.ContactId = hazard.ContactId;
+			data.HazardType = hazard.HazardType;
+			data.HazardTypeName = EnumName<ContactPreplanHazardTypes>(hazard.HazardType);
+			data.Severity = hazard.Severity;
+			data.SeverityName = EnumName<ContactPreplanHazardSeverities>(hazard.Severity);
+			data.Title = hazard.Title;
+			data.Description = hazard.Description;
+			data.LocationDescription = hazard.LocationDescription;
+			data.GpsCoordinates = hazard.GpsCoordinates;
+			data.ShouldAlert = hazard.ShouldAlert;
+
+			data.AddedOnUtc = hazard.AddedOn;
+			data.AddedOn = hazard.AddedOn.FormatForDepartment(department);
+			data.AddedByUserId = hazard.AddedByUserId;
+
+			data.EditedOnUtc = hazard.EditedOn;
+			if (hazard.EditedOn.HasValue)
+				data.EditedOn = hazard.EditedOn.Value.FormatForDepartment(department);
+			data.EditedByUserId = hazard.EditedByUserId;
+
+			data.RedactedFields = Resgrid.Services.ProtectedReadService.GetRedactedFieldIds(hazard, Resgrid.Services.ProtectedReadService.ContactPreplanHazardFieldAccessors);
+
+			return data;
+		}
+
+		private static string EnumName<TEnum>(int value) where TEnum : struct, Enum
+		{
+			return Enum.IsDefined(typeof(TEnum), value) ? Enum.GetName(typeof(TEnum), value) : value.ToString();
 		}
 	}
 }

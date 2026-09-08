@@ -39,6 +39,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsService _recordsService;
 		private readonly IRecordsBulkPacketService _bulk;
 		private readonly IRecordsFieldRolloutService _fieldRollout;
+		private readonly IFeatureToggleService _featureToggles;
 		private readonly IRecordsCutoverService _cutoverService;
 		private readonly IRecordsAuthorizationService _recordsAuthorizationService;
 		private readonly IRecordsUdfService _udf;
@@ -71,7 +72,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICompositeViewEngine viewEngine, IPdfProvider pdfProvider, IRecordsSearchService recordsSearch, IDepartmentDataProtectionService dataProtection,
 			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard, IRecordsUdfService udf,
 			IRecordsProtectionService protection, IProtectedGrantContext grantContext, IRecordsRevealService reveal, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IContactsService contacts,
-			IRecordsBulkPacketService bulk, IRecordsFieldRolloutService fieldRollout)
+			IRecordsBulkPacketService bulk, IRecordsFieldRolloutService fieldRollout, IFeatureToggleService featureToggles)
 		{
 			_fieldRollout = fieldRollout;
 			_bulk = bulk;
@@ -84,6 +85,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_grantContext = grantContext;
 			_recordsService = recordsService;
 			_cutoverService = cutoverService;
+			_featureToggles = featureToggles;
 			_recordsAuthorizationService = recordsAuthorizationService;
 			_udf = udf;
 			_departmentsService = departmentsService;
@@ -209,6 +211,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModuleState = moduleState,
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin(),
+				QualityReviewOn = await _featureToggles.IsEnabledAsync(FeatureFlagKeys.RecordsQualityReview, DepartmentId),
 				Year = year,
 				DefinitionKey = definitionKey,
 				StateFilter = state,
@@ -1608,6 +1611,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			try
 			{
 				model.Rollout = await _fieldRollout.GetAsync(DepartmentId, UserId, windowDays, cancellationToken);
+				// The service clamps the window; the label has to say the window the numbers actually cover.
+				model.WindowDays = model.Rollout.WindowDays;
 			}
 			catch (UnauthorizedAccessException)
 			{

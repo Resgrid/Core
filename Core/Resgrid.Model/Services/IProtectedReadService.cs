@@ -160,6 +160,22 @@ namespace Resgrid.Model.Services
 		Task<ProtectedReadResult> ResolveContactNotesForReadAsync(int departmentId,
 			IReadOnlyList<ContactNote> notes, string grantToken, string userId, CancellationToken cancellationToken = default);
 
+		/// <summary>Resolves contact pre-plans (catalog v12): the pre-plan's own text fields only; hazards resolve separately.</summary>
+		Task<ProtectedReadResult> ResolveContactPreplansForReadAsync(int departmentId,
+			IReadOnlyList<ContactPreplan> preplans, string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>Resolves premise hazards (catalog v12): title, description, location text and coordinates.</summary>
+		Task<ProtectedReadResult> ResolveContactPreplanHazardsForReadAsync(int departmentId,
+			IReadOnlyList<ContactPreplanHazard> hazards, string grantToken, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Resolves contact site attachments (catalog v12): name and file name always; includeData additionally
+		/// decrypts the binary payload, and a concealed payload reads as null (ciphertext bytes are never served).
+		/// </summary>
+		Task<ProtectedReadResult> ResolveContactAttachmentsForReadAsync(int departmentId,
+			IReadOnlyList<ContactAttachment> attachments, string grantToken, string userId,
+			bool includeData = false, CancellationToken cancellationToken = default);
+
 		/// <summary>Resolves a member's department-scoped emergency contacts (catalog v4).</summary>
 		Task<ProtectedReadResult> ResolveMemberEmergencyContactsForReadAsync(int departmentId,
 			IReadOnlyList<DepartmentMemberEmergencyContact> contacts, string grantToken, string userId,

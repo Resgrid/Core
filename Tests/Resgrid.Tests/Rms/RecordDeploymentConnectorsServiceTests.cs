@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using Resgrid.Config;
 using Resgrid.Model;
@@ -326,6 +328,26 @@ namespace Resgrid.Tests.Rms
 			result.Run.RequestCount.Should().Be(2); result.Run.OrdersCreated.Should().Be(2);
 			_h.Feed.CursorsSeen.Should().Equal(null, "p2");
 			_h.Defs.Connectors.Single().LastCursor.Should().BeNull("the last page ended the cursor");
+			_h.Defs.OrdersRepo.Verify(r => r.GetForDepartmentAsync(Dept, true), Times.Once,
+				"the department's orders are matched against once per run, not re-read for every page");
+		}
+
+		[Test]
+		public async Task A_run_that_cannot_claim_the_connector_is_skipped_rather_than_run_twice()
+		{
+			var connector = await ReadyAsync();
+			_h.Feed.Serve(Feed("v1", Order("O-1001", "open", Request("O-1"))));
+			// Another runner holds the connector: the claim is what stops two runs from spending the same hourly
+			// budget, importing the same pages and overwriting each other's cursor.
+			_h.Defs.ConnectorsRepo.Setup(r => r.TryBumpRowVersionAsync(Dept, connector.RmsExternalOrderConnectorId, It.IsAny<long>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+
+			var result = await _h.Connectors.RunAsync(Dept, Admin, connector.RmsExternalOrderConnectorId);
+
+			result.Run.Outcome.Should().Be(RmsConnectorRunOutcomes.Rejected);
+			_h.Feed.Fetches.Should().Be(0);
+			_h.Defs.Orders.Should().BeEmpty();
+			_h.Defs.ConnectorRuns.Should().ContainSingle("a skipped run is still recorded");
+			_h.Defs.Connectors.Single().LastPolledOn.Should().BeNull("the connector row belongs to whoever holds the claim");
 		}
 
 		#endregion

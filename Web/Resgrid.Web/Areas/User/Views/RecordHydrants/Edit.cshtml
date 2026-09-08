@@ -1,0 +1,42 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordHydrantEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var title = Model.IsNew ? L["NewHydrant"].Value : L["EditHydrant"].Value;
+	ViewBag.Title = "Resgrid | " + title;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordHydrants" asp-action="Index" asp-route-area="User">@L["Hydrants"]</a></li>
+			<li class="active"><strong>@title</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox"><div class="ibox-content">
+		<form method="post" class="form-horizontal" asp-controller="RecordHydrants" asp-action="Edit" asp-route-area="User">
+			@Html.AntiForgeryToken()
+			<input type="hidden" asp-for="Hydrant.RmsHydrantId" /><input type="hidden" asp-for="Hydrant.RowVersion" /><input type="hidden" asp-for="Hydrant.InService" />
+			<div class="form-group"><label class="col-sm-3 control-label">@L["HydrantNumber"]</label><div class="col-sm-9"><input class="form-control" asp-for="Hydrant.HydrantNumber" maxlength="50" required /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Type"]</label><div class="col-sm-9"><select class="form-control" asp-for="Hydrant.Type" asp-items="Model.Types"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Coordinates"]</label><div class="col-sm-4"><input class="form-control" asp-for="Hydrant.Latitude" required /></div><div class="col-sm-5"><input class="form-control" asp-for="Hydrant.Longitude" required /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["AddressText"]</label><div class="col-sm-9"><input class="form-control" asp-for="Hydrant.AddressText" maxlength="500" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["HydrantOwner"]</label><div class="col-sm-4"><select class="form-control" asp-for="Hydrant.OwnerKind" asp-items="Model.OwnerKinds"></select></div><div class="col-sm-5"><input class="form-control" asp-for="Hydrant.OwnerName" maxlength="200" placeholder="@L["OwnerName"]" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["MainSize"]</label><div class="col-sm-9"><input class="form-control" asp-for="Hydrant.MainSizeInches" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["StaticPressure"] / @L["ResidualPressure"]</label><div class="col-sm-4"><input class="form-control" asp-for="Hydrant.StaticPressurePsi" /></div><div class="col-sm-5"><input class="form-control" asp-for="Hydrant.ResidualPressurePsi" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["FlowGpm"]</label><div class="col-sm-9"><input class="form-control" asp-for="Hydrant.FlowGpm" /><span class="help-block">@L["FlowGpmHelp"]</span></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["PoiId"]</label><div class="col-sm-9"><input class="form-control" asp-for="Hydrant.PoiId" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["InspectionNotes"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Hydrant.Notes" rows="3" maxlength="4000"></textarea></div></div>
+			<div class="form-group"><div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-primary"><i class="fa fa-save"></i> @L["Save"]</button>
+				<a class="btn btn-default" asp-controller="RecordHydrants" asp-action="Index" asp-route-area="User">@L["BackToRecords"]</a>
+			</div></div>
+		</form>
+	</div></div>
+</div>

@@ -1,0 +1,35 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordInvestigationOpenView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["OpenCase"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["OpenCase"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordInvestigations" asp-action="Index" asp-route-area="User">@L["Investigations"]</a></li>
+			<li class="active"><strong>@L["OpenCase"]</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox"><div class="ibox-content">
+		<p class="text-muted">@L["OpenCaseIntro"]</p>
+		<form method="post" class="form-horizontal" asp-controller="RecordInvestigations" asp-action="Open" asp-route-area="User">
+			@Html.AntiForgeryToken()
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Title"]</label><div class="col-sm-9"><input class="form-control" asp-for="Title" maxlength="200" required /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Occupancies"]</label><div class="col-sm-9"><select class="form-control" asp-for="OccupancyId" asp-items="Model.Occupancies"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["CallId"]</label><div class="col-sm-9"><input class="form-control" type="number" asp-for="CallId" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["IncidentSummary"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="IncidentSummary" rows="4" maxlength="4000"></textarea></div></div>
+			<div class="form-group"><div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-primary"><i class="fa fa-folder-open"></i> @L["OpenCase"]</button>
+				<a class="btn btn-default" asp-controller="RecordInvestigations" asp-action="Index" asp-route-area="User">@L["BackToRecords"]</a>
+			</div></div>
+		</form>
+	</div></div>
+</div>

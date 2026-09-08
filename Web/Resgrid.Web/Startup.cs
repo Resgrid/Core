@@ -259,6 +259,7 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.RecordReport_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordReport, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.RecordDisclosure_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDisclosure, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.RecordLegalHold_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordLegalHold, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Record_PreventionAdmin, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.PreventionAdmin));
 
 				options.AddPolicy(ResgridResources.Shift_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.Shift_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.Update));

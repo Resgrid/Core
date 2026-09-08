@@ -1,0 +1,88 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordOccupancyEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var title = Model.IsNew ? L["NewOccupancy"].Value : L["EditOccupancy"].Value;
+	ViewBag.Title = "Resgrid | " + title;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordOccupancies" asp-action="Index" asp-route-area="User">@L["Occupancies"]</a></li>
+			<li class="active"><strong>@title</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (Model.Occupancy.IsProtected) { <div class="alert alert-warning">@L["ProtectedEditHint"]</div> }
+	<form method="post" class="form-horizontal" asp-controller="RecordOccupancies" asp-action="Edit" asp-route-area="User">
+		@Html.AntiForgeryToken()
+		<input type="hidden" asp-for="Occupancy.RmsOccupancyId" />
+		<input type="hidden" asp-for="Occupancy.RowVersion" />
+		<input type="hidden" asp-for="Occupancy.OccupancyNumber" />
+		<div class="row">
+			<div class="col-md-6">
+				<div class="ibox"><div class="ibox-title"><h5>@L["OccupancyIdentity"]</h5></div><div class="ibox-content">
+					<div class="form-group"><label class="col-sm-4 control-label">@L["DefinitionName"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.Name" maxlength="200" required /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["DeploymentStatus"]</label><div class="col-sm-8"><select class="form-control" asp-for="Occupancy.Status" asp-items="Model.Statuses"></select></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["AddressText"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.AddressText" maxlength="500" required /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["Municipality"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.City" maxlength="100" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["StateProvince"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.StateProvince" maxlength="100" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["PostalCode"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.PostalCode" maxlength="20" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["Country"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.Country" maxlength="100" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["Coordinates"]</label><div class="col-sm-4"><input class="form-control" asp-for="Occupancy.Latitude" placeholder="Lat" /></div><div class="col-sm-4"><input class="form-control" asp-for="Occupancy.Longitude" placeholder="Lon" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["ParcelId"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.ParcelId" maxlength="100" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["PoiId"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.PoiId" /></div></div>
+				</div></div>
+				<div class="ibox"><div class="ibox-title"><h5>@L["OccupancyStructure"]</h5></div><div class="ibox-content">
+					<div class="form-group"><label class="col-sm-4 control-label">@L["ConstructionType"]</label><div class="col-sm-8"><select class="form-control" asp-for="Occupancy.ConstructionType" asp-items="Model.ConstructionTypes"></select></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["RoofType"]</label><div class="col-sm-8"><select class="form-control" asp-for="Occupancy.RoofType" asp-items="Model.RoofTypes"></select></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["OccupancyType"]</label><div class="col-sm-8"><select class="form-control" asp-for="Occupancy.OccupancyType" asp-items="Model.OccupancyTypes"></select></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["Stories"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.Stories" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["YearBuilt"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.YearBuilt" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["SquareFeet"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.SquareFeet" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["OccupantLoad"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.OccupantLoad" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["OccupancyHours"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.OccupancyHours" maxlength="200" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["OccupantsNeedingAssistance"]</label><div class="col-sm-8"><label class="checkbox-inline"><input type="checkbox" asp-for="Occupancy.HasOccupantsNeedingAssistance" /> @L["Yes"]</label><textarea class="form-control" asp-for="Occupancy.OccupantsNeedingAssistanceNotes" rows="2" maxlength="2000"></textarea></div></div>
+				</div></div>
+			</div>
+			<div class="col-md-6">
+				<div class="ibox"><div class="ibox-title"><h5>@L["OccupancyProtection"]</h5></div><div class="ibox-content">
+					<div class="form-group"><label class="col-sm-4 control-label">@L["SprinklerType"]</label><div class="col-sm-8"><select class="form-control" asp-for="Occupancy.SprinklerType" asp-items="Model.SprinklerTypes"></select></div></div>
+					<div class="form-group"><div class="col-sm-offset-4 col-sm-8"><label class="checkbox-inline"><input type="checkbox" asp-for="Occupancy.HasStandpipe" /> @L["Standpipe"]</label> <label class="checkbox-inline"><input type="checkbox" asp-for="Occupancy.HasFireAlarm" /> @L["FireAlarm"]</label></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["FdcLocation"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.FdcLocation" maxlength="500" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["GasShutoff"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.GasShutoffLocation" maxlength="500" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["ElectricShutoff"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.ElectricShutoffLocation" maxlength="500" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["WaterShutoff"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.WaterShutoffLocation" maxlength="500" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["UtilityNotes"]</label><div class="col-sm-8"><textarea class="form-control" asp-for="Occupancy.UtilityNotes" rows="2" maxlength="2000"></textarea></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["NearestHydrant"]</label><div class="col-sm-8">@if (Model.Hydrants.Count > 0) { <select class="form-control" asp-for="Occupancy.NearestHydrantId" asp-items="Model.Hydrants"></select> } else { <input class="form-control" asp-for="Occupancy.NearestHydrantId" maxlength="36" /> }</div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["RequiredFireFlow"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.RequiredFireFlowGpm" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["WaterSupplyNotes"]</label><div class="col-sm-8"><textarea class="form-control" asp-for="Occupancy.WaterSupplyNotes" rows="2" maxlength="2000"></textarea></div></div>
+				</div></div>
+				<div class="ibox"><div class="ibox-title"><h5>@L["OccupancyAccess"]</h5></div><div class="ibox-content">
+					<div class="form-group"><label class="col-sm-4 control-label">@L["KnoxBox"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.KnoxBoxLocation" maxlength="500" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["GateCode"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.GateCode" maxlength="100" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["AlarmPanel"]</label><div class="col-sm-8"><input class="form-control" asp-for="Occupancy.AlarmPanelLocation" maxlength="500" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["AlarmCompany"]</label><div class="col-sm-5"><input class="form-control" asp-for="Occupancy.AlarmCompany" maxlength="200" /></div><div class="col-sm-3"><input class="form-control" asp-for="Occupancy.AlarmCompanyPhone" maxlength="50" placeholder="@L["ContactNumber"]" /></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["AccessNotes"]</label><div class="col-sm-8"><textarea class="form-control" asp-for="Occupancy.AccessNotes" rows="2" maxlength="2000"></textarea></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["EmergencyContact"]</label><div class="col-sm-5"><input class="form-control" asp-for="Occupancy.EmergencyContactName" maxlength="200" /></div><div class="col-sm-3"><input class="form-control" asp-for="Occupancy.EmergencyContactPhone" maxlength="50" placeholder="@L["ContactNumber"]" /></div></div>
+				</div></div>
+				<div class="ibox"><div class="ibox-title"><h5>@L["OccupancyTactical"]</h5></div><div class="ibox-content">
+					<div class="form-group"><div class="col-sm-offset-4 col-sm-8"><label class="checkbox-inline"><input type="checkbox" asp-for="Occupancy.HazmatOnSite" /> @L["HazmatOnSite"]</label></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["GeneralHazardNotes"]</label><div class="col-sm-8"><textarea class="form-control" asp-for="Occupancy.GeneralHazardNotes" rows="3" maxlength="4000"></textarea></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["TacticalSummary"]</label><div class="col-sm-8"><textarea class="form-control" asp-for="Occupancy.TacticalSummary" rows="4" maxlength="4000"></textarea></div></div>
+					<div class="form-group"><label class="col-sm-4 control-label">@L["ReviewDue"]</label><div class="col-sm-8"><input class="form-control" type="date" asp-for="Occupancy.NextReviewDue" asp-format="{0:yyyy-MM-dd}" /></div></div>
+				</div></div>
+			</div>
+		</div>
+		<div class="form-group"><div class="col-sm-12">
+			<button class="btn btn-primary"><i class="fa fa-save"></i> @L["Save"]</button>
+			<a class="btn btn-default" asp-controller="RecordOccupancies" asp-action="@(Model.IsNew ? "Index" : "Details")" asp-route-area="User" asp-route-id="@Model.Occupancy.RmsOccupancyId">@L["BackToRecords"]</a>
+		</div></div>
+	</form>
+</div>

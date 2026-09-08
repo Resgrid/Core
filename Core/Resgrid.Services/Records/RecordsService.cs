@@ -213,6 +213,9 @@ namespace Resgrid.Services.Records
 			}
 			record.DisplaySummary = definitionVersion == null ? BuildDisplaySummary(recordType, record, details, units) : definitionVersion.DefinitionKey;
 
+			record.CardinalityKey = BuildCardinalityKey(record, details, CardinalityFor(record, definitionVersion));
+			await GuardCardinalityAsync(record, definitionVersion);
+
 			var outboxIds = new List<long>();
 			// Concurrent creates can read the same maximum before either has inserted, and
 			// UX_RmsOperationalRecords_Department_RecordNumber then rejects the loser. Its number was never used, so
@@ -251,17 +254,31 @@ namespace Resgrid.Services.Records
 					string.IsNullOrWhiteSpace(input.DuplicateContinueReason) ? null : new { duplicateContinueReason = input.DuplicateContinueReason });
 			});
 			}
-			catch (DbException) when (scopedKey != null)
+			// One catch for every reason an insert can be rejected: an exception filter cannot await, so the
+			// idempotency lookup happens here. A key that finds no winner falls through to the other causes rather
+			// than rethrowing — a number collision on an idempotent create is still a retryable collision.
+			catch (DbException) when (scopedKey != null || record.CardinalityKey != null || (allocatesOnCreate && attempt < NumberAllocationRetries))
 			{
-				var winner = await _records.GetByIdempotencyKeyAsync(departmentId, scopedKey);
-				if (winner == null) throw;
-				return await ReplayCreateAsync(departmentId, userId, winner, requestChecksum);
-			}
-			catch (DbException) when (allocatesOnCreate && attempt < NumberAllocationRetries)
-			{
-				// The transaction rolled back, so nothing of this attempt survives; reallocate and go round again.
-				record.RecordNumber = null;
-				continue;
+				if (scopedKey != null)
+				{
+					var winner = await _records.GetByIdempotencyKeyAsync(departmentId, scopedKey);
+					if (winner != null)
+						return await ReplayCreateAsync(departmentId, userId, winner, requestChecksum);
+				}
+				if (record.CardinalityKey != null)
+				{
+					// Two creates passed the read-side guard and the index rejected this one. Re-read: if the winner is
+					// there, the author gets the same answer they would have got a moment earlier.
+					await GuardCardinalityAsync(record, definitionVersion);
+					throw;
+				}
+				if (allocatesOnCreate && attempt < NumberAllocationRetries)
+				{
+					// The transaction rolled back, so nothing of this attempt survives; reallocate and go round again.
+					record.RecordNumber = null;
+					continue;
+				}
+				throw;
 			}
 			break;
 			}
@@ -607,6 +624,8 @@ namespace Resgrid.Services.Records
 				var revision = await WriteRevisionAsync(record, draft, RmsRevisionTransition.Voided, userId, reasonCode, reasonText, AttestationStatementVersion, now, cancellationToken);
 
 				record.State = (int)RmsRecordState.Voided;
+				// A voided Record no longer holds its cardinality slot; the replacement must be creatable (plan 5.2.1).
+				record.CardinalityKey = null;
 				record.VoidedOn = now;
 				record.VoidedByUserId = userId;
 				record.VoidReasonCode = reasonCode;
@@ -639,6 +658,8 @@ namespace Resgrid.Services.Records
 			{
 				await GuardVersionAsync(record, record.RowVersion, cancellationToken);
 				record.State = (int)RmsRecordState.Cancelled;
+				// Same as void: an abandoned draft must not block the Record that replaces it.
+				record.CardinalityKey = null;
 				record.CancelledOn = now;
 				record.CancelledByUserId = userId;
 				record.ModifiedOn = now;
@@ -1184,6 +1205,60 @@ namespace Resgrid.Services.Records
 			record.ExternalId = snapshot.ExternalId;
 			record.StartedOn = snapshot.StartedOn;
 			record.EndedOn = snapshot.EndedOn;
+		}
+
+		/// <summary>
+		/// The cardinality rule in force for a Record: the version's own value for a department definition, and the
+		/// locked table for a system definition, which is where NERIS and Unit Activity get theirs (plan 5.2.1).
+		/// </summary>
+		private static RmsRecordCardinality CardinalityFor(RmsOperationalRecord record, RmsRecordDefinitionVersion definitionVersion)
+			=> definitionVersion == null
+				? RmsDefinitionKeys.CardinalityFor(record.DefinitionKey)
+				: (RmsRecordCardinality)definitionVersion.Cardinality;
+
+		/// <summary>
+		/// The value a filtered unique index enforces, or null when nothing is to be enforced. Every rule is keyed on
+		/// the Call, so a Record without one is never constrained — the same fallback incident-scoped numbering takes.
+		/// </summary>
+		private static string BuildCardinalityKey(RmsOperationalRecord record, RmsOperationalRecordDetail details, RmsRecordCardinality cardinality)
+		{
+			if (cardinality == RmsRecordCardinality.MultiplePerCall || !record.CallId.HasValue)
+				return null;
+
+			if (cardinality == RmsRecordCardinality.SingleAuthoritative)
+				// The reporting entity is the department, and DepartmentId is already the first column of the index.
+				return $"single:{record.CallId.Value}:{record.DefinitionKey}";
+
+			// OnePerSubjectPerCall: the subject is the unit the Record is about when it names one — Unit Activity —
+			// and otherwise the author, which is what a per-person record (responder exposure) is keyed on.
+			var subject = details?.UnitId.HasValue == true
+				? "unit:" + details.UnitId.Value
+				: "person:" + record.AuthorUserId;
+			return $"subject:{record.CallId.Value}:{record.DefinitionKey}:{subject}";
+		}
+
+		/// <summary>
+		/// Reads before writing so the author is handed the Record that already exists instead of a database error.
+		/// The index is still the authority: two simultaneous creates both pass this check and the loser's insert is
+		/// rejected, which is why the caller sees <see cref="RecordCardinalityException"/> from either path.
+		/// </summary>
+		private async Task GuardCardinalityAsync(RmsOperationalRecord record, RmsRecordDefinitionVersion definitionVersion)
+		{
+			if (record.CardinalityKey == null)
+				return;
+
+			var existing = (await _records.GetByCallAsync(record.DepartmentId, record.CallId.Value))?
+				.FirstOrDefault(r => string.Equals(r.CardinalityKey, record.CardinalityKey, StringComparison.Ordinal)
+					&& !string.Equals(r.RmsOperationalRecordId, record.RmsOperationalRecordId, StringComparison.Ordinal));
+			if (existing == null)
+				return;
+
+			var cardinality = CardinalityFor(record, definitionVersion);
+			var name = definitionVersion?.DefinitionKey ?? record.DefinitionKey;
+			throw new RecordCardinalityException(existing.RmsOperationalRecordId, record.DefinitionKey, cardinality,
+				cardinality == RmsRecordCardinality.SingleAuthoritative
+					? $"This call already has its {name} record. Open the existing record instead of starting another."
+					: $"This call already has a {name} record for that subject. Open the existing record instead of starting another.");
 		}
 
 		private async Task<string> AllocateRecordNumberAsync(RmsOperationalRecord record, CancellationToken cancellationToken)

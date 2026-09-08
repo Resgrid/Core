@@ -194,6 +194,7 @@ namespace Resgrid.Repositories.DataRepository
 		private static readonly string MetadataColumns = Cols("RmsExternalOrderId", "DepartmentId", "ProtectionId", "RecordId", "ProfileKey", "ProfileVersion", "HomeProfileKey", "HostProfileKey", "SourceScheme", "SourceSystem",
 			"OrderNumber", "IncidentName", "IncidentNumber", "IncidentCountry", "IncidentSubdivision", "OrderingOffice", "DispatchOffice", "RequestingAgency", "ReceivingAgency", "SendingAgency", "DepartmentRole", "CostCode",
 			"AgreementReference", "CurrencyCode", "MeasurementSystem", "TimeZoneId", "CapturedOffsetMinutes", "SourceCapturedOn", "SourceVersion", "ArtifactFileName", "ArtifactContentType", "ArtifactChecksum", "ArtifactSafeUrl",
+			"ConnectorId", "OwnershipMarker",
 			"Status", "MobilizedOn", "ReleasedOn", "ClosedOutOn", "ClosedOutByUserId", "CloseoutNotes", "IsProtected", "ProtectedCatalogVersion", "CreatedOn", "CreatedByUserId", "ModifiedOn", "ModifiedByUserId", "RowVersion", "DeletedOn");
 
 		public RmsExternalOrdersRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -238,5 +239,8 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<RmsExternalOrderFill> GetByIdForDepartmentAsync(int departmentId, string fillId)
 			=> QueryFirstOrDefaultAsync<RmsExternalOrderFill>($"SELECT * FROM {Tbl("RmsExternalOrderFills")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExternalOrderFillId")} = {P}Id AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, Id = fillId });
+
+		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string fillId, long expectedVersion, CancellationToken cancellationToken = default)
+			=> await ExecuteAsync($"UPDATE {Tbl("RmsExternalOrderFills")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExternalOrderFillId")} = {P}Id AND {Col("RowVersion")} = {P}Version AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, Id = fillId, Version = expectedVersion }, cancellationToken) == 1;
 	}
 }

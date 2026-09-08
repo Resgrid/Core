@@ -15,6 +15,11 @@ namespace Resgrid.Web.Areas.User.Models.Contacts
 		public List<RouteStop> RouteStops { get; set; }
 		public List<RoutePlan> RoutePlans { get; set; }
 
+		/// <summary>Pre-plan (null when none), hazards and attachment metadata for the Pre-Plan / Files tabs (Contacts plan Phase A).</summary>
+		public ContactPreplan Preplan { get; set; }
+		public List<ContactPreplanHazard> Hazards { get; set; } = new List<ContactPreplanHazard>();
+		public List<ContactAttachment> Attachments { get; set; } = new List<ContactAttachment>();
+
 		/// <summary>ADP: true when this contact carries protected fields rendered as REDACTED (plan 7.2).</summary>
 		public bool IsProtectedContact { get; set; }
 	}

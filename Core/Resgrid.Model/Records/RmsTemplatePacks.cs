@@ -138,6 +138,8 @@ namespace Resgrid.Model
 		public string Category { get; set; }
 		public string Description { get; set; }
 		public RmsLifecyclePreset LifecyclePreset { get; set; } = RmsLifecyclePreset.QuickEntry;
+		/// <summary>How many Records of this definition may exist on one Call (plan section 5.2.1).</summary>
+		public RmsRecordCardinality Cardinality { get; set; } = RmsRecordCardinality.MultiplePerCall;
 		public string NumberPrefix { get; set; }
 		/// <summary>Template default for <see cref="RecordDefinitionNumbering.PerIncidentSequence"/>; ICS-style forms number per incident.</summary>
 		public bool PerIncidentSequence { get; set; }

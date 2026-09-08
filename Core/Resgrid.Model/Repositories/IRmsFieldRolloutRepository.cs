@@ -9,7 +9,7 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsFieldRolloutEventsRepository : IRepository<RmsFieldRolloutEvent>
 	{
 		/// <summary>Every event in the window, oldest first. Bounded by <paramref name="take"/> so a dashboard cannot pull the archive.</summary>
-		Task<IEnumerable<RmsFieldRolloutEvent>> GetForWindowAsync(int departmentId, DateTime sinceUtc, int take);
+		Task<IEnumerable<RmsFieldRolloutEvent>> GetForWindowAsync(int departmentId, DateTime sinceUtc, int take, CancellationToken cancellationToken = default);
 
 		/// <summary>Inserts a batch in one round trip; returns how many rows were written.</summary>
 		Task<int> InsertBatchAsync(IEnumerable<RmsFieldRolloutEvent> events, CancellationToken cancellationToken = default);

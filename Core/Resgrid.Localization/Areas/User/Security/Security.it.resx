@@ -992,4 +992,6 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Chi può applicare e rimuovere i vincoli legali, che sospendono la conservazione e impediscono l'invalidazione di un rapporto.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Riassegnare bozze di rapporto</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Chi può trasferire una bozza di rapporto a un altro autore, ad esempio quando l'autore originale non è disponibile.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Gestire i dati di prevenzione</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Chi può creare e modificare occupazioni, programmi di ispezione e raccolte di norme, idranti, permessi e attività di riduzione del rischio comunitario. La lettura dei dati di prevenzione richiede solo l'accesso ai Registri; le indagini sono regolate dal permesso sui registri riservati e dall'appartenenza al caso.</value></data>
 </root>

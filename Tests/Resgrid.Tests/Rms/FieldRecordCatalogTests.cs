@@ -307,6 +307,22 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task A_transient_catalog_failure_is_a_retry_rather_than_a_reset_for_every_device()
+		{
+			Publish("shift-log", "Shift log");
+			_definitions.Setup(d => d.ListAsync(Dept, It.IsAny<bool>())).ThrowsAsync(new TimeoutException("the database was busy"));
+
+			var catalog = await _service.GetCatalogAsync(Dept, Me, new FieldRecordCatalogRequest { Origin = RmsOriginClient.Responder, AppVersion = "5.2.0" });
+			catalog.Ok.Should().BeFalse();
+			catalog.Reasons.Should().Contain(FieldRecordCatalogV1.ExclusionReasons.CatalogUnavailable);
+
+			var bundle = await _service.SyncAsync(Dept, Me, new FieldRecordSyncRequest { Origin = RmsOriginClient.Responder, AppVersion = "5.2.0", Since = 1_700_000_000_000, ScopeStamp = "scope-1" });
+			bundle.Ok.Should().BeFalse();
+			bundle.Reasons.Should().Contain(FieldRecordCatalogV1.ExclusionReasons.CatalogUnavailable);
+			bundle.ResetRequired.Should().BeFalse("a database that hiccuped must not send every syncing device back for a full download at once");
+		}
+
+		[Test]
 		public void Version_comparison_is_numeric_and_tolerates_prereleases()
 		{
 			FieldRecordCatalogV1.CompareVersions("1.2.10", "1.2.9").Should().BePositive();

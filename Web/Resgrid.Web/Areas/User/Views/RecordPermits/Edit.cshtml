@@ -1,0 +1,41 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordPermitEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var title = Model.IsNew ? L["NewPermit"].Value : L["EditPermit"].Value;
+	ViewBag.Title = "Resgrid | " + title;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordPermits" asp-action="Index" asp-route-area="User">@L["Permits"]</a></li>
+			<li class="active"><strong>@title</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (Model.Permit.IsProtected) { <div class="alert alert-warning">@L["ProtectedEditHint"]</div> }
+	<div class="ibox"><div class="ibox-content">
+		<form method="post" class="form-horizontal" asp-controller="RecordPermits" asp-action="Edit" asp-route-area="User">
+			@Html.AntiForgeryToken()
+			<input type="hidden" asp-for="Permit.RmsPermitId" /><input type="hidden" asp-for="Permit.RowVersion" />
+			<div class="form-group"><label class="col-sm-3 control-label">@L["PermitType"]</label><div class="col-sm-9"><select class="form-control" asp-for="Permit.RmsPermitTypeId" asp-items="Model.Types" required></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Occupancies"]</label><div class="col-sm-9"><select class="form-control" asp-for="Permit.RmsOccupancyId" asp-items="Model.Occupancies"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Applicant"]</label><div class="col-sm-9"><input class="form-control" asp-for="Permit.ApplicantName" maxlength="200" required /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["ApplicantPhone"] / @L["ApplicantEmail"]</label><div class="col-sm-4"><input class="form-control" asp-for="Permit.ApplicantPhone" maxlength="50" /></div><div class="col-sm-5"><input class="form-control" asp-for="Permit.ApplicantEmail" maxlength="200" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["ContactId"]</label><div class="col-sm-9"><input class="form-control" asp-for="Permit.ApplicantContactId" maxlength="36" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["DefinitionDescription"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Permit.Description" rows="3" maxlength="4000" required></textarea></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Conditions"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Permit.Conditions" rows="4" maxlength="4000"></textarea></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["ExpiresOn"]</label><div class="col-sm-9"><input class="form-control" type="date" asp-for="Permit.ExpiresOn" asp-format="{0:yyyy-MM-dd}" /><span class="help-block">@L["ExpiresOnHelp"]</span></div></div>
+			<div class="form-group"><div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-primary"><i class="fa fa-save"></i> @(Model.IsNew ? L["ApplyPermit"].Value : L["Save"].Value)</button>
+				<a class="btn btn-default" asp-controller="RecordPermits" asp-action="Index" asp-route-area="User">@L["BackToRecords"]</a>
+			</div></div>
+		</form>
+	</div></div>
+</div>

@@ -247,5 +247,12 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Whether check-in timers are enabled for this call
 		/// </summary>
 		public bool CheckInTimersEnabled { get; set; }
+
+		/// <summary>
+		/// Contacts linked to this call (primary first) with pre-plan / alert / hazard indicators.
+		/// Populated by GetCall and GetActiveCalls; empty on other list endpoints. Use
+		/// GetCallSiteInfo for the full site knowledge. Contacts plan Phase A, decision 3a.
+		/// </summary>
+		public List<CallContactResultData> Contacts { get; set; } = new List<CallContactResultData>();
 	}
 }

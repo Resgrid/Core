@@ -1753,6 +1753,8 @@ namespace Resgrid.Providers.Claims
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordLegalHold, ResgridClaimTypes.Actions.Update) };
 				case PermissionTypes.ReassignRecordDrafts:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Reassign) };
+				case PermissionTypes.RecordsPreventionAdmin:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.PreventionAdmin) };
 				default:
 					return NoGrants;
 			}

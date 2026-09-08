@@ -75,5 +75,8 @@
   "RecordLegalHoldReleased": 157,
   "RecordEvidenceCaptured": 158,
   "RecordPurged": 159,
-  "RecordExportScheduled": 160
+  "RecordExportScheduled": 160,
+  "RecordInspectionCompleted": 161,
+  "RecordViolationOverdue": 162,
+  "RecordPermitExpiring": 163
 }

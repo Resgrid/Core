@@ -46,10 +46,16 @@ namespace Resgrid.Model
 			public const string Retired = "retired";
 			public const string NotPublished = "not_published";
 			public const string ProtectedDataUnavailable = "protected_data_unavailable";
+
+			/// <summary>
+			/// The server could not read the catalog this time — a transient failure, not a decision about this app
+			/// or this member. A client retries; unlike every other refusal it is not grounds for discarding a cache.
+			/// </summary>
+			public const string CatalogUnavailable = "catalog_unavailable";
 			public static readonly IReadOnlyList<string> All = new[]
 			{
 				OriginNotField, ModuleDisabled, RecordsNotUsable, AppDisabled, AppVersionTooOld, NotMember, SurfaceNotEnabled, ContextNotAllowed, ContextNotVerified,
-				CapabilityUnsupported, Retired, NotPublished, ProtectedDataUnavailable
+				CapabilityUnsupported, Retired, NotPublished, ProtectedDataUnavailable, CatalogUnavailable
 			};
 		}
 

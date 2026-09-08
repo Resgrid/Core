@@ -434,4 +434,10 @@
   <data name="EditContact" xml:space="preserve">
     <value>Editar contacto</value>
   </data>
+  <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
+    <value>Los planes previos de este departamento ahora se mantienen como ocupaciones en Registros. Esta página es de solo lectura; edite la ocupación en Registros.</value>
+  </data>
+  <data name="PreplanOpenOccupancy" xml:space="preserve">
+    <value>Abrir ocupación</value>
+  </data>
 </root>

@@ -1,0 +1,85 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordsHealthView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["RecordsHealth"];
+	var t = Model.Telemetry;
+	var p = Model.Prevention;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["RecordsHealth"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li class="active"><strong>@L["RecordsHealth"]</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	<p class="text-muted">@L["RecordsHealthIntro"]</p>
+	<form method="get" class="form-inline m-b-sm" asp-controller="RecordsHealth" asp-action="Index" asp-route-area="User">
+		<label>@L["TelemetryWindow"]</label>
+		<select class="form-control" name="windowHours">@foreach (var h in new[] { 1, 6, 24, 72, 168, 720 }) { <option value="@h" selected="@(h == Model.WindowHours)">@h h</option> }</select>
+		<button class="btn btn-default">@L["Filter"]</button>
+		<span class="text-muted m-l-sm">@L["GeneratedOn"] @RmsEnumDisplay.Utc(t.GeneratedOn)</span>
+	</form>
+	@foreach (var a in t.Alerts) { <div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> @a</div> }
+	@foreach (var w in t.Warnings) { <div class="alert alert-warning">@w</div> }
+	@if (t.Alerts.Count == 0 && t.Warnings.Count == 0) { <div class="alert alert-success"><i class="fa fa-check"></i> @L["NoAlerts"]</div> }
+	<div class="row">
+		<div class="col-md-4">
+			<div class="ibox"><div class="ibox-title"><h5>@L["ActivateHeader"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["RecordsModuleActive"]</dt><dd>@(t.RecordsActive ? L["Yes"].Value : L["No"].Value) @RmsEnumDisplay.Utc(t.ActivatedOn)</dd>
+					<dt>@L["LegacyWriteAttempts"]</dt><dd class="@(t.LegacyWriteAttempts > 0 ? "text-danger" : "")">@t.LegacyWriteAttempts</dd>
+					<dt>@L["AuthorizationDenials"]</dt><dd>@t.AuthorizationDenials</dd>
+					<dt>@L["SearchIndexStatus"]</dt><dd>@(t.SearchEnabled ? L["SearchOnline"].Value : L["SearchDisabled"].Value)</dd>
+					<dt>@L["ProtectionEnforced"]</dt><dd>@(t.ProtectionEnforced ? L["Yes"].Value : L["No"].Value) · @L["CatalogVersion"] @t.ProtectedCatalogVersion</dd>
+				</dl>
+			</div></div>
+			<div class="ibox"><div class="ibox-title"><h5>@L["OutboxHeader"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["OutboxPending"]</dt><dd>@t.OutboxPending</dd>
+					<dt>@L["OutboxFailed"]</dt><dd class="@(t.OutboxFailed > 0 ? "text-danger" : "")">@t.OutboxFailed</dd>
+					<dt>@L["OutboxOldest"]</dt><dd class="@(t.OutboxLagAlert ? "text-danger" : "")">@(t.OutboxOldestPendingSeconds.HasValue ? t.OutboxOldestPendingSeconds.Value.ToString("0") + " s" : "-")</dd>
+				</dl>
+			</div></div>
+		</div>
+		<div class="col-md-4">
+			<div class="ibox"><div class="ibox-title"><h5>@L["WorkflowRuns"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["RunsCompleted"]</dt><dd>@t.WorkflowRunsCompleted</dd>
+					<dt>@L["RunsSkipped"]</dt><dd>@t.WorkflowRunsSkipped</dd>
+					<dt>@L["RunsFailed"]</dt><dd class="@(t.WorkflowRunsFailed > 0 ? "text-danger" : "")">@t.WorkflowRunsFailed</dd>
+					<dt>@L["RunsRunning"]</dt><dd>@t.WorkflowRunsRunning</dd>
+				</dl>
+			</div></div>
+			<div class="ibox"><div class="ibox-title"><h5>@L["RecordsHeader"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["RecordsCreated"]</dt><dd>@t.RecordsCreated</dd>
+					<dt>@L["RecordsFinalized"]</dt><dd>@t.RecordsFinalized</dd>
+					<dt>@L["RecordsOverdue"]</dt><dd>@t.RecordsOverdue</dd>
+					<dt>@L["SubmissionsFailed"]</dt><dd class="@(t.SubmissionsFailed > 0 ? "text-danger" : "")">@t.SubmissionsFailed</dd>
+					<dt>@L["SubmissionsAwaiting"]</dt><dd>@t.SubmissionsAwaiting</dd>
+					<dt>@L["ScanPending"]</dt><dd>@t.AttachmentsScanPending</dd>
+					<dt>@L["ScanRejected"]</dt><dd>@t.AttachmentsScanRejected</dd>
+				</dl>
+			</div></div>
+		</div>
+		<div class="col-md-4">
+			<div class="ibox"><div class="ibox-title"><h5>@L["PreventionHeader"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["Occupancies"]</dt><dd>@p.Occupancies (@p.OccupanciesReviewOverdue @L["Overdue"])</dd>
+					<dt>@L["Inspections"]</dt><dd>@p.InspectionsScheduled (@p.InspectionsDue @L["Overdue"])</dd>
+					<dt>@L["Violations"]</dt><dd>@p.ViolationsOpen (@p.ViolationsOverdue @L["Overdue"])</dd>
+					<dt>@L["Hydrants"]</dt><dd>@p.Hydrants (@p.HydrantsOutOfService @L["OutOfService"], @p.HydrantsTestDue @L["TestDue"])</dd>
+					<dt>@L["Permits"]</dt><dd>@p.PermitsActive (@p.PermitsExpiringSoon @L["ExpiringSoon"], @p.PermitsAwaitingReview @L["AwaitingReview"])</dd>
+					<dt>@L["CrrActivities"]</dt><dd>@p.CrrActivitiesLast90Days · @p.CrrSmokeAlarmsLast90Days @L["SmokeAlarmsInstalled"]</dd>
+					<dt>@L["Investigations"]</dt><dd>@p.InvestigationCasesOpen @L["Open"]</dd>
+				</dl>
+			</div></div>
+		</div>
+	</div>
+</div>

@@ -138,6 +138,23 @@ namespace Resgrid.Model.Services
 			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
 
 		/// <summary>
+		/// Prepares a contact pre-plan (catalog v12). <paramref name="existingPreplan"/> is the stored row a
+		/// REDACTED sentinel is restored from on edits (the editor never had that value revealed); null for creates.
+		/// </summary>
+		Task<ProtectedWriteResult> PrepareContactPreplanWriteAsync(int departmentId, ContactPreplan preplan,
+			ContactPreplan existingPreplan, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a premise hazard (catalog v12); <paramref name="existingHazard"/> restores sentinels on edits.</summary>
+		Task<ProtectedWriteResult> PrepareContactPreplanHazardWriteAsync(int departmentId, ContactPreplanHazard hazard,
+			ContactPreplanHazard existingHazard, string grantToken, string userId, bool workloadCaller,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>Prepares a contact site attachment (catalog v12): name, file name and the binary payload.</summary>
+		Task<ProtectedWriteResult> PrepareContactAttachmentWriteAsync(int departmentId, ContactAttachment attachment,
+			string grantToken, string userId, bool workloadCaller, CancellationToken cancellationToken = default);
+
+		/// <summary>
 		/// Prepares a unit state (catalog v2): note, geolocation text, and the typed
 		/// latitude/longitude which move into their companion envelope columns.
 		/// </summary>

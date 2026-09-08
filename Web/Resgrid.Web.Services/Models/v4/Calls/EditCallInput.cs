@@ -80,6 +80,18 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string ContactInfo { get; set; }
 
 		/// <summary>
+		/// Id of the primary Contact (the premises/customer record) to link to the call. Optional;
+		/// the contact must belong to the department. Contacts plan Phase A (A5).
+		/// </summary>
+		public string ContactId { get; set; }
+
+		/// <summary>
+		/// Ids of additional Contacts to link to the call. Optional. On EditCall, supplying ContactId or
+		/// AdditionalContactIds (even empty) replaces the call's existing contact links; omitting both leaves them unchanged.
+		/// </summary>
+		public List<string> AdditionalContactIds { get; set; }
+
+		/// <summary>
 		/// External Call Id
 		/// </summary>
 		public string ExternalId { get; set; }

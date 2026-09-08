@@ -188,6 +188,85 @@ namespace Resgrid.Model
 		/// <summary>The rendered export artifact (RmsExportRuns.Data) is a generated copy of record content.</summary>
 		public static readonly string ExportRunDataFieldId = FieldId("RmsExportRuns", "Data");
 
+		// ---- RMS-5 prevention and investigations, catalog v13 ----------------------------------------------------
+
+		/// <summary>Occupancy master (RMS-5): access secrets, hazard/tactical text, utility notes, the on-site emergency contact. Structural codes and flags stay plaintext.</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<RmsOccupancy, string> Get, Action<RmsOccupancy, string> Set)> Occupancies = Map<RmsOccupancy>(
+			("OccupantsNeedingAssistanceNotes", o => o.OccupantsNeedingAssistanceNotes, (o, v) => o.OccupantsNeedingAssistanceNotes = v),
+			("UtilityNotes", o => o.UtilityNotes, (o, v) => o.UtilityNotes = v),
+			("KnoxBoxLocation", o => o.KnoxBoxLocation, (o, v) => o.KnoxBoxLocation = v),
+			("GateCode", o => o.GateCode, (o, v) => o.GateCode = v),
+			("AlarmPanelLocation", o => o.AlarmPanelLocation, (o, v) => o.AlarmPanelLocation = v),
+			("AlarmCompany", o => o.AlarmCompany, (o, v) => o.AlarmCompany = v),
+			("AlarmCompanyPhone", o => o.AlarmCompanyPhone, (o, v) => o.AlarmCompanyPhone = v),
+			("AccessNotes", o => o.AccessNotes, (o, v) => o.AccessNotes = v),
+			("WaterSupplyNotes", o => o.WaterSupplyNotes, (o, v) => o.WaterSupplyNotes = v),
+			("EmergencyContactName", o => o.EmergencyContactName, (o, v) => o.EmergencyContactName = v),
+			("EmergencyContactPhone", o => o.EmergencyContactPhone, (o, v) => o.EmergencyContactPhone = v),
+			("GeneralHazardNotes", o => o.GeneralHazardNotes, (o, v) => o.GeneralHazardNotes = v),
+			("TacticalSummary", o => o.TacticalSummary, (o, v) => o.TacticalSummary = v));
+
+		public static readonly IReadOnlyDictionary<string, (Func<RmsOccupancyHazard, string> Get, Action<RmsOccupancyHazard, string> Set)> OccupancyHazards = Map<RmsOccupancyHazard>(
+			("Description", h => h.Description, (h, v) => h.Description = v),
+			("LocationDescription", h => h.LocationDescription, (h, v) => h.LocationDescription = v),
+			("GpsCoordinates", h => h.GpsCoordinates, (h, v) => h.GpsCoordinates = v));
+
+		/// <summary>Inspection notes and the occupant representative's printed name.</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<RmsInspection, string> Get, Action<RmsInspection, string> Set)> Inspections = Map<RmsInspection>(
+			("Notes", i => i.Notes, (i, v) => i.Notes = v),
+			("SignatureName", i => i.SignatureName, (i, v) => i.SignatureName = v));
+
+		public static readonly IReadOnlyDictionary<string, (Func<RmsViolation, string> Get, Action<RmsViolation, string> Set)> Violations = Map<RmsViolation>(
+			("Description", x => x.Description, (x, v) => x.Description = v),
+			("CorrectiveAction", x => x.CorrectiveAction, (x, v) => x.CorrectiveAction = v));
+
+		/// <summary>Permit applicant identity and the reviewer's notes.</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<RmsPermit, string> Get, Action<RmsPermit, string> Set)> Permits = Map<RmsPermit>(
+			("ApplicantName", p => p.ApplicantName, (p, v) => p.ApplicantName = v),
+			("ApplicantPhone", p => p.ApplicantPhone, (p, v) => p.ApplicantPhone = v),
+			("ApplicantEmail", p => p.ApplicantEmail, (p, v) => p.ApplicantEmail = v),
+			("ReviewNotes", p => p.ReviewNotes, (p, v) => p.ReviewNotes = v));
+
+		public static readonly IReadOnlyDictionary<string, (Func<RmsPlanReview, string> Get, Action<RmsPlanReview, string> Set)> PlanReviews = Map<RmsPlanReview>(
+			("Comments", p => p.Comments, (p, v) => p.Comments = v));
+
+		/// <summary>Investigation case narrative (Tier 1: restricted and encrypted).</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<RmsInvestigationCase, string> Get, Action<RmsInvestigationCase, string> Set)> InvestigationCases = Map<RmsInvestigationCase>(
+			("IncidentSummary", c => c.IncidentSummary, (c, v) => c.IncidentSummary = v),
+			("CauseDetail", c => c.CauseDetail, (c, v) => c.CauseDetail = v),
+			("OriginDescription", c => c.OriginDescription, (c, v) => c.OriginDescription = v),
+			("Findings", c => c.Findings, (c, v) => c.Findings = v),
+			("ClosureReason", c => c.ClosureReason, (c, v) => c.ClosureReason = v));
+
+		public static readonly IReadOnlyDictionary<string, (Func<RmsInvestigationNote, string> Get, Action<RmsInvestigationNote, string> Set)> InvestigationNotes = Map<RmsInvestigationNote>(
+			("Subject", n => n.Subject, (n, v) => n.Subject = v),
+			("Body", n => n.Body, (n, v) => n.Body = v));
+
+		public static readonly IReadOnlyDictionary<string, (Func<RmsInvestigationEvidence, string> Get, Action<RmsInvestigationEvidence, string> Set)> InvestigationEvidence = Map<RmsInvestigationEvidence>(
+			("Description", e => e.Description, (e, v) => e.Description = v),
+			("CollectedFrom", e => e.CollectedFrom, (e, v) => e.CollectedFrom = v),
+			("CurrentCustodianExternal", e => e.CurrentCustodianExternal, (e, v) => e.CurrentCustodianExternal = v));
+
+		public static readonly IReadOnlyDictionary<string, (Func<RmsInvestigationCustody, string> Get, Action<RmsInvestigationCustody, string> Set)> InvestigationCustody = Map<RmsInvestigationCustody>(
+			("FromExternal", c => c.FromExternal, (c, v) => c.FromExternal = v),
+			("ToExternal", c => c.ToExternal, (c, v) => c.ToExternal = v),
+			("Reason", c => c.Reason, (c, v) => c.Reason = v));
+
+		public static readonly IReadOnlyDictionary<string, (Func<RmsInvestigationReferral, string> Get, Action<RmsInvestigationReferral, string> Set)> InvestigationReferrals = Map<RmsInvestigationReferral>(
+			("Reason", r => r.Reason, (r, v) => r.Reason = v));
+
+		/// <summary>QA findings and notes quote the record they review, so they inherit its sensitivity.</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<RmsQualityReview, string> Get, Action<RmsQualityReview, string> Set)> QualityReviews = Map<RmsQualityReview>(
+			("FindingsJson", q => q.FindingsJson, (q, v) => q.FindingsJson = v),
+			("Note", q => q.Note, (q, v) => q.Note = v));
+
+		/// <summary>Prevention/investigation attachment text columns; the bytes ride <see cref="PreventionAttachmentDataFieldId"/>.</summary>
+		public static readonly IReadOnlyDictionary<string, (Func<RmsPreventionAttachment, string> Get, Action<RmsPreventionAttachment, string> Set)> PreventionAttachments = Map<RmsPreventionAttachment>(
+			("FileName", a => a.FileName, (a, v) => a.FileName = v),
+			("Description", a => a.Description, (a, v) => a.Description = v));
+
+		public static readonly string PreventionAttachmentDataFieldId = FieldId("RmsPreventionAttachments", "Data");
+
 		/// <summary>Every RMS field id the catalog must carry, for the pin test.</summary>
 		public static IEnumerable<string> AllFieldIds()
 		{
@@ -195,6 +274,20 @@ namespace Resgrid.Model
 			foreach (var k in Narratives.Keys) yield return k;
 			foreach (var k in Locations.Keys) yield return k;
 			foreach (var k in LocationCompanions.Keys) yield return k;
+			foreach (var k in Occupancies.Keys) yield return k;
+			foreach (var k in OccupancyHazards.Keys) yield return k;
+			foreach (var k in Inspections.Keys) yield return k;
+			foreach (var k in Violations.Keys) yield return k;
+			foreach (var k in Permits.Keys) yield return k;
+			foreach (var k in PlanReviews.Keys) yield return k;
+			foreach (var k in InvestigationCases.Keys) yield return k;
+			foreach (var k in InvestigationNotes.Keys) yield return k;
+			foreach (var k in InvestigationEvidence.Keys) yield return k;
+			foreach (var k in InvestigationCustody.Keys) yield return k;
+			foreach (var k in InvestigationReferrals.Keys) yield return k;
+			foreach (var k in QualityReviews.Keys) yield return k;
+			foreach (var k in PreventionAttachments.Keys) yield return k;
+			yield return PreventionAttachmentDataFieldId;
 			foreach (var k in SourceFacts.Keys) yield return k;
 			foreach (var k in Casualties.Keys) yield return k;
 			foreach (var k in Exposures.Keys) yield return k;

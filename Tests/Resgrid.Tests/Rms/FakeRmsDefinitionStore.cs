@@ -162,6 +162,8 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d, string id) => Fills.Where(x => x.DepartmentId == d && x.RmsExternalOrderId == id).ToList());
 			FillsRepo.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, string id) => Fills.FirstOrDefault(x => x.DepartmentId == d && x.RmsExternalOrderFillId == id));
+			FillsRepo.Setup(r => r.TryBumpRowVersionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, long expected, CancellationToken c) => Bump(Fills.FirstOrDefault(x => x.DepartmentId == d && x.RmsExternalOrderFillId == id), expected, (x, v) => x.RowVersion = v, x => x.RowVersion));
 			ReferencesRepo.Setup(r => r.InsertAsync(It.IsAny<RmsExternalReference>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((RmsExternalReference e, CancellationToken c, bool f) => { References.Add(e); return e; });
 
@@ -178,6 +180,8 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d) => Connectors.Where(x => x.DepartmentId == d).Select(Clone).ToList());
 			ConnectorsRepo.Setup(r => r.GetDueAsync(It.IsAny<DateTime>(), It.IsAny<int>()))
 				.ReturnsAsync((DateTime now, int take) => Connectors.Where(x => x.IsReadyToRun && (!x.LastPolledOn.HasValue || x.LastPolledOn.Value.AddMinutes(x.PollIntervalMinutes) <= now)).Take(take).Select(Clone).ToList());
+			ConnectorsRepo.Setup(r => r.TryBumpRowVersionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, long expected, CancellationToken c) => Bump(Connectors.FirstOrDefault(x => x.DepartmentId == d && x.RmsExternalOrderConnectorId == id), expected, (x, v) => x.RowVersion = v, x => x.RowVersion));
 			ConnectorRunsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsExternalOrderConnectorRun>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((RmsExternalOrderConnectorRun e, CancellationToken c, bool f) => { ConnectorRuns.Add(e); return e; });
 			ConnectorRunsRepo.Setup(r => r.GetForConnectorAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))

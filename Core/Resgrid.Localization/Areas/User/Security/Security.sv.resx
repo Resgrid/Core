@@ -992,4 +992,6 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Vem som får lägga och häva rättsliga spärrar, som pausar gallring och hindrar att en rapport ogiltigförklaras.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Omfördela rapportutkast</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Vem som får flytta ett rapportutkast till en annan författare, till exempel när den ursprungliga författaren inte är tillgänglig.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Hantera förebyggande data</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Vem som får skapa och ändra objekt, tillsynsprogram och regelverk, brandposter, tillstånd och aktiviteter för att minska risker i samhället. Att läsa förebyggande data kräver bara åtkomst till Register; utredningar styrs av behörigheten för begränsade register och medlemskap i ärendet.</value></data>
 </root>

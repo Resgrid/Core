@@ -153,7 +153,16 @@
 		RecordPurged = 159,
 
 		/// <summary>A department export template's schedule came due and its file was rendered for delivery.</summary>
-		RecordExportScheduled = 160
+		RecordExportScheduled = 160,
+
+		/// <summary>A prevention inspection was completed (RMS-5); carries the inspection identity, result and violation counts, never the notes.</summary>
+		RecordInspectionCompleted = 161,
+
+		/// <summary>A code violation passed its correction due date without being corrected (RMS-5); raised once per violation by the daily sweep.</summary>
+		RecordViolationOverdue = 162,
+
+		/// <summary>An issued permit is inside its expiry notice window (RMS-5); raised once per permit by the daily sweep.</summary>
+		RecordPermitExpiring = 163
 	}
 
 	public static class WorkflowTriggerEventTypes
@@ -162,7 +171,7 @@
 		public const int RecordsBlockFirst = 100;
 		public const int RecordsBlockLast = 115;
 
-		/// <summary>The second Records block, 152-163 (registry section 3.2, allocated 2026-09-05); 161-163 are reserved.</summary>
+		/// <summary>The second Records block, 152-163 (registry section 3.2, allocated 2026-09-05); 161-163 were taken by RMS-5 on 2026-09-07.</summary>
 		public const int RecordsBlock2First = 152;
 		public const int RecordsBlock2Last = 163;
 

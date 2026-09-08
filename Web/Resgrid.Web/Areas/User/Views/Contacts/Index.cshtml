@@ -125,7 +125,10 @@
             timestamp = c.AddedOn.TimeConverter(Model.Department).FormatForDepartment(Model.Department);
         }
 
-        @Html.Raw("<tr><td></td><td>" + c.GetName() + "</td><td>" + c.GetTypeName() + "</td><td>" + c.GetCategoryName() + "</td><td>" + timestamp + "</td>")
+        var reviewBadge = Model.PreplanReviewOverdueContactIds != null && Model.PreplanReviewOverdueContactIds.Contains(c.ContactId)
+            ? " <span class='badge badge-warning' title='" + localizer["PreplanReviewOverdue"] + "'>" + localizer["PreplanReviewDue"] + "</span>"
+            : "";
+        @Html.Raw("<tr><td></td><td>" + c.GetName() + reviewBadge + "</td><td>" + c.GetTypeName() + "</td><td>" + c.GetCategoryName() + "</td><td>" + timestamp + "</td>")
 
         @Html.Raw("<td>")
 

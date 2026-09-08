@@ -57,6 +57,34 @@ namespace Resgrid.Tests.Rms
 		public Task<ProtectedReadResult> RevealDisclosureProductionsAsync(int departmentId, IReadOnlyList<RmsDisclosureProduction> rows, CancellationToken cancellationToken = default) => Empty();
 		public Task<ProtectedReadResult> RevealLegalHoldsAsync(int departmentId, IReadOnlyList<RmsRecordLegalHold> rows, CancellationToken cancellationToken = default) => Empty();
 		public Task<ProtectedReadResult> RevealSubmissionsAsync(int departmentId, IReadOnlyList<RmsSubmission> rows, CancellationToken cancellationToken = default) => Empty();
+
+		// RMS-5 / catalog v13 rows
+		public Task ProtectOccupancyAsync(int departmentId, RmsOccupancy row, RmsOccupancy existing, string userId = null, CancellationToken cancellationToken = default) => Write("occupancy");
+		public Task<ProtectedReadResult> RevealOccupanciesAsync(int departmentId, IReadOnlyList<RmsOccupancy> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectOccupancyHazardAsync(int departmentId, RmsOccupancyHazard row, RmsOccupancyHazard existing, string userId = null, CancellationToken cancellationToken = default) => Write("occupancy hazard");
+		public Task<ProtectedReadResult> RevealOccupancyHazardsAsync(int departmentId, IReadOnlyList<RmsOccupancyHazard> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectInspectionAsync(int departmentId, RmsInspection row, RmsInspection existing, string userId = null, CancellationToken cancellationToken = default) => Write("inspection");
+		public Task<ProtectedReadResult> RevealInspectionsAsync(int departmentId, IReadOnlyList<RmsInspection> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectViolationAsync(int departmentId, RmsViolation row, RmsViolation existing, string userId = null, CancellationToken cancellationToken = default) => Write("violation");
+		public Task<ProtectedReadResult> RevealViolationsAsync(int departmentId, IReadOnlyList<RmsViolation> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectPermitAsync(int departmentId, RmsPermit row, RmsPermit existing, string userId = null, CancellationToken cancellationToken = default) => Write("permit");
+		public Task<ProtectedReadResult> RevealPermitsAsync(int departmentId, IReadOnlyList<RmsPermit> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectPlanReviewAsync(int departmentId, RmsPlanReview row, RmsPlanReview existing, string userId = null, CancellationToken cancellationToken = default) => Write("plan review");
+		public Task<ProtectedReadResult> RevealPlanReviewsAsync(int departmentId, IReadOnlyList<RmsPlanReview> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectInvestigationCaseAsync(int departmentId, RmsInvestigationCase row, RmsInvestigationCase existing, string userId = null, CancellationToken cancellationToken = default) => Write("investigation case");
+		public Task<ProtectedReadResult> RevealInvestigationCasesAsync(int departmentId, IReadOnlyList<RmsInvestigationCase> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectInvestigationNoteAsync(int departmentId, RmsInvestigationNote row, RmsInvestigationNote existing, string userId = null, CancellationToken cancellationToken = default) => Write("investigation note");
+		public Task<ProtectedReadResult> RevealInvestigationNotesAsync(int departmentId, IReadOnlyList<RmsInvestigationNote> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectInvestigationEvidenceAsync(int departmentId, RmsInvestigationEvidence row, RmsInvestigationEvidence existing, string userId = null, CancellationToken cancellationToken = default) => Write("investigation evidence");
+		public Task<ProtectedReadResult> RevealInvestigationEvidenceAsync(int departmentId, IReadOnlyList<RmsInvestigationEvidence> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectInvestigationCustodyAsync(int departmentId, RmsInvestigationCustody row, string userId = null, CancellationToken cancellationToken = default) => Write("custody transfer");
+		public Task<ProtectedReadResult> RevealInvestigationCustodyAsync(int departmentId, IReadOnlyList<RmsInvestigationCustody> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectInvestigationReferralAsync(int departmentId, RmsInvestigationReferral row, RmsInvestigationReferral existing, string userId = null, CancellationToken cancellationToken = default) => Write("referral");
+		public Task<ProtectedReadResult> RevealInvestigationReferralsAsync(int departmentId, IReadOnlyList<RmsInvestigationReferral> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectQualityReviewAsync(int departmentId, RmsQualityReview row, RmsQualityReview existing, string userId = null, CancellationToken cancellationToken = default) => Write("quality review");
+		public Task<ProtectedReadResult> RevealQualityReviewsAsync(int departmentId, IReadOnlyList<RmsQualityReview> rows, CancellationToken cancellationToken = default) => Empty();
+		public Task ProtectPreventionAttachmentAsync(int departmentId, RmsPreventionAttachment row, RmsPreventionAttachment existing, string userId = null, CancellationToken cancellationToken = default) => Write("prevention attachment");
+		public Task<ProtectedReadResult> RevealPreventionAttachmentsAsync(int departmentId, IReadOnlyList<RmsPreventionAttachment> rows, bool includeData, CancellationToken cancellationToken = default) => Empty();
 		public Task<ProtectedReadResult> RevealExportRunsAsync(int departmentId, IReadOnlyList<RmsExportRun> rows, bool includeData, CancellationToken cancellationToken = default) => Empty();
 		public Task<bool> ResolveSubmissionForWorkloadAsync(int departmentId, RmsSubmission submission, string purpose, CancellationToken cancellationToken = default) => Task.FromResult(AllowWorkload);
 		public Task<ProtectedReadResult> RevealForWorkloadAsync(int departmentId, RecordAggregate aggregate, string purpose, CancellationToken cancellationToken = default) => Empty();

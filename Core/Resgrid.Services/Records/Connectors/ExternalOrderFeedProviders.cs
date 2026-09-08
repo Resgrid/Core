@@ -18,7 +18,15 @@ namespace Resgrid.Services.Records.Connectors
 	/// </summary>
 	public abstract class ExternalOrderFeedProviderBase : IExternalOrderFeedProvider
 	{
-		private static readonly HttpClient SharedHttpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(Math.Max(5, RecordsConnectorConfig.TimeoutSeconds)) };
+		/// <summary>
+		/// Redirects are not followed: the destination is checked against its resolved addresses before the
+		/// request, and a redirect the handler follows on its own would go somewhere nothing checked. A source
+		/// that answers 3xx is reported as an error so its administrator fixes the feed root instead.
+		/// </summary>
+		private static readonly HttpClient SharedHttpClient = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false })
+		{
+			Timeout = TimeSpan.FromSeconds(Math.Max(5, RecordsConnectorConfig.TimeoutSeconds))
+		};
 
 		private readonly HttpClient _http;
 
@@ -39,6 +47,10 @@ namespace Resgrid.Services.Records.Connectors
 				throw new InvalidOperationException("The connector has no usable feed root.");
 			if (!string.Equals(uri.Scheme, "https", StringComparison.OrdinalIgnoreCase) && !(RecordsConnectorConfig.AllowHttp && string.Equals(uri.Scheme, "http", StringComparison.OrdinalIgnoreCase)))
 				throw new InvalidOperationException("The feed root must be https.");
+
+			// Checked again here, not only when the connector was saved: the allowlist can have changed, and a name
+			// that resolved publicly then can resolve to something internal now.
+			await ExternalFeedDestination.RequireAllowedDestinationAsync(uri, cancellationToken);
 
 			var builder = new UriBuilder(uri);
 			if (!string.IsNullOrWhiteSpace(cursor))

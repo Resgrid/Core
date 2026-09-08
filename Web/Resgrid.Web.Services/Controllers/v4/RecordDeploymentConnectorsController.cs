@@ -239,7 +239,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[AllowAnonymous]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		[ProducesResponseType(StatusCodes.Status413PayloadTooLarge)]
 		public async Task<ActionResult<RecordDeploymentConnectorRunApiResult>> Inbound(string connectorId, CancellationToken cancellationToken)
 		{
@@ -267,7 +269,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ResponseHelper.PopulateV4ResponseData(result);
 				return Ok(result);
 			}
+			// A wrong token is 401 here rather than the 403 an authenticated caller gets; a malformed feed, a spent
+			// hourly limit or a connector that is not ready map exactly as they do on every other action.
 			catch (UnauthorizedAccessException) { return Unauthorized(); }
+			catch (Exception ex) { return Fail(ex); }
 		}
 
 		#region Helpers

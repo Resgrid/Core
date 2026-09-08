@@ -26,7 +26,7 @@ namespace Resgrid.Tests.Rms
 			foreach (var fieldId in RmsProtectedFields.AllFieldIds())
 			{
 				entries.Should().ContainKey(fieldId, $"the write seam can encrypt {fieldId}, so the catalog must own it");
-				entries[fieldId].AddedInCatalogVersion.Should().BeInRange(ProtectedFieldCatalog.RecordsCatalogVersion, ProtectedFieldCatalog.RecordsTypedValuesCatalogVersion, $"{fieldId} ships with the RMS catalog bump (v10) or the typed-values follow-up (v11)");
+				entries[fieldId].AddedInCatalogVersion.Should().BeInRange(ProtectedFieldCatalog.RecordsCatalogVersion, ProtectedFieldCatalog.PreventionCatalogVersion, $"{fieldId} ships with the RMS catalog bump (v10), the typed-values follow-up (v11) or the RMS-5 prevention family (v13)");
 			}
 		}
 

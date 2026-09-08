@@ -437,6 +437,8 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Who can place and release legal holds, which suspend retention and prevent a record from being voided.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Reassign Draft Records</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Who can move a draft record to a different author, for example when the original author is unavailable.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Manage Prevention Data</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Who can create and change occupancies, inspection programs and code sets, hydrants, permits and community risk reduction activities. Reading prevention data needs only Records access; investigations are governed by the restricted-records permission plus case membership.</value></data>
 </root>
 
 

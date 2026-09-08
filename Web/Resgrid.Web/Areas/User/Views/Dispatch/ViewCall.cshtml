@@ -234,6 +234,7 @@
                                             <li class=""><a href="#tab-9" data-toggle="tab" aria-expanded="false">@localizer["LinkedCalls"]</a></li>
                                             <li class=""><a href="#tab-11" data-toggle="tab" aria-expanded="false">@localizer["Contacts"]</a></li>
                                             <li class=""><a href="#tab-12" data-toggle="tab" aria-expanded="false">@localizer["VideoFeeds"]</a></li>
+                                            <li class=""><a href="#tab-13" data-toggle="tab" aria-expanded="false">@localizer["SiteInfo"]@if (Model.SiteInfo != null && Model.SiteInfo.Contacts.Any(x => x.AlertNotes.Any() || x.Hazards.Any(h => h.ShouldAlert))) { <i class="fa fa-exclamation-circle text-danger"></i> }</a></li>
                                             @if (!String.IsNullOrWhiteSpace(Model.Call.CallFormData))
                                             {
                                                 <li class=""><a href="#tab-10" data-toggle="tab" aria-expanded="false">@localizer["CallFormLabel"]</a></li>
@@ -752,6 +753,75 @@
                                                     }
                                                 </tbody>
                                             </table>
+                                        </div>
+                                        <div class="tab-pane" id="tab-13">
+                                            @if (Model.SiteInfo == null || !Model.SiteInfo.Contacts.Any())
+                                            {
+                                                <p class="text-muted">@localizer["NoSiteInfo"]</p>
+                                            }
+                                            else
+                                            {
+                                                ViewData["Department"] = Model.Department;
+                                                foreach (var site in Model.SiteInfo.Contacts)
+                                                {
+                                                    <div class="ibox">
+                                                        <div class="ibox-title">
+                                                            <h5><i class="fa fa-building"></i> @Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(site.Contact.Name) <small>(@(site.CallContactType == 0 ? localizer["Primary"] : localizer["Additional"]))</small></h5>
+                                                            <div class="ibox-tools">
+                                                                <a class="btn btn-xs btn-info" asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@site.Contact.ContactId">@commonLocalizer["View"]</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="ibox-content">
+                                                            @if (site.AlertNotes.Any())
+                                                            {
+                                                                <h4><i class="fa fa-bell text-danger"></i> @localizer["AlertNotes"]</h4>
+                                                                foreach (var note in site.AlertNotes)
+                                                                {
+                                                                    <div class="alert alert-warning">@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(note.Note)</div>
+                                                                }
+                                                            }
+                                                            @if (site.Hazards.Any())
+                                                            {
+                                                                <h4><i class="fa fa-warning"></i> @localizer["PremiseHazards"]</h4>
+                                                                <table class="table table-condensed">
+                                                                    <tbody>
+                                                                        @foreach (var hazard in site.Hazards)
+                                                                        {
+                                                                            <tr style="background-color:@Resgrid.Web.Areas.User.Controllers.ContactsController.HazardSeverityColor(hazard.Severity)">
+                                                                                <td><strong>@((Resgrid.Model.ContactPreplanHazardSeverities)hazard.Severity)</strong></td>
+                                                                                <td>@Resgrid.Web.Areas.User.Controllers.ContactsController.SplitPascalCase(((Resgrid.Model.ContactPreplanHazardTypes)hazard.HazardType).ToString())</td>
+                                                                                <td><strong data-adp-field="contactpreplanhazards.title:@hazard.ContactPreplanHazardId">@hazard.Title</strong>@if (!string.IsNullOrWhiteSpace(hazard.Description)) { <br /><small data-adp-field="contactpreplanhazards.description:@hazard.ContactPreplanHazardId">@hazard.Description</small> }</td>
+                                                                                <td><span data-adp-field="contactpreplanhazards.locationdescription:@hazard.ContactPreplanHazardId">@hazard.LocationDescription</span> @if (!string.IsNullOrWhiteSpace(hazard.GpsCoordinates)) { <small>(<span data-adp-field="contactpreplanhazards.gpscoordinates:@hazard.ContactPreplanHazardId">@hazard.GpsCoordinates</span>)</small> }</td>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            }
+                                                            @if (site.Preplan != null)
+                                                            {
+                                                                <partial name="_ContactPreplanSummary" model="site.Preplan" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <p class="text-muted">@localizer["NoPreplan"]</p>
+                                                            }
+                                                            @if (site.Attachments.Any())
+                                                            {
+                                                                <h4><i class="fa fa-paperclip"></i> @localizer["SiteFiles"]</h4>
+                                                                <ul class="list-unstyled">
+                                                                    @foreach (var attachment in site.Attachments)
+                                                                    {
+                                                                        <li>
+                                                                            <a asp-controller="Contacts" asp-action="GetContactAttachment" asp-route-area="User" asp-route-contactAttachmentId="@attachment.ContactAttachmentId"><i class="fa fa-download"></i> @Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(attachment.Name)</a>
+                                                                            <small class="text-muted">(@Resgrid.Web.Areas.User.Controllers.ContactsController.SplitPascalCase(((Resgrid.Model.ContactAttachmentTypes)attachment.ContactAttachmentType).ToString()))</small>
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
                                         </div>
                                         <div class="tab-pane" id="tab-12">
                                             @if (Model.VideoFeeds != null && Model.VideoFeeds.Any())

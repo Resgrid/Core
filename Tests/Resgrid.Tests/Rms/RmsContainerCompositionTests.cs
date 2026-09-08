@@ -58,6 +58,19 @@ namespace Resgrid.Tests.Rms
 			Resolve<IRecordOperationalSummaryService>().Should().NotBeNull();
 			// RMS-3e (2026-09-05): ADP seam, ambient grant context and department report exports
 			Resolve<IProtectedGrantContext>().Should().NotBeNull();
+			// RMS-5 prevention + investigations, RMS-4 quality review and release telemetry (2026-09-07)
+			Resolve<Resgrid.Services.Records.RecordsPreventionGate>().Should().NotBeNull();
+			Resolve<IRecordsOccupancyService>().Should().NotBeNull();
+			Resolve<IContactPreplanOwnershipGate>().Should().BeOfType<Resgrid.Services.Records.RecordsOccupancyService>("Contacts asks the occupancy service who owns structure writes");
+			Resolve<IRecordsInspectionsService>().Should().NotBeNull();
+			Resolve<IRecordsHydrantsService>().Should().NotBeNull();
+			Resolve<IRecordsPermitsService>().Should().NotBeNull();
+			Resolve<IRecordsCrrService>().Should().NotBeNull();
+			Resolve<IRecordsPreventionAttachmentsService>().Should().NotBeNull();
+			Resolve<IRecordsInvestigationsService>().Should().NotBeNull();
+			Resolve<IRecordsQualityReviewService>().Should().NotBeNull();
+			Resolve<IRecordsReleaseTelemetryService>().Should().NotBeNull();
+			Resolve<IRecordsPreventionSweepService>().Should().NotBeNull();
 			Resolve<IRecordsProtectionService>().Should().NotBeNull();
 			Resolve<IRecordsProtectedReadService>().Should().NotBeNull();
 			Resolve<IRecordsExportService>().Should().NotBeNull();

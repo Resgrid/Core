@@ -91,5 +91,11 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Every fill of a set of orders in one pass; the deployment list would otherwise query once per order.</summary>
 		Task<IEnumerable<RmsExternalOrderFill>> GetForOrdersAsync(int departmentId, IEnumerable<string> orderIds);
 		Task<RmsExternalOrderFill> GetByIdForDepartmentAsync(int departmentId, string fillId);
+
+		/// <summary>
+		/// Claims the fill at <paramref name="expectedVersion"/>. False when another writer moved first: the
+		/// in-memory check alone cannot stop two callers from both reading Requested and both writing.
+		/// </summary>
+		Task<bool> TryBumpRowVersionAsync(int departmentId, string fillId, long expectedVersion, CancellationToken cancellationToken = default);
 	}
 }

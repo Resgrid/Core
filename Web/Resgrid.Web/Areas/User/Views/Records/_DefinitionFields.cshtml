@@ -81,7 +81,9 @@
 		// The draft is hydrated with canViewRestricted:true so the author's own save can round-trip it, so a withheld
 		// field still arrives here carrying its plaintext. Blank it once, up front, rather than per input type:
 		// "disabled" hides nothing from anyone reading the markup.
-		if (withheld) { Value = string.Empty; Reference = string.Empty; }
+		// Unit and Currency are part of the withheld entry too: a quantity's unit or a cost's currency is a fact
+		// about the entry, and "disabled" leaves the selected option readable in the markup.
+		if (withheld) { Value = string.Empty; Reference = string.Empty; Unit = field.DefaultUnit; Currency = field.DefaultCurrency; }
 
 		sb.Append("<div class=\"form-group rms-def-field\" data-field-key=\"").Append(E(field.Key)).Append("\" data-field-type=\"").Append(field.Type).Append("\"").Append(hidden ? " hidden" : "").Append(">");
 		sb.Append("<label class=\"col-sm-3 control-label").Append(required ? " required" : "").Append("\">").Append(E(field.Label ?? field.Key));

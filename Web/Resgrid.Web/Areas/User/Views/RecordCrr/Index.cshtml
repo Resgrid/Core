@@ -1,0 +1,75 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordCrrIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["CrrActivities"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@L["CrrActivities"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li class="active"><strong>@L["CrrActivities"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanAdminister)
+			{
+				<a class="btn btn-success" asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewCrrActivity"]</a>
+			}
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-8">
+			<div class="ibox"><div class="ibox-content">
+				<form method="get" class="form-inline" asp-controller="RecordCrr" asp-action="Index" asp-route-area="User">
+					<input type="date" class="form-control" name="start" value="@Model.Start.ToString("yyyy-MM-dd")" />
+					<input type="date" class="form-control" name="end" value="@Model.End.ToString("yyyy-MM-dd")" />
+					<button class="btn btn-default">@L["Filter"]</button>
+				</form>
+				@if (Model.Activities.Count == 0) { <p class="m-t-sm">@L["NoCrr"]</p> }
+				else
+				{
+					<table class="table table-striped table-hover m-t-sm">
+						<thead><tr><th>@L["OccurredOn"]</th><th>@L["Kind"]</th><th>@L["Title"]</th><th>@L["Location"]</th><th>@L["AudienceCount"]</th><th>@L["SmokeAlarmsInstalled"]</th><th>@L["HoursSpent"]</th><th></th></tr></thead>
+						<tbody>
+						@foreach (var a in Model.Activities)
+						{
+							<tr>
+								<td>@RmsEnumDisplay.Day(a.OccurredOn)</td>
+								<td>@(RmsEnumDisplay.Label<RmsCrrActivityKind>(a.Kind))</td>
+								<td>@a.Title</td>
+								<td>@a.LocationText</td>
+								<td>@a.AudienceCount</td>
+								<td>@a.SmokeAlarmsInstalled</td>
+								<td>@a.HoursSpent</td>
+								<td>@if (Model.CanAdminister) { <a class="btn btn-xs btn-default" asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User" asp-route-id="@a.RmsCrrActivityId">@L["Edit"]</a> }</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				}
+			</div></div>
+		</div>
+		<div class="col-md-4">
+			<div class="ibox"><div class="ibox-title"><h5>@L["CrrSummary"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["CrrActivities"]</dt><dd>@Model.Summary.Activities</dd>
+					<dt>@L["AudienceCount"]</dt><dd>@Model.Summary.Audience</dd>
+					<dt>@L["SmokeAlarmsInstalled"]</dt><dd>@Model.Summary.SmokeAlarmsInstalled</dd>
+					<dt>@L["HoursSpent"]</dt><dd>@Model.Summary.Hours</dd>
+				</dl>
+				<table class="table table-condensed">
+					<tbody>@foreach (var kv in Model.Summary.ByKind.OrderByDescending(k => k.Value)) { <tr><td>@(RmsEnumDisplay.Label<RmsCrrActivityKind>(kv.Key))</td><td>@kv.Value</td></tr> }</tbody>
+				</table>
+			</div></div>
+		</div>
+	</div>
+</div>

@@ -1,4 +1,4 @@
-using Autofac;
+﻿using Autofac;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
@@ -220,6 +220,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ContactNotesRepository>().As<IContactNotesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactsRepository>().As<IContactsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactCategoryRepository>().As<IContactCategoryRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactPreplanRepository>().As<IContactPreplanRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactPreplanHazardRepository>().As<IContactPreplanHazardRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContactAttachmentRepository>().As<IContactAttachmentRepository>().InstancePerLifetimeScope();
 
 			// Indoor Maps Repositories
 			builder.RegisterType<IndoorMapsRepository>().As<IIndoorMapsRepository>().InstancePerLifetimeScope();
@@ -322,6 +325,36 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RmsFieldRolloutEventsRepository>().As<IRmsFieldRolloutEventsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsExternalOrderConnectorsRepository>().As<IRmsExternalOrderConnectorsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsExternalOrderConnectorRunsRepository>().As<IRmsExternalOrderConnectorRunsRepository>().InstancePerLifetimeScope();
+			// RMS-5 prevention + investigations and the RMS-4 quality review (registry M0185/M0186)
+			builder.RegisterType<RmsOccupanciesRepository>().As<IRmsOccupanciesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsOccupancyContactLinksRepository>().As<IRmsOccupancyContactLinksRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsOccupancyHazardsRepository>().As<IRmsOccupancyHazardsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsOccupancyCrosswalksRepository>().As<IRmsOccupancyCrosswalksRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsOccupancyFieldProvenancesRepository>().As<IRmsOccupancyFieldProvenancesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsOccupancyOwnershipsRepository>().As<IRmsOccupancyOwnershipsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsCodeSetsRepository>().As<IRmsCodeSetsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsCodeSectionsRepository>().As<IRmsCodeSectionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsInspectionProgramsRepository>().As<IRmsInspectionProgramsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsInspectionsRepository>().As<IRmsInspectionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsViolationsRepository>().As<IRmsViolationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsHydrantsRepository>().As<IRmsHydrantsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsHydrantFlowTestsRepository>().As<IRmsHydrantFlowTestsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsHydrantMaintenancesRepository>().As<IRmsHydrantMaintenancesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsPermitTypesRepository>().As<IRmsPermitTypesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsPermitsRepository>().As<IRmsPermitsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsPlanReviewsRepository>().As<IRmsPlanReviewsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsCrrActivitiesRepository>().As<IRmsCrrActivitiesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsPreventionAttachmentsRepository>().As<IRmsPreventionAttachmentsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsPreventionSequencesRepository>().As<IRmsPreventionSequencesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsInvestigationCasesRepository>().As<IRmsInvestigationCasesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsInvestigationCaseIncidentsRepository>().As<IRmsInvestigationCaseIncidentsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsInvestigationCaseMembersRepository>().As<IRmsInvestigationCaseMembersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsInvestigationNotesRepository>().As<IRmsInvestigationNotesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsInvestigationEvidenceRepository>().As<IRmsInvestigationEvidenceRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsInvestigationCustodyRepository>().As<IRmsInvestigationCustodyRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsInvestigationReferralsRepository>().As<IRmsInvestigationReferralsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsQualityRubricsRepository>().As<IRmsQualityRubricsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RmsQualityReviewsRepository>().As<IRmsQualityReviewsRepository>().InstancePerLifetimeScope();
 			// NERIS incident report aggregate (RMS-2, registry M0164-M0166)
 			builder.RegisterType<RmsIncidentReportsRepository>().As<IRmsIncidentReportsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsSourceFactsRepository>().As<IRmsSourceFactsRepository>().InstancePerLifetimeScope();

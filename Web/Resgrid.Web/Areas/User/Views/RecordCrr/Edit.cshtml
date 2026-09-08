@@ -1,0 +1,51 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordCrrEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var title = Model.IsNew ? L["NewCrrActivity"].Value : L["Edit"].Value + ": " + Model.Activity.Title;
+	ViewBag.Title = "Resgrid | " + title;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordCrr" asp-action="Index" asp-route-area="User">@L["CrrActivities"]</a></li>
+			<li class="active"><strong>@title</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox"><div class="ibox-content">
+		<form method="post" class="form-horizontal" asp-controller="RecordCrr" asp-action="Edit" asp-route-area="User">
+			@Html.AntiForgeryToken()
+			<input type="hidden" asp-for="Activity.RmsCrrActivityId" /><input type="hidden" asp-for="Activity.RowVersion" />
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Kind"]</label><div class="col-sm-9"><select class="form-control" asp-for="Activity.Kind" asp-items="Model.Kinds"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["OccurredOn"]</label><div class="col-sm-9"><input type="date" class="form-control" name="occurredOn" value="@Model.Activity.OccurredOn.ToString("yyyy-MM-dd")" required /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Title"]</label><div class="col-sm-9"><input class="form-control" asp-for="Activity.Title" maxlength="200" required /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["DefinitionDescription"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Activity.Description" rows="3" maxlength="4000"></textarea></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Occupancies"]</label><div class="col-sm-9"><select class="form-control" asp-for="Activity.RmsOccupancyId" asp-items="Model.Occupancies"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Location"]</label><div class="col-sm-9"><input class="form-control" asp-for="Activity.LocationText" maxlength="500" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Coordinates"]</label><div class="col-sm-4"><input class="form-control" asp-for="Activity.Latitude" /></div><div class="col-sm-5"><input class="form-control" asp-for="Activity.Longitude" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["AudienceCount"]</label><div class="col-sm-9"><input class="form-control" type="number" min="0" asp-for="Activity.AudienceCount" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["SmokeAlarmsInstalled"]</label><div class="col-sm-9"><input class="form-control" type="number" min="0" asp-for="Activity.SmokeAlarmsInstalled" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["HoursSpent"]</label><div class="col-sm-9"><input class="form-control" type="number" step="0.25" min="0" asp-for="Activity.HoursSpent" /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Staff"]</label><div class="col-sm-9"><input class="form-control" asp-for="Activity.StaffUserIdsCsv" maxlength="2000" /><span class="help-block">@L["StaffHelp"]</span></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Outcome"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Activity.Outcome" rows="2" maxlength="2000"></textarea></div></div>
+			<div class="form-group"><div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-primary"><i class="fa fa-save"></i> @L["Save"]</button>
+				<a class="btn btn-default" asp-controller="RecordCrr" asp-action="Index" asp-route-area="User">@L["BackToRecords"]</a>
+			</div></div>
+		</form>
+		@if (!Model.IsNew)
+		{
+			<form method="post" asp-controller="RecordCrr" asp-action="Delete" asp-route-area="User" onsubmit="return confirm('@L["DeleteCrrConfirm"]');">
+				@Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.Activity.RmsCrrActivityId" />
+				<button class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> @L["DeleteCrr"]</button>
+			</form>
+		}
+	</div></div>
+</div>

@@ -483,4 +483,10 @@
   <data name="EditContact" xml:space="preserve">
     <value>تعديل جهة الاتصال</value>
   </data>
+  <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
+    <value>أصبحت الخطط المسبقة لهذه الإدارة تُدار الآن كمبانٍ في السجلات. هذه الصفحة للقراءة فقط؛ عدّل المبنى من السجلات.</value>
+  </data>
+  <data name="PreplanOpenOccupancy" xml:space="preserve">
+    <value>فتح المبنى</value>
+  </data>
 </root>

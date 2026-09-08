@@ -1,0 +1,97 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordInspectionsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["Inspections"];
+	var now = DateTime.UtcNow;
+	string Occ(string id) => Model.OccupancyNames.TryGetValue(id ?? "", out var n) ? n : id;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@L["Inspections"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li class="active"><strong>@L["Inspections"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanAdminister)
+			{
+				<a class="btn btn-default" asp-controller="RecordInspections" asp-action="Programs" asp-route-area="User"><i class="fa fa-list-ol"></i> @L["InspectionPrograms"]</a>
+				<form method="post" style="display:inline" asp-controller="RecordInspections" asp-action="GenerateDue" asp-route-area="User">@Html.AntiForgeryToken()<button class="btn btn-default"><i class="fa fa-refresh"></i> @L["GenerateDue"]</button></form>
+			}
+			<a class="btn btn-default" asp-controller="RecordInspections" asp-action="CodeSets" asp-route-area="User"><i class="fa fa-book"></i> @L["CodeSets"]</a>
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox">
+		<div class="ibox-content">
+			<form method="get" class="form-inline" asp-controller="RecordInspections" asp-action="Index" asp-route-area="User">
+				<select class="form-control" name="state" asp-items="Model.States"><option value="">@L["AllStates"]</option></select>
+				<select class="form-control" name="programId" asp-items="Model.ProgramItems"><option value="">@L["AllPrograms"]</option></select>
+				<button class="btn btn-default">@L["Filter"]</button>
+			</form>
+			@if (Model.Inspections.Count == 0) { <p class="m-t-sm">@L["NoInspections"]</p> }
+			else
+			{
+				<div class="table-responsive m-t-sm">
+					<table class="table table-striped table-hover">
+						<thead><tr><th>@L["InspectionNumber"]</th><th>@L["Occupancies"]</th><th>@L["State"]</th><th>@L["ScheduledOn"]</th><th>@L["CompletedOn"]</th><th>@L["InspectionResult"]</th><th></th></tr></thead>
+						<tbody>
+						@foreach (var i in Model.Inspections)
+						{
+							var overdue = i.State == (int)RmsInspectionState.Scheduled && i.ScheduledOn.HasValue && i.ScheduledOn < now;
+							<tr class="@(overdue ? "warning" : "")">
+								<td>@i.InspectionNumber</td>
+								<td><a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@i.RmsOccupancyId">@Occ(i.RmsOccupancyId)</a></td>
+								<td><span class="label label-@RmsEnumDisplay.StateClass((RmsInspectionState)i.State)">@(RmsEnumDisplay.Label<RmsInspectionState>(i.State))</span></td>
+								<td>@RmsEnumDisplay.Day(i.ScheduledOn)</td>
+								<td>@RmsEnumDisplay.Day(i.CompletedOn)</td>
+								<td>@(RmsEnumDisplay.Label<RmsInspectionResult>(i.Result))</td>
+								<td><a class="btn btn-xs btn-default" asp-controller="RecordInspections" asp-action="Details" asp-route-area="User" asp-route-id="@i.RmsInspectionId">@L["ViewRecordHeader"]</a></td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				</div>
+				@if (Model.Total > Model.PageSize)
+				{
+					<ul class="pagination">
+						@for (var p = 1; p <= (Model.Total + Model.PageSize - 1) / Model.PageSize; p++) { <li class="@(p == Model.Page ? "active" : "")"><a asp-controller="RecordInspections" asp-action="Index" asp-route-area="User" asp-route-state="@Model.State" asp-route-programId="@Model.ProgramId" asp-route-page="@p">@p</a></li> }
+					</ul>
+				}
+			}
+		</div>
+	</div>
+	<div class="ibox">
+		<div class="ibox-title"><h5>@L["OpenViolations"] (@Model.OpenViolations.Count)</h5></div>
+		<div class="ibox-content">
+			@if (Model.OpenViolations.Count == 0) { <p class="text-muted">@L["NoViolations"]</p> }
+			else
+			{
+				<table class="table table-condensed">
+					<thead><tr><th>@L["Occupancies"]</th><th>@L["Severity"]</th><th>@L["DefinitionDescription"]</th><th>@L["DueOn"]</th><th>@L["State"]</th><th></th></tr></thead>
+					<tbody>
+					@foreach (var v in Model.OpenViolations)
+					{
+						<tr class="@(v.DueOn.HasValue && v.DueOn < now ? "danger" : "")">
+							<td><a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@v.RmsOccupancyId">@Occ(v.RmsOccupancyId)</a></td>
+							<td>@(RmsEnumDisplay.Label<RmsViolationSeverity>(v.Severity))</td>
+							<td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(v.Description)</td>
+							<td>@RmsEnumDisplay.Day(v.DueOn)</td>
+							<td><span class="label label-@RmsEnumDisplay.StateClass((RmsViolationState)v.State)">@(RmsEnumDisplay.Label<RmsViolationState>(v.State))</span></td>
+							<td>@if (!string.IsNullOrWhiteSpace(v.RmsInspectionId)) { <a class="btn btn-xs btn-default" asp-controller="RecordInspections" asp-action="Details" asp-route-area="User" asp-route-id="@v.RmsInspectionId">@L["ViewRecordHeader"]</a> }</td>
+						</tr>
+					}
+					</tbody>
+				</table>
+			}
+		</div>
+	</div>
+</div>

@@ -437,6 +437,8 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Ποιος μπορεί να θέτει και να αίρει νομικές δεσμεύσεις, οι οποίες αναστέλλουν τη διατήρηση και εμποδίζουν την ακύρωση αναφοράς.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Ανάθεση πρόχειρων αναφορών σε άλλον</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Ποιος μπορεί να μεταφέρει ένα πρόχειρο αναφοράς σε άλλον συντάκτη, για παράδειγμα όταν ο αρχικός συντάκτης δεν είναι διαθέσιμος.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Διαχείριση δεδομένων πρόληψης</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Ποιος μπορεί να δημιουργεί και να αλλάζει κτίρια, προγράμματα επιθεώρησης και σύνολα κωδίκων, πυροσβεστικούς κρουνούς, άδειες και δράσεις μείωσης κινδύνου στην κοινότητα. Η ανάγνωση δεδομένων πρόληψης απαιτεί μόνο πρόσβαση στα Αρχεία· οι έρευνες διέπονται από το δικαίωμα περιορισμένων αρχείων και τη συμμετοχή στην υπόθεση.</value></data>
 </root>
 
 

@@ -253,7 +253,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				OriginClient = Origin(input.OriginClient),
 				AppVersion = AppVersion(input.AppVersion),
 				ClientCapability = input.ClientCapability,
-				Events = input.Events.Select(e => new RecordFieldRolloutInput
+				Events = input.Events.Where(e => e != null).Select(e => new RecordFieldRolloutInput
 				{
 					EventType = e.EventType, Outcome = e.Outcome, DefinitionKey = e.DefinitionKey, DefinitionVersion = e.DefinitionVersion,
 					RecordId = e.RecordId, DurationMs = e.DurationMs, ItemCount = e.ItemCount, OccurredOn = e.OccurredOn

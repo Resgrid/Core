@@ -1,0 +1,37 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordsQualityRubricView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var title = Model.IsNew ? L["NewRubric"].Value : L["Edit"].Value + ": " + Model.Rubric.Name;
+	ViewBag.Title = "Resgrid | " + title;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordsQuality" asp-action="Index" asp-route-area="User">@L["QualityReview"]</a></li>
+			<li class="active"><strong>@title</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox"><div class="ibox-content">
+		<form method="post" class="form-horizontal" asp-controller="RecordsQuality" asp-action="Rubric" asp-route-area="User">
+			@Html.AntiForgeryToken()
+			<input type="hidden" asp-for="Rubric.RmsQualityRubricId" /><input type="hidden" asp-for="Rubric.RowVersion" />
+			<div class="form-group"><label class="col-sm-3 control-label">@L["DefinitionName"]</label><div class="col-sm-9"><input class="form-control" asp-for="Rubric.Name" maxlength="200" required /></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Definition"]</label><div class="col-sm-9"><select class="form-control" asp-for="Rubric.DefinitionKey" asp-items="Model.Definitions"></select></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["SampleSize"]</label><div class="col-sm-9"><input class="form-control" type="number" min="1" max="500" asp-for="Rubric.SampleSize" /><span class="help-block">@L["SampleSizeHelp"]</span></div></div>
+			<div class="form-group"><label class="col-sm-3 control-label">@L["Criteria"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="CriteriaText" rows="10" style="font-family:monospace" required></textarea><span class="help-block">@L["CriteriaHelp"]</span></div></div>
+			<div class="form-group"><div class="col-sm-offset-3 col-sm-9"><label class="checkbox-inline"><input type="checkbox" asp-for="Rubric.IsActive" /> @L["Enabled"]</label></div></div>
+			<div class="form-group"><div class="col-sm-offset-3 col-sm-9">
+				<button class="btn btn-primary"><i class="fa fa-save"></i> @L["Save"]</button>
+				<a class="btn btn-default" asp-controller="RecordsQuality" asp-action="Index" asp-route-area="User">@L["BackToRecords"]</a>
+			</div></div>
+		</form>
+	</div></div>
+</div>

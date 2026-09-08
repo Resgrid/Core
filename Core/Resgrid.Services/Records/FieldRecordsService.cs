@@ -196,7 +196,7 @@ namespace Resgrid.Services.Records
 			{
 				// A member who cannot author still gets an empty catalog rather than an error: the app shows read-only.
 				catalog.Ok = true;
-				return catalog;
+				return await RecordCatalogOutcomeAsync(departmentId, userId, request, capability, catalog);
 			}
 
 			var enforced = string.Equals(preflight.ProtectionState, DepartmentDataProtectionState.Enabled.ToString(), StringComparison.Ordinal)
@@ -205,9 +205,11 @@ namespace Resgrid.Services.Records
 			AddLockedStarters(catalog, request.Origin, context, capability);
 			// A transient listing failure and a department with nothing published look identical to the app, and the
 			// app caches what it is told, so say the catalog is unusable rather than handing back the starters alone.
+			// It says so under its own reason: a database that hiccuped is a retry, not grounds for every device in
+			// the department to throw its cache away and re-download together against the store that just failed.
 			if (!await AddDepartmentDefinitionsAsync(departmentId, catalog, request.Origin, request.AppVersion, capability, context, enforced))
 			{
-				catalog.Reasons.Add(FieldRecordCatalogV1.ExclusionReasons.RecordsNotUsable);
+				catalog.Reasons.Add(FieldRecordCatalogV1.ExclusionReasons.CatalogUnavailable);
 				return await RecordCatalogOutcomeAsync(departmentId, userId, request, capability, catalog);
 			}
 
@@ -490,7 +492,9 @@ namespace Resgrid.Services.Records
 			if (!catalog.Ok)
 			{
 				bundle.Reasons.AddRange(catalog.Reasons);
-				bundle.ResetRequired = request.Since > 0;
+				// A scope or policy refusal invalidates what the device holds; a transient catalog failure does not,
+				// so that one answers "retry" rather than telling every syncing device to reset at once.
+				bundle.ResetRequired = request.Since > 0 && !catalog.Reasons.Contains(FieldRecordCatalogV1.ExclusionReasons.CatalogUnavailable);
 				bundle.ServerTimestampMs = 0;
 				return bundle;
 			}

@@ -22,11 +22,30 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public void The_catalog_is_at_version_ten_and_the_last_candidates_are_what_moved_it()
 		{
-			// v9 closed the remaining Protected Data candidates; v10 (2026-09-05) is the Records (RMS) family and
-			// v11 (2026-09-06) the typed values of department definitions, pinned in RmsProtectedFieldsCatalogTests.
-			_catalog.Version.Should().Be(11);
-			_catalog.GetAddedBetween(9, 11).Select(e => e.FieldId).Should().BeEquivalentTo(Resgrid.Model.RmsProtectedFields.AllFieldIds());
+			// v9 closed the remaining Protected Data candidates; v10 (2026-09-05) is the Records (RMS) family,
+			// v11 (2026-09-06) the typed values of department definitions, pinned in RmsProtectedFieldsCatalogTests,
+			// and v12 (2026-09-07) the Contacts pre-plan family (Contacts plan Phase A).
+			// v13 (2026-09-07) is the RMS-5 prevention/investigation family plus the RMS-4 quality review.
+			_catalog.Version.Should().Be(ProtectedFieldCatalog.PreventionCatalogVersion);
+			_catalog.GetAddedBetween(9, 13).Where(e => e.Family == Resgrid.Model.RmsProtectedFields.Family).Select(e => e.FieldId).Should().BeEquivalentTo(Resgrid.Model.RmsProtectedFields.AllFieldIds());
+			_catalog.GetAddedBetween(12, 13).Select(e => e.FieldId).Should().BeEquivalentTo(
+				Resgrid.Model.RmsProtectedFields.Occupancies.Keys.Concat(Resgrid.Model.RmsProtectedFields.OccupancyHazards.Keys)
+					.Concat(Resgrid.Model.RmsProtectedFields.Inspections.Keys).Concat(Resgrid.Model.RmsProtectedFields.Violations.Keys)
+					.Concat(Resgrid.Model.RmsProtectedFields.Permits.Keys).Concat(Resgrid.Model.RmsProtectedFields.PlanReviews.Keys)
+					.Concat(Resgrid.Model.RmsProtectedFields.InvestigationCases.Keys).Concat(Resgrid.Model.RmsProtectedFields.InvestigationNotes.Keys)
+					.Concat(Resgrid.Model.RmsProtectedFields.InvestigationEvidence.Keys).Concat(Resgrid.Model.RmsProtectedFields.InvestigationCustody.Keys)
+					.Concat(Resgrid.Model.RmsProtectedFields.InvestigationReferrals.Keys).Concat(Resgrid.Model.RmsProtectedFields.QualityReviews.Keys)
+					.Concat(Resgrid.Model.RmsProtectedFields.PreventionAttachments.Keys).Concat(new[] { Resgrid.Model.RmsProtectedFields.PreventionAttachmentDataFieldId }),
+				"catalog v13 is exactly the RMS-5 seam");
+			_catalog.GetAddedBetween(12, 13).Should().OnlyContain(e => e.Family == Resgrid.Model.RmsProtectedFields.Family);
 			_catalog.GetAddedBetween(10, 11).Select(e => e.FieldId).Should().BeEquivalentTo(new[] { Resgrid.Model.RmsProtectedFields.ValueFieldId });
+			_catalog.GetAddedBetween(11, 12).Select(e => e.FieldId).Should().BeEquivalentTo(
+				ProtectedReadService.ContactPreplanFieldAccessors.Keys
+					.Concat(ProtectedReadService.ContactPreplanHazardFieldAccessors.Keys)
+					.Concat(ProtectedReadService.ContactAttachmentFieldAccessors.Keys)
+					.Concat(new[] { ProtectedReadService.ContactAttachmentDataFieldId }),
+				"catalog v12 is exactly the pre-plan, hazard and site-attachment seam");
+			_catalog.GetAddedBetween(11, 12).Should().OnlyContain(e => e.Family == "Contacts" && e.ViewPermission == PermissionTypes.ViewProtectedContactData);
 
 			_catalog.GetAddedBetween(8, 9).Select(e => e.FieldId)
 				.Should().BeEquivalentTo(new[]

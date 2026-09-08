@@ -55,9 +55,9 @@ namespace Resgrid.Tests.Services
 				"every catalog binding is counted");
 			result.TotalRows.Should().Be(10000L * AdpTableBindings.V1.Count);
 
-			// 450,000 rows / 100 rps = 4500s + 46×30s overhead = 5880s; ×1.25 = 7350s → 125 min P50 (catalog v11 binds 46 tables).
-			result.EstimatedP50Minutes.Should().Be(125);
-			result.EstimatedP90Minutes.Should().Be(250);
+			// 620,000 rows / 100 rps = 6200s + 62×30s overhead = 8060s; ×1.25 = 10075s → 168 min P50 (catalog v13 binds 62 tables).
+			result.EstimatedP50Minutes.Should().Be(168);
+			result.EstimatedP90Minutes.Should().Be(336);
 			result.ProjectedNights.Should().Be(1, "the P90 estimate still fits one 480-minute window");
 			result.BenchmarkRowsPerSecond.Should().Be(100);
 		}

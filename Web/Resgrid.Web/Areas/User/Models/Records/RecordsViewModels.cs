@@ -85,6 +85,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 	public class RecordsIndexView : RecordsBaseView
 	{
 		public RecordsModuleState ModuleState { get; set; }
+		/// <summary>RMS-4 quality review flag (Records.QualityReview); shows the button on the index only.</summary>
+		public bool QualityReviewOn { get; set; }
 		public Department Department { get; set; }
 		public bool IsDepartmentAdmin { get; set; }
 		public List<RmsRecordSearchProjection> Records { get; set; } = new List<RmsRecordSearchProjection>();

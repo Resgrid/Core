@@ -992,4 +992,6 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Wer rechtliche Sperren setzen und aufheben darf; sie setzen die Aufbewahrungsfrist aus und verhindern das Annullieren eines Berichts.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Berichtsentwürfe neu zuweisen</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Wer einen Berichtsentwurf einem anderen Verfasser zuweisen darf, etwa wenn der ursprüngliche Verfasser nicht verfügbar ist.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Präventionsdaten verwalten</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Wer Objekte, Prüfprogramme und Vorschriftensätze, Hydranten, Genehmigungen und Aktivitäten zur Risikominderung anlegen und ändern darf. Das Lesen von Präventionsdaten erfordert nur Zugriff auf Berichte; Ermittlungen unterliegen der Berechtigung für eingeschränkte Berichte und der Fallmitgliedschaft.</value></data>
 </root>

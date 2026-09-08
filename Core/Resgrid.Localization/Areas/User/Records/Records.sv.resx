@@ -1123,6 +1123,11 @@
   <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Tilldela nummer</value></data>
   <data name="DefinitionPerGroup" xml:space="preserve"><value>Sekvens per station</value></data>
   <data name="DefinitionPerIncident" xml:space="preserve"><value>Sekvens per insats</value></data>
+  <data name="DefinitionCardinality" xml:space="preserve"><value>Poster per larm</value></data>
+  <data name="DefinitionCardinalityMultiple" xml:space="preserve"><value>Flera per larm</value></data>
+  <data name="DefinitionCardinalitySingle" xml:space="preserve"><value>En auktoritativ per larm</value></data>
+  <data name="DefinitionCardinalityPerSubject" xml:space="preserve"><value>En per subjekt per larm</value></data>
+  <data name="DefinitionCardinalityHelp" xml:space="preserve"><value>Hur många poster av den här definitionen ett larm får ha. Kontrolleras vid skapande; en ogiltigförklarad eller avbruten post frigör sin plats.</value></data>
   <data name="DefinitionResetYearly" xml:space="preserve"><value>Återställ årligen</value></data>
   <data name="DefinitionClassification" xml:space="preserve"><value>Klassificering</value></data>
   <data name="DefinitionRetention" xml:space="preserve"><value>Bevarande (år)</value></data>
@@ -1418,4 +1423,414 @@
   <data name="ReconciliationSourceAhead" xml:space="preserve"><value>Källans status ligger före den lokala tillsättningen</value></data>
   <data name="ReconciliationSourceBehind" xml:space="preserve"><value>Källans status ligger efter den lokala tillsättningen</value></data>
   <data name="DeploymentOwnedByConnector" xml:space="preserve"><value>Underhålls av en koppling</value></data>
+  <data name="AccessAudit" xml:space="preserve"><value>Åtkomstlogg</value></data>
+  <data name="AccessNotes" xml:space="preserve"><value>Åtkomstanteckningar</value></data>
+  <data name="AddEvidence" xml:space="preserve"><value>Lägg till bevis</value></data>
+  <data name="AddHazard" xml:space="preserve"><value>Lägg till fara</value></data>
+  <data name="AddMember" xml:space="preserve"><value>Lägg till medlem</value></data>
+  <data name="AddNote" xml:space="preserve"><value>Lägg till anteckning</value></data>
+  <data name="AddReferral" xml:space="preserve"><value>Lägg till hänvisning</value></data>
+  <data name="AddViolation" xml:space="preserve"><value>Lägg till överträdelse</value></data>
+  <data name="Agency" xml:space="preserve"><value>Myndighet</value></data>
+  <data name="AlarmCompany" xml:space="preserve"><value>Larmbolag</value></data>
+  <data name="AlarmPanel" xml:space="preserve"><value>Larmcentral</value></data>
+  <data name="AllPrograms" xml:space="preserve"><value>Alla program</value></data>
+  <data name="AmendmentsRecommended" xml:space="preserve"><value>Rekommenderade ändringar</value></data>
+  <data name="Applicant" xml:space="preserve"><value>Sökande</value></data>
+  <data name="ApplicantEmail" xml:space="preserve"><value>Sökandens e-post</value></data>
+  <data name="ApplicantPhone" xml:space="preserve"><value>Sökandens telefon</value></data>
+  <data name="AppliedOn" xml:space="preserve"><value>Ansökt</value></data>
+  <data name="ApplyPermit" xml:space="preserve"><value>Skicka ansökan</value></data>
+  <data name="ApproveFindings" xml:space="preserve"><value>Godkänn slutsatser</value></data>
+  <data name="ApproveFindingsHint" xml:space="preserve"><value>Slutsatserna måste godkännas av en granskare eller ansvarig som inte är författaren.</value></data>
+  <data name="AttachmentAdded" xml:space="preserve"><value>Bilaga tillagd.</value></data>
+  <data name="AttachmentFileRequired" xml:space="preserve"><value>Välj en fil att bifoga.</value></data>
+  <data name="AttachmentRemoved" xml:space="preserve"><value>Bilaga borttagen.</value></data>
+  <data name="AudienceCount" xml:space="preserve"><value>Publik</value></data>
+  <data name="AuthorizationDenials" xml:space="preserve"><value>Nekade behörigheter</value></data>
+  <data name="AverageScore" xml:space="preserve"><value>Genomsnittlig poäng</value></data>
+  <data name="ByAuthor" xml:space="preserve"><value>Per författare</value></data>
+  <data name="ByCriterion" xml:space="preserve"><value>Per kriterium</value></data>
+  <data name="ByDefinition" xml:space="preserve"><value>Per definition</value></data>
+  <data name="ByUnit" xml:space="preserve"><value>Per enhet</value></data>
+  <data name="CancelInspection" xml:space="preserve"><value>Avbryt tillsyn</value></data>
+  <data name="CancelInspectionConfirm" xml:space="preserve"><value>Avbryta denna tillsyn? Posten finns kvar i historiken.</value></data>
+  <data name="CandidateLinked" xml:space="preserve"><value>Kandidat länkad.</value></data>
+  <data name="CandidateRejected" xml:space="preserve"><value>Kandidat avvisad.</value></data>
+  <data name="Candidates" xml:space="preserve"><value>Kandidater</value></data>
+  <data name="CaseAccessNotice" xml:space="preserve"><value>Åtkomst till ärendet är begränsad till dess medlemmar och varje läsning loggas.</value></data>
+  <data name="CaseClosed" xml:space="preserve"><value>Ärende stängt.</value></data>
+  <data name="CaseMembers" xml:space="preserve"><value>Ärendemedlemmar</value></data>
+  <data name="CaseNotes" xml:space="preserve"><value>Ärendeanteckningar</value></data>
+  <data name="CaseOpened" xml:space="preserve"><value>Ärende {0} öppnat.</value></data>
+  <data name="CaseReopened" xml:space="preserve"><value>Ärende återöppnat.</value></data>
+  <data name="CaseSaved" xml:space="preserve"><value>Ärende sparat.</value></data>
+  <data name="CatalogVersion" xml:space="preserve"><value>Katalogversion</value></data>
+  <data name="CauseClassification" xml:space="preserve"><value>Orsaksklassificering</value></data>
+  <data name="CauseDetail" xml:space="preserve"><value>Orsaksdetalj</value></data>
+  <data name="Checklist" xml:space="preserve"><value>Checklista</value></data>
+  <data name="ChecklistHelp" xml:space="preserve"><value>Ett objekt per rad: nyckel | text | obligatorisk (y/n) | id för regelavsnitt.</value></data>
+  <data name="ChecklistItem" xml:space="preserve"><value>Kontrollpunkt</value></data>
+  <data name="CloseCase" xml:space="preserve"><value>Stäng ärende</value></data>
+  <data name="CloseCaseConfirm" xml:space="preserve"><value>Stänga ärendet? Anteckningarna blir skrivskyddade.</value></data>
+  <data name="CloseInspection" xml:space="preserve"><value>Avsluta tillsyn</value></data>
+  <data name="ClosureReason" xml:space="preserve"><value>Orsak till stängning</value></data>
+  <data name="CodeEdition" xml:space="preserve"><value>Utgåva</value></data>
+  <data name="CodeSectionSaved" xml:space="preserve"><value>Regelavsnitt sparat.</value></data>
+  <data name="CodeSectionText" xml:space="preserve"><value>Avsnittstext</value></data>
+  <data name="CodeSections" xml:space="preserve"><value>Regelavsnitt</value></data>
+  <data name="CodeSetSaved" xml:space="preserve"><value>Regelverk sparat.</value></data>
+  <data name="CodeSets" xml:space="preserve"><value>Regelverk</value></data>
+  <data name="CodeSetsIntro" xml:space="preserve"><value>Brand- och byggregler som tillsynen utgår från. Avsnitten har standardallvarlighet och rättelsetid för överträdelser.</value></data>
+  <data name="CollectedFrom" xml:space="preserve"><value>Insamlat från</value></data>
+  <data name="CollectedOn" xml:space="preserve"><value>Insamlat</value></data>
+  <data name="Comments" xml:space="preserve"><value>Kommentarer</value></data>
+  <data name="CompleteInspection" xml:space="preserve"><value>Slutför tillsyn</value></data>
+  <data name="Conditions" xml:space="preserve"><value>Villkor</value></data>
+  <data name="ConditionsTemplate" xml:space="preserve"><value>Villkorsmall</value></data>
+  <data name="ContactId" xml:space="preserve"><value>Kontakt-ID</value></data>
+  <data name="ContactLinked" xml:space="preserve"><value>Kontakt länkad.</value></data>
+  <data name="ContactUnlinked" xml:space="preserve"><value>Kontakt avlänkad.</value></data>
+  <data name="CorrectiveAction" xml:space="preserve"><value>Åtgärd</value></data>
+  <data name="CreateOccupancyFromSource" xml:space="preserve"><value>Skapa ett nytt objekt från denna källa</value></data>
+  <data name="Criteria" xml:space="preserve"><value>Kriterier</value></data>
+  <data name="CriteriaHelp" xml:space="preserve"><value>Ett kriterium per rad: nyckel | text | vikt.</value></data>
+  <data name="CriterionScore" xml:space="preserve"><value>Poäng (0-4)</value></data>
+  <data name="CriterionWeight" xml:space="preserve"><value>Vikt</value></data>
+  <data name="CrosswalkIntroText" xml:space="preserve"><value>Inventeringen hittar insatsplaner, kontakter med adress och intressepunkter, grupperar dem efter adress och närhet och föreslår objekt. Avgör varje kandidat innan skrivägandet flyttas till Register.</value></data>
+  <data name="CrrActivities" xml:space="preserve"><value>Riskminskning i samhället</value></data>
+  <data name="CrrDeleted" xml:space="preserve"><value>Aktivitet borttagen.</value></data>
+  <data name="CrrSaved" xml:space="preserve"><value>Aktivitet sparad.</value></data>
+  <data name="CrrSummary" xml:space="preserve"><value>Sammanfattning för perioden</value></data>
+  <data name="Custodian" xml:space="preserve"><value>Förvarare</value></data>
+  <data name="CustodyChain" xml:space="preserve"><value>Spårbarhetskedja</value></data>
+  <data name="CustodyChainHelp" xml:space="preserve"><value>Överlämningar kan bara läggas till; varje överlämning anger vem som lämnade, vem som tog emot, varför och resulterande tillstånd.</value></data>
+  <data name="CustodyTransferred" xml:space="preserve"><value>Förvaring överlämnad.</value></data>
+  <data name="DecisionReason" xml:space="preserve"><value>Beslutsmotivering</value></data>
+  <data name="DefaultCorrectionDays" xml:space="preserve"><value>Rättelsedagar</value></data>
+  <data name="DefaultSeverity" xml:space="preserve"><value>Standardallvarlighet</value></data>
+  <data name="DeleteCrr" xml:space="preserve"><value>Ta bort aktivitet</value></data>
+  <data name="DeleteCrrConfirm" xml:space="preserve"><value>Ta bort aktiviteten?</value></data>
+  <data name="DeleteHydrant" xml:space="preserve"><value>Ta bort brandpost</value></data>
+  <data name="DeleteHydrantConfirm" xml:space="preserve"><value>Ta bort brandposten? Flödestester och underhållshistorik försvinner.</value></data>
+  <data name="DeleteOccupancy" xml:space="preserve"><value>Ta bort objekt</value></data>
+  <data name="DeleteOccupancyConfirm" xml:space="preserve"><value>Ta bort objektet? Tillsyner, tillstånd och faror behåller historiken men förlorar sin överordnade post.</value></data>
+  <data name="DueOn" xml:space="preserve"><value>Förfaller</value></data>
+  <data name="EditHydrant" xml:space="preserve"><value>Redigera brandpost</value></data>
+  <data name="EditOccupancy" xml:space="preserve"><value>Redigera objekt</value></data>
+  <data name="EditPermit" xml:space="preserve"><value>Redigera tillstånd</value></data>
+  <data name="EffectiveOn" xml:space="preserve"><value>Gäller från</value></data>
+  <data name="ElectricShutoff" xml:space="preserve"><value>Elavstängning</value></data>
+  <data name="EmergencyContact" xml:space="preserve"><value>Nödkontakt</value></data>
+  <data name="EvidenceAdded" xml:space="preserve"><value>Bevis tillagt.</value></data>
+  <data name="EvidenceItems" xml:space="preserve"><value>Bevis</value></data>
+  <data name="EvidenceNumber" xml:space="preserve"><value>Bevisnr</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Går ut</value></data>
+  <data name="ExpiresOnHelp" xml:space="preserve"><value>Lämna tomt för att använda tillståndstypens giltighet från utfärdandet.</value></data>
+  <data name="ExpiringSoon" xml:space="preserve"><value>Går snart ut</value></data>
+  <data name="ExportCase" xml:space="preserve"><value>Exportera paket</value></data>
+  <data name="Failed" xml:space="preserve"><value>Underkänd</value></data>
+  <data name="FdcLocation" xml:space="preserve"><value>Placering av stigarledning</value></data>
+  <data name="FeeAmount" xml:space="preserve"><value>Avgift</value></data>
+  <data name="FeeAmountHelp" xml:space="preserve"><value>Endast referens; fakturering registreras här men drivs inte in.</value></data>
+  <data name="FeePaidOn" xml:space="preserve"><value>Avgift betald</value></data>
+  <data name="FeeRecorded" xml:space="preserve"><value>Avgift registrerad.</value></data>
+  <data name="FileName" xml:space="preserve"><value>Fil</value></data>
+  <data name="Findings" xml:space="preserve"><value>Slutsatser</value></data>
+  <data name="FindingsApproved" xml:space="preserve"><value>Slutsatser godkända.</value></data>
+  <data name="FindingsApprovedNotice" xml:space="preserve"><value>Godkända</value></data>
+  <data name="FindingsPendingNotice" xml:space="preserve"><value>Väntar på godkännande, registrerade</value></data>
+  <data name="FindingsRecorded" xml:space="preserve"><value>Slutsatser registrerade och skickade för godkännande.</value></data>
+  <data name="FindingsReturned" xml:space="preserve"><value>Slutsatser återsända till författaren.</value></data>
+  <data name="FireAlarm" xml:space="preserve"><value>Brandlarm</value></data>
+  <data name="FlowClass" xml:space="preserve"><value>Flödesklass</value></data>
+  <data name="FlowGpm" xml:space="preserve"><value>Flöde (gpm)</value></data>
+  <data name="FlowGpmHelp" xml:space="preserve"><value>Registrerade flödestester uppdaterar värdet och NFPA 291-klassen automatiskt.</value></data>
+  <data name="FlowTestHelp" xml:space="preserve"><value>Flödet beräknas som 29,83 × c × d² × √pitot och avrundas till 10 gpm; klassen följer NFPA 291.</value></data>
+  <data name="FlowTestRecorded" xml:space="preserve"><value>Flödestest registrerat.</value></data>
+  <data name="FlowTests" xml:space="preserve"><value>Flödestester</value></data>
+  <data name="FrequencyMonths" xml:space="preserve"><value>Intervall (månader)</value></data>
+  <data name="FromCustodian" xml:space="preserve"><value>Från</value></data>
+  <data name="GasShutoff" xml:space="preserve"><value>Gasavstängning</value></data>
+  <data name="GateCode" xml:space="preserve"><value>Grindkod</value></data>
+  <data name="GeneralHazardNotes" xml:space="preserve"><value>Allmänna faroanteckningar</value></data>
+  <data name="GenerateDue" xml:space="preserve"><value>Skapa förfallna tillsyner</value></data>
+  <data name="GenerateDueResult" xml:space="preserve"><value>{0} tillsyner skapade.</value></data>
+  <data name="HazardRemoved" xml:space="preserve"><value>Fara borttagen.</value></data>
+  <data name="HazardSaved" xml:space="preserve"><value>Fara sparad.</value></data>
+  <data name="Hazards" xml:space="preserve"><value>Faror</value></data>
+  <data name="HazmatOnSite" xml:space="preserve"><value>Farligt gods på plats</value></data>
+  <data name="HoursSpent" xml:space="preserve"><value>Timmar</value></data>
+  <data name="HydrantCounts" xml:space="preserve"><value>{0} brandposter, {1} ur drift, {2} med förfallet flödestest.</value></data>
+  <data name="HydrantDeleted" xml:space="preserve"><value>Brandpost borttagen.</value></data>
+  <data name="HydrantMap" xml:space="preserve"><value>Karta</value></data>
+  <data name="HydrantMapHint" xml:space="preserve"><value>Färgen följer NFPA 291-flödesklassen; svart betyder ur drift.</value></data>
+  <data name="HydrantNumber" xml:space="preserve"><value>Brandpostnr</value></data>
+  <data name="HydrantOwner" xml:space="preserve"><value>Ägare</value></data>
+  <data name="HydrantSaved" xml:space="preserve"><value>Brandpost sparad.</value></data>
+  <data name="Hydrants" xml:space="preserve"><value>Brandposter</value></data>
+  <data name="ImportHydrants" xml:space="preserve"><value>Importera brandposter</value></data>
+  <data name="ImportHydrantsHelp" xml:space="preserve"><value>CSV med rubrikrad: number, latitude, longitude, type, address, main_size, flow_gpm, owner. Befintliga nummer uppdateras.</value></data>
+  <data name="ImportRejectedRows" xml:space="preserve"><value>Rader som inte importerades</value></data>
+  <data name="ImportResult" xml:space="preserve"><value>{0} rader lästa, {1} skapade, {2} uppdaterade, {3} avvisade.</value></data>
+  <data name="ImportSections" xml:space="preserve"><value>Importera avsnitt</value></data>
+  <data name="ImportSectionsHelp" xml:space="preserve"><value>CSV med rubrikrad: section, title, text, severity (1-4), correction_days.</value></data>
+  <data name="InService" xml:space="preserve"><value>I drift</value></data>
+  <data name="IncidentLinked" xml:space="preserve"><value>Incident länkad; nuvarande revision är låst.</value></data>
+  <data name="IncidentSummary" xml:space="preserve"><value>Incidentsammanfattning</value></data>
+  <data name="IncidentUnlinked" xml:space="preserve"><value>Incident avlänkad.</value></data>
+  <data name="IncludeClosed" xml:space="preserve"><value>Inkludera stängda</value></data>
+  <data name="InspectionCancelled" xml:space="preserve"><value>Tillsyn avbruten.</value></data>
+  <data name="InspectionClosed" xml:space="preserve"><value>Tillsyn avslutad.</value></data>
+  <data name="InspectionCompleted" xml:space="preserve"><value>Tillsyn slutförd; underkända punkter skapade överträdelser.</value></data>
+  <data name="InspectionNotes" xml:space="preserve"><value>Anteckningar</value></data>
+  <data name="InspectionNumber" xml:space="preserve"><value>Tillsynsnr</value></data>
+  <data name="InspectionPrograms" xml:space="preserve"><value>Tillsynsprogram</value></data>
+  <data name="InspectionProgramsIntro" xml:space="preserve"><value>Ett program kopplar en checklista till ett intervall och de objekttyper det gäller; förfallna tillsyner skapas från det.</value></data>
+  <data name="InspectionResult" xml:space="preserve"><value>Resultat</value></data>
+  <data name="InspectionScheduled" xml:space="preserve"><value>Tillsyn planerad.</value></data>
+  <data name="InspectionStarted" xml:space="preserve"><value>Tillsyn påbörjad.</value></data>
+  <data name="Inspections" xml:space="preserve"><value>Tillsyner</value></data>
+  <data name="Inspector" xml:space="preserve"><value>Inspektör</value></data>
+  <data name="InventoriedOn" xml:space="preserve"><value>Inventerat</value></data>
+  <data name="InventoryResult" xml:space="preserve"><value>{0} källor genomsökta, {1} kandidater skapade, {2} uppdaterade, {3} redan avgjorda.</value></data>
+  <data name="Investigations" xml:space="preserve"><value>Utredningar</value></data>
+  <data name="InvestigationsIntro" xml:space="preserve"><value>Bara ärenden du är medlem i visas. Varje läsning av ett ärende skrivs till åtkomstloggen.</value></data>
+  <data name="InvoiceReference" xml:space="preserve"><value>Fakturareferens</value></data>
+  <data name="IssueNotice" xml:space="preserve"><value>Utfärda föreläggande</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Utfärdat</value></data>
+  <data name="ItemNote" xml:space="preserve"><value>Anteckning</value></data>
+  <data name="Jurisdiction" xml:space="preserve"><value>Jurisdiktion</value></data>
+  <data name="KnoxBox" xml:space="preserve"><value>Nyckelskåp</value></data>
+  <data name="LastInspectedOn" xml:space="preserve"><value>Senast inspekterad</value></data>
+  <data name="LastMaintainedOn" xml:space="preserve"><value>Senast underhållen</value></data>
+  <data name="LastReviewedOn" xml:space="preserve"><value>Senast granskad</value></data>
+  <data name="LastTestedOn" xml:space="preserve"><value>Senast testad</value></data>
+  <data name="LeadInvestigator" xml:space="preserve"><value>Huvudutredare</value></data>
+  <data name="LegacyWriteAttempts" xml:space="preserve"><value>Skrivförsök mot gamla systemet</value></data>
+  <data name="LinkCandidate" xml:space="preserve"><value>Länka</value></data>
+  <data name="LinkContact" xml:space="preserve"><value>Länka kontakt</value></data>
+  <data name="LinkIncident" xml:space="preserve"><value>Länka incident</value></data>
+  <data name="LinkedContacts" xml:space="preserve"><value>Länkade kontakter</value></data>
+  <data name="LinkedCount" xml:space="preserve"><value>Länkade</value></data>
+  <data name="LinkedIncidents" xml:space="preserve"><value>Länkade incidenter</value></data>
+  <data name="LinkedIncidentsHelp" xml:space="preserve"><value>Länkningen låser incidentrevisionen vid det tillfället; slutsatser ändrar aldrig incidentrapporten.</value></data>
+  <data name="MainSize" xml:space="preserve"><value>Ledningsdimension (tum)</value></data>
+  <data name="MaintenanceLog" xml:space="preserve"><value>Underhållslogg</value></data>
+  <data name="MaintenanceRecorded" xml:space="preserve"><value>Underhåll registrerat.</value></data>
+  <data name="MarkReviewed" xml:space="preserve"><value>Markera som granskad</value></data>
+  <data name="MatchConfidence" xml:space="preserve"><value>Matchningssäkerhet</value></data>
+  <data name="MemberAdded" xml:space="preserve"><value>Medlem tillagd.</value></data>
+  <data name="MemberRemoved" xml:space="preserve"><value>Medlem borttagen.</value></data>
+  <data name="MergeConfirm" xml:space="preserve"><value>Slå ihop objektet med målet? Faror, länkar och historik flyttas; denna post blir en hänvisning.</value></data>
+  <data name="MergeInto" xml:space="preserve"><value>Slå ihop med</value></data>
+  <data name="MergeTargetId" xml:space="preserve"><value>Målobjektets ID</value></data>
+  <data name="NearestHydrant" xml:space="preserve"><value>Närmaste brandpost</value></data>
+  <data name="NewCodeSet" xml:space="preserve"><value>Nytt regelverk</value></data>
+  <data name="NewCrrActivity" xml:space="preserve"><value>Ny aktivitet</value></data>
+  <data name="NewHydrant" xml:space="preserve"><value>Ny brandpost</value></data>
+  <data name="NewOccupancy" xml:space="preserve"><value>Nytt objekt</value></data>
+  <data name="NewPermit" xml:space="preserve"><value>Nytt tillstånd</value></data>
+  <data name="NewPermitType" xml:space="preserve"><value>Ny tillståndstyp</value></data>
+  <data name="NewProgram" xml:space="preserve"><value>Nytt program</value></data>
+  <data name="NewRubric" xml:space="preserve"><value>Ny bedömningsmall</value></data>
+  <data name="NoAlerts" xml:space="preserve"><value>Inga larm eller varningar i detta fönster.</value></data>
+  <data name="NoAttachments" xml:space="preserve"><value>Inga bilagor.</value></data>
+  <data name="NoCandidates" xml:space="preserve"><value>Inga kandidater väntar. Kör inventeringen för att hitta insatsplaner och kontakter att stämma av.</value></data>
+  <data name="NoCases" xml:space="preserve"><value>Inga ärenden.</value></data>
+  <data name="NoChecklist" xml:space="preserve"><value>Programmet har inga kontrollpunkter.</value></data>
+  <data name="NoCrr" xml:space="preserve"><value>Inga aktiviteter under perioden.</value></data>
+  <data name="NoFlowTests" xml:space="preserve"><value>Inga flödestester registrerade.</value></data>
+  <data name="NoHazards" xml:space="preserve"><value>Inga faror registrerade.</value></data>
+  <data name="NoHydrants" xml:space="preserve"><value>Inga brandposter ännu.</value></data>
+  <data name="NoInspections" xml:space="preserve"><value>Inga tillsyner.</value></data>
+  <data name="NoLinkedContacts" xml:space="preserve"><value>Inga länkade kontakter.</value></data>
+  <data name="NoMaintenance" xml:space="preserve"><value>Inget underhåll registrerat.</value></data>
+  <data name="NoOccupancies" xml:space="preserve"><value>Inga objekt matchar.</value></data>
+  <data name="NoPendingReviews" xml:space="preserve"><value>Inga granskningar väntar på poängsättning.</value></data>
+  <data name="NoPermits" xml:space="preserve"><value>Inga tillstånd matchar.</value></data>
+  <data name="NoPlanReviews" xml:space="preserve"><value>Inga granskningsomgångar ännu.</value></data>
+  <data name="NoReviewsYet" xml:space="preserve"><value>Inga poängsatta granskningar under perioden.</value></data>
+  <data name="NoRubrics" xml:space="preserve"><value>Inga bedömningsmallar ännu. En administratör skapar den första.</value></data>
+  <data name="NoViolations" xml:space="preserve"><value>Inga överträdelser.</value></data>
+  <data name="NotRecordedShort" xml:space="preserve"><value>Ej tillämpl.</value></data>
+  <data name="NoteBody" xml:space="preserve"><value>Anteckningstext</value></data>
+  <data name="NoteSaved" xml:space="preserve"><value>Anteckning sparad.</value></data>
+  <data name="NoteSubject" xml:space="preserve"><value>Ämne</value></data>
+  <data name="NoticeIssued" xml:space="preserve"><value>Föreläggande utfärdat.</value></data>
+  <data name="NoticeReference" xml:space="preserve"><value>Föreläggandereferens</value></data>
+  <data name="Occupancies" xml:space="preserve"><value>Objekt</value></data>
+  <data name="OccupancyAccess" xml:space="preserve"><value>Åtkomst</value></data>
+  <data name="OccupancyCount" xml:space="preserve"><value>{0} objekt</value></data>
+  <data name="OccupancyDeleted" xml:space="preserve"><value>Objekt borttaget.</value></data>
+  <data name="OccupancyHours" xml:space="preserve"><value>Verksamhetstider</value></data>
+  <data name="OccupancyIdentity" xml:space="preserve"><value>Identitet och plats</value></data>
+  <data name="OccupancyMerged" xml:space="preserve"><value>Objekt sammanslaget.</value></data>
+  <data name="OccupancyMergedNotice" xml:space="preserve"><value>Objektet slogs ihop med</value></data>
+  <data name="OccupancyNumber" xml:space="preserve"><value>Objektnr</value></data>
+  <data name="OccupancyProtection" xml:space="preserve"><value>Brandskydd och försörjning</value></data>
+  <data name="OccupancyReviewed" xml:space="preserve"><value>Objekt markerat som granskat.</value></data>
+  <data name="OccupancySaved" xml:space="preserve"><value>Objekt sparat.</value></data>
+  <data name="OccupancySearchPlaceholder" xml:space="preserve"><value>Sök nummer, namn eller adress</value></data>
+  <data name="OccupancyStructure" xml:space="preserve"><value>Byggnad</value></data>
+  <data name="OccupancyTactical" xml:space="preserve"><value>Faror och taktik</value></data>
+  <data name="OccupancyType" xml:space="preserve"><value>Objekttyp</value></data>
+  <data name="OccupancyTypesApply" xml:space="preserve"><value>Gäller objekttyper</value></data>
+  <data name="OccupancyTypesApplyHelp" xml:space="preserve"><value>Typnummer avgränsade med komma; tomt betyder alla typer.</value></data>
+  <data name="OccupantLoad" xml:space="preserve"><value>Personantal</value></data>
+  <data name="OccupantsNeedingAssistance" xml:space="preserve"><value>Personer som behöver hjälp</value></data>
+  <data name="OpenCase" xml:space="preserve"><value>Öppna ärende</value></data>
+  <data name="OpenCaseIntro" xml:space="preserve"><value>Du blir huvudutredare. Lägg till medlemmar efter öppnandet; bara medlemmar kan läsa ärendet.</value></data>
+  <data name="OpenViolations" xml:space="preserve"><value>Öppna överträdelser</value></data>
+  <data name="OpenedOn" xml:space="preserve"><value>Öppnat</value></data>
+  <data name="OriginDescription" xml:space="preserve"><value>Beskrivning av startplats</value></data>
+  <data name="OutOfService" xml:space="preserve"><value>Ur drift</value></data>
+  <data name="OutOfServiceReason" xml:space="preserve"><value>Orsak till driftstopp</value></data>
+  <data name="OutboxFailed" xml:space="preserve"><value>Misslyckade händelser</value></data>
+  <data name="OutboxHeader" xml:space="preserve"><value>Händelseutkorg</value></data>
+  <data name="OutboxOldest" xml:space="preserve"><value>Äldsta väntande</value></data>
+  <data name="OutboxPending" xml:space="preserve"><value>Väntande händelser</value></data>
+  <data name="Outcome" xml:space="preserve"><value>Utfall</value></data>
+  <data name="OutletDiameter" xml:space="preserve"><value>Uttag (tum)</value></data>
+  <data name="OwnerName" xml:space="preserve"><value>Ägarens namn</value></data>
+  <data name="OwnershipContactsOwnedNotice" xml:space="preserve"><value>Insatsplaner skrivs fortfarande under Kontakter. Stäm av kopplingen för att flytta skrivägandet till objekt.</value></data>
+  <data name="OwnershipRecordsOwnedNotice" xml:space="preserve"><value>Objekt i Register äger insatsplanerna. Kontaktsidor och apparna läser projektioner härifrån.</value></data>
+  <data name="OwnershipSwitched" xml:space="preserve"><value>Skrivägande flyttat till objekt i Register.</value></data>
+  <data name="ParcelId" xml:space="preserve"><value>Fastighetsbeteckning</value></data>
+  <data name="Passed" xml:space="preserve"><value>Godkänd</value></data>
+  <data name="PendingReviews" xml:space="preserve"><value>Granskningar att poängsätta</value></data>
+  <data name="PerformedOn" xml:space="preserve"><value>Utfört</value></data>
+  <data name="PermitCode" xml:space="preserve"><value>Kod</value></data>
+  <data name="PermitNumber" xml:space="preserve"><value>Tillståndsnr</value></data>
+  <data name="PermitSaved" xml:space="preserve"><value>Tillstånd sparat.</value></data>
+  <data name="PermitTransitioned" xml:space="preserve"><value>Tillståndets status uppdaterad.</value></data>
+  <data name="PermitType" xml:space="preserve"><value>Tillståndstyp</value></data>
+  <data name="PermitTypeSaved" xml:space="preserve"><value>Tillståndstyp sparad.</value></data>
+  <data name="PermitTypes" xml:space="preserve"><value>Tillståndstyper</value></data>
+  <data name="Permits" xml:space="preserve"><value>Tillstånd</value></data>
+  <data name="PinnedRevision" xml:space="preserve"><value>låst revision</value></data>
+  <data name="PitotPressure" xml:space="preserve"><value>Pitot (psi)</value></data>
+  <data name="PlanReviewOutcome" xml:space="preserve"><value>Granskningsutfall</value></data>
+  <data name="PlanReviewRecorded" xml:space="preserve"><value>Ritningsgranskning registrerad.</value></data>
+  <data name="PlanReviews" xml:space="preserve"><value>Ritningsgranskning</value></data>
+  <data name="PoiId" xml:space="preserve"><value>Intressepunkts-ID</value></data>
+  <data name="PreplanCrosswalk" xml:space="preserve"><value>Koppling av insatsplaner</value></data>
+  <data name="PreplanOwnership" xml:space="preserve"><value>Skrivägande för insatsplaner</value></data>
+  <data name="PreplanReviewOverdue" xml:space="preserve"><value>Granskningsdatumet för objektet har passerat.</value></data>
+  <data name="PreventionHeader" xml:space="preserve"><value>Förebyggande</value></data>
+  <data name="ProgramSaved" xml:space="preserve"><value>Program sparat.</value></data>
+  <data name="ProtectedContentBlocked" xml:space="preserve"><value>Skyddat innehåll är dolt; visa det innan denna åtgärd.</value></data>
+  <data name="ProtectionEnforced" xml:space="preserve"><value>Dataskydd aktivt</value></data>
+  <data name="QualityReview" xml:space="preserve"><value>Kvalitetsgranskning</value></data>
+  <data name="QualityReviewIntro" xml:space="preserve"><value>Urvalet väljer slutförda poster deterministiskt per mall; poängen är viktad och matar trenderna.</value></data>
+  <data name="RecommendAmendment" xml:space="preserve"><value>Rekommendera ändring</value></data>
+  <data name="RecommendsAmendment" xml:space="preserve"><value>Rekommenderar ändring av incidentrapporten</value></data>
+  <data name="RecommendsAmendmentHelp" xml:space="preserve"><value>Slutsatser ändrar aldrig incidenten. Rekommendationen går via postens ändringsflöde.</value></data>
+  <data name="RecordFee" xml:space="preserve"><value>Registrera avgift</value></data>
+  <data name="RecordFindings" xml:space="preserve"><value>Registrera slutsatser</value></data>
+  <data name="RecordFlowTest" xml:space="preserve"><value>Registrera flödestest</value></data>
+  <data name="RecordMaintenance" xml:space="preserve"><value>Registrera underhåll</value></data>
+  <data name="RecordPlanReview" xml:space="preserve"><value>Registrera ritningsgranskning</value></data>
+  <data name="RecordedBy" xml:space="preserve"><value>Registrerat av</value></data>
+  <data name="RecordsCreated" xml:space="preserve"><value>Skapade poster</value></data>
+  <data name="RecordsFinalized" xml:space="preserve"><value>Slutförda poster</value></data>
+  <data name="RecordsHealth" xml:space="preserve"><value>Driftstatus</value></data>
+  <data name="RecordsHealthIntro" xml:space="preserve"><value>Grundtelemetri för aktiveringen av Register: skrivförsök mot gamla systemet, utkorgsfördröjning, Workflow-körningar, skanningar och förebyggande räknare. Varje källa faller tillbaka till en varning i stället för att fälla sidan.</value></data>
+  <data name="RecordsModuleActive" xml:space="preserve"><value>Register aktiverat</value></data>
+  <data name="RecordsOverdue" xml:space="preserve"><value>Poster försenade för granskning</value></data>
+  <data name="ReferenceNumber" xml:space="preserve"><value>Referensnummer</value></data>
+  <data name="ReferralAdded" xml:space="preserve"><value>Hänvisning tillagd.</value></data>
+  <data name="ReferralUpdated" xml:space="preserve"><value>Hänvisning uppdaterad.</value></data>
+  <data name="Referrals" xml:space="preserve"><value>Hänvisningar</value></data>
+  <data name="ReinspectionOf" xml:space="preserve"><value>Omtillsyn av</value></data>
+  <data name="RejectCandidate" xml:space="preserve"><value>Avvisa</value></data>
+  <data name="RemoveAttachmentConfirm" xml:space="preserve"><value>Ta bort bilagan?</value></data>
+  <data name="ReopenCase" xml:space="preserve"><value>Återöppna ärende</value></data>
+  <data name="RequiredFireFlow" xml:space="preserve"><value>Erforderligt släckvattenflöde (gpm)</value></data>
+  <data name="RequiresPlanReview" xml:space="preserve"><value>Kräver ritningsgranskning</value></data>
+  <data name="ResidualPressure" xml:space="preserve"><value>Resttryck (psi)</value></data>
+  <data name="ResultingState" xml:space="preserve"><value>Resulterande tillstånd</value></data>
+  <data name="ReturnFindings" xml:space="preserve"><value>Återsänd till författaren</value></data>
+  <data name="ReturnedToService" xml:space="preserve"><value>Åter i drift</value></data>
+  <data name="ReviewCount" xml:space="preserve"><value>Granskningar</value></data>
+  <data name="ReviewCycle" xml:space="preserve"><value>Omgång</value></data>
+  <data name="ReviewNote" xml:space="preserve"><value>Granskarens anteckning</value></data>
+  <data name="ReviewNotes" xml:space="preserve"><value>Granskningsanteckningar</value></data>
+  <data name="ReviewOverdueOnly" xml:space="preserve"><value>Försenad granskning</value></data>
+  <data name="ReviewScored" xml:space="preserve"><value>Granskning poängsatt.</value></data>
+  <data name="ReviewedOn" xml:space="preserve"><value>Granskat</value></data>
+  <data name="RoofType" xml:space="preserve"><value>Taktyp</value></data>
+  <data name="RubricSaved" xml:space="preserve"><value>Bedömningsmall sparad.</value></data>
+  <data name="Rubrics" xml:space="preserve"><value>Bedömningsmallar</value></data>
+  <data name="RunInventory" xml:space="preserve"><value>Kör inventering</value></data>
+  <data name="RunSample" xml:space="preserve"><value>Ta stickprov</value></data>
+  <data name="RunsCompleted" xml:space="preserve"><value>Slutförda</value></data>
+  <data name="RunsFailed" xml:space="preserve"><value>Misslyckade</value></data>
+  <data name="RunsRunning" xml:space="preserve"><value>Pågående</value></data>
+  <data name="RunsSkipped" xml:space="preserve"><value>Överhoppade</value></data>
+  <data name="SampleCreated" xml:space="preserve"><value>{0} poster utvalda för granskning.</value></data>
+  <data name="SampleSize" xml:space="preserve"><value>Urvalsstorlek</value></data>
+  <data name="SampleSizeHelp" xml:space="preserve"><value>Poster per urvalskörning; urvalet är deterministiskt för mallen och perioden.</value></data>
+  <data name="Sampled" xml:space="preserve"><value>Utvalda</value></data>
+  <data name="SampledOn" xml:space="preserve"><value>Utvald</value></data>
+  <data name="ScanPending" xml:space="preserve"><value>Bilagor som väntar på skanning</value></data>
+  <data name="ScanRejected" xml:space="preserve"><value>Bilagor avvisade av skanning</value></data>
+  <data name="ScanState" xml:space="preserve"><value>Skanning</value></data>
+  <data name="ScheduleInspection" xml:space="preserve"><value>Planera tillsyn</value></data>
+  <data name="ScheduleReinspection" xml:space="preserve"><value>Planera omtillsyn</value></data>
+  <data name="ScheduledOn" xml:space="preserve"><value>Planerad</value></data>
+  <data name="ScoreHelp" xml:space="preserve"><value>Poängsätt varje kriterium 0-4; den viktade summan blir en procentsats.</value></data>
+  <data name="ScoreReview" xml:space="preserve"><value>Poängsätt granskning</value></data>
+  <data name="Scored" xml:space="preserve"><value>Poängsatta</value></data>
+  <data name="ScoredOn" xml:space="preserve"><value>Poängsatt</value></data>
+  <data name="SectionNumber" xml:space="preserve"><value>Avsnitt</value></data>
+  <data name="SectionsImported" xml:space="preserve"><value>{0} avsnitt importerade.</value></data>
+  <data name="SetInService" xml:space="preserve"><value>Åter i drift</value></data>
+  <data name="SetOutOfService" xml:space="preserve"><value>Ta ur drift</value></data>
+  <data name="ShouldAlert" xml:space="preserve"><value>Larma besättningar</value></data>
+  <data name="SignatureName" xml:space="preserve"><value>Underskriftens namn</value></data>
+  <data name="SignatureNameHint" xml:space="preserve"><value>Inskrivet namn på den som intygar tillsynen</value></data>
+  <data name="SmokeAlarmsInstalled" xml:space="preserve"><value>Installerade brandvarnare</value></data>
+  <data name="SprinklerType" xml:space="preserve"><value>Sprinkler</value></data>
+  <data name="SquareFeet" xml:space="preserve"><value>Kvadratfot</value></data>
+  <data name="Staff" xml:space="preserve"><value>Personal</value></data>
+  <data name="StaffHelp" xml:space="preserve"><value>Kommaavgränsade användar-ID för de medlemmar som deltog.</value></data>
+  <data name="Standpipe" xml:space="preserve"><value>Stigarledning</value></data>
+  <data name="StartInspection" xml:space="preserve"><value>Starta tillsyn</value></data>
+  <data name="StartedOn" xml:space="preserve"><value>Påbörjad</value></data>
+  <data name="StaticPressure" xml:space="preserve"><value>Statiskt (psi)</value></data>
+  <data name="StorageLocation" xml:space="preserve"><value>Förvaringsplats</value></data>
+  <data name="Stories" xml:space="preserve"><value>Våningar</value></data>
+  <data name="SubmissionsAwaiting" xml:space="preserve"><value>Väntande inskick</value></data>
+  <data name="SubmissionsFailed" xml:space="preserve"><value>Misslyckade inskick</value></data>
+  <data name="SubmittedOn" xml:space="preserve"><value>Inlämnat</value></data>
+  <data name="SuggestedOccupancy" xml:space="preserve"><value>Föreslaget objekt</value></data>
+  <data name="SwitchBlocked" xml:space="preserve"><value>Bytet är blockerat tills inventeringen körts, varje kandidat avgjorts och ingen insatsplan är oavstämd.</value></data>
+  <data name="SwitchOwnership" xml:space="preserve"><value>Flytta skrivägandet till Register</value></data>
+  <data name="SwitchOwnershipAcknowledge" xml:space="preserve"><value>Jag förstår att insatsplansidorna i Kontakter och apparna blir skrivskyddade projektioner av objekt.</value></data>
+  <data name="SwitchOwnershipConfirm" xml:space="preserve"><value>Flytta skrivägandet nu? Redigering av insatsplaner i Kontakter upphör omedelbart.</value></data>
+  <data name="SwitchOwnershipIntro" xml:space="preserve"><value>Efter bytet redigeras insatsplaner bara som objekt. Kontakter och apparna fortsätter via projektioner; återställning är en databasåterställning, inte en knapp.</value></data>
+  <data name="SwitchedOn" xml:space="preserve"><value>Bytt</value></data>
+  <data name="TacticalSummary" xml:space="preserve"><value>Taktisk sammanfattning</value></data>
+  <data name="TelemetryWindow" xml:space="preserve"><value>Fönster</value></data>
+  <data name="TestDue" xml:space="preserve"><value>test förfallet</value></data>
+  <data name="TestedOn" xml:space="preserve"><value>Testad</value></data>
+  <data name="TransferCustody" xml:space="preserve"><value>Överlämna förvaring</value></data>
+  <data name="TransferTo" xml:space="preserve"><value>Till</value></data>
+  <data name="TransferToExternal" xml:space="preserve"><value>Till extern part</value></data>
+  <data name="TransferredOn" xml:space="preserve"><value>Överlämnat</value></data>
+  <data name="TransitionPermit" xml:space="preserve"><value>Ändra status</value></data>
+  <data name="Trends" xml:space="preserve"><value>Trender</value></data>
+  <data name="TrendsSince" xml:space="preserve"><value>Sedan</value></data>
+  <data name="Unlink" xml:space="preserve"><value>Avlänka</value></data>
+  <data name="UnreconciledPreplans" xml:space="preserve"><value>Oavstämda insatsplaner</value></data>
+  <data name="UploadedOn" xml:space="preserve"><value>Uppladdad</value></data>
+  <data name="UtilityNotes" xml:space="preserve"><value>Anteckningar om försörjning</value></data>
+  <data name="ValidityDays" xml:space="preserve"><value>Giltighet (dagar)</value></data>
+  <data name="ViolationSaved" xml:space="preserve"><value>Överträdelse sparad.</value></data>
+  <data name="ViolationUpdated" xml:space="preserve"><value>Överträdelse uppdaterad.</value></data>
+  <data name="Violations" xml:space="preserve"><value>Överträdelser</value></data>
+  <data name="WaterShutoff" xml:space="preserve"><value>Vattenavstängning</value></data>
+  <data name="WaterSupplyNotes" xml:space="preserve"><value>Anteckningar om vattenförsörjning</value></data>
+  <data name="WorkflowRuns" xml:space="preserve"><value>Workflow-körningar</value></data>
 </root>

@@ -247,6 +247,13 @@ namespace Resgrid.Services.Records.Connectors
 				if (connector.WriteEnabled)
 					return await FinishAsync(connector, run, result, RmsConnectorRunOutcomes.Rejected, "Write authority is not granted in this release.", cancellationToken);
 
+				// One runner at a time. A poll, a manual run and a push can all reach the same connector, and each of
+				// them spends the hourly budget and writes the cursor back, so the run is claimed on the row first:
+				// the loser is refused rather than fetching the same pages and overwriting the winner's bookkeeping.
+				if (!await _connectors.TryBumpRowVersionAsync(connector.DepartmentId, connector.RmsExternalOrderConnectorId, connector.RowVersion, cancellationToken))
+					return await RefuseClaimAsync(run, result, cancellationToken);
+				connector.RowVersion += 1;
+
 				var provider = RequireProvider(connector.ProviderKey);
 				var pages = new List<ExternalOrderFeed>();
 				if (pushedFeed != null)
@@ -286,10 +293,14 @@ namespace Resgrid.Services.Records.Connectors
 					connector.LastCursor = cursor;
 				}
 
+				// The department's orders are read once for the whole run rather than once per page: the match is by
+				// order number and scheme, and a twenty-page run would otherwise re-read the department's entire
+				// order history twenty times. Orders created by this run are added to the list as they are made.
+				var known = (await _orders.GetForDepartmentAsync(connector.DepartmentId, true))?.Where(o => !o.DeletedOn.HasValue).ToList() ?? new List<RmsExternalOrder>();
 				foreach (var feed in pages)
 				{
 					run.SourceVersion = feed.Source?.Version ?? run.SourceVersion;
-					await ImportFeedAsync(connector, provider, feed, actor, run, result, cancellationToken);
+					await ImportFeedAsync(connector, provider, feed, actor, run, result, known, cancellationToken);
 				}
 
 				connector.LastSuccessOn = DateTime.UtcNow;
@@ -313,6 +324,28 @@ namespace Resgrid.Services.Records.Connectors
 				}
 				return await FinishAsync(connector, run, result, RmsConnectorRunOutcomes.Failed, ex.Message, cancellationToken);
 			}
+		}
+
+		/// <summary>
+		/// A run that lost the claim leaves its run row and nothing else: the connector row belongs to whoever holds
+		/// the claim, so writing this run's stale copy of it is exactly what the claim exists to prevent.
+		/// </summary>
+		private async Task<RecordDeploymentConnectorRunResult> RefuseClaimAsync(RmsExternalOrderConnectorRun run, RecordDeploymentConnectorRunResult result, CancellationToken cancellationToken)
+		{
+			const string error = "The connector is already running; this run was skipped.";
+			run.Outcome = RmsConnectorRunOutcomes.Rejected;
+			run.Error = error;
+			run.FinishedOn = DateTime.UtcNow;
+			try
+			{
+				await _runs.InsertAsync(run, cancellationToken, true);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Connector run bookkeeping failed for " + run.RmsExternalOrderConnectorId);
+			}
+			result.Messages.Add(error);
+			return result;
 		}
 
 		private async Task<RecordDeploymentConnectorRunResult> FinishAsync(RmsExternalOrderConnector connector, RmsExternalOrderConnectorRun run, RecordDeploymentConnectorRunResult result, string outcome, string error, CancellationToken cancellationToken)
@@ -364,10 +397,9 @@ namespace Resgrid.Services.Records.Connectors
 		/// transitioned on the source's say-so. So an unseen order is provisioned, a changed order gets a new
 		/// snapshot, an unseen request becomes a Requested fill, and everything else is reconciliation.
 		/// </summary>
-		private async Task ImportFeedAsync(RmsExternalOrderConnector connector, IExternalOrderFeedProvider provider, ExternalOrderFeed feed, string actor, RmsExternalOrderConnectorRun run, RecordDeploymentConnectorRunResult result, CancellationToken cancellationToken)
+		private async Task ImportFeedAsync(RmsExternalOrderConnector connector, IExternalOrderFeedProvider provider, ExternalOrderFeed feed, string actor, RmsExternalOrderConnectorRun run, RecordDeploymentConnectorRunResult result, List<RmsExternalOrder> existing, CancellationToken cancellationToken)
 		{
 			var scheme = string.IsNullOrWhiteSpace(connector.SourceScheme) ? provider.DefaultScheme : connector.SourceScheme;
-			var existing = (await _orders.GetForDepartmentAsync(connector.DepartmentId, true))?.Where(o => !o.DeletedOn.HasValue).ToList() ?? new List<RmsExternalOrder>();
 
 			foreach (var order in feed.Orders)
 			{
@@ -587,6 +619,9 @@ namespace Resgrid.Services.Records.Connectors
 			if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out var uri)) throw new ArgumentException("The feed root must be an absolute URL.", nameof(input));
 			if (!string.Equals(uri.Scheme, "https", StringComparison.OrdinalIgnoreCase) && !(RecordsConnectorConfig.AllowHttp && string.Equals(uri.Scheme, "http", StringComparison.OrdinalIgnoreCase)))
 				throw new ArgumentException("The feed root must be https.", nameof(input));
+			// Refused at the point a person sets it rather than only at fetch time, so an internal target is an
+			// error on the form instead of a run that quietly probed something.
+			ExternalFeedDestination.RequireAllowedUrl(uri);
 			if (!RmsConnectorCredentialKinds.IsKnown(input.CredentialKind)) throw new ArgumentException("Choose a credential kind: none, bearer or header.", nameof(input));
 			if (string.Equals(input.CredentialKind, RmsConnectorCredentialKinds.Header, StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(input.CredentialHeaderName))
 				throw new ArgumentException("A header credential needs the header name.", nameof(input));

@@ -65,6 +65,23 @@ namespace Resgrid.Services
 		/// </summary>
 		public const int RecordsTypedValuesCatalogVersion = 11;
 
+		/// <summary>
+		/// Catalog version the Contacts pre-plan family was added in (Contacts plan Phase A, A8 / risk 1): the
+		/// pre-incident plan's access secrets, utility/water/occupancy notes, on-site contact names and numbers,
+		/// tactical text, the premise hazard text and coordinates, and the site attachment name/file/bytes.
+		/// Structural columns (enum values, occupant load, fire flow, flags, review dates) stay plaintext so the
+		/// review-currency badge and NERIS crosswalk still work without a grant.
+		/// </summary>
+		public const int ContactPreplansCatalogVersion = 12;
+
+		/// <summary>
+		/// Catalog version the RMS-5 prevention and investigation tables (and the RMS-4 quality review) were added in:
+		/// the occupancy master's access secrets and hazard text, inspection notes, violation text, permit applicant
+		/// identity and review notes, the whole investigation case narrative (Tier 1), QA findings, and the
+		/// prevention attachment name/description/bytes. Entries mirror RmsProtectedFields (the seam).
+		/// </summary>
+		public const int PreventionCatalogVersion = 13;
+
 		private static readonly IReadOnlyList<ProtectedFieldDefinition> Entries = BuildV1();
 		private static readonly Dictionary<string, ProtectedFieldDefinition> ById =
 			Entries.ToDictionary(e => e.FieldId, StringComparer.OrdinalIgnoreCase);
@@ -547,6 +564,124 @@ namespace Resgrid.Services
 			list.Add(new ProtectedFieldDefinition(RmsProtectedFields.ValueFieldId, RmsProtectedFields.Family, "RmsRecordValues", "ProtectedEnvelope",
 				ProtectedFieldStorageKind.PackedJson, ProtectedFieldClassification.Sensitive,
 				PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, RecordsTypedValuesCatalogVersion));
+
+			// ---- Contacts pre-plans (Contacts plan Phase A), catalog v12 -----------------------
+			// A pre-incident plan is the premises' access and hazard knowledge: gate codes, Knox box and
+			// alarm panel locations, utility shutoffs, on-site emergency contacts, occupants who need
+			// help, and the crew's tactical notes. In a protected department that is at least as
+			// sensitive as the contact's phone number, so the whole text surface is cataloged under the
+			// Contacts family and the same view permission. Hazard text and coordinates ride with it;
+			// a site attachment (floor plan, photo, drawing) is cataloged like a call attachment: name,
+			// file name and bytes together, because the file is the point.
+			void Preplan(string column, ProtectedFieldClassification classification) =>
+				list.Add(new ProtectedFieldDefinition($"contactpreplans.{column.ToLowerInvariant()}", ContactsFamily, "ContactPreplans",
+					column, ProtectedFieldStorageKind.Text, classification, PermissionTypes.ViewProtectedContactData,
+					PermissionTypes.ViewProtectedContactData, ContactPreplansCatalogVersion));
+
+			Preplan("OccupancyNotes", ProtectedFieldClassification.Sensitive);
+			Preplan("OccupancyHours", ProtectedFieldClassification.Sensitive);
+			Preplan("OccupantsNeedingAssistanceNotes", ProtectedFieldClassification.Phi);
+			Preplan("GasShutoffLocation", ProtectedFieldClassification.Sensitive);
+			Preplan("ElectricShutoffLocation", ProtectedFieldClassification.Sensitive);
+			Preplan("WaterShutoffLocation", ProtectedFieldClassification.Sensitive);
+			Preplan("UtilityNotes", ProtectedFieldClassification.Sensitive);
+			Preplan("KnoxBoxLocation", ProtectedFieldClassification.Sensitive);
+			Preplan("GateCode", ProtectedFieldClassification.Sensitive);
+			Preplan("AlarmPanelLocation", ProtectedFieldClassification.Sensitive);
+			Preplan("AlarmCompany", ProtectedFieldClassification.Sensitive);
+			Preplan("AlarmCompanyPhone", ProtectedFieldClassification.Pii);
+			Preplan("AccessNotes", ProtectedFieldClassification.Sensitive);
+			Preplan("NearestHydrantLocation", ProtectedFieldClassification.Sensitive);
+			Preplan("WaterSupplyNotes", ProtectedFieldClassification.Sensitive);
+			Preplan("EmergencyContactName", ProtectedFieldClassification.Pii);
+			Preplan("EmergencyContactPhone", ProtectedFieldClassification.Pii);
+			Preplan("SecondaryContactName", ProtectedFieldClassification.Pii);
+			Preplan("SecondaryContactPhone", ProtectedFieldClassification.Pii);
+			Preplan("GeneralHazardNotes", ProtectedFieldClassification.Sensitive);
+			Preplan("TacticalSummary", ProtectedFieldClassification.Sensitive);
+
+			void Hazard(string column, ProtectedFieldClassification classification) =>
+				list.Add(new ProtectedFieldDefinition($"contactpreplanhazards.{column.ToLowerInvariant()}", ContactsFamily, "ContactPreplanHazards",
+					column, ProtectedFieldStorageKind.Text, classification, PermissionTypes.ViewProtectedContactData,
+					PermissionTypes.ViewProtectedContactData, ContactPreplansCatalogVersion));
+
+			Hazard("Title", ProtectedFieldClassification.Sensitive);
+			Hazard("Description", ProtectedFieldClassification.Sensitive);
+			Hazard("LocationDescription", ProtectedFieldClassification.Sensitive);
+			Hazard("GpsCoordinates", ProtectedFieldClassification.Pii);
+
+			void SiteFile(string column, ProtectedFieldClassification classification, ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
+				list.Add(new ProtectedFieldDefinition($"contactattachments.{column.ToLowerInvariant()}", ContactsFamily, "ContactAttachments",
+					column, kind, classification, PermissionTypes.ViewProtectedContactData,
+					PermissionTypes.ViewProtectedContactData, ContactPreplansCatalogVersion));
+
+			SiteFile("Name", ProtectedFieldClassification.Sensitive);
+			SiteFile("FileName", ProtectedFieldClassification.Sensitive);
+			SiteFile("Data", ProtectedFieldClassification.Sensitive, ProtectedFieldStorageKind.Binary);
+
+			// ---- RMS-5 prevention and investigations (+ RMS-4 quality review), catalog v13 ----------
+			// The occupancy master absorbs the Contacts pre-plan text (same columns, same classifications), the
+			// inspection/permit rows carry reviewer notes and applicant identity, and the investigation case is a
+			// Tier 1 restricted class end to end (plan section 5.9.2). Attachment name/description/bytes follow the
+			// record-attachment rule. RecordRestricted_View plus case membership still decides who SEES a revealed
+			// investigation value; encryption at rest is the separate protection this catalog owns.
+			void Prevention(string table, string column, ProtectedFieldClassification classification,
+				ProtectedFieldStorageKind kind = ProtectedFieldStorageKind.Text) =>
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
+					RmsProtectedFields.Family, table, column, kind, classification,
+					PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData,
+					PreventionCatalogVersion));
+
+			Prevention("RmsOccupancies", "OccupantsNeedingAssistanceNotes", ProtectedFieldClassification.Phi);
+			Prevention("RmsOccupancies", "UtilityNotes", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancies", "KnoxBoxLocation", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancies", "GateCode", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancies", "AlarmPanelLocation", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancies", "AlarmCompany", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancies", "AlarmCompanyPhone", ProtectedFieldClassification.Pii);
+			Prevention("RmsOccupancies", "AccessNotes", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancies", "WaterSupplyNotes", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancies", "EmergencyContactName", ProtectedFieldClassification.Pii);
+			Prevention("RmsOccupancies", "EmergencyContactPhone", ProtectedFieldClassification.Pii);
+			Prevention("RmsOccupancies", "GeneralHazardNotes", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancies", "TacticalSummary", ProtectedFieldClassification.Sensitive);
+
+			Prevention("RmsOccupancyHazards", "Description", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancyHazards", "LocationDescription", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsOccupancyHazards", "GpsCoordinates", ProtectedFieldClassification.Pii);
+
+			Prevention("RmsInspections", "Notes", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsInspections", "SignatureName", ProtectedFieldClassification.Pii);
+			Prevention("RmsViolations", "Description", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsViolations", "CorrectiveAction", ProtectedFieldClassification.Sensitive);
+
+			Prevention("RmsPermits", "ApplicantName", ProtectedFieldClassification.Pii);
+			Prevention("RmsPermits", "ApplicantPhone", ProtectedFieldClassification.Pii);
+			Prevention("RmsPermits", "ApplicantEmail", ProtectedFieldClassification.Pii);
+			Prevention("RmsPermits", "ReviewNotes", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsPlanReviews", "Comments", ProtectedFieldClassification.Sensitive);
+
+			Prevention("RmsInvestigationCases", "IncidentSummary", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsInvestigationCases", "CauseDetail", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsInvestigationCases", "OriginDescription", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsInvestigationCases", "Findings", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsInvestigationCases", "ClosureReason", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsInvestigationNotes", "Subject", ProtectedFieldClassification.Pii);
+			Prevention("RmsInvestigationNotes", "Body", ProtectedFieldClassification.Phi);
+			Prevention("RmsInvestigationEvidence", "Description", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsInvestigationEvidence", "CollectedFrom", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsInvestigationEvidence", "CurrentCustodianExternal", ProtectedFieldClassification.Pii);
+			Prevention("RmsInvestigationCustody", "FromExternal", ProtectedFieldClassification.Pii);
+			Prevention("RmsInvestigationCustody", "ToExternal", ProtectedFieldClassification.Pii);
+			Prevention("RmsInvestigationCustody", "Reason", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsInvestigationReferrals", "Reason", ProtectedFieldClassification.Sensitive);
+
+			Prevention("RmsQualityReviews", "FindingsJson", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsQualityReviews", "Note", ProtectedFieldClassification.Sensitive);
+
+			Prevention("RmsPreventionAttachments", "FileName", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsPreventionAttachments", "Description", ProtectedFieldClassification.Sensitive);
+			Prevention("RmsPreventionAttachments", "Data", ProtectedFieldClassification.Phi, ProtectedFieldStorageKind.Binary);
 
 			return list;
 		}

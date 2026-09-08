@@ -268,6 +268,11 @@ namespace Resgrid.Web.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.RecordLegalHold, ResgridClaimTypes.Actions.Update);
 		}
 
+		public static bool CanAdministerRecordsPrevention()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.PreventionAdmin);
+		}
+
 		public static bool CanCreateShift()
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.Create);

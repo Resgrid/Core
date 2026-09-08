@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -783,6 +783,16 @@ namespace Resgrid.Services
 			}
 
 			return call;
+		}
+
+		public async Task<List<CallContact>> GetCallContactsByCallIdAsync(int callId)
+		{
+			var callContacts = await _callContactsRepository.GetCallContactsByCallIdAsync(callId);
+
+			if (callContacts == null)
+				return new List<CallContact>();
+
+			return callContacts.ToList();
 		}
 
 		public async Task<bool> DeleteCallContactsAsync(int callId, CancellationToken cancellationToken = default(CancellationToken))

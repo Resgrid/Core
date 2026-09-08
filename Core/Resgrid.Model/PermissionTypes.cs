@@ -140,7 +140,15 @@
 		ManageRecordLegalHold = 66,
 
 		/// <summary>Reassign an unfinalized draft to another author (Record_Reassign). No-row default: department and group admins.</summary>
-		ReassignRecordDrafts = 67
+		ReassignRecordDrafts = 67,
+
+		/// <summary>
+		/// Manage prevention data: occupancies, inspection programs and code sets, hydrants, permits and CRR
+		/// (Record_PreventionAdmin). No-row default: department admins. RMS-5, registry value 69 (from the pool
+		/// released on 2026-08-27; 68 is Unified Search's ManageSearchIndex). Reading prevention data needs only
+		/// Record_View; investigations use ViewRestrictedRecords (59) plus case membership, never this value.
+		/// </summary>
+		RecordsPreventionAdmin = 69
 	}
 
 }

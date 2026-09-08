@@ -992,4 +992,6 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Qui peut poser et lever des conservations légales, qui suspendent la rétention et empêchent l'annulation d'un rapport.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Réattribuer les brouillons de rapport</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Qui peut transférer un brouillon de rapport à un autre auteur, par exemple lorsque l'auteur d'origine est indisponible.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Gérer les données de prévention</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Qui peut créer et modifier les occupations, les programmes d'inspection et les recueils de codes, les bornes d'incendie, les permis et les activités de réduction des risques communautaires. La lecture des données de prévention ne demande que l'accès aux dossiers ; les enquêtes relèvent de la permission des dossiers restreints et de l'appartenance au dossier.</value></data>
 </root>

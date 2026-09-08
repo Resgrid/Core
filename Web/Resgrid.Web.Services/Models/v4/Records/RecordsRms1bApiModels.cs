@@ -97,6 +97,8 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public int Version { get; set; }
 		public string State { get; set; }
 		public string LifecyclePreset { get; set; }
+		/// <summary>How many Records of this definition may exist on one Call (plan section 5.2.1).</summary>
+		public string Cardinality { get; set; }
 		public List<int> ReviewerRoleIds { get; set; } = new List<int>();
 		public List<int> ApproverRoleIds { get; set; } = new List<int>();
 		public int? ReviewDueHours { get; set; }
@@ -286,6 +288,7 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public string Description { get; set; }
 		public string PackKey { get; set; }
 		public string LifecyclePreset { get; set; }
+		public string Cardinality { get; set; }
 		public string NumberPrefix { get; set; }
 		public string PermittedSubjectTypes { get; set; }
 		public string ProfileKey { get; set; }

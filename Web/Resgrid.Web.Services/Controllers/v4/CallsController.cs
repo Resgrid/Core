@@ -22,6 +22,8 @@ using System.Globalization;
 using Resgrid.Model.Events;
 using Resgrid.Model.Queue;
 using Resgrid.Web.Services.Models.v4.CallProtocols;
+using Resgrid.Web.Services.Models.v4.ContactFiles;
+using Resgrid.Web.Services.Models.v4.Contacts;
 using Resgrid.Web.Helpers;
 using Resgrid.Web.ServicesCore.Helpers;
 
@@ -61,6 +63,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IProtectedReadService _protectedCallReadService;
+		private readonly IContactsService _contactsService;
 		private readonly IProtectedWriteService _protectedWriteService;
 
 		public CallsController(
@@ -89,9 +92,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IFeatureToggleService featureToggleService,
 			IDepartmentDataProtectionService dataProtectionService,
 			IProtectedReadService protectedCallReadService,
-			IProtectedWriteService protectedWriteService
+			IProtectedWriteService protectedWriteService,
+			IContactsService contactsService
 			)
 		{
+			_contactsService = contactsService;
 			_dataProtectionService = dataProtectionService;
 			_protectedCallReadService = protectedCallReadService;
 			_protectedWriteService = protectedWriteService;
@@ -172,6 +177,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				call.Type = null;
 				call.Latitude = null;
 				call.Longitude = null;
+				call.Contacts = new List<CallContactResultData>();
 			}
 
 			return true;
@@ -238,6 +244,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				// Resolve BEFORE per-call processing so geocoding and templates see plaintext (or
 				// REDACTED), never envelopes.
 				var protectedReads = await ResolveProtectedReadsAsync(calls);
+				var contactPairs = new List<KeyValuePair<Call, CallResultData>>();
 
 				foreach (var c in calls)
 				{
@@ -258,8 +265,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 					var callData = ConvertCall(callWithData, null, address, TimeZone, destinationPoi);
 					if (protectedReads.TryGetValue(callWithData.CallId, out var protectedRead))
 						ApplyProtectedReadMetadata(callData, protectedRead);
+					contactPairs.Add(new KeyValuePair<Call, CallResultData>(callWithData, callData));
 					result.Data.Add(callData);
 				}
+
+				// Linked contacts with pre-plan / alert / hazard indicators (Contacts plan Phase A, 3a).
+				await ApplyCallContactsAsync(DepartmentId, contactPairs);
 
 				await ApplyBigBoardSafeShellAsync(result.Data);
 				result.PageSize = result.Data.Count();
@@ -340,6 +351,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi);
 			ApplyProtectedReadMetadata(result.Data, protectedRead);
 
+			// Linked contacts with pre-plan / alert / hazard indicators (Contacts plan Phase A, 3a).
+			await ApplyCallContactsAsync(effectiveDepartmentId, new List<KeyValuePair<Call, CallResultData>> { new KeyValuePair<Call, CallResultData>(c, result.Data) });
+
 			// BigBoard shells also suppress UDF submissions — user-authored free text defaults to
 			// sensitive in a protected department (plan section 5.2).
 			if (await ApplyBigBoardSafeShellAsync(new[] { result.Data }))
@@ -368,6 +382,145 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the site information for every contact linked to a call in one round trip: the contact,
+		/// its pre-incident plan, premise hazards, live alert notes and file metadata with signed download
+		/// links (Contacts plan Phase A, decision 3b). This is the RMS/NERIS authoring prefill contract for
+		/// calls linked to a Contact: additive changes only. Signed file links expire; do not persist them.
+		/// </summary>
+		/// <param name="callId">Id of the call</param>
+		[HttpGet("GetCallSiteInfo")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<CallSiteInfoResult>> GetCallSiteInfo(string callId)
+		{
+			if (!int.TryParse(callId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedCallId))
+				return BadRequest();
+
+			var result = new CallSiteInfoResult();
+			var call = await _callsService.GetCallByIdAsync(parsedCallId);
+
+			if (call == null)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return Ok(result);
+			}
+
+			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserViewCallAsync(UserId, parsedCallId))
+				return Unauthorized();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var siteInfo = await _contactsService.GetCallSiteInfoAsync(parsedCallId, DepartmentId);
+
+			result.Data = new CallSiteInfoData { CallId = parsedCallId.ToString() };
+
+			if (siteInfo != null && siteInfo.Contacts.Any())
+			{
+				// Attended protected read (plan 7.1): contact identity and note text decrypt with a valid
+				// grant or read as REDACTED. Pre-plan and hazard text is not cataloged and passes through.
+				var contacts = siteInfo.Contacts.Select(x => x.Contact).ToList();
+				var protectedRead = await _protectedCallReadService.ResolveContactsForReadAsync(DepartmentId, contacts, ProtectedGrantToken, UserId);
+				result.Data.IsProtected = protectedRead.IsProtected;
+				result.Data.ProtectedReason = protectedRead.ProtectedReason;
+
+				var alertNotes = siteInfo.Contacts.SelectMany(x => x.AlertNotes).ToList();
+				if (alertNotes.Any())
+					await _protectedCallReadService.ResolveContactNotesForReadAsync(DepartmentId, alertNotes, ProtectedGrantToken, UserId);
+
+				// Catalog v12: pre-plan text, hazard text and attachment names resolve in the same request.
+				var preplans = siteInfo.Contacts.Where(x => x.Preplan != null).Select(x => x.Preplan).ToList();
+				var preplanRead = preplans.Any()
+					? await _protectedCallReadService.ResolveContactPreplansForReadAsync(DepartmentId, preplans, ProtectedGrantToken, UserId)
+					: new ProtectedReadResult();
+				var hazards = siteInfo.Contacts.SelectMany(x => x.Hazards).ToList();
+				var hazardRead = hazards.Any()
+					? await _protectedCallReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, hazards, ProtectedGrantToken, UserId)
+					: new ProtectedReadResult();
+				var attachments = siteInfo.Contacts.SelectMany(x => x.Attachments).ToList();
+				var attachmentRead = attachments.Any()
+					? await _protectedCallReadService.ResolveContactAttachmentsForReadAsync(DepartmentId, attachments, ProtectedGrantToken, UserId, includeData: false)
+					: new ProtectedReadResult();
+
+				result.Data.IsProtected = result.Data.IsProtected || preplanRead.IsProtected || hazardRead.IsProtected || attachmentRead.IsProtected;
+				result.Data.ProtectedReason ??= preplanRead.ProtectedReason ?? hazardRead.ProtectedReason ?? attachmentRead.ProtectedReason;
+
+				var noteTypes = await _contactsService.GetContactNoteTypesByDepartmentIdAsync(DepartmentId);
+
+				foreach (var entry in siteInfo.Contacts)
+				{
+					var data = new CallSiteContactData
+					{
+						ContactId = entry.Contact.ContactId,
+						Name = SafeContactName(entry.Contact),
+						ContactType = entry.Contact.ContactType,
+						CallContactType = entry.CallContactType,
+						LocationGpsCoordinates = entry.Contact.LocationGpsCoordinates,
+						EntranceGpsCoordinates = entry.Contact.EntranceGpsCoordinates,
+						PhoneNumber = FirstNonEmpty(entry.Contact.CellPhoneNumber, entry.Contact.OfficePhoneNumber, entry.Contact.HomePhoneNumber)
+					};
+
+					if (entry.Preplan != null)
+					{
+						data.Preplan = ContactsController.ConvertPreplanData(entry.Preplan, department);
+						ContactsController.ApplyProtection(data.Preplan, preplanRead, hazardRead);
+						if (!string.IsNullOrWhiteSpace(entry.Preplan.ContactPreplanId) && entry.Preplan.ContactPreplanId.StartsWith("occ:", StringComparison.Ordinal))
+							data.OccupancyId = entry.Preplan.ContactPreplanId.Substring(4);
+					}
+
+					data.Hazards = entry.Hazards.Select(h =>
+					{
+						var hazardData = ContactsController.ConvertHazardData(h, department);
+						hazardData.IsProtected = hazardRead.IsProtected;
+						hazardData.ProtectedReason = hazardRead.ProtectedReason;
+						return hazardData;
+					}).ToList();
+
+					foreach (var note in entry.AlertNotes)
+					{
+						var noteType = string.IsNullOrWhiteSpace(note.ContactNoteTypeId) ? null : noteTypes.FirstOrDefault(t => t.ContactNoteTypeId == note.ContactNoteTypeId);
+						var noteData = new ContactNoteResultData
+						{
+							ContactNoteId = note.ContactNoteId,
+							ContactId = note.ContactId,
+							ContactNoteTypeId = note.ContactNoteTypeId,
+							NoteType = noteType?.Name,
+							Note = note.Note,
+							ShouldAlert = note.ShouldAlert,
+							Visibility = note.Visibility,
+							ExpiresOnUtc = note.ExpiresOn,
+							AddedOnUtc = note.AddedOn,
+							AddedOn = note.AddedOn.FormatForDepartment(department),
+							AddedByUserId = note.AddedByUserId,
+							IsProtected = result.Data.IsProtected,
+							ProtectedReason = result.Data.ProtectedReason
+						};
+						if (note.ExpiresOn.HasValue)
+							noteData.ExpiresOn = note.ExpiresOn.Value.FormatForDepartment(department);
+						data.AlertNotes.Add(noteData);
+					}
+
+					data.Attachments = entry.Attachments.Select(a =>
+					{
+						var fileData = ContactFilesController.ConvertContactFileData(a, department, false);
+						fileData.IsProtected = attachmentRead.IsProtected;
+						fileData.ProtectedReason = attachmentRead.ProtectedReason;
+						return fileData;
+					}).ToList();
+
+					result.Data.Contacts.Add(data);
+				}
+			}
+
+			result.PageSize = result.Data.Contacts.Count;
+			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
@@ -980,6 +1133,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!writePreflight.Success)
 				return ProtectedWriteProblem(writePreflight);
 
+			// Contacts plan Phase A (A5): API-created calls can link department contacts.
+			var contactLinks = await BuildCallContactLinksAsync(effectiveDepartmentId, newCallInput.ContactId, newCallInput.AdditionalContactIds);
+			if (contactLinks == null)
+				return BadRequest("One or more contacts do not belong to this department.");
+			if (contactLinks.Any())
+				call.Contacts = contactLinks;
+
 			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
 			if (recommendationResult != null && recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
@@ -1367,6 +1527,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			// ADP protected write (plan 19.2): cataloged plaintext encrypts in place before
 			// persistence; a blocked write persists nothing.
+			// Contacts plan Phase A (A5): replace the contact links only when the input carries them.
+			if (editCallInput.ContactId != null || editCallInput.AdditionalContactIds != null)
+			{
+				var contactLinks = await BuildCallContactLinksAsync(DepartmentId, editCallInput.ContactId, editCallInput.AdditionalContactIds);
+				if (contactLinks == null)
+					return BadRequest("One or more contacts do not belong to this department.");
+
+				await _callsService.DeleteCallContactsAsync(call.CallId, cancellationToken);
+				call.Contacts = contactLinks;
+			}
+
 			var protectedWrite = await _protectedWriteService.PrepareCallWriteAsync(DepartmentId, call,
 				storedCatalogedValues, ProtectedGrantToken, UserId, IsSystemApiKeyRequest, cancellationToken);
 			if (!protectedWrite.Success)
@@ -2233,6 +2404,88 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			return callResult;
+		}
+
+		/// <summary>Validates the requested contact links belong to the department; null when any does not, empty when none were requested.</summary>
+		private async Task<List<CallContact>> BuildCallContactLinksAsync(int departmentId, string primaryContactId, List<string> additionalContactIds)
+		{
+			var links = new List<CallContact>();
+			var seen = new HashSet<string>(StringComparer.Ordinal);
+
+			async Task<bool> AddAsync(string contactId, int callContactType)
+			{
+				if (string.IsNullOrWhiteSpace(contactId) || !seen.Add(contactId))
+					return true;
+
+				var contact = await _contactsService.GetContactByIdAsync(contactId);
+				if (contact == null || contact.IsDeleted || contact.DepartmentId != departmentId)
+					return false;
+
+				links.Add(new CallContact { DepartmentId = departmentId, ContactId = contact.ContactId, CallContactType = callContactType });
+				return true;
+			}
+
+			if (!await AddAsync(primaryContactId, 0))
+				return null;
+
+			foreach (var contactId in additionalContactIds ?? new List<string>())
+			{
+				if (!await AddAsync(contactId, 1))
+					return null;
+			}
+
+			return links;
+		}
+
+		/// <summary>
+		/// Fills CallResultData.Contacts for the given calls (Contacts plan Phase A, decision 3a). Contact
+		/// names honor the caller's protected-read grant: plaintext with a grant, REDACTED without.
+		/// </summary>
+		private async Task ApplyCallContactsAsync(int departmentId, IReadOnlyList<KeyValuePair<Call, CallResultData>> pairs)
+		{
+			var calls = pairs.Select(x => x.Key).Where(x => x?.Contacts != null && x.Contacts.Any()).ToList();
+			if (!calls.Any())
+				return;
+
+			var summaries = await _contactsService.GetCallContactSummariesAsync(departmentId, calls) ?? new Dictionary<int, List<CallContactSummary>>();
+			var contacts = summaries.Values.SelectMany(x => x).Select(x => x.Contact).GroupBy(x => x.ContactId).Select(g => g.First()).ToList();
+			if (contacts.Any())
+				await _protectedCallReadService.ResolveContactsForReadAsync(departmentId, contacts, ProtectedGrantToken, UserId);
+
+			foreach (var pair in pairs)
+			{
+				if (pair.Key == null || pair.Value == null || !summaries.TryGetValue(pair.Key.CallId, out var list))
+					continue;
+
+				pair.Value.Contacts = list.Select(x => new CallContactResultData
+				{
+					ContactId = x.Contact.ContactId,
+					Name = SafeContactName(x.Contact),
+					ContactType = x.Contact.ContactType,
+					CallContactType = x.CallContactType,
+					HasPreplan = x.HasPreplan,
+					AlertNoteCount = x.AlertNoteCount,
+					HazardCount = x.HazardCount
+				}).ToList();
+			}
+		}
+
+		/// <summary>A redacted name part collapses the whole display name to the REDACTED placeholder.</summary>
+		private static string SafeContactName(Contact contact)
+		{
+			if (contact == null)
+				return null;
+
+			if (contact.FirstName == ProtectedDataEnvelope.RedactionValue || contact.LastName == ProtectedDataEnvelope.RedactionValue ||
+				contact.CompanyName == ProtectedDataEnvelope.RedactionValue)
+				return ProtectedDataEnvelope.RedactionValue;
+
+			return contact.GetName()?.Trim();
+		}
+
+		private static string FirstNonEmpty(params string[] values)
+		{
+			return values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
 		}
 
 		private async Task<Poi> GetValidatedDestinationPoiAsync(int? destinationPoiId, int? departmentIdOverride = null)

@@ -1,0 +1,55 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordInspectionProgramsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["InspectionPrograms"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["InspectionPrograms"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordInspections" asp-action="Index" asp-route-area="User">@L["Inspections"]</a></li>
+			<li class="active"><strong>@L["InspectionPrograms"]</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-5">
+			<div class="ibox"><div class="ibox-title"><h5>@L["InspectionPrograms"]</h5></div><div class="ibox-content">
+				<p class="text-muted">@L["InspectionProgramsIntro"]</p>
+				<table class="table table-condensed">
+					<thead><tr><th>@L["DefinitionName"]</th><th>@L["FrequencyMonths"]</th><th>@L["Enabled"]</th><th></th></tr></thead>
+					<tbody>
+					@foreach (var p in Model.Programs)
+					{
+						<tr><td>@p.Name</td><td>@p.FrequencyMonths</td><td>@(p.IsActive ? L["Yes"].Value : L["No"].Value)</td><td><a class="btn btn-xs btn-default" asp-controller="RecordInspections" asp-action="Programs" asp-route-area="User" asp-route-id="@p.RmsInspectionProgramId">@L["Edit"]</a></td></tr>
+					}
+					</tbody>
+				</table>
+				<a class="btn btn-sm btn-success" asp-controller="RecordInspections" asp-action="Programs" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewProgram"]</a>
+			</div></div>
+		</div>
+		<div class="col-md-7">
+			<div class="ibox"><div class="ibox-title"><h5>@(string.IsNullOrWhiteSpace(Model.Editing.RmsInspectionProgramId) ? L["NewProgram"] : L["Edit"] + ": " + Model.Editing.Name)</h5></div><div class="ibox-content">
+				<form method="post" class="form-horizontal" asp-controller="RecordInspections" asp-action="SaveProgram" asp-route-area="User">
+					@Html.AntiForgeryToken()
+					<input type="hidden" asp-for="Editing.RmsInspectionProgramId" /><input type="hidden" asp-for="Editing.RowVersion" />
+					<div class="form-group"><label class="col-sm-3 control-label">@L["DefinitionName"]</label><div class="col-sm-9"><input class="form-control" asp-for="Editing.Name" maxlength="200" required /></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["DefinitionDescription"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Editing.Description" rows="2" maxlength="2000"></textarea></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["FrequencyMonths"]</label><div class="col-sm-9"><input class="form-control" type="number" min="1" max="120" asp-for="Editing.FrequencyMonths" /></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["OccupancyTypesApply"]</label><div class="col-sm-9"><input class="form-control" asp-for="Editing.OccupancyTypesCsv" maxlength="200" placeholder="1,2,5" /><span class="help-block">@L["OccupancyTypesApplyHelp"] @string.Join(", ", Model.OccupancyTypes.Select(t => t.Value + "=" + t.Text))</span></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["CodeSets"]</label><div class="col-sm-9"><select class="form-control" asp-for="Editing.RmsCodeSetId" asp-items="Model.CodeSetItems"></select></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["Checklist"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="ChecklistText" rows="10" style="font-family:monospace"></textarea><span class="help-block">@L["ChecklistHelp"]</span></div></div>
+					<div class="form-group"><div class="col-sm-offset-3 col-sm-9"><label class="checkbox-inline"><input type="checkbox" asp-for="Editing.IsActive" /> @L["Enabled"]</label></div></div>
+					<div class="form-group"><div class="col-sm-offset-3 col-sm-9"><button class="btn btn-primary"><i class="fa fa-save"></i> @L["Save"]</button></div></div>
+				</form>
+			</div></div>
+		</div>
+	</div>
+</div>

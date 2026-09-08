@@ -96,7 +96,8 @@ namespace Resgrid.Tests.Web.Services
 				Mock.Of<IFeatureToggleService>(),
 				_dataProtectionService.Object,
 				_protectedCallReadService.Object,
-				Mock.Of<IProtectedWriteService>())
+				Mock.Of<IProtectedWriteService>(),
+				Mock.Of<IContactsService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};

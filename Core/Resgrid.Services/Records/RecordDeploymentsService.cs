@@ -316,9 +316,11 @@ namespace Resgrid.Services.Records
 			var fill = await _fills.GetByIdForDepartmentAsync(departmentId, fillId) ?? throw new ArgumentException("Unknown fill.", nameof(fillId));
 			var order = await RequireEditableAsync(departmentId, userId, fill.RmsExternalOrderId);
 			// Two callers can both read Requested and both pass the state-machine check, and the second write would
-			// silently drop the first transition along with its audit line.
+			// silently drop the first transition along with its audit line. This check refuses a caller who says
+			// which version it saw; the conditional claim below is what actually serializes the two writers.
 			if (input.ExpectedRowVersion.HasValue && fill.RowVersion != input.ExpectedRowVersion.Value)
 				throw new RecordConcurrencyException(fill.RmsExternalOrderFillId, input.ExpectedRowVersion.Value, fill.RowVersion);
+			var loadedRowVersion = fill.RowVersion;
 			var from = (RmsDeploymentFillStatus)fill.Status;
 			if (!Allowed.TryGetValue(from, out var next) || !next.Contains(input.Status))
 				throw new InvalidOperationException($"A fill cannot move from {from} to {input.Status}.");
@@ -341,10 +343,18 @@ namespace Resgrid.Services.Records
 				case RmsDeploymentFillStatus.Demobilized: fill.DemobilizedOn = when; break;
 				case RmsDeploymentFillStatus.Returned: fill.ReturnedOn = when; break;
 			}
-			fill.ModifiedOn = DateTime.UtcNow; fill.ModifiedByUserId = userId; fill.RowVersion += 1;
+			fill.ModifiedOn = DateTime.UtcNow; fill.ModifiedByUserId = userId;
 
 			await InTransactionAsync(async () =>
 			{
+				// The row is claimed at the version it was read at, so the loser of a race is refused rather than
+				// overwriting the winner's transition with a whole-entity update.
+				if (!await _fills.TryBumpRowVersionAsync(departmentId, fill.RmsExternalOrderFillId, loadedRowVersion, cancellationToken))
+				{
+					var current = await _fills.GetByIdForDepartmentAsync(departmentId, fill.RmsExternalOrderFillId);
+					throw new RecordConcurrencyException(fill.RmsExternalOrderFillId, loadedRowVersion, current?.RowVersion ?? -1);
+				}
+				fill.RowVersion = loadedRowVersion + 1;
 				await _fills.UpdateAsync(fill, cancellationToken, true);
 				var fills = (await _fills.GetForOrderAsync(departmentId, order.RmsExternalOrderId))?.ToList() ?? new List<RmsExternalOrderFill>();
 				var active = fills.Where(f => f.Status != (int)RmsDeploymentFillStatus.Declined).ToList();

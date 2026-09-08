@@ -1,0 +1,137 @@
+@model Resgrid.Web.Areas.User.Models.Contacts.ContactAttachmentsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
+@{
+    ViewData["Title"] = "Resgrid | " + @localizer["SiteFiles"];
+    var contactName = Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(Model.Contact.Name);
+    var canEdit = ClaimsAuthorizationHelper.CanEditContacts();
+    var canDelete = ClaimsAuthorizationHelper.CanDeleteContacts();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["SiteFiles"]: @contactName</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Contacts" asp-action="Index" asp-route-area="User">@localizer["Contacts"]</a>
+            </li>
+            <li>
+                <a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId">@contactName</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["SiteFiles"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-4">
+        <div class="title-action">
+            @if (canEdit)
+            {
+                <a asp-controller="Contacts" asp-action="Preplan" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-default"><i class="fa fa-fire-extinguisher"></i> @localizer["PreplanTitle"]</a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-danger">@Model.Message</div>
+    }
+
+    @if (canEdit)
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-upload"></i> @localizer["UploadFile"]</h5></div>
+                    <div class="ibox-content">
+                        <form class="form-horizontal" role="form" asp-controller="Contacts" asp-action="UploadAttachment" asp-route-area="User" method="post" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="contactId" value="@Model.Contact.ContactId" />
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["FileType"]</label>
+                                <div class="col-sm-10"><select name="attachmentType" class="form-control" asp-items="Model.AttachmentTypes"></select></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@localizer["FileTitle"]</label>
+                                <div class="col-sm-10"><input type="text" name="name" class="form-control" maxlength="500" placeholder="@localizer["FileTitlePlaceholder"]" /></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">@commonLocalizer["File"]</label>
+                                <div class="col-sm-10">
+                                    <input type="file" name="file" required />
+                                    <small class="form-text text-muted">@localizer["UploadFileInfo"]</small>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10 col-sm-offset-2">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> @localizer["Upload"]</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-paperclip"></i> @localizer["SiteFiles"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Attachments == null || Model.Attachments.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoFiles"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>@commonLocalizer["Type"]</th>
+                                    <th>@commonLocalizer["Name"]</th>
+                                    <th>@localizer["FileName"]</th>
+                                    <th>@localizer["Size"]</th>
+                                    <th>@localizer["AddedOn"]</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var attachment in Model.Attachments)
+                                {
+                                    var typeName = Enum.IsDefined(typeof(Resgrid.Model.ContactAttachmentTypes), attachment.ContactAttachmentType)
+                                        ? Resgrid.Web.Areas.User.Controllers.ContactsController.SplitPascalCase(((Resgrid.Model.ContactAttachmentTypes)attachment.ContactAttachmentType).ToString())
+                                        : attachment.ContactAttachmentType.ToString();
+                                    <tr>
+                                        <td>@typeName</td>
+                                        <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(attachment.Name)</td>
+                                        <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(attachment.FileName)</td>
+                                        <td>@(attachment.Size >= 1024 * 1024 ? $"{attachment.Size / (1024.0 * 1024.0):0.0} MB" : $"{Math.Max(1, attachment.Size / 1024)} KB")</td>
+                                        <td>@attachment.AddedOn.TimeConverter(Model.Department).FormatForDepartment(Model.Department)</td>
+                                        <td class="text-right">
+                                            <a class="btn btn-xs btn-primary" asp-controller="Contacts" asp-action="GetContactAttachment" asp-route-area="User" asp-route-contactAttachmentId="@attachment.ContactAttachmentId"><i class="fa fa-download"></i> @localizer["Download"]</a>
+                                            @if (canDelete)
+                                            {
+                                                <form method="post" style="display:inline;" asp-controller="Contacts" asp-action="DeleteAttachment" asp-route-area="User" onsubmit="return confirm('@localizer["DeleteFileConfirm"]');">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="contactId" value="@Model.Contact.ContactId" />
+                                                    <input type="hidden" name="contactAttachmentId" value="@attachment.ContactAttachmentId" />
+                                                    <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> @commonLocalizer["Delete"]</button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

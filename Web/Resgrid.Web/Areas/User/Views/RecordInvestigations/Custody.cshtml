@@ -1,0 +1,63 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordInvestigationCustodyView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var e = Model.Evidence;
+	ViewBag.Title = "Resgrid | " + L["CustodyChain"] + " | " + e.EvidenceNumber;
+	string Text(string v) => Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(v);
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["CustodyChain"]: @e.EvidenceNumber</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordInvestigations" asp-action="Index" asp-route-area="User">@L["Investigations"]</a></li>
+			<li><a asp-controller="RecordInvestigations" asp-action="Details" asp-route-area="User" asp-route-id="@Model.CaseId">@L["ViewRecordHeader"]</a></li>
+			<li class="active"><strong>@e.EvidenceNumber</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-5">
+			<div class="ibox"><div class="ibox-title"><h5>@L["EvidenceItems"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["Kind"]</dt><dd>@(RmsEnumDisplay.Label<RmsInvestigationEvidenceKind>(e.Kind))</dd>
+					<dt>@L["DefinitionDescription"]</dt><dd>@Text(e.Description)</dd>
+					<dt>@L["CollectedOn"]</dt><dd>@RmsEnumDisplay.Utc(e.CollectedOn) · @Model.UserName(e.CollectedByUserId)</dd>
+					<dt>@L["CollectedFrom"]</dt><dd>@Text(e.CollectedFrom)</dd>
+					<dt>@L["State"]</dt><dd>@(RmsEnumDisplay.Label<RmsEvidenceState>(e.State))</dd>
+					<dt>@L["Custodian"]</dt><dd>@(string.IsNullOrWhiteSpace(e.CurrentCustodianUserId) ? Text(e.CurrentCustodianExternal) : Model.UserName(e.CurrentCustodianUserId))</dd>
+					<dt>@L["StorageLocation"]</dt><dd>@Text(e.StorageLocation)</dd>
+				</dl>
+				<h4>@L["TransferCustody"]</h4>
+				<form method="post" asp-controller="RecordInvestigations" asp-action="TransferCustody" asp-route-area="User">
+					@Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.CaseId" /><input type="hidden" name="evidenceId" value="@e.RmsInvestigationEvidenceId" />
+					<div class="form-group"><label>@L["TransferTo"]</label><select class="form-control" name="toUserId"><option value="">-</option>@foreach (var u in Model.UserNames.OrderBy(u => u.Value)) { <option value="@u.Key">@u.Value</option> }</select></div>
+					<div class="form-group"><label>@L["TransferToExternal"]</label><input class="form-control" name="toExternal" maxlength="200" /></div>
+					<div class="form-group"><label>@L["ResultingState"]</label><select class="form-control" name="resultingState">@foreach (var s in RmsEnumDisplay.Items<RmsEvidenceState>(includeZero: false)) { <option value="@s.Value">@s.Text</option> }</select></div>
+					<div class="form-group"><label>@L["ReasonText"]</label><input class="form-control" name="reason" maxlength="1000" required /></div>
+					<button class="btn btn-primary"><i class="fa fa-exchange"></i> @L["TransferCustody"]</button>
+				</form>
+			</div></div>
+		</div>
+		<div class="col-md-7">
+			<div class="ibox"><div class="ibox-title"><h5>@L["CustodyChain"]</h5></div><div class="ibox-content">
+				<p class="text-muted"><small>@L["CustodyChainHelp"]</small></p>
+				<table class="table table-condensed table-striped">
+					<thead><tr><th>#</th><th>@L["TransferredOn"]</th><th>@L["FromCustodian"]</th><th>@L["TransferTo"]</th><th>@L["ResultingState"]</th><th>@L["ReasonText"]</th><th>@L["RecordedBy"]</th></tr></thead>
+					<tbody>
+					@foreach (var t in Model.Chain.OrderBy(t => t.Sequence))
+					{
+						<tr><td>@t.Sequence</td><td>@RmsEnumDisplay.Utc(t.TransferredOn)</td><td>@(string.IsNullOrWhiteSpace(t.FromUserId) ? Text(t.FromExternal) : Model.UserName(t.FromUserId))</td><td>@(string.IsNullOrWhiteSpace(t.ToUserId) ? Text(t.ToExternal) : Model.UserName(t.ToUserId))</td><td>@(RmsEnumDisplay.Label<RmsEvidenceState>(t.ResultingState))</td><td>@Text(t.Reason)</td><td>@Model.UserName(t.RecordedByUserId)</td></tr>
+					}
+					</tbody>
+				</table>
+			</div></div>
+		</div>
+	</div>
+</div>

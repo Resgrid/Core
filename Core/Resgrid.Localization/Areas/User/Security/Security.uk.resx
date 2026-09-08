@@ -992,4 +992,6 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Хто може накладати та знімати юридичні утримання, які призупиняють строк зберігання та не дозволяють анулювати звіт.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Перепризначення чернеток звітів</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Хто може передати чернетку звіту іншому автору, наприклад коли початковий автор недоступний.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Керування даними профілактики</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Хто може створювати та змінювати об'єкти, програми перевірок і збірки норм, гідранти, дозволи та заходи зі зниження ризиків у громаді. Для читання даних профілактики достатньо доступу до Записів; розслідування регулюються дозволом на обмежені записи та членством у справі.</value></data>
 </root>

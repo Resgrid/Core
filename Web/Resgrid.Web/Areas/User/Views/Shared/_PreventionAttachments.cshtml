@@ -1,0 +1,67 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model PreventionAttachmentsPartialView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+<div class="ibox">
+	<div class="ibox-title"><h5>@L["Attachments"]</h5></div>
+	<div class="ibox-content">
+		@if (Model.Attachments.Count == 0)
+		{
+			<p class="text-muted">@L["NoAttachments"]</p>
+		}
+		else
+		{
+			<table class="table table-condensed">
+				<thead><tr><th>@L["FileName"]</th><th>@L["DefinitionDescription"]</th><th>@L["ScanState"]</th><th>@L["UploadedOn"]</th><th></th></tr></thead>
+				<tbody>
+				@foreach (var a in Model.Attachments)
+				{
+					<tr>
+						<td>
+							@if (a.ScanState == (int)RmsAttachmentScanState.Clean)
+							{
+								<a asp-controller="RecordPreventionAttachments" asp-action="Download" asp-route-area="User" asp-route-id="@a.RmsPreventionAttachmentId">@a.FileName</a>
+							}
+							else
+							{
+								@a.FileName
+							}
+							<small class="text-muted">(@(a.ByteSize / 1024) KB)</small>
+						</td>
+						<td>@a.Description</td>
+						<td>@(RmsEnumDisplay.Label<RmsAttachmentScanState>(a.ScanState))@(a.Classification == (int)RmsEvidenceClassification.Restricted ? " · " + L["RestrictedSection"] : "")</td>
+						<td>@RmsEnumDisplay.Utc(a.UploadedOn)</td>
+						<td>
+							@if (Model.CanWrite)
+							{
+								<form method="post" asp-controller="RecordPreventionAttachments" asp-action="Remove" asp-route-area="User" style="display:inline">
+									@Html.AntiForgeryToken()
+									<input type="hidden" name="id" value="@a.RmsPreventionAttachmentId" />
+									<input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+									<button class="btn btn-xs btn-danger" onclick="return confirm('@L["RemoveAttachmentConfirm"]');">@L["RemoveRow"]</button>
+								</form>
+							}
+						</td>
+					</tr>
+				}
+				</tbody>
+			</table>
+		}
+		@if (Model.CanWrite)
+		{
+			<form method="post" enctype="multipart/form-data" class="form-inline" asp-controller="RecordPreventionAttachments" asp-action="Add" asp-route-area="User">
+				@Html.AntiForgeryToken()
+				<input type="hidden" name="parentKind" value="@((int)Model.ParentKind)" />
+				<input type="hidden" name="parentId" value="@Model.ParentId" />
+				<input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+				<input type="file" name="file" required />
+				<input type="text" class="form-control" name="description" maxlength="500" placeholder="@L["DefinitionDescription"]" />
+				@if (Model.AllowRestricted)
+				{
+					<label class="checkbox-inline"><input type="checkbox" name="restricted" value="true" /> @L["RestrictedSection"]</label>
+				}
+				<button class="btn btn-sm btn-primary"><i class="fa fa-paperclip"></i> @L["AddAttachment"]</button>
+			</form>
+		}
+	</div>
+</div>

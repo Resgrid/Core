@@ -1,0 +1,485 @@
+@model Resgrid.Web.Areas.User.Models.Contacts.ContactPreplanView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
+@{
+    ViewData["Title"] = "Resgrid | " + @localizer["PreplanTitle"];
+    var contactName = Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(Model.Contact.Name);
+    // ADP reveal (plan 7.2, catalog v12): the banner in the body and the step-up wiring in the Scripts
+    // section share one descriptor; both only render when the page is protected.
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedContact"],
+        RevealController = "Contacts",
+        RevealAction = "RevealContactPreplan",
+        RevealData = new Dictionary<string, string> { { "contactId", Model.Contact.ContactId } }
+    };
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["PreplanTitle"]: @contactName</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Contacts" asp-action="Index" asp-route-area="User">@localizer["Contacts"]</a>
+            </li>
+            <li>
+                <a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId">@contactName</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["PreplanTitle"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-4">
+        <div class="title-action">
+            <a asp-controller="Contacts" asp-action="Attachments" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-default"><i class="fa fa-paperclip"></i> @localizer["SiteFiles"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    @if (Model.IsProtectedContact)
+    {
+        <div class="row">
+            <div class="col-xs-12">
+                <partial name="_AdpRevealBanner" model="adpReveal" />
+            </div>
+        </div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-danger">@Model.Message</div>
+    }
+    @if (Model.IsRecordsOwned)
+    {
+        <div class="alert alert-info">
+            <i class="fa fa-lock"></i> @localizer["PreplanRecordsOwnedNotice"]
+            @if (!string.IsNullOrWhiteSpace(Model.OccupancyId))
+            {
+                <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@Model.OccupancyId" class="btn btn-xs btn-default m-l-sm">@localizer["PreplanOpenOccupancy"]</a>
+            }
+        </div>
+    }
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+    <form id="preplanForm" class="form-horizontal" role="form" asp-controller="Contacts" asp-action="Preplan" asp-route-area="User" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Contact.ContactId" />
+        <input type="hidden" asp-for="Preplan.ContactPreplanId" />
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-building"></i> @localizer["PreplanOccupancySection"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["ConstructionType"]</label>
+                            <div class="col-sm-8"><select asp-for="Preplan.ConstructionType" asp-items="Model.ConstructionTypes" class="form-control"></select></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["RoofType"]</label>
+                            <div class="col-sm-8"><select asp-for="Preplan.RoofType" asp-items="Model.RoofTypes" class="form-control"></select></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["OccupancyType"]</label>
+                            <div class="col-sm-8"><select asp-for="Preplan.OccupancyType" asp-items="Model.OccupancyTypes" class="form-control"></select></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["OccupancyHours"]</label>
+                            <div class="col-sm-8"><input asp-for="Preplan.OccupancyHours" data-adp-field="contactpreplans.occupancyhours" class="form-control" placeholder="@localizer["OccupancyHoursPlaceholder"]" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["OccupantLoad"]</label>
+                            <div class="col-sm-8"><input asp-for="Preplan.OccupantLoad" type="number" min="0" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["OccupantsNeedingAssistance"]</label>
+                            <div class="col-sm-8">
+                                <div class="checkbox"><label><input asp-for="Preplan.HasOccupantsNeedingAssistance" type="checkbox" /> @localizer["OccupantsNeedingAssistanceYes"]</label></div>
+                                <textarea asp-for="Preplan.OccupantsNeedingAssistanceNotes" data-adp-field="contactpreplans.occupantsneedingassistancenotes" class="form-control" rows="2" placeholder="@localizer["OccupantsNeedingAssistanceNotes"]"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["OccupancyNotes"]</label>
+                            <div class="col-sm-8"><textarea asp-for="Preplan.OccupancyNotes" data-adp-field="contactpreplans.occupancynotes" class="form-control" rows="3"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-bolt"></i> @localizer["PreplanUtilitiesSection"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["GasShutoff"]</label>
+                            <div class="col-sm-8"><input asp-for="Preplan.GasShutoffLocation" data-adp-field="contactpreplans.gasshutofflocation" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["ElectricShutoff"]</label>
+                            <div class="col-sm-8"><input asp-for="Preplan.ElectricShutoffLocation" data-adp-field="contactpreplans.electricshutofflocation" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["WaterShutoff"]</label>
+                            <div class="col-sm-8"><input asp-for="Preplan.WaterShutoffLocation" data-adp-field="contactpreplans.watershutofflocation" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["UtilityNotes"]</label>
+                            <div class="col-sm-8"><textarea asp-for="Preplan.UtilityNotes" data-adp-field="contactpreplans.utilitynotes" class="form-control" rows="2"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-tint"></i> @localizer["PreplanWaterSection"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["NearestHydrant"]</label>
+                            <div class="col-sm-8"><input asp-for="Preplan.NearestHydrantLocation" data-adp-field="contactpreplans.nearesthydrantlocation" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["RequiredFireFlow"]</label>
+                            <div class="col-sm-8"><input asp-for="Preplan.RequiredFireFlowGpm" type="number" min="0" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["WaterSupplyNotes"]</label>
+                            <div class="col-sm-8"><textarea asp-for="Preplan.WaterSupplyNotes" data-adp-field="contactpreplans.watersupplynotes" class="form-control" rows="2"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-key"></i> @localizer["PreplanAccessSection"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["KnoxBox"]</label>
+                            <div class="col-sm-8"><input asp-for="Preplan.KnoxBoxLocation" data-adp-field="contactpreplans.knoxboxlocation" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["GateCode"]</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Preplan.GateCode" data-adp-field="contactpreplans.gatecode" class="form-control" autocomplete="off" />
+                                <small class="form-text text-muted">@localizer["GateCodeInfo"]</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["AlarmPanel"]</label>
+                            <div class="col-sm-8"><input asp-for="Preplan.AlarmPanelLocation" data-adp-field="contactpreplans.alarmpanellocation" class="form-control" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["AlarmCompany"]</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Preplan.AlarmCompany" data-adp-field="contactpreplans.alarmcompany" class="form-control" placeholder="@commonLocalizer["Name"]" />
+                                <input asp-for="Preplan.AlarmCompanyPhone" data-adp-field="contactpreplans.alarmcompanyphone" class="form-control m-t-xs" placeholder="@localizer["Phone"]" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["AccessNotes"]</label>
+                            <div class="col-sm-8"><textarea asp-for="Preplan.AccessNotes" data-adp-field="contactpreplans.accessnotes" class="form-control" rows="2"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-phone"></i> @localizer["PreplanContactsSection"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["EmergencyContact"]</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Preplan.EmergencyContactName" data-adp-field="contactpreplans.emergencycontactname" class="form-control" placeholder="@commonLocalizer["Name"]" />
+                                <input asp-for="Preplan.EmergencyContactPhone" data-adp-field="contactpreplans.emergencycontactphone" class="form-control m-t-xs" placeholder="@localizer["Phone"]" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["SecondaryContact"]</label>
+                            <div class="col-sm-8">
+                                <input asp-for="Preplan.SecondaryContactName" data-adp-field="contactpreplans.secondarycontactname" class="form-control" placeholder="@commonLocalizer["Name"]" />
+                                <input asp-for="Preplan.SecondaryContactPhone" data-adp-field="contactpreplans.secondarycontactphone" class="form-control m-t-xs" placeholder="@localizer["Phone"]" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-exclamation-triangle"></i> @localizer["PreplanTacticalSection"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["HazmatOnSite"]</label>
+                            <div class="col-sm-8"><div class="checkbox"><label><input asp-for="Preplan.HazmatOnSite" type="checkbox" /> @localizer["HazmatOnSiteYes"]</label></div></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["GeneralHazardNotes"]</label>
+                            <div class="col-sm-8"><textarea asp-for="Preplan.GeneralHazardNotes" data-adp-field="contactpreplans.generalhazardnotes" class="form-control" rows="3"></textarea></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["TacticalSummary"]</label>
+                            <div class="col-sm-8"><textarea asp-for="Preplan.TacticalSummary" data-adp-field="contactpreplans.tacticalsummary" class="form-control" rows="4"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-calendar-check-o"></i> @localizer["PreplanReviewSection"]</h5></div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["LastReviewed"]</label>
+                            <div class="col-sm-8">
+                                <p class="form-control-static">
+                                    @if (Model.Preplan.LastReviewedOn.HasValue)
+                                    {
+                                        @Model.Preplan.LastReviewedOn.Value.TimeConverter(Model.Department).FormatForDepartment(Model.Department)
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">@localizer["NeverReviewed"]</span>
+                                    }
+                                </p>
+                                <div class="checkbox"><label><input asp-for="MarkReviewed" type="checkbox" /> @localizer["MarkReviewedNow"]</label></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["NextReviewDue"]</label>
+                            <div class="col-sm-8"><input asp-for="NextReviewDue" type="date" class="form-control" /></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox">
+                    <div class="ibox-content text-right">
+                        <a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-white">@commonLocalizer["Cancel"]</a>
+                        @if (!Model.IsRecordsOwned)
+                        {
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> @localizer["SavePreplan"]</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-warning"></i> @localizer["PremiseHazards"]</h5>
+                    <div class="ibox-tools">
+                        @if (!Model.IsRecordsOwned)
+                        {
+                            <button type="button" class="btn btn-primary btn-xs" id="addHazardBtn"><i class="fa fa-plus"></i> @localizer["AddHazard"]</button>
+                        }
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["PremiseHazardsInfo"]</p>
+                    <table class="table table-striped" id="hazardsTable">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Severity"]</th>
+                                <th>@commonLocalizer["Type"]</th>
+                                <th>@localizer["Title"]</th>
+                                <th>@localizer["Location"]</th>
+                                <th>@localizer["Alert"]</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="hazardsBody"></tbody>
+                    </table>
+                    <div id="noHazards" class="text-muted" style="display:none;">@localizer["NoHazards"]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="hazardModal" tabindex="-1" role="dialog" aria-labelledby="hazardModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="hazardModalLabel">@localizer["AddHazard"]</h4>
+            </div>
+            <div class="modal-body">
+                <form id="hazardForm">
+                    <input type="hidden" id="hazardId" />
+                    <div class="form-group">
+                        <label for="hazardTitle">@localizer["Title"]</label>
+                        <input type="text" class="form-control" id="hazardTitle" maxlength="500" required />
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="hazardType">@commonLocalizer["Type"]</label>
+                                <select class="form-control" id="hazardType" asp-items="Model.HazardTypes"></select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="hazardSeverity">@localizer["Severity"]</label>
+                                <select class="form-control" id="hazardSeverity" asp-items="Model.HazardSeverities"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hazardDescription">@commonLocalizer["Description"]</label>
+                        <textarea class="form-control" id="hazardDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="hazardLocation">@localizer["Location"]</label>
+                        <input type="text" class="form-control" id="hazardLocation" maxlength="1000" />
+                    </div>
+                    <div class="form-group">
+                        <label for="hazardGps">@localizer["GpsCoordinates"]</label>
+                        <input type="text" class="form-control" id="hazardGps" placeholder="lat,lng" maxlength="100" />
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="hazardShouldAlert" /> @localizer["HazardShouldAlert"]</label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@commonLocalizer["Cancel"]</button>
+                <button type="button" class="btn btn-primary" id="saveHazardBtn"><i class="fa fa-save"></i> @localizer["SaveHazard"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @if (Model.IsProtectedContact)
+    {
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var contactId = '@Model.Contact.ContactId';
+            var token = $('#preplanForm input[name="__RequestVerificationToken"]').val();
+            var hazards = [];
+
+            function esc(value) {
+                return $('<div/>').text(value || '').html();
+            }
+
+            function renderHazards() {
+                var $body = $('#hazardsBody');
+                $body.empty();
+                if (!hazards.length) {
+                    $('#noHazards').show();
+                    return;
+                }
+                $('#noHazards').hide();
+                hazards.forEach(function (h) {
+                    var row = '<tr style="background-color:' + h.SeverityColor + '">' +
+                        '<td>' + esc(h.SeverityName) + '</td>' +
+                        '<td>' + esc(h.HazardTypeName) + '</td>' +
+                        '<td><strong>' + esc(h.Title) + '</strong>' + (h.Description ? '<br/><small>' + esc(h.Description) + '</small>' : '') + '</td>' +
+                        '<td>' + esc(h.LocationDescription) + (h.GpsCoordinates ? '<br/><small>' + esc(h.GpsCoordinates) + '</small>' : '') + '</td>' +
+                        '<td>' + (h.ShouldAlert ? '<i class="fa fa-bell text-danger"></i>' : '') + '</td>' +
+                        '<td class="text-right">' +
+                        '<button type="button" class="btn btn-xs btn-warning edit-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">@commonLocalizer["Edit"]</button> ' +
+                        '<button type="button" class="btn btn-xs btn-danger delete-hazard" data-id="' + esc(h.ContactPreplanHazardId) + '">@commonLocalizer["Delete"]</button>' +
+                        '</td></tr>';
+                    $body.append(row);
+                });
+            }
+
+            function loadHazards() {
+                $.getJSON(resgrid.absoluteBaseUrl + '/User/Contacts/GetHazardsJson', { contactId: contactId }, function (data) {
+                    hazards = data || [];
+                    renderHazards();
+                });
+            }
+
+            function openModal(h) {
+                $('#hazardId').val(h ? h.ContactPreplanHazardId : '');
+                $('#hazardTitle').val(h ? h.Title : '');
+                $('#hazardType').val(h ? h.HazardType : 0);
+                $('#hazardSeverity').val(h ? h.Severity : 0);
+                $('#hazardDescription').val(h ? h.Description : '');
+                $('#hazardLocation').val(h ? h.LocationDescription : '');
+                $('#hazardGps').val(h ? h.GpsCoordinates : '');
+                $('#hazardShouldAlert').prop('checked', h ? h.ShouldAlert : false);
+                $('#hazardModalLabel').text(h ? '@localizer["EditHazard"]' : '@localizer["AddHazard"]');
+                $('#hazardModal').modal('show');
+            }
+
+            $('#addHazardBtn').on('click', function () { openModal(null); });
+
+            $('#hazardsBody').on('click', '.edit-hazard', function () {
+                var id = $(this).data('id');
+                var h = hazards.filter(function (x) { return x.ContactPreplanHazardId === id; })[0];
+                openModal(h);
+            });
+
+            $('#hazardsBody').on('click', '.delete-hazard', function () {
+                if (!confirm('@localizer["DeleteHazardConfirm"]')) return;
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Contacts/DeleteHazard',
+                    type: 'POST',
+                    data: { contactPreplanHazardId: $(this).data('id'), __RequestVerificationToken: token },
+                    success: function () { loadHazards(); },
+                    error: function () { toastr.error('@localizer["HazardSaveError"]'); }
+                });
+            });
+
+            $('#saveHazardBtn').on('click', function () {
+                var title = $('#hazardTitle').val().trim();
+                if (!title) {
+                    toastr.error('@localizer["HazardTitleRequired"]');
+                    return;
+                }
+                var payload = {
+                    ContactPreplanHazardId: $('#hazardId').val() || null,
+                    ContactId: contactId,
+                    HazardType: parseInt($('#hazardType').val(), 10),
+                    Severity: parseInt($('#hazardSeverity').val(), 10),
+                    Title: title,
+                    Description: $('#hazardDescription').val(),
+                    LocationDescription: $('#hazardLocation').val(),
+                    GpsCoordinates: $('#hazardGps').val(),
+                    ShouldAlert: $('#hazardShouldAlert').is(':checked')
+                };
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Contacts/SaveHazard',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(payload),
+                    success: function (response) {
+                        if (response && response.success) {
+                            $('#hazardModal').modal('hide');
+                            loadHazards();
+                        } else {
+                            toastr.error((response && response.error) || '@localizer["HazardSaveError"]');
+                        }
+                    },
+                    error: function () { toastr.error('@localizer["HazardSaveError"]'); }
+                });
+            });
+
+            // ADP (catalog v12): the reveal payload carries each hazard's text keyed "<fieldId>:<hazardId>";
+            // swap them into the grid in place, and reload the redacted rows when the grant lapses.
+            window.resgridAdpPageRevealed = function (values) {
+                if (!values) return;
+                var columns = { 'contactpreplanhazards.title': 'Title', 'contactpreplanhazards.description': 'Description', 'contactpreplanhazards.locationdescription': 'LocationDescription', 'contactpreplanhazards.gpscoordinates': 'GpsCoordinates' };
+                hazards.forEach(function (h) {
+                    Object.keys(columns).forEach(function (key) {
+                        var value = values[key + ':' + h.ContactPreplanHazardId];
+                        if (typeof value === 'string' && value !== 'REDACTED' && value.indexOf('rgdp:') !== 0)
+                            h[columns[key]] = value;
+                    });
+                });
+                renderHazards();
+            };
+            window.resgridAdpPageConcealed = function () { loadHazards(); };
+
+            loadHazards();
+        });
+    </script>
+}

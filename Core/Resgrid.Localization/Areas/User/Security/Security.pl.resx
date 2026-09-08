@@ -992,4 +992,6 @@
   <data name="PermRecordsManageRecordLegalHoldNote" xml:space="preserve"><value>Kto może nakładać i zdejmować blokady prawne, które wstrzymują retencję i uniemożliwiają unieważnienie raportu.</value></data>
   <data name="PermRecordsReassignRecordDraftsLabel" xml:space="preserve"><value>Przypisywanie wersji roboczych innym autorom</value></data>
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Kto może przekazać wersję roboczą raportu innemu autorowi, np. gdy pierwotny autor jest niedostępny.</value></data>
+  <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Zarządzanie danymi prewencji</value></data>
+  <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Kto może tworzyć i zmieniać obiekty, programy kontroli i zbiory przepisów, hydranty, zezwolenia oraz działania na rzecz ograniczania ryzyka w społeczności. Odczyt danych prewencji wymaga jedynie dostępu do Rejestrów; dochodzenia podlegają uprawnieniu do rejestrów zastrzeżonych i członkostwu w sprawie.</value></data>
 </root>

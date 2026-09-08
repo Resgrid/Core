@@ -425,6 +425,9 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.RecordEvidenceCaptured:
 				case WorkflowTriggerEventType.RecordPurged:
 				case WorkflowTriggerEventType.RecordExportScheduled:
+				case WorkflowTriggerEventType.RecordInspectionCompleted:
+				case WorkflowTriggerEventType.RecordViolationOverdue:
+				case WorkflowTriggerEventType.RecordPermitExpiring:
 				{
 					// Records (RMS): the payload is the outbox snapshot carried by RecordsWorkflowEvent; it is never
 					// rehydrated from current record state, so a retry sees exactly what the original run saw.
@@ -1221,7 +1224,7 @@ namespace Resgrid.Services
 				obj["obligation"] = ToScriptObject(obligation);
 
 			// RMS-3e blocks (plan section 5.6): each is present only on the triggers that carry it.
-			foreach (var name in new[] { "attachment", "disclosure", "legal_hold", "evidence", "purge", "export", "definition", "fields" })
+			foreach (var name in new[] { "attachment", "disclosure", "legal_hold", "evidence", "purge", "export", "definition", "fields", "inspection", "violation", "permit" })
 			{
 				if (payload[name] is JObject block)
 					obj[name] = ToScriptObject(block);

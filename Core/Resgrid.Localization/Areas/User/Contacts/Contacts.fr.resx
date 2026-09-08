@@ -434,4 +434,10 @@
   <data name="EditContact" xml:space="preserve">
     <value>Edit Contact</value>
   </data>
+  <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
+    <value>Les plans d'intervention de ce service sont désormais gérés comme des occupations dans les Dossiers. Cette page est en lecture seule ; modifiez l'occupation dans les Dossiers.</value>
+  </data>
+  <data name="PreplanOpenOccupancy" xml:space="preserve">
+    <value>Ouvrir l'occupation</value>
+  </data>
 </root>

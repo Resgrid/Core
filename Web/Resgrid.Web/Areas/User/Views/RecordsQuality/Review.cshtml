@@ -1,0 +1,62 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordsQualityReviewView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var r = Model.Review;
+	ViewBag.Title = "Resgrid | " + L["ScoreReview"] + " | " + r.RecordNumber;
+	var scored = r.ScoredOn.HasValue;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["ScoreReview"]: @r.RecordNumber</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordsQuality" asp-action="Index" asp-route-area="User">@L["QualityReview"]</a></li>
+			<li class="active"><strong>@r.RecordNumber</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="ibox"><div class="ibox-content">
+		<dl class="dl-horizontal">
+			<dt>@L["RecordNumber"]</dt><dd><a asp-controller="Records" asp-action="Details" asp-route-area="User" asp-route-id="@r.RecordId">@r.RecordNumber</a> · @r.DefinitionKey · @L["Revision"] @r.RevisionId</dd>
+			<dt>@L["Author"]</dt><dd>@r.AuthorUserId</dd>
+			<dt>@L["SampledOn"]</dt><dd>@RmsEnumDisplay.Utc(r.SampledOn)</dd>
+			@if (scored) { <dt>@L["ScoredOn"]</dt><dd>@RmsEnumDisplay.Utc(r.ScoredOn) · @r.ReviewerUserId · <strong>@r.Score%</strong></dd> }
+		</dl>
+		<p class="text-muted">@L["ScoreHelp"]</p>
+		<form method="post" asp-controller="RecordsQuality" asp-action="Score" asp-route-area="User">
+			@Html.AntiForgeryToken()<input type="hidden" name="id" value="@r.RmsQualityReviewId" />
+			<table class="table table-condensed">
+				<thead><tr><th>@L["Criteria"]</th><th>@L["CriterionWeight"]</th><th>@L["CriterionScore"]</th><th>@L["ItemNote"]</th></tr></thead>
+				<tbody>
+				@foreach (var c in Model.Criteria)
+				{
+					Model.Findings.TryGetValue(c.Key, out var f);
+					<tr>
+						<td>@c.Text<br /><small class="text-muted">@c.Key</small></td>
+						<td>@c.Weight</td>
+						<td>@if (scored) { @f?.Score } else { <select class="form-control input-sm" name="score_@c.Key">@for (var s = 0; s <= 4; s++) { <option value="@s" selected="@((f?.Score ?? 4) == s)">@s</option> }</select> }</td>
+						<td>@if (scored) { @f?.Note } else { <input class="form-control input-sm" name="note_@c.Key" value="@f?.Note" maxlength="1000" /> }</td>
+					</tr>
+				}
+				</tbody>
+			</table>
+			@if (!scored)
+			{
+				<div class="form-group"><label>@L["ReviewNote"]</label><textarea class="form-control" name="note" rows="3" maxlength="4000"></textarea></div>
+				<div class="checkbox"><label><input type="checkbox" name="amendmentRecommended" value="true" /> @L["RecommendAmendment"]</label></div>
+				<button class="btn btn-primary"><i class="fa fa-check"></i> @L["ScoreReview"]</button>
+			}
+			else
+			{
+				<p style="white-space:pre-wrap">@r.Note</p>
+				@if (r.AmendmentRecommended) { <p class="text-warning"><i class="fa fa-flag"></i> @L["RecommendAmendment"]</p> }
+			}
+		</form>
+	</div></div>
+</div>

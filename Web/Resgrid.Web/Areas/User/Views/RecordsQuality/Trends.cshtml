@@ -1,0 +1,45 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordsQualityTrendsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["Trends"];
+	var t = Model.Trends;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["QualityReview"]: @L["Trends"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordsQuality" asp-action="Index" asp-route-area="User">@L["QualityReview"]</a></li>
+			<li class="active"><strong>@L["Trends"]</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	<div class="ibox"><div class="ibox-content">
+		<form method="get" class="form-inline" asp-controller="RecordsQuality" asp-action="Trends" asp-route-area="User">
+			<label>@L["TrendsSince"]</label> <input type="date" class="form-control" name="since" value="@Model.Since.ToString("yyyy-MM-dd")" />
+			<button class="btn btn-default">@L["Filter"]</button>
+		</form>
+		<p class="m-t-sm">@L["Sampled"]: <strong>@t.Sampled</strong> · @L["Scored"]: <strong>@t.Scored</strong> · @L["AverageScore"]: <strong>@t.AverageScore.ToString("0.0")%</strong></p>
+	</div></div>
+	<div class="row">
+		@foreach (var block in new[] { (L["ByAuthor"].Value, t.ByAuthor), (L["ByUnit"].Value, t.ByUnit), (L["ByDefinition"].Value, t.ByDefinition), (L["ByCriterion"].Value, t.ByCriterion) })
+		{
+			<div class="col-md-6">
+				<div class="ibox"><div class="ibox-title"><h5>@block.Item1</h5></div><div class="ibox-content">
+					@if (block.Item2.Count == 0) { <p class="text-muted">@L["NoReviewsYet"]</p> }
+					else
+					{
+						<table class="table table-condensed table-striped">
+							<thead><tr><th></th><th>@L["ReviewCount"]</th><th>@L["AverageScore"]</th><th>@L["AmendmentsRecommended"]</th></tr></thead>
+							<tbody>@foreach (var row in block.Item2.OrderBy(r => r.AverageScore)) { <tr><td>@row.Label</td><td>@row.Reviews</td><td>@row.AverageScore.ToString("0.0")%</td><td>@row.AmendmentsRecommended</td></tr> }</tbody>
+						</table>
+					}
+				</div></div>
+			</div>
+		}
+	</div>
+</div>

@@ -64,11 +64,13 @@ namespace Resgrid.Model
 			new RecordPermissionDescriptor(PermissionTypes.ManageRecordReports, PermissionActions.DepartmentAdminsOnly, false, "Manage saved Record reports", everyoneOffered: false),
 			new RecordPermissionDescriptor(PermissionTypes.ManageRecordDisclosures, PermissionActions.DepartmentAdminsOnly, false, "Manage public-records disclosures", everyoneOffered: false),
 			new RecordPermissionDescriptor(PermissionTypes.ManageRecordLegalHold, PermissionActions.DepartmentAdminsOnly, false, "Place and release legal holds", everyoneOffered: false),
-			new RecordPermissionDescriptor(PermissionTypes.ReassignRecordDrafts, PermissionActions.DepartmentAndGroupAdmins, true, "Reassign draft Records")
+			new RecordPermissionDescriptor(PermissionTypes.ReassignRecordDrafts, PermissionActions.DepartmentAndGroupAdmins, true, "Reassign draft Records"),
+			new RecordPermissionDescriptor(PermissionTypes.RecordsPreventionAdmin, PermissionActions.DepartmentAdminsOnly, false, "Manage prevention data (occupancies, inspections, hydrants, permits, CRR)", everyoneOffered: false)
 		};
 
 		public const int FirstValue = 50;
-		public const int LastValue = 67;
+		/// <summary>Highest RMS value. 68 (Unified Search's ManageSearchIndex) sits inside the range and is not a Records permission; iterate <see cref="All"/>, never the range.</summary>
+		public const int LastValue = 69;
 
 		public static RecordPermissionDescriptor Get(PermissionTypes type)
 		{

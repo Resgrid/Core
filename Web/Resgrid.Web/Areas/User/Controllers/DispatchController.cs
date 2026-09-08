@@ -1323,6 +1323,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
+
+			// Contacts plan Phase A (A6): Site Info panel. Contact identity/notes render REDACTED in a
+			// protected department (no grant server-side); pre-plan and hazard text is not cataloged.
+			model.SiteInfo = await _contactsService.GetCallSiteInfoAsync(callId, DepartmentId);
+			if (model.SiteInfo != null && model.SiteInfo.Contacts.Any())
+			{
+				await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, model.SiteInfo.Contacts.Select(x => x.Contact).ToList(), null, UserId);
+				var siteAlertNotes = model.SiteInfo.Contacts.SelectMany(x => x.AlertNotes).ToList();
+				if (siteAlertNotes.Any())
+					await _protectedReadService.ResolveContactNotesForReadAsync(DepartmentId, siteAlertNotes, null, UserId);
+
+				// Catalog v12: pre-plan text, hazard text and attachment names render REDACTED; RevealCall fills them in.
+				var sitePreplans = model.SiteInfo.Contacts.Where(x => x.Preplan != null).Select(x => x.Preplan).ToList();
+				if (sitePreplans.Any())
+					await _protectedReadService.ResolveContactPreplansForReadAsync(DepartmentId, sitePreplans, null, UserId);
+				var siteHazards = model.SiteInfo.Contacts.SelectMany(x => x.Hazards).ToList();
+				if (siteHazards.Any())
+					await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, siteHazards, null, UserId);
+				var siteAttachments = model.SiteInfo.Contacts.SelectMany(x => x.Attachments).ToList();
+				if (siteAttachments.Any())
+					await _protectedReadService.ResolveContactAttachmentsForReadAsync(DepartmentId, siteAttachments, null, UserId);
+			}
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true, true);
 
 			// ADP (plan 7.2): server-rendered pages always render protected values as REDACTED — a
@@ -1397,6 +1419,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var fields = Resgrid.Services.ProtectedReadService.CallFieldAccessors
 				.ToDictionary(a => a.Key, a => a.Value.Get(resolved.Call));
+
+			// Catalog v12: the Site Info tab marks each linked contact's pre-plan and hazard values with the
+			// row id as a suffix, so the same step-up reveals the premises knowledge with the call.
+			var siteInfo = await _contactsService.GetCallSiteInfoAsync(callId, DepartmentId);
+			if (siteInfo != null && siteInfo.Contacts.Any())
+			{
+				var sitePreplans = siteInfo.Contacts.Where(x => x.Preplan != null).Select(x => x.Preplan).ToList();
+				var siteHazards = siteInfo.Contacts.SelectMany(x => x.Hazards).ToList();
+				var preplanRead = sitePreplans.Any()
+					? await _protectedReadService.ResolveContactPreplansForReadAsync(DepartmentId, sitePreplans, grantToken, UserId)
+					: null;
+				var hazardRead = siteHazards.Any()
+					? await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, siteHazards, grantToken, UserId)
+					: null;
+
+				if (preplanRead != null && preplanRead.IsProtected && preplanRead.ProtectedReason != null)
+					return Json(new { success = false, error = preplanRead.ProtectedReason });
+				if (hazardRead != null && hazardRead.IsProtected && hazardRead.ProtectedReason != null)
+					return Json(new { success = false, error = hazardRead.ProtectedReason });
+
+				foreach (var preplan in sitePreplans)
+					ContactsController.AddPreplanFields(fields, preplan, suffixed: true);
+			}
 
 			// The call's user-defined fields are cataloged too, and both the view and the edit form
 			// mark them for this module. Revealing the call while its custom fields keep showing the
@@ -3111,6 +3156,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 							contactNotesJson.Add(json);
 						}
 					}
+				}
+
+				// Contacts plan Phase A: ShouldAlert premise hazards ride the same alert modal as alert notes.
+				// ADP catalog v12: no grant server-side, so enveloped text reads as REDACTED.
+				var hazards = await _contactsService.GetHazardsByContactIdAsync(contactId, DepartmentId);
+				await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, hazards, null, UserId);
+				foreach (var hazard in hazards.Where(x => x.ShouldAlert))
+				{
+					ContactNoteJson json = new ContactNoteJson();
+					json.Id = hazard.ContactPreplanHazardId;
+					json.ContactId = contactId;
+					json.Note = string.IsNullOrWhiteSpace(hazard.Description) ? hazard.Title : $"{hazard.Title}: {hazard.Description}";
+					if (!string.IsNullOrWhiteSpace(hazard.LocationDescription))
+						json.Note += $" ({hazard.LocationDescription})";
+					json.ShouldAlert = true;
+					json.AddedOn = hazard.AddedOn.FormatForDepartment(department, true);
+					json.AddedBy = string.IsNullOrWhiteSpace(hazard.AddedByUserId) ? "" : await UserHelper.GetFullNameForUser(hazard.AddedByUserId);
+					json.TypeName = $"{_dispatchLocalizer["PremiseHazard"].Value} - {(ContactPreplanHazardSeverities)hazard.Severity}";
+					json.TypeColor = ContactsController.HazardSeverityColor(hazard.Severity);
+					contactNotesJson.Add(json);
 				}
 			}
 

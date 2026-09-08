@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -19,6 +20,8 @@ using Resgrid.Web.Areas.User.Models.Contacts;
 using Resgrid.WebCore.Areas.User.Models;
 using Resgrid.WebCore.Areas.User.Models.Contacts;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -40,13 +43,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRouteService _routeService;
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 		private readonly IProtectedReadService _protectedReadService;
+		private readonly IContactPreplanOwnershipGate _preplanOwnership;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> _localizer;
 
 		public ContactsController(IContactsService contactsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
 			IAddressService addressService, IEventAggregator eventAggregator, ICallsService callsService, IAuthorizationService authorizationService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			IDepartmentGroupsService departmentGroupsService, IRouteService routeService, IPhoneNumberProcesserProvider phoneNumberProcesser,
-			IProtectedReadService protectedReadService)
+			IProtectedReadService protectedReadService, IContactPreplanOwnershipGate preplanOwnership,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer)
 		{
+			_preplanOwnership = preplanOwnership;
+			_localizer = localizer;
 			_contactsService = contactsService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
@@ -71,6 +79,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ContactCategories = await _contactsService.GetContactCategoriesForDepartmentAsync(DepartmentId);
 			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.PreplanReviewOverdueContactIds = new HashSet<string>(
+				(await _contactsService.GetPreplansDueForReviewAsync(DepartmentId)).Select(x => x.ContactId), StringComparer.Ordinal);
 
 			// ADP: server-rendered lists show REDACTED for protected values (no grant server-side).
 			await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, model.Contacts, null, UserId);
@@ -147,6 +157,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.MailingAddress = await _addressService.GetAddressByIdAsync(model.Contact.MailingAddressId.Value);
 
 			model.Notes = await _contactsService.GetContactNotesByContactIdAsync(contactId, DepartmentId);
+
+			// Contacts plan Phase A: Pre-Plan and Files tabs. ADP catalog v12: render REDACTED; RevealContact
+			// returns the pre-plan and hazard values alongside the contact's own fields.
+			model.Preplan = await _contactsService.GetPreplanByContactIdAsync(contactId, DepartmentId);
+			model.Hazards = await _contactsService.GetHazardsByContactIdAsync(contactId, DepartmentId);
+			model.Attachments = await _contactsService.GetContactAttachmentsAsync(contactId, DepartmentId);
+			if (model.Preplan != null)
+				await _protectedReadService.ResolveContactPreplansForReadAsync(DepartmentId, new List<ContactPreplan> { model.Preplan }, null, UserId);
+			await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, model.Hazards, null, UserId);
+			await _protectedReadService.ResolveContactAttachmentsForReadAsync(DepartmentId, model.Attachments, null, UserId);
 
 			// ADP: render REDACTED; the reveal is client-side (step-up modal then RevealContact).
 			var protectedRead = await _protectedReadService.ResolveContactsForReadAsync(DepartmentId,
@@ -983,6 +1003,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var fields = Resgrid.Services.ProtectedReadService.ContactFieldAccessors
 				.ToDictionary(a => a.Key, a => a.Value.Get(contact));
 
+			// Catalog v12: the View page's Pre-Plan tab marks its values with the pre-plan/hazard id as a
+			// suffix, so one step-up reveals the contact, its plan and its hazards together.
+			var preplanReveal = await AddPreplanRevealFieldsAsync(fields, contactId, grantToken, suffixed: true);
+			if (preplanReveal != null && preplanReveal.IsProtected && preplanReveal.ProtectedReason != null)
+				return Json(new { success = false, error = preplanReveal.ProtectedReason });
+
 			// The contact's UDF values are cataloged too, and the form renders them as inputs marked
 			// for this module. Revealing the contact but leaving its custom fields showing the
 			// placeholder would be an odd half-reveal of the same record.
@@ -1110,5 +1136,528 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return Json(callsJson);
 		}
+		#region Pre-plans and site attachments (Contacts plan Phase A, A6)
+
+		private static readonly HashSet<string> AllowedAttachmentExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		{
+			"jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "ppt", "pptx", "pps", "ppsx", "odt", "xls", "xlsx", "txt", "csv", "dwg", "dxf"
+		};
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		public async Task<IActionResult> Preplan(string contactId)
+		{
+			var model = await BuildPreplanViewAsync(contactId, null);
+			if (model == null)
+				return Unauthorized();
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		public async Task<IActionResult> Preplan(ContactPreplanView model, CancellationToken cancellationToken)
+		{
+			if (model?.Contact == null || string.IsNullOrWhiteSpace(model.Contact.ContactId))
+				return BadRequest();
+
+			var contact = await _contactsService.GetContactByIdAsync(model.Contact.ContactId);
+			if (contact == null || contact.IsDeleted || contact.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var posted = model.Preplan ?? new ContactPreplan();
+
+			if (!Enum.IsDefined(typeof(ContactPreplanConstructionTypes), posted.ConstructionType) ||
+				!Enum.IsDefined(typeof(ContactPreplanRoofTypes), posted.RoofType) ||
+				!Enum.IsDefined(typeof(ContactPreplanOccupancyTypes), posted.OccupancyType))
+				ModelState.AddModelError("Preplan", "Unknown construction, roof or occupancy type.");
+
+			if (!ModelState.IsValid)
+			{
+				var rebuilt = await BuildPreplanViewAsync(contact.ContactId, posted);
+				rebuilt.NextReviewDue = model.NextReviewDue;
+				rebuilt.MarkReviewed = model.MarkReviewed;
+				return View(rebuilt);
+			}
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var existing = await _contactsService.GetPreplanByContactIdAsync(contact.ContactId, DepartmentId);
+
+			posted.ContactId = contact.ContactId;
+			posted.DepartmentId = DepartmentId;
+			posted.NextReviewDue = model.NextReviewDue.HasValue
+				? DateTimeHelpers.ConvertToUtc(model.NextReviewDue.Value, department.TimeZone)
+				: (DateTime?)null;
+			posted.LastReviewedOn = existing?.LastReviewedOn;
+			posted.ReviewedByUserId = existing?.ReviewedByUserId;
+
+			if (model.MarkReviewed)
+			{
+				posted.LastReviewedOn = DateTime.UtcNow;
+				posted.ReviewedByUserId = UserId;
+			}
+
+			try
+			{
+				await _contactsService.SavePreplanAsync(posted, UserId, IpAddressHelper.GetRequestIP(Request, true),
+					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+			}
+			catch (InvalidOperationException ex) when (ex.Message == IContactPreplanOwnershipGate.RecordsOwnedReason)
+			{
+				var rebuilt = await BuildPreplanViewAsync(contact.ContactId, null);
+				rebuilt.Message = _localizer["PreplanRecordsOwnedNotice"].Value;
+				return View(rebuilt);
+			}
+
+			return RedirectToAction("View", "Contacts", new { Area = "User", contactId = contact.ContactId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Contacts_Delete)]
+		public async Task<IActionResult> DeletePreplan(string contactId, CancellationToken cancellationToken)
+		{
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			try
+			{
+				await _contactsService.DeletePreplanAsync(contactId, DepartmentId, UserId, IpAddressHelper.GetRequestIP(Request, true),
+					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+			}
+			catch (InvalidOperationException ex) when (ex.Message == IContactPreplanOwnershipGate.RecordsOwnedReason)
+			{
+				return RedirectToAction("Preplan", "Contacts", new { Area = "User", contactId });
+			}
+
+			return RedirectToAction("View", "Contacts", new { Area = "User", contactId = contactId });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<IActionResult> GetHazardsJson(string contactId)
+		{
+			var result = new List<ContactHazardJson>();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.DepartmentId != DepartmentId)
+				return Json(result);
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var hazards = await _contactsService.GetHazardsByContactIdAsync(contactId, DepartmentId);
+
+			// ADP: a server-rendered list holds no grant; the editor page reveals through RevealContactPreplan.
+			await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, hazards, null, UserId);
+
+			foreach (var hazard in hazards)
+				result.Add(await ToHazardJsonAsync(hazard, department));
+
+			return Json(result);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		public async Task<IActionResult> SaveHazard([FromBody] SaveContactHazardInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || !ModelState.IsValid)
+				return Json(new { success = false, error = "A title is required." });
+
+			var contact = await _contactsService.GetContactByIdAsync(input.ContactId);
+			if (contact == null || contact.IsDeleted || contact.DepartmentId != DepartmentId)
+				return Json(new { success = false, error = "Contact not found." });
+
+			if (!Enum.IsDefined(typeof(ContactPreplanHazardTypes), input.HazardType) ||
+				!Enum.IsDefined(typeof(ContactPreplanHazardSeverities), input.Severity))
+				return Json(new { success = false, error = "Unknown hazard type or severity." });
+
+			var hazard = new ContactPreplanHazard
+			{
+				ContactPreplanHazardId = string.IsNullOrWhiteSpace(input.ContactPreplanHazardId) ? null : input.ContactPreplanHazardId,
+				ContactId = contact.ContactId,
+				DepartmentId = DepartmentId,
+				HazardType = input.HazardType,
+				Severity = input.Severity,
+				Title = input.Title,
+				Description = input.Description,
+				LocationDescription = input.LocationDescription,
+				GpsCoordinates = input.GpsCoordinates,
+				ShouldAlert = input.ShouldAlert
+			};
+
+			try
+			{
+				var saved = await _contactsService.SaveHazardAsync(hazard, UserId, IpAddressHelper.GetRequestIP(Request, true),
+					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+
+				return Json(new { success = true, id = saved.ContactPreplanHazardId });
+			}
+			catch (InvalidOperationException ex) when (ex.Message == IContactPreplanOwnershipGate.RecordsOwnedReason)
+			{
+				return Json(new { success = false, error = _localizer["PreplanRecordsOwnedNotice"].Value });
+			}
+			catch (InvalidOperationException)
+			{
+				return Json(new { success = false, error = "Hazard not found." });
+			}
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		public async Task<IActionResult> DeleteHazard([FromForm] string contactPreplanHazardId, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var deleted = await _contactsService.DeleteHazardAsync(contactPreplanHazardId, DepartmentId, UserId, IpAddressHelper.GetRequestIP(Request, true),
+					$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+
+				return Json(new { success = deleted });
+			}
+			catch (InvalidOperationException ex) when (ex.Message == IContactPreplanOwnershipGate.RecordsOwnedReason)
+			{
+				return Json(new { success = false, error = _localizer["PreplanRecordsOwnedNotice"].Value });
+			}
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<IActionResult> Attachments(string contactId)
+		{
+			var model = await BuildAttachmentsViewAsync(contactId);
+			if (model == null)
+				return Unauthorized();
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		public async Task<IActionResult> UploadAttachment(string contactId, int attachmentType, string name, IFormFile file, CancellationToken cancellationToken)
+		{
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.IsDeleted || contact.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			string error = null;
+			if (file == null || file.Length == 0)
+				error = "Choose a file to upload.";
+			else if (!Enum.IsDefined(typeof(ContactAttachmentTypes), attachmentType))
+				error = "Unknown file type.";
+			else if (!AllowedAttachmentExtensions.Contains(FileHelper.GetFileExtensionWithoutDot(file.FileName) ?? string.Empty))
+				error = $"File type ({FileHelper.GetFileExtensionWithoutDot(file.FileName)}) is not importable.";
+			else if (file.Length > ContactAttachment.MaxSizeBytes)
+				error = "Attachment is too large, must be smaller than 30MB.";
+
+			if (error != null)
+			{
+				var model = await BuildAttachmentsViewAsync(contactId);
+				model.Message = error;
+				return View("Attachments", model);
+			}
+
+			byte[] data;
+			using (var stream = new MemoryStream())
+			{
+				await file.CopyToAsync(stream, cancellationToken);
+				data = stream.ToArray();
+			}
+
+			var attachment = new ContactAttachment
+			{
+				ContactId = contact.ContactId,
+				DepartmentId = DepartmentId,
+				ContactAttachmentType = attachmentType,
+				Name = string.IsNullOrWhiteSpace(name) ? file.FileName : name.Trim(),
+				FileName = Path.GetFileName(file.FileName),
+				FileType = file.ContentType,
+				Data = data
+			};
+
+			await _contactsService.SaveContactAttachmentAsync(attachment, UserId, IpAddressHelper.GetRequestIP(Request, true),
+				$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+
+			return RedirectToAction("Attachments", "Contacts", new { Area = "User", contactId = contact.ContactId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Contacts_Delete)]
+		public async Task<IActionResult> DeleteAttachment(string contactId, int contactAttachmentId, CancellationToken cancellationToken)
+		{
+			await _contactsService.DeleteContactAttachmentAsync(contactAttachmentId, DepartmentId, UserId, IpAddressHelper.GetRequestIP(Request, true),
+				$"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+
+			return RedirectToAction("Attachments", "Contacts", new { Area = "User", contactId = contactId });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<IActionResult> GetContactAttachment(int contactAttachmentId)
+		{
+			var attachment = await _contactsService.GetContactAttachmentByIdAsync(contactAttachmentId);
+
+			if (attachment == null || attachment.DepartmentId != DepartmentId || attachment.Data == null)
+				return NotFound();
+
+			// ADP: an enveloped payload/name is ciphertext — the MVC surface has no per-download grant
+			// flow, so a protected file is simply not served here (same rule as call files).
+			if (attachment.IsProtected || Resgrid.Services.ProtectedReadService.IsBinaryEnveloped(attachment.Data) ||
+				ProtectedDataEnvelope.HasEnvelopePrefix(attachment.FileName))
+				return NotFound();
+
+			var contentType = string.IsNullOrWhiteSpace(attachment.FileType)
+				? FileHelper.GetContentTypeByExtension(Path.GetExtension(attachment.FileName ?? string.Empty))
+				: attachment.FileType;
+			if (string.IsNullOrWhiteSpace(contentType))
+				contentType = "application/octet-stream";
+
+			return new FileContentResult(attachment.Data, contentType)
+			{
+				FileDownloadName = attachment.FileName
+			};
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Contacts_View)]
+		public async Task<IActionResult> GetAttachmentsJson(string contactId)
+		{
+			var result = new List<ContactAttachmentJson>();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.DepartmentId != DepartmentId)
+				return Json(result);
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var attachments = await _contactsService.GetContactAttachmentsAsync(contactId, DepartmentId);
+			await _protectedReadService.ResolveContactAttachmentsForReadAsync(DepartmentId, attachments, null, UserId);
+
+			foreach (var attachment in attachments)
+				result.Add(await ToAttachmentJsonAsync(attachment, department));
+
+			return Json(result);
+		}
+
+		private async Task<ContactPreplanView> BuildPreplanViewAsync(string contactId, ContactPreplan posted)
+		{
+			if (string.IsNullOrWhiteSpace(contactId))
+				return null;
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.IsDeleted || contact.DepartmentId != DepartmentId)
+				return null;
+
+			var model = new ContactPreplanView();
+			model.Contact = contact;
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Preplan = posted ?? await _contactsService.GetPreplanByContactIdAsync(contactId, DepartmentId) ?? new ContactPreplan();
+			model.Hazards = await _contactsService.GetHazardsByContactIdAsync(contactId, DepartmentId);
+
+			// RMS-5 write cutover: once the department's pre-plans are owned by Records occupancies this page is
+			// read-only and points at the occupancy; the service refuses writes regardless (Contacts plan Phase A note).
+			model.IsRecordsOwned = await _preplanOwnership.IsRecordsOwnedAsync(DepartmentId);
+			if (model.IsRecordsOwned)
+				model.OccupancyId = await _preplanOwnership.GetOccupancyIdForContactAsync(DepartmentId, contactId);
+
+			// ADP catalog v12: the editor renders REDACTED for enveloped values; RevealContactPreplan fills them
+			// in after the step-up, and a value that stays REDACTED round-trips to the write net, which
+			// restores it from the stored row instead of persisting the placeholder.
+			var preplanRead = posted == null && !string.IsNullOrWhiteSpace(model.Preplan.ContactPreplanId)
+				? await _protectedReadService.ResolveContactPreplansForReadAsync(DepartmentId, new List<ContactPreplan> { model.Preplan }, null, UserId)
+				: new ProtectedReadResult();
+			await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, model.Hazards, null, UserId);
+
+			if (posted == null && model.Preplan.NextReviewDue.HasValue)
+				model.NextReviewDue = model.Preplan.NextReviewDue.Value.TimeConverter(model.Department);
+
+			model.ConstructionTypes = EnumSelectList<ContactPreplanConstructionTypes>(model.Preplan.ConstructionType);
+			model.RoofTypes = EnumSelectList<ContactPreplanRoofTypes>(model.Preplan.RoofType);
+			model.OccupancyTypes = EnumSelectList<ContactPreplanOccupancyTypes>(model.Preplan.OccupancyType);
+			model.HazardTypes = EnumSelectList<ContactPreplanHazardTypes>(0);
+			model.HazardSeverities = EnumSelectList<ContactPreplanHazardSeverities>(0);
+
+			var protectedRead = await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, new List<Contact> { contact }, null, UserId);
+			model.IsProtectedContact = protectedRead.IsProtected || preplanRead.IsProtected;
+
+			return model;
+		}
+
+		/// <summary>
+		/// Reveal endpoint for the pre-plan editor (ADP plan 7.2, catalog v12): decrypted pre-plan values keyed by
+		/// catalog field id, plus every hazard's text keyed "&lt;fieldId&gt;:&lt;hazardId&gt;" for the grid. Authorizes
+		/// the contact on top of validating the grant.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Contacts_Update)]
+		public async Task<IActionResult> RevealContactPreplan([FromForm] string contactId)
+		{
+			if (String.IsNullOrWhiteSpace(contactId))
+				return BadRequest();
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.DepartmentId != DepartmentId)
+				return NotFound();
+
+			string grantToken = Request.Headers["X-Resgrid-Protected-Grant"];
+			var fields = new Dictionary<string, string>();
+			var resolved = await AddPreplanRevealFieldsAsync(fields, contactId, grantToken, suffixed: false);
+
+			if (resolved != null && resolved.IsProtected && resolved.ProtectedReason != null)
+				return Json(new { success = false, error = resolved.ProtectedReason });
+
+			return Json(new { success = true, fields });
+		}
+
+		/// <summary>
+		/// Adds the contact's pre-plan and hazard values to a reveal payload. Plain field ids for the editor
+		/// (its inputs are the only ones on the page); ":&lt;rowId&gt;"-suffixed ids for read-only views, where several
+		/// pre-plans can share a page (the call Site Info tab). Hazards are always suffixed: there are many of them.
+		/// Returns the first resolve that reported a reason, or null when the contact has no pre-plan.
+		/// </summary>
+		private async Task<ProtectedReadResult> AddPreplanRevealFieldsAsync(Dictionary<string, string> fields, string contactId, string grantToken, bool suffixed)
+		{
+			var preplan = await _contactsService.GetPreplanByContactIdAsync(contactId, DepartmentId);
+			if (preplan == null)
+				return null;
+
+			var preplanRead = await _protectedReadService.ResolveContactPreplansForReadAsync(DepartmentId, new List<ContactPreplan> { preplan }, grantToken, UserId);
+			var hazardRead = await _protectedReadService.ResolveContactPreplanHazardsForReadAsync(DepartmentId, preplan.Hazards, grantToken, UserId);
+
+			AddPreplanFields(fields, preplan, suffixed);
+
+			if (preplanRead.IsProtected && preplanRead.ProtectedReason != null)
+				return preplanRead;
+			if (hazardRead.IsProtected && hazardRead.ProtectedReason != null)
+				return hazardRead;
+			return preplanRead;
+		}
+
+		/// <summary>Writes one resolved pre-plan (and its hazards) into a reveal payload; shared with the call page.</summary>
+		public static void AddPreplanFields(Dictionary<string, string> fields, ContactPreplan preplan, bool suffixed)
+		{
+			if (preplan == null)
+				return;
+
+			foreach (var accessor in Resgrid.Services.ProtectedReadService.ContactPreplanFieldAccessors)
+				fields[suffixed ? $"{accessor.Key}:{preplan.ContactPreplanId}" : accessor.Key] = accessor.Value.Get(preplan);
+
+			foreach (var hazard in preplan.Hazards ?? new List<ContactPreplanHazard>())
+			{
+				foreach (var accessor in Resgrid.Services.ProtectedReadService.ContactPreplanHazardFieldAccessors)
+					fields[$"{accessor.Key}:{hazard.ContactPreplanHazardId}"] = accessor.Value.Get(hazard);
+			}
+		}
+
+		private async Task<ContactAttachmentsView> BuildAttachmentsViewAsync(string contactId)
+		{
+			if (string.IsNullOrWhiteSpace(contactId))
+				return null;
+
+			var contact = await _contactsService.GetContactByIdAsync(contactId);
+			if (contact == null || contact.IsDeleted || contact.DepartmentId != DepartmentId)
+				return null;
+
+			var model = new ContactAttachmentsView();
+			model.Contact = contact;
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Attachments = await _contactsService.GetContactAttachmentsAsync(contactId, DepartmentId);
+			await _protectedReadService.ResolveContactAttachmentsForReadAsync(DepartmentId, model.Attachments, null, UserId);
+			model.AttachmentTypes = EnumSelectList<ContactAttachmentTypes>(0);
+
+			var protectedRead = await _protectedReadService.ResolveContactsForReadAsync(DepartmentId, new List<Contact> { contact }, null, UserId);
+			model.IsProtectedContact = protectedRead.IsProtected;
+
+			return model;
+		}
+
+		private static SelectList EnumSelectList<TEnum>(int selected) where TEnum : struct, Enum
+		{
+			var items = Enum.GetValues(typeof(TEnum)).Cast<TEnum>()
+				.Select(v => new SelectListItem { Value = Convert.ToInt32(v).ToString(), Text = SplitPascalCase(v.ToString()) })
+				.ToList();
+
+			return new SelectList(items, "Value", "Text", selected.ToString());
+		}
+
+		/// <summary>"TypeIFireResistive" → "Type I Fire Resistive"; keeps roman numerals and acronyms readable without a resource per enum member.</summary>
+		public static string SplitPascalCase(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+				return value;
+
+			var builder = new System.Text.StringBuilder(value.Length + 8);
+			for (int i = 0; i < value.Length; i++)
+			{
+				var c = value[i];
+				if (i > 0 && char.IsUpper(c))
+				{
+					var previous = value[i - 1];
+					var next = i + 1 < value.Length ? value[i + 1] : '\0';
+					if (char.IsLower(previous) || (char.IsUpper(previous) && char.IsLower(next)))
+						builder.Append(' ');
+				}
+				builder.Append(c);
+			}
+
+			return builder.ToString();
+		}
+
+		private async Task<ContactHazardJson> ToHazardJsonAsync(ContactPreplanHazard hazard, Department department)
+		{
+			var json = new ContactHazardJson();
+			json.ContactPreplanHazardId = hazard.ContactPreplanHazardId;
+			json.ContactId = hazard.ContactId;
+			json.HazardType = hazard.HazardType;
+			json.HazardTypeName = Enum.IsDefined(typeof(ContactPreplanHazardTypes), hazard.HazardType) ? SplitPascalCase(((ContactPreplanHazardTypes)hazard.HazardType).ToString()) : hazard.HazardType.ToString();
+			json.Severity = hazard.Severity;
+			json.SeverityName = Enum.IsDefined(typeof(ContactPreplanHazardSeverities), hazard.Severity) ? ((ContactPreplanHazardSeverities)hazard.Severity).ToString() : hazard.Severity.ToString();
+			json.SeverityColor = HazardSeverityColor(hazard.Severity);
+			json.Title = ProtectedDataEnvelope.SafeDisplay(hazard.Title);
+			json.Description = ProtectedDataEnvelope.SafeDisplay(hazard.Description);
+			json.LocationDescription = ProtectedDataEnvelope.SafeDisplay(hazard.LocationDescription);
+			json.GpsCoordinates = ProtectedDataEnvelope.SafeDisplay(hazard.GpsCoordinates);
+			json.ShouldAlert = hazard.ShouldAlert;
+			json.AddedOn = hazard.AddedOn.FormatForDepartment(department);
+			json.AddedBy = string.IsNullOrWhiteSpace(hazard.AddedByUserId) ? "" : await UserHelper.GetFullNameForUser(hazard.AddedByUserId);
+
+			return json;
+		}
+
+		/// <summary>Danger = red, Caution = amber, Info = blue; shared with the dispatch alert banner.</summary>
+		public static string HazardSeverityColor(int severity)
+		{
+			switch (severity)
+			{
+				case (int)ContactPreplanHazardSeverities.Danger:
+					return "#F8D7DA";
+				case (int)ContactPreplanHazardSeverities.Caution:
+					return "#FFF3CD";
+				default:
+					return "#D1ECF1";
+			}
+		}
+
+		private async Task<ContactAttachmentJson> ToAttachmentJsonAsync(ContactAttachment attachment, Department department)
+		{
+			var json = new ContactAttachmentJson();
+			json.ContactAttachmentId = attachment.ContactAttachmentId;
+			json.ContactId = attachment.ContactId;
+			json.Type = attachment.ContactAttachmentType;
+			json.TypeName = Enum.IsDefined(typeof(ContactAttachmentTypes), attachment.ContactAttachmentType) ? SplitPascalCase(((ContactAttachmentTypes)attachment.ContactAttachmentType).ToString()) : attachment.ContactAttachmentType.ToString();
+			json.Name = ProtectedDataEnvelope.SafeDisplay(attachment.Name);
+			json.FileName = ProtectedDataEnvelope.SafeDisplay(attachment.FileName);
+			json.Mime = attachment.FileType;
+			json.Size = attachment.Size;
+			json.AddedOn = attachment.AddedOn.FormatForDepartment(department);
+			json.AddedBy = string.IsNullOrWhiteSpace(attachment.AddedByUserId) ? "" : await UserHelper.GetFullNameForUser(attachment.AddedByUserId);
+			json.Url = Url.Action("GetContactAttachment", "Contacts", new { Area = "User", contactAttachmentId = attachment.ContactAttachmentId });
+
+			return json;
+		}
+
+		#endregion
 	}
 }

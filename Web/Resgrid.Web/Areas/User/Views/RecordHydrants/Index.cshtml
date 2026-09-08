@@ -1,0 +1,104 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordHydrantsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["Hydrants"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@L["Hydrants"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li class="active"><strong>@L["Hydrants"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanAdminister)
+			{
+				<a class="btn btn-success" asp-controller="RecordHydrants" asp-action="Edit" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewHydrant"]</a>
+			}
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (Model.ImportResult != null && Model.ImportResult.Rejected.Count > 0)
+	{
+		<div class="alert alert-warning">
+			<strong>@L["ImportRejectedRows"]</strong>
+			<ul>@foreach (var r in Model.ImportResult.Rejected.Take(50)) { <li>#@r.Line @r.HydrantNumber: @r.Error</li> }</ul>
+		</div>
+	}
+	<div class="row">
+		<div class="col-md-8">
+			<div class="ibox"><div class="ibox-content">
+				<p class="text-muted">@string.Format(L["HydrantCounts"].Value, Model.Hydrants.Count, Model.Hydrants.Count(h => !h.InService), Model.TestDue)</p>
+				@if (Model.Hydrants.Count == 0) { <p>@L["NoHydrants"]</p> }
+				else
+				{
+					<div class="table-responsive">
+						<table class="table table-striped table-hover">
+							<thead><tr><th>@L["HydrantNumber"]</th><th>@L["Type"]</th><th>@L["AddressText"]</th><th>@L["FlowClass"]</th><th>@L["FlowGpm"]</th><th>@L["MainSize"]</th><th>@L["InService"]</th><th>@L["LastTestedOn"]</th><th></th></tr></thead>
+							<tbody>
+							@foreach (var h in Model.Hydrants)
+							{
+								<tr class="@(h.InService ? "" : "danger")">
+									<td>@h.HydrantNumber</td>
+									<td>@(RmsEnumDisplay.Label<RmsHydrantType>(h.Type))</td>
+									<td>@h.AddressText<br /><small class="text-muted">@h.Latitude, @h.Longitude</small></td>
+									<td>@(RmsEnumDisplay.Label<RmsHydrantFlowClass>(h.FlowClass))</td>
+									<td>@h.FlowGpm</td>
+									<td>@h.MainSizeInches</td>
+									<td>@(h.InService ? L["Yes"].Value : L["No"].Value)</td>
+									<td>@RmsEnumDisplay.Day(h.LastTestedOn)</td>
+									<td><a class="btn btn-xs btn-default" asp-controller="RecordHydrants" asp-action="Details" asp-route-area="User" asp-route-id="@h.RmsHydrantId">@L["ViewRecordHeader"]</a></td>
+								</tr>
+							}
+							</tbody>
+						</table>
+					</div>
+				}
+			</div></div>
+		</div>
+		<div class="col-md-4">
+			<div class="ibox"><div class="ibox-title"><h5>@L["HydrantMap"]</h5></div><div class="ibox-content">
+				<div id="hydrantMap" style="height:360px"></div>
+				<p class="text-muted m-t-xs"><small>@L["HydrantMapHint"]</small></p>
+			</div></div>
+			@if (Model.CanAdminister)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["ImportHydrants"]</h5></div><div class="ibox-content">
+					<p class="text-muted">@L["ImportHydrantsHelp"]</p>
+					<form method="post" asp-controller="RecordHydrants" asp-action="Import" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						<textarea class="form-control" name="csv" rows="6" style="font-family:monospace" placeholder="number,latitude,longitude,type,address,main_size,flow_gpm,owner"></textarea>
+						<button class="btn btn-sm btn-default m-t-xs"><i class="fa fa-upload"></i> @L["ImportHydrants"]</button>
+					</form>
+				</div></div>
+			}
+		</div>
+	</div>
+</div>
+@section Scripts {
+	<script>
+		(function () {
+			var points = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MapPoints.Select(p => new { p.HydrantId, p.HydrantNumber, Lat = p.Latitude, Lon = p.Longitude, p.InService, p.FlowClass, p.FlowGpm })));
+			if (typeof L === 'undefined' || !document.getElementById('hydrantMap')) { return; }
+			var map = L.map('hydrantMap');
+			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
+			var colors = ['#999', '#1ab394', '#23c6c8', '#f8ac59', '#ed5565'];
+			var bounds = [];
+			points.forEach(function (p) {
+				var color = p.InService ? colors[p.FlowClass] || '#999' : '#000';
+				var m = L.circleMarker([p.Lat, p.Lon], { radius: 7, color: color, fillColor: color, fillOpacity: 0.8 }).addTo(map);
+				m.bindPopup('<a href="@Url.Action("Details", "RecordHydrants", new { area = "User" })?id=' + p.HydrantId + '">' + p.HydrantNumber + '</a>' + (p.FlowGpm ? '<br/>' + p.FlowGpm + ' gpm' : '') + (p.InService ? '' : '<br/><b>@L["OutOfService"]</b>'));
+				bounds.push([p.Lat, p.Lon]);
+			});
+			if (bounds.length) { map.fitBounds(bounds, { padding: [20, 20] }); } else { map.setView([39.5, -98.35], 4); }
+		})();
+	</script>
+}

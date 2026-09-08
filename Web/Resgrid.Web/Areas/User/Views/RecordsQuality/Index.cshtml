@@ -1,0 +1,70 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordsQualityIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["QualityReview"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@L["QualityReview"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li class="active"><strong>@L["QualityReview"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="RecordsQuality" asp-action="Trends" asp-route-area="User"><i class="fa fa-line-chart"></i> @L["Trends"]</a>
+			@if (Model.CanManageRubrics) { <a class="btn btn-success" asp-controller="RecordsQuality" asp-action="Rubric" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewRubric"]</a> }
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-5">
+			<div class="ibox"><div class="ibox-title"><h5>@L["Rubrics"]</h5></div><div class="ibox-content">
+				<p class="text-muted">@L["QualityReviewIntro"]</p>
+				@if (Model.Rubrics.Count == 0) { <p>@L["NoRubrics"]</p> }
+				@foreach (var r in Model.Rubrics)
+				{
+					<div class="panel panel-default"><div class="panel-body">
+						<strong>@r.Name</strong> @(r.IsActive ? "" : "(" + L["DefinitionRetiredLabel"] + ")")<br />
+						<small class="text-muted">@(string.IsNullOrWhiteSpace(r.DefinitionKey) ? L["AllDefinitions"].Value : r.DefinitionKey) · @L["SampleSize"] @r.SampleSize</small>
+						<div class="m-t-xs">
+							@if (Model.CanManageRubrics) { <a class="btn btn-xs btn-default" asp-controller="RecordsQuality" asp-action="Rubric" asp-route-area="User" asp-route-id="@r.RmsQualityRubricId">@L["Edit"]</a> }
+							@if (r.IsActive)
+							{
+								<form method="post" class="form-inline" style="display:inline" asp-controller="RecordsQuality" asp-action="Sample" asp-route-area="User">
+									@Html.AntiForgeryToken()<input type="hidden" name="rubricId" value="@r.RmsQualityRubricId" />
+									<input type="date" class="form-control input-sm" name="since" value="@DateTime.UtcNow.AddDays(-30).ToString("yyyy-MM-dd")" />
+									<button class="btn btn-xs btn-primary"><i class="fa fa-random"></i> @L["RunSample"]</button>
+								</form>
+							}
+						</div>
+					</div></div>
+				}
+			</div></div>
+		</div>
+		<div class="col-md-7">
+			<div class="ibox"><div class="ibox-title"><h5>@L["PendingReviews"] (@Model.Pending.Count)</h5></div><div class="ibox-content">
+				@if (Model.Pending.Count == 0) { <p class="text-muted">@L["NoPendingReviews"]</p> }
+				else
+				{
+					<table class="table table-striped table-hover">
+						<thead><tr><th>@L["RecordNumber"]</th><th>@L["Definition"]</th><th>@L["Author"]</th><th>@L["SampledOn"]</th><th></th></tr></thead>
+						<tbody>
+						@foreach (var p in Model.Pending)
+						{
+							<tr><td>@p.RecordNumber</td><td>@p.DefinitionKey</td><td>@p.AuthorUserId</td><td>@RmsEnumDisplay.Day(p.SampledOn)</td><td><a class="btn btn-xs btn-primary" asp-controller="RecordsQuality" asp-action="Review" asp-route-area="User" asp-route-id="@p.RmsQualityReviewId">@L["ScoreReview"]</a></td></tr>
+						}
+						</tbody>
+					</table>
+				}
+			</div></div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,154 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordInspectionDetailsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var i = Model.Inspection;
+	ViewBag.Title = "Resgrid | " + L["Inspections"] + " | " + i.InspectionNumber;
+	var returnUrl = Url.Action("Details", "RecordInspections", new { area = "User", id = i.RmsInspectionId });
+	string Text(string v) => Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(v);
+	var editable = Model.CanAdminister && Model.CanRecord;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@i.InspectionNumber <span class="label label-@RmsEnumDisplay.StateClass((RmsInspectionState)i.State)">@(RmsEnumDisplay.Label<RmsInspectionState>(i.State))</span></h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordInspections" asp-action="Index" asp-route-area="User">@L["Inspections"]</a></li>
+			<li class="active"><strong>@i.InspectionNumber</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (Model.Aggregate.Protection.IsProtected) { <div class="alert alert-warning">@L["ProtectedRecordBanner"]</div> }
+	<div class="row">
+		<div class="col-md-4">
+			<div class="ibox"><div class="ibox-title"><h5>@L["Summary"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["Occupancies"]</dt><dd>@if (Model.Aggregate.Occupancy != null) { <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@i.RmsOccupancyId">@Model.Aggregate.Occupancy.OccupancyNumber @Text(Model.Aggregate.Occupancy.Name)</a><br /><small>@Text(Model.Aggregate.Occupancy.AddressText)</small> } else { @i.RmsOccupancyId }</dd>
+					<dt>@L["InspectionPrograms"]</dt><dd>@Model.Aggregate.Program?.Name</dd>
+					<dt>@L["ScheduledOn"]</dt><dd>@RmsEnumDisplay.Utc(i.ScheduledOn)</dd>
+					<dt>@L["Inspector"]</dt><dd>@i.InspectorUserId</dd>
+					<dt>@L["StartedOn"]</dt><dd>@RmsEnumDisplay.Utc(i.StartedOn)</dd>
+					<dt>@L["CompletedOn"]</dt><dd>@RmsEnumDisplay.Utc(i.CompletedOn)</dd>
+					<dt>@L["InspectionResult"]</dt><dd>@(RmsEnumDisplay.Label<RmsInspectionResult>(i.Result))</dd>
+					<dt>@L["SignatureName"]</dt><dd>@Text(i.SignatureName) @RmsEnumDisplay.Utc(i.SignedOn)</dd>
+					<dt>@L["NoticeReference"]</dt><dd>@Text(i.NoticeReference) @RmsEnumDisplay.Utc(i.NoticeIssuedOn)</dd>
+					@if (!string.IsNullOrWhiteSpace(i.ParentInspectionId)) { <dt>@L["ReinspectionOf"]</dt><dd><a asp-controller="RecordInspections" asp-action="Details" asp-route-area="User" asp-route-id="@i.ParentInspectionId">@i.ParentInspectionId</a></dd> }
+				</dl>
+				@if (!string.IsNullOrWhiteSpace(i.Notes)) { <p style="white-space:pre-wrap">@Text(i.Notes)</p> }
+			</div></div>
+			@if (Model.CanAdminister)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["Actions"]</h5></div><div class="ibox-content">
+					@if (i.State == (int)RmsInspectionState.Scheduled)
+					{
+						<form method="post" asp-controller="RecordInspections" asp-action="Start" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" /><button class="btn btn-primary btn-block"><i class="fa fa-play"></i> @L["StartInspection"]</button></form>
+					}
+					@if (i.State == (int)RmsInspectionState.Completed || i.State == (int)RmsInspectionState.ReinspectionRequired)
+					{
+						<form method="post" class="m-t-xs" asp-controller="RecordInspections" asp-action="Notice" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" />
+							<div class="input-group"><input class="form-control" name="noticeReference" maxlength="100" placeholder="@L["NoticeReference"]" required /><span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-envelope"></i> @L["IssueNotice"]</button></span></div></form>
+						<form method="post" class="m-t-xs" asp-controller="RecordInspections" asp-action="Reinspect" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" />
+							<div class="input-group"><input type="date" class="form-control" name="scheduledOn" value="@DateTime.UtcNow.Date.AddDays(30).ToString("yyyy-MM-dd")" /><span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-calendar"></i> @L["ScheduleReinspection"]</button></span></div></form>
+						<form method="post" class="m-t-xs" asp-controller="RecordInspections" asp-action="Close" asp-route-area="User">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" /><button class="btn btn-default btn-block"><i class="fa fa-check"></i> @L["CloseInspection"]</button></form>
+					}
+					@if (i.State == (int)RmsInspectionState.Scheduled || i.State == (int)RmsInspectionState.InProgress)
+					{
+						<form method="post" class="m-t-xs" asp-controller="RecordInspections" asp-action="Cancel" asp-route-area="User" onsubmit="return confirm('@L["CancelInspectionConfirm"]');">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" />
+							<div class="input-group"><input class="form-control" name="reason" maxlength="500" placeholder="@L["ReasonText"]" required /><span class="input-group-btn"><button class="btn btn-danger"><i class="fa fa-times"></i> @L["CancelInspection"]</button></span></div></form>
+					}
+				</div></div>
+			}
+			<partial name="_PreventionAttachments" model="new PreventionAttachmentsPartialView { ParentKind = RmsPreventionParentKind.Inspection, ParentId = i.RmsInspectionId, Attachments = Model.Aggregate.Attachments, CanWrite = Model.CanAdminister, ReturnUrl = returnUrl }" />
+		</div>
+		<div class="col-md-8">
+			<div class="ibox"><div class="ibox-title"><h5>@L["Checklist"]</h5></div><div class="ibox-content">
+				@if (Model.Aggregate.Checklist.Count == 0) { <p class="text-muted">@L["NoChecklist"]</p> }
+				<form method="post" asp-controller="RecordInspections" asp-action="Complete" asp-route-area="User">
+					@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" />
+					<table class="table table-condensed">
+						<thead><tr><th>#</th><th>@L["ChecklistItem"]</th><th>@L["InspectionResult"]</th><th>@L["ItemNote"]</th></tr></thead>
+						<tbody>
+						@foreach (var item in Model.Aggregate.Checklist.OrderBy(c => c.Order))
+						{
+							Model.Results.TryGetValue(item.Key, out var result);
+							<tr>
+								<td>@item.Key @(item.Required ? "*" : "")</td>
+								<td>@item.Text</td>
+								<td>
+									@if (editable)
+									{
+										<label class="radio-inline"><input type="radio" name="item_@item.Key" value="pass" checked="@(result?.Passed == true)" /> @L["Passed"]</label>
+										<label class="radio-inline"><input type="radio" name="item_@item.Key" value="fail" checked="@(result?.Passed == false)" /> @L["Failed"]</label>
+										<label class="radio-inline"><input type="radio" name="item_@item.Key" value="skip" checked="@(result == null || result.Passed == null)" /> @L["NotRecordedShort"]</label>
+									}
+									else
+									{
+										@(result?.Passed == true ? L["Passed"].Value : result?.Passed == false ? L["Failed"].Value : L["NotRecordedShort"].Value)
+									}
+								</td>
+								<td>@if (editable) { <input class="form-control input-sm" name="note_@item.Key" value="@result?.Note" maxlength="1000" /> } else { @Text(result?.Note) }</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+					@if (editable)
+					{
+						<div class="form-group"><label>@L["InspectionNotes"]</label><textarea class="form-control" name="notes" rows="3" maxlength="4000">@i.Notes</textarea></div>
+						<div class="form-group"><label>@L["SignatureName"]</label><input class="form-control" name="signatureName" maxlength="200" placeholder="@L["SignatureNameHint"]" /></div>
+						<button class="btn btn-primary"><i class="fa fa-check-square-o"></i> @L["CompleteInspection"]</button>
+					}
+				</form>
+			</div></div>
+			<div class="ibox"><div class="ibox-title"><h5>@L["Violations"] (@Model.Aggregate.Violations.Count)</h5></div><div class="ibox-content">
+				@if (Model.Aggregate.Violations.Count == 0) { <p class="text-muted">@L["NoViolations"]</p> }
+				else
+				{
+					<table class="table table-condensed">
+						<thead><tr><th>@L["Severity"]</th><th>@L["DefinitionDescription"]</th><th>@L["CorrectiveAction"]</th><th>@L["DueOn"]</th><th>@L["State"]</th><th></th></tr></thead>
+						<tbody>
+						@foreach (var v in Model.Aggregate.Violations)
+						{
+							<tr>
+								<td>@(RmsEnumDisplay.Label<RmsViolationSeverity>(v.Severity))</td>
+								<td>@Text(v.Description)<br /><small class="text-muted">@v.ChecklistItemKey @v.RmsCodeSectionId</small></td>
+								<td>@Text(v.CorrectiveAction)</td>
+								<td>@RmsEnumDisplay.Day(v.DueOn)</td>
+								<td><span class="label label-@RmsEnumDisplay.StateClass((RmsViolationState)v.State)">@(RmsEnumDisplay.Label<RmsViolationState>(v.State))</span><br /><small>@RmsEnumDisplay.Day(v.CorrectedOn) @RmsEnumDisplay.Day(v.VerifiedOn)</small></td>
+								<td>
+									@if (Model.CanAdminister)
+									{
+										<form method="post" class="form-inline" asp-controller="RecordInspections" asp-action="TransitionViolation" asp-route-area="User">
+											@Html.AntiForgeryToken()<input type="hidden" name="violationId" value="@v.RmsViolationId" /><input type="hidden" name="returnTo" value="@i.RmsInspectionId" />
+											<select class="form-control input-sm" name="target" asp-items="Model.ViolationStates"></select>
+											<input class="form-control input-sm" name="note" maxlength="500" placeholder="@L["ItemNote"]" />
+											<button class="btn btn-xs btn-default">@L["Transition"]</button>
+										</form>
+									}
+								</td>
+							</tr>
+						}
+						</tbody>
+					</table>
+				}
+				@if (Model.CanAdminister && i.State != (int)RmsInspectionState.Cancelled && i.State != (int)RmsInspectionState.Closed)
+				{
+					<form method="post" asp-controller="RecordInspections" asp-action="SaveViolation" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@i.RmsInspectionId" /><input type="hidden" name="violation.RmsOccupancyId" value="@i.RmsOccupancyId" />
+						<div class="row">
+							<div class="col-sm-2"><select class="form-control" name="violation.Severity">@foreach (var sev in RmsEnumDisplay.Items<RmsViolationSeverity>(includeZero: false)) { <option value="@sev.Value">@sev.Text</option> }</select></div>
+							<div class="col-sm-5"><input class="form-control" name="violation.Description" maxlength="2000" placeholder="@L["DefinitionDescription"]" required /></div>
+							<div class="col-sm-3"><input class="form-control" name="violation.CorrectiveAction" maxlength="2000" placeholder="@L["CorrectiveAction"]" /></div>
+							<div class="col-sm-2"><input type="date" class="form-control" name="violation.DueOn" /></div>
+						</div>
+						<button class="btn btn-sm btn-primary m-t-xs"><i class="fa fa-plus"></i> @L["AddViolation"]</button>
+					</form>
+				}
+			</div></div>
+		</div>
+	</div>
+</div>

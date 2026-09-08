@@ -1,0 +1,100 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordPermitDetailsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	var p = Model.Permit;
+	ViewBag.Title = "Resgrid | " + L["Permits"] + " | " + p.PermitNumber;
+	var returnUrl = Url.Action("Details", "RecordPermits", new { area = "User", id = p.RmsPermitId });
+	string Text(string v) => Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(v);
+	var terminal = p.State == (int)RmsPermitState.Closed || p.State == (int)RmsPermitState.Denied || p.State == (int)RmsPermitState.Revoked;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@p.PermitNumber <span class="label label-@RmsEnumDisplay.StateClass((RmsPermitState)p.State)">@(RmsEnumDisplay.Label<RmsPermitState>(p.State))</span></h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordPermits" asp-action="Index" asp-route-area="User">@L["Permits"]</a></li>
+			<li class="active"><strong>@p.PermitNumber</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.CanAdminister && !terminal)
+			{
+				<a class="btn btn-primary" asp-controller="RecordPermits" asp-action="Edit" asp-route-area="User" asp-route-id="@p.RmsPermitId"><i class="fa fa-pencil"></i> @L["Edit"]</a>
+			}
+		</div>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (Model.Aggregate.Protection.IsProtected) { <div class="alert alert-warning">@L["ProtectedRecordBanner"]</div> }
+	<div class="row">
+		<div class="col-md-6">
+			<div class="ibox"><div class="ibox-title"><h5>@L["Summary"]</h5></div><div class="ibox-content">
+				<dl class="dl-horizontal">
+					<dt>@L["PermitType"]</dt><dd>@Model.Aggregate.Type?.Name (@Model.Aggregate.Type?.Code)</dd>
+					<dt>@L["Occupancies"]</dt><dd>@if (Model.Aggregate.Occupancy != null) { <a asp-controller="RecordOccupancies" asp-action="Details" asp-route-area="User" asp-route-id="@p.RmsOccupancyId">@Model.Aggregate.Occupancy.OccupancyNumber @Text(Model.Aggregate.Occupancy.Name)</a> }</dd>
+					<dt>@L["Applicant"]</dt><dd>@Text(p.ApplicantName)<br /><small>@Text(p.ApplicantPhone) @Text(p.ApplicantEmail)</small></dd>
+					<dt>@L["DefinitionDescription"]</dt><dd style="white-space:pre-wrap">@Text(p.Description)</dd>
+					<dt>@L["AppliedOn"]</dt><dd>@RmsEnumDisplay.Utc(p.AppliedOn)</dd>
+					<dt>@L["ReviewedOn"]</dt><dd>@RmsEnumDisplay.Utc(p.ReviewedOn) @p.ReviewedByUserId</dd>
+					<dt>@L["IssuedOn"]</dt><dd>@RmsEnumDisplay.Utc(p.IssuedOn) @p.IssuedByUserId</dd>
+					<dt>@L["EffectiveOn"]</dt><dd>@RmsEnumDisplay.Day(p.EffectiveOn) · @L["ExpiresOn"] @RmsEnumDisplay.Day(p.ExpiresOn)</dd>
+					<dt>@L["Conditions"]</dt><dd style="white-space:pre-wrap">@Text(p.Conditions)</dd>
+					<dt>@L["ReviewNotes"]</dt><dd style="white-space:pre-wrap">@Text(p.ReviewNotes)</dd>
+					<dt>@L["DecisionReason"]</dt><dd>@Text(p.DecisionReason)</dd>
+					<dt>@L["FeeAmount"]</dt><dd>@p.FeeAmount @(p.FeePaidOn.HasValue ? "· " + L["FeePaidOn"] + " " + RmsEnumDisplay.Day(p.FeePaidOn) + " " + p.InvoiceReference : "")</dd>
+				</dl>
+			</div></div>
+			<partial name="_PreventionAttachments" model="new PreventionAttachmentsPartialView { ParentKind = RmsPreventionParentKind.Permit, ParentId = p.RmsPermitId, Attachments = Model.Aggregate.Attachments, CanWrite = Model.CanAdminister, ReturnUrl = returnUrl }" />
+		</div>
+		<div class="col-md-6">
+			<div class="ibox"><div class="ibox-title"><h5>@L["PlanReviews"]</h5></div><div class="ibox-content">
+				@if (Model.Aggregate.PlanReviews.Count == 0) { <p class="text-muted">@L["NoPlanReviews"]</p> }
+				else
+				{
+					<table class="table table-condensed">
+						<thead><tr><th>@L["ReviewCycle"]</th><th>@L["SubmittedOn"]</th><th>@L["ReviewedOn"]</th><th>@L["PlanReviewOutcome"]</th><th>@L["Comments"]</th></tr></thead>
+						<tbody>
+						@foreach (var r in Model.Aggregate.PlanReviews.OrderBy(r => r.CycleNumber))
+						{
+							<tr><td>@r.CycleNumber</td><td>@RmsEnumDisplay.Day(r.SubmittedOn)</td><td>@RmsEnumDisplay.Day(r.ReviewedOn) @r.ReviewerUserId</td><td>@(RmsEnumDisplay.Label<RmsPlanReviewOutcome>(r.Outcome))</td><td style="white-space:pre-wrap">@Text(r.Comments)</td></tr>
+						}
+						</tbody>
+					</table>
+				}
+				@if (Model.CanAdminister && !terminal)
+				{
+					<form method="post" asp-controller="RecordPermits" asp-action="PlanReview" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.RmsPermitId" />
+						<div class="row"><div class="col-sm-4"><select class="form-control" name="outcome" asp-items="Model.Outcomes"></select></div><div class="col-sm-8"><input class="form-control" name="comments" maxlength="4000" placeholder="@L["Comments"]" /></div></div>
+						<button class="btn btn-sm btn-primary m-t-xs">@L["RecordPlanReview"]</button>
+					</form>
+				}
+			</div></div>
+			@if (Model.CanAdminister && !terminal)
+			{
+				<div class="ibox"><div class="ibox-title"><h5>@L["TransitionPermit"]</h5></div><div class="ibox-content">
+					<form method="post" class="form-horizontal" asp-controller="RecordPermits" asp-action="Transition" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.RmsPermitId" />
+						<div class="form-group"><label class="col-sm-3 control-label">@L["State"]</label><div class="col-sm-9"><select class="form-control" name="target" asp-items="Model.Transitions"></select></div></div>
+						<div class="form-group"><label class="col-sm-3 control-label">@L["EffectiveOn"]</label><div class="col-sm-4"><input type="date" class="form-control" name="effectiveOn" /></div><label class="col-sm-2 control-label">@L["ExpiresOn"]</label><div class="col-sm-3"><input type="date" class="form-control" name="expiresOn" /></div></div>
+						<div class="form-group"><label class="col-sm-3 control-label">@L["ReasonText"]</label><div class="col-sm-9"><input class="form-control" name="reason" maxlength="1000" /></div></div>
+						<div class="form-group"><div class="col-sm-offset-3 col-sm-9"><button class="btn btn-warning"><i class="fa fa-arrow-right"></i> @L["Transition"]</button></div></div>
+					</form>
+					<hr />
+					<form method="post" class="form-inline" asp-controller="RecordPermits" asp-action="Fee" asp-route-area="User">
+						@Html.AntiForgeryToken()<input type="hidden" name="id" value="@p.RmsPermitId" />
+						<input class="form-control" type="number" step="0.01" name="amount" value="@(p.FeeAmount ?? Model.Aggregate.Type?.FeeAmount)" placeholder="@L["FeeAmount"]" required />
+						<input class="form-control" name="invoiceReference" maxlength="100" placeholder="@L["InvoiceReference"]" />
+						<button class="btn btn-sm btn-default"><i class="fa fa-money"></i> @L["RecordFee"]</button>
+					</form>
+				</div></div>
+			}
+		</div>
+	</div>
+</div>

@@ -1,0 +1,54 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordPermitTypesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["PermitTypes"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@L["PermitTypes"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@L["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordPermits" asp-action="Index" asp-route-area="User">@L["Permits"]</a></li>
+			<li class="active"><strong>@L["PermitTypes"]</strong></li>
+		</ol>
+	</div>
+</div>
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	<div class="row">
+		<div class="col-md-6">
+			<div class="ibox"><div class="ibox-content">
+				<table class="table table-condensed">
+					<thead><tr><th>@L["PermitCode"]</th><th>@L["DefinitionName"]</th><th>@L["ValidityDays"]</th><th>@L["RequiresPlanReview"]</th><th>@L["FeeAmount"]</th><th>@L["Enabled"]</th><th></th></tr></thead>
+					<tbody>
+					@foreach (var t in Model.Types)
+					{
+						<tr><td>@t.Code</td><td>@t.Name</td><td>@t.DefaultValidityDays</td><td>@(t.RequiresPlanReview ? L["Yes"].Value : L["No"].Value)</td><td>@t.FeeAmount</td><td>@(t.IsActive ? L["Yes"].Value : L["No"].Value)</td><td><a class="btn btn-xs btn-default" asp-controller="RecordPermits" asp-action="Types" asp-route-area="User" asp-route-id="@t.RmsPermitTypeId">@L["Edit"]</a></td></tr>
+					}
+					</tbody>
+				</table>
+				<a class="btn btn-sm btn-success" asp-controller="RecordPermits" asp-action="Types" asp-route-area="User"><i class="fa fa-plus"></i> @L["NewPermitType"]</a>
+			</div></div>
+		</div>
+		<div class="col-md-6">
+			<div class="ibox"><div class="ibox-title"><h5>@(string.IsNullOrWhiteSpace(Model.Editing.RmsPermitTypeId) ? L["NewPermitType"] : L["Edit"] + ": " + Model.Editing.Name)</h5></div><div class="ibox-content">
+				<form method="post" class="form-horizontal" asp-controller="RecordPermits" asp-action="SaveType" asp-route-area="User">
+					@Html.AntiForgeryToken()
+					<input type="hidden" asp-for="Editing.RmsPermitTypeId" /><input type="hidden" asp-for="Editing.RowVersion" />
+					<div class="form-group"><label class="col-sm-3 control-label">@L["PermitCode"]</label><div class="col-sm-9"><input class="form-control" asp-for="Editing.Code" maxlength="20" required /></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["DefinitionName"]</label><div class="col-sm-9"><input class="form-control" asp-for="Editing.Name" maxlength="200" required /></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["DefinitionDescription"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Editing.Description" rows="2" maxlength="2000"></textarea></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["ValidityDays"]</label><div class="col-sm-9"><input class="form-control" type="number" min="1" asp-for="Editing.DefaultValidityDays" /></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["FeeAmount"]</label><div class="col-sm-9"><input class="form-control" type="number" step="0.01" asp-for="Editing.FeeAmount" /><span class="help-block">@L["FeeAmountHelp"]</span></div></div>
+					<div class="form-group"><label class="col-sm-3 control-label">@L["ConditionsTemplate"]</label><div class="col-sm-9"><textarea class="form-control" asp-for="Editing.ConditionsTemplate" rows="4" maxlength="4000"></textarea></div></div>
+					<div class="form-group"><div class="col-sm-offset-3 col-sm-9"><label class="checkbox-inline"><input type="checkbox" asp-for="Editing.RequiresPlanReview" /> @L["RequiresPlanReview"]</label> <label class="checkbox-inline"><input type="checkbox" asp-for="Editing.IsActive" /> @L["Enabled"]</label></div></div>
+					<div class="form-group"><div class="col-sm-offset-3 col-sm-9"><button class="btn btn-primary"><i class="fa fa-save"></i> @L["Save"]</button></div></div>
+				</form>
+			</div></div>
+		</div>
+	</div>
+</div>

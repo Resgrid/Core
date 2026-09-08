@@ -70,6 +70,36 @@ namespace Resgrid.Model.Services
 		Task<ProtectedReadResult> RevealDisclosureProductionsAsync(int departmentId, IReadOnlyList<RmsDisclosureProduction> rows, CancellationToken cancellationToken = default);
 		Task<ProtectedReadResult> RevealLegalHoldsAsync(int departmentId, IReadOnlyList<RmsRecordLegalHold> rows, CancellationToken cancellationToken = default);
 		Task<ProtectedReadResult> RevealSubmissionsAsync(int departmentId, IReadOnlyList<RmsSubmission> rows, CancellationToken cancellationToken = default);
+
+		// ---- RMS-5 prevention and investigations, RMS-4 quality review (catalog v13) ----
+		Task ProtectOccupancyAsync(int departmentId, RmsOccupancy row, RmsOccupancy existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealOccupanciesAsync(int departmentId, IReadOnlyList<RmsOccupancy> rows, CancellationToken cancellationToken = default);
+		Task ProtectOccupancyHazardAsync(int departmentId, RmsOccupancyHazard row, RmsOccupancyHazard existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealOccupancyHazardsAsync(int departmentId, IReadOnlyList<RmsOccupancyHazard> rows, CancellationToken cancellationToken = default);
+		Task ProtectInspectionAsync(int departmentId, RmsInspection row, RmsInspection existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealInspectionsAsync(int departmentId, IReadOnlyList<RmsInspection> rows, CancellationToken cancellationToken = default);
+		Task ProtectViolationAsync(int departmentId, RmsViolation row, RmsViolation existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealViolationsAsync(int departmentId, IReadOnlyList<RmsViolation> rows, CancellationToken cancellationToken = default);
+		Task ProtectPermitAsync(int departmentId, RmsPermit row, RmsPermit existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealPermitsAsync(int departmentId, IReadOnlyList<RmsPermit> rows, CancellationToken cancellationToken = default);
+		Task ProtectPlanReviewAsync(int departmentId, RmsPlanReview row, RmsPlanReview existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealPlanReviewsAsync(int departmentId, IReadOnlyList<RmsPlanReview> rows, CancellationToken cancellationToken = default);
+		Task ProtectInvestigationCaseAsync(int departmentId, RmsInvestigationCase row, RmsInvestigationCase existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealInvestigationCasesAsync(int departmentId, IReadOnlyList<RmsInvestigationCase> rows, CancellationToken cancellationToken = default);
+		Task ProtectInvestigationNoteAsync(int departmentId, RmsInvestigationNote row, RmsInvestigationNote existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealInvestigationNotesAsync(int departmentId, IReadOnlyList<RmsInvestigationNote> rows, CancellationToken cancellationToken = default);
+		Task ProtectInvestigationEvidenceAsync(int departmentId, RmsInvestigationEvidence row, RmsInvestigationEvidence existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealInvestigationEvidenceAsync(int departmentId, IReadOnlyList<RmsInvestigationEvidence> rows, CancellationToken cancellationToken = default);
+		Task ProtectInvestigationCustodyAsync(int departmentId, RmsInvestigationCustody row, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealInvestigationCustodyAsync(int departmentId, IReadOnlyList<RmsInvestigationCustody> rows, CancellationToken cancellationToken = default);
+		Task ProtectInvestigationReferralAsync(int departmentId, RmsInvestigationReferral row, RmsInvestigationReferral existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealInvestigationReferralsAsync(int departmentId, IReadOnlyList<RmsInvestigationReferral> rows, CancellationToken cancellationToken = default);
+		Task ProtectQualityReviewAsync(int departmentId, RmsQualityReview row, RmsQualityReview existing, string userId = null, CancellationToken cancellationToken = default);
+		Task<ProtectedReadResult> RevealQualityReviewsAsync(int departmentId, IReadOnlyList<RmsQualityReview> rows, CancellationToken cancellationToken = default);
+		/// <summary>Seals a prevention/investigation attachment: name and description as text, the bytes as a binary envelope (catalog v13).</summary>
+		Task ProtectPreventionAttachmentAsync(int departmentId, RmsPreventionAttachment row, RmsPreventionAttachment existing, string userId = null, CancellationToken cancellationToken = default);
+		/// <summary>Reveals prevention attachment metadata, and the bytes when includeData; a concealed binary is nulled and named in RedactedFields.</summary>
+		Task<ProtectedReadResult> RevealPreventionAttachmentsAsync(int departmentId, IReadOnlyList<RmsPreventionAttachment> rows, bool includeData, CancellationToken cancellationToken = default);
 		Task<ProtectedReadResult> RevealExportRunsAsync(int departmentId, IReadOnlyList<RmsExportRun> rows, bool includeData, CancellationToken cancellationToken = default);
 
 		/// <summary>

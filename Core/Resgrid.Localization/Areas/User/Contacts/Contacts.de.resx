@@ -434,4 +434,10 @@
   <data name="EditContact" xml:space="preserve">
     <value>Edit Contact</value>
   </data>
+  <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
+    <value>Einsatzpläne dieser Organisation werden jetzt als Objekte in den Berichten gepflegt. Diese Seite ist schreibgeschützt; bearbeiten Sie das Objekt unter Berichte.</value>
+  </data>
+  <data name="PreplanOpenOccupancy" xml:space="preserve">
+    <value>Objekt öffnen</value>
+  </data>
 </root>

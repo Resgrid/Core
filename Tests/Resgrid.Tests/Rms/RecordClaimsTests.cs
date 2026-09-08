@@ -192,7 +192,8 @@ namespace Resgrid.Tests.Rms
 		public void Catalog_covers_exactly_values_50_to_67_once_each()
 		{
 			var values = RecordPermissionCatalog.All.Select(d => (int)d.Type).OrderBy(v => v).ToList();
-			values.Should().Equal(Enumerable.Range(RecordPermissionCatalog.FirstValue, 18));
+			// 50-67 are RMS-1; 69 is RMS-5's PreventionAdmin (68 belongs to Unified Search and is not a Records permission).
+			values.Should().Equal(Enumerable.Range(RecordPermissionCatalog.FirstValue, 18).Concat(new[] { (int)PermissionTypes.RecordsPreventionAdmin }));
 		}
 
 		[Test]

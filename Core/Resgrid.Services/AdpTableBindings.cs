@@ -61,7 +61,7 @@ namespace Resgrid.Services
 				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
 					ProtectedFieldStorageKind.CompanionColumn, $"Protected{column}Envelope");
 
-			return new List<AdpTableBinding>
+			var bindings = new List<AdpTableBinding>
 			{
 				AdpTableBinding.Direct("Calls", "CallId", pkIsNumeric: true, "DepartmentId", new[]
 				{
@@ -497,6 +497,9 @@ namespace Resgrid.Services
 					Text("RmsPreventionAttachments", "FileName"), Text("RmsPreventionAttachments", "Description"), Binary("RmsPreventionAttachments", "Data")
 				}) with { ProtectedMarkerColumn = "IsProtected" }
 			};
+			return bindings.Concat(Resgrid.Model.Checklists.ChecklistTables.All.Values.Select(table =>
+				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table == "ChecklistCompletionFiles"
+					? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, "Content") }) with { ProtectedMarkerColumn = "IsProtected" })).ToList();
 		}
 	}
 }

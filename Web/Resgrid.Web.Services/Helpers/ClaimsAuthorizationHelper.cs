@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using System.Security.Claims;
 using CommonServiceLocator;
@@ -11,6 +11,8 @@ namespace Resgrid.Web.ServicesCore.Helpers
 	{
 		public static IHttpContextAccessor _httpContextAccessor;
 
+		public static bool CanManageChecklists() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update);
+		public static bool CanViewChecklistResults() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View);
 		public static ResgridIdentity GetIdentity()
 		{
 			if (GetClaimsPrincipal().Identity.IsAuthenticated)

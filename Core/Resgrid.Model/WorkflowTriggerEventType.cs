@@ -1,7 +1,9 @@
-﻿namespace Resgrid.Model
+namespace Resgrid.Model
 {
 	public enum WorkflowTriggerEventType
 	{
+		ChecklistCompleted = 67,
+		ChecklistFailed = 68,
 		CallAdded = 0,
 		CallUpdated = 1,
 		CallClosed = 2,

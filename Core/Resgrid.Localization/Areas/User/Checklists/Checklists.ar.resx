@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="Checklists" xml:space="preserve">
+    <value>قوائم التحقق</value>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>قوالب قوائم التحقق</value>
+  </data>
+  <data name="Free" xml:space="preserve">
+    <value>قوائم التحقق مجانية لجميع الإدارات.</value>
+  </data>
+  <data name="Guidance" xml:space="preserve">
+    <value>قبل الاستخدام، عدّل هذه القوالب لتناسب معداتك وإجراءات الشركة المصنّعة والمتطلبات المحلية.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>البحث عن قالب</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>معاينة القالب</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>لا توجد قوالب تطابق بحثك.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>حرج</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>مطلوب</value>
+  </data>
+  <data name="FailNote" xml:space="preserve">
+    <value>يلزم إدخال ملاحظة عند عدم اجتياز الفحص.</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>يجب على مُعدّ القائمة وعضو آخر، بعد التحقق من هوية كل منهما، التحقق من النتيجة بشكل مستقل.</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>الصيانة وأوامر العمل (Readiness Pro)</value>
+  </data>
+  <data name="NewChecklist" xml:space="preserve">
+    <value>قائمة تحقق جديدة</value>
+  </data>
+  <data name="NoDefinitions" xml:space="preserve">
+    <value>لا توجد قوائم تحقق في هذه الصفحة.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>الإصدار</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Retired" xml:space="preserve">
+    <value>متوقفة عن الاستخدام</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>مسودة</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>منشورة</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="EditChecklist" xml:space="preserve">
+    <value>محرر قائمة التحقق</value>
+  </data>
+  <data name="DraftGuidance" xml:space="preserve">
+    <value>احفظ مسودة ثم انشرها. تحتفظ عمليات التحقق الحالية بإصدارها المنشور الأصلي. لا تُدخل بيانات المرضى.</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>حفظ المسودة</value>
+  </data>
+  <data name="PublishedVersion" xml:space="preserve">
+    <value>الإصدار المنشور</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="EditDraft" xml:space="preserve">
+    <value>تعديل المسودة</value>
+  </data>
+  <data name="PublishDraft" xml:space="preserve">
+    <value>نشر المسودة</value>
+  </data>
+  <data name="PublishGuidance" xml:space="preserve">
+    <value>ينشئ النشر إصدارًا غير قابل للتعديل لعمليات التحقق الجديدة.</value>
+  </data>
+  <data name="Retire" xml:space="preserve">
+    <value>إيقاف الاستخدام</value>
+  </data>
+  <data name="DeleteDraft" xml:space="preserve">
+    <value>حذف المسودة</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>الجهة أو العنصر محل الفحص</value>
+  </data>
+  <data name="SelectTarget" xml:space="preserve">
+    <value>اختر الجهة أو العنصر محل الفحص</value>
+  </data>
+  <data name="StartRun" xml:space="preserve">
+    <value>بدء قائمة التحقق</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>السجل</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>وقت البدء</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>الدرجة</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="Passed" xml:space="preserve">
+    <value>اجتاز الفحص</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>لم يجتز الفحص</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>غير مكتمل</value>
+  </data>
+  <data name="RunGuidance" xml:space="preserve">
+    <value>أجب عن كل بند ينطبق على الحالة. يتطلب اختيار «لا ينطبق» ذكر السبب. احفظ التقدم للمتابعة لاحقًا. لا يمكن تعديل الإجابات والمرفقات بعد إرسالها.</value>
+  </data>
+  <data name="SaveProgress" xml:space="preserve">
+    <value>حفظ التقدم</value>
+  </data>
+  <data name="SubmitRun" xml:space="preserve">
+    <value>إرسال قائمة التحقق</value>
+  </data>
+  <data name="NoScore" xml:space="preserve">
+    <value>لا توجد درجة قابلة للاحتساب</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>مُعدّ القائمة</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>تم الإرسال</value>
+  </data>
+  <data name="WitnessLabel" xml:space="preserve">
+    <value>الشاهد</value>
+  </data>
+  <data name="Item" xml:space="preserve">
+    <value>البند</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>الإجابة</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>الملاحظة</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>المرفقات الإثباتية</value>
+  </data>
+  <data name="Unanswered" xml:space="preserve">
+    <value>لم تتم الإجابة</value>
+  </data>
+  <data name="ReportedLocation" xml:space="preserve">
+    <value>الموقع المُبلّغ عنه</value>
+  </data>
+  <data name="WitnessInstructions" xml:space="preserve">
+    <value>يجب أن يتحقق عضو آخر، بعد التحقق من هويته، من الإجابات والمرفقات المُرسلة بشكل مستقل. شارك معه رابط هذه الصفحة.</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>إقرار التحقق المستقل</value>
+  </data>
+  <data name="Attest" xml:space="preserve">
+    <value>إقرار وإكمال</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>تصدير بصيغة JSON</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>طباعة</value>
+  </data>
+  <data name="Checklist name" xml:space="preserve">
+    <value>اسم قائمة التحقق</value>
+  </data>
+  <data name="Instructions (do not include patient data)" xml:space="preserve">
+    <value>التعليمات (لا تُدرج بيانات المرضى)</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="Target type" xml:space="preserve">
+    <value>نوع الجهة أو العنصر محل الفحص</value>
+  </data>
+  <data name="Passing score (%)" xml:space="preserve">
+    <value>درجة الاجتياز (%)</value>
+  </data>
+  <data name="Require reported location" xml:space="preserve">
+    <value>إلزام إدخال الموقع المُبلّغ عنه</value>
+  </data>
+  <data name="Require a different authenticated member to witness the submission" xml:space="preserve">
+    <value>اشتراط أن يشهد على الإرسال عضو آخر تم التحقق من هويته</value>
+  </data>
+  <data name="Section name" xml:space="preserve">
+    <value>اسم القسم</value>
+  </data>
+  <data name="Question / check" xml:space="preserve">
+    <value>السؤال / الفحص</value>
+  </data>
+  <data name="Item instructions" xml:space="preserve">
+    <value>تعليمات البند</value>
+  </data>
+  <data name="Answer type" xml:space="preserve">
+    <value>نوع الإجابة</value>
+  </data>
+  <data name="Critical failure overrides the score" xml:space="preserve">
+    <value>عدم اجتياز بند حرج يجعل النتيجة غير ناجحة مهما كانت الدرجة</value>
+  </data>
+  <data name="Allow N/A with a reason" xml:space="preserve">
+    <value>السماح باختيار «لا ينطبق» مع ذكر السبب</value>
+  </data>
+  <data name="Require a note on failure" xml:space="preserve">
+    <value>إلزام إدخال ملاحظة عند عدم الاجتياز</value>
+  </data>
+  <data name="Require a photo on failure" xml:space="preserve">
+    <value>إلزام إرفاق صورة عند عدم الاجتياز</value>
+  </data>
+  <data name="Score weight (0 excludes this item from the score)" xml:space="preserve">
+    <value>وزن البند في الدرجة (0 يستبعده من الحساب)</value>
+  </data>
+  <data name="Passing answer" xml:space="preserve">
+    <value>الإجابة التي تحقق الاجتياز</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>وحدات القياس</value>
+  </data>
+  <data name="Minimum passing value (optional if maximum is set)" xml:space="preserve">
+    <value>الحد الأدنى للاجتياز (اختياري إذا تم تحديد الحد الأعلى)</value>
+  </data>
+  <data name="Maximum passing value (optional if minimum is set)" xml:space="preserve">
+    <value>الحد الأعلى للاجتياز (اختياري إذا تم تحديد الحد الأدنى)</value>
+  </data>
+  <data name="Choices (one per line)" xml:space="preserve">
+    <value>الخيارات (خيار واحد في كل سطر)</value>
+  </data>
+  <data name="Exact passing choice" xml:space="preserve">
+    <value>الخيار المطابق المطلوب للاجتياز</value>
+  </data>
+  <data name="Show only when" xml:space="preserve">
+    <value>الإظهار فقط عند</value>
+  </data>
+  <data name="Also required when" xml:space="preserve">
+    <value>مطلوب أيضًا عند</value>
+  </data>
+  <data name="Always / no condition" xml:space="preserve">
+    <value>دائمًا / دون شرط</value>
+  </data>
+  <data name="Move section up" xml:space="preserve">
+    <value>نقل القسم إلى أعلى</value>
+  </data>
+  <data name="Move section down" xml:space="preserve">
+    <value>نقل القسم إلى أسفل</value>
+  </data>
+  <data name="Remove section" xml:space="preserve">
+    <value>حذف القسم</value>
+  </data>
+  <data name="Move item up" xml:space="preserve">
+    <value>نقل البند إلى أعلى</value>
+  </data>
+  <data name="Move item down" xml:space="preserve">
+    <value>نقل البند إلى أسفل</value>
+  </data>
+  <data name="Remove item" xml:space="preserve">
+    <value>حذف البند</value>
+  </data>
+  <data name="Add item" xml:space="preserve">
+    <value>إضافة بند</value>
+  </data>
+  <data name="Add section" xml:space="preserve">
+    <value>إضافة قسم</value>
+  </data>
+  <data name="Answer status" xml:space="preserve">
+    <value>حالة الإجابة</value>
+  </data>
+  <data name="N/A reason" xml:space="preserve">
+    <value>سبب عدم الانطباق</value>
+  </data>
+  <data name="Note (required on failure)" xml:space="preserve">
+    <value>ملاحظة (مطلوبة عند عدم الاجتياز)</value>
+  </data>
+  <data name="Completion / handover note" xml:space="preserve">
+    <value>ملاحظة الإكمال / التسليم</value>
+  </data>
+  <data name="Reported latitude" xml:space="preserve">
+    <value>خط العرض المُبلّغ عنه</value>
+  </data>
+  <data name="Reported longitude" xml:space="preserve">
+    <value>خط الطول المُبلّغ عنه</value>
+  </data>
+  <data name="Use current location" xml:space="preserve">
+    <value>استخدام الموقع الحالي</value>
+  </data>
+  <data name="Clear signature" xml:space="preserve">
+    <value>مسح التوقيع</value>
+  </data>
+  <data name="Save signature image" xml:space="preserve">
+    <value>حفظ صورة التوقيع</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Pass / Fail" xml:space="preserve">
+    <value>اجتاز / لم يجتز</value>
+  </data>
+  <data name="Yes / No" xml:space="preserve">
+    <value>نعم / لا</value>
+  </data>
+  <data name="Checkbox" xml:space="preserve">
+    <value>مربع اختيار</value>
+  </data>
+  <data name="Numeric reading" xml:space="preserve">
+    <value>قراءة رقمية</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>الكمية</value>
+  </data>
+  <data name="Free text" xml:space="preserve">
+    <value>نص حر</value>
+  </data>
+  <data name="Select list" xml:space="preserve">
+    <value>قائمة خيارات</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>صورة</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>توقيع</value>
+  </data>
+  <data name="Start of shift" xml:space="preserve">
+    <value>بداية الوردية</value>
+  </data>
+  <data name="Unit check" xml:space="preserve">
+    <value>فحص الوحدة</value>
+  </data>
+  <data name="Personal gear" xml:space="preserve">
+    <value>المعدات الشخصية</value>
+  </data>
+  <data name="Annual review" xml:space="preserve">
+    <value>مراجعة سنوية</value>
+  </data>
+  <data name="Facility" xml:space="preserve">
+    <value>المنشأة</value>
+  </data>
+  <data name="Safety audit" xml:space="preserve">
+    <value>تدقيق السلامة</value>
+  </data>
+  <data name="Equipment check" xml:space="preserve">
+    <value>فحص المعدات</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>الإدارة</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>الوحدة</value>
+  </data>
+  <data name="Group / station" xml:space="preserve">
+    <value>المجموعة / المحطة</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="Section {0}" xml:space="preserve">
+    <value>القسم {0}</value>
+  </data>
+  <data name="Item {0}" xml:space="preserve">
+    <value>البند {0}</value>
+  </data>
+  <data name="Remove this section and its items from the draft?" xml:space="preserve">
+    <value>هل تريد حذف هذا القسم وبنوده من المسودة؟</value>
+  </data>
+  <data name="Remove this item from the draft?" xml:space="preserve">
+    <value>هل تريد حذف هذا البند من المسودة؟</value>
+  </data>
+  <data name="Yes / checked" xml:space="preserve">
+    <value>نعم / محدد</value>
+  </data>
+  <data name="No / unchecked" xml:space="preserve">
+    <value>لا / غير محدد</value>
+  </data>
+  <data name="Unnamed earlier item" xml:space="preserve">
+    <value>بند سابق دون اسم</value>
+  </data>
+  <data name="Answer that activates this condition" xml:space="preserve">
+    <value>الإجابة التي تفعّل هذا الشرط</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>اختياري</value>
+  </data>
+  <data name="Answered" xml:space="preserve">
+    <value>تمت الإجابة</value>
+  </data>
+  <data name="N/A" xml:space="preserve">
+    <value>لا ينطبق</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>اختر</value>
+  </data>
+  <data name="Pass" xml:space="preserve">
+    <value>اجتاز</value>
+  </data>
+  <data name="Fail" xml:space="preserve">
+    <value>لم يجتز</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="Checked" xml:space="preserve">
+    <value>محدد</value>
+  </data>
+  <data name="Unchecked" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+  <data name="Passing range: {0} to {1}" xml:space="preserve">
+    <value>نطاق الاجتياز: من {0} إلى {1}</value>
+  </data>
+  <data name="No minimum" xml:space="preserve">
+    <value>دون حد أدنى</value>
+  </data>
+  <data name="No maximum" xml:space="preserve">
+    <value>دون حد أعلى</value>
+  </data>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
+    <value>صورة إثباتية (PNG/JPEG، حتى 10 ميغابايت؛ يلزم فحص أمني)</value>
+  </data>
+  <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
+    <value>ارسم توقيعك أو ارفع صورة له. إذا كان مطلوبًا وجود شاهد مستقل، فعليه تسجيل الدخول بشكل منفصل.</value>
+  </data>
+  <data name="Signature drawing area. Alternatively upload an image." xml:space="preserve">
+    <value>مساحة رسم التوقيع. يمكنك رفع صورة بدلًا من ذلك.</value>
+  </data>
+  <data name="Draw a signature first." xml:space="preserve">
+    <value>ارسم توقيعًا أولًا.</value>
+  </data>
+  <data name="Site / building / room" xml:space="preserve">
+    <value>الموقع / المبنى / الغرفة</value>
+  </data>
+  <data name="Reported latitude (required)" xml:space="preserve">
+    <value>خط العرض المُبلّغ عنه (مطلوب)</value>
+  </data>
+  <data name="Location is unavailable. Enter coordinates manually." xml:space="preserve">
+    <value>الموقع غير متاح. أدخل الإحداثيات يدويًا.</value>
+  </data>
+  <data name="Location could not be read. Enter coordinates manually." xml:space="preserve">
+    <value>تعذّر تحديد الموقع. أدخل الإحداثيات يدويًا.</value>
+  </data>
+  <data name="Earlier progress saved; unsaved changes remain." xml:space="preserve">
+    <value>تم حفظ التقدم السابق؛ لا تزال هناك تغييرات غير محفوظة.</value>
+  </data>
+  <data name="Progress saved." xml:space="preserve">
+    <value>تم حفظ التقدم.</value>
+  </data>
+  <data name="The request could not be completed. Your changes are still on this page." xml:space="preserve">
+    <value>تعذّر إكمال الطلب. لا تزال تغييراتك موجودة في هذه الصفحة.</value>
+  </data>
+  <data name="The request could not be completed." xml:space="preserve">
+    <value>تعذّر إكمال الطلب.</value>
+  </data>
+  <data name="Evidence must be at most 10 MB." xml:space="preserve">
+    <value>يجب ألا يتجاوز حجم المرفق الإثباتي 10 ميغابايت.</value>
+  </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
+  <data name="AwaitingWitness" xml:space="preserve">
+    <value>بانتظار الشاهد</value>
+  </data>
+  <data name="Protected checklist data" xml:space="preserve">
+    <value>بيانات قائمة التحقق المحمية</value>
+  </data>
+  <data name="Protected checklists" xml:space="preserve">
+    <value>قوائم التحقق المحمية</value>
+  </data>
+  <data name="Unlock checklist data" xml:space="preserve">
+    <value>فتح بيانات قائمة التحقق</value>
+  </data>
+  <data name="Verify your identity to view the checklist, answers and evidence." xml:space="preserve">
+    <value>تحقق من هويتك لعرض قائمة التحقق والإجابات والمرفقات الإثباتية.</value>
+  </data>
+  <data name="Verify and open" xml:space="preserve">
+    <value>تحقق وافتح</value>
+  </data>
+  <data name="Use this template" xml:space="preserve">
+    <value>استخدام هذا القالب</value>
+  </data>
+  <data name="Manage checklists" xml:space="preserve">
+    <value>إدارة قوائم التحقق</value>
+  </data>
+  <data name="View checklist results" xml:space="preserve">
+    <value>عرض نتائج قوائم التحقق</value>
+  </data>
+  <data name="Create, edit, publish and retire free checklists." xml:space="preserve">
+    <value>إنشاء قوائم تحقق مجانية وتعديلها ونشرها وإيقاف استخدامها.</value>
+  </data>
+  <data name="View results from other members. Members retain their own history." xml:space="preserve">
+    <value>عرض نتائج الأعضاء الآخرين. يحتفظ كل عضو بإمكانية الوصول إلى سجله.</value>
+  </data>
+  <data name="Checks" xml:space="preserve">
+    <value>الفحوصات</value>
+  </data>
+</root>

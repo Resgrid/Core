@@ -1,4 +1,4 @@
-﻿using Resgrid.Model.Events;
+using Resgrid.Model.Events;
 using System;
 using System.Threading.Tasks;
 
@@ -28,5 +28,6 @@ namespace Resgrid.Model.Providers
 		/// need no changes. The callback receives (departmentId, ChatEventRaised JSON payload).
 		/// </summary>
 		void RegisterForChatEvents(Func<int, string, Task> chatEvent);
+		void RegisterForChecklistEvents(Func<int, string, Task> checklistEvent);
 	}
 }

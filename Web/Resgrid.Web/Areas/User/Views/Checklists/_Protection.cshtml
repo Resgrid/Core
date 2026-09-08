@@ -1,0 +1,6 @@
+@using Resgrid.Web.Areas.User.Models
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistStrings
+@if (ViewBag.ProtectionEnforced == true)
+{
+    @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = checklistStrings["Protected checklist data"].Value })
+}

@@ -42,6 +42,12 @@ namespace Resgrid.Config
 		// precedent and live here.
 		public static string PaddleAdpAddon = "pri_01m11vm50c17z0rxcgy4fppf80";
 		public static string PaddleAdpAddonTest = "";
+
+		// Readiness Pro: EUR 195/month, Paddle product pro_01m20xwmzpnkxzp7mm7nwwxp7p.
+		// Stripe USD 150/month is seeded on PlanAddons by M0190. Test prices must be
+		// configured separately; a missing sandbox price must never fall back to production.
+		public static string PaddleReadinessProAddon = "pri_01m20xy5x54j0sp4mcydcm4q6m";
+		public static string PaddleReadinessProAddonTest = "";
 		public static string PaddleProductionEnvironment = "production";
 		public static string PaddleTestEnvironment = "sandbox";
 		public static string PaddleProductionClientToken = "";
@@ -151,6 +157,11 @@ namespace Resgrid.Config
 				return PaddleAdpAddonTest;
 			else
 				return PaddleAdpAddon;
+		}
+
+		public static string GetPaddleReadinessProAddonPriceId()
+		{
+			return NormalizeConfigValue(IsTestMode ? PaddleReadinessProAddonTest : PaddleReadinessProAddon);
 		}
 
 		public static string GetPaddleEnvironment()

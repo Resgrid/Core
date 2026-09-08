@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Providers.Claims
+namespace Resgrid.Providers.Claims
 {
 	public static class ResgridResources
 	{
@@ -194,6 +194,8 @@
 		public const string Record_Reassign = "Record_Reassign";
 		public const string RecordLegacy_View = "RecordLegacy_View";
 		public const string RecordRestricted_View = "RecordRestricted_View";
+		public const string Checklist_Update = "Checklist_Update";
+		public const string ChecklistResults_View = "ChecklistResults_View";
 		public const string RecordDefinition_Update = "RecordDefinition_Update";
 		public const string RecordDefinition_Publish = "RecordDefinition_Publish";
 		public const string RecordReport_Update = "RecordReport_Update";

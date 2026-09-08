@@ -683,6 +683,11 @@ namespace Resgrid.Services
 			Prevention("RmsPreventionAttachments", "Description", ProtectedFieldClassification.Sensitive);
 			Prevention("RmsPreventionAttachments", "Data", ProtectedFieldClassification.Phi, ProtectedFieldStorageKind.Binary);
 
+			foreach (var table in Resgrid.Model.Checklists.ChecklistTables.All.Values)
+				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 14));
+			list.Add(new ProtectedFieldDefinition("checklistcompletionfiles.data", OperationalFamily, "ChecklistCompletionFiles", "Data", ProtectedFieldStorageKind.Binary,
+				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 14));
 			return list;
 		}
 	}

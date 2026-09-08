@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -398,6 +398,18 @@ namespace Resgrid.Services
 							: string.Empty;
 						scriptObject["coverage_gap"] = gap;
 					}
+					break;
+				}
+				case WorkflowTriggerEventType.ChecklistCompleted:
+				case WorkflowTriggerEventType.ChecklistFailed:
+				{
+					var checklistEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
+					var payload = checklistEvent?.Payload ?? new JObject();
+					var checklist = new ScriptObject();
+					foreach (var pair in new[] { ("completion_id", "CompletionId"), ("definition_id", "DefinitionId"), ("version_id", "VersionId"), ("target_type", "TargetType"), ("target_id", "TargetId"), ("score", "Score"), ("passed", "Passed"), ("item_id", "ItemId") })
+						checklist[pair.Item1] = ToScriptValue(payload[pair.Item2]);
+					checklist["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Checklists/CompletionDetail/{(string)payload["CompletionId"]}";
+					scriptObject["checklist"] = checklist;
 					break;
 				}
 				case WorkflowTriggerEventType.RecordCreated:

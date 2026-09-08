@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="NewChecklist" xml:space="preserve">
+    <value>Nouvelle liste</value>
+  </data>
+  <data name="NoDefinitions" xml:space="preserve">
+    <value>Aucune liste sur cette page.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>État</value>
+  </data>
+  <data name="Retired" xml:space="preserve">
+    <value>Retirée</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>Brouillon</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>Publiée</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="EditChecklist" xml:space="preserve">
+    <value>Éditeur de listes</value>
+  </data>
+  <data name="DraftGuidance" xml:space="preserve">
+    <value>Enregistrez un brouillon, puis publiez-le. Les exécutions existantes conservent leur version initiale. Ne saisissez aucune donnée de patient.</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Enregistrer le brouillon</value>
+  </data>
+  <data name="PublishedVersion" xml:space="preserve">
+    <value>Version publiée</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="EditDraft" xml:space="preserve">
+    <value>Modifier le brouillon</value>
+  </data>
+  <data name="PublishDraft" xml:space="preserve">
+    <value>Publier le brouillon</value>
+  </data>
+  <data name="PublishGuidance" xml:space="preserve">
+    <value>La publication crée une version immuable pour les nouvelles exécutions.</value>
+  </data>
+  <data name="Retire" xml:space="preserve">
+    <value>Retirer</value>
+  </data>
+  <data name="DeleteDraft" xml:space="preserve">
+    <value>Supprimer le brouillon</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>Cible</value>
+  </data>
+  <data name="SelectTarget" xml:space="preserve">
+    <value>Choisir une cible</value>
+  </data>
+  <data name="StartRun" xml:space="preserve">
+    <value>Démarrer la liste</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Historique</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Début</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Résultat</value>
+  </data>
+  <data name="Passed" xml:space="preserve">
+    <value>Réussi</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Échoué</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>Incomplet</value>
+  </data>
+  <data name="RunGuidance" xml:space="preserve">
+    <value>Répondez à chaque élément applicable. Non applicable exige un motif. Enregistrez la progression pour reprendre plus tard. Les réponses et preuves soumises sont immuables.</value>
+  </data>
+  <data name="SaveProgress" xml:space="preserve">
+    <value>Enregistrer la progression</value>
+  </data>
+  <data name="SubmitRun" xml:space="preserve">
+    <value>Soumettre la liste</value>
+  </data>
+  <data name="NoScore" xml:space="preserve">
+    <value>Aucun score applicable</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Auteur</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>Soumise</value>
+  </data>
+  <data name="WitnessLabel" xml:space="preserve">
+    <value>Témoin</value>
+  </data>
+  <data name="Item" xml:space="preserve">
+    <value>Élément</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Réponse</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>Preuve</value>
+  </data>
+  <data name="Unanswered" xml:space="preserve">
+    <value>Sans réponse</value>
+  </data>
+  <data name="ReportedLocation" xml:space="preserve">
+    <value>Position déclarée</value>
+  </data>
+  <data name="WitnessInstructions" xml:space="preserve">
+    <value>Un autre membre authentifié doit vérifier indépendamment les réponses et preuves soumises. Partagez le lien de cette page avec cette personne.</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>Déclaration de vérification indépendante</value>
+  </data>
+  <data name="Attest" xml:space="preserve">
+    <value>Attester et terminer</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Exporter en JSON</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Imprimer</value>
+  </data>
+  <data name="Checklist name" xml:space="preserve">
+    <value>Nom de la liste</value>
+  </data>
+  <data name="Instructions (do not include patient data)" xml:space="preserve">
+    <value>Instructions (sans données de patients)</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Catégorie</value>
+  </data>
+  <data name="Target type" xml:space="preserve">
+    <value>Type de cible</value>
+  </data>
+  <data name="Passing score (%)" xml:space="preserve">
+    <value>Score minimal (%)</value>
+  </data>
+  <data name="Require reported location" xml:space="preserve">
+    <value>Exiger la position déclarée</value>
+  </data>
+  <data name="Require a different authenticated member to witness the submission" xml:space="preserve">
+    <value>Exiger un autre membre authentifié comme témoin de la soumission</value>
+  </data>
+  <data name="Section name" xml:space="preserve">
+    <value>Nom de la section</value>
+  </data>
+  <data name="Question / check" xml:space="preserve">
+    <value>Question / contrôle</value>
+  </data>
+  <data name="Item instructions" xml:space="preserve">
+    <value>Instructions de l'élément</value>
+  </data>
+  <data name="Answer type" xml:space="preserve">
+    <value>Type de réponse</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Obligatoire</value>
+  </data>
+  <data name="Critical failure overrides the score" xml:space="preserve">
+    <value>Un échec critique prévaut sur le score</value>
+  </data>
+  <data name="Allow N/A with a reason" xml:space="preserve">
+    <value>Autoriser non applicable avec un motif</value>
+  </data>
+  <data name="Require a note on failure" xml:space="preserve">
+    <value>Exiger une note en cas d'échec</value>
+  </data>
+  <data name="Require a photo on failure" xml:space="preserve">
+    <value>Exiger une photo en cas d'échec</value>
+  </data>
+  <data name="Score weight (0 excludes this item from the score)" xml:space="preserve">
+    <value>Poids du score (0 exclut l'élément)</value>
+  </data>
+  <data name="Passing answer" xml:space="preserve">
+    <value>Réponse de réussite</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Unités</value>
+  </data>
+  <data name="Minimum passing value (optional if maximum is set)" xml:space="preserve">
+    <value>Valeur minimale de réussite (facultative si maximum)</value>
+  </data>
+  <data name="Maximum passing value (optional if minimum is set)" xml:space="preserve">
+    <value>Valeur maximale de réussite (facultative si minimum)</value>
+  </data>
+  <data name="Choices (one per line)" xml:space="preserve">
+    <value>Choix (un par ligne)</value>
+  </data>
+  <data name="Exact passing choice" xml:space="preserve">
+    <value>Choix exact de réussite</value>
+  </data>
+  <data name="Show only when" xml:space="preserve">
+    <value>Afficher uniquement si</value>
+  </data>
+  <data name="Also required when" xml:space="preserve">
+    <value>Également obligatoire si</value>
+  </data>
+  <data name="Always / no condition" xml:space="preserve">
+    <value>Toujours / sans condition</value>
+  </data>
+  <data name="Move section up" xml:space="preserve">
+    <value>Monter la section</value>
+  </data>
+  <data name="Move section down" xml:space="preserve">
+    <value>Descendre la section</value>
+  </data>
+  <data name="Remove section" xml:space="preserve">
+    <value>Supprimer la section</value>
+  </data>
+  <data name="Move item up" xml:space="preserve">
+    <value>Monter l'élément</value>
+  </data>
+  <data name="Move item down" xml:space="preserve">
+    <value>Descendre l'élément</value>
+  </data>
+  <data name="Remove item" xml:space="preserve">
+    <value>Supprimer l'élément</value>
+  </data>
+  <data name="Add item" xml:space="preserve">
+    <value>Ajouter un élément</value>
+  </data>
+  <data name="Add section" xml:space="preserve">
+    <value>Ajouter une section</value>
+  </data>
+  <data name="Answer status" xml:space="preserve">
+    <value>État de réponse</value>
+  </data>
+  <data name="N/A reason" xml:space="preserve">
+    <value>Motif de non-applicabilité</value>
+  </data>
+  <data name="Note (required on failure)" xml:space="preserve">
+    <value>Note (obligatoire en cas d'échec)</value>
+  </data>
+  <data name="Completion / handover note" xml:space="preserve">
+    <value>Note de clôture / relève</value>
+  </data>
+  <data name="Reported latitude" xml:space="preserve">
+    <value>Latitude déclarée</value>
+  </data>
+  <data name="Reported longitude" xml:space="preserve">
+    <value>Longitude déclarée</value>
+  </data>
+  <data name="Use current location" xml:space="preserve">
+    <value>Utiliser la position actuelle</value>
+  </data>
+  <data name="Clear signature" xml:space="preserve">
+    <value>Effacer la signature</value>
+  </data>
+  <data name="Save signature image" xml:space="preserve">
+    <value>Enregistrer l'image de signature</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>Listes de contrôle</value>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>Modèles de listes</value>
+  </data>
+  <data name="Free" xml:space="preserve">
+    <value>Les listes sont gratuites pour tous les services.</value>
+  </data>
+  <data name="Guidance" xml:space="preserve">
+    <value>Adaptez ces modèles à votre équipement, aux instructions du fabricant et aux exigences locales avant utilisation.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Trouver un modèle</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Rechercher</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Aperçu du modèle</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Aucun modèle correspondant.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Retour</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>Critique</value>
+  </data>
+  <data name="FailNote" xml:space="preserve">
+    <value>Un contrôle échoué exige une note.</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>L'auteur authentifié et un autre membre authentifié doivent vérifier le résultat indépendamment.</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>Maintenance et ordres de travail (Readiness Pro)</value>
+  </data>
+  <data name="Pass / Fail" xml:space="preserve">
+    <value>Réussi / Échoué</value>
+  </data>
+  <data name="Yes / No" xml:space="preserve">
+    <value>Oui / Non</value>
+  </data>
+  <data name="Checkbox" xml:space="preserve">
+    <value>Case à cocher</value>
+  </data>
+  <data name="Numeric reading" xml:space="preserve">
+    <value>Relevé numérique</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Quantité</value>
+  </data>
+  <data name="Free text" xml:space="preserve">
+    <value>Texte libre</value>
+  </data>
+  <data name="Select list" xml:space="preserve">
+    <value>Liste de choix</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Photo</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>Signature</value>
+  </data>
+  <data name="Start of shift" xml:space="preserve">
+    <value>Début de relève</value>
+  </data>
+  <data name="Unit check" xml:space="preserve">
+    <value>Contrôle d’unité</value>
+  </data>
+  <data name="Personal gear" xml:space="preserve">
+    <value>Équipement individuel</value>
+  </data>
+  <data name="Annual review" xml:space="preserve">
+    <value>Revue annuelle</value>
+  </data>
+  <data name="Facility" xml:space="preserve">
+    <value>Installation</value>
+  </data>
+  <data name="Safety audit" xml:space="preserve">
+    <value>Audit de sécurité</value>
+  </data>
+  <data name="Equipment check" xml:space="preserve">
+    <value>Contrôle du matériel</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Autre</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>Service</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Unité</value>
+  </data>
+  <data name="Group / station" xml:space="preserve">
+    <value>Groupe / caserne</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="Section {0}" xml:space="preserve">
+    <value>Section {0}</value>
+  </data>
+  <data name="Item {0}" xml:space="preserve">
+    <value>Élément {0}</value>
+  </data>
+  <data name="Remove this section and its items from the draft?" xml:space="preserve">
+    <value>Supprimer cette section et ses éléments du brouillon ?</value>
+  </data>
+  <data name="Remove this item from the draft?" xml:space="preserve">
+    <value>Supprimer cet élément du brouillon ?</value>
+  </data>
+  <data name="Yes / checked" xml:space="preserve">
+    <value>Oui / cochée</value>
+  </data>
+  <data name="No / unchecked" xml:space="preserve">
+    <value>Non / décochée</value>
+  </data>
+  <data name="Unnamed earlier item" xml:space="preserve">
+    <value>Élément précédent sans nom</value>
+  </data>
+  <data name="Answer that activates this condition" xml:space="preserve">
+    <value>Réponse qui active cette condition</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>Facultatif</value>
+  </data>
+  <data name="Answered" xml:space="preserve">
+    <value>Répondu</value>
+  </data>
+  <data name="N/A" xml:space="preserve">
+    <value>Sans objet</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>Choisir</value>
+  </data>
+  <data name="Pass" xml:space="preserve">
+    <value>Réussi</value>
+  </data>
+  <data name="Fail" xml:space="preserve">
+    <value>Échoué</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Non</value>
+  </data>
+  <data name="Checked" xml:space="preserve">
+    <value>Cochée</value>
+  </data>
+  <data name="Unchecked" xml:space="preserve">
+    <value>Décochée</value>
+  </data>
+  <data name="Passing range: {0} to {1}" xml:space="preserve">
+    <value>Plage de réussite : de {0} à {1}</value>
+  </data>
+  <data name="No minimum" xml:space="preserve">
+    <value>Sans minimum</value>
+  </data>
+  <data name="No maximum" xml:space="preserve">
+    <value>Sans maximum</value>
+  </data>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
+    <value>Image justificative (PNG/JPEG, 10 Mo maximum ; analyse antivirus requise)</value>
+  </data>
+  <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
+    <value>Dessinez votre signature ou importez une image de celle-ci. Si un témoin indépendant est requis, il doit se connecter séparément.</value>
+  </data>
+  <data name="Signature drawing area. Alternatively upload an image." xml:space="preserve">
+    <value>Zone de dessin de la signature. Vous pouvez également importer une image.</value>
+  </data>
+  <data name="Draw a signature first." xml:space="preserve">
+    <value>Dessinez d’abord une signature.</value>
+  </data>
+  <data name="Site / building / room" xml:space="preserve">
+    <value>Site / bâtiment / pièce</value>
+  </data>
+  <data name="Reported latitude (required)" xml:space="preserve">
+    <value>Latitude déclarée (obligatoire)</value>
+  </data>
+  <data name="Location is unavailable. Enter coordinates manually." xml:space="preserve">
+    <value>La position est indisponible. Saisissez les coordonnées manuellement.</value>
+  </data>
+  <data name="Location could not be read. Enter coordinates manually." xml:space="preserve">
+    <value>Impossible de déterminer la position. Saisissez les coordonnées manuellement.</value>
+  </data>
+  <data name="Earlier progress saved; unsaved changes remain." xml:space="preserve">
+    <value>La progression précédente a été enregistrée ; des modifications restent à enregistrer.</value>
+  </data>
+  <data name="Progress saved." xml:space="preserve">
+    <value>Progression enregistrée.</value>
+  </data>
+  <data name="The request could not be completed. Your changes are still on this page." xml:space="preserve">
+    <value>La demande n’a pas pu aboutir. Vos modifications sont conservées sur cette page.</value>
+  </data>
+  <data name="The request could not be completed." xml:space="preserve">
+    <value>La demande n’a pas pu aboutir.</value>
+  </data>
+  <data name="Evidence must be at most 10 MB." xml:space="preserve">
+    <value>Les justificatifs ne doivent pas dépasser 10 Mo.</value>
+  </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>En cours</value>
+  </data>
+  <data name="AwaitingWitness" xml:space="preserve">
+    <value>En attente d’un témoin</value>
+  </data>
+  <data name="Protected checklist data" xml:space="preserve">
+    <value>Données protégées de la liste de contrôle</value>
+  </data>
+  <data name="Protected checklists" xml:space="preserve">
+    <value>Listes de contrôle protégées</value>
+  </data>
+  <data name="Unlock checklist data" xml:space="preserve">
+    <value>Déverrouiller les données de la liste</value>
+  </data>
+  <data name="Verify your identity to view the checklist, answers and evidence." xml:space="preserve">
+    <value>Vérifiez votre identité pour consulter la liste, les réponses et les justificatifs.</value>
+  </data>
+  <data name="Verify and open" xml:space="preserve">
+    <value>Vérifier et ouvrir</value>
+  </data>
+  <data name="Use this template" xml:space="preserve">
+    <value>Utiliser ce modèle</value>
+  </data>
+  <data name="Manage checklists" xml:space="preserve">
+    <value>Gérer les listes de contrôle</value>
+  </data>
+  <data name="View checklist results" xml:space="preserve">
+    <value>Consulter les résultats des listes</value>
+  </data>
+  <data name="Create, edit, publish and retire free checklists." xml:space="preserve">
+    <value>Créer, modifier, publier et retirer des listes de contrôle gratuites.</value>
+  </data>
+  <data name="View results from other members. Members retain their own history." xml:space="preserve">
+    <value>Consulter les résultats des autres membres. Chaque membre conserve l’accès à son propre historique.</value>
+  </data>
+  <data name="Checks" xml:space="preserve">
+    <value>Contrôles</value>
+  </data>
+</root>

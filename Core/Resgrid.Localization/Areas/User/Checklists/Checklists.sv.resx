@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="NewChecklist" xml:space="preserve">
+    <value>Ny checklista</value>
+  </data>
+  <data name="NoDefinitions" xml:space="preserve">
+    <value>Inga checklistor på den här sidan.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Retired" xml:space="preserve">
+    <value>Avvecklad</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>Utkast</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>Publicerad</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Föregående</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Nästa</value>
+  </data>
+  <data name="EditChecklist" xml:space="preserve">
+    <value>Redigera checklista</value>
+  </data>
+  <data name="DraftGuidance" xml:space="preserve">
+    <value>Spara ett utkast och publicera det. Befintliga körningar behåller sin ursprungliga version. Ange inga patientuppgifter.</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Spara utkast</value>
+  </data>
+  <data name="PublishedVersion" xml:space="preserve">
+    <value>Publicerad version</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="EditDraft" xml:space="preserve">
+    <value>Redigera utkast</value>
+  </data>
+  <data name="PublishDraft" xml:space="preserve">
+    <value>Publicera utkast</value>
+  </data>
+  <data name="PublishGuidance" xml:space="preserve">
+    <value>Publicering skapar en oföränderlig version för nya körningar.</value>
+  </data>
+  <data name="Retire" xml:space="preserve">
+    <value>Avveckla</value>
+  </data>
+  <data name="DeleteDraft" xml:space="preserve">
+    <value>Ta bort utkast</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>Mål</value>
+  </data>
+  <data name="SelectTarget" xml:space="preserve">
+    <value>Välj ett mål</value>
+  </data>
+  <data name="StartRun" xml:space="preserve">
+    <value>Starta checklista</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Historik</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Startad</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Poäng</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Resultat</value>
+  </data>
+  <data name="Passed" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Underkänd</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>Ofullständig</value>
+  </data>
+  <data name="RunGuidance" xml:space="preserve">
+    <value>Besvara varje tillämplig punkt. Ej tillämplig kräver en motivering. Spara förloppet för att fortsätta senare. Inskickade svar och underlag kan inte ändras.</value>
+  </data>
+  <data name="SaveProgress" xml:space="preserve">
+    <value>Spara förlopp</value>
+  </data>
+  <data name="SubmitRun" xml:space="preserve">
+    <value>Skicka in checklista</value>
+  </data>
+  <data name="NoScore" xml:space="preserve">
+    <value>Ingen tillämplig poäng</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Utförare</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>Inskickad</value>
+  </data>
+  <data name="WitnessLabel" xml:space="preserve">
+    <value>Vittne</value>
+  </data>
+  <data name="Item" xml:space="preserve">
+    <value>Punkt</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Svar</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>Underlag</value>
+  </data>
+  <data name="Unanswered" xml:space="preserve">
+    <value>Obesvarad</value>
+  </data>
+  <data name="ReportedLocation" xml:space="preserve">
+    <value>Rapporterad plats</value>
+  </data>
+  <data name="WitnessInstructions" xml:space="preserve">
+    <value>En annan inloggad medlem måste självständigt kontrollera inskickade svar och underlag. Dela länken till den här sidan med medlemmen.</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>Intyg om oberoende kontroll</value>
+  </data>
+  <data name="Attest" xml:space="preserve">
+    <value>Intyga och slutför</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Exportera JSON</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Skriv ut</value>
+  </data>
+  <data name="Checklist name" xml:space="preserve">
+    <value>Checklistans namn</value>
+  </data>
+  <data name="Instructions (do not include patient data)" xml:space="preserve">
+    <value>Instruktioner (inga patientuppgifter)</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Target type" xml:space="preserve">
+    <value>Måltyp</value>
+  </data>
+  <data name="Passing score (%)" xml:space="preserve">
+    <value>Godkänd poäng (%)</value>
+  </data>
+  <data name="Require reported location" xml:space="preserve">
+    <value>Kräv rapporterad plats</value>
+  </data>
+  <data name="Require a different authenticated member to witness the submission" xml:space="preserve">
+    <value>Kräv en annan inloggad medlem som vittne</value>
+  </data>
+  <data name="Section name" xml:space="preserve">
+    <value>Avsnittets namn</value>
+  </data>
+  <data name="Question / check" xml:space="preserve">
+    <value>Fråga / kontroll</value>
+  </data>
+  <data name="Item instructions" xml:space="preserve">
+    <value>Punktens instruktioner</value>
+  </data>
+  <data name="Answer type" xml:space="preserve">
+    <value>Svarstyp</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Obligatorisk</value>
+  </data>
+  <data name="Critical failure overrides the score" xml:space="preserve">
+    <value>Kritiskt fel åsidosätter poängen</value>
+  </data>
+  <data name="Allow N/A with a reason" xml:space="preserve">
+    <value>Tillåt ej tillämplig med motivering</value>
+  </data>
+  <data name="Require a note on failure" xml:space="preserve">
+    <value>Kräv anteckning vid fel</value>
+  </data>
+  <data name="Require a photo on failure" xml:space="preserve">
+    <value>Kräv foto vid fel</value>
+  </data>
+  <data name="Score weight (0 excludes this item from the score)" xml:space="preserve">
+    <value>Poängvikt (0 utesluter punkten)</value>
+  </data>
+  <data name="Passing answer" xml:space="preserve">
+    <value>Godkänt svar</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="Minimum passing value (optional if maximum is set)" xml:space="preserve">
+    <value>Minsta godkända värde (valfritt om maximum finns)</value>
+  </data>
+  <data name="Maximum passing value (optional if minimum is set)" xml:space="preserve">
+    <value>Högsta godkända värde (valfritt om minimum finns)</value>
+  </data>
+  <data name="Choices (one per line)" xml:space="preserve">
+    <value>Alternativ (ett per rad)</value>
+  </data>
+  <data name="Exact passing choice" xml:space="preserve">
+    <value>Exakt godkänt alternativ</value>
+  </data>
+  <data name="Show only when" xml:space="preserve">
+    <value>Visa endast när</value>
+  </data>
+  <data name="Also required when" xml:space="preserve">
+    <value>Även obligatorisk när</value>
+  </data>
+  <data name="Always / no condition" xml:space="preserve">
+    <value>Alltid / inget villkor</value>
+  </data>
+  <data name="Move section up" xml:space="preserve">
+    <value>Flytta avsnitt uppåt</value>
+  </data>
+  <data name="Move section down" xml:space="preserve">
+    <value>Flytta avsnitt nedåt</value>
+  </data>
+  <data name="Remove section" xml:space="preserve">
+    <value>Ta bort avsnitt</value>
+  </data>
+  <data name="Move item up" xml:space="preserve">
+    <value>Flytta punkt uppåt</value>
+  </data>
+  <data name="Move item down" xml:space="preserve">
+    <value>Flytta punkt nedåt</value>
+  </data>
+  <data name="Remove item" xml:space="preserve">
+    <value>Ta bort punkt</value>
+  </data>
+  <data name="Add item" xml:space="preserve">
+    <value>Lägg till punkt</value>
+  </data>
+  <data name="Add section" xml:space="preserve">
+    <value>Lägg till avsnitt</value>
+  </data>
+  <data name="Answer status" xml:space="preserve">
+    <value>Svarsstatus</value>
+  </data>
+  <data name="N/A reason" xml:space="preserve">
+    <value>Motivering för ej tillämplig</value>
+  </data>
+  <data name="Note (required on failure)" xml:space="preserve">
+    <value>Anteckning (krävs vid fel)</value>
+  </data>
+  <data name="Completion / handover note" xml:space="preserve">
+    <value>Slut- / överlämningsanteckning</value>
+  </data>
+  <data name="Reported latitude" xml:space="preserve">
+    <value>Rapporterad latitud</value>
+  </data>
+  <data name="Reported longitude" xml:space="preserve">
+    <value>Rapporterad longitud</value>
+  </data>
+  <data name="Use current location" xml:space="preserve">
+    <value>Använd aktuell plats</value>
+  </data>
+  <data name="Clear signature" xml:space="preserve">
+    <value>Rensa underskrift</value>
+  </data>
+  <data name="Save signature image" xml:space="preserve">
+    <value>Spara underskriftsbild</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>Checklistor</value>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>Checklistemallar</value>
+  </data>
+  <data name="Free" xml:space="preserve">
+    <value>Checklistor är kostnadsfria för alla avdelningar.</value>
+  </data>
+  <data name="Guidance" xml:space="preserve">
+    <value>Anpassa mallarna till utrustningen, tillverkarens rutiner och lokala krav före användning.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Hitta en mall</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Sök</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Förhandsgranska mall</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Inga matchande mallar.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Tillbaka</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>Kritisk</value>
+  </data>
+  <data name="FailNote" xml:space="preserve">
+    <value>En underkänd kontroll kräver en anteckning.</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>Den inloggade utföraren och en annan inloggad medlem måste självständigt verifiera resultatet.</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>Underhåll och arbetsorder (Readiness Pro)</value>
+  </data>
+  <data name="Pass / Fail" xml:space="preserve">
+    <value>Godkänd / Underkänd</value>
+  </data>
+  <data name="Yes / No" xml:space="preserve">
+    <value>Ja / Nej</value>
+  </data>
+  <data name="Checkbox" xml:space="preserve">
+    <value>Kryssruta</value>
+  </data>
+  <data name="Numeric reading" xml:space="preserve">
+    <value>Mätvärde</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Antal</value>
+  </data>
+  <data name="Free text" xml:space="preserve">
+    <value>Fritext</value>
+  </data>
+  <data name="Select list" xml:space="preserve">
+    <value>Vallista</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Foto</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>Underskrift</value>
+  </data>
+  <data name="Start of shift" xml:space="preserve">
+    <value>Skiftstart</value>
+  </data>
+  <data name="Unit check" xml:space="preserve">
+    <value>Enhetskontroll</value>
+  </data>
+  <data name="Personal gear" xml:space="preserve">
+    <value>Personlig utrustning</value>
+  </data>
+  <data name="Annual review" xml:space="preserve">
+    <value>Årlig översyn</value>
+  </data>
+  <data name="Facility" xml:space="preserve">
+    <value>Anläggning</value>
+  </data>
+  <data name="Safety audit" xml:space="preserve">
+    <value>Säkerhetsgranskning</value>
+  </data>
+  <data name="Equipment check" xml:space="preserve">
+    <value>Utrustningskontroll</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>Avdelning</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Enhet</value>
+  </data>
+  <data name="Group / station" xml:space="preserve">
+    <value>Grupp / station</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Section {0}" xml:space="preserve">
+    <value>Avsnitt {0}</value>
+  </data>
+  <data name="Item {0}" xml:space="preserve">
+    <value>Punkt {0}</value>
+  </data>
+  <data name="Remove this section and its items from the draft?" xml:space="preserve">
+    <value>Ta bort det här avsnittet och dess punkter från utkastet?</value>
+  </data>
+  <data name="Remove this item from the draft?" xml:space="preserve">
+    <value>Ta bort den här punkten från utkastet?</value>
+  </data>
+  <data name="Yes / checked" xml:space="preserve">
+    <value>Ja / markerad</value>
+  </data>
+  <data name="No / unchecked" xml:space="preserve">
+    <value>Nej / avmarkerad</value>
+  </data>
+  <data name="Unnamed earlier item" xml:space="preserve">
+    <value>Tidigare punkt utan namn</value>
+  </data>
+  <data name="Answer that activates this condition" xml:space="preserve">
+    <value>Svar som aktiverar det här villkoret</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>Valfri</value>
+  </data>
+  <data name="Answered" xml:space="preserve">
+    <value>Besvarad</value>
+  </data>
+  <data name="N/A" xml:space="preserve">
+    <value>Ej tillämplig</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>Välj</value>
+  </data>
+  <data name="Pass" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="Fail" xml:space="preserve">
+    <value>Underkänd</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nej</value>
+  </data>
+  <data name="Checked" xml:space="preserve">
+    <value>Markerad</value>
+  </data>
+  <data name="Unchecked" xml:space="preserve">
+    <value>Avmarkerad</value>
+  </data>
+  <data name="Passing range: {0} to {1}" xml:space="preserve">
+    <value>Godkänt intervall: {0} till {1}</value>
+  </data>
+  <data name="No minimum" xml:space="preserve">
+    <value>Ingen nedre gräns</value>
+  </data>
+  <data name="No maximum" xml:space="preserve">
+    <value>Ingen övre gräns</value>
+  </data>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
+    <value>Underlagsbild (PNG/JPEG, högst 10 MB; virusskanning krävs)</value>
+  </data>
+  <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
+    <value>Rita din underskrift eller ladda upp en bild av den. Om ett oberoende vittne krävs måste vittnet logga in separat.</value>
+  </data>
+  <data name="Signature drawing area. Alternatively upload an image." xml:space="preserve">
+    <value>Rityta för underskrift. Du kan även ladda upp en bild.</value>
+  </data>
+  <data name="Draw a signature first." xml:space="preserve">
+    <value>Rita en underskrift först.</value>
+  </data>
+  <data name="Site / building / room" xml:space="preserve">
+    <value>Plats / byggnad / rum</value>
+  </data>
+  <data name="Reported latitude (required)" xml:space="preserve">
+    <value>Rapporterad latitud (obligatorisk)</value>
+  </data>
+  <data name="Location is unavailable. Enter coordinates manually." xml:space="preserve">
+    <value>Platsen är inte tillgänglig. Ange koordinaterna manuellt.</value>
+  </data>
+  <data name="Location could not be read. Enter coordinates manually." xml:space="preserve">
+    <value>Det gick inte att läsa platsen. Ange koordinaterna manuellt.</value>
+  </data>
+  <data name="Earlier progress saved; unsaved changes remain." xml:space="preserve">
+    <value>Tidigare förlopp har sparats; osparade ändringar återstår.</value>
+  </data>
+  <data name="Progress saved." xml:space="preserve">
+    <value>Förloppet har sparats.</value>
+  </data>
+  <data name="The request could not be completed. Your changes are still on this page." xml:space="preserve">
+    <value>Begäran kunde inte slutföras. Dina ändringar finns kvar på den här sidan.</value>
+  </data>
+  <data name="The request could not be completed." xml:space="preserve">
+    <value>Begäran kunde inte slutföras.</value>
+  </data>
+  <data name="Evidence must be at most 10 MB." xml:space="preserve">
+    <value>Underlaget får vara högst 10 MB.</value>
+  </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>Pågår</value>
+  </data>
+  <data name="AwaitingWitness" xml:space="preserve">
+    <value>Inväntar vittne</value>
+  </data>
+  <data name="Protected checklist data" xml:space="preserve">
+    <value>Skyddade checklistedata</value>
+  </data>
+  <data name="Protected checklists" xml:space="preserve">
+    <value>Skyddade checklistor</value>
+  </data>
+  <data name="Unlock checklist data" xml:space="preserve">
+    <value>Lås upp checklistedata</value>
+  </data>
+  <data name="Verify your identity to view the checklist, answers and evidence." xml:space="preserve">
+    <value>Verifiera din identitet för att visa checklistan, svaren och underlagen.</value>
+  </data>
+  <data name="Verify and open" xml:space="preserve">
+    <value>Verifiera och öppna</value>
+  </data>
+  <data name="Use this template" xml:space="preserve">
+    <value>Använd den här mallen</value>
+  </data>
+  <data name="Manage checklists" xml:space="preserve">
+    <value>Hantera checklistor</value>
+  </data>
+  <data name="View checklist results" xml:space="preserve">
+    <value>Visa checklistornas resultat</value>
+  </data>
+  <data name="Create, edit, publish and retire free checklists." xml:space="preserve">
+    <value>Skapa, redigera, publicera och avveckla kostnadsfria checklistor.</value>
+  </data>
+  <data name="View results from other members. Members retain their own history." xml:space="preserve">
+    <value>Visa andra medlemmars resultat. Medlemmarna behåller åtkomsten till sin egen historik.</value>
+  </data>
+  <data name="Checks" xml:space="preserve">
+    <value>Kontroller</value>
+  </data>
+</root>

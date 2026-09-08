@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Providers.Claims
+namespace Resgrid.Providers.Claims
 {
 	public static class ResgridClaimTypes
 	{
@@ -58,6 +58,8 @@
 
 		public static class Resources
 		{
+			public const string Checklist = "Checklist";
+			public const string ChecklistResults = "ChecklistResults";
 			// Resources
 			public const string Department = "Department";
 			public const string Personnel = "Personnel";

@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="NewChecklist" xml:space="preserve">
+    <value>Νέα λίστα</value>
+  </data>
+  <data name="NoDefinitions" xml:space="preserve">
+    <value>Δεν υπάρχουν λίστες σε αυτή τη σελίδα.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Έκδοση</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Retired" xml:space="preserve">
+    <value>Αποσυρμένη</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>Δημοσιευμένη</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Προηγούμενο</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="EditChecklist" xml:space="preserve">
+    <value>Επεξεργασία λίστας</value>
+  </data>
+  <data name="DraftGuidance" xml:space="preserve">
+    <value>Αποθηκεύστε ένα πρόχειρο και δημοσιεύστε το. Οι υπάρχουσες εκτελέσεις διατηρούν την αρχική έκδοση. Μην εισάγετε δεδομένα ασθενών.</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Αποθήκευση πρόχειρου</value>
+  </data>
+  <data name="PublishedVersion" xml:space="preserve">
+    <value>Δημοσιευμένη έκδοση</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="EditDraft" xml:space="preserve">
+    <value>Επεξεργασία πρόχειρου</value>
+  </data>
+  <data name="PublishDraft" xml:space="preserve">
+    <value>Δημοσίευση πρόχειρου</value>
+  </data>
+  <data name="PublishGuidance" xml:space="preserve">
+    <value>Η δημοσίευση δημιουργεί αμετάβλητη έκδοση για νέες εκτελέσεις.</value>
+  </data>
+  <data name="Retire" xml:space="preserve">
+    <value>Απόσυρση</value>
+  </data>
+  <data name="DeleteDraft" xml:space="preserve">
+    <value>Διαγραφή πρόχειρου</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>Στόχος</value>
+  </data>
+  <data name="SelectTarget" xml:space="preserve">
+    <value>Επιλέξτε στόχο</value>
+  </data>
+  <data name="StartRun" xml:space="preserve">
+    <value>Έναρξη λίστας</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Ιστορικό</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Βαθμολογία</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="Passed" xml:space="preserve">
+    <value>Επιτυχία</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Αποτυχία</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>Ελλιπές</value>
+  </data>
+  <data name="RunGuidance" xml:space="preserve">
+    <value>Απαντήστε σε κάθε σχετικό στοιχείο. Το μη εφαρμόσιμο απαιτεί αιτιολογία. Αποθηκεύστε την πρόοδο για συνέχεια αργότερα. Οι υποβληθείσες απαντήσεις και αποδείξεις δεν αλλάζουν.</value>
+  </data>
+  <data name="SaveProgress" xml:space="preserve">
+    <value>Αποθήκευση προόδου</value>
+  </data>
+  <data name="SubmitRun" xml:space="preserve">
+    <value>Υποβολή λίστας</value>
+  </data>
+  <data name="NoScore" xml:space="preserve">
+    <value>Χωρίς εφαρμόσιμη βαθμολογία</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Συντάκτης</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>Υποβλήθηκε</value>
+  </data>
+  <data name="WitnessLabel" xml:space="preserve">
+    <value>Μάρτυρας</value>
+  </data>
+  <data name="Item" xml:space="preserve">
+    <value>Στοιχείο</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Απάντηση</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>Αποδεικτικό</value>
+  </data>
+  <data name="Unanswered" xml:space="preserve">
+    <value>Αναπάντητο</value>
+  </data>
+  <data name="ReportedLocation" xml:space="preserve">
+    <value>Δηλωμένη τοποθεσία</value>
+  </data>
+  <data name="WitnessInstructions" xml:space="preserve">
+    <value>Ένα διαφορετικό μέλος με επαληθευμένη ταυτότητα πρέπει να ελέγξει ανεξάρτητα τις υποβληθείσες απαντήσεις και τα αποδεικτικά. Μοιραστείτε μαζί του τον σύνδεσμο αυτής της σελίδας.</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>Δήλωση ανεξάρτητης επαλήθευσης</value>
+  </data>
+  <data name="Attest" xml:space="preserve">
+    <value>Βεβαίωση και ολοκλήρωση</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Εξαγωγή JSON</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Εκτύπωση</value>
+  </data>
+  <data name="Checklist name" xml:space="preserve">
+    <value>Όνομα λίστας</value>
+  </data>
+  <data name="Instructions (do not include patient data)" xml:space="preserve">
+    <value>Οδηγίες (χωρίς δεδομένα ασθενών)</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="Target type" xml:space="preserve">
+    <value>Τύπος στόχου</value>
+  </data>
+  <data name="Passing score (%)" xml:space="preserve">
+    <value>Ελάχιστη βαθμολογία (%)</value>
+  </data>
+  <data name="Require reported location" xml:space="preserve">
+    <value>Απαίτηση δηλωμένης τοποθεσίας</value>
+  </data>
+  <data name="Require a different authenticated member to witness the submission" xml:space="preserve">
+    <value>Απαίτηση διαφορετικού μέλους με επαληθευμένη ταυτότητα ως μάρτυρα της υποβολής</value>
+  </data>
+  <data name="Section name" xml:space="preserve">
+    <value>Όνομα ενότητας</value>
+  </data>
+  <data name="Question / check" xml:space="preserve">
+    <value>Ερώτηση / έλεγχος</value>
+  </data>
+  <data name="Item instructions" xml:space="preserve">
+    <value>Οδηγίες στοιχείου</value>
+  </data>
+  <data name="Answer type" xml:space="preserve">
+    <value>Τύπος απάντησης</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Απαιτείται</value>
+  </data>
+  <data name="Critical failure overrides the score" xml:space="preserve">
+    <value>Η κρίσιμη αποτυχία υπερισχύει της βαθμολογίας</value>
+  </data>
+  <data name="Allow N/A with a reason" xml:space="preserve">
+    <value>Να επιτρέπεται μη εφαρμόσιμο με αιτιολογία</value>
+  </data>
+  <data name="Require a note on failure" xml:space="preserve">
+    <value>Απαίτηση σημείωσης σε αποτυχία</value>
+  </data>
+  <data name="Require a photo on failure" xml:space="preserve">
+    <value>Απαίτηση φωτογραφίας σε αποτυχία</value>
+  </data>
+  <data name="Score weight (0 excludes this item from the score)" xml:space="preserve">
+    <value>Βαρύτητα βαθμολογίας (0 εξαιρεί το στοιχείο)</value>
+  </data>
+  <data name="Passing answer" xml:space="preserve">
+    <value>Απάντηση επιτυχίας</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="Minimum passing value (optional if maximum is set)" xml:space="preserve">
+    <value>Ελάχιστη τιμή επιτυχίας (προαιρετική με μέγιστο)</value>
+  </data>
+  <data name="Maximum passing value (optional if minimum is set)" xml:space="preserve">
+    <value>Μέγιστη τιμή επιτυχίας (προαιρετική με ελάχιστο)</value>
+  </data>
+  <data name="Choices (one per line)" xml:space="preserve">
+    <value>Επιλογές (μία ανά γραμμή)</value>
+  </data>
+  <data name="Exact passing choice" xml:space="preserve">
+    <value>Ακριβής επιλογή επιτυχίας</value>
+  </data>
+  <data name="Show only when" xml:space="preserve">
+    <value>Εμφάνιση μόνο όταν</value>
+  </data>
+  <data name="Also required when" xml:space="preserve">
+    <value>Απαιτείται επίσης όταν</value>
+  </data>
+  <data name="Always / no condition" xml:space="preserve">
+    <value>Πάντα / χωρίς συνθήκη</value>
+  </data>
+  <data name="Move section up" xml:space="preserve">
+    <value>Μετακίνηση ενότητας πάνω</value>
+  </data>
+  <data name="Move section down" xml:space="preserve">
+    <value>Μετακίνηση ενότητας κάτω</value>
+  </data>
+  <data name="Remove section" xml:space="preserve">
+    <value>Αφαίρεση ενότητας</value>
+  </data>
+  <data name="Move item up" xml:space="preserve">
+    <value>Μετακίνηση στοιχείου πάνω</value>
+  </data>
+  <data name="Move item down" xml:space="preserve">
+    <value>Μετακίνηση στοιχείου κάτω</value>
+  </data>
+  <data name="Remove item" xml:space="preserve">
+    <value>Αφαίρεση στοιχείου</value>
+  </data>
+  <data name="Add item" xml:space="preserve">
+    <value>Προσθήκη στοιχείου</value>
+  </data>
+  <data name="Add section" xml:space="preserve">
+    <value>Προσθήκη ενότητας</value>
+  </data>
+  <data name="Answer status" xml:space="preserve">
+    <value>Κατάσταση απάντησης</value>
+  </data>
+  <data name="N/A reason" xml:space="preserve">
+    <value>Αιτιολογία μη εφαρμογής</value>
+  </data>
+  <data name="Note (required on failure)" xml:space="preserve">
+    <value>Σημείωση (απαιτείται σε αποτυχία)</value>
+  </data>
+  <data name="Completion / handover note" xml:space="preserve">
+    <value>Σημείωση ολοκλήρωσης / παράδοσης</value>
+  </data>
+  <data name="Reported latitude" xml:space="preserve">
+    <value>Δηλωμένο γεωγραφικό πλάτος</value>
+  </data>
+  <data name="Reported longitude" xml:space="preserve">
+    <value>Δηλωμένο γεωγραφικό μήκος</value>
+  </data>
+  <data name="Use current location" xml:space="preserve">
+    <value>Χρήση τρέχουσας τοποθεσίας</value>
+  </data>
+  <data name="Clear signature" xml:space="preserve">
+    <value>Εκκαθάριση υπογραφής</value>
+  </data>
+  <data name="Save signature image" xml:space="preserve">
+    <value>Αποθήκευση εικόνας υπογραφής</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>Λίστες ελέγχου</value>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>Πρότυπα λιστών</value>
+  </data>
+  <data name="Free" xml:space="preserve">
+    <value>Οι λίστες είναι δωρεάν για όλα τα τμήματα.</value>
+  </data>
+  <data name="Guidance" xml:space="preserve">
+    <value>Προσαρμόστε τα πρότυπα στον εξοπλισμό, τις διαδικασίες του κατασκευαστή και τις τοπικές απαιτήσεις πριν από τη χρήση.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Εύρεση προτύπου</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Προεπισκόπηση προτύπου</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Δεν βρέθηκαν σχετικά πρότυπα.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Πίσω</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>Κρίσιμο</value>
+  </data>
+  <data name="FailNote" xml:space="preserve">
+    <value>Μια αποτυχημένη δοκιμή απαιτεί σημείωση.</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>Ο συντάκτης και ένα διαφορετικό μέλος, με επαληθευμένη την ταυτότητα και των δύο, πρέπει να επαληθεύσουν ανεξάρτητα το αποτέλεσμα.</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>Συντήρηση και εντολές εργασίας (Readiness Pro)</value>
+  </data>
+  <data name="Pass / Fail" xml:space="preserve">
+    <value>Επιτυχία / Αποτυχία</value>
+  </data>
+  <data name="Yes / No" xml:space="preserve">
+    <value>Ναι / Όχι</value>
+  </data>
+  <data name="Checkbox" xml:space="preserve">
+    <value>Πλαίσιο ελέγχου</value>
+  </data>
+  <data name="Numeric reading" xml:space="preserve">
+    <value>Αριθμητική μέτρηση</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Ποσότητα</value>
+  </data>
+  <data name="Free text" xml:space="preserve">
+    <value>Ελεύθερο κείμενο</value>
+  </data>
+  <data name="Select list" xml:space="preserve">
+    <value>Λίστα επιλογών</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Ημερομηνία</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Φωτογραφία</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>Υπογραφή</value>
+  </data>
+  <data name="Start of shift" xml:space="preserve">
+    <value>Έναρξη βάρδιας</value>
+  </data>
+  <data name="Unit check" xml:space="preserve">
+    <value>Έλεγχος μονάδας</value>
+  </data>
+  <data name="Personal gear" xml:space="preserve">
+    <value>Ατομικός εξοπλισμός</value>
+  </data>
+  <data name="Annual review" xml:space="preserve">
+    <value>Ετήσια ανασκόπηση</value>
+  </data>
+  <data name="Facility" xml:space="preserve">
+    <value>Εγκατάσταση</value>
+  </data>
+  <data name="Safety audit" xml:space="preserve">
+    <value>Έλεγχος ασφάλειας</value>
+  </data>
+  <data name="Equipment check" xml:space="preserve">
+    <value>Έλεγχος εξοπλισμού</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Άλλο</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>Τμήμα</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="Group / station" xml:space="preserve">
+    <value>Ομάδα / σταθμός</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="Section {0}" xml:space="preserve">
+    <value>Ενότητα {0}</value>
+  </data>
+  <data name="Item {0}" xml:space="preserve">
+    <value>Στοιχείο {0}</value>
+  </data>
+  <data name="Remove this section and its items from the draft?" xml:space="preserve">
+    <value>Να αφαιρεθούν αυτή η ενότητα και τα στοιχεία της από το πρόχειρο;</value>
+  </data>
+  <data name="Remove this item from the draft?" xml:space="preserve">
+    <value>Να αφαιρεθεί αυτό το στοιχείο από το πρόχειρο;</value>
+  </data>
+  <data name="Yes / checked" xml:space="preserve">
+    <value>Ναι / επιλεγμένο</value>
+  </data>
+  <data name="No / unchecked" xml:space="preserve">
+    <value>Όχι / μη επιλεγμένο</value>
+  </data>
+  <data name="Unnamed earlier item" xml:space="preserve">
+    <value>Προηγούμενο στοιχείο χωρίς όνομα</value>
+  </data>
+  <data name="Answer that activates this condition" xml:space="preserve">
+    <value>Απάντηση που ενεργοποιεί αυτή τη συνθήκη</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>Προαιρετικό</value>
+  </data>
+  <data name="Answered" xml:space="preserve">
+    <value>Απαντημένο</value>
+  </data>
+  <data name="N/A" xml:space="preserve">
+    <value>Δεν εφαρμόζεται</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>Επιλέξτε</value>
+  </data>
+  <data name="Pass" xml:space="preserve">
+    <value>Επιτυχία</value>
+  </data>
+  <data name="Fail" xml:space="preserve">
+    <value>Αποτυχία</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+  <data name="Checked" xml:space="preserve">
+    <value>Επιλεγμένο</value>
+  </data>
+  <data name="Unchecked" xml:space="preserve">
+    <value>Μη επιλεγμένο</value>
+  </data>
+  <data name="Passing range: {0} to {1}" xml:space="preserve">
+    <value>Εύρος επιτυχίας: {0} έως {1}</value>
+  </data>
+  <data name="No minimum" xml:space="preserve">
+    <value>Χωρίς ελάχιστο</value>
+  </data>
+  <data name="No maximum" xml:space="preserve">
+    <value>Χωρίς μέγιστο</value>
+  </data>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
+    <value>Εικόνα τεκμηρίωσης (PNG/JPEG, έως 10 MB· απαιτείται έλεγχος για κακόβουλο λογισμικό)</value>
+  </data>
+  <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
+    <value>Σχεδιάστε την υπογραφή σας ή μεταφορτώστε εικόνα της. Αν απαιτείται ανεξάρτητος μάρτυρας, πρέπει να συνδεθεί ξεχωριστά.</value>
+  </data>
+  <data name="Signature drawing area. Alternatively upload an image." xml:space="preserve">
+    <value>Περιοχή σχεδίασης υπογραφής. Εναλλακτικά, μεταφορτώστε μια εικόνα.</value>
+  </data>
+  <data name="Draw a signature first." xml:space="preserve">
+    <value>Σχεδιάστε πρώτα μια υπογραφή.</value>
+  </data>
+  <data name="Site / building / room" xml:space="preserve">
+    <value>Τοποθεσία / κτίριο / δωμάτιο</value>
+  </data>
+  <data name="Reported latitude (required)" xml:space="preserve">
+    <value>Δηλωμένο γεωγραφικό πλάτος (απαιτείται)</value>
+  </data>
+  <data name="Location is unavailable. Enter coordinates manually." xml:space="preserve">
+    <value>Η τοποθεσία δεν είναι διαθέσιμη. Εισαγάγετε τις συντεταγμένες χειροκίνητα.</value>
+  </data>
+  <data name="Location could not be read. Enter coordinates manually." xml:space="preserve">
+    <value>Δεν ήταν δυνατός ο εντοπισμός της τοποθεσίας. Εισαγάγετε τις συντεταγμένες χειροκίνητα.</value>
+  </data>
+  <data name="Earlier progress saved; unsaved changes remain." xml:space="preserve">
+    <value>Η προηγούμενη πρόοδος αποθηκεύτηκε· υπάρχουν νεότερες μη αποθηκευμένες αλλαγές.</value>
+  </data>
+  <data name="Progress saved." xml:space="preserve">
+    <value>Η πρόοδος αποθηκεύτηκε.</value>
+  </data>
+  <data name="The request could not be completed. Your changes are still on this page." xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ολοκλήρωση του αιτήματος. Οι αλλαγές σας παραμένουν σε αυτή τη σελίδα.</value>
+  </data>
+  <data name="The request could not be completed." xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ολοκλήρωση του αιτήματος.</value>
+  </data>
+  <data name="Evidence must be at most 10 MB." xml:space="preserve">
+    <value>Τα αποδεικτικά δεν πρέπει να υπερβαίνουν τα 10 MB.</value>
+  </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+  </data>
+  <data name="AwaitingWitness" xml:space="preserve">
+    <value>Αναμονή μάρτυρα</value>
+  </data>
+  <data name="Protected checklist data" xml:space="preserve">
+    <value>Προστατευμένα δεδομένα λίστας ελέγχου</value>
+  </data>
+  <data name="Protected checklists" xml:space="preserve">
+    <value>Προστατευμένες λίστες ελέγχου</value>
+  </data>
+  <data name="Unlock checklist data" xml:space="preserve">
+    <value>Ξεκλείδωμα δεδομένων λίστας ελέγχου</value>
+  </data>
+  <data name="Verify your identity to view the checklist, answers and evidence." xml:space="preserve">
+    <value>Επαληθεύστε την ταυτότητά σας για να δείτε τη λίστα, τις απαντήσεις και τα αποδεικτικά.</value>
+  </data>
+  <data name="Verify and open" xml:space="preserve">
+    <value>Επαλήθευση και άνοιγμα</value>
+  </data>
+  <data name="Use this template" xml:space="preserve">
+    <value>Χρήση αυτού του προτύπου</value>
+  </data>
+  <data name="Manage checklists" xml:space="preserve">
+    <value>Διαχείριση λιστών ελέγχου</value>
+  </data>
+  <data name="View checklist results" xml:space="preserve">
+    <value>Προβολή αποτελεσμάτων λιστών ελέγχου</value>
+  </data>
+  <data name="Create, edit, publish and retire free checklists." xml:space="preserve">
+    <value>Δημιουργία, επεξεργασία, δημοσίευση και απόσυρση δωρεάν λιστών ελέγχου.</value>
+  </data>
+  <data name="View results from other members. Members retain their own history." xml:space="preserve">
+    <value>Προβολή αποτελεσμάτων άλλων μελών. Τα μέλη διατηρούν πρόσβαση στο δικό τους ιστορικό.</value>
+  </data>
+  <data name="Checks" xml:space="preserve">
+    <value>Έλεγχοι</value>
+  </data>
+</root>

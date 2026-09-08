@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
@@ -317,6 +317,8 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.Record_Reassign, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Reassign));
 				options.AddPolicy(ResgridResources.RecordLegacy_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordLegacy, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.RecordRestricted_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordRestricted, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Checklist_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.ChecklistResults_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.RecordDefinition_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.RecordDefinition_Publish, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Publish));
 				options.AddPolicy(ResgridResources.RecordReport_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordReport, ResgridClaimTypes.Actions.Update));

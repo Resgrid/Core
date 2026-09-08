@@ -35,12 +35,12 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public const string EveryoneValue = "3";
 		public const string DepartmentAndGroupAdminsAndSelectRolesValue = "4";
 
-		public static List<RecordsPermissionRow> Build(IEnumerable<Permission> permissions)
+		public static List<RecordsPermissionRow> Build(IEnumerable<Permission> permissions, IEnumerable<RecordPermissionDescriptor> descriptors = null)
 		{
 			var existing = (permissions ?? Enumerable.Empty<Permission>()).Where(p => p != null).ToList();
 			var rows = new List<RecordsPermissionRow>();
 
-			foreach (var descriptor in RecordPermissionCatalog.All)
+			foreach (var descriptor in descriptors ?? RecordPermissionCatalog.All)
 			{
 				var row = existing.FirstOrDefault(p => p.PermissionType == (int)descriptor.Type);
 				var value = row != null ? row.Action : (int)descriptor.NoRowDefault;
@@ -50,7 +50,7 @@ namespace Resgrid.Web.Areas.User.Models.Security
 					Type = descriptor.Type,
 					Value = value,
 					HasRow = row != null,
-					LockToGroup = row != null && row.LockToGroup,
+					LockToGroup = row != null ? row.LockToGroup : descriptor.Type == PermissionTypes.ViewChecklistResults,
 					ShowLockToGroup = descriptor.LockToGroupMeaningful,
 					Options = BuildOptions(descriptor.EveryoneOffered, value)
 				});

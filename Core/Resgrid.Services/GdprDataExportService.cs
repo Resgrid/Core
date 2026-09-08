@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -34,6 +34,7 @@ namespace Resgrid.Services
 		private readonly ITrainingService _trainingService;
 		private readonly IShiftsService _shiftsService;
 		private readonly IEmailService _emailService;
+		private readonly IChecklistRepository _checklists;
 
 		public GdprDataExportService(
 			IGdprDataExportRequestRepository repository,
@@ -49,7 +50,7 @@ namespace Resgrid.Services
 			ICertificationService certificationService,
 			ITrainingService trainingService,
 			IShiftsService shiftsService,
-			IEmailService emailService)
+			IEmailService emailService, IChecklistRepository checklists = null)
 		{
 			_repository = repository;
 			_userProfileService = userProfileService;
@@ -65,6 +66,7 @@ namespace Resgrid.Services
 			_trainingService = trainingService;
 			_shiftsService = shiftsService;
 			_emailService = emailService;
+			_checklists = checklists;
 		}
 
 		public async Task<GdprDataExportRequest> CreateExportRequestAsync(string userId, int departmentId, CancellationToken cancellationToken = default)
@@ -179,6 +181,7 @@ namespace Resgrid.Services
 				await AddJsonEntry(archive, "certifications.json", await BuildCertificationsDataAsync(userId), ledger);
 				await AddJsonEntry(archive, "trainings.json", await BuildTrainingsDataAsync(userId), ledger);
 				await AddJsonEntry(archive, "shifts.json", await BuildShiftsDataAsync(userId), ledger);
+				if (_checklists != null) await AddJsonEntry(archive, "checklists.json", await BuildChecklistDataAsync(userId, departmentId), ledger);
 
 				// Written last, so it can report what every other entry withheld. Only present when
 				// something actually was: a member of an unprotected department gets the archive they
@@ -218,6 +221,23 @@ namespace Resgrid.Services
 				Counts[fileName] = Counts[fileName] + 1;
 				Total++;
 			}
+		}
+
+		private async Task<object> BuildChecklistDataAsync(string userId, int departmentId)
+		{
+			var records = new List<object>();
+			for (var skip = 0; ; skip += 100)
+			{
+				var batch = await _checklists.ListAsync<Resgrid.Model.Checklists.ChecklistCompletion>(departmentId, skip: skip);
+				foreach (var completion in batch.Where(c => c.CreatedBy == userId || c.WitnessUserId == userId || c.TargetType == (int)Resgrid.Model.Checklists.ChecklistTargetType.Personnel && c.TargetId == userId))
+				{
+					var files = await _checklists.ListAsync<Resgrid.Model.Checklists.ChecklistCompletionFile>(departmentId, completion.Id, take: 500);
+					records.Add(new { Completion = completion, Answers = await _checklists.ListAsync<Resgrid.Model.Checklists.ChecklistCompletionItem>(departmentId, completion.Id, take: 250), Files = files });
+				}
+				if (batch.Count < 100) break;
+			}
+			// AddJsonEntry applies the existing recursive ADP redaction and records omissions in the manifest.
+			return records;
 		}
 
 		private static async Task AddJsonEntry(ZipArchive archive, string fileName, object data, RedactionLedger ledger)

@@ -2857,6 +2857,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.TrainingEnabled = !model.Modules.TrainingDisabled;
 			model.InventoryEnabled = !model.Modules.InventoryDisabled;
 			model.MaintenanceEnabled = !model.Modules.MaintenanceDisabled;
+			model.ChecklistsEnabled = !model.Modules.ChecklistsDisabled;
 
 			return View(model);
 		}
@@ -2884,6 +2885,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				modules.TrainingDisabled = !model.TrainingEnabled;
 				modules.InventoryDisabled = !model.InventoryEnabled;
 				modules.MaintenanceDisabled = !model.MaintenanceEnabled;
+				modules.ChecklistsDisabled = !model.ChecklistsEnabled;
 
 				await _departmentSettingsService.SetDepartmentModuleSettingsAsync(DepartmentId, modules, cancellationToken);
 

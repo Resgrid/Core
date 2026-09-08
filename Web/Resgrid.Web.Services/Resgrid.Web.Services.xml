@@ -1120,6 +1120,12 @@
             </summary>
             <param name="callId">The call identifier to inspect.</param>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistsController.GetChecklistTemplates(System.String)">
+            <summary>Searches the free starter catalog for the authenticated department.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistsController.GetChecklistTemplate(System.String)">
+            <summary>Returns a starter template preview, including critical checks and witness requirements.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CommandsController">
             <summary>
             Command definitions: predefined incident-command templates (swimlanes) per call type, used to
@@ -2748,6 +2754,9 @@
             Anonymous, token-scoped public incident status feed. It exposes only records explicitly marked Public and only
             while the Incident Commander/PIO has public sharing enabled. Disabling sharing revokes the token immediately.
             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ReadinessController.GetAccess">
+            <summary>Independent feature availability and monthly offers. A flag alone is not a paid entitlement.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController">
             <summary>

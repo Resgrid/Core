@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using Resgrid.Config;
 using Resgrid.Framework;
@@ -80,6 +80,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 				ItemId = message.Call.CallId.ToString()
 			}.SerializeJson());
 		}
+
+		public Task<bool> ChecklistUpdated(int departmentId, string completionId) => SendMessage(Topics.EventingTopic, new EventingMessage
+		{
+			Id = Guid.NewGuid(), Type = (int)EventingTypes.ChecklistUpdated, TimeStamp = DateTime.UtcNow, DepartmentId = departmentId, ItemId = completionId
+		}.SerializeJson());
 
 		public async Task<bool> IncidentCommandUpdated(IncidentCommandUpdatedEvent message)
 		{

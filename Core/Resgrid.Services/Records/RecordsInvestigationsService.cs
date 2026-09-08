@@ -144,13 +144,36 @@ namespace Resgrid.Services.Records
 		public async Task<RmsInvestigationCase> UpdateAsync(int departmentId, string userId, RmsInvestigationCase input, CancellationToken cancellationToken = default)
 		{
 			if (input == null) throw new ArgumentNullException(nameof(input));
-			var (investigation, _) = await RequireMemberAsync(departmentId, userId, input.RmsInvestigationCaseId, RmsInvestigationRole.Lead, RmsInvestigationRole.Investigator);
+			var (investigation, role) = await RequireMemberAsync(departmentId, userId, input.RmsInvestigationCaseId, RmsInvestigationRole.Lead, RmsInvestigationRole.Investigator);
 			RequireOpen(investigation);
 			if (input.RowVersion != 0 && input.RowVersion != investigation.RowVersion) throw new InvalidOperationException("The case changed since it was loaded. Reload it before saving.");
 			var existing = new RmsInvestigationCase { IncidentSummary = investigation.IncidentSummary, CauseDetail = investigation.CauseDetail, OriginDescription = investigation.OriginDescription, Findings = investigation.Findings, ClosureReason = investigation.ClosureReason };
 			investigation.Title = RecordsPreventionGate.Require(input.Title, 250, "A case needs a title.");
 			investigation.IncidentSummary = RecordsPreventionGate.Trim(input.IncidentSummary, 8000); investigation.RmsOccupancyId = RecordsPreventionGate.Trim(input.RmsOccupancyId, 36); investigation.CallId = input.CallId;
-			if (!string.IsNullOrWhiteSpace(input.LeadInvestigatorUserId)) investigation.LeadInvestigatorUserId = input.LeadInvestigatorUserId.Trim();
+			// Only a lead reassigns the lead. An investigator may edit the case body, so the posted value is
+			// authoritative for nobody else: a tampered field is denied rather than quietly applied.
+			var requestedLead = RecordsPreventionGate.Trim(input.LeadInvestigatorUserId, 128);
+			if (requestedLead != null && requestedLead != investigation.LeadInvestigatorUserId)
+			{
+				if (role != RmsInvestigationRole.Lead)
+				{
+					await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Denied, AuditPurpose, investigation.RmsInvestigationCaseId,
+						new { reason = "only a lead investigator may reassign the lead investigator" }, successful: false, cancellationToken: cancellationToken);
+					throw new UnauthorizedAccessException("Only a lead investigator may reassign the lead investigator.");
+				}
+
+				if (!await _authorization.IsActiveMemberAsync(requestedLead, departmentId))
+					throw new ArgumentException("The lead investigator must be an active member of the department.");
+
+				// Every case operation goes through RequireMemberAsync, so a lead who is not on the case could not open
+				// the case they lead. Add them to the case first, then hand them the lead.
+				var onCase = ((await _members.GetForCaseAsync(departmentId, investigation.RmsInvestigationCaseId)) ?? Enumerable.Empty<RmsInvestigationCaseMember>())
+					.Any(m => m.UserId == requestedLead && m.IsActive);
+				if (!onCase)
+					throw new ArgumentException("The lead investigator must be an active member of the case.");
+
+				investigation.LeadInvestigatorUserId = requestedLead;
+			}
 			investigation.ModifiedOn = DateTime.UtcNow; investigation.RowVersion++;
 			await SealAndUpdateAsync(departmentId, userId, investigation, existing, cancellationToken);
 			await _gate.AuditAsync(departmentId, userId, RmsAccessAuditAction.Change, AuditPurpose, investigation.RmsInvestigationCaseId, new { action = "updated" }, cancellationToken: cancellationToken);

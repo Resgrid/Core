@@ -100,7 +100,7 @@ namespace Resgrid.Services.Records
 				Successful = successful,
 				OccurredOn = DateTime.UtcNow,
 				Purpose = Trim(purpose, 100),
-				CorrelationId = Trim(aggregateId, 100),
+				CorrelationId = Trim(aggregateId, 36),
 				IpAddress = Trim(ipAddress, 64),
 				OriginClient = (int)RmsOriginClient.Web,
 				DetailJson = detail == null ? null : JsonConvert.SerializeObject(detail)

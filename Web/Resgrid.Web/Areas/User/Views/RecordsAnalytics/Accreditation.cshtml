@@ -1,0 +1,122 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordsAccreditationView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["AnalyticsHeader"] + " - " + L["AnalyticsAccreditation"];
+	var a = Model.Accreditation;
+}
+@await Html.PartialAsync("_AnalyticsShell", Model)
+<div class="wrapper wrapper-content" style="padding-top:0">
+	@if (a != null)
+	{
+		<div class="row">
+			<div class="col-md-6">
+				<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsResponseSummary"]</h5></div><div class="ibox-content">
+					<dl class="dl-horizontal m-b-none">
+						<dt>@L["AnalyticsResponses"]</dt><dd>@a.Response.Responses</dd>
+						<dt>@L["AnalyticsTurnout"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(a.Response.TurnoutP90Seconds) · @L["AnalyticsWithinTarget"] @RmsAnalyticsDisplay.Percent(a.Response.TurnoutWithinTargetPercent)</dd>
+						<dt>@L["AnalyticsTravel"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(a.Response.TravelP90Seconds) · @L["AnalyticsWithinTarget"] @RmsAnalyticsDisplay.Percent(a.Response.TravelWithinTargetPercent)</dd>
+						<dt>@L["AnalyticsTotalResponse"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(a.Response.TotalResponseP90Seconds)</dd>
+						<dt>@L["AnalyticsFirstArrival"] @L["AnalyticsP90"]</dt><dd>@RmsAnalyticsDisplay.Seconds(a.Response.FirstArrivalP90Seconds)</dd>
+					</dl>
+				</div></div>
+				<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsTraining"]</h5></div><div class="ibox-content">
+					<dl class="dl-horizontal">
+						<dt>@L["AnalyticsTrainingRecords"]</dt><dd>@a.Training.Records</dd>
+						<dt>@L["AnalyticsTrainingHours"]</dt><dd>@RmsAnalyticsDisplay.Hours(a.Training.Hours)</dd>
+						<dt>@L["AnalyticsMembersTrained"]</dt><dd>@a.Training.MembersTrained</dd>
+						<dt>@L["AnalyticsHoursPerMember"]</dt><dd>@RmsAnalyticsDisplay.Number(a.Training.HoursPerMember)</dd>
+					</dl>
+					@await Html.PartialAsync("_AnalyticsCounts", a.Training.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "bar" }, { "ShowHours", true }, { "Take", 24 } })
+				</div></div>
+			</div>
+			<div class="col-md-6">
+				<div class="ibox"><div class="ibox-title"><h5>@L["Inspections"]</h5></div><div class="ibox-content">
+					@if (!a.InspectionsEnabled || a.Inspections == null) { <p class="text-muted">@L["AnalyticsModuleOff"]</p> }
+					else
+					{
+						var i = a.Inspections;
+						<dl class="dl-horizontal">
+							<dt>@L["AnalyticsCompleted"]</dt><dd>@i.Completed (@L["AnalyticsPassed"] @i.Passed · @L["AnalyticsFailed"] @i.Failed · @L["AnalyticsConditional"] @i.Conditional)</dd>
+							<dt>@L["AnalyticsPassRate"]</dt><dd>@RmsAnalyticsDisplay.Percent(i.PassRatePercent)</dd>
+							<dt>@L["AnalyticsOnSchedule"]</dt><dd>@RmsAnalyticsDisplay.Percent(i.OnSchedulePercent) (@i.CompletedOnSchedule)</dd>
+							<dt>@L["AnalyticsDaysScheduledToCompleted"]</dt><dd>@RmsAnalyticsDisplay.Number(i.AverageDaysScheduledToCompleted)</dd>
+							<dt>@L["AnalyticsReinspections"]</dt><dd>@i.ReinspectionsRequired</dd>
+							<dt>@L["AnalyticsCancelled"]</dt><dd>@i.Cancelled</dd>
+							<dt>@L["AnalyticsOpenNow"]</dt><dd>@i.OpenNow (@i.OverdueNow @L["Overdue"])</dd>
+						</dl>
+						@await Html.PartialAsync("_AnalyticsCounts", i.ByProgram, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByProgram"].Value } })
+					}
+				</div></div>
+				<div class="ibox"><div class="ibox-title"><h5>@L["Violations"]</h5></div><div class="ibox-content">
+					@if (!a.InspectionsEnabled || a.Violations == null) { <p class="text-muted">@L["AnalyticsModuleOff"]</p> }
+					else
+					{
+						var v = a.Violations;
+						<dl class="dl-horizontal">
+							<dt>@L["AnalyticsOpened"]</dt><dd>@v.Opened</dd>
+							<dt>@L["AnalyticsCorrected"]</dt><dd>@v.Corrected (@L["AnalyticsVerified"] @v.Verified · @L["AnalyticsWaived"] @v.Waived · @L["AnalyticsEscalated"] @v.Escalated)</dd>
+							<dt>@L["AnalyticsDaysToCorrection"]</dt><dd>@RmsAnalyticsDisplay.Number(v.AverageDaysToCorrection)</dd>
+							<dt>@L["AnalyticsOpenNow"]</dt><dd>@v.OpenNow (@v.OverdueNow @L["Overdue"])</dd>
+						</dl>
+						@await Html.PartialAsync("_AnalyticsCounts", v.BySeverity, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsBySeverity"].Value } })
+					}
+				</div></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-4">
+				<div class="ibox"><div class="ibox-title"><h5>@L["Permits"]</h5></div><div class="ibox-content">
+					@if (!a.PermitsEnabled || a.Permits == null) { <p class="text-muted">@L["AnalyticsModuleOff"]</p> }
+					else
+					{
+						var pm = a.Permits;
+						<dl class="dl-horizontal">
+							<dt>@L["AnalyticsApplied"]</dt><dd>@pm.Applied</dd>
+							<dt>@L["AnalyticsIssued"]</dt><dd>@pm.Issued</dd>
+							<dt>@L["AnalyticsDenied"]</dt><dd>@pm.Denied</dd>
+							<dt>@L["AnalyticsExpired"]</dt><dd>@pm.Expired · @L["AnalyticsRevoked"] @pm.Revoked</dd>
+							<dt>@L["AnalyticsActiveNow"]</dt><dd>@pm.ActiveNow</dd>
+							<dt>@L["AnalyticsDaysToIssue"]</dt><dd>@RmsAnalyticsDisplay.Number(pm.AverageDaysAppliedToIssued)</dd>
+						</dl>
+						@await Html.PartialAsync("_AnalyticsCounts", pm.ByType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByType"].Value } })
+					}
+				</div></div>
+			</div>
+			<div class="col-md-4">
+				<div class="ibox"><div class="ibox-title"><h5>@L["Hydrants"]</h5></div><div class="ibox-content">
+					@if (!a.HydrantsEnabled || a.Hydrants == null) { <p class="text-muted">@L["AnalyticsModuleOff"]</p> }
+					else
+					{
+						var h = a.Hydrants;
+						<dl class="dl-horizontal">
+							<dt>@L["AnalyticsTotal"]</dt><dd>@h.Total</dd>
+							<dt>@L["AnalyticsInService"]</dt><dd>@h.InService · @L["OutOfService"] @h.OutOfService</dd>
+							<dt>@L["AnalyticsTestedWithin12Months"]</dt><dd>@RmsAnalyticsDisplay.Percent(h.TestedWithin12MonthsPercent) (@h.TestedWithin12Months)</dd>
+							<dt>@L["AnalyticsFlowTests"]</dt><dd>@h.FlowTestsInWindow</dd>
+						</dl>
+						@await Html.PartialAsync("_AnalyticsCounts", h.ByFlowClass, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByFlowClass"].Value } })
+					}
+				</div></div>
+			</div>
+			<div class="col-md-4">
+				<div class="ibox"><div class="ibox-title"><h5>@L["Occupancies"]</h5></div><div class="ibox-content">
+					@if (!a.OccupancyEnabled || a.Occupancies == null) { <p class="text-muted">@L["AnalyticsModuleOff"]</p> }
+					else
+					{
+						var o = a.Occupancies;
+						<dl class="dl-horizontal">
+							<dt>@L["AnalyticsTotal"]</dt><dd>@o.Total</dd>
+							<dt>@L["AnalyticsReviewCurrent"]</dt><dd>@RmsAnalyticsDisplay.Percent(o.ReviewCurrentPercent) (@o.ReviewCurrent) · @L["AnalyticsReviewOverdue"] @o.ReviewOverdue</dd>
+							<dt>@L["AnalyticsInspectedWithin12Months"]</dt><dd>@RmsAnalyticsDisplay.Percent(o.InspectedWithin12MonthsPercent) (@o.InspectedWithin12Months)</dd>
+							<dt>@L["AnalyticsHazmat"]</dt><dd>@o.HazmatOnSite</dd>
+							<dt>@L["AnalyticsOpenViolations"]</dt><dd>@o.OpenViolations</dd>
+						</dl>
+						@await Html.PartialAsync("_AnalyticsCounts", o.ByType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByType"].Value } })
+					}
+				</div></div>
+			</div>
+		</div>
+	}
+</div>

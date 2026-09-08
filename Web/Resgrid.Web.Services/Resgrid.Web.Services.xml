@@ -2749,6 +2749,29 @@
             while the Incident Commander/PIO has public sharing enabled. Disabling sharing revokes the token immediately.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController">
+            <summary>
+            RMS-6 records analytics (RMS plan section 6, RMS-6): response-performance, workload, executive, accreditation and
+            community-risk dashboards over finalized Records. Member principals with Record_View only; a group-scoped member
+            gets figures over the Records they can open, a department administrator the department (plan section 11, q. 38).
+            The window is [start, end) in UTC, defaulting to the last 90 days and clamped to 366; a truncated result says so.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController.ResponsePerformance(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>Turnout, travel, total response, time on scene and first arrival; by unit, station group, hour of day and month.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController.Workload(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.String,System.Threading.CancellationToken)">
+            <summary>Records, hours and unit utilization by definition, month, author, station group, unit and person, plus the weekday/hour heat map.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController.Executive(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.String,System.Threading.CancellationToken)">
+            <summary>Headline figures against the preceding window of equal length, lifecycle medians, return and acceptance rates, queues and overdue obligations.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController.Accreditation(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>Inspection, violation, permit, hydrant, occupancy, training and response evidence; prevention sections only when their module is on.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController.CommunityRisk(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>Incident mix, occupancy risk profile, open violations, hydrants and CRR activity; prevention sections only when their module is on.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController">
             <summary>
             Definition management and runtime catalog over v4 (RMS plan section 5.4, RMS-1B): template browse, clone/new

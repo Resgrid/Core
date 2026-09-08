@@ -29,6 +29,13 @@ namespace Resgrid.Model.Repositories
 		public DateTime? FinalizedOnStart { get; set; }
 		public DateTime? FinalizedOnEnd { get; set; }
 
+		/// <summary>
+		/// Half-open occurrence window [OccurredOnStart, OccurredOnEnd) on the call creation time, else FinalizedOn when
+		/// the report carries no call time (RMS-6 analytics bucket incidents by when they happened, not when they were filed).
+		/// </summary>
+		public DateTime? OccurredOnStart { get; set; }
+		public DateTime? OccurredOnEnd { get; set; }
+
 		public string ViewerUserId { get; set; }
 		public int Skip { get; set; }
 		public int Take { get; set; } = 50;
@@ -55,6 +62,8 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsIncidentChildRepository<T> : IRepository<T> where T : class, IEntity
 	{
 		Task<IEnumerable<T>> GetForRecordAsync(int departmentId, string recordId, string revisionId);
+		/// <summary>Revision-bound child rows for many revisions at once (the attested set of finalized reports).</summary>
+		Task<IEnumerable<T>> GetForRevisionsAsync(int departmentId, IEnumerable<string> revisionIds);
 		Task<int> DeleteDraftForRecordAsync(int departmentId, string recordId, CancellationToken cancellationToken = default);
 	}
 

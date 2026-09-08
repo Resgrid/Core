@@ -212,6 +212,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
 				IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin(),
 				QualityReviewOn = await _featureToggles.IsEnabledAsync(FeatureFlagKeys.RecordsQualityReview, DepartmentId),
+				AnalyticsOn = await _featureToggles.IsEnabledAsync(FeatureFlagKeys.RecordsAnalytics, DepartmentId),
 				Year = year,
 				DefinitionKey = definitionKey,
 				StateFilter = state,

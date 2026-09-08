@@ -1,4 +1,4 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
 @using Resgrid.Web.Areas.User.Models.Records
@@ -73,6 +73,10 @@
 			@if (Model.ModuleState.RecordsUsable && Model.QualityReviewOn && ClaimsAuthorizationHelper.CanReviewRecords())
 			{
 				<a class="btn btn-default" asp-controller="RecordsQuality" asp-action="Index" asp-route-area="User"><i class="fa fa-check-square-o"></i> @localizer["QualityReview"]</a>
+			}
+			@if (Model.ModuleState.RecordsUsable && Model.AnalyticsOn)
+			{
+				<a class="btn btn-default" asp-controller="RecordsAnalytics" asp-action="Index" asp-route-area="User"><i class="fa fa-bar-chart"></i> @localizer["AnalyticsHeader"]</a>
 			}
 			@if (Model.IsDepartmentAdmin)
 			{

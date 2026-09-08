@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -308,6 +308,8 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordsQualityReviewService>().As<IRecordsQualityReviewService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsReleaseTelemetryService>().As<IRecordsReleaseTelemetryService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsPreventionSweepService>().As<IRecordsPreventionSweepService>().InstancePerLifetimeScope();
+			// RMS-6 records analytics
+			builder.RegisterType<Records.RecordsAnalyticsService>().As<IRecordsAnalyticsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.Connectors.RecordDeploymentConnectorsService>().As<IRecordDeploymentConnectorsService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.Connectors.GenericOrderFeedProvider>().As<IExternalOrderFeedProvider>().SingleInstance();
 			builder.RegisterType<Records.Connectors.AgencyOrderFeedProvider>().As<IExternalOrderFeedProvider>().SingleInstance();

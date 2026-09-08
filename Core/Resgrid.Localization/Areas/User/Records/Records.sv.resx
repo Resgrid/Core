@@ -1833,4 +1833,117 @@
   <data name="WaterShutoff" xml:space="preserve"><value>Vattenavstängning</value></data>
   <data name="WaterSupplyNotes" xml:space="preserve"><value>Anteckningar om vattenförsörjning</value></data>
   <data name="WorkflowRuns" xml:space="preserve"><value>Workflow-körningar</value></data>
+  <data name="AnalyticsAccreditation" xml:space="preserve"><value>Ackreditering</value></data>
+  <data name="AnalyticsActiveNow" xml:space="preserve"><value>Aktiva nu</value></data>
+  <data name="AnalyticsActivities" xml:space="preserve"><value>Aktiviteter</value></data>
+  <data name="AnalyticsAllGroups" xml:space="preserve"><value>Alla stationsgrupper</value></data>
+  <data name="AnalyticsAmended" xml:space="preserve"><value>Ändringar</value></data>
+  <data name="AnalyticsApplied" xml:space="preserve"><value>Ansökta</value></data>
+  <data name="AnalyticsAudience" xml:space="preserve"><value>Nådd publik</value></data>
+  <data name="AnalyticsAverage" xml:space="preserve"><value>Medel</value></data>
+  <data name="AnalyticsAwaitingReview" xml:space="preserve"><value>Väntar på granskning</value></data>
+  <data name="AnalyticsByCallType" xml:space="preserve"><value>Per larmtyp</value></data>
+  <data name="AnalyticsByFlowClass" xml:space="preserve"><value>Per flödesklass</value></data>
+  <data name="AnalyticsByHour" xml:space="preserve"><value>Per timme på dygnet</value></data>
+  <data name="AnalyticsByIncidentType" xml:space="preserve"><value>Per händelsetyp</value></data>
+  <data name="AnalyticsByKind" xml:space="preserve"><value>Per slag</value></data>
+  <data name="AnalyticsByMonth" xml:space="preserve"><value>Per månad</value></data>
+  <data name="AnalyticsByPerson" xml:space="preserve"><value>Per person</value></data>
+  <data name="AnalyticsByProgram" xml:space="preserve"><value>Per program</value></data>
+  <data name="AnalyticsBySeverity" xml:space="preserve"><value>Per allvarlighetsgrad</value></data>
+  <data name="AnalyticsBySource" xml:space="preserve"><value>Per källa</value></data>
+  <data name="AnalyticsByStationGroup" xml:space="preserve"><value>Per stationsgrupp</value></data>
+  <data name="AnalyticsByType" xml:space="preserve"><value>Per typ</value></data>
+  <data name="AnalyticsCancelled" xml:space="preserve"><value>Inställda</value></data>
+  <data name="AnalyticsCommunityRisk" xml:space="preserve"><value>Samhällsrisk</value></data>
+  <data name="AnalyticsCompleted" xml:space="preserve"><value>Slutförda</value></data>
+  <data name="AnalyticsConditional" xml:space="preserve"><value>Villkorade</value></data>
+  <data name="AnalyticsCorrected" xml:space="preserve"><value>Åtgärdade</value></data>
+  <data name="AnalyticsCount" xml:space="preserve"><value>Antal</value></data>
+  <data name="AnalyticsCrr" xml:space="preserve"><value>Samhällsriskreducering</value></data>
+  <data name="AnalyticsDaysScheduledToCompleted" xml:space="preserve"><value>Snitt dagar från planerad till slutförd</value></data>
+  <data name="AnalyticsDaysToCorrection" xml:space="preserve"><value>Snitt dagar till åtgärd</value></data>
+  <data name="AnalyticsDaysToIssue" xml:space="preserve"><value>Snitt dagar från ansökan till utfärdande</value></data>
+  <data name="AnalyticsDenied" xml:space="preserve"><value>Nekade</value></data>
+  <data name="AnalyticsEscalated" xml:space="preserve"><value>Eskalerade</value></data>
+  <data name="AnalyticsExecutive" xml:space="preserve"><value>Ledningsöversikt</value></data>
+  <data name="AnalyticsExpired" xml:space="preserve"><value>Utgångna</value></data>
+  <data name="AnalyticsFailed" xml:space="preserve"><value>Underkända</value></data>
+  <data name="AnalyticsFirstArrival" xml:space="preserve"><value>Första ankomst</value></data>
+  <data name="AnalyticsFlowTests" xml:space="preserve"><value>Flödestester under perioden</value></data>
+  <data name="AnalyticsFrom" xml:space="preserve"><value>Från</value></data>
+  <data name="AnalyticsGroupScoped" xml:space="preserve"><value>Siffrorna omfattar bara de poster du kan öppna; avdelningsadministratörer ser avdelningens totaler.</value></data>
+  <data name="AnalyticsHazmat" xml:space="preserve"><value>Farligt gods på plats</value></data>
+  <data name="AnalyticsHeader" xml:space="preserve"><value>Analys</value></data>
+  <data name="AnalyticsHeadline" xml:space="preserve"><value>Nyckeltal</value></data>
+  <data name="AnalyticsHeatMap" xml:space="preserve"><value>Poster per veckodag och timme</value></data>
+  <data name="AnalyticsHours" xml:space="preserve"><value>Timmar</value></data>
+  <data name="AnalyticsHoursPerMember" xml:space="preserve"><value>Timmar per medlem</value></data>
+  <data name="AnalyticsInService" xml:space="preserve"><value>I drift</value></data>
+  <data name="AnalyticsIncidentReports" xml:space="preserve"><value>Händelserapporter</value></data>
+  <data name="AnalyticsIncidents" xml:space="preserve"><value>Händelser</value></data>
+  <data name="AnalyticsInspectedWithin12Months" xml:space="preserve"><value>Inspekterade senaste 12 månaderna</value></data>
+  <data name="AnalyticsIntro" xml:space="preserve"><value>Instrumentpaneler som beräknas vid behov från slutförda poster. En gruppbegränsad användare ser bara de poster som kan öppnas; avdelningsadministratörer ser hela avdelningen.</value></data>
+  <data name="AnalyticsIssued" xml:space="preserve"><value>Utfärdade</value></data>
+  <data name="AnalyticsLifecycle" xml:space="preserve"><value>Livscykel</value></data>
+  <data name="AnalyticsMax" xml:space="preserve"><value>Högsta</value></data>
+  <data name="AnalyticsMedian" xml:space="preserve"><value>Medianvärde</value></data>
+  <data name="AnalyticsMedianHoursToFinalize" xml:space="preserve"><value>Median timmar till slutförande</value></data>
+  <data name="AnalyticsMedianReviewHours" xml:space="preserve"><value>Median granskningstid (h)</value></data>
+  <data name="AnalyticsMembersTrained" xml:space="preserve"><value>Utbildade medlemmar</value></data>
+  <data name="AnalyticsModuleOff" xml:space="preserve"><value>Den här modulen är inte aktiverad för avdelningen.</value></data>
+  <data name="AnalyticsNeedingAssistance" xml:space="preserve"><value>Boende som behöver hjälp</value></data>
+  <data name="AnalyticsNerisAcceptance" xml:space="preserve"><value>NERIS-godkännandegrad</value></data>
+  <data name="AnalyticsNerisAccepted" xml:space="preserve"><value>NERIS godkända</value></data>
+  <data name="AnalyticsNerisRejected" xml:space="preserve"><value>NERIS avvisade</value></data>
+  <data name="AnalyticsNoData" xml:space="preserve"><value>Inga slutförda poster i detta intervall.</value></data>
+  <data name="AnalyticsNoSprinklers" xml:space="preserve"><value>Utan sprinkler</value></data>
+  <data name="AnalyticsOccupancyRisk" xml:space="preserve"><value>Riskprofil för byggnader</value></data>
+  <data name="AnalyticsOnScene" xml:space="preserve"><value>Tid på plats</value></data>
+  <data name="AnalyticsOnSchedule" xml:space="preserve"><value>Slutförda i tid</value></data>
+  <data name="AnalyticsOpenDrafts" xml:space="preserve"><value>Öppna utkast</value></data>
+  <data name="AnalyticsOpenNow" xml:space="preserve"><value>Öppna nu</value></data>
+  <data name="AnalyticsOpenViolations" xml:space="preserve"><value>Öppna avvikelser</value></data>
+  <data name="AnalyticsOpened" xml:space="preserve"><value>Öppnade</value></data>
+  <data name="AnalyticsOverdueNow" xml:space="preserve"><value>Försenade åtaganden nu</value></data>
+  <data name="AnalyticsP90" xml:space="preserve"><value>90:e percentilen</value></data>
+  <data name="AnalyticsPassRate" xml:space="preserve"><value>Godkännandegrad</value></data>
+  <data name="AnalyticsPassed" xml:space="preserve"><value>Godkända</value></data>
+  <data name="AnalyticsPersonnelHours" xml:space="preserve"><value>Personaltimmar</value></data>
+  <data name="AnalyticsPriorPeriod" xml:space="preserve"><value>Föregående period</value></data>
+  <data name="AnalyticsQueues" xml:space="preserve"><value>Köer och åtaganden</value></data>
+  <data name="AnalyticsRecordHours" xml:space="preserve"><value>Posttimmar</value></data>
+  <data name="AnalyticsRecordsFinalized" xml:space="preserve"><value>Slutförda poster</value></data>
+  <data name="AnalyticsRecordsRead" xml:space="preserve"><value>Lästa poster</value></data>
+  <data name="AnalyticsRecordsWithResponses" xml:space="preserve"><value>Poster med enhetstider</value></data>
+  <data name="AnalyticsReinspections" xml:space="preserve"><value>Ominspektioner krävs</value></data>
+  <data name="AnalyticsResponse" xml:space="preserve"><value>Insatstider</value></data>
+  <data name="AnalyticsResponseSummary" xml:space="preserve"><value>Insatsöversikt</value></data>
+  <data name="AnalyticsResponses" xml:space="preserve"><value>Enhetsinsatser</value></data>
+  <data name="AnalyticsReturnRate" xml:space="preserve"><value>Returandel</value></data>
+  <data name="AnalyticsReviewCurrent" xml:space="preserve"><value>Granskning aktuell</value></data>
+  <data name="AnalyticsReviewOverdue" xml:space="preserve"><value>Granskning försenad</value></data>
+  <data name="AnalyticsRevoked" xml:space="preserve"><value>Återkallade</value></data>
+  <data name="AnalyticsRunRecords" xml:space="preserve"><value>Utryckningsposter</value></data>
+  <data name="AnalyticsSamples" xml:space="preserve"><value>Mätvärden</value></data>
+  <data name="AnalyticsShare" xml:space="preserve"><value>Andel</value></data>
+  <data name="AnalyticsTestedWithin12Months" xml:space="preserve"><value>Testade senaste 12 månaderna</value></data>
+  <data name="AnalyticsTo" xml:space="preserve"><value>Till</value></data>
+  <data name="AnalyticsTotal" xml:space="preserve"><value>Totalt</value></data>
+  <data name="AnalyticsTotalResponse" xml:space="preserve"><value>Total insatstid</value></data>
+  <data name="AnalyticsTraining" xml:space="preserve"><value>Utbildning</value></data>
+  <data name="AnalyticsTrainingHours" xml:space="preserve"><value>Utbildningstimmar</value></data>
+  <data name="AnalyticsTrainingRecords" xml:space="preserve"><value>Utbildningsposter</value></data>
+  <data name="AnalyticsTravel" xml:space="preserve"><value>Körtid</value></data>
+  <data name="AnalyticsTravelTarget" xml:space="preserve"><value>Mål för körtid (s)</value></data>
+  <data name="AnalyticsTurnout" xml:space="preserve"><value>Utryckningstid</value></data>
+  <data name="AnalyticsTurnoutTarget" xml:space="preserve"><value>Mål för utryckningstid (s)</value></data>
+  <data name="AnalyticsUnitOnSceneHours" xml:space="preserve"><value>enhetstimmar på plats</value></data>
+  <data name="AnalyticsVacant" xml:space="preserve"><value>Tomma</value></data>
+  <data name="AnalyticsVerified" xml:space="preserve"><value>Verifierade</value></data>
+  <data name="AnalyticsVoided" xml:space="preserve"><value>Makulerade</value></data>
+  <data name="AnalyticsWaived" xml:space="preserve"><value>Efterskänkta</value></data>
+  <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Blev försenade under perioden</value></data>
+  <data name="AnalyticsWithinTarget" xml:space="preserve"><value>Inom målet</value></data>
+  <data name="AnalyticsWorkload" xml:space="preserve"><value>Arbetsbelastning</value></data>
 </root>

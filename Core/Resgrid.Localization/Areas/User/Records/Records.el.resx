@@ -1833,4 +1833,117 @@
   <data name="WaterShutoff" xml:space="preserve"><value>Διακοπή νερού</value></data>
   <data name="WaterSupplyNotes" xml:space="preserve"><value>Σημειώσεις υδροδότησης</value></data>
   <data name="WorkflowRuns" xml:space="preserve"><value>Εκτελέσεις Workflow</value></data>
+  <data name="AnalyticsAccreditation" xml:space="preserve"><value>Πιστοποίηση</value></data>
+  <data name="AnalyticsActiveNow" xml:space="preserve"><value>Ενεργά τώρα</value></data>
+  <data name="AnalyticsActivities" xml:space="preserve"><value>Δραστηριότητες</value></data>
+  <data name="AnalyticsAllGroups" xml:space="preserve"><value>Όλες οι ομάδες σταθμών</value></data>
+  <data name="AnalyticsAmended" xml:space="preserve"><value>Τροποποιήσεις</value></data>
+  <data name="AnalyticsApplied" xml:space="preserve"><value>Αιτήθηκαν</value></data>
+  <data name="AnalyticsAudience" xml:space="preserve"><value>Κοινό που προσεγγίστηκε</value></data>
+  <data name="AnalyticsAverage" xml:space="preserve"><value>Μέσος όρος</value></data>
+  <data name="AnalyticsAwaitingReview" xml:space="preserve"><value>Σε αναμονή αναθεώρησης</value></data>
+  <data name="AnalyticsByCallType" xml:space="preserve"><value>Ανά τύπο κλήσης</value></data>
+  <data name="AnalyticsByFlowClass" xml:space="preserve"><value>Ανά κλάση ροής</value></data>
+  <data name="AnalyticsByHour" xml:space="preserve"><value>Ανά ώρα ημέρας</value></data>
+  <data name="AnalyticsByIncidentType" xml:space="preserve"><value>Ανά τύπο συμβάντος</value></data>
+  <data name="AnalyticsByKind" xml:space="preserve"><value>Ανά είδος</value></data>
+  <data name="AnalyticsByMonth" xml:space="preserve"><value>Ανά μήνα</value></data>
+  <data name="AnalyticsByPerson" xml:space="preserve"><value>Ανά άτομο</value></data>
+  <data name="AnalyticsByProgram" xml:space="preserve"><value>Ανά πρόγραμμα</value></data>
+  <data name="AnalyticsBySeverity" xml:space="preserve"><value>Ανά σοβαρότητα</value></data>
+  <data name="AnalyticsBySource" xml:space="preserve"><value>Ανά πηγή</value></data>
+  <data name="AnalyticsByStationGroup" xml:space="preserve"><value>Ανά ομάδα σταθμού</value></data>
+  <data name="AnalyticsByType" xml:space="preserve"><value>Ανά τύπο</value></data>
+  <data name="AnalyticsCancelled" xml:space="preserve"><value>Ακυρώθηκαν</value></data>
+  <data name="AnalyticsCommunityRisk" xml:space="preserve"><value>Κοινοτικός κίνδυνος</value></data>
+  <data name="AnalyticsCompleted" xml:space="preserve"><value>Ολοκληρώθηκαν</value></data>
+  <data name="AnalyticsConditional" xml:space="preserve"><value>Υπό όρους</value></data>
+  <data name="AnalyticsCorrected" xml:space="preserve"><value>Διορθώθηκαν</value></data>
+  <data name="AnalyticsCount" xml:space="preserve"><value>Πλήθος</value></data>
+  <data name="AnalyticsCrr" xml:space="preserve"><value>Μείωση κοινοτικού κινδύνου</value></data>
+  <data name="AnalyticsDaysScheduledToCompleted" xml:space="preserve"><value>Μ.Ο. ημερών από προγραμματισμό έως ολοκλήρωση</value></data>
+  <data name="AnalyticsDaysToCorrection" xml:space="preserve"><value>Μ.Ο. ημερών έως διόρθωση</value></data>
+  <data name="AnalyticsDaysToIssue" xml:space="preserve"><value>Μ.Ο. ημερών από αίτηση έως έκδοση</value></data>
+  <data name="AnalyticsDenied" xml:space="preserve"><value>Απορρίφθηκαν</value></data>
+  <data name="AnalyticsEscalated" xml:space="preserve"><value>Κλιμακώθηκαν</value></data>
+  <data name="AnalyticsExecutive" xml:space="preserve"><value>Συνοπτική εικόνα</value></data>
+  <data name="AnalyticsExpired" xml:space="preserve"><value>Έληξαν</value></data>
+  <data name="AnalyticsFailed" xml:space="preserve"><value>Αποτυχημένες</value></data>
+  <data name="AnalyticsFirstArrival" xml:space="preserve"><value>Πρώτη άφιξη</value></data>
+  <data name="AnalyticsFlowTests" xml:space="preserve"><value>Δοκιμές ροής στο διάστημα</value></data>
+  <data name="AnalyticsFrom" xml:space="preserve"><value>Από</value></data>
+  <data name="AnalyticsGroupScoped" xml:space="preserve"><value>Τα στοιχεία καλύπτουν μόνο τις εγγραφές που μπορείτε να ανοίξετε· οι διαχειριστές τμήματος βλέπουν τα σύνολα του τμήματος.</value></data>
+  <data name="AnalyticsHazmat" xml:space="preserve"><value>Επικίνδυνα υλικά στο χώρο</value></data>
+  <data name="AnalyticsHeader" xml:space="preserve"><value>Αναλυτικά στοιχεία</value></data>
+  <data name="AnalyticsHeadline" xml:space="preserve"><value>Βασικά μεγέθη</value></data>
+  <data name="AnalyticsHeatMap" xml:space="preserve"><value>Εγγραφές ανά ημέρα και ώρα</value></data>
+  <data name="AnalyticsHours" xml:space="preserve"><value>Ώρες</value></data>
+  <data name="AnalyticsHoursPerMember" xml:space="preserve"><value>Ώρες ανά μέλος</value></data>
+  <data name="AnalyticsInService" xml:space="preserve"><value>Σε λειτουργία</value></data>
+  <data name="AnalyticsIncidentReports" xml:space="preserve"><value>Αναφορές συμβάντων</value></data>
+  <data name="AnalyticsIncidents" xml:space="preserve"><value>Συμβάντα</value></data>
+  <data name="AnalyticsInspectedWithin12Months" xml:space="preserve"><value>Επιθεωρήθηκαν τους τελευταίους 12 μήνες</value></data>
+  <data name="AnalyticsIntro" xml:space="preserve"><value>Πίνακες που υπολογίζονται κατ' απαίτηση από οριστικοποιημένες εγγραφές. Ένας χρήστης με περιορισμό ομάδας βλέπει μόνο τις εγγραφές που μπορεί να ανοίξει· οι διαχειριστές τμήματος βλέπουν όλο το τμήμα.</value></data>
+  <data name="AnalyticsIssued" xml:space="preserve"><value>Εκδόθηκαν</value></data>
+  <data name="AnalyticsLifecycle" xml:space="preserve"><value>Κύκλος ζωής</value></data>
+  <data name="AnalyticsMax" xml:space="preserve"><value>Μέγιστο</value></data>
+  <data name="AnalyticsMedian" xml:space="preserve"><value>Διάμεσος</value></data>
+  <data name="AnalyticsMedianHoursToFinalize" xml:space="preserve"><value>Διάμεσος ωρών έως οριστικοποίηση</value></data>
+  <data name="AnalyticsMedianReviewHours" xml:space="preserve"><value>Διάμεσος χρόνου αναθεώρησης (ω)</value></data>
+  <data name="AnalyticsMembersTrained" xml:space="preserve"><value>Εκπαιδευμένα μέλη</value></data>
+  <data name="AnalyticsModuleOff" xml:space="preserve"><value>Αυτή η ενότητα δεν είναι ενεργή για το τμήμα.</value></data>
+  <data name="AnalyticsNeedingAssistance" xml:space="preserve"><value>Ένοικοι που χρειάζονται βοήθεια</value></data>
+  <data name="AnalyticsNerisAcceptance" xml:space="preserve"><value>Ποσοστό αποδοχής NERIS</value></data>
+  <data name="AnalyticsNerisAccepted" xml:space="preserve"><value>Αποδεκτές NERIS</value></data>
+  <data name="AnalyticsNerisRejected" xml:space="preserve"><value>Απορριφθείσες NERIS</value></data>
+  <data name="AnalyticsNoData" xml:space="preserve"><value>Δεν υπάρχουν οριστικοποιημένες εγγραφές σε αυτό το διάστημα.</value></data>
+  <data name="AnalyticsNoSprinklers" xml:space="preserve"><value>Χωρίς καταιονιστήρες</value></data>
+  <data name="AnalyticsOccupancyRisk" xml:space="preserve"><value>Προφίλ κινδύνου κτιρίων</value></data>
+  <data name="AnalyticsOnScene" xml:space="preserve"><value>Χρόνος στο σημείο</value></data>
+  <data name="AnalyticsOnSchedule" xml:space="preserve"><value>Ολοκληρώθηκαν εμπρόθεσμα</value></data>
+  <data name="AnalyticsOpenDrafts" xml:space="preserve"><value>Ανοικτά προσχέδια</value></data>
+  <data name="AnalyticsOpenNow" xml:space="preserve"><value>Ανοικτές τώρα</value></data>
+  <data name="AnalyticsOpenViolations" xml:space="preserve"><value>Ανοικτές παραβάσεις</value></data>
+  <data name="AnalyticsOpened" xml:space="preserve"><value>Άνοιξαν</value></data>
+  <data name="AnalyticsOverdueNow" xml:space="preserve"><value>Εκπρόθεσμες υποχρεώσεις τώρα</value></data>
+  <data name="AnalyticsP90" xml:space="preserve"><value>90ό εκατοστημόριο</value></data>
+  <data name="AnalyticsPassRate" xml:space="preserve"><value>Ποσοστό επιτυχίας</value></data>
+  <data name="AnalyticsPassed" xml:space="preserve"><value>Επιτυχείς</value></data>
+  <data name="AnalyticsPersonnelHours" xml:space="preserve"><value>Ώρες προσωπικού</value></data>
+  <data name="AnalyticsPriorPeriod" xml:space="preserve"><value>Προηγούμενη περίοδος</value></data>
+  <data name="AnalyticsQueues" xml:space="preserve"><value>Ουρές και υποχρεώσεις</value></data>
+  <data name="AnalyticsRecordHours" xml:space="preserve"><value>Ώρες εγγραφών</value></data>
+  <data name="AnalyticsRecordsFinalized" xml:space="preserve"><value>Οριστικοποιημένες εγγραφές</value></data>
+  <data name="AnalyticsRecordsRead" xml:space="preserve"><value>Εγγραφές που διαβάστηκαν</value></data>
+  <data name="AnalyticsRecordsWithResponses" xml:space="preserve"><value>Εγγραφές με χρόνους μονάδων</value></data>
+  <data name="AnalyticsReinspections" xml:space="preserve"><value>Απαιτούνται επανελέγχοι</value></data>
+  <data name="AnalyticsResponse" xml:space="preserve"><value>Απόδοση ανταπόκρισης</value></data>
+  <data name="AnalyticsResponseSummary" xml:space="preserve"><value>Σύνοψη ανταπόκρισης</value></data>
+  <data name="AnalyticsResponses" xml:space="preserve"><value>Ανταποκρίσεις μονάδων</value></data>
+  <data name="AnalyticsReturnRate" xml:space="preserve"><value>Ποσοστό επιστροφών</value></data>
+  <data name="AnalyticsReviewCurrent" xml:space="preserve"><value>Επισκόπηση ενημερωμένη</value></data>
+  <data name="AnalyticsReviewOverdue" xml:space="preserve"><value>Επισκόπηση εκπρόθεσμη</value></data>
+  <data name="AnalyticsRevoked" xml:space="preserve"><value>Ανακλήθηκαν</value></data>
+  <data name="AnalyticsRunRecords" xml:space="preserve"><value>Εγγραφές εξόδων</value></data>
+  <data name="AnalyticsSamples" xml:space="preserve"><value>Δείγματα</value></data>
+  <data name="AnalyticsShare" xml:space="preserve"><value>Μερίδιο</value></data>
+  <data name="AnalyticsTestedWithin12Months" xml:space="preserve"><value>Ελέγχθηκαν τους τελευταίους 12 μήνες</value></data>
+  <data name="AnalyticsTo" xml:space="preserve"><value>Έως</value></data>
+  <data name="AnalyticsTotal" xml:space="preserve"><value>Σύνολο</value></data>
+  <data name="AnalyticsTotalResponse" xml:space="preserve"><value>Συνολική ανταπόκριση</value></data>
+  <data name="AnalyticsTraining" xml:space="preserve"><value>Εκπαίδευση</value></data>
+  <data name="AnalyticsTrainingHours" xml:space="preserve"><value>Ώρες εκπαίδευσης</value></data>
+  <data name="AnalyticsTrainingRecords" xml:space="preserve"><value>Εγγραφές εκπαίδευσης</value></data>
+  <data name="AnalyticsTravel" xml:space="preserve"><value>Μετάβαση</value></data>
+  <data name="AnalyticsTravelTarget" xml:space="preserve"><value>Στόχος μετάβασης (δ)</value></data>
+  <data name="AnalyticsTurnout" xml:space="preserve"><value>Εξόρμηση</value></data>
+  <data name="AnalyticsTurnoutTarget" xml:space="preserve"><value>Στόχος εξόρμησης (δ)</value></data>
+  <data name="AnalyticsUnitOnSceneHours" xml:space="preserve"><value>ώρες μονάδων στο σημείο</value></data>
+  <data name="AnalyticsVacant" xml:space="preserve"><value>Κενά</value></data>
+  <data name="AnalyticsVerified" xml:space="preserve"><value>Επαληθεύτηκαν</value></data>
+  <data name="AnalyticsVoided" xml:space="preserve"><value>Ακυρωμένες</value></data>
+  <data name="AnalyticsWaived" xml:space="preserve"><value>Παραιτήθηκαν</value></data>
+  <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Έγιναν εκπρόθεσμες στο διάστημα</value></data>
+  <data name="AnalyticsWithinTarget" xml:space="preserve"><value>Εντός στόχου</value></data>
+  <data name="AnalyticsWorkload" xml:space="preserve"><value>Φόρτος εργασίας</value></data>
 </root>

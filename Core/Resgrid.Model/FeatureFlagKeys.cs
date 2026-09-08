@@ -75,5 +75,8 @@ namespace Resgrid.Model
 
 		/// <summary>RMS-4 optional post-finalization quality review. Depends on Records.System. Seeded off by M0186.</summary>
 		public const string RecordsQualityReview = "Records.QualityReview";
+
+		/// <summary>RMS-6 records analytics: response-performance, workload, executive, accreditation and community-risk dashboards over finalized Records. Depends on Records.System. Seeded off by M0187.</summary>
+		public const string RecordsAnalytics = "Records.Analytics";
 	}
 }

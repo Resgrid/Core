@@ -133,6 +133,7 @@ namespace Resgrid.Tests.Rms
 		public Task<IEnumerable<RmsInspection>> GetForOccupancyAsync(int departmentId, string occupancyId) => Task.FromResult<IEnumerable<RmsInspection>>(Live(departmentId).Where(i => i.RmsOccupancyId == occupancyId).ToList());
 		public Task<IDictionary<string, DateTime>> GetLastCompletedByOccupancyAsync(int departmentId, string programId) => Task.FromResult<IDictionary<string, DateTime>>(Live(departmentId).Where(i => i.RmsInspectionProgramId == programId && i.CompletedOn.HasValue).GroupBy(i => i.RmsOccupancyId).ToDictionary(g => g.Key, g => g.Max(i => i.CompletedOn.Value)));
 		public Task<IEnumerable<RmsInspection>> GetOpenForProgramAsync(int departmentId, string programId) => Task.FromResult<IEnumerable<RmsInspection>>(Live(departmentId).Where(i => i.RmsInspectionProgramId == programId && (i.State == (int)RmsInspectionState.Scheduled || i.State == (int)RmsInspectionState.InProgress || i.State == (int)RmsInspectionState.ReinspectionRequired)).ToList());
+		public Task<IEnumerable<RmsInspection>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take) => Task.FromResult<IEnumerable<RmsInspection>>(Live(departmentId).Where(i => { var d = i.CompletedOn ?? i.ScheduledOn ?? i.CreatedOn; return d >= startUtc && d < endUtc; }).Take(take).ToList());
 		public Task<bool> TryBumpRowVersionAsync(int departmentId, string inspectionId, long expectedVersion, CancellationToken cancellationToken = default) => Task.FromResult(true);
 	}
 
@@ -146,6 +147,7 @@ namespace Resgrid.Tests.Rms
 		public Task<int> CountOpenAsync(int departmentId) => Task.FromResult(Live(departmentId).Count(v => v.IsOpen));
 		public Task<int> CountOverdueAsync(int departmentId, DateTime utcNow) => Task.FromResult(Live(departmentId).Count(v => v.IsOpen && v.DueOn < utcNow));
 		public Task<IDictionary<string, int>> CountOpenByOccupancyAsync(int departmentId, IEnumerable<string> occupancyIds) { var ids = occupancyIds.ToHashSet(); return Task.FromResult<IDictionary<string, int>>(Live(departmentId).Where(v => v.IsOpen && ids.Contains(v.RmsOccupancyId)).GroupBy(v => v.RmsOccupancyId).ToDictionary(g => g.Key, g => g.Count())); }
+		public Task<IEnumerable<RmsViolation>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take) => Task.FromResult<IEnumerable<RmsViolation>>(Live(departmentId).Where(v => v.CreatedOn >= startUtc && v.CreatedOn < endUtc).Take(take).ToList());
 	}
 
 	public class FakeHydrants : InMemoryRepo<RmsHydrant>, IRmsHydrantsRepository
@@ -163,6 +165,7 @@ namespace Resgrid.Tests.Rms
 	public class FakeFlowTests : InMemoryRepo<RmsHydrantFlowTest>, IRmsHydrantFlowTestsRepository
 	{
 		public Task<IEnumerable<RmsHydrantFlowTest>> GetForHydrantAsync(int departmentId, string hydrantId) => Task.FromResult<IEnumerable<RmsHydrantFlowTest>>(Rows.Where(t => t.DepartmentId == departmentId && t.RmsHydrantId == hydrantId).ToList());
+		public Task<IEnumerable<RmsHydrantFlowTest>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take) => Task.FromResult<IEnumerable<RmsHydrantFlowTest>>(Rows.Where(t => t.DepartmentId == departmentId && t.TestedOn >= startUtc && t.TestedOn < endUtc).Take(take).ToList());
 	}
 
 	public class FakeMaintenance : InMemoryRepo<RmsHydrantMaintenance>, IRmsHydrantMaintenancesRepository
@@ -185,6 +188,7 @@ namespace Resgrid.Tests.Rms
 		public Task<IEnumerable<RmsPermit>> GetForOccupancyAsync(int departmentId, string occupancyId) => Task.FromResult<IEnumerable<RmsPermit>>(Live(departmentId).Where(p => p.RmsOccupancyId == occupancyId).ToList());
 		public Task<IEnumerable<RmsPermit>> GetExpiringAsync(int departmentId, DateTime utcNow, DateTime horizonUtc, int take) => Task.FromResult<IEnumerable<RmsPermit>>(Live(departmentId).Where(p => p.State == (int)RmsPermitState.Issued && p.ExpiresOn != null && p.ExpiresOn <= horizonUtc).Take(take).ToList());
 		public Task<int> CountExpiringAsync(int departmentId, DateTime utcNow, DateTime horizonUtc) => Task.FromResult(Live(departmentId).Count(p => p.State == (int)RmsPermitState.Issued && p.ExpiresOn > utcNow && p.ExpiresOn <= horizonUtc));
+		public Task<IEnumerable<RmsPermit>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take) => Task.FromResult<IEnumerable<RmsPermit>>(Live(departmentId).Where(p => p.AppliedOn >= startUtc && p.AppliedOn < endUtc).Take(take).ToList());
 		public Task<bool> TryBumpRowVersionAsync(int departmentId, string permitId, long expectedVersion, CancellationToken cancellationToken = default) => Task.FromResult(true);
 	}
 

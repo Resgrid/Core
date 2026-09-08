@@ -1,4 +1,4 @@
-﻿@inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
+@inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject Resgrid.Model.Services.IRecordsAuthorizationService recordsAuthorization
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
 @{
@@ -93,6 +93,7 @@
 				var preventionPermitsOn = preventionOccupancyOn && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionPermits, navDepartmentId);
 				var preventionCrrOn = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionCrr, navDepartmentId);
 				var investigationsOn = ClaimsAuthorizationHelper.CanViewRestrictedRecords() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsInvestigations, navDepartmentId);
+				var analyticsOn = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsAnalytics, navDepartmentId);
 				@if (preventionOccupancyOn)
 				{
 					<li class="@Html.IsSelected(controller: "RecordOccupancies")"><a asp-controller="RecordOccupancies" asp-action="Index" asp-route-area="User"><i class="fa fa-building-o"></i> @recordsLocalizer["Occupancies"]</a></li>
@@ -116,6 +117,10 @@
 				@if (investigationsOn)
 				{
 					<li class="@Html.IsSelected(controller: "RecordInvestigations")"><a asp-controller="RecordInvestigations" asp-action="Index" asp-route-area="User"><i class="fa fa-search"></i> @recordsLocalizer["Investigations"]</a></li>
+				}
+				@if (analyticsOn)
+				{
+					<li class="@Html.IsSelected(controller: "RecordsAnalytics")"><a asp-controller="RecordsAnalytics" asp-action="Index" asp-route-area="User"><i class="fa fa-bar-chart"></i> @recordsLocalizer["AnalyticsHeader"]</a></li>
 				}
 			}
 			else if (SettingsHelper.IsLogsEnabled())

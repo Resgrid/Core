@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -191,6 +191,11 @@ namespace Resgrid.Tests.Localization
 			"Records|fr|ReviewCycle",           // "Cycle"
 			"Records|fr|SectionNumber",         // "Section"
 			"Records|it|FileName",              // "File"
+			// Records analytics (2026-09-08): the target-language word is the English one.
+			"Records|fr|AnalyticsMax",          // "Maximum"
+			"Records|es|AnalyticsTotal",        // "Total"
+			"Records|fr|AnalyticsTotal",        // "Total"
+			"Records|fr|AnalyticsIncidents",    // "Incidents"
 
 			// Counted phrases whose wording matches English.
 			"CommunicationTest|es|ScopeRoles",    // {0} roles

@@ -139,6 +139,8 @@ namespace Resgrid.Model
 		public string Description { get; set; }
 		public RmsLifecyclePreset LifecyclePreset { get; set; } = RmsLifecyclePreset.QuickEntry;
 		public string NumberPrefix { get; set; }
+		/// <summary>Template default for <see cref="RecordDefinitionNumbering.PerIncidentSequence"/>; ICS-style forms number per incident.</summary>
+		public bool PerIncidentSequence { get; set; }
 		public string PermittedSubjectTypes { get; set; }
 		public RmsFieldClassification Classification { get; set; }
 		public int? RetentionYears { get; set; }

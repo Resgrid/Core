@@ -1,0 +1,165 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordDeploymentConnectorEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	var c = Model.Connector;
+	var title = Model.IsNew ? localizer["NewConnector"].Value : (c?.Name ?? Model.Name);
+	ViewBag.Title = "Resgrid | " + title;
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	string Who(string userId) => string.IsNullOrEmpty(userId) ? "-" : (Model.PersonnelNames.TryGetValue(userId, out var n) ? n : userId);
+	string Kind(string kind)
+	{
+		switch (kind)
+		{
+			case RecordDeploymentReconciliationItem.SourceReleasedLocalOut: return localizer["ReconciliationSourceReleased"];
+			case RecordDeploymentReconciliationItem.SourceClosedLocalOpen: return localizer["ReconciliationSourceClosed"];
+			case RecordDeploymentReconciliationItem.SourceRequestMissingLocally: return localizer["ReconciliationSourceRequestMissing"];
+			case RecordDeploymentReconciliationItem.LocalFillMissingInSource: return localizer["ReconciliationLocalFillMissing"];
+			case RecordDeploymentReconciliationItem.SourceStatusAhead: return localizer["ReconciliationSourceAhead"];
+			case RecordDeploymentReconciliationItem.SourceStatusBehind: return localizer["ReconciliationSourceBehind"];
+			default: return kind;
+		}
+	}
+	var inboundUrl = c == null ? null : $"/api/v4/RecordDeploymentConnectors/Inbound?connectorId={c.RmsExternalOrderConnectorId}";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@title <span class="label label-warning">@localizer["PreviewPack"]</span>
+			@if (c != null)
+			{
+				if (c.IsEnabled) { <span class="label label-primary">@localizer["ConnectorEnabled"]</span> } else { <span class="label label-default">@localizer["ConnectorDisabled"]</span> }
+				if (c.IsReadyToRun) { <span class="label label-success">@localizer["ConnectorReady"]</span> } else { <span class="label label-warning">@localizer["ConnectorNotReady"]</span> }
+			}
+		</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User">@localizer["Deployments"]</a></li>
+			<li><a asp-controller="RecordDeploymentConnectors" asp-action="Index" asp-route-area="User">@localizer["Connectors"]</a></li>
+			<li class="active"><strong>@title</strong></li>
+		</ol>
+	</div>
+	@if (c != null)
+	{
+		<div class="col-sm-4">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="Run" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default" @(c.IsReadyToRun ? "" : "disabled")><i class="fa fa-refresh"></i> @localizer["ConnectorRunNow"]</button></form>
+				@if (c.IsEnabled)
+				{
+					<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="SetEnabled" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId" asp-route-enabled="false">@Html.AntiForgeryToken()<button type="submit" class="btn btn-warning"><i class="fa fa-pause"></i> @localizer["ConnectorDisable"]</button></form>
+				}
+				else
+				{
+					<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="SetEnabled" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId" asp-route-enabled="true">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary"><i class="fa fa-play"></i> @localizer["ConnectorEnable"]</button></form>
+				}
+			</div>
+		</div>
+	}
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (!Model.ConnectorsEnabled) { <div class="alert alert-warning">@localizer["ConnectorsOff"]</div> }
+	@if (!string.IsNullOrEmpty(Model.InboundToken))
+	{
+		<div class="alert alert-info">
+			<strong>@localizer["ConnectorInboundToken"]</strong> <code>@Model.InboundToken</code><br />
+			<small>@localizer["ConnectorInboundTokenOnce"]</small>
+		</div>
+	}
+	<div class="row">
+		<div class="col-md-6">
+			<div class="ibox">
+				<div class="ibox-title"><h5>@(Model.IsNew ? localizer["NewConnector"] : localizer["ConnectorName"])</h5></div>
+				<div class="ibox-content">
+					<form class="form-horizontal" method="post" asp-controller="RecordDeploymentConnectors" asp-action="@(Model.IsNew ? "New" : "Edit")" asp-route-area="User" asp-route-id="@Model.Id">
+						@Html.AntiForgeryToken()
+						<input type="hidden" asp-for="RowVersion" />
+						<div class="form-group"><label class="col-sm-4 control-label required">@localizer["ConnectorName"]</label><div class="col-sm-8"><input type="text" class="form-control" asp-for="Name" maxlength="200" /></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label required">@localizer["ConnectorProvider"]</label><div class="col-sm-8"><select class="form-control" asp-for="ProviderKey" asp-items="Model.Providers"></select></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DeploymentSource"]</label><div class="col-sm-4"><input type="text" class="form-control" asp-for="SourceScheme" placeholder="iroc / ciffc / local" maxlength="64" /></div><div class="col-sm-4"><input type="text" class="form-control" asp-for="SourceSystem" placeholder="@localizer["ConnectorSourceSystem"]" maxlength="200" /></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["TemplateProfile"]</label><div class="col-sm-8"><select class="form-control" asp-for="ProfileKey" asp-items="Model.Profiles"></select></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label required">@localizer["ConnectorBaseUrl"]</label><div class="col-sm-8"><input type="url" class="form-control" asp-for="BaseUrl" placeholder="https://" maxlength="1000" /><span class="help-block">@localizer["ConnectorFeedContract"]</span></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["ConnectorCredentialKind"]</label><div class="col-sm-4"><select class="form-control" asp-for="CredentialKind" asp-items="Model.CredentialKinds"></select></div><div class="col-sm-4"><input type="text" class="form-control" asp-for="CredentialHeaderName" placeholder="@localizer["ConnectorCredentialHeaderName"]" maxlength="100" /></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["ConnectorCredential"]</label><div class="col-sm-8"><input type="password" class="form-control" asp-for="Credential" autocomplete="new-password" /><span class="help-block">@localizer["ConnectorCredentialHelp"] @if (c != null && !string.IsNullOrEmpty(c.CredentialCiphertext)) { <span class="label label-success">@localizer["ConnectorCredentialStored"]</span> }</span></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["ConnectorPollInterval"]</label><div class="col-sm-4"><input type="number" class="form-control" asp-for="PollIntervalMinutes" min="@Model.MinPollIntervalMinutes" /></div><label class="col-sm-2 control-label">@localizer["ConnectorMaxRequestsPerHour"]</label><div class="col-sm-2"><input type="number" class="form-control" asp-for="MaxRequestsPerHour" min="1" max="600" /></div></div>
+						<div class="form-group"><label class="col-sm-4 control-label required">@localizer["ConnectorTermsReference"]</label><div class="col-sm-8"><input type="text" class="form-control" asp-for="TermsReference" maxlength="500" placeholder="https://" /></div></div>
+						<div class="form-group"><div class="col-sm-offset-4 col-sm-8"><label><input type="checkbox" asp-for="ReadEnabled" /> @localizer["ConnectorReadEnabled"]</label><br /><label class="text-muted"><input type="checkbox" disabled /> @localizer["ConnectorWriteRefused"]</label></div></div>
+						<div class="form-group"><div class="col-sm-offset-4 col-sm-8"><button type="submit" class="btn btn-primary" @(Model.ConnectorsEnabled ? "" : "disabled")>@commonLocalizer["Save"]</button> <a class="btn btn-default" asp-controller="RecordDeploymentConnectors" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a></div></div>
+					</form>
+				</div>
+			</div>
+		</div>
+		@if (c != null)
+		{
+			<div class="col-md-6">
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["ConnectorState"]</h5></div>
+					<div class="ibox-content">
+						<dl class="dl-horizontal">
+							<dt>@localizer["ConnectorTermsReference"]</dt><dd>@if (c.TermsAcknowledgedOn.HasValue) { <span class="label label-success">@localizer["ConnectorTermsAcknowledged"]</span> <small>@When(c.TermsAcknowledgedOn) · @Who(c.TermsAcknowledgedByUserId)</small> } else { <span class="label label-warning">@localizer["ConnectorTermsNotAcknowledged"]</span> }</dd>
+							<dt>@localizer["ConnectorLastPolled"]</dt><dd>@When(c.LastPolledOn)</dd>
+							<dt>@localizer["ConnectorLastSuccess"]</dt><dd>@When(c.LastSuccessOn)</dd>
+							<dt>@localizer["ConnectorLastError"]</dt><dd><span class="text-danger">@c.LastError</span> @if (c.ConsecutiveFailures > 0) { <small class="text-muted">(@c.ConsecutiveFailures)</small> }</dd>
+							<dt>@localizer["ConnectorMaxRequestsPerHour"]</dt><dd>@c.RequestsThisHour / @c.MaxRequestsPerHour</dd>
+							<dt>@localizer["ConnectorInboundEndpoint"]</dt><dd><code>@inboundUrl</code><br /><small class="text-muted">X-Resgrid-Connector-Token</small></dd>
+						</dl>
+						@if (!c.TermsAcknowledgedOn.HasValue)
+						{
+							<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="AcknowledgeTerms" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-success btn-sm"><i class="fa fa-check"></i> @localizer["ConnectorTermsAcknowledge"]</button></form>
+						}
+						<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="RotateToken" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default btn-sm"><i class="fa fa-key"></i> @localizer["ConnectorRotateToken"]</button></form>
+						<form method="post" style="display:inline" asp-controller="RecordDeploymentConnectors" asp-action="Delete" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId" onsubmit="return confirm('@localizer["ConnectorDeleteConfirm"]');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> @localizer["ConnectorDelete"]</button></form>
+					</div>
+				</div>
+				<div class="ibox">
+					<div class="ibox-title"><h5>@localizer["Reconciliation"]</h5></div>
+					<div class="ibox-content">
+						@if (Model.Reconciliation.Count == 0)
+						{
+							<p class="text-muted">@localizer["ReconciliationNone"]</p>
+						}
+						else
+						{
+							<table class="table table-condensed">
+								<thead><tr><th>@localizer["DeploymentOrderNumber"]</th><th>@localizer["DeploymentRequestNumber"]</th><th>@localizer["ReconciliationKind"]</th><th>@localizer["ReconciliationSourceStatus"]</th><th>@localizer["ReconciliationLocalStatus"]</th></tr></thead>
+								<tbody>
+									@foreach (var item in Model.Reconciliation)
+									{
+										<tr><td><a asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@item.OrderId">@item.OrderNumber</a></td><td>@item.RequestNumber</td><td>@Kind(item.Kind)</td><td><code>@item.SourceStatus</code></td><td><code>@item.LocalStatus</code></td></tr>
+									}
+								</tbody>
+							</table>
+						}
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+	@if (c != null)
+	{
+		<div class="ibox">
+			<div class="ibox-title"><h5>@localizer["ConnectorRuns"]</h5></div>
+			<div class="ibox-content">
+				<table class="table table-condensed table-striped">
+					<thead><tr><th>@localizer["Created"]</th><th>@localizer["ConnectorRunTrigger"]</th><th>@localizer["ConnectorRunOutcome"]</th><th>@localizer["ConnectorRunCounts"]</th><th>@localizer["DeploymentSourceVersion"]</th><th>@localizer["ConnectorLastError"]</th></tr></thead>
+					<tbody>
+						@foreach (var r in Model.Runs)
+						{
+							<tr>
+								<td>@When(r.StartedOn) <small class="text-muted">@Who(r.TriggeredByUserId)</small></td>
+								<td><code>@r.Trigger</code></td>
+								<td><span class="label label-@(r.Outcome == RmsConnectorRunOutcomes.Ok ? "success" : r.Outcome == RmsConnectorRunOutcomes.Failed ? "danger" : "warning")">@r.Outcome</span></td>
+								<td>@r.OrdersSeen / @r.OrdersCreated / @r.SnapshotsRecorded / @r.RequestsAdded / @r.Unchanged / @r.Rejected / @r.Conflicts <small class="text-muted">(@r.RequestCount)</small></td>
+								<td>@r.SourceVersion</td>
+								<td><small class="text-danger">@r.Error</small></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	}
+</div>

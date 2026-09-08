@@ -140,6 +140,8 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 		/// <summary>Keep the declared parameter type enumerable so Dapper expands SQL Server lists; Npgsql binds the same array to ANY.</summary>
 		protected static int[] InListValue(IEnumerable<int> values) => (values ?? Enumerable.Empty<int>()).ToArray();
 
+		protected static string[] InListValue(IEnumerable<string> values) => (values ?? Enumerable.Empty<string>()).ToArray();
+
 		protected static string Concat(params string[] parts)
 		{
 			return string.Join(IsPostgres ? " || " : " + ", parts);
@@ -304,14 +306,16 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				new { DepartmentId = departmentId, DefinitionKey = definitionKey, DefinitionVersion = definitionVersion, States = InListValue(states) });
 		}
 
-		public Task<IEnumerable<RmsOperationalRecord>> GetByIdsAsync(int departmentId, IEnumerable<string> recordIds)
+		public async Task<IEnumerable<RmsOperationalRecord>> GetByIdsAsync(int departmentId, IEnumerable<string> recordIds)
 		{
-			var ids = (recordIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().ToArray();
-			if (ids.Length == 0)
-				return Task.FromResult<IEnumerable<RmsOperationalRecord>>(new List<RmsOperationalRecord>());
-			return QueryAsync<RmsOperationalRecord>(
-				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsOperationalRecordId", "Ids")} AND {Col("DeletedOn")} IS NULL AND {Col("PurgedOn")} IS NULL",
-				new { DepartmentId = departmentId, Ids = ids });
+			// Dapper expands the SQL Server IN list into one parameter per id and a report run can pass thousands, so
+			// chunk below the 2100-parameter limit the way the other id lookups in this file do.
+			var rows = new List<RmsOperationalRecord>();
+			foreach (var ids in (recordIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+				rows.AddRange(await QueryAsync<RmsOperationalRecord>(
+					$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsOperationalRecordId", "Ids")} AND {Col("DeletedOn")} IS NULL AND {Col("PurgedOn")} IS NULL",
+					new { DepartmentId = departmentId, Ids = ids }));
+			return rows;
 		}
 
 		public Task<IEnumerable<RmsOperationalRecord>> GetByDepartmentAndStatesAsync(int departmentId, IEnumerable<int> states, int? year, int skip, int take)
@@ -347,6 +351,18 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			return QueryAsync<RmsOperationalRecord>(
 				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("State", "States")} AND {Col("FinalizedOn")} >= {P}Since AND {Col("DeletedOn")} IS NULL ORDER BY {Col("FinalizedOn")} DESC",
 				new { DepartmentId = departmentId, States = InListValue(states), Since = sinceUtc });
+		}
+
+		public Task<IEnumerable<RmsOperationalRecord>> GetCreatedSinceAsync(int departmentId, DateTime sinceUtc, int take)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Since", sinceUtc);
+			parameters.Add("Skip", 0);
+			parameters.Add("Take", take <= 0 ? 5000 : Math.Min(take, 200000));
+			return QueryAsync<RmsOperationalRecord>(
+				$"SELECT * FROM {Tbl("RmsOperationalRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CreatedOn")} >= {P}Since AND {Col("DeletedOn")} IS NULL ORDER BY {Col("CreatedOn")} DESC, {Col("RmsOperationalRecordId")} {Paging()}",
+				parameters);
 		}
 
 		public Task<IEnumerable<RmsOperationalRecord>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take, string afterId = null)
@@ -829,7 +845,7 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 		{
 			var (where, parameters) = BuildWhere(departmentId, query);
 			return QueryAsync<RmsRecordSearchProjection>(
-				$"SELECT p.* FROM {Tbl("RmsRecordSearchProjections")} p WHERE {where} ORDER BY COALESCE(p.{Col("OccurredOn")}, p.{Col("RecordCreatedOn")}) DESC {Paging()}",
+				$"SELECT p.* FROM {Tbl("RmsRecordSearchProjections")} p WHERE {where} ORDER BY COALESCE(p.{Col("OccurredOn")}, p.{Col("RecordCreatedOn")}) DESC, p.{Col("RmsRecordSearchProjectionId")} DESC {Paging()}",
 				parameters);
 		}
 
@@ -880,18 +896,19 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				parameters);
 		}
 
-		public Task<IEnumerable<RmsRecordSearchProjection>> GetByIdsAsync(int departmentId, IEnumerable<string> recordIds)
+		public async Task<IEnumerable<RmsRecordSearchProjection>> GetByIdsAsync(int departmentId, IEnumerable<string> recordIds)
 		{
-			var ids = (recordIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().ToList();
-			if (ids.Count == 0)
-				return Task.FromResult<IEnumerable<RmsRecordSearchProjection>>(new List<RmsRecordSearchProjection>());
-
-			var parameters = new DynamicParameters();
-			parameters.Add("DepartmentId", departmentId);
-			parameters.Add("Ids", IsPostgres ? (object)ids.ToArray() : ids);
-			return QueryAsync<RmsRecordSearchProjection>(
-				$"SELECT * FROM {Tbl("RmsRecordSearchProjections")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL AND {InList("RmsRecordSearchProjectionId", "Ids")}",
-				parameters);
+			var rows = new List<RmsRecordSearchProjection>();
+			foreach (var ids in (recordIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct().Chunk(1000))
+			{
+				var parameters = new DynamicParameters();
+				parameters.Add("DepartmentId", departmentId);
+				parameters.Add("Ids", IsPostgres ? (object)ids : ids.ToList());
+				rows.AddRange(await QueryAsync<RmsRecordSearchProjection>(
+					$"SELECT * FROM {Tbl("RmsRecordSearchProjections")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DeletedOn")} IS NULL AND {InList("RmsRecordSearchProjectionId", "Ids")}",
+					parameters));
+			}
+			return rows;
 		}
 
 		private (string, DynamicParameters) BuildWhere(int departmentId, RmsRecordQuery query)
@@ -925,6 +942,12 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			{
 				sb.Append($" AND {YearOf($"COALESCE(p.{Col("OccurredOn")}, p.{Col("RecordCreatedOn")})")} = {P}Year");
 				parameters.Add("Year", query.Year.Value);
+			}
+
+			if (query.OccurredSince.HasValue)
+			{
+				sb.Append($" AND COALESCE(p.{Col("FinalizedOn")}, p.{Col("OccurredOn")}, p.{Col("RecordCreatedOn")}) >= {P}OccurredSince");
+				parameters.Add("OccurredSince", query.OccurredSince.Value, System.Data.DbType.DateTime2);
 			}
 
 			if (query.CallId.HasValue)

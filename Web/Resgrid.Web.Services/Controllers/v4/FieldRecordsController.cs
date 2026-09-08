@@ -31,11 +31,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		private readonly IFieldRecordsService _field;
 		private readonly IRecordWorkAssignmentsService _assignments;
+		private readonly IRecordsFieldRolloutService _rollout;
 
-		public FieldRecordsController(IFieldRecordsService field, IRecordWorkAssignmentsService assignments)
+		public FieldRecordsController(IFieldRecordsService field, IRecordWorkAssignmentsService assignments, IRecordsFieldRolloutService rollout)
 		{
 			_field = field;
 			_assignments = assignments;
+			_rollout = rollout;
 		}
 
 		#region Preflight and catalog
@@ -226,6 +228,61 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.AssignmentId)) return BadRequest();
 			return await CommandAsync(() => _assignments.CancelAsync(DepartmentId, UserId, input.AssignmentId, input.RowVersion, input.Reason, Origin(input.OriginClient), cancellationToken));
+		}
+
+		#endregion
+
+		#region Rollout telemetry
+
+		/// <summary>
+		/// Safe rollout datapoints from this app (RMS plan RMS-1D): coded outcomes, counts and durations against the
+		/// authenticated department and member. Nothing here carries record content, and a report that names an
+		/// unknown event or a non-field origin is dropped rather than stored.
+		/// </summary>
+		[HttpPost("Telemetry")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<FieldRecordTelemetryResult>> Telemetry([FromBody] FieldRecordTelemetryInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || input.Events == null || input.Events.Count == 0)
+				return BadRequest();
+
+			var accepted = await _rollout.RecordBatchAsync(DepartmentId, UserId, new RecordFieldRolloutBatch
+			{
+				OriginClient = Origin(input.OriginClient),
+				AppVersion = AppVersion(input.AppVersion),
+				ClientCapability = input.ClientCapability,
+				Events = input.Events.Select(e => new RecordFieldRolloutInput
+				{
+					EventType = e.EventType, Outcome = e.Outcome, DefinitionKey = e.DefinitionKey, DefinitionVersion = e.DefinitionVersion,
+					RecordId = e.RecordId, DurationMs = e.DurationMs, ItemCount = e.ItemCount, OccurredOn = e.OccurredOn
+				}).ToList()
+			}, cancellationToken);
+
+			var result = new FieldRecordTelemetryResult { Data = new FieldRecordTelemetryData { Accepted = accepted }, Status = ResponseHelper.Success, PageSize = accepted };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>The per-app rollout dashboard for this department (RMS plan RMS-1D). Department administration only.</summary>
+		[HttpGet("Rollout")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
+		[Authorize(Policy = ResgridResources.Record_View)]
+		public async Task<ActionResult<FieldRecordRolloutResult>> Rollout(int windowDays = 30, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var rollout = await _rollout.GetAsync(DepartmentId, UserId, windowDays, cancellationToken);
+				var result = new FieldRecordRolloutResult { Data = rollout, Status = ResponseHelper.Success, PageSize = rollout.Apps.Count };
+				ResponseHelper.PopulateV4ResponseData(result);
+				return Ok(result);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return Forbid();
+			}
 		}
 
 		#endregion

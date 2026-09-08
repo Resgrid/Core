@@ -547,6 +547,9 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public bool HasArtifact { get; set; }
 		public string ArtifactSafeUrl { get; set; }
 		public string Status { get; set; }
+		/// <summary>manual (a person captured the order) or connector (an external ordering-system connector maintains its snapshots).</summary>
+		public string OwnershipMarker { get; set; }
+		public string ConnectorId { get; set; }
 		public DateTime? MobilizedOn { get; set; }
 		public DateTime? ReleasedOn { get; set; }
 		public DateTime? ClosedOutOn { get; set; }

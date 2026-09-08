@@ -16,6 +16,12 @@ namespace Resgrid.Model.Services
 		Task<RecordDeploymentAggregate> GetAsync(int departmentId, string userId, string orderId, bool includeArtifact = false);
 		Task<RecordDeploymentAggregate> GetForRecordAsync(int departmentId, string userId, string recordId);
 		Task<List<RmsExternalOrder>> ListAsync(int departmentId, string userId, bool includeClosed);
+		/// <summary>
+		/// A bounded page of deployments with their fills, loaded in one pass. The list shape only needs the order,
+		/// its fills and the Record's number/state, so this deliberately skips the full Record hydrate and the
+		/// jurisdiction profiles that <see cref="GetAsync"/> loads; use GetAsync for a single deployment.
+		/// </summary>
+		Task<List<RecordDeploymentAggregate>> ListAggregatesAsync(int departmentId, string userId, bool includeClosed, int take);
 		Task<RmsExternalOrderFill> AddFillAsync(int departmentId, string userId, string orderId, RecordDeploymentFillInput input, CancellationToken cancellationToken = default);
 		Task<RmsExternalOrderFill> TransitionFillAsync(int departmentId, string userId, string fillId, RecordDeploymentFillTransitionInput input, CancellationToken cancellationToken = default);
 		/// <summary>Records a later snapshot of the same external order (a new versioned artifact); never overwrites signed history.</summary>

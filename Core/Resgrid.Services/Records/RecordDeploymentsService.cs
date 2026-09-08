@@ -30,6 +30,7 @@ namespace Resgrid.Services.Records
 		private readonly IRmsExternalOrderFillsRepository _fills;
 		private readonly IRmsExternalReferencesRepository _references;
 		private readonly IRecordsService _records;
+		private readonly IRmsOperationalRecordsRepository _recordRows;
 		private readonly IRecordDefinitionsService _definitions;
 		private readonly IRecordTemplatePacksService _packs;
 		private readonly IRecordsAuthorizationService _authorization;
@@ -37,12 +38,14 @@ namespace Resgrid.Services.Records
 		private readonly IUnitOfWork _unitOfWork;
 
 		public RecordDeploymentsService(IRmsExternalOrdersRepository orders, IRmsExternalOrderFillsRepository fills, IRmsExternalReferencesRepository references, IRecordsService records,
-			IRecordDefinitionsService definitions, IRecordTemplatePacksService packs, IRecordsAuthorizationService authorization, IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork)
+			IRmsOperationalRecordsRepository recordRows, IRecordDefinitionsService definitions, IRecordTemplatePacksService packs, IRecordsAuthorizationService authorization,
+			IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork)
 		{
 			_orders = orders;
 			_fills = fills;
 			_references = references;
 			_records = records;
+			_recordRows = recordRows;
 			_definitions = definitions;
 			_packs = packs;
 			_authorization = authorization;
@@ -102,6 +105,12 @@ namespace Resgrid.Services.Records
 			};
 			var record = await _records.CreateDraftAsync(departmentId, userId, draft, cancellationToken);
 
+			// A retried create replays the same draft through the idempotency key, and a Record carries exactly one
+			// order snapshot (UX_RmsExternalOrders_Department_Record). Hand back what is already there rather than
+			// letting the second insert hit that index.
+			var already = await _orders.GetForRecordAsync(departmentId, record.Record.RmsOperationalRecordId);
+			if (already != null) return await BuildAsync(departmentId, already);
+
 			var now = DateTime.UtcNow;
 			var order = new RmsExternalOrder
 			{
@@ -115,16 +124,29 @@ namespace Resgrid.Services.Records
 				TimeZoneId = input.TimeZoneId, CapturedOffsetMinutes = input.CapturedOffsetMinutes, SourceCapturedOn = input.SourceCapturedOn ?? now, SourceVersion = input.SourceVersion ?? "1",
 				ArtifactFileName = input.ArtifactData == null ? null : input.ArtifactFileName, ArtifactContentType = input.ArtifactData == null ? null : input.ArtifactContentType,
 				ArtifactChecksum = input.ArtifactData == null ? null : RecordSnapshotSerializer.Checksum(input.ArtifactData), ArtifactData = input.ArtifactData, ArtifactSafeUrl = SafeUrl(input.ArtifactSafeUrl),
+				ConnectorId = string.IsNullOrWhiteSpace(input.ConnectorId) ? null : input.ConnectorId.Trim(),
+				OwnershipMarker = !string.IsNullOrWhiteSpace(input.ConnectorId) && string.Equals(input.OwnershipMarker, RmsExternalOrderOwnership.Connector, StringComparison.OrdinalIgnoreCase) ? RmsExternalOrderOwnership.Connector : RmsExternalOrderOwnership.Manual,
 				Status = (int)RmsExternalOrderStatus.Open, CreatedOn = now, CreatedByUserId = userId, ModifiedOn = now, ModifiedByUserId = userId, RowVersion = 1
 			};
 			var fills = (input.Fills ?? new List<RecordDeploymentFillInput>()).Select(f => ToFill(order, f, userId, now)).ToList();
 
-			await InTransactionAsync(async () =>
+			try
 			{
-				await _orders.InsertAsync(order, cancellationToken, true);
-				foreach (var fill in fills) await _fills.InsertAsync(fill, cancellationToken, true);
-				await AuditAsync(departmentId, userId, order, $"Create deployment from external order {order.OrderNumber} ({profileKey})", cancellationToken);
-			});
+				await InTransactionAsync(async () =>
+				{
+					await _orders.InsertAsync(order, cancellationToken, true);
+					foreach (var fill in fills) await _fills.InsertAsync(fill, cancellationToken, true);
+					await AuditAsync(departmentId, userId, order, $"Create deployment from external order {order.OrderNumber} ({profileKey})", cancellationToken);
+				});
+			}
+			catch
+			{
+				// The draft Record was created before this transaction, so a rollback here would otherwise leave a
+				// deployment Record with no order behind it. Cancel it so the reserved number is recorded as voided.
+				try { await _records.CancelAsync(departmentId, userId, order.RecordId, cancellationToken); }
+				catch (Exception cleanup) { Framework.Logging.LogException(cleanup, "The orphaned deployment draft could not be cancelled after the order insert failed."); }
+				throw;
+			}
 			return await GetAsync(departmentId, userId, order.RmsExternalOrderId);
 		}
 
@@ -244,6 +266,24 @@ namespace Resgrid.Services.Records
 			return visible;
 		}
 
+		public async Task<List<RecordDeploymentAggregate>> ListAggregatesAsync(int departmentId, string userId, bool includeClosed, int take)
+		{
+			var orders = (await ListAsync(departmentId, userId, includeClosed)).Take(Math.Clamp(take <= 0 ? 50 : take, 1, 200)).ToList();
+			if (orders.Count == 0) return new List<RecordDeploymentAggregate>();
+
+			var fills = (await _fills.GetForOrdersAsync(departmentId, orders.Select(o => o.RmsExternalOrderId)))?.ToList() ?? new List<RmsExternalOrderFill>();
+			var fillsByOrder = fills.ToLookup(f => f.RmsExternalOrderId, StringComparer.Ordinal);
+			var records = (await _recordRows.GetByIdsAsync(departmentId, orders.Select(o => o.RecordId)))?.ToList() ?? new List<RmsOperationalRecord>();
+			var recordsById = records.GroupBy(r => r.RmsOperationalRecordId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+
+			return orders.Select(order => new RecordDeploymentAggregate
+			{
+				Order = order,
+				Fills = fillsByOrder[order.RmsExternalOrderId].OrderBy(f => f.RequestNumber, StringComparer.Ordinal).ToList(),
+				Record = recordsById.TryGetValue(order.RecordId, out var row) ? new RecordAggregate { Record = row } : null
+			}).ToList();
+		}
+
 		public async Task<RmsExternalOrderFill> AddFillAsync(int departmentId, string userId, string orderId, RecordDeploymentFillInput input, CancellationToken cancellationToken = default)
 		{
 			var order = await RequireEditableAsync(departmentId, userId, orderId);
@@ -275,6 +315,10 @@ namespace Resgrid.Services.Records
 			if (input == null) throw new ArgumentNullException(nameof(input));
 			var fill = await _fills.GetByIdForDepartmentAsync(departmentId, fillId) ?? throw new ArgumentException("Unknown fill.", nameof(fillId));
 			var order = await RequireEditableAsync(departmentId, userId, fill.RmsExternalOrderId);
+			// Two callers can both read Requested and both pass the state-machine check, and the second write would
+			// silently drop the first transition along with its audit line.
+			if (input.ExpectedRowVersion.HasValue && fill.RowVersion != input.ExpectedRowVersion.Value)
+				throw new RecordConcurrencyException(fill.RmsExternalOrderFillId, input.ExpectedRowVersion.Value, fill.RowVersion);
 			var from = (RmsDeploymentFillStatus)fill.Status;
 			if (!Allowed.TryGetValue(from, out var next) || !next.Contains(input.Status))
 				throw new InvalidOperationException($"A fill cannot move from {from} to {input.Status}.");

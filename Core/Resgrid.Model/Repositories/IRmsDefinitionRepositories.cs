@@ -88,6 +88,8 @@ namespace Resgrid.Model.Repositories
 	public interface IRmsExternalOrderFillsRepository : IRepository<RmsExternalOrderFill>
 	{
 		Task<IEnumerable<RmsExternalOrderFill>> GetForOrderAsync(int departmentId, string orderId);
+		/// <summary>Every fill of a set of orders in one pass; the deployment list would otherwise query once per order.</summary>
+		Task<IEnumerable<RmsExternalOrderFill>> GetForOrdersAsync(int departmentId, IEnumerable<string> orderIds);
 		Task<RmsExternalOrderFill> GetByIdForDepartmentAsync(int departmentId, string fillId);
 	}
 }

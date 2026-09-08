@@ -1668,6 +1668,16 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.RecordAssignments(System.String)">
             <summary>Assignments on one Record; empty when the caller cannot read that Record.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.Telemetry(Resgrid.Web.Services.Models.v4.Records.FieldRecordTelemetryInput,System.Threading.CancellationToken)">
+            <summary>
+            Safe rollout datapoints from this app (RMS plan RMS-1D): coded outcomes, counts and durations against the
+            authenticated department and member. Nothing here carries record content, and a report that names an
+            unknown event or a non-field origin is dropped rather than stored.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.Rollout(System.Int32,System.Threading.CancellationToken)">
+            <summary>The per-app rollout dashboard for this department (RMS plan RMS-1D). Department administration only.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.FieldRecordsController.Origin(System.Nullable{System.Int32})">
             <summary>The claimed origin, normalized: a non-field value is System, which every field gate refuses.</summary>
         </member>
@@ -2651,6 +2661,24 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController.SaveLayout(System.String,Resgrid.Model.RecordsDefinitionLayoutConfig,System.Threading.CancellationToken)">
             <summary>Saves the definition-scope print layout; every save is a new layout version the footer names.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RecordDeploymentConnectorsController">
+            <summary>
+            External ordering-system connectors for mutual-aid deployments (RMS plan section 4.1, RMS-1C). Department
+            administration only, enforced here and again in the service. A connector reads a documented feed under an
+            encrypted credential, an hourly request limit, and an acknowledgement of the source's terms; write authority
+            is refused. Import provisions unseen orders and records changed ones as new versioned snapshots; it never
+            transitions a local fill — disagreements are listed by Reconciliation for a person.
+            The Inbound action is the one anonymous endpoint: a source pushes a feed document with the connector's
+            one-time token in <c>X-Resgrid-Connector-Token</c>; the server holds only a hash of that token.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDeploymentConnectorsController.Inbound(System.String,System.Threading.CancellationToken)">
+            <summary>
+            A source pushes a feed document. No user session: the connector id is in the query and the connector's
+            token in <c>X-Resgrid-Connector-Token</c>. A wrong token and an unknown connector are refused alike, and a
+            refused push leaves no run row, so the endpoint reveals nothing about what exists.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordDeploymentsController">
             <summary>
             Create Deployment from External Order over v4 (RMS plan section 4.1 external-order fill contract, RMS-1C,
@@ -2663,6 +2691,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDeploymentsController.Snapshot(System.String,Resgrid.Web.Services.Models.v4.Records.RecordDeploymentSnapshotInput,System.Threading.CancellationToken)">
             <summary>Records a later snapshot of the same external order; the previous artifact stays on record as a superseded reference.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordDeploymentsController.Wrap(Resgrid.Model.RecordDeploymentAggregate,System.String)">
+            <summary>Null when the re-fetch after a write came back empty; every caller turns that into a 404.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordEvidenceController">
             <summary>
@@ -12398,6 +12429,18 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Records.FieldRecordAssignInput.AssigneeKind">
             <summary><see cref="T:Resgrid.Model.RmsWorkAssigneeKind"/>: 1 Person, 2 Unit, 3 Group, 4 CommandRole, 5 DispatchRole.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.FieldRecordTelemetryInput">
+            <summary>A batch of safe rollout datapoints from one app (RMS plan RMS-1D). Counts and codes only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.FieldRecordTelemetryEventInput.EventType">
+            <summary>One of RmsFieldRolloutEventTypes; anything else is dropped rather than stored.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.FieldRecordTelemetryEventInput.Outcome">
+            <summary>"ok" or the coded refusal/conflict the client was given.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.FieldRecordTelemetryData.Accepted">
+            <summary>How many events were kept after validation and truncation.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentAnalysisData">
             <summary>
             The NERIS incident-analysis filing (RMS-3): the fire/hazmat investigation posted separately from the
@@ -12484,6 +12527,34 @@
         <member name="T:Resgrid.Web.Services.Models.v4.Records.IncidentReportConflictResult">
             <summary>409 on a stale incident report save.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordDeploymentConnectorData">
+            <summary>
+            External ordering-system connector over v4 (RMS plan section 4.1). The stored credential and the inbound
+            token never leave the server: the connector reports only whether each is set. The inbound token is
+            returned exactly once, at creation or rotation.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDeploymentConnectorData.WriteEnabled">
+            <summary>Always false in this release; write authority to an external ordering system is refused.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDeploymentConnectorInputData.CredentialKind">
+            <summary>none, bearer or header.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDeploymentConnectorInputData.Credential">
+            <summary>Plain credential; encrypted at rest and never returned. Blank on update keeps the stored one.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDeploymentConnectorInputData.WriteEnabled">
+            <summary>Must be false; true is refused.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDeploymentConnectorInputData.TermsReference">
+            <summary>Where the source's terms of use are recorded; required before acknowledgement.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDeploymentConnectorInputData.RowVersion">
+            <summary>Update only: the RowVersion the caller last saw.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDeploymentConnectorCreatedData.InboundToken">
+            <summary>Shown once. The server keeps only a hash.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.RecordsCapabilitiesResult">
             <summary>Capability manifest for the Records module (RMS plan sections 5.4, 5.9.1).</summary>
         </member>
@@ -12536,6 +12607,12 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordData.Values">
             <summary>Department-definition typed values rendered against the pinned version (RMS-1B); null for locked system definitions.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordAttachmentData.MetadataStripped">
+            <summary>EXIF, XMP and IPTC were removed on upload; images are always re-encoded (RMS-1D media hygiene).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordAttachmentData.MediaLocationRetained">
+            <summary>The definition's profile asked for the photo's coordinates and they survived; false on everything else.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput">
             <summary>Create or save a draft. Dates are UTC. Every list replaces the draft rows wholesale.</summary>
         </member>
@@ -12552,7 +12629,11 @@
             <summary>Client-generated GUID for an offline-created draft; server-assigned when null.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.Values">
-            <summary>Typed values for a department definition (RMS-1B); ignored for locked system definitions.</summary>
+            <summary>
+            Typed values for a department definition (RMS-1B); ignored for locked system definitions. A posted list
+            replaces the stored values wholesale, so this stays null when the property is omitted: null is "no value
+            update", an empty list is an explicit clear. Do not give it a default.
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.SaveRecordDraftInput.OriginClient">
             <summary>RmsOriginClient: 2 Responder, 3 Unit, 4 IncidentCommand, 5 Dispatch, 6 Api (default). Field clients are gated by their Records.Field.* flag.</summary>
@@ -12620,6 +12701,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordsBulkData.Run">
             <summary>The stored packet run (download through RecordExportTemplates/DownloadRun); null for an assignment.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Records.RecordDeploymentData.OwnershipMarker">
+            <summary>manual (a person captured the order) or connector (an external ordering-system connector maintains its snapshots).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Records.CreateRecordDeploymentInput.ArtifactBase64">
             <summary>Base64 of the order artifact (PDF, image, export); at most 25 MB decoded.</summary>

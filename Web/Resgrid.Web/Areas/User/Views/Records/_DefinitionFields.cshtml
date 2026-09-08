@@ -77,7 +77,11 @@
 		string Reference = template ? string.Empty : InputReference(section.Key, rowKey, field.Key);
 		string Unit = template ? field.DefaultUnit : (InputUnit(section.Key, rowKey, field.Key) ?? field.DefaultUnit);
 		string Currency = template ? field.DefaultCurrency : (InputCurrency(section.Key, rowKey, field.Key) ?? field.DefaultCurrency);
-		var values = template ? new List<string>() : InputValues(section.Key, rowKey, field.Key);
+		var values = template || withheld ? new List<string>() : InputValues(section.Key, rowKey, field.Key);
+		// The draft is hydrated with canViewRestricted:true so the author's own save can round-trip it, so a withheld
+		// field still arrives here carrying its plaintext. Blank it once, up front, rather than per input type:
+		// "disabled" hides nothing from anyone reading the markup.
+		if (withheld) { Value = string.Empty; Reference = string.Empty; }
 
 		sb.Append("<div class=\"form-group rms-def-field\" data-field-key=\"").Append(E(field.Key)).Append("\" data-field-type=\"").Append(field.Type).Append("\"").Append(hidden ? " hidden" : "").Append(">");
 		sb.Append("<label class=\"col-sm-3 control-label").Append(required ? " required" : "").Append("\">").Append(E(field.Label ?? field.Key));
@@ -153,7 +157,8 @@
 				{
 					var list = field.Type == RmsFieldType.Person ? Model.Personnel : field.Type == RmsFieldType.Unit ? Model.AvailableUnits : field.Type == RmsFieldType.Group ? Model.Stations : field.Type == RmsFieldType.Contact ? Model.Contacts : field.Type == RmsFieldType.CallReference ? Model.Calls : Model.Attachments;
 					sb.Append("<select class=\"form-control\" name=\"").Append(prefix).Append(".ReferenceId\"").Append(disabled).Append("><option value=\"\"></option>");
-					foreach (var item in list) sb.Append("<option value=\"").Append(E(item.Value)).Append("\"").Append(string.Equals(item.Value, Reference, StringComparison.OrdinalIgnoreCase) ? " selected" : "").Append(">").Append(E(item.Text)).Append("</option>");
+					if (!withheld)
+						foreach (var item in list) sb.Append("<option value=\"").Append(E(item.Value)).Append("\"").Append(string.Equals(item.Value, Reference, StringComparison.OrdinalIgnoreCase) ? " selected" : "").Append(">").Append(E(item.Text)).Append("</option>");
 					sb.Append("</select>");
 					break;
 				}

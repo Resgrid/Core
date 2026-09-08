@@ -106,7 +106,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await CanManageAsync()) return Forbid();
 			try
 			{
-				await _reports.DeleteAsync(DepartmentId, UserId, id, cancellationToken);
+				await _reports.DeleteAsync(DepartmentId, UserId, id, null, cancellationToken);
 				TempData["RecordsMessage"] = _localizer["ReportDeleted"].Value;
 			}
 			catch (UnauthorizedAccessException) { return Forbid(); }

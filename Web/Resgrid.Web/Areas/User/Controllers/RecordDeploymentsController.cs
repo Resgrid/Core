@@ -48,7 +48,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Index(bool includeClosed = false)
 		{
 			if (!(await _cutover.GetModuleStateAsync(DepartmentId)).FlagEnabled) return NotFound();
-			var model = new RecordDeploymentsIndexView { Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false), Orders = await _deployments.ListAsync(DepartmentId, UserId, includeClosed), IncludeClosed = includeClosed, CanCreate = ClaimsAuthorizationHelper.CanCreateRecord() };
+			var model = new RecordDeploymentsIndexView { Department = await _departments.GetDepartmentByIdAsync(DepartmentId, false), Orders = await _deployments.ListAsync(DepartmentId, UserId, includeClosed), IncludeClosed = includeClosed, CanCreate = ClaimsAuthorizationHelper.CanCreateRecord(), IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() };
 			if (TempData["RecordsMessage"] is string message) model.Message = message;
 			if (TempData["RecordsError"] is string error) model.ErrorMessage = error;
 			return View(model);

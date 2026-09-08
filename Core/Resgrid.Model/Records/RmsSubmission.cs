@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Resgrid.Model
 {
@@ -35,6 +36,33 @@ namespace Resgrid.Model
 		/// belongs to without reading the payload.
 		/// </summary>
 		public const string NerisIncidentAnalysis = "NERIS_ANALYSIS";
+
+		// Non-NERIS destinations (Back Office plan E4). The submission model is a general outbound-exchange
+		// record — destination/version, idempotency key, payload checksum and artifact, attempts, status,
+		// response — and nothing about it is NERIS-specific. These four name the incident-business exchanges
+		// that program stages. No dispatcher owns them yet: worker 41 speaks NERIS only and skips them by
+		// destination rather than claiming a row it cannot deliver.
+		/// <summary>Finance/accounting export of an approved cost or time artifact.</summary>
+		public const string FinanceExport = "FINANCE_EXPORT";
+		/// <summary>e-ISuite incident-business data exchange.</summary>
+		public const string EIsuiteExchange = "EISUITE_EXCHANGE";
+		/// <summary>EMAC reimbursement package filing.</summary>
+		public const string EmacReimbursement = "EMAC_REIMBURSEMENT";
+		/// <summary>Agency records filing of a produced record set.</summary>
+		public const string AgencyRecordsFiling = "AGENCY_RECORDS_FILING";
+
+		/// <summary>Every destination RMS recognizes. An unknown destination is refused at queue time.</summary>
+		public static readonly string[] All =
+		{
+			Neris, NerisIncidentAnalysis, FinanceExport, EIsuiteExchange, EmacReimbursement, AgencyRecordsFiling
+		};
+
+		/// <summary>The destinations worker 41 (RmsSubmissionCommand) delivers. Everything else waits for its own dispatcher.</summary>
+		public static readonly string[] NerisOwned = { Neris, NerisIncidentAnalysis };
+
+		public static bool IsNerisOwned(string destination) => NerisOwned.Contains(destination, StringComparer.Ordinal);
+
+		public static bool IsKnown(string destination) => All.Contains(destination, StringComparer.Ordinal);
 	}
 
 	/// <summary>

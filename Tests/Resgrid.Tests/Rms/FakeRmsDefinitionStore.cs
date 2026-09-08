@@ -27,6 +27,8 @@ namespace Resgrid.Tests.Rms
 		public List<RmsExternalOrder> Orders { get; } = new List<RmsExternalOrder>();
 		public List<RmsExternalOrderFill> Fills { get; } = new List<RmsExternalOrderFill>();
 		public List<RmsExternalReference> References { get; } = new List<RmsExternalReference>();
+		public List<RmsExternalOrderConnector> Connectors { get; } = new List<RmsExternalOrderConnector>();
+		public List<RmsExternalOrderConnectorRun> ConnectorRuns { get; } = new List<RmsExternalOrderConnectorRun>();
 
 		public Mock<IRmsRecordDefinitionsRepository> DefinitionsRepo { get; } = new Mock<IRmsRecordDefinitionsRepository>();
 		public Mock<IRmsRecordDefinitionVersionsRepository> VersionsRepo { get; } = new Mock<IRmsRecordDefinitionVersionsRepository>();
@@ -40,6 +42,8 @@ namespace Resgrid.Tests.Rms
 		public Mock<IRmsExternalOrdersRepository> OrdersRepo { get; } = new Mock<IRmsExternalOrdersRepository>();
 		public Mock<IRmsExternalOrderFillsRepository> FillsRepo { get; } = new Mock<IRmsExternalOrderFillsRepository>();
 		public Mock<IRmsExternalReferencesRepository> ReferencesRepo { get; } = new Mock<IRmsExternalReferencesRepository>();
+		public Mock<IRmsExternalOrderConnectorsRepository> ConnectorsRepo { get; } = new Mock<IRmsExternalOrderConnectorsRepository>();
+		public Mock<IRmsExternalOrderConnectorRunsRepository> ConnectorRunsRepo { get; } = new Mock<IRmsExternalOrderConnectorRunsRepository>();
 
 		public FakeRmsDefinitionStore(FakeRmsStore records = null)
 		{
@@ -123,6 +127,8 @@ namespace Resgrid.Tests.Rms
 				.ReturnsAsync((int d, string id) => Reports.FirstOrDefault(x => x.DepartmentId == d && x.RmsSavedReportDefinitionId == id && x.DeletedOn == null));
 			ReportsRepo.Setup(r => r.GetForDepartmentAsync(It.IsAny<int>()))
 				.ReturnsAsync((int d) => Reports.Where(x => x.DepartmentId == d && x.DeletedOn == null).ToList());
+			ReportsRepo.Setup(r => r.TryBumpRowVersionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string id, long expected, CancellationToken c) => Bump(Reports.FirstOrDefault(x => x.DepartmentId == d && x.RmsSavedReportDefinitionId == id && x.DeletedOn == null), expected, (x, v) => x.RowVersion = v, x => x.RowVersion));
 
 			// Product catalog mirrors
 			PacksRepo.Setup(r => r.SaveOrUpdateAsync(It.IsAny<RmsTemplatePackVersion>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -159,6 +165,25 @@ namespace Resgrid.Tests.Rms
 			ReferencesRepo.Setup(r => r.InsertAsync(It.IsAny<RmsExternalReference>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((RmsExternalReference e, CancellationToken c, bool f) => { References.Add(e); return e; });
 
+			// External order connectors
+			ConnectorsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsExternalOrderConnector>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsExternalOrderConnector e, CancellationToken c, bool f) => { Connectors.Add(e); return e; });
+			ConnectorsRepo.Setup(r => r.UpdateAsync(It.IsAny<RmsExternalOrderConnector>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsExternalOrderConnector e, CancellationToken c, bool f) => { Connectors.RemoveAll(x => x.RmsExternalOrderConnectorId == e.RmsExternalOrderConnectorId); Connectors.Add(e); return e; });
+			ConnectorsRepo.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string id) => Clone(Connectors.FirstOrDefault(x => x.DepartmentId == d && x.RmsExternalOrderConnectorId == id)));
+			ConnectorsRepo.Setup(r => r.GetByIdAsync(It.IsAny<string>()))
+				.ReturnsAsync((string id) => Clone(Connectors.FirstOrDefault(x => x.RmsExternalOrderConnectorId == id)));
+			ConnectorsRepo.Setup(r => r.GetForDepartmentAsync(It.IsAny<int>()))
+				.ReturnsAsync((int d) => Connectors.Where(x => x.DepartmentId == d).Select(Clone).ToList());
+			ConnectorsRepo.Setup(r => r.GetDueAsync(It.IsAny<DateTime>(), It.IsAny<int>()))
+				.ReturnsAsync((DateTime now, int take) => Connectors.Where(x => x.IsReadyToRun && (!x.LastPolledOn.HasValue || x.LastPolledOn.Value.AddMinutes(x.PollIntervalMinutes) <= now)).Take(take).Select(Clone).ToList());
+			ConnectorRunsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsExternalOrderConnectorRun>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((RmsExternalOrderConnectorRun e, CancellationToken c, bool f) => { ConnectorRuns.Add(e); return e; });
+			ConnectorRunsRepo.Setup(r => r.GetForConnectorAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, string id, int take) => ConnectorRuns.Where(x => x.DepartmentId == d && x.RmsExternalOrderConnectorId == id).OrderByDescending(x => x.StartedOn).Take(take).ToList());
+			ConnectorRunsRepo.Setup(r => r.TrimAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(0);
+
 			if (records != null)
 			{
 				records.RecordsRepo.Setup(r => r.GetByDefinitionVersionAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IEnumerable<int>>()))
@@ -179,5 +204,9 @@ namespace Resgrid.Tests.Rms
 			set(row, expected + 1);
 			return true;
 		}
+		/// <summary>Repositories hand back fresh rows; the service must not be able to mutate the store through a reference it never saved.</summary>
+		private static RmsExternalOrderConnector Clone(RmsExternalOrderConnector c)
+			=> c == null ? null : Newtonsoft.Json.JsonConvert.DeserializeObject<RmsExternalOrderConnector>(Newtonsoft.Json.JsonConvert.SerializeObject(c));
+
 	}
 }

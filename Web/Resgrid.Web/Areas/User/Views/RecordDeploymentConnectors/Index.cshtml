@@ -1,0 +1,100 @@
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@model Resgrid.Web.Areas.User.Models.Records.RecordDeploymentConnectorsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["Connectors"];
+	string When(DateTime? value) => value.HasValue ? value.Value.TimeConverterToString(Model.Department) : "-";
+	string Kind(string kind)
+	{
+		switch (kind)
+		{
+			case RecordDeploymentReconciliationItem.SourceReleasedLocalOut: return localizer["ReconciliationSourceReleased"];
+			case RecordDeploymentReconciliationItem.SourceClosedLocalOpen: return localizer["ReconciliationSourceClosed"];
+			case RecordDeploymentReconciliationItem.SourceRequestMissingLocally: return localizer["ReconciliationSourceRequestMissing"];
+			case RecordDeploymentReconciliationItem.LocalFillMissingInSource: return localizer["ReconciliationLocalFillMissing"];
+			case RecordDeploymentReconciliationItem.SourceStatusAhead: return localizer["ReconciliationSourceAhead"];
+			case RecordDeploymentReconciliationItem.SourceStatusBehind: return localizer["ReconciliationSourceBehind"];
+			default: return kind;
+		}
+	}
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["Connectors"] <span class="label label-warning">@localizer["PreviewPack"]</span></h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li><a asp-controller="RecordDeployments" asp-action="Index" asp-route-area="User">@localizer["Deployments"]</a></li>
+			<li class="active"><strong>@localizer["Connectors"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.ConnectorsEnabled) { <a class="btn btn-success" asp-controller="RecordDeploymentConnectors" asp-action="New" asp-route-area="User"><i class="fa fa-plus"></i> @localizer["NewConnector"]</a> }
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	@if (!string.IsNullOrEmpty(Model.Message)) { <div class="alert alert-success">@Model.Message</div> }
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
+	@if (!Model.ConnectorsEnabled) { <div class="alert alert-warning">@localizer["ConnectorsOff"]</div> }
+	<div class="ibox">
+		<div class="ibox-content">
+			<p class="text-muted">@localizer["ConnectorsIntro"]</p>
+			<p class="text-muted"><i class="fa fa-ban"></i> @localizer["ConnectorWriteRefused"]</p>
+			<table class="table table-striped">
+				<thead><tr><th>@localizer["ConnectorName"]</th><th>@localizer["ConnectorProvider"]</th><th>@localizer["ConnectorBaseUrl"]</th><th>@localizer["ConnectorState"]</th><th>@localizer["ConnectorLastPolled"]</th><th>@localizer["ConnectorLastSuccess"]</th><th>@localizer["ConnectorLastError"]</th></tr></thead>
+				<tbody>
+					@foreach (var c in Model.Connectors)
+					{
+						<tr>
+							<td><a asp-controller="RecordDeploymentConnectors" asp-action="Edit" asp-route-area="User" asp-route-id="@c.RmsExternalOrderConnectorId">@c.Name</a></td>
+							<td><code>@c.ProviderKey</code> <small class="text-muted">@c.SourceScheme / @c.ProfileKey</small></td>
+							<td><small>@c.BaseUrl</small></td>
+							<td>
+								@if (c.IsEnabled) { <span class="label label-primary">@localizer["ConnectorEnabled"]</span> } else { <span class="label label-default">@localizer["ConnectorDisabled"]</span> }
+								@if (c.IsReadyToRun) { <span class="label label-success">@localizer["ConnectorReady"]</span> } else { <span class="label label-warning">@localizer["ConnectorNotReady"]</span> }
+							</td>
+							<td>@When(c.LastPolledOn)</td>
+							<td>@When(c.LastSuccessOn)</td>
+							<td><small class="text-danger">@c.LastError</small></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="ibox">
+		<div class="ibox-title"><h5>@localizer["Reconciliation"]</h5></div>
+		<div class="ibox-content">
+			<p class="text-muted">@localizer["ReconciliationIntro"]</p>
+			@if (Model.Reconciliation.Count == 0)
+			{
+				<p>@localizer["ReconciliationNone"]</p>
+			}
+			else
+			{
+				<table class="table table-condensed">
+					<thead><tr><th>@localizer["DeploymentOrderNumber"]</th><th>@localizer["DeploymentRequestNumber"]</th><th>@localizer["ReconciliationKind"]</th><th>@localizer["ReconciliationSourceStatus"]</th><th>@localizer["ReconciliationLocalStatus"]</th><th>@localizer["DeploymentSourceVersion"]</th></tr></thead>
+					<tbody>
+						@foreach (var item in Model.Reconciliation)
+						{
+							<tr>
+								<td><a asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@item.OrderId">@item.OrderNumber</a></td>
+								<td>@item.RequestNumber</td>
+								<td>@Kind(item.Kind)</td>
+								<td><code>@item.SourceStatus</code></td>
+								<td><code>@item.LocalStatus</code></td>
+								<td>@item.SourceVersion <small class="text-muted">@When(item.SourceCapturedOn)</small></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+	</div>
+</div>

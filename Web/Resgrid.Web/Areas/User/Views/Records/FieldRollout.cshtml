@@ -1,0 +1,185 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Records.RecordsFieldRolloutView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["FieldRollout"];
+}
+@functions {
+	static string Percent(int part, int whole) => whole <= 0 ? "-" : ((int)System.Math.Round(part * 100d / whole)) + "%";
+
+	static string Minutes(long? milliseconds) => milliseconds.HasValue ? System.Math.Round(milliseconds.Value / 60000d, 1).ToString("0.0") : "-";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@localizer["FieldRollout"]</h2>
+		<ol class="breadcrumb">
+			<li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+			<li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@localizer["RecordsHeader"]</a></li>
+			<li class="active"><strong>@localizer["FieldRollout"]</strong></li>
+		</ol>
+	</div>
+	<div class="col-sm-4">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@foreach (var days in new[] { 7, 30, 90 })
+			{
+				<a class="btn @(Model.WindowDays == days ? "btn-primary" : "btn-default")" asp-controller="Records" asp-action="FieldRollout" asp-route-area="User" asp-route-windowDays="@days">@string.Format(localizer["RolloutWindowDays"].Value, days)</a>
+			}
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	<p class="text-muted">@localizer["FieldRolloutIntro"]</p>
+
+	@if (Model.Rollout == null)
+	{
+		<div class="alert alert-warning">@localizer["RolloutUnavailable"]</div>
+	}
+	else
+	{
+		@if (!Model.Rollout.AnyAppEnabled)
+		{
+			<div class="alert alert-info">@localizer["RolloutNoAppsEnabled"]</div>
+		}
+
+		<div class="row">
+			@foreach (var app in Model.Rollout.Apps)
+			{
+				var enabled = Model.Rollout.AppFlags.TryGetValue(app.OriginClient, out var on) && on;
+				var minimum = Model.Rollout.MinimumAppVersions.TryGetValue(app.OriginClient, out var min) ? min : string.Empty;
+				<div class="col-md-6">
+					<div class="ibox">
+						<div class="ibox-title">
+							<h5>@localizer["App" + app.OriginClient]</h5>
+							<span class="label @(enabled ? "label-primary" : "label-default") pull-right">@(enabled ? localizer["RolloutFlagOn"] : localizer["RolloutFlagOff"])</span>
+						</div>
+						<div class="ibox-content">
+							<table class="table table-condensed">
+								<tbody>
+									<tr>
+										<th>@localizer["RolloutActiveUsers"]</th>
+										<td>@app.ActiveUsers</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutCompatible"]</th>
+										<td>
+											@app.CompatibleUsers / @app.ActiveUsers (@Percent(app.CompatibleUsers, app.ActiveUsers))
+											@if (!string.IsNullOrWhiteSpace(minimum))
+											{
+												<small class="text-muted">@string.Format(localizer["RolloutMinimumVersion"].Value, minimum)</small>
+											}
+										</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutRecords"]</th>
+										<td>@string.Format(localizer["RolloutRecordsValue"].Value, app.RecordsCreated, app.RecordsFinalized)</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutCatalog"]</th>
+										<td>
+											@app.CatalogRequests
+											@if (app.CatalogFailures > 0)
+											{
+												<span class="label label-warning">@string.Format(localizer["RolloutFailures"].Value, app.CatalogFailures)</span>
+											}
+										</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutAuthoring"]</th>
+										<td>@string.Format(localizer["RolloutAuthoringValue"].Value, app.DraftsStarted, app.DraftsSaved, app.DraftSaveFailures)</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutSync"]</th>
+										<td>
+											@app.Syncs
+											@if (app.SyncFailures > 0)
+											{
+												<span class="label label-warning">@string.Format(localizer["RolloutFailures"].Value, app.SyncFailures)</span>
+											}
+										</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutConflicts"]</th>
+										<td>
+											@app.Conflicts
+											@foreach (var kind in app.ConflictKinds.OrderByDescending(k => k.Value))
+											{
+												<span class="label label-default m-l-xs">@kind.Key: @kind.Value</span>
+											}
+										</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutAttachments"]</th>
+										<td>@string.Format(localizer["RolloutAttachmentsValue"].Value, app.AttachmentsUploaded, app.AttachmentFailures)</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutCompleted"]</th>
+										<td>@string.Format(localizer["RolloutCompletedValue"].Value, app.Completed, Minutes(app.MedianTimeToCompleteMs))</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutAbandoned"]</th>
+										<td>
+											@app.Abandoned
+											@if (app.AbandonmentRate.HasValue)
+											{
+												<span class="text-muted">(@((int)System.Math.Round(app.AbandonmentRate.Value * 100))%)</span>
+											}
+										</td>
+									</tr>
+									<tr>
+										<th>@localizer["RolloutWebHandoff"]</th>
+										<td>@app.WebHandoffs</td>
+									</tr>
+								</tbody>
+							</table>
+
+							@if (app.Versions.Count > 0)
+							{
+								<h5 class="m-t-sm">@localizer["RolloutVersions"]</h5>
+								<table class="table table-condensed">
+									<thead>
+										<tr>
+											<th>@localizer["RolloutVersion"]</th>
+											<th>@localizer["RolloutUsers"]</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var version in app.Versions.Take(8))
+										{
+											var compatible = FieldRecordCatalogV1.MeetsMinimum(version.AppVersion, minimum);
+											<tr>
+												<td><code>@version.AppVersion</code></td>
+												<td>@version.Users</td>
+												<td>
+													@if (!compatible)
+													{
+														<span class="label label-warning">@localizer["RolloutTooOld"]</span>
+													}
+												</td>
+											</tr>
+										}
+									</tbody>
+								</table>
+							}
+
+							@if (app.CatalogFailureReasons.Count > 0)
+							{
+								<h5 class="m-t-sm">@localizer["RolloutRefusals"]</h5>
+								<ul class="list-unstyled">
+									@foreach (var reason in app.CatalogFailureReasons.OrderByDescending(r => r.Value))
+									{
+										<li><code>@reason.Key</code> &times; @reason.Value</li>
+									}
+								</ul>
+							}
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+
+		<p class="text-muted small">@string.Format(localizer["RolloutGeneratedOn"].Value, Model.Rollout.GeneratedOn.ToString("u"))</p>
+	}
+</div>

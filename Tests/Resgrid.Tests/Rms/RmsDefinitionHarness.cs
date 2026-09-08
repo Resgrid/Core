@@ -49,6 +49,8 @@ namespace Resgrid.Tests.Rms
 		public RecordsService Records { get; }
 		public RecordSavedReportsService Reports { get; }
 		public RecordDeploymentsService Deployments { get; }
+		public FakeOrderFeedProvider Feed { get; } = new FakeOrderFeedProvider();
+		public Resgrid.Services.Records.Connectors.RecordDeploymentConnectorsService Connectors { get; }
 
 		public RmsDefinitionHarness()
 		{
@@ -56,6 +58,7 @@ namespace Resgrid.Tests.Rms
 			Defs = new FakeRmsDefinitionStore(Store);
 
 			Authorization.Setup(a => a.IsActiveMemberAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(true);
+			Authorization.Setup(a => a.IsDepartmentAdminAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync((string u, int d) => u == Admin && d == Dept);
 			Authorization.Setup(a => a.HasPermissionAsync(It.IsAny<string>(), Dept, It.IsAny<PermissionTypes>())).ReturnsAsync(true);
 			Authorization.Setup(a => a.CanUserViewRecordAsync(It.IsAny<string>(), It.IsAny<string>(), Dept)).ReturnsAsync(true);
 			Authorization.Setup(a => a.CanReadSourceCallAsync(It.IsAny<string>(), Dept, It.IsAny<Call>())).ReturnsAsync(true);
@@ -97,7 +100,9 @@ namespace Resgrid.Tests.Rms
 				Store.AuditsRepo.Object, Outbox, Cutover.Object, Settings.Object, Groups.Object, Profiles.Object, Units.Object, Calls.Object, Adp.Object,
 				Store.UnitOfWork.Object, OutboundQueue.Object, new NullRecordAttachmentScanner(), Authorization.Object, Mock.Of<IRecordsUdfService>(), Protection, Definitions, TypedValues, Roles.Object);
 			Reports = new RecordSavedReportsService(Defs.ReportsRepo.Object, Definitions, Records, Store.RecordsRepo.Object, Defs.ValuesRepo.Object, Defs.GroupsRepo.Object, Authorization.Object, Store.AuditsRepo.Object);
-			Deployments = new RecordDeploymentsService(Defs.OrdersRepo.Object, Defs.FillsRepo.Object, Defs.ReferencesRepo.Object, Records, Definitions, Templates, Authorization.Object, Store.AuditsRepo.Object, Store.UnitOfWork.Object);
+			Deployments = new RecordDeploymentsService(Defs.OrdersRepo.Object, Defs.FillsRepo.Object, Defs.ReferencesRepo.Object, Records, Store.RecordsRepo.Object, Definitions, Templates, Authorization.Object, Store.AuditsRepo.Object, Store.UnitOfWork.Object);
+			Connectors = new Resgrid.Services.Records.Connectors.RecordDeploymentConnectorsService(Defs.ConnectorsRepo.Object, Defs.ConnectorRunsRepo.Object, Defs.OrdersRepo.Object, Defs.FillsRepo.Object,
+				Deployments, Authorization.Object, Store.AuditsRepo.Object, new IExternalOrderFeedProvider[] { Feed, new FakeOrderFeedProvider(RmsExternalOrderConnectorProviders.Iroc, "iroc", RmsDeploymentProfiles.UsWildland, new Resgrid.Services.Records.Connectors.IrocOrderFeedProvider().ValidateOrder, Feed) });
 		}
 
 		/// <summary>Creates a blank department definition and replaces the starter schema with <paramref name="schema"/> in draft v1.</summary>

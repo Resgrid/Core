@@ -8,6 +8,7 @@ using SixLabors.ImageSharp.Formats.Bmp;
 using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.Metadata.Profiles.Exif;
 using SixLabors.ImageSharp.Formats.Tiff;
 using SixLabors.ImageSharp.Formats.Webp;
 
@@ -26,6 +27,9 @@ namespace Resgrid.Services.Records
 		public string ContentType { get; set; }
 		public bool IsImage { get; set; }
 		public bool MetadataStripped { get; set; }
+
+		/// <summary>True when the definition's policy kept the EXIF GPS block; recorded on the attachment.</summary>
+		public bool LocationRetained { get; set; }
 	}
 
 	/// <summary>
@@ -55,7 +59,14 @@ namespace Resgrid.Services.Records
 			".png", ".jpg", ".jpeg", ".jpe", ".gif", ".webp", ".bmp", ".tif", ".tiff"
 		};
 
-		public static AttachmentHygieneResult Sanitize(string fileName, string contentType, byte[] data)
+		public static AttachmentHygieneResult Sanitize(string fileName, string contentType, byte[] data) => Sanitize(fileName, contentType, data, false);
+
+		/// <summary>
+		/// <paramref name="retainLocation"/> keeps the EXIF GPS block and nothing else — device identity, serial
+		/// numbers, author, software and timestamps still go. It is set only by a definition whose profile needs the
+		/// coordinates (RMS plan RMS-1D), and the caller records which way the decision went on the attachment.
+		/// </summary>
+		public static AttachmentHygieneResult Sanitize(string fileName, string contentType, byte[] data, bool retainLocation)
 		{
 			if (data == null || data.Length == 0)
 				throw new RecordAttachmentRejectedException("Attachment content is required.");
@@ -85,7 +96,10 @@ namespace Resgrid.Services.Records
 					throw new RecordAttachmentRejectedException($"Attachment '{safeName}' is larger than the {MaxPixels / 1_000_000} megapixel limit.");
 
 				var format = image.Metadata.DecodedImageFormat ?? PngFormat.Instance;
+				var location = retainLocation ? ExtractLocation(image) : null;
 				StripMetadata(image);
+				if (location != null)
+					image.Metadata.ExifProfile = location;
 
 				using var output = new MemoryStream();
 				image.Save(output, EncoderFor(format));
@@ -96,7 +110,8 @@ namespace Resgrid.Services.Records
 					FileName = safeName,
 					ContentType = format.DefaultMimeType,
 					IsImage = true,
-					MetadataStripped = true
+					MetadataStripped = true,
+					LocationRetained = location != null
 				};
 			}
 			catch (RecordAttachmentRejectedException)
@@ -108,6 +123,49 @@ namespace Resgrid.Services.Records
 				// Undecodable "images" are refused rather than stored raw: a mismatched type is exactly the case hygiene exists for.
 				throw new RecordAttachmentRejectedException($"Attachment '{safeName}' could not be read as an image ({ex.GetType().Name}).");
 			}
+		}
+
+		/// <summary>
+		/// The source image's GPS tags on a profile of their own, or null when it carries none. Copying tag by tag
+		/// rather than filtering a clone is deliberate: only what is named here can survive, so a future EXIF tag
+		/// carrying device or person identity cannot slip through by default.
+		/// </summary>
+		private static ExifProfile ExtractLocation(Image image)
+		{
+			var source = image.Metadata.ExifProfile;
+			if (source == null)
+				return null;
+
+			var kept = new ExifProfile();
+			Copy(source, kept, ExifTag.GPSVersionID);
+			Copy(source, kept, ExifTag.GPSLatitudeRef);
+			Copy(source, kept, ExifTag.GPSLatitude);
+			Copy(source, kept, ExifTag.GPSLongitudeRef);
+			Copy(source, kept, ExifTag.GPSLongitude);
+			Copy(source, kept, ExifTag.GPSAltitudeRef);
+			Copy(source, kept, ExifTag.GPSAltitude);
+			Copy(source, kept, ExifTag.GPSTimestamp);
+			Copy(source, kept, ExifTag.GPSSatellites);
+			Copy(source, kept, ExifTag.GPSStatus);
+			Copy(source, kept, ExifTag.GPSMeasureMode);
+			Copy(source, kept, ExifTag.GPSDOP);
+			Copy(source, kept, ExifTag.GPSSpeedRef);
+			Copy(source, kept, ExifTag.GPSSpeed);
+			Copy(source, kept, ExifTag.GPSTrackRef);
+			Copy(source, kept, ExifTag.GPSTrack);
+			Copy(source, kept, ExifTag.GPSImgDirectionRef);
+			Copy(source, kept, ExifTag.GPSImgDirection);
+			Copy(source, kept, ExifTag.GPSMapDatum);
+			Copy(source, kept, ExifTag.GPSDateStamp);
+			Copy(source, kept, ExifTag.GPSDifferential);
+
+			return kept.Values.Count == 0 ? null : kept;
+		}
+
+		private static void Copy<TValue>(ExifProfile source, ExifProfile destination, ExifTag<TValue> tag)
+		{
+			if (source.TryGetValue(tag, out var value) && value != null && value.Value != null)
+				destination.SetValue(tag, value.Value);
 		}
 
 		private static void StripMetadata(Image image)

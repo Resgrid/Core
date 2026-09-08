@@ -15,6 +15,9 @@ namespace Resgrid.Model.Repositories
 		public IList<int> States { get; set; }
 		public string DefinitionKey { get; set; }
 		public int? Year { get; set; }
+		/// <summary>Lower bound on COALESCE(FinalizedOn, OccurredOn, RecordCreatedOn): a report window belongs in the
+		/// query, never after the page has been cut, or matching Records fall off the end without any warning.</summary>
+		public DateTime? OccurredSince { get; set; }
 		public int? CallId { get; set; }
 		public string AuthorUserId { get; set; }
 		public string OwnerUserId { get; set; }
@@ -51,6 +54,9 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsOperationalRecord>> GetOpenAsync(int departmentId);
 		/// <summary>Live Finalized/Amended Records whose FinalizedOn is at or after the instant.</summary>
 		Task<IEnumerable<RmsOperationalRecord>> GetFinalizedSinceAsync(int departmentId, DateTime sinceUtc);
+
+		/// <summary>Records created in the window, newest first. Bounded; used by the Field Records rollout dashboard (RMS-1D).</summary>
+		Task<IEnumerable<RmsOperationalRecord>> GetCreatedSinceAsync(int departmentId, DateTime sinceUtc, int take);
 		/// <summary>Retention candidates (RMS-3, worker 43): live, closed Records finalized before the cutoff, oldest first.</summary>
 		Task<IEnumerable<RmsOperationalRecord>> GetRetentionCandidatesAsync(int departmentId, DateTime cutoffUtc, int take, string afterId = null);
 		/// <summary>Live Records with no RmsRecordGroupScope row: they stay department-wide under group scoping (plan 5.7.1).</summary>

@@ -38,6 +38,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	{
 		private readonly IRecordsService _recordsService;
 		private readonly IRecordsBulkPacketService _bulk;
+		private readonly IRecordsFieldRolloutService _fieldRollout;
 		private readonly IRecordsCutoverService _cutoverService;
 		private readonly IRecordsAuthorizationService _recordsAuthorizationService;
 		private readonly IRecordsUdfService _udf;
@@ -70,8 +71,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICompositeViewEngine viewEngine, IPdfProvider pdfProvider, IRecordsSearchService recordsSearch, IDepartmentDataProtectionService dataProtection,
 			IDepartmentProfileMediaService branding, IRecordsPrintLayoutService printLayouts, IRecordsAccountabilityService accountability, IRecordsDashboardService dashboard, IRecordsUdfService udf,
 			IRecordsProtectionService protection, IProtectedGrantContext grantContext, IRecordsRevealService reveal, IRecordDefinitionsService definitions, IRecordTypedValuesService typedValues, IContactsService contacts,
-			IRecordsBulkPacketService bulk)
+			IRecordsBulkPacketService bulk, IRecordsFieldRolloutService fieldRollout)
 		{
+			_fieldRollout = fieldRollout;
 			_bulk = bulk;
 			_contacts = contacts;
 			_reveal = reveal;
@@ -1582,6 +1584,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CarryGrant(form);
 			form.ProtectionEnforced = aggregate?.Protection?.IsProtected ?? await _protection.IsEnforcedAsync(DepartmentId);
 			return View("EditDefinition", form);
+		}
+
+		/// <summary>
+		/// Per-app Field Records rollout (RMS plan RMS-1D): who is on a compatible version, what the apps were
+		/// refused, and where authoring stopped. Counts only — this page never shows what anybody wrote.
+		/// </summary>
+		[HttpGet]
+		public async Task<IActionResult> FieldRollout(int windowDays = 30, CancellationToken cancellationToken = default)
+		{
+			if (!await _recordsAuthorizationService.IsActiveMemberAsync(UserId, DepartmentId)) return Forbid();
+			var moduleState = await _cutoverService.GetModuleStateAsync(DepartmentId);
+			if (!moduleState.FlagEnabled) return NotFound();
+
+			var model = new RecordsFieldRolloutView
+			{
+				ModuleState = moduleState,
+				Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false),
+				IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin(),
+				WindowDays = windowDays
+			};
+
+			try
+			{
+				model.Rollout = await _fieldRollout.GetAsync(DepartmentId, UserId, windowDays, cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return Forbid();
+			}
+
+			return View(model);
 		}
 
 		private async Task PopulateBulkAsync(RecordsIndexView model)

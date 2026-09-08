@@ -428,10 +428,14 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			var claimable = new[] { (int)RmsSubmissionState.Queued, (int)RmsSubmissionState.AwaitingDestination };
 			var recoverable = $"s.{Col("State")} = {(int)RmsSubmissionState.Failed} AND s.{Col("RequiresReconciliation")} = {P}True AND EXISTS (SELECT 1 FROM {Tbl("RmsSubmissionExchanges")} e WHERE e.{Col("DepartmentId")} = s.{Col("DepartmentId")} AND e.{Col("SubmissionId")} = s.{Col("RmsSubmissionId")} AND e.{Col("Stage")} = 'Response' AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsSubmissionExchanges")} a WHERE a.{Col("DepartmentId")} = e.{Col("DepartmentId")} AND a.{Col("SubmissionId")} = e.{Col("SubmissionId")} AND a.{Col("ExchangeId")} = e.{Col("ExchangeId")} AND a.{Col("Stage")} = 'Applied'))";
+			// Worker 41 speaks NERIS. A non-NERIS destination (Back Office plan E4: finance export, e-ISuite,
+			// EMAC reimbursement, agency records filing) is never claimed here, so it waits for its own dispatcher
+			// instead of being leased, refused as an unsupported destination, and retried until it exhausts.
 			var candidates = (await QueryAsync<RmsSubmission>(
-				$"SELECT s.* FROM {Tbl("RmsSubmissions")} s WHERE ({InList("State", "States")} OR ({recoverable})) AND ({Col("NextAttemptOn")} IS NULL OR {Col("NextAttemptOn")} <= {P}Now) " +
+				$"SELECT s.* FROM {Tbl("RmsSubmissions")} s WHERE ({InList("State", "States")} OR ({recoverable})) AND {InList("Destination", "Destinations")} " +
+				$"AND ({Col("NextAttemptOn")} IS NULL OR {Col("NextAttemptOn")} <= {P}Now) " +
 				$"AND ({Col("LeaseExpiresOn")} IS NULL OR {Col("LeaseExpiresOn")} < {P}Now) ORDER BY {Col("QueuedOn")} {Paging()}",
-				new { States = InListValue(claimable), True = true, Now = utcNow, Skip = 0, Take = Math.Clamp(batchSize, 1, 500) }, cancellationToken)).ToList();
+				new { States = InListValue(claimable), Destinations = InListValue(RmsSubmissionDestinations.NerisOwned), True = true, Now = utcNow, Skip = 0, Take = Math.Clamp(batchSize, 1, 500) }, cancellationToken)).ToList();
 
 			var claimed = new List<RmsSubmission>();
 			var leaseUntil = utcNow.Add(leaseDuration);

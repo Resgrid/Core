@@ -429,6 +429,14 @@ namespace Resgrid.Model
 		public string Prefix { get; set; }
 		public RmsNumberAssignment Assignment { get; set; } = RmsNumberAssignment.OnFinalize;
 		public bool PerGroupSequence { get; set; }
+
+		/// <summary>
+		/// Incident-scoped uniqueness and reset (Back Office plan E2), alongside the existing department and group
+		/// scopes. An ICS form is numbered per incident by definition — the third ICS 214 on a Call is 003 on that
+		/// Call, not 003 for the department this year. Requires the definition to permit the "call" subject; a Record
+		/// with no Call falls back to the wider scope rather than colliding.
+		/// </summary>
+		public bool PerIncidentSequence { get; set; }
 		public bool ResetYearly { get; set; } = true;
 		public int SequenceWidth { get; set; } = 4;
 
@@ -446,7 +454,29 @@ namespace Resgrid.Model
 		public List<string> LaunchContexts { get; set; } = new List<string>();
 		public bool AllowOffline { get; set; }
 		public bool AllowAttachments { get; set; } = true;
+
+		/// <summary>
+		/// Media capture hygiene (RMS plan RMS-1D): photo EXIF location and device metadata are stripped on upload
+		/// by default, because a photo of a protected facility, a SAR subject's location or a security client's site
+		/// is a disclosure nobody intended. A definition whose profile genuinely needs the coordinates — a damage
+		/// assessment, a clue report — sets this, and the decision is recorded on every attachment either way.
+		/// </summary>
+		public bool RetainMediaLocation { get; set; }
+
 		public string MinimumAppVersion { get; set; }
+
+		/// <summary>
+		/// No field app may author on this version — the definition is Web only (Back Office plan E7). This is the
+		/// mechanical expression of a desk-authored pack: the four apps exclude it with SurfaceNotEnabled, and no
+		/// bounded sync bundle ever puts it on a device. Web authoring is unaffected, because the Web renderer is
+		/// not gated by the client surface.
+		/// </summary>
+		[JsonIgnore]
+		public bool IsWebOnly => !Responder && !Unit && !IncidentCommand && !Dispatch;
+
+		/// <summary>A Web-only surface: no app authoring, and therefore no offline drafts. Attachments stay available on the Web.</summary>
+		public static RecordDefinitionClientSurface WebOnly(bool allowAttachments = true)
+			=> new RecordDefinitionClientSurface { Responder = false, Unit = false, IncidentCommand = false, Dispatch = false, AllowOffline = false, AllowAttachments = allowAttachments };
 
 		public static RecordDefinitionClientSurface Parse(string json) => string.IsNullOrWhiteSpace(json) ? new RecordDefinitionClientSurface() : JsonConvert.DeserializeObject<RecordDefinitionClientSurface>(json) ?? new RecordDefinitionClientSurface();
 	}

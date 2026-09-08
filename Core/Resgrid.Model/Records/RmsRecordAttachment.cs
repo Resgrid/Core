@@ -48,6 +48,13 @@ namespace Resgrid.Model
 		/// <summary>True when location/device metadata was stripped on upload (plan section 4.7, media hygiene).</summary>
 		public bool MetadataStripped { get; set; }
 
+		/// <summary>
+		/// True when this image kept its EXIF GPS block because the definition's profile needs the coordinates
+		/// (RMS plan RMS-1D media capture hygiene). False on everything else, including every non-image, so the
+		/// decision is readable on the attachment rather than inferred from the definition later.
+		/// </summary>
+		public bool MediaLocationRetained { get; set; }
+
 		/// <summary>RmsEvidenceClassification. Null means legacy/unclassified and requires restricted access.</summary>
 		public int? Classification { get; set; }
 		[NotMapped, JsonIgnore]

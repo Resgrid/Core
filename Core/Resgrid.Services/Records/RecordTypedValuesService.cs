@@ -308,6 +308,13 @@ namespace Resgrid.Services.Records
 		{
 			if (IsBlank(input)) return null;
 			var value = input.Value?.Trim();
+			// A client that posts only Values or ReferenceId leaves Value null; the text cases below index it directly,
+			// so record a validation issue rather than letting the NRE surface as a 500.
+			if (value == null && (field.Type == RmsFieldType.ShortText || field.Type == RmsFieldType.LongText || field.Type == RmsFieldType.CountrySubdivision))
+			{
+				context.Error(input, "not_text", $"'{field.Label ?? field.Key}' must be posted as a text value.");
+				return null;
+			}
 			var row = new RmsRecordValue();
 			switch (field.Type)
 			{
@@ -587,11 +594,18 @@ namespace Resgrid.Services.Records
 		// Storage
 		// ------------------------------------------------------------------------------------------------
 
+		/// <summary>
+		/// A posted list replaces the stored rows wholesale, so the two "nothing here" shapes have to stay apart:
+		/// null means the caller sent no values at all and the stored draft is left alone, an empty list is an
+		/// explicit clear. Without that split a client that has never heard of typed values erases them on any save.
+		/// </summary>
 		public async Task<RecordValueSet> SaveDraftValuesAsync(int departmentId, string userId, string recordId, RmsRecordDefinitionVersion version, List<RecordValueInput> inputs, CancellationToken cancellationToken = default)
 		{
 			if (version == null) throw new ArgumentNullException(nameof(version));
+			if (inputs == null)
+				return await HydrateAsync(departmentId, recordId, null, version, true);
 			var context = new ParseContext(departmentId, recordId, version.Schema, this) { UserId = userId };
-			var parsed = await ParseAllAsync(context, inputs ?? new List<RecordValueInput>(), version);
+			var parsed = await ParseAllAsync(context, inputs, version);
 			if (context.Issues.Any(i => i.Severity == "error"))
 				throw new ArgumentException(string.Join(" ", context.Issues.Where(i => i.Severity == "error").Select(i => i.Message)));
 
@@ -669,19 +683,21 @@ namespace Resgrid.Services.Records
 
 		/// <summary>
 		/// A copied row gets a new identity, and the envelope's AAD is bound to the row key, so a sealed source must be
-		/// revealed first and the copy re-sealed under its own key (the caller's grant carries finalize under enforcement).
+		/// revealed first and the copy carried as plaintext (the caller's grant carries finalize under enforcement).
+		/// The reveal unseals the sources in place, so the copy — cloned before the reveal — is what still holds the
+		/// envelope and what has to be tested. Re-sealing is deliberately left to <see cref="SealAndInsertAsync"/>,
+		/// which runs after the copies have been given their new row ids, so the new envelope binds to the new key.
 		/// </summary>
-		private async Task ResealCopiesAsync(int departmentId, string userId, List<RmsRecordValue> sources, List<RmsRecordValue> copies, string operation, CancellationToken cancellationToken)
+		private async Task UnsealCopiesAsync(int departmentId, List<RmsRecordValue> sources, List<RmsRecordValue> copies, string operation)
 		{
 			(await RevealSealedAsync(departmentId, sources)).RequireRevealed(operation);
 			foreach (var copy in copies)
 			{
 				var source = sources.FirstOrDefault(s => s.RmsRecordValueId == copy.RmsRecordValueId);
-				if (source == null || !source.IsSealed) continue;
+				if (source == null || !copy.IsSealed) continue;
 				RmsRecordValuePack.Unpack(copy, RmsRecordValuePack.Pack(source));
 				copy.ProtectedEnvelope = null; copy.IsProtected = false; copy.ProtectedCatalogVersion = 0;
 			}
-			await _protection.ProtectValuesAsync(departmentId, copies, userId, cancellationToken);
 		}
 
 		public async Task CopyDraftToRevisionAsync(int departmentId, string recordId, string revisionId, CancellationToken cancellationToken = default)
@@ -690,7 +706,7 @@ namespace Resgrid.Services.Records
 			var rows = (await _values.GetForRecordAsync(departmentId, recordId, null))?.ToList() ?? new List<RmsRecordValue>();
 			var now = DateTime.UtcNow;
 			var copies = rows.Select(Clone).ToList();
-			await ResealCopiesAsync(departmentId, null, rows, copies, "finalize", cancellationToken);
+			await UnsealCopiesAsync(departmentId, rows, copies, "finalize");
 			var groupMap = new Dictionary<string, string>(StringComparer.Ordinal);
 			foreach (var group in groups)
 			{
@@ -726,7 +742,7 @@ namespace Resgrid.Services.Records
 			var groups = (await _groups.GetForRecordAsync(departmentId, recordId, revisionId))?.ToList() ?? new List<RmsRecordValueGroup>();
 			var rows = (await _values.GetForRecordAsync(departmentId, recordId, revisionId))?.ToList() ?? new List<RmsRecordValue>();
 			var copies = rows.Select(Clone).ToList();
-			await ResealCopiesAsync(departmentId, userId, rows, copies, "restore draft", cancellationToken);
+			await UnsealCopiesAsync(departmentId, rows, copies, "restore draft");
 			await _values.DeleteDraftForRecordAsync(departmentId, recordId, cancellationToken);
 			await _groups.DeleteDraftForRecordAsync(departmentId, recordId, cancellationToken);
 			var now = DateTime.UtcNow;

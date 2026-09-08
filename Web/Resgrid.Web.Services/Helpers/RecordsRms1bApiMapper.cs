@@ -124,7 +124,7 @@ namespace Resgrid.Web.Services.Helpers
 		{
 			TemplateId = t.RmsExportTemplateId, TemplateKey = t.TemplateKey, Name = t.Name, Description = t.Description, Format = ((RmsExportFormat)t.Format).ToString(), Scope = ((RmsExportScope)t.Scope).ToString(),
 			DefinitionKeys = (t.DefinitionKeysCsv ?? string.Empty).Split(',').Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList(),
-			Columns = string.IsNullOrWhiteSpace(t.ColumnsJson) ? new List<string>() : Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(t.ColumnsJson) ?? new List<string>(),
+			Columns = RecordsExportService.ParseColumns(t.ColumnsJson),
 			IncludeNarrative = t.IncludeNarrative, IncludeRestricted = t.IncludeRestricted, EgressAcknowledgedOn = t.EgressAcknowledgedOn, EgressAcknowledgedByUserId = t.EgressAcknowledgedByUserId, FileNameTemplate = t.FileNameTemplate,
 			IncludeHeader = t.IncludeHeader, Delimiter = t.Delimiter == "\t" ? "tab" : t.Delimiter, ScheduleKind = ((RmsExportScheduleKind)t.ScheduleKind).ToString(), ScheduleHourLocal = t.ScheduleHourLocal, ScheduleDayOfWeek = t.ScheduleDayOfWeek,
 			ScheduleDayOfMonth = t.ScheduleDayOfMonth, WindowDays = t.WindowDays, NextRunOn = t.NextRunOn, LastRunOn = t.LastRunOn, IsEnabled = t.IsEnabled, CreatedOn = t.CreatedOn, ModifiedOn = t.ModifiedOn, RowVersion = t.RowVersion, ETag = RecordsApiContract.ToETag(t.RowVersion)
@@ -157,6 +157,9 @@ namespace Resgrid.Web.Services.Helpers
 
 		public static RecordDeploymentData ToDeployment(RecordDeploymentAggregate aggregate)
 		{
+			// A command endpoint re-fetches after the write, and that fetch can come back empty (deleted, or no longer
+			// visible). Returning null keeps the mapper from being the thing that turns it into a 500.
+			if (aggregate?.Order == null) return null;
 			var o = aggregate.Order;
 			var pack = RecordTemplateCatalog.PackOf(RecordDeploymentsService.DeploymentTemplateKey);
 			return new RecordDeploymentData
@@ -167,7 +170,7 @@ namespace Resgrid.Web.Services.Helpers
 				RequestingAgency = o.RequestingAgency, ReceivingAgency = o.ReceivingAgency, SendingAgency = o.SendingAgency, DepartmentRole = o.DepartmentRole, CostCode = o.CostCode, AgreementReference = o.AgreementReference,
 				CurrencyCode = o.CurrencyCode, MeasurementSystem = o.MeasurementSystem, TimeZoneId = o.TimeZoneId, CapturedOffsetMinutes = o.CapturedOffsetMinutes, SourceCapturedOn = o.SourceCapturedOn, SourceVersion = o.SourceVersion,
 				ArtifactFileName = o.ArtifactFileName, ArtifactContentType = o.ArtifactContentType, ArtifactChecksum = o.ArtifactChecksum, HasArtifact = o.ArtifactChecksum != null, ArtifactSafeUrl = o.ArtifactSafeUrl,
-				Status = ((RmsExternalOrderStatus)o.Status).ToString(), MobilizedOn = o.MobilizedOn, ReleasedOn = o.ReleasedOn, ClosedOutOn = o.ClosedOutOn, CloseoutNotes = o.CloseoutNotes, AllReturned = aggregate.AllReturned,
+				Status = ((RmsExternalOrderStatus)o.Status).ToString(), OwnershipMarker = string.IsNullOrEmpty(o.OwnershipMarker) ? RmsExternalOrderOwnership.Manual : o.OwnershipMarker, ConnectorId = o.ConnectorId, MobilizedOn = o.MobilizedOn, ReleasedOn = o.ReleasedOn, ClosedOutOn = o.ClosedOutOn, CloseoutNotes = o.CloseoutNotes, AllReturned = aggregate.AllReturned,
 				IsPreview = pack?.IsPreview ?? true, ProvenanceStatement = "Preview: created from an external order snapshot; no claim that NWCG, CIFFC or a member agency accepts this output until a real order has been filled and reconciled.",
 				CreatedOn = o.CreatedOn, ModifiedOn = o.ModifiedOn, RowVersion = o.RowVersion, ETag = RecordsApiContract.ToETag(o.RowVersion), Fills = aggregate.Fills.Select(ToFill).ToList()
 			};

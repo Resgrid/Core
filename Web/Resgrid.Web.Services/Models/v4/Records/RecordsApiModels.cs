@@ -305,6 +305,12 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public DateTime UploadedOn { get; set; }
 		public int ScanState { get; set; }
 		public string ScanStateName { get; set; }
+
+		/// <summary>EXIF, XMP and IPTC were removed on upload; images are always re-encoded (RMS-1D media hygiene).</summary>
+		public bool MetadataStripped { get; set; }
+
+		/// <summary>The definition's profile asked for the photo's coordinates and they survived; false on everything else.</summary>
+		public bool MediaLocationRetained { get; set; }
 	}
 
 	public class RecordRevisionData
@@ -344,8 +350,12 @@ namespace Resgrid.Web.Services.Models.v4.Records
 		public RecordDetailsInput Details { get; set; } = new RecordDetailsInput();
 		public List<RecordParticipantInputData> Participants { get; set; } = new List<RecordParticipantInputData>();
 		public List<RecordUnitResponseInputData> Units { get; set; } = new List<RecordUnitResponseInputData>();
-		/// <summary>Typed values for a department definition (RMS-1B); ignored for locked system definitions.</summary>
-		public List<RecordValueInputData> Values { get; set; } = new List<RecordValueInputData>();
+		/// <summary>
+		/// Typed values for a department definition (RMS-1B); ignored for locked system definitions. A posted list
+		/// replaces the stored values wholesale, so this stays null when the property is omitted: null is "no value
+		/// update", an empty list is an explicit clear. Do not give it a default.
+		/// </summary>
+		public List<RecordValueInputData> Values { get; set; }
 		public string DuplicateContinueReason { get; set; }
 		/// <summary>RmsOriginClient: 2 Responder, 3 Unit, 4 IncidentCommand, 5 Dispatch, 6 Api (default). Field clients are gated by their Records.Field.* flag.</summary>
 		public int? OriginClient { get; set; }

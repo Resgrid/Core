@@ -63,6 +63,7 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public string NumberPrefix { get; set; }
 		public int NumberAssignment { get; set; } = (int)RmsNumberAssignment.OnFinalize;
 		public bool PerGroupSequence { get; set; }
+		public bool PerIncidentSequence { get; set; }
 		public bool ResetYearly { get; set; } = true;
 		public int SequenceWidth { get; set; } = 4;
 		public int? RetentionYears { get; set; }
@@ -73,6 +74,8 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public bool SurfaceDispatch { get; set; }
 		public bool AllowOffline { get; set; }
 		public bool AllowAttachments { get; set; } = true;
+		/// <summary>Media capture hygiene (RMS-1D): keep photo coordinates on this definition's attachments.</summary>
+		public bool RetainMediaLocation { get; set; }
 		public string SchemaJson { get; set; }
 		public string MigrationMapJson { get; set; }
 		public string ChangeNotes { get; set; }
@@ -104,10 +107,10 @@ namespace Resgrid.Web.Areas.User.Models.Records
 				Name = Name, Category = Category, Description = Description, PermittedSubjectTypes = PermittedSubjectTypes,
 				LifecyclePreset = (RmsLifecyclePreset)LifecyclePreset, ReviewerRoleIds = ReviewerRoleIds ?? new List<int>(), ApproverRoleIds = ApproverRoleIds ?? new List<int>(),
 				ReviewDueHours = ReviewDueHours, ApproveDueHours = ApproveDueHours, RequireAuthorAttestation = RequireAuthorAttestation,
-				Numbering = new RecordDefinitionNumbering { Prefix = NumberPrefix?.Trim().ToUpperInvariant(), Assignment = (RmsNumberAssignment)NumberAssignment, PerGroupSequence = PerGroupSequence, ResetYearly = ResetYearly, SequenceWidth = SequenceWidth },
+				Numbering = new RecordDefinitionNumbering { Prefix = NumberPrefix?.Trim().ToUpperInvariant(), Assignment = (RmsNumberAssignment)NumberAssignment, PerGroupSequence = PerGroupSequence, PerIncidentSequence = PerIncidentSequence, ResetYearly = ResetYearly, SequenceWidth = SequenceWidth },
 				RetentionYears = RetentionYears, Classification = (RmsFieldClassification)Classification,
 				Schema = RecordDefinitionSchema.Parse(SchemaJson),
-				ClientSurface = new RecordDefinitionClientSurface { Responder = SurfaceResponder, Unit = SurfaceUnit, IncidentCommand = SurfaceIncidentCommand, Dispatch = SurfaceDispatch, AllowOffline = AllowOffline, AllowAttachments = AllowAttachments },
+				ClientSurface = new RecordDefinitionClientSurface { Responder = SurfaceResponder, Unit = SurfaceUnit, IncidentCommand = SurfaceIncidentCommand, Dispatch = SurfaceDispatch, AllowOffline = AllowOffline, AllowAttachments = AllowAttachments, RetainMediaLocation = RetainMediaLocation },
 				MigrationMap = string.IsNullOrWhiteSpace(MigrationMapJson) ? new List<RecordDefinitionFieldMapping>() : Newtonsoft.Json.JsonConvert.DeserializeObject<List<RecordDefinitionFieldMapping>>(MigrationMapJson) ?? new List<RecordDefinitionFieldMapping>(),
 				ChangeNotes = ChangeNotes
 			};
@@ -122,9 +125,9 @@ namespace Resgrid.Web.Areas.User.Models.Records
 				Name = aggregate.Definition.Name, Category = aggregate.Definition.Category, Description = aggregate.Definition.Description, PermittedSubjectTypes = aggregate.Definition.PermittedSubjectTypes,
 				LifecyclePreset = version.LifecyclePreset, ReviewerRoleIds = Resgrid.Services.Records.RecordDefinitionsService.ParseIds(version.ReviewerRoleIds), ApproverRoleIds = Resgrid.Services.Records.RecordDefinitionsService.ParseIds(version.ApproverRoleIds),
 				ReviewDueHours = version.ReviewDueHours, ApproveDueHours = version.ApproveDueHours, RequireAuthorAttestation = version.RequireAuthorAttestation,
-				NumberPrefix = numbering.Prefix, NumberAssignment = (int)numbering.Assignment, PerGroupSequence = numbering.PerGroupSequence, ResetYearly = numbering.ResetYearly, SequenceWidth = numbering.SequenceWidth,
+				NumberPrefix = numbering.Prefix, NumberAssignment = (int)numbering.Assignment, PerGroupSequence = numbering.PerGroupSequence, PerIncidentSequence = numbering.PerIncidentSequence, ResetYearly = numbering.ResetYearly, SequenceWidth = numbering.SequenceWidth,
 				RetentionYears = version.RetentionYears, Classification = version.Classification,
-				SurfaceResponder = surface.Responder, SurfaceUnit = surface.Unit, SurfaceIncidentCommand = surface.IncidentCommand, SurfaceDispatch = surface.Dispatch, AllowOffline = surface.AllowOffline, AllowAttachments = surface.AllowAttachments,
+				SurfaceResponder = surface.Responder, SurfaceUnit = surface.Unit, SurfaceIncidentCommand = surface.IncidentCommand, SurfaceDispatch = surface.Dispatch, AllowOffline = surface.AllowOffline, AllowAttachments = surface.AllowAttachments, RetainMediaLocation = surface.RetainMediaLocation,
 				SchemaJson = Newtonsoft.Json.JsonConvert.SerializeObject(version.Schema, Newtonsoft.Json.Formatting.Indented, new Newtonsoft.Json.JsonSerializerSettings { NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Ignore }),
 				MigrationMapJson = version.MigrationMapJson, ChangeNotes = version.ChangeNotes, Schema = version.Schema, IsPublished = version.IsPublished,
 				MinimumClientCapability = version.MinimumClientCapability ?? RecordsClientCapabilities.Derive(version.Schema)
@@ -311,6 +314,7 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public List<RmsExternalOrder> Orders { get; set; } = new List<RmsExternalOrder>();
 		public bool IncludeClosed { get; set; }
 		public bool CanCreate { get; set; }
+		public bool IsDepartmentAdmin { get; set; }
 	}
 
 	public class RecordDeploymentNewView : RecordsBaseView
@@ -426,5 +430,62 @@ namespace Resgrid.Web.Areas.User.Models.Records
 
 		/// <summary>Whether a stored restricted cell is withheld for this viewer (the input renders disabled and blank).</summary>
 		public bool IsWithheld(string fieldKey) => !CanViewRestricted && Schema.FindField(fieldKey)?.Classification == RmsFieldClassification.Restricted;
+	}
+
+	/// <summary>External ordering-system connectors (RMS plan section 4.1): the department's connectors and the open reconciliation across them.</summary>
+	public class RecordDeploymentConnectorsIndexView : RecordsBaseView
+	{
+		public Department Department { get; set; }
+		public bool ConnectorsEnabled { get; set; }
+		public List<RmsExternalOrderConnector> Connectors { get; set; } = new List<RmsExternalOrderConnector>();
+		public List<RecordDeploymentReconciliationItem> Reconciliation { get; set; } = new List<RecordDeploymentReconciliationItem>();
+		public string InboundToken { get; set; }
+	}
+
+	/// <summary>One connector: the editable input, and when it exists, its state, run log, reconciliation and the one-time inbound token.</summary>
+	public class RecordDeploymentConnectorEditView : RecordsBaseView
+	{
+		public bool IsNew { get; set; }
+		public string Id { get; set; }
+		public long RowVersion { get; set; }
+		public string ProviderKey { get; set; } = RmsExternalOrderConnectorProviders.Generic;
+		public string Name { get; set; }
+		public string SourceSystem { get; set; }
+		public string SourceScheme { get; set; }
+		public string ProfileKey { get; set; }
+		public string BaseUrl { get; set; }
+		public string CredentialKind { get; set; } = RmsConnectorCredentialKinds.None;
+		public string CredentialHeaderName { get; set; }
+		public string Credential { get; set; }
+		public bool ReadEnabled { get; set; } = true;
+		public int PollIntervalMinutes { get; set; } = 60;
+		public int MaxRequestsPerHour { get; set; } = 12;
+		public string TermsReference { get; set; }
+
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public RmsExternalOrderConnector Connector { get; set; }
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public Department Department { get; set; }
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public bool ConnectorsEnabled { get; set; }
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public int MinPollIntervalMinutes { get; set; }
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public string InboundToken { get; set; }
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public List<SelectListItem> Providers { get; set; } = new List<SelectListItem>();
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public List<SelectListItem> Profiles { get; set; } = new List<SelectListItem>();
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public List<SelectListItem> CredentialKinds { get; set; } = new List<SelectListItem>();
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public List<RmsExternalOrderConnectorRun> Runs { get; set; } = new List<RmsExternalOrderConnectorRun>();
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public List<RecordDeploymentReconciliationItem> Reconciliation { get; set; } = new List<RecordDeploymentReconciliationItem>();
+		[Microsoft.AspNetCore.Mvc.ModelBinding.BindNever] public Dictionary<string, string> PersonnelNames { get; set; } = new Dictionary<string, string>();
+
+		public RecordDeploymentConnectorInput ToInput() => new RecordDeploymentConnectorInput
+		{
+			ProviderKey = ProviderKey, Name = Name, SourceSystem = SourceSystem, SourceScheme = SourceScheme, ProfileKey = ProfileKey, BaseUrl = BaseUrl, CredentialKind = CredentialKind,
+			CredentialHeaderName = CredentialHeaderName, Credential = Credential, ReadEnabled = ReadEnabled, WriteEnabled = false, PollIntervalMinutes = PollIntervalMinutes,
+			MaxRequestsPerHour = MaxRequestsPerHour, TermsReference = TermsReference
+		};
+
+		public static RecordDeploymentConnectorEditView From(RmsExternalOrderConnector c) => new RecordDeploymentConnectorEditView
+		{
+			Id = c.RmsExternalOrderConnectorId, RowVersion = c.RowVersion, ProviderKey = c.ProviderKey, Name = c.Name, SourceSystem = c.SourceSystem, SourceScheme = c.SourceScheme, ProfileKey = c.ProfileKey,
+			BaseUrl = c.BaseUrl, CredentialKind = c.CredentialKind, CredentialHeaderName = c.CredentialHeaderName, ReadEnabled = c.ReadEnabled, PollIntervalMinutes = c.PollIntervalMinutes,
+			MaxRequestsPerHour = c.MaxRequestsPerHour, TermsReference = c.TermsReference, Connector = c
+		};
 	}
 }

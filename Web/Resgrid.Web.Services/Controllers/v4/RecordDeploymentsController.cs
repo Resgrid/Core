@@ -41,15 +41,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("List")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Record_View)]
-		public async Task<ActionResult<RecordDeploymentsResult>> List(bool includeClosed = false)
+		public async Task<ActionResult<RecordDeploymentsResult>> List(bool includeClosed = false, int take = 50)
 		{
 			if (!await FlagOnAsync()) return NotFound();
-			var orders = await _deployments.ListAsync(DepartmentId, UserId, includeClosed);
+			// One bounded page, loaded in a single pass; the endpoint used to re-fetch the full aggregate per order.
+			var aggregates = await _deployments.ListAggregatesAsync(DepartmentId, UserId, includeClosed, take);
 			var result = new RecordDeploymentsResult { Status = ResponseHelper.Success };
-			foreach (var order in orders)
+			foreach (var aggregate in aggregates)
 			{
-				var aggregate = await _deployments.GetAsync(DepartmentId, UserId, order.RmsExternalOrderId);
-				if (aggregate != null) result.Data.Add(RecordsRms1bApiMapper.ToDeployment(aggregate));
+				var data = RecordsRms1bApiMapper.ToDeployment(aggregate);
+				if (data != null) result.Data.Add(data);
 			}
 			result.PageSize = result.Data.Count;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -67,7 +68,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var aggregate = await _deployments.GetAsync(DepartmentId, UserId, id);
 				if (aggregate == null) return NotFound();
-				return Ok(Wrap(aggregate));
+				var wrapped = Wrap(aggregate);
+				return wrapped == null ? (ActionResult<RecordDeploymentResult>)NotFound() : Ok(wrapped);
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}
@@ -83,7 +85,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var aggregate = await _deployments.GetForRecordAsync(DepartmentId, UserId, recordId);
 				if (aggregate == null) return NotFound();
-				return Ok(Wrap(aggregate));
+				var wrapped = Wrap(aggregate);
+				return wrapped == null ? (ActionResult<RecordDeploymentResult>)NotFound() : Ok(wrapped);
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}
@@ -104,7 +107,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var created = RecordsRms1bApiMapper.ToCreateInput(input, origin);
 				created.IdempotencyKey = RecordsApiHelper.ResolveIdempotencyKey(input.IdempotencyKey, Request);
 				var aggregate = await _deployments.CreateFromExternalOrderAsync(DepartmentId, UserId, created, cancellationToken);
-				return StatusCode(StatusCodes.Status201Created, Wrap(aggregate, ResponseHelper.Created));
+				var created201 = Wrap(aggregate, ResponseHelper.Created);
+				if (created201 == null) return NotFound();
+				return StatusCode(StatusCodes.Status201Created, created201);
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}
@@ -121,7 +126,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				await _deployments.AddFillAsync(DepartmentId, UserId, id, input, cancellationToken);
-				return Ok(Wrap(await _deployments.GetAsync(DepartmentId, UserId, id)));
+				var wrapped = Wrap(await _deployments.GetAsync(DepartmentId, UserId, id));
+				return wrapped == null ? (ActionResult<RecordDeploymentResult>)NotFound() : Ok(wrapped);
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}
@@ -139,8 +145,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (usable != null) return usable;
 			try
 			{
+				input.ExpectedRowVersion ??= RecordsApiContract.ParseETag(Request.Headers[RecordsApiContract.IfMatchHeader]);
 				var fill = await _deployments.TransitionFillAsync(DepartmentId, UserId, fillId, input, cancellationToken);
-				return Ok(Wrap(await _deployments.GetAsync(DepartmentId, UserId, fill.RmsExternalOrderId)));
+				var wrapped = Wrap(await _deployments.GetAsync(DepartmentId, UserId, fill.RmsExternalOrderId));
+				return wrapped == null ? (ActionResult<RecordDeploymentResult>)NotFound() : Ok(wrapped);
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}
@@ -160,7 +168,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				byte[] artifact;
 				try { artifact = Convert.FromBase64String(input.ArtifactBase64); } catch (FormatException) { return Problem(statusCode: StatusCodes.Status400BadRequest, title: "ArtifactBase64 is not valid base64.", type: "record_deployment_validation"); }
 				await _deployments.RecordSourceSnapshotAsync(DepartmentId, UserId, id, input.SourceVersion, artifact, input.ArtifactFileName, input.ArtifactContentType, cancellationToken);
-				return Ok(Wrap(await _deployments.GetAsync(DepartmentId, UserId, id)));
+				var wrapped = Wrap(await _deployments.GetAsync(DepartmentId, UserId, id));
+				return wrapped == null ? (ActionResult<RecordDeploymentResult>)NotFound() : Ok(wrapped);
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}
@@ -179,7 +188,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				await _deployments.CloseoutAsync(DepartmentId, UserId, id, rowVersion, input.Notes, cancellationToken);
-				return Ok(Wrap(await _deployments.GetAsync(DepartmentId, UserId, id)));
+				var wrapped = Wrap(await _deployments.GetAsync(DepartmentId, UserId, id));
+				return wrapped == null ? (ActionResult<RecordDeploymentResult>)NotFound() : Ok(wrapped);
 			}
 			catch (Exception ex) { return Fail(ex); }
 		}
@@ -200,9 +210,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex) { return Fail(ex); }
 		}
 
+		/// <summary>Null when the re-fetch after a write came back empty; every caller turns that into a 404.</summary>
 		private RecordDeploymentResult Wrap(RecordDeploymentAggregate aggregate, string status = ResponseHelper.Success)
 		{
-			var result = new RecordDeploymentResult { Data = RecordsRms1bApiMapper.ToDeployment(aggregate), Status = status, PageSize = 1 };
+			var data = RecordsRms1bApiMapper.ToDeployment(aggregate);
+			if (data == null) return null;
+			var result = new RecordDeploymentResult { Data = data, Status = status, PageSize = 1 };
 			ResponseHelper.PopulateV4ResponseData(result);
 			Response.Headers[RecordsApiContract.ETagHeader] = result.Data.ETag;
 			return result;

@@ -17,6 +17,7 @@
 	</div>
 	<div class="col-sm-4">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			@if (Model.IsDepartmentAdmin) { <a class="btn btn-default" asp-controller="RecordDeploymentConnectors" asp-action="Index" asp-route-area="User"><i class="fa fa-plug"></i> @localizer["Connectors"]</a> }
 			@if (Model.CanCreate) { <a class="btn btn-success" asp-controller="RecordDeployments" asp-action="New" asp-route-area="User"><i class="fa fa-plus"></i> @localizer["NewDeployment"]</a> }
 		</div>
 	</div>
@@ -37,7 +38,7 @@
 						<tr>
 							<td><a asp-controller="RecordDeployments" asp-action="Details" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">@o.OrderNumber</a></td>
 							<td>@o.IncidentName <small class="text-muted">@o.IncidentNumber</small></td>
-							<td><code>@o.ProfileKey</code></td>
+							<td><code>@o.ProfileKey</code> @if (o.OwnershipMarker == RmsExternalOrderOwnership.Connector) { <span class="label label-info" title="@localizer["DeploymentOwnedByConnector"]"><i class="fa fa-plug"></i></span> }</td>
 							<td>@o.SourceScheme@(string.IsNullOrEmpty(o.SourceSystem) ? "" : " / " + o.SourceSystem) @if (!string.IsNullOrEmpty(o.SourceVersion)) { <small class="text-muted">v@(o.SourceVersion)</small> }</td>
 							<td>@((RmsExternalOrderStatus)o.Status)</td>
 							<td>@o.CreatedOn.TimeConverterToString(Model.Department)</td>

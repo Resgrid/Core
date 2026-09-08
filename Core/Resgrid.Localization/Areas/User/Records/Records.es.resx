@@ -1122,6 +1122,7 @@
   <data name="DefinitionSequenceWidth" xml:space="preserve"><value>Ancho de secuencia</value></data>
   <data name="DefinitionNumberAssignment" xml:space="preserve"><value>Asignar número</value></data>
   <data name="DefinitionPerGroup" xml:space="preserve"><value>Secuencia por estación</value></data>
+  <data name="DefinitionPerIncident" xml:space="preserve"><value>Secuencia por incidente</value></data>
   <data name="DefinitionResetYearly" xml:space="preserve"><value>Reiniciar anualmente</value></data>
   <data name="DefinitionClassification" xml:space="preserve"><value>Clasificación</value></data>
   <data name="DefinitionRetention" xml:space="preserve"><value>Retención (años)</value></data>
@@ -1315,4 +1316,106 @@
   <data name="Projectionresource-summary" xml:space="preserve"><value>Resumen de recursos</value></data>
   <data name="Projectionqualifications" xml:space="preserve"><value>Cualificaciones</value></data>
   <data name="Projectioncommand-summary" xml:space="preserve"><value>Resumen de mando</value></data>
+  <data name="FieldRollout" xml:space="preserve"><value>Despliegue de registros en campo</value></data>
+  <data name="FieldRolloutIntro" xml:space="preserve"><value>Cómo va cada aplicación operativa con los registros: quién tiene una versión utilizable, qué se les denegó y dónde se detuvo la redacción. Solo recuentos: esta página nunca muestra lo que alguien escribió.</value></data>
+  <data name="RolloutUnavailable" xml:space="preserve"><value>La vista de despliegue no está disponible para su cuenta.</value></data>
+  <data name="RolloutNoAppsEnabled" xml:space="preserve"><value>Ninguna aplicación operativa tiene activados los registros en campo.</value></data>
+  <data name="RolloutWindowDays" xml:space="preserve"><value>{0} días</value></data>
+  <data name="RolloutFlagOn" xml:space="preserve"><value>Activado</value></data>
+  <data name="RolloutFlagOff" xml:space="preserve"><value>Desactivado</value></data>
+  <data name="RolloutActiveUsers" xml:space="preserve"><value>Personas que lo usan</value></data>
+  <data name="RolloutCompatible" xml:space="preserve"><value>Con una versión utilizable</value></data>
+  <data name="RolloutMinimumVersion" xml:space="preserve"><value>mínimo {0}</value></data>
+  <data name="RolloutRecords" xml:space="preserve"><value>Registros</value></data>
+  <data name="RolloutRecordsValue" xml:space="preserve"><value>{0} iniciados, {1} finalizados</value></data>
+  <data name="RolloutCatalog" xml:space="preserve"><value>Solicitudes de catálogo</value></data>
+  <data name="RolloutFailures" xml:space="preserve"><value>{0} rechazadas</value></data>
+  <data name="RolloutAuthoring" xml:space="preserve"><value>Redacción</value></data>
+  <data name="RolloutAuthoringValue" xml:space="preserve"><value>{0} iniciados, {1} enviados, {2} fallaron al enviar</value></data>
+  <data name="RolloutSync" xml:space="preserve"><value>Sincronizaciones</value></data>
+  <data name="RolloutConflicts" xml:space="preserve"><value>Conflictos mostrados</value></data>
+  <data name="RolloutAttachments" xml:space="preserve"><value>Adjuntos</value></data>
+  <data name="RolloutAttachmentsValue" xml:space="preserve"><value>{0} subidos, {1} fallidos</value></data>
+  <data name="RolloutCompleted" xml:space="preserve"><value>Completados en la aplicación</value></data>
+  <data name="RolloutCompletedValue" xml:space="preserve"><value>{0}, mediana {1} minutos</value></data>
+  <data name="RolloutAbandoned" xml:space="preserve"><value>Dejados sin terminar</value></data>
+  <data name="RolloutWebHandoff" xml:space="preserve"><value>Enviados a la aplicación web</value></data>
+  <data name="RolloutVersions" xml:space="preserve"><value>Versiones en uso</value></data>
+  <data name="RolloutVersion" xml:space="preserve"><value>Versión</value></data>
+  <data name="RolloutUsers" xml:space="preserve"><value>Personas</value></data>
+  <data name="RolloutTooOld" xml:space="preserve"><value>Demasiado antigua</value></data>
+  <data name="RolloutRefusals" xml:space="preserve"><value>Por qué se denegó el catálogo</value></data>
+  <data name="RolloutGeneratedOn" xml:space="preserve"><value>Generado {0}.</value></data>
+  <data name="AppResponder" xml:space="preserve"><value>Responder</value></data>
+  <data name="AppUnit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="AppIncidentCommand" xml:space="preserve"><value>Mando de incidentes</value></data>
+  <data name="AppDispatch" xml:space="preserve"><value>Despacho</value></data>
+  <data name="MediaLocationRetained" xml:space="preserve"><value>Ubicación de la foto conservada</value></data>
+  <data name="MediaLocationStripped" xml:space="preserve"><value>Ubicación de la foto eliminada</value></data>
+  <data name="DefinitionRetainMediaLocation" xml:space="preserve"><value>Conservar las coordenadas de las fotos en los adjuntos</value></data>
+  <data name="DefinitionRetainMediaLocationHelp" xml:space="preserve"><value>Desactivado por defecto: la ubicación y los datos del dispositivo se eliminan al subir. Actívelo solo si el formulario necesita realmente dónde se tomó la foto, como una evaluación de daños o un informe de indicios.</value></data>
+  <data name="Connectors" xml:space="preserve"><value>Conectores externos</value></data>
+  <data name="ConnectorsIntro" xml:space="preserve"><value>Lee órdenes de recursos de un sistema de pedidos externo mediante un feed documentado, una credencial cifrada, un límite de solicitudes y las condiciones de la fuente. La fuente sigue siendo la autoridad: cada cambio se guarda como una nueva instantánea y nada local cambia automáticamente.</value></data>
+  <data name="NewConnector" xml:space="preserve"><value>Nuevo conector</value></data>
+  <data name="ConnectorName" xml:space="preserve"><value>Nombre del conector</value></data>
+  <data name="ConnectorProvider" xml:space="preserve"><value>Proveedor del feed</value></data>
+  <data name="ConnectorSourceSystem" xml:space="preserve"><value>Sistema de origen</value></data>
+  <data name="ConnectorBaseUrl" xml:space="preserve"><value>Raíz del feed (https)</value></data>
+  <data name="ConnectorFeedContract" xml:space="preserve"><value>La fuente debe servir el Resgrid Mutual-Aid Order Feed v1 (JSON). No se admite el raspado de pantalla ni las actualizaciones inferidas.</value></data>
+  <data name="ConnectorCredentialKind" xml:space="preserve"><value>Tipo de credencial</value></data>
+  <data name="ConnectorCredentialHeaderName" xml:space="preserve"><value>Nombre del encabezado</value></data>
+  <data name="ConnectorCredential" xml:space="preserve"><value>Credencial</value></data>
+  <data name="ConnectorCredentialHelp" xml:space="preserve"><value>Se cifra en reposo y no vuelve a mostrarse. Déjelo en blanco para conservar la credencial guardada.</value></data>
+  <data name="ConnectorCredentialStored" xml:space="preserve"><value>Credencial guardada</value></data>
+  <data name="ConnectorReadEnabled" xml:space="preserve"><value>Autoridad de lectura concedida</value></data>
+  <data name="ConnectorWriteRefused" xml:space="preserve"><value>En esta versión no se concede autoridad de escritura. Nunca se escribe nada de vuelta en el sistema de pedidos.</value></data>
+  <data name="ConnectorPollInterval" xml:space="preserve"><value>Intervalo de sondeo (minutos)</value></data>
+  <data name="ConnectorMaxRequestsPerHour" xml:space="preserve"><value>Solicitudes por hora</value></data>
+  <data name="ConnectorTermsReference" xml:space="preserve"><value>Condiciones de la fuente</value></data>
+  <data name="ConnectorTermsAcknowledge" xml:space="preserve"><value>Aceptar las condiciones de la fuente</value></data>
+  <data name="ConnectorTermsAcknowledged" xml:space="preserve"><value>Condiciones aceptadas</value></data>
+  <data name="ConnectorTermsNotAcknowledged" xml:space="preserve"><value>Condiciones aún no aceptadas</value></data>
+  <data name="ConnectorEnable" xml:space="preserve"><value>Activar conector</value></data>
+  <data name="ConnectorDisable" xml:space="preserve"><value>Desactivar conector</value></data>
+  <data name="ConnectorEnabled" xml:space="preserve"><value>Activado</value></data>
+  <data name="ConnectorDisabled" xml:space="preserve"><value>Desactivado</value></data>
+  <data name="ConnectorEnabledMessage" xml:space="preserve"><value>Conector activado.</value></data>
+  <data name="ConnectorDisabledMessage" xml:space="preserve"><value>Conector desactivado.</value></data>
+  <data name="ConnectorTermsAcknowledgedMessage" xml:space="preserve"><value>Se aceptaron las condiciones de la fuente.</value></data>
+  <data name="ConnectorRunNow" xml:space="preserve"><value>Leer el feed ahora</value></data>
+  <data name="ConnectorRotateToken" xml:space="preserve"><value>Emitir un nuevo token de entrada</value></data>
+  <data name="ConnectorInboundToken" xml:space="preserve"><value>Token de entrada</value></data>
+  <data name="ConnectorInboundTokenOnce" xml:space="preserve"><value>Copie este token ahora. Se muestra una sola vez; el servidor conserva solo un hash.</value></data>
+  <data name="ConnectorInboundEndpoint" xml:space="preserve"><value>Punto de entrada para envíos</value></data>
+  <data name="ConnectorDelete" xml:space="preserve"><value>Eliminar conector</value></data>
+  <data name="ConnectorDeleteConfirm" xml:space="preserve"><value>¿Eliminar este conector? Los despliegues importados y sus instantáneas se conservan.</value></data>
+  <data name="ConnectorRuns" xml:space="preserve"><value>Registro de ejecuciones</value></data>
+  <data name="ConnectorRunTrigger" xml:space="preserve"><value>Desencadenante</value></data>
+  <data name="ConnectorRunOutcome" xml:space="preserve"><value>Resultado</value></data>
+  <data name="ConnectorRunCounts" xml:space="preserve"><value>Vistos / creados / instantáneas / solicitudes / sin cambios / rechazados / conflictos</value></data>
+  <data name="ConnectorLastPolled" xml:space="preserve"><value>Última lectura</value></data>
+  <data name="ConnectorLastSuccess" xml:space="preserve"><value>Último éxito</value></data>
+  <data name="ConnectorLastError" xml:space="preserve"><value>Último error</value></data>
+  <data name="ConnectorSaved" xml:space="preserve"><value>Conector guardado.</value></data>
+  <data name="ConnectorCreated" xml:space="preserve"><value>Conector creado. Permanece desactivado hasta que se acepten las condiciones de la fuente y se active.</value></data>
+  <data name="ConnectorDeleted" xml:space="preserve"><value>Conector eliminado.</value></data>
+  <data name="ConnectorRunFinished" xml:space="preserve"><value>Lectura del feed finalizada (creados / instantáneas / solicitudes / conflictos).</value></data>
+  <data name="ConnectorTokenRotated" xml:space="preserve"><value>Se emitió un nuevo token de entrada; el anterior ya no funciona.</value></data>
+  <data name="ConnectorsOff" xml:space="preserve"><value>Los conectores externos están desactivados en esta instalación.</value></data>
+  <data name="ConnectorState" xml:space="preserve"><value>Estado del conector</value></data>
+  <data name="ConnectorReady" xml:space="preserve"><value>Listo</value></data>
+  <data name="ConnectorNotReady" xml:space="preserve"><value>No listo</value></data>
+  <data name="Reconciliation" xml:space="preserve"><value>Conciliación</value></data>
+  <data name="ReconciliationIntro" xml:space="preserve"><value>Dónde difieren la última instantánea de la fuente y el registro de despliegue de este departamento. Nada de esto se aplica automáticamente; decide un coordinador.</value></data>
+  <data name="ReconciliationNone" xml:space="preserve"><value>No hay discrepancias entre la fuente y sus registros.</value></data>
+  <data name="ReconciliationKind" xml:space="preserve"><value>Discrepancia</value></data>
+  <data name="ReconciliationSourceStatus" xml:space="preserve"><value>La fuente indica</value></data>
+  <data name="ReconciliationLocalStatus" xml:space="preserve"><value>Su registro indica</value></data>
+  <data name="ReconciliationSourceReleased" xml:space="preserve"><value>La fuente liberó la orden, pero una asignación aún no ha regresado</value></data>
+  <data name="ReconciliationSourceClosed" xml:space="preserve"><value>La fuente cerró la orden, pero hay asignaciones aún abiertas</value></data>
+  <data name="ReconciliationSourceRequestMissing" xml:space="preserve"><value>La solicitud existe en la fuente pero no localmente</value></data>
+  <data name="ReconciliationLocalFillMissing" xml:space="preserve"><value>La asignación existe localmente pero no en la fuente</value></data>
+  <data name="ReconciliationSourceAhead" xml:space="preserve"><value>El estado de la fuente va por delante de la asignación local</value></data>
+  <data name="ReconciliationSourceBehind" xml:space="preserve"><value>El estado de la fuente va por detrás de la asignación local</value></data>
+  <data name="DeploymentOwnedByConnector" xml:space="preserve"><value>Mantenido por un conector</value></data>
 </root>

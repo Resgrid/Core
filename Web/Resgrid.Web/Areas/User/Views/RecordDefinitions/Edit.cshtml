@@ -74,7 +74,7 @@
 						<h4>@localizer["DefinitionNumbering"]</h4>
 						<div class="form-group"><label class="col-sm-4 control-label required">@localizer["DefinitionNumberPrefix"]</label><div class="col-sm-3"><input type="text" class="form-control" asp-for="NumberPrefix" maxlength="6" style="text-transform:uppercase" /></div><label class="col-sm-2 control-label">@localizer["DefinitionSequenceWidth"]</label><div class="col-sm-3"><input type="number" class="form-control" asp-for="SequenceWidth" min="3" max="8" /></div></div>
 						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionNumberAssignment"]</label><div class="col-sm-8"><select class="form-control" asp-for="NumberAssignment"><option value="1">OnFinalize</option><option value="2">OnCreate</option></select></div></div>
-						<div class="form-group"><div class="col-sm-8 col-sm-offset-4"><label class="checkbox-inline"><input type="checkbox" asp-for="PerGroupSequence" /> @localizer["DefinitionPerGroup"]</label> <label class="checkbox-inline"><input type="checkbox" asp-for="ResetYearly" /> @localizer["DefinitionResetYearly"]</label></div></div>
+						<div class="form-group"><div class="col-sm-8 col-sm-offset-4"><label class="checkbox-inline"><input type="checkbox" asp-for="PerGroupSequence" /> @localizer["DefinitionPerGroup"]</label> <label class="checkbox-inline"><input type="checkbox" asp-for="PerIncidentSequence" /> @localizer["DefinitionPerIncident"]</label> <label class="checkbox-inline"><input type="checkbox" asp-for="ResetYearly" /> @localizer["DefinitionResetYearly"]</label></div></div>
 						<h4>@localizer["DefinitionClassification"]</h4>
 						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionClassification"]</label><div class="col-sm-4"><select class="form-control" asp-for="Classification"><option value="0">Standard</option><option value="1">Restricted</option><option value="2">Protected</option></select></div><label class="col-sm-2 control-label">@localizer["DefinitionRetention"]</label><div class="col-sm-2"><input type="number" class="form-control" asp-for="RetentionYears" min="0" max="100" /></div></div>
 						<h4>@localizer["DefinitionClientSurface"]</h4>
@@ -85,6 +85,10 @@
 							<label class="checkbox-inline"><input type="checkbox" asp-for="SurfaceDispatch" /> Dispatch</label>
 							<label class="checkbox-inline"><input type="checkbox" asp-for="AllowOffline" /> @localizer["DefinitionAllowOffline"]</label>
 							<label class="checkbox-inline"><input type="checkbox" asp-for="AllowAttachments" /> @localizer["DefinitionAllowAttachments"]</label>
+						</div></div>
+						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionRetainMediaLocation"]</label><div class="col-sm-8">
+							<label class="checkbox-inline"><input type="checkbox" asp-for="RetainMediaLocation" /> @localizer["DefinitionRetainMediaLocation"]</label>
+							<p class="help-block">@localizer["DefinitionRetainMediaLocationHelp"]</p>
 						</div></div>
 						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionChangeNotes"]</label><div class="col-sm-8"><textarea class="form-control" rows="2" asp-for="ChangeNotes"></textarea></div></div>
 						<div class="form-group"><label class="col-sm-4 control-label">@localizer["DefinitionMigrationMap"]</label><div class="col-sm-8"><textarea class="form-control" rows="2" asp-for="MigrationMapJson" placeholder='[{"fromFieldKey":"old","toFieldKey":"new"}]'></textarea></div></div>

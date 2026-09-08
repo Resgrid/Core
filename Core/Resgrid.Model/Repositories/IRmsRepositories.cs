@@ -251,8 +251,12 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Count of obligations currently sitting overdue; the accountability view and dashboards read it.</summary>
 		Task<int> CountOverdueAsync(int departmentId);
 		Task<int> CountVisibleOverdueAsync(int departmentId, List<int> visibleGroupIds, string userId);
-		/// <summary>Due-state rows modified in [start, end) - the due-state history the RMS-6 dashboards read - at most <paramref name="take"/> rows.</summary>
-		Task<IEnumerable<RmsRecordDueState>> GetChangedInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take);
+		/// <summary>
+		/// Due-state rows whose last emission falls in [start, end) - the due-state history the RMS-6 dashboards read - at
+		/// most <paramref name="take"/> rows. The row is mutable, so the emission time and not the row's change time is what
+		/// dates the transition: a row that went overdue inside the window but was touched again after it still counts.
+		/// </summary>
+		Task<IEnumerable<RmsRecordDueState>> GetLastEmittedInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take);
 		Task<int> ClearForRecordAsync(int departmentId, string recordId, DateTime utcNow, CancellationToken cancellationToken = default);
 	}
 

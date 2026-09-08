@@ -184,6 +184,24 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
+		public async Task The_lead_investigator_must_already_be_a_member_of_the_case()
+		{
+			var investigation = await _h.InvestigationsService.OpenAsync(Dept, Admin, "Warehouse fire", null, null, "Summary");
+			var caseId = investigation.RmsInvestigationCaseId;
+
+			// Member is in the department but not on the case, so leading it would leave them unable to open it.
+			Func<Task> assign = () => _h.InvestigationsService.UpdateAsync(Dept, Admin,
+				new RmsInvestigationCase { RmsInvestigationCaseId = caseId, Title = "Warehouse fire", LeadInvestigatorUserId = Member });
+			await assign.Should().ThrowAsync<ArgumentException>();
+			investigation.LeadInvestigatorUserId.Should().Be(Admin);
+
+			await _h.InvestigationsService.AddMemberAsync(Dept, Admin, caseId, Member, RmsInvestigationRole.Investigator);
+			await _h.InvestigationsService.UpdateAsync(Dept, Admin,
+				new RmsInvestigationCase { RmsInvestigationCaseId = caseId, Title = "Warehouse fire", LeadInvestigatorUserId = Member });
+			investigation.LeadInvestigatorUserId.Should().Be(Member);
+		}
+
+		[Test]
 		public async Task Investigation_files_are_restricted_and_readable_only_by_members()
 		{
 			var investigation = await _h.InvestigationsService.OpenAsync(Dept, Admin, "Warehouse fire", null, null, null);

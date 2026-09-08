@@ -165,6 +165,13 @@ namespace Resgrid.Services.Records
 				if (!await _authorization.IsActiveMemberAsync(requestedLead, departmentId))
 					throw new ArgumentException("The lead investigator must be an active member of the department.");
 
+				// Every case operation goes through RequireMemberAsync, so a lead who is not on the case could not open
+				// the case they lead. Add them to the case first, then hand them the lead.
+				var onCase = ((await _members.GetForCaseAsync(departmentId, investigation.RmsInvestigationCaseId)) ?? Enumerable.Empty<RmsInvestigationCaseMember>())
+					.Any(m => m.UserId == requestedLead && m.IsActive);
+				if (!onCase)
+					throw new ArgumentException("The lead investigator must be an active member of the case.");
+
 				investigation.LeadInvestigatorUserId = requestedLead;
 			}
 			investigation.ModifiedOn = DateTime.UtcNow; investigation.RowVersion++;

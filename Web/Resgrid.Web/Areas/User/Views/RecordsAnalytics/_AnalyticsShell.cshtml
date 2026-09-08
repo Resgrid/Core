@@ -3,13 +3,15 @@
 @model RecordsAnalyticsBaseView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
 @{
+	// Action, icon, caption, and which of the filters that action accepts, so switching tabs carries the filter
+	// state across instead of silently resetting it to the defaults.
 	var tabs = new[]
 	{
-		("Index", "fa-tachometer", L["AnalyticsExecutive"].Value),
-		("ResponsePerformance", "fa-clock-o", L["AnalyticsResponse"].Value),
-		("Workload", "fa-tasks", L["AnalyticsWorkload"].Value),
-		("Accreditation", "fa-certificate", L["AnalyticsAccreditation"].Value),
-		("CommunityRisk", "fa-shield", L["AnalyticsCommunityRisk"].Value)
+		("Index", "fa-tachometer", L["AnalyticsExecutive"].Value, true, false),
+		("ResponsePerformance", "fa-clock-o", L["AnalyticsResponse"].Value, true, true),
+		("Workload", "fa-tasks", L["AnalyticsWorkload"].Value, true, false),
+		("Accreditation", "fa-certificate", L["AnalyticsAccreditation"].Value, false, true),
+		("CommunityRisk", "fa-shield", L["AnalyticsCommunityRisk"].Value, false, false)
 	};
 	var result = Model.Result;
 }
@@ -37,7 +39,7 @@
 		<ul class="nav nav-tabs">
 			@foreach (var tab in tabs)
 			{
-				<li class="@(Model.Action == tab.Item1 ? "active" : "")"><a asp-controller="RecordsAnalytics" asp-action="@tab.Item1" asp-route-area="User" asp-route-start="@Model.Start.ToString("yyyy-MM-dd")" asp-route-end="@Model.End.ToString("yyyy-MM-dd")" asp-route-stationGroupId="@Model.StationGroupId"><i class="fa @tab.Item2"></i> @tab.Item3</a></li>
+				<li class="@(Model.Action == tab.Item1 ? "active" : "")"><a asp-controller="RecordsAnalytics" asp-action="@tab.Item1" asp-route-area="User" asp-route-start="@Model.Start.ToString("yyyy-MM-dd")" asp-route-end="@Model.End.ToString("yyyy-MM-dd")" asp-route-stationGroupId="@Model.StationGroupId" asp-route-definitionKey="@(tab.Item4 ? Model.DefinitionKey : null)" asp-route-turnoutTargetSeconds="@(tab.Item5 ? (int?)Model.TurnoutTargetSeconds : null)" asp-route-travelTargetSeconds="@(tab.Item5 ? (int?)Model.TravelTargetSeconds : null)"><i class="fa @tab.Item2"></i> @tab.Item3</a></li>
 			}
 		</ul>
 	</div>

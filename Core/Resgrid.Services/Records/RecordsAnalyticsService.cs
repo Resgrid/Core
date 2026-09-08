@@ -357,7 +357,7 @@ namespace Resgrid.Services.Records
 		{
 			var c = await BeginAsync(departmentId, userId, query);
 			var data = await LoadAsync(c, c.Start, c.End, true);
-			var result = new RecordsResponsePerformance();
+			var result = new RecordsResponsePerformance { DepartmentId = c.DepartmentId };
 			await SectionAsync(result, "Response times", async () =>
 			{
 				var labels = await LabelsAsync(departmentId, true, true, false);
@@ -391,7 +391,7 @@ namespace Resgrid.Services.Records
 		{
 			var c = await BeginAsync(departmentId, userId, query);
 			var data = await LoadAsync(c, c.Start, c.End, true);
-			var result = new RecordsWorkload();
+			var result = new RecordsWorkload { DepartmentId = c.DepartmentId };
 			await SectionAsync(result, "Workload", async () =>
 			{
 				var labels = await LabelsAsync(departmentId, true, true, true);
@@ -440,7 +440,7 @@ namespace Resgrid.Services.Records
 		{
 			var c = await BeginAsync(departmentId, userId, query);
 			var data = await LoadAsync(c, c.Start, c.End, true);
-			var result = new RecordsExecutiveSummary { PriorStart = c.Start - c.Span, PriorEnd = c.Start };
+			var result = new RecordsExecutiveSummary { DepartmentId = c.DepartmentId, PriorStart = c.Start - c.Span, PriorEnd = c.Start };
 			Dataset prior = null;
 			await SectionAsync(result, "Prior period", async () => { prior = await LoadAsync(c, result.PriorStart, result.PriorEnd, true); });
 			await SectionAsync(result, "Headline figures", async () =>
@@ -484,7 +484,7 @@ namespace Resgrid.Services.Records
 
 		private async Task<int> WentOverdueAsync(Context c, Dataset data, DateTime start, DateTime end)
 		{
-			var rows = ((await _dueStates.GetChangedInRangeAsync(c.DepartmentId, start, end, RecordsAnalyticsLimits.RowCap)) ?? Enumerable.Empty<RmsRecordDueState>())
+			var rows = ((await _dueStates.GetLastEmittedInRangeAsync(c.DepartmentId, start, end, RecordsAnalyticsLimits.RowCap)) ?? Enumerable.Empty<RmsRecordDueState>())
 				.Where(d => d.OverdueCount > 0 && d.LastEmittedOn.HasValue && d.LastEmittedOn >= start && d.LastEmittedOn < end && (d.LastEmittedState == (int)RmsDueState.Overdue || d.LastEmittedState == (int)RmsDueState.Cleared));
 			if (!c.GroupScoped) return rows.Count();
 			// A group-scoped viewer only counts obligations on Records they can open.
@@ -526,6 +526,7 @@ namespace Resgrid.Services.Records
 			var data = await LoadAsync(c, c.Start, c.End, true);
 			var result = new RecordsAccreditation
 			{
+				DepartmentId = c.DepartmentId,
 				OccupancyEnabled = await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Occupancy),
 				InspectionsEnabled = await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Inspections),
 				HydrantsEnabled = await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Hydrants),
@@ -687,6 +688,7 @@ namespace Resgrid.Services.Records
 			var data = await LoadAsync(c, c.Start, c.End, true);
 			var result = new RecordsCommunityRisk
 			{
+				DepartmentId = c.DepartmentId,
 				CrrEnabled = await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Crr),
 				OccupancyEnabled = await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Occupancy),
 				InspectionsEnabled = await _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Inspections),

@@ -17,7 +17,11 @@ namespace Resgrid.Model
 		/// <summary>Exclusive end (UTC). Defaults to now.</summary>
 		public DateTime? End { get; set; }
 
-		/// <summary>Restrict to Records whose station group (or, for a unit response, the unit's group snapshot) is this group.</summary>
+		/// <summary>
+		/// Restrict to Records and incident reports whose own station group is this group. The filter is on the Record
+		/// header, not on the responding unit's group snapshot, so a dashboard filtered to a station reads that station's
+		/// incidents including any mutual-aid unit that ran them.
+		/// </summary>
 		public int? StationGroupId { get; set; }
 
 		/// <summary>Restrict operational Records to one definition key (e.g. system.run).</summary>

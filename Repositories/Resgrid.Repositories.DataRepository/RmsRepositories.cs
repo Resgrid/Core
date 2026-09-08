@@ -1284,7 +1284,7 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				new { DepartmentId = departmentId, Overdue = (int)RmsDueState.Overdue, VisibleGroupIds = InListValue(visibleGroupIds), Viewer = userId });
 		}
 
-		public Task<IEnumerable<RmsRecordDueState>> GetChangedInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take)
+		public Task<IEnumerable<RmsRecordDueState>> GetLastEmittedInRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take)
 		{
 			var parameters = new DynamicParameters();
 			parameters.Add("DepartmentId", departmentId);
@@ -1293,7 +1293,7 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			parameters.Add("Skip", 0);
 			parameters.Add("Take", take <= 0 ? 5000 : Math.Min(take, 200000));
 			return QueryAsync<RmsRecordDueState>(
-				$"SELECT * FROM {Tbl("RmsRecordDueStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ModifiedOn")} >= {P}Start AND {Col("ModifiedOn")} < {P}End ORDER BY {Col("ModifiedOn")}, {Col("RmsRecordDueStateId")} {Paging()}",
+				$"SELECT * FROM {Tbl("RmsRecordDueStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("LastEmittedOn")} >= {P}Start AND {Col("LastEmittedOn")} < {P}End ORDER BY {Col("LastEmittedOn")}, {Col("RmsRecordDueStateId")} {Paging()}",
 				parameters);
 		}
 

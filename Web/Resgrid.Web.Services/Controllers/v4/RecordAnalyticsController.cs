@@ -30,8 +30,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_analytics = analytics;
 		}
 
+		// The targets are clamped to the same bounds the web filter form enforces, so an out-of-range value from an API
+		// caller cannot skew the within-target percentages the dashboards report.
 		private static RecordsAnalyticsQuery Query(DateTime? start, DateTime? end, int? stationGroupId, string definitionKey, int turnoutTargetSeconds, int travelTargetSeconds)
-			=> new RecordsAnalyticsQuery { Start = start, End = end, StationGroupId = stationGroupId, DefinitionKey = definitionKey, TurnoutTargetSeconds = turnoutTargetSeconds, TravelTargetSeconds = travelTargetSeconds };
+			=> new RecordsAnalyticsQuery
+			{
+				Start = start, End = end, StationGroupId = stationGroupId, DefinitionKey = definitionKey,
+				TurnoutTargetSeconds = Math.Clamp(turnoutTargetSeconds, 0, 3600), TravelTargetSeconds = Math.Clamp(travelTargetSeconds, 0, 7200)
+			};
 
 		/// <summary>Turnout, travel, total response, time on scene and first arrival; by unit, station group, hour of day and month.</summary>
 		[HttpGet("ResponsePerformance")]

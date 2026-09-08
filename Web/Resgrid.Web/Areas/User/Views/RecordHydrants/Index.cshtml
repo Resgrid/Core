@@ -86,7 +86,7 @@
 @section Scripts {
 	<script>
 		(function () {
-			var points = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MapPoints.Select(p => new { p.HydrantId, p.HydrantNumber, Lat = p.Latitude, Lon = p.Longitude, p.InService, p.FlowClass, p.FlowGpm })));
+			var points = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.MapPoints.Select(p => new { p.HydrantId, p.HydrantNumber, Lat = p.Latitude, Lon = p.Longitude, p.InService, p.FlowClass, p.FlowGpm }), new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
 			if (typeof L === 'undefined' || !document.getElementById('hydrantMap')) { return; }
 			var map = L.map('hydrantMap');
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);

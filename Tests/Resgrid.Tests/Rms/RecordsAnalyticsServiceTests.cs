@@ -64,7 +64,7 @@ namespace Resgrid.Tests.Rms
 			_reportUnits.Setup(u => u.GetForRevisionsAsync(Dept, It.IsAny<IEnumerable<string>>())).ReturnsAsync((int d, IEnumerable<string> ids) => { var set = ids.ToHashSet(); return _reportUnitRows.Where(u => set.Contains(u.RevisionId)).ToList(); });
 			_incidentTypes.Setup(t => t.GetForRevisionsAsync(Dept, It.IsAny<IEnumerable<string>>())).ReturnsAsync((int d, IEnumerable<string> ids) => ids.SelectMany(id => new[] { new RmsIncidentType { RevisionId = id, TypeCode = "FIRE||STRUCTURE", IsPrimary = false, Ordinal = 0 }, new RmsIncidentType { RevisionId = id, TypeCode = "MEDICAL||CARDIAC", IsPrimary = true, Ordinal = 1 } }).ToList());
 			_revisions.Setup(r => r.GetTransitionsInRangeAsync(Dept, It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<RmsRevisionTransitionRow>());
-			_dueStates.Setup(d => d.GetChangedInRangeAsync(Dept, It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<RmsRecordDueState>());
+			_dueStates.Setup(d => d.GetLastEmittedInRangeAsync(Dept, It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<RmsRecordDueState>());
 			_dueStates.Setup(d => d.CountVisibleOverdueAsync(Dept, It.IsAny<List<int>>(), It.IsAny<string>())).ReturnsAsync(4);
 			_unitsService.Setup(u => u.GetUnitsForDepartmentAsync(Dept)).ReturnsAsync(new List<Unit> { new Unit { UnitId = 1, Name = "Engine 1" }, new Unit { UnitId = 2, Name = "Medic 2" } });
 			_groupsService.Setup(g => g.GetAllGroupsForDepartmentAsync(Dept)).ReturnsAsync(new List<DepartmentGroup> { new DepartmentGroup { DepartmentGroupId = 10, Name = "Station 10" } });
@@ -189,7 +189,7 @@ namespace Resgrid.Tests.Rms
 			_reports.Add(new RmsIncidentReport { RmsIncidentReportId = "i1", DepartmentId = Dept, State = (int)RmsRecordState.Accepted, CurrentRevisionId = "rev-i1", CallCreatedOn = T0, FinalizedOn = T0.AddDays(1), AcceptedOn = T0.AddDays(2), CreatedOn = T0 });
 			_reports.Add(new RmsIncidentReport { RmsIncidentReportId = "i2", DepartmentId = Dept, State = (int)RmsRecordState.Rejected, CurrentRevisionId = "rev-i2", CallCreatedOn = T0, FinalizedOn = T0.AddDays(1), RejectedOn = T0.AddDays(2), CreatedOn = T0 });
 			_revisions.Setup(r => r.GetTransitionsInRangeAsync(Dept, Start, End, It.IsAny<int>())).ReturnsAsync(new List<RmsRevisionTransitionRow> { new RmsRevisionTransitionRow { RecordId = "r1", Transition = (int)RmsRevisionTransition.Amended }, new RmsRevisionTransitionRow { RecordId = "r2", Transition = (int)RmsRevisionTransition.Voided } });
-			_dueStates.Setup(d => d.GetChangedInRangeAsync(Dept, Start, End, It.IsAny<int>())).ReturnsAsync(new List<RmsRecordDueState>
+			_dueStates.Setup(d => d.GetLastEmittedInRangeAsync(Dept, Start, End, It.IsAny<int>())).ReturnsAsync(new List<RmsRecordDueState>
 			{
 				new RmsRecordDueState { RecordId = "r1", OverdueCount = 1, LastEmittedState = (int)RmsDueState.Overdue, LastEmittedOn = T0 },
 				new RmsRecordDueState { RecordId = "r2", OverdueCount = 0, LastEmittedState = (int)RmsDueState.DueSoon, LastEmittedOn = T0 },

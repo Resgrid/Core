@@ -8,6 +8,9 @@
 	var chart = ViewData["Chart"] as string ?? "none";
 	var id = "t" + Guid.NewGuid().ToString("N");
 	var rows = (Model ?? new List<RecordsResponseTimeRow>()).Where(r => r.Responses > 0).ToList();
+	// Labels are department-entered unit and group names, so the chart JSON is escaped for HTML: a label holding
+	// "</script>" is written as characters instead of closing the block it sits in.
+	var json = new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml };
 }
 <div class="ibox"><div class="ibox-title"><h5>@title</h5></div><div class="ibox-content">
 	@if (rows.Count == 0) { <p class="text-muted">@L["AnalyticsNoData"]</p> }
@@ -16,7 +19,7 @@
 		if (chart != "none")
 		{
 			<div class="rms-chart m-b-sm"><canvas id="@id"></canvas></div>
-			<script>document.addEventListener('DOMContentLoaded', function () { rmsChart('@id', @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.Label))), @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.TotalResponse.P90Seconds ?? 0))), '@chart', '@L["AnalyticsTotalResponse"] @L["AnalyticsP90"] (s)'); });</script>
+			<script>document.addEventListener('DOMContentLoaded', function () { rmsChart('@id', @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.Label), json)), @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(rows.Select(r => r.TotalResponse.P90Seconds ?? 0), json)), '@chart', '@L["AnalyticsTotalResponse"] @L["AnalyticsP90"] (s)'); });</script>
 		}
 		<div class="table-responsive">
 			<table class="table table-condensed table-striped m-b-none">

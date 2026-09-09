@@ -38,7 +38,10 @@ namespace Resgrid.Services
 		public async Task<List<AuditLog>> GetAllAuditLogsForDepartmentAsync(int departmentId)
 		{
 			var logs = await _auditLogsRepository.GetAllByDepartmentIdAsync(departmentId);
-			return (await Task.WhenAll(logs.Select(DisplayAsync))).ToList();
+			var display = new List<AuditLog>();
+			foreach (var log in logs)
+				display.Add(await DisplayAsync(log));
+			return display;
 		}
 
 		public async Task<List<AuditLog>> GetAuditLogsForDepartmentPagedAsync(int departmentId, DateTime startDate, DateTime endDate, AuditLogTypes? logType, int page, int pageSize)
@@ -54,7 +57,10 @@ namespace Resgrid.Services
 			var safeEnd = (endDate == default(DateTime) || endDate < safeStart) ? DateTime.UtcNow : endDate;
 
 			var logs = await _auditLogsRepository.GetAuditLogsForDepartmentPagedAsync(departmentId, safeStart, safeEnd, (int?)logType, safePage, safePageSize);
-			return (await Task.WhenAll(logs.Select(DisplayAsync))).ToList();
+			var display = new List<AuditLog>();
+			foreach (var log in logs)
+				display.Add(await DisplayAsync(log));
+			return display;
 		}
 
 		private Task<AuditLog> DisplayAsync(AuditLog log)

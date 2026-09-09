@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+<resheader name="version"><value>2.0</value></resheader>
+<resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+<resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+<data name="WorkOrders" xml:space="preserve"><value>Εντολές εργασίας</value></data>
+<data name="NewWorkOrder" xml:space="preserve"><value>Νέα εντολή εργασίας</value></data>
+<data name="EditWorkOrder" xml:space="preserve"><value>Επεξεργασία εντολής εργασίας</value></data>
+<data name="Status" xml:space="preserve"><value>Κατάσταση</value></data>
+<data name="Priority" xml:space="preserve"><value>Προτεραιότητα</value></data>
+<data name="Type" xml:space="preserve"><value>Τύπος</value></data>
+<data name="All" xml:space="preserve"><value>Όλα</value></data>
+<data name="Unit" xml:space="preserve"><value>Μονάδα</value></data>
+<data name="Group" xml:space="preserve"><value>Ομάδα</value></data>
+<data name="Asset" xml:space="preserve"><value>Εξοπλισμός</value></data>
+<data name="AssignedToMe" xml:space="preserve"><value>Ανατεθειμένες σε εμένα</value></data>
+<data name="Filter" xml:space="preserve"><value>Φιλτράρισμα</value></data>
+<data name="Number" xml:space="preserve"><value>Αριθμός</value></data>
+<data name="Title" xml:space="preserve"><value>Τίτλος</value></data>
+<data name="DueOn" xml:space="preserve"><value>Προθεσμία</value></data>
+<data name="NoWorkOrders" xml:space="preserve"><value>Καμία εντολή εργασίας δεν αντιστοιχεί σε αυτά τα φίλτρα.</value></data>
+<data name="Previous" xml:space="preserve"><value>Προηγούμενο</value></data>
+<data name="Next" xml:space="preserve"><value>Επόμενο</value></data>
+<data name="None" xml:space="preserve"><value>Κανένα</value></data>
+<data name="Description" xml:space="preserve"><value>Περιγραφή</value></data>
+<data name="LocationText" xml:space="preserve"><value>Χώρος, κτίριο ή τοποθεσία</value></data>
+<data name="Currency" xml:space="preserve"><value>Νόμισμα</value></data>
+<data name="EstimatedCost" xml:space="preserve"><value>Εκτιμώμενο κόστος</value></data>
+<data name="ApprovedCost" xml:space="preserve"><value>Εγκεκριμένο κόστος</value></data>
+<data name="CostCenter" xml:space="preserve"><value>Κέντρο κόστους</value></data>
+<data name="VendorDetails" xml:space="preserve"><value>Στοιχεία προμηθευτή</value></data>
+<data name="WarrantyReference" xml:space="preserve"><value>Αναφορά εγγύησης</value></data>
+<data name="SafetyCritical" xml:space="preserve"><value>Εργασία κρίσιμη για την ασφάλεια</value></data>
+<data name="HazardousWork" xml:space="preserve"><value>Επικίνδυνη εργασία</value></data>
+<data name="SafetyNotice" xml:space="preserve"><value>Καταγράψτε την εγκεκριμένη διαδικασία και τις αναφορές απομόνωσης. Η εφαρμογή δεν εκτελεί φυσική απομόνωση ούτε εγκρίνει την επαναφορά σε λειτουργία.</value></data>
+<data name="ProcedureReference" xml:space="preserve"><value>Αναφορά διαδικασίας</value></data>
+<data name="ProcedureVersion" xml:space="preserve"><value>Έκδοση διαδικασίας</value></data>
+<data name="PermitReference" xml:space="preserve"><value>Αναφορά άδειας</value></data>
+<data name="IsolationReference" xml:space="preserve"><value>Αναφορά απομόνωσης</value></data>
+<data name="QualifiedPersonnel" xml:space="preserve"><value>Ειδικευμένο προσωπικό</value></data>
+<data name="TaskSteps" xml:space="preserve"><value>Βήματα εργασίας</value></data>
+<data name="AddStep" xml:space="preserve"><value>Προσθήκη βήματος</value></data>
+<data name="Save" xml:space="preserve"><value>Αποθήκευση</value></data>
+<data name="Cancel" xml:space="preserve"><value>Ακύρωση</value></data>
+<data name="ReportedBy" xml:space="preserve"><value>Αναφέρθηκε από</value></data>
+<data name="AssignedTo" xml:space="preserve"><value>Ανατέθηκε σε</value></data>
+<data name="Resolution" xml:space="preserve"><value>Αποκατάσταση</value></data>
+<data name="Cause" xml:space="preserve"><value>Αιτία</value></data>
+<data name="VerificationEvidence" xml:space="preserve"><value>Αποδεικτικά επαλήθευσης και δοκιμών</value></data>
+<data name="VerifiedBy" xml:space="preserve"><value>Επαληθεύτηκε από</value></data>
+<data name="Export" xml:space="preserve"><value>Εξαγωγή</value></data>
+<data name="AcceptAssignment" xml:space="preserve"><value>Αποδοχή ανάθεσης</value></data>
+<data name="Assign" xml:space="preserve"><value>Ανάθεση</value></data>
+<data name="User" xml:space="preserve"><value>Χρήστης</value></data>
+<data name="Role" xml:space="preserve"><value>Ρόλος</value></data>
+<data name="ChangeStatus" xml:space="preserve"><value>Αλλαγή κατάστασης</value></data>
+<data name="Reason" xml:space="preserve"><value>Αιτιολογία</value></data>
+<data name="DuplicateOf" xml:space="preserve"><value>Αναγνωριστικό κύριας εντολής εργασίας</value></data>
+<data name="ConfirmTasksComplete" xml:space="preserve"><value>Επιβεβαιώνω ότι ολοκληρώθηκαν όλα τα βήματα της εργασίας.</value></data>
+<data name="Activity" xml:space="preserve"><value>Δραστηριότητα</value></data>
+<data name="Comment" xml:space="preserve"><value>Σχόλιο</value></data>
+<data name="AddComment" xml:space="preserve"><value>Προσθήκη σχολίου</value></data>
+<data name="Labor" xml:space="preserve"><value>Εργατοώρες</value></data>
+<data name="WorkDate" xml:space="preserve"><value>Ημερομηνία εργασίας</value></data>
+<data name="Hours" xml:space="preserve"><value>Ώρες</value></data>
+<data name="Rate" xml:space="preserve"><value>Ωριαία αμοιβή</value></data>
+<data name="Note" xml:space="preserve"><value>Σημείωση</value></data>
+<data name="CurrentUser" xml:space="preserve"><value>Τρέχων χρήστης</value></data>
+<data name="AddLabor" xml:space="preserve"><value>Προσθήκη εργατοωρών</value></data>
+<data name="Parts" xml:space="preserve"><value>Ανταλλακτικά</value></data>
+<data name="FreeTextPartsNotice" xml:space="preserve"><value>Τα ανταλλακτικά καταγράφονται ως ελεύθερο κείμενο. Το απόθεμα δεν μεταβάλλεται.</value></data>
+<data name="Quantity" xml:space="preserve"><value>Ποσότητα</value></data>
+<data name="UnitCost" xml:space="preserve"><value>Κόστος μονάδας</value></data>
+<data name="Actions" xml:space="preserve"><value>Ενέργειες</value></data>
+<data name="Voided" xml:space="preserve"><value>Ακυρωμένο</value></data>
+<data name="Void" xml:space="preserve"><value>Ακύρωση</value></data>
+<data name="AddPart" xml:space="preserve"><value>Προσθήκη ανταλλακτικού</value></data>
+<data name="Files" xml:space="preserve"><value>Αρχεία</value></data>
+<data name="Withdrawn" xml:space="preserve"><value>Αποσυρμένο</value></data>
+<data name="Withdraw" xml:space="preserve"><value>Απόσυρση</value></data>
+<data name="File" xml:space="preserve"><value>Αρχείο</value></data>
+<data name="FileHelp" xml:space="preserve"><value>PDF, PNG ή JPEG, έως 10 MB. Τα αρχεία πρέπει να περάσουν τον έλεγχο ασφαλείας πριν γίνουν αποδεκτά.</value></data>
+<data name="Upload" xml:space="preserve"><value>Μεταφόρτωση</value></data>
+<data name="Done" xml:space="preserve"><value>Ολοκληρωμένο</value></data>
+<data name="Pending" xml:space="preserve"><value>Σε αναμονή</value></data>
+<data name="Unlock" xml:space="preserve"><value>Επαλήθευση ταυτότητας και άνοιγμα</value></data>
+<data name="ReadOnlyHistory" xml:space="preserve"><value>Το ιστορικό παραμένει διαθέσιμο. Οι νέες εργασίες απαιτούν ενεργή συνδρομή Readiness Pro και ενεργοποιημένη ενότητα συντήρησης.</value></data>
+<data name="MembershipRequired" xml:space="preserve"><value>Απαιτείται ενεργή ιδιότητα μέλους του τμήματος.</value></data>
+<data name="ReadinessProRequired" xml:space="preserve"><value>Απαιτείται Readiness Pro για νέες εργασίες συντήρησης.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Δεν έχετε άδεια για αυτή την ενέργεια.</value></data>
+<data name="Unavailable" xml:space="preserve"><value>Αυτή η εντολή εργασίας ή το αποδεικτικό δεν είναι διαθέσιμο.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Επιλέξτε έναν διαθέσιμο στόχο στο τμήμα σας.</value></data>
+<data name="AssignmentRequired" xml:space="preserve"><value>Επιλέξτε ένα ενεργό μέλος του τμήματος ή έναν ρόλο προσωπικού.</value></data>
+<data name="Conflict" xml:space="preserve"><value>Αυτή η εντολή εργασίας άλλαξε. Φορτώστε την ξανά πριν από την αποθήκευση.</value></data>
+<data name="InvalidInput" xml:space="preserve"><value>Ελέγξτε τις τιμές που εισαγάγατε και τα υποχρεωτικά πεδία.</value></data>
+<data name="ProtectedDataRequired" xml:space="preserve"><value>Επαληθεύστε την ταυτότητά σας για να ανοίξετε τα προστατευμένα δεδομένα της εντολής εργασίας.</value></data>
+<data name="InvalidTransition" xml:space="preserve"><value>Αυτή η αλλαγή κατάστασης δεν επιτρέπεται.</value></data>
+<data name="AcceptAssignmentFirst" xml:space="preserve"><value>Η ανάθεση πρέπει να γίνει αποδεκτή πριν αρχίσει η εργασία.</value></data>
+<data name="SafetyRequirements" xml:space="preserve"><value>Συμπληρώστε τη διαδικασία ασφαλείας, την έκδοση, την άδεια, την απομόνωση και τα στοιχεία ειδικευμένου προσωπικού.</value></data>
+<data name="TasksIncomplete" xml:space="preserve"><value>Ολοκληρώστε όλα τα βήματα πριν χαρακτηρίσετε την εργασία ολοκληρωμένη.</value></data>
+<data name="IndependentVerificationRequired" xml:space="preserve"><value>Η εργασία που είναι κρίσιμη για την ασφάλεια πρέπει να επαληθεύεται από εξουσιοδοτημένο άτομο διαφορετικό από εκείνο που την ολοκλήρωσε.</value></data>
+<data name="HistoryLimit" xml:space="preserve"><value>Το ιστορικό είναι πολύ μεγάλο για να εμφανιστεί σε ένα αίτημα.</value></data>
+<data name="InvalidFile" xml:space="preserve"><value>Επιλέξτε έγκυρο αρχείο PDF, PNG ή JPEG έως 10 MB.</value></data>
+<data name="ScanRequired" xml:space="preserve"><value>Το αρχείο δεν πέρασε τον έλεγχο. Δοκιμάστε ξανά όταν ο έλεγχος είναι διαθέσιμος.</value></data>
+<data name="FileLimit" xml:space="preserve"><value>Αυτή η εντολή εργασίας έφτασε το όριο αρχείων.</value></data>
+<data name="IntegrityFailed" xml:space="preserve"><value>Ο έλεγχος ακεραιότητας του αρχείου απέτυχε.</value></data>
+<data name="RequestFailed" xml:space="preserve"><value>Το αίτημα δεν ολοκληρώθηκε. Οι τιμές που εισαγάγατε παραμένουν σε αυτή τη σελίδα.</value></data>
+<data name="ManageWorkOrders" xml:space="preserve"><value>Διαχείριση εντολών εργασίας</value></data>
+<data name="ViewAllWorkOrders" xml:space="preserve"><value>Προβολή εντολών εργασίας άλλων μελών</value></data>
+<data name="ManageWorkOrdersNote" xml:space="preserve"><value>Αξιολόγηση, ανάθεση και επαλήθευση εντολών εργασίας εντός του επιτρεπόμενου πεδίου.</value></data>
+<data name="ViewAllWorkOrdersNote" xml:space="preserve"><value>Προβολή εντολών εργασίας της επιτρεπόμενης ομάδας ή του τμήματος. Οι αιτούντες διατηρούν το δικό τους ιστορικό.</value></data>
+<data name="WorkOrderCreated" xml:space="preserve"><value>Δημιουργήθηκε εντολή εργασίας</value></data>
+<data name="WorkOrderStatusChanged" xml:space="preserve"><value>Άλλαξε η κατάσταση εντολής εργασίας</value></data>
+<data name="WorkOrderAssigned" xml:space="preserve"><value>Ανατέθηκε εντολή εργασίας</value></data>
+<data name="NotificationTitle" xml:space="preserve"><value>Ενημέρωση εντολής εργασίας</value></data>
+<data name="NotificationMessage" xml:space="preserve"><value>Μια εντολή εργασίας στο τμήμα σας χρειάζεται προσοχή. Ανοίξτε το Resgrid για λεπτομέρειες.</value></data>
+<data name="ReadinessPro" xml:space="preserve"><value>Readiness Pro</value></data>
+<data name="Monthly" xml:space="preserve"><value>Μηνιαία</value></data>
+<data name="Buy" xml:space="preserve"><value>Εγγραφή</value></data>
+<data name="ManageSubscription" xml:space="preserve"><value>Διαχείριση συνδρομής</value></data>
+<data name="CancelSubscription" xml:space="preserve"><value>Ακύρωση ανανέωσης</value></data>
+<data name="BillingUnavailable" xml:space="preserve"><value>Η αγορά του Readiness Pro δεν είναι διαθέσιμη για αυτή τη ρύθμιση χρέωσης.</value></data>
+<data name="CheckoutPending" xml:space="preserve"><value>Η διαδικασία πληρωμής δεν ενεργοποιεί την πρόσβαση στη συντήρηση. Η πρόσβαση ξεκινά μετά την επαλήθευση της πληρωμής.</value></data>
+<data name="PaidThrough" xml:space="preserve"><value>Πληρωμένο έως</value></data>
+<data name="SubscriptionCancelled" xml:space="preserve"><value>Η ανανέωση ακυρώθηκε. Η πρόσβαση συνεχίζεται για την πληρωμένη περίοδο.</value></data>
+<data name="StatusRequested" xml:space="preserve"><value>Ζητήθηκε</value></data>
+<data name="StatusAccepted" xml:space="preserve"><value>Αποδεκτή</value></data>
+<data name="StatusAssigned" xml:space="preserve"><value>Ανατεθειμένη</value></data>
+<data name="StatusInProgress" xml:space="preserve"><value>Σε εξέλιξη</value></data>
+<data name="StatusOnHold" xml:space="preserve"><value>Σε αναστολή</value></data>
+<data name="StatusCompleted" xml:space="preserve"><value>Ολοκληρωμένη</value></data>
+<data name="StatusClosed" xml:space="preserve"><value>Κλειστή</value></data>
+<data name="StatusRejected" xml:space="preserve"><value>Απορριφθείσα</value></data>
+<data name="StatusDuplicate" xml:space="preserve"><value>Διπλότυπη</value></data>
+<data name="StatusCancelled" xml:space="preserve"><value>Ακυρωμένη</value></data>
+<data name="PriorityLow" xml:space="preserve"><value>Χαμηλή</value></data>
+<data name="PriorityNormal" xml:space="preserve"><value>Κανονική</value></data>
+<data name="PriorityHigh" xml:space="preserve"><value>Υψηλή</value></data>
+<data name="PriorityEmergency" xml:space="preserve"><value>Έκτακτη ανάγκη</value></data>
+<data name="TypeCorrective" xml:space="preserve"><value>Διορθωτική</value></data>
+<data name="TypePreventive" xml:space="preserve"><value>Προληπτική</value></data>
+<data name="TypeInspection" xml:space="preserve"><value>Επιθεώρηση</value></data>
+<data name="TypeFacility" xml:space="preserve"><value>Εγκατάσταση</value></data>
+<data name="TypeOther" xml:space="preserve"><value>Άλλη</value></data>
+<data name="ActivityCreated" xml:space="preserve"><value>Υποβλήθηκε αίτημα εργασίας</value></data>
+<data name="ActivityUpdated" xml:space="preserve"><value>Ενημερώθηκε η εντολή εργασίας</value></data>
+<data name="ActivityStatusChanged" xml:space="preserve"><value>Άλλαξε η κατάσταση</value></data>
+<data name="ActivityAssigned" xml:space="preserve"><value>Άλλαξε η ανάθεση</value></data>
+<data name="ActivityAssignmentAccepted" xml:space="preserve"><value>Έγινε αποδοχή ανάθεσης</value></data>
+<data name="ActivityComment" xml:space="preserve"><value>Προστέθηκε σχόλιο</value></data>
+<data name="ActivityLaborAdded" xml:space="preserve"><value>Προστέθηκαν εργατοώρες</value></data>
+<data name="ActivityPartAdded" xml:space="preserve"><value>Προστέθηκε ανταλλακτικό</value></data>
+<data name="ActivityPartVoided" xml:space="preserve"><value>Ακυρώθηκε ανταλλακτικό</value></data>
+<data name="ActivityFileAdded" xml:space="preserve"><value>Προστέθηκε αρχείο</value></data>
+<data name="ActivityFileWithdrawn" xml:space="preserve"><value>Αποσύρθηκε αρχείο</value></data>
+</root>

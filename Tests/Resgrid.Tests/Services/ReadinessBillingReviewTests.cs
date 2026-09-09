@@ -19,6 +19,28 @@ namespace Resgrid.Tests.Services
 	public class ReadinessBillingReviewTests
 	{
 		[Test]
+		public async Task Explicit_bypass_reads_fresh_addon_metadata_without_consulting_the_cache()
+		{
+			var previousUrl = SystemBehaviorConfig.BillingApiBaseUrl; var previousKey = ApiConfig.BackendInternalApikey; var previousCache = SystemBehaviorConfig.CacheEnabled;
+			var builder = WebApplication.CreateBuilder(); builder.Logging.ClearProviders(); builder.WebHost.UseUrls("http://127.0.0.1:0");
+			await using var app = builder.Build();
+			app.MapGet("/api/Billing/GetAllAddonPlansByType", () => new { Data = new[] { new PlanAddon { PlanAddonId = "fresh", AddonType = (int)PlanAddonTypes.ReadinessPro } } });
+			try
+			{
+				await app.StartAsync(); SystemBehaviorConfig.BillingApiBaseUrl = app.Urls.Single(); ApiConfig.BackendInternalApikey = "test-only"; SystemBehaviorConfig.CacheEnabled = true;
+				var cache = new Mock<ICacheProvider>(MockBehavior.Strict);
+				var service = new SubscriptionsService(null, null, cache.Object, null, null, null, null, null);
+				(await service.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ReadinessPro, bypassCache: true)).Should().ContainSingle(p => p.PlanAddonId == "fresh");
+				cache.VerifyNoOtherCalls();
+			}
+			finally
+			{
+				SystemBehaviorConfig.BillingApiBaseUrl = previousUrl; ApiConfig.BackendInternalApikey = previousKey; SystemBehaviorConfig.CacheEnabled = previousCache;
+				await app.StopAsync();
+			}
+		}
+
+		[Test]
 		public async Task Both_addon_helpers_bound_unresponsive_billing_requests()
 		{
 			var previousUrl = SystemBehaviorConfig.BillingApiBaseUrl;

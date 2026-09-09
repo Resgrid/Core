@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+<resheader name="version"><value>2.0</value></resheader>
+<resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+<resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+<data name="WorkOrders" xml:space="preserve"><value>Ordres de travail</value></data>
+<data name="NewWorkOrder" xml:space="preserve"><value>Nouvel ordre de travail</value></data>
+<data name="EditWorkOrder" xml:space="preserve"><value>Modifier l’ordre de travail</value></data>
+<data name="Status" xml:space="preserve"><value>État</value></data>
+<data name="Priority" xml:space="preserve"><value>Priorité</value></data>
+<data name="Type" xml:space="preserve"><value>Type</value></data>
+<data name="All" xml:space="preserve"><value>Tous</value></data>
+<data name="Unit" xml:space="preserve"><value>Unité</value></data>
+<data name="Group" xml:space="preserve"><value>Groupe</value></data>
+<data name="Asset" xml:space="preserve"><value>Équipement</value></data>
+<data name="AssignedToMe" xml:space="preserve"><value>Affectés à moi</value></data>
+<data name="Filter" xml:space="preserve"><value>Filtrer</value></data>
+<data name="Number" xml:space="preserve"><value>Numéro</value></data>
+<data name="Title" xml:space="preserve"><value>Titre</value></data>
+<data name="DueOn" xml:space="preserve"><value>Échéance</value></data>
+<data name="NoWorkOrders" xml:space="preserve"><value>Aucun ordre de travail ne correspond à ces filtres.</value></data>
+<data name="Previous" xml:space="preserve"><value>Précédent</value></data>
+<data name="Next" xml:space="preserve"><value>Suivant</value></data>
+<data name="None" xml:space="preserve"><value>Aucun</value></data>
+<data name="Description" xml:space="preserve"><value>Description</value></data>
+<data name="LocationText" xml:space="preserve"><value>Site, bâtiment ou emplacement</value></data>
+<data name="Currency" xml:space="preserve"><value>Devise</value></data>
+<data name="EstimatedCost" xml:space="preserve"><value>Coût estimé</value></data>
+<data name="ApprovedCost" xml:space="preserve"><value>Coût approuvé</value></data>
+<data name="CostCenter" xml:space="preserve"><value>Centre de coûts</value></data>
+<data name="VendorDetails" xml:space="preserve"><value>Coordonnées du fournisseur</value></data>
+<data name="WarrantyReference" xml:space="preserve"><value>Référence de garantie</value></data>
+<data name="SafetyCritical" xml:space="preserve"><value>Travail critique pour la sécurité</value></data>
+<data name="HazardousWork" xml:space="preserve"><value>Travail dangereux</value></data>
+<data name="SafetyNotice" xml:space="preserve"><value>Consignez la procédure approuvée et les références de consignation. Cette application n’effectue aucune consignation physique et n’autorise pas la remise en service.</value></data>
+<data name="ProcedureReference" xml:space="preserve"><value>Référence de la procédure</value></data>
+<data name="ProcedureVersion" xml:space="preserve"><value>Version de la procédure</value></data>
+<data name="PermitReference" xml:space="preserve"><value>Référence du permis</value></data>
+<data name="IsolationReference" xml:space="preserve"><value>Référence de consignation</value></data>
+<data name="QualifiedPersonnel" xml:space="preserve"><value>Personnel qualifié</value></data>
+<data name="TaskSteps" xml:space="preserve"><value>Étapes de la tâche</value></data>
+<data name="AddStep" xml:space="preserve"><value>Ajouter une étape</value></data>
+<data name="Save" xml:space="preserve"><value>Enregistrer</value></data>
+<data name="Cancel" xml:space="preserve"><value>Annuler</value></data>
+<data name="ReportedBy" xml:space="preserve"><value>Signalé par</value></data>
+<data name="AssignedTo" xml:space="preserve"><value>Affecté à</value></data>
+<data name="Resolution" xml:space="preserve"><value>Résolution</value></data>
+<data name="Cause" xml:space="preserve"><value>Cause</value></data>
+<data name="VerificationEvidence" xml:space="preserve"><value>Preuves de vérification et d’essai</value></data>
+<data name="VerifiedBy" xml:space="preserve"><value>Vérifié par</value></data>
+<data name="Export" xml:space="preserve"><value>Exporter</value></data>
+<data name="AcceptAssignment" xml:space="preserve"><value>Accepter l’affectation</value></data>
+<data name="Assign" xml:space="preserve"><value>Affecter</value></data>
+<data name="User" xml:space="preserve"><value>Utilisateur</value></data>
+<data name="Role" xml:space="preserve"><value>Rôle</value></data>
+<data name="ChangeStatus" xml:space="preserve"><value>Changer l’état</value></data>
+<data name="Reason" xml:space="preserve"><value>Motif</value></data>
+<data name="DuplicateOf" xml:space="preserve"><value>Identifiant de l’ordre de travail de référence</value></data>
+<data name="ConfirmTasksComplete" xml:space="preserve"><value>Je confirme que toutes les étapes de la tâche sont terminées.</value></data>
+<data name="Activity" xml:space="preserve"><value>Activité</value></data>
+<data name="Comment" xml:space="preserve"><value>Commentaire</value></data>
+<data name="AddComment" xml:space="preserve"><value>Ajouter un commentaire</value></data>
+<data name="Labor" xml:space="preserve"><value>Main-d’œuvre</value></data>
+<data name="WorkDate" xml:space="preserve"><value>Date du travail</value></data>
+<data name="Hours" xml:space="preserve"><value>Heures</value></data>
+<data name="Rate" xml:space="preserve"><value>Tarif horaire</value></data>
+<data name="Note" xml:space="preserve"><value>Note</value></data>
+<data name="CurrentUser" xml:space="preserve"><value>Utilisateur actuel</value></data>
+<data name="AddLabor" xml:space="preserve"><value>Ajouter de la main-d’œuvre</value></data>
+<data name="Parts" xml:space="preserve"><value>Pièces</value></data>
+<data name="FreeTextPartsNotice" xml:space="preserve"><value>Ces pièces sont saisies en texte libre. Les stocks ne sont pas modifiés.</value></data>
+<data name="Quantity" xml:space="preserve"><value>Quantité</value></data>
+<data name="UnitCost" xml:space="preserve"><value>Coût unitaire</value></data>
+<data name="Actions" xml:space="preserve"><value>Actions</value></data>
+<data name="Voided" xml:space="preserve"><value>Annulée</value></data>
+<data name="Void" xml:space="preserve"><value>Annuler</value></data>
+<data name="AddPart" xml:space="preserve"><value>Ajouter une pièce</value></data>
+<data name="Files" xml:space="preserve"><value>Fichiers</value></data>
+<data name="Withdrawn" xml:space="preserve"><value>Retiré</value></data>
+<data name="Withdraw" xml:space="preserve"><value>Retirer</value></data>
+<data name="File" xml:space="preserve"><value>Fichier</value></data>
+<data name="FileHelp" xml:space="preserve"><value>PDF, PNG ou JPEG, jusqu’à 10 Mo. Les fichiers doivent réussir l’analyse de sécurité avant d’être acceptés.</value></data>
+<data name="Upload" xml:space="preserve"><value>Téléverser</value></data>
+<data name="Done" xml:space="preserve"><value>Terminé</value></data>
+<data name="Pending" xml:space="preserve"><value>En attente</value></data>
+<data name="Unlock" xml:space="preserve"><value>Vérifier l’identité et ouvrir</value></data>
+<data name="ReadOnlyHistory" xml:space="preserve"><value>L’historique reste disponible. Les nouveaux travaux nécessitent un abonnement Readiness Pro actif et l’activation du module de maintenance.</value></data>
+<data name="MembershipRequired" xml:space="preserve"><value>Une appartenance active au service est requise.</value></data>
+<data name="ReadinessProRequired" xml:space="preserve"><value>Readiness Pro est requis pour les nouveaux travaux de maintenance.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Vous n’avez pas l’autorisation d’effectuer cette action.</value></data>
+<data name="Unavailable" xml:space="preserve"><value>Cet ordre de travail ou cette pièce justificative n’est pas disponible.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Sélectionnez une cible disponible dans votre service.</value></data>
+<data name="AssignmentRequired" xml:space="preserve"><value>Sélectionnez un membre actif du service ou un rôle du personnel.</value></data>
+<data name="Conflict" xml:space="preserve"><value>Cet ordre de travail a changé. Rechargez-le avant d’enregistrer.</value></data>
+<data name="InvalidInput" xml:space="preserve"><value>Vérifiez les valeurs saisies et les champs obligatoires.</value></data>
+<data name="ProtectedDataRequired" xml:space="preserve"><value>Vérifiez votre identité pour ouvrir les données protégées de l’ordre de travail.</value></data>
+<data name="InvalidTransition" xml:space="preserve"><value>Cette transition d’état n’est pas autorisée.</value></data>
+<data name="AcceptAssignmentFirst" xml:space="preserve"><value>L’affectation doit être acceptée avant le début du travail.</value></data>
+<data name="SafetyRequirements" xml:space="preserve"><value>Renseignez la procédure de sécurité, sa version, le permis, la consignation et le personnel qualifié.</value></data>
+<data name="TasksIncomplete" xml:space="preserve"><value>Terminez toutes les étapes avant de déclarer le travail terminé.</value></data>
+<data name="IndependentVerificationRequired" xml:space="preserve"><value>Un travail critique pour la sécurité doit être vérifié par une personne autorisée autre que celle qui l’a terminé.</value></data>
+<data name="HistoryLimit" xml:space="preserve"><value>Cet historique est trop volumineux pour être affiché en une seule requête.</value></data>
+<data name="InvalidFile" xml:space="preserve"><value>Choisissez un fichier PDF, PNG ou JPEG valide de 10 Mo maximum.</value></data>
+<data name="ScanRequired" xml:space="preserve"><value>Le fichier n’a pas réussi l’analyse. Réessayez lorsque l’analyse sera disponible.</value></data>
+<data name="FileLimit" xml:space="preserve"><value>Cet ordre de travail a atteint sa limite de fichiers.</value></data>
+<data name="IntegrityFailed" xml:space="preserve"><value>Le contrôle d’intégrité du fichier a échoué.</value></data>
+<data name="RequestFailed" xml:space="preserve"><value>La demande n’a pas pu aboutir. Les valeurs saisies sont conservées sur cette page.</value></data>
+<data name="ManageWorkOrders" xml:space="preserve"><value>Gérer les ordres de travail</value></data>
+<data name="ViewAllWorkOrders" xml:space="preserve"><value>Voir les ordres de travail des autres membres</value></data>
+<data name="ManageWorkOrdersNote" xml:space="preserve"><value>Évaluer, affecter et vérifier les ordres de travail dans le périmètre autorisé.</value></data>
+<data name="ViewAllWorkOrdersNote" xml:space="preserve"><value>Voir les ordres de travail du groupe ou du service autorisé. Les demandeurs conservent leur propre historique.</value></data>
+<data name="WorkOrderCreated" xml:space="preserve"><value>Ordre de travail créé</value></data>
+<data name="WorkOrderStatusChanged" xml:space="preserve"><value>État de l’ordre de travail modifié</value></data>
+<data name="WorkOrderAssigned" xml:space="preserve"><value>Ordre de travail affecté</value></data>
+<data name="NotificationTitle" xml:space="preserve"><value>Mise à jour d’un ordre de travail</value></data>
+<data name="NotificationMessage" xml:space="preserve"><value>Un ordre de travail de votre service nécessite votre attention. Ouvrez Resgrid pour consulter les détails.</value></data>
+<data name="ReadinessPro" xml:space="preserve"><value>Readiness Pro</value></data>
+<data name="Monthly" xml:space="preserve"><value>Mensuel</value></data>
+<data name="Buy" xml:space="preserve"><value>S’abonner</value></data>
+<data name="ManageSubscription" xml:space="preserve"><value>Gérer l’abonnement</value></data>
+<data name="CancelSubscription" xml:space="preserve"><value>Annuler le renouvellement</value></data>
+<data name="BillingUnavailable" xml:space="preserve"><value>La souscription à Readiness Pro n’est pas disponible pour cette configuration de facturation.</value></data>
+<data name="CheckoutPending" xml:space="preserve"><value>Le passage en caisse n’active pas l’accès à la maintenance. L’accès commence après vérification du paiement.</value></data>
+<data name="PaidThrough" xml:space="preserve"><value>Payé jusqu’au</value></data>
+<data name="SubscriptionCancelled" xml:space="preserve"><value>Le renouvellement est annulé. L’accès est maintenu pendant la période payée.</value></data>
+<data name="StatusRequested" xml:space="preserve"><value>Demandé</value></data>
+<data name="StatusAccepted" xml:space="preserve"><value>Accepté</value></data>
+<data name="StatusAssigned" xml:space="preserve"><value>Affecté</value></data>
+<data name="StatusInProgress" xml:space="preserve"><value>En cours</value></data>
+<data name="StatusOnHold" xml:space="preserve"><value>Suspendu</value></data>
+<data name="StatusCompleted" xml:space="preserve"><value>Terminé</value></data>
+<data name="StatusClosed" xml:space="preserve"><value>Clôturé</value></data>
+<data name="StatusRejected" xml:space="preserve"><value>Rejeté</value></data>
+<data name="StatusDuplicate" xml:space="preserve"><value>Doublon</value></data>
+<data name="StatusCancelled" xml:space="preserve"><value>Annulé</value></data>
+<data name="PriorityLow" xml:space="preserve"><value>Basse</value></data>
+<data name="PriorityNormal" xml:space="preserve"><value>Normale</value></data>
+<data name="PriorityHigh" xml:space="preserve"><value>Haute</value></data>
+<data name="PriorityEmergency" xml:space="preserve"><value>Urgence</value></data>
+<data name="TypeCorrective" xml:space="preserve"><value>Correctif</value></data>
+<data name="TypePreventive" xml:space="preserve"><value>Préventif</value></data>
+<data name="TypeInspection" xml:space="preserve"><value>Inspection</value></data>
+<data name="TypeFacility" xml:space="preserve"><value>Bâtiment</value></data>
+<data name="TypeOther" xml:space="preserve"><value>Autre</value></data>
+<data name="ActivityCreated" xml:space="preserve"><value>Demande de travail soumise</value></data>
+<data name="ActivityUpdated" xml:space="preserve"><value>Ordre de travail mis à jour</value></data>
+<data name="ActivityStatusChanged" xml:space="preserve"><value>État modifié</value></data>
+<data name="ActivityAssigned" xml:space="preserve"><value>Affectation modifiée</value></data>
+<data name="ActivityAssignmentAccepted" xml:space="preserve"><value>Affectation acceptée</value></data>
+<data name="ActivityComment" xml:space="preserve"><value>Commentaire ajouté</value></data>
+<data name="ActivityLaborAdded" xml:space="preserve"><value>Main-d’œuvre ajoutée</value></data>
+<data name="ActivityPartAdded" xml:space="preserve"><value>Pièce ajoutée</value></data>
+<data name="ActivityPartVoided" xml:space="preserve"><value>Pièce annulée</value></data>
+<data name="ActivityFileAdded" xml:space="preserve"><value>Fichier ajouté</value></data>
+<data name="ActivityFileWithdrawn" xml:space="preserve"><value>Fichier retiré</value></data>
+</root>

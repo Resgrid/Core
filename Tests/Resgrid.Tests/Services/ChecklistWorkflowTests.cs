@@ -42,6 +42,7 @@ namespace Resgrid.Tests.Services
 			_authorization.Setup(s => s.RequireMemberAsync(It.IsAny<ChecklistActor>())).Returns(Task.CompletedTask);
 			_authorization.Setup(s => s.CanManageAsync(It.IsAny<ChecklistActor>())).ReturnsAsync(true);
 			_authorization.Setup(s => s.CanReadAsync(It.IsAny<ChecklistActor>(), It.IsAny<ChecklistCompletion>())).ReturnsAsync((ChecklistActor a, ChecklistCompletion c) => c != null && c.DepartmentId == a.DepartmentId && (c.CreatedBy == a.UserId || c.WitnessUserId == a.UserId));
+			_authorization.Setup(s => s.ReadFilterAsync(It.IsAny<ChecklistActor>())).ReturnsAsync((ChecklistActor a) => new Func<ChecklistCompletion, Task<bool>>(c => _authorization.Object.CanReadAsync(a, c)));
 			_authorization.Setup(s => s.TargetAsync(It.IsAny<ChecklistActor>(), It.IsAny<ChecklistTargetType>(), It.IsAny<string>())).ReturnsAsync((ChecklistActor a, ChecklistTargetType t, string id) => new ChecklistTarget { Type = t, Id = id, Name = "Test target" });
 			_audits = new Mock<IAuditLogsRepository>();
 			_audits.Setup(s => s.InsertAsync(It.IsAny<AuditLog>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -112,7 +113,7 @@ namespace Resgrid.Tests.Services
 			var run = await Start(); var input = Answers(run.Form, "fail"); input.Answers[0].Note = null;
 			Func<Task> submit = () => _service.SaveRunAsync(_actor, run.Run, input, true);
 			(await submit.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(400);
-			var current = await _service.GetRunAsync(_actor, run.Run); current.Completion.State.Should().Be(0); current.Input.Answers.Should().BeEmpty(); _events.Should().BeEmpty();
+			var current = await _service.GetRunAsync(_actor, run.Run); current.Completion.State.Should().Be(0); current.Input.Answers.Should().BeEmpty(); _events.Where(e => e.Trigger.HasValue).Should().BeEmpty();
 		}
 		[Test]
 		public async Task Stale_progress_cannot_overwrite_newer_answers()
@@ -127,7 +128,7 @@ namespace Resgrid.Tests.Services
 		public async Task Identical_terminal_retry_is_idempotent_and_changed_payload_conflicts()
 		{
 			var run = await Start(); var input = Answers(run.Form); var revision = await _service.SaveRunAsync(_actor, run.Run, input, true);
-			(await _service.SaveRunAsync(_actor, run.Run, input, true)).Should().Be(revision); _events.Should().ContainSingle();
+			(await _service.SaveRunAsync(_actor, run.Run, input, true)).Should().Be(revision); _events.Where(e => e.Trigger.HasValue).Should().ContainSingle();
 			input.Note = "Changed after submission";
 			Func<Task> changed = () => _service.SaveRunAsync(_actor, run.Run, input, true);
 			(await changed.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(409);
@@ -144,7 +145,7 @@ namespace Resgrid.Tests.Services
 		public async Task Author_cannot_witness_and_a_distinct_authenticated_witness_finalizes_once()
 		{
 			var run = await Start(true); await _service.SaveRunAsync(_actor, run.Run, Answers(run.Form), true);
-			var current = await _service.GetRunAsync(_actor, run.Run); current.Completion.State.Should().Be(1); _events.Should().BeEmpty();
+			var current = await _service.GetRunAsync(_actor, run.Run); current.Completion.State.Should().Be(1); _events.Where(e => e.Trigger.HasValue).Should().BeEmpty();
 			Func<Task> own = () => _service.WitnessAsync(_actor, run.Run, current.Completion.SubmissionHash, "I verified the count.");
 			(await own.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(403);
 			var witness = new ChecklistActor { DepartmentId = 77, UserId = "witness" };
@@ -153,7 +154,7 @@ namespace Resgrid.Tests.Services
 			_authorization.Setup(a => a.CanReadAsync(witness, It.IsAny<ChecklistCompletion>())).ReturnsAsync(true);
 			await _service.WitnessAsync(witness, run.Run, current.Completion.SubmissionHash, "I independently verified the count.");
 			await _service.WitnessAsync(witness, run.Run, current.Completion.SubmissionHash, "I independently verified the count.");
-			current = await _service.GetRunAsync(_actor, run.Run); current.Completion.WitnessUserId.Should().Be("witness"); current.Completion.State.Should().Be(2); _events.Should().ContainSingle();
+			current = await _service.GetRunAsync(_actor, run.Run); current.Completion.WitnessUserId.Should().Be("witness"); current.Completion.State.Should().Be(2); _events.Where(e => e.Trigger.HasValue).Should().ContainSingle();
 		}
 		[Test]
 		public async Task Historical_reads_survive_flag_disable_but_writes_stop()
@@ -219,6 +220,7 @@ namespace Resgrid.Tests.Services
 			private Dictionary<(Type, string), string> _backup;
 			public void Begin() => _backup = new Dictionary<(Type, string), string>(_rows);
 			public void Rollback() { if (_backup != null) _rows = new Dictionary<(Type, string), string>(_backup); }
+			public Task<List<ChecklistOccurrence>> ReportOccurrencesAsync(int departmentId, DateTime fromUtc, DateTime untilUtc, int skip, CancellationToken ct = default) => Task.FromResult(_rows.Where(p => p.Key.Item1 == typeof(ChecklistOccurrence)).Select(p => JsonConvert.DeserializeObject<ChecklistOccurrence>(p.Value)).Where(r => r.DepartmentId == departmentId && (r.PeriodStartUtc ?? r.CreatedOn) >= fromUtc && (r.PeriodStartUtc ?? r.CreatedOn) < untilUtc).OrderBy(r => r.CreatedOn).ThenBy(r => r.Id).Skip(skip).Take(500).ToList());
 			public Task LockDepartmentAsync(int departmentId, CancellationToken ct = default) => Task.CompletedTask;
 			public Task<T> GetAsync<T>(int departmentId, string id, CancellationToken ct = default) where T : ChecklistRow
 			{

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Checklists;
@@ -11,10 +12,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
 	[Authorize]
-	public class ChecklistsController : V4AuthenticatedApiControllerbase
+	public partial class ChecklistsController : ChecklistApiControllerBase
 	{
 		private readonly IChecklistTemplateService _templates;
-		public ChecklistsController(IChecklistTemplateService templates) => _templates = templates;
+		public ChecklistsController(IChecklistTemplateService templates, IChecklistsService checklists, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings) : base(checklists, strings) => _templates = templates;
 
 		/// <summary>Searches the free starter catalog for the authenticated department.</summary>
 		[HttpGet("GetChecklistTemplates")]

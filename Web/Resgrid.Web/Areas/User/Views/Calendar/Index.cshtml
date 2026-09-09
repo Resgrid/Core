@@ -205,6 +205,7 @@
 </div>
 @section Scripts
 {
+    @await Html.PartialAsync("~/Areas/User/Views/Checklists/_LiveScripts.cshtml")
     <script src="~/lib/fullcalendar/index.global.min.js" asp-append-version="true"></script>
     <script src="~/js/app/internal/calendar/resgrid.calendar.index.js" type="text/javascript"></script>
 }

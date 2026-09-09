@@ -15,5 +15,6 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>The initial run for a (WorkflowId, EventId) pair, or null; plan section 5.6 dedup (retries reuse it).</summary>
 		Task<WorkflowRun> GetByWorkflowAndEventAsync(string workflowId, string eventId);
+		Task<List<WorkflowRun>> GetByWorkflowsAndEventAsync(int departmentId, IReadOnlyCollection<string> workflowIds, string eventId);
 	}
 }

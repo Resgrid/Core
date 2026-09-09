@@ -24,6 +24,10 @@ namespace Resgrid.Services
 		private const string ModerationFamily = "Moderation";
 		private const string DocumentsFamily = "Documents";
 		private const string CredentialsFamily = "Credentials";
+		private const int ChecklistContentCatalogVersion = 14;
+		private const int ChecklistOutcomeCatalogVersion = 15;
+		// Readiness history is version 16, owned by ReadinessHistoryFields.CatalogVersion.
+		private const int ChecklistScheduleCatalogVersion = 17;
 
 		/// <summary>Catalog version the section 5.2 operational entries were added in.</summary>
 		private const int OperationalCatalogVersion = 2;
@@ -688,12 +692,17 @@ namespace Resgrid.Services
 					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.Checklists.ReadinessHistoryFields.CatalogVersion));
 			foreach (var outcome in new[] { (Table: "ChecklistCompletions", Column: "Score"), (Table: "ChecklistCompletions", Column: "Passed"), (Table: "ChecklistCompletionItems", Column: "IsFailure") })
 				list.Add(new ProtectedFieldDefinition(outcome.Table.ToLowerInvariant() + "." + outcome.Column.ToLowerInvariant(), OperationalFamily, outcome.Table, outcome.Column, ProtectedFieldStorageKind.CompanionColumn,
-					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 15));
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, ChecklistOutcomeCatalogVersion));
 			foreach (var table in Resgrid.Model.Checklists.ChecklistTables.All.Values)
 				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
-					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, table == "ChecklistSchedules" ? 17 : 14));
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, table == Resgrid.Model.Checklists.ChecklistTables.All[typeof(Resgrid.Model.Checklists.ChecklistSchedule)] ? ChecklistScheduleCatalogVersion : ChecklistContentCatalogVersion));
 			list.Add(new ProtectedFieldDefinition("checklistcompletionfiles.data", OperationalFamily, "ChecklistCompletionFiles", "Data", ProtectedFieldStorageKind.Binary,
-				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 14));
+				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, ChecklistContentCatalogVersion));
+			foreach (var table in Resgrid.Model.WorkOrders.WorkOrderTables.All.Values)
+				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 18));
+			list.Add(new ProtectedFieldDefinition("workorderfiles.data", OperationalFamily, "WorkOrderFiles", "Data", ProtectedFieldStorageKind.Binary,
+				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 18));
 			return list;
 		}
 	}

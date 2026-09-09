@@ -10,15 +10,16 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		private readonly IConnectionProvider _connections;
 		private readonly IUnitOfWork _unit;
+		private readonly SqlConfiguration _sqlConfiguration;
 		public FeatureFlagRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
 		{
-			_connections = connectionProvider; _unit = unitOfWork;
+			_connections = connectionProvider; _unit = unitOfWork; _sqlConfiguration = sqlConfiguration;
 		}
 		public async System.Threading.Tasks.Task TouchEvaluationAsync(int flagId, System.DateTime evaluatedOn, System.Threading.CancellationToken ct = default)
 		{
 			// Never re-save a cached definition for telemetry: that could restore an old flag state.
-			const string sql = "UPDATE FeatureFlags SET LastEvaluatedOn=@evaluatedOn WHERE FeatureFlagId=@flagId AND (LastEvaluatedOn IS NULL OR LastEvaluatedOn<@evaluatedOn)";
+			var sql = $"UPDATE {_sqlConfiguration.SchemaName}.FeatureFlags SET LastEvaluatedOn=@evaluatedOn WHERE FeatureFlagId=@flagId AND (LastEvaluatedOn IS NULL OR LastEvaluatedOn<@evaluatedOn)";
 			if (_unit.Connection != null)
 				await Dapper.SqlMapper.ExecuteAsync(_unit.Connection, new Dapper.CommandDefinition(sql, new { flagId, evaluatedOn }, _unit.Transaction, cancellationToken: ct));
 			else

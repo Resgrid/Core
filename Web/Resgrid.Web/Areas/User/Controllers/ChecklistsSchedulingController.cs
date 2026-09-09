@@ -13,11 +13,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public partial class ChecklistsController
 	{
 		[HttpGet, Authorize(Policy = ResgridResources.Checklist_Update)]
-		public async Task<IActionResult> Schedules(string id, int page = 0) => View("Schedules", new ChecklistSchedulesView { DefinitionId = id, Schedules = await _checklists.SchedulesAsync(Actor, id, page), Page = page, CanEdit = await _access.CanUseChecklistsAsync(DepartmentId) });
+		public async Task<IActionResult> Schedules(string id, int page = 0) => View("Schedules", new ChecklistSchedulesView { DefinitionId = id, Schedules = await _checklists.SchedulesAsync(Actor, id, page), Page = page, CanEdit = await ChecklistsEnabledAsync() });
 		[HttpGet, Authorize(Policy = ResgridResources.Checklist_Update)]
 		public async Task<IActionResult> EditSchedule(string id = null, string definitionId = null)
 		{
-			if (!await _access.CanUseChecklistsAsync(DepartmentId) || !await _checklists.CanManageAsync(Actor)) return Forbid();
+			if (!await ChecklistsEnabledAsync() || !await _checklists.CanManageAsync(Actor)) return Forbid();
 			var input = new ChecklistScheduleInput { DefinitionId = definitionId };
 			if (id != null)
 			{
@@ -55,7 +55,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _checklists.SaveScheduleAsync(Actor, input); return RedirectToAction("Schedules", new { id = input.DefinitionId });
 		}
 		[HttpGet]
-		public async Task<IActionResult> Due(int page = 0) => View("Due", new ChecklistDueView { Occurrences = await _checklists.DueAsync(Actor, page), Page = page });
+		public async Task<IActionResult> Due(int page = 0)
+		{
+			var rows = await _checklists.DueAsync(Actor, page, includeNext: true);
+			return View("Due", new ChecklistDueView { Occurrences = rows.Take(50).ToList(), Page = page, HasMore = rows.Count > 50 });
+		}
 		[HttpGet]
 		public async Task<IActionResult> Occurrence(string id) => View("Occurrence", await _checklists.OccurrenceAsync(Actor, id));
 		[HttpPost, ValidateAntiForgeryToken]

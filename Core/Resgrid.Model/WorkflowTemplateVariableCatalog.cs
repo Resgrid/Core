@@ -386,6 +386,16 @@ namespace Resgrid.Model
 
 			switch (eventType)
 			{
+				case WorkflowTriggerEventType.WorkOrderCreated:
+				case WorkflowTriggerEventType.WorkOrderStatusChanged:
+				case WorkflowTriggerEventType.WorkOrderAssigned:
+					foreach (var pair in WorkOrders.WorkOrderWorkflowPayload.Variables)
+						list.Add(new TemplateVariableDescriptor("work_order." + pair.Variable, pair.Property, pair.Variable is "asset_id" or "due_on" or "title" ? "string" : "int", false));
+					list.Add(new TemplateVariableDescriptor("work_order.url", "Authenticated work-order link", "string", false));
+					list.Add(new TemplateVariableDescriptor("protection.is_redacted", "Sensitive work-order fields are withheld", "bool", false));
+					list.Add(new TemplateVariableDescriptor("protection.redacted_fields", "Withheld fields", "array", false));
+					list.Add(new TemplateVariableDescriptor("protection.catalog_version", "Protection catalog", "int", false));
+					break;
 				case WorkflowTriggerEventType.ChecklistCompleted:
 				case WorkflowTriggerEventType.ChecklistFailed:
                 case WorkflowTriggerEventType.ChecklistMissed:

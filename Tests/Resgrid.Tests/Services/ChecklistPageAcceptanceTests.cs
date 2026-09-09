@@ -88,7 +88,7 @@ namespace Resgrid.Tests.Services
 				(await _service.GetScheduleAsync(_actor, setup.Input.Id)).Content.Name.Should().Be("HTTP schedule edit");
 				(await client.PostAsync("/User/Checklists/SaveSchedule", new FormUrlEncodedContent(fields))).StatusCode.Should().Be(HttpStatusCode.Conflict);
 				await _service.SweepSchedulesAsync(setup.Clock.Now.UtcDateTime); var occurrence = (await _store.ListAsync<ChecklistOccurrence>(77)).First();
-				foreach (var page in new[] { "/User/Checklists/Due", "/User/Checklists/Reminders", "/User/Checklists/Occurrence?id=" + occurrence.Id })
+				foreach (var page in new[] { "/User/Checklists/Compliance", "/User/Checklists/ReadinessPacket", "/User/Checklists/Due", "/User/Checklists/Reminders", "/User/Checklists/Occurrence?id=" + occurrence.Id })
 				{ response = await client.GetAsync(page); response.StatusCode.Should().Be(HttpStatusCode.OK, await response.Content.ReadAsStringAsync()); }
 				_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { RedactedFields = { "checklistschedules.content" } }));
 				response = await client.GetAsync(path); html = await response.Content.ReadAsStringAsync(); response.StatusCode.Should().Be(HttpStatusCode.OK, html); html.Should().NotContain("HTTP schedule edit");

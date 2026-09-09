@@ -42,7 +42,7 @@ namespace Resgrid.Tests.Services
 				DepartmentId = DepartmentId, PlanAddonId = "readiness-monthly", TransactionId = "paid-invoice",
 				EffectiveOn = DateTime.UtcNow.AddDays(-1), EndingOn = DateTime.UtcNow.AddDays(20)
 			};
-			_billing.Setup(s => s.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ReadinessPro)).ReturnsAsync(new List<PlanAddon>
+			_billing.Setup(s => s.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ReadinessPro, false)).ReturnsAsync(new List<PlanAddon>
 			{
 				new PlanAddon { PlanAddonId = _payment.PlanAddonId, AddonType = (int)PlanAddonTypes.ReadinessPro }
 			});
@@ -155,7 +155,7 @@ namespace Resgrid.Tests.Services
 		[TestCase(2)]
 		public async Task Other_addon_catalogs_cannot_grant_maintenance(int addonType)
 		{
-			_billing.Setup(s => s.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ReadinessPro)).ReturnsAsync(new List<PlanAddon>
+			_billing.Setup(s => s.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ReadinessPro, false)).ReturnsAsync(new List<PlanAddon>
 			{
 				new PlanAddon { AddonType = addonType, PlanAddonId = "readiness-monthly" }, null
 			});
@@ -168,7 +168,7 @@ namespace Resgrid.Tests.Services
 		public async Task Missing_billing_payloads_fail_closed(bool missingCatalog)
 		{
 			if (missingCatalog)
-				_billing.Setup(s => s.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ReadinessPro)).ReturnsAsync((List<PlanAddon>)null);
+				_billing.Setup(s => s.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ReadinessPro, false)).ReturnsAsync((List<PlanAddon>)null);
 			else
 				_billing.Setup(s => s.GetCurrentPaymentAddonsForDepartmentAsync(DepartmentId, It.IsAny<List<string>>())).ReturnsAsync((List<PaymentAddon>)null);
 			(await _service.CanUseMaintenanceAsync(DepartmentId)).Should().BeFalse();
@@ -177,7 +177,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task Billing_outage_denies_maintenance_and_does_not_affect_checklists()
 		{
-			_billing.Setup(s => s.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ReadinessPro)).ThrowsAsync(new TimeoutException("Test outage"));
+			_billing.Setup(s => s.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ReadinessPro, false)).ThrowsAsync(new TimeoutException("Test outage"));
 			(await _service.CanUseMaintenanceAsync(DepartmentId)).Should().BeFalse();
 			(await _service.CanUseChecklistsAsync(DepartmentId)).Should().BeTrue();
 		}

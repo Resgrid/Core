@@ -13,10 +13,10 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			if (UnitOfWork.Transaction == null) throw new InvalidOperationException("Checklist access changes require a transaction.");
 			var sql = Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres
-				? "SELECT id FROM checklistaccessfence WHERE id=1 FOR UPDATE" : "SELECT [Id] FROM [ChecklistAccessFence] WITH (UPDLOCK,HOLDLOCK) WHERE [Id]=1";
+				? $"SELECT id FROM {Tbl("ChecklistAccessFence")} WHERE id=1 FOR UPDATE" : $"SELECT [Id] FROM {Tbl("ChecklistAccessFence")} WITH (UPDLOCK,HOLDLOCK) WHERE [Id]=1";
 			if (await ScalarAsync<int>(sql, null, ct) != 1) throw new InvalidOperationException("Checklist access fence is unavailable.");
 		}
-		public async Task ApplyAccessStateAsync(int departmentId, bool enabled, DateTime nowUtc, CancellationToken ct = default, bool inventoryEnabled = true)
+		public async Task ApplyAccessStateAsync(int departmentId, bool enabled, DateTime nowUtc, bool inventoryEnabled = true, CancellationToken ct = default)
 		{
 			if (UnitOfWork.Transaction == null) throw new InvalidOperationException("Checklist access changes require a transaction.");
 			foreach (var schedule in await QueryAsync<ChecklistSchedule>($"SELECT {Col("Id")},{Col("IsSuspended")},{Col("TargetType")} FROM {Tbl("ChecklistSchedules")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("IsActive")}={P}Active", new { DepartmentId = departmentId, Active = true }, ct))

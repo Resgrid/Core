@@ -11,6 +11,8 @@ namespace Resgrid.Web.ServicesCore.Helpers
 	{
 		public static IHttpContextAccessor _httpContextAccessor;
 
+		public static bool CanManageWorkOrders() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.Update);
+		public static bool CanViewAllWorkOrders() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.View);
 		public static bool CanManageChecklists() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update);
 		public static bool CanViewChecklistResults() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View);
 		public static ResgridIdentity GetIdentity()

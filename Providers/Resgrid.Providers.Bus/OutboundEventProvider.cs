@@ -62,7 +62,7 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(chatEventTopicHandler);
 			_eventAggregator.AddAsyncListener<DomainEventDispatchedEvent>(async message =>
 			{
-				if (message.ProducerSubsystem != "Checklists" || message.IsReplay) return;
+				if (message.ProducerSubsystem != "Checklists") return;
 				if (_rabbitTopicProvider == null) _rabbitTopicProvider = new RabbitTopicProvider();
 				if (!await _rabbitTopicProvider.ChecklistUpdated(message.DepartmentId, message.AggregateId))
 					throw new InvalidOperationException("Checklist event delivery failed; the outbox will retry.");

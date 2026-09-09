@@ -21,7 +21,7 @@ namespace Resgrid.Tests.Rms
 	/// artifact worth storing instead of a link.
 	/// </summary>
 	[TestFixture]
-	public class RecordsEvidenceServiceTests
+	public partial class RecordsEvidenceServiceTests
 	{
 		private const int Dept = 9;
 
@@ -353,7 +353,7 @@ namespace Resgrid.Tests.Rms
 			(await adapter.IsAvailableAsync(Dept)).Should().BeFalse();
 			var capture = await adapter.CaptureAsync(Request(RmsEvidenceKind.ReadinessPacket));
 			capture.Available.Should().BeFalse();
-			capture.UnavailableReason.Should().Be(ReadinessPacketEvidenceAdapter.UnavailableReason);
+			capture.UnavailableReason.Should().Be(Resgrid.Services.ChecklistReportDocuments.Text("Checklists are disabled for this department."));
 		}
 	}
 }

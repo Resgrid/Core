@@ -32,7 +32,7 @@ namespace Resgrid.Repositories.DataRepository
 			// conservatively when any active hold exists, even if its content is encrypted.
 			if (await Exists("RmsRecordLegalHolds") && await connection.ExecuteScalarAsync<int>(new CommandDefinition($"SELECT COUNT(*) FROM {Q("RmsRecordLegalHolds")} WHERE {Q("DepartmentId")}=@DepartmentId AND {Q("ReleasedOn")} IS NULL", new { DepartmentId = departmentId }, transaction, cancellationToken: ct)) > 0)
 				throw new InvalidOperationException("Department readiness evidence is retained under an active legal hold.");
-			var triggers = new[] { WorkflowTriggerEventType.ChecklistCompleted, WorkflowTriggerEventType.ChecklistFailed, WorkflowTriggerEventType.ChecklistMissed, WorkflowTriggerEventType.ChecklistScheduleChanged, WorkflowTriggerEventType.ChecklistOccurrenceSkipped }.Select(t => (int)t).ToArray();
+			var triggers = ChecklistWorkflowPayload.Triggers.ToArray();
 			var triggerPredicate = Q("TriggerEventType") + (pg ? "=ANY(@Triggers)" : " IN @Triggers");
 			var auditPredicate = Q("LogType") + (pg ? "=ANY(@AuditTypes)" : " IN @AuditTypes");
 			var parameters = new { DepartmentId = departmentId, Triggers = triggers, AuditTypes = ReadinessHistoryFields.AuditTypes };
@@ -41,9 +41,9 @@ namespace Resgrid.Repositories.DataRepository
 				if (await Exists("WorkflowRunLogs")) await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q("WorkflowRunLogs")} WHERE {Q("WorkflowRunId")} IN (SELECT {Q("WorkflowRunId")} FROM {Q("WorkflowRuns")} WHERE {Q("DepartmentId")}=@DepartmentId AND {triggerPredicate})", parameters, transaction, cancellationToken: ct));
 				await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q("WorkflowRuns")} WHERE {Q("DepartmentId")}=@DepartmentId AND {triggerPredicate}", parameters, transaction, cancellationToken: ct));
 			}
-			if (await Exists("DomainEventOutbox")) await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q("DomainEventOutbox")} WHERE {Q("DepartmentId")}=@DepartmentId AND {Q("ProducerSubsystem")}='Checklists'", parameters, transaction, cancellationToken: ct));
+			if (await Exists("DomainEventOutbox")) await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q("DomainEventOutbox")} WHERE {Q("DepartmentId")}=@DepartmentId AND {Q("ProducerSubsystem")} IN ('Checklists','WorkOrders')", parameters, transaction, cancellationToken: ct));
 			if (await Exists("AuditLogs")) await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q("AuditLogs")} WHERE {Q("DepartmentId")}=@DepartmentId AND {auditPredicate}", parameters, transaction, cancellationToken: ct));
-			foreach (var table in new[] { "ChecklistReminders", "ChecklistCompletionFiles", "ChecklistCompletionItems", "ChecklistCompletions", "ChecklistOccurrences", "ChecklistSchedules", "ChecklistDefinitionVersions", "ChecklistDefinitions", "DepartmentChecklistSettings" })
+			foreach (var table in new[] { "ReadinessProBillingAccounts", "WorkOrderNotifications", "WorkOrderFiles", "WorkOrderParts", "WorkOrderLabors", "WorkOrderActivities", "WorkOrders", "ChecklistReminders", "ChecklistCompletionFiles", "ChecklistCompletionItems", "ChecklistCompletions", "ChecklistOccurrences", "ChecklistSchedules", "ChecklistDefinitionVersions", "ChecklistDefinitions", "DepartmentChecklistSettings" })
 				if (await Exists(table)) await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q(table)} WHERE {Q("DepartmentId")}=@DepartmentId", parameters, transaction, cancellationToken: ct));
 		}
 	}

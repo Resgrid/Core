@@ -58,6 +58,7 @@ namespace Resgrid.Providers.Claims
 
 		public static class Resources
 		{
+			public const string WorkOrder = "WorkOrder";
 			public const string Checklist = "Checklist";
 			public const string ChecklistResults = "ChecklistResults";
 			// Resources

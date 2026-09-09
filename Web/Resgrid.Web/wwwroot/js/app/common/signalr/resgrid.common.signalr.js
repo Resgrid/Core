@@ -1,4 +1,4 @@
-﻿var resgrid;
+var resgrid;
 (function (resgrid) {
     var common;
     (function (common) {
@@ -39,6 +39,7 @@
                 eventHub.keepAliveIntervalInMilliseconds = 1000;
 
                 eventHub.onreconnected(function () {
+                    document.dispatchEvent(new Event("resgrid:checklists-updated"));
                     if (departmentId && departmentId > 0) {
                         eventHub.invoke("Connect", Number(departmentId)).catch(function (err) {
                             return console.error(err.toString());
@@ -141,6 +142,7 @@
                 }
             }
             function registerClientMethods() {
+                eventHub.on("checklistUpdated", function () { document.dispatchEvent(new Event("resgrid:checklists-updated")); });
                 eventHub.on("onConnected", function (id) {
                     //connectionId = id;
                 });

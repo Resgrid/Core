@@ -90,7 +90,10 @@ namespace Resgrid.Tests.Rms
 
 			((int)WorkflowTriggerEventType.ChecklistCompleted).Should().Be(67);
 			((int)WorkflowTriggerEventType.ChecklistFailed).Should().Be(68);
-			foreach (var value in Enumerable.Range(52, 48).Except(new[] { 67, 68, 69 }))
+			((int)WorkflowTriggerEventType.WorkOrderCreated).Should().Be(70);
+			((int)WorkflowTriggerEventType.WorkOrderStatusChanged).Should().Be(71);
+			((int)WorkflowTriggerEventType.WorkOrderAssigned).Should().Be(72);
+			foreach (var value in Enumerable.Range(52, 48).Except(new[] { 67, 68, 69, 70, 71, 72 }))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");
 		}
 

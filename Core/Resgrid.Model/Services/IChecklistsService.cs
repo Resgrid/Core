@@ -8,6 +8,9 @@ namespace Resgrid.Model.Services
 {
 	public interface IChecklistsService
 	{
+		Task<ChecklistComplianceSummary> GetComplianceSummaryAsync(ChecklistActor actor, ChecklistReportQuery query);
+		Task<List<ChecklistReportEntry>> GetEntityChecklistHistoryAsync(ChecklistActor actor, ChecklistTargetType entityType, string entityId, DateTime fromUtc, DateTime untilUtc);
+		Task<ReadinessEvidenceManifestV1> GetReadinessPacketForCallAsync(ChecklistActor actor, int callId, int lookbackDays = 30);
 		Task<bool> CanManageAsync(ChecklistActor actor);
 		Task<List<ChecklistCalendarEntry>> CalendarAsync(ChecklistActor actor, DateTime fromUtc, DateTime untilUtc);
 		Task<ChecklistOccurrenceView> OccurrenceAsync(ChecklistActor actor, string id);
@@ -22,6 +25,12 @@ namespace Resgrid.Model.Services
 		Task RetireAsync(ChecklistActor actor, string id, int revision, bool delete = false);
 		Task<List<ChecklistTarget>> TargetsAsync(ChecklistActor actor, ChecklistTargetType type);
 		Task<string> StartAsync(ChecklistActor actor, string definitionId, string targetId, string completionId);
+		Task<string> StartPinnedAsync(ChecklistActor actor, string definitionId, string versionId, string targetId, string completionId);
+		Task<string> StartOccurrenceWithIdAsync(ChecklistActor actor, string occurrenceId, string completionId);
+		Task<ChecklistRunView> PreviewOccurrenceAsync(ChecklistActor actor, string occurrenceId);
+		Task<ChecklistMobilePage> MobileDueAsync(ChecklistActor actor, ChecklistMobileQuery query);
+		Task<List<ChecklistHistoryEntry>> MobileHistoryAsync(ChecklistActor actor, ChecklistMobileQuery query);
+		Task AddFileAtRevisionAsync(ChecklistActor actor, string id, string itemId, int revision, string fileName, string contentType, byte[] data);
 		Task<ChecklistRunView> GetRunAsync(ChecklistActor actor, string id);
 		Task<List<ChecklistHistoryEntry>> HistoryAsync(ChecklistActor actor, string definitionId, int page = 0, bool includeNext = false);
 		Task<int> SaveRunAsync(ChecklistActor actor, string id, ChecklistRunInput input, bool submit);
@@ -29,10 +38,12 @@ namespace Resgrid.Model.Services
 		Task AddFileAsync(ChecklistActor actor, string id, string itemId, string fileName, string contentType, byte[] data);
 		Task<ChecklistCompletionFile> GetFileAsync(ChecklistActor actor, string id);
 		Task DeleteFileAsync(ChecklistActor actor, string id);
+		Task DeleteFileAtRevisionAsync(ChecklistActor actor, string id, int revision);
 		Task<List<ChecklistScheduleView>> SchedulesAsync(ChecklistActor actor, string definitionId, int page = 0);
 		Task<ChecklistScheduleView> GetScheduleAsync(ChecklistActor actor, string id);
 		Task<string> SaveScheduleAsync(ChecklistActor actor, ChecklistScheduleInput input);
-		Task<List<ChecklistOccurrenceView>> DueAsync(ChecklistActor actor, int page = 0);
+		Task DisableScheduleAsync(ChecklistActor actor, string id, int revision);
+		Task<List<ChecklistOccurrenceView>> DueAsync(ChecklistActor actor, int page = 0, bool includeNext = false);
 		Task<string> StartOccurrenceAsync(ChecklistActor actor, string occurrenceId);
 		Task SkipOccurrenceAsync(ChecklistActor actor, string occurrenceId, int revision, string reason);
 		Task<ChecklistScheduleSweepResult> SweepSchedulesAsync(DateTime utcNow, CancellationToken ct = default);

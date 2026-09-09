@@ -22,7 +22,7 @@ namespace Resgrid.Tests.Services
 	/// re-encrypted.
 	/// </summary>
 	[TestFixture]
-	public class DepartmentDataMigrationEngineTests
+	public partial class DepartmentDataMigrationEngineTests
 	{
 		private const int DeptId = 42;
 

@@ -637,4 +637,44 @@
   <data name="ReminderFixedTime" xml:space="preserve"><value>Ora del riepilogo giornaliero (fuso orario dell’organizzazione; sostituisce l’inizio turno)</value></data>
   <data name="ReminderShiftStart" xml:space="preserve"><value>Invia un riepilogo all’inizio del turno</value></data>
   <data name="ReminderTimeValidation" xml:space="preserve"><value>Inserisci un solo orario nel formato HH:mm.</value></data>
+  <data name="ChecklistComplianceReport" xml:space="preserve"><value>Rapporto di conformità delle liste di controllo</value></data>
+  <data name="ChecklistMissedReport" xml:space="preserve"><value>Rapporto dei controlli mancati</value></data>
+  <data name="ReadinessPacketReport" xml:space="preserve"><value>Fascicolo di prontezza operativa</value></data>
+  <data name="ExpectedChecks" xml:space="preserve"><value>Controlli previsti</value></data>
+  <data name="CompletedChecks" xml:space="preserve"><value>Controlli completati</value></data>
+  <data name="OnTimeChecks" xml:space="preserve"><value>Controlli puntuali</value></data>
+  <data name="MissedChecks" xml:space="preserve"><value>Scadenze mancate</value></data>
+  <data name="ExcusedChecks" xml:space="preserve"><value>Controlli giustificati</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>Tasso di completamento (%)</value></data>
+  <data name="MissedTrend" xml:space="preserve"><value>Andamento delle scadenze mancate</value></data>
+  <data name="ComplianceMethod" xml:space="preserve"><value>Il periodo seleziona i controlli in base all’ora di inizio. Nel tasso contano solo le finestre pianificate scadute. I controlli giustificati sono esclusi; i completamenti tardivi restano scadenze mancate. I controlli su richiesta e le finestre aperte compaiono solo nella cronologia.</value></data>
+  <data name="AuthorizedScope" xml:space="preserve"><value>Sono inclusi solo i risultati che sei autorizzato a visualizzare.</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Dalla data</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Alla data (esclusa)</value></data>
+  <data name="AllTargets" xml:space="preserve"><value>Tutti i destinatari</value></data>
+  <data name="RefreshReport" xml:space="preserve"><value>Aggiorna rapporto</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Esporta CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Stampa rapporto</value></data>
+  <data name="ScheduleReport" xml:space="preserve"><value>Programma rapporto</value></data>
+  <data name="CallId" xml:space="preserve"><value>ID intervento</value></data>
+  <data name="LookbackDays" xml:space="preserve"><value>Giorni precedenti</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Scarica PDF e manifesto</value></data>
+  <data name="PacketMethod" xml:space="preserve"><value>Le evidenze coprono i giorni selezionati prima dell’intervento e sono valutate al momento dell’intervento. Gli invii successivi non dimostrano una prontezza precedente. I dati originali restano nei moduli responsabili.</value></data>
+  <data name="DispatchedUnits" xml:space="preserve"><value>Unità mobilitate</value></data>
+  <data name="IssuedEquipment" xml:space="preserve"><value>Attrezzatura assegnata al momento dell’intervento</value></data>
+  <data name="ScheduledReportProtected" xml:space="preserve"><value>L’invio programmato contiene un avviso PDF e un collegamento sicuro al rapporto. Apri il rapporto per verificare l’accesso attuale e sbloccare i dati protetti; i risultati dei controlli e i dati personali non vengono inviati per e-mail.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Seleziona un periodo UTC cronologico di massimo 93 giorni.</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>Questo rapporto è troppo grande. Seleziona un periodo più breve.</value></data>
+  <data name="ReadinessCallUnavailable" xml:space="preserve"><value>L’intervento non è disponibile o l’accesso è negato.</value></data>
+  <data name="HistoricalAssetInvalid" xml:space="preserve"><value>La provenienza storica dell’attrezzatura è incompleta o incoerente.</value></data>
+  <data name="RestrictedChecklistResults" xml:space="preserve"><value>Alcuni risultati dei controlli non rientrano nelle tue autorizzazioni.</value></data>
+  <data name="LifecycleHistoryUnavailable" xml:space="preserve"><value>Alcuni cambiamenti di stato sono avvenuti dopo l’intervento; lo stato precedente non può essere ricostruito.</value></data>
+  <data name="RestrictedUnits" xml:space="preserve"><value>Alcune unità mobilitate non sono disponibili o non rientrano nelle tue autorizzazioni.</value></data>
+  <data name="HistoricalUnitNamesUnavailable" xml:space="preserve"><value>I nomi delle unità sono quelli attuali; i nomi storici non sono disponibili.</value></data>
+  <data name="ContractorEquipmentUnavailable" xml:space="preserve"><value>La cronologia delle attrezzature degli appaltatori non è disponibile.</value></data>
+  <data name="HistoricalInventoryUnavailable" xml:space="preserve"><value>I registri storici di assegnazione dell’attrezzatura non sono disponibili.</value></data>
+  <data name="WorkOrdersUnavailable" xml:space="preserve"><value>Le evidenze degli ordini di lavoro saranno disponibili in una fase successiva.</value></data>
+  <data name="PacketCaptureWindow" xml:space="preserve"><value>L’acquisizione delle evidenze di prontezza richiede un intervento e copre i 30 giorni precedenti; non sono supportate date personalizzate.</value></data>
+  <data name="TargetType" xml:space="preserve"><value>Tipo di destinatario</value></data>
+  <data name="Group" xml:space="preserve"><value>Stazione / gruppo</value></data>
 </root>

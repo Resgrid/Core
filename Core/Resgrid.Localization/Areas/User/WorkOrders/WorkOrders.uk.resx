@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+<resheader name="version"><value>2.0</value></resheader>
+<resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+<resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+<data name="WorkOrders" xml:space="preserve"><value>Наряди на роботи</value></data>
+<data name="NewWorkOrder" xml:space="preserve"><value>Новий наряд на роботи</value></data>
+<data name="EditWorkOrder" xml:space="preserve"><value>Редагувати наряд на роботи</value></data>
+<data name="Status" xml:space="preserve"><value>Стан</value></data>
+<data name="Priority" xml:space="preserve"><value>Пріоритет</value></data>
+<data name="Type" xml:space="preserve"><value>Тип</value></data>
+<data name="All" xml:space="preserve"><value>Усі</value></data>
+<data name="Unit" xml:space="preserve"><value>Одиниця</value></data>
+<data name="Group" xml:space="preserve"><value>Група</value></data>
+<data name="Asset" xml:space="preserve"><value>Обладнання</value></data>
+<data name="AssignedToMe" xml:space="preserve"><value>Призначені мені</value></data>
+<data name="Filter" xml:space="preserve"><value>Фільтрувати</value></data>
+<data name="Number" xml:space="preserve"><value>Номер</value></data>
+<data name="Title" xml:space="preserve"><value>Назва</value></data>
+<data name="DueOn" xml:space="preserve"><value>Строк виконання</value></data>
+<data name="NoWorkOrders" xml:space="preserve"><value>Жоден наряд на роботи не відповідає цим фільтрам.</value></data>
+<data name="Previous" xml:space="preserve"><value>Попередня</value></data>
+<data name="Next" xml:space="preserve"><value>Наступна</value></data>
+<data name="None" xml:space="preserve"><value>Немає</value></data>
+<data name="Description" xml:space="preserve"><value>Опис</value></data>
+<data name="LocationText" xml:space="preserve"><value>Об’єкт, будівля або місце</value></data>
+<data name="Currency" xml:space="preserve"><value>Валюта</value></data>
+<data name="EstimatedCost" xml:space="preserve"><value>Орієнтовна вартість</value></data>
+<data name="ApprovedCost" xml:space="preserve"><value>Затверджена вартість</value></data>
+<data name="CostCenter" xml:space="preserve"><value>Центр витрат</value></data>
+<data name="VendorDetails" xml:space="preserve"><value>Дані постачальника</value></data>
+<data name="WarrantyReference" xml:space="preserve"><value>Посилання на гарантію</value></data>
+<data name="SafetyCritical" xml:space="preserve"><value>Робота, критична для безпеки</value></data>
+<data name="HazardousWork" xml:space="preserve"><value>Небезпечна робота</value></data>
+<data name="SafetyNotice" xml:space="preserve"><value>Запишіть затверджену процедуру та посилання на відключення джерел енергії. Цей застосунок не виконує фізичного відключення й не дозволяє повернення до експлуатації.</value></data>
+<data name="ProcedureReference" xml:space="preserve"><value>Посилання на процедуру</value></data>
+<data name="ProcedureVersion" xml:space="preserve"><value>Версія процедури</value></data>
+<data name="PermitReference" xml:space="preserve"><value>Посилання на дозвіл</value></data>
+<data name="IsolationReference" xml:space="preserve"><value>Посилання на відключення</value></data>
+<data name="QualifiedPersonnel" xml:space="preserve"><value>Кваліфікований персонал</value></data>
+<data name="TaskSteps" xml:space="preserve"><value>Етапи завдання</value></data>
+<data name="AddStep" xml:space="preserve"><value>Додати етап</value></data>
+<data name="Save" xml:space="preserve"><value>Зберегти</value></data>
+<data name="Cancel" xml:space="preserve"><value>Скасувати</value></data>
+<data name="ReportedBy" xml:space="preserve"><value>Повідомив</value></data>
+<data name="AssignedTo" xml:space="preserve"><value>Призначено</value></data>
+<data name="Resolution" xml:space="preserve"><value>Усунення</value></data>
+<data name="Cause" xml:space="preserve"><value>Причина</value></data>
+<data name="VerificationEvidence" xml:space="preserve"><value>Докази перевірки та випробувань</value></data>
+<data name="VerifiedBy" xml:space="preserve"><value>Перевірив</value></data>
+<data name="Export" xml:space="preserve"><value>Експортувати</value></data>
+<data name="AcceptAssignment" xml:space="preserve"><value>Прийняти призначення</value></data>
+<data name="Assign" xml:space="preserve"><value>Призначити</value></data>
+<data name="User" xml:space="preserve"><value>Користувач</value></data>
+<data name="Role" xml:space="preserve"><value>Роль</value></data>
+<data name="ChangeStatus" xml:space="preserve"><value>Змінити стан</value></data>
+<data name="Reason" xml:space="preserve"><value>Обґрунтування</value></data>
+<data name="DuplicateOf" xml:space="preserve"><value>Ідентифікатор основного наряду на роботи</value></data>
+<data name="ConfirmTasksComplete" xml:space="preserve"><value>Підтверджую завершення всіх етапів завдання.</value></data>
+<data name="Activity" xml:space="preserve"><value>Дії</value></data>
+<data name="Comment" xml:space="preserve"><value>Коментар</value></data>
+<data name="AddComment" xml:space="preserve"><value>Додати коментар</value></data>
+<data name="Labor" xml:space="preserve"><value>Трудовитрати</value></data>
+<data name="WorkDate" xml:space="preserve"><value>Дата роботи</value></data>
+<data name="Hours" xml:space="preserve"><value>Години</value></data>
+<data name="Rate" xml:space="preserve"><value>Погодинна ставка</value></data>
+<data name="Note" xml:space="preserve"><value>Примітка</value></data>
+<data name="CurrentUser" xml:space="preserve"><value>Поточний користувач</value></data>
+<data name="AddLabor" xml:space="preserve"><value>Додати трудовитрати</value></data>
+<data name="Parts" xml:space="preserve"><value>Деталі</value></data>
+<data name="FreeTextPartsNotice" xml:space="preserve"><value>Ці деталі записуються довільним текстом. Складські залишки не змінюються.</value></data>
+<data name="Quantity" xml:space="preserve"><value>Кількість</value></data>
+<data name="UnitCost" xml:space="preserve"><value>Вартість одиниці</value></data>
+<data name="Actions" xml:space="preserve"><value>Дії</value></data>
+<data name="Voided" xml:space="preserve"><value>Анульовано</value></data>
+<data name="Void" xml:space="preserve"><value>Анулювати</value></data>
+<data name="AddPart" xml:space="preserve"><value>Додати деталь</value></data>
+<data name="Files" xml:space="preserve"><value>Файли</value></data>
+<data name="Withdrawn" xml:space="preserve"><value>Відкликано</value></data>
+<data name="Withdraw" xml:space="preserve"><value>Відкликати</value></data>
+<data name="File" xml:space="preserve"><value>Файл</value></data>
+<data name="FileHelp" xml:space="preserve"><value>PDF, PNG або JPEG, до 10 МБ. Перед прийняттям файли мають пройти перевірку безпеки.</value></data>
+<data name="Upload" xml:space="preserve"><value>Завантажити</value></data>
+<data name="Done" xml:space="preserve"><value>Готово</value></data>
+<data name="Pending" xml:space="preserve"><value>Очікується</value></data>
+<data name="Unlock" xml:space="preserve"><value>Підтвердити особу та відкрити</value></data>
+<data name="ReadOnlyHistory" xml:space="preserve"><value>Історія залишається доступною. Нові роботи потребують активної підписки Readiness Pro та ввімкненого модуля обслуговування.</value></data>
+<data name="MembershipRequired" xml:space="preserve"><value>Потрібне активне членство в підрозділі.</value></data>
+<data name="ReadinessProRequired" xml:space="preserve"><value>Для нових робіт з обслуговування потрібен Readiness Pro.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Ви не маєте дозволу на цю дію.</value></data>
+<data name="Unavailable" xml:space="preserve"><value>Цей наряд на роботи або доказ недоступний.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Виберіть доступний об’єкт у своєму підрозділі.</value></data>
+<data name="AssignmentRequired" xml:space="preserve"><value>Виберіть одного активного учасника підрозділу або роль персоналу.</value></data>
+<data name="Conflict" xml:space="preserve"><value>Цей наряд на роботи змінено. Оновіть сторінку перед збереженням.</value></data>
+<data name="InvalidInput" xml:space="preserve"><value>Перевірте введені значення та обов’язкові поля.</value></data>
+<data name="ProtectedDataRequired" xml:space="preserve"><value>Підтвердьте свою особу, щоб відкрити захищені дані наряду на роботи.</value></data>
+<data name="InvalidTransition" xml:space="preserve"><value>Такий перехід стану не дозволений.</value></data>
+<data name="AcceptAssignmentFirst" xml:space="preserve"><value>Призначення необхідно прийняти до початку роботи.</value></data>
+<data name="SafetyRequirements" xml:space="preserve"><value>Заповніть процедуру безпеки, її версію, дозвіл, відключення та дані кваліфікованого персоналу.</value></data>
+<data name="TasksIncomplete" xml:space="preserve"><value>Завершіть усі етапи, перш ніж позначати роботу як виконану.</value></data>
+<data name="IndependentVerificationRequired" xml:space="preserve"><value>Роботу, критичну для безпеки, має перевірити уповноважена особа, яка не виконувала її.</value></data>
+<data name="HistoryLimit" xml:space="preserve"><value>Ця історія завелика для відображення в одному запиті.</value></data>
+<data name="InvalidFile" xml:space="preserve"><value>Виберіть дійсний файл PDF, PNG або JPEG розміром до 10 МБ.</value></data>
+<data name="ScanRequired" xml:space="preserve"><value>Файл не пройшов перевірку. Спробуйте знову, коли перевірка буде доступною.</value></data>
+<data name="FileLimit" xml:space="preserve"><value>Досягнуто обмеження кількості файлів для цього наряду.</value></data>
+<data name="IntegrityFailed" xml:space="preserve"><value>Файл не пройшов перевірку цілісності.</value></data>
+<data name="RequestFailed" xml:space="preserve"><value>Не вдалося виконати запит. Введені значення залишаються на цій сторінці.</value></data>
+<data name="ManageWorkOrders" xml:space="preserve"><value>Керувати нарядами на роботи</value></data>
+<data name="ViewAllWorkOrders" xml:space="preserve"><value>Переглядати наряди інших учасників</value></data>
+<data name="ManageWorkOrdersNote" xml:space="preserve"><value>Оцінювати, призначати та перевіряти наряди на роботи в дозволених межах.</value></data>
+<data name="ViewAllWorkOrdersNote" xml:space="preserve"><value>Переглядати наряди на роботи дозволеної групи або підрозділу. Заявники зберігають власну історію.</value></data>
+<data name="WorkOrderCreated" xml:space="preserve"><value>Створено наряд на роботи</value></data>
+<data name="WorkOrderStatusChanged" xml:space="preserve"><value>Змінено стан наряду на роботи</value></data>
+<data name="WorkOrderAssigned" xml:space="preserve"><value>Призначено наряд на роботи</value></data>
+<data name="NotificationTitle" xml:space="preserve"><value>Оновлення наряду на роботи</value></data>
+<data name="NotificationMessage" xml:space="preserve"><value>Наряд на роботи у вашому підрозділі потребує уваги. Відкрийте Resgrid, щоб переглянути подробиці.</value></data>
+<data name="ReadinessPro" xml:space="preserve"><value>Readiness Pro</value></data>
+<data name="Monthly" xml:space="preserve"><value>Щомісяця</value></data>
+<data name="Buy" xml:space="preserve"><value>Підписатися</value></data>
+<data name="ManageSubscription" xml:space="preserve"><value>Керувати підпискою</value></data>
+<data name="CancelSubscription" xml:space="preserve"><value>Скасувати поновлення</value></data>
+<data name="BillingUnavailable" xml:space="preserve"><value>Оформлення Readiness Pro недоступне для цих налаштувань оплати.</value></data>
+<data name="CheckoutPending" xml:space="preserve"><value>Оформлення платежу не активує доступ до обслуговування. Доступ починається після перевірки оплати.</value></data>
+<data name="PaidThrough" xml:space="preserve"><value>Сплачено до</value></data>
+<data name="SubscriptionCancelled" xml:space="preserve"><value>Поновлення скасовано. Доступ триває до завершення оплаченого періоду.</value></data>
+<data name="StatusRequested" xml:space="preserve"><value>Запитано</value></data>
+<data name="StatusAccepted" xml:space="preserve"><value>Прийнято</value></data>
+<data name="StatusAssigned" xml:space="preserve"><value>Призначено</value></data>
+<data name="StatusInProgress" xml:space="preserve"><value>Виконується</value></data>
+<data name="StatusOnHold" xml:space="preserve"><value>Призупинено</value></data>
+<data name="StatusCompleted" xml:space="preserve"><value>Виконано</value></data>
+<data name="StatusClosed" xml:space="preserve"><value>Закрито</value></data>
+<data name="StatusRejected" xml:space="preserve"><value>Відхилено</value></data>
+<data name="StatusDuplicate" xml:space="preserve"><value>Дублікат</value></data>
+<data name="StatusCancelled" xml:space="preserve"><value>Скасовано</value></data>
+<data name="PriorityLow" xml:space="preserve"><value>Низький</value></data>
+<data name="PriorityNormal" xml:space="preserve"><value>Звичайний</value></data>
+<data name="PriorityHigh" xml:space="preserve"><value>Високий</value></data>
+<data name="PriorityEmergency" xml:space="preserve"><value>Надзвичайний</value></data>
+<data name="TypeCorrective" xml:space="preserve"><value>Коригувальна</value></data>
+<data name="TypePreventive" xml:space="preserve"><value>Профілактична</value></data>
+<data name="TypeInspection" xml:space="preserve"><value>Перевірка</value></data>
+<data name="TypeFacility" xml:space="preserve"><value>Об’єкт</value></data>
+<data name="TypeOther" xml:space="preserve"><value>Інша</value></data>
+<data name="ActivityCreated" xml:space="preserve"><value>Подано заявку на роботу</value></data>
+<data name="ActivityUpdated" xml:space="preserve"><value>Оновлено наряд на роботи</value></data>
+<data name="ActivityStatusChanged" xml:space="preserve"><value>Змінено стан</value></data>
+<data name="ActivityAssigned" xml:space="preserve"><value>Змінено призначення</value></data>
+<data name="ActivityAssignmentAccepted" xml:space="preserve"><value>Прийнято призначення</value></data>
+<data name="ActivityComment" xml:space="preserve"><value>Додано коментар</value></data>
+<data name="ActivityLaborAdded" xml:space="preserve"><value>Додано трудовитрати</value></data>
+<data name="ActivityPartAdded" xml:space="preserve"><value>Додано деталь</value></data>
+<data name="ActivityPartVoided" xml:space="preserve"><value>Анульовано деталь</value></data>
+<data name="ActivityFileAdded" xml:space="preserve"><value>Додано файл</value></data>
+<data name="ActivityFileWithdrawn" xml:space="preserve"><value>Відкликано файл</value></data>
+</root>

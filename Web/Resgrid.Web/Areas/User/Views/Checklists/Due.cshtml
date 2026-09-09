@@ -17,6 +17,7 @@
     }
     </tbody></table></div>
     @if (Model.Page > 0) { <a class="btn btn-default" asp-route-page="@(Model.Page - 1)">@localizer["Previous"]</a> }
-    <a class="btn btn-default" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a><a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
+    @if (Model.HasMore) { <a class="btn btn-default" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a> }<a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
 </div></div></div>
-@section Scripts { @await Html.PartialAsync("_ProtectionScripts") }
+<form id="checklist-live-refresh" class="checklist-form" asp-action="Reopen" method="post" hidden>@Html.AntiForgeryToken()<input type="hidden" name="page" value="Due" /></form>
+@section Scripts { @await Html.PartialAsync("_ProtectionScripts") @await Html.PartialAsync("_LiveScripts") }

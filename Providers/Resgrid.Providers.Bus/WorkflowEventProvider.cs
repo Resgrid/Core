@@ -147,7 +147,7 @@ namespace Resgrid.Providers.Bus
 				return;
 
 			// Replays (activation, legacy indexing, operator re-drives) must never flood workflows.
-			if (dispatched.IsReplay && dispatched.ProducerSubsystem != "Checklists")
+			if (dispatched.IsReplay && !ChecklistWorkflowPayload.IsReadinessProducer(dispatched.ProducerSubsystem))
 				return;
 
 			var trigger = (WorkflowTriggerEventType)dispatched.TriggerEventType.Value;
@@ -202,17 +202,18 @@ namespace Resgrid.Providers.Bus
 					if (workflows == null || workflows.Count == 0)
 						return;
 
-					payloadJson = envelope.ProducerSubsystem == "Checklists"
+					payloadJson = ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem)
 						? await ChecklistWorkflowPayload.ProjectAsync(departmentId, eventObj, _protectedProjectionService, wrapped: true)
 						: await _protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
-					if (envelope.ProducerSubsystem == "Checklists")
+					if (ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem))
 					{
 						// Retry a run whose database insert succeeded but whose queue send did not.
 						// Its stable run ID is claimed atomically by the worker before executing actions.
+						var existingRuns = (await _runRepository.GetByWorkflowsAndEventAsync(departmentId, workflows.Select(w => w.WorkflowId).ToArray(), envelope.EventId))
+							.GroupBy(r => r.WorkflowId).ToDictionary(g => g.Key, g => g.OrderBy(r => r.StartedOn).First());
 						foreach (var workflow in workflows.ToList())
 						{
-							var existing = await _runRepository.GetByWorkflowAndEventAsync(workflow.WorkflowId, envelope.EventId);
-							if (existing == null) continue;
+							if (!existingRuns.TryGetValue(workflow.WorkflowId, out var existing)) continue;
 							if (existing.DepartmentId != departmentId) throw new InvalidOperationException("Workflow event tenant mismatch.");
 							if (existing.Status == (int)WorkflowRunStatus.Pending) await RequeueChecklistRunAsync(existing, payloadJson);
 							workflows.Remove(workflow);
@@ -268,7 +269,7 @@ namespace Resgrid.Providers.Bus
 
 				foreach (var workflow in workflows)
 				{
-					if (envelope?.ProducerSubsystem != "Checklists" && await IsDuplicateAsync(workflow.WorkflowId, envelope)) continue;
+					if (!ChecklistWorkflowPayload.IsReadinessProducer(envelope?.ProducerSubsystem) && await IsDuplicateAsync(workflow.WorkflowId, envelope)) continue;
 
 					var run = WorkflowRunEnvelope.Apply(new WorkflowRun
 					{
@@ -285,12 +286,12 @@ namespace Resgrid.Providers.Bus
 
 					try
 					{
-						if (envelope?.ProducerSubsystem == "Checklists") await ProtectChecklistRunAsync(run);
+						if (ChecklistWorkflowPayload.IsReadinessProducer(envelope?.ProducerSubsystem)) await ProtectChecklistRunAsync(run);
 						run = await _runRepository.InsertAsync(run, CancellationToken.None);
 					}
 					catch (Exception ex) when (envelope != null && WorkflowRunEnvelope.IsDuplicateKeyViolation(ex))
 					{
-						if (envelope.ProducerSubsystem == "Checklists")
+						if (ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem))
 						{
 							var existing = await _runRepository.GetByWorkflowAndEventAsync(workflow.WorkflowId, envelope.EventId);
 							if (existing == null || existing.DepartmentId != departmentId) throw;
@@ -382,7 +383,7 @@ namespace Resgrid.Providers.Bus
 
 				try
 				{
-					if (envelope.ProducerSubsystem == "Checklists") await ProtectChecklistRunAsync(run);
+					if (ChecklistWorkflowPayload.IsReadinessProducer(envelope.ProducerSubsystem)) await ProtectChecklistRunAsync(run);
 					await _runRepository.InsertAsync(run, CancellationToken.None);
 					Framework.Logging.LogError($"Records event {envelope.EventId} ({eventType}) was skipped for workflow {workflow.WorkflowId} in department {departmentId}: {reason}.");
 				}

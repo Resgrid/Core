@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -117,6 +117,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#region Reporting
+		private static string ChecklistReportName(ReportTypes type) => type == ReportTypes.ChecklistCompliance ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistComplianceReport") : type == ReportTypes.ChecklistMissed ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistMissedReport") : type.ToString();
+		private static Microsoft.AspNetCore.Mvc.Rendering.SelectList ChecklistReportTypes(ReportTypes selected) => new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enum.GetValues<ReportTypes>().Select(t => new { Value = (int)t, Text = ChecklistReportName(t) }), "Value", "Text", (int)selected);
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
 		public async Task<IActionResult>  Reporting()
@@ -179,7 +182,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (task.ScheduleType == (int)ScheduleTypes.Weekly)
 					st.DaysOfWeek = days.ToString();
 
-				st.Data = ((ReportTypes)int.Parse(task.Data)).ToString();
+				st.Data = ChecklistReportName((ReportTypes)int.Parse(task.Data));
 
 				scheduleJson.Add(st);
 			}
@@ -192,7 +195,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult>  AddNewScheduledReport()
 		{
 			var model = new NewScheduledReportView();
-			model.ReportTypes = model.ReportType.ToSelectList();
+			model.ReportTypes = ChecklistReportTypes(model.ReportType);
 
 			return View(model);
 		}
@@ -202,7 +205,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult>  AddNewScheduledReport(NewScheduledReportView model, CancellationToken cancellationToken)
 		{
-			model.ReportTypes = model.ReportType.ToSelectList();
+			model.ReportTypes = ChecklistReportTypes(model.ReportType);
 
 			if (!model.SpecificDatetime)
 			{
@@ -286,7 +289,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult>  EditScheduledReport(int scheduleId)
 		{
 			var model = new EditScheduledReportView();
-			model.ReportTypes = model.ReportType.ToSelectList();
+			model.ReportTypes = ChecklistReportTypes(model.ReportType);
 
 			var schedule= await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
 			if (schedule.ScheduleType == (int)ScheduleTypes.SpecifcDateTime)
@@ -316,7 +319,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult>  EditScheduledReport(EditScheduledReportView model, CancellationToken cancellationToken)
 		{
-			model.ReportTypes = model.ReportType.ToSelectList();
+			model.ReportTypes = ChecklistReportTypes(model.ReportType);
 
 
 			if (!model.SpecificDatetime)

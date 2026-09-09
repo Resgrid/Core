@@ -637,4 +637,44 @@
   <data name="ReminderFixedTime" xml:space="preserve"><value>Tid för daglig sammanställning (organisationens tidszon; ersätter skiftstart)</value></data>
   <data name="ReminderShiftStart" xml:space="preserve"><value>Skicka en sammanställning vid skiftstart</value></data>
   <data name="ReminderTimeValidation" xml:space="preserve"><value>Ange en enda tid i formatet HH:mm.</value></data>
+  <data name="ChecklistComplianceReport" xml:space="preserve"><value>Rapport om checklistornas genomförande</value></data>
+  <data name="ChecklistMissedReport" xml:space="preserve"><value>Rapport om missade kontroller</value></data>
+  <data name="ReadinessPacketReport" xml:space="preserve"><value>Beredskapsunderlag</value></data>
+  <data name="ExpectedChecks" xml:space="preserve"><value>Förväntade kontroller</value></data>
+  <data name="CompletedChecks" xml:space="preserve"><value>Slutförda kontroller</value></data>
+  <data name="OnTimeChecks" xml:space="preserve"><value>Kontroller i tid</value></data>
+  <data name="MissedChecks" xml:space="preserve"><value>Missade tidsfrister</value></data>
+  <data name="ExcusedChecks" xml:space="preserve"><value>Undantagna kontroller</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>Andel slutförda (%)</value></data>
+  <data name="MissedTrend" xml:space="preserve"><value>Utveckling av missade tidsfrister</value></data>
+  <data name="ComplianceMethod" xml:space="preserve"><value>Perioden väljer kontroller utifrån deras starttid. Endast avslutade schemalagda tidsfönster räknas i andelen. Undantagna kontroller räknas inte; sena slutföranden förblir missade tidsfrister. Kontroller vid behov och öppna tidsfönster visas endast i historiken.</value></data>
+  <data name="AuthorizedScope" xml:space="preserve"><value>Endast resultat som du har behörighet att se ingår.</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Från datum</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Till datum (exklusive)</value></data>
+  <data name="AllTargets" xml:space="preserve"><value>Alla mål</value></data>
+  <data name="RefreshReport" xml:space="preserve"><value>Uppdatera rapport</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Exportera CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Skriv ut rapport</value></data>
+  <data name="ScheduleReport" xml:space="preserve"><value>Schemalägg rapport</value></data>
+  <data name="CallId" xml:space="preserve"><value>Insats-ID</value></data>
+  <data name="LookbackDays" xml:space="preserve"><value>Antal föregående dagar</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Hämta PDF och underlagsförteckning</value></data>
+  <data name="PacketMethod" xml:space="preserve"><value>Underlaget omfattar de valda dagarna före insatsen och bedöms vid insatstidpunkten. Senare inlämningar bevisar inte tidigare beredskap. Källposterna finns kvar i sina ansvariga moduler.</value></data>
+  <data name="DispatchedUnits" xml:space="preserve"><value>Larmade enheter</value></data>
+  <data name="IssuedEquipment" xml:space="preserve"><value>Utrustning utlämnad vid insatstidpunkten</value></data>
+  <data name="ScheduledReportProtected" xml:space="preserve"><value>Den schemalagda leveransen innehåller ett PDF-meddelande och en säker rapportlänk. Öppna rapporten för att kontrollera din aktuella behörighet och låsa upp skyddade uppgifter; kontrollresultat och personuppgifter skickas inte med e-post.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Välj en kronologisk UTC-period på högst 93 dagar.</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>Rapporten är för stor. Välj en kortare period.</value></data>
+  <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Insatsen är inte tillgänglig eller åtkomst nekas.</value></data>
+  <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Utrustningens historiska ursprungsuppgifter är ofullständiga eller motsägelsefulla.</value></data>
+  <data name="RestrictedChecklistResults" xml:space="preserve"><value>Vissa kontrollresultat ligger utanför din behörighet.</value></data>
+  <data name="LifecycleHistoryUnavailable" xml:space="preserve"><value>Vissa statusändringar skedde efter insatsen; den tidigare statusen kan inte återskapas.</value></data>
+  <data name="RestrictedUnits" xml:space="preserve"><value>Vissa larmade enheter är inte tillgängliga eller ligger utanför din behörighet.</value></data>
+  <data name="HistoricalUnitNamesUnavailable" xml:space="preserve"><value>Enhetsnamnen är aktuella; historiska namn är inte tillgängliga.</value></data>
+  <data name="ContractorEquipmentUnavailable" xml:space="preserve"><value>Entreprenörernas utrustningshistorik är inte tillgänglig.</value></data>
+  <data name="HistoricalInventoryUnavailable" xml:space="preserve"><value>Historiska uppgifter om utlämnad utrustning är inte tillgängliga.</value></data>
+  <data name="WorkOrdersUnavailable" xml:space="preserve"><value>Underlag för arbetsorder blir tillgängligt i en senare fas.</value></data>
+  <data name="PacketCaptureWindow" xml:space="preserve"><value>Insamling av beredskapsunderlag kräver en insats och omfattar de föregående 30 dagarna; egna täckningsdatum stöds inte.</value></data>
+  <data name="TargetType" xml:space="preserve"><value>Måltyp</value></data>
+  <data name="Group" xml:space="preserve"><value>Station / grupp</value></data>
 </root>

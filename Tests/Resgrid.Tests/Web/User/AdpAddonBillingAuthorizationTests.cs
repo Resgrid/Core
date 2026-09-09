@@ -72,7 +72,7 @@ namespace Resgrid.Tests.Web.User
 			};
 
 			_subscriptionsService = new Mock<ISubscriptionsService>();
-			_subscriptionsService.Setup(x => x.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP))
+			_subscriptionsService.Setup(x => x.GetAllAddonPlansByTypeAsync(PlanAddonTypes.ADP, false))
 				.ReturnsAsync(new List<PlanAddon> { adpPlanAddon });
 			_subscriptionsService.Setup(x => x.GetPlanByIdAsync(4, It.IsAny<bool>()))
 				.ReturnsAsync(new Plan { PlanId = 4, Name = "ADP", Cost = 999 });

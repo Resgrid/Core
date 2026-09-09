@@ -20,13 +20,14 @@ namespace Resgrid.Tests.Services
 		public void SetUp() => _catalog = new ProtectedFieldCatalog();
 
 		[Test]
-		public void The_catalog_is_at_version_ten_and_the_last_candidates_are_what_moved_it()
+		public void Historical_catalog_waves_preserve_their_original_field_sets()
 		{
 			// v9 closed the remaining Protected Data candidates; v10 (2026-09-05) is the Records (RMS) family,
 			// v11 (2026-09-06) the typed values of department definitions, pinned in RmsProtectedFieldsCatalogTests,
 			// and v12 (2026-09-07) the Contacts pre-plan family (Contacts plan Phase A).
 			// v13 (2026-09-07) is the RMS-5 prevention/investigation family plus the RMS-4 quality review.
-			_catalog.Version.Should().Be(ProtectedFieldCatalog.PreventionCatalogVersion);
+			_catalog.GetAddedBetween(0, ProtectedFieldCatalog.PreventionCatalogVersion).Max(e => e.AddedInCatalogVersion)
+				.Should().Be(ProtectedFieldCatalog.PreventionCatalogVersion);
 			_catalog.GetAddedBetween(9, 13).Where(e => e.Family == Resgrid.Model.RmsProtectedFields.Family).Select(e => e.FieldId).Should().BeEquivalentTo(Resgrid.Model.RmsProtectedFields.AllFieldIds());
 			_catalog.GetAddedBetween(12, 13).Select(e => e.FieldId).Should().BeEquivalentTo(
 				Resgrid.Model.RmsProtectedFields.Occupancies.Keys.Concat(Resgrid.Model.RmsProtectedFields.OccupancyHazards.Keys)

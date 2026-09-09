@@ -776,9 +776,9 @@ namespace Resgrid.Services
 			return paymentAddons;
 		}
 
-		public Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType)
+		public Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType, bool bypassCache = false)
 		{
-			if (planAddonType == PlanAddonTypes.ReadinessPro && Config.SystemBehaviorConfig.CacheEnabled &&
+			if (!bypassCache && planAddonType == PlanAddonTypes.ReadinessPro && Config.SystemBehaviorConfig.CacheEnabled &&
 				!string.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !string.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 				return _cacheProvider.RetrieveAsync($"AddonPlansByType_{(int)planAddonType}",
 					() => LoadAddonPlansByTypeAsync(planAddonType), TimeSpan.FromMinutes(5));

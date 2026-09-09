@@ -13,7 +13,7 @@ namespace Resgrid.Tests.Services
 		{
 			public List<ChecklistShiftStart> ShiftStarts = new();
 			public Task LockAccessFenceAsync(CancellationToken ct = default) => Task.CompletedTask;
-			public async Task ApplyAccessStateAsync(int departmentId, bool enabled, DateTime nowUtc, CancellationToken ct = default, bool inventoryEnabled = true)
+			public async Task ApplyAccessStateAsync(int departmentId, bool enabled, DateTime nowUtc, bool inventoryEnabled = true, CancellationToken ct = default)
 			{
 				foreach (var row in (await ListAsync<ChecklistSchedule>(departmentId)).Where(s => s.IsActive && s.IsSuspended != !(enabled && (s.TargetType != 5 || inventoryEnabled))))
 				{

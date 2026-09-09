@@ -32,7 +32,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 {
 	[Area("User")]
 	[ClaimsResource(ResgridClaimTypes.Resources.Reports)]
-	public class ReportsController : SecureBaseController
+	public partial class ReportsController : SecureBaseController
 	{
 		#region Private Members and Constructors
 

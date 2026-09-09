@@ -1,0 +1,8 @@
+@model Resgrid.Model.WorkOrders.WorkOrderFilter
+<input type="hidden" name="Page" value="@Model.Page"/>
+<input type="hidden" name="Status" value="@Model.Status"/>
+<input type="hidden" name="Priority" value="@Model.Priority"/>
+<input type="hidden" name="UnitId" value="@Model.UnitId"/>
+<input type="hidden" name="GroupId" value="@Model.GroupId"/>
+<input type="hidden" name="AssetId" value="@Model.AssetId"/>
+<input type="hidden" name="AssignedToMe" value="@Model.AssignedToMe.ToString().ToLowerInvariant()"/>

@@ -1670,7 +1670,7 @@ namespace Resgrid.Providers.Claims
 		{
 			AddClaimOnce(identity, ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View);
 
-			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All))
+			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All))
 			{
 				var grants = RecordClaimGrants(descriptor.Type);
 				if (grants.Length == 0)
@@ -1741,6 +1741,10 @@ namespace Resgrid.Providers.Claims
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordLegacy, ResgridClaimTypes.Actions.View) };
 				case PermissionTypes.ViewGroupRecords:
 					return NoGrants;
+				case PermissionTypes.ManageWorkOrders:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.Update) };
+				case PermissionTypes.ViewAllWorkOrders:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.View) };
 				case PermissionTypes.ManageChecklists:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update) };
 				case PermissionTypes.ViewChecklistResults:

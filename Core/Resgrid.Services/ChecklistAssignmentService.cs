@@ -26,14 +26,14 @@ namespace Resgrid.Services
 		{ _departments = departments; _groups = groups; _units = units; _roles = roles; }
 		public async Task ValidateAsync(int departmentId, int type, string id)
 		{
-			if (type == 0 && string.IsNullOrEmpty(id)) return;
+			if (type == (int)ChecklistAssignmentType.Automatic && string.IsNullOrEmpty(id)) return;
 			if (!Enum.IsDefined(typeof(ChecklistAssignmentType), type) || string.IsNullOrWhiteSpace(id) || id.Length > 128) throw new ChecklistException(400, "AssignmentUnavailable");
 			var valid = false;
-			if (type == 1) { var m = await _departments.GetDepartmentMemberAsync(id, departmentId, true); valid = m?.DepartmentId == departmentId && !m.IsDeleted && m.IsDisabled != true; }
+			if (type == (int)ChecklistAssignmentType.User) { var m = await _departments.GetDepartmentMemberAsync(id, departmentId, true); valid = m?.DepartmentId == departmentId && !m.IsDeleted && m.IsDisabled != true; }
 			else if (int.TryParse(id, NumberStyles.None, CultureInfo.InvariantCulture, out var numeric))
 			{
-				valid = type switch { 2 => (await _roles.GetRoleByIdAsync(numeric))?.DepartmentId == departmentId,
-					3 => (await _groups.GetGroupByIdAsync(numeric, true))?.DepartmentId == departmentId, 4 => (await _units.GetUnitByIdAsync(numeric))?.DepartmentId == departmentId, _ => false };
+				valid = (ChecklistAssignmentType)type switch { ChecklistAssignmentType.Role => (await _roles.GetRoleByIdAsync(numeric))?.DepartmentId == departmentId,
+					ChecklistAssignmentType.Group => (await _groups.GetGroupByIdAsync(numeric, true))?.DepartmentId == departmentId, ChecklistAssignmentType.Unit => (await _units.GetUnitByIdAsync(numeric))?.DepartmentId == departmentId, _ => false };
 			}
 			if (!valid) throw new ChecklistException(400, "AssignmentUnavailable");
 		}
@@ -41,12 +41,12 @@ namespace Resgrid.Services
 		{
 			try { await ValidateAsync(departmentId, type, id); } catch (ChecklistException) { return new HashSet<string>(); }
 			var current = (await _departments.GetAllMembersForDepartmentUnlimitedAsync(departmentId, true)).Where(m => m.DepartmentId == departmentId && !m.IsDeleted && m.IsDisabled != true).Select(m => m.UserId).ToHashSet(StringComparer.Ordinal);
-			IEnumerable<string> assigned = type switch
+			IEnumerable<string> assigned = (ChecklistAssignmentType)type switch
 			{
-				0 => current, 1 => new[] { id },
-				2 => (await _roles.GetAllMembersOfRoleAsync(int.Parse(id, CultureInfo.InvariantCulture))).Select(m => m.UserId),
-				3 => (await _groups.GetAllMembersForGroupAsync(int.Parse(id, CultureInfo.InvariantCulture))).Where(m => m.DepartmentId == departmentId).Select(m => m.UserId),
-				4 => (await _units.GetActiveRolesForUnitAsync(int.Parse(id, CultureInfo.InvariantCulture))).Where(m => m.DepartmentId == departmentId).Select(m => m.UserId),
+				ChecklistAssignmentType.Automatic => current, ChecklistAssignmentType.User => new[] { id },
+				ChecklistAssignmentType.Role => (await _roles.GetAllMembersOfRoleAsync(int.Parse(id, CultureInfo.InvariantCulture))).Select(m => m.UserId),
+				ChecklistAssignmentType.Group => (await _groups.GetAllMembersForGroupAsync(int.Parse(id, CultureInfo.InvariantCulture))).Where(m => m.DepartmentId == departmentId).Select(m => m.UserId),
+				ChecklistAssignmentType.Unit => (await _units.GetActiveRolesForUnitAsync(int.Parse(id, CultureInfo.InvariantCulture))).Where(m => m.DepartmentId == departmentId).Select(m => m.UserId),
 				_ => Array.Empty<string>()
 			};
 			current.IntersectWith(assigned); return current;

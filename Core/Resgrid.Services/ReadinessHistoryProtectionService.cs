@@ -33,7 +33,11 @@ namespace Resgrid.Services
 			if (copy is WorkflowRunLog log) { log.WorkflowRun = null; log.WorkflowStep = null; }
 			bool enforced;
 			try { enforced = await _policy.IsProtectionEnforcedAsync(departmentId); }
-			catch { enforced = true; }
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogError($"Readiness history policy lookup failed for department {departmentId}: {ex.GetType().FullName}.");
+				enforced = true;
+			}
 			foreach (var field in fields.Values)
 				if (!string.IsNullOrEmpty(field.Get(copy)) && (enforced || ProtectedDataEnvelope.HasEnvelopePrefix(field.Get(copy)))) field.Set(copy, ProtectedDataEnvelope.RedactionValue);
 			return copy;

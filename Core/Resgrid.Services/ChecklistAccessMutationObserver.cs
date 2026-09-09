@@ -36,7 +36,7 @@ namespace Resgrid.Services
 				var row = await _settings.GetDepartmentSettingByIdTypeAsync(department, DepartmentSettingTypes.ModuleSettings);
 				var module = row == null ? new DepartmentModuleSettings() : ObjectSerialization.Deserialize<DepartmentModuleSettings>(row.Setting);
 				var enabled = module != null && !module.ChecklistsDisabled && await evaluate(FeatureFlagKeys.ChecklistsSystem, department);
-				await _store.ApplyAccessStateAsync(department, enabled, _clock.GetUtcNow().UtcDateTime, ct, module?.InventoryDisabled != true);
+				await _store.ApplyAccessStateAsync(department, enabled, _clock.GetUtcNow().UtcDateTime, module?.InventoryDisabled != true, ct);
 			}
 		}
 	}

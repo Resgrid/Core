@@ -637,4 +637,44 @@
   <data name="ReminderFixedTime" xml:space="preserve"><value>Godzina codziennego podsumowania (strefa czasowa organizacji; zastępuje początek zmiany)</value></data>
   <data name="ReminderShiftStart" xml:space="preserve"><value>Wyślij podsumowanie na początku zmiany</value></data>
   <data name="ReminderTimeValidation" xml:space="preserve"><value>Wprowadź jedną godzinę w formacie HH:mm.</value></data>
+  <data name="ChecklistComplianceReport" xml:space="preserve"><value>Raport realizacji list kontrolnych</value></data>
+  <data name="ChecklistMissedReport" xml:space="preserve"><value>Raport pominiętych kontroli</value></data>
+  <data name="ReadinessPacketReport" xml:space="preserve"><value>Pakiet dowodów gotowości</value></data>
+  <data name="ExpectedChecks" xml:space="preserve"><value>Oczekiwane kontrole</value></data>
+  <data name="CompletedChecks" xml:space="preserve"><value>Ukończone kontrole</value></data>
+  <data name="OnTimeChecks" xml:space="preserve"><value>Kontrole terminowe</value></data>
+  <data name="MissedChecks" xml:space="preserve"><value>Przekroczone terminy</value></data>
+  <data name="ExcusedChecks" xml:space="preserve"><value>Usprawiedliwione kontrole</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>Wskaźnik ukończenia (%)</value></data>
+  <data name="MissedTrend" xml:space="preserve"><value>Trend przekroczonych terminów</value></data>
+  <data name="ComplianceMethod" xml:space="preserve"><value>Okres wybiera kontrole według czasu rozpoczęcia. Do wskaźnika wlicza się tylko zakończone zaplanowane okna czasowe. Usprawiedliwione kontrole są wykluczone; spóźnione ukończenia nadal oznaczają przekroczenie terminu. Kontrole na żądanie i otwarte okna pojawiają się tylko w historii.</value></data>
+  <data name="AuthorizedScope" xml:space="preserve"><value>Uwzględniono tylko wyniki, do których masz uprawnienia.</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Od daty</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Do daty (bez tego dnia)</value></data>
+  <data name="AllTargets" xml:space="preserve"><value>Wszystkie cele</value></data>
+  <data name="RefreshReport" xml:space="preserve"><value>Odśwież raport</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Eksportuj CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Drukuj raport</value></data>
+  <data name="ScheduleReport" xml:space="preserve"><value>Zaplanuj raport</value></data>
+  <data name="CallId" xml:space="preserve"><value>Identyfikator zdarzenia</value></data>
+  <data name="LookbackDays" xml:space="preserve"><value>Liczba poprzednich dni</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Pobierz PDF i wykaz dowodów</value></data>
+  <data name="PacketMethod" xml:space="preserve"><value>Dowody obejmują wybrane dni przed zdarzeniem i są oceniane na moment zdarzenia. Późniejsze zgłoszenia nie dowodzą wcześniejszej gotowości. Rekordy źródłowe pozostają w odpowiedzialnych za nie modułach.</value></data>
+  <data name="DispatchedUnits" xml:space="preserve"><value>Zadysponowane jednostki</value></data>
+  <data name="IssuedEquipment" xml:space="preserve"><value>Sprzęt wydany w chwili zdarzenia</value></data>
+  <data name="ScheduledReportProtected" xml:space="preserve"><value>Zaplanowana wysyłka zawiera powiadomienie PDF i bezpieczny odnośnik do raportu. Otwórz raport, aby zweryfikować bieżący dostęp i odblokować chronione dane; wyniki kontroli i dane osobowe nie są wysyłane pocztą elektroniczną.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Wybierz chronologiczny okres UTC nie dłuższy niż 93 dni.</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>Ten raport jest zbyt duży. Wybierz krótszy okres.</value></data>
+  <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Zdarzenie jest niedostępne lub odmówiono dostępu.</value></data>
+  <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Historyczne pochodzenie sprzętu jest niepełne lub niespójne.</value></data>
+  <data name="RestrictedChecklistResults" xml:space="preserve"><value>Niektóre wyniki kontroli wykraczają poza Twoje uprawnienia.</value></data>
+  <data name="LifecycleHistoryUnavailable" xml:space="preserve"><value>Niektóre zmiany stanu nastąpiły po zdarzeniu; wcześniejszego stanu nie można odtworzyć.</value></data>
+  <data name="RestrictedUnits" xml:space="preserve"><value>Niektóre zadysponowane jednostki są niedostępne lub wykraczają poza Twoje uprawnienia.</value></data>
+  <data name="HistoricalUnitNamesUnavailable" xml:space="preserve"><value>Nazwy jednostek są aktualne; historyczne nazwy są niedostępne.</value></data>
+  <data name="ContractorEquipmentUnavailable" xml:space="preserve"><value>Historia sprzętu wykonawców jest niedostępna.</value></data>
+  <data name="HistoricalInventoryUnavailable" xml:space="preserve"><value>Historyczne zapisy wydania sprzętu są niedostępne.</value></data>
+  <data name="WorkOrdersUnavailable" xml:space="preserve"><value>Dowody dotyczące zleceń pracy będą dostępne na późniejszym etapie.</value></data>
+  <data name="PacketCaptureWindow" xml:space="preserve"><value>Utrwalenie dowodów gotowości wymaga zdarzenia i obejmuje poprzednie 30 dni; własne daty zakresu nie są obsługiwane.</value></data>
+  <data name="TargetType" xml:space="preserve"><value>Typ celu</value></data>
+  <data name="Group" xml:space="preserve"><value>Stacja / grupa</value></data>
 </root>

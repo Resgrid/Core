@@ -50,7 +50,7 @@ namespace Resgrid.Tests.Services
 		{
 			var service = new Mock<IChecklistTemplateService>(MockBehavior.Strict);
 			service.Setup(x => x.SearchAsync(77, "shelter opening")).ReturnsAsync(ChecklistTemplateCatalog.Search("shelter opening"));
-			var controller = new ChecklistsController(service.Object);
+			var controller = new ChecklistsController(service.Object, Mock.Of<IChecklistsService>(), null);
 			var response = (await controller.GetChecklistTemplates("shelter opening")).Value;
 			response.Status.Should().Be("success");
 			response.Version.Should().Be("v4");
@@ -63,7 +63,7 @@ namespace Resgrid.Tests.Services
 		public async Task Disabled_catalog_and_unknown_template_return_not_found()
 		{
 			var service = new Mock<IChecklistTemplateService>();
-			var controller = new ChecklistsController(service.Object);
+			var controller = new ChecklistsController(service.Object, Mock.Of<IChecklistsService>(), null);
 			(await controller.GetChecklistTemplates()).Result.Should().BeOfType<NotFoundResult>();
 			(await controller.GetChecklistTemplate("unknown")).Result.Should().BeOfType<NotFoundResult>();
 		}
@@ -72,7 +72,7 @@ namespace Resgrid.Tests.Services
 		public async Task Invalid_requests_are_rejected_before_catalog_lookup()
 		{
 			var service = new Mock<IChecklistTemplateService>(MockBehavior.Strict);
-			var controller = new ChecklistsController(service.Object);
+			var controller = new ChecklistsController(service.Object, Mock.Of<IChecklistsService>(), null);
 			(await controller.GetChecklistTemplates(new string('x', 257))).Result.Should().BeOfType<BadRequestObjectResult>();
 			(await controller.GetChecklistTemplate(null)).Result.Should().BeOfType<BadRequestObjectResult>();
 			service.VerifyNoOtherCalls();

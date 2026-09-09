@@ -1,3 +1,4 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> workOrderStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistStrings
 @model Resgrid.Model.Workflow
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
@@ -5,7 +6,7 @@
     ViewData["Title"] = "Resgrid | " + localizer["EditWorkflowHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
     var credentialsJson = (string)(ViewBag.CredentialsJson ?? "[]");
-    var triggerEventTypeName = Resgrid.Model.Checklists.ChecklistWorkflowPayload.IsChecklist((int)Model.TriggerEventType) ? checklistStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : (string)(ViewBag.TriggerEventTypeName ?? Model.TriggerEventType.ToString());
+    var triggerEventTypeName = Model.TriggerEventType is 70 or 71 or 72 ? workOrderStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : Resgrid.Model.Checklists.ChecklistWorkflowPayload.IsChecklist((int)Model.TriggerEventType) ? checklistStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : (string)(ViewBag.TriggerEventTypeName ?? Model.TriggerEventType.ToString());
 }
 
 @section Styles {

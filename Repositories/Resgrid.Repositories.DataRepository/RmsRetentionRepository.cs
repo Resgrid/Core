@@ -56,8 +56,8 @@ namespace Resgrid.Repositories.DataRepository
 			// PurgedOn is datetime2 on SQL Server. Binding it as datetime rounds the
 			// database value on replay and can make an otherwise identical acknowledgement fail.
 			var parameters = new DynamicParameters(new { target.DepartmentId, target.RecordId });
-			parameters.Add("PurgedOn", target.PurgedOn, DbType.DateTime2);
-			parameters.Add("CompletedOn", completedOn, DbType.DateTime2);
+			parameters.Add("PurgedOn", DatabaseTimestamp(target.PurgedOn), DbType.DateTime2);
+			parameters.Add("CompletedOn", DatabaseTimestamp(completedOn), DbType.DateTime2);
 			return await ExecuteAsync($"UPDATE {Tbl(table)} SET {Col("SearchErasedOn")}={P}CompletedOn WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col(id)}={P}RecordId AND {Col("PurgedOn")}={P}PurgedOn AND {Col("SearchErasedOn")} IS NULL",
 				parameters, cancellationToken) == 1;
 		}

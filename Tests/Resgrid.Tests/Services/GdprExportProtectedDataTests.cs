@@ -114,7 +114,7 @@ namespace Resgrid.Tests.Services
 				_departmentsService.Object, _departmentGroupsService.Object, _personnelRolesService.Object,
 				_actionLogsService.Object, _messageService.Object, _certificationService.Object,
 				_trainingService.Object, _shiftsService.Object, _emailService.Object, new ChecklistWorkflowTests.MemoryStore(),
-				new Lazy<IReadinessHistoryProtectionService>(() => new ReadinessHistoryProtectionService(Mock.Of<IProtectedWriteService>(), Mock.Of<IDepartmentDataProtectionService>())), checklistReminders.Object);
+				new Lazy<IReadinessHistoryProtectionService>(() => new ReadinessHistoryProtectionService(Mock.Of<IProtectedWriteService>(), Mock.Of<IDepartmentDataProtectionService>())), checklistReminders.Object, EmptyWorkOrders());
 		}
 
 		private async Task<Dictionary<string, string>> RunExportAsync()

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+<resheader name="version"><value>2.0</value></resheader>
+<resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+<resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+<data name="WorkOrders" xml:space="preserve"><value>Arbetsorder</value></data>
+<data name="NewWorkOrder" xml:space="preserve"><value>Ny arbetsorder</value></data>
+<data name="EditWorkOrder" xml:space="preserve"><value>Redigera arbetsorder</value></data>
+<data name="Status" xml:space="preserve"><value>Status</value></data>
+<data name="Priority" xml:space="preserve"><value>Prioritet</value></data>
+<data name="Type" xml:space="preserve"><value>Typ</value></data>
+<data name="All" xml:space="preserve"><value>Alla</value></data>
+<data name="Unit" xml:space="preserve"><value>Enhet</value></data>
+<data name="Group" xml:space="preserve"><value>Grupp</value></data>
+<data name="Asset" xml:space="preserve"><value>Utrustning</value></data>
+<data name="AssignedToMe" xml:space="preserve"><value>Tilldelade mig</value></data>
+<data name="Filter" xml:space="preserve"><value>Filtrera</value></data>
+<data name="Number" xml:space="preserve"><value>Nummer</value></data>
+<data name="Title" xml:space="preserve"><value>Titel</value></data>
+<data name="DueOn" xml:space="preserve"><value>Förfallodatum</value></data>
+<data name="NoWorkOrders" xml:space="preserve"><value>Inga arbetsorder matchar dessa filter.</value></data>
+<data name="Previous" xml:space="preserve"><value>Föregående</value></data>
+<data name="Next" xml:space="preserve"><value>Nästa</value></data>
+<data name="None" xml:space="preserve"><value>Ingen</value></data>
+<data name="Description" xml:space="preserve"><value>Beskrivning</value></data>
+<data name="LocationText" xml:space="preserve"><value>Plats, byggnad eller läge</value></data>
+<data name="Currency" xml:space="preserve"><value>Valuta</value></data>
+<data name="EstimatedCost" xml:space="preserve"><value>Beräknad kostnad</value></data>
+<data name="ApprovedCost" xml:space="preserve"><value>Godkänd kostnad</value></data>
+<data name="CostCenter" xml:space="preserve"><value>Kostnadsställe</value></data>
+<data name="VendorDetails" xml:space="preserve"><value>Leverantörsuppgifter</value></data>
+<data name="WarrantyReference" xml:space="preserve"><value>Garantireferens</value></data>
+<data name="SafetyCritical" xml:space="preserve"><value>Säkerhetskritiskt arbete</value></data>
+<data name="HazardousWork" xml:space="preserve"><value>Farligt arbete</value></data>
+<data name="SafetyNotice" xml:space="preserve"><value>Dokumentera den godkända proceduren och referenser för frånkoppling. Denna applikation utför ingen fysisk frånkoppling och godkänner inte återgång till drift.</value></data>
+<data name="ProcedureReference" xml:space="preserve"><value>Procedurreferens</value></data>
+<data name="ProcedureVersion" xml:space="preserve"><value>Procedurversion</value></data>
+<data name="PermitReference" xml:space="preserve"><value>Tillståndsreferens</value></data>
+<data name="IsolationReference" xml:space="preserve"><value>Frånkopplingsreferens</value></data>
+<data name="QualifiedPersonnel" xml:space="preserve"><value>Kvalificerad personal</value></data>
+<data name="TaskSteps" xml:space="preserve"><value>Arbetssteg</value></data>
+<data name="AddStep" xml:space="preserve"><value>Lägg till steg</value></data>
+<data name="Save" xml:space="preserve"><value>Spara</value></data>
+<data name="Cancel" xml:space="preserve"><value>Avbryt</value></data>
+<data name="ReportedBy" xml:space="preserve"><value>Rapporterat av</value></data>
+<data name="AssignedTo" xml:space="preserve"><value>Tilldelad till</value></data>
+<data name="Resolution" xml:space="preserve"><value>Åtgärd</value></data>
+<data name="Cause" xml:space="preserve"><value>Orsak</value></data>
+<data name="VerificationEvidence" xml:space="preserve"><value>Underlag för verifiering och provning</value></data>
+<data name="VerifiedBy" xml:space="preserve"><value>Verifierat av</value></data>
+<data name="Export" xml:space="preserve"><value>Exportera</value></data>
+<data name="AcceptAssignment" xml:space="preserve"><value>Acceptera tilldelning</value></data>
+<data name="Assign" xml:space="preserve"><value>Tilldela</value></data>
+<data name="User" xml:space="preserve"><value>Användare</value></data>
+<data name="Role" xml:space="preserve"><value>Roll</value></data>
+<data name="ChangeStatus" xml:space="preserve"><value>Ändra status</value></data>
+<data name="Reason" xml:space="preserve"><value>Orsak</value></data>
+<data name="DuplicateOf" xml:space="preserve"><value>ID för den huvudsakliga arbetsordern</value></data>
+<data name="ConfirmTasksComplete" xml:space="preserve"><value>Jag bekräftar att alla arbetssteg är slutförda.</value></data>
+<data name="Activity" xml:space="preserve"><value>Aktivitet</value></data>
+<data name="Comment" xml:space="preserve"><value>Kommentar</value></data>
+<data name="AddComment" xml:space="preserve"><value>Lägg till kommentar</value></data>
+<data name="Labor" xml:space="preserve"><value>Arbetstid</value></data>
+<data name="WorkDate" xml:space="preserve"><value>Arbetsdatum</value></data>
+<data name="Hours" xml:space="preserve"><value>Timmar</value></data>
+<data name="Rate" xml:space="preserve"><value>Timpris</value></data>
+<data name="Note" xml:space="preserve"><value>Anteckning</value></data>
+<data name="CurrentUser" xml:space="preserve"><value>Aktuell användare</value></data>
+<data name="AddLabor" xml:space="preserve"><value>Lägg till arbetstid</value></data>
+<data name="Parts" xml:space="preserve"><value>Delar</value></data>
+<data name="FreeTextPartsNotice" xml:space="preserve"><value>Dessa delar registreras som fritext. Lagersaldot ändras inte.</value></data>
+<data name="Quantity" xml:space="preserve"><value>Antal</value></data>
+<data name="UnitCost" xml:space="preserve"><value>Styckkostnad</value></data>
+<data name="Actions" xml:space="preserve"><value>Åtgärder</value></data>
+<data name="Voided" xml:space="preserve"><value>Makulerad</value></data>
+<data name="Void" xml:space="preserve"><value>Makulera</value></data>
+<data name="AddPart" xml:space="preserve"><value>Lägg till del</value></data>
+<data name="Files" xml:space="preserve"><value>Filer</value></data>
+<data name="Withdrawn" xml:space="preserve"><value>Återkallad</value></data>
+<data name="Withdraw" xml:space="preserve"><value>Återkalla</value></data>
+<data name="File" xml:space="preserve"><value>Fil</value></data>
+<data name="FileHelp" xml:space="preserve"><value>PDF, PNG eller JPEG, upp till 10 MB. Filer måste godkännas i säkerhetsskanningen innan de accepteras.</value></data>
+<data name="Upload" xml:space="preserve"><value>Ladda upp</value></data>
+<data name="Done" xml:space="preserve"><value>Klart</value></data>
+<data name="Pending" xml:space="preserve"><value>Väntande</value></data>
+<data name="Unlock" xml:space="preserve"><value>Verifiera identiteten och öppna</value></data>
+<data name="ReadOnlyHistory" xml:space="preserve"><value>Historiken är fortsatt tillgänglig. Nya arbeten kräver en aktiv Readiness Pro-prenumeration och en aktiverad underhållsmodul.</value></data>
+<data name="MembershipRequired" xml:space="preserve"><value>Aktivt medlemskap i avdelningen krävs.</value></data>
+<data name="ReadinessProRequired" xml:space="preserve"><value>Readiness Pro krävs för nya underhållsarbeten.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Du har inte behörighet att utföra denna åtgärd.</value></data>
+<data name="Unavailable" xml:space="preserve"><value>Denna arbetsorder eller detta underlag är inte tillgängligt.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Välj ett tillgängligt mål inom din avdelning.</value></data>
+<data name="AssignmentRequired" xml:space="preserve"><value>Välj en aktiv avdelningsmedlem eller personalroll.</value></data>
+<data name="Conflict" xml:space="preserve"><value>Denna arbetsorder har ändrats. Läs in den igen innan du sparar.</value></data>
+<data name="InvalidInput" xml:space="preserve"><value>Kontrollera angivna värden och obligatoriska fält.</value></data>
+<data name="ProtectedDataRequired" xml:space="preserve"><value>Verifiera din identitet för att öppna skyddade arbetsorderuppgifter.</value></data>
+<data name="InvalidTransition" xml:space="preserve"><value>Denna statusändring är inte tillåten.</value></data>
+<data name="AcceptAssignmentFirst" xml:space="preserve"><value>Tilldelningen måste accepteras innan arbetet påbörjas.</value></data>
+<data name="SafetyRequirements" xml:space="preserve"><value>Fyll i säkerhetsprocedur, version, tillstånd, frånkoppling och uppgifter om kvalificerad personal.</value></data>
+<data name="TasksIncomplete" xml:space="preserve"><value>Slutför alla arbetssteg innan arbetet markeras som klart.</value></data>
+<data name="IndependentVerificationRequired" xml:space="preserve"><value>Säkerhetskritiskt arbete måste verifieras av en behörig person som inte är den som slutförde det.</value></data>
+<data name="HistoryLimit" xml:space="preserve"><value>Historiken är för stor för att visas i en enda begäran.</value></data>
+<data name="InvalidFile" xml:space="preserve"><value>Välj en giltig PDF-, PNG- eller JPEG-fil på högst 10 MB.</value></data>
+<data name="ScanRequired" xml:space="preserve"><value>Filen har inte godkänts i skanningen. Försök igen när skanningen är tillgänglig.</value></data>
+<data name="FileLimit" xml:space="preserve"><value>Denna arbetsorder har nått sin filgräns.</value></data>
+<data name="IntegrityFailed" xml:space="preserve"><value>Filens integritetskontroll misslyckades.</value></data>
+<data name="RequestFailed" xml:space="preserve"><value>Begäran kunde inte slutföras. Dina angivna värden finns kvar på denna sida.</value></data>
+<data name="ManageWorkOrders" xml:space="preserve"><value>Hantera arbetsorder</value></data>
+<data name="ViewAllWorkOrders" xml:space="preserve"><value>Visa andra medlemmars arbetsorder</value></data>
+<data name="ManageWorkOrdersNote" xml:space="preserve"><value>Bedöm, tilldela och verifiera arbetsorder inom tillåtet område.</value></data>
+<data name="ViewAllWorkOrdersNote" xml:space="preserve"><value>Visa arbetsorder i den tillåtna gruppen eller avdelningen. Beställare behåller sin egen historik.</value></data>
+<data name="WorkOrderCreated" xml:space="preserve"><value>Arbetsorder skapad</value></data>
+<data name="WorkOrderStatusChanged" xml:space="preserve"><value>Arbetsorderns status ändrad</value></data>
+<data name="WorkOrderAssigned" xml:space="preserve"><value>Arbetsorder tilldelad</value></data>
+<data name="NotificationTitle" xml:space="preserve"><value>Uppdatering av arbetsorder</value></data>
+<data name="NotificationMessage" xml:space="preserve"><value>En arbetsorder i din avdelning behöver uppmärksamhet. Öppna Resgrid för mer information.</value></data>
+<data name="ReadinessPro" xml:space="preserve"><value>Readiness Pro</value></data>
+<data name="Monthly" xml:space="preserve"><value>Månadsvis</value></data>
+<data name="Buy" xml:space="preserve"><value>Prenumerera</value></data>
+<data name="ManageSubscription" xml:space="preserve"><value>Hantera prenumeration</value></data>
+<data name="CancelSubscription" xml:space="preserve"><value>Avsluta förnyelse</value></data>
+<data name="BillingUnavailable" xml:space="preserve"><value>Readiness Pro kan inte köpas med denna faktureringskonfiguration.</value></data>
+<data name="CheckoutPending" xml:space="preserve"><value>Kassan aktiverar inte åtkomst till underhåll. Åtkomsten börjar efter att betalningen verifierats.</value></data>
+<data name="PaidThrough" xml:space="preserve"><value>Betald till</value></data>
+<data name="SubscriptionCancelled" xml:space="preserve"><value>Förnyelsen har avslutats. Åtkomsten fortsätter under den betalda perioden.</value></data>
+<data name="StatusRequested" xml:space="preserve"><value>Begärd</value></data>
+<data name="StatusAccepted" xml:space="preserve"><value>Accepterad</value></data>
+<data name="StatusAssigned" xml:space="preserve"><value>Tilldelad</value></data>
+<data name="StatusInProgress" xml:space="preserve"><value>Pågår</value></data>
+<data name="StatusOnHold" xml:space="preserve"><value>Pausad</value></data>
+<data name="StatusCompleted" xml:space="preserve"><value>Slutförd</value></data>
+<data name="StatusClosed" xml:space="preserve"><value>Stängd</value></data>
+<data name="StatusRejected" xml:space="preserve"><value>Avvisad</value></data>
+<data name="StatusDuplicate" xml:space="preserve"><value>Dubblett</value></data>
+<data name="StatusCancelled" xml:space="preserve"><value>Avbruten</value></data>
+<data name="PriorityLow" xml:space="preserve"><value>Låg</value></data>
+<data name="PriorityNormal" xml:space="preserve"><value>Normal</value></data>
+<data name="PriorityHigh" xml:space="preserve"><value>Hög</value></data>
+<data name="PriorityEmergency" xml:space="preserve"><value>Nödläge</value></data>
+<data name="TypeCorrective" xml:space="preserve"><value>Avhjälpande</value></data>
+<data name="TypePreventive" xml:space="preserve"><value>Förebyggande</value></data>
+<data name="TypeInspection" xml:space="preserve"><value>Inspektion</value></data>
+<data name="TypeFacility" xml:space="preserve"><value>Fastighet</value></data>
+<data name="TypeOther" xml:space="preserve"><value>Övrigt</value></data>
+<data name="ActivityCreated" xml:space="preserve"><value>Arbetsbegäran inskickad</value></data>
+<data name="ActivityUpdated" xml:space="preserve"><value>Arbetsorder uppdaterad</value></data>
+<data name="ActivityStatusChanged" xml:space="preserve"><value>Status ändrad</value></data>
+<data name="ActivityAssigned" xml:space="preserve"><value>Tilldelning ändrad</value></data>
+<data name="ActivityAssignmentAccepted" xml:space="preserve"><value>Tilldelning accepterad</value></data>
+<data name="ActivityComment" xml:space="preserve"><value>Kommentar tillagd</value></data>
+<data name="ActivityLaborAdded" xml:space="preserve"><value>Arbetstid tillagd</value></data>
+<data name="ActivityPartAdded" xml:space="preserve"><value>Del tillagd</value></data>
+<data name="ActivityPartVoided" xml:space="preserve"><value>Del makulerad</value></data>
+<data name="ActivityFileAdded" xml:space="preserve"><value>Fil tillagd</value></data>
+<data name="ActivityFileWithdrawn" xml:space="preserve"><value>Fil återkallad</value></data>
+</root>

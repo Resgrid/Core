@@ -78,6 +78,12 @@ namespace Resgrid.Services
 		{
 			switch (eventType)
 			{
+				case WorkflowTriggerEventType.WorkOrderCreated:
+				case WorkflowTriggerEventType.WorkOrderStatusChanged:
+				case WorkflowTriggerEventType.WorkOrderAssigned:
+					obj["work_order"] = new ScriptObject { ["id"] = 123, ["revision"] = 2, ["status"] = 2, ["priority"] = 1, ["unit_id"] = 12, ["group_id"] = 3, ["role_id"] = 4, ["asset_id"] = null, ["due_on"] = "2026-09-09T08:00:00Z", ["title"] = ProtectedDataEnvelope.RedactionValue, ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/Detail/123" };
+					obj["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = new ScriptArray { "Title" }, ["catalog_version"] = 18 };
+					break;
 				case WorkflowTriggerEventType.ChecklistCompleted:
 				case WorkflowTriggerEventType.ChecklistFailed:
                 case WorkflowTriggerEventType.ChecklistMissed:

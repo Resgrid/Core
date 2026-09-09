@@ -17,7 +17,12 @@ namespace Resgrid.Services
 		{
 			builder.RegisterType<ReadinessAccessService>().As<IReadinessAccessService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistTemplateService>().As<IChecklistTemplateService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkOrderNotificationService>().As<IWorkOrderNotificationService>().InstancePerLifetimeScope();
+			builder.RegisterType<ReadinessProBillingService>().As<IReadinessProBillingService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkOrderAuthorizationService>().As<IWorkOrderAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChecklistScheduledReportService>().As<IChecklistScheduledReportService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistAssignmentService>().As<Resgrid.Model.Checklists.IChecklistAssignmentService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnavailableChecklistAssetSource>().As<Resgrid.Model.Checklists.IChecklistAssetSource>().PreserveExistingDefaults().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistReminderService>().As<IChecklistReminderService>().InstancePerLifetimeScope();

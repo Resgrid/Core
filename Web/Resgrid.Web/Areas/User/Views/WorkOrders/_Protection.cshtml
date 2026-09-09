@@ -1,0 +1,7 @@
+@using Resgrid.Web.Areas.User.Models
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@if (ViewBag.ProtectionEnforced == true)
+{
+    @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value })
+}
+<div class="alert alert-danger work-order-error" role="alert" hidden></div>

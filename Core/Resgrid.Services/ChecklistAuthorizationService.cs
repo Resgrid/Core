@@ -27,6 +27,8 @@ namespace Resgrid.Services
 			if (member == null || member.IsDeleted || member.IsDisabled.GetValueOrDefault()) throw new ChecklistException(403, "Active department membership is required.");
 		}
 		private async Task<bool> AllowedAsync(ChecklistActor actor, PermissionTypes type, PermissionActions fallback, int? targetGroup = null)
+			=> (await PermissionFilterAsync(actor, type, fallback))(targetGroup);
+		private async Task<Func<int?, bool>> PermissionFilterAsync(ChecklistActor actor, PermissionTypes type, PermissionActions fallback)
 		{
 			await RequireMemberAsync(actor);
 			var member = await _departments.GetDepartmentMemberAsync(actor.UserId, actor.DepartmentId, true);
@@ -34,19 +36,28 @@ namespace Resgrid.Services
 			var admin = member.IsAdmin.GetValueOrDefault() || department?.ManagingUserId == actor.UserId;
 			var group = await _groups.GetGroupForUserAsync(actor.UserId, actor.DepartmentId);
 			var permission = await _permissions.GetPermissionByDepartmentTypeAsync(actor.DepartmentId, type);
-			if (!RecordPermissionEvaluation.IsSatisfied(permission?.Action ?? (int)fallback, permission?.Data, admin, group?.IsUserGroupAdmin(actor.UserId) == true, await _roles.GetRolesForUserAsync(actor.UserId, actor.DepartmentId))) return false;
+			var allowed = RecordPermissionEvaluation.IsSatisfied(permission?.Action ?? (int)fallback, permission?.Data, admin, group?.IsUserGroupAdmin(actor.UserId) == true, await _roles.GetRolesForUserAsync(actor.UserId, actor.DepartmentId));
 			var lockToGroup = permission?.LockToGroup ?? type == PermissionTypes.ViewChecklistResults;
-			return admin || !lockToGroup || targetGroup.HasValue && targetGroup == group?.DepartmentGroupId;
+			var groupId = group?.DepartmentGroupId;
+			return targetGroup => allowed && (admin || !lockToGroup || targetGroup.HasValue && targetGroup == groupId);
 		}
 		public Task<bool> CanManageAsync(ChecklistActor actor) => AllowedAsync(actor, PermissionTypes.ManageChecklists, PermissionActions.DepartmentAdminsOnly);
 		public async Task<bool> CanReadAsync(ChecklistActor actor, ChecklistCompletion completion)
+			=> await (await ReadFilterAsync(actor))(completion);
+		public async Task<Func<ChecklistCompletion, Task<bool>>> ReadFilterAsync(ChecklistActor actor)
 		{
 			await RequireMemberAsync(actor);
-			if (completion == null || completion.DepartmentId != actor.DepartmentId) return false;
-			if (completion.CreatedBy == actor.UserId || completion.WitnessUserId == actor.UserId) return true;
-			int? groupId = completion.TargetGroupId;
-			if (completion.TargetType == (int)ChecklistTargetType.Group && int.TryParse(completion.TargetId, out var id)) groupId = id;
-			return await AllowedAsync(actor, PermissionTypes.ViewChecklistResults, PermissionActions.DepartmentAndGroupAdmins, groupId);
+			// This snapshot belongs to one read operation. Later commands recheck membership and permissions.
+			Task<Func<int?, bool>> permission = null;
+			return async completion =>
+			{
+				if (completion == null || completion.DepartmentId != actor.DepartmentId) return false;
+				if (completion.CreatedBy == actor.UserId || completion.WitnessUserId == actor.UserId) return true;
+				int? groupId = completion.TargetGroupId;
+				if (completion.TargetType == (int)ChecklistTargetType.Group && int.TryParse(completion.TargetId, out var id)) groupId = id;
+				var allowed = await (permission ??= PermissionFilterAsync(actor, PermissionTypes.ViewChecklistResults, PermissionActions.DepartmentAndGroupAdmins));
+				return allowed(groupId);
+			};
 		}
 		public async Task<ChecklistTarget> TargetAsync(ChecklistActor actor, ChecklistTargetType type, string id)
 		{

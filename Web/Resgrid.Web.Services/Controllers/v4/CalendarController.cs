@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Services;
 using System.Threading.Tasks;
@@ -34,6 +34,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class CalendarController : V4AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors
+		private readonly IChecklistsService _checklists;
 		private readonly ICalendarService _calendarService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IAuthorizationService _authorizationService;
@@ -43,9 +44,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		public CalendarController(ICalendarService calendarService, IDepartmentsService departmentsService,
 			IAuthorizationService authorizationService, IEventAggregator eventAggregator,
-			IUserProfileService userProfileService, IProtectedReadService protectedReadService)
+			IUserProfileService userProfileService, IProtectedReadService protectedReadService, IChecklistsService checklists = null)
 		{
-			_protectedReadService = protectedReadService;
+			_protectedReadService = protectedReadService; _checklists = checklists;
 			_calendarService = calendarService;
 			_departmentsService = departmentsService;
 			_authorizationService = authorizationService;
@@ -123,8 +124,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetDepartmentCalendarItemsInRange")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
-		public async Task<ActionResult<GetAllCalendarItemResult>> GetDepartmentCalendarItemsInRange(DateTime start, DateTime end)
+		public async Task<ActionResult<GetAllCalendarItemResult>> GetDepartmentCalendarItemsInRange(DateTime start, DateTime end, bool includeChecklists = false)
 		{
+			if (includeChecklists && (end.Date < start.Date || (end.Date - start.Date).TotalDays > 92 || end.Date == DateTime.MaxValue.Date)) return BadRequest();
 			var result = new GetAllCalendarItemResult();
 			result.Data = new List<GetAllCalendarItemResultData>();
 
@@ -161,6 +163,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Status = ResponseHelper.NotFound;
 			}
 
+			if (includeChecklists && _checklists != null)
+			{
+				try
+				{
+					foreach (var entry in await _checklists.CalendarAsync(new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = ProtectedGrantToken }, start.Date, end.Date.AddDays(1)))
+						result.Data.Add(new GetAllCalendarItemResultData { CalendarItemId = entry.Id, Title = entry.Title, StartUtc = entry.StartUtc, EndUtc = entry.EndUtc, Start = entry.StartUtc.TimeConverter(department), End = entry.EndUtc.TimeConverter(department), StartTimezone = department?.TimeZone, EndTimezone = department?.TimeZone, IsVirtual = true, LockEditing = true, SourceType = "Checklist", SourceId = entry.OccurrenceId, IsRedacted = entry.IsRedacted, DeepLinkUrl = "/User/Checklists/Occurrence?id=" + entry.OccurrenceId, ChecklistState = entry.State, TypeColor = entry.State == 4 ? "#c0392b" : entry.State == 2 ? "#247a42" : "#6a4c93" });
+				}
+				catch (Resgrid.Model.Checklists.ChecklistException ex) { return StatusCode(ex.StatusCode); }
+				result.PageSize = result.Data.Count; result.Status = result.Data.Count > 0 ? ResponseHelper.Success : ResponseHelper.NotFound;
+			}
+			Response.Headers["Cache-Control"] = "no-store";
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return result;

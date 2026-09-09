@@ -1,0 +1,13 @@
+@model Resgrid.Model.Checklists.ChecklistOccurrenceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["DueChecks"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+    @await Html.PartialAsync("_Protection")
+    <h2>@Model.Name</h2><p>@Model.Target.Name</p>
+    <p><time datetime="@Model.Occurrence.PeriodStartUtc?.ToString("O")">@Model.Occurrence.PeriodStartUtc?.ToString("u")</time> — <time datetime="@Model.Occurrence.WindowEndUtc?.ToString("O")">@Model.Occurrence.WindowEndUtc?.ToString("u")</time></p>
+    <p>@localizer[((Resgrid.Model.Checklists.ChecklistOccurrenceState)Model.Occurrence.State).ToString()]</p>
+    @if (Model.CanStart) { <form class="checklist-form" asp-action="StartOccurrence" method="post"><input type="hidden" name="id" value="@Model.Occurrence.Id" /><button type="submit" class="btn btn-primary">@localizer["OpenCheck"]</button></form> }
+    @if (Model.CanSkip) { <form class="checklist-form" asp-action="SkipOccurrence" method="post"><input type="hidden" name="id" value="@Model.Occurrence.Id" /><input type="hidden" name="revision" value="@Model.Occurrence.Revision" /><label for="reason">@localizer["SkipReason"]</label><textarea id="reason" name="reason" maxlength="4000" required class="form-control"></textarea><button type="submit" class="btn btn-default">@localizer["ExcuseCheck"]</button></form> }
+    <a asp-action="Due">@localizer["DueChecks"]</a>
+</div></div></div>
+@section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

@@ -28,10 +28,8 @@ namespace Resgrid.Model
 		/// <summary>The Scriban-rendered content that was passed to the action executor.</summary>
 		public string RenderedOutput { get; set; }
 
-		[MaxLength(4000)]
 		public string ActionResult { get; set; }
 
-		[MaxLength(4000)]
 		public string ErrorMessage { get; set; }
 
 		public DateTime StartedOn { get; set; }

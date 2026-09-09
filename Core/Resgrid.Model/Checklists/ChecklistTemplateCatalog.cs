@@ -34,11 +34,16 @@ namespace Resgrid.Model.Checklists
 		private static ChecklistTemplate T(string id, string name, string sector, string description,
 			ChecklistCategory category, ChecklistScheduleFrequency frequency, ChecklistTargetType target,
 			params (string Key, string Name, bool Critical)[] items)
+			=> T(id, name, sector, description, category, frequency, target, false, items);
+
+		private static ChecklistTemplate T(string id, string name, string sector, string description,
+			ChecklistCategory category, ChecklistScheduleFrequency frequency, ChecklistTargetType target,
+			bool requiresIndependentWitness, params (string Key, string Name, bool Critical)[] items)
 		{
 			var checks = items.Select(i => new ChecklistTemplateItem(Id(id + ":" + i.Key), i.Name,
 				ChecklistItemType.PassFail, true, i.Critical, !i.Critical, true));
 			return new ChecklistTemplate(id, name, sector, description, category, frequency, target,
-				id == "ems-controlled-count", new[] { category.ToString(), target.ToString() }, new[]
+				requiresIndependentWitness, new[] { category.ToString(), target.ToString() }, new[]
 				{
 					new ChecklistTemplateSection(Id(id + ":inspection"), "Readiness checks", checks),
 					new ChecklistTemplateSection(Id(id + ":handover"), "Findings and handover", new[]
@@ -89,7 +94,7 @@ namespace Resgrid.Model.Checklists
 				I("seal", "Bag, seals and inventory identity checked"), C("stock", "Required stock meets local par levels"),
 				C("expiry", "Expiry dates and packaging checked"), I("restock", "Shortages recorded and reported")),
 			T("ems-controlled-count", "Controlled Supply Count Review", "EMS", "Requires two independently authenticated witnesses and the department's controlled-substance protocol before execution.",
-				ChecklistCategory.SafetyAudit, ChecklistScheduleFrequency.PerShift, ChecklistTargetType.Unit,
+				ChecklistCategory.SafetyAudit, ChecklistScheduleFrequency.PerShift, ChecklistTargetType.Unit, requiresIndependentWitness: true,
 				C("security", "Storage security and seals checked"), C("count", "Count reconciled against the authorized ledger"),
 				C("discrepancy", "Discrepancies escalated under the approved protocol"), I("expiry", "Expiry and storage conditions checked")),
 			T("ems-aed", "AED Readiness Check", "EMS", "External readiness check; follow the device-specific instructions and interval.",

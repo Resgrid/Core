@@ -123,7 +123,7 @@
             </summary>
             <returns>ActionResult&lt;List&lt;CalendarItem&gt;&gt;.</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItemsInRange(System.DateTime,System.DateTime)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetDepartmentCalendarItemsInRange(System.DateTime,System.DateTime,System.Boolean)">
             <summary>
             Gets the department calendar items in range.
             </summary>

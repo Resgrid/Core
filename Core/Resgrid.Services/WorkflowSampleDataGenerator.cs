@@ -80,7 +80,12 @@ namespace Resgrid.Services
 			{
 				case WorkflowTriggerEventType.ChecklistCompleted:
 				case WorkflowTriggerEventType.ChecklistFailed:
-					obj["checklist"] = new ScriptObject { ["completion_id"] = "11111111-1111-1111-1111-111111111111", ["definition_id"] = "22222222-2222-2222-2222-222222222222", ["version_id"] = "33333333-3333-3333-3333-333333333333", ["target_type"] = 1, ["target_id"] = "12", ["score"] = 75m, ["passed"] = false, ["item_id"] = "44444444-4444-4444-4444-444444444444", ["url"] = "/User/Checklists/CompletionDetail/11111111-1111-1111-1111-111111111111" };
+                case WorkflowTriggerEventType.ChecklistMissed:
+                case WorkflowTriggerEventType.ChecklistScheduleChanged:
+                case WorkflowTriggerEventType.ChecklistOccurrenceSkipped:
+					obj["protection"] = new ScriptObject { ["is_redacted"] = false, ["redacted_fields"] = new ScriptArray(), ["catalog_version"] = 0 };
+					var scheduled = eventType != WorkflowTriggerEventType.ChecklistCompleted && eventType != WorkflowTriggerEventType.ChecklistFailed;
+					obj["checklist"] = new ScriptObject { ["completion_id"] = "11111111-1111-1111-1111-111111111111", ["definition_id"] = "22222222-2222-2222-2222-222222222222", ["version_id"] = "33333333-3333-3333-3333-333333333333", ["schedule_id"] = scheduled ? "55555555-5555-5555-5555-555555555555" : null, ["occurrence_id"] = "66666666-6666-6666-6666-666666666666", ["period_start_utc"] = "2026-09-08T08:00:00.0000000Z", ["window_end_utc"] = "2026-09-08T09:00:00.0000000Z", ["state"] = 4, ["revision"] = 2, ["is_active"] = true, ["target_type"] = 1, ["target_id"] = "12", ["score"] = 75m, ["passed"] = false, ["item_id"] = "44444444-4444-4444-4444-444444444444", ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Checklists/" + (scheduled ? "Due" : "CompletionDetail/11111111-1111-1111-1111-111111111111") };
 					break;
 				case WorkflowTriggerEventType.CallAdded:
 				case WorkflowTriggerEventType.CallUpdated:
@@ -954,4 +959,3 @@ namespace Resgrid.Services
 		}
 	}
 }
-

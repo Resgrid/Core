@@ -678,7 +678,7 @@ namespace Resgrid.Services
 			if (profile == null || profile.SendNotificationPush)
 			{
 				var spm = new StandardPushMessage();
-				spm.Title = "Notification";
+				spm.Title = title;
 				spm.SubTitle = $"{title} {message}";
 				spm.DepartmentCode = department?.Code;
 				spm.DepartmentId = departmentId;

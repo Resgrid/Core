@@ -1,0 +1,22 @@
+@model Resgrid.Web.Areas.User.Models.Checklists.ChecklistDueView
+@using Resgrid.Model.Checklists
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["DueChecks"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+    <h2>@localizer["DueChecks"]</h2><p>@localizer["DueGuidance"]</p>
+    @await Html.PartialAsync("_Protection")
+    @if (Model.Occurrences.Count == 0) { <p>@localizer["NoDueChecks"]</p> }
+    <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Target"]</th><th>@localizer["ScheduledFor"] (UTC)</th><th>@localizer["WindowEnds"] (UTC)</th><th>@localizer["State"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
+    @foreach (var entry in Model.Occurrences)
+    {
+        var row = entry.Occurrence;
+        <tr><td>@entry.Name</td><td>@entry.Target.Name</td><td>@row.PeriodStartUtc?.ToString("yyyy-MM-dd HH:mm")</td><td>@row.WindowEndUtc?.ToString("yyyy-MM-dd HH:mm")</td><td>@localizer[((ChecklistOccurrenceState)row.State).ToString()]</td><td>
+            @if (entry.CanStart) { <form class="checklist-form" asp-action="StartOccurrence" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.Id" /><button type="submit" class="btn btn-success">@localizer["OpenCheck"]</button></form> }
+            @if (entry.CanSkip) { <details><summary>@localizer["ExcuseCheck"]</summary><form class="checklist-form" asp-action="SkipOccurrence" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.Id" /><input type="hidden" name="revision" value="@row.Revision" /><label for="reason-@row.Id">@localizer["SkipReason"]</label><textarea id="reason-@row.Id" name="reason" class="form-control" maxlength="4000" required></textarea><button type="submit" class="btn btn-warning">@localizer["ExcuseCheck"]</button></form></details> }
+        </td></tr>
+    }
+    </tbody></table></div>
+    @if (Model.Page > 0) { <a class="btn btn-default" asp-route-page="@(Model.Page - 1)">@localizer["Previous"]</a> }
+    <a class="btn btn-default" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a><a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
+</div></div></div>
+@section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

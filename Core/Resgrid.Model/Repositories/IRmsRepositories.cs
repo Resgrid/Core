@@ -135,6 +135,10 @@ namespace Resgrid.Model.Repositories
 
 	public interface IDomainEventOutboxRepository : IRepository<DomainEventOutboxEntry>
 	{
+		/// <summary>Fill a newly allocated checklist event inside its producer transaction; only an empty, unleased Pending row is eligible.</summary>
+		Task<bool> InitializeChecklistPayloadAsync(DomainEventOutboxEntry entry, CancellationToken cancellationToken = default);
+		/// <summary>Replace a checklist payload with its current safe projection while holding its dispatch lease.</summary>
+		Task<bool> ReplaceChecklistPayloadAsync(DomainEventOutboxEntry leasedEntry, string safePayload, CancellationToken cancellationToken = default);
 		Task<long> GetNextSequenceAsync(int departmentId, string aggregateId);
 		/// <summary>Leases up to <paramref name="batchSize"/> pending rows whose NextAttemptOn has passed (or is null) to <paramref name="leaseOwner"/>.</summary>
 		Task<IEnumerable<DomainEventOutboxEntry>> ClaimPendingBatchAsync(string leaseOwner, TimeSpan leaseDuration, int batchSize, DateTime utcNow, CancellationToken cancellationToken = default);

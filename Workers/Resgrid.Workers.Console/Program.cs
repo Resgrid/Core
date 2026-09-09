@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using Microsoft.Extensions.Logging;
 using Quidjibo;
@@ -490,6 +490,10 @@ namespace Resgrid.Workers.Console
 					new Commands.DomainEventOutboxDispatchCommand(40),
 					Cron.MinuteIntervals(1),
 					stoppingToken);
+
+				// Worker 63 is the readiness registry allocation. Department gating and pauses are evaluated by the service.
+				await Client.ScheduleAsync("Checklist Scheduling", new Commands.ChecklistSchedulingCommand(63), Cron.MinuteIntervals(5), stoppingToken);
+				await Client.ScheduleAsync("Checklist Reminders", new Commands.ChecklistReminderCommand(64), Cron.MinuteIntervals(5), stoppingToken);
 
 				// Worker ID 44 (Identifier Allocation Registry section 3.3, the Unified Search allocation absorbed by RMS-1): records search index maintenance. This
 				// process holds the single Lucene writer; retention erasure still runs while search indexing is disabled.

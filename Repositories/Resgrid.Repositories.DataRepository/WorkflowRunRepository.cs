@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -15,6 +15,11 @@ namespace Resgrid.Repositories.DataRepository
 {
 	public class WorkflowRunRepository : RmsRepositoryBase<WorkflowRun>, IWorkflowRunRepository
 	{
+		public async Task<bool> TryStartChecklistRunAsync(string runId, string workflowId, int departmentId, int attemptNumber, string safePayload)
+		{
+			return await ExecuteAsync($"UPDATE {Tbl("WorkflowRuns")} SET {Col("Status")} = {P}Running, {Col("AttemptNumber")} = {P}Attempt, {Col("InputPayload")} = {P}Payload WHERE {Col("WorkflowRunId")} = {P}Id AND {Col("WorkflowId")} = {P}WorkflowId AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("TriggerEventType")} IN (67,68,69,164,165) AND (({P}Attempt = 1 AND {Col("Status")} = {P}Pending) OR ({P}Attempt > 1 AND {Col("Status")} = {P}Retrying AND {Col("AttemptNumber")} = {P}Previous))",
+				new { Id = runId, WorkflowId = workflowId, DepartmentId = departmentId, Attempt = attemptNumber, Previous = attemptNumber - 1, Payload = safePayload, Running = (int)WorkflowRunStatus.Running, Pending = (int)WorkflowRunStatus.Pending, Retrying = (int)WorkflowRunStatus.Retrying }) == 1;
+		}
 		public override Task<WorkflowRun> InsertAsync(WorkflowRun entity, System.Threading.CancellationToken cancellationToken, bool firstLevelOnly = false)
 			=> WriteRunAsync(entity, true, cancellationToken, firstLevelOnly);
 		public override Task<WorkflowRun> UpdateAsync(WorkflowRun entity, System.Threading.CancellationToken cancellationToken, bool firstLevelOnly = false)

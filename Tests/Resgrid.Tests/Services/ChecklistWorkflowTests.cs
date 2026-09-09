@@ -19,7 +19,7 @@ using Resgrid.Services;
 namespace Resgrid.Tests.Services
 {
 	[TestFixture]
-	public class ChecklistWorkflowTests
+	public partial class ChecklistWorkflowTests
 	{
 		private readonly ChecklistActor _actor = new ChecklistActor { DepartmentId = 77, UserId = "author" };
 		private MemoryStore _store;
@@ -43,7 +43,9 @@ namespace Resgrid.Tests.Services
 			_authorization.Setup(s => s.CanManageAsync(It.IsAny<ChecklistActor>())).ReturnsAsync(true);
 			_authorization.Setup(s => s.CanReadAsync(It.IsAny<ChecklistActor>(), It.IsAny<ChecklistCompletion>())).ReturnsAsync((ChecklistActor a, ChecklistCompletion c) => c != null && c.DepartmentId == a.DepartmentId && (c.CreatedBy == a.UserId || c.WitnessUserId == a.UserId));
 			_authorization.Setup(s => s.TargetAsync(It.IsAny<ChecklistActor>(), It.IsAny<ChecklistTargetType>(), It.IsAny<string>())).ReturnsAsync((ChecklistActor a, ChecklistTargetType t, string id) => new ChecklistTarget { Type = t, Id = id, Name = "Test target" });
-			_audits = new Mock<IAuditLogsRepository>(); _audits.SetReturnsDefault(Task.FromResult(new AuditLog()));
+			_audits = new Mock<IAuditLogsRepository>();
+			_audits.Setup(s => s.InsertAsync(It.IsAny<AuditLog>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((AuditLog log, CancellationToken ct, bool first) => { log.AuditLogId = 1; return log; });
 			_outbox = new Mock<IDomainEventOutboxService>();
 			_outbox.Setup(s => s.EnqueueAsync(77, "Checklists", It.IsAny<DomainEventEnvelope>(), It.IsAny<CancellationToken>())).ReturnsAsync((int d, string p, DomainEventEnvelope e, CancellationToken c) => { _events.Add(e); return new DomainEventOutboxEntry { DomainEventOutboxId = _events.Count }; });
 			_read = new Mock<IProtectedReadService>(); _read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult()));
@@ -62,6 +64,25 @@ namespace Resgrid.Tests.Services
 		}
 		private static ChecklistRunInput Answers(ChecklistForm form, string value = "pass") => new ChecklistRunInput { Revision = 1,
 			Answers = form.Sections.SelectMany(s => s.Items).Select(i => new ChecklistAnswer { ItemId = i.Id, Status = ChecklistAnswerStatus.Answered, Value = value, Note = value == "fail" ? "Removed from service; supervisor notified" : null }).ToList() };
+
+		[Test]
+		public async Task Protected_writes_cannot_persist_fields_skipped_by_an_older_catalog()
+		{
+			_write.SetReturnsDefault(Task.FromResult(ProtectedWriteResult.Allowed(isProtected: true)));
+			Func<Task> save = () => _service.SaveDefinitionAsync(_actor, null, 0, Form());
+			(await save.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(403);
+			(await _store.ListAsync<ChecklistDefinition>(77)).Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task History_cannot_read_unmigrated_protected_outcomes_and_audits_do_not_copy_them()
+		{
+			var run = await Start(); await _service.SaveRunAsync(_actor, run.Run, Answers(run.Form, "fail"), true);
+			_audits.Verify(s => s.InsertAsync(It.Is<AuditLog>(l => l.Data.Contains("Score") || l.Data.Contains("Passed") || l.Data.Contains("FailedItemIds")), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			_read.SetReturnsDefault(Task.FromResult(new ProtectedReadResult { IsProtected = true }));
+			Func<Task> history = () => _service.HistoryAsync(_actor, run.Definition);
+			(await history.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(403);
+		}
 		[Test]
 		public async Task Published_version_is_pinned_and_draft_edits_do_not_change_a_started_run()
 		{
@@ -192,7 +213,7 @@ namespace Resgrid.Tests.Services
 			var view = await _service.GetRunAsync(_actor, run.Run); var input = Answers(run.Form); input.Revision = view.Completion.Revision; await _service.SaveRunAsync(_actor, run.Run, input, true);
 			Func<Task> remove = () => _service.DeleteFileAsync(_actor, view.Files[0].Id); (await remove.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(409);
 		}
-		internal sealed class MemoryStore : IChecklistRepository
+		internal sealed partial class MemoryStore : IChecklistRepository
 		{
 			private Dictionary<(Type, string), string> _rows = new Dictionary<(Type, string), string>();
 			private Dictionary<(Type, string), string> _backup;
@@ -205,6 +226,15 @@ namespace Resgrid.Tests.Services
 				return Task.FromResult(row?.DepartmentId == departmentId ? row : null);
 			}
 			public Task<List<T>> ListAsync<T>(int departmentId, string parentId = null, int skip = 0, int take = 100, CancellationToken ct = default) where T : ChecklistRow => Task.FromResult(_rows.Where(p => p.Key.Item1 == typeof(T)).Select(p => JsonConvert.DeserializeObject<T>(p.Value)).Where(r => r.DepartmentId == departmentId && (parentId == null || r.ParentId == parentId)).OrderByDescending(r => r.CreatedOn).Skip(skip).Take(take).ToList());
+			public int ChildQueries { get; private set; }
+			public Task<List<T>> ListChildrenAsync<T>(int departmentId, IReadOnlyCollection<string> parentIds, int skip = 0, int take = 100, CancellationToken ct = default) where T : ChecklistRow
+			{
+				ChildQueries++;
+				var rows = _rows.Where(p => p.Key.Item1 == typeof(T)).Select(p => JsonConvert.DeserializeObject<T>(p.Value))
+					.Where(r => r.DepartmentId == departmentId && parentIds.Contains(r.ParentId)).OrderByDescending(r => r.CreatedOn).ThenBy(r => r.Id).Skip(skip).Take(take).ToList();
+				foreach (var file in rows.OfType<ChecklistCompletionFile>()) file.Data = null;
+				return Task.FromResult(rows);
+			}
 			public Task WriteAsync<T>(T row, bool insert, CancellationToken ct = default) where T : ChecklistRow { var key = (typeof(T), row.Id); if (insert && _rows.ContainsKey(key)) throw new InvalidOperationException("Duplicate ID"); _rows[key] = JsonConvert.SerializeObject(row); return Task.CompletedTask; }
 			public async Task ReplaceAnswersAsync(int departmentId, string completionId, IEnumerable<ChecklistCompletionItem> items, CancellationToken ct = default)
 			{ foreach (var old in await ListAsync<ChecklistCompletionItem>(departmentId, completionId, take: 500)) _rows.Remove((typeof(ChecklistCompletionItem), old.Id)); foreach (var item in items) await WriteAsync(item, true, ct); }

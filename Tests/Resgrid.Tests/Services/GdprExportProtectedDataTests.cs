@@ -25,7 +25,7 @@ namespace Resgrid.Tests.Services
 	/// back has to be declared rather than silently dropped from a subject access request.
 	/// </summary>
 	[TestFixture]
-	public class GdprExportProtectedDataTests
+	public partial class GdprExportProtectedDataTests
 	{
 		private const int DeptId = 4;
 		private const string UserId = "user-1";
@@ -107,11 +107,14 @@ namespace Resgrid.Tests.Services
 
 			_emailService = new Mock<IEmailService>();
 
+			var checklistReminders = new Mock<IChecklistReminderRepository>();
+			checklistReminders.SetReturnsDefault(Task.FromResult(new List<Resgrid.Model.Checklists.ChecklistReminder>()));
 			_service = new GdprDataExportService(_repository.Object, _userProfileService.Object,
 				_memberSensitiveDataService.Object, _emergencyContactService.Object, _usersService.Object,
 				_departmentsService.Object, _departmentGroupsService.Object, _personnelRolesService.Object,
 				_actionLogsService.Object, _messageService.Object, _certificationService.Object,
-				_trainingService.Object, _shiftsService.Object, _emailService.Object);
+				_trainingService.Object, _shiftsService.Object, _emailService.Object, new ChecklistWorkflowTests.MemoryStore(),
+				new Lazy<IReadinessHistoryProtectionService>(() => new ReadinessHistoryProtectionService(Mock.Of<IProtectedWriteService>(), Mock.Of<IDepartmentDataProtectionService>())), checklistReminders.Object);
 		}
 
 		private async Task<Dictionary<string, string>> RunExportAsync()

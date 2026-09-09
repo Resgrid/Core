@@ -196,7 +196,15 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label" for="ChecklistsEnabled">@checklistLocalizer["Checklists"]</label>
                                 <div class="col-sm-9">
-                                    <input type="checkbox" asp-for="ChecklistsEnabled" />
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="ChecklistsEnabled">
+                                            <label class="onoffswitch-label" for="ChecklistsEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
                                     <p class="help-block">@checklistLocalizer["Free"]</p>
                                 </div>
                             </div>

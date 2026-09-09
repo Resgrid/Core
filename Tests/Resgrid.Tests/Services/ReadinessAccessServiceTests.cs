@@ -34,7 +34,7 @@ namespace Resgrid.Tests.Services
 			_settings = new Mock<IDepartmentSettingsService>();
 			_billing = new Mock<ISubscriptionsService>(MockBehavior.Strict);
 			_modules = new DepartmentModuleSettings();
-			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(DepartmentId, false)).ReturnsAsync(() => _modules);
+			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(() => _modules);
 			SetFlag(FeatureFlagKeys.ChecklistsSystem, true);
 			SetFlag(FeatureFlagKeys.MaintenanceWorkOrders, true);
 			_payment = new PaymentAddon
@@ -59,7 +59,11 @@ namespace Resgrid.Tests.Services
 			Resgrid.Config.ApiConfig.BackendInternalApikey = _billingKey;
 		}
 
-		private void SetFlag(string key, bool enabled) => _flags.Setup(f => f.IsEnabledAsync(key, DepartmentId, false, null)).ReturnsAsync(enabled);
+		private void SetFlag(string key, bool enabled)
+		{
+			_flags.Setup(f => f.IsEnabledAsync(key, DepartmentId, false, null)).ReturnsAsync(enabled);
+			_flags.Setup(f => f.EvaluateFreshAsync(key, DepartmentId)).ReturnsAsync(new FeatureFlagEvaluation { IsEnabled = enabled });
+		}
 
 		[Test]
 		public async Task Free_checklists_never_query_billing_or_require_maintenance()

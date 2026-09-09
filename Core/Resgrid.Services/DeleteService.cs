@@ -364,6 +364,7 @@ namespace Resgrid.Services
 					Logging.LogInfo($"DeleteService::Executing pending department deletion for DepartmentId {item.SourceId}, requested by UserId {item.QueuedByUserId} on {item.QueuedOn:u}, scheduled for {item.ToBeCompletedOn:u}");
 
 					var result = await _deleteRepository.DeleteDepartmentAndUsersAsync(departmentId);
+					if (!result) throw new InvalidOperationException("Department deletion is not supported by the configured database provider.");
 
 					// Write the execution audit record only after the delete succeeds: retried
 					// attempts must not each leave an "executed" row. The row is written directly

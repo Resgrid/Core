@@ -534,4 +534,107 @@
   <data name="Checks" xml:space="preserve">
     <value>Verificaciones</value>
   </data>
+  <data name="Schedules" xml:space="preserve"><value>Programaciones</value></data>
+  <data name="NewSchedule" xml:space="preserve"><value>Nueva programación</value></data>
+  <data name="NoSchedules" xml:space="preserve"><value>Aún no hay programaciones.</value></data>
+  <data name="EditSchedule" xml:space="preserve"><value>Editar programación</value></data>
+  <data name="Frequency" xml:space="preserve"><value>Frecuencia</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Zona horaria</value></data>
+  <data name="SchedulePaused" xml:space="preserve"><value>En pausa</value></data>
+  <data name="ScheduleNotes" xml:space="preserve"><value>Notas de la programación</value></data>
+  <data name="ScheduleStartDate" xml:space="preserve"><value>Fecha de inicio</value></data>
+  <data name="ScheduleEndDate" xml:space="preserve"><value>Fecha de fin (opcional)</value></data>
+  <data name="TimesOfDay" xml:space="preserve"><value>Horas locales</value></data>
+  <data name="WeeklyDays" xml:space="preserve"><value>Días de las revisiones semanales</value></data>
+  <data name="DayOfMonth" xml:space="preserve"><value>Día del mes</value></data>
+  <data name="AnchorMonth" xml:space="preserve"><value>Mes de referencia</value></data>
+  <data name="ScheduleWorkshift" xml:space="preserve"><value>Turno para revisiones por turno</value></data>
+  <data name="WorkshiftFallback" xml:space="preserve"><value>Usar horas locales cada día</value></data>
+  <data name="WindowMinutes" xml:space="preserve"><value>Plazo de realización (minutos)</value></data>
+  <data name="ScheduleEnabled" xml:space="preserve"><value>Programación habilitada</value></data>
+  <data name="SaveSchedule" xml:space="preserve"><value>Guardar programación</value></data>
+  <data name="DueChecks" xml:space="preserve"><value>Revisiones pendientes</value></data>
+  <data name="NoDueChecks" xml:space="preserve"><value>No hay revisiones en esta lista.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Programada para</value></data>
+  <data name="WindowEnds" xml:space="preserve"><value>Fin del plazo</value></data>
+  <data name="Actions" xml:space="preserve"><value>Acciones</value></data>
+  <data name="OpenCheck" xml:space="preserve"><value>Abrir revisión</value></data>
+  <data name="ExcuseCheck" xml:space="preserve"><value>Justificar omisión</value></data>
+  <data name="SkipReason" xml:space="preserve"><value>Motivo de la omisión justificada</value></data>
+  <data name="Scheduled" xml:space="preserve"><value>Programada</value></data>
+  <data name="Missed" xml:space="preserve"><value>No realizada</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Omisión justificada</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Cancelada</value></data>
+  <data name="PerShift" xml:space="preserve"><value>Cada turno</value></data>
+  <data name="Daily" xml:space="preserve"><value>Diariamente</value></data>
+  <data name="Weekly" xml:space="preserve"><value>Semanalmente</value></data>
+  <data name="Monthly" xml:space="preserve"><value>Mensualmente</value></data>
+  <data name="Quarterly" xml:space="preserve"><value>Trimestralmente</value></data>
+  <data name="SemiAnnual" xml:space="preserve"><value>Cada seis meses</value></data>
+  <data name="Annual" xml:space="preserve"><value>Anualmente</value></data>
+  <data name="ScheduleValidation" xml:space="preserve"><value>Revise las fechas, horas, objetivo y repetición de la programación.</value></data>
+  <data name="SchedulePermission" xml:space="preserve"><value>No tiene permiso para gestionar programaciones de revisión.</value></data>
+  <data name="ScheduleUnavailable" xml:space="preserve"><value>Esta programación no está disponible.</value></data>
+  <data name="ScheduleRequiresPublished" xml:space="preserve"><value>Publique la lista de comprobación antes de programarla.</value></data>
+  <data name="OccurrenceUnavailable" xml:space="preserve"><value>Esta revisión no está disponible o ya ha cambiado.</value></data>
+  <data name="SkipReasonRequired" xml:space="preserve"><value>Introduzca un motivo de hasta 4.000 caracteres.</value></data>
+  <data name="ChecklistCompleted" xml:space="preserve"><value>Lista de comprobación completada</value></data>
+  <data name="ChecklistFailed" xml:space="preserve"><value>Lista de comprobación no superada</value></data>
+  <data name="ChecklistMissed" xml:space="preserve"><value>Lista de comprobación no realizada</value></data>
+  <data name="ChecklistScheduleChanged" xml:space="preserve"><value>Programación de revisión modificada</value></data>
+  <data name="ChecklistOccurrenceSkipped" xml:space="preserve"><value>Omisión de revisión programada justificada</value></data>
+  <data name="ScheduleVersionGuidance" xml:space="preserve"><value>Al guardar se fija la versión publicada actual. Los cambios sustituyen revisiones futuras no iniciadas; la pausa cancela las no iniciadas.</value></data>
+  <data name="ScheduleTimeGuidance" xml:space="preserve"><value>Las horas usan esta zona. Una hora inexistente se adelanta; una hora repetida se ejecuta una sola vez.</value></data>
+  <data name="TimesOfDayGuidance" xml:space="preserve"><value>Introduzca hasta ocho horas en formato de 24 horas, separadas por comas.</value></data>
+  <data name="MonthGuidance" xml:space="preserve"><value>Para revisiones mensuales o menos frecuentes. Los meses cortos usan su último día. El mes de referencia determina las revisiones trimestrales, semestrales y anuales.</value></data>
+  <data name="WorkshiftGuidance" xml:space="preserve"><value>Solo para revisiones por turno. Un turno seleccionado usa sus fechas de inicio registradas; de lo contrario, se usan las horas locales cada día.</value></data>
+  <data name="DueGuidance" xml:space="preserve"><value>Próximas revisiones de siete días y revisiones sin terminar. Las revisiones no realizadas aún se pueden completar.</value></data>
+  <data name="ReminderSettings" xml:space="preserve">
+    <value>Recordatorios de listas de verificación</value>
+  </data>
+  <data name="ReminderHelp" xml:space="preserve">
+    <value>Los recordatorios se aplican a las verificaciones que comiencen después de activarlos. Los mensajes incluyen un enlace para iniciar sesión y respetan las preferencias de notificación de cada persona. Los resúmenes agrupan los recordatorios pendientes por destinatario.</value>
+  </data>
+  <data name="ReminderEnabled" xml:space="preserve">
+    <value>Activar recordatorios de listas de verificación</value>
+  </data>
+  <data name="ReminderBefore" xml:space="preserve">
+    <value>Minutos antes del vencimiento (0 desactiva)</value>
+  </data>
+  <data name="ReminderMissed" xml:space="preserve">
+    <value>Avisar al personal responsable de las verificaciones omitidas</value>
+  </data>
+  <data name="ReminderDigest" xml:space="preserve">
+    <value>Agrupar los recordatorios pendientes en resúmenes</value>
+  </data>
+  <data name="ReminderEscalate" xml:space="preserve">
+    <value>Avisar a los administradores del departamento tras estos minutos de retraso (vacío desactiva)</value>
+  </data>
+  <data name="ReminderValidation" xml:space="preserve">
+    <value>Indique un intervalo de 0–10080 minutos para los recordatorios y de 1–43200 minutos para el aviso a administradores, o deje este último vacío.</value>
+  </data>
+  <data name="ReminderTitle" xml:space="preserve">
+    <value>Recordatorios de listas de verificación</value>
+  </data>
+  <data name="ReminderMessage" xml:space="preserve">
+    <value>Hay actualizaciones de listas de verificación. Inicie sesión para revisar sus verificaciones.</value>
+  </data>
+  <data name="SaveReminders" xml:space="preserve">
+    <value>Guardar configuración de recordatorios</value>
+  </data>
+  <data name="AssetUnavailable" xml:space="preserve"><value>El equipo con número de serie no está disponible.</value></data>
+  <data name="Assignment" xml:space="preserve"><value>Asignado a</value></data>
+  <data name="AssignmentAutomatic" xml:space="preserve"><value>Asignación automática</value></data>
+  <data name="AssignmentPermission" xml:space="preserve"><value>No tiene asignada la realización de esta comprobación.</value></data>
+  <data name="AssignmentType1" xml:space="preserve"><value>Persona</value></data>
+  <data name="AssignmentType2" xml:space="preserve"><value>Función del personal</value></data>
+  <data name="AssignmentType3" xml:space="preserve"><value>Grupo o estación</value></data>
+  <data name="AssignmentType4" xml:space="preserve"><value>Dotación de la unidad</value></data>
+  <data name="AssignmentUnavailable" xml:space="preserve"><value>Seleccione una asignación disponible en esta organización.</value></data>
+  <data name="CalendarInclude" xml:space="preserve"><value>Comprobaciones de disponibilidad</value></data>
+  <data name="CalendarRange" xml:space="preserve"><value>Seleccione un intervalo de calendario de hasta 93 días.</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>Equipo con número de serie</value></data>
+  <data name="ReminderFixedTime" xml:space="preserve"><value>Hora del resumen diario (zona horaria de la organización; sustituye al inicio del turno)</value></data>
+  <data name="ReminderShiftStart" xml:space="preserve"><value>Enviar un resumen al inicio del turno</value></data>
+  <data name="ReminderTimeValidation" xml:space="preserve"><value>Introduzca una sola hora con el formato HH:mm.</value></data>
 </root>

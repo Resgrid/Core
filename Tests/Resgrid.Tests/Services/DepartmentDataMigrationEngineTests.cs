@@ -110,6 +110,76 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task Checklist_catalog_upgrade_and_offboarding_preserve_boolean_and_decimal_outcomes()
+		{
+			var id = Guid.NewGuid().ToString(); var itemId = Guid.NewGuid().ToString();
+			// Snapshot from catalog 14: Content is already sealed; typed outcomes have no companions yet.
+			_bulk.Seed("Calls", "CallId");
+			_bulk.Seed("ChecklistCompletions", "Id", Row(("Id", id), ("Score", 87.25m), ("Passed", false), ("Content", _crypto.EncryptText(_dek, 1, "SYNTHETIC-PHI-CANARY", DeptId, "checklistcompletions.content", id))));
+			_bulk.Seed("ChecklistCompletionItems", "Id", Row(("Id", itemId), ("IsFailure", true), ("Content", _crypto.EncryptText(_dek, 1, "SYNTHETIC-ANSWER", DeptId, "checklistcompletionitems.content", itemId))));
+			var completion = _bulk.Table("ChecklistCompletions").Single(); var item = _bulk.Table("ChecklistCompletionItems").Single();
+			completion["Score"].Should().Be(87.25m); completion["Passed"].Should().Be(false);
+			var contentEnvelope = (string)completion["Content"];
+			var upgrade = Context(DepartmentDataProtectionMigrationKind.CatalogUpgrade); upgrade.FromCatalogVersion = 14; upgrade.CatalogVersion = 15;
+			(await _engine.RunEncryptionNightAsync(upgrade, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
+			completion["Content"].Should().Be(contentEnvelope, "an outcome-only catalog upgrade must preserve the existing content envelope");
+			completion["Score"].Should().BeNull(); completion["Passed"].Should().BeNull(); item["IsFailure"].Should().BeNull();
+			((string)completion["ProtectedPassedEnvelope"]).Should().StartWith("rgdp:");
+			var offboarding = Context(DepartmentDataProtectionMigrationKind.Offboarding); offboarding.CatalogVersion = 15;
+			(await _engine.RunDecryptionNightAsync(offboarding, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
+			completion["Score"].Should().Be(87.25m); completion["Passed"].Should().Be(false); item["IsFailure"].Should().Be(true);
+			completion["Content"].Should().Be("SYNTHETIC-PHI-CANARY"); completion["ProtectedPassedEnvelope"].Should().BeNull();
+		}
+
+		[Test]
+		public async Task Checklist_history_catalog_upgrade_preserves_all_eight_fields_through_resume_and_offboarding()
+		{
+			_bulk.Seed("Calls", "CallId");
+			var bindings = AdpTableBindings.ForVersionRange(new ProtectedFieldCatalog(), 15, 16);
+			bindings.Should().HaveCount(4); bindings.Sum(b => b.Columns.Count).Should().Be(8);
+			var expected = new Dictionary<string, string>();
+			foreach (var binding in bindings)
+			{
+				var key = binding.PkIsNumeric ? "19" : Guid.NewGuid().ToString();
+				var row = Row((binding.PkColumn, key));
+				foreach (var field in binding.Columns) row[field.ColumnName] = expected[field.FieldId] = "SYNTHETIC-PHI-CANARY:" + field.FieldId;
+				_bulk.Seed(binding.TableName, binding.PkColumn, row);
+			}
+			var upgrade = Context(DepartmentDataProtectionMigrationKind.CatalogUpgrade); upgrade.FromCatalogVersion = 15; upgrade.CatalogVersion = 16;
+			(await _engine.RunEncryptionNightAsync(upgrade, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
+			var encrypted = new Dictionary<string, string>();
+			foreach (var binding in bindings)
+				foreach (var field in binding.Columns)
+				{
+					var row = _bulk.Table(binding.TableName).Single(); var value = (string)row[field.ColumnName];
+					encrypted[field.FieldId] = value; value.Should().StartWith("rgdp:").And.NotContain("CANARY");
+					_crypto.DecryptText(_dek, value, DeptId, field.FieldId, (string)row[binding.PkColumn]).Should().Be(expected[field.FieldId]);
+				}
+			(await _engine.RunEncryptionNightAsync(upgrade, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
+			foreach (var binding in bindings)
+				foreach (var field in binding.Columns) _bulk.Table(binding.TableName).Single()[field.ColumnName].Should().Be(encrypted[field.FieldId]);
+			var offboarding = Context(DepartmentDataProtectionMigrationKind.Offboarding); offboarding.CatalogVersion = 16;
+			(await _engine.RunDecryptionNightAsync(offboarding, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
+			foreach (var binding in bindings)
+				foreach (var field in binding.Columns) _bulk.Table(binding.TableName).Single()[field.ColumnName].Should().Be(expected[field.FieldId]);
+		}
+
+		[Test]
+		public async Task Checklist_schedule_catalog_upgrade_preserves_routing_and_restores_content_on_offboarding()
+		{
+			_bulk.Seed("Calls", "CallId"); var id = Guid.NewGuid().ToString();
+			_bulk.Seed("ChecklistSchedules", "Id", Row(("Id", id), ("Content", "SYNTHETIC-PRIVATE-SCHEDULE"), ("AssignmentId", "member-route"), ("ClockMinutes", "480")));
+			var upgrade = Context(DepartmentDataProtectionMigrationKind.CatalogUpgrade); upgrade.FromCatalogVersion = 16; upgrade.CatalogVersion = 17;
+			(await _engine.RunEncryptionNightAsync(upgrade, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
+			var row = _bulk.Table("ChecklistSchedules").Single(); var envelope = (string)row["Content"]; envelope.Should().StartWith("rgdp:");
+			row["AssignmentId"].Should().Be("member-route"); row["ClockMinutes"].Should().Be("480");
+			(await _engine.RunEncryptionNightAsync(upgrade, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables); row["Content"].Should().Be(envelope);
+			var offboarding = Context(DepartmentDataProtectionMigrationKind.Offboarding); offboarding.CatalogVersion = 17;
+			(await _engine.RunDecryptionNightAsync(offboarding, CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
+			row["Content"].Should().Be("SYNTHETIC-PRIVATE-SCHEDULE"); row["AssignmentId"].Should().Be("member-route");
+		}
+
+		[Test]
 		public async Task Double_run_proof_resuming_an_open_run_skips_the_completed_range()
 		{
 			await _engine.RunEncryptionNightAsync(Context(DepartmentDataProtectionMigrationKind.Enrollment), CancellationToken.None);
@@ -410,11 +480,14 @@ namespace Resgrid.Tests.Services
 				if (!_tables.TryGetValue(binding.TableName, out var table))
 					return Task.FromResult<IReadOnlyList<AdpBulkFieldRow>>(Array.Empty<AdpBulkFieldRow>());
 
-				var ordered = table.Rows.OrderBy(r => Convert.ToInt64(r[table.PkColumn], CultureInfo.InvariantCulture)).ToList();
+				var ordered = (binding.PkIsNumeric
+					? table.Rows.OrderBy(r => Convert.ToInt64(r[table.PkColumn], CultureInfo.InvariantCulture))
+					: table.Rows.OrderBy(r => Convert.ToString(r[table.PkColumn], CultureInfo.InvariantCulture), StringComparer.Ordinal)).ToList();
 				var filtered = string.IsNullOrEmpty(afterCursor)
 					? ordered
-					: ordered.Where(r => Convert.ToInt64(r[table.PkColumn], CultureInfo.InvariantCulture) >
-										 long.Parse(afterCursor, CultureInfo.InvariantCulture)).ToList();
+					: ordered.Where(r => binding.PkIsNumeric
+						? Convert.ToInt64(r[table.PkColumn], CultureInfo.InvariantCulture) > long.Parse(afterCursor, CultureInfo.InvariantCulture)
+						: string.CompareOrdinal(Convert.ToString(r[table.PkColumn], CultureInfo.InvariantCulture), afterCursor) > 0).ToList();
 
 				var batch = filtered.Take(batchSize).Select(r => new AdpBulkFieldRow
 				{

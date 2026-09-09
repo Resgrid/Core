@@ -5,6 +5,8 @@ namespace Resgrid.Model.Repositories
 {
 	public interface IWorkflowRunRepository : IRepository<WorkflowRun>
 	{
+		/// <summary>Claim a checklist event attempt once; duplicate queue deliveries cannot execute it twice.</summary>
+		Task<bool> TryStartChecklistRunAsync(string runId, string workflowId, int departmentId, int attemptNumber, string safePayload);
 		Task<IEnumerable<WorkflowRun>> GetByDepartmentIdPagedAsync(int departmentId, int page, int pageSize);
 		Task<IEnumerable<WorkflowRun>> GetPendingAndRunningByDepartmentIdAsync(int departmentId);
 		Task<IEnumerable<WorkflowRun>> GetRunsByWorkflowIdAsync(string workflowId, int page, int pageSize);

@@ -8,7 +8,7 @@
     @await Html.PartialAsync("_Protection")
     @if (Model.CanManage)
     {
-        <p><a class="btn btn-default" asp-action="Edit" asp-route-id="@definition.Id">@localizer["EditDraft"]</a></p>
+        <p><a class="btn btn-default" asp-action="Edit" asp-route-id="@definition.Id">@localizer["EditDraft"]</a><a class="btn btn-default" asp-action="Schedules" asp-route-id="@definition.Id">@localizer["Schedules"]</a></p>
         <form class="checklist-form" asp-action="Publish" method="post">
             @Html.AntiForgeryToken()<input type="hidden" name="id" value="@definition.Id" /><input type="hidden" name="revision" value="@definition.Revision" />
             <button class="btn btn-primary" type="submit">@localizer["PublishDraft"]</button><span class="help-block">@localizer["PublishGuidance"]</span>
@@ -34,11 +34,11 @@
     @foreach (var entry in Model.History)
     {
         var run = entry.Completion;
-        <tr><td><a asp-action="Run" asp-route-id="@run.Id">@run.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")</a></td><td>@entry.TargetName</td><td>@localizer[((ChecklistRunState)run.State).ToString()]</td><td>@(run.Score.HasValue ? run.Score + "%" : "—")</td><td>@(run.SubmittedOn.HasValue ? run.Passed ? localizer["Passed"] : localizer["Failed"] : localizer["Incomplete"])</td></tr>
+        <tr><td><a asp-action="Run" asp-route-id="@run.Id">@run.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")</a></td><td>@entry.TargetName</td><td>@localizer[((ChecklistRunState)run.State).ToString()]</td><td>@(run.Score.HasValue ? run.Score + "%" : "—")</td><td>@(run.SubmittedOn.HasValue ? run.Passed.HasValue ? run.Passed.Value ? localizer["Passed"] : localizer["Failed"] : "—" : localizer["Incomplete"])</td></tr>
     }
     </tbody></table>
     @if (Model.Page > 0) { <a class="btn btn-default" asp-route-id="@definition.Id" asp-route-page="@(Model.Page - 1)">@localizer["Previous"]</a> }
-    <a class="btn btn-default" asp-route-id="@definition.Id" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a>
+    @if (Model.HasMore) { <a class="btn btn-default" asp-route-id="@definition.Id" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a> }
     <a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
 </div></div></div>
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

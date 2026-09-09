@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Config;
 using Resgrid.Model;
+using Resgrid.Model.Checklists;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
@@ -27,6 +28,9 @@ namespace Resgrid.Providers.Bus
 		private static IDepartmentsService _departmentsService;
 		private static ISubscriptionsService _subscriptionsService;
 		private static IProtectedProjectionService _protectedProjectionService;
+		private static Lazy<IReadinessHistoryProtectionService> _history;
+		private static Task ProtectChecklistRunAsync(WorkflowRun run) => (_history?.Value ?? throw new InvalidOperationException("Readiness history protection is unavailable."))
+			.ProtectAsync(run.DepartmentId, run.WorkflowRunId, run, ReadinessHistoryFields.Runs);
 
 		// Per-minute rate limit tracker: departmentId → (window start, count)
 		private static readonly System.Collections.Concurrent.ConcurrentDictionary<int, (DateTime Window, int Count)> _rateLimitTracker
@@ -55,7 +59,7 @@ namespace Resgrid.Providers.Bus
 			IWorkflowRunRepository runRepository,
 			IDepartmentsService departmentsService,
 			ISubscriptionsService subscriptionsService,
-			IProtectedProjectionService protectedProjectionService)
+			IProtectedProjectionService protectedProjectionService, Lazy<IReadinessHistoryProtectionService> history = null)
 		{
 			_eventAggregator        = eventAggregator;
 			_outboundQueueProvider  = outboundQueueProvider;
@@ -64,6 +68,7 @@ namespace Resgrid.Providers.Bus
 			_departmentsService     = departmentsService;
 			_subscriptionsService   = subscriptionsService;
 			_protectedProjectionService = protectedProjectionService;
+			_history = history;
 
 			RegisterListeners();
 		}
@@ -132,17 +137,17 @@ namespace Resgrid.Providers.Bus
 			// (plan section 5.6). The legacy LogAdded compatibility projection rides the same road with
 			// TriggerEventType = LogAdded and a LogAddedEvent-shaped payload, so existing LogAdded workflows keep
 			// their exact log.* contract without a legacy Logs row ever being written.
-			_eventAggregator.AddListener<DomainEventDispatchedEvent>(e => HandleDomainEvent(e));
+			_eventAggregator.AddAsyncListener<DomainEventDispatchedEvent>(HandleDomainEventAsync);
 		}
 
-		private static void HandleDomainEvent(DomainEventDispatchedEvent dispatched)
+		private static async Task HandleDomainEventAsync(DomainEventDispatchedEvent dispatched)
 		{
 			if (dispatched == null || !dispatched.TriggerEventType.HasValue ||
 				!Enum.IsDefined(typeof(WorkflowTriggerEventType), dispatched.TriggerEventType.Value))
 				return;
 
 			// Replays (activation, legacy indexing, operator re-drives) must never flood workflows.
-			if (dispatched.IsReplay)
+			if (dispatched.IsReplay && dispatched.ProducerSubsystem != "Checklists")
 				return;
 
 			var trigger = (WorkflowTriggerEventType)dispatched.TriggerEventType.Value;
@@ -165,11 +170,11 @@ namespace Resgrid.Providers.Bus
 					return;
 
 				compatibility.DepartmentId = dispatched.DepartmentId;
-				HandleEvent(dispatched.DepartmentId, trigger, compatibility, dispatched);
+				await HandleEventAsync(dispatched.DepartmentId, trigger, compatibility, dispatched);
 				return;
 			}
 
-			HandleEvent(dispatched.DepartmentId, trigger, evt, dispatched);
+			await HandleEventAsync(dispatched.DepartmentId, trigger, evt, dispatched);
 		}
 
 		/// <summary>
@@ -179,6 +184,11 @@ namespace Resgrid.Providers.Bus
 		/// with its reason rather than dropped. Legacy in-process events keep today's behaviour.
 		/// </summary>
 		private static async void HandleEvent(int departmentId, WorkflowTriggerEventType eventType, object eventObj, DomainEventDispatchedEvent envelope = null)
+		{
+			await HandleEventAsync(departmentId, eventType, eventObj, envelope);
+		}
+
+		private static async Task HandleEventAsync(int departmentId, WorkflowTriggerEventType eventType, object eventObj, DomainEventDispatchedEvent envelope = null)
 		{
 			try
 			{
@@ -192,7 +202,23 @@ namespace Resgrid.Providers.Bus
 					if (workflows == null || workflows.Count == 0)
 						return;
 
-					payloadJson = await _protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
+					payloadJson = envelope.ProducerSubsystem == "Checklists"
+						? await ChecklistWorkflowPayload.ProjectAsync(departmentId, eventObj, _protectedProjectionService, wrapped: true)
+						: await _protectedProjectionService.BuildSafeWorkflowPayloadAsync(departmentId, eventObj);
+					if (envelope.ProducerSubsystem == "Checklists")
+					{
+						// Retry a run whose database insert succeeded but whose queue send did not.
+						// Its stable run ID is claimed atomically by the worker before executing actions.
+						foreach (var workflow in workflows.ToList())
+						{
+							var existing = await _runRepository.GetByWorkflowAndEventAsync(workflow.WorkflowId, envelope.EventId);
+							if (existing == null) continue;
+							if (existing.DepartmentId != departmentId) throw new InvalidOperationException("Workflow event tenant mismatch.");
+							if (existing.Status == (int)WorkflowRunStatus.Pending) await RequeueChecklistRunAsync(existing, payloadJson);
+							workflows.Remove(workflow);
+						}
+						if (workflows.Count == 0) return;
+					}
 				}
 
 				// ── Plan-aware rate limiting ─────────────────────────────────────────
@@ -242,8 +268,7 @@ namespace Resgrid.Providers.Bus
 
 				foreach (var workflow in workflows)
 				{
-					if (await IsDuplicateAsync(workflow.WorkflowId, envelope))
-						continue;
+					if (envelope?.ProducerSubsystem != "Checklists" && await IsDuplicateAsync(workflow.WorkflowId, envelope)) continue;
 
 					var run = WorkflowRunEnvelope.Apply(new WorkflowRun
 					{
@@ -260,10 +285,17 @@ namespace Resgrid.Providers.Bus
 
 					try
 					{
+						if (envelope?.ProducerSubsystem == "Checklists") await ProtectChecklistRunAsync(run);
 						run = await _runRepository.InsertAsync(run, CancellationToken.None);
 					}
 					catch (Exception ex) when (envelope != null && WorkflowRunEnvelope.IsDuplicateKeyViolation(ex))
 					{
+						if (envelope.ProducerSubsystem == "Checklists")
+						{
+							var existing = await _runRepository.GetByWorkflowAndEventAsync(workflow.WorkflowId, envelope.EventId);
+							if (existing == null || existing.DepartmentId != departmentId) throw;
+							if (existing.Status == (int)WorkflowRunStatus.Pending) await RequeueChecklistRunAsync(existing, payloadJson);
+						}
 						// Two dispatchers (post-commit and the worker sweep) raced on the same event; the index is the backstop.
 						Framework.Logging.LogInfo($"Workflow {workflow.WorkflowId} already has a run for event {envelope.EventId}; duplicate dispatch ignored.");
 						continue;
@@ -281,7 +313,8 @@ namespace Resgrid.Providers.Bus
 						EnqueuedOn       = DateTime.UtcNow
 					};
 
-					await _outboundQueueProvider.EnqueueWorkflow(queueItem);
+					if (!await _outboundQueueProvider.EnqueueWorkflow(queueItem) && envelope != null)
+						throw new InvalidOperationException("Workflow queue did not accept the event run.");
 
 					// Increment free-plan daily counter after each successful enqueue
 					if (isFreePlan)
@@ -290,8 +323,18 @@ namespace Resgrid.Providers.Bus
 			}
 			catch (Exception ex)
 			{
+				if (envelope != null) throw; // The durable dispatcher owns retries and value-free failure recording.
 				Framework.Logging.LogException(ex);
 			}
+		}
+
+		private static async Task RequeueChecklistRunAsync(WorkflowRun run, string safePayload)
+		{
+			if (!await _outboundQueueProvider.EnqueueWorkflow(new WorkflowQueueItem
+			{
+				WorkflowId = run.WorkflowId, WorkflowRunId = run.WorkflowRunId, DepartmentId = run.DepartmentId,
+				TriggerEventType = run.TriggerEventType, EventPayloadJson = safePayload, AttemptNumber = 1, EnqueuedOn = DateTime.UtcNow
+			})) throw new InvalidOperationException("Workflow queue did not accept the event run.");
 		}
 
 		/// <summary>One initial run per (WorkflowId, EventId): a retry or a second dispatcher reuses the existing run.</summary>
@@ -339,6 +382,7 @@ namespace Resgrid.Providers.Bus
 
 				try
 				{
+					if (envelope.ProducerSubsystem == "Checklists") await ProtectChecklistRunAsync(run);
 					await _runRepository.InsertAsync(run, CancellationToken.None);
 					Framework.Logging.LogError($"Records event {envelope.EventId} ({eventType}) was skipped for workflow {workflow.WorkflowId} in department {departmentId}: {reason}.");
 				}

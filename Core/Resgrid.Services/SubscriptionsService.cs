@@ -734,7 +734,8 @@ namespace Resgrid.Services
 				if (planAddonIds == null || planAddonIds.Count == 0)
 					return new List<PaymentAddon>();
 
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromMilliseconds(BillingApiTimeoutMs) };
+				using var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetCurrentPaymentAddonsForDepartmentPost", Method.Post);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json; charset=utf-8");
@@ -775,11 +776,21 @@ namespace Resgrid.Services
 			return paymentAddons;
 		}
 
-		public async Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType)
+		public Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType)
+		{
+			if (planAddonType == PlanAddonTypes.ReadinessPro && Config.SystemBehaviorConfig.CacheEnabled &&
+				!string.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !string.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+				return _cacheProvider.RetrieveAsync($"AddonPlansByType_{(int)planAddonType}",
+					() => LoadAddonPlansByTypeAsync(planAddonType), TimeSpan.FromMinutes(5));
+			return LoadAddonPlansByTypeAsync(planAddonType);
+		}
+
+		private async Task<List<PlanAddon>> LoadAddonPlansByTypeAsync(PlanAddonTypes planAddonType)
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromMilliseconds(BillingApiTimeoutMs) };
+				using var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 				var request = new RestRequest($"/api/Billing/GetAllAddonPlansByType", Method.Get);
 				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
 				request.AddHeader("Content-Type", "application/json");

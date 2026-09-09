@@ -72,17 +72,22 @@ namespace Resgrid.Model
 		/// null sweeps every row of the table.
 		/// </summary>
 		public string RowFilterColumn { get; init; }
+		/// <summary>Fixed, reviewed discriminator for shared-table families; never supplied by a request.</summary>
+		public AdpRowDiscriminator Discriminator { get; init; }
 	}
+
+	public sealed record AdpRowDiscriminator(string Column, IReadOnlyList<int> Integers = null, string Text = null, bool OnParent = false);
 
 	/// <summary>One cataloged column inside a binding.</summary>
 	public sealed class AdpColumnSpec
 	{
-		public AdpColumnSpec(string columnName, string fieldId, ProtectedFieldStorageKind storageKind, string companionColumn = null)
+		public AdpColumnSpec(string columnName, string fieldId, ProtectedFieldStorageKind storageKind, string companionColumn = null, bool companionIsBoolean = false)
 		{
 			ColumnName = columnName;
 			FieldId = fieldId;
 			StorageKind = storageKind;
 			CompanionColumn = companionColumn;
+			CompanionIsBoolean = companionIsBoolean;
 
 			if (storageKind == ProtectedFieldStorageKind.CompanionColumn && string.IsNullOrWhiteSpace(companionColumn))
 				throw new ArgumentException("Companion storage requires a companion column name.", nameof(companionColumn));
@@ -97,5 +102,7 @@ namespace Resgrid.Model
 
 		/// <summary>Envelope column for CompanionColumn storage (e.g. "ProtectedLatitudeEnvelope").</summary>
 		public string CompanionColumn { get; }
+		/// <summary>Restore a boolean, rather than a decimal, when offboarding this typed companion.</summary>
+		public bool CompanionIsBoolean { get; }
 	}
 }

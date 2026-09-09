@@ -88,7 +88,9 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.RecordDefinitionPublished).Should().Be(113);
 			((int)WorkflowTriggerEventType.RecordDefinitionRetired).Should().Be(114);
 
-			foreach (var value in Enumerable.Range(52, 48))
+			((int)WorkflowTriggerEventType.ChecklistCompleted).Should().Be(67);
+			((int)WorkflowTriggerEventType.ChecklistFailed).Should().Be(68);
+			foreach (var value in Enumerable.Range(52, 48).Except(new[] { 67, 68, 69 }))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");
 		}
 

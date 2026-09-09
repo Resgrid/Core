@@ -32,7 +32,6 @@ namespace Resgrid.Model
 
 		public DateTime? CompletedOn { get; set; }
 
-		[MaxLength(4000)]
 		public string ErrorMessage { get; set; }
 
 		public int AttemptNumber { get; set; } = 1;

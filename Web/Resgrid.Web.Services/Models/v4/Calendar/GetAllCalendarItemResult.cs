@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
@@ -22,6 +22,12 @@ public class GetAllCalendarItemResult : StandardApiResponseV4Base
 /// </summary>
 public class GetAllCalendarItemResultData
 {
+	public bool IsVirtual { get; set; }
+	public int? ChecklistState { get; set; }
+	public string SourceType { get; set; }
+	public string SourceId { get; set; }
+	public string DeepLinkUrl { get; set; }
+	public bool IsRedacted { get; set; }
 	/// <summary>
 	/// Identifier for the calendar item
 	/// </summary>

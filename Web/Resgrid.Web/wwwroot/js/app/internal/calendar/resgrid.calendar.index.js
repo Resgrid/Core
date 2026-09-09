@@ -28,6 +28,7 @@ var resgrid;
                     dayMaxEvents: true,   // show "+N more" when too many events
                     events: {
                         url: resgrid.absoluteBaseUrl + '/User/Calendar/GetV2CalendarEntriesForCal',
+                        extraParams: function () { return { includeChecklists: document.getElementById('include-checklists')?.checked === true }; },
                         failure: function () {
                             console.error('Failed to load calendar events.');
                         }
@@ -54,6 +55,7 @@ var resgrid;
                 });
 
                 calendarInstance.render();
+                document.getElementById('include-checklists')?.addEventListener('change', function () { calendarInstance.refetchEvents(); });
             });
 
             index.getCalendar = function () { return calendarInstance; };

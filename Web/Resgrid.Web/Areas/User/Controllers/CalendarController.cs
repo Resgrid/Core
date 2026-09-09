@@ -26,6 +26,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public class CalendarController : SecureBaseController
 	{
 		#region Private Members and Constructors
+		private readonly IChecklistsService _checklists;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUsersService _usersService;
 		private readonly ICalendarService _calendarService;
@@ -42,9 +43,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentGroupsService departmentGroupsService, IGeoLocationProvider geoLocationProvider, IEventAggregator eventAggregator,
 			IAuthorizationService authorizationService, IUserProfileService userProfileService,
 			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
-			IProtectedReadService protectedReadService)
+			IProtectedReadService protectedReadService, IChecklistsService checklists = null)
 		{
-			_protectedReadService = protectedReadService;
+			_protectedReadService = protectedReadService; _checklists = checklists;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_calendarService = calendarService;
@@ -611,12 +612,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Schedule_View)]
-		public async Task<IActionResult> GetV2CalendarEntriesForCal(string start, string end)
+		public async Task<IActionResult> GetV2CalendarEntriesForCal(string start, string end, bool includeChecklists = false)
 		{
-			var jsonItems = new List<CalendarItemV2Json>();
+			var jsonItems = new List<object>();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var items = await _calendarService.GetAllCalendarItemsForDepartmentAsync(DepartmentId, DateTime.UtcNow.AddMonths(-6));
+			await _protectedReadService.ResolveCalendarItemsForReadAsync(DepartmentId, items, null, UserId);
 			var itemTypes = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 
 			foreach (var item in items)
@@ -654,6 +656,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				jsonItems.Add(jsonItem);
 			}
 
+			if (includeChecklists && _checklists != null)
+			{
+				if (!DateTimeOffset.TryParse(start, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var from) || !DateTimeOffset.TryParse(end, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var until)) return BadRequest();
+				try
+				{
+					foreach (var entry in await _checklists.CalendarAsync(new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = DepartmentId, UserId = UserId }, from.UtcDateTime, until.UtcDateTime))
+						jsonItems.Add(new { id = entry.Id, title = entry.Title, start = entry.StartUtc.ToString("O"), end = entry.EndUtc.ToString("O"), allDay = false, backgroundColor = entry.State == 4 ? "#c0392b" : entry.State == 2 ? "#247a42" : "#6a4c93", checklistState = entry.State, url = Url.Action("Occurrence", "Checklists", new { area = "User", id = entry.OccurrenceId }), isVirtual = true, isRedacted = entry.IsRedacted });
+				}
+				catch (Resgrid.Model.Checklists.ChecklistException ex) { return StatusCode(ex.StatusCode); }
+			}
+			Response.Headers["Cache-Control"] = "no-store";
 			return Json(jsonItems);
 		}
 

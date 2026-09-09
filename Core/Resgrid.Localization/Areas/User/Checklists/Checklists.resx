@@ -534,4 +534,107 @@
   <data name="Checks" xml:space="preserve">
     <value>Checks</value>
   </data>
+  <data name="Schedules" xml:space="preserve"><value>Schedules</value></data>
+  <data name="NewSchedule" xml:space="preserve"><value>New schedule</value></data>
+  <data name="NoSchedules" xml:space="preserve"><value>No schedules yet.</value></data>
+  <data name="EditSchedule" xml:space="preserve"><value>Edit schedule</value></data>
+  <data name="Frequency" xml:space="preserve"><value>Frequency</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Time zone</value></data>
+  <data name="SchedulePaused" xml:space="preserve"><value>Paused</value></data>
+  <data name="ScheduleNotes" xml:space="preserve"><value>Schedule notes</value></data>
+  <data name="ScheduleStartDate" xml:space="preserve"><value>Start date</value></data>
+  <data name="ScheduleEndDate" xml:space="preserve"><value>End date (optional)</value></data>
+  <data name="TimesOfDay" xml:space="preserve"><value>Local times</value></data>
+  <data name="WeeklyDays" xml:space="preserve"><value>Days for weekly checks</value></data>
+  <data name="DayOfMonth" xml:space="preserve"><value>Day of month</value></data>
+  <data name="AnchorMonth" xml:space="preserve"><value>Starting month</value></data>
+  <data name="ScheduleWorkshift" xml:space="preserve"><value>Workshift for checks each shift</value></data>
+  <data name="WorkshiftFallback" xml:space="preserve"><value>Use local times each day</value></data>
+  <data name="WindowMinutes" xml:space="preserve"><value>Completion window (minutes)</value></data>
+  <data name="ScheduleEnabled" xml:space="preserve"><value>Schedule enabled</value></data>
+  <data name="SaveSchedule" xml:space="preserve"><value>Save schedule</value></data>
+  <data name="DueChecks" xml:space="preserve"><value>Due checks</value></data>
+  <data name="NoDueChecks" xml:space="preserve"><value>No checks in this list.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Scheduled for</value></data>
+  <data name="WindowEnds" xml:space="preserve"><value>Window ends</value></data>
+  <data name="Actions" xml:space="preserve"><value>Actions</value></data>
+  <data name="OpenCheck" xml:space="preserve"><value>Open check</value></data>
+  <data name="ExcuseCheck" xml:space="preserve"><value>Excuse check</value></data>
+  <data name="SkipReason" xml:space="preserve"><value>Reason for excusing this check</value></data>
+  <data name="Scheduled" xml:space="preserve"><value>Scheduled</value></data>
+  <data name="Missed" xml:space="preserve"><value>Missed</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Excused</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="PerShift" xml:space="preserve"><value>Each shift</value></data>
+  <data name="Daily" xml:space="preserve"><value>Daily</value></data>
+  <data name="Weekly" xml:space="preserve"><value>Weekly</value></data>
+  <data name="Monthly" xml:space="preserve"><value>Monthly</value></data>
+  <data name="Quarterly" xml:space="preserve"><value>Quarterly</value></data>
+  <data name="SemiAnnual" xml:space="preserve"><value>Every six months</value></data>
+  <data name="Annual" xml:space="preserve"><value>Annually</value></data>
+  <data name="ScheduleValidation" xml:space="preserve"><value>Check the schedule dates, times, target and recurrence settings.</value></data>
+  <data name="SchedulePermission" xml:space="preserve"><value>You cannot manage checklist schedules.</value></data>
+  <data name="ScheduleUnavailable" xml:space="preserve"><value>This schedule is unavailable.</value></data>
+  <data name="ScheduleRequiresPublished" xml:space="preserve"><value>Publish the checklist before scheduling it.</value></data>
+  <data name="OccurrenceUnavailable" xml:space="preserve"><value>This check is unavailable or has already changed.</value></data>
+  <data name="SkipReasonRequired" xml:space="preserve"><value>Enter a reason of up to 4,000 characters.</value></data>
+  <data name="ChecklistCompleted" xml:space="preserve"><value>Checklist completed</value></data>
+  <data name="ChecklistFailed" xml:space="preserve"><value>Checklist failed</value></data>
+  <data name="ChecklistMissed" xml:space="preserve"><value>Checklist missed</value></data>
+  <data name="ChecklistScheduleChanged" xml:space="preserve"><value>Checklist schedule changed</value></data>
+  <data name="ChecklistOccurrenceSkipped" xml:space="preserve"><value>Checklist occurrence excused</value></data>
+  <data name="ScheduleVersionGuidance" xml:space="preserve"><value>Saving pins the current published version. Changes replace future unstarted checks; pausing cancels unstarted checks.</value></data>
+  <data name="ScheduleTimeGuidance" xml:space="preserve"><value>Times use this zone. A skipped clock time moves forward; a repeated time occurs once.</value></data>
+  <data name="TimesOfDayGuidance" xml:space="preserve"><value>Enter up to eight times, separated by commas, in 24-hour format.</value></data>
+  <data name="MonthGuidance" xml:space="preserve"><value>For monthly or less frequent checks. Short months use their last day. The starting month anchors quarterly, six-monthly and annual checks.</value></data>
+  <data name="WorkshiftGuidance" xml:space="preserve"><value>Only for each-shift checks. A selected workshift uses its recorded start dates; otherwise local times apply daily.</value></data>
+  <data name="DueGuidance" xml:space="preserve"><value>Upcoming checks for seven days and unfinished checks. Missed checks can still be completed.</value></data>
+  <data name="ReminderSettings" xml:space="preserve">
+    <value>Checklist reminders</value>
+  </data>
+  <data name="ReminderHelp" xml:space="preserve">
+    <value>Reminders apply to checks starting after reminders are enabled. Messages contain a sign-in link and respect each person's notification preferences. Digests combine pending reminders for each recipient.</value>
+  </data>
+  <data name="ReminderEnabled" xml:space="preserve">
+    <value>Enable checklist reminders</value>
+  </data>
+  <data name="ReminderBefore" xml:space="preserve">
+    <value>Minutes before the due time (0 disables)</value>
+  </data>
+  <data name="ReminderMissed" xml:space="preserve">
+    <value>Notify responsible personnel of missed checks</value>
+  </data>
+  <data name="ReminderDigest" xml:space="preserve">
+    <value>Combine pending reminders into digests</value>
+  </data>
+  <data name="ReminderEscalate" xml:space="preserve">
+    <value>Escalate to department administrators after this many minutes overdue (blank disables)</value>
+  </data>
+  <data name="ReminderValidation" xml:space="preserve">
+    <value>Enter a reminder interval of 0–10080 minutes and an escalation interval of 1–43200 minutes, or leave escalation blank.</value>
+  </data>
+  <data name="ReminderTitle" xml:space="preserve">
+    <value>Checklist reminders</value>
+  </data>
+  <data name="ReminderMessage" xml:space="preserve">
+    <value>Checklist updates are available. Sign in to review your checks.</value>
+  </data>
+  <data name="SaveReminders" xml:space="preserve">
+    <value>Save reminder settings</value>
+  </data>
+  <data name="AssetUnavailable" xml:space="preserve"><value>Serialized equipment is unavailable.</value></data>
+  <data name="Assignment" xml:space="preserve"><value>Assigned to</value></data>
+  <data name="AssignmentAutomatic" xml:space="preserve"><value>Automatic routing</value></data>
+  <data name="AssignmentPermission" xml:space="preserve"><value>You are not assigned to perform this check.</value></data>
+  <data name="AssignmentType1" xml:space="preserve"><value>Person</value></data>
+  <data name="AssignmentType2" xml:space="preserve"><value>Personnel role</value></data>
+  <data name="AssignmentType3" xml:space="preserve"><value>Group or station</value></data>
+  <data name="AssignmentType4" xml:space="preserve"><value>Unit crew</value></data>
+  <data name="AssignmentUnavailable" xml:space="preserve"><value>Choose an available assignment in this department.</value></data>
+  <data name="CalendarInclude" xml:space="preserve"><value>Readiness checks</value></data>
+  <data name="CalendarRange" xml:space="preserve"><value>Choose a calendar range of up to 93 days.</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>Serialized equipment</value></data>
+  <data name="ReminderFixedTime" xml:space="preserve"><value>Daily digest time (department time zone; overrides shift starts)</value></data>
+  <data name="ReminderShiftStart" xml:space="preserve"><value>Send a digest at shift start</value></data>
+  <data name="ReminderTimeValidation" xml:space="preserve"><value>Enter one time in HH:mm format.</value></data>
 </root>

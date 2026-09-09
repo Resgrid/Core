@@ -402,14 +402,23 @@ namespace Resgrid.Services
 				}
 				case WorkflowTriggerEventType.ChecklistCompleted:
 				case WorkflowTriggerEventType.ChecklistFailed:
+                case WorkflowTriggerEventType.ChecklistMissed:
+                case WorkflowTriggerEventType.ChecklistScheduleChanged:
+                case WorkflowTriggerEventType.ChecklistOccurrenceSkipped:
 				{
 					var checklistEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
 					var payload = checklistEvent?.Payload ?? new JObject();
 					var checklist = new ScriptObject();
-					foreach (var pair in new[] { ("completion_id", "CompletionId"), ("definition_id", "DefinitionId"), ("version_id", "VersionId"), ("target_type", "TargetType"), ("target_id", "TargetId"), ("score", "Score"), ("passed", "Passed"), ("item_id", "ItemId") })
+					foreach (var pair in new[] { ("completion_id", "CompletionId"), ("definition_id", "DefinitionId"), ("version_id", "VersionId"), ("target_type", "TargetType"), ("target_id", "TargetId"), ("score", "Score"), ("passed", "Passed"), ("item_id", "ItemId"), ("schedule_id", "ScheduleId"), ("occurrence_id", "OccurrenceId"), ("period_start_utc", "PeriodStartUtc"), ("window_end_utc", "WindowEndUtc"), ("state", "State"), ("is_active", "IsActive"), ("revision", "Revision") })
 						checklist[pair.Item1] = ToScriptValue(payload[pair.Item2]);
-					checklist["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Checklists/CompletionDetail/{(string)payload["CompletionId"]}";
+					checklist["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Checklists/" + (payload["ScheduleId"] == null ? $"CompletionDetail/{(string)payload["CompletionId"]}" : "Due");
 					scriptObject["checklist"] = checklist;
+					scriptObject["protection"] = new ScriptObject
+					{
+						["is_redacted"] = payload["is_redacted"]?.Value<bool>() == true,
+						["redacted_fields"] = ToScriptValue(payload["redacted_fields"] ?? new JArray()),
+						["catalog_version"] = payload["catalog_version"]?.Value<int>() ?? 0
+					};
 					break;
 				}
 				case WorkflowTriggerEventType.RecordCreated:
@@ -1293,4 +1302,3 @@ namespace Resgrid.Services
 		}
 	}
 }
-

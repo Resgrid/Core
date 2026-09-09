@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
+using Resgrid.Model.Checklists;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -14,11 +15,13 @@ namespace Resgrid.Services
 	{
 		private readonly IAuditLogsRepository _auditLogsRepository;
 		private readonly IUserProfileService _userProfileService;
+		private readonly Lazy<IReadinessHistoryProtectionService> _history;
 
-		public AuditService(IAuditLogsRepository auditLogsRepository, IUserProfileService userProfileService)
+		public AuditService(IAuditLogsRepository auditLogsRepository, IUserProfileService userProfileService, Lazy<IReadinessHistoryProtectionService> history = null)
 		{
 			_auditLogsRepository = auditLogsRepository;
 			_userProfileService = userProfileService;
+			_history = history;
 		}
 
 		public async Task<AuditLog> SaveAuditLogAsync(AuditLog auditLog, CancellationToken cancellationToken = default(CancellationToken))
@@ -29,13 +32,13 @@ namespace Resgrid.Services
 
 		public async Task<AuditLog> GetAuditLogByIdAsync(int auditLogId)
 		{
-			return await _auditLogsRepository.GetByIdAsync(auditLogId);
+			return await DisplayAsync(await _auditLogsRepository.GetByIdAsync(auditLogId));
 		}
 
 		public async Task<List<AuditLog>> GetAllAuditLogsForDepartmentAsync(int departmentId)
 		{
 			var logs = await _auditLogsRepository.GetAllByDepartmentIdAsync(departmentId);
-			return logs.ToList();
+			return (await Task.WhenAll(logs.Select(DisplayAsync))).ToList();
 		}
 
 		public async Task<List<AuditLog>> GetAuditLogsForDepartmentPagedAsync(int departmentId, DateTime startDate, DateTime endDate, AuditLogTypes? logType, int page, int pageSize)
@@ -51,7 +54,14 @@ namespace Resgrid.Services
 			var safeEnd = (endDate == default(DateTime) || endDate < safeStart) ? DateTime.UtcNow : endDate;
 
 			var logs = await _auditLogsRepository.GetAuditLogsForDepartmentPagedAsync(departmentId, safeStart, safeEnd, (int?)logType, safePage, safePageSize);
-			return logs.ToList();
+			return (await Task.WhenAll(logs.Select(DisplayAsync))).ToList();
+		}
+
+		private Task<AuditLog> DisplayAsync(AuditLog log)
+		{
+			if (log == null || !ReadinessHistoryFields.IsChecklistAudit(log.LogType)) return Task.FromResult(log);
+			var history = _history?.Value ?? throw new InvalidOperationException("Readiness history protection is unavailable.");
+			return history.ForDisplayAsync(log.DepartmentId, log, ReadinessHistoryFields.Audits);
 		}
 
 		public string GetAuditLogTypeString(AuditLogTypes logType)

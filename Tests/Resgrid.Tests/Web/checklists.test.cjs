@@ -35,6 +35,15 @@ const htmlJson = value => JSON.stringify(value).replace(/</g, '\\u003c');
         assert.equal(await page.evaluate(() => window.pwned), undefined);
 
         const conditional = { ...item, Id: otherId, Name: 'Failure detail', Type: 5, Critical: false, Required: false, VisibleWhen: { ItemId: itemId, EqualsValue: 'fail' }, RequiredWhen: { ItemId: itemId, EqualsValue: 'fail' } };
+        await page.setContent(`<div id="checklist-error" hidden></div><form id="checklist-editor" action="/save"><input name="formJson"><div id="checklist-builder"></div><button type="submit">Save draft</button></form><script id="checklist-form-data" type="application/json">${htmlJson({ ...definition, Sections: [{ ...definition.Sections[0], Items: [item, conditional] }] })}</script>`);
+        await page.evaluate(() => { window.requests = []; window.fetch = async (url, options) => { requests.push(Object.fromEntries(options.body.entries())); return { ok: true, json: async () => ({ revision: 2 }) }; }; });
+        await page.addScriptTag({ path: script });
+        await page.getByRole('button', { name: 'Move item up', exact: true }).nth(1).click();
+        assert.equal(await page.getByLabel('Show only when', { exact: true }).nth(0).inputValue(), '');
+        await page.getByRole('button', { name: 'Save draft', exact: true }).click();
+        const moved = JSON.parse(await page.evaluate(() => requests[0].formJson)).Sections[0].Items[0];
+        assert.equal(moved.VisibleWhen, null); assert.equal(moved.RequiredWhen, null, 'Reordering clears conditions that no longer reference earlier items');
+
         const run = { Completion: { Id: '44444444-4444-4444-4444-444444444444' }, Form: { ...definition, Sections: [{ ...definition.Sections[0], Items: [item, conditional] }] }, Input: { Revision: 1, Answers: [], Note: null }, Files: [] };
         await page.setContent(`<div id="checklist-error" hidden></div><div id="checklist-saved" hidden></div><form id="checklist-run" action="/run/save" data-upload="/upload" data-remove="/remove" data-evidence="/evidence"><input name="id" value="${run.Completion.Id}"><input name="inputJson"><input name="__RequestVerificationToken" value="csrf"><div id="checklist-answers"></div><button type="submit" name="submit" value="false">Save progress</button><button type="submit" name="submit" value="true">Submit</button></form><script id="checklist-run-data" type="application/json">${htmlJson(run)}</script>`);
         await page.evaluate(() => { window.requests = []; window.fetch = (url, options) => new Promise(resolve => requests.push({ url, fields: Object.fromEntries(options.body.entries()), resolve })); });
@@ -61,6 +70,13 @@ const htmlJson = value => JSON.stringify(value).replace(/</g, '\\u003c');
         await page.locator('#checklist-error:not([hidden])').waitFor();
         assert.match(await page.locator('#checklist-error').textContent(), /Reload/);
         assert.equal(await page.getByLabel('Completion / handover note', { exact: true }).inputValue(), 'Typed while save is in flight');
+        await page.evaluate(() => { window.uploadAttempts = 0; window.fetch = async () => { uploadAttempts++; return { ok: false, status: 400, json: async () => ({ message: 'Retry upload' }) }; }; });
+        const picker = page.locator('input[type="file"]').first();
+        const uploadFile = { name: 'evidence.png', mimeType: 'image/png', buffer: Buffer.from([1, 2, 3]) };
+        await picker.setInputFiles(uploadFile);
+        await page.waitForFunction(() => document.querySelector('input[type=file]').value === '');
+        await picker.setInputFiles(uploadFile);
+        await page.waitForFunction(() => window.uploadAttempts === 2 && document.querySelector('input[type=file]').value === '');
         assert.deepEqual(errors, []);
         console.log('PASS: builder types and ordering, escaped content, conditional visibility, serialized saves, revision updates, CSRF, conflict preserves unsaved work.');
     } finally { await browser.close(); }

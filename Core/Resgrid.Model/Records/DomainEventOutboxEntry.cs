@@ -41,6 +41,8 @@ namespace Resgrid.Model
 		public int? TriggerEventType { get; set; }
 
 		public string PayloadJson { get; set; }
+		/// <summary>Allowlisted routing facts with outcomes always withheld; retained when ADP seals the historical payload.</summary>
+		public string ReadinessRoutingJson { get; set; }
 
 		public string CorrelationId { get; set; }
 

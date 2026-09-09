@@ -6,5 +6,6 @@
 	/// </summary>
 	public interface IFeatureFlagRepository : IRepository<FeatureFlag>
 	{
+		System.Threading.Tasks.Task TouchEvaluationAsync(int flagId, System.DateTime evaluatedOn, System.Threading.CancellationToken ct = default);
 	}
 }

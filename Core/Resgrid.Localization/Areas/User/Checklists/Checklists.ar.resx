@@ -534,4 +534,107 @@
   <data name="Checks" xml:space="preserve">
     <value>الفحوصات</value>
   </data>
+  <data name="Schedules" xml:space="preserve"><value>الجداول</value></data>
+  <data name="NewSchedule" xml:space="preserve"><value>جدول جديد</value></data>
+  <data name="NoSchedules" xml:space="preserve"><value>لا توجد جداول بعد.</value></data>
+  <data name="EditSchedule" xml:space="preserve"><value>تعديل الجدول</value></data>
+  <data name="Frequency" xml:space="preserve"><value>معدل التكرار</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>المنطقة الزمنية</value></data>
+  <data name="SchedulePaused" xml:space="preserve"><value>متوقف مؤقتًا</value></data>
+  <data name="ScheduleNotes" xml:space="preserve"><value>ملاحظات الجدول</value></data>
+  <data name="ScheduleStartDate" xml:space="preserve"><value>تاريخ البدء</value></data>
+  <data name="ScheduleEndDate" xml:space="preserve"><value>تاريخ الانتهاء (اختياري)</value></data>
+  <data name="TimesOfDay" xml:space="preserve"><value>الأوقات المحلية</value></data>
+  <data name="WeeklyDays" xml:space="preserve"><value>أيام الفحوص الأسبوعية</value></data>
+  <data name="DayOfMonth" xml:space="preserve"><value>اليوم من الشهر</value></data>
+  <data name="AnchorMonth" xml:space="preserve"><value>الشهر المرجعي</value></data>
+  <data name="ScheduleWorkshift" xml:space="preserve"><value>وردية العمل للفحوص في كل وردية</value></data>
+  <data name="WorkshiftFallback" xml:space="preserve"><value>استخدام الأوقات المحلية كل يوم</value></data>
+  <data name="WindowMinutes" xml:space="preserve"><value>مهلة الإكمال (بالدقائق)</value></data>
+  <data name="ScheduleEnabled" xml:space="preserve"><value>الجدول مفعّل</value></data>
+  <data name="SaveSchedule" xml:space="preserve"><value>حفظ الجدول</value></data>
+  <data name="DueChecks" xml:space="preserve"><value>الفحوص المستحقة</value></data>
+  <data name="NoDueChecks" xml:space="preserve"><value>لا توجد فحوص في هذه القائمة.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>موعد الفحص</value></data>
+  <data name="WindowEnds" xml:space="preserve"><value>نهاية المهلة</value></data>
+  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="OpenCheck" xml:space="preserve"><value>فتح الفحص</value></data>
+  <data name="ExcuseCheck" xml:space="preserve"><value>تبرير تجاوز الفحص</value></data>
+  <data name="SkipReason" xml:space="preserve"><value>سبب التجاوز المبرر للفحص</value></data>
+  <data name="Scheduled" xml:space="preserve"><value>مجدول</value></data>
+  <data name="Missed" xml:space="preserve"><value>لم يُنفّذ</value></data>
+  <data name="Skipped" xml:space="preserve"><value>تجاوز مبرر</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>ملغى</value></data>
+  <data name="PerShift" xml:space="preserve"><value>كل وردية</value></data>
+  <data name="Daily" xml:space="preserve"><value>يوميًا</value></data>
+  <data name="Weekly" xml:space="preserve"><value>أسبوعيًا</value></data>
+  <data name="Monthly" xml:space="preserve"><value>شهريًا</value></data>
+  <data name="Quarterly" xml:space="preserve"><value>كل ثلاثة أشهر</value></data>
+  <data name="SemiAnnual" xml:space="preserve"><value>كل ستة أشهر</value></data>
+  <data name="Annual" xml:space="preserve"><value>سنويًا</value></data>
+  <data name="ScheduleValidation" xml:space="preserve"><value>تحقق من تواريخ الجدول وأوقاته والهدف وإعدادات التكرار.</value></data>
+  <data name="SchedulePermission" xml:space="preserve"><value>ليس لديك إذن لإدارة جداول الفحص.</value></data>
+  <data name="ScheduleUnavailable" xml:space="preserve"><value>هذا الجدول غير متاح.</value></data>
+  <data name="ScheduleRequiresPublished" xml:space="preserve"><value>انشر قائمة التحقق قبل جدولتها.</value></data>
+  <data name="OccurrenceUnavailable" xml:space="preserve"><value>هذا الفحص غير متاح أو تم تغييره بالفعل.</value></data>
+  <data name="SkipReasonRequired" xml:space="preserve"><value>أدخل سببًا لا يتجاوز 4000 حرف.</value></data>
+  <data name="ChecklistCompleted" xml:space="preserve"><value>اكتملت قائمة التحقق</value></data>
+  <data name="ChecklistFailed" xml:space="preserve"><value>لم تجتز قائمة التحقق</value></data>
+  <data name="ChecklistMissed" xml:space="preserve"><value>لم تُنفّذ قائمة التحقق</value></data>
+  <data name="ChecklistScheduleChanged" xml:space="preserve"><value>تم تغيير جدول قائمة التحقق</value></data>
+  <data name="ChecklistOccurrenceSkipped" xml:space="preserve"><value>تم تبرير تجاوز الفحص المجدول</value></data>
+  <data name="ScheduleVersionGuidance" xml:space="preserve"><value>يحفظ الجدول الإصدار المنشور الحالي. تستبدل التغييرات الفحوص المستقبلية التي لم تبدأ؛ ويُلغي الإيقاف المؤقت الفحوص التي لم تبدأ.</value></data>
+  <data name="ScheduleTimeGuidance" xml:space="preserve"><value>تتبع الأوقات هذه المنطقة. يُنقل الوقت غير الموجود إلى الأمام؛ ويحدث الوقت المكرر مرة واحدة.</value></data>
+  <data name="TimesOfDayGuidance" xml:space="preserve"><value>أدخل ما يصل إلى ثمانية أوقات بتنسيق 24 ساعة، مفصولة بفواصل إنجليزية.</value></data>
+  <data name="MonthGuidance" xml:space="preserve"><value>للفحوص الشهرية أو الأقل تكرارًا. تستخدم الأشهر القصيرة يومها الأخير. يحدد الشهر المرجعي الفحوص ربع السنوية ونصف السنوية والسنوية.</value></data>
+  <data name="WorkshiftGuidance" xml:space="preserve"><value>للفحوص في كل وردية فقط. تستخدم الوردية المختارة تواريخ البدء المسجلة؛ وإلا فتُستخدم الأوقات المحلية يوميًا.</value></data>
+  <data name="DueGuidance" xml:space="preserve"><value>الفحوص القادمة لسبعة أيام والفحوص غير المكتملة. لا يزال بالإمكان إكمال الفحوص الفائتة.</value></data>
+  <data name="ReminderSettings" xml:space="preserve">
+    <value>تذكيرات قوائم التحقق</value>
+  </data>
+  <data name="ReminderHelp" xml:space="preserve">
+    <value>تنطبق التذكيرات على عمليات التحقق التي تبدأ بعد تفعيلها. تحتوي الرسائل على رابط لتسجيل الدخول وتراعي تفضيلات الإشعارات لكل شخص. تجمع الملخصات التذكيرات المعلقة حسب المستلم.</value>
+  </data>
+  <data name="ReminderEnabled" xml:space="preserve">
+    <value>تفعيل تذكيرات قوائم التحقق</value>
+  </data>
+  <data name="ReminderBefore" xml:space="preserve">
+    <value>الدقائق قبل الموعد النهائي (0 للتعطيل)</value>
+  </data>
+  <data name="ReminderMissed" xml:space="preserve">
+    <value>إشعار الموظفين المسؤولين بعمليات التحقق الفائتة</value>
+  </data>
+  <data name="ReminderDigest" xml:space="preserve">
+    <value>جمع التذكيرات المعلقة في ملخصات</value>
+  </data>
+  <data name="ReminderEscalate" xml:space="preserve">
+    <value>إشعار مسؤولي القسم بعد هذا العدد من دقائق التأخير (اتركه فارغًا للتعطيل)</value>
+  </data>
+  <data name="ReminderValidation" xml:space="preserve">
+    <value>أدخل مدة للتذكير من 0 إلى 10080 دقيقة ومدة لإشعار المسؤولين من 1 إلى 43200 دقيقة، أو اترك مدة إشعار المسؤولين فارغة.</value>
+  </data>
+  <data name="ReminderTitle" xml:space="preserve">
+    <value>تذكيرات قوائم التحقق</value>
+  </data>
+  <data name="ReminderMessage" xml:space="preserve">
+    <value>تتوفر تحديثات لقوائم التحقق. سجّل الدخول لمراجعة عمليات التحقق الخاصة بك.</value>
+  </data>
+  <data name="SaveReminders" xml:space="preserve">
+    <value>حفظ إعدادات التذكيرات</value>
+  </data>
+  <data name="AssetUnavailable" xml:space="preserve"><value>المعدات ذات الرقم التسلسلي غير متاحة.</value></data>
+  <data name="Assignment" xml:space="preserve"><value>مُسند إلى</value></data>
+  <data name="AssignmentAutomatic" xml:space="preserve"><value>إسناد تلقائي</value></data>
+  <data name="AssignmentPermission" xml:space="preserve"><value>لم يُسند إليك إجراء هذا الفحص.</value></data>
+  <data name="AssignmentType1" xml:space="preserve"><value>شخص</value></data>
+  <data name="AssignmentType2" xml:space="preserve"><value>دور وظيفي</value></data>
+  <data name="AssignmentType3" xml:space="preserve"><value>مجموعة أو محطة</value></data>
+  <data name="AssignmentType4" xml:space="preserve"><value>طاقم الوحدة</value></data>
+  <data name="AssignmentUnavailable" xml:space="preserve"><value>اختر إسنادًا متاحًا في هذه المؤسسة.</value></data>
+  <data name="CalendarInclude" xml:space="preserve"><value>فحوص الجاهزية</value></data>
+  <data name="CalendarRange" xml:space="preserve"><value>اختر فترة تقويم لا تتجاوز 93 يومًا.</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>معدات ذات رقم تسلسلي</value></data>
+  <data name="ReminderFixedTime" xml:space="preserve"><value>وقت الملخص اليومي (المنطقة الزمنية للمؤسسة؛ يحل محل بداية المناوبة)</value></data>
+  <data name="ReminderShiftStart" xml:space="preserve"><value>إرسال ملخص عند بداية المناوبة</value></data>
+  <data name="ReminderTimeValidation" xml:space="preserve"><value>أدخل وقتًا واحدًا بتنسيق HH:mm.</value></data>
 </root>

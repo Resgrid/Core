@@ -27,10 +27,10 @@ namespace Resgrid.Services
 
 			try
 			{
-				if (!await _flags.IsEnabledAsync(FeatureFlagKeys.ChecklistsSystem, departmentId))
+				if ((await _flags.EvaluateFreshAsync(FeatureFlagKeys.ChecklistsSystem, departmentId))?.IsEnabled != true)
 					return false;
 
-				var settings = await _settings.GetDepartmentModuleSettingsAsync(departmentId);
+				var settings = await _settings.GetDepartmentModuleSettingsAsync(departmentId, true);
 				return settings != null && !settings.ChecklistsDisabled;
 			}
 			catch (Exception ex)

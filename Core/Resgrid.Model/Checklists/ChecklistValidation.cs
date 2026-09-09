@@ -13,7 +13,7 @@ namespace Resgrid.Model.Checklists
 			if (form == null) { errors.Add("A definition is required."); return errors; }
 			if (string.IsNullOrWhiteSpace(form.Name) || form.Name.Length > 200) errors.Add("Name is required and must be at most 200 characters.");
 			if (form.Instructions?.Length > 10000) errors.Add("Instructions are too long.");
-			if (!Enum.IsDefined(typeof(ChecklistCategory), form.Category) || !new[] { ChecklistTargetType.Department, ChecklistTargetType.Unit, ChecklistTargetType.Group, ChecklistTargetType.Personnel }.Contains(form.TargetType)) errors.Add("Choose a supported category and target type.");
+			if (!Enum.IsDefined(typeof(ChecklistCategory), form.Category) || !new[] { ChecklistTargetType.Department, ChecklistTargetType.Unit, ChecklistTargetType.Group, ChecklistTargetType.Personnel, ChecklistTargetType.InventoryAsset }.Contains(form.TargetType)) errors.Add("Choose a supported category and target type.");
 			if (form.PassThreshold < 0 || form.PassThreshold > 100) errors.Add("Pass threshold must be between 0 and 100.");
 			if (form.Sections == null || form.Sections.Count == 0 || form.Sections.Count > 30) { errors.Add("Use between 1 and 30 sections."); return errors; }
 			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

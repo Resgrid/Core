@@ -214,6 +214,11 @@ namespace Resgrid.Model
 		ChecklistCompletionSubmitted,
 		ChecklistWitnessAttested,
 		ChecklistFileAdded,
-		ChecklistFileRemoved
+		ChecklistFileRemoved,
+		ChecklistScheduleAdded,
+		ChecklistScheduleUpdated,
+		ChecklistOccurrenceMissed,
+		ChecklistOccurrenceSkipped,
+		ChecklistReminderSettingsUpdated
 	}
 }

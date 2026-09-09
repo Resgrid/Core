@@ -93,7 +93,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public void Every_persisted_content_slot_and_binary_has_a_catalog_and_upgrade_binding()
 		{
-			var catalog = new ProtectedFieldCatalog(); var bindings = AdpTableBindings.ForVersionRange(catalog, 13, 14);
+			var catalog = new ProtectedFieldCatalog(); var bindings = AdpTableBindings.ForVersionRange(catalog, 13, catalog.Version);
 			foreach (var table in ChecklistTables.All.Values)
 			{
 				bindings.Should().ContainSingle(b => b.TableName == table && b.DepartmentColumn == "DepartmentId" && b.ProtectedMarkerColumn == "IsProtected");

@@ -43,7 +43,7 @@ namespace Resgrid.Services
 				// carry the init-only marker column across.
 				scoped.Add(new AdpTableBinding(binding.TableName, binding.PkColumn, binding.PkIsNumeric,
 					binding.DepartmentColumn, binding.ParentFkColumn, binding.ParentTable, binding.ParentPkColumn,
-					columns) with { ProtectedMarkerColumn = binding.ProtectedMarkerColumn, CarrierColumns = binding.CarrierColumns, RowFilterColumn = binding.RowFilterColumn });
+					columns) with { ProtectedMarkerColumn = binding.ProtectedMarkerColumn, CarrierColumns = binding.CarrierColumns, RowFilterColumn = binding.RowFilterColumn, Discriminator = binding.Discriminator });
 			}
 
 			return scoped;
@@ -57,12 +57,20 @@ namespace Resgrid.Services
 				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ProtectedFieldStorageKind.Binary);
 			AdpColumnSpec Packed(string table, string column) =>
 				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", ProtectedFieldStorageKind.PackedJson);
-			AdpColumnSpec Companion(string table, string column) =>
+			AdpColumnSpec Companion(string table, string column, bool boolean = false) =>
 				new AdpColumnSpec(column, $"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}",
-					ProtectedFieldStorageKind.CompanionColumn, $"Protected{column}Envelope");
+					ProtectedFieldStorageKind.CompanionColumn, $"Protected{column}Envelope", boolean);
 
 			var bindings = new List<AdpTableBinding>
 			{
+				AdpTableBinding.Direct("AuditLogs", "AuditLogId", true, "DepartmentId", new[] { Text("AuditLogs", "Data") })
+					with { Discriminator = new AdpRowDiscriminator("LogType", Resgrid.Model.Checklists.ReadinessHistoryFields.AuditTypes) },
+				AdpTableBinding.Direct("DomainEventOutbox", "DomainEventOutboxId", true, "DepartmentId", new[] { Text("DomainEventOutbox", "PayloadJson"), Text("DomainEventOutbox", "LastError") })
+					with { Discriminator = new AdpRowDiscriminator("ProducerSubsystem", Text: "Checklists") },
+				AdpTableBinding.Direct("WorkflowRuns", "WorkflowRunId", false, "DepartmentId", new[] { Text("WorkflowRuns", "InputPayload"), Text("WorkflowRuns", "ErrorMessage") })
+					with { Discriminator = new AdpRowDiscriminator("TriggerEventType", Resgrid.Model.Checklists.ChecklistWorkflowPayload.Triggers) },
+				AdpTableBinding.ViaParent("WorkflowRunLogs", "WorkflowRunLogId", false, "WorkflowRunId", "WorkflowRuns", "WorkflowRunId", new[] { Text("WorkflowRunLogs", "RenderedOutput"), Text("WorkflowRunLogs", "ActionResult"), Text("WorkflowRunLogs", "ErrorMessage") })
+					with { Discriminator = new AdpRowDiscriminator("TriggerEventType", Resgrid.Model.Checklists.ChecklistWorkflowPayload.Triggers, OnParent: true) },
 				AdpTableBinding.Direct("Calls", "CallId", pkIsNumeric: true, "DepartmentId", new[]
 				{
 					Text("Calls", "Name"), Text("Calls", "Type"), Text("Calls", "NatureOfCall"),
@@ -498,8 +506,13 @@ namespace Resgrid.Services
 				}) with { ProtectedMarkerColumn = "IsProtected" }
 			};
 			return bindings.Concat(Resgrid.Model.Checklists.ChecklistTables.All.Values.Select(table =>
-				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table == "ChecklistCompletionFiles"
-					? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, "Content") }) with { ProtectedMarkerColumn = "IsProtected" })).ToList();
+				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table switch
+				{
+					"ChecklistCompletionFiles" => new[] { Text(table, "Content"), Binary(table, "Data") },
+					"ChecklistCompletions" => new[] { Text(table, "Content"), Companion(table, "Score"), Companion(table, "Passed", true) },
+					"ChecklistCompletionItems" => new[] { Text(table, "Content"), Companion(table, "IsFailure", true) },
+					_ => new[] { Text(table, "Content") }
+				}) with { ProtectedMarkerColumn = "IsProtected" })).ToList();
 		}
 	}
 }

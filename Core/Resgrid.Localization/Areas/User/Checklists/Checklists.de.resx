@@ -534,4 +534,107 @@
   <data name="Checks" xml:space="preserve">
     <value>Prüfungen</value>
   </data>
+  <data name="Schedules" xml:space="preserve"><value>Zeitpläne</value></data>
+  <data name="NewSchedule" xml:space="preserve"><value>Neuer Zeitplan</value></data>
+  <data name="NoSchedules" xml:space="preserve"><value>Noch keine Zeitpläne.</value></data>
+  <data name="EditSchedule" xml:space="preserve"><value>Zeitplan bearbeiten</value></data>
+  <data name="Frequency" xml:space="preserve"><value>Häufigkeit</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Zeitzone</value></data>
+  <data name="SchedulePaused" xml:space="preserve"><value>Pausiert</value></data>
+  <data name="ScheduleNotes" xml:space="preserve"><value>Hinweise zum Zeitplan</value></data>
+  <data name="ScheduleStartDate" xml:space="preserve"><value>Startdatum</value></data>
+  <data name="ScheduleEndDate" xml:space="preserve"><value>Enddatum (optional)</value></data>
+  <data name="TimesOfDay" xml:space="preserve"><value>Ortszeiten</value></data>
+  <data name="WeeklyDays" xml:space="preserve"><value>Tage für wöchentliche Prüfungen</value></data>
+  <data name="DayOfMonth" xml:space="preserve"><value>Tag des Monats</value></data>
+  <data name="AnchorMonth" xml:space="preserve"><value>Ausgangsmonat</value></data>
+  <data name="ScheduleWorkshift" xml:space="preserve"><value>Dienstschicht für Prüfungen je Schicht</value></data>
+  <data name="WorkshiftFallback" xml:space="preserve"><value>Täglich Ortszeiten verwenden</value></data>
+  <data name="WindowMinutes" xml:space="preserve"><value>Bearbeitungszeitraum (Minuten)</value></data>
+  <data name="ScheduleEnabled" xml:space="preserve"><value>Zeitplan aktiviert</value></data>
+  <data name="SaveSchedule" xml:space="preserve"><value>Zeitplan speichern</value></data>
+  <data name="DueChecks" xml:space="preserve"><value>Fällige Prüfungen</value></data>
+  <data name="NoDueChecks" xml:space="preserve"><value>Keine Prüfungen in dieser Liste.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Geplant für</value></data>
+  <data name="WindowEnds" xml:space="preserve"><value>Zeitraum endet</value></data>
+  <data name="Actions" xml:space="preserve"><value>Aktionen</value></data>
+  <data name="OpenCheck" xml:space="preserve"><value>Prüfung öffnen</value></data>
+  <data name="ExcuseCheck" xml:space="preserve"><value>Prüfung entschuldigen</value></data>
+  <data name="SkipReason" xml:space="preserve"><value>Grund für die entschuldigte Prüfung</value></data>
+  <data name="Scheduled" xml:space="preserve"><value>Geplant</value></data>
+  <data name="Missed" xml:space="preserve"><value>Versäumt</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Entschuldigt</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Abgebrochen</value></data>
+  <data name="PerShift" xml:space="preserve"><value>Je Schicht</value></data>
+  <data name="Daily" xml:space="preserve"><value>Täglich</value></data>
+  <data name="Weekly" xml:space="preserve"><value>Wöchentlich</value></data>
+  <data name="Monthly" xml:space="preserve"><value>Monatlich</value></data>
+  <data name="Quarterly" xml:space="preserve"><value>Vierteljährlich</value></data>
+  <data name="SemiAnnual" xml:space="preserve"><value>Halbjährlich</value></data>
+  <data name="Annual" xml:space="preserve"><value>Jährlich</value></data>
+  <data name="ScheduleValidation" xml:space="preserve"><value>Prüfen Sie Daten, Uhrzeiten, Ziel und Wiederholung des Zeitplans.</value></data>
+  <data name="SchedulePermission" xml:space="preserve"><value>Sie dürfen keine Prüfzeitpläne verwalten.</value></data>
+  <data name="ScheduleUnavailable" xml:space="preserve"><value>Dieser Zeitplan ist nicht verfügbar.</value></data>
+  <data name="ScheduleRequiresPublished" xml:space="preserve"><value>Veröffentlichen Sie die Prüfliste, bevor Sie sie einplanen.</value></data>
+  <data name="OccurrenceUnavailable" xml:space="preserve"><value>Diese Prüfung ist nicht verfügbar oder wurde bereits geändert.</value></data>
+  <data name="SkipReasonRequired" xml:space="preserve"><value>Geben Sie einen Grund mit höchstens 4.000 Zeichen ein.</value></data>
+  <data name="ChecklistCompleted" xml:space="preserve"><value>Prüfliste abgeschlossen</value></data>
+  <data name="ChecklistFailed" xml:space="preserve"><value>Prüfliste nicht bestanden</value></data>
+  <data name="ChecklistMissed" xml:space="preserve"><value>Prüfliste versäumt</value></data>
+  <data name="ChecklistScheduleChanged" xml:space="preserve"><value>Prüfzeitplan geändert</value></data>
+  <data name="ChecklistOccurrenceSkipped" xml:space="preserve"><value>Geplante Prüfung entschuldigt</value></data>
+  <data name="ScheduleVersionGuidance" xml:space="preserve"><value>Beim Speichern wird die aktuell veröffentlichte Version festgelegt. Änderungen ersetzen künftige unbegonnene Prüfungen; Pausieren hebt unbegonnene Prüfungen auf.</value></data>
+  <data name="ScheduleTimeGuidance" xml:space="preserve"><value>Die Zeiten gelten in dieser Zeitzone. Nicht vorhandene Uhrzeiten werden auf die nächste gültige Minute verschoben; doppelte Uhrzeiten werden nur einmal berücksichtigt.</value></data>
+  <data name="TimesOfDayGuidance" xml:space="preserve"><value>Geben Sie bis zu acht Uhrzeiten im 24-Stunden-Format ein, getrennt durch Kommas.</value></data>
+  <data name="MonthGuidance" xml:space="preserve"><value>Für monatliche oder seltenere Prüfungen. In kurzen Monaten gilt der letzte Tag. Der Ausgangsmonat bestimmt vierteljährliche, halbjährliche und jährliche Prüfungen.</value></data>
+  <data name="WorkshiftGuidance" xml:space="preserve"><value>Nur für Prüfungen je Schicht. Eine gewählte Dienstschicht nutzt ihre erfassten Startdaten; sonst gelten täglich die Ortszeiten.</value></data>
+  <data name="DueGuidance" xml:space="preserve"><value>Anstehende Prüfungen für sieben Tage und offene Prüfungen. Versäumte Prüfungen können weiterhin abgeschlossen werden.</value></data>
+  <data name="ReminderSettings" xml:space="preserve">
+    <value>Erinnerungen an Checklisten</value>
+  </data>
+  <data name="ReminderHelp" xml:space="preserve">
+    <value>Erinnerungen gelten für Prüfungen, die nach dem Aktivieren beginnen. Nachrichten enthalten einen Anmeldelink und berücksichtigen die Benachrichtigungseinstellungen jeder Person. Ausstehende Erinnerungen werden je Empfänger zusammengefasst.</value>
+  </data>
+  <data name="ReminderEnabled" xml:space="preserve">
+    <value>Erinnerungen an Checklisten aktivieren</value>
+  </data>
+  <data name="ReminderBefore" xml:space="preserve">
+    <value>Minuten vor der Fälligkeit (0 deaktiviert)</value>
+  </data>
+  <data name="ReminderMissed" xml:space="preserve">
+    <value>Zuständiges Personal über versäumte Prüfungen benachrichtigen</value>
+  </data>
+  <data name="ReminderDigest" xml:space="preserve">
+    <value>Ausstehende Erinnerungen zusammenfassen</value>
+  </data>
+  <data name="ReminderEscalate" xml:space="preserve">
+    <value>Nach so vielen Minuten Überfälligkeit die Abteilungsadministratoren benachrichtigen (leer deaktiviert)</value>
+  </data>
+  <data name="ReminderValidation" xml:space="preserve">
+    <value>Geben Sie 0–10080 Minuten für Erinnerungen und 1–43200 Minuten für die Eskalation ein oder lassen Sie die Eskalation leer.</value>
+  </data>
+  <data name="ReminderTitle" xml:space="preserve">
+    <value>Erinnerungen an Checklisten</value>
+  </data>
+  <data name="ReminderMessage" xml:space="preserve">
+    <value>Aktualisierungen zu Checklisten sind verfügbar. Melden Sie sich an, um Ihre Prüfungen einzusehen.</value>
+  </data>
+  <data name="SaveReminders" xml:space="preserve">
+    <value>Erinnerungseinstellungen speichern</value>
+  </data>
+  <data name="AssetUnavailable" xml:space="preserve"><value>Einzeln erfasste Ausrüstung ist nicht verfügbar.</value></data>
+  <data name="Assignment" xml:space="preserve"><value>Zugewiesen an</value></data>
+  <data name="AssignmentAutomatic" xml:space="preserve"><value>Automatische Zuordnung</value></data>
+  <data name="AssignmentPermission" xml:space="preserve"><value>Sie sind dieser Prüfung nicht zugewiesen.</value></data>
+  <data name="AssignmentType1" xml:space="preserve"><value>Einzelperson</value></data>
+  <data name="AssignmentType2" xml:space="preserve"><value>Personalrolle</value></data>
+  <data name="AssignmentType3" xml:space="preserve"><value>Gruppe oder Wache</value></data>
+  <data name="AssignmentType4" xml:space="preserve"><value>Fahrzeugbesatzung</value></data>
+  <data name="AssignmentUnavailable" xml:space="preserve"><value>Wählen Sie eine verfügbare Zuweisung in dieser Organisation.</value></data>
+  <data name="CalendarInclude" xml:space="preserve"><value>Bereitschaftsprüfungen</value></data>
+  <data name="CalendarRange" xml:space="preserve"><value>Wählen Sie einen Kalenderzeitraum von höchstens 93 Tagen.</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>Einzeln erfasste Ausrüstung</value></data>
+  <data name="ReminderFixedTime" xml:space="preserve"><value>Uhrzeit der täglichen Zusammenfassung (Zeitzone der Organisation; ersetzt Schichtbeginn)</value></data>
+  <data name="ReminderShiftStart" xml:space="preserve"><value>Zusammenfassung bei Schichtbeginn senden</value></data>
+  <data name="ReminderTimeValidation" xml:space="preserve"><value>Geben Sie eine Uhrzeit im Format HH:mm ein.</value></data>
 </root>

@@ -17,20 +17,19 @@ namespace Resgrid.Model.Checklists
 		public bool RequireLocation { get; set; }
 		public bool RequiresIndependentWitness { get; set; }
 		public List<ChecklistSection> Sections { get; set; } = new List<ChecklistSection>();
-		public static ChecklistForm FromTemplate(ChecklistTemplate template)
+		public static ChecklistForm FromTemplate(ChecklistTemplate template, bool assetsAvailable = false)
 		{
 			var form = new ChecklistForm
 			{
 			Name = template.Name, Instructions = template.Description, Category = template.SuggestedCategory,
-			TargetType = template.SuggestedTargetType == ChecklistTargetType.InventoryAsset ? ChecklistTargetType.Department : template.SuggestedTargetType,
+			TargetType = !assetsAvailable && template.SuggestedTargetType == ChecklistTargetType.InventoryAsset ? ChecklistTargetType.Department : template.SuggestedTargetType,
 			RequiresIndependentWitness = template.RequiresIndependentWitness,
 			Sections = template.Sections.Select(s => new ChecklistSection { Name = s.Name,
 				Items = s.Items.Select(i => new ChecklistItem { Name = i.Name, Type = i.Type, Required = i.Required,
 					Critical = i.Critical, AllowNotApplicable = i.AllowNotApplicable, RequireNoteOnFail = i.RequireNoteOnFail, Weight = i.Type == ChecklistItemType.FreeText && !i.Required ? 0 : 1 }).ToList() }).ToList()
 			};
-			// Linked inventory assets belong to P1-M2. On-demand equipment checks remain usable now,
-			// attributed to the responsible department/unit/group/person and an explicit equipment ID.
-			if (template.SuggestedTargetType == ChecklistTargetType.InventoryAsset)
+			// Without serialized inventory, retain a required equipment identifier and responsible target.
+			if (!assetsAvailable && template.SuggestedTargetType == ChecklistTargetType.InventoryAsset)
 				form.Sections[0].Items.Insert(0, new ChecklistItem { Name = "Equipment identifier", Instructions = "Record the equipment label or serial number.", Type = ChecklistItemType.FreeText, Required = true, Weight = 0, RequireNoteOnFail = false });
 			return form;
 		}
@@ -100,6 +99,7 @@ namespace Resgrid.Model.Checklists
 	public sealed class ChecklistRunView
 	{
 		public int VersionNumber { get; set; }
+		public string WitnessAttestation { get; set; }
 		public ChecklistCompletion Completion { get; set; }
 		public ChecklistForm Form { get; set; }
 		public ChecklistTarget Target { get; set; }

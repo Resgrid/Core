@@ -301,9 +301,16 @@ namespace Resgrid.Repositories.DataRepository
 
 		private string Scope(AdpTableBinding binding)
 		{
+			var filter = binding.Discriminator;
+			// Discriminators are code-owned constants. Integers and escaped string literals keep the same
+			// scope on reads, verification and counts without broadening the shared table to other features.
+			var discriminator = filter == null ? "" : filter.Text != null
+				? $"{Ident(filter.Column)} = '{filter.Text.Replace("'", "''")}'"
+				: $"{Ident(filter.Column)} IN ({string.Join(",", filter.Integers ?? throw new InvalidOperationException("Missing ADP discriminator values."))})";
 			var scope = !string.IsNullOrEmpty(binding.DepartmentColumn)
 				? $"{Ident(binding.DepartmentColumn)} = @DepartmentId"
-				: $"{Ident(binding.ParentFkColumn)} IN (SELECT {Ident(binding.ParentPkColumn)} FROM {Table(binding.ParentTable)} WHERE {Ident("DepartmentId")} = @DepartmentId)";
+				: $"{Ident(binding.ParentFkColumn)} IN (SELECT {Ident(binding.ParentPkColumn)} FROM {Table(binding.ParentTable)} WHERE {Ident("DepartmentId")} = @DepartmentId{(filter?.OnParent == true ? " AND " + discriminator : "")})";
+			if (filter != null && !filter.OnParent) scope = $"({scope} AND {discriminator})";
 
 			// A boolean row filter narrows the sweep (RmsRecordValues.ProtectionRequired): rows outside it are never
 			// read, counted or verified, so a Standard-classified value stays plaintext by construction.

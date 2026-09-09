@@ -683,9 +683,15 @@ namespace Resgrid.Services
 			Prevention("RmsPreventionAttachments", "Description", ProtectedFieldClassification.Sensitive);
 			Prevention("RmsPreventionAttachments", "Data", ProtectedFieldClassification.Phi, ProtectedFieldStorageKind.Binary);
 
+			foreach (var history in new[] { ("AuditLogs", "Data"), ("DomainEventOutbox", "PayloadJson"), ("DomainEventOutbox", "LastError"), ("WorkflowRuns", "InputPayload"), ("WorkflowRuns", "ErrorMessage"), ("WorkflowRunLogs", "RenderedOutput"), ("WorkflowRunLogs", "ActionResult"), ("WorkflowRunLogs", "ErrorMessage") })
+				list.Add(new ProtectedFieldDefinition(history.Item1.ToLowerInvariant() + "." + history.Item2.ToLowerInvariant(), OperationalFamily, history.Item1, history.Item2, ProtectedFieldStorageKind.Text,
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.Checklists.ReadinessHistoryFields.CatalogVersion));
+			foreach (var outcome in new[] { (Table: "ChecklistCompletions", Column: "Score"), (Table: "ChecklistCompletions", Column: "Passed"), (Table: "ChecklistCompletionItems", Column: "IsFailure") })
+				list.Add(new ProtectedFieldDefinition(outcome.Table.ToLowerInvariant() + "." + outcome.Column.ToLowerInvariant(), OperationalFamily, outcome.Table, outcome.Column, ProtectedFieldStorageKind.CompanionColumn,
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 15));
 			foreach (var table in Resgrid.Model.Checklists.ChecklistTables.All.Values)
 				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
-					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 14));
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, table == "ChecklistSchedules" ? 17 : 14));
 			list.Add(new ProtectedFieldDefinition("checklistcompletionfiles.data", OperationalFamily, "ChecklistCompletionFiles", "Data", ProtectedFieldStorageKind.Binary,
 				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 14));
 			return list;

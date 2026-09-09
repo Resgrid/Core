@@ -17,8 +17,9 @@ namespace Resgrid.Services
 		private readonly IUnitsService _units;
 		private readonly IAuthorizationService _authorization;
 		private readonly IUserProfileService _profiles;
-		public ChecklistAuthorizationService(IDepartmentsService departments, IDepartmentGroupsService groups, IPersonnelRolesService roles, IPermissionsService permissions, IUnitsService units, IAuthorizationService authorization, IUserProfileService profiles)
-		{ _departments = departments; _groups = groups; _roles = roles; _permissions = permissions; _units = units; _authorization = authorization; _profiles = profiles; }
+		private readonly IChecklistAssetSource _assets;
+		public ChecklistAuthorizationService(IDepartmentsService departments, IDepartmentGroupsService groups, IPersonnelRolesService roles, IPermissionsService permissions, IUnitsService units, IAuthorizationService authorization, IUserProfileService profiles, IChecklistAssetSource assets = null)
+		{ _departments = departments; _groups = groups; _roles = roles; _permissions = permissions; _units = units; _authorization = authorization; _profiles = profiles; _assets = assets; }
 		public async Task RequireMemberAsync(ChecklistActor actor)
 		{
 			if (actor == null || actor.DepartmentId <= 0 || string.IsNullOrWhiteSpace(actor.UserId)) throw new ChecklistException(403, "Active department membership is required.");
@@ -50,6 +51,11 @@ namespace Resgrid.Services
 		public async Task<ChecklistTarget> TargetAsync(ChecklistActor actor, ChecklistTargetType type, string id)
 		{
 			await RequireMemberAsync(actor);
+			return await TargetCoreAsync(actor, type, id, () => _groups.GetGroupForUserAsync(actor.UserId, actor.DepartmentId), () => CanManageAsync(actor));
+		}
+		private async Task<ChecklistTarget> TargetCoreAsync(ChecklistActor actor, ChecklistTargetType type, string id,
+			Func<Task<DepartmentGroup>> ownGroup, Func<Task<bool>> canManage)
+		{
 			if (id == null || id.Length > 128) throw new ChecklistException(400, "Select a target.");
 			string name = null; int? targetGroupId = null;
 			if (type == ChecklistTargetType.Department && id == actor.DepartmentId.ToString()) name = (await _departments.GetDepartmentByIdAsync(actor.DepartmentId, true))?.Name;
@@ -61,13 +67,18 @@ namespace Resgrid.Services
 			else if (type == ChecklistTargetType.Group && int.TryParse(id, out var groupId))
 			{
 				var group = await _groups.GetGroupByIdAsync(groupId, true);
-				var own = await _groups.GetGroupForUserAsync(actor.UserId, actor.DepartmentId);
-				if (group?.DepartmentId == actor.DepartmentId && (groupId == own?.DepartmentGroupId || await CanManageAsync(actor))) { name = group.Name; targetGroupId = group.DepartmentGroupId; }
+				var own = await ownGroup();
+				if (group?.DepartmentId == actor.DepartmentId && (groupId == own?.DepartmentGroupId || await canManage())) { name = group.Name; targetGroupId = group.DepartmentGroupId; }
 			}
 			else if (type == ChecklistTargetType.Personnel)
 			{
 				var member = await _departments.GetDepartmentMemberAsync(id, actor.DepartmentId, true);
 				if (member != null && !member.IsDeleted && !member.IsDisabled.GetValueOrDefault() && (id == actor.UserId || await _authorization.CanUserViewPersonAsync(actor.UserId, id, actor.DepartmentId))) { name = (await _profiles.GetProfileByUserIdAsync(id))?.FullName?.AsFirstNameLastName ?? id; targetGroupId = (await _groups.GetGroupForUserAsync(id, actor.DepartmentId))?.DepartmentGroupId; }
+			}
+			else if (type == ChecklistTargetType.InventoryAsset && Guid.TryParse(id, out _) && _assets != null && await _assets.IsAvailableAsync(actor.DepartmentId))
+			{
+				var asset = await _assets.GetAsync(actor, id);
+				if (asset?.DepartmentId == actor.DepartmentId && asset.Id == id) { name = asset.Name; targetGroupId = asset.GroupId; }
 			}
 			if (name == null) throw new ChecklistException(404, "Target is unavailable.");
 			return new ChecklistTarget { Type = type, Id = id, Name = name, GroupId = targetGroupId };
@@ -82,11 +93,19 @@ namespace Resgrid.Services
 				case ChecklistTargetType.Unit: ids = (await _units.GetUnitsForDepartmentAsync(actor.DepartmentId)).Select(u => u.UnitId.ToString()); break;
 				case ChecklistTargetType.Group: ids = (await _groups.GetAllGroupsForDepartmentAsync(actor.DepartmentId)).Select(g => g.DepartmentGroupId.ToString()); break;
 				case ChecklistTargetType.Personnel: ids = (await _departments.GetAllMembersForDepartmentAsync(actor.DepartmentId)).Where(m => !m.IsDeleted && !m.IsDisabled.GetValueOrDefault()).Select(m => m.UserId); break;
+				case ChecklistTargetType.InventoryAsset:
+					if (_assets == null || !await _assets.IsAvailableAsync(actor.DepartmentId)) return new List<ChecklistTarget>();
+					ids = (await _assets.ListAsync(actor)).Where(a => a.DepartmentId == actor.DepartmentId).Select(a => a.Id); break;
 				default: return new List<ChecklistTarget>();
 			}
 			var result = new List<ChecklistTarget>();
+			// Share only actor state within this listing. Recheck each target and every later command.
+			Task<DepartmentGroup> ownGroup = null;
+			Task<bool> canManage = null;
 			foreach (var id in ids)
-				try { result.Add(await TargetAsync(actor, type, id)); } catch (ChecklistException ex) when (ex.StatusCode == 404) { }
+				try { result.Add(await TargetCoreAsync(actor, type, id,
+					() => ownGroup ??= _groups.GetGroupForUserAsync(actor.UserId, actor.DepartmentId),
+					() => canManage ??= CanManageAsync(actor))); } catch (ChecklistException ex) when (ex.StatusCode == 404) { }
 			return result;
 		}
 	}

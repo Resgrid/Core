@@ -19,8 +19,7 @@ namespace Resgrid.Model.Checklists
 		public IReadOnlyList<string> Keywords { get; }
 
 		[JsonIgnore]
-		public string SearchText => string.Join(" ", new[] { Name, Sector, Description }
-			.Concat(Keywords).Concat(Sections.SelectMany(s => s.Items).Select(i => i.Name))).ToLowerInvariant();
+		public string SearchText { get; }
 
 		public ChecklistTemplate(string id, string name, string sector, string description,
 			ChecklistCategory category, ChecklistScheduleFrequency frequency, ChecklistTargetType target,
@@ -36,6 +35,8 @@ namespace Resgrid.Model.Checklists
 			RequiresIndependentWitness = requiresIndependentWitness;
 			Keywords = keywords.ToList().AsReadOnly();
 			Sections = sections.ToList().AsReadOnly();
+			SearchText = string.Join(" ", new[] { Name, Sector, Description }
+				.Concat(Keywords).Concat(Sections.SelectMany(s => s.Items).Select(i => i.Name))).ToLowerInvariant();
 		}
 	}
 

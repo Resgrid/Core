@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Resgrid.Model.Checklists;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -27,11 +29,17 @@ namespace Resgrid.Services.Records
 
 		private readonly IDomainEventOutboxRepository _outboxRepository;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly Lazy<IProtectedProjectionService> _protection;
+		private readonly Lazy<IReadinessHistoryProtectionService> _history;
+		private Task ProtectHistoryAsync(DomainEventOutboxEntry entry, CancellationToken ct) => (_history?.Value ?? throw new InvalidOperationException("Readiness history protection is unavailable."))
+			.ProtectAsync(entry.DepartmentId, entry.DomainEventOutboxId.ToString(System.Globalization.CultureInfo.InvariantCulture), entry, ReadinessHistoryFields.Outbox, ct);
 
-		public DomainEventOutboxService(IDomainEventOutboxRepository outboxRepository, IEventAggregator eventAggregator)
+		public DomainEventOutboxService(IDomainEventOutboxRepository outboxRepository, IEventAggregator eventAggregator, Lazy<IProtectedProjectionService> protection = null, Lazy<IReadinessHistoryProtectionService> history = null)
 		{
 			_outboxRepository = outboxRepository;
 			_eventAggregator = eventAggregator;
+			_protection = protection;
+			_history = history;
 		}
 
 		public async Task<DomainEventOutboxEntry> EnqueueAsync(int departmentId, string producerSubsystem, DomainEventEnvelope envelope, CancellationToken cancellationToken = default)
@@ -53,7 +61,9 @@ namespace Resgrid.Services.Records
 				AggregateVersion = envelope.AggregateVersion,
 				Sequence = await _outboxRepository.GetNextSequenceAsync(departmentId, envelope.AggregateId),
 				TriggerEventType = envelope.Trigger.HasValue ? (int?)envelope.Trigger.Value : null,
-				PayloadJson = JsonConvert.SerializeObject(envelope.Payload ?? new object()),
+				PayloadJson = producerSubsystem == "Checklists"
+					? await ChecklistWorkflowPayload.ProjectAsync(departmentId, envelope.Payload, _protection?.Value)
+					: JsonConvert.SerializeObject(envelope.Payload ?? new object()),
 				CorrelationId = envelope.CorrelationId,
 				CausationId = envelope.CausationId,
 				OriginClient = (int)envelope.OriginClient,
@@ -64,7 +74,14 @@ namespace Resgrid.Services.Records
 				CreatedOn = now
 			};
 
-			return await _outboxRepository.InsertAsync(entry, cancellationToken, true);
+			if (producerSubsystem != "Checklists") return await _outboxRepository.InsertAsync(entry, cancellationToken, true);
+			var payload = entry.PayloadJson;
+			entry.ReadinessRoutingJson = ChecklistWorkflowPayload.Routing(payload, entry.AggregateId);
+			entry.PayloadJson = "{}"; // Allocate the numeric AAD identity without writing content to SQL.
+			entry = await _outboxRepository.InsertAsync(entry, cancellationToken, true);
+			entry.PayloadJson = payload; await ProtectHistoryAsync(entry, cancellationToken);
+			if (!await _outboxRepository.InitializeChecklistPayloadAsync(entry, cancellationToken)) throw new InvalidOperationException("Checklist event initialization failed.");
+			return entry;
 		}
 
 		public async Task<int> DispatchAfterCommitAsync(IEnumerable<long> domainEventOutboxIds, CancellationToken cancellationToken = default)
@@ -135,7 +152,18 @@ namespace Resgrid.Services.Records
 		{
 			try
 			{
-				_eventAggregator.SendMessage(new DomainEventDispatchedEvent
+				var dispatchPayload = entry.PayloadJson;
+				if (entry.ProducerSubsystem == "Checklists")
+				{
+					var original = entry.PayloadJson; var oldError = entry.LastError;
+					var source = ProtectedDataEnvelope.HasEnvelopePrefix(original) ? entry.ReadinessRoutingJson : original;
+					if (string.IsNullOrEmpty(source)) throw new InvalidOperationException("Checklist event routing metadata is unavailable.");
+					dispatchPayload = await ChecklistWorkflowPayload.ProjectAsync(entry.DepartmentId, JObject.Parse(source), _protection?.Value);
+					await ProtectHistoryAsync(entry, cancellationToken);
+					if ((entry.PayloadJson != original || entry.LastError != oldError) && !await _outboxRepository.ReplaceChecklistPayloadAsync(entry, entry.PayloadJson, cancellationToken))
+						throw new InvalidOperationException("Checklist outbox lease changed before projection was saved.");
+				}
+				var dispatched = new DomainEventDispatchedEvent
 				{
 					DepartmentId = entry.DepartmentId,
 					EventId = entry.EventId,
@@ -146,22 +174,29 @@ namespace Resgrid.Services.Records
 					AggregateId = entry.AggregateId,
 					Sequence = entry.Sequence,
 					TriggerEventType = entry.TriggerEventType,
-					PayloadJson = entry.PayloadJson,
+					PayloadJson = dispatchPayload,
 					CorrelationId = entry.CorrelationId,
 					CausationId = entry.CausationId,
 					OriginClient = entry.OriginClient,
 					IsReplay = entry.Attempts > 1,
 					OccurredOn = entry.OccurredOn
-				});
+				};
+				_eventAggregator.SendMessage(dispatched);
+				await _eventAggregator.SendMessageAsync(dispatched);
 
-				await _outboxRepository.MarkDispatchedAsync(entry.DomainEventOutboxId, DateTime.UtcNow, cancellationToken);
-				return true;
+				return await _outboxRepository.MarkDispatchedAsync(entry.DomainEventOutboxId, DateTime.UtcNow, cancellationToken);
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex, $"Outbox dispatch failed for event {entry.EventId} (attempt {entry.Attempts}).");
+				var error = entry.ProducerSubsystem == "Checklists" ? "Checklist subscriber delivery failed." : ex.Message;
+				if (entry.ProducerSubsystem == "Checklists")
+				{
+					entry.LastError = error; await ProtectHistoryAsync(entry, cancellationToken); error = entry.LastError;
+				}
+				if (entry.ProducerSubsystem == "Checklists") Logging.LogError($"Outbox dispatch failed for event {entry.EventId} (attempt {entry.Attempts}).");
+				else Logging.LogException(ex, $"Outbox dispatch failed for event {entry.EventId} (attempt {entry.Attempts}).");
 				var terminal = entry.Attempts >= MaximumAttempts;
-				await _outboxRepository.MarkFailedAsync(entry.DomainEventOutboxId, ex.Message, terminal ? (DateTime?)null : DateTime.UtcNow.Add(BackoffFor(entry.Attempts)), terminal, cancellationToken);
+				await _outboxRepository.MarkFailedAsync(entry.DomainEventOutboxId, error, terminal ? (DateTime?)null : DateTime.UtcNow.Add(BackoffFor(entry.Attempts)), terminal, cancellationToken);
 				return false;
 			}
 		}

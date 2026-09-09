@@ -534,4 +534,107 @@
   <data name="Checks" xml:space="preserve">
     <value>Έλεγχοι</value>
   </data>
+  <data name="Schedules" xml:space="preserve"><value>Προγράμματα</value></data>
+  <data name="NewSchedule" xml:space="preserve"><value>Νέο πρόγραμμα</value></data>
+  <data name="NoSchedules" xml:space="preserve"><value>Δεν υπάρχουν ακόμη προγράμματα.</value></data>
+  <data name="EditSchedule" xml:space="preserve"><value>Επεξεργασία προγράμματος</value></data>
+  <data name="Frequency" xml:space="preserve"><value>Συχνότητα</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Ζώνη ώρας</value></data>
+  <data name="SchedulePaused" xml:space="preserve"><value>Σε παύση</value></data>
+  <data name="ScheduleNotes" xml:space="preserve"><value>Σημειώσεις προγράμματος</value></data>
+  <data name="ScheduleStartDate" xml:space="preserve"><value>Ημερομηνία έναρξης</value></data>
+  <data name="ScheduleEndDate" xml:space="preserve"><value>Ημερομηνία λήξης (προαιρετική)</value></data>
+  <data name="TimesOfDay" xml:space="preserve"><value>Τοπικές ώρες</value></data>
+  <data name="WeeklyDays" xml:space="preserve"><value>Ημέρες εβδομαδιαίων ελέγχων</value></data>
+  <data name="DayOfMonth" xml:space="preserve"><value>Ημέρα του μήνα</value></data>
+  <data name="AnchorMonth" xml:space="preserve"><value>Μήνας αναφοράς</value></data>
+  <data name="ScheduleWorkshift" xml:space="preserve"><value>Βάρδια για ελέγχους ανά βάρδια</value></data>
+  <data name="WorkshiftFallback" xml:space="preserve"><value>Χρήση τοπικών ωρών κάθε ημέρα</value></data>
+  <data name="WindowMinutes" xml:space="preserve"><value>Περιθώριο ολοκλήρωσης (λεπτά)</value></data>
+  <data name="ScheduleEnabled" xml:space="preserve"><value>Ενεργό πρόγραμμα</value></data>
+  <data name="SaveSchedule" xml:space="preserve"><value>Αποθήκευση προγράμματος</value></data>
+  <data name="DueChecks" xml:space="preserve"><value>Εκκρεμείς έλεγχοι</value></data>
+  <data name="NoDueChecks" xml:space="preserve"><value>Δεν υπάρχουν έλεγχοι σε αυτή τη λίστα.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Προγραμματισμένος για</value></data>
+  <data name="WindowEnds" xml:space="preserve"><value>Λήξη περιθωρίου</value></data>
+  <data name="Actions" xml:space="preserve"><value>Ενέργειες</value></data>
+  <data name="OpenCheck" xml:space="preserve"><value>Άνοιγμα ελέγχου</value></data>
+  <data name="ExcuseCheck" xml:space="preserve"><value>Δικαιολόγηση παράλειψης</value></data>
+  <data name="SkipReason" xml:space="preserve"><value>Αιτία δικαιολόγησης της παράλειψης</value></data>
+  <data name="Scheduled" xml:space="preserve"><value>Προγραμματισμένος</value></data>
+  <data name="Missed" xml:space="preserve"><value>Δεν εκτελέστηκε</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Δικαιολογημένη παράλειψη</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Ακυρωμένος</value></data>
+  <data name="PerShift" xml:space="preserve"><value>Ανά βάρδια</value></data>
+  <data name="Daily" xml:space="preserve"><value>Καθημερινά</value></data>
+  <data name="Weekly" xml:space="preserve"><value>Εβδομαδιαία</value></data>
+  <data name="Monthly" xml:space="preserve"><value>Μηνιαία</value></data>
+  <data name="Quarterly" xml:space="preserve"><value>Τριμηνιαία</value></data>
+  <data name="SemiAnnual" xml:space="preserve"><value>Ανά εξάμηνο</value></data>
+  <data name="Annual" xml:space="preserve"><value>Ετησίως</value></data>
+  <data name="ScheduleValidation" xml:space="preserve"><value>Ελέγξτε τις ημερομηνίες, τις ώρες, τον στόχο και την επανάληψη του προγράμματος.</value></data>
+  <data name="SchedulePermission" xml:space="preserve"><value>Δεν έχετε δικαίωμα διαχείρισης προγραμμάτων ελέγχου.</value></data>
+  <data name="ScheduleUnavailable" xml:space="preserve"><value>Αυτό το πρόγραμμα δεν είναι διαθέσιμο.</value></data>
+  <data name="ScheduleRequiresPublished" xml:space="preserve"><value>Δημοσιεύστε τη λίστα ελέγχου πριν την προγραμματίσετε.</value></data>
+  <data name="OccurrenceUnavailable" xml:space="preserve"><value>Αυτός ο έλεγχος δεν είναι διαθέσιμος ή έχει ήδη αλλάξει.</value></data>
+  <data name="SkipReasonRequired" xml:space="preserve"><value>Εισαγάγετε αιτία έως 4.000 χαρακτήρες.</value></data>
+  <data name="ChecklistCompleted" xml:space="preserve"><value>Η λίστα ελέγχου ολοκληρώθηκε</value></data>
+  <data name="ChecklistFailed" xml:space="preserve"><value>Η λίστα ελέγχου απέτυχε</value></data>
+  <data name="ChecklistMissed" xml:space="preserve"><value>Η λίστα ελέγχου δεν εκτελέστηκε</value></data>
+  <data name="ChecklistScheduleChanged" xml:space="preserve"><value>Το πρόγραμμα ελέγχου άλλαξε</value></data>
+  <data name="ChecklistOccurrenceSkipped" xml:space="preserve"><value>Η παράλειψη του προγραμματισμένου ελέγχου δικαιολογήθηκε</value></data>
+  <data name="ScheduleVersionGuidance" xml:space="preserve"><value>Η αποθήκευση δεσμεύει την τρέχουσα δημοσιευμένη έκδοση. Οι αλλαγές αντικαθιστούν μελλοντικούς ελέγχους που δεν ξεκίνησαν· η παύση ακυρώνει ελέγχους που δεν ξεκίνησαν.</value></data>
+  <data name="ScheduleTimeGuidance" xml:space="preserve"><value>Οι ώρες ακολουθούν αυτή τη ζώνη. Ώρα που παραλείπεται μεταφέρεται εμπρός· επαναλαμβανόμενη ώρα εκτελείται μία φορά.</value></data>
+  <data name="TimesOfDayGuidance" xml:space="preserve"><value>Εισαγάγετε έως οκτώ ώρες σε μορφή 24ώρου, χωρισμένες με κόμματα.</value></data>
+  <data name="MonthGuidance" xml:space="preserve"><value>Για μηνιαίους ή αραιότερους ελέγχους. Στους σύντομους μήνες χρησιμοποιείται η τελευταία ημέρα. Ο μήνας αναφοράς καθορίζει τριμηνιαίους, εξαμηνιαίους και ετήσιους ελέγχους.</value></data>
+  <data name="WorkshiftGuidance" xml:space="preserve"><value>Μόνο για ελέγχους ανά βάρδια. Η επιλεγμένη βάρδια χρησιμοποιεί τις καταγεγραμμένες ημερομηνίες έναρξης· διαφορετικά ισχύουν καθημερινά οι τοπικές ώρες.</value></data>
+  <data name="DueGuidance" xml:space="preserve"><value>Προσεχείς έλεγχοι επτά ημερών και ανολοκλήρωτοι έλεγχοι. Οι εκπρόθεσμοι έλεγχοι μπορούν ακόμη να ολοκληρωθούν.</value></data>
+  <data name="ReminderSettings" xml:space="preserve">
+    <value>Υπενθυμίσεις λιστών ελέγχου</value>
+  </data>
+  <data name="ReminderHelp" xml:space="preserve">
+    <value>Οι υπενθυμίσεις αφορούν ελέγχους που ξεκινούν μετά την ενεργοποίησή τους. Τα μηνύματα περιέχουν σύνδεσμο σύνδεσης και σέβονται τις προτιμήσεις ειδοποιήσεων κάθε ατόμου. Οι συνόψεις ομαδοποιούν τις εκκρεμείς υπενθυμίσεις ανά παραλήπτη.</value>
+  </data>
+  <data name="ReminderEnabled" xml:space="preserve">
+    <value>Ενεργοποίηση υπενθυμίσεων λιστών ελέγχου</value>
+  </data>
+  <data name="ReminderBefore" xml:space="preserve">
+    <value>Λεπτά πριν από την προθεσμία (0 για απενεργοποίηση)</value>
+  </data>
+  <data name="ReminderMissed" xml:space="preserve">
+    <value>Ειδοποίηση του υπεύθυνου προσωπικού για ελέγχους που παραλείφθηκαν</value>
+  </data>
+  <data name="ReminderDigest" xml:space="preserve">
+    <value>Ομαδοποίηση εκκρεμών υπενθυμίσεων σε συνόψεις</value>
+  </data>
+  <data name="ReminderEscalate" xml:space="preserve">
+    <value>Ειδοποίηση των διαχειριστών του τμήματος μετά από τόσα λεπτά καθυστέρησης (κενό για απενεργοποίηση)</value>
+  </data>
+  <data name="ReminderValidation" xml:space="preserve">
+    <value>Ορίστε διάστημα υπενθύμισης 0–10080 λεπτών και διάστημα ειδοποίησης διαχειριστών 1–43200 λεπτών ή αφήστε το δεύτερο κενό.</value>
+  </data>
+  <data name="ReminderTitle" xml:space="preserve">
+    <value>Υπενθυμίσεις λιστών ελέγχου</value>
+  </data>
+  <data name="ReminderMessage" xml:space="preserve">
+    <value>Υπάρχουν ενημερώσεις για τις λίστες ελέγχου. Συνδεθείτε για να δείτε τους ελέγχους σας.</value>
+  </data>
+  <data name="SaveReminders" xml:space="preserve">
+    <value>Αποθήκευση ρυθμίσεων υπενθυμίσεων</value>
+  </data>
+  <data name="AssetUnavailable" xml:space="preserve"><value>Ο εξοπλισμός με σειριακό αριθμό δεν είναι διαθέσιμος.</value></data>
+  <data name="Assignment" xml:space="preserve"><value>Ανάθεση σε</value></data>
+  <data name="AssignmentAutomatic" xml:space="preserve"><value>Αυτόματη ανάθεση</value></data>
+  <data name="AssignmentPermission" xml:space="preserve"><value>Δεν σας έχει ανατεθεί η εκτέλεση αυτού του ελέγχου.</value></data>
+  <data name="AssignmentType1" xml:space="preserve"><value>Άτομο</value></data>
+  <data name="AssignmentType2" xml:space="preserve"><value>Ρόλος προσωπικού</value></data>
+  <data name="AssignmentType3" xml:space="preserve"><value>Ομάδα ή σταθμός</value></data>
+  <data name="AssignmentType4" xml:space="preserve"><value>Πλήρωμα μονάδας</value></data>
+  <data name="AssignmentUnavailable" xml:space="preserve"><value>Επιλέξτε μια διαθέσιμη ανάθεση σε αυτόν τον οργανισμό.</value></data>
+  <data name="CalendarInclude" xml:space="preserve"><value>Έλεγχοι ετοιμότητας</value></data>
+  <data name="CalendarRange" xml:space="preserve"><value>Επιλέξτε περίοδο ημερολογίου έως 93 ημέρες.</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>Εξοπλισμός με σειριακό αριθμό</value></data>
+  <data name="ReminderFixedTime" xml:space="preserve"><value>Ώρα ημερήσιας σύνοψης (ζώνη ώρας οργανισμού· υπερισχύει της έναρξης βάρδιας)</value></data>
+  <data name="ReminderShiftStart" xml:space="preserve"><value>Αποστολή σύνοψης στην έναρξη βάρδιας</value></data>
+  <data name="ReminderTimeValidation" xml:space="preserve"><value>Εισαγάγετε μία ώρα σε μορφή HH:mm.</value></data>
 </root>

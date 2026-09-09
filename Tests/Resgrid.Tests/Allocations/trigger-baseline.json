@@ -1,4 +1,4 @@
-﻿{
+{
   "CallAdded": 0,
   "CallUpdated": 1,
   "CallClosed": 2,
@@ -78,5 +78,8 @@
   "RecordExportScheduled": 160,
   "RecordInspectionCompleted": 161,
   "RecordViolationOverdue": 162,
-  "RecordPermitExpiring": 163
+  "RecordPermitExpiring": 163,
+  "ChecklistMissed": 69,
+  "ChecklistScheduleChanged": 164,
+  "ChecklistOccurrenceSkipped": 165
 }

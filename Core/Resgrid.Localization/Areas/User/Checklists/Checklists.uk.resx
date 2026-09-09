@@ -534,4 +534,107 @@
   <data name="Checks" xml:space="preserve">
     <value>Перевірки</value>
   </data>
+  <data name="Schedules" xml:space="preserve"><value>Розклади</value></data>
+  <data name="NewSchedule" xml:space="preserve"><value>Новий розклад</value></data>
+  <data name="NoSchedules" xml:space="preserve"><value>Розкладів ще немає.</value></data>
+  <data name="EditSchedule" xml:space="preserve"><value>Редагувати розклад</value></data>
+  <data name="Frequency" xml:space="preserve"><value>Періодичність</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Часовий пояс</value></data>
+  <data name="SchedulePaused" xml:space="preserve"><value>Призупинено</value></data>
+  <data name="ScheduleNotes" xml:space="preserve"><value>Примітки до розкладу</value></data>
+  <data name="ScheduleStartDate" xml:space="preserve"><value>Дата початку</value></data>
+  <data name="ScheduleEndDate" xml:space="preserve"><value>Дата завершення (необов’язково)</value></data>
+  <data name="TimesOfDay" xml:space="preserve"><value>Місцевий час</value></data>
+  <data name="WeeklyDays" xml:space="preserve"><value>Дні щотижневих перевірок</value></data>
+  <data name="DayOfMonth" xml:space="preserve"><value>День місяця</value></data>
+  <data name="AnchorMonth" xml:space="preserve"><value>Опорний місяць</value></data>
+  <data name="ScheduleWorkshift" xml:space="preserve"><value>Зміна для перевірок кожної зміни</value></data>
+  <data name="WorkshiftFallback" xml:space="preserve"><value>Використовувати місцевий час щодня</value></data>
+  <data name="WindowMinutes" xml:space="preserve"><value>Термін виконання (хвилини)</value></data>
+  <data name="ScheduleEnabled" xml:space="preserve"><value>Розклад увімкнено</value></data>
+  <data name="SaveSchedule" xml:space="preserve"><value>Зберегти розклад</value></data>
+  <data name="DueChecks" xml:space="preserve"><value>Перевірки до виконання</value></data>
+  <data name="NoDueChecks" xml:space="preserve"><value>У цьому списку немає перевірок.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Заплановано на</value></data>
+  <data name="WindowEnds" xml:space="preserve"><value>Кінець терміну</value></data>
+  <data name="Actions" xml:space="preserve"><value>Дії</value></data>
+  <data name="OpenCheck" xml:space="preserve"><value>Відкрити перевірку</value></data>
+  <data name="ExcuseCheck" xml:space="preserve"><value>Обґрунтувати пропуск</value></data>
+  <data name="SkipReason" xml:space="preserve"><value>Причина обґрунтованого пропуску</value></data>
+  <data name="Scheduled" xml:space="preserve"><value>Заплановано</value></data>
+  <data name="Missed" xml:space="preserve"><value>Не виконано</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Пропуск обґрунтовано</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Скасовано</value></data>
+  <data name="PerShift" xml:space="preserve"><value>Кожної зміни</value></data>
+  <data name="Daily" xml:space="preserve"><value>Щодня</value></data>
+  <data name="Weekly" xml:space="preserve"><value>Щотижня</value></data>
+  <data name="Monthly" xml:space="preserve"><value>Щомісяця</value></data>
+  <data name="Quarterly" xml:space="preserve"><value>Щокварталу</value></data>
+  <data name="SemiAnnual" xml:space="preserve"><value>Кожні шість місяців</value></data>
+  <data name="Annual" xml:space="preserve"><value>Щороку</value></data>
+  <data name="ScheduleValidation" xml:space="preserve"><value>Перевірте дати, час, об’єкт і періодичність розкладу.</value></data>
+  <data name="SchedulePermission" xml:space="preserve"><value>Ви не можете керувати розкладами перевірок.</value></data>
+  <data name="ScheduleUnavailable" xml:space="preserve"><value>Цей розклад недоступний.</value></data>
+  <data name="ScheduleRequiresPublished" xml:space="preserve"><value>Опублікуйте контрольний список перед плануванням.</value></data>
+  <data name="OccurrenceUnavailable" xml:space="preserve"><value>Ця перевірка недоступна або вже змінена.</value></data>
+  <data name="SkipReasonRequired" xml:space="preserve"><value>Укажіть причину довжиною до 4000 символів.</value></data>
+  <data name="ChecklistCompleted" xml:space="preserve"><value>Контрольний список завершено</value></data>
+  <data name="ChecklistFailed" xml:space="preserve"><value>Контрольний список не пройдено</value></data>
+  <data name="ChecklistMissed" xml:space="preserve"><value>Контрольний список не виконано</value></data>
+  <data name="ChecklistScheduleChanged" xml:space="preserve"><value>Розклад перевірок змінено</value></data>
+  <data name="ChecklistOccurrenceSkipped" xml:space="preserve"><value>Пропуск запланованої перевірки обґрунтовано</value></data>
+  <data name="ScheduleVersionGuidance" xml:space="preserve"><value>Збереження закріплює поточну опубліковану версію. Зміни замінюють майбутні нерозпочаті перевірки; призупинення скасовує нерозпочаті перевірки.</value></data>
+  <data name="ScheduleTimeGuidance" xml:space="preserve"><value>Час відповідає цьому поясу. Пропущений час переноситься вперед; повторений час виконується лише один раз.</value></data>
+  <data name="TimesOfDayGuidance" xml:space="preserve"><value>Введіть до восьми значень часу у 24-годинному форматі через кому.</value></data>
+  <data name="MonthGuidance" xml:space="preserve"><value>Для щомісячних або рідших перевірок. У коротких місяцях використовується останній день. Опорний місяць визначає щоквартальні, піврічні та щорічні перевірки.</value></data>
+  <data name="WorkshiftGuidance" xml:space="preserve"><value>Лише для перевірок кожної зміни. Вибрана зміна використовує записані дати початку; інакше місцевий час застосовується щодня.</value></data>
+  <data name="DueGuidance" xml:space="preserve"><value>Майбутні перевірки на сім днів і незавершені перевірки. Прострочені перевірки все ще можна виконати.</value></data>
+  <data name="ReminderSettings" xml:space="preserve">
+    <value>Нагадування про контрольні списки</value>
+  </data>
+  <data name="ReminderHelp" xml:space="preserve">
+    <value>Нагадування стосуються перевірок, що починаються після їх увімкнення. Повідомлення містять посилання для входу та враховують налаштування сповіщень кожної людини. Зведення об’єднують нагадування, що очікують на надсилання, за одержувачем.</value>
+  </data>
+  <data name="ReminderEnabled" xml:space="preserve">
+    <value>Увімкнути нагадування про контрольні списки</value>
+  </data>
+  <data name="ReminderBefore" xml:space="preserve">
+    <value>Хвилини до кінцевого терміну (0 вимикає)</value>
+  </data>
+  <data name="ReminderMissed" xml:space="preserve">
+    <value>Сповіщати відповідальний персонал про пропущені перевірки</value>
+  </data>
+  <data name="ReminderDigest" xml:space="preserve">
+    <value>Об’єднувати нагадування у зведення</value>
+  </data>
+  <data name="ReminderEscalate" xml:space="preserve">
+    <value>Сповістити адміністраторів підрозділу після такої кількості хвилин прострочення (порожнє поле вимикає)</value>
+  </data>
+  <data name="ReminderValidation" xml:space="preserve">
+    <value>Вкажіть інтервал нагадування від 0 до 10080 хвилин та інтервал сповіщення адміністраторів від 1 до 43200 хвилин або залиште другий порожнім.</value>
+  </data>
+  <data name="ReminderTitle" xml:space="preserve">
+    <value>Нагадування про контрольні списки</value>
+  </data>
+  <data name="ReminderMessage" xml:space="preserve">
+    <value>Доступні оновлення контрольних списків. Увійдіть, щоб переглянути свої перевірки.</value>
+  </data>
+  <data name="SaveReminders" xml:space="preserve">
+    <value>Зберегти налаштування нагадувань</value>
+  </data>
+  <data name="AssetUnavailable" xml:space="preserve"><value>Обладнання із серійним номером недоступне.</value></data>
+  <data name="Assignment" xml:space="preserve"><value>Призначено для</value></data>
+  <data name="AssignmentAutomatic" xml:space="preserve"><value>Автоматичне призначення</value></data>
+  <data name="AssignmentPermission" xml:space="preserve"><value>Вас не призначено виконувати цю перевірку.</value></data>
+  <data name="AssignmentType1" xml:space="preserve"><value>Особа</value></data>
+  <data name="AssignmentType2" xml:space="preserve"><value>Роль персоналу</value></data>
+  <data name="AssignmentType3" xml:space="preserve"><value>Група або станція</value></data>
+  <data name="AssignmentType4" xml:space="preserve"><value>Екіпаж підрозділу</value></data>
+  <data name="AssignmentUnavailable" xml:space="preserve"><value>Виберіть доступне призначення в цій організації.</value></data>
+  <data name="CalendarInclude" xml:space="preserve"><value>Перевірки готовності</value></data>
+  <data name="CalendarRange" xml:space="preserve"><value>Виберіть період календаря тривалістю до 93 днів.</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>Обладнання із серійним номером</value></data>
+  <data name="ReminderFixedTime" xml:space="preserve"><value>Час щоденного зведення (часовий пояс організації; замінює початок зміни)</value></data>
+  <data name="ReminderShiftStart" xml:space="preserve"><value>Надсилати зведення на початку зміни</value></data>
+  <data name="ReminderTimeValidation" xml:space="preserve"><value>Введіть один час у форматі HH:mm.</value></data>
 </root>

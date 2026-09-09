@@ -59,7 +59,9 @@
             field(root, 'Checklist name', model, 'Name').maxLength = 200;
             field(root, 'Instructions (do not include patient data)', model, 'Instructions', 'textarea').maxLength = 10000;
             field(root, 'Category', model, 'Category', 'number', categories.map((name, i) => [i, name]));
-            field(root, 'Target type', model, 'TargetType', 'number', [[0, 'Department'], [1, 'Unit'], [2, 'Group / station'], [3, 'Personnel']]);
+            const targets = [[0, 'Department'], [1, 'Unit'], [2, 'Group / station'], [3, 'Personnel']];
+            if (root.dataset.assetsAvailable === 'true' || model.TargetType === 5) targets.push([5, 'InventoryAsset']);
+            field(root, 'Target type', model, 'TargetType', 'number', targets);
             const threshold = field(root, 'Passing score (%)', model, 'PassThreshold', 'number'); threshold.min = 0; threshold.max = 100;
             field(root, 'Require reported location', model, 'RequireLocation', 'checkbox');
             field(root, 'Require a different authenticated member to witness the submission', model, 'RequiresIndependentWitness', 'checkbox');
@@ -90,6 +92,7 @@
                         field(box, 'Exact passing choice', item, 'PassingValue');
                     }
                     [['VisibleWhen', 'Show only when'], ['RequiredWhen', 'Also required when']].forEach(pair => {
+                        if (item[pair[0]] && !earlier.some(source => source.Id === item[pair[0]].ItemId)) item[pair[0]] = null;
                         const value = { ItemId: item[pair[0]] ? item[pair[0]].ItemId : '' };
                         field(box, pair[1], value, 'ItemId', 'text', [['', 'Always / no condition']].concat(earlier.map(i => [i.Id, i.Name || tr('Unnamed earlier item'), false]))).addEventListener('change', () => {
                             item[pair[0]] = value.ItemId ? { ItemId: value.ItemId, EqualsValue: '' } : null; render();
@@ -177,7 +180,8 @@
                 field(box, item.RequireNoteOnFail ? 'Note (required on failure)' : 'Note', answer, 'Note', 'textarea').maxLength = 5000;
                 const evidence = el('div', null, box); const block = { box, item, answer, required, status, value, na, evidence }; blocks.push(block);
                 const uploadLabel = el('label', tr('Evidence image (PNG/JPEG, up to 10 MB; scanning required)'), box);
-                const picker = el('input', null, uploadLabel); picker.type = 'file'; picker.accept = 'image/png,image/jpeg'; picker.addEventListener('change', () => upload(block, picker.files[0]));
+                const picker = el('input', null, uploadLabel); picker.type = 'file'; picker.accept = 'image/png,image/jpeg';
+                picker.addEventListener('change', async () => { try { await upload(block, picker.files[0]); } finally { picker.value = ''; } });
                 if (item.Type === 9) {
                     el('p', tr('Draw your signature or upload a signature image. A required independent witness must sign in separately.'), box);
                     const canvas = el('canvas', null, box); canvas.width = 600; canvas.height = 160; canvas.style.cssText = 'max-width:100%;border:1px solid #777;touch-action:none;background:white';

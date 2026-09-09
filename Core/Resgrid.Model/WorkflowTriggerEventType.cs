@@ -4,6 +4,9 @@ namespace Resgrid.Model
 	{
 		ChecklistCompleted = 67,
 		ChecklistFailed = 68,
+		ChecklistMissed = 69,
+		ChecklistScheduleChanged = 164,
+		ChecklistOccurrenceSkipped = 165,
 		CallAdded = 0,
 		CallUpdated = 1,
 		CallClosed = 2,
@@ -184,4 +187,3 @@ namespace Resgrid.Model
 		}
 	}
 }
-

@@ -18,6 +18,10 @@ namespace Resgrid.Services
 			builder.RegisterType<ReadinessAccessService>().As<IReadinessAccessService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistTemplateService>().As<IChecklistTemplateService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChecklistAssignmentService>().As<Resgrid.Model.Checklists.IChecklistAssignmentService>().InstancePerLifetimeScope();
+			builder.RegisterType<UnavailableChecklistAssetSource>().As<Resgrid.Model.Checklists.IChecklistAssetSource>().PreserveExistingDefaults().InstancePerLifetimeScope();
+			builder.RegisterType<ChecklistReminderService>().As<IChecklistReminderService>().InstancePerLifetimeScope();
+			builder.RegisterType<ReadinessHistoryProtectionService>().As<IReadinessHistoryProtectionService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistAuthorizationService>().As<IChecklistAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowService>().As<IWorkflowService>().InstancePerLifetimeScope();
@@ -84,6 +88,7 @@ namespace Resgrid.Services
 			builder.RegisterType<UnitTrackingStatusService>().As<IUnitTrackingStatusService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentSettingsService>().As<IDepartmentSettingsService>().InstancePerLifetimeScope();
 			builder.RegisterType<FeatureToggleService>().As<IFeatureToggleService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChecklistAccessMutationObserver>().As<IFeatureFlagMutationObserver>().InstancePerLifetimeScope();
 			builder.RegisterType<CallDispatchStatusService>().As<ICallDispatchStatusService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelRolesService>().As<IPersonnelRolesService>().InstancePerLifetimeScope();
 			builder.RegisterType<ScheduledTasksService>().As<IScheduledTasksService>().InstancePerLifetimeScope();

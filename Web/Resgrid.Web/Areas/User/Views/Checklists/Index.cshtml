@@ -4,8 +4,8 @@
 <div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12"><h2>@localizer["Checklists"]</h2><p>@localizer["Free"]</p></div></div>
 <div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
     @await Html.PartialAsync("_Protection")
-    <p><a class="btn btn-default" asp-action="Templates">@localizer["Templates"]</a>
-    @if (Model.CanManage) { <a class="btn btn-primary" asp-action="New">@localizer["NewChecklist"]</a> }</p>
+    <p><a class="btn btn-default" asp-action="Templates">@localizer["Templates"]</a><a class="btn btn-default" asp-action="Due">@localizer["DueChecks"]</a>
+    @if (Model.CanManage) { <a class="btn btn-default" asp-action="Reminders">@localizer["ReminderSettings"]</a> <a class="btn btn-primary" asp-action="New">@localizer["NewChecklist"]</a> }</p>
     @if (Model.Definitions.Count == 0) { <p>@localizer["NoDefinitions"]</p> }
     <table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Version"]</th><th>@localizer["State"]</th></tr></thead><tbody>
     @foreach (var item in Model.Definitions)
@@ -14,6 +14,6 @@
     }
     </tbody></table>
     @if (Model.Page > 0) { <a class="btn btn-default" asp-route-page="@(Model.Page - 1)">@localizer["Previous"]</a> }
-    <a class="btn btn-default" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a>
+    @if (Model.HasMore) { <a class="btn btn-default" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a> }
 </div></div></div>
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

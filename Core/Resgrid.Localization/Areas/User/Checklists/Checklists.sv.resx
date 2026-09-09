@@ -534,4 +534,107 @@
   <data name="Checks" xml:space="preserve">
     <value>Kontroller</value>
   </data>
+  <data name="Schedules" xml:space="preserve"><value>Scheman</value></data>
+  <data name="NewSchedule" xml:space="preserve"><value>Nytt schema</value></data>
+  <data name="NoSchedules" xml:space="preserve"><value>Det finns inga scheman ännu.</value></data>
+  <data name="EditSchedule" xml:space="preserve"><value>Redigera schema</value></data>
+  <data name="Frequency" xml:space="preserve"><value>Frekvens</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Tidszon</value></data>
+  <data name="SchedulePaused" xml:space="preserve"><value>Pausat</value></data>
+  <data name="ScheduleNotes" xml:space="preserve"><value>Schemaanteckningar</value></data>
+  <data name="ScheduleStartDate" xml:space="preserve"><value>Startdatum</value></data>
+  <data name="ScheduleEndDate" xml:space="preserve"><value>Slutdatum (valfritt)</value></data>
+  <data name="TimesOfDay" xml:space="preserve"><value>Lokala tider</value></data>
+  <data name="WeeklyDays" xml:space="preserve"><value>Dagar för veckokontroller</value></data>
+  <data name="DayOfMonth" xml:space="preserve"><value>Dag i månaden</value></data>
+  <data name="AnchorMonth" xml:space="preserve"><value>Referensmånad</value></data>
+  <data name="ScheduleWorkshift" xml:space="preserve"><value>Arbetspass för kontroller vid varje pass</value></data>
+  <data name="WorkshiftFallback" xml:space="preserve"><value>Använd lokala tider varje dag</value></data>
+  <data name="WindowMinutes" xml:space="preserve"><value>Tidsfrist för genomförande (minuter)</value></data>
+  <data name="ScheduleEnabled" xml:space="preserve"><value>Schema aktiverat</value></data>
+  <data name="SaveSchedule" xml:space="preserve"><value>Spara schema</value></data>
+  <data name="DueChecks" xml:space="preserve"><value>Kontroller att utföra</value></data>
+  <data name="NoDueChecks" xml:space="preserve"><value>Inga kontroller i den här listan.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Planerad till</value></data>
+  <data name="WindowEnds" xml:space="preserve"><value>Tidsfristen löper ut</value></data>
+  <data name="Actions" xml:space="preserve"><value>Åtgärder</value></data>
+  <data name="OpenCheck" xml:space="preserve"><value>Öppna kontroll</value></data>
+  <data name="ExcuseCheck" xml:space="preserve"><value>Godkänn undantag</value></data>
+  <data name="SkipReason" xml:space="preserve"><value>Orsak till undantaget</value></data>
+  <data name="Scheduled" xml:space="preserve"><value>Planerad</value></data>
+  <data name="Missed" xml:space="preserve"><value>Missad</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Undantag godkänt</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Avbruten</value></data>
+  <data name="PerShift" xml:space="preserve"><value>Varje arbetspass</value></data>
+  <data name="Daily" xml:space="preserve"><value>Dagligen</value></data>
+  <data name="Weekly" xml:space="preserve"><value>Varje vecka</value></data>
+  <data name="Monthly" xml:space="preserve"><value>Varje månad</value></data>
+  <data name="Quarterly" xml:space="preserve"><value>Varje kvartal</value></data>
+  <data name="SemiAnnual" xml:space="preserve"><value>Var sjätte månad</value></data>
+  <data name="Annual" xml:space="preserve"><value>Årligen</value></data>
+  <data name="ScheduleValidation" xml:space="preserve"><value>Kontrollera schemats datum, tider, mål och upprepning.</value></data>
+  <data name="SchedulePermission" xml:space="preserve"><value>Du får inte hantera kontrollscheman.</value></data>
+  <data name="ScheduleUnavailable" xml:space="preserve"><value>Det här schemat är inte tillgängligt.</value></data>
+  <data name="ScheduleRequiresPublished" xml:space="preserve"><value>Publicera checklistan innan du schemalägger den.</value></data>
+  <data name="OccurrenceUnavailable" xml:space="preserve"><value>Den här kontrollen är inte tillgänglig eller har redan ändrats.</value></data>
+  <data name="SkipReasonRequired" xml:space="preserve"><value>Ange en orsak med högst 4 000 tecken.</value></data>
+  <data name="ChecklistCompleted" xml:space="preserve"><value>Checklista slutförd</value></data>
+  <data name="ChecklistFailed" xml:space="preserve"><value>Checklista underkänd</value></data>
+  <data name="ChecklistMissed" xml:space="preserve"><value>Checklista missad</value></data>
+  <data name="ChecklistScheduleChanged" xml:space="preserve"><value>Kontrollschema ändrat</value></data>
+  <data name="ChecklistOccurrenceSkipped" xml:space="preserve"><value>Undantag från planerad kontroll godkänt</value></data>
+  <data name="ScheduleVersionGuidance" xml:space="preserve"><value>När du sparar låses den aktuella publicerade versionen. Ändringar ersätter framtida ej påbörjade kontroller; paus avbryter ej påbörjade kontroller.</value></data>
+  <data name="ScheduleTimeGuidance" xml:space="preserve"><value>Tiderna följer den här tidszonen. En överhoppad klocktid flyttas framåt; en upprepad tid inträffar bara en gång.</value></data>
+  <data name="TimesOfDayGuidance" xml:space="preserve"><value>Ange upp till åtta tider i 24-timmarsformat, åtskilda med kommatecken.</value></data>
+  <data name="MonthGuidance" xml:space="preserve"><value>För månatliga eller mindre frekventa kontroller. Korta månader använder sin sista dag. Referensmånaden styr kvartalsvisa, halvårsvisa och årliga kontroller.</value></data>
+  <data name="WorkshiftGuidance" xml:space="preserve"><value>Endast för kontroller vid varje arbetspass. Ett valt arbetspass använder sina registrerade startdatum; annars gäller lokala tider varje dag.</value></data>
+  <data name="DueGuidance" xml:space="preserve"><value>Kommande kontroller för sju dagar och oavslutade kontroller. Missade kontroller kan fortfarande slutföras.</value></data>
+  <data name="ReminderSettings" xml:space="preserve">
+    <value>Påminnelser om checklistor</value>
+  </data>
+  <data name="ReminderHelp" xml:space="preserve">
+    <value>Påminnelser gäller kontroller som börjar efter att påminnelserna aktiverats. Meddelanden innehåller en inloggningslänk och följer varje persons aviseringsinställningar. Sammanställningar samlar väntande påminnelser per mottagare.</value>
+  </data>
+  <data name="ReminderEnabled" xml:space="preserve">
+    <value>Aktivera påminnelser om checklistor</value>
+  </data>
+  <data name="ReminderBefore" xml:space="preserve">
+    <value>Minuter före förfallotiden (0 inaktiverar)</value>
+  </data>
+  <data name="ReminderMissed" xml:space="preserve">
+    <value>Meddela ansvarig personal om missade kontroller</value>
+  </data>
+  <data name="ReminderDigest" xml:space="preserve">
+    <value>Samla väntande påminnelser i sammanställningar</value>
+  </data>
+  <data name="ReminderEscalate" xml:space="preserve">
+    <value>Meddela avdelningsadministratörer efter så här många minuters försening (tomt inaktiverar)</value>
+  </data>
+  <data name="ReminderValidation" xml:space="preserve">
+    <value>Ange ett påminnelseintervall på 0–10080 minuter och ett intervall för avisering till administratörer på 1–43200 minuter, eller lämna det senare tomt.</value>
+  </data>
+  <data name="ReminderTitle" xml:space="preserve">
+    <value>Påminnelser om checklistor</value>
+  </data>
+  <data name="ReminderMessage" xml:space="preserve">
+    <value>Det finns uppdateringar av checklistor. Logga in för att granska dina kontroller.</value>
+  </data>
+  <data name="SaveReminders" xml:space="preserve">
+    <value>Spara påminnelseinställningar</value>
+  </data>
+  <data name="AssetUnavailable" xml:space="preserve"><value>Utrustning med serienummer är inte tillgänglig.</value></data>
+  <data name="Assignment" xml:space="preserve"><value>Tilldelad till</value></data>
+  <data name="AssignmentAutomatic" xml:space="preserve"><value>Automatisk tilldelning</value></data>
+  <data name="AssignmentPermission" xml:space="preserve"><value>Du har inte tilldelats att utföra den här kontrollen.</value></data>
+  <data name="AssignmentType1" xml:space="preserve"><value>Enskild person</value></data>
+  <data name="AssignmentType2" xml:space="preserve"><value>Personalroll</value></data>
+  <data name="AssignmentType3" xml:space="preserve"><value>Grupp eller station</value></data>
+  <data name="AssignmentType4" xml:space="preserve"><value>Enhetens besättning</value></data>
+  <data name="AssignmentUnavailable" xml:space="preserve"><value>Välj en tillgänglig tilldelning i den här organisationen.</value></data>
+  <data name="CalendarInclude" xml:space="preserve"><value>Beredskapskontroller</value></data>
+  <data name="CalendarRange" xml:space="preserve"><value>Välj ett kalenderintervall på högst 93 dagar.</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>Utrustning med serienummer</value></data>
+  <data name="ReminderFixedTime" xml:space="preserve"><value>Tid för daglig sammanställning (organisationens tidszon; ersätter skiftstart)</value></data>
+  <data name="ReminderShiftStart" xml:space="preserve"><value>Skicka en sammanställning vid skiftstart</value></data>
+  <data name="ReminderTimeValidation" xml:space="preserve"><value>Ange en enda tid i formatet HH:mm.</value></data>
 </root>

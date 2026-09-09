@@ -25,6 +25,7 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Full evaluation including the value and the reason (source) it resolved that way.</summary>
 		Task<FeatureFlagEvaluation> EvaluateAsync(string key, int departmentId, IDictionary<string, string> context = null);
+		Task<FeatureFlagEvaluation> EvaluateFreshAsync(string key, int departmentId);
 
 		/// <summary>Resolved string value for a multivariate flag (or defaultValue when off/unknown).</summary>
 		Task<string> GetValueAsync(string key, int departmentId, string defaultValue = null, IDictionary<string, string> context = null);

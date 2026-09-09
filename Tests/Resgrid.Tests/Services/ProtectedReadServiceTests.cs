@@ -12,6 +12,7 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Services;
+using Resgrid.Model.Checklists;
 
 namespace Resgrid.Tests.Services
 {
@@ -70,6 +71,50 @@ namespace Resgrid.Tests.Services
 				Scopes = new[] { ProtectedDataGrantScopes.Read, ProtectedDataGrantScopes.Write },
 				MfaAtUtc = DateTime.UtcNow
 			}).Token;
+		}
+
+		[Test]
+		public async Task Checklist_outcomes_encrypt_with_content_and_reseal_after_an_authorized_read()
+		{
+			SetupWriteEnforced();
+			_dataProtectionService.Setup(x => x.GetPolicyByDepartmentIdAsync(DeptId, It.IsAny<bool>())).ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = DeptId, PolicyEpoch = Epoch, CatalogVersion = 15 });
+			var crypto = new ProtectedFieldCryptoService(); var key = RandomNumberGenerator.GetBytes(32);
+			_brokerClient.Setup(x => x.EncryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string g, string r, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken ct) => new ProtectedDataBrokerResult
+				{ Success = true, Items = items.Select(i => new ProtectedFieldOperationResult { FieldId = i.FieldId, RowKey = i.RowKey, Value = crypto.EncryptText(key, 1, i.Value, d, i.FieldId, i.RowKey) }).ToList() });
+			_brokerClient.Setup(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int d, string g, string r, IReadOnlyList<ProtectedFieldOperationItem> items, CancellationToken ct) => new ProtectedDataBrokerResult
+				{ Success = true, Items = items.Select(i => new ProtectedFieldOperationResult { FieldId = i.FieldId, RowKey = i.RowKey, Value = crypto.DecryptText(key, i.Value, d, i.FieldId, i.RowKey) }).ToList() });
+			var row = new ChecklistCompletion { DepartmentId = DeptId, Content = "SYNTHETIC-PHI-CANARY", Score = 87.25m, Passed = false };
+			var grant = IssueGrant();
+			var write = await _service.PrepareRecordsEntityWriteAsync(DeptId, row, null, row.Id, ChecklistTables.Fields<ChecklistCompletion>(), () => row.IsProtected = true, grant, UserId, false);
+			write.Success.Should().BeTrue(); row.Score.Should().BeNull(); row.Passed.Should().BeNull();
+			row.Content.Should().NotContain("SYNTHETIC-PHI-CANARY"); row.ProtectedScoreEnvelope.Should().StartWith("rgdp:"); row.ProtectedPassedEnvelope.Should().StartWith("rgdp:");
+			var stored = Newtonsoft.Json.JsonConvert.DeserializeObject<ChecklistCompletion>(Newtonsoft.Json.JsonConvert.SerializeObject(row));
+			var read = await _service.ResolveRecordsEntitiesForReadAsync(DeptId, new[] { (row, row.Id) }, ChecklistTables.Fields<ChecklistCompletion>(), grant, UserId);
+			read.RedactedFields.Should().BeEmpty(); row.Score.Should().Be(87.25m); row.Passed.Should().BeFalse(); row.ProtectedScoreEnvelope.Should().BeNull();
+			row.Passed = true;
+			(await _service.PrepareRecordsEntityWriteAsync(DeptId, row, null, row.Id, ChecklistTables.Fields<ChecklistCompletion>(), () => row.IsProtected = true, grant, UserId, false)).Success.Should().BeTrue();
+			row.Score.Should().BeNull(); row.Passed.Should().BeNull();
+			crypto.DecryptText(key, row.ProtectedPassedEnvelope, DeptId, "checklistcompletions.passed", row.Id).Should().Be("True");
+			var denied = await _service.ResolveRecordsEntitiesForReadAsync(DeptId, new[] { (stored, stored.Id) }, ChecklistTables.Fields<ChecklistCompletion>(), null, UserId);
+			denied.RedactedFields.Should().HaveCount(3); stored.Score.Should().BeNull(); stored.Passed.Should().BeNull();
+			var item = new ChecklistCompletionItem { DepartmentId = DeptId, Content = "SYNTHETIC-ANSWER", IsFailure = true };
+			(await _service.PrepareRecordsEntityWriteAsync(DeptId, item, null, item.Id, ChecklistTables.Fields<ChecklistCompletionItem>(), () => item.IsProtected = true, grant, UserId, false)).Success.Should().BeTrue();
+			item.IsFailure.Should().BeNull(); item.Content.Should().NotContain("SYNTHETIC-ANSWER");
+			(await _service.ResolveRecordsEntitiesForReadAsync(DeptId, new[] { (item, item.Id) }, ChecklistTables.Fields<ChecklistCompletionItem>(), grant, UserId)).RedactedFields.Should().BeEmpty();
+			item.IsFailure.Should().BeTrue();
+			CryptographicOperations.ZeroMemory(key);
+		}
+
+		[TestCase("missing"), TestCase("other-user"), TestCase("revoked")]
+		public async Task Checklist_sensitive_outcomes_cannot_be_revealed_with_invalid_grants(string reason)
+		{
+			var row = new ChecklistCompletion { DepartmentId = DeptId, Content = "rgdp:1:1:content==", ProtectedScoreEnvelope = "rgdp:1:1:score==", ProtectedPassedEnvelope = "rgdp:1:1:passed==", Score = null, Passed = null };
+			var grant = reason == "missing" ? null : IssueGrant(reason == "other-user" ? "different-user" : UserId, reason == "revoked" ? Epoch - 1 : Epoch);
+			var result = await _service.ResolveRecordsEntitiesForReadAsync(DeptId, new[] { (row, row.Id) }, ChecklistTables.Fields<ChecklistCompletion>(), grant, UserId);
+			result.RedactedFields.Should().HaveCount(3); row.Score.Should().BeNull(); row.Passed.Should().BeNull(); row.Content.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			_brokerClient.Verify(x => x.DecryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		private static Call EnvelopedCall(int callId = 17) => new Call
@@ -309,7 +354,12 @@ namespace Resgrid.Tests.Services
 				// RMS-5 prevention and investigations plus the RMS-4 quality review, catalog v13: read through the generic Records resolvers.
 				"RmsOccupancies", "RmsOccupancyHazards", "RmsInspections", "RmsViolations", "RmsPermits", "RmsPlanReviews",
 				"RmsInvestigationCases", "RmsInvestigationNotes", "RmsInvestigationEvidence", "RmsInvestigationCustody", "RmsInvestigationReferrals",
-				"RmsQualityReviews", "RmsPreventionAttachments"
+				"RmsQualityReviews", "RmsPreventionAttachments",
+				// Checklist content and outcome companions use ChecklistTables.Fields<T>() and the generic resolver.
+				"ChecklistDefinitions", "ChecklistDefinitionVersions", "ChecklistOccurrences", "ChecklistCompletions",
+				"ChecklistCompletionItems", "ChecklistCompletionFiles", "DepartmentChecklistSettings", "ChecklistSchedules",
+				// ReadinessHistoryFields supplies masked audit/run/log views; outbox consumers use the safe routing copy.
+				"AuditLogs", "DomainEventOutbox", "WorkflowRuns", "WorkflowRunLogs"
 			};
 
 			AdpTableBindings.V1.Select(b => b.TableName)

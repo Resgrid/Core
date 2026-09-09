@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +19,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 {
 	[Area("User")]
 	[Authorize]
-	public class ChecklistsController : SecureBaseController
+	public partial class ChecklistsController : SecureBaseController
 	{
 		private readonly IChecklistTemplateService _templates;
 		private readonly IChecklistsService _checklists;
@@ -26,8 +27,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedGrantContext _grant;
 		private readonly IDepartmentDataProtectionService _protection;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> _strings;
-		public ChecklistsController(IChecklistTemplateService templates, IChecklistsService checklists, IReadinessAccessService access, IProtectedGrantContext grant, IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings)
-		{ _templates = templates; _checklists = checklists; _access = access; _grant = grant; _protection = protection; _strings = strings; }
+		private readonly Lazy<IWorkShiftsService> _workshifts;
+		private readonly Lazy<IDepartmentsService> _departments;
+		public ChecklistsController(IChecklistTemplateService templates, IChecklistsService checklists, IReadinessAccessService access, IProtectedGrantContext grant, IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings, Lazy<IWorkShiftsService> workshifts = null, Lazy<IDepartmentsService> departments = null)
+		{ _templates = templates; _checklists = checklists; _access = access; _grant = grant; _protection = protection; _strings = strings; _workshifts = workshifts; _departments = departments; }
 		private ChecklistActor Actor => new ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant.GrantToken };
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -42,12 +45,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				executed.ExceptionHandled = true;
 				if (HttpMethods.IsGet(Request.Method) && ex.StatusCode == 403 && ex.Message.StartsWith("Unlock protected", StringComparison.Ordinal))
-					executed.Result = View("Locked", new ChecklistLockedView { Page = context.RouteData.Values["action"]?.ToString(), Id = Request.Query["id"].ToString() is { Length: > 0 } queryId ? queryId : context.RouteData.Values["id"]?.ToString() });
-				else executed.Result = StatusCode(ex.StatusCode, new { message = ex.Message });
+					executed.Result = View("Locked", new ChecklistLockedView { Page = context.RouteData.Values["action"]?.ToString() == "EditSchedule" && Request.Query.ContainsKey("definitionId") ? "NewSchedule" : context.RouteData.Values["action"]?.ToString(), Id = Request.Query["id"].ToString() is { Length: > 0 } queryId ? queryId : Request.Query["definitionId"].ToString() is { Length: > 0 } definitionId ? definitionId : context.RouteData.Values["id"]?.ToString() });
+				else { var message = _strings[ex.Message]; executed.Result = StatusCode(ex.StatusCode, new { message = message.ResourceNotFound ? _strings["The request could not be completed."].Value : message.Value }); }
 			}
 		}
 		[HttpGet]
-		public async Task<IActionResult> Index(int page = 0) => View("Index", new ChecklistIndexView { Definitions = await _checklists.ListAsync(Actor, page), CanManage = await _checklists.CanManageAsync(Actor) && await _access.CanUseChecklistsAsync(DepartmentId), Page = page });
+		public async Task<IActionResult> Index(int page = 0)
+		{
+			var rows = await _checklists.ListAsync(Actor, page, includeNext: true);
+			return View("Index", new ChecklistIndexView { Definitions = rows.Take(50).ToList(), HasMore = rows.Count > 50,
+				CanManage = await _checklists.CanManageAsync(Actor) && await _access.CanUseChecklistsAsync(DepartmentId), Page = page });
+		}
 		[HttpGet]
 		public async Task<IActionResult> Templates(string query = null)
 		{
@@ -68,14 +76,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> New(string templateId = null)
 		{
 			if (!await _access.CanUseChecklistsAsync(DepartmentId) || !await _checklists.CanManageAsync(Actor)) return NotFound();
+			var assetsAvailable = await _checklists.AssetTargetsAvailableAsync(Actor);
 			var form = new ChecklistForm { Name = "", Sections = { new ChecklistSection { Name = _strings["Checks"].Value, Items = { new ChecklistItem { Name = "" } } } } };
 			if (templateId != null)
 			{
 				var template = await _templates.GetByIdAsync(DepartmentId, templateId);
 				if (template == null) return NotFound();
-				form = ChecklistForm.FromTemplate(template);
+				form = ChecklistForm.FromTemplate(template, assetsAvailable);
 			}
-			return View("Edit", new ChecklistEditView { Form = form });
+			return View("Edit", new ChecklistEditView { Form = form, AssetsAvailable = assetsAvailable });
 		}
 		[HttpGet, Authorize(Policy = ResgridResources.Checklist_Update)]
 		public async Task<IActionResult> Edit(string id)
@@ -83,7 +92,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _checklists.CanManageAsync(Actor)) return Forbid();
 			if (!await _access.CanUseChecklistsAsync(DepartmentId)) return NotFound();
 			var row = await _checklists.GetDefinitionAsync(Actor, id);
-			return View("Edit", new ChecklistEditView { Id = id, Revision = row.Definition.Revision, Form = row.Form });
+			return View("Edit", new ChecklistEditView { AssetsAvailable = await _checklists.AssetTargetsAvailableAsync(Actor), Id = id, Revision = row.Definition.Revision, Form = row.Form });
 		}
 		[HttpPost, ValidateAntiForgeryToken, Authorize(Policy = ResgridResources.Checklist_Update)]
 		public async Task<IActionResult> SaveDefinition(string id, int revision, string formJson)
@@ -92,10 +101,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var saved = await _checklists.SaveDefinitionAsync(Actor, id, revision, form);
 			return Json(new { url = Url.Action("Detail", new { id = saved }) });
 		}
-		private static T Parse<T>(string json)
+		private static T Parse<T>(string json) where T : class
 		{
 			if (string.IsNullOrWhiteSpace(json) || json.Length > 1000000) throw new ChecklistException(400, "Form content is missing or too large.");
-			try { return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings { MaxDepth = 20, TypeNameHandling = TypeNameHandling.None }); }
+			try { return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings { MaxDepth = 20, TypeNameHandling = TypeNameHandling.None }) ?? throw new ChecklistException(400, "The form content is invalid."); }
 			catch (JsonException) { throw new ChecklistException(400, "The form content is invalid."); }
 		}
 		[HttpGet]
@@ -103,7 +112,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var row = await _checklists.GetDefinitionAsync(Actor, id);
 			var canStart = await _access.CanUseChecklistsAsync(DepartmentId) && !row.Definition.Retired && row.Definition.CurrentVersionId != null;
-			return View("Detail", new ChecklistDetailView { Definition = row, History = await _checklists.HistoryAsync(Actor, id, page), CanManage = await _checklists.CanManageAsync(Actor) && await _access.CanUseChecklistsAsync(DepartmentId), CanStart = canStart,
+			var history = await _checklists.HistoryAsync(Actor, id, page, includeNext: true);
+			return View("Detail", new ChecklistDetailView { Definition = row, History = history.Take(50).ToList(), HasMore = history.Count > 50, CanManage = await _checklists.CanManageAsync(Actor) && await _access.CanUseChecklistsAsync(DepartmentId), CanStart = canStart,
 				Targets = canStart ? await _checklists.TargetsAsync(Actor, row.PublishedForm.TargetType) : new System.Collections.Generic.List<ChecklistTarget>(), Page = page });
 		}
 		[HttpPost, ValidateAntiForgeryToken, Authorize(Policy = ResgridResources.Checklist_Update)]
@@ -148,6 +158,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public Task<IActionResult> Reopen(string page, string id) => page switch
 		{
 			"Index" => Index(), "Detail" => Detail(id), "Edit" => Edit(id), "Run" => Run(id), "CompletionDetail" => CompletionDetail(id),
+			"Schedules" => Schedules(id), "EditSchedule" => EditSchedule(id), "NewSchedule" => EditSchedule(definitionId: id), "Due" => Due(),
+			"Occurrence" => Occurrence(id), "Reminders" => Reminders(),
 			_ => Task.FromResult<IActionResult>(BadRequest())
 		};
 	}

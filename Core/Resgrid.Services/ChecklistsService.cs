@@ -17,7 +17,7 @@ using Resgrid.Services.Records;
 
 namespace Resgrid.Services
 {
-	public class ChecklistsService : IChecklistsService
+	public partial class ChecklistsService : IChecklistsService
 	{
 		private readonly IChecklistRepository _store;
 		private readonly IChecklistAuthorizationService _authorization;
@@ -28,10 +28,13 @@ namespace Resgrid.Services
 		private readonly Lazy<IProtectedReadService> _read;
 		private readonly Lazy<IProtectedWriteService> _write;
 		private readonly IRecordAttachmentScanner _scanner;
+		private readonly TimeProvider _clock;
+		private readonly IChecklistAssignmentService _assignments;
+		private readonly IChecklistAssetSource _assets;
 		public ChecklistsService(IChecklistRepository store, IChecklistAuthorizationService authorization, IReadinessAccessService access,
 			IUnitOfWork uow, IAuditLogsRepository audit, IDomainEventOutboxService outbox, Lazy<IProtectedReadService> read,
-			Lazy<IProtectedWriteService> write, IRecordAttachmentScanner scanner)
-		{ _store = store; _authorization = authorization; _access = access; _uow = uow; _audit = audit; _outbox = outbox; _read = read; _write = write; _scanner = scanner; }
+			Lazy<IProtectedWriteService> write, IRecordAttachmentScanner scanner, TimeProvider clock = null, IChecklistAssignmentService assignments = null, IChecklistAssetSource assets = null)
+		{ _store = store; _authorization = authorization; _access = access; _uow = uow; _audit = audit; _outbox = outbox; _read = read; _write = write; _scanner = scanner; _clock = clock ?? TimeProvider.System; _assignments = assignments; _assets = assets; }
 
 		public Task<bool> CanManageAsync(ChecklistActor actor) => _authorization.CanManageAsync(actor);
 		private async Task RequireWriteAsync(ChecklistActor actor, bool manage = false)
@@ -49,31 +52,44 @@ namespace Resgrid.Services
 		private async Task<T> RevealAsync<T>(ChecklistActor actor, T row) where T : ChecklistRow
 		{
 			if (row == null) throw new ChecklistException(404, "Checklist item is unavailable.");
+			var hadPlaintext = HasPlaintextFields(row);
 			var result = await _read.Value.ResolveRecordsEntitiesForReadAsync(actor.DepartmentId, new[] { (row, row.Id) }, ChecklistTables.Fields<T>(), actor.GrantToken, actor.UserId);
-			if (result == null || result.RedactedFields.Count > 0) throw new ChecklistException(403, "Unlock protected data to use this checklist.");
+			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && hadPlaintext) throw new ChecklistException(403, "Unlock protected data to use this checklist.");
 			return row;
 		}
+		private static bool HasPlaintextFields<T>(T row) where T : ChecklistRow => ChecklistTables.Fields<T>().Values
+			.Select(f => f.Get(row)).Any(v => !string.IsNullOrEmpty(v) && !ProtectedDataEnvelope.HasEnvelopePrefix(v) && v != ProtectedDataEnvelope.RedactionValue);
 		private async Task SealAsync<T>(ChecklistActor actor, T row) where T : ChecklistRow
 		{
 			var result = await _write.Value.PrepareRecordsEntityWriteAsync(actor.DepartmentId, row, (T)null, row.Id, ChecklistTables.Fields<T>(), () => row.IsProtected = true, actor.GrantToken, actor.UserId, false);
-			if (result?.Success != true) throw new ChecklistException(403, "Protected data could not be saved. Unlock it and retry.");
+			if (result?.Success != true || result.IsProtected && HasPlaintextFields(row)) throw new ChecklistException(403, "Protected data could not be saved. Unlock it and retry.");
 		}
 		private async Task PersistAsync<T>(ChecklistActor actor, T row, bool insert) where T : ChecklistRow
 		{ row.UpdatedOn = DateTime.UtcNow; await SealAsync(actor, row); await _store.WriteAsync(row, insert); }
 		private async Task AuditAsync(ChecklistActor actor, ChecklistRow row, AuditLogTypes type, object detail = null)
 		{
-			await _audit.InsertAsync(new AuditLog { DepartmentId = actor.DepartmentId, ObjectDepartmentId = actor.DepartmentId, UserId = actor.UserId,
+			var data = JsonConvert.SerializeObject(new { row.Id, row.Revision, Detail = detail });
+			// Allocate the identity inside this command's existing transaction without staging content in SQL.
+			var audit = await _audit.InsertAsync(new AuditLog { DepartmentId = actor.DepartmentId, ObjectDepartmentId = actor.DepartmentId, UserId = actor.UserId,
 				ObjectId = row.Id, LogType = (int)type, LoggedOn = DateTime.UtcNow, Successful = true, Message = type.ToString(),
-				Data = JsonConvert.SerializeObject(new { row.Id, row.Revision, Detail = detail }), ServerName = Environment.MachineName }, CancellationToken.None);
+				ServerName = Environment.MachineName }, CancellationToken.None);
+			audit.Data = data;
+			var protectedWrite = await _write.Value.PrepareRecordsEntityWriteAsync(actor.DepartmentId, audit, null,
+				audit.AuditLogId.ToString(System.Globalization.CultureInfo.InvariantCulture), ReadinessHistoryFields.Audits, null, actor.GrantToken, actor.UserId, false);
+			if (protectedWrite?.Success != true || protectedWrite.IsProtected && !ProtectedDataEnvelope.HasEnvelopePrefix(audit.Data))
+				throw new ChecklistException(403, "Protected data could not be saved. Unlock it and retry.");
+			await _audit.UpdateAsync(audit, CancellationToken.None);
 		}
-		private async Task<T> TransactionAsync<T>(ChecklistActor actor, Func<List<long>, Task<T>> action)
+		private async Task<T> TransactionAsync<T>(ChecklistActor actor, Func<List<long>, Task<T>> action, bool accessFence = false)
 		{
 			if (_uow.Transaction != null) throw new InvalidOperationException("Checklist commands own their transaction.");
 			var events = new List<long>(); T result;
 			try
 			{
 				await _uow.CreateOrGetConnectionAsync(CancellationToken.None);
+				if (accessFence) await _store.LockAccessFenceAsync();
 				await _store.LockDepartmentAsync(actor.DepartmentId);
+				await RequireWriteAsync(actor);
 				result = await action(events);
 				_uow.CommitChanges();
 			}
@@ -81,30 +97,30 @@ namespace Resgrid.Services
 			await _outbox.DispatchAfterCommitAsync(events);
 			return result;
 		}
-		public async Task<List<ChecklistDefinitionView>> ListAsync(ChecklistActor actor, int page = 0)
+		public async Task<List<ChecklistDefinitionView>> ListAsync(ChecklistActor actor, int page = 0, bool includeNext = false)
 		{
 			await _authorization.RequireMemberAsync(actor);
 			if (page < 0 || page > 10000) throw new ChecklistException(400, "Invalid page.");
 			var manage = await CanManageAsync(actor); var result = new List<ChecklistDefinitionView>();
-			foreach (var row in await _store.ListAsync<ChecklistDefinition>(actor.DepartmentId, skip: page * 50, take: 50))
-			{
-				if (row.DeletedOn.HasValue || !manage && row.CurrentVersionId == null) continue;
+			foreach (var row in await ReadPageAsync<ChecklistDefinition>(actor.DepartmentId, null, page, includeNext,
+				row => Task.FromResult(!row.DeletedOn.HasValue && (manage || row.CurrentVersionId != null))))
 				result.Add(await DefinitionViewAsync(actor, row, manage));
-			}
 			return result;
 		}
 		private async Task<ChecklistDefinitionView> DefinitionViewAsync(ChecklistActor actor, ChecklistDefinition row, bool manage)
 		{
 			if (row == null || row.DeletedOn.HasValue) throw new ChecklistException(404, "Checklist definition is unavailable.");
+			var published = row.CurrentVersionId == null ? null : await RevealAsync(actor,
+				await _store.GetAsync<ChecklistDefinitionVersion>(actor.DepartmentId, row.CurrentVersionId));
 			string content;
 			if (manage) content = (await RevealAsync(actor, row)).Content;
 			else
 			{
 				if (row.CurrentVersionId == null) throw new ChecklistException(404, "Checklist is not published.");
-				content = (await RevealAsync(actor, await _store.GetAsync<ChecklistDefinitionVersion>(actor.DepartmentId, row.CurrentVersionId))).Content;
+				content = published.Content;
 				row.Content = null;
 			}
-			return new ChecklistDefinitionView { Definition = row, Form = Decode<ChecklistForm>(content), PublishedForm = row.CurrentVersionId == null ? null : Decode<ChecklistForm>((await RevealAsync(actor, await _store.GetAsync<ChecklistDefinitionVersion>(actor.DepartmentId, row.CurrentVersionId))).Content) };
+			return new ChecklistDefinitionView { Definition = row, Form = Decode<ChecklistForm>(content), PublishedForm = published == null ? null : Decode<ChecklistForm>(published.Content) };
 		}
 		public async Task<ChecklistDefinitionView> GetDefinitionAsync(ChecklistActor actor, string id)
 		{
@@ -114,6 +130,7 @@ namespace Resgrid.Services
 		public async Task<string> SaveDefinitionAsync(ChecklistActor actor, string id, int revision, ChecklistForm form)
 		{
 			await RequireWriteAsync(actor, true); Valid(ChecklistValidation.Validate(form)); if (id != null) Id(id);
+			if (form.TargetType == ChecklistTargetType.InventoryAsset && !await AssetTargetsAvailableAsync(actor)) throw new ChecklistException(400, "AssetUnavailable");
 			foreach (var section in form.Sections)
 			{
 				section.Id = Guid.Parse(section.Id).ToString("D");
@@ -185,7 +202,7 @@ namespace Resgrid.Services
 				occurrence.Content = JsonConvert.SerializeObject(target); await PersistAsync(actor, occurrence, true);
 				var completion = New<ChecklistCompletion>(actor, definition.Id); completion.Id = completionId;
 				completion.TargetGroupId = target.GroupId; completion.VersionId = version.Id; completion.OccurrenceId = occurrence.Id; completion.TargetId = target.Id; completion.TargetType = (int)target.Type;
-				completion.Content = "{}"; await PersistAsync(actor, completion, true); await AuditAsync(actor, completion, AuditLogTypes.ChecklistCompletionStarted); return completion.Id;
+				completion.Content = "{}"; completion.Passed = false; await PersistAsync(actor, completion, true); await AuditAsync(actor, completion, AuditLogTypes.ChecklistCompletionStarted); return completion.Id;
 			});
 		}
 		private async Task RequireRunReadAsync(ChecklistActor actor, ChecklistCompletion row)
@@ -203,22 +220,52 @@ namespace Resgrid.Services
 			foreach (var item in await _store.ListAsync<ChecklistCompletionItem>(actor.DepartmentId, row.Id, take: 250)) input.Answers.Add(Decode<ChecklistAnswer>((await RevealAsync(actor, item)).Content));
 			var files = await _store.ListAsync<ChecklistCompletionFile>(actor.DepartmentId, row.Id, take: 500);
 			foreach (var file in files) await RevealAsync(actor, file);
-			return new ChecklistRunView { VersionNumber = version.Version, Completion = row, Form = Decode<ChecklistForm>(version.Content), Target = Decode<ChecklistTarget>(occurrence.Content), Input = input, Files = files };
+			return new ChecklistRunView { WitnessAttestation = WitnessAttestation(row.Content), VersionNumber = version.Version, Completion = row, Form = Decode<ChecklistForm>(version.Content), Target = Decode<ChecklistTarget>(occurrence.Content), Input = input, Files = files };
+		}
+		private static string WitnessAttestation(string content)
+		{
+			try
+			{
+				var value = JObject.Parse(content ?? "{}")["WitnessAttestation"];
+				return value?.Type == JTokenType.String ? value.Value<string>() : null;
+			}
+			catch (JsonException) { return null; }
 		}
 		public async Task<ChecklistRunView> GetRunAsync(ChecklistActor actor, string id)
 		{ Id(id); await _authorization.RequireMemberAsync(actor); return await RunViewAsync(actor, await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, id)); }
-		public async Task<List<ChecklistHistoryEntry>> HistoryAsync(ChecklistActor actor, string definitionId, int page = 0)
+		public async Task<List<ChecklistHistoryEntry>> HistoryAsync(ChecklistActor actor, string definitionId, int page = 0, bool includeNext = false)
 		{
 			Id(definitionId); await _authorization.RequireMemberAsync(actor);
 			if (page < 0 || page > 10000) throw new ChecklistException(400, "Invalid page.");
 			var result = new List<ChecklistHistoryEntry>();
-			foreach (var row in await _store.ListAsync<ChecklistCompletion>(actor.DepartmentId, definitionId, page * 50, 50))
-				if (await _authorization.CanReadAsync(actor, row))
-				{
-					var occurrence = await RevealAsync(actor, await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, row.OccurrenceId));
-					row.Content = null; result.Add(new ChecklistHistoryEntry { Completion = row, TargetName = Decode<ChecklistTarget>(occurrence.Content).Name });
-				}
+			foreach (var row in await ReadPageAsync<ChecklistCompletion>(actor.DepartmentId, definitionId, page, includeNext,
+				row => _authorization.CanReadAsync(actor, row)))
+			{
+				await RevealAsync(actor, row);
+				var occurrence = await RevealAsync(actor, await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, row.OccurrenceId));
+				row.Content = null; result.Add(new ChecklistHistoryEntry { Completion = row, TargetName = Decode<ChecklistTarget>(occurrence.Content).Name });
+			}
 			return result;
+		}
+		// Page authorized rows, so deleted drafts or another member's runs cannot hide the next page.
+		private async Task<List<T>> ReadPageAsync<T>(int departmentId, string parentId, int page, bool includeNext,
+			Func<T, Task<bool>> visible) where T : ChecklistRow
+		{
+			var result = new List<T>();
+			var remaining = page * 50;
+			var take = includeNext ? 51 : 50;
+			for (var skip = 0; ; skip += 100)
+			{
+				var batch = await _store.ListAsync<T>(departmentId, parentId, skip, 100);
+				foreach (var row in batch)
+				{
+					if (!await visible(row)) continue;
+					if (remaining > 0) { remaining--; continue; }
+					result.Add(row);
+					if (result.Count == take) return result;
+				}
+				if (batch.Count < 100) return result;
+			}
 		}
 		private static string SubmissionHash(ChecklistRunInput input, IEnumerable<ChecklistCompletionFile> files) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new
 		{
@@ -233,6 +280,7 @@ namespace Resgrid.Services
 			{
 				var row = await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, id);
 				if (row == null || row.CreatedBy != actor.UserId) throw new ChecklistException(404, "Only the author can edit this run.");
+				await RequireRunAssignmentAsync(actor, row);
 				var view = await RunViewAsync(actor, row);
 				var evaluation = ChecklistValidation.Evaluate(view.Form, input, Evidence(view.Files), submit); Valid(evaluation.Errors);
 				foreach (var answer in input.Answers) answer.ItemId = Guid.Parse(answer.ItemId).ToString("D");
@@ -260,13 +308,14 @@ namespace Resgrid.Services
 					if (row.State == (int)ChecklistRunState.Submitted) await EventAsync(actor, row, WorkflowTriggerEventType.ChecklistCompleted, null, events);
 				}
 				await PersistAsync(actor, row, false); await AuditAsync(actor, row, submit ? AuditLogTypes.ChecklistCompletionSubmitted : AuditLogTypes.ChecklistProgressSaved,
-					new { row.State, row.Score, row.Passed, FailedItemIds = evaluation.FailedItemIds }); return row.Revision;
+					new { row.State }); return row.Revision;
 			});
 		}
 		private async Task AdvanceOccurrenceAsync(ChecklistActor actor, ChecklistCompletion completion)
 		{
 			var occurrence = await RevealAsync(actor, await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, completion.OccurrenceId));
-			occurrence.State = completion.State; occurrence.Revision++; await PersistAsync(actor, occurrence, false);
+			occurrence.State = completion.State == (int)ChecklistRunState.Submitted || !occurrence.MissedOn.HasValue ? completion.State : (int)ChecklistOccurrenceState.Missed;
+			occurrence.Revision++; await PersistAsync(actor, occurrence, false);
 		}
 		private async Task EventAsync(ChecklistActor actor, ChecklistCompletion row, WorkflowTriggerEventType trigger, string itemId, List<long> events)
 		{
@@ -293,9 +342,11 @@ namespace Resgrid.Services
 				if (row.State != (int)ChecklistRunState.AwaitingWitness || !view.Form.RequiresIndependentWitness) throw new ChecklistException(409, "This run is not awaiting a witness.");
 				var content = JObject.Parse(row.Content); content["WitnessAttestation"] = attestation; row.Content = content.ToString(Formatting.None);
 				row.WitnessUserId = actor.UserId; row.WitnessedOn = DateTime.UtcNow; row.State = (int)ChecklistRunState.Submitted; row.Revision++;
-				await AdvanceOccurrenceAsync(actor, row); await PersistAsync(actor, row, false);
+				await AdvanceOccurrenceAsync(actor, row);
+				await EventAsync(actor, row, WorkflowTriggerEventType.ChecklistCompleted, null, events);
+				await PersistAsync(actor, row, false);
 				await AuditAsync(actor, row, AuditLogTypes.ChecklistWitnessAttested, new { row.SubmissionHash });
-				await EventAsync(actor, row, WorkflowTriggerEventType.ChecklistCompleted, null, events); return true;
+				return true;
 			});
 		}
 		public async Task AddFileAsync(ChecklistActor actor, string id, string itemId, string fileName, string contentType, byte[] data)
@@ -321,6 +372,7 @@ namespace Resgrid.Services
 			{
 				var row = await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, id);
 				if (row?.CreatedBy != actor.UserId || row.State != (int)ChecklistRunState.InProgress) throw new ChecklistException(409, "Submitted evidence is immutable.");
+				await RequireRunAssignmentAsync(actor, row);
 				var view = await RunViewAsync(actor, row);
 				if (!view.Form.Sections.SelectMany(s => s.Items).Any(i => i.Id == itemId)) throw new ChecklistException(404, "The evidence item does not belong to this version.");
 				var checksum = Convert.ToHexString(SHA256.HashData(clean.Data));
@@ -329,7 +381,7 @@ namespace Resgrid.Services
 				var file = New<ChecklistCompletionFile>(actor, row.Id); file.ItemId = itemId; file.ContentType = clean.ContentType; file.Size = clean.Data.Length;
 				file.Sha256 = checksum; file.Data = clean.Data; file.ScanState = (int)scan.State; file.Content = clean.FileName;
 				var protection = await _write.Value.PrepareRecordsBinaryWriteAsync(actor.DepartmentId, "checklistcompletionfiles.data", file.Id, file.Data, bytes => file.Data = bytes, () => file.IsProtected = true, actor.GrantToken, actor.UserId, false);
-				if (protection?.Success != true) throw new ChecklistException(403, "Protected evidence could not be saved.");
+				if (protection?.Success != true || protection.IsProtected && !ProtectedReadService.IsBinaryEnveloped(file.Data)) throw new ChecklistException(403, "Protected evidence could not be saved.");
 				await PersistAsync(actor, file, true); row.Revision++; await PersistAsync(actor, row, false);
 				await AuditAsync(actor, file, AuditLogTypes.ChecklistFileAdded, new { CompletionId = row.Id, itemId, file.Size, file.ScanState }); return true;
 			});
@@ -356,6 +408,7 @@ namespace Resgrid.Services
 				if (file == null) throw new ChecklistException(404, "Evidence is unavailable.");
 				var row = await RevealAsync(actor, await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, file.ParentId));
 				if (row.CreatedBy != actor.UserId || row.State != (int)ChecklistRunState.InProgress) throw new ChecklistException(409, "Submitted evidence is immutable.");
+				await RequireRunAssignmentAsync(actor, row);
 				await _store.DeleteFileAsync(actor.DepartmentId, id); row.Revision++; await PersistAsync(actor, row, false);
 				await AuditAsync(actor, file, AuditLogTypes.ChecklistFileRemoved, new { CompletionId = row.Id }); return true;
 			});

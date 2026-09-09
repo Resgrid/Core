@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Checklists;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -30,6 +31,9 @@ namespace Resgrid.Services
 		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IRecordsExportService _recordsExportService;
+		private readonly Lazy<IProtectedProjectionService> _protectedProjection;
+		private readonly Lazy<IReadinessHistoryProtectionService> _history;
+		private IReadinessHistoryProtectionService History => _history?.Value ?? throw new InvalidOperationException("Readiness history protection is unavailable.");
 
 		public WorkflowService(
 			IWorkflowRepository workflowRepository,
@@ -42,9 +46,11 @@ namespace Resgrid.Services
 			IWorkflowActionExecutorFactory executorFactory,
 			IWorkflowTemplateContextBuilder contextBuilder,
 			ISubscriptionsService subscriptionsService,
-			IRecordsExportService recordsExportService)
+			IRecordsExportService recordsExportService, Lazy<IProtectedProjectionService> protectedProjection = null, Lazy<IReadinessHistoryProtectionService> history = null)
 		{
 			_recordsExportService = recordsExportService;
+			_protectedProjection = protectedProjection;
+			_history = history;
 			_workflowRepository = workflowRepository;
 			_stepRepository = stepRepository;
 			_credentialRepository = credentialRepository;
@@ -295,6 +301,20 @@ namespace Resgrid.Services
 		{
 			var workflow = await _workflowRepository.GetByIdAsync(workflowId);
 			if (workflow == null) return null;
+			if (workflow.DepartmentId != departmentId) throw new InvalidOperationException("Workflow tenant mismatch.");
+			var checklist = ChecklistWorkflowPayload.IsChecklist(workflow.TriggerEventType);
+			if (checklist)
+			{
+				if (string.IsNullOrEmpty(existingRunId)) throw new InvalidOperationException("Checklist workflows require a durable event run.");
+				eventPayloadJson = await ChecklistWorkflowPayload.ProjectAsync(departmentId, JObject.Parse(eventPayloadJson), _protectedProjection?.Value, wrapped: true);
+				var persistedInput = new WorkflowRun { InputPayload = eventPayloadJson };
+				await History.ProtectAsync(departmentId, existingRunId, persistedInput, ReadinessHistoryFields.Runs, cancellationToken);
+				if (!await _runRepository.TryStartChecklistRunAsync(existingRunId, workflowId, departmentId, attemptNumber, persistedInput.InputPayload))
+				{
+					var duplicate = await _runRepository.GetByIdAsync(existingRunId);
+					return duplicate?.DepartmentId == departmentId && duplicate.WorkflowId == workflowId ? duplicate : null;
+				}
+			}
 
 			// Resolve whether this is a free-plan department once per execution
 			var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
@@ -307,6 +327,7 @@ namespace Resgrid.Services
 				run = await _runRepository.GetByIdAsync(existingRunId);
 				if (run == null)
 				{
+					if (checklist) throw new InvalidOperationException("The claimed checklist workflow run no longer exists.");
 					Logging.LogError($"WorkflowService.ExecuteWorkflowAsync: WorkflowRun '{existingRunId}' not found for workflowId '{workflowId}'. Recreating run record.");
 					run = new WorkflowRun
 					{
@@ -324,9 +345,11 @@ namespace Resgrid.Services
 				}
 				else
 				{
+					if (run.DepartmentId != departmentId || run.WorkflowId != workflowId) throw new InvalidOperationException("Workflow run tenant mismatch.");
+					if (checklist) run.InputPayload = eventPayloadJson;
 					run.Status        = (int)WorkflowRunStatus.Running;
 					run.AttemptNumber = attemptNumber;
-					await _runRepository.UpdateAsync(run, cancellationToken);
+					await UpdateRunAsync(run, cancellationToken);
 				}
 			}
 			else
@@ -355,11 +378,11 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex);
+				if (checklist) Logging.LogError($"Checklist workflow failed for run {run.WorkflowRunId}."); else Logging.LogException(ex);
 				run.Status       = (int)WorkflowRunStatus.Failed;
 				run.ErrorMessage = $"Failed to build template context: {ex.Message}";
 				run.CompletedOn  = DateTime.UtcNow;
-				await _runRepository.UpdateAsync(run, cancellationToken);
+				await UpdateRunAsync(run, cancellationToken);
 				return run;
 			}
 
@@ -369,7 +392,7 @@ namespace Resgrid.Services
 				run.Status       = (int)WorkflowRunStatus.Failed;
 				run.ErrorMessage = "Template context builder returned a null context object.";
 				run.CompletedOn  = DateTime.UtcNow;
-				await _runRepository.UpdateAsync(run, cancellationToken);
+				await UpdateRunAsync(run, cancellationToken);
 				return run;
 			}
 
@@ -411,7 +434,7 @@ namespace Resgrid.Services
 							logEntry.RenderedOutput = step.ConditionExpression;
 							logEntry.DurationMs    = sw.ElapsedMilliseconds;
 							logEntry.CompletedOn   = DateTime.UtcNow;
-							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
 							continue;
 						}
 
@@ -428,7 +451,7 @@ namespace Resgrid.Services
 							logEntry.RenderedOutput = step.ConditionExpression;
 							logEntry.DurationMs    = sw.ElapsedMilliseconds;
 							logEntry.CompletedOn   = DateTime.UtcNow;
-							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
 							continue;
 						}
 
@@ -443,7 +466,7 @@ namespace Resgrid.Services
 							logEntry.RenderedOutput = conditionResult;
 							logEntry.DurationMs    = sw.ElapsedMilliseconds;
 							logEntry.CompletedOn   = DateTime.UtcNow;
-							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
 							continue;
 						}
 					}
@@ -465,7 +488,7 @@ namespace Resgrid.Services
 							logEntry.ErrorMessage = $"Daily {actionType} send limit of {dailyLimit} reached for this department. Step skipped.";
 							logEntry.DurationMs   = sw.ElapsedMilliseconds;
 							logEntry.CompletedOn  = DateTime.UtcNow;
-							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
 							anyFailure = true;
 							continue;
 						}
@@ -498,7 +521,7 @@ namespace Resgrid.Services
 						sw.Stop();
 						logEntry.DurationMs  = sw.ElapsedMilliseconds;
 						logEntry.CompletedOn = DateTime.UtcNow;
-						await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+						await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
 						anyFailure = true;
 						continue;
 					}
@@ -561,7 +584,7 @@ namespace Resgrid.Services
 							logEntry.ErrorMessage = "A report export can only be attached to a Records trigger.";
 							logEntry.DurationMs   = sw.ElapsedMilliseconds;
 							logEntry.CompletedOn  = DateTime.UtcNow;
-							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
 							anyFailure = true;
 							continue;
 						}
@@ -586,7 +609,7 @@ namespace Resgrid.Services
 							logEntry.ErrorMessage = $"Report export failed: {exportEx.Message}";
 							logEntry.DurationMs   = sw.ElapsedMilliseconds;
 							logEntry.CompletedOn  = DateTime.UtcNow;
-							await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+							await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
 							anyFailure = true;
 							Logging.LogException(exportEx);
 							continue;
@@ -647,10 +670,10 @@ namespace Resgrid.Services
 					logEntry.DurationMs   = sw.ElapsedMilliseconds;
 					logEntry.CompletedOn  = DateTime.UtcNow;
 					anyFailure = true;
-					Logging.LogException(ex);
+					if (checklist) Logging.LogError($"Checklist workflow failed for run {run.WorkflowRunId}."); else Logging.LogException(ex);
 				}
 
-				await _runLogRepository.InsertAsync(logEntry, cancellationToken);
+				await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
 			}
 
 			// Determine retry or final status
@@ -674,7 +697,7 @@ namespace Resgrid.Services
 			}
 
 			run.CompletedOn = DateTime.UtcNow;
-			await _runRepository.UpdateAsync(run, cancellationToken);
+			await UpdateRunAsync(run, cancellationToken);
 			return run;
 		}
 
@@ -689,37 +712,42 @@ namespace Resgrid.Services
 
 			run.Status      = (int)WorkflowRunStatus.Cancelled;
 			run.CompletedOn = DateTime.UtcNow;
-			await _runRepository.UpdateAsync(run, cancellationToken);
+			await UpdateRunAsync(run, cancellationToken);
 			return true;
 		}
 
 		// ── Run Queries ───────────────────────────────────────────────────────────────
 
 		public async Task<WorkflowRun> GetWorkflowRunByIdAsync(string workflowRunId, CancellationToken cancellationToken = default)
-			=> await _runRepository.GetByIdAsync(workflowRunId);
+			=> await DisplayRunAsync(await _runRepository.GetByIdAsync(workflowRunId));
 
 		public async Task<List<WorkflowRun>> GetRunsByDepartmentIdAsync(int departmentId, int page, int pageSize, CancellationToken cancellationToken = default)
 		{
 			var results = await _runRepository.GetByDepartmentIdPagedAsync(departmentId, page, pageSize);
-			return results?.ToList() ?? new List<WorkflowRun>();
+			return await DisplayRunsAsync(results);
 		}
 
 		public async Task<List<WorkflowRun>> GetRunsByWorkflowIdAsync(string workflowId, int page, int pageSize, CancellationToken cancellationToken = default)
 		{
 			var results = await _runRepository.GetRunsByWorkflowIdAsync(workflowId, page, pageSize);
-			return results?.ToList() ?? new List<WorkflowRun>();
+			return await DisplayRunsAsync(results);
 		}
 
 		public async Task<List<WorkflowRun>> GetPendingAndRunningRunsByDepartmentIdAsync(int departmentId, CancellationToken cancellationToken = default)
 		{
 			var results = await _runRepository.GetPendingAndRunningByDepartmentIdAsync(departmentId);
-			return results?.ToList() ?? new List<WorkflowRun>();
+			return await DisplayRunsAsync(results);
 		}
 
 		public async Task<List<WorkflowRunLog>> GetLogsForRunAsync(string workflowRunId, CancellationToken cancellationToken = default)
 		{
 			var results = await _runLogRepository.GetByWorkflowRunIdAsync(workflowRunId);
-			return results?.OrderBy(l => l.StartedOn).ToList() ?? new List<WorkflowRunLog>();
+			var run = await _runRepository.GetByIdAsync(workflowRunId);
+			if (run == null) return new List<WorkflowRunLog>();
+			var logs = results?.OrderBy(l => l.StartedOn).ToList() ?? new List<WorkflowRunLog>();
+			if (ChecklistWorkflowPayload.IsChecklist(run.TriggerEventType))
+				return (await Task.WhenAll(logs.Select(log => History.ForDisplayAsync(run.DepartmentId, log, ReadinessHistoryFields.Logs)))).ToList();
+			return logs;
 		}
 
 		public async Task<WorkflowHealthSummary> GetWorkflowHealthAsync(string workflowId, CancellationToken cancellationToken = default)
@@ -727,8 +755,7 @@ namespace Resgrid.Services
 			var workflow = await _workflowRepository.GetByIdAsync(workflowId);
 			if (workflow == null) return null;
 
-			var allRuns = (await _runRepository.GetRunsByWorkflowIdAsync(workflowId, 1, 10000))?.ToList()
-			              ?? new List<WorkflowRun>();
+			var allRuns = await DisplayRunsAsync(await _runRepository.GetRunsByWorkflowIdAsync(workflowId, 1, 10000));
 
 			var now     = DateTime.UtcNow;
 			var runs24h = allRuns.Where(r => r.StartedOn >= now.AddHours(-24)).ToList();
@@ -770,6 +797,31 @@ namespace Resgrid.Services
 			};
 		}
 
+		private async Task UpdateRunAsync(WorkflowRun run, CancellationToken ct)
+		{
+			if (ChecklistWorkflowPayload.IsChecklist(run.TriggerEventType))
+				await History.ProtectAsync(run.DepartmentId, run.WorkflowRunId, run, ReadinessHistoryFields.Runs, ct);
+			await _runRepository.UpdateAsync(run, ct);
+		}
+
+		private async Task InsertLogAsync(int departmentId, bool checklist, WorkflowRunLog log, CancellationToken ct)
+		{
+			if (checklist) await History.ProtectAsync(departmentId, log.WorkflowRunLogId, log, ReadinessHistoryFields.Logs, ct);
+			await _runLogRepository.InsertAsync(log, ct);
+		}
+
+		private async Task<WorkflowRun> DisplayRunAsync(WorkflowRun run)
+		{
+			if (run == null || !ChecklistWorkflowPayload.IsChecklist(run.TriggerEventType)) return run;
+			var copy = await History.ForDisplayAsync(run.DepartmentId, run, ReadinessHistoryFields.Runs);
+			if (copy.Logs != null)
+				copy.Logs = await Task.WhenAll(copy.Logs.Select(log => History.ForDisplayAsync(run.DepartmentId, log, ReadinessHistoryFields.Logs)));
+			return copy;
+		}
+
+		private async Task<List<WorkflowRun>> DisplayRunsAsync(IEnumerable<WorkflowRun> runs)
+			=> (await Task.WhenAll((runs ?? Enumerable.Empty<WorkflowRun>()).Select(DisplayRunAsync))).ToList();
+
 		public async Task<bool> ClearPendingRunsAsync(int departmentId, CancellationToken cancellationToken = default)
 		{
 			var pending = await _runRepository.GetPendingAndRunningByDepartmentIdAsync(departmentId);
@@ -779,12 +831,9 @@ namespace Resgrid.Services
 			{
 				run.Status      = (int)WorkflowRunStatus.Cancelled;
 				run.CompletedOn = DateTime.UtcNow;
-				await _runRepository.UpdateAsync(run, cancellationToken);
+				await UpdateRunAsync(run, cancellationToken);
 			}
 			return true;
 		}
 	}
 }
-
-
-

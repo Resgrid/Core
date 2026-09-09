@@ -30,18 +30,9 @@ namespace Resgrid.Repositories.DataRepository
 
 					using (var transaction = db.BeginTransaction())
 					{
+						await ChecklistDepartmentCleanup.DeleteWithinTransactionAsync(db, transaction, departmentId, DatabaseTypes.SqlServer);
 						var result = await db.ExecuteAsync(@"
-								IF OBJECT_ID('dbo.ChecklistDefinitions', 'U') IS NOT NULL
-                                BEGIN
-                                    DELETE FROM [dbo].[ChecklistCompletionFiles] WHERE DepartmentId = @DepartmentId
-                                    DELETE FROM [dbo].[ChecklistCompletionItems] WHERE DepartmentId = @DepartmentId
-                                    DELETE FROM [dbo].[ChecklistCompletions] WHERE DepartmentId = @DepartmentId
-                                    DELETE FROM [dbo].[ChecklistOccurrences] WHERE DepartmentId = @DepartmentId
-                                    DELETE FROM [dbo].[ChecklistDefinitionVersions] WHERE DepartmentId = @DepartmentId
-                                    DELETE FROM [dbo].[ChecklistDefinitions] WHERE DepartmentId = @DepartmentId
-                                    DELETE FROM [dbo].[DepartmentChecklistSettings] WHERE DepartmentId = @DepartmentId
-                                END
-                                DECLARE @UserId NVARCHAR(128)
+								DECLARE @UserId NVARCHAR(128)
 								DECLARE @UnitId INT
 								DECLARE @ManagingUserId NVARCHAR(128)
 

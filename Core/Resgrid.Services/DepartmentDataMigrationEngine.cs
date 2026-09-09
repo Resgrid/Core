@@ -555,7 +555,9 @@ namespace Resgrid.Services
 
 					var plaintext = _cryptoService.DecryptText(dek, companion,
 						context.DepartmentId, spec.FieldId, row.RowKey);
-					setValues[spec.ColumnName] = decimal.Parse(plaintext, CultureInfo.InvariantCulture);
+					setValues[spec.ColumnName] = spec.CompanionIsBoolean
+						? (object)(plaintext == "1" || plaintext != "0" && bool.Parse(plaintext))
+						: decimal.Parse(plaintext, CultureInfo.InvariantCulture);
 					setValues[spec.CompanionColumn] = null;
 					return ColumnOutcome.Changed;
 				}

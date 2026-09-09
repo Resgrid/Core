@@ -1,0 +1,22 @@
+@model Resgrid.Model.Checklists.ChecklistReminderSettingsInput
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["ReminderSettings"]; }
+<div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12"><h2>@localizer["ReminderSettings"]</h2></div></div>
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+    @await Html.PartialAsync("_Protection")
+    <p>@localizer["ReminderHelp"]</p>
+    <form class="checklist-form" asp-action="SaveReminders" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Revision" />
+        <div class="checkbox"><label><input asp-for="Enabled" /> @localizer["ReminderEnabled"]</label></div>
+        <div class="form-group"><label asp-for="NotifyBeforeMinutes">@localizer["ReminderBefore"]</label><input class="form-control" asp-for="NotifyBeforeMinutes" min="0" max="10080" /></div>
+        <div class="checkbox"><label><input asp-for="NotifyMissed" /> @localizer["ReminderMissed"]</label></div>
+        <div class="checkbox"><label><input asp-for="DigestMode" /> @localizer["ReminderDigest"]</label></div>
+        <div class="checkbox"><label><input asp-for="NotifyAtShiftStart" /> @localizer["ReminderShiftStart"]</label></div>
+        <div class="form-group"><label asp-for="FixedDigestTime">@localizer["ReminderFixedTime"]</label><input class="form-control" asp-for="FixedDigestTime" type="time" /></div>
+        <div class="form-group"><label asp-for="EscalateAfterMinutes">@localizer["ReminderEscalate"]</label><input class="form-control" asp-for="EscalateAfterMinutes" min="1" max="43200" /></div>
+        <button class="btn btn-primary" type="submit">@localizer["SaveReminders"]</button>
+        <a class="btn btn-default" asp-action="Index">@localizer["Checklists"]</a>
+    </form>
+</div></div></div>
+@section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

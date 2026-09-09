@@ -9,10 +9,10 @@
     <dl class="dl-horizontal">
         <dt>@localizer["State"]</dt><dd>@localizer[((ChecklistRunState)run.State).ToString()]</dd>
         <dt>@localizer["Score"]</dt><dd>@(run.Score.HasValue ? run.Score + "%" : localizer["NoScore"].Value)</dd>
-        <dt>@localizer["Result"]</dt><dd>@(run.SubmittedOn.HasValue ? run.Passed ? localizer["Passed"] : localizer["Failed"] : localizer["Incomplete"])</dd>
+        <dt>@localizer["Result"]</dt><dd>@(run.SubmittedOn.HasValue ? run.Passed.HasValue ? run.Passed.Value ? localizer["Passed"] : localizer["Failed"] : "—" : localizer["Incomplete"])</dd>
         <dt>@localizer["Author"]</dt><dd>@run.CreatedBy</dd><dt>@localizer["Submitted"] (UTC)</dt><dd>@run.SubmittedOn?.ToString("u")</dd>
         <dt>@localizer["Version"]</dt><dd>@Model.VersionNumber</dd>
-        @if (run.WitnessedOn.HasValue) { <dt>@localizer["WitnessLabel"]</dt><dd>@run.WitnessUserId · @run.WitnessedOn.Value.ToString("u")</dd><dt>@localizer["Attestation"]</dt><dd>@((string)Newtonsoft.Json.Linq.JObject.Parse(run.Content ?? "{}")["WitnessAttestation"])</dd> }
+        @if (run.WitnessedOn.HasValue) { <dt>@localizer["WitnessLabel"]</dt><dd>@run.WitnessUserId · @run.WitnessedOn.Value.ToString("u")</dd><dt>@localizer["Attestation"]</dt><dd>@Model.WitnessAttestation</dd> }
     </dl>
     @foreach (var checklistSection in Model.Form.Sections)
     {

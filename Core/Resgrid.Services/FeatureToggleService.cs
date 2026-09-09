@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,7 +22,7 @@ namespace Resgrid.Services
 	/// evaluation hot path is served entirely from cache; management writes invalidate the relevant
 	/// cache entries and emit audit events.
 	/// </summary>
-	public class FeatureToggleService : IFeatureToggleService
+	public partial class FeatureToggleService : IFeatureToggleService
 	{
 		private const string AllFlagsCacheKey = "FeatureFlags_All";
 		private const string AllRulesCacheKey = "FeatureFlagTargetingRules_All";
@@ -45,7 +45,7 @@ namespace Resgrid.Services
 		public FeatureToggleService(IFeatureFlagRepository featureFlagRepository, IFeatureFlagOverrideRepository featureFlagOverrideRepository,
 			IFeatureFlagTargetingRuleRepository featureFlagTargetingRuleRepository, IFeatureFlagPrerequisiteRepository featureFlagPrerequisiteRepository,
 			IFeatureFlagUsageRepository featureFlagUsageRepository, ICacheProvider cacheProvider, IEventAggregator eventAggregator,
-			ISubscriptionsService subscriptionsService, IDepartmentsService departmentsService)
+			ISubscriptionsService subscriptionsService, IDepartmentsService departmentsService, Resgrid.Model.Repositories.Queries.IUnitOfWork mutationUnit = null, IFeatureFlagMutationObserver mutationObserver = null)
 		{
 			_featureFlagRepository = featureFlagRepository;
 			_featureFlagOverrideRepository = featureFlagOverrideRepository;
@@ -55,7 +55,7 @@ namespace Resgrid.Services
 			_cacheProvider = cacheProvider;
 			_eventAggregator = eventAggregator;
 			_subscriptionsService = subscriptionsService;
-			_departmentsService = departmentsService;
+			_departmentsService = departmentsService; _mutationUnit = mutationUnit; _mutationObserver = mutationObserver;
 		}
 
 		private static TimeSpan CacheLength => TimeSpan.FromMinutes(FeatureFlagsConfig.CacheDurationMinutes <= 0 ? 60 : FeatureFlagsConfig.CacheDurationMinutes);
@@ -79,6 +79,8 @@ namespace Resgrid.Services
 				return false;
 			}
 		}
+
+		public Task<FeatureFlagEvaluation> EvaluateFreshAsync(string key, int departmentId) => EvaluateInternalAsync(key, departmentId, null, false, new HashSet<int>(), true);
 
 		public async Task<FeatureFlagEvaluation> EvaluateAsync(string key, int departmentId, IDictionary<string, string> context = null)
 		{
@@ -113,13 +115,13 @@ namespace Resgrid.Services
 			return ComputeStateHash(evaluations);
 		}
 
-		private async Task<FeatureFlagEvaluation> EvaluateInternalAsync(string key, int departmentId, IDictionary<string, string> context, bool defaultValue, HashSet<int> visited)
+		private async Task<FeatureFlagEvaluation> EvaluateInternalAsync(string key, int departmentId, IDictionary<string, string> context, bool defaultValue, HashSet<int> visited, bool bypassCache = false)
 		{
 			// 0) Subsystem master switch.
 			if (!FeatureFlagsConfig.FeatureFlagsEnabled)
 				return BuildDefault(key, defaultValue, FeatureFlagEvaluationSource.SubsystemDisabled);
 
-			var flags = await GetAllFlagsAsync(includeArchived: true);
+			var flags = await GetAllFlagsAsync(includeArchived: true, bypassCache: bypassCache || _mutationActive);
 			var flag = flags.FirstOrDefault(f => string.Equals(f.FlagKey, key, StringComparison.OrdinalIgnoreCase));
 
 			// 1) Unknown flag -> caller/code default.
@@ -147,14 +149,14 @@ namespace Resgrid.Services
 					return evaluation = Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.Schedule);
 
 				// 5) Prerequisites.
-				var prerequisites = (await GetAllPrerequisitesAsync()).Where(p => p.FeatureFlagId == flag.FeatureFlagId).ToList();
+				var prerequisites = (await GetAllPrerequisitesAsync(bypassCache)).Where(p => p.FeatureFlagId == flag.FeatureFlagId).ToList();
 				foreach (var prerequisite in prerequisites)
 				{
 					var required = flags.FirstOrDefault(f => f.FeatureFlagId == prerequisite.RequiredFeatureFlagId);
 					if (required == null)
 						continue;
 
-					var requiredEvaluation = await EvaluateInternalAsync(required.FlagKey, departmentId, context, false, visited);
+					var requiredEvaluation = await EvaluateInternalAsync(required.FlagKey, departmentId, context, false, visited, bypassCache);
 					var satisfied = string.IsNullOrEmpty(prerequisite.RequiredValue)
 						? requiredEvaluation.IsEnabled
 						: requiredEvaluation.IsEnabled && string.Equals(requiredEvaluation.Value, prerequisite.RequiredValue, StringComparison.OrdinalIgnoreCase);
@@ -164,7 +166,7 @@ namespace Resgrid.Services
 				}
 
 				// 6) Per-department override (explicit, non-expired) wins over rollout/targeting.
-				var overrides = await GetOverridesForDepartmentAsync(departmentId);
+				var overrides = await GetOverridesForDepartmentAsync(departmentId, bypassCache || _mutationActive);
 				var departmentOverride = overrides.FirstOrDefault(o => o.FeatureFlagId == flag.FeatureFlagId);
 				if (departmentOverride != null && (!departmentOverride.ExpiresOn.HasValue || departmentOverride.ExpiresOn.Value > now))
 					return evaluation = Build(flag, departmentOverride.IsEnabled, departmentOverride.FlagValue, FeatureFlagEvaluationSource.Override);
@@ -178,7 +180,7 @@ namespace Resgrid.Services
 				}
 
 				// 8) Targeting rules (first match by priority).
-				var rules = (await GetAllTargetingRulesAsync()).Where(r => r.FeatureFlagId == flag.FeatureFlagId).OrderBy(r => r.Priority).ToList();
+				var rules = (await GetAllTargetingRulesAsync(bypassCache)).Where(r => r.FeatureFlagId == flag.FeatureFlagId).OrderBy(r => r.Priority).ToList();
 				foreach (var rule in rules)
 				{
 					if (!await RuleMatchesAsync(rule, departmentId, context))
@@ -426,7 +428,7 @@ namespace Resgrid.Services
 			}
 
 			List<FeatureFlag> flags;
-			if (!bypassCache && SystemBehaviorConfig.CacheEnabled)
+			if (!bypassCache && !_mutationActive && SystemBehaviorConfig.CacheEnabled)
 				flags = await _cacheProvider.RetrieveAsync(AllFlagsCacheKey, fetch, CacheLength);
 			else
 				flags = await fetch();
@@ -441,7 +443,7 @@ namespace Resgrid.Services
 			return flags.FirstOrDefault(f => string.Equals(f.FlagKey, key, StringComparison.OrdinalIgnoreCase));
 		}
 
-		private async Task<List<FeatureFlagTargetingRule>> GetAllTargetingRulesAsync()
+		private async Task<List<FeatureFlagTargetingRule>> GetAllTargetingRulesAsync(bool bypassCache = false)
 		{
 			async Task<List<FeatureFlagTargetingRule>> fetch()
 			{
@@ -449,13 +451,13 @@ namespace Resgrid.Services
 				return all?.ToList() ?? new List<FeatureFlagTargetingRule>();
 			}
 
-			if (SystemBehaviorConfig.CacheEnabled)
+			if (!bypassCache && !_mutationActive && SystemBehaviorConfig.CacheEnabled)
 				return await _cacheProvider.RetrieveAsync(AllRulesCacheKey, fetch, CacheLength) ?? new List<FeatureFlagTargetingRule>();
 
 			return await fetch();
 		}
 
-		private async Task<List<FeatureFlagPrerequisite>> GetAllPrerequisitesAsync()
+		private async Task<List<FeatureFlagPrerequisite>> GetAllPrerequisitesAsync(bool bypassCache = false)
 		{
 			async Task<List<FeatureFlagPrerequisite>> fetch()
 			{
@@ -463,7 +465,7 @@ namespace Resgrid.Services
 				return all?.ToList() ?? new List<FeatureFlagPrerequisite>();
 			}
 
-			if (SystemBehaviorConfig.CacheEnabled)
+			if (!bypassCache && !_mutationActive && SystemBehaviorConfig.CacheEnabled)
 				return await _cacheProvider.RetrieveAsync(AllPrereqsCacheKey, fetch, CacheLength) ?? new List<FeatureFlagPrerequisite>();
 
 			return await fetch();
@@ -477,7 +479,7 @@ namespace Resgrid.Services
 				return all?.ToList() ?? new List<FeatureFlagOverride>();
 			}
 
-			if (!bypassCache && SystemBehaviorConfig.CacheEnabled)
+			if (!bypassCache && !_mutationActive && SystemBehaviorConfig.CacheEnabled)
 				return await _cacheProvider.RetrieveAsync(string.Format(DepartmentOverridesCacheKey, departmentId), fetch, CacheLength) ?? new List<FeatureFlagOverride>();
 
 			return await fetch();
@@ -487,7 +489,8 @@ namespace Resgrid.Services
 
 		#region Flag management
 
-		public async Task<FeatureFlag> SaveFlagAsync(FeatureFlag flag, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<FeatureFlag> SaveFlagAsync(FeatureFlag flag, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => SaveFlagAsyncCore(flag, userId, cancellationToken), cancellationToken);
+		private async Task<FeatureFlag> SaveFlagAsyncCore(FeatureFlag flag, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (flag == null)
 				throw new ArgumentNullException(nameof(flag));
@@ -520,7 +523,8 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<bool> ArchiveFlagAsync(string key, string userId, bool archived = true, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<bool> ArchiveFlagAsync(string key, string userId, bool archived = true, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => ArchiveFlagAsyncCore(key, userId, archived, cancellationToken), cancellationToken);
+		private async Task<bool> ArchiveFlagAsyncCore(string key, string userId, bool archived = true, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var flag = await GetFlagByKeyAsync(key, bypassCache: true);
 			if (flag == null)
@@ -538,7 +542,8 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<FeatureFlag> SetGlobalEnabledAsync(string key, bool enabled, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<FeatureFlag> SetGlobalEnabledAsync(string key, bool enabled, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => SetGlobalEnabledAsyncCore(key, enabled, userId, cancellationToken), cancellationToken);
+		private async Task<FeatureFlag> SetGlobalEnabledAsyncCore(string key, bool enabled, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var flag = await GetFlagByKeyAsync(key, bypassCache: true);
 			if (flag == null)
@@ -556,7 +561,8 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<FeatureFlag> SetRolloutPercentageAsync(string key, int percentage, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<FeatureFlag> SetRolloutPercentageAsync(string key, int percentage, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => SetRolloutPercentageAsyncCore(key, percentage, userId, cancellationToken), cancellationToken);
+		private async Task<FeatureFlag> SetRolloutPercentageAsyncCore(string key, int percentage, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var flag = await GetFlagByKeyAsync(key, bypassCache: true);
 			if (flag == null)
@@ -574,7 +580,8 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<bool> DeleteFlagAsync(string key, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<bool> DeleteFlagAsync(string key, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => DeleteFlagAsyncCore(key, userId, cancellationToken), cancellationToken);
+		private async Task<bool> DeleteFlagAsyncCore(string key, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var flag = await GetFlagByKeyAsync(key, bypassCache: true);
 			if (flag == null)
@@ -619,7 +626,8 @@ namespace Resgrid.Services
 			return all?.Where(o => o.FeatureFlagId == flag.FeatureFlagId).ToList() ?? new List<FeatureFlagOverride>();
 		}
 
-		public async Task<FeatureFlagOverride> SetDepartmentOverrideAsync(string key, int departmentId, bool isEnabled, string value, string reason, DateTime? expiresOn, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<FeatureFlagOverride> SetDepartmentOverrideAsync(string key, int departmentId, bool isEnabled, string value, string reason, DateTime? expiresOn, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => SetDepartmentOverrideAsyncCore(key, departmentId, isEnabled, value, reason, expiresOn, userId, cancellationToken), cancellationToken);
+		private async Task<FeatureFlagOverride> SetDepartmentOverrideAsyncCore(string key, int departmentId, bool isEnabled, string value, string reason, DateTime? expiresOn, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var flag = await GetFlagByKeyAsync(key, bypassCache: true);
 			if (flag == null)
@@ -655,7 +663,8 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<bool> RemoveDepartmentOverrideAsync(string key, int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<bool> RemoveDepartmentOverrideAsync(string key, int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => RemoveDepartmentOverrideAsyncCore(key, departmentId, userId, cancellationToken), cancellationToken);
+		private async Task<bool> RemoveDepartmentOverrideAsyncCore(string key, int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var flag = await GetFlagByKeyAsync(key, bypassCache: true);
 			if (flag == null)
@@ -686,7 +695,8 @@ namespace Resgrid.Services
 			return (await GetAllTargetingRulesAsync()).Where(r => r.FeatureFlagId == flag.FeatureFlagId).OrderBy(r => r.Priority).ToList();
 		}
 
-		public async Task<FeatureFlagTargetingRule> SaveTargetingRuleAsync(FeatureFlagTargetingRule rule, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<FeatureFlagTargetingRule> SaveTargetingRuleAsync(FeatureFlagTargetingRule rule, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => SaveTargetingRuleAsyncCore(rule, userId, cancellationToken), cancellationToken);
+		private async Task<FeatureFlagTargetingRule> SaveTargetingRuleAsyncCore(FeatureFlagTargetingRule rule, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (rule == null)
 				throw new ArgumentNullException(nameof(rule));
@@ -712,7 +722,8 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<bool> RemoveTargetingRuleAsync(int targetingRuleId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<bool> RemoveTargetingRuleAsync(int targetingRuleId, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => RemoveTargetingRuleAsyncCore(targetingRuleId, userId, cancellationToken), cancellationToken);
+		private async Task<bool> RemoveTargetingRuleAsyncCore(int targetingRuleId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var rule = (await _featureFlagTargetingRuleRepository.GetAllAsync())?.FirstOrDefault(r => r.FeatureFlagTargetingRuleId == targetingRuleId);
 			if (rule == null)
@@ -735,7 +746,8 @@ namespace Resgrid.Services
 			return (await GetAllPrerequisitesAsync()).Where(p => p.FeatureFlagId == flag.FeatureFlagId).ToList();
 		}
 
-		public async Task<FeatureFlagPrerequisite> AddPrerequisiteAsync(string key, string requiredKey, string requiredValue, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<FeatureFlagPrerequisite> AddPrerequisiteAsync(string key, string requiredKey, string requiredValue, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => AddPrerequisiteAsyncCore(key, requiredKey, requiredValue, userId, cancellationToken), cancellationToken);
+		private async Task<FeatureFlagPrerequisite> AddPrerequisiteAsyncCore(string key, string requiredKey, string requiredValue, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var flag = await GetFlagByKeyAsync(key, bypassCache: true);
 			var required = await GetFlagByKeyAsync(requiredKey, bypassCache: true);
@@ -762,7 +774,8 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<bool> RemovePrerequisiteAsync(int prerequisiteId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public Task<bool> RemovePrerequisiteAsync(int prerequisiteId, string userId, CancellationToken cancellationToken = default(CancellationToken)) => MutateFlagAsync(() => RemovePrerequisiteAsyncCore(prerequisiteId, userId, cancellationToken), cancellationToken);
+		private async Task<bool> RemovePrerequisiteAsyncCore(int prerequisiteId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var prereq = (await _featureFlagPrerequisiteRepository.GetAllAsync())?.FirstOrDefault(p => p.FeatureFlagPrerequisiteId == prerequisiteId);
 			if (prereq == null)
@@ -856,11 +869,7 @@ namespace Resgrid.Services
 			var now = DateTime.UtcNow;
 			foreach (var flagId in touchedFlagIds)
 			{
-				var flag = await _featureFlagRepository.GetByIdAsync(flagId);
-				if (flag == null)
-					continue;
-				flag.LastEvaluatedOn = now;
-				await _featureFlagRepository.SaveOrUpdateAsync(flag, cancellationToken);
+				await _featureFlagRepository.TouchEvaluationAsync(flagId, now, cancellationToken);
 			}
 
 			return flushed;
@@ -892,6 +901,7 @@ namespace Resgrid.Services
 
 		public async Task InvalidateFlagCacheAsync()
 		{
+			if (_mutationActive) { _invalidateFlags = true; return; }
 			await _cacheProvider.RemoveAsync(AllFlagsCacheKey);
 			await _cacheProvider.RemoveAsync(AllRulesCacheKey);
 			await _cacheProvider.RemoveAsync(AllPrereqsCacheKey);
@@ -899,11 +909,13 @@ namespace Resgrid.Services
 
 		public async Task InvalidateDepartmentOverrideCacheAsync(int departmentId)
 		{
+			if (_mutationActive) { _invalidateOverrides.Add(departmentId); return; }
 			await _cacheProvider.RemoveAsync(string.Format(DepartmentOverridesCacheKey, departmentId));
 		}
 
 		private void PublishAudit(int departmentId, string userId, AuditLogTypes type, string before, object after)
 		{
+			if (_mutationActive) { _committedAudits.Add(() => PublishAudit(departmentId, userId, type, before, after)); return; }
 			try
 			{
 				_eventAggregator.SendMessage<AuditEvent>(new AuditEvent

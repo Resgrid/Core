@@ -26,10 +26,12 @@ const makeItem = (suffix, type) => ({ Id: suffix.padStart(8, '0') + '-1111-1111-
             const custom = { ...makeItem('2', 6), Options: ['Yes', 'No'], PassingValue: 'Yes', VisibleWhen: { ItemId: first.Id, EqualsValue: 'fail' } };
             const definition = { Name: 'User-owned title', Category: 0, TargetType: 0, PassThreshold: 100, Sections: [{ Id: id, Name: 'User-owned section', Items: [first, custom] }] };
             const localeScript = `<script id="checklist-translations" type="application/json">${json(translations)}</script>`;
-            await page.setContent(`<html lang="${culture}"><body><div id="checklist-error" hidden></div><form id="checklist-editor" action="/save"><input name="formJson"><div id="checklist-builder"></div><button type="submit" id="save">${translate('SaveDraft')}</button></form><script id="checklist-form-data" type="application/json">${json(definition)}</script>${localeScript}</body></html>`);
+            await page.setContent(`<html lang="${culture}"><body><div id="checklist-error" hidden></div><form id="checklist-editor" action="/save"><input name="formJson"><div id="checklist-builder" data-assets-available="true"></div><button type="submit" id="save">${translate('SaveDraft')}</button></form><script id="checklist-form-data" type="application/json">${json(definition)}</script>${localeScript}</body></html>`);
             await page.evaluate(() => { window.saved = null; window.fetch = async (_, options) => { saved = JSON.parse(options.body.get('formJson')); return { ok: true, json: async () => ({ revision: 2 }) }; }; });
             await page.addScriptTag({ path: script });
             assert.equal(await page.getByLabel(translate('Checklist name'), { exact: true }).inputValue(), definition.Name);
+            assert.equal(await page.getByLabel(translate('Target type'), { exact: true }).locator('option[value="5"]').textContent(), translate('InventoryAsset'));
+            await page.getByLabel(translate('Target type'), { exact: true }).selectOption('5');
             assert.equal(await page.getByLabel(translate('Answer type'), { exact: true }).first().locator('option:checked').textContent(), translate('Pass / Fail'));
             assert.equal(await page.getByLabel(translate('Category'), { exact: true }).locator('option:checked').textContent(), translate('Start of shift'));
             const condition = page.getByLabel(translate('Answer that activates this condition'), { exact: true });

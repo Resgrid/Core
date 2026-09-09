@@ -534,4 +534,107 @@
   <data name="Checks" xml:space="preserve">
     <value>Kontrole</value>
   </data>
+  <data name="Schedules" xml:space="preserve"><value>Harmonogramy</value></data>
+  <data name="NewSchedule" xml:space="preserve"><value>Nowy harmonogram</value></data>
+  <data name="NoSchedules" xml:space="preserve"><value>Nie ma jeszcze harmonogramów.</value></data>
+  <data name="EditSchedule" xml:space="preserve"><value>Edytuj harmonogram</value></data>
+  <data name="Frequency" xml:space="preserve"><value>Częstotliwość</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Strefa czasowa</value></data>
+  <data name="SchedulePaused" xml:space="preserve"><value>Wstrzymany</value></data>
+  <data name="ScheduleNotes" xml:space="preserve"><value>Uwagi do harmonogramu</value></data>
+  <data name="ScheduleStartDate" xml:space="preserve"><value>Data rozpoczęcia</value></data>
+  <data name="ScheduleEndDate" xml:space="preserve"><value>Data zakończenia (opcjonalna)</value></data>
+  <data name="TimesOfDay" xml:space="preserve"><value>Godziny lokalne</value></data>
+  <data name="WeeklyDays" xml:space="preserve"><value>Dni kontroli cotygodniowych</value></data>
+  <data name="DayOfMonth" xml:space="preserve"><value>Dzień miesiąca</value></data>
+  <data name="AnchorMonth" xml:space="preserve"><value>Miesiąc odniesienia</value></data>
+  <data name="ScheduleWorkshift" xml:space="preserve"><value>Zmiana dla kontroli na każdej zmianie</value></data>
+  <data name="WorkshiftFallback" xml:space="preserve"><value>Używaj godzin lokalnych codziennie</value></data>
+  <data name="WindowMinutes" xml:space="preserve"><value>Czas na wykonanie (minuty)</value></data>
+  <data name="ScheduleEnabled" xml:space="preserve"><value>Harmonogram włączony</value></data>
+  <data name="SaveSchedule" xml:space="preserve"><value>Zapisz harmonogram</value></data>
+  <data name="DueChecks" xml:space="preserve"><value>Kontrole do wykonania</value></data>
+  <data name="NoDueChecks" xml:space="preserve"><value>Brak kontroli na tej liście.</value></data>
+  <data name="ScheduledFor" xml:space="preserve"><value>Zaplanowano na</value></data>
+  <data name="WindowEnds" xml:space="preserve"><value>Koniec terminu</value></data>
+  <data name="Actions" xml:space="preserve"><value>Działania</value></data>
+  <data name="OpenCheck" xml:space="preserve"><value>Otwórz kontrolę</value></data>
+  <data name="ExcuseCheck" xml:space="preserve"><value>Usprawiedliw pominięcie</value></data>
+  <data name="SkipReason" xml:space="preserve"><value>Powód usprawiedliwionego pominięcia</value></data>
+  <data name="Scheduled" xml:space="preserve"><value>Zaplanowana</value></data>
+  <data name="Missed" xml:space="preserve"><value>Niewykonana</value></data>
+  <data name="Skipped" xml:space="preserve"><value>Pominięcie usprawiedliwione</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Anulowana</value></data>
+  <data name="PerShift" xml:space="preserve"><value>Na każdej zmianie</value></data>
+  <data name="Daily" xml:space="preserve"><value>Codziennie</value></data>
+  <data name="Weekly" xml:space="preserve"><value>Co tydzień</value></data>
+  <data name="Monthly" xml:space="preserve"><value>Co miesiąc</value></data>
+  <data name="Quarterly" xml:space="preserve"><value>Co kwartał</value></data>
+  <data name="SemiAnnual" xml:space="preserve"><value>Co sześć miesięcy</value></data>
+  <data name="Annual" xml:space="preserve"><value>Co rok</value></data>
+  <data name="ScheduleValidation" xml:space="preserve"><value>Sprawdź daty, godziny, obiekt i powtarzalność harmonogramu.</value></data>
+  <data name="SchedulePermission" xml:space="preserve"><value>Nie możesz zarządzać harmonogramami kontroli.</value></data>
+  <data name="ScheduleUnavailable" xml:space="preserve"><value>Ten harmonogram jest niedostępny.</value></data>
+  <data name="ScheduleRequiresPublished" xml:space="preserve"><value>Opublikuj listę kontrolną przed jej zaplanowaniem.</value></data>
+  <data name="OccurrenceUnavailable" xml:space="preserve"><value>Ta kontrola jest niedostępna lub została już zmieniona.</value></data>
+  <data name="SkipReasonRequired" xml:space="preserve"><value>Podaj powód zawierający do 4000 znaków.</value></data>
+  <data name="ChecklistCompleted" xml:space="preserve"><value>Lista kontrolna ukończona</value></data>
+  <data name="ChecklistFailed" xml:space="preserve"><value>Lista kontrolna niezaliczona</value></data>
+  <data name="ChecklistMissed" xml:space="preserve"><value>Lista kontrolna niewykonana</value></data>
+  <data name="ChecklistScheduleChanged" xml:space="preserve"><value>Harmonogram kontroli zmieniony</value></data>
+  <data name="ChecklistOccurrenceSkipped" xml:space="preserve"><value>Pominięcie zaplanowanej kontroli usprawiedliwione</value></data>
+  <data name="ScheduleVersionGuidance" xml:space="preserve"><value>Zapis przypina aktualną opublikowaną wersję. Zmiany zastępują przyszłe nierozpoczęte kontrole; wstrzymanie anuluje nierozpoczęte kontrole.</value></data>
+  <data name="ScheduleTimeGuidance" xml:space="preserve"><value>Godziny dotyczą tej strefy. Pominięta godzina jest przesuwana do przodu; powtórzona godzina występuje tylko raz.</value></data>
+  <data name="TimesOfDayGuidance" xml:space="preserve"><value>Podaj do ośmiu godzin w formacie 24-godzinnym, oddzielonych przecinkami.</value></data>
+  <data name="MonthGuidance" xml:space="preserve"><value>Dla kontroli miesięcznych lub rzadszych. W krótszych miesiącach używany jest ostatni dzień. Miesiąc odniesienia wyznacza kontrole kwartalne, półroczne i roczne.</value></data>
+  <data name="WorkshiftGuidance" xml:space="preserve"><value>Tylko dla kontroli na każdej zmianie. Wybrana zmiana używa zapisanych dat rozpoczęcia; w przeciwnym razie godziny lokalne obowiązują codziennie.</value></data>
+  <data name="DueGuidance" xml:space="preserve"><value>Nadchodzące kontrole na siedem dni i kontrole nieukończone. Zaległe kontrole można nadal wykonać.</value></data>
+  <data name="ReminderSettings" xml:space="preserve">
+    <value>Przypomnienia o listach kontrolnych</value>
+  </data>
+  <data name="ReminderHelp" xml:space="preserve">
+    <value>Przypomnienia dotyczą kontroli rozpoczynających się po ich włączeniu. Wiadomości zawierają odnośnik do logowania i uwzględniają preferencje powiadomień każdej osoby. Podsumowania łączą oczekujące przypomnienia według odbiorcy.</value>
+  </data>
+  <data name="ReminderEnabled" xml:space="preserve">
+    <value>Włącz przypomnienia o listach kontrolnych</value>
+  </data>
+  <data name="ReminderBefore" xml:space="preserve">
+    <value>Minuty przed terminem (0 wyłącza)</value>
+  </data>
+  <data name="ReminderMissed" xml:space="preserve">
+    <value>Powiadamiaj odpowiedzialny personel o pominiętych kontrolach</value>
+  </data>
+  <data name="ReminderDigest" xml:space="preserve">
+    <value>Łącz oczekujące przypomnienia w podsumowania</value>
+  </data>
+  <data name="ReminderEscalate" xml:space="preserve">
+    <value>Powiadom administratorów działu po tylu minutach opóźnienia (puste pole wyłącza)</value>
+  </data>
+  <data name="ReminderValidation" xml:space="preserve">
+    <value>Podaj czas przypomnienia od 0 do 10080 minut oraz czas powiadomienia administratorów od 1 do 43200 minut lub pozostaw ten drugi pusty.</value>
+  </data>
+  <data name="ReminderTitle" xml:space="preserve">
+    <value>Przypomnienia o listach kontrolnych</value>
+  </data>
+  <data name="ReminderMessage" xml:space="preserve">
+    <value>Dostępne są aktualizacje list kontrolnych. Zaloguj się, aby przejrzeć swoje kontrole.</value>
+  </data>
+  <data name="SaveReminders" xml:space="preserve">
+    <value>Zapisz ustawienia przypomnień</value>
+  </data>
+  <data name="AssetUnavailable" xml:space="preserve"><value>Sprzęt z numerem seryjnym jest niedostępny.</value></data>
+  <data name="Assignment" xml:space="preserve"><value>Przypisano do</value></data>
+  <data name="AssignmentAutomatic" xml:space="preserve"><value>Automatyczne przypisanie</value></data>
+  <data name="AssignmentPermission" xml:space="preserve"><value>Nie przypisano Ci wykonania tej kontroli.</value></data>
+  <data name="AssignmentType1" xml:space="preserve"><value>Osoba</value></data>
+  <data name="AssignmentType2" xml:space="preserve"><value>Rola personelu</value></data>
+  <data name="AssignmentType3" xml:space="preserve"><value>Grupa lub stacja</value></data>
+  <data name="AssignmentType4" xml:space="preserve"><value>Załoga jednostki</value></data>
+  <data name="AssignmentUnavailable" xml:space="preserve"><value>Wybierz dostępne przypisanie w tej organizacji.</value></data>
+  <data name="CalendarInclude" xml:space="preserve"><value>Kontrole gotowości</value></data>
+  <data name="CalendarRange" xml:space="preserve"><value>Wybierz zakres kalendarza nieprzekraczający 93 dni.</value></data>
+  <data name="InventoryAsset" xml:space="preserve"><value>Sprzęt z numerem seryjnym</value></data>
+  <data name="ReminderFixedTime" xml:space="preserve"><value>Godzina codziennego podsumowania (strefa czasowa organizacji; zastępuje początek zmiany)</value></data>
+  <data name="ReminderShiftStart" xml:space="preserve"><value>Wyślij podsumowanie na początku zmiany</value></data>
+  <data name="ReminderTimeValidation" xml:space="preserve"><value>Wprowadź jedną godzinę w formacie HH:mm.</value></data>
 </root>

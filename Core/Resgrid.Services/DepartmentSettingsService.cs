@@ -13,7 +13,7 @@ using Resgrid.Model.Services;
 
 namespace Resgrid.Services
 {
-	public class DepartmentSettingsService : IDepartmentSettingsService
+	public partial class DepartmentSettingsService : IDepartmentSettingsService
 	{
 		private static string DisableAutoAvailableCacheKey = "DSetAutoAvailable_{0}";
 		private static string StripeCustomerCacheKey = "DSetStripeCus_{0}";
@@ -47,16 +47,26 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 
 		public DepartmentSettingsService(IDepartmentSettingsRepository departmentSettingsRepository, IAddressService addressService,
-			IGeoLocationProvider geoLocationProvider, ICacheProvider cacheProvider)
+			IGeoLocationProvider geoLocationProvider, ICacheProvider cacheProvider,
+			Resgrid.Model.Repositories.Queries.IUnitOfWork moduleUnit = null, IFeatureFlagMutationObserver moduleObserver = null, Lazy<IFeatureToggleService> moduleFlags = null)
 		{
 			_departmentSettingsRepository = departmentSettingsRepository;
 			_addressService = addressService;
 			_geoLocationProvider = geoLocationProvider;
 			_cacheProvider = cacheProvider;
+			_moduleUnit = moduleUnit; _moduleObserver = moduleObserver; _moduleFlags = moduleFlags;
 		}
 
 		public async Task<DepartmentSetting> SaveOrUpdateSettingAsync(int departmentId, string setting, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (type == DepartmentSettingTypes.ModuleSettings && _moduleObserver != null)
+				return await MutateModuleAsync(departmentId, async () =>
+				{
+					var row = await _departmentSettingsRepository.GetDepartmentSettingByIdTypeAsync(departmentId, type)
+						?? new DepartmentSetting { DepartmentId = departmentId, SettingType = (int)type };
+					row.Setting = setting;
+					return await _departmentSettingsRepository.SaveOrUpdateAsync(row, cancellationToken);
+				}, cancellationToken);
 			var savedSetting = await GetSettingByDepartmentIdType(departmentId, type);
 
 			DepartmentSetting result;
@@ -87,6 +97,12 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteSettingAsync(int departmentId, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (type == DepartmentSettingTypes.ModuleSettings && _moduleObserver != null)
+				return await MutateModuleAsync(departmentId, async () =>
+				{
+					var row = await _departmentSettingsRepository.GetDepartmentSettingByIdTypeAsync(departmentId, type);
+					return row != null && await _departmentSettingsRepository.DeleteAsync(row, cancellationToken);
+				}, cancellationToken);
 			var savedSetting = await GetSettingByDepartmentIdType(departmentId, type);
 
 			if (savedSetting != null)

@@ -388,8 +388,14 @@ namespace Resgrid.Model
 			{
 				case WorkflowTriggerEventType.ChecklistCompleted:
 				case WorkflowTriggerEventType.ChecklistFailed:
-					foreach (var field in new[] { "completion_id", "definition_id", "version_id", "target_type", "target_id", "score", "passed", "item_id", "url" })
-						list.Add(new TemplateVariableDescriptor("checklist." + field, "Checklist " + field, field == "passed" ? "bool" : field == "score" ? "decimal" : field == "target_type" ? "int" : "string", false));
+                case WorkflowTriggerEventType.ChecklistMissed:
+                case WorkflowTriggerEventType.ChecklistScheduleChanged:
+                case WorkflowTriggerEventType.ChecklistOccurrenceSkipped:
+					foreach (var field in new[] { "completion_id", "definition_id", "version_id", "target_type", "target_id", "score", "passed", "item_id", "schedule_id", "occurrence_id", "period_start_utc", "window_end_utc", "state", "is_active", "revision", "url" })
+						list.Add(new TemplateVariableDescriptor("checklist." + field, "Checklist " + field + (field == "score" || field == "passed" ? "; REDACTED when protected. Check protection.is_redacted before comparing results." : ""), field == "passed" || field == "is_active" ? "bool" : field == "score" ? "decimal" : field == "target_type" || field == "state" || field == "revision" ? "int" : "string", false));
+					list.Add(new TemplateVariableDescriptor("protection.is_redacted", "Whether checklist outcomes were withheld", "bool", false));
+					list.Add(new TemplateVariableDescriptor("protection.redacted_fields", "Names of withheld checklist outcomes", "array", false));
+					list.Add(new TemplateVariableDescriptor("protection.catalog_version", "Protection catalog used for this projection", "int", false));
 					break;
 				case WorkflowTriggerEventType.CommandEstablished:
 				case WorkflowTriggerEventType.CommandTransferred:
@@ -1007,4 +1013,3 @@ namespace Resgrid.Model
 		}
 	}
 }
-

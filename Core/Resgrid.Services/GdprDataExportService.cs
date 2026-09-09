@@ -13,6 +13,7 @@ using Resgrid.Localization.Areas.User.SystemMessages;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Checklists;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -35,6 +36,8 @@ namespace Resgrid.Services
 		private readonly IShiftsService _shiftsService;
 		private readonly IEmailService _emailService;
 		private readonly IChecklistRepository _checklists;
+		private readonly IChecklistReminderRepository _checklistReminders;
+		private readonly Lazy<IReadinessHistoryProtectionService> _checklistProtection;
 
 		public GdprDataExportService(
 			IGdprDataExportRequestRepository repository,
@@ -50,9 +53,10 @@ namespace Resgrid.Services
 			ICertificationService certificationService,
 			ITrainingService trainingService,
 			IShiftsService shiftsService,
-			IEmailService emailService, IChecklistRepository checklists = null)
+			IEmailService emailService, IChecklistRepository checklists, Lazy<IReadinessHistoryProtectionService> checklistProtection, IChecklistReminderRepository checklistReminders)
 		{
 			_repository = repository;
+			_checklistReminders = checklistReminders ?? throw new ArgumentNullException(nameof(checklistReminders));
 			_userProfileService = userProfileService;
 			_memberSensitiveDataService = memberSensitiveDataService;
 			_emergencyContactService = emergencyContactService;
@@ -66,7 +70,8 @@ namespace Resgrid.Services
 			_trainingService = trainingService;
 			_shiftsService = shiftsService;
 			_emailService = emailService;
-			_checklists = checklists;
+			_checklists = checklists ?? throw new ArgumentNullException(nameof(checklists));
+			_checklistProtection = checklistProtection ?? throw new ArgumentNullException(nameof(checklistProtection));
 		}
 
 		public async Task<GdprDataExportRequest> CreateExportRequestAsync(string userId, int departmentId, CancellationToken cancellationToken = default)
@@ -181,7 +186,7 @@ namespace Resgrid.Services
 				await AddJsonEntry(archive, "certifications.json", await BuildCertificationsDataAsync(userId), ledger);
 				await AddJsonEntry(archive, "trainings.json", await BuildTrainingsDataAsync(userId), ledger);
 				await AddJsonEntry(archive, "shifts.json", await BuildShiftsDataAsync(userId), ledger);
-				if (_checklists != null) await AddJsonEntry(archive, "checklists.json", await BuildChecklistDataAsync(userId, departmentId), ledger);
+				await AddJsonEntry(archive, "checklists.json", await BuildChecklistDataAsync(userId, departmentId), ledger);
 
 				// Written last, so it can report what every other entry withheld. Only present when
 				// something actually was: a member of an unprotected department gets the archive they
@@ -225,19 +230,60 @@ namespace Resgrid.Services
 
 		private async Task<object> BuildChecklistDataAsync(string userId, int departmentId)
 		{
+			if (_checklistProtection == null) throw new InvalidOperationException("Checklist export protection is unavailable.");
+			async Task<T> Safe<T>(T row) where T : ChecklistRow => await _checklistProtection.Value.ForDisplayAsync(departmentId, row, ChecklistTables.Fields<T>());
+			async Task<ILookup<string, T>> Children<T>(IReadOnlyCollection<string> parentIds) where T : ChecklistRow
+			{
+				var children = new List<T>();
+				for (var offset = 0; ; offset += 100)
+				{
+					var batch = await _checklists.ListChildrenAsync<T>(departmentId, parentIds, offset);
+					foreach (var child in batch) children.Add(await Safe(child));
+					if (batch.Count < 100) return children.ToLookup(child => child.ParentId);
+				}
+			}
 			var records = new List<object>();
+			var relatedOccurrences = new HashSet<string>();
 			for (var skip = 0; ; skip += 100)
 			{
 				var batch = await _checklists.ListAsync<Resgrid.Model.Checklists.ChecklistCompletion>(departmentId, skip: skip);
-				foreach (var completion in batch.Where(c => c.CreatedBy == userId || c.WitnessUserId == userId || c.TargetType == (int)Resgrid.Model.Checklists.ChecklistTargetType.Personnel && c.TargetId == userId))
+				var completions = batch.Where(c => c.CreatedBy == userId || c.WitnessUserId == userId || c.TargetType == (int)ChecklistTargetType.Personnel && c.TargetId == userId).ToList();
+				if (completions.Count > 0)
 				{
-					var files = await _checklists.ListAsync<Resgrid.Model.Checklists.ChecklistCompletionFile>(departmentId, completion.Id, take: 500);
-					records.Add(new { Completion = completion, Answers = await _checklists.ListAsync<Resgrid.Model.Checklists.ChecklistCompletionItem>(departmentId, completion.Id, take: 250), Files = files });
+					var ids = completions.Select(c => c.Id).ToArray();
+					var answers = await Children<ChecklistCompletionItem>(ids);
+					var files = await Children<ChecklistCompletionFile>(ids);
+					foreach (var completion in completions)
+					{
+						relatedOccurrences.Add(completion.OccurrenceId);
+						records.Add(new { Completion = await Safe(completion), Answers = answers[completion.Id], Files = files[completion.Id] });
+					}
 				}
 				if (batch.Count < 100) break;
 			}
-			// AddJsonEntry applies the existing recursive ADP redaction and records omissions in the manifest.
-			return records;
+			var schedules = new List<ChecklistSchedule>(); var occurrences = new List<ChecklistOccurrence>(); var ownedSchedules = new HashSet<string>();
+			for (var skip = 0; ; skip += 100)
+			{
+				var batch = await _checklists.ListAsync<ChecklistSchedule>(departmentId, skip: skip);
+				foreach (var row in batch.Where(s => s.CreatedBy == userId || s.TargetType == (int)ChecklistTargetType.Personnel && s.TargetId == userId))
+				{ ownedSchedules.Add(row.Id); schedules.Add(await Safe(row)); }
+				if (batch.Count < 100) break;
+			}
+			for (var skip = 0; ; skip += 100)
+			{
+				var batch = await _checklists.ListAsync<ChecklistOccurrence>(departmentId, skip: skip);
+				foreach (var row in batch.Where(o => relatedOccurrences.Contains(o.Id) || ownedSchedules.Contains(o.ScheduleId) || o.TargetType == (int)ChecklistTargetType.Personnel && o.TargetId == userId)) occurrences.Add(await Safe(row));
+				if (batch.Count < 100) break;
+			}
+			// Mask cataloged fields even before enrollment migration finishes. The archive ledger records REDACTED values.
+			var reminders = new List<object>();
+			for (var skip = 0; ; skip += 100)
+			{
+				var batch = await _checklistReminders.ForRecipientAsync(departmentId, userId, skip);
+				reminders.AddRange(batch.Select(r => (object)new { r.Id, r.OccurrenceId, r.Kind, r.Status, r.CreatedOnUtc, r.CompletedOnUtc }));
+				if (batch.Count < 100) break;
+			}
+			return new { Completions = records, Schedules = schedules, Occurrences = occurrences, Reminders = reminders };
 		}
 
 		private static async Task AddJsonEntry(ZipArchive archive, string fileName, object data, RedactionLedger ledger)

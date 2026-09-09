@@ -15,9 +15,10 @@ using Resgrid.Web.Helpers;
 namespace Resgrid.Web.Areas.User.Controllers
 {
 	[WorkOrderFormCulture, Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(1024 * 1024)]
-	public sealed class InventoryController : SecureBaseController
+	public sealed partial class InventoryController : SecureBaseController
 	{
 		private readonly IInventoryCatalogService _catalog;
+		private readonly IInventoryPurchasingService _purchasing;
 		private readonly IInventoryStockService _stock;
 		private readonly IInventoryTransferService _transfers;
 		private readonly IInventoryIssuanceService _issuance;
@@ -31,8 +32,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> _strings;
 		public InventoryController(IInventoryCatalogService catalog, IInventoryStockService stock, IInventoryTransferService transfers, IInventoryIssuanceService issuance,
 			IInventoryMigrationService migration, IInventoryAuthorizationService auth, IProtectedGrantContext grant, IDepartmentDataProtectionService protection,
-			IUnitsService units, IDepartmentGroupsService groups, IDepartmentsService departments, IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> strings)
-		{ _catalog = catalog; _stock = stock; _transfers = transfers; _issuance = issuance; _migration = migration; _auth = auth; _grant = grant; _protection = protection; _units = units; _groups = groups; _departments = departments; _strings = strings; }
+			IUnitsService units, IDepartmentGroupsService groups, IDepartmentsService departments, IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> strings, IInventoryPurchasingService purchasing = null)
+		{ _catalog = catalog; _stock = stock; _transfers = transfers; _issuance = issuance; _migration = migration; _auth = auth; _grant = grant; _protection = protection; _units = units; _groups = groups; _departments = departments; _strings = strings; _purchasing = purchasing; }
 		private InventoryActor Actor => new() { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant.GrantToken };
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -49,7 +50,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Page = context.ActionArguments.TryGetValue("page", out var page) && page is int pageNumber ? pageNumber : 0,
 					UnitId = context.ActionArguments.TryGetValue("unitId", out var unit) && unit is int unitNumber ? unitNumber : null, UserId = context.ActionArguments.TryGetValue("userId", out var person) ? person as string : null,
 					ItemId = context.ActionArguments.TryGetValue("itemId", out var item) ? item as string : null, LocationId = context.ActionArguments.TryGetValue("locationId", out var location) ? location as string : null });
-				else executed.Result = StatusCode(error.StatusCode, new { message = _strings["UnableToComplete"].Value, code = error.Code });
+				else
+				{
+					var localized = _strings[error.Code];
+					executed.Result = StatusCode(error.StatusCode, new { message = localized.ResourceNotFound ? _strings["UnableToComplete"].Value : localized.Value, code = error.Code });
+				}
 			}
 		}
 		private async Task PageAsync<T>(InventoryWorkspaceView view) where T : InventoryRow
@@ -78,6 +83,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var assets = await _catalog.ListAsync<InventoryAsset>(Actor); view.Assets = assets.Items;
 			var lots = await _catalog.ListAsync<InventoryLot>(Actor); view.Lots = lots.Items;
 			view.ChoicesHaveMore |= assets.HasMore || lots.HasMore;
+			if (_purchasing != null && view.CanWrite && tab is "Items" or "Lots")
+			{
+				try
+				{
+					view.VendorContacts = await _purchasing.GetVendorContactsAsync(Actor);
+					view.Vendors = await PurchasingChoicesAsync<InventoryVendor>();
+					view.CanChooseVendors = true;
+				}
+				catch (InventoryException error) when (error.StatusCode == 403) { /* Catalog editing remains available without purchasing access. */ }
+			}
 			switch (tab)
 			{
 				case "OnHand": await QueryAsync<InventoryStock>(view, new InventoryQuery { ItemId = itemId, LocationId = locationId }); break;
@@ -107,8 +122,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			foreach (var unit in await _units.GetUnitsForDepartmentAsync(DepartmentId))
 				if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = 2, UnitId = unit.UnitId })) view.Units.Add(new() { Id = unit.UnitId.ToString(), Name = unit.Name });
-			foreach (var group in await _groups.GetAllGroupsForDepartmentAsync(DepartmentId))
-				if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = 1, GroupId = group.DepartmentGroupId })) view.Groups.Add(new() { Id = group.DepartmentGroupId.ToString(), Name = group.Name });
+			if (view.CanWrite && tab == "Locations")
+				foreach (var group in await _groups.GetAllGroupsForDepartmentAsync(DepartmentId))
+					if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = 1, GroupId = group.DepartmentGroupId })) view.Groups.Add(new() { Id = group.DepartmentGroupId.ToString(), Name = group.Name });
 			foreach (var person in await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId))
 				if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = 3, UserId = person.UserId })) view.People.Add(new() { Id = person.UserId, Name = person.Name });
 			return View("Workspace", view);
@@ -147,7 +163,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet] public IActionResult AssetDetail(string id) => RedirectToAction("Index", new { tab = "AssetDetail", id });
 		[HttpGet] public async Task<IActionResult> ViewEntry(int inventoryId)
 		{
-			for (var page = 0; page <= 200; page++) { var result = await _catalog.ListAsync<InventoryTransaction>(Actor, page); var row = result.Items.FirstOrDefault(t => t.LegacyInventoryId == inventoryId); if (row != null) return RedirectToAction("Index", new { tab = "Transaction", id = row.Id }); if (!result.HasMore) break; }
+			var row = await _catalog.GetLegacyTransactionAsync(Actor, inventoryId);
+			if (row != null) return RedirectToAction("Index", new { tab = "Transaction", id = row.Id });
 			return NotFound();
 		}
 	}

@@ -472,5 +472,179 @@
   <data name="Yes" xml:space="preserve">
     <value>Ja</value>
   </data>
+  <data name="RecordUsageTitle" xml:space="preserve"><value>Lageranvändning</value></data>
+  <data name="RecordUsageHelp" xml:space="preserve"><value>När användningen sparas ändras lagersaldot omedelbart. Ändringarna kvarstår om ett utkast eller en rapportändring överges. Återför felaktig användning uttryckligen och registrera sedan ersättningen. Öppna en rapportändring innan du ändrar användningen i en slutförd rapport.</value></data>
+  <data name="RecordUsageWitnessHelp" xml:space="preserve"><value>Förbrukning och återföring av kontrollerade artiklar kräver ett oberoende vittne i Lager. Slutför först den processen och koppla sedan det skapade transaktions-ID:t här.</value></data>
+  <data name="RecordUsageRecorded" xml:space="preserve"><value>Registrerad användning</value></data>
+  <data name="RecordUsageType" xml:space="preserve"><value>Användningstyp</value></data>
+  <data name="RecordUsageType0" xml:space="preserve"><value>Använt</value></data>
+  <data name="RecordUsageType1" xml:space="preserve"><value>Förbrukat på patient</value></data>
+  <data name="RecordUsageType2" xml:space="preserve"><value>Lämnat på plats</value></data>
+  <data name="RecordUsageType3" xml:space="preserve"><value>Skadat</value></data>
+  <data name="RecordUsageLedgerEntry" xml:space="preserve"><value>Lagerpost</value></data>
+  <data name="RecordUsageRecordedUtc" xml:space="preserve"><value>Registrerat (UTC)</value></data>
+  <data name="RecordUsageReverses" xml:space="preserve"><value>Återför användning</value></data>
+  <data name="RecordUsageReversed" xml:space="preserve"><value>Återfört</value></data>
+  <data name="RecordUsageReverse" xml:space="preserve"><value>Återför användning</value></data>
+  <data name="RecordUsageReverseHelp" xml:space="preserve"><value>Detta registrerar en fullständig återföring och behåller den ursprungliga användningen i historiken. För att korrigera en mängd eller artikel återför du användningen och registrerar ersättningen. Om återföringen redan har bekräftats av ett vittne i Lager anger du dess transaktions-ID för att koppla den utan att ändra lagret igen.</value></data>
+  <data name="RecordUsageCorrectionReason" xml:space="preserve"><value>Orsak till korrigering</value></data>
+  <data name="RecordUsageExistingReversal" xml:space="preserve"><value>ID för befintlig återföring bekräftad av vittne (valfritt)</value></data>
+  <data name="RecordUsageLedgerHelp" xml:space="preserve"><value>Positiva mängder registrerar användning; negativa mängder återför den. Öppna lagerposten för rörelsedetaljer enligt dina aktuella lagerbehörigheter.</value></data>
+  <data name="RecordUsageExistingConsumption" xml:space="preserve"><value>ID för befintlig förbrukningstransaktion (valfritt)</value></data>
+  <data name="RecordUsageAttachHelp" xml:space="preserve"><value>Ange en slutförd förbrukningstransaktion från Lager för att koppla dess artikel, mängd, plats och anteckning. Fälten för ny förbrukning nedan ignoreras och lagret förbrukas inte igen. Välj användningstyp ovan.</value></data>
+  <data name="RecordUsageNewConsumption" xml:space="preserve"><value>Ny förbrukning</value></data>
+  <data name="RecordUsageDefaultLocation" xml:space="preserve"><value>Använd rapportens enhet eller station</value></data>
+  <data name="RecordUsageLocationHelp" xml:space="preserve"><value>Lämna tomt för att använda rapportens insatsenhet, med stationen som reserv. Välj en källa uttryckligen om rapporten har flera möjliga platser.</value></data>
+  <data name="RecordUsageSave" xml:space="preserve"><value>Spara användning</value></data>
+  <data name="RecordUsageReturnToReport" xml:space="preserve"><value>Tillbaka till rapporten</value></data>
+  <data name="RecordUsageRefreshEvidence" xml:space="preserve"><value>Uppdatera underlag från registrerad användning</value></data>
+  <data name="RecordUsageSaved" xml:space="preserve"><value>Användningen har sparats och underlaget har registrerats.</value></data>
+  <data name="RecordUsageEvidencePending" xml:space="preserve"><value>Lageråtgärden har sparats. Underlaget kunde inte registreras. Använd Uppdatera underlag när åtkomstproblem eller ändringar i utkastet har lösts. Skicka inte lageråtgärden igen.</value></data>
+  <data name="RecordUsageDraftChanged" xml:space="preserve"><value>Utkastet har ändrats. Kontrollera den registrerade användningen innan du skickar en ny lageråtgärd.</value></data>
+  <data name="RecordUsageWitnessRequired" xml:space="preserve"><value>Slutför processen med ett oberoende vittne i Lager och koppla sedan det skapade transaktions-ID:t här. Ingen lagerrörelse registrerades av denna åtgärd.</value></data>
+  <data name="RecordUsageEvidenceSaved" xml:space="preserve"><value>Underlaget har registrerats.</value></data>
+  <data name="RecordUsageReconciliationRequired" xml:space="preserve"><value>En återföring i lagerregistret har inte kopplats till denna rapport. Koppla den som en korrigering innan rapporten slutförs.</value></data>
+  <data name="M4Purchasing" xml:space="preserve"><value>Inköp</value></data>
+  <data name="M4Vendors" xml:space="preserve"><value>Leverantörer</value></data>
+  <data name="M4PurchaseOrders" xml:space="preserve"><value>Inköpsordrar</value></data>
+  <data name="M4Valuation" xml:space="preserve"><value>Lagervärdering</value></data>
+  <data name="M4VendorHelp" xml:space="preserve"><value>Leverantörer använder företagsposter från Kontakter. Skapa eller uppdatera företagets uppgifter i Kontakter och koppla sedan företaget här.</value></data>
+  <data name="M4AccountNumber" xml:space="preserve"><value>Kundnummer hos leverantören</value></data>
+  <data name="M4CompanyContact" xml:space="preserve"><value>Företag i Kontakter</value></data>
+  <data name="M4NewVendor" xml:space="preserve"><value>Lägg till leverantör</value></data>
+  <data name="M4PurchaseOrderNumber" xml:space="preserve"><value>Inköpsordernummer</value></data>
+  <data name="M4Supplier" xml:space="preserve"><value>Leverantör</value></data>
+  <data name="M4Currency" xml:space="preserve"><value>Valuta</value></data>
+  <data name="M4ViewPurchaseOrder" xml:space="preserve"><value>Visa inköpsorder</value></data>
+  <data name="M4Status0" xml:space="preserve"><value>Utkast</value></data>
+  <data name="M4Status1" xml:space="preserve"><value>Beställd</value></data>
+  <data name="M4Status2" xml:space="preserve"><value>Delvis mottagen</value></data>
+  <data name="M4Status3" xml:space="preserve"><value>Mottagen</value></data>
+  <data name="M4Status4" xml:space="preserve"><value>Avbruten</value></data>
+  <data name="M4QuantityOrdered" xml:space="preserve"><value>Beställd mängd</value></data>
+  <data name="M4QuantityReceived" xml:space="preserve"><value>Mottagen mängd</value></data>
+  <data name="M4Remaining" xml:space="preserve"><value>Återstående mängd</value></data>
+  <data name="M4OrderHelp" xml:space="preserve"><value>När en order markeras som beställd låses orderraderna. Om ordern avbryts stoppas fler inleveranser, medan redan mottagna mängder behålls.</value></data>
+  <data name="M4Order" xml:space="preserve"><value>Markera som beställd</value></data>
+  <data name="M4CancelOrder" xml:space="preserve"><value>Avbryt order</value></data>
+  <data name="M4Receive" xml:space="preserve"><value>Ta emot artiklar</value></data>
+  <data name="M4ReceiptHelp" xml:space="preserve"><value>Ta emot hela eller delar av en order. Ta bort rader som inte ingår i leveransen. Om ett oberoende vittne krävs ändras lagersaldon och mottagna mängder först efter godkännande i Lager.</value></data>
+  <data name="M4SerializedReceiptHelp" xml:space="preserve"><value>Använd en rad per tillgång med serienummer, med antal 1 och ett eget serienummer. Lägg till rader för att ta emot fler tillgångar eller fördela mängder mellan platser eller partier.</value></data>
+  <data name="M4ReceiveQuantity" xml:space="preserve"><value>Mängd att ta emot</value></data>
+  <data name="M4RemoveLine" xml:space="preserve"><value>Ta bort rad</value></data>
+  <data name="M4Receipts" xml:space="preserve"><value>Inleveranser</value></data>
+  <data name="M4NewPurchaseOrder" xml:space="preserve"><value>Ny inköpsorder</value></data>
+  <data name="M4ValuationScope" xml:space="preserve"><value>Värderingen omfattar endast lager och platser som du har behörighet att se. Summor redovisas separat för varje valuta. Rader med okänd kostnad räknas separat och ingår inte i summorna för känt värde.</value></data>
+  <data name="M4AsOfUtc" xml:space="preserve"><value>Gäller per (UTC)</value></data>
+  <data name="M4NegativeStock" xml:space="preserve"><value>Vissa synliga lagersaldon är negativa. Kontrollera dem innan du använder värderingen som underlag.</value></data>
+  <data name="M4KnownValue" xml:space="preserve"><value>Känt värde</value></data>
+  <data name="M4UncostedRows" xml:space="preserve"><value>Rader utan kostnad</value></data>
+  <data name="M4UnspecifiedCurrency" xml:space="preserve"><value>Valuta saknas</value></data>
+  <data name="M4UnknownCost" xml:space="preserve"><value>Okänd kostnad</value></data>
+  <data name="M4AverageUnitCost" xml:space="preserve"><value>Genomsnittlig styckkostnad</value></data>
+  <data name="M4PreferredVendor" xml:space="preserve"><value>Förvald leverantör</value></data>
+  <data name="M4CurrencyHelp" xml:space="preserve"><value>Använd en valuta per artikel. Befintligt lager utan valuta hålls separat i värderingen; att ange en valuta räknar inte om kostnaderna.</value></data>
+  <data name="InventoryPurchaseOrderReceived" xml:space="preserve"><value>Inköpsorder för lager mottagen</value></data>
+  <data name="M5Operations" xml:space="preserve"><value>Inventeringar, varningar och rapporter</value></data>
+  <data name="M5Counts" xml:space="preserve"><value>Inventeringar</value></data>
+  <data name="M5Alerts" xml:space="preserve"><value>Lagervarningar</value></data>
+  <data name="M5Reports" xml:space="preserve"><value>Lagerrapporter</value></data>
+  <data name="M5CountHelp" xml:space="preserve"><value>Skapa en ögonblicksbild av upp till 100 lagerpositioner. Registrera varje antal, spara och slutför sedan inventeringen. Om lagret eller kataloguppgifterna ändras ska du avbryta inventeringen och starta en ny. Registrera nyfunnen utrustning med serienummer via Ta emot.</value></data>
+  <data name="M5AllLocations" xml:space="preserve"><value>Alla lagerplatser</value></data>
+  <data name="M5StartCount" xml:space="preserve"><value>Starta inventering</value></data>
+  <data name="M5CompleteCount" xml:space="preserve"><value>Slutför inventering</value></data>
+  <data name="M5CancelCount" xml:space="preserve"><value>Avbryt inventering</value></data>
+  <data name="M5SnapshotOn" xml:space="preserve"><value>Ögonblicksbild från (UTC)</value></data>
+  <data name="M5Expected" xml:space="preserve"><value>Förväntat antal</value></data>
+  <data name="M5Counted" xml:space="preserve"><value>Räknat antal</value></data>
+  <data name="M5Variance" xml:space="preserve"><value>Avvikelse</value></data>
+  <data name="M5VarianceLines" xml:space="preserve"><value>Rader med avvikelse</value></data>
+  <data name="M5CountStatus0" xml:space="preserve"><value>Utkast</value></data>
+  <data name="M5CountStatus1" xml:space="preserve"><value>Inväntar vittnesintyg</value></data>
+  <data name="M5CountStatus2" xml:space="preserve"><value>Slutförd</value></data>
+  <data name="M5CountStatus3" xml:space="preserve"><value>Avbruten</value></data>
+  <data name="M5WitnessHelp" xml:space="preserve"><value>Ett oberoende vittne måste godkänna den väntande åtgärden i lagerhistoriken. Ögonblicksbilden måste fortfarande vara aktuell.</value></data>
+  <data name="M5AlertHelp" xml:space="preserve"><value>Varningar visar låga lagernivåer, lager som förfaller inom 30 dagar, utgånget lager och försenade återlämningar. Uppdatera varningarna en gång efter införandet för att initiera varningar om låga lagernivåer, och efter import av äldre inventarier. Senare ändringar av lager och artiklar uppdaterar dem automatiskt.</value></data>
+  <data name="M5RefreshAlerts" xml:space="preserve"><value>Uppdatera varningar</value></data>
+  <data name="M5AlertType0" xml:space="preserve"><value>Låg lagernivå</value></data>
+  <data name="M5AlertType1" xml:space="preserve"><value>Förfaller snart</value></data>
+  <data name="M5AlertType2" xml:space="preserve"><value>Utgånget</value></data>
+  <data name="M5AlertType3" xml:space="preserve"><value>Försenad återlämning</value></data>
+  <data name="M5Open" xml:space="preserve"><value>Öppen</value></data>
+  <data name="M5Resolved" xml:space="preserve"><value>Åtgärdad</value></data>
+  <data name="M5DueOn" xml:space="preserve"><value>Förfaller (UTC)</value></data>
+  <data name="M5ReportHelp" xml:space="preserve"><value>Välj en rapport och eventuella filter. Datumen anges i UTC och slutdatumet är exkluderat. Ögonblicksrapporter använder aktuella innehav. Ladda ned PDF-filen för att visa eller skriva ut den.</value></data>
+  <data name="M5FromUtc" xml:space="preserve"><value>Startdatum (UTC, inkluderat)</value></data>
+  <data name="M5UntilUtc" xml:space="preserve"><value>Slutdatum (UTC, exkluderat)</value></data>
+  <data name="M5DownloadPdf" xml:space="preserve"><value>Ladda ned utskrivbar PDF</value></data>
+  <data name="M5ScheduleReports" xml:space="preserve"><value>Schemalägg rapportutskick</value></data>
+  <data name="M5AlertNotificationTitle" xml:space="preserve"><value>Lagervarningar</value></data>
+  <data name="M5AlertNotificationMessage" xml:space="preserve"><value>Lagret behöver ses över. Logga in för att granska aktuella varningar.</value></data>
+  <data name="M5ReportOnHand" xml:space="preserve"><value>Aktuellt lagersaldo</value></data>
+  <data name="M5ReportUsage" xml:space="preserve"><value>Lageranvändning</value></data>
+  <data name="M5ReportExpiration" xml:space="preserve"><value>Lagrets utgångsdatum</value></data>
+  <data name="M5ReportLowStock" xml:space="preserve"><value>Låga lagernivåer</value></data>
+  <data name="M5ReportTransferHistory" xml:space="preserve"><value>Historik över lageröverföringar</value></data>
+  <data name="M5ReportIssuance" xml:space="preserve"><value>Historik över lagerutlämningar</value></data>
+  <data name="M5ReportValuation" xml:space="preserve"><value>Lagervärdering</value></data>
+  <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Journal över kontrollerade substanser</value></data>
+  <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Dagar till utgångsdatum</value></data>
+  <data name="M5Shortfall" xml:space="preserve"><value>Antal under beställningspunkten</value></data>
+  <data name="M5ReorderQuantity" xml:space="preserve"><value>Föreslaget beställningsantal</value></data>
+  <data name="M5IssuanceId" xml:space="preserve"><value>Utlämnings-ID</value></data>
+  <data name="M5PersonId" xml:space="preserve"><value>Mottagande persons ID</value></data>
+  <data name="M5UnitId" xml:space="preserve"><value>Mottagande enhets ID</value></data>
+  <data name="M5IssuedOn" xml:space="preserve"><value>Utlämnat (UTC)</value></data>
+  <data name="M5ReturnedQuantity" xml:space="preserve"><value>Återlämnat antal</value></data>
+  <data name="M5OutstandingQuantity" xml:space="preserve"><value>Antal att återlämna</value></data>
+  <data name="M5ReturnedOn" xml:space="preserve"><value>Återlämnat (UTC)</value></data>
+  <data name="M5Performer" xml:space="preserve"><value>Utfört av (användar-ID)</value></data>
+  <data name="M5ReversesTransaction" xml:space="preserve"><value>Återför transaktion</value></data>
+  <data name="M5UsageSource" xml:space="preserve"><value>Användningskälla</value></data>
+  <data name="M5SourceId" xml:space="preserve"><value>Post-ID</value></data>
+  <data name="M5CallId" xml:space="preserve"><value>Larm-ID</value></data>
+  <data name="M5RevisionId" xml:space="preserve"><value>ID för ändrad revision</value></data>
+  <data name="M5DeaSchedule" xml:space="preserve"><value>DEA-klassificering</value></data>
+  <data name="M5FromBefore" xml:space="preserve"><value>Avsändande saldo före</value></data>
+  <data name="M5FromAfter" xml:space="preserve"><value>Avsändande saldo efter</value></data>
+  <data name="M5ToBefore" xml:space="preserve"><value>Mottagande saldo före</value></data>
+  <data name="M5ToAfter" xml:space="preserve"><value>Mottagande saldo efter</value></data>
+  <data name="M5Witness" xml:space="preserve"><value>Vittne (användar-ID)</value></data>
+  <data name="M5WitnessedOn" xml:space="preserve"><value>Intygat (UTC)</value></data>
+  <data name="M5ScheduledReportProtected" xml:space="preserve"><value>Lagret innehåller skyddade uppgifter. Öppna rapportlänken som kräver inloggning och verifiera din identitet för att visa eller skriva ut aktuella resultat. Denna schemalagda PDF innehåller inga lagervärden.</value></data>
+  <data name="M5ReportScope" xml:space="preserve"><value>Den här rapporten innehåller endast inventarier och lagerplatser som du för närvarande har behörighet att visa. Antal och värden avser den angivna ögonblicksbilden. Resultaten är begränsade till 5 000 rader.</value></data>
+  <data name="M5ReportRange" xml:space="preserve"><value>UTC-intervall (inkluderad start, exkluderat slut)</value></data>
+  <data name="M5ReportMethodUsage" xml:space="preserve"><value>Varje lagerrörelse visas en gång. Positiva antal registrerar utgående användning och negativa antal återför den. Postuppgifter kräver åtkomst till källan. Importerade utgående rörelser behåller sina äldre identifierare och skapar ingen koppling till en logg eller patient.</value></data>
+  <data name="M5ReportMethodLowStock" xml:space="preserve"><value>Aktiva artiklar listas när synligt mängdhanterat lager eller innehav med serienummer ligger på eller under beställningspunkten. Om ingen beställningspunkt finns används miniminivån. Innehav med serienummer omfattar utrustning i drift, utlämnad, skadad och under reparation. Dolda lagerplatser utesluts.</value></data>
+  <data name="M5ReportMethodIssuance" xml:space="preserve"><value>Raderna visar utlämningar som skapats inom det valda datumintervallet och deras aktuella återlämningsstatus. För att se antal som återstår att lämna tillbaka från äldre utlämningar måste du välja ett tidigare startdatum.</value></data>
+  <data name="M5ReportMethodExpiration" xml:space="preserve"><value>Raderna visar aktuella positiva lagersaldon och aktiva innehav med serienummer vars utgångsdatum ligger inom det valda intervallet. Som standard ingår redan utgånget lager och lager som förfaller under de kommande 30 dagarna.</value></data>
+  <data name="M5PerformerSignature" xml:space="preserve"><value>Utförarens underskrift</value></data>
+  <data name="M5WitnessSignature" xml:space="preserve"><value>Vittnets underskrift</value></data>
+  <data name="M5NotRecorded" xml:space="preserve"><value>Inte registrerat</value></data>
+  <data name="M5ReferenceType0" xml:space="preserve"><value>Lagerrörelse utan åtkomlig postlänk</value></data>
+  <data name="M5ReferenceType2" xml:space="preserve"><value>Poster</value></data>
+  <data name="M5ReferenceType8" xml:space="preserve"><value>Äldre lagerrörelse</value></data>
+  <data name="InvalidCount" xml:space="preserve"><value>Ange giltiga inventeringsuppgifter och antal.</value></data>
+  <data name="CountScopeTooLarge" xml:space="preserve"><value>Välj en mindre omfattning. Inventeringar stöder upp till 100 lagerpositioner.</value></data>
+  <data name="CountEmpty" xml:space="preserve"><value>Det finns inga aktiva lagerpositioner att inventera inom denna omfattning.</value></data>
+  <data name="CountAlreadyExists" xml:space="preserve"><value>Den här inventeringen finns redan. Öppna den från inventeringslistan.</value></data>
+  <data name="CountStateConflict" xml:space="preserve"><value>Inventeringen har ändrats eller innehåller ofullständiga observationer. Läs in den igen och spara alla antal innan du slutför den.</value></data>
+  <data name="CountSnapshotChanged" xml:space="preserve"><value>Lagret har ändrats sedan denna ögonblicksbild. Avbryt inventeringen och starta en ny.</value></data>
+  <data name="CountReceiptImmutable" xml:space="preserve"><value>Inventeringsjusteringar hör till den slutförda inventeringen. Starta en ny inventering för att korrigera lagret.</value></data>
+  <data name="CountCompletionRequired" xml:space="preserve"><value>Bokför inventeringsavvikelser genom att slutföra inventeringen.</value></data>
+  <data name="InvalidReportRange" xml:space="preserve"><value>Välj ett giltigt UTC-datumintervall på högst 366 dagar.</value></data>
+  <data name="InvalidReportFilter" xml:space="preserve"><value>Välj giltiga rapportfilter.</value></data>
+  <data name="ReportChanged" xml:space="preserve"><value>Rapporten ändrades medan PDF-filen skapades. Skapa den igen.</value></data>
+  <data name="ReportGenerationFailed" xml:space="preserve"><value>Det gick inte att skapa rapporten. Försök igen.</value></data>
+  <data name="InventoryLowStock" xml:space="preserve"><value>Lågt lagersaldo</value></data>
+  <data name="InventoryExpiring" xml:space="preserve"><value>Lager med nära utgångsdatum</value></data>
+  <data name="InventoryCountCompleted" xml:space="preserve"><value>Inventering slutförd</value></data>
+  <data name="InventoryReturnOverdue" xml:space="preserve"><value>Försenad återlämning</value></data>
+  <data name="HolderHistoryRetained" xml:space="preserve"><value>Den här resursen refereras i lagerhistoriken och måste behållas.</value></data>
+  <data name="InventoryAdjusted" xml:space="preserve"><value>Lager justerat</value></data>
+  <data name="InventoryTransferCompleted" xml:space="preserve"><value>Lageröverföring slutförd</value></data>
+  <data name="InventoryIssued" xml:space="preserve"><value>Lager utlämnat</value></data>
+  <data name="InventoryReturned" xml:space="preserve"><value>Lager återlämnat</value></data>
+  <data name="InventoryAssetStatusChanged" xml:space="preserve"><value>Status för inventariet ändrad</value></data>
+  <data name="ControlledSubstanceRecorded" xml:space="preserve"><value>Kontrollerad substans registrerad</value></data>
 </root>
-

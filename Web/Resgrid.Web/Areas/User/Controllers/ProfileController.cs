@@ -117,7 +117,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#region Reporting
-		private static string ChecklistReportName(ReportTypes type) => type == ReportTypes.ChecklistCompliance ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistComplianceReport") : type == ReportTypes.ChecklistMissed ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistMissedReport") : type.ToString();
+		private static string ChecklistReportName(ReportTypes type) => (int)type >= 6 && (int)type <= 13 ? Resgrid.Services.InventoryReportDocuments.Title((Resgrid.Model.Inventories.InventoryReportKind)((int)type - 6)) : type == ReportTypes.ChecklistCompliance ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistComplianceReport") : type == ReportTypes.ChecklistMissed ? Resgrid.Services.ChecklistReportDocuments.Text("ChecklistMissedReport") : type.ToString();
 		private static Microsoft.AspNetCore.Mvc.Rendering.SelectList ChecklistReportTypes(ReportTypes selected) => new Microsoft.AspNetCore.Mvc.Rendering.SelectList(Enum.GetValues<ReportTypes>().Select(t => new { Value = (int)t, Text = ChecklistReportName(t) }), "Value", "Text", (int)selected);
 
 		[HttpGet]
@@ -205,6 +205,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult>  AddNewScheduledReport(NewScheduledReportView model, CancellationToken cancellationToken)
 		{
+			if (!Enum.IsDefined(model.ReportType)) return BadRequest();
 			model.ReportTypes = ChecklistReportTypes(model.ReportType);
 
 			if (!model.SpecificDatetime)
@@ -292,6 +293,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ReportTypes = ChecklistReportTypes(model.ReportType);
 
 			var schedule= await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
+			if (schedule == null || schedule.DepartmentId != DepartmentId || schedule.UserId != UserId || schedule.TaskType != (int)TaskTypes.ReportDelivery) return NotFound();
 			if (schedule.ScheduleType == (int)ScheduleTypes.SpecifcDateTime)
 			{
 				model.SpecificDatetime = true;
@@ -317,8 +319,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult>  EditScheduledReport(EditScheduledReportView model, CancellationToken cancellationToken)
 		{
+			if (!Enum.IsDefined(model.ReportType)) return BadRequest();
 			model.ReportTypes = ChecklistReportTypes(model.ReportType);
 
 
@@ -362,6 +366,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				ScheduledTask task= await _scheduledTasksService.GetScheduledTaskByIdAsync(model.ScheduleId);
+				if (task == null || task.DepartmentId != DepartmentId || task.UserId != UserId || task.TaskType != (int)TaskTypes.ReportDelivery) return NotFound();
 				task.UserId = UserId;
 
 				if (model.SpecificDatetime)
@@ -397,6 +402,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View(model);
+		}
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Profile_Update)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ActivateScheduledReport(int scheduleId, CancellationToken cancellationToken)
+		{
+			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
+			if (task == null || task.DepartmentId != DepartmentId || task.UserId != UserId || task.TaskType != (int)TaskTypes.ReportDelivery) return NotFound();
+			await _scheduledTasksService.EnableScheduledTaskByIdAsync(scheduleId, cancellationToken);
+			return new EmptyResult();
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Profile_Update)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeactivateScheduledReport(int scheduleId, CancellationToken cancellationToken)
+		{
+			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
+			if (task == null || task.DepartmentId != DepartmentId || task.UserId != UserId || task.TaskType != (int)TaskTypes.ReportDelivery) return NotFound();
+			await _scheduledTasksService.DisabledScheduledTaskByIdAsync(scheduleId, cancellationToken);
+			return new EmptyResult();
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Profile_Update)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DeleteScheduledReport(int scheduleId, CancellationToken cancellationToken)
+		{
+			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
+			if (task == null || task.DepartmentId != DepartmentId || task.UserId != UserId || task.TaskType != (int)TaskTypes.ReportDelivery) return NotFound();
+			await _scheduledTasksService.DeleteScheduledTask(scheduleId, cancellationToken);
+			return new EmptyResult();
 		}
 		#endregion Reporting
 
@@ -741,6 +778,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult>  DeactivateSchedule(int scheduleId, CancellationToken cancellationToken)
 		{
+			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
+			if (task?.TaskType == (int)TaskTypes.ReportDelivery) return NotFound();
 			await _scheduledTasksService.DisabledScheduledTaskByIdAsync(scheduleId, cancellationToken);
 			return new EmptyResult();
 		}
@@ -749,6 +788,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult>  ActivateSchedule(int scheduleId, CancellationToken cancellationToken)
 		{
+			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
+			if (task?.TaskType == (int)TaskTypes.ReportDelivery) return NotFound();
 			await _scheduledTasksService.EnableScheduledTaskByIdAsync(scheduleId, cancellationToken);
 			return new EmptyResult();
 		}
@@ -757,6 +798,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> DeleteSchedule(int scheduleId, CancellationToken cancellationToken)
 		{
+			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
+			if (task?.TaskType == (int)TaskTypes.ReportDelivery) return NotFound();
 			await _scheduledTasksService.DeleteScheduledTask(scheduleId, cancellationToken);
 			return new EmptyResult();
 		}

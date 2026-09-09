@@ -19,7 +19,7 @@ using Resgrid.Services.Records;
 namespace Resgrid.Tests.Services
 {
 	[TestFixture]
-	public sealed class RmsInventoryModernUsageTests
+	public sealed partial class RmsInventoryModernUsageTests
 	{
 		private const int Department = 77;
 		private const string RecordId = "11111111-1111-1111-1111-111111111111";
@@ -44,6 +44,7 @@ namespace Resgrid.Tests.Services
 		private List<RmsExternalReference> _references;
 		private List<RmsAccessAudit> _audits;
 		private List<InventoryTransaction> _ledger;
+		private List<RecordInventoryUsage> _usageRows;
 		private List<(InventoryActor Actor, InventoryCommand Command)> _posts;
 		private List<List<long>> _dispatches;
 		private DbTransaction _transaction;
@@ -54,7 +55,7 @@ namespace Resgrid.Tests.Services
 		[SetUp]
 		public void SetUp()
 		{
-			_references = new(); _audits = new(); _ledger = new(); _posts = new(); _dispatches = new(); _balance = 10; _transaction = null; _migrated = true;
+			_references = new(); _audits = new(); _ledger = new(); _usageRows = new(); _posts = new(); _dispatches = new(); _balance = 10; _transaction = null; _migrated = true;
 			_record = new RmsOperationalRecord { RmsOperationalRecordId = RecordId, DepartmentId = Department, AuthorUserId = "author", State = (int)RmsRecordState.Draft, RowVersion = 1 };
 			_incident = new RmsIncidentReport { RmsIncidentReportId = RecordId, DepartmentId = Department, AuthorUserId = "author", State = (int)RmsRecordState.Draft, RowVersion = 1 };
 			_records = new(); _incidents = new(); _referencesRepo = new(); _auditRepo = new(); _authorization = new(); _modernStore = new(); _stock = new(); _catalog = new(); _legacy = new(); _uow = new(); _outbox = new();
@@ -84,15 +85,28 @@ namespace Resgrid.Tests.Services
 			_modernStore.Setup(s => s.LockDepartmentAsync(Department)).Returns(() => { _transaction.Should().NotBeNull(); return Task.CompletedTask; });
 			_modernStore.Setup(s => s.LegacyItemAsync(Department, 1)).ReturnsAsync(() => Copy(item));
 			_modernStore.Setup(s => s.GetAsync<InventoryTransaction>(Department, It.IsAny<string>())).ReturnsAsync((int d, string id) => Copy(_ledger.SingleOrDefault(t => t.Id == id && t.DepartmentId == d)));
+			_modernStore.Setup(s => s.GetAsync<InventoryLocation>(Department, LocationId)).ReturnsAsync(() => Copy(location));
+			_modernStore.Setup(s => s.GetAsync<RecordInventoryUsage>(Department, It.IsAny<string>())).ReturnsAsync((int d, string id) => Copy(_usageRows.SingleOrDefault(t => t.Id == id)));
+			_modernStore.Setup(s => s.RelatedAsync<RecordInventoryUsage>(Department, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((int d, string col, string id) => _usageRows.Where(x => (string)typeof(RecordInventoryUsage).GetProperty(col).GetValue(x) == id).Select(Copy).ToList());
+			_modernStore.Setup(s => s.RelatedAsync<InventoryTransaction>(Department, It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync((int d, string col, string id) => _ledger.Where(x => (string)typeof(InventoryTransaction).GetProperty(col).GetValue(x) == id).Select(Copy).ToList());
+			_modernStore.Setup(s => s.LegacyTransactionAsync(Department, It.IsAny<int>())).ReturnsAsync((int d, int id) => Copy(_ledger.SingleOrDefault(t => t.LegacyInventoryId == id)));
+			_catalog.Setup(c => c.GetAsync<RecordInventoryUsage>(It.IsAny<InventoryActor>(), It.IsAny<string>())).ReturnsAsync((InventoryActor a, string id) => Copy(_usageRows.SingleOrDefault(t => t.Id == id)));
+			_stock.Setup(s => s.RecordUsageWithinTransactionAsync(It.IsAny<InventoryActor>(), It.IsAny<RecordInventoryUsage>())).Returns((InventoryActor a, RecordInventoryUsage usage) =>
+			{ _transaction.Should().NotBeNull(); if (_usageRows.Any(x => x.TransactionId == usage.TransactionId)) throw new InventoryException(409, "UsageAlreadyRecorded"); _usageRows.Add(Copy(usage)); return Task.CompletedTask; });
 			_stock.Setup(s => s.PostWithinTransactionAsync(It.IsAny<InventoryActor>(), It.IsAny<InventoryCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync((InventoryActor actor, InventoryCommand command, CancellationToken ct) =>
 			{
 				_transaction.Should().NotBeNull("Records must own the stock and reference transaction"); _posts.Add((Copy(actor), Copy(command)));
-				var line = command.Lines.Single(); var before = _balance; _balance -= line.Quantity;
+				var result = new InventoryResult();
+				foreach (var line in command.Lines)
+				{
+				var before = _balance; _balance += line.FromLocationId != null ? -line.Quantity : line.Quantity;
 				var entry = new InventoryTransaction { DepartmentId = actor.DepartmentId, EntryId = _ledger.Count + 1, OperationId = Guid.NewGuid().ToString("D"),
 					ItemId = line.ItemId, AssetId = line.AssetId, LotId = line.LotId, FromLocationId = line.FromLocationId, ToLocationId = line.ToLocationId,
 					Quantity = line.Quantity, FromQuantityBefore = before, FromQuantityAfter = _balance, ReferenceType = (int)line.ReferenceType, ReferenceId = line.ReferenceId,
-					TransactionType = (int)line.Type, OccurredOn = DateTime.UtcNow, Content = JsonConvert.SerializeObject(new { Note = Canary }) };
-				_ledger.Add(entry); return new InventoryResult { TransactionIds = new() { entry.Id }, OutboxIds = new() { 101 } };
+					TransactionType = (int)line.Type, ReversesTransactionId = line.ReversesTransactionId, OccurredOn = DateTime.UtcNow, Content = JsonConvert.SerializeObject(new { line.Note, ItemName = Canary, UnitOfMeasure = "each", UnitCost = 4.25m }) };
+				_ledger.Add(entry); result.TransactionIds.Add(entry.Id); result.OutboxIds.Add(100 + _ledger.Count);
+				}
+				return result;
 			});
 			_uow.SetupGet(u => u.Transaction).Returns(() => _transaction);
 			_uow.Setup(u => u.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => { Begin(); return (DbConnection)null; });
@@ -118,8 +132,8 @@ namespace Resgrid.Tests.Services
 			command.Lines[0].ReferenceType.Should().Be(InventoryReferenceType.WorkOrder, "the adapter must copy the caller's mutable command"); command.Lines[0].ReferenceId.Should().Be("999");
 			_balance.Should().Be(7.874999m); (kind == RmsRecordKind.Operational ? _record.RowVersion : _incident.RowVersion).Should().Be(2);
 			result.TransactionId.Should().Be(_ledger.Single().Id); result.ItemId.Should().Be(ItemId); result.InventoryId.Should().Be(0);
-			var reference = _references.Single(); reference.RmsExternalReferenceId.Should().Be(command.RequestId); reference.SourceEntityType.Should().Be("InventoryTransaction"); reference.SourceEntityId.Should().Be(result.TransactionId);
-			JObject.Parse(reference.SnapshotJson).Value<int>("SchemaVersion").Should().Be(2); reference.SnapshotJson.Should().NotContain(Canary).And.NotContain(_actor.GrantToken);
+			var reference = _references.Single(); reference.RmsExternalReferenceId.Should().Be(command.RequestId); reference.SourceEntityType.Should().Be("RecordInventoryUsage"); reference.SourceEntityId.Should().Be(result.UsageId);
+			JObject.Parse(reference.SnapshotJson).Value<int>("SchemaVersion").Should().Be(3); reference.SnapshotJson.Should().NotContain(Canary).And.NotContain(_actor.GrantToken);
 			result.ItemName.Should().Be("REDACTED"); result.Note.Should().Be("REDACTED"); result.SourceChecksum.Should().HaveLength(64); _audits.Single().DetailJson.Should().NotContain(Canary);
 			_dispatches.Single().Should().Equal(101); _stock.Verify(s => s.PostTransactionAsync(It.IsAny<InventoryActor>(), It.IsAny<InventoryCommand>(), It.IsAny<CancellationToken>()), Times.Never);
 			_legacy.Verify(i => i.SaveInventoryAsync(It.IsAny<Inventory>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -132,7 +146,7 @@ namespace Resgrid.Tests.Services
 			var renewed = new InventoryActor { DepartmentId = Department, UserId = "author", GrantToken = "synthetic-renewed-grant" };
 			var retry = await _adapter.ConsumeModernAsync(renewed, RecordId, RmsRecordKind.Operational, 1, Copy(command));
 			retry.TransactionId.Should().Be(first.TransactionId); _record.RowVersion.Should().Be(2); _balance.Should().Be(7.874999m);
-			_posts.Should().HaveCount(1); _references.Should().HaveCount(1); _audits.Should().HaveCount(1); _dispatches.Should().HaveCount(1);
+			_posts.Should().HaveCount(1); _references.Should().HaveCount(1); _audits.Should().HaveCount(1); _dispatches.Should().HaveCount(2, "retry recovers the original outbox dispatch without another movement");
 			_records.Verify(r => r.TryBumpRowVersionAsync(Department, RecordId, 1, It.IsAny<CancellationToken>()), Times.Once);
 			_catalog.Verify(c => c.GetAsync<InventoryTransaction>(It.Is<InventoryActor>(a => a.GrantToken == "synthetic-renewed-grant"), first.TransactionId), Times.Once);
 			command.Lines[0].Quantity = 3;
@@ -195,8 +209,8 @@ namespace Resgrid.Tests.Services
 		{
 			_transaction.Should().BeNull(); _transaction = new Mock<DbTransaction>().Object;
 			var references = _references.Select(Copy).ToList(); var audits = _audits.Select(Copy).ToList(); var ledger = _ledger.Select(Copy).ToList();
-			var record = Copy(_record); var incident = Copy(_incident); var balance = _balance;
-			_rollback = () => { _references = references; _audits = audits; _ledger = ledger; _record = record; _incident = incident; _balance = balance; };
+			var record = Copy(_record); var incident = Copy(_incident); var balance = _balance; var usages = _usageRows.Select(Copy).ToList();
+			_rollback = () => { _references = references; _audits = audits; _ledger = ledger; _usageRows = usages; _record = record; _incident = incident; _balance = balance; };
 		}
 	}
 }

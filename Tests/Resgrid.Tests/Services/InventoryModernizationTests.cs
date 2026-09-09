@@ -22,7 +22,7 @@ using Resgrid.Services;
 namespace Resgrid.Tests.Services
 {
 	[TestFixture]
-	public sealed class InventoryModernizationTests
+	public sealed partial class InventoryModernizationTests
 	{
 		private const int Department = 77;
 		private const string Canary = "PII-PHI-CANARY inventory narrative";
@@ -47,6 +47,10 @@ namespace Resgrid.Tests.Services
 		private Mock<IInventoryTypesRepository> _legacyTypes;
 		private Mock<IWorkOrderRepository> _workOrders;
 		private Mock<IWorkOrderAuthorizationService> _workOrderAuth;
+		private Mock<IRecordsAuthorizationService> _recordsAuth;
+		private Mock<IRmsInventoryUsageAdapter> _recordUsageAdapter;
+		private Mock<IContactsService> _contacts;
+		private Dictionary<string, Contact> _companyContacts;
 
 		[SetUp]
 		public void SetUp()
@@ -87,9 +91,17 @@ namespace Resgrid.Tests.Services
 			_legacyInventory.Setup(x => x.GetAllInventoriesByDepartmentIdAsync(Department)).ReturnsAsync(Array.Empty<Inventory>());
 			_legacyTypes.Setup(x => x.GetAllByDepartmentIdAsync(Department)).ReturnsAsync(Array.Empty<InventoryType>());
 			_workOrders = new(); _workOrderAuth = new();
+			_recordsAuth = new(); _recordUsageAdapter = new();
+			_recordsAuth.Setup(x => x.CanUserViewRecordAsync(It.IsAny<string>(), It.IsAny<string>(), Department)).ReturnsAsync(true);
+			_recordsAuth.Setup(x => x.HasPermissionAsync(It.IsAny<string>(), Department, PermissionTypes.ViewRestrictedRecords)).ReturnsAsync(true);
+			_recordUsageAdapter.Setup(x => x.RequireUsageCorrectionAccessAsync(It.IsAny<InventoryActor>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+			_contacts = new(); _companyContacts = new();
+			_contacts.Setup(x => x.GetContactByIdAsync(It.IsAny<string>())).ReturnsAsync((string id) => _companyContacts.TryGetValue(id, out var contact) ? Copy(contact) : null);
+			_contacts.Setup(x => x.GetAllContactsForDepartmentAsync(It.IsAny<int>())).ReturnsAsync((int departmentId) => _companyContacts.Values.Where(c => c.DepartmentId == departmentId).Select(Copy).ToList());
 			_service = new InventoryModernizationService(_store, _auth.Object, _uow.Object, _read.Object, _write.Object,
 				_outbox.Object, audit.Object, units.Object, groups.Object, _clock, _legacyInventory.Object, _legacyTypes.Object,
-				_workOrders.Object, new Lazy<IWorkOrderAuthorizationService>(() => _workOrderAuth.Object));
+				_workOrders.Object, new Lazy<IWorkOrderAuthorizationService>(() => _workOrderAuth.Object),
+				new Lazy<IRecordsAuthorizationService>(() => _recordsAuth.Object), new Lazy<IRmsInventoryUsageAdapter>(() => _recordUsageAdapter.Object), _contacts.Object);
 		}
 
 		[Test]
@@ -117,7 +129,7 @@ namespace Resgrid.Tests.Services
 			var item = await _service.SaveItemAsync(_actor, input); var location = Location();
 			var lot = await _service.SaveLotAsync(_actor, new InventoryLot { ItemId = item.Id, ExpiresOn = _clock.Utc.AddDays(10) }, new InventoryLotContent { LotNumber = "synthetic lot" });
 			var receipt = Receive(item, location, 1); receipt.Lines[0].LotId = lot.Id; await _service.PostTransactionAsync(_actor, receipt);
-			input.Id = item.Id; input.Revision = item.Revision; input.RequiresExpiration = !initiallyRequired;
+			input.Id = item.Id; input.Revision = (await _service.GetAsync<InventoryItem>(_actor, item.Id)).Revision; input.RequiresExpiration = !initiallyRequired;
 			await Fails(() => _service.SaveItemAsync(_actor, input), "ItemTrackingLocked", 409);
 			(await _service.GetAsync<InventoryItem>(_actor, item.Id)).RequiresExpiration.Should().Be(initiallyRequired);
 		}
@@ -520,7 +532,7 @@ namespace Resgrid.Tests.Services
 		{
 			var input = new InventoryItemInput { Details = new InventoryItemContent { Name = "Synthetic medical consumable", UnitOfMeasure = "each" } };
 			var item = await _service.SaveItemAsync(_actor, input); var location = Location(); await _service.PostTransactionAsync(_actor, Receive(item, location, 1));
-			input.Id = item.Id; input.Revision = item.Revision; input.TrackingMode = InventoryTrackingMode.Serialized;
+			input.Id = item.Id; input.Revision = (await _service.GetAsync<InventoryItem>(_actor, item.Id)).Revision; input.TrackingMode = InventoryTrackingMode.Serialized;
 			await Fails(() => _service.SaveItemAsync(_actor, input), "ItemTrackingLocked", 409);
 			await Fails(() => _service.SaveLocationAsync(_actor, new InventoryLocationInput { Id = location.Id, Revision = location.Revision,
 				Name = "Attempted reassignment", Type = InventoryLocationType.Unit, UnitId = 101 }), "LocationHolderImmutable", 409);
@@ -811,8 +823,19 @@ namespace Resgrid.Tests.Services
 			public void Rollback() { if (_before != null) _rows = _before; _before = null; }
 			private void RequireTransaction() { if (_before == null) throw new InvalidOperationException("Mutation requires an owning transaction."); }
 			public Task LockDepartmentAsync(int departmentId) { RequireTransaction(); return Task.CompletedTask; }
+			public Task<List<int>> AlertDepartmentsAsync(int afterDepartmentId) => Task.FromResult(All<InventoryItem>().Select(i => i.DepartmentId).Distinct().Where(i => i > afterDepartmentId).OrderBy(i => i).Take(100).ToList());
+			public Task<long> LastEntryAsync(int departmentId) => Task.FromResult(All<InventoryTransaction>().Where(t => t.DepartmentId == departmentId).Select(t => t.EntryId).DefaultIfEmpty().Max());
+			public Task<InventoryAlert> OpenAlertAsync(int departmentId, string dedupKey) => Task.FromResult(All<InventoryAlert>().SingleOrDefault(a => a.DepartmentId == departmentId && a.DedupKey == dedupKey && a.Status == 0));
+			public Task<InventoryAlertDelivery> AlertDeliveryAsync(int departmentId, string alertId, string userId) => Task.FromResult(All<InventoryAlertDelivery>().SingleOrDefault(d => d.DepartmentId == departmentId && d.AlertId == alertId && d.UserId == userId));
+			public Task<List<InventoryAlert>> OpenAlertsAsync(int departmentId, int skip = 0) => Task.FromResult(All<InventoryAlert>().Where(a => a.DepartmentId == departmentId && a.Status == 0).OrderBy(a => a.OpenedOn).ThenBy(a => a.Id).Skip(skip).Take(501).ToList());
 			public Task<T> GetAsync<T>(int departmentId, string id) where T : InventoryRow => Task.FromResult(All<T>().SingleOrDefault(r => r.DepartmentId == departmentId && r.Id == id));
 			public Task<List<T>> ListAsync<T>(int departmentId, int skip = 0) where T : InventoryRow => Task.FromResult(All<T>().Where(r => r.DepartmentId == departmentId).OrderBy(r => r.CreatedOn).ThenBy(r => r.Id).Skip(skip).Take(501).ToList());
+			public Task<List<InventoryStockQuantity>> StockQuantitiesAsync(int departmentId, IReadOnlyCollection<string> itemIds) => Task.FromResult(All<InventoryStock>()
+				.Where(s => s.DepartmentId == departmentId && !s.IsDeleted && itemIds.Contains(s.ItemId)).GroupBy(s => new { s.ItemId, s.LocationId })
+				.Select(g => new InventoryStockQuantity { ItemId = g.Key.ItemId, LocationId = g.Key.LocationId, Quantity = g.Sum(s => s.Quantity) }).ToList());
+			public Task<List<InventoryTransaction>> AssetHistoryAsync(int departmentId, IReadOnlyCollection<string> assetIds, DateTime at, bool after, int skip = 0) => Task.FromResult(All<InventoryTransaction>()
+				.Where(t => t.DepartmentId == departmentId && assetIds.Contains(t.AssetId) && (after ? t.OccurredOn > at : t.OccurredOn <= at))
+				.OrderBy(t => t.OccurredOn).ThenBy(t => t.EntryId).Skip(skip).Take(501).ToList());
 			public Task<List<T>> QueryAsync<T>(int departmentId, InventoryQuery filter, int skip = 0) where T : InventoryRow
 			{
 				var rows = All<T>().Where(r => r.DepartmentId == departmentId && (r is not InventoryMutableRow mutable || !mutable.IsDeleted));
@@ -831,7 +854,7 @@ namespace Resgrid.Tests.Services
 			}
 			public Task UpdateAsync<T>(T row, int expectedRevision) where T : InventoryRow
 			{
-				RequireTransaction(); if (row is InventoryTransaction or InventoryTransferItem) throw new InvalidOperationException("Ledger identities are immutable.");
+				RequireTransaction(); if (row is InventoryTransaction or InventoryTransferItem or RecordInventoryUsage) throw new InvalidOperationException("Ledger identities are immutable.");
 				var stored = All<T>().SingleOrDefault(r => r.DepartmentId == row.DepartmentId && r.Id == row.Id);
 				if (stored == null || stored.Revision != expectedRevision || row.Revision != expectedRevision + 1) throw new InventoryException(409, "RevisionConflict");
 				Seed(row); return Task.CompletedTask;

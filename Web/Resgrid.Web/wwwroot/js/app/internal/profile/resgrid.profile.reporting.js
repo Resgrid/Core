@@ -24,7 +24,7 @@ var resgrid;
                             orderable: false,
                             searchable: false,
                             render: function (data, type, row) {
-                                var html = '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Profile/EditReportingSchedule?scheduleId=' + row.ScheduleId + '">Edit</a> ';
+                                var html = '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Profile/EditScheduledReport?scheduleId=' + row.ScheduleId + '">Edit</a> ';
                                 if (row.IsActive) {
                                     html += '<a class="btn btn-sm btn-warning" onclick="resgrid.profile.reporting.deactivateSchedule(' + row.ScheduleId + ');">Deactivate</a> ';
                                 } else {
@@ -42,16 +42,24 @@ var resgrid;
             });
             function activateSchedule(scheduleId) {
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Profile/ActivateSchedule?scheduleId=' + scheduleId,
-                    contentType: 'application/json; charset=utf-8',
+                    url: resgrid.absoluteBaseUrl + '/User/Profile/ActivateScheduledReport',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                    data: {
+                        scheduleId: scheduleId,
+                        __RequestVerificationToken: $('#reporting-antiforgery input[name="__RequestVerificationToken"]').val()
+                    },
                     type: 'POST'
                 }).done(function () { refreshGrid(); });
             }
             reporting.activateSchedule = activateSchedule;
             function deactivateSchedule(scheduleId) {
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Profile/DeactivateSchedule?scheduleId=' + scheduleId,
-                    contentType: 'application/json; charset=utf-8',
+                    url: resgrid.absoluteBaseUrl + '/User/Profile/DeactivateScheduledReport',
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                    data: {
+                        scheduleId: scheduleId,
+                        __RequestVerificationToken: $('#reporting-antiforgery input[name="__RequestVerificationToken"]').val()
+                    },
                     type: 'POST'
                 }).done(function () { refreshGrid(); });
             }
@@ -59,8 +67,12 @@ var resgrid;
             function deleteSchedule(scheduleId) {
                 if (confirm("Are you sure you want to delete this schedule?")) {
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Profile/DeleteSchedule?scheduleId=' + scheduleId,
-                        contentType: 'application/json; charset=utf-8',
+                        url: resgrid.absoluteBaseUrl + '/User/Profile/DeleteScheduledReport',
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        data: {
+                            scheduleId: scheduleId,
+                            __RequestVerificationToken: $('#reporting-antiforgery input[name="__RequestVerificationToken"]').val()
+                        },
                         type: 'POST'
                     }).done(function () { refreshGrid(); });
                 }

@@ -199,6 +199,11 @@
                                 </td>
                             </tr>
                             </tbody>
+                            <tbody>
+                            @foreach (var kind in Enum.GetValues<Resgrid.Model.Inventories.InventoryReportKind>()) {
+                                <tr><td><a href="@Url.Action("Operations", "Inventory", new { Area = "User", tab = "Reports" })">@Resgrid.Services.InventoryReportDocuments.Title(kind)</a></td><td colspan="2">@Resgrid.Services.InventoryReportDocuments.Text("M5ReportHelp")</td></tr>
+                            }
+                            </tbody>
                         </table>
                     </div>
                 </div>

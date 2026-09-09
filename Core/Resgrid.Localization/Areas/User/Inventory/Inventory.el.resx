@@ -531,5 +531,179 @@
   <data name="Yes" xml:space="preserve">
     <value>Ναι</value>
   </data>
+  <data name="RecordUsageTitle" xml:space="preserve"><value>Χρήση αποθεμάτων</value></data>
+  <data name="RecordUsageHelp" xml:space="preserve"><value>Η αποθήκευση της χρήσης αλλάζει αμέσως το απόθεμα. Οι αλλαγές παραμένουν αν εγκαταλειφθεί ένα προσχέδιο ή μια τροποποίηση αναφοράς. Αντιλογίστε ρητά τη λανθασμένη χρήση και καταγράψτε την αντικατάστασή της. Ανοίξτε τροποποίηση πριν αλλάξετε τη χρήση σε ολοκληρωμένη αναφορά.</value></data>
+  <data name="RecordUsageWitnessHelp" xml:space="preserve"><value>Η κατανάλωση και οι αντιλογισμοί ελεγχόμενων ειδών απαιτούν ανεξάρτητο μάρτυρα στα Αποθέματα. Ολοκληρώστε πρώτα αυτή τη διαδικασία και συνδέστε εδώ το αναγνωριστικό της συναλλαγής που προέκυψε.</value></data>
+  <data name="RecordUsageRecorded" xml:space="preserve"><value>Καταγεγραμμένη χρήση</value></data>
+  <data name="RecordUsageType" xml:space="preserve"><value>Τύπος χρήσης</value></data>
+  <data name="RecordUsageType0" xml:space="preserve"><value>Χρησιμοποιήθηκε</value></data>
+  <data name="RecordUsageType1" xml:space="preserve"><value>Καταναλώθηκε σε ασθενή</value></data>
+  <data name="RecordUsageType2" xml:space="preserve"><value>Αφέθηκε στον τόπο του συμβάντος</value></data>
+  <data name="RecordUsageType3" xml:space="preserve"><value>Κατεστραμμένο</value></data>
+  <data name="RecordUsageLedgerEntry" xml:space="preserve"><value>Εγγραφή στο καθολικό</value></data>
+  <data name="RecordUsageRecordedUtc" xml:space="preserve"><value>Καταγράφηκε (UTC)</value></data>
+  <data name="RecordUsageReverses" xml:space="preserve"><value>Αντιλογίζει τη χρήση</value></data>
+  <data name="RecordUsageReversed" xml:space="preserve"><value>Αντιλογίστηκε</value></data>
+  <data name="RecordUsageReverse" xml:space="preserve"><value>Αντιλογισμός χρήσης</value></data>
+  <data name="RecordUsageReverseHelp" xml:space="preserve"><value>Αυτή η ενέργεια καταγράφει πλήρη αντιλογισμό και διατηρεί την αρχική χρήση στο ιστορικό. Για να διορθώσετε ποσότητα ή είδος, αντιλογίστε τη χρήση και καταγράψτε την αντικατάστασή της. Αν ο αντιλογισμός έχει ήδη επιβεβαιωθεί από μάρτυρα στα Αποθέματα, εισαγάγετε το αναγνωριστικό της συναλλαγής του για να τον συνδέσετε χωρίς νέα αλλαγή αποθέματος.</value></data>
+  <data name="RecordUsageCorrectionReason" xml:space="preserve"><value>Αιτία διόρθωσης</value></data>
+  <data name="RecordUsageExistingReversal" xml:space="preserve"><value>Αναγνωριστικό υπάρχοντος αντιλογισμού με επιβεβαίωση μάρτυρα (προαιρετικό)</value></data>
+  <data name="RecordUsageLedgerHelp" xml:space="preserve"><value>Οι θετικές ποσότητες καταγράφουν χρήση και οι αρνητικές την αντιλογίζουν. Ανοίξτε την εγγραφή στο καθολικό για τα στοιχεία κίνησης σύμφωνα με την τρέχουσα πρόσβασή σας στα αποθέματα.</value></data>
+  <data name="RecordUsageExistingConsumption" xml:space="preserve"><value>Αναγνωριστικό υπάρχουσας συναλλαγής κατανάλωσης (προαιρετικό)</value></data>
+  <data name="RecordUsageAttachHelp" xml:space="preserve"><value>Εισαγάγετε μια ολοκληρωμένη συναλλαγή κατανάλωσης από τα Αποθέματα για να συνδέσετε το είδος, την ποσότητα, την τοποθεσία και τη σημείωσή της. Τα παρακάτω πεδία νέας κατανάλωσης αγνοούνται και το απόθεμα δεν καταναλώνεται ξανά. Επιλέξτε τον τύπο χρήσης παραπάνω.</value></data>
+  <data name="RecordUsageNewConsumption" xml:space="preserve"><value>Νέα κατανάλωση</value></data>
+  <data name="RecordUsageDefaultLocation" xml:space="preserve"><value>Χρήση μονάδας ή σταθμού της αναφοράς</value></data>
+  <data name="RecordUsageLocationHelp" xml:space="preserve"><value>Αφήστε κενό για να χρησιμοποιηθεί η μονάδα απόκρισης της αναφοράς, με τον σταθμό ως εναλλακτική. Επιλέξτε ρητά πηγή όταν η αναφορά έχει πολλές πιθανές τοποθεσίες.</value></data>
+  <data name="RecordUsageSave" xml:space="preserve"><value>Αποθήκευση χρήσης</value></data>
+  <data name="RecordUsageReturnToReport" xml:space="preserve"><value>Επιστροφή στην αναφορά</value></data>
+  <data name="RecordUsageRefreshEvidence" xml:space="preserve"><value>Ανανέωση τεκμηρίων από καταγεγραμμένη χρήση</value></data>
+  <data name="RecordUsageSaved" xml:space="preserve"><value>Η χρήση αποθηκεύτηκε και καταγράφηκαν τα υποστηρικτικά τεκμήρια.</value></data>
+  <data name="RecordUsageEvidencePending" xml:space="preserve"><value>Η ενέργεια αποθέματος αποθηκεύτηκε. Δεν ήταν δυνατή η καταγραφή τεκμηρίων. Χρησιμοποιήστε την Ανανέωση τεκμηρίων αφού επιλύσετε τα προβλήματα πρόσβασης ή τις αλλαγές του προσχεδίου. Μην υποβάλετε ξανά την ενέργεια αποθέματος.</value></data>
+  <data name="RecordUsageDraftChanged" xml:space="preserve"><value>Το προσχέδιο άλλαξε. Ελέγξτε την καταγεγραμμένη χρήση πριν υποβάλετε άλλη ενέργεια αποθέματος.</value></data>
+  <data name="RecordUsageWitnessRequired" xml:space="preserve"><value>Ολοκληρώστε τη διαδικασία με ανεξάρτητο μάρτυρα στα Αποθέματα και συνδέστε εδώ το αναγνωριστικό της συναλλαγής που προέκυψε. Αυτή η ενέργεια δεν κατέγραψε καμία κίνηση αποθέματος.</value></data>
+  <data name="RecordUsageEvidenceSaved" xml:space="preserve"><value>Τα υποστηρικτικά τεκμήρια καταγράφηκαν.</value></data>
+  <data name="RecordUsageReconciliationRequired" xml:space="preserve"><value>Ένας αντιλογισμός στο καθολικό δεν έχει συνδεθεί με αυτή την αναφορά. Συνδέστε τον ως διόρθωση πριν την οριστικοποίηση.</value></data>
+  <data name="M4Purchasing" xml:space="preserve"><value>Αγορές</value></data>
+  <data name="M4Vendors" xml:space="preserve"><value>Προμηθευτές</value></data>
+  <data name="M4PurchaseOrders" xml:space="preserve"><value>Εντολές αγοράς</value></data>
+  <data name="M4Valuation" xml:space="preserve"><value>Αποτίμηση αποθέματος</value></data>
+  <data name="M4VendorHelp" xml:space="preserve"><value>Οι προμηθευτές χρησιμοποιούν εγγραφές εταιρειών από τις Επαφές. Δημιουργήστε ή ενημερώστε τα στοιχεία της εταιρείας στις Επαφές και συνδέστε την εδώ.</value></data>
+  <data name="M4AccountNumber" xml:space="preserve"><value>Αριθμός λογαριασμού στον προμηθευτή</value></data>
+  <data name="M4CompanyContact" xml:space="preserve"><value>Εταιρεία στις Επαφές</value></data>
+  <data name="M4NewVendor" xml:space="preserve"><value>Προσθήκη προμηθευτή</value></data>
+  <data name="M4PurchaseOrderNumber" xml:space="preserve"><value>Αριθμός εντολής αγοράς</value></data>
+  <data name="M4Supplier" xml:space="preserve"><value>Προμηθευτής</value></data>
+  <data name="M4Currency" xml:space="preserve"><value>Νόμισμα</value></data>
+  <data name="M4ViewPurchaseOrder" xml:space="preserve"><value>Προβολή εντολής αγοράς</value></data>
+  <data name="M4Status0" xml:space="preserve"><value>Πρόχειρη</value></data>
+  <data name="M4Status1" xml:space="preserve"><value>Έχει παραγγελθεί</value></data>
+  <data name="M4Status2" xml:space="preserve"><value>Έχει παραληφθεί εν μέρει</value></data>
+  <data name="M4Status3" xml:space="preserve"><value>Έχει παραληφθεί</value></data>
+  <data name="M4Status4" xml:space="preserve"><value>Ακυρωμένη</value></data>
+  <data name="M4QuantityOrdered" xml:space="preserve"><value>Παραγγελθείσα ποσότητα</value></data>
+  <data name="M4QuantityReceived" xml:space="preserve"><value>Παραληφθείσα ποσότητα</value></data>
+  <data name="M4Remaining" xml:space="preserve"><value>Υπόλοιπη ποσότητα</value></data>
+  <data name="M4OrderHelp" xml:space="preserve"><value>Η σήμανση μιας εντολής ως παραγγελθείσας κλειδώνει τις γραμμές της. Η ακύρωση εμποδίζει περαιτέρω παραλαβές και διατηρεί τις ποσότητες που έχουν ήδη παραληφθεί.</value></data>
+  <data name="M4Order" xml:space="preserve"><value>Σήμανση ως παραγγελθείσα</value></data>
+  <data name="M4CancelOrder" xml:space="preserve"><value>Ακύρωση εντολής</value></data>
+  <data name="M4Receive" xml:space="preserve"><value>Παραλαβή ειδών</value></data>
+  <data name="M4ReceiptHelp" xml:space="preserve"><value>Παραλάβετε ολόκληρη την εντολή ή μέρος της. Αφαιρέστε τις γραμμές που δεν περιλαμβάνονται σε αυτή την παράδοση. Αν απαιτείται ανεξάρτητος μάρτυρας, το απόθεμα και οι παραληφθείσες ποσότητες αλλάζουν μόνο μετά την έγκρισή του στην Αποθήκη.</value></data>
+  <data name="M4SerializedReceiptHelp" xml:space="preserve"><value>Χρησιμοποιήστε μία γραμμή για κάθε πάγιο με σειριακό αριθμό, με ποσότητα 1 και τον δικό του σειριακό αριθμό. Προσθέστε γραμμές για να παραλάβετε περισσότερα πάγια ή να κατανείμετε ποσότητες σε διαφορετικές τοποθεσίες ή παρτίδες.</value></data>
+  <data name="M4ReceiveQuantity" xml:space="preserve"><value>Ποσότητα προς παραλαβή</value></data>
+  <data name="M4RemoveLine" xml:space="preserve"><value>Αφαίρεση γραμμής</value></data>
+  <data name="M4Receipts" xml:space="preserve"><value>Παραλαβές</value></data>
+  <data name="M4NewPurchaseOrder" xml:space="preserve"><value>Νέα εντολή αγοράς</value></data>
+  <data name="M4ValuationScope" xml:space="preserve"><value>Η αποτίμηση καλύπτει μόνο το απόθεμα και τις τοποθεσίες που έχετε δικαίωμα να βλέπετε. Τα σύνολα εμφανίζονται ξεχωριστά για κάθε νόμισμα. Οι γραμμές με άγνωστο κόστος καταμετρώνται ξεχωριστά και εξαιρούνται από τα σύνολα γνωστής αξίας.</value></data>
+  <data name="M4AsOfUtc" xml:space="preserve"><value>Κατά την (UTC)</value></data>
+  <data name="M4NegativeStock" xml:space="preserve"><value>Ορισμένα ορατά υπόλοιπα αποθέματος είναι αρνητικά. Ελέγξτε τα πριν βασιστείτε σε αυτή την αποτίμηση.</value></data>
+  <data name="M4KnownValue" xml:space="preserve"><value>Γνωστή αξία</value></data>
+  <data name="M4UncostedRows" xml:space="preserve"><value>Γραμμές χωρίς κόστος</value></data>
+  <data name="M4UnspecifiedCurrency" xml:space="preserve"><value>Δεν έχει οριστεί νόμισμα</value></data>
+  <data name="M4UnknownCost" xml:space="preserve"><value>Άγνωστο κόστος</value></data>
+  <data name="M4AverageUnitCost" xml:space="preserve"><value>Μέσο κόστος μονάδας</value></data>
+  <data name="M4PreferredVendor" xml:space="preserve"><value>Προτιμώμενος προμηθευτής</value></data>
+  <data name="M4CurrencyHelp" xml:space="preserve"><value>Χρησιμοποιήστε ένα νόμισμα ανά είδος. Το υπάρχον απόθεμα χωρίς νόμισμα παραμένει ξεχωριστό στην αποτίμηση· η αντιστοίχιση νομίσματος δεν μετατρέπει τα κόστη.</value></data>
+  <data name="InventoryPurchaseOrderReceived" xml:space="preserve"><value>Παραλήφθηκε εντολή αγοράς αποθέματος</value></data>
+  <data name="M5Operations" xml:space="preserve"><value>Καταμετρήσεις, ειδοποιήσεις και αναφορές</value></data>
+  <data name="M5Counts" xml:space="preserve"><value>Καταμετρήσεις αποθέματος</value></data>
+  <data name="M5Alerts" xml:space="preserve"><value>Ειδοποιήσεις αποθέματος</value></data>
+  <data name="M5Reports" xml:space="preserve"><value>Αναφορές αποθέματος</value></data>
+  <data name="M5CountHelp" xml:space="preserve"><value>Ξεκινήστε ένα στιγμιότυπο με έως 100 θέσεις αποθέματος. Καταγράψτε κάθε ποσότητα, αποθηκεύστε και έπειτα ολοκληρώστε την καταμέτρηση. Αν αλλάξουν το απόθεμα ή τα στοιχεία του καταλόγου, ακυρώστε και ξεκινήστε νέα καταμέτρηση. Καταγράψτε εξοπλισμό με σειριακό αριθμό που εντοπίζεται για πρώτη φορά μέσω της Παραλαβής.</value></data>
+  <data name="M5AllLocations" xml:space="preserve"><value>Όλες οι τοποθεσίες</value></data>
+  <data name="M5StartCount" xml:space="preserve"><value>Έναρξη καταμέτρησης</value></data>
+  <data name="M5CompleteCount" xml:space="preserve"><value>Ολοκλήρωση καταμέτρησης</value></data>
+  <data name="M5CancelCount" xml:space="preserve"><value>Ακύρωση καταμέτρησης</value></data>
+  <data name="M5SnapshotOn" xml:space="preserve"><value>Χρόνος στιγμιοτύπου (UTC)</value></data>
+  <data name="M5Expected" xml:space="preserve"><value>Αναμενόμενη ποσότητα</value></data>
+  <data name="M5Counted" xml:space="preserve"><value>Καταμετρημένη ποσότητα</value></data>
+  <data name="M5Variance" xml:space="preserve"><value>Απόκλιση</value></data>
+  <data name="M5VarianceLines" xml:space="preserve"><value>Γραμμές με απόκλιση</value></data>
+  <data name="M5CountStatus0" xml:space="preserve"><value>Προσχέδιο</value></data>
+  <data name="M5CountStatus1" xml:space="preserve"><value>Αναμονή μάρτυρα</value></data>
+  <data name="M5CountStatus2" xml:space="preserve"><value>Ολοκληρώθηκε</value></data>
+  <data name="M5CountStatus3" xml:space="preserve"><value>Ακυρώθηκε</value></data>
+  <data name="M5WitnessHelp" xml:space="preserve"><value>Ένας ανεξάρτητος μάρτυρας πρέπει να εγκρίνει την εκκρεμή ενέργεια από το ιστορικό Αποθεμάτων. Το στιγμιότυπο πρέπει να εξακολουθεί να ανταποκρίνεται στην τρέχουσα κατάσταση.</value></data>
+  <data name="M5AlertHelp" xml:space="preserve"><value>Οι ειδοποιήσεις εμφανίζουν χαμηλό απόθεμα, λήξη εντός 30 ημερών, ληγμένο απόθεμα και εκπρόθεσμες επιστροφές. Κάντε μία ανανέωση μετά την ενεργοποίηση της λειτουργίας για να αρχικοποιηθούν οι ειδοποιήσεις χαμηλού αποθέματος, καθώς και μετά την εισαγωγή παλαιού αποθέματος. Οι επόμενες αλλαγές στο απόθεμα και στα είδη τις ενημερώνουν αυτόματα.</value></data>
+  <data name="M5RefreshAlerts" xml:space="preserve"><value>Ανανέωση ειδοποιήσεων</value></data>
+  <data name="M5AlertType0" xml:space="preserve"><value>Χαμηλό απόθεμα</value></data>
+  <data name="M5AlertType1" xml:space="preserve"><value>Λήγει σύντομα</value></data>
+  <data name="M5AlertType2" xml:space="preserve"><value>Έχει λήξει</value></data>
+  <data name="M5AlertType3" xml:space="preserve"><value>Εκπρόθεσμη επιστροφή</value></data>
+  <data name="M5Open" xml:space="preserve"><value>Ανοιχτή</value></data>
+  <data name="M5Resolved" xml:space="preserve"><value>Επιλύθηκε</value></data>
+  <data name="M5DueOn" xml:space="preserve"><value>Προθεσμία (UTC)</value></data>
+  <data name="M5ReportHelp" xml:space="preserve"><value>Επιλέξτε αναφορά και προαιρετικά φίλτρα. Οι ημερομηνίες χρησιμοποιούν UTC και δεν περιλαμβάνουν την ημερομηνία λήξης του διαστήματος. Οι αναφορές στιγμιοτύπου χρησιμοποιούν τα τρέχοντα αποθέματα. Κατεβάστε το PDF για προβολή ή εκτύπωση.</value></data>
+  <data name="M5FromUtc" xml:space="preserve"><value>Από ημερομηνία (UTC, περιλαμβάνεται)</value></data>
+  <data name="M5UntilUtc" xml:space="preserve"><value>Έως ημερομηνία (UTC, δεν περιλαμβάνεται)</value></data>
+  <data name="M5DownloadPdf" xml:space="preserve"><value>Λήψη εκτυπώσιμου PDF</value></data>
+  <data name="M5ScheduleReports" xml:space="preserve"><value>Προγραμματισμός αποστολής αναφορών</value></data>
+  <data name="M5AlertNotificationTitle" xml:space="preserve"><value>Ειδοποιήσεις αποθέματος</value></data>
+  <data name="M5AlertNotificationMessage" xml:space="preserve"><value>Το απόθεμα χρειάζεται έλεγχο. Συνδεθείτε για να δείτε τις τρέχουσες ειδοποιήσεις.</value></data>
+  <data name="M5ReportOnHand" xml:space="preserve"><value>Διαθέσιμο απόθεμα</value></data>
+  <data name="M5ReportUsage" xml:space="preserve"><value>Χρήση αποθέματος</value></data>
+  <data name="M5ReportExpiration" xml:space="preserve"><value>Λήξη αποθέματος</value></data>
+  <data name="M5ReportLowStock" xml:space="preserve"><value>Χαμηλό απόθεμα</value></data>
+  <data name="M5ReportTransferHistory" xml:space="preserve"><value>Ιστορικό μεταφορών αποθέματος</value></data>
+  <data name="M5ReportIssuance" xml:space="preserve"><value>Ιστορικό χορηγήσεων αποθέματος</value></data>
+  <data name="M5ReportValuation" xml:space="preserve"><value>Αποτίμηση αποθέματος</value></data>
+  <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Μητρώο ελεγχόμενων ουσιών</value></data>
+  <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Ημέρες μέχρι τη λήξη</value></data>
+  <data name="M5Shortfall" xml:space="preserve"><value>Ποσότητα που υπολείπεται του σημείου αναπαραγγελίας</value></data>
+  <data name="M5ReorderQuantity" xml:space="preserve"><value>Προτεινόμενη ποσότητα αναπαραγγελίας</value></data>
+  <data name="M5IssuanceId" xml:space="preserve"><value>Αναγνωριστικό χορήγησης</value></data>
+  <data name="M5PersonId" xml:space="preserve"><value>Αναγνωριστικό παραλήπτη</value></data>
+  <data name="M5UnitId" xml:space="preserve"><value>Αναγνωριστικό μονάδας παραλήπτη</value></data>
+  <data name="M5IssuedOn" xml:space="preserve"><value>Χρόνος χορήγησης (UTC)</value></data>
+  <data name="M5ReturnedQuantity" xml:space="preserve"><value>Επιστραφείσα ποσότητα</value></data>
+  <data name="M5OutstandingQuantity" xml:space="preserve"><value>Ποσότητα που δεν έχει επιστραφεί</value></data>
+  <data name="M5ReturnedOn" xml:space="preserve"><value>Χρόνος επιστροφής (UTC)</value></data>
+  <data name="M5Performer" xml:space="preserve"><value>Εκτελέστηκε από (αναγνωριστικό χρήστη)</value></data>
+  <data name="M5ReversesTransaction" xml:space="preserve"><value>Αντιλογίζει τη συναλλαγή</value></data>
+  <data name="M5UsageSource" xml:space="preserve"><value>Πηγή χρήσης</value></data>
+  <data name="M5SourceId" xml:space="preserve"><value>Αναγνωριστικό εγγραφής</value></data>
+  <data name="M5CallId" xml:space="preserve"><value>Αναγνωριστικό κλήσης</value></data>
+  <data name="M5RevisionId" xml:space="preserve"><value>Αναγνωριστικό τροποποιημένης αναθεώρησης</value></data>
+  <data name="M5DeaSchedule" xml:space="preserve"><value>Κατηγορία ελέγχου DEA</value></data>
+  <data name="M5FromBefore" xml:space="preserve"><value>Υπόλοιπο προέλευσης πριν</value></data>
+  <data name="M5FromAfter" xml:space="preserve"><value>Υπόλοιπο προέλευσης μετά</value></data>
+  <data name="M5ToBefore" xml:space="preserve"><value>Υπόλοιπο προορισμού πριν</value></data>
+  <data name="M5ToAfter" xml:space="preserve"><value>Υπόλοιπο προορισμού μετά</value></data>
+  <data name="M5Witness" xml:space="preserve"><value>Μάρτυρας (αναγνωριστικό χρήστη)</value></data>
+  <data name="M5WitnessedOn" xml:space="preserve"><value>Χρόνος επιβεβαίωσης μάρτυρα (UTC)</value></data>
+  <data name="M5ScheduledReportProtected" xml:space="preserve"><value>Το απόθεμα περιέχει προστατευμένα δεδομένα. Ανοίξτε τον σύνδεσμο της αναφοράς που απαιτεί σύνδεση και επαληθεύστε την ταυτότητά σας για να δείτε ή να εκτυπώσετε τα τρέχοντα αποτελέσματα. Αυτό το προγραμματισμένο PDF δεν περιέχει τιμές αποθέματος.</value></data>
+  <data name="M5ReportScope" xml:space="preserve"><value>Αυτή η αναφορά περιλαμβάνει μόνο το απόθεμα και τις τοποθεσίες που έχετε δικαίωμα να βλέπετε τώρα. Οι ποσότητες και οι αξίες περιγράφουν το συγκεκριμένο στιγμιότυπο. Τα αποτελέσματα περιορίζονται σε 5.000 γραμμές.</value></data>
+  <data name="M5ReportRange" xml:space="preserve"><value>Διάστημα UTC (περιλαμβάνεται η αρχή, εξαιρείται το τέλος)</value></data>
+  <data name="M5ReportMethodUsage" xml:space="preserve"><value>Κάθε κίνηση αποθέματος εμφανίζεται μία φορά. Οι θετικές ποσότητες καταγράφουν εξερχόμενη χρήση και οι αρνητικές την αντιλογίζουν. Τα στοιχεία της εγγραφής απαιτούν πρόσβαση στην πηγή. Οι εισαγόμενες εξερχόμενες κινήσεις διατηρούν την παλαιά ταυτότητά τους και δεν δημιουργούν σύνδεση με ημερολόγιο συμβάντων ή ασθενή.</value></data>
+  <data name="M5ReportMethodLowStock" xml:space="preserve"><value>Τα ενεργά είδη εμφανίζονται όταν το ορατό απόθεμα που παρακολουθείται κατά ποσότητα ή τα πάγια με σειριακό αριθμό βρίσκονται στο σημείο αναπαραγγελίας ή κάτω από αυτό. Αν δεν έχει οριστεί σημείο αναπαραγγελίας, χρησιμοποιείται το ελάχιστο απόθεμα. Στα πάγια με σειριακό αριθμό περιλαμβάνονται όσα είναι σε υπηρεσία, έχουν χορηγηθεί, έχουν υποστεί ζημιά ή βρίσκονται σε επισκευή. Οι κρυφές τοποθεσίες εξαιρούνται.</value></data>
+  <data name="M5ReportMethodIssuance" xml:space="preserve"><value>Οι γραμμές εμφανίζουν τις χορηγήσεις που δημιουργήθηκαν στο επιλεγμένο χρονικό διάστημα και την τρέχουσα κατάσταση επιστροφής τους. Για ποσότητες που δεν έχουν επιστραφεί από παλαιότερες χορηγήσεις, επιλέξτε προγενέστερη ημερομηνία έναρξης.</value></data>
+  <data name="M5ReportMethodExpiration" xml:space="preserve"><value>Οι γραμμές εμφανίζουν το τρέχον θετικό απόθεμα και τα ενεργά πάγια με σειριακό αριθμό των οποίων η ημερομηνία λήξης βρίσκεται στο επιλεγμένο διάστημα. Η προεπιλογή περιλαμβάνει το ήδη ληγμένο απόθεμα και όσα λήγουν τις επόμενες 30 ημέρες.</value></data>
+  <data name="M5PerformerSignature" xml:space="preserve"><value>Υπογραφή εκτελούντος</value></data>
+  <data name="M5WitnessSignature" xml:space="preserve"><value>Υπογραφή μάρτυρα</value></data>
+  <data name="M5NotRecorded" xml:space="preserve"><value>Δεν καταγράφηκε</value></data>
+  <data name="M5ReferenceType0" xml:space="preserve"><value>Κίνηση αποθέματος χωρίς προσβάσιμο σύνδεσμο εγγραφής</value></data>
+  <data name="M5ReferenceType2" xml:space="preserve"><value>Εγγραφές</value></data>
+  <data name="M5ReferenceType8" xml:space="preserve"><value>Παλαιά κίνηση αποθέματος</value></data>
+  <data name="InvalidCount" xml:space="preserve"><value>Εισαγάγετε έγκυρα στοιχεία καταμέτρησης και ποσότητες.</value></data>
+  <data name="CountScopeTooLarge" xml:space="preserve"><value>Επιλέξτε μικρότερο εύρος. Οι καταμετρήσεις υποστηρίζουν έως 100 θέσεις αποθέματος.</value></data>
+  <data name="CountEmpty" xml:space="preserve"><value>Δεν υπάρχουν ενεργές θέσεις αποθέματος προς καταμέτρηση σε αυτό το εύρος.</value></data>
+  <data name="CountAlreadyExists" xml:space="preserve"><value>Αυτή η καταμέτρηση υπάρχει ήδη. Ανοίξτε την από τη λίστα καταμετρήσεων.</value></data>
+  <data name="CountStateConflict" xml:space="preserve"><value>Η καταμέτρηση άλλαξε ή οι παρατηρήσεις της είναι ελλιπείς. Φορτώστε την ξανά και αποθηκεύστε όλες τις ποσότητες πριν την ολοκλήρωση.</value></data>
+  <data name="CountSnapshotChanged" xml:space="preserve"><value>Το απόθεμα άλλαξε μετά από αυτό το στιγμιότυπο. Ακυρώστε αυτή την καταμέτρηση και ξεκινήστε νέα.</value></data>
+  <data name="CountReceiptImmutable" xml:space="preserve"><value>Οι προσαρμογές καταμέτρησης ανήκουν στην αντίστοιχη ολοκληρωμένη καταμέτρηση. Ξεκινήστε νέα καταμέτρηση για να διορθώσετε το απόθεμα.</value></data>
+  <data name="CountCompletionRequired" xml:space="preserve"><value>Καταχωρίστε τις αποκλίσεις ολοκληρώνοντας την καταμέτρηση αποθέματος.</value></data>
+  <data name="InvalidReportRange" xml:space="preserve"><value>Επιλέξτε έγκυρο διάστημα ημερομηνιών UTC που δεν υπερβαίνει τις 366 ημέρες.</value></data>
+  <data name="InvalidReportFilter" xml:space="preserve"><value>Επιλέξτε έγκυρα φίλτρα αναφοράς.</value></data>
+  <data name="ReportChanged" xml:space="preserve"><value>Η αναφορά άλλαξε κατά τη δημιουργία του PDF. Δημιουργήστε την ξανά.</value></data>
+  <data name="ReportGenerationFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η δημιουργία της αναφοράς. Δοκιμάστε ξανά.</value></data>
+  <data name="InventoryLowStock" xml:space="preserve"><value>Χαμηλό απόθεμα</value></data>
+  <data name="InventoryExpiring" xml:space="preserve"><value>Λήξη αποθέματος σύντομα</value></data>
+  <data name="InventoryCountCompleted" xml:space="preserve"><value>Ολοκλήρωση απογραφής</value></data>
+  <data name="InventoryReturnOverdue" xml:space="preserve"><value>Εκπρόθεσμη επιστροφή εξοπλισμού</value></data>
+  <data name="HolderHistoryRetained" xml:space="preserve"><value>Αυτός ο πόρος αναφέρεται στο ιστορικό αποθέματος και πρέπει να διατηρηθεί.</value></data>
+  <data name="InventoryAdjusted" xml:space="preserve"><value>Το απόθεμα προσαρμόστηκε</value></data>
+  <data name="InventoryTransferCompleted" xml:space="preserve"><value>Η μεταφορά αποθέματος ολοκληρώθηκε</value></data>
+  <data name="InventoryIssued" xml:space="preserve"><value>Το απόθεμα χορηγήθηκε</value></data>
+  <data name="InventoryReturned" xml:space="preserve"><value>Το απόθεμα επιστράφηκε</value></data>
+  <data name="InventoryAssetStatusChanged" xml:space="preserve"><value>Η κατάσταση του εξοπλισμού άλλαξε</value></data>
+  <data name="ControlledSubstanceRecorded" xml:space="preserve"><value>Η ελεγχόμενη ουσία καταγράφηκε</value></data>
 </root>
-

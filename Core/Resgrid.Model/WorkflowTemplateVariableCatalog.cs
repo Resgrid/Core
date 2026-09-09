@@ -771,17 +771,22 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.InventoryIssued:
 				case WorkflowTriggerEventType.InventoryReturned:
 				case WorkflowTriggerEventType.InventoryAssetStatusChanged:
+				case WorkflowTriggerEventType.InventoryPurchaseOrderReceived:
+				case WorkflowTriggerEventType.InventoryLowStock:
+				case WorkflowTriggerEventType.InventoryExpiring:
+				case WorkflowTriggerEventType.InventoryCountCompleted:
+				case WorkflowTriggerEventType.InventoryReturnOverdue:
 				case WorkflowTriggerEventType.ControlledSubstanceRecorded:
 					foreach (var pair in Inventories.InventoryWorkflowPayload.Variables)
 					{
 						var type = pair.Variable switch
 						{
-							"transaction_type" or "previous_status" or "status" or "reference_type" => "int",
+							"transaction_type" or "previous_status" or "status" or "reference_type" or "usage_type" or "purchase_order_status" or "line_count" or "variance_line_count" or "alert_type" => "int",
 							"quantity" or "from_quantity_before" or "from_quantity_after" or "to_quantity_before" or "to_quantity_after" => "decimal",
-							"occurred_on" => "datetime",
+							"occurred_on" or "due_on" => "datetime",
 							_ => "string"
 						};
-						list.Add(new TemplateVariableDescriptor("inventory." + pair.Variable, pair.Property + (pair.Variable == "item_name" ? "; always REDACTED" : string.Empty), type, false));
+						list.Add(new TemplateVariableDescriptor("inventory." + pair.Variable, pair.Property + (pair.Variable is "item_name" or "variance_value" ? "; always REDACTED" : string.Empty), type, false));
 					}
 					list.AddRange(new[]
 					{

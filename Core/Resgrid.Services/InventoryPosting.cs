@@ -30,13 +30,20 @@ namespace Resgrid.Services
 			var content = Decode<InventoryOperationContent>(await RevealAsync(actor, operation)); content.Fingerprint = fingerprint; content.Result = result;
 			operation.Content = JsonConvert.SerializeObject(content); await SaveAsync(actor, operation, false); return result;
 		}
-		private async Task ValidateCommandAsync(InventoryActor actor, InventoryCommand command, bool issuance = false, bool joined = false)
+		private async Task ValidateCommandAsync(InventoryActor actor, InventoryCommand command, bool issuance = false, bool joined = false, bool purchasing = false, bool counting = false)
 		{
 			await _auth.RequireAsync(actor);
 			if (command?.Lines == null || command.Lines.Count is < 1 or > 100) throw new InventoryException(400, "InvalidLines"); Id(command.RequestId);
 			foreach (var line in command.Lines)
 			{
-				if (line == null || !Enum.IsDefined(line.Type) || line.Type is InventoryTransactionType.Migrated or InventoryTransactionType.Count || !issuance && line.Type is InventoryTransactionType.Issue or InventoryTransactionType.Return)
+				if (line?.CountItemId != null && !counting) throw new InventoryException(400, "CountCompletionRequired");
+				if (line?.PurchaseOrderItemId != null && !purchasing) throw new InventoryException(400, "PurchaseReceiptRequired");
+				if (line != null && (line.UsageId != null || line.UsageType.HasValue))
+				{
+					if (!joined || line.ReferenceType != InventoryReferenceType.RmsRecord || line.UsageId == null || !line.UsageType.HasValue || !Enum.IsDefined(line.UsageType.Value)) throw new InventoryException(400, "InvalidUsageSource");
+					Id(line.UsageId);
+				}
+				if (line == null || !Enum.IsDefined(line.Type) || line.Type == InventoryTransactionType.Migrated || !counting && line.Type == InventoryTransactionType.Count || !issuance && line.Type is InventoryTransactionType.Issue or InventoryTransactionType.Return)
 					throw new InventoryException(400, "InvalidTransactionType");
 				Quantity(line.Quantity, line.Type == InventoryTransactionType.StatusChange);
 				if (line.Type == InventoryTransactionType.StatusChange && (line.Quantity != 0 || line.AssetId == null || !line.Status.HasValue || !Enum.IsDefined(line.Status.Value))) throw new InventoryException(400, "InvalidAssetStatus");
@@ -48,32 +55,32 @@ namespace Resgrid.Services
 				if (line.Type == InventoryTransactionType.Receive && (from || !to)
 					|| line.Type is InventoryTransactionType.Consume or InventoryTransactionType.WriteOff && (!from || to)
 					|| line.Type is InventoryTransactionType.Transfer or InventoryTransactionType.Issue or InventoryTransactionType.Return && (!from || !to)
-					|| line.Type == InventoryTransactionType.Adjust && from == to) throw new InventoryException(400, "InvalidMovement");
+					|| line.Type is InventoryTransactionType.Adjust or InventoryTransactionType.Count && from == to) throw new InventoryException(400, "InvalidMovement");
 				var permission = line.Type == InventoryTransactionType.Transfer ? PermissionTypes.TransferInventory : line.Type is InventoryTransactionType.Issue or InventoryTransactionType.Return ? PermissionTypes.IssueInventory : PermissionTypes.AdjustInventory;
-				if (from) await LocationAsync(actor, line.FromLocationId, true, permission);
-				if (to) await LocationAsync(actor, line.ToLocationId, true, permission);
+				if (from) await LocationAsync(actor, line.FromLocationId, true, permission, historical: line.ReversesTransactionId != null);
+				if (to) await LocationAsync(actor, line.ToLocationId, true, permission, historical: line.ReversesTransactionId != null);
 				if (!from && !to) await _auth.RequireAsync(actor, true, permission);
-				await ValidatePostingItemAsync(actor, line, joined);
+				await ValidatePostingItemAsync(actor, line, joined, purchasing, counting);
 			}
 		}
-		private async Task ValidatePostingItemAsync(InventoryActor actor, InventoryPosting line, bool joined = false)
+		private async Task ValidatePostingItemAsync(InventoryActor actor, InventoryPosting line, bool joined = false, bool purchasing = false, bool counting = false)
 		{
 			var item = await GetAsync<InventoryItem>(actor, line.ItemId);
-			if (item.IsDeleted || !item.IsActive) throw new InventoryException(409, "ItemUnavailable");
+			if ((item.IsDeleted || !item.IsActive) && line.ReversesTransactionId == null) throw new InventoryException(409, "ItemUnavailable");
 			if (item.IsControlledSubstance) await _auth.RequireAsync(actor, true, PermissionTypes.ManageControlledSubstances);
 			if (!Enum.IsDefined(line.ReferenceType) || line.ReferenceId?.Length > 128 || (line.ReferenceType == InventoryReferenceType.None) != (line.ReferenceId == null)) throw new InventoryException(400, "InvalidReference");
 			if (line.ReferenceId != null && !Guid.TryParseExact(line.ReferenceId, "D", out _) && (!long.TryParse(line.ReferenceId, out var numeric) || numeric <= 0)) throw new InventoryException(400, "InvalidReference");
-			await ValidateReferenceAsync(actor, line, joined);
+			await ValidateReferenceAsync(actor, line, joined, purchasing: purchasing, counting: counting);
 			if (line.LotId != null)
 			{
 				var lot = await GetAsync<InventoryLot>(actor, line.LotId);
-				if (lot.ItemId != item.Id || lot.IsDeleted || item.RequiresExpiration && !lot.ExpiresOn.HasValue) throw new InventoryException(400, "LotMismatch");
+				if (lot.ItemId != item.Id || lot.IsDeleted && line.ReversesTransactionId == null || item.RequiresExpiration && !lot.ExpiresOn.HasValue) throw new InventoryException(400, "LotMismatch");
 				if (line.Type is InventoryTransactionType.Consume or InventoryTransactionType.Issue && lot.ExpiresOn <= Now) throw new InventoryException(409, "LotExpired");
 			}
 			else if (item.RequiresLotTracking || item.RequiresExpiration && item.TrackingMode == (int)InventoryTrackingMode.Bulk) throw new InventoryException(400, "LotRequired");
 			if (item.TrackingMode == (int)InventoryTrackingMode.Serialized)
 			{
-				if (line.Type == InventoryTransactionType.Adjust) throw new InventoryException(400, "SerializedAdjustmentUnsupported");
+				if (line.Type == InventoryTransactionType.Adjust && line.ReversesTransactionId == null) throw new InventoryException(400, "SerializedAdjustmentUnsupported");
 				if (line.AssetId == null || line.Type != InventoryTransactionType.StatusChange && line.Quantity != 1) throw new InventoryException(400, "SerializedQuantity");
 			}
 			else if (line.AssetId != null || line.Type == InventoryTransactionType.StatusChange) throw new InventoryException(400, "AssetMismatch");
@@ -86,8 +93,8 @@ namespace Resgrid.Services
 			foreach (var line in command.Lines)
 			{
 				var permission = line.Type == InventoryTransactionType.Transfer ? PermissionTypes.TransferInventory : line.Type is InventoryTransactionType.Issue or InventoryTransactionType.Return ? PermissionTypes.IssueInventory : PermissionTypes.AdjustInventory;
-				if (line.FromLocationId != null) await LocationAsync(actor, line.FromLocationId, true, permission);
-				if (line.ToLocationId != null) await LocationAsync(actor, line.ToLocationId, true, permission);
+				if (line.FromLocationId != null) await LocationAsync(actor, line.FromLocationId, true, permission, historical: line.ReversesTransactionId != null);
+				if (line.ToLocationId != null) await LocationAsync(actor, line.ToLocationId, true, permission, historical: line.ReversesTransactionId != null);
 				if (line.FromLocationId == null && line.ToLocationId == null) await _auth.RequireAsync(actor, true, permission);
 				if (line.AssetId != null)
 				{
@@ -98,6 +105,16 @@ namespace Resgrid.Services
 				Id(line.ItemId); var item = await _store.GetAsync<InventoryItem>(actor.DepartmentId, line.ItemId);
 				if (item == null) throw new InventoryException(404, "Unavailable");
 				if (item.IsControlledSubstance) await _auth.RequireAsync(actor, true, PermissionTypes.ManageControlledSubstances);
+				if (!joined && line.ReversesTransactionId != null)
+				{
+					if ((await _store.GetAsync<InventoryTransaction>(actor.DepartmentId, line.ReversesTransactionId))?.PurchaseOrderItemId != null) throw new InventoryException(409, "PurchaseReceiptImmutable");
+					var linked = await _store.RelatedAsync<RecordInventoryUsage>(actor.DepartmentId, "TransactionId", line.ReversesTransactionId);
+					foreach (var usage in linked)
+					{
+						if (!item.IsControlledSubstance || _recordUsage == null) throw new InventoryException(409, "RecordUsageCorrectionRequired");
+						await _recordUsage.Value.RequireUsageCorrectionAccessAsync(actor, usage.Id);
+					}
+				}
 				await ValidateReferenceAsync(actor, line, joined, requireOpen: false);
 			}
 		}
@@ -157,6 +174,16 @@ namespace Resgrid.Services
 			if (operation.State == 2 && receipt.WitnessId == actor.UserId && receipt.Attestation == attestation)
 			{
 				if (receipt.Result == null) throw new InventoryException(409, "RequestInProgress");
+				if (receipt.PendingCount != null)
+				{
+					await RequireCountAccessAsync(actor, await _store.GetAsync<InventoryCount>(actor.DepartmentId, receipt.PendingCount.CountId));
+					foreach (var id in receipt.Result.OutboxIds ?? new()) if (!events.Contains(id)) events.Add(id);
+				}
+				if (receipt.PendingPurchaseReceipt != null)
+				{
+					await RequirePurchaseReceiptAccessAsync(actor, receipt.PendingPurchaseReceipt);
+					foreach (var id in receipt.Result.OutboxIds ?? new()) if (!events.Contains(id)) events.Add(id);
+				}
 				foreach (var id in receipt.Result.TransactionIds)
 				{
 					var transaction = await _store.GetAsync<InventoryTransaction>(actor.DepartmentId, id);
@@ -171,6 +198,15 @@ namespace Resgrid.Services
 			InventoryResult result;
 			switch (receipt.PendingKind ?? "Post")
 			{
+				case "Count":
+					if (receipt.PendingCount == null) throw new InventoryException(409, "CountStateConflict");
+					await RequireCountAccessAsync(performer, await _store.GetAsync<InventoryCount>(actor.DepartmentId, receipt.PendingCount.CountId));
+					result = await CompleteCountLinesAsync(actor, operation, receipt.PendingCount, events, performer.UserId, actor.UserId, attestation);
+					break;
+				case "PurchaseReceive":
+					await RequirePurchaseReceiptAccessAsync(performer, receipt.PendingPurchaseReceipt);
+					result = await CompletePurchaseReceiptAsync(actor, operation, receipt.PendingPurchaseReceipt, events, performer.UserId, actor.UserId, attestation);
+					break;
 				case "Post":
 				case "Transfer":
 				case "Receive":
@@ -210,14 +246,20 @@ namespace Resgrid.Services
 				transaction.ItemId = item.Id; transaction.AssetId = line.AssetId; transaction.LotId = line.LotId; transaction.Quantity = line.Quantity;
 				transaction.FromLocationId = line.FromLocationId; transaction.ToLocationId = line.ToLocationId; transaction.TransactionType = (int)line.Type;
 				transaction.ReferenceType = (int)line.ReferenceType; transaction.ReferenceId = line.ReferenceId; transaction.OccurredOn = Now;
-				transaction.ReversesTransactionId = line.ReversesTransactionId; transaction.IssuanceId = line.IssuanceId;
+				transaction.ReversesTransactionId = line.ReversesTransactionId; transaction.IssuanceId = line.IssuanceId; transaction.PurchaseOrderItemId = line.PurchaseOrderItemId;
+				transaction.CountItemId = line.CountItemId;
 				if (line.ReversesTransactionId != null)
 				{
 					var original = await GetAsync<InventoryTransaction>(actor, line.ReversesTransactionId);
+					if (original.PurchaseOrderItemId != null) throw new InventoryException(409, "PurchaseReceiptImmutable");
+					if (original.CountItemId != null) throw new InventoryException(409, "CountReceiptImmutable");
+					if (original.ReferenceType == (int)InventoryReferenceType.RmsRecord && (line.ReferenceType != InventoryReferenceType.RmsRecord || line.ReferenceId != original.ReferenceId)) throw new InventoryException(409, "RecordUsageCorrectionRequired");
 					if (original.ReversesTransactionId != null || original.ItemId != item.Id || original.AssetId != line.AssetId || original.LotId != line.LotId || original.Quantity != line.Quantity
-						|| original.FromLocationId != line.ToLocationId || original.ToLocationId != line.FromLocationId || original.TransactionType is 0 or 4 or 5 or 9
+						|| original.FromLocationId != line.ToLocationId || original.ToLocationId != line.FromLocationId || original.TransactionType is 4 or 5 or 9
+						|| original.TransactionType == 0 && (line.UsageId == null || line.ReferenceType != InventoryReferenceType.RmsRecord || original.FromLocationId == null || original.ToLocationId != null)
 						|| (await _store.RelatedAsync<InventoryTransaction>(actor.DepartmentId, "ReversesTransactionId", original.Id)).Count > 0) throw new InventoryException(409, "InvalidReversal");
 				}
+				var postingCost = await CostForPostingAsync(actor, item, line);
 				if (item.TrackingMode == (int)InventoryTrackingMode.Bulk)
 				{
 					if (line.FromLocationId != null)
@@ -232,35 +274,51 @@ namespace Resgrid.Services
 						transaction.ToQuantityAfter = stock.Quantity; transaction.ToQuantityBefore = stock.Quantity - line.Quantity;
 					}
 				}
-				else await MoveAssetAsync(actor, line, transaction);
-				var cost = line.UnitCost ?? (line.LotId == null ? null : Decode<InventoryLotContent>(await GetAsync<InventoryLot>(actor, line.LotId)).UnitCost)
-					?? Decode<InventoryItemContent>(item).DefaultUnitCost;
+				else await MoveAssetAsync(actor, line, transaction, postingCost.UnitCost);
+				var cost = postingCost.UnitCost;
 				transaction.CreatedBy = performer ?? actor.UserId;
 				var serial = line.AssetId == null ? null : Decode<InventoryAssetContent>(await GetAsync<InventoryAsset>(actor, line.AssetId)).SerialNumber;
-				transaction.Content = JsonConvert.SerializeObject(new { line.Note, ItemName = Decode<InventoryItemContent>(item).Name, SerialNumber = serial, UnitCost = cost, TotalCost = cost * line.Quantity, PerformerId = performer ?? actor.UserId, WitnessUserId = witness, WitnessedOn = witness == null ? (DateTime?)null : Now, Attestation = attestation });
+				transaction.Content = JsonConvert.SerializeObject(new { line.Note, ItemName = Decode<InventoryItemContent>(item).Name, UnitOfMeasure = Decode<InventoryItemContent>(item).UnitOfMeasure, SerialNumber = serial, UnitCost = cost, TotalCost = cost.HasValue ? (decimal?)Money(cost.Value * line.Quantity) : null, postingCost.CurrencyCode, PerformerId = performer ?? actor.UserId, WitnessUserId = witness, WitnessedOn = witness == null ? (DateTime?)null : Now, Attestation = attestation });
+				await ApplyAverageCostAsync(actor, item, postingCost);
 				await SaveAsync(actor, transaction); await AuditAsync(actor, transaction, "InventoryTransactionPosted"); result.TransactionIds.Add(transaction.Id);
-				await EventAsync(transaction, WorkflowTriggerEventType.InventoryAdjusted, events);
+				await EventAsync(transaction, WorkflowTriggerEventType.InventoryAdjusted, events, usageId: line.UsageId, usageType: line.UsageType);
 				if (transaction.OldStatus != transaction.NewStatus) await EventAsync(transaction, WorkflowTriggerEventType.InventoryAssetStatusChanged, events);
 				if (item.IsControlledSubstance) { if (witness == null) throw new InventoryException(409, "IndependentWitnessRequired"); await EventAsync(transaction, WorkflowTriggerEventType.ControlledSubstanceRecorded, events); }
 			}
+			await RefreshPostingAlertsAsync(actor, command, events);
 			result.OutboxIds = events.ToList(); return result;
 		}
-		private async Task MoveAssetAsync(InventoryActor actor, InventoryPosting line, InventoryTransaction transaction)
+		private async Task MoveAssetAsync(InventoryActor actor, InventoryPosting line, InventoryTransaction transaction, decimal? receiptCost)
 		{
 			var asset = await GetAsync<InventoryAsset>(actor, line.AssetId);
 			if (asset.ItemId != line.ItemId || asset.LotId != line.LotId || asset.IsDeleted || line.ExpectedAssetRevision.HasValue && asset.Revision != line.ExpectedAssetRevision) throw new InventoryException(409, "AssetConflict");
+			if (line.Type == InventoryTransactionType.Adjust && line.ReversesTransactionId != null)
+			{
+				var original = await GetAsync<InventoryTransaction>(actor, line.ReversesTransactionId);
+				var latest = (await _store.RelatedAsync<InventoryTransaction>(actor.DepartmentId, "AssetId", asset.Id)).OrderByDescending(x => x.EntryId).FirstOrDefault();
+				if (original.TransactionType != (int)InventoryTransactionType.Consume || original.NewStatus != (int)InventoryAssetStatus.Consumed || original.OldStatus is not (0 or 2 or 3)
+					|| asset.Status != original.NewStatus || asset.CurrentLocationId != original.FromLocationId || latest?.Id != original.Id || line.FromLocationId != null || line.ToLocationId != original.FromLocationId)
+					throw new InventoryException(409, "AssetReversalConflict");
+				transaction.OldStatus = asset.Status; transaction.NewStatus = original.OldStatus; asset.Status = original.OldStatus.Value;
+				await SaveAsync(actor, asset, false); return;
+			}
 			// Terminal holders remain for audit access, never as stock available for another disposal or implicit recovery.
 			if (asset.Status is 4 or 5 or 6 && (line.Type != InventoryTransactionType.StatusChange || line.Status is InventoryAssetStatus.InService or InventoryAssetStatus.Issued or InventoryAssetStatus.OutForRepair or InventoryAssetStatus.Damaged))
 				throw new InventoryException(409, "AssetNotAvailable");
 			if (asset.CurrentLocationId == null && line.Type != InventoryTransactionType.Receive) throw new InventoryException(409, "AssetNotAvailable");
 			if (line.Type != InventoryTransactionType.Receive && asset.CurrentLocationId != line.FromLocationId) throw new InventoryException(409, "AssetLocationConflict");
 			if (line.Type == InventoryTransactionType.Receive && asset.CurrentLocationId != null) throw new InventoryException(409, "AssetAlreadyReceived");
+			if (line.Type == InventoryTransactionType.Receive)
+			{
+				var details = Decode<InventoryAssetContent>(asset);
+				details.AcquisitionCost ??= receiptCost; asset.Content = JsonConvert.SerializeObject(details);
+			}
 			if (line.Type is InventoryTransactionType.Issue or InventoryTransactionType.Transfer && (asset.Status != (int)InventoryAssetStatus.InService || asset.ExpiresOn <= Now)) throw new InventoryException(409, "AssetNotAvailable");
 			if (line.Type == InventoryTransactionType.Consume && asset.ExpiresOn <= Now) throw new InventoryException(409, "AssetNotAvailable");
 			var issuance = (await _store.RelatedAsync<InventoryIssuance>(actor.DepartmentId, "AssetId", asset.Id)).SingleOrDefault(x => x.Status is 0 or 2);
 			if (issuance != null && line.Type is not (InventoryTransactionType.Return or InventoryTransactionType.StatusChange) && !(line.Type == InventoryTransactionType.Issue && issuance.Id == line.IssuanceId)) throw new InventoryException(409, "ReturnAssetFirst");
 			var status = line.Type switch { InventoryTransactionType.Issue => InventoryAssetStatus.Issued, InventoryTransactionType.Consume => InventoryAssetStatus.Consumed,
-				InventoryTransactionType.WriteOff => InventoryAssetStatus.Lost, InventoryTransactionType.Return or InventoryTransactionType.StatusChange => line.Status ?? InventoryAssetStatus.InService, _ => (InventoryAssetStatus)asset.Status };
+				InventoryTransactionType.WriteOff or InventoryTransactionType.Count => InventoryAssetStatus.Lost, InventoryTransactionType.Return or InventoryTransactionType.StatusChange => line.Status ?? InventoryAssetStatus.InService, _ => (InventoryAssetStatus)asset.Status };
 			if (line.Type == InventoryTransactionType.StatusChange)
 			{
 				if (asset.Status == (int)status) throw new InventoryException(409, "StatusUnchanged");
@@ -281,15 +339,16 @@ namespace Resgrid.Services
 			}
 			transaction.OldStatus = asset.Status; transaction.NewStatus = (int)status; asset.Status = (int)status; await SaveAsync(actor, asset, false);
 		}
-		private async Task EventAsync(InventoryTransaction transaction, WorkflowTriggerEventType trigger, List<long> events, string transferId = null)
+		private async Task EventAsync(InventoryTransaction transaction, WorkflowTriggerEventType trigger, List<long> events, string transferId = null, string usageId = null, InventoryUsageType? usageType = null)
 		{
 			var entry = await _outbox.EnqueueAsync(transaction.DepartmentId, "Inventory", new DomainEventEnvelope
 			{
 				EventName = trigger.ToString(), SchemaVersion = 1, AggregateType = transferId != null ? "InventoryTransfer" : transaction.AssetId != null ? "InventoryAsset" : "InventoryItem",
 				AggregateId = transferId ?? transaction.AssetId ?? transaction.ItemId, Trigger = trigger, CorrelationId = transaction.OperationId, OccurredOn = transaction.OccurredOn,
-				Payload = new { InventoryEvent = true, TransactionId = transaction.Id, transaction.ItemId, transaction.AssetId, transaction.LotId, TransferId = transferId, transaction.IssuanceId, transaction.TransactionType, transaction.Quantity,
+				Payload = new { InventoryEvent = true, TransactionId = transaction.Id, transaction.ItemId, transaction.AssetId, transaction.LotId, UsageId = usageId, UsageType = usageType, TransferId = transferId, transaction.IssuanceId, transaction.TransactionType, transaction.Quantity,
 					transaction.FromLocationId, transaction.ToLocationId, transaction.FromQuantityBefore, transaction.FromQuantityAfter, transaction.ToQuantityBefore, transaction.ToQuantityAfter,
-					transaction.OldStatus, transaction.NewStatus, transaction.ReferenceType, transaction.ReferenceId, transaction.OccurredOn, transaction.ReversesTransactionId }
+					transaction.OldStatus, transaction.NewStatus, transaction.ReferenceType, transaction.ReferenceId, transaction.OccurredOn, transaction.ReversesTransactionId, transaction.PurchaseOrderItemId, transaction.CountItemId,
+					CountId = transaction.ReferenceType == (int)InventoryReferenceType.Count ? transaction.ReferenceId : null }
 			}); events.Add(entry.DomainEventOutboxId);
 		}
 		public Task<InventoryResult> CreateAndCompleteTransferAsync(InventoryActor actor, InventoryCommand command) => TransactionAsync(actor, async events =>

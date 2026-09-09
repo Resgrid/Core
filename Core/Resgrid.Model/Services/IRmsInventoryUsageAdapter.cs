@@ -20,6 +20,14 @@ namespace Resgrid.Model.Services
 		public int InventoryId { get; set; }
 		public string TransactionId { get; set; }
 		public string ItemId { get; set; }
+		public string UsageId { get; set; }
+		public string AssetId { get; set; }
+		public string LotId { get; set; }
+		public string LocationId { get; set; }
+		public InventoryUsageType UsageType { get; set; }
+		public string ReversesUsageId { get; set; }
+		public bool IsReversed { get; set; }
+		public string PendingReversalTransactionId { get; set; }
 		public decimal Quantity { get; set; }
 		public string Note { get; set; }
 		public string ItemName { get; set; }
@@ -42,6 +50,11 @@ namespace Resgrid.Model.Services
 	{
 		Task<RmsInventoryUsage> ConsumeAsync(int departmentId, string userId, string recordId, RmsRecordKind kind, long expectedRowVersion, int typeId, int groupId, int? unitId, decimal quantity, string note, CancellationToken cancellationToken = default, string grantToken = null);
 		Task<RmsInventoryUsage> ConsumeModernAsync(InventoryActor actor, string recordId, RmsRecordKind kind, long expectedRowVersion, InventoryCommand command, CancellationToken cancellationToken = default);
+		Task<List<RmsInventoryUsage>> RecordModernUsageAsync(InventoryActor actor, string recordId, RmsRecordKind kind, long expectedRowVersion, RecordInventoryUsageRequest request, CancellationToken cancellationToken = default);
+		Task<RmsInventoryUsage> ReverseModernUsageAsync(InventoryActor actor, string recordId, RmsRecordKind kind, long expectedRowVersion, RecordInventoryUsageCorrection correction, CancellationToken cancellationToken = default);
+		Task<List<RmsInventoryUsage>> GetAuthorizedUsageAsync(InventoryActor actor, string recordId, RmsRecordKind kind);
+		/// <summary>Checks the live source and fences its version in Inventory's active transaction before a new linked stock correction.</summary>
+		Task RequireUsageCorrectionAccessAsync(InventoryActor actor, string usageId);
 		Task<List<RmsInventoryUsage>> GetUsageForRecordAsync(int departmentId, string recordId);
 
 		Task<List<RmsInventoryUsage>> GetUsageForLegacyLogAsync(int departmentId, int logId);

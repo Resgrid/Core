@@ -472,5 +472,179 @@
   <data name="Yes" xml:space="preserve">
     <value>Oui</value>
   </data>
+  <data name="RecordUsageTitle" xml:space="preserve"><value>Utilisation du stock</value></data>
+  <data name="RecordUsageHelp" xml:space="preserve"><value>Enregistrer l'utilisation modifie immédiatement le stock. Ces changements persistent si un brouillon ou un amendement est abandonné. Annulez explicitement l'utilisation incorrecte, puis enregistrez son remplacement. Ouvrez un amendement avant de modifier l'utilisation dans un rapport finalisé.</value></data>
+  <data name="RecordUsageWitnessHelp" xml:space="preserve"><value>La consommation et l'annulation d'articles réglementés nécessitent un témoin indépendant dans Inventaire. Terminez d'abord cette procédure, puis associez ici l'identifiant de la transaction obtenue.</value></data>
+  <data name="RecordUsageRecorded" xml:space="preserve"><value>Utilisation enregistrée</value></data>
+  <data name="RecordUsageType" xml:space="preserve"><value>Type d'utilisation</value></data>
+  <data name="RecordUsageType0" xml:space="preserve"><value>Utilisé</value></data>
+  <data name="RecordUsageType1" xml:space="preserve"><value>Consommé pour un patient</value></data>
+  <data name="RecordUsageType2" xml:space="preserve"><value>Laissé sur les lieux</value></data>
+  <data name="RecordUsageType3" xml:space="preserve"><value>Endommagé</value></data>
+  <data name="RecordUsageLedgerEntry" xml:space="preserve"><value>Écriture du registre</value></data>
+  <data name="RecordUsageRecordedUtc" xml:space="preserve"><value>Enregistré (UTC)</value></data>
+  <data name="RecordUsageReverses" xml:space="preserve"><value>Annule l'utilisation</value></data>
+  <data name="RecordUsageReversed" xml:space="preserve"><value>Annulée</value></data>
+  <data name="RecordUsageReverse" xml:space="preserve"><value>Annuler l'utilisation</value></data>
+  <data name="RecordUsageReverseHelp" xml:space="preserve"><value>Cette action enregistre une annulation complète et conserve l'utilisation d'origine dans l'historique. Pour corriger une quantité ou un article, annulez l'utilisation puis enregistrez son remplacement. Si l'annulation a déjà été validée par un témoin dans Inventaire, saisissez son identifiant de transaction pour l'associer sans modifier le stock à nouveau.</value></data>
+  <data name="RecordUsageCorrectionReason" xml:space="preserve"><value>Motif de la correction</value></data>
+  <data name="RecordUsageExistingReversal" xml:space="preserve"><value>Identifiant d'annulation existante validée par un témoin (facultatif)</value></data>
+  <data name="RecordUsageLedgerHelp" xml:space="preserve"><value>Les quantités positives enregistrent l'utilisation ; les quantités négatives l'annulent. Ouvrez l'écriture du registre pour consulter le mouvement selon vos droits d'accès actuels au stock.</value></data>
+  <data name="RecordUsageExistingConsumption" xml:space="preserve"><value>Identifiant de la transaction de consommation existante (facultatif)</value></data>
+  <data name="RecordUsageAttachHelp" xml:space="preserve"><value>Saisissez une transaction de consommation terminée dans Inventaire pour associer son article, sa quantité, son emplacement et sa note. Les champs de nouvelle consommation ci-dessous sont ignorés et le stock n'est pas consommé une seconde fois. Sélectionnez le type d'utilisation ci-dessus.</value></data>
+  <data name="RecordUsageNewConsumption" xml:space="preserve"><value>Nouvelle consommation</value></data>
+  <data name="RecordUsageDefaultLocation" xml:space="preserve"><value>Utiliser l'unité ou la caserne du rapport</value></data>
+  <data name="RecordUsageLocationHelp" xml:space="preserve"><value>Laissez vide pour utiliser l'unité intervenante du rapport, avec sa caserne comme solution de repli. Choisissez explicitement une source si le rapport présente plusieurs emplacements possibles.</value></data>
+  <data name="RecordUsageSave" xml:space="preserve"><value>Enregistrer l'utilisation</value></data>
+  <data name="RecordUsageReturnToReport" xml:space="preserve"><value>Revenir au rapport</value></data>
+  <data name="RecordUsageRefreshEvidence" xml:space="preserve"><value>Actualiser les justificatifs de l'utilisation enregistrée</value></data>
+  <data name="RecordUsageSaved" xml:space="preserve"><value>Utilisation enregistrée et justificatifs capturés.</value></data>
+  <data name="RecordUsageEvidencePending" xml:space="preserve"><value>L'opération de stock a été enregistrée. Les justificatifs n'ont pas pu être capturés ; utilisez Actualiser les justificatifs après avoir résolu les problèmes d'accès ou les changements du brouillon. Ne soumettez pas à nouveau l'opération de stock.</value></data>
+  <data name="RecordUsageDraftChanged" xml:space="preserve"><value>Le brouillon a changé. Vérifiez l'utilisation enregistrée avant de soumettre une autre opération de stock.</value></data>
+  <data name="RecordUsageWitnessRequired" xml:space="preserve"><value>Terminez la procédure avec un témoin indépendant dans Inventaire, puis associez ici l'identifiant de la transaction obtenue. Cette action n'a enregistré aucun mouvement de stock.</value></data>
+  <data name="RecordUsageEvidenceSaved" xml:space="preserve"><value>Justificatifs capturés.</value></data>
+  <data name="RecordUsageReconciliationRequired" xml:space="preserve"><value>Une écriture d'annulation du registre n'est pas liée à ce rapport. Associez-la en tant que correction avant de finaliser.</value></data>
+  <data name="M4Purchasing" xml:space="preserve"><value>Achats</value></data>
+  <data name="M4Vendors" xml:space="preserve"><value>Fournisseurs</value></data>
+  <data name="M4PurchaseOrders" xml:space="preserve"><value>Bons de commande</value></data>
+  <data name="M4Valuation" xml:space="preserve"><value>Valorisation du stock</value></data>
+  <data name="M4VendorHelp" xml:space="preserve"><value>Les fournisseurs utilisent les fiches d’entreprise de Contacts. Créez ou mettez à jour les coordonnées de l’entreprise dans Contacts, puis associez-la ici.</value></data>
+  <data name="M4AccountNumber" xml:space="preserve"><value>Numéro de compte chez le fournisseur</value></data>
+  <data name="M4CompanyContact" xml:space="preserve"><value>Entreprise dans Contacts</value></data>
+  <data name="M4NewVendor" xml:space="preserve"><value>Ajouter un fournisseur</value></data>
+  <data name="M4PurchaseOrderNumber" xml:space="preserve"><value>Numéro du bon de commande</value></data>
+  <data name="M4Supplier" xml:space="preserve"><value>Fournisseur</value></data>
+  <data name="M4Currency" xml:space="preserve"><value>Devise</value></data>
+  <data name="M4ViewPurchaseOrder" xml:space="preserve"><value>Voir le bon de commande</value></data>
+  <data name="M4Status0" xml:space="preserve"><value>Brouillon</value></data>
+  <data name="M4Status1" xml:space="preserve"><value>Commandé</value></data>
+  <data name="M4Status2" xml:space="preserve"><value>Partiellement réceptionné</value></data>
+  <data name="M4Status3" xml:space="preserve"><value>Réceptionné</value></data>
+  <data name="M4Status4" xml:space="preserve"><value>Annulé</value></data>
+  <data name="M4QuantityOrdered" xml:space="preserve"><value>Quantité commandée</value></data>
+  <data name="M4QuantityReceived" xml:space="preserve"><value>Quantité réceptionnée</value></data>
+  <data name="M4Remaining" xml:space="preserve"><value>Quantité restante</value></data>
+  <data name="M4OrderHelp" xml:space="preserve"><value>Marquer une commande comme commandée verrouille ses lignes. L’annulation empêche toute nouvelle réception et conserve les quantités déjà réceptionnées.</value></data>
+  <data name="M4Order" xml:space="preserve"><value>Marquer comme commandé</value></data>
+  <data name="M4CancelOrder" xml:space="preserve"><value>Annuler la commande</value></data>
+  <data name="M4Receive" xml:space="preserve"><value>Réceptionner les articles</value></data>
+  <data name="M4ReceiptHelp" xml:space="preserve"><value>Réceptionnez tout ou partie d’une commande. Retirez les lignes qui ne font pas partie de cette livraison. Si un témoin indépendant est requis, le stock et les quantités réceptionnées ne changent qu’après son approbation dans Inventaire.</value></data>
+  <data name="M4SerializedReceiptHelp" xml:space="preserve"><value>Utilisez une ligne par équipement suivi par numéro de série, avec une quantité de 1 et son propre numéro de série. Ajoutez des lignes pour réceptionner d’autres équipements ou répartir les quantités entre plusieurs emplacements ou lots.</value></data>
+  <data name="M4ReceiveQuantity" xml:space="preserve"><value>Quantité à réceptionner</value></data>
+  <data name="M4RemoveLine" xml:space="preserve"><value>Retirer la ligne</value></data>
+  <data name="M4Receipts" xml:space="preserve"><value>Réceptions</value></data>
+  <data name="M4NewPurchaseOrder" xml:space="preserve"><value>Nouveau bon de commande</value></data>
+  <data name="M4ValuationScope" xml:space="preserve"><value>La valorisation porte uniquement sur le stock et les emplacements que vous êtes autorisé à consulter. Les totaux sont séparés par devise. Les lignes dont le coût est inconnu sont comptées séparément et exclues des totaux de valeur connue.</value></data>
+  <data name="M4AsOfUtc" xml:space="preserve"><value>Au (UTC)</value></data>
+  <data name="M4NegativeStock" xml:space="preserve"><value>Certains soldes de stock visibles sont négatifs. Vérifiez-les avant de vous appuyer sur cette valorisation.</value></data>
+  <data name="M4KnownValue" xml:space="preserve"><value>Valeur connue</value></data>
+  <data name="M4UncostedRows" xml:space="preserve"><value>Lignes sans coût</value></data>
+  <data name="M4UnspecifiedCurrency" xml:space="preserve"><value>Devise non précisée</value></data>
+  <data name="M4UnknownCost" xml:space="preserve"><value>Coût inconnu</value></data>
+  <data name="M4AverageUnitCost" xml:space="preserve"><value>Coût unitaire moyen</value></data>
+  <data name="M4PreferredVendor" xml:space="preserve"><value>Fournisseur privilégié</value></data>
+  <data name="M4CurrencyHelp" xml:space="preserve"><value>Utilisez une seule devise par article. Le stock existant sans devise reste séparé dans la valorisation ; attribuer une devise ne convertit pas les coûts.</value></data>
+  <data name="InventoryPurchaseOrderReceived" xml:space="preserve"><value>Bon de commande de stock réceptionné</value></data>
+  <data name="M5Operations" xml:space="preserve"><value>Comptages, alertes et rapports</value></data>
+  <data name="M5Counts" xml:space="preserve"><value>Comptages de stock</value></data>
+  <data name="M5Alerts" xml:space="preserve"><value>Alertes de stock</value></data>
+  <data name="M5Reports" xml:space="preserve"><value>Rapports de stock</value></data>
+  <data name="M5CountHelp" xml:space="preserve"><value>Relevez l’état actuel de 100 positions de stock au maximum. Saisissez toutes les quantités, enregistrez, puis terminez le comptage. Si le stock ou les données du catalogue changent, annulez et lancez un nouveau comptage. Enregistrez les équipements avec numéro de série nouvellement trouvés via Réceptionner les articles.</value></data>
+  <data name="M5AllLocations" xml:space="preserve"><value>Tous les emplacements</value></data>
+  <data name="M5StartCount" xml:space="preserve"><value>Lancer le comptage</value></data>
+  <data name="M5CompleteCount" xml:space="preserve"><value>Terminer le comptage</value></data>
+  <data name="M5CancelCount" xml:space="preserve"><value>Annuler le comptage</value></data>
+  <data name="M5SnapshotOn" xml:space="preserve"><value>État relevé le (UTC)</value></data>
+  <data name="M5Expected" xml:space="preserve"><value>Quantité attendue</value></data>
+  <data name="M5Counted" xml:space="preserve"><value>Quantité comptée</value></data>
+  <data name="M5Variance" xml:space="preserve"><value>Écart</value></data>
+  <data name="M5VarianceLines" xml:space="preserve"><value>Lignes présentant un écart</value></data>
+  <data name="M5CountStatus0" xml:space="preserve"><value>Brouillon</value></data>
+  <data name="M5CountStatus1" xml:space="preserve"><value>En attente d’un témoin</value></data>
+  <data name="M5CountStatus2" xml:space="preserve"><value>Terminé</value></data>
+  <data name="M5CountStatus3" xml:space="preserve"><value>Annulé</value></data>
+  <data name="M5WitnessHelp" xml:space="preserve"><value>Un témoin indépendant doit approuver l’opération en attente depuis l’historique du stock. L’état relevé doit toujours être à jour.</value></data>
+  <data name="M5AlertHelp" xml:space="preserve"><value>Les alertes signalent les stocks bas, les péremptions dans les 30 prochains jours, les articles périmés et les retours en retard. Actualisez-les une fois après la mise en service pour initialiser les alertes de stock bas, ainsi qu’après l’importation de l’ancien inventaire. Les modifications ultérieures du stock et des articles les mettent à jour automatiquement.</value></data>
+  <data name="M5RefreshAlerts" xml:space="preserve"><value>Actualiser les alertes</value></data>
+  <data name="M5AlertType0" xml:space="preserve"><value>Stock bas</value></data>
+  <data name="M5AlertType1" xml:space="preserve"><value>Péremption prochaine</value></data>
+  <data name="M5AlertType2" xml:space="preserve"><value>Périmé</value></data>
+  <data name="M5AlertType3" xml:space="preserve"><value>Retour en retard</value></data>
+  <data name="M5Open" xml:space="preserve"><value>Ouverte</value></data>
+  <data name="M5Resolved" xml:space="preserve"><value>Résolue</value></data>
+  <data name="M5DueOn" xml:space="preserve"><value>Échéance (UTC)</value></data>
+  <data name="M5ReportHelp" xml:space="preserve"><value>Sélectionnez un rapport et, si nécessaire, des filtres. Les dates sont exprimées en UTC et la date de fin est exclue. Les rapports d’état utilisent le stock actuel. Téléchargez le PDF pour le consulter ou l’imprimer.</value></data>
+  <data name="M5FromUtc" xml:space="preserve"><value>Date de début (UTC, incluse)</value></data>
+  <data name="M5UntilUtc" xml:space="preserve"><value>Date de fin (UTC, exclue)</value></data>
+  <data name="M5DownloadPdf" xml:space="preserve"><value>Télécharger le PDF imprimable</value></data>
+  <data name="M5ScheduleReports" xml:space="preserve"><value>Programmer l’envoi de rapports</value></data>
+  <data name="M5AlertNotificationTitle" xml:space="preserve"><value>Alertes de stock</value></data>
+  <data name="M5AlertNotificationMessage" xml:space="preserve"><value>Le stock nécessite votre attention. Connectez-vous pour consulter les alertes actuelles.</value></data>
+  <data name="M5ReportOnHand" xml:space="preserve"><value>Stock disponible</value></data>
+  <data name="M5ReportUsage" xml:space="preserve"><value>Utilisation du stock</value></data>
+  <data name="M5ReportExpiration" xml:space="preserve"><value>Péremption du stock</value></data>
+  <data name="M5ReportLowStock" xml:space="preserve"><value>Articles en stock bas</value></data>
+  <data name="M5ReportTransferHistory" xml:space="preserve"><value>Historique des transferts de stock</value></data>
+  <data name="M5ReportIssuance" xml:space="preserve"><value>Historique des dotations</value></data>
+  <data name="M5ReportValuation" xml:space="preserve"><value>Valorisation du stock</value></data>
+  <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Registre des substances contrôlées</value></data>
+  <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Jours avant péremption</value></data>
+  <data name="M5Shortfall" xml:space="preserve"><value>Quantité manquante pour atteindre le seuil de réapprovisionnement</value></data>
+  <data name="M5ReorderQuantity" xml:space="preserve"><value>Quantité de réapprovisionnement suggérée</value></data>
+  <data name="M5IssuanceId" xml:space="preserve"><value>ID de la dotation</value></data>
+  <data name="M5PersonId" xml:space="preserve"><value>ID de la personne destinataire</value></data>
+  <data name="M5UnitId" xml:space="preserve"><value>ID de l’unité destinataire</value></data>
+  <data name="M5IssuedOn" xml:space="preserve"><value>Attribué le (UTC)</value></data>
+  <data name="M5ReturnedQuantity" xml:space="preserve"><value>Quantité retournée</value></data>
+  <data name="M5OutstandingQuantity" xml:space="preserve"><value>Quantité restant à retourner</value></data>
+  <data name="M5ReturnedOn" xml:space="preserve"><value>Retourné le (UTC)</value></data>
+  <data name="M5Performer" xml:space="preserve"><value>Effectué par (ID utilisateur)</value></data>
+  <data name="M5ReversesTransaction" xml:space="preserve"><value>Annule le mouvement</value></data>
+  <data name="M5UsageSource" xml:space="preserve"><value>Origine de l’utilisation</value></data>
+  <data name="M5SourceId" xml:space="preserve"><value>ID du dossier</value></data>
+  <data name="M5CallId" xml:space="preserve"><value>ID de l’appel</value></data>
+  <data name="M5RevisionId" xml:space="preserve"><value>ID de la révision modifiée</value></data>
+  <data name="M5DeaSchedule" xml:space="preserve"><value>Classification DEA</value></data>
+  <data name="M5FromBefore" xml:space="preserve"><value>Solde d’origine avant</value></data>
+  <data name="M5FromAfter" xml:space="preserve"><value>Solde d’origine après</value></data>
+  <data name="M5ToBefore" xml:space="preserve"><value>Solde de destination avant</value></data>
+  <data name="M5ToAfter" xml:space="preserve"><value>Solde de destination après</value></data>
+  <data name="M5Witness" xml:space="preserve"><value>Témoin (ID utilisateur)</value></data>
+  <data name="M5WitnessedOn" xml:space="preserve"><value>Attesté le (UTC)</value></data>
+  <data name="M5ScheduledReportProtected" xml:space="preserve"><value>Le stock contient des données protégées. Ouvrez le lien du rapport nécessitant une authentification et vérifiez votre identité pour consulter ou imprimer les résultats actuels. Ce PDF programmé ne contient aucune valeur du stock.</value></data>
+  <data name="M5ReportScope" xml:space="preserve"><value>Ce rapport inclut uniquement le stock et les emplacements que vous êtes actuellement autorisé à consulter. Les quantités et les valeurs correspondent à l’état relevé à la date indiquée ; les résultats sont limités à 5 000 lignes.</value></data>
+  <data name="M5ReportRange" xml:space="preserve"><value>Intervalle UTC (début inclus, fin exclue)</value></data>
+  <data name="M5ReportMethodUsage" xml:space="preserve"><value>Chaque mouvement de stock apparaît une seule fois. Les quantités positives enregistrent les sorties liées à une utilisation ; les quantités négatives les annulent. Les détails du dossier nécessitent un accès à la source. Les sorties importées conservent leur identité dans l’ancien système et ne créent aucun lien avec un journal d’activité ou un patient.</value></data>
+  <data name="M5ReportMethodLowStock" xml:space="preserve"><value>Les articles actifs sont affichés lorsque le stock visible suivi par quantité ou par numéro de série est inférieur ou égal au seuil de réapprovisionnement ; à défaut, le stock minimum est utilisé. Le stock suivi par numéro de série inclut les équipements en service, attribués, endommagés et en réparation. Les emplacements masqués sont exclus.</value></data>
+  <data name="M5ReportMethodIssuance" xml:space="preserve"><value>Les lignes présentent les dotations créées dans l’intervalle de dates sélectionné et leur état de retour actuel. Pour consulter les quantités restant à retourner sur des dotations plus anciennes, choisissez une date de début antérieure.</value></data>
+  <data name="M5ReportMethodExpiration" xml:space="preserve"><value>Les lignes présentent le stock actuel de quantité positive et les équipements actifs avec numéro de série dont la date de péremption se situe dans l’intervalle sélectionné. Par défaut, les articles déjà périmés et ceux qui périment dans les 30 prochains jours sont inclus.</value></data>
+  <data name="M5PerformerSignature" xml:space="preserve"><value>Signature de l’auteur de l’opération</value></data>
+  <data name="M5WitnessSignature" xml:space="preserve"><value>Signature du témoin</value></data>
+  <data name="M5NotRecorded" xml:space="preserve"><value>Non renseigné</value></data>
+  <data name="M5ReferenceType0" xml:space="preserve"><value>Mouvement de stock sans lien accessible vers un dossier</value></data>
+  <data name="M5ReferenceType2" xml:space="preserve"><value>Dossiers</value></data>
+  <data name="M5ReferenceType8" xml:space="preserve"><value>Mouvement de l’ancien inventaire</value></data>
+  <data name="InvalidCount" xml:space="preserve"><value>Saisissez des informations et des quantités de comptage valides.</value></data>
+  <data name="CountScopeTooLarge" xml:space="preserve"><value>Sélectionnez un périmètre plus restreint. Les comptages acceptent jusqu’à 100 positions de stock.</value></data>
+  <data name="CountEmpty" xml:space="preserve"><value>Aucune position de stock active n’est à compter dans ce périmètre.</value></data>
+  <data name="CountAlreadyExists" xml:space="preserve"><value>Ce comptage existe déjà. Ouvrez-le depuis la liste des comptages.</value></data>
+  <data name="CountStateConflict" xml:space="preserve"><value>Le comptage a changé ou comporte des observations incomplètes. Rechargez-le et enregistrez toutes les quantités avant de le terminer.</value></data>
+  <data name="CountSnapshotChanged" xml:space="preserve"><value>Le stock a changé depuis le relevé de cet état. Annulez ce comptage et lancez-en un nouveau.</value></data>
+  <data name="CountReceiptImmutable" xml:space="preserve"><value>Les ajustements de comptage appartiennent au comptage terminé. Lancez un nouveau comptage pour corriger le stock.</value></data>
+  <data name="CountCompletionRequired" xml:space="preserve"><value>Terminez le comptage de stock pour enregistrer les écarts.</value></data>
+  <data name="InvalidReportRange" xml:space="preserve"><value>Sélectionnez un intervalle de dates UTC valide de 366 jours au maximum.</value></data>
+  <data name="InvalidReportFilter" xml:space="preserve"><value>Sélectionnez des filtres de rapport valides.</value></data>
+  <data name="ReportChanged" xml:space="preserve"><value>Le rapport a changé pendant la génération du PDF. Générez-le à nouveau.</value></data>
+  <data name="ReportGenerationFailed" xml:space="preserve"><value>Le rapport n’a pas pu être généré. Réessayez.</value></data>
+  <data name="InventoryLowStock" xml:space="preserve"><value>Stock faible</value></data>
+  <data name="InventoryExpiring" xml:space="preserve"><value>Expiration prochaine du stock</value></data>
+  <data name="InventoryCountCompleted" xml:space="preserve"><value>Inventaire terminé</value></data>
+  <data name="InventoryReturnOverdue" xml:space="preserve"><value>Retour de matériel en retard</value></data>
+  <data name="HolderHistoryRetained" xml:space="preserve"><value>Cette ressource est référencée dans l’historique du stock et doit être conservée.</value></data>
+  <data name="InventoryAdjusted" xml:space="preserve"><value>Stock ajusté</value></data>
+  <data name="InventoryTransferCompleted" xml:space="preserve"><value>Transfert de stock terminé</value></data>
+  <data name="InventoryIssued" xml:space="preserve"><value>Stock attribué</value></data>
+  <data name="InventoryReturned" xml:space="preserve"><value>Stock retourné</value></data>
+  <data name="InventoryAssetStatusChanged" xml:space="preserve"><value>Statut du bien en stock modifié</value></data>
+  <data name="ControlledSubstanceRecorded" xml:space="preserve"><value>Substance contrôlée enregistrée</value></data>
 </root>
-

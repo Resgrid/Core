@@ -17,7 +17,9 @@ namespace Resgrid.Services
 		{
 			builder.RegisterType<InventoryAuthorizationService>().As<IInventoryAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryModernizationService>().AsSelf().As<IInventoryCatalogService>().As<IInventoryStockService>().As<IInventoryTransferService>()
-				.As<IInventoryIssuanceService>().As<IInventoryMigrationService>().As<Resgrid.Model.Checklists.IChecklistAssetSource>().As<Resgrid.Model.Checklists.IChecklistHistoricalAssetSource>().InstancePerLifetimeScope();
+				.As<IInventoryIssuanceService>().As<IInventoryMigrationService>().As<IInventoryPurchasingService>().As<IInventoryOperationsService>().As<IInventoryAlertService>().As<Resgrid.Model.Checklists.IChecklistAssetSource>().As<Resgrid.Model.Checklists.IChecklistHistoricalAssetSource>().InstancePerLifetimeScope();
+			builder.RegisterType<InventoryAlertNotifications>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<InventoryScheduledReportService>().As<IInventoryScheduledReportService>().InstancePerLifetimeScope();
 			builder.RegisterType<ReadinessAccessService>().As<IReadinessAccessService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistTemplateService>().As<IChecklistTemplateService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderNotificationService>().As<IWorkOrderNotificationService>().InstancePerLifetimeScope();

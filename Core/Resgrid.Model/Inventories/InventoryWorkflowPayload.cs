@@ -12,11 +12,16 @@ namespace Resgrid.Model.Inventories
 	/// <summary>Reviewed inventory routing and quantities; personnel and authored content never cross the Workflow boundary.</summary>
 	public static class InventoryWorkflowPayload
 	{
-		public const int CatalogVersion = 19;
-		public static readonly IReadOnlyList<int> Triggers = Array.AsReadOnly(new[] { 22, 58, 59, 60, 64, 66 });
+		public const int CatalogVersion = 22;
+		public static readonly IReadOnlyList<int> Triggers = Array.AsReadOnly(new[] { 22, 58, 59, 60, 61, 62, 63, 64, 65, 66, 166 });
 		public static readonly (string Variable, string Property)[] Variables =
 		{
 			("transaction_id", "TransactionId"), ("item_id", "ItemId"), ("asset_id", "AssetId"), ("lot_id", "LotId"),
+			("usage_id", "UsageId"), ("usage_type", "UsageType"),
+			("count_id", "CountId"), ("count_item_id", "CountItemId"), ("variance_line_count", "VarianceLineCount"), ("variance_value", "VarianceValue"),
+			("alert_id", "AlertId"), ("alert_type", "AlertType"), ("location_id", "LocationId"), ("due_on", "DueOn"),
+			("purchase_order_id", "PurchaseOrderId"), ("purchase_order_item_id", "PurchaseOrderItemId"), ("vendor_id", "VendorId"),
+			("receipt_id", "ReceiptId"), ("purchase_order_status", "PurchaseOrderStatus"), ("line_count", "LineCount"), ("currency_code", "CurrencyCode"),
 			("transfer_id", "TransferId"), ("issuance_id", "IssuanceId"), ("transaction_type", "TransactionType"), ("quantity", "Quantity"),
 			("from_location_id", "FromLocationId"), ("to_location_id", "ToLocationId"),
 			("from_quantity_before", "FromQuantityBefore"), ("from_quantity_after", "FromQuantityAfter"),
@@ -24,8 +29,8 @@ namespace Resgrid.Model.Inventories
 			("previous_status", "OldStatus"), ("status", "NewStatus"), ("reference_type", "ReferenceType"), ("reference_id", "ReferenceId"),
 			("reverses_transaction_id", "ReversesTransactionId"), ("occurred_on", "OccurredOn"), ("item_name", "ItemName")
 		};
-		private static readonly string[] GuidFields = { "TransactionId", "ItemId", "AssetId", "LotId", "TransferId", "IssuanceId", "FromLocationId", "ToLocationId", "ReversesTransactionId" };
-		private static readonly string[] WithheldFields = { "ItemName", "Note", "SerialNumber", "WitnessUserId" };
+		private static readonly string[] GuidFields = { "TransactionId", "ItemId", "AssetId", "LotId", "TransferId", "IssuanceId", "FromLocationId", "ToLocationId", "ReversesTransactionId", "UsageId", "PurchaseOrderId", "PurchaseOrderItemId", "VendorId", "ReceiptId", "CountId", "CountItemId", "AlertId", "LocationId" };
+		private static readonly string[] WithheldFields = { "ItemName", "Note", "SerialNumber", "WitnessUserId", "VarianceValue" };
 
 		public static bool IsInventory(JObject payload) => payload?["InventoryEvent"]?.Type == JTokenType.Boolean && payload["InventoryEvent"].Value<bool>();
 		public static bool IsInventory(int trigger) => Triggers.Contains(trigger);
@@ -69,6 +74,10 @@ namespace Resgrid.Model.Inventories
 			var safe = new JObject { ["InventoryEvent"] = true };
 			foreach (var name in GuidFields) CopyGuid(payload, safe, name);
 			foreach (var name in new[] { "TransactionType", "OldStatus", "NewStatus", "ReferenceType" }) CopyInteger(payload, safe, name);
+			CopyInteger(payload, safe, "UsageType", 3);
+			CopyInteger(payload, safe, "PurchaseOrderStatus", 4); CopyInteger(payload, safe, "LineCount", 100);
+			CopyInteger(payload, safe, "VarianceLineCount", 100); CopyInteger(payload, safe, "AlertType", 3); CopyTimestamp(payload, safe, "DueOn");
+			if (payload["CurrencyCode"]?.Type == JTokenType.String && payload.Value<string>("CurrencyCode") is { Length: 3 } currency && currency.All(c => c >= 'A' && c <= 'Z')) safe["CurrencyCode"] = currency;
 			foreach (var name in new[] { "Quantity", "FromQuantityBefore", "FromQuantityAfter", "ToQuantityBefore", "ToQuantityAfter" })
 			{
 				var token = payload[name];
@@ -96,7 +105,7 @@ namespace Resgrid.Model.Inventories
 			var eventName = source["EventName"];
 			if (eventName?.Type == JTokenType.String && Enum.TryParse<WorkflowTriggerEventType>(eventName.Value<string>(), out var trigger) && IsInventory((int)trigger) && Enum.IsDefined(typeof(WorkflowTriggerEventType), trigger)) safe["EventName"] = trigger.ToString();
 			var aggregate = source["AggregateType"]?.Type == JTokenType.String ? source["AggregateType"].Value<string>() : null;
-			if (aggregate is "InventoryTransaction" or "InventoryItem" or "InventoryAsset" or "InventoryTransfer" or "InventoryIssuance") safe["AggregateType"] = aggregate;
+			if (aggregate is "InventoryTransaction" or "InventoryItem" or "InventoryAsset" or "InventoryTransfer" or "InventoryIssuance" or "InventoryPurchaseOrder" or "InventoryCount" or "InventoryAlert") safe["AggregateType"] = aggregate;
 			var origin = source["OriginClient"];
 			if (origin?.Type == JTokenType.String && Enum.TryParse<RmsOriginClient>(origin.Value<string>(), out var client) && Enum.IsDefined(typeof(RmsOriginClient), client)) safe["OriginClient"] = client.ToString();
 			if (source["IsReplay"]?.Type == JTokenType.Boolean) safe["IsReplay"] = source["IsReplay"].DeepClone();

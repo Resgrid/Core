@@ -17,7 +17,13 @@ namespace Resgrid.Model.WorkOrders
 			foreach (var field in new[] { "WorkOrderId", "Revision", "Status", "Priority", "TargetUnitId", "TargetGroupId", "AssignedToRoleId" })
 				if (payload[field]?.Type == JTokenType.Integer && payload[field].Value<long>() >= 0 && payload[field].Value<long>() <= int.MaxValue) safe[field] = payload[field].DeepClone();
 			if (payload["InventoryAssetId"]?.Type == JTokenType.String && Guid.TryParseExact(payload["InventoryAssetId"].Value<string>(), "D", out var asset)) safe["InventoryAssetId"] = asset.ToString("D");
-			if (payload["DueOn"]?.Type == JTokenType.Date) safe["DueOn"] = ((DateTimeOffset)payload["DueOn"]).UtcDateTime.ToString("O");
+			if (payload["DueOn"] is JValue { Type: JTokenType.Date } date)
+			{
+				var utc = date.Value is DateTimeOffset offset ? offset.UtcDateTime
+					: date.Value is DateTime value && value.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(value, DateTimeKind.Utc)
+					: ((DateTime)date.Value).ToUniversalTime();
+				safe["DueOn"] = utc.ToString("O");
+			}
 			else if (payload["DueOn"]?.Type == JTokenType.String && DateTimeOffset.TryParse(payload["DueOn"].Value<string>(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var due)) safe["DueOn"] = due.UtcDateTime.ToString("O");
 			safe["Title"] = ProtectedDataEnvelope.RedactionValue; safe["is_redacted"] = true; safe["redacted_fields"] = new JArray("Title"); safe["catalog_version"] = WorkOrderTables.CatalogVersion;
 			return safe.ToString(Formatting.None);

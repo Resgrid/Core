@@ -22,11 +22,7 @@ namespace Resgrid.Services
 					var item = await GetAsync<InventoryItem>(actor, input.ItemId);
 					if (item.TrackingMode != (int)InventoryTrackingMode.Serialized || item.IsDeleted || !item.IsActive || input.Details.AcquisitionCost < 0) throw new InventoryException(400, "InvalidAsset");
 					if (item.RequiresExpiration && !input.ExpiresOn.HasValue) throw new InventoryException(400, "ExpiryRequired");
-					foreach (var other in await _store.RelatedAsync<InventoryAsset>(actor.DepartmentId, "ItemId", item.Id))
-						if (string.Equals(Decode<InventoryAssetContent>(await RevealAsync(actor, other)).SerialNumber, input.Details.SerialNumber, StringComparison.OrdinalIgnoreCase)) throw new InventoryException(409, "DuplicateSerial");
-					var asset = New<InventoryAsset>(actor); if (input.Id != null) { Id(input.Id); asset.Id = input.Id; }
-					asset.ItemId = item.Id; asset.LotId = input.LotId; asset.ExpiresOn = input.ExpiresOn?.ToUniversalTime(); asset.AcquiredOn = Now; asset.Status = (int)InventoryAssetStatus.InService;
-					asset.Content = JsonConvert.SerializeObject(input.Details); await SaveAsync(actor, asset);
+					var asset = await CreateUnreceivedAssetAsync(actor, item, input.Id, input.LotId, input.ExpiresOn, input.Details);
 					var command = new InventoryCommand { RequestId = input.RequestId, Lines = new() { new InventoryPosting { ItemId = item.Id, AssetId = asset.Id, LotId = input.LotId, ToLocationId = input.LocationId, Quantity = 1, Type = InventoryTransactionType.Receive, UnitCost = input.Details.AcquisitionCost } } };
 					await ValidateCommandAsync(actor, command);
 					if (item.IsControlledSubstance) return await AwaitWitnessAsync(actor, operation, "Receive", command, assetId: asset.Id);
@@ -35,17 +31,29 @@ namespace Resgrid.Services
 			});
 			return await GetAsync<InventoryAsset>(actor, result.AssetId);
 		}
+		private async Task<InventoryAsset> CreateUnreceivedAssetAsync(InventoryActor actor, InventoryItem item, string id, string lotId, DateTime? expiresOn, InventoryAssetContent details, string performer = null)
+		{
+			Text(details.SerialNumber); Cost(details.AcquisitionCost);
+			if (details.AssetTag?.Length > 250 || details.Barcode?.Length > 250) throw new InventoryException(400, "InvalidAsset");
+			foreach (var other in await _store.RelatedAsync<InventoryAsset>(actor.DepartmentId, "ItemId", item.Id))
+				if (string.Equals(Decode<InventoryAssetContent>(await RevealAsync(actor, other)).SerialNumber, details.SerialNumber, StringComparison.OrdinalIgnoreCase)) throw new InventoryException(409, "DuplicateSerial");
+			var asset = New<InventoryAsset>(actor); if (id != null) { Id(id); asset.Id = id; }
+			asset.ItemId = item.Id; asset.LotId = lotId; asset.ExpiresOn = expiresOn?.ToUniversalTime(); asset.AcquiredOn = Now; asset.Status = (int)InventoryAssetStatus.InService;
+			asset.CreatedBy = performer ?? actor.UserId; asset.Content = JsonConvert.SerializeObject(details); await SaveAsync(actor, asset); return asset;
+		}
+		private async Task CreateKitContainerAsync(InventoryActor actor, string assetId, string performer)
+		{
+			var location = New<InventoryLocation>(actor); location.CreatedBy = performer ?? actor.UserId;
+			location.LocationType = (int)InventoryLocationType.Container; location.ContainerAssetId = assetId;
+			location.Content = JsonConvert.SerializeObject(new InventoryLabel { Name = "Container" }); await SaveAsync(actor, location);
+		}
 		private async Task<InventoryResult> ReceiveAssetAsync(InventoryActor actor, InventoryOperation operation, InventoryCommand command, List<long> events,
 			string performer = null, string witness = null, string attestation = null)
 		{
 			if (command.Lines.Count != 1 || command.Lines[0].Type != InventoryTransactionType.Receive || command.Lines[0].AssetId == null) throw new InventoryException(400, "InvalidAsset");
 			var line = command.Lines[0]; var result = await PostLinesAsync(actor, operation, command, events, performer, witness, attestation); result.AssetId = line.AssetId;
 			if ((await _store.GetAsync<InventoryItem>(actor.DepartmentId, line.ItemId)).IsKit)
-			{
-				var location = New<InventoryLocation>(actor); location.CreatedBy = performer ?? actor.UserId;
-				location.LocationType = (int)InventoryLocationType.Container; location.ContainerAssetId = line.AssetId;
-				location.Content = JsonConvert.SerializeObject(new InventoryLabel { Name = "Container" }); await SaveAsync(actor, location);
-			}
+				await CreateKitContainerAsync(actor, line.AssetId, performer);
 			return result;
 		}
 		public Task<InventoryResult> IssueAsync(InventoryActor actor, InventoryIssueInput input) => TransactionAsync(actor, async events =>

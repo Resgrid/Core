@@ -15,9 +15,8 @@ namespace Resgrid.Model.Checklists
 			(int)WorkflowTriggerEventType.ChecklistCompleted, (int)WorkflowTriggerEventType.ChecklistFailed,
 			(int)WorkflowTriggerEventType.ChecklistMissed, (int)WorkflowTriggerEventType.WorkOrderCreated,
 			(int)WorkflowTriggerEventType.WorkOrderStatusChanged, (int)WorkflowTriggerEventType.WorkOrderAssigned,
-			(int)WorkflowTriggerEventType.ChecklistScheduleChanged, (int)WorkflowTriggerEventType.ChecklistOccurrenceSkipped,
-			22, 58, 59, 60, 64, 66
-		});
+			(int)WorkflowTriggerEventType.ChecklistScheduleChanged, (int)WorkflowTriggerEventType.ChecklistOccurrenceSkipped
+		}.Concat(Resgrid.Model.Inventories.InventoryWorkflowPayload.Triggers).ToArray());
 		private static readonly string[] Identifiers = { "CompletionId", "DefinitionId", "VersionId", "ItemId", "ScheduleId", "OccurrenceId" };
 		private static bool IsStructuralTarget(int type, string target) =>
 			type >= 0 && type <= 2 && int.TryParse(target, out var numeric) && numeric > 0

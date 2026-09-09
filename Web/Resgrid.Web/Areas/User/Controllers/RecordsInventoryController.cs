@@ -43,6 +43,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{ _usage=usage; _evidence=evidence; _auth=auth; _cutover=cutover; _records=records; _incidents=incidents; _inventory=inventory; _groups=groups; _units=units; _modernCatalog=modernCatalog; _migration=migration; _grant=grant; _protection=protection; _strings=strings; }
 		private InventoryActor Actor => new() { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant?.GrantToken };
 		private string UnableToComplete => _strings?["UnableToComplete"].Value ?? "Unable to complete this inventory action.";
+		private string Text(string key, string fallback) => _strings?[key].Value ?? fallback;
 		private Task<bool> IsModernAsync() => _migration?.IsMigratedAsync(DepartmentId) ?? Task.FromResult(false);
 		private async Task<long?> VersionAsync(string recordId, RmsRecordKind kind)
 		{
@@ -89,8 +90,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Groups=(await _groups.GetAllStationGroupsForDepartmentAsync(DepartmentId)).Select(g=>new SelectListItem {Value=g.DepartmentGroupId.ToString(),Text=g.Name}).ToList();
 					model.Units=(await _units.GetUnitsForDepartmentAsync(DepartmentId)).Select(u=>new SelectListItem {Value=u.UnitId.ToString(),Text=u.Name}).ToList();
 				}
-				model.Usage = await _usage.GetUsageForRecordAsync(DepartmentId, model.RecordId);
+				model.Usage = model.ModernInventory
+					? await _usage.GetAuthorizedUsageAsync(Actor, model.RecordId, model.Kind)
+					: await _usage.GetUsageForRecordAsync(DepartmentId, model.RecordId);
 			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (InventoryException ex)
 			{
 				model.Types.Clear(); model.Locations.Clear(); model.Lots.Clear(); model.Assets.Clear(); model.Usage.Clear();
@@ -127,6 +131,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			throw new InventoryException(409, "InventoryChoiceLimitExceeded");
 		}
 		private static T Details<T>(InventoryRow row) where T : new() => string.IsNullOrWhiteSpace(row.Content) ? new T() : JsonConvert.DeserializeObject<T>(row.Content) ?? new T();
+		private string RequirePostedRequestId(RecordInventoryView model)
+		{
+			// A model's generated default is never proof that a network submission supplied a replay key.
+			if (!Request.HasFormContentType || !Request.Form.TryGetValue(nameof(model.RequestId), out var supplied) || supplied.Count != 1 || !Guid.TryParseExact(supplied[0], "D", out var requestId) || requestId == Guid.Empty || model.RequestId != supplied[0])
+				throw new InventoryException(400, "RequestIdRequired");
+			return requestId.ToString("D");
+		}
+		private async Task<string> CaptureSavedUsageAsync(string recordId, RmsRecordKind kind, CancellationToken cancellationToken)
+		{
+			try
+			{
+				await CaptureAsync(recordId, kind, cancellationToken);
+				return Text("RecordUsageSaved", "Usage saved and supporting evidence captured.");
+			}
+			catch (Exception ex) when (ex is InvalidOperationException || ex is ArgumentException || ex is UnauthorizedAccessException || ex is InventoryException)
+			{
+				return Text("RecordUsageEvidencePending", "The inventory action was saved. Evidence could not be captured; use Refresh evidence after resolving access or draft changes. Do not submit the inventory action again.");
+			}
+		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Consume(RecordInventoryView model,CancellationToken cancellationToken)
@@ -140,23 +163,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (modern)
 				{
-					// The model creates a request ID for a new form only. Network submissions must explicitly carry it.
-					if (!Request.HasFormContentType || !Request.Form.TryGetValue(nameof(model.RequestId), out var supplied) || supplied.Count != 1 || !Guid.TryParseExact(supplied[0], "D", out var requestId) || requestId == Guid.Empty || model.RequestId != supplied[0])
-						throw new InventoryException(400, "RequestIdRequired");
-					await _usage.ConsumeModernAsync(Actor, model.RecordId, model.Kind, model.RowVersion, new InventoryCommand
+					var requestId = RequirePostedRequestId(model);
+					var line = string.IsNullOrWhiteSpace(model.ExistingTransactionId)
+						? new RecordInventoryUsageLine { ItemId = model.ItemId, LocationId = model.LocationId, LotId = model.LotId, AssetId = model.AssetId, Quantity = model.Quantity, UsageType = model.UsageType, Note = model.Note }
+						: new RecordInventoryUsageLine { ExistingTransactionId = model.ExistingTransactionId.Trim(), UsageType = model.UsageType };
+					await _usage.RecordModernUsageAsync(Actor, model.RecordId, model.Kind, model.RowVersion, new RecordInventoryUsageRequest
 					{
-						RequestId = requestId.ToString("D"),
-						Lines = new List<InventoryPosting> { new() { Type = InventoryTransactionType.Consume, ItemId = model.ItemId, FromLocationId = model.LocationId, LotId = model.LotId, AssetId = model.AssetId, Quantity = model.Quantity, Note = model.Note } }
+						RequestId = requestId,
+						Lines = new List<RecordInventoryUsageLine> { line }
 					}, cancellationToken);
 				}
 				else await _usage.ConsumeAsync(DepartmentId,UserId,model.RecordId,model.Kind,model.RowVersion,model.TypeId,model.GroupId,model.UnitId,model.Quantity,model.Note,cancellationToken,_grant?.GrantToken);
 				saved = true;
-				try { await CaptureAsync(model.RecordId,model.Kind,cancellationToken); message="Usage saved and supporting evidence captured."; }
-				catch(Exception ex) when(ex is InvalidOperationException || ex is ArgumentException || ex is UnauthorizedAccessException || ex is InventoryException) { message="The consumption was saved. Evidence could not be captured; use Refresh evidence after resolving access or draft changes. Do not enter the consumption again."; }
+				message = await CaptureSavedUsageAsync(model.RecordId, model.Kind, cancellationToken);
 			}
 			catch(UnauthorizedAccessException) { return Forbid(); }
-			catch(RecordConcurrencyException) { message="The draft changed. Check the recorded usage below before entering another consumption."; }
-			catch(InventoryException ex) { message = ex.Code == "IndependentWitnessRequired" ? "Controlled-substance usage requires the independent witness process in Inventory. No consumption was recorded here." : UnableToComplete; }
+			catch(RecordConcurrencyException) { message = Text("RecordUsageDraftChanged", "The draft changed. Check the recorded usage before submitting another inventory action."); }
+			catch(InventoryException ex) { message = ex.Code == "IndependentWitnessRequired" ? Text("RecordUsageWitnessRequired", "Complete the independent witness process in Inventory, then attach the resulting transaction ID here. No stock movement was recorded by this action.") : UnableToComplete; }
 			catch(Exception ex) when(ex is InvalidOperationException || ex is ArgumentException) { message=UnableToComplete; }
 			if (modern || _protection != null && await _protection.IsProtectionEnforcedAsync(DepartmentId))
 			{
@@ -166,6 +189,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 			TempData["InventoryMessage"] = message;
 			return RedirectToAction("Edit",new {recordId=model.RecordId,kind=model.Kind});
 		}
+		[HttpPost, ValidateAntiForgeryToken]
+		public async Task<IActionResult> Reverse(RecordInventoryView model, CancellationToken cancellationToken)
+		{
+			Response.Headers.CacheControl = "no-store";
+			if (!(await VersionAsync(model.RecordId, model.Kind)).HasValue || !await IsModernAsync()) return NotFound();
+			if (!ModelState.IsValid) { model.ErrorMessage = UnableToComplete; return await RenderAsync(model, true); }
+			var saved = false; string message;
+			try
+			{
+				var requestId = RequirePostedRequestId(model);
+				await _usage.ReverseModernUsageAsync(Actor, model.RecordId, model.Kind, model.RowVersion, new RecordInventoryUsageCorrection
+				{
+					RequestId = requestId, UsageId = model.UsageId, Reason = model.CorrectionReason,
+					ExistingTransactionId = string.IsNullOrWhiteSpace(model.ExistingTransactionId) ? null : model.ExistingTransactionId.Trim()
+				}, cancellationToken);
+				saved = true;
+				message = await CaptureSavedUsageAsync(model.RecordId, model.Kind, cancellationToken);
+			}
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			catch (RecordConcurrencyException) { message = Text("RecordUsageDraftChanged", "The draft changed. Check the recorded usage before submitting another inventory action."); }
+			catch (InventoryException ex) { message = ex.Code == "IndependentWitnessRequired" ? Text("RecordUsageWitnessRequired", "Complete the independent witness process in Inventory, then attach the resulting transaction ID here. No stock movement was recorded by this action.") : UnableToComplete; }
+			catch (Exception ex) when (ex is InvalidOperationException || ex is ArgumentException) { message = UnableToComplete; }
+			if (saved) { ModelState.Clear(); model = new RecordInventoryView { RecordId = model.RecordId, Kind = model.Kind }; }
+			model.ErrorMessage = message;
+			return await RenderAsync(model, !saved);
+		}
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RefreshEvidence(string recordId,RmsRecordKind kind,CancellationToken cancellationToken)
@@ -173,7 +222,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			Response.Headers.CacheControl = "no-store";
 			if (!(await VersionAsync(recordId,kind)).HasValue) return NotFound();
 			string message;
-			try { await CaptureAsync(recordId,kind,cancellationToken); message="Supporting evidence captured."; }
+			try { await CaptureAsync(recordId,kind,cancellationToken); message = Text("RecordUsageEvidenceSaved", "Supporting evidence captured."); }
 			catch(UnauthorizedAccessException) { return Forbid(); }
 			catch(Exception ex) when(ex is InvalidOperationException || ex is ArgumentException || ex is InventoryException) { message=UnableToComplete; }
 			if (await IsModernAsync() || _protection != null && await _protection.IsProtectionEnforcedAsync(DepartmentId))

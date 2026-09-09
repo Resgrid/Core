@@ -14,14 +14,18 @@ namespace Resgrid.Model.Services
 		Task<InventoryLot> SaveLotAsync(InventoryActor actor, InventoryLot lot, InventoryLotContent details);
 		Task ArchiveAsync<T>(InventoryActor actor, string id, int revision) where T : InventoryMutableRow;
 		Task<T> GetAsync<T>(InventoryActor actor, string id) where T : InventoryRow;
+		Task<InventoryTransaction> GetLegacyTransactionAsync(InventoryActor actor, int inventoryId);
 		Task<InventoryPage<T>> ListAsync<T>(InventoryActor actor, int page = 0) where T : InventoryRow;
 		Task<InventoryPage<T>> QueryAsync<T>(InventoryActor actor, InventoryQuery filter, int page = 0) where T : InventoryRow;
 	}
 	public interface IInventoryStockService
 	{
+		Task<Dictionary<string, decimal>> GetVisibleQuantitiesAsync(InventoryActor actor, IReadOnlyCollection<string> itemIds);
 		Task<InventoryResult> PostTransactionAsync(InventoryActor actor, InventoryCommand command, CancellationToken ct = default);
 		/// <summary>The caller owns the active transaction and dispatches returned OutboxIds only after its commit.</summary>
 		Task<InventoryResult> PostWithinTransactionAsync(InventoryActor actor, InventoryCommand command, CancellationToken ct = default);
+		/// <summary>The authorized source adapter owns the active transaction and source lifecycle checks. Does not post stock again.</summary>
+		Task RecordUsageWithinTransactionAsync(InventoryActor actor, RecordInventoryUsage usage);
 		Task<InventoryResult> WitnessAsync(InventoryActor actor, string requestId, string attestation);
 		Task RebuildStocksAsync(InventoryActor actor);
 		Task<List<InventoryTransaction>> GetByReferenceAsync(InventoryActor actor, InventoryReferenceType type, string id);

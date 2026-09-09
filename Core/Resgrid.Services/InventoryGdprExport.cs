@@ -26,11 +26,18 @@ namespace Resgrid.Services
 				throw new InvalidOperationException("Inventory export exceeds the supported department size.");
 			}
 			var locations = await Relevant<InventoryLocation>(x => x.UserId == userId || x.CreatedBy == userId);
-			var locationIds = locations.Select(x => x.Id).ToHashSet();
+			var locationIds = locations.Where(x => x.UserId == userId).Select(x => x.Id).ToHashSet();
 			var issuances = await Relevant<InventoryIssuance>(x => x.IssuedToUserId == userId || x.CreatedBy == userId);
 			var issuanceIds = issuances.Select(x => x.Id).ToHashSet();
 			var operations = await Relevant<InventoryOperation>(x => x.CreatedBy == userId || x.WitnessUserId == userId);
 			return new { Locations = locations, Issuances = issuances,
+				Counts = await Relevant<InventoryCount>(x => x.CreatedBy == userId),
+				CountItems = await Relevant<InventoryCountItem>(x => x.CreatedBy == userId),
+				AlertDeliveries = await Relevant<InventoryAlertDelivery>(x => x.UserId == userId),
+				Vendors = await Relevant<InventoryVendor>(x => x.CreatedBy == userId),
+				PurchaseOrders = await Relevant<InventoryPurchaseOrder>(x => x.CreatedBy == userId),
+				PurchaseOrderItems = await Relevant<InventoryPurchaseOrderItem>(x => x.CreatedBy == userId),
+				RecordUsages = await Relevant<RecordInventoryUsage>(x => x.CreatedBy == userId),
 				Assets = await Relevant<InventoryAsset>(x => x.CreatedBy == userId || locationIds.Contains(x.CurrentLocationId)),
 				Transactions = await Relevant<InventoryTransaction>(x => x.CreatedBy == userId || issuanceIds.Contains(x.IssuanceId) || locationIds.Contains(x.FromLocationId) || locationIds.Contains(x.ToLocationId)),
 				Operations = operations.Where(x => x.CreatedBy == userId),

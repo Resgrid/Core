@@ -92,6 +92,8 @@ namespace Resgrid.Model.Inventories
 		public string ReferenceId { get; set; }
 		public string ReversesTransactionId { get; set; }
 		public string IssuanceId { get; set; }
+		public string PurchaseOrderItemId { get; set; }
+		public string CountItemId { get; set; }
 		public int? LegacyInventoryId { get; set; }
 		public DateTime OccurredOn { get; set; }
 	}
@@ -132,6 +134,9 @@ namespace Resgrid.Model.Inventories
 		public decimal? ReorderPoint { get; set; }
 		public decimal? ReorderQuantity { get; set; }
 		public decimal? DefaultUnitCost { get; set; }
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public decimal? AverageUnitCost { get; set; }
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string CurrencyCode { get; set; }
+		[JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public string PreferredVendorId { get; set; }
 	}
 	public sealed class InventoryLabel { public string Name { get; set; } public string Note { get; set; } }
 	public sealed class InventoryLotContent { public string LotNumber { get; set; } public decimal? UnitCost { get; set; } public string VendorId { get; set; } }
@@ -139,12 +144,19 @@ namespace Resgrid.Model.Inventories
 	public static class InventoryTables
 	{
 		public const int CatalogVersion = 19;
+		public const int UsageCatalogVersion = 20;
+		public const int PurchasingCatalogVersion = 21;
+		public const int OperationsCatalogVersion = 22;
 		public static readonly IReadOnlyDictionary<Type, string> All = new Dictionary<Type, string>
 		{
 			[typeof(InventoryCategory)] = "InventoryCategories", [typeof(InventoryItem)] = "InventoryItems", [typeof(InventoryLocation)] = "InventoryLocations",
 			[typeof(InventoryLot)] = "InventoryLots", [typeof(InventoryStock)] = "InventoryStocks", [typeof(InventoryAsset)] = "InventoryAssets", [typeof(InventoryTransaction)] = "InventoryTransactions",
 			[typeof(InventoryOperation)] = "InventoryOperations", [typeof(InventoryTransfer)] = "InventoryTransfers", [typeof(InventoryTransferItem)] = "InventoryTransferItems",
-			[typeof(InventoryIssuance)] = "InventoryIssuances", [typeof(InventoryKit)] = "InventoryKits", [typeof(InventoryKitItem)] = "InventoryKitItems"
+			[typeof(InventoryIssuance)] = "InventoryIssuances", [typeof(InventoryKit)] = "InventoryKits", [typeof(InventoryKitItem)] = "InventoryKitItems",
+			[typeof(RecordInventoryUsage)] = "RecordInventoryUsages",
+			[typeof(InventoryVendor)] = "InventoryVendors", [typeof(InventoryPurchaseOrder)] = "InventoryPurchaseOrders", [typeof(InventoryPurchaseOrderItem)] = "InventoryPurchaseOrderItems",
+			[typeof(InventoryCount)] = "InventoryCounts", [typeof(InventoryCountItem)] = "InventoryCountItems",
+			[typeof(InventoryAlert)] = "InventoryAlerts", [typeof(InventoryAlertDelivery)] = "InventoryAlertDeliveries"
 		};
 		public static IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> Fields<T>() where T : InventoryRow =>
 			new Dictionary<string, (Func<T, string>, Action<T, string>)> { [All[typeof(T)].ToLowerInvariant() + ".content"] = (x => x.Content, (x, v) => x.Content = v) };

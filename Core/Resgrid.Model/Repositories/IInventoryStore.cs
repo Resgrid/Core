@@ -8,6 +8,11 @@ namespace Resgrid.Model.Repositories
 	public interface IInventoryStore
 	{
 		Task LockDepartmentAsync(int departmentId);
+		Task<List<int>> AlertDepartmentsAsync(int afterDepartmentId);
+		Task<long> LastEntryAsync(int departmentId);
+		Task<InventoryAlert> OpenAlertAsync(int departmentId, string dedupKey);
+		Task<InventoryAlertDelivery> AlertDeliveryAsync(int departmentId, string alertId, string userId);
+		Task<List<InventoryAlert>> OpenAlertsAsync(int departmentId, int skip = 0);
 		Task<T> GetAsync<T>(int departmentId, string id) where T : InventoryRow;
 		Task<List<T>> ListAsync<T>(int departmentId, int skip = 0) where T : InventoryRow;
 		Task<List<T>> QueryAsync<T>(int departmentId, InventoryQuery filter, int skip = 0) where T : InventoryRow;
@@ -19,6 +24,8 @@ namespace Resgrid.Model.Repositories
 		Task<InventoryItem> LegacyItemAsync(int departmentId, int typeId);
 		Task<InventoryTransaction> LegacyTransactionAsync(int departmentId, int inventoryId);
 		Task RebuildStocksAsync(int departmentId);
+		Task<List<InventoryStockQuantity>> StockQuantitiesAsync(int departmentId, IReadOnlyCollection<string> itemIds);
+		Task<List<InventoryTransaction>> AssetHistoryAsync(int departmentId, IReadOnlyCollection<string> assetIds, System.DateTime at, bool after, int skip = 0);
 		Task<bool> HasLegacyMigrationAsync(int departmentId);
 	}
 }

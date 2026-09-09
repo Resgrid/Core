@@ -24,6 +24,13 @@ namespace Resgrid.Tests.Services
 			store.SetReturnsDefault(Task.FromResult(new List<InventoryAsset>()));
 			store.SetReturnsDefault(Task.FromResult(new List<InventoryTransaction>()));
 			store.SetReturnsDefault(Task.FromResult(new List<InventoryOperation>()));
+			store.SetReturnsDefault(Task.FromResult(new List<RecordInventoryUsage>()));
+			store.SetReturnsDefault(Task.FromResult(new List<InventoryVendor>()));
+			store.SetReturnsDefault(Task.FromResult(new List<InventoryPurchaseOrder>()));
+			store.SetReturnsDefault(Task.FromResult(new List<InventoryPurchaseOrderItem>()));
+			store.SetReturnsDefault(Task.FromResult(new List<InventoryCount>()));
+			store.SetReturnsDefault(Task.FromResult(new List<InventoryCountItem>()));
+			store.SetReturnsDefault(Task.FromResult(new List<InventoryAlertDelivery>()));
 			return store.Object;
 		}
 
@@ -45,6 +52,28 @@ namespace Resgrid.Tests.Services
 		private static T InventoryExportRow<T>(string creator = UserId, int department = DeptId, string content = "SUBJECT-EVIDENCE") where T : InventoryRow, new()
 			=> new() { DepartmentId = department, CreatedBy = creator, Content = content };
 
+		[Test]
+		public void Inventory_export_requires_storage_at_construction()
+		{
+			FluentActions.Invoking(() => UseInventoryExport(null)).Should().Throw<ArgumentNullException>().WithParameterName("inventoryStore");
+		}
+
+		[Test]
+		public async Task Authorship_of_shared_locations_does_not_export_other_holders_assets_or_movements()
+		{
+			var store = EmptyInventory();
+			var shared = InventoryExportRow<InventoryLocation>(); shared.LocationType = (int)InventoryLocationType.Station; shared.GroupId = 5;
+			var personal = InventoryExportRow<InventoryLocation>("other"); personal.UserId = UserId;
+			var foreignAsset = InventoryExportRow<InventoryAsset>("other", content: "UNRELATED-CANARY"); foreignAsset.CurrentLocationId = shared.Id;
+			var foreignMovement = InventoryExportRow<InventoryTransaction>("other", content: "UNRELATED-CANARY"); foreignMovement.ToLocationId = shared.Id;
+			var heldAsset = InventoryExportRow<InventoryAsset>("other"); heldAsset.CurrentLocationId = personal.Id;
+			InventoryExportPages(store, shared, personal); InventoryExportPages(store, foreignAsset, heldAsset); InventoryExportPages(store, foreignMovement);
+			UseInventoryExport(store);
+			var json = (await RunExportAsync())["inventory.json"]; var data = JObject.Parse(json);
+			json.Should().NotContain("UNRELATED-CANARY"); data["Locations"].Should().HaveCount(2);
+			data["Assets"].Should().ContainSingle(); data["Assets"][0]["Id"].Value<string>().Should().Be(heldAsset.Id); data["Transactions"].Should().BeEmpty();
+		}
+
 		private static void InventoryExportPages<T>(IInventoryStore store, params T[] rows) where T : InventoryRow
 			=> Mock.Get(store).Setup(s => s.ListAsync<T>(DeptId, It.IsAny<int>()))
 				.ReturnsAsync((int department, int skip) => rows.Skip(skip).Take(501).ToList());
@@ -53,6 +82,7 @@ namespace Resgrid.Tests.Services
 		public async Task Inventory_export_includes_subject_relationships_and_excludes_unrelated_or_foreign_candidates()
 		{
 			var store = EmptyInventory();
+			InventoryExportPages(store, InventoryExportRow<RecordInventoryUsage>(), InventoryExportRow<RecordInventoryUsage>("another-user", content: "UNRELATED-CANARY"), InventoryExportRow<RecordInventoryUsage>(department: 999, content: "FOREIGN-CANARY"));
 			var location = InventoryExportRow<InventoryLocation>("another-user"); location.UserId = UserId;
 			var authoredLocation = InventoryExportRow<InventoryLocation>();
 			InventoryExportPages(store, location, authoredLocation,
@@ -69,11 +99,22 @@ namespace Resgrid.Tests.Services
 				InventoryExportRow<InventoryTransaction>("another-user", content: "UNRELATED-CANARY"), InventoryExportRow<InventoryTransaction>(department: 999, content: "FOREIGN-CANARY"));
 			InventoryExportPages(store, InventoryExportRow<InventoryOperation>(), InventoryExportRow<InventoryOperation>("another-user", content: "UNRELATED-CANARY"),
 				InventoryExportRow<InventoryOperation>(department: 999, content: "FOREIGN-CANARY"));
+			var vendor = InventoryExportRow<InventoryVendor>(); vendor.ContactId = Guid.NewGuid().ToString("D");
+			var order = InventoryExportRow<InventoryPurchaseOrder>(); order.VendorId = vendor.Id;
+			var line = InventoryExportRow<InventoryPurchaseOrderItem>(); line.PurchaseOrderId = order.Id;
+			var unrelatedOrder = InventoryExportRow<InventoryPurchaseOrder>("another-user", content: "UNRELATED-CANARY"); unrelatedOrder.VendorId = vendor.Id;
+			var unrelatedLine = InventoryExportRow<InventoryPurchaseOrderItem>("another-user", content: "UNRELATED-CANARY"); unrelatedLine.PurchaseOrderId = order.Id;
+			InventoryExportPages(store, vendor, InventoryExportRow<InventoryVendor>("another-user", content: "UNRELATED-CANARY"), InventoryExportRow<InventoryVendor>(department: 999, content: "FOREIGN-CANARY"));
+			InventoryExportPages(store, order, unrelatedOrder, InventoryExportRow<InventoryPurchaseOrder>(department: 999, content: "FOREIGN-CANARY"));
+			InventoryExportPages(store, line, unrelatedLine, InventoryExportRow<InventoryPurchaseOrderItem>(department: 999, content: "FOREIGN-CANARY"));
 			UseInventoryExport(store);
 			var files = await RunExportAsync(); var json = files["inventory.json"]; var data = JObject.Parse(json);
 			json.Should().Contain("SUBJECT-EVIDENCE").And.NotContain("UNRELATED-CANARY").And.NotContain("FOREIGN-CANARY");
 			data["Locations"].Should().HaveCount(2); data["Issuances"].Should().HaveCount(2); data["Assets"].Should().HaveCount(2);
 			data["Transactions"].Should().HaveCount(3); data["Operations"].Should().HaveCount(1); data["WitnessedOperations"].Should().BeEmpty();
+			data["Vendors"].Should().ContainSingle(); data["Vendors"][0]["Id"].Value<string>().Should().Be(vendor.Id);
+			data["PurchaseOrders"].Should().ContainSingle(); data["PurchaseOrders"][0]["Id"].Value<string>().Should().Be(order.Id);
+			data["PurchaseOrderItems"].Should().ContainSingle(); data["PurchaseOrderItems"][0]["Id"].Value<string>().Should().Be(line.Id);
 		}
 
 		[TestCase(false, false), TestCase(false, true), TestCase(true, false), TestCase(true, true)]
@@ -102,19 +143,33 @@ namespace Resgrid.Tests.Services
 			var location = InventoryExportRow<InventoryLocation>(content: content); var issuance = InventoryExportRow<InventoryIssuance>(content: content);
 			var asset = InventoryExportRow<InventoryAsset>(content: content); var transaction = InventoryExportRow<InventoryTransaction>(content: content);
 			var operation = InventoryExportRow<InventoryOperation>(content: content);
+			var vendorContent = encrypted ? "rgdp:1:21:SYNTHETIC-VENDOR-CIPHERTEXT-CANARY" : "{\"AccountNumber\":\"VENDOR-ACCOUNT-CANARY\",\"Note\":\"VENDOR-NOTE-CANARY\"}";
+			var orderContent = encrypted ? "rgdp:1:21:SYNTHETIC-ORDER-CIPHERTEXT-CANARY" : "{\"Number\":\"ORDER-NUMBER-CANARY\",\"SupplierName\":\"SUPPLIER-CANARY\",\"Note\":\"ORDER-NOTE-CANARY\"}";
+			var lineContent = encrypted ? "rgdp:1:21:SYNTHETIC-LINE-CIPHERTEXT-CANARY" : "{\"UnitCost\":12345.678901,\"Note\":\"LINE-NOTE-CANARY\"}";
+			var vendor = InventoryExportRow<InventoryVendor>(content: vendorContent); vendor.ContactId = Guid.NewGuid().ToString("D");
+			var order = InventoryExportRow<InventoryPurchaseOrder>(content: orderContent); order.VendorId = vendor.Id;
+			var line = InventoryExportRow<InventoryPurchaseOrderItem>(content: lineContent); line.PurchaseOrderId = order.Id;
+			var purchasing = new InventoryRow[] { vendor, order, line };
+			var originals = purchasing.ToDictionary(row => row.Id, row => JObject.FromObject(row).ToString());
 			InventoryExportPages(store, location); InventoryExportPages(store, issuance); InventoryExportPages(store, asset);
-			InventoryExportPages(store, transaction); InventoryExportPages(store, operation); UseInventoryExport(store, enforced, policyFailure);
+			InventoryExportPages(store, transaction); InventoryExportPages(store, operation);
+			InventoryExportPages(store, vendor); InventoryExportPages(store, order); InventoryExportPages(store, line); UseInventoryExport(store, enforced, policyFailure);
 			var files = await RunExportAsync(); var json = files["inventory.json"]; var data = JObject.Parse(json);
 			var masked = enforced || encrypted || policyFailure;
 			foreach (var property in new[] { "Locations", "Issuances", "Assets", "Transactions", "Operations" })
 				data[property][0]["Content"].Value<string>().Should().Be(masked ? ProtectedDataEnvelope.RedactionValue : content);
+			foreach (var entry in new[] { (Property: "Vendors", Content: vendorContent), (Property: "PurchaseOrders", Content: orderContent), (Property: "PurchaseOrderItems", Content: lineContent) })
+				data[entry.Property][0]["Content"].Value<string>().Should().Be(masked ? ProtectedDataEnvelope.RedactionValue : entry.Content);
 			if (masked)
 			{
-				json.Should().NotContain("CANARY").And.NotContain("rgdp:");
-				JObject.Parse(files["withheld.json"])["entries"]["inventory.json"]["valuesWithheld"].Value<int>().Should().Be(5);
+				json.Should().NotContain("CANARY").And.NotContain("rgdp:").And.NotContain("12345.678901");
+				var withheld = JObject.Parse(files["withheld.json"])["entries"]["inventory.json"];
+				withheld["valuesWithheld"].Value<int>().Should().Be(8);
+				withheld["fields"].Values<string>().Should().Contain(new[] { "Vendors[].Content", "PurchaseOrders[].Content", "PurchaseOrderItems[].Content" });
 			}
 			else files.Should().NotContainKey("withheld.json");
 			new InventoryRow[] { location, issuance, asset, transaction, operation }.Should().OnlyContain(x => x.Content == content);
+			foreach (var row in purchasing) JObject.FromObject(row).ToString().Should().Be(originals[row.Id], "export masking must not rewrite stored supplier details or purchase costs");
 		}
 
 		[Test]
@@ -125,11 +180,13 @@ namespace Resgrid.Tests.Services
 				.Select(i => InventoryExportRow<T>(i >= 999 ? UserId : "another-user")).ToArray();
 			var locations = Rows<InventoryLocation>(); var issuances = Rows<InventoryIssuance>(); var assets = Rows<InventoryAsset>();
 			var transactions = Rows<InventoryTransaction>(); var operations = Rows<InventoryOperation>();
+			var vendors = Rows<InventoryVendor>(); var orders = Rows<InventoryPurchaseOrder>(); var lines = Rows<InventoryPurchaseOrderItem>();
 			operations[1001].CreatedBy = "another-user"; operations[1001].WitnessUserId = UserId;
 			InventoryExportPages(store, locations); InventoryExportPages(store, issuances); InventoryExportPages(store, assets);
-			InventoryExportPages(store, transactions); InventoryExportPages(store, operations); UseInventoryExport(store);
+			InventoryExportPages(store, transactions); InventoryExportPages(store, operations);
+			InventoryExportPages(store, vendors); InventoryExportPages(store, orders); InventoryExportPages(store, lines); UseInventoryExport(store);
 			var data = JObject.Parse((await RunExportAsync())["inventory.json"]);
-			foreach (var property in new[] { "Locations", "Issuances", "Assets", "Transactions" })
+			foreach (var property in new[] { "Locations", "Issuances", "Assets", "Transactions", "Vendors", "PurchaseOrders", "PurchaseOrderItems" })
 			{
 				data[property].Should().HaveCount(3); data[property].Select(x => x["Id"].Value<string>()).Should().OnlyHaveUniqueItems();
 			}
@@ -140,6 +197,7 @@ namespace Resgrid.Tests.Services
 				foreach (var skip in new[] { 0, 500, 1000 }) Mock.Get(store).Verify(s => s.ListAsync<T>(DeptId, skip), Times.Once);
 			}
 			VerifyPages<InventoryLocation>(); VerifyPages<InventoryIssuance>(); VerifyPages<InventoryAsset>(); VerifyPages<InventoryTransaction>(); VerifyPages<InventoryOperation>();
+			VerifyPages<InventoryVendor>(); VerifyPages<InventoryPurchaseOrder>(); VerifyPages<InventoryPurchaseOrderItem>();
 		}
 
 		[Test]

@@ -49,7 +49,9 @@ namespace Resgrid.Tests.Services
 			{
 				CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(culture);
 				var expected = new DateTime(2026, 9, 3, 12, 34, 56, DateTimeKind.Utc);
-				foreach (var value in new JToken[] { new JValue(expected), new JValue(new DateTimeOffset(expected).ToOffset(TimeSpan.FromHours(2))), new JValue("2026-09-03T14:34:56+02:00") })
+				foreach (var value in new JToken[] { new JValue(expected), new JValue(expected.ToLocalTime()), new JValue(DateTime.SpecifyKind(expected, DateTimeKind.Unspecified)),
+					JObject.Parse("{\"DueOn\":\"2026-09-03T12:34:56\"}")["DueOn"], new JValue("2026-09-03T12:34:56"),
+					new JValue(new DateTimeOffset(expected).ToOffset(TimeSpan.FromHours(2))), new JValue("2026-09-03T14:34:56+02:00") })
 				{
 					var result = JObject.Parse(WorkOrderWorkflowPayload.Routing(new JObject { ["DueOn"] = value }));
 					((DateTimeOffset)result["DueOn"]).UtcDateTime.Should().Be(expected);

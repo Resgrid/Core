@@ -925,7 +925,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
 			try { await _unitsService.DeleteUnitAsync(unitId, cancellationToken); }
 			catch (Resgrid.Model.Inventories.InventoryException ex) when (ex.Code == "HolderHistoryRetained")
-			{ return Conflict(new { code = ex.Code, message = "This unit is referenced by inventory history and must be retained." }); }
+			{
+				TempData["InventoryHolderRetained"] = true;
+				return RedirectToAction("Index");
+			}
 			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 			return RedirectToAction("Index");

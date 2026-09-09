@@ -15,7 +15,7 @@ using Resgrid.Model.Services;
 
 namespace Resgrid.Services
 {
-	public sealed partial class InventoryModernizationService : IInventoryCatalogService, IInventoryStockService, IInventoryTransferService, IInventoryIssuanceService, IInventoryMigrationService, IChecklistAssetSource, IChecklistHistoricalAssetSource
+	public sealed partial class InventoryModernizationService : IInventoryCatalogService, IInventoryStockService, IInventoryTransferService, IInventoryIssuanceService, IInventoryMigrationService, IInventoryPurchasingService, IInventoryOperationsService, IInventoryAlertService, IChecklistAssetSource, IChecklistHistoricalAssetSource
 	{
 		private readonly IInventoryStore _store;
 		private readonly IInventoryAuthorizationService _auth;
@@ -31,11 +31,15 @@ namespace Resgrid.Services
 		private readonly IInventoryTypesRepository _legacyTypes;
 		private readonly IWorkOrderRepository _workOrders;
 		private readonly Lazy<IWorkOrderAuthorizationService> _workOrderAuthorization;
+		private readonly Lazy<IRecordsAuthorizationService> _recordsAuthorization;
+		private readonly Lazy<IRmsInventoryUsageAdapter> _recordUsage;
+		private readonly IContactsService _contacts;
 		public InventoryModernizationService(IInventoryStore store, IInventoryAuthorizationService auth, IUnitOfWork uow, IProtectedReadService read,
 			IProtectedWriteService write, IDomainEventOutboxService outbox, IAuditLogsRepository audit, IUnitsService units, IDepartmentGroupsService groups, TimeProvider clock = null,
 			IInventoryRepository legacyInventory = null, IInventoryTypesRepository legacyTypes = null,
-			IWorkOrderRepository workOrders = null, Lazy<IWorkOrderAuthorizationService> workOrderAuthorization = null)
-		{ _store = store; _auth = auth; _uow = uow; _read = read; _write = write; _outbox = outbox; _audit = audit; _units = units; _groups = groups; _clock = clock ?? TimeProvider.System; _legacyInventory = legacyInventory; _legacyTypes = legacyTypes; _workOrders = workOrders; _workOrderAuthorization = workOrderAuthorization; }
+			IWorkOrderRepository workOrders = null, Lazy<IWorkOrderAuthorizationService> workOrderAuthorization = null,
+			Lazy<IRecordsAuthorizationService> recordsAuthorization = null, Lazy<IRmsInventoryUsageAdapter> recordUsage = null, IContactsService contacts = null)
+		{ _store = store; _auth = auth; _uow = uow; _read = read; _write = write; _outbox = outbox; _audit = audit; _units = units; _groups = groups; _clock = clock ?? TimeProvider.System; _legacyInventory = legacyInventory; _legacyTypes = legacyTypes; _workOrders = workOrders; _workOrderAuthorization = workOrderAuthorization; _recordsAuthorization = recordsAuthorization; _recordUsage = recordUsage; _contacts = contacts; }
 		public Task<bool> IsMigratedAsync(int departmentId) => _store.HasLegacyMigrationAsync(departmentId);
 		private DateTime Now => _clock.GetUtcNow().UtcDateTime;
 		private static void Id(string id) { if (!Guid.TryParseExact(id, "D", out var value) || value == Guid.Empty) throw new InventoryException(400, "InvalidIdentifier"); }
@@ -127,6 +131,24 @@ namespace Resgrid.Services
 		}
 		private async Task AuthorizeRowAsync(InventoryActor actor, InventoryRow row)
 		{
+			if (row is InventoryCount count) await RequireCountAccessAsync(actor, count);
+			if (row is InventoryCountItem countLine) await RequireCountAccessAsync(actor, await _store.GetAsync<InventoryCount>(actor.DepartmentId, countLine.CountId));
+			if (row is InventoryAlert alert) await RequireAlertAccessAsync(actor, alert);
+			if (row is InventoryAlertDelivery) throw new InventoryException(403, "Unavailable");
+			if (row is InventoryVendor or InventoryPurchaseOrder or InventoryPurchaseOrderItem)
+			{
+				await RequirePurchasingAccessAsync(actor, false);
+				if (row is InventoryPurchaseOrderItem purchaseItem && await _store.GetAsync<InventoryPurchaseOrder>(actor.DepartmentId, purchaseItem.PurchaseOrderId) == null)
+					throw new InventoryException(404, "Unavailable");
+			}
+			// Record usage is read through the source adapter, which checks Records visibility as well as Inventory access.
+			if (row is RecordInventoryUsage usage)
+			{
+				if (_recordsAuthorization == null || usage.SourceType != (int)InventoryUsageSourceType.RmsRecord
+					|| !await _recordsAuthorization.Value.CanUserViewRecordAsync(actor.UserId, usage.SourceId, actor.DepartmentId)
+					|| !await _recordsAuthorization.Value.HasPermissionAsync(actor.UserId, actor.DepartmentId, PermissionTypes.ViewRestrictedRecords)) throw new InventoryException(403, "RecordSourceAuthorizationRequired");
+				await LocationAsync(actor, usage.SourceLocationId, historical: true);
+			}
 			if (row is InventoryTransferItem detail)
 			{
 				var transfer = await _store.GetAsync<InventoryTransfer>(actor.DepartmentId, detail.TransferId);

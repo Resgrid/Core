@@ -53,11 +53,11 @@ namespace Resgrid.Services
 			ICertificationService certificationService,
 			ITrainingService trainingService,
 			IShiftsService shiftsService,
-			IEmailService emailService, IChecklistRepository checklists, Lazy<IReadinessHistoryProtectionService> checklistProtection, IChecklistReminderRepository checklistReminders, IWorkOrderRepository workOrders, IInventoryStore inventoryStore = null)
+			IEmailService emailService, IChecklistRepository checklists, Lazy<IReadinessHistoryProtectionService> checklistProtection, IChecklistReminderRepository checklistReminders, IWorkOrderRepository workOrders, IInventoryStore inventoryStore)
 		{
 			_repository = repository;
 			_workOrders = workOrders ?? throw new ArgumentNullException(nameof(workOrders));
-			_inventoryStore = inventoryStore;
+			_inventoryStore = inventoryStore ?? throw new ArgumentNullException(nameof(inventoryStore));
 			_checklistReminders = checklistReminders ?? throw new ArgumentNullException(nameof(checklistReminders));
 			_userProfileService = userProfileService;
 			_memberSensitiveDataService = memberSensitiveDataService;

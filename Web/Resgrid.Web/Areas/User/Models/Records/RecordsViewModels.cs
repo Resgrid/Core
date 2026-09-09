@@ -153,6 +153,10 @@ namespace Resgrid.Web.Areas.User.Models.Records
 
 	public class RecordInventoryView : RecordsBaseView
 	{
+		public Resgrid.Model.Inventories.InventoryUsageType UsageType { get; set; }
+		public string UsageId { get; set; }
+		public string ExistingTransactionId { get; set; }
+		public string CorrectionReason { get; set; }
 		public bool ModernInventory { get; set; }
 		public string ItemId { get; set; }
 		public string LocationId { get; set; }

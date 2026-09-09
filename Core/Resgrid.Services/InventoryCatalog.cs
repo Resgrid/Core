@@ -22,9 +22,16 @@ namespace Resgrid.Services
 			if (input.CategoryId != null && (await GetAsync<InventoryCategory>(actor, input.CategoryId)).IsDeleted) throw new InventoryException(404, "Unavailable");
 			if (input.IsControlledSubstance) await _auth.RequireAsync(actor, true, PermissionTypes.ManageControlledSubstances);
 			var row = input.Id == null ? New<InventoryItem>(actor) : await GetAsync<InventoryItem>(actor, input.Id);
+			Cost(input.Details.DefaultUnitCost);
+			var existingDetails = Decode<InventoryItemContent>(row);
+			input.Details.CurrencyCode = Currency(input.Details.CurrencyCode) ?? existingDetails.CurrencyCode;
+			if (existingDetails.CurrencyCode != null && existingDetails.CurrencyCode != input.Details.CurrencyCode && ((await _store.RelatedAsync<InventoryTransaction>(actor.DepartmentId, "ItemId", row.Id)).Count != 0 || await HasOpenPurchaseLineAsync(actor, row.Id)))
+				throw new InventoryException(409, "ItemCurrencyLocked");
+			input.Details.AverageUnitCost = existingDetails.AverageUnitCost;
+			if (input.Details.PreferredVendorId != null && input.Details.PreferredVendorId != existingDetails.PreferredVendorId && (await GetAsync<InventoryVendor>(actor, input.Details.PreferredVendorId)).IsDeleted) throw new InventoryException(409, "VendorUnavailable");
 			if (input.Id != null && row.Revision != input.Revision) throw new InventoryException(409, "RevisionConflict");
 			if (input.Id != null && (row.TrackingMode != (int)input.TrackingMode || row.IsKit != input.IsKit || row.RequiresLotTracking != input.RequiresLotTracking || row.RequiresExpiration != input.RequiresExpiration || row.IsControlledSubstance != input.IsControlledSubstance)
-				&& (await _store.RelatedAsync<InventoryTransaction>(actor.DepartmentId, "ItemId", row.Id)).Count > 0) throw new InventoryException(409, "ItemTrackingLocked");
+				&& ((await _store.RelatedAsync<InventoryTransaction>(actor.DepartmentId, "ItemId", row.Id)).Count > 0 || await HasOpenPurchaseLineAsync(actor, row.Id))) throw new InventoryException(409, "ItemTrackingLocked");
 			foreach (var other in (await AllAsync<InventoryItem>(actor.DepartmentId)).Where(x => !x.IsDeleted && x.Id != row.Id))
 			{
 				var details = Decode<InventoryItemContent>(await RevealAsync(actor, other));
@@ -34,7 +41,7 @@ namespace Resgrid.Services
 			row.CategoryId = input.CategoryId; row.TrackingMode = (int)input.TrackingMode; row.IsKit = input.IsKit; row.RequiresLotTracking = input.RequiresLotTracking;
 			row.RequiresExpiration = input.RequiresExpiration; row.IsControlledSubstance = input.IsControlledSubstance; row.IsActive = input.IsActive;
 			input.Details.Name = input.Details.Name.Trim(); row.Content = JsonConvert.SerializeObject(input.Details);
-			await SaveAsync(actor, row, input.Id == null); await AuditAsync(actor, row, "InventoryItemSaved"); return await RevealAsync(actor, row);
+			await SaveAsync(actor, row, input.Id == null); await AuditAsync(actor, row, "InventoryItemSaved"); await RefreshLowStockAsync(actor, row.Id, events); return await RevealAsync(actor, row);
 		});
 		public Task<InventoryCategory> SaveCategoryAsync(InventoryActor actor, string id, int revision, string name, string parentId) => TransactionAsync(actor, async events =>
 		{
@@ -84,6 +91,8 @@ namespace Resgrid.Services
 			await _auth.RequireAsync(actor, true); if (lot == null || details == null) throw new InventoryException(400, "LotRequired"); Text(details.LotNumber);
 			var item = await GetAsync<InventoryItem>(actor, lot.ItemId);
 			if (item.IsDeleted || !item.IsActive || item.RequiresExpiration && !lot.ExpiresOn.HasValue || details.UnitCost < 0) throw new InventoryException(400, "InvalidLot");
+			Cost(details.UnitCost);
+			if (details.VendorId != null && (await GetAsync<InventoryVendor>(actor, details.VendorId)).IsDeleted) throw new InventoryException(409, "VendorUnavailable");
 			foreach (var other in await _store.RelatedAsync<InventoryLot>(actor.DepartmentId, "ItemId", item.Id))
 				if (Decode<InventoryLotContent>(await RevealAsync(actor, other)).LotNumber == details.LotNumber) throw new InventoryException(409, "DuplicateLot");
 			var row = New<InventoryLot>(actor); row.ItemId = item.Id; row.ExpiresOn = lot.ExpiresOn?.ToUniversalTime(); row.ReceivedOn = Now; row.Content = JsonConvert.SerializeObject(details);
@@ -92,13 +101,18 @@ namespace Resgrid.Services
 		public Task ArchiveAsync<T>(InventoryActor actor, string id, int revision) where T : InventoryMutableRow => TransactionAsync(actor, async events =>
 		{
 			await _auth.RequireAsync(actor, true); var row = await GetAsync<T>(actor, id); if (row.Revision != revision) throw new InventoryException(409, "RevisionConflict");
-			if (row is not (InventoryItem or InventoryCategory or InventoryLocation or InventoryKit)) throw new InventoryException(400, "ArchiveNotSupported");
+			if (row is not (InventoryItem or InventoryCategory or InventoryLocation or InventoryKit or InventoryVendor)) throw new InventoryException(400, "ArchiveNotSupported");
+			if (row is InventoryVendor && (await _store.RelatedAsync<InventoryPurchaseOrder>(actor.DepartmentId, "VendorId", id)).Any(p => !p.IsDeleted && p.Status is 0 or 1 or 2)) throw new InventoryException(409, "VendorHasOpenOrders");
 			if (row is InventoryItem item && ((await _store.RelatedAsync<InventoryStock>(actor.DepartmentId, "ItemId", id)).Any(x => x.Quantity != 0) || (await _store.RelatedAsync<InventoryAsset>(actor.DepartmentId, "ItemId", id)).Any(x => !x.IsDeleted && x.Status is not (4 or 5 or 6)))) throw new InventoryException(409, "StockRemains");
 			if (row is InventoryLocation location && (location.IsDefault || (await _store.RelatedAsync<InventoryStock>(actor.DepartmentId, "LocationId", id)).Any(x => x.Quantity != 0) || (await _store.RelatedAsync<InventoryAsset>(actor.DepartmentId, "CurrentLocationId", id)).Any() || (await _store.RelatedAsync<InventoryLocation>(actor.DepartmentId, "ParentLocationId", id)).Any(x => !x.IsDeleted))) throw new InventoryException(409, "LocationInUse");
 			if (row is InventoryCategory && ((await _store.RelatedAsync<InventoryItem>(actor.DepartmentId, "CategoryId", id)).Any(x => !x.IsDeleted) || (await _store.RelatedAsync<InventoryCategory>(actor.DepartmentId, "ParentCategoryId", id)).Any(x => !x.IsDeleted))) throw new InventoryException(409, "CategoryInUse");
 			row.IsDeleted = true; await SaveAsync(actor, row, false); await AuditAsync(actor, row, "InventoryArchived"); return true;
 		});
-		public Task RebuildStocksAsync(InventoryActor actor) => TransactionAsync(actor, async events => { await _auth.RequireAsync(actor, true); await _store.RebuildStocksAsync(actor.DepartmentId); return true; });
+		public Task RebuildStocksAsync(InventoryActor actor) => TransactionAsync(actor, async events => {
+			await _auth.RequireAsync(actor, true); await _store.RebuildStocksAsync(actor.DepartmentId);
+			foreach (var item in await AllAsync<InventoryItem>(actor.DepartmentId)) await RefreshLowStockAsync(actor, item.Id, events);
+			return true;
+		});
 		public async Task<System.Collections.Generic.List<InventoryTransaction>> GetByReferenceAsync(InventoryActor actor, InventoryReferenceType type, string id)
 		{
 			await _auth.RequireAsync(actor); var result = new System.Collections.Generic.List<InventoryTransaction>();

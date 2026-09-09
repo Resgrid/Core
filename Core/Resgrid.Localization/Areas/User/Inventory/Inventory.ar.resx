@@ -348,4 +348,179 @@
   <data name="Yes" xml:space="preserve">
     <value>نعم</value>
   </data>
+  <data name="RecordUsageTitle" xml:space="preserve"><value>استخدام المخزون</value></data>
+  <data name="RecordUsageHelp" xml:space="preserve"><value>يغيّر حفظ الاستخدام المخزون فورًا. تبقى هذه التغييرات إذا تم التخلي عن مسودة أو تعديل للتقرير. اعكس الاستخدام غير الصحيح صراحةً، ثم سجّل البديل. افتح تعديلًا قبل تغيير الاستخدام في تقرير مكتمل.</value></data>
+  <data name="RecordUsageWitnessHelp" xml:space="preserve"><value>يتطلب استهلاك الأصناف الخاضعة للرقابة وعكسه شاهدًا مستقلاً في المخزون. أكمل هذا الإجراء أولاً، ثم اربط معرّف المعاملة الناتجة هنا.</value></data>
+  <data name="RecordUsageRecorded" xml:space="preserve"><value>الاستخدام المسجّل</value></data>
+  <data name="RecordUsageType" xml:space="preserve"><value>نوع الاستخدام</value></data>
+  <data name="RecordUsageType0" xml:space="preserve"><value>مستخدم</value></data>
+  <data name="RecordUsageType1" xml:space="preserve"><value>مستهلك على مريض</value></data>
+  <data name="RecordUsageType2" xml:space="preserve"><value>متروك في موقع الحادث</value></data>
+  <data name="RecordUsageType3" xml:space="preserve"><value>تالف</value></data>
+  <data name="RecordUsageLedgerEntry" xml:space="preserve"><value>قيد السجل</value></data>
+  <data name="RecordUsageRecordedUtc" xml:space="preserve"><value>وقت التسجيل (UTC)</value></data>
+  <data name="RecordUsageReverses" xml:space="preserve"><value>يعكس الاستخدام</value></data>
+  <data name="RecordUsageReversed" xml:space="preserve"><value>تم العكس</value></data>
+  <data name="RecordUsageReverse" xml:space="preserve"><value>عكس الاستخدام</value></data>
+  <data name="RecordUsageReverseHelp" xml:space="preserve"><value>يسجّل هذا الإجراء عكسًا كاملاً ويحفظ الاستخدام الأصلي في السجل التاريخي. لتصحيح كمية أو صنف، اعكس الاستخدام وسجّل البديل. إذا كان شاهد قد أكد العكس بالفعل في المخزون، فأدخل معرّف المعاملة لربطها دون تغيير المخزون مرة أخرى.</value></data>
+  <data name="RecordUsageCorrectionReason" xml:space="preserve"><value>سبب التصحيح</value></data>
+  <data name="RecordUsageExistingReversal" xml:space="preserve"><value>معرّف معاملة عكس موجودة أكدها شاهد (اختياري)</value></data>
+  <data name="RecordUsageLedgerHelp" xml:space="preserve"><value>تسجّل الكميات الموجبة الاستخدام، وتعكسه الكميات السالبة. افتح قيد السجل لعرض تفاصيل الحركة وفق صلاحيات وصولك الحالية إلى المخزون.</value></data>
+  <data name="RecordUsageExistingConsumption" xml:space="preserve"><value>معرّف معاملة استهلاك موجودة (اختياري)</value></data>
+  <data name="RecordUsageAttachHelp" xml:space="preserve"><value>أدخل معاملة استهلاك مكتملة في المخزون لربط صنفها وكميتها وموقعها وملاحظتها. تُتجاهل حقول الاستهلاك الجديد أدناه، ولا يُستهلك المخزون مرة أخرى. حدد نوع الاستخدام أعلاه.</value></data>
+  <data name="RecordUsageNewConsumption" xml:space="preserve"><value>استهلاك جديد</value></data>
+  <data name="RecordUsageDefaultLocation" xml:space="preserve"><value>استخدام وحدة التقرير أو محطته</value></data>
+  <data name="RecordUsageLocationHelp" xml:space="preserve"><value>اتركه فارغًا لاستخدام الوحدة المستجيبة في التقرير، مع استخدام المحطة كخيار بديل. حدد المصدر صراحةً إذا كان التقرير يتضمن عدة مواقع محتملة.</value></data>
+  <data name="RecordUsageSave" xml:space="preserve"><value>حفظ الاستخدام</value></data>
+  <data name="RecordUsageReturnToReport" xml:space="preserve"><value>العودة إلى التقرير</value></data>
+  <data name="RecordUsageRefreshEvidence" xml:space="preserve"><value>تحديث الأدلة من الاستخدام المسجّل</value></data>
+  <data name="RecordUsageSaved" xml:space="preserve"><value>تم حفظ الاستخدام وتوثيق الأدلة الداعمة.</value></data>
+  <data name="RecordUsageEvidencePending" xml:space="preserve"><value>تم حفظ عملية المخزون. تعذّر توثيق الأدلة؛ استخدم «تحديث الأدلة» بعد حل مشكلات الوصول أو تغييرات المسودة. لا ترسل عملية المخزون مرة أخرى.</value></data>
+  <data name="RecordUsageDraftChanged" xml:space="preserve"><value>تغيّرت المسودة. تحقق من الاستخدام المسجّل قبل إرسال عملية مخزون أخرى.</value></data>
+  <data name="RecordUsageWitnessRequired" xml:space="preserve"><value>أكمل إجراء الشاهد المستقل في المخزون، ثم اربط معرّف المعاملة الناتجة هنا. لم تسجّل هذه العملية أي حركة مخزون.</value></data>
+  <data name="RecordUsageEvidenceSaved" xml:space="preserve"><value>تم توثيق الأدلة الداعمة.</value></data>
+  <data name="RecordUsageReconciliationRequired" xml:space="preserve"><value>لم تُربط معاملة عكس في السجل بهذا التقرير. اربطها كتصحيح قبل اعتماد التقرير نهائيًا.</value></data>
+  <data name="M4Purchasing" xml:space="preserve"><value>المشتريات</value></data>
+  <data name="M4Vendors" xml:space="preserve"><value>الموردون</value></data>
+  <data name="M4PurchaseOrders" xml:space="preserve"><value>أوامر الشراء</value></data>
+  <data name="M4Valuation" xml:space="preserve"><value>تقييم المخزون</value></data>
+  <data name="M4VendorHelp" xml:space="preserve"><value>يستخدم الموردون سجلات الشركات في «جهات الاتصال». أنشئ بيانات الشركة أو حدّثها في «جهات الاتصال»، ثم اربط الشركة هنا.</value></data>
+  <data name="M4AccountNumber" xml:space="preserve"><value>رقم الحساب لدى المورد</value></data>
+  <data name="M4CompanyContact" xml:space="preserve"><value>الشركة في جهات الاتصال</value></data>
+  <data name="M4NewVendor" xml:space="preserve"><value>إضافة مورد</value></data>
+  <data name="M4PurchaseOrderNumber" xml:space="preserve"><value>رقم أمر الشراء</value></data>
+  <data name="M4Supplier" xml:space="preserve"><value>المورد</value></data>
+  <data name="M4Currency" xml:space="preserve"><value>العملة</value></data>
+  <data name="M4ViewPurchaseOrder" xml:space="preserve"><value>عرض أمر الشراء</value></data>
+  <data name="M4Status0" xml:space="preserve"><value>مسودة</value></data>
+  <data name="M4Status1" xml:space="preserve"><value>تم الطلب</value></data>
+  <data name="M4Status2" xml:space="preserve"><value>تم الاستلام جزئيًا</value></data>
+  <data name="M4Status3" xml:space="preserve"><value>تم الاستلام</value></data>
+  <data name="M4Status4" xml:space="preserve"><value>ملغى</value></data>
+  <data name="M4QuantityOrdered" xml:space="preserve"><value>الكمية المطلوبة</value></data>
+  <data name="M4QuantityReceived" xml:space="preserve"><value>الكمية المستلمة</value></data>
+  <data name="M4Remaining" xml:space="preserve"><value>الكمية المتبقية</value></data>
+  <data name="M4OrderHelp" xml:space="preserve"><value>يؤدي وضع علامة «تم الطلب» على الأمر إلى قفل بنوده. يمنع إلغاء الأمر أي استلام إضافي ويحافظ على الكميات التي تم استلامها بالفعل.</value></data>
+  <data name="M4Order" xml:space="preserve"><value>وضع علامة «تم الطلب»</value></data>
+  <data name="M4CancelOrder" xml:space="preserve"><value>إلغاء الأمر</value></data>
+  <data name="M4Receive" xml:space="preserve"><value>استلام الأصناف</value></data>
+  <data name="M4ReceiptHelp" xml:space="preserve"><value>استلم الطلب كاملًا أو جزءًا منه. أزل البنود غير المشمولة في هذه الشحنة. إذا كان وجود شاهد مستقل مطلوبًا، فلن تتغير أرصدة المخزون والكميات المستلمة إلا بعد موافقته في «المخزون».</value></data>
+  <data name="M4SerializedReceiptHelp" xml:space="preserve"><value>استخدم صفًا مستقلًا لكل أصل له رقم تسلسلي، بكمية 1 ورقمه التسلسلي الخاص. أضف صفوفًا لاستلام أصول إضافية أو توزيع الكميات على مواقع أو دفعات مختلفة.</value></data>
+  <data name="M4ReceiveQuantity" xml:space="preserve"><value>الكمية المراد استلامها</value></data>
+  <data name="M4RemoveLine" xml:space="preserve"><value>إزالة البند</value></data>
+  <data name="M4Receipts" xml:space="preserve"><value>عمليات الاستلام</value></data>
+  <data name="M4NewPurchaseOrder" xml:space="preserve"><value>أمر شراء جديد</value></data>
+  <data name="M4ValuationScope" xml:space="preserve"><value>يشمل التقييم المخزون والمواقع التي يحق لك عرضها فقط. تُعرض الإجماليات لكل عملة على حدة. تُحسب الصفوف ذات التكلفة غير المعروفة بشكل منفصل وتُستبعد من إجماليات القيمة المعروفة.</value></data>
+  <data name="M4AsOfUtc" xml:space="preserve"><value>اعتبارًا من (UTC)</value></data>
+  <data name="M4NegativeStock" xml:space="preserve"><value>بعض أرصدة المخزون الظاهرة سالبة. راجعها قبل الاعتماد على هذا التقييم.</value></data>
+  <data name="M4KnownValue" xml:space="preserve"><value>القيمة المعروفة</value></data>
+  <data name="M4UncostedRows" xml:space="preserve"><value>صفوف بلا تكلفة</value></data>
+  <data name="M4UnspecifiedCurrency" xml:space="preserve"><value>العملة غير محددة</value></data>
+  <data name="M4UnknownCost" xml:space="preserve"><value>التكلفة غير معروفة</value></data>
+  <data name="M4AverageUnitCost" xml:space="preserve"><value>متوسط تكلفة الوحدة</value></data>
+  <data name="M4PreferredVendor" xml:space="preserve"><value>المورد المفضل</value></data>
+  <data name="M4CurrencyHelp" xml:space="preserve"><value>استخدم عملة واحدة لكل صنف. يظل المخزون الحالي الذي لم تُحدد له عملة منفصلًا في التقييم؛ فتعيين عملة لا يحوّل التكاليف.</value></data>
+  <data name="InventoryPurchaseOrderReceived" xml:space="preserve"><value>تم استلام أمر شراء للمخزون</value></data>
+  <data name="M5Operations" xml:space="preserve"><value>الجرد والتنبيهات والتقارير</value></data>
+  <data name="M5Counts" xml:space="preserve"><value>جرد المخزون</value></data>
+  <data name="M5Alerts" xml:space="preserve"><value>تنبيهات المخزون</value></data>
+  <data name="M5Reports" xml:space="preserve"><value>تقارير المخزون</value></data>
+  <data name="M5CountHelp" xml:space="preserve"><value>ابدأ بلقطة تضم ما يصل إلى 100 بند مخزون. سجّل كل كمية، ثم احفظ وأكمل الجرد. إذا تغيرت بيانات المخزون أو دليل الأصناف، فألغِ الجرد وابدأ جردًا جديدًا. سجّل المعدات ذات الأرقام التسلسلية التي تُكتشف لأول مرة من خلال «الاستلام».</value></data>
+  <data name="M5AllLocations" xml:space="preserve"><value>جميع المواقع</value></data>
+  <data name="M5StartCount" xml:space="preserve"><value>بدء الجرد</value></data>
+  <data name="M5CompleteCount" xml:space="preserve"><value>إكمال الجرد</value></data>
+  <data name="M5CancelCount" xml:space="preserve"><value>إلغاء الجرد</value></data>
+  <data name="M5SnapshotOn" xml:space="preserve"><value>وقت اللقطة (UTC)</value></data>
+  <data name="M5Expected" xml:space="preserve"><value>الكمية المتوقعة</value></data>
+  <data name="M5Counted" xml:space="preserve"><value>الكمية المجرودة</value></data>
+  <data name="M5Variance" xml:space="preserve"><value>الفرق</value></data>
+  <data name="M5VarianceLines" xml:space="preserve"><value>البنود التي تحتوي على فروق</value></data>
+  <data name="M5CountStatus0" xml:space="preserve"><value>مسودة</value></data>
+  <data name="M5CountStatus1" xml:space="preserve"><value>بانتظار الشاهد</value></data>
+  <data name="M5CountStatus2" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="M5CountStatus3" xml:space="preserve"><value>ملغى</value></data>
+  <data name="M5WitnessHelp" xml:space="preserve"><value>يجب أن يوافق شاهد مستقل على العملية المعلقة من سجل المخزون. ويجب أن تظل اللقطة مطابقة للحالة الحالية.</value></data>
+  <data name="M5AlertHelp" xml:space="preserve"><value>تُظهر التنبيهات انخفاض المخزون، والأصناف التي تنتهي صلاحيتها خلال 30 يومًا، والمخزون منتهي الصلاحية، والإرجاعات المتأخرة. حدّث التنبيهات مرة واحدة بعد إطلاق الميزة لتهيئة تنبيهات انخفاض المخزون، وكذلك بعد استيراد المخزون القديم. تُحدّثها التعديلات اللاحقة على المخزون والأصناف تلقائيًا.</value></data>
+  <data name="M5RefreshAlerts" xml:space="preserve"><value>تحديث التنبيهات</value></data>
+  <data name="M5AlertType0" xml:space="preserve"><value>مخزون منخفض</value></data>
+  <data name="M5AlertType1" xml:space="preserve"><value>تنتهي الصلاحية قريبًا</value></data>
+  <data name="M5AlertType2" xml:space="preserve"><value>منتهي الصلاحية</value></data>
+  <data name="M5AlertType3" xml:space="preserve"><value>إرجاع متأخر</value></data>
+  <data name="M5Open" xml:space="preserve"><value>مفتوح</value></data>
+  <data name="M5Resolved" xml:space="preserve"><value>تمت المعالجة</value></data>
+  <data name="M5DueOn" xml:space="preserve"><value>موعد الاستحقاق (UTC)</value></data>
+  <data name="M5ReportHelp" xml:space="preserve"><value>اختر تقريرًا وأي عوامل تصفية اختيارية. تستخدم التواريخ توقيت UTC ولا تشمل تاريخ النهاية. تعتمد تقارير اللقطة على المخزون الحالي. نزّل ملف PDF لعرضه أو طباعته.</value></data>
+  <data name="M5FromUtc" xml:space="preserve"><value>من تاريخ (UTC، شامل)</value></data>
+  <data name="M5UntilUtc" xml:space="preserve"><value>إلى تاريخ (UTC، غير شامل)</value></data>
+  <data name="M5DownloadPdf" xml:space="preserve"><value>تنزيل ملف PDF قابل للطباعة</value></data>
+  <data name="M5ScheduleReports" xml:space="preserve"><value>جدولة إرسال التقارير</value></data>
+  <data name="M5AlertNotificationTitle" xml:space="preserve"><value>تنبيهات المخزون</value></data>
+  <data name="M5AlertNotificationMessage" xml:space="preserve"><value>المخزون يحتاج إلى مراجعة. سجّل الدخول للاطلاع على التنبيهات الحالية.</value></data>
+  <data name="M5ReportOnHand" xml:space="preserve"><value>المخزون المتوفر</value></data>
+  <data name="M5ReportUsage" xml:space="preserve"><value>استخدام المخزون</value></data>
+  <data name="M5ReportExpiration" xml:space="preserve"><value>انتهاء صلاحية المخزون</value></data>
+  <data name="M5ReportLowStock" xml:space="preserve"><value>انخفاض المخزون</value></data>
+  <data name="M5ReportTransferHistory" xml:space="preserve"><value>سجل نقل المخزون</value></data>
+  <data name="M5ReportIssuance" xml:space="preserve"><value>سجل صرف المخزون</value></data>
+  <data name="M5ReportValuation" xml:space="preserve"><value>تقييم المخزون</value></data>
+  <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>سجل المواد الخاضعة للرقابة</value></data>
+  <data name="M5DaysUntilExpiry" xml:space="preserve"><value>الأيام المتبقية حتى انتهاء الصلاحية</value></data>
+  <data name="M5Shortfall" xml:space="preserve"><value>الكمية الناقصة عن نقطة إعادة الطلب</value></data>
+  <data name="M5ReorderQuantity" xml:space="preserve"><value>كمية إعادة الطلب المقترحة</value></data>
+  <data name="M5IssuanceId" xml:space="preserve"><value>معرّف عملية الصرف</value></data>
+  <data name="M5PersonId" xml:space="preserve"><value>معرّف الشخص المستلم</value></data>
+  <data name="M5UnitId" xml:space="preserve"><value>معرّف الوحدة المستلمة</value></data>
+  <data name="M5IssuedOn" xml:space="preserve"><value>وقت الصرف (UTC)</value></data>
+  <data name="M5ReturnedQuantity" xml:space="preserve"><value>الكمية المُعادة</value></data>
+  <data name="M5OutstandingQuantity" xml:space="preserve"><value>الكمية التي لم تُعد بعد</value></data>
+  <data name="M5ReturnedOn" xml:space="preserve"><value>وقت الإرجاع (UTC)</value></data>
+  <data name="M5Performer" xml:space="preserve"><value>منفّذ العملية (معرّف المستخدم)</value></data>
+  <data name="M5ReversesTransaction" xml:space="preserve"><value>يعكس المعاملة</value></data>
+  <data name="M5UsageSource" xml:space="preserve"><value>مصدر الاستخدام</value></data>
+  <data name="M5SourceId" xml:space="preserve"><value>معرّف السجل</value></data>
+  <data name="M5CallId" xml:space="preserve"><value>معرّف البلاغ</value></data>
+  <data name="M5RevisionId" xml:space="preserve"><value>معرّف النسخة المعدّلة</value></data>
+  <data name="M5DeaSchedule" xml:space="preserve"><value>تصنيف إدارة مكافحة المخدرات الأمريكية (DEA)</value></data>
+  <data name="M5FromBefore" xml:space="preserve"><value>رصيد المصدر قبل العملية</value></data>
+  <data name="M5FromAfter" xml:space="preserve"><value>رصيد المصدر بعد العملية</value></data>
+  <data name="M5ToBefore" xml:space="preserve"><value>رصيد الوجهة قبل العملية</value></data>
+  <data name="M5ToAfter" xml:space="preserve"><value>رصيد الوجهة بعد العملية</value></data>
+  <data name="M5Witness" xml:space="preserve"><value>الشاهد (معرّف المستخدم)</value></data>
+  <data name="M5WitnessedOn" xml:space="preserve"><value>وقت تأكيد الشاهد (UTC)</value></data>
+  <data name="M5ScheduledReportProtected" xml:space="preserve"><value>يحتوي المخزون على بيانات محمية. افتح رابط التقرير الذي يتطلب تسجيل الدخول وتحقق من هويتك لعرض النتائج الحالية أو طباعتها. لا يتضمن ملف PDF المجدول هذا أي قيم للمخزون.</value></data>
+  <data name="M5ReportScope" xml:space="preserve"><value>يتضمن هذا التقرير المخزون والمواقع التي يحق لك عرضها حاليًا فقط. تصف الكميات والقيم اللقطة المحددة، وتقتصر النتائج على 5,000 صف.</value></data>
+  <data name="M5ReportRange" xml:space="preserve"><value>النطاق الزمني بتوقيت UTC (يشمل البداية ولا يشمل النهاية)</value></data>
+  <data name="M5ReportMethodUsage" xml:space="preserve"><value>تظهر كل حركة مخزون مرة واحدة. تسجّل الكميات الموجبة الاستخدام الصادر، وتعكسه الكميات السالبة. يتطلب عرض تفاصيل السجل صلاحية الوصول إلى المصدر. تحتفظ الحركات الصادرة المستوردة بهويتها القديمة ولا تنشئ رابطًا بسجل عمليات أو مريض.</value></data>
+  <data name="M5ReportMethodLowStock" xml:space="preserve"><value>تُدرج الأصناف النشطة عندما يكون المخزون الظاهر المتتبع بالكميات أو الأصول ذات الأرقام التسلسلية عند نقطة إعادة الطلب أو دونها، مع استخدام الحد الأدنى للمخزون عند عدم تحديد تلك النقطة. تشمل الأصول ذات الأرقام التسلسلية الأصول قيد الخدمة والمصروفة والتالفة وقيد الإصلاح. تُستبعد المواقع المخفية.</value></data>
+  <data name="M5ReportMethodIssuance" xml:space="preserve"><value>تعرض الصفوف عمليات الصرف التي أُنشئت ضمن النطاق الزمني المحدد وحالة إرجاعها الحالية. لعرض الكميات التي لم تُعد من عمليات صرف أقدم، اختر تاريخ بداية أسبق.</value></data>
+  <data name="M5ReportMethodExpiration" xml:space="preserve"><value>تعرض الصفوف أرصدة المخزون الموجبة الحالية والأصول النشطة ذات الأرقام التسلسلية التي يقع تاريخ انتهاء صلاحيتها ضمن النطاق المحدد. يشمل النطاق الافتراضي المخزون المنتهي الصلاحية بالفعل والمخزون الذي تنتهي صلاحيته خلال الأيام الثلاثين القادمة.</value></data>
+  <data name="M5PerformerSignature" xml:space="preserve"><value>توقيع منفّذ العملية</value></data>
+  <data name="M5WitnessSignature" xml:space="preserve"><value>توقيع الشاهد</value></data>
+  <data name="M5NotRecorded" xml:space="preserve"><value>غير مسجّل</value></data>
+  <data name="M5ReferenceType0" xml:space="preserve"><value>حركة مخزون دون رابط إلى سجل يمكن الوصول إليه</value></data>
+  <data name="M5ReferenceType2" xml:space="preserve"><value>السجلات</value></data>
+  <data name="M5ReferenceType8" xml:space="preserve"><value>حركة مخزون قديمة</value></data>
+  <data name="InvalidCount" xml:space="preserve"><value>أدخل تفاصيل جرد وكميات صحيحة.</value></data>
+  <data name="CountScopeTooLarge" xml:space="preserve"><value>اختر نطاقًا أصغر. يدعم الجرد ما يصل إلى 100 بند مخزون.</value></data>
+  <data name="CountEmpty" xml:space="preserve"><value>لا توجد بنود مخزون نشطة لجردها ضمن هذا النطاق.</value></data>
+  <data name="CountAlreadyExists" xml:space="preserve"><value>هذا الجرد موجود بالفعل. افتحه من قائمة عمليات الجرد.</value></data>
+  <data name="CountStateConflict" xml:space="preserve"><value>تغير الجرد أو لم تُسجّل جميع كمياته. أعد تحميله واحفظ جميع الكميات قبل إكماله.</value></data>
+  <data name="CountSnapshotChanged" xml:space="preserve"><value>تغير المخزون بعد التقاط هذه اللقطة. ألغِ هذا الجرد وابدأ جردًا جديدًا.</value></data>
+  <data name="CountReceiptImmutable" xml:space="preserve"><value>تتبع تسويات الجرد عملية الجرد المكتملة الخاصة بها. ابدأ جردًا جديدًا لتصحيح المخزون.</value></data>
+  <data name="CountCompletionRequired" xml:space="preserve"><value>رحّل فروق الجرد بإكمال جرد المخزون.</value></data>
+  <data name="InvalidReportRange" xml:space="preserve"><value>اختر نطاق تواريخ صحيحًا بتوقيت UTC لا يتجاوز 366 يومًا.</value></data>
+  <data name="InvalidReportFilter" xml:space="preserve"><value>اختر عوامل تصفية صحيحة للتقرير.</value></data>
+  <data name="ReportChanged" xml:space="preserve"><value>تغير التقرير أثناء إنشاء ملف PDF. أعد إنشاءه.</value></data>
+  <data name="ReportGenerationFailed" xml:space="preserve"><value>تعذر إنشاء التقرير. حاول مرة أخرى.</value></data>
+  <data name="InventoryLowStock" xml:space="preserve"><value>انخفاض مخزون المواد</value></data>
+  <data name="InventoryExpiring" xml:space="preserve"><value>اقتراب انتهاء صلاحية المخزون</value></data>
+  <data name="InventoryCountCompleted" xml:space="preserve"><value>اكتمال جرد المخزون</value></data>
+  <data name="InventoryReturnOverdue" xml:space="preserve"><value>تأخر إعادة العهدة</value></data>
+  <data name="HolderHistoryRetained" xml:space="preserve"><value>هذا المورد مرتبط بسجل المخزون ويجب الاحتفاظ به.</value></data>
+  <data name="InventoryAdjusted" xml:space="preserve"><value>تم تعديل المخزون</value></data>
+  <data name="InventoryTransferCompleted" xml:space="preserve"><value>اكتمل نقل المخزون</value></data>
+  <data name="InventoryIssued" xml:space="preserve"><value>تم صرف المخزون</value></data>
+  <data name="InventoryReturned" xml:space="preserve"><value>تم إرجاع المخزون</value></data>
+  <data name="InventoryAssetStatusChanged" xml:space="preserve"><value>تغيرت حالة أصل المخزون</value></data>
+  <data name="ControlledSubstanceRecorded" xml:space="preserve"><value>تم تسجيل مادة خاضعة للرقابة</value></data>
 </root>

@@ -18,7 +18,7 @@ namespace Resgrid.Services.Records
 	/// Inventory usage over RmsExternalReference rows (semantic role InventoryUsage). Writes never touch a legacy
 	/// Log row; reads answer for either source so callers stay source-agnostic (RMS plan RMS-1 package).
 	/// </summary>
-	public class RmsInventoryUsageAdapter : IRmsInventoryUsageAdapter
+	public partial class RmsInventoryUsageAdapter : IRmsInventoryUsageAdapter
 	{
 		public const string SemanticRole = "InventoryUsage";
 		public const string SourceSubsystem = "Inventory";
@@ -37,15 +37,19 @@ namespace Resgrid.Services.Records
 		private readonly IInventoryStockService _modernStock;
 		private readonly IInventoryCatalogService _modernCatalog;
 		private readonly IDomainEventOutboxService _outbox;
+		private readonly IRmsRecordUnitResponsesRepository _recordUnits;
+		private readonly IRmsUnitResponsesRepository _incidentUnits;
 
 		public RmsInventoryUsageAdapter(IRmsExternalReferencesRepository references, IRmsOperationalRecordsRepository records, IRmsIncidentReportsRepository incidents,
 			IInventoryService inventory, IRecordsAuthorizationService authorization, IDepartmentGroupsService groups, IUnitsService units, IUnitOfWork unit, IRmsAccessAuditsRepository audits,
-			IInventoryStore modernStore = null, IInventoryStockService modernStock = null, IInventoryCatalogService modernCatalog = null, IDomainEventOutboxService outbox = null)
+			IInventoryStore modernStore = null, IInventoryStockService modernStock = null, IInventoryCatalogService modernCatalog = null, IDomainEventOutboxService outbox = null,
+			IRmsRecordUnitResponsesRepository recordUnits = null, IRmsUnitResponsesRepository incidentUnits = null)
 		{
 			_references = references;
 			_records = records;
 			_incidents = incidents; _inventory = inventory; _authorization = authorization; _groups = groups; _units = units; _unit = unit; _audits = audits;
 			_modernStore = modernStore; _modernStock = modernStock; _modernCatalog = modernCatalog; _outbox = outbox;
+			_recordUnits = recordUnits; _incidentUnits = incidentUnits;
 		}
 
 		public async Task<RmsInventoryUsage> ConsumeAsync(int departmentId, string userId, string recordId, RmsRecordKind kind, long expectedRowVersion, int typeId, int groupId, int? unitId, decimal quantity, string note, CancellationToken cancellationToken = default, string grantToken = null)
@@ -79,7 +83,7 @@ namespace Resgrid.Services.Records
 			catch { _unit.DiscardChanges(); throw; }
 		}
 
-		public async Task<RmsInventoryUsage> ConsumeModernAsync(InventoryActor actor, string recordId, RmsRecordKind kind, long expectedRowVersion, InventoryCommand command, CancellationToken cancellationToken = default)
+		private async Task<RmsInventoryUsage> ConsumeModernV2Async(InventoryActor actor, string recordId, RmsRecordKind kind, long expectedRowVersion, InventoryCommand command, CancellationToken cancellationToken = default)
 		{
 			if (_modernStore == null || _modernStock == null || _modernCatalog == null || _outbox == null) throw new InvalidOperationException("Modern inventory integration is unavailable.");
 			if (actor == null || actor.DepartmentId <= 0 || string.IsNullOrWhiteSpace(actor.UserId)) throw new UnauthorizedAccessException();
@@ -153,18 +157,20 @@ namespace Resgrid.Services.Records
 			throw new InvalidOperationException("The inventory location list exceeds the supported size.");
 		}
 
-		private async Task AuthorizeModernSourceAsync(InventoryActor actor, string locationId)
+		private async Task AuthorizeModernSourceAsync(InventoryActor actor, string locationId, bool historical = false)
 		{
-			var seen = new HashSet<string>(StringComparer.Ordinal); var location = await _modernCatalog.GetAsync<InventoryLocation>(actor, locationId);
+			Task<InventoryLocation> ReadLocation(string id) => historical ? _modernStore.GetAsync<InventoryLocation>(actor.DepartmentId, id) : _modernCatalog.GetAsync<InventoryLocation>(actor, id);
+			var seen = new HashSet<string>(StringComparer.Ordinal); var location = await ReadLocation(locationId);
 			while (true)
 			{
-				if (location?.DepartmentId != actor.DepartmentId || location.IsDeleted || !seen.Add(location.Id) || seen.Count > 32) throw new UnauthorizedAccessException();
+				if (location?.DepartmentId != actor.DepartmentId || location.IsDeleted && !historical || !seen.Add(location.Id) || seen.Count > 32) throw new UnauthorizedAccessException();
 				if (location.ContainerAssetId != null)
 				{
-					var asset = await _modernCatalog.GetAsync<InventoryAsset>(actor, location.ContainerAssetId);
-					location = await _modernCatalog.GetAsync<InventoryLocation>(actor, asset.CurrentLocationId); continue;
+					var asset = historical ? await _modernStore.GetAsync<InventoryAsset>(actor.DepartmentId, location.ContainerAssetId) : await _modernCatalog.GetAsync<InventoryAsset>(actor, location.ContainerAssetId);
+					if (asset?.DepartmentId != actor.DepartmentId) throw new UnauthorizedAccessException();
+					location = await ReadLocation(asset.CurrentLocationId); continue;
 				}
-				if (location.ParentLocationId != null) { location = await _modernCatalog.GetAsync<InventoryLocation>(actor, location.ParentLocationId); continue; }
+				if (location.ParentLocationId != null) { location = await ReadLocation(location.ParentLocationId); continue; }
 				var groupId = location.GroupId;
 				if (location.UnitId.HasValue) groupId = (await _units.GetUnitByIdAsync(location.UnitId.Value))?.StationGroupId;
 				if (location.UserId != null) groupId = (await _groups.GetGroupForUserAsync(location.UserId, actor.DepartmentId))?.DepartmentGroupId;
@@ -205,12 +211,15 @@ namespace Resgrid.Services.Records
 		public async Task<List<RmsInventoryUsage>> GetUsageForRecordAsync(int departmentId, string recordId)
 		{
 			var references = await _references.GetForRecordAsync(departmentId, recordId) ?? Enumerable.Empty<RmsExternalReference>();
-			return references
+			var result = references
 				.Where(r => r != null && r.DepartmentId == departmentId && r.RecordId == recordId && !r.DeletedOn.HasValue && string.Equals(r.SemanticRole, SemanticRole, StringComparison.Ordinal))
 				.Select(FromReference)
 				.Where(u => u != null)
 				.OrderBy(u => u.CapturedOn)
 				.ToList();
+			var reversed = result.Where(x => x.ReversesUsageId != null).Select(x => x.ReversesUsageId).ToHashSet();
+			foreach (var usage in result) usage.IsReversed = usage.UsageId != null && reversed.Contains(usage.UsageId);
+			return result;
 		}
 
 		/// <summary>
@@ -313,6 +322,19 @@ namespace Resgrid.Services.Records
 				throw new InvalidOperationException("The inventory usage snapshot is unreadable.");
 			}
 
+			if (snapshot.SchemaVersion == 3)
+			{
+				if (reference.SourceEntityType != "RecordInventoryUsage" || reference.SourceEntityId != reference.RmsExternalReferenceId || snapshot.UsageId != reference.SourceEntityId
+					|| !Guid.TryParseExact(snapshot.UsageId, "D", out var usageId) || usageId == Guid.Empty || !Guid.TryParseExact(snapshot.TransactionId, "D", out var transactionId) || transactionId == Guid.Empty
+					|| !Guid.TryParseExact(snapshot.ItemId, "D", out var itemId) || itemId == Guid.Empty || snapshot.Quantity <= 0 || !Enum.IsDefined(snapshot.UsageType)
+					|| snapshot.ReversesUsageId != null && (!Guid.TryParseExact(snapshot.ReversesUsageId, "D", out var reversedId) || reversedId == Guid.Empty || reversedId == usageId))
+					throw new InvalidOperationException("The inventory usage source identity is invalid.");
+				return new RmsInventoryUsage { ReferenceId = reference.RmsExternalReferenceId, ReferenceChecksum = reference.Checksum, Source = RmsInventoryUsage.SourceRecord, RecordId = reference.RecordId,
+					UsageId = snapshot.UsageId, TransactionId = snapshot.TransactionId, ItemId = snapshot.ItemId, AssetId = snapshot.AssetId, LotId = snapshot.LotId, LocationId = snapshot.LocationId,
+					UsageType = snapshot.UsageType, ReversesUsageId = snapshot.ReversesUsageId, Quantity = snapshot.ReversesUsageId == null ? snapshot.Quantity : -snapshot.Quantity,
+					Note = ProtectedDataEnvelope.RedactionValue, ItemName = ProtectedDataEnvelope.RedactionValue, UnitOfMeasure = ProtectedDataEnvelope.RedactionValue,
+					SourceChecksum = snapshot.SourceChecksum, CapturedByUserId = reference.CapturedByUserId, CapturedOn = reference.CapturedOn };
+			}
 			if (snapshot.SchemaVersion == 2 || reference.SourceEntityType == "InventoryTransaction")
 			{
 				if (snapshot.SchemaVersion != 2 || reference.SourceEntityType != "InventoryTransaction" || !Guid.TryParseExact(reference.SourceEntityId, "D", out var sourceId) || sourceId == Guid.Empty
@@ -321,7 +343,7 @@ namespace Resgrid.Services.Records
 				return new RmsInventoryUsage
 				{
 					ReferenceId = reference.RmsExternalReferenceId, ReferenceChecksum = reference.Checksum, Source = RmsInventoryUsage.SourceRecord, RecordId = reference.RecordId,
-					TransactionId = transactionId.ToString("D"), ItemId = itemId.ToString("D"), Quantity = snapshot.Quantity,
+					UsageId = reference.RmsExternalReferenceId, TransactionId = transactionId.ToString("D"), ItemId = itemId.ToString("D"), Quantity = snapshot.Quantity,
 					// This grant-free read path cannot expose copies of modern inventory content, even from malformed stored snapshots.
 					Note = ProtectedDataEnvelope.RedactionValue, ItemName = ProtectedDataEnvelope.RedactionValue, UnitOfMeasure = ProtectedDataEnvelope.RedactionValue,
 					SourceChecksum = snapshot.SourceChecksum, CapturedByUserId = reference.CapturedByUserId, CapturedOn = reference.CapturedOn
@@ -337,6 +359,7 @@ namespace Resgrid.Services.Records
 				Source = RmsInventoryUsage.SourceRecord,
 				RecordId = reference.RecordId,
 				InventoryId = inventoryId,
+				UsageId = reference.RmsExternalReferenceId,
 				Quantity = snapshot.Quantity,
 				Note = snapshot.Note,
 				ItemName = snapshot.ItemName, UnitOfMeasure = snapshot.UnitOfMeasure, SourceChecksum = snapshot.SourceChecksum,
@@ -353,6 +376,14 @@ namespace Resgrid.Services.Records
 
 		private sealed class UsageSnapshot
 		{
+			public string UsageId { get; set; }
+			public string AssetId { get; set; }
+			public string LotId { get; set; }
+			public string LocationId { get; set; }
+			public InventoryUsageType UsageType { get; set; }
+			public string ReversesUsageId { get; set; }
+			public List<string> BatchUsageIds { get; set; }
+			public List<long> OutboxIds { get; set; }
 			[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
 			public int SchemaVersion { get; set; }
 			[JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]

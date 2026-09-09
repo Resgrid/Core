@@ -678,4 +678,17 @@
   <data name="TargetType" xml:space="preserve"><value>Måltyp</value></data>
   <data name="Group" xml:space="preserve"><value>Station / grupp</value></data>
   <data name="ChecklistsDisabled" xml:space="preserve"><value>Checklistor är inaktiverade för den här avdelningen.</value></data>
+<data name="CreateWorkOrderOnFail" xml:space="preserve"><value>Skapa en Readiness Pro-arbetsorder vid fel</value></data>
+<data name="ReadinessFailureHelp" xml:space="preserve"><value>Checklistan förblir kostnadsfri. Betald uppföljning försöks igen när Readiness Pro är tillgängligt; spärrar kräver en separat oberoende frigivning.</value></data>
+<data name="RelatedWorkOrders" xml:space="preserve"><value>Relaterade arbetsorder</value></data>
+<data name="WorkOrderPriority" xml:space="preserve"><value>Prioritet</value></data>
+<data name="WorkOrderPriorityLow" xml:space="preserve"><value>Låg</value></data>
+<data name="WorkOrderPriorityNormal" xml:space="preserve"><value>Normal prioritet</value></data>
+<data name="WorkOrderPriorityHigh" xml:space="preserve"><value>Hög</value></data>
+<data name="WorkOrderPriorityEmergency" xml:space="preserve"><value>Nödläge</value></data>
+<data name="SetUnitStateOnFail" xml:space="preserve"><value>Ta enheten ur tjänst</value></data>
+<data name="HoldAssetOnFail" xml:space="preserve"><value>Ta utrustning ur drift för reparation</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>Underhållslagringen är inte tillgänglig.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Du har inte behörighet att utföra denna åtgärd.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Välj ett tillgängligt mål inom din avdelning.</value></data>
 </root>

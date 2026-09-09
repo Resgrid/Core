@@ -57,6 +57,7 @@ namespace Resgrid.Tests.Services
         [Test,NonParallelizable]
         public async Task Http_routes_bind_forms_enforce_CSRF_preserve_conflicts_and_localize_protected_failures()
         {
+            Maintenance();
             _auth.Setup(a=>a.ChoicesAsync(It.IsAny<ChecklistActor>())).ReturnsAsync(new WorkOrderChoices());
             var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             while(directory != null && !System.IO.File.Exists(Path.Combine(directory.FullName,"Resgrid.sln"))) directory=directory.Parent;
@@ -68,7 +69,7 @@ namespace Resgrid.Tests.Services
             builder.Services.AddAuthorization();
             builder.Services.AddControllersWithViews(o=>o.Filters.Add(new WorkOrderBodyFilter())).AddApplicationPart(typeof(MvcController).Assembly).AddApplicationPart(typeof(ApiController).Assembly)
                 .AddNewtonsoftJson(o=>o.SerializerSettings.ContractResolver=new Newtonsoft.Json.Serialization.DefaultContractResolver());
-            builder.Services.AddSingleton<IWorkOrdersService>(_service); builder.Services.AddSingleton(_auth.Object); builder.Services.AddSingleton(_access.Object);
+            builder.Services.AddSingleton<IWorkOrdersService>(_service); builder.Services.AddSingleton<IWorkOrderMaintenanceService>(_service); builder.Services.AddSingleton(_auth.Object); builder.Services.AddSingleton(_access.Object);
             var departments=new Mock<IDepartmentsService>();
             departments.Setup(d=>d.GetDepartmentMemberAsync(It.IsAny<string>(),77,true)).ReturnsAsync((string user,int dept,bool fresh)=>new DepartmentMember {DepartmentId=77,UserId=user});
             departments.Setup(d=>d.GetDepartmentByIdAsync(77,true)).ReturnsAsync(new Department {DepartmentId=77,ManagingUserId="manager"});
@@ -115,6 +116,20 @@ namespace Resgrid.Tests.Services
                 var body=new StringContent(JsonConvert.SerializeObject(new { Id=id,Input=new WorkOrderTransition {Revision=1,Status=WorkOrderStatus.Accepted}}),Encoding.UTF8,"application/json");
                 response=await client.PostAsync("/api/v4/WorkOrders/SetWorkOrderStatus",body); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
                 response=await client.PostAsync("/api/v4/WorkOrders/SetWorkOrderStatus",body); response.StatusCode.Should().Be(HttpStatusCode.Conflict);
+                response=await client.GetAsync("/User/WorkOrders/NewRecurrence"); html=await response.Content.ReadAsStringAsync();
+                response.StatusCode.Should().Be(HttpStatusCode.OK,html); html.Should().Contain("name=\"Input.Template.Content.Title\"");
+                var pmFields=new Dictionary<string,string> { ["Input.Template.RequestId"]=Guid.NewGuid().ToString("D"),["Input.Template.Content.Title"]="Synthetic HTTP PM",["Input.Template.Content.Currency"]="EUR",
+                    ["Input.AnchorLocal"]="2026-09-12T12:00",["Input.TimeZoneId"]="UTC",["Input.Calendar"]="3",["serviceStart"]="00:00",["serviceEnd"]="23:59",["Input.IsActive"]="true" };
+                (await client.PostAsync("/User/WorkOrders/SaveRecurrence",new FormUrlEncodedContent(pmFields))).StatusCode.Should().Be(HttpStatusCode.BadRequest);
+                pmFields["__RequestVerificationToken"]=csrf;
+                response=await client.PostAsync("/User/WorkOrders/SaveRecurrence",new FormUrlEncodedContent(pmFields));
+                response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync()); var pmId=JObject.Parse(await response.Content.ReadAsStringAsync())["id"].Value<int>();
+                foreach(var pmPage in new[]{"Recurrences","Recurrence?id="+pmId,"EditRecurrence?id="+pmId})
+                { response=await client.GetAsync("/User/WorkOrders/"+pmPage); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync()); }
+                response=await client.GetAsync("/api/v4/WorkOrders/GetWorkOrderRecurrence?id="+pmId); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
+                (await client.GetAsync("/api/v4/WorkOrders/GetWorkOrderRecurrence?id=9999")).StatusCode.Should().Be(HttpStatusCode.NotFound);
+                var replayBody=new StringContent(JsonConvert.SerializeObject(new {Id=id,Input=new WorkOrderDeferralInput {Revision=2,DueOn=_maintenanceClock.Utc.AddDays(2),Reason="Approved"}}),Encoding.UTF8,"application/json");
+                response=await client.PostAsync("/api/v4/WorkOrders/DeferWorkOrder",replayBody); response.StatusCode.Should().Be(HttpStatusCode.OK,await response.Content.ReadAsStringAsync());
                 _access.Setup(a=>a.CanUseMaintenanceAsync(77)).ReturnsAsync(false);
                 response=await client.GetAsync("/api/v4/WorkOrders/GetWorkOrder?id="+id); response.StatusCode.Should().Be(HttpStatusCode.OK);
                 response=await client.PostAsync("/api/v4/WorkOrders/NewWorkOrder",new StringContent(JsonConvert.SerializeObject(Input()),Encoding.UTF8,"application/json")); response.StatusCode.Should().Be(HttpStatusCode.PaymentRequired);

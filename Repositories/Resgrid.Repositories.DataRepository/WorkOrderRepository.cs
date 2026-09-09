@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public sealed class WorkOrderRepository : RmsRepositoryBase<WorkOrder>, IWorkOrderRepository
+	public sealed partial class WorkOrderRepository : RmsRepositoryBase<WorkOrder>, IWorkOrderRepository, IWorkOrderMaintenanceRepository
 	{
 		public WorkOrderRepository(IConnectionProvider connection, SqlConfiguration config, IUnitOfWork uow, IQueryFactory queries) : base(connection, config, uow, queries) { }
 		private static string Table<T>() where T : WorkOrderRow => WorkOrderTables.All[typeof(T)];
@@ -42,13 +42,13 @@ namespace Resgrid.Repositories.DataRepository
 		public async Task<List<WorkOrder>> ListAsync(int departmentId, WorkOrderReadScope scope, WorkOrderFilter filter)
 		{
 			if (scope == null || string.IsNullOrWhiteSpace(scope.UserId) || filter.Page < 0 || filter.Page > 10000) throw new ArgumentException("Invalid work-order scope.");
-			var parameters = new DynamicParameters(new { DepartmentId = departmentId, UserId = scope.UserId, AllowedGroup = scope.GroupId, Status = (int?)filter.Status, Priority = (int?)filter.Priority, UnitId = filter.UnitId, GroupId = filter.GroupId, AssetId = filter.AssetId, Skip = filter.Page * 50, Take = 51 });
+			var parameters = new DynamicParameters(new { DepartmentId = departmentId, UserId = scope.UserId, AllowedGroup = scope.GroupId, Status = (int?)filter.Status, Priority = (int?)filter.Priority, UnitId = filter.UnitId, GroupId = filter.GroupId, AssetId = filter.AssetId, ChecklistCompletionId = filter.ChecklistCompletionId, Skip = filter.Page * 50, Take = 51 });
 			parameters.Add("Roles", InListValue(scope.RoleIds == null || scope.RoleIds.Length == 0 ? new[] { -1 } : scope.RoleIds));
 			var own = $"({Col("CreatedBy")}={P}UserId OR {Col("AssignedToUserId")}={P}UserId OR {InList("AssignedToRoleId", "Roles")} OR {Col("TargetGroupId")}={P}AllowedGroup)";
 			var conditions = new List<string> { $"{Col("DepartmentId")}={P}DepartmentId" };
 			if (!scope.All) conditions.Add(own);
 			if (filter.AssignedToMe) conditions.Add($"({Col("AssignedToUserId")}={P}UserId OR {InList("AssignedToRoleId", "Roles")})");
-			foreach (var item in new[] { (filter.Status.HasValue, "Status", "Status"), (filter.Priority.HasValue, "Priority", "Priority"), (filter.UnitId.HasValue, "TargetUnitId", "UnitId"), (filter.GroupId.HasValue, "TargetGroupId", "GroupId"), (filter.AssetId != null, "InventoryAssetId", "AssetId") })
+			foreach (var item in new[] { (filter.Status.HasValue, "Status", "Status"), (filter.Priority.HasValue, "Priority", "Priority"), (filter.UnitId.HasValue, "TargetUnitId", "UnitId"), (filter.GroupId.HasValue, "TargetGroupId", "GroupId"), (filter.AssetId != null, "InventoryAssetId", "AssetId"), (filter.ChecklistCompletionId != null, "SourceChecklistCompletionId", "ChecklistCompletionId") })
 				if (item.Item1) conditions.Add(Col(item.Item2) + "=" + P + item.Item3);
 			return (await QueryAsync<WorkOrder>($"SELECT {Cols(Columns<WorkOrder>())} FROM {Tbl("WorkOrders")} WHERE {string.Join(" AND ", conditions)} ORDER BY {Col("Id")} DESC {Paging()}", parameters, default)).ToList();
 		}
@@ -74,7 +74,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			Transaction();
 			var columns = Columns<T>().Where(c => c != "Id" && c != "DepartmentId");
-			var immutable = typeof(T) == typeof(WorkOrderActivity) || typeof(T) == typeof(WorkOrderLabor) ? $" AND {Col("Content")} IS NULL" : "";
+			var immutable = typeof(T) == typeof(WorkOrderActivity) || typeof(T) == typeof(WorkOrderLabor) || typeof(T) == typeof(WorkOrderRecurrenceVersion) || typeof(T) == typeof(WorkOrderMeterReading) || typeof(T) == typeof(WorkOrderRecurrenceChange) ? $" AND {Col("Content")} IS NULL" : "";
 			if (await ExecuteAsync($"UPDATE {Tbl(Table<T>())} SET {string.Join(",", columns.Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id{immutable}", row, default) != 1) throw new InvalidOperationException("Work-order evidence could not be saved.");
 		}
 	}

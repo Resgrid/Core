@@ -254,4 +254,7 @@
   <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>E-Mail zum Zurücksetzen des Passworts senden</value></data>
   <data name="SendPasswordResetEmail" xml:space="preserve"><value>E-Mail zum Zurücksetzen des Passworts senden</value></data>
   <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>Resgrid sendet diesem Benutzer einen kurzlebigen, einmal verwendbaren Link an seine bestätigte E-Mail-Adresse. Der Administrator wählt oder sieht das neue Passwort nicht.</value></data>
+  <data name="ScheduleMutationFailed" xml:space="preserve">
+    <value>Der Zeitplan konnte nicht aktualisiert werden. Laden Sie die Seite neu und versuchen Sie es erneut.</value>
+  </data>
 </root>

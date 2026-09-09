@@ -1,0 +1,39 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderRecurrenceEditView
+@using Resgrid.Model.WorkOrders
+@using System.Globalization
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["PreventiveMaintenance"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+<h2>@localizer["PreventiveMaintenance"]</h2>@await Html.PartialAsync("_Protection")
+<form class="work-order-form work-order-command work-order-protected" asp-action="SaveRecurrence" method="post" data-destination="Recurrence" data-step-prefix="Input.Template.Content.Steps">
+@Html.AntiForgeryToken()<input asp-for="Input.Id" type="hidden"/><input asp-for="Input.Revision" type="hidden"/><input asp-for="Input.Template.RequestId" type="hidden"/>
+<label><input asp-for="Input.IsActive"/> @localizer["Active"]</label>
+@await Html.PartialAsync("_OrderFields", Model.Input.Template, new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = "Input.Template" }, ["Choices"] = Model.Choices, ["CanManage"] = true, ["Recurrence"] = true })
+<h3>@localizer["Schedule"]</h3><p>@localizer["RecurrenceHelp"]</p>
+<div class="row"><div class="col-sm-4 form-group"><label asp-for="Input.Calendar">@localizer["Calendar"]</label><select asp-for="Input.Calendar" class="form-control">@foreach (var x in Enum.GetValues<MaintenanceCalendar>()) { <option value="@((int)x)">@localizer["Calendar" + x]</option> }</select></div>
+<div class="col-sm-4 form-group"><label asp-for="Input.Interval">@localizer["Interval"]</label><input asp-for="Input.Interval" type="number" min="1" max="120" class="form-control" required/></div>
+<div class="col-sm-4 form-group"><label asp-for="Input.LeadDays">@localizer["LeadDays"]</label><input asp-for="Input.LeadDays" type="number" min="0" max="90" class="form-control" required/></div></div>
+<div class="form-group"><label asp-for="Input.TimeZoneId">@localizer["TimeZone"]</label><select asp-for="Input.TimeZoneId" class="form-control">@foreach (var zone in TimeZoneInfo.GetSystemTimeZones()) { <option value="@zone.Id">@zone.Id</option> }</select></div>
+<div class="row"><div class="col-sm-6 form-group"><label asp-for="Input.AnchorLocal">@localizer["FirstDueLocal"]</label><input asp-for="Input.AnchorLocal" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm:ss.fffffff}" step="any" class="form-control" required/></div><div class="col-sm-6 form-group"><label asp-for="Input.EndOn">@localizer["EndDate"]</label><input asp-for="Input.EndOn" type="date" class="form-control"/></div></div>
+<label><input asp-for="Input.CompletionBased"/> @localizer["CompletionBased"]</label>
+<h3>@localizer["ServiceWindow"]</h3><input asp-for="Input.ServiceWeekdays" type="hidden" id="maintenance-weekdays"/>
+@for (var day = 0; day < 7; day++) { <label><input type="checkbox" class="maintenance-weekday" value="@day" checked="@((Model.Input.ServiceWeekdays & (1 << day)) != 0)"/> @CultureInfo.CurrentCulture.DateTimeFormat.GetDayName((DayOfWeek)day)</label> }
+<div class="row"><div class="col-sm-6 form-group"><label>@localizer["ServiceStart"]<input name="serviceStart" type="time" class="form-control" value="@TimeOnly.FromTimeSpan(TimeSpan.FromMinutes(Model.Input.ServiceStartMinute)).ToString("HH:mm")" required/></label></div>
+<div class="col-sm-6 form-group"><label>@localizer["ServiceEnd"]<input name="serviceEnd" type="time" class="form-control" value="@TimeOnly.FromTimeSpan(TimeSpan.FromMinutes(Model.Input.ServiceEndMinute)).ToString("HH:mm")" required/></label></div></div>
+<div class="row"><div class="col-sm-6 form-group"><label asp-for="Input.BlackoutFrom">@localizer["BlackoutFrom"]</label><input asp-for="Input.BlackoutFrom" type="date" class="form-control"/></div><div class="col-sm-6 form-group"><label asp-for="Input.BlackoutUntil">@localizer["BlackoutUntil"]</label><input asp-for="Input.BlackoutUntil" type="date" class="form-control"/></div></div>
+<h3>@localizer["UsageAndCondition"]</h3>
+<div class="row"><div class="col-sm-4 form-group"><label asp-for="Input.MeterUnit">@localizer["MeterUnit"]</label><select asp-for="Input.MeterUnit" class="form-control">@foreach (var x in Enum.GetValues<MaintenanceMeterUnit>()) { <option value="@((int)x)">@localizer["Meter" + x]</option> }</select></div>
+<div class="col-sm-4 form-group"><label asp-for="Input.MeterInterval">@localizer["MeterInterval"]</label><input asp-for="Input.MeterInterval" type="number" min="0.000001" step="0.000001" class="form-control"/></div>
+<div class="col-sm-4 form-group"><label asp-for="Input.MeterBaseline">@localizer["MeterBaseline"]</label><input asp-for="Input.MeterBaseline" readonly="@(Model.Input.Id != 0)" type="number" min="0" step="0.000001" class="form-control"/></div></div>
+<div class="row"><div class="col-sm-4 form-group"><label asp-for="Input.Condition">@localizer["Condition"]</label><select asp-for="Input.Condition" class="form-control">@foreach (var x in Enum.GetValues<MaintenanceCondition>()) { <option value="@((int)x)">@localizer["Condition" + x]</option> }</select></div>
+<div class="col-sm-4 form-group"><label asp-for="Input.ConditionThreshold">@localizer["ConditionThreshold"]</label><input asp-for="Input.ConditionThreshold" type="number" step="any" class="form-control"/></div>
+<div class="col-sm-4 form-group"><label asp-for="Input.ConditionUnit">@localizer["ConditionUnit"]</label><input asp-for="Input.ConditionUnit" maxlength="100" class="form-control"/></div></div>
+<h3>@localizer["AssignmentAndEscalation"]</h3>
+<label>@localizer["User"] <select asp-for="Input.AssignedToUserId" class="form-control work-order-user"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Users) { <option value="@x.Id">@x.Name</option> }</select></label>
+<label>@localizer["Role"] <select asp-for="Input.AssignedToRoleId" class="form-control work-order-role"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Roles) { <option value="@x.Id">@x.Name</option> }</select></label>
+<label asp-for="Input.EscalateAfterMinutes">@localizer["EscalateAfter"]</label><input asp-for="Input.EscalateAfterMinutes" type="number" min="0" max="525600" class="form-control"/>
+<label>@localizer["EscalationRole"] <select asp-for="Input.EscalationRoleId" class="form-control"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Roles) { <option value="@x.Id">@x.Name</option> }</select></label>
+<label asp-for="Input.Reason">@localizer["Reason"]</label><textarea asp-for="Input.Reason" class="form-control" maxlength="4000" required="@(Model.Input.Id != 0)"></textarea>
+<button class="btn btn-primary" type="submit">@localizer["Save"]</button><a asp-action="Recurrences" class="btn btn-default">@localizer["Cancel"]</a>
+</form></div></div></div>
+@section Scripts { @await Html.PartialAsync("_Scripts") }

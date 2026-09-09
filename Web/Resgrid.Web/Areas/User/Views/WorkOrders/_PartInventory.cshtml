@@ -1,0 +1,9 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+<fieldset class="work-order-inventory" data-url="@Url.Action("PartChoices")">
+<legend>@localizer["InventoryParts"]</legend><p>@localizer["InventoryPartsHelp"]</p>
+<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>
+@foreach (var choice in new[] { ("item", "InventoryItemId", "InventoryItem"), ("location", "InventoryLocationId", "InventoryLocation"), ("lot", "InventoryLotId", "InventoryLot"), ("asset", "InventoryAssetId", "Asset") }) {
+<label>@localizer[choice.Item3]<select class="form-control inventory-part-choice" name="@choice.Item2" data-kind="@choice.Item1"><option value="">@localizer["None"]</option></select></label>
+<button type="button" class="btn btn-default inventory-part-load" data-kind="@choice.Item1" data-page="0">@localizer["LoadChoices"]</button>
+}
+</fieldset>

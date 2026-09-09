@@ -18,17 +18,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 {
 	[WorkOrderFormCulture]
 	[Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(1024 * 1024)]
-	public sealed class WorkOrdersController : SecureBaseController
+	public sealed partial class WorkOrdersController : SecureBaseController
 	{
 		private readonly IWorkOrdersService _orders;
+		private readonly IWorkOrderMaintenanceService _maintenance;
 		private readonly IWorkOrderAuthorizationService _authorization;
 		private readonly IReadinessAccessService _access;
 		private readonly IProtectedGrantContext _grant;
 		private readonly IDepartmentDataProtectionService _protection;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> _strings;
 		public WorkOrdersController(IWorkOrdersService orders, IWorkOrderAuthorizationService authorization, IReadinessAccessService access, IProtectedGrantContext grant,
-			IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> strings)
-		{ _orders = orders; _authorization = authorization; _access = access; _grant = grant; _protection = protection; _strings = strings; }
+			IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> strings, IWorkOrderMaintenanceService maintenance = null)
+		{ _orders = orders; _authorization = authorization; _access = access; _grant = grant; _protection = protection; _strings = strings; _maintenance = maintenance; }
 		private ChecklistActor Actor => new ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant.GrantToken };
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -57,7 +58,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View("Edit", new WorkOrderEditView { Input = new WorkOrderInput { RequestId = Guid.NewGuid().ToString("D") }, Choices = await _orders.ChoicesAsync(Actor), CanManage = await _authorization.CanManageAsync(Actor, null) });
 		}
 		[HttpGet]
-		public async Task<IActionResult> Detail(int id) => View("Detail", new WorkOrderDetailView { Detail = await _orders.GetAsync(Actor, id), Choices = await _orders.ChoicesAsync(Actor) });
+		public async Task<IActionResult> Detail(int id) { var detail = await _orders.GetAsync(Actor, id); return View("Detail", new WorkOrderDetailView { Detail = detail, Choices = await _orders.ChoicesAsync(Actor), Holds = _maintenance == null ? new() : await _maintenance.HoldsAsync(Actor, id), CanRelease = await _authorization.CanManageAsync(Actor, detail.Order.GroupId) }); }
 		[HttpGet]
 		public async Task<IActionResult> Edit(int id)
 		{
@@ -96,6 +97,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public async Task<IActionResult> Export(int id) { var detail = await _orders.GetAsync(Actor, id); return File(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detail, Formatting.Indented)), "application/json", "work-order-" + id + ".json"); }
 		[HttpPost, ValidateAntiForgeryToken]
-		public Task<IActionResult> Reopen(string destination, int id, WorkOrderFilter filter) => destination switch { "Detail" => Detail(id), "Edit" => Edit(id), "New" => New(), "Index" => Index(filter ?? new WorkOrderFilter()), _ => Task.FromResult<IActionResult>(BadRequest()) };
+		public Task<IActionResult> Reopen(string destination, int id, WorkOrderFilter filter) => destination switch { "Detail" => Detail(id), "Edit" => Edit(id), "New" => New(), "Recurrence" => Recurrence(id), "EditRecurrence" => EditRecurrence(id), "NewRecurrence" => NewRecurrence(), "Recurrences" => Recurrences(filter?.Page ?? 0), "Index" => Index(filter ?? new WorkOrderFilter()), _ => Task.FromResult<IActionResult>(BadRequest()) };
 	}
 }

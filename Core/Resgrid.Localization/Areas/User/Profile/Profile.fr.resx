@@ -254,4 +254,7 @@
   <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>Envoyer l’e-mail de réinitialisation du mot de passe</value></data>
   <data name="SendPasswordResetEmail" xml:space="preserve"><value>Envoyer l’e-mail de réinitialisation du mot de passe</value></data>
   <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>Resgrid enverra à cet utilisateur un lien à courte durée de vie et à usage unique à son adresse e-mail confirmée. L’administrateur ne choisira ni ne verra le nouveau mot de passe.</value></data>
+  <data name="ScheduleMutationFailed" xml:space="preserve">
+    <value>Le planning n’a pas pu être mis à jour. Actualisez la page et réessayez.</value>
+  </data>
 </root>

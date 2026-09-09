@@ -36,6 +36,8 @@ namespace Resgrid.Services
 			if (command?.Lines == null || command.Lines.Count is < 1 or > 100) throw new InventoryException(400, "InvalidLines"); Id(command.RequestId);
 			foreach (var line in command.Lines)
 			{
+				if (line?.WorkOrderPartId != null && (!joined || line.ReferenceType != InventoryReferenceType.WorkOrder)) throw new InventoryException(400, "WorkOrderPostingRequired");
+				if (line?.WorkOrderPartId != null) await RequireWorkOrderPartAsync(actor, line);
 				if (line?.CountItemId != null && !counting) throw new InventoryException(400, "CountCompletionRequired");
 				if (line?.PurchaseOrderItemId != null && !purchasing) throw new InventoryException(400, "PurchaseReceiptRequired");
 				if (line != null && (line.UsageId != null || line.UsageType.HasValue))
@@ -207,7 +209,16 @@ namespace Resgrid.Services
 					await RequirePurchaseReceiptAccessAsync(performer, receipt.PendingPurchaseReceipt);
 					result = await CompletePurchaseReceiptAsync(actor, operation, receipt.PendingPurchaseReceipt, events, performer.UserId, actor.UserId, attestation);
 					break;
-				case "Post":
+				case "WorkOrder":
+                        if (_workOrderMaintenance == null || receipt.PendingCommand?.Lines?.Count != 1) throw new InventoryException(409, "ReferenceUnavailable");
+                        await RequireCommandAccessAsync(performer, receipt.PendingCommand, joined: true);
+                        await RequireWorkOrderPartAsync(performer, receipt.PendingCommand.Lines[0]);
+                        await RequireCommandAccessAsync(actor, receipt.PendingCommand, joined: true);
+                        await ValidateCommandAsync(actor, receipt.PendingCommand, joined: true);
+                        result = await PostLinesAsync(actor, operation, receipt.PendingCommand, events, performer.UserId, actor.UserId, attestation);
+                        await _workOrderMaintenance.Value.CompleteInventoryPartAsync(actor, receipt.PendingCommand.Lines[0].WorkOrderPartId.Value, result.TransactionIds.Single(), receipt.PendingCommand.Lines[0].ReversesTransactionId != null, events);
+                        break;
+                    case "Post":
 				case "Transfer":
 				case "Receive":
 					await RequireCommandAccessAsync(performer, receipt.PendingCommand);
@@ -247,11 +258,12 @@ namespace Resgrid.Services
 				transaction.FromLocationId = line.FromLocationId; transaction.ToLocationId = line.ToLocationId; transaction.TransactionType = (int)line.Type;
 				transaction.ReferenceType = (int)line.ReferenceType; transaction.ReferenceId = line.ReferenceId; transaction.OccurredOn = Now;
 				transaction.ReversesTransactionId = line.ReversesTransactionId; transaction.IssuanceId = line.IssuanceId; transaction.PurchaseOrderItemId = line.PurchaseOrderItemId;
-				transaction.CountItemId = line.CountItemId;
+				transaction.CountItemId = line.CountItemId; transaction.WorkOrderPartId = line.WorkOrderPartId;
 				if (line.ReversesTransactionId != null)
 				{
 					var original = await GetAsync<InventoryTransaction>(actor, line.ReversesTransactionId);
 					if (original.PurchaseOrderItemId != null) throw new InventoryException(409, "PurchaseReceiptImmutable");
+					if (original.WorkOrderPartId.HasValue && original.WorkOrderPartId != line.WorkOrderPartId) throw new InventoryException(409, "WorkOrderPostingRequired");
 					if (original.CountItemId != null) throw new InventoryException(409, "CountReceiptImmutable");
 					if (original.ReferenceType == (int)InventoryReferenceType.RmsRecord && (line.ReferenceType != InventoryReferenceType.RmsRecord || line.ReferenceId != original.ReferenceId)) throw new InventoryException(409, "RecordUsageCorrectionRequired");
 					if (original.ReversesTransactionId != null || original.ItemId != item.Id || original.AssetId != line.AssetId || original.LotId != line.LotId || original.Quantity != line.Quantity
@@ -319,7 +331,8 @@ namespace Resgrid.Services
 			if (issuance != null && line.Type is not (InventoryTransactionType.Return or InventoryTransactionType.StatusChange) && !(line.Type == InventoryTransactionType.Issue && issuance.Id == line.IssuanceId)) throw new InventoryException(409, "ReturnAssetFirst");
 			var status = line.Type switch { InventoryTransactionType.Issue => InventoryAssetStatus.Issued, InventoryTransactionType.Consume => InventoryAssetStatus.Consumed,
 				InventoryTransactionType.WriteOff or InventoryTransactionType.Count => InventoryAssetStatus.Lost, InventoryTransactionType.Return or InventoryTransactionType.StatusChange => line.Status ?? InventoryAssetStatus.InService, _ => (InventoryAssetStatus)asset.Status };
-			if (line.Type == InventoryTransactionType.StatusChange)
+			if (status is InventoryAssetStatus.InService or InventoryAssetStatus.Issued && _maintenanceOrders != null && (await _maintenanceOrders.ActiveHoldsAsync(actor.DepartmentId, null, asset.Id)).Count > 0) throw new InventoryException(409, "AssetSafetyHold");
+            if (line.Type == InventoryTransactionType.StatusChange)
 			{
 				if (asset.Status == (int)status) throw new InventoryException(409, "StatusUnchanged");
 				if (status == InventoryAssetStatus.Issued && issuance == null || status == InventoryAssetStatus.InService && issuance != null) throw new InventoryException(409, "IssuanceStatusConflict");

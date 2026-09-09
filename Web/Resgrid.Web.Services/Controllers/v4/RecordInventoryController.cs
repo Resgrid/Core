@@ -78,7 +78,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var usage = await action(); string evidenceId = null;
 				try { evidenceId = (await _evidence.CaptureAsync(new RecordEvidenceCaptureRequest { DepartmentId = DepartmentId, RecordId = recordId, RecordKind = kind, Kind = RmsEvidenceKind.InventoryUsage,
 					CapturedByUserId = UserId, CaptureReason = "Officer recorded inventory usage or correction", OriginClient = RmsOriginClient.Api }, true, ct)).RmsEvidenceArtifactId; }
-				catch (Exception ex) when (ex is InvalidOperationException || ex is ArgumentException || ex is UnauthorizedAccessException || ex is InventoryException) { }
+				catch (Exception ex) when (ex is InvalidOperationException || ex is ArgumentException || ex is UnauthorizedAccessException || ex is InventoryException)
+				{ Resgrid.Framework.Logging.LogError($"Record inventory evidence capture failed for department {DepartmentId}: {ex.GetType().FullName}."); }
 				return await Allowed(recordId) ? StatusCode(201, new { usage, evidenceId, evidenceCaptureRequired = evidenceId == null }) : Forbid();
 			}
 			catch (RecordConcurrencyException) { return Conflict(new { error = "The draft changed. Reload its version and recorded usage before retrying." }); }
@@ -100,7 +101,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					: await _usage.ConsumeAsync(DepartmentId,UserId,input.RecordId,input.Kind,input.ExpectedRowVersion,input.TypeId,input.GroupId,input.UnitId,input.Quantity,input.Note,cancellationToken,grant);
 				string evidenceId=null;
 				try { evidenceId=(await _evidence.CaptureAsync(new RecordEvidenceCaptureRequest {DepartmentId=DepartmentId,RecordId=input.RecordId,RecordKind=input.Kind,Kind=RmsEvidenceKind.InventoryUsage,CapturedByUserId=UserId,CaptureReason="Officer recorded inventory consumption",OriginClient=RmsOriginClient.Api},true,cancellationToken)).RmsEvidenceArtifactId; }
-				catch(Exception ex) when(ex is InvalidOperationException || ex is ArgumentException || ex is UnauthorizedAccessException || ex is InventoryException) { }
+				catch(Exception ex) when(ex is InvalidOperationException || ex is ArgumentException || ex is UnauthorizedAccessException || ex is InventoryException)
+				{ Resgrid.Framework.Logging.LogError($"Record inventory evidence capture failed for department {DepartmentId}: {ex.GetType().FullName}."); }
 				if (!await Allowed(input.RecordId)) return Forbid();
 				return StatusCode(201,new {usage,evidenceId,evidenceCaptureRequired=evidenceId==null});
 			}

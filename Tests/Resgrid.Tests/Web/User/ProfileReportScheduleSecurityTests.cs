@@ -26,6 +26,7 @@ namespace Resgrid.Tests.Web.User
 		private const int ScheduleId = 410;
 		private const string UserId = "report-owner";
 		private Mock<IScheduledTasksService> _tasks;
+		private Mock<Resgrid.Model.Services.IAuthorizationService> _authorization;
 		private ProfileController _controller;
 		private IHttpContextAccessor _previousAccessor;
 
@@ -44,8 +45,10 @@ namespace Resgrid.Tests.Web.User
 			http.Request.Method = "POST";
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = http };
 			_tasks = new Mock<IScheduledTasksService>(MockBehavior.Strict);
+			_authorization = new Mock<Resgrid.Model.Services.IAuthorizationService>(MockBehavior.Strict);
+			_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, UserId)).ReturnsAsync(true);
 			_controller = new ProfileController(
-				departmentsService: null, usersService: null, authorizationService: null,
+				departmentsService: null, usersService: null, authorizationService: _authorization.Object,
 				userProfileService: null, scheduledTasksService: _tasks.Object, certificationService: null,
 				customStateService: null, imageService: null, appOptionsAccessor: null,
 				emailService: null, userManager: null, signInManager: null,
@@ -143,6 +146,45 @@ namespace Resgrid.Tests.Web.User
 
 			_tasks.VerifyAll();
 			_tasks.Invocations.Select(i => i.Method.Name).Should().Equal(nameof(IScheduledTasksService.GetScheduledTaskByIdAsync), MutationMethod(action));
+		}
+
+		private static IEnumerable<TestCaseData> RejectedStaffingTargets()
+		{
+			foreach (var action in new[] { nameof(ProfileController.ActivateSchedule), nameof(ProfileController.DeactivateSchedule), nameof(ProfileController.DeleteSchedule) })
+				foreach (var target in new[] { "missing", "department", "owner", "empty-owner", "task-type" })
+					yield return new TestCaseData(action, target);
+		}
+
+		[TestCaseSource(nameof(RejectedStaffingTargets))]
+		public async Task Staffing_mutations_reject_inaccessible_schedules(string action, string target)
+		{
+			var schedule = OwnedReport(); schedule.TaskType = (int)TaskTypes.UserStaffingLevel;
+			if (target == "missing") schedule = null;
+			if (target == "department") schedule.DepartmentId++;
+			if (target == "empty-owner") schedule.UserId = "";
+			if (target == "task-type") schedule.TaskType = -1;
+			if (target == "owner")
+			{
+				schedule.UserId = "another-member";
+				_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, schedule.UserId)).ReturnsAsync(false);
+			}
+			_tasks.Setup(s => s.GetScheduledTaskByIdAsync(ScheduleId)).ReturnsAsync(schedule);
+			(await InvokeAsync(action)).Should().BeOfType<NotFoundResult>();
+			VerifyNoMutation();
+		}
+
+		[TestCase(nameof(ProfileController.ActivateSchedule))]
+		[TestCase(nameof(ProfileController.DeactivateSchedule))]
+		[TestCase(nameof(ProfileController.DeleteSchedule))]
+		public async Task Staffing_mutations_preserve_delegated_member_management(string action)
+		{
+			var schedule = OwnedReport(); schedule.TaskType = (int)TaskTypes.UserStaffingLevel; schedule.UserId = "managed-member";
+			_authorization.Setup(a => a.CanUserEditProfileAsync(UserId, DepartmentId, schedule.UserId)).ReturnsAsync(true);
+			_tasks.Setup(s => s.GetScheduledTaskByIdAsync(ScheduleId)).ReturnsAsync(schedule);
+			ExpectMutation(action, schedule, CancellationToken.None);
+			(await InvokeAsync(action)).Should().BeOfType<EmptyResult>();
+			_authorization.Verify(a => a.CanUserEditProfileAsync(UserId, DepartmentId, schedule.UserId), Times.Once);
+			_tasks.VerifyAll();
 		}
 
 		private static ScheduledTask OwnedReport() => new()

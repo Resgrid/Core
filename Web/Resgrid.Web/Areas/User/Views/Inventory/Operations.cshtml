@@ -18,6 +18,7 @@
     @if (protectedData) { @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value }) }
     <div id="inventory-message" class="alert alert-info" role="status" hidden></div>
     <form id="inventory-page" asp-action="ReopenOperations" method="post" class="inventory-navigation">
+        <input type="hidden" name="kind" value="@((int)Model.ReportKind)"/>
         @Html.AntiForgeryToken()<input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="@Model.Page"/><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="locationId" value="@Model.LocationId"/><input type="hidden" name="itemId" value="@Model.ItemId"/>
         @if (Model.Locked) { <button type="submit" class="btn btn-primary">@localizer["Unlock"]</button> }
     </form>
@@ -88,7 +89,7 @@
             <p>@localizer["M5ReportHelp"]</p>
             <form asp-action="ReportPdf" method="post" class="inventory-navigation" id="inventory-report-form">
                 @Html.AntiForgeryToken()
-                <div class="form-group"><label for="report-kind">@localizer["M5Reports"]</label><select class="form-control" id="report-kind" name="Kind">@foreach (var kind in Enum.GetValues<InventoryReportKind>()) { <option value="@((int)kind)">@InventoryReportDocuments.Title(kind)</option> }</select></div>
+                <div class="form-group"><label for="report-kind">@localizer["M5Reports"]</label><select class="form-control" id="report-kind" name="Kind">@foreach (var kind in Enum.GetValues<InventoryReportKind>()) { <option value="@((int)kind)" selected="@(kind == Model.ReportKind)">@InventoryReportDocuments.Title(kind)</option> }</select></div>
                 <div class="form-group"><label for="report-location">@localizer["Location"]</label><select class="form-control" id="report-location" name="LocationId"><option value="">@localizer["M5AllLocations"]</option>@foreach (var location in Model.Locations) { <option value="@location.Id">@LocationName(location.Id)</option> }</select></div>
                 <div class="form-group"><label for="report-item">@localizer["Items"]</label><select class="form-control" id="report-item" name="ItemId"><option value="">—</option>@foreach (var item in Model.Items) { <option value="@item.Id">@ItemName(item.Id)</option> }</select></div>
                 <div class="form-group"><label for="report-from">@localizer["M5FromUtc"]</label><input class="form-control" id="report-from" type="date" name="FromUtc"/></div>

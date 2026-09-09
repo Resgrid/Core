@@ -45,7 +45,7 @@ namespace Resgrid.Tests.Services
             _service = new GdprDataExportService(_repository.Object, _userProfileService.Object, _memberSensitiveDataService.Object, _emergencyContactService.Object,
                 _usersService.Object, _departmentsService.Object, _departmentGroupsService.Object, _personnelRolesService.Object, _actionLogsService.Object,
                 _messageService.Object, _certificationService.Object, _trainingService.Object, _shiftsService.Object, _emailService.Object, store,
-                new Lazy<IReadinessHistoryProtectionService>(() => protection), reminders.Object, EmptyWorkOrders(), EmptyInventory());
+                new Lazy<IReadinessHistoryProtectionService>(() => protection), reminders.Object, EmptyWorkOrders(), EmptyInventory(), EmptyMaintenance());
             var files = await RunExportAsync(); var json = files["checklists.json"];
             json.Should().NotContain("CANARY").And.NotContain("rgdp:").And.Contain("REDACTED");
             var exported = JObject.Parse(json);

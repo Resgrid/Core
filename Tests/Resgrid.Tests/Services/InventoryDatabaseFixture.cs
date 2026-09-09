@@ -104,11 +104,15 @@ CREATE TABLE {Q("AuditLogs")} ({Q("Id")} {text}(36) PRIMARY KEY, {Q("DepartmentI
 			}
 			var source = new Mock<IMigrationSource>(); source.Setup(s => s.GetMigrations()).Returns(new IMigration[]
 			{
-				_type == DatabaseTypes.Postgres ? new M0198_AddInventoryModernizationPg() : new M0198_AddInventoryModernization(),
+				_type == DatabaseTypes.Postgres ? new M0197_AddWorkOrdersPg() : new M0197_AddWorkOrders(),
+                _type == DatabaseTypes.Postgres ? new M0198_AddInventoryModernizationPg() : new M0198_AddInventoryModernization(),
 				_type == DatabaseTypes.Postgres ? new M0199_FenceLegacyInventoryWritesPg() : new M0199_FenceLegacyInventoryWrites(),
 				_type == DatabaseTypes.Postgres ? new M0200_AddRecordInventoryUsagePg() : new M0200_AddRecordInventoryUsage(),
 				_type == DatabaseTypes.Postgres ? new M0201_AddInventoryPurchasingPg() : new M0201_AddInventoryPurchasing(),
-				_type == DatabaseTypes.Postgres ? new M0202_AddInventoryCountsAndAlertsPg() : new M0202_AddInventoryCountsAndAlerts()
+				_type == DatabaseTypes.Postgres ? new M0202_AddInventoryCountsAndAlertsPg() : new M0202_AddInventoryCountsAndAlerts(),
+                _type == DatabaseTypes.Postgres ? new M0203_AddWorkOrderIntegrationsPg() : new M0203_AddWorkOrderIntegrations(),
+                _type == DatabaseTypes.Postgres ? new M0204_AddWorkOrderRecurrencesPg() : new M0204_AddWorkOrderRecurrences(),
+				_type == DatabaseTypes.Postgres ? new M0205_EnforceInventoryTenantHoldersPg() : new M0205_EnforceInventoryTenantHolders()
 			});
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{

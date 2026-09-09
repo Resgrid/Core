@@ -107,7 +107,7 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.InventoryPurchaseOrderReceived).Should().Be(65);
 			((int)WorkflowTriggerEventType.ControlledSubstanceRecorded).Should().Be(66);
 			((int)WorkflowTriggerEventType.InventoryReturnOverdue).Should().Be(166);
-			foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(58, 15)))
+            foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(58, 16)))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");
 		}
 

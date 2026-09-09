@@ -48,7 +48,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			if (await Exists("DomainEventOutbox")) await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q("DomainEventOutbox")} WHERE {Q("DepartmentId")}=@DepartmentId AND {producerPredicate}", parameters, transaction, cancellationToken: ct));
 			if (await Exists("AuditLogs")) await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q("AuditLogs")} WHERE {Q("DepartmentId")}=@DepartmentId AND {auditPredicate}", parameters, transaction, cancellationToken: ct));
-			foreach (var table in new[] { "ReadinessProBillingAccounts", "WorkOrderNotifications", "WorkOrderFiles", "WorkOrderParts", "WorkOrderLabors", "WorkOrderActivities", "WorkOrders", "ChecklistReminders", "ChecklistCompletionFiles", "ChecklistCompletionItems", "ChecklistCompletions", "ChecklistOccurrences", "ChecklistSchedules", "ChecklistDefinitionVersions", "ChecklistDefinitions", "DepartmentChecklistSettings" })
+			foreach (var table in new[] { "WorkOrderFailureIntents", "WorkOrderSafetyHolds", "WorkOrderRecurrenceChanges", "WorkOrderMeterReadings", "ReadinessProBillingAccounts", "WorkOrderNotifications", "WorkOrderFiles", "WorkOrderParts", "WorkOrderLabors", "WorkOrderActivities", "WorkOrders", "WorkOrderRecurrenceVersions", "WorkOrderRecurrences", "ChecklistReminders", "ChecklistCompletionFiles", "ChecklistCompletionItems", "ChecklistCompletions", "ChecklistOccurrences", "ChecklistSchedules", "ChecklistDefinitionVersions", "ChecklistDefinitions", "DepartmentChecklistSettings" })
 				if (await Exists(table)) await connection.ExecuteAsync(new CommandDefinition($"DELETE FROM {Q(table)} WHERE {Q("DepartmentId")}=@DepartmentId", parameters, transaction, cancellationToken: ct));
 		}
 	}

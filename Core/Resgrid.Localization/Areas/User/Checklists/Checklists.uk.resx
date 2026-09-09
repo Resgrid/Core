@@ -678,4 +678,17 @@
   <data name="TargetType" xml:space="preserve"><value>Тип цілі</value></data>
   <data name="Group" xml:space="preserve"><value>Станція / група</value></data>
   <data name="ChecklistsDisabled" xml:space="preserve"><value>Контрольні списки вимкнено для цього підрозділу.</value></data>
+<data name="CreateWorkOrderOnFail" xml:space="preserve"><value>Створити наряд Readiness Pro у разі невдачі</value></data>
+<data name="ReadinessFailureHelp" xml:space="preserve"><value>Контрольний список залишається безкоштовним. Платні дії повторюються за доступності Readiness Pro; налаштовані блокування потребують окремого незалежного зняття.</value></data>
+<data name="RelatedWorkOrders" xml:space="preserve"><value>Пов’язані наряди</value></data>
+<data name="WorkOrderPriority" xml:space="preserve"><value>Пріоритет</value></data>
+<data name="WorkOrderPriorityLow" xml:space="preserve"><value>Низький</value></data>
+<data name="WorkOrderPriorityNormal" xml:space="preserve"><value>Звичайний</value></data>
+<data name="WorkOrderPriorityHigh" xml:space="preserve"><value>Високий</value></data>
+<data name="WorkOrderPriorityEmergency" xml:space="preserve"><value>Надзвичайний</value></data>
+<data name="SetUnitStateOnFail" xml:space="preserve"><value>Вивести підрозділ зі служби</value></data>
+<data name="HoldAssetOnFail" xml:space="preserve"><value>Вивести обладнання з експлуатації для ремонту</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>Сховище технічного обслуговування недоступне.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Ви не маєте дозволу на цю дію.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Виберіть доступний об’єкт у своєму підрозділі.</value></data>
 </root>

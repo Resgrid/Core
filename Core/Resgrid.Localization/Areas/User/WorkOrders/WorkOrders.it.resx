@@ -154,4 +154,110 @@
 <data name="ActivityPartVoided" xml:space="preserve"><value>Ricambio annullato</value></data>
 <data name="ActivityFileAdded" xml:space="preserve"><value>File aggiunto</value></data>
 <data name="ActivityFileWithdrawn" xml:space="preserve"><value>File ritirato</value></data>
+<data name="Active" xml:space="preserve"><value>Programma attivo</value></data>
+<data name="ActivityDeferred" xml:space="preserve"><value>Scadenza rinviata</value></data>
+<data name="ActivityEscalated" xml:space="preserve"><value>Segnalazione del ritardo</value></data>
+<data name="ActivitySafetyHold" xml:space="preserve"><value>Blocco di sicurezza applicato</value></data>
+<data name="ActivitySafetyReleased" xml:space="preserve"><value>Blocco di sicurezza rimosso</value></data>
+<data name="AddHold" xml:space="preserve"><value>Applicare un blocco di sicurezza</value></data>
+<data name="ApproveDeferral" xml:space="preserve"><value>Approvare il rinvio</value></data>
+<data name="AssetHold" xml:space="preserve"><value>Blocco di sicurezza dell'attrezzatura</value></data>
+<data name="AssignmentAndEscalation" xml:space="preserve"><value>Assegnazione e segnalazione</value></data>
+<data name="BlackoutFrom" xml:space="preserve"><value>Inizio del periodo escluso</value></data>
+<data name="BlackoutUntil" xml:space="preserve"><value>Fine del periodo escluso</value></data>
+<data name="Calendar" xml:space="preserve"><value>Frequenza del calendario</value></data>
+<data name="CalendarDaily" xml:space="preserve"><value>Giornaliera</value></data>
+<data name="CalendarMonthly" xml:space="preserve"><value>Mensile</value></data>
+<data name="CalendarNone" xml:space="preserve"><value>Senza attivazione da calendario</value></data>
+<data name="CalendarQuarterly" xml:space="preserve"><value>Trimestrale</value></data>
+<data name="CalendarWeekly" xml:space="preserve"><value>Settimanale</value></data>
+<data name="CalendarYearly" xml:space="preserve"><value>Annuale</value></data>
+<data name="CompletionBased" xml:space="preserve"><value>Calcolare l'intervallo successivo dalla chiusura verificata</value></data>
+<data name="Condition" xml:space="preserve"><value>Attivazione in base alla condizione</value></data>
+<data name="ConditionAtOrAbove" xml:space="preserve"><value>Alla soglia o al di sopra</value></data>
+<data name="ConditionAtOrBelow" xml:space="preserve"><value>Alla soglia o al di sotto</value></data>
+<data name="ConditionNone" xml:space="preserve"><value>Senza attivazione per condizione</value></data>
+<data name="ConditionThreshold" xml:space="preserve"><value>Soglia di condizione</value></data>
+<data name="ConditionUnit" xml:space="preserve"><value>Unità di misura della condizione</value></data>
+<data name="ConditionValue" xml:space="preserve"><value>Lettura della condizione</value></data>
+<data name="DeferralReason" xml:space="preserve"><value>Motivo del rinvio</value></data>
+<data name="Edit" xml:space="preserve"><value>Modifica programma</value></data>
+<data name="EndDate" xml:space="preserve"><value>Data di fine</value></data>
+<data name="EscalateAfter" xml:space="preserve"><value>Segnalare dopo i minuti di ritardo</value></data>
+<data name="EscalationRole" xml:space="preserve"><value>Ruolo destinatario della segnalazione</value></data>
+<data name="FirstDueLocal" xml:space="preserve"><value>Prima scadenza in ora locale</value></data>
+<data name="GeneratedFailureTitle" xml:space="preserve"><value>Verifica del difetto della lista di controllo</value></data>
+<data name="HoldAsset" xml:space="preserve"><value>Metti l'attrezzatura fuori uso per riparazione</value></data>
+<data name="HoldUnit" xml:space="preserve"><value>Metti l'unità fuori servizio</value></data>
+<data name="HoldReleaseHelp" xml:space="preserve"><value>Un revisore indipendente autorizzato deve registrare qualifiche e prove di rilascio. Il ripristino richiede l'ultimo blocco e uno stato invariato; la sola chiusura non ripristina il servizio.</value></data>
+<data name="IndependentReleaseRequired" xml:space="preserve"><value>Un altro revisore autorizzato deve rimuovere questo blocco.</value></data>
+<data name="Interval" xml:space="preserve"><value>Intervallo di pianificazione</value></data>
+<data name="InventoryOperationFailed" xml:space="preserve"><value>Impossibile completare l'operazione di magazzino. Verificare disponibilità e permessi.</value></data>
+<data name="InventoryPartInvalid" xml:space="preserve"><value>Selezionare un articolo e un'ubicazione di origine validi.</value></data>
+<data name="InventoryParts" xml:space="preserve"><value>Ricambi collegati al magazzino</value></data>
+<data name="InventoryPartsHelp" xml:space="preserve"><value>Lasciare l'articolo vuoto per un ricambio a testo libero. I ricambi di magazzino usano i costi del registro e possono richiedere un testimone indipendente nel magazzino.</value></data>
+<data name="InventoryPermissionRequired" xml:space="preserve"><value>È richiesta l'autorizzazione al magazzino o la verifica dei dati protetti.</value></data>
+<data name="InventoryWitnessPending" xml:space="preserve"><value>Testimone di magazzino in attesa; completare l'attestazione prima di chiudere l'ordine di lavoro.</value></data>
+<data name="LeadDays" xml:space="preserve"><value>Anticipo in giorni</value></data>
+<data name="LoadChoices" xml:space="preserve"><value>Carica altre opzioni</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>L'archivio di manutenzione non è disponibile.</value></data>
+<data name="MeterBaseline" xml:space="preserve"><value>Valore di riferimento dell'intervallo del contatore</value></data>
+<data name="MeterCycles" xml:space="preserve"><value>Cicli operativi</value></data>
+<data name="MeterEpoch" xml:space="preserve"><value>Generazione del contatore</value></data>
+<data name="MeterHours" xml:space="preserve"><value>Ore di funzionamento</value></data>
+<data name="MeterInterval" xml:space="preserve"><value>Intervallo del contatore</value></data>
+<data name="MeterKilometers" xml:space="preserve"><value>Chilometri</value></data>
+<data name="MeterMiles" xml:space="preserve"><value>Miglia percorse</value></data>
+<data name="MeterNone" xml:space="preserve"><value>Senza attivazione da contatore</value></data>
+<data name="MeterUnit" xml:space="preserve"><value>Unità di misura del contatore</value></data>
+<data name="MeterValue" xml:space="preserve"><value>Lettura del contatore</value></data>
+<data name="NewRecurrence" xml:space="preserve"><value>Nuovo programma preventivo</value></data>
+<data name="NextDue" xml:space="preserve"><value>Prossima scadenza</value></data>
+<data name="ObservedOn" xml:space="preserve"><value>Ora di osservazione</value></data>
+<data name="OriginalDue" xml:space="preserve"><value>Scadenza originale</value></data>
+<data name="Paused" xml:space="preserve"><value>Programma sospeso</value></data>
+<data name="PreventiveMaintenance" xml:space="preserve"><value>Manutenzione preventiva</value></data>
+<data name="ReadingInvalid" xml:space="preserve"><value>Verificare lettura, ora di osservazione e requisiti di azzeramento del contatore.</value></data>
+<data name="ReadingSource" xml:space="preserve"><value>Fonte della lettura</value></data>
+<data name="Readings" xml:space="preserve"><value>Cronologia delle letture</value></data>
+<data name="RecordReading" xml:space="preserve"><value>Registra lettura</value></data>
+<data name="RecurrenceHelp" xml:space="preserve"><value>Si attiva il primo criterio raggiunto tra calendario, contatore e condizione. È consentito un ordine in sospeso per programma. L'annullamento di un ordine generato sospende il programma per revisione.</value></data>
+<data name="RecurrenceInvalid" xml:space="preserve"><value>Verificare programma, fuso orario, finestra di servizio e criteri.</value></data>
+<data name="RecurrencePending" xml:space="preserve"><value>Completare o annullare l'ordine in sospeso prima di modificare destinazione o base del contatore.</value></data>
+<data name="ReleaseEvidence" xml:space="preserve"><value>Prove di verifica del rilascio</value></data>
+<data name="ReleaseHold" xml:space="preserve"><value>Rimuovi blocco di sicurezza</value></data>
+<data name="ReleaseQualification" xml:space="preserve"><value>Qualifica del revisore</value></data>
+<data name="ResetMeter" xml:space="preserve"><value>Contatore sostituito o azzerato (motivo obbligatorio)</value></data>
+<data name="RestoreIfUnchanged" xml:space="preserve"><value>Ripristina lo stato precedente solo se invariato e senza altri blocchi</value></data>
+<data name="RevisedDue" xml:space="preserve"><value>Scadenza modificata</value></data>
+<data name="SafetyHolds" xml:space="preserve"><value>Blocchi di sicurezza</value></data>
+<data name="Schedule" xml:space="preserve"><value>Programma di manutenzione</value></data>
+<data name="ServiceEnd" xml:space="preserve"><value>Fine della finestra di servizio</value></data>
+<data name="ServiceStart" xml:space="preserve"><value>Inizio della finestra di servizio</value></data>
+<data name="ServiceWindow" xml:space="preserve"><value>Finestra di servizio</value></data>
+<data name="SourceChecklist" xml:space="preserve"><value>Invio della lista di controllo di origine</value></data>
+<data name="StatePreserved" xml:space="preserve"><value>Stato attuale conservato</value></data>
+<data name="StateRestored" xml:space="preserve"><value>Stato precedente ripristinato</value></data>
+<data name="Target" xml:space="preserve"><value>Destinazione della manutenzione</value></data>
+<data name="TimeZone" xml:space="preserve"><value>Fuso orario</value></data>
+<data name="UnitHold" xml:space="preserve"><value>Blocco di sicurezza dell'unità</value></data>
+<data name="UsageAndCondition" xml:space="preserve"><value>Utilizzo e condizione</value></data>
+<data name="UseDueDeferral" xml:space="preserve"><value>Utilizzare l'azione di rinvio approvato per modificare la scadenza.</value></data>
+<data name="UseMeterReset" xml:space="preserve"><value>Registrare un azzeramento tracciato per cambiare la base; usare un nuovo programma per unità diverse.</value></data>
+<data name="InventoryItem" xml:space="preserve"><value>Articolo di magazzino</value></data>
+<data name="InventoryLocation" xml:space="preserve"><value>Ubicazione di magazzino di origine</value></data>
+<data name="InventoryLot" xml:space="preserve"><value>Lotto di magazzino</value></data>
+<data name="WorkOrderRecurrenceChanged" xml:space="preserve"><value>Programma preventivo modificato</value></data>
+<data name="WorkOrderThresholdReached" xml:space="preserve"><value>Soglia di manutenzione raggiunta</value></data>
+<data name="WorkOrderPartChanged" xml:space="preserve"><value>Ricambio dell'ordine di lavoro modificato</value></data>
+<data name="MaintenanceChange0" xml:space="preserve"><value>Programma configurato</value></data>
+<data name="MaintenanceChange1" xml:space="preserve"><value>Lettura registrata</value></data>
+<data name="MaintenanceChange2" xml:space="preserve"><value>Azzeramento del contatore registrato</value></data>
+<data name="MaintenanceChange3" xml:space="preserve"><value>Scadenza rinviata</value></data>
+<data name="MaintenanceChange4" xml:space="preserve"><value>Ordine di lavoro creato</value></data>
+<data name="MaintenanceChange5" xml:space="preserve"><value>Segnalazione del ritardo</value></data>
+<data name="WorkOrderOverdue" xml:space="preserve"><value>Segnalazione del ritardo</value></data>
+<data name="WorkOrderSafetyHoldApplied" xml:space="preserve"><value>Blocco di sicurezza applicato</value></data>
+<data name="WorkOrderSafetyHoldReleased" xml:space="preserve"><value>Blocco di sicurezza rimosso</value></data>
+<data name="WorkOrderDeferred" xml:space="preserve"><value>Scadenza rinviata</value></data>
 </root>

@@ -678,4 +678,17 @@
   <data name="TargetType" xml:space="preserve"><value>Target type</value></data>
   <data name="Group" xml:space="preserve"><value>Station / group</value></data>
   <data name="ChecklistsDisabled" xml:space="preserve"><value>Checklists are disabled for this department.</value></data>
+<data name="CreateWorkOrderOnFail" xml:space="preserve"><value>Create a Readiness Pro work order on failure</value></data>
+<data name="ReadinessFailureHelp" xml:space="preserve"><value>The checklist remains free. Paid follow-up retries when Readiness Pro is available; configured safety holds require a separate independent release.</value></data>
+<data name="RelatedWorkOrders" xml:space="preserve"><value>Related work orders</value></data>
+<data name="WorkOrderPriority" xml:space="preserve"><value>Priority</value></data>
+<data name="WorkOrderPriorityLow" xml:space="preserve"><value>Low</value></data>
+<data name="WorkOrderPriorityNormal" xml:space="preserve"><value>Normal</value></data>
+<data name="WorkOrderPriorityHigh" xml:space="preserve"><value>High</value></data>
+<data name="WorkOrderPriorityEmergency" xml:space="preserve"><value>Emergency</value></data>
+<data name="SetUnitStateOnFail" xml:space="preserve"><value>Place unit out of service</value></data>
+<data name="HoldAssetOnFail" xml:space="preserve"><value>Place equipment out for repair</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>Maintenance storage is unavailable.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>You do not have permission to perform this action.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Select an available target in your department.</value></data>
 </root>

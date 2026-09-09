@@ -39,6 +39,7 @@ namespace Resgrid.Model.Inventories
 		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public InventoryUsageType? UsageType { get; set; }
 		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string PurchaseOrderItemId { get; set; }
 		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string CountItemId { get; set; }
+		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public int? WorkOrderPartId { get; set; }
 		public string Note { get; set; }
 		public decimal? UnitCost { get; set; }
 	}

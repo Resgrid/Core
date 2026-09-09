@@ -254,4 +254,7 @@
   <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>Skicka e-post för lösenordsåterställning</value></data>
   <data name="SendPasswordResetEmail" xml:space="preserve"><value>Skicka e-post för lösenordsåterställning</value></data>
   <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>Resgrid skickar en kortlivad engångslänk till användarens bekräftade e-postadress. Administratören väljer eller ser inte det nya lösenordet.</value></data>
+  <data name="ScheduleMutationFailed" xml:space="preserve">
+    <value>Schemat kunde inte uppdateras. Uppdatera sidan och försök igen.</value>
+  </data>
 </root>

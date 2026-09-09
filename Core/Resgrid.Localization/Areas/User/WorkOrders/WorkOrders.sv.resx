@@ -154,4 +154,110 @@
 <data name="ActivityPartVoided" xml:space="preserve"><value>Del makulerad</value></data>
 <data name="ActivityFileAdded" xml:space="preserve"><value>Fil tillagd</value></data>
 <data name="ActivityFileWithdrawn" xml:space="preserve"><value>Fil återkallad</value></data>
+<data name="Active" xml:space="preserve"><value>Aktivt schema</value></data>
+<data name="ActivityDeferred" xml:space="preserve"><value>Förfallodatum uppskjutet</value></data>
+<data name="ActivityEscalated" xml:space="preserve"><value>Försening eskalerad</value></data>
+<data name="ActivitySafetyHold" xml:space="preserve"><value>Säkerhetsspärr införd</value></data>
+<data name="ActivitySafetyReleased" xml:space="preserve"><value>Säkerhetsspärr hävd</value></data>
+<data name="AddHold" xml:space="preserve"><value>Inför säkerhetsspärr</value></data>
+<data name="ApproveDeferral" xml:space="preserve"><value>Godkänn uppskjutning</value></data>
+<data name="AssetHold" xml:space="preserve"><value>Säkerhetsspärr för utrustning</value></data>
+<data name="AssignmentAndEscalation" xml:space="preserve"><value>Tilldelning och eskalering</value></data>
+<data name="BlackoutFrom" xml:space="preserve"><value>Spärrperiodens början</value></data>
+<data name="BlackoutUntil" xml:space="preserve"><value>Spärrperiodens slut</value></data>
+<data name="Calendar" xml:space="preserve"><value>Kalenderfrekvens</value></data>
+<data name="CalendarDaily" xml:space="preserve"><value>Dagligen</value></data>
+<data name="CalendarMonthly" xml:space="preserve"><value>Månadsvis</value></data>
+<data name="CalendarNone" xml:space="preserve"><value>Ingen kalenderutlösare</value></data>
+<data name="CalendarQuarterly" xml:space="preserve"><value>Kvartalsvis</value></data>
+<data name="CalendarWeekly" xml:space="preserve"><value>Veckovis</value></data>
+<data name="CalendarYearly" xml:space="preserve"><value>Årligen</value></data>
+<data name="CompletionBased" xml:space="preserve"><value>Beräkna nästa intervall från verifierad stängning</value></data>
+<data name="Condition" xml:space="preserve"><value>Tillståndsutlösare</value></data>
+<data name="ConditionAtOrAbove" xml:space="preserve"><value>Vid eller över tröskeln</value></data>
+<data name="ConditionAtOrBelow" xml:space="preserve"><value>Vid eller under tröskeln</value></data>
+<data name="ConditionNone" xml:space="preserve"><value>Ingen tillståndsutlösare</value></data>
+<data name="ConditionThreshold" xml:space="preserve"><value>Tillståndströskel</value></data>
+<data name="ConditionUnit" xml:space="preserve"><value>Mätenhet för tillstånd</value></data>
+<data name="ConditionValue" xml:space="preserve"><value>Tillståndsmätvärde</value></data>
+<data name="DeferralReason" xml:space="preserve"><value>Orsak till uppskjutning</value></data>
+<data name="Edit" xml:space="preserve"><value>Redigera schema</value></data>
+<data name="EndDate" xml:space="preserve"><value>Slutdatum</value></data>
+<data name="EscalateAfter" xml:space="preserve"><value>Eskalera efter antal försenade minuter</value></data>
+<data name="EscalationRole" xml:space="preserve"><value>Mottagarroll för eskalering</value></data>
+<data name="FirstDueLocal" xml:space="preserve"><value>Första förfallodatum och lokal tid</value></data>
+<data name="GeneratedFailureTitle" xml:space="preserve"><value>Uppföljning av checklistfel</value></data>
+<data name="HoldAsset" xml:space="preserve"><value>Ta utrustning ur drift för reparation</value></data>
+<data name="HoldUnit" xml:space="preserve"><value>Ta enheten ur tjänst</value></data>
+<data name="HoldReleaseHelp" xml:space="preserve"><value>En oberoende behörig granskare måste registrera kvalifikationer och frigivningsunderlag. Återställning kräver den sista spärren och oförändrat tillstånd; enbart stängning återställer aldrig drift.</value></data>
+<data name="IndependentReleaseRequired" xml:space="preserve"><value>En annan behörig granskare måste häva spärren.</value></data>
+<data name="Interval" xml:space="preserve"><value>Schemaläggningsintervall</value></data>
+<data name="InventoryOperationFailed" xml:space="preserve"><value>Lageråtgärden kunde inte slutföras. Kontrollera tillgänglighet och behörigheter.</value></data>
+<data name="InventoryPartInvalid" xml:space="preserve"><value>Välj en giltig lagerartikel och källplats.</value></data>
+<data name="InventoryParts" xml:space="preserve"><value>Lagerkopplade delar</value></data>
+<data name="InventoryPartsHelp" xml:space="preserve"><value>Lämna artikeln tom för en del i fritext. Lagerdelar använder bokförda kostnader och kan kräva ett oberoende vittne i lagret.</value></data>
+<data name="InventoryPermissionRequired" xml:space="preserve"><value>Lagerbehörighet eller verifiering av skyddade data krävs.</value></data>
+<data name="InventoryWitnessPending" xml:space="preserve"><value>Lagervittne inväntas; slutför bevittningen innan arbetsordern stängs.</value></data>
+<data name="LeadDays" xml:space="preserve"><value>Framförhållning i dagar</value></data>
+<data name="LoadChoices" xml:space="preserve"><value>Läs in fler alternativ</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>Underhållslagringen är inte tillgänglig.</value></data>
+<data name="MeterBaseline" xml:space="preserve"><value>Basvärde för mätarintervall</value></data>
+<data name="MeterCycles" xml:space="preserve"><value>Driftcykler</value></data>
+<data name="MeterEpoch" xml:space="preserve"><value>Mätargeneration</value></data>
+<data name="MeterHours" xml:space="preserve"><value>Drifttimmar</value></data>
+<data name="MeterInterval" xml:space="preserve"><value>Mätarintervall</value></data>
+<data name="MeterKilometers" xml:space="preserve"><value>Kilometer</value></data>
+<data name="MeterMiles" xml:space="preserve"><value>Körda engelska mil</value></data>
+<data name="MeterNone" xml:space="preserve"><value>Ingen mätarutlösare</value></data>
+<data name="MeterUnit" xml:space="preserve"><value>Mätarens måttenhet</value></data>
+<data name="MeterValue" xml:space="preserve"><value>Mätarställning</value></data>
+<data name="NewRecurrence" xml:space="preserve"><value>Nytt förebyggande schema</value></data>
+<data name="NextDue" xml:space="preserve"><value>Nästa förfallodatum</value></data>
+<data name="ObservedOn" xml:space="preserve"><value>Observationstid</value></data>
+<data name="OriginalDue" xml:space="preserve"><value>Ursprungligt förfallodatum</value></data>
+<data name="Paused" xml:space="preserve"><value>Pausat schema</value></data>
+<data name="PreventiveMaintenance" xml:space="preserve"><value>Förebyggande underhåll</value></data>
+<data name="ReadingInvalid" xml:space="preserve"><value>Kontrollera mätvärde, observationstid och krav för nollställning.</value></data>
+<data name="ReadingSource" xml:space="preserve"><value>Mätvärdets källa</value></data>
+<data name="Readings" xml:space="preserve"><value>Mätvärdeshistorik</value></data>
+<data name="RecordReading" xml:space="preserve"><value>Registrera mätvärde</value></data>
+<data name="RecurrenceHelp" xml:space="preserve"><value>Det första uppnådda villkoret för kalender, mätare eller tillstånd utlöser ordern. En väntande order tillåts per schema. Avbruten genererad order pausar schemat för granskning.</value></data>
+<data name="RecurrenceInvalid" xml:space="preserve"><value>Kontrollera schema, tidszon, servicefönster och utlösare.</value></data>
+<data name="RecurrencePending" xml:space="preserve"><value>Slutför eller avbryt väntande order innan mål eller mätarbas ändras.</value></data>
+<data name="ReleaseEvidence" xml:space="preserve"><value>Verifieringsunderlag för frigivning</value></data>
+<data name="ReleaseHold" xml:space="preserve"><value>Häv säkerhetsspärr</value></data>
+<data name="ReleaseQualification" xml:space="preserve"><value>Granskarens kvalifikation</value></data>
+<data name="ResetMeter" xml:space="preserve"><value>Mätare bytt eller nollställd (orsak krävs)</value></data>
+<data name="RestoreIfUnchanged" xml:space="preserve"><value>Återställ tidigare tillstånd endast om det är oförändrat och inga andra spärrar finns</value></data>
+<data name="RevisedDue" xml:space="preserve"><value>Ändrat förfallodatum</value></data>
+<data name="SafetyHolds" xml:space="preserve"><value>Säkerhetsspärrar</value></data>
+<data name="Schedule" xml:space="preserve"><value>Underhållsschema</value></data>
+<data name="ServiceEnd" xml:space="preserve"><value>Servicefönstrets slut</value></data>
+<data name="ServiceStart" xml:space="preserve"><value>Servicefönstrets början</value></data>
+<data name="ServiceWindow" xml:space="preserve"><value>Servicefönster</value></data>
+<data name="SourceChecklist" xml:space="preserve"><value>Ursprunglig checklistinlämning</value></data>
+<data name="StatePreserved" xml:space="preserve"><value>Aktuellt tillstånd bevarat</value></data>
+<data name="StateRestored" xml:space="preserve"><value>Tidigare tillstånd återställt</value></data>
+<data name="Target" xml:space="preserve"><value>Underhållsmål</value></data>
+<data name="TimeZone" xml:space="preserve"><value>Tidszon</value></data>
+<data name="UnitHold" xml:space="preserve"><value>Säkerhetsspärr för enhet</value></data>
+<data name="UsageAndCondition" xml:space="preserve"><value>Användning och tillstånd</value></data>
+<data name="UseDueDeferral" xml:space="preserve"><value>Använd godkänd uppskjutning för att ändra förfallodatum.</value></data>
+<data name="UseMeterReset" xml:space="preserve"><value>Registrera en spårbar nollställning för att ändra basvärdet; använd ett nytt schema för andra måttenheter.</value></data>
+<data name="InventoryItem" xml:space="preserve"><value>Lagerartikel</value></data>
+<data name="InventoryLocation" xml:space="preserve"><value>Källplats i lagret</value></data>
+<data name="InventoryLot" xml:space="preserve"><value>Lagerparti</value></data>
+<data name="WorkOrderRecurrenceChanged" xml:space="preserve"><value>Förebyggande schema ändrat</value></data>
+<data name="WorkOrderThresholdReached" xml:space="preserve"><value>Underhållströskel uppnådd</value></data>
+<data name="WorkOrderPartChanged" xml:space="preserve"><value>Arbetsorderdel ändrad</value></data>
+<data name="MaintenanceChange0" xml:space="preserve"><value>Schema konfigurerat</value></data>
+<data name="MaintenanceChange1" xml:space="preserve"><value>Mätvärde registrerat</value></data>
+<data name="MaintenanceChange2" xml:space="preserve"><value>Mätarnollställning registrerad</value></data>
+<data name="MaintenanceChange3" xml:space="preserve"><value>Förfallodatum uppskjutet</value></data>
+<data name="MaintenanceChange4" xml:space="preserve"><value>Arbetsorder skapad</value></data>
+<data name="MaintenanceChange5" xml:space="preserve"><value>Försening eskalerad</value></data>
+<data name="WorkOrderOverdue" xml:space="preserve"><value>Försening eskalerad</value></data>
+<data name="WorkOrderSafetyHoldApplied" xml:space="preserve"><value>Säkerhetsspärr införd</value></data>
+<data name="WorkOrderSafetyHoldReleased" xml:space="preserve"><value>Säkerhetsspärr hävd</value></data>
+<data name="WorkOrderDeferred" xml:space="preserve"><value>Förfallodatum uppskjutet</value></data>
 </root>

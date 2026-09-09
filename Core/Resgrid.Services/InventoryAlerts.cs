@@ -45,13 +45,13 @@ namespace Resgrid.Services
 			if (item == null) throw new InventoryException(404, "Unavailable");
 			if (item.IsControlledSubstance) await _auth.RequireAsync(actor, false, PermissionTypes.ManageControlledSubstances);
 		}
-		private async Task SetAlertAsync(int departmentId, InventoryAlertType type, string itemId, string locationId, string lotId, string assetId, string issuanceId, bool active, DateTime? due, decimal? quantity, List<long> events)
+		private async Task SetAlertAsync(int departmentId, InventoryAlertType type, string itemId, string locationId, string lotId, string assetId, string issuanceId, bool active, DateTime? due, decimal? quantity, List<long> events, Dictionary<string, InventoryAlert> openAlerts = null)
 		{
 			var key = Fingerprint(new { type, itemId, locationId, lotId, assetId, issuanceId });
-			var current = await _store.OpenAlertAsync(departmentId, key);
+			var current = openAlerts == null ? await _store.OpenAlertAsync(departmentId, key) : openAlerts.GetValueOrDefault(key);
 			if (!active)
 			{
-				if (current != null) { current.Status = 1; current.ResolvedOn = Now; await UpdateAlertMetadataAsync(current); }
+				if (current != null) { current.Status = 1; current.ResolvedOn = Now; await UpdateAlertMetadataAsync(current); openAlerts?.Remove(key); }
 				return;
 			}
 			if (current != null)
@@ -62,6 +62,7 @@ namespace Resgrid.Services
 			var row = New<InventoryAlert>(new InventoryActor { DepartmentId = departmentId });
 			row.AlertType = (int)type; row.DedupKey = key; row.ItemId = itemId; row.LocationId = locationId; row.LotId = lotId; row.AssetId = assetId; row.IssuanceId = issuanceId; row.OpenedOn = Now; row.DueOn = due; row.Quantity = quantity;
 			await _store.InsertAsync(row);
+			if (openAlerts != null) openAlerts[key] = row;
 			var trigger = type == InventoryAlertType.LowStock ? WorkflowTriggerEventType.InventoryLowStock : type == InventoryAlertType.OverdueReturn ? WorkflowTriggerEventType.InventoryReturnOverdue : WorkflowTriggerEventType.InventoryExpiring;
 			var entry = await _outbox.EnqueueAsync(departmentId, "Inventory", new DomainEventEnvelope { EventName = trigger.ToString(), Trigger = trigger, SchemaVersion = 1,
 				AggregateType = "InventoryAlert", AggregateId = row.Id, OccurredOn = Now,
@@ -110,10 +111,37 @@ namespace Resgrid.Services
 			}
 			foreach (var item in items) await RefreshLowStockAsync(actor, item, events);
 		}
+		private async Task RefreshAllLowStockAsync(InventoryActor actor, List<long> events)
+		{
+			// One department snapshot under the posting lock; reuse holder liveness across items and lots.
+			var openAlerts = (await AllOpenAlertsAsync(actor.DepartmentId)).ToDictionary(a => a.DedupKey);
+			var stocks = (await AllAsync<InventoryStock>(actor.DepartmentId)).Where(s => !s.IsDeleted).ToLookup(s => s.ItemId);
+			var assets = (await AllAsync<InventoryAsset>(actor.DepartmentId)).Where(a => !a.IsDeleted && a.Status is 0 or 1 or 2 or 3).ToLookup(a => a.ItemId);
+			var locations = new Dictionary<string, bool>();
+			async Task<bool> Live(string id)
+			{
+				if (id == null) return false;
+				if (!locations.TryGetValue(id, out var live)) locations[id] = live = await LiveAlertLocationAsync(actor.DepartmentId, id);
+				return live;
+			}
+			foreach (var row in await AllAsync<InventoryItem>(actor.DepartmentId))
+			{
+				await AuthorizeRowAsync(actor, row);
+				var item = await RevealAsync(actor, row); var content = Decode<InventoryItemContent>(item); decimal quantity = 0;
+				if (item.TrackingMode == 0)
+				{
+					foreach (var stock in stocks[item.Id]) if (await Live(stock.LocationId)) quantity += stock.Quantity;
+				}
+				else foreach (var asset in assets[item.Id]) if (await Live(asset.CurrentLocationId)) quantity++;
+				var threshold = content.ReorderPoint ?? content.MinLevel;
+				await SetAlertAsync(actor.DepartmentId, InventoryAlertType.LowStock, item.Id, null, null, null, null,
+					!item.IsDeleted && item.IsActive && threshold.HasValue && quantity <= threshold.Value, null, quantity, events, openAlerts);
+			}
+		}
 		public Task RefreshAlertsAsync(InventoryActor actor) => TransactionAsync(actor, async events =>
 		{
 			await _auth.RequireAsync(actor, false, PermissionTypes.AdjustInventory);
-			foreach (var item in await AllAsync<InventoryItem>(actor.DepartmentId)) await RefreshLowStockAsync(actor, item.Id, events);
+			await RefreshAllLowStockAsync(actor, events);
 			await EvaluateDatedAlertsAsync(actor.DepartmentId, events); return true;
 		});
 		public Task SweepAlertsAsync(int departmentId) => AlertTransactionAsync(departmentId, async events => { await EvaluateDatedAlertsAsync(departmentId, events); return true; });
@@ -188,20 +216,25 @@ namespace Resgrid.Services
 		}
 		public Task<InventoryAlertDelivery> ClaimAlertAsync(int departmentId, string userId) => AlertTransactionAsync(departmentId, async events =>
 		{
-			foreach (var alert in await AllOpenAlertsAsync(departmentId))
+			for (var skip = 0; skip <= 100000; skip += 500)
 			{
-				var delivery = await _store.AlertDeliveryAsync(departmentId, alert.Id, userId);
-				if (delivery != null && (delivery.State is 2 or 3 || delivery.NextAttemptOn > Now || delivery.LeaseUntil > Now)) continue;
-				if (!await CanReceiveAlertAsync(departmentId, userId, alert.Id)) continue;
-				if (delivery == null)
+				var candidates = await _store.ClaimableAlertsAsync(departmentId, userId, Now, skip);
+				foreach (var alert in candidates.Take(500))
 				{
-					delivery = New<InventoryAlertDelivery>(new InventoryActor { DepartmentId = departmentId }); delivery.AlertId = alert.Id; delivery.UserId = userId; delivery.NextAttemptOn = Now;
-					await _store.InsertAsync(delivery);
+					if (!await CanReceiveAlertAsync(departmentId, userId, alert.Id)) continue;
+					var delivery = await _store.AlertDeliveryAsync(departmentId, alert.Id, userId);
+					if (delivery != null && (delivery.State is 2 or 3 || delivery.NextAttemptOn > Now || delivery.LeaseUntil > Now)) continue;
+					if (delivery == null)
+					{
+						delivery = New<InventoryAlertDelivery>(new InventoryActor { DepartmentId = departmentId }); delivery.AlertId = alert.Id; delivery.UserId = userId; delivery.NextAttemptOn = Now;
+						await _store.InsertAsync(delivery);
+					}
+					delivery.State = 1; delivery.ClaimToken = Guid.NewGuid().ToString("D"); delivery.LeaseUntil = Now.AddMinutes(30); delivery.AttemptCount++;
+					await UpdateAlertMetadataAsync(delivery); return delivery;
 				}
-				delivery.State = 1; delivery.ClaimToken = Guid.NewGuid().ToString("D"); delivery.LeaseUntil = Now.AddMinutes(30); delivery.AttemptCount++;
-				await UpdateAlertMetadataAsync(delivery); return delivery;
+				if (candidates.Count <= 500) return null;
 			}
-			return null;
+			throw new InventoryException(409, "InventoryTooLarge");
 		});
 		private async Task<List<InventoryAlert>> AllOpenAlertsAsync(int departmentId)
 		{

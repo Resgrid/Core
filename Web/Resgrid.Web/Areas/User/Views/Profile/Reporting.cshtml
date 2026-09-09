@@ -36,6 +36,7 @@
                     </div>
                 </div>
                 <div class="ibox-content">
+                    <div id="reporting-error" class="alert alert-danger" role="alert" hidden>@localizer["ScheduleMutationFailed"]</div>
                     <form id="reporting-antiforgery" hidden>@Html.AntiForgeryToken()</form>
                     <table id="reportingScheduleGrid" class="table table-striped table-bordered table-hover" width="100%"></table>
                 </div>

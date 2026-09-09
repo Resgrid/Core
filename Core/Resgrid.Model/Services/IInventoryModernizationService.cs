@@ -14,6 +14,7 @@ namespace Resgrid.Model.Services
 		Task<InventoryLot> SaveLotAsync(InventoryActor actor, InventoryLot lot, InventoryLotContent details);
 		Task ArchiveAsync<T>(InventoryActor actor, string id, int revision) where T : InventoryMutableRow;
 		Task<T> GetAsync<T>(InventoryActor actor, string id) where T : InventoryRow;
+		Task<Dictionary<string, T>> GetManyAsync<T>(InventoryActor actor, IReadOnlyCollection<string> ids) where T : InventoryRow;
 		Task<InventoryTransaction> GetLegacyTransactionAsync(InventoryActor actor, int inventoryId);
 		Task<InventoryPage<T>> ListAsync<T>(InventoryActor actor, int page = 0) where T : InventoryRow;
 		Task<InventoryPage<T>> QueryAsync<T>(InventoryActor actor, InventoryQuery filter, int page = 0) where T : InventoryRow;

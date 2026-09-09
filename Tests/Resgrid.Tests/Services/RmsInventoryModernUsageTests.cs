@@ -80,6 +80,12 @@ namespace Resgrid.Tests.Services
 			_catalog.Setup(c => c.GetAsync<InventoryItem>(It.IsAny<InventoryActor>(), ItemId)).ReturnsAsync(() => Copy(item));
 			_catalog.Setup(c => c.GetAsync<InventoryLocation>(It.IsAny<InventoryActor>(), LocationId)).ReturnsAsync(() => Copy(location));
 			_catalog.Setup(c => c.GetAsync<InventoryTransaction>(It.IsAny<InventoryActor>(), It.IsAny<string>())).ReturnsAsync((InventoryActor a, string id) => Copy(_ledger.SingleOrDefault(t => t.DepartmentId == a.DepartmentId && t.Id == id)));
+			_catalog.Setup(c => c.GetManyAsync<InventoryTransaction>(It.IsAny<InventoryActor>(), It.IsAny<IReadOnlyCollection<string>>()))
+				.ReturnsAsync((InventoryActor a, IReadOnlyCollection<string> ids) => _ledger.Where(t => t.DepartmentId == a.DepartmentId && ids.Contains(t.Id)).ToDictionary(t => t.Id, Copy));
+			_catalog.Setup(c => c.GetManyAsync<RecordInventoryUsage>(It.IsAny<InventoryActor>(), It.IsAny<IReadOnlyCollection<string>>()))
+				.ReturnsAsync((InventoryActor a, IReadOnlyCollection<string> ids) => _usageRows.Where(t => t.DepartmentId == a.DepartmentId && ids.Contains(t.Id)).ToDictionary(t => t.Id, Copy));
+			_modernStore.Setup(s => s.RelatedManyAsync<InventoryTransaction>(Department, It.IsAny<string>(), It.IsAny<IReadOnlyCollection<string>>()))
+				.ReturnsAsync((int d, string column, IReadOnlyCollection<string> ids) => _ledger.Where(t => t.DepartmentId == d && ids.Contains((string)typeof(InventoryTransaction).GetProperty(column).GetValue(t))).Select(Copy).ToList());
 			_catalog.Setup(c => c.ListAsync<InventoryLocation>(It.IsAny<InventoryActor>(), 0)).ReturnsAsync(new InventoryPage<InventoryLocation> { Items = new() { location } });
 			_modernStore.Setup(s => s.HasLegacyMigrationAsync(Department)).ReturnsAsync(() => _migrated);
 			_modernStore.Setup(s => s.LockDepartmentAsync(Department)).Returns(() => { _transaction.Should().NotBeNull(); return Task.CompletedTask; });

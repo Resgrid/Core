@@ -46,7 +46,7 @@ namespace Resgrid.Tests.Services
 				_personnelRolesService.Object, _actionLogsService.Object, _messageService.Object, _certificationService.Object,
 				_trainingService.Object, _shiftsService.Object, _emailService.Object, new ChecklistWorkflowTests.MemoryStore(),
 				new Lazy<IReadinessHistoryProtectionService>(() => new ReadinessHistoryProtectionService(Mock.Of<IProtectedWriteService>(), policy.Object)),
-				reminders.Object, EmptyWorkOrders(), store);
+				reminders.Object, EmptyWorkOrders(), store, EmptyMaintenance());
 		}
 
 		private static T InventoryExportRow<T>(string creator = UserId, int department = DeptId, string content = "SUBJECT-EVIDENCE") where T : InventoryRow, new()

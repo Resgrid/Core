@@ -38,6 +38,7 @@ namespace Resgrid.Web.Areas.User.Models.Inventory
 		public InventoryValuation Valuation { get; set; }
 		public InventoryCountDetail CountDetail { get; set; }
 		public bool CanViewReports { get; set; }
+		public InventoryReportKind ReportKind { get; set; } = InventoryReportKind.OnHand;
 		public static T Details<T>(InventoryRow row) where T : new() => string.IsNullOrEmpty(row?.Content) ? new T() : JsonConvert.DeserializeObject<T>(row.Content) ?? new T();
 	}
 }

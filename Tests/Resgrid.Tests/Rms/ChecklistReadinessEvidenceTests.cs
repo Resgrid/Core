@@ -30,7 +30,7 @@ namespace Resgrid.Tests.Rms
 			var adapter = new ReadinessPacketEvidenceAdapter(checklists.Object, access.Object, grant, pdf.Object);
 			var service = new RecordsEvidenceService(_store.EvidenceRepo.Object, _store.RecordsRepo.Object, _incidents.ReportsRepo.Object,
 				_store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object,
-				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<IEventAggregator>()));
+				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<IEventAggregator>()), Mock.Of<Resgrid.Model.Repositories.IInventoryStore>());
 			var artifact = await service.CaptureAsync(Request(RmsEvidenceKind.ReadinessPacket));
 			artifact.Classification.Should().Be((int)RmsEvidenceClassification.Restricted);
 			artifact.ManifestJson.Should().Contain("Original evidence").And.Contain("PdfSha256").And.Contain("ManifestSha256");

@@ -678,4 +678,17 @@
   <data name="TargetType" xml:space="preserve"><value>Type de cible</value></data>
   <data name="Group" xml:space="preserve"><value>Caserne / groupe</value></data>
   <data name="ChecklistsDisabled" xml:space="preserve"><value>Les listes de contrôle sont désactivées pour ce département.</value></data>
+<data name="CreateWorkOrderOnFail" xml:space="preserve"><value>Créer un ordre Readiness Pro en cas d'échec</value></data>
+<data name="ReadinessFailureHelp" xml:space="preserve"><value>La liste reste gratuite. Le suivi payant est réessayé lorsque Readiness Pro est disponible ; les blocages configurés exigent une levée indépendante distincte.</value></data>
+<data name="RelatedWorkOrders" xml:space="preserve"><value>Ordres de travail associés</value></data>
+<data name="WorkOrderPriority" xml:space="preserve"><value>Priorité</value></data>
+<data name="WorkOrderPriorityLow" xml:space="preserve"><value>Basse</value></data>
+<data name="WorkOrderPriorityNormal" xml:space="preserve"><value>Normale</value></data>
+<data name="WorkOrderPriorityHigh" xml:space="preserve"><value>Haute</value></data>
+<data name="WorkOrderPriorityEmergency" xml:space="preserve"><value>Urgence</value></data>
+<data name="SetUnitStateOnFail" xml:space="preserve"><value>Mettre l'unité hors service</value></data>
+<data name="HoldAssetOnFail" xml:space="preserve"><value>Retirer le matériel pour réparation</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>Le stockage de maintenance est indisponible.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Vous n’avez pas l’autorisation d’effectuer cette action.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Sélectionnez une cible disponible dans votre service.</value></data>
 </root>

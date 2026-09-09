@@ -647,4 +647,7 @@
   <data name="InventoryReturned" xml:space="preserve"><value>Запаси повернуто</value></data>
   <data name="InventoryAssetStatusChanged" xml:space="preserve"><value>Стан інвентарного активу змінено</value></data>
   <data name="ControlledSubstanceRecorded" xml:space="preserve"><value>Контрольовану речовину зареєстровано</value></data>
+  <data name="WorkOrderPostingRequired" xml:space="preserve"><value>Проведіть або сторнуйте цю деталь через її наряд.</value></data>
+  <data name="AssetSafetyHold" xml:space="preserve"><value>Блокування безпеки обслуговування перешкоджає поверненню обладнання в експлуатацію.</value></data>
+  <data name="ReadinessProRequired" xml:space="preserve"><value>Для нових робіт з обслуговування потрібен Readiness Pro.</value></data>
 </root>

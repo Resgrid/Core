@@ -110,8 +110,6 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 				Create.ForeignKey(N("FK_" + child + "_ItemLot")).FromTable(N(child)).ForeignColumns(N("DepartmentId"), N("ItemId"), N("LotId")).ToTable(N("InventoryLots")).PrimaryColumns(N("DepartmentId"), N("ItemId"), N("Id"));
 			foreach (var child in AssetChildren)
 				Create.ForeignKey(N("FK_" + child + "_ItemAsset")).FromTable(N(child)).ForeignColumns(N("DepartmentId"), N("ItemId"), N("AssetId")).ToTable(N("InventoryAssets")).PrimaryColumns(N("DepartmentId"), N("ItemId"), N("Id"));
-			TenantHolderKey("DepartmentGroups", "DepartmentGroupId");
-			TenantHolderKey("Units", "UnitId");
 			Holder("InventoryLocations", "GroupId", "DepartmentGroups", "DepartmentGroupId");
 			Holder("InventoryLocations", "UnitId", "Units", "UnitId");
 			Holder("InventoryLocations", "UserId", "AspNetUsers", "Id");
@@ -145,16 +143,11 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			Index("InventoryTransfers", "History", false, "DepartmentId", "CreatedOn");
 			SpecialIndexes();
 		}
-		private void TenantHolderKey(string parent, string key)
-		{
-			if (!Schema.Table(N(parent)).Exists() || Schema.Table(N(parent)).Constraint(N("UQ_" + parent + "_DepartmentId_" + key)).Exists()) return;
-			Create.UniqueConstraint(N("UQ_InventoryHolder_" + parent)).OnTable(N(parent)).Columns(N("DepartmentId"), N(key));
-		}
 		private void Holder(string table, string column, string parent, string key)
 		{
-			// Groups and units belong to one tenant; user identities may belong to multiple departments.
+			// Existing unit tracking provides a tenant key; older minimal databases still get the typed FK.
 			if (!Schema.Table(N(parent)).Exists()) return;
-			if (parent is "Units" or "DepartmentGroups")
+			if (parent == "Units" && Schema.Table(N(parent)).Constraint(N("UQ_Units_DepartmentId_UnitId")).Exists())
 				Create.ForeignKey(N("FK_" + table + "_Holder_" + column)).FromTable(N(table)).ForeignColumns(N("DepartmentId"), N(column)).ToTable(N(parent)).PrimaryColumns(N("DepartmentId"), N(key));
 			else Create.ForeignKey(N("FK_" + table + "_Holder_" + column)).FromTable(N(table)).ForeignColumn(N(column)).ToTable(N(parent)).PrimaryColumn(N(key));
 		}
@@ -181,9 +174,6 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			foreach (var child in LotChildren) Delete.ForeignKey(N("FK_" + child + "_ItemLot")).OnTable(N(child));
 			foreach (var link in Links) Delete.ForeignKey(N("FK_" + link.Table + "_" + link.Column)).OnTable(N(link.Table));
 			foreach (var table in Tables.Reverse()) Delete.Table(N(table));
-			foreach (var parent in new[] { "DepartmentGroups", "Units" })
-				if (Schema.Table(N(parent)).Exists() && Schema.Table(N(parent)).Constraint(N("UQ_InventoryHolder_" + parent)).Exists())
-					Delete.UniqueConstraint(N("UQ_InventoryHolder_" + parent)).FromTable(N(parent));
 		}
 	}
 }

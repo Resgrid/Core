@@ -678,4 +678,17 @@
   <data name="TargetType" xml:space="preserve"><value>Τύπος στόχου</value></data>
   <data name="Group" xml:space="preserve"><value>Σταθμός / ομάδα</value></data>
   <data name="ChecklistsDisabled" xml:space="preserve"><value>Οι λίστες ελέγχου είναι απενεργοποιημένες για αυτό το τμήμα.</value></data>
+<data name="CreateWorkOrderOnFail" xml:space="preserve"><value>Δημιουργία εντολής εργασίας Readiness Pro σε αποτυχία</value></data>
+<data name="ReadinessFailureHelp" xml:space="preserve"><value>Η λίστα ελέγχου παραμένει δωρεάν. Η επί πληρωμή συνέχεια επαναλαμβάνεται όταν διατίθεται το Readiness Pro· οι δεσμεύσεις ασφαλείας απαιτούν χωριστή ανεξάρτητη άρση.</value></data>
+<data name="RelatedWorkOrders" xml:space="preserve"><value>Σχετικές εντολές εργασίας</value></data>
+<data name="WorkOrderPriority" xml:space="preserve"><value>Προτεραιότητα</value></data>
+<data name="WorkOrderPriorityLow" xml:space="preserve"><value>Χαμηλή</value></data>
+<data name="WorkOrderPriorityNormal" xml:space="preserve"><value>Κανονική</value></data>
+<data name="WorkOrderPriorityHigh" xml:space="preserve"><value>Υψηλή</value></data>
+<data name="WorkOrderPriorityEmergency" xml:space="preserve"><value>Έκτακτη ανάγκη</value></data>
+<data name="SetUnitStateOnFail" xml:space="preserve"><value>Θέση μονάδας εκτός υπηρεσίας</value></data>
+<data name="HoldAssetOnFail" xml:space="preserve"><value>Θέση εξοπλισμού εκτός χρήσης για επισκευή</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>Ο χώρος αποθήκευσης συντήρησης δεν είναι διαθέσιμος.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Δεν έχετε άδεια για αυτή την ενέργεια.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Επιλέξτε έναν διαθέσιμο στόχο στο τμήμα σας.</value></data>
 </root>

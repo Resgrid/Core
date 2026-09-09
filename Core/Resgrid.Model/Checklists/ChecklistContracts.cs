@@ -57,6 +57,10 @@ namespace Resgrid.Model.Checklists
 		public bool AllowNotApplicable { get; set; }
 		public bool RequireNoteOnFail { get; set; } = true;
 		public bool RequirePhotoOnFail { get; set; }
+		public bool CreateWorkOrderOnFail { get; set; }
+		public Resgrid.Model.WorkOrders.WorkOrderPriority WorkOrderPriority { get; set; } = Resgrid.Model.WorkOrders.WorkOrderPriority.Normal;
+		public bool SetUnitStateOnFail { get; set; }
+		public bool HoldAssetOnFail { get; set; }
 		public decimal Weight { get; set; } = 1;
 		public string Units { get; set; }
 		public decimal? Minimum { get; set; }

@@ -32,10 +32,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Operations(string tab = "Counts", int page = 0, string id = null, string itemId = null, string locationId = null)
+		public async Task<IActionResult> Operations(string tab = "Counts", int page = 0, string id = null, string itemId = null, string locationId = null, InventoryReportKind? kind = null)
 		{
 			if (tab is not ("Counts" or "Alerts" or "Reports") || page < 0 || page > 10000) throw new InventoryException(400, "InvalidPage");
-			var view = new InventoryWorkspaceView { Tab = tab, Page = page, Id = id, ItemId = itemId, LocationId = locationId,
+			if (kind.HasValue && !Enum.IsDefined(kind.Value)) throw new InventoryException(400, "InvalidInput");
+			var view = new InventoryWorkspaceView { Tab = tab, Page = page, Id = id, ItemId = itemId, LocationId = locationId, ReportKind = kind ?? InventoryReportKind.OnHand,
 				Migrated = await _migration.IsMigratedAsync(DepartmentId), CanViewReports = await MayViewInventoryReportsAsync() };
 			var groupId = (await _groups.GetGroupForUserAsync(UserId, DepartmentId))?.DepartmentGroupId;
 			view.CanWrite = await MayWriteAsync(PermissionTypes.AdjustInventory, groupId);
@@ -70,13 +71,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (InventoryException error) when (error.Code == "ProtectedDataRequired" && HttpMethods.IsGet(Request.Method))
 			{
 				return View("Operations", new InventoryWorkspaceView { Locked = true, Migrated = view.Migrated, CanWrite = view.CanWrite,
-					CanViewReports = view.CanViewReports, Tab = tab, Page = page, Id = id, ItemId = itemId, LocationId = locationId });
+					CanViewReports = view.CanViewReports, Tab = tab, Page = page, Id = id, ItemId = itemId, LocationId = locationId, ReportKind = view.ReportKind });
 			}
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]
-		public Task<IActionResult> ReopenOperations(string tab = "Counts", int page = 0, string id = null, string itemId = null, string locationId = null)
-			=> Operations(tab, page, id, itemId, locationId);
+		public Task<IActionResult> ReopenOperations(string tab = "Counts", int page = 0, string id = null, string itemId = null, string locationId = null, InventoryReportKind? kind = null)
+			=> Operations(tab, page, id, itemId, locationId, kind);
 		[HttpPost, ValidateAntiForgeryToken]
 		public async Task<IActionResult> GetCounts(int page = 0, string locationId = null)
 			=> Json(await _catalog.QueryAsync<InventoryCount>(Actor, new InventoryQuery { LocationId = locationId }, page));

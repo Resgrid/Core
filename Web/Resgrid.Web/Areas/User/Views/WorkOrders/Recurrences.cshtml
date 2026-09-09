@@ -1,0 +1,17 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderRecurrencePageView
+@using Resgrid.Model.WorkOrders
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["PreventiveMaintenance"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+<h2>@localizer["PreventiveMaintenance"]</h2>
+@await Html.PartialAsync("_Protection")
+<div class="work-order-protected">
+<a class="btn btn-default" asp-action="Index">@localizer["WorkOrders"]</a>
+@if (Model.CanWrite) { <a class="btn btn-primary" asp-action="NewRecurrence">@localizer["NewRecurrence"]</a> }
+<table class="table"><thead><tr><th>@localizer["Title"]</th><th>@localizer["NextDue"]</th><th>@localizer["Active"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
+@foreach (var entry in Model.Rows.Take(50)) { <tr><td><a asp-action="Recurrence" asp-route-id="@entry.Schedule.Id">@entry.Settings.Template.Content.Title</a></td><td>@entry.Schedule.NextDueOn?.ToString("u")</td><td>@localizer[entry.Schedule.IsActive ? "Active" : "Paused"]</td><td>@if (entry.Schedule.PendingWorkOrderId.HasValue) { <a asp-action="Detail" asp-route-id="@entry.Schedule.PendingWorkOrderId">@localizer["WorkOrders"]</a> }</td></tr> }
+</tbody></table>
+@if (Model.Page > 0) { <a class="btn btn-default" asp-action="Recurrences" asp-route-page="@(Model.Page - 1)">@localizer["Previous"]</a> }
+@if (Model.Rows.Count > 50) { <a class="btn btn-default" asp-action="Recurrences" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a> }
+</div></div></div></div>
+@section Scripts { @await Html.PartialAsync("_Scripts") }

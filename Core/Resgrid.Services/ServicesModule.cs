@@ -16,7 +16,7 @@ namespace Resgrid.Services
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.RegisterType<InventoryAuthorizationService>().As<IInventoryAuthorizationService>().InstancePerLifetimeScope();
-			builder.RegisterType<InventoryModernizationService>().AsSelf().As<IInventoryCatalogService>().As<IInventoryStockService>().As<IInventoryTransferService>()
+			builder.RegisterType<InventoryModernizationService>().AsSelf().As<IInventoryCatalogService>().As<IInventoryStockService>().As<IInventoryWorkOrderAdapter>().As<IInventoryTransferService>()
 				.As<IInventoryIssuanceService>().As<IInventoryMigrationService>().As<IInventoryPurchasingService>().As<IInventoryOperationsService>().As<IInventoryAlertService>().As<Resgrid.Model.Checklists.IChecklistAssetSource>().As<Resgrid.Model.Checklists.IChecklistHistoricalAssetSource>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryAlertNotifications>().AsSelf().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryScheduledReportService>().As<IInventoryScheduledReportService>().InstancePerLifetimeScope();
@@ -31,7 +31,7 @@ namespace Resgrid.Services
 					var scope = context.Resolve<ILifetimeScope>();
 					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("readiness-billing-client"));
 				}).InstancePerLifetimeScope();
-			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().As<IWorkOrderMaintenanceService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderAuthorizationService>().As<IWorkOrderAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistScheduledReportService>().As<IChecklistScheduledReportService>().InstancePerLifetimeScope();

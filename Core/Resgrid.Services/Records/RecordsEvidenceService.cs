@@ -41,9 +41,9 @@ namespace Resgrid.Services.Records
 		public RecordsEvidenceService(IRmsEvidenceArtifactsRepository artifacts, IRmsOperationalRecordsRepository records,
 			IRmsIncidentReportsRepository incidentReports, IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork,
 			IEnumerable<IRecordEvidenceAdapter> adapters, IRecordsAuthorizationService authorization, ICallsService calls, IRmsExternalReferencesRepository references,
-			IRecordsProtectionService protection, IDomainEventOutboxService outbox, IInventoryStore inventoryStore = null)
+			IRecordsProtectionService protection, IDomainEventOutboxService outbox, IInventoryStore inventoryStore)
 		{
-			_inventoryStore = inventoryStore;
+			_inventoryStore = inventoryStore ?? throw new ArgumentNullException(nameof(inventoryStore));
 			_protection = protection;
 			_outbox = outbox;
 			_artifacts = artifacts;
@@ -67,7 +67,6 @@ namespace Resgrid.Services.Records
 			// Never finalize an apparently balanced evidence snapshot while that source movement is unaccounted for.
 			foreach (var reference in references.Where(r => r.SourceEntityType == "RecordInventoryUsage"))
 			{
-				if (_inventoryStore == null) throw new InvalidOperationException("Inventory evidence verification is unavailable.");
 				var usage = await _inventoryStore.GetAsync<Resgrid.Model.Inventories.RecordInventoryUsage>(departmentId, reference.SourceEntityId);
 				if (usage == null || usage.SourceId != recordId || usage.RecordKind != reference.RecordKind) throw new InvalidOperationException("Inventory usage provenance is unavailable.");
 				if (usage.ReversesUsageId != null) continue;

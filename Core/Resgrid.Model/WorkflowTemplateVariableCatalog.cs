@@ -389,6 +389,13 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:
+				case WorkflowTriggerEventType.WorkOrderOverdue:
+				case WorkflowTriggerEventType.WorkOrderSafetyHoldApplied:
+				case WorkflowTriggerEventType.WorkOrderSafetyHoldReleased:
+				case WorkflowTriggerEventType.WorkOrderRecurrenceChanged:
+				case WorkflowTriggerEventType.WorkOrderThresholdReached:
+				case WorkflowTriggerEventType.WorkOrderDeferred:
+				case WorkflowTriggerEventType.WorkOrderPartChanged:
 					foreach (var pair in WorkOrders.WorkOrderWorkflowPayload.Variables)
 						list.Add(new TemplateVariableDescriptor("work_order." + pair.Variable, "Work order " + pair.Variable.Replace('_', ' ') + (pair.Variable == "title" ? "; always REDACTED. Do not compare or render this value." : ""), pair.Variable is "asset_id" or "due_on" or "title" ? "string" : "int", false));
 					list.Add(new TemplateVariableDescriptor("work_order.url", "Authenticated work-order link", "string", false));

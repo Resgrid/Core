@@ -16,7 +16,7 @@ namespace Resgrid.Repositories.DataRepository
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.RegisterType<ReadinessProBillingRepository>().As<IReadinessProBillingRepository>().InstancePerLifetimeScope();
-			builder.RegisterType<WorkOrderRepository>().As<IWorkOrderRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkOrderRepository>().As<IWorkOrderRepository>().As<IWorkOrderMaintenanceRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistRepository>().As<IChecklistRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistReminderRepository>().As<IChecklistReminderRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<StandardIsolation>().As<IISolationLevel>().InstancePerLifetimeScope();

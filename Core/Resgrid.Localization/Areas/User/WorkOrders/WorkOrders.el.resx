@@ -154,4 +154,110 @@
 <data name="ActivityPartVoided" xml:space="preserve"><value>Ακυρώθηκε ανταλλακτικό</value></data>
 <data name="ActivityFileAdded" xml:space="preserve"><value>Προστέθηκε αρχείο</value></data>
 <data name="ActivityFileWithdrawn" xml:space="preserve"><value>Αποσύρθηκε αρχείο</value></data>
+<data name="Active" xml:space="preserve"><value>Ενεργό πρόγραμμα</value></data>
+<data name="ActivityDeferred" xml:space="preserve"><value>Αναβολή προθεσμίας</value></data>
+<data name="ActivityEscalated" xml:space="preserve"><value>Κλιμάκωση καθυστέρησης</value></data>
+<data name="ActivitySafetyHold" xml:space="preserve"><value>Επιβολή δέσμευσης ασφαλείας</value></data>
+<data name="ActivitySafetyReleased" xml:space="preserve"><value>Άρση δέσμευσης ασφαλείας</value></data>
+<data name="AddHold" xml:space="preserve"><value>Επιβολή δέσμευσης ασφαλείας</value></data>
+<data name="ApproveDeferral" xml:space="preserve"><value>Έγκριση αναβολής</value></data>
+<data name="AssetHold" xml:space="preserve"><value>Δέσμευση ασφαλείας εξοπλισμού</value></data>
+<data name="AssignmentAndEscalation" xml:space="preserve"><value>Ανάθεση και κλιμάκωση</value></data>
+<data name="BlackoutFrom" xml:space="preserve"><value>Έναρξη αποκλεισμού</value></data>
+<data name="BlackoutUntil" xml:space="preserve"><value>Λήξη αποκλεισμού</value></data>
+<data name="Calendar" xml:space="preserve"><value>Ημερολογιακή συχνότητα</value></data>
+<data name="CalendarDaily" xml:space="preserve"><value>Καθημερινά</value></data>
+<data name="CalendarMonthly" xml:space="preserve"><value>Μηνιαία</value></data>
+<data name="CalendarNone" xml:space="preserve"><value>Χωρίς ημερολογιακό έναυσμα</value></data>
+<data name="CalendarQuarterly" xml:space="preserve"><value>Τριμηνιαία</value></data>
+<data name="CalendarWeekly" xml:space="preserve"><value>Εβδομαδιαία</value></data>
+<data name="CalendarYearly" xml:space="preserve"><value>Ετησίως</value></data>
+<data name="CompletionBased" xml:space="preserve"><value>Υπολογισμός επόμενου διαστήματος από την επαληθευμένη ολοκλήρωση</value></data>
+<data name="Condition" xml:space="preserve"><value>Έναυσμα κατάστασης</value></data>
+<data name="ConditionAtOrAbove" xml:space="preserve"><value>Στο όριο ή υψηλότερα</value></data>
+<data name="ConditionAtOrBelow" xml:space="preserve"><value>Στο όριο ή χαμηλότερα</value></data>
+<data name="ConditionNone" xml:space="preserve"><value>Χωρίς έναυσμα κατάστασης</value></data>
+<data name="ConditionThreshold" xml:space="preserve"><value>Όριο κατάστασης</value></data>
+<data name="ConditionUnit" xml:space="preserve"><value>Μονάδα μέτρησης κατάστασης</value></data>
+<data name="ConditionValue" xml:space="preserve"><value>Ένδειξη κατάστασης</value></data>
+<data name="DeferralReason" xml:space="preserve"><value>Αιτία αναβολής</value></data>
+<data name="Edit" xml:space="preserve"><value>Επεξεργασία προγράμματος</value></data>
+<data name="EndDate" xml:space="preserve"><value>Ημερομηνία λήξης</value></data>
+<data name="EscalateAfter" xml:space="preserve"><value>Κλιμάκωση μετά από λεπτά καθυστέρησης</value></data>
+<data name="EscalationRole" xml:space="preserve"><value>Ρόλος παραλήπτη κλιμάκωσης</value></data>
+<data name="FirstDueLocal" xml:space="preserve"><value>Πρώτη προθεσμία σε τοπική ώρα</value></data>
+<data name="GeneratedFailureTitle" xml:space="preserve"><value>Παρακολούθηση ελαττώματος λίστας ελέγχου</value></data>
+<data name="HoldAsset" xml:space="preserve"><value>Θέση εξοπλισμού εκτός χρήσης για επισκευή</value></data>
+<data name="HoldUnit" xml:space="preserve"><value>Θέση μονάδας εκτός υπηρεσίας</value></data>
+<data name="HoldReleaseHelp" xml:space="preserve"><value>Ανεξάρτητος εξουσιοδοτημένος ελεγκτής καταγράφει προσόντα και τεκμήρια άρσης. Η επαναφορά απαιτεί την τελευταία δέσμευση και αμετάβλητη κατάσταση· η ολοκλήρωση μόνη της δεν επαναφέρει τη λειτουργία.</value></data>
+<data name="IndependentReleaseRequired" xml:space="preserve"><value>Άλλος εξουσιοδοτημένος ελεγκτής πρέπει να άρει τη δέσμευση.</value></data>
+<data name="Interval" xml:space="preserve"><value>Διάστημα προγραμματισμού</value></data>
+<data name="InventoryOperationFailed" xml:space="preserve"><value>Η πράξη αποθέματος δεν ολοκληρώθηκε. Ελέγξτε διαθεσιμότητα και δικαιώματα.</value></data>
+<data name="InventoryPartInvalid" xml:space="preserve"><value>Επιλέξτε έγκυρο είδος αποθέματος και θέση προέλευσης.</value></data>
+<data name="InventoryParts" xml:space="preserve"><value>Ανταλλακτικά συνδεδεμένα με απόθεμα</value></data>
+<data name="InventoryPartsHelp" xml:space="preserve"><value>Αφήστε κενό το είδος για ελεύθερο κείμενο. Τα ανταλλακτικά αποθέματος χρησιμοποιούν κόστος καθολικού και ενδέχεται να απαιτούν ανεξάρτητο μάρτυρα στο απόθεμα.</value></data>
+<data name="InventoryPermissionRequired" xml:space="preserve"><value>Απαιτείται δικαίωμα αποθέματος ή επαλήθευση προστατευμένων δεδομένων.</value></data>
+<data name="InventoryWitnessPending" xml:space="preserve"><value>Εκκρεμεί μάρτυρας αποθέματος· ολοκληρώστε την επιβεβαίωση πριν κλείσετε την εντολή εργασίας.</value></data>
+<data name="LeadDays" xml:space="preserve"><value>Χρόνος προειδοποίησης σε ημέρες</value></data>
+<data name="LoadChoices" xml:space="preserve"><value>Φόρτωση περισσότερων επιλογών</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>Ο χώρος αποθήκευσης συντήρησης δεν είναι διαθέσιμος.</value></data>
+<data name="MeterBaseline" xml:space="preserve"><value>Βασική τιμή διαστήματος μετρητή</value></data>
+<data name="MeterCycles" xml:space="preserve"><value>Κύκλοι λειτουργίας</value></data>
+<data name="MeterEpoch" xml:space="preserve"><value>Γενιά μετρητή</value></data>
+<data name="MeterHours" xml:space="preserve"><value>Ώρες λειτουργίας</value></data>
+<data name="MeterInterval" xml:space="preserve"><value>Διάστημα μετρητή</value></data>
+<data name="MeterKilometers" xml:space="preserve"><value>Χιλιόμετρα</value></data>
+<data name="MeterMiles" xml:space="preserve"><value>Διανυθέντα μίλια</value></data>
+<data name="MeterNone" xml:space="preserve"><value>Χωρίς έναυσμα μετρητή</value></data>
+<data name="MeterUnit" xml:space="preserve"><value>Μονάδα μέτρησης μετρητή</value></data>
+<data name="MeterValue" xml:space="preserve"><value>Ένδειξη μετρητή</value></data>
+<data name="NewRecurrence" xml:space="preserve"><value>Νέο πρόγραμμα προληπτικής συντήρησης</value></data>
+<data name="NextDue" xml:space="preserve"><value>Επόμενη προθεσμία</value></data>
+<data name="ObservedOn" xml:space="preserve"><value>Χρόνος παρατήρησης</value></data>
+<data name="OriginalDue" xml:space="preserve"><value>Αρχική προθεσμία</value></data>
+<data name="Paused" xml:space="preserve"><value>Πρόγραμμα σε παύση</value></data>
+<data name="PreventiveMaintenance" xml:space="preserve"><value>Προληπτική συντήρηση</value></data>
+<data name="ReadingInvalid" xml:space="preserve"><value>Ελέγξτε την ένδειξη, τον χρόνο παρατήρησης και τις απαιτήσεις μηδενισμού μετρητή.</value></data>
+<data name="ReadingSource" xml:space="preserve"><value>Πηγή ένδειξης</value></data>
+<data name="Readings" xml:space="preserve"><value>Ιστορικό ενδείξεων</value></data>
+<data name="RecordReading" xml:space="preserve"><value>Καταγραφή ένδειξης</value></data>
+<data name="RecurrenceHelp" xml:space="preserve"><value>Τα εναύσματα ημερολογίου, μετρητή και κατάστασης ενεργοποιούνται με όποιο επιτευχθεί πρώτο. Επιτρέπεται μία εκκρεμής εντολή ανά πρόγραμμα. Η ακύρωση παραγόμενης εντολής θέτει το πρόγραμμα σε παύση για έλεγχο.</value></data>
+<data name="RecurrenceInvalid" xml:space="preserve"><value>Ελέγξτε πρόγραμμα, ζώνη ώρας, παράθυρο συντήρησης και εναύσματα.</value></data>
+<data name="RecurrencePending" xml:space="preserve"><value>Ολοκληρώστε ή ακυρώστε την εκκρεμή εντολή πριν αλλάξετε στόχο ή βάση μετρητή.</value></data>
+<data name="ReleaseEvidence" xml:space="preserve"><value>Τεκμήρια επαλήθευσης άρσης</value></data>
+<data name="ReleaseHold" xml:space="preserve"><value>Άρση δέσμευσης ασφαλείας</value></data>
+<data name="ReleaseQualification" xml:space="preserve"><value>Προσόντα ελεγκτή</value></data>
+<data name="ResetMeter" xml:space="preserve"><value>Αντικατάσταση ή μηδενισμός μετρητή (απαιτείται αιτία)</value></data>
+<data name="RestoreIfUnchanged" xml:space="preserve"><value>Επαναφορά προηγούμενης κατάστασης μόνο αν παραμένει αμετάβλητη και δεν υπάρχουν άλλες δεσμεύσεις</value></data>
+<data name="RevisedDue" xml:space="preserve"><value>Αναθεωρημένη προθεσμία</value></data>
+<data name="SafetyHolds" xml:space="preserve"><value>Δεσμεύσεις ασφαλείας</value></data>
+<data name="Schedule" xml:space="preserve"><value>Πρόγραμμα συντήρησης</value></data>
+<data name="ServiceEnd" xml:space="preserve"><value>Λήξη παραθύρου συντήρησης</value></data>
+<data name="ServiceStart" xml:space="preserve"><value>Έναρξη παραθύρου συντήρησης</value></data>
+<data name="ServiceWindow" xml:space="preserve"><value>Παράθυρο συντήρησης</value></data>
+<data name="SourceChecklist" xml:space="preserve"><value>Αρχική υποβολή λίστας ελέγχου</value></data>
+<data name="StatePreserved" xml:space="preserve"><value>Διατήρηση τρέχουσας κατάστασης</value></data>
+<data name="StateRestored" xml:space="preserve"><value>Επαναφορά προηγούμενης κατάστασης</value></data>
+<data name="Target" xml:space="preserve"><value>Στόχος συντήρησης</value></data>
+<data name="TimeZone" xml:space="preserve"><value>Ζώνη ώρας</value></data>
+<data name="UnitHold" xml:space="preserve"><value>Δέσμευση ασφαλείας μονάδας</value></data>
+<data name="UsageAndCondition" xml:space="preserve"><value>Χρήση και κατάσταση</value></data>
+<data name="UseDueDeferral" xml:space="preserve"><value>Χρησιμοποιήστε την εγκεκριμένη αναβολή για αλλαγή προθεσμίας.</value></data>
+<data name="UseMeterReset" xml:space="preserve"><value>Καταγράψτε ελεγχόμενο μηδενισμό για αλλαγή βάσης· χρησιμοποιήστε νέο πρόγραμμα για άλλες μονάδες.</value></data>
+<data name="InventoryItem" xml:space="preserve"><value>Είδος αποθέματος</value></data>
+<data name="InventoryLocation" xml:space="preserve"><value>Θέση αποθέματος προέλευσης</value></data>
+<data name="InventoryLot" xml:space="preserve"><value>Παρτίδα αποθέματος</value></data>
+<data name="WorkOrderRecurrenceChanged" xml:space="preserve"><value>Αλλαγή προγράμματος προληπτικής συντήρησης</value></data>
+<data name="WorkOrderThresholdReached" xml:space="preserve"><value>Επίτευξη ορίου συντήρησης</value></data>
+<data name="WorkOrderPartChanged" xml:space="preserve"><value>Αλλαγή ανταλλακτικού εντολής εργασίας</value></data>
+<data name="MaintenanceChange0" xml:space="preserve"><value>Ρύθμιση προγράμματος</value></data>
+<data name="MaintenanceChange1" xml:space="preserve"><value>Καταγραφή ένδειξης</value></data>
+<data name="MaintenanceChange2" xml:space="preserve"><value>Καταγραφή μηδενισμού μετρητή</value></data>
+<data name="MaintenanceChange3" xml:space="preserve"><value>Αναβολή προθεσμίας</value></data>
+<data name="MaintenanceChange4" xml:space="preserve"><value>Δημιουργήθηκε εντολή εργασίας</value></data>
+<data name="MaintenanceChange5" xml:space="preserve"><value>Κλιμάκωση καθυστέρησης</value></data>
+<data name="WorkOrderOverdue" xml:space="preserve"><value>Κλιμάκωση καθυστέρησης</value></data>
+<data name="WorkOrderSafetyHoldApplied" xml:space="preserve"><value>Επιβολή δέσμευσης ασφαλείας</value></data>
+<data name="WorkOrderSafetyHoldReleased" xml:space="preserve"><value>Άρση δέσμευσης ασφαλείας</value></data>
+<data name="WorkOrderDeferred" xml:space="preserve"><value>Αναβολή προθεσμίας</value></data>
 </root>

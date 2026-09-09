@@ -5,6 +5,7 @@
 <div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
     @await Html.PartialAsync("_Protection")
     <p><a class="btn btn-default" asp-action="Templates">@localizer["Templates"]</a><a class="btn btn-default" asp-action="Due">@localizer["DueChecks"]</a>
+    <a class="btn btn-default" asp-action="Compliance">@localizer["ChecklistComplianceReport"]</a>
     @if (Model.CanManage) { <a class="btn btn-default" asp-action="Reminders">@localizer["ReminderSettings"]</a> <a class="btn btn-primary" asp-action="New">@localizer["NewChecklist"]</a> }</p>
     @if (Model.Definitions.Count == 0) { <p>@localizer["NoDefinitions"]</p> }
     <table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Version"]</th><th>@localizer["State"]</th></tr></thead><tbody>

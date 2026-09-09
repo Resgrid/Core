@@ -1,0 +1,36 @@
+@model Resgrid.Model.Checklists.ChecklistComplianceSummary
+@using Resgrid.Model.Checklists
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["ChecklistComplianceReport"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+<h2>@localizer["ChecklistComplianceReport"]</h2><p>@localizer["ComplianceMethod"]</p><p>@localizer["AuthorizedScope"]</p>
+@await Html.PartialAsync("_Protection")
+<form class="checklist-form" asp-action="Compliance" method="post">
+    @Html.AntiForgeryToken()
+    <label for="from">@localizer["ReportFrom"] (UTC)</label><input id="from" name="FromUtc" type="date" value="@Model.FromUtc.ToString("yyyy-MM-dd")" required />
+    <label for="until">@localizer["ReportUntil"] (UTC)</label><input id="until" name="UntilUtc" type="date" value="@Model.UntilUtc.ToString("yyyy-MM-dd")" required />
+    <label for="target-type">@localizer["TargetType"]</label><select id="target-type" name="TargetType"><option value="">@localizer["AllTargets"]</option>
+    @foreach (var type in Enum.GetValues<ChecklistTargetType>()) { <option value="@((int)type)" selected="@(Model.TargetType == type)">@localizer[type.ToString()]</option> }
+    </select>
+    <button class="btn btn-primary" type="submit">@localizer["RefreshReport"]</button>
+    <button class="btn btn-default" type="submit" formaction="@Url.Action("ComplianceCsv")">@localizer["ExportCsv"]</button>
+    <button class="btn btn-default" type="submit" formaction="@Url.Action("ChecklistComplianceReport", "Reports")">@localizer["PrintReport"]</button>
+</form>
+@if (!Model.IsRedacted)
+{
+    <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Target"]</th><th>@localizer["TargetType"]</th><th>@localizer["ExpectedChecks"]</th><th>@localizer["CompletedChecks"]</th><th>@localizer["OnTimeChecks"]</th><th>@localizer["MissedChecks"]</th><th>@localizer["ExcusedChecks"]</th><th>@localizer["CompletionRate"]</th></tr></thead><tbody>
+    @foreach (var group in Model.Groups)
+    { <tr><td>@group.Target.Name</td><td>@localizer[group.Target.Type.ToString()]</td><td>@group.Expected</td><td>@group.Completed</td><td>@group.OnTime</td><td>@group.Missed</td><td>@group.Skipped</td><td>@(group.CompletionRate.HasValue ? group.CompletionRate.Value.ToString("0.##") + "%" : "—")</td></tr> }
+    </tbody></table></div>
+    <h3>@localizer["MissedTrend"]</h3>
+    <table class="table"><thead><tr><th>@localizer["Date"] (UTC)</th><th>@localizer["ExpectedChecks"]</th><th>@localizer["MissedChecks"]</th></tr></thead><tbody>
+    @foreach (var day in Model.Trend) { <tr><td>@day.DayUtc.ToString("yyyy-MM-dd")</td><td>@day.Expected</td><td><progress max="@day.Expected" value="@day.Missed" aria-label="@localizer["MissedChecks"]"></progress> @day.Missed</td></tr> }
+    </tbody></table>
+    @foreach (var source in Model.UnavailableSources) { <p>@localizer[source]</p> }
+}
+<p>@localizer["ScheduledReportProtected"]</p>
+<a class="btn btn-default" asp-controller="Profile" asp-action="AddNewScheduledReport">@localizer["ScheduleReport"]</a>
+<a class="btn btn-default" asp-action="ReadinessPacket">@localizer["ReadinessPacketReport"]</a>
+<a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
+</div></div></div>
+@section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

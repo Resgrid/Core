@@ -47,28 +47,36 @@ namespace Resgrid.Services.Records.Evidence
 		}
 	}
 
-	/// <summary>
-	/// Apparatus and equipment readiness at the time of the call — a checklist/work-order manifest with source
-	/// completion IDs, coverage period and checksum (plan section 4.5).
-	/// <para>
-	/// The checklists and maintenance module this reads from is planned but not built. The adapter ships anyway,
-	/// because the plan requires all six and because "unavailable" and "there was no readiness evidence" are
-	/// different answers: an author who sees the source reported as absent knows not to draw a conclusion from
-	/// the empty list. When the module lands, only <see cref="CaptureAsync"/> changes.
-	/// </para>
-	/// </summary>
+	/// <summary>Captures the authorized readiness PDF and provenance as one immutable RMS artifact.</summary>
 	public class ReadinessPacketEvidenceAdapter : IRecordEvidenceAdapter
 	{
 		public const string SourceSubsystem = "Checklists";
 		public const string UnavailableReason = "The checklists and maintenance module is not present in this build.";
-
+		private readonly IChecklistsService _checklists;
+		private readonly IReadinessAccessService _access;
+		private readonly IProtectedGrantContext _grant;
+		private readonly Resgrid.Model.Providers.IPdfProvider _pdf;
+		public ReadinessPacketEvidenceAdapter(IChecklistsService checklists = null, IReadinessAccessService access = null, IProtectedGrantContext grant = null, Resgrid.Model.Providers.IPdfProvider pdf = null)
+		{ _checklists = checklists; _access = access; _grant = grant; _pdf = pdf; }
 		public RmsEvidenceKind Kind => RmsEvidenceKind.ReadinessPacket;
-
-		public Task<bool> IsAvailableAsync(int departmentId) => Task.FromResult(false);
-
-		public Task<RecordEvidenceCapture> CaptureAsync(RecordEvidenceCaptureRequest request, CancellationToken cancellationToken = default)
+		public Task<bool> IsAvailableAsync(int departmentId) => _checklists == null || _access == null || _pdf == null ? Task.FromResult(false) : _access.CanUseChecklistsAsync(departmentId);
+		public async Task<RecordEvidenceCapture> CaptureAsync(RecordEvidenceCaptureRequest request, CancellationToken cancellationToken = default)
 		{
-			return Task.FromResult(RecordEvidenceCapture.Unavailable(UnavailableReason));
+			if (!await IsAvailableAsync(request.DepartmentId)) return RecordEvidenceCapture.Unavailable(ChecklistReportDocuments.Text("Checklists are disabled for this department."));
+			if (_grant == null || _grant.IsWorkloadCaller || _grant.UserId != request.CapturedByUserId) throw new UnauthorizedAccessException();
+			if (!request.CallId.HasValue || request.CoverageStart.HasValue || request.CoverageEnd.HasValue) throw new ArgumentException(ChecklistReportDocuments.Text("PacketCaptureWindow"));
+			var actor = new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = request.DepartmentId, UserId = request.CapturedByUserId, GrantToken = _grant.GrantToken };
+			var manifest = await _checklists.GetReadinessPacketForCallAsync(actor, request.CallId.Value);
+			if (manifest.Checklists.Count > EvidenceLimits.MaxItems) throw new ArgumentException(ChecklistReportDocuments.Text("ReportTooLarge"));
+			cancellationToken.ThrowIfCancellationRequested();
+			var package = ChecklistReportDocuments.Package(manifest, _pdf);
+			// Repeat source authorization after PDF conversion, before Records retains the snapshot.
+			var current = await _checklists.GetReadinessPacketForCallAsync(actor, request.CallId.Value);
+			ChecklistReportDocuments.EnsureStillAuthorized(manifest, current);
+			return new RecordEvidenceCapture { Title = ChecklistReportDocuments.Text("ReadinessPacketReport"), SourceSubsystem = SourceSubsystem,
+				SourceEntityType = "ReadinessEvidenceManifestV1", SourceEntityId = EvidenceLimits.SelectionIdentity(new { request.CallId, lookback_days = 30 }),
+				IdentifierScheme = "resgrid:readiness-packet", SourceVersion = manifest.GeneratorVersion, CoverageStart = manifest.CoverageStartUtc,
+				CoverageEnd = manifest.CoverageEndUtc, SourceItemCount = manifest.Checklists.Count, Classification = RmsEvidenceClassification.Restricted, Manifest = package };
 		}
 	}
 

@@ -32,6 +32,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public ChecklistsController(IChecklistTemplateService templates, IChecklistsService checklists, IReadinessAccessService access, IProtectedGrantContext grant, IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings, Lazy<IWorkShiftsService> workshifts = null, Lazy<IDepartmentsService> departments = null)
 		{ _templates = templates; _checklists = checklists; _access = access; _grant = grant; _protection = protection; _strings = strings; _workshifts = workshifts; _departments = departments; }
 		private ChecklistActor Actor => new ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant.GrantToken };
+		private Task<bool> _checklistsEnabled;
+		private Task<bool> ChecklistsEnabledAsync() => _checklistsEnabled ??= _access.CanUseChecklistsAsync(DepartmentId);
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
 			Response.Headers["Cache-Control"] = "no-store";
@@ -39,7 +41,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.ProtectedGrant = _grant.GrantToken;
 			ViewBag.GrantExpiresOn = HttpProtectedGrantContext.ReadExpiry(Request);
 			ViewBag.ChecklistUserId = UserId;
-			ViewBag.ChecklistsEnabled = await _access.CanUseChecklistsAsync(DepartmentId);
+			ViewBag.ChecklistsEnabled = await ChecklistsEnabledAsync();
 			var executed = await next();
 			if (executed.Exception is ChecklistException ex)
 			{
@@ -54,7 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var rows = await _checklists.ListAsync(Actor, page, includeNext: true);
 			return View("Index", new ChecklistIndexView { Definitions = rows.Take(50).ToList(), HasMore = rows.Count > 50,
-				CanManage = await _checklists.CanManageAsync(Actor) && await _access.CanUseChecklistsAsync(DepartmentId), Page = page });
+				CanManage = await _checklists.CanManageAsync(Actor) && await ChecklistsEnabledAsync(), Page = page });
 		}
 		[HttpGet]
 		public async Task<IActionResult> Templates(string query = null)
@@ -75,7 +77,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet, Authorize(Policy = ResgridResources.Checklist_Update)]
 		public async Task<IActionResult> New(string templateId = null)
 		{
-			if (!await _access.CanUseChecklistsAsync(DepartmentId) || !await _checklists.CanManageAsync(Actor)) return NotFound();
+			if (!await ChecklistsEnabledAsync() || !await _checklists.CanManageAsync(Actor)) return NotFound();
 			var assetsAvailable = await _checklists.AssetTargetsAvailableAsync(Actor);
 			var form = new ChecklistForm { Name = "", Sections = { new ChecklistSection { Name = _strings["Checks"].Value, Items = { new ChecklistItem { Name = "" } } } } };
 			if (templateId != null)
@@ -90,7 +92,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Edit(string id)
 		{
 			if (!await _checklists.CanManageAsync(Actor)) return Forbid();
-			if (!await _access.CanUseChecklistsAsync(DepartmentId)) return NotFound();
+			if (!await ChecklistsEnabledAsync()) return NotFound();
 			var row = await _checklists.GetDefinitionAsync(Actor, id);
 			return View("Edit", new ChecklistEditView { AssetsAvailable = await _checklists.AssetTargetsAvailableAsync(Actor), Id = id, Revision = row.Definition.Revision, Form = row.Form });
 		}
@@ -111,9 +113,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Detail(string id, int page = 0)
 		{
 			var row = await _checklists.GetDefinitionAsync(Actor, id);
-			var canStart = await _access.CanUseChecklistsAsync(DepartmentId) && !row.Definition.Retired && row.Definition.CurrentVersionId != null;
+			var canStart = await ChecklistsEnabledAsync() && !row.Definition.Retired && row.Definition.CurrentVersionId != null;
 			var history = await _checklists.HistoryAsync(Actor, id, page, includeNext: true);
-			return View("Detail", new ChecklistDetailView { Definition = row, History = history.Take(50).ToList(), HasMore = history.Count > 50, CanManage = await _checklists.CanManageAsync(Actor) && await _access.CanUseChecklistsAsync(DepartmentId), CanStart = canStart,
+			return View("Detail", new ChecklistDetailView { Definition = row, History = history.Take(50).ToList(), HasMore = history.Count > 50, CanManage = await _checklists.CanManageAsync(Actor) && await ChecklistsEnabledAsync(), CanStart = canStart,
 				Targets = canStart ? await _checklists.TargetsAsync(Actor, row.PublishedForm.TargetType) : new System.Collections.Generic.List<ChecklistTarget>(), Page = page });
 		}
 		[HttpPost, ValidateAntiForgeryToken, Authorize(Policy = ResgridResources.Checklist_Update)]
@@ -127,7 +129,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Run(string id)
 		{
 			var run = await _checklists.GetRunAsync(Actor, id);
-			return View(run.Completion.State == (int)ChecklistRunState.InProgress && run.Completion.CreatedBy == UserId && await _access.CanUseChecklistsAsync(DepartmentId) ? "Run" : "CompletionDetail", run);
+			return View(run.Completion.State == (int)ChecklistRunState.InProgress && run.Completion.CreatedBy == UserId && await ChecklistsEnabledAsync() ? "Run" : "CompletionDetail", run);
 		}
 		[HttpGet]
 		public Task<IActionResult> CompletionDetail(string id) => Run(id);

@@ -42,6 +42,9 @@ namespace Resgrid.Tests.Services
 				var combined = (await controller.GetDepartmentCalendarItemsInRange(now.Date, now.Date, true)).Value; combined.PageSize.Should().Be(2);
 				var readiness = combined.Data.Single(i => i.IsVirtual); readiness.CalendarItemId.Should().Be("checklist:" + id); readiness.SourceId.Should().Be(id); readiness.LockEditing.Should().BeTrue(); readiness.IsRedacted.Should().BeTrue(); readiness.ChecklistState.Should().Be(4); readiness.TypeColor.Should().Be("#c0392b"); readiness.DeepLinkUrl.Should().EndWith(id); readiness.StartUtc.Should().Be(now);
 				context.Response.Headers.CacheControl.ToString().Should().Be("no-store");
+				checklists.Setup(c => c.CalendarAsync(It.IsAny<ChecklistActor>(), It.IsAny<DateTime>(), It.IsAny<DateTime>())).ThrowsAsync(new ChecklistException(403, "Unavailable"));
+				var partial = (await controller.GetDepartmentCalendarItemsInRange(now.Date, now.Date, true)).Value;
+				partial.Data.Should().ContainSingle(i => i.CalendarItemId == "42" && !i.IsVirtual); partial.PageSize.Should().Be(1);
 				(await controller.GetDepartmentCalendarItemsInRange(now, now.AddDays(94), true)).Result.Should().BeOfType<BadRequestResult>();
 			}
 			finally { ClaimsHelper._httpContextAccessor = previous; }

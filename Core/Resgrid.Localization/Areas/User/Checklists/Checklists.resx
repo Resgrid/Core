@@ -637,4 +637,44 @@
   <data name="ReminderFixedTime" xml:space="preserve"><value>Daily digest time (department time zone; overrides shift starts)</value></data>
   <data name="ReminderShiftStart" xml:space="preserve"><value>Send a digest at shift start</value></data>
   <data name="ReminderTimeValidation" xml:space="preserve"><value>Enter one time in HH:mm format.</value></data>
+  <data name="ChecklistComplianceReport" xml:space="preserve"><value>Checklist compliance report</value></data>
+  <data name="ChecklistMissedReport" xml:space="preserve"><value>Missed checklist report</value></data>
+  <data name="ReadinessPacketReport" xml:space="preserve"><value>Readiness packet</value></data>
+  <data name="ExpectedChecks" xml:space="preserve"><value>Expected checks</value></data>
+  <data name="CompletedChecks" xml:space="preserve"><value>Completed checks</value></data>
+  <data name="OnTimeChecks" xml:space="preserve"><value>On-time checks</value></data>
+  <data name="MissedChecks" xml:space="preserve"><value>Missed deadlines</value></data>
+  <data name="ExcusedChecks" xml:space="preserve"><value>Excused checks</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>Completion rate (%)</value></data>
+  <data name="MissedTrend" xml:space="preserve"><value>Missed deadline trend</value></data>
+  <data name="ComplianceMethod" xml:space="preserve"><value>The period selects checks by their start time. Only elapsed scheduled windows count toward the rate. Excused checks are excluded; late completions remain missed deadlines. On-demand checks and open windows appear in history only.</value></data>
+  <data name="AuthorizedScope" xml:space="preserve"><value>Only results you are authorized to view are included.</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>From date</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Until date (exclusive)</value></data>
+  <data name="AllTargets" xml:space="preserve"><value>All targets</value></data>
+  <data name="RefreshReport" xml:space="preserve"><value>Refresh report</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Export CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Print report</value></data>
+  <data name="ScheduleReport" xml:space="preserve"><value>Schedule report</value></data>
+  <data name="CallId" xml:space="preserve"><value>Call ID</value></data>
+  <data name="LookbackDays" xml:space="preserve"><value>Lookback days</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Download PDF and manifest</value></data>
+  <data name="PacketMethod" xml:space="preserve"><value>Evidence covers the selected days before the call, evaluated at call time. Later submissions do not prove earlier readiness. Source records remain with their owning modules.</value></data>
+  <data name="DispatchedUnits" xml:space="preserve"><value>Dispatched units</value></data>
+  <data name="IssuedEquipment" xml:space="preserve"><value>Equipment issued at call time</value></data>
+  <data name="ScheduledReportProtected" xml:space="preserve"><value>Scheduled delivery contains a PDF notice and a secure report link. Open the report to verify your current access and unlock protected data; checklist results and personal data are not emailed.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Select a chronological UTC period of at most 93 days.</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>This report is too large. Select a shorter period.</value></data>
+  <data name="ReadinessCallUnavailable" xml:space="preserve"><value>The call is unavailable or access is denied.</value></data>
+  <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Historical equipment provenance is incomplete or inconsistent.</value></data>
+  <data name="RestrictedChecklistResults" xml:space="preserve"><value>Some checklist results are outside your permissions.</value></data>
+  <data name="LifecycleHistoryUnavailable" xml:space="preserve"><value>Some lifecycle changes occurred after the call; their earlier state cannot be reconstructed.</value></data>
+  <data name="RestrictedUnits" xml:space="preserve"><value>Some dispatched units are unavailable or outside your permissions.</value></data>
+  <data name="HistoricalUnitNamesUnavailable" xml:space="preserve"><value>Unit labels are current; historical unit names are unavailable.</value></data>
+  <data name="ContractorEquipmentUnavailable" xml:space="preserve"><value>Contractor equipment history is unavailable.</value></data>
+  <data name="HistoricalInventoryUnavailable" xml:space="preserve"><value>Historical equipment issue records are unavailable.</value></data>
+  <data name="WorkOrdersUnavailable" xml:space="preserve"><value>Work-order evidence will be available in a later phase.</value></data>
+  <data name="PacketCaptureWindow" xml:space="preserve"><value>Readiness evidence capture requires a call and uses the 30 days before that call; custom coverage dates are not supported.</value></data>
+  <data name="TargetType" xml:space="preserve"><value>Target type</value></data>
+  <data name="Group" xml:space="preserve"><value>Station / group</value></data>
 </root>

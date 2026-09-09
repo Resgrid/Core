@@ -1120,11 +1120,38 @@
             </summary>
             <param name="callId">The call identifier to inspect.</param>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistsController.DeleteSchedule(Resgrid.Web.Services.Models.v4.Checklists.ChecklistCommandInput)">
+            <summary>Disables future schedule work, preserving immutable occurrences and completion history.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistsController.GetChecklistTemplates(System.String)">
             <summary>Searches the free starter catalog for the authenticated department.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistsController.GetChecklistTemplate(System.String)">
             <summary>Returns a starter template preview, including critical checks and witness requirements.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.GetComplianceSummary(Resgrid.Model.Checklists.ChecklistReportQuery)">
+            <summary>Completion rates and missed deadlines within a UTC start-date cohort (at most 93 days), filtered by current result permissions and ADP.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.GetReadinessPacket(System.Int32,System.Int32)">
+            <summary>Checklist evidence at the call time, with explicit unavailable historical inventory/deployment sources. This is a preview; RMS captures an immutable artifact separately.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.GetChecklistAccess">
+            <summary>Fresh value-free scope and access state for secure local drafts. A mutation always repeats authorization and grant validation.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.GetDueChecklists(Resgrid.Model.Checklists.ChecklistMobileQuery)">
+            <summary>Paged, authorized scheduled checks and published on-demand forms. Unit scope includes currently issued serialized assets when available.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.GetChecklistRun(System.String,System.String)">
+            <summary>Reads a run by ID, or previews a pinned scheduled occurrence without creating a run.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.StartChecklistRun(Resgrid.Web.Services.Models.v4.Checklists.ChecklistStartInput)">
+            <summary>Starts or resumes one logical client GUID. The supplied published version is preserved for an offline on-demand run.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.CompleteChecklistRun(Resgrid.Web.Services.Models.v4.Checklists.ChecklistProgressInput)">
+            <summary>Replays with the same validated answers/evidence produce one completion and one set of Workflow events. Different stale content returns 409.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChecklistRunsController.UploadChecklistRunEvidence(Resgrid.Web.Services.Models.v4.Checklists.ChecklistEvidenceInput)">
+            <summary>In-memory image transport for native clients, with the same size, scan, revision and ADP rules as multipart uploads.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CommandsController">
             <summary>

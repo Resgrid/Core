@@ -637,4 +637,44 @@
   <data name="ReminderFixedTime" xml:space="preserve"><value>Час щоденного зведення (часовий пояс організації; замінює початок зміни)</value></data>
   <data name="ReminderShiftStart" xml:space="preserve"><value>Надсилати зведення на початку зміни</value></data>
   <data name="ReminderTimeValidation" xml:space="preserve"><value>Введіть один час у форматі HH:mm.</value></data>
+  <data name="ChecklistComplianceReport" xml:space="preserve"><value>Звіт про виконання контрольних списків</value></data>
+  <data name="ChecklistMissedReport" xml:space="preserve"><value>Звіт про пропущені перевірки</value></data>
+  <data name="ReadinessPacketReport" xml:space="preserve"><value>Пакет доказів готовності</value></data>
+  <data name="ExpectedChecks" xml:space="preserve"><value>Очікувані перевірки</value></data>
+  <data name="CompletedChecks" xml:space="preserve"><value>Завершені перевірки</value></data>
+  <data name="OnTimeChecks" xml:space="preserve"><value>Вчасні перевірки</value></data>
+  <data name="MissedChecks" xml:space="preserve"><value>Пропущені терміни</value></data>
+  <data name="ExcusedChecks" xml:space="preserve"><value>Виправдані пропуски</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>Відсоток завершення (%)</value></data>
+  <data name="MissedTrend" xml:space="preserve"><value>Динаміка пропущених термінів</value></data>
+  <data name="ComplianceMethod" xml:space="preserve"><value>Період вибирає перевірки за часом початку. До відсотка враховуються лише заплановані часові вікна, що завершилися. Виправдані пропуски виключаються; пізні завершення залишаються порушеннями терміну. Перевірки на вимогу та відкриті вікна відображаються лише в історії.</value></data>
+  <data name="AuthorizedScope" xml:space="preserve"><value>Включено лише результати, які ви маєте право переглядати.</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>З дати</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>До дати (не включно)</value></data>
+  <data name="AllTargets" xml:space="preserve"><value>Усі цілі</value></data>
+  <data name="RefreshReport" xml:space="preserve"><value>Оновити звіт</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Експортувати CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Друкувати звіт</value></data>
+  <data name="ScheduleReport" xml:space="preserve"><value>Запланувати звіт</value></data>
+  <data name="CallId" xml:space="preserve"><value>Ідентифікатор події</value></data>
+  <data name="LookbackDays" xml:space="preserve"><value>Кількість попередніх днів</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Завантажити PDF і перелік доказів</value></data>
+  <data name="PacketMethod" xml:space="preserve"><value>Докази охоплюють вибрані дні до події та оцінюються на момент події. Пізніші подання не доводять попередньої готовності. Вихідні записи залишаються у відповідальних за них модулях.</value></data>
+  <data name="DispatchedUnits" xml:space="preserve"><value>Направлені підрозділи</value></data>
+  <data name="IssuedEquipment" xml:space="preserve"><value>Спорядження, видане на момент події</value></data>
+  <data name="ScheduledReportProtected" xml:space="preserve"><value>Запланована доставка містить PDF-повідомлення та захищене посилання на звіт. Відкрийте звіт, щоб перевірити поточні права доступу й розблокувати захищені дані; результати перевірок і персональні дані не надсилаються електронною поштою.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Виберіть хронологічний період UTC тривалістю не більше 93 днів.</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>Цей звіт завеликий. Виберіть коротший період.</value></data>
+  <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Подія недоступна або в доступі відмовлено.</value></data>
+  <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Історичні дані про походження спорядження неповні або суперечливі.</value></data>
+  <data name="RestrictedChecklistResults" xml:space="preserve"><value>Деякі результати перевірок виходять за межі ваших прав доступу.</value></data>
+  <data name="LifecycleHistoryUnavailable" xml:space="preserve"><value>Деякі зміни стану відбулися після події; попередній стан неможливо відновити.</value></data>
+  <data name="RestrictedUnits" xml:space="preserve"><value>Деякі направлені підрозділи недоступні або виходять за межі ваших прав доступу.</value></data>
+  <data name="HistoricalUnitNamesUnavailable" xml:space="preserve"><value>Назви підрозділів поточні; історичні назви недоступні.</value></data>
+  <data name="ContractorEquipmentUnavailable" xml:space="preserve"><value>Історія спорядження підрядників недоступна.</value></data>
+  <data name="HistoricalInventoryUnavailable" xml:space="preserve"><value>Історичні записи видачі спорядження недоступні.</value></data>
+  <data name="WorkOrdersUnavailable" xml:space="preserve"><value>Докази щодо нарядів на роботи будуть доступні на наступному етапі.</value></data>
+  <data name="PacketCaptureWindow" xml:space="preserve"><value>Збереження доказів готовності потребує події та охоплює попередні 30 днів; довільні дати періоду не підтримуються.</value></data>
+  <data name="TargetType" xml:space="preserve"><value>Тип цілі</value></data>
+  <data name="Group" xml:space="preserve"><value>Станція / група</value></data>
 </root>

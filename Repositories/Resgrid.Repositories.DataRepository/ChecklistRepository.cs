@@ -18,6 +18,8 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		public ChecklistRepository(IConnectionProvider connection, SqlConfiguration config, IUnitOfWork uow, IQueryFactory queries) : base(connection, config, uow, queries) { }
 		public Task LockDepartmentAsync(int departmentId, CancellationToken ct = default) => LockRecordsDepartmentAsync(departmentId, ct);
+		public async Task<List<ChecklistOccurrence>> ReportOccurrencesAsync(int departmentId, DateTime fromUtc, DateTime untilUtc, int skip, CancellationToken ct = default) => (await QueryAsync<ChecklistOccurrence>(
+			$"SELECT {Cols(Columns<ChecklistOccurrence>())} FROM {Tbl("ChecklistOccurrences")} WHERE {Col("DepartmentId")}={P}DepartmentId AND COALESCE({Col("PeriodStartUtc")},{Col("CreatedOn")})>={P}From AND COALESCE({Col("PeriodStartUtc")},{Col("CreatedOn")})<{P}Until ORDER BY {Col("CreatedOn")},{Col("Id")} {Paging()}", new { DepartmentId = departmentId, From = fromUtc, Until = untilUtc, Skip = skip, Take = 500 }, ct)).ToList();
 		private static string Table<T>() where T : ChecklistRow => ChecklistTables.All[typeof(T)];
 		private static class ColumnCache<T> where T : ChecklistRow
 		{
@@ -35,6 +37,23 @@ namespace Resgrid.Repositories.DataRepository
 			if (take < 1 || take > 500) throw new ArgumentOutOfRangeException(nameof(take));
 			var parent = parentId == null ? "" : $" AND {Col("ParentId")}={P}ParentId";
 			return (await QueryAsync<T>($"SELECT {Cols(Columns<T>(false))} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}={P}DepartmentId{parent} ORDER BY {Col("CreatedOn")} DESC, {Col("Id")} {Paging()}", new { DepartmentId = departmentId, ParentId = parentId, Skip = skip, Take = take }, ct)).ToList();
+		}
+		public async Task<List<T>> ListForMemberAsync<T>(int departmentId, string userId, int skip = 0, int take = 100, CancellationToken ct = default) where T : ChecklistRow
+		{
+			if (string.IsNullOrWhiteSpace(userId)) throw new ArgumentException("A member is required.", nameof(userId));
+			if (skip < 0) throw new ArgumentOutOfRangeException(nameof(skip));
+			if (take < 1 || take > 500) throw new ArgumentOutOfRangeException(nameof(take));
+			var target = $"({Col("TargetType")}={P}Personnel AND {Col("TargetId")}={P}UserId)";
+			var owned = $"({Col("CreatedBy")}={P}UserId OR {target})";
+			string member;
+			if (typeof(T) == typeof(ChecklistCompletion)) member = $"({owned} OR {Col("WitnessUserId")}={P}UserId)";
+			else if (typeof(T) == typeof(ChecklistSchedule)) member = owned;
+			else if (typeof(T) == typeof(ChecklistOccurrence))
+				// Witnessing alone does not grant an export of another member's occurrence metadata.
+				member = $"({target} OR {Col("Id")} IN (SELECT {Col("OccurrenceId")} FROM {Tbl("ChecklistCompletions")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {owned}) OR {Col("ScheduleId")} IN (SELECT {Col("Id")} FROM {Tbl("ChecklistSchedules")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {owned}))";
+			else throw new InvalidOperationException("This checklist table does not support member exports.");
+			return (await QueryAsync<T>($"SELECT {Cols(Columns<T>(false))} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}={P}DepartmentId AND {member} ORDER BY {Col("CreatedOn")} DESC, {Col("Id")} {Paging()}",
+				new { DepartmentId = departmentId, UserId = userId, Personnel = (int)ChecklistTargetType.Personnel, Skip = skip, Take = take }, ct)).ToList();
 		}
 		public async Task<List<T>> ListChildrenAsync<T>(int departmentId, IReadOnlyCollection<string> parentIds, int skip = 0, int take = 100, CancellationToken ct = default) where T : ChecklistRow
 		{

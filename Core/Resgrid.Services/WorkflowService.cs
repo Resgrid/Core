@@ -378,7 +378,7 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
-				if (checklist) Logging.LogError($"Checklist workflow failed for run {run.WorkflowRunId}."); else Logging.LogException(ex);
+				if (checklist) Logging.LogError($"Checklist workflow failed for run {run.WorkflowRunId}: {ex.GetType().FullName}."); else Logging.LogException(ex);
 				run.Status       = (int)WorkflowRunStatus.Failed;
 				run.ErrorMessage = $"Failed to build template context: {ex.Message}";
 				run.CompletedOn  = DateTime.UtcNow;
@@ -670,7 +670,7 @@ namespace Resgrid.Services
 					logEntry.DurationMs   = sw.ElapsedMilliseconds;
 					logEntry.CompletedOn  = DateTime.UtcNow;
 					anyFailure = true;
-					if (checklist) Logging.LogError($"Checklist workflow failed for run {run.WorkflowRunId}."); else Logging.LogException(ex);
+					if (checklist) Logging.LogError($"Checklist workflow failed for run {run.WorkflowRunId}: {ex.GetType().FullName}."); else Logging.LogException(ex);
 				}
 
 				await InsertLogAsync(departmentId, checklist, logEntry, cancellationToken);
@@ -815,12 +815,22 @@ namespace Resgrid.Services
 			if (run == null || !ChecklistWorkflowPayload.IsChecklist(run.TriggerEventType)) return run;
 			var copy = await History.ForDisplayAsync(run.DepartmentId, run, ReadinessHistoryFields.Runs);
 			if (copy.Logs != null)
-				copy.Logs = await Task.WhenAll(copy.Logs.Select(log => History.ForDisplayAsync(run.DepartmentId, log, ReadinessHistoryFields.Logs)));
+			{
+				var logs = new List<WorkflowRunLog>();
+				foreach (var log in copy.Logs)
+					logs.Add(await History.ForDisplayAsync(run.DepartmentId, log, ReadinessHistoryFields.Logs));
+				copy.Logs = logs;
+			}
 			return copy;
 		}
 
 		private async Task<List<WorkflowRun>> DisplayRunsAsync(IEnumerable<WorkflowRun> runs)
-			=> (await Task.WhenAll((runs ?? Enumerable.Empty<WorkflowRun>()).Select(DisplayRunAsync))).ToList();
+		{
+			var display = new List<WorkflowRun>();
+			foreach (var run in runs ?? Enumerable.Empty<WorkflowRun>())
+				display.Add(await DisplayRunAsync(run));
+			return display;
+		}
 
 		public async Task<bool> ClearPendingRunsAsync(int departmentId, CancellationToken cancellationToken = default)
 		{

@@ -1,0 +1,9 @@
+@using Resgrid.Web.Areas.User.Models
+@using Newtonsoft.Json
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+<script id="work-order-page" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { protectedData = ViewBag.ProtectionEnforced == true, grant = (string)ViewBag.ProtectedGrant, expiry = (DateTime?)ViewBag.GrantExpiresOn, reopen = Url.Action("Reopen"), index = Url.Action("Index"), error = localizer["RequestFailed"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+<script src="~/js/app/internal/workorders/work-orders.js" asp-append-version="true"></script>
+@if (ViewBag.ProtectionEnforced == true)
+{
+    @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value, GrantExpiresOnUtc = (DateTime?)ViewBag.GrantExpiresOn, BindForms = new System.Collections.Generic.List<string> { "form.work-order-form" } })
+}

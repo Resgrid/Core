@@ -81,5 +81,10 @@
   "RecordPermitExpiring": 163,
   "ChecklistMissed": 69,
   "ChecklistScheduleChanged": 164,
-  "ChecklistOccurrenceSkipped": 165
+  "ChecklistOccurrenceSkipped": 165,
+  "ChecklistCompleted": 67,
+  "ChecklistFailed": 68,
+  "WorkOrderCreated": 70,
+  "WorkOrderStatusChanged": 71,
+  "WorkOrderAssigned": 72
 }

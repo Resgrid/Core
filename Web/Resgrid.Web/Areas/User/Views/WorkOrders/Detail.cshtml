@@ -1,0 +1,67 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderDetailView
+@using Resgrid.Model.WorkOrders
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{ var d = Model.Detail; var o = d.Order; var c = d.Input.Content; ViewBag.Title = "Resgrid | " + o.Number; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+@await Html.PartialAsync("_Protection")
+<div class="work-order-protected">
+<h2>@o.Number — @o.Title</h2><p>@localizer["Status" + o.Status] · @localizer["Priority" + o.Priority] · @localizer["DueOn"]: @o.DueOn?.ToString("u")</p>
+@if (!d.CanWrite) { <p class="alert alert-info">@localizer["ReadOnlyHistory"]</p> }
+<p style="white-space:pre-wrap">@c.Description</p><p>@c.LocationText</p>
+<p>@localizer["ReportedBy"]: @d.ReportedBy · @localizer["AssignedTo"]: @(Model.Choices.Users.FirstOrDefault(x => x.Id == o.AssignedToUserId)?.Name ?? Model.Choices.Roles.FirstOrDefault(x => x.Id == o.AssignedToRoleId?.ToString())?.Name ?? localizer["None"].Value)</p>
+<p>@localizer["Currency"]: @c.Currency · @localizer["EstimatedCost"]: @c.EstimatedCost · @localizer["ApprovedCost"]: @c.ApprovedCost · @localizer["CostCenter"]: @c.CostCenter</p>
+<p>@localizer["VendorDetails"]: @c.VendorDetails</p><p>@localizer["WarrantyReference"]: @c.WarrantyReference</p>
+@if (c.SafetyCritical || c.HazardousWork) { <p class="alert alert-warning">@localizer[c.HazardousWork ? "HazardousWork" : "SafetyCritical"] — @localizer["SafetyNotice"]</p> }
+<dl><dt>@localizer["ProcedureReference"] / @localizer["ProcedureVersion"]</dt><dd>@c.ProcedureReference / @c.ProcedureVersion</dd><dt>@localizer["PermitReference"]</dt><dd>@c.PermitReference</dd><dt>@localizer["IsolationReference"]</dt><dd>@c.IsolationReference</dd><dt>@localizer["QualifiedPersonnel"]</dt><dd>@c.QualifiedPersonnel</dd></dl>
+@if (c.Steps.Count > 0) { <h3>@localizer["TaskSteps"]</h3><ol>@foreach (var step in c.Steps) { <li>@step.Text — @localizer[step.Completed ? "Done" : "Pending"]</li> }</ol> }
+@if (d.CompletedOn.HasValue) { <h3>@localizer["Resolution"]</h3><p>@c.Resolution</p><p>@localizer["Cause"]: @c.Cause</p> }
+@if (d.ClosedOn.HasValue) { <p>@localizer["VerificationEvidence"]: @c.VerificationEvidence</p><p>@localizer["VerifiedBy"]: @d.VerifiedBy · @d.ClosedOn?.ToString("u")</p> }
+@if (d.CanEdit) { <a class="btn btn-default" asp-action="Edit" asp-route-id="@o.Id">@localizer["EditWorkOrder"]</a> }
+<form class="work-order-form work-order-export" asp-action="Export" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><button type="submit" class="btn btn-default">@localizer["Export"]</button></form>
+@if (d.CanAccept) { <form class="work-order-form work-order-command" asp-action="Accept" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><button type="submit" class="btn btn-primary">@localizer["AcceptAssignment"]</button></form> }
+@if (d.CanManage && o.Status is WorkOrderStatus.Accepted or WorkOrderStatus.Assigned or WorkOrderStatus.InProgress or WorkOrderStatus.OnHold)
+{
+    <h3>@localizer["Assign"]</h3><form class="work-order-form work-order-command form-inline" asp-action="Assign" method="post">
+    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="Revision" value="@o.Revision"/>
+    <label>@localizer["User"] <select class="form-control work-order-user" name="UserId"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Users) { <option value="@x.Id">@x.Name</option> }</select></label>
+    <label>@localizer["Role"] <select class="form-control work-order-role" name="RoleId"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Roles) { <option value="@x.Id">@x.Name</option> }</select></label>
+    <button class="btn btn-primary" type="submit">@localizer["Assign"]</button></form>
+}
+@if (d.Transitions.Length > 0)
+{
+    <h3>@localizer["ChangeStatus"]</h3><form class="work-order-form work-order-command" asp-action="Transition" method="post">
+    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="Revision" value="@o.Revision"/>
+    <label>@localizer["Status"] <select class="form-control" name="Status">@foreach (var status in d.Transitions) { <option value="@((int)status)">@localizer["Status" + status]</option> }</select></label>
+    <div class="form-group"><label>@localizer["Reason"]<textarea class="form-control" name="Reason" maxlength="4000"></textarea></label></div>
+    <div class="form-group"><label>@localizer["DuplicateOf"]<input class="form-control" type="number" name="DuplicateOfId" min="1"/></label></div>
+    <div class="form-group"><label>@localizer["Resolution"]<textarea class="form-control" name="Resolution" maxlength="4000"></textarea></label></div>
+    <div class="form-group"><label>@localizer["Cause"]<textarea class="form-control" name="Cause" maxlength="4000"></textarea></label></div>
+    <div class="form-group"><label>@localizer["VerificationEvidence"]<textarea class="form-control" name="VerificationEvidence" maxlength="4000"></textarea></label></div>
+    <label><input type="checkbox" name="ConfirmTasksComplete" value="true"/> @localizer["ConfirmTasksComplete"]</label><button class="btn btn-primary" type="submit">@localizer["ChangeStatus"]</button></form>
+}
+<h3>@localizer["Activity"]</h3><ol>@foreach (var a in d.Activities) { <li><strong>@localizer["Activity" + a.Type]</strong> · @a.CreatedOn.ToString("u") · @a.UserId @if (a.NewStatus.HasValue) { <span>→ @localizer["Status" + (WorkOrderStatus)a.NewStatus.Value]</span> }<p style="white-space:pre-wrap">@a.Note</p>
+@if (a.AssignedToUserId != null || a.AssignedToRoleId.HasValue) { <p>@localizer["AssignedTo"]: @(a.AssignedToUserId ?? a.AssignedToRoleId.ToString())</p> }
+@if (a.Snapshot != null) { <details><summary>@localizer["Description"]: @a.Snapshot.Title</summary>
+<p>@a.Snapshot.Description</p><p>@localizer["Resolution"]: @a.Snapshot.Resolution</p><p>@localizer["Cause"]: @a.Snapshot.Cause</p>
+<p>@localizer["VerificationEvidence"]: @a.Snapshot.VerificationEvidence</p><p>@localizer["ProcedureReference"]: @a.Snapshot.ProcedureReference (@a.Snapshot.ProcedureVersion)</p>
+</details> }</li> }</ol>
+@if (d.CanWrite && o.Status is not (WorkOrderStatus.Closed or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate) && (d.CanContribute || d.ReportedBy == User.Identity.Name || d.ReportedBy == Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetUserId()))
+{
+    <form class="work-order-form work-order-command" asp-action="Comment" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><label>@localizer["Comment"]<textarea name="note" class="form-control" required maxlength="10000"></textarea></label><button class="btn btn-primary" type="submit">@localizer["AddComment"]</button></form>
+}
+<h3>@localizer["Labor"]</h3><table class="table"><thead><tr><th>@localizer["User"]</th><th>@localizer["WorkDate"]</th><th>@localizer["Hours"]</th><th>@localizer["Rate"]</th><th>@localizer["Note"]</th></tr></thead><tbody>@foreach (var l in d.Labor) { <tr><td>@l.UserId</td><td>@l.WorkDate.ToString("d")</td><td>@l.Content.Hours</td><td>@l.Content.RatePerHour @c.Currency</td><td>@l.Content.Note</td></tr> }</tbody></table>
+@if (d.CanContribute)
+{
+    <form class="work-order-form work-order-command form-inline" asp-action="Labor" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="Revision" value="@o.Revision"/>
+    @if (d.CanManage) { <label>@localizer["User"] <select class="form-control" name="UserId"><option value="">@localizer["CurrentUser"]</option>@foreach (var x in Model.Choices.Users) { <option value="@x.Id">@x.Name</option> }</select></label> }
+    <label>@localizer["WorkDate"] <input class="form-control" name="WorkDate" type="date" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required/></label><label>@localizer["Hours"] <input class="form-control" name="Content.Hours" type="number" step="0.01" min="0.01" max="24" required/></label>
+    <label>@localizer["Rate"] <input class="form-control" name="Content.RatePerHour" type="number" step="0.01" min="0"/></label><label>@localizer["Note"] <input class="form-control" name="Content.Note" maxlength="4000"/></label><button class="btn btn-primary" type="submit">@localizer["AddLabor"]</button></form>
+}
+<h3>@localizer["Parts"]</h3><p>@localizer["FreeTextPartsNotice"]</p><table class="table"><thead><tr><th>@localizer["Description"]</th><th>@localizer["Quantity"]</th><th>@localizer["UnitCost"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
+@foreach (var p in d.Parts) { <tr><td>@p.Content.Description</td><td>@p.Content.Quantity</td><td>@p.Content.UnitCost @c.Currency</td><td>@if (p.VoidedOn.HasValue) { <span>@localizer["Voided"]: @p.Content.VoidReason</span> } else if (d.CanContribute) { <form class="work-order-form work-order-command" asp-action="VoidPart" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><input type="hidden" name="partId" value="@p.Id"/><label>@localizer["Reason"]<input name="reason" required maxlength="4000"/></label><button class="btn btn-default" type="submit">@localizer["Void"]</button></form> }</td></tr> }
+</tbody></table>
+@if (d.CanContribute) { <form class="work-order-form work-order-command form-inline" asp-action="Part" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="Revision" value="@o.Revision"/><label>@localizer["Description"] <input class="form-control" name="Content.Description" required maxlength="2000"/></label><label>@localizer["Quantity"] <input class="form-control" name="Content.Quantity" type="number" min="0.001" step="0.001" required/></label><label>@localizer["UnitCost"] <input class="form-control" name="Content.UnitCost" type="number" min="0" step="0.01"/></label><button class="btn btn-primary" type="submit">@localizer["AddPart"]</button></form> }
+<h3>@localizer["Files"]</h3><ul>@foreach (var f in d.Files) { <li><a class="work-order-evidence" asp-action="Evidence" asp-route-id="@f.Id">@f.Name</a> (@f.Size) @if (f.WithdrawnOn.HasValue) { <span>@localizer["Withdrawn"]</span> } else if (d.CanContribute) { <form class="work-order-form work-order-command" asp-action="WithdrawFile" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><input type="hidden" name="fileId" value="@f.Id"/><label>@localizer["Reason"]<input name="reason" required maxlength="4000"/></label><button class="btn btn-default" type="submit">@localizer["Withdraw"]</button></form> }</li> }</ul>
+@if (d.CanContribute || d.CanWrite && o.Status == WorkOrderStatus.Requested && d.ReportedBy == Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetUserId()) { <form class="work-order-form work-order-command" asp-action="Upload" method="post" enctype="multipart/form-data">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><label>@localizer["File"] <input name="file" type="file" accept=".pdf,.png,.jpg,.jpeg" required/></label><p>@localizer["FileHelp"]</p><button class="btn btn-primary" type="submit">@localizer["Upload"]</button></form> }
+</div></div></div></div>
+@section Scripts { @await Html.PartialAsync("_Scripts") }

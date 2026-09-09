@@ -106,6 +106,11 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 
 		protected static bool IsPostgres => DataConfig.DatabaseType == DatabaseTypes.Postgres;
 
+		// Records store UTC clock values in PostgreSQL timestamp columns without a time zone.
+		// DateTime2 preserves precision on both providers, but Npgsql requires an Unspecified kind.
+		protected static DateTime DatabaseTimestamp(DateTime value)
+			=> IsPostgres ? DateTime.SpecifyKind(value, DateTimeKind.Unspecified) : value;
+
 		protected string P => SqlConfiguration.ParameterNotation;
 
 		/// <summary>Schema-qualified table reference in the dialect's identifier style.</summary>
@@ -677,12 +682,12 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 		public async Task<bool> InitializeChecklistPayloadAsync(DomainEventOutboxEntry entry, CancellationToken cancellationToken = default)
 		{
 			if (UnitOfWork.Transaction == null) throw new InvalidOperationException("Checklist event initialization requires the producer transaction.");
-			return await ExecuteAsync($"UPDATE {Tbl("DomainEventOutbox")} SET {Col("PayloadJson")} = {P}Payload WHERE {Col("DomainEventOutboxId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("EventId")} = {P}EventId AND {Col("ProducerSubsystem")} = 'Checklists' AND {Col("State")} = {P}Pending AND {Col("LeaseOwner")} IS NULL AND {Col("PayloadJson")} = '{{}}'",
+			return await ExecuteAsync($"UPDATE {Tbl("DomainEventOutbox")} SET {Col("PayloadJson")} = {P}Payload WHERE {Col("DomainEventOutboxId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("EventId")} = {P}EventId AND {Col("ProducerSubsystem")} IN ('Checklists','WorkOrders') AND {Col("State")} = {P}Pending AND {Col("LeaseOwner")} IS NULL AND {Col("PayloadJson")} = '{{}}'",
 				new { Id = entry.DomainEventOutboxId, entry.DepartmentId, entry.EventId, Payload = entry.PayloadJson, Pending = (int)DomainEventOutboxState.Pending }, cancellationToken) == 1;
 		}
 		public async Task<bool> ReplaceChecklistPayloadAsync(DomainEventOutboxEntry entry, string safePayload, CancellationToken cancellationToken = default)
 		{
-			return await ExecuteAsync($"UPDATE {Tbl("DomainEventOutbox")} SET {Col("PayloadJson")} = {P}Payload, {Col("LastError")} = {P}LastError WHERE {Col("DomainEventOutboxId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("ProducerSubsystem")} = 'Checklists' AND {Col("State")} = {P}Pending AND {Col("LeaseOwner")} = {P}Owner AND {Col("Attempts")} = {P}Attempts AND {Col("LeaseExpiresOn")} > {P}Now",
+			return await ExecuteAsync($"UPDATE {Tbl("DomainEventOutbox")} SET {Col("PayloadJson")} = {P}Payload, {Col("LastError")} = {P}LastError WHERE {Col("DomainEventOutboxId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("ProducerSubsystem")} IN ('Checklists','WorkOrders') AND {Col("State")} = {P}Pending AND {Col("LeaseOwner")} = {P}Owner AND {Col("Attempts")} = {P}Attempts AND {Col("LeaseExpiresOn")} > {P}Now",
 				new { Id = entry.DomainEventOutboxId, entry.DepartmentId, Payload = safePayload, entry.LastError, Pending = (int)DomainEventOutboxState.Pending, Owner = entry.LeaseOwner, entry.Attempts, Now = DateTime.UtcNow }, cancellationToken) == 1;
 		}
 		public DomainEventOutboxRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -990,7 +995,7 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 					parameters.Add("SinceId", sinceId);
 				}
 
-				parameters.Add("Since", since.Value, System.Data.DbType.DateTime2);
+				parameters.Add("Since", DatabaseTimestamp(since.Value), System.Data.DbType.DateTime2);
 			}
 
 			return QueryAsync<RmsRecordSearchProjection>(
@@ -1049,7 +1054,7 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 			if (query.OccurredSince.HasValue)
 			{
 				sb.Append($" AND COALESCE(p.{Col("FinalizedOn")}, p.{Col("OccurredOn")}, p.{Col("RecordCreatedOn")}) >= {P}OccurredSince");
-				parameters.Add("OccurredSince", query.OccurredSince.Value, System.Data.DbType.DateTime2);
+				parameters.Add("OccurredSince", DatabaseTimestamp(query.OccurredSince.Value), System.Data.DbType.DateTime2);
 			}
 
 			if (query.CallId.HasValue)

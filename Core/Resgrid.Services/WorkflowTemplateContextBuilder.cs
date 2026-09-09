@@ -400,6 +400,18 @@ namespace Resgrid.Services
 					}
 					break;
 				}
+				case WorkflowTriggerEventType.WorkOrderCreated:
+				case WorkflowTriggerEventType.WorkOrderStatusChanged:
+				case WorkflowTriggerEventType.WorkOrderAssigned:
+				{
+					var orderEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
+					var payload = orderEvent?.Payload ?? new JObject(); var order = new ScriptObject();
+					foreach (var pair in Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Variables) order[pair.Variable] = ToScriptValue(payload[pair.Property]);
+					order["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/Detail/{payload["WorkOrderId"]?.Value<int>()}";
+					scriptObject["work_order"] = order;
+					scriptObject["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = ToScriptValue(new JArray("Title")), ["catalog_version"] = 18 };
+					break;
+				}
 				case WorkflowTriggerEventType.ChecklistCompleted:
 				case WorkflowTriggerEventType.ChecklistFailed:
                 case WorkflowTriggerEventType.ChecklistMissed:

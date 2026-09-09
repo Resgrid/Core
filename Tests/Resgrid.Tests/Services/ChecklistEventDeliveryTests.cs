@@ -25,7 +25,7 @@ using Scriban.Runtime;
 namespace Resgrid.Tests.Services
 {
 	[TestFixture, NonParallelizable]
-	public class ChecklistEventDeliveryTests
+	public partial class ChecklistEventDeliveryTests
 	{
 		private FakeRmsStore _store;
 		private EventAggregator _bus;
@@ -54,7 +54,7 @@ namespace Resgrid.Tests.Services
 		public async Task Projection_precedes_persistence_and_is_rechecked_after_enrollment()
 		{
 			var entry = await _outbox.EnqueueAsync(42, "Checklists", Event());
-			entry.PayloadJson.Should().NotContain("CANARY").And.NotContain("Data");
+			entry.PayloadJson.Should().NotContain("CANARY").And.NotContain("Data").And.NotContain("person-42");
 			JObject.Parse(entry.PayloadJson)["Score"].Value<decimal>().Should().Be(87.25m);
 			_policy.Setup(s => s.IsProtectionEnforcedAsync(42)).ReturnsAsync(true);
 			DomainEventDispatchedEvent delivered = null;
@@ -62,9 +62,9 @@ namespace Resgrid.Tests.Services
 			(await _outbox.DispatchAfterCommitAsync(new[] { entry.DomainEventOutboxId })).Should().Be(1);
 			var payload = JObject.Parse(delivered.PayloadJson);
 			payload["Score"].Value<string>().Should().Be("REDACTED"); payload["Passed"].Value<string>().Should().Be("REDACTED"); payload["TargetId"].Value<string>().Should().Be("REDACTED");
-			payload["is_redacted"].Value<bool>().Should().BeTrue(); payload["catalog_version"].Value<int>().Should().Be(17);
+			payload["is_redacted"].Value<bool>().Should().BeTrue(); payload["catalog_version"].Value<int>().Should().Be(18);
 			entry.PayloadJson.Should().StartWith("rgdp:").And.NotContain("87.25").And.NotContain("person-42");
-			_history.Decrypt(42, "domaineventoutbox.payloadjson", entry.DomainEventOutboxId.ToString(), entry.PayloadJson).Should().Contain("87.25").And.Contain("person-42");
+			_history.Decrypt(42, "domaineventoutbox.payloadjson", entry.DomainEventOutboxId.ToString(), entry.PayloadJson).Should().Contain("87.25").And.NotContain("person-42");
 		}
 		[Test]
 		public async Task Protected_or_unknown_policy_never_persists_plaintext_outcomes()
@@ -114,7 +114,7 @@ namespace Resgrid.Tests.Services
 			var workflow = new Workflow { WorkflowId = Guid.NewGuid().ToString(), DepartmentId = 42, TriggerEventType = trigger };
 			workflows.Setup(s => s.GetAllActiveByDepartmentAndEventTypeAsync(42, trigger)).ReturnsAsync(new[] { workflow });
 			WorkflowRun stored = null;
-			runs.Setup(s => s.GetByWorkflowAndEventAsync(workflow.WorkflowId, It.IsAny<string>())).ReturnsAsync(() => stored);
+			runs.Setup(s => s.GetByWorkflowsAndEventAsync(42, It.IsAny<IReadOnlyCollection<string>>(), It.IsAny<string>())).ReturnsAsync(() => stored == null ? new List<WorkflowRun>() : new List<WorkflowRun> { stored });
 			runs.Setup(s => s.InsertAsync(It.IsAny<WorkflowRun>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((WorkflowRun r, CancellationToken ct, bool first) => stored = r);
 			var attempts = new List<WorkflowQueueItem>();
 			queue.Setup(s => s.EnqueueWorkflow(It.IsAny<WorkflowQueueItem>())).ReturnsAsync((WorkflowQueueItem item) => { attempts.Add(item); return attempts.Count > 1; });

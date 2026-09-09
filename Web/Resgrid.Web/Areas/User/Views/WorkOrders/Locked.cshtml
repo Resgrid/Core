@@ -1,0 +1,13 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderLockedView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["WorkOrders"]; ViewBag.ProtectionEnforced = true; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+    <h2>@localizer["WorkOrders"]</h2>
+    @await Html.PartialAsync("_Protection")
+    <form class="work-order-form" asp-action="Reopen" method="post">
+        @Html.AntiForgeryToken()<input type="hidden" name="destination" value="@Model.Page"/><input type="hidden" name="id" value="@Model.Id"/>
+        @await Html.PartialAsync("_FilterFields", Model.Filter)
+        <button class="btn btn-primary" type="submit">@localizer["Unlock"]</button>
+    </form>
+</div></div></div>
+@section Scripts { @await Html.PartialAsync("_Scripts") }

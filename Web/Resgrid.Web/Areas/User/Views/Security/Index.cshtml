@@ -2,6 +2,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Security.PermissionsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> workOrderLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.TwoFactor.TwoFactor> twoFactorLocalizer
 @{
@@ -458,8 +459,8 @@
                                     {
                                         if (row.Type == PermissionTypes.ManageChecklists) { <tr><td colspan="5"><strong>@checklistLocalizer["Checklists"]</strong></td></tr> }
                                         <tr data-record-perm="@row.PermissionType" data-record-el="@row.ElementId">
-                                            <td>@(row.Type == PermissionTypes.ManageChecklists ? checklistLocalizer["Manage checklists"].Value : row.Type == PermissionTypes.ViewChecklistResults ? checklistLocalizer["View checklist results"].Value : localizer[row.LabelKey].Value)</td>
-                                            <td style="max-width: 350px">@(row.Type == PermissionTypes.ManageChecklists ? checklistLocalizer["Create, edit, publish and retire free checklists."].Value : row.Type == PermissionTypes.ViewChecklistResults ? checklistLocalizer["View results from other members. Members retain their own history."].Value : localizer[row.NoteKey].Value)</td>
+                                            <td>@(row.Type == PermissionTypes.ManageWorkOrders ? workOrderLocalizer["ManageWorkOrders"].Value : row.Type == PermissionTypes.ViewAllWorkOrders ? workOrderLocalizer["ViewAllWorkOrders"].Value : row.Type == PermissionTypes.ManageChecklists ? checklistLocalizer["Manage checklists"].Value : row.Type == PermissionTypes.ViewChecklistResults ? checklistLocalizer["View checklist results"].Value : localizer[row.LabelKey].Value)</td>
+                                            <td style="max-width: 350px">@(row.Type == PermissionTypes.ManageWorkOrders ? workOrderLocalizer["ManageWorkOrdersNote"].Value : row.Type == PermissionTypes.ViewAllWorkOrders ? workOrderLocalizer["ViewAllWorkOrdersNote"].Value : row.Type == PermissionTypes.ManageChecklists ? checklistLocalizer["Create, edit, publish and retire free checklists."].Value : row.Type == PermissionTypes.ViewChecklistResults ? checklistLocalizer["View results from other members. Members retain their own history."].Value : localizer[row.NoteKey].Value)</td>
                                             <td>@Html.DropDownList(row.ElementId, row.Options, new { id = row.ElementId })</td>
                                             <td>
                                                 @if (row.ShowLockToGroup)

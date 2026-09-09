@@ -66,7 +66,7 @@ namespace Resgrid.Services
 				AdpTableBinding.Direct("AuditLogs", "AuditLogId", true, "DepartmentId", new[] { Text("AuditLogs", "Data") })
 					with { Discriminator = new AdpRowDiscriminator("LogType", Resgrid.Model.Checklists.ReadinessHistoryFields.AuditTypes) },
 				AdpTableBinding.Direct("DomainEventOutbox", "DomainEventOutboxId", true, "DepartmentId", new[] { Text("DomainEventOutbox", "PayloadJson"), Text("DomainEventOutbox", "LastError") })
-					with { Discriminator = new AdpRowDiscriminator("ProducerSubsystem", Text: "Checklists") },
+					with { Discriminator = new AdpRowDiscriminator("ProducerSubsystem", Texts: new[] { "Checklists", "WorkOrders" }) },
 				AdpTableBinding.Direct("WorkflowRuns", "WorkflowRunId", false, "DepartmentId", new[] { Text("WorkflowRuns", "InputPayload"), Text("WorkflowRuns", "ErrorMessage") })
 					with { Discriminator = new AdpRowDiscriminator("TriggerEventType", Resgrid.Model.Checklists.ChecklistWorkflowPayload.Triggers) },
 				AdpTableBinding.ViaParent("WorkflowRunLogs", "WorkflowRunLogId", false, "WorkflowRunId", "WorkflowRuns", "WorkflowRunId", new[] { Text("WorkflowRunLogs", "RenderedOutput"), Text("WorkflowRunLogs", "ActionResult"), Text("WorkflowRunLogs", "ErrorMessage") })
@@ -505,6 +505,8 @@ namespace Resgrid.Services
 					Text("RmsPreventionAttachments", "FileName"), Text("RmsPreventionAttachments", "Description"), Binary("RmsPreventionAttachments", "Data")
 				}) with { ProtectedMarkerColumn = "IsProtected" }
 			};
+			bindings.AddRange(Resgrid.Model.WorkOrders.WorkOrderTables.All.Values.Select(table =>
+				AdpTableBinding.Direct(table, "Id", true, "DepartmentId", table == "WorkOrderFiles" ? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, "Content") }) with { ProtectedMarkerColumn = "IsProtected" }));
 			return bindings.Concat(Resgrid.Model.Checklists.ChecklistTables.All.Values.Select(table =>
 				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table switch
 				{

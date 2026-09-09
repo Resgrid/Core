@@ -930,7 +930,7 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex, "Failed to publish feature flag audit event");
+				Logging.LogException(ex, $"FeatureToggleService.PublishAudit failed for department {departmentId}, user {userId}, audit type {type}.");
 			}
 		}
 

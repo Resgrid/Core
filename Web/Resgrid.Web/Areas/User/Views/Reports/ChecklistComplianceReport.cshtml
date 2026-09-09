@@ -1,0 +1,9 @@
+@model Resgrid.Model.Checklists.ChecklistComplianceSummary
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["ChecklistComplianceReport"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+@await Html.PartialAsync("~/Areas/User/Views/Checklists/_Protection.cshtml")
+<button type="button" class="btn btn-primary hidden-print" onclick="window.print()">@localizer["PrintReport"]</button>
+@Html.Raw(Resgrid.Services.ChecklistReportDocuments.ComplianceBody(Model, ViewBag.MissedOnly == true))
+</div></div></div>
+@section Scripts { @await Html.PartialAsync("~/Areas/User/Views/Checklists/_ProtectionScripts.cshtml") }

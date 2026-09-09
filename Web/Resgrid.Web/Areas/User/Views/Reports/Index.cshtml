@@ -2,6 +2,7 @@
 @using Resgrid.Model
 @using Resgrid.Web.Helpers
 @using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @model Resgrid.Web.Areas.User.Models.Logs.LogsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.FlaggedReport> flaggedReportLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
@@ -46,6 +47,7 @@
                             </tr>
                             </thead>
                             <tbody>
+                            <tr><td><a asp-controller="Checklists" asp-action="Compliance">@checklistLocalizer["ChecklistComplianceReport"]</a></td><td>@checklistLocalizer["AuthorizedScope"]</td><td><a asp-controller="Checklists" asp-action="ReadinessPacket">@checklistLocalizer["ReadinessPacketReport"]</a></td></tr>
                             <tr>
                                 <td>
                                     <a href="@Url.Action("ActionLogsParams", "Reports", new { Area = "User" })">@localizer["PersonnelStatusHistoryReportName"]</a>

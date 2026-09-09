@@ -40,13 +40,20 @@ namespace Resgrid.Services
 			var result = new List<ChecklistCalendarEntry>();
 			if (!await _access.CanUseChecklistsAsync(actor.DepartmentId)) return result;
 			var names = new Dictionary<string, (string Name, bool Redacted)>();
+			var targets = new Dictionary<(int Type, string Id), bool>();
 			for (var skip = 0; ; skip += 500)
 			{
 				var rows = await _store.CalendarOccurrencesAsync(actor.DepartmentId, fromUtc, untilUtc, skip);
 				foreach (var row in rows)
 				{
-					try { await _authorization.TargetAsync(actor, (ChecklistTargetType)row.TargetType, row.TargetId); }
-					catch (ChecklistException ex) when (ex.StatusCode == 403 || ex.StatusCode == 404) { continue; }
+					var key = (row.TargetType, row.TargetId);
+					if (!targets.TryGetValue(key, out var allowed))
+					{
+						try { await _authorization.TargetAsync(actor, (ChecklistTargetType)row.TargetType, row.TargetId); allowed = true; }
+						catch (ChecklistException ex) when (ex.StatusCode == 403 || ex.StatusCode == 404) { allowed = false; }
+						targets[key] = allowed;
+					}
+					if (!allowed) continue;
 					if (!names.TryGetValue(row.ScheduleId, out var name))
 					{
 						var schedule = await _store.GetAsync<ChecklistSchedule>(actor.DepartmentId, row.ScheduleId);

@@ -19,21 +19,30 @@ namespace Resgrid.Services
 		{
 			if (_mutationObserver == null || _mutationUnit == null) return await action();
 			if (_mutationActive || _mutationUnit.Transaction != null) throw new InvalidOperationException("Feature flag commands own their transaction.");
+			T result;
 			try
 			{
-				_mutationActive = true; await _mutationUnit.CreateOrGetConnectionAsync(ct);
-				await _mutationObserver.BeforeChangeAsync(null, ct);
-				// Observe expired/scheduled policy before replacing it, even between worker sweeps.
-				await _mutationObserver.AfterChangeAsync(async (key, department) => (await EvaluateFreshAsync(key, department)).IsEnabled, ct);
-				var result = await action();
-				await _mutationObserver.AfterChangeAsync(async (key, department) => (await EvaluateFreshAsync(key, department)).IsEnabled, ct);
-				_mutationUnit.CommitChanges(); _mutationActive = false;
-				if (_invalidateFlags) await InvalidateFlagCacheAsync();
-				foreach (var department in _invalidateOverrides) await InvalidateDepartmentOverrideCacheAsync(department);
-				foreach (var audit in _committedAudits) audit();
+				try
+				{
+					_mutationActive = true; await _mutationUnit.CreateOrGetConnectionAsync(ct);
+					await _mutationObserver.BeforeChangeAsync(null, ct);
+					// Observe expired/scheduled policy before replacing it, even between worker sweeps.
+					await _mutationObserver.AfterChangeAsync(async (key, department) => (await EvaluateFreshAsync(key, department)).IsEnabled, ct);
+					result = await action();
+					await _mutationObserver.AfterChangeAsync(async (key, department) => (await EvaluateFreshAsync(key, department)).IsEnabled, ct);
+					_mutationUnit.CommitChanges();
+				}
+				catch { _mutationUnit.DiscardChanges(); throw; }
+				_mutationActive = false;
+				// Cache failures cannot roll back committed writes or suppress their audit publication.
+				try
+				{
+					if (_invalidateFlags) await InvalidateFlagCacheAsync();
+					foreach (var department in _invalidateOverrides) await InvalidateDepartmentOverrideCacheAsync(department);
+				}
+				finally { foreach (var audit in _committedAudits) audit(); }
 				return result;
 			}
-			catch { _mutationUnit.DiscardChanges(); throw; }
 			finally { _mutationActive = false; _invalidateFlags = false; _invalidateOverrides.Clear(); _committedAudits.Clear(); }
 		}
 	}

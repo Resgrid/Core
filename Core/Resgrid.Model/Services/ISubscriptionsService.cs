@@ -192,7 +192,7 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		/// <param name="planAddonType">The type of plan addon.</param>
 		/// <returns>Task&lt;List&lt;PlanAddon&gt;&gt;.</returns>
-		Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType);
+		Task<List<PlanAddon>> GetAllAddonPlansByTypeAsync(PlanAddonTypes planAddonType, bool bypassCache = false);
 
 		/// <summary>
 		/// Gets all plan addons active for a subscription asynchronous.

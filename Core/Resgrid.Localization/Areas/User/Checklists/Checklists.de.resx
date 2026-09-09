@@ -637,4 +637,44 @@
   <data name="ReminderFixedTime" xml:space="preserve"><value>Uhrzeit der täglichen Zusammenfassung (Zeitzone der Organisation; ersetzt Schichtbeginn)</value></data>
   <data name="ReminderShiftStart" xml:space="preserve"><value>Zusammenfassung bei Schichtbeginn senden</value></data>
   <data name="ReminderTimeValidation" xml:space="preserve"><value>Geben Sie eine Uhrzeit im Format HH:mm ein.</value></data>
+  <data name="ChecklistComplianceReport" xml:space="preserve"><value>Bericht zur Checklisten-Erfüllung</value></data>
+  <data name="ChecklistMissedReport" xml:space="preserve"><value>Bericht über versäumte Prüfungen</value></data>
+  <data name="ReadinessPacketReport" xml:space="preserve"><value>Bereitschaftsnachweise</value></data>
+  <data name="ExpectedChecks" xml:space="preserve"><value>Fällige Prüfungen</value></data>
+  <data name="CompletedChecks" xml:space="preserve"><value>Abgeschlossene Prüfungen</value></data>
+  <data name="OnTimeChecks" xml:space="preserve"><value>Fristgerechte Prüfungen</value></data>
+  <data name="MissedChecks" xml:space="preserve"><value>Versäumte Fristen</value></data>
+  <data name="ExcusedChecks" xml:space="preserve"><value>Entschuldigte Prüfungen</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>Erfüllungsquote (%)</value></data>
+  <data name="MissedTrend" xml:space="preserve"><value>Verlauf versäumter Fristen</value></data>
+  <data name="ComplianceMethod" xml:space="preserve"><value>Der Zeitraum wählt Prüfungen nach ihrem Beginn aus. Nur abgelaufene geplante Zeitfenster zählen für die Quote. Entschuldigte Prüfungen sind ausgenommen; verspätete Abschlüsse bleiben Fristversäumnisse. Spontane Prüfungen und offene Zeitfenster erscheinen nur im Verlauf.</value></data>
+  <data name="AuthorizedScope" xml:space="preserve"><value>Es werden nur Ergebnisse angezeigt, für die Sie eine Leseberechtigung haben.</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Ab Datum</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Bis Datum (ausschließlich)</value></data>
+  <data name="AllTargets" xml:space="preserve"><value>Alle Ziele</value></data>
+  <data name="RefreshReport" xml:space="preserve"><value>Bericht aktualisieren</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>CSV exportieren</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Bericht drucken</value></data>
+  <data name="ScheduleReport" xml:space="preserve"><value>Bericht planen</value></data>
+  <data name="CallId" xml:space="preserve"><value>Einsatz-ID</value></data>
+  <data name="LookbackDays" xml:space="preserve"><value>Rückblick in Tagen</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>PDF und Nachweisverzeichnis herunterladen</value></data>
+  <data name="PacketMethod" xml:space="preserve"><value>Die Nachweise umfassen die gewählten Tage vor dem Einsatz und werden zum Einsatzzeitpunkt bewertet. Spätere Einreichungen belegen keine frühere Bereitschaft. Die Quelldaten verbleiben in ihren zuständigen Modulen.</value></data>
+  <data name="DispatchedUnits" xml:space="preserve"><value>Alarmierte Einheiten</value></data>
+  <data name="IssuedEquipment" xml:space="preserve"><value>Zum Einsatzzeitpunkt ausgegebene Ausrüstung</value></data>
+  <data name="ScheduledReportProtected" xml:space="preserve"><value>Der geplante Versand enthält einen PDF-Hinweis und einen sicheren Berichtslink. Öffnen Sie den Bericht, um Ihre aktuelle Berechtigung zu prüfen und geschützte Daten freizugeben. Prüfergebnisse und personenbezogene Daten werden nicht per E-Mail versendet.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Wählen Sie einen chronologischen UTC-Zeitraum von höchstens 93 Tagen.</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>Dieser Bericht ist zu groß. Wählen Sie einen kürzeren Zeitraum.</value></data>
+  <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Der Einsatz ist nicht verfügbar oder der Zugriff wurde verweigert.</value></data>
+  <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Die Herkunftsnachweise der früheren Ausrüstung sind unvollständig oder widersprüchlich.</value></data>
+  <data name="RestrictedChecklistResults" xml:space="preserve"><value>Einige Prüfergebnisse liegen außerhalb Ihrer Berechtigungen.</value></data>
+  <data name="LifecycleHistoryUnavailable" xml:space="preserve"><value>Einige Statusänderungen erfolgten nach dem Einsatz; der frühere Status kann nicht rekonstruiert werden.</value></data>
+  <data name="RestrictedUnits" xml:space="preserve"><value>Einige alarmierte Einheiten sind nicht verfügbar oder liegen außerhalb Ihrer Berechtigungen.</value></data>
+  <data name="HistoricalUnitNamesUnavailable" xml:space="preserve"><value>Die Einheitsbezeichnungen sind aktuell; frühere Namen sind nicht verfügbar.</value></data>
+  <data name="ContractorEquipmentUnavailable" xml:space="preserve"><value>Der Ausrüstungsverlauf von Auftragnehmern ist nicht verfügbar.</value></data>
+  <data name="HistoricalInventoryUnavailable" xml:space="preserve"><value>Frühere Ausgabenachweise für Ausrüstung sind nicht verfügbar.</value></data>
+  <data name="WorkOrdersUnavailable" xml:space="preserve"><value>Nachweise zu Arbeitsaufträgen werden in einer späteren Phase verfügbar sein.</value></data>
+  <data name="PacketCaptureWindow" xml:space="preserve"><value>Die Erfassung von Bereitschaftsnachweisen erfordert einen Einsatz und umfasst die 30 Tage davor; eigene Zeiträume werden nicht unterstützt.</value></data>
+  <data name="TargetType" xml:space="preserve"><value>Zieltyp</value></data>
+  <data name="Group" xml:space="preserve"><value>Wache / Gruppe</value></data>
 </root>

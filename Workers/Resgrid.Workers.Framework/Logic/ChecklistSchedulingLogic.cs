@@ -17,7 +17,7 @@ namespace Resgrid.Workers.Framework.Logic
 				return Tuple.Create(result.Errors == 0, $"Checklist scheduling: generated={result.Generated}, missed={result.Missed}, errors={result.Errors}");
 			}
 			catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-			catch { return Tuple.Create(false, "Checklist scheduling failed."); }
+			catch (Exception ex) { Resgrid.Framework.Logging.LogError($"Checklist scheduling worker failed: {ex.GetType().FullName}."); return Tuple.Create(false, "Checklist scheduling failed."); }
 		}
 	}
 }

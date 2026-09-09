@@ -304,7 +304,15 @@ namespace Resgrid.Repositories.DataRepository
 			var filter = binding.Discriminator;
 			// Discriminators are code-owned constants. Integers and escaped string literals keep the same
 			// scope on reads, verification and counts without broadening the shared table to other features.
-			var discriminator = filter == null ? "" : filter.Text != null
+			if (filter?.OnParent == true && !string.IsNullOrEmpty(binding.DepartmentColumn))
+				throw new InvalidOperationException("A parent-scoped ADP discriminator requires a parent-keyed binding.");
+			if (filter?.Texts != null && (filter.Texts.Count == 0 || filter.Texts.Any(t => t == null)))
+				throw new InvalidOperationException("Missing ADP discriminator values.");
+			if (filter != null && filter.Texts == null && filter.Text == null && !(filter.Integers?.Count > 0))
+				throw new InvalidOperationException("Missing ADP discriminator values.");
+			var discriminator = filter == null ? "" : filter.Texts != null
+				? $"{Ident(filter.Column)} IN ({string.Join(",", filter.Texts.Select(t => "\'" + t.Replace("\'", "\'\'") + "\'"))})"
+				: filter.Text != null
 				? $"{Ident(filter.Column)} = '{filter.Text.Replace("'", "''")}'"
 				: $"{Ident(filter.Column)} IN ({string.Join(",", filter.Integers ?? throw new InvalidOperationException("Missing ADP discriminator values."))})";
 			var scope = !string.IsNullOrEmpty(binding.DepartmentColumn)

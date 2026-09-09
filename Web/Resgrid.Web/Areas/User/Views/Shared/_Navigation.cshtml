@@ -1,5 +1,6 @@
 @inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
 @inject Resgrid.Model.Services.IReadinessAccessService readinessAccess
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> workOrderLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
 @inject Resgrid.Model.Services.IRecordsAuthorizationService recordsAuthorization
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> recordsLocalizer
@@ -160,6 +161,10 @@
 				<li class="@Html.IsSelected(controller: "Trainings")">
 					<a asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-book"></i> <span class="nav-label" data-i18n="nav.trainings">@commonLocalizer["TrainingsModule"]</span></a>
 				</li>
+			}
+			@if (await readinessAccess.CanUseMaintenanceAsync(ClaimsAuthorizationHelper.GetDepartmentId()))
+			{
+				<li class="@Html.IsSelected(controller: "WorkOrders")"><a asp-controller="WorkOrders" asp-action="Index" asp-route-area="User"><i class="fa fa-wrench"></i> <span class="nav-label">@workOrderLocalizer["WorkOrders"]</span></a></li>
 			}
 			@if (await readinessAccess.CanUseChecklistsAsync(ClaimsAuthorizationHelper.GetDepartmentId()))
 			{

@@ -69,29 +69,40 @@ namespace Resgrid.Services
 				return row.Id;
 			}, accessFence: true);
 		}
-		public async Task<List<ChecklistOccurrenceView>> DueAsync(ChecklistActor actor, int page = 0)
+		public async Task<List<ChecklistOccurrenceView>> DueAsync(ChecklistActor actor, int page = 0, bool includeNext = false)
 		{
-			await _authorization.RequireMemberAsync(actor); if (page < 0 || page > 10000) throw new ChecklistException(400, "ScheduleValidation");
+			await _authorization.RequireMemberAsync(actor); if (page < 0 || page > 100) throw new ChecklistException(400, "ScheduleValidation");
 			var enabled = await _access.CanUseChecklistsAsync(actor.DepartmentId); var manage = await CanManageAsync(actor); var views = new List<ChecklistOccurrenceView>();
-			foreach (var occurrence in await _store.DueOccurrencesAsync(actor.DepartmentId, _clock.GetUtcNow().UtcDateTime.AddDays(7), page * 50))
+			var remaining = page * 50; var take = includeNext ? 51 : 50;
+			var until = _clock.GetUtcNow().UtcDateTime.AddDays(7);
+			for (var skip = 0; ; skip += 50)
 			{
-				ChecklistTarget target;
-				try { target = await _authorization.TargetAsync(actor, (ChecklistTargetType)occurrence.TargetType, occurrence.TargetId); }
-				catch (ChecklistException ex) when (ex.StatusCode == 404) { continue; }
-				var schedule = await _store.GetAsync<ChecklistSchedule>(actor.DepartmentId, occurrence.ScheduleId);
-				if (schedule == null) continue;
-				var assigned = await CanPerformScheduleAsync(actor, schedule);
-				// The response omits stored Content/envelopes. Names come through the attended read boundary.
-				await RevealAsync(actor, schedule);
-				var metadata = JsonConvert.DeserializeObject<ChecklistOccurrence>(JsonConvert.SerializeObject(occurrence)); metadata.Content = null;
-				views.Add(new ChecklistOccurrenceView { Occurrence = metadata, Name = Decode<ChecklistScheduleContent>(schedule.Content).Name, Target = target,
-					CanStart = enabled && assigned && schedule.IsActive && !schedule.IsSuspended && occurrence.PeriodStartUtc <= _clock.GetUtcNow().UtcDateTime, CanSkip = enabled && manage && (occurrence.State == 3 || occurrence.State == 4) && await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, occurrence.CompletionId) == null });
+				var rows = await _store.DueOccurrencesAsync(actor.DepartmentId, until, skip);
+				foreach (var occurrence in rows)
+				{
+					ChecklistTarget target;
+					try { target = await _authorization.TargetAsync(actor, (ChecklistTargetType)occurrence.TargetType, occurrence.TargetId); }
+					catch (ChecklistException ex) when (ex.StatusCode == 404) { continue; }
+					var schedule = await _store.GetAsync<ChecklistSchedule>(actor.DepartmentId, occurrence.ScheduleId);
+					if (schedule == null) continue;
+					if (remaining > 0) { remaining--; continue; }
+					var assigned = await CanPerformScheduleAsync(actor, schedule);
+					// The response omits stored Content/envelopes. Names come through the attended read boundary.
+					await RevealAsync(actor, schedule);
+					var metadata = JsonConvert.DeserializeObject<ChecklistOccurrence>(JsonConvert.SerializeObject(occurrence)); metadata.Content = null;
+					views.Add(new ChecklistOccurrenceView { Occurrence = metadata, Name = Decode<ChecklistScheduleContent>(schedule.Content).Name, Target = target,
+						CanStart = enabled && assigned && schedule.IsActive && !schedule.IsSuspended && occurrence.PeriodStartUtc <= _clock.GetUtcNow().UtcDateTime, CanSkip = enabled && manage && (occurrence.State == 3 || occurrence.State == 4) && await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, occurrence.CompletionId) == null });
+					if (views.Count == take) return views;
+				}
+				if (rows.Count < 50) return views;
 			}
-			return views;
 		}
-		public async Task<string> StartOccurrenceAsync(ChecklistActor actor, string occurrenceId)
+		public Task<string> StartOccurrenceAsync(ChecklistActor actor, string occurrenceId) => StartOccurrenceWithIdAsync(actor, occurrenceId, null);
+		public async Task<string> StartOccurrenceWithIdAsync(ChecklistActor actor, string occurrenceId, string completionId)
 		{
 			Id(occurrenceId); await RequireWriteAsync(actor);
+			occurrenceId = Guid.Parse(occurrenceId).ToString();
+			if (completionId != null) { Id(completionId); completionId = Guid.Parse(completionId).ToString(); }
 			return await TransactionAsync(actor, async events =>
 			{
 				var row = await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, occurrenceId);
@@ -99,7 +110,17 @@ namespace Resgrid.Services
 				var existing = await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, row.CompletionId);
 				var schedule = await _store.GetAsync<ChecklistSchedule>(actor.DepartmentId, row.ScheduleId);
 				if (!await CanPerformScheduleAsync(actor, schedule)) throw new ChecklistException(403, "AssignmentPermission");
-				if (existing != null) { await RequireRunReadAsync(actor, existing); return existing.Id; }
+				if (existing != null)
+				{
+					await RequireRunReadAsync(actor, existing);
+					if (completionId != null && (completionId != existing.Id || existing.CreatedBy != actor.UserId)) throw new ChecklistException(409, "Run identifier is already in use.");
+					await RevealAsync(actor, existing); return existing.Id;
+				}
+				if (completionId != null)
+				{
+					if (await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, completionId) != null) throw new ChecklistException(409, "Run identifier is already in use.");
+					row.CompletionId = completionId;
+				}
 				var definition = await _store.GetAsync<ChecklistDefinition>(actor.DepartmentId, row.ParentId);
 				if (schedule?.IsActive != true || schedule.IsSuspended || definition == null || definition.Retired || definition.DeletedOn.HasValue) throw new ChecklistException(409, "OccurrenceUnavailable");
 				var target = await _authorization.TargetAsync(actor, (ChecklistTargetType)row.TargetType, row.TargetId);
@@ -145,6 +166,7 @@ namespace Resgrid.Services
 			var result = await _write.Value.PrepareRecordsEntityWriteAsync(row.DepartmentId, row, (T)null, row.Id, ChecklistTables.Fields<T>(), () => row.IsProtected = true, null, null, true, ct);
 			if (result?.Success != true || result.IsProtected && HasPlaintextFields(row)) throw new InvalidOperationException("Checklist scheduling requires an available ADP catalog and write broker.");
 			await _store.WriteAsync(row, insert, ct);
+			if (row is ChecklistOccurrence) _refreshRow = row;
 		}
 		private async Task WorkerAuditAsync(ChecklistRow row, AuditLogTypes type, DateTime now, CancellationToken ct)
 		{
@@ -168,7 +190,7 @@ namespace Resgrid.Services
 						var schedules = await _store.ActiveSchedulesAsync(department, afterSchedule, ct); if (schedules.Count == 0) break;
 						foreach (var candidate in schedules)
 						{
-							ct.ThrowIfCancellationRequested(); var events = new List<long>(); var generated = 0; var missed = 0;
+							ct.ThrowIfCancellationRequested(); var events = new List<long>(); var generated = 0; var missed = 0; _refreshRow = null;
 							try
 							{
 								await _uow.CreateOrGetConnectionAsync(ct); await _store.LockDepartmentAsync(department, ct);
@@ -224,11 +246,12 @@ namespace Resgrid.Services
 									}
 									await WorkerWriteAsync(schedule, false, ct);
 								}
+								await RefreshEventAsync(events);
 								_uow.CommitChanges(); result.Generated += generated; result.Missed += missed;
 								await _outbox.DispatchAfterCommitAsync(events, ct);
 							}
 							catch (OperationCanceledException) when (ct.IsCancellationRequested) { _uow.DiscardChanges(); throw; }
-							catch { _uow.DiscardChanges(); result.Errors++; Resgrid.Framework.Logging.LogError($"Checklist scheduling failed for department {department}, schedule {candidate.Id}."); }
+							catch (Exception ex) { _uow.DiscardChanges(); result.Errors++; Resgrid.Framework.Logging.LogError($"Checklist scheduling failed for department {department}, schedule {candidate.Id}: {ex.GetType().FullName}."); }
 						}
 						afterSchedule = schedules.Last().Id;
 					}

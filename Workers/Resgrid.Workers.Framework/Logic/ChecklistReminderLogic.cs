@@ -17,7 +17,7 @@ namespace Resgrid.Workers.Framework.Logic
 				return Tuple.Create(result.Errors == 0, $"Checklist reminders: handedOff={result.HandedOff}, suppressed={result.Suppressed}, errors={result.Errors}");
 			}
 			catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-			catch { return Tuple.Create(false, "Checklist reminders failed."); }
+			catch (Exception ex) { Resgrid.Framework.Logging.LogError($"Checklist reminder worker failed: {ex.GetType().FullName}."); return Tuple.Create(false, "Checklist reminders failed."); }
 		}
 	}
 }

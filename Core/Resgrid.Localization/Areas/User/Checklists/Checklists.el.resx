@@ -637,4 +637,44 @@
   <data name="ReminderFixedTime" xml:space="preserve"><value>Ώρα ημερήσιας σύνοψης (ζώνη ώρας οργανισμού· υπερισχύει της έναρξης βάρδιας)</value></data>
   <data name="ReminderShiftStart" xml:space="preserve"><value>Αποστολή σύνοψης στην έναρξη βάρδιας</value></data>
   <data name="ReminderTimeValidation" xml:space="preserve"><value>Εισαγάγετε μία ώρα σε μορφή HH:mm.</value></data>
+  <data name="ChecklistComplianceReport" xml:space="preserve"><value>Αναφορά συμμόρφωσης λιστών ελέγχου</value></data>
+  <data name="ChecklistMissedReport" xml:space="preserve"><value>Αναφορά παραλειφθέντων ελέγχων</value></data>
+  <data name="ReadinessPacketReport" xml:space="preserve"><value>Φάκελος ετοιμότητας</value></data>
+  <data name="ExpectedChecks" xml:space="preserve"><value>Αναμενόμενοι έλεγχοι</value></data>
+  <data name="CompletedChecks" xml:space="preserve"><value>Ολοκληρωμένοι έλεγχοι</value></data>
+  <data name="OnTimeChecks" xml:space="preserve"><value>Εμπρόθεσμοι έλεγχοι</value></data>
+  <data name="MissedChecks" xml:space="preserve"><value>Χαμένες προθεσμίες</value></data>
+  <data name="ExcusedChecks" xml:space="preserve"><value>Δικαιολογημένες εξαιρέσεις</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>Ποσοστό ολοκλήρωσης (%)</value></data>
+  <data name="MissedTrend" xml:space="preserve"><value>Εξέλιξη χαμένων προθεσμιών</value></data>
+  <data name="ComplianceMethod" xml:space="preserve"><value>Η περίοδος επιλέγει ελέγχους βάσει της ώρας έναρξης. Στο ποσοστό υπολογίζονται μόνο προγραμματισμένα χρονικά παράθυρα που έληξαν. Οι δικαιολογημένες εξαιρέσεις αποκλείονται· οι καθυστερημένες ολοκληρώσεις παραμένουν χαμένες προθεσμίες. Οι έκτακτοι έλεγχοι και τα ανοικτά παράθυρα εμφανίζονται μόνο στο ιστορικό.</value></data>
+  <data name="AuthorizedScope" xml:space="preserve"><value>Περιλαμβάνονται μόνο αποτελέσματα που έχετε δικαίωμα να δείτε.</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Από ημερομηνία</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Έως ημερομηνία (δεν περιλαμβάνεται)</value></data>
+  <data name="AllTargets" xml:space="preserve"><value>Όλοι οι στόχοι</value></data>
+  <data name="RefreshReport" xml:space="preserve"><value>Ανανέωση αναφοράς</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Εξαγωγή CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>Εκτύπωση αναφοράς</value></data>
+  <data name="ScheduleReport" xml:space="preserve"><value>Προγραμματισμός αναφοράς</value></data>
+  <data name="CallId" xml:space="preserve"><value>Αναγνωριστικό συμβάντος</value></data>
+  <data name="LookbackDays" xml:space="preserve"><value>Ημέρες αναδρομής</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>Λήψη PDF και καταλόγου τεκμηρίων</value></data>
+  <data name="PacketMethod" xml:space="preserve"><value>Τα τεκμήρια καλύπτουν τις επιλεγμένες ημέρες πριν από το συμβάν και αξιολογούνται κατά τον χρόνο του συμβάντος. Μεταγενέστερες υποβολές δεν αποδεικνύουν προηγούμενη ετοιμότητα. Τα αρχικά αρχεία παραμένουν στις αρμόδιες ενότητες.</value></data>
+  <data name="DispatchedUnits" xml:space="preserve"><value>Μονάδες που κινητοποιήθηκαν</value></data>
+  <data name="IssuedEquipment" xml:space="preserve"><value>Εξοπλισμός που είχε χορηγηθεί κατά το συμβάν</value></data>
+  <data name="ScheduledReportProtected" xml:space="preserve"><value>Η προγραμματισμένη αποστολή περιέχει ειδοποίηση PDF και ασφαλή σύνδεσμο αναφοράς. Ανοίξτε την αναφορά για επαλήθευση της τρέχουσας πρόσβασης και ξεκλείδωμα προστατευμένων δεδομένων· αποτελέσματα ελέγχων και προσωπικά δεδομένα δεν αποστέλλονται με ηλεκτρονικό ταχυδρομείο.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Επιλέξτε χρονολογική περίοδο UTC έως 93 ημερών.</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>Η αναφορά είναι πολύ μεγάλη. Επιλέξτε μικρότερη περίοδο.</value></data>
+  <data name="ReadinessCallUnavailable" xml:space="preserve"><value>Το συμβάν δεν είναι διαθέσιμο ή δεν επιτρέπεται η πρόσβαση.</value></data>
+  <data name="HistoricalAssetInvalid" xml:space="preserve"><value>Η προέλευση του παλαιότερου εξοπλισμού είναι ελλιπής ή ασυνεπής.</value></data>
+  <data name="RestrictedChecklistResults" xml:space="preserve"><value>Ορισμένα αποτελέσματα ελέγχων υπερβαίνουν τα δικαιώματά σας.</value></data>
+  <data name="LifecycleHistoryUnavailable" xml:space="preserve"><value>Ορισμένες αλλαγές κατάστασης έγιναν μετά το συμβάν· η προηγούμενη κατάσταση δεν μπορεί να ανασυσταθεί.</value></data>
+  <data name="RestrictedUnits" xml:space="preserve"><value>Ορισμένες μονάδες που κινητοποιήθηκαν δεν είναι διαθέσιμες ή υπερβαίνουν τα δικαιώματά σας.</value></data>
+  <data name="HistoricalUnitNamesUnavailable" xml:space="preserve"><value>Οι ονομασίες μονάδων είναι οι τρέχουσες· παλαιότερες ονομασίες δεν είναι διαθέσιμες.</value></data>
+  <data name="ContractorEquipmentUnavailable" xml:space="preserve"><value>Το ιστορικό εξοπλισμού αναδόχων δεν είναι διαθέσιμο.</value></data>
+  <data name="HistoricalInventoryUnavailable" xml:space="preserve"><value>Τα παλαιότερα αρχεία χορήγησης εξοπλισμού δεν είναι διαθέσιμα.</value></data>
+  <data name="WorkOrdersUnavailable" xml:space="preserve"><value>Τεκμήρια εντολών εργασίας θα διατεθούν σε επόμενη φάση.</value></data>
+  <data name="PacketCaptureWindow" xml:space="preserve"><value>Η καταγραφή τεκμηρίων ετοιμότητας απαιτεί συμβάν και καλύπτει τις προηγούμενες 30 ημέρες· προσαρμοσμένες ημερομηνίες δεν υποστηρίζονται.</value></data>
+  <data name="TargetType" xml:space="preserve"><value>Τύπος στόχου</value></data>
+  <data name="Group" xml:space="preserve"><value>Σταθμός / ομάδα</value></data>
 </root>

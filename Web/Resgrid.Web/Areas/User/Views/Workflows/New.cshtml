@@ -1,3 +1,4 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> workOrderStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistStrings
 @model Resgrid.Model.Workflow
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
@@ -10,7 +11,7 @@
                         .Cast<Resgrid.Model.WorkflowTriggerEventType>()
                         .Where(e => !usedEventTypes.Contains((int)e))
                         .Where(e => recordsTriggersAvailable || !Resgrid.Model.WorkflowTriggerEventTypes.IsRecordsTrigger(e))
-                        .Select(e => new SelectListItem { Value = ((int)e).ToString(), Text = Resgrid.Model.Checklists.ChecklistWorkflowPayload.IsChecklist((int)e) ? checklistStrings[e.ToString()].Value : e.ToString() })
+                        .Select(e => new SelectListItem { Value = ((int)e).ToString(), Text = (int)e is 70 or 71 or 72 ? workOrderStrings[e.ToString()].Value : Resgrid.Model.Checklists.ChecklistWorkflowPayload.IsChecklist((int)e) ? checklistStrings[e.ToString()].Value : e.ToString() })
                         .ToList();
     var noEventTypesAvailable = !eventTypes.Any();
 }

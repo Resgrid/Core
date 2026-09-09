@@ -151,7 +151,9 @@ namespace Resgrid.Model
 		RecordsPreventionAdmin = 69,
 
 		ManageChecklists = 112,
-		ViewChecklistResults = 113
+ViewChecklistResults = 113,
+		ManageWorkOrders = 114,
+		ViewAllWorkOrders = 115
 	}
 
 }

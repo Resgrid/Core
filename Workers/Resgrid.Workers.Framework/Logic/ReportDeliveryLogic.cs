@@ -18,16 +18,33 @@ namespace Resgrid.Workers.Framework.Logic
 		private IScheduledTasksService _scheduledTasksService;
 		private IEmailService _emailService;
 		private IPdfProvider _pdfProvider;
+		private IChecklistScheduledReportService _checklistReports;
 
 		public ReportDeliveryLogic()
 		{
 			_scheduledTasksService = Bootstrapper.GetKernel().Resolve<IScheduledTasksService>();
 			_emailService = Bootstrapper.GetKernel().Resolve<IEmailService>();
 			_pdfProvider = Bootstrapper.GetKernel().Resolve<IPdfProvider>();
+			_checklistReports = Bootstrapper.GetKernel().Resolve<IChecklistScheduledReportService>();
 		}
+		public ReportDeliveryLogic(IScheduledTasksService tasks, IEmailService email, IPdfProvider pdf, IChecklistScheduledReportService checklistReports)
+		{ _scheduledTasksService = tasks; _emailService = email; _pdfProvider = pdf; _checklistReports = checklistReports; }
 
 		public async Task<Tuple<bool, string>> Process(ReportDeliveryQueueItem item)
 		{
+			// Only a static PDF notice and authenticated link leave the system. No checklist data is emailed.
+			if (item?.ScheduledTask?.Data is "4" or "5")
+			{
+				try
+				{
+					if (item.Department?.DepartmentId != item.ScheduledTask.DepartmentId || !ConfigHelper.CanTransmit(item.ScheduledTask.DepartmentId)) return Tuple.Create(false, "Checklist report delivery is unavailable.");
+					var notification = await _checklistReports.BuildAsync(item.ScheduledTask);
+					await _emailService.SendReportDeliveryAsync(notification, item.ScheduledTask.DepartmentId, $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Checklists/Compliance", notification.Subject);
+					await _scheduledTasksService.CreateScheduleTaskLogAsync(item.ScheduledTask);
+					return Tuple.Create(true, "");
+				}
+				catch (Exception) { Logging.LogError("Checklist scheduled report delivery failed."); return Tuple.Create(false, "Checklist scheduled report delivery failed."); }
+			}
 			bool success = true;
 			string result = "";
 
@@ -45,7 +62,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 						var response = await client.ExecuteAsync(request);
 
-						if (!string.IsNullOrWhiteSpace(response.Content))
+						if (response.IsSuccessful && !string.IsNullOrWhiteSpace(response.Content))
 						{
 							//var content =
 							//	response.Content.Replace(
@@ -87,6 +104,7 @@ namespace Resgrid.Workers.Framework.Logic
 
 							await _emailService.SendReportDeliveryAsync(systemNotificaiton, item.Department.DepartmentId, reportUrl, ((ReportTypes)int.Parse(item.ScheduledTask.Data)).ToString());
 						}
+						else { success = false; result = "Report generation failed."; }
 					}
 				}
 				catch (Exception ex)

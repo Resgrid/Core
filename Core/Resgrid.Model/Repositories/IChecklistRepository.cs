@@ -8,14 +8,16 @@ namespace Resgrid.Model.Repositories
 {
 	public interface IChecklistRepository
 	{
+		Task<List<ChecklistOccurrence>> ReportOccurrencesAsync(int departmentId, DateTime fromUtc, DateTime untilUtc, int skip, CancellationToken ct = default);
 		Task LockDepartmentAsync(int departmentId, CancellationToken ct = default);
 		Task LockAccessFenceAsync(CancellationToken ct = default);
-		Task ApplyAccessStateAsync(int departmentId, bool enabled, DateTime nowUtc, CancellationToken ct = default, bool inventoryEnabled = true);
+		Task ApplyAccessStateAsync(int departmentId, bool enabled, DateTime nowUtc, bool inventoryEnabled = true, CancellationToken ct = default);
 		Task<List<ChecklistOccurrence>> CalendarOccurrencesAsync(int departmentId, DateTime fromUtc, DateTime untilUtc, int skip, CancellationToken ct = default);
 		Task<List<ChecklistShiftStart>> ShiftStartsAsync(int departmentId, DateTime fromUtc, DateTime untilUtc, CancellationToken ct = default);
 		Task AdvanceDigestSweepAsync(int departmentId, DateTime nowUtc, CancellationToken ct = default);
 		Task<T> GetAsync<T>(int departmentId, string id, CancellationToken ct = default) where T : ChecklistRow;
 		Task<List<T>> ListAsync<T>(int departmentId, string parentId = null, int skip = 0, int take = 100, CancellationToken ct = default) where T : ChecklistRow;
+		Task<List<T>> ListForMemberAsync<T>(int departmentId, string userId, int skip = 0, int take = 100, CancellationToken ct = default) where T : ChecklistRow;
 		Task<List<T>> ListChildrenAsync<T>(int departmentId, IReadOnlyCollection<string> parentIds, int skip = 0, int take = 100, CancellationToken ct = default) where T : ChecklistRow;
 		Task WriteAsync<T>(T row, bool insert, CancellationToken ct = default) where T : ChecklistRow;
 		Task ReplaceAnswersAsync(int departmentId, string completionId, IEnumerable<ChecklistCompletionItem> items, CancellationToken ct = default);

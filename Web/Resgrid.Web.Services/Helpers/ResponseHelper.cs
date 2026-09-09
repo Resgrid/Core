@@ -10,7 +10,7 @@ namespace Resgrid.Web.Services.Helpers
 			data.Timestamp = DateTime.UtcNow;
 			data.Version = "v4";
 			data.Node = Environment.MachineName;
-			data.RequestId = System.Diagnostics.Activity.Current.Id;
+			data.RequestId = System.Diagnostics.Activity.Current?.Id ?? Guid.NewGuid().ToString("N");
 			data.Environment = Enum.GetName(Config.SystemBehaviorConfig.Environment);
 		}
 

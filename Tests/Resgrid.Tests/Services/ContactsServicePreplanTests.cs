@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -289,8 +290,8 @@ namespace Resgrid.Tests.Services
 
 			_audits.Should().ContainSingle();
 			_audits[0].Type.Should().Be(AuditLogTypes.ContactPreplanUpdated);
-			_audits[0].Before.Should().NotContain("1111");
-			_audits[0].After.Should().NotContain("2222");
+			JObject.Parse(_audits[0].Before).Value<string>(nameof(ContactPreplan.GateCode)).Should().Be("***");
+			JObject.Parse(_audits[0].After).Value<string>(nameof(ContactPreplan.GateCode)).Should().Be("***");
 		}
 
 		[Test]

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+<resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+<resheader name="version"><value>2.0</value></resheader>
+<resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+<resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+<data name="WorkOrders" xml:space="preserve"><value>أوامر العمل</value></data>
+<data name="NewWorkOrder" xml:space="preserve"><value>أمر عمل جديد</value></data>
+<data name="EditWorkOrder" xml:space="preserve"><value>تعديل أمر العمل</value></data>
+<data name="Status" xml:space="preserve"><value>الحالة</value></data>
+<data name="Priority" xml:space="preserve"><value>الأولوية</value></data>
+<data name="Type" xml:space="preserve"><value>النوع</value></data>
+<data name="All" xml:space="preserve"><value>الكل</value></data>
+<data name="Unit" xml:space="preserve"><value>الوحدة</value></data>
+<data name="Group" xml:space="preserve"><value>المجموعة</value></data>
+<data name="Asset" xml:space="preserve"><value>المعدات</value></data>
+<data name="AssignedToMe" xml:space="preserve"><value>المسندة إليّ</value></data>
+<data name="Filter" xml:space="preserve"><value>تصفية</value></data>
+<data name="Number" xml:space="preserve"><value>الرقم</value></data>
+<data name="Title" xml:space="preserve"><value>العنوان</value></data>
+<data name="DueOn" xml:space="preserve"><value>تاريخ الاستحقاق</value></data>
+<data name="NoWorkOrders" xml:space="preserve"><value>لا توجد أوامر عمل تطابق هذه المرشحات.</value></data>
+<data name="Previous" xml:space="preserve"><value>السابق</value></data>
+<data name="Next" xml:space="preserve"><value>التالي</value></data>
+<data name="None" xml:space="preserve"><value>لا شيء</value></data>
+<data name="Description" xml:space="preserve"><value>الوصف</value></data>
+<data name="LocationText" xml:space="preserve"><value>الموقع أو المبنى أو المكان</value></data>
+<data name="Currency" xml:space="preserve"><value>العملة</value></data>
+<data name="EstimatedCost" xml:space="preserve"><value>التكلفة المقدّرة</value></data>
+<data name="ApprovedCost" xml:space="preserve"><value>التكلفة المعتمدة</value></data>
+<data name="CostCenter" xml:space="preserve"><value>مركز التكلفة</value></data>
+<data name="VendorDetails" xml:space="preserve"><value>بيانات المورد</value></data>
+<data name="WarrantyReference" xml:space="preserve"><value>مرجع الضمان</value></data>
+<data name="SafetyCritical" xml:space="preserve"><value>عمل حرج للسلامة</value></data>
+<data name="HazardousWork" xml:space="preserve"><value>عمل خطر</value></data>
+<data name="SafetyNotice" xml:space="preserve"><value>سجّل الإجراء المعتمد ومراجع عزل مصادر الطاقة. لا ينفّذ هذا التطبيق العزل الفعلي ولا يجيز إعادة المعدات إلى الخدمة.</value></data>
+<data name="ProcedureReference" xml:space="preserve"><value>مرجع الإجراء</value></data>
+<data name="ProcedureVersion" xml:space="preserve"><value>إصدار الإجراء</value></data>
+<data name="PermitReference" xml:space="preserve"><value>مرجع التصريح</value></data>
+<data name="IsolationReference" xml:space="preserve"><value>مرجع العزل</value></data>
+<data name="QualifiedPersonnel" xml:space="preserve"><value>الموظفون المؤهلون</value></data>
+<data name="TaskSteps" xml:space="preserve"><value>خطوات المهمة</value></data>
+<data name="AddStep" xml:space="preserve"><value>إضافة خطوة</value></data>
+<data name="Save" xml:space="preserve"><value>حفظ</value></data>
+<data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+<data name="ReportedBy" xml:space="preserve"><value>أبلغ عنه</value></data>
+<data name="AssignedTo" xml:space="preserve"><value>مسند إلى</value></data>
+<data name="Resolution" xml:space="preserve"><value>المعالجة</value></data>
+<data name="Cause" xml:space="preserve"><value>السبب</value></data>
+<data name="VerificationEvidence" xml:space="preserve"><value>أدلة التحقق والاختبار</value></data>
+<data name="VerifiedBy" xml:space="preserve"><value>تحقّق منه</value></data>
+<data name="Export" xml:space="preserve"><value>تصدير</value></data>
+<data name="AcceptAssignment" xml:space="preserve"><value>قبول الإسناد</value></data>
+<data name="Assign" xml:space="preserve"><value>إسناد</value></data>
+<data name="User" xml:space="preserve"><value>المستخدم</value></data>
+<data name="Role" xml:space="preserve"><value>الدور</value></data>
+<data name="ChangeStatus" xml:space="preserve"><value>تغيير الحالة</value></data>
+<data name="Reason" xml:space="preserve"><value>المبرر</value></data>
+<data name="DuplicateOf" xml:space="preserve"><value>معرّف أمر العمل الأصلي</value></data>
+<data name="ConfirmTasksComplete" xml:space="preserve"><value>أؤكد اكتمال جميع خطوات المهمة.</value></data>
+<data name="Activity" xml:space="preserve"><value>النشاط</value></data>
+<data name="Comment" xml:space="preserve"><value>تعليق</value></data>
+<data name="AddComment" xml:space="preserve"><value>إضافة تعليق</value></data>
+<data name="Labor" xml:space="preserve"><value>العمالة</value></data>
+<data name="WorkDate" xml:space="preserve"><value>تاريخ العمل</value></data>
+<data name="Hours" xml:space="preserve"><value>الساعات</value></data>
+<data name="Rate" xml:space="preserve"><value>الأجر بالساعة</value></data>
+<data name="Note" xml:space="preserve"><value>ملاحظة</value></data>
+<data name="CurrentUser" xml:space="preserve"><value>المستخدم الحالي</value></data>
+<data name="AddLabor" xml:space="preserve"><value>إضافة عمالة</value></data>
+<data name="Parts" xml:space="preserve"><value>القطع</value></data>
+<data name="FreeTextPartsNotice" xml:space="preserve"><value>تُسجّل هذه القطع كنص حر. لا يتغير رصيد المخزون.</value></data>
+<data name="Quantity" xml:space="preserve"><value>الكمية</value></data>
+<data name="UnitCost" xml:space="preserve"><value>تكلفة الوحدة</value></data>
+<data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+<data name="Voided" xml:space="preserve"><value>مبطلة</value></data>
+<data name="Void" xml:space="preserve"><value>إبطال</value></data>
+<data name="AddPart" xml:space="preserve"><value>إضافة قطعة</value></data>
+<data name="Files" xml:space="preserve"><value>الملفات</value></data>
+<data name="Withdrawn" xml:space="preserve"><value>مسحوب</value></data>
+<data name="Withdraw" xml:space="preserve"><value>سحب</value></data>
+<data name="File" xml:space="preserve"><value>ملف</value></data>
+<data name="FileHelp" xml:space="preserve"><value>ملفات PDF أو PNG أو JPEG بحجم يصل إلى 10 ميغابايت. يجب اجتياز الفحص الأمني قبل قبول الملفات.</value></data>
+<data name="Upload" xml:space="preserve"><value>رفع</value></data>
+<data name="Done" xml:space="preserve"><value>مكتمل</value></data>
+<data name="Pending" xml:space="preserve"><value>قيد الانتظار</value></data>
+<data name="Unlock" xml:space="preserve"><value>التحقق من الهوية والفتح</value></data>
+<data name="ReadOnlyHistory" xml:space="preserve"><value>يبقى السجل متاحًا. يتطلب العمل الجديد اشتراكًا نشطًا في Readiness Pro وتفعيل وحدة الصيانة.</value></data>
+<data name="MembershipRequired" xml:space="preserve"><value>يلزم وجود عضوية نشطة في القسم.</value></data>
+<data name="ReadinessProRequired" xml:space="preserve"><value>يلزم Readiness Pro لأعمال الصيانة الجديدة.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>ليس لديك إذن لتنفيذ هذا الإجراء.</value></data>
+<data name="Unavailable" xml:space="preserve"><value>أمر العمل أو الدليل غير متاح.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>اختر هدفًا متاحًا في قسمك.</value></data>
+<data name="AssignmentRequired" xml:space="preserve"><value>اختر عضوًا نشطًا في القسم أو دورًا للموظفين.</value></data>
+<data name="Conflict" xml:space="preserve"><value>تغيّر أمر العمل هذا. أعد تحميله قبل الحفظ.</value></data>
+<data name="InvalidInput" xml:space="preserve"><value>تحقق من القيم المدخلة والحقول المطلوبة.</value></data>
+<data name="ProtectedDataRequired" xml:space="preserve"><value>تحقق من هويتك لفتح بيانات أمر العمل المحمية.</value></data>
+<data name="InvalidTransition" xml:space="preserve"><value>هذا الانتقال بين الحالات غير مسموح.</value></data>
+<data name="AcceptAssignmentFirst" xml:space="preserve"><value>يجب قبول الإسناد قبل بدء العمل.</value></data>
+<data name="SafetyRequirements" xml:space="preserve"><value>أكمل بيانات إجراء السلامة وإصداره والتصريح والعزل والموظفين المؤهلين.</value></data>
+<data name="TasksIncomplete" xml:space="preserve"><value>أكمل جميع خطوات المهمة قبل وضع علامة اكتمال العمل.</value></data>
+<data name="IndependentVerificationRequired" xml:space="preserve"><value>يجب أن يتحقق من العمل الحرج للسلامة شخص مخوّل غير الشخص الذي أكمله.</value></data>
+<data name="HistoryLimit" xml:space="preserve"><value>هذا السجل أكبر من أن يُعرض في طلب واحد.</value></data>
+<data name="InvalidFile" xml:space="preserve"><value>اختر ملف PDF أو PNG أو JPEG صالحًا لا يتجاوز 10 ميغابايت.</value></data>
+<data name="ScanRequired" xml:space="preserve"><value>لم يجتز الملف الفحص. حاول مجددًا عندما يكون الفحص متاحًا.</value></data>
+<data name="FileLimit" xml:space="preserve"><value>بلغ أمر العمل الحد الأقصى لعدد الملفات.</value></data>
+<data name="IntegrityFailed" xml:space="preserve"><value>فشل التحقق من سلامة الملف.</value></data>
+<data name="RequestFailed" xml:space="preserve"><value>تعذر إكمال الطلب. لا تزال القيم التي أدخلتها موجودة في هذه الصفحة.</value></data>
+<data name="ManageWorkOrders" xml:space="preserve"><value>إدارة أوامر العمل</value></data>
+<data name="ViewAllWorkOrders" xml:space="preserve"><value>عرض أوامر عمل الأعضاء الآخرين</value></data>
+<data name="ManageWorkOrdersNote" xml:space="preserve"><value>تقييم أوامر العمل وإسنادها والتحقق منها ضمن النطاق المسموح.</value></data>
+<data name="ViewAllWorkOrdersNote" xml:space="preserve"><value>عرض أوامر العمل في المجموعة أو القسم المسموح. يحتفظ مقدّمو الطلبات بسجلاتهم الخاصة.</value></data>
+<data name="WorkOrderCreated" xml:space="preserve"><value>تم إنشاء أمر العمل</value></data>
+<data name="WorkOrderStatusChanged" xml:space="preserve"><value>تغيّرت حالة أمر العمل</value></data>
+<data name="WorkOrderAssigned" xml:space="preserve"><value>تم إسناد أمر العمل</value></data>
+<data name="NotificationTitle" xml:space="preserve"><value>تحديث أمر عمل</value></data>
+<data name="NotificationMessage" xml:space="preserve"><value>يحتاج أمر عمل في قسمك إلى الانتباه. افتح Resgrid للاطلاع على التفاصيل.</value></data>
+<data name="ReadinessPro" xml:space="preserve"><value>Readiness Pro</value></data>
+<data name="Monthly" xml:space="preserve"><value>شهريًا</value></data>
+<data name="Buy" xml:space="preserve"><value>اشتراك</value></data>
+<data name="ManageSubscription" xml:space="preserve"><value>إدارة الاشتراك</value></data>
+<data name="CancelSubscription" xml:space="preserve"><value>إلغاء التجديد</value></data>
+<data name="BillingUnavailable" xml:space="preserve"><value>الاشتراك في Readiness Pro غير متاح لإعدادات الفوترة هذه.</value></data>
+<data name="CheckoutPending" xml:space="preserve"><value>لا تفعّل عملية الدفع الوصول إلى الصيانة. يبدأ الوصول بعد التحقق من الدفع.</value></data>
+<data name="PaidThrough" xml:space="preserve"><value>مدفوع حتى</value></data>
+<data name="SubscriptionCancelled" xml:space="preserve"><value>تم إلغاء التجديد. يستمر الوصول طوال الفترة المدفوعة.</value></data>
+<data name="StatusRequested" xml:space="preserve"><value>مطلوب</value></data>
+<data name="StatusAccepted" xml:space="preserve"><value>مقبول</value></data>
+<data name="StatusAssigned" xml:space="preserve"><value>مسند</value></data>
+<data name="StatusInProgress" xml:space="preserve"><value>قيد التنفيذ</value></data>
+<data name="StatusOnHold" xml:space="preserve"><value>معلّق</value></data>
+<data name="StatusCompleted" xml:space="preserve"><value>مكتمل</value></data>
+<data name="StatusClosed" xml:space="preserve"><value>مغلق</value></data>
+<data name="StatusRejected" xml:space="preserve"><value>مرفوض</value></data>
+<data name="StatusDuplicate" xml:space="preserve"><value>مكرر</value></data>
+<data name="StatusCancelled" xml:space="preserve"><value>ملغى</value></data>
+<data name="PriorityLow" xml:space="preserve"><value>منخفضة</value></data>
+<data name="PriorityNormal" xml:space="preserve"><value>عادية</value></data>
+<data name="PriorityHigh" xml:space="preserve"><value>عالية</value></data>
+<data name="PriorityEmergency" xml:space="preserve"><value>طارئة</value></data>
+<data name="TypeCorrective" xml:space="preserve"><value>تصحيحي</value></data>
+<data name="TypePreventive" xml:space="preserve"><value>وقائي</value></data>
+<data name="TypeInspection" xml:space="preserve"><value>فحص</value></data>
+<data name="TypeFacility" xml:space="preserve"><value>مرافق</value></data>
+<data name="TypeOther" xml:space="preserve"><value>آخر</value></data>
+<data name="ActivityCreated" xml:space="preserve"><value>تم تقديم طلب العمل</value></data>
+<data name="ActivityUpdated" xml:space="preserve"><value>تم تحديث أمر العمل</value></data>
+<data name="ActivityStatusChanged" xml:space="preserve"><value>تم تغيير الحالة</value></data>
+<data name="ActivityAssigned" xml:space="preserve"><value>تم تغيير الإسناد</value></data>
+<data name="ActivityAssignmentAccepted" xml:space="preserve"><value>تم قبول الإسناد</value></data>
+<data name="ActivityComment" xml:space="preserve"><value>تمت إضافة تعليق</value></data>
+<data name="ActivityLaborAdded" xml:space="preserve"><value>تمت إضافة عمالة</value></data>
+<data name="ActivityPartAdded" xml:space="preserve"><value>تمت إضافة قطعة</value></data>
+<data name="ActivityPartVoided" xml:space="preserve"><value>تم إبطال قطعة</value></data>
+<data name="ActivityFileAdded" xml:space="preserve"><value>تمت إضافة ملف</value></data>
+<data name="ActivityFileWithdrawn" xml:space="preserve"><value>تم سحب ملف</value></data>
+</root>

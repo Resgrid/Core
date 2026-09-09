@@ -12,5 +12,5 @@ namespace Resgrid.Web.Areas.User.Models.Checklists
 		public List<ChecklistWorkshiftChoice> Workshifts { get; set; } = new();
 	}
 	public class ChecklistWorkshiftChoice { public string Id { get; set; } public string Name { get; set; } }
-	public class ChecklistDueView { public List<ChecklistOccurrenceView> Occurrences { get; set; } public int Page { get; set; } }
+	public class ChecklistDueView { public List<ChecklistOccurrenceView> Occurrences { get; set; } public int Page { get; set; } public bool HasMore { get; set; } }
 }

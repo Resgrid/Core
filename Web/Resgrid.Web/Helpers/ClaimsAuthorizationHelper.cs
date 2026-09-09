@@ -313,6 +313,8 @@ namespace Resgrid.Web.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete);
 		}
 
+		public static bool CanManageWorkOrders() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.Update);
+		public static bool CanViewAllWorkOrders() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.View);
 		public static bool CanManageChecklists() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update);
 		public static bool CanViewChecklistResults() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View);
 

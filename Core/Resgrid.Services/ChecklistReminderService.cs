@@ -67,7 +67,7 @@ namespace Resgrid.Services
 						}
 					}
 					catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-					catch { result.Errors++; } // Never persist provider exceptions or sensitive content.
+					catch (Exception ex) { result.Errors++; Resgrid.Framework.Logging.LogError($"Checklist reminder sweep failed for department {departmentId}: {ex.GetType().FullName}."); }
 				}
 			}
 			return result;

@@ -76,7 +76,7 @@ namespace Resgrid.Model
 		public AdpRowDiscriminator Discriminator { get; init; }
 	}
 
-	public sealed record AdpRowDiscriminator(string Column, IReadOnlyList<int> Integers = null, string Text = null, bool OnParent = false);
+	public sealed record AdpRowDiscriminator(string Column, IReadOnlyList<int> Integers = null, string Text = null, bool OnParent = false, IReadOnlyList<string> Texts = null);
 
 	/// <summary>One cataloged column inside a binding.</summary>
 	public sealed class AdpColumnSpec

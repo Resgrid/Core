@@ -194,6 +194,8 @@ namespace Resgrid.Providers.Claims
 		public const string Record_Reassign = "Record_Reassign";
 		public const string RecordLegacy_View = "RecordLegacy_View";
 		public const string RecordRestricted_View = "RecordRestricted_View";
+		public const string WorkOrder_Update = "WorkOrder_Update";
+		public const string WorkOrder_View = "WorkOrder_View";
 		public const string Checklist_Update = "Checklist_Update";
 		public const string ChecklistResults_View = "ChecklistResults_View";
 		public const string RecordDefinition_Update = "RecordDefinition_Update";

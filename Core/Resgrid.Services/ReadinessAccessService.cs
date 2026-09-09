@@ -30,7 +30,7 @@ namespace Resgrid.Services
 				if ((await _flags.EvaluateFreshAsync(FeatureFlagKeys.ChecklistsSystem, departmentId))?.IsEnabled != true)
 					return false;
 
-				var settings = await _settings.GetDepartmentModuleSettingsAsync(departmentId, true);
+				var settings = await _settings.GetDepartmentModuleSettingsAsync(departmentId, bypassCache: true);
 				return settings != null && !settings.ChecklistsDisabled;
 			}
 			catch (Exception ex)
@@ -47,10 +47,10 @@ namespace Resgrid.Services
 
 			try
 			{
-				if (!await _flags.IsEnabledAsync(FeatureFlagKeys.MaintenanceWorkOrders, departmentId))
+				if ((await _flags.EvaluateFreshAsync(FeatureFlagKeys.MaintenanceWorkOrders, departmentId))?.IsEnabled != true)
 					return false;
 
-				var settings = await _settings.GetDepartmentModuleSettingsAsync(departmentId);
+				var settings = await _settings.GetDepartmentModuleSettingsAsync(departmentId, bypassCache: true);
 				if (settings == null || settings.MaintenanceDisabled)
 					return false;
 

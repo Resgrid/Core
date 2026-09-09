@@ -1,0 +1,32 @@
+@model Resgrid.Model.ReadinessProBillingStatus
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@using Resgrid.Config
+@using Newtonsoft.Json
+@{ ViewBag.Title = "Resgrid | Readiness Pro"; }
+<div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12"><h2>Readiness Pro</h2></div></div>
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+@if (Model == null) { <p class="alert alert-warning">@localizer["BillingUnavailable"]</p> }
+else {
+    <h3>@Model.MonthlyAmount.ToString("N2") @Model.Currency / @localizer["Monthly"]</h3>
+    <p>@localizer["CheckoutPending"]</p>
+    @if (Model.PaidThroughUtc.HasValue) { <p>@localizer["PaidThrough"]: @Model.PaidThroughUtc.Value.ToString("u")</p> }
+    @if (Model.Cancelled) { <p>@localizer["SubscriptionCancelled"]</p> }
+    @if (Model.CheckoutAvailable) {
+        <form method="post" asp-action="Checkout" id="readiness-checkout">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary">@localizer["Buy"]</button></form>
+    }
+    @if (Model.CanCancel && !Model.Cancelled) {
+        <form method="post" asp-action="CancelRenewal">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default">@localizer["CancelSubscription"]</button></form>
+    }
+}
+<p class="alert alert-danger" id="readiness-billing-error" hidden></p>
+<p><a asp-controller="Subscription" asp-action="Index">@localizer["ManageSubscription"]</a></p>
+<p><a asp-controller="WorkOrders" asp-action="Index">@localizer["WorkOrders"]</a></p>
+</div></div></div>
+@section Scripts {
+@if (Model?.Provider == "Paddle") { <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script> }
+<script type="application/json" id="readiness-billing-config">@Html.Raw(JsonConvert.SerializeObject(new {
+    provider = Model?.Provider, token = Model?.Provider == "Paddle" ? PaymentProviderConfig.GetPaddleClientToken() : null,
+    environment = PaymentProviderConfig.GetPaddleEnvironment(), error = localizer["BillingUnavailable"].Value
+}, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+<script src="~/js/app/internal/workorders/readiness-billing.js" asp-append-version="true"></script>
+}

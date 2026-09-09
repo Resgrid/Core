@@ -661,10 +661,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!DateTimeOffset.TryParse(start, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var from) || !DateTimeOffset.TryParse(end, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var until)) return BadRequest();
 				try
 				{
-					foreach (var entry in await _checklists.CalendarAsync(new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = DepartmentId, UserId = UserId }, from.UtcDateTime, until.UtcDateTime))
+					foreach (var entry in await _checklists.CalendarAsync(new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = Request.Headers[Resgrid.Web.Helpers.HttpProtectedGrantContext.HeaderName].ToString() }, from.UtcDateTime, until.UtcDateTime))
 						jsonItems.Add(new { id = entry.Id, title = entry.Title, start = entry.StartUtc.ToString("O"), end = entry.EndUtc.ToString("O"), allDay = false, backgroundColor = entry.State == 4 ? "#c0392b" : entry.State == 2 ? "#247a42" : "#6a4c93", checklistState = entry.State, url = Url.Action("Occurrence", "Checklists", new { area = "User", id = entry.OccurrenceId }), isVirtual = true, isRedacted = entry.IsRedacted });
 				}
-				catch (Resgrid.Model.Checklists.ChecklistException ex) { return StatusCode(ex.StatusCode); }
+				catch (Resgrid.Model.Checklists.ChecklistException ex) { Logging.LogError($"Checklist calendar unavailable for department {DepartmentId}: status {ex.StatusCode}."); }
 			}
 			Response.Headers["Cache-Control"] = "no-store";
 			return Json(jsonItems);

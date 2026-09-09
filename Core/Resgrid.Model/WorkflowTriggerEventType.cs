@@ -167,7 +167,10 @@ namespace Resgrid.Model
 		RecordViolationOverdue = 162,
 
 		/// <summary>An issued permit is inside its expiry notice window (RMS-5); raised once per permit by the daily sweep.</summary>
-		RecordPermitExpiring = 163
+RecordPermitExpiring = 163,
+		WorkOrderCreated = 70,
+		WorkOrderStatusChanged = 71,
+		WorkOrderAssigned = 72
 	}
 
 	public static class WorkflowTriggerEventTypes

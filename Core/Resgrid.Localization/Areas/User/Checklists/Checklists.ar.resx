@@ -637,4 +637,44 @@
   <data name="ReminderFixedTime" xml:space="preserve"><value>وقت الملخص اليومي (المنطقة الزمنية للمؤسسة؛ يحل محل بداية المناوبة)</value></data>
   <data name="ReminderShiftStart" xml:space="preserve"><value>إرسال ملخص عند بداية المناوبة</value></data>
   <data name="ReminderTimeValidation" xml:space="preserve"><value>أدخل وقتًا واحدًا بتنسيق HH:mm.</value></data>
+  <data name="ChecklistComplianceReport" xml:space="preserve"><value>تقرير الالتزام بقوائم التحقق</value></data>
+  <data name="ChecklistMissedReport" xml:space="preserve"><value>تقرير الفحوص الفائتة</value></data>
+  <data name="ReadinessPacketReport" xml:space="preserve"><value>ملف أدلة الجاهزية</value></data>
+  <data name="ExpectedChecks" xml:space="preserve"><value>الفحوص المتوقعة</value></data>
+  <data name="CompletedChecks" xml:space="preserve"><value>الفحوص المكتملة</value></data>
+  <data name="OnTimeChecks" xml:space="preserve"><value>الفحوص المنجزة في موعدها</value></data>
+  <data name="MissedChecks" xml:space="preserve"><value>المواعيد النهائية الفائتة</value></data>
+  <data name="ExcusedChecks" xml:space="preserve"><value>الفحوص المعفاة</value></data>
+  <data name="CompletionRate" xml:space="preserve"><value>نسبة الإكمال (%)</value></data>
+  <data name="MissedTrend" xml:space="preserve"><value>اتجاه المواعيد النهائية الفائتة</value></data>
+  <data name="ComplianceMethod" xml:space="preserve"><value>تُختار الفحوص حسب وقت بدايتها ضمن الفترة. لا تدخل في النسبة إلا النوافذ المجدولة التي انتهت. تُستثنى الفحوص المعفاة؛ وتظل الإكمالات المتأخرة إخفاقاً في الموعد. تظهر الفحوص عند الطلب والنوافذ المفتوحة في السجل فقط.</value></data>
+  <data name="AuthorizedScope" xml:space="preserve"><value>تُدرج فقط النتائج التي تملك صلاحية الاطلاع عليها.</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>من تاريخ</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>إلى تاريخ (غير مشمول)</value></data>
+  <data name="AllTargets" xml:space="preserve"><value>جميع الأهداف</value></data>
+  <data name="RefreshReport" xml:space="preserve"><value>تحديث التقرير</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>تصدير CSV</value></data>
+  <data name="PrintReport" xml:space="preserve"><value>طباعة التقرير</value></data>
+  <data name="ScheduleReport" xml:space="preserve"><value>جدولة التقرير</value></data>
+  <data name="CallId" xml:space="preserve"><value>معرّف البلاغ</value></data>
+  <data name="LookbackDays" xml:space="preserve"><value>عدد الأيام السابقة</value></data>
+  <data name="DownloadPacket" xml:space="preserve"><value>تنزيل PDF وبيان الأدلة</value></data>
+  <data name="PacketMethod" xml:space="preserve"><value>تغطي الأدلة الأيام المحددة قبل البلاغ وتُقيّم في وقت البلاغ. لا تثبت الإرسالات اللاحقة جاهزية سابقة. تبقى السجلات المصدرية في الوحدات المسؤولة عنها.</value></data>
+  <data name="DispatchedUnits" xml:space="preserve"><value>الوحدات المرسلة</value></data>
+  <data name="IssuedEquipment" xml:space="preserve"><value>المعدات المصروفة وقت البلاغ</value></data>
+  <data name="ScheduledReportProtected" xml:space="preserve"><value>تحتوي الرسالة المجدولة على إشعار PDF ورابط آمن للتقرير. افتح التقرير للتحقق من صلاحياتك الحالية وفتح البيانات المحمية؛ لا تُرسل نتائج الفحوص أو البيانات الشخصية بالبريد الإلكتروني.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>حدد فترة زمنية مرتبة بتوقيت UTC لا تتجاوز 93 يوماً.</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>هذا التقرير كبير جداً. حدد فترة أقصر.</value></data>
+  <data name="ReadinessCallUnavailable" xml:space="preserve"><value>البلاغ غير متاح أو تم رفض الوصول.</value></data>
+  <data name="HistoricalAssetInvalid" xml:space="preserve"><value>بيانات المصدر التاريخي للمعدات ناقصة أو غير متسقة.</value></data>
+  <data name="RestrictedChecklistResults" xml:space="preserve"><value>بعض نتائج الفحوص خارج نطاق صلاحياتك.</value></data>
+  <data name="LifecycleHistoryUnavailable" xml:space="preserve"><value>حدثت بعض تغييرات الحالة بعد البلاغ؛ ولا يمكن إعادة بناء حالتها السابقة.</value></data>
+  <data name="RestrictedUnits" xml:space="preserve"><value>بعض الوحدات المرسلة غير متاحة أو خارج نطاق صلاحياتك.</value></data>
+  <data name="HistoricalUnitNamesUnavailable" xml:space="preserve"><value>أسماء الوحدات هي الأسماء الحالية؛ الأسماء التاريخية غير متاحة.</value></data>
+  <data name="ContractorEquipmentUnavailable" xml:space="preserve"><value>سجل معدات المقاولين غير متاح.</value></data>
+  <data name="HistoricalInventoryUnavailable" xml:space="preserve"><value>سجلات صرف المعدات التاريخية غير متاحة.</value></data>
+  <data name="WorkOrdersUnavailable" xml:space="preserve"><value>ستتوفر أدلة أوامر العمل في مرحلة لاحقة.</value></data>
+  <data name="PacketCaptureWindow" xml:space="preserve"><value>يتطلب حفظ أدلة الجاهزية بلاغاً ويغطي الثلاثين يوماً السابقة له؛ تواريخ التغطية المخصصة غير مدعومة.</value></data>
+  <data name="TargetType" xml:space="preserve"><value>نوع الهدف</value></data>
+  <data name="Group" xml:space="preserve"><value>المحطة / المجموعة</value></data>
 </root>

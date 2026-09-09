@@ -75,6 +75,39 @@ namespace Resgrid.Tests.Services
 			Func<Task> target = () => _service.TargetAsync(_actor, ChecklistTargetType.Unit, "9"); (await target.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(404);
 			target = () => _service.TargetAsync(_actor, ChecklistTargetType.Group, "9"); (await target.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(404);
 		}
+		[Test]
+		public async Task Read_filter_preserves_owner_witness_group_and_tenant_boundaries_with_one_permission_lookup()
+		{
+			var filter = await _service.ReadFilterAsync(_actor);
+			(await filter(new ChecklistCompletion { DepartmentId = 77, CreatedBy = "member" })).Should().BeTrue();
+			(await filter(new ChecklistCompletion { DepartmentId = 77, WitnessUserId = "member" })).Should().BeTrue();
+			(await filter(new ChecklistCompletion { DepartmentId = 88, CreatedBy = "member", WitnessUserId = "member" })).Should().BeFalse();
+			(await filter(null)).Should().BeFalse();
+			_permissions.Verify(p => p.GetPermissionByDepartmentTypeAsync(77, PermissionTypes.ViewChecklistResults), Times.Never);
+			for (var i = 0; i < 105; i++)
+			{
+				(await filter(new ChecklistCompletion { DepartmentId = 77, TargetType = (int)ChecklistTargetType.Group, TargetId = "10" })).Should().BeTrue();
+				(await filter(new ChecklistCompletion { DepartmentId = 77, TargetType = (int)ChecklistTargetType.Group, TargetId = "20" })).Should().BeFalse();
+				(await filter(new ChecklistCompletion { DepartmentId = 77, TargetType = (int)ChecklistTargetType.Unit, TargetId = "9", TargetGroupId = 10 })).Should().BeTrue();
+			}
+			_permissions.Verify(p => p.GetPermissionByDepartmentTypeAsync(77, PermissionTypes.ViewChecklistResults), Times.Once);
+			_groups.Verify(g => g.GetGroupForUserAsync("member", 77), Times.Once);
+		}
+		[Test]
+		public async Task A_new_read_filter_rechecks_permissions_groups_and_membership_after_revocation()
+		{
+			var row = new ChecklistCompletion { DepartmentId = 77, TargetType = (int)ChecklistTargetType.Group, TargetId = "10" };
+			(await (await _service.ReadFilterAsync(_actor))(row)).Should().BeTrue();
+			_groups.Setup(g => g.GetGroupForUserAsync("member", 77)).ReturnsAsync(new DepartmentGroup { DepartmentId = 77, DepartmentGroupId = 20, Members = new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "member", IsAdmin = true } } });
+			(await (await _service.ReadFilterAsync(_actor))(row)).Should().BeFalse();
+			_member.IsAdmin = true;
+			var admin = await _service.ReadFilterAsync(_actor);
+			(await admin(row)).Should().BeTrue();
+			(await admin(new ChecklistCompletion { DepartmentId = 88, TargetType = row.TargetType, TargetId = row.TargetId })).Should().BeFalse();
+			_member.IsDisabled = true;
+			Func<Task> disabled = () => _service.ReadFilterAsync(_actor);
+			(await disabled.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(403);
+		}
 		[TestCase(false, false, false, false)]
 		[TestCase(false, true, false, true)]
 		[TestCase(true, false, true, true)]

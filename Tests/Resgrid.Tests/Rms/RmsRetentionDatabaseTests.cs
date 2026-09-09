@@ -46,7 +46,7 @@ namespace Resgrid.Tests.Rms
 			_connection = new SqlConnectionStringBuilder(Master) { InitialCatalog = _database }.ConnectionString;
 			using (var db = new SqlConnection(_connection))
 				await db.ExecuteAsync("CREATE TABLE Departments (DepartmentId int NOT NULL PRIMARY KEY); INSERT Departments VALUES (11),(12); CREATE TABLE DepartmentSettings (DepartmentSettingId int IDENTITY PRIMARY KEY, DepartmentId int NOT NULL, SettingType int NOT NULL, Setting nvarchar(max) NOT NULL); CREATE TABLE WorkflowRuns (WorkflowRunId nvarchar(36) NOT NULL PRIMARY KEY, WorkflowId nvarchar(36) NOT NULL, DepartmentId int NOT NULL, Status int NOT NULL, CompletedOn datetime2 NULL, InputPayload nvarchar(max) NULL, ErrorMessage nvarchar(max) NULL); CREATE TABLE WorkflowRunLogs (WorkflowRunLogId nvarchar(36) NOT NULL PRIMARY KEY, WorkflowRunId nvarchar(36) NOT NULL, RenderedOutput nvarchar(max) NULL, ActionResult nvarchar(max) NULL, ErrorMessage nvarchar(max) NULL);");
-			var versions = new HashSet<long> { 48, 49, 124, 142, 143, 144, 145, 150, 151, 153, 154, 155, 156, 157, 160, 164, 165, 166, 167, 168, 169, 170, 171, 173 };
+			var versions = new HashSet<long> { 48, 49, 124, 142, 143, 144, 145, 150, 151, 153, 154, 155, 156, 157, 160, 164, 165, 166, 167, 168, 169, 170, 171, 173, 176, 180, 182, 193 };
 			var migrations = typeof(M0150_AddRmsRecordsCore).Assembly.GetTypes().Where(t => typeof(IMigration).IsAssignableFrom(t) && !t.IsAbstract)
 				.Where(t => t.GetCustomAttributes(typeof(MigrationAttribute), false).Cast<MigrationAttribute>().Any(a => versions.Contains(a.Version)))
 				.Select(t => (IMigration)Activator.CreateInstance(t)).ToList();

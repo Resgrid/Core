@@ -317,6 +317,8 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.Record_Reassign, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.Reassign));
 				options.AddPolicy(ResgridResources.RecordLegacy_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordLegacy, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.RecordRestricted_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordRestricted, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.WorkOrder_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.WorkOrder_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.Checklist_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.ChecklistResults_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.RecordDefinition_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Update));

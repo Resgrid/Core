@@ -7,7 +7,7 @@ namespace Resgrid.Model.Checklists
 	public static class ReadinessHistoryFields
 	{
 		public const int CatalogVersion = 16;
-		public static readonly int[] AuditTypes = Enum.GetValues<AuditLogTypes>().Where(x => x.ToString().StartsWith("Checklist", StringComparison.Ordinal)).Select(x => (int)x).ToArray();
+		public static readonly int[] AuditTypes = Enum.GetValues<AuditLogTypes>().Where(x => (x.ToString().StartsWith("Checklist", StringComparison.Ordinal) || x.ToString().StartsWith("WorkOrder", StringComparison.Ordinal))).Select(x => (int)x).ToArray();
 		public static bool IsChecklistAudit(int type) => AuditTypes.Contains(type);
 		public static readonly IReadOnlyDictionary<string, (Func<AuditLog, string> Get, Action<AuditLog, string> Set)> Audits = new Dictionary<string, (Func<AuditLog, string>, Action<AuditLog, string>)>
 		{ ["auditlogs.data"] = (x => x.Data, (x, v) => x.Data = v) };

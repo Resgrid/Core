@@ -170,7 +170,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					foreach (var entry in await _checklists.CalendarAsync(new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = ProtectedGrantToken }, start.Date, end.Date.AddDays(1)))
 						result.Data.Add(new GetAllCalendarItemResultData { CalendarItemId = entry.Id, Title = entry.Title, StartUtc = entry.StartUtc, EndUtc = entry.EndUtc, Start = entry.StartUtc.TimeConverter(department), End = entry.EndUtc.TimeConverter(department), StartTimezone = department?.TimeZone, EndTimezone = department?.TimeZone, IsVirtual = true, LockEditing = true, SourceType = "Checklist", SourceId = entry.OccurrenceId, IsRedacted = entry.IsRedacted, DeepLinkUrl = "/User/Checklists/Occurrence?id=" + entry.OccurrenceId, ChecklistState = entry.State, TypeColor = entry.State == 4 ? "#c0392b" : entry.State == 2 ? "#247a42" : "#6a4c93" });
 				}
-				catch (Resgrid.Model.Checklists.ChecklistException ex) { return StatusCode(ex.StatusCode); }
+				catch (Resgrid.Model.Checklists.ChecklistException ex) { Resgrid.Framework.Logging.LogError($"Checklist calendar unavailable for department {DepartmentId}: status {ex.StatusCode}."); }
 				result.PageSize = result.Data.Count; result.Status = result.Data.Count > 0 ? ResponseHelper.Success : ResponseHelper.NotFound;
 			}
 			Response.Headers["Cache-Control"] = "no-store";

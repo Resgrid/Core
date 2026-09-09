@@ -39,7 +39,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			Execute.WithConnection((connection, transaction) =>
 			{
 				using var command = connection.CreateCommand(); command.Transaction = transaction;
-				command.CommandText = $"SELECT (SELECT COUNT(*) FROM {Q("ChecklistReminders")}) + (SELECT COUNT(*) FROM {Q("DepartmentChecklistSettings")})";
+				command.CommandText = $"SELECT (SELECT COUNT(*) FROM {Q("ChecklistReminders")}) + (SELECT COUNT(*) FROM {Q("DepartmentChecklistSettings")} WHERE {Q("RemindersEnabled")}=TRUE OR {Q("NotifyBeforeMinutes")}<>60 OR {Q("NotifyMissed")}=FALSE OR {Q("DigestMode")}=FALSE OR {Q("EscalateAfterMinutes")} IS NOT NULL OR {Q("RemindersActiveFromUtc")} IS NOT NULL)";
 				if (Convert.ToInt64(command.ExecuteScalar()) > 0) throw new InvalidOperationException("Reminder settings and delivery history must be preserved; populated reminder storage cannot be rolled back.");
 			});
 			Delete.Table(N("ChecklistReminders"));

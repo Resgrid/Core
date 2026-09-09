@@ -81,7 +81,7 @@ namespace Resgrid.Tests.Services
 		{
 			const string attack = "\"><script>alert('schedule-canary')</script><a onmouseover=\"attack";
 			var checklists = new Mock<IChecklistsService>();
-			checklists.Setup(s => s.SchedulesAsync(It.IsAny<ChecklistActor>(), attack, 1)).ReturnsAsync(new List<ChecklistScheduleView>
+			checklists.Setup(s => s.SchedulesAsync(It.IsAny<ChecklistActor>(), attack, 1, false)).ReturnsAsync(new List<ChecklistScheduleView>
 			{
 				new ChecklistScheduleView { Schedule = new ChecklistSchedule { Id = attack, TimeZoneId = attack, Frequency = 2 }, Content = new ChecklistScheduleContent { Name = attack } }
 			});

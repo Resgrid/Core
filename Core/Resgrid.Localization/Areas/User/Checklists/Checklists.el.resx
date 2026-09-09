@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>Η καταγραφή τεκμηρίων ετοιμότητας απαιτεί συμβάν και καλύπτει τις προηγούμενες 30 ημέρες· προσαρμοσμένες ημερομηνίες δεν υποστηρίζονται.</value></data>
   <data name="TargetType" xml:space="preserve"><value>Τύπος στόχου</value></data>
   <data name="Group" xml:space="preserve"><value>Σταθμός / ομάδα</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>Οι λίστες ελέγχου είναι απενεργοποιημένες για αυτό το τμήμα.</value></data>
 </root>

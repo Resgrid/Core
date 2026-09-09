@@ -61,11 +61,11 @@ namespace Resgrid.Model.WorkOrders
 		public bool All { get; set; }
 		public int? GroupId { get; set; }
 		public int[] RoleIds { get; set; } = Array.Empty<int>();
-		public bool Allows(WorkOrder row) => All || row.CreatedBy == UserId || row.AssignedToUserId == UserId || GroupId.HasValue && row.TargetGroupId == GroupId || row.AssignedToRoleId.HasValue && Array.IndexOf(RoleIds, row.AssignedToRoleId.Value) >= 0;
+		public bool Allows(WorkOrder row) => All || row.CreatedBy == UserId || row.AssignedToUserId == UserId || GroupId.HasValue && row.TargetGroupId == GroupId || row.AssignedToRoleId.HasValue && Array.IndexOf(RoleIds ?? Array.Empty<int>(), row.AssignedToRoleId.Value) >= 0;
 	}
 	public sealed class WorkOrderInput
 	{
-		public string RequestId { get; set; } = Guid.NewGuid().ToString("D");
+		public string RequestId { get; set; }
 		public int Revision { get; set; }
 		public WorkOrderType Type { get; set; }
 		public WorkOrderPriority Priority { get; set; } = WorkOrderPriority.Normal;

@@ -43,6 +43,8 @@ namespace Resgrid.Web.Areas.User.Models.Security
 			foreach (var descriptor in descriptors ?? RecordPermissionCatalog.All)
 			{
 				var row = existing.FirstOrDefault(p => p.PermissionType == (int)descriptor.Type);
+				if (row == null && descriptor.Type is PermissionTypes.TransferInventory or PermissionTypes.IssueInventory)
+					row = existing.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.AdjustInventory);
 				var value = row != null ? row.Action : (int)descriptor.NoRowDefault;
 
 				rows.Add(new RecordsPermissionRow

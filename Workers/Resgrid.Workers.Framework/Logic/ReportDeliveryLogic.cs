@@ -43,7 +43,7 @@ namespace Resgrid.Workers.Framework.Logic
 					await _scheduledTasksService.CreateScheduleTaskLogAsync(item.ScheduledTask);
 					return Tuple.Create(true, "");
 				}
-				catch (Exception) { Logging.LogError("Checklist scheduled report delivery failed."); return Tuple.Create(false, "Checklist scheduled report delivery failed."); }
+				catch (Exception ex) { Logging.LogError($"Checklist scheduled report delivery failed: {ex.GetType().FullName}."); return Tuple.Create(false, "Checklist scheduled report delivery failed."); }
 			}
 			bool success = true;
 			string result = "";

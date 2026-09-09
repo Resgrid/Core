@@ -41,14 +41,15 @@ namespace Resgrid.Web.Mcp.Tools
 			var schema = SchemaBuilder.BuildObjectSchema(
 				new Dictionary<string, SchemaBuilder.PropertySchema>
 				{
-					["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" }
+					["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" },
+					["page"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Zero-based catalog page, default 0. Request the next page while HasMore is true." }
 				},
 				new[] { "accessToken" }
 			);
 
 			server.AddTool(
 				toolName,
-				"Retrieves all inventory items for the department",
+				"Retrieves one page of department inventory catalog items. Follow HasMore with page + 1. This client does not carry Protected Data Grants.",
 				schema,
 				async (arguments) =>
 				{
@@ -60,11 +61,12 @@ namespace Resgrid.Web.Mcp.Tools
 						{
 							return CreateErrorResponse("Access token is required");
 						}
+						if (args.Page < 0 || args.Page > 10000) return CreateErrorResponse("Page must be between 0 and 10000");
 
 						_logger.LogInformation("Retrieving inventory");
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/Inventory/GetAll",
+							$"/api/v4/Inventory/GetAll?page={args.Page}",
 							args.AccessToken
 						);
 
@@ -72,7 +74,7 @@ namespace Resgrid.Web.Mcp.Tools
 					}
 					catch (Exception ex)
 					{
-						_logger.LogError(ex, "Error retrieving inventory");
+						_logger.LogError("Error retrieving inventory ({ExceptionType})", ex.GetType().Name);
 						return CreateErrorResponse("Failed to retrieve inventory. Please try again later.");
 					}
 				}
@@ -88,7 +90,7 @@ namespace Resgrid.Web.Mcp.Tools
 				new Dictionary<string, SchemaBuilder.PropertySchema>
 				{
 					["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" },
-					["itemId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Inventory item ID" }
+					["itemId"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Inventory item GUID returned by get_inventory" }
 				},
 				new[] { "accessToken", "itemId" }
 			);
@@ -107,11 +109,12 @@ namespace Resgrid.Web.Mcp.Tools
 						{
 							return CreateErrorResponse("Access token is required");
 						}
+						if (!ValidId(args.ItemId)) return CreateErrorResponse("A valid inventory item GUID is required");
 
 						_logger.LogInformation("Retrieving inventory item {ItemId}", args.ItemId);
 
 						var result = await _apiClient.GetAsync<object>(
-							$"/api/v4/Inventory/GetItem?itemId={args.ItemId}",
+							$"/api/v4/Inventory/GetItem?itemId={Uri.EscapeDataString(args.ItemId)}",
 							args.AccessToken
 						);
 
@@ -119,7 +122,7 @@ namespace Resgrid.Web.Mcp.Tools
 					}
 					catch (Exception ex)
 					{
-						_logger.LogError(ex, "Error retrieving inventory item");
+						_logger.LogError("Error retrieving inventory item ({ExceptionType})", ex.GetType().Name);
 						return CreateErrorResponse("Failed to retrieve inventory item. Please try again later.");
 					}
 				}
@@ -135,16 +138,25 @@ namespace Resgrid.Web.Mcp.Tools
 				new Dictionary<string, SchemaBuilder.PropertySchema>
 				{
 					["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" },
-					["itemId"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Inventory item ID" },
-					["quantity"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "New quantity" },
+					["itemId"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Inventory item GUID returned by get_inventory" },
+					["requestId"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Caller-supplied request GUID. Reuse this same GUID and unchanged values for every retry of this adjustment." },
+					["fromLocationId"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Source location GUID to subtract quantity. Supply exactly one of fromLocationId or toLocationId." },
+					["toLocationId"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Destination location GUID to add quantity. Supply exactly one of fromLocationId or toLocationId." },
+					["lotId"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Optional inventory lot GUID; required when the item tracks lots" },
+					["quantity"] = new SchemaBuilder.PropertySchema { Type = "number", Description = "Positive quantity delta, up to 100000000 with at most six decimal places; never an absolute balance" },
 					["note"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "Optional note about the update" }
 				},
-				new[] { "accessToken", "itemId", "quantity" }
+				new[] { "accessToken", "itemId", "requestId", "quantity" }
 			);
+			schema["oneOf"] = new[]
+			{
+				new Dictionary<string, object> { ["required"] = new[] { "fromLocationId" } },
+				new Dictionary<string, object> { ["required"] = new[] { "toLocationId" } }
+			};
 
 			server.AddTool(
 				toolName,
-				"Updates the quantity of an inventory item",
+				"Records an inventory quantity adjustment at an explicit location. Supply a positive delta, one direction, and a stable request GUID. Protected writes require the Inventory app; this client cannot carry a Protected Data Grant.",
 				schema,
 				async (arguments) =>
 				{
@@ -156,12 +168,22 @@ namespace Resgrid.Web.Mcp.Tools
 						{
 							return CreateErrorResponse("Access token is required");
 						}
+						if (!ValidId(args.ItemId) || !ValidId(args.RequestId)) return CreateErrorResponse("Valid item and request GUIDs are required");
+						if ((args.FromLocationId == null) == (args.ToLocationId == null)
+							|| args.FromLocationId != null && !ValidId(args.FromLocationId) || args.ToLocationId != null && !ValidId(args.ToLocationId)
+							|| args.LotId != null && !ValidId(args.LotId)) return CreateErrorResponse("Supply exactly one valid source or destination location GUID and a valid optional lot GUID");
+						if (args.Quantity <= 0 || args.Quantity > 100000000m || decimal.Round(args.Quantity, 6) != args.Quantity) return CreateErrorResponse("Quantity must be a positive delta up to 100000000 with at most six decimal places");
+						if (args.Note?.Length > 16000) return CreateErrorResponse("The adjustment note cannot exceed 16000 characters");
 
 						_logger.LogInformation("Updating inventory item {ItemId}", args.ItemId);
 
 						var updateData = new
 						{
 							itemId = args.ItemId,
+							requestId = args.RequestId,
+							fromLocationId = args.FromLocationId,
+							toLocationId = args.ToLocationId,
+							lotId = args.LotId,
 							quantity = args.Quantity,
 							note = args.Note
 						};
@@ -172,12 +194,12 @@ namespace Resgrid.Web.Mcp.Tools
 							args.AccessToken
 						);
 
-						return new { success = true, data = result, message = "Inventory updated successfully" };
+						return new { success = true, data = result, message = "Inventory adjustment request accepted" };
 					}
 					catch (Exception ex)
 					{
-						_logger.LogError(ex, "Error updating inventory");
-						return CreateErrorResponse("Failed to update inventory. Please try again later.");
+						_logger.LogError("Error updating inventory ({ExceptionType})", ex.GetType().Name);
+						return CreateErrorResponse("The inventory adjustment could not be confirmed. Retry with the same requestId and unchanged values. Protected data requires the Inventory app.");
 					}
 				}
 			);
@@ -191,14 +213,15 @@ namespace Resgrid.Web.Mcp.Tools
 			var schema = SchemaBuilder.BuildObjectSchema(
 				new Dictionary<string, SchemaBuilder.PropertySchema>
 				{
-					["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" }
+					["accessToken"] = new SchemaBuilder.PropertySchema { Type = "string", Description = "OAuth2 access token obtained from authentication" },
+					["page"] = new SchemaBuilder.PropertySchema { Type = "integer", Description = "Zero-based catalog page, default 0. Continue while HasMore is true, even when a page has no low-stock items." }
 				},
 				new[] { "accessToken" }
 			);
 
 			server.AddTool(
 				toolName,
-				"Retrieves all inventory items that are low in stock",
+				"Retrieves a catalog page of bulk items at or below their reorder point using stock locations this caller can view. Follow HasMore with page + 1.",
 				schema,
 				async (arguments) =>
 				{
@@ -210,25 +233,27 @@ namespace Resgrid.Web.Mcp.Tools
 						{
 							return CreateErrorResponse("Access token is required");
 						}
+						if (args.Page < 0 || args.Page > 10000) return CreateErrorResponse("Page must be between 0 and 10000");
 
 						_logger.LogInformation("Retrieving low stock items");
 
 						var result = await _apiClient.GetAsync<object>(
-							"/api/v4/Inventory/GetLowStockItems",
+							$"/api/v4/Inventory/GetLowStockItems?page={args.Page}",
 							args.AccessToken
 						);
 
 						return new { success = true, data = result };
 					}
-				catch (Exception ex)
-				{
-					_logger.LogError(ex, "Error retrieving low stock items");
-					return CreateErrorResponse("Failed to retrieve low stock items. Please try again later.");
-				}
+					catch (Exception ex)
+					{
+						_logger.LogError("Error retrieving low stock items ({ExceptionType})", ex.GetType().Name);
+						return CreateErrorResponse("Failed to retrieve low stock items. Please try again later.");
+					}
 				}
 			);
 		}
 
+		private static bool ValidId(string value) => Guid.TryParseExact(value, "D", out var id) && id != Guid.Empty;
 		private static object CreateErrorResponse(string errorMessage) =>
 			new { success = false, error = errorMessage };
 
@@ -236,6 +261,8 @@ namespace Resgrid.Web.Mcp.Tools
 		{
 			[JsonProperty("accessToken")]
 			public string AccessToken { get; set; }
+			[JsonProperty("page")]
+			public int Page { get; set; }
 		}
 
 		private sealed class ItemIdArgs
@@ -244,7 +271,7 @@ namespace Resgrid.Web.Mcp.Tools
 			public string AccessToken { get; set; }
 
 			[JsonProperty("itemId")]
-			public int ItemId { get; set; }
+			public string ItemId { get; set; }
 		}
 
 		private sealed class UpdateInventoryArgs
@@ -253,10 +280,19 @@ namespace Resgrid.Web.Mcp.Tools
 			public string AccessToken { get; set; }
 
 			[JsonProperty("itemId")]
-			public int ItemId { get; set; }
+			public string ItemId { get; set; }
+
+			[JsonProperty("requestId")]
+			public string RequestId { get; set; }
+			[JsonProperty("fromLocationId")]
+			public string FromLocationId { get; set; }
+			[JsonProperty("toLocationId")]
+			public string ToLocationId { get; set; }
+			[JsonProperty("lotId")]
+			public string LotId { get; set; }
 
 			[JsonProperty("quantity")]
-			public int Quantity { get; set; }
+			public decimal Quantity { get; set; }
 
 			[JsonProperty("note")]
 			public string Note { get; set; }

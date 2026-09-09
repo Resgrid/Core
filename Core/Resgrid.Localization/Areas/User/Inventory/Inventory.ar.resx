@@ -33,4 +33,319 @@
   <data name="UnitOfMeasure" xml:space="preserve"><value>وحدة القياس</value></data>
   <data name="ViewHistory" xml:space="preserve"><value>عرض السجل</value></data>
   <data name="ViewInventoryEntryHeader" xml:space="preserve"><value>عرض إدخال المخزون</value></data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="AddLine" xml:space="preserve">
+    <value>إضافة صنف</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>أرشفة</value>
+  </data>
+  <data name="AssetDetail" xml:space="preserve">
+    <value>تفاصيل الأصل</value>
+  </data>
+  <data name="AssetId" xml:space="preserve">
+    <value>معرّف الأصل</value>
+  </data>
+  <data name="Assets" xml:space="preserve">
+    <value>الأصول</value>
+  </data>
+  <data name="AssetTag" xml:space="preserve">
+    <value>وسم الأصل</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>إقرار الشاهد</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>الرمز الشريطي</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>الفئات</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>قوائم التحقق</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>الرمز</value>
+  </data>
+  <data name="ContainerAsset" xml:space="preserve">
+    <value>معرّف الأصل الحاوي</value>
+  </data>
+  <data name="DefaultLocation" xml:space="preserve">
+    <value>الموقع الافتراضي</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="ExpectedReturn" xml:space="preserve">
+    <value>تاريخ الإرجاع المتوقع</value>
+  </data>
+  <data name="Expiration" xml:space="preserve">
+    <value>تاريخ انتهاء الصلاحية</value>
+  </data>
+  <data name="FromLocation" xml:space="preserve">
+    <value>موقع المصدر</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>السجل</value>
+  </data>
+  <data name="HolderHelp" xml:space="preserve">
+    <value>اختر شخصًا واحدًا أو وحدة واحدة لاستلام العهدة.</value>
+  </data>
+  <data name="Initialize" xml:space="preserve">
+    <value>تهيئة المخزون</value>
+  </data>
+  <data name="InitializeDescription" xml:space="preserve">
+    <value>هيّئ مساحة المخزون باستيراد الأصناف والأرصدة والسجل الحالي.</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>المخزون</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="IsControlledSubstance" xml:space="preserve">
+    <value>مادة خاضعة للرقابة</value>
+  </data>
+  <data name="IsKit" xml:space="preserve">
+    <value>صنف ضمن طقم</value>
+  </data>
+  <data name="Issuances" xml:space="preserve">
+    <value>عمليات الصرف</value>
+  </data>
+  <data name="IssuanceStatus0" xml:space="preserve">
+    <value>بانتظار الإرجاع</value>
+  </data>
+  <data name="IssuanceStatus1" xml:space="preserve">
+    <value>مُرجع</value>
+  </data>
+  <data name="IssuanceStatus2" xml:space="preserve">
+    <value>مُرجع جزئيًا</value>
+  </data>
+  <data name="IssuanceStatus3" xml:space="preserve">
+    <value>مفقود</value>
+  </data>
+  <data name="IssuanceStatus4" xml:space="preserve">
+    <value>مستهلك</value>
+  </data>
+  <data name="Issue" xml:space="preserve">
+    <value>صرف</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>الأصناف</value>
+  </data>
+  <data name="Kits" xml:space="preserve">
+    <value>الأطقم</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+  <data name="Locations" xml:space="preserve">
+    <value>المواقع</value>
+  </data>
+  <data name="LocationType" xml:space="preserve">
+    <value>نوع الموقع</value>
+  </data>
+  <data name="LocationType0" xml:space="preserve">
+    <value>منشأة</value>
+  </data>
+  <data name="LocationType1" xml:space="preserve">
+    <value>محطة</value>
+  </data>
+  <data name="LocationType2" xml:space="preserve">
+    <value>وحدة</value>
+  </data>
+  <data name="LocationType3" xml:space="preserve">
+    <value>أفراد</value>
+  </data>
+  <data name="LocationType4" xml:space="preserve">
+    <value>حاوية</value>
+  </data>
+  <data name="LocationType5" xml:space="preserve">
+    <value>خارجي</value>
+  </data>
+  <data name="LotId" xml:space="preserve">
+    <value>معرّف الدُفعة</value>
+  </data>
+  <data name="Lots" xml:space="preserve">
+    <value>الدُفعات</value>
+  </data>
+  <data name="Minimum" xml:space="preserve">
+    <value>الحد الأدنى للمخزون</value>
+  </data>
+  <data name="MoreChoices" xml:space="preserve">
+    <value>تُعرض الصفحة الأولى فقط من الخيارات المتاحة.</value>
+  </data>
+  <data name="Movement" xml:space="preserve">
+    <value>حركة مخزون</value>
+  </data>
+  <data name="Movement0" xml:space="preserve">
+    <value>رصيد افتتاحي مستورد</value>
+  </data>
+  <data name="Movement1" xml:space="preserve">
+    <value>استلام</value>
+  </data>
+  <data name="Movement2" xml:space="preserve">
+    <value>استهلاك</value>
+  </data>
+  <data name="Movement3" xml:space="preserve">
+    <value>تحويل</value>
+  </data>
+  <data name="Movement4" xml:space="preserve">
+    <value>صرف</value>
+  </data>
+  <data name="Movement5" xml:space="preserve">
+    <value>إرجاع</value>
+  </data>
+  <data name="Movement6" xml:space="preserve">
+    <value>تسوية</value>
+  </data>
+  <data name="Movement7" xml:space="preserve">
+    <value>جرد</value>
+  </data>
+  <data name="Movement8" xml:space="preserve">
+    <value>شطب</value>
+  </data>
+  <data name="Movement9" xml:space="preserve">
+    <value>تغيير الحالة</value>
+  </data>
+  <data name="MovementHelp" xml:space="preserve">
+    <value>أدخل كمية موجبة. يتطلب الاستلام موقع وجهة، ويتطلب الاستهلاك والشطب موقع مصدر. تتطلب التسوية موقع مصدر أو موقع وجهة. يتطلب التحويل موقعين مختلفين.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="NewAsset" xml:space="preserve">
+    <value>أصل جديد</value>
+  </data>
+  <data name="NewItem" xml:space="preserve">
+    <value>صنف جديد</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="NoRows" xml:space="preserve">
+    <value>لا توجد سجلات مخزون لعرضها.</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="OnHand" xml:space="preserve">
+    <value>الرصيد المتاح</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>العنصر الأعلى</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>الشخص</value>
+  </data>
+  <data name="PersonnelGear" xml:space="preserve">
+    <value>تجهيزات الأفراد</value>
+  </data>
+  <data name="PostMovement" xml:space="preserve">
+    <value>تسجيل الحركة</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="ProtectedDataRequired" xml:space="preserve">
+    <value>تحقّق من هويتك لعرض المخزون المحمي.</value>
+  </data>
+  <data name="Rebuild" xml:space="preserve">
+    <value>إعادة حساب أرصدة المخزون</value>
+  </data>
+  <data name="Reference" xml:space="preserve">
+    <value>المرجع</value>
+  </data>
+  <data name="ReorderPoint" xml:space="preserve">
+    <value>نقطة إعادة الطلب</value>
+  </data>
+  <data name="RequiresExpiration" xml:space="preserve">
+    <value>تاريخ انتهاء الصلاحية مطلوب</value>
+  </data>
+  <data name="RequiresLotTracking" xml:space="preserve">
+    <value>تتبع الدُفعات</value>
+  </data>
+  <data name="Return" xml:space="preserve">
+    <value>إرجاع</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="SerialNumber" xml:space="preserve">
+    <value>الرقم التسلسلي</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Status0" xml:space="preserve">
+    <value>قيد الخدمة</value>
+  </data>
+  <data name="Status1" xml:space="preserve">
+    <value>مصروف</value>
+  </data>
+  <data name="Status2" xml:space="preserve">
+    <value>قيد الإصلاح</value>
+  </data>
+  <data name="Status3" xml:space="preserve">
+    <value>تالف</value>
+  </data>
+  <data name="Status4" xml:space="preserve">
+    <value>مفقود</value>
+  </data>
+  <data name="Status5" xml:space="preserve">
+    <value>مستهلك</value>
+  </data>
+  <data name="Status6" xml:space="preserve">
+    <value>خارج الخدمة</value>
+  </data>
+  <data name="ToLocation" xml:space="preserve">
+    <value>موقع الوجهة</value>
+  </data>
+  <data name="Tracking0" xml:space="preserve">
+    <value>حسب الكمية</value>
+  </data>
+  <data name="Tracking1" xml:space="preserve">
+    <value>حسب الرقم التسلسلي</value>
+  </data>
+  <data name="TrackingMode" xml:space="preserve">
+    <value>طريقة التتبع</value>
+  </data>
+  <data name="Transfers" xml:space="preserve">
+    <value>التحويلات</value>
+  </data>
+  <data name="UnableToComplete" xml:space="preserve">
+    <value>تعذّر إكمال هذا الإجراء على المخزون.</value>
+  </data>
+  <data name="UnitCost" xml:space="preserve">
+    <value>تكلفة الوحدة</value>
+  </data>
+  <data name="UnitEquipment" xml:space="preserve">
+    <value>تجهيزات الوحدة</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>إلغاء القفل</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>التصديق بصفة شاهد</value>
+  </data>
+  <data name="WitnessPending" xml:space="preserve">
+    <value>بانتظار شاهد مخوّل آخر غير منفّذ العملية. معرّف الطلب:</value>
+  </data>
+  <data name="WitnessRequest" xml:space="preserve">
+    <value>معرّف طلب الشهادة</value>
+  </data>
+  <data name="WorkOrders" xml:space="preserve">
+    <value>أوامر العمل</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
 </root>

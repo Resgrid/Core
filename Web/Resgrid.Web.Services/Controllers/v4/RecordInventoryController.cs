@@ -15,6 +15,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		public class ConsumeInput
 		{
+			public Resgrid.Model.Inventories.InventoryCommand Command { get; set; }
 			public string RecordId {get;set;}
 			public RmsRecordKind Kind {get;set;}
 			public long ExpectedRowVersion {get;set;}
@@ -47,7 +48,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await Allowed(input.RecordId)) return NotFound();
 			try
 			{
-				var usage=await _usage.ConsumeAsync(DepartmentId,UserId,input.RecordId,input.Kind,input.ExpectedRowVersion,input.TypeId,input.GroupId,input.UnitId,input.Quantity,input.Note,cancellationToken);
+				var grant = Request.Headers[DataProtectionController.GrantHeader].ToString();
+				var usage=input.Command != null
+					? await _usage.ConsumeModernAsync(new Resgrid.Model.Inventories.InventoryActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = grant }, input.RecordId, input.Kind, input.ExpectedRowVersion, input.Command, cancellationToken)
+					: await _usage.ConsumeAsync(DepartmentId,UserId,input.RecordId,input.Kind,input.ExpectedRowVersion,input.TypeId,input.GroupId,input.UnitId,input.Quantity,input.Note,cancellationToken,grant);
 				string evidenceId=null;
 				try { evidenceId=(await _evidence.CaptureAsync(new RecordEvidenceCaptureRequest {DepartmentId=DepartmentId,RecordId=input.RecordId,RecordKind=input.Kind,Kind=RmsEvidenceKind.InventoryUsage,CapturedByUserId=UserId,CaptureReason="Officer recorded inventory consumption",OriginClient=RmsOriginClient.Api},true,cancellationToken)).RmsEvidenceArtifactId; }
 				catch(Exception ex) when(ex is InvalidOperationException || ex is ArgumentException || ex is UnauthorizedAccessException) { }
@@ -55,6 +59,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return StatusCode(201,new {usage,evidenceId,evidenceCaptureRequired=evidenceId==null});
 			}
 			catch(RecordConcurrencyException) {return Conflict(new {error="The draft changed. Reload its version and recorded usage before retrying."});}
+			catch(Resgrid.Model.Inventories.InventoryException ex) { return StatusCode(ex.StatusCode, new { code=ex.Code, error="Inventory consumption could not be completed.", type=ex.Code=="ProtectedDataRequired" ? "protected_data_required" : "inventory_error" }); }
 			catch(UnauthorizedAccessException) {return Forbid();}
 			catch(Exception ex) when(ex is InvalidOperationException || ex is ArgumentException) {return BadRequest(new {error=ex.Message});}
 		}

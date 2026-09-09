@@ -32,16 +32,16 @@ namespace Resgrid.Repositories.DataRepository
 			if (UnitOfWork.Transaction == null) throw new InvalidOperationException("Readiness billing writes require the department transaction.");
 			var columns = typeof(ReadinessProBillingAccount).GetProperties().Select(p => p.Name).ToArray();
 			var existing = await GetAsync(account.DepartmentId);
-			await ExecuteAsync(existing == null ? $"INSERT INTO {Tbl("ReadinessProBillingAccounts")} ({Cols(columns)}) VALUES ({string.Join(",", columns.Select(c => P + c))})"
-				: $"UPDATE {Tbl("ReadinessProBillingAccounts")} SET {string.Join(",", columns.Where(c => c != "DepartmentId").Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId", account, default);
+			if (await ExecuteAsync(existing == null ? $"INSERT INTO {Tbl("ReadinessProBillingAccounts")} ({Cols(columns)}) VALUES ({string.Join(",", columns.Select(c => P + c))})"
+				: $"UPDATE {Tbl("ReadinessProBillingAccounts")} SET {string.Join(",", columns.Where(c => c != "DepartmentId").Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId", account, default) != 1) throw new InvalidOperationException("Readiness billing account could not be saved.");
 		}
 		public async Task<List<PaymentAddon>> PaymentsAsync(int departmentId, string planAddonId) => (await QueryAsync<PaymentAddon>($"SELECT * FROM {Tbl("PaymentAddons")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("PlanAddonId")}={P}PlanAddonId", new { DepartmentId = departmentId, PlanAddonId = planAddonId }, default)).ToList();
 		public async Task SavePaymentAsync(PaymentAddon payment, bool insert)
 		{
 			if (UnitOfWork.Transaction == null) throw new InvalidOperationException("Readiness billing writes require the department transaction.");
 			var columns = typeof(PaymentAddon).GetProperties().Where(p => p.CanWrite && !payment.IgnoredProperties.Contains(p.Name)).Select(p => p.Name).ToArray();
-			await ExecuteAsync(insert ? $"INSERT INTO {Tbl("PaymentAddons")} ({Cols(columns)}) VALUES ({string.Join(",", columns.Select(c => P + c))})"
-				: $"UPDATE {Tbl("PaymentAddons")} SET {string.Join(",", columns.Where(c => c != "DepartmentId" && c != "PaymentAddonId").Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("PaymentAddonId")}={P}PaymentAddonId AND {Col("PlanAddonId")}={P}PlanAddonId", payment, default);
+			if (await ExecuteAsync(insert ? $"INSERT INTO {Tbl("PaymentAddons")} ({Cols(columns)}) VALUES ({string.Join(",", columns.Select(c => P + c))})"
+				: $"UPDATE {Tbl("PaymentAddons")} SET {string.Join(",", columns.Where(c => c != "DepartmentId" && c != "PaymentAddonId").Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("PaymentAddonId")}={P}PaymentAddonId AND {Col("PlanAddonId")}={P}PlanAddonId", payment, default) != 1) throw new InvalidOperationException("Readiness billing payment could not be saved.");
 		}
 	}
 }

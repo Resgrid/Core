@@ -360,9 +360,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
 				auditEvent.ServerName = Environment.MachineName;
 				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				try { await _deleteService.DeleteGroupAsync(group.DepartmentGroupId, DepartmentId, UserId, cancellationToken); }
+				catch (Resgrid.Model.Inventories.InventoryException ex) when (ex.Code == "HolderHistoryRetained")
+				{ model.Group = group; model.Message = "This group is referenced by inventory history and must be retained."; return View(model); }
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
-
-				await _deleteService.DeleteGroupAsync(group.DepartmentGroupId, DepartmentId, UserId, cancellationToken);
 			}
 
 			return RedirectToAction("Index", "Groups", new { Area = "User" });

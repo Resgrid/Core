@@ -1,25 +1,78 @@
 @using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models
+@using Resgrid.Web.Helpers
+@using Newtonsoft.Json
 @model Resgrid.Web.Areas.User.Models.Records.RecordInventoryView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> inventoryLocalizer
 @{ ViewBag.Title = "Resgrid | Record inventory usage"; var controller = Model.Kind == RmsRecordKind.IncidentReport ? "IncidentReports" : "Records"; }
 <div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-title"><h2>Inventory usage</h2></div><div class="ibox-content">
     <p>Enter supplies consumed on this report. Saving creates an inventory ledger adjustment and captures supporting evidence. Correct stock adjustments in Inventory; record corrections through an RMS amendment.</p>
     @if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-info" role="status">@Model.ErrorMessage</div> }
+    @if (Model.ProtectionEnforced) { @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = inventoryLocalizer["ProtectedDataRequired"].Value }) }
+    <form id="record-inventory-reopen" method="post" asp-action="Reopen" asp-controller="RecordsInventory" asp-area="User">
+        @Html.AntiForgeryToken()<input type="hidden" asp-for="RecordId"/><input type="hidden" asp-for="Kind"/>
+        <input type="hidden" name="@HttpProtectedGrantContext.FormFieldName" value="@Model.ProtectedGrant"/>
+        <input type="hidden" name="@HttpProtectedGrantContext.ExpiresOnFormFieldName" value="@Model.ProtectedGrantExpiresOnUtc?.ToString("O")"/>
+        @if (Model.ProtectionRedacted) { <button type="submit" class="btn btn-primary">@inventoryLocalizer["Unlock"]</button> }
+    </form>
+    <div id="record-inventory-protected">
+    @if (!Model.ProtectionRedacted && ViewBag.InventoryUnavailable != true) {
     <h3>Recorded usage</h3>
     <table class="table"><thead><tr><th>Item</th><th>Quantity</th><th>Note</th><th>Ledger entry</th><th>Recorded at (UTC)</th></tr></thead><tbody>
-    @foreach (var usage in Model.Usage) { <tr><td>@usage.ItemName</td><td>@usage.Quantity @usage.UnitOfMeasure</td><td>@usage.Note</td><td>@usage.InventoryId</td><td>@usage.CapturedOn.ToString("u")</td></tr> }
+    @foreach (var usage in Model.Usage) {
+        var redact = Model.ProtectionEnforced || !string.IsNullOrEmpty(usage.TransactionId);
+        <tr><td>@(redact ? ProtectedDataEnvelope.RedactionValue : usage.ItemName) @if (!string.IsNullOrEmpty(usage.ItemId)) { <small class="text-muted" style="display:block">@usage.ItemId</small> }</td>
+        <td>@usage.Quantity @(redact ? ProtectedDataEnvelope.RedactionValue : usage.UnitOfMeasure)</td><td>@(redact ? ProtectedDataEnvelope.RedactionValue : usage.Note)</td>
+        <td>@if (!string.IsNullOrEmpty(usage.TransactionId)) { <a asp-action="Index" asp-controller="Inventory" asp-area="User" asp-route-tab="Transaction" asp-route-id="@usage.TransactionId">@usage.TransactionId</a> } else { @usage.InventoryId }</td>
+        <td>@usage.CapturedOn.ToString("u")</td></tr>
+    }
     </tbody></table>
-    <form method="post" asp-action="Consume" asp-controller="RecordsInventory" asp-area="User">
+    @if (Model.ModernInventory) { <p>Usage retains the transaction identifiers and quantity. Open the ledger entry to view inventory details with your current protected-data access.</p> }
+    <form id="record-inventory-consume" method="post" asp-action="Consume" asp-controller="RecordsInventory" asp-area="User">
         @Html.AntiForgeryToken()<input type="hidden" asp-for="RecordId" /><input type="hidden" asp-for="Kind" /><input type="hidden" asp-for="RowVersion" />
+        <input type="hidden" asp-for="RequestId"/>
+        <input type="hidden" name="@HttpProtectedGrantContext.FormFieldName" value="@Model.ProtectedGrant"/>
+        <input type="hidden" name="@HttpProtectedGrantContext.ExpiresOnFormFieldName" value="@Model.ProtectedGrantExpiresOnUtc?.ToString("O")"/>
+        @if (Model.ModernInventory) {
+        <div class="form-group"><label asp-for="ItemId">@inventoryLocalizer["Items"]</label><select class="form-control" asp-for="ItemId" asp-items="Model.Types" required><option value="">—</option></select></div>
+        <div class="form-group"><label asp-for="LocationId">@inventoryLocalizer["FromLocation"]</label><select class="form-control" asp-for="LocationId" asp-items="Model.Locations" required><option value="">—</option></select></div>
+        <div class="form-group"><label asp-for="LotId">@inventoryLocalizer["Lots"]</label><select class="form-control" asp-for="LotId" asp-items="Model.Lots"><option value="">—</option></select></div>
+        <div class="form-group"><label asp-for="AssetId">@inventoryLocalizer["Assets"]</label><select class="form-control" asp-for="AssetId" asp-items="Model.Assets"><option value="">—</option></select></div>
+        } else {
         <div class="form-group"><label asp-for="TypeId">Item</label><select class="form-control" asp-for="TypeId" asp-items="Model.Types" required><option value="">Choose item</option></select></div>
         <div class="form-group"><label asp-for="GroupId">Stock station</label><select class="form-control" asp-for="GroupId" asp-items="Model.Groups" required><option value="">Choose station</option></select></div>
         <div class="form-group"><label asp-for="UnitId">Unit</label><select class="form-control" asp-for="UnitId" asp-items="Model.Units"><option value="">No assigned unit</option></select></div>
+        }
         <div class="form-group"><label asp-for="Quantity">Quantity consumed</label><input class="form-control" asp-for="Quantity" type="number" min="0.000001" max="100000000" step="0.000001" required /></div>
         <div class="form-group"><label asp-for="Note">Usage note</label><textarea class="form-control" asp-for="Note" rows="3" maxlength="16000"></textarea></div>
         <button type="submit" class="btn btn-primary">Record consumption</button>
         <a class="btn btn-default" asp-action="Details" asp-controller="@controller" asp-area="User" asp-route-id="@Model.RecordId">Return to report</a>
     </form>
-    <form method="post" asp-action="RefreshEvidence" asp-controller="RecordsInventory" asp-area="User" style="margin-top:16px">
+    <form id="record-inventory-evidence" method="post" asp-action="RefreshEvidence" asp-controller="RecordsInventory" asp-area="User" style="margin-top:16px">
         @Html.AntiForgeryToken()<input type="hidden" asp-for="RecordId" /><input type="hidden" asp-for="Kind" />
+        <input type="hidden" name="@HttpProtectedGrantContext.FormFieldName" value="@Model.ProtectedGrant"/>
+        <input type="hidden" name="@HttpProtectedGrantContext.ExpiresOnFormFieldName" value="@Model.ProtectedGrantExpiresOnUtc?.ToString("O")"/>
         <button type="submit" class="btn btn-default">Refresh evidence from recorded usage</button>
     </form>
+    }
+    </div>
 </div></div></div>
+@section Scripts {
+    @if (Model.ProtectionEnforced) {
+        <script>
+            window.resgridAdpPageRevealed = function () {
+                if (window.resgridAdpReveal) window.resgridAdpReveal.submitWithGrant(document.getElementById('record-inventory-reopen'));
+            };
+            window.resgridAdpPageConcealed = function () {
+                document.getElementById('record-inventory-protected').replaceChildren();
+                document.querySelectorAll('input[name="@HttpProtectedGrantContext.FormFieldName"]').forEach(function (field) { field.value = ''; });
+                window.location.replace(@Html.Raw(JsonConvert.SerializeObject(Url.Action("Edit", "RecordsInventory", new { area = "User", recordId = Model.RecordId, kind = Model.Kind }), new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml })));
+            };
+        </script>
+        @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView {
+            BannerTitle = inventoryLocalizer["ProtectedDataRequired"].Value,
+            GrantExpiresOnUtc = Model.ProtectedGrantExpiresOnUtc,
+            BindForms = new System.Collections.Generic.List<string> { "#record-inventory-reopen", "#record-inventory-consume", "#record-inventory-evidence" }
+        })
+    }
+}

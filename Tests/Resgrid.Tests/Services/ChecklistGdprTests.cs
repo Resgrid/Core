@@ -45,10 +45,11 @@ namespace Resgrid.Tests.Services
             _service = new GdprDataExportService(_repository.Object, _userProfileService.Object, _memberSensitiveDataService.Object, _emergencyContactService.Object,
                 _usersService.Object, _departmentsService.Object, _departmentGroupsService.Object, _personnelRolesService.Object, _actionLogsService.Object,
                 _messageService.Object, _certificationService.Object, _trainingService.Object, _shiftsService.Object, _emailService.Object, store,
-                new Lazy<IReadinessHistoryProtectionService>(() => protection), reminders.Object, EmptyWorkOrders());
+                new Lazy<IReadinessHistoryProtectionService>(() => protection), reminders.Object, EmptyWorkOrders(), EmptyInventory());
             var files = await RunExportAsync(); var json = files["checklists.json"];
-            json.Should().NotContain("CANARY").And.NotContain("23.5").And.NotContain("rgdp:").And.Contain("REDACTED");
+            json.Should().NotContain("CANARY").And.NotContain("rgdp:").And.Contain("REDACTED");
             var exported = JObject.Parse(json);
+			exported["Completions"].Select(c => c["Completion"]["Score"].Value<decimal?>()).Should().OnlyContain(score => score == null);
             exported["Completions"].Should().HaveCount(26);
             store.ChildQueries.Should().Be(9, "children are paged across all selected parents, not queried per completion");
             json.Should().NotContain("AQID", "evidence blobs are excluded from JSON exports");

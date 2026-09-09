@@ -392,4 +392,22 @@
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>من يمكنه نقل مسودة سجل إلى مؤلف آخر، مثلاً عندما يكون المؤلف الأصلي غير متاح.</value></data>
   <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>إدارة بيانات الوقاية</value></data>
   <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>من يستطيع إنشاء وتعديل المباني وبرامج التفتيش ومجموعات القوانين وصنابير الإطفاء والتصاريح وأنشطة الحد من مخاطر المجتمع. تتطلب قراءة بيانات الوقاية الوصول إلى السجلات فقط؛ أما التحقيقات فتخضع لصلاحية السجلات المقيدة وعضوية القضية.</value></data>
+  <data name="PermRecordsIssueInventoryLabel" xml:space="preserve">
+    <value>صرف المخزون وإرجاعه</value>
+  </data>
+  <data name="PermRecordsIssueInventoryNote" xml:space="preserve">
+    <value>يحدد من يمكنه صرف المخزون وإرجاعه. يُسمح افتراضيًا لمسؤولي الإدارة.</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesLabel" xml:space="preserve">
+    <value>إدارة المواد الخاضعة للرقابة</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesNote" xml:space="preserve">
+    <value>يحدد من يمكنه تسجيل معاملات المواد الخاضعة للرقابة والشهادة عليها. يُسمح افتراضيًا لمسؤولي الإدارة. يجب أن يشهد على كل معاملة شخص مخوّل آخر غير منفّذها.</value>
+  </data>
+  <data name="PermRecordsTransferInventoryLabel" xml:space="preserve">
+    <value>تحويل المخزون</value>
+  </data>
+  <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
+    <value>يحدد من يمكنه تحويل المخزون بين المواقع. يُسمح افتراضيًا لمسؤولي الإدارة.</value>
+  </data>
 </root>

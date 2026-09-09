@@ -439,6 +439,24 @@
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Ποιος μπορεί να μεταφέρει ένα πρόχειρο αναφοράς σε άλλον συντάκτη, για παράδειγμα όταν ο αρχικός συντάκτης δεν είναι διαθέσιμος.</value></data>
   <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Διαχείριση δεδομένων πρόληψης</value></data>
   <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Ποιος μπορεί να δημιουργεί και να αλλάζει κτίρια, προγράμματα επιθεώρησης και σύνολα κωδίκων, πυροσβεστικούς κρουνούς, άδειες και δράσεις μείωσης κινδύνου στην κοινότητα. Η ανάγνωση δεδομένων πρόληψης απαιτεί μόνο πρόσβαση στα Αρχεία· οι έρευνες διέπονται από το δικαίωμα περιορισμένων αρχείων και τη συμμετοχή στην υπόθεση.</value></data>
+  <data name="PermRecordsIssueInventoryLabel" xml:space="preserve">
+    <value>Χορήγηση και επιστροφή αποθεμάτων</value>
+  </data>
+  <data name="PermRecordsIssueInventoryNote" xml:space="preserve">
+    <value>Καθορίζει ποιος μπορεί να χορηγεί και να επιστρέφει αποθέματα. Από προεπιλογή, επιτρέπεται στους διαχειριστές του τμήματος.</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesLabel" xml:space="preserve">
+    <value>Διαχείριση ελεγχόμενων ουσιών</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesNote" xml:space="preserve">
+    <value>Καθορίζει ποιος μπορεί να καταχωρίζει και να βεβαιώνει συναλλαγές ελεγχόμενων ουσιών. Από προεπιλογή, επιτρέπεται στους διαχειριστές του τμήματος. Κάθε συναλλαγή πρέπει να βεβαιώνεται από διαφορετικό εξουσιοδοτημένο άτομο.</value>
+  </data>
+  <data name="PermRecordsTransferInventoryLabel" xml:space="preserve">
+    <value>Μεταφορά αποθεμάτων</value>
+  </data>
+  <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
+    <value>Καθορίζει ποιος μπορεί να μεταφέρει αποθέματα μεταξύ τοποθεσιών. Από προεπιλογή, επιτρέπεται στους διαχειριστές του τμήματος.</value>
+  </data>
 </root>
 
 

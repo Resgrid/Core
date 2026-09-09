@@ -390,7 +390,7 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:
 					foreach (var pair in WorkOrders.WorkOrderWorkflowPayload.Variables)
-						list.Add(new TemplateVariableDescriptor("work_order." + pair.Variable, pair.Property, pair.Variable is "asset_id" or "due_on" or "title" ? "string" : "int", false));
+						list.Add(new TemplateVariableDescriptor("work_order." + pair.Variable, "Work order " + pair.Variable.Replace('_', ' ') + (pair.Variable == "title" ? "; always REDACTED. Do not compare or render this value." : ""), pair.Variable is "asset_id" or "due_on" or "title" ? "string" : "int", false));
 					list.Add(new TemplateVariableDescriptor("work_order.url", "Authenticated work-order link", "string", false));
 					list.Add(new TemplateVariableDescriptor("protection.is_redacted", "Sensitive work-order fields are withheld", "bool", false));
 					list.Add(new TemplateVariableDescriptor("protection.redacted_fields", "Withheld fields", "array", false));
@@ -754,17 +754,49 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.InventoryAdjusted:
 					list.AddRange(new[]
 					{
-						new TemplateVariableDescriptor("inventory.id", "Inventory record ID", "int", false),
-						new TemplateVariableDescriptor("inventory.type_name", "Inventory type name", "string", false),
-						new TemplateVariableDescriptor("inventory.type_description", "Inventory type description", "string", false),
-						new TemplateVariableDescriptor("inventory.unit_of_measure", "Unit of measure", "string", false),
-						new TemplateVariableDescriptor("inventory.batch", "Batch identifier", "string", false),
-						new TemplateVariableDescriptor("inventory.note", "Note", "string", false),
-						new TemplateVariableDescriptor("inventory.location", "Storage location", "string", false),
-						new TemplateVariableDescriptor("inventory.amount", "Current amount", "double", false),
-						new TemplateVariableDescriptor("inventory.previous_amount", "Previous amount before adjustment", "double", false),
-						new TemplateVariableDescriptor("inventory.timestamp", "Adjustment timestamp", "datetime", false),
-						new TemplateVariableDescriptor("inventory.group_id", "Group ID", "int", false),
+						new TemplateVariableDescriptor("inventory.id", "Deprecated alias: transaction GUID for modern events, integer inventory ID for historical events; use inventory.transaction_id", "string", false),
+						new TemplateVariableDescriptor("inventory.type_name", "Deprecated item name alias; REDACTED for modern events", "string", false),
+						new TemplateVariableDescriptor("inventory.type_description", "Legacy type description; REDACTED for modern events", "string", false),
+						new TemplateVariableDescriptor("inventory.unit_of_measure", "Legacy unit of measure; empty for modern events", "string", false),
+						new TemplateVariableDescriptor("inventory.batch", "Legacy batch identifier; REDACTED for modern events", "string", false),
+						new TemplateVariableDescriptor("inventory.note", "Legacy note; REDACTED for modern events", "string", false),
+						new TemplateVariableDescriptor("inventory.location", "Deprecated location alias: destination GUID when present, otherwise source GUID", "string", false),
+						new TemplateVariableDescriptor("inventory.amount", "Deprecated balance alias: destination after quantity when present, otherwise source after quantity; use the explicit from/to quantity variables", "decimal", false),
+						new TemplateVariableDescriptor("inventory.previous_amount", "Deprecated balance alias: before quantity for the same location as inventory.amount", "decimal", false),
+						new TemplateVariableDescriptor("inventory.timestamp", "Deprecated alias for inventory.occurred_on", "datetime", false),
+						new TemplateVariableDescriptor("inventory.group_id", "Legacy group ID; zero for modern events", "int", false),
+					});
+					goto case WorkflowTriggerEventType.InventoryTransferCompleted;
+				case WorkflowTriggerEventType.InventoryTransferCompleted:
+				case WorkflowTriggerEventType.InventoryIssued:
+				case WorkflowTriggerEventType.InventoryReturned:
+				case WorkflowTriggerEventType.InventoryAssetStatusChanged:
+				case WorkflowTriggerEventType.ControlledSubstanceRecorded:
+					foreach (var pair in Inventories.InventoryWorkflowPayload.Variables)
+					{
+						var type = pair.Variable switch
+						{
+							"transaction_type" or "previous_status" or "status" or "reference_type" => "int",
+							"quantity" or "from_quantity_before" or "from_quantity_after" or "to_quantity_before" or "to_quantity_after" => "decimal",
+							"occurred_on" => "datetime",
+							_ => "string"
+						};
+						list.Add(new TemplateVariableDescriptor("inventory." + pair.Variable, pair.Property + (pair.Variable == "item_name" ? "; always REDACTED" : string.Empty), type, false));
+					}
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("event.id", "Stable event ID across delivery attempts", "string", false),
+						new TemplateVariableDescriptor("event.name", "Inventory trigger name", "string", false),
+						new TemplateVariableDescriptor("event.schema_version", "Inventory payload schema version", "int", false),
+						new TemplateVariableDescriptor("event.occurred_on", "When the event occurred (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("event.correlation_id", "Inventory operation correlation ID", "string", false),
+						new TemplateVariableDescriptor("event.causation_id", "ID of the event that caused this event", "string", false),
+						new TemplateVariableDescriptor("event.sequence", "Sequence within the inventory aggregate", "int", false),
+						new TemplateVariableDescriptor("event.is_replay", "Whether this delivery is a retry", "bool", false),
+						new TemplateVariableDescriptor("event.origin_client", "Originating Resgrid client", "string", false),
+						new TemplateVariableDescriptor("protection.is_redacted", "Inventory personnel and authored content are always withheld", "bool", false),
+						new TemplateVariableDescriptor("protection.redacted_fields", "Withheld inventory fields", "array", false),
+						new TemplateVariableDescriptor("protection.catalog_version", "Inventory protection catalog version", "int", false),
 					});
 					break;
 

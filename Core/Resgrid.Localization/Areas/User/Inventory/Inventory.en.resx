@@ -216,5 +216,320 @@
   <data name="ViewInventoryEntryHeader" xml:space="preserve">
     <value>View Inventory Entry</value>
   </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="AddLine" xml:space="preserve">
+    <value>Add item</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Archive</value>
+  </data>
+  <data name="AssetDetail" xml:space="preserve">
+    <value>Asset details</value>
+  </data>
+  <data name="AssetId" xml:space="preserve">
+    <value>Asset ID</value>
+  </data>
+  <data name="Assets" xml:space="preserve">
+    <value>Assets</value>
+  </data>
+  <data name="AssetTag" xml:space="preserve">
+    <value>Asset tag</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>Witness attestation</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Barcode</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>Checklists</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="ContainerAsset" xml:space="preserve">
+    <value>Container asset ID</value>
+  </data>
+  <data name="DefaultLocation" xml:space="preserve">
+    <value>Default location</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="ExpectedReturn" xml:space="preserve">
+    <value>Expected return date</value>
+  </data>
+  <data name="Expiration" xml:space="preserve">
+    <value>Expiration date</value>
+  </data>
+  <data name="FromLocation" xml:space="preserve">
+    <value>Source location</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="HolderHelp" xml:space="preserve">
+    <value>Select one person or one unit to receive the inventory.</value>
+  </data>
+  <data name="Initialize" xml:space="preserve">
+    <value>Initialize inventory</value>
+  </data>
+  <data name="InitializeDescription" xml:space="preserve">
+    <value>Initialize the inventory workspace by importing existing inventory, balances, and history.</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Inventory</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="IsControlledSubstance" xml:space="preserve">
+    <value>Controlled substance</value>
+  </data>
+  <data name="IsKit" xml:space="preserve">
+    <value>Kit item</value>
+  </data>
+  <data name="Issuances" xml:space="preserve">
+    <value>Issuances</value>
+  </data>
+  <data name="IssuanceStatus0" xml:space="preserve">
+    <value>Outstanding</value>
+  </data>
+  <data name="IssuanceStatus1" xml:space="preserve">
+    <value>Returned</value>
+  </data>
+  <data name="IssuanceStatus2" xml:space="preserve">
+    <value>Partially returned</value>
+  </data>
+  <data name="IssuanceStatus3" xml:space="preserve">
+    <value>Lost</value>
+  </data>
+  <data name="IssuanceStatus4" xml:space="preserve">
+    <value>Consumed</value>
+  </data>
+  <data name="Issue" xml:space="preserve">
+    <value>Issue</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="Kits" xml:space="preserve">
+    <value>Kits</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Locations" xml:space="preserve">
+    <value>Locations</value>
+  </data>
+  <data name="LocationType" xml:space="preserve">
+    <value>Location type</value>
+  </data>
+  <data name="LocationType0" xml:space="preserve">
+    <value>Facility</value>
+  </data>
+  <data name="LocationType1" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="LocationType2" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="LocationType3" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="LocationType4" xml:space="preserve">
+    <value>Container</value>
+  </data>
+  <data name="LocationType5" xml:space="preserve">
+    <value>External</value>
+  </data>
+  <data name="LotId" xml:space="preserve">
+    <value>Lot ID</value>
+  </data>
+  <data name="Lots" xml:space="preserve">
+    <value>Lots</value>
+  </data>
+  <data name="Minimum" xml:space="preserve">
+    <value>Minimum stock</value>
+  </data>
+  <data name="MoreChoices" xml:space="preserve">
+    <value>Only the first page of available choices is shown.</value>
+  </data>
+  <data name="Movement" xml:space="preserve">
+    <value>Movement</value>
+  </data>
+  <data name="Movement0" xml:space="preserve">
+    <value>Opening balance imported</value>
+  </data>
+  <data name="Movement1" xml:space="preserve">
+    <value>Receive</value>
+  </data>
+  <data name="Movement2" xml:space="preserve">
+    <value>Consume</value>
+  </data>
+  <data name="Movement3" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="Movement4" xml:space="preserve">
+    <value>Issue</value>
+  </data>
+  <data name="Movement5" xml:space="preserve">
+    <value>Return</value>
+  </data>
+  <data name="Movement6" xml:space="preserve">
+    <value>Adjust</value>
+  </data>
+  <data name="Movement7" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="Movement8" xml:space="preserve">
+    <value>Write off</value>
+  </data>
+  <data name="Movement9" xml:space="preserve">
+    <value>Change status</value>
+  </data>
+  <data name="MovementHelp" xml:space="preserve">
+    <value>Enter a positive quantity to move. Receipts require a destination; consumption and write-offs require a source. Adjustments require either a source or a destination. Transfers require two different locations.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NewAsset" xml:space="preserve">
+    <value>New asset</value>
+  </data>
+  <data name="NewItem" xml:space="preserve">
+    <value>New item</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NoRows" xml:space="preserve">
+    <value>No inventory records to display.</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="OnHand" xml:space="preserve">
+    <value>On hand</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Parent</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="PersonnelGear" xml:space="preserve">
+    <value>Personnel gear</value>
+  </data>
+  <data name="PostMovement" xml:space="preserve">
+    <value>Record movement</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="ProtectedDataRequired" xml:space="preserve">
+    <value>Verify your identity to view protected inventory.</value>
+  </data>
+  <data name="Rebuild" xml:space="preserve">
+    <value>Rebuild stock balances</value>
+  </data>
+  <data name="Reference" xml:space="preserve">
+    <value>Reference</value>
+  </data>
+  <data name="ReorderPoint" xml:space="preserve">
+    <value>Reorder point</value>
+  </data>
+  <data name="RequiresExpiration" xml:space="preserve">
+    <value>Expiration required</value>
+  </data>
+  <data name="RequiresLotTracking" xml:space="preserve">
+    <value>Track lots</value>
+  </data>
+  <data name="Return" xml:space="preserve">
+    <value>Return</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SerialNumber" xml:space="preserve">
+    <value>Serial number</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Status0" xml:space="preserve">
+    <value>In service</value>
+  </data>
+  <data name="Status1" xml:space="preserve">
+    <value>Issued</value>
+  </data>
+  <data name="Status2" xml:space="preserve">
+    <value>Out for repair</value>
+  </data>
+  <data name="Status3" xml:space="preserve">
+    <value>Damaged</value>
+  </data>
+  <data name="Status4" xml:space="preserve">
+    <value>Lost</value>
+  </data>
+  <data name="Status5" xml:space="preserve">
+    <value>Consumed</value>
+  </data>
+  <data name="Status6" xml:space="preserve">
+    <value>Retired</value>
+  </data>
+  <data name="ToLocation" xml:space="preserve">
+    <value>Destination location</value>
+  </data>
+  <data name="Tracking0" xml:space="preserve">
+    <value>By quantity</value>
+  </data>
+  <data name="Tracking1" xml:space="preserve">
+    <value>By serial number</value>
+  </data>
+  <data name="TrackingMode" xml:space="preserve">
+    <value>Tracking mode</value>
+  </data>
+  <data name="Transfers" xml:space="preserve">
+    <value>Transfers</value>
+  </data>
+  <data name="UnableToComplete" xml:space="preserve">
+    <value>Unable to complete this inventory action.</value>
+  </data>
+  <data name="UnitCost" xml:space="preserve">
+    <value>Unit cost</value>
+  </data>
+  <data name="UnitEquipment" xml:space="preserve">
+    <value>Unit equipment</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Unlock</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>Attest as witness</value>
+  </data>
+  <data name="WitnessPending" xml:space="preserve">
+    <value>Awaiting an independent authorized witness. Request ID:</value>
+  </data>
+  <data name="WitnessRequest" xml:space="preserve">
+    <value>Witness request ID</value>
+  </data>
+  <data name="WorkOrders" xml:space="preserve">
+    <value>Work orders</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
 </root>
 

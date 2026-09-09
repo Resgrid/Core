@@ -39,7 +39,7 @@ namespace Resgrid.Model.Services
 		Task<ChecklistCompletionFile> GetFileAsync(ChecklistActor actor, string id);
 		Task DeleteFileAsync(ChecklistActor actor, string id);
 		Task DeleteFileAtRevisionAsync(ChecklistActor actor, string id, int revision);
-		Task<List<ChecklistScheduleView>> SchedulesAsync(ChecklistActor actor, string definitionId, int page = 0);
+		Task<List<ChecklistScheduleView>> SchedulesAsync(ChecklistActor actor, string definitionId, int page = 0, bool includeNext = false);
 		Task<ChecklistScheduleView> GetScheduleAsync(ChecklistActor actor, string id);
 		Task<string> SaveScheduleAsync(ChecklistActor actor, ChecklistScheduleInput input);
 		Task DisableScheduleAsync(ChecklistActor actor, string id, int revision);

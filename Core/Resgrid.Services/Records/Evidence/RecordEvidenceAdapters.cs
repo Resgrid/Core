@@ -62,7 +62,7 @@ namespace Resgrid.Services.Records.Evidence
 		public Task<bool> IsAvailableAsync(int departmentId) => _checklists == null || _access == null || _pdf == null ? Task.FromResult(false) : _access.CanUseChecklistsAsync(departmentId);
 		public async Task<RecordEvidenceCapture> CaptureAsync(RecordEvidenceCaptureRequest request, CancellationToken cancellationToken = default)
 		{
-			if (!await IsAvailableAsync(request.DepartmentId)) return RecordEvidenceCapture.Unavailable(ChecklistReportDocuments.Text("Checklists are disabled for this department."));
+			if (!await IsAvailableAsync(request.DepartmentId)) return RecordEvidenceCapture.Unavailable(ChecklistReportDocuments.Text("ChecklistsDisabled"));
 			if (_grant == null || _grant.IsWorkloadCaller || _grant.UserId != request.CapturedByUserId) throw new UnauthorizedAccessException();
 			if (!request.CallId.HasValue || request.CoverageStart.HasValue || request.CoverageEnd.HasValue) throw new ArgumentException(ChecklistReportDocuments.Text("PacketCaptureWindow"));
 			var actor = new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = request.DepartmentId, UserId = request.CapturedByUserId, GrantToken = _grant.GrantToken };

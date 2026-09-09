@@ -51,10 +51,10 @@ namespace Resgrid.Services
 		public async Task<WorkOrderFile> GetFileAsync(ChecklistActor actor, int id)
 		{
 			await _authorization.RequireMemberAsync(actor); var metadata = await _store.GetAsync<WorkOrderFile>(actor.DepartmentId, id, false);
-			if (metadata?.WorkOrderId == null) throw new WorkOrderException(404, "Unavailable");
+			if (metadata?.WorkOrderId == null || metadata.WithdrawnOn.HasValue) throw new WorkOrderException(404, "Unavailable");
 			await ReadOrderAsync(actor, metadata.WorkOrderId.Value);
 			var file = await RevealAsync(actor, await _store.GetAsync<WorkOrderFile>(actor.DepartmentId, id));
-			if (file.ScanState != (int)RmsAttachmentScanState.Clean) throw new WorkOrderException(404, "Unavailable");
+			if (file.ScanState != (int)RmsAttachmentScanState.Clean || file.WithdrawnOn.HasValue) throw new WorkOrderException(404, "Unavailable");
 			var enveloped = ProtectedReadService.IsBinaryEnveloped(file.Data);
 			var result = await _read.Value.ResolveRecordsBinaryForReadAsync(actor.DepartmentId, "workorderfiles.data", Key(file), file.Data, bytes => file.Data = bytes, actor.GrantToken, actor.UserId);
 			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && !enveloped || file.Data == null) throw new WorkOrderException(403, "ProtectedDataRequired");

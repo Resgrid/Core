@@ -1,0 +1,155 @@
+@using System.Globalization
+@using System.Linq
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using Newtonsoft.Json
+@using Resgrid.Model.Inventories
+@using Resgrid.Web.Areas.User.Models
+@using Resgrid.Web.Areas.User.Models.Inventory
+@model InventoryWorkspaceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
+@functions {
+    IHtmlContent Field(string name, string label, object value = null, string type = "text", IEnumerable<SelectListItem> options = null) {
+        var wrap = new TagBuilder("div"); wrap.AddCssClass("form-group");
+        var caption = new TagBuilder("label"); var identity = "inv-" + Guid.NewGuid().ToString("N"); caption.Attributes["for"] = identity; caption.InnerHtml.Append(localizer[label].Value); wrap.InnerHtml.AppendHtml(caption);
+        var element = new TagBuilder(options == null ? "input" : "select"); element.AddCssClass("form-control"); element.Attributes["name"] = name; element.Attributes["id"] = identity;
+        var text = Convert.ToString(value, CultureInfo.InvariantCulture) ?? "";
+        if (options == null) { element.Attributes["type"] = type; element.Attributes["value"] = text; element.Attributes["maxlength"] = "16000"; if (type == "number") element.Attributes["step"] = "0.000001"; }
+        else foreach (var option in options) { var item = new TagBuilder("option"); item.Attributes["value"] = option.Value ?? ""; if ((option.Value ?? "") == text) item.Attributes["selected"] = "selected"; item.InnerHtml.Append(option.Text); element.InnerHtml.AppendHtml(item); }
+        wrap.InnerHtml.AppendHtml(element); return wrap;
+    }
+    IEnumerable<SelectListItem> Choice(IEnumerable<InventoryChoice> list) => new[] { new SelectListItem { Value = "", Text = "—" } }.Concat(list.Select(x => new SelectListItem { Value = x.Id, Text = x.Name }));
+    IEnumerable<SelectListItem> Codes(string prefix, params int[] values) => values.Select(x => new SelectListItem { Value = x.ToString(), Text = localizer[prefix + x].Value });
+}
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Inventory"];
+    var protectedData = ViewBag.ProtectionEnforced == true;
+    var itemOptions = Choice(Model.Items.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryItemContent>(x).Name }));
+    var locationOptions = Choice(Model.Locations.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLabel>(x).Name }));
+    var categoryOptions = Choice(Model.Categories.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLabel>(x).Name }));
+    var assetOptions = Choice(Model.Assets.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryAssetContent>(x).SerialNumber + " · " + InventoryWorkspaceView.Details<InventoryAssetContent>(x).AssetTag }));
+    var lotOptions = Choice(Model.Lots.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLotContent>(x).LotNumber }));
+    string ItemName(string id) => Model.Items.FirstOrDefault(i => i.Id == id) is { } item ? InventoryWorkspaceView.Details<InventoryItemContent>(item).Name : id;
+    string LocationName(string id) => Model.Locations.FirstOrDefault(i => i.Id == id) is { } location ? InventoryWorkspaceView.Details<InventoryLabel>(location).Name : id;
+}
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-title"><h2>@localizer["Inventory"]</h2></div><div class="ibox-content">
+    @if (ViewBag.ProtectionEnforced == true) { @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value }) }
+    <div id="inventory-message" class="alert alert-info" role="status" hidden></div>
+    <form id="inventory-page" asp-action="Reopen" method="post" class="inventory-navigation">
+        @Html.AntiForgeryToken()<input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="@Model.Page"/><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="unitId" value="@Model.UnitId"/><input type="hidden" name="userId" value="@Model.UserId"/><input type="hidden" name="itemId" value="@Model.ItemId"/><input type="hidden" name="locationId" value="@Model.LocationId"/>
+        @if (Model.Locked) { <button type="submit" class="btn btn-primary">@localizer["Unlock"]</button> }
+    </form>
+    @if (!Model.Locked && !Model.Migrated) {
+        <p>@localizer["InitializeDescription"]</p>
+        @if (Model.CanWrite) { <form asp-action="Initialize" method="post" class="inventory-command">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary">@localizer["Initialize"]</button></form> }
+    }
+    @if (!Model.Locked && Model.Migrated) {
+        <nav class="btn-toolbar" aria-label="@localizer["Inventory"]">
+        @foreach (var tab in new[] { "OnHand", "Items", "Categories", "Locations", "Lots", "Assets", "Issuances", "Kits", "Transfers", "History" }) {
+            <form asp-action="Reopen" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="@tab"/><input type="hidden" name="itemId" value="@Model.ItemId"/><input type="hidden" name="locationId" value="@Model.LocationId"/><button class="btn @(Model.Tab == tab ? "btn-primary" : "btn-default")" type="submit">@localizer[tab]</button></form>
+        }
+        </nav><hr/><h3>@localizer[Model.Tab]</h3>
+        @if (Model.ChoicesHaveMore) { <p class="alert alert-info">@localizer["MoreChoices"]</p> }
+        @if (Model.Tab is "OnHand" or "History") {
+            <form asp-action="@(protectedData ? "Reopen" : "Index")" method="@(protectedData ? "post" : "get")" class="@(protectedData ? "inventory-navigation" : "inventory-filter")">
+                @if (protectedData) { @Html.AntiForgeryToken() }
+                <input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="0"/>
+                @Field("itemId", "Items", Model.ItemId, options: itemOptions)@Field("locationId", "Location", Model.LocationId, options: locationOptions)
+                <button class="btn btn-default" type="submit">@localizer[Model.Tab == "History" ? "ViewHistory" : "OnHand"]</button>
+            </form>
+        }
+        @if (Model.Tab == "OnHand") {
+            <form asp-action="Reopen" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="UnitEquipment"/>@Field("unitId", "Unit", null, options: Choice(Model.Units))<button class="btn btn-default" type="submit">@localizer["UnitEquipment"]</button></form>
+            <form asp-action="Reopen" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="PersonnelGear"/>@Field("userId", "Person", null, options: Choice(Model.People))<button class="btn btn-default" type="submit">@localizer["PersonnelGear"]</button></form>
+        }
+        <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Location"]</th><th>@localizer["Amount"]</th><th>@localizer["Status"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
+        @foreach (var row in Model.Rows) {
+            var title = row switch { InventoryItem i => InventoryWorkspaceView.Details<InventoryItemContent>(i).Name, InventoryAsset a => ItemName(a.ItemId) + " · " + InventoryWorkspaceView.Details<InventoryAssetContent>(a).SerialNumber, InventoryStock s => ItemName(s.ItemId), InventoryIssuance i => ItemName(i.ItemId), InventoryLot l => InventoryWorkspaceView.Details<InventoryLotContent>(l).LotNumber, InventoryTransaction t => ItemName(t.ItemId) + " · " + localizer["Movement" + t.TransactionType].Value, _ => InventoryWorkspaceView.Details<InventoryLabel>(row).Name ?? row.Id };
+            var location = row switch { InventoryAsset a => LocationName(a.CurrentLocationId), InventoryStock s => LocationName(s.LocationId), InventoryIssuance i => LocationName(i.LocationId), InventoryTransaction t => LocationName(t.FromLocationId) + " → " + LocationName(t.ToLocationId), InventoryTransfer t => LocationName(t.FromLocationId) + " → " + LocationName(t.ToLocationId), _ => "" };
+            var amount = row switch { InventoryStock s => s.Quantity.ToString(CultureInfo.CurrentCulture), InventoryIssuance i => (i.Quantity - i.ReturnedQuantity).ToString(CultureInfo.CurrentCulture), InventoryTransaction t => t.Quantity.ToString(CultureInfo.CurrentCulture), _ => "" };
+            <tr><td>@title<small class="text-muted" style="display:block">@row.Id</small></td><td>@location</td><td>@amount</td><td>@(row is InventoryAsset asset ? localizer["Status" + asset.Status] : row is InventoryIssuance issued ? localizer["IssuanceStatus" + issued.Status] : "")</td><td>
+                @if (row is InventoryAsset) { <form asp-action="Reopen" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="AssetDetail"/><input type="hidden" name="id" value="@row.Id"/><button class="btn btn-default btn-xs" type="submit">@localizer["ViewHistory"]</button></form> }
+                @if (row is InventoryTransaction txn) { <time>@txn.OccurredOn.ToString("u")</time><details><summary>@localizer["Details"]</summary><p>@(InventoryWorkspaceView.Details<InventoryLabel>(txn).Note)</p><p>@localizer["Reference"]: @txn.ReferenceType / @txn.ReferenceId</p></details> }
+                @if (Model.CanWrite && Model.Tab is "Items" or "Categories" or "Locations" or "Kits") { <form asp-action="Archive" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="kind" value="@Model.Tab"/><input type="hidden" name="id" value="@row.Id"/><input type="hidden" name="revision" value="@row.Revision"/><button class="btn btn-default btn-xs" type="submit">@localizer["Archive"]</button></form> }
+                @if (Model.CanIssue && row is InventoryIssuance outstanding && outstanding.Status is 0 or 2) {
+                    <details><summary>@localizer["Return"]</summary><form asp-action="Return" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/><input type="hidden" name="IssuanceId" value="@row.Id"/><input type="hidden" name="Revision" value="@row.Revision"/>@Field("ToLocationId", "ToLocation", null, options: locationOptions)@Field("Quantity", "Amount", outstanding.Quantity - outstanding.ReturnedQuantity, "number")@Field("Condition", "Status", 0, options: Codes("Status", 0, 2, 3))@Field("Note", "Note")<button class="btn btn-primary" type="submit">@localizer["Return"]</button></form></details>
+                }
+                @if (Model.CanWrite && row is InventoryCategory category) {
+                    <details><summary>@localizer["Edit"]</summary><form asp-action="SaveCategory" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@category.Id"/><input type="hidden" name="revision" value="@category.Revision"/>@Field("name", "Name", InventoryWorkspaceView.Details<InventoryLabel>(category).Name)@Field("parentId", "Parent", category.ParentCategoryId, options: categoryOptions)<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form></details>
+                }
+                @if (Model.CanWrite && row is InventoryLocation place) {
+                    <details><summary>@localizer["Edit"]</summary><form asp-action="SaveLocation" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="Id" value="@place.Id"/><input type="hidden" name="Revision" value="@place.Revision"/><input type="hidden" name="Type" value="@place.LocationType"/><input type="hidden" name="GroupId" value="@place.GroupId"/><input type="hidden" name="UnitId" value="@place.UnitId"/><input type="hidden" name="UserId" value="@place.UserId"/><input type="hidden" name="ContainerAssetId" value="@place.ContainerAssetId"/><input type="hidden" name="ParentLocationId" value="@place.ParentLocationId"/><input type="hidden" name="IsDefault" value="@place.IsDefault.ToString().ToLowerInvariant()"/>@Field("Name", "Name", InventoryWorkspaceView.Details<InventoryLabel>(place).Name)<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form></details>
+                }
+                @if (Model.CanWrite && row is InventoryKit editableKit) {
+                    <details><summary>@localizer["Edit"]</summary><form asp-action="SaveKit" method="post" class="inventory-command inventory-kit">
+                    @Html.AntiForgeryToken()<input type="hidden" name="Id" value="@editableKit.Id"/><input type="hidden" name="Revision" value="@editableKit.Revision"/>@Field("Name", "Name", InventoryWorkspaceView.Details<InventoryLabel>(editableKit).Name)
+                    <div class="inventory-kit-lines">
+                    @{ var editLines = Model.KitContents.Where(k => k.KitId == editableKit.Id && !k.IsDeleted).ToList(); var editIndex = 0; }
+                    @foreach (var kitLine in editLines.DefaultIfEmpty(new InventoryKitItem { Quantity = 1 })) {
+                        var prefix = "Lines[" + editIndex++ + "].";
+                        <div class="inventory-kit-line">@Field(prefix + "ItemId", "Items", kitLine.ItemId, options: itemOptions)@Field(prefix + "Quantity", "Amount", kitLine.Quantity, "number")<button class="btn btn-default inventory-remove-line" type="button">@localizer["Archive"]</button></div>
+                    }
+                    </div><button class="btn btn-default inventory-add-line" type="button">@localizer["AddLine"]</button><button class="btn btn-primary" type="submit">@localizer["Save"]</button></form></details>
+                }
+                @if (Model.CanIssue && row is InventoryKit kit && Model.KitContents.Any(k => k.KitId == kit.Id && !k.IsDeleted)) {
+                    var kitLines = Model.KitContents.Where(k => k.KitId == kit.Id && !k.IsDeleted).ToList();
+                    var issueCount = kitLines.Sum(k => Model.Items.FirstOrDefault(i => i.Id == k.ItemId)?.TrackingMode == (int)InventoryTrackingMode.Serialized ? k.Quantity : 1);
+                    if (issueCount <= 100 && kitLines.All(k => Model.Items.Any(i => i.Id == k.ItemId))) {
+                        <details><summary>@localizer["Issue"]</summary><form asp-action="IssueKit" method="post" class="inventory-command inventory-kit-issue">@Html.AntiForgeryToken()<input type="hidden" name="KitId" value="@kit.Id"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>@Field("userId", "Person", null, options: Choice(Model.People))@Field("unitId", "Unit", null, options: Choice(Model.Units))
+                        @{ var lineIndex = 0; }
+                        @foreach (var kitLine in kitLines) {
+                            var serialized = Model.Items.First(i => i.Id == kitLine.ItemId).TrackingMode == (int)InventoryTrackingMode.Serialized;
+                            var quantity = serialized ? 1 : kitLine.Quantity;
+                            foreach (var component in Enumerable.Range(0, serialized ? (int)kitLine.Quantity : 1)) {
+                                var prefix = "Lines[" + lineIndex++ + "].";
+                                <fieldset><legend>@ItemName(kitLine.ItemId) @(serialized ? (component + 1).ToString(CultureInfo.CurrentCulture) : "")</legend><input type="hidden" name="@(prefix + "ItemId")" value="@kitLine.ItemId"/><input type="hidden" name="@(prefix + "Quantity")" value="@quantity.ToString(CultureInfo.InvariantCulture)"/><p>@localizer["Amount"]: @quantity.ToString(CultureInfo.CurrentCulture)</p>
+                                @if (serialized) { @Field(prefix + "AssetId", "AssetId", null, options: Choice(Model.Assets.Where(a => a.ItemId == kitLine.ItemId && a.Status == (int)InventoryAssetStatus.InService && a.CurrentLocationId != null).Select(a => new InventoryChoice { Id = a.Id, Name = InventoryWorkspaceView.Details<InventoryAssetContent>(a).SerialNumber + " · " + InventoryWorkspaceView.Details<InventoryAssetContent>(a).AssetTag }))) }
+                                @Field(prefix + "LotId", "LotId", null, options: Choice(Model.Lots.Where(l => l.ItemId == kitLine.ItemId).Select(l => new InventoryChoice { Id = l.Id, Name = InventoryWorkspaceView.Details<InventoryLotContent>(l).LotNumber })))@Field(prefix + "FromLocationId", "FromLocation", null, options: locationOptions)</fieldset>
+                            }
+                        }
+                        <button class="btn btn-primary" type="submit">@localizer["Issue"]</button></form></details>
+                    } else { <p class="text-muted">@localizer["UnableToComplete"]</p> }
+                }
+            </td></tr>
+        }
+        </tbody></table></div>
+        @if (Model.Rows.Count == 0) { <p>@localizer["NoRows"]</p> }
+        @foreach (var nextPage in new[] { Model.Page - 1, Model.Page + 1 }.Where(p => p >= 0 && (p < Model.Page || Model.HasMore))) { <form asp-action="Reopen" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="@nextPage"/><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="unitId" value="@Model.UnitId"/><input type="hidden" name="userId" value="@Model.UserId"/><input type="hidden" name="itemId" value="@Model.ItemId"/><input type="hidden" name="locationId" value="@Model.LocationId"/><button class="btn btn-default" type="submit">@localizer[nextPage < Model.Page ? "Previous" : "Next"]</button></form> }
+        @if (Model.Tab == "AssetDetail") {
+            <p><a asp-controller="Checklists" asp-action="Index">@localizer["Checklists"]</a> · <a asp-controller="WorkOrders" asp-action="Index" asp-route-AssetId="@Model.Id">@localizer["WorkOrders"]</a></p>
+        }
+        @if (Model.CanWrite || Model.CanTransfer || Model.CanIssue || Model.CanWitness) {
+            <hr/>
+            @if (Model.CanWrite && Model.Tab == "Items") {
+                foreach (var item in new[] { new InventoryItem() }.Concat(Model.Rows.OfType<InventoryItem>())) {
+                    var details = InventoryWorkspaceView.Details<InventoryItemContent>(item); var isNew = !Model.Rows.Contains(item);
+                    <details><summary>@localizer[isNew ? "NewItem" : "Edit"] @details.Name</summary><form asp-action="SaveItem" method="post" class="inventory-command">
+                    @Html.AntiForgeryToken()<input type="hidden" name="Id" value="@(isNew ? null : item.Id)"/><input type="hidden" name="Revision" value="@item.Revision"/>
+                    @Field("Details.Name", "Name", details.Name)@Field("Details.Description", "Description", details.Description)@Field("Details.UnitOfMeasure", "UnitOfMeasure", details.UnitOfMeasure)@Field("Details.Code", "Code", details.Code)@Field("Details.Barcode", "Barcode", details.Barcode)
+                    @Field("CategoryId", "Categories", item.CategoryId, options: categoryOptions)@Field("TrackingMode", "TrackingMode", item.TrackingMode, options: Codes("Tracking", 0, 1))
+                    @foreach (var flag in new[] { ("IsKit", item.IsKit), ("RequiresLotTracking", item.RequiresLotTracking), ("RequiresExpiration", item.RequiresExpiration), ("IsControlledSubstance", item.IsControlledSubstance), ("IsActive", item.IsActive) }) { @Field(flag.Item1, flag.Item1, flag.Item2.ToString().ToLowerInvariant(), options: new[] { new SelectListItem { Value = "false", Text = localizer["No"] }, new SelectListItem { Value = "true", Text = localizer["Yes"] } }) }
+                    @Field("Details.MinLevel", "Minimum", details.MinLevel, "number")@Field("Details.ReorderPoint", "ReorderPoint", details.ReorderPoint, "number")@Field("Details.DefaultUnitCost", "UnitCost", details.DefaultUnitCost, "number")
+                    <input type="hidden" name="Details.MaxLevel" value="@details.MaxLevel?.ToString(CultureInfo.InvariantCulture)"/><input type="hidden" name="Details.ReorderQuantity" value="@details.ReorderQuantity?.ToString(CultureInfo.InvariantCulture)"/><input type="hidden" name="Details.DeaSchedule" value="@details.DeaSchedule"/><input type="hidden" name="Details.DefaultExpirationDays" value="@details.DefaultExpirationDays"/>
+                    <button class="btn btn-primary" type="submit">@localizer["Save"]</button></form></details>
+                }
+            }
+            @if (Model.CanWrite && Model.Tab == "Categories") { <form asp-action="SaveCategory" method="post" class="inventory-command">@Html.AntiForgeryToken()@Field("name", "Name")@Field("parentId", "Parent", null, options: categoryOptions)<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
+            @if (Model.CanWrite && Model.Tab == "Locations") { <form asp-action="SaveLocation" method="post" class="inventory-command">@Html.AntiForgeryToken()@Field("Name", "Name")@Field("Type", "LocationType", 0, options: Codes("LocationType", 0, 1, 2, 3, 4, 5))@Field("GroupId", "Station", null, options: Choice(Model.Groups))@Field("UnitId", "Unit", null, options: Choice(Model.Units))@Field("UserId", "Person", null, options: Choice(Model.People))@Field("ContainerAssetId", "ContainerAsset", null, options: assetOptions)@Field("ParentLocationId", "Parent", null, options: locationOptions)@Field("IsDefault", "DefaultLocation", "false", options: new[] { new SelectListItem { Value = "false", Text = localizer["No"] }, new SelectListItem { Value = "true", Text = localizer["Yes"] } })<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
+            @if (Model.CanWrite && Model.Tab == "Lots") { <form asp-action="CreateLot" method="post" class="inventory-command">@Html.AntiForgeryToken()@Field("itemId", "Items", null, options: itemOptions)@Field("details.LotNumber", "Batch")@Field("expiresOn", "Expiration", null, "date")@Field("details.UnitCost", "UnitCost", null, "number")<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
+            @if (Model.CanWrite && Model.Tab == "Assets") { <form asp-action="CreateAsset" method="post" class="inventory-command" data-inventory-create-asset="true">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>@Field("ItemId", "Items", null, options: itemOptions)@Field("LocationId", "Location", null, options: locationOptions)@Field("LotId", "LotId", null, options: lotOptions)@Field("Details.SerialNumber", "SerialNumber")@Field("Details.AssetTag", "AssetTag")@Field("Details.Barcode", "Barcode")@Field("ExpiresOn", "Expiration", null, "date")<button class="btn btn-primary" type="submit">@localizer["NewAsset"]</button></form> }
+            @if ((Model.CanWrite && Model.Tab == "OnHand") || (Model.CanTransfer && Model.Tab == "Transfers")) { <form asp-action="@(Model.Tab == "Transfers" ? "Transfer" : "Post")" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>@Field("Lines[0].Type", "Movement", Model.Tab == "Transfers" ? 3 : 1, options: Model.Tab == "Transfers" ? Codes("Movement", 3) : Codes("Movement", 1, 2, 6, 8))@Field("Lines[0].ItemId", "Items", null, options: itemOptions)@Field("Lines[0].AssetId", "AssetId", null, options: assetOptions)@Field("Lines[0].LotId", "LotId", null, options: lotOptions)@Field("Lines[0].FromLocationId", "FromLocation", null, options: locationOptions)@Field("Lines[0].ToLocationId", "ToLocation", null, options: locationOptions)@Field("Lines[0].Quantity", "Amount", null, "number")@Field("Lines[0].Note", "Note")<p>@localizer["MovementHelp"]</p><button class="btn btn-primary" type="submit">@localizer["PostMovement"]</button></form> }
+            @if (Model.CanIssue && Model.Tab == "Issuances") { <form asp-action="Issue" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>@Field("ItemId", "Items", null, options: itemOptions)@Field("AssetId", "AssetId", null, options: assetOptions)@Field("LotId", "LotId", null, options: lotOptions)@Field("FromLocationId", "FromLocation", null, options: locationOptions)@Field("Quantity", "Amount", null, "number")@Field("UserId", "Person", null, options: Choice(Model.People))@Field("UnitId", "Unit", null, options: Choice(Model.Units))@Field("ExpectedReturnOn", "ExpectedReturn", null, "date")@Field("Note", "Note")<p>@localizer["HolderHelp"]</p><button class="btn btn-primary" type="submit">@localizer["Issue"]</button></form> }
+            @if (Model.CanWrite && Model.Tab == "AssetDetail" && Model.Rows.OfType<InventoryAsset>().FirstOrDefault() is { } current) { <form asp-action="Status" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/><input type="hidden" name="Lines[0].ItemId" value="@current.ItemId"/><input type="hidden" name="Lines[0].AssetId" value="@current.Id"/><input type="hidden" name="Lines[0].LotId" value="@current.LotId"/><input type="hidden" name="Lines[0].FromLocationId" value="@current.CurrentLocationId"/><input type="hidden" name="Lines[0].ExpectedAssetRevision" value="@current.Revision"/><input type="hidden" name="Lines[0].Type" value="9"/>@Field("Lines[0].Status", "Status", current.Status, options: Codes("Status", 0, 2, 3, 4, 5, 6))@Field("Lines[0].Note", "Note")<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
+            @if (Model.CanWrite && Model.Tab == "Kits") { <form asp-action="SaveKit" method="post" class="inventory-command inventory-kit">@Html.AntiForgeryToken()@Field("Name", "Name")<div class="inventory-kit-lines"><div class="inventory-kit-line">@Field("Lines[0].ItemId", "Items", null, options: itemOptions)@Field("Lines[0].Quantity", "Amount", 1, "number")<button class="btn btn-default inventory-remove-line" type="button">@localizer["Archive"]</button></div></div><button class="btn btn-default inventory-add-line" type="button">@localizer["AddLine"]</button><button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
+            @if (Model.Tab == "History") {
+                if (Model.CanWitness) { <form asp-action="Witness" method="post" class="inventory-command">@Html.AntiForgeryToken()@Field("requestId", "WitnessRequest")@Field("attestation", "Attestation")<button class="btn btn-primary" type="submit">@localizer["Witness"]</button></form> }
+                if (Model.CanWrite) { <form asp-action="Rebuild" method="post" class="inventory-command">@Html.AntiForgeryToken()<button class="btn btn-default" type="submit">@localizer["Rebuild"]</button></form> }
+            }
+        }
+    }
+</div></div></div>
+@section Scripts {
+<script id="inventory-settings" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { protectedData = ViewBag.ProtectionEnforced == true, grant = (string)ViewBag.ProtectedGrant, expiry = (DateTime?)ViewBag.GrantExpiresOn, index = Url.Action("Index"), failed = localizer["UnableToComplete"].Value, witness = localizer["WitnessPending"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+<script src="~/js/app/internal/inventory/inventory-modern.js" asp-append-version="true"></script>
+@if (ViewBag.ProtectionEnforced == true) { @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value, GrantExpiresOnUtc = (DateTime?)ViewBag.GrantExpiresOn, BindForms = new List<string> { "form.inventory-navigation", "form.inventory-command" } }) }
+}

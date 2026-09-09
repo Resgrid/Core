@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>La captura de evidencias de preparación requiere un incidente y abarca los 30 días anteriores; no se admiten fechas de cobertura personalizadas.</value></data>
   <data name="TargetType" xml:space="preserve"><value>Tipo de objetivo</value></data>
   <data name="Group" xml:space="preserve"><value>Estación / grupo</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>Las listas de verificación están deshabilitadas para este departamento.</value></data>
 </root>

@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>Utrwalenie dowodów gotowości wymaga zdarzenia i obejmuje poprzednie 30 dni; własne daty zakresu nie są obsługiwane.</value></data>
   <data name="TargetType" xml:space="preserve"><value>Typ celu</value></data>
   <data name="Group" xml:space="preserve"><value>Stacja / grupa</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>Listy kontrolne są wyłączone dla tego działu.</value></data>
 </root>

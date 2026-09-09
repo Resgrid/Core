@@ -994,4 +994,22 @@
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Vem som får flytta ett rapportutkast till en annan författare, till exempel när den ursprungliga författaren inte är tillgänglig.</value></data>
   <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Hantera förebyggande data</value></data>
   <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Vem som får skapa och ändra objekt, tillsynsprogram och regelverk, brandposter, tillstånd och aktiviteter för att minska risker i samhället. Att läsa förebyggande data kräver bara åtkomst till Register; utredningar styrs av behörigheten för begränsade register och medlemskap i ärendet.</value></data>
+  <data name="PermRecordsIssueInventoryLabel" xml:space="preserve">
+    <value>Lämna ut och återlämna inventarier</value>
+  </data>
+  <data name="PermRecordsIssueInventoryNote" xml:space="preserve">
+    <value>Styr vem som får lämna ut och återlämna inventarier. Som standard har avdelningsadministratörer behörighet.</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesLabel" xml:space="preserve">
+    <value>Hantera kontrollerade substanser</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesNote" xml:space="preserve">
+    <value>Styr vem som får registrera och bevittna transaktioner med kontrollerade substanser. Som standard har avdelningsadministratörer behörighet. Varje transaktion måste bevittnas av en annan behörig person.</value>
+  </data>
+  <data name="PermRecordsTransferInventoryLabel" xml:space="preserve">
+    <value>Flytta inventarier</value>
+  </data>
+  <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
+    <value>Styr vem som får flytta inventarier mellan lagerplatser. Som standard har avdelningsadministratörer behörighet.</value>
+  </data>
 </root>

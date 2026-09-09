@@ -153,7 +153,14 @@ namespace Resgrid.Model
 		ManageChecklists = 112,
 ViewChecklistResults = 113,
 		ManageWorkOrders = 114,
-		ViewAllWorkOrders = 115
+		ViewAllWorkOrders = 115,
+
+		/// <summary>Transfer inventory between department locations. Defaults to the inventory adjustment permission.</summary>
+		TransferInventory = 47,
+		/// <summary>Issue and return department equipment. Defaults to the inventory adjustment permission.</summary>
+		IssueInventory = 48,
+		/// <summary>Record controlled-substance inventory transactions. Defaults to department administrators.</summary>
+		ManageControlledSubstances = 49
 	}
 
 }

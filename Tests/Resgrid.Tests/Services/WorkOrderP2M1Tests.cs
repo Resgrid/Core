@@ -54,7 +54,7 @@ namespace Resgrid.Tests.Services
 			_uow.Setup(u => u.DiscardChanges()).Callback(() => _store.Rollback());
 			_service = new WorkOrdersService(_store, _auth.Object, _access.Object, _uow.Object, audit.Object, _outbox.Object, new Lazy<IProtectedReadService>(() => _read.Object), new Lazy<IProtectedWriteService>(() => _write.Object), _scanner.Object);
 		}
-		private static WorkOrderInput Input(bool safety = false) => new WorkOrderInput { Content = new WorkOrderContent { Title = "Synthetic equipment repair", Description = "PII-PHI-CANARY narrative", SafetyCritical = safety } };
+		private static WorkOrderInput Input(bool safety = false) => new WorkOrderInput { RequestId = Guid.NewGuid().ToString("D"), Content = new WorkOrderContent { Title = "Synthetic equipment repair", Description = "PII-PHI-CANARY narrative", SafetyCritical = safety } };
 		private async Task<WorkOrderDetail> Transition(int id, WorkOrderStatus status, ChecklistActor actor = null, string reason = null, string evidence = null)
 		{
 			actor ??= _actor; var current = await _service.GetAsync(actor, id);

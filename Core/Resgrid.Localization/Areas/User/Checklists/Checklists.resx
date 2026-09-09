@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>Readiness evidence capture requires a call and uses the 30 days before that call; custom coverage dates are not supported.</value></data>
   <data name="TargetType" xml:space="preserve"><value>Target type</value></data>
   <data name="Group" xml:space="preserve"><value>Station / group</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>Checklists are disabled for this department.</value></data>
 </root>

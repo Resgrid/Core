@@ -48,7 +48,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{ Required(input); await Checklists.RetireAsync(Actor, input.Id, input.Revision, true); return Reply(true); }
 		[HttpGet("GetSchedules"), Authorize(Policy = ResgridResources.Checklist_Update)]
 		public async Task<IActionResult> GetSchedules(string definitionId, int page = 0)
-		{ var rows = await Checklists.SchedulesAsync(Actor, definitionId, page); var more = rows.Count == 50 && page < 10000 && (await Checklists.SchedulesAsync(Actor, definitionId, page + 1)).Count > 0; return Reply(rows.Select(ScheduleData).ToList(), rows.Count, more); }
+		{ var rows = await Checklists.SchedulesAsync(Actor, definitionId, page, includeNext: true); var more = rows.Count > 50 && page < 10000; var data = rows.Take(50).Select(ScheduleData).ToList(); return Reply(data, data.Count, more); }
 		[HttpGet("GetSchedule"), Authorize(Policy = ResgridResources.Checklist_Update)]
 		public async Task<IActionResult> GetSchedule(string id) => Reply(ScheduleData(await Checklists.GetScheduleAsync(Actor, id)));
 		[HttpPost("NewSchedule"), Authorize(Policy = ResgridResources.Checklist_Update)]

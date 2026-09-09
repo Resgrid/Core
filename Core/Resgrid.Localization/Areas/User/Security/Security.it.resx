@@ -994,4 +994,22 @@
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Chi può trasferire una bozza di rapporto a un altro autore, ad esempio quando l'autore originale non è disponibile.</value></data>
   <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Gestire i dati di prevenzione</value></data>
   <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Chi può creare e modificare occupazioni, programmi di ispezione e raccolte di norme, idranti, permessi e attività di riduzione del rischio comunitario. La lettura dei dati di prevenzione richiede solo l'accesso ai Registri; le indagini sono regolate dal permesso sui registri riservati e dall'appartenenza al caso.</value></data>
+  <data name="PermRecordsIssueInventoryLabel" xml:space="preserve">
+    <value>Assegnare e restituire inventario</value>
+  </data>
+  <data name="PermRecordsIssueInventoryNote" xml:space="preserve">
+    <value>Definisce chi può assegnare e restituire l’inventario. Per impostazione predefinita, sono autorizzati gli amministratori del dipartimento.</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesLabel" xml:space="preserve">
+    <value>Gestire sostanze controllate</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesNote" xml:space="preserve">
+    <value>Definisce chi può registrare e attestare transazioni di sostanze controllate. Per impostazione predefinita, sono autorizzati gli amministratori del dipartimento. Ogni transazione deve essere attestata da un’altra persona autorizzata.</value>
+  </data>
+  <data name="PermRecordsTransferInventoryLabel" xml:space="preserve">
+    <value>Trasferire inventario</value>
+  </data>
+  <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
+    <value>Definisce chi può trasferire l’inventario tra ubicazioni. Per impostazione predefinita, sono autorizzati gli amministratori del dipartimento.</value>
+  </data>
 </root>

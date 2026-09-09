@@ -42,6 +42,8 @@ namespace Resgrid.Services
 		private readonly IUserSessionService _userSessionService;
 		private readonly IDepartmentMemberSensitiveDataService _memberSensitiveDataService;
 		private readonly IDepartmentMemberEmergencyContactService _emergencyContactService;
+		private readonly IInventoryStore _inventoryStore;
+		private readonly Resgrid.Model.Repositories.Queries.IUnitOfWork _inventoryUnitOfWork;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -53,7 +55,8 @@ namespace Resgrid.Services
 			IDeleteRepository deleteRepository, IAuditLogsRepository auditLogsRepository,
 			IScheduledTasksService scheduledTasksService, IUserSessionService userSessionService,
 			IDepartmentMemberSensitiveDataService memberSensitiveDataService,
-			IDepartmentMemberEmergencyContactService emergencyContactService)
+			IDepartmentMemberEmergencyContactService emergencyContactService,
+			IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null)
 		{
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
@@ -82,6 +85,8 @@ namespace Resgrid.Services
 			_userSessionService = userSessionService;
 			_memberSensitiveDataService = memberSensitiveDataService;
 			_emergencyContactService = emergencyContactService;
+			_inventoryStore = inventoryStore;
+			_inventoryUnitOfWork = inventoryUnitOfWork;
 		}
 
 		public async Task<DeleteUserResults> DeleteUserAsync(int departmentId, string authorizingUserId, string userIdToDelete, CancellationToken cancellationToken = default(CancellationToken))
@@ -283,6 +288,9 @@ namespace Resgrid.Services
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(currentUserId, departmentGroupId))
 				return DeleteGroupResults.UnAuthorized;
 
+			// Check retained inventory evidence before clearing any group associations, under the same department lock as posting.
+			await InventoryHolderRetention.DeleteAsync(_inventoryStore, _inventoryUnitOfWork, departmentId, departmentGroupId, false, async () =>
+			{
 			await _callsService.ClearGroupForDispatchesAsync(departmentGroupId, cancellationToken);
 			await _workLogsService.ClearGroupForLogsAsync(departmentGroupId, cancellationToken);
 			await _unitsService.ClearGroupForUnitsAsync(departmentGroupId, cancellationToken);
@@ -290,6 +298,8 @@ namespace Resgrid.Services
 			await _inventoryService.DeleteInventoriesByGroupIdAsync(departmentGroupId, departmentId, cancellationToken);
 			await _departmentGroupsService.DeleteGroupMembersByGroupIdAsync(departmentGroupId, departmentId, cancellationToken);
 			await _departmentGroupsService.DeleteGroupByIdAsync(departmentGroupId, cancellationToken);
+			return true;
+			}, cancellationToken);
 
 			return DeleteGroupResults.NoFailure;
 		}

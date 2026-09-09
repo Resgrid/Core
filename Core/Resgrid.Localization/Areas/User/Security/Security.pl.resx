@@ -994,4 +994,22 @@
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Kto może przekazać wersję roboczą raportu innemu autorowi, np. gdy pierwotny autor jest niedostępny.</value></data>
   <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Zarządzanie danymi prewencji</value></data>
   <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Kto może tworzyć i zmieniać obiekty, programy kontroli i zbiory przepisów, hydranty, zezwolenia oraz działania na rzecz ograniczania ryzyka w społeczności. Odczyt danych prewencji wymaga jedynie dostępu do Rejestrów; dochodzenia podlegają uprawnieniu do rejestrów zastrzeżonych i członkostwu w sprawie.</value></data>
+  <data name="PermRecordsIssueInventoryLabel" xml:space="preserve">
+    <value>Wydawanie i zwracanie inwentarza</value>
+  </data>
+  <data name="PermRecordsIssueInventoryNote" xml:space="preserve">
+    <value>Określa, kto może wydawać i zwracać inwentarz. Domyślnie uprawnieni są administratorzy departamentu.</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesLabel" xml:space="preserve">
+    <value>Zarządzanie substancjami kontrolowanymi</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesNote" xml:space="preserve">
+    <value>Określa, kto może rejestrować i poświadczać transakcje dotyczące substancji kontrolowanych. Domyślnie uprawnieni są administratorzy departamentu. Każdą transakcję musi poświadczyć inna uprawniona osoba.</value>
+  </data>
+  <data name="PermRecordsTransferInventoryLabel" xml:space="preserve">
+    <value>Przesuwanie inwentarza</value>
+  </data>
+  <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
+    <value>Określa, kto może przesuwać inwentarz między lokalizacjami. Domyślnie uprawnieni są administratorzy departamentu.</value>
+  </data>
 </root>

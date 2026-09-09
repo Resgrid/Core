@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>Insamling av beredskapsunderlag kräver en insats och omfattar de föregående 30 dagarna; egna täckningsdatum stöds inte.</value></data>
   <data name="TargetType" xml:space="preserve"><value>Måltyp</value></data>
   <data name="Group" xml:space="preserve"><value>Station / grupp</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>Checklistor är inaktiverade för den här avdelningen.</value></data>
 </root>

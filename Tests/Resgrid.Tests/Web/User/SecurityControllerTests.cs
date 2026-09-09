@@ -26,6 +26,7 @@ namespace Resgrid.Tests.Web.User
 		private const string UserId = "audit-admin";
 		private Mock<IDepartmentsService> _departmentsService;
 		private Mock<IAuditService> _auditService;
+		private Mock<IPermissionsService> _permissionsService;
 		private SecurityController _controller;
 
 		[SetUp]
@@ -33,6 +34,7 @@ namespace Resgrid.Tests.Web.User
 		{
 			_departmentsService = new Mock<IDepartmentsService>();
 			_auditService = new Mock<IAuditService>();
+			_permissionsService = new Mock<IPermissionsService>();
 
 			var httpContext = new DefaultHttpContext
 			{
@@ -51,7 +53,7 @@ namespace Resgrid.Tests.Web.User
 			_controller = new SecurityController(
 				_departmentsService.Object,
 				_auditService.Object,
-				Mock.Of<IPermissionsService>(),
+				_permissionsService.Object,
 				Mock.Of<IEventAggregator>(),
 				Mock.Of<IDepartmentSettingsService>(),
 				Mock.Of<ISystemAuditsService>(),
@@ -146,6 +148,35 @@ namespace Resgrid.Tests.Web.User
 				"2026-01-01 00:00:00",
 				AuditLogTypes.UserAdded.ToString());
 			entries.Single(x => x.AuditLogId == 3).TimestampSort.Should().BeNull();
+		}
+
+		[TestCase(PermissionTypes.TransferInventory)]
+		[TestCase(PermissionTypes.IssueInventory)]
+		public async Task GetRolesForPermission_MissingInventoryRule_DisplaysInheritedAdjustmentRoles(PermissionTypes permission)
+		{
+			_permissionsService.Setup(s => s.GetPermissionByDepartmentTypeAsync(DepartmentId, permission)).ReturnsAsync((Permission)null);
+			_permissionsService.Setup(s => s.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.AdjustInventory))
+				.ReturnsAsync(new Permission { DepartmentId = DepartmentId, PermissionType = (int)PermissionTypes.AdjustInventory, Data = "3,7" });
+
+			var result = await _controller.GetRolesForPermission((int)permission);
+
+			result.Should().BeOfType<JsonResult>().Subject.Value.Should().Be("3,7");
+			_permissionsService.Verify(s => s.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.AdjustInventory), Times.Once);
+		}
+
+		[TestCase(PermissionTypes.TransferInventory)]
+		[TestCase(PermissionTypes.IssueInventory)]
+		public async Task GetRolesForPermission_ExplicitEmptyInventoryRule_DoesNotInheritAdjustmentRoles(PermissionTypes permission)
+		{
+			_permissionsService.Setup(s => s.GetPermissionByDepartmentTypeAsync(DepartmentId, permission))
+				.ReturnsAsync(new Permission { DepartmentId = DepartmentId, PermissionType = (int)permission, Data = "" });
+			_permissionsService.Setup(s => s.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.AdjustInventory))
+				.ReturnsAsync(new Permission { DepartmentId = DepartmentId, PermissionType = (int)PermissionTypes.AdjustInventory, Data = "3,7" });
+
+			var result = await _controller.GetRolesForPermission((int)permission);
+
+			result.Should().BeOfType<JsonResult>().Subject.Value.Should().Be("");
+			_permissionsService.Verify(s => s.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.AdjustInventory), Times.Never);
 		}
 
 		[Test]

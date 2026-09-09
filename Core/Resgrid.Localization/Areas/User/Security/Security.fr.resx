@@ -994,4 +994,22 @@
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Qui peut transférer un brouillon de rapport à un autre auteur, par exemple lorsque l'auteur d'origine est indisponible.</value></data>
   <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Gérer les données de prévention</value></data>
   <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Qui peut créer et modifier les occupations, les programmes d'inspection et les recueils de codes, les bornes d'incendie, les permis et les activités de réduction des risques communautaires. La lecture des données de prévention ne demande que l'accès aux dossiers ; les enquêtes relèvent de la permission des dossiers restreints et de l'appartenance au dossier.</value></data>
+  <data name="PermRecordsIssueInventoryLabel" xml:space="preserve">
+    <value>Attribuer et retourner l’inventaire</value>
+  </data>
+  <data name="PermRecordsIssueInventoryNote" xml:space="preserve">
+    <value>Définit qui peut attribuer et retourner l’inventaire. Par défaut, cette autorisation est réservée aux administrateurs du département.</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesLabel" xml:space="preserve">
+    <value>Gérer les substances contrôlées</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesNote" xml:space="preserve">
+    <value>Définit qui peut enregistrer et attester les transactions de substances contrôlées. Par défaut, cette autorisation est réservée aux administrateurs du département. Chaque transaction doit être attestée par une autre personne habilitée.</value>
+  </data>
+  <data name="PermRecordsTransferInventoryLabel" xml:space="preserve">
+    <value>Transférer l’inventaire</value>
+  </data>
+  <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
+    <value>Définit qui peut transférer l’inventaire entre emplacements. Par défaut, cette autorisation est réservée aux administrateurs du département.</value>
+  </data>
 </root>

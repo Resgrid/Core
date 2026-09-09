@@ -28,7 +28,7 @@ namespace Resgrid.Services
 			body.Append("<p>").Append(H(Text("AuthorizedScope"))).Append("</p><table>").Append(Head("Target", "ExpectedChecks", "CompletedChecks", "OnTimeChecks", "MissedChecks", "ExcusedChecks", "CompletionRate"));
 			foreach (var group in report.Groups.Where(g => !missedOnly || g.Missed > 0)) body.Append("<tr>").Append(Cell(group.Target.Name)).Append(Cell(group.Expected)).Append(Cell(group.Completed)).Append(Cell(group.OnTime)).Append(Cell(group.Missed)).Append(Cell(group.Skipped)).Append(Cell(group.CompletionRate?.ToString("0.##") ?? "—")).Append("</tr>");
 			body.Append("</table><h2>").Append(H(Text("MissedTrend"))).Append("</h2><table>").Append(Head("Date", "ExpectedChecks", "MissedChecks"));
-			foreach (var day in report.Trend) body.Append("<tr>").Append(Cell(day.DayUtc.ToString("yyyy-MM-dd"))).Append(Cell(day.Expected)).Append(Cell(day.Missed)).Append("</tr>");
+			foreach (var day in report.Trend) body.Append("<tr>").Append(Cell(day.DayUtc.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))).Append(Cell(day.Expected)).Append(Cell(day.Missed)).Append("</tr>");
 			body.Append("</table>").Append(Entries(report.Entries.Where(e => !missedOnly || e.Missed))).Append(Unavailable(report.UnavailableSources));
 			return Page(missedOnly ? "ChecklistMissedReport" : "ChecklistComplianceReport", body.ToString());
 		}

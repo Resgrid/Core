@@ -482,7 +482,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Rows come from RecordPermissionCatalog so this screen, ClaimsLogic.AddRecordClaims and the
 			// activation-time row migration share one set of no-row defaults. A missing row preselects that
 			// default, which for the Logs-parity types equals today's CreateLog/DeleteLog fall-through.
-			model.RecordsPermissions = RecordsPermissionRows.Build(permissions).Concat(RecordsPermissionRows.Build(permissions, ChecklistPermissionCatalog.All)).Concat(RecordsPermissionRows.Build(permissions, WorkOrderPermissionCatalog.All)).ToList();
+			model.RecordsPermissions = RecordsPermissionRows.Build(permissions).Concat(RecordsPermissionRows.Build(permissions, ChecklistPermissionCatalog.All)).Concat(RecordsPermissionRows.Build(permissions, WorkOrderPermissionCatalog.All)).Concat(RecordsPermissionRows.Build(permissions, InventoryPermissionCatalog.All)).ToList();
 			var recordsState = await _recordsCutoverService.GetModuleStateAsync(DepartmentId);
 			model.RecordsFlagEnabled = recordsState != null && recordsState.FlagEnabled;
 			model.RecordsActivated = recordsState != null && recordsState.RecordsUsable;
@@ -768,6 +768,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> GetRolesForPermission(int type)
 		{
 			var before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, (PermissionTypes)type);
+			if (before == null && (type == (int)PermissionTypes.TransferInventory || type == (int)PermissionTypes.IssueInventory))
+				before = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.AdjustInventory);
 
 			if (before != null)
 				return Json(before.Data);

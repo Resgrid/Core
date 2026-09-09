@@ -10,13 +10,15 @@ namespace Resgrid.Model.WorkOrders
 	public static class WorkOrderWorkflowPayload
 	{
 		public static readonly (string Variable, string Property)[] Variables = { ("id", "WorkOrderId"), ("revision", "Revision"), ("status", "Status"), ("priority", "Priority"), ("unit_id", "TargetUnitId"), ("group_id", "TargetGroupId"), ("asset_id", "InventoryAssetId"), ("role_id", "AssignedToRoleId"), ("due_on", "DueOn"), ("title", "Title") };
+		public static bool IsWorkOrder(int trigger) => trigger is (int)WorkflowTriggerEventType.WorkOrderCreated or (int)WorkflowTriggerEventType.WorkOrderStatusChanged or (int)WorkflowTriggerEventType.WorkOrderAssigned;
 		public static string Routing(JObject payload)
 		{
 			var safe = new JObject();
 			foreach (var field in new[] { "WorkOrderId", "Revision", "Status", "Priority", "TargetUnitId", "TargetGroupId", "AssignedToRoleId" })
 				if (payload[field]?.Type == JTokenType.Integer && payload[field].Value<long>() >= 0 && payload[field].Value<long>() <= int.MaxValue) safe[field] = payload[field].DeepClone();
 			if (payload["InventoryAssetId"]?.Type == JTokenType.String && Guid.TryParseExact(payload["InventoryAssetId"].Value<string>(), "D", out var asset)) safe["InventoryAssetId"] = asset.ToString("D");
-			if ((payload["DueOn"]?.Type == JTokenType.String || payload["DueOn"]?.Type == JTokenType.Date) && DateTimeOffset.TryParse(payload["DueOn"].ToString(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var due)) safe["DueOn"] = due.UtcDateTime.ToString("O");
+			if (payload["DueOn"]?.Type == JTokenType.Date) safe["DueOn"] = ((DateTimeOffset)payload["DueOn"]).UtcDateTime.ToString("O");
+			else if (payload["DueOn"]?.Type == JTokenType.String && DateTimeOffset.TryParse(payload["DueOn"].Value<string>(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var due)) safe["DueOn"] = due.UtcDateTime.ToString("O");
 			safe["Title"] = ProtectedDataEnvelope.RedactionValue; safe["is_redacted"] = true; safe["redacted_fields"] = new JArray("Title"); safe["catalog_version"] = WorkOrderTables.CatalogVersion;
 			return safe.ToString(Formatting.None);
 		}

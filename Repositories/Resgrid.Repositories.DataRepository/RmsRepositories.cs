@@ -682,13 +682,13 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 		public async Task<bool> InitializeChecklistPayloadAsync(DomainEventOutboxEntry entry, CancellationToken cancellationToken = default)
 		{
 			if (UnitOfWork.Transaction == null) throw new InvalidOperationException("Checklist event initialization requires the producer transaction.");
-			return await ExecuteAsync($"UPDATE {Tbl("DomainEventOutbox")} SET {Col("PayloadJson")} = {P}Payload WHERE {Col("DomainEventOutboxId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("EventId")} = {P}EventId AND {Col("ProducerSubsystem")} IN ('Checklists','WorkOrders') AND {Col("State")} = {P}Pending AND {Col("LeaseOwner")} IS NULL AND {Col("PayloadJson")} = '{{}}'",
-				new { Id = entry.DomainEventOutboxId, entry.DepartmentId, entry.EventId, Payload = entry.PayloadJson, Pending = (int)DomainEventOutboxState.Pending }, cancellationToken) == 1;
+			return await ExecuteAsync($"UPDATE {Tbl("DomainEventOutbox")} SET {Col("PayloadJson")} = {P}Payload WHERE {Col("DomainEventOutboxId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("EventId")} = {P}EventId AND {InList("ProducerSubsystem", "Producers")} AND {Col("State")} = {P}Pending AND {Col("LeaseOwner")} IS NULL AND {Col("PayloadJson")} = '{{}}'",
+				new { Id = entry.DomainEventOutboxId, entry.DepartmentId, entry.EventId, Payload = entry.PayloadJson, Producers = InListValue(Resgrid.Model.Checklists.ChecklistWorkflowPayload.ReadinessProducers), Pending = (int)DomainEventOutboxState.Pending }, cancellationToken) == 1;
 		}
 		public async Task<bool> ReplaceChecklistPayloadAsync(DomainEventOutboxEntry entry, string safePayload, CancellationToken cancellationToken = default)
 		{
-			return await ExecuteAsync($"UPDATE {Tbl("DomainEventOutbox")} SET {Col("PayloadJson")} = {P}Payload, {Col("LastError")} = {P}LastError WHERE {Col("DomainEventOutboxId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {Col("ProducerSubsystem")} IN ('Checklists','WorkOrders') AND {Col("State")} = {P}Pending AND {Col("LeaseOwner")} = {P}Owner AND {Col("Attempts")} = {P}Attempts AND {Col("LeaseExpiresOn")} > {P}Now",
-				new { Id = entry.DomainEventOutboxId, entry.DepartmentId, Payload = safePayload, entry.LastError, Pending = (int)DomainEventOutboxState.Pending, Owner = entry.LeaseOwner, entry.Attempts, Now = DateTime.UtcNow }, cancellationToken) == 1;
+			return await ExecuteAsync($"UPDATE {Tbl("DomainEventOutbox")} SET {Col("PayloadJson")} = {P}Payload, {Col("LastError")} = {P}LastError WHERE {Col("DomainEventOutboxId")} = {P}Id AND {Col("DepartmentId")} = {P}DepartmentId AND {InList("ProducerSubsystem", "Producers")} AND {Col("State")} = {P}Pending AND {Col("LeaseOwner")} = {P}Owner AND {Col("Attempts")} = {P}Attempts AND {Col("LeaseExpiresOn")} > {P}Now",
+				new { Id = entry.DomainEventOutboxId, entry.DepartmentId, Payload = safePayload, entry.LastError, Producers = InListValue(Resgrid.Model.Checklists.ChecklistWorkflowPayload.ReadinessProducers), Pending = (int)DomainEventOutboxState.Pending, Owner = entry.LeaseOwner, entry.Attempts, Now = DateTime.UtcNow }, cancellationToken) == 1;
 		}
 		public DomainEventOutboxRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }

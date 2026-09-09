@@ -15,10 +15,20 @@ namespace Resgrid.Services
 
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterType<InventoryAuthorizationService>().As<IInventoryAuthorizationService>().InstancePerLifetimeScope();
+			builder.RegisterType<InventoryModernizationService>().AsSelf().As<IInventoryCatalogService>().As<IInventoryStockService>().As<IInventoryTransferService>()
+				.As<IInventoryIssuanceService>().As<IInventoryMigrationService>().As<Resgrid.Model.Checklists.IChecklistAssetSource>().As<Resgrid.Model.Checklists.IChecklistHistoricalAssetSource>().InstancePerLifetimeScope();
 			builder.RegisterType<ReadinessAccessService>().As<IReadinessAccessService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistTemplateService>().As<IChecklistTemplateService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderNotificationService>().As<IWorkOrderNotificationService>().InstancePerLifetimeScope();
-			builder.RegisterType<ReadinessProBillingService>().As<IReadinessProBillingService>().InstancePerLifetimeScope();
+			builder.Register(_ => new RestClient(new RestClientOptions(SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromSeconds(10) },
+				configureSerialization: serializer => serializer.UseNewtonsoftJson())).Named<RestClient>("readiness-billing-client").SingleInstance();
+			builder.RegisterType<ReadinessProBillingService>().As<IReadinessProBillingService>()
+				.WithParameter((parameter, _) => parameter.ParameterType == typeof(Func<RestClient>), (_, context) =>
+				{
+					var scope = context.Resolve<ILifetimeScope>();
+					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("readiness-billing-client"));
+				}).InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderAuthorizationService>().As<IWorkOrderAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();

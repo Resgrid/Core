@@ -268,7 +268,7 @@ namespace Resgrid.Services
 			{
 				await RevealAsync(actor, row);
 				var occurrence = await RevealAsync(actor, await _store.GetAsync<ChecklistOccurrence>(actor.DepartmentId, row.OccurrenceId));
-				row.Content = null; result.Add(new ChecklistHistoryEntry { Completion = row, TargetName = Decode<ChecklistTarget>(occurrence.Content).Name });
+				row.Content = null; result.Add(new ChecklistHistoryEntry { Completion = row, TargetName = Decode<ChecklistTarget>(occurrence.Content)?.Name ?? row.TargetId });
 			}
 			return result;
 		}

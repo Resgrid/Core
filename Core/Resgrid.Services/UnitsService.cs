@@ -31,6 +31,8 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly ILimitsService _limitsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IInventoryStore _inventoryStore;
+		private readonly Resgrid.Model.Repositories.Queries.IUnitOfWork _inventoryUnitOfWork;
 
 		// Lazy: defers the protected-write graph (broker client) until a state save actually needs it.
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
@@ -45,9 +47,10 @@ namespace Resgrid.Services
 			IUnitLocationsDocRepository unitLocationsDocRepository, Lazy<IUnitLocationsMongoRepository> unitLocationsMongoRepository,
 			IUnitActiveRolesRepository unitActiveRolesRepository,
 			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService,
-			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService, IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null)
 		{
 			_recordsCutoverService = recordsCutoverService;
+			_inventoryStore = inventoryStore; _inventoryUnitOfWork = inventoryUnitOfWork;
 			_unitsRepository = unitsRepository;
 			_unitStatesRepository = unitStatesRepository;
 			_unitLogsRepository = unitLogsRepository;
@@ -192,6 +195,8 @@ namespace Resgrid.Services
 
 			if (unit != null)
 			{
+				return await InventoryHolderRetention.DeleteAsync(_inventoryStore, _inventoryUnitOfWork, unit.DepartmentId, unitId, true, async () =>
+				{
 				var states = await _unitStatesRepository.GetAllStatesByUnitIdAsync(unitId);
 
 				if (states != null && states.Any())
@@ -210,6 +215,7 @@ namespace Resgrid.Services
 				SendUnitVisibilityRefresh(unit.DepartmentId);
 
 				return true;
+				}, cancellationToken);
 			}
 
 			return false;

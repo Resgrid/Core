@@ -62,7 +62,7 @@ namespace Resgrid.Tests.Services
 			(await _outbox.DispatchAfterCommitAsync(new[] { entry.DomainEventOutboxId })).Should().Be(1);
 			var payload = JObject.Parse(delivered.PayloadJson);
 			payload["Score"].Value<string>().Should().Be("REDACTED"); payload["Passed"].Value<string>().Should().Be("REDACTED"); payload["TargetId"].Value<string>().Should().Be("REDACTED");
-			payload["is_redacted"].Value<bool>().Should().BeTrue(); payload["catalog_version"].Value<int>().Should().Be(18);
+			payload["is_redacted"].Value<bool>().Should().BeTrue(); payload["catalog_version"].Value<int>().Should().Be(new ProtectedFieldCatalog().Version);
 			entry.PayloadJson.Should().StartWith("rgdp:").And.NotContain("87.25").And.NotContain("person-42");
 			_history.Decrypt(42, "domaineventoutbox.payloadjson", entry.DomainEventOutboxId.ToString(), entry.PayloadJson).Should().Contain("87.25").And.NotContain("person-42");
 		}

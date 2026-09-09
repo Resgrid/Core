@@ -86,5 +86,10 @@
   "ChecklistFailed": 68,
   "WorkOrderCreated": 70,
   "WorkOrderStatusChanged": 71,
-  "WorkOrderAssigned": 72
+  "WorkOrderAssigned": 72,
+  "InventoryTransferCompleted": 58,
+  "InventoryIssued": 59,
+  "InventoryReturned": 60,
+  "InventoryAssetStatusChanged": 64,
+  "ControlledSubstanceRecorded": 66
 }

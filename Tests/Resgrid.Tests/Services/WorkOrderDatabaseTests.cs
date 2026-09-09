@@ -169,6 +169,12 @@ namespace Resgrid.Tests.Services
             (await store.PaymentsAsync(77, account.PlanAddonId)).Should().ContainSingle(); (await store.PaymentsAsync(88, account.PlanAddonId)).Should().BeEmpty();
             payment.IsCancelled = true; await uow.CreateOrGetConnectionAsync(); await store.SavePaymentAsync(payment, false); uow.DiscardChanges();
             (await store.PaymentsAsync(77, account.PlanAddonId)).Single().IsCancelled.Should().BeFalse();
+            var originalId = payment.PaymentAddonId;
+            payment.PaymentAddonId = Guid.NewGuid().ToString(); await uow.CreateOrGetConnectionAsync();
+            await FluentActions.Awaiting(() => store.SavePaymentAsync(payment, false)).Should().ThrowAsync<InvalidOperationException>(); uow.DiscardChanges();
+            payment.PaymentAddonId = originalId; payment.PlanAddonId = Guid.NewGuid().ToString(); await uow.CreateOrGetConnectionAsync();
+            await FluentActions.Awaiting(() => store.SavePaymentAsync(payment, false)).Should().ThrowAsync<InvalidOperationException>(); uow.DiscardChanges();
+            (await store.PaymentsAsync(77, account.PlanAddonId)).Single().IsCancelled.Should().BeFalse();
         }
         [Test, Order(1000)]
         public void Populated_migration_refuses_destructive_rollback()

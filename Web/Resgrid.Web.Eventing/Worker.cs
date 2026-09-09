@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using OpenIddict.Abstractions;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.Threading;
@@ -53,6 +53,7 @@ namespace Resgrid.Web.Eventing
 														  IncidentCommandUpdated);
 
 			_rabbitInboundEventProvider.RegisterForChatEvents(ChatEventReceived);
+			_rabbitInboundEventProvider.RegisterForChecklistEvents((departmentId, id) => _eventingHub.Clients.Group(departmentId.ToString()).SendAsync("checklistUpdated", id));
 
 			await StartProviderAsync();
 

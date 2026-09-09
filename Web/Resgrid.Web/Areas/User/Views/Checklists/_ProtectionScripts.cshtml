@@ -1,0 +1,24 @@
+@using Resgrid.Web.Areas.User.Models
+@using Newtonsoft.Json
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistStrings
+<script id="checklist-translations" type="application/json">@Html.Raw(JsonConvert.SerializeObject(checklistStrings.GetAllStrings(true).GroupBy(s => s.Name).ToDictionary(g => g.Key, g => g.First().Value), new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+@if (ViewBag.ProtectionEnforced == true)
+{
+    <script>
+        document.querySelectorAll('form.checklist-form').forEach(function (form) {
+            var grant = @Html.Raw(JsonConvert.SerializeObject((string)ViewBag.ProtectedGrant, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }));
+            var expiry = @Html.Raw(JsonConvert.SerializeObject((DateTime?)ViewBag.GrantExpiresOn));
+            if (grant) {
+                [['__ResgridProtectedGrant', grant], ['__ResgridProtectedGrantExpiresOn', expiry]].forEach(function (pair) {
+                    var field = document.createElement('input'); field.type = 'hidden'; field.name = pair[0]; field.value = pair[1] || ''; form.appendChild(field);
+                });
+            }
+        });
+        window.resgridAdpPageConcealed = function () { window.location.replace('@Url.Action("Index", "Checklists")'); };
+        document.querySelectorAll('a.checklist-evidence').forEach(function (link) {
+            link.addEventListener('click', function (event) { event.preventDefault(); window.resgridAdpReveal.download(link.href); });
+        });
+    </script>
+    <script>$(function () { document.querySelectorAll('form.checklist-form').forEach(function (form) { window.resgridAdpReveal.bindForm(form); }); });</script>
+    @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView { BannerTitle = checklistStrings["Protected checklist data"].Value, GrantExpiresOnUtc = (DateTime?)ViewBag.GrantExpiresOn, BindForms = new System.Collections.Generic.List<string> { "form.checklist-form" } })
+}

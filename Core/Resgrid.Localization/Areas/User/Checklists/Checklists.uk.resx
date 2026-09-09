@@ -1,0 +1,537 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data name="NewChecklist" xml:space="preserve">
+    <value>Новий список</value>
+  </data>
+  <data name="NoDefinitions" xml:space="preserve">
+    <value>На цій сторінці немає списків.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Версія</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="Retired" xml:space="preserve">
+    <value>Виведено з використання</value>
+  </data>
+  <data name="Draft" xml:space="preserve">
+    <value>Чернетка</value>
+  </data>
+  <data name="Published" xml:space="preserve">
+    <value>Опубліковано</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Попередня</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Наступна</value>
+  </data>
+  <data name="EditChecklist" xml:space="preserve">
+    <value>Редактор списків</value>
+  </data>
+  <data name="DraftGuidance" xml:space="preserve">
+    <value>Збережіть чернетку, а потім опублікуйте її. Наявні виконання зберігають початкову версію. Не вводьте дані пацієнтів.</value>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Зберегти чернетку</value>
+  </data>
+  <data name="PublishedVersion" xml:space="preserve">
+    <value>Опублікована версія</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="EditDraft" xml:space="preserve">
+    <value>Редагувати чернетку</value>
+  </data>
+  <data name="PublishDraft" xml:space="preserve">
+    <value>Опублікувати чернетку</value>
+  </data>
+  <data name="PublishGuidance" xml:space="preserve">
+    <value>Публікація створює незмінну версію для нових виконань.</value>
+  </data>
+  <data name="Retire" xml:space="preserve">
+    <value>Вивести з використання</value>
+  </data>
+  <data name="DeleteDraft" xml:space="preserve">
+    <value>Видалити чернетку</value>
+  </data>
+  <data name="Target" xml:space="preserve">
+    <value>Ціль</value>
+  </data>
+  <data name="SelectTarget" xml:space="preserve">
+    <value>Виберіть ціль</value>
+  </data>
+  <data name="StartRun" xml:space="preserve">
+    <value>Розпочати список</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Історія</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Розпочато</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Оцінка</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="Passed" xml:space="preserve">
+    <value>Пройдено</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Не пройдено</value>
+  </data>
+  <data name="Incomplete" xml:space="preserve">
+    <value>Незавершено</value>
+  </data>
+  <data name="RunGuidance" xml:space="preserve">
+    <value>Дайте відповіді на всі застосовні пункти. Для відповіді «Не застосовується» потрібне пояснення. Збережіть хід виконання, щоб продовжити пізніше. Подані відповіді й підтвердження не можна змінювати.</value>
+  </data>
+  <data name="SaveProgress" xml:space="preserve">
+    <value>Зберегти хід виконання</value>
+  </data>
+  <data name="SubmitRun" xml:space="preserve">
+    <value>Подати список</value>
+  </data>
+  <data name="NoScore" xml:space="preserve">
+    <value>Немає застосовної оцінки</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Автор</value>
+  </data>
+  <data name="Submitted" xml:space="preserve">
+    <value>Подано</value>
+  </data>
+  <data name="WitnessLabel" xml:space="preserve">
+    <value>Свідок</value>
+  </data>
+  <data name="Item" xml:space="preserve">
+    <value>Пункт</value>
+  </data>
+  <data name="Answer" xml:space="preserve">
+    <value>Відповідь</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="Evidence" xml:space="preserve">
+    <value>Доказ</value>
+  </data>
+  <data name="Unanswered" xml:space="preserve">
+    <value>Без відповіді</value>
+  </data>
+  <data name="ReportedLocation" xml:space="preserve">
+    <value>Заявлене місцезнаходження</value>
+  </data>
+  <data name="WitnessInstructions" xml:space="preserve">
+    <value>Інший автентифікований учасник має незалежно перевірити подані відповіді й докази. Поділіться з ним посиланням на цю сторінку.</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>Заява про незалежну перевірку</value>
+  </data>
+  <data name="Attest" xml:space="preserve">
+    <value>Підтвердити та завершити</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Експортувати JSON</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Друк</value>
+  </data>
+  <data name="Checklist name" xml:space="preserve">
+    <value>Назва списку</value>
+  </data>
+  <data name="Instructions (do not include patient data)" xml:space="preserve">
+    <value>Інструкції (без даних пацієнтів)</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Target type" xml:space="preserve">
+    <value>Тип цілі</value>
+  </data>
+  <data name="Passing score (%)" xml:space="preserve">
+    <value>Прохідна оцінка (%)</value>
+  </data>
+  <data name="Require reported location" xml:space="preserve">
+    <value>Вимагати заявлене місцезнаходження</value>
+  </data>
+  <data name="Require a different authenticated member to witness the submission" xml:space="preserve">
+    <value>Вимагати іншого автентифікованого учасника як свідка</value>
+  </data>
+  <data name="Section name" xml:space="preserve">
+    <value>Назва розділу</value>
+  </data>
+  <data name="Question / check" xml:space="preserve">
+    <value>Запитання / перевірка</value>
+  </data>
+  <data name="Item instructions" xml:space="preserve">
+    <value>Інструкції пункту</value>
+  </data>
+  <data name="Answer type" xml:space="preserve">
+    <value>Тип відповіді</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Обов'язково</value>
+  </data>
+  <data name="Critical failure overrides the score" xml:space="preserve">
+    <value>Критична помилка переважає оцінку</value>
+  </data>
+  <data name="Allow N/A with a reason" xml:space="preserve">
+    <value>Дозволити відповідь «Не застосовується» з поясненням</value>
+  </data>
+  <data name="Require a note on failure" xml:space="preserve">
+    <value>Вимагати примітку при помилці</value>
+  </data>
+  <data name="Require a photo on failure" xml:space="preserve">
+    <value>Вимагати фото при помилці</value>
+  </data>
+  <data name="Score weight (0 excludes this item from the score)" xml:space="preserve">
+    <value>Вага оцінки (0 виключає пункт)</value>
+  </data>
+  <data name="Passing answer" xml:space="preserve">
+    <value>Прохідна відповідь</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Одиниці</value>
+  </data>
+  <data name="Minimum passing value (optional if maximum is set)" xml:space="preserve">
+    <value>Мінімальне прохідне значення (необов'язкове за наявності максимуму)</value>
+  </data>
+  <data name="Maximum passing value (optional if minimum is set)" xml:space="preserve">
+    <value>Максимальне прохідне значення (необов'язкове за наявності мінімуму)</value>
+  </data>
+  <data name="Choices (one per line)" xml:space="preserve">
+    <value>Варіанти (по одному в рядку)</value>
+  </data>
+  <data name="Exact passing choice" xml:space="preserve">
+    <value>Точний прохідний варіант</value>
+  </data>
+  <data name="Show only when" xml:space="preserve">
+    <value>Показувати лише коли</value>
+  </data>
+  <data name="Also required when" xml:space="preserve">
+    <value>Також обов'язково коли</value>
+  </data>
+  <data name="Always / no condition" xml:space="preserve">
+    <value>Завжди / без умови</value>
+  </data>
+  <data name="Move section up" xml:space="preserve">
+    <value>Перемістити розділ угору</value>
+  </data>
+  <data name="Move section down" xml:space="preserve">
+    <value>Перемістити розділ униз</value>
+  </data>
+  <data name="Remove section" xml:space="preserve">
+    <value>Видалити розділ</value>
+  </data>
+  <data name="Move item up" xml:space="preserve">
+    <value>Перемістити пункт угору</value>
+  </data>
+  <data name="Move item down" xml:space="preserve">
+    <value>Перемістити пункт униз</value>
+  </data>
+  <data name="Remove item" xml:space="preserve">
+    <value>Видалити пункт</value>
+  </data>
+  <data name="Add item" xml:space="preserve">
+    <value>Додати пункт</value>
+  </data>
+  <data name="Add section" xml:space="preserve">
+    <value>Додати розділ</value>
+  </data>
+  <data name="Answer status" xml:space="preserve">
+    <value>Стан відповіді</value>
+  </data>
+  <data name="N/A reason" xml:space="preserve">
+    <value>Пояснення незастосовності</value>
+  </data>
+  <data name="Note (required on failure)" xml:space="preserve">
+    <value>Примітка (обов'язкова при помилці)</value>
+  </data>
+  <data name="Completion / handover note" xml:space="preserve">
+    <value>Примітка завершення / передачі</value>
+  </data>
+  <data name="Reported latitude" xml:space="preserve">
+    <value>Заявлена широта</value>
+  </data>
+  <data name="Reported longitude" xml:space="preserve">
+    <value>Заявлена довгота</value>
+  </data>
+  <data name="Use current location" xml:space="preserve">
+    <value>Використати поточне місцезнаходження</value>
+  </data>
+  <data name="Clear signature" xml:space="preserve">
+    <value>Очистити підпис</value>
+  </data>
+  <data name="Save signature image" xml:space="preserve">
+    <value>Зберегти зображення підпису</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>Контрольні списки</value>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>Шаблони списків</value>
+  </data>
+  <data name="Free" xml:space="preserve">
+    <value>Списки безкоштовні для всіх підрозділів.</value>
+  </data>
+  <data name="Guidance" xml:space="preserve">
+    <value>Перед використанням адаптуйте шаблони до обладнання, процедур виробника та місцевих вимог.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Знайти шаблон</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Перегляд шаблону</value>
+  </data>
+  <data name="NoResults" xml:space="preserve">
+    <value>Відповідних шаблонів не знайдено.</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="Critical" xml:space="preserve">
+    <value>Критичний</value>
+  </data>
+  <data name="FailNote" xml:space="preserve">
+    <value>Невдала перевірка вимагає примітки.</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>Автентифікований автор та інший автентифікований учасник мають незалежно перевірити результат.</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>Технічне обслуговування та наряди на роботи (Readiness Pro)</value>
+  </data>
+  <data name="Pass / Fail" xml:space="preserve">
+    <value>Пройдено / Не пройдено</value>
+  </data>
+  <data name="Yes / No" xml:space="preserve">
+    <value>Так / Ні</value>
+  </data>
+  <data name="Checkbox" xml:space="preserve">
+    <value>Прапорець</value>
+  </data>
+  <data name="Numeric reading" xml:space="preserve">
+    <value>Числовий показник</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Кількість</value>
+  </data>
+  <data name="Free text" xml:space="preserve">
+    <value>Довільний текст</value>
+  </data>
+  <data name="Select list" xml:space="preserve">
+    <value>Список вибору</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Фото</value>
+  </data>
+  <data name="Signature" xml:space="preserve">
+    <value>Підпис</value>
+  </data>
+  <data name="Start of shift" xml:space="preserve">
+    <value>Початок зміни</value>
+  </data>
+  <data name="Unit check" xml:space="preserve">
+    <value>Перевірка одиниці техніки</value>
+  </data>
+  <data name="Personal gear" xml:space="preserve">
+    <value>Особисте спорядження</value>
+  </data>
+  <data name="Annual review" xml:space="preserve">
+    <value>Щорічний огляд</value>
+  </data>
+  <data name="Facility" xml:space="preserve">
+    <value>Об’єкт</value>
+  </data>
+  <data name="Safety audit" xml:space="preserve">
+    <value>Аудит безпеки</value>
+  </data>
+  <data name="Equipment check" xml:space="preserve">
+    <value>Перевірка обладнання</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Одиниця техніки</value>
+  </data>
+  <data name="Group / station" xml:space="preserve">
+    <value>Група / станція</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="Section {0}" xml:space="preserve">
+    <value>Розділ {0}</value>
+  </data>
+  <data name="Item {0}" xml:space="preserve">
+    <value>Пункт {0}</value>
+  </data>
+  <data name="Remove this section and its items from the draft?" xml:space="preserve">
+    <value>Видалити цей розділ і його пункти з чернетки?</value>
+  </data>
+  <data name="Remove this item from the draft?" xml:space="preserve">
+    <value>Видалити цей пункт із чернетки?</value>
+  </data>
+  <data name="Yes / checked" xml:space="preserve">
+    <value>Так / позначено</value>
+  </data>
+  <data name="No / unchecked" xml:space="preserve">
+    <value>Ні / не позначено</value>
+  </data>
+  <data name="Unnamed earlier item" xml:space="preserve">
+    <value>Попередній пункт без назви</value>
+  </data>
+  <data name="Answer that activates this condition" xml:space="preserve">
+    <value>Відповідь, яка активує цю умову</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>Необов’язково</value>
+  </data>
+  <data name="Answered" xml:space="preserve">
+    <value>Надано відповідь</value>
+  </data>
+  <data name="N/A" xml:space="preserve">
+    <value>Не застосовується</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>Виберіть</value>
+  </data>
+  <data name="Pass" xml:space="preserve">
+    <value>Пройдено</value>
+  </data>
+  <data name="Fail" xml:space="preserve">
+    <value>Не пройдено</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="Checked" xml:space="preserve">
+    <value>Позначено</value>
+  </data>
+  <data name="Unchecked" xml:space="preserve">
+    <value>Не позначено</value>
+  </data>
+  <data name="Passing range: {0} to {1}" xml:space="preserve">
+    <value>Допустимий діапазон: від {0} до {1}</value>
+  </data>
+  <data name="No minimum" xml:space="preserve">
+    <value>Без мінімуму</value>
+  </data>
+  <data name="No maximum" xml:space="preserve">
+    <value>Без максимуму</value>
+  </data>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
+    <value>Зображення для підтвердження (PNG/JPEG, до 10 МБ; потрібна перевірка на шкідливе ПЗ)</value>
+  </data>
+  <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
+    <value>Намалюйте підпис або завантажте його зображення. Якщо потрібен незалежний свідок, він має увійти окремо.</value>
+  </data>
+  <data name="Signature drawing area. Alternatively upload an image." xml:space="preserve">
+    <value>Область для малювання підпису. Також можна завантажити зображення.</value>
+  </data>
+  <data name="Draw a signature first." xml:space="preserve">
+    <value>Спочатку намалюйте підпис.</value>
+  </data>
+  <data name="Site / building / room" xml:space="preserve">
+    <value>Місце / будівля / приміщення</value>
+  </data>
+  <data name="Reported latitude (required)" xml:space="preserve">
+    <value>Заявлена широта (обов’язково)</value>
+  </data>
+  <data name="Location is unavailable. Enter coordinates manually." xml:space="preserve">
+    <value>Місцезнаходження недоступне. Введіть координати вручну.</value>
+  </data>
+  <data name="Location could not be read. Enter coordinates manually." xml:space="preserve">
+    <value>Не вдалося визначити місцезнаходження. Введіть координати вручну.</value>
+  </data>
+  <data name="Earlier progress saved; unsaved changes remain." xml:space="preserve">
+    <value>Попередній хід виконання збережено; залишилися незбережені зміни.</value>
+  </data>
+  <data name="Progress saved." xml:space="preserve">
+    <value>Хід виконання збережено.</value>
+  </data>
+  <data name="The request could not be completed. Your changes are still on this page." xml:space="preserve">
+    <value>Не вдалося виконати запит. Ваші зміни залишилися на цій сторінці.</value>
+  </data>
+  <data name="The request could not be completed." xml:space="preserve">
+    <value>Не вдалося виконати запит.</value>
+  </data>
+  <data name="Evidence must be at most 10 MB." xml:space="preserve">
+    <value>Розмір файлу підтвердження не має перевищувати 10 МБ.</value>
+  </data>
+  <data name="InProgress" xml:space="preserve">
+    <value>Триває</value>
+  </data>
+  <data name="AwaitingWitness" xml:space="preserve">
+    <value>Очікує на свідка</value>
+  </data>
+  <data name="Protected checklist data" xml:space="preserve">
+    <value>Захищені дані контрольного списку</value>
+  </data>
+  <data name="Protected checklists" xml:space="preserve">
+    <value>Захищені контрольні списки</value>
+  </data>
+  <data name="Unlock checklist data" xml:space="preserve">
+    <value>Розблокувати дані контрольного списку</value>
+  </data>
+  <data name="Verify your identity to view the checklist, answers and evidence." xml:space="preserve">
+    <value>Підтвердьте свою особу, щоб переглянути список, відповіді та підтвердження.</value>
+  </data>
+  <data name="Verify and open" xml:space="preserve">
+    <value>Підтвердити й відкрити</value>
+  </data>
+  <data name="Use this template" xml:space="preserve">
+    <value>Використати цей шаблон</value>
+  </data>
+  <data name="Manage checklists" xml:space="preserve">
+    <value>Керувати контрольними списками</value>
+  </data>
+  <data name="View checklist results" xml:space="preserve">
+    <value>Переглядати результати контрольних списків</value>
+  </data>
+  <data name="Create, edit, publish and retire free checklists." xml:space="preserve">
+    <value>Створювати, редагувати, публікувати та виводити з використання безкоштовні контрольні списки.</value>
+  </data>
+  <data name="View results from other members. Members retain their own history." xml:space="preserve">
+    <value>Переглядати результати інших учасників. Учасники зберігають доступ до власної історії.</value>
+  </data>
+  <data name="Checks" xml:space="preserve">
+    <value>Перевірки</value>
+  </data>
+</root>

@@ -254,6 +254,14 @@ namespace Resgrid.Tests.Rms
 			(wide.End - wide.Start).TotalDays.Should().Be(RecordsAnalyticsLimits.MaxWindowDays);
 			wide.Warnings.Should().ContainSingle(w => w.Contains("clamped"));
 
+			// The due-state read is capped on its own, so the overdue figure says it was cut short in its own words.
+			_dueStates.Setup(d => d.GetLastEmittedInRangeAsync(Dept, Start, End, It.IsAny<int>())).ReturnsAsync((int dept, DateTime s, DateTime e, int take) =>
+				Enumerable.Range(0, Math.Min(take, RecordsAnalyticsLimits.RowCap + 1))
+					.Select(i => new RmsRecordDueState { RecordId = "d" + i, OverdueCount = 1, LastEmittedState = (int)RmsDueState.Overdue, LastEmittedOn = T0 }).ToList());
+			var cappedDue = await _svc.GetExecutiveSummaryAsync(Dept, Admin, Q());
+			cappedDue.WentOverdue.Should().Be(RecordsAnalyticsLimits.RowCap);
+			cappedDue.Warnings.Should().ContainSingle(w => w.Contains("due-state changes"));
+
 			for (var i = 0; i < RecordsAnalyticsLimits.RowCap + 1; i++) _records.Add(new RmsOperationalRecord { RmsOperationalRecordId = "x" + i, DepartmentId = Dept, DefinitionKey = RmsDefinitionKeys.Run, RecordType = 1, State = (int)RmsRecordState.Finalized, CurrentRevisionId = "rx" + i, StartedOn = T0, CreatedOn = T0, FinalizedOn = T0 });
 			var capped = await _svc.GetWorkloadAsync(Dept, Member, Q());
 			capped.Truncated.Should().BeTrue();

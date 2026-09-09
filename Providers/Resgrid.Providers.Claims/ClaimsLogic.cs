@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -1670,7 +1670,7 @@ namespace Resgrid.Providers.Claims
 		{
 			AddClaimOnce(identity, ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View);
 
-			foreach (var descriptor in RecordPermissionCatalog.All)
+			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All))
 			{
 				var grants = RecordClaimGrants(descriptor.Type);
 				if (grants.Length == 0)
@@ -1741,6 +1741,10 @@ namespace Resgrid.Providers.Claims
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordLegacy, ResgridClaimTypes.Actions.View) };
 				case PermissionTypes.ViewGroupRecords:
 					return NoGrants;
+				case PermissionTypes.ManageChecklists:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update) };
+				case PermissionTypes.ViewChecklistResults:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View) };
 				case PermissionTypes.ManageRecordDefinitions:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Update) };
 				case PermissionTypes.PublishRecordDefinitions:

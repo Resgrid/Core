@@ -7,6 +7,12 @@ namespace Resgrid.Model
 	/// </summary>
 	public static class FeatureFlagKeys
 	{
+		/// <summary>Free checklists rollout gate. Independent of paid plans and Maintenance.WorkOrders. Seeded off by M0189.</summary>
+		public const string ChecklistsSystem = "Checklists.System";
+
+		/// <summary>Maintenance and work orders rollout gate. Also requires a Readiness Pro entitlement. Seeded off by M0189.</summary>
+		public const string MaintenanceWorkOrders = "Maintenance.WorkOrders";
+
 		/// <summary>
 		/// Routes inbound Twilio SMS through the new chatbot ingress pipeline. When off (globally or for a
 		/// specific department) the original text-command handling in TwilioController is used instead.

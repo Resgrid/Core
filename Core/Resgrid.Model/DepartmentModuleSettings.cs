@@ -61,5 +61,8 @@ namespace Resgrid.Model
 		public bool MaintenanceDisabled { get; set; }
 		[ProtoMember(22)]
 		public string MaintenanceNameOverride { get; set; }
+
+		[ProtoMember(23)]
+		public bool ChecklistsDisabled { get; set; }
 	}
 }

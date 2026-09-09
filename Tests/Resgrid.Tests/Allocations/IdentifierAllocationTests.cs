@@ -22,6 +22,8 @@ namespace Resgrid.Tests.Allocations
 		#region Registry test 1 — no duplicate values in append-only enums
 
 		[TestCase(typeof(PermissionTypes))]
+		[TestCase(typeof(EventingTypes))]
+		[TestCase(typeof(PlanAddonTypes))]
 		[TestCase(typeof(WorkflowTriggerEventType))]
 		[TestCase(typeof(DepartmentSettingTypes))]
 		[TestCase(typeof(Resgrid.Model.Events.EventTypes))]

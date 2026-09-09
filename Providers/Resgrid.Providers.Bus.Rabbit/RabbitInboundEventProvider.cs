@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Channels;
@@ -29,6 +29,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<int, UnitLocationUpdatedEvent, Task> UnitLocationUpdated;
 		public Func<int, string, Task> ProcessIncidentCommandUpdated;
 		public Func<int, string, Task> ProcessChatEvent;
+		public Func<int, string, Task> ProcessChecklistEvent;
 
 		public async Task Start(string clientName, string queueName)
 		{
@@ -172,6 +173,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 								if (ProcessIncidentCommandUpdated != null)
 									await ProcessIncidentCommandUpdated.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
 								break;
+							case EventingTypes.ChecklistUpdated:
+								if (ProcessChecklistEvent != null) await ProcessChecklistEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
 							case EventingTypes.ChatEvent:
 								if (ProcessChatEvent != null)
 									await ProcessChatEvent.Invoke(eventingMessage.DepartmentId, eventingMessage.Payload);
@@ -235,6 +239,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 			UnitLocationUpdated = unitLocationUpdated;
 			ProcessIncidentCommandUpdated = incidentCommandUpdated;
 		}
+
+		public void RegisterForChecklistEvents(Func<int, string, Task> checklistEvent) => ProcessChecklistEvent = checklistEvent;
 
 		public void RegisterForChatEvents(Func<int, string, Task> chatEvent)
 		{

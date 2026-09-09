@@ -203,6 +203,17 @@ namespace Resgrid.Model
 		ContactPreplanUpdated,
 		ContactPreplanRemoved,
 		ContactAttachmentAdded,
-		ContactAttachmentRemoved
+		ContactAttachmentRemoved,
+		ChecklistDefinitionAdded,
+		ChecklistDefinitionUpdated,
+		ChecklistDefinitionPublished,
+		ChecklistDefinitionRetired,
+		ChecklistDefinitionRemoved,
+		ChecklistCompletionStarted,
+		ChecklistProgressSaved,
+		ChecklistCompletionSubmitted,
+		ChecklistWitnessAttested,
+		ChecklistFileAdded,
+		ChecklistFileRemoved
 	}
 }

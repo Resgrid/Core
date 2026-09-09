@@ -1,0 +1,31 @@
+@model Resgrid.Web.Areas.User.Models.Checklists.ChecklistTemplatesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["Templates"]; }
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-12"><h2>@localizer["Templates"]</h2><p>@localizer["Free"]</p></div>
+</div>
+<div class="wrapper wrapper-content">
+	<div class="ibox"><div class="ibox-content">
+		<p>@localizer["Guidance"]</p>
+		<form method="get" asp-action="Templates" asp-controller="Checklists" asp-area="User" class="form-inline m-b-md">
+			<label for="query">@localizer["SearchLabel"]</label>
+			<input id="query" name="query" value="@Model.Query" maxlength="256" class="form-control" type="search" />
+			<button type="submit" class="btn btn-primary">@localizer["Search"]</button>
+		</form>
+		@if (Model.Templates.Count == 0)
+		{
+			<p role="status">@localizer["NoResults"]</p>
+		}
+		@foreach (var template in Model.Templates)
+		{
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<h3>@template.Name <small>@template.Sector</small></h3>
+					<p>@template.Description</p>
+					<a asp-action="Template" asp-controller="Checklists" asp-area="User" asp-route-id="@template.Id" class="btn btn-default">@localizer["Preview"] <span class="sr-only">@template.Name</span></a>
+				</div>
+			</div>
+		}
+	</div></div>
+</div>

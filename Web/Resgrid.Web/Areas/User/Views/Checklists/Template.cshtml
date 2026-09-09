@@ -1,0 +1,33 @@
+@model Resgrid.Model.Checklists.ChecklistTemplate
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@{ ViewBag.Title = "Resgrid | " + Model.Name; }
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-12"><h2>@Model.Name</h2><p>@Model.Sector</p></div>
+</div>
+<div class="wrapper wrapper-content">
+	<div class="ibox"><div class="ibox-content">
+		<p>@Model.Description</p>@if (ClaimsAuthorizationHelper.CanManageChecklists()) { <p><a class="btn btn-primary" asp-action="New" asp-route-templateId="@Model.Id">@localizer["Use this template"]</a></p> }
+		<p>@localizer["Guidance"]</p>
+		@if (Model.RequiresIndependentWitness)
+		{
+			<p class="alert alert-info">@localizer["Witness"]</p>
+		}
+		@foreach (var checklistSection in Model.Sections)
+		{
+			<h3>@checklistSection.Name</h3>
+			<ul class="list-group">
+				@foreach (var item in checklistSection.Items)
+				{
+					<li class="list-group-item">
+						@item.Name
+						@if (item.Critical) { <span class="label label-danger">@localizer["Critical"]</span> }
+						@if (item.Required) { <span class="label label-default">@localizer["Required"]</span> }
+						@if (item.RequireNoteOnFail) { <p class="help-block">@localizer["FailNote"]</p> }
+					</li>
+				}
+			</ul>
+		}
+		<a asp-action="Templates" asp-controller="Checklists" asp-area="User" class="btn btn-default">@localizer["Back"]</a>
+	</div></div>
+</div>

@@ -1,0 +1,21 @@
+@model Resgrid.Web.Areas.User.Models.Checklists.ChecklistEditView
+@using Newtonsoft.Json
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["EditChecklist"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+    <h2>@localizer["EditChecklist"]</h2><p>@localizer["DraftGuidance"]</p>
+    @await Html.PartialAsync("_Protection")
+    <div id="checklist-error" class="alert alert-danger" role="alert" hidden></div>
+    <form id="checklist-editor" class="checklist-form" asp-action="SaveDefinition" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" /><input type="hidden" name="revision" value="@Model.Revision" /><input type="hidden" name="formJson" />
+        <div id="checklist-builder"></div>
+        <button class="btn btn-primary" type="submit">@localizer["SaveDraft"]</button>
+        <a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
+    </form>
+    <script id="checklist-form-data" type="application/json">@Html.Raw(JsonConvert.SerializeObject(Model.Form, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+</div></div></div>
+@section Scripts {
+    @await Html.PartialAsync("_ProtectionScripts")
+    <script src="~/js/app/internal/checklists/checklists.js" asp-append-version="true"></script>
+}

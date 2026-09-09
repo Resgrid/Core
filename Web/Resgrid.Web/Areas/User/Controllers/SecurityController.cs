@@ -482,7 +482,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Rows come from RecordPermissionCatalog so this screen, ClaimsLogic.AddRecordClaims and the
 			// activation-time row migration share one set of no-row defaults. A missing row preselects that
 			// default, which for the Logs-parity types equals today's CreateLog/DeleteLog fall-through.
-			model.RecordsPermissions = RecordsPermissionRows.Build(permissions);
+			model.RecordsPermissions = RecordsPermissionRows.Build(permissions).Concat(RecordsPermissionRows.Build(permissions, ChecklistPermissionCatalog.All)).ToList();
 			var recordsState = await _recordsCutoverService.GetModuleStateAsync(DepartmentId);
 			model.RecordsFlagEnabled = recordsState != null && recordsState.FlagEnabled;
 			model.RecordsActivated = recordsState != null && recordsState.RecordsUsable;

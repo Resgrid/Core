@@ -42,6 +42,13 @@ namespace Resgrid.Model
 
 		public string GetExternalKey()
 		{
+			if (AddonType == (int)PlanAddonTypes.ReadinessPro)
+			{
+				// Readiness Pro has separate live/test prices; never use a live price in test mode.
+				var priceId = Config.PaymentProviderConfig.IsTestMode ? TestExternalId : ExternalId;
+				return string.IsNullOrWhiteSpace(priceId) ? null : priceId.Trim();
+			}
+
 			if (!string.IsNullOrEmpty(ExternalId))
 				return ExternalId;
 
@@ -73,6 +80,11 @@ namespace Resgrid.Model
 
 		public DateTime GetEndDateFromNow()
 		{
+			// Readiness Pro has its own monthly interval, even on an annual base plan.
+			// Actual paid access uses the reconciled PaymentAddon interval, never this estimate.
+			if (AddonType == (int)PlanAddonTypes.ReadinessPro)
+				return DateTime.UtcNow.AddMonths(1);
+
 			if (Plan != null)
 			{
 				switch ((PlanFrequency)Plan.Frequency)
@@ -100,6 +112,8 @@ namespace Resgrid.Model
 					return "Push-To-Talk";
 				case PlanAddonTypes.ADP:
 					return "Advanced Data Protection";
+				case PlanAddonTypes.ReadinessPro:
+					return "Readiness Pro";
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Autofac;
 using System.Security.Claims;
 using CommonServiceLocator;
@@ -312,6 +312,9 @@ namespace Resgrid.Web.Helpers
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete);
 		}
+
+		public static bool CanManageChecklists() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update);
+		public static bool CanViewChecklistResults() => GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View);
 
 		public static bool CanViewRoutes()
 		{

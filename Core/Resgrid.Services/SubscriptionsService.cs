@@ -1155,6 +1155,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> ModifyPTTAddonSubscriptionAsync(string stripeCustomerId, long quantity, PlanAddon planAddon)
 		{
+			if (planAddon?.AddonType == (int)PlanAddonTypes.ReadinessPro)
+				return false;
+
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
 				if (string.IsNullOrWhiteSpace(stripeCustomerId))
@@ -1463,6 +1466,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> ModifyPaddlePTTAddonSubscriptionAsync(string paddleCustomerId, long quantity, PlanAddon planAddon)
 		{
+			if (planAddon?.AddonType == (int)PlanAddonTypes.ReadinessPro)
+				return false;
+
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
 				if (string.IsNullOrWhiteSpace(paddleCustomerId))

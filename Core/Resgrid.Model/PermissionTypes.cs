@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Model
+namespace Resgrid.Model
 {
 	public enum PermissionTypes
 	{
@@ -148,7 +148,10 @@
 		/// released on 2026-08-27; 68 is Unified Search's ManageSearchIndex). Reading prevention data needs only
 		/// Record_View; investigations use ViewRestrictedRecords (59) plus case membership, never this value.
 		/// </summary>
-		RecordsPreventionAdmin = 69
+		RecordsPreventionAdmin = 69,
+
+		ManageChecklists = 112,
+		ViewChecklistResults = 113
 	}
 
 }

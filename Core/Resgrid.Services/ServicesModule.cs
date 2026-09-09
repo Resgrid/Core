@@ -15,6 +15,10 @@ namespace Resgrid.Services
 
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterType<ReadinessAccessService>().As<IReadinessAccessService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChecklistTemplateService>().As<IChecklistTemplateService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChecklistAuthorizationService>().As<IChecklistAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowService>().As<IWorkflowService>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentCommandService>().As<IIncidentCommandService>().InstancePerLifetimeScope();

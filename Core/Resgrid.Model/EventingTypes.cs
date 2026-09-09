@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Model
+namespace Resgrid.Model
 {
 	public enum EventingTypes
 	{
@@ -11,6 +11,7 @@
 		PersonnelLocationUpdated = 7,
 		UnitLocationUpdated = 8,
 		IncidentCommandUpdated = 9,
-		ChatEvent = 10
+		ChatEvent = 10,
+		ChecklistUpdated = 11
 	}
 }

@@ -1,0 +1,57 @@
+@model Resgrid.Model.Checklists.ChecklistRunView
+@using Resgrid.Model.Checklists
+@using System.Linq
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@{ ViewBag.Title = "Resgrid | " + Model.Form.Name; var run = Model.Completion; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+    <h2>@Model.Form.Name</h2><p>@Model.Target.Name</p>
+    @await Html.PartialAsync("_Protection")
+    <dl class="dl-horizontal">
+        <dt>@localizer["State"]</dt><dd>@localizer[((ChecklistRunState)run.State).ToString()]</dd>
+        <dt>@localizer["Score"]</dt><dd>@(run.Score.HasValue ? run.Score + "%" : localizer["NoScore"].Value)</dd>
+        <dt>@localizer["Result"]</dt><dd>@(run.SubmittedOn.HasValue ? run.Passed ? localizer["Passed"] : localizer["Failed"] : localizer["Incomplete"])</dd>
+        <dt>@localizer["Author"]</dt><dd>@run.CreatedBy</dd><dt>@localizer["Submitted"] (UTC)</dt><dd>@run.SubmittedOn?.ToString("u")</dd>
+        <dt>@localizer["Version"]</dt><dd>@Model.VersionNumber</dd>
+        @if (run.WitnessedOn.HasValue) { <dt>@localizer["WitnessLabel"]</dt><dd>@run.WitnessUserId · @run.WitnessedOn.Value.ToString("u")</dd><dt>@localizer["Attestation"]</dt><dd>@((string)Newtonsoft.Json.Linq.JObject.Parse(run.Content ?? "{}")["WitnessAttestation"])</dd> }
+    </dl>
+    @foreach (var checklistSection in Model.Form.Sections)
+    {
+        <h3>@checklistSection.Name</h3>
+        <table class="table table-bordered"><thead><tr><th>@localizer["Item"]</th><th>@localizer["Answer"]</th><th>@localizer["Note"]</th><th>@localizer["Evidence"]</th></tr></thead><tbody>
+        @foreach (var item in checklistSection.Items)
+        {
+            var answer = Model.Input.Answers.FirstOrDefault(a => a.ItemId == item.Id);
+            var displayAnswer = answer?.Status == ChecklistAnswerStatus.NotApplicable ? localizer["N/A"].Value + ": " + answer.NotApplicableReason : localizer["Unanswered"].Value;
+            if (answer?.Status == ChecklistAnswerStatus.Answered)
+            {
+                displayAnswer = item.Type == ChecklistItemType.PassFail ? localizer[answer.Value == "pass" ? "Pass" : "Fail"].Value
+                    : item.Type == ChecklistItemType.YesNo ? localizer[answer.Value == "true" ? "Yes" : "No"].Value
+                    : item.Type == ChecklistItemType.Checkbox ? localizer[answer.Value == "true" ? "Checked" : "Unchecked"].Value
+                    : answer.Value;
+            }
+            <tr><td>@item.Name @if(item.Critical) { <strong>(@localizer["Critical"])</strong> }</td><td>@displayAnswer</td><td style="white-space: pre-wrap">@answer?.Note</td><td>
+            @foreach (var file in Model.Files.Where(f => f.ItemId == item.Id)) { <a class="checklist-evidence" asp-action="Evidence" asp-route-id="@file.Id">@file.Content</a><br /> }
+            </td></tr>
+        }
+        </tbody></table>
+    }
+    <p style="white-space: pre-wrap">@Model.Input.LocationDescription</p>
+    <p style="white-space: pre-wrap">@Model.Input.Note</p>
+    @if (Model.Input.Latitude.HasValue) { <p>@localizer["ReportedLocation"]: @Model.Input.Latitude, @Model.Input.Longitude</p> }
+    @if (run.State == (int)ChecklistRunState.AwaitingWitness)
+    {
+        <p class="alert alert-info">@localizer["WitnessInstructions"]</p>
+        @if (run.CreatedBy != (string)ViewBag.ChecklistUserId && ViewBag.ChecklistsEnabled == true)
+        {
+            <form class="checklist-form" asp-action="Witness" method="post">
+                @Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.Id" /><input type="hidden" name="submissionHash" value="@run.SubmissionHash" />
+                <label for="attestation">@localizer["Attestation"]</label><textarea id="attestation" name="attestation" class="form-control" maxlength="2000" required></textarea>
+                <button class="btn btn-primary" type="submit">@localizer["Attest"]</button>
+            </form>
+        }
+    }
+    <form class="checklist-form" asp-action="Export" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@run.Id" /><button class="btn btn-default" type="submit">@localizer["Export"]</button></form>
+    <button class="btn btn-default" type="button" onclick="window.print()">@localizer["Print"]</button>
+    <a class="btn btn-default" asp-action="Detail" asp-route-id="@run.ParentId">@localizer["History"]</a>
+</div></div></div>
+@section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

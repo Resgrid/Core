@@ -15,6 +15,7 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterType<ChecklistRepository>().As<IChecklistRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<StandardIsolation>().As<IISolationLevel>().InstancePerLifetimeScope();
 
 			if (Config.DataConfig.DatabaseType == Config.DatabaseTypes.Postgres)

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Resgrid.Model
 {
@@ -386,6 +386,11 @@ namespace Resgrid.Model
 
 			switch (eventType)
 			{
+				case WorkflowTriggerEventType.ChecklistCompleted:
+				case WorkflowTriggerEventType.ChecklistFailed:
+					foreach (var field in new[] { "completion_id", "definition_id", "version_id", "target_type", "target_id", "score", "passed", "item_id", "url" })
+						list.Add(new TemplateVariableDescriptor("checklist." + field, "Checklist " + field, field == "passed" ? "bool" : field == "score" ? "decimal" : field == "target_type" ? "int" : "string", false));
+					break;
 				case WorkflowTriggerEventType.CommandEstablished:
 				case WorkflowTriggerEventType.CommandTransferred:
 				case WorkflowTriggerEventType.IncidentClosed:

@@ -484,8 +484,15 @@ namespace Resgrid.Services.Records
 
 		private async Task<int> WentOverdueAsync(Context c, Dataset data, DateTime start, DateTime end)
 		{
-			var rows = ((await _dueStates.GetLastEmittedInRangeAsync(c.DepartmentId, start, end, RecordsAnalyticsLimits.RowCap)) ?? Enumerable.Empty<RmsRecordDueState>())
-				.Where(d => d.OverdueCount > 0 && d.LastEmittedOn.HasValue && d.LastEmittedOn >= start && d.LastEmittedOn < end && (d.LastEmittedState == (int)RmsDueState.Overdue || d.LastEmittedState == (int)RmsDueState.Cleared));
+			// One row past the cap says whether the read was cut short. The due-state read is its own input, so it carries
+			// its own warning: Finish's Truncated flag speaks for the Records read and would not name this figure.
+			var read = ((await _dueStates.GetLastEmittedInRangeAsync(c.DepartmentId, start, end, RecordsAnalyticsLimits.RowCap + 1)) ?? Enumerable.Empty<RmsRecordDueState>()).ToList();
+			if (read.Count > RecordsAnalyticsLimits.RowCap)
+			{
+				read = read.Take(RecordsAnalyticsLimits.RowCap).ToList();
+				c.Warnings.Add($"More than {RecordsAnalyticsLimits.RowCap:N0} due-state changes fall in this window; the count of obligations that went overdue covers the first {RecordsAnalyticsLimits.RowCap:N0} by emission. Narrow the window.");
+			}
+			var rows = read.Where(d => d.OverdueCount > 0 && d.LastEmittedOn.HasValue && d.LastEmittedOn >= start && d.LastEmittedOn < end && (d.LastEmittedState == (int)RmsDueState.Overdue || d.LastEmittedState == (int)RmsDueState.Cleared));
 			if (!c.GroupScoped) return rows.Count();
 			// A group-scoped viewer only counts obligations on Records they can open.
 			var mine = data.Records.Select(r => r.RmsOperationalRecordId).Concat(data.Reports.Select(r => r.RmsIncidentReportId)).ToHashSet(StringComparer.Ordinal);

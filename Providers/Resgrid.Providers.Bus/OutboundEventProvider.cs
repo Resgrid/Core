@@ -1,4 +1,4 @@
-﻿using Resgrid.Config;
+using Resgrid.Config;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
@@ -60,6 +60,13 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(personnelLocationUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(unitLocationUpdatedTopicHandler);
 			_eventAggregator.AddListener(chatEventTopicHandler);
+			_eventAggregator.AddAsyncListener<DomainEventDispatchedEvent>(async message =>
+			{
+				if (message.ProducerSubsystem != "Checklists" || message.IsReplay) return;
+				if (_rabbitTopicProvider == null) _rabbitTopicProvider = new RabbitTopicProvider();
+				if (!await _rabbitTopicProvider.ChecklistUpdated(message.DepartmentId, message.AggregateId))
+					throw new InvalidOperationException("Checklist event delivery failed; the outbox will retry.");
+			});
 		}
 
 		public Action<UnitStatusEvent> unitStatusHandler = async delegate (UnitStatusEvent message)

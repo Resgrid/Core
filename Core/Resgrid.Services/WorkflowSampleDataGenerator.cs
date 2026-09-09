@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Resgrid.Model;
 using Scriban.Runtime;
 
@@ -78,6 +78,10 @@ namespace Resgrid.Services
 		{
 			switch (eventType)
 			{
+				case WorkflowTriggerEventType.ChecklistCompleted:
+				case WorkflowTriggerEventType.ChecklistFailed:
+					obj["checklist"] = new ScriptObject { ["completion_id"] = "11111111-1111-1111-1111-111111111111", ["definition_id"] = "22222222-2222-2222-2222-222222222222", ["version_id"] = "33333333-3333-3333-3333-333333333333", ["target_type"] = 1, ["target_id"] = "12", ["score"] = 75m, ["passed"] = false, ["item_id"] = "44444444-4444-4444-4444-444444444444", ["url"] = "/User/Checklists/CompletionDetail/11111111-1111-1111-1111-111111111111" };
+					break;
 				case WorkflowTriggerEventType.CallAdded:
 				case WorkflowTriggerEventType.CallUpdated:
 				case WorkflowTriggerEventType.CallClosed:

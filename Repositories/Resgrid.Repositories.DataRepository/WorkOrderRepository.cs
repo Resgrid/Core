@@ -43,7 +43,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			if (scope == null || string.IsNullOrWhiteSpace(scope.UserId) || filter.Page < 0 || filter.Page > 10000) throw new ArgumentException("Invalid work-order scope.");
 			var parameters = new DynamicParameters(new { DepartmentId = departmentId, UserId = scope.UserId, AllowedGroup = scope.GroupId, Status = (int?)filter.Status, Priority = (int?)filter.Priority, UnitId = filter.UnitId, GroupId = filter.GroupId, AssetId = filter.AssetId, Skip = filter.Page * 50, Take = 51 });
-			parameters.Add("Roles", InListValue(scope.RoleIds.Length == 0 ? new[] { -1 } : scope.RoleIds));
+			parameters.Add("Roles", InListValue(scope.RoleIds == null || scope.RoleIds.Length == 0 ? new[] { -1 } : scope.RoleIds));
 			var own = $"({Col("CreatedBy")}={P}UserId OR {Col("AssignedToUserId")}={P}UserId OR {InList("AssignedToRoleId", "Roles")} OR {Col("TargetGroupId")}={P}AllowedGroup)";
 			var conditions = new List<string> { $"{Col("DepartmentId")}={P}DepartmentId" };
 			if (!scope.All) conditions.Add(own);

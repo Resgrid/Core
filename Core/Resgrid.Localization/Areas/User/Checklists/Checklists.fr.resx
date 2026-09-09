@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>La capture des éléments de préparation exige une intervention et couvre les 30 jours précédents ; les dates de couverture personnalisées ne sont pas prises en charge.</value></data>
   <data name="TargetType" xml:space="preserve"><value>Type de cible</value></data>
   <data name="Group" xml:space="preserve"><value>Caserne / groupe</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>Les listes de contrôle sont désactivées pour ce département.</value></data>
 </root>

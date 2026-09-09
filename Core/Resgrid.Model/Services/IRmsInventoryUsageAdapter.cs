@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Model.Inventories;
 
 namespace Resgrid.Model.Services
 {
@@ -17,6 +18,8 @@ namespace Resgrid.Model.Services
 		public string RecordId { get; set; }
 		public int? LegacyLogId { get; set; }
 		public int InventoryId { get; set; }
+		public string TransactionId { get; set; }
+		public string ItemId { get; set; }
 		public decimal Quantity { get; set; }
 		public string Note { get; set; }
 		public string ItemName { get; set; }
@@ -37,7 +40,8 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface IRmsInventoryUsageAdapter
 	{
-		Task<RmsInventoryUsage> ConsumeAsync(int departmentId, string userId, string recordId, RmsRecordKind kind, long expectedRowVersion, int typeId, int groupId, int? unitId, decimal quantity, string note, CancellationToken cancellationToken = default);
+		Task<RmsInventoryUsage> ConsumeAsync(int departmentId, string userId, string recordId, RmsRecordKind kind, long expectedRowVersion, int typeId, int groupId, int? unitId, decimal quantity, string note, CancellationToken cancellationToken = default, string grantToken = null);
+		Task<RmsInventoryUsage> ConsumeModernAsync(InventoryActor actor, string recordId, RmsRecordKind kind, long expectedRowVersion, InventoryCommand command, CancellationToken cancellationToken = default);
 		Task<List<RmsInventoryUsage>> GetUsageForRecordAsync(int departmentId, string recordId);
 
 		Task<List<RmsInventoryUsage>> GetUsageForLegacyLogAsync(int departmentId, int logId);

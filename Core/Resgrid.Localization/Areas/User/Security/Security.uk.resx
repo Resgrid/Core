@@ -994,4 +994,22 @@
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Хто може передати чернетку звіту іншому автору, наприклад коли початковий автор недоступний.</value></data>
   <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Керування даними профілактики</value></data>
   <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Хто може створювати та змінювати об'єкти, програми перевірок і збірки норм, гідранти, дозволи та заходи зі зниження ризиків у громаді. Для читання даних профілактики достатньо доступу до Записів; розслідування регулюються дозволом на обмежені записи та членством у справі.</value></data>
+  <data name="PermRecordsIssueInventoryLabel" xml:space="preserve">
+    <value>Видача та повернення інвентаря</value>
+  </data>
+  <data name="PermRecordsIssueInventoryNote" xml:space="preserve">
+    <value>Визначає, хто може видавати та повертати інвентар. За замовчуванням це дозволено адміністраторам департаменту.</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesLabel" xml:space="preserve">
+    <value>Керування контрольованими речовинами</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesNote" xml:space="preserve">
+    <value>Визначає, хто може реєструвати та засвідчувати операції з контрольованими речовинами. За замовчуванням це дозволено адміністраторам департаменту. Кожну операцію має засвідчити інша уповноважена особа.</value>
+  </data>
+  <data name="PermRecordsTransferInventoryLabel" xml:space="preserve">
+    <value>Переміщення інвентаря</value>
+  </data>
+  <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
+    <value>Визначає, хто може переміщувати інвентар між місцями зберігання. За замовчуванням це дозволено адміністраторам департаменту.</value>
+  </data>
 </root>

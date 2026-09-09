@@ -30,11 +30,12 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IIdentityRepository _identityRepository;
 		private readonly IUnitOfWork _unitOfWork;
+		private readonly IInventoryStore _inventoryStore;
 
 		public DepartmentGroupsService(IDepartmentGroupsRepository departmentGroupsRepository, IDepartmentGroupMembersRepository departmentGroupMembersRepository,
 			ISubscriptionsService subscriptionsService, IAddressService addressService, IDepartmentsService departmentsService, IGeoLocationProvider geoLocationProvider,
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator, ICacheProvider cacheProvider,
-			IIdentityRepository identityRepository, IUnitOfWork unitOfWork)
+			IIdentityRepository identityRepository, IUnitOfWork unitOfWork, IInventoryStore inventoryStore = null)
 		{
 			_departmentGroupsRepository = departmentGroupsRepository;
 			_departmentGroupMembersRepository = departmentGroupMembersRepository;
@@ -47,6 +48,7 @@ namespace Resgrid.Services
 			_cacheProvider = cacheProvider;
 			_identityRepository = identityRepository;
 			_unitOfWork = unitOfWork;
+			_inventoryStore = inventoryStore;
 		}
 
 		public async Task<List<DepartmentGroup>> GetAllAsync()
@@ -251,6 +253,9 @@ namespace Resgrid.Services
 		public async Task<bool> DeleteGroupByIdAsync(int groupId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var group = await GetGroupByIdAsync(groupId);
+			if (group == null) return false;
+			return await InventoryHolderRetention.DeleteAsync(_inventoryStore, _unitOfWork, group.DepartmentId, groupId, false, async () =>
+			{
 			var members = await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(groupId);
 
 			foreach (var departmentGroupMember in members)
@@ -263,6 +268,7 @@ namespace Resgrid.Services
 			SendGroupVisibilityRefresh(group?.DepartmentId ?? 0);
 
 			return true;
+			}, cancellationToken);
 		}
 
 		public async Task<DepartmentGroup> UpdateAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken))

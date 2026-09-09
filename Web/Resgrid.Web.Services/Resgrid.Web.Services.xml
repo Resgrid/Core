@@ -2339,6 +2339,15 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.CloseIncidentChannels(System.Int32)">
             <summary>Closes all open on-demand tactical channels for a call.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetAll(System.Int32)">
+            <summary>One page of catalog items. Continue with page+1 while HasMore is true.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.UpdateItem(Resgrid.Web.Services.Models.v4.Inventory.InventoryAdjustmentInput,System.Threading.CancellationToken)">
+            <summary>Adjustment compatibility route: provide a positive delta and exactly one explicit source/destination location.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetLowStockItems(System.Int32)">
+            <summary>Bulk items at/below their reorder point, using only stock locations this caller can view. Page is the catalog page.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MappingController">
             <summary>
             Mapping operations
@@ -11698,6 +11707,12 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentCapabilitiesResult">
             <summary>The current user's effective incident capabilities (raw flags value + granted names).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Inventory.InventoryAdjustmentInput">
+            <summary>A positive quantity delta with an explicit direction, never an absolute replacement balance.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem">
+            <summary>Bulk stock visible to this caller, summed across authorized locations and lots.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetCustomMapRegionsGeoJSONResult.GeoJson">
             <summary>

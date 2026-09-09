@@ -21,7 +21,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ViewBag.MissedOnly = missedOnly;
 				return View("ChecklistComplianceReport", report);
 			}
-			catch (ChecklistException ex) { return StatusCode(ex.StatusCode, ChecklistReportDocuments.Text("The request could not be completed.")); }
+			catch (ChecklistException ex) { Resgrid.Framework.Logging.LogError($"Checklist compliance report failed for department {DepartmentId}: status {ex.StatusCode}."); return StatusCode(ex.StatusCode, ChecklistReportDocuments.Text("The request could not be completed.")); }
 		}
 	}
 }

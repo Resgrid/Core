@@ -251,7 +251,19 @@ namespace Resgrid.Services
 					break;
 				}
 				case WorkflowTriggerEventType.InventoryAdjusted:
+				case WorkflowTriggerEventType.InventoryTransferCompleted:
+				case WorkflowTriggerEventType.InventoryIssued:
+				case WorkflowTriggerEventType.InventoryReturned:
+				case WorkflowTriggerEventType.InventoryAssetStatusChanged:
+				case WorkflowTriggerEventType.ControlledSubstanceRecorded:
 				{
+					var modern = string.IsNullOrWhiteSpace(eventPayloadJson) ? null : JsonConvert.DeserializeObject<RecordsWorkflowEvent>(eventPayloadJson, new JsonSerializerSettings { FloatParseHandling = FloatParseHandling.Decimal });
+					if (Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory(modern?.Payload) || eventType != WorkflowTriggerEventType.InventoryAdjusted)
+					{
+						MapModernInventoryVariables(scriptObject, modern, eventType == WorkflowTriggerEventType.InventoryAdjusted);
+						break;
+					}
+					// Existing InventoryAdjusted templates can still render historical top-level legacy events.
 					var evt = TryDeserialize<InventoryAdjustedEvent>(eventPayloadJson);
 					if (evt?.Inventory != null)
 					{
@@ -409,7 +421,7 @@ namespace Resgrid.Services
 					foreach (var pair in Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Variables) order[pair.Variable] = ToScriptValue(payload[pair.Property]);
 					order["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/Detail/{payload["WorkOrderId"]?.Value<int>()}";
 					scriptObject["work_order"] = order;
-					scriptObject["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = ToScriptValue(new JArray("Title")), ["catalog_version"] = 18 };
+					scriptObject["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = ToScriptValue(new JArray("Title")), ["catalog_version"] = Resgrid.Model.WorkOrders.WorkOrderTables.CatalogVersion };
 					break;
 				}
 				case WorkflowTriggerEventType.ChecklistCompleted:
@@ -1145,6 +1157,42 @@ namespace Resgrid.Services
 			t["created_on"] = training.CreatedOn;
 			t["to_be_completed_by"] = training.ToBeCompletedBy;
 			obj["training"] = t;
+		}
+
+		private static void MapModernInventoryVariables(ScriptObject obj, RecordsWorkflowEvent evt, bool legacyAliases)
+		{
+			if (evt?.SchemaVersion != 1 || !Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory(evt.Payload))
+				throw new InvalidOperationException("The inventory workflow payload has an unsupported schema.");
+			using var reader = new Newtonsoft.Json.JsonTextReader(new System.IO.StringReader(Resgrid.Model.Inventories.InventoryWorkflowPayload.Routing(evt.Payload))) { FloatParseHandling = Newtonsoft.Json.FloatParseHandling.Decimal };
+			var payload = JObject.Load(reader);
+			var inventory = new ScriptObject();
+			foreach (var pair in Resgrid.Model.Inventories.InventoryWorkflowPayload.Variables) inventory[pair.Variable] = ToScriptValue(payload[pair.Property]);
+			if (legacyAliases)
+			{
+				inventory["id"] = ToScriptValue(payload["TransactionId"]);
+				inventory["type_name"] = ProtectedDataEnvelope.RedactionValue;
+				inventory["type_description"] = ProtectedDataEnvelope.RedactionValue;
+				inventory["unit_of_measure"] = string.Empty;
+				inventory["batch"] = ProtectedDataEnvelope.RedactionValue;
+				inventory["note"] = ProtectedDataEnvelope.RedactionValue;
+				inventory["location"] = ToScriptValue(payload["ToLocationId"] ?? payload["FromLocationId"]);
+				// Deprecated single-location aliases prefer the destination; transfers expose both sides in the modern variables.
+				inventory["amount"] = ToScriptValue(payload["ToQuantityAfter"] ?? payload["FromQuantityAfter"]);
+				inventory["previous_amount"] = ToScriptValue(payload["ToQuantityAfter"] != null ? payload["ToQuantityBefore"] : payload["FromQuantityBefore"]);
+				inventory["timestamp"] = ToScriptValue(payload["OccurredOn"]) ?? evt.OccurredOn;
+				inventory["group_id"] = 0;
+			}
+			obj["inventory"] = inventory;
+			obj["event"] = new ScriptObject
+			{
+				["id"] = evt.EventId ?? string.Empty, ["name"] = evt.EventName ?? string.Empty, ["schema_version"] = evt.SchemaVersion,
+				["occurred_on"] = evt.OccurredOn, ["correlation_id"] = evt.CorrelationId ?? string.Empty, ["causation_id"] = evt.CausationId ?? string.Empty,
+				["sequence"] = evt.Sequence, ["is_replay"] = evt.IsReplay, ["origin_client"] = evt.OriginClient ?? RmsOriginClient.System.ToString()
+			};
+			obj["protection"] = new ScriptObject
+			{
+				["is_redacted"] = true, ["redacted_fields"] = ToScriptValue(payload["redacted_fields"]), ["catalog_version"] = ToScriptValue(payload["catalog_version"])
+			};
 		}
 
 		private static void MapInventoryVariables(ScriptObject obj, Inventory inventory, double previousAmount)

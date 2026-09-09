@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>Збереження доказів готовності потребує події та охоплює попередні 30 днів; довільні дати періоду не підтримуються.</value></data>
   <data name="TargetType" xml:space="preserve"><value>Тип цілі</value></data>
   <data name="Group" xml:space="preserve"><value>Станція / група</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>Контрольні списки вимкнено для цього підрозділу.</value></data>
 </root>

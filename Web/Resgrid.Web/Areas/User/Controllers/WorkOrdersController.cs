@@ -54,7 +54,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> New()
 		{
 			if (!await _access.CanUseMaintenanceAsync(DepartmentId)) throw new WorkOrderException(402, "ReadinessProRequired");
-			return View("Edit", new WorkOrderEditView { Input = new WorkOrderInput(), Choices = await _orders.ChoicesAsync(Actor), CanManage = await _authorization.CanManageAsync(Actor, null) });
+			return View("Edit", new WorkOrderEditView { Input = new WorkOrderInput { RequestId = Guid.NewGuid().ToString("D") }, Choices = await _orders.ChoicesAsync(Actor), CanManage = await _authorization.CanManageAsync(Actor, null) });
 		}
 		[HttpGet]
 		public async Task<IActionResult> Detail(int id) => View("Detail", new WorkOrderDetailView { Detail = await _orders.GetAsync(Actor, id), Choices = await _orders.ChoicesAsync(Actor) });

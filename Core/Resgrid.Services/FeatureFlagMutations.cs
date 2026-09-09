@@ -15,6 +15,11 @@ namespace Resgrid.Services
 		private bool _invalidateFlags;
 		private readonly HashSet<int> _invalidateOverrides = new();
 		private readonly List<Action> _committedAudits = new();
+		private async Task InvalidateCacheAfterCommitAsync(string key)
+		{
+			try { await _cacheProvider.RemoveAsync(key); }
+			catch (Exception ex) { Resgrid.Framework.Logging.LogError($"Feature flag cache invalidation failed after commit for {key}: {ex.GetType().FullName}."); }
+		}
 		private async Task<T> MutateFlagAsync<T>(Func<Task<T>> action, CancellationToken ct)
 		{
 			if (_mutationObserver == null || _mutationUnit == null) return await action();
@@ -35,12 +40,13 @@ namespace Resgrid.Services
 				catch { _mutationUnit.DiscardChanges(); throw; }
 				_mutationActive = false;
 				// Cache failures cannot roll back committed writes or suppress their audit publication.
-				try
-				{
-					if (_invalidateFlags) await InvalidateFlagCacheAsync();
-					foreach (var department in _invalidateOverrides) await InvalidateDepartmentOverrideCacheAsync(department);
-				}
-				finally { foreach (var audit in _committedAudits) audit(); }
+				if (_invalidateFlags)
+					foreach (var key in new[] { AllFlagsCacheKey, AllRulesCacheKey, AllPrereqsCacheKey })
+						await InvalidateCacheAfterCommitAsync(key);
+				foreach (var department in _invalidateOverrides)
+					await InvalidateCacheAfterCommitAsync(string.Format(DepartmentOverridesCacheKey, department));
+				// PublishAudit already isolates individual publication failures.
+				foreach (var audit in _committedAudits) audit();
 				return result;
 			}
 			finally { _mutationActive = false; _invalidateFlags = false; _invalidateOverrides.Clear(); _committedAudits.Clear(); }

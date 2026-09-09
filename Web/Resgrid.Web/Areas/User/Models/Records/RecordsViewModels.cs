@@ -153,6 +153,15 @@ namespace Resgrid.Web.Areas.User.Models.Records
 
 	public class RecordInventoryView : RecordsBaseView
 	{
+		public bool ModernInventory { get; set; }
+		public string ItemId { get; set; }
+		public string LocationId { get; set; }
+		public string LotId { get; set; }
+		public string AssetId { get; set; }
+		public string RequestId { get; set; } = System.Guid.NewGuid().ToString("D");
+		public List<SelectListItem> Locations { get; set; } = new();
+		public List<SelectListItem> Lots { get; set; } = new();
+		public List<SelectListItem> Assets { get; set; } = new();
 		public string RecordId { get; set; }
 		public RmsRecordKind Kind { get; set; }
 		public long RowVersion { get; set; }

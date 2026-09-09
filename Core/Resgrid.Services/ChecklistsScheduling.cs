@@ -13,13 +13,13 @@ namespace Resgrid.Services
 {
 	public partial class ChecklistsService
 	{
-		public async Task<List<ChecklistScheduleView>> SchedulesAsync(ChecklistActor actor, string definitionId, int page = 0)
+		public async Task<List<ChecklistScheduleView>> SchedulesAsync(ChecklistActor actor, string definitionId, int page = 0, bool includeNext = false)
 		{
 			Id(definitionId); await _authorization.RequireMemberAsync(actor);
 			if (!await CanManageAsync(actor)) throw new ChecklistException(403, "SchedulePermission");
 			if (page < 0 || page > 10000) throw new ChecklistException(400, "ScheduleValidation");
 			var views = new List<ChecklistScheduleView>();
-			foreach (var row in await _store.ListAsync<ChecklistSchedule>(actor.DepartmentId, definitionId, page * 50, 50))
+			foreach (var row in await _store.ListAsync<ChecklistSchedule>(actor.DepartmentId, definitionId, page * 50, includeNext ? 51 : 50))
 			{
 				await RevealAsync(actor, row); views.Add(new ChecklistScheduleView { Schedule = row, Content = Decode<ChecklistScheduleContent>(row.Content) });
 			}

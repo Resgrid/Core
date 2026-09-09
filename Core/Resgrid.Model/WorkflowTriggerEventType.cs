@@ -170,7 +170,14 @@ namespace Resgrid.Model
 RecordPermitExpiring = 163,
 		WorkOrderCreated = 70,
 		WorkOrderStatusChanged = 71,
-		WorkOrderAssigned = 72
+		WorkOrderAssigned = 72,
+
+		// Inventory modernization: persisted registry allocations; InventoryAdjusted retains value 22.
+		InventoryTransferCompleted = 58,
+		InventoryIssued = 59,
+		InventoryReturned = 60,
+		InventoryAssetStatusChanged = 64,
+		ControlledSubstanceRecorded = 66
 	}
 
 	public static class WorkflowTriggerEventTypes

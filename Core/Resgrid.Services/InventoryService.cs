@@ -14,13 +14,19 @@ namespace Resgrid.Services
 		private readonly IInventoryRepository _inventoryRepository;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IUnitsService _unitsService;
+		private readonly IInventoryStore _modern;
 
-		public InventoryService(IInventoryTypesRepository inventoryTypesRepository, IInventoryRepository inventoryRepository, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService)
+		public InventoryService(IInventoryTypesRepository inventoryTypesRepository, IInventoryRepository inventoryRepository, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, IInventoryStore modern = null)
 		{
 			_inventoryTypesRepository = inventoryTypesRepository;
 			_inventoryRepository = inventoryRepository;
 			_departmentGroupsService = departmentGroupsService;
 			_unitsService = unitsService;
+			_modern = modern;
+		}
+		private async Task GuardLegacyWriteAsync(int departmentId)
+		{
+			if (_modern != null && await _modern.HasLegacyMigrationAsync(departmentId)) throw new Model.Inventories.InventoryException(409, "LegacyInventoryReadOnly");
 		}
 
 		public async Task<InventoryType> GetTypeByIdAsync(int typeId)
@@ -30,6 +36,7 @@ namespace Resgrid.Services
 
 		public async Task<InventoryType> SaveTypeAsync(InventoryType type, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			await GuardLegacyWriteAsync(type.DepartmentId);
 			return await _inventoryTypesRepository.SaveOrUpdateAsync(type, cancellationToken);
 		}
 
@@ -48,12 +55,14 @@ namespace Resgrid.Services
 
 		public async Task<Inventory> SaveInventoryAsync(Inventory inventory, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			await GuardLegacyWriteAsync(inventory.DepartmentId);
 			return await _inventoryRepository.SaveOrUpdateAsync(inventory, cancellationToken);
 		}
 
 		public async Task<bool> DeleteTypeAsync(int typeId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var type = await GetTypeByIdAsync(typeId);
+			await GuardLegacyWriteAsync(type.DepartmentId);
 			var inventories = await _inventoryRepository.GetInventoryByTypeIdAsync(typeId);
 
 			foreach (var inventory in inventories)
@@ -111,6 +120,8 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteInventoriesByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// Migrated legacy rows remain immutable historical evidence when a holder is removed.
+			if (_modern != null && await _modern.HasLegacyMigrationAsync(departmentId)) return true;
 			return await _inventoryRepository.DeleteInventoriesByGroupIdAsync(groupId, departmentId, cancellationToken);
 		}
 	}

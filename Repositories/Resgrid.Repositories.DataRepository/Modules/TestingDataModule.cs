@@ -82,6 +82,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DocumentRepository>().As<IDocumentRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<InvitesRepository>().As<IInvitesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryRepository>().As<IInventoryRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InventoryStore>().As<IInventoryStore>().InstancePerLifetimeScope();
 			builder.RegisterType<InventoryTypesRepository>().As<IInventoryTypesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoisRepository>().As<IPoisRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiTypesRepository>().As<IPoiTypesRepository>().InstancePerLifetimeScope();

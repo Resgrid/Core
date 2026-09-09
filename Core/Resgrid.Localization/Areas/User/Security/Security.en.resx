@@ -439,6 +439,24 @@
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Who can move a draft record to a different author, for example when the original author is unavailable.</value></data>
   <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Manage Prevention Data</value></data>
   <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Who can create and change occupancies, inspection programs and code sets, hydrants, permits and community risk reduction activities. Reading prevention data needs only Records access; investigations are governed by the restricted-records permission plus case membership.</value></data>
+  <data name="PermRecordsIssueInventoryLabel" xml:space="preserve">
+    <value>Issue and return inventory</value>
+  </data>
+  <data name="PermRecordsIssueInventoryNote" xml:space="preserve">
+    <value>Controls who can issue and return inventory. Defaults to department administrators.</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesLabel" xml:space="preserve">
+    <value>Manage controlled substances</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesNote" xml:space="preserve">
+    <value>Controls who can record and witness controlled-substance transactions. Defaults to department administrators. A different authorized person must witness each transaction.</value>
+  </data>
+  <data name="PermRecordsTransferInventoryLabel" xml:space="preserve">
+    <value>Transfer inventory</value>
+  </data>
+  <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
+    <value>Controls who can transfer inventory between locations. Defaults to department administrators.</value>
+  </data>
 </root>
 
 

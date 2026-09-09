@@ -157,5 +157,320 @@
   <data name="ViewInventoryEntryHeader" xml:space="preserve">
     <value>Visualizza voce di inventario</value>
   </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Azioni</value>
+  </data>
+  <data name="AddLine" xml:space="preserve">
+    <value>Aggiungi articolo</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Archivia</value>
+  </data>
+  <data name="AssetDetail" xml:space="preserve">
+    <value>Dettagli del bene</value>
+  </data>
+  <data name="AssetId" xml:space="preserve">
+    <value>ID del bene</value>
+  </data>
+  <data name="Assets" xml:space="preserve">
+    <value>Beni</value>
+  </data>
+  <data name="AssetTag" xml:space="preserve">
+    <value>Etichetta del bene</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>Attestazione del testimone</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Codice a barre</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Categorie</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>Liste di controllo</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Codice</value>
+  </data>
+  <data name="ContainerAsset" xml:space="preserve">
+    <value>ID del bene contenitore</value>
+  </data>
+  <data name="DefaultLocation" xml:space="preserve">
+    <value>Ubicazione predefinita</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descrizione</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Dettagli</value>
+  </data>
+  <data name="ExpectedReturn" xml:space="preserve">
+    <value>Data di restituzione prevista</value>
+  </data>
+  <data name="Expiration" xml:space="preserve">
+    <value>Data di scadenza</value>
+  </data>
+  <data name="FromLocation" xml:space="preserve">
+    <value>Ubicazione di origine</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Cronologia</value>
+  </data>
+  <data name="HolderHelp" xml:space="preserve">
+    <value>Seleziona una persona o un’unità a cui assegnare il materiale.</value>
+  </data>
+  <data name="Initialize" xml:space="preserve">
+    <value>Inizializza inventario</value>
+  </data>
+  <data name="InitializeDescription" xml:space="preserve">
+    <value>Inizializza l’area inventario importando articoli, giacenze e cronologia esistenti.</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Inventario</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Attivo</value>
+  </data>
+  <data name="IsControlledSubstance" xml:space="preserve">
+    <value>Sostanza controllata</value>
+  </data>
+  <data name="IsKit" xml:space="preserve">
+    <value>Articolo del kit</value>
+  </data>
+  <data name="Issuances" xml:space="preserve">
+    <value>Assegnazioni</value>
+  </data>
+  <data name="IssuanceStatus0" xml:space="preserve">
+    <value>Da restituire</value>
+  </data>
+  <data name="IssuanceStatus1" xml:space="preserve">
+    <value>Restituito</value>
+  </data>
+  <data name="IssuanceStatus2" xml:space="preserve">
+    <value>Restituito parzialmente</value>
+  </data>
+  <data name="IssuanceStatus3" xml:space="preserve">
+    <value>Smarrito</value>
+  </data>
+  <data name="IssuanceStatus4" xml:space="preserve">
+    <value>Consumato</value>
+  </data>
+  <data name="Issue" xml:space="preserve">
+    <value>Assegna</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Articoli</value>
+  </data>
+  <data name="Kits" xml:space="preserve">
+    <value>Kit</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Ubicazione</value>
+  </data>
+  <data name="Locations" xml:space="preserve">
+    <value>Ubicazioni</value>
+  </data>
+  <data name="LocationType" xml:space="preserve">
+    <value>Tipo di ubicazione</value>
+  </data>
+  <data name="LocationType0" xml:space="preserve">
+    <value>Struttura</value>
+  </data>
+  <data name="LocationType1" xml:space="preserve">
+    <value>Stazione</value>
+  </data>
+  <data name="LocationType2" xml:space="preserve">
+    <value>Unità</value>
+  </data>
+  <data name="LocationType3" xml:space="preserve">
+    <value>Personale</value>
+  </data>
+  <data name="LocationType4" xml:space="preserve">
+    <value>Contenitore</value>
+  </data>
+  <data name="LocationType5" xml:space="preserve">
+    <value>Esterna</value>
+  </data>
+  <data name="LotId" xml:space="preserve">
+    <value>ID del lotto</value>
+  </data>
+  <data name="Lots" xml:space="preserve">
+    <value>Lotti</value>
+  </data>
+  <data name="Minimum" xml:space="preserve">
+    <value>Scorta minima</value>
+  </data>
+  <data name="MoreChoices" xml:space="preserve">
+    <value>Viene mostrata solo la prima pagina delle opzioni disponibili.</value>
+  </data>
+  <data name="Movement" xml:space="preserve">
+    <value>Movimento</value>
+  </data>
+  <data name="Movement0" xml:space="preserve">
+    <value>Giacenza iniziale importata</value>
+  </data>
+  <data name="Movement1" xml:space="preserve">
+    <value>Ricevi</value>
+  </data>
+  <data name="Movement2" xml:space="preserve">
+    <value>Consuma</value>
+  </data>
+  <data name="Movement3" xml:space="preserve">
+    <value>Trasferisci</value>
+  </data>
+  <data name="Movement4" xml:space="preserve">
+    <value>Assegna</value>
+  </data>
+  <data name="Movement5" xml:space="preserve">
+    <value>Restituisci</value>
+  </data>
+  <data name="Movement6" xml:space="preserve">
+    <value>Rettifica</value>
+  </data>
+  <data name="Movement7" xml:space="preserve">
+    <value>Conta</value>
+  </data>
+  <data name="Movement8" xml:space="preserve">
+    <value>Dismetti</value>
+  </data>
+  <data name="Movement9" xml:space="preserve">
+    <value>Cambia stato</value>
+  </data>
+  <data name="MovementHelp" xml:space="preserve">
+    <value>Inserisci una quantità positiva. Le ricezioni richiedono una destinazione; i consumi e le dismissioni richiedono un’origine. Le rettifiche richiedono un’origine o una destinazione. I trasferimenti richiedono due ubicazioni diverse.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nome</value>
+  </data>
+  <data name="NewAsset" xml:space="preserve">
+    <value>Nuovo bene</value>
+  </data>
+  <data name="NewItem" xml:space="preserve">
+    <value>Nuovo articolo</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Successivo</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NoRows" xml:space="preserve">
+    <value>Nessun record di inventario da visualizzare.</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="OnHand" xml:space="preserve">
+    <value>Giacenze</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Elemento superiore</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Persona</value>
+  </data>
+  <data name="PersonnelGear" xml:space="preserve">
+    <value>Dotazione del personale</value>
+  </data>
+  <data name="PostMovement" xml:space="preserve">
+    <value>Registra movimento</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Precedente</value>
+  </data>
+  <data name="ProtectedDataRequired" xml:space="preserve">
+    <value>Verifica la tua identità per visualizzare l’inventario protetto.</value>
+  </data>
+  <data name="Rebuild" xml:space="preserve">
+    <value>Ricalcola le giacenze</value>
+  </data>
+  <data name="Reference" xml:space="preserve">
+    <value>Riferimento</value>
+  </data>
+  <data name="ReorderPoint" xml:space="preserve">
+    <value>Punto di riordino</value>
+  </data>
+  <data name="RequiresExpiration" xml:space="preserve">
+    <value>Scadenza obbligatoria</value>
+  </data>
+  <data name="RequiresLotTracking" xml:space="preserve">
+    <value>Tracciamento dei lotti</value>
+  </data>
+  <data name="Return" xml:space="preserve">
+    <value>Restituisci</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Salva</value>
+  </data>
+  <data name="SerialNumber" xml:space="preserve">
+    <value>Numero di serie</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Stato</value>
+  </data>
+  <data name="Status0" xml:space="preserve">
+    <value>In servizio</value>
+  </data>
+  <data name="Status1" xml:space="preserve">
+    <value>Assegnato</value>
+  </data>
+  <data name="Status2" xml:space="preserve">
+    <value>In riparazione</value>
+  </data>
+  <data name="Status3" xml:space="preserve">
+    <value>Danneggiato</value>
+  </data>
+  <data name="Status4" xml:space="preserve">
+    <value>Smarrito</value>
+  </data>
+  <data name="Status5" xml:space="preserve">
+    <value>Consumato</value>
+  </data>
+  <data name="Status6" xml:space="preserve">
+    <value>Dismesso</value>
+  </data>
+  <data name="ToLocation" xml:space="preserve">
+    <value>Ubicazione di destinazione</value>
+  </data>
+  <data name="Tracking0" xml:space="preserve">
+    <value>Per quantità</value>
+  </data>
+  <data name="Tracking1" xml:space="preserve">
+    <value>Per numero di serie</value>
+  </data>
+  <data name="TrackingMode" xml:space="preserve">
+    <value>Modalità di tracciamento</value>
+  </data>
+  <data name="Transfers" xml:space="preserve">
+    <value>Trasferimenti</value>
+  </data>
+  <data name="UnableToComplete" xml:space="preserve">
+    <value>Impossibile completare questa operazione di inventario.</value>
+  </data>
+  <data name="UnitCost" xml:space="preserve">
+    <value>Costo unitario</value>
+  </data>
+  <data name="UnitEquipment" xml:space="preserve">
+    <value>Attrezzatura dell’unità</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Sblocca</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>Attesta come testimone</value>
+  </data>
+  <data name="WitnessPending" xml:space="preserve">
+    <value>In attesa di un testimone autorizzato diverso dall’operatore. ID richiesta:</value>
+  </data>
+  <data name="WitnessRequest" xml:space="preserve">
+    <value>ID della richiesta di testimone</value>
+  </data>
+  <data name="WorkOrders" xml:space="preserve">
+    <value>Ordini di lavoro</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Sì</value>
+  </data>
 </root>
 

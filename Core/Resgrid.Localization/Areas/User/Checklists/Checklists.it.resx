@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>L’acquisizione delle evidenze di prontezza richiede un intervento e copre i 30 giorni precedenti; non sono supportate date personalizzate.</value></data>
   <data name="TargetType" xml:space="preserve"><value>Tipo di destinatario</value></data>
   <data name="Group" xml:space="preserve"><value>Stazione / gruppo</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>Le liste di controllo sono disabilitate per questo reparto.</value></data>
 </root>

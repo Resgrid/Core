@@ -25,7 +25,7 @@ else { <p class="alert alert-info">@localizer["ReadOnlyHistory"] <a asp-controll
 }</td></tr> }
 </tbody></table></div>
 @if (Model.Orders.Items.Count == 0) { <p>@localizer["NoWorkOrders"]</p> }
-@if (Model.Filter.Page > 0) { <a asp-route-page="@(Model.Filter.Page - 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Previous"]</a> }
-@if (Model.Orders.HasMore) { <a asp-route-page="@(Model.Filter.Page + 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Next"]</a> }
+@if (Model.Filter.Page > 0) { <a asp-action="Index" asp-route-page="@(Model.Filter.Page - 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Previous"]</a> }
+@if (Model.Orders.HasMore) { <a asp-action="Index" asp-route-page="@(Model.Filter.Page + 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Next"]</a> }
 </div></div></div>
 @section Scripts { @await Html.PartialAsync("_Scripts") }

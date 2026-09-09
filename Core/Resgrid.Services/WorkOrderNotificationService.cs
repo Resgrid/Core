@@ -51,7 +51,7 @@ namespace Resgrid.Services
 					var department = await _departments.GetDepartmentByIdAsync(entry.DepartmentId, true);
 					var number = await _settings.GetTextToCallNumberForDepartmentAsync(entry.DepartmentId);
 					var current = await _orders.GetAsync<WorkOrder>(entry.DepartmentId, id);
-					if (department == null || profile == null || current == null || !await _access.CanUseMaintenanceAsync(entry.DepartmentId) || !(await RecipientsAsync(entry.DepartmentId, current)).Contains(user))
+					if (department == null || profile == null || current == null || !await _access.CanUseMaintenanceAsync(entry.DepartmentId) || !await IsRecipientAsync(entry.DepartmentId, current, user))
 					{ await FinishAsync(notice, 3); continue; }
 					CultureInfo culture;
 					try { culture = CultureInfo.GetCultureInfo(profile.Language ?? "en"); if (!SupportedLocales.GetSupportedCultures().Contains(culture.TwoLetterISOLanguageName)) culture = CultureInfo.GetCultureInfo("en"); }
@@ -62,8 +62,25 @@ namespace Resgrid.Services
 						number, department, Strings.GetString("NotificationTitle", culture), profile);
 					await FinishAsync(notice, handedOff ? 2 : 3);
 				}
-				catch { await FinishAsync(notice, 0); throw new InvalidOperationException("Work-order notification handoff failed."); }
+				catch (Exception ex)
+				{
+					// Provider errors can contain content or credentials; only routing and exception types leave this boundary.
+					Resgrid.Framework.Logging.LogError($"Work-order notification handoff failed for department {entry.DepartmentId}, order {id}: {ex.GetType().FullName}.");
+					try { await FinishAsync(notice, 0); }
+					catch (Exception releaseEx) { Resgrid.Framework.Logging.LogError($"Work-order notification lease release failed for department {entry.DepartmentId}, order {id}: {releaseEx.GetType().FullName}."); }
+					throw new InvalidOperationException("Work-order notification handoff failed.");
+				}
 			}
+		}
+		private async Task<bool> IsRecipientAsync(int departmentId, WorkOrder row, string user)
+		{
+			var member = await _departments.GetDepartmentMemberAsync(user, departmentId, true);
+			if (member?.DepartmentId != departmentId || member.IsDeleted || member.IsDisabled == true) return false;
+			if (row.CreatedBy == user) return true;
+			var actor = new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = departmentId, UserId = user };
+			if (row.Status is 0 or 1 && await _authorization.CanManageAsync(actor, row.TargetGroupId)) return true;
+			if (row.AssignedToUserId != null) return row.AssignedToUserId == user;
+			return row.AssignedToRoleId.HasValue && (await _authorization.ScopeAsync(actor)).RoleIds.Contains(row.AssignedToRoleId.Value);
 		}
 		private async Task<System.Collections.Generic.List<string>> RecipientsAsync(int departmentId, WorkOrder row)
         {

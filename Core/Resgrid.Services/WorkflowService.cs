@@ -306,7 +306,7 @@ namespace Resgrid.Services
 			if (checklist)
 			{
 				if (string.IsNullOrEmpty(existingRunId)) throw new InvalidOperationException("Checklist workflows require a durable event run.");
-				eventPayloadJson = await ChecklistWorkflowPayload.ProjectAsync(departmentId, JObject.Parse(eventPayloadJson), _protectedProjection?.Value, wrapped: true);
+				eventPayloadJson = await ChecklistWorkflowPayload.ProjectAsync(departmentId, Resgrid.Model.Inventories.InventoryWorkflowPayload.Parse(eventPayloadJson), _protectedProjection?.Value, wrapped: true);
 				var persistedInput = new WorkflowRun { InputPayload = eventPayloadJson };
 				await History.ProtectAsync(departmentId, existingRunId, persistedInput, ReadinessHistoryFields.Runs, cancellationToken);
 				if (!await _runRepository.TryStartChecklistRunAsync(existingRunId, workflowId, departmentId, attemptNumber, persistedInput.InputPayload))

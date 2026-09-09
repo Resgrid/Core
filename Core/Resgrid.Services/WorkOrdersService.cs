@@ -150,7 +150,8 @@ namespace Resgrid.Services
 				if (manage && !await _authorization.CanManageAsync(actor, input.TargetGroupId)) throw new WorkOrderException(403, "PermissionRequired");
 				var document = Decode<StoredContent>(row.Content);
 				if (row.StartedOn.HasValue && (document.Fields.SafetyCritical && !input.Content.SafetyCritical || document.Fields.HazardousWork && !input.Content.HazardousWork)) throw new WorkOrderException(409, "SafetyRequirements");
-				if (!manage && (input.Content.ApprovedCost.HasValue || input.Content.Resolution != document.Fields.Resolution || input.Content.VerificationEvidence != document.Fields.VerificationEvidence)) throw new WorkOrderException(403, "PermissionRequired");
+				if (!manage && (input.Content.ApprovedCost.HasValue && input.Content.ApprovedCost != document.Fields.ApprovedCost || input.Content.Resolution != document.Fields.Resolution || input.Content.VerificationEvidence != document.Fields.VerificationEvidence)) throw new WorkOrderException(403, "PermissionRequired");
+				if (!manage) input.Content.ApprovedCost = document.Fields.ApprovedCost;
 				document.Fields = input.Content; row.Content = JsonConvert.SerializeObject(document); Apply(row, input);
 				await ChangedAsync(actor, row, WorkOrderActivityType.Updated, events); return true;
 			});

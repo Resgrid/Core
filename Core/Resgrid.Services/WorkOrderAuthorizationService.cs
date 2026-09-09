@@ -22,39 +22,52 @@ namespace Resgrid.Services
 		public WorkOrderAuthorizationService(IDepartmentsService departments, IDepartmentGroupsService groups, IPersonnelRolesService roles, IPermissionsService permissions,
 			IUnitsService units, IAuthorizationService resources, IChecklistAssignmentService assignments, IChecklistAssetSource assets = null)
 		{ _departments = departments; _groups = groups; _roles = roles; _permissions = permissions; _units = units; _resources = resources; _assignments = assignments; _assets = assets; }
-		public async Task RequireMemberAsync(ChecklistActor actor)
+		public async Task RequireMemberAsync(ChecklistActor actor) => await MemberAsync(actor);
+		private async Task<DepartmentMember> MemberAsync(ChecklistActor actor)
 		{
 			if (actor == null || actor.DepartmentId <= 0 || string.IsNullOrWhiteSpace(actor.UserId)) throw new WorkOrderException(403, "MembershipRequired");
 			var m = await _departments.GetDepartmentMemberAsync(actor.UserId, actor.DepartmentId, true);
 			if (m?.DepartmentId != actor.DepartmentId || m.IsDeleted || m.IsDisabled == true) throw new WorkOrderException(403, "MembershipRequired");
+			return m;
 		}
-		private async Task<bool> AllowedAsync(ChecklistActor actor, PermissionTypes type, int? groupId)
+		private sealed class ActorContext
 		{
-			await RequireMemberAsync(actor);
-			var member = await _departments.GetDepartmentMemberAsync(actor.UserId, actor.DepartmentId, true);
+			public ChecklistActor Actor;
+			public bool Admin;
+			public DepartmentGroup Group;
+			public List<PersonnelRole> Roles;
+			public readonly Dictionary<PermissionTypes, Permission> Permissions = new();
+		}
+		private async Task<ActorContext> ContextAsync(ChecklistActor actor)
+		{
+			var member = await MemberAsync(actor);
 			var department = await _departments.GetDepartmentByIdAsync(actor.DepartmentId, true);
-			var admin = member.IsAdmin == true || department?.ManagingUserId == actor.UserId;
-			var group = await _groups.GetGroupForUserAsync(actor.UserId, actor.DepartmentId);
-			var permission = await _permissions.GetPermissionByDepartmentTypeAsync(actor.DepartmentId, type);
+			return new ActorContext { Actor = actor, Admin = member.IsAdmin == true || department?.ManagingUserId == actor.UserId,
+				Group = await _groups.GetGroupForUserAsync(actor.UserId, actor.DepartmentId), Roles = await _roles.GetRolesForUserAsync(actor.UserId, actor.DepartmentId) };
+		}
+		private async Task<bool> AllowedAsync(ActorContext context, PermissionTypes type, int? groupId)
+		{
+			var actor = context.Actor; var admin = context.Admin; var group = context.Group;
+			if (!context.Permissions.TryGetValue(type, out var permission))
+				context.Permissions[type] = permission = await _permissions.GetPermissionByDepartmentTypeAsync(actor.DepartmentId, type);
 			var fallback = type == PermissionTypes.ManageWorkOrders ? PermissionActions.DepartmentAdminsOnly : PermissionActions.DepartmentAndGroupAdmins;
-			if (!RecordPermissionEvaluation.IsSatisfied(permission?.Action ?? (int)fallback, permission?.Data, admin, group?.IsUserGroupAdmin(actor.UserId) == true, await _roles.GetRolesForUserAsync(actor.UserId, actor.DepartmentId))) return false;
+			if (!RecordPermissionEvaluation.IsSatisfied(permission?.Action ?? (int)fallback, permission?.Data, admin, group?.IsUserGroupAdmin(actor.UserId) == true, context.Roles)) return false;
 			return admin || !(permission?.LockToGroup ?? type == PermissionTypes.ViewAllWorkOrders) || groupId.HasValue && groupId == group?.DepartmentGroupId;
 		}
-		public Task<bool> CanManageAsync(ChecklistActor actor, int? groupId) => AllowedAsync(actor, PermissionTypes.ManageWorkOrders, groupId);
+		public async Task<bool> CanManageAsync(ChecklistActor actor, int? groupId) => await AllowedAsync(await ContextAsync(actor), PermissionTypes.ManageWorkOrders, groupId);
 		public async Task<WorkOrderReadScope> ScopeAsync(ChecklistActor actor)
 		{
-			await RequireMemberAsync(actor);
-			var group = await _groups.GetGroupForUserAsync(actor.UserId, actor.DepartmentId);
-			var all = await AllowedAsync(actor, PermissionTypes.ViewAllWorkOrders, null) || await CanManageAsync(actor, null);
-			var groupAllowed = group != null && (await AllowedAsync(actor, PermissionTypes.ViewAllWorkOrders, group.DepartmentGroupId) || await CanManageAsync(actor, group.DepartmentGroupId));
+			var context = await ContextAsync(actor); var group = context.Group;
+			var all = await AllowedAsync(context, PermissionTypes.ViewAllWorkOrders, null) || await AllowedAsync(context, PermissionTypes.ManageWorkOrders, null);
+			var groupAllowed = group != null && (await AllowedAsync(context, PermissionTypes.ViewAllWorkOrders, group.DepartmentGroupId) || await AllowedAsync(context, PermissionTypes.ManageWorkOrders, group.DepartmentGroupId));
 			return new WorkOrderReadScope { UserId = actor.UserId, All = all, GroupId = groupAllowed ? group.DepartmentGroupId : null,
-				RoleIds = (await _roles.GetRolesForUserAsync(actor.UserId, actor.DepartmentId)).Where(r => r.DepartmentId == actor.DepartmentId).Select(r => r.PersonnelRoleId).ToArray() };
+				RoleIds = context.Roles.Where(r => r.DepartmentId == actor.DepartmentId).Select(r => r.PersonnelRoleId).ToArray() };
 		}
 		public async Task<bool> CanContributeAsync(ChecklistActor actor, WorkOrder row)
 		{
-			await RequireMemberAsync(actor);
+			var context = await ContextAsync(actor);
 			if (row?.DepartmentId != actor.DepartmentId) return false;
-			if (await CanManageAsync(actor, row.TargetGroupId)) return true;
+			if (await AllowedAsync(context, PermissionTypes.ManageWorkOrders, row.TargetGroupId)) return true;
 			if (row.AssignedToUserId != null) return row.AssignedToUserId == actor.UserId;
 			return row.AssignedToRoleId.HasValue && (await _assignments.MembersAsync(actor.DepartmentId, 2, row.AssignedToRoleId.Value.ToString())).Contains(actor.UserId);
 		}
@@ -76,10 +89,14 @@ namespace Resgrid.Services
 			}
 			if (!string.IsNullOrEmpty(input.InventoryAssetId))
 			{
-				if (!Guid.TryParseExact(input.InventoryAssetId, "D", out _) || _assets == null || !await _assets.IsAvailableAsync(actor.DepartmentId)) throw new WorkOrderException(404, "TargetUnavailable");
-				var asset = await _assets.GetAsync(actor, input.InventoryAssetId);
-				if (asset?.DepartmentId != actor.DepartmentId || asset.Id != input.InventoryAssetId || input.TargetUnitId.HasValue && input.TargetUnitId != asset.UnitId || input.TargetGroupId.HasValue && input.TargetGroupId != asset.GroupId) throw new WorkOrderException(404, "TargetUnavailable");
-				input.TargetUnitId = asset.UnitId; input.TargetGroupId = asset.GroupId;
+				try
+				{
+					if (!Guid.TryParseExact(input.InventoryAssetId, "D", out _) || _assets == null || !await _assets.IsAvailableAsync(actor.DepartmentId)) throw new WorkOrderException(404, "TargetUnavailable");
+					var asset = await _assets.GetAsync(actor, input.InventoryAssetId);
+					if (asset?.DepartmentId != actor.DepartmentId || asset.Id != input.InventoryAssetId || input.TargetUnitId.HasValue && input.TargetUnitId != asset.UnitId || input.TargetGroupId.HasValue && input.TargetGroupId != asset.GroupId) throw new WorkOrderException(404, "TargetUnavailable");
+					input.TargetUnitId = asset.UnitId; input.TargetGroupId = asset.GroupId;
+				}
+				catch (ChecklistException ex) { throw new WorkOrderException(ex.StatusCode, ex.Message); }
 			}
 		}
 		public async Task ValidateAssignmentAsync(ChecklistActor actor, WorkOrder row, string userId, int? roleId)
@@ -92,16 +109,20 @@ namespace Resgrid.Services
 		}
 		public async Task<WorkOrderChoices> ChoicesAsync(ChecklistActor actor)
 		{
-			await RequireMemberAsync(actor); var result = new WorkOrderChoices();
+			var context = await ContextAsync(actor); var result = new WorkOrderChoices();
 			foreach (var c in await _assignments.ChoicesAsync(actor))
 			{
 				var choice = new WorkOrderChoice { Id = c.Id, Name = c.Name };
 				if (c.Type == 1 && await _resources.CanUserViewPersonAsync(actor.UserId, c.Id, actor.DepartmentId)) result.Users.Add(choice);
 				if (c.Type == 2) result.Roles.Add(choice);
-				if (c.Type == 3 && ((await _groups.GetGroupForUserAsync(actor.UserId, actor.DepartmentId))?.DepartmentGroupId.ToString() == c.Id || await CanManageAsync(actor, int.Parse(c.Id)))) result.Groups.Add(choice);
+				if (c.Type == 3 && (context.Group?.DepartmentGroupId.ToString() == c.Id || await AllowedAsync(context, PermissionTypes.ManageWorkOrders, int.Parse(c.Id)))) result.Groups.Add(choice);
 				if (c.Type == 4 && await _resources.CanUserViewUnitAsync(actor.UserId, int.Parse(c.Id))) result.Units.Add(choice);
 			}
-			if (_assets != null && await _assets.IsAvailableAsync(actor.DepartmentId)) result.Assets = (await _assets.ListAsync(actor)).Where(a => a.DepartmentId == actor.DepartmentId).Select(a => new WorkOrderChoice { Id = a.Id, Name = a.Name }).ToList();
+			try
+			{
+				if (_assets != null && await _assets.IsAvailableAsync(actor.DepartmentId)) result.Assets = (await _assets.ListAsync(actor)).Where(a => a.DepartmentId == actor.DepartmentId).Select(a => new WorkOrderChoice { Id = a.Id, Name = a.Name }).ToList();
+			}
+			catch (ChecklistException ex) { throw new WorkOrderException(ex.StatusCode, ex.Message); }
 			return result;
 		}
 		public async Task<List<string>> RecipientsAsync(int departmentId, WorkOrder row)

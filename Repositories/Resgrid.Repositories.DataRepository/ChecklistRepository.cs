@@ -71,7 +71,14 @@ namespace Resgrid.Repositories.DataRepository
 			var columns = Columns<T>();
 			var sql = insert ? $"INSERT INTO {Tbl(Table<T>())} ({Cols(columns)}) VALUES ({string.Join(",", columns.Select(c => P + c))})"
 				: $"UPDATE {Tbl(Table<T>())} SET {string.Join(",", columns.Where(c => c != "Id" && c != "DepartmentId").Select(c => Col(c) + "=" + P + c))} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id";
-			if (await ExecuteAsync(sql, row, ct) != 1) throw new InvalidOperationException("Checklist row could not be saved.");
+			try
+			{
+				if (await ExecuteAsync(sql, row, ct) != 1) throw new InvalidOperationException("Checklist row could not be saved.");
+			}
+			catch (Microsoft.Data.SqlClient.SqlException ex) when (insert && typeof(T) == typeof(ChecklistCompletion) && ex.Number is 2601 or 2627)
+			{ throw new ChecklistException(409, "Run identifier is already in use."); }
+			catch (Npgsql.PostgresException ex) when (insert && typeof(T) == typeof(ChecklistCompletion) && ex.SqlState == "23505")
+			{ throw new ChecklistException(409, "Run identifier is already in use."); }
 		}
 		public async Task ReplaceAnswersAsync(int departmentId, string completionId, IEnumerable<ChecklistCompletionItem> items, CancellationToken ct = default)
 		{

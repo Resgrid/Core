@@ -216,5 +216,320 @@
   <data name="ViewInventoryEntryHeader" xml:space="preserve">
     <value>Προβολή Καταχώρισης Αποθέματος</value>
   </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="AddLine" xml:space="preserve">
+    <value>Προσθήκη είδους</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Αρχειοθέτηση</value>
+  </data>
+  <data name="AssetDetail" xml:space="preserve">
+    <value>Λεπτομέρειες παγίου</value>
+  </data>
+  <data name="AssetId" xml:space="preserve">
+    <value>Αναγνωριστικό παγίου</value>
+  </data>
+  <data name="Assets" xml:space="preserve">
+    <value>Πάγια</value>
+  </data>
+  <data name="AssetTag" xml:space="preserve">
+    <value>Ετικέτα παγίου</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>Βεβαίωση μάρτυρα</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Γραμμωτός κώδικας</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Κατηγορίες</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>Λίστες ελέγχου</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Κωδικός</value>
+  </data>
+  <data name="ContainerAsset" xml:space="preserve">
+    <value>Αναγνωριστικό παγίου περιέκτη</value>
+  </data>
+  <data name="DefaultLocation" xml:space="preserve">
+    <value>Προεπιλεγμένη τοποθεσία</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Λεπτομέρειες</value>
+  </data>
+  <data name="ExpectedReturn" xml:space="preserve">
+    <value>Αναμενόμενη ημερομηνία επιστροφής</value>
+  </data>
+  <data name="Expiration" xml:space="preserve">
+    <value>Ημερομηνία λήξης</value>
+  </data>
+  <data name="FromLocation" xml:space="preserve">
+    <value>Τοποθεσία προέλευσης</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Ιστορικό</value>
+  </data>
+  <data name="HolderHelp" xml:space="preserve">
+    <value>Επιλέξτε ένα άτομο ή μία μονάδα που θα παραλάβει το υλικό.</value>
+  </data>
+  <data name="Initialize" xml:space="preserve">
+    <value>Αρχικοποίηση αποθεμάτων</value>
+  </data>
+  <data name="InitializeDescription" xml:space="preserve">
+    <value>Αρχικοποιήστε τον χώρο αποθεμάτων εισάγοντας τα υπάρχοντα είδη, υπόλοιπα και το ιστορικό.</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Αποθέματα</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="IsControlledSubstance" xml:space="preserve">
+    <value>Ελεγχόμενη ουσία</value>
+  </data>
+  <data name="IsKit" xml:space="preserve">
+    <value>Είδος σετ</value>
+  </data>
+  <data name="Issuances" xml:space="preserve">
+    <value>Χορηγήσεις</value>
+  </data>
+  <data name="IssuanceStatus0" xml:space="preserve">
+    <value>Εκκρεμεί επιστροφή</value>
+  </data>
+  <data name="IssuanceStatus1" xml:space="preserve">
+    <value>Επιστράφηκε</value>
+  </data>
+  <data name="IssuanceStatus2" xml:space="preserve">
+    <value>Επιστράφηκε μερικώς</value>
+  </data>
+  <data name="IssuanceStatus3" xml:space="preserve">
+    <value>Απολεσθέν</value>
+  </data>
+  <data name="IssuanceStatus4" xml:space="preserve">
+    <value>Καταναλωμένο</value>
+  </data>
+  <data name="Issue" xml:space="preserve">
+    <value>Χορήγηση</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Είδη</value>
+  </data>
+  <data name="Kits" xml:space="preserve">
+    <value>Σετ</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="Locations" xml:space="preserve">
+    <value>Τοποθεσίες</value>
+  </data>
+  <data name="LocationType" xml:space="preserve">
+    <value>Τύπος τοποθεσίας</value>
+  </data>
+  <data name="LocationType0" xml:space="preserve">
+    <value>Εγκατάσταση</value>
+  </data>
+  <data name="LocationType1" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="LocationType2" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="LocationType3" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="LocationType4" xml:space="preserve">
+    <value>Περιέκτης</value>
+  </data>
+  <data name="LocationType5" xml:space="preserve">
+    <value>Εξωτερική</value>
+  </data>
+  <data name="LotId" xml:space="preserve">
+    <value>Αναγνωριστικό παρτίδας</value>
+  </data>
+  <data name="Lots" xml:space="preserve">
+    <value>Παρτίδες</value>
+  </data>
+  <data name="Minimum" xml:space="preserve">
+    <value>Ελάχιστο απόθεμα</value>
+  </data>
+  <data name="MoreChoices" xml:space="preserve">
+    <value>Εμφανίζεται μόνο η πρώτη σελίδα των διαθέσιμων επιλογών.</value>
+  </data>
+  <data name="Movement" xml:space="preserve">
+    <value>Κίνηση αποθέματος</value>
+  </data>
+  <data name="Movement0" xml:space="preserve">
+    <value>Εισαγωγή αρχικού υπολοίπου</value>
+  </data>
+  <data name="Movement1" xml:space="preserve">
+    <value>Παραλαβή</value>
+  </data>
+  <data name="Movement2" xml:space="preserve">
+    <value>Κατανάλωση</value>
+  </data>
+  <data name="Movement3" xml:space="preserve">
+    <value>Μεταφορά</value>
+  </data>
+  <data name="Movement4" xml:space="preserve">
+    <value>Χορήγηση</value>
+  </data>
+  <data name="Movement5" xml:space="preserve">
+    <value>Επιστροφή</value>
+  </data>
+  <data name="Movement6" xml:space="preserve">
+    <value>Προσαρμογή</value>
+  </data>
+  <data name="Movement7" xml:space="preserve">
+    <value>Καταμέτρηση</value>
+  </data>
+  <data name="Movement8" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="Movement9" xml:space="preserve">
+    <value>Αλλαγή κατάστασης</value>
+  </data>
+  <data name="MovementHelp" xml:space="preserve">
+    <value>Εισαγάγετε θετική ποσότητα. Οι παραλαβές απαιτούν προορισμό, ενώ η κατανάλωση και οι διαγραφές απαιτούν προέλευση. Οι προσαρμογές απαιτούν είτε προέλευση είτε προορισμό. Οι μεταφορές απαιτούν δύο διαφορετικές τοποθεσίες.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="NewAsset" xml:space="preserve">
+    <value>Νέο πάγιο</value>
+  </data>
+  <data name="NewItem" xml:space="preserve">
+    <value>Νέο είδος</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Επόμενη</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+  <data name="NoRows" xml:space="preserve">
+    <value>Δεν υπάρχουν εγγραφές αποθεμάτων προς εμφάνιση.</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="OnHand" xml:space="preserve">
+    <value>Διαθέσιμο απόθεμα</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Γονικό στοιχείο</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Άτομο</value>
+  </data>
+  <data name="PersonnelGear" xml:space="preserve">
+    <value>Ατομικός εξοπλισμός</value>
+  </data>
+  <data name="PostMovement" xml:space="preserve">
+    <value>Καταχώριση κίνησης</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Προηγούμενη</value>
+  </data>
+  <data name="ProtectedDataRequired" xml:space="preserve">
+    <value>Επαληθεύστε την ταυτότητά σας για να δείτε προστατευμένα αποθέματα.</value>
+  </data>
+  <data name="Rebuild" xml:space="preserve">
+    <value>Επανυπολογισμός υπολοίπων</value>
+  </data>
+  <data name="Reference" xml:space="preserve">
+    <value>Αναφορά</value>
+  </data>
+  <data name="ReorderPoint" xml:space="preserve">
+    <value>Όριο αναπαραγγελίας</value>
+  </data>
+  <data name="RequiresExpiration" xml:space="preserve">
+    <value>Απαιτείται ημερομηνία λήξης</value>
+  </data>
+  <data name="RequiresLotTracking" xml:space="preserve">
+    <value>Παρακολούθηση παρτίδων</value>
+  </data>
+  <data name="Return" xml:space="preserve">
+    <value>Επιστροφή</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="SerialNumber" xml:space="preserve">
+    <value>Σειριακός αριθμός</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Status0" xml:space="preserve">
+    <value>Σε χρήση</value>
+  </data>
+  <data name="Status1" xml:space="preserve">
+    <value>Χορηγημένο</value>
+  </data>
+  <data name="Status2" xml:space="preserve">
+    <value>Σε επισκευή</value>
+  </data>
+  <data name="Status3" xml:space="preserve">
+    <value>Κατεστραμμένο</value>
+  </data>
+  <data name="Status4" xml:space="preserve">
+    <value>Απολεσθέν</value>
+  </data>
+  <data name="Status5" xml:space="preserve">
+    <value>Καταναλωμένο</value>
+  </data>
+  <data name="Status6" xml:space="preserve">
+    <value>Αποσυρμένο</value>
+  </data>
+  <data name="ToLocation" xml:space="preserve">
+    <value>Τοποθεσία προορισμού</value>
+  </data>
+  <data name="Tracking0" xml:space="preserve">
+    <value>Ανά ποσότητα</value>
+  </data>
+  <data name="Tracking1" xml:space="preserve">
+    <value>Ανά σειριακό αριθμό</value>
+  </data>
+  <data name="TrackingMode" xml:space="preserve">
+    <value>Τρόπος παρακολούθησης</value>
+  </data>
+  <data name="Transfers" xml:space="preserve">
+    <value>Μεταφορές</value>
+  </data>
+  <data name="UnableToComplete" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ολοκλήρωση αυτής της ενέργειας αποθεμάτων.</value>
+  </data>
+  <data name="UnitCost" xml:space="preserve">
+    <value>Κόστος μονάδας</value>
+  </data>
+  <data name="UnitEquipment" xml:space="preserve">
+    <value>Εξοπλισμός μονάδας</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Ξεκλείδωμα</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>Βεβαίωση ως μάρτυρας</value>
+  </data>
+  <data name="WitnessPending" xml:space="preserve">
+    <value>Αναμονή για διαφορετικό εξουσιοδοτημένο μάρτυρα. Αναγνωριστικό αιτήματος:</value>
+  </data>
+  <data name="WitnessRequest" xml:space="preserve">
+    <value>Αναγνωριστικό αιτήματος μάρτυρα</value>
+  </data>
+  <data name="WorkOrders" xml:space="preserve">
+    <value>Εντολές εργασίας</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
 </root>
 

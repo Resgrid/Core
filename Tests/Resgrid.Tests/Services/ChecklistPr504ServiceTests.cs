@@ -73,7 +73,8 @@ namespace Resgrid.Tests.Services
 			events.Setup(e => e.SendMessage(It.IsAny<AuditEvent>())).Callback(() => committed.Should().BeTrue());
 			var service = new FeatureToggleService(flags.Object, null, null, null, null, cache.Object, events.Object, null, null, unit.Object, Mock.Of<IFeatureFlagMutationObserver>());
 			Func<Task> save = () => service.SaveFlagAsync(new FeatureFlag { FlagKey = "Review.Test" }, "actor");
-			if (failCache) await save.Should().ThrowAsync<InvalidOperationException>(); else await save();
+			await save.Should().NotThrowAsync();
+			cache.Verify(c => c.RemoveAsync(It.IsAny<string>()), Times.Exactly(3));
 			unit.Verify(u => u.CommitChanges(), Times.Once);
 			unit.Verify(u => u.DiscardChanges(), Times.Never);
 			events.Verify(e => e.SendMessage(It.Is<AuditEvent>(a => a.UserId == "actor" && a.Type == AuditLogTypes.FeatureFlagChanged)), Times.Once);

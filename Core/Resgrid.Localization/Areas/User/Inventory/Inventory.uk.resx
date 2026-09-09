@@ -157,5 +157,320 @@
   <data name="ViewInventoryEntryHeader" xml:space="preserve">
     <value>Переглянути запис інвентарю</value>
   </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="AddLine" xml:space="preserve">
+    <value>Додати позицію</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Архівувати</value>
+  </data>
+  <data name="AssetDetail" xml:space="preserve">
+    <value>Відомості про одиницю майна</value>
+  </data>
+  <data name="AssetId" xml:space="preserve">
+    <value>Ідентифікатор одиниці майна</value>
+  </data>
+  <data name="Assets" xml:space="preserve">
+    <value>Одиниці майна</value>
+  </data>
+  <data name="AssetTag" xml:space="preserve">
+    <value>Інвентарний номер</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>Засвідчення свідка</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Штрихкод</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Категорії</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>Контрольні списки</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="ContainerAsset" xml:space="preserve">
+    <value>Ідентифікатор майна-контейнера</value>
+  </data>
+  <data name="DefaultLocation" xml:space="preserve">
+    <value>Місце зберігання за замовчуванням</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Відомості</value>
+  </data>
+  <data name="ExpectedReturn" xml:space="preserve">
+    <value>Очікувана дата повернення</value>
+  </data>
+  <data name="Expiration" xml:space="preserve">
+    <value>Дата закінчення строку придатності</value>
+  </data>
+  <data name="FromLocation" xml:space="preserve">
+    <value>Місце відправлення</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Історія</value>
+  </data>
+  <data name="HolderHelp" xml:space="preserve">
+    <value>Виберіть одну особу або один підрозділ як отримувача майна.</value>
+  </data>
+  <data name="Initialize" xml:space="preserve">
+    <value>Ініціалізувати інвентар</value>
+  </data>
+  <data name="InitializeDescription" xml:space="preserve">
+    <value>Ініціалізуйте робочу область інвентаря, імпортувавши наявну номенклатуру, залишки та історію.</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Інвентар</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Активна</value>
+  </data>
+  <data name="IsControlledSubstance" xml:space="preserve">
+    <value>Контрольована речовина</value>
+  </data>
+  <data name="IsKit" xml:space="preserve">
+    <value>Позиція комплекту</value>
+  </data>
+  <data name="Issuances" xml:space="preserve">
+    <value>Видачі</value>
+  </data>
+  <data name="IssuanceStatus0" xml:space="preserve">
+    <value>Очікує повернення</value>
+  </data>
+  <data name="IssuanceStatus1" xml:space="preserve">
+    <value>Повернуто</value>
+  </data>
+  <data name="IssuanceStatus2" xml:space="preserve">
+    <value>Частково повернуто</value>
+  </data>
+  <data name="IssuanceStatus3" xml:space="preserve">
+    <value>Втрачено</value>
+  </data>
+  <data name="IssuanceStatus4" xml:space="preserve">
+    <value>Використано</value>
+  </data>
+  <data name="Issue" xml:space="preserve">
+    <value>Видати</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Номенклатура</value>
+  </data>
+  <data name="Kits" xml:space="preserve">
+    <value>Комплекти</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Місце зберігання</value>
+  </data>
+  <data name="Locations" xml:space="preserve">
+    <value>Місця зберігання</value>
+  </data>
+  <data name="LocationType" xml:space="preserve">
+    <value>Тип місця зберігання</value>
+  </data>
+  <data name="LocationType0" xml:space="preserve">
+    <value>Об’єкт</value>
+  </data>
+  <data name="LocationType1" xml:space="preserve">
+    <value>Станція</value>
+  </data>
+  <data name="LocationType2" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="LocationType3" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="LocationType4" xml:space="preserve">
+    <value>Контейнер</value>
+  </data>
+  <data name="LocationType5" xml:space="preserve">
+    <value>Зовнішнє</value>
+  </data>
+  <data name="LotId" xml:space="preserve">
+    <value>Ідентифікатор партії</value>
+  </data>
+  <data name="Lots" xml:space="preserve">
+    <value>Партії</value>
+  </data>
+  <data name="Minimum" xml:space="preserve">
+    <value>Мінімальний запас</value>
+  </data>
+  <data name="MoreChoices" xml:space="preserve">
+    <value>Показано лише першу сторінку доступних варіантів.</value>
+  </data>
+  <data name="Movement" xml:space="preserve">
+    <value>Рух запасів</value>
+  </data>
+  <data name="Movement0" xml:space="preserve">
+    <value>Початковий залишок імпортовано</value>
+  </data>
+  <data name="Movement1" xml:space="preserve">
+    <value>Прийняти</value>
+  </data>
+  <data name="Movement2" xml:space="preserve">
+    <value>Використати</value>
+  </data>
+  <data name="Movement3" xml:space="preserve">
+    <value>Перемістити</value>
+  </data>
+  <data name="Movement4" xml:space="preserve">
+    <value>Видати</value>
+  </data>
+  <data name="Movement5" xml:space="preserve">
+    <value>Повернути</value>
+  </data>
+  <data name="Movement6" xml:space="preserve">
+    <value>Скоригувати</value>
+  </data>
+  <data name="Movement7" xml:space="preserve">
+    <value>Провести інвентаризацію</value>
+  </data>
+  <data name="Movement8" xml:space="preserve">
+    <value>Списати</value>
+  </data>
+  <data name="Movement9" xml:space="preserve">
+    <value>Змінити стан</value>
+  </data>
+  <data name="MovementHelp" xml:space="preserve">
+    <value>Укажіть додатну кількість. Надходження потребують місця призначення, а використання та списання — місця відправлення. Коригування потребують місця відправлення або призначення. Переміщення потребують двох різних місць.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="NewAsset" xml:space="preserve">
+    <value>Нова одиниця майна</value>
+  </data>
+  <data name="NewItem" xml:space="preserve">
+    <value>Нова позиція</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Наступна</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="NoRows" xml:space="preserve">
+    <value>Немає записів інвентаря для відображення.</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="OnHand" xml:space="preserve">
+    <value>Залишки</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Батьківський елемент</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Особа</value>
+  </data>
+  <data name="PersonnelGear" xml:space="preserve">
+    <value>Особисте спорядження</value>
+  </data>
+  <data name="PostMovement" xml:space="preserve">
+    <value>Зареєструвати рух</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Попередня</value>
+  </data>
+  <data name="ProtectedDataRequired" xml:space="preserve">
+    <value>Підтвердьте свою особу, щоб переглянути захищений інвентар.</value>
+  </data>
+  <data name="Rebuild" xml:space="preserve">
+    <value>Перерахувати залишки</value>
+  </data>
+  <data name="Reference" xml:space="preserve">
+    <value>Посилання</value>
+  </data>
+  <data name="ReorderPoint" xml:space="preserve">
+    <value>Поріг повторного замовлення</value>
+  </data>
+  <data name="RequiresExpiration" xml:space="preserve">
+    <value>Строк придатності обов’язковий</value>
+  </data>
+  <data name="RequiresLotTracking" xml:space="preserve">
+    <value>Облік за партіями</value>
+  </data>
+  <data name="Return" xml:space="preserve">
+    <value>Повернути</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="SerialNumber" xml:space="preserve">
+    <value>Серійний номер</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Стан</value>
+  </data>
+  <data name="Status0" xml:space="preserve">
+    <value>В експлуатації</value>
+  </data>
+  <data name="Status1" xml:space="preserve">
+    <value>Видано</value>
+  </data>
+  <data name="Status2" xml:space="preserve">
+    <value>На ремонті</value>
+  </data>
+  <data name="Status3" xml:space="preserve">
+    <value>Пошкоджено</value>
+  </data>
+  <data name="Status4" xml:space="preserve">
+    <value>Втрачено</value>
+  </data>
+  <data name="Status5" xml:space="preserve">
+    <value>Використано</value>
+  </data>
+  <data name="Status6" xml:space="preserve">
+    <value>Виведено з експлуатації</value>
+  </data>
+  <data name="ToLocation" xml:space="preserve">
+    <value>Місце призначення</value>
+  </data>
+  <data name="Tracking0" xml:space="preserve">
+    <value>За кількістю</value>
+  </data>
+  <data name="Tracking1" xml:space="preserve">
+    <value>За серійним номером</value>
+  </data>
+  <data name="TrackingMode" xml:space="preserve">
+    <value>Спосіб обліку</value>
+  </data>
+  <data name="Transfers" xml:space="preserve">
+    <value>Переміщення</value>
+  </data>
+  <data name="UnableToComplete" xml:space="preserve">
+    <value>Не вдалося виконати цю дію з інвентарем.</value>
+  </data>
+  <data name="UnitCost" xml:space="preserve">
+    <value>Вартість одиниці</value>
+  </data>
+  <data name="UnitEquipment" xml:space="preserve">
+    <value>Оснащення підрозділу</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Розблокувати</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>Засвідчити як свідок</value>
+  </data>
+  <data name="WitnessPending" xml:space="preserve">
+    <value>Очікується засвідчення іншою уповноваженою особою. Ідентифікатор запиту:</value>
+  </data>
+  <data name="WitnessRequest" xml:space="preserve">
+    <value>Ідентифікатор запиту на свідка</value>
+  </data>
+  <data name="WorkOrders" xml:space="preserve">
+    <value>Наряди на роботи</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Так</value>
+  </data>
 </root>
 

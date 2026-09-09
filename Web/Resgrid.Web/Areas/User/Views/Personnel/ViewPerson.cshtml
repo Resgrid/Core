@@ -2,6 +2,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Personnel.ViewPersonView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> inventoryLocalizer
 @{
 	ViewBag.Title = "Resgrid | View Profile" + @localizer["ViewPersonHeader"];
 }
@@ -24,6 +25,7 @@
 	</div>
 	<div class="col-sm-8">
 		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="Inventory" asp-action="PersonnelGear" asp-route-userId="@Model.User.Id">@inventoryLocalizer["PersonnelGear"]</a>
 			<a class="btn btn-info" href="@Url.Action("ViewEvents", "Personnel", new { area = "User", userId = Model.User.Id })">@localizer["ViewEvents"]</a>
 		</div>
 	</div>

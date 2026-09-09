@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>يتطلب حفظ أدلة الجاهزية بلاغاً ويغطي الثلاثين يوماً السابقة له؛ تواريخ التغطية المخصصة غير مدعومة.</value></data>
   <data name="TargetType" xml:space="preserve"><value>نوع الهدف</value></data>
   <data name="Group" xml:space="preserve"><value>المحطة / المجموعة</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>قوائم التحقق معطلة لهذا القسم.</value></data>
 </root>

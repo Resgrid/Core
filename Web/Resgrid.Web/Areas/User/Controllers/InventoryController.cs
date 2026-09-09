@@ -1,347 +1,154 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Localization;
 using Resgrid.Model;
+using Resgrid.Model.Inventories;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Inventory;
-using Microsoft.AspNetCore.Authorization;
-using Resgrid.Model.Helpers;
-using Resgrid.Providers.Claims;
+using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
-	[Area("User")]
-	public class InventoryController : SecureBaseController
+	[WorkOrderFormCulture, Area("User"), Authorize, ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(1024 * 1024)]
+	public sealed class InventoryController : SecureBaseController
 	{
-		#region Private Members and Constructors
-		private readonly IInventoryService _inventoryService;
-		private readonly IDepartmentGroupsService _departmentGroupsService;
-		private readonly IUnitsService _unitsService;
-		private readonly IDepartmentsService _departmentsService;
-		private readonly IUserProfileService _userProfileService;
-		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> _localizer;
-		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
-
-		public InventoryController(IInventoryService inventoryService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer)
+		private readonly IInventoryCatalogService _catalog;
+		private readonly IInventoryStockService _stock;
+		private readonly IInventoryTransferService _transfers;
+		private readonly IInventoryIssuanceService _issuance;
+		private readonly IInventoryMigrationService _migration;
+		private readonly IInventoryAuthorizationService _auth;
+		private readonly IProtectedGrantContext _grant;
+		private readonly IDepartmentDataProtectionService _protection;
+		private readonly IUnitsService _units;
+		private readonly IDepartmentGroupsService _groups;
+		private readonly IDepartmentsService _departments;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> _strings;
+		public InventoryController(IInventoryCatalogService catalog, IInventoryStockService stock, IInventoryTransferService transfers, IInventoryIssuanceService issuance,
+			IInventoryMigrationService migration, IInventoryAuthorizationService auth, IProtectedGrantContext grant, IDepartmentDataProtectionService protection,
+			IUnitsService units, IDepartmentGroupsService groups, IDepartmentsService departments, IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> strings)
+		{ _catalog = catalog; _stock = stock; _transfers = transfers; _issuance = issuance; _migration = migration; _auth = auth; _grant = grant; _protection = protection; _units = units; _groups = groups; _departments = departments; _strings = strings; }
+		private InventoryActor Actor => new() { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant.GrantToken };
+		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
-			_inventoryService = inventoryService;
-			_departmentGroupsService = departmentGroupsService;
-			_unitsService = unitsService;
-			_departmentsService = departmentsService;
-			_userProfileService = userProfileService;
-			_localizer = localizer;
-			_commonLocalizer = commonLocalizer;
-		}
-		#endregion Private Members and Constructors
-
-		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public async Task<IActionResult> Index()
-		{
-			return View();
-		}
-
-		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public async Task<IActionResult> ManageTypes()
-		{
-			return View();
-		}
-
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public async Task<IActionResult> AddType()
-		{
-			var model = new AddTypeView();
-			model.Type = new InventoryType();
-
-			return View(model);
-		}
-
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Inventory_Create)]
-		public async Task<IActionResult> Adjust()
-		{
-			var model = new AdjustView();
-			model.Inventory = new Inventory();
-			model.Types = await _inventoryService.GetAllTypesForDepartmentAsync(DepartmentId);
-			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
-
-			return View(model);
-		}
-
-		[HttpPost]
-		[Authorize(Policy = ResgridResources.Inventory_Create)]
-		public async Task<IActionResult> Adjust(AdjustView model)
-		{
-			if (model.Inventory.Amount == 0)
-				ModelState.AddModelError("Inventory.Amount", _localizer["AdjustmentAmountRequired"]);
-
-			if (ModelState.IsValid)
+			Response.Headers["Cache-Control"] = "no-store";
+			try { await _auth.RequireAsync(Actor); } catch (InventoryException ex) { context.Result = StatusCode(ex.StatusCode); return; }
+			ViewBag.ProtectionEnforced = await _protection.IsProtectionEnforcedAsync(DepartmentId); ViewBag.ProtectedGrant = _grant.GrantToken; ViewBag.GrantExpiresOn = HttpProtectedGrantContext.ReadExpiry(Request);
+			if (!ModelState.IsValid) { context.Result = BadRequest(new { message = _strings["UnableToComplete"].Value }); return; }
+			var executed = await next();
+			if (executed.Exception is InventoryException error)
 			{
-				model.Inventory.DepartmentId = DepartmentId;
-				model.Inventory.TimeStamp = DateTime.UtcNow;
-				model.Inventory.AddedByUserId = UserId;
-
-				if (model.UnitId > 0)
-					model.Inventory.UnitId = model.UnitId;
-
-				await _inventoryService.SaveInventoryAsync(model.Inventory);
-
-				return RedirectToAction("Index");
+				executed.ExceptionHandled = true;
+				if (HttpMethods.IsGet(Request.Method) && error.Code == "ProtectedDataRequired") executed.Result = View("Workspace", new InventoryWorkspaceView { Locked = true,
+					Tab = context.ActionArguments.TryGetValue("tab", out var tab) ? tab as string ?? "OnHand" : "OnHand", Id = context.ActionArguments.TryGetValue("id", out var id) ? id as string : null,
+					Page = context.ActionArguments.TryGetValue("page", out var page) && page is int pageNumber ? pageNumber : 0,
+					UnitId = context.ActionArguments.TryGetValue("unitId", out var unit) && unit is int unitNumber ? unitNumber : null, UserId = context.ActionArguments.TryGetValue("userId", out var person) ? person as string : null,
+					ItemId = context.ActionArguments.TryGetValue("itemId", out var item) ? item as string : null, LocationId = context.ActionArguments.TryGetValue("locationId", out var location) ? location as string : null });
+				else executed.Result = StatusCode(error.StatusCode, new { message = _strings["UnableToComplete"].Value, code = error.Code });
 			}
-
-			model.Types = await _inventoryService.GetAllTypesForDepartmentAsync(DepartmentId);
-			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
-
-			return View(model);
 		}
-
-		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public async Task<IActionResult> History()
+		private async Task PageAsync<T>(InventoryWorkspaceView view) where T : InventoryRow
+		{ var result = await _catalog.ListAsync<T>(Actor, view.Page); view.Rows = result.Items.Cast<InventoryRow>().ToList(); view.HasMore = result.HasMore; }
+		private async Task QueryAsync<T>(InventoryWorkspaceView view, InventoryQuery filter) where T : InventoryRow
+		{ var result = await _catalog.QueryAsync<T>(Actor, filter, view.Page); view.Rows = result.Items.Cast<InventoryRow>().ToList(); view.HasMore = result.HasMore; }
+		private async Task<bool> MayWriteAsync(PermissionTypes permission, int? groupId)
 		{
-			return View();
+			try { await _auth.RequireAsync(Actor, true, permission, groupId); return true; }
+			catch (InventoryException ex) when (ex.StatusCode is 403 or 409) { return false; }
 		}
-
-		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public async Task<IActionResult> ViewEntry(int inventoryId)
-		{
-			var model = new ViewEntryView();
-			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			model.Inventory = await _inventoryService.GetInventoryByIdAsync(inventoryId);
-			
-			if (model.Inventory == null || model.Inventory.DepartmentId != DepartmentId)
-				return Unauthorized();
-
-			var profile = await _userProfileService.GetProfileByUserIdAsync(model.Inventory.AddedByUserId);
-
-			if (profile != null)
-				model.Name = profile.FullName.AsFirstNameLastName;
-			else
-				model.Name = _commonLocalizer["Unknown"];
-
-			return View(model);
-		}
-
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public async Task<IActionResult> DeleteType(int typeId)
+		public async Task<IActionResult> Index(string tab = "OnHand", int page = 0, string id = null, int? unitId = null, string userId = null, string itemId = null, string locationId = null)
 		{
-			var type = await _inventoryService.GetTypeByIdAsync(typeId);
-
-			if (type == null)
-				return RedirectToAction("ManageTypes");
-
-			if (type.DepartmentId != DepartmentId)
-				return Unauthorized();
-
-			await _inventoryService.DeleteTypeAsync(typeId);
-
-			return RedirectToAction("ManageTypes");
-		}
-
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public async Task<IActionResult> EditType(int typeId)
-		{
-			var type = await _inventoryService.GetTypeByIdAsync(typeId);
-
-			if (type == null)
-				return RedirectToAction("ManageTypes");
-
-			if (type.DepartmentId != DepartmentId)
-				return Unauthorized();
-
-			var model = new EditTypeView();
-			model.Type = type;
-
-			return View(model);
-		}
-
-		[HttpPost]
-		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public async Task<IActionResult> EditType(EditTypeView model)
-		{
-			var type = await _inventoryService.GetTypeByIdAsync(model.Type.InventoryTypeId);
-
-			if (type == null)
-				return RedirectToAction("ManageTypes");
-
-			if (type.DepartmentId != DepartmentId)
-				return Unauthorized();
-
-			type.Type = model.Type.Type;
-			type.Description = model.Type.Description;
-			type.ExpiresDays = model.Type.ExpiresDays;
-			type.UnitOfMesasure = model.Type.UnitOfMesasure;
-
-			await _inventoryService.SaveTypeAsync(type);
-
-			return RedirectToAction("ManageTypes");
-		}
-
-		[HttpPost]
-		[Authorize(Policy = ResgridResources.Inventory_Update)]
-		public async Task<IActionResult> AddType(AddTypeView model)
-		{
-			if (ModelState.IsValid)
+			var view = new InventoryWorkspaceView { Tab = tab, Page = page, Id = id, UnitId = unitId, UserId = userId, ItemId = itemId, LocationId = locationId, Migrated = await _migration.IsMigratedAsync(DepartmentId) };
+			var actorGroupId = (await _groups.GetGroupForUserAsync(UserId, DepartmentId))?.DepartmentGroupId;
+			view.CanWrite = await MayWriteAsync(PermissionTypes.AdjustInventory, actorGroupId);
+			view.CanTransfer = await MayWriteAsync(PermissionTypes.TransferInventory, actorGroupId);
+			view.CanIssue = await MayWriteAsync(PermissionTypes.IssueInventory, actorGroupId);
+			view.CanWitness = await MayWriteAsync(PermissionTypes.ManageControlledSubstances, actorGroupId);
+			if (!view.Migrated) return View("Workspace", view);
+			var items = await _catalog.ListAsync<InventoryItem>(Actor); view.Items = items.Items;
+			var locations = await _catalog.ListAsync<InventoryLocation>(Actor); view.Locations = locations.Items;
+			var categories = await _catalog.ListAsync<InventoryCategory>(Actor); view.Categories = categories.Items;
+			view.ChoicesHaveMore = items.HasMore || locations.HasMore || categories.HasMore;
+			var assets = await _catalog.ListAsync<InventoryAsset>(Actor); view.Assets = assets.Items;
+			var lots = await _catalog.ListAsync<InventoryLot>(Actor); view.Lots = lots.Items;
+			view.ChoicesHaveMore |= assets.HasMore || lots.HasMore;
+			switch (tab)
 			{
-				model.Type.DepartmentId = DepartmentId;
-				await _inventoryService.SaveTypeAsync(model.Type);
-
-				return RedirectToAction("ManageTypes");
+				case "OnHand": await QueryAsync<InventoryStock>(view, new InventoryQuery { ItemId = itemId, LocationId = locationId }); break;
+				case "Items": await PageAsync<InventoryItem>(view); break;
+				case "Categories": await PageAsync<InventoryCategory>(view); break;
+				case "Locations": await PageAsync<InventoryLocation>(view); break;
+				case "Lots": await PageAsync<InventoryLot>(view); break;
+				case "Assets": await PageAsync<InventoryAsset>(view); break;
+				case "Issuances": await PageAsync<InventoryIssuance>(view); break;
+				case "Kits":
+					await PageAsync<InventoryKit>(view);
+					foreach (var kit in view.Rows)
+					{
+						var contents = await _catalog.QueryAsync<InventoryKitItem>(Actor, new InventoryQuery { KitId = kit.Id });
+						if (contents.HasMore) throw new InventoryException(409, "InventoryTooLarge");
+						view.KitContents.AddRange(contents.Items);
+					}
+					foreach (var component in view.KitContents.Select(x => x.ItemId).Distinct().Where(x => view.Items.All(i => i.Id != x))) view.Items.Add(await _catalog.GetAsync<InventoryItem>(Actor, component));
+					break;
+				case "Transfers": await PageAsync<InventoryTransfer>(view); break;
+				case "History": await QueryAsync<InventoryTransaction>(view, new InventoryQuery { ItemId = itemId, LocationId = locationId }); break;
+				case "AssetDetail": await QueryAsync<InventoryTransaction>(view, new InventoryQuery { AssetId = id }); view.Rows.Insert(0, await _catalog.GetAsync<InventoryAsset>(Actor, id)); break;
+				case "Transaction": view.Rows.Add(await _catalog.GetAsync<InventoryTransaction>(Actor, id)); break;
+				case "UnitEquipment": if (!unitId.HasValue) throw new InventoryException(400, "HolderRequired"); view.Rows.AddRange((await _issuance.GetUnitEquipmentAsync(Actor, unitId.Value)).Select(e => (InventoryRow)e.Asset ?? e.Stock)); break;
+				case "PersonnelGear": if (string.IsNullOrWhiteSpace(userId)) throw new InventoryException(400, "HolderRequired"); await QueryAsync<InventoryIssuance>(view, new InventoryQuery { IssuedToUserId = userId }); break;
+				default: throw new InventoryException(400, "InvalidPage");
 			}
-
-			return View(model);
+			foreach (var unit in await _units.GetUnitsForDepartmentAsync(DepartmentId))
+				if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = 2, UnitId = unit.UnitId })) view.Units.Add(new() { Id = unit.UnitId.ToString(), Name = unit.Name });
+			foreach (var group in await _groups.GetAllGroupsForDepartmentAsync(DepartmentId))
+				if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = 1, GroupId = group.DepartmentGroupId })) view.Groups.Add(new() { Id = group.DepartmentGroupId.ToString(), Name = group.Name });
+			foreach (var person in await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId))
+				if (await _auth.CanLocationAsync(Actor, new InventoryLocation { DepartmentId = DepartmentId, LocationType = 3, UserId = person.UserId })) view.People.Add(new() { Id = person.UserId, Name = person.Name });
+			return View("Workspace", view);
 		}
-
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public async Task<IActionResult> GetTypesList()
+		[HttpPost, ValidateAntiForgeryToken] public Task<IActionResult> Reopen(string tab = "OnHand", int page = 0, string id = null, int? unitId = null, string userId = null, string itemId = null, string locationId = null) => Index(tab, page, id, unitId, userId, itemId, locationId);
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Initialize() => Json(await _migration.MigrateLegacyAsync(Actor));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> SaveItem(InventoryItemInput input) => Json(await _catalog.SaveItemAsync(Actor, input));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> SaveCategory(string id, int revision, string name, string parentId) => Json(await _catalog.SaveCategoryAsync(Actor, id, revision, name, parentId));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> SaveLocation(InventoryLocationInput input) => Json(await _catalog.SaveLocationAsync(Actor, input));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> CreateLot(string itemId, DateTime? expiresOn, InventoryLotContent details) => Json(await _catalog.SaveLotAsync(Actor, new InventoryLot { ItemId = itemId, ExpiresOn = expiresOn }, details));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Post(InventoryCommand command) => Json(await _stock.PostTransactionAsync(Actor, command));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Transfer(InventoryCommand command) => Json(await _transfers.CreateAndCompleteTransferAsync(Actor, command));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> CreateAsset(InventoryAssetInput input) => Json(await _issuance.CreateAssetAsync(Actor, input));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Issue(InventoryIssueInput input) => Json(await _issuance.IssueAsync(Actor, input));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Return(InventoryReturnInput input) => Json(await _issuance.ReturnAsync(Actor, input));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Status(InventoryCommand command) => Json(await _issuance.ChangeAssetStatusAsync(Actor, command));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> SaveKit(InventoryKitInput input) => Json(await _issuance.SaveKitAsync(Actor, input));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> IssueKit(InventoryKitIssueInput input, string userId, int? unitId)
+		{ if (input?.Lines == null) throw new InventoryException(400, "InvalidKit"); foreach (var line in input.Lines) { line.UserId = userId; line.UnitId = unitId; } return Json(await _issuance.IssueKitAsync(Actor, input)); }
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Witness(string requestId, string attestation) => Json(await _stock.WitnessAsync(Actor, requestId, attestation));
+		[HttpPost, ValidateAntiForgeryToken] public async Task<IActionResult> Rebuild() { await _stock.RebuildStocksAsync(Actor); return Json(new { success = true }); }
+		[HttpPost, ValidateAntiForgeryToken, Authorize(Policy = Resgrid.Providers.Claims.ResgridResources.Inventory_Delete)]
+		public async Task<IActionResult> Archive(string kind, string id, int revision)
 		{
-			List<InventoryTypeJson> inventoryJson = new List<InventoryTypeJson>();
-
-			var types = await _inventoryService.GetAllTypesForDepartmentAsync(DepartmentId);
-
-			foreach (var type in types)
-			{
-				var typeJson = new InventoryTypeJson();
-				typeJson.TypeId = type.InventoryTypeId;
-				typeJson.Name = type.Type;
-				
-				if (type.ExpiresDays > 0)
-					typeJson.ExpiresDays = $"{type.ExpiresDays} Days";
-				else
-					typeJson.ExpiresDays = "No Expiry";
-
-				inventoryJson.Add(typeJson);
-			}
-
-			return Json(inventoryJson);
+			switch (kind) { case "Items": await _catalog.ArchiveAsync<InventoryItem>(Actor, id, revision); break; case "Categories": await _catalog.ArchiveAsync<InventoryCategory>(Actor, id, revision); break; case "Locations": await _catalog.ArchiveAsync<InventoryLocation>(Actor, id, revision); break; case "Kits": await _catalog.ArchiveAsync<InventoryKit>(Actor, id, revision); break; default: throw new InventoryException(400, "InvalidInput"); }
+			return Json(new { success = true });
 		}
-
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public async Task<IActionResult> GetCombinedInventoryList()
+		[HttpGet] public IActionResult ManageTypes() => RedirectToAction("Index", new { tab = "Items" });
+		[HttpGet] public IActionResult AddType() => RedirectToAction("Index", new { tab = "Items" });
+		[HttpGet] public IActionResult EditType(int typeId) => RedirectToAction("Index", new { tab = "Items" });
+		[HttpGet] public IActionResult Adjust() => RedirectToAction("Index");
+		[HttpGet] public IActionResult History() => RedirectToAction("Index", new { tab = "History" });
+		[HttpGet] public IActionResult ByUnit(int unitId) => RedirectToAction("Index", new { tab = "UnitEquipment", unitId });
+		[HttpGet] public IActionResult UnitEquipment(int unitId) => RedirectToAction("Index", new { tab = "UnitEquipment", unitId });
+		[HttpGet] public IActionResult PersonnelGear(string userId) => RedirectToAction("Index", new { tab = "PersonnelGear", userId });
+		[HttpGet] public IActionResult AssetDetail(string id) => RedirectToAction("Index", new { tab = "AssetDetail", id });
+		[HttpGet] public async Task<IActionResult> ViewEntry(int inventoryId)
 		{
-			List<InventorySummaryJson> inventoryJson = new List<InventorySummaryJson>();
-
-			var items = await _inventoryService.GetConsolidatedInventoryForDepartment(DepartmentId);
-
-			foreach (var item in items)
-			{
-				var inventory = new InventorySummaryJson();
-				inventory.Name = item.Type.Type;
-				inventory.Group = item.Group.Name;
-
-				if (item.Unit != null)
-					inventory.Unit = item.Unit.Name;
-				else
-					inventory.Unit = _localizer["NoUnit"];
-
-				inventory.Count = item.Amount;
-
-				inventoryJson.Add(inventory);
-			}
-
-			return Json(inventoryJson);
-		}
-
-		[HttpGet]
-
-		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public async Task<IActionResult> GetInventoryList()
-		{
-			List<InventoryJson> inventoryJson = new List<InventoryJson>();
-
-			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			var items = await _inventoryService.GetAllTransactionsForDepartmentAsync(DepartmentId);
-			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			//var groups = await _departmentGroupsService.GetAllGroupsForDepartment(DepartmentId);
-			
-			foreach (var item in items)
-			{
-				var inventory = new InventoryJson();
-				inventory.InventoryId = item.InventoryId;
-				inventory.Type = item.Type.Type;
-				inventory.Amount = item.Amount;
-				inventory.Batch = item.Batch;
-				inventory.Timestamp = item.TimeStamp.FormatForDepartment(department);
-
-				if (item.Unit != null)
-					inventory.Unit = item.Unit.Name;
-				else
-					inventory.Unit = _localizer["NoUnit"];
-
-				if (item.Group != null)
-					inventory.Group = item.Group.Name;
-				else
-					inventory.Group = _localizer["NoGroup"];
-
-				var name = names.FirstOrDefault(x => x.UserId == item.AddedByUserId);
-
-				if (name != null)
-					inventory.UserName = name.Name;
-				else
-					inventory.UserName = _commonLocalizer["Unknown"];
-
-
-				inventoryJson.Add(inventory);
-			}
-
-			return Json(inventoryJson);
-		}
-
-		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public async Task<IActionResult> ByUnit()
-		{
-			return View();
-		}
-
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Inventory_View)]
-		public async Task<IActionResult> GetInventoryByUnitList()
-		{
-			List<InventoryJson> inventoryJson = new List<InventoryJson>();
-
-			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			var items = await _inventoryService.GetAllTransactionsForDepartmentAsync(DepartmentId);
-			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-
-			foreach (var item in items.Where(x => x.UnitId.HasValue && x.UnitId.Value > 0)
-										.OrderBy(x => x.Unit != null ? x.Unit.Name : string.Empty)
-										.ThenBy(x => x.Type != null ? x.Type.Type : string.Empty))
-			{
-				var inventory = new InventoryJson();
-				inventory.InventoryId = item.InventoryId;
-				inventory.Type = item.Type.Type;
-				inventory.Amount = item.Amount;
-				inventory.Batch = item.Batch;
-				inventory.Timestamp = item.TimeStamp.FormatForDepartment(department);
-
-				if (item.Unit != null)
-					inventory.Unit = item.Unit.Name;
-				else
-					inventory.Unit = _localizer["NoUnit"];
-
-				if (item.Group != null)
-					inventory.Group = item.Group.Name;
-				else
-					inventory.Group = _localizer["NoGroup"];
-
-				var name = names.FirstOrDefault(x => x.UserId == item.AddedByUserId);
-
-				if (name != null)
-					inventory.UserName = name.Name;
-				else
-					inventory.UserName = _commonLocalizer["Unknown"];
-
-				inventoryJson.Add(inventory);
-			}
-
-			return Json(inventoryJson);
+			for (var page = 0; page <= 200; page++) { var result = await _catalog.ListAsync<InventoryTransaction>(Actor, page); var row = result.Items.FirstOrDefault(t => t.LegacyInventoryId == inventoryId); if (row != null) return RedirectToAction("Index", new { tab = "Transaction", id = row.Id }); if (!result.HasMore) break; }
+			return NotFound();
 		}
 	}
 }

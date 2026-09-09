@@ -160,7 +160,7 @@ namespace Resgrid.Services.Records
 					var original = entry.PayloadJson; var oldError = entry.LastError;
 					var source = ProtectedDataEnvelope.HasEnvelopePrefix(original) ? entry.ReadinessRoutingJson : original;
 					if (string.IsNullOrEmpty(source)) throw new InvalidOperationException("Checklist event routing metadata is unavailable.");
-					dispatchPayload = await ChecklistWorkflowPayload.ProjectAsync(entry.DepartmentId, JObject.Parse(source), _protection?.Value);
+					dispatchPayload = await ChecklistWorkflowPayload.ProjectAsync(entry.DepartmentId, Resgrid.Model.Inventories.InventoryWorkflowPayload.Parse(source), _protection?.Value);
 					await ProtectHistoryAsync(entry, cancellationToken);
 					if ((entry.PayloadJson != original || entry.LastError != oldError) && !await _outboxRepository.ReplaceChecklistPayloadAsync(entry, entry.PayloadJson, cancellationToken))
 						throw new InvalidOperationException("Checklist outbox lease changed before projection was saved.");
@@ -192,7 +192,7 @@ namespace Resgrid.Services.Records
 			}
 			catch (Exception ex)
 			{
-				var error = ChecklistWorkflowPayload.IsReadinessProducer(entry.ProducerSubsystem) ? "Checklist subscriber delivery failed." : ex.Message;
+				var error = ChecklistWorkflowPayload.IsReadinessProducer(entry.ProducerSubsystem) ? "Readiness subscriber delivery failed." : ex.Message;
 				if (ChecklistWorkflowPayload.IsReadinessProducer(entry.ProducerSubsystem))
 				{
 					entry.LastError = error; await ProtectHistoryAsync(entry, cancellationToken); error = entry.LastError;

@@ -37,8 +37,11 @@ namespace Resgrid.Tests.Rms
 			// 68 is Unified Search's ManageSearchIndex; RMS-5 took 69 from the pool released on 2026-08-27.
 			Enum.IsDefined(typeof(PermissionTypes), 68).Should().BeFalse("68 is reserved for Unified Search's ManageSearchIndex, which is not authored yet");
 
-			// 40-49 belong to other pending plans; RMS must not have taken any of them.
-			foreach (var value in Enumerable.Range(40, 10))
+			// Inventory consumed its 47-49 reservation in P1-M1/M2; 40-46 remain unauthored.
+			((int)PermissionTypes.TransferInventory).Should().Be(47);
+			((int)PermissionTypes.IssueInventory).Should().Be(48);
+			((int)PermissionTypes.ManageControlledSubstances).Should().Be(49);
+			foreach (var value in Enumerable.Range(40, 7))
 				Enum.IsDefined(typeof(PermissionTypes), value).Should().BeFalse($"PermissionTypes {value} is reserved for another plan");
 		}
 
@@ -93,7 +96,13 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.WorkOrderCreated).Should().Be(70);
 			((int)WorkflowTriggerEventType.WorkOrderStatusChanged).Should().Be(71);
 			((int)WorkflowTriggerEventType.WorkOrderAssigned).Should().Be(72);
-			foreach (var value in Enumerable.Range(52, 48).Except(new[] { 67, 68, 69, 70, 71, 72 }))
+			((int)WorkflowTriggerEventType.InventoryAdjusted).Should().Be(22);
+			((int)WorkflowTriggerEventType.InventoryTransferCompleted).Should().Be(58);
+			((int)WorkflowTriggerEventType.InventoryIssued).Should().Be(59);
+			((int)WorkflowTriggerEventType.InventoryReturned).Should().Be(60);
+			((int)WorkflowTriggerEventType.InventoryAssetStatusChanged).Should().Be(64);
+			((int)WorkflowTriggerEventType.ControlledSubstanceRecorded).Should().Be(66);
+			foreach (var value in Enumerable.Range(52, 48).Except(new[] { 58, 59, 60, 64, 66, 67, 68, 69, 70, 71, 72 }))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");
 		}
 

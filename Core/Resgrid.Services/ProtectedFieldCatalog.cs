@@ -700,9 +700,12 @@ namespace Resgrid.Services
 				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, ChecklistContentCatalogVersion));
 			foreach (var table in Resgrid.Model.WorkOrders.WorkOrderTables.All.Values)
 				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
-					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 18));
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.WorkOrders.WorkOrderTables.CatalogVersion));
 			list.Add(new ProtectedFieldDefinition("workorderfiles.data", OperationalFamily, "WorkOrderFiles", "Data", ProtectedFieldStorageKind.Binary,
-				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, 18));
+				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.WorkOrders.WorkOrderTables.CatalogVersion));
+			foreach (var table in Resgrid.Model.Inventories.InventoryTables.All.Values)
+				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.Inventories.InventoryTables.CatalogVersion));
 			return list;
 		}
 	}

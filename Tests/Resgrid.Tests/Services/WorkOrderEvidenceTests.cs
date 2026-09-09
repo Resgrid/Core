@@ -38,10 +38,12 @@ namespace Resgrid.Tests.Services
             _scanner.Setup(s=>s.ScanAsync(It.IsAny<string>(),It.IsAny<string>(),It.IsAny<byte[]>(),It.IsAny<CancellationToken>())).ReturnsAsync(new RecordAttachmentScanResult {State=RmsAttachmentScanState.Clean});
             await _service.AddFileAsync(_actor,id,1,"synthetic.pdf","application/pdf",bytes);row=await _service.GetAsync(_actor,id);
             var file=row.Files.Single();(await _service.GetFileAsync(_actor,file.Id)).Data.Should().Equal(bytes);
-            await _service.WithdrawFileAsync(_actor,id,file.Id,row.Order.Revision,"Superseded");
-            (await _service.GetFileAsync(_actor,file.Id)).Data.Should().Equal(bytes);
             var stored=await _store.GetAsync<WorkOrderFile>(77,file.Id);stored.Data[0]=0;await _store.WriteAsync(stored);
             await FluentActions.Awaiting(()=>_service.GetFileAsync(_actor,file.Id)).Should().ThrowAsync<WorkOrderException>().Where(e=>e.Code=="IntegrityFailed");
+            stored.Data=bytes;await _store.WriteAsync(stored);
+            await _service.WithdrawFileAsync(_actor,id,file.Id,row.Order.Revision,"Superseded");
+            await FluentActions.Awaiting(()=>_service.GetFileAsync(_actor,file.Id)).Should().ThrowAsync<WorkOrderException>().Where(e=>e.StatusCode==404);
+            (await _store.GetAsync<WorkOrderFile>(77,file.Id)).Data.Should().Equal(bytes);
         }
     }
 }

@@ -1,5 +1,6 @@
 @model Resgrid.Web.Areas.User.Models.Units.NewUnitView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> inventoryLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["EditUnitHeader"];
 }
@@ -15,6 +16,7 @@
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
         <h2>@localizer["EditUnitHeader"]</h2>
+        <a class="btn btn-default" asp-controller="Inventory" asp-action="UnitEquipment" asp-route-unitId="@Model.Unit.UnitId">@inventoryLocalizer["UnitEquipment"]</a>
         <ol class="breadcrumb">
             <li>
                 <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>

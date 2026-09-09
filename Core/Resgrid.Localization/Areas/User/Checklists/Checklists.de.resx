@@ -677,4 +677,5 @@
   <data name="PacketCaptureWindow" xml:space="preserve"><value>Die Erfassung von Bereitschaftsnachweisen erfordert einen Einsatz und umfasst die 30 Tage davor; eigene Zeiträume werden nicht unterstützt.</value></data>
   <data name="TargetType" xml:space="preserve"><value>Zieltyp</value></data>
   <data name="Group" xml:space="preserve"><value>Wache / Gruppe</value></data>
+  <data name="ChecklistsDisabled" xml:space="preserve"><value>Checklisten sind für diese Abteilung deaktiviert.</value></data>
 </root>

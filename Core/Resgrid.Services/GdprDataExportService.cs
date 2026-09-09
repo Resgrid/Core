@@ -53,10 +53,11 @@ namespace Resgrid.Services
 			ICertificationService certificationService,
 			ITrainingService trainingService,
 			IShiftsService shiftsService,
-			IEmailService emailService, IChecklistRepository checklists, Lazy<IReadinessHistoryProtectionService> checklistProtection, IChecklistReminderRepository checklistReminders, IWorkOrderRepository workOrders = null)
+			IEmailService emailService, IChecklistRepository checklists, Lazy<IReadinessHistoryProtectionService> checklistProtection, IChecklistReminderRepository checklistReminders, IWorkOrderRepository workOrders, IInventoryStore inventoryStore = null)
 		{
 			_repository = repository;
-			_workOrders = workOrders;
+			_workOrders = workOrders ?? throw new ArgumentNullException(nameof(workOrders));
+			_inventoryStore = inventoryStore;
 			_checklistReminders = checklistReminders ?? throw new ArgumentNullException(nameof(checklistReminders));
 			_userProfileService = userProfileService;
 			_memberSensitiveDataService = memberSensitiveDataService;
@@ -189,6 +190,7 @@ namespace Resgrid.Services
 				await AddJsonEntry(archive, "shifts.json", await BuildShiftsDataAsync(userId), ledger);
 				await AddJsonEntry(archive, "checklists.json", await BuildChecklistDataAsync(userId, departmentId), ledger);
 				await AddJsonEntry(archive, "workorders.json", await BuildWorkOrderDataAsync(userId, departmentId), ledger);
+				await AddJsonEntry(archive, "inventory.json", await BuildInventoryDataAsync(userId, departmentId), ledger);
 
 				// Written last, so it can report what every other entry withheld. Only present when
 				// something actually was: a member of an unprotected department gets the archive they

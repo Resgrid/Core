@@ -994,4 +994,22 @@
   <data name="PermRecordsReassignRecordDraftsNote" xml:space="preserve"><value>Wer einen Berichtsentwurf einem anderen Verfasser zuweisen darf, etwa wenn der ursprüngliche Verfasser nicht verfügbar ist.</value></data>
   <data name="PermRecordsRecordsPreventionAdminLabel" xml:space="preserve"><value>Präventionsdaten verwalten</value></data>
   <data name="PermRecordsRecordsPreventionAdminNote" xml:space="preserve"><value>Wer Objekte, Prüfprogramme und Vorschriftensätze, Hydranten, Genehmigungen und Aktivitäten zur Risikominderung anlegen und ändern darf. Das Lesen von Präventionsdaten erfordert nur Zugriff auf Berichte; Ermittlungen unterliegen der Berechtigung für eingeschränkte Berichte und der Fallmitgliedschaft.</value></data>
+  <data name="PermRecordsIssueInventoryLabel" xml:space="preserve">
+    <value>Inventar ausgeben und zurücknehmen</value>
+  </data>
+  <data name="PermRecordsIssueInventoryNote" xml:space="preserve">
+    <value>Legt fest, wer Inventar ausgeben und zurücknehmen darf. Standardmäßig sind Abteilungsadministratoren berechtigt.</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesLabel" xml:space="preserve">
+    <value>Kontrollierte Substanzen verwalten</value>
+  </data>
+  <data name="PermRecordsManageControlledSubstancesNote" xml:space="preserve">
+    <value>Legt fest, wer Buchungen kontrollierter Substanzen erfassen und bezeugen darf. Standardmäßig sind Abteilungsadministratoren berechtigt. Jede Buchung muss von einer anderen berechtigten Person bezeugt werden.</value>
+  </data>
+  <data name="PermRecordsTransferInventoryLabel" xml:space="preserve">
+    <value>Inventar umlagern</value>
+  </data>
+  <data name="PermRecordsTransferInventoryNote" xml:space="preserve">
+    <value>Legt fest, wer Inventar zwischen Lagerorten umlagern darf. Standardmäßig sind Abteilungsadministratoren berechtigt.</value>
+  </data>
 </root>

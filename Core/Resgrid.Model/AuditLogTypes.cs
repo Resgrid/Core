@@ -220,6 +220,7 @@ namespace Resgrid.Model
 		ChecklistOccurrenceMissed,
 		ChecklistOccurrenceSkipped,
 ChecklistReminderSettingsUpdated,
-		WorkOrderChanged
+		WorkOrderChanged,
+		InventoryChanged
 	}
 }

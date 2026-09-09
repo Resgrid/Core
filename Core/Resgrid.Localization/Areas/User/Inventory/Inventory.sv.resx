@@ -157,5 +157,320 @@
   <data name="ViewInventoryEntryHeader" xml:space="preserve">
     <value>Visa lagerpost</value>
   </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="AddLine" xml:space="preserve">
+    <value>Lägg till artikel</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Arkivera</value>
+  </data>
+  <data name="AssetDetail" xml:space="preserve">
+    <value>Utrustningsdetaljer</value>
+  </data>
+  <data name="AssetId" xml:space="preserve">
+    <value>Utrustnings-ID</value>
+  </data>
+  <data name="Assets" xml:space="preserve">
+    <value>Utrustningsenheter</value>
+  </data>
+  <data name="AssetTag" xml:space="preserve">
+    <value>Inventarienummer</value>
+  </data>
+  <data name="Attestation" xml:space="preserve">
+    <value>Vittnesintyg</value>
+  </data>
+  <data name="Barcode" xml:space="preserve">
+    <value>Streckkod</value>
+  </data>
+  <data name="Categories" xml:space="preserve">
+    <value>Kategorier</value>
+  </data>
+  <data name="Checklists" xml:space="preserve">
+    <value>Checklistor</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="ContainerAsset" xml:space="preserve">
+    <value>Behållarens utrustnings-ID</value>
+  </data>
+  <data name="DefaultLocation" xml:space="preserve">
+    <value>Standardlagerplats</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detaljer</value>
+  </data>
+  <data name="ExpectedReturn" xml:space="preserve">
+    <value>Förväntat återlämningsdatum</value>
+  </data>
+  <data name="Expiration" xml:space="preserve">
+    <value>Utgångsdatum</value>
+  </data>
+  <data name="FromLocation" xml:space="preserve">
+    <value>Avsändande lagerplats</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Historik</value>
+  </data>
+  <data name="HolderHelp" xml:space="preserve">
+    <value>Välj en person eller en enhet som ska ta emot utrustningen.</value>
+  </data>
+  <data name="Initialize" xml:space="preserve">
+    <value>Initiera inventarier</value>
+  </data>
+  <data name="InitializeDescription" xml:space="preserve">
+    <value>Initiera inventarieområdet genom att importera befintliga artiklar, lagersaldon och historik.</value>
+  </data>
+  <data name="Inventory" xml:space="preserve">
+    <value>Inventarier</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="IsControlledSubstance" xml:space="preserve">
+    <value>Kontrollerad substans</value>
+  </data>
+  <data name="IsKit" xml:space="preserve">
+    <value>Satsartikel</value>
+  </data>
+  <data name="Issuances" xml:space="preserve">
+    <value>Utlämningar</value>
+  </data>
+  <data name="IssuanceStatus0" xml:space="preserve">
+    <value>Ej återlämnad</value>
+  </data>
+  <data name="IssuanceStatus1" xml:space="preserve">
+    <value>Återlämnad</value>
+  </data>
+  <data name="IssuanceStatus2" xml:space="preserve">
+    <value>Delvis återlämnad</value>
+  </data>
+  <data name="IssuanceStatus3" xml:space="preserve">
+    <value>Förlorad</value>
+  </data>
+  <data name="IssuanceStatus4" xml:space="preserve">
+    <value>Förbrukad</value>
+  </data>
+  <data name="Issue" xml:space="preserve">
+    <value>Lämna ut</value>
+  </data>
+  <data name="Items" xml:space="preserve">
+    <value>Artiklar</value>
+  </data>
+  <data name="Kits" xml:space="preserve">
+    <value>Satser</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Lagerplats</value>
+  </data>
+  <data name="Locations" xml:space="preserve">
+    <value>Lagerplatser</value>
+  </data>
+  <data name="LocationType" xml:space="preserve">
+    <value>Typ av lagerplats</value>
+  </data>
+  <data name="LocationType0" xml:space="preserve">
+    <value>Anläggning</value>
+  </data>
+  <data name="LocationType1" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="LocationType2" xml:space="preserve">
+    <value>Enhet</value>
+  </data>
+  <data name="LocationType3" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="LocationType4" xml:space="preserve">
+    <value>Behållare</value>
+  </data>
+  <data name="LocationType5" xml:space="preserve">
+    <value>Extern</value>
+  </data>
+  <data name="LotId" xml:space="preserve">
+    <value>Parti-ID</value>
+  </data>
+  <data name="Lots" xml:space="preserve">
+    <value>Partier</value>
+  </data>
+  <data name="Minimum" xml:space="preserve">
+    <value>Minimilager</value>
+  </data>
+  <data name="MoreChoices" xml:space="preserve">
+    <value>Endast den första sidan med tillgängliga alternativ visas.</value>
+  </data>
+  <data name="Movement" xml:space="preserve">
+    <value>Lagertransaktion</value>
+  </data>
+  <data name="Movement0" xml:space="preserve">
+    <value>Ingående saldo importerat</value>
+  </data>
+  <data name="Movement1" xml:space="preserve">
+    <value>Ta emot</value>
+  </data>
+  <data name="Movement2" xml:space="preserve">
+    <value>Förbruka</value>
+  </data>
+  <data name="Movement3" xml:space="preserve">
+    <value>Flytta</value>
+  </data>
+  <data name="Movement4" xml:space="preserve">
+    <value>Lämna ut</value>
+  </data>
+  <data name="Movement5" xml:space="preserve">
+    <value>Återlämna</value>
+  </data>
+  <data name="Movement6" xml:space="preserve">
+    <value>Justera</value>
+  </data>
+  <data name="Movement7" xml:space="preserve">
+    <value>Inventera</value>
+  </data>
+  <data name="Movement8" xml:space="preserve">
+    <value>Utrangera</value>
+  </data>
+  <data name="Movement9" xml:space="preserve">
+    <value>Ändra status</value>
+  </data>
+  <data name="MovementHelp" xml:space="preserve">
+    <value>Ange en positiv mängd. Inleveranser kräver en mottagande plats; förbrukning och utrangering kräver en avsändande plats. Justeringar kräver antingen en avsändande eller en mottagande plats. Förflyttningar kräver två olika platser.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="NewAsset" xml:space="preserve">
+    <value>Ny utrustningsenhet</value>
+  </data>
+  <data name="NewItem" xml:space="preserve">
+    <value>Ny artikel</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Nästa</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nej</value>
+  </data>
+  <data name="NoRows" xml:space="preserve">
+    <value>Det finns inga inventarieposter att visa.</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Anteckning</value>
+  </data>
+  <data name="OnHand" xml:space="preserve">
+    <value>Lagersaldo</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Överordnat objekt</value>
+  </data>
+  <data name="Person" xml:space="preserve">
+    <value>Person</value>
+  </data>
+  <data name="PersonnelGear" xml:space="preserve">
+    <value>Personlig utrustning</value>
+  </data>
+  <data name="PostMovement" xml:space="preserve">
+    <value>Registrera transaktion</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Föregående</value>
+  </data>
+  <data name="ProtectedDataRequired" xml:space="preserve">
+    <value>Verifiera din identitet för att visa skyddade inventarier.</value>
+  </data>
+  <data name="Rebuild" xml:space="preserve">
+    <value>Beräkna om lagersaldon</value>
+  </data>
+  <data name="Reference" xml:space="preserve">
+    <value>Referens</value>
+  </data>
+  <data name="ReorderPoint" xml:space="preserve">
+    <value>Beställningspunkt</value>
+  </data>
+  <data name="RequiresExpiration" xml:space="preserve">
+    <value>Utgångsdatum krävs</value>
+  </data>
+  <data name="RequiresLotTracking" xml:space="preserve">
+    <value>Spåra partier</value>
+  </data>
+  <data name="Return" xml:space="preserve">
+    <value>Återlämna</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="SerialNumber" xml:space="preserve">
+    <value>Serienummer</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Status0" xml:space="preserve">
+    <value>I bruk</value>
+  </data>
+  <data name="Status1" xml:space="preserve">
+    <value>Utlämnad</value>
+  </data>
+  <data name="Status2" xml:space="preserve">
+    <value>På reparation</value>
+  </data>
+  <data name="Status3" xml:space="preserve">
+    <value>Skadad</value>
+  </data>
+  <data name="Status4" xml:space="preserve">
+    <value>Förlorad</value>
+  </data>
+  <data name="Status5" xml:space="preserve">
+    <value>Förbrukad</value>
+  </data>
+  <data name="Status6" xml:space="preserve">
+    <value>Tagen ur bruk</value>
+  </data>
+  <data name="ToLocation" xml:space="preserve">
+    <value>Mottagande lagerplats</value>
+  </data>
+  <data name="Tracking0" xml:space="preserve">
+    <value>Efter mängd</value>
+  </data>
+  <data name="Tracking1" xml:space="preserve">
+    <value>Efter serienummer</value>
+  </data>
+  <data name="TrackingMode" xml:space="preserve">
+    <value>Spårningsmetod</value>
+  </data>
+  <data name="Transfers" xml:space="preserve">
+    <value>Förflyttningar</value>
+  </data>
+  <data name="UnableToComplete" xml:space="preserve">
+    <value>Det gick inte att slutföra inventarieåtgärden.</value>
+  </data>
+  <data name="UnitCost" xml:space="preserve">
+    <value>Styckkostnad</value>
+  </data>
+  <data name="UnitEquipment" xml:space="preserve">
+    <value>Enhetens utrustning</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Lås upp</value>
+  </data>
+  <data name="Witness" xml:space="preserve">
+    <value>Intyga som vittne</value>
+  </data>
+  <data name="WitnessPending" xml:space="preserve">
+    <value>Inväntar ett annat behörigt vittne. Begärans ID:</value>
+  </data>
+  <data name="WitnessRequest" xml:space="preserve">
+    <value>ID för vittnesbegäran</value>
+  </data>
+  <data name="WorkOrders" xml:space="preserve">
+    <value>Arbetsorder</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
 </root>
 

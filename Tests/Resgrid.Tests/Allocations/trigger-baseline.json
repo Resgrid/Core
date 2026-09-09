@@ -91,5 +91,10 @@
   "InventoryIssued": 59,
   "InventoryReturned": 60,
   "InventoryAssetStatusChanged": 64,
-  "ControlledSubstanceRecorded": 66
+  "ControlledSubstanceRecorded": 66,
+  "InventoryPurchaseOrderReceived": 65,
+  "InventoryLowStock": 61,
+  "InventoryExpiring": 62,
+  "InventoryCountCompleted": 63,
+  "InventoryReturnOverdue": 166
 }

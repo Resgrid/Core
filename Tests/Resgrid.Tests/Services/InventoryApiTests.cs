@@ -30,7 +30,7 @@ namespace Resgrid.Tests.Services
 {
 	/// <summary>Real MVC binding, authentication and action filters around mocked domain boundaries.</summary>
 	[TestFixture, NonParallelizable]
-	public sealed class InventoryApiTests
+	public sealed partial class InventoryApiTests
 	{
 		private const string Route = "/api/v4/Inventory/";
 		private const string Canary = "SYNTHETIC-INVENTORY-API-PHI-CANARY";
@@ -43,12 +43,13 @@ namespace Resgrid.Tests.Services
 		private Mock<IInventoryIssuanceService> _issuance;
 		private Mock<IInventoryMigrationService> _migration;
 		private Mock<IInventoryAuthorizationService> _authorization;
+		private Mock<IInventoryPurchasingService> _purchasing;
 		private List<(InventoryActor Actor, InventoryCommand Command)> _posts;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_catalog = new(); _stock = new(); _transfers = new(); _issuance = new(); _migration = new(); _authorization = new(); _posts = new();
+			_catalog = new(); _stock = new(); _transfers = new(); _issuance = new(); _migration = new(); _authorization = new(); _purchasing = new(); _posts = new();
 			_catalog.Setup(s => s.ListAsync<InventoryItem>(It.IsAny<InventoryActor>(), It.IsAny<int>())).ReturnsAsync(new InventoryPage<InventoryItem>());
 			_stock.Setup(s => s.PostTransactionAsync(It.IsAny<InventoryActor>(), It.IsAny<InventoryCommand>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((InventoryActor actor, InventoryCommand command, CancellationToken ct) =>
@@ -163,21 +164,20 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task Low_stock_uses_authorized_stock_pages_and_reports_the_visibility_scope()
+		public async Task Low_stock_uses_authorized_totals_for_the_catalog_page_and_reports_the_visibility_scope()
 		{
 			_catalog.Setup(s => s.ListAsync<InventoryItem>(It.IsAny<InventoryActor>(), 2)).ReturnsAsync(new InventoryPage<InventoryItem> { HasMore = true,
 				Items = new() { new InventoryItem { Id = ItemId, DepartmentId = 77, Content = JsonConvert.SerializeObject(new InventoryItemContent { Name = "Synthetic gloves", UnitOfMeasure = "pair", ReorderPoint = 5m }) } } });
-			_catalog.Setup(s => s.ListAsync<InventoryStock>(It.IsAny<InventoryActor>(), 0)).ReturnsAsync(new InventoryPage<InventoryStock> { HasMore = true,
-				Items = new() { new InventoryStock { ItemId = ItemId, LocationId = LocationId, Quantity = 1.125m } } });
-			_catalog.Setup(s => s.ListAsync<InventoryStock>(It.IsAny<InventoryActor>(), 1)).ReturnsAsync(new InventoryPage<InventoryStock> {
-				Items = new() { new InventoryStock { ItemId = ItemId, LocationId = LotId, Quantity = 2m } } });
+			_stock.Setup(s => s.GetVisibleQuantitiesAsync(It.IsAny<InventoryActor>(), It.Is<IReadOnlyCollection<string>>(ids => ids.Count == 1 && ids.Contains(ItemId))))
+				.ReturnsAsync(new Dictionary<string, decimal> { [ItemId] = 3.125m });
 			await WithServer(async client =>
 			{
 				SignIn(client); var response = await client.GetAsync(Route + "GetLowStockItems?page=2"); await Success(response);
 				var json = JObject.Parse(await response.Content.ReadAsStringAsync()); var row = json["Data"]["Items"].Single();
 				row.Value<decimal>("VisibleQuantity").Should().Be(3.125m); row.Value<string>("QuantityScope").Should().Be("AuthorizedLocations");
 				json.Value<bool>("HasMore").Should().BeTrue();
-				_catalog.Verify(s => s.ListAsync<InventoryStock>(It.Is<InventoryActor>(a => a.DepartmentId == 77 && a.UserId == "manager"), 1), Times.Once);
+				_stock.Verify(s => s.GetVisibleQuantitiesAsync(It.Is<InventoryActor>(a => a.DepartmentId == 77 && a.UserId == "manager"), It.IsAny<IReadOnlyCollection<string>>()), Times.Once);
+				_catalog.Verify(s => s.ListAsync<InventoryStock>(It.IsAny<InventoryActor>(), It.IsAny<int>()), Times.Never);
 			});
 		}
 
@@ -190,10 +190,12 @@ namespace Resgrid.Tests.Services
 			var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Testing" });
 			builder.Logging.ClearProviders(); builder.WebHost.UseUrls("http://127.0.0.1:0"); builder.Services.AddHttpContextAccessor(); builder.Services.AddLocalization(); builder.Services.AddApiVersioning();
 			const string scheme = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme;
-			builder.Services.AddAuthentication(scheme).AddScheme<AuthenticationSchemeOptions, TestAuthentication>(scheme, _ => { }); builder.Services.AddAuthorization();
+			builder.Services.AddAuthentication(scheme).AddScheme<AuthenticationSchemeOptions, TestAuthentication>(scheme, _ => { });
+			builder.Services.AddAuthorization(options => options.AddPolicy(Resgrid.Providers.Claims.ResgridResources.Inventory_Delete, policy => policy.RequireClaim("inventory-delete", "true")));
 			builder.Services.AddControllers().AddApplicationPart(typeof(ApiController).Assembly).AddNewtonsoftJson(o => o.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver());
 			builder.Services.AddSingleton(_catalog.Object); builder.Services.AddSingleton(_stock.Object); builder.Services.AddSingleton(_transfers.Object);
 			builder.Services.AddSingleton(_issuance.Object); builder.Services.AddSingleton(_migration.Object); builder.Services.AddSingleton(_authorization.Object);
+			builder.Services.AddSingleton(_purchasing.Object);
 			await using var app = builder.Build(); var previous = ApiClaims._httpContextAccessor; ApiClaims._httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
 			app.UseRouting(); app.UseAuthentication(); app.UseAuthorization(); app.MapControllers();
 			try { await app.StartAsync(); using var client = new HttpClient { BaseAddress = new Uri(app.Urls.Single()) }; await test(client); }
@@ -205,7 +207,8 @@ namespace Resgrid.Tests.Services
 			protected override Task<AuthenticateResult> HandleAuthenticateAsync()
 			{
 				if (!Request.Headers.TryGetValue("Test-Member", out var user)) return Task.FromResult(AuthenticateResult.NoResult());
-				var claims = new[] { new Claim(ClaimTypes.PrimarySid, user.ToString()), new Claim(ClaimTypes.PrimaryGroupSid, "77") };
+				var claims = new List<Claim> { new Claim(ClaimTypes.PrimarySid, user.ToString()), new Claim(ClaimTypes.PrimaryGroupSid, "77") };
+				if (Request.Headers["Test-Inventory-Delete"] == "true") claims.Add(new Claim("inventory-delete", "true"));
 				return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme.Name)), Scheme.Name)));
 			}
 		}

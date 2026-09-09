@@ -8,6 +8,8 @@ using Moq;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Inventories;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services.Records;
 using Resgrid.Services.Records.Evidence;
@@ -168,6 +170,91 @@ namespace Resgrid.Tests.Rms
 			await _service.RequireInventoryCoverageAsync(Dept,_record.RmsOperationalRecordId,new[]{artifact});
 			reference.SnapshotJson="{\"Quantity\":3}";reference.Checksum=RecordSnapshotSerializer.Checksum(reference.SnapshotJson);
 			Func<Task> stale=()=>_service.RequireInventoryCoverageAsync(Dept,_record.RmsOperationalRecordId,new[]{artifact});await stale.Should().ThrowAsync<ArgumentException>();
+		}
+		[TestCase(RmsRecordKind.Operational)]
+		[TestCase(RmsRecordKind.IncidentReport)]
+		public async Task Witnessed_ledger_reversal_requires_a_linked_Record_correction_and_refreshed_evidence_before_finalization(RmsRecordKind kind)
+		{
+			var recordId = _record.RmsOperationalRecordId;
+			var inventory = new Mock<IInventoryStore>();
+			var original = new RecordInventoryUsage { DepartmentId = Dept, SourceType = (int)InventoryUsageSourceType.RmsRecord, SourceId = recordId, RecordKind = (int)kind,
+				TransactionId = Guid.NewGuid().ToString("D"), ItemId = Guid.NewGuid().ToString("D"), SourceLocationId = Guid.NewGuid().ToString("D"), Quantity = 2 };
+			var originalReference = UsageReference(original);
+			var references = new List<RmsExternalReference> { originalReference };
+			var reversals = new List<InventoryTransaction>(); var corrections = new List<RecordInventoryUsage>();
+			_references.Setup(x => x.GetForRecordAsync(Dept, recordId)).ReturnsAsync(() => references);
+			inventory.Setup(x => x.GetAsync<RecordInventoryUsage>(Dept, original.Id)).ReturnsAsync(original);
+			inventory.Setup(x => x.RelatedAsync<InventoryTransaction>(Dept, "ReversesTransactionId", original.TransactionId)).ReturnsAsync(() => reversals);
+			inventory.Setup(x => x.RelatedAsync<RecordInventoryUsage>(Dept, "ReversesUsageId", original.Id)).ReturnsAsync(() => corrections);
+			var service = InventoryCoverageService(inventory.Object);
+			var signedArtifact = UsageArtifact(recordId, originalReference); signedArtifact.RevisionId = Guid.NewGuid().ToString("D");
+			var frozenManifest = signedArtifact.ManifestJson; var frozenChecksum = signedArtifact.Checksum;
+			await service.RequireInventoryCoverageAsync(Dept, recordId, new[] { signedArtifact });
+
+			var reversal = new InventoryTransaction { DepartmentId = Dept, ItemId = original.ItemId, Quantity = original.Quantity, ToLocationId = original.SourceLocationId,
+				TransactionType = (int)InventoryTransactionType.Adjust, ReversesTransactionId = original.TransactionId };
+			reversals.Add(reversal);
+			Func<Task> finalize = () => service.RequireInventoryCoverageAsync(Dept, recordId, new[] { signedArtifact });
+			await finalize.Should().ThrowAsync<ArgumentException>().WithMessage("Attach the inventory reversal*");
+
+			var correction = new RecordInventoryUsage { DepartmentId = Dept, SourceType = original.SourceType, SourceId = recordId, RecordKind = (int)kind,
+				TransactionId = reversal.Id, ReversesUsageId = original.Id, ItemId = original.ItemId, SourceLocationId = original.SourceLocationId, Quantity = original.Quantity };
+			corrections.Add(correction);
+			inventory.Setup(x => x.GetAsync<RecordInventoryUsage>(Dept, correction.Id)).ReturnsAsync(correction);
+			await finalize.Should().ThrowAsync<ArgumentException>().WithMessage("Attach the inventory reversal*", "a source usage row without a Records reference cannot satisfy the signed evidence contract");
+
+			var correctionReference = UsageReference(correction); references.Add(correctionReference);
+			await finalize.Should().ThrowAsync<ArgumentException>().WithMessage("Refresh the inventory evidence*");
+			var refreshed = UsageArtifact(recordId, originalReference, correctionReference);
+			await service.RequireInventoryCoverageAsync(Dept, recordId, new[] { refreshed });
+			signedArtifact.ManifestJson.Should().Be(frozenManifest); signedArtifact.Checksum.Should().Be(frozenChecksum);
+			RecordSnapshotSerializer.Checksum(signedArtifact.ManifestJson).Should().Be(frozenChecksum, "the earlier signed artifact remains verifiable after a later correction");
+			var totals = JObject.Parse(refreshed.ManifestJson)["usage"].Sum(x => x.Value<decimal>("quantity"));
+			totals.Should().Be(0, "the corrected snapshot includes the consumption and one negative reversal, without replacing history");
+		}
+
+		[Test]
+		public async Task A_correction_from_another_Record_cannot_cover_a_pending_inventory_ledger_reversal()
+		{
+			var recordId = _record.RmsOperationalRecordId; var inventory = new Mock<IInventoryStore>();
+			var original = new RecordInventoryUsage { DepartmentId = Dept, SourceType = (int)InventoryUsageSourceType.RmsRecord, SourceId = recordId, RecordKind = (int)RmsRecordKind.Operational, TransactionId = Guid.NewGuid().ToString("D"), Quantity = 1 };
+			var originalReference = UsageReference(original);
+			var reversal = new InventoryTransaction { DepartmentId = Dept, ReversesTransactionId = original.TransactionId, Quantity = 1 };
+			var foreign = new RecordInventoryUsage { DepartmentId = Dept, SourceType = original.SourceType, SourceId = Guid.NewGuid().ToString("D"), RecordKind = original.RecordKind, ReversesUsageId = original.Id, TransactionId = reversal.Id, Quantity = 1 };
+			_references.Setup(x => x.GetForRecordAsync(Dept, recordId)).ReturnsAsync(new[] { originalReference });
+			inventory.Setup(x => x.GetAsync<RecordInventoryUsage>(Dept, original.Id)).ReturnsAsync(original);
+			inventory.Setup(x => x.RelatedAsync<InventoryTransaction>(Dept, "ReversesTransactionId", original.TransactionId)).ReturnsAsync(new List<InventoryTransaction> { reversal });
+			inventory.Setup(x => x.RelatedAsync<RecordInventoryUsage>(Dept, "ReversesUsageId", original.Id)).ReturnsAsync(new List<RecordInventoryUsage> { foreign });
+			Func<Task> finalize = () => InventoryCoverageService(inventory.Object).RequireInventoryCoverageAsync(Dept, recordId, new[] { UsageArtifact(recordId, originalReference) });
+			await finalize.Should().ThrowAsync<ArgumentException>().WithMessage("Attach the inventory reversal*");
+		}
+
+		[Test]
+		public async Task Modern_inventory_evidence_fails_closed_when_source_verification_is_unavailable()
+		{
+			var usage = new RecordInventoryUsage { DepartmentId = Dept, SourceId = _record.RmsOperationalRecordId, RecordKind = (int)RmsRecordKind.Operational, TransactionId = Guid.NewGuid().ToString("D"), Quantity = 1 };
+			var reference = UsageReference(usage);
+			_references.Setup(x => x.GetForRecordAsync(Dept, _record.RmsOperationalRecordId)).ReturnsAsync(new[] { reference });
+			Func<Task> finalize = () => _service.RequireInventoryCoverageAsync(Dept, _record.RmsOperationalRecordId, new[] { UsageArtifact(_record.RmsOperationalRecordId, reference) });
+			await finalize.Should().ThrowAsync<InvalidOperationException>().WithMessage("Inventory evidence verification is unavailable.");
+		}
+
+		private RecordsEvidenceService InventoryCoverageService(IInventoryStore inventory) => new(_store.EvidenceRepo.Object, _store.RecordsRepo.Object,
+			_incidents.ReportsRepo.Object, _store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { (IRecordEvidenceAdapter)_adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object,
+			new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()), inventory);
+		private static RmsExternalReference UsageReference(RecordInventoryUsage usage)
+		{
+			var snapshot = RecordsEvidenceService.Serialize(new { SchemaVersion = 3, UsageId = usage.Id, usage.TransactionId, usage.ItemId, usage.Quantity, usage.ReversesUsageId });
+			return new RmsExternalReference { RmsExternalReferenceId = usage.Id, DepartmentId = usage.DepartmentId, RecordId = usage.SourceId, RecordKind = usage.RecordKind.Value,
+				SourceSubsystem = RmsInventoryUsageAdapter.SourceSubsystem, SourceEntityType = "RecordInventoryUsage", SourceEntityId = usage.Id, SemanticRole = RmsInventoryUsageAdapter.SemanticRole,
+				SnapshotJson = snapshot, Checksum = RecordSnapshotSerializer.Checksum(snapshot) };
+		}
+		private static RmsEvidenceArtifact UsageArtifact(string recordId, params RmsExternalReference[] references)
+		{
+			var manifest = RecordsEvidenceService.Serialize(new { usage = references.Select(reference => {
+				var snapshot = JObject.Parse(reference.SnapshotJson); return new { reference_id = reference.RmsExternalReferenceId, reference_checksum = reference.Checksum,
+					quantity = snapshot.Value<string>("ReversesUsageId") == null ? snapshot.Value<decimal>("Quantity") : -snapshot.Value<decimal>("Quantity") }; }).ToArray() });
+			return new RmsEvidenceArtifact { DepartmentId = Dept, RecordId = recordId, Kind = (int)RmsEvidenceKind.InventoryUsage, ManifestJson = manifest, Checksum = RecordSnapshotSerializer.Checksum(manifest) };
 		}
 		[Test]
 		public async Task Forged_call_and_non_author_capture_are_denied_before_reading_the_source()

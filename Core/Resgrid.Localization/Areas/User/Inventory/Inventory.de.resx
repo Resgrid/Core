@@ -472,5 +472,179 @@
   <data name="Yes" xml:space="preserve">
     <value>Ja</value>
   </data>
+  <data name="RecordUsageTitle" xml:space="preserve"><value>Bestandsverbrauch</value></data>
+  <data name="RecordUsageHelp" xml:space="preserve"><value>Das Speichern des Verbrauchs ändert den Bestand sofort. Diese Änderungen bleiben erhalten, wenn ein Entwurf oder eine Berichtsänderung verworfen wird. Stornieren Sie falschen Verbrauch ausdrücklich und erfassen Sie anschließend den Ersatz. Öffnen Sie eine Berichtsänderung, bevor Sie den Verbrauch eines abgeschlossenen Berichts ändern.</value></data>
+  <data name="RecordUsageWitnessHelp" xml:space="preserve"><value>Verbrauch und Stornierungen kontrollierter Artikel erfordern einen unabhängigen Zeugen in Inventar. Schließen Sie diesen Vorgang zuerst ab und verknüpfen Sie anschließend die entstandene Transaktions-ID hier.</value></data>
+  <data name="RecordUsageRecorded" xml:space="preserve"><value>Erfasster Verbrauch</value></data>
+  <data name="RecordUsageType" xml:space="preserve"><value>Verwendungsart</value></data>
+  <data name="RecordUsageType0" xml:space="preserve"><value>Verwendet</value></data>
+  <data name="RecordUsageType1" xml:space="preserve"><value>Am Patienten verbraucht</value></data>
+  <data name="RecordUsageType2" xml:space="preserve"><value>Am Einsatzort belassen</value></data>
+  <data name="RecordUsageType3" xml:space="preserve"><value>Beschädigt</value></data>
+  <data name="RecordUsageLedgerEntry" xml:space="preserve"><value>Buchung</value></data>
+  <data name="RecordUsageRecordedUtc" xml:space="preserve"><value>Erfasst (UTC)</value></data>
+  <data name="RecordUsageReverses" xml:space="preserve"><value>Storniert Verbrauch</value></data>
+  <data name="RecordUsageReversed" xml:space="preserve"><value>Storniert</value></data>
+  <data name="RecordUsageReverse" xml:space="preserve"><value>Verbrauch stornieren</value></data>
+  <data name="RecordUsageReverseHelp" xml:space="preserve"><value>Dies erfasst eine vollständige Stornierung und erhält den ursprünglichen Verbrauch im Verlauf. Um eine Menge oder einen Artikel zu korrigieren, stornieren Sie den Verbrauch und erfassen Sie den Ersatz. Wurde die Stornierung bereits in Inventar von einem Zeugen bestätigt, geben Sie ihre Transaktions-ID ein, um sie ohne erneute Bestandsänderung zu verknüpfen.</value></data>
+  <data name="RecordUsageCorrectionReason" xml:space="preserve"><value>Korrekturgrund</value></data>
+  <data name="RecordUsageExistingReversal" xml:space="preserve"><value>ID einer vorhandenen, bezeugten Stornotransaktion (optional)</value></data>
+  <data name="RecordUsageLedgerHelp" xml:space="preserve"><value>Positive Mengen erfassen Verbrauch; negative Mengen stornieren ihn. Öffnen Sie die Buchung, um Bewegungsdetails gemäß Ihren aktuellen Inventarzugriffsrechten anzuzeigen.</value></data>
+  <data name="RecordUsageExistingConsumption" xml:space="preserve"><value>ID einer vorhandenen Verbrauchstransaktion (optional)</value></data>
+  <data name="RecordUsageAttachHelp" xml:space="preserve"><value>Geben Sie eine abgeschlossene Verbrauchstransaktion aus Inventar ein, um deren Artikel, Menge, Lagerort und Notiz zu verknüpfen. Die Felder für neuen Verbrauch unten werden ignoriert, und der Bestand wird nicht erneut verbraucht. Wählen Sie oben die Verwendungsart.</value></data>
+  <data name="RecordUsageNewConsumption" xml:space="preserve"><value>Neuer Verbrauch</value></data>
+  <data name="RecordUsageDefaultLocation" xml:space="preserve"><value>Einheit oder Wache des Berichts verwenden</value></data>
+  <data name="RecordUsageLocationHelp" xml:space="preserve"><value>Leer lassen, um die Einsatzeinheit des Berichts zu verwenden, ersatzweise deren Wache. Wählen Sie die Quelle ausdrücklich, wenn der Bericht mehrere mögliche Lagerorte hat.</value></data>
+  <data name="RecordUsageSave" xml:space="preserve"><value>Verbrauch speichern</value></data>
+  <data name="RecordUsageReturnToReport" xml:space="preserve"><value>Zum Bericht zurück</value></data>
+  <data name="RecordUsageRefreshEvidence" xml:space="preserve"><value>Nachweise aus erfasstem Verbrauch aktualisieren</value></data>
+  <data name="RecordUsageSaved" xml:space="preserve"><value>Verbrauch gespeichert und Nachweise erfasst.</value></data>
+  <data name="RecordUsageEvidencePending" xml:space="preserve"><value>Der Inventarvorgang wurde gespeichert. Die Nachweise konnten nicht erfasst werden. Verwenden Sie Nachweise aktualisieren, nachdem Zugriffsprobleme oder Entwurfsänderungen geklärt sind. Senden Sie den Inventarvorgang nicht erneut.</value></data>
+  <data name="RecordUsageDraftChanged" xml:space="preserve"><value>Der Entwurf wurde geändert. Prüfen Sie den erfassten Verbrauch, bevor Sie einen weiteren Inventarvorgang senden.</value></data>
+  <data name="RecordUsageWitnessRequired" xml:space="preserve"><value>Schließen Sie das Verfahren mit einem unabhängigen Zeugen in Inventar ab und verknüpfen Sie hier die entstandene Transaktions-ID. Durch diese Aktion wurde keine Bestandsbewegung erfasst.</value></data>
+  <data name="RecordUsageEvidenceSaved" xml:space="preserve"><value>Nachweise erfasst.</value></data>
+  <data name="RecordUsageReconciliationRequired" xml:space="preserve"><value>Eine Stornobuchung wurde noch nicht mit diesem Bericht verknüpft. Verknüpfen Sie sie vor dem Abschließen als Korrektur.</value></data>
+  <data name="M4Purchasing" xml:space="preserve"><value>Einkauf</value></data>
+  <data name="M4Vendors" xml:space="preserve"><value>Lieferanten</value></data>
+  <data name="M4PurchaseOrders" xml:space="preserve"><value>Bestellungen</value></data>
+  <data name="M4Valuation" xml:space="preserve"><value>Bestandsbewertung</value></data>
+  <data name="M4VendorHelp" xml:space="preserve"><value>Lieferanten verwenden Firmeneinträge aus dem Bereich „Kontakte“. Erstellen oder aktualisieren Sie dort die Firmendaten und verknüpfen Sie die Firma anschließend hier.</value></data>
+  <data name="M4AccountNumber" xml:space="preserve"><value>Kundennummer beim Lieferanten</value></data>
+  <data name="M4CompanyContact" xml:space="preserve"><value>Firma aus den Kontakten</value></data>
+  <data name="M4NewVendor" xml:space="preserve"><value>Lieferanten hinzufügen</value></data>
+  <data name="M4PurchaseOrderNumber" xml:space="preserve"><value>Bestellnummer</value></data>
+  <data name="M4Supplier" xml:space="preserve"><value>Lieferant</value></data>
+  <data name="M4Currency" xml:space="preserve"><value>Währung</value></data>
+  <data name="M4ViewPurchaseOrder" xml:space="preserve"><value>Bestellung anzeigen</value></data>
+  <data name="M4Status0" xml:space="preserve"><value>Entwurf</value></data>
+  <data name="M4Status1" xml:space="preserve"><value>Bestellt</value></data>
+  <data name="M4Status2" xml:space="preserve"><value>Teilweise eingegangen</value></data>
+  <data name="M4Status3" xml:space="preserve"><value>Eingegangen</value></data>
+  <data name="M4Status4" xml:space="preserve"><value>Storniert</value></data>
+  <data name="M4QuantityOrdered" xml:space="preserve"><value>Bestellte Menge</value></data>
+  <data name="M4QuantityReceived" xml:space="preserve"><value>Eingegangene Menge</value></data>
+  <data name="M4Remaining" xml:space="preserve"><value>Restmenge</value></data>
+  <data name="M4OrderHelp" xml:space="preserve"><value>Wenn eine Bestellung als bestellt markiert wird, werden ihre Positionen gesperrt. Das Stornieren verhindert weitere Wareneingänge; bereits eingegangene Mengen bleiben erhalten.</value></data>
+  <data name="M4Order" xml:space="preserve"><value>Als bestellt markieren</value></data>
+  <data name="M4CancelOrder" xml:space="preserve"><value>Bestellung stornieren</value></data>
+  <data name="M4Receive" xml:space="preserve"><value>Artikel entgegennehmen</value></data>
+  <data name="M4ReceiptHelp" xml:space="preserve"><value>Erfassen Sie den Eingang der gesamten Bestellung oder einer Teillieferung. Entfernen Sie Positionen, die nicht zu dieser Lieferung gehören. Ist ein unabhängiger Zeuge erforderlich, ändern sich Bestand und eingegangene Mengen erst nach dessen Bestätigung in der Bestandsverwaltung.</value></data>
+  <data name="M4SerializedReceiptHelp" xml:space="preserve"><value>Verwenden Sie für jeden Vermögensgegenstand mit Seriennummer eine eigene Zeile mit Menge 1 und seiner Seriennummer. Fügen Sie Zeilen hinzu, um weitere Gegenstände zu erfassen oder Mengen auf Lagerorte oder Chargen aufzuteilen.</value></data>
+  <data name="M4ReceiveQuantity" xml:space="preserve"><value>Zu empfangende Menge</value></data>
+  <data name="M4RemoveLine" xml:space="preserve"><value>Position entfernen</value></data>
+  <data name="M4Receipts" xml:space="preserve"><value>Wareneingänge</value></data>
+  <data name="M4NewPurchaseOrder" xml:space="preserve"><value>Neue Bestellung</value></data>
+  <data name="M4ValuationScope" xml:space="preserve"><value>Die Bewertung umfasst nur Bestände und Lagerorte, die Sie einsehen dürfen. Summen werden für jede Währung getrennt ausgewiesen. Zeilen mit unbekannten Kosten werden separat gezählt und nicht in die Summen der bekannten Werte einbezogen.</value></data>
+  <data name="M4AsOfUtc" xml:space="preserve"><value>Stand (UTC)</value></data>
+  <data name="M4NegativeStock" xml:space="preserve"><value>Einige sichtbare Lagerbestände sind negativ. Prüfen Sie diese, bevor Sie die Bewertung als Grundlage verwenden.</value></data>
+  <data name="M4KnownValue" xml:space="preserve"><value>Bekannter Wert</value></data>
+  <data name="M4UncostedRows" xml:space="preserve"><value>Zeilen ohne Kostenangabe</value></data>
+  <data name="M4UnspecifiedCurrency" xml:space="preserve"><value>Währung nicht angegeben</value></data>
+  <data name="M4UnknownCost" xml:space="preserve"><value>Kosten unbekannt</value></data>
+  <data name="M4AverageUnitCost" xml:space="preserve"><value>Durchschnittliche Stückkosten</value></data>
+  <data name="M4PreferredVendor" xml:space="preserve"><value>Bevorzugter Lieferant</value></data>
+  <data name="M4CurrencyHelp" xml:space="preserve"><value>Verwenden Sie pro Artikel eine Währung. Bestehende Bestände ohne Währungsangabe bleiben bei der Bewertung getrennt; das Zuweisen einer Währung rechnet die Kosten nicht um.</value></data>
+  <data name="InventoryPurchaseOrderReceived" xml:space="preserve"><value>Bestellung für den Lagerbestand eingegangen</value></data>
+  <data name="M5Operations" xml:space="preserve"><value>Bestandszählungen, Warnungen und Berichte</value></data>
+  <data name="M5Counts" xml:space="preserve"><value>Bestandszählungen</value></data>
+  <data name="M5Alerts" xml:space="preserve"><value>Inventarwarnungen</value></data>
+  <data name="M5Reports" xml:space="preserve"><value>Inventarberichte</value></data>
+  <data name="M5CountHelp" xml:space="preserve"><value>Erstellen Sie eine Momentaufnahme von bis zu 100 Bestandspositionen. Erfassen Sie jede Menge, speichern Sie die Zählung und schließen Sie sie dann ab. Wenn sich Bestands- oder Katalogdaten ändern, brechen Sie die Zählung ab und beginnen Sie eine neue. Erfassen Sie neu aufgefundene Ausrüstung mit Seriennummer über „Einlagern“.</value></data>
+  <data name="M5AllLocations" xml:space="preserve"><value>Alle Lagerorte</value></data>
+  <data name="M5StartCount" xml:space="preserve"><value>Zählung starten</value></data>
+  <data name="M5CompleteCount" xml:space="preserve"><value>Zählung abschließen</value></data>
+  <data name="M5CancelCount" xml:space="preserve"><value>Zählung abbrechen</value></data>
+  <data name="M5SnapshotOn" xml:space="preserve"><value>Momentaufnahme vom (UTC)</value></data>
+  <data name="M5Expected" xml:space="preserve"><value>Sollbestand</value></data>
+  <data name="M5Counted" xml:space="preserve"><value>Gezählter Bestand</value></data>
+  <data name="M5Variance" xml:space="preserve"><value>Abweichung</value></data>
+  <data name="M5VarianceLines" xml:space="preserve"><value>Positionen mit einer Abweichung</value></data>
+  <data name="M5CountStatus0" xml:space="preserve"><value>Entwurf</value></data>
+  <data name="M5CountStatus1" xml:space="preserve"><value>Wartet auf Zeugenbestätigung</value></data>
+  <data name="M5CountStatus2" xml:space="preserve"><value>Abgeschlossen</value></data>
+  <data name="M5CountStatus3" xml:space="preserve"><value>Abgebrochen</value></data>
+  <data name="M5WitnessHelp" xml:space="preserve"><value>Ein unabhängiger Zeuge muss den ausstehenden Vorgang im Inventarverlauf bestätigen. Die Momentaufnahme muss weiterhin aktuell sein.</value></data>
+  <data name="M5AlertHelp" xml:space="preserve"><value>Warnungen zeigen niedrige Bestände, in den nächsten 30 Tagen ablaufendes Inventar, abgelaufenes Inventar und überfällige Rückgaben. Aktualisieren Sie die Warnungen einmal nach der Einführung, um Bestandswarnungen zu initialisieren, sowie nach dem Import von Altbeständen. Spätere Bestands- und Artikeländerungen aktualisieren sie automatisch.</value></data>
+  <data name="M5RefreshAlerts" xml:space="preserve"><value>Warnungen aktualisieren</value></data>
+  <data name="M5AlertType0" xml:space="preserve"><value>Niedriger Bestand</value></data>
+  <data name="M5AlertType1" xml:space="preserve"><value>Läuft bald ab</value></data>
+  <data name="M5AlertType2" xml:space="preserve"><value>Abgelaufen</value></data>
+  <data name="M5AlertType3" xml:space="preserve"><value>Überfällige Rückgabe</value></data>
+  <data name="M5Open" xml:space="preserve"><value>Offen</value></data>
+  <data name="M5Resolved" xml:space="preserve"><value>Erledigt</value></data>
+  <data name="M5DueOn" xml:space="preserve"><value>Fällig am (UTC)</value></data>
+  <data name="M5ReportHelp" xml:space="preserve"><value>Wählen Sie einen Bericht und bei Bedarf Filter aus. Datumsangaben verwenden UTC; das Enddatum ist ausgeschlossen. Momentaufnahmeberichte verwenden die aktuellen Bestände. Laden Sie die PDF-Datei herunter, um sie anzuzeigen oder zu drucken.</value></data>
+  <data name="M5FromUtc" xml:space="preserve"><value>Startdatum (UTC, einschließlich)</value></data>
+  <data name="M5UntilUtc" xml:space="preserve"><value>Enddatum (UTC, ausschließlich)</value></data>
+  <data name="M5DownloadPdf" xml:space="preserve"><value>Druckbare PDF herunterladen</value></data>
+  <data name="M5ScheduleReports" xml:space="preserve"><value>Berichtsversand planen</value></data>
+  <data name="M5AlertNotificationTitle" xml:space="preserve"><value>Inventarwarnungen</value></data>
+  <data name="M5AlertNotificationMessage" xml:space="preserve"><value>Das Inventar erfordert Ihre Aufmerksamkeit. Melden Sie sich an, um die aktuellen Warnungen zu prüfen.</value></data>
+  <data name="M5ReportOnHand" xml:space="preserve"><value>Aktueller Inventarbestand</value></data>
+  <data name="M5ReportUsage" xml:space="preserve"><value>Inventarverbrauch</value></data>
+  <data name="M5ReportExpiration" xml:space="preserve"><value>Ablaufdaten des Inventars</value></data>
+  <data name="M5ReportLowStock" xml:space="preserve"><value>Niedrige Inventarbestände</value></data>
+  <data name="M5ReportTransferHistory" xml:space="preserve"><value>Umlagerungsverlauf des Inventars</value></data>
+  <data name="M5ReportIssuance" xml:space="preserve"><value>Ausgabeverlauf des Inventars</value></data>
+  <data name="M5ReportValuation" xml:space="preserve"><value>Bestandsbewertung</value></data>
+  <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Protokoll kontrollierter Substanzen</value></data>
+  <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Tage bis zum Ablauf</value></data>
+  <data name="M5Shortfall" xml:space="preserve"><value>Fehlmenge zum Meldebestand</value></data>
+  <data name="M5ReorderQuantity" xml:space="preserve"><value>Vorgeschlagene Nachbestellmenge</value></data>
+  <data name="M5IssuanceId" xml:space="preserve"><value>Ausgabe-ID</value></data>
+  <data name="M5PersonId" xml:space="preserve"><value>ID der empfangenden Person</value></data>
+  <data name="M5UnitId" xml:space="preserve"><value>ID der empfangenden Einheit</value></data>
+  <data name="M5IssuedOn" xml:space="preserve"><value>Ausgegeben am (UTC)</value></data>
+  <data name="M5ReturnedQuantity" xml:space="preserve"><value>Zurückgegebene Menge</value></data>
+  <data name="M5OutstandingQuantity" xml:space="preserve"><value>Ausstehende Menge</value></data>
+  <data name="M5ReturnedOn" xml:space="preserve"><value>Zurückgegeben am (UTC)</value></data>
+  <data name="M5Performer" xml:space="preserve"><value>Durchgeführt von (Benutzer-ID)</value></data>
+  <data name="M5ReversesTransaction" xml:space="preserve"><value>Storniert Transaktion</value></data>
+  <data name="M5UsageSource" xml:space="preserve"><value>Verbrauchsquelle</value></data>
+  <data name="M5SourceId" xml:space="preserve"><value>Datensatz-ID</value></data>
+  <data name="M5CallId" xml:space="preserve"><value>Einsatz-ID</value></data>
+  <data name="M5RevisionId" xml:space="preserve"><value>ID der geänderten Revision</value></data>
+  <data name="M5DeaSchedule" xml:space="preserve"><value>DEA-Einstufung</value></data>
+  <data name="M5FromBefore" xml:space="preserve"><value>Quellbestand vorher</value></data>
+  <data name="M5FromAfter" xml:space="preserve"><value>Quellbestand nachher</value></data>
+  <data name="M5ToBefore" xml:space="preserve"><value>Zielbestand vorher</value></data>
+  <data name="M5ToAfter" xml:space="preserve"><value>Zielbestand nachher</value></data>
+  <data name="M5Witness" xml:space="preserve"><value>Zeuge (Benutzer-ID)</value></data>
+  <data name="M5WitnessedOn" xml:space="preserve"><value>Bestätigt am (UTC)</value></data>
+  <data name="M5ScheduledReportProtected" xml:space="preserve"><value>Das Inventar enthält geschützte Daten. Öffnen Sie den Berichtslink mit Anmeldung und bestätigen Sie Ihre Identität, um aktuelle Ergebnisse anzuzeigen oder zu drucken. Diese planmäßig erstellte PDF-Datei enthält keine Inventarwerte.</value></data>
+  <data name="M5ReportScope" xml:space="preserve"><value>Dieser Bericht enthält nur Inventar und Lagerorte, für die Sie aktuell eine Anzeigeberechtigung haben. Mengen und Werte beziehen sich auf die angegebene Momentaufnahme. Die Ergebnisse sind auf 5.000 Zeilen begrenzt.</value></data>
+  <data name="M5ReportRange" xml:space="preserve"><value>UTC-Zeitraum (Start einschließlich, Ende ausschließlich)</value></data>
+  <data name="M5ReportMethodUsage" xml:space="preserve"><value>Jede Bestandsbewegung erscheint einmal. Positive Mengen erfassen ausgehenden Verbrauch; negative Mengen machen ihn rückgängig. Für Datensatzdetails ist Zugriff auf die Quelle erforderlich. Importierte ausgehende Bewegungen behalten ihre ursprüngliche Kennung und stellen keine Verknüpfung mit einem Protokoll oder Patienten her.</value></data>
+  <data name="M5ReportMethodLowStock" xml:space="preserve"><value>Aktive Artikel werden aufgeführt, wenn der sichtbare Mengenbestand oder Bestand mit Seriennummer den Meldebestand erreicht oder unterschreitet. Ist kein Meldebestand festgelegt, gilt der Mindestbestand. Bestände mit Seriennummer umfassen einsatzbereite, ausgegebene, beschädigte und in Reparatur befindliche Ausrüstung. Ausgeblendete Lagerorte werden ausgeschlossen.</value></data>
+  <data name="M5ReportMethodIssuance" xml:space="preserve"><value>Die Zeilen zeigen Ausgaben, die im ausgewählten Zeitraum erstellt wurden, und ihren aktuellen Rückgabestatus. Für ausstehende Mengen älterer Ausgaben muss ein früheres Startdatum gewählt werden.</value></data>
+  <data name="M5ReportMethodExpiration" xml:space="preserve"><value>Die Zeilen zeigen aktuelle positive Bestände und aktive Bestände mit Seriennummer, deren Ablaufdatum im ausgewählten Zeitraum liegt. Standardmäßig werden bereits abgelaufenes Inventar und Inventar, das in den nächsten 30 Tagen abläuft, angezeigt.</value></data>
+  <data name="M5PerformerSignature" xml:space="preserve"><value>Unterschrift der ausführenden Person</value></data>
+  <data name="M5WitnessSignature" xml:space="preserve"><value>Unterschrift des Zeugen</value></data>
+  <data name="M5NotRecorded" xml:space="preserve"><value>Nicht erfasst</value></data>
+  <data name="M5ReferenceType0" xml:space="preserve"><value>Inventarbewegung ohne zugängliche Datensatzverknüpfung</value></data>
+  <data name="M5ReferenceType2" xml:space="preserve"><value>Datensätze</value></data>
+  <data name="M5ReferenceType8" xml:space="preserve"><value>Übernommene Inventarbewegung</value></data>
+  <data name="InvalidCount" xml:space="preserve"><value>Geben Sie gültige Zählungsdaten und Mengen ein.</value></data>
+  <data name="CountScopeTooLarge" xml:space="preserve"><value>Wählen Sie einen kleineren Bereich aus. Zählungen unterstützen bis zu 100 Bestandspositionen.</value></data>
+  <data name="CountEmpty" xml:space="preserve"><value>In diesem Bereich gibt es keine aktiven Bestandspositionen zu zählen.</value></data>
+  <data name="CountAlreadyExists" xml:space="preserve"><value>Diese Zählung existiert bereits. Öffnen Sie sie über die Liste der Zählungen.</value></data>
+  <data name="CountStateConflict" xml:space="preserve"><value>Die Zählung wurde geändert oder enthält unvollständige Erfassungen. Laden Sie sie erneut und speichern Sie vor dem Abschluss alle Mengen.</value></data>
+  <data name="CountSnapshotChanged" xml:space="preserve"><value>Das Inventar hat sich seit dieser Momentaufnahme geändert. Brechen Sie diese Zählung ab und beginnen Sie eine neue.</value></data>
+  <data name="CountReceiptImmutable" xml:space="preserve"><value>Zählungskorrekturen gehören zur abgeschlossenen Zählung. Beginnen Sie eine neue Zählung, um den Bestand zu korrigieren.</value></data>
+  <data name="CountCompletionRequired" xml:space="preserve"><value>Buchen Sie Zählungsabweichungen, indem Sie die Bestandszählung abschließen.</value></data>
+  <data name="InvalidReportRange" xml:space="preserve"><value>Wählen Sie einen gültigen UTC-Zeitraum von höchstens 366 Tagen.</value></data>
+  <data name="InvalidReportFilter" xml:space="preserve"><value>Wählen Sie gültige Berichtsfilter aus.</value></data>
+  <data name="ReportChanged" xml:space="preserve"><value>Der Bericht hat sich während der PDF-Erstellung geändert. Erstellen Sie ihn erneut.</value></data>
+  <data name="ReportGenerationFailed" xml:space="preserve"><value>Der Bericht konnte nicht erstellt werden. Versuchen Sie es erneut.</value></data>
+  <data name="InventoryLowStock" xml:space="preserve"><value>Niedriger Lagerbestand</value></data>
+  <data name="InventoryExpiring" xml:space="preserve"><value>Inventar läuft ab</value></data>
+  <data name="InventoryCountCompleted" xml:space="preserve"><value>Inventurzählung abgeschlossen</value></data>
+  <data name="InventoryReturnOverdue" xml:space="preserve"><value>Inventarrückgabe überfällig</value></data>
+  <data name="HolderHistoryRetained" xml:space="preserve"><value>Diese Ressource wird im Bestandsverlauf referenziert und muss erhalten bleiben.</value></data>
+  <data name="InventoryAdjusted" xml:space="preserve"><value>Bestand angepasst</value></data>
+  <data name="InventoryTransferCompleted" xml:space="preserve"><value>Bestandsübertragung abgeschlossen</value></data>
+  <data name="InventoryIssued" xml:space="preserve"><value>Bestand ausgegeben</value></data>
+  <data name="InventoryReturned" xml:space="preserve"><value>Bestand zurückgegeben</value></data>
+  <data name="InventoryAssetStatusChanged" xml:space="preserve"><value>Status des Inventargegenstands geändert</value></data>
+  <data name="ControlledSubstanceRecorded" xml:space="preserve"><value>Kontrollierte Substanz erfasst</value></data>
 </root>
-

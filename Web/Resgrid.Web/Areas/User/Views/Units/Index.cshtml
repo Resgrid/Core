@@ -2,6 +2,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Units.UnitsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> inventoryLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @commonLocalizer["UnitsModule"];
 }
@@ -73,6 +74,10 @@
                 overflow: visible !important;
             }
 </style>
+@if (TempData["InventoryHolderRetained"] is true)
+{
+    <div class="alert alert-warning" role="alert">@inventoryLocalizer["HolderHistoryRetained"]</div>
+}
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">

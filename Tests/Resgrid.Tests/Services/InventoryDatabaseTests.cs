@@ -10,9 +10,11 @@ using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using Resgrid.Config;
+using Resgrid.Model;
 using Resgrid.Model.Inventories;
 using Resgrid.Repositories.DataRepository;
 using Resgrid.Repositories.DataRepository.Transactions;
+using Resgrid.Services;
 
 namespace Resgrid.Tests.Services
 {
@@ -28,7 +30,7 @@ namespace Resgrid.Tests.Services
 		public async Task Schema_covers_every_persisted_model_column_and_six_decimal_quantities()
 		{
 			await using var db = Connect(_connection);
-			InventoryTables.All.Should().HaveCount(13);
+			InventoryTables.All.Should().HaveCount(21);
 			foreach (var binding in InventoryTables.All)
 			{
 				var actual = (await db.QueryAsync<string>("SELECT LOWER(column_name) FROM information_schema.columns WHERE LOWER(table_name)=@table", new { table = binding.Value.ToLowerInvariant() })).ToHashSet();
@@ -42,6 +44,330 @@ namespace Resgrid.Tests.Services
 					(await db.ExecuteScalarAsync<int>("SELECT numeric_scale" + query, parameters)).Should().Be(6);
 				}
 			}
+		}
+
+		[Test]
+		public void Usage_catalog_upgrade_adds_only_new_content_and_keeps_existing_inventory_at_version_19()
+		{
+			var catalog = new ProtectedFieldCatalog();
+			var originalTables = InventoryTables.All.Values.Except(new[] { "RecordInventoryUsages", "InventoryVendors", "InventoryPurchaseOrders", "InventoryPurchaseOrderItems", "InventoryCounts", "InventoryCountItems", "InventoryAlerts", "InventoryAlertDeliveries" }).ToArray();
+			originalTables.Should().HaveCount(13);
+			foreach (var table in originalTables)
+				catalog.GetForTable(table).Should().ContainSingle().Which.AddedInCatalogVersion.Should().Be(19);
+			catalog.GetForTable("RecordInventoryUsages").Should().ContainSingle().Which.AddedInCatalogVersion.Should().Be(20);
+			catalog.GetForTableAndVersion("RecordInventoryUsages", 19).Should().BeEmpty();
+			var binding = AdpTableBindings.ForVersionRange(catalog, 19, 20).Should().ContainSingle().Which;
+			binding.TableName.Should().Be("RecordInventoryUsages"); binding.PkColumn.Should().Be("Id"); binding.PkIsNumeric.Should().BeFalse();
+			binding.DepartmentColumn.Should().Be("DepartmentId"); binding.ProtectedMarkerColumn.Should().Be("IsProtected");
+			binding.Columns.Select(c => c.FieldId).Should().Equal("recordinventoryusages.content");
+		}
+
+		[Test]
+		public void Purchasing_catalog_upgrade_registers_only_the_three_new_protected_content_fields()
+		{
+			var catalog = new ProtectedFieldCatalog();
+			var tables = new[] { "InventoryVendors", "InventoryPurchaseOrders", "InventoryPurchaseOrderItems" };
+			var bindings = AdpTableBindings.ForVersionRange(catalog, 20, 21).ToArray();
+			bindings.Select(b => b.TableName).Should().BeEquivalentTo(tables);
+			foreach (var binding in bindings)
+			{
+				catalog.GetForTable(binding.TableName).Should().ContainSingle().Which.AddedInCatalogVersion.Should().Be(21);
+				catalog.GetForTableAndVersion(binding.TableName, 20).Should().BeEmpty();
+				binding.PkColumn.Should().Be("Id"); binding.PkIsNumeric.Should().BeFalse();
+				binding.DepartmentColumn.Should().Be("DepartmentId"); binding.ProtectedMarkerColumn.Should().Be("IsProtected");
+				binding.Columns.Select(c => c.FieldId).Should().Equal(binding.TableName.ToLowerInvariant() + ".content");
+			}
+			catalog.GetForTable("RecordInventoryUsages").Should().ContainSingle().Which.AddedInCatalogVersion.Should().Be(20);
+		}
+
+		[Test]
+		public async Task Purchasing_vendor_links_preserve_contact_identity_type_tenant_and_active_uniqueness()
+		{
+			var contactId = await InsertContactAsync(contactId: new string('V', 128));
+			var foreignContact = await InsertContactAsync(88);
+			var vendor = NewRow<InventoryVendor>(); vendor.ContactId = contactId;
+			await WriteAsync(store => store.InsertAsync(vendor));
+			await RejectAsync(store => { var duplicate = NewRow<InventoryVendor>(); duplicate.ContactId = contactId; return store.InsertAsync(duplicate); });
+			await RejectAsync(store => { var foreign = NewRow<InventoryVendor>(); foreign.ContactId = foreignContact; return store.InsertAsync(foreign); });
+			await using var db = Connect(_connection);
+			if (_type == DatabaseTypes.Postgres)
+				(await db.QueryAsync<string>("SELECT udt_name FROM information_schema.columns WHERE table_name IN ('contacts','inventoryvendors') AND column_name='contactid'"))
+					.Should().HaveCount(2).And.OnlyContain(t => t == "citext");
+			else
+				(await db.QueryAsync<int>("SELECT character_maximum_length FROM information_schema.columns WHERE table_name IN ('Contacts','InventoryVendors') AND column_name='ContactId'"))
+					.Should().HaveCount(2).And.OnlyContain(length => length == 128);
+			await FluentActions.Awaiting(() => db.ExecuteAsync($"DELETE FROM {Q("Contacts")} WHERE {Q("ContactId")}=@contactId", new { contactId })).Should().ThrowAsync<DbException>();
+			vendor.IsDeleted = true; vendor.Revision++;
+			var replacement = NewRow<InventoryVendor>(); replacement.ContactId = contactId;
+			await WriteAsync(async store => { await store.UpdateAsync(vendor, 1); await store.InsertAsync(replacement); });
+			using var uow = new UnitOfWork(Connections()); var repository = Store(uow);
+			(await repository.GetAsync<InventoryVendor>(77, replacement.Id)).ContactId.Should().Be(contactId);
+			(await repository.GetAsync<InventoryVendor>(88, replacement.Id)).Should().BeNull();
+			(await repository.RelatedAsync<InventoryVendor>(77, "ContactId", contactId)).Select(v => v.Id).Should().BeEquivalentTo(new[] { vendor.Id, replacement.Id });
+			(await repository.QueryAsync<InventoryVendor>(77, new InventoryQuery())).Should().ContainSingle().Which.Id.Should().Be(replacement.Id);
+		}
+
+		[Test]
+		public async Task Purchasing_order_and_line_foreign_keys_are_tenant_scoped_and_statuses_are_bounded()
+		{
+			var seed = await SeedPurchasingAsync(); var foreign = await SeedPurchasingAsync(88);
+			foreach (var corrupt in new Action<InventoryPurchaseOrder>[]
+			{
+				row => row.DepartmentId = 88, row => row.VendorId = foreign.Vendor.Id, row => row.Status = -1, row => row.Status = 5
+			})
+				await RejectAsync(store =>
+				{
+					var row = NewRow<InventoryPurchaseOrder>(); row.VendorId = seed.Vendor.Id; row.CurrencyCode = "USD";
+					corrupt(row); return store.InsertAsync(row);
+				});
+			foreach (var corrupt in new Action<InventoryPurchaseOrderItem>[]
+			{
+				row => row.DepartmentId = 88, row => row.PurchaseOrderId = foreign.Order.Id, row => row.ItemId = foreign.Item.Id
+			})
+				await RejectAsync(store => { var row = PurchaseLine(seed.Order, seed.Item, 2); corrupt(row); return store.InsertAsync(row); });
+			await WriteAsync(async store =>
+			{
+				foreach (InventoryPurchaseOrderStatus status in Enum.GetValues(typeof(InventoryPurchaseOrderStatus)))
+				{
+					var row = NewRow<InventoryPurchaseOrder>(); row.VendorId = seed.Vendor.Id; row.CurrencyCode = "USD"; row.Status = (int)status;
+					await store.InsertAsync(row);
+				}
+			});
+			using var uow = new UnitOfWork(Connections());
+			(await Store(uow).RelatedAsync<InventoryPurchaseOrder>(77, "VendorId", seed.Vendor.Id)).Select(o => o.Status).Distinct().Should().BeEquivalentTo(new[] { 0, 1, 2, 3, 4 });
+		}
+
+		[Test]
+		public async Task Purchasing_lines_enforce_positive_ordered_nonnegative_received_and_active_line_numbers()
+		{
+			var seed = await SeedPurchasingAsync();
+			foreach (var corrupt in new Action<InventoryPurchaseOrderItem>[]
+			{
+				row => row.LineNumber = 0, row => row.QuantityOrdered = 0, row => row.QuantityOrdered = -1,
+				row => row.QuantityReceived = -0.000001m, row => row.QuantityReceived = row.QuantityOrdered + 0.000001m
+			})
+				await RejectAsync(store => { var row = PurchaseLine(seed.Order, seed.Item, 2); corrupt(row); return store.InsertAsync(row); });
+			await RejectAsync(store => store.InsertAsync(PurchaseLine(seed.Order, seed.Item)));
+			seed.Line.IsDeleted = true; seed.Line.Revision++;
+			var replacement = PurchaseLine(seed.Order, seed.Item); replacement.QuantityReceived = replacement.QuantityOrdered;
+			var next = PurchaseLine(seed.Order, seed.Item, 2); next.QuantityReceived = 0.123456m;
+			await WriteAsync(async store => { await store.UpdateAsync(seed.Line, 1); await store.InsertAsync(replacement); await store.InsertAsync(next); });
+			using var uow = new UnitOfWork(Connections()); var repository = Store(uow);
+			(await repository.RelatedAsync<InventoryPurchaseOrderItem>(77, "PurchaseOrderId", seed.Order.Id)).Should().HaveCount(3);
+			(await repository.QueryAsync<InventoryPurchaseOrderItem>(77, new InventoryQuery())).Select(l => l.Id).Should().BeEquivalentTo(new[] { replacement.Id, next.Id });
+			(await repository.GetAsync<InventoryPurchaseOrderItem>(77, replacement.Id)).QuantityReceived.Should().Be(3.123456m);
+			(await repository.GetAsync<InventoryPurchaseOrderItem>(77, next.Id)).QuantityReceived.Should().Be(0.123456m);
+		}
+
+		[Test]
+		public async Task Purchasing_receipt_backlinks_require_same_tenant_lines_and_purchase_order_reference_type()
+		{
+			var seed = await SeedPurchasingAsync(); var foreign = await SeedPurchasingAsync(88);
+			await RejectAsync(store => store.InsertAsync(Receipt(seed.Order, foreign.Line, seed.Item, seed.Location)));
+			await RejectAsync(store => { var invalid = Receipt(seed.Order, seed.Line, seed.Item, seed.Location); invalid.ReferenceType = (int)InventoryReferenceType.None; return store.InsertAsync(invalid); });
+			var receipt = Receipt(seed.Order, seed.Line, seed.Item, seed.Location);
+			await WriteAsync(store => store.InsertAsync(receipt));
+			using var uow = new UnitOfWork(Connections()); var repository = Store(uow);
+			var saved = await repository.GetAsync<InventoryTransaction>(77, receipt.Id);
+			saved.PurchaseOrderItemId.Should().Be(seed.Line.Id); saved.ReferenceId.Should().Be(seed.Order.Id); saved.Quantity.Should().Be(0.123456m);
+			(await repository.RelatedAsync<InventoryTransaction>(77, "PurchaseOrderItemId", seed.Line.Id)).Should().ContainSingle().Which.Id.Should().Be(receipt.Id);
+			(await repository.RelatedAsync<InventoryTransaction>(88, "PurchaseOrderItemId", seed.Line.Id)).Should().BeEmpty();
+			await using var db = Connect(_connection);
+			await FluentActions.Awaiting(() => db.ExecuteAsync($"DELETE FROM {Q("InventoryPurchaseOrderItems")} WHERE {Q("Id")}=@Id", new { seed.Line.Id })).Should().ThrowAsync<DbException>();
+		}
+
+		[Test]
+		public async Task Purchasing_receipt_counter_stock_and_ledger_rollback_as_one_transaction()
+		{
+			var seed = await SeedPurchasingAsync();
+			await WriteAsync(async store => { await store.ApplyStockDeltaAsync(77, seed.Item.Id, seed.Location.Id, null, 5, "inventory-test-author"); });
+			var receipt = Receipt(seed.Order, seed.Line, seed.Item, seed.Location);
+			using var uow = new UnitOfWork(Connections()); var repository = Store(uow);
+			await uow.CreateOrGetConnectionAsync(); await repository.LockDepartmentAsync(77);
+			seed.Line.QuantityReceived = receipt.Quantity; seed.Line.Revision++;
+			seed.Order.Status = (int)InventoryPurchaseOrderStatus.PartiallyReceived; seed.Order.Revision++;
+			await repository.UpdateAsync(seed.Line, 1); await repository.UpdateAsync(seed.Order, 1); await repository.InsertAsync(receipt);
+			await repository.ApplyStockDeltaAsync(77, seed.Item.Id, seed.Location.Id, null, receipt.Quantity, "inventory-test-author");
+			uow.DiscardChanges();
+			(await repository.GetAsync<InventoryTransaction>(77, receipt.Id)).Should().BeNull();
+			var line = await repository.GetAsync<InventoryPurchaseOrderItem>(77, seed.Line.Id); line.QuantityReceived.Should().Be(0); line.Revision.Should().Be(1);
+			var order = await repository.GetAsync<InventoryPurchaseOrder>(77, seed.Order.Id); order.Status.Should().Be((int)InventoryPurchaseOrderStatus.Draft); order.Revision.Should().Be(1);
+			(await repository.RelatedAsync<InventoryStock>(77, "ItemId", seed.Item.Id)).Single().Quantity.Should().Be(5);
+		}
+
+		[Test]
+		public async Task Purchasing_repository_updates_preserve_protected_content_revisions_and_tenant_boundaries()
+		{
+			var seed = await SeedPurchasingAsync();
+			foreach (var row in new InventoryMutableRow[] { seed.Vendor, seed.Order, seed.Line })
+			{ row.Revision++; row.IsProtected = true; row.Content = new string('p', 18000); }
+			seed.Order.Status = (int)InventoryPurchaseOrderStatus.Received; seed.Order.OrderedOn = new DateTime(2026, 9, 1); seed.Order.ReceivedOn = new DateTime(2026, 9, 2);
+			seed.Line.QuantityReceived = seed.Line.QuantityOrdered;
+			await WriteAsync(async store => { await store.UpdateAsync(seed.Vendor, 1); await store.UpdateAsync(seed.Order, 1); await store.UpdateAsync(seed.Line, 1); });
+			await FluentActions.Awaiting(() => WriteAsync(store => store.UpdateAsync(seed.Vendor, 1))).Should().ThrowAsync<InvalidOperationException>().WithMessage("*changed or is unavailable*");
+			await FluentActions.Awaiting(() => WriteAsync(store => store.UpdateAsync(seed.Order, 1))).Should().ThrowAsync<InvalidOperationException>();
+			await FluentActions.Awaiting(() => WriteAsync(store => store.UpdateAsync(seed.Line, 1))).Should().ThrowAsync<InvalidOperationException>();
+			using var uow = new UnitOfWork(Connections()); var repository = Store(uow);
+			var vendor = await repository.GetAsync<InventoryVendor>(77, seed.Vendor.Id);
+			var order = await repository.GetAsync<InventoryPurchaseOrder>(77, seed.Order.Id);
+			var line = await repository.GetAsync<InventoryPurchaseOrderItem>(77, seed.Line.Id);
+			foreach (var row in new InventoryMutableRow[] { vendor, order, line })
+			{ row.Revision.Should().Be(2); row.IsProtected.Should().BeTrue(); row.Content.Should().Be(new string('p', 18000)); }
+			order.CurrencyCode.Should().Be("USD"); order.OrderedOn.Should().Be(seed.Order.OrderedOn); order.ReceivedOn.Should().Be(seed.Order.ReceivedOn);
+			line.QuantityReceived.Should().Be(3.123456m);
+			(await repository.GetAsync<InventoryVendor>(88, vendor.Id)).Should().BeNull();
+			(await repository.GetAsync<InventoryPurchaseOrder>(88, order.Id)).Should().BeNull();
+			(await repository.GetAsync<InventoryPurchaseOrderItem>(88, line.Id)).Should().BeNull();
+			order.IsDeleted = true; order.Revision++;
+			await WriteAsync(store => store.UpdateAsync(order, 2));
+			(await repository.QueryAsync<InventoryPurchaseOrder>(77, new InventoryQuery())).Should().BeEmpty();
+			(await repository.RelatedAsync<InventoryPurchaseOrder>(77, "VendorId", vendor.Id)).Should().ContainSingle().Which.IsDeleted.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task Purchasing_migration_refuses_rollback_without_erasing_orders_or_receipt_provenance()
+		{
+			var seed = await SeedPurchasingAsync(); var receipt = Receipt(seed.Order, seed.Line, seed.Item, seed.Location);
+			receipt.IsProtected = true; receipt.Content = "SYNTHETIC-OPAQUE-RECEIPT";
+			await WriteAsync(store => store.InsertAsync(receipt));
+			await using var db = Connect(_connection); var before = await CleanupSnapshotAsync(db);
+			var runner = _runner.GetRequiredService<IMigrationRunner>();
+			try { FluentActions.Invoking(() => runner.MigrateDown(200)).Should().Throw<Exception>(); }
+			finally { _runner.GetRequiredService<IVersionLoader>().LoadVersionInfo(); runner.MigrateUp(); }
+			(await CleanupSnapshotAsync(db)).Should().BeEquivalentTo(before);
+		}
+
+		[Test]
+		public async Task Usage_foreign_keys_isolate_tenant_item_asset_lot_transaction_and_correction_links()
+		{
+			var seed = await SeedAsync(); var other = await SeedAsync(); var foreign = await SeedAsync(88);
+			InventoryLot Lot(InventoryItem item) { var row = NewRow<InventoryLot>(item.DepartmentId); row.ItemId = item.Id; row.ReceivedOn = DateTime.UtcNow; return row; }
+			InventoryAsset Asset(InventoryItem item, InventoryLocation location) { var row = NewRow<InventoryAsset>(item.DepartmentId); row.ItemId = item.Id; row.CurrentLocationId = location.Id; return row; }
+			var lot = Lot(seed.Item); var otherLot = Lot(other.Item); var foreignLot = Lot(foreign.Item);
+			var asset = Asset(seed.Item, seed.Location); var otherAsset = Asset(other.Item, other.Location); var foreignAsset = Asset(foreign.Item, foreign.Location);
+			var transaction = Posting(seed.Item, seed.Location, null, 0.123456m, InventoryTransactionType.Consume);
+			var foreignTransaction = Posting(foreign.Item, foreign.Location, null, 1, InventoryTransactionType.Consume);
+			var foreignUsage = Usage(foreignTransaction);
+			await WriteAsync(async store => { await store.InsertAsync(lot); await store.InsertAsync(otherLot); await store.InsertAsync(asset); await store.InsertAsync(otherAsset); await store.InsertAsync(transaction); });
+			await WriteAsync(async store => { await store.InsertAsync(foreignLot); await store.InsertAsync(foreignAsset); await store.InsertAsync(foreignTransaction); await store.InsertAsync(foreignUsage); }, 88);
+			foreach (var corrupt in new Action<RecordInventoryUsage>[]
+			{
+				r => r.DepartmentId = 88, r => r.ItemId = foreign.Item.Id, r => r.SourceLocationId = foreign.Location.Id,
+				r => r.TransactionId = foreignTransaction.Id, r => r.AssetId = foreignAsset.Id, r => r.LotId = foreignLot.Id,
+				r => r.AssetId = otherAsset.Id, r => r.LotId = otherLot.Id, r => r.ReversesUsageId = foreignUsage.Id
+			})
+				await RejectAsync(store => { var invalid = Usage(transaction); corrupt(invalid); return store.InsertAsync(invalid); });
+			var usage = Usage(transaction); usage.AssetId = asset.Id; usage.LotId = lot.Id;
+			usage.CallId = 987654; usage.RmsRevisionId = Guid.NewGuid().ToString("D"); usage.Content = new string('u', 18000);
+			await WriteAsync(store => store.InsertAsync(usage));
+			using var uow = new UnitOfWork(Connections()); var saved = await Store(uow).GetAsync<RecordInventoryUsage>(77, usage.Id);
+			saved.Quantity.Should().Be(0.123456m); saved.Content.Should().HaveLength(18000); saved.RmsRevisionId.Should().Be(usage.RmsRevisionId);
+			(await Store(uow).GetAsync<RecordInventoryUsage>(88, usage.Id)).Should().BeNull();
+		}
+
+		[Test]
+		public async Task Usage_checks_reject_null_rms_kind_invalid_source_quantity_and_self_reversal()
+		{
+			var seed = await SeedAsync(); var transaction = Posting(seed.Item, seed.Location, null, 1, InventoryTransactionType.Consume);
+			await WriteAsync(store => store.InsertAsync(transaction));
+			foreach (var corrupt in new Action<RecordInventoryUsage>[]
+			{
+				r => r.SourceType = -1, r => r.SourceType = 2, r => r.RecordKind = null, r => r.RecordKind = 3,
+				r => r.SourceType = (int)InventoryUsageSourceType.LegacyLog, r => r.Quantity = 0, r => r.Quantity = -1,
+				r => r.UsageType = -1, r => r.UsageType = 4, r => r.Revision = 0, r => r.ReversesUsageId = r.Id
+			})
+				await RejectAsync(store => { var invalid = Usage(transaction); corrupt(invalid); return store.InsertAsync(invalid); });
+			var legacy = Usage(transaction); legacy.SourceType = (int)InventoryUsageSourceType.LegacyLog; legacy.RecordKind = null; legacy.SourceId = "314";
+			await WriteAsync(store => store.InsertAsync(legacy));
+			using var uow = new UnitOfWork(Connections());
+			(await Store(uow).GetAsync<RecordInventoryUsage>(77, legacy.Id)).SourceId.Should().Be("314", "legacy source IDs remain soft references rather than GUID-only Record identities");
+		}
+
+		[Test]
+		public async Task Usage_transaction_and_reversal_uniqueness_prevent_duplicate_claims()
+		{
+			var seed = await SeedAsync(); var transaction = Posting(seed.Item, seed.Location, null, 1, InventoryTransactionType.Consume);
+			var usage = Usage(transaction);
+			var reversal = Posting(seed.Item, null, seed.Location, 1, InventoryTransactionType.Adjust); reversal.ReversesTransactionId = transaction.Id;
+			var correction = Usage(reversal, usage.SourceId); correction.ReversesUsageId = usage.Id;
+			var secondReversal = Posting(seed.Item, null, seed.Location, 1, InventoryTransactionType.Adjust); secondReversal.ReversesTransactionId = transaction.Id;
+			await WriteAsync(async store => { await store.InsertAsync(transaction); await store.InsertAsync(usage); await store.InsertAsync(reversal); await store.InsertAsync(correction); await store.InsertAsync(secondReversal); });
+			await RejectAsync(store => store.InsertAsync(Usage(transaction, Guid.NewGuid().ToString("D"))));
+			await RejectAsync(store => { var duplicate = Usage(secondReversal, usage.SourceId); duplicate.ReversesUsageId = usage.Id; return store.InsertAsync(duplicate); });
+			using var uow = new UnitOfWork(Connections()); var repository = Store(uow);
+			(await repository.ListAsync<RecordInventoryUsage>(77)).Select(r => r.Id).Should().BeEquivalentTo(new[] { usage.Id, correction.Id });
+			await using var db = Connect(_connection);
+			await FluentActions.Awaiting(() => db.ExecuteAsync($"DELETE FROM {Q("InventoryTransactions")} WHERE {Q("Id")}=@Id", new { reversal.Id })).Should().ThrowAsync<DbException>();
+		}
+
+		[Test]
+		public async Task Usage_store_updates_are_rejected_without_rewriting_original_evidence()
+		{
+			var seed = await SeedAsync(); var transaction = Posting(seed.Item, seed.Location, null, 1, InventoryTransactionType.Consume); var usage = Usage(transaction);
+			usage.Content = "ORIGINAL-USAGE";
+			await WriteAsync(async store => { await store.InsertAsync(transaction); await store.InsertAsync(usage); });
+			usage.Quantity = 2; usage.Content = "REWRITTEN-USAGE"; usage.Revision = 2;
+			await FluentActions.Awaiting(() => WriteAsync(store => store.UpdateAsync(usage, 1))).Should().ThrowAsync<InvalidOperationException>().WithMessage("*immutable*");
+			using var uow = new UnitOfWork(Connections()); var saved = await Store(uow).GetAsync<RecordInventoryUsage>(77, usage.Id);
+			saved.Quantity.Should().Be(1); saved.Content.Should().Be("ORIGINAL-USAGE"); saved.Revision.Should().Be(1);
+		}
+
+		[Test]
+		public async Task Usage_source_filters_apply_before_paging_and_preserve_kind_and_tenant_boundaries()
+		{
+			var seed = await SeedAsync(); var foreign = await SeedAsync(88); var sourceId = Guid.NewGuid().ToString("D");
+			var matches = new System.Collections.Generic.List<RecordInventoryUsage>();
+			await WriteAsync(async store =>
+			{
+				for (var i = 0; i < 1003; i++)
+				{
+					var transaction = Posting(seed.Item, seed.Location, null, 1, InventoryTransactionType.Consume); await store.InsertAsync(transaction);
+					var row = Usage(transaction, i < 501 ? "unrelated" : sourceId); row.Id = $"00000000-0000-0000-0000-{i + 1:000000000000}";
+					if (i >= 501) matches.Add(row); await store.InsertAsync(row);
+				}
+				foreach (var source in new[] { (Type: InventoryUsageSourceType.RmsRecord, Kind: (int?)RmsRecordKind.IncidentReport), (Type: InventoryUsageSourceType.LegacyLog, Kind: (int?)null) })
+				{
+					var transaction = Posting(seed.Item, seed.Location, null, 1, InventoryTransactionType.Consume); await store.InsertAsync(transaction);
+					var row = Usage(transaction, sourceId); row.SourceType = (int)source.Type; row.RecordKind = source.Kind;
+					row.Id = $"ffffffff-ffff-ffff-ffff-{(int)source.Type + 1:000000000000}"; await store.InsertAsync(row);
+				}
+			});
+			await WriteAsync(async store => { var transaction = Posting(foreign.Item, foreign.Location, null, 1, InventoryTransactionType.Consume); await store.InsertAsync(transaction); await store.InsertAsync(Usage(transaction, sourceId)); }, 88);
+			using var uow = new UnitOfWork(Connections()); var repository = Store(uow);
+			var filter = new InventoryQuery { SourceType = (int)InventoryUsageSourceType.RmsRecord, SourceId = sourceId, RecordKind = (int)RmsRecordKind.Operational };
+			(await repository.QueryAsync<RecordInventoryUsage>(77, new InventoryQuery())).Should().HaveCount(501).And.OnlyContain(r => r.SourceId == "unrelated");
+			(await repository.QueryAsync<RecordInventoryUsage>(77, filter)).Select(r => r.Id).Should().Equal(matches.Take(501).Select(r => r.Id));
+			(await repository.QueryAsync<RecordInventoryUsage>(77, filter, 500)).Select(r => r.Id).Should().Equal(matches.Skip(500).Select(r => r.Id));
+			(await repository.QueryAsync<RecordInventoryUsage>(88, filter)).Should().ContainSingle().Which.DepartmentId.Should().Be(88);
+			(await repository.QueryAsync<RecordInventoryUsage>(77, new InventoryQuery { SourceId = "' OR 1=1;--" })).Should().BeEmpty();
+			await FluentActions.Awaiting(() => repository.QueryAsync<InventoryItem>(77, filter)).Should().ThrowAsync<ArgumentException>();
+		}
+
+		[Test]
+		public async Task Usage_stock_and_ledger_joined_transaction_roll_back_together()
+		{
+			var seed = await SeedAsync(); await WriteAsync(async store => { await store.ApplyStockDeltaAsync(77, seed.Item.Id, seed.Location.Id, null, 5, "inventory-test-author"); });
+			var transaction = Posting(seed.Item, seed.Location, null, 0.123456m, InventoryTransactionType.Consume); var usage = Usage(transaction);
+			using var uow = new UnitOfWork(Connections()); var repository = Store(uow); await uow.CreateOrGetConnectionAsync(); await repository.LockDepartmentAsync(77);
+			await repository.ApplyStockDeltaAsync(77, seed.Item.Id, seed.Location.Id, null, -usage.Quantity, "inventory-test-author");
+			await repository.InsertAsync(transaction); await repository.InsertAsync(usage); uow.DiscardChanges();
+			(await repository.GetAsync<InventoryTransaction>(77, transaction.Id)).Should().BeNull();
+			(await repository.GetAsync<RecordInventoryUsage>(77, usage.Id)).Should().BeNull();
+			(await repository.RelatedAsync<InventoryStock>(77, "ItemId", seed.Item.Id)).Single().Quantity.Should().Be(5);
+		}
+
+		[Test]
+		public async Task Usage_migration_refuses_rollback_while_usage_and_correction_provenance_exist()
+		{
+			var seed = await SeedAsync(); var transaction = Posting(seed.Item, seed.Location, null, 1, InventoryTransactionType.Consume);
+			var usage = Usage(transaction); var reversal = Posting(seed.Item, null, seed.Location, 1, InventoryTransactionType.Adjust);
+			reversal.ReversesTransactionId = transaction.Id; var correction = Usage(reversal, usage.SourceId); correction.ReversesUsageId = usage.Id;
+			await WriteAsync(async store => { await store.InsertAsync(transaction); await store.InsertAsync(usage); await store.InsertAsync(reversal); await store.InsertAsync(correction); });
+			await using var db = Connect(_connection); var before = await CleanupSnapshotAsync(db);
+			var runner = _runner.GetRequiredService<IMigrationRunner>();
+			try { FluentActions.Invoking(() => runner.MigrateDown(199)).Should().Throw<Exception>(); }
+			finally { _runner.GetRequiredService<IVersionLoader>().LoadVersionInfo(); runner.MigrateUp(); }
+			(await CleanupSnapshotAsync(db)).Should().BeEquivalentTo(before);
 		}
 
 		[Test]
@@ -151,6 +477,9 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task Typed_holder_checks_and_tenant_unit_foreign_key_reject_invalid_locations()
 		{
+			await RejectAsync(store => { var row = NewRow<InventoryLocation>(); row.LocationType = (int)InventoryLocationType.Station; row.GroupId = 223; return store.InsertAsync(row); });
+			var station = NewRow<InventoryLocation>(); station.LocationType = (int)InventoryLocationType.Station; station.GroupId = 123;
+			await WriteAsync(store => store.InsertAsync(station));
 			await RejectAsync(store => { var row = NewRow<InventoryLocation>(); row.LocationType = (int)InventoryLocationType.Unit; row.UnitId = 12; row.GroupId = 123; return store.InsertAsync(row); });
 			await RejectAsync(store => { var row = NewRow<InventoryLocation>(); row.LocationType = (int)InventoryLocationType.Unit; row.UnitId = 22; return store.InsertAsync(row); });
 			await RejectAsync(store => { var row = NewRow<InventoryLocation>(); row.LocationType = (int)InventoryLocationType.Personnel; return store.InsertAsync(row); });
@@ -362,6 +691,7 @@ namespace Resgrid.Tests.Services
 				.Should().BeEquivalentTo(new[] { "Records", "Checklists", "WorkOrders" });
 			(await db.QueryAsync<int>($"SELECT {Q("LogType")} FROM {Q("AuditLogs")} WHERE {Q("DepartmentId")}=77")).Should().BeEquivalentTo(new[] { 0 });
 			(await LegacyCountAsync(db, "RmsRecordLegalHolds", 77)).Should().Be(1, "retention records belong to the caller's separate retention policy");
+			(await LegacyCountAsync(db, "Contacts", 77)).Should().Be(1, "Inventory cleanup must preserve the Contacts-owned organization identity");
 			await FluentActions.Awaiting(() => InsertLegacyTypeAsync(db, 88)).Should().ThrowAsync<DbException>();
 		}
 	}

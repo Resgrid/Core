@@ -220,6 +220,11 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.InventoryIssued:
 				case WorkflowTriggerEventType.InventoryReturned:
 				case WorkflowTriggerEventType.InventoryAssetStatusChanged:
+				case WorkflowTriggerEventType.InventoryPurchaseOrderReceived:
+				case WorkflowTriggerEventType.InventoryLowStock:
+				case WorkflowTriggerEventType.InventoryExpiring:
+				case WorkflowTriggerEventType.InventoryCountCompleted:
+				case WorkflowTriggerEventType.InventoryReturnOverdue:
 				case WorkflowTriggerEventType.ControlledSubstanceRecorded:
 					AddInventorySamples(obj, eventType);
 					break;
@@ -568,13 +573,14 @@ namespace Resgrid.Services
 			var occurred = new DateTime(2026, 9, 9, 8, 0, 0, DateTimeKind.Utc);
 			var serialized = eventType is WorkflowTriggerEventType.InventoryIssued or WorkflowTriggerEventType.InventoryReturned or WorkflowTriggerEventType.InventoryAssetStatusChanged;
 			var statusChange = eventType == WorkflowTriggerEventType.InventoryAssetStatusChanged;
+			var recordUsage = eventType == WorkflowTriggerEventType.InventoryAdjusted;
 			var transactionType = eventType switch
 			{
 				WorkflowTriggerEventType.InventoryTransferCompleted => InventoryTransactionType.Transfer,
 				WorkflowTriggerEventType.InventoryIssued => InventoryTransactionType.Issue,
 				WorkflowTriggerEventType.InventoryReturned => InventoryTransactionType.Return,
 				WorkflowTriggerEventType.InventoryAssetStatusChanged => InventoryTransactionType.StatusChange,
-				WorkflowTriggerEventType.ControlledSubstanceRecorded => InventoryTransactionType.Consume,
+				WorkflowTriggerEventType.ControlledSubstanceRecorded or WorkflowTriggerEventType.InventoryAdjusted => InventoryTransactionType.Consume,
 				_ => InventoryTransactionType.Adjust
 			};
 			var referenceType = eventType switch
@@ -583,13 +589,15 @@ namespace Resgrid.Services
 				WorkflowTriggerEventType.InventoryIssued => InventoryReferenceType.Deployment,
 				WorkflowTriggerEventType.InventoryReturned => InventoryReferenceType.Issuance,
 				WorkflowTriggerEventType.InventoryAssetStatusChanged => InventoryReferenceType.WorkOrder,
-				WorkflowTriggerEventType.ControlledSubstanceRecorded => InventoryReferenceType.RmsRecord,
+				WorkflowTriggerEventType.ControlledSubstanceRecorded or WorkflowTriggerEventType.InventoryAdjusted => InventoryReferenceType.RmsRecord,
 				_ => InventoryReferenceType.None
 			};
 			var quantity = statusChange ? 0m : serialized ? 1m : 2m;
 			var payload = new Dictionary<string, object>
 			{
 				["TransactionId"] = transactionId, ["ItemId"] = itemId, ["AssetId"] = serialized ? assetId : null, ["LotId"] = serialized ? null : lotId,
+				["UsageId"] = recordUsage ? "cccccccc-cccc-cccc-cccc-cccccccccccc" : null,
+				["UsageType"] = recordUsage ? (int?)InventoryUsageType.Used : null,
 				["TransferId"] = eventType == WorkflowTriggerEventType.InventoryTransferCompleted ? transferId : null,
 				["IssuanceId"] = eventType is WorkflowTriggerEventType.InventoryIssued or WorkflowTriggerEventType.InventoryReturned ? issuanceId : null,
 				["TransactionType"] = (int)transactionType, ["Quantity"] = quantity, ["FromLocationId"] = sourceId,
@@ -603,6 +611,17 @@ namespace Resgrid.Services
 				["ReferenceId"] = referenceType switch { InventoryReferenceType.None => null, InventoryReferenceType.Transfer => transferId, InventoryReferenceType.Issuance => issuanceId, InventoryReferenceType.WorkOrder => "123", _ => "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb" },
 				["ReversesTransactionId"] = null, ["OccurredOn"] = occurred, ["ItemName"] = ProtectedDataEnvelope.RedactionValue
 			};
+			if (eventType == WorkflowTriggerEventType.InventoryPurchaseOrderReceived)
+				payload = new Dictionary<string, object> { ["PurchaseOrderId"] = "dddddddd-dddd-dddd-dddd-dddddddddddd", ["VendorId"] = "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+					["ReceiptId"] = "ffffffff-ffff-ffff-ffff-ffffffffffff", ["PurchaseOrderStatus"] = 2, ["LineCount"] = 2, ["CurrencyCode"] = "USD", ["OccurredOn"] = occurred, ["ItemName"] = ProtectedDataEnvelope.RedactionValue };
+			if (eventType == WorkflowTriggerEventType.InventoryCountCompleted)
+				payload = new Dictionary<string, object> { ["CountId"] = "dddddddd-dddd-dddd-dddd-dddddddddddd", ["LocationId"] = sourceId,
+					["LineCount"] = 12, ["VarianceLineCount"] = 2, ["VarianceValue"] = ProtectedDataEnvelope.RedactionValue, ["OccurredOn"] = occurred };
+			if (eventType is WorkflowTriggerEventType.InventoryLowStock or WorkflowTriggerEventType.InventoryExpiring or WorkflowTriggerEventType.InventoryReturnOverdue)
+				payload = new Dictionary<string, object> { ["AlertId"] = "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee", ["ItemId"] = itemId,
+					["AlertType"] = eventType == WorkflowTriggerEventType.InventoryLowStock ? 0 : eventType == WorkflowTriggerEventType.InventoryExpiring ? 1 : 3,
+					["LocationId"] = eventType == WorkflowTriggerEventType.InventoryLowStock ? null : sourceId, ["Quantity"] = 2m,
+					["IssuanceId"] = eventType == WorkflowTriggerEventType.InventoryReturnOverdue ? issuanceId : null, ["DueOn"] = eventType == WorkflowTriggerEventType.InventoryLowStock ? null : occurred, ["OccurredOn"] = occurred };
 			var inventory = new ScriptObject();
 			foreach (var pair in InventoryWorkflowPayload.Variables) inventory[pair.Variable] = payload.TryGetValue(pair.Property, out var value) ? value : null;
 			if (eventType == WorkflowTriggerEventType.InventoryAdjusted)
@@ -617,7 +636,7 @@ namespace Resgrid.Services
 				["id"] = "99999999-9999-9999-9999-999999999999", ["name"] = eventType.ToString(), ["schema_version"] = 1, ["occurred_on"] = occurred,
 				["correlation_id"] = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", ["causation_id"] = string.Empty, ["sequence"] = 1L, ["is_replay"] = false, ["origin_client"] = "Web"
 			};
-			obj["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = new ScriptArray { "ItemName", "Note", "SerialNumber", "WitnessUserId" }, ["catalog_version"] = InventoryWorkflowPayload.CatalogVersion };
+			obj["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = new ScriptArray { "ItemName", "Note", "SerialNumber", "WitnessUserId", "VarianceValue" }, ["catalog_version"] = InventoryWorkflowPayload.CatalogVersion };
 		}
 
 		/// <summary>Records snapshots match the event, record and change catalogs; state pairs follow the trigger.</summary>

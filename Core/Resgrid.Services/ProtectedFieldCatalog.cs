@@ -705,7 +705,11 @@ namespace Resgrid.Services
 				ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.WorkOrders.WorkOrderTables.CatalogVersion));
 			foreach (var table in Resgrid.Model.Inventories.InventoryTables.All.Values)
 				list.Add(new ProtectedFieldDefinition(table.ToLowerInvariant() + ".content", OperationalFamily, table, "Content", ProtectedFieldStorageKind.Text,
-					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, Resgrid.Model.Inventories.InventoryTables.CatalogVersion));
+					ProtectedFieldClassification.Sensitive, PermissionTypes.ViewProtectedOperationalData, PermissionTypes.EditProtectedCallData, table switch {
+						"RecordInventoryUsages" => Resgrid.Model.Inventories.InventoryTables.UsageCatalogVersion,
+						"InventoryCounts" or "InventoryCountItems" or "InventoryAlerts" or "InventoryAlertDeliveries" => Resgrid.Model.Inventories.InventoryTables.OperationsCatalogVersion,
+						"InventoryVendors" or "InventoryPurchaseOrders" or "InventoryPurchaseOrderItems" => Resgrid.Model.Inventories.InventoryTables.PurchasingCatalogVersion,
+						_ => Resgrid.Model.Inventories.InventoryTables.CatalogVersion }));
 			return list;
 		}
 	}

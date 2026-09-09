@@ -83,7 +83,7 @@ namespace Resgrid.Tests.Services
 			var collection = (IList<int>)ChecklistWorkflowPayload.Triggers;
 			Action change = () => collection[0] = 999;
 			change.Should().Throw<NotSupportedException>();
-			ChecklistWorkflowPayload.Triggers.Should().Equal(67, 68, 69, 70, 71, 72, 164, 165, 22, 58, 59, 60, 64, 66);
+			ChecklistWorkflowPayload.Triggers.Should().Equal(67, 68, 69, 70, 71, 72, 164, 165, 22, 58, 59, 60, 61, 62, 63, 64, 65, 66, 166);
 			ChecklistWorkflowPayload.IsChecklist(67).Should().BeTrue();
 			ChecklistWorkflowPayload.IsChecklist(999).Should().BeFalse();
 		}

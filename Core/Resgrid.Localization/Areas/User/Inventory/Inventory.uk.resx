@@ -472,5 +472,179 @@
   <data name="Yes" xml:space="preserve">
     <value>Так</value>
   </data>
+  <data name="RecordUsageTitle" xml:space="preserve"><value>Використання запасів</value></data>
+  <data name="RecordUsageHelp" xml:space="preserve"><value>Збереження використання негайно змінює залишок запасів. Ці зміни зберігаються, якщо відмовитися від чернетки або зміни звіту. Явно сторнуйте помилкове використання, а потім зареєструйте заміну. Відкрийте зміну звіту, перш ніж змінювати використання в завершеному звіті.</value></data>
+  <data name="RecordUsageWitnessHelp" xml:space="preserve"><value>Витрачання та сторнування контрольованих товарів потребують незалежного свідка в розділі «Запаси». Спочатку завершіть цю процедуру, а потім прив’яжіть тут ідентифікатор створеної транзакції.</value></data>
+  <data name="RecordUsageRecorded" xml:space="preserve"><value>Зареєстроване використання</value></data>
+  <data name="RecordUsageType" xml:space="preserve"><value>Тип використання</value></data>
+  <data name="RecordUsageType0" xml:space="preserve"><value>Використано</value></data>
+  <data name="RecordUsageType1" xml:space="preserve"><value>Витрачено на пацієнта</value></data>
+  <data name="RecordUsageType2" xml:space="preserve"><value>Залишено на місці події</value></data>
+  <data name="RecordUsageType3" xml:space="preserve"><value>Пошкоджено</value></data>
+  <data name="RecordUsageLedgerEntry" xml:space="preserve"><value>Запис у журналі руху</value></data>
+  <data name="RecordUsageRecordedUtc" xml:space="preserve"><value>Зареєстровано (UTC)</value></data>
+  <data name="RecordUsageReverses" xml:space="preserve"><value>Сторнує використання</value></data>
+  <data name="RecordUsageReversed" xml:space="preserve"><value>Сторновано</value></data>
+  <data name="RecordUsageReverse" xml:space="preserve"><value>Сторнувати використання</value></data>
+  <data name="RecordUsageReverseHelp" xml:space="preserve"><value>Ця дія реєструє повне сторнування та зберігає початкове використання в історії. Щоб виправити кількість або товар, сторнуйте використання й зареєструйте заміну. Якщо сторнування вже підтверджене свідком у розділі «Запаси», укажіть ідентифікатор його транзакції, щоб прив’язати його без повторної зміни запасів.</value></data>
+  <data name="RecordUsageCorrectionReason" xml:space="preserve"><value>Причина коригування</value></data>
+  <data name="RecordUsageExistingReversal" xml:space="preserve"><value>Ідентифікатор наявного сторнування, підтвердженого свідком (необов’язково)</value></data>
+  <data name="RecordUsageLedgerHelp" xml:space="preserve"><value>Додатні кількості реєструють використання, від’ємні — сторнують його. Відкрийте запис у журналі, щоб переглянути відомості про рух відповідно до поточних прав доступу до запасів.</value></data>
+  <data name="RecordUsageExistingConsumption" xml:space="preserve"><value>Ідентифікатор наявної транзакції витрачання (необов’язково)</value></data>
+  <data name="RecordUsageAttachHelp" xml:space="preserve"><value>Укажіть завершену транзакцію витрачання з розділу «Запаси», щоб прив’язати її товар, кількість, місце та примітку. Поля нового витрачання нижче ігноруються, і запаси не списуються повторно. Виберіть тип використання вище.</value></data>
+  <data name="RecordUsageNewConsumption" xml:space="preserve"><value>Нове витрачання</value></data>
+  <data name="RecordUsageDefaultLocation" xml:space="preserve"><value>Використати підрозділ або станцію зі звіту</value></data>
+  <data name="RecordUsageLocationHelp" xml:space="preserve"><value>Залиште порожнім, щоб використати залучений підрозділ зі звіту, а за потреби — його станцію. Явно виберіть джерело, якщо звіт має кілька можливих місць.</value></data>
+  <data name="RecordUsageSave" xml:space="preserve"><value>Зберегти використання</value></data>
+  <data name="RecordUsageReturnToReport" xml:space="preserve"><value>Повернутися до звіту</value></data>
+  <data name="RecordUsageRefreshEvidence" xml:space="preserve"><value>Оновити підтвердні матеріали зареєстрованого використання</value></data>
+  <data name="RecordUsageSaved" xml:space="preserve"><value>Використання збережено, підтвердні матеріали зафіксовано.</value></data>
+  <data name="RecordUsageEvidencePending" xml:space="preserve"><value>Операцію із запасами збережено. Не вдалося зафіксувати підтвердні матеріали. Скористайтеся дією «Оновити підтвердні матеріали» після усунення проблем із доступом або змінами чернетки. Не надсилайте операцію із запасами повторно.</value></data>
+  <data name="RecordUsageDraftChanged" xml:space="preserve"><value>Чернетку змінено. Перевірте зареєстроване використання, перш ніж надсилати іншу операцію із запасами.</value></data>
+  <data name="RecordUsageWitnessRequired" xml:space="preserve"><value>Завершіть процедуру з незалежним свідком у розділі «Запаси», а потім прив’яжіть тут ідентифікатор створеної транзакції. Ця дія не зареєструвала руху запасів.</value></data>
+  <data name="RecordUsageEvidenceSaved" xml:space="preserve"><value>Підтвердні матеріали зафіксовано.</value></data>
+  <data name="RecordUsageReconciliationRequired" xml:space="preserve"><value>Сторнування в журналі ще не прив’язане до цього звіту. Прив’яжіть його як коригування перед завершенням звіту.</value></data>
+  <data name="M4Purchasing" xml:space="preserve"><value>Закупівлі</value></data>
+  <data name="M4Vendors" xml:space="preserve"><value>Постачальники</value></data>
+  <data name="M4PurchaseOrders" xml:space="preserve"><value>Замовлення на закупівлю</value></data>
+  <data name="M4Valuation" xml:space="preserve"><value>Оцінка запасів</value></data>
+  <data name="M4VendorHelp" xml:space="preserve"><value>Для постачальників використовуються записи компаній із розділу «Контакти». Створіть або оновіть дані компанії в розділі «Контакти», а потім пов’яжіть її тут.</value></data>
+  <data name="M4AccountNumber" xml:space="preserve"><value>Номер рахунку в постачальника</value></data>
+  <data name="M4CompanyContact" xml:space="preserve"><value>Компанія з розділу «Контакти»</value></data>
+  <data name="M4NewVendor" xml:space="preserve"><value>Додати постачальника</value></data>
+  <data name="M4PurchaseOrderNumber" xml:space="preserve"><value>Номер замовлення на закупівлю</value></data>
+  <data name="M4Supplier" xml:space="preserve"><value>Постачальник</value></data>
+  <data name="M4Currency" xml:space="preserve"><value>Валюта</value></data>
+  <data name="M4ViewPurchaseOrder" xml:space="preserve"><value>Переглянути замовлення на закупівлю</value></data>
+  <data name="M4Status0" xml:space="preserve"><value>Чернетка</value></data>
+  <data name="M4Status1" xml:space="preserve"><value>Замовлено</value></data>
+  <data name="M4Status2" xml:space="preserve"><value>Частково отримано</value></data>
+  <data name="M4Status3" xml:space="preserve"><value>Отримано</value></data>
+  <data name="M4Status4" xml:space="preserve"><value>Скасовано</value></data>
+  <data name="M4QuantityOrdered" xml:space="preserve"><value>Замовлена кількість</value></data>
+  <data name="M4QuantityReceived" xml:space="preserve"><value>Отримана кількість</value></data>
+  <data name="M4Remaining" xml:space="preserve"><value>Залишок до отримання</value></data>
+  <data name="M4OrderHelp" xml:space="preserve"><value>Позначення замовлення як замовленого блокує його позиції. Скасування унеможливлює подальші надходження та зберігає вже отримані кількості.</value></data>
+  <data name="M4Order" xml:space="preserve"><value>Позначити як замовлене</value></data>
+  <data name="M4CancelOrder" xml:space="preserve"><value>Скасувати замовлення</value></data>
+  <data name="M4Receive" xml:space="preserve"><value>Прийняти товари</value></data>
+  <data name="M4ReceiptHelp" xml:space="preserve"><value>Прийміть усе замовлення або його частину. Видаліть позиції, яких немає в цій поставці. Якщо потрібен незалежний свідок, залишки запасів та отримані кількості зміняться лише після його підтвердження в розділі «Запаси».</value></data>
+  <data name="M4SerializedReceiptHelp" xml:space="preserve"><value>Використовуйте окремий рядок для кожного активу із серійним номером, із кількістю 1 та його власним серійним номером. Додайте рядки, щоб прийняти більше активів або розподілити кількості між місцями зберігання чи партіями.</value></data>
+  <data name="M4ReceiveQuantity" xml:space="preserve"><value>Кількість до приймання</value></data>
+  <data name="M4RemoveLine" xml:space="preserve"><value>Видалити позицію</value></data>
+  <data name="M4Receipts" xml:space="preserve"><value>Надходження</value></data>
+  <data name="M4NewPurchaseOrder" xml:space="preserve"><value>Нове замовлення на закупівлю</value></data>
+  <data name="M4ValuationScope" xml:space="preserve"><value>Оцінка охоплює лише запаси та місця зберігання, які ви маєте право переглядати. Підсумки подаються окремо для кожної валюти. Рядки з невідомою вартістю враховуються окремо та не включаються до підсумків відомої вартості.</value></data>
+  <data name="M4AsOfUtc" xml:space="preserve"><value>Станом на (UTC)</value></data>
+  <data name="M4NegativeStock" xml:space="preserve"><value>Деякі видимі залишки запасів від’ємні. Перевірте їх, перш ніж покладатися на цю оцінку.</value></data>
+  <data name="M4KnownValue" xml:space="preserve"><value>Відома вартість</value></data>
+  <data name="M4UncostedRows" xml:space="preserve"><value>Рядки без вартості</value></data>
+  <data name="M4UnspecifiedCurrency" xml:space="preserve"><value>Валюту не вказано</value></data>
+  <data name="M4UnknownCost" xml:space="preserve"><value>Невідома вартість</value></data>
+  <data name="M4AverageUnitCost" xml:space="preserve"><value>Середня вартість одиниці</value></data>
+  <data name="M4PreferredVendor" xml:space="preserve"><value>Бажаний постачальник</value></data>
+  <data name="M4CurrencyHelp" xml:space="preserve"><value>Використовуйте одну валюту для кожного товару. Наявні запаси без валюти залишаються окремо в оцінці; призначення валюти не перераховує вартість.</value></data>
+  <data name="InventoryPurchaseOrderReceived" xml:space="preserve"><value>Отримано замовлення на закупівлю запасів</value></data>
+  <data name="M5Operations" xml:space="preserve"><value>Інвентаризації, сповіщення та звіти</value></data>
+  <data name="M5Counts" xml:space="preserve"><value>Інвентаризації запасів</value></data>
+  <data name="M5Alerts" xml:space="preserve"><value>Сповіщення про запаси</value></data>
+  <data name="M5Reports" xml:space="preserve"><value>Звіти про запаси</value></data>
+  <data name="M5CountHelp" xml:space="preserve"><value>Створіть знімок стану не більш ніж 100 позицій запасів. Укажіть кожну кількість, збережіть і завершіть інвентаризацію. Якщо запаси або дані каталогу зміняться, скасуйте її та почніть нову. Обладнання із серійними номерами, виявлене вперше, реєструйте через «Отримання».</value></data>
+  <data name="M5AllLocations" xml:space="preserve"><value>Усі місця зберігання</value></data>
+  <data name="M5StartCount" xml:space="preserve"><value>Почати інвентаризацію</value></data>
+  <data name="M5CompleteCount" xml:space="preserve"><value>Завершити інвентаризацію</value></data>
+  <data name="M5CancelCount" xml:space="preserve"><value>Скасувати інвентаризацію</value></data>
+  <data name="M5SnapshotOn" xml:space="preserve"><value>Час знімка стану (UTC)</value></data>
+  <data name="M5Expected" xml:space="preserve"><value>Очікувана кількість</value></data>
+  <data name="M5Counted" xml:space="preserve"><value>Підрахована кількість</value></data>
+  <data name="M5Variance" xml:space="preserve"><value>Розбіжність</value></data>
+  <data name="M5VarianceLines" xml:space="preserve"><value>Рядки з розбіжностями</value></data>
+  <data name="M5CountStatus0" xml:space="preserve"><value>Чернетка</value></data>
+  <data name="M5CountStatus1" xml:space="preserve"><value>Очікує на свідка</value></data>
+  <data name="M5CountStatus2" xml:space="preserve"><value>Завершено</value></data>
+  <data name="M5CountStatus3" xml:space="preserve"><value>Скасовано</value></data>
+  <data name="M5WitnessHelp" xml:space="preserve"><value>Незалежний свідок має схвалити очікувану операцію в історії запасів. Знімок стану має залишатися актуальним.</value></data>
+  <data name="M5AlertHelp" xml:space="preserve"><value>Сповіщення показують низький рівень запасів, закінчення терміну придатності протягом 30 днів, прострочені запаси та затримані повернення. Оновіть їх один раз після запуску функції, щоб створити сповіщення про низький рівень запасів, а також після імпорту старих запасів. Подальші зміни запасів і товарів оновлюватимуть їх автоматично.</value></data>
+  <data name="M5RefreshAlerts" xml:space="preserve"><value>Оновити сповіщення</value></data>
+  <data name="M5AlertType0" xml:space="preserve"><value>Низький рівень запасів</value></data>
+  <data name="M5AlertType1" xml:space="preserve"><value>Термін придатності скоро закінчиться</value></data>
+  <data name="M5AlertType2" xml:space="preserve"><value>Термін придатності закінчився</value></data>
+  <data name="M5AlertType3" xml:space="preserve"><value>Повернення прострочене</value></data>
+  <data name="M5Open" xml:space="preserve"><value>Відкрите</value></data>
+  <data name="M5Resolved" xml:space="preserve"><value>Усунено</value></data>
+  <data name="M5DueOn" xml:space="preserve"><value>Кінцевий термін (UTC)</value></data>
+  <data name="M5ReportHelp" xml:space="preserve"><value>Виберіть звіт і, за потреби, фільтри. Дати вказуються в UTC; кінцева дата не включається в діапазон. Звіти зі знімком стану використовують поточні запаси. Завантажте PDF для перегляду або друку.</value></data>
+  <data name="M5FromUtc" xml:space="preserve"><value>Від дати (UTC, включно)</value></data>
+  <data name="M5UntilUtc" xml:space="preserve"><value>До дати (UTC, не включно)</value></data>
+  <data name="M5DownloadPdf" xml:space="preserve"><value>Завантажити PDF для друку</value></data>
+  <data name="M5ScheduleReports" xml:space="preserve"><value>Запланувати надсилання звітів</value></data>
+  <data name="M5AlertNotificationTitle" xml:space="preserve"><value>Сповіщення про запаси</value></data>
+  <data name="M5AlertNotificationMessage" xml:space="preserve"><value>Запаси потребують уваги. Увійдіть, щоб переглянути поточні сповіщення.</value></data>
+  <data name="M5ReportOnHand" xml:space="preserve"><value>Наявні запаси</value></data>
+  <data name="M5ReportUsage" xml:space="preserve"><value>Використання запасів</value></data>
+  <data name="M5ReportExpiration" xml:space="preserve"><value>Терміни придатності запасів</value></data>
+  <data name="M5ReportLowStock" xml:space="preserve"><value>Низький рівень запасів</value></data>
+  <data name="M5ReportTransferHistory" xml:space="preserve"><value>Історія переміщень запасів</value></data>
+  <data name="M5ReportIssuance" xml:space="preserve"><value>Історія видачі запасів</value></data>
+  <data name="M5ReportValuation" xml:space="preserve"><value>Оцінка запасів</value></data>
+  <data name="M5ReportControlledSubstanceLog" xml:space="preserve"><value>Журнал контрольованих речовин</value></data>
+  <data name="M5DaysUntilExpiry" xml:space="preserve"><value>Днів до закінчення терміну придатності</value></data>
+  <data name="M5Shortfall" xml:space="preserve"><value>Кількість, якої бракує до точки повторного замовлення</value></data>
+  <data name="M5ReorderQuantity" xml:space="preserve"><value>Рекомендована кількість для повторного замовлення</value></data>
+  <data name="M5IssuanceId" xml:space="preserve"><value>Ідентифікатор видачі</value></data>
+  <data name="M5PersonId" xml:space="preserve"><value>Ідентифікатор особи-одержувача</value></data>
+  <data name="M5UnitId" xml:space="preserve"><value>Ідентифікатор підрозділу-одержувача</value></data>
+  <data name="M5IssuedOn" xml:space="preserve"><value>Час видачі (UTC)</value></data>
+  <data name="M5ReturnedQuantity" xml:space="preserve"><value>Повернена кількість</value></data>
+  <data name="M5OutstandingQuantity" xml:space="preserve"><value>Неповернена кількість</value></data>
+  <data name="M5ReturnedOn" xml:space="preserve"><value>Час повернення (UTC)</value></data>
+  <data name="M5Performer" xml:space="preserve"><value>Виконавець (ідентифікатор користувача)</value></data>
+  <data name="M5ReversesTransaction" xml:space="preserve"><value>Сторнує операцію</value></data>
+  <data name="M5UsageSource" xml:space="preserve"><value>Джерело використання</value></data>
+  <data name="M5SourceId" xml:space="preserve"><value>Ідентифікатор запису</value></data>
+  <data name="M5CallId" xml:space="preserve"><value>Ідентифікатор виклику</value></data>
+  <data name="M5RevisionId" xml:space="preserve"><value>Ідентифікатор зміненої редакції</value></data>
+  <data name="M5DeaSchedule" xml:space="preserve"><value>Категорія контролю DEA</value></data>
+  <data name="M5FromBefore" xml:space="preserve"><value>Залишок у джерелі до операції</value></data>
+  <data name="M5FromAfter" xml:space="preserve"><value>Залишок у джерелі після операції</value></data>
+  <data name="M5ToBefore" xml:space="preserve"><value>Залишок у місці призначення до операції</value></data>
+  <data name="M5ToAfter" xml:space="preserve"><value>Залишок у місці призначення після операції</value></data>
+  <data name="M5Witness" xml:space="preserve"><value>Свідок (ідентифікатор користувача)</value></data>
+  <data name="M5WitnessedOn" xml:space="preserve"><value>Час підтвердження свідком (UTC)</value></data>
+  <data name="M5ScheduledReportProtected" xml:space="preserve"><value>Запаси містять захищені дані. Відкрийте посилання на звіт, яке вимагає входу, і підтвердьте свою особу, щоб переглянути або надрукувати поточні результати. Цей запланований PDF не містить значень запасів.</value></data>
+  <data name="M5ReportScope" xml:space="preserve"><value>Цей звіт містить лише запаси та місця зберігання, які ви зараз маєте право переглядати. Кількості та вартості описують указаний знімок стану; результати обмежено 5 000 рядками.</value></data>
+  <data name="M5ReportRange" xml:space="preserve"><value>Діапазон UTC (початок включається, кінець не включається)</value></data>
+  <data name="M5ReportMethodUsage" xml:space="preserve"><value>Кожен рух запасів відображається один раз. Додатні кількості позначають вихідне використання, а від’ємні його сторнують. Для перегляду деталей запису потрібен доступ до джерела. Імпортовані вихідні рухи зберігають свою стару ідентичність і не створюють зв’язку з журналом або пацієнтом.</value></data>
+  <data name="M5ReportMethodLowStock" xml:space="preserve"><value>Активні товари відображаються, коли видимі запаси з кількісним обліком або активи із серійними номерами перебувають на рівні точки повторного замовлення чи нижче. Якщо її не задано, використовується мінімальний запас. До активів із серійними номерами належать активи в експлуатації, видані, пошкоджені та в ремонті. Приховані місця зберігання виключаються.</value></data>
+  <data name="M5ReportMethodIssuance" xml:space="preserve"><value>Рядки показують видачі, створені у вибраному діапазоні дат, і поточний стан їх повернення. Щоб побачити неповернені кількості за давнішими видачами, виберіть ранішу дату початку.</value></data>
+  <data name="M5ReportMethodExpiration" xml:space="preserve"><value>Рядки показують поточні додатні залишки та активні активи із серійними номерами, термін придатності яких закінчується у вибраному діапазоні. За замовчуванням включаються вже прострочені запаси та запаси, термін придатності яких закінчиться протягом наступних 30 днів.</value></data>
+  <data name="M5PerformerSignature" xml:space="preserve"><value>Підпис виконавця</value></data>
+  <data name="M5WitnessSignature" xml:space="preserve"><value>Підпис свідка</value></data>
+  <data name="M5NotRecorded" xml:space="preserve"><value>Не записано</value></data>
+  <data name="M5ReferenceType0" xml:space="preserve"><value>Рух запасів без доступного посилання на запис</value></data>
+  <data name="M5ReferenceType2" xml:space="preserve"><value>Записи</value></data>
+  <data name="M5ReferenceType8" xml:space="preserve"><value>Рух запасів зі старої системи</value></data>
+  <data name="InvalidCount" xml:space="preserve"><value>Укажіть коректні дані інвентаризації та кількості.</value></data>
+  <data name="CountScopeTooLarge" xml:space="preserve"><value>Виберіть менший обсяг. Інвентаризація підтримує не більш ніж 100 позицій запасів.</value></data>
+  <data name="CountEmpty" xml:space="preserve"><value>У вибраному обсязі немає активних позицій запасів для інвентаризації.</value></data>
+  <data name="CountAlreadyExists" xml:space="preserve"><value>Ця інвентаризація вже існує. Відкрийте її зі списку інвентаризацій.</value></data>
+  <data name="CountStateConflict" xml:space="preserve"><value>Інвентаризація змінилася або містить неповні результати підрахунку. Завантажте її повторно та збережіть усі кількості перед завершенням.</value></data>
+  <data name="CountSnapshotChanged" xml:space="preserve"><value>Запаси змінилися після цього знімка стану. Скасуйте цю інвентаризацію та почніть нову.</value></data>
+  <data name="CountReceiptImmutable" xml:space="preserve"><value>Коригування інвентаризації належать відповідній завершеній інвентаризації. Почніть нову, щоб виправити запаси.</value></data>
+  <data name="CountCompletionRequired" xml:space="preserve"><value>Проведіть розбіжності, завершивши інвентаризацію запасів.</value></data>
+  <data name="InvalidReportRange" xml:space="preserve"><value>Виберіть коректний діапазон дат UTC тривалістю не більш ніж 366 днів.</value></data>
+  <data name="InvalidReportFilter" xml:space="preserve"><value>Виберіть коректні фільтри звіту.</value></data>
+  <data name="ReportChanged" xml:space="preserve"><value>Звіт змінився під час створення PDF. Створіть його ще раз.</value></data>
+  <data name="ReportGenerationFailed" xml:space="preserve"><value>Не вдалося створити звіт. Спробуйте ще раз.</value></data>
+  <data name="InventoryLowStock" xml:space="preserve"><value>Низький рівень запасів</value></data>
+  <data name="InventoryExpiring" xml:space="preserve"><value>Наближається закінчення терміну придатності запасів</value></data>
+  <data name="InventoryCountCompleted" xml:space="preserve"><value>Інвентаризацію завершено</value></data>
+  <data name="InventoryReturnOverdue" xml:space="preserve"><value>Прострочене повернення майна</value></data>
+  <data name="HolderHistoryRetained" xml:space="preserve"><value>На цей ресурс є посилання в історії запасів, тому його потрібно зберегти.</value></data>
+  <data name="InventoryAdjusted" xml:space="preserve"><value>Запаси скориговано</value></data>
+  <data name="InventoryTransferCompleted" xml:space="preserve"><value>Переміщення запасів завершено</value></data>
+  <data name="InventoryIssued" xml:space="preserve"><value>Запаси видано</value></data>
+  <data name="InventoryReturned" xml:space="preserve"><value>Запаси повернуто</value></data>
+  <data name="InventoryAssetStatusChanged" xml:space="preserve"><value>Стан інвентарного активу змінено</value></data>
+  <data name="ControlledSubstanceRecorded" xml:space="preserve"><value>Контрольовану речовину зареєстровано</value></data>
 </root>
-

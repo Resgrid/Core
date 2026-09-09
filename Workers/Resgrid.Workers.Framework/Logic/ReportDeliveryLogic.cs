@@ -32,6 +32,21 @@ namespace Resgrid.Workers.Framework.Logic
 
 		public async Task<Tuple<bool, string>> Process(ReportDeliveryQueueItem item)
 		{
+			if (item?.ScheduledTask?.Data is "6" or "7" or "8" or "9" or "10" or "11" or "12" or "13")
+			{
+				try
+				{
+					if (item.Department?.DepartmentId != item.ScheduledTask.DepartmentId || !ConfigHelper.CanTransmit(item.ScheduledTask.DepartmentId)) return Tuple.Create(false, "Inventory report delivery is unavailable.");
+					using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
+					var reports = scope.Resolve<IInventoryScheduledReportService>();
+					var notification = await reports.BuildAsync(item.ScheduledTask);
+					await reports.ValidateAsync(item.ScheduledTask);
+					await _emailService.SendReportDeliveryAsync(notification, item.ScheduledTask.DepartmentId, $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Inventory/Operations?tab=Reports", notification.Subject);
+					await _scheduledTasksService.CreateScheduleTaskLogAsync(item.ScheduledTask);
+					return Tuple.Create(true, "");
+				}
+				catch (Exception ex) { Logging.LogError($"Inventory scheduled report delivery failed: {ex.GetType().FullName}."); return Tuple.Create(false, "Inventory scheduled report delivery failed."); }
+			}
 			// Only a static PDF notice and authenticated link leave the system. No checklist data is emailed.
 			if (item?.ScheduledTask?.Data is "4" or "5")
 			{

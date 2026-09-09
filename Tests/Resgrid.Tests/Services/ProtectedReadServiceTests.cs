@@ -358,6 +358,14 @@ namespace Resgrid.Tests.Services
 				// Checklist content and outcome companions use ChecklistTables.Fields<T>() and the generic resolver.
 				"ChecklistDefinitions", "ChecklistDefinitionVersions", "ChecklistOccurrences", "ChecklistCompletions",
 				"ChecklistCompletionItems", "ChecklistCompletionFiles", "DepartmentChecklistSettings", "ChecklistSchedules",
+				// Work-order content uses WorkOrderTables.Fields<T>(); file downloads use the binary resolver.
+				"WorkOrders", "WorkOrderActivities", "WorkOrderLabors", "WorkOrderParts", "WorkOrderFiles",
+				// Inventory content uses InventoryTables.Fields<T>() through the generic protected resolver.
+				"InventoryCategories", "InventoryItems", "InventoryLocations", "InventoryLots", "InventoryStocks",
+				"InventoryAssets", "InventoryTransactions", "InventoryOperations", "InventoryTransfers", "InventoryTransferItems",
+				"InventoryIssuances", "InventoryKits", "InventoryKitItems", "RecordInventoryUsages",
+				"InventoryVendors", "InventoryPurchaseOrders", "InventoryPurchaseOrderItems",
+				"InventoryCounts", "InventoryCountItems", "InventoryAlerts", "InventoryAlertDeliveries",
 				// ReadinessHistoryFields supplies masked audit/run/log views; outbox consumers use the safe routing copy.
 				"AuditLogs", "DomainEventOutbox", "WorkflowRuns", "WorkflowRunLogs"
 			};

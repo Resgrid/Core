@@ -1,0 +1,205 @@
+@using System.Globalization
+@using System.Linq
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using Newtonsoft.Json
+@using Resgrid.Model.Inventories
+@using Resgrid.Web.Areas.User.Models
+@using Resgrid.Web.Areas.User.Models.Inventory
+@model InventoryWorkspaceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
+@functions {
+    IHtmlContent PurchasingField(string name, string label, object value = null, string type = "text", IEnumerable<SelectListItem> options = null, bool required = false, bool readOnly = false, int maxLength = 16000) {
+        var wrap = new TagBuilder("div"); wrap.AddCssClass("form-group");
+        var caption = new TagBuilder("label"); var identity = "purchase-" + Guid.NewGuid().ToString("N"); caption.Attributes["for"] = identity; caption.InnerHtml.Append(localizer[label].Value); wrap.InnerHtml.AppendHtml(caption);
+        var element = new TagBuilder(options == null ? "input" : "select"); element.AddCssClass("form-control"); element.Attributes["name"] = name; element.Attributes["id"] = identity;
+        if (required) element.Attributes["required"] = "required";
+        if (readOnly) element.Attributes["readonly"] = "readonly";
+        var text = value is DateTime date ? date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : Convert.ToString(value, CultureInfo.InvariantCulture) ?? "";
+        if (options == null) {
+            element.Attributes["type"] = type; element.Attributes["value"] = text; element.Attributes["maxlength"] = maxLength.ToString(CultureInfo.InvariantCulture);
+            if (type == "number") { element.Attributes["step"] = "0.000001"; element.Attributes["min"] = name.EndsWith(".UnitCost", StringComparison.Ordinal) ? "0" : "0.000001"; }
+            if (name == "CurrencyCode") { element.Attributes["pattern"] = "[A-Za-z]{3}"; element.Attributes["autocomplete"] = "off"; }
+        } else foreach (var option in options) {
+            var item = new TagBuilder("option"); item.Attributes["value"] = option.Value ?? ""; if ((option.Value ?? "") == text) item.Attributes["selected"] = "selected"; item.InnerHtml.Append(option.Text); element.InnerHtml.AppendHtml(item);
+        }
+        wrap.InnerHtml.AppendHtml(element); return wrap;
+    }
+    IEnumerable<SelectListItem> PurchasingChoices(IEnumerable<InventoryChoice> choices) => new[] { new SelectListItem { Value = "", Text = "—" } }.Concat(choices.Select(x => new SelectListItem { Value = x.Id, Text = x.Name }));
+}
+@{
+    ViewBag.Title = "Resgrid | " + localizer["M4Purchasing"];
+    var protectedData = ViewBag.ProtectionEnforced == true;
+    var itemOptions = PurchasingChoices(Model.Items.Where(x => !x.IsDeleted && x.IsActive).Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryItemContent>(x).Name }));
+    var locationOptions = PurchasingChoices(Model.Locations.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLabel>(x).Name }));
+    var contactOptions = PurchasingChoices(Model.VendorContacts.Select(x => new InventoryChoice { Id = x.Id, Name = x.Name }));
+    string ContactName(string id) => Model.VendorContacts.FirstOrDefault(x => x.Id == id)?.Name ?? id;
+    var vendorOptions = PurchasingChoices(Model.Vendors.Select(x => new InventoryChoice { Id = x.Id, Name = ContactName(x.ContactId) }));
+    string LocationName(string id) => Model.Locations.FirstOrDefault(x => x.Id == id) is { } row ? InventoryWorkspaceView.Details<InventoryLabel>(row).Name : id;
+    var detail = Model.PurchaseOrder;
+    var order = detail?.Order;
+    var orderContent = InventoryWorkspaceView.Details<InventoryPurchaseOrderContent>(order);
+}
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-title"><h2>@localizer["M4Purchasing"]</h2></div><div class="ibox-content">
+    @if (protectedData) { @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value }) }
+    <div id="inventory-message" class="alert alert-info" role="status" hidden></div>
+    <form id="inventory-page" asp-action="ReopenPurchasing" method="post" class="inventory-navigation">
+        @Html.AntiForgeryToken()<input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="@Model.Page"/><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="locationId" value="@Model.LocationId"/>
+        @if (Model.Locked) { <button type="submit" class="btn btn-primary">@localizer["Unlock"]</button> }
+    </form>
+    @if (!Model.Locked) {
+        <nav class="btn-toolbar" aria-label="@localizer["M4Purchasing"]">
+            <form asp-action="Reopen" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<button class="btn btn-default" type="submit">@localizer["Inventory"]</button></form>
+            @foreach (var tab in new[] { "Vendors", "PurchaseOrders", "Valuation" }) {
+                <form asp-action="ReopenPurchasing" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="@tab"/><button class="btn @(Model.Tab == tab ? "btn-primary" : "btn-default")" type="submit">@localizer["M4" + tab]</button></form>
+            }
+        </nav><hr/>
+        @if (!Model.Migrated) { <p>@localizer["InitializeDescription"]</p> }
+    }
+    @if (!Model.Locked && Model.Migrated) {
+        <h3>@localizer["M4" + Model.Tab]</h3>
+        @if (Model.Tab == "Vendors") {
+            <p>@localizer["M4VendorHelp"]</p>
+            @foreach (var vendor in Model.Rows.OfType<InventoryVendor>()) {
+                var details = InventoryWorkspaceView.Details<InventoryVendorContent>(vendor);
+                <section class="panel panel-default"><div class="panel-heading"><h4>@ContactName(vendor.ContactId)</h4><small>@vendor.Id</small></div><div class="panel-body">
+                    <p>@localizer["M4AccountNumber"]: @details.AccountNumber</p><p>@details.Note</p>
+                    @if (Model.CanWrite) {
+                        <details><summary>@localizer["Edit"]</summary><form asp-action="SaveVendor" method="post" class="inventory-command">
+                            @Html.AntiForgeryToken()<input type="hidden" name="Id" value="@vendor.Id"/><input type="hidden" name="Revision" value="@vendor.Revision"/>
+                            <input type="hidden" name="ContactId" value="@vendor.ContactId"/><p>@localizer["M4CompanyContact"]: @ContactName(vendor.ContactId)</p>
+                            @PurchasingField("Details.AccountNumber", "M4AccountNumber", details.AccountNumber, maxLength: 250)@PurchasingField("Details.Note", "Note", details.Note)
+                            <button class="btn btn-primary" type="submit">@localizer["Save"]</button>
+                        </form></details>
+                        <form asp-action="ArchiveVendor" method="post" class="inventory-command">
+                            @Html.AntiForgeryToken()<input type="hidden" name="id" value="@vendor.Id"/><input type="hidden" name="revision" value="@vendor.Revision"/><button class="btn btn-default" type="submit">@localizer["Archive"]</button>
+                        </form>
+                    }
+                </div></section>
+            }
+            @if (Model.CanWrite) {
+                <details><summary>@localizer["M4NewVendor"]</summary><form asp-action="SaveVendor" method="post" class="inventory-command">
+                    @Html.AntiForgeryToken()<input type="hidden" name="Revision" value="0"/>
+                    @PurchasingField("ContactId", "M4CompanyContact", options: contactOptions, required: true)
+                    @PurchasingField("Details.AccountNumber", "M4AccountNumber", maxLength: 250)@PurchasingField("Details.Note", "Note")
+                    <button class="btn btn-primary" type="submit">@localizer["Save"]</button>
+                </form></details>
+            }
+        }
+        @if (Model.Tab == "PurchaseOrders" && order == null) {
+            <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["M4PurchaseOrderNumber"]</th><th>@localizer["M4Supplier"]</th><th>@localizer["Status"]</th><th>@localizer["M4Currency"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
+                @foreach (var purchase in Model.Rows.OfType<InventoryPurchaseOrder>()) {
+                    var details = InventoryWorkspaceView.Details<InventoryPurchaseOrderContent>(purchase);
+                    <tr><td>@details.Number</td><td>@details.SupplierName</td><td>@localizer["M4Status" + purchase.Status]</td><td>@purchase.CurrencyCode</td><td>
+                        <form asp-action="ReopenPurchasing" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@purchase.Id"/><button class="btn btn-default" type="submit">@localizer["M4ViewPurchaseOrder"]</button></form>
+                    </td></tr>
+                }
+            </tbody></table></div>
+        }
+        @if (Model.Tab == "PurchaseOrders" && order != null) {
+            <h4>@orderContent.Number · @localizer["M4Status" + order.Status]</h4>
+            <p>@orderContent.SupplierName · @order.CurrencyCode</p><p>@orderContent.Note</p><small>@order.Id</small>
+            <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Items"]</th><th>@localizer["UnitOfMeasure"]</th><th>@localizer["M4QuantityOrdered"]</th><th>@localizer["M4QuantityReceived"]</th><th>@localizer["M4Remaining"]</th><th>@localizer["UnitCost"]</th></tr></thead><tbody>
+                @foreach (var line in detail.Lines.OrderBy(x => x.LineNumber)) {
+                    var content = InventoryWorkspaceView.Details<InventoryPurchaseOrderItemContent>(line);
+                    <tr><td>@content.ItemName<p>@content.Note</p></td><td>@content.UnitOfMeasure</td><td>@line.QuantityOrdered.ToString(CultureInfo.CurrentCulture)</td><td>@line.QuantityReceived.ToString(CultureInfo.CurrentCulture)</td><td>@((line.QuantityOrdered - line.QuantityReceived).ToString(CultureInfo.CurrentCulture))</td><td>@content.UnitCost.ToString(CultureInfo.CurrentCulture) @order.CurrencyCode</td></tr>
+                }
+            </tbody></table></div>
+            @if (Model.CanWrite && order.Status is 0 or 1 or 2) {
+                <p>@localizer["M4OrderHelp"]</p>
+                @if (order.Status == (int)InventoryPurchaseOrderStatus.Draft) {
+                    <form asp-action="OrderPurchaseOrder" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="Id" value="@order.Id"/><input type="hidden" name="Revision" value="@order.Revision"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/><button class="btn btn-primary" type="submit">@localizer["M4Order"]</button></form>
+                }
+                <form asp-action="CancelPurchaseOrder" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="Id" value="@order.Id"/><input type="hidden" name="Revision" value="@order.Revision"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/><button class="btn btn-default" type="submit">@localizer["M4CancelOrder"]</button></form>
+            }
+            @if (Model.CanWrite && order.Status is 1 or 2 && detail.Lines.Any(x => x.QuantityOrdered > x.QuantityReceived)) {
+                <h4>@localizer["M4Receive"]</h4><p>@localizer["M4ReceiptHelp"]</p><p>@localizer["M4SerializedReceiptHelp"]</p>
+                <form asp-action="ReceivePurchaseOrder" method="post" class="inventory-command m4-lines-form" data-receipt="true">
+                    @Html.AntiForgeryToken()<input type="hidden" name="PurchaseOrderId" value="@order.Id"/><input type="hidden" name="Revision" value="@order.Revision"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>
+                    <div class="m4-lines">
+                    @{ var receiptIndex = 0; }
+                    @foreach (var line in detail.Lines.Where(x => x.QuantityOrdered > x.QuantityReceived).OrderBy(x => x.LineNumber)) {
+                        var content = InventoryWorkspaceView.Details<InventoryPurchaseOrderItemContent>(line);
+                        var item = Model.Items.FirstOrDefault(x => x.Id == line.ItemId);
+                        var serialized = item?.TrackingMode == (int)InventoryTrackingMode.Serialized;
+                        var prefix = "Lines[" + receiptIndex++ + "].";
+                        var lotOptions = PurchasingChoices(Model.Lots.Where(x => x.ItemId == line.ItemId).Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLotContent>(x).LotNumber }));
+                        <fieldset class="m4-line"><legend>@content.ItemName · @localizer["M4Remaining"]: @((line.QuantityOrdered - line.QuantityReceived).ToString(CultureInfo.CurrentCulture)) @content.UnitOfMeasure</legend>
+                            <input type="hidden" name="@(prefix + "PurchaseOrderItemId")" value="@line.Id"/>
+                            @PurchasingField(prefix + "Quantity", "M4ReceiveQuantity", serialized ? 1m : line.QuantityOrdered - line.QuantityReceived, "number", required: true, readOnly: serialized)
+                            @PurchasingField(prefix + "LocationId", "ToLocation", options: locationOptions, required: true)
+                            @PurchasingField(prefix + "LotId", "Batch", options: lotOptions, required: item?.RequiresLotTracking == true)
+                            @if (serialized) {
+                                @PurchasingField(prefix + "Asset.SerialNumber", "SerialNumber", required: true, maxLength: 250)@PurchasingField(prefix + "Asset.AssetTag", "AssetTag", maxLength: 250)@PurchasingField(prefix + "Asset.Barcode", "Barcode", maxLength: 250)@PurchasingField(prefix + "Asset.ExpiresOn", "Expiration", type: "date", required: item?.RequiresExpiration == true)
+                            }
+                            <button class="btn btn-default m4-copy-line" type="button">@localizer["AddLine"]</button><button class="btn btn-default m4-remove-line" type="button">@localizer["M4RemoveLine"]</button>
+                        </fieldset>
+                    }
+                    </div><button class="btn btn-primary" type="submit">@localizer["M4Receive"]</button>
+                </form>
+                <form asp-action="Reopen" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="History"/><button class="btn btn-default" type="submit">@localizer["Witness"]</button></form>
+            }
+            @if (detail.Receipts.Count > 0) {
+                <h4>@localizer["M4Receipts"]</h4>
+                <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Items"]</th><th>@localizer["Amount"]</th><th>@localizer["ToLocation"]</th><th>@localizer["Details"]</th></tr></thead><tbody>
+                    @foreach (var receipt in detail.Receipts) {
+                        var content = InventoryWorkspaceView.Details<InventoryLabel>(receipt);
+                        <tr><td>@receipt.ItemId</td><td>@receipt.Quantity.ToString(CultureInfo.CurrentCulture)</td><td>@LocationName(receipt.ToLocationId)</td><td><time>@receipt.OccurredOn.ToString("u")</time><p>@content.Note</p><form asp-action="Reopen" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="Transaction"/><input type="hidden" name="id" value="@receipt.Id"/><button class="btn btn-default" type="submit">@localizer["ViewHistory"]</button></form></td></tr>
+                    }
+                </tbody></table></div>
+            }
+        }
+        @if (Model.CanWrite && Model.Tab == "PurchaseOrders" && (order == null || order.Status == (int)InventoryPurchaseOrderStatus.Draft)) {
+            <details open="@(order != null)"><summary>@localizer[order == null ? "M4NewPurchaseOrder" : "Edit"]</summary>
+                <form asp-action="SavePurchaseOrder" method="post" class="inventory-command m4-lines-form">
+                    @Html.AntiForgeryToken()<input type="hidden" name="Id" value="@(order?.Id ?? Guid.NewGuid().ToString("D"))"/><input type="hidden" name="Revision" value="@(order?.Revision ?? 0)"/>
+                    @PurchasingField("Number", "M4PurchaseOrderNumber", orderContent.Number, required: true, maxLength: 80)
+                    @PurchasingField("VendorId", "M4Supplier", order?.VendorId, options: vendorOptions, required: true)
+                    @PurchasingField("CurrencyCode", "M4Currency", order?.CurrencyCode, required: true, maxLength: 3)
+                    @PurchasingField("Note", "Note", orderContent.Note)
+                    <div class="m4-lines">
+                    @{ var draftIndex = 0; var draftLines = detail?.Lines.OrderBy(x => x.LineNumber).ToList() ?? new List<InventoryPurchaseOrderItem>(); }
+                    @foreach (var line in draftLines.DefaultIfEmpty(new InventoryPurchaseOrderItem { QuantityOrdered = 1 })) {
+                        var prefix = "Lines[" + draftIndex++ + "].";
+                        var content = InventoryWorkspaceView.Details<InventoryPurchaseOrderItemContent>(line);
+                        <fieldset class="m4-line"><legend>@localizer["Items"]</legend>
+                            <input type="hidden" name="@(prefix + "Id")" value="@(draftLines.Contains(line) ? line.Id : null)"/>
+                            @PurchasingField(prefix + "ItemId", "Items", line.ItemId, options: itemOptions, required: true)
+                            @PurchasingField(prefix + "QuantityOrdered", "M4QuantityOrdered", line.QuantityOrdered, "number", required: true)
+                            @PurchasingField(prefix + "UnitCost", "UnitCost", content.UnitCost, "number", required: true)
+                            @PurchasingField(prefix + "Note", "Note", content.Note)
+                            <button class="btn btn-default m4-remove-line" type="button">@localizer["M4RemoveLine"]</button>
+                        </fieldset>
+                    }
+                    </div><button class="btn btn-default m4-add-line" type="button">@localizer["AddLine"]</button><button class="btn btn-primary" type="submit">@localizer["Save"]</button>
+                </form>
+            </details>
+        }
+        @if (Model.Tab == "Valuation" && Model.Valuation != null) {
+            <p>@localizer["M4ValuationScope"]</p><p>@localizer["M4AsOfUtc"]: <time>@Model.Valuation.AsOfUtc.ToString("u")</time></p>
+            <form asp-action="ReopenPurchasing" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="Valuation"/>@PurchasingField("locationId", "Location", Model.LocationId, options: locationOptions)<button class="btn btn-default" type="submit">@localizer["M4Valuation"]</button></form>
+            @if (Model.Valuation.HasNegativeStock) { <p class="alert alert-warning">@localizer["M4NegativeStock"]</p> }
+            <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["M4Currency"]</th><th>@localizer["M4KnownValue"]</th><th>@localizer["M4UncostedRows"]</th></tr></thead><tbody>
+                @foreach (var total in Model.Valuation.Totals) { <tr><td>@(string.IsNullOrEmpty(total.CurrencyCode) ? localizer["M4UnspecifiedCurrency"].Value : total.CurrencyCode)</td><td>@total.KnownValue.ToString(CultureInfo.CurrentCulture)</td><td>@total.UncostedRows</td></tr> }
+            </tbody></table></div>
+            <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Items"]</th><th>@localizer["Location"]</th><th>@localizer["Amount"]</th><th>@localizer["UnitCost"]</th><th>@localizer["M4KnownValue"]</th><th>@localizer["M4Currency"]</th></tr></thead><tbody>
+                @foreach (var line in Model.Valuation.Lines) {
+                    <tr><td>@line.ItemName<small class="text-muted" style="display:block">@line.AssetId @line.LotId</small></td><td>@LocationName(line.LocationId)</td><td>@line.Quantity.ToString(CultureInfo.CurrentCulture)</td><td>@(line.UnitCost?.ToString(CultureInfo.CurrentCulture) ?? localizer["M4UnknownCost"].Value)</td><td>@(line.Value?.ToString(CultureInfo.CurrentCulture) ?? localizer["M4UnknownCost"].Value)</td><td>@(string.IsNullOrEmpty(line.CurrencyCode) ? localizer["M4UnspecifiedCurrency"].Value : line.CurrencyCode)</td></tr>
+                }
+            </tbody></table></div>
+            @if (Model.Valuation.Lines.Count == 0) { <p>@localizer["NoRows"]</p> }
+        }
+        @if (Model.Tab != "Valuation" && order == null) {
+            if (Model.Rows.Count == 0) { <p>@localizer["NoRows"]</p> }
+            foreach (var nextPage in new[] { Model.Page - 1, Model.Page + 1 }.Where(p => p >= 0 && (p < Model.Page || Model.HasMore))) {
+                <form asp-action="ReopenPurchasing" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="@nextPage"/><button class="btn btn-default" type="submit">@localizer[nextPage < Model.Page ? "Previous" : "Next"]</button></form>
+            }
+        }
+    }
+</div></div></div>
+@section Scripts {
+<script id="inventory-settings" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { protectedData, grant = (string)ViewBag.ProtectedGrant, expiry = (DateTime?)ViewBag.GrantExpiresOn, index = Url.Action("Purchasing", new { tab = Model.Tab, id = Model.Id, page = Model.Page, locationId = Model.LocationId }), failed = localizer["UnableToComplete"].Value, witness = localizer["WitnessPending"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+<script src="~/js/app/internal/inventory/inventory-modern.js" asp-append-version="true"></script>
+<script src="~/js/app/internal/inventory/inventory-purchasing.js" asp-append-version="true"></script>
+@if (protectedData) { @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value, GrantExpiresOnUtc = (DateTime?)ViewBag.GrantExpiresOn, BindForms = new List<string> { "form.inventory-navigation", "form.inventory-command" } }) }
+}

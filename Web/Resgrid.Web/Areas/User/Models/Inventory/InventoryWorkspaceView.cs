@@ -16,6 +16,7 @@ namespace Resgrid.Web.Areas.User.Models.Inventory
 		public bool CanTransfer { get; set; }
 		public bool CanIssue { get; set; }
 		public bool CanWitness { get; set; }
+		public bool CanChooseVendors { get; set; }
 		public int? UnitId { get; set; }
 		public string UserId { get; set; }
 		public string Id { get; set; }
@@ -31,6 +32,12 @@ namespace Resgrid.Web.Areas.User.Models.Inventory
 		public List<InventoryChoice> Units { get; set; } = new();
 		public List<InventoryChoice> People { get; set; } = new();
 		public List<InventoryChoice> Groups { get; set; } = new();
+		public List<InventoryVendor> Vendors { get; set; } = new();
+		public List<InventoryVendorChoice> VendorContacts { get; set; } = new();
+		public InventoryPurchaseOrderDetail PurchaseOrder { get; set; }
+		public InventoryValuation Valuation { get; set; }
+		public InventoryCountDetail CountDetail { get; set; }
+		public bool CanViewReports { get; set; }
 		public static T Details<T>(InventoryRow row) where T : new() => string.IsNullOrEmpty(row?.Content) ? new T() : JsonConvert.DeserializeObject<T>(row.Content) ?? new T();
 	}
 }

@@ -37,6 +37,13 @@
     }));
     });
     let fieldSequence = 0;
+    document.querySelectorAll('form.inventory-command').forEach(form => {
+        const movement = form.querySelector('[name="Lines[0].Type"]');
+        const cost = form.querySelector('[name="Lines[0].UnitCost"]');
+        if (!movement || !cost) return;
+        const refreshCost = () => { cost.disabled = movement.value !== '1'; };
+        movement.addEventListener('change', refreshCost); refreshCost();
+    });
     function refreshKitLines(lines) {
         Array.from(lines.children).forEach((row, index) => {
             row.querySelectorAll('[name]').forEach(field => { field.name = field.name.replace(/^Lines\[\d+\]/, 'Lines[' + index + ']'); });

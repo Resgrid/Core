@@ -17,10 +17,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 {
 	[Route("api/v{VersionId:apiVersion}/[controller]"), ApiVersion("4.0"), ApiExplorerSettings(GroupName = "v4"), Authorize]
 	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(1024 * 1024)]
-	public sealed class InventoryController : V4AuthenticatedApiControllerbase, IAsyncActionFilter, IOrderedFilter
+	public sealed partial class InventoryController : V4AuthenticatedApiControllerbase, IAsyncActionFilter, IOrderedFilter
 	{
 		public int Order => -3000; // Sanitize model-binding errors before ApiController's automatic response.
 		private readonly IInventoryCatalogService _catalog;
+		private readonly IInventoryPurchasingService _purchasing;
 		private readonly IInventoryStockService _stock;
 		private readonly IInventoryTransferService _transfers;
 		private readonly IInventoryIssuanceService _issuance;
@@ -28,8 +29,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IInventoryAuthorizationService _authorization;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> _strings;
 		public InventoryController(IInventoryCatalogService catalog, IInventoryStockService stock, IInventoryTransferService transfers, IInventoryIssuanceService issuance,
-			IInventoryMigrationService migration, IInventoryAuthorizationService authorization, IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> strings)
-		{ _catalog = catalog; _stock = stock; _transfers = transfers; _issuance = issuance; _migration = migration; _authorization = authorization; _strings = strings; }
+			IInventoryMigrationService migration, IInventoryAuthorizationService authorization, IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> strings, IInventoryPurchasingService purchasing = null)
+		{ _catalog = catalog; _stock = stock; _transfers = transfers; _issuance = issuance; _migration = migration; _authorization = authorization; _strings = strings; _purchasing = purchasing; }
 		private InventoryActor Actor => new InventoryActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = Request.Headers[DataProtectionController.GrantHeader].ToString() };
 		private OkObjectResult Reply<T>(T value, int count = 1, bool more = false, int page = 0)
 		{
@@ -126,13 +127,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetTransferItems")]
 		public async Task<IActionResult> GetTransferItems(int page = 0)
 		{
-			var actor = Actor; var rows = await _catalog.ListAsync<InventoryTransferItem>(actor, page);
-			var result = new InventoryPage<InventoryTransferItem> { HasMore = rows.HasMore };
-			foreach (var row in rows.Items)
-			{
-				try { await _catalog.GetAsync<InventoryTransfer>(actor, row.TransferId); result.Items.Add(row); }
-				catch (InventoryException exception) when (exception.StatusCode is 403 or 404) { }
-			}
+			var result = await _catalog.ListAsync<InventoryTransferItem>(Actor, page);
 			return Reply(result, result.Items.Count, result.HasMore, page);
 		}
 		[HttpGet("GetAssets")]
@@ -204,14 +199,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<IActionResult> GetLowStockItems(int page = 0)
 		{
 			var actor = Actor; var items = await _catalog.ListAsync<InventoryItem>(actor, page);
-			var totals = items.Items.Where(i => !i.IsDeleted && i.IsActive && i.TrackingMode == (int)InventoryTrackingMode.Bulk).ToDictionary(i => i.Id, _ => 0m);
-			for (var stockPage = 0; ; stockPage++)
-			{
-				var stocks = await _catalog.ListAsync<InventoryStock>(actor, stockPage);
-				foreach (var stock in stocks.Items) if (!stock.IsDeleted && totals.ContainsKey(stock.ItemId)) totals[stock.ItemId] += stock.Quantity;
-				if (!stocks.HasMore) break;
-				if (stockPage >= 200) throw new InventoryException(409, "InventoryTooLarge");
-			}
+			var itemIds = items.Items.Where(i => !i.IsDeleted && i.IsActive && i.TrackingMode == (int)InventoryTrackingMode.Bulk).Select(i => i.Id).ToArray();
+			var totals = await _stock.GetVisibleQuantitiesAsync(actor, itemIds);
 			var result = new InventoryPage<InventoryLowStockItem> { HasMore = items.HasMore };
 			foreach (var item in items.Items.Where(i => totals.ContainsKey(i.Id)))
 			{

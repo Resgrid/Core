@@ -50,6 +50,8 @@ namespace Resgrid.Services
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService, IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null)
 		{
 			_recordsCutoverService = recordsCutoverService;
+			if ((inventoryStore == null) != (inventoryUnitOfWork == null))
+				throw new ArgumentException("Inventory storage and its unit of work must be supplied together.", nameof(inventoryStore));
 			_inventoryStore = inventoryStore; _inventoryUnitOfWork = inventoryUnitOfWork;
 			_unitsRepository = unitsRepository;
 			_unitStatesRepository = unitStatesRepository;

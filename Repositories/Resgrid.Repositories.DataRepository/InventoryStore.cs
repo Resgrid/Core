@@ -23,7 +23,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"ParentCategoryId", "CategoryId", "ContainerAssetId", "ParentLocationId", "ItemId", "LocationId", "LotId", "CurrentLocationId",
 			"OperationId", "AssetId", "FromLocationId", "ToLocationId", "ReferenceId", "ReversesTransactionId", "IssuanceId", "TransferId",
-			"TransactionId", "ReturnedToLocationId", "KitId", "RequestId", "IssuedToUserId", "UserId"
+			"TransactionId", "ReturnedToLocationId", "KitId", "RequestId", "IssuedToUserId", "UserId", "SourceId", "ReversesUsageId", "ContactId", "VendorId", "PurchaseOrderId", "PurchaseOrderItemId", "CountId", "CountItemId", "AlertId", "DedupKey"
 		};
 
 		public InventoryStore(IConnectionProvider connection, SqlConfiguration config, IUnitOfWork uow, IQueryFactory queries)
@@ -49,6 +49,28 @@ namespace Resgrid.Repositories.DataRepository
 		}
 
 		public Task LockDepartmentAsync(int departmentId) => LockRecordsDepartmentAsync(departmentId, default);
+		public async Task<List<int>> AlertDepartmentsAsync(int afterDepartmentId) => (await QueryAsync<int>(
+			$"SELECT DISTINCT {Col("DepartmentId")} FROM {Tbl("InventoryItems")} WHERE {Col("DepartmentId")}>@AfterDepartmentId ORDER BY {Col("DepartmentId")} {Paging()}",
+			new { AfterDepartmentId = afterDepartmentId, Skip = 0, Take = 100 })).ToList();
+
+		public Task<long> LastEntryAsync(int departmentId) => ScalarAsync<long>(
+			$"SELECT COALESCE(MAX({Col("EntryId")}),0) FROM {Tbl("InventoryTransactions")} WHERE {Col("DepartmentId")}={P}DepartmentId",
+			new { DepartmentId = departmentId });
+
+		public Task<InventoryAlert> OpenAlertAsync(int departmentId, string dedupKey) => QueryFirstOrDefaultAsync<InventoryAlert>(
+			$"SELECT {Cols(Columns<InventoryAlert>())} FROM {Tbl("InventoryAlerts")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("DedupKey")}={P}DedupKey AND {Col("Status")}=0",
+			new { DepartmentId = departmentId, DedupKey = dedupKey });
+
+		public Task<InventoryAlertDelivery> AlertDeliveryAsync(int departmentId, string alertId, string userId) => QueryFirstOrDefaultAsync<InventoryAlertDelivery>(
+			$"SELECT {Cols(Columns<InventoryAlertDelivery>())} FROM {Tbl("InventoryAlertDeliveries")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("AlertId")}={P}AlertId AND {Col("UserId")}={P}UserId",
+			new { DepartmentId = departmentId, AlertId = alertId, UserId = userId });
+
+		public async Task<List<InventoryAlert>> OpenAlertsAsync(int departmentId, int skip = 0)
+		{
+			if (skip < 0) throw new ArgumentOutOfRangeException(nameof(skip));
+			return (await QueryAsync<InventoryAlert>($"SELECT {Cols(Columns<InventoryAlert>())} FROM {Tbl("InventoryAlerts")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Status")}=0 ORDER BY {Col("OpenedOn")},{Col("Id")} {Paging()}",
+				new { DepartmentId = departmentId, Skip = skip, Take = PageSize })).ToList();
+		}
 
 		public Task<T> GetAsync<T>(int departmentId, string id) where T : InventoryRow => QueryFirstOrDefaultAsync<T>(
 			$"SELECT {Cols(Columns<T>())} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id",
@@ -85,11 +107,18 @@ namespace Resgrid.Repositories.DataRepository
 				conditions.Add($"{Col(column)}={P}{column}"); parameters.Add(column, value);
 			}
 			Equal("ItemId", filter.ItemId); Equal("AssetId", filter.AssetId); Equal("IssuedToUserId", filter.IssuedToUserId); Equal("KitId", filter.KitId);
+			Equal("SourceId", filter.SourceId);
+			if (filter.SourceType.HasValue || filter.RecordKind.HasValue)
+			{
+				if (typeof(T) != typeof(RecordInventoryUsage)) throw new ArgumentException("Unsupported inventory source filter.");
+				if (filter.SourceType.HasValue) { conditions.Add($"{Col("SourceType")}={P}SourceType"); parameters.Add("SourceType", filter.SourceType.Value); }
+				if (filter.RecordKind.HasValue) { conditions.Add($"{Col("RecordKind")}={P}RecordKind"); parameters.Add("RecordKind", filter.RecordKind.Value); }
+			}
 			if (typeof(T) == typeof(InventoryTransaction) && filter.LocationId != null)
 			{ conditions.Add($"({Col("FromLocationId")}={P}LocationId OR {Col("ToLocationId")}={P}LocationId)"); parameters.Add("LocationId", filter.LocationId); }
-			else Equal("LocationId", filter.LocationId);
+			else Equal(typeof(T) == typeof(RecordInventoryUsage) ? "SourceLocationId" : "LocationId", filter.LocationId);
 			if (typeof(InventoryMutableRow).IsAssignableFrom(typeof(T))) conditions.Add($"{Col("IsDeleted")}={(IsPostgres ? "false" : "0")}");
-			var order = typeof(T) == typeof(InventoryTransaction) ? $"{Col("EntryId")} DESC" : Col("Id");
+			var order = typeof(T) == typeof(InventoryTransaction) ? $"{Col("EntryId")} DESC" : typeof(T) == typeof(InventoryCount) ? $"{Col("CreatedOn")} DESC,{Col("Id")}" : typeof(T) == typeof(InventoryAlert) ? $"{Col("Status")},{Col("OpenedOn")} DESC,{Col("Id")}" : Col("Id");
 			return (await QueryAsync<T>($"SELECT {Cols(Columns<T>())} FROM {Tbl(Table<T>())} WHERE {string.Join(" AND ", conditions)} ORDER BY {order} {Paging()}", parameters)).ToList();
 		}
 
@@ -112,7 +141,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			Transaction();
 			if (row == null) throw new ArgumentNullException(nameof(row));
-			if (row is InventoryTransaction or InventoryTransferItem) throw new InvalidOperationException("Inventory ledger and transfer evidence are immutable.");
+			if (row is InventoryTransaction or InventoryTransferItem or RecordInventoryUsage) throw new InvalidOperationException("Inventory ledger and usage evidence are immutable.");
 			if (expectedRevision < 1 || expectedRevision == int.MaxValue || row.Revision != expectedRevision + 1) throw new ArgumentException("Inventory updates must advance the expected revision once.", nameof(expectedRevision));
 			var columns = Columns<T>().Where(c => c is not "Id" and not "DepartmentId" and not "CreatedOn" and not "CreatedBy").ToArray();
 			var parameters = Parameters(row); parameters.Add("ExpectedRevision", expectedRevision);
@@ -144,6 +173,24 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<InventoryTransaction> LegacyTransactionAsync(int departmentId, int inventoryId) => QueryFirstOrDefaultAsync<InventoryTransaction>(
 			$"SELECT {Cols(Columns<InventoryTransaction>())} FROM {Tbl("InventoryTransactions")} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("LegacyInventoryId")}={P}InventoryId", new { DepartmentId = departmentId, InventoryId = inventoryId });
+
+		public async Task<List<InventoryStockQuantity>> StockQuantitiesAsync(int departmentId, IReadOnlyCollection<string> itemIds)
+		{
+			if (itemIds == null || itemIds.Count > 500) throw new ArgumentException("A catalog page of item IDs is required.", nameof(itemIds));
+			if (itemIds.Count == 0) return new List<InventoryStockQuantity>();
+			var predicate = IsPostgres ? $"{Col("ItemId")}=ANY(@ItemIds)" : $"{Col("ItemId")} IN @ItemIds";
+			return (await QueryAsync<InventoryStockQuantity>($"SELECT {Cols("ItemId", "LocationId")},SUM({Col("Quantity")}) AS {Col("Quantity")} FROM {Tbl("InventoryStocks")} WHERE {Col("DepartmentId")}=@DepartmentId AND {Col("IsDeleted")}={(IsPostgres ? "false" : "0")} AND {predicate} GROUP BY {Cols("ItemId", "LocationId")}",
+				new { DepartmentId = departmentId, ItemIds = itemIds.ToArray() })).ToList();
+		}
+
+		public async Task<List<InventoryTransaction>> AssetHistoryAsync(int departmentId, IReadOnlyCollection<string> assetIds, DateTime at, bool after, int skip = 0)
+		{
+			if (assetIds == null || assetIds.Count > 500 || skip < 0) throw new ArgumentException("A bounded asset history query is required.");
+			if (assetIds.Count == 0) return new List<InventoryTransaction>();
+			var predicate = IsPostgres ? $"{Col("AssetId")}=ANY(@AssetIds)" : $"{Col("AssetId")} IN @AssetIds";
+			return (await QueryAsync<InventoryTransaction>($"SELECT {Cols(Columns<InventoryTransaction>())} FROM {Tbl("InventoryTransactions")} WHERE {Col("DepartmentId")}=@DepartmentId AND {predicate} AND {Col("OccurredOn")} {(after ? ">" : "<=")} @At ORDER BY {Col("OccurredOn")},{Col("EntryId")} {Paging()}",
+				new { DepartmentId = departmentId, AssetIds = assetIds.ToArray(), At = DatabaseTimestamp(at), Skip = skip, Take = PageSize })).ToList();
+		}
 
 		public async Task RebuildStocksAsync(int departmentId)
 		{

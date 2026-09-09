@@ -36,12 +36,14 @@ namespace Resgrid.Services.Records
 		private readonly IRmsExternalReferencesRepository _references;
 		private readonly IRecordsProtectionService _protection;
 		private readonly IDomainEventOutboxService _outbox;
+		private readonly IInventoryStore _inventoryStore;
 
 		public RecordsEvidenceService(IRmsEvidenceArtifactsRepository artifacts, IRmsOperationalRecordsRepository records,
 			IRmsIncidentReportsRepository incidentReports, IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork,
 			IEnumerable<IRecordEvidenceAdapter> adapters, IRecordsAuthorizationService authorization, ICallsService calls, IRmsExternalReferencesRepository references,
-			IRecordsProtectionService protection, IDomainEventOutboxService outbox)
+			IRecordsProtectionService protection, IDomainEventOutboxService outbox, IInventoryStore inventoryStore = null)
 		{
+			_inventoryStore = inventoryStore;
 			_protection = protection;
 			_outbox = outbox;
 			_artifacts = artifacts;
@@ -61,6 +63,19 @@ namespace Resgrid.Services.Records
 			var references = ((await _references.GetForRecordAsync(departmentId, recordId)) ?? Enumerable.Empty<RmsExternalReference>())
 				.Where(r=>r.DepartmentId==departmentId && r.RecordId==recordId && !r.DeletedOn.HasValue && r.SemanticRole==RmsInventoryUsageAdapter.SemanticRole).ToList();
 			if (references.Count==0) return;
+			// A witnessed correction may be posted in Inventory before the officer attaches it here.
+			// Never finalize an apparently balanced evidence snapshot while that source movement is unaccounted for.
+			foreach (var reference in references.Where(r => r.SourceEntityType == "RecordInventoryUsage"))
+			{
+				if (_inventoryStore == null) throw new InvalidOperationException("Inventory evidence verification is unavailable.");
+				var usage = await _inventoryStore.GetAsync<Resgrid.Model.Inventories.RecordInventoryUsage>(departmentId, reference.SourceEntityId);
+				if (usage == null || usage.SourceId != recordId || usage.RecordKind != reference.RecordKind) throw new InvalidOperationException("Inventory usage provenance is unavailable.");
+				if (usage.ReversesUsageId != null) continue;
+				var reversals = await _inventoryStore.RelatedAsync<Resgrid.Model.Inventories.InventoryTransaction>(departmentId, "ReversesTransactionId", usage.TransactionId);
+				var corrections = await _inventoryStore.RelatedAsync<Resgrid.Model.Inventories.RecordInventoryUsage>(departmentId, "ReversesUsageId", usage.Id);
+				if (reversals.Any(t => !corrections.Any(c => c.TransactionId == t.Id && c.SourceId == recordId && c.RecordKind == reference.RecordKind && references.Any(r => r.SourceEntityType == "RecordInventoryUsage" && r.SourceEntityId == c.Id))))
+					throw new ArgumentException("Attach the inventory reversal as a Record correction before finalizing.");
+			}
 			var covered=new Dictionary<string,string>(StringComparer.Ordinal);
 			foreach(var artifact in (captured ?? Enumerable.Empty<RmsEvidenceArtifact>()).Where(a=>a.Kind==(int)RmsEvidenceKind.InventoryUsage))
 			{

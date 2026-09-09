@@ -114,13 +114,17 @@ namespace Resgrid.Services
 			var units = unitIds.ToHashSet(); var result = new List<ReadinessAssetSnapshot>(); if (units.Count == 0) return result;
 			var assets = (await AllAsync<InventoryAsset>(actor.DepartmentId)).Where(a => a.DepartmentId == actor.DepartmentId).ToDictionary(a => a.Id, StringComparer.Ordinal);
 			var locations = (await AllAsync<InventoryLocation>(actor.DepartmentId)).Where(l => l.DepartmentId == actor.DepartmentId).ToDictionary(l => l.Id, StringComparer.Ordinal);
-			var ledger = (await AllAsync<InventoryTransaction>(actor.DepartmentId)).Where(t => t.DepartmentId == actor.DepartmentId && t.AssetId != null)
-				.OrderBy(t => t.OccurredOn).ThenBy(t => t.EntryId).ToList();
+			var ledger = await ChecklistAssetHistoryAsync(actor.DepartmentId, assets.Keys, callUtc, false);
 			var histories = ledger.GroupBy(t => t.AssetId).ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
-			foreach (var asset in assets.Values)
+			var candidates = assets.Values.Select(asset => (Asset: asset, State: HistoricalChecklistPosition(asset.Id, callUtc, long.MaxValue, assets, locations, histories)))
+				.Where(candidate => candidate.State?.Location?.UnitId != null && units.Contains(candidate.State.Location.UnitId.Value)).ToList();
+			// Later container changes are needed to prove the first departure, including moves into a different bag on the same unit.
+			var departureAssets = candidates.Select(c => c.Asset.Id).Concat(locations.Values.Select(l => l.ContainerAssetId).Where(id => id != null)).Distinct();
+			if (candidates.Count > 0) ledger.AddRange(await ChecklistAssetHistoryAsync(actor.DepartmentId, departureAssets, callUtc, true));
+			histories = ledger.GroupBy(t => t.AssetId).ToDictionary(g => g.Key, g => g.OrderBy(t => t.OccurredOn).ThenBy(t => t.EntryId).ToList(), StringComparer.Ordinal);
+			foreach (var candidate in candidates)
 			{
-				var state = HistoricalChecklistPosition(asset.Id, callUtc, long.MaxValue, assets, locations, histories);
-				if (state?.Location?.UnitId == null || !units.Contains(state.Location.UnitId.Value)) continue;
+				var asset = candidate.Asset; var state = candidate.State;
 				if (!await _auth.CanLocationAsync(inventoryActor, state.Location)) continue;
 				var unit = await _units.GetUnitByIdAsync(state.Location.UnitId.Value); if (unit?.DepartmentId != actor.DepartmentId) continue;
 				string name;
@@ -143,6 +147,20 @@ namespace Resgrid.Services
 				if (result.Count > 1000) throw new ChecklistException(400, "ReportTooLarge");
 			}
 			return result;
+		}
+
+		private async Task<List<InventoryTransaction>> ChecklistAssetHistoryAsync(int departmentId, IEnumerable<string> assetIds, DateTime at, bool after)
+		{
+			var result = new List<InventoryTransaction>();
+			foreach (var batch in assetIds.Distinct().Chunk(500))
+				for (var skip = 0; ; skip += 500)
+				{
+					var rows = await _store.AssetHistoryAsync(departmentId, batch, at, after, skip);
+					result.AddRange(rows.Take(500));
+					if (result.Count > 100000) throw new ChecklistException(400, "ReportTooLarge");
+					if (rows.Count <= 500) break;
+				}
+			return result.OrderBy(t => t.OccurredOn).ThenBy(t => t.EntryId).ToList();
 		}
 
 		private sealed class HistoricalChecklistAssetPosition

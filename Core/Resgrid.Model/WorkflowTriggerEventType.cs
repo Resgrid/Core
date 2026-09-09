@@ -176,7 +176,12 @@ RecordPermitExpiring = 163,
 		InventoryTransferCompleted = 58,
 		InventoryIssued = 59,
 		InventoryReturned = 60,
+		InventoryLowStock = 61,
+		InventoryExpiring = 62,
+		InventoryCountCompleted = 63,
+		InventoryReturnOverdue = 166,
 		InventoryAssetStatusChanged = 64,
+		InventoryPurchaseOrderReceived = 65,
 		ControlledSubstanceRecorded = 66
 	}
 

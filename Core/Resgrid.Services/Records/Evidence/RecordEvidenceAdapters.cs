@@ -59,7 +59,7 @@ namespace Resgrid.Services.Records.Evidence
 		public ReadinessPacketEvidenceAdapter(IChecklistsService checklists = null, IReadinessAccessService access = null, IProtectedGrantContext grant = null, Resgrid.Model.Providers.IPdfProvider pdf = null)
 		{ _checklists = checklists; _access = access; _grant = grant; _pdf = pdf; }
 		public RmsEvidenceKind Kind => RmsEvidenceKind.ReadinessPacket;
-		public Task<bool> IsAvailableAsync(int departmentId) => _checklists == null || _access == null || _pdf == null ? Task.FromResult(false) : _access.CanUseChecklistsAsync(departmentId);
+		public Task<bool> IsAvailableAsync(int departmentId) => Task.FromResult(_checklists != null && _pdf != null);
 		public async Task<RecordEvidenceCapture> CaptureAsync(RecordEvidenceCaptureRequest request, CancellationToken cancellationToken = default)
 		{
 			if (!await IsAvailableAsync(request.DepartmentId)) return RecordEvidenceCapture.Unavailable(ChecklistReportDocuments.Text("ChecklistsDisabled"));
@@ -67,7 +67,7 @@ namespace Resgrid.Services.Records.Evidence
 			if (!request.CallId.HasValue || request.CoverageStart.HasValue || request.CoverageEnd.HasValue) throw new ArgumentException(ChecklistReportDocuments.Text("PacketCaptureWindow"));
 			var actor = new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = request.DepartmentId, UserId = request.CapturedByUserId, GrantToken = _grant.GrantToken };
 			var manifest = await _checklists.GetReadinessPacketForCallAsync(actor, request.CallId.Value);
-			if (manifest.Checklists.Count > EvidenceLimits.MaxItems) throw new ArgumentException(ChecklistReportDocuments.Text("ReportTooLarge"));
+			if (manifest.Checklists.Count + manifest.WorkOrders.Count > EvidenceLimits.MaxItems) throw new ArgumentException(ChecklistReportDocuments.Text("ReportTooLarge"));
 			cancellationToken.ThrowIfCancellationRequested();
 			var package = ChecklistReportDocuments.Package(manifest, _pdf);
 			// Repeat source authorization after PDF conversion, before Records retains the snapshot.
@@ -76,7 +76,7 @@ namespace Resgrid.Services.Records.Evidence
 			return new RecordEvidenceCapture { Title = ChecklistReportDocuments.Text("ReadinessPacketReport"), SourceSubsystem = SourceSubsystem,
 				SourceEntityType = "ReadinessEvidenceManifestV1", SourceEntityId = EvidenceLimits.SelectionIdentity(new { request.CallId, lookback_days = 30 }),
 				IdentifierScheme = "resgrid:readiness-packet", SourceVersion = manifest.GeneratorVersion, CoverageStart = manifest.CoverageStartUtc,
-				CoverageEnd = manifest.CoverageEndUtc, SourceItemCount = manifest.Checklists.Count, Classification = RmsEvidenceClassification.Restricted, Manifest = package };
+				CoverageEnd = manifest.CoverageEndUtc, SourceItemCount = manifest.Checklists.Count + manifest.WorkOrders.Count, Classification = RmsEvidenceClassification.Restricted, Manifest = package };
 		}
 	}
 

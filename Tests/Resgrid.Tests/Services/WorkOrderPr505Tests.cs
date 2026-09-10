@@ -53,8 +53,11 @@ namespace Resgrid.Tests.Services
 					JObject.Parse("{\"DueOn\":\"2026-09-03T12:34:56\"}")["DueOn"], new JValue("2026-09-03T12:34:56"),
 					new JValue(new DateTimeOffset(expected).ToOffset(TimeSpan.FromHours(2))), new JValue("2026-09-03T14:34:56+02:00") })
 				{
-					var result = JObject.Parse(WorkOrderWorkflowPayload.Routing(new JObject { ["DueOn"] = value }));
-					((DateTimeOffset)result["DueOn"]).UtcDateTime.Should().Be(expected);
+					foreach (var field in new[] { "DueOn", "ResponseDueOn", "RepairDueOn", "ResponseBreachedOn", "RepairBreachedOn" })
+                    {
+                        var result = JObject.Parse(WorkOrderWorkflowPayload.Routing(new JObject { [field] = value }));
+                        ((DateTimeOffset)result[field]).UtcDateTime.Should().Be(expected);
+                    }
 				}
 			}
 			finally { CultureInfo.CurrentCulture = previous; }

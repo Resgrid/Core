@@ -305,7 +305,8 @@ namespace Resgrid.Services
                                 order.AssignedToUserId = row.AssignedToUserId; order.AssignedToRoleId = row.AssignedToRoleId;
                                 order.Status = order.AssignedToUserId != null || order.AssignedToRoleId.HasValue ? (int)WorkOrderStatus.Assigned : (int)WorkOrderStatus.Accepted;
                                 if (order.Status == 2) { await _authorization.ValidateAssignmentAsync(owner, order, order.AssignedToUserId, order.AssignedToRoleId); order.AssignedOn = Now; }
-                                await _store.AllocateAsync(order);
+                                await PinSlaAsync(order); if (order.Status == (int)WorkOrderStatus.Accepted) order.ResponseOn = Now;
+                                await _store.AllocateAsync(order); await RecordGeneratedCreationAsync(order);
                                 var generated = New<WorkOrderRecurrenceChange>(owner, order.Id); generated.RecurrenceId = row.Id; generated.ChangeType = (int)MaintenanceChangeType.Generated; generated.OriginalDueOn = original; generated.RevisedDueOn = due; await _store.AllocateAsync(generated);
                                 await EventAsync(order, WorkflowTriggerEventType.WorkOrderCreated, events);
                                 if (order.Status == 2) await EventAsync(order, WorkflowTriggerEventType.WorkOrderAssigned, events);
@@ -324,6 +325,7 @@ namespace Resgrid.Services
         {
             RequireMaintenanceStore(); var result = new WorkOrderMaintenanceSweep();
             if (!await _access.CanUseMaintenanceAsync(departmentId)) return result;
+            await EscalateServiceLevelsAsync(departmentId, result);
             foreach (var candidate in await _maintenance.OverdueAsync(departmentId, Now))
             {
                 try

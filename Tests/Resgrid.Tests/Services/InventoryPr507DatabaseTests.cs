@@ -14,7 +14,8 @@ namespace Resgrid.Tests.Services
 {
 	public partial class InventoryDatabaseTests
 	{
-		[Test]
+		// Upgrade reversals run before service cases create evidence guarded by later migrations.
+		[Test, Order(1)]
 		public async Task Tenant_holder_upgrade_rejects_existing_cross_department_links_without_rewriting_inventory()
 		{
 			var runner = _runner.GetRequiredService<IMigrationRunner>();

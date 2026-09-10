@@ -64,7 +64,8 @@
         button.addEventListener('click', async function () {
             var root = button.closest('.work-order-inventory'), form = root.closest('form');
             var kind = button.dataset.kind, select = root.querySelector('select[data-kind="' + kind + '"]');
-            var item = root.querySelector('select[data-kind="item"]').value;
+            var itemSelect = root.querySelector('select[data-kind="item"]');
+            var item = itemSelect ? itemSelect.value : '';
             if ((kind === 'lot' || kind === 'asset') && !item) return;
             var data = new FormData();
             ['__RequestVerificationToken', '__ResgridProtectedGrant', '__ResgridProtectedGrantExpiresOn'].forEach(function (name) {

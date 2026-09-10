@@ -90,8 +90,18 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.WorkOrderThresholdReached:
 				case WorkflowTriggerEventType.WorkOrderDeferred:
 				case WorkflowTriggerEventType.WorkOrderPartChanged:
+				case WorkflowTriggerEventType.WorkOrderApprovalChanged:
+				case WorkflowTriggerEventType.WorkOrderSlaBreached:
+				case WorkflowTriggerEventType.WorkOrderVendorChargeChanged:
+				case WorkflowTriggerEventType.WorkOrderPolicyChanged:
+
 					obj["work_order"] = new ScriptObject { ["id"] = 123, ["revision"] = 2, ["status"] = 2, ["priority"] = 1, ["unit_id"] = 12, ["group_id"] = 3, ["role_id"] = 4, ["asset_id"] = null, ["due_on"] = "2026-09-09T08:00:00Z", ["title"] = ProtectedDataEnvelope.RedactionValue, ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/Detail/123" };
-					obj["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = new ScriptArray { "Title" }, ["catalog_version"] = 18 };
+                    var sampleOrder = (ScriptObject)obj["work_order"];
+                    foreach (var variable in Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Variables) if (!sampleOrder.ContainsKey(variable.Variable)) sampleOrder[variable.Variable] = null;
+                    if (eventType == WorkflowTriggerEventType.WorkOrderPolicyChanged) { sampleOrder["id"] = null; sampleOrder["policy_id"] = 1; sampleOrder["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/Policy"; }
+                    if (eventType == WorkflowTriggerEventType.WorkOrderApprovalChanged) sampleOrder["approval_state"] = 1;
+                    sampleOrder["response_due_on"] = "2026-09-09T09:00:00Z"; sampleOrder["repair_due_on"] = "2026-09-10T09:00:00Z";
+					obj["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = new ScriptArray { "Title" }, ["catalog_version"] = Resgrid.Model.WorkOrders.WorkOrderTables.OperationsCatalogVersion };
 					break;
 				case WorkflowTriggerEventType.ChecklistCompleted:
 				case WorkflowTriggerEventType.ChecklistFailed:

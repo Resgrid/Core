@@ -27,7 +27,16 @@ namespace Resgrid.Services
 				{
 					var activity = await Children<WorkOrderActivity>(row.Id); var labor = await Children<WorkOrderLabor>(row.Id);
 					if (row.CreatedBy != userId && row.AssignedToUserId != userId && row.CompletedBy != userId && row.VerifiedBy != userId && !activity.Any(a => a.CreatedBy == userId) && !labor.Any(l => l.UserId == userId || l.CreatedBy == userId)) continue;
-					orders.Add(new { Order = await Safe(row), Activity = activity, Labor = labor, Parts = await Children<WorkOrderPart>(row.Id), Files = (await Children<WorkOrderFile>(row.Id)).Select(f => new { f.Id, f.DepartmentId, f.WorkOrderId, f.Content, f.ContentType, f.Size, f.Sha256, f.ScanState, f.WithdrawnOn, f.CreatedOn, f.CreatedBy }) });
+					var snapshots = new List<WorkOrderReportSnapshot>();
+					long afterId = 0;
+					while (true)
+					{
+						var batch = await _workOrders.ReportSnapshotHistoryAsync(departmentId, row.Id, afterId);
+						if (batch == null) throw new InvalidOperationException("Work-order revision export storage is unavailable.");
+						snapshots.AddRange(batch);
+						if (batch.Count < 500) break; afterId = batch.Last().Id;
+					}
+					orders.Add(new { Order = await Safe(row), Activity = activity, Labor = labor, ReportSnapshots = snapshots, VendorCharges = await Children<WorkOrderVendorCharge>(row.Id), PartMovements = await Children<WorkOrderPartMovement>(row.Id), OperationReceipts = await Children<WorkOrderOperationReceipt>(row.Id), Parts = await Children<WorkOrderPart>(row.Id), Files = (await Children<WorkOrderFile>(row.Id)).Select(f => new { f.Id, f.DepartmentId, f.WorkOrderId, f.Content, f.ContentType, f.Size, f.Sha256, f.ScanState, f.WithdrawnOn, f.CreatedOn, f.CreatedBy }) });
 				}
 				if (rows.Count <= 50) return orders;
 			}

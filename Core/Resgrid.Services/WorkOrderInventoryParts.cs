@@ -21,7 +21,7 @@ namespace Resgrid.Services
             {
                 var order = await ContributionAsync(actor, orderId, revision);
                 var part = await _store.GetAsync<WorkOrderPart>(actor.DepartmentId, partId);
-                if (part?.WorkOrderId != orderId || part.InventoryOperationId == null || part.VoidedOn.HasValue || _inventoryMaintenance == null)
+                if (part?.WorkOrderId != orderId || part.InventoryOperationId == null || part.VoidedOn.HasValue || _inventoryMaintenance == null || _inventoryCatalog == null)
                     throw new WorkOrderException(409, "Unavailable");
                 await RevealAsync(actor, part); var content = Decode<WorkOrderPartContent>(part.Content);
                 if (part.InventoryTransactionId != null && (content.VoidReason == null || part.InventoryReversalId != null)) throw new WorkOrderException(409, "Conflict");
@@ -34,6 +34,7 @@ namespace Resgrid.Services
         }
         private async Task RequireNoPendingPartsAsync(ChecklistActor actor, int id)
         {
+            if ((await ChildrenAsync<WorkOrderPart>(actor, id)).Any(p => p.Staged && (p.ReservedQuantity > 0 || p.IssuedQuantity > 0))) throw new WorkOrderException(409, "PartBalanceOutstanding");
             foreach (var part in await ChildrenAsync<WorkOrderPart>(actor, id))
                 if (part.InventoryOperationId != null && !part.VoidedOn.HasValue && (part.InventoryTransactionId == null || Decode<WorkOrderPartContent>(part.Content).VoidReason != null && part.InventoryReversalId == null))
                     throw new WorkOrderException(409, "InventoryWitnessPending");
@@ -55,13 +56,14 @@ namespace Resgrid.Services
                     {
                         await ReadOrderAsync(actor, id); await RevealAsync(actor, prior);
                         var content = Decode<WorkOrderPartContent>(prior.Content);
-                        if (prior.WorkOrderId != id || prior.CreatedBy != actor.UserId || prior.InventoryItemId != input.InventoryItemId || content.Quantity != input.Content.Quantity || content.RequestFingerprint != fingerprint) throw new WorkOrderException(409, "Conflict");
+                        if (prior.Staged || prior.WorkOrderId != id || prior.CreatedBy != actor.UserId || prior.InventoryItemId != input.InventoryItemId || content.Quantity != input.Content.Quantity || content.RequestFingerprint != fingerprint) throw new WorkOrderException(409, "Conflict");
                         return true;
                     }
                 }
                 var row = await ContributionAsync(actor, id, input.Revision);
                 var part = New<WorkOrderPart>(actor, id); part.InventoryItemId = linked ? input.InventoryItemId : null; part.InventoryRequestId = linked ? input.RequestId : null;
                 input.Content.Currency = Decode<StoredContent>(row.Content).Fields.Currency; input.Content.RequestFingerprint = linked ? fingerprint : null;
+                if (!linked) await RequireSpendingAsync(actor, row, input.Content.UnitCost.HasValue ? decimal.Round(input.Content.Quantity * input.Content.UnitCost.Value, 2, MidpointRounding.AwayFromZero) : null, input.Content.Currency);
                 part.Content = JsonConvert.SerializeObject(input.Content); await SaveAsync(actor, part, true);
                 if (linked)
                 {
@@ -81,7 +83,7 @@ namespace Resgrid.Services
             await TransactionAsync(actor, async events =>
             {
                 var row = await ContributionAsync(actor, id, revision); var part = await _store.GetAsync<WorkOrderPart>(actor.DepartmentId, partId);
-                if (part?.WorkOrderId != id || part.VoidedOn.HasValue) throw new WorkOrderException(409, "Unavailable");
+                if (part?.WorkOrderId != id || part.VoidedOn.HasValue || part.Staged) throw new WorkOrderException(409, "Unavailable");
                 await RevealAsync(actor, part); var content = Decode<WorkOrderPartContent>(part.Content);
                 if (content.VoidReason != null) throw new WorkOrderException(409, "InventoryWitnessPending");
                 content.VoidReason = reason; part.Content = JsonConvert.SerializeObject(content); part.Revision++;
@@ -114,6 +116,8 @@ namespace Resgrid.Services
             await RevealAsync(principal, part);
             var ledger = await _inventoryCatalog.Value.GetAsync<InventoryTransaction>(actor, transactionId);
             if (ledger.WorkOrderPartId != partId || ledger.ReferenceType != (int)InventoryReferenceType.WorkOrder || ledger.ReferenceId != row.Id.ToString(CultureInfo.InvariantCulture) || ledger.ItemId != part.InventoryItemId) throw new WorkOrderException(409, "InventoryPartInvalid");
+            if (part.Staged && ledger.WorkOrderPartMovementId.HasValue) { await CompletePartMovementAsync(principal, row, part, ledger, events); return; }
+            if (part.Staged || ledger.WorkOrderPartMovementId.HasValue) throw new WorkOrderException(409, "InventoryPartInvalid");
             var content = Decode<WorkOrderPartContent>(part.Content);
             if (ledger.Quantity != content.Quantity || reversal && ledger.ReversesTransactionId != part.InventoryTransactionId || !reversal && ledger.ReversesTransactionId != null) throw new WorkOrderException(409, "InventoryPartInvalid");
             if (reversal) { if (part.InventoryReversalId != null) throw new WorkOrderException(409, "Conflict"); part.InventoryReversalId = ledger.Id; part.VoidedOn = Now; }
@@ -125,6 +129,7 @@ namespace Resgrid.Services
                 part.Content = JsonConvert.SerializeObject(content);
             }
             part.Revision++; await SaveAsync(principal, part);
+            if (!reversal) await RequireSpendingAsync(principal, row);
             await ChangedAsync(principal, row, reversal ? WorkOrderActivityType.PartVoided : WorkOrderActivityType.PartAdded, events, trigger: WorkflowTriggerEventType.WorkOrderPartChanged);
         }
     }

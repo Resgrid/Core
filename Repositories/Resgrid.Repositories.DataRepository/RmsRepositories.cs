@@ -1253,6 +1253,20 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 				$"SELECT COUNT(1) FROM {Tbl("RmsEvidenceArtifacts")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RecordId")} = {P}RecordId AND {Col("DeletedOn")} IS NULL",
 				new { DepartmentId = departmentId, RecordId = recordId });
 		}
+
+		public Task<IEnumerable<RmsEvidenceArtifactHeader>> GetHeadersByKindInRangeAsync(int departmentId, RmsEvidenceKind kind, DateTime startUtc, DateTime endUtc, int take)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Kind", (int)kind);
+			parameters.Add("Start", startUtc);
+			parameters.Add("End", endUtc);
+			parameters.Add("Skip", 0);
+			parameters.Add("Take", take <= 0 ? 5000 : Math.Min(take, 200000));
+			return QueryAsync<RmsEvidenceArtifactHeader>(
+				$"SELECT {Col("RmsEvidenceArtifactId")} AS RmsEvidenceArtifactId, {Col("RecordId")} AS RecordId, {Col("RecordKind")} AS RecordKind, {Col("RevisionId")} AS RevisionId, {Col("Kind")} AS Kind, {Col("Classification")} AS Classification, {Col("CapturedOn")} AS CapturedOn, {Col("SupersededOn")} AS SupersededOn FROM {Tbl("RmsEvidenceArtifacts")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Kind")} = {P}Kind AND {Col("CapturedOn")} >= {P}Start AND {Col("CapturedOn")} < {P}End AND {Col("DeletedOn")} IS NULL ORDER BY {Col("CapturedOn")}, {Col("RmsEvidenceArtifactId")} {Paging()}",
+				parameters);
+		}
 	}
 
 	/// <summary>Due state per (Record, obligation) — registry M0170, RMS-3.</summary>

@@ -1946,4 +1946,50 @@
   <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Blev försenade under perioden</value></data>
   <data name="AnalyticsWithinTarget" xml:space="preserve"><value>Inom målet</value></data>
   <data name="AnalyticsWorkload" xml:space="preserve"><value>Arbetsbelastning</value></data>
+  <data name="ReadinessAssets" xml:space="preserve"><value>Tillgångar</value></data>
+  <data name="ReadinessAssetsAssigned" xml:space="preserve"><value>Tilldelade tillgångar</value></data>
+  <data name="ReadinessByStatus" xml:space="preserve"><value>Per status</value></data>
+  <data name="ReadinessChecklists" xml:space="preserve"><value>Efterlevnad av checklistor</value></data>
+  <data name="ReadinessChecks" xml:space="preserve"><value>Kontroller</value></data>
+  <data name="ReadinessChecksExpected" xml:space="preserve"><value>Förväntade</value></data>
+  <data name="ReadinessCohort" xml:space="preserve"><value>Uppmätt period</value></data>
+  <data name="ReadinessCompletionRate" xml:space="preserve"><value>Genomförandegrad</value></data>
+  <data name="ReadinessCosts" xml:space="preserve"><value>Kostnader</value></data>
+  <data name="ReadinessCoverage" xml:space="preserve"><value>Täckning</value></data>
+  <data name="ReadinessDamaged" xml:space="preserve"><value>Skadade</value></data>
+  <data name="ReadinessEmergency" xml:space="preserve"><value>Akut</value></data>
+  <data name="ReadinessEquipment" xml:space="preserve"><value>Utrustning</value></data>
+  <data name="ReadinessEvidence" xml:space="preserve"><value>Beredskapspaket</value></data>
+  <data name="ReadinessExpiringSoon" xml:space="preserve"><value>går ut inom 30 dagar</value></data>
+  <data name="ReadinessForbidden" xml:space="preserve"><value>Modulen nekade den här vyn för ditt konto; inget därifrån räknas.</value></data>
+  <data name="ReadinessHeader" xml:space="preserve"><value>Beredskap</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>Beredskap för fordon och utrustning sammansatt från modulerna checklistor, underhåll och lager. Varje modul behörighetsprövar dig själv; Poster bidrar bara med de beredskapspaket som fångats.</value></data>
+  <data name="ReadinessIssuancesOutstanding" xml:space="preserve"><value>Utestående utlämningar</value></data>
+  <data name="ReadinessIssued" xml:space="preserve"><value>Utlämnade</value></data>
+  <data name="ReadinessLabor" xml:space="preserve"><value>Arbete</value></data>
+  <data name="ReadinessMissed" xml:space="preserve"><value>Missade</value></data>
+  <data name="ReadinessMissingRepairTimes" xml:space="preserve"><value>utan tider</value></data>
+  <data name="ReadinessMttr" xml:space="preserve"><value>Genomsnittlig reparationstid (h)</value></data>
+  <data name="ReadinessNeedsAttention" xml:space="preserve"><value>kräver uppmärksamhet</value></data>
+  <data name="ReadinessOnHold" xml:space="preserve"><value>Pausade</value></data>
+  <data name="ReadinessOnTime" xml:space="preserve"><value>i tid</value></data>
+  <data name="ReadinessOnTimeRate" xml:space="preserve"><value>Punktlighetsgrad</value></data>
+  <data name="ReadinessOpenByAge" xml:space="preserve"><value>Öppna per ålder</value></data>
+  <data name="ReadinessOpenByPriority" xml:space="preserve"><value>Öppna per prioritet</value></data>
+  <data name="ReadinessOutForRepair" xml:space="preserve"><value>På reparation</value></data>
+  <data name="ReadinessOverdueReturns" xml:space="preserve"><value>Försenade återlämningar</value></data>
+  <data name="ReadinessPackets" xml:space="preserve"><value>Paket</value></data>
+  <data name="ReadinessPacketsCaptured" xml:space="preserve"><value>Fångade paket</value></data>
+  <data name="ReadinessParts" xml:space="preserve"><value>Delar</value></data>
+  <data name="ReadinessRecordsWithPacket" xml:space="preserve"><value>Poster med paket</value></data>
+  <data name="ReadinessRedacted" xml:space="preserve"><value>Svarsdetaljer undanhålls för din behörighetsnivå; räkningarna är fullständiga.</value></data>
+  <data name="ReadinessRepairSamples" xml:space="preserve"><value>tidsatta reparationer</value></data>
+  <data name="ReadinessSkipped" xml:space="preserve"><value>överhoppade</value></data>
+  <data name="ReadinessState" xml:space="preserve"><value>Tillstånd</value></data>
+  <data name="ReadinessTrend" xml:space="preserve"><value>Förväntade och missade kontroller per dag</value></data>
+  <data name="ReadinessUnavailableSources" xml:space="preserve"><value>Otillgänglig källa</value></data>
+  <data name="ReadinessUnit" xml:space="preserve"><value>Enhet</value></data>
+  <data name="ReadinessUnits" xml:space="preserve"><value>Beredskapstavla för enheter</value></data>
+  <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Oprissatta rader</value></data>
+  <data name="ReadinessWorkOrders" xml:space="preserve"><value>Arbetsorder</value></data>
 </root>

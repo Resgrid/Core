@@ -1946,4 +1946,50 @@
   <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Έγιναν εκπρόθεσμες στο διάστημα</value></data>
   <data name="AnalyticsWithinTarget" xml:space="preserve"><value>Εντός στόχου</value></data>
   <data name="AnalyticsWorkload" xml:space="preserve"><value>Φόρτος εργασίας</value></data>
+  <data name="ReadinessAssets" xml:space="preserve"><value>Στοιχεία εξοπλισμού</value></data>
+  <data name="ReadinessAssetsAssigned" xml:space="preserve"><value>Ανατεθειμένα στοιχεία</value></data>
+  <data name="ReadinessByStatus" xml:space="preserve"><value>Ανά κατάσταση</value></data>
+  <data name="ReadinessChecklists" xml:space="preserve"><value>Συμμόρφωση λιστών ελέγχου</value></data>
+  <data name="ReadinessChecks" xml:space="preserve"><value>Έλεγχοι</value></data>
+  <data name="ReadinessChecksExpected" xml:space="preserve"><value>Αναμενόμενοι</value></data>
+  <data name="ReadinessCohort" xml:space="preserve"><value>Μετρούμενη περίοδος</value></data>
+  <data name="ReadinessCompletionRate" xml:space="preserve"><value>Ποσοστό ολοκλήρωσης</value></data>
+  <data name="ReadinessCosts" xml:space="preserve"><value>Κόστος</value></data>
+  <data name="ReadinessCoverage" xml:space="preserve"><value>Κάλυψη</value></data>
+  <data name="ReadinessDamaged" xml:space="preserve"><value>Κατεστραμμένα</value></data>
+  <data name="ReadinessEmergency" xml:space="preserve"><value>Επείγουσες</value></data>
+  <data name="ReadinessEquipment" xml:space="preserve"><value>Εξοπλισμός</value></data>
+  <data name="ReadinessEvidence" xml:space="preserve"><value>Πακέτα ετοιμότητας</value></data>
+  <data name="ReadinessExpiringSoon" xml:space="preserve"><value>λήγουν εντός 30 ημερών</value></data>
+  <data name="ReadinessForbidden" xml:space="preserve"><value>Η ενότητα αρνήθηκε αυτή την προβολή για τον λογαριασμό σας· τίποτα από αυτήν δεν μετριέται.</value></data>
+  <data name="ReadinessHeader" xml:space="preserve"><value>Ετοιμότητα</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>Ετοιμότητα οχημάτων και εξοπλισμού συντεθειμένη από τις ενότητες λιστών ελέγχου, συντήρησης και αποθέματος. Κάθε ενότητα σας εξουσιοδοτεί μόνη της· οι Εγγραφές προσθέτουν μόνο τα πακέτα ετοιμότητας που κατέγραψαν.</value></data>
+  <data name="ReadinessIssuancesOutstanding" xml:space="preserve"><value>Εκκρεμείς χορηγήσεις</value></data>
+  <data name="ReadinessIssued" xml:space="preserve"><value>Χορηγημένα</value></data>
+  <data name="ReadinessLabor" xml:space="preserve"><value>Εργασία</value></data>
+  <data name="ReadinessMissed" xml:space="preserve"><value>Χαμένοι</value></data>
+  <data name="ReadinessMissingRepairTimes" xml:space="preserve"><value>χωρίς χρόνους</value></data>
+  <data name="ReadinessMttr" xml:space="preserve"><value>Μέσος χρόνος επισκευής (ω)</value></data>
+  <data name="ReadinessNeedsAttention" xml:space="preserve"><value>χρειάζονται προσοχή</value></data>
+  <data name="ReadinessOnHold" xml:space="preserve"><value>Σε αναμονή</value></data>
+  <data name="ReadinessOnTime" xml:space="preserve"><value>εγκαίρως</value></data>
+  <data name="ReadinessOnTimeRate" xml:space="preserve"><value>Ποσοστό εγκαιρότητας</value></data>
+  <data name="ReadinessOpenByAge" xml:space="preserve"><value>Ανοικτές ανά ηλικία</value></data>
+  <data name="ReadinessOpenByPriority" xml:space="preserve"><value>Ανοικτές ανά προτεραιότητα</value></data>
+  <data name="ReadinessOutForRepair" xml:space="preserve"><value>Σε επισκευή</value></data>
+  <data name="ReadinessOverdueReturns" xml:space="preserve"><value>Εκπρόθεσμες επιστροφές</value></data>
+  <data name="ReadinessPackets" xml:space="preserve"><value>Πακέτα</value></data>
+  <data name="ReadinessPacketsCaptured" xml:space="preserve"><value>Καταγεγραμμένα πακέτα</value></data>
+  <data name="ReadinessParts" xml:space="preserve"><value>Ανταλλακτικά</value></data>
+  <data name="ReadinessRecordsWithPacket" xml:space="preserve"><value>Εγγραφές με πακέτο</value></data>
+  <data name="ReadinessRedacted" xml:space="preserve"><value>Οι λεπτομέρειες απαντήσεων αποκρύπτονται για το επίπεδο πρόσβασής σας· οι μετρήσεις είναι πλήρεις.</value></data>
+  <data name="ReadinessRepairSamples" xml:space="preserve"><value>χρονομετρημένες επισκευές</value></data>
+  <data name="ReadinessSkipped" xml:space="preserve"><value>παραλείφθηκαν</value></data>
+  <data name="ReadinessState" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="ReadinessTrend" xml:space="preserve"><value>Αναμενόμενοι και χαμένοι έλεγχοι ανά ημέρα</value></data>
+  <data name="ReadinessUnavailableSources" xml:space="preserve"><value>Μη διαθέσιμη πηγή</value></data>
+  <data name="ReadinessUnit" xml:space="preserve"><value>Μονάδα</value></data>
+  <data name="ReadinessUnits" xml:space="preserve"><value>Πίνακας ετοιμότητας μονάδων</value></data>
+  <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Γραμμές χωρίς τιμή</value></data>
+  <data name="ReadinessWorkOrders" xml:space="preserve"><value>Εντολές εργασίας</value></data>
 </root>

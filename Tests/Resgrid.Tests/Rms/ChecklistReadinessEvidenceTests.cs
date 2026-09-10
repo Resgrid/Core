@@ -24,7 +24,8 @@ namespace Resgrid.Tests.Rms
 				CoverageStartUtc = DateTime.UtcNow.AddDays(-30), CoverageEndUtc = DateTime.UtcNow.AddHours(-2),
 				Checklists = new List<ChecklistReportEntry> { new() { OccurrenceId = "source-occurrence", VersionId = "pinned-version", Version = 3, Name = "Original evidence", Target = new ChecklistTarget { Id = "1", Type = ChecklistTargetType.Unit, Name = "Engine 1" } } } };
 			var checklists = new Mock<IChecklistsService>(); checklists.Setup(c => c.GetReadinessPacketForCallAsync(It.IsAny<ChecklistActor>(), 501, 30)).ReturnsAsync(() => source);
-			var access = new Mock<IReadinessAccessService>(); access.Setup(a => a.CanUseChecklistsAsync(Dept)).ReturnsAsync(true);
+			source.WorkOrders.Add(new Resgrid.Model.WorkOrders.ReadinessWorkOrderEvidence { WorkOrderId = 19, Revision = 3, SnapshotId = 29, Title = "Pinned maintenance", UnitId = 1, ActiveSafetyHoldIds = new() { 8 } });
+			var access = new Mock<IReadinessAccessService>(); access.Setup(a => a.CanUseChecklistsAsync(Dept)).ReturnsAsync(false);
 			var grant = Mock.Of<IProtectedGrantContext>(g => g.UserId == "author" && g.GrantToken == "synthetic-grant" && !g.IsWorkloadCaller);
 			var pdf = new Mock<IPdfProvider>(); pdf.Setup(p => p.ConvertHtmlToPdf(It.IsAny<string>())).Returns(Encoding.ASCII.GetBytes("%PDF-1.4 synthetic evidence"));
 			var adapter = new ReadinessPacketEvidenceAdapter(checklists.Object, access.Object, grant, pdf.Object);
@@ -34,9 +35,11 @@ namespace Resgrid.Tests.Rms
 			var artifact = await service.CaptureAsync(Request(RmsEvidenceKind.ReadinessPacket));
 			artifact.Classification.Should().Be((int)RmsEvidenceClassification.Restricted);
 			artifact.ManifestJson.Should().Contain("Original evidence").And.Contain("PdfSha256").And.Contain("ManifestSha256");
+			artifact.ManifestJson.Should().Contain("Pinned maintenance").And.Contain("SnapshotId");
 			var json = artifact.ManifestJson; var checksum = artifact.Checksum;
 			await service.BindToRevisionAsync(Dept, _record.RmsOperationalRecordId, "finalized-revision");
 			source.Checklists[0].Name = "Later edited source"; source.Checklists.Clear();
+			source.WorkOrders.Clear();
 			var retained = (await service.GetForRecordAsync(Dept, _record.RmsOperationalRecordId, "finalized-revision"))[0];
 			retained.ManifestJson.Should().Be(json); retained.Checksum.Should().Be(checksum); (await service.VerifyAsync(Dept, retained.RmsEvidenceArtifactId)).Should().BeTrue();
 			checklists.Verify(c => c.GetReadinessPacketForCallAsync(It.Is<ChecklistActor>(a => a.UserId == "author" && a.GrantToken == "synthetic-grant"), 501, 30), Times.Exactly(2));

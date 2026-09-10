@@ -26,7 +26,7 @@ namespace Resgrid.Services.Records
 	/// instead of under-counting. Every section is computed independently and degrades to a warning.
 	/// </para>
 	/// </summary>
-	public class RecordsAnalyticsService : IRecordsAnalyticsService
+	public partial class RecordsAnalyticsService : IRecordsAnalyticsService
 	{
 		/// <summary>An interval longer than this is a mis-keyed time, not a response, and is excluded from every distribution.</summary>
 		public static readonly TimeSpan MaxInterval = TimeSpan.FromHours(24);
@@ -64,18 +64,28 @@ namespace Resgrid.Services.Records
 		private readonly IUnitsService _unitsService;
 		private readonly IDepartmentGroupsService _groupsService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IFeatureToggleService _flags;
+		private readonly IChecklistsService _checklists;
+		private readonly IReadinessAccessService _readinessAccess;
+		private readonly IWorkOrderReportingService _workOrderReporting;
+		private readonly IInventoryCatalogService _inventory;
+		private readonly IInventoryAuthorizationService _inventoryAuthorization;
+		private readonly IRmsEvidenceArtifactsRepository _evidence;
 
 		public RecordsAnalyticsService(RecordsPreventionGate gate, IRecordsAuthorizationService authorization, IRmsOperationalRecordsRepository records, IRmsRecordUnitResponsesRepository units,
 			IRmsRecordParticipantsRepository participants, IRmsRecordGroupScopesRepository scopes, IRmsOperationalRecordDetailsRepository details, IRmsIncidentReportsRepository reports,
 			IRmsUnitResponsesRepository reportUnits, IRmsIncidentTypesRepository incidentTypes, IRmsRevisionsRepository revisions, IRmsRecordDueStatesRepository dueStates,
 			IRmsInspectionsRepository inspections, IRmsInspectionProgramsRepository programs, IRmsViolationsRepository violations, IRmsPermitsRepository permits, IRmsPermitTypesRepository permitTypes,
 			IRmsHydrantsRepository hydrants, IRmsHydrantFlowTestsRepository flowTests, IRmsOccupanciesRepository occupancies, IRmsCrrActivitiesRepository crr,
-			IUnitsService unitsService, IDepartmentGroupsService groupsService, IDepartmentsService departmentsService)
+			IUnitsService unitsService, IDepartmentGroupsService groupsService, IDepartmentsService departmentsService,
+			IFeatureToggleService flags, IChecklistsService checklists, IReadinessAccessService readinessAccess, IWorkOrderReportingService workOrderReporting,
+			IInventoryCatalogService inventory, IInventoryAuthorizationService inventoryAuthorization, IRmsEvidenceArtifactsRepository evidence)
 		{
 			_gate = gate; _authorization = authorization; _records = records; _units = units; _participants = participants; _scopes = scopes; _details = details; _reports = reports;
 			_reportUnits = reportUnits; _incidentTypes = incidentTypes; _revisions = revisions; _dueStates = dueStates; _inspections = inspections; _programs = programs; _violations = violations;
 			_permits = permits; _permitTypes = permitTypes; _hydrants = hydrants; _flowTests = flowTests; _occupancies = occupancies; _crr = crr;
 			_unitsService = unitsService; _groupsService = groupsService; _departmentsService = departmentsService;
+			_flags = flags; _checklists = checklists; _readinessAccess = readinessAccess; _workOrderReporting = workOrderReporting; _inventory = inventory; _inventoryAuthorization = inventoryAuthorization; _evidence = evidence;
 		}
 
 		public Task<bool> IsModuleEnabledAsync(int departmentId) => _gate.IsEnabledAsync(departmentId, RecordsPreventionModule.Analytics);

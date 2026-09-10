@@ -36,6 +36,7 @@ namespace Resgrid.Services
 			if (command?.Lines == null || command.Lines.Count is < 1 or > 100) throw new InventoryException(400, "InvalidLines"); Id(command.RequestId);
 			foreach (var line in command.Lines)
 			{
+				if (line?.WorkOrderPartMovementId != null && (!joined || line.WorkOrderPartId == null)) throw new InventoryException(400, "WorkOrderPostingRequired");
 				if (line?.WorkOrderPartId != null && (!joined || line.ReferenceType != InventoryReferenceType.WorkOrder)) throw new InventoryException(400, "WorkOrderPostingRequired");
 				if (line?.WorkOrderPartId != null) await RequireWorkOrderPartAsync(actor, line);
 				if (line?.CountItemId != null && !counting) throw new InventoryException(400, "CountCompletionRequired");
@@ -259,6 +260,7 @@ namespace Resgrid.Services
 				transaction.ReferenceType = (int)line.ReferenceType; transaction.ReferenceId = line.ReferenceId; transaction.OccurredOn = Now;
 				transaction.ReversesTransactionId = line.ReversesTransactionId; transaction.IssuanceId = line.IssuanceId; transaction.PurchaseOrderItemId = line.PurchaseOrderItemId;
 				transaction.CountItemId = line.CountItemId; transaction.WorkOrderPartId = line.WorkOrderPartId;
+				transaction.WorkOrderPartMovementId = line.WorkOrderPartMovementId;
 				if (line.ReversesTransactionId != null)
 				{
 					var original = await GetAsync<InventoryTransaction>(actor, line.ReversesTransactionId);
@@ -277,7 +279,7 @@ namespace Resgrid.Services
 					if (line.FromLocationId != null)
 					{
 						var stock = await _store.ApplyStockDeltaAsync(actor.DepartmentId, item.Id, line.FromLocationId, line.LotId, -line.Quantity, actor.UserId);
-						if (stock.Quantity < 0) throw new InventoryException(409, "InsufficientStock");
+						if (stock.Quantity < await AllocatedQuantityAsync(actor.DepartmentId, line)) throw new InventoryException(409, "InsufficientStock");
 						transaction.FromQuantityAfter = stock.Quantity; transaction.FromQuantityBefore = stock.Quantity + line.Quantity;
 					}
 					if (line.ToLocationId != null)
@@ -303,6 +305,7 @@ namespace Resgrid.Services
 		private async Task MoveAssetAsync(InventoryActor actor, InventoryPosting line, InventoryTransaction transaction, decimal? receiptCost)
 		{
 			var asset = await GetAsync<InventoryAsset>(actor, line.AssetId);
+			if (line.FromLocationId != null && await AllocatedQuantityAsync(actor.DepartmentId, line) > 0) throw new InventoryException(409, "AssetNotAvailable");
 			if (asset.ItemId != line.ItemId || asset.LotId != line.LotId || asset.IsDeleted || line.ExpectedAssetRevision.HasValue && asset.Revision != line.ExpectedAssetRevision) throw new InventoryException(409, "AssetConflict");
 			if (line.Type == InventoryTransactionType.Adjust && line.ReversesTransactionId != null)
 			{

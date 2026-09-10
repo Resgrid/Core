@@ -1946,4 +1946,50 @@
   <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Vencidas en el período</value></data>
   <data name="AnalyticsWithinTarget" xml:space="preserve"><value>Dentro del objetivo</value></data>
   <data name="AnalyticsWorkload" xml:space="preserve"><value>Carga de trabajo</value></data>
+  <data name="ReadinessAssets" xml:space="preserve"><value>Activos</value></data>
+  <data name="ReadinessAssetsAssigned" xml:space="preserve"><value>Activos asignados</value></data>
+  <data name="ReadinessByStatus" xml:space="preserve"><value>Por estado</value></data>
+  <data name="ReadinessChecklists" xml:space="preserve"><value>Cumplimiento de listas de verificación</value></data>
+  <data name="ReadinessChecks" xml:space="preserve"><value>Verificaciones</value></data>
+  <data name="ReadinessChecksExpected" xml:space="preserve"><value>Esperadas</value></data>
+  <data name="ReadinessCohort" xml:space="preserve"><value>Período medido</value></data>
+  <data name="ReadinessCompletionRate" xml:space="preserve"><value>Tasa de cumplimiento</value></data>
+  <data name="ReadinessCosts" xml:space="preserve"><value>Costos</value></data>
+  <data name="ReadinessCoverage" xml:space="preserve"><value>Cobertura</value></data>
+  <data name="ReadinessDamaged" xml:space="preserve"><value>Dañados</value></data>
+  <data name="ReadinessEmergency" xml:space="preserve"><value>Emergencia</value></data>
+  <data name="ReadinessEquipment" xml:space="preserve"><value>Equipos</value></data>
+  <data name="ReadinessEvidence" xml:space="preserve"><value>Paquetes de preparación</value></data>
+  <data name="ReadinessExpiringSoon" xml:space="preserve"><value>vencen en 30 días</value></data>
+  <data name="ReadinessForbidden" xml:space="preserve"><value>El módulo rechazó esta vista para su cuenta; no se cuenta nada de él.</value></data>
+  <data name="ReadinessHeader" xml:space="preserve"><value>Preparación operativa</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>Preparación de vehículos y equipos compuesta a partir de los módulos de listas de verificación, mantenimiento e inventario. Cada módulo le autoriza por sí mismo; Registros solo añade los paquetes de preparación que capturó.</value></data>
+  <data name="ReadinessIssuancesOutstanding" xml:space="preserve"><value>Entregas pendientes</value></data>
+  <data name="ReadinessIssued" xml:space="preserve"><value>Entregados</value></data>
+  <data name="ReadinessLabor" xml:space="preserve"><value>Mano de obra</value></data>
+  <data name="ReadinessMissed" xml:space="preserve"><value>Omitidas</value></data>
+  <data name="ReadinessMissingRepairTimes" xml:space="preserve"><value>sin tiempos</value></data>
+  <data name="ReadinessMttr" xml:space="preserve"><value>Tiempo medio de reparación (h)</value></data>
+  <data name="ReadinessNeedsAttention" xml:space="preserve"><value>requieren atención</value></data>
+  <data name="ReadinessOnHold" xml:space="preserve"><value>En espera</value></data>
+  <data name="ReadinessOnTime" xml:space="preserve"><value>a tiempo</value></data>
+  <data name="ReadinessOnTimeRate" xml:space="preserve"><value>Tasa de puntualidad</value></data>
+  <data name="ReadinessOpenByAge" xml:space="preserve"><value>Abiertas por antigüedad</value></data>
+  <data name="ReadinessOpenByPriority" xml:space="preserve"><value>Abiertas por prioridad</value></data>
+  <data name="ReadinessOutForRepair" xml:space="preserve"><value>En reparación</value></data>
+  <data name="ReadinessOverdueReturns" xml:space="preserve"><value>Devoluciones vencidas</value></data>
+  <data name="ReadinessPackets" xml:space="preserve"><value>Paquetes</value></data>
+  <data name="ReadinessPacketsCaptured" xml:space="preserve"><value>Paquetes capturados</value></data>
+  <data name="ReadinessParts" xml:space="preserve"><value>Repuestos</value></data>
+  <data name="ReadinessRecordsWithPacket" xml:space="preserve"><value>Registros con paquete</value></data>
+  <data name="ReadinessRedacted" xml:space="preserve"><value>El detalle de las respuestas se oculta para su nivel de acceso; los recuentos están completos.</value></data>
+  <data name="ReadinessRepairSamples" xml:space="preserve"><value>reparaciones cronometradas</value></data>
+  <data name="ReadinessSkipped" xml:space="preserve"><value>omitidas a propósito</value></data>
+  <data name="ReadinessState" xml:space="preserve"><value>Estado</value></data>
+  <data name="ReadinessTrend" xml:space="preserve"><value>Verificaciones esperadas y omitidas por día</value></data>
+  <data name="ReadinessUnavailableSources" xml:space="preserve"><value>Fuente no disponible</value></data>
+  <data name="ReadinessUnit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="ReadinessUnits" xml:space="preserve"><value>Tablero de preparación de unidades</value></data>
+  <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Líneas sin precio</value></data>
+  <data name="ReadinessWorkOrders" xml:space="preserve"><value>Órdenes de trabajo</value></data>
 </root>

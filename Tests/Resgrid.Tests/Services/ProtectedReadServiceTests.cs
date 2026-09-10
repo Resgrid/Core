@@ -360,6 +360,7 @@ namespace Resgrid.Tests.Services
 				"ChecklistCompletionItems", "ChecklistCompletionFiles", "DepartmentChecklistSettings", "ChecklistSchedules",
 				// Work-order content uses WorkOrderTables.Fields<T>(); file downloads use the binary resolver.
                 "WorkOrders", "WorkOrderActivities", "WorkOrderLabors", "WorkOrderParts", "WorkOrderFiles",
+                "WorkOrderPolicies", "WorkOrderOperationReceipts", "WorkOrderVendorCharges", "WorkOrderPartMovements",
                 "WorkOrderFailureIntents", "WorkOrderSafetyHolds", "WorkOrderRecurrences", "WorkOrderRecurrenceVersions", "WorkOrderMeterReadings", "WorkOrderRecurrenceChanges",
 				// Inventory content uses InventoryTables.Fields<T>() through the generic protected resolver.
 				"InventoryCategories", "InventoryItems", "InventoryLocations", "InventoryLots", "InventoryStocks",
@@ -501,7 +502,7 @@ namespace Resgrid.Tests.Services
 				"the conversation resolves in one round trip, not one call per row");
 		}
 
-		// ── protected writes ─────────────────────────────────────────────────────
+		// â”€â”€ protected writes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 		[Test]
 		public async Task A_message_write_envelopes_the_subject_and_the_body()
@@ -1506,7 +1507,7 @@ namespace Resgrid.Tests.Services
 				It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
-		// ── contact writes ───────────────────────────────────────────────────────
+		// â”€â”€ contact writes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 		[Test]
 		public async Task Contact_write_envelopes_text_fields_and_the_binary_image()

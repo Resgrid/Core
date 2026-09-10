@@ -691,4 +691,7 @@
 <data name="MaintenanceUnavailable" xml:space="preserve"><value>تخزين الصيانة غير متاح.</value></data>
 <data name="PermissionRequired" xml:space="preserve"><value>ليس لديك إذن لتنفيذ هذا الإجراء.</value></data>
 <data name="TargetUnavailable" xml:space="preserve"><value>اختر هدفًا متاحًا في قسمك.</value></data>
+  <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>تعذّر إعادة بناء بعض الحالات التاريخية لأوامر العمل. لا تدّعي الحزمة تغطية الصيانة بالكامل.</value></data>
+  <data name="RestrictedWorkOrders" xml:space="preserve"><value>تقتصر أدلة أوامر العمل على النطاق المصرّح للقارئ بالوصول إليه حاليًا.</value></data>
+  <data name="ProtectedDataRequired" xml:space="preserve"><value>يجب إلغاء قفل البيانات المحمية للمتابعة.</value></data>
 </root>

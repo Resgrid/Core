@@ -35,11 +35,11 @@ namespace Resgrid.Services
 		}
 		public async Task DispatchAsync(DomainEventOutboxEntry entry)
 		{
-			if (entry?.ProducerSubsystem != "WorkOrders" || entry.TriggerEventType is not (70 or 71 or 72 or 73 or 167 or 168) || !Guid.TryParseExact(entry.EventId, "D", out _) || !int.TryParse(entry.AggregateId, out var id)) return;
+			if (entry?.ProducerSubsystem != "WorkOrders" || entry.TriggerEventType is not (70 or 71 or 72 or 73 or 167 or 168 or 173 or 174) || !Guid.TryParseExact(entry.EventId, "D", out _) || !int.TryParse(entry.AggregateId, out var id)) return;
 			if (!await _access.CanUseMaintenanceAsync(entry.DepartmentId)) return;
 			var row = await _orders.GetAsync<WorkOrder>(entry.DepartmentId, id);
 			if (row == null) return;
-			foreach (var user in await RecipientsAsync(entry.DepartmentId, row))
+			foreach (var user in await RecipientsAsync(entry.DepartmentId, row, entry.TriggerEventType is 173 or 174))
 			{
 				var notice = new WorkOrderNotification { DepartmentId = entry.DepartmentId, WorkOrderId = id, EventId = entry.EventId, UserId = user, LeaseOwner = Guid.NewGuid().ToString("D") };
 				var state = await TransactionAsync(entry.DepartmentId, () => _orders.ClaimNotificationAsync(notice, DateTime.UtcNow));
@@ -51,7 +51,7 @@ namespace Resgrid.Services
 					var department = await _departments.GetDepartmentByIdAsync(entry.DepartmentId, true);
 					var number = await _settings.GetTextToCallNumberForDepartmentAsync(entry.DepartmentId);
 					var current = await _orders.GetAsync<WorkOrder>(entry.DepartmentId, id);
-					if (department == null || profile == null || current == null || !await _access.CanUseMaintenanceAsync(entry.DepartmentId) || !await IsRecipientAsync(entry.DepartmentId, current, user))
+					if (department == null || profile == null || current == null || !await _access.CanUseMaintenanceAsync(entry.DepartmentId) || !await IsRecipientAsync(entry.DepartmentId, current, user, entry.TriggerEventType is 173 or 174))
 					{ await FinishAsync(notice, 3); continue; }
 					CultureInfo culture;
 					try { culture = CultureInfo.GetCultureInfo(profile.Language ?? "en"); if (!SupportedLocales.GetSupportedCultures().Contains(culture.TwoLetterISOLanguageName)) culture = CultureInfo.GetCultureInfo("en"); }
@@ -72,17 +72,19 @@ namespace Resgrid.Services
 				}
 			}
 		}
-		private async Task<bool> IsRecipientAsync(int departmentId, WorkOrder row, string user)
+		private async Task<bool> IsRecipientAsync(int departmentId, WorkOrder row, string user, bool managerNotice = false)
 		{
 			var member = await _departments.GetDepartmentMemberAsync(user, departmentId, true);
 			if (member?.DepartmentId != departmentId || member.IsDeleted || member.IsDisabled == true) return false;
 			if (row.CreatedBy == user) return true;
 			var actor = new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = departmentId, UserId = user };
-			if (row.Status is 0 or 1 && await _authorization.CanManageAsync(actor, row.TargetGroupId)) return true;
+			if ((managerNotice || row.Status is 0 or 1) && await _authorization.CanManageAsync(actor, row.TargetGroupId)) return true;
+			// Escalation-role members are recipients too; revalidating without this drops them before the assigned-user check.
+			if (row.EscalatedOn.HasValue && row.EscalationRoleId.HasValue && (await _authorization.ScopeAsync(actor)).RoleIds.Contains(row.EscalationRoleId.Value)) return true;
 			if (row.AssignedToUserId != null) return row.AssignedToUserId == user;
 			return row.AssignedToRoleId.HasValue && (await _authorization.ScopeAsync(actor)).RoleIds.Contains(row.AssignedToRoleId.Value);
 		}
-		private async Task<System.Collections.Generic.List<string>> RecipientsAsync(int departmentId, WorkOrder row)
+		private async Task<System.Collections.Generic.List<string>> RecipientsAsync(int departmentId, WorkOrder row, bool managerNotice = false)
         {
             var result = new System.Collections.Generic.HashSet<string>(await _authorization.RecipientsAsync(departmentId, row));
             if (row.EscalatedOn.HasValue && row.EscalationRoleId.HasValue)
@@ -91,7 +93,7 @@ namespace Resgrid.Services
             foreach (var member in members.Where(m => m.DepartmentId == departmentId && !m.IsDeleted && m.IsDisabled != true))
             {
                 var actor = new Resgrid.Model.Checklists.ChecklistActor { DepartmentId = departmentId, UserId = member.UserId };
-                if (member.UserId == row.CreatedBy || row.Status is 0 or 1 && await _authorization.CanManageAsync(actor, row.TargetGroupId))
+                if (member.UserId == row.CreatedBy || (managerNotice || row.Status is 0 or 1) && await _authorization.CanManageAsync(actor, row.TargetGroupId))
                     result.Add(member.UserId);
             }
             return result.OrderBy(id => id, StringComparer.Ordinal).ToList();

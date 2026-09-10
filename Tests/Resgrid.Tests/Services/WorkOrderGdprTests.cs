@@ -25,12 +25,20 @@ namespace Resgrid.Tests.Services
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrderRecurrenceVersion>()));
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrderMeterReading>()));
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrderRecurrenceChange>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderPolicy>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderOperationReceipt>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderVendorCharge>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderPartMovement>()));
             return store.Object;
         }
         private static IWorkOrderRepository EmptyWorkOrders()
         {
             var store = new Mock<IWorkOrderRepository>();
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrder>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderPolicy>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderOperationReceipt>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderVendorCharge>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderPartMovement>()));
             return store.Object;
         }
         [TestCase(false), TestCase(true)]
@@ -42,7 +50,11 @@ namespace Resgrid.Tests.Services
             });
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrderActivity>()));
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrderLabor>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderVendorCharge> {new() {Id=8,DepartmentId=DeptId,WorkOrderId=1,CreatedBy=UserId,Content="VENDOR-CANARY"}}));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderPartMovement> {new() {Id=9,DepartmentId=DeptId,WorkOrderId=1,CreatedBy=UserId,Content="MOVEMENT-CANARY"}}));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderOperationReceipt> {new() {Id=10,DepartmentId=DeptId,WorkOrderId=1,CreatedBy=UserId,Content="BULK-CANARY"}}));
             store.SetReturnsDefault(Task.FromResult(new List<WorkOrderPart>()));
+            store.SetReturnsDefault(Task.FromResult(new List<WorkOrderReportSnapshot> { new() { DepartmentId = DeptId, WorkOrderId = 1, Revision = 2, Id = 3 } }));
             store.Setup(s => s.ChildrenAsync<WorkOrderFile>(DeptId, 1, 0)).ReturnsAsync(new List<WorkOrderFile> {
                 new WorkOrderFile { Id=2, DepartmentId=DeptId, WorkOrderId=1, CreatedBy=UserId, Content="PII-FILENAME-CANARY", Data=new byte[]{1,2,3} }
             });
@@ -68,6 +80,7 @@ namespace Resgrid.Tests.Services
                 new Lazy<IReadinessHistoryProtectionService>(()=>new ReadinessHistoryProtectionService(Mock.Of<IProtectedWriteService>(),policy.Object)),reminders.Object,store.Object,EmptyInventory(), maintenance.Object);
             var files = await RunExportAsync();
             files["workorders.json"].Should().Contain("REDACTED").And.NotContain("CANARY").And.NotContain("AQID");
+            files["workorders.json"].Should().Contain("ReportSnapshots").And.Contain("Revision");
             files["maintenance.json"].Should().Contain("REDACTED").And.NotContain("CANARY").And.NotContain("UNRELATED-HOLD");
             var exported = Newtonsoft.Json.Linq.JObject.Parse(files["maintenance.json"]);
             exported["SafetyHolds"].Count().Should().Be(1); exported["Readings"].Count().Should().Be(1); exported["Recurrences"].Count().Should().Be(1);

@@ -1,0 +1,44 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderReportView
+@using Resgrid.Model.WorkOrders
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{ var destination = Model.Stats == null ? "History" : "Reports"; ViewBag.Title = "Resgrid | " + localizer[Model.Stats == null ? "ServiceHistory" : "MaintenanceReports"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+<h2>@localizer[Model.Stats == null ? "ServiceHistory" : "MaintenanceReports"]</h2>
+<a asp-action="Index">@localizer["WorkOrders"]</a> | <a asp-action="Reports">@localizer["MaintenanceReports"]</a> | <a asp-action="History" asp-route-unitId="@Model.Query.UnitId" asp-route-assetId="@Model.Query.AssetId">@localizer["ServiceHistory"]</a>
+@await Html.PartialAsync("_Protection")
+<p>@localizer[Model.Stats == null ? "HistoryMethod" : "ReportMethod"]</p>
+<form method="post" asp-action="Reopen" class="form-inline work-order-form work-order-protected">
+@Html.AntiForgeryToken()<input type="hidden" name="destination" value="@destination"/>
+<label>@localizer["ReportFrom"] <input class="form-control" type="datetime-local" name="FromUtc" value="@Model.Query.FromUtc?.ToString("yyyy-MM-ddTHH:mm:ss")" step="1"/></label>
+<label>@localizer["ReportUntil"] <input class="form-control" type="datetime-local" name="UntilUtc" value="@Model.Query.UntilUtc?.ToString("yyyy-MM-ddTHH:mm:ss")" step="1"/></label>
+<label>@localizer["Status"] <select class="form-control" name="Status"><option value="">@localizer["All"]</option>@foreach (var s in Enum.GetValues<WorkOrderStatus>()) { <option value="@((int)s)" selected="@(Model.Query.Status == s)">@localizer["Status" + s]</option> }</select></label>
+<label>@localizer["Priority"] <select class="form-control" name="Priority"><option value="">@localizer["All"]</option>@foreach (var p in Enum.GetValues<WorkOrderPriority>()) { <option value="@((int)p)" selected="@(Model.Query.Priority == p)">@localizer["Priority" + p]</option> }</select></label>
+<label>@localizer["Unit"] <select class="form-control" name="UnitId"><option value="">@localizer["All"]</option>@foreach (var u in Model.Choices.Units) { <option value="@u.Id" selected="@(Model.Query.UnitId?.ToString() == u.Id)">@u.Name</option> }</select></label>
+<label>@localizer["Group"] <select class="form-control" name="GroupId"><option value="">@localizer["All"]</option>@foreach (var g in Model.Choices.Groups) { <option value="@g.Id" selected="@(Model.Query.GroupId?.ToString() == g.Id)">@g.Name</option> }</select></label>
+<label>@localizer["Asset"] <input class="form-control" name="AssetId" value="@Model.Query.AssetId" list="report-assets"/></label>
+<datalist id="report-assets">@foreach (var a in Model.Choices.Assets) { <option value="@a.Id">@a.Name</option> }</datalist>
+<button type="submit" class="btn btn-default">@localizer["Filter"]</button>
+</form>
+<div class="work-order-protected">
+@if (Model.Stats != null) {
+var stats = Model.Stats;
+<p>@localizer["AsOfUtc"]: @stats.AsOfUtc.ToString("u")</p>
+<table class="table"><tbody>
+<tr><th>@localizer["TotalOrders"]</th><td>@stats.Total</td><th>@localizer["OpenOrders"]</th><td>@stats.Open</td><th>@localizer["OverdueOrders"]</th><td>@stats.Overdue</td></tr>
+<tr><th>@localizer["MeanRepairHours"]</th><td>@(stats.MeanTimeToRepairHours?.ToString("0.##") ?? "—")</td><th>@localizer["RepairSamples"]</th><td>@stats.RepairSamples</td><th>@localizer["MissingRepairTimes"]</th><td>@stats.MissingRepairTimes</td></tr>
+<tr><th>@localizer["ActiveRepairHours"]</th><td>@stats.ActiveRepairHours.ToString("0.##")</td><th>@localizer["WaitingHours"]</th><td>@stats.WaitingHours.ToString("0.##")</td><th>@localizer["DowntimeHours"]</th><td>@stats.DowntimeHours.ToString("0.##")</td></tr>
+<tr><th>@localizer["PreventiveCompliance"]</th><td>@(stats.PreventiveCompliancePercent?.ToString("0.##") ?? "—")%</td><th>@localizer["PreventiveOnTime"]</th><td>@stats.PreventiveOnTime / @stats.PreventiveDue</td><th>@localizer["RepeatedFailures"]</th><td>@stats.RepeatedFailures</td></tr>
+<tr><th>@localizer["MissingTimeHistory"]</th><td>@stats.MissingTimeHistory</td><th>@localizer["ResponseSlaBreaches"]</th><td>@stats.ResponseSlaBreaches</td><th>@localizer["RepairSlaBreaches"]</th><td>@stats.RepairSlaBreaches</td></tr>
+</tbody></table><p>@localizer["OperationsAnalyticsHelp"]</p>
+<table class="table"><caption>@localizer["OpenByPriority"]</caption><tbody>@foreach (var p in Enum.GetValues<WorkOrderPriority>()) { <tr><th>@localizer["Priority" + p]</th><td>@stats.OpenByPriority[(int)p]</td></tr> }</tbody></table>
+<table class="table"><caption>@localizer["OpenByAge"]</caption><tbody>@for (var i = 0; i < 4; i++) { <tr><th>@localizer["AgeBucket" + i]</th><td>@stats.OpenByAge[i]</td></tr> }</tbody></table>
+@await Html.PartialAsync("_ReportCosts", stats.Costs)
+}
+<form class="work-order-form" method="post" asp-action="ExportCsv">@Html.AntiForgeryToken()@await Html.PartialAsync("_ReportFields", Model.Query)<button class="btn btn-default" type="submit">@localizer["ExportCsv"]</button></form>
+<table class="table table-striped"><caption>@localizer["ServiceHistory"]</caption><thead><tr><th>@localizer["Number"]</th><th>@localizer["Title"]</th><th>@localizer["Status"]</th><th>@localizer["Priority"]</th><th>@localizer["CreatedOn"]</th><th>@localizer["RepairHours"]</th><th>@localizer["ActiveRepairHours"]</th><th>@localizer["WaitingHours"]</th><th>@localizer["DowntimeHours"]</th><th>@localizer["Costs"]</th></tr></thead><tbody>
+@foreach (var entry in Model.History.Items) { <tr><td>@entry.Order.Number</td><td><a asp-action="Detail" asp-route-id="@entry.Order.Id">@entry.Order.Title</a></td><td>@localizer["Status" + entry.Order.Status]</td><td>@localizer["Priority" + entry.Order.Priority]</td><td>@entry.Order.CreatedOn.ToString("u")</td><td>@(entry.RepairHours?.ToString("0.##") ?? "—")</td><td>@(entry.ActiveRepairHours?.ToString("0.##") ?? "—")</td><td>@(entry.WaitingHours?.ToString("0.##") ?? "—")</td><td>@entry.DowntimeHours.ToString("0.##")</td><td>@await Html.PartialAsync("_ReportCosts", entry.Costs)</td></tr> }
+</tbody></table>
+@if (Model.History.Items.Count == 0) { <p>@localizer["NoWorkOrders"]</p> }
+@if (Model.History.NextAfterId.HasValue) { <a asp-action="@destination" asp-route-afterId="@Model.History.NextAfterId" asp-route-fromUtc="@Model.Query.FromUtc?.ToString("O")" asp-route-untilUtc="@Model.Query.UntilUtc?.ToString("O")" asp-route-status="@Model.Query.Status" asp-route-priority="@Model.Query.Priority" asp-route-unitId="@Model.Query.UnitId" asp-route-groupId="@Model.Query.GroupId" asp-route-assetId="@Model.Query.AssetId">@localizer["Next"]</a> }
+</div></div></div></div>
+@section Scripts { @await Html.PartialAsync("_Scripts") }

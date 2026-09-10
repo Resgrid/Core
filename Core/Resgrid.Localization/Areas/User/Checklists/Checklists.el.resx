@@ -691,4 +691,7 @@
 <data name="MaintenanceUnavailable" xml:space="preserve"><value>Ο χώρος αποθήκευσης συντήρησης δεν είναι διαθέσιμος.</value></data>
 <data name="PermissionRequired" xml:space="preserve"><value>Δεν έχετε άδεια για αυτή την ενέργεια.</value></data>
 <data name="TargetUnavailable" xml:space="preserve"><value>Επιλέξτε έναν διαθέσιμο στόχο στο τμήμα σας.</value></data>
+  <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Δεν ήταν δυνατή η ανακατασκευή ορισμένων ιστορικών καταστάσεων εντολών. Το πακέτο δεν εγγυάται πλήρη κάλυψη συντήρησης.</value></data>
+  <data name="RestrictedWorkOrders" xml:space="preserve"><value>Τα τεκμήρια εντολών περιορίζονται στο τρέχον εξουσιοδοτημένο πεδίο πρόσβασης του αναγνώστη.</value></data>
+  <data name="ProtectedDataRequired" xml:space="preserve"><value>Τα προστατευμένα δεδομένα πρέπει να ξεκλειδωθούν για να συνεχίσετε.</value></data>
 </root>

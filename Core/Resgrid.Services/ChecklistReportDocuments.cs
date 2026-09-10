@@ -44,12 +44,13 @@ namespace Resgrid.Services
 			return body.Append("</table>").ToString();
 		}
 		private static string Unavailable(IEnumerable<string> sources) => "<ul>" + string.Concat(sources.Select(s => "<li>" + H(Text(s)) + "</li>")) + "</ul>";
-		public static string Packet(ReadinessEvidenceManifestV1 packet) => Page("ReadinessPacketReport", "<p>" + H(Text("CallId")) + ": " + H(packet.CallId) + "</p><p>" + H(packet.CoverageStartUtc.ToString("u")) + " — " + H(packet.CoverageEndUtc.ToString("u")) + "</p><p>" + H(Text("PacketMethod")) + "</p><h2>" + H(Text("DispatchedUnits")) + "</h2><ul>" + string.Concat(packet.Units.Select(u => "<li>" + H(u.Name) + " (#" + H(u.UnitId) + "; " + H(u.DispatchedUtc.ToString("u")) + ")</li>")) + "</ul><h2>" + H(Text("IssuedEquipment")) + "</h2><ul>" + string.Concat(packet.Assets.Select(a => "<li>" + H(a.Name) + " (" + H(a.AssetId) + ")</li>")) + "</ul>" + Entries(packet.Checklists) + Unavailable(packet.UnavailableSources));
+		public static string Packet(ReadinessEvidenceManifestV1 packet) => Page("ReadinessPacketReport", "<p>" + H(Text("CallId")) + ": " + H(packet.CallId) + "</p><p>" + H(packet.CoverageStartUtc.ToString("u")) + " — " + H(packet.CoverageEndUtc.ToString("u")) + "</p><p>" + H(Text("PacketMethod")) + "</p><h2>" + H(Text("DispatchedUnits")) + "</h2><ul>" + string.Concat(packet.Units.Select(u => "<li>" + H(u.Name) + " (#" + H(u.UnitId) + "; " + H(u.DispatchedUtc.ToString("u")) + ")</li>")) + "</ul><h2>" + H(Text("IssuedEquipment")) + "</h2><ul>" + string.Concat(packet.Assets.Select(a => "<li>" + H(a.Name) + " (" + H(a.AssetId) + ")</li>")) + "</ul>" + Entries(packet.Checklists) + WorkOrderReportDocuments.PacketSection(packet.WorkOrders) + Unavailable(packet.UnavailableSources));
 		public static string Sha256(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
 		public static void EnsureStillAuthorized(ReadinessEvidenceManifestV1 captured, ReadinessEvidenceManifestV1 current)
 		{
 			if (captured.DepartmentId != current.DepartmentId || captured.CallId != current.CallId
 				|| captured.Checklists.Any(e => !current.Checklists.Any(c => c.OccurrenceId == e.OccurrenceId))
+				|| captured.WorkOrders.Any(e => !current.WorkOrders.Any(c => c.WorkOrderId == e.WorkOrderId && c.Revision == e.Revision && c.SnapshotId == e.SnapshotId && c.SourceActivityId == e.SourceActivityId))
 				|| captured.Units.Any(u => !current.Units.Any(c => c.UnitId == u.UnitId))
 				|| captured.Assets.Any(a => !current.Assets.Any(c => c.AssetId == a.AssetId && c.SourceId == a.SourceId)))
 				throw new ChecklistException(403, "The request could not be completed.");

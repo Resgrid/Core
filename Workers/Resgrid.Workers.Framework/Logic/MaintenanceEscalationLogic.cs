@@ -23,7 +23,8 @@ namespace Resgrid.Workers.Framework.Logic
                         ct.ThrowIfCancellationRequested();
                         using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
                         try { var result = await scope.Resolve<IWorkOrderMaintenanceService>().EscalateMaintenanceAsync(id); errors += result.Errors; generated += result.Generated; escalated += result.Escalated; }
-                        catch { errors++; }
+                        catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
+                        catch (Exception ex) { errors++; Resgrid.Framework.Logging.LogError($"Maintenance escalation failed for department {id}: {ex.GetType().FullName}."); }
                         after = id;
                     }
                     if (departments.Count < 200) break;
@@ -31,7 +32,7 @@ namespace Resgrid.Workers.Framework.Logic
                 return Tuple.Create(errors == 0, $"Maintenance: generated={generated}, escalated={escalated}, errors={errors}");
             }
             catch (OperationCanceledException) when (ct.IsCancellationRequested) { throw; }
-            catch { return Tuple.Create(false, "Maintenance sweep failed."); }
+            catch (Exception ex) { Resgrid.Framework.Logging.LogError($"Maintenance escalation worker failed: {ex.GetType().FullName}."); return Tuple.Create(false, "Maintenance sweep failed."); }
         }
     }
 }

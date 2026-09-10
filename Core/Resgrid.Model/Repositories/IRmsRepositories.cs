@@ -244,6 +244,8 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Stamps every unbound draft artifact with the revision being written at finalize.</summary>
 		Task<int> BindDraftToRevisionAsync(int departmentId, string recordId, string revisionId, DateTime utcNow, CancellationToken cancellationToken = default);
 		Task<int> CountForRecordAsync(int departmentId, string recordId);
+		/// <summary>Header columns (never manifest, storage reference or envelope) of live artifacts of one kind captured in [start, end), oldest first, at most <paramref name="take"/> rows.</summary>
+		Task<IEnumerable<RmsEvidenceArtifactHeader>> GetHeadersByKindInRangeAsync(int departmentId, RmsEvidenceKind kind, DateTime startUtc, DateTime endUtc, int take);
 	}
 
 	public interface IRmsRecordDueStatesRepository : IRepository<RmsRecordDueState>

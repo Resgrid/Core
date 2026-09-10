@@ -75,7 +75,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
         }
         public override void Down()
         {
-            Execute.Sql("DO $$ BEGIN IF exists (select 1 from workorderfailureintents) or exists (select 1 from workordersafetyholds) or exists (select 1 from inventorytransactions where workorderpartid is not null) THEN RAISE EXCEPTION 'Readiness evidence requires authorized retention before rollback.'; END IF; END $$;");
+            Execute.Sql("DO $$ BEGIN IF exists (select 1 from workorderfailureintents) or exists (select 1 from workordersafetyholds) or exists (select 1 from inventorytransactions where workorderpartid is not null) or exists (select 1 from workorderparts where inventoryoperationid is not null or inventoryrequestid is not null) THEN RAISE EXCEPTION 'Readiness evidence requires authorized retention before rollback.'; END IF; END $$;");
             Delete.ForeignKey(N("FK_InventoryTransactions_WorkOrderPart")).OnTable(N("InventoryTransactions"));
             Delete.Index(N("IX_InventoryTransactions_WorkOrderPart")).OnTable(N("InventoryTransactions"));
             Delete.Index(N("UX_WorkOrderParts_InventoryRequest")).OnTable(N("WorkOrderParts"));

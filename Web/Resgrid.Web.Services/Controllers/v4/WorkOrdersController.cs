@@ -19,8 +19,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		private readonly IWorkOrdersService _orders;
 		private readonly IWorkOrderMaintenanceService _maintenance;
+		private readonly IWorkOrderReportingService _reports;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> _strings;
-		public WorkOrdersController(IWorkOrdersService orders, IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> strings, IWorkOrderMaintenanceService maintenance = null) { _orders = orders; _strings = strings; _maintenance = maintenance; }
+		public WorkOrdersController(IWorkOrdersService orders, IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> strings, IWorkOrderMaintenanceService maintenance = null, IWorkOrderReportingService reports = null) { _orders = orders; _strings = strings; _maintenance = maintenance; _reports = reports; }
 		private ChecklistActor Actor => new ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = Request.Headers[DataProtectionController.GrantHeader].ToString() };
 		private OkObjectResult Reply<T>(T value, int count = 1, bool more = false) { var response = new WorkOrderApiResult<T> { Data = value, Status = ResponseHelper.Success, PageSize = count, HasMore = more }; ResponseHelper.PopulateV4ResponseData(response); return Ok(response); }
 		private static T Required<T>(T input) where T : class => input ?? throw new WorkOrderException(400, "InvalidInput");
@@ -43,7 +44,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetWorkOrderChoices")]
 		public async Task<IActionResult> GetWorkOrderChoices() => Reply(await _orders.ChoicesAsync(Actor));
 		[HttpGet("GetWorkOrderActivity")]
-		public async Task<IActionResult> GetWorkOrderActivity(int id) { var detail = await _orders.GetAsync(Actor, id); return Reply(detail.Activities, detail.Activities.Count); }
+		public async Task<IActionResult> GetWorkOrderActivity(int id, int afterId = 0) { if (_reports == null) throw new WorkOrderException(503, "MaintenanceUnavailable"); var page = await _reports.GetWorkOrderActivityAsync(Actor, id, afterId); return Reply(page.Items, page.Items.Count, page.NextAfterId.HasValue); }
 		[HttpGet("GetWorkOrderHistoryForAsset")]
 		public Task<IActionResult> GetWorkOrderHistoryForAsset(string assetId, int page = 0) { if (string.IsNullOrWhiteSpace(assetId)) throw new WorkOrderException(400, "InvalidInput"); return GetWorkOrders(new WorkOrderFilter { AssetId = assetId, Page = page }); }
 		[HttpPost("NewWorkOrder")]

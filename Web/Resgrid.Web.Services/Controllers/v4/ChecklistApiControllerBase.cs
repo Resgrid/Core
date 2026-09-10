@@ -46,7 +46,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var protectedData = ex.StatusCode == 403 && (ex.Message.Contains("protected", StringComparison.OrdinalIgnoreCase) || ex.Message.StartsWith("Unlock", StringComparison.Ordinal));
 			var code = protectedData ? "protected_data_required" : ex.StatusCode == 409 ? "checklist_conflict" : ex.StatusCode == 403 ? "checklist_forbidden" : ex.StatusCode == 404 ? "checklist_unavailable" : "checklist_validation";
-			var message = _strings[ex.Message];
+			// The protected-data message is a routing sentinel the MVC controllers match on, not a resource key.
+			// Look the localized text up by key so the caller gets a real message instead of the generic fallback.
+			var message = _strings[protectedData ? "ProtectedDataRequired" : ex.Message];
 			// Do not return validation excerpts containing item names, entered values or envelopes.
 			var problem = new ProblemDetails { Status = ex.StatusCode, Type = code, Title = message.ResourceNotFound ? _strings["The request could not be completed."].Value : message.Value };
 			problem.Extensions["IsRedacted"] = protectedData;

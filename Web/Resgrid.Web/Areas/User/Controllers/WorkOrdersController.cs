@@ -22,14 +22,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 	{
 		private readonly IWorkOrdersService _orders;
 		private readonly IWorkOrderMaintenanceService _maintenance;
+		private readonly IWorkOrderReportingService _reports;
+		private IWorkOrderOperationsService OperationsService => _orders as IWorkOrderOperationsService ?? throw new WorkOrderException(503, "MaintenanceUnavailable");
 		private readonly IWorkOrderAuthorizationService _authorization;
 		private readonly IReadinessAccessService _access;
 		private readonly IProtectedGrantContext _grant;
 		private readonly IDepartmentDataProtectionService _protection;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> _strings;
 		public WorkOrdersController(IWorkOrdersService orders, IWorkOrderAuthorizationService authorization, IReadinessAccessService access, IProtectedGrantContext grant,
-			IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> strings, IWorkOrderMaintenanceService maintenance = null)
-		{ _orders = orders; _authorization = authorization; _access = access; _grant = grant; _protection = protection; _strings = strings; _maintenance = maintenance; }
+			IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> strings, IWorkOrderMaintenanceService maintenance = null, IWorkOrderReportingService reports = null)
+		{ _orders = orders; _authorization = authorization; _access = access; _grant = grant; _protection = protection; _strings = strings; _maintenance = maintenance; _reports = reports; }
 		private ChecklistActor Actor => new ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant.GrantToken };
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -44,7 +46,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (HttpMethods.IsGet(Request.Method) && ex.Code == "ProtectedDataRequired")
 				{
 					int.TryParse(Request.Query["id"].ToString() is { Length: > 0 } id ? id : context.RouteData.Values["id"]?.ToString(), out var orderId);
-					executed.Result = View("Locked", new WorkOrderLockedView { Page = context.RouteData.Values["action"]?.ToString(), Id = orderId, Filter = context.ActionArguments.TryGetValue("filter", out var filters) && filters is WorkOrderFilter workOrderFilter ? workOrderFilter : new WorkOrderFilter() });
+					executed.Result = View("Locked", new WorkOrderLockedView { Query = context.ActionArguments.TryGetValue("query", out var reportQuery) && reportQuery is WorkOrderReportQuery rq ? rq : new WorkOrderReportQuery(), Page = context.RouteData.Values["action"]?.ToString(), Id = orderId, Filter = context.ActionArguments.TryGetValue("filter", out var filters) && filters is WorkOrderFilter workOrderFilter ? workOrderFilter : new WorkOrderFilter() });
 				}
 				else executed.Result = StatusCode(ex.StatusCode, new { message = _strings[ex.Code].Value, code = ex.Code });
 			}
@@ -97,6 +99,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost, ValidateAntiForgeryToken]
 		public async Task<IActionResult> Export(int id) { var detail = await _orders.GetAsync(Actor, id); return File(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(detail, Formatting.Indented)), "application/json", "work-order-" + id + ".json"); }
 		[HttpPost, ValidateAntiForgeryToken]
-		public Task<IActionResult> Reopen(string destination, int id, WorkOrderFilter filter) => destination switch { "Detail" => Detail(id), "Edit" => Edit(id), "New" => New(), "Recurrence" => Recurrence(id), "EditRecurrence" => EditRecurrence(id), "NewRecurrence" => NewRecurrence(), "Recurrences" => Recurrences(filter?.Page ?? 0), "Index" => Index(filter ?? new WorkOrderFilter()), _ => Task.FromResult<IActionResult>(BadRequest()) };
+		public Task<IActionResult> Reopen(string destination, int id, WorkOrderFilter filter, WorkOrderReportQuery query = null) => destination switch { "Operations" => Operations(id), "Policy" => Policy(), "Bulk" => Bulk(filter?.Page ?? 0), "Reports" => Reports(query ?? new WorkOrderReportQuery()), "History" => History(query ?? new WorkOrderReportQuery()), "ExportCsv" => ExportCsv(query ?? new WorkOrderReportQuery()), "Detail" => Detail(id), "Edit" => Edit(id), "New" => New(), "Recurrence" => Recurrence(id), "EditRecurrence" => EditRecurrence(id), "NewRecurrence" => NewRecurrence(), "Recurrences" => Recurrences(filter?.Page ?? 0), "Index" => Index(filter ?? new WorkOrderFilter()), _ => Task.FromResult<IActionResult>(BadRequest()) };
 	}
 }

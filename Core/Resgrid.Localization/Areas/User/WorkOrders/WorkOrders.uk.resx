@@ -260,4 +260,120 @@
 <data name="WorkOrderSafetyHoldApplied" xml:space="preserve"><value>Накладено блокування безпеки</value></data>
 <data name="WorkOrderSafetyHoldReleased" xml:space="preserve"><value>Блокування безпеки знято</value></data>
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Термін відкладено</value></data>
+  <data name="MaintenanceReports" xml:space="preserve"><value>Звіти з технічного обслуговування</value></data>
+  <data name="ServiceHistory" xml:space="preserve"><value>Історія обслуговування</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Створено від (UTC, включно)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Створено до (UTC, не включно)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Час розрахунку (UTC)</value></data>
+  <data name="TotalOrders" xml:space="preserve"><value>Усього нарядів на роботи</value></data>
+  <data name="OpenOrders" xml:space="preserve"><value>Відкриті наряди на роботи</value></data>
+  <data name="OverdueOrders" xml:space="preserve"><value>Прострочені наряди на роботи</value></data>
+  <data name="MeanRepairHours" xml:space="preserve"><value>Середній час ремонту (години)</value></data>
+  <data name="RepairSamples" xml:space="preserve"><value>Виміряні завершені ремонти</value></data>
+  <data name="MissingRepairTimes" xml:space="preserve"><value>Ремонти без коректного часу</value></data>
+  <data name="OpenByPriority" xml:space="preserve"><value>Відкриті за пріоритетом</value></data>
+  <data name="OpenByAge" xml:space="preserve"><value>Відкриті за давністю</value></data>
+  <data name="AgeBucket0" xml:space="preserve"><value>0–6 днів</value></data>
+  <data name="AgeBucket1" xml:space="preserve"><value>7–29 днів</value></data>
+  <data name="AgeBucket2" xml:space="preserve"><value>30–89 днів</value></data>
+  <data name="AgeBucket3" xml:space="preserve"><value>90 днів і більше</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Експортувати CSV</value></data>
+  <data name="Costs" xml:space="preserve"><value>Витрати</value></data>
+  <data name="TotalCost" xml:space="preserve"><value>Відома сума</value></data>
+  <data name="UnknownLabor" xml:space="preserve"><value>Записи праці з невідомою вартістю</value></data>
+  <data name="UnknownParts" xml:space="preserve"><value>Записи запчастин з невідомою вартістю</value></data>
+  <data name="UnknownCurrency" xml:space="preserve"><value>Невідома валюта</value></data>
+  <data name="CreatedOn" xml:space="preserve"><value>Дата створення</value></data>
+  <data name="StartedOn" xml:space="preserve"><value>Дата початку</value></data>
+  <data name="CompletedOn" xml:space="preserve"><value>Дата завершення</value></data>
+  <data name="RepairHours" xml:space="preserve"><value>Час ремонту (години)</value></data>
+  <data name="Revision" xml:space="preserve"><value>Редакція</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>Цей звіт завеликий. Звузьте діапазон дат або фільтри ресурсів.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Виберіть коректний діапазон дат; звіти панелі підтримують до 366 днів.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Поточний стан нарядів, створених у вибраному діапазоні UTC. Відкриті включають завершені роботи, що очікують закриття. Середній час ремонту вимірюється від першого початку до останнього завершення, включно з призупиненнями та повторними відкриттями; некоректні значення часу виключаються. Витрати округлюються для кожного запису й розділяються за валютою, без скасованих або невиданих запчастин. Невідомі витрати й давні валюти оплати праці залишаються невідомими; курси обміну не припускаються.</value></data>
+  <data name="HistoryMethod" xml:space="preserve"><value>Повна історія обслуговування, якщо не вибрано дати. Кожен рядок CSV відповідає одному наряду й одній валюті. Відомі витрати не включають скасовані або невидані запчастини; відсутні ціни та давні валюти оплати праці позначаються як невідомі.</value></data>
+  <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Стан наряду на момент виклику з незмінними посиланнями на редакції в маніфесті. Включено давніші відкриті роботи з обслуговування; завершені роботи охоплюють ретроспективний період. Історичний стан, який неможливо відновити, позначається як недоступний.</value></data>
+
+<data name="Operations" xml:space="preserve"><value>Операції нарядів на роботи</value></data>
+<data name="OperationsPolicy" xml:space="preserve"><value>Правила операцій</value></data>
+<data name="SpendingApprovals" xml:space="preserve"><value>Погодження витрат</value></data>
+<data name="RequireSpendingApproval" xml:space="preserve"><value>Вимагати погодження понад установлені пороги</value></data>
+<data name="SpendingThreshold" xml:space="preserve"><value>Поріг витрат</value></data>
+<data name="ApprovalAmount" xml:space="preserve"><value>Сума для погодження</value></data>
+<data name="RequestApproval" xml:space="preserve"><value>Запросити погодження</value></data>
+<data name="ApproveSpending" xml:space="preserve"><value>Погодити витрати</value></data>
+<data name="RejectSpending" xml:space="preserve"><value>Відхилити витрати</value></data>
+<data name="Decision" xml:space="preserve"><value>Рішення</value></data>
+<data name="ApprovalStateNone" xml:space="preserve"><value>Погодження не запитано</value></data>
+<data name="ApprovalStateRequested" xml:space="preserve"><value>Погодження запитано</value></data>
+<data name="ApprovalStateApproved" xml:space="preserve"><value>Витрати погоджено</value></data>
+<data name="ApprovalStateRejected" xml:space="preserve"><value>Витрати відхилено</value></data>
+<data name="BusinessCalendar" xml:space="preserve"><value>Робочий календар</value></data>
+<data name="ServiceWeekdays" xml:space="preserve"><value>Робочі дні</value></data>
+<data name="Holidays" xml:space="preserve"><value>Неробочі дати (YYYY-MM-DD)</value></data>
+<data name="ResponseMinutes" xml:space="preserve"><value>Цільовий час реагування (робочі хвилини)</value></data>
+<data name="RepairMinutes" xml:space="preserve"><value>Цільовий час ремонту (робочі хвилини)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Кінцевий термін реагування (UTC)</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Кінцевий термін ремонту (UTC)</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Час реагування (UTC)</value></data>
+<data name="VendorCharges" xml:space="preserve"><value>Витрати на постачальників</value></data>
+<data name="AddVendorCharge" xml:space="preserve"><value>Додати витрати на постачальника</value></data>
+<data name="VoidCharge" xml:space="preserve"><value>Анулювати витрати</value></data>
+<data name="InvoiceReference" xml:space="preserve"><value>Посилання на рахунок</value></data>
+<data name="ServiceDate" xml:space="preserve"><value>Дата надання послуги</value></data>
+<data name="PartsAllocation" xml:space="preserve"><value>Розподіл запчастин</value></data>
+<data name="ReservedParts" xml:space="preserve"><value>Зарезервована кількість</value></data>
+<data name="IssuedParts" xml:space="preserve"><value>Видана кількість</value></data>
+<data name="ConsumedParts" xml:space="preserve"><value>Використана кількість</value></data>
+<data name="ReturnedParts" xml:space="preserve"><value>Повернена невикористана кількість</value></data>
+<data name="PartMovements" xml:space="preserve"><value>Історія руху запчастин</value></data>
+<data name="PartMovementReserve" xml:space="preserve"><value>Зарезервувати запчастини</value></data>
+<data name="PartMovementIssue" xml:space="preserve"><value>Видати зарезервовані запчастини</value></data>
+<data name="PartMovementConsume" xml:space="preserve"><value>Зареєструвати використання</value></data>
+<data name="PartMovementReturnUnused" xml:space="preserve"><value>Повернути невикористані запчастини</value></data>
+<data name="PartMovementReleaseReservation" xml:space="preserve"><value>Зняти резервування</value></data>
+<data name="IssueLocation" xml:space="preserve"><value>Місце видачі</value></data>
+<data name="BulkOperations" xml:space="preserve"><value>Масові операції</value></data>
+<data name="BulkAssignment" xml:space="preserve"><value>Масове призначення</value></data>
+<data name="BulkPreview" xml:space="preserve"><value>Переглянути рядки</value></data>
+<data name="BulkApply" xml:space="preserve"><value>Застосувати коректні рядки</value></data>
+<data name="BulkResults" xml:space="preserve"><value>Результати пакета</value></data>
+<data name="BulkApplied" xml:space="preserve"><value>Застосовано</value></data>
+<data name="BulkReady" xml:space="preserve"><value>Готово до застосування</value></data>
+<data name="RowNumber" xml:space="preserve"><value>Номер рядка</value></data>
+<data name="Select" xml:space="preserve"><value>Вибрати</value></data>
+<data name="ImportWorkOrders" xml:space="preserve"><value>Імпортувати наряди на роботи</value></data>
+<data name="ImportCsv" xml:space="preserve"><value>Дані CSV</value></data>
+<data name="ImportTemplate" xml:space="preserve"><value>Завантажити шаблон CSV</value></data>
+<data name="ActiveRepairHours" xml:space="preserve"><value>Години активного ремонту</value></data>
+<data name="WaitingHours" xml:space="preserve"><value>Години очікування</value></data>
+<data name="DowntimeHours" xml:space="preserve"><value>Години простою через блокування з міркувань безпеки</value></data>
+<data name="MissingTimeHistory" xml:space="preserve"><value>Наряди з неповною історією часу</value></data>
+<data name="PreventiveCompliance" xml:space="preserve"><value>Дотримання строків профілактичного обслуговування</value></data>
+<data name="PreventiveOnTime" xml:space="preserve"><value>Вчасно / заплановано</value></data>
+<data name="RepeatedFailures" xml:space="preserve"><value>Повторні несправності</value></data>
+<data name="ResponseSlaBreaches" xml:space="preserve"><value>Порушені строки реагування</value></data>
+<data name="RepairSlaBreaches" xml:space="preserve"><value>Порушені строки ремонту</value></data>
+<data name="OperationsPolicyInvalid" xml:space="preserve"><value>Перевірте правила витрат, календар і цільові строки обслуговування.</value></data>
+<data name="SpendingApprovalRequired" xml:space="preserve"><value>Для цієї суми та валюти потрібне чинне незалежне погодження.</value></data>
+<data name="IndependentApprovalRequired" xml:space="preserve"><value>Рішення за цим запитом має ухвалити інший уповноважений керівник.</value></data>
+<data name="BulkInputInvalid" xml:space="preserve"><value>Виберіть від 1 до 200 коректних рядків з унікальними номерами.</value></data>
+<data name="BulkCsvInvalid" xml:space="preserve"><value>Перевірте стовпці, числа та формат дати UTC в цьому рядку.</value></data>
+<data name="BulkPreviewChanged" xml:space="preserve"><value>Пакет змінено. Перегляньте його повторно перед застосуванням.</value></data>
+<data name="PartBalanceInvalid" xml:space="preserve"><value>Кількість перевищує доступний зарезервований або виданий залишок.</value></data>
+<data name="PartBalanceOutstanding" xml:space="preserve"><value>Зніміть резервування та використайте або поверніть видані запчастини перед завершенням наряду.</value></data>
+<data name="PartCurrencyChanged" xml:space="preserve"><value>Валюту вартості запасів змінено. Перевірте резервування перед продовженням.</value></data>
+<data name="IndependentApprovalHelp" xml:space="preserve"><value>Заявник не може погоджувати власний запит.</value></data>
+<data name="BulkHelp" xml:space="preserve"><value>Перегляньте до 200 рядків. Коректні рядки застосовуються окремо; помилки залишаються видимими, а повторна спроба не дублює успішні рядки.</value></data>
+<data name="ImportHelp" xml:space="preserve"><value>Вставте CSV за завантаженим шаблоном. Збережіть назви стовпців, використовуйте десяткову крапку, числові значення типу (0–4) та пріоритету (0–3) і дати UTC, як-от 2026-09-09T12:00:00Z.</value></data>
+<data name="PolicyHelp" xml:space="preserve"><value>Пороги порівнюють оцінену вартість із сумою праці, витрат на постачальників і виділених запчастин. Невідомі витрати або валюти без правила потребують перевірки. Погодження незалежні та діють для окремої валюти.</value></data>
+<data name="BusinessCalendarHelp" xml:space="preserve"><value>Виберіть місцеві робочі дні й години; кінець о 00:00 означає північ. Укажіть по одному неробочому дню в рядку. Нуль для обох цілей вимикає пріоритет. Строки рахуються від створення й перераховуються при зміні пріоритету. Прийняття зупиняє час реагування, завершення — час ремонту. Повторне відкриття зберігає початкові терміни.</value></data>
+<data name="PartsAllocationHelp" xml:space="preserve"><value>Зарезервуйте запаси, видайте їх до місця роботи, потім використайте або поверніть невикористані запчастини до джерела. Інші наряди не можуть використовувати зарезервовані чи видані залишки. Контрольовані запаси потребують незалежного свідка. Лише використання враховується як витрати на запчастини.</value></data>
+<data name="OperationsAnalyticsHelp" xml:space="preserve"><value>Активний час — робота в процесі; очікування охоплює запит, прийняття, призначення та призупинення. Простій об’єднує інтервали блокувань безпеки в межах наряду. Відсутня історія лишається невідомою. Профілактична відповідність враховує початкові строки, зокрема прострочені незавершені роботи. Повторні несправності мають спільний актив або підрозділ і зафіксовану причину.</value></data>
+<data name="WorkOrderApprovalChanged" xml:space="preserve"><value>Погодження наряду змінено</value></data>
+<data name="WorkOrderSlaBreached" xml:space="preserve"><value>Цільовий строк обслуговування наряду порушено</value></data>
+<data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Витрати на постачальника в наряді змінено</value></data>
+<data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Правила операцій нарядів змінено</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Кінцевий термін реагування (UTC)</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Кінцевий термін ремонту (UTC)</value></data>
 </root>

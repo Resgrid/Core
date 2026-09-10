@@ -14,7 +14,7 @@ namespace Resgrid.Web.Services.Controllers.v4
         [HttpGet("GetWorkOrderInventoryChoices")]
         public async Task<IActionResult> GetWorkOrderInventoryChoices(string kind, string itemId = null, int page = 0) { MaintenanceAvailable(); return Reply(await _maintenance.InventoryChoicesAsync(Actor, kind, itemId, page)); }
         [HttpGet("GetWorkOrderHolds")]
-        public async Task<IActionResult> GetWorkOrderHolds(int id) { MaintenanceAvailable(); return Reply(await _maintenance.HoldsAsync(Actor, id)); }
+        public async Task<IActionResult> GetWorkOrderHolds(int id, int afterId = 0) { if (_reports == null) throw new WorkOrderException(503, "MaintenanceUnavailable"); var page = await _reports.GetWorkOrderHoldsAsync(Actor, id, afterId); return Reply(page.Items, page.Items.Count, page.NextAfterId.HasValue); }
         [HttpPost("AddWorkOrderHold")]
         public async Task<IActionResult> AddWorkOrderHold([FromBody] WorkOrderMaintenanceCommand<WorkOrderHoldInput> command) { MaintenanceAvailable(); Required(command); await _maintenance.AddHoldAsync(Actor, command.Id, Required(command.Input)); return Reply(await _maintenance.HoldsAsync(Actor, command.Id)); }
         [HttpPost("ReleaseWorkOrderHold")]

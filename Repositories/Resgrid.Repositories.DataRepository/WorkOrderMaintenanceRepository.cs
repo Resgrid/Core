@@ -11,7 +11,7 @@ namespace Resgrid.Repositories.DataRepository
     {
         public async Task<List<T>> QueryMaintenanceAsync<T>(int departmentId, string field = null, object value = null, int skip = 0, bool pendingOnly = false) where T : WorkOrderRow
         {
-            if (skip < 0 || field != null && field is not ("RecurrenceId" or "WorkOrderId" or "RequestId" or "InventoryRequestId")) throw new ArgumentException("Invalid maintenance query.");
+            if (skip < 0 || field != null && field is not ("RecurrenceId" or "WorkOrderId" or "RequestId" or "InventoryRequestId" or "PartId")) throw new ArgumentException("Invalid maintenance query.");
             var where = $"{Col("DepartmentId")}={P}DepartmentId";
             if (field != null) where += $" AND {Col(field)}={P}Value";
             if (pendingOnly)

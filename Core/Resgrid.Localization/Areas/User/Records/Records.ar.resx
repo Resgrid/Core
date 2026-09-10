@@ -1946,4 +1946,50 @@
   <data name="AnalyticsWentOverdue" xml:space="preserve"><value>أصبحت متأخرة خلال الفترة</value></data>
   <data name="AnalyticsWithinTarget" xml:space="preserve"><value>ضمن الهدف</value></data>
   <data name="AnalyticsWorkload" xml:space="preserve"><value>عبء العمل</value></data>
+  <data name="ReadinessAssets" xml:space="preserve"><value>الأصول</value></data>
+  <data name="ReadinessAssetsAssigned" xml:space="preserve"><value>الأصول المخصصة</value></data>
+  <data name="ReadinessByStatus" xml:space="preserve"><value>حسب الحالة</value></data>
+  <data name="ReadinessChecklists" xml:space="preserve"><value>الالتزام بقوائم الفحص</value></data>
+  <data name="ReadinessChecks" xml:space="preserve"><value>الفحوصات</value></data>
+  <data name="ReadinessChecksExpected" xml:space="preserve"><value>المتوقعة</value></data>
+  <data name="ReadinessCohort" xml:space="preserve"><value>الفترة المقاسة</value></data>
+  <data name="ReadinessCompletionRate" xml:space="preserve"><value>معدل الإكمال</value></data>
+  <data name="ReadinessCosts" xml:space="preserve"><value>التكاليف</value></data>
+  <data name="ReadinessCoverage" xml:space="preserve"><value>التغطية</value></data>
+  <data name="ReadinessDamaged" xml:space="preserve"><value>تالفة</value></data>
+  <data name="ReadinessEmergency" xml:space="preserve"><value>طارئة</value></data>
+  <data name="ReadinessEquipment" xml:space="preserve"><value>المعدات</value></data>
+  <data name="ReadinessEvidence" xml:space="preserve"><value>حزم الجاهزية</value></data>
+  <data name="ReadinessExpiringSoon" xml:space="preserve"><value>تنتهي خلال 30 يومًا</value></data>
+  <data name="ReadinessForbidden" xml:space="preserve"><value>رفضت الوحدة هذا العرض لحسابك؛ لم يُحتسب شيء منها.</value></data>
+  <data name="ReadinessHeader" xml:space="preserve"><value>الجاهزية</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>جاهزية المركبات والمعدات مجمّعة من وحدات قوائم الفحص والصيانة والمخزون. كل وحدة تتحقق من صلاحيتك بنفسها؛ تضيف السجلات فقط حزم الجاهزية التي التقطتها.</value></data>
+  <data name="ReadinessIssuancesOutstanding" xml:space="preserve"><value>عمليات الصرف المعلقة</value></data>
+  <data name="ReadinessIssued" xml:space="preserve"><value>مصروفة</value></data>
+  <data name="ReadinessLabor" xml:space="preserve"><value>العمالة</value></data>
+  <data name="ReadinessMissed" xml:space="preserve"><value>الفائتة</value></data>
+  <data name="ReadinessMissingRepairTimes" xml:space="preserve"><value>بدون أوقات</value></data>
+  <data name="ReadinessMttr" xml:space="preserve"><value>متوسط وقت الإصلاح (س)</value></data>
+  <data name="ReadinessNeedsAttention" xml:space="preserve"><value>تحتاج إلى اهتمام</value></data>
+  <data name="ReadinessOnHold" xml:space="preserve"><value>معلّقة</value></data>
+  <data name="ReadinessOnTime" xml:space="preserve"><value>في الوقت المحدد</value></data>
+  <data name="ReadinessOnTimeRate" xml:space="preserve"><value>معدل الالتزام بالوقت</value></data>
+  <data name="ReadinessOpenByAge" xml:space="preserve"><value>المفتوحة حسب العمر</value></data>
+  <data name="ReadinessOpenByPriority" xml:space="preserve"><value>المفتوحة حسب الأولوية</value></data>
+  <data name="ReadinessOutForRepair" xml:space="preserve"><value>قيد الإصلاح</value></data>
+  <data name="ReadinessOverdueReturns" xml:space="preserve"><value>إرجاعات متأخرة</value></data>
+  <data name="ReadinessPackets" xml:space="preserve"><value>الحزم</value></data>
+  <data name="ReadinessPacketsCaptured" xml:space="preserve"><value>الحزم الملتقطة</value></data>
+  <data name="ReadinessParts" xml:space="preserve"><value>القطع</value></data>
+  <data name="ReadinessRecordsWithPacket" xml:space="preserve"><value>سجلات بحزمة</value></data>
+  <data name="ReadinessRedacted" xml:space="preserve"><value>تُحجب تفاصيل الإجابات لمستوى وصولك؛ الأعداد كاملة.</value></data>
+  <data name="ReadinessRepairSamples" xml:space="preserve"><value>إصلاحات موقوتة</value></data>
+  <data name="ReadinessSkipped" xml:space="preserve"><value>متجاوزة</value></data>
+  <data name="ReadinessState" xml:space="preserve"><value>الحالة</value></data>
+  <data name="ReadinessTrend" xml:space="preserve"><value>الفحوصات المتوقعة والفائتة حسب اليوم</value></data>
+  <data name="ReadinessUnavailableSources" xml:space="preserve"><value>مصدر غير متاح</value></data>
+  <data name="ReadinessUnit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="ReadinessUnits" xml:space="preserve"><value>لوحة جاهزية الوحدات</value></data>
+  <data name="ReadinessUnknownCosts" xml:space="preserve"><value>بنود بدون سعر</value></data>
+  <data name="ReadinessWorkOrders" xml:space="preserve"><value>أوامر العمل</value></data>
 </root>

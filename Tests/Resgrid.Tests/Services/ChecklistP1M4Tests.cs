@@ -79,14 +79,14 @@ namespace Resgrid.Tests.Services
 			var report = await _service.GetComplianceSummaryAsync(_actor, Month());
 			report.Entries.Where(e => e.DueUtc > DateTime.UtcNow || !e.Scheduled).Should().OnlyContain(e => !e.Expected && !e.Missed);
 		}
-		private void PacketService(Mock<IChecklistHistoricalAssetSource> assets, DateTime? callAt = null, int department = 77)
+		private void PacketService(Mock<IChecklistHistoricalAssetSource> assets, DateTime? callAt = null, int department = 77, IWorkOrderReportingService workOrders = null)
 		{
 			var call = new Call { CallId = 101, DepartmentId = department, LoggedOn = callAt ?? ReportMonth.AddDays(30), Name = "CALL-PHI-CANARY", UnitDispatches = new List<CallDispatchUnit> { new() { CallId = 101, UnitId = 1, CallDispatchUnitId = 21, DispatchedOn = ReportMonth.AddDays(30) } } };
 			var calls = new Mock<ICallsService>(); calls.Setup(c => c.GetCallByIdAsync(101, true)).ReturnsAsync(call);
 			calls.Setup(c => c.PopulateCallData(call, false, false, false, false, true, false, false, false, false, false)).ReturnsAsync(call);
 			var auth = new Mock<IAuthorizationService>(); auth.Setup(a => a.CanUserViewCallAsync("author", 101)).ReturnsAsync(true);
 			_service = new ChecklistsService(_store, _authorization.Object, _access.Object, _uow.Object, _audits.Object, _outbox.Object, new(() => _read.Object), new(() => _write.Object), _scanner.Object,
-				reportCalls: new(() => calls.Object), reportAuthorization: new(() => auth.Object), historicalAssets: assets?.Object);
+				reportCalls: new(() => calls.Object), reportAuthorization: new(() => auth.Object), historicalAssets: assets?.Object, workOrderReports: workOrders == null ? null : new(() => workOrders));
 		}
 		[Test]
 		public async Task P1M4_packet_includes_all_dispatched_unit_and_historically_issued_asset_checks_without_call_narrative()

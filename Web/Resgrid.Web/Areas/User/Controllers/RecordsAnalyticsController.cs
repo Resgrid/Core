@@ -58,6 +58,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				async (m, q, ct) => m.Accreditation = await _analytics.GetAccreditationAsync(DepartmentId, UserId, q, ct));
 
 		[HttpGet]
+		public Task<IActionResult> Readiness(string start = null, string end = null, int? stationGroupId = null)
+			=> Page(new RecordsReadinessView { Action = nameof(Readiness) }, start, end, stationGroupId, null, null, null,
+				async (m, q, ct) => m.Readiness = await _analytics.GetReadinessAsync(DepartmentId, UserId, q, ct));
+
+		[HttpGet]
 		public Task<IActionResult> CommunityRisk(string start = null, string end = null, int? stationGroupId = null)
 			=> Page(new RecordsCommunityRiskView { Action = nameof(CommunityRisk) }, start, end, stationGroupId, null, null, null,
 				async (m, q, ct) => m.Risk = await _analytics.GetCommunityRiskAsync(DepartmentId, UserId, q, ct));

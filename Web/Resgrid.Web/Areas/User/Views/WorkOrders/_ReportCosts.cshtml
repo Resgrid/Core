@@ -1,0 +1,5 @@
+@model System.Collections.Generic.List<Resgrid.Model.WorkOrders.WorkOrderCostTotal>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+<table class="table"><thead><tr><th>@localizer["Currency"]</th><th>@localizer["Labor"]</th><th>@localizer["Parts"]</th><th>@localizer["VendorCharges"]</th><th>@localizer["TotalCost"]</th><th>@localizer["UnknownLabor"]</th><th>@localizer["UnknownParts"]</th></tr></thead><tbody>
+@foreach (var cost in Model) { <tr><td>@(cost.Currency ?? localizer["UnknownCurrency"].Value)</td><td>@cost.Labor.ToString("0.00")</td><td>@cost.Parts.ToString("0.00")</td><td>@cost.Vendor.ToString("0.00")</td><td>@cost.Total.ToString("0.00")</td><td>@cost.UnknownLabor</td><td>@cost.UnknownParts</td></tr> }
+</tbody></table>

@@ -140,8 +140,8 @@ namespace Resgrid.Tests.Services
 			private Dictionary<Type, List<WorkOrderRow>> _before;
 			private static T Copy<T>(T value) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(value));
 			public IEnumerable<T> All<T>() where T : WorkOrderRow => _rows.TryGetValue(typeof(T), out var rows) ? rows.Cast<T>().Select(Copy) : Enumerable.Empty<T>();
-			public void Begin() => _before = _rows.ToDictionary(p => p.Key, p => p.Value.Select(v => (WorkOrderRow)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(v), p.Key)).ToList());
-			public void Rollback() { if (_before != null) _rows = _before; }
+			public void Begin() { BeginReporting(); _before = _rows.ToDictionary(p => p.Key, p => p.Value.Select(v => (WorkOrderRow)JsonConvert.DeserializeObject(JsonConvert.SerializeObject(v), p.Key)).ToList()); }
+			public void Rollback() { RollbackReporting(); if (_before != null) _rows = _before; }
 			public Task LockDepartmentAsync(int departmentId) => Task.CompletedTask;
 			public Task<T> GetAsync<T>(int departmentId, int id, bool includeData = true) where T : WorkOrderRow => Task.FromResult(All<T>().SingleOrDefault(r => r.DepartmentId == departmentId && r.Id == id));
 			public Task<WorkOrder> RequestAsync(int departmentId, string requestId) => Task.FromResult(All<WorkOrder>().SingleOrDefault(r => r.DepartmentId == departmentId && r.RequestId == requestId));

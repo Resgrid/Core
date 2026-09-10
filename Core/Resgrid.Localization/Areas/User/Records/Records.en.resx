@@ -1946,4 +1946,50 @@
   <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Went overdue in window</value></data>
   <data name="AnalyticsWithinTarget" xml:space="preserve"><value>Within target</value></data>
   <data name="AnalyticsWorkload" xml:space="preserve"><value>Workload</value></data>
+  <data name="ReadinessAssets" xml:space="preserve"><value>Assets</value></data>
+  <data name="ReadinessAssetsAssigned" xml:space="preserve"><value>Assets assigned</value></data>
+  <data name="ReadinessByStatus" xml:space="preserve"><value>By status</value></data>
+  <data name="ReadinessChecklists" xml:space="preserve"><value>Checklist compliance</value></data>
+  <data name="ReadinessChecks" xml:space="preserve"><value>Checks</value></data>
+  <data name="ReadinessChecksExpected" xml:space="preserve"><value>Expected</value></data>
+  <data name="ReadinessCohort" xml:space="preserve"><value>Measured period</value></data>
+  <data name="ReadinessCompletionRate" xml:space="preserve"><value>Completion rate</value></data>
+  <data name="ReadinessCosts" xml:space="preserve"><value>Costs</value></data>
+  <data name="ReadinessCoverage" xml:space="preserve"><value>Coverage</value></data>
+  <data name="ReadinessDamaged" xml:space="preserve"><value>Damaged</value></data>
+  <data name="ReadinessEmergency" xml:space="preserve"><value>Emergency</value></data>
+  <data name="ReadinessEquipment" xml:space="preserve"><value>Equipment</value></data>
+  <data name="ReadinessEvidence" xml:space="preserve"><value>Readiness packets</value></data>
+  <data name="ReadinessExpiringSoon" xml:space="preserve"><value>expiring within 30 days</value></data>
+  <data name="ReadinessForbidden" xml:space="preserve"><value>The module refused this view for your account; nothing from it is counted.</value></data>
+  <data name="ReadinessHeader" xml:space="preserve"><value>Readiness</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>Apparatus and equipment readiness composed from the checklists, maintenance and inventory modules. Each module authorizes you itself; Records adds only the readiness packets it captured.</value></data>
+  <data name="ReadinessIssuancesOutstanding" xml:space="preserve"><value>Issuances outstanding</value></data>
+  <data name="ReadinessIssued" xml:space="preserve"><value>Issued</value></data>
+  <data name="ReadinessLabor" xml:space="preserve"><value>Labor</value></data>
+  <data name="ReadinessMissed" xml:space="preserve"><value>Missed</value></data>
+  <data name="ReadinessMissingRepairTimes" xml:space="preserve"><value>without times</value></data>
+  <data name="ReadinessMttr" xml:space="preserve"><value>Mean time to repair (h)</value></data>
+  <data name="ReadinessNeedsAttention" xml:space="preserve"><value>need attention</value></data>
+  <data name="ReadinessOnHold" xml:space="preserve"><value>On hold</value></data>
+  <data name="ReadinessOnTime" xml:space="preserve"><value>on time</value></data>
+  <data name="ReadinessOnTimeRate" xml:space="preserve"><value>On-time rate</value></data>
+  <data name="ReadinessOpenByAge" xml:space="preserve"><value>Open by age</value></data>
+  <data name="ReadinessOpenByPriority" xml:space="preserve"><value>Open by priority</value></data>
+  <data name="ReadinessOutForRepair" xml:space="preserve"><value>Out for repair</value></data>
+  <data name="ReadinessOverdueReturns" xml:space="preserve"><value>Overdue returns</value></data>
+  <data name="ReadinessPackets" xml:space="preserve"><value>Packets</value></data>
+  <data name="ReadinessPacketsCaptured" xml:space="preserve"><value>Packets captured</value></data>
+  <data name="ReadinessParts" xml:space="preserve"><value>Parts</value></data>
+  <data name="ReadinessRecordsWithPacket" xml:space="preserve"><value>Records with a packet</value></data>
+  <data name="ReadinessRedacted" xml:space="preserve"><value>Answer-level detail is withheld for your access level; the counts are complete.</value></data>
+  <data name="ReadinessRepairSamples" xml:space="preserve"><value>repairs timed</value></data>
+  <data name="ReadinessSkipped" xml:space="preserve"><value>skipped</value></data>
+  <data name="ReadinessState" xml:space="preserve"><value>State</value></data>
+  <data name="ReadinessTrend" xml:space="preserve"><value>Expected and missed checks by day</value></data>
+  <data name="ReadinessUnavailableSources" xml:space="preserve"><value>Unavailable source</value></data>
+  <data name="ReadinessUnit" xml:space="preserve"><value>Unit</value></data>
+  <data name="ReadinessUnits" xml:space="preserve"><value>Unit readiness board</value></data>
+  <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Unpriced lines</value></data>
+  <data name="ReadinessWorkOrders" xml:space="preserve"><value>Work orders</value></data>
 </root>

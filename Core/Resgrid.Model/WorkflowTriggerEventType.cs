@@ -178,6 +178,10 @@ RecordPermitExpiring = 163,
 		WorkOrderThresholdReached = 170,
 		WorkOrderDeferred = 171,
 		WorkOrderPartChanged = 172,
+		WorkOrderApprovalChanged = 173,
+		WorkOrderSlaBreached = 174,
+		WorkOrderVendorChargeChanged = 175,
+		WorkOrderPolicyChanged = 176,
 
 		// Inventory modernization: persisted registry allocations; InventoryAdjusted retains value 22.
 		InventoryTransferCompleted = 58,

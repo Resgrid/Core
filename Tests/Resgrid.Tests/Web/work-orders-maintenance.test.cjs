@@ -6,13 +6,13 @@ const launch = require('./browser-launch.cjs');
     try {
         const page = await browser.newPage(); const errors = [];
         page.on('pageerror', e => errors.push(e.message));
-        const pickers = ['item','location','lot','asset'].map(kind => `<select class="inventory-part-choice" data-kind="${kind}"><option value="">—</option></select><button type="button" class="inventory-part-load" data-kind="${kind}">Charger</button>`).join('');
+        const pickers = ['item','location','lot','asset'].map(kind => `<select class="inventory-part-choice" data-kind="${kind}"><option value="">â€”</option></select><button type="button" class="inventory-part-load" data-kind="${kind}">Charger</button>`).join('');
         await page.setContent(`<p class="work-order-error" hidden></p><div class="work-order-protected">
         <form class="work-order-form work-order-command" data-destination="Recurrence" data-step-prefix="Input.Template.Content.Steps" action="https://example.invalid/save">
         <input name="__RequestVerificationToken" value="synthetic-csrf"/>
-        <div id="work-order-steps"></div><button type="button" id="work-order-add-step">Étape</button>
+        <div id="work-order-steps"></div><button type="button" id="work-order-add-step">Ã‰tape</button>
         <input type="checkbox" class="maintenance-weekday" value="1"/><input type="checkbox" class="maintenance-weekday" value="5"/><input id="maintenance-weekdays" value="0"/>
-        <div class="work-order-inventory" data-url="https://example.invalid/choices">${pickers}</div><button type="submit">Enregistrer</button></form></div>
+        <div class="work-order-inventory" data-url="https://example.invalid/choices">${pickers}</div><div id="allocation-destination" class="work-order-inventory" data-url="https://example.invalid/choices"><select class="inventory-part-choice" data-kind="location"><option value="">—</option></select><button type="button" class="inventory-part-load" data-kind="location">Charger</button></div><button type="submit">Enregistrer</button></form></div>
         <script id="work-order-page" type="application/json">{"protectedData":true,"grant":"synthetic-grant","expiry":"2030-01-01T00:00:00Z","index":"about:blank#concealed","reopen":"/reopen","error":"Erreur"}</script>`);
         await page.evaluate(() => {
             window.$ = f => f(); window.requests = []; window.navigations = [];
@@ -26,6 +26,8 @@ const launch = require('./browser-launch.cjs');
             HTMLFormElement.prototype.submit = function () { navigations.push(Object.fromEntries(new FormData(this))); };
         });
         await page.addScriptTag({path:path.resolve(__dirname,'../../../Web/Resgrid.Web/wwwroot/js/app/internal/workorders/work-orders.js')});
+        await page.click('#allocation-destination button');
+        assert.equal(await page.locator('#allocation-destination select option').count(),2);
         await page.click('#work-order-add-step');
         assert.equal(await page.locator('[name="Input.Template.Content.Steps[0].Text"]').count(),1);
         for (const checkbox of await page.locator('.maintenance-weekday').all()) await checkbox.check();

@@ -45,7 +45,7 @@ namespace Resgrid.Repositories.DataRepository
 			var parameters = new DynamicParameters(new { DepartmentId = departmentId, UserId = scope.UserId, AllowedGroup = scope.GroupId, Status = (int?)filter.Status, Priority = (int?)filter.Priority, UnitId = filter.UnitId, GroupId = filter.GroupId, AssetId = filter.AssetId, ChecklistCompletionId = filter.ChecklistCompletionId, Skip = filter.Page * 50, Take = 51 });
 			parameters.Add("Roles", InListValue(scope.RoleIds == null || scope.RoleIds.Length == 0 ? new[] { -1 } : scope.RoleIds));
 			var own = $"({Col("CreatedBy")}={P}UserId OR {Col("AssignedToUserId")}={P}UserId OR {InList("AssignedToRoleId", "Roles")} OR {Col("TargetGroupId")}={P}AllowedGroup)";
-			var conditions = new List<string> { $"{Col("DepartmentId")}={P}DepartmentId" };
+			var conditions = new List<string> { $"{Col("DepartmentId")}={P}DepartmentId", $"{Col("IsDeleted")}={(IsPostgres ? "false" : "0")}" };
 			if (!scope.All) conditions.Add(own);
 			if (filter.AssignedToMe) conditions.Add($"({Col("AssignedToUserId")}={P}UserId OR {InList("AssignedToRoleId", "Roles")})");
 			foreach (var item in new[] { (filter.Status.HasValue, "Status", "Status"), (filter.Priority.HasValue, "Priority", "Priority"), (filter.UnitId.HasValue, "TargetUnitId", "UnitId"), (filter.GroupId.HasValue, "TargetGroupId", "GroupId"), (filter.AssetId != null, "InventoryAssetId", "AssetId"), (filter.ChecklistCompletionId != null, "SourceChecklistCompletionId", "ChecklistCompletionId") })

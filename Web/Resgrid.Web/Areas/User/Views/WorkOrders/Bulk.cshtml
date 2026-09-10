@@ -1,0 +1,35 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderBulkView
+@using Newtonsoft.Json
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{ ViewBag.Title = "Resgrid | " + localizer["BulkOperations"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+<h2>@localizer["BulkOperations"]</h2><a asp-action="Index">@localizer["WorkOrders"]</a>
+@await Html.PartialAsync("_Protection")
+<div class="work-order-protected"><p>@localizer["BulkHelp"]</p>
+@if (Model.Result != null) {
+<h3>@localizer[Model.Applied ? "BulkResults" : "BulkPreview"]</h3>
+<table class="table"><thead><tr><th>@localizer["RowNumber"]</th><th>@localizer["Number"]</th><th>@localizer["Title"]</th><th>@localizer["Status"]</th></tr></thead><tbody>
+@foreach (var row in Model.Result.Rows) { <tr><td>@row.RowNumber</td><td>@row.WorkOrderId</td><td>@row.Title</td><td>@localizer[row.ErrorCode ?? (row.Applied ? "BulkApplied" : "BulkReady")]</td></tr> }
+</tbody></table>
+@if (Model.Result.Rows.Any(r => r.ErrorCode == null && !r.Applied)) {
+<form class="work-order-form" method="post" asp-action="ApplyBulk">@Html.AntiForgeryToken()
+<input type="hidden" name="payload" value="@JsonConvert.SerializeObject(Model.Input)"/><button class="btn btn-primary" type="submit">@localizer["BulkApply"]</button></form>
+}
+<a asp-action="Bulk">@localizer["BulkOperations"]</a>
+} else {
+<h3>@localizer["ImportWorkOrders"]</h3><p>@localizer["ImportHelp"]</p><a asp-action="ImportTemplate">@localizer["ImportTemplate"]</a>
+<form class="work-order-form" method="post" asp-action="PreviewBulk">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Model.Form.RequestId"/>
+<label for="bulk-csv">@localizer["ImportCsv"]</label><textarea id="bulk-csv" name="Csv" class="form-control" rows="8" maxlength="1048576" required></textarea>
+<button class="btn btn-default" type="submit">@localizer["BulkPreview"]</button></form>
+<h3>@localizer["BulkAssignment"]</h3>
+<form class="work-order-form" method="post" asp-action="PreviewBulk">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>
+<label>@localizer["AssignedTo"]<select class="form-control" name="UserId"><option value="">@localizer["None"]</option>@foreach (var u in Model.Choices.Users) { <option value="@u.Id">@u.Name</option> }</select></label>
+<label>@localizer["Role"]<select class="form-control" name="RoleId"><option value="">@localizer["None"]</option>@foreach (var r in Model.Choices.Roles) { <option value="@r.Id">@r.Name</option> }</select></label>
+<table class="table"><thead><tr><th>@localizer["Select"]</th><th>@localizer["Number"]</th><th>@localizer["Title"]</th><th>@localizer["Status"]</th></tr></thead><tbody>
+@for (var i = 0; i < Model.Orders.Items.Count; i++) { var row = Model.Orders.Items[i]; <tr><td><input aria-label="@row.Number" type="checkbox" name="Selections[@i].Selected" value="true"/><input type="hidden" name="Selections[@i].Id" value="@row.Id"/><input type="hidden" name="Selections[@i].Revision" value="@row.Revision"/></td><td>@row.Number</td><td>@row.Title</td><td>@localizer["Status" + row.Status]</td></tr> }
+</tbody></table><button class="btn btn-default" type="submit">@localizer["BulkPreview"]</button></form>
+@if (Model.Page > 0) { <a asp-action="Bulk" asp-route-page="@(Model.Page-1)">@localizer["Previous"]</a> }
+@if (Model.Orders.HasMore) { <a asp-action="Bulk" asp-route-page="@(Model.Page+1)">@localizer["Next"]</a> }
+}
+</div></div></div></div>
+@section Scripts { @await Html.PartialAsync("_Scripts") }

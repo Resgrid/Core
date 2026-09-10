@@ -10,4 +10,5 @@ namespace Resgrid.Web.Services.Models.v4.Records
 	public class RecordsExecutiveSummaryResult : StandardApiResponseV4Base { public RecordsExecutiveSummary Data { get; set; } }
 	public class RecordsAccreditationResult : StandardApiResponseV4Base { public RecordsAccreditation Data { get; set; } }
 	public class RecordsCommunityRiskResult : StandardApiResponseV4Base { public RecordsCommunityRisk Data { get; set; } }
+	public class RecordsReadinessResult : StandardApiResponseV4Base { public RecordsReadiness Data { get; set; } }
 }

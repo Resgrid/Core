@@ -29,6 +29,12 @@ namespace Resgrid.Model.WorkOrders
 	}
 	public sealed class WorkOrder : WorkOrderRow
 	{
+		public DateTime? ResponseDueOn { get; set; }
+		public DateTime? RepairDueOn { get; set; }
+		public DateTime? ResponseOn { get; set; }
+		public DateTime? ResponseBreachedOn { get; set; }
+		public DateTime? RepairBreachedOn { get; set; }
+		public int? SlaPolicyRevision { get; set; }
 		public string RequestId { get; set; }
 		public int NumberYear { get; set; }
 		public int NumberSequence { get; set; }
@@ -76,6 +82,15 @@ namespace Resgrid.Model.WorkOrders
 	public sealed class WorkOrderLabor : WorkOrderRow { public string UserId { get; set; } public DateTime WorkDate { get; set; } }
 	public sealed class WorkOrderPart : WorkOrderRow
 	{
+		public bool Staged { get; set; }
+		public string ReservedLocationId { get; set; }
+		public string IssuedLocationId { get; set; }
+		public string ReservedAssetId { get; set; }
+		public string ReservedLotId { get; set; }
+		public decimal ReservedQuantity { get; set; }
+		public decimal IssuedQuantity { get; set; }
+		public decimal ConsumedQuantity { get; set; }
+		public decimal ReturnedQuantity { get; set; }
 		public string InventoryItemId { get; set; }
 		public string InventoryTransactionId { get; set; }
 		public string InventoryOperationId { get; set; }
@@ -94,6 +109,7 @@ namespace Resgrid.Model.WorkOrders
 	}
 	public sealed class WorkOrderContent
 	{
+		[Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public WorkOrderApproval Approval { get; set; }
 		public string Title { get; set; }
 		public string Description { get; set; }
 		public string LocationText { get; set; }
@@ -116,16 +132,19 @@ namespace Resgrid.Model.WorkOrders
 		public List<WorkOrderTaskStep> Steps { get; set; } = new List<WorkOrderTaskStep>();
 	}
 	public sealed class WorkOrderTaskStep { public string Text { get; set; } public bool Completed { get; set; } }
-	public sealed class WorkOrderLaborContent { public decimal Hours { get; set; } public decimal? RatePerHour { get; set; } public string Note { get; set; } }
-	public sealed class WorkOrderPartContent { [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string RequestFingerprint { get; set; } public string Currency { get; set; } public string Description { get; set; } public decimal Quantity { get; set; } public decimal? UnitCost { get; set; } public string VoidReason { get; set; } }
+	public sealed class WorkOrderLaborContent { [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string Currency { get; set; } public decimal Hours { get; set; } public decimal? RatePerHour { get; set; } public string Note { get; set; } }
+	public sealed class WorkOrderPartContent { [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public decimal? ConsumedCost { get; set; } [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string RequestFingerprint { get; set; } public string Currency { get; set; } public string Description { get; set; } public decimal Quantity { get; set; } public decimal? UnitCost { get; set; } public string VoidReason { get; set; } }
 	public static class WorkOrderTables
 	{
 		public const int CatalogVersion = 18;
 		public const int IntegrationCatalogVersion = 23;
 		public const int RecurrenceCatalogVersion = 24;
-		public static int VersionFor(string table) => table is "WorkOrderSafetyHolds" or "WorkOrderFailureIntents" ? IntegrationCatalogVersion : table is "WorkOrderRecurrences" or "WorkOrderRecurrenceVersions" or "WorkOrderMeterReadings" or "WorkOrderRecurrenceChanges" ? RecurrenceCatalogVersion : CatalogVersion;
+		public const int OperationsCatalogVersion = 25;
+		public static int VersionFor(string table) => table is "WorkOrderPolicies" or "WorkOrderOperationReceipts" or "WorkOrderVendorCharges" or "WorkOrderPartMovements" ? OperationsCatalogVersion : table is "WorkOrderSafetyHolds" or "WorkOrderFailureIntents" ? IntegrationCatalogVersion : table is "WorkOrderRecurrences" or "WorkOrderRecurrenceVersions" or "WorkOrderMeterReadings" or "WorkOrderRecurrenceChanges" ? RecurrenceCatalogVersion : CatalogVersion;
 		public static readonly IReadOnlyDictionary<Type, string> All = new Dictionary<Type, string>
 		{
+			[typeof(WorkOrderPolicy)] = "WorkOrderPolicies", [typeof(WorkOrderOperationReceipt)] = "WorkOrderOperationReceipts",
+			[typeof(WorkOrderVendorCharge)] = "WorkOrderVendorCharges", [typeof(WorkOrderPartMovement)] = "WorkOrderPartMovements",
 			[typeof(WorkOrder)] = "WorkOrders", [typeof(WorkOrderActivity)] = "WorkOrderActivities", [typeof(WorkOrderLabor)] = "WorkOrderLabors",
 			[typeof(WorkOrderPart)] = "WorkOrderParts", [typeof(WorkOrderFile)] = "WorkOrderFiles",
 			[typeof(WorkOrderFailureIntent)] = "WorkOrderFailureIntents", [typeof(WorkOrderSafetyHold)] = "WorkOrderSafetyHolds",

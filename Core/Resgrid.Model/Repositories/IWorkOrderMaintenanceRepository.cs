@@ -7,6 +7,8 @@ namespace Resgrid.Model.Repositories
 {
     public interface IWorkOrderMaintenanceRepository
     {
+        Task<List<WorkOrderPart>> AllocatedPartsAsync(int departmentId, string itemId, string locationId, string lotId, string assetId);
+        Task<List<WorkOrder>> SlaDueAsync(int departmentId, DateTime now);
         Task<List<T>> QueryMaintenanceAsync<T>(int departmentId, string field = null, object value = null, int skip = 0, bool pendingOnly = false) where T : WorkOrderRow;
         Task<List<int>> MaintenanceDepartmentsAsync(int afterDepartmentId);
         Task<List<WorkOrder>> OverdueAsync(int departmentId, DateTime now);

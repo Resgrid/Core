@@ -396,8 +396,13 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.WorkOrderThresholdReached:
 				case WorkflowTriggerEventType.WorkOrderDeferred:
 				case WorkflowTriggerEventType.WorkOrderPartChanged:
+				case WorkflowTriggerEventType.WorkOrderApprovalChanged:
+				case WorkflowTriggerEventType.WorkOrderSlaBreached:
+				case WorkflowTriggerEventType.WorkOrderVendorChargeChanged:
+				case WorkflowTriggerEventType.WorkOrderPolicyChanged:
+
 					foreach (var pair in WorkOrders.WorkOrderWorkflowPayload.Variables)
-						list.Add(new TemplateVariableDescriptor("work_order." + pair.Variable, "Work order " + pair.Variable.Replace('_', ' ') + (pair.Variable == "title" ? "; always REDACTED. Do not compare or render this value." : ""), pair.Variable is "asset_id" or "due_on" or "title" ? "string" : "int", false));
+						list.Add(new TemplateVariableDescriptor("work_order." + pair.Variable, "Work order " + pair.Variable.Replace('_', ' ') + (pair.Variable == "title" ? "; always REDACTED. Do not compare or render this value." : ""), (pair.Variable is "asset_id" or "due_on" or "title" || pair.Variable.EndsWith("_on", System.StringComparison.Ordinal)) ? "string" : "int", false));
 					list.Add(new TemplateVariableDescriptor("work_order.url", "Authenticated work-order link", "string", false));
 					list.Add(new TemplateVariableDescriptor("protection.is_redacted", "Sensitive work-order fields are withheld", "bool", false));
 					list.Add(new TemplateVariableDescriptor("protection.redacted_fields", "Withheld fields", "array", false));

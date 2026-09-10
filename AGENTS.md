@@ -78,14 +78,41 @@ Each layer depends only on the layer(s) to its left:
 - **Providers** (`Resgrid.Providers.*`): External integrations — depends on Model
 - **Web/Workers**: Entry points — depend on everything
 
-### Dependency Injection (Autofac + Service Locator)
+### Dependency Injection (Autofac)
 
-This codebase uses **Service Locator** pattern, NOT constructor injection:
+**Constructor injection is the convention.** Services, repositories, providers, controllers
+(MVC and v4 API), and hubs all declare their dependencies as constructor parameters and let
+Autofac supply them. When a type needs a new dependency, add a constructor parameter — do NOT
+reach for the service locator. Existing constructors are large (e.g. `CommunicationTestService`
+takes 18 parameters, `DispatchController` 30); that is deliberate and expected, and it is what
+keeps these types unit-testable with mocks.
 
 ```csharp
-// How services are resolved throughout the codebase:
-var service = Bootstrapper.GetKernel().Resolve<ISomeService>();
+// The convention — constructor injection:
+public class SomethingService : ISomethingService
+{
+    private readonly IDepartmentsService _departmentsService;
+
+    public SomethingService(IDepartmentsService departmentsService)
+    {
+        _departmentsService = departmentsService;
+    }
+}
 ```
+
+**Service Locator is the exception, not the rule.** `Bootstrapper.GetKernel().Resolve<T>()` is
+reserved for the specific places where no DI container is available at the call site or where a
+container-managed constructor cannot be used:
+
+- Worker logic under `Workers/Resgrid.Workers.Framework/Logic/` (queue consumers constructed by
+  the job host, not by Autofac).
+- Static helpers and extension methods that have no constructor to inject into.
+- Deliberate lazy escapes from a construction-time dependency cycle — and even then prefer
+  `Lazy<T>` as a constructor parameter (see `CallsService`'s `Lazy<IProtectedWriteService>`)
+  over a service-locator call.
+
+If you find yourself adding `Bootstrapper.GetKernel().Resolve<T>()` anywhere else, use a
+constructor parameter instead.
 
 The `Bootstrapper` class (in `Resgrid.Workers.Framework/Bootstrapper.cs`) initializes Autofac with module-based registration:
 ```csharp
@@ -193,9 +220,9 @@ Task type discrimination uses `(int)TaskTypes.SomeEnum`.
 
 When Billing API is configured but returns a response where `Data.Data` is null, `GetCurrentPlanForDepartmentAsync` returns null instead of the free plan fallback. Callers that access `plan.PlanId` or `plan.GetLimitForTypeAsInt()` will NRE.
 
-### 3. Service Locator in Constructors
+### 3. Injected Dependencies Are Never Null
 
-Unlike modern DI, this codebase resolves dependencies explicitly in constructors via `Bootstrapper.GetKernel().Resolve<T>()`. When examining stack traces, dependencies are never null due to constructor injection failures — the Bootstrapper would fail at app start. If a NullReferenceException occurs on a service call, the issue is typically in the return value of the called method, not the service reference itself.
+Dependencies come from Autofac constructor injection, so they are never null at a call site — a missing registration fails at container build (app start), not at the point of use. If a NullReferenceException occurs on a service call, the issue is almost always in the **return value** of the called method, not the service reference itself. The same holds for the worker paths that use `Bootstrapper.GetKernel().Resolve<T>()`: an unregistered type throws a resolution exception rather than handing back null.
 
 ### 4. Async State Machine Line Numbers
 

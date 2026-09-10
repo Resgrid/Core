@@ -154,6 +154,7 @@ namespace Resgrid.Model.Services
     /// <summary>Inventory owns its permissions, controlled witnesses, ledger and asset state. Caller owns the shared transaction.</summary>
     public interface IInventoryWorkOrderAdapter
     {
+        Task<WorkOrderPartQuote> QuotePartAsync(InventoryActor actor, int orderId, WorkOrderPartInput input);
         Task<InventoryResult> PostPartAsync(InventoryActor actor, int partId, InventoryCommand command);
         Task CancelPendingPartAsync(InventoryActor actor, int partId, string operationId);
         Task<WorkOrderAssetState> ApplyHoldAsync(InventoryActor actor, int orderId, string assetId, int? restoreState = null, int? expectedRevision = null, bool safetyRelease = false);

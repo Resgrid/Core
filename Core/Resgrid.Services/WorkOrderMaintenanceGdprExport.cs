@@ -29,6 +29,10 @@ namespace Resgrid.Services
             var changes = await Rows<WorkOrderRecurrenceChange>(r => r.CreatedBy == userId);
             var related = versions.Select(r => r.RecurrenceId).Concat(readings.Select(r => r.RecurrenceId)).Concat(changes.Select(r => r.RecurrenceId)).ToHashSet();
             return new {
+                Policies = await Rows<WorkOrderPolicy>(r => r.CreatedBy == userId),
+                OperationReceipts = await Rows<WorkOrderOperationReceipt>(r => r.CreatedBy == userId),
+                VendorCharges = await Rows<WorkOrderVendorCharge>(r => r.CreatedBy == userId),
+                PartMovements = await Rows<WorkOrderPartMovement>(r => r.CreatedBy == userId),
                 FailureIntents = await Rows<WorkOrderFailureIntent>(r => r.CreatedBy == userId || r.AuthorizedBy == userId),
                 SafetyHolds = await Rows<WorkOrderSafetyHold>(r => r.CreatedBy == userId || r.ReleasedBy == userId),
                 Recurrences = await Rows<WorkOrderRecurrence>(r => r.CreatedBy == userId || r.AssignedToUserId == userId || related.Contains(r.Id)),

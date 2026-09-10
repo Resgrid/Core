@@ -764,7 +764,7 @@ namespace Resgrid.Services
 			r["revision_id"] = revisionId ?? "";
 			r["revision_number"] = revisionNumber;
 			r["checksum"] = revisionId == null ? "" : "3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b";
-			r["summary"] = "Pump Operations â€” Hose evolutions";
+			r["summary"] = "Pump Operations — Hose evolutions";
 			r["url"] = "https://resgrid.local/User/Records/Details/9d8c7b6a-5f4e-4d3c-b2a1-0f9e8d7c6b5a";
 			obj["record"] = r;
 
@@ -843,7 +843,7 @@ namespace Resgrid.Services
 			if (!isDefinitionTrigger)
 			{
 				var fields = new ScriptObject();
-				fields["client_site"] = "Harbor Logistics â€” Pier 4";
+				fields["client_site"] = "Harbor Logistics — Pier 4";
 				fields["officer"] = "J. Alvarez";
 				fields["exception_reported"] = true;
 				var checkpoint = new ScriptObject();

@@ -180,7 +180,14 @@ namespace Resgrid.Services
 				if (input.Content.Currency != document.Fields.Currency) { input.Content.Approval = null; input.Content.ApprovedCost = null; }
 				var oldPriority = row.Priority;
 				document.Fields = input.Content; row.Content = JsonConvert.SerializeObject(document); Apply(row, input);
-				if (oldPriority != row.Priority) await PinSlaAsync(row);
+				if (oldPriority != row.Priority)
+				{
+					// Re-pinning recomputes the due dates for the new priority. A breach that already happened stays
+					// recorded, so history keeps it and SlaDueAsync does not pick the order up and emit it a second time.
+					var responseBreachedOn = row.ResponseBreachedOn; var repairBreachedOn = row.RepairBreachedOn;
+					await PinSlaAsync(row);
+					row.ResponseBreachedOn = responseBreachedOn; row.RepairBreachedOn = repairBreachedOn;
+				}
 				await ChangedAsync(actor, row, WorkOrderActivityType.Updated, events); return true;
 			});
 		}

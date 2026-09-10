@@ -305,7 +305,7 @@ namespace Resgrid.Services
                                 order.AssignedToUserId = row.AssignedToUserId; order.AssignedToRoleId = row.AssignedToRoleId;
                                 order.Status = order.AssignedToUserId != null || order.AssignedToRoleId.HasValue ? (int)WorkOrderStatus.Assigned : (int)WorkOrderStatus.Accepted;
                                 if (order.Status == 2) { await _authorization.ValidateAssignmentAsync(owner, order, order.AssignedToUserId, order.AssignedToRoleId); order.AssignedOn = Now; }
-                                await PinSlaAsync(order); order.ResponseOn = Now;
+                                await PinSlaAsync(order); if (order.Status == (int)WorkOrderStatus.Accepted) order.ResponseOn = Now;
                                 await _store.AllocateAsync(order); await RecordGeneratedCreationAsync(order);
                                 var generated = New<WorkOrderRecurrenceChange>(owner, order.Id); generated.RecurrenceId = row.Id; generated.ChangeType = (int)MaintenanceChangeType.Generated; generated.OriginalDueOn = original; generated.RevisedDueOn = due; await _store.AllocateAsync(generated);
                                 await EventAsync(order, WorkflowTriggerEventType.WorkOrderCreated, events);

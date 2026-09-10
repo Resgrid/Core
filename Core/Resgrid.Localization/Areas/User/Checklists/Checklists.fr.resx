@@ -693,4 +693,5 @@
 <data name="TargetUnavailable" xml:space="preserve"><value>Sélectionnez une cible disponible dans votre service.</value></data>
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Certains états historiques des ordres n’ont pas pu être reconstitués. Le dossier ne garantit pas une couverture complète de la maintenance.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Les preuves des ordres sont limitées au périmètre actuellement autorisé du lecteur.</value></data>
+  <data name="ProtectedDataRequired" xml:space="preserve"><value>Les données protégées doivent être déverrouillées pour continuer.</value></data>
 </root>

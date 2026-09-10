@@ -693,4 +693,5 @@
 <data name="TargetUnavailable" xml:space="preserve"><value>Seleziona un destinatario disponibile nel tuo dipartimento.</value></data>
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Non è stato possibile ricostruire alcuni stati storici degli ordini. Il pacchetto non garantisce una copertura completa della manutenzione.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Le prove degli ordini sono limitate all’ambito attualmente autorizzato del lettore.</value></data>
+  <data name="ProtectedDataRequired" xml:space="preserve"><value>È necessario sbloccare i dati protetti per continuare.</value></data>
 </root>

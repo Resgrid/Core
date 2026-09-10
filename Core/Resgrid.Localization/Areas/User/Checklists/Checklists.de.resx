@@ -693,4 +693,5 @@
 <data name="TargetUnavailable" xml:space="preserve"><value>Wählen Sie ein verfügbares Ziel in Ihrer Organisation.</value></data>
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Einige historische Arbeitsauftragszustände konnten nicht rekonstruiert werden. Das Paket beansprucht keine vollständige Wartungsabdeckung.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Arbeitsauftragsnachweise sind auf den aktuell berechtigten Lesebereich beschränkt.</value></data>
+  <data name="ProtectedDataRequired" xml:space="preserve"><value>Geschützte Daten müssen zum Fortfahren entsperrt werden.</value></data>
 </root>

@@ -5,18 +5,18 @@
 <div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
 @await Html.PartialAsync("_Protection")
 <div class="work-order-protected">
-<h2>@o.Number â€” @o.Title</h2><p>@localizer["Status" + o.Status] Â· @localizer["Priority" + o.Priority] Â· @localizer["DueOn"]: @o.DueOn?.ToString("u")</p>
+<h2>@o.Number — @o.Title</h2><p>@localizer["Status" + o.Status] · @localizer["Priority" + o.Priority] · @localizer["DueOn"]: @o.DueOn?.ToString("u")</p>
 @if (!d.CanWrite) { <p class="alert alert-info">@localizer["ReadOnlyHistory"]</p> }
 <p style="white-space:pre-wrap">@c.Description</p><p>@c.LocationText</p>
-<p>@localizer["ReportedBy"]: @d.ReportedBy Â· @localizer["AssignedTo"]: @(Model.Choices.Users.FirstOrDefault(x => x.Id == o.AssignedToUserId)?.Name ?? Model.Choices.Roles.FirstOrDefault(x => x.Id == o.AssignedToRoleId?.ToString())?.Name ?? localizer["None"].Value)</p>
-<p>@localizer["Currency"]: @c.Currency Â· @localizer["EstimatedCost"]: @c.EstimatedCost Â· @localizer["ApprovedCost"]: @c.ApprovedCost Â· @localizer["CostCenter"]: @c.CostCenter</p>
+<p>@localizer["ReportedBy"]: @d.ReportedBy · @localizer["AssignedTo"]: @(Model.Choices.Users.FirstOrDefault(x => x.Id == o.AssignedToUserId)?.Name ?? Model.Choices.Roles.FirstOrDefault(x => x.Id == o.AssignedToRoleId?.ToString())?.Name ?? localizer["None"].Value)</p>
+<p>@localizer["Currency"]: @c.Currency · @localizer["EstimatedCost"]: @c.EstimatedCost · @localizer["ApprovedCost"]: @c.ApprovedCost · @localizer["CostCenter"]: @c.CostCenter</p>
 <p>@localizer["VendorDetails"]: @c.VendorDetails</p><p>@localizer["WarrantyReference"]: @c.WarrantyReference</p>
 <p><a asp-action="Operations" asp-route-id="@o.Id">@localizer["Operations"]</a></p>
-@if (c.SafetyCritical || c.HazardousWork) { <p class="alert alert-warning">@localizer[c.HazardousWork ? "HazardousWork" : "SafetyCritical"] â€” @localizer["SafetyNotice"]</p> }
+@if (c.SafetyCritical || c.HazardousWork) { <p class="alert alert-warning">@localizer[c.HazardousWork ? "HazardousWork" : "SafetyCritical"] — @localizer["SafetyNotice"]</p> }
 <dl><dt>@localizer["ProcedureReference"] / @localizer["ProcedureVersion"]</dt><dd>@c.ProcedureReference / @c.ProcedureVersion</dd><dt>@localizer["PermitReference"]</dt><dd>@c.PermitReference</dd><dt>@localizer["IsolationReference"]</dt><dd>@c.IsolationReference</dd><dt>@localizer["QualifiedPersonnel"]</dt><dd>@c.QualifiedPersonnel</dd></dl>
-@if (c.Steps.Count > 0) { <h3>@localizer["TaskSteps"]</h3><ol>@foreach (var step in c.Steps) { <li>@step.Text â€” @localizer[step.Completed ? "Done" : "Pending"]</li> }</ol> }
+@if (c.Steps.Count > 0) { <h3>@localizer["TaskSteps"]</h3><ol>@foreach (var step in c.Steps) { <li>@step.Text — @localizer[step.Completed ? "Done" : "Pending"]</li> }</ol> }
 @if (d.CompletedOn.HasValue) { <h3>@localizer["Resolution"]</h3><p>@c.Resolution</p><p>@localizer["Cause"]: @c.Cause</p> }
-@if (d.ClosedOn.HasValue) { <p>@localizer["VerificationEvidence"]: @c.VerificationEvidence</p><p>@localizer["VerifiedBy"]: @d.VerifiedBy Â· @d.ClosedOn?.ToString("u")</p> }
+@if (d.ClosedOn.HasValue) { <p>@localizer["VerificationEvidence"]: @c.VerificationEvidence</p><p>@localizer["VerifiedBy"]: @d.VerifiedBy · @d.ClosedOn?.ToString("u")</p> }
 @if (d.CanEdit) { <a class="btn btn-default" asp-action="Edit" asp-route-id="@o.Id">@localizer["EditWorkOrder"]</a> }
 <form class="work-order-form work-order-export" asp-action="Export" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><button type="submit" class="btn btn-default">@localizer["Export"]</button></form>
 @if (d.CanAccept) { <form class="work-order-form work-order-command" asp-action="Accept" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><button type="submit" class="btn btn-primary">@localizer["AcceptAssignment"]</button></form> }
@@ -41,9 +41,9 @@
     <label><input type="checkbox" name="ConfirmTasksComplete" value="true"/> @localizer["ConfirmTasksComplete"]</label><button class="btn btn-primary" type="submit">@localizer["ChangeStatus"]</button></form>
 }
 @await Html.PartialAsync("_Maintenance", Model)
-<h3>@localizer["Activity"]</h3><ol>@foreach (var a in d.Activities) { <li><strong>@localizer["Activity" + a.Type]</strong> Â· @a.CreatedOn.ToString("u") Â· @a.UserId @if (a.NewStatus.HasValue) { <span>â†’ @localizer["Status" + (WorkOrderStatus)a.NewStatus.Value]</span> }<p style="white-space:pre-wrap">@a.Note</p>
+<h3>@localizer["Activity"]</h3><ol>@foreach (var a in d.Activities) { <li><strong>@localizer["Activity" + a.Type]</strong> · @a.CreatedOn.ToString("u") · @a.UserId @if (a.NewStatus.HasValue) { <span>→ @localizer["Status" + (WorkOrderStatus)a.NewStatus.Value]</span> }<p style="white-space:pre-wrap">@a.Note</p>
 @if (a.AssignedToUserId != null || a.AssignedToRoleId.HasValue) { <p>@localizer["AssignedTo"]: @(a.AssignedToUserId ?? a.AssignedToRoleId.ToString())</p> }
-@if (a.RevisedDueOn.HasValue) { <p>@localizer["OriginalDue"]: @a.OriginalDueOn?.ToString("u") â†’ @localizer["RevisedDue"]: @a.RevisedDueOn.Value.ToString("u")</p> }
+@if (a.RevisedDueOn.HasValue) { <p>@localizer["OriginalDue"]: @a.OriginalDueOn?.ToString("u") → @localizer["RevisedDue"]: @a.RevisedDueOn.Value.ToString("u")</p> }
 @if (a.Snapshot != null) { <details><summary>@localizer["Description"]: @a.Snapshot.Title</summary>
 <p>@a.Snapshot.Description</p><p>@localizer["Resolution"]: @a.Snapshot.Resolution</p><p>@localizer["Cause"]: @a.Snapshot.Cause</p>
 <p>@localizer["VerificationEvidence"]: @a.Snapshot.VerificationEvidence</p><p>@localizer["ProcedureReference"]: @a.Snapshot.ProcedureReference (@a.Snapshot.ProcedureVersion)</p>

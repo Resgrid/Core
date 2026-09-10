@@ -693,4 +693,5 @@
 <data name="TargetUnavailable" xml:space="preserve"><value>Select an available target in your department.</value></data>
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Some historical work-order states could not be reconstructed. The packet does not claim complete maintenance coverage.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Work-order evidence is limited to the reader’s current authorized scope.</value></data>
+  <data name="ProtectedDataRequired" xml:space="preserve"><value>Protected data must be unlocked to continue.</value></data>
 </root>

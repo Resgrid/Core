@@ -23,6 +23,8 @@ namespace Resgrid.Services
         {
             if (input?.Content == null || !Guid.TryParseExact(input.RequestId, "D", out _)) throw new WorkOrderException(400, "InvalidInput");
             var c = input.Content; Money(c.Amount); Text(c.VendorName, 200, true); Text(c.InvoiceReference, 200, true); Text(c.Description, 4000, true);
+            // Newtonsoft binds an offset-bearing value as Local; compare and store the instant, not the wall clock.
+            c.ServiceDate = c.ServiceDate.Kind == DateTimeKind.Local ? c.ServiceDate.ToUniversalTime() : DateTime.SpecifyKind(c.ServiceDate, DateTimeKind.Utc);
             if (!ValidCurrency(c.Currency) || c.Amount <= 0 || c.ServiceDate.Year < 2000 || c.ServiceDate > Now.AddDays(1) || c.VendorId != null && !Guid.TryParseExact(c.VendorId, "D", out _)) throw new WorkOrderException(400, "InvalidInput");
             var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { c.VendorId, c.VendorName, c.InvoiceReference, c.Description, c.Currency, c.Amount, c.ServiceDate }))));
             await TransactionAsync(actor, async events =>

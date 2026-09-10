@@ -30,7 +30,7 @@ namespace Resgrid.Services
             else
             {
                 var asset = await GetAsync<InventoryAsset>(actor, line.AssetId);
-                if (allocations > 0 || asset.Status != (int)InventoryAssetStatus.InService || asset.CurrentLocationId != line.FromLocationId || asset.LotId != line.LotId || asset.ExpiresOn <= Now) throw new InventoryException(409, "AssetNotAvailable");
+                if (allocations > 0 || asset.IsDeleted || asset.Status != (int)InventoryAssetStatus.InService || asset.CurrentLocationId != line.FromLocationId || asset.LotId != line.LotId || asset.ExpiresOn <= Now) throw new InventoryException(409, "AssetNotAvailable");
             }
             return new WorkOrderPartQuote { UnitCost = cost.UnitCost, Currency = cost.CurrencyCode };
         }

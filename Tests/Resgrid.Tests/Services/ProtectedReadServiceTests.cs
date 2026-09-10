@@ -19,7 +19,7 @@ namespace Resgrid.Tests.Services
 	/// <summary>
 	/// Attended protected-read pipeline (plan section 7.1): unprotected passthrough, redaction with
 	/// machine-readable reasons for every grant failure mode, one batched broker round trip on a
-	/// valid grant, and fail-closed behavior on broker faults â€” a client never sees ciphertext.
+	/// valid grant, and fail-closed behavior on broker faults — a client never sees ciphertext.
 	/// </summary>
 	[TestFixture]
 	public class ProtectedReadServiceTests
@@ -322,7 +322,7 @@ namespace Resgrid.Tests.Services
 
 		/// <summary>
 		/// The per-table assertions above enumerate tables by hand, so a NEW binding added without a
-		/// read accessor map would slip past them silently â€” and a bound-but-unreadable column is
+		/// read accessor map would slip past them silently — and a bound-but-unreadable column is
 		/// exactly how an envelope reaches a client as ciphertext. This pins the whole set: every
 		/// bound table either has accessor coverage or is on the explicit exclusion list below.
 		/// </summary>
@@ -662,7 +662,7 @@ namespace Resgrid.Tests.Services
 			var result = await _service.PrepareCallWriteAsync(DeptId, edited, stored, IssueGrant(), UserId, workloadCaller: false);
 
 			result.Success.Should().BeTrue();
-			edited.Name.Should().Be("rgdp:1:1:storedname==", "REDACTED means unchanged â€” the stored envelope survives");
+			edited.Name.Should().Be("rgdp:1:1:storedname==", "REDACTED means unchanged — the stored envelope survives");
 			edited.NatureOfCall.Should().Be("rgdp:1:1:calls.natureofcall==", "genuinely changed fields encrypt");
 		}
 
@@ -693,7 +693,7 @@ namespace Resgrid.Tests.Services
 
 			result.Success.Should().BeTrue();
 			sentItems.Select(i => i.FieldId).Should().BeEquivalentTo(new[] { "calls.natureofcall" },
-				"the placeholder must never be enveloped â€” that would destroy the original");
+				"the placeholder must never be enveloped — that would destroy the original");
 
 			// And it must not survive as the literal word either. These nets run AFTER the row was
 			// saved, so leaving "REDACTED" in the field means it is what sits in the database, and a
@@ -718,7 +718,7 @@ namespace Resgrid.Tests.Services
 						Items = items.Select(i => new ProtectedFieldOperationResult { FieldId = i.FieldId, RowKey = i.RowKey, Value = $"rgdp:1:1:{i.FieldId}==" }).ToList()
 					});
 
-			// The department is stamped at catalog v0 â€” it owns nothing yet, so no cataloged field
+			// The department is stamped at catalog v0 — it owns nothing yet, so no cataloged field
 			// may be encrypted under its (older) AAD until an upgrade sweeps it.
 			_dataProtectionService.Setup(x => x.GetPolicyByDepartmentIdAsync(DeptId, It.IsAny<bool>()))
 				.ReturnsAsync(new DepartmentDataProtectionPolicy { DepartmentId = DeptId, PolicyEpoch = Epoch, CatalogVersion = 0 });
@@ -751,7 +751,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		/// <summary>
-		/// Stamps the department at the CURRENT catalog version â€” catalog-v2 fields are only written
+		/// Stamps the department at the CURRENT catalog version — catalog-v2 fields are only written
 		/// for a department that has taken the upgrade (EncryptSlotsAsync skips fields the department
 		/// does not yet own), so the operational-family write tests must model an upgraded tenant.
 		/// </summary>
@@ -777,7 +777,7 @@ namespace Resgrid.Tests.Services
 			certification.Data.Should().BeNull("enveloped document bytes must never ride out through a serializer");
 
 			// Filetype is not cataloged, and the list view uses it to decide whether a document
-			// exists â€” concealing a file must not look like deleting it.
+			// exists — concealing a file must not look like deleting it.
 			certification.Filetype.Should().Be("application/pdf");
 		}
 
@@ -883,7 +883,7 @@ namespace Resgrid.Tests.Services
 		public async Task Certifications_are_skipped_by_a_department_pinned_below_catalog_v6()
 		{
 			// The department has not been swept for v6 yet, so its certification columns are still
-			// plaintext by design â€” encrypting them now would leave rows the sweep never migrated.
+			// plaintext by design — encrypting them now would leave rows the sweep never migrated.
 			SetupWriteEnforced();
 			SetupEncryptEcho();
 			_dataProtectionService.Setup(x => x.GetPolicyByDepartmentIdAsync(DeptId, It.IsAny<bool>()))
@@ -917,7 +917,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task Call_log_narratives_redact_without_a_grant()
 		{
-			// CallLogs is a different table and entity from the Log family â€” both call their text
+			// CallLogs is a different table and entity from the Log family — both call their text
 			// column Narrative, and only the Log family had a read path. These rows were being
 			// enveloped by the sweep and then rendered raw by the call export and the logs index.
 			var log = new CallLog
@@ -995,8 +995,8 @@ namespace Resgrid.Tests.Services
 		}
 
 		/// <summary>
-		/// The sentinel has destroyed data four times in this codebase â€” member addresses, emergency
-		/// contacts, UDF values and certifications â€” because nine of the twelve write paths only
+		/// The sentinel has destroyed data four times in this codebase — member addresses, emergency
+		/// contacts, UDF values and certifications — because nine of the twelve write paths only
 		/// refused to ENCRYPT it and let the literal word stay in the row the service had already
 		/// saved. This pins the policy centrally so a new write path inherits it.
 		/// </summary>

@@ -214,7 +214,7 @@ namespace Resgrid.Services
                     {
                         var activity = await RevealAsync(actor, await _store.GetAsync<WorkOrderActivity>(actor.DepartmentId, snapshot.SourceActivityId.Value));
                         if (activity.WorkOrderId != row.Id) throw new WorkOrderException(409, "Unavailable");
-                        fields = JObject.Parse(activity.Content)["Snapshot"]?.ToObject<WorkOrderContent>();
+                        fields = JObject.Parse(activity.Content ?? "{}")["Snapshot"]?.ToObject<WorkOrderContent>();
                     }
                     else if (snapshot.SourceType == 2 && snapshot.RecurrenceVersionId.HasValue)
                     {

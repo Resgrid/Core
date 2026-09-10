@@ -155,7 +155,12 @@ namespace Resgrid.Services
 					throw new ChecklistException(ex.StatusCode, ex.Code == "ProtectedDataRequired" ? "Unlock protected data to use this checklist." : ex.Code == "ReportTooLarge" ? "ReportTooLarge" : "ReadinessCallUnavailable");
 				}
 			}
-			packet.Checklists = await ReportEntriesAsync(actor, new ChecklistReportQuery { FromUtc = packet.CoverageStartUtc, UntilUtc = at.AddTicks(1) }, at, packet.UnavailableSources, targets);
+			// The checklist section is the only part of the packet the checklists module owns, and the sibling report
+			// methods gate it through RequireWriteAsync. A department with checklists switched off still gets its units,
+			// issued equipment and work orders; it does not get results the module itself would refuse to serve.
+			if (await _access.CanUseChecklistsAsync(actor.DepartmentId))
+				packet.Checklists = await ReportEntriesAsync(actor, new ChecklistReportQuery { FromUtc = packet.CoverageStartUtc, UntilUtc = at.AddTicks(1) }, at, packet.UnavailableSources, targets);
+			else AddUnavailable(packet.UnavailableSources, "ChecklistsDisabled");
 			await _authorization.RequireMemberAsync(actor);
 			if (!await _reportAuthorization.Value.CanUserViewCallAsync(actor.UserId, callId)) throw new ChecklistException(404, "ReadinessCallUnavailable");
 			return packet;

@@ -693,4 +693,5 @@
 <data name="TargetUnavailable" xml:space="preserve"><value>Виберіть доступний об’єкт у своєму підрозділі.</value></data>
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Деякі історичні стани нарядів не вдалося відновити. Пакет не гарантує повного охоплення технічного обслуговування.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Докази нарядів обмежені поточним дозволеним обсягом доступу читача.</value></data>
+  <data name="ProtectedDataRequired" xml:space="preserve"><value>Щоб продовжити, потрібно розблокувати захищені дані.</value></data>
 </root>

@@ -436,7 +436,9 @@ namespace Resgrid.Services
 					var orderEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
 					var payload = orderEvent?.Payload ?? new JObject(); var order = new ScriptObject();
 					foreach (var pair in Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Variables) order[pair.Variable] = ToScriptValue(payload[pair.Property]);
-					order["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/{(payload["PolicyId"] != null ? "Policy" : payload["WorkOrderId"] != null ? "Detail/" + payload["WorkOrderId"]?.Value<int>() : "Recurrence/" + payload["RecurrenceId"]?.Value<int>())}";
+					// A JSON null still yields a token, so route off the parsed identifier rather than token presence.
+					var policyId = payload["PolicyId"]?.Value<int?>(); var routedOrderId = payload["WorkOrderId"]?.Value<int?>(); var routedRecurrenceId = payload["RecurrenceId"]?.Value<int?>();
+					order["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/{(policyId.HasValue ? "Policy" : routedOrderId.HasValue ? "Detail/" + routedOrderId.Value : routedRecurrenceId.HasValue ? "Recurrence/" + routedRecurrenceId.Value : string.Empty)}";
 					scriptObject["work_order"] = order;
 					scriptObject["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = ToScriptValue(new JArray("Title")), ["catalog_version"] = Resgrid.Model.WorkOrders.WorkOrderTables.OperationsCatalogVersion };
 					break;

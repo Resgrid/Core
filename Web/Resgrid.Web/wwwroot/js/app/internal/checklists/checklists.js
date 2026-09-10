@@ -61,7 +61,7 @@
             field(root, 'Category', model, 'Category', 'number', categories.map((name, i) => [i, name]));
             const targets = [[0, 'Department'], [1, 'Unit'], [2, 'Group / station'], [3, 'Personnel']];
             if (root.dataset.assetsAvailable === 'true' || model.TargetType === 5) targets.push([5, 'InventoryAsset']);
-            field(root, 'Target type', model, 'TargetType', 'number', targets);
+            field(root, 'Target type', model, 'TargetType', 'number', targets).addEventListener('change', () => { model.Sections.forEach(section => section.Items.forEach(item => { if (model.TargetType !== 1 && model.TargetType !== 5) item.SetUnitStateOnFail = false; if (model.TargetType !== 5) item.HoldAssetOnFail = false; })); render(); });
             const threshold = field(root, 'Passing score (%)', model, 'PassThreshold', 'number'); threshold.min = 0; threshold.max = 100;
             field(root, 'Require reported location', model, 'RequireLocation', 'checkbox');
             field(root, 'Require a different authenticated member to witness the submission', model, 'RequiresIndependentWitness', 'checkbox');
@@ -79,6 +79,14 @@
                     field(box, 'Item instructions', item, 'Instructions', 'textarea').maxLength = 5000;
                     field(box, 'Answer type', item, 'Type', 'number', types.map((name, i) => [i, name])).addEventListener('change', render);
                     [['Required', 'Required'], ['Critical failure overrides the score', 'Critical'], ['Allow N/A with a reason', 'AllowNotApplicable'], ['Require a note on failure', 'RequireNoteOnFail'], ['Require a photo on failure', 'RequirePhotoOnFail']].forEach(pair => field(box, pair[0], item, pair[1], 'checkbox'));
+                    field(box, 'CreateWorkOrderOnFail', item, 'CreateWorkOrderOnFail', 'checkbox').addEventListener('change', () => { if (!item.CreateWorkOrderOnFail) { item.SetUnitStateOnFail = false; item.HoldAssetOnFail = false; } render(); });
+                    if (item.CreateWorkOrderOnFail) {
+                        if (item.WorkOrderPriority == null) item.WorkOrderPriority = 1;
+                        field(box, 'WorkOrderPriority', item, 'WorkOrderPriority', 'number', [[0, 'WorkOrderPriorityLow'], [1, 'WorkOrderPriorityNormal'], [2, 'WorkOrderPriorityHigh'], [3, 'WorkOrderPriorityEmergency']]);
+                        if (model.TargetType === 1 || model.TargetType === 5) field(box, 'SetUnitStateOnFail', item, 'SetUnitStateOnFail', 'checkbox');
+                        if (model.TargetType === 5) field(box, 'HoldAssetOnFail', item, 'HoldAssetOnFail', 'checkbox');
+                        el('p', tr('ReadinessFailureHelp'), box);
+                    }
                     const weight = field(box, 'Score weight (0 excludes this item from the score)', item, 'Weight', 'number'); weight.min = 0; weight.max = 1000;
                     if (item.Type === 1 || item.Type === 2) field(box, 'Passing answer', item, 'PassingValue', 'text', [['true', 'Yes / checked'], ['false', 'No / unchecked']]);
                     if (item.Type === 3 || item.Type === 4) {

@@ -7,33 +7,7 @@
 @await Html.PartialAsync("_Protection")
 <form class="work-order-form work-order-command work-order-protected" asp-action="Save" method="post">
 @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.Id"/><input asp-for="Input.RequestId" type="hidden"/><input asp-for="Input.Revision" type="hidden"/>
-<div class="form-group"><label asp-for="Input.Content.Title">@localizer["Title"]</label><input asp-for="Input.Content.Title" class="form-control" required maxlength="200"/></div>
-<div class="form-group"><label asp-for="Input.Content.Description">@localizer["Description"]</label><textarea asp-for="Input.Content.Description" class="form-control" rows="5" maxlength="20000"></textarea></div>
-<div class="row"><div class="col-sm-4 form-group"><label asp-for="Input.Type">@localizer["Type"]</label><select asp-for="Input.Type" class="form-control">@foreach (var t in Enum.GetValues<WorkOrderType>()) { <option value="@((int)t)">@localizer["Type" + t]</option> }</select></div>
-<div class="col-sm-4 form-group"><label asp-for="Input.Priority">@localizer["Priority"]</label><select asp-for="Input.Priority" class="form-control">@foreach (var p in Enum.GetValues<WorkOrderPriority>()) { <option value="@((int)p)">@localizer["Priority" + p]</option> }</select></div>
-<div class="col-sm-4 form-group"><label asp-for="Input.DueOn">@localizer["DueOn"] (UTC)</label><input asp-for="Input.DueOn" class="form-control" type="datetime-local"/></div></div>
-<div class="row"><div class="col-sm-4 form-group"><label asp-for="Input.TargetUnitId">@localizer["Unit"]</label><select asp-for="Input.TargetUnitId" class="form-control"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Units) { <option value="@x.Id">@x.Name</option> }</select></div>
-<div class="col-sm-4 form-group"><label asp-for="Input.TargetGroupId">@localizer["Group"]</label><select asp-for="Input.TargetGroupId" class="form-control"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Groups) { <option value="@x.Id">@x.Name</option> }</select></div>
-@if (Model.Choices.Assets.Count > 0) { <div class="col-sm-4 form-group"><label asp-for="Input.InventoryAssetId">@localizer["Asset"]</label><select asp-for="Input.InventoryAssetId" class="form-control"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Assets) { <option value="@x.Id">@x.Name</option> }</select></div> }
-else { <input asp-for="Input.InventoryAssetId" type="hidden"/> }</div>
-<div class="form-group"><label asp-for="Input.Content.LocationText">@localizer["LocationText"]</label><input asp-for="Input.Content.LocationText" class="form-control" maxlength="1000"/></div>
-<div class="row"><div class="col-sm-4 form-group"><label asp-for="Input.Content.Currency">@localizer["Currency"]</label><input asp-for="Input.Content.Currency" class="form-control" maxlength="3" pattern="[A-Z]{3}" required/></div>
-<div class="col-sm-4 form-group"><label asp-for="Input.Content.EstimatedCost">@localizer["EstimatedCost"]</label><input asp-for="Input.Content.EstimatedCost" type="number" min="0" step="0.01" class="form-control"/></div>
-@if (Model.CanManage) { <div class="col-sm-4 form-group"><label asp-for="Input.Content.ApprovedCost">@localizer["ApprovedCost"]</label><input asp-for="Input.Content.ApprovedCost" type="number" min="0" step="0.01" class="form-control"/></div> }</div>
-<div class="form-group"><label asp-for="Input.Content.CostCenter">@localizer["CostCenter"]</label><input asp-for="Input.Content.CostCenter" class="form-control" maxlength="200"/></div>
-<div class="form-group"><label asp-for="Input.Content.VendorDetails">@localizer["VendorDetails"]</label><textarea asp-for="Input.Content.VendorDetails" class="form-control" maxlength="4000"></textarea></div>
-<div class="form-group"><label asp-for="Input.Content.WarrantyReference">@localizer["WarrantyReference"]</label><input asp-for="Input.Content.WarrantyReference" class="form-control" maxlength="4000"/></div>
-<label><input asp-for="Input.Content.SafetyCritical"/> @localizer["SafetyCritical"]</label>
-<label><input asp-for="Input.Content.HazardousWork"/> @localizer["HazardousWork"]</label>
-<p>@localizer["SafetyNotice"]</p>
-<div class="form-group"><label asp-for="Input.Content.ProcedureReference">@localizer["ProcedureReference"]</label><input asp-for="Input.Content.ProcedureReference" class="form-control" maxlength="4000"/></div>
-<div class="form-group"><label asp-for="Input.Content.ProcedureVersion">@localizer["ProcedureVersion"]</label><input asp-for="Input.Content.ProcedureVersion" class="form-control" maxlength="4000"/></div>
-<div class="form-group"><label asp-for="Input.Content.PermitReference">@localizer["PermitReference"]</label><input asp-for="Input.Content.PermitReference" class="form-control" maxlength="4000"/></div>
-<div class="form-group"><label asp-for="Input.Content.IsolationReference">@localizer["IsolationReference"]</label><input asp-for="Input.Content.IsolationReference" class="form-control" maxlength="4000"/></div>
-<div class="form-group"><label asp-for="Input.Content.QualifiedPersonnel">@localizer["QualifiedPersonnel"]</label><input asp-for="Input.Content.QualifiedPersonnel" class="form-control" maxlength="4000"/></div>
-<h3>@localizer["TaskSteps"]</h3><div id="work-order-steps">
-@for (var i = 0; i < Model.Input.Content.Steps.Count; i++) { <div class="form-group"><input asp-for="Input.Content.Steps[i].Text" class="form-control" maxlength="1000" required/><input asp-for="Input.Content.Steps[i].Completed" type="hidden"/></div> }
-</div><button type="button" class="btn btn-default" id="work-order-add-step">@localizer["AddStep"]</button>
+@await Html.PartialAsync("_OrderFields", Model.Input, new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = "Input" }, ["Choices"] = Model.Choices, ["CanManage"] = Model.CanManage })
 <button class="btn btn-primary" type="submit">@localizer["Save"]</button><a class="btn btn-default" asp-action="Index">@localizer["Cancel"]</a>
 </form></div></div></div>
 @section Scripts { @await Html.PartialAsync("_Scripts") }

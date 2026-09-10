@@ -828,6 +828,11 @@ namespace Resgrid.Tests.Services
 			public Task<InventoryAlert> OpenAlertAsync(int departmentId, string dedupKey) => Task.FromResult(All<InventoryAlert>().SingleOrDefault(a => a.DepartmentId == departmentId && a.DedupKey == dedupKey && a.Status == 0));
 			public Task<InventoryAlertDelivery> AlertDeliveryAsync(int departmentId, string alertId, string userId) => Task.FromResult(All<InventoryAlertDelivery>().SingleOrDefault(d => d.DepartmentId == departmentId && d.AlertId == alertId && d.UserId == userId));
 			public Task<List<InventoryAlert>> OpenAlertsAsync(int departmentId, int skip = 0) => Task.FromResult(All<InventoryAlert>().Where(a => a.DepartmentId == departmentId && a.Status == 0).OrderBy(a => a.OpenedOn).ThenBy(a => a.Id).Skip(skip).Take(501).ToList());
+			public Task<List<InventoryAlert>> ClaimableAlertsAsync(int departmentId, string userId, DateTime now, int skip = 0) => Task.FromResult(All<InventoryAlert>()
+				.Where(a => a.DepartmentId == departmentId && a.Status == 0 && !All<InventoryAlertDelivery>().Any(d => d.DepartmentId == departmentId && d.AlertId == a.Id && d.UserId == userId
+					&& (d.State is 2 or 3 || d.NextAttemptOn > now || d.LeaseUntil > now))).OrderBy(a => a.OpenedOn).ThenBy(a => a.Id).Skip(skip).Take(501).ToList());
+			public Task<List<T>> RelatedManyAsync<T>(int departmentId, string column, IReadOnlyCollection<string> ids) where T : InventoryRow
+				=> Task.FromResult(All<T>().Where(r => r.DepartmentId == departmentId && ids.Contains((string)typeof(T).GetProperty(column).GetValue(r))).OrderBy(r => r.Id).ToList());
 			public Task<T> GetAsync<T>(int departmentId, string id) where T : InventoryRow => Task.FromResult(All<T>().SingleOrDefault(r => r.DepartmentId == departmentId && r.Id == id));
 			public Task<List<T>> ListAsync<T>(int departmentId, int skip = 0) where T : InventoryRow => Task.FromResult(All<T>().Where(r => r.DepartmentId == departmentId).OrderBy(r => r.CreatedOn).ThenBy(r => r.Id).Skip(skip).Take(501).ToList());
 			public Task<List<InventoryStockQuantity>> StockQuantitiesAsync(int departmentId, IReadOnlyCollection<string> itemIds) => Task.FromResult(All<InventoryStock>()

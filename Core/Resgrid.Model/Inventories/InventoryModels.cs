@@ -94,6 +94,7 @@ namespace Resgrid.Model.Inventories
 		public string IssuanceId { get; set; }
 		public string PurchaseOrderItemId { get; set; }
 		public string CountItemId { get; set; }
+		public int? WorkOrderPartId { get; set; }
 		public int? LegacyInventoryId { get; set; }
 		public DateTime OccurredOn { get; set; }
 	}

@@ -134,7 +134,7 @@ namespace Resgrid.Tests.Services
 			await ((Func<Task>)(async () => await _service.CreateAsync(_actor, Input()))).Should().ThrowAsync<WorkOrderException>();
 			_store.All<WorkOrder>().Should().BeEmpty(); _events.Should().BeEmpty(); _uow.Verify(u => u.CommitChanges(), Times.Never);
 		}
-		private sealed class Store : IWorkOrderRepository
+		private sealed partial class Store : IWorkOrderRepository, IWorkOrderMaintenanceRepository
 		{
 			private Dictionary<Type, List<WorkOrderRow>> _rows = new Dictionary<Type, List<WorkOrderRow>>();
 			private Dictionary<Type, List<WorkOrderRow>> _before;

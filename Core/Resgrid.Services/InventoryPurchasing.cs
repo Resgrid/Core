@@ -40,11 +40,15 @@ namespace Resgrid.Services
 		{
 			await RequirePurchasingAccessAsync(actor, false);
 			if (_contacts == null) throw new InventoryException(404, "VendorContactUnavailable");
-			var contacts = (await _contacts.GetAllContactsForDepartmentAsync(actor.DepartmentId)).Where(c => c.DepartmentId == actor.DepartmentId && c.ContactType == 1 && !c.IsDeleted).ToList();
+			var contacts = (await _contacts.GetAllContactsForDepartmentAsync(actor.DepartmentId)).Where(c => c.DepartmentId == actor.DepartmentId && c.ContactType == 1 && !c.IsDeleted)
+				.Select(c => JsonConvert.DeserializeObject<Contact>(JsonConvert.SerializeObject(c))).ToList();
 			if (contacts.Count > 5000) throw new InventoryException(409, "InventoryTooLarge");
-			var result = new List<InventoryVendorChoice>();
-			foreach (var contact in contacts) result.Add(new() { Id = contact.ContactId, Name = (await VendorContactAsync(actor, contact.ContactId, true)).CompanyName });
-			return result;
+			if (contacts.Count == 0) return new List<InventoryVendorChoice>();
+			var wasPlain = contacts.Any(c => !string.IsNullOrEmpty(c.CompanyName) && !ProtectedDataEnvelope.HasEnvelopePrefix(c.CompanyName));
+			var result = await _read.ResolveContactsForReadAsync(actor.DepartmentId, contacts, actor.GrantToken, actor.UserId);
+			if (result == null || result.RedactedFields.Count > 0 || result.IsProtected && wasPlain || contacts.Any(c => ProtectedDataEnvelope.HasEnvelopePrefix(c.CompanyName)))
+				throw new InventoryException(403, "ProtectedDataRequired");
+			return contacts.Select(c => new InventoryVendorChoice { Id = c.ContactId, Name = c.CompanyName }).ToList();
 		}
 		public Task<InventoryVendor> SaveVendorAsync(InventoryActor actor, InventoryVendorInput input) => TransactionAsync(actor, async events =>
 		{

@@ -16,7 +16,7 @@ namespace Resgrid.Model.Checklists
 			(int)WorkflowTriggerEventType.ChecklistMissed, (int)WorkflowTriggerEventType.WorkOrderCreated,
 			(int)WorkflowTriggerEventType.WorkOrderStatusChanged, (int)WorkflowTriggerEventType.WorkOrderAssigned,
 			(int)WorkflowTriggerEventType.ChecklistScheduleChanged, (int)WorkflowTriggerEventType.ChecklistOccurrenceSkipped
-		}.Concat(Resgrid.Model.Inventories.InventoryWorkflowPayload.Triggers).ToArray());
+		}.Concat(Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Triggers).Distinct().Concat(Resgrid.Model.Inventories.InventoryWorkflowPayload.Triggers).ToArray());
 		private static readonly string[] Identifiers = { "CompletionId", "DefinitionId", "VersionId", "ItemId", "ScheduleId", "OccurrenceId" };
 		private static bool IsStructuralTarget(int type, string target) =>
 			type >= 0 && type <= 2 && int.TryParse(target, out var numeric) && numeric > 0
@@ -32,7 +32,7 @@ namespace Resgrid.Model.Checklists
 		{
 			var source = Resgrid.Model.Inventories.InventoryWorkflowPayload.Parse(payloadJson);
 			if (Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory(source)) return Resgrid.Model.Inventories.InventoryWorkflowPayload.Routing(source);
-			if (source["WorkOrderId"] != null) return Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Routing(source);
+			if (source["WorkOrderId"] != null || source["RecurrenceId"] != null) return Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Routing(source);
 			var safe = new JObject();
 			foreach (var name in Identifiers)
 				if (source[name]?.Type == JTokenType.String && Guid.TryParse(source[name].Value<string>(), out var id)) safe[name] = id.ToString("D");
@@ -57,7 +57,7 @@ namespace Resgrid.Model.Checklists
 			var source = value as JObject ?? (value == null ? new JObject() : JObject.FromObject(value));
 			var payload = wrapped ? source["Payload"] as JObject ?? new JObject() : source;
 			if (Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory(payload)) return await Resgrid.Model.Inventories.InventoryWorkflowPayload.ProjectAsync(departmentId, source, protection, wrapped);
-			if (payload["WorkOrderId"] != null) return await Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.ProjectAsync(departmentId, payload, protection, wrapped);
+			if (payload["WorkOrderId"] != null || payload["RecurrenceId"] != null) return await Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.ProjectAsync(departmentId, payload, protection, wrapped);
 			var safe = new JObject();
 			foreach (var name in Identifiers)
 				if (Guid.TryParse(payload[name]?.Value<string>(), out var id)) safe[name] = id.ToString("D");

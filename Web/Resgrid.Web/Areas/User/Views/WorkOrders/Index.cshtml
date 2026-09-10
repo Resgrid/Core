@@ -2,14 +2,14 @@
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
 @{ ViewBag.Title = "Resgrid | " + localizer["WorkOrders"]; }
-<div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12"><h2>@localizer["WorkOrders"]</h2><p>Readiness Pro</p></div></div>
+<div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12"><h2>@localizer["WorkOrders"]</h2><a class="btn btn-default" asp-action="Recurrences">@localizer["PreventiveMaintenance"]</a><p>Readiness Pro</p></div></div>
 <div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
 @await Html.PartialAsync("_Protection")
 @if (Model.Orders.CanWrite) { <a class="btn btn-primary" asp-action="New">@localizer["NewWorkOrder"]</a> }
 else { <p class="alert alert-info">@localizer["ReadOnlyHistory"] <a asp-controller="ReadinessProBilling" asp-action="Index">Readiness Pro</a></p> }
 <form method="post" asp-action="Reopen" class="form-inline work-order-form">
     @Html.AntiForgeryToken()<input type="hidden" name="destination" value="Index"/>
-    <label>@localizer["Status"] <select class="form-control" name="Status"><option value="">@localizer["All"]</option>@foreach (var s in Enum.GetValues<WorkOrderStatus>()) { <option value="@((int)s)" selected="@(Model.Filter.Status == s)">@localizer["Status" + s]</option> }</select></label>
+    <input type="hidden" name="ChecklistCompletionId" value="@Model.Filter.ChecklistCompletionId"/><label>@localizer["Status"] <select class="form-control" name="Status"><option value="">@localizer["All"]</option>@foreach (var s in Enum.GetValues<WorkOrderStatus>()) { <option value="@((int)s)" selected="@(Model.Filter.Status == s)">@localizer["Status" + s]</option> }</select></label>
     <label>@localizer["Priority"] <select class="form-control" name="Priority"><option value="">@localizer["All"]</option>@foreach (var p in Enum.GetValues<WorkOrderPriority>()) { <option value="@((int)p)" selected="@(Model.Filter.Priority == p)">@localizer["Priority" + p]</option> }</select></label>
     <label>@localizer["Unit"] <select class="form-control" name="UnitId"><option value="">@localizer["All"]</option>@foreach (var u in Model.Choices.Units) { <option value="@u.Id" selected="@(Model.Filter.UnitId?.ToString() == u.Id)">@u.Name</option> }</select></label>
     <label>@localizer["Group"] <select class="form-control" name="GroupId"><option value="">@localizer["All"]</option>@foreach (var g in Model.Choices.Groups) { <option value="@g.Id" selected="@(Model.Filter.GroupId?.ToString() == g.Id)">@g.Name</option> }</select></label>
@@ -25,7 +25,7 @@ else { <p class="alert alert-info">@localizer["ReadOnlyHistory"] <a asp-controll
 }</td></tr> }
 </tbody></table></div>
 @if (Model.Orders.Items.Count == 0) { <p>@localizer["NoWorkOrders"]</p> }
-@if (Model.Filter.Page > 0) { <a asp-action="Index" asp-route-page="@(Model.Filter.Page - 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Previous"]</a> }
+@if (Model.Filter.Page > 0) { <a asp-action="Index" asp-route-page="@(Model.Filter.Page - 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-checklistCompletionId="@Model.Filter.ChecklistCompletionId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Previous"]</a> }
 @if (Model.Orders.HasMore) { <a asp-action="Index" asp-route-page="@(Model.Filter.Page + 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Next"]</a> }
 </div></div></div>
 @section Scripts { @await Html.PartialAsync("_Scripts") }

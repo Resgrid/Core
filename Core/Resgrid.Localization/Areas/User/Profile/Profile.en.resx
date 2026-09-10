@@ -303,4 +303,7 @@
   <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>Send Password Reset Email</value></data>
   <data name="SendPasswordResetEmail" xml:space="preserve"><value>Send Password Reset Email</value></data>
   <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>Resgrid will send this user a short-lived, single-use link at their confirmed email address. The administrator will not choose or see the new password.</value></data>
+  <data name="ScheduleMutationFailed" xml:space="preserve">
+    <value>The schedule could not be updated. Refresh the page and try again.</value>
+  </data>
 </root>

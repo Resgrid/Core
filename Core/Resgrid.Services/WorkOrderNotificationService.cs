@@ -35,7 +35,7 @@ namespace Resgrid.Services
 		}
 		public async Task DispatchAsync(DomainEventOutboxEntry entry)
 		{
-			if (entry?.ProducerSubsystem != "WorkOrders" || entry.TriggerEventType is not (70 or 71 or 72) || !Guid.TryParseExact(entry.EventId, "D", out _) || !int.TryParse(entry.AggregateId, out var id)) return;
+			if (entry?.ProducerSubsystem != "WorkOrders" || entry.TriggerEventType is not (70 or 71 or 72 or 73 or 167 or 168) || !Guid.TryParseExact(entry.EventId, "D", out _) || !int.TryParse(entry.AggregateId, out var id)) return;
 			if (!await _access.CanUseMaintenanceAsync(entry.DepartmentId)) return;
 			var row = await _orders.GetAsync<WorkOrder>(entry.DepartmentId, id);
 			if (row == null) return;
@@ -85,6 +85,8 @@ namespace Resgrid.Services
 		private async Task<System.Collections.Generic.List<string>> RecipientsAsync(int departmentId, WorkOrder row)
         {
             var result = new System.Collections.Generic.HashSet<string>(await _authorization.RecipientsAsync(departmentId, row));
+            if (row.EscalatedOn.HasValue && row.EscalationRoleId.HasValue)
+                result.UnionWith(await _authorization.RecipientsAsync(departmentId, new WorkOrder { DepartmentId = departmentId, AssignedToRoleId = row.EscalationRoleId }));
             var members = await _departments.GetAllMembersForDepartmentUnlimitedAsync(departmentId, true);
             foreach (var member in members.Where(m => m.DepartmentId == departmentId && !m.IsDeleted && m.IsDisabled != true))
             {

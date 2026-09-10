@@ -15,7 +15,7 @@ using Resgrid.Model.Services;
 
 namespace Resgrid.Services
 {
-	public sealed partial class InventoryModernizationService : IInventoryCatalogService, IInventoryStockService, IInventoryTransferService, IInventoryIssuanceService, IInventoryMigrationService, IInventoryPurchasingService, IInventoryOperationsService, IInventoryAlertService, IChecklistAssetSource, IChecklistHistoricalAssetSource
+	public sealed partial class InventoryModernizationService : IInventoryCatalogService, IInventoryStockService, IInventoryTransferService, IInventoryIssuanceService, IInventoryMigrationService, IInventoryPurchasingService, IInventoryOperationsService, IInventoryAlertService, IInventoryWorkOrderAdapter, IChecklistAssetSource, IChecklistHistoricalAssetSource
 	{
 		private readonly IInventoryStore _store;
 		private readonly IInventoryAuthorizationService _auth;
@@ -34,12 +34,15 @@ namespace Resgrid.Services
 		private readonly Lazy<IRecordsAuthorizationService> _recordsAuthorization;
 		private readonly Lazy<IRmsInventoryUsageAdapter> _recordUsage;
 		private readonly IContactsService _contacts;
+		private readonly IWorkOrderMaintenanceRepository _maintenanceOrders;
+		private readonly Lazy<IWorkOrderMaintenanceService> _workOrderMaintenance;
+		private readonly IReadinessAccessService _readinessAccess;
 		public InventoryModernizationService(IInventoryStore store, IInventoryAuthorizationService auth, IUnitOfWork uow, IProtectedReadService read,
 			IProtectedWriteService write, IDomainEventOutboxService outbox, IAuditLogsRepository audit, IUnitsService units, IDepartmentGroupsService groups, TimeProvider clock = null,
 			IInventoryRepository legacyInventory = null, IInventoryTypesRepository legacyTypes = null,
 			IWorkOrderRepository workOrders = null, Lazy<IWorkOrderAuthorizationService> workOrderAuthorization = null,
-			Lazy<IRecordsAuthorizationService> recordsAuthorization = null, Lazy<IRmsInventoryUsageAdapter> recordUsage = null, IContactsService contacts = null)
-		{ _store = store; _auth = auth; _uow = uow; _read = read; _write = write; _outbox = outbox; _audit = audit; _units = units; _groups = groups; _clock = clock ?? TimeProvider.System; _legacyInventory = legacyInventory; _legacyTypes = legacyTypes; _workOrders = workOrders; _workOrderAuthorization = workOrderAuthorization; _recordsAuthorization = recordsAuthorization; _recordUsage = recordUsage; _contacts = contacts; }
+			Lazy<IRecordsAuthorizationService> recordsAuthorization = null, Lazy<IRmsInventoryUsageAdapter> recordUsage = null, IContactsService contacts = null, IWorkOrderMaintenanceRepository maintenanceOrders = null, Lazy<IWorkOrderMaintenanceService> workOrderMaintenance = null, IReadinessAccessService readinessAccess = null)
+		{ _store = store; _auth = auth; _uow = uow; _read = read; _write = write; _outbox = outbox; _audit = audit; _units = units; _groups = groups; _clock = clock ?? TimeProvider.System; _legacyInventory = legacyInventory; _legacyTypes = legacyTypes; _workOrders = workOrders; _workOrderAuthorization = workOrderAuthorization; _recordsAuthorization = recordsAuthorization; _recordUsage = recordUsage; _contacts = contacts; _maintenanceOrders = maintenanceOrders; _workOrderMaintenance = workOrderMaintenance; _readinessAccess = readinessAccess; }
 		public Task<bool> IsMigratedAsync(int departmentId) => _store.HasLegacyMigrationAsync(departmentId);
 		private DateTime Now => _clock.GetUtcNow().UtcDateTime;
 		private static void Id(string id) { if (!Guid.TryParseExact(id, "D", out var value) || value == Guid.Empty) throw new InventoryException(400, "InvalidIdentifier"); }

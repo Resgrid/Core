@@ -274,22 +274,32 @@ namespace Resgrid.Services.Records
 				// This endpoint must not reveal a copied legacy snapshot without an Inventory protection boundary.
 				legacy.Note = legacy.ItemName = legacy.UnitOfMeasure = ProtectedDataEnvelope.RedactionValue;
 			}
-			foreach (var usage in result.Where(x => x.TransactionId != null))
+			var modern = result.Where(x => x.TransactionId != null).ToList();
+			var transactions = modern.Count == 0 ? new Dictionary<string, InventoryTransaction>()
+				: await _modernCatalog.GetManyAsync<InventoryTransaction>(actor, modern.Select(x => x.TransactionId).Distinct().ToArray());
+			var correctionIds = modern.Where(x => x.ReversesUsageId != null).Select(x => x.UsageId).Distinct().ToArray();
+			var corrections = correctionIds.Length == 0 ? new Dictionary<string, RecordInventoryUsage>()
+				: await _modernCatalog.GetManyAsync<RecordInventoryUsage>(actor, correctionIds);
+			var reversals = new List<InventoryTransaction>();
+			foreach (var batch in modern.Where(x => x.ReversesUsageId == null).Select(x => x.TransactionId).Distinct().Chunk(500))
+				reversals.AddRange(await _modernStore.RelatedManyAsync<InventoryTransaction>(actor.DepartmentId, "ReversesTransactionId", batch));
+			var reversalsByTransaction = reversals.ToLookup(t => t.ReversesTransactionId);
+			var attachedCorrections = result.Where(x => x.ReversesUsageId != null).Select(x => (x.ReversesUsageId, x.TransactionId)).ToHashSet();
+			foreach (var usage in modern)
 			{
-				var transaction = await _modernCatalog.GetAsync<InventoryTransaction>(actor, usage.TransactionId);
+				var transaction = transactions[usage.TransactionId];
 				await AuthorizeModernSourceAsync(actor, transaction.FromLocationId ?? transaction.ToLocationId, historical: true);
 				var details = JObject.Parse(transaction.Content ?? "{}");
 				usage.Note = details.Value<string>("Note"); usage.ItemName = details.Value<string>("ItemName"); usage.UnitOfMeasure = details.Value<string>("UnitOfMeasure");
 				usage.AssetId = transaction.AssetId; usage.LotId = transaction.LotId; usage.LocationId = transaction.FromLocationId ?? transaction.ToLocationId;
 				if (usage.ReversesUsageId != null)
 				{
-					var row = await _modernCatalog.GetAsync<RecordInventoryUsage>(actor, usage.UsageId);
+					var row = corrections[usage.UsageId];
 					usage.Note = JsonConvert.DeserializeObject<InventoryLabel>(row.Content ?? "{}")?.Note;
 				}
 				else
 				{
-					var reversedTransactions = await _modernStore.RelatedAsync<InventoryTransaction>(actor.DepartmentId, "ReversesTransactionId", usage.TransactionId);
-					usage.PendingReversalTransactionId = reversedTransactions.FirstOrDefault(t => !result.Any(r => r.ReversesUsageId == usage.UsageId && r.TransactionId == t.Id))?.Id;
+					usage.PendingReversalTransactionId = reversalsByTransaction[usage.TransactionId].FirstOrDefault(t => !attachedCorrections.Contains((usage.UsageId, t.Id)))?.Id;
 				}
 			}
 			var reversed = result.Where(x => x.ReversesUsageId != null).Select(x => x.ReversesUsageId).ToHashSet();

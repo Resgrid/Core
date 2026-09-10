@@ -75,4 +75,7 @@
   <data name="SendPasswordResetEmailHeader" xml:space="preserve"><value>إرسال بريد إلكتروني لإعادة تعيين كلمة المرور</value></data>
   <data name="SendPasswordResetEmail" xml:space="preserve"><value>إرسال بريد إلكتروني لإعادة تعيين كلمة المرور</value></data>
   <data name="SendPasswordResetEmailInfo" xml:space="preserve"><value>سيرسل Resgrid إلى هذا المستخدم رابطًا قصير الصلاحية يُستخدم مرة واحدة إلى عنوان بريده الإلكتروني المؤكد. لن يختار المسؤول كلمة المرور الجديدة ولن يراها.</value></data>
+  <data name="ScheduleMutationFailed" xml:space="preserve">
+    <value>تعذّر تحديث الجدول. حدّث الصفحة وحاول مرة أخرى.</value>
+  </data>
 </root>

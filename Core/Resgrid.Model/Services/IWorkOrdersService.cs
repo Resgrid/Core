@@ -47,6 +47,7 @@ namespace Resgrid.Model.WorkOrders
 	}
 	public sealed class WorkOrderFilter
 	{
+        public string ChecklistCompletionId { get; set; }
 		public int Page { get; set; }
 		public WorkOrderStatus? Status { get; set; }
 		public WorkOrderPriority? Priority { get; set; }
@@ -88,7 +89,7 @@ namespace Resgrid.Model.WorkOrders
 	}
 	public sealed class WorkOrderAssignment { public int Revision { get; set; } public string UserId { get; set; } public int? RoleId { get; set; } }
 	public sealed class WorkOrderLaborInput { public int Revision { get; set; } public string UserId { get; set; } public DateTime WorkDate { get; set; } public WorkOrderLaborContent Content { get; set; } = new WorkOrderLaborContent(); }
-	public sealed class WorkOrderPartInput { public int Revision { get; set; } public WorkOrderPartContent Content { get; set; } = new WorkOrderPartContent(); }
+	public sealed class WorkOrderPartInput { public string RequestId { get; set; } public string InventoryItemId { get; set; } public string InventoryAssetId { get; set; } public string InventoryLotId { get; set; } public string InventoryLocationId { get; set; } public int Revision { get; set; } public WorkOrderPartContent Content { get; set; } = new WorkOrderPartContent(); }
 	public sealed class WorkOrderSummary
 	{
 		public WorkOrderStatus? QuickStatus { get; set; }
@@ -122,14 +123,19 @@ namespace Resgrid.Model.WorkOrders
 		public string VerifiedBy { get; set; }
 		public DateTime? CompletedOn { get; set; }
 		public DateTime? ClosedOn { get; set; }
+		public string SourceChecklistCompletionId { get; set; }
+		public string SourceChecklistItemId { get; set; }
+		public string RecurrenceId { get; set; }
+		public DateTime? OriginalDueOn { get; set; }
+		public DateTime? EscalatedOn { get; set; }
 		public List<WorkOrderActivityView> Activities { get; set; } = new List<WorkOrderActivityView>();
 		public List<WorkOrderLaborView> Labor { get; set; } = new List<WorkOrderLaborView>();
 		public List<WorkOrderPartView> Parts { get; set; } = new List<WorkOrderPartView>();
 		public List<WorkOrderFileView> Files { get; set; } = new List<WorkOrderFileView>();
 	}
-	public sealed class WorkOrderActivityView { public WorkOrderContent Snapshot { get; set; } public string AssignedToUserId { get; set; } public int? AssignedToRoleId { get; set; } public int Id { get; set; } public WorkOrderActivityType Type { get; set; } public string UserId { get; set; } public DateTime CreatedOn { get; set; } public string Note { get; set; } public int? OldStatus { get; set; } public int? NewStatus { get; set; } }
+	public sealed class WorkOrderActivityView { public DateTime? OriginalDueOn { get; set; } public DateTime? RevisedDueOn { get; set; } public WorkOrderContent Snapshot { get; set; } public string AssignedToUserId { get; set; } public int? AssignedToRoleId { get; set; } public int Id { get; set; } public WorkOrderActivityType Type { get; set; } public string UserId { get; set; } public DateTime CreatedOn { get; set; } public string Note { get; set; } public int? OldStatus { get; set; } public int? NewStatus { get; set; } }
 	public sealed class WorkOrderLaborView { public int Id { get; set; } public string UserId { get; set; } public DateTime WorkDate { get; set; } public WorkOrderLaborContent Content { get; set; } }
-	public sealed class WorkOrderPartView { public int Id { get; set; } public DateTime? VoidedOn { get; set; } public WorkOrderPartContent Content { get; set; } }
+	public sealed class WorkOrderPartView { public string InventoryWitnessRequestId { get; set; } public string InventoryItemId { get; set; } public string InventoryTransactionId { get; set; } public string InventoryOperationId { get; set; } public bool AwaitingWitness { get; set; } public int Id { get; set; } public DateTime? VoidedOn { get; set; } public WorkOrderPartContent Content { get; set; } }
 	public sealed class WorkOrderFileView { public int Id { get; set; } public string Name { get; set; } public string ContentType { get; set; } public int Size { get; set; } public DateTime? WithdrawnOn { get; set; } }
 	public sealed class WorkOrderChoice { public string Id { get; set; } public string Name { get; set; } }
 	public sealed class WorkOrderChoices

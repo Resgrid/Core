@@ -678,4 +678,17 @@
   <data name="TargetType" xml:space="preserve"><value>نوع الهدف</value></data>
   <data name="Group" xml:space="preserve"><value>المحطة / المجموعة</value></data>
   <data name="ChecklistsDisabled" xml:space="preserve"><value>قوائم التحقق معطلة لهذا القسم.</value></data>
+<data name="CreateWorkOrderOnFail" xml:space="preserve"><value>إنشاء أمر عمل Readiness Pro عند الإخفاق</value></data>
+<data name="ReadinessFailureHelp" xml:space="preserve"><value>تبقى قائمة التحقق مجانية. تُعاد محاولة المتابعة المدفوعة عند توافر Readiness Pro؛ وتتطلب حظورات السلامة رفعًا مستقلاً منفصلاً.</value></data>
+<data name="RelatedWorkOrders" xml:space="preserve"><value>أوامر العمل المرتبطة</value></data>
+<data name="WorkOrderPriority" xml:space="preserve"><value>الأولوية</value></data>
+<data name="WorkOrderPriorityLow" xml:space="preserve"><value>منخفضة</value></data>
+<data name="WorkOrderPriorityNormal" xml:space="preserve"><value>عادية</value></data>
+<data name="WorkOrderPriorityHigh" xml:space="preserve"><value>عالية</value></data>
+<data name="WorkOrderPriorityEmergency" xml:space="preserve"><value>طارئة</value></data>
+<data name="SetUnitStateOnFail" xml:space="preserve"><value>إخراج الوحدة من الخدمة</value></data>
+<data name="HoldAssetOnFail" xml:space="preserve"><value>إخراج المعدة للإصلاح</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>تخزين الصيانة غير متاح.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>ليس لديك إذن لتنفيذ هذا الإجراء.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>اختر هدفًا متاحًا في قسمك.</value></data>
 </root>

@@ -678,4 +678,17 @@
   <data name="TargetType" xml:space="preserve"><value>Zieltyp</value></data>
   <data name="Group" xml:space="preserve"><value>Wache / Gruppe</value></data>
   <data name="ChecklistsDisabled" xml:space="preserve"><value>Checklisten sind für diese Abteilung deaktiviert.</value></data>
+<data name="CreateWorkOrderOnFail" xml:space="preserve"><value>Bei Fehler einen Readiness Pro-Arbeitsauftrag erstellen</value></data>
+<data name="ReadinessFailureHelp" xml:space="preserve"><value>Die Prüfliste bleibt kostenlos. Kostenpflichtige Folgeschritte werden bei verfügbarem Readiness Pro erneut versucht; Sicherheitssperren erfordern eine separate unabhängige Freigabe.</value></data>
+<data name="RelatedWorkOrders" xml:space="preserve"><value>Verknüpfte Arbeitsaufträge</value></data>
+<data name="WorkOrderPriority" xml:space="preserve"><value>Priorität</value></data>
+<data name="WorkOrderPriorityLow" xml:space="preserve"><value>Niedrig</value></data>
+<data name="WorkOrderPriorityNormal" xml:space="preserve"><value>Normale Priorität</value></data>
+<data name="WorkOrderPriorityHigh" xml:space="preserve"><value>Hoch</value></data>
+<data name="WorkOrderPriorityEmergency" xml:space="preserve"><value>Notfall</value></data>
+<data name="SetUnitStateOnFail" xml:space="preserve"><value>Einheit außer Dienst setzen</value></data>
+<data name="HoldAssetOnFail" xml:space="preserve"><value>Gerät zur Reparatur sperren</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>Wartungsspeicher nicht verfügbar.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Sie haben keine Berechtigung für diese Aktion.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Wählen Sie ein verfügbares Ziel in Ihrer Organisation.</value></data>
 </root>

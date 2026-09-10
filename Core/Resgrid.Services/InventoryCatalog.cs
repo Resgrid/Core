@@ -110,7 +110,7 @@ namespace Resgrid.Services
 		});
 		public Task RebuildStocksAsync(InventoryActor actor) => TransactionAsync(actor, async events => {
 			await _auth.RequireAsync(actor, true); await _store.RebuildStocksAsync(actor.DepartmentId);
-			foreach (var item in await AllAsync<InventoryItem>(actor.DepartmentId)) await RefreshLowStockAsync(actor, item.Id, events);
+			await RefreshAllLowStockAsync(actor, events);
 			return true;
 		});
 		public async Task<System.Collections.Generic.List<InventoryTransaction>> GetByReferenceAsync(InventoryActor actor, InventoryReferenceType type, string id)

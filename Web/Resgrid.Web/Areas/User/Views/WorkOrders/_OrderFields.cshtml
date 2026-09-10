@@ -1,0 +1,32 @@
+@model Resgrid.Model.WorkOrders.WorkOrderInput
+@using Resgrid.Model.WorkOrders
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{ var choices = (WorkOrderChoices)ViewData["Choices"]; var canManage = (bool)ViewData["CanManage"]; }
+<div class="form-group"><label asp-for="Content.Title">@localizer["Title"]</label><input asp-for="Content.Title" class="form-control" required maxlength="200"/></div>
+<div class="form-group"><label asp-for="Content.Description">@localizer["Description"]</label><textarea asp-for="Content.Description" class="form-control" rows="5" maxlength="20000"></textarea></div>
+<div class="row">
+@if (ViewData["Recurrence"] as bool? != true) { <div class="col-sm-4 form-group"><label asp-for="Type">@localizer["Type"]</label><select asp-for="Type" class="form-control">@foreach (var t in Enum.GetValues<WorkOrderType>()) { <option value="@((int)t)">@localizer["Type" + t]</option> }</select></div> }
+<div class="col-sm-4 form-group"><label asp-for="Priority">@localizer["Priority"]</label><select asp-for="Priority" class="form-control">@foreach (var p in Enum.GetValues<WorkOrderPriority>()) { <option value="@((int)p)">@localizer["Priority" + p]</option> }</select></div>
+@if (ViewData["Recurrence"] as bool? != true) { <div class="col-sm-4 form-group"><label asp-for="DueOn">@localizer["DueOn"] (UTC)</label><input asp-for="DueOn" class="form-control" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm:ss.fffffff}" step="any" readonly="@(Model.Revision > 0)"/></div> }</div>
+<div class="row"><div class="col-sm-4 form-group"><label asp-for="TargetUnitId">@localizer["Unit"]</label><select asp-for="TargetUnitId" class="form-control"><option value="">@localizer["None"]</option>@foreach (var x in choices.Units) { <option value="@x.Id">@x.Name</option> }</select></div>
+<div class="col-sm-4 form-group"><label asp-for="TargetGroupId">@localizer["Group"]</label><select asp-for="TargetGroupId" class="form-control"><option value="">@localizer["None"]</option>@foreach (var x in choices.Groups) { <option value="@x.Id">@x.Name</option> }</select></div>
+@if (choices.Assets.Count > 0) { <div class="col-sm-4 form-group"><label asp-for="InventoryAssetId">@localizer["Asset"]</label><select asp-for="InventoryAssetId" class="form-control"><option value="">@localizer["None"]</option>@foreach (var x in choices.Assets) { <option value="@x.Id">@x.Name</option> }</select></div> }
+else { <input asp-for="InventoryAssetId" type="hidden"/> }</div>
+<div class="form-group"><label asp-for="Content.LocationText">@localizer["LocationText"]</label><input asp-for="Content.LocationText" class="form-control" maxlength="1000"/></div>
+<div class="row"><div class="col-sm-4 form-group"><label asp-for="Content.Currency">@localizer["Currency"]</label><input asp-for="Content.Currency" class="form-control" maxlength="3" pattern="[A-Z]{3}" required/></div>
+<div class="col-sm-4 form-group"><label asp-for="Content.EstimatedCost">@localizer["EstimatedCost"]</label><input asp-for="Content.EstimatedCost" type="number" min="0" step="0.01" class="form-control"/></div>
+@if (canManage) { <div class="col-sm-4 form-group"><label asp-for="Content.ApprovedCost">@localizer["ApprovedCost"]</label><input asp-for="Content.ApprovedCost" type="number" min="0" step="0.01" class="form-control"/></div> }</div>
+<div class="form-group"><label asp-for="Content.CostCenter">@localizer["CostCenter"]</label><input asp-for="Content.CostCenter" class="form-control" maxlength="200"/></div>
+<div class="form-group"><label asp-for="Content.VendorDetails">@localizer["VendorDetails"]</label><textarea asp-for="Content.VendorDetails" class="form-control" maxlength="4000"></textarea></div>
+<div class="form-group"><label asp-for="Content.WarrantyReference">@localizer["WarrantyReference"]</label><input asp-for="Content.WarrantyReference" class="form-control" maxlength="4000"/></div>
+<label><input asp-for="Content.SafetyCritical"/> @localizer["SafetyCritical"]</label>
+<label><input asp-for="Content.HazardousWork"/> @localizer["HazardousWork"]</label>
+<p>@localizer["SafetyNotice"]</p>
+<div class="form-group"><label asp-for="Content.ProcedureReference">@localizer["ProcedureReference"]</label><input asp-for="Content.ProcedureReference" class="form-control" maxlength="4000"/></div>
+<div class="form-group"><label asp-for="Content.ProcedureVersion">@localizer["ProcedureVersion"]</label><input asp-for="Content.ProcedureVersion" class="form-control" maxlength="4000"/></div>
+<div class="form-group"><label asp-for="Content.PermitReference">@localizer["PermitReference"]</label><input asp-for="Content.PermitReference" class="form-control" maxlength="4000"/></div>
+<div class="form-group"><label asp-for="Content.IsolationReference">@localizer["IsolationReference"]</label><input asp-for="Content.IsolationReference" class="form-control" maxlength="4000"/></div>
+<div class="form-group"><label asp-for="Content.QualifiedPersonnel">@localizer["QualifiedPersonnel"]</label><input asp-for="Content.QualifiedPersonnel" class="form-control" maxlength="4000"/></div>
+<h3>@localizer["TaskSteps"]</h3><div id="work-order-steps">
+@for (var i = 0; i < Model.Content.Steps.Count; i++) { <div class="form-group"><input asp-for="Content.Steps[i].Text" class="form-control" maxlength="1000" required/><input asp-for="Content.Steps[i].Completed" type="hidden"/></div> }
+</div><button type="button" class="btn btn-default" id="work-order-add-step">@localizer["AddStep"]</button>

@@ -14,6 +14,7 @@
         <dt>@localizer["Version"]</dt><dd>@Model.VersionNumber</dd>
         @if (run.WitnessedOn.HasValue) { <dt>@localizer["WitnessLabel"]</dt><dd>@run.WitnessUserId · @run.WitnessedOn.Value.ToString("u")</dd><dt>@localizer["Attestation"]</dt><dd>@Model.WitnessAttestation</dd> }
     </dl>
+    @if (Model.Form.Sections.SelectMany(s => s.Items).Any(i => i.CreateWorkOrderOnFail)) { <a class="btn btn-default" asp-controller="WorkOrders" asp-action="Index" asp-route-checklistCompletionId="@run.Id">@localizer["RelatedWorkOrders"]</a> }
     @foreach (var checklistSection in Model.Form.Sections)
     {
         <h3>@checklistSection.Name</h3>

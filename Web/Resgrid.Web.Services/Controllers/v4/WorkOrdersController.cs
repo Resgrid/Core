@@ -15,11 +15,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 {
 	[Route("api/v{VersionId:apiVersion}/[controller]"), ApiVersion("4.0"), ApiExplorerSettings(GroupName = "v4"), Authorize]
 	[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None), RequestSizeLimit(1024 * 1024)]
-	public sealed class WorkOrdersController : V4AuthenticatedApiControllerbase, IAsyncActionFilter
+	public sealed partial class WorkOrdersController : V4AuthenticatedApiControllerbase, IAsyncActionFilter
 	{
 		private readonly IWorkOrdersService _orders;
+		private readonly IWorkOrderMaintenanceService _maintenance;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> _strings;
-		public WorkOrdersController(IWorkOrdersService orders, IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> strings) { _orders = orders; _strings = strings; }
+		public WorkOrdersController(IWorkOrdersService orders, IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> strings, IWorkOrderMaintenanceService maintenance = null) { _orders = orders; _strings = strings; _maintenance = maintenance; }
 		private ChecklistActor Actor => new ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = Request.Headers[DataProtectionController.GrantHeader].ToString() };
 		private OkObjectResult Reply<T>(T value, int count = 1, bool more = false) { var response = new WorkOrderApiResult<T> { Data = value, Status = ResponseHelper.Success, PageSize = count, HasMore = more }; ResponseHelper.PopulateV4ResponseData(response); return Ok(response); }
 		private static T Required<T>(T input) where T : class => input ?? throw new WorkOrderException(400, "InvalidInput");

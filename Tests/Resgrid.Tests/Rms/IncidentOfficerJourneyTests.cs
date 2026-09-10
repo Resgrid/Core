@@ -40,7 +40,7 @@ namespace Resgrid.Tests.Rms
 				ResultJson = "{\"decision\":\"Engine 5 selected\",\"caller\":\"Private caller identity\"}" } });
 			var evidence = new RecordsEvidenceService(_store.Shared.EvidenceRepo.Object, _store.Shared.RecordsRepo.Object, _store.ReportsRepo.Object,
 				_store.Shared.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { new RunCardActivationEvidenceAdapter(activations.Object) },
-				_authorization.Object, _calls.Object, Mock.Of<IRmsExternalReferencesRepository>(), new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object));
+				_authorization.Object, _calls.Object, Mock.Of<IRmsExternalReferencesRepository>(), new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.Shared.OutboxRepo.Object, _aggregator.Object), Mock.Of<Resgrid.Model.Repositories.IInventoryStore>());
 			_service = BuildService(udf, evidence);
 			var started = await _service.StartFromCallAsync(Dept, "author", CallId); var id = started.Report.RmsIncidentReportId;
 			var sample = Resgrid.Tests.Providers.NerisMappingTests.Snapshot();

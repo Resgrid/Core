@@ -41,6 +41,29 @@ namespace Resgrid.Tests.Services
 		private const string M5CountId = "77777777-7777-7777-7777-777777777777";
 		private const string M5LineId = "88888888-8888-8888-8888-888888888888";
 
+		[TestCase(InventoryReportKind.Expiration)]
+		[TestCase(InventoryReportKind.Valuation)]
+		public async Task Inventory_report_selection_survives_protected_navigation(InventoryReportKind kind)
+		{
+			await WithM5Server(M5Operations(), async (client, views) =>
+			{
+				SignIn(client); client.DefaultRequestHeaders.Add("Test-Reports", "true");
+				var response = await client.GetAsync(MvcRoute + "Operations?tab=Reports&kind=" + (int)kind); await Success(response);
+				var html = await response.Content.ReadAsStringAsync();
+				var locked = (InventoryWorkspaceView)views.LastView.Model;
+				locked.Locked.Should().BeTrue(); locked.ReportKind.Should().Be(kind);
+				html.Should().Contain("name=\"kind\" value=\"" + (int)kind + "\"");
+				response = await client.PostAsync(MvcRoute + "ReopenOperations", new FormUrlEncodedContent(new Dictionary<string, string>
+				{
+					["__RequestVerificationToken"] = PurchasingCsrf(html), ["tab"] = "Reports", ["kind"] = ((int)kind).ToString(),
+					[HttpProtectedGrantContext.FormFieldName] = "navigation-grant", [HttpProtectedGrantContext.ExpiresOnFormFieldName] = "2030-01-01T00:00:00Z"
+				}));
+				await Success(response);
+				((InventoryWorkspaceView)views.LastView.Model).ReportKind.Should().Be(kind);
+				(await response.Content.ReadAsStringAsync()).Should().Contain("value=\"" + (int)kind + "\" selected=\"selected\"");
+			}, mvc: true, protectedData: true);
+		}
+
 		[Test]
 		public async Task Operations_API_uses_authenticated_tenant_and_header_grant_for_count_commands_and_query_filters()
 		{

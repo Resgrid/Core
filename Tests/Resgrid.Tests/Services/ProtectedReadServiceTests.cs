@@ -359,7 +359,8 @@ namespace Resgrid.Tests.Services
 				"ChecklistDefinitions", "ChecklistDefinitionVersions", "ChecklistOccurrences", "ChecklistCompletions",
 				"ChecklistCompletionItems", "ChecklistCompletionFiles", "DepartmentChecklistSettings", "ChecklistSchedules",
 				// Work-order content uses WorkOrderTables.Fields<T>(); file downloads use the binary resolver.
-				"WorkOrders", "WorkOrderActivities", "WorkOrderLabors", "WorkOrderParts", "WorkOrderFiles",
+                "WorkOrders", "WorkOrderActivities", "WorkOrderLabors", "WorkOrderParts", "WorkOrderFiles",
+                "WorkOrderFailureIntents", "WorkOrderSafetyHolds", "WorkOrderRecurrences", "WorkOrderRecurrenceVersions", "WorkOrderMeterReadings", "WorkOrderRecurrenceChanges",
 				// Inventory content uses InventoryTables.Fields<T>() through the generic protected resolver.
 				"InventoryCategories", "InventoryItems", "InventoryLocations", "InventoryLots", "InventoryStocks",
 				"InventoryAssets", "InventoryTransactions", "InventoryOperations", "InventoryTransfers", "InventoryTransferItems",

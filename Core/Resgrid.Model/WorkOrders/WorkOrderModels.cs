@@ -8,7 +8,7 @@ namespace Resgrid.Model.WorkOrders
 	public enum WorkOrderStatus { Requested = 0, Accepted = 1, Assigned = 2, InProgress = 3, OnHold = 4, Completed = 5, Closed = 6, Rejected = 7, Duplicate = 8, Cancelled = 9 }
 	public enum WorkOrderPriority { Low = 0, Normal = 1, High = 2, Emergency = 3 }
 	public enum WorkOrderType { Corrective = 0, Preventive = 1, Inspection = 2, Facility = 3, Other = 4 }
-	public enum WorkOrderActivityType { Created = 0, Updated = 1, StatusChanged = 2, Assigned = 3, AssignmentAccepted = 4, Comment = 5, LaborAdded = 6, PartAdded = 7, PartVoided = 8, FileAdded = 9, FileWithdrawn = 10 }
+	public enum WorkOrderActivityType { Created = 0, Updated = 1, StatusChanged = 2, Assigned = 3, AssignmentAccepted = 4, Comment = 5, LaborAdded = 6, PartAdded = 7, PartVoided = 8, FileAdded = 9, FileWithdrawn = 10, SafetyHold = 11, SafetyReleased = 12, Deferred = 13, Escalated = 14 }
 	/// <summary>Free text, monetary details and file names live only in cataloged Content. Numeric identities are allocated with empty content before sealing.</summary>
 	public abstract class WorkOrderRow : IEntity
 	{
@@ -59,6 +59,12 @@ namespace Resgrid.Model.WorkOrders
 		public bool RestoreUnitStateOnClose { get; set; }
 		public int? PreviousUnitStateType { get; set; }
 		public string WorkOrderRecurrenceId { get; set; }
+		public int? RecurrenceVersionId { get; set; }
+		public long? RecurrenceCycle { get; set; }
+		public DateTime? OriginalDueOn { get; set; }
+		public DateTime? EscalatedOn { get; set; }
+		public int EscalateAfterMinutes { get; set; }
+		public int? EscalationRoleId { get; set; }
 		public bool IsDeleted { get; set; }
 	}
 	public sealed class WorkOrderActivity : WorkOrderRow
@@ -72,6 +78,9 @@ namespace Resgrid.Model.WorkOrders
 	{
 		public string InventoryItemId { get; set; }
 		public string InventoryTransactionId { get; set; }
+		public string InventoryOperationId { get; set; }
+		public string InventoryReversalId { get; set; }
+		public string InventoryRequestId { get; set; }
 		public DateTime? VoidedOn { get; set; }
 	}
 	public sealed class WorkOrderFile : WorkOrderRow
@@ -108,14 +117,20 @@ namespace Resgrid.Model.WorkOrders
 	}
 	public sealed class WorkOrderTaskStep { public string Text { get; set; } public bool Completed { get; set; } }
 	public sealed class WorkOrderLaborContent { public decimal Hours { get; set; } public decimal? RatePerHour { get; set; } public string Note { get; set; } }
-	public sealed class WorkOrderPartContent { public string Description { get; set; } public decimal Quantity { get; set; } public decimal? UnitCost { get; set; } public string VoidReason { get; set; } }
+	public sealed class WorkOrderPartContent { [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)] public string RequestFingerprint { get; set; } public string Currency { get; set; } public string Description { get; set; } public decimal Quantity { get; set; } public decimal? UnitCost { get; set; } public string VoidReason { get; set; } }
 	public static class WorkOrderTables
 	{
 		public const int CatalogVersion = 18;
+		public const int IntegrationCatalogVersion = 23;
+		public const int RecurrenceCatalogVersion = 24;
+		public static int VersionFor(string table) => table is "WorkOrderSafetyHolds" or "WorkOrderFailureIntents" ? IntegrationCatalogVersion : table is "WorkOrderRecurrences" or "WorkOrderRecurrenceVersions" or "WorkOrderMeterReadings" or "WorkOrderRecurrenceChanges" ? RecurrenceCatalogVersion : CatalogVersion;
 		public static readonly IReadOnlyDictionary<Type, string> All = new Dictionary<Type, string>
 		{
 			[typeof(WorkOrder)] = "WorkOrders", [typeof(WorkOrderActivity)] = "WorkOrderActivities", [typeof(WorkOrderLabor)] = "WorkOrderLabors",
-			[typeof(WorkOrderPart)] = "WorkOrderParts", [typeof(WorkOrderFile)] = "WorkOrderFiles"
+			[typeof(WorkOrderPart)] = "WorkOrderParts", [typeof(WorkOrderFile)] = "WorkOrderFiles",
+			[typeof(WorkOrderFailureIntent)] = "WorkOrderFailureIntents", [typeof(WorkOrderSafetyHold)] = "WorkOrderSafetyHolds",
+			[typeof(WorkOrderRecurrence)] = "WorkOrderRecurrences", [typeof(WorkOrderRecurrenceVersion)] = "WorkOrderRecurrenceVersions",
+			[typeof(WorkOrderMeterReading)] = "WorkOrderMeterReadings", [typeof(WorkOrderRecurrenceChange)] = "WorkOrderRecurrenceChanges"
 		};
 		public static IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> Fields<T>() where T : WorkOrderRow =>
 			new Dictionary<string, (Func<T, string>, Action<T, string>)> { [All[typeof(T)].ToLowerInvariant() + ".content"] = (x => x.Content, (x, v) => x.Content = v) };

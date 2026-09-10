@@ -35,13 +35,21 @@ namespace Resgrid.Services
 		private readonly Lazy<ICallsService> _reportCalls;
 		private readonly Lazy<IAuthorizationService> _reportAuthorization;
 		private readonly IChecklistHistoricalAssetSource _historicalAssets;
+		private readonly Lazy<IWorkOrderMaintenanceService> _failureMaintenance;
 		public ChecklistsService(IChecklistRepository store, IChecklistAuthorizationService authorization, IReadinessAccessService access,
 			IUnitOfWork uow, IAuditLogsRepository audit, IDomainEventOutboxService outbox, Lazy<IProtectedReadService> read,
 			Lazy<IProtectedWriteService> write, IRecordAttachmentScanner scanner, TimeProvider clock = null, IChecklistAssignmentService assignments = null, IChecklistAssetSource assets = null,
-			Lazy<ICallsService> reportCalls = null, Lazy<IAuthorizationService> reportAuthorization = null, IChecklistHistoricalAssetSource historicalAssets = null)
-		{ _store = store; _authorization = authorization; _access = access; _uow = uow; _audit = audit; _outbox = outbox; _read = read; _write = write; _scanner = scanner; _clock = clock ?? TimeProvider.System; _assignments = assignments; _assets = assets; _reportCalls = reportCalls; _reportAuthorization = reportAuthorization; _historicalAssets = historicalAssets; }
+			Lazy<ICallsService> reportCalls = null, Lazy<IAuthorizationService> reportAuthorization = null, IChecklistHistoricalAssetSource historicalAssets = null, Lazy<IWorkOrderMaintenanceService> failureMaintenance = null)
+		{ _store = store; _authorization = authorization; _access = access; _uow = uow; _audit = audit; _outbox = outbox; _read = read; _write = write; _scanner = scanner; _clock = clock ?? TimeProvider.System; _assignments = assignments; _assets = assets; _reportCalls = reportCalls; _reportAuthorization = reportAuthorization; _historicalAssets = historicalAssets; _failureMaintenance = failureMaintenance; }
 
-		public Task<bool> CanManageAsync(ChecklistActor actor) => _authorization.CanManageAsync(actor);
+		private async Task ValidateMaintenanceOptionsAsync(ChecklistActor actor, ChecklistForm form)
+        {
+            if (!form.Sections.SelectMany(s => s.Items).Any(i => i.CreateWorkOrderOnFail || i.SetUnitStateOnFail || i.HoldAssetOnFail)) return;
+            if (_failureMaintenance == null) throw new ChecklistException(503, "MaintenanceUnavailable");
+            try { await _failureMaintenance.Value.ValidateFailureOptionsAsync(actor, form); }
+            catch (Resgrid.Model.WorkOrders.WorkOrderException ex) { throw new ChecklistException(ex.StatusCode, ex.Code); }
+        }
+        public Task<bool> CanManageAsync(ChecklistActor actor) => _authorization.CanManageAsync(actor);
 		private async Task RequireWriteAsync(ChecklistActor actor, bool manage = false)
 		{
 			await _authorization.RequireMemberAsync(actor);
@@ -146,7 +154,7 @@ namespace Resgrid.Services
 		}
 		public async Task<string> SaveDefinitionAsync(ChecklistActor actor, string id, int revision, ChecklistForm form)
 		{
-			await RequireWriteAsync(actor, true); Valid(ChecklistValidation.Validate(form)); if (id != null) Id(id);
+			await RequireWriteAsync(actor, true); Valid(ChecklistValidation.Validate(form)); await ValidateMaintenanceOptionsAsync(actor, form); if (id != null) Id(id);
 			if (form.TargetType == ChecklistTargetType.InventoryAsset && !await AssetTargetsAvailableAsync(actor)) throw new ChecklistException(400, "AssetUnavailable");
 			foreach (var section in form.Sections)
 			{
@@ -176,7 +184,7 @@ namespace Resgrid.Services
 			{
 				var row = await RevealAsync(actor, await _store.GetAsync<ChecklistDefinition>(actor.DepartmentId, id)); Revision(row, revision);
 				if (row.DeletedOn.HasValue) throw new ChecklistException(409, "Deleted definitions cannot be published.");
-				Valid(ChecklistValidation.Validate(Decode<ChecklistForm>(row.Content)));
+				Valid(ChecklistValidation.Validate(Decode<ChecklistForm>(row.Content))); await ValidateMaintenanceOptionsAsync(actor, Decode<ChecklistForm>(row.Content));
 				var version = New<ChecklistDefinitionVersion>(actor, row.Id); version.Version = row.PublishedVersion + 1; version.Content = row.Content;
 				await PersistAsync(actor, version, true);
 				row.CurrentVersionId = version.Id; row.PublishedVersion = version.Version; row.Retired = false; row.Revision++;
@@ -333,7 +341,16 @@ namespace Resgrid.Services
 					row.SubmittedOn = DateTime.UtcNow; row.Score = evaluation.Score; row.Passed = evaluation.Passed; row.SubmissionHash = hash;
 					row.State = (int)(view.Form.RequiresIndependentWitness ? ChecklistRunState.AwaitingWitness : ChecklistRunState.Submitted);
 					await AdvanceOccurrenceAsync(actor, row);
-					foreach (var failed in evaluation.FailedItemIds) await EventAsync(actor, row, WorkflowTriggerEventType.ChecklistFailed, failed, events);
+					foreach (var failed in evaluation.FailedItemIds)
+                    {
+                        await EventAsync(actor, row, WorkflowTriggerEventType.ChecklistFailed, failed, events);
+                        var option = view.Form.Sections.SelectMany(s => s.Items).Single(i => i.Id == failed);
+                        if (option.CreateWorkOrderOnFail)
+                        {
+                            if (_failureMaintenance == null) throw new ChecklistException(503, "MaintenanceUnavailable");
+                            await _failureMaintenance.Value.RecordFailureIntentAsync(actor, row, await _store.GetAsync<ChecklistDefinitionVersion>(actor.DepartmentId, row.VersionId), option);
+                        }
+                    }
 					if (row.State == (int)ChecklistRunState.Submitted) await EventAsync(actor, row, WorkflowTriggerEventType.ChecklistCompleted, null, events);
 				}
 				await PersistAsync(actor, row, false); await AuditAsync(actor, row, submit ? AuditLogTypes.ChecklistCompletionSubmitted : AuditLogTypes.ChecklistProgressSaved,

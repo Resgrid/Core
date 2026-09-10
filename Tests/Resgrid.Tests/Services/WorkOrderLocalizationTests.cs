@@ -15,7 +15,24 @@ namespace Resgrid.Tests.Services
 	[TestFixture]
 	public class WorkOrderLocalizationTests
 	{
-		public static IEnumerable<string> Cultures => SupportedLocales.GetSupportedCultures();
+        public static IEnumerable<string> Cultures => SupportedLocales.GetSupportedCultures();
+        [Test]
+        public void Maintenance_views_and_service_errors_resolve_real_resource_keys()
+        {
+            var root = new DirectoryInfo(ResourceDirectory()).Parent.Parent.Parent.Parent.Parent.FullName;
+            var files = Directory.GetFiles(Path.Combine(root, "Core", "Resgrid.Services"), "WorkOrder*.cs")
+                .Concat(Directory.GetFiles(Path.Combine(root, "Web", "Resgrid.Web", "Areas", "User", "Views", "WorkOrders"), "*.cshtml"));
+            var keys = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var file in files)
+            {
+                var source = File.ReadAllText(file);
+                foreach (Match match in Regex.Matches(source, """localizer\["([^"]+)"\]|WorkOrderException\(\d+, "([^"]+)"\)|MaintenanceText\("([^"]+)"\)"""))
+                    keys.Add(match.Groups.Cast<Group>().Skip(1).First(g=>g.Success).Value);
+            }
+            keys.UnionWith(new[] { "ActivitySafetyHold", "ActivitySafetyReleased", "StateRestored", "StatePreserved", "Active", "Paused", "GeneratedFailureTitle" });
+            var resources = Read(Path.Combine(ResourceDirectory(), "WorkOrders.resx"));
+            keys.Except(resources.Keys).Should().BeEmpty("user interfaces and errors must not show untranslated resource identifiers");
+        }
 		private static string ResourceDirectory()
 		{
 			var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);

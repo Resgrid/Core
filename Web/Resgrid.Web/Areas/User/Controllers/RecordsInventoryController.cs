@@ -147,6 +147,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			catch (Exception ex) when (ex is InvalidOperationException || ex is ArgumentException || ex is UnauthorizedAccessException || ex is InventoryException)
 			{
+				Resgrid.Framework.Logging.LogError($"Record inventory evidence capture failed for department {DepartmentId}: {ex.GetType().FullName}.");
 				return Text("RecordUsageEvidencePending", "The inventory action was saved. Evidence could not be captured; use Refresh evidence after resolving access or draft changes. Do not submit the inventory action again.");
 			}
 		}

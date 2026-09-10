@@ -678,4 +678,17 @@
   <data name="TargetType" xml:space="preserve"><value>Tipo de objetivo</value></data>
   <data name="Group" xml:space="preserve"><value>Estación / grupo</value></data>
   <data name="ChecklistsDisabled" xml:space="preserve"><value>Las listas de verificación están deshabilitadas para este departamento.</value></data>
+<data name="CreateWorkOrderOnFail" xml:space="preserve"><value>Crear una orden Readiness Pro al fallar</value></data>
+<data name="ReadinessFailureHelp" xml:space="preserve"><value>La lista sigue siendo gratuita. El seguimiento de pago se reintenta cuando Readiness Pro está disponible; los bloqueos configurados requieren una liberación independiente separada.</value></data>
+<data name="RelatedWorkOrders" xml:space="preserve"><value>Órdenes de trabajo relacionadas</value></data>
+<data name="WorkOrderPriority" xml:space="preserve"><value>Prioridad</value></data>
+<data name="WorkOrderPriorityLow" xml:space="preserve"><value>Baja</value></data>
+<data name="WorkOrderPriorityNormal" xml:space="preserve"><value>Prioridad normal</value></data>
+<data name="WorkOrderPriorityHigh" xml:space="preserve"><value>Alta</value></data>
+<data name="WorkOrderPriorityEmergency" xml:space="preserve"><value>Emergencia</value></data>
+<data name="SetUnitStateOnFail" xml:space="preserve"><value>Poner la unidad fuera de servicio</value></data>
+<data name="HoldAssetOnFail" xml:space="preserve"><value>Retirar el equipo para reparación</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>El almacenamiento de mantenimiento no está disponible.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>No tiene permiso para realizar esta acción.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Seleccione un destino disponible en su departamento.</value></data>
 </root>

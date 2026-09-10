@@ -21,12 +21,12 @@ namespace Resgrid.Tests.Services
 {
     public partial class DepartmentDataMigrationEngineTests
     {
-        [Test]
-        public async Task Work_order_catalog_upgrade_is_retry_safe_and_offboards_all_text_and_binary_fields()
+        [TestCase(17,18,5,6),TestCase(22,23,2,2),TestCase(23,24,4,4)]
+        public async Task Work_order_catalog_upgrade_is_retry_safe_and_offboards_all_text_and_binary_fields(int from, int to, int tables, int columns)
         {
             _bulk.Seed("Calls","CallId");
-            var bindings=AdpTableBindings.ForVersionRange(new ProtectedFieldCatalog(),17,18);
-            bindings.Should().HaveCount(5); bindings.Sum(b=>b.Columns.Count).Should().Be(6);
+            var bindings=AdpTableBindings.ForVersionRange(new ProtectedFieldCatalog(),from,to);
+            bindings.Should().HaveCount(tables); bindings.Sum(b=>b.Columns.Count).Should().Be(columns);
             var bytes=Encoding.UTF8.GetBytes("SYNTHETIC-PHI-FILE");
             foreach(var b in bindings)
             {
@@ -35,7 +35,7 @@ namespace Resgrid.Tests.Services
                 foreach(var c in b.Columns) row[c.ColumnName]=c.StorageKind==ProtectedFieldStorageKind.Binary ? bytes : "SYNTHETIC-PHI-CANARY";
                 _bulk.Seed(b.TableName,b.PkColumn,row);
             }
-            var upgrade=Context(DepartmentDataProtectionMigrationKind.CatalogUpgrade);upgrade.FromCatalogVersion=17;upgrade.CatalogVersion=18;
+            var upgrade=Context(DepartmentDataProtectionMigrationKind.CatalogUpgrade);upgrade.FromCatalogVersion=from;upgrade.CatalogVersion=to;
             (await _engine.RunEncryptionNightAsync(upgrade,CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
             var envelopes=new Dictionary<string,string>();
             foreach(var b in bindings)
@@ -48,15 +48,15 @@ namespace Resgrid.Tests.Services
             }
             (await _engine.RunEncryptionNightAsync(upgrade,CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
             foreach(var b in bindings) _bulk.Table(b.TableName).Single()["Content"].Should().Be(envelopes[b.TableName]);
-            var offboarding=Context(DepartmentDataProtectionMigrationKind.Offboarding);offboarding.CatalogVersion=18;
+            var offboarding=Context(DepartmentDataProtectionMigrationKind.Offboarding);offboarding.CatalogVersion=to;
             (await _engine.RunDecryptionNightAsync(offboarding,CancellationToken.None)).Outcome.Should().Be(AdpMigrationNightOutcome.CompletedAllTables);
             foreach(var b in bindings) _bulk.Table(b.TableName).Single()["Content"].Should().Be("SYNTHETIC-PHI-CANARY");
-            ((byte[])_bulk.Table("WorkOrderFiles").Single()["Data"]).Should().Equal(bytes);
+            if(to==18) ((byte[])_bulk.Table("WorkOrderFiles").Single()["Data"]).Should().Equal(bytes);
         }
     }
     public partial class ChecklistEventDeliveryTests
     {
-        [TestCase(70),TestCase(71),TestCase(72)]
+        [TestCase(70),TestCase(71),TestCase(72),TestCase(73),TestCase(167),TestCase(168),TestCase(169),TestCase(170),TestCase(171),TestCase(172)]
         public async Task Work_order_events_encrypt_history_and_replay_only_safe_Workflow_routing(int trigger)
         {
             var notifications=new Mock<IWorkOrderNotificationService>();

@@ -1,0 +1,35 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderDetailView
+@using Resgrid.Model.WorkOrders
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{ var d = Model.Detail; var id = d.Order.Id; }
+@if (d.SourceChecklistCompletionId != null) { <p><a asp-controller="Checklists" asp-action="Run" asp-route-id="@d.SourceChecklistCompletionId">@localizer["SourceChecklist"]</a></p> }
+@if (d.RecurrenceId != null) { <p><a asp-action="Recurrence" asp-route-id="@d.RecurrenceId">@localizer["PreventiveMaintenance"]</a></p> }
+@if (d.OriginalDueOn.HasValue) { <p>@localizer["OriginalDue"]: @d.OriginalDueOn.Value.ToString("u")</p> }
+<h3>@localizer["SafetyHolds"]</h3><p>@localizer["HoldReleaseHelp"]</p>
+<table class="table"><thead><tr><th>@localizer["Target"]</th><th>@localizer["Reason"]</th><th>@localizer["Status"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
+@foreach (var entry in Model.Holds) {
+    var h = entry.Hold;
+    <tr><td>@localizer[h.UnitId.HasValue ? "Unit" : "Asset"]: @(h.UnitId?.ToString() ?? h.AssetId)</td><td>@entry.Content.Reason</td>
+    <td>@localizer[h.ReleasedOn.HasValue ? "ActivitySafetyReleased" : "ActivitySafetyHold"] @if (h.ReleasedOn.HasValue) { <span>· @localizer[h.StateRestored ? "StateRestored" : "StatePreserved"]</span><p>@entry.Content.ReleaseEvidence</p><p>@entry.Content.Qualification</p> }</td>
+    <td>@if (!h.ReleasedOn.HasValue && Model.CanRelease) {
+        <form class="work-order-form work-order-command" asp-action="ReleaseHold" method="post">@Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@id"/><input type="hidden" name="holdId" value="@h.Id"/><input type="hidden" name="Revision" value="@h.Revision"/>
+        <label>@localizer["ReleaseEvidence"]<textarea name="Evidence" class="form-control" maxlength="4000" required></textarea></label>
+        <label>@localizer["ReleaseQualification"]<input name="Qualification" class="form-control" maxlength="2000" required/></label>
+        <label><input type="checkbox" name="RestoreState" value="true"/> @localizer["RestoreIfUnchanged"]</label>
+        <button type="submit" class="btn btn-warning">@localizer["ReleaseHold"]</button></form>
+    }</td></tr>
+}
+</tbody></table>
+@if (d.CanManage && d.Order.Status is not (WorkOrderStatus.Closed or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate)) {
+@if (d.Order.UnitId.HasValue || d.Order.AssetId != null) {
+<form class="work-order-form work-order-command" asp-action="Hold" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
+@if (d.Order.UnitId.HasValue) { <label><input type="checkbox" name="Unit" value="true"/> @localizer["HoldUnit"]</label> }
+@if (d.Order.AssetId != null) { <label><input type="checkbox" name="Asset" value="true"/> @localizer["HoldAsset"]</label> }
+<label>@localizer["Reason"]<textarea name="Reason" class="form-control" maxlength="4000" required></textarea></label><button type="submit" class="btn btn-warning">@localizer["AddHold"]</button></form>
+}
+@if (d.Order.Status != WorkOrderStatus.Completed) {
+<form class="work-order-form work-order-command" asp-action="Defer" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
+<label>@localizer["RevisedDue"] (UTC)<input type="datetime-local" name="DueOn" class="form-control" required/></label><label>@localizer["DeferralReason"]<textarea name="Reason" class="form-control" maxlength="4000" required></textarea></label><button type="submit" class="btn btn-default">@localizer["ApproveDeferral"]</button></form>
+}
+}

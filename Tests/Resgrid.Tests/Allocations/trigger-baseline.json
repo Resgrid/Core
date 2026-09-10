@@ -96,5 +96,12 @@
   "InventoryLowStock": 61,
   "InventoryExpiring": 62,
   "InventoryCountCompleted": 63,
-  "InventoryReturnOverdue": 166
+  "InventoryReturnOverdue": 166,
+  "WorkOrderOverdue": 73,
+  "WorkOrderSafetyHoldApplied": 167,
+  "WorkOrderSafetyHoldReleased": 168,
+  "WorkOrderRecurrenceChanged": 169,
+  "WorkOrderThresholdReached": 170,
+  "WorkOrderDeferred": 171,
+  "WorkOrderPartChanged": 172
 }

@@ -16,7 +16,13 @@
             const copy = event.target.closest('.m4-copy-line');
             if (remove && lines.children.length > 1) remove.closest('.m4-line').remove();
             if ((add || copy) && lines.children.length < 100) {
-                const row = (copy ? copy.closest('.m4-line') : lines.firstElementChild).cloneNode(true);
+                const source = copy ? copy.closest('.m4-line') : lines.firstElementChild;
+                const row = source.cloneNode(true);
+                if (copy && form.dataset.receipt === 'true') {
+                    source.querySelectorAll('select[name]').forEach(field => {
+                        row.querySelector('select[name="' + field.name + '"]').value = field.value;
+                    });
+                }
                 row.querySelectorAll('[name]').forEach(field => {
                     const label = field.id && row.querySelector('label[for="' + field.id + '"]');
                     if (field.id) { field.id = 'purchase-added-' + (++identity); if (label) label.htmlFor = field.id; }

@@ -678,4 +678,17 @@
   <data name="TargetType" xml:space="preserve"><value>Typ celu</value></data>
   <data name="Group" xml:space="preserve"><value>Stacja / grupa</value></data>
   <data name="ChecklistsDisabled" xml:space="preserve"><value>Listy kontrolne są wyłączone dla tego działu.</value></data>
+<data name="CreateWorkOrderOnFail" xml:space="preserve"><value>Utwórz zlecenie Readiness Pro przy niepowodzeniu</value></data>
+<data name="ReadinessFailureHelp" xml:space="preserve"><value>Lista pozostaje bezpłatna. Płatne działania są ponawiane, gdy Readiness Pro jest dostępny; blokady wymagają oddzielnego niezależnego zwolnienia.</value></data>
+<data name="RelatedWorkOrders" xml:space="preserve"><value>Powiązane zlecenia</value></data>
+<data name="WorkOrderPriority" xml:space="preserve"><value>Priorytet</value></data>
+<data name="WorkOrderPriorityLow" xml:space="preserve"><value>Niski</value></data>
+<data name="WorkOrderPriorityNormal" xml:space="preserve"><value>Normalny</value></data>
+<data name="WorkOrderPriorityHigh" xml:space="preserve"><value>Wysoki</value></data>
+<data name="WorkOrderPriorityEmergency" xml:space="preserve"><value>Nagły wypadek</value></data>
+<data name="SetUnitStateOnFail" xml:space="preserve"><value>Wyłącz jednostkę ze służby</value></data>
+<data name="HoldAssetOnFail" xml:space="preserve"><value>Wyłącz sprzęt do naprawy</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>Magazyn danych konserwacji jest niedostępny.</value></data>
+<data name="PermissionRequired" xml:space="preserve"><value>Nie masz uprawnień do wykonania tej czynności.</value></data>
+<data name="TargetUnavailable" xml:space="preserve"><value>Wybierz dostępny obiekt w swoim dziale.</value></data>
 </root>

@@ -154,4 +154,110 @@
 <data name="ActivityPartVoided" xml:space="preserve"><value>تم إبطال قطعة</value></data>
 <data name="ActivityFileAdded" xml:space="preserve"><value>تمت إضافة ملف</value></data>
 <data name="ActivityFileWithdrawn" xml:space="preserve"><value>تم سحب ملف</value></data>
+<data name="Active" xml:space="preserve"><value>جدول نشط</value></data>
+<data name="ActivityDeferred" xml:space="preserve"><value>تم تأجيل الموعد</value></data>
+<data name="ActivityEscalated" xml:space="preserve"><value>تصعيد التأخير</value></data>
+<data name="ActivitySafetyHold" xml:space="preserve"><value>تم فرض حظر السلامة</value></data>
+<data name="ActivitySafetyReleased" xml:space="preserve"><value>تم رفع حظر السلامة</value></data>
+<data name="AddHold" xml:space="preserve"><value>فرض حظر السلامة</value></data>
+<data name="ApproveDeferral" xml:space="preserve"><value>الموافقة على التأجيل</value></data>
+<data name="AssetHold" xml:space="preserve"><value>حظر سلامة المعدة</value></data>
+<data name="AssignmentAndEscalation" xml:space="preserve"><value>الإسناد والتصعيد</value></data>
+<data name="BlackoutFrom" xml:space="preserve"><value>بداية فترة الاستبعاد</value></data>
+<data name="BlackoutUntil" xml:space="preserve"><value>نهاية فترة الاستبعاد</value></data>
+<data name="Calendar" xml:space="preserve"><value>تكرار التقويم</value></data>
+<data name="CalendarDaily" xml:space="preserve"><value>يومي</value></data>
+<data name="CalendarMonthly" xml:space="preserve"><value>شهري</value></data>
+<data name="CalendarNone" xml:space="preserve"><value>بلا محفز تقويمي</value></data>
+<data name="CalendarQuarterly" xml:space="preserve"><value>ربع سنوي</value></data>
+<data name="CalendarWeekly" xml:space="preserve"><value>أسبوعي</value></data>
+<data name="CalendarYearly" xml:space="preserve"><value>سنوي</value></data>
+<data name="CompletionBased" xml:space="preserve"><value>حساب الفترة التالية من الإغلاق المعتمد</value></data>
+<data name="Condition" xml:space="preserve"><value>محفز الحالة</value></data>
+<data name="ConditionAtOrAbove" xml:space="preserve"><value>عند العتبة أو أعلى منها</value></data>
+<data name="ConditionAtOrBelow" xml:space="preserve"><value>عند العتبة أو أقل منها</value></data>
+<data name="ConditionNone" xml:space="preserve"><value>بلا محفز حالة</value></data>
+<data name="ConditionThreshold" xml:space="preserve"><value>عتبة الحالة</value></data>
+<data name="ConditionUnit" xml:space="preserve"><value>وحدة قياس الحالة</value></data>
+<data name="ConditionValue" xml:space="preserve"><value>قراءة الحالة</value></data>
+<data name="DeferralReason" xml:space="preserve"><value>سبب التأجيل</value></data>
+<data name="Edit" xml:space="preserve"><value>تعديل الجدول</value></data>
+<data name="EndDate" xml:space="preserve"><value>تاريخ الانتهاء</value></data>
+<data name="EscalateAfter" xml:space="preserve"><value>التصعيد بعد عدد دقائق التأخير</value></data>
+<data name="EscalationRole" xml:space="preserve"><value>دور مستلم التصعيد</value></data>
+<data name="FirstDueLocal" xml:space="preserve"><value>أول موعد استحقاق بالتوقيت المحلي</value></data>
+<data name="GeneratedFailureTitle" xml:space="preserve"><value>متابعة خلل قائمة التحقق</value></data>
+<data name="HoldAsset" xml:space="preserve"><value>إخراج المعدة للإصلاح</value></data>
+<data name="HoldUnit" xml:space="preserve"><value>إخراج الوحدة من الخدمة</value></data>
+<data name="HoldReleaseHelp" xml:space="preserve"><value>يجب أن يسجل مراجع مستقل ومخول مؤهلاته وأدلة رفع الحظر. تتطلب استعادة الخدمة رفع آخر حظر وعدم تغير الحالة؛ ولا يكفي الإغلاق وحده.</value></data>
+<data name="IndependentReleaseRequired" xml:space="preserve"><value>يجب أن يرفع هذا الحظر مراجع مخول آخر.</value></data>
+<data name="Interval" xml:space="preserve"><value>فترة الجدولة</value></data>
+<data name="InventoryOperationFailed" xml:space="preserve"><value>تعذر إكمال عملية المخزون. راجع التوافر والصلاحيات.</value></data>
+<data name="InventoryPartInvalid" xml:space="preserve"><value>اختر صنف مخزون وموقع مصدر صالحين.</value></data>
+<data name="InventoryParts" xml:space="preserve"><value>قطع مرتبطة بالمخزون</value></data>
+<data name="InventoryPartsHelp" xml:space="preserve"><value>اترك الصنف فارغًا لقطعة بنص حر. تستخدم قطع المخزون تكاليف السجل وقد تتطلب شاهدًا مستقلاً في المخزون.</value></data>
+<data name="InventoryPermissionRequired" xml:space="preserve"><value>يلزم إذن المخزون أو التحقق من البيانات المحمية.</value></data>
+<data name="InventoryWitnessPending" xml:space="preserve"><value>شاهد المخزون قيد الانتظار؛ أكمل الشهادة قبل إغلاق أمر العمل.</value></data>
+<data name="LeadDays" xml:space="preserve"><value>المهلة بالأيام</value></data>
+<data name="LoadChoices" xml:space="preserve"><value>تحميل مزيد من الخيارات</value></data>
+<data name="MaintenanceUnavailable" xml:space="preserve"><value>تخزين الصيانة غير متاح.</value></data>
+<data name="MeterBaseline" xml:space="preserve"><value>خط أساس فترة العداد</value></data>
+<data name="MeterCycles" xml:space="preserve"><value>دورات التشغيل</value></data>
+<data name="MeterEpoch" xml:space="preserve"><value>جيل العداد</value></data>
+<data name="MeterHours" xml:space="preserve"><value>ساعات التشغيل</value></data>
+<data name="MeterInterval" xml:space="preserve"><value>فترة العداد</value></data>
+<data name="MeterKilometers" xml:space="preserve"><value>كيلومترات</value></data>
+<data name="MeterMiles" xml:space="preserve"><value>الأميال المقطوعة</value></data>
+<data name="MeterNone" xml:space="preserve"><value>بلا محفز عداد</value></data>
+<data name="MeterUnit" xml:space="preserve"><value>وحدة قياس العداد</value></data>
+<data name="MeterValue" xml:space="preserve"><value>قراءة العداد</value></data>
+<data name="NewRecurrence" xml:space="preserve"><value>جدول وقائي جديد</value></data>
+<data name="NextDue" xml:space="preserve"><value>موعد الاستحقاق التالي</value></data>
+<data name="ObservedOn" xml:space="preserve"><value>وقت الرصد</value></data>
+<data name="OriginalDue" xml:space="preserve"><value>موعد الاستحقاق الأصلي</value></data>
+<data name="Paused" xml:space="preserve"><value>جدول متوقف</value></data>
+<data name="PreventiveMaintenance" xml:space="preserve"><value>الصيانة الوقائية</value></data>
+<data name="ReadingInvalid" xml:space="preserve"><value>تحقق من القراءة ووقت الرصد ومتطلبات إعادة ضبط العداد.</value></data>
+<data name="ReadingSource" xml:space="preserve"><value>مصدر القراءة</value></data>
+<data name="Readings" xml:space="preserve"><value>سجل القراءات</value></data>
+<data name="RecordReading" xml:space="preserve"><value>تسجيل القراءة</value></data>
+<data name="RecurrenceHelp" xml:space="preserve"><value>تُستخدم محفزات التقويم والعداد والحالة بحسب الأسبق. يُسمح بأمر معلق واحد لكل جدول. يؤدي إلغاء أمر مُنشأ إلى إيقاف الجدول للمراجعة.</value></data>
+<data name="RecurrenceInvalid" xml:space="preserve"><value>تحقق من الجدول والمنطقة الزمنية ونافذة الخدمة وإعدادات المحفزات.</value></data>
+<data name="RecurrencePending" xml:space="preserve"><value>أكمل الأمر المعلق أو ألغِه قبل تغيير الهدف أو خط أساس العداد.</value></data>
+<data name="ReleaseEvidence" xml:space="preserve"><value>أدلة التحقق لرفع الحظر</value></data>
+<data name="ReleaseHold" xml:space="preserve"><value>رفع حظر السلامة</value></data>
+<data name="ReleaseQualification" xml:space="preserve"><value>مؤهل المراجع</value></data>
+<data name="ResetMeter" xml:space="preserve"><value>تم استبدال العداد أو إعادة ضبطه (السبب مطلوب)</value></data>
+<data name="RestoreIfUnchanged" xml:space="preserve"><value>استعادة الحالة السابقة فقط إذا لم تتغير ولم تبقَ حظورات أخرى</value></data>
+<data name="RevisedDue" xml:space="preserve"><value>موعد الاستحقاق المعدل</value></data>
+<data name="SafetyHolds" xml:space="preserve"><value>حظورات السلامة</value></data>
+<data name="Schedule" xml:space="preserve"><value>جدول الصيانة</value></data>
+<data name="ServiceEnd" xml:space="preserve"><value>نهاية نافذة الخدمة</value></data>
+<data name="ServiceStart" xml:space="preserve"><value>بداية نافذة الخدمة</value></data>
+<data name="ServiceWindow" xml:space="preserve"><value>نافذة الخدمة</value></data>
+<data name="SourceChecklist" xml:space="preserve"><value>إرسال قائمة التحقق المصدر</value></data>
+<data name="StatePreserved" xml:space="preserve"><value>تم الحفاظ على الحالة الحالية</value></data>
+<data name="StateRestored" xml:space="preserve"><value>تمت استعادة الحالة السابقة</value></data>
+<data name="Target" xml:space="preserve"><value>هدف الصيانة</value></data>
+<data name="TimeZone" xml:space="preserve"><value>المنطقة الزمنية</value></data>
+<data name="UnitHold" xml:space="preserve"><value>حظر سلامة الوحدة</value></data>
+<data name="UsageAndCondition" xml:space="preserve"><value>الاستخدام والحالة</value></data>
+<data name="UseDueDeferral" xml:space="preserve"><value>استخدم إجراء التأجيل المعتمد لتغيير موعد الاستحقاق.</value></data>
+<data name="UseMeterReset" xml:space="preserve"><value>سجل إعادة ضبط موثقة لتغيير خط الأساس؛ واستخدم جدولًا جديدًا لوحدات قياس مختلفة.</value></data>
+<data name="InventoryItem" xml:space="preserve"><value>صنف المخزون</value></data>
+<data name="InventoryLocation" xml:space="preserve"><value>موقع المخزون المصدر</value></data>
+<data name="InventoryLot" xml:space="preserve"><value>دفعة المخزون</value></data>
+<data name="WorkOrderRecurrenceChanged" xml:space="preserve"><value>تم تغيير الجدول الوقائي</value></data>
+<data name="WorkOrderThresholdReached" xml:space="preserve"><value>تم بلوغ عتبة الصيانة</value></data>
+<data name="WorkOrderPartChanged" xml:space="preserve"><value>تم تغيير قطعة أمر العمل</value></data>
+<data name="MaintenanceChange0" xml:space="preserve"><value>تم إعداد الجدول</value></data>
+<data name="MaintenanceChange1" xml:space="preserve"><value>تم تسجيل القراءة</value></data>
+<data name="MaintenanceChange2" xml:space="preserve"><value>تم تسجيل إعادة ضبط العداد</value></data>
+<data name="MaintenanceChange3" xml:space="preserve"><value>تم تأجيل الموعد</value></data>
+<data name="MaintenanceChange4" xml:space="preserve"><value>تم إنشاء أمر العمل</value></data>
+<data name="MaintenanceChange5" xml:space="preserve"><value>تصعيد التأخير</value></data>
+<data name="WorkOrderOverdue" xml:space="preserve"><value>تصعيد التأخير</value></data>
+<data name="WorkOrderSafetyHoldApplied" xml:space="preserve"><value>تم فرض حظر السلامة</value></data>
+<data name="WorkOrderSafetyHoldReleased" xml:space="preserve"><value>تم رفع حظر السلامة</value></data>
+<data name="WorkOrderDeferred" xml:space="preserve"><value>تم تأجيل الموعد</value></data>
 </root>

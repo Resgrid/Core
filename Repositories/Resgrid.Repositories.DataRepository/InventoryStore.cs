@@ -76,6 +76,30 @@ namespace Resgrid.Repositories.DataRepository
 			$"SELECT {Cols(Columns<T>())} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}={P}DepartmentId AND {Col("Id")}={P}Id",
 			new { DepartmentId = departmentId, Id = id });
 
+		public async Task<List<InventoryAlert>> ClaimableAlertsAsync(int departmentId, string userId, DateTime now, int skip = 0)
+		{
+			if (string.IsNullOrWhiteSpace(userId) || skip < 0) throw new ArgumentException("A recipient and valid page are required.");
+			var columns = string.Join(",", Columns<InventoryAlert>().Select(c => "a." + Col(c)));
+			return (await QueryAsync<InventoryAlert>($@"SELECT {columns} FROM {Tbl("InventoryAlerts")} a
+LEFT JOIN {Tbl("InventoryAlertDeliveries")} d ON d.{Col("DepartmentId")}=a.{Col("DepartmentId")} AND d.{Col("AlertId")}=a.{Col("Id")} AND d.{Col("UserId")}=@UserId
+WHERE a.{Col("DepartmentId")}=@DepartmentId AND a.{Col("Status")}=0
+AND (d.{Col("Id")} IS NULL OR (d.{Col("State")} NOT IN (2,3) AND d.{Col("NextAttemptOn")}<=@Now AND (d.{Col("LeaseUntil")} IS NULL OR d.{Col("LeaseUntil")}<=@Now)))
+ORDER BY a.{Col("OpenedOn")},a.{Col("Id")} {Paging()}", new { DepartmentId = departmentId, UserId = userId, Now = DatabaseTimestamp(now), Skip = skip, Take = PageSize })).ToList();
+		}
+
+		public async Task<List<T>> RelatedManyAsync<T>(int departmentId, string column, IReadOnlyCollection<string> ids) where T : InventoryRow
+		{
+			if (column == null || column != "Id" && !RelationshipColumns.Contains(column) || !Properties<T>().Any(p => p.Name == column && p.PropertyType == typeof(string)))
+				throw new ArgumentException("Invalid inventory relationship column.", nameof(column));
+			if (ids == null || ids.Count > 500) throw new ArgumentException("A bounded set of inventory IDs is required.", nameof(ids));
+			if (ids.Count == 0) return new List<T>();
+			var predicate = IsPostgres ? $"{Col(column)}=ANY(@Ids)" : $"{Col(column)} IN @Ids";
+			var rows = (await QueryAsync<T>($"SELECT {Cols(Columns<T>())} FROM {Tbl(Table<T>())} WHERE {Col("DepartmentId")}=@DepartmentId AND {predicate} ORDER BY {Col("Id")} {Paging()}",
+				new { DepartmentId = departmentId, Ids = ids.ToArray(), Skip = 0, Take = MaximumRelatedRows + 1 })).ToList();
+			if (rows.Count > MaximumRelatedRows) throw new InvalidOperationException("The inventory relationship exceeds the supported operation size.");
+			return rows;
+		}
+
 		public async Task<List<T>> ListAsync<T>(int departmentId, int skip = 0) where T : InventoryRow
 		{
 			if (skip < 0) throw new ArgumentOutOfRangeException(nameof(skip));

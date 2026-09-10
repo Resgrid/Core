@@ -98,7 +98,7 @@ namespace Resgrid.Tests.Rms
 			_authorization.Setup(a => a.CanReadSourceCallAsync("author", Dept, It.IsAny<Call>())).ReturnsAsync(true);
 			_service = new RecordsEvidenceService(_store.EvidenceRepo.Object, _store.RecordsRepo.Object,
 				_incidents.ReportsRepo.Object, _store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { (IRecordEvidenceAdapter)_adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object,
-				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
+				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()), Mock.Of<Resgrid.Model.Repositories.IInventoryStore>());
 		}
 
 		private RecordEvidenceCaptureRequest Request(RmsEvidenceKind kind = RmsEvidenceKind.RunCardActivation)
@@ -144,7 +144,7 @@ namespace Resgrid.Tests.Rms
 			var adapter = new ChatPromotionEvidenceAdapter(messages.Object, channels.Object, new Lazy<IChatPermissionService>(() => permission.Object));
 			var service = new RecordsEvidenceService(_store.EvidenceRepo.Object, _store.RecordsRepo.Object, _incidents.ReportsRepo.Object,
 				_store.AuditsRepo.Object, _store.UnitOfWork.Object, new[] { adapter }, _authorization.Object, Mock.Of<ICallsService>(), _references.Object,
-				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()));
+				new PassthroughRecordsProtection(), new DomainEventOutboxService(_store.OutboxRepo.Object, Mock.Of<Resgrid.Model.Providers.IEventAggregator>()), Mock.Of<Resgrid.Model.Repositories.IInventoryStore>());
 			var request = Request(RmsEvidenceKind.ChatPromotion); request.SourceIds = new() { "one", "two" };
 			var first = await service.CaptureAsync(request); var original = first.ManifestJson;
 			request.SourceIds = new() { "three" }; var second = await service.CaptureAsync(request);
@@ -230,13 +230,19 @@ namespace Resgrid.Tests.Rms
 		}
 
 		[Test]
-		public async Task Modern_inventory_evidence_fails_closed_when_source_verification_is_unavailable()
+		public async Task Modern_inventory_evidence_fails_closed_when_source_usage_is_missing()
 		{
 			var usage = new RecordInventoryUsage { DepartmentId = Dept, SourceId = _record.RmsOperationalRecordId, RecordKind = (int)RmsRecordKind.Operational, TransactionId = Guid.NewGuid().ToString("D"), Quantity = 1 };
 			var reference = UsageReference(usage);
 			_references.Setup(x => x.GetForRecordAsync(Dept, _record.RmsOperationalRecordId)).ReturnsAsync(new[] { reference });
 			Func<Task> finalize = () => _service.RequireInventoryCoverageAsync(Dept, _record.RmsOperationalRecordId, new[] { UsageArtifact(_record.RmsOperationalRecordId, reference) });
-			await finalize.Should().ThrowAsync<InvalidOperationException>().WithMessage("Inventory evidence verification is unavailable.");
+			await finalize.Should().ThrowAsync<InvalidOperationException>().WithMessage("Inventory usage provenance is unavailable.");
+		}
+
+		[Test]
+		public void Evidence_service_requires_inventory_storage_at_construction()
+		{
+			FluentActions.Invoking(() => InventoryCoverageService(null)).Should().Throw<ArgumentNullException>().WithParameterName("inventoryStore");
 		}
 
 		private RecordsEvidenceService InventoryCoverageService(IInventoryStore inventory) => new(_store.EvidenceRepo.Object, _store.RecordsRepo.Object,

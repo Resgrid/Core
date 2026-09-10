@@ -6,6 +6,24 @@ namespace Resgrid.Services
 {
 	public sealed partial class InventoryModernizationService
 	{
+		public async Task<System.Collections.Generic.Dictionary<string, T>> GetManyAsync<T>(InventoryActor actor, System.Collections.Generic.IReadOnlyCollection<string> ids) where T : InventoryRow
+		{
+			await _auth.RequireAsync(actor);
+			if (ids == null || ids.Count > 5000) throw new InventoryException(400, "InvalidPage");
+			foreach (var id in ids) Id(id);
+			var result = new System.Collections.Generic.Dictionary<string, T>();
+			foreach (var batch in ids.Distinct().Chunk(500))
+			{
+				var rows = await _store.RelatedManyAsync<T>(actor.DepartmentId, "Id", batch);
+				if (rows.Count != batch.Length) throw new InventoryException(404, "Unavailable");
+				foreach (var row in rows)
+				{
+					await AuthorizeRowAsync(actor, row);
+					result.Add(row.Id, await RevealAsync(actor, row));
+				}
+			}
+			return result;
+		}
 		public async Task<InventoryTransaction> GetLegacyTransactionAsync(InventoryActor actor, int inventoryId)
 		{
 			await _auth.RequireAsync(actor);

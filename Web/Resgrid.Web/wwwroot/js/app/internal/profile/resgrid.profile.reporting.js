@@ -49,7 +49,7 @@ var resgrid;
                         __RequestVerificationToken: $('#reporting-antiforgery input[name="__RequestVerificationToken"]').val()
                     },
                     type: 'POST'
-                }).done(function () { refreshGrid(); });
+                }).done(function () { refreshGrid(); }).fail(reportFailure);
             }
             reporting.activateSchedule = activateSchedule;
             function deactivateSchedule(scheduleId) {
@@ -61,7 +61,7 @@ var resgrid;
                         __RequestVerificationToken: $('#reporting-antiforgery input[name="__RequestVerificationToken"]').val()
                     },
                     type: 'POST'
-                }).done(function () { refreshGrid(); });
+                }).done(function () { refreshGrid(); }).fail(reportFailure);
             }
             reporting.deactivateSchedule = deactivateSchedule;
             function deleteSchedule(scheduleId) {
@@ -74,16 +74,20 @@ var resgrid;
                             __RequestVerificationToken: $('#reporting-antiforgery input[name="__RequestVerificationToken"]').val()
                         },
                         type: 'POST'
-                    }).done(function () { refreshGrid(); });
+                    }).done(function () { refreshGrid(); }).fail(reportFailure);
                 }
             }
             reporting.deleteSchedule = deleteSchedule;
             function refreshGrid() {
+                $('#reporting-error').prop('hidden', true);
                 if (reportingTable) {
                     reportingTable.ajax.reload();
                 }
             }
             reporting.refreshGrid = refreshGrid;
+            function reportFailure(xhr) {
+                if (xhr.status !== 401) $('#reporting-error').prop('hidden', false);
+            }
         })(reporting = profile.reporting || (profile.reporting = {}));
     })(profile = resgrid.profile || (resgrid.profile = {}));
 })(resgrid || (resgrid = {}));

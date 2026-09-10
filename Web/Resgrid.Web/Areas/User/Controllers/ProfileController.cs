@@ -779,7 +779,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult>  DeactivateSchedule(int scheduleId, CancellationToken cancellationToken)
 		{
 			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
-			if (task?.TaskType == (int)TaskTypes.ReportDelivery) return NotFound();
+			if (!await CanManageStaffingScheduleAsync(task)) return NotFound();
 			await _scheduledTasksService.DisabledScheduledTaskByIdAsync(scheduleId, cancellationToken);
 			return new EmptyResult();
 		}
@@ -789,7 +789,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult>  ActivateSchedule(int scheduleId, CancellationToken cancellationToken)
 		{
 			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
-			if (task?.TaskType == (int)TaskTypes.ReportDelivery) return NotFound();
+			if (!await CanManageStaffingScheduleAsync(task)) return NotFound();
 			await _scheduledTasksService.EnableScheduledTaskByIdAsync(scheduleId, cancellationToken);
 			return new EmptyResult();
 		}
@@ -799,9 +799,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteSchedule(int scheduleId, CancellationToken cancellationToken)
 		{
 			var task = await _scheduledTasksService.GetScheduledTaskByIdAsync(scheduleId);
-			if (task?.TaskType == (int)TaskTypes.ReportDelivery) return NotFound();
+			if (!await CanManageStaffingScheduleAsync(task)) return NotFound();
 			await _scheduledTasksService.DeleteScheduledTask(scheduleId, cancellationToken);
 			return new EmptyResult();
+		}
+		private Task<bool> CanManageStaffingScheduleAsync(ScheduledTask task)
+		{
+			if (task == null || task.DepartmentId != DepartmentId || task.TaskType != (int)TaskTypes.UserStaffingLevel || string.IsNullOrWhiteSpace(task.UserId))
+				return Task.FromResult(false);
+			return _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, task.UserId);
 		}
 		#endregion Staffing Schedules
 

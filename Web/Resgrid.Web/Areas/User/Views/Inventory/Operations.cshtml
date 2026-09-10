@@ -1,116 +1,551 @@
 @using System.Globalization
 @using System.Linq
+@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.Rendering
 @using Newtonsoft.Json
 @using Resgrid.Model.Inventories
 @using Resgrid.Services
 @using Resgrid.Web.Areas.User.Models
 @using Resgrid.Web.Areas.User.Models.Inventory
+@using Resgrid.Web.Helpers
 @model InventoryWorkspaceView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
+@*
+    Operations: physical counts, the alerts they and the catalog raise, and printable reports.
+
+    Starting a count and building a report are both wizards, because both ask a couple of
+    scoping questions whose answers change what the rest of the form means. Entering the
+    counted numbers is deliberately not a wizard: it is one long list to work down.
+*@
+@functions {
+    IHtmlContent Field(string name, string label, object value = null, string type = "text",
+        IEnumerable<SelectListItem> options = null, string help = null, bool required = false,
+        bool wide = false, int maxLength = 16000, string min = null)
+        => WorkspaceFormHelper.Field(localizer, name, label, value, type, options, help, required, false, wide, maxLength, null, min);
+
+    IHtmlContent Hide(string name, object value) => WorkspaceFormHelper.Hidden(name, value);
+
+    IEnumerable<SelectListItem> Choice(IEnumerable<InventoryChoice> list) => WorkspaceFormHelper.Choices(list.Select(x => (x.Id, x.Name)));
+
+    // Theme label colours; a bare "label" is the theme's neutral grey, used for a cancelled count.
+    string CountPill(int status) => status switch
+    {
+        0 => "label-warning",
+        1 => "label-info",
+        2 => "label-success",
+        _ => ""
+    };
+}
 @{
     ViewBag.Title = "Resgrid | " + localizer["M5Operations"];
     var protectedData = ViewBag.ProtectionEnforced == true;
     var count = Model.CountDetail?.Count;
-    string LocationName(string id) => Model.Locations.FirstOrDefault(l => l.Id == id) is { } row ? InventoryWorkspaceView.Details<InventoryLabel>(row).Name : id;
+
+    string LocationName(string id) => string.IsNullOrEmpty(id) ? "" : Model.Locations.FirstOrDefault(l => l.Id == id) is { } row ? InventoryWorkspaceView.Details<InventoryLabel>(row).Name : id;
     string ItemName(string id) => Model.Items.FirstOrDefault(i => i.Id == id) is { } row ? InventoryWorkspaceView.Details<InventoryItemContent>(row).Name : id;
+
+    var locationChoices = Choice(Model.Locations.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLabel>(x).Name }));
+
+    var tabs = new (string Key, string Icon)[] { ("Counts", "fa-check-square-o"), ("Alerts", "fa-bell-o"), ("Reports", "fa-file-pdf-o") };
+    var help = new Dictionary<string, string> { ["Counts"] = "M5CountHelp", ["Alerts"] = "M5AlertHelp", ["Reports"] = "M5ReportHelp" };
+
+    ViewData["Module"] = "Operations";
+    ViewData["Intro"] = localizer["M5OperationsIntro"].Value;
 }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-title"><h2>@localizer["M5Operations"]</h2></div><div class="ibox-content">
-    @if (protectedData) { @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value }) }
-    <div id="inventory-message" class="alert alert-info" role="status" hidden></div>
-    <form id="inventory-page" asp-action="ReopenOperations" method="post" class="inventory-navigation">
-        <input type="hidden" name="kind" value="@((int)Model.ReportKind)"/>
-        @Html.AntiForgeryToken()<input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="@Model.Page"/><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="locationId" value="@Model.LocationId"/><input type="hidden" name="itemId" value="@Model.ItemId"/>
-        @if (Model.Locked) { <button type="submit" class="btn btn-primary">@localizer["Unlock"]</button> }
-    </form>
-    @if (!Model.Locked) {
-        <nav class="btn-toolbar" aria-label="@localizer["M5Operations"]">
-            <form asp-action="Reopen" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<button class="btn btn-default" type="submit">@localizer["Inventory"]</button></form>
-            @foreach (var tab in new[] { "Counts", "Alerts", "Reports" }.Where(t => t != "Reports" || Model.CanViewReports)) {
-                <form asp-action="ReopenOperations" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="@tab"/><button class="btn @(Model.Tab == tab ? "btn-primary" : "btn-default")" type="submit">@localizer["M5" + tab]</button></form>
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer[Model.Locked || !Model.Migrated ? "M5Operations" : "M5" + Model.Tab]</h5>
+        </div>
+        <div class="ibox-content">
+
+            @if (protectedData)
+            {
+                @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value })
             }
-        </nav><hr/>
-        @if (!Model.Migrated) { <p>@localizer["InitializeDescription"]</p> }
-    }
-    @if (!Model.Locked && Model.Migrated) {
-        <h3>@localizer["M5" + Model.Tab]</h3>
-        @if (Model.Tab == "Counts" && count == null) {
-            <p>@localizer["M5CountHelp"]</p>
-            @if (Model.CanWrite) {
-                <form asp-action="StartCount" method="post" class="inventory-command">
-                    @Html.AntiForgeryToken()<input type="hidden" name="Id" value="@Guid.NewGuid().ToString("D")"/>
-                    <div class="form-group"><label for="count-name">@localizer["Name"]</label><input class="form-control" id="count-name" name="Name" required maxlength="250"/></div>
-                    <div class="form-group"><label for="count-location">@localizer["Location"]</label><select class="form-control" id="count-location" name="LocationId"><option value="">@localizer["M5AllLocations"]</option>
-                        @foreach (var location in Model.Locations) { <option value="@location.Id">@LocationName(location.Id)</option> }
-                    </select></div>
-                    <div class="form-group"><label for="count-note">@localizer["Note"]</label><textarea class="form-control" id="count-note" name="Note" maxlength="16000"></textarea></div>
-                    <button class="btn btn-primary" type="submit">@localizer["M5StartCount"]</button>
-                </form><hr/>
-            }
-            <table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Location"]</th><th>@localizer["Status"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
-                @foreach (var row in Model.Rows.OfType<InventoryCount>()) { <tr><td>@(InventoryWorkspaceView.Details<InventoryCountContent>(row).Name)</td><td>@(row.LocationId == null ? localizer["M5AllLocations"].Value : LocationName(row.LocationId))</td><td>@localizer["M5CountStatus" + row.Status]</td><td><form asp-action="ReopenOperations" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.Id"/><button class="btn btn-default" type="submit">@localizer["Details"]</button></form></td></tr> }
-            </tbody></table>
-        }
-        @if (count != null) {
-            var details = InventoryWorkspaceView.Details<InventoryCountContent>(count);
-            <h4>@details.Name · @localizer["M5CountStatus" + count.Status]</h4><p>@details.Note</p><p>@localizer["M5SnapshotOn"]: @count.SnapshotOn.ToString("u")</p>
-            <form asp-action="SaveCount" method="post" class="inventory-command">
-                @Html.AntiForgeryToken()<input type="hidden" name="CountId" value="@count.Id"/><input type="hidden" name="Revision" value="@count.Revision"/>
-                <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Items"]</th><th>@localizer["Location"]</th><th>@localizer["M5Expected"]</th><th>@localizer["M5Counted"]</th><th>@localizer["M5Variance"]</th></tr></thead><tbody>
-                    @for (var i = 0; i < Model.CountDetail.Lines.Count; i++) {
-                        var line = Model.CountDetail.Lines[i]; var data = InventoryWorkspaceView.Details<InventoryCountItemContent>(line);
-                        <tr><td>@data.ItemName <small>@data.LotNumber @data.SerialNumber</small></td><td>@LocationName(line.LocationId)</td><td>@line.ExpectedQuantity.ToString(CultureInfo.CurrentCulture) @data.UnitOfMeasure</td><td>
-                            @if (count.Status == 0 && Model.CanWrite) { <input type="hidden" name="Lines[@i].Id" value="@line.Id"/><input class="form-control" aria-label="@localizer["M5Counted"] @data.ItemName" type="number" name="Lines[@i].Quantity" value="@line.CountedQuantity?.ToString(CultureInfo.InvariantCulture)" min="0" max="@(line.AssetId == null ? "100000000" : "1")" step="@(line.AssetId == null ? "0.000001" : "1")" required/> }
-                            else { @line.CountedQuantity?.ToString(CultureInfo.CurrentCulture) }
-                        </td><td>@((line.CountedQuantity - line.ExpectedQuantity)?.ToString(CultureInfo.CurrentCulture))</td></tr>
-                    }
-                </tbody></table></div>
-                @if (count.Status == 0 && Model.CanWrite) { <button class="btn btn-primary" type="submit">@localizer["Save"]</button> }
-            </form>
-            @if (Model.CanWrite && count.Status == 0) {
-                <form asp-action="CompleteCount" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="CountId" value="@count.Id"/><input type="hidden" name="Revision" value="@count.Revision"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/><button class="btn btn-success" type="submit">@localizer["M5CompleteCount"]</button></form>
-            }
-            @if (Model.CanWrite && count.Status is 0 or 1) {
-                <form asp-action="CancelCount" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="countId" value="@count.Id"/><input type="hidden" name="revision" value="@count.Revision"/><button class="btn btn-default" type="submit">@localizer["M5CancelCount"]</button></form>
-            }
-            @if (count.Status == 1) { <p>@localizer["M5WitnessHelp"]</p><form asp-action="Reopen" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="History"/><button class="btn btn-default">@localizer["Witness"]</button></form> }
-            @if (count.Status == 2) {
-                <p>@localizer["M5VarianceLines"]: @details.VarianceLineCount</p>
-                @foreach (var total in details.Totals) { <p>@(total.CurrencyCode ?? localizer["M4UnspecifiedCurrency"].Value): @total.KnownValue.ToString(CultureInfo.CurrentCulture) · @localizer["M4UnknownCost"]: @total.UncostedRows</p> }
-            }
-        }
-        @if (Model.Tab == "Alerts") {
-            <p>@localizer["M5AlertHelp"]</p>
-            @if (Model.CanWrite) { <form asp-action="RefreshAlerts" method="post" class="inventory-command">@Html.AntiForgeryToken()<button class="btn btn-primary" type="submit">@localizer["M5RefreshAlerts"]</button></form> }
-            <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Type"]</th><th>@localizer["Items"]</th><th>@localizer["Location"]</th><th>@localizer["Status"]</th><th>@localizer["Amount"]</th><th>@localizer["M5DueOn"]</th></tr></thead><tbody>
-                @foreach (var alert in Model.Rows.OfType<InventoryAlert>()) { <tr><td>@localizer["M5AlertType" + alert.AlertType]</td><td>@ItemName(alert.ItemId)<small style="display:block">@alert.AssetId @alert.LotId @alert.IssuanceId</small></td><td>@(alert.LocationId == null ? localizer["M5AllLocations"].Value : LocationName(alert.LocationId))</td><td>@localizer[alert.Status == 0 ? "M5Open" : "M5Resolved"]</td><td>@alert.Quantity?.ToString(CultureInfo.CurrentCulture)</td><td>@alert.DueOn?.ToString("u")</td></tr> }
-            </tbody></table></div>
-        }
-        @if (Model.Tab == "Reports" && Model.CanViewReports) {
-            <p>@localizer["M5ReportHelp"]</p>
-            <form asp-action="ReportPdf" method="post" class="inventory-navigation" id="inventory-report-form">
+
+            <div id="inventory-message" class="alert alert-info" role="status" hidden></div>
+
+            <form id="inventory-page" asp-action="ReopenOperations" method="post" class="inventory-navigation">
                 @Html.AntiForgeryToken()
-                <div class="form-group"><label for="report-kind">@localizer["M5Reports"]</label><select class="form-control" id="report-kind" name="Kind">@foreach (var kind in Enum.GetValues<InventoryReportKind>()) { <option value="@((int)kind)" selected="@(kind == Model.ReportKind)">@InventoryReportDocuments.Title(kind)</option> }</select></div>
-                <div class="form-group"><label for="report-location">@localizer["Location"]</label><select class="form-control" id="report-location" name="LocationId"><option value="">@localizer["M5AllLocations"]</option>@foreach (var location in Model.Locations) { <option value="@location.Id">@LocationName(location.Id)</option> }</select></div>
-                <div class="form-group"><label for="report-item">@localizer["Items"]</label><select class="form-control" id="report-item" name="ItemId"><option value="">—</option>@foreach (var item in Model.Items) { <option value="@item.Id">@ItemName(item.Id)</option> }</select></div>
-                <div class="form-group"><label for="report-from">@localizer["M5FromUtc"]</label><input class="form-control" id="report-from" type="date" name="FromUtc"/></div>
-                <div class="form-group"><label for="report-person">@localizer["Person"]</label><select class="form-control" id="report-person" name="UserId"><option value="">—</option>@foreach (var person in Model.People) { <option value="@person.Id">@person.Name</option> }</select></div>
-                <div class="form-group"><label for="report-unit">@localizer["Unit"]</label><select class="form-control" id="report-unit" name="UnitId"><option value="">—</option>@foreach (var unit in Model.Units) { <option value="@unit.Id">@unit.Name</option> }</select></div>
-                <div class="form-group"><label for="report-until">@localizer["M5UntilUtc"]</label><input class="form-control" id="report-until" type="date" name="UntilUtc"/></div>
-                <button class="btn btn-primary" type="submit">@localizer["M5DownloadPdf"]</button>
+                @Hide("kind", (int)Model.ReportKind)
+                @Hide("tab", Model.Tab)@Hide("page", Model.Page)@Hide("id", Model.Id)
+                @Hide("locationId", Model.LocationId)@Hide("itemId", Model.ItemId)
+                @if (Model.Locked)
+                {
+                    <div class="text-center m-t-lg m-b-lg">
+                        <i class="fa fa-lock fa-3x text-muted"></i>
+                        <h4 class="m-t-sm">@localizer["ProtectedDataRequired"]</h4>
+                        <p>@commonLocalizer["AdpProtectedBannerDescription"]</p>
+                        <button type="submit" class="btn btn-primary m-t">@localizer["Unlock"]</button>
+                    </div>
+                }
             </form>
-            <p><a asp-controller="Profile" asp-action="Reporting">@localizer["M5ScheduleReports"]</a></p>
-        }
-        @if (Model.Tab != "Reports" && count == null) {
-            if (Model.Rows.Count == 0) { <p>@localizer["NoRows"]</p> }
-            foreach (var nextPage in new[] { Model.Page - 1, Model.Page + 1 }.Where(p => p >= 0 && (p < Model.Page || Model.HasMore))) {
-                <form asp-action="ReopenOperations" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="@nextPage"/><input type="hidden" name="itemId" value="@Model.ItemId"/><input type="hidden" name="locationId" value="@Model.LocationId"/><button class="btn btn-default" type="submit">@localizer[nextPage < Model.Page ? "Previous" : "Next"]</button></form>
+
+            @if (!Model.Locked)
+            {
+                <ul class="nav nav-tabs" role="tablist" aria-label="@localizer["M5Operations"]">
+                    @foreach (var tab in tabs.Where(t => t.Key != "Reports" || Model.CanViewReports))
+                    {
+                        <li class="nav-item @(Model.Tab == tab.Key ? "active" : null)">
+                            <form asp-action="ReopenOperations" method="post" class="inventory-navigation">
+                                @Html.AntiForgeryToken()
+                                @Hide("tab", tab.Key)
+                                <button type="submit" aria-current="@(Model.Tab == tab.Key ? "page" : "false")">
+                                    <i class="fa @tab.Icon"></i> @localizer["M5" + tab.Key]
+                                </button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+
+                if (!Model.Migrated)
+                {
+                    <div class="text-center m-t-lg m-b-lg">
+                        <i class="fa fa-cubes fa-3x text-muted"></i>
+                        <h4 class="m-t-sm">@localizer["Initialize"]</h4>
+                        <p>@localizer["InitializeDescription"]</p>
+                    </div>
+                }
             }
-        }
-    }
-</div></div></div>
+
+            @if (!Model.Locked && Model.Migrated)
+            {
+                @if (count == null && help.ContainsKey(Model.Tab))
+                {
+                    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer[help[Model.Tab]]</div>
+                }
+
+                @* ── Count list ──────────────────────────────────────────────────── *@
+                @if (Model.Tab == "Counts" && count == null)
+                {
+                    if (Model.CanWrite)
+                    {
+                        <div class="rgw-toolbar">
+                            <div class="rgw-toolbar-spacer"></div>
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#m5-start-count"><i class="fa fa-plus"></i> @localizer["M5StartCount"]</button>
+                        </div>
+                    }
+
+                    if (!Model.Rows.OfType<InventoryCount>().Any())
+                    {
+                        <div class="text-center m-t-lg m-b-lg">
+                            <i class="fa fa-check-square-o fa-3x text-muted"></i>
+                            <h4 class="m-t-sm">@localizer["NoRows"]</h4>
+                            <p>@localizer["NoRowsHelp"]</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped rgw-table">
+                                <thead><tr><th>@localizer["Name"]</th><th>@localizer["Location"]</th><th>@localizer["Status"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                                <tbody>
+                                    @foreach (var row in Model.Rows.OfType<InventoryCount>())
+                                    {
+                                        <tr>
+                                            <td>@(InventoryWorkspaceView.Details<InventoryCountContent>(row).Name)</td>
+                                            <td>@(row.LocationId == null ? localizer["M5AllLocations"].Value : LocationName(row.LocationId))</td>
+                                            <td><span class="label @CountPill(row.Status)">@localizer["M5CountStatus" + row.Status]</span></td>
+                                            <td class="rgw-row-actions">
+                                                <form asp-action="ReopenOperations" method="post" class="inventory-navigation">
+                                                    @Html.AntiForgeryToken()
+                                                    @Hide("id", row.Id)
+                                                    <button class="btn btn-xs btn-info" type="submit">@localizer["Details"]</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                }
+
+                @* ── One count ───────────────────────────────────────────────────── *@
+                @if (count != null)
+                {
+                    var details = InventoryWorkspaceView.Details<InventoryCountContent>(count);
+                    var open = count.Status == 0 && Model.CanWrite;
+
+                    <div class="rgw-toolbar">
+                        <form asp-action="ReopenOperations" method="post" class="inventory-navigation">
+                            @Html.AntiForgeryToken()
+                            @Hide("tab", "Counts")
+                            <button class="btn btn-default btn-sm" type="submit"><i class="fa fa-arrow-left"></i> @localizer["Back"]</button>
+                        </form>
+                        <div class="rgw-toolbar-spacer"></div>
+                        @if (Model.CanWrite && count.Status == 0)
+                        {
+                            <form asp-action="CompleteCount" method="post" class="inventory-command">
+                                @Html.AntiForgeryToken()
+                                @Hide("CountId", count.Id)@Hide("Revision", count.Revision)@Hide("RequestId", Guid.NewGuid().ToString("D"))
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-check"></i> @localizer["M5CompleteCount"]</button>
+                            </form>
+                        }
+                        @if (Model.CanWrite && count.Status is 0 or 1)
+                        {
+                            <form asp-action="CancelCount" method="post" class="inventory-command">
+                                @Html.AntiForgeryToken()
+                                @Hide("countId", count.Id)@Hide("revision", count.Revision)
+                                <button class="btn btn-default" type="submit">@localizer["M5CancelCount"]</button>
+                            </form>
+                        }
+                    </div>
+
+                    <h3>@details.Name</h3>
+                    <p class="text-muted">
+                        <span class="label @CountPill(count.Status)">@localizer["M5CountStatus" + count.Status]</span>
+                        @(count.LocationId == null ? localizer["M5AllLocations"].Value : LocationName(count.LocationId))
+                        &middot; @localizer["M5SnapshotOn"]: <time datetime="@count.SnapshotOn.ToString("u")">@count.SnapshotOn.ToString("g", CultureInfo.CurrentCulture)</time>
+                    </p>
+                    @if (!string.IsNullOrEmpty(details.Note))
+                    {
+                        <p>@details.Note</p>
+                    }
+                    <div class="hr-line-dashed"></div>
+
+                    @if (open)
+                    {
+                        <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["M5CountEnterHelp"]</div>
+                    }
+
+                    <form asp-action="SaveCount" method="post" class="inventory-command">
+                        @Html.AntiForgeryToken()
+                        @Hide("CountId", count.Id)@Hide("Revision", count.Revision)
+                        <div class="table-responsive">
+                            <table class="table table-striped rgw-table">
+                                <thead><tr><th>@localizer["Items"]</th><th>@localizer["Location"]</th><th class="text-right">@localizer["M5Expected"]</th><th class="text-right">@localizer["M5Counted"]</th><th class="text-right">@localizer["M5Variance"]</th></tr></thead>
+                                <tbody>
+                                    @for (var i = 0; i < Model.CountDetail.Lines.Count; i++)
+                                    {
+                                        var line = Model.CountDetail.Lines[i];
+                                        var data = InventoryWorkspaceView.Details<InventoryCountItemContent>(line);
+                                        var variance = line.CountedQuantity - line.ExpectedQuantity;
+                                        <tr>
+                                            <td>
+                                                @data.ItemName
+                                                @if (!string.IsNullOrEmpty(data.LotNumber) || !string.IsNullOrEmpty(data.SerialNumber))
+                                                {
+                                                    <small class="text-muted rgw-sub">@data.LotNumber @data.SerialNumber</small>
+                                                }
+                                            </td>
+                                            <td>@LocationName(line.LocationId)</td>
+                                            <td class="text-right">@line.ExpectedQuantity.ToString(CultureInfo.CurrentCulture) @data.UnitOfMeasure</td>
+                                            <td class="text-right">
+                                                @if (open)
+                                                {
+                                                    @Hide("Lines[" + i + "].Id", line.Id)
+                                                    <input class="form-control" aria-label="@localizer["M5Counted"] @data.ItemName" type="number"
+                                                           name="Lines[@i].Quantity" value="@line.CountedQuantity?.ToString(CultureInfo.InvariantCulture)"
+                                                           min="0" max="@(line.AssetId == null ? "100000000" : "1")"
+                                                           step="@(line.AssetId == null ? "0.000001" : "1")" required />
+                                                }
+                                                else
+                                                {
+                                                    @line.CountedQuantity?.ToString(CultureInfo.CurrentCulture)
+                                                }
+                                            </td>
+                                            <td class="text-right">
+                                                @if (variance.HasValue && variance.Value != 0)
+                                                {
+                                                    <span class="label label-warning">@variance.Value.ToString(CultureInfo.CurrentCulture)</span>
+                                                }
+                                                else if (variance.HasValue)
+                                                {
+                                                    <span class="label label-success">0</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (open)
+                        {
+                            <div class="rgw-wizard-actions">
+                                <div class="rgw-wizard-spacer"></div>
+                                <button class="btn btn-primary" type="submit">@localizer["Save"]</button>
+                            </div>
+                        }
+                    </form>
+
+                    @if (count.Status == 1)
+                    {
+                        <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["M5WitnessHelp"]</div>
+                        <form asp-action="Reopen" method="post" class="inventory-navigation">
+                            @Html.AntiForgeryToken()
+                            @Hide("tab", "History")
+                            <button class="btn btn-default" type="submit">@localizer["Witness"]</button>
+                        </form>
+                    }
+
+                    @if (count.Status == 2)
+                    {
+                        @* Totals use the same ibox statistic tile as the records dashboard. *@
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6">
+                                <div class="ibox">
+                                    <div class="ibox-title"><h5>@localizer["M5VarianceLines"]</h5></div>
+                                    <div class="ibox-content"><h1 class="no-margins">@details.VarianceLineCount</h1></div>
+                                </div>
+                            </div>
+                            @foreach (var total in details.Totals)
+                            {
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="ibox">
+                                        <div class="ibox-title"><h5>@(total.CurrencyCode ?? localizer["M4UnspecifiedCurrency"].Value)</h5></div>
+                                        <div class="ibox-content">
+                                            <h1 class="no-margins">@total.KnownValue.ToString(CultureInfo.CurrentCulture)</h1>
+                                            <small>@localizer["M4UnknownCost"]: @total.UncostedRows</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+
+                @* ── Alerts ──────────────────────────────────────────────────────── *@
+                @if (Model.Tab == "Alerts")
+                {
+                    if (Model.CanWrite)
+                    {
+                        <div class="rgw-toolbar">
+                            <div class="rgw-toolbar-spacer"></div>
+                            <form asp-action="RefreshAlerts" method="post" class="inventory-command">
+                                @Html.AntiForgeryToken()
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-refresh"></i> @localizer["M5RefreshAlerts"]</button>
+                            </form>
+                        </div>
+                    }
+
+                    if (!Model.Rows.OfType<InventoryAlert>().Any())
+                    {
+                        <div class="text-center m-t-lg m-b-lg">
+                            <i class="fa fa-bell-o fa-3x text-muted"></i>
+                            <h4 class="m-t-sm">@localizer["NoRows"]</h4>
+                            <p>@localizer["M5NoAlertsHelp"]</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped rgw-table">
+                                <thead><tr><th>@localizer["Type"]</th><th>@localizer["Items"]</th><th>@localizer["Location"]</th><th>@localizer["Status"]</th><th class="text-right">@localizer["Amount"]</th><th>@localizer["M5DueOn"]</th></tr></thead>
+                                <tbody>
+                                    @foreach (var alert in Model.Rows.OfType<InventoryAlert>())
+                                    {
+                                        <tr>
+                                            <td><span class="label label-warning">@localizer["M5AlertType" + alert.AlertType]</span></td>
+                                            <td>
+                                                @ItemName(alert.ItemId)
+                                                @if (!string.IsNullOrEmpty(alert.AssetId) || !string.IsNullOrEmpty(alert.LotId) || !string.IsNullOrEmpty(alert.IssuanceId))
+                                                {
+                                                    <small class="text-muted rgw-sub">@alert.AssetId @alert.LotId @alert.IssuanceId</small>
+                                                }
+                                            </td>
+                                            <td>@(alert.LocationId == null ? localizer["M5AllLocations"].Value : LocationName(alert.LocationId))</td>
+                                            <td><span class="label @(alert.Status == 0 ? "label-warning" : "label-success")">@localizer[alert.Status == 0 ? "M5Open" : "M5Resolved"]</span></td>
+                                            <td class="text-right">@alert.Quantity?.ToString(CultureInfo.CurrentCulture)</td>
+                                            <td>
+                                                @if (alert.DueOn.HasValue)
+                                                {
+                                                    <time datetime="@alert.DueOn.Value.ToString("u")">@alert.DueOn.Value.ToString("g", CultureInfo.CurrentCulture)</time>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                }
+
+                @* ── Reports ─────────────────────────────────────────────────────── *@
+                @if (Model.Tab == "Reports" && Model.CanViewReports)
+                {
+                    <form asp-action="ReportPdf" method="post" class="inventory-navigation rgw-wizard" id="inventory-report-form">
+                        @Html.AntiForgeryToken()
+                        <ol class="rgw-steps"></ol>
+
+                        <div class="rgw-step" data-title="@localizer["M5StepReportKind"]">
+                            <h4>@localizer["M5StepReportKind"]</h4>
+                            <p class="text-muted">@localizer["M5StepReportKindHint"]</p>
+                            <div class="rgw-grid">
+                                <div class="form-group rgw-wide">
+                                    <label for="report-kind">@localizer["M5Reports"]</label>
+                                    <select class="form-control" id="report-kind" name="Kind" required>
+                                        @foreach (var kind in Enum.GetValues<InventoryReportKind>())
+                                        {
+                                            <option value="@((int)kind)" selected="@(kind == Model.ReportKind)">@InventoryReportDocuments.Title(kind)</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rgw-step" data-title="@localizer["M5StepReportFilters"]">
+                            <h4>@localizer["M5StepReportFilters"]</h4>
+                            <p class="text-muted">@localizer["M5StepReportFiltersHint"]</p>
+                            <div class="rgw-grid">
+                                <div class="form-group">
+                                    <label for="report-location">@localizer["Location"]</label>
+                                    <select class="form-control" id="report-location" name="LocationId">
+                                        <option value="">@localizer["M5AllLocations"]</option>
+                                        @foreach (var location in Model.Locations)
+                                        {
+                                            <option value="@location.Id">@LocationName(location.Id)</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="report-item">@localizer["Items"]</label>
+                                    <select class="form-control" id="report-item" name="ItemId">
+                                        <option value="">—</option>
+                                        @foreach (var item in Model.Items)
+                                        {
+                                            <option value="@item.Id">@ItemName(item.Id)</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="report-person">@localizer["Person"]</label>
+                                    <select class="form-control" id="report-person" name="UserId">
+                                        <option value="">—</option>
+                                        @foreach (var person in Model.People)
+                                        {
+                                            <option value="@person.Id">@person.Name</option>
+                                        }
+                                    </select>
+                                    <span class="help-block">@localizer["HelpFieldHolder"]</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="report-unit">@localizer["Unit"]</label>
+                                    <select class="form-control" id="report-unit" name="UnitId">
+                                        <option value="">—</option>
+                                        @foreach (var unit in Model.Units)
+                                        {
+                                            <option value="@unit.Id">@unit.Name</option>
+                                        }
+                                    </select>
+                                    <span class="help-block">@localizer["HelpFieldHolder"]</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="report-from">@localizer["M5FromUtc"]</label>
+                                    <input class="form-control" id="report-from" type="date" name="FromUtc" />
+                                    <span class="help-block">@localizer["HelpFieldReportRange"]</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="report-until">@localizer["M5UntilUtc"]</label>
+                                    <input class="form-control" id="report-until" type="date" name="UntilUtc" />
+                                    <span class="help-block">@localizer["HelpFieldReportRange"]</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rgw-wizard-actions">
+                            <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                            <div class="rgw-wizard-spacer"></div>
+                            <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                            <button type="submit" class="btn btn-primary rgw-step-submit"><i class="fa fa-download"></i> @localizer["M5DownloadPdf"]</button>
+                        </div>
+                    </form>
+
+                    <p class="m-t"><a asp-controller="Profile" asp-action="Reporting">@localizer["M5ScheduleReports"]</a></p>
+                }
+
+                @if (Model.Tab != "Reports" && count == null && (Model.Page > 0 || Model.HasMore))
+                {
+                    <div class="rgw-pager">
+                        @foreach (var nextPage in new[] { Model.Page - 1, Model.Page + 1 }.Where(p => p >= 0 && (p < Model.Page || Model.HasMore)))
+                        {
+                            <form asp-action="ReopenOperations" method="post" class="inventory-navigation">
+                                @Html.AntiForgeryToken()
+                                @Hide("tab", Model.Tab)@Hide("page", nextPage)@Hide("itemId", Model.ItemId)@Hide("locationId", Model.LocationId)
+                                <button class="btn btn-default btn-sm" type="submit">
+                                    <i class="fa @(nextPage < Model.Page ? "fa-chevron-left" : "fa-chevron-right")"></i>
+                                    @localizer[nextPage < Model.Page ? "Previous" : "Next"]
+                                </button>
+                            </form>
+                        }
+                        <span class="text-muted">@(Model.Page + 1)</span>
+                    </div>
+                }
+
+                @* ── Dialogs ─────────────────────────────────────────────────────── *@
+                @if (Model.CanWrite && Model.Tab == "Counts" && count == null)
+                {
+                    <div class="modal fade rgw-modal" id="m5-start-count" tabindex="-1" role="dialog" aria-labelledby="m5-start-count-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="m5-start-count-title">@localizer["M5StartCount"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert rgw-modal-message" role="status"></div>
+                                    <form asp-action="StartCount" method="post" class="inventory-command rgw-wizard">
+                                        @Html.AntiForgeryToken()
+                                        @Hide("Id", Guid.NewGuid().ToString("D"))
+                                        <ol class="rgw-steps"></ol>
+
+                                        <div class="rgw-step" data-title="@localizer["M5StepCountBasics"]">
+                                            <h4>@localizer["M5StepCountBasics"]</h4>
+                                            <p class="text-muted">@localizer["M5StepCountBasicsHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("Name", "Name", null, required: true, maxLength: 250, help: "M5CountNameHelp", wide: true)
+                                                @Field("Note", "Note", null, "textarea", wide: true)
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["M5StepCountScope"]">
+                                            <h4>@localizer["M5StepCountScope"]</h4>
+                                            <p class="text-muted">@localizer["M5StepCountScopeHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("LocationId", "Location", null, options: locationChoices, help: "HelpFieldCountLocation", wide: true)
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["Review"]">
+                                            <h4>@localizer["Review"]</h4>
+                                            <p class="text-muted">@localizer["ReviewHint"]</p>
+                                            <dl class="rgw-review"></dl>
+                                        </div>
+
+                                        <div class="rgw-wizard-actions">
+                                            <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                                            <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["M5StartCount"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
+
 @section Scripts {
-<script id="inventory-settings" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { protectedData, grant = (string)ViewBag.ProtectedGrant, expiry = (DateTime?)ViewBag.GrantExpiresOn, index = Url.Action("Operations", new { tab = Model.Tab, id = Model.Id, page = Model.Page }), failed = localizer["UnableToComplete"].Value, witness = localizer["WitnessPending"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
-<script src="~/js/app/internal/inventory/inventory-modern.js" asp-append-version="true"></script>
-<script src="~/js/app/internal/inventory/inventory-operations.js" asp-append-version="true"></script>
-@if (protectedData) { @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value, GrantExpiresOnUtc = (DateTime?)ViewBag.GrantExpiresOn, BindForms = new List<string> { "form.inventory-navigation", "form.inventory-command" } }) }
+    <script id="inventory-settings" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { protectedData, grant = (string)ViewBag.ProtectedGrant, expiry = (DateTime?)ViewBag.GrantExpiresOn, index = Url.Action("Operations", new { tab = Model.Tab, id = Model.Id, page = Model.Page }), failed = localizer["UnableToComplete"].Value, witness = localizer["WitnessPending"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+    <script id="workspace-settings" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { required = localizer["RequiredFieldsMissing"].Value, nothingEntered = localizer["NoRows"].Value, yes = localizer["Yes"].Value, no = localizer["No"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+    <script src="~/js/app/internal/inventory/inventory-modern.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/inventory/inventory-operations.js" asp-append-version="true"></script>
+    <script src="~/js/app/common/workspace/resgrid.common.workspace.js" asp-append-version="true"></script>
+    @if (protectedData)
+    {
+        @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value, GrantExpiresOnUtc = (DateTime?)ViewBag.GrantExpiresOn, BindForms = new List<string> { "form.inventory-navigation", "form.inventory-command" } })
+    }
 }

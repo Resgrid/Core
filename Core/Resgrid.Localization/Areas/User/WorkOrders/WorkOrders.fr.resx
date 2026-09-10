@@ -376,4 +376,25 @@
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Politique des opérations des ordres de travail modifiée</value></data>
 <data name="ResponseDueOn" xml:space="preserve"><value>Échéance de réponse (UTC)</value></data>
 <data name="RepairDueOn" xml:space="preserve"><value>Échéance de réparation (UTC)</value></data>
+  <data name="WorkOrdersIntro" xml:space="preserve"><value>Créez des réparations, suivez qui les réalise et consultez le coût de la maintenance.</value></data>
+  <data name="Close" xml:space="preserve"><value>Fermer</value></data>
+  <data name="Continue" xml:space="preserve"><value>Continuer</value></data>
+  <data name="Review" xml:space="preserve"><value>Vérifier</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Vérifiez les réponses ci-dessous, puis enregistrez.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Renseignez les champs en surbrillance avant de continuer.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Rien pour l'instant. Utilisez les boutons ci-dessus pour créer le premier.</value></data>
+  <data name="HelpWorkOrders" xml:space="preserve"><value>Un ordre de travail correspond à une réparation ou une inspection, de la demande jusqu'à la correction vérifiée.</value></data>
+  <data name="StepOrderDescribe" xml:space="preserve"><value>Décrire les travaux</value></data>
+  <data name="StepOrderDescribeHint" xml:space="preserve"><value>Ce qu'il faut faire, son urgence et la date à laquelle c'est attendu.</value></data>
+  <data name="StepOrderTarget" xml:space="preserve"><value>Objet concerné</value></data>
+  <data name="StepOrderTargetHint" xml:space="preserve"><value>L'engin, la caserne ou l'actif concerné, et où le trouver.</value></data>
+  <data name="StepOrderCost" xml:space="preserve"><value>Coût et fournisseur</value></data>
+  <data name="StepOrderCostHint" xml:space="preserve"><value>Le coût attendu, le budget concerné et qui réalise les travaux.</value></data>
+  <data name="StepOrderSafety" xml:space="preserve"><value>Sécurité et procédure</value></data>
+  <data name="StepOrderSafetyHint" xml:space="preserve"><value>Les permis, consignations et qualifications requis, et les étapes à suivre.</value></data>
+  <data name="StepRecurrenceScheduleHint" xml:space="preserve"><value>À quelle fréquence les travaux reviennent et dans quelle plage ils peuvent être faits.</value></data>
+  <data name="StepRecurrenceUsageHint" xml:space="preserve"><value>Déclencheurs facultatifs de compteur ou d'état qui avancent les travaux selon l'usage.</value></data>
+  <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>À qui va l'ordre de travail généré, et vers qui il remonte si personne ne le prend.</value></data>
+  <data name="HelpFieldDueOn" xml:space="preserve"><value>Détermine l'indicateur de retard et le compteur de niveau de service.</value></data>
+  <data name="HelpFieldSteps" xml:space="preserve"><value>Les étapes que suit le technicien. Certaines transitions exigent qu'elles soient toutes faites.</value></data>
 </root>

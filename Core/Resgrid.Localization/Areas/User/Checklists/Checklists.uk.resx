@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Деякі історичні стани нарядів не вдалося відновити. Пакет не гарантує повного охоплення технічного обслуговування.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Докази нарядів обмежені поточним дозволеним обсягом доступу читача.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>Щоб продовжити, потрібно розблокувати захищені дані.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>Створюйте перевірки для ваших підрозділів, плануйте їх і дивіться, що виконано.</value></data>
+  <data name="Close" xml:space="preserve"><value>Закрити</value></data>
+  <data name="Continue" xml:space="preserve"><value>Продовжити</value></data>
+  <data name="Review" xml:space="preserve"><value>Перевірка</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Перевірте відповіді нижче та збережіть.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Заповніть підсвічені поля, перш ніж продовжити.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Тут ще нічого немає. Скористайтеся кнопками вище, щоб створити перший запис.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>Чек-лист — це набір запитань, на які відповідає підрозділ. Опублікуйте його, перш ніж планувати чи виконувати.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>Оберіть, щодо чого виконується ця перевірка.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>Виправдані перевірки залишаються в записі разом із зазначеною тут причиною.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>Списання зупиняє нові виконання та майбутні заплановані перевірки. Наявна історія зберігається.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>Перевірки добираються за часом початку, а не завершення.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>Виклик, для якого формується пакет.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>Назвіть розклад</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>Як називається цей розклад і щодо чого він виконується.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>Коли він виконується</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>Як часто відкривається перевірка і в якому часовому поясі читаються ці години.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>Хто її виконує</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>Хто відповідає за перевірку і скільки часу має після її відкриття.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>Показується у списку до виконання, тож зробіть її впізнаваною з першого погляду.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Скільки часу має підрозділ, щоб завершити перевірку після її відкриття. Після цього вона вважається пропущеною.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>Автоматична маршрутизація надсилає перевірку тому, хто відповідає за об'єкт. Оберіть особу, роль, групу чи техніку, щоб змінити це.</value></data>
 </root>

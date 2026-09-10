@@ -1,0 +1,69 @@
+@using Resgrid.Web.Areas.User.Models.Inventory
+@model InventoryWorkspaceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
+@*
+    Page heading shared by the three inventory screens, laid out the same way as the rest of
+    the application: title and breadcrumb on the left, module buttons in a top-page-buttons
+    group on the right. ViewData["Module"] selects which one is current ("Inventory",
+    "Purchasing" or "Operations") and ViewData["Intro"] is an optional one line description.
+
+    The module switch has to be a POST for the same reason the tab strip does: under
+    Advanced Data Protection the request carries the reveal grant, and only the POST
+    forms that inventory-modern.js binds get one attached.
+*@
+@{
+    var module = (string)ViewData["Module"] ?? "Inventory";
+    var titles = new Dictionary<string, string>
+    {
+        ["Inventory"] = localizer["Inventory"].Value,
+        ["Purchasing"] = localizer["M4Purchasing"].Value,
+        ["Operations"] = localizer["M5Operations"].Value
+    };
+    var intro = (string)ViewData["Intro"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-5">
+        <h2>@titles[module]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            @if (module == "Inventory")
+            {
+                <li class="active"><strong>@localizer["Inventory"]</strong></li>
+            }
+            else
+            {
+                <li><a asp-controller="Inventory" asp-action="Index" asp-route-area="User">@localizer["Inventory"]</a></li>
+                <li class="active"><strong>@titles[module]</strong></li>
+            }
+        </ol>
+        @if (!string.IsNullOrEmpty(intro))
+        {
+            <small class="text-muted">@intro</small>
+        }
+    </div>
+    <div class="col-sm-7">
+        <div class="top-page-buttons rgw-modules">
+            @if (module != "Inventory")
+            {
+                <form asp-action="Reopen" method="post" class="inventory-navigation">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-default" type="submit"><i class="fa fa-cubes"></i> @localizer["Inventory"]</button>
+                </form>
+            }
+            @if (module != "Purchasing")
+            {
+                <form asp-action="ReopenPurchasing" method="post" class="inventory-navigation">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-default" type="submit"><i class="fa fa-shopping-cart"></i> @localizer["M4Purchasing"]</button>
+                </form>
+            }
+            @if (module != "Operations")
+            {
+                <form asp-action="ReopenOperations" method="post" class="inventory-navigation">
+                    @Html.AntiForgeryToken()
+                    <button class="btn btn-default" type="submit"><i class="fa fa-clipboard"></i> @localizer["M5Operations"]</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

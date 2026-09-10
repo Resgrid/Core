@@ -1,23 +1,147 @@
 @model Resgrid.Web.Areas.User.Models.Checklists.ChecklistDueView
 @using Resgrid.Model.Checklists
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["DueChecks"]; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-    <h2>@localizer["DueChecks"]</h2><p>@localizer["DueGuidance"]</p>
-    @await Html.PartialAsync("_Protection")
-    @if (Model.Occurrences.Count == 0) { <p>@localizer["NoDueChecks"]</p> }
-    <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Target"]</th><th>@localizer["ScheduledFor"] (UTC)</th><th>@localizer["WindowEnds"] (UTC)</th><th>@localizer["State"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
-    @foreach (var entry in Model.Occurrences)
+@*
+    Excusing a check is a decision that needs a reason, so it opens in a dialog rather than an
+    inline disclosure. The textarea still lives on the page, which is what stops the live
+    refresh in checklist-live.js from throwing away a half typed reason.
+*@
+@functions {
+    string StatePill(ChecklistOccurrenceState state) => state switch
     {
-        var row = entry.Occurrence;
-        <tr><td>@entry.Name</td><td>@entry.Target.Name</td><td>@row.PeriodStartUtc?.ToString("yyyy-MM-dd HH:mm")</td><td>@row.WindowEndUtc?.ToString("yyyy-MM-dd HH:mm")</td><td>@localizer[((ChecklistOccurrenceState)row.State).ToString()]</td><td>
-            @if (entry.CanStart) { <form class="checklist-form" asp-action="StartOccurrence" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.Id" /><button type="submit" class="btn btn-success">@localizer["OpenCheck"]</button></form> }
-            @if (entry.CanSkip) { <details><summary>@localizer["ExcuseCheck"]</summary><form class="checklist-form" asp-action="SkipOccurrence" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.Id" /><input type="hidden" name="revision" value="@row.Revision" /><label for="reason-@row.Id">@localizer["SkipReason"]</label><textarea id="reason-@row.Id" name="reason" class="form-control" maxlength="4000" required></textarea><button type="submit" class="btn btn-warning">@localizer["ExcuseCheck"]</button></form></details> }
-        </td></tr>
-    }
-    </tbody></table></div>
-    @if (Model.Page > 0) { <a class="btn btn-default" asp-route-page="@(Model.Page - 1)">@localizer["Previous"]</a> }
-    @if (Model.HasMore) { <a class="btn btn-default" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a> }<a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
-</div></div></div>
+        ChecklistOccurrenceState.Scheduled => "label-info",
+        ChecklistOccurrenceState.InProgress => "label-warning",
+        ChecklistOccurrenceState.Missed => "label-danger",
+        ChecklistOccurrenceState.Skipped => "",
+        _ => ""
+    };
+}
+@{
+    ViewBag.Title = "Resgrid | " + localizer["DueChecks"];
+    ViewData["Tab"] = "Due";
+    ViewData["Title"] = localizer["DueChecks"].Value;
+    ViewData["Subtitle"] = localizer["DueGuidance"].Value;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["DueChecks"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["DueGuidance"]</div>
+
+            @if (Model.Occurrences.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-clock-o fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["NoDueChecks"]</h4>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Name"]</th>
+                                <th>@localizer["Target"]</th>
+                                <th>@localizer["ScheduledFor"] (UTC)</th>
+                                <th>@localizer["WindowEnds"] (UTC)</th>
+                                <th>@localizer["State"]</th>
+                                <th class="rgw-row-actions">@localizer["Actions"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in Model.Occurrences)
+                            {
+                                var row = entry.Occurrence;
+                                var state = (ChecklistOccurrenceState)row.State;
+                                <tr>
+                                    <td>@entry.Name</td>
+                                    <td>@entry.Target.Name</td>
+                                    <td>@row.PeriodStartUtc?.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td>@row.WindowEndUtc?.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td><span class="label @StatePill(state)">@localizer[state.ToString()]</span></td>
+                                    <td class="rgw-row-actions">
+                                        @if (entry.CanStart)
+                                        {
+                                            <form class="checklist-form" asp-action="StartOccurrence" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@row.Id" />
+                                                <button type="submit" class="btn btn-xs btn-primary">@localizer["OpenCheck"]</button>
+                                            </form>
+                                        }
+                                        @if (entry.CanSkip)
+                                        {
+                                            <button type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#skip-@row.Id">@localizer["ExcuseCheck"]</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @if (Model.Page > 0 || Model.HasMore)
+            {
+                <div class="rgw-pager">
+                    @if (Model.Page > 0)
+                    {
+                        <a class="btn btn-default btn-sm" asp-route-page="@(Model.Page - 1)"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                    }
+                    @if (Model.HasMore)
+                    {
+                        <a class="btn btn-default btn-sm" asp-route-page="@(Model.Page + 1)">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                    }
+                    <span class="text-muted">@(Model.Page + 1)</span>
+                </div>
+            }
+
+            @foreach (var entry in Model.Occurrences.Where(x => x.CanSkip))
+            {
+                var row = entry.Occurrence;
+                <div class="modal fade rgw-modal" id="skip-@row.Id" tabindex="-1" role="dialog" aria-labelledby="skip-@(row.Id)-title">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="skip-@(row.Id)-title">@localizer["ExcuseCheck"] &middot; @entry.Name</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-muted">@localizer["SkipHint"]</p>
+                                <form class="checklist-form" asp-action="SkipOccurrence" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@row.Id" />
+                                    <input type="hidden" name="revision" value="@row.Revision" />
+                                    <div class="rgw-grid">
+                                        <div class="form-group rgw-wide">
+                                            <label for="reason-@row.Id">@localizer["SkipReason"]</label>
+                                            <textarea id="reason-@row.Id" name="reason" class="form-control" rows="3" maxlength="4000" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="rgw-wizard-actions">
+                                        <div class="rgw-wizard-spacer"></div>
+                                        <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                        <button type="submit" class="btn btn-warning">@localizer["ExcuseCheck"]</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
 <form id="checklist-live-refresh" class="checklist-form" asp-action="Reopen" method="post" hidden>@Html.AntiForgeryToken()<input type="hidden" name="page" value="Due" /></form>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") @await Html.PartialAsync("_LiveScripts") }

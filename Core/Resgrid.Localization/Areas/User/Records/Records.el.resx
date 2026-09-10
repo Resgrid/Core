@@ -1992,4 +1992,116 @@
   <data name="ReadinessUnits" xml:space="preserve"><value>Πίνακας ετοιμότητας μονάδων</value></data>
   <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Γραμμές χωρίς τιμή</value></data>
   <data name="ReadinessWorkOrders" xml:space="preserve"><value>Εντολές εργασίας</value></data>
+  <data name="LegalHoldsHeader" xml:space="preserve"><value>Δεσμεύσεις διατήρησης αρχείων</value></data>
+  <data name="LegalHoldsIntro" xml:space="preserve"><value>Χρησιμοποιήστε δέσμευση διατήρησης για δικαστική διαφορά, έρευνα ή αίτημα αρχείων. Προστατεύει και την ανάλυση και τα τεκμήρια· η αποδέσμευση γνωστοποίησης δεν την αίρει.</value></data>
+  <data name="PlaceHold" xml:space="preserve"><value>Επιβολή δέσμευσης διατήρησης</value></data>
+  <data name="ReleaseHold" xml:space="preserve"><value>Άρση δέσμευσης</value></data>
+  <data name="ReleaseHoldReason" xml:space="preserve"><value>Αρμοδιότητα και λόγος άρσης της διατήρησης</value></data>
+  <data name="NoHolds" xml:space="preserve"><value>Δεν έχουν επιβληθεί δεσμεύσεις διατήρησης.</value></data>
+  <data name="HoldActive" xml:space="preserve"><value>Δέσμευση σε ισχύ</value></data>
+  <data name="HoldScope" xml:space="preserve"><value>Εύρος</value></data>
+  <data name="HoldPeriod" xml:space="preserve"><value>Διατηρούμενη περίοδος</value></data>
+  <data name="HoldRecordId" xml:space="preserve"><value>Συγκεκριμένο αναγνωριστικό αρχείου</value></data>
+  <data name="HoldRecordIdHelp" xml:space="preserve"><value>Αφήστε κενό για να δεσμεύσετε ό,τι ταιριάζει σε ορισμό και εύρος ημερομηνιών.</value></data>
+  <data name="HoldDefinition" xml:space="preserve"><value>Εύρος ορισμού</value></data>
+  <data name="HoldNerisScope" xml:space="preserve"><value>Συμβάν και ανάλυση NERIS</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>Για εύρος ορισμού, αφήστε και τις δύο ημερομηνίες κενές για να διατηρηθούν όλες. Ώρες σε UTC.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>Έναρξη περιόδου (UTC)</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>Λήξη περιόδου (UTC)</value></data>
+  <data name="HoldReason" xml:space="preserve"><value>Βάση της δέσμευσης</value></data>
+  <data name="HoldReasonLitigation" xml:space="preserve"><value>Δικαστική διαφορά</value></data>
+  <data name="HoldReasonInvestigation" xml:space="preserve"><value>Έρευνα</value></data>
+  <data name="HoldReasonRecordsRequest" xml:space="preserve"><value>Αίτημα δημόσιων αρχείων</value></data>
+  <data name="HoldReasonOther" xml:space="preserve"><value>Άλλο</value></data>
+  <data name="HoldReference" xml:space="preserve"><value>Αρμοδιότητα ή αριθμός υπόθεσης</value></data>
+  <data name="HoldNotes" xml:space="preserve"><value>Οδηγίες διατήρησης και βάση</value></data>
+  <data name="HoldAllMatching" xml:space="preserve"><value>Όλα τα σχετικά αρχεία</value></data>
+  <data name="HoldAnyStart" xml:space="preserve"><value>Οποιαδήποτε έναρξη</value></data>
+  <data name="HoldAnyEnd" xml:space="preserve"><value>Οποιαδήποτε λήξη</value></data>
+  <data name="HoldPlacedBy" xml:space="preserve"><value>Επιβλήθηκε από</value></data>
+  <data name="HoldReleasedBy" xml:space="preserve"><value>Άρθηκε από</value></data>
+  <data name="Reason" xml:space="preserve"><value>Αιτία</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Δεν υπάρχει τίποτα ακόμη. Χρησιμοποιήστε τα κουμπιά παραπάνω για να δημιουργήσετε το πρώτο.</value></data>
+  <data name="PreviousPage" xml:space="preserve"><value>Προηγούμενη σελίδα</value></data>
+  <data name="NextPage" xml:space="preserve"><value>Επόμενη σελίδα</value></data>
+  <data name="ReturnToReport" xml:space="preserve"><value>Επιστροφή στην αναφορά</value></data>
+  <data name="EvidenceManifestIntro" xml:space="preserve"><value>Ένα καταγεγραμμένο μανιφέστο διατηρεί τα επιλεγμένα στοιχεία πηγής και το άθροισμα ελέγχου τους. Οι προσχέδιες καταγραφές εντάσσονται στην υπογεγραμμένη αναθεώρηση και οι διορθώσεις κρατούν τα προηγούμενα τεκμήρια στο ιστορικό.</value></data>
+  <data name="EvidenceWithheld" xml:space="preserve"><value>Παρακράτηση περιορισμένων τεκμηρίων</value></data>
+  <data name="EvidenceCurrent" xml:space="preserve"><value>Τρέχον</value></data>
+  <data name="EvidenceDraft" xml:space="preserve"><value>Προσχέδια καταγραφή</value></data>
+  <data name="EvidenceSignedRevision" xml:space="preserve"><value>Υπογεγραμμένη αναθεώρηση</value></data>
+  <data name="EvidenceSourceVersion" xml:space="preserve"><value>Έκδοση πηγής</value></data>
+  <data name="EvidenceDownloadManifest" xml:space="preserve"><value>Λήψη επαληθευμένου μανιφέστου</value></data>
+  <data name="EvidenceLoadSource" xml:space="preserve"><value>Φόρτωση πηγής</value></data>
+  <data name="EvidenceLoadMessages" xml:space="preserve"><value>Φόρτωση μηνυμάτων</value></data>
+  <data name="EvidenceChannel" xml:space="preserve"><value>Κανάλι συμβάντος</value></data>
+  <data name="EvidenceChooseChannel" xml:space="preserve"><value>Επιλέξτε κανάλι</value></data>
+  <data name="EvidenceRestricted" xml:space="preserve"><value>απαιτείται περιορισμένη πρόσβαση</value></data>
+  <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>Δεν καταγράφονται τεκμήρια για μη διαθέσιμη πηγή.</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Έναρξη κάλυψης (UTC)</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Λήξη κάλυψης (UTC)</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>Ώρα συμβάντος για την ισχύ (UTC)</value></data>
+  <data name="EvidencePersonnel" xml:space="preserve"><value>Προσωπικό</value></data>
+  <data name="EvidenceMessages" xml:space="preserve"><value>Μηνύματα</value></data>
+  <data name="EvidenceNoChoices" xml:space="preserve"><value>Δεν υπάρχουν προσβάσιμα στοιχεία σε αυτή τη σελίδα.</value></data>
+  <data name="EvidenceEdited" xml:space="preserve"><value>επεξεργασμένο</value></data>
+  <data name="EvidencePageWarning" xml:space="preserve"><value>Οι μη καταγεγραμμένες επιλογές αυτής της σελίδας θα καθαριστούν.</value></data>
+  <data name="EvidenceTrackingHelp" xml:space="preserve"><value>Επιλέξτε έως 20 οχήματα και παράθυρο έως 24 ωρών. Δειγματοληπτούνται έως 24 στίγματα ανά όχημα· καταγράψτε άλλα παράθυρα ξεχωριστά.</value></data>
+  <data name="EvidenceCertificationHelp" xml:space="preserve"><value>Επιλέξτε το προσωπικό του οποίου η κατάσταση προσόντων ανήκει σε αυτή την αναφορά. Οι αριθμοί πιστοποιητικών και τα αρχεία παραμένουν στις Πιστοποιήσεις.</value></data>
+  <data name="EvidenceRunCardHelp" xml:space="preserve"><value>Καταγράφει τις αποφάσεις διάθεσης που κατέγραψαν τα Run Cards για το συμβάν της αναφοράς. Μια απόφαση που δεν καταγράφηκε δεν ανακατασκευάζεται.</value></data>
+  <data name="EvidenceInventoryHelp" xml:space="preserve"><value>Ανανεώνει τα τεκμήρια για κάθε καταγεγραμμένη ανάλωση αποθέματος. Δεν αναλώνει ξανά απόθεμα.</value></data>
+  <data name="EvidenceChatHelp" xml:space="preserve"><value>Επιλέξτε τα μηνύματα προς διατήρηση· περιλαμβάνονται οι απαντήσεις νήματος. Κάθε σελίδα είναι ξεχωριστή καταγραφή, οπότε καταγράψτε αυτήν πριν προχωρήσετε. Τα κείμενα εμφανίζονται ως απλό κείμενο.</value></data>
+  <data name="SubmissionRecoveryHeader" xml:space="preserve"><value>Ιστορικό υποβολής και αποκατάσταση</value></data>
+  <data name="SubmissionRecoveryIntro" xml:space="preserve"><value>Κάθε προσπάθεια παράδοσης και απόκριση προορισμού για αυτή την υποβολή, με τα εργαλεία συμφωνίας μιας αποτυχημένης.</value></data>
+  <data name="SubmissionNoIdentifier" xml:space="preserve"><value>Δεν καταγράφηκε αναγνωριστικό</value></data>
+  <data name="SubmissionLatestIssue" xml:space="preserve"><value>Τελευταίο ζήτημα</value></data>
+  <data name="SubmissionExchangeHeader" xml:space="preserve"><value>Ιστορικό παράδοσης και απόκρισης</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Ώρες σε UTC. Οι προηγούμενες αποκρίσεις παραμένουν διαθέσιμες μετά από απόρριψη, επανάληψη και διόρθωση.</value></data>
+  <data name="SubmissionNoExchanges" xml:space="preserve"><value>Δεν καταγράφηκε ιστορικό ανταλλαγής για αυτή την παλαιά υποβολή.</value></data>
+  <data name="SubmissionOperation" xml:space="preserve"><value>Λειτουργία και στάδιο</value></data>
+  <data name="SubmissionResponse" xml:space="preserve"><value>Απόκριση προορισμού</value></data>
+  <data name="SubmissionLastResponseHeader" xml:space="preserve"><value>Τελευταία αποθηκευμένη απόκριση προορισμού</value></data>
+  <data name="SubmissionBindHeader" xml:space="preserve"><value>Σύνδεση μη απεσταλμένης υποβολής</value></data>
+  <data name="SubmissionBindIntro" xml:space="preserve"><value>Ελέγξτε την τρέχουσα οντότητα NERIS και τον προορισμό της υπηρεσίας. Η σύνδεση θέτει την υποβολή σε ουρά παράδοσης.</value></data>
+  <data name="SubmissionBindAction" xml:space="preserve"><value>Σύνδεση και ουρά</value></data>
+  <data name="SubmissionVerifyHeader" xml:space="preserve"><value>Επαλήθευση υπάρχουσας υποβολής στον προορισμό</value></data>
+  <data name="SubmissionVerifyIntro" xml:space="preserve"><value>Εντοπίστε την υποβολή στον αρχικό προορισμό. Το αναγνωριστικό της ελέγχεται έναντι της αναφοράς σε ουρά πριν συνεχιστεί η άντληση.</value></data>
+  <data name="SubmissionVerifyAction" xml:space="preserve"><value>Επιβεβαίωση παραλαβής</value></data>
+  <data name="SubmissionAbsenceHeader" xml:space="preserve"><value>Καταγραφή επαληθευμένης απουσίας υποβολής</value></data>
+  <data name="SubmissionAbsenceIntro" xml:space="preserve"><value>Χρησιμοποιήστε το μόνο αφού ο προορισμός ή η υποστήριξή του επιβεβαιώσει ότι η υποβολή δεν δημιουργήθηκε ποτέ· ένα κενό αποτέλεσμα αναζήτησης δεν αρκεί. Καταγράφει την επαλήθευσή σας και αίρει το μπλοκάρισμα. Δεν στέλνει τίποτα ούτε προγραμματίζει επανάληψη.</value></data>
+  <data name="SubmissionVerificationReference" xml:space="preserve"><value>Αναφορά επαλήθευσης ή υποστήριξης προορισμού</value></data>
+  <data name="SubmissionAbsenceReason" xml:space="preserve"><value>Τι επαληθεύτηκε και από ποιον</value></data>
+  <data name="SubmissionAbsenceConfirm" xml:space="preserve"><value>Επαλήθευσα ότι ο αρχικός προορισμός δεν δημιούργησε αυτή την υποβολή.</value></data>
+  <data name="SubmissionAbsenceAction" xml:space="preserve"><value>Καταγραφή επαλήθευσης χωρίς αποστολή</value></data>
+  <data name="SubmissionStateQueued" xml:space="preserve"><value>Σε ουρά</value></data>
+  <data name="SubmissionStateInFlight" xml:space="preserve"><value>Σε μεταφορά</value></data>
+  <data name="SubmissionStateAccepted" xml:space="preserve"><value>Έγινε αποδεκτή</value></data>
+  <data name="SubmissionStateRejected" xml:space="preserve"><value>Απορρίφθηκε</value></data>
+  <data name="SubmissionStateFailed" xml:space="preserve"><value>Απέτυχε</value></data>
+  <data name="SubmissionStateSuperseded" xml:space="preserve"><value>Αντικαταστάθηκε από νεότερη αναθεώρηση</value></data>
+  <data name="SubmissionStateAwaitingDestination" xml:space="preserve"><value>Αναμονή ελέγχου από τον προορισμό</value></data>
+  <data name="NewRunCallHeader" xml:space="preserve"><value>Δημιουργία συμβάντος για αυτή την έξοδο</value></data>
+  <data name="NewRunCallIntro" xml:space="preserve"><value>Καταγράψτε ένα παρελθόν συμβάν και συνδέστε το με αυτή την έξοδο. Το συμβάν δημιουργείται κλειστό και δεν κινητοποιεί κανέναν.</value></data>
+  <data name="NewRunCallName" xml:space="preserve"><value>Όνομα συμβάντος</value></data>
+  <data name="NewRunCallOccurredOn" xml:space="preserve"><value>Συνέβη στις (τοπική ώρα υπηρεσίας)</value></data>
+  <data name="NewRunCallAddress" xml:space="preserve"><value>Διεύθυνση</value></data>
+  <data name="NewRunCallNature" xml:space="preserve"><value>Φύση του συμβάντος</value></data>
+  <data name="NewRunCallAction" xml:space="preserve"><value>Δημιουργία και σύνδεση συμβάντος</value></data>
+  <data name="DiffRevisionRange" xml:space="preserve"><value>Αναθεώρηση {0} σε σύγκριση με την αναθεώρηση {1}</value></data>
+  <data name="DiffPrint" xml:space="preserve"><value>Εκτύπωση σύγκρισης σε PDF</value></data>
+  <data name="CustomFieldsHeader" xml:space="preserve"><value>Προσαρμοσμένα πεδία υπηρεσίας</value></data>
+  <data name="NewRunCallSaveFirst" xml:space="preserve"><value>Αποθηκεύστε το προσχέδιο για να δημιουργήσετε και να συνδέσετε ένα παρελθόν συμβάν.</value></data>
+  <data name="ParticipantInclude" xml:space="preserve"><value>Συμπερίληψη</value></data>
+  <data name="ParticipantChoose" xml:space="preserve"><value>Επιλέξτε συμμετέχοντα</value></data>
+  <data name="ParticipantLabel" xml:space="preserve"><value>Συμμετέχων</value></data>
+  <data name="ParticipantRoleLabel" xml:space="preserve"><value>Ρόλος συμμετέχοντα</value></data>
+  <data name="ParticipantUnitLabel" xml:space="preserve"><value>Ανατεθειμένο όχημα</value></data>
+  <data name="ParticipantNoUnit" xml:space="preserve"><value>Κανένα ανατεθειμένο όχημα</value></data>
+  <data name="ParticipantPreviousUnit" xml:space="preserve"><value>Προηγουμένως ανατεθειμένο όχημα</value></data>
+  <data name="ParticipantAdd" xml:space="preserve"><value>Προσθήκη συμμετέχοντα</value></data>
+  <data name="ParticipantRoleFor" xml:space="preserve"><value>Ρόλος για {0}</value></data>
+  <data name="FileClassification" xml:space="preserve"><value>Διαβάθμιση αρχείου</value></data>
+  <data name="FileClassificationHelp" xml:space="preserve"><value>Ισχύει και για τα ονόματα και τις περιγραφές αρχείων, όχι μόνο για το αρχείο.</value></data>
+  <data name="ClassificationRestricted" xml:space="preserve"><value>Περιορισμένο</value></data>
+  <data name="ClassificationUnrestricted" xml:space="preserve"><value>Απεριόριστο επιχειρησιακό περιεχόμενο</value></data>
 </root>

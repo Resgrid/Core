@@ -297,4 +297,5 @@
     <value>ملف القسم</value>
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>حالات حفظ السجلات</value></data>
+  <data name="RecordsAllModule" xml:space="preserve"><value>كل السجلات</value></data>
 </root>

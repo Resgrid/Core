@@ -106,9 +106,11 @@ namespace Resgrid.Tests.Services
 				var html = await response.Content.ReadAsStringAsync(); response.StatusCode.Should().Be(HttpStatusCode.OK, html);
 				html.Should().NotContain("<script>").And.NotContain("<a onmouseover=").And.Contain("&lt;script&gt;");
 				var links = Regex.Matches(html, "href=\"([^\"]+)\"").Select(m => WebUtility.HtmlDecode(m.Groups[1].Value)).ToList();
-				links.Should().HaveCount(canEdit ? 5 : 3, "each edit/navigation link must remain one attribute");
+				// No href anywhere on the page may break out of its attribute, including the
+				// module chrome (breadcrumb and tab strip) that carries no untrusted input.
 				links.Should().OnlyContain(link => !link.Contains("<") && !link.Contains("\""));
-				links.Select(Uri.UnescapeDataString).Should().OnlyContain(link => link.Contains(attack));
+				var untrusted = links.Where(link => Uri.UnescapeDataString(link).Contains(attack)).ToList();
+				untrusted.Should().HaveCount(canEdit ? 5 : 3, "each edit/navigation link must remain one attribute");
 			}
 			finally { await app.StopAsync(); ClaimsAuthorizationHelper._httpContextAccessor = previous; }
 		}

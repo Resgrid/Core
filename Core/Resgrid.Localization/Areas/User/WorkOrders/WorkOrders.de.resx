@@ -376,4 +376,25 @@
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Vorgangsrichtlinie für Arbeitsaufträge geändert</value></data>
 <data name="ResponseDueOn" xml:space="preserve"><value>Reaktionsfrist (UTC)</value></data>
 <data name="RepairDueOn" xml:space="preserve"><value>Reparaturfrist (UTC)</value></data>
+  <data name="WorkOrdersIntro" xml:space="preserve"><value>Reparaturen anlegen, Zuständigkeiten verfolgen und die Wartungskosten sehen.</value></data>
+  <data name="Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="Continue" xml:space="preserve"><value>Weiter</value></data>
+  <data name="Review" xml:space="preserve"><value>Prüfen</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Prüfen Sie die Angaben unten und speichern Sie dann.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Füllen Sie die hervorgehobenen Felder aus, bevor Sie fortfahren.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Hier ist noch nichts. Legen Sie über die Schaltflächen oben den ersten Eintrag an.</value></data>
+  <data name="HelpWorkOrders" xml:space="preserve"><value>Ein Arbeitsauftrag ist eine Reparatur oder Prüfung, von der Anforderung bis zur geprüften Behebung.</value></data>
+  <data name="StepOrderDescribe" xml:space="preserve"><value>Arbeit beschreiben</value></data>
+  <data name="StepOrderDescribeHint" xml:space="preserve"><value>Was zu tun ist, wie dringend es ist und bis wann es benötigt wird.</value></data>
+  <data name="StepOrderTarget" xml:space="preserve"><value>Wofür es gilt</value></data>
+  <data name="StepOrderTargetHint" xml:space="preserve"><value>Fahrzeug, Wache oder Asset, für das die Arbeit gilt, und wo es zu finden ist.</value></data>
+  <data name="StepOrderCost" xml:space="preserve"><value>Kosten und Lieferant</value></data>
+  <data name="StepOrderCostHint" xml:space="preserve"><value>Welche Kosten erwartet werden, welches Budget belastet wird und wer die Arbeit ausführt.</value></data>
+  <data name="StepOrderSafety" xml:space="preserve"><value>Sicherheit und Verfahren</value></data>
+  <data name="StepOrderSafetyHint" xml:space="preserve"><value>Erforderliche Freigaben, Freischaltungen und Qualifikationen sowie die einzuhaltenden Schritte.</value></data>
+  <data name="StepRecurrenceScheduleHint" xml:space="preserve"><value>Wie oft die Arbeit ansteht und in welchem Zeitfenster sie erledigt werden kann.</value></data>
+  <data name="StepRecurrenceUsageHint" xml:space="preserve"><value>Optionale Zähler- oder Zustandsauslöser, die die Arbeit bei entsprechender Nutzung früher anlegen.</value></data>
+  <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>An wen der erzeugte Arbeitsauftrag geht und an wen eskaliert wird, wenn ihn niemand übernimmt.</value></data>
+  <data name="HelpFieldDueOn" xml:space="preserve"><value>Steuert die Überfälligkeitsmarkierung und die Service-Level-Uhr.</value></data>
+  <data name="HelpFieldSteps" xml:space="preserve"><value>Die Schritte, die der Techniker abarbeitet. Manche Statuswechsel setzen voraus, dass alle erledigt sind.</value></data>
 </root>

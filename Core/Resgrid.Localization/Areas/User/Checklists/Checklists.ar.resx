@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>تعذّر إعادة بناء بعض الحالات التاريخية لأوامر العمل. لا تدّعي الحزمة تغطية الصيانة بالكامل.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>تقتصر أدلة أوامر العمل على النطاق المصرّح للقارئ بالوصول إليه حاليًا.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>يجب إلغاء قفل البيانات المحمية للمتابعة.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>أنشئ الفحوصات التي تنفّذها أطقمك، وجدولها، وتابع ما تم إنجازه.</value></data>
+  <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Continue" xml:space="preserve"><value>متابعة</value></data>
+  <data name="Review" xml:space="preserve"><value>مراجعة</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>راجع الإجابات أدناه ثم احفظ.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>املأ الحقول المميزة قبل المتابعة.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>لا يوجد شيء هنا بعد. استخدم الأزرار أعلاه لإنشاء أول واحد.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>قائمة التحقق هي مجموعة الأسئلة التي يجيب عنها الطاقم. انشرها قبل جدولتها أو تنفيذها.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>اختر الهدف الذي يُنفَّذ عليه هذا الفحص.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>تبقى الفحوصات المعذورة في السجل مع السبب الذي تذكره هنا.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>الإحالة توقف عمليات التنفيذ الجديدة والفحوصات المجدولة المقبلة. يُحتفظ بالسجل القائم.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>تُحدَّد الفحوصات بحسب وقت بدايتها لا وقت إتمامها.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>البلاغ الذي يُجمَّع الملف من أجله.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>سمِّ الجدول</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>اسم هذا الجدول والهدف الذي يُنفَّذ عليه.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>متى يُنفَّذ</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>عدد مرات فتح الفحص، والمنطقة الزمنية التي تُقرأ بها تلك الأوقات.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>من يتولّاه</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>من المسؤول عن الفحص وكم من الوقت لديه بعد فتحه.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>يظهر في قائمة المستحق، فاجعله سهل التمييز بنظرة واحدة.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>المدة المتاحة للطاقم لإنهاء الفحص بعد فتحه. بعدها يُحتسب فائتًا.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>التوجيه التلقائي يرسل الفحص إلى من يحوز الهدف. اختر شخصًا أو دورًا أو مجموعة أو مركبة لتجاوز ذلك.</value></data>
 </root>

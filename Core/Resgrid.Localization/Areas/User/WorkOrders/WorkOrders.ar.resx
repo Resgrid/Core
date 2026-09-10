@@ -376,4 +376,25 @@
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>تغيرت سياسة عمليات أوامر العمل</value></data>
 <data name="ResponseDueOn" xml:space="preserve"><value>الموعد النهائي للاستجابة (UTC)</value></data>
 <data name="RepairDueOn" xml:space="preserve"><value>الموعد النهائي للإصلاح (UTC)</value></data>
+  <data name="WorkOrdersIntro" xml:space="preserve"><value>أنشئ أوامر الإصلاح وتابع من ينفّذها واطّلع على تكلفة الصيانة.</value></data>
+  <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Continue" xml:space="preserve"><value>متابعة</value></data>
+  <data name="Review" xml:space="preserve"><value>مراجعة</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>راجع الإجابات أدناه ثم احفظ.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>املأ الحقول المميزة قبل المتابعة.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>لا يوجد شيء هنا بعد. استخدم الأزرار أعلاه لإنشاء أول واحد.</value></data>
+  <data name="HelpWorkOrders" xml:space="preserve"><value>أمر العمل هو إصلاح أو فحص واحد، من الطلب حتى الإصلاح المُتحقّق منه.</value></data>
+  <data name="StepOrderDescribe" xml:space="preserve"><value>وصف العمل</value></data>
+  <data name="StepOrderDescribeHint" xml:space="preserve"><value>ما المطلوب عمله، ومدى إلحاحه، وموعد الحاجة إليه.</value></data>
+  <data name="StepOrderTarget" xml:space="preserve"><value>موضوع العمل</value></data>
+  <data name="StepOrderTargetHint" xml:space="preserve"><value>المركبة أو المحطة أو الأصل المعني بالعمل، وأين يوجد.</value></data>
+  <data name="StepOrderCost" xml:space="preserve"><value>التكلفة والمورّد</value></data>
+  <data name="StepOrderCostHint" xml:space="preserve"><value>التكلفة المتوقعة، وأي ميزانية تتحمّلها، ومن ينفّذ العمل.</value></data>
+  <data name="StepOrderSafety" xml:space="preserve"><value>السلامة والإجراء</value></data>
+  <data name="StepOrderSafetyHint" xml:space="preserve"><value>التصاريح وعمليات العزل والمؤهلات التي يتطلبها العمل، والخطوات الواجب اتباعها.</value></data>
+  <data name="StepRecurrenceScheduleHint" xml:space="preserve"><value>عدد مرات تكرار العمل، والنافذة الزمنية التي يمكن لأطقمك تنفيذه خلالها.</value></data>
+  <data name="StepRecurrenceUsageHint" xml:space="preserve"><value>محفّزات اختيارية للعدّاد أو الحالة تُنشئ العمل مبكرًا وفق الاستخدام.</value></data>
+  <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>إلى من يذهب أمر العمل المُنشأ، وإلى من يُصعَّد إن لم يتولّه أحد.</value></data>
+  <data name="HelpFieldDueOn" xml:space="preserve"><value>يحدّد وسم التأخر وعدّاد مستوى الخدمة.</value></data>
+  <data name="HelpFieldSteps" xml:space="preserve"><value>الخطوات التي ينفّذها الفني. بعض تغييرات الحالة تتطلب إتمامها جميعًا.</value></data>
 </root>

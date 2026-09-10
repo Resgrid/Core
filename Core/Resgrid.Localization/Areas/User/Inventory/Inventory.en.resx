@@ -709,4 +709,137 @@
   <data name="WorkOrderPostingRequired" xml:space="preserve"><value>Post or reverse this part through its work order.</value></data>
   <data name="AssetSafetyHold" xml:space="preserve"><value>A maintenance safety hold prevents returning this equipment to service.</value></data>
   <data name="ReadinessProRequired" xml:space="preserve"><value>Readiness Pro is required for new maintenance work.</value></data>
+  <data name="AdjustStock" xml:space="preserve"><value>Adjust stock</value></data>
+  <data name="Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Contents" xml:space="preserve"><value>Contents</value></data>
+  <data name="Continue" xml:space="preserve"><value>Continue</value></data>
+  <data name="EditItem" xml:space="preserve"><value>Edit item</value></data>
+  <data name="Expires" xml:space="preserve"><value>Expires</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="IssueEquipment" xml:space="preserve"><value>Issue equipment</value></data>
+  <data name="Item" xml:space="preserve"><value>Item</value></data>
+  <data name="NewCategory" xml:space="preserve"><value>New category</value></data>
+  <data name="NewKit" xml:space="preserve"><value>New kit</value></data>
+  <data name="NewLocation" xml:space="preserve"><value>New location</value></data>
+  <data name="NewLot" xml:space="preserve"><value>New lot</value></data>
+  <data name="NewTransfer" xml:space="preserve"><value>New transfer</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Nothing here yet. Use the buttons above to create the first record.</value></data>
+  <data name="Outstanding" xml:space="preserve"><value>Outstanding</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Quantity</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Fill in the highlighted fields before continuing.</value></data>
+  <data name="Review" xml:space="preserve"><value>Review</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Check the answers below, then save.</value></data>
+  <data name="Transaction" xml:space="preserve"><value>Ledger entry</value></data>
+  <data name="Type" xml:space="preserve"><value>Type</value></data>
+  <data name="When" xml:space="preserve"><value>When</value></data>
+  <data name="WorkspaceIntro" xml:space="preserve"><value>Track what your department owns, where it is kept and who is carrying it.</value></data>
+  <data name="M4PurchasingIntro" xml:space="preserve"><value>Manage suppliers, raise purchase orders and see what your stock is worth.</value></data>
+  <data name="M5OperationsIntro" xml:space="preserve"><value>Run physical counts, work through alerts and print inventory reports.</value></data>
+  <data name="HelpOnHand" xml:space="preserve"><value>What you hold right now, by item and location. Filter to one item or place, then adjust the stock when a count changes.</value></data>
+  <data name="HelpItems" xml:space="preserve"><value>Items are the things you stock: the catalogue entry, not a physical object. Decide how each one is tracked before you add stock for it.</value></data>
+  <data name="HelpCategories" xml:space="preserve"><value>Categories group items so lists and reports stay readable. A category can sit under a parent category.</value></data>
+  <data name="HelpLocations" xml:space="preserve"><value>Locations are where stock lives: stations, apparatus, people, containers, or a shelf inside another location.</value></data>
+  <data name="HelpLots" xml:space="preserve"><value>A lot is a batch of one item sharing a lot number, an expiry date and a cost.</value></data>
+  <data name="HelpAssets" xml:space="preserve"><value>Assets are individually serialised pieces of equipment. Each one has its own serial number, status and history.</value></data>
+  <data name="HelpIssuances" xml:space="preserve"><value>Equipment currently signed out to a person or an apparatus. Record a return when it comes back.</value></data>
+  <data name="HelpKits" xml:space="preserve"><value>A kit is a fixed list of items issued together, such as a turnout gear set or a medic bag.</value></data>
+  <data name="HelpTransfers" xml:space="preserve"><value>Move stock between two locations. Both sides of the move are written to the ledger.</value></data>
+  <data name="HelpHistory" xml:space="preserve"><value>Every movement is written to an append-only ledger. Filter it by item or location to audit a change.</value></data>
+  <data name="HelpAssetDetail" xml:space="preserve"><value>The full history of a single asset, together with its checklists and work orders.</value></data>
+  <data name="HelpTransaction" xml:space="preserve"><value>A single ledger entry, shown exactly as it was written.</value></data>
+  <data name="HelpUnitEquipment" xml:space="preserve"><value>Everything currently assigned to the selected apparatus.</value></data>
+  <data name="HelpPersonnelGear" xml:space="preserve"><value>Everything currently signed out to the selected person.</value></data>
+  <data name="HelpHolderLookup" xml:space="preserve"><value>Look up everything held by one apparatus or one person.</value></data>
+  <data name="HelpLocationRename" xml:space="preserve"><value>Only the name can change here. Placement and scope were fixed when the location was created.</value></data>
+  <data name="HelpAssetStatus" xml:space="preserve"><value>Changing the status writes a ledger entry. Use it when equipment goes for repair, is damaged, lost or retired.</value></data>
+  <data name="HelpWitness" xml:space="preserve"><value>Enter the request number shown when the movement was posted, then attest to what you saw.</value></data>
+  <data name="M4HelpVendors" xml:space="preserve"><value>Suppliers you buy from. Each one is linked to a company contact and can carry an account number.</value></data>
+  <data name="M4HelpPurchaseOrders" xml:space="preserve"><value>Raise an order with a supplier, then receive against it. Receiving posts the stock and records what it cost.</value></data>
+  <data name="M4HelpValuation" xml:space="preserve"><value>What the stock you hold is worth, using the cost recorded when it was received.</value></data>
+  <data name="M5NoAlertsHelp" xml:space="preserve"><value>No alerts are open. Refresh to check stock levels, expiry dates and overdue returns again.</value></data>
+  <data name="M5CountEnterHelp" xml:space="preserve"><value>Enter what you actually counted for every line. The variance column updates once the count is saved.</value></data>
+  <data name="M5CountNameHelp" xml:space="preserve"><value>Something you will recognise later, such as "Station 2 annual count".</value></data>
+  <data name="StepItemBasics" xml:space="preserve"><value>Describe the item</value></data>
+  <data name="StepItemTracking" xml:space="preserve"><value>How it is tracked</value></data>
+  <data name="StepItemStock" xml:space="preserve"><value>Stock levels and cost</value></data>
+  <data name="StepLocationBasics" xml:space="preserve"><value>Name the location</value></data>
+  <data name="StepLocationScope" xml:space="preserve"><value>Where it sits</value></data>
+  <data name="StepMovementWhat" xml:space="preserve"><value>What is moving</value></data>
+  <data name="StepMovementWhere" xml:space="preserve"><value>From and to</value></data>
+  <data name="StepMovementAmount" xml:space="preserve"><value>How much</value></data>
+  <data name="StepIssueWhat" xml:space="preserve"><value>What is being issued</value></data>
+  <data name="StepIssueWho" xml:space="preserve"><value>Who is taking it</value></data>
+  <data name="StepIssueWhen" xml:space="preserve"><value>Return and notes</value></data>
+  <data name="StepAssetItem" xml:space="preserve"><value>Which item</value></data>
+  <data name="StepAssetIdentity" xml:space="preserve"><value>Serial and tags</value></data>
+  <data name="StepLotItem" xml:space="preserve"><value>Which item</value></data>
+  <data name="StepLotDetails" xml:space="preserve"><value>Lot details</value></data>
+  <data name="StepKitBasics" xml:space="preserve"><value>Name the kit</value></data>
+  <data name="StepKitContents" xml:space="preserve"><value>Kit contents</value></data>
+  <data name="M4StepOrderHeader" xml:space="preserve"><value>Order details</value></data>
+  <data name="M4StepOrderLines" xml:space="preserve"><value>Order lines</value></data>
+  <data name="M5StepCountBasics" xml:space="preserve"><value>Name the count</value></data>
+  <data name="M5StepCountScope" xml:space="preserve"><value>Scope</value></data>
+  <data name="M5StepReportKind" xml:space="preserve"><value>Choose a report</value></data>
+  <data name="M5StepReportFilters" xml:space="preserve"><value>Narrow it down</value></data>
+  <data name="HelpFieldAmount" xml:space="preserve"><value>How many units, in the item's unit of measure.</value></data>
+  <data name="HelpFieldAsset" xml:space="preserve"><value>For serialised items, pick the exact unit being moved.</value></data>
+  <data name="HelpFieldCategory" xml:space="preserve"><value>Optional grouping used by lists and reports.</value></data>
+  <data name="HelpFieldCode" xml:space="preserve"><value>Your own stock or part number, if you use one.</value></data>
+  <data name="HelpFieldCountLocation" xml:space="preserve"><value>Leave blank to count everything.</value></data>
+  <data name="HelpFieldCurrency" xml:space="preserve"><value>Three letter currency code, such as USD or EUR.</value></data>
+  <data name="HelpFieldDefaultLocation" xml:space="preserve"><value>New stock lands here when no location is chosen.</value></data>
+  <data name="HelpFieldExpectedReturn" xml:space="preserve"><value>Overdue returns are flagged on the alerts screen.</value></data>
+  <data name="HelpFieldExpiration" xml:space="preserve"><value>The date this stock stops being usable.</value></data>
+  <data name="HelpFieldFromLocation" xml:space="preserve"><value>Where the stock is leaving. Leave blank when bringing new stock in.</value></data>
+  <data name="HelpFieldHolder" xml:space="preserve"><value>Choose a person or an apparatus, not both.</value></data>
+  <data name="HelpFieldIsActive" xml:space="preserve"><value>Inactive items stay in history but cannot be chosen for new movements.</value></data>
+  <data name="HelpFieldIsControlledSubstance" xml:space="preserve"><value>Movements need a second person to witness them and are kept for audit.</value></data>
+  <data name="HelpFieldIsKit" xml:space="preserve"><value>Mark this as a kit container rather than something you stock on its own.</value></data>
+  <data name="HelpFieldLocationType" xml:space="preserve"><value>Station, apparatus, person, container, or a sub-location of another place.</value></data>
+  <data name="HelpFieldLot" xml:space="preserve"><value>Pick the batch this stock came from, if the item is lot tracked.</value></data>
+  <data name="HelpFieldMinimum" xml:space="preserve"><value>Raise an alert when the amount on hand falls below this.</value></data>
+  <data name="HelpFieldNote" xml:space="preserve"><value>Why this happened. Notes appear on the ledger and on reports.</value></data>
+  <data name="HelpFieldParent" xml:space="preserve"><value>Optional. Nest this under another record.</value></data>
+  <data name="HelpFieldReorderPoint" xml:space="preserve"><value>Suggest reordering once the amount on hand reaches this.</value></data>
+  <data name="HelpFieldReportRange" xml:space="preserve"><value>Snapshot reports ignore the date range.</value></data>
+  <data name="HelpFieldRequiresExpiration" xml:space="preserve"><value>Require an expiry date so this item appears on expiry alerts.</value></data>
+  <data name="HelpFieldRequiresLotTracking" xml:space="preserve"><value>Require a lot number whenever stock of this item is received.</value></data>
+  <data name="HelpFieldReturnCondition" xml:space="preserve"><value>The state the equipment came back in.</value></data>
+  <data name="HelpFieldSerialNumber" xml:space="preserve"><value>Manufacturer serial. It must be unique for this item.</value></data>
+  <data name="HelpFieldToLocation" xml:space="preserve"><value>Where the stock is going. Leave blank when consuming or writing stock off.</value></data>
+  <data name="HelpFieldTrackingMode" xml:space="preserve"><value>Bulk counts a quantity. Serialised tracks every unit separately, with its own serial number and history.</value></data>
+  <data name="HelpFieldUnitCost" xml:space="preserve"><value>Cost of one unit, used for valuation.</value></data>
+  <data name="HelpFieldUnitOfMeasure" xml:space="preserve"><value>How you count it: each, box, litre, metre.</value></data>
+  <data name="M4AccountNumberHelp" xml:space="preserve"><value>The account this supplier knows you by.</value></data>
+  <data name="M4CompanyContactHelp" xml:space="preserve"><value>Pick the company contact this supplier record belongs to.</value></data>
+  <data name="M4NewVendorHint" xml:space="preserve"><value>A supplier is a company contact you buy from. Add the contact first if it is not in the list.</value></data>
+  <data name="M4PurchaseOrderNumberHelp" xml:space="preserve"><value>Your reference for this order. It appears on the ledger when the stock is received.</value></data>
+  <data name="M4StepOrderHeaderHint" xml:space="preserve"><value>Who you are buying from, under what reference, and in which currency.</value></data>
+  <data name="M4StepOrderLinesHint" xml:space="preserve"><value>One line per item. Quantities and costs here are what you will receive against.</value></data>
+  <data name="M5StepCountBasicsHint" xml:space="preserve"><value>A count freezes a snapshot of your stock so you can compare it with what is on the shelf.</value></data>
+  <data name="M5StepCountScopeHint" xml:space="preserve"><value>Count one location, or leave it blank to count the whole department.</value></data>
+  <data name="M5StepReportKindHint" xml:space="preserve"><value>The report decides which of the filters on the next step apply.</value></data>
+  <data name="M5StepReportFiltersHint" xml:space="preserve"><value>Leave a filter blank to include everything. Unavailable filters are greyed out.</value></data>
+  <data name="StepAssetItemHint" xml:space="preserve"><value>An asset is one physical unit of an item. Say which item it is and where it will live.</value></data>
+  <data name="StepAssetIdentityHint" xml:space="preserve"><value>How this unit is identified when someone picks it up or scans it.</value></data>
+  <data name="StepIssueWhatHint" xml:space="preserve"><value>Choose the item and the place it is coming out of.</value></data>
+  <data name="StepIssueWhenHint" xml:space="preserve"><value>When you expect it back, and anything worth recording about the hand-over.</value></data>
+  <data name="StepItemBasicsHint" xml:space="preserve"><value>What people will see when they search for this in a list.</value></data>
+  <data name="StepItemTrackingHint" xml:space="preserve"><value>These answers decide what the system asks for later, so they are hard to change once stock exists.</value></data>
+  <data name="StepItemStockHint" xml:space="preserve"><value>Optional thresholds that drive low stock alerts, plus the cost used for valuation.</value></data>
+  <data name="StepKitBasicsHint" xml:space="preserve"><value>Kits are issued as a whole, so give this one a name your crews will recognise.</value></data>
+  <data name="StepKitContentsHint" xml:space="preserve"><value>List every item the kit contains and how many of each.</value></data>
+  <data name="StepKitIssueHint" xml:space="preserve"><value>Confirm which physical unit and which shelf each part of the kit is coming from.</value></data>
+  <data name="StepLocationBasicsHint" xml:space="preserve"><value>The name shows up in every drop-down that asks where something is.</value></data>
+  <data name="StepLocationScopeHint" xml:space="preserve"><value>Fill in only the field that matches the type you chose; leave the rest blank.</value></data>
+  <data name="StepLotDetailsHint" xml:space="preserve"><value>The lot number as printed on the packaging, plus what the batch cost and when it expires.</value></data>
+  <data name="StepLotItemHint" xml:space="preserve"><value>Lots always belong to one item, so pick it first.</value></data>
+  <data name="StepMovementWhatHint" xml:space="preserve"><value>The kind of movement decides which of the fields below the system will use.</value></data>
+  <data name="StepMovementWhereHint" xml:space="preserve"><value>Receiving needs only a destination; consuming or writing off needs only a source.</value></data>
+  <data name="StepMovementAmountHint" xml:space="preserve"><value>The quantity and the reason. Both end up on the ledger entry this creates.</value></data>
+  <data name="StepReturnHint" xml:space="preserve"><value>Say how much came back, where it went, and what condition it is in.</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inactive</value></data>
 </root>

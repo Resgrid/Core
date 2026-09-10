@@ -1992,4 +1992,116 @@
   <data name="ReadinessUnits" xml:space="preserve"><value>Beredskapstavla för enheter</value></data>
   <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Oprissatta rader</value></data>
   <data name="ReadinessWorkOrders" xml:space="preserve"><value>Arbetsorder</value></data>
+  <data name="LegalHoldsHeader" xml:space="preserve"><value>Bevarandespärrar för journaler</value></data>
+  <data name="LegalHoldsIntro" xml:space="preserve"><value>Använd en bevarandespärr vid tvist, utredning eller begäran om handlingar. Spärren skyddar även analys och bevis; att släppa ett utlämnande upphäver den inte.</value></data>
+  <data name="PlaceHold" xml:space="preserve"><value>Lägg bevarandespärr</value></data>
+  <data name="ReleaseHold" xml:space="preserve"><value>Släpp spärren</value></data>
+  <data name="ReleaseHoldReason" xml:space="preserve"><value>Behörighet och skäl för att häva bevarandet</value></data>
+  <data name="NoHolds" xml:space="preserve"><value>Inga bevarandespärrar har lagts.</value></data>
+  <data name="HoldActive" xml:space="preserve"><value>Spärr gäller</value></data>
+  <data name="HoldScope" xml:space="preserve"><value>Omfattning</value></data>
+  <data name="HoldPeriod" xml:space="preserve"><value>Bevarad period</value></data>
+  <data name="HoldRecordId" xml:space="preserve"><value>Specifik journalidentifierare</value></data>
+  <data name="HoldRecordIdHelp" xml:space="preserve"><value>Lämna tomt för att i stället spärra allt som matchar en definition och ett datumintervall.</value></data>
+  <data name="HoldDefinition" xml:space="preserve"><value>Definitionsomfattning</value></data>
+  <data name="HoldNerisScope" xml:space="preserve"><value>NERIS-händelse och analys</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>För en definitionsomfattning, lämna båda datumen tomma för att bevara alla. Tider i UTC.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>Periodens start (UTC)</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>Periodens slut (UTC)</value></data>
+  <data name="HoldReason" xml:space="preserve"><value>Grund för spärren</value></data>
+  <data name="HoldReasonLitigation" xml:space="preserve"><value>Rättstvist</value></data>
+  <data name="HoldReasonInvestigation" xml:space="preserve"><value>Utredning</value></data>
+  <data name="HoldReasonRecordsRequest" xml:space="preserve"><value>Begäran om allmän handling</value></data>
+  <data name="HoldReasonOther" xml:space="preserve"><value>Annat</value></data>
+  <data name="HoldReference" xml:space="preserve"><value>Behörighet eller ärendereferens</value></data>
+  <data name="HoldNotes" xml:space="preserve"><value>Bevarandeinstruktioner och grund</value></data>
+  <data name="HoldAllMatching" xml:space="preserve"><value>Alla matchande journaler</value></data>
+  <data name="HoldAnyStart" xml:space="preserve"><value>Valfri start</value></data>
+  <data name="HoldAnyEnd" xml:space="preserve"><value>Valfritt slut</value></data>
+  <data name="HoldPlacedBy" xml:space="preserve"><value>Lagd av</value></data>
+  <data name="HoldReleasedBy" xml:space="preserve"><value>Släppt av</value></data>
+  <data name="Reason" xml:space="preserve"><value>Skäl</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Inget här ännu. Använd knapparna ovan för att skapa den första.</value></data>
+  <data name="PreviousPage" xml:space="preserve"><value>Föregående sida</value></data>
+  <data name="NextPage" xml:space="preserve"><value>Nästa sida</value></data>
+  <data name="ReturnToReport" xml:space="preserve"><value>Tillbaka till rapporten</value></data>
+  <data name="EvidenceManifestIntro" xml:space="preserve"><value>Ett sparat manifest bevarar de valda källuppgifterna och deras kontrollsumma. Utkastsinsamlingar blir del av den signerade revisionen, och rättelser behåller tidigare bevis i historiken.</value></data>
+  <data name="EvidenceWithheld" xml:space="preserve"><value>Begränsade bevis undanhålls</value></data>
+  <data name="EvidenceCurrent" xml:space="preserve"><value>Aktuell</value></data>
+  <data name="EvidenceDraft" xml:space="preserve"><value>Utkastsinsamling</value></data>
+  <data name="EvidenceSignedRevision" xml:space="preserve"><value>Signerad revision</value></data>
+  <data name="EvidenceSourceVersion" xml:space="preserve"><value>Källversion</value></data>
+  <data name="EvidenceDownloadManifest" xml:space="preserve"><value>Ladda ner verifierat manifest</value></data>
+  <data name="EvidenceLoadSource" xml:space="preserve"><value>Läs in källa</value></data>
+  <data name="EvidenceLoadMessages" xml:space="preserve"><value>Läs in meddelanden</value></data>
+  <data name="EvidenceChannel" xml:space="preserve"><value>Händelsekanal</value></data>
+  <data name="EvidenceChooseChannel" xml:space="preserve"><value>Välj en kanal</value></data>
+  <data name="EvidenceRestricted" xml:space="preserve"><value>kräver begränsad behörighet</value></data>
+  <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>Inga bevis registreras för en otillgänglig källa.</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Täckningens start (UTC)</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Täckningens slut (UTC)</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>Händelsetid för giltighet (UTC)</value></data>
+  <data name="EvidencePersonnel" xml:space="preserve"><value>Personal</value></data>
+  <data name="EvidenceMessages" xml:space="preserve"><value>Meddelanden</value></data>
+  <data name="EvidenceNoChoices" xml:space="preserve"><value>Inga åtkomliga poster på den här sidan.</value></data>
+  <data name="EvidenceEdited" xml:space="preserve"><value>redigerad</value></data>
+  <data name="EvidencePageWarning" xml:space="preserve"><value>Ej insamlade val på den här sidan rensas.</value></data>
+  <data name="EvidenceTrackingHelp" xml:space="preserve"><value>Välj högst 20 fordon och ett fönster på högst 24 timmar. Upp till 24 positioner per fordon samlas in; fånga ytterligare fönster separat.</value></data>
+  <data name="EvidenceCertificationHelp" xml:space="preserve"><value>Välj den personal vars behörighetsstatus hör till den här rapporten. Certifikatnummer och filer stannar i Certifieringar.</value></data>
+  <data name="EvidenceRunCardHelp" xml:space="preserve"><value>Fångar de larmbeslut som Run Cards registrerade för rapportens larm. Ett beslut som aldrig registrerades kan inte återskapas.</value></data>
+  <data name="EvidenceInventoryHelp" xml:space="preserve"><value>Uppdaterar bevisen för varje registrerad lagerförbrukning. Inget lager förbrukas på nytt.</value></data>
+  <data name="EvidenceChatHelp" xml:space="preserve"><value>Välj meddelandena som ska bevaras; trådsvar ingår. Varje sida är en egen insamling, så samla in den här sidan innan du går vidare. Meddelandetexter visas som text.</value></data>
+  <data name="SubmissionRecoveryHeader" xml:space="preserve"><value>Inlämningshistorik och återställning</value></data>
+  <data name="SubmissionRecoveryIntro" xml:space="preserve"><value>Varje leveransförsök och svar från destinationen för den här inlämningen, samt verktygen för att reda ut ett som gick fel.</value></data>
+  <data name="SubmissionNoIdentifier" xml:space="preserve"><value>Ingen identifierare registrerad</value></data>
+  <data name="SubmissionLatestIssue" xml:space="preserve"><value>Senaste problemet</value></data>
+  <data name="SubmissionExchangeHeader" xml:space="preserve"><value>Leverans- och svarshistorik</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Tider i UTC. Tidigare svar finns kvar efter avslag, nytt försök och rättelse.</value></data>
+  <data name="SubmissionNoExchanges" xml:space="preserve"><value>Ingen utbyteshistorik registrerades för den här äldre inlämningen.</value></data>
+  <data name="SubmissionOperation" xml:space="preserve"><value>Åtgärd och steg</value></data>
+  <data name="SubmissionResponse" xml:space="preserve"><value>Destinationens svar</value></data>
+  <data name="SubmissionLastResponseHeader" xml:space="preserve"><value>Senast sparade svar från destinationen</value></data>
+  <data name="SubmissionBindHeader" xml:space="preserve"><value>Koppla en icke skickad inlämning</value></data>
+  <data name="SubmissionBindIntro" xml:space="preserve"><value>Granska organisationens aktuella NERIS-enhet och destination. Kopplingen köar inlämningen för leverans.</value></data>
+  <data name="SubmissionBindAction" xml:space="preserve"><value>Koppla och köa</value></data>
+  <data name="SubmissionVerifyHeader" xml:space="preserve"><value>Verifiera en befintlig inlämning hos destinationen</value></data>
+  <data name="SubmissionVerifyIntro" xml:space="preserve"><value>Leta upp inlämningen hos den ursprungliga destinationen. Identifieraren kontrolleras mot den köade rapporten innan avfrågningen återupptas.</value></data>
+  <data name="SubmissionVerifyAction" xml:space="preserve"><value>Bekräfta mottagande</value></data>
+  <data name="SubmissionAbsenceHeader" xml:space="preserve"><value>Registrera verifierad avsaknad av inlämning</value></data>
+  <data name="SubmissionAbsenceIntro" xml:space="preserve"><value>Använd först efter att destinationen eller dess support bekräftat att inlämningen aldrig skapades; ett tomt sökresultat räcker inte. Det registrerar din verifiering och häver spärren. Inget skickas och inget nytt försök schemaläggs.</value></data>
+  <data name="SubmissionVerificationReference" xml:space="preserve"><value>Destinationens verifierings- eller supportreferens</value></data>
+  <data name="SubmissionAbsenceReason" xml:space="preserve"><value>Vad som verifierades och av vem</value></data>
+  <data name="SubmissionAbsenceConfirm" xml:space="preserve"><value>Jag har verifierat att den ursprungliga destinationen inte skapade den här inlämningen.</value></data>
+  <data name="SubmissionAbsenceAction" xml:space="preserve"><value>Registrera verifiering utan att skicka</value></data>
+  <data name="SubmissionStateQueued" xml:space="preserve"><value>I kö</value></data>
+  <data name="SubmissionStateInFlight" xml:space="preserve"><value>Under leverans</value></data>
+  <data name="SubmissionStateAccepted" xml:space="preserve"><value>Godkänd</value></data>
+  <data name="SubmissionStateRejected" xml:space="preserve"><value>Avvisad</value></data>
+  <data name="SubmissionStateFailed" xml:space="preserve"><value>Misslyckad</value></data>
+  <data name="SubmissionStateSuperseded" xml:space="preserve"><value>Ersatt av en nyare revision</value></data>
+  <data name="SubmissionStateAwaitingDestination" xml:space="preserve"><value>Väntar på destinationens granskning</value></data>
+  <data name="NewRunCallHeader" xml:space="preserve"><value>Skapa ett larm för den här insatsen</value></data>
+  <data name="NewRunCallIntro" xml:space="preserve"><value>Registrera en tidigare händelse och koppla den till insatsen. Larmet skapas stängt och larmar ingen.</value></data>
+  <data name="NewRunCallName" xml:space="preserve"><value>Larmets namn</value></data>
+  <data name="NewRunCallOccurredOn" xml:space="preserve"><value>Inträffade (organisationens lokala tid)</value></data>
+  <data name="NewRunCallAddress" xml:space="preserve"><value>Adress</value></data>
+  <data name="NewRunCallNature" xml:space="preserve"><value>Larmets art</value></data>
+  <data name="NewRunCallAction" xml:space="preserve"><value>Skapa och koppla larmet</value></data>
+  <data name="DiffRevisionRange" xml:space="preserve"><value>Revision {0} jämförd med revision {1}</value></data>
+  <data name="DiffPrint" xml:space="preserve"><value>Skriv ut jämförelsen som PDF</value></data>
+  <data name="CustomFieldsHeader" xml:space="preserve"><value>Organisationens egna fält</value></data>
+  <data name="NewRunCallSaveFirst" xml:space="preserve"><value>Spara utkastet för att skapa och koppla ett historiskt larm.</value></data>
+  <data name="ParticipantInclude" xml:space="preserve"><value>Inkludera</value></data>
+  <data name="ParticipantChoose" xml:space="preserve"><value>Välj en deltagare</value></data>
+  <data name="ParticipantLabel" xml:space="preserve"><value>Deltagare</value></data>
+  <data name="ParticipantRoleLabel" xml:space="preserve"><value>Deltagarens roll</value></data>
+  <data name="ParticipantUnitLabel" xml:space="preserve"><value>Tilldelat fordon</value></data>
+  <data name="ParticipantNoUnit" xml:space="preserve"><value>Inget tilldelat fordon</value></data>
+  <data name="ParticipantPreviousUnit" xml:space="preserve"><value>Tidigare tilldelat fordon</value></data>
+  <data name="ParticipantAdd" xml:space="preserve"><value>Lägg till deltagare</value></data>
+  <data name="ParticipantRoleFor" xml:space="preserve"><value>Roll för {0}</value></data>
+  <data name="FileClassification" xml:space="preserve"><value>Filens klassificering</value></data>
+  <data name="FileClassificationHelp" xml:space="preserve"><value>Gäller även filnamn och beskrivningar, inte bara själva filen.</value></data>
+  <data name="ClassificationRestricted" xml:space="preserve"><value>Begränsad</value></data>
+  <data name="ClassificationUnrestricted" xml:space="preserve"><value>Obegränsat operativt innehåll</value></data>
 </root>

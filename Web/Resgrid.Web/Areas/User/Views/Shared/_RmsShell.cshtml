@@ -1,0 +1,36 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> rmsLocalizer
+@*
+    Page heading shared by the records screens that sit outside the main Records controller
+    (preservation holds, evidence, submissions, document comparisons). Laid out the same way
+    as the rest of the application, and the same way Records/Index already does it.
+
+    ViewData["Title"]      heading and last breadcrumb crumb
+    ViewData["Subtitle"]   optional one line description under the breadcrumb
+    ViewData["ParentText"] optional intermediate crumb, with ParentController/ParentAction/ParentId
+*@
+@{
+    var title = (string)ViewData["Title"] ?? rmsLocalizer["RecordsHeader"].Value;
+    var subtitle = (string)ViewData["Subtitle"];
+    var parentText = (string)ViewData["ParentText"];
+    var parentController = (string)ViewData["ParentController"] ?? "Records";
+    var parentAction = (string)ViewData["ParentAction"] ?? "Index";
+    var parentId = (string)ViewData["ParentId"];
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Records" asp-action="Index" asp-route-area="User">@rmsLocalizer["RecordsHeader"]</a></li>
+            @if (!string.IsNullOrEmpty(parentText))
+            {
+                <li><a asp-controller="@parentController" asp-action="@parentAction" asp-route-id="@parentId" asp-route-area="User">@parentText</a></li>
+            }
+            <li class="active"><strong>@title</strong></li>
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+    </div>
+</div>

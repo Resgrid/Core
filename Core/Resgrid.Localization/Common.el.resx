@@ -782,4 +782,5 @@
     <value>Προφίλ υπηρεσίας</value>
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Δεσμεύσεις διατήρησης αρχείων</value></data>
+  <data name="RecordsAllModule" xml:space="preserve"><value>Όλα τα αρχεία</value></data>
 </root>

@@ -1992,4 +1992,116 @@
   <data name="ReadinessUnits" xml:space="preserve"><value>Tablica gotowości jednostek</value></data>
   <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Pozycje bez ceny</value></data>
   <data name="ReadinessWorkOrders" xml:space="preserve"><value>Zlecenia pracy</value></data>
+  <data name="LegalHoldsHeader" xml:space="preserve"><value>Blokady zachowania rejestrów</value></data>
+  <data name="LegalHoldsIntro" xml:space="preserve"><value>Użyj blokady zachowania przy sporze, dochodzeniu lub wniosku o dokumenty. Blokada chroni też analizę i dowody; zwolnienie ujawnienia jej nie znosi.</value></data>
+  <data name="PlaceHold" xml:space="preserve"><value>Nałóż blokadę zachowania</value></data>
+  <data name="ReleaseHold" xml:space="preserve"><value>Zwolnij blokadę</value></data>
+  <data name="ReleaseHoldReason" xml:space="preserve"><value>Podstawa i powód zwolnienia zachowania</value></data>
+  <data name="NoHolds" xml:space="preserve"><value>Nie nałożono żadnych blokad zachowania.</value></data>
+  <data name="HoldActive" xml:space="preserve"><value>Blokada obowiązuje</value></data>
+  <data name="HoldScope" xml:space="preserve"><value>Zakres</value></data>
+  <data name="HoldPeriod" xml:space="preserve"><value>Zachowany okres</value></data>
+  <data name="HoldRecordId" xml:space="preserve"><value>Identyfikator konkretnego wpisu</value></data>
+  <data name="HoldRecordIdHelp" xml:space="preserve"><value>Pozostaw puste, aby objąć wszystko pasujące do definicji i zakresu dat.</value></data>
+  <data name="HoldDefinition" xml:space="preserve"><value>Zakres definicji</value></data>
+  <data name="HoldNerisScope" xml:space="preserve"><value>Zdarzenie i analiza NERIS</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>Dla zakresu definicji pozostaw obie daty puste, aby zachować wszystkie. Czas w UTC.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>Początek okresu (UTC)</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>Koniec okresu (UTC)</value></data>
+  <data name="HoldReason" xml:space="preserve"><value>Podstawa blokady</value></data>
+  <data name="HoldReasonLitigation" xml:space="preserve"><value>Spór sądowy</value></data>
+  <data name="HoldReasonInvestigation" xml:space="preserve"><value>Dochodzenie</value></data>
+  <data name="HoldReasonRecordsRequest" xml:space="preserve"><value>Wniosek o informację publiczną</value></data>
+  <data name="HoldReasonOther" xml:space="preserve"><value>Inne</value></data>
+  <data name="HoldReference" xml:space="preserve"><value>Podstawa lub sygnatura sprawy</value></data>
+  <data name="HoldNotes" xml:space="preserve"><value>Instrukcje zachowania i podstawa</value></data>
+  <data name="HoldAllMatching" xml:space="preserve"><value>Wszystkie pasujące wpisy</value></data>
+  <data name="HoldAnyStart" xml:space="preserve"><value>Dowolny początek</value></data>
+  <data name="HoldAnyEnd" xml:space="preserve"><value>Dowolny koniec</value></data>
+  <data name="HoldPlacedBy" xml:space="preserve"><value>Nałożona przez</value></data>
+  <data name="HoldReleasedBy" xml:space="preserve"><value>Zwolniona przez</value></data>
+  <data name="Reason" xml:space="preserve"><value>Powód</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Jeszcze nic tu nie ma. Użyj przycisków powyżej, aby utworzyć pierwszy wpis.</value></data>
+  <data name="PreviousPage" xml:space="preserve"><value>Poprzednia strona</value></data>
+  <data name="NextPage" xml:space="preserve"><value>Następna strona</value></data>
+  <data name="ReturnToReport" xml:space="preserve"><value>Wróć do raportu</value></data>
+  <data name="EvidenceManifestIntro" xml:space="preserve"><value>Zapisany manifest zachowuje wybrane fakty źródłowe i ich sumę kontrolną. Przechwycenia robocze wchodzą do podpisanej wersji, a korekty pozostawiają wcześniejsze dowody w historii.</value></data>
+  <data name="EvidenceWithheld" xml:space="preserve"><value>Wstrzymano dowody o ograniczonym dostępie</value></data>
+  <data name="EvidenceCurrent" xml:space="preserve"><value>Aktualne</value></data>
+  <data name="EvidenceDraft" xml:space="preserve"><value>Przechwycenie robocze</value></data>
+  <data name="EvidenceSignedRevision" xml:space="preserve"><value>Podpisana wersja</value></data>
+  <data name="EvidenceSourceVersion" xml:space="preserve"><value>Wersja źródła</value></data>
+  <data name="EvidenceDownloadManifest" xml:space="preserve"><value>Pobierz zweryfikowany manifest</value></data>
+  <data name="EvidenceLoadSource" xml:space="preserve"><value>Wczytaj źródło</value></data>
+  <data name="EvidenceLoadMessages" xml:space="preserve"><value>Wczytaj wiadomości</value></data>
+  <data name="EvidenceChannel" xml:space="preserve"><value>Kanał zdarzenia</value></data>
+  <data name="EvidenceChooseChannel" xml:space="preserve"><value>Wybierz kanał</value></data>
+  <data name="EvidenceRestricted" xml:space="preserve"><value>wymaga dostępu ograniczonego</value></data>
+  <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>Dla niedostępnego źródła nie zostaną zapisane żadne dowody.</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Początek zakresu (UTC)</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Koniec zakresu (UTC)</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>Czas zdarzenia dla ważności (UTC)</value></data>
+  <data name="EvidencePersonnel" xml:space="preserve"><value>Personel</value></data>
+  <data name="EvidenceMessages" xml:space="preserve"><value>Wiadomości</value></data>
+  <data name="EvidenceNoChoices" xml:space="preserve"><value>Brak dostępnych elementów na tej stronie.</value></data>
+  <data name="EvidenceEdited" xml:space="preserve"><value>edytowano</value></data>
+  <data name="EvidencePageWarning" xml:space="preserve"><value>Nieprzechwycone zaznaczenia na tej stronie zostaną wyczyszczone.</value></data>
+  <data name="EvidenceTrackingHelp" xml:space="preserve"><value>Wybierz maksymalnie 20 pojazdów i okno do 24 godzin. Próbkowane są do 24 pozycji na pojazd; kolejne okna przechwyć osobno.</value></data>
+  <data name="EvidenceCertificationHelp" xml:space="preserve"><value>Wybierz personel, którego status kwalifikacji należy do tego raportu. Numery certyfikatów i pliki pozostają w Certyfikatach.</value></data>
+  <data name="EvidenceRunCardHelp" xml:space="preserve"><value>Przechwytuje decyzje dysponowania zapisane przez Run Cards dla zdarzenia z tego raportu. Decyzji nigdy niezapisanej nie da się odtworzyć.</value></data>
+  <data name="EvidenceInventoryHelp" xml:space="preserve"><value>Odświeża dowody dla każdego zapisanego zużycia zapasów. Nie zużywa stanu ponownie.</value></data>
+  <data name="EvidenceChatHelp" xml:space="preserve"><value>Wybierz wiadomości do zachowania; odpowiedzi w wątku są uwzględnione. Każda strona to osobne przechwycenie, więc przechwyć tę przed przejściem dalej. Treści pokazywane są jako tekst.</value></data>
+  <data name="SubmissionRecoveryHeader" xml:space="preserve"><value>Historia wysyłki i odzyskiwanie</value></data>
+  <data name="SubmissionRecoveryIntro" xml:space="preserve"><value>Każda próba dostarczenia i odpowiedź celu dla tego zgłoszenia oraz narzędzia do uzgodnienia nieudanej.</value></data>
+  <data name="SubmissionNoIdentifier" xml:space="preserve"><value>Nie zapisano identyfikatora</value></data>
+  <data name="SubmissionLatestIssue" xml:space="preserve"><value>Ostatni problem</value></data>
+  <data name="SubmissionExchangeHeader" xml:space="preserve"><value>Historia dostarczeń i odpowiedzi</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Czas w UTC. Wcześniejsze odpowiedzi pozostają dostępne po odrzuceniu, ponowieniu i korekcie.</value></data>
+  <data name="SubmissionNoExchanges" xml:space="preserve"><value>Dla tej starszej wysyłki nie zapisano historii wymiany.</value></data>
+  <data name="SubmissionOperation" xml:space="preserve"><value>Operacja i etap</value></data>
+  <data name="SubmissionResponse" xml:space="preserve"><value>Odpowiedź celu</value></data>
+  <data name="SubmissionLastResponseHeader" xml:space="preserve"><value>Ostatnia zapisana odpowiedź celu</value></data>
+  <data name="SubmissionBindHeader" xml:space="preserve"><value>Powiąż niewysłaną wysyłkę</value></data>
+  <data name="SubmissionBindIntro" xml:space="preserve"><value>Sprawdź bieżącą jednostkę NERIS i cel jednostki. Powiązanie kolejkuje tę wysyłkę do dostarczenia.</value></data>
+  <data name="SubmissionBindAction" xml:space="preserve"><value>Powiąż i zakolejkuj</value></data>
+  <data name="SubmissionVerifyHeader" xml:space="preserve"><value>Zweryfikuj istniejące zgłoszenie u celu</value></data>
+  <data name="SubmissionVerifyIntro" xml:space="preserve"><value>Odszukaj zgłoszenie w pierwotnym celu. Jego identyfikator jest porównywany z raportem w kolejce przed wznowieniem odpytywania.</value></data>
+  <data name="SubmissionVerifyAction" xml:space="preserve"><value>Potwierdź odbiór</value></data>
+  <data name="SubmissionAbsenceHeader" xml:space="preserve"><value>Zapisz zweryfikowany brak zgłoszenia</value></data>
+  <data name="SubmissionAbsenceIntro" xml:space="preserve"><value>Użyj dopiero po potwierdzeniu przez cel lub jego wsparcie, że zgłoszenie nigdy nie powstało; pusty wynik wyszukiwania nie wystarczy. Zapisuje weryfikację i zdejmuje blokadę. Nic nie wysyła ani nie planuje ponowień.</value></data>
+  <data name="SubmissionVerificationReference" xml:space="preserve"><value>Numer weryfikacji lub zgłoszenia wsparcia celu</value></data>
+  <data name="SubmissionAbsenceReason" xml:space="preserve"><value>Co zweryfikowano i przez kogo</value></data>
+  <data name="SubmissionAbsenceConfirm" xml:space="preserve"><value>Zweryfikowałem, że pierwotny cel nie utworzył tego zgłoszenia.</value></data>
+  <data name="SubmissionAbsenceAction" xml:space="preserve"><value>Zapisz weryfikację bez wysyłania</value></data>
+  <data name="SubmissionStateQueued" xml:space="preserve"><value>W kolejce</value></data>
+  <data name="SubmissionStateInFlight" xml:space="preserve"><value>W trakcie wysyłki</value></data>
+  <data name="SubmissionStateAccepted" xml:space="preserve"><value>Zaakceptowano</value></data>
+  <data name="SubmissionStateRejected" xml:space="preserve"><value>Odrzucono</value></data>
+  <data name="SubmissionStateFailed" xml:space="preserve"><value>Niepowodzenie</value></data>
+  <data name="SubmissionStateSuperseded" xml:space="preserve"><value>Zastąpiono nowszą wersją</value></data>
+  <data name="SubmissionStateAwaitingDestination" xml:space="preserve"><value>Oczekuje na przegląd celu</value></data>
+  <data name="NewRunCallHeader" xml:space="preserve"><value>Utwórz zdarzenie dla tego wyjazdu</value></data>
+  <data name="NewRunCallIntro" xml:space="preserve"><value>Zapisz minione zdarzenie i powiąż je z tym wyjazdem. Zdarzenie powstaje jako zamknięte i nikogo nie dysponuje.</value></data>
+  <data name="NewRunCallName" xml:space="preserve"><value>Nazwa zdarzenia</value></data>
+  <data name="NewRunCallOccurredOn" xml:space="preserve"><value>Wystąpiło (czas lokalny jednostki)</value></data>
+  <data name="NewRunCallAddress" xml:space="preserve"><value>Adres</value></data>
+  <data name="NewRunCallNature" xml:space="preserve"><value>Charakter zdarzenia</value></data>
+  <data name="NewRunCallAction" xml:space="preserve"><value>Utwórz i powiąż zdarzenie</value></data>
+  <data name="DiffRevisionRange" xml:space="preserve"><value>Wersja {0} w porównaniu z wersją {1}</value></data>
+  <data name="DiffPrint" xml:space="preserve"><value>Wydrukuj porównanie do PDF</value></data>
+  <data name="CustomFieldsHeader" xml:space="preserve"><value>Pola własne jednostki</value></data>
+  <data name="NewRunCallSaveFirst" xml:space="preserve"><value>Zapisz wersję roboczą, aby utworzyć i powiązać zdarzenie historyczne.</value></data>
+  <data name="ParticipantInclude" xml:space="preserve"><value>Uwzględnij</value></data>
+  <data name="ParticipantChoose" xml:space="preserve"><value>Wybierz uczestnika</value></data>
+  <data name="ParticipantLabel" xml:space="preserve"><value>Uczestnik</value></data>
+  <data name="ParticipantRoleLabel" xml:space="preserve"><value>Rola uczestnika</value></data>
+  <data name="ParticipantUnitLabel" xml:space="preserve"><value>Przypisany pojazd</value></data>
+  <data name="ParticipantNoUnit" xml:space="preserve"><value>Brak przypisanego pojazdu</value></data>
+  <data name="ParticipantPreviousUnit" xml:space="preserve"><value>Wcześniej przypisany pojazd</value></data>
+  <data name="ParticipantAdd" xml:space="preserve"><value>Dodaj uczestnika</value></data>
+  <data name="ParticipantRoleFor" xml:space="preserve"><value>Rola dla {0}</value></data>
+  <data name="FileClassification" xml:space="preserve"><value>Klasyfikacja pliku</value></data>
+  <data name="FileClassificationHelp" xml:space="preserve"><value>Dotyczy także nazw i opisów plików, nie tylko samego pliku.</value></data>
+  <data name="ClassificationRestricted" xml:space="preserve"><value>Ograniczone</value></data>
+  <data name="ClassificationUnrestricted" xml:space="preserve"><value>Treść operacyjna bez ograniczeń</value></data>
 </root>

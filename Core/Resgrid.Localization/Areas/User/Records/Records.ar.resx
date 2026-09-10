@@ -1992,4 +1992,116 @@
   <data name="ReadinessUnits" xml:space="preserve"><value>لوحة جاهزية الوحدات</value></data>
   <data name="ReadinessUnknownCosts" xml:space="preserve"><value>بنود بدون سعر</value></data>
   <data name="ReadinessWorkOrders" xml:space="preserve"><value>أوامر العمل</value></data>
+  <data name="LegalHoldsHeader" xml:space="preserve"><value>حالات حفظ السجلات</value></data>
+  <data name="LegalHoldsIntro" xml:space="preserve"><value>استخدم حفظ السجلات للتقاضي أو التحقيق أو طلب السجلات. يحمي الحفظ أيضًا التحليل والأدلة، ورفع الإفصاح لا يرفعه.</value></data>
+  <data name="PlaceHold" xml:space="preserve"><value>فرض حفظ السجلات</value></data>
+  <data name="ReleaseHold" xml:space="preserve"><value>رفع الحفظ</value></data>
+  <data name="ReleaseHoldReason" xml:space="preserve"><value>الصلاحية وسبب رفع الحفظ</value></data>
+  <data name="NoHolds" xml:space="preserve"><value>لم يتم فرض أي حفظ للسجلات.</value></data>
+  <data name="HoldActive" xml:space="preserve"><value>الحفظ ساري</value></data>
+  <data name="HoldScope" xml:space="preserve"><value>النطاق</value></data>
+  <data name="HoldPeriod" xml:space="preserve"><value>الفترة المحفوظة</value></data>
+  <data name="HoldRecordId" xml:space="preserve"><value>معرّف سجل محدّد</value></data>
+  <data name="HoldRecordIdHelp" xml:space="preserve"><value>اتركه فارغًا لحفظ كل ما يطابق تعريفًا ونطاقًا زمنيًا بدلًا من ذلك.</value></data>
+  <data name="HoldDefinition" xml:space="preserve"><value>نطاق التعريف</value></data>
+  <data name="HoldNerisScope" xml:space="preserve"><value>حادث وتحليل NERIS</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>لنطاق التعريف، اترك كلا التاريخين فارغين لحفظ جميع التواريخ. الأوقات بتوقيت UTC.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>بداية الفترة (UTC)</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>نهاية الفترة (UTC)</value></data>
+  <data name="HoldReason" xml:space="preserve"><value>أساس الحفظ</value></data>
+  <data name="HoldReasonLitigation" xml:space="preserve"><value>تقاضٍ</value></data>
+  <data name="HoldReasonInvestigation" xml:space="preserve"><value>تحقيق</value></data>
+  <data name="HoldReasonRecordsRequest" xml:space="preserve"><value>طلب سجلات عامة</value></data>
+  <data name="HoldReasonOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="HoldReference" xml:space="preserve"><value>الصلاحية أو مرجع القضية</value></data>
+  <data name="HoldNotes" xml:space="preserve"><value>تعليمات الحفظ وأساسه</value></data>
+  <data name="HoldAllMatching" xml:space="preserve"><value>كل السجلات المطابقة</value></data>
+  <data name="HoldAnyStart" xml:space="preserve"><value>أي بداية</value></data>
+  <data name="HoldAnyEnd" xml:space="preserve"><value>أي نهاية</value></data>
+  <data name="HoldPlacedBy" xml:space="preserve"><value>فُرض بواسطة</value></data>
+  <data name="HoldReleasedBy" xml:space="preserve"><value>رُفع بواسطة</value></data>
+  <data name="Reason" xml:space="preserve"><value>السبب</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>لا يوجد شيء هنا بعد. استخدم الأزرار أعلاه لإنشاء أول واحد.</value></data>
+  <data name="PreviousPage" xml:space="preserve"><value>الصفحة السابقة</value></data>
+  <data name="NextPage" xml:space="preserve"><value>الصفحة التالية</value></data>
+  <data name="ReturnToReport" xml:space="preserve"><value>العودة إلى التقرير</value></data>
+  <data name="EvidenceManifestIntro" xml:space="preserve"><value>يحفظ البيان الملتقط حقائق المصدر المختارة ومجموع التحقق الخاص بها. تصبح عمليات الالتقاط المسودة جزءًا من المراجعة الموقّعة، وتبقي التصحيحات الأدلة السابقة في السجل.</value></data>
+  <data name="EvidenceWithheld" xml:space="preserve"><value>أدلة مقيّدة محجوبة</value></data>
+  <data name="EvidenceCurrent" xml:space="preserve"><value>حالي</value></data>
+  <data name="EvidenceDraft" xml:space="preserve"><value>التقاط مسودة</value></data>
+  <data name="EvidenceSignedRevision" xml:space="preserve"><value>مراجعة موقّعة</value></data>
+  <data name="EvidenceSourceVersion" xml:space="preserve"><value>إصدار المصدر</value></data>
+  <data name="EvidenceDownloadManifest" xml:space="preserve"><value>تنزيل البيان المُتحقّق</value></data>
+  <data name="EvidenceLoadSource" xml:space="preserve"><value>تحميل المصدر</value></data>
+  <data name="EvidenceLoadMessages" xml:space="preserve"><value>تحميل الرسائل</value></data>
+  <data name="EvidenceChannel" xml:space="preserve"><value>قناة الحادث</value></data>
+  <data name="EvidenceChooseChannel" xml:space="preserve"><value>اختر قناة</value></data>
+  <data name="EvidenceRestricted" xml:space="preserve"><value>يتطلب وصولًا مقيّدًا</value></data>
+  <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>لن تُسجَّل أي أدلة لمصدر غير متاح.</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>بداية التغطية (UTC)</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>نهاية التغطية (UTC)</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>وقت الحادث لتحديد الصلاحية (UTC)</value></data>
+  <data name="EvidencePersonnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="EvidenceMessages" xml:space="preserve"><value>الرسائل</value></data>
+  <data name="EvidenceNoChoices" xml:space="preserve"><value>لا توجد عناصر متاحة في هذه الصفحة.</value></data>
+  <data name="EvidenceEdited" xml:space="preserve"><value>مُعدّل</value></data>
+  <data name="EvidencePageWarning" xml:space="preserve"><value>ستُمسح التحديدات غير الملتقطة في هذه الصفحة.</value></data>
+  <data name="EvidenceTrackingHelp" xml:space="preserve"><value>اختر 20 مركبة كحد أقصى ونافذة لا تتجاوز 24 ساعة. تُؤخذ حتى 24 نقطة لكل مركبة؛ التقط النوافذ الأخرى بشكل منفصل.</value></data>
+  <data name="EvidenceCertificationHelp" xml:space="preserve"><value>اختر الأفراد الذين تخص حالة مؤهلاتهم هذا التقرير. تبقى أرقام الشهادات والملفات في قسم الشهادات.</value></data>
+  <data name="EvidenceRunCardHelp" xml:space="preserve"><value>يلتقط قرارات الإرسال التي سجّلتها بطاقات الاستجابة لبلاغ هذا التقرير. القرار غير المسجَّل لا يمكن استعادته لاحقًا.</value></data>
+  <data name="EvidenceInventoryHelp" xml:space="preserve"><value>يحدّث الأدلة لكل استهلاك مخزون مسجَّل. ولا يستهلك المخزون مرة أخرى.</value></data>
+  <data name="EvidenceChatHelp" xml:space="preserve"><value>اختر الرسائل المراد حفظها؛ وتُدرج ردود السلسلة. كل صفحة عملية التقاط منفصلة، فالتقط هذه الصفحة قبل الانتقال. تُعرض نصوص الرسائل كنص.</value></data>
+  <data name="SubmissionRecoveryHeader" xml:space="preserve"><value>سجل الإرسال والاسترداد</value></data>
+  <data name="SubmissionRecoveryIntro" xml:space="preserve"><value>كل محاولة تسليم واستجابة الوجهة لهذا الإيداع، مع أدوات تسوية المحاولة الفاشلة.</value></data>
+  <data name="SubmissionNoIdentifier" xml:space="preserve"><value>لم يُسجَّل معرّف</value></data>
+  <data name="SubmissionLatestIssue" xml:space="preserve"><value>آخر مشكلة</value></data>
+  <data name="SubmissionExchangeHeader" xml:space="preserve"><value>سجل التسليم والاستجابة</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>الأوقات بتوقيت UTC. تبقى الاستجابات السابقة متاحة بعد الرفض وإعادة المحاولة والتصحيح.</value></data>
+  <data name="SubmissionNoExchanges" xml:space="preserve"><value>لم يُسجَّل سجل تبادل لهذا الإيداع القديم.</value></data>
+  <data name="SubmissionOperation" xml:space="preserve"><value>العملية والمرحلة</value></data>
+  <data name="SubmissionResponse" xml:space="preserve"><value>استجابة الوجهة</value></data>
+  <data name="SubmissionLastResponseHeader" xml:space="preserve"><value>آخر استجابة وجهة مخزّنة</value></data>
+  <data name="SubmissionBindHeader" xml:space="preserve"><value>ربط إيداع لم يُرسل</value></data>
+  <data name="SubmissionBindIntro" xml:space="preserve"><value>راجع كيان NERIS والوجهة الحاليين للإدارة. يؤدي الربط إلى وضع هذا الإيداع في قائمة الإرسال.</value></data>
+  <data name="SubmissionBindAction" xml:space="preserve"><value>اربط وأدرج في القائمة</value></data>
+  <data name="SubmissionVerifyHeader" xml:space="preserve"><value>تحقّق من إيداع قائم لدى الوجهة</value></data>
+  <data name="SubmissionVerifyIntro" xml:space="preserve"><value>حدّد موقع الإيداع في الوجهة الأصلية. يُطابق معرّفه مع التقرير في القائمة قبل استئناف الاستطلاع.</value></data>
+  <data name="SubmissionVerifyAction" xml:space="preserve"><value>تأكيد الاستلام</value></data>
+  <data name="SubmissionAbsenceHeader" xml:space="preserve"><value>تسجيل غياب مُتحقّق منه للإيداع</value></data>
+  <data name="SubmissionAbsenceIntro" xml:space="preserve"><value>استخدمه فقط بعد تأكيد الوجهة أو فريق دعمها أن الإيداع لم يُنشأ قط؛ ونتيجة البحث الفارغة لا تكفي. يسجّل تحقّقك ويرفع حظر الاسترداد. ولا يرسل شيئًا ولا يجدول إعادة محاولة.</value></data>
+  <data name="SubmissionVerificationReference" xml:space="preserve"><value>مرجع التحقّق أو الدعم لدى الوجهة</value></data>
+  <data name="SubmissionAbsenceReason" xml:space="preserve"><value>ما الذي جرى التحقق منه ومن قام به</value></data>
+  <data name="SubmissionAbsenceConfirm" xml:space="preserve"><value>لقد تحققت من أن الوجهة الأصلية لم تنشئ هذا الإيداع.</value></data>
+  <data name="SubmissionAbsenceAction" xml:space="preserve"><value>سجّل التحقّق دون إرسال</value></data>
+  <data name="SubmissionStateQueued" xml:space="preserve"><value>في القائمة</value></data>
+  <data name="SubmissionStateInFlight" xml:space="preserve"><value>قيد الإرسال</value></data>
+  <data name="SubmissionStateAccepted" xml:space="preserve"><value>مقبول</value></data>
+  <data name="SubmissionStateRejected" xml:space="preserve"><value>مرفوض</value></data>
+  <data name="SubmissionStateFailed" xml:space="preserve"><value>فشل</value></data>
+  <data name="SubmissionStateSuperseded" xml:space="preserve"><value>استُبدل بمراجعة أحدث</value></data>
+  <data name="SubmissionStateAwaitingDestination" xml:space="preserve"><value>بانتظار مراجعة الوجهة</value></data>
+  <data name="NewRunCallHeader" xml:space="preserve"><value>إنشاء بلاغ لهذه المهمة</value></data>
+  <data name="NewRunCallIntro" xml:space="preserve"><value>سجّل حادثًا سابقًا واربطه بهذه المهمة. يُنشأ البلاغ مغلقًا ولا يستدعي أحدًا.</value></data>
+  <data name="NewRunCallName" xml:space="preserve"><value>اسم البلاغ</value></data>
+  <data name="NewRunCallOccurredOn" xml:space="preserve"><value>وقع في (التوقيت المحلي للإدارة)</value></data>
+  <data name="NewRunCallAddress" xml:space="preserve"><value>العنوان</value></data>
+  <data name="NewRunCallNature" xml:space="preserve"><value>طبيعة البلاغ</value></data>
+  <data name="NewRunCallAction" xml:space="preserve"><value>أنشئ البلاغ واربطه</value></data>
+  <data name="DiffRevisionRange" xml:space="preserve"><value>المراجعة {0} مقارنةً بالمراجعة {1}</value></data>
+  <data name="DiffPrint" xml:space="preserve"><value>اطبع المقارنة بصيغة PDF</value></data>
+  <data name="CustomFieldsHeader" xml:space="preserve"><value>الحقول المخصصة للإدارة</value></data>
+  <data name="NewRunCallSaveFirst" xml:space="preserve"><value>احفظ المسودة لإنشاء بلاغ سابق وربطه.</value></data>
+  <data name="ParticipantInclude" xml:space="preserve"><value>تضمين</value></data>
+  <data name="ParticipantChoose" xml:space="preserve"><value>اختر مشاركًا</value></data>
+  <data name="ParticipantLabel" xml:space="preserve"><value>مشارك</value></data>
+  <data name="ParticipantRoleLabel" xml:space="preserve"><value>دور المشارك</value></data>
+  <data name="ParticipantUnitLabel" xml:space="preserve"><value>المركبة المخصصة</value></data>
+  <data name="ParticipantNoUnit" xml:space="preserve"><value>لا توجد مركبة مخصصة</value></data>
+  <data name="ParticipantPreviousUnit" xml:space="preserve"><value>مركبة مخصصة سابقًا</value></data>
+  <data name="ParticipantAdd" xml:space="preserve"><value>إضافة مشارك</value></data>
+  <data name="ParticipantRoleFor" xml:space="preserve"><value>دور {0}</value></data>
+  <data name="FileClassification" xml:space="preserve"><value>تصنيف الملف</value></data>
+  <data name="FileClassificationHelp" xml:space="preserve"><value>ينطبق أيضًا على أسماء الملفات وأوصافها، لا على الملف وحده.</value></data>
+  <data name="ClassificationRestricted" xml:space="preserve"><value>مقيّد</value></data>
+  <data name="ClassificationUnrestricted" xml:space="preserve"><value>محتوى تشغيلي غير مقيّد</value></data>
 </root>

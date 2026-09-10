@@ -650,4 +650,137 @@
   <data name="WorkOrderPostingRequired" xml:space="preserve"><value>Dieses Teil über seinen Arbeitsauftrag buchen oder stornieren.</value></data>
   <data name="AssetSafetyHold" xml:space="preserve"><value>Eine Wartungssicherheitssperre verhindert die Wiederinbetriebnahme dieses Geräts.</value></data>
   <data name="ReadinessProRequired" xml:space="preserve"><value>Für neue Wartungsarbeiten ist Readiness Pro erforderlich.</value></data>
+  <data name="AdjustStock" xml:space="preserve"><value>Bestand anpassen</value></data>
+  <data name="Back" xml:space="preserve"><value>Zurück</value></data>
+  <data name="Category" xml:space="preserve"><value>Kategorie</value></data>
+  <data name="Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="Contents" xml:space="preserve"><value>Inhalt</value></data>
+  <data name="Continue" xml:space="preserve"><value>Weiter</value></data>
+  <data name="EditItem" xml:space="preserve"><value>Artikel bearbeiten</value></data>
+  <data name="Expires" xml:space="preserve"><value>Läuft ab</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtern</value></data>
+  <data name="IssueEquipment" xml:space="preserve"><value>Ausrüstung ausgeben</value></data>
+  <data name="Item" xml:space="preserve"><value>Artikel</value></data>
+  <data name="NewCategory" xml:space="preserve"><value>Neue Kategorie</value></data>
+  <data name="NewKit" xml:space="preserve"><value>Neues Set</value></data>
+  <data name="NewLocation" xml:space="preserve"><value>Neuer Lagerort</value></data>
+  <data name="NewLot" xml:space="preserve"><value>Neue Charge</value></data>
+  <data name="NewTransfer" xml:space="preserve"><value>Neue Umlagerung</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Hier ist noch nichts. Legen Sie über die Schaltflächen oben den ersten Eintrag an.</value></data>
+  <data name="Outstanding" xml:space="preserve"><value>Offen</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Menge</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Füllen Sie die hervorgehobenen Felder aus, bevor Sie fortfahren.</value></data>
+  <data name="Review" xml:space="preserve"><value>Prüfen</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Prüfen Sie die Angaben unten und speichern Sie dann.</value></data>
+  <data name="Transaction" xml:space="preserve"><value>Buchung</value></data>
+  <data name="Type" xml:space="preserve"><value>Typ</value></data>
+  <data name="When" xml:space="preserve"><value>Zeitpunkt</value></data>
+  <data name="WorkspaceIntro" xml:space="preserve"><value>Verfolgen Sie, was Ihre Abteilung besitzt, wo es lagert und wer es mitführt.</value></data>
+  <data name="M4PurchasingIntro" xml:space="preserve"><value>Lieferanten verwalten, Bestellungen anlegen und den Wert Ihres Bestands sehen.</value></data>
+  <data name="M5OperationsIntro" xml:space="preserve"><value>Inventuren durchführen, Warnungen abarbeiten und Bestandsberichte drucken.</value></data>
+  <data name="HelpOnHand" xml:space="preserve"><value>Ihr aktueller Bestand nach Artikel und Lagerort. Filtern Sie nach Artikel oder Ort und passen Sie den Bestand an, wenn sich eine Zählung ändert.</value></data>
+  <data name="HelpItems" xml:space="preserve"><value>Artikel sind das, was Sie führen: der Katalogeintrag, nicht das physische Objekt. Legen Sie die Nachverfolgung fest, bevor Sie Bestand erfassen.</value></data>
+  <data name="HelpCategories" xml:space="preserve"><value>Kategorien gruppieren Artikel, damit Listen und Berichte lesbar bleiben. Eine Kategorie kann einer übergeordneten Kategorie untergeordnet sein.</value></data>
+  <data name="HelpLocations" xml:space="preserve"><value>Lagerorte sind, wo Bestand liegt: Wachen, Fahrzeuge, Personen, Behälter oder ein Fach innerhalb eines anderen Ortes.</value></data>
+  <data name="HelpLots" xml:space="preserve"><value>Eine Charge ist eine Menge eines Artikels mit gleicher Chargennummer, gleichem Ablaufdatum und gleichen Kosten.</value></data>
+  <data name="HelpAssets" xml:space="preserve"><value>Assets sind einzeln seriennummerierte Ausrüstungsteile. Jedes hat eigene Seriennummer, Status und Historie.</value></data>
+  <data name="HelpIssuances" xml:space="preserve"><value>Ausrüstung, die derzeit an eine Person oder ein Fahrzeug ausgegeben ist. Erfassen Sie die Rückgabe, wenn sie zurückkommt.</value></data>
+  <data name="HelpKits" xml:space="preserve"><value>Ein Set ist eine feste Liste von Artikeln, die zusammen ausgegeben werden, etwa eine Einsatzkleidung oder ein Notfallrucksack.</value></data>
+  <data name="HelpTransfers" xml:space="preserve"><value>Bestand zwischen zwei Lagerorten umlagern. Beide Seiten der Bewegung werden im Journal erfasst.</value></data>
+  <data name="HelpHistory" xml:space="preserve"><value>Jede Bewegung wird in ein reines Anfüge-Journal geschrieben. Filtern Sie nach Artikel oder Ort, um eine Änderung zu prüfen.</value></data>
+  <data name="HelpAssetDetail" xml:space="preserve"><value>Die vollständige Historie eines einzelnen Assets samt Checklisten und Arbeitsaufträgen.</value></data>
+  <data name="HelpTransaction" xml:space="preserve"><value>Ein einzelner Journaleintrag, genau so dargestellt, wie er erfasst wurde.</value></data>
+  <data name="HelpUnitEquipment" xml:space="preserve"><value>Alles, was dem ausgewählten Fahrzeug derzeit zugeordnet ist.</value></data>
+  <data name="HelpPersonnelGear" xml:space="preserve"><value>Alles, was derzeit an die ausgewählte Person ausgegeben ist.</value></data>
+  <data name="HelpHolderLookup" xml:space="preserve"><value>Zeigen Sie alles an, was ein Fahrzeug oder eine Person führt.</value></data>
+  <data name="HelpLocationRename" xml:space="preserve"><value>Hier lässt sich nur der Name ändern. Zuordnung und Geltungsbereich wurden bei der Anlage festgelegt.</value></data>
+  <data name="HelpAssetStatus" xml:space="preserve"><value>Eine Statusänderung erzeugt einen Journaleintrag. Nutzen Sie sie bei Reparatur, Beschädigung, Verlust oder Ausmusterung.</value></data>
+  <data name="HelpWitness" xml:space="preserve"><value>Geben Sie die beim Buchen angezeigte Anforderungsnummer ein und bestätigen Sie, was Sie beobachtet haben.</value></data>
+  <data name="M4HelpVendors" xml:space="preserve"><value>Lieferanten, bei denen Sie einkaufen. Jeder ist mit einem Firmenkontakt verknüpft und kann eine Kundennummer führen.</value></data>
+  <data name="M4HelpPurchaseOrders" xml:space="preserve"><value>Legen Sie eine Bestellung bei einem Lieferanten an und buchen Sie den Wareneingang. Der Eingang bucht den Bestand und erfasst die Kosten.</value></data>
+  <data name="M4HelpValuation" xml:space="preserve"><value>Der Wert Ihres Bestands auf Basis der beim Wareneingang erfassten Kosten.</value></data>
+  <data name="M5NoAlertsHelp" xml:space="preserve"><value>Keine offenen Warnungen. Aktualisieren Sie, um Bestände, Ablaufdaten und überfällige Rückgaben erneut zu prüfen.</value></data>
+  <data name="M5CountEnterHelp" xml:space="preserve"><value>Tragen Sie für jede Zeile die tatsächlich gezählte Menge ein. Die Abweichungsspalte aktualisiert sich nach dem Speichern.</value></data>
+  <data name="M5CountNameHelp" xml:space="preserve"><value>Etwas, das Sie später wiedererkennen, etwa "Wache 2 Jahresinventur".</value></data>
+  <data name="StepItemBasics" xml:space="preserve"><value>Artikel beschreiben</value></data>
+  <data name="StepItemTracking" xml:space="preserve"><value>Art der Nachverfolgung</value></data>
+  <data name="StepItemStock" xml:space="preserve"><value>Bestandsgrenzen und Kosten</value></data>
+  <data name="StepLocationBasics" xml:space="preserve"><value>Lagerort benennen</value></data>
+  <data name="StepLocationScope" xml:space="preserve"><value>Zuordnung</value></data>
+  <data name="StepMovementWhat" xml:space="preserve"><value>Was bewegt wird</value></data>
+  <data name="StepMovementWhere" xml:space="preserve"><value>Von und nach</value></data>
+  <data name="StepMovementAmount" xml:space="preserve"><value>Menge</value></data>
+  <data name="StepIssueWhat" xml:space="preserve"><value>Was ausgegeben wird</value></data>
+  <data name="StepIssueWho" xml:space="preserve"><value>Wer es übernimmt</value></data>
+  <data name="StepIssueWhen" xml:space="preserve"><value>Rückgabe und Notizen</value></data>
+  <data name="StepAssetItem" xml:space="preserve"><value>Welcher Artikel</value></data>
+  <data name="StepAssetIdentity" xml:space="preserve"><value>Seriennummer und Kennzeichnung</value></data>
+  <data name="StepLotItem" xml:space="preserve"><value>Welcher Artikel</value></data>
+  <data name="StepLotDetails" xml:space="preserve"><value>Chargendaten</value></data>
+  <data name="StepKitBasics" xml:space="preserve"><value>Set benennen</value></data>
+  <data name="StepKitContents" xml:space="preserve"><value>Set-Inhalt</value></data>
+  <data name="M4StepOrderHeader" xml:space="preserve"><value>Bestelldaten</value></data>
+  <data name="M4StepOrderLines" xml:space="preserve"><value>Bestellpositionen</value></data>
+  <data name="M5StepCountBasics" xml:space="preserve"><value>Inventur benennen</value></data>
+  <data name="M5StepCountScope" xml:space="preserve"><value>Umfang</value></data>
+  <data name="M5StepReportKind" xml:space="preserve"><value>Bericht wählen</value></data>
+  <data name="M5StepReportFilters" xml:space="preserve"><value>Eingrenzen</value></data>
+  <data name="HelpFieldAmount" xml:space="preserve"><value>Wie viele Einheiten, in der Mengeneinheit des Artikels.</value></data>
+  <data name="HelpFieldAsset" xml:space="preserve"><value>Bei seriennummerierten Artikeln die genaue Einheit auswählen.</value></data>
+  <data name="HelpFieldCategory" xml:space="preserve"><value>Optionale Gruppierung für Listen und Berichte.</value></data>
+  <data name="HelpFieldCode" xml:space="preserve"><value>Ihre eigene Artikel- oder Teilenummer, falls vorhanden.</value></data>
+  <data name="HelpFieldCountLocation" xml:space="preserve"><value>Leer lassen, um alles zu zählen.</value></data>
+  <data name="HelpFieldCurrency" xml:space="preserve"><value>Dreistelliger Währungscode, etwa USD oder EUR.</value></data>
+  <data name="HelpFieldDefaultLocation" xml:space="preserve"><value>Neuer Bestand landet hier, wenn kein Lagerort gewählt wird.</value></data>
+  <data name="HelpFieldExpectedReturn" xml:space="preserve"><value>Überfällige Rückgaben erscheinen im Warnungsbereich.</value></data>
+  <data name="HelpFieldExpiration" xml:space="preserve"><value>Das Datum, ab dem dieser Bestand nicht mehr verwendbar ist.</value></data>
+  <data name="HelpFieldFromLocation" xml:space="preserve"><value>Von wo der Bestand abgeht. Leer lassen, wenn neuer Bestand zugeht.</value></data>
+  <data name="HelpFieldHolder" xml:space="preserve"><value>Wählen Sie entweder eine Person oder ein Fahrzeug, nicht beides.</value></data>
+  <data name="HelpFieldIsActive" xml:space="preserve"><value>Inaktive Artikel bleiben in der Historie, sind aber für neue Bewegungen nicht wählbar.</value></data>
+  <data name="HelpFieldIsControlledSubstance" xml:space="preserve"><value>Bewegungen müssen von einer zweiten Person bezeugt werden und werden revisionssicher aufbewahrt.</value></data>
+  <data name="HelpFieldIsKit" xml:space="preserve"><value>Als Set-Behälter kennzeichnen statt als eigenständig geführten Artikel.</value></data>
+  <data name="HelpFieldLocationType" xml:space="preserve"><value>Wache, Fahrzeug, Person, Behälter oder Unterort eines anderen Ortes.</value></data>
+  <data name="HelpFieldLot" xml:space="preserve"><value>Wählen Sie die Charge, aus der dieser Bestand stammt, sofern chargenpflichtig.</value></data>
+  <data name="HelpFieldMinimum" xml:space="preserve"><value>Warnung auslösen, wenn der Bestand darunter fällt.</value></data>
+  <data name="HelpFieldNote" xml:space="preserve"><value>Warum dies geschah. Notizen erscheinen im Journal und in Berichten.</value></data>
+  <data name="HelpFieldParent" xml:space="preserve"><value>Optional. Diesem Eintrag einen übergeordneten Eintrag zuweisen.</value></data>
+  <data name="HelpFieldReorderPoint" xml:space="preserve"><value>Nachbestellung vorschlagen, sobald der Bestand diesen Wert erreicht.</value></data>
+  <data name="HelpFieldReportRange" xml:space="preserve"><value>Stichtagsberichte ignorieren den Zeitraum.</value></data>
+  <data name="HelpFieldRequiresExpiration" xml:space="preserve"><value>Ablaufdatum verlangen, damit der Artikel in Ablaufwarnungen erscheint.</value></data>
+  <data name="HelpFieldRequiresLotTracking" xml:space="preserve"><value>Bei jedem Wareneingang dieses Artikels eine Chargennummer verlangen.</value></data>
+  <data name="HelpFieldReturnCondition" xml:space="preserve"><value>Der Zustand, in dem die Ausrüstung zurückkam.</value></data>
+  <data name="HelpFieldSerialNumber" xml:space="preserve"><value>Herstellerseriennummer. Sie muss für diesen Artikel eindeutig sein.</value></data>
+  <data name="HelpFieldToLocation" xml:space="preserve"><value>Wohin der Bestand geht. Leer lassen bei Verbrauch oder Ausbuchung.</value></data>
+  <data name="HelpFieldTrackingMode" xml:space="preserve"><value>Schüttgut zählt eine Menge. Seriennummeriert verfolgt jede Einheit einzeln mit eigener Nummer und Historie.</value></data>
+  <data name="HelpFieldUnitCost" xml:space="preserve"><value>Kosten je Einheit, für die Bewertung verwendet.</value></data>
+  <data name="HelpFieldUnitOfMeasure" xml:space="preserve"><value>Wie Sie zählen: Stück, Karton, Liter, Meter.</value></data>
+  <data name="M4AccountNumberHelp" xml:space="preserve"><value>Die Kundennummer, unter der dieser Lieferant Sie führt.</value></data>
+  <data name="M4CompanyContactHelp" xml:space="preserve"><value>Wählen Sie den Firmenkontakt, zu dem dieser Lieferant gehört.</value></data>
+  <data name="M4NewVendorHint" xml:space="preserve"><value>Ein Lieferant ist ein Firmenkontakt, bei dem Sie einkaufen. Legen Sie den Kontakt zuerst an, falls er fehlt.</value></data>
+  <data name="M4PurchaseOrderNumberHelp" xml:space="preserve"><value>Ihre Referenz für diese Bestellung. Sie erscheint beim Wareneingang im Journal.</value></data>
+  <data name="M4StepOrderHeaderHint" xml:space="preserve"><value>Bei wem Sie kaufen, unter welcher Referenz und in welcher Währung.</value></data>
+  <data name="M4StepOrderLinesHint" xml:space="preserve"><value>Eine Zeile je Artikel. Mengen und Kosten hier sind die Grundlage des Wareneingangs.</value></data>
+  <data name="M5StepCountBasicsHint" xml:space="preserve"><value>Eine Inventur friert eine Momentaufnahme Ihres Bestands ein, um sie mit dem Regal zu vergleichen.</value></data>
+  <data name="M5StepCountScopeHint" xml:space="preserve"><value>Einen Lagerort zählen oder leer lassen, um die gesamte Abteilung zu zählen.</value></data>
+  <data name="M5StepReportKindHint" xml:space="preserve"><value>Der Bericht bestimmt, welche Filter im nächsten Schritt gelten.</value></data>
+  <data name="M5StepReportFiltersHint" xml:space="preserve"><value>Leere Filter schließen alles ein. Nicht verfügbare Filter sind ausgegraut.</value></data>
+  <data name="StepAssetItemHint" xml:space="preserve"><value>Ein Asset ist eine physische Einheit eines Artikels. Geben Sie Artikel und Lagerort an.</value></data>
+  <data name="StepAssetIdentityHint" xml:space="preserve"><value>Wie diese Einheit identifiziert wird, wenn sie jemand aufnimmt oder scannt.</value></data>
+  <data name="StepIssueWhatHint" xml:space="preserve"><value>Wählen Sie den Artikel und den Ort, aus dem er entnommen wird.</value></data>
+  <data name="StepIssueWhenHint" xml:space="preserve"><value>Wann Sie es zurückerwarten und was zur Übergabe festzuhalten ist.</value></data>
+  <data name="StepItemBasicsHint" xml:space="preserve"><value>Was Nutzer sehen, wenn sie in einer Liste danach suchen.</value></data>
+  <data name="StepItemTrackingHint" xml:space="preserve"><value>Diese Angaben bestimmen spätere Abfragen und lassen sich mit vorhandenem Bestand kaum ändern.</value></data>
+  <data name="StepItemStockHint" xml:space="preserve"><value>Optionale Schwellen für Bestandswarnungen sowie die Kosten für die Bewertung.</value></data>
+  <data name="StepKitBasicsHint" xml:space="preserve"><value>Sets werden als Ganzes ausgegeben; wählen Sie einen Namen, den Ihre Einsatzkräfte kennen.</value></data>
+  <data name="StepKitContentsHint" xml:space="preserve"><value>Listen Sie jeden enthaltenen Artikel und die jeweilige Menge auf.</value></data>
+  <data name="StepKitIssueHint" xml:space="preserve"><value>Bestätigen Sie für jeden Teil des Sets die physische Einheit und den Lagerort.</value></data>
+  <data name="StepLocationBasicsHint" xml:space="preserve"><value>Der Name erscheint in jeder Auswahl, die nach dem Ort fragt.</value></data>
+  <data name="StepLocationScopeHint" xml:space="preserve"><value>Füllen Sie nur das Feld aus, das zum gewählten Typ passt; den Rest leer lassen.</value></data>
+  <data name="StepLotDetailsHint" xml:space="preserve"><value>Die Chargennummer wie auf der Verpackung, dazu Kosten und Ablaufdatum der Charge.</value></data>
+  <data name="StepLotItemHint" xml:space="preserve"><value>Chargen gehören immer zu einem Artikel; wählen Sie ihn zuerst.</value></data>
+  <data name="StepMovementWhatHint" xml:space="preserve"><value>Die Bewegungsart bestimmt, welche der Felder unten verwendet werden.</value></data>
+  <data name="StepMovementWhereHint" xml:space="preserve"><value>Ein Zugang braucht nur ein Ziel; Verbrauch oder Ausbuchung nur eine Quelle.</value></data>
+  <data name="StepMovementAmountHint" xml:space="preserve"><value>Menge und Grund. Beides landet im erzeugten Journaleintrag.</value></data>
+  <data name="StepReturnHint" xml:space="preserve"><value>Geben Sie an, wie viel zurückkam, wohin es ging und in welchem Zustand es ist.</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inaktiv</value></data>
 </root>

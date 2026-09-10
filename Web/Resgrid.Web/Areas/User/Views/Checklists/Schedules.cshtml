@@ -1,21 +1,81 @@
 @model Resgrid.Web.Areas.User.Models.Checklists.ChecklistSchedulesView
 @using Resgrid.Model.Checklists
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["Schedules"]; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-    <h2>@localizer["Schedules"]</h2>
-    @await Html.PartialAsync("_Protection")
-    <p>@localizer["ScheduleVersionGuidance"]</p>
-    @if (Model.CanEdit) { <a class="btn btn-primary" asp-action="EditSchedule" asp-route-definitionId="@Model.DefinitionId">@localizer["NewSchedule"]</a> }
-    @if (Model.Schedules.Count == 0) { <p>@localizer["NoSchedules"]</p> }
-    <table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Frequency"]</th><th>@localizer["TimeZone"]</th><th>@localizer["State"]</th></tr></thead><tbody>
-    @foreach (var entry in Model.Schedules)
-    {
-        <tr><td>@if (Model.CanEdit) { <a asp-action="EditSchedule" asp-route-id="@entry.Schedule.Id">@entry.Content.Name</a> } else { @entry.Content.Name }</td><td>@localizer[((ChecklistScheduleFrequency)entry.Schedule.Frequency).ToString()]</td><td>@entry.Schedule.TimeZoneId</td><td>@localizer[entry.Schedule.IsActive && !entry.Schedule.IsSuspended ? "Active" : "SchedulePaused"]</td></tr>
-    }
-    </tbody></table>
-    @if (Model.Page > 0) { <a class="btn btn-default" asp-route-id="@Model.DefinitionId" asp-route-page="@(Model.Page - 1)">@localizer["Previous"]</a> }
-    <a class="btn btn-default" asp-route-id="@Model.DefinitionId" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a>
-    <a class="btn btn-default" asp-action="Detail" asp-route-id="@Model.DefinitionId">@localizer["Back"]</a>
-</div></div></div>
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Schedules"];
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["Schedules"].Value;
+    ViewData["Subtitle"] = localizer["ScheduleVersionGuidance"].Value;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["Schedules"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["ScheduleVersionGuidance"]</div>
+
+            <div class="rgw-toolbar">
+                <a class="btn btn-default btn-sm" asp-action="Detail" asp-route-id="@Model.DefinitionId"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
+                <div class="rgw-toolbar-spacer"></div>
+                @if (Model.CanEdit)
+                {
+                    <a class="btn btn-primary" asp-action="EditSchedule" asp-route-definitionId="@Model.DefinitionId"><i class="fa fa-plus"></i> @localizer["NewSchedule"]</a>
+                }
+            </div>
+
+            @if (Model.Schedules.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-calendar fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["NoSchedules"]</h4>
+                    <p class="text-muted">@localizer["NoRowsHelp"]</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["Name"]</th><th>@localizer["Frequency"]</th><th>@localizer["TimeZone"]</th><th>@localizer["State"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var entry in Model.Schedules)
+                            {
+                                var running = entry.Schedule.IsActive && !entry.Schedule.IsSuspended;
+                                <tr>
+                                    <td>@entry.Content.Name</td>
+                                    <td>@localizer[((ChecklistScheduleFrequency)entry.Schedule.Frequency).ToString()]</td>
+                                    <td>@entry.Schedule.TimeZoneId</td>
+                                    <td><span class="label @(running ? "label-success" : "label-warning")">@localizer[running ? "Active" : "SchedulePaused"]</span></td>
+                                    <td class="rgw-row-actions">
+                                        @if (Model.CanEdit)
+                                        {
+                                            <a class="btn btn-xs btn-primary" asp-action="EditSchedule" asp-route-id="@entry.Schedule.Id">@localizer["EditSchedule"]</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            <div class="rgw-pager">
+                @if (Model.Page > 0)
+                {
+                    <a class="btn btn-default btn-sm" asp-route-id="@Model.DefinitionId" asp-route-page="@(Model.Page - 1)"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                }
+                <a class="btn btn-default btn-sm" asp-route-id="@Model.DefinitionId" asp-route-page="@(Model.Page + 1)">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                <span class="text-muted">@(Model.Page + 1)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

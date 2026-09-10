@@ -691,4 +691,6 @@
 <data name="MaintenanceUnavailable" xml:space="preserve"><value>Magazyn danych konserwacji jest niedostępny.</value></data>
 <data name="PermissionRequired" xml:space="preserve"><value>Nie masz uprawnień do wykonania tej czynności.</value></data>
 <data name="TargetUnavailable" xml:space="preserve"><value>Wybierz dostępny obiekt w swoim dziale.</value></data>
+  <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Nie udało się odtworzyć niektórych historycznych stanów zleceń. Pakiet nie gwarantuje pełnego pokrycia prac konserwacyjnych.</value></data>
+  <data name="RestrictedWorkOrders" xml:space="preserve"><value>Dowody zleceń są ograniczone do bieżącego zakresu uprawnień odbiorcy.</value></data>
 </root>

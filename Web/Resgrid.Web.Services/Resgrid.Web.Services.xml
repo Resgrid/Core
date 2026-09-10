@@ -2814,8 +2814,9 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController.Accreditation(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.Int32,System.Int32,System.Threading.CancellationToken)">
             <summary>Inspection, violation, permit, hydrant, occupancy, training and response evidence; prevention sections only when their module is on.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController.CommunityRisk(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RecordAnalyticsController.Readiness(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int32},System.Threading.CancellationToken)">
             <summary>Incident mix, occupancy risk profile, open violations, hydrants and CRR activity; prevention sections only when their module is on.</summary>
+            <summary>Apparatus and equipment readiness composed from the checklists, maintenance and inventory modules (each authorizes the caller itself) plus readiness-packet evidence; the unit board joins them on the unit id.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RecordDefinitionsController">
             <summary>

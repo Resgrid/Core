@@ -89,8 +89,8 @@ namespace Resgrid.Model.Checklists
 	public sealed class ReadinessEvidenceManifestV1
 	{
 		public string Schema => "ReadinessEvidenceManifestV1";
-		public string GeneratorVersion => "checklists-p1m4/1";
-		public string ProfileVersion => "checklists-only/1";
+		public string GeneratorVersion => "readiness-p2m4/1";
+		public string ProfileVersion => "checklists-work-orders/1";
 		public int DepartmentId { get; set; }
 		public int CallId { get; set; }
 		public DateTime CallUtc { get; set; }
@@ -101,6 +101,7 @@ namespace Resgrid.Model.Checklists
 		public List<ReadinessUnitSnapshot> Units { get; set; } = new();
 		public List<ReadinessAssetSnapshot> Assets { get; set; } = new();
 		public List<ChecklistReportEntry> Checklists { get; set; } = new();
+		public List<Resgrid.Model.WorkOrders.ReadinessWorkOrderEvidence> WorkOrders { get; set; } = new();
 		public List<string> UnavailableSources { get; set; } = new();
 	}
 	/// <summary>Checksum the exact UTF-8 ManifestJson bytes and decoded PDF bytes, not this wrapper.</summary>

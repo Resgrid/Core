@@ -111,6 +111,9 @@ namespace Resgrid.Model.WorkOrders
 	public sealed class WorkOrderPage { public List<WorkOrderSummary> Items { get; set; } = new List<WorkOrderSummary>(); public bool HasMore { get; set; } public bool CanWrite { get; set; } }
 	public sealed class WorkOrderDetail
 	{
+		public DateTime? ResponseDueOn { get; set; }
+		public DateTime? RepairDueOn { get; set; }
+		public DateTime? ResponseOn { get; set; }
 		public WorkOrderSummary Order { get; set; }
 		public WorkOrderInput Input { get; set; }
 		public bool CanWrite { get; set; }
@@ -135,7 +138,7 @@ namespace Resgrid.Model.WorkOrders
 	}
 	public sealed class WorkOrderActivityView { public DateTime? OriginalDueOn { get; set; } public DateTime? RevisedDueOn { get; set; } public WorkOrderContent Snapshot { get; set; } public string AssignedToUserId { get; set; } public int? AssignedToRoleId { get; set; } public int Id { get; set; } public WorkOrderActivityType Type { get; set; } public string UserId { get; set; } public DateTime CreatedOn { get; set; } public string Note { get; set; } public int? OldStatus { get; set; } public int? NewStatus { get; set; } }
 	public sealed class WorkOrderLaborView { public int Id { get; set; } public string UserId { get; set; } public DateTime WorkDate { get; set; } public WorkOrderLaborContent Content { get; set; } }
-	public sealed class WorkOrderPartView { public string InventoryWitnessRequestId { get; set; } public string InventoryItemId { get; set; } public string InventoryTransactionId { get; set; } public string InventoryOperationId { get; set; } public bool AwaitingWitness { get; set; } public int Id { get; set; } public DateTime? VoidedOn { get; set; } public WorkOrderPartContent Content { get; set; } }
+	public sealed class WorkOrderPartView { public bool Staged { get; set; } public decimal ReservedQuantity { get; set; } public decimal IssuedQuantity { get; set; } public decimal ConsumedQuantity { get; set; } public decimal ReturnedQuantity { get; set; } public string InventoryWitnessRequestId { get; set; } public string InventoryItemId { get; set; } public string InventoryTransactionId { get; set; } public string InventoryOperationId { get; set; } public bool AwaitingWitness { get; set; } public int Id { get; set; } public DateTime? VoidedOn { get; set; } public WorkOrderPartContent Content { get; set; } }
 	public sealed class WorkOrderFileView { public int Id { get; set; } public string Name { get; set; } public string ContentType { get; set; } public int Size { get; set; } public DateTime? WithdrawnOn { get; set; } }
 	public sealed class WorkOrderChoice { public string Id { get; set; } public string Name { get; set; } }
 	public sealed class WorkOrderChoices

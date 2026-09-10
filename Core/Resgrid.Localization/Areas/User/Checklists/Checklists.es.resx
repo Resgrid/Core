@@ -691,4 +691,6 @@
 <data name="MaintenanceUnavailable" xml:space="preserve"><value>El almacenamiento de mantenimiento no está disponible.</value></data>
 <data name="PermissionRequired" xml:space="preserve"><value>No tiene permiso para realizar esta acción.</value></data>
 <data name="TargetUnavailable" xml:space="preserve"><value>Seleccione un destino disponible en su departamento.</value></data>
+  <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>No se pudieron reconstruir algunos estados históricos de las órdenes. El paquete no garantiza una cobertura completa del mantenimiento.</value></data>
+  <data name="RestrictedWorkOrders" xml:space="preserve"><value>Las pruebas de las órdenes se limitan al ámbito autorizado actual del lector.</value></data>
 </root>

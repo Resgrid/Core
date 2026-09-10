@@ -23,5 +23,11 @@ namespace Resgrid.Model.Services
 		Task<RecordsExecutiveSummary> GetExecutiveSummaryAsync(int departmentId, string userId, RecordsAnalyticsQuery query, CancellationToken cancellationToken = default);
 		Task<RecordsAccreditation> GetAccreditationAsync(int departmentId, string userId, RecordsAnalyticsQuery query, CancellationToken cancellationToken = default);
 		Task<RecordsCommunityRisk> GetCommunityRiskAsync(int departmentId, string userId, RecordsAnalyticsQuery query, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Apparatus and equipment readiness composed from the checklists, maintenance and inventory modules through their
+		/// own authorized reads, plus readiness-packet evidence on Records; RMS computes no readiness of its own.
+		/// </summary>
+		Task<RecordsReadiness> GetReadinessAsync(int departmentId, string userId, RecordsAnalyticsQuery query, CancellationToken cancellationToken = default);
 	}
 }

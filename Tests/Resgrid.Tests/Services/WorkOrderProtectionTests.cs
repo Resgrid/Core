@@ -21,7 +21,7 @@ namespace Resgrid.Tests.Services
 {
     public partial class DepartmentDataMigrationEngineTests
     {
-        [TestCase(17,18,5,6),TestCase(22,23,2,2),TestCase(23,24,4,4)]
+        [TestCase(17,18,5,6),TestCase(22,23,2,2),TestCase(23,24,4,4),TestCase(24,25,4,4)]
         public async Task Work_order_catalog_upgrade_is_retry_safe_and_offboards_all_text_and_binary_fields(int from, int to, int tables, int columns)
         {
             _bulk.Seed("Calls","CallId");
@@ -56,7 +56,7 @@ namespace Resgrid.Tests.Services
     }
     public partial class ChecklistEventDeliveryTests
     {
-        [TestCase(70),TestCase(71),TestCase(72),TestCase(73),TestCase(167),TestCase(168),TestCase(169),TestCase(170),TestCase(171),TestCase(172)]
+        [TestCase(70),TestCase(71),TestCase(72),TestCase(73),TestCase(167),TestCase(168),TestCase(169),TestCase(170),TestCase(171),TestCase(172),TestCase(173),TestCase(174),TestCase(175),TestCase(176)]
         public async Task Work_order_events_encrypt_history_and_replay_only_safe_Workflow_routing(int trigger)
         {
             var notifications=new Mock<IWorkOrderNotificationService>();

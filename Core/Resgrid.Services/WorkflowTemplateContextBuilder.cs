@@ -427,13 +427,18 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.WorkOrderThresholdReached:
 				case WorkflowTriggerEventType.WorkOrderDeferred:
 				case WorkflowTriggerEventType.WorkOrderPartChanged:
+				case WorkflowTriggerEventType.WorkOrderApprovalChanged:
+				case WorkflowTriggerEventType.WorkOrderSlaBreached:
+				case WorkflowTriggerEventType.WorkOrderVendorChargeChanged:
+				case WorkflowTriggerEventType.WorkOrderPolicyChanged:
+
 				{
 					var orderEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
 					var payload = orderEvent?.Payload ?? new JObject(); var order = new ScriptObject();
 					foreach (var pair in Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Variables) order[pair.Variable] = ToScriptValue(payload[pair.Property]);
-					order["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/{(payload["WorkOrderId"] != null ? "Detail/" + payload["WorkOrderId"]?.Value<int>() : "Recurrence/" + payload["RecurrenceId"]?.Value<int>())}";
+					order["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/{(payload["PolicyId"] != null ? "Policy" : payload["WorkOrderId"] != null ? "Detail/" + payload["WorkOrderId"]?.Value<int>() : "Recurrence/" + payload["RecurrenceId"]?.Value<int>())}";
 					scriptObject["work_order"] = order;
-					scriptObject["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = ToScriptValue(new JArray("Title")), ["catalog_version"] = Resgrid.Model.WorkOrders.WorkOrderTables.RecurrenceCatalogVersion };
+					scriptObject["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = ToScriptValue(new JArray("Title")), ["catalog_version"] = Resgrid.Model.WorkOrders.WorkOrderTables.OperationsCatalogVersion };
 					break;
 				}
 				case WorkflowTriggerEventType.ChecklistCompleted:

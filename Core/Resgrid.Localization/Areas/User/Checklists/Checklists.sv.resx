@@ -691,4 +691,6 @@
 <data name="MaintenanceUnavailable" xml:space="preserve"><value>Underhållslagringen är inte tillgänglig.</value></data>
 <data name="PermissionRequired" xml:space="preserve"><value>Du har inte behörighet att utföra denna åtgärd.</value></data>
 <data name="TargetUnavailable" xml:space="preserve"><value>Välj ett tillgängligt mål inom din avdelning.</value></data>
+  <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Vissa historiska tillstånd för arbetsorder kunde inte återskapas. Paketet garanterar inte fullständig underhållstäckning.</value></data>
+  <data name="RestrictedWorkOrders" xml:space="preserve"><value>Arbetsorderbevisen begränsas till läsarens nuvarande behörighet.</value></data>
 </root>

@@ -260,4 +260,120 @@
 <data name="WorkOrderSafetyHoldApplied" xml:space="preserve"><value>Sicherheitssperre gesetzt</value></data>
 <data name="WorkOrderSafetyHoldReleased" xml:space="preserve"><value>Sicherheitssperre aufgehoben</value></data>
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Fälligkeit verschoben</value></data>
+  <data name="MaintenanceReports" xml:space="preserve"><value>Wartungsberichte</value></data>
+  <data name="ServiceHistory" xml:space="preserve"><value>Wartungsverlauf</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Erstellt ab (UTC, einschließlich)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Erstellt vor (UTC, ausschließlich)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Berechnet am (UTC)</value></data>
+  <data name="TotalOrders" xml:space="preserve"><value>Arbeitsaufträge insgesamt</value></data>
+  <data name="OpenOrders" xml:space="preserve"><value>Offene Arbeitsaufträge</value></data>
+  <data name="OverdueOrders" xml:space="preserve"><value>Überfällige Arbeitsaufträge</value></data>
+  <data name="MeanRepairHours" xml:space="preserve"><value>Mittlere Reparaturzeit (Stunden)</value></data>
+  <data name="RepairSamples" xml:space="preserve"><value>Gemessene abgeschlossene Reparaturen</value></data>
+  <data name="MissingRepairTimes" xml:space="preserve"><value>Reparaturen ohne gültige Zeitangaben</value></data>
+  <data name="OpenByPriority" xml:space="preserve"><value>Offene Aufträge nach Priorität</value></data>
+  <data name="OpenByAge" xml:space="preserve"><value>Offene Aufträge nach Alter</value></data>
+  <data name="AgeBucket0" xml:space="preserve"><value>0–6 Tage</value></data>
+  <data name="AgeBucket1" xml:space="preserve"><value>7–29 Tage</value></data>
+  <data name="AgeBucket2" xml:space="preserve"><value>30–89 Tage</value></data>
+  <data name="AgeBucket3" xml:space="preserve"><value>Ab 90 Tagen</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>CSV exportieren</value></data>
+  <data name="Costs" xml:space="preserve"><value>Kosten</value></data>
+  <data name="TotalCost" xml:space="preserve"><value>Bekannte Gesamtkosten</value></data>
+  <data name="UnknownLabor" xml:space="preserve"><value>Arbeitseinträge mit unbekannten Kosten</value></data>
+  <data name="UnknownParts" xml:space="preserve"><value>Teileeinträge mit unbekannten Kosten</value></data>
+  <data name="UnknownCurrency" xml:space="preserve"><value>Unbekannte Währung</value></data>
+  <data name="CreatedOn" xml:space="preserve"><value>Erstellt am</value></data>
+  <data name="StartedOn" xml:space="preserve"><value>Begonnen am</value></data>
+  <data name="CompletedOn" xml:space="preserve"><value>Abgeschlossen am</value></data>
+  <data name="RepairHours" xml:space="preserve"><value>Reparaturzeit (Stunden)</value></data>
+  <data name="Revision" xml:space="preserve"><value>Überarbeitungsstand</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>Dieser Bericht ist zu groß. Schränken Sie den Zeitraum oder die Zielfilter ein.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Wählen Sie einen gültigen Zeitraum; Übersichtsberichte unterstützen bis zu 366 Tage.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Aktueller Stand der im gewählten UTC-Zeitraum erstellten Arbeitsaufträge. Offen umfasst abgeschlossene Arbeiten ohne endgültigen Abschluss. Die mittlere Reparaturzeit reicht vom ersten Beginn bis zur letzten Fertigstellung, einschließlich Unterbrechungen und Wiedereröffnungen; ungültige Zeiten werden ausgeschlossen. Kosten werden je Eintrag gerundet und nach Währung getrennt; stornierte oder nicht ausgegebene Teile zählen nicht. Unbekannte Kosten und frühere Arbeitswährungen bleiben unbekannt; Wechselkurse werden nicht angenommen.</value></data>
+  <data name="HistoryMethod" xml:space="preserve"><value>Gesamter Wartungsverlauf, sofern kein Zeitraum ausgewählt ist. Jede CSV-Zeile steht für einen Auftrag und eine Währung. Bekannte Kosten schließen stornierte oder nicht ausgegebene Teile aus; fehlende Preise und frühere Arbeitswährungen werden als unbekannt ausgewiesen.</value></data>
+  <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Stand des Arbeitsauftrags zum Einsatzzeitpunkt mit unveränderlichen Versionsreferenzen im Manifest. Ältere offene Wartungen sind enthalten; abgeschlossene Arbeiten berücksichtigen den Rückblickzeitraum. Nicht rekonstruierbare historische Zustände werden als nicht verfügbar gekennzeichnet.</value></data>
+
+<data name="Operations" xml:space="preserve"><value>Arbeitsauftragsvorgänge</value></data>
+<data name="OperationsPolicy" xml:space="preserve"><value>Vorgangsrichtlinie</value></data>
+<data name="SpendingApprovals" xml:space="preserve"><value>Ausgabenfreigaben</value></data>
+<data name="RequireSpendingApproval" xml:space="preserve"><value>Freigabe oberhalb der Schwellen verlangen</value></data>
+<data name="SpendingThreshold" xml:space="preserve"><value>Ausgabenschwelle</value></data>
+<data name="ApprovalAmount" xml:space="preserve"><value>Freizugebender Betrag</value></data>
+<data name="RequestApproval" xml:space="preserve"><value>Freigabe anfordern</value></data>
+<data name="ApproveSpending" xml:space="preserve"><value>Ausgaben freigeben</value></data>
+<data name="RejectSpending" xml:space="preserve"><value>Ausgaben ablehnen</value></data>
+<data name="Decision" xml:space="preserve"><value>Entscheidung</value></data>
+<data name="ApprovalStateNone" xml:space="preserve"><value>Keine Freigabe angefordert</value></data>
+<data name="ApprovalStateRequested" xml:space="preserve"><value>Freigabe angefordert</value></data>
+<data name="ApprovalStateApproved" xml:space="preserve"><value>Ausgaben freigegeben</value></data>
+<data name="ApprovalStateRejected" xml:space="preserve"><value>Ausgaben abgelehnt</value></data>
+<data name="BusinessCalendar" xml:space="preserve"><value>Betriebskalender</value></data>
+<data name="ServiceWeekdays" xml:space="preserve"><value>Arbeitstage</value></data>
+<data name="Holidays" xml:space="preserve"><value>Arbeitsfreie Tage (YYYY-MM-DD)</value></data>
+<data name="ResponseMinutes" xml:space="preserve"><value>Reaktionsziel (Arbeitsminuten)</value></data>
+<data name="RepairMinutes" xml:space="preserve"><value>Reparaturziel (Arbeitsminuten)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Reaktionsfrist (UTC)</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Reparaturfrist (UTC)</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Reagiert am (UTC)</value></data>
+<data name="VendorCharges" xml:space="preserve"><value>Lieferantenkosten</value></data>
+<data name="AddVendorCharge" xml:space="preserve"><value>Lieferantenkosten hinzufügen</value></data>
+<data name="VoidCharge" xml:space="preserve"><value>Kosten stornieren</value></data>
+<data name="InvoiceReference" xml:space="preserve"><value>Rechnungsreferenz</value></data>
+<data name="ServiceDate" xml:space="preserve"><value>Leistungsdatum</value></data>
+<data name="PartsAllocation" xml:space="preserve"><value>Teilezuordnung</value></data>
+<data name="ReservedParts" xml:space="preserve"><value>Reservierte Menge</value></data>
+<data name="IssuedParts" xml:space="preserve"><value>Ausgegebene Menge</value></data>
+<data name="ConsumedParts" xml:space="preserve"><value>Verbrauchte Menge</value></data>
+<data name="ReturnedParts" xml:space="preserve"><value>Unverbrauchte Rückgabemenge</value></data>
+<data name="PartMovements" xml:space="preserve"><value>Teilebewegungsverlauf</value></data>
+<data name="PartMovementReserve" xml:space="preserve"><value>Teile reservieren</value></data>
+<data name="PartMovementIssue" xml:space="preserve"><value>Reservierte Teile ausgeben</value></data>
+<data name="PartMovementConsume" xml:space="preserve"><value>Verbrauch erfassen</value></data>
+<data name="PartMovementReturnUnused" xml:space="preserve"><value>Unverbrauchte Teile zurückgeben</value></data>
+<data name="PartMovementReleaseReservation" xml:space="preserve"><value>Reservierung freigeben</value></data>
+<data name="IssueLocation" xml:space="preserve"><value>Ausgabeort</value></data>
+<data name="BulkOperations" xml:space="preserve"><value>Sammelvorgänge</value></data>
+<data name="BulkAssignment" xml:space="preserve"><value>Sammelzuweisung</value></data>
+<data name="BulkPreview" xml:space="preserve"><value>Zeilen prüfen</value></data>
+<data name="BulkApply" xml:space="preserve"><value>Gültige Zeilen anwenden</value></data>
+<data name="BulkResults" xml:space="preserve"><value>Stapelergebnisse</value></data>
+<data name="BulkApplied" xml:space="preserve"><value>Angewendet</value></data>
+<data name="BulkReady" xml:space="preserve"><value>Bereit zur Anwendung</value></data>
+<data name="RowNumber" xml:space="preserve"><value>Zeilennummer</value></data>
+<data name="Select" xml:space="preserve"><value>Auswählen</value></data>
+<data name="ImportWorkOrders" xml:space="preserve"><value>Arbeitsaufträge importieren</value></data>
+<data name="ImportCsv" xml:space="preserve"><value>CSV-Daten</value></data>
+<data name="ImportTemplate" xml:space="preserve"><value>CSV-Vorlage herunterladen</value></data>
+<data name="ActiveRepairHours" xml:space="preserve"><value>Aktive Reparaturstunden</value></data>
+<data name="WaitingHours" xml:space="preserve"><value>Wartestunden</value></data>
+<data name="DowntimeHours" xml:space="preserve"><value>Ausfallstunden durch Sicherheitssperren</value></data>
+<data name="MissingTimeHistory" xml:space="preserve"><value>Aufträge mit unvollständigem Zeitverlauf</value></data>
+<data name="PreventiveCompliance" xml:space="preserve"><value>Einhaltung vorbeugender Wartung</value></data>
+<data name="PreventiveOnTime" xml:space="preserve"><value>Pünktlich / fällig</value></data>
+<data name="RepeatedFailures" xml:space="preserve"><value>Wiederholte Ausfälle</value></data>
+<data name="ResponseSlaBreaches" xml:space="preserve"><value>Verfehlte Reaktionsziele</value></data>
+<data name="RepairSlaBreaches" xml:space="preserve"><value>Verfehlte Reparaturziele</value></data>
+<data name="OperationsPolicyInvalid" xml:space="preserve"><value>Prüfen Sie Ausgabenregeln, Kalender und Serviceziele.</value></data>
+<data name="SpendingApprovalRequired" xml:space="preserve"><value>Für diese Kosten und Währung ist eine gültige unabhängige Freigabe erforderlich.</value></data>
+<data name="IndependentApprovalRequired" xml:space="preserve"><value>Eine andere berechtigte Führungskraft muss über diesen Antrag entscheiden.</value></data>
+<data name="BulkInputInvalid" xml:space="preserve"><value>Wählen Sie 1 bis 200 gültige Zeilen mit eindeutigen Zeilennummern.</value></data>
+<data name="BulkCsvInvalid" xml:space="preserve"><value>Prüfen Sie Spalten, Zahlen und UTC-Datumsformat dieser Zeile.</value></data>
+<data name="BulkPreviewChanged" xml:space="preserve"><value>Der Stapel wurde geändert. Prüfen Sie ihn vor der Anwendung erneut.</value></data>
+<data name="PartBalanceInvalid" xml:space="preserve"><value>Die Menge übersteigt den verfügbaren reservierten oder ausgegebenen Bestand.</value></data>
+<data name="PartBalanceOutstanding" xml:space="preserve"><value>Geben Sie Reservierungen frei und verbrauchen oder retournieren Sie ausgegebene Teile vor dem Abschluss.</value></data>
+<data name="PartCurrencyChanged" xml:space="preserve"><value>Die Währung der Bestandskosten wurde geändert. Prüfen Sie die Reservierung vor dem Fortfahren.</value></data>
+<data name="IndependentApprovalHelp" xml:space="preserve"><value>Antragstellende dürfen ihren eigenen Antrag nicht freigeben.</value></data>
+<data name="BulkHelp" xml:space="preserve"><value>Prüfen Sie bis zu 200 Zeilen. Gültige Zeilen werden einzeln angewendet; Fehler bleiben sichtbar und erfolgreiche Zeilen werden bei Wiederholung nicht dupliziert.</value></data>
+<data name="ImportHelp" xml:space="preserve"><value>Fügen Sie CSV-Daten anhand der heruntergeladenen Vorlage ein. Behalten Sie Spaltennamen bei; verwenden Sie Dezimalpunkte, numerische Typwerte (0–4) und Prioritätswerte (0–3) und UTC-Daten wie 2026-09-09T12:00:00Z.</value></data>
+<data name="PolicyHelp" xml:space="preserve"><value>Schwellen vergleichen Schätzkosten mit der Summe aus Arbeit, Lieferantenkosten und gebundenen Teilen. Unbekannte Kosten oder Währungen ohne Regel erfordern Prüfung. Freigaben sind unabhängig und währungsspezifisch.</value></data>
+<data name="BusinessCalendarHelp" xml:space="preserve"><value>Wählen Sie lokale Arbeitstage und -zeiten; 00:00 als Ende bedeutet Mitternacht. Tragen Sie je Zeile einen freien Tag ein. Zwei Nullwerte deaktivieren eine Priorität. Fristen beginnen bei Erstellung und werden bei Prioritätsänderung neu berechnet. Annahme stoppt die Reaktions-, Fertigstellung die Reparaturzeit. Wiederöffnung behält ursprüngliche Fristen.</value></data>
+<data name="PartsAllocationHelp" xml:space="preserve"><value>Reservieren Sie Bestand, geben Sie ihn an einen Arbeitsort aus und verbrauchen Sie ihn oder retournieren Sie unbenutzte Teile an die Quelle. Andere Aufträge können reservierte und ausgegebene Mengen nicht nutzen. Kontrollierte Bestände benötigen weiterhin unabhängige Bezeugung. Nur Verbrauch zählt als Teileaufwand.</value></data>
+<data name="OperationsAnalyticsHelp" xml:space="preserve"><value>Aktive Zeit ist Bearbeitungszeit; Warten umfasst Anfrage, Annahme, Zuweisung und Unterbrechungen. Ausfallzeit vereint Sicherheitssperren je Auftrag. Fehlender Statusverlauf bleibt unbekannt. Wartungstreue nutzt ursprüngliche Fälligkeiten einschließlich überfälliger offener Arbeit. Wiederholte Ausfälle haben dasselbe Objekt bzw. dieselbe Einheit und eine erfasste Ursache.</value></data>
+<data name="WorkOrderApprovalChanged" xml:space="preserve"><value>Arbeitsauftragsfreigabe geändert</value></data>
+<data name="WorkOrderSlaBreached" xml:space="preserve"><value>Serviceziel des Arbeitsauftrags verfehlt</value></data>
+<data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Lieferantenkosten des Arbeitsauftrags geändert</value></data>
+<data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Vorgangsrichtlinie für Arbeitsaufträge geändert</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Reaktionsfrist (UTC)</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Reparaturfrist (UTC)</value></data>
 </root>

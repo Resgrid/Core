@@ -260,4 +260,120 @@
 <data name="WorkOrderSafetyHoldApplied" xml:space="preserve"><value>تم فرض حظر السلامة</value></data>
 <data name="WorkOrderSafetyHoldReleased" xml:space="preserve"><value>تم رفع حظر السلامة</value></data>
 <data name="WorkOrderDeferred" xml:space="preserve"><value>تم تأجيل الموعد</value></data>
+  <data name="MaintenanceReports" xml:space="preserve"><value>تقارير الصيانة</value></data>
+  <data name="ServiceHistory" xml:space="preserve"><value>سجل الخدمة</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>أُنشئ من (UTC، شامل)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>أُنشئ قبل (UTC، غير شامل)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>وقت الحساب (UTC)</value></data>
+  <data name="TotalOrders" xml:space="preserve"><value>إجمالي أوامر العمل</value></data>
+  <data name="OpenOrders" xml:space="preserve"><value>أوامر العمل المفتوحة</value></data>
+  <data name="OverdueOrders" xml:space="preserve"><value>أوامر العمل المتأخرة</value></data>
+  <data name="MeanRepairHours" xml:space="preserve"><value>متوسط زمن الإصلاح (ساعات)</value></data>
+  <data name="RepairSamples" xml:space="preserve"><value>الإصلاحات المكتملة المقاسة</value></data>
+  <data name="MissingRepairTimes" xml:space="preserve"><value>إصلاحات تفتقر إلى أوقات صالحة</value></data>
+  <data name="OpenByPriority" xml:space="preserve"><value>المفتوح حسب الأولوية</value></data>
+  <data name="OpenByAge" xml:space="preserve"><value>المفتوح حسب العمر</value></data>
+  <data name="AgeBucket0" xml:space="preserve"><value>٠–٦ أيام</value></data>
+  <data name="AgeBucket1" xml:space="preserve"><value>٧–٢٩ يومًا</value></data>
+  <data name="AgeBucket2" xml:space="preserve"><value>٣٠–٨٩ يومًا</value></data>
+  <data name="AgeBucket3" xml:space="preserve"><value>٩٠ يومًا فأكثر</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>تصدير CSV</value></data>
+  <data name="Costs" xml:space="preserve"><value>التكاليف</value></data>
+  <data name="TotalCost" xml:space="preserve"><value>الإجمالي المعروف</value></data>
+  <data name="UnknownLabor" xml:space="preserve"><value>سجلات عمل بتكلفة غير معروفة</value></data>
+  <data name="UnknownParts" xml:space="preserve"><value>سجلات قطع بتكلفة غير معروفة</value></data>
+  <data name="UnknownCurrency" xml:space="preserve"><value>عملة غير معروفة</value></data>
+  <data name="CreatedOn" xml:space="preserve"><value>تاريخ الإنشاء</value></data>
+  <data name="StartedOn" xml:space="preserve"><value>تاريخ البدء</value></data>
+  <data name="CompletedOn" xml:space="preserve"><value>تاريخ الإكمال</value></data>
+  <data name="RepairHours" xml:space="preserve"><value>زمن الإصلاح (ساعات)</value></data>
+  <data name="Revision" xml:space="preserve"><value>المراجعة</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>هذا التقرير كبير جدًا. قلّل النطاق الزمني أو حدّد الأهداف بدقة أكبر.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>اختر نطاقًا زمنيًا صالحًا؛ تدعم تقارير لوحة المعلومات مدة تصل إلى ٣٦٦ يومًا.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>الحالة الحالية لأوامر العمل المنشأة ضمن النطاق المحدد بالتوقيت UTC. تشمل الأوامر المفتوحة الأعمال المكتملة التي تنتظر الإغلاق. متوسط زمن الإصلاح هو المدة من أول بدء إلى آخر إكمال، بما فيها فترات التعليق وإعادة الفتح؛ تُستبعد الأوقات غير الصالحة. تُقرّب التكاليف لكل سجل وتُفصل حسب العملة، وتُستبعد القطع الملغاة أو غير المصروفة. تبقى التكاليف وعملات العمل القديمة غير المعروفة كذلك؛ لا تُفترض أسعار صرف.</value></data>
+  <data name="HistoryMethod" xml:space="preserve"><value>سجل الخدمة الكامل ما لم تُحدّد تواريخ. يمثّل كل صف في CSV أمر عمل وعملة واحدة. تستبعد التكاليف المعروفة القطع الملغاة أو غير المصروفة؛ تُعرض الأسعار المفقودة وعملات العمل القديمة على أنها غير معروفة.</value></data>
+  <data name="WorkOrderPacketMethod" xml:space="preserve"><value>حالة أمر العمل وقت البلاغ، مع مراجع مراجعات غير قابلة للتغيير في البيان. تُدرج أعمال الصيانة المفتوحة الأقدم؛ وتخضع الأعمال المكتملة لفترة الاسترجاع. تُعلّم الحالة التاريخية التي يتعذّر استعادتها بأنها غير متاحة.</value></data>
+
+<data name="Operations" xml:space="preserve"><value>عمليات أوامر العمل</value></data>
+<data name="OperationsPolicy" xml:space="preserve"><value>سياسة العمليات</value></data>
+<data name="SpendingApprovals" xml:space="preserve"><value>موافقات الإنفاق</value></data>
+<data name="RequireSpendingApproval" xml:space="preserve"><value>اشتراط الموافقة عند تجاوز الحدود</value></data>
+<data name="SpendingThreshold" xml:space="preserve"><value>حد الإنفاق</value></data>
+<data name="ApprovalAmount" xml:space="preserve"><value>المبلغ المطلوب اعتماده</value></data>
+<data name="RequestApproval" xml:space="preserve"><value>طلب الموافقة</value></data>
+<data name="ApproveSpending" xml:space="preserve"><value>اعتماد الإنفاق</value></data>
+<data name="RejectSpending" xml:space="preserve"><value>رفض الإنفاق</value></data>
+<data name="Decision" xml:space="preserve"><value>القرار</value></data>
+<data name="ApprovalStateNone" xml:space="preserve"><value>لم تُطلب موافقة</value></data>
+<data name="ApprovalStateRequested" xml:space="preserve"><value>طُلبت الموافقة</value></data>
+<data name="ApprovalStateApproved" xml:space="preserve"><value>الإنفاق معتمد</value></data>
+<data name="ApprovalStateRejected" xml:space="preserve"><value>الإنفاق مرفوض</value></data>
+<data name="BusinessCalendar" xml:space="preserve"><value>تقويم العمل</value></data>
+<data name="ServiceWeekdays" xml:space="preserve"><value>أيام العمل</value></data>
+<data name="Holidays" xml:space="preserve"><value>تواريخ العطلات (YYYY-MM-DD)</value></data>
+<data name="ResponseMinutes" xml:space="preserve"><value>الوقت المستهدف للاستجابة (دقائق العمل)</value></data>
+<data name="RepairMinutes" xml:space="preserve"><value>الوقت المستهدف للإصلاح (دقائق العمل)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>الموعد النهائي للاستجابة (UTC)</value></data>
+<data name="RepairDue" xml:space="preserve"><value>الموعد النهائي للإصلاح (UTC)</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>وقت الاستجابة (UTC)</value></data>
+<data name="VendorCharges" xml:space="preserve"><value>رسوم الموردين</value></data>
+<data name="AddVendorCharge" xml:space="preserve"><value>إضافة رسوم مورد</value></data>
+<data name="VoidCharge" xml:space="preserve"><value>إلغاء الرسوم</value></data>
+<data name="InvoiceReference" xml:space="preserve"><value>مرجع الفاتورة</value></data>
+<data name="ServiceDate" xml:space="preserve"><value>تاريخ الخدمة</value></data>
+<data name="PartsAllocation" xml:space="preserve"><value>تخصيص القطع</value></data>
+<data name="ReservedParts" xml:space="preserve"><value>الكمية المحجوزة</value></data>
+<data name="IssuedParts" xml:space="preserve"><value>الكمية المصروفة</value></data>
+<data name="ConsumedParts" xml:space="preserve"><value>الكمية المستهلكة</value></data>
+<data name="ReturnedParts" xml:space="preserve"><value>الكمية غير المستخدمة المُعادة</value></data>
+<data name="PartMovements" xml:space="preserve"><value>سجل حركة القطع</value></data>
+<data name="PartMovementReserve" xml:space="preserve"><value>حجز القطع</value></data>
+<data name="PartMovementIssue" xml:space="preserve"><value>صرف القطع المحجوزة</value></data>
+<data name="PartMovementConsume" xml:space="preserve"><value>تسجيل الاستهلاك</value></data>
+<data name="PartMovementReturnUnused" xml:space="preserve"><value>إعادة القطع غير المستخدمة</value></data>
+<data name="PartMovementReleaseReservation" xml:space="preserve"><value>إلغاء الحجز</value></data>
+<data name="IssueLocation" xml:space="preserve"><value>موقع صرف القطع</value></data>
+<data name="BulkOperations" xml:space="preserve"><value>العمليات الجماعية</value></data>
+<data name="BulkAssignment" xml:space="preserve"><value>الإسناد الجماعي</value></data>
+<data name="BulkPreview" xml:space="preserve"><value>معاينة الصفوف</value></data>
+<data name="BulkApply" xml:space="preserve"><value>تطبيق الصفوف الصالحة</value></data>
+<data name="BulkResults" xml:space="preserve"><value>نتائج الدفعة</value></data>
+<data name="BulkApplied" xml:space="preserve"><value>تم التطبيق</value></data>
+<data name="BulkReady" xml:space="preserve"><value>جاهز للتطبيق</value></data>
+<data name="RowNumber" xml:space="preserve"><value>رقم الصف</value></data>
+<data name="Select" xml:space="preserve"><value>تحديد</value></data>
+<data name="ImportWorkOrders" xml:space="preserve"><value>استيراد أوامر العمل</value></data>
+<data name="ImportCsv" xml:space="preserve"><value>بيانات CSV</value></data>
+<data name="ImportTemplate" xml:space="preserve"><value>تنزيل قالب CSV</value></data>
+<data name="ActiveRepairHours" xml:space="preserve"><value>ساعات الإصلاح الفعلي</value></data>
+<data name="WaitingHours" xml:space="preserve"><value>ساعات الانتظار</value></data>
+<data name="DowntimeHours" xml:space="preserve"><value>ساعات التعطل بسبب إيقاف السلامة</value></data>
+<data name="MissingTimeHistory" xml:space="preserve"><value>أوامر بسجل زمني غير مكتمل</value></data>
+<data name="PreventiveCompliance" xml:space="preserve"><value>الالتزام بالصيانة الوقائية</value></data>
+<data name="PreventiveOnTime" xml:space="preserve"><value>في الموعد / مستحق</value></data>
+<data name="RepeatedFailures" xml:space="preserve"><value>الأعطال المتكررة</value></data>
+<data name="ResponseSlaBreaches" xml:space="preserve"><value>أهداف الاستجابة المتجاوزة</value></data>
+<data name="RepairSlaBreaches" xml:space="preserve"><value>أهداف الإصلاح المتجاوزة</value></data>
+<data name="OperationsPolicyInvalid" xml:space="preserve"><value>تحقق من قواعد الإنفاق والتقويم وأهداف الخدمة.</value></data>
+<data name="SpendingApprovalRequired" xml:space="preserve"><value>يلزم اعتماد مستقل صالح لهذه التكلفة والعملة.</value></data>
+<data name="IndependentApprovalRequired" xml:space="preserve"><value>يجب أن يبتّ مدير آخر مخوّل في هذا الطلب.</value></data>
+<data name="BulkInputInvalid" xml:space="preserve"><value>حدد من صف واحد إلى 200 صف صالح بأرقام صفوف فريدة.</value></data>
+<data name="BulkCsvInvalid" xml:space="preserve"><value>تحقق من أعمدة هذا الصف وأرقامه وتنسيق تاريخ UTC.</value></data>
+<data name="BulkPreviewChanged" xml:space="preserve"><value>تغيرت الدفعة. عاينها مجددًا قبل التطبيق.</value></data>
+<data name="PartBalanceInvalid" xml:space="preserve"><value>تتجاوز الكمية الرصيد المحجوز أو المصروف المتاح.</value></data>
+<data name="PartBalanceOutstanding" xml:space="preserve"><value>ألغِ الحجوزات واستهلك القطع المصروفة أو أعدها قبل إكمال هذا الأمر.</value></data>
+<data name="PartCurrencyChanged" xml:space="preserve"><value>تغيرت عملة تكلفة المخزون. راجع الحجز قبل المتابعة.</value></data>
+<data name="IndependentApprovalHelp" xml:space="preserve"><value>لا يمكن لمقدم الطلب اعتماد طلبه بنفسه.</value></data>
+<data name="BulkHelp" xml:space="preserve"><value>عاين حتى 200 صف. يُطبّق كل صف صالح منفردًا، وتظل الأخطاء ظاهرة، ولا تتكرر الصفوف الناجحة عند إعادة المحاولة.</value></data>
+<data name="ImportHelp" xml:space="preserve"><value>الصق بيانات CSV باستخدام القالب المُنزّل. احتفظ بأسماء الأعمدة واستخدم النقطة العشرية وقيم النوع الرقمية (0–4) والأولوية (0–3) وتواريخ UTC مثل 2026-09-09T12:00:00Z.</value></data>
+<data name="PolicyHelp" xml:space="preserve"><value>تقارن الحدود التكلفة المقدرة بإجمالي العمالة ورسوم الموردين والقطع المخصصة. تتطلب التكاليف المجهولة أو العملات دون قاعدة مراجعة. الموافقات مستقلة ومحددة لكل عملة.</value></data>
+<data name="BusinessCalendarHelp" xml:space="preserve"><value>اختر أيام وساعات العمل المحلية؛ تعني 00:00 كنهاية منتصف الليل. أدخل كل عطلة في سطر. عطّل أولوية بضبط هدفيها على صفر. تبدأ المهل عند الإنشاء وتتغير بتعديل الأولوية. يوقف القبول عداد الاستجابة، والإكمال عداد الإصلاح. تحتفظ إعادة الفتح بالمواعيد الأصلية.</value></data>
+<data name="PartsAllocationHelp" xml:space="preserve"><value>احجز المخزون واصرفه إلى موقع العمل ثم استهلكه أو أعد القطع غير المستخدمة إلى المصدر. لا يمكن لأوامر أخرى استخدام الأرصدة المحجوزة والمصروفة. يظل المخزون الخاضع للرقابة بحاجة إلى شاهد مستقل. يُحتسب الاستهلاك فقط كمصروف قطع.</value></data>
+<data name="OperationsAnalyticsHelp" xml:space="preserve"><value>الوقت الفعلي هو وقت التنفيذ؛ يشمل الانتظار الطلب والقبول والإسناد والتعليق. التعطل هو مجموع فترات إيقاف السلامة غير المتداخلة لكل أمر. يظل سجل الحالة المفقود مجهولًا. يعتمد الالتزام الوقائي على المواعيد الأصلية ويشمل الأعمال المتأخرة غير المكتملة. تشترك الأعطال المتكررة في أصل أو وحدة وسبب مسجل.</value></data>
+<data name="WorkOrderApprovalChanged" xml:space="preserve"><value>تغير اعتماد أمر العمل</value></data>
+<data name="WorkOrderSlaBreached" xml:space="preserve"><value>تجاوز هدف خدمة أمر العمل</value></data>
+<data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>تغيرت رسوم مورد أمر العمل</value></data>
+<data name="WorkOrderPolicyChanged" xml:space="preserve"><value>تغيرت سياسة عمليات أوامر العمل</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>الموعد النهائي للاستجابة (UTC)</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>الموعد النهائي للإصلاح (UTC)</value></data>
 </root>

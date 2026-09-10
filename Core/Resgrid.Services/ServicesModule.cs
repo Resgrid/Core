@@ -31,7 +31,7 @@ namespace Resgrid.Services
 					var scope = context.Resolve<ILifetimeScope>();
 					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("readiness-billing-client"));
 				}).InstancePerLifetimeScope();
-			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().As<IWorkOrderMaintenanceService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().As<IWorkOrderMaintenanceService>().As<IWorkOrderReportingService>().As<IWorkOrderOperationsService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderAuthorizationService>().As<IWorkOrderAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistScheduledReportService>().As<IChecklistScheduledReportService>().InstancePerLifetimeScope();

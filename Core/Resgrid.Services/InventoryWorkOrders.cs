@@ -46,7 +46,8 @@ namespace Resgrid.Services
             if (!await _readinessAccess.CanUseMaintenanceAsync(actor.DepartmentId)) throw new InventoryException(402, "ReadinessProRequired");
             var part = await _workOrders.GetAsync<WorkOrderPart>(actor.DepartmentId, line.WorkOrderPartId.Value);
             if (part?.WorkOrderId?.ToString(System.Globalization.CultureInfo.InvariantCulture) != line.ReferenceId || part.InventoryItemId != line.ItemId || part.VoidedOn.HasValue) throw new InventoryException(409, "ReferenceUnavailable");
-            if (line.ReversesTransactionId == null && part.InventoryTransactionId != null || line.ReversesTransactionId != null && part.InventoryTransactionId != line.ReversesTransactionId) throw new InventoryException(409, "ReferenceUnavailable");
+            if (part.Staged) await ValidatePartMovementAsync(actor.DepartmentId, line);
+            else if (line.WorkOrderPartMovementId.HasValue || line.ReversesTransactionId == null && part.InventoryTransactionId != null || line.ReversesTransactionId != null && part.InventoryTransactionId != line.ReversesTransactionId) throw new InventoryException(409, "ReferenceUnavailable");
             var order = await _workOrders.GetAsync<WorkOrder>(actor.DepartmentId, part.WorkOrderId.Value);
             var principal = new ChecklistActor { DepartmentId = actor.DepartmentId, UserId = actor.UserId, GrantToken = actor.GrantToken };
             if (order == null || order.Status >= 5 || !await _workOrderAuthorization.Value.CanContributeAsync(principal, order)) throw new InventoryException(409, "ReferenceClosed");

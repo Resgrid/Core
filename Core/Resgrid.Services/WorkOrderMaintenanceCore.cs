@@ -25,6 +25,10 @@ namespace Resgrid.Services
         private async Task<WorkOrder> RevealOrderAsync(ChecklistActor actor, WorkOrder row)
         {
             await RevealAsync(actor, row);
+            return await PopulateOrderContentAsync(actor, row);
+        }
+        private async Task<WorkOrder> PopulateOrderContentAsync(ChecklistActor actor, WorkOrder row)
+        {
             if (!string.IsNullOrEmpty(row.Content)) return row;
             WorkOrderContent fields;
             if (row.SourceType == 2 && row.RecurrenceVersionId.HasValue)
@@ -114,7 +118,7 @@ namespace Resgrid.Services
                     order.RequestId = request; order.NumberYear = Now.Year; order.NumberSequence = await _store.NextNumberAsync(departmentId, order.NumberYear);
                     order.SourceType = 1; order.SourceChecklistCompletionId = intent.CompletionId; order.SourceChecklistItemId = intent.ItemId; order.SourceOccurrenceId = intent.OccurrenceId;
                     order.Priority = intent.Priority; order.TargetUnitId = target.TargetUnitId; order.TargetGroupId = target.TargetGroupId; order.InventoryAssetId = target.InventoryAssetId;
-                    await _store.AllocateAsync(order); await EventAsync(order, WorkflowTriggerEventType.WorkOrderCreated, events); result.Generated++;
+                    await PinSlaAsync(order); await _store.AllocateAsync(order); await RecordGeneratedCreationAsync(order); await EventAsync(order, WorkflowTriggerEventType.WorkOrderCreated, events); result.Generated++;
                 }
                 if (intent.HoldUnit && order.TargetUnitId.HasValue) { await CreateHoldAsync(owner, order, true, null, events, true); result.Held++; }
                 if (intent.HoldAsset && order.InventoryAssetId != null) { await CreateHoldAsync(owner, order, false, null, events, true); result.Held++; }

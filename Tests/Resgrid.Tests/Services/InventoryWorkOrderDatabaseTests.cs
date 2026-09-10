@@ -25,7 +25,7 @@ namespace Resgrid.Tests.Services
         private (WorkOrdersService Orders, InventoryModernizationService Inventory, Mock<IReadinessAccessService> Access) MaintenancePair(UnitOfWork uow)
         {
             var orders = new WorkOrderRepository(Connections(), Configuration(), uow, Mock.Of<IQueryFactory>());
-            var auth = new Mock<IWorkOrderAuthorizationService>(); auth.Setup(a=>a.ScopeAsync(It.IsAny<ChecklistActor>())).ReturnsAsync(new WorkOrderReadScope { All=true });
+            var auth = new Mock<IWorkOrderAuthorizationService>(); auth.Setup(a=>a.ScopeAsync(It.IsAny<ChecklistActor>())).ReturnsAsync((ChecklistActor actor)=>new WorkOrderReadScope { All=true, UserId=actor.UserId });
             auth.Setup(a=>a.CanManageAsync(It.IsAny<ChecklistActor>(),It.IsAny<int?>())).ReturnsAsync(true);
             auth.Setup(a=>a.CanContributeAsync(It.IsAny<ChecklistActor>(),It.IsAny<WorkOrder>())).ReturnsAsync(true);
             auth.Setup(a=>a.RecipientsAsync(It.IsAny<int>(),It.IsAny<WorkOrder>())).ReturnsAsync(new List<string>());

@@ -63,7 +63,9 @@ namespace Resgrid.Tests.Services
             var source = new Mock<IMigrationSource>(); source.Setup(s => s.GetMigrations()).Returns(new IMigration[] {
                 _type == DatabaseTypes.Postgres ? new M0197_AddWorkOrdersPg() : new M0197_AddWorkOrders(),
                 _type == DatabaseTypes.Postgres ? new M0203_AddWorkOrderIntegrationsPg() : new M0203_AddWorkOrderIntegrations(),
-                _type == DatabaseTypes.Postgres ? new M0204_AddWorkOrderRecurrencesPg() : new M0204_AddWorkOrderRecurrences()
+                _type == DatabaseTypes.Postgres ? new M0204_AddWorkOrderRecurrencesPg() : new M0204_AddWorkOrderRecurrences(),
+                _type == DatabaseTypes.Postgres ? new M0206_AddWorkOrderReportingPg() : new M0206_AddWorkOrderReporting(),
+                _type == DatabaseTypes.Postgres ? new M0207_AddWorkOrderOperationsPg() : new M0207_AddWorkOrderOperations()
             });
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{

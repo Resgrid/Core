@@ -112,7 +112,9 @@ CREATE TABLE {Q("AuditLogs")} ({Q("Id")} {text}(36) PRIMARY KEY, {Q("DepartmentI
 				_type == DatabaseTypes.Postgres ? new M0202_AddInventoryCountsAndAlertsPg() : new M0202_AddInventoryCountsAndAlerts(),
                 _type == DatabaseTypes.Postgres ? new M0203_AddWorkOrderIntegrationsPg() : new M0203_AddWorkOrderIntegrations(),
                 _type == DatabaseTypes.Postgres ? new M0204_AddWorkOrderRecurrencesPg() : new M0204_AddWorkOrderRecurrences(),
-				_type == DatabaseTypes.Postgres ? new M0205_EnforceInventoryTenantHoldersPg() : new M0205_EnforceInventoryTenantHolders()
+				_type == DatabaseTypes.Postgres ? new M0205_EnforceInventoryTenantHoldersPg() : new M0205_EnforceInventoryTenantHolders(),
+                _type == DatabaseTypes.Postgres ? new M0206_AddWorkOrderReportingPg() : new M0206_AddWorkOrderReporting(),
+                _type == DatabaseTypes.Postgres ? new M0207_AddWorkOrderOperationsPg() : new M0207_AddWorkOrderOperations()
 			});
 			_runner = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
 			{

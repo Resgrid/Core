@@ -36,11 +36,12 @@ namespace Resgrid.Services
 		private readonly Lazy<IAuthorizationService> _reportAuthorization;
 		private readonly IChecklistHistoricalAssetSource _historicalAssets;
 		private readonly Lazy<IWorkOrderMaintenanceService> _failureMaintenance;
+		private readonly Lazy<IWorkOrderReportingService> _workOrderReports;
 		public ChecklistsService(IChecklistRepository store, IChecklistAuthorizationService authorization, IReadinessAccessService access,
 			IUnitOfWork uow, IAuditLogsRepository audit, IDomainEventOutboxService outbox, Lazy<IProtectedReadService> read,
 			Lazy<IProtectedWriteService> write, IRecordAttachmentScanner scanner, TimeProvider clock = null, IChecklistAssignmentService assignments = null, IChecklistAssetSource assets = null,
-			Lazy<ICallsService> reportCalls = null, Lazy<IAuthorizationService> reportAuthorization = null, IChecklistHistoricalAssetSource historicalAssets = null, Lazy<IWorkOrderMaintenanceService> failureMaintenance = null)
-		{ _store = store; _authorization = authorization; _access = access; _uow = uow; _audit = audit; _outbox = outbox; _read = read; _write = write; _scanner = scanner; _clock = clock ?? TimeProvider.System; _assignments = assignments; _assets = assets; _reportCalls = reportCalls; _reportAuthorization = reportAuthorization; _historicalAssets = historicalAssets; _failureMaintenance = failureMaintenance; }
+			Lazy<ICallsService> reportCalls = null, Lazy<IAuthorizationService> reportAuthorization = null, IChecklistHistoricalAssetSource historicalAssets = null, Lazy<IWorkOrderMaintenanceService> failureMaintenance = null, Lazy<IWorkOrderReportingService> workOrderReports = null)
+		{ _store = store; _authorization = authorization; _access = access; _uow = uow; _audit = audit; _outbox = outbox; _read = read; _write = write; _scanner = scanner; _clock = clock ?? TimeProvider.System; _assignments = assignments; _assets = assets; _reportCalls = reportCalls; _reportAuthorization = reportAuthorization; _historicalAssets = historicalAssets; _failureMaintenance = failureMaintenance; _workOrderReports = workOrderReports; }
 
 		private async Task ValidateMaintenanceOptionsAsync(ChecklistActor actor, ChecklistForm form)
         {

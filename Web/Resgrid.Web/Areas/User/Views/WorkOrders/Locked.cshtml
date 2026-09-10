@@ -6,7 +6,8 @@
     @await Html.PartialAsync("_Protection")
     <form class="work-order-form" asp-action="Reopen" method="post">
         @Html.AntiForgeryToken()<input type="hidden" name="destination" value="@Model.Page"/><input type="hidden" name="id" value="@Model.Id"/>
-        @await Html.PartialAsync("_FilterFields", Model.Filter)
+        @if (Model.Page is "Reports" or "History" or "ExportCsv") { @await Html.PartialAsync("_ReportFields", Model.Query) }
+        else { @await Html.PartialAsync("_FilterFields", Model.Filter) }
         <button class="btn btn-primary" type="submit">@localizer["Unlock"]</button>
     </form>
 </div></div></div>

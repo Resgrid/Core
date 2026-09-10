@@ -1946,4 +1946,50 @@
   <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Стали простроченими за період</value></data>
   <data name="AnalyticsWithinTarget" xml:space="preserve"><value>У межах цілі</value></data>
   <data name="AnalyticsWorkload" xml:space="preserve"><value>Навантаження</value></data>
+  <data name="ReadinessAssets" xml:space="preserve"><value>Активи</value></data>
+  <data name="ReadinessAssetsAssigned" xml:space="preserve"><value>Призначені активи</value></data>
+  <data name="ReadinessByStatus" xml:space="preserve"><value>За статусом</value></data>
+  <data name="ReadinessChecklists" xml:space="preserve"><value>Дотримання контрольних списків</value></data>
+  <data name="ReadinessChecks" xml:space="preserve"><value>Перевірки</value></data>
+  <data name="ReadinessChecksExpected" xml:space="preserve"><value>Очікувано</value></data>
+  <data name="ReadinessCohort" xml:space="preserve"><value>Вимірюваний період</value></data>
+  <data name="ReadinessCompletionRate" xml:space="preserve"><value>Частка виконання</value></data>
+  <data name="ReadinessCosts" xml:space="preserve"><value>Витрати</value></data>
+  <data name="ReadinessCoverage" xml:space="preserve"><value>Покриття</value></data>
+  <data name="ReadinessDamaged" xml:space="preserve"><value>Пошкоджено</value></data>
+  <data name="ReadinessEmergency" xml:space="preserve"><value>Аварійні</value></data>
+  <data name="ReadinessEquipment" xml:space="preserve"><value>Обладнання</value></data>
+  <data name="ReadinessEvidence" xml:space="preserve"><value>Пакети готовності</value></data>
+  <data name="ReadinessExpiringSoon" xml:space="preserve"><value>спливають протягом 30 днів</value></data>
+  <data name="ReadinessForbidden" xml:space="preserve"><value>Модуль відмовив у цьому перегляді для вашого облікового запису; нічого з нього не враховано.</value></data>
+  <data name="ReadinessHeader" xml:space="preserve"><value>Готовність</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>Готовність техніки та обладнання, зібрана з модулів контрольних списків, обслуговування та інвентарю. Кожен модуль авторизує вас самостійно; Записи додають лише захоплені пакети готовності.</value></data>
+  <data name="ReadinessIssuancesOutstanding" xml:space="preserve"><value>Незакриті видачі</value></data>
+  <data name="ReadinessIssued" xml:space="preserve"><value>Видано</value></data>
+  <data name="ReadinessLabor" xml:space="preserve"><value>Праця</value></data>
+  <data name="ReadinessMissed" xml:space="preserve"><value>Пропущено</value></data>
+  <data name="ReadinessMissingRepairTimes" xml:space="preserve"><value>без часу</value></data>
+  <data name="ReadinessMttr" xml:space="preserve"><value>Середній час ремонту (год)</value></data>
+  <data name="ReadinessNeedsAttention" xml:space="preserve"><value>потребують уваги</value></data>
+  <data name="ReadinessOnHold" xml:space="preserve"><value>Призупинено</value></data>
+  <data name="ReadinessOnTime" xml:space="preserve"><value>вчасно</value></data>
+  <data name="ReadinessOnTimeRate" xml:space="preserve"><value>Частка вчасних</value></data>
+  <data name="ReadinessOpenByAge" xml:space="preserve"><value>Відкриті за віком</value></data>
+  <data name="ReadinessOpenByPriority" xml:space="preserve"><value>Відкриті за пріоритетом</value></data>
+  <data name="ReadinessOutForRepair" xml:space="preserve"><value>У ремонті</value></data>
+  <data name="ReadinessOverdueReturns" xml:space="preserve"><value>Прострочені повернення</value></data>
+  <data name="ReadinessPackets" xml:space="preserve"><value>Пакети</value></data>
+  <data name="ReadinessPacketsCaptured" xml:space="preserve"><value>Захоплені пакети</value></data>
+  <data name="ReadinessParts" xml:space="preserve"><value>Запчастини</value></data>
+  <data name="ReadinessRecordsWithPacket" xml:space="preserve"><value>Записи з пакетом</value></data>
+  <data name="ReadinessRedacted" xml:space="preserve"><value>Деталі відповідей приховано для вашого рівня доступу; підрахунки повні.</value></data>
+  <data name="ReadinessRepairSamples" xml:space="preserve"><value>ремонтів із часом</value></data>
+  <data name="ReadinessSkipped" xml:space="preserve"><value>пропущено навмисно</value></data>
+  <data name="ReadinessState" xml:space="preserve"><value>Стан</value></data>
+  <data name="ReadinessTrend" xml:space="preserve"><value>Очікувані та пропущені перевірки за днями</value></data>
+  <data name="ReadinessUnavailableSources" xml:space="preserve"><value>Недоступне джерело</value></data>
+  <data name="ReadinessUnit" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="ReadinessUnits" xml:space="preserve"><value>Табло готовності підрозділів</value></data>
+  <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Рядки без ціни</value></data>
+  <data name="ReadinessWorkOrders" xml:space="preserve"><value>Наряди на роботи</value></data>
 </root>

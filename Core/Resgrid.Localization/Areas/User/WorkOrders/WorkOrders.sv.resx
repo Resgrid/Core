@@ -260,4 +260,120 @@
 <data name="WorkOrderSafetyHoldApplied" xml:space="preserve"><value>Säkerhetsspärr införd</value></data>
 <data name="WorkOrderSafetyHoldReleased" xml:space="preserve"><value>Säkerhetsspärr hävd</value></data>
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Förfallodatum uppskjutet</value></data>
+  <data name="MaintenanceReports" xml:space="preserve"><value>Underhållsrapporter</value></data>
+  <data name="ServiceHistory" xml:space="preserve"><value>Servicehistorik</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Skapad från (UTC, inklusive)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Skapad före (UTC, exklusive)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Beräknad vid (UTC)</value></data>
+  <data name="TotalOrders" xml:space="preserve"><value>Totalt antal arbetsorder</value></data>
+  <data name="OpenOrders" xml:space="preserve"><value>Öppna arbetsorder</value></data>
+  <data name="OverdueOrders" xml:space="preserve"><value>Försenade arbetsorder</value></data>
+  <data name="MeanRepairHours" xml:space="preserve"><value>Genomsnittlig reparationstid (timmar)</value></data>
+  <data name="RepairSamples" xml:space="preserve"><value>Uppmätta slutförda reparationer</value></data>
+  <data name="MissingRepairTimes" xml:space="preserve"><value>Reparationer utan giltiga tider</value></data>
+  <data name="OpenByPriority" xml:space="preserve"><value>Öppna efter prioritet</value></data>
+  <data name="OpenByAge" xml:space="preserve"><value>Öppna efter ålder</value></data>
+  <data name="AgeBucket0" xml:space="preserve"><value>0–6 dagar</value></data>
+  <data name="AgeBucket1" xml:space="preserve"><value>7–29 dagar</value></data>
+  <data name="AgeBucket2" xml:space="preserve"><value>30–89 dagar</value></data>
+  <data name="AgeBucket3" xml:space="preserve"><value>90 dagar eller fler</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Exportera CSV</value></data>
+  <data name="Costs" xml:space="preserve"><value>Kostnader</value></data>
+  <data name="TotalCost" xml:space="preserve"><value>Känd totalsumma</value></data>
+  <data name="UnknownLabor" xml:space="preserve"><value>Arbetsposter med okänd kostnad</value></data>
+  <data name="UnknownParts" xml:space="preserve"><value>Reservdelsposter med okänd kostnad</value></data>
+  <data name="UnknownCurrency" xml:space="preserve"><value>Okänd valuta</value></data>
+  <data name="CreatedOn" xml:space="preserve"><value>Skapad</value></data>
+  <data name="StartedOn" xml:space="preserve"><value>Påbörjad</value></data>
+  <data name="CompletedOn" xml:space="preserve"><value>Slutförd</value></data>
+  <data name="RepairHours" xml:space="preserve"><value>Reparationstid (timmar)</value></data>
+  <data name="Revision" xml:space="preserve"><value>Revisionsnummer</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>Rapporten är för stor. Begränsa datumintervallet eller målfiltren.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Välj ett giltigt datumintervall; översiktsrapporter stöder upp till 366 dagar.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Aktuellt tillstånd för arbetsorder skapade inom valt UTC-intervall. Öppna omfattar slutfört arbete som väntar på stängning. Genomsnittlig reparationstid räknas från första start till senaste slutförande, inklusive uppehåll och återöppningar; ogiltiga tider utesluts. Kostnader avrundas per post och delas upp efter valuta; makulerade eller ej utlämnade delar utesluts. Okända kostnader och äldre arbetsvalutor förblir okända; inga växelkurser antas.</value></data>
+  <data name="HistoryMethod" xml:space="preserve"><value>Fullständig servicehistorik om inga datum väljs. Varje CSV-rad motsvarar en order och en valuta. Kända kostnader utesluter makulerade eller ej utlämnade delar; saknade priser och äldre arbetsvalutor anges som okända.</value></data>
+  <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Arbetsorderns tillstånd vid larmtillfället, med oföränderliga revisionsreferenser i manifestet. Äldre öppet underhåll ingår; slutfört arbete använder tillbakablicksperioden. Historiska tillstånd som inte kan återskapas markeras som otillgängliga.</value></data>
+
+<data name="Operations" xml:space="preserve"><value>Arbetsorderåtgärder</value></data>
+<data name="OperationsPolicy" xml:space="preserve"><value>Regler för arbetsorder</value></data>
+<data name="SpendingApprovals" xml:space="preserve"><value>Godkännande av utgifter</value></data>
+<data name="RequireSpendingApproval" xml:space="preserve"><value>Kräv godkännande över gränsvärden</value></data>
+<data name="SpendingThreshold" xml:space="preserve"><value>Utgiftsgräns</value></data>
+<data name="ApprovalAmount" xml:space="preserve"><value>Belopp att godkänna</value></data>
+<data name="RequestApproval" xml:space="preserve"><value>Begär godkännande</value></data>
+<data name="ApproveSpending" xml:space="preserve"><value>Godkänn utgiften</value></data>
+<data name="RejectSpending" xml:space="preserve"><value>Avslå utgiften</value></data>
+<data name="Decision" xml:space="preserve"><value>Beslut</value></data>
+<data name="ApprovalStateNone" xml:space="preserve"><value>Inget godkännande begärt</value></data>
+<data name="ApprovalStateRequested" xml:space="preserve"><value>Godkännande begärt</value></data>
+<data name="ApprovalStateApproved" xml:space="preserve"><value>Utgiften godkänd</value></data>
+<data name="ApprovalStateRejected" xml:space="preserve"><value>Utgiften avslagen</value></data>
+<data name="BusinessCalendar" xml:space="preserve"><value>Arbetskalender</value></data>
+<data name="ServiceWeekdays" xml:space="preserve"><value>Arbetsdagar</value></data>
+<data name="Holidays" xml:space="preserve"><value>Arbetsfria datum (YYYY-MM-DD)</value></data>
+<data name="ResponseMinutes" xml:space="preserve"><value>Svarsmål (arbetsminuter)</value></data>
+<data name="RepairMinutes" xml:space="preserve"><value>Reparationsmål (arbetsminuter)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Sista svarstid (UTC)</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Sista reparationstid (UTC)</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Svar registrerat (UTC)</value></data>
+<data name="VendorCharges" xml:space="preserve"><value>Leverantörskostnader</value></data>
+<data name="AddVendorCharge" xml:space="preserve"><value>Lägg till leverantörskostnad</value></data>
+<data name="VoidCharge" xml:space="preserve"><value>Makulera kostnad</value></data>
+<data name="InvoiceReference" xml:space="preserve"><value>Fakturareferens</value></data>
+<data name="ServiceDate" xml:space="preserve"><value>Tjänstedatum</value></data>
+<data name="PartsAllocation" xml:space="preserve"><value>Tilldelning av reservdelar</value></data>
+<data name="ReservedParts" xml:space="preserve"><value>Reserverad mängd</value></data>
+<data name="IssuedParts" xml:space="preserve"><value>Utlämnad mängd</value></data>
+<data name="ConsumedParts" xml:space="preserve"><value>Förbrukad mängd</value></data>
+<data name="ReturnedParts" xml:space="preserve"><value>Återlämnad oanvänd mängd</value></data>
+<data name="PartMovements" xml:space="preserve"><value>Historik över reservdelsrörelser</value></data>
+<data name="PartMovementReserve" xml:space="preserve"><value>Reservera reservdelar</value></data>
+<data name="PartMovementIssue" xml:space="preserve"><value>Lämna ut reserverade delar</value></data>
+<data name="PartMovementConsume" xml:space="preserve"><value>Registrera förbrukning</value></data>
+<data name="PartMovementReturnUnused" xml:space="preserve"><value>Återlämna oanvända delar</value></data>
+<data name="PartMovementReleaseReservation" xml:space="preserve"><value>Frigör reservation</value></data>
+<data name="IssueLocation" xml:space="preserve"><value>Utlämningsplats</value></data>
+<data name="BulkOperations" xml:space="preserve"><value>Massåtgärder</value></data>
+<data name="BulkAssignment" xml:space="preserve"><value>Masstilldelning</value></data>
+<data name="BulkPreview" xml:space="preserve"><value>Förhandsgranska rader</value></data>
+<data name="BulkApply" xml:space="preserve"><value>Tillämpa giltiga rader</value></data>
+<data name="BulkResults" xml:space="preserve"><value>Resultat för omgången</value></data>
+<data name="BulkApplied" xml:space="preserve"><value>Tillämpad</value></data>
+<data name="BulkReady" xml:space="preserve"><value>Klar att tillämpa</value></data>
+<data name="RowNumber" xml:space="preserve"><value>Radnummer</value></data>
+<data name="Select" xml:space="preserve"><value>Välj</value></data>
+<data name="ImportWorkOrders" xml:space="preserve"><value>Importera arbetsorder</value></data>
+<data name="ImportCsv" xml:space="preserve"><value>CSV-data</value></data>
+<data name="ImportTemplate" xml:space="preserve"><value>Hämta CSV-mall</value></data>
+<data name="ActiveRepairHours" xml:space="preserve"><value>Aktiva reparationstimmar</value></data>
+<data name="WaitingHours" xml:space="preserve"><value>Väntetimmar</value></data>
+<data name="DowntimeHours" xml:space="preserve"><value>Stilleståndstimmar vid säkerhetsspärr</value></data>
+<data name="MissingTimeHistory" xml:space="preserve"><value>Order med ofullständig tidshistorik</value></data>
+<data name="PreventiveCompliance" xml:space="preserve"><value>Efterlevnad av förebyggande underhåll</value></data>
+<data name="PreventiveOnTime" xml:space="preserve"><value>I tid / förfallna</value></data>
+<data name="RepeatedFailures" xml:space="preserve"><value>Återkommande fel</value></data>
+<data name="ResponseSlaBreaches" xml:space="preserve"><value>Missade svarsmål</value></data>
+<data name="RepairSlaBreaches" xml:space="preserve"><value>Missade reparationsmål</value></data>
+<data name="OperationsPolicyInvalid" xml:space="preserve"><value>Kontrollera utgiftsregler, kalender och servicemål.</value></data>
+<data name="SpendingApprovalRequired" xml:space="preserve"><value>Ett giltigt oberoende godkännande krävs för denna kostnad och valuta.</value></data>
+<data name="IndependentApprovalRequired" xml:space="preserve"><value>En annan behörig chef måste besluta om begäran.</value></data>
+<data name="BulkInputInvalid" xml:space="preserve"><value>Välj mellan 1 och 200 giltiga rader med unika radnummer.</value></data>
+<data name="BulkCsvInvalid" xml:space="preserve"><value>Kontrollera radens kolumner, tal och UTC-datumformat.</value></data>
+<data name="BulkPreviewChanged" xml:space="preserve"><value>Omgången har ändrats. Förhandsgranska den igen innan du tillämpar den.</value></data>
+<data name="PartBalanceInvalid" xml:space="preserve"><value>Mängden överstiger tillgängligt reserverat eller utlämnat saldo.</value></data>
+<data name="PartBalanceOutstanding" xml:space="preserve"><value>Frigör reservationer och förbruka eller återlämna utlämnade delar innan ordern slutförs.</value></data>
+<data name="PartCurrencyChanged" xml:space="preserve"><value>Valutan för lagerkostnaden har ändrats. Granska reservationen innan du fortsätter.</value></data>
+<data name="IndependentApprovalHelp" xml:space="preserve"><value>Den som begär godkännande kan inte godkänna sin egen begäran.</value></data>
+<data name="BulkHelp" xml:space="preserve"><value>Förhandsgranska upp till 200 rader. Varje giltig rad tillämpas separat; fel förblir synliga och lyckade rader dupliceras inte vid nya försök.</value></data>
+<data name="ImportHelp" xml:space="preserve"><value>Klistra in CSV enligt den hämtade mallen. Behåll kolumnnamnen och använd decimalpunkt, numeriska typvärden (0–4) och prioritetsvärden (0–3) och UTC-datum som 2026-09-09T12:00:00Z.</value></data>
+<data name="PolicyHelp" xml:space="preserve"><value>Gränserna jämför uppskattad kostnad med arbete, leverantörskostnader och bundna delar. Okända kostnader eller valutor utan regel kräver granskning. Godkännanden är oberoende och valutaspecifika.</value></data>
+<data name="BusinessCalendarHelp" xml:space="preserve"><value>Välj lokala arbetsdagar och tider; sluttiden 00:00 betyder midnatt. Ange en helgdag per rad. Sätt båda målen till noll för att inaktivera en prioritet. Tider räknas från skapandet och räknas om vid ändrad prioritet. Acceptans stoppar svarstiden, slutförande reparationstiden. Återöppning behåller ursprungliga tidsgränser.</value></data>
+<data name="PartsAllocationHelp" xml:space="preserve"><value>Reservera lagret, lämna ut till en arbetsplats och förbruka eller återlämna oanvända delar till ursprunget. Andra order kan inte använda reserverade eller utlämnade saldon. Kontrollerat lager kräver fortfarande ett oberoende vittne. Endast förbrukning räknas som reservdelskostnad.</value></data>
+<data name="OperationsAnalyticsHelp" xml:space="preserve"><value>Aktiv tid är tid under arbete; väntan omfattar begäran, acceptans, tilldelning och pauser. Stillestånd förenar säkerhetsspärrar per order. Saknad historik förblir okänd. Förebyggande efterlevnad använder ursprungliga förfallodatum, även för försenat oavslutat arbete. Återkommande fel delar tillgång eller enhet och registrerad orsak.</value></data>
+<data name="WorkOrderApprovalChanged" xml:space="preserve"><value>Arbetsorderns godkännande ändrat</value></data>
+<data name="WorkOrderSlaBreached" xml:space="preserve"><value>Arbetsorderns servicemål missat</value></data>
+<data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Arbetsorderns leverantörskostnad ändrad</value></data>
+<data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Reglerna för arbetsorder ändrade</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Sista svarstid (UTC)</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Sista reparationstid (UTC)</value></data>
 </root>

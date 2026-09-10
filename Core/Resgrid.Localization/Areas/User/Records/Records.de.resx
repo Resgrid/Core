@@ -1946,4 +1946,50 @@
   <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Im Zeitraum überfällig geworden</value></data>
   <data name="AnalyticsWithinTarget" xml:space="preserve"><value>Im Ziel</value></data>
   <data name="AnalyticsWorkload" xml:space="preserve"><value>Arbeitsaufkommen</value></data>
+  <data name="ReadinessAssets" xml:space="preserve"><value>Ausrüstungsgegenstände</value></data>
+  <data name="ReadinessAssetsAssigned" xml:space="preserve"><value>Zugewiesene Gegenstände</value></data>
+  <data name="ReadinessByStatus" xml:space="preserve"><value>Nach Zustand</value></data>
+  <data name="ReadinessChecklists" xml:space="preserve"><value>Checklisten-Einhaltung</value></data>
+  <data name="ReadinessChecks" xml:space="preserve"><value>Prüfungen</value></data>
+  <data name="ReadinessChecksExpected" xml:space="preserve"><value>Erwartet</value></data>
+  <data name="ReadinessCohort" xml:space="preserve"><value>Gemessener Zeitraum</value></data>
+  <data name="ReadinessCompletionRate" xml:space="preserve"><value>Erledigungsquote</value></data>
+  <data name="ReadinessCosts" xml:space="preserve"><value>Kosten</value></data>
+  <data name="ReadinessCoverage" xml:space="preserve"><value>Abdeckung</value></data>
+  <data name="ReadinessDamaged" xml:space="preserve"><value>Beschädigt</value></data>
+  <data name="ReadinessEmergency" xml:space="preserve"><value>Notfall</value></data>
+  <data name="ReadinessEquipment" xml:space="preserve"><value>Ausrüstung</value></data>
+  <data name="ReadinessEvidence" xml:space="preserve"><value>Bereitschaftspakete</value></data>
+  <data name="ReadinessExpiringSoon" xml:space="preserve"><value>laufen innerhalb von 30 Tagen ab</value></data>
+  <data name="ReadinessForbidden" xml:space="preserve"><value>Das Modul hat diese Ansicht für Ihr Konto abgelehnt; nichts daraus wird gezählt.</value></data>
+  <data name="ReadinessHeader" xml:space="preserve"><value>Einsatzbereitschaft</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>Einsatzbereitschaft von Fahrzeugen und Ausrüstung, zusammengeführt aus den Modulen Checklisten, Instandhaltung und Lagerbestand. Jedes Modul prüft Ihre Berechtigung selbst; Datensätze steuern nur die erfassten Bereitschaftspakete bei.</value></data>
+  <data name="ReadinessIssuancesOutstanding" xml:space="preserve"><value>Offene Ausgaben</value></data>
+  <data name="ReadinessIssued" xml:space="preserve"><value>Ausgegeben</value></data>
+  <data name="ReadinessLabor" xml:space="preserve"><value>Arbeit</value></data>
+  <data name="ReadinessMissed" xml:space="preserve"><value>Versäumt</value></data>
+  <data name="ReadinessMissingRepairTimes" xml:space="preserve"><value>ohne Zeiten</value></data>
+  <data name="ReadinessMttr" xml:space="preserve"><value>Mittlere Reparaturzeit (h)</value></data>
+  <data name="ReadinessNeedsAttention" xml:space="preserve"><value>benötigen Aufmerksamkeit</value></data>
+  <data name="ReadinessOnHold" xml:space="preserve"><value>Zurückgestellt</value></data>
+  <data name="ReadinessOnTime" xml:space="preserve"><value>termingerecht</value></data>
+  <data name="ReadinessOnTimeRate" xml:space="preserve"><value>Termintreue</value></data>
+  <data name="ReadinessOpenByAge" xml:space="preserve"><value>Offen nach Alter</value></data>
+  <data name="ReadinessOpenByPriority" xml:space="preserve"><value>Offen nach Priorität</value></data>
+  <data name="ReadinessOutForRepair" xml:space="preserve"><value>In Reparatur</value></data>
+  <data name="ReadinessOverdueReturns" xml:space="preserve"><value>Überfällige Rückgaben</value></data>
+  <data name="ReadinessPackets" xml:space="preserve"><value>Pakete</value></data>
+  <data name="ReadinessPacketsCaptured" xml:space="preserve"><value>Erfasste Pakete</value></data>
+  <data name="ReadinessParts" xml:space="preserve"><value>Teile</value></data>
+  <data name="ReadinessRecordsWithPacket" xml:space="preserve"><value>Datensätze mit Paket</value></data>
+  <data name="ReadinessRedacted" xml:space="preserve"><value>Antwortdetails werden für Ihre Zugriffsstufe zurückgehalten; die Zählungen sind vollständig.</value></data>
+  <data name="ReadinessRepairSamples" xml:space="preserve"><value>gemessene Reparaturen</value></data>
+  <data name="ReadinessSkipped" xml:space="preserve"><value>übersprungen</value></data>
+  <data name="ReadinessState" xml:space="preserve"><value>Zustand</value></data>
+  <data name="ReadinessTrend" xml:space="preserve"><value>Erwartete und versäumte Prüfungen je Tag</value></data>
+  <data name="ReadinessUnavailableSources" xml:space="preserve"><value>Nicht verfügbare Quelle</value></data>
+  <data name="ReadinessUnit" xml:space="preserve"><value>Einheit</value></data>
+  <data name="ReadinessUnits" xml:space="preserve"><value>Bereitschaftstafel der Einheiten</value></data>
+  <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Unbepreiste Positionen</value></data>
+  <data name="ReadinessWorkOrders" xml:space="preserve"><value>Arbeitsaufträge</value></data>
 </root>

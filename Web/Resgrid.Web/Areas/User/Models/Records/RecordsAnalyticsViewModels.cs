@@ -75,4 +75,10 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public RecordsCommunityRisk Risk { get; set; }
 		public override RecordsAnalyticsBase Result => Risk;
 	}
+
+	public class RecordsReadinessView : RecordsAnalyticsBaseView
+	{
+		public RecordsReadiness Readiness { get; set; }
+		public override RecordsAnalyticsBase Result => Readiness;
+	}
 }

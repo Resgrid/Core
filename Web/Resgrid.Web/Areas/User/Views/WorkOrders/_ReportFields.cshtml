@@ -1,0 +1,9 @@
+@model Resgrid.Model.WorkOrders.WorkOrderReportQuery
+<input type="hidden" name="FromUtc" value="@Model.FromUtc?.ToString("O")"/>
+<input type="hidden" name="UntilUtc" value="@Model.UntilUtc?.ToString("O")"/>
+<input type="hidden" name="Status" value="@((int?)Model.Status)"/>
+<input type="hidden" name="Priority" value="@((int?)Model.Priority)"/>
+<input type="hidden" name="UnitId" value="@Model.UnitId"/>
+<input type="hidden" name="GroupId" value="@Model.GroupId"/>
+<input type="hidden" name="AssetId" value="@Model.AssetId"/>
+<input type="hidden" name="AfterId" value="@Model.AfterId"/>

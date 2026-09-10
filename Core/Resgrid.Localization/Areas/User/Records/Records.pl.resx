@@ -1946,4 +1946,50 @@
   <data name="AnalyticsWentOverdue" xml:space="preserve"><value>Przeterminowane w okresie</value></data>
   <data name="AnalyticsWithinTarget" xml:space="preserve"><value>W granicach celu</value></data>
   <data name="AnalyticsWorkload" xml:space="preserve"><value>Obciążenie pracą</value></data>
+  <data name="ReadinessAssets" xml:space="preserve"><value>Środki trwałe</value></data>
+  <data name="ReadinessAssetsAssigned" xml:space="preserve"><value>Przypisane środki</value></data>
+  <data name="ReadinessByStatus" xml:space="preserve"><value>Według statusu</value></data>
+  <data name="ReadinessChecklists" xml:space="preserve"><value>Zgodność list kontrolnych</value></data>
+  <data name="ReadinessChecks" xml:space="preserve"><value>Kontrole</value></data>
+  <data name="ReadinessChecksExpected" xml:space="preserve"><value>Oczekiwane</value></data>
+  <data name="ReadinessCohort" xml:space="preserve"><value>Mierzony okres</value></data>
+  <data name="ReadinessCompletionRate" xml:space="preserve"><value>Wskaźnik wykonania</value></data>
+  <data name="ReadinessCosts" xml:space="preserve"><value>Koszty</value></data>
+  <data name="ReadinessCoverage" xml:space="preserve"><value>Pokrycie</value></data>
+  <data name="ReadinessDamaged" xml:space="preserve"><value>Uszkodzone</value></data>
+  <data name="ReadinessEmergency" xml:space="preserve"><value>Awaryjne</value></data>
+  <data name="ReadinessEquipment" xml:space="preserve"><value>Sprzęt</value></data>
+  <data name="ReadinessEvidence" xml:space="preserve"><value>Pakiety gotowości</value></data>
+  <data name="ReadinessExpiringSoon" xml:space="preserve"><value>wygasają w ciągu 30 dni</value></data>
+  <data name="ReadinessForbidden" xml:space="preserve"><value>Moduł odmówił tego widoku dla Twojego konta; nic z niego nie jest liczone.</value></data>
+  <data name="ReadinessHeader" xml:space="preserve"><value>Gotowość</value></data>
+  <data name="ReadinessIntro" xml:space="preserve"><value>Gotowość pojazdów i sprzętu zestawiona z modułów list kontrolnych, konserwacji i magazynu. Każdy moduł autoryzuje Cię samodzielnie; Rekordy dodają tylko przechwycone pakiety gotowości.</value></data>
+  <data name="ReadinessIssuancesOutstanding" xml:space="preserve"><value>Wydania nierozliczone</value></data>
+  <data name="ReadinessIssued" xml:space="preserve"><value>Wydane</value></data>
+  <data name="ReadinessLabor" xml:space="preserve"><value>Robocizna</value></data>
+  <data name="ReadinessMissed" xml:space="preserve"><value>Pominięte</value></data>
+  <data name="ReadinessMissingRepairTimes" xml:space="preserve"><value>bez czasów</value></data>
+  <data name="ReadinessMttr" xml:space="preserve"><value>Średni czas naprawy (h)</value></data>
+  <data name="ReadinessNeedsAttention" xml:space="preserve"><value>wymagają uwagi</value></data>
+  <data name="ReadinessOnHold" xml:space="preserve"><value>Wstrzymane</value></data>
+  <data name="ReadinessOnTime" xml:space="preserve"><value>na czas</value></data>
+  <data name="ReadinessOnTimeRate" xml:space="preserve"><value>Wskaźnik terminowości</value></data>
+  <data name="ReadinessOpenByAge" xml:space="preserve"><value>Otwarte według wieku</value></data>
+  <data name="ReadinessOpenByPriority" xml:space="preserve"><value>Otwarte według priorytetu</value></data>
+  <data name="ReadinessOutForRepair" xml:space="preserve"><value>W naprawie</value></data>
+  <data name="ReadinessOverdueReturns" xml:space="preserve"><value>Zaległe zwroty</value></data>
+  <data name="ReadinessPackets" xml:space="preserve"><value>Pakiety</value></data>
+  <data name="ReadinessPacketsCaptured" xml:space="preserve"><value>Przechwycone pakiety</value></data>
+  <data name="ReadinessParts" xml:space="preserve"><value>Części</value></data>
+  <data name="ReadinessRecordsWithPacket" xml:space="preserve"><value>Rekordy z pakietem</value></data>
+  <data name="ReadinessRedacted" xml:space="preserve"><value>Szczegóły odpowiedzi są ukryte dla Twojego poziomu dostępu; liczby są kompletne.</value></data>
+  <data name="ReadinessRepairSamples" xml:space="preserve"><value>naprawy zmierzone</value></data>
+  <data name="ReadinessSkipped" xml:space="preserve"><value>pominięte celowo</value></data>
+  <data name="ReadinessState" xml:space="preserve"><value>Stan</value></data>
+  <data name="ReadinessTrend" xml:space="preserve"><value>Kontrole oczekiwane i pominięte według dnia</value></data>
+  <data name="ReadinessUnavailableSources" xml:space="preserve"><value>Niedostępne źródło</value></data>
+  <data name="ReadinessUnit" xml:space="preserve"><value>Jednostka</value></data>
+  <data name="ReadinessUnits" xml:space="preserve"><value>Tablica gotowości jednostek</value></data>
+  <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Pozycje bez ceny</value></data>
+  <data name="ReadinessWorkOrders" xml:space="preserve"><value>Zlecenia pracy</value></data>
 </root>

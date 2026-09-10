@@ -73,7 +73,8 @@ namespace Resgrid.Tests.Rms
 
 			_svc = new RecordsAnalyticsService(_h.Gate, _h.Authorization.Object, _h.Records.Object, _h.Units.Object, _participants.Object, _scopes.Object, _details.Object, _h.Reports.Object, _reportUnits.Object,
 				_incidentTypes.Object, _revisions.Object, _dueStates.Object, _h.Inspections, _h.Programs, _h.Violations, _h.Permits, _h.PermitTypes, _h.Hydrants, _h.FlowTests, _h.Occupancies, _h.Crr,
-				_unitsService.Object, _groupsService.Object, _departmentsService.Object);
+				_unitsService.Object, _groupsService.Object, _departmentsService.Object,
+				_h.Flags.Object, Mock.Of<IChecklistsService>(), Mock.Of<IReadinessAccessService>(), Mock.Of<IWorkOrderReportingService>(), Mock.Of<IInventoryCatalogService>(), Mock.Of<IInventoryAuthorizationService>(), Mock.Of<IRmsEvidenceArtifactsRepository>());
 		}
 
 		private static RecordsAnalyticsQuery Q() => new RecordsAnalyticsQuery { Start = Start, End = End };

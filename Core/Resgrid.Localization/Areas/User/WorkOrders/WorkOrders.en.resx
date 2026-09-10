@@ -260,4 +260,120 @@
 <data name="WorkOrderSafetyHoldApplied" xml:space="preserve"><value>Safety hold applied</value></data>
 <data name="WorkOrderSafetyHoldReleased" xml:space="preserve"><value>Safety hold released</value></data>
 <data name="WorkOrderDeferred" xml:space="preserve"><value>Due date deferred</value></data>
+  <data name="MaintenanceReports" xml:space="preserve"><value>Maintenance reports</value></data>
+  <data name="ServiceHistory" xml:space="preserve"><value>Service history</value></data>
+  <data name="ReportFrom" xml:space="preserve"><value>Created from (UTC, inclusive)</value></data>
+  <data name="ReportUntil" xml:space="preserve"><value>Created before (UTC, exclusive)</value></data>
+  <data name="AsOfUtc" xml:space="preserve"><value>Calculated at (UTC)</value></data>
+  <data name="TotalOrders" xml:space="preserve"><value>Total work orders</value></data>
+  <data name="OpenOrders" xml:space="preserve"><value>Open work orders</value></data>
+  <data name="OverdueOrders" xml:space="preserve"><value>Overdue work orders</value></data>
+  <data name="MeanRepairHours" xml:space="preserve"><value>Mean repair time (hours)</value></data>
+  <data name="RepairSamples" xml:space="preserve"><value>Completed repairs measured</value></data>
+  <data name="MissingRepairTimes" xml:space="preserve"><value>Repairs missing valid times</value></data>
+  <data name="OpenByPriority" xml:space="preserve"><value>Open by priority</value></data>
+  <data name="OpenByAge" xml:space="preserve"><value>Open by age</value></data>
+  <data name="AgeBucket0" xml:space="preserve"><value>0–6 days</value></data>
+  <data name="AgeBucket1" xml:space="preserve"><value>7–29 days</value></data>
+  <data name="AgeBucket2" xml:space="preserve"><value>30–89 days</value></data>
+  <data name="AgeBucket3" xml:space="preserve"><value>90+ days</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Export CSV</value></data>
+  <data name="Costs" xml:space="preserve"><value>Costs</value></data>
+  <data name="TotalCost" xml:space="preserve"><value>Known total</value></data>
+  <data name="UnknownLabor" xml:space="preserve"><value>Labor entries with unknown cost</value></data>
+  <data name="UnknownParts" xml:space="preserve"><value>Part entries with unknown cost</value></data>
+  <data name="UnknownCurrency" xml:space="preserve"><value>Unknown currency</value></data>
+  <data name="CreatedOn" xml:space="preserve"><value>Created</value></data>
+  <data name="StartedOn" xml:space="preserve"><value>Started</value></data>
+  <data name="CompletedOn" xml:space="preserve"><value>Completed</value></data>
+  <data name="RepairHours" xml:space="preserve"><value>Repair time (hours)</value></data>
+  <data name="Revision" xml:space="preserve"><value>Revision</value></data>
+  <data name="ReportTooLarge" xml:space="preserve"><value>This report is too large. Narrow the date range or target filters.</value></data>
+  <data name="ReportRangeInvalid" xml:space="preserve"><value>Choose a valid date range; dashboard reports support up to 366 days.</value></data>
+  <data name="ReportMethod" xml:space="preserve"><value>Current state of work orders created in the selected UTC range. Open includes completed work awaiting closure. MTTR is elapsed time from first start to latest completion, including holds and reopens; invalid times are excluded. Costs are rounded per entry, separated by currency, and exclude voided or unissued parts. Unknown costs and legacy labor currency remain unknown; no exchange rates are assumed.</value></data>
+  <data name="HistoryMethod" xml:space="preserve"><value>All-time service history unless dates are selected. Each CSV row represents one order and currency. Known costs exclude voided or unissued parts; missing prices and legacy labor currency are reported as unknown.</value></data>
+  <data name="WorkOrderPacketMethod" xml:space="preserve"><value>Work-order state at the call time, with immutable revision references in the manifest. Older open maintenance is included; completed work uses the lookback window. Unrecoverable historical state is marked unavailable.</value></data>
+
+<data name="Operations" xml:space="preserve"><value>Work order operations</value></data>
+<data name="OperationsPolicy" xml:space="preserve"><value>Operations policy</value></data>
+<data name="SpendingApprovals" xml:space="preserve"><value>Spending approvals</value></data>
+<data name="RequireSpendingApproval" xml:space="preserve"><value>Require approval above thresholds</value></data>
+<data name="SpendingThreshold" xml:space="preserve"><value>Spending threshold</value></data>
+<data name="ApprovalAmount" xml:space="preserve"><value>Amount to approve</value></data>
+<data name="RequestApproval" xml:space="preserve"><value>Request approval</value></data>
+<data name="ApproveSpending" xml:space="preserve"><value>Approve spending</value></data>
+<data name="RejectSpending" xml:space="preserve"><value>Reject spending</value></data>
+<data name="Decision" xml:space="preserve"><value>Decision</value></data>
+<data name="ApprovalStateNone" xml:space="preserve"><value>No approval requested</value></data>
+<data name="ApprovalStateRequested" xml:space="preserve"><value>Approval requested</value></data>
+<data name="ApprovalStateApproved" xml:space="preserve"><value>Spending approved</value></data>
+<data name="ApprovalStateRejected" xml:space="preserve"><value>Spending rejected</value></data>
+<data name="BusinessCalendar" xml:space="preserve"><value>Business calendar</value></data>
+<data name="ServiceWeekdays" xml:space="preserve"><value>Working days</value></data>
+<data name="Holidays" xml:space="preserve"><value>Nonworking dates (YYYY-MM-DD)</value></data>
+<data name="ResponseMinutes" xml:space="preserve"><value>Response target (working minutes)</value></data>
+<data name="RepairMinutes" xml:space="preserve"><value>Repair target (working minutes)</value></data>
+<data name="ResponseDue" xml:space="preserve"><value>Response deadline (UTC)</value></data>
+<data name="RepairDue" xml:space="preserve"><value>Repair deadline (UTC)</value></data>
+<data name="RespondedOn" xml:space="preserve"><value>Responded at (UTC)</value></data>
+<data name="VendorCharges" xml:space="preserve"><value>Vendor charges</value></data>
+<data name="AddVendorCharge" xml:space="preserve"><value>Add vendor charge</value></data>
+<data name="VoidCharge" xml:space="preserve"><value>Void charge</value></data>
+<data name="InvoiceReference" xml:space="preserve"><value>Invoice reference</value></data>
+<data name="ServiceDate" xml:space="preserve"><value>Service date</value></data>
+<data name="PartsAllocation" xml:space="preserve"><value>Parts allocation</value></data>
+<data name="ReservedParts" xml:space="preserve"><value>Reserved quantity</value></data>
+<data name="IssuedParts" xml:space="preserve"><value>Issued quantity</value></data>
+<data name="ConsumedParts" xml:space="preserve"><value>Consumed quantity</value></data>
+<data name="ReturnedParts" xml:space="preserve"><value>Unused quantity returned</value></data>
+<data name="PartMovements" xml:space="preserve"><value>Parts movement history</value></data>
+<data name="PartMovementReserve" xml:space="preserve"><value>Reserve parts</value></data>
+<data name="PartMovementIssue" xml:space="preserve"><value>Issue reserved parts</value></data>
+<data name="PartMovementConsume" xml:space="preserve"><value>Record consumption</value></data>
+<data name="PartMovementReturnUnused" xml:space="preserve"><value>Return unused parts</value></data>
+<data name="PartMovementReleaseReservation" xml:space="preserve"><value>Release reservation</value></data>
+<data name="IssueLocation" xml:space="preserve"><value>Issue to location</value></data>
+<data name="BulkOperations" xml:space="preserve"><value>Bulk operations</value></data>
+<data name="BulkAssignment" xml:space="preserve"><value>Bulk assignment</value></data>
+<data name="BulkPreview" xml:space="preserve"><value>Preview rows</value></data>
+<data name="BulkApply" xml:space="preserve"><value>Apply valid rows</value></data>
+<data name="BulkResults" xml:space="preserve"><value>Batch results</value></data>
+<data name="BulkApplied" xml:space="preserve"><value>Applied</value></data>
+<data name="BulkReady" xml:space="preserve"><value>Ready to apply</value></data>
+<data name="RowNumber" xml:space="preserve"><value>Row number</value></data>
+<data name="Select" xml:space="preserve"><value>Select</value></data>
+<data name="ImportWorkOrders" xml:space="preserve"><value>Import work orders</value></data>
+<data name="ImportCsv" xml:space="preserve"><value>CSV data</value></data>
+<data name="ImportTemplate" xml:space="preserve"><value>Download CSV template</value></data>
+<data name="ActiveRepairHours" xml:space="preserve"><value>Active repair hours</value></data>
+<data name="WaitingHours" xml:space="preserve"><value>Waiting hours</value></data>
+<data name="DowntimeHours" xml:space="preserve"><value>Safety-hold downtime hours</value></data>
+<data name="MissingTimeHistory" xml:space="preserve"><value>Orders with incomplete time history</value></data>
+<data name="PreventiveCompliance" xml:space="preserve"><value>Preventive maintenance compliance</value></data>
+<data name="PreventiveOnTime" xml:space="preserve"><value>On time / due</value></data>
+<data name="RepeatedFailures" xml:space="preserve"><value>Repeated failures</value></data>
+<data name="ResponseSlaBreaches" xml:space="preserve"><value>Missed response targets</value></data>
+<data name="RepairSlaBreaches" xml:space="preserve"><value>Missed repair targets</value></data>
+<data name="OperationsPolicyInvalid" xml:space="preserve"><value>Check the spending rules, calendar and service targets.</value></data>
+<data name="SpendingApprovalRequired" xml:space="preserve"><value>A valid independent approval is required for this cost and currency.</value></data>
+<data name="IndependentApprovalRequired" xml:space="preserve"><value>A different authorized manager must decide this request.</value></data>
+<data name="BulkInputInvalid" xml:space="preserve"><value>Select between 1 and 200 valid rows with unique row numbers.</value></data>
+<data name="BulkCsvInvalid" xml:space="preserve"><value>Check this row’s columns, numbers and UTC date format.</value></data>
+<data name="BulkPreviewChanged" xml:space="preserve"><value>The batch changed. Preview it again before applying.</value></data>
+<data name="PartBalanceInvalid" xml:space="preserve"><value>The quantity exceeds the available reserved or issued balance.</value></data>
+<data name="PartBalanceOutstanding" xml:space="preserve"><value>Release reservations and consume or return issued parts before completing this order.</value></data>
+<data name="PartCurrencyChanged" xml:space="preserve"><value>The inventory cost currency changed. Review the reservation before continuing.</value></data>
+<data name="IndependentApprovalHelp" xml:space="preserve"><value>The requester cannot approve their own request.</value></data>
+<data name="BulkHelp" xml:space="preserve"><value>Preview up to 200 rows. Each valid row is applied separately; errors remain visible and successful rows are not duplicated on retry.</value></data>
+<data name="ImportHelp" xml:space="preserve"><value>Paste CSV using the downloaded template. Keep its column names, use decimal points, numeric type values (0–4) and priority values (0–3), and UTC dates such as 2026-09-09T12:00:00Z.</value></data>
+<data name="PolicyHelp" xml:space="preserve"><value>Thresholds compare estimated cost with total labor, vendor charges and committed parts. Unknown costs or currencies without a rule require review. Approvals are independent and currency-specific.</value></data>
+<data name="BusinessCalendarHelp" xml:space="preserve"><value>Choose local working days and hours; 00:00 as the end means midnight. Enter holidays one per line. Set both targets to zero to disable a priority. Deadlines start at creation; priority edits recalculate them. Acceptance stops the response clock; completion stops the repair clock. Reopening retains the original deadlines.</value></data>
+<data name="PartsAllocationHelp" xml:space="preserve"><value>Reserve stock, issue it to a work location, then consume it or return unused parts to the source. Reserved and issued balances cannot be used by other orders. Controlled stock still needs an independent witness. Only consumption is charged as a parts expense.</value></data>
+<data name="OperationsAnalyticsHelp" xml:space="preserve"><value>Active time is time in progress; waiting includes requests, acceptance, assignment and holds. Downtime is the union of safety holds per order. Missing status history stays unknown. Preventive compliance uses original due dates, including overdue unfinished work. Repeated failures share an asset or unit and a recorded cause.</value></data>
+<data name="WorkOrderApprovalChanged" xml:space="preserve"><value>Work order approval changed</value></data>
+<data name="WorkOrderSlaBreached" xml:space="preserve"><value>Work order service target missed</value></data>
+<data name="WorkOrderVendorChargeChanged" xml:space="preserve"><value>Work order vendor charge changed</value></data>
+<data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Work order operations policy changed</value></data>
+<data name="ResponseDueOn" xml:space="preserve"><value>Response deadline (UTC)</value></data>
+<data name="RepairDueOn" xml:space="preserve"><value>Repair deadline (UTC)</value></data>
 </root>

@@ -90,8 +90,18 @@ namespace Resgrid.Services
 				case WorkflowTriggerEventType.WorkOrderThresholdReached:
 				case WorkflowTriggerEventType.WorkOrderDeferred:
 				case WorkflowTriggerEventType.WorkOrderPartChanged:
+				case WorkflowTriggerEventType.WorkOrderApprovalChanged:
+				case WorkflowTriggerEventType.WorkOrderSlaBreached:
+				case WorkflowTriggerEventType.WorkOrderVendorChargeChanged:
+				case WorkflowTriggerEventType.WorkOrderPolicyChanged:
+
 					obj["work_order"] = new ScriptObject { ["id"] = 123, ["revision"] = 2, ["status"] = 2, ["priority"] = 1, ["unit_id"] = 12, ["group_id"] = 3, ["role_id"] = 4, ["asset_id"] = null, ["due_on"] = "2026-09-09T08:00:00Z", ["title"] = ProtectedDataEnvelope.RedactionValue, ["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/Detail/123" };
-					obj["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = new ScriptArray { "Title" }, ["catalog_version"] = 18 };
+                    var sampleOrder = (ScriptObject)obj["work_order"];
+                    foreach (var variable in Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.Variables) if (!sampleOrder.ContainsKey(variable.Variable)) sampleOrder[variable.Variable] = null;
+                    if (eventType == WorkflowTriggerEventType.WorkOrderPolicyChanged) { sampleOrder["id"] = null; sampleOrder["policy_id"] = 1; sampleOrder["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/WorkOrders/Policy"; }
+                    if (eventType == WorkflowTriggerEventType.WorkOrderApprovalChanged) sampleOrder["approval_state"] = 1;
+                    sampleOrder["response_due_on"] = "2026-09-09T09:00:00Z"; sampleOrder["repair_due_on"] = "2026-09-10T09:00:00Z";
+					obj["protection"] = new ScriptObject { ["is_redacted"] = true, ["redacted_fields"] = new ScriptArray { "Title" }, ["catalog_version"] = Resgrid.Model.WorkOrders.WorkOrderTables.OperationsCatalogVersion };
 					break;
 				case WorkflowTriggerEventType.ChecklistCompleted:
 				case WorkflowTriggerEventType.ChecklistFailed:
@@ -754,7 +764,7 @@ namespace Resgrid.Services
 			r["revision_id"] = revisionId ?? "";
 			r["revision_number"] = revisionNumber;
 			r["checksum"] = revisionId == null ? "" : "3a7bd3e2360a3d29eea436fcfb7e44c735d117c42d1c1835420b6b9942dd4f1b";
-			r["summary"] = "Pump Operations — Hose evolutions";
+			r["summary"] = "Pump Operations â€” Hose evolutions";
 			r["url"] = "https://resgrid.local/User/Records/Details/9d8c7b6a-5f4e-4d3c-b2a1-0f9e8d7c6b5a";
 			obj["record"] = r;
 
@@ -833,7 +843,7 @@ namespace Resgrid.Services
 			if (!isDefinitionTrigger)
 			{
 				var fields = new ScriptObject();
-				fields["client_site"] = "Harbor Logistics — Pier 4";
+				fields["client_site"] = "Harbor Logistics â€” Pier 4";
 				fields["officer"] = "J. Alvarez";
 				fields["exception_reported"] = true;
 				var checkpoint = new ScriptObject();

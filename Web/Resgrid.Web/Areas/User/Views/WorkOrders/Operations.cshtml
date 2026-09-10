@@ -1,0 +1,55 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderOperationsView
+@using Resgrid.Model.WorkOrders
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{ var d = Model.Detail; var id = d.Order.Id; var c = d.Input.Content; ViewBag.Title = "Resgrid | " + localizer["Operations"]; }
+<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
+<h2>@localizer["Operations"]</h2><a asp-action="Detail" asp-route-id="@id">@d.Order.Number</a>
+@await Html.PartialAsync("_Protection")
+<div class="work-order-protected"><h3>@d.Order.Title</h3><div class="alert alert-danger work-order-error" hidden role="alert"></div>
+<dl><dt>@localizer["ResponseDue"]</dt><dd>@d.ResponseDueOn?.ToString("u")</dd><dt>@localizer["RepairDue"]</dt><dd>@d.RepairDueOn?.ToString("u")</dd><dt>@localizer["RespondedOn"]</dt><dd>@d.ResponseOn?.ToString("u")</dd></dl>
+<h3>@localizer["SpendingApprovals"]</h3>
+@if (c.Approval != null) { <p>@localizer["ApprovalState" + c.Approval.State]: @c.Approval.Amount @c.Approval.Currency</p><p>@c.Approval.Reason</p> }
+@if (d.CanContribute || d.CanEdit) {
+<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="RequestApproval">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
+<label>@localizer["ApprovalAmount"] (@c.Currency)<input class="form-control" name="Amount" type="number" min="0" max="100000000" step="0.01" required/></label><label>@localizer["Reason"]<textarea name="Reason" class="form-control" maxlength="4000" required></textarea></label><button class="btn btn-default" type="submit">@localizer["RequestApproval"]</button></form>
+}
+@if (d.CanManage && c.Approval?.State == WorkOrderApprovalState.Requested) {
+<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="DecideApproval">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
+<label>@localizer["Decision"]<select class="form-control" name="Approve"><option value="true">@localizer["ApproveSpending"]</option><option value="false">@localizer["RejectSpending"]</option></select></label><label>@localizer["Reason"]<textarea name="Reason" class="form-control" maxlength="4000" required></textarea></label><p>@localizer["IndependentApprovalHelp"]</p><button class="btn btn-primary" type="submit">@localizer["Save"]</button></form>
+}
+<h3>@localizer["VendorCharges"]</h3>
+<table class="table"><thead><tr><th>@localizer["VendorDetails"]</th><th>@localizer["InvoiceReference"]</th><th>@localizer["Description"]</th><th>@localizer["TotalCost"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
+@foreach (var charge in Model.VendorCharges) { <tr><td>@charge.Content.VendorName</td><td>@charge.Content.InvoiceReference</td><td>@charge.Content.Description</td><td>@charge.Content.Amount @charge.Content.Currency @if (charge.VoidedOn.HasValue) { <span>@localizer["Voided"]</span> }</td><td>@if (d.CanContribute && d.CanManage && !charge.VoidedOn.HasValue) { <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="VoidVendorCharge">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="chargeId" value="@charge.Id"/><input type="hidden" name="revision" value="@d.Order.Revision"/><input name="reason" class="form-control" aria-label="@localizer["Reason"]" maxlength="4000" required/><button class="btn btn-warning" type="submit">@localizer["VoidCharge"]</button></form> }</td></tr> }
+</tbody></table>
+@if (Model.VendorCharges.Count == 50) { <a asp-action="Operations" asp-route-id="@id" asp-route-vendorAfterId="@Model.VendorCharges.Last().Id">@localizer["Next"]</a> }
+@if (d.CanContribute) {
+<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="AddVendorCharge">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>
+<label>@localizer["VendorDetails"]<input name="Content.VendorName" class="form-control" maxlength="200" required/></label><label>@localizer["InvoiceReference"]<input name="Content.InvoiceReference" class="form-control" maxlength="200" required/></label>
+<label>@localizer["Description"]<textarea name="Content.Description" class="form-control" maxlength="4000" required></textarea></label>
+<label>@localizer["Currency"]<input name="Content.Currency" value="@c.Currency" class="form-control" pattern="[A-Z]{3}" maxlength="3" required/></label><label>@localizer["TotalCost"]<input name="Content.Amount" class="form-control" type="number" min="0.01" max="100000000" step="0.01" required/></label>
+<label>@localizer["ServiceDate"]<input name="Content.ServiceDate" class="form-control" type="date" required/></label><button class="btn btn-primary" type="submit">@localizer["AddVendorCharge"]</button></form>
+}
+<h3>@localizer["PartsAllocation"]</h3><p>@localizer["PartsAllocationHelp"]</p>
+<table class="table"><thead><tr><th>@localizer["Description"]</th><th>@localizer["ReservedParts"]</th><th>@localizer["IssuedParts"]</th><th>@localizer["ConsumedParts"]</th><th>@localizer["ReturnedParts"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
+@foreach (var part in d.Parts.Where(p => p.Staged)) { <tr><td>@part.Content.Description</td><td>@part.ReservedQuantity</td><td>@part.IssuedQuantity</td><td>@part.ConsumedQuantity</td><td>@part.ReturnedQuantity</td><td>
+@if (d.CanContribute && (part.ReservedQuantity > 0 || part.IssuedQuantity > 0)) {
+<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="MovePart">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="partId" value="@part.Id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>
+<label>@localizer["Actions"]<select class="form-control" name="Kind">@foreach (var kind in Enum.GetValues<WorkOrderPartMovementKind>().Where(k => k != WorkOrderPartMovementKind.Reserve)) { <option value="@((int)kind)">@localizer["PartMovement" + kind]</option> }</select></label><label>@localizer["Quantity"]<input name="Quantity" class="form-control" type="number" min="0.000001" max="100000" step="0.000001" required/></label>
+<fieldset class="work-order-inventory" data-url="@Url.Action("PartChoices")"><label>@localizer["IssueLocation"]<select name="LocationId" class="form-control inventory-part-choice" data-kind="location"><option value="">@localizer["None"]</option></select></label><button type="button" class="btn btn-default inventory-part-load" data-kind="location" data-page="0">@localizer["LoadChoices"]</button></fieldset>
+<label>@localizer["Reason"]<input name="Reason" class="form-control" maxlength="4000" required/></label><button type="submit" class="btn btn-default">@localizer["Save"]</button></form>
+}
+</td></tr> }
+</tbody></table>
+@if (d.CanContribute) {
+<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="ReservePart">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
+@await Html.PartialAsync("_PartInventory")
+<label>@localizer["Description"]<input name="Content.Description" class="form-control" maxlength="2000" required/></label><label>@localizer["Quantity"]<input name="Content.Quantity" class="form-control" type="number" min="0.000001" max="100000" step="0.000001" required/></label><button type="submit" class="btn btn-primary">@localizer["PartMovementReserve"]</button></form>
+}
+<h3>@localizer["PartMovements"]</h3><table class="table"><thead><tr><th>@localizer["Parts"]</th><th>@localizer["Actions"]</th><th>@localizer["Quantity"]</th><th>@localizer["CreatedOn"]</th><th>@localizer["Status"]</th></tr></thead><tbody>
+@foreach (var movement in Model.Movements) { <tr><td>@movement.PartId</td><td>@localizer["PartMovement" + (WorkOrderPartMovementKind)movement.Kind]</td><td>@movement.Quantity</td><td>@movement.CreatedOn.ToString("u")</td><td>@localizer[movement.Cancelled ? "StatusCancelled" : movement.InventoryOperationId != null && movement.InventoryTransactionId == null ? "InventoryWitnessPending" : "Done"]
+@if (!movement.Cancelled && movement.InventoryOperationId != null && movement.InventoryTransactionId == null) { <code>@movement.RequestId</code><a asp-controller="Inventory" asp-action="Index" asp-route-tab="History">@localizer["InventoryParts"]</a> }
+@if (d.CanContribute && !movement.Cancelled && movement.InventoryOperationId != null && movement.InventoryTransactionId == null) { <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="CancelPartMovement">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="movementId" value="@movement.Id"/><input type="hidden" name="revision" value="@d.Order.Revision"/><input class="form-control" name="reason" aria-label="@localizer["Reason"]" maxlength="4000" required/><button type="submit" class="btn btn-warning">@localizer["Cancel"]</button></form> }
+</td></tr> }
+</tbody></table>@if (Model.Movements.Count == 50) { <a asp-action="Operations" asp-route-id="@id" asp-route-movementAfterId="@Model.Movements.Last().Id">@localizer["Next"]</a> }
+</div></div></div></div>
+@section Scripts { @await Html.PartialAsync("_Scripts") }

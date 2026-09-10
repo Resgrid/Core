@@ -1,0 +1,168 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Records
+@model RecordsReadinessView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> L
+@{
+	ViewBag.Title = "Resgrid | " + L["AnalyticsHeader"] + " - " + L["ReadinessHeader"];
+	var r = Model.Readiness;
+	string StateLabel(int? state) => !state.HasValue ? "-" : System.Enum.IsDefined(typeof(UnitStateTypes), state.Value) ? RmsEnumDisplay.Label<UnitStateTypes>(state.Value) : state.Value.ToString();
+	var trendId = "t" + Guid.NewGuid().ToString("N");
+}
+@await Html.PartialAsync("_AnalyticsShell", Model)
+<div class="wrapper wrapper-content" style="padding-top:0">
+	@if (r != null)
+	{
+		<p class="text-muted">@L["ReadinessIntro"]</p>
+		<div class="ibox"><div class="ibox-title"><h5>@L["ReadinessUnits"]</h5><span class="text-muted pull-right">@r.Units.Count(u => u.NeedsAttention) @L["ReadinessNeedsAttention"]</span></div><div class="ibox-content">
+			@if (r.Units.Count == 0) { <p class="text-muted">@L["AnalyticsNoData"]</p> }
+			else
+			{
+				<div class="table-responsive">
+					<table class="table table-condensed table-striped m-b-none">
+						<thead><tr>
+							<th>@L["ReadinessUnit"]</th><th>@L["Station"]</th><th>@L["ReadinessState"]</th>
+							<th class="text-right">@L["ReadinessChecks"] (@L["AnalyticsCompleted"]/@L["ReadinessChecksExpected"])</th><th class="text-right">@L["ReadinessMissed"]</th><th class="text-right">@L["ReadinessCompletionRate"]</th>
+							<th class="text-right">@L["ReadinessWorkOrders"] @L["Open"]</th><th class="text-right">@L["Overdue"]</th><th class="text-right">@L["ReadinessOnHold"]</th>
+							<th class="text-right">@L["ReadinessAssetsAssigned"]</th><th class="text-right">@L["ReadinessOutForRepair"]</th><th class="text-right">@L["AnalyticsExpired"]</th><th class="text-right">@L["ReadinessPackets"]</th>
+						</tr></thead>
+						<tbody>
+							@foreach (var u in r.Units)
+							{
+								<tr class="@(u.NeedsAttention ? "warning" : "")">
+									<td>@if (u.NeedsAttention) { <i class="fa fa-exclamation-triangle text-warning"></i> } @u.Label</td>
+									<td>@(u.StationGroupLabel ?? "-")</td>
+									<td>@StateLabel(u.State) @if (u.StateOn.HasValue) { <small class="text-muted">(@RmsEnumDisplay.Utc(u.StateOn))</small> }</td>
+									<td class="text-right">@(r.Checklists == null ? "-" : u.ChecklistCompleted + "/" + u.ChecklistExpected)</td>
+									<td class="text-right @(u.ChecklistMissed > 0 ? "text-danger" : "")">@(r.Checklists == null ? "-" : u.ChecklistMissed.ToString())</td>
+									<td class="text-right">@(r.Checklists == null ? "-" : RmsAnalyticsDisplay.Percent(u.ChecklistCompletionRatePercent))</td>
+									<td class="text-right">@(r.WorkOrders == null ? "-" : u.OpenWorkOrders.ToString())</td>
+									<td class="text-right @(u.OverdueWorkOrders > 0 ? "text-danger" : "")">@(r.WorkOrders == null ? "-" : u.OverdueWorkOrders.ToString())</td>
+									<td class="text-right @(u.OnHoldWorkOrders > 0 ? "text-danger" : "")">@(r.WorkOrders == null ? "-" : u.OnHoldWorkOrders.ToString())</td>
+									<td class="text-right">@(r.Equipment == null ? "-" : u.AssetsAssigned.ToString())</td>
+									<td class="text-right @(u.AssetsOutForRepair > 0 ? "text-danger" : "")">@(r.Equipment == null ? "-" : u.AssetsOutForRepair.ToString())</td>
+									<td class="text-right @(u.AssetsExpired > 0 ? "text-danger" : "")">@(r.Equipment == null ? "-" : u.AssetsExpired.ToString())</td>
+									<td class="text-right">@u.ReadinessPackets</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
+		</div></div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="ibox"><div class="ibox-title"><h5>@L["ReadinessChecklists"]</h5></div><div class="ibox-content">
+					@if (!r.ChecklistsEnabled) { <p class="text-muted">@L["AnalyticsModuleOff"]</p> }
+					else if (r.ChecklistsForbidden || r.Checklists == null) { <p class="text-muted">@L["ReadinessForbidden"]</p> }
+					else
+					{
+						var ck = r.Checklists;
+						<p class="text-muted">@L["ReadinessCohort"]: @ck.CohortStart.ToString("yyyy-MM-dd") - @ck.CohortEnd.AddDays(-1).ToString("yyyy-MM-dd")</p>
+						@if (ck.IsRedacted) { <div class="alert alert-info">@L["ReadinessRedacted"]</div> }
+						@foreach (var s in ck.UnavailableSources) { <div class="alert alert-warning">@L["ReadinessUnavailableSources"]: @s</div> }
+						<div class="row">
+							<div class="col-xs-4 rms-kpi"><div class="value">@RmsAnalyticsDisplay.Percent(ck.CompletionRatePercent)</div><div class="label">@L["ReadinessCompletionRate"]</div><small class="text-muted">@ck.Completed / @ck.Expected</small></div>
+							<div class="col-xs-4 rms-kpi"><div class="value">@RmsAnalyticsDisplay.Percent(ck.OnTimePercent)</div><div class="label">@L["ReadinessOnTimeRate"]</div><small class="text-muted">@ck.OnTime @L["ReadinessOnTime"]</small></div>
+							<div class="col-xs-4 rms-kpi"><div class="value @(ck.Missed > 0 ? "text-danger" : "")">@ck.Missed</div><div class="label">@L["ReadinessMissed"]</div><small class="text-muted">@ck.Skipped @L["ReadinessSkipped"]</small></div>
+						</div>
+						@if (ck.Trend.Count > 0)
+						{
+							<h5>@L["ReadinessTrend"]</h5>
+							<div class="rms-chart m-b-sm"><canvas id="@trendId"></canvas></div>
+							<script>document.addEventListener('DOMContentLoaded', function () {
+								var el = document.getElementById('@trendId'); if (!el || !window.Chart) return;
+								new Chart(el, { type: 'bar', data: { labels: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ck.Trend.Select(t => t.Day.ToString("MM-dd")))), datasets: [
+									{ label: '@L["ReadinessChecksExpected"]', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ck.Trend.Select(t => t.Expected))), backgroundColor: 'rgba(26,179,148,0.5)' },
+									{ label: '@L["ReadinessMissed"]', data: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ck.Trend.Select(t => t.Missed))), backgroundColor: 'rgba(237,85,101,0.7)' }] },
+									options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true }, x: { ticks: { maxRotation: 45, autoSkip: true } } } } });
+							});</script>
+						}
+						@foreach (var block in new[] { (L["ByUnit"].Value, ck.ByUnit), (L["AnalyticsByStationGroup"].Value, ck.ByStationGroup), (L["AnalyticsByPerson"].Value, ck.ByPerson), (L["ReadinessAssets"].Value, ck.ByAsset) })
+						{
+							if (block.Item2.Count == 0) { continue; }
+							<h5>@block.Item1</h5>
+							<table class="table table-condensed table-striped">
+								<thead><tr><th></th><th class="text-right">@L["ReadinessChecksExpected"]</th><th class="text-right">@L["AnalyticsCompleted"]</th><th class="text-right">@L["ReadinessOnTime"]</th><th class="text-right">@L["ReadinessMissed"]</th><th class="text-right">@L["ReadinessSkipped"]</th><th class="text-right">@L["ReadinessCompletionRate"]</th></tr></thead>
+								<tbody>@foreach (var row in block.Item2.Take(25)) { <tr><td>@row.Label</td><td class="text-right">@row.Expected</td><td class="text-right">@row.Completed</td><td class="text-right">@row.OnTime</td><td class="text-right @(row.Missed > 0 ? "text-danger" : "")">@row.Missed</td><td class="text-right">@row.Skipped</td><td class="text-right">@RmsAnalyticsDisplay.Percent(row.CompletionRatePercent)</td></tr> }</tbody>
+							</table>
+						}
+					}
+				</div></div>
+			</div>
+			<div class="col-md-6">
+				<div class="ibox"><div class="ibox-title"><h5>@L["ReadinessWorkOrders"]</h5></div><div class="ibox-content">
+					@if (!r.MaintenanceEnabled) { <p class="text-muted">@L["AnalyticsModuleOff"]</p> }
+					else if (r.MaintenanceForbidden || r.WorkOrders == null) { <p class="text-muted">@L["ReadinessForbidden"]</p> }
+					else
+					{
+						var wo = r.WorkOrders;
+						<p class="text-muted">@L["ReadinessCohort"]: @wo.CohortStart.ToString("yyyy-MM-dd") - @wo.CohortEnd.AddDays(-1).ToString("yyyy-MM-dd")</p>
+						<div class="row">
+							<div class="col-xs-3 rms-kpi"><div class="value">@wo.Total</div><div class="label">@L["AnalyticsTotal"]</div></div>
+							<div class="col-xs-3 rms-kpi"><div class="value">@wo.Open</div><div class="label">@L["Open"]</div></div>
+							<div class="col-xs-3 rms-kpi"><div class="value @(wo.Overdue > 0 ? "text-danger" : "")">@wo.Overdue</div><div class="label">@L["Overdue"]</div></div>
+							<div class="col-xs-3 rms-kpi"><div class="value">@RmsAnalyticsDisplay.Number(wo.MeanTimeToRepairHours)</div><div class="label">@L["ReadinessMttr"]</div><small class="text-muted">@wo.RepairSamples @L["ReadinessRepairSamples"] · @wo.MissingRepairTimes @L["ReadinessMissingRepairTimes"]</small></div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", wo.OpenByPriority, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ReadinessOpenByPriority"].Value }, { "Chart", "doughnut" } })</div>
+							<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", wo.OpenByAge, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ReadinessOpenByAge"].Value }, { "Chart", "bar" } })</div>
+						</div>
+						@if (wo.Costs.Count > 0)
+						{
+							<h5>@L["ReadinessCosts"]</h5>
+							<table class="table table-condensed table-striped">
+								<thead><tr><th></th><th class="text-right">@L["ReadinessLabor"]</th><th class="text-right">@L["ReadinessParts"]</th><th class="text-right">@L["AnalyticsTotal"]</th><th class="text-right">@L["ReadinessUnknownCosts"]</th></tr></thead>
+								<tbody>@foreach (var cost in wo.Costs) { <tr><td>@cost.Currency</td><td class="text-right">@cost.Labor.ToString("N2")</td><td class="text-right">@cost.Parts.ToString("N2")</td><td class="text-right">@cost.Total.ToString("N2")</td><td class="text-right">@cost.Unknown</td></tr> }</tbody>
+							</table>
+						}
+						@if (wo.ByUnit.Count > 0)
+						{
+							<h5>@L["ByUnit"]</h5>
+							<table class="table table-condensed table-striped">
+								<thead><tr><th></th><th class="text-right">@L["AnalyticsTotal"]</th><th class="text-right">@L["Open"]</th><th class="text-right">@L["Overdue"]</th><th class="text-right">@L["ReadinessOnHold"]</th><th class="text-right">@L["ReadinessEmergency"]</th></tr></thead>
+								<tbody>@foreach (var row in wo.ByUnit.Take(25)) { <tr><td>@row.Label</td><td class="text-right">@row.Total</td><td class="text-right">@row.Open</td><td class="text-right @(row.Overdue > 0 ? "text-danger" : "")">@row.Overdue</td><td class="text-right">@row.OnHold</td><td class="text-right @(row.Emergency > 0 ? "text-danger" : "")">@row.Emergency</td></tr> }</tbody>
+							</table>
+						}
+					}
+				</div></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="ibox"><div class="ibox-title"><h5>@L["ReadinessEquipment"]</h5></div><div class="ibox-content">
+					@if (!r.InventoryEnabled) { <p class="text-muted">@L["AnalyticsModuleOff"]</p> }
+					else if (r.InventoryForbidden || r.Equipment == null) { <p class="text-muted">@L["ReadinessForbidden"]</p> }
+					else
+					{
+						var eq = r.Equipment;
+						<dl class="dl-horizontal">
+							<dt>@L["ReadinessAssets"]</dt><dd>@eq.Assets (@L["AnalyticsInService"] @eq.InService · @L["ReadinessIssued"] @eq.Issued)</dd>
+							<dt>@L["ReadinessOutForRepair"]</dt><dd class="@(eq.OutForRepair > 0 ? "text-danger" : "")">@eq.OutForRepair · @L["ReadinessDamaged"] @eq.Damaged</dd>
+							<dt>@L["AnalyticsExpired"]</dt><dd class="@(eq.Expired > 0 ? "text-danger" : "")">@eq.Expired · @L["ReadinessExpiringSoon"] @eq.ExpiringWithin30Days</dd>
+							<dt>@L["ReadinessIssuancesOutstanding"]</dt><dd>@eq.IssuancesOutstanding · @L["ReadinessOverdueReturns"] <span class="@(eq.IssuancesOverdueReturn > 0 ? "text-danger" : "")">@eq.IssuancesOverdueReturn</span></dd>
+						</dl>
+						@await Html.PartialAsync("_AnalyticsCounts", eq.ByStatus, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ReadinessByStatus"].Value }, { "Chart", "doughnut" } })
+						@if (eq.ByUnit.Count > 0)
+						{
+							<h5>@L["ByUnit"]</h5>
+							<table class="table table-condensed table-striped">
+								<thead><tr><th></th><th class="text-right">@L["ReadinessAssets"]</th><th class="text-right">@L["ReadinessIssued"]</th><th class="text-right">@L["ReadinessOutForRepair"]</th><th class="text-right">@L["ReadinessDamaged"]</th><th class="text-right">@L["AnalyticsExpired"]</th><th class="text-right">@L["ReadinessOverdueReturns"]</th></tr></thead>
+								<tbody>@foreach (var row in eq.ByUnit.Take(25)) { <tr><td>@row.Label</td><td class="text-right">@row.Assets</td><td class="text-right">@row.Issued</td><td class="text-right @(row.OutForRepair > 0 ? "text-danger" : "")">@row.OutForRepair</td><td class="text-right">@row.Damaged</td><td class="text-right @(row.Expired > 0 ? "text-danger" : "")">@row.Expired</td><td class="text-right">@row.OverdueReturns</td></tr> }</tbody>
+							</table>
+						}
+					}
+				</div></div>
+			</div>
+			<div class="col-md-6">
+				<div class="ibox"><div class="ibox-title"><h5>@L["ReadinessEvidence"]</h5></div><div class="ibox-content">
+					<div class="row">
+						<div class="col-xs-4 rms-kpi"><div class="value">@r.Evidence.PacketsCaptured</div><div class="label">@L["ReadinessPacketsCaptured"]</div></div>
+						<div class="col-xs-4 rms-kpi"><div class="value">@r.Evidence.RecordsWithPacket / @r.Evidence.CallLinkedRecords</div><div class="label">@L["ReadinessRecordsWithPacket"]</div></div>
+						<div class="col-xs-4 rms-kpi"><div class="value">@RmsAnalyticsDisplay.Percent(r.Evidence.CoveragePercent)</div><div class="label">@L["ReadinessCoverage"]</div></div>
+					</div>
+					@await Html.PartialAsync("_AnalyticsCounts", r.Evidence.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "bar" }, { "Take", 24 } })
+				</div></div>
+			</div>
+		</div>
+	}
+</div>

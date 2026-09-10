@@ -76,6 +76,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>Incident mix, occupancy risk profile, open violations, hydrants and CRR activity; prevention sections only when their module is on.</summary>
+		/// <summary>Apparatus and equipment readiness composed from the checklists, maintenance and inventory modules (each authorizes the caller itself) plus readiness-packet evidence; the unit board joins them on the unit id.</summary>
+		[HttpGet("Readiness")]
+		public async Task<ActionResult<RecordsReadinessResult>> Readiness(DateTime? start = null, DateTime? end = null, int? stationGroupId = null, CancellationToken cancellationToken = default)
+		{
+			if (!await FlagOnAsync()) return NotFound();
+			try { return Ok(Done(new RecordsReadinessResult { Data = await _analytics.GetReadinessAsync(DepartmentId, UserId, Query(start, end, stationGroupId, null, 80, 240), cancellationToken), PageSize = 1 })); }
+			catch (Exception ex) { return Fail(ex); }
+		}
+
 		[HttpGet("CommunityRisk")]
 		public async Task<ActionResult<RecordsCommunityRiskResult>> CommunityRisk(DateTime? start = null, DateTime? end = null, int? stationGroupId = null, CancellationToken cancellationToken = default)
 		{

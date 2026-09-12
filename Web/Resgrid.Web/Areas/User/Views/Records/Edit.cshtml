@@ -118,7 +118,7 @@
 								<div class="col-sm-6"><select class="form-control" asp-for="CallId" asp-items="Model.Calls"><option value="">@localizer["NoCall"]</option></select></div>
 								@if (t == RmsOperationalRecordType.Run && !Model.CallId.HasValue && ClaimsAuthorizationHelper.CanCreateCall())
 								{
-									<div class="col-sm-4">@if (Model.IsNew) { <span>Save the draft to create and link a historical Call.</span> } else { <a asp-action="NewRunCall" asp-controller="Records" asp-route-area="User" asp-route-id="@Model.RecordId" class="btn btn-default">Create Call for Run</a> }</div>
+									<div class="col-sm-4">@if (Model.IsNew) { <span>@localizer["NewRunCallSaveFirst"]</span> } else { <a asp-action="NewRunCall" asp-controller="Records" asp-route-area="User" asp-route-id="@Model.RecordId" class="btn btn-default">@localizer["NewRunCallHeader"]</a> }</div>
 								}
 							</div>
 							<div class="form-group">
@@ -232,16 +232,16 @@
 							@for (var i = 0; i < Model.ParticipantRows.Count; i++)
 							{
 								var participant = Model.ParticipantRows[i]; var name = Model.Personnel.FirstOrDefault(p => p.Value == participant.UserId)?.Text ?? participant.UserId;
-								<tr><td><label><input type="checkbox" asp-for="ParticipantRows[i].Selected" /> Include</label><select class="form-control input-sm" asp-for="ParticipantRows[i].UserId" asp-items="Model.Personnel" aria-label="Participant"><option value="">Choose a participant</option>
+								<tr><td><label><input type="checkbox" asp-for="ParticipantRows[i].Selected" /> Include</label><select class="form-control input-sm" asp-for="ParticipantRows[i].UserId" asp-items="Model.Personnel" aria-label="@localizer["ParticipantLabel"]"><option value="">@localizer["ParticipantChoose"]</option>
 								@if (!string.IsNullOrWhiteSpace(participant.UserId) && Model.Personnel.All(p => p.Value != participant.UserId)) { <option value="@participant.UserId">@name</option> }
 								</select></td>
-								<td><select class="form-control input-sm" asp-for="ParticipantRows[i].UnitId" asp-items="Model.AvailableUnits"><option value="">No assigned unit</option>
-								@if (participant.UnitId.HasValue && Model.AvailableUnits.All(u => u.Value != participant.UnitId.Value.ToString())) { <option value="@participant.UnitId">Previously assigned unit @participant.UnitId</option> }
-								</select></td><td><input class="form-control input-sm" asp-for="ParticipantRows[i].Role" maxlength="100" aria-label="Role for @name" /></td></tr>
+								<td><select class="form-control input-sm" asp-for="ParticipantRows[i].UnitId" asp-items="Model.AvailableUnits"><option value="">@localizer["ParticipantNoUnit"]</option>
+								@if (participant.UnitId.HasValue && Model.AvailableUnits.All(u => u.Value != participant.UnitId.Value.ToString())) { <option value="@participant.UnitId">@localizer["ParticipantPreviousUnit"] @participant.UnitId</option> }
+								</select></td><td><input class="form-control input-sm" asp-for="ParticipantRows[i].Role" maxlength="100" aria-label="@localizer["ParticipantRoleFor", name]" /></td></tr>
 							}
 							</tbody></table>
-							<button class="btn btn-default" type="button" id="add-record-participant">Add participant</button>
-							<template id="record-participant-template"><tr><td><label><input type="checkbox" name="ParticipantRows[__index__].Selected" value="true" checked /> Include</label><input type="hidden" name="ParticipantRows[__index__].Selected" value="false" /><select class="form-control input-sm" name="ParticipantRows[__index__].UserId" aria-label="Participant"><option value="">Choose a participant</option>@foreach (var p in Model.Personnel) { <option value="@p.Value">@p.Text</option> }</select></td><td><select class="form-control input-sm" name="ParticipantRows[__index__].UnitId" aria-label="Assigned unit"><option value="">No assigned unit</option>@foreach (var unit in Model.AvailableUnits) { <option value="@unit.Value">@unit.Text</option> }</select></td><td><input class="form-control input-sm" name="ParticipantRows[__index__].Role" maxlength="100" aria-label="Participant role" /></td></tr></template>
+							<button class="btn btn-default" type="button" id="add-record-participant">@localizer["ParticipantAdd"]</button>
+							<template id="record-participant-template"><tr><td><label><input type="checkbox" name="ParticipantRows[__index__].Selected" value="true" checked /> @localizer["ParticipantInclude"]</label><input type="hidden" name="ParticipantRows[__index__].Selected" value="false" /><select class="form-control input-sm" name="ParticipantRows[__index__].UserId" aria-label="@localizer["ParticipantLabel"]"><option value="">@localizer["ParticipantChoose"]</option>@foreach (var p in Model.Personnel) { <option value="@p.Value">@p.Text</option> }</select></td><td><select class="form-control input-sm" name="ParticipantRows[__index__].UnitId" aria-label="@localizer["ParticipantUnitLabel"]"><option value="">@localizer["ParticipantNoUnit"]</option>@foreach (var unit in Model.AvailableUnits) { <option value="@unit.Value">@unit.Text</option> }</select></td><td><input class="form-control input-sm" name="ParticipantRows[__index__].Role" maxlength="100" aria-label="@localizer["ParticipantRoleLabel"]" /></td></tr></template>
 							<script src="~/js/record-participants.js" asp-append-version="true" defer></script>
 						</div>
 					</div>
@@ -288,7 +288,7 @@
 					<div class="ibox-title"><h5>@localizer["Attachments"]</h5></div>
 					<div class="ibox-content">
 						<input type="file" name="files" multiple />
-						<label asp-for="AttachmentClassification">File classification (including names and descriptions)</label><select asp-for="AttachmentClassification" class="form-control"><option value="1">Restricted</option><option value="0">Unrestricted operational content</option></select>
+						<label asp-for="AttachmentClassification">@localizer["FileClassification"]</label><select asp-for="AttachmentClassification" class="form-control"><option value="1">@localizer["ClassificationRestricted"]</option><option value="0">@localizer["ClassificationUnrestricted"]</option></select><span class="help-block">@localizer["FileClassificationHelp"]</span>
 					</div>
 				</div>
 

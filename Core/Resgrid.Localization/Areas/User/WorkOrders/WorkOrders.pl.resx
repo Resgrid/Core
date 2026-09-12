@@ -376,4 +376,25 @@
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Zmieniono zasady operacyjne zleceń pracy</value></data>
 <data name="ResponseDueOn" xml:space="preserve"><value>Termin reakcji (UTC)</value></data>
 <data name="RepairDueOn" xml:space="preserve"><value>Termin naprawy (UTC)</value></data>
+  <data name="WorkOrdersIntro" xml:space="preserve"><value>Zgłaszaj naprawy, śledź wykonawców i sprawdzaj koszty utrzymania.</value></data>
+  <data name="Close" xml:space="preserve"><value>Zamknij</value></data>
+  <data name="Continue" xml:space="preserve"><value>Dalej</value></data>
+  <data name="Review" xml:space="preserve"><value>Podsumowanie</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Sprawdź poniższe odpowiedzi, a następnie zapisz.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Wypełnij podświetlone pola przed przejściem dalej.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Jeszcze nic tu nie ma. Użyj przycisków powyżej, aby utworzyć pierwszy wpis.</value></data>
+  <data name="HelpWorkOrders" xml:space="preserve"><value>Zlecenie pracy to jedna naprawa lub przegląd, od zgłoszenia po zweryfikowaną naprawę.</value></data>
+  <data name="StepOrderDescribe" xml:space="preserve"><value>Opisz pracę</value></data>
+  <data name="StepOrderDescribeHint" xml:space="preserve"><value>Co trzeba zrobić, jak pilne to jest i na kiedy.</value></data>
+  <data name="StepOrderTarget" xml:space="preserve"><value>Czego dotyczy</value></data>
+  <data name="StepOrderTargetHint" xml:space="preserve"><value>Pojazd, remiza lub zasób, którego dotyczy praca, oraz gdzie go znaleźć.</value></data>
+  <data name="StepOrderCost" xml:space="preserve"><value>Koszt i dostawca</value></data>
+  <data name="StepOrderCostHint" xml:space="preserve"><value>Ile ma kosztować, na który budżet trafia i kto wykonuje pracę.</value></data>
+  <data name="StepOrderSafety" xml:space="preserve"><value>Bezpieczeństwo i procedura</value></data>
+  <data name="StepOrderSafetyHint" xml:space="preserve"><value>Wymagane zezwolenia, blokady i kwalifikacje oraz kroki do wykonania.</value></data>
+  <data name="StepRecurrenceScheduleHint" xml:space="preserve"><value>Jak często praca się powtarza i w jakim oknie można ją wykonać.</value></data>
+  <data name="StepRecurrenceUsageHint" xml:space="preserve"><value>Opcjonalne wyzwalacze licznika lub stanu, które przyspieszają pracę zależnie od użycia.</value></data>
+  <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Do kogo trafia wygenerowane zlecenie i do kogo jest eskalowane, gdy nikt go nie podejmie.</value></data>
+  <data name="HelpFieldDueOn" xml:space="preserve"><value>Steruje oznaczeniem opóźnienia i zegarem poziomu usług.</value></data>
+  <data name="HelpFieldSteps" xml:space="preserve"><value>Kroki, które wykonuje technik. Niektóre zmiany statusu wymagają ukończenia wszystkich.</value></data>
 </root>

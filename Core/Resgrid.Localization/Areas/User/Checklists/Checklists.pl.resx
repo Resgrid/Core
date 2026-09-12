@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Nie udało się odtworzyć niektórych historycznych stanów zleceń. Pakiet nie gwarantuje pełnego pokrycia prac konserwacyjnych.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Dowody zleceń są ograniczone do bieżącego zakresu uprawnień odbiorcy.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>Aby kontynuować, należy odblokować dane chronione.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>Twórz kontrole wykonywane przez załogi, planuj je i sprawdzaj, co zostało zrobione.</value></data>
+  <data name="Close" xml:space="preserve"><value>Zamknij</value></data>
+  <data name="Continue" xml:space="preserve"><value>Dalej</value></data>
+  <data name="Review" xml:space="preserve"><value>Podsumowanie</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Sprawdź poniższe odpowiedzi, a następnie zapisz.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Wypełnij podświetlone pola przed przejściem dalej.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Jeszcze nic tu nie ma. Użyj przycisków powyżej, aby utworzyć pierwszy wpis.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>Lista kontrolna to zestaw pytań, na które odpowiada załoga. Opublikuj ją, zanim zaplanujesz lub uruchomisz.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>Wybierz, czego dotyczy to wykonanie.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>Usprawiedliwione kontrole pozostają w rejestrze wraz z podanym tu powodem.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>Wycofanie blokuje nowe wykonania i przyszłe zaplanowane kontrole. Historia zostaje zachowana.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>Kontrole są wybierane według czasu rozpoczęcia, a nie zakończenia.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>Zdarzenie, dla którego przygotowywany jest pakiet.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>Nazwij harmonogram</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>Jak nazywa się ten harmonogram i czego dotyczy.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>Kiedy jest uruchamiany</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>Jak często otwiera się kontrola i w jakiej strefie czasowej odczytywane są te godziny.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>Kto ją przejmuje</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>Kto odpowiada za kontrolę i ile ma czasu od jej otwarcia.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>Widoczna na liście terminów, więc niech będzie rozpoznawalna na pierwszy rzut oka.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Ile czasu ma załoga na ukończenie kontroli od jej otwarcia. Po tym czasie liczy się jako pominięta.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>Automatyczne kierowanie wysyła kontrolę do posiadacza obiektu. Wybierz osobę, rolę, grupę lub pojazd, aby to zmienić.</value></data>
 </root>

@@ -34,6 +34,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
     private ICommandService _normalizePhoneNumbersCommand;
     private ICommandService _oidcUpdateCommand;
     private ICommandService _securityRefreshCommand;
+    private ICommandService _featureFlagsCommand;
     private ICommandService _helpCommand;
 
     // Cancellation token source used to submit a cancellation request.
@@ -61,6 +62,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         [FromKeyedServices("NormalizePhoneNumbersCommand")] ICommandService normalizePhoneNumbersCommand,
         [FromKeyedServices("OidcUpdateCommand")] ICommandService oidcUpdateCommand,
         [FromKeyedServices("SecurityRefreshCommand")] ICommandService securityRefreshCommand,
+        [FromKeyedServices("FeatureFlagsCommand")] ICommandService featureFlagsCommand,
         [FromKeyedServices("HelpCommand")] ICommandService helpCommand)
     {
         _hostApplicationLifetime = hostApplicationLifetime;
@@ -75,6 +77,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         _normalizePhoneNumbersCommand = normalizePhoneNumbersCommand;
         _oidcUpdateCommand = oidcUpdateCommand;
         _securityRefreshCommand = securityRefreshCommand;
+        _featureFlagsCommand = featureFlagsCommand;
         _helpCommand = helpCommand;
     }
 
@@ -206,6 +209,8 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
 		        return await _oidcUpdateCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--SecurityRefresh"))
 		        return await _securityRefreshCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
+	        else if (args.Contains("--FeatureFlags") || args.Contains("--FeatureToggles") || args.Contains("--Toggles"))
+		        return await _featureFlagsCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else
 	        {
 		        return await _helpCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);

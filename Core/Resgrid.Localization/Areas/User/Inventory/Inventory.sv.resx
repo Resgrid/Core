@@ -650,4 +650,137 @@
   <data name="WorkOrderPostingRequired" xml:space="preserve"><value>Bokför eller återför delen via dess arbetsorder.</value></data>
   <data name="AssetSafetyHold" xml:space="preserve"><value>En säkerhetsspärr för underhåll hindrar att utrustningen återtas i drift.</value></data>
   <data name="ReadinessProRequired" xml:space="preserve"><value>Readiness Pro krävs för nya underhållsarbeten.</value></data>
+  <data name="AdjustStock" xml:space="preserve"><value>Justera lager</value></data>
+  <data name="Back" xml:space="preserve"><value>Tillbaka</value></data>
+  <data name="Category" xml:space="preserve"><value>Kategori</value></data>
+  <data name="Close" xml:space="preserve"><value>Stäng</value></data>
+  <data name="Contents" xml:space="preserve"><value>Innehåll</value></data>
+  <data name="Continue" xml:space="preserve"><value>Fortsätt</value></data>
+  <data name="EditItem" xml:space="preserve"><value>Redigera artikel</value></data>
+  <data name="Expires" xml:space="preserve"><value>Går ut</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrera</value></data>
+  <data name="IssueEquipment" xml:space="preserve"><value>Lämna ut utrustning</value></data>
+  <data name="Item" xml:space="preserve"><value>Artikel</value></data>
+  <data name="NewCategory" xml:space="preserve"><value>Ny kategori</value></data>
+  <data name="NewKit" xml:space="preserve"><value>Ny sats</value></data>
+  <data name="NewLocation" xml:space="preserve"><value>Ny plats</value></data>
+  <data name="NewLot" xml:space="preserve"><value>Nytt parti</value></data>
+  <data name="NewTransfer" xml:space="preserve"><value>Ny överföring</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Inget här ännu. Använd knapparna ovan för att skapa den första posten.</value></data>
+  <data name="Outstanding" xml:space="preserve"><value>Utestående</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Antal</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Fyll i de markerade fälten innan du fortsätter.</value></data>
+  <data name="Review" xml:space="preserve"><value>Granska</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Kontrollera uppgifterna nedan och spara sedan.</value></data>
+  <data name="Transaction" xml:space="preserve"><value>Transaktion</value></data>
+  <data name="Type" xml:space="preserve"><value>Typ</value></data>
+  <data name="When" xml:space="preserve"><value>När</value></data>
+  <data name="WorkspaceIntro" xml:space="preserve"><value>Håll reda på vad din organisation äger, var det förvaras och vem som bär det.</value></data>
+  <data name="M4PurchasingIntro" xml:space="preserve"><value>Hantera leverantörer, skapa inköpsorder och se vad lagret är värt.</value></data>
+  <data name="M5OperationsIntro" xml:space="preserve"><value>Genomför inventeringar, hantera varningar och skriv ut lagerrapporter.</value></data>
+  <data name="HelpOnHand" xml:space="preserve"><value>Vad du har just nu, per artikel och plats. Filtrera på en artikel eller plats och justera lagret när en räkning ändras.</value></data>
+  <data name="HelpItems" xml:space="preserve"><value>Artiklar är det du lagerför: katalogposten, inte ett fysiskt föremål. Bestäm hur varje artikel spåras innan du lägger till lager.</value></data>
+  <data name="HelpCategories" xml:space="preserve"><value>Kategorier grupperar artiklar så att listor och rapporter förblir läsbara. En kategori kan ligga under en överordnad kategori.</value></data>
+  <data name="HelpLocations" xml:space="preserve"><value>Platser är där lagret finns: stationer, fordon, personer, behållare eller en hylla inuti en annan plats.</value></data>
+  <data name="HelpLots" xml:space="preserve"><value>Ett parti är en sats av en artikel med samma partinummer, utgångsdatum och kostnad.</value></data>
+  <data name="HelpAssets" xml:space="preserve"><value>Tillgångar är utrustning med individuellt serienummer. Var och en har eget nummer, status och historik.</value></data>
+  <data name="HelpIssuances" xml:space="preserve"><value>Utrustning som just nu är utlämnad till en person eller ett fordon. Registrera återlämning när den kommer tillbaka.</value></data>
+  <data name="HelpKits" xml:space="preserve"><value>En sats är en fast lista med artiklar som lämnas ut tillsammans, till exempel larmställ eller en akutväska.</value></data>
+  <data name="HelpTransfers" xml:space="preserve"><value>Flytta lager mellan två platser. Båda sidor av flytten skrivs till journalen.</value></data>
+  <data name="HelpHistory" xml:space="preserve"><value>Varje rörelse skrivs till en journal som endast kan utökas. Filtrera på artikel eller plats för att granska en ändring.</value></data>
+  <data name="HelpAssetDetail" xml:space="preserve"><value>Hela historiken för en tillgång, tillsammans med dess checklistor och arbetsorder.</value></data>
+  <data name="HelpTransaction" xml:space="preserve"><value>En enskild journalpost, visad exakt som den skrevs.</value></data>
+  <data name="HelpUnitEquipment" xml:space="preserve"><value>Allt som just nu är tilldelat det valda fordonet.</value></data>
+  <data name="HelpPersonnelGear" xml:space="preserve"><value>Allt som just nu är utlämnat till den valda personen.</value></data>
+  <data name="HelpHolderLookup" xml:space="preserve"><value>Slå upp allt som ett fordon eller en person har.</value></data>
+  <data name="HelpLocationRename" xml:space="preserve"><value>Endast namnet kan ändras här. Placering och omfattning fastställdes när platsen skapades.</value></data>
+  <data name="HelpAssetStatus" xml:space="preserve"><value>En statusändring skapar en journalpost. Använd den vid reparation, skada, förlust eller utrangering.</value></data>
+  <data name="HelpWitness" xml:space="preserve"><value>Ange begärannumret som visades vid bokföringen och intyga vad du såg.</value></data>
+  <data name="M4HelpVendors" xml:space="preserve"><value>Leverantörer du köper från. Var och en är kopplad till en företagskontakt och kan ha ett kundnummer.</value></data>
+  <data name="M4HelpPurchaseOrders" xml:space="preserve"><value>Skapa en order hos en leverantör och ta sedan emot mot den. Mottagningen bokför lagret och registrerar kostnaden.</value></data>
+  <data name="M4HelpValuation" xml:space="preserve"><value>Vad lagret du har är värt, baserat på kostnaden som registrerades vid mottagning.</value></data>
+  <data name="M5NoAlertsHelp" xml:space="preserve"><value>Inga öppna varningar. Uppdatera för att kontrollera lagernivåer, utgångsdatum och försenade återlämningar igen.</value></data>
+  <data name="M5CountEnterHelp" xml:space="preserve"><value>Ange vad du faktiskt räknade för varje rad. Avvikelsekolumnen uppdateras när räkningen sparats.</value></data>
+  <data name="M5CountNameHelp" xml:space="preserve"><value>Något du känner igen senare, till exempel "Station 2 årsinventering".</value></data>
+  <data name="StepItemBasics" xml:space="preserve"><value>Beskriv artikeln</value></data>
+  <data name="StepItemTracking" xml:space="preserve"><value>Hur den spåras</value></data>
+  <data name="StepItemStock" xml:space="preserve"><value>Lagernivåer och kostnad</value></data>
+  <data name="StepLocationBasics" xml:space="preserve"><value>Namnge platsen</value></data>
+  <data name="StepLocationScope" xml:space="preserve"><value>Var den hör hemma</value></data>
+  <data name="StepMovementWhat" xml:space="preserve"><value>Vad som flyttas</value></data>
+  <data name="StepMovementWhere" xml:space="preserve"><value>Från och till</value></data>
+  <data name="StepMovementAmount" xml:space="preserve"><value>Hur mycket</value></data>
+  <data name="StepIssueWhat" xml:space="preserve"><value>Vad som lämnas ut</value></data>
+  <data name="StepIssueWho" xml:space="preserve"><value>Vem som tar den</value></data>
+  <data name="StepIssueWhen" xml:space="preserve"><value>Återlämning och anteckningar</value></data>
+  <data name="StepAssetItem" xml:space="preserve"><value>Vilken artikel</value></data>
+  <data name="StepAssetIdentity" xml:space="preserve"><value>Serienummer och märkning</value></data>
+  <data name="StepLotItem" xml:space="preserve"><value>Vilken artikel</value></data>
+  <data name="StepLotDetails" xml:space="preserve"><value>Partiuppgifter</value></data>
+  <data name="StepKitBasics" xml:space="preserve"><value>Namnge satsen</value></data>
+  <data name="StepKitContents" xml:space="preserve"><value>Satsens innehåll</value></data>
+  <data name="M4StepOrderHeader" xml:space="preserve"><value>Orderuppgifter</value></data>
+  <data name="M4StepOrderLines" xml:space="preserve"><value>Orderrader</value></data>
+  <data name="M5StepCountBasics" xml:space="preserve"><value>Namnge inventeringen</value></data>
+  <data name="M5StepCountScope" xml:space="preserve"><value>Omfattning</value></data>
+  <data name="M5StepReportKind" xml:space="preserve"><value>Välj en rapport</value></data>
+  <data name="M5StepReportFilters" xml:space="preserve"><value>Avgränsa</value></data>
+  <data name="HelpFieldAmount" xml:space="preserve"><value>Hur många enheter, i artikelns måttenhet.</value></data>
+  <data name="HelpFieldAsset" xml:space="preserve"><value>För serienummermärkta artiklar, välj exakt enhet.</value></data>
+  <data name="HelpFieldCategory" xml:space="preserve"><value>Valfri gruppering som används i listor och rapporter.</value></data>
+  <data name="HelpFieldCode" xml:space="preserve"><value>Ditt eget artikel- eller reservdelsnummer, om du använder ett.</value></data>
+  <data name="HelpFieldCountLocation" xml:space="preserve"><value>Lämna tomt för att räkna allt.</value></data>
+  <data name="HelpFieldCurrency" xml:space="preserve"><value>Valutakod med tre bokstäver, till exempel USD eller EUR.</value></data>
+  <data name="HelpFieldDefaultLocation" xml:space="preserve"><value>Nytt lager hamnar här när ingen plats väljs.</value></data>
+  <data name="HelpFieldExpectedReturn" xml:space="preserve"><value>Försenade återlämningar flaggas på varningsskärmen.</value></data>
+  <data name="HelpFieldExpiration" xml:space="preserve"><value>Det datum då lagret inte längre går att använda.</value></data>
+  <data name="HelpFieldFromLocation" xml:space="preserve"><value>Varifrån lagret lämnar. Lämna tomt vid inleverans av nytt lager.</value></data>
+  <data name="HelpFieldHolder" xml:space="preserve"><value>Välj en person eller ett fordon, inte båda.</value></data>
+  <data name="HelpFieldIsActive" xml:space="preserve"><value>Inaktiva artiklar finns kvar i historiken men kan inte väljas för nya rörelser.</value></data>
+  <data name="HelpFieldIsControlledSubstance" xml:space="preserve"><value>Rörelser kräver en andra person som vittne och sparas för revision.</value></data>
+  <data name="HelpFieldIsKit" xml:space="preserve"><value>Markera som satsbehållare i stället för något du lagerför separat.</value></data>
+  <data name="HelpFieldLocationType" xml:space="preserve"><value>Station, fordon, person, behållare eller underplats till en annan plats.</value></data>
+  <data name="HelpFieldLot" xml:space="preserve"><value>Välj partiet lagret kommer från om artikeln partispåras.</value></data>
+  <data name="HelpFieldMinimum" xml:space="preserve"><value>Utlös en varning när saldot understiger detta.</value></data>
+  <data name="HelpFieldNote" xml:space="preserve"><value>Varför detta hände. Anteckningar visas i journalen och i rapporter.</value></data>
+  <data name="HelpFieldParent" xml:space="preserve"><value>Valfritt. Placera denna post under en annan.</value></data>
+  <data name="HelpFieldReorderPoint" xml:space="preserve"><value>Föreslå ombeställning när saldot når detta.</value></data>
+  <data name="HelpFieldReportRange" xml:space="preserve"><value>Ögonblicksrapporter ignorerar datumintervallet.</value></data>
+  <data name="HelpFieldRequiresExpiration" xml:space="preserve"><value>Kräv utgångsdatum så att artikeln syns i utgångsvarningar.</value></data>
+  <data name="HelpFieldRequiresLotTracking" xml:space="preserve"><value>Kräv partinummer varje gång denna artikel tas emot.</value></data>
+  <data name="HelpFieldReturnCondition" xml:space="preserve"><value>Skicket utrustningen kom tillbaka i.</value></data>
+  <data name="HelpFieldSerialNumber" xml:space="preserve"><value>Tillverkarens serienummer. Det måste vara unikt för artikeln.</value></data>
+  <data name="HelpFieldToLocation" xml:space="preserve"><value>Vart lagret går. Lämna tomt vid förbrukning eller avskrivning.</value></data>
+  <data name="HelpFieldTrackingMode" xml:space="preserve"><value>Bulk räknar en kvantitet. Serienummer spårar varje enhet separat, med eget nummer och historik.</value></data>
+  <data name="HelpFieldUnitCost" xml:space="preserve"><value>Kostnad för en enhet, används för värdering.</value></data>
+  <data name="HelpFieldUnitOfMeasure" xml:space="preserve"><value>Hur du räknar den: styck, kartong, liter, meter.</value></data>
+  <data name="M4AccountNumberHelp" xml:space="preserve"><value>Kontot som leverantören känner dig som.</value></data>
+  <data name="M4CompanyContactHelp" xml:space="preserve"><value>Välj företagskontakten som denna leverantör hör till.</value></data>
+  <data name="M4NewVendorHint" xml:space="preserve"><value>En leverantör är en företagskontakt du köper från. Lägg till kontakten först om den saknas.</value></data>
+  <data name="M4PurchaseOrderNumberHelp" xml:space="preserve"><value>Din referens för ordern. Den visas i journalen vid mottagning.</value></data>
+  <data name="M4StepOrderHeaderHint" xml:space="preserve"><value>Vem du köper av, under vilken referens och i vilken valuta.</value></data>
+  <data name="M4StepOrderLinesHint" xml:space="preserve"><value>En rad per artikel. Kvantiteter och kostnader här är underlag för mottagningen.</value></data>
+  <data name="M5StepCountBasicsHint" xml:space="preserve"><value>En inventering fryser en ögonblicksbild av lagret så du kan jämföra med hyllan.</value></data>
+  <data name="M5StepCountScopeHint" xml:space="preserve"><value>Räkna en plats, eller lämna tomt för att räkna hela organisationen.</value></data>
+  <data name="M5StepReportKindHint" xml:space="preserve"><value>Rapporten avgör vilka filter i nästa steg som gäller.</value></data>
+  <data name="M5StepReportFiltersHint" xml:space="preserve"><value>Lämna ett filter tomt för att ta med allt. Otillgängliga filter är nedtonade.</value></data>
+  <data name="StepAssetItemHint" xml:space="preserve"><value>En tillgång är en fysisk enhet av en artikel. Ange vilken artikel och var den ska finnas.</value></data>
+  <data name="StepAssetIdentityHint" xml:space="preserve"><value>Hur enheten identifieras när någon tar upp eller skannar den.</value></data>
+  <data name="StepIssueWhatHint" xml:space="preserve"><value>Välj artikeln och platsen den tas från.</value></data>
+  <data name="StepIssueWhenHint" xml:space="preserve"><value>När du väntar tillbaka den, och vad som är värt att notera om överlämningen.</value></data>
+  <data name="StepItemBasicsHint" xml:space="preserve"><value>Vad människor ser när de söker efter detta i en lista.</value></data>
+  <data name="StepItemTrackingHint" xml:space="preserve"><value>Dessa svar avgör vad systemet frågar efter senare och är svåra att ändra när lager finns.</value></data>
+  <data name="StepItemStockHint" xml:space="preserve"><value>Valfria trösklar som styr varningar om lågt lager, samt kostnaden för värdering.</value></data>
+  <data name="StepKitBasicsHint" xml:space="preserve"><value>Satser lämnas ut som helhet, så ge den ett namn dina besättningar känner igen.</value></data>
+  <data name="StepKitContentsHint" xml:space="preserve"><value>Lista varje artikel satsen innehåller och hur många av varje.</value></data>
+  <data name="StepKitIssueHint" xml:space="preserve"><value>Bekräfta vilken fysisk enhet och vilken plats varje del av satsen tas från.</value></data>
+  <data name="StepLocationBasicsHint" xml:space="preserve"><value>Namnet visas i varje listruta som frågar var något finns.</value></data>
+  <data name="StepLocationScopeHint" xml:space="preserve"><value>Fyll bara i fältet som matchar den typ du valde; lämna resten tomt.</value></data>
+  <data name="StepLotDetailsHint" xml:space="preserve"><value>Partinumret som står på förpackningen, plus vad partiet kostade och när det går ut.</value></data>
+  <data name="StepLotItemHint" xml:space="preserve"><value>Ett parti hör alltid till en artikel, så välj den först.</value></data>
+  <data name="StepMovementWhatHint" xml:space="preserve"><value>Typen av rörelse avgör vilka av fälten nedan som används.</value></data>
+  <data name="StepMovementWhereHint" xml:space="preserve"><value>En inleverans behöver bara en destination; förbrukning eller avskrivning bara en källa.</value></data>
+  <data name="StepMovementAmountHint" xml:space="preserve"><value>Kvantiteten och orsaken. Båda hamnar i journalposten som skapas.</value></data>
+  <data name="StepReturnHint" xml:space="preserve"><value>Ange hur mycket som kom tillbaka, vart det gick och i vilket skick det är.</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inaktiv</value></data>
 </root>

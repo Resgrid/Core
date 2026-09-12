@@ -23,8 +23,8 @@
 			</div>
 		</div></div>
 		<div class="row">
-			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", w.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "bar" }, { "ShowHours", true }, { "Take", 24 } })</div>
-			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", w.ByDefinition, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ByDefinition"].Value }, { "Chart", "doughnut" }, { "ShowHours", true } })</div>
+			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", w.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByMonth"].Value, ["Chart"] = "bar", ["ShowHours"] = true, ["Take"] = 24 })</div>
+			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", w.ByDefinition, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["ByDefinition"].Value, ["Chart"] = "doughnut", ["ShowHours"] = true })</div>
 		</div>
 		<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsHeatMap"]</h5></div><div class="ibox-content">
 			@if (max == 0) { <p class="text-muted">@L["AnalyticsNoData"]</p> }
@@ -42,12 +42,16 @@
 			}
 		</div></div>
 		<div class="row">
-			<div class="col-md-4">@await Html.PartialAsync("_AnalyticsCounts", w.ByPerson, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByPerson"].Value }, { "ShowHours", true }, { "Take", 25 } })</div>
-			<div class="col-md-4">@await Html.PartialAsync("_AnalyticsCounts", w.ByUnit, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ByUnit"].Value }, { "Chart", "bar" }, { "ShowHours", true }, { "Take", 25 } })</div>
+			<div class="col-md-4">@await Html.PartialAsync("_AnalyticsCounts", w.ByPerson, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByPerson"].Value, ["ShowHours"] = true, ["Take"] = 25 })</div>
+			<div class="col-md-4">@await Html.PartialAsync("_AnalyticsCounts", w.ByUnit, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["ByUnit"].Value, ["Chart"] = "bar", ["ShowHours"] = true, ["Take"] = 25 })</div>
 			<div class="col-md-4">
-				@await Html.PartialAsync("_AnalyticsCounts", w.ByAuthor, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ByAuthor"].Value }, { "ShowHours", true }, { "Take", 25 } })
-				@await Html.PartialAsync("_AnalyticsCounts", w.ByStationGroup, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByStationGroup"].Value }, { "ShowHours", true } })
+				@await Html.PartialAsync("_AnalyticsCounts", w.ByAuthor, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["ByAuthor"].Value, ["ShowHours"] = true, ["Take"] = 25 })
+				@await Html.PartialAsync("_AnalyticsCounts", w.ByStationGroup, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByStationGroup"].Value, ["ShowHours"] = true })
 			</div>
 		</div>
 	}
 </div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

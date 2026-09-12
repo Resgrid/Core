@@ -1,0 +1,34 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@*
+    The module's tab strip. ViewData["Tab"] names the tab that owns the current screen, so a
+    sub page (an order, a recurrence, the operations desk) still shows where in the module it
+    sits. ViewData["CanWrite"] hides the two tabs a read only member cannot use.
+*@
+@{
+    var current = (string)ViewData["Tab"] ?? "Index";
+    var canWrite = ViewData["CanWrite"] as bool? ?? false;
+    var tabs = new List<(string Action, string Icon, string Label)>
+    {
+        ("Index", "fa-wrench", localizer["WorkOrders"].Value),
+        ("Recurrences", "fa-refresh", localizer["PreventiveMaintenance"].Value),
+        ("Reports", "fa-bar-chart", localizer["MaintenanceReports"].Value),
+        ("History", "fa-history", localizer["ServiceHistory"].Value)
+    };
+
+    if (canWrite)
+    {
+        tabs.Add(("Bulk", "fa-list-ol", localizer["BulkOperations"].Value));
+        tabs.Add(("Policy", "fa-sliders", localizer["OperationsPolicy"].Value));
+    }
+}
+<ul class="nav nav-tabs" role="tablist">
+    @foreach (var tab in tabs)
+    {
+        <li class="nav-item @(current == tab.Action ? "active" : null)">
+            <a asp-controller="WorkOrders" asp-action="@tab.Action" asp-route-area="User"
+               aria-current="@(current == tab.Action ? "page" : "false")">
+                <i class="fa @tab.Icon"></i> @tab.Label
+            </a>
+        </li>
+    }
+</ul>

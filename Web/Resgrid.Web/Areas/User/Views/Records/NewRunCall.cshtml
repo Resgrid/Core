@@ -1,16 +1,60 @@
 @model Resgrid.Web.Areas.User.Models.Records.RecordNewCallView
-@{ ViewBag.Title = "Resgrid | Create Call for Run"; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-title"><h2>Create Call for Run</h2></div><div class="ibox-content">
-    <p>Record a past incident and link it to this Run. The Call is created as closed and does not dispatch responders.</p>
-    @if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-danger">@Model.ErrorMessage</div> }
-    <form method="post" asp-action="NewRunCall" asp-controller="Records" asp-area="User">
-        @Html.AntiForgeryToken()
-        <input type="hidden" asp-for="RecordId" /><input type="hidden" asp-for="RowVersion" />
-        <div class="form-group"><label asp-for="Name">Call name</label><input asp-for="Name" class="form-control" maxlength="200" required /></div>
-        <div class="form-group"><label asp-for="OccurredOn">Occurred at (department local time)</label><input asp-for="OccurredOn" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm}" class="form-control" required /></div>
-        <div class="form-group"><label asp-for="Address">Address</label><input asp-for="Address" class="form-control" maxlength="500" /></div>
-        <div class="form-group"><label asp-for="Nature">Nature of Call</label><textarea asp-for="Nature" class="form-control" rows="5" maxlength="16000"></textarea></div>
-        <button type="submit" class="btn btn-primary">Create and link Call</button>
-        <a asp-action="Edit" asp-controller="Records" asp-area="User" asp-route-id="@Model.RecordId" class="btn btn-default">Return to Run</a>
-    </form>
-</div></div></div>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["NewRunCallHeader"];
+    ViewData["Title"] = localizer["NewRunCallHeader"].Value;
+    ViewData["Subtitle"] = localizer["NewRunCallIntro"].Value;
+    ViewData["ParentText"] = localizer["EditRecordHeader"].Value;
+    ViewData["ParentAction"] = "Edit";
+    ViewData["ParentId"] = Model.RecordId;
+}
+
+@await Html.PartialAsync("_RmsShell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["NewRunCallHeader"]</h5></div>
+        <div class="ibox-content">
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["NewRunCallIntro"]</div>
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger" role="alert">@Model.ErrorMessage</div>
+            }
+
+            <form method="post" asp-action="NewRunCall" asp-controller="Records" asp-area="User">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="RecordId" />
+                <input type="hidden" asp-for="RowVersion" />
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label asp-for="Name">@localizer["NewRunCallName"]</label>
+                        <input asp-for="Name" class="form-control" maxlength="200" required />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OccurredOn">@localizer["NewRunCallOccurredOn"]</label>
+                        <input asp-for="OccurredOn" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm}" class="form-control" required />
+                    </div>
+                    <div class="form-group rgw-wide">
+                        <label asp-for="Address">@localizer["NewRunCallAddress"]</label>
+                        <input asp-for="Address" class="form-control" maxlength="500" />
+                    </div>
+                    <div class="form-group rgw-wide">
+                        <label asp-for="Nature">@localizer["NewRunCallNature"]</label>
+                        <textarea asp-for="Nature" class="form-control" rows="5" maxlength="16000"></textarea>
+                    </div>
+                </div>
+                <div class="rgw-wizard-actions">
+                    <div class="rgw-wizard-spacer"></div>
+                    <a asp-action="Edit" asp-controller="Records" asp-area="User" asp-route-id="@Model.RecordId" class="btn btn-white">@localizer["Cancel"]</a>
+                    <button type="submit" class="btn btn-primary">@localizer["NewRunCallAction"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

@@ -782,4 +782,5 @@
     <value>Department Profile</value>
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Records preservation holds</value></data>
+  <data name="RecordsAllModule" xml:space="preserve"><value>All records</value></data>
 </root>

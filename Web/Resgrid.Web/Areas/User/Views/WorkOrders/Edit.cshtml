@@ -1,13 +1,55 @@
 @model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderEditView
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer[Model.Id == 0 ? "NewWorkOrder" : "EditWorkOrder"]; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-<h2>@localizer[Model.Id == 0 ? "NewWorkOrder" : "EditWorkOrder"]</h2>
-@await Html.PartialAsync("_Protection")
-<form class="work-order-form work-order-command work-order-protected" asp-action="Save" method="post">
-@Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.Id"/><input asp-for="Input.RequestId" type="hidden"/><input asp-for="Input.Revision" type="hidden"/>
-@await Html.PartialAsync("_OrderFields", Model.Input, new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = "Input" }, ["Choices"] = Model.Choices, ["CanManage"] = Model.CanManage })
-<button class="btn btn-primary" type="submit">@localizer["Save"]</button><a class="btn btn-default" asp-action="Index">@localizer["Cancel"]</a>
-</form></div></div></div>
-@section Scripts { @await Html.PartialAsync("_Scripts") }
+@{
+    var isNew = Model.Id == 0;
+    ViewBag.Title = "Resgrid | " + localizer[isNew ? "NewWorkOrder" : "EditWorkOrder"];
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer[isNew ? "NewWorkOrder" : "EditWorkOrder"].Value;
+    ViewData["CanWrite"] = Model.CanManage;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer[isNew ? "NewWorkOrder" : "EditWorkOrder"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Protection")
+
+            <form class="work-order-form work-order-command work-order-protected rgw-wizard" asp-action="Save" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <input asp-for="Input.RequestId" type="hidden" />
+                <input asp-for="Input.Revision" type="hidden" />
+
+                <ol class="rgw-steps"></ol>
+
+                @await Html.PartialAsync("_OrderFields", Model.Input, new ViewDataDictionary(ViewData) { TemplateInfo = { HtmlFieldPrefix = "Input" }, ["Choices"] = Model.Choices, ["CanManage"] = Model.CanManage })
+
+                <div class="rgw-step" data-title="@localizer["Review"]">
+                    <h4>@localizer["Review"]</h4>
+                    <p class="text-muted">@localizer["ReviewHint"]</p>
+                    <dl class="rgw-review"></dl>
+                </div>
+
+                <div class="rgw-wizard-actions">
+                    <button type="button" class="btn btn-white rgw-step-prev">@localizer["Previous"]</button>
+                    <div class="rgw-wizard-spacer"></div>
+                    <a class="btn btn-white" asp-action="Index">@localizer["Cancel"]</a>
+                    <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                    <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["Save"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script id="workspace-settings" type="application/json">@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new { required = localizer["RequiredFieldsMissing"].Value, nothingEntered = localizer["None"].Value, yes = localizer["Done"].Value, no = localizer["Pending"].Value }, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }))</script>
+    <script src="~/js/app/common/workspace/resgrid.common.workspace.js" asp-append-version="true"></script>
+    @await Html.PartialAsync("_Scripts")
+}

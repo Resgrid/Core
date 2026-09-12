@@ -245,7 +245,7 @@
 						<form method="post" enctype="multipart/form-data" asp-controller="Records" asp-action="AddAttachment" asp-route-area="User" asp-route-id="@record.RmsOperationalRecordId">
 							@Html.AntiForgeryToken()
 							<input type="file" name="files" multiple />
-							<label for="record-file-classification">File classification</label><select id="record-file-classification" name="classification" class="form-control"><option value="1">Restricted</option><option value="0">Unrestricted operational content</option></select>
+							<label for="record-file-classification">@localizer["FileClassification"]</label><select id="record-file-classification" name="classification" class="form-control"><option value="1">@localizer["ClassificationRestricted"]</option><option value="0">@localizer["ClassificationUnrestricted"]</option></select>
 							<button type="submit" class="btn btn-xs btn-default m-t-xs">@localizer["AddAttachment"]</button>
 						</form>
 					}

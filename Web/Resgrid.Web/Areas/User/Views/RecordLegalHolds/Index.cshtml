@@ -1,35 +1,214 @@
 @using Resgrid.Model
 @model List<RmsRecordLegalHold>
-@{ ViewBag.Title = "Records preservation holds"; }
-<h1>Records preservation holds</h1>
-<p>Use a preservation hold for litigation, investigation or a records request. A record hold also protects its analysis and evidence. Releasing a disclosure does not release its preservation hold.</p>
-@if (TempData["HoldMessage"] != null) { <p class="alert alert-success">@TempData["HoldMessage"]</p> }
-@if (TempData["HoldError"] != null) { <p class="alert alert-danger">@TempData["HoldError"]</p> }
-<h2>Place a hold</h2>
-<form method="post" asp-action="Place" asp-area="User" asp-controller="RecordLegalHolds">
-@Html.AntiForgeryToken()
-<label>Specific record ID (leave blank for a definition/date scope)<input class="form-control" name="RecordId" value="@ViewBag.RecordId" maxlength="36" /></label>
-<label>Definition<select class="form-control" name="DefinitionKey"><option value="">All definitions</option>@foreach (var key in RmsDefinitionKeys.LockedTypes.Keys) { <option value="@key">@key</option> }<option value="@RmsDefinitionKeys.NerisIncidentReport">NERIS incident and analysis</option></select></label>
-<p>For a definition/date scope, leave both dates blank to preserve every date. These times are UTC.</p>
-<label>Period start (UTC)<input class="form-control" type="datetime-local" name="PeriodStart" /></label>
-<label>Period end (UTC)<input class="form-control" type="datetime-local" name="PeriodEnd" /></label>
-<label>Reason<select class="form-control" name="Reason"><option>Litigation</option><option>Investigation</option><option>Public records request</option><option>Other</option></select></label>
-<label>Authority or case/request reference<input class="form-control" name="ReferenceNumber" required maxlength="100" /></label>
-<label>Preservation instructions and basis<textarea class="form-control" name="Notes" required maxlength="4000"></textarea></label>
-<p><button class="btn btn-primary">Place preservation hold</button></p>
-</form>
-<h2>Hold history</h2>
-@foreach (var hold in Model)
-{
- <section class="panel panel-default"><div class="panel-heading"><h3>@hold.ReferenceNumber · @(hold.IsActive ? "Active" : "Released")</h3></div><div class="panel-body">
- <p>@hold.Reason · Record: @(hold.RecordId ?? "All matching") · Definition: @(hold.DefinitionKey ?? "All")</p>
- <p>Period: @(hold.PeriodStart?.ToString("u") ?? "Any start") to @(hold.PeriodEnd?.ToString("u") ?? "Any end")</p>
- <p style="white-space:pre-wrap">@hold.Notes</p><p>Placed @hold.PlacedOn.ToString("u") by @hold.PlacedByUserId</p>
- @if (hold.IsActive) {
-  <form method="post" asp-action="Release" asp-controller="RecordLegalHolds" asp-area="User">@Html.AntiForgeryToken()
-  <input type="hidden" name="id" value="@hold.RmsRecordLegalHoldId" /><input type="hidden" name="expectedVersion" value="@hold.RowVersion" />
-  <label>Authority and reason for releasing preservation<textarea class="form-control" name="reason" required maxlength="4000"></textarea></label>
-  <button class="btn btn-warning">Release this hold</button></form>
- } else { <p>Released @hold.ReleasedOn?.ToString("u") by @hold.ReleasedByUserId</p><p style="white-space:pre-wrap">@hold.ReleaseNotes</p> }
- </div></section>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@*
+    Preservation holds. Placing a hold and releasing one both need an authority reference and
+    a written basis, so each opens in a dialog rather than sitting inline under the list.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["LegalHoldsHeader"];
+    ViewData["Title"] = localizer["LegalHoldsHeader"].Value;
+    ViewData["Subtitle"] = localizer["LegalHoldsIntro"].Value;
+}
+
+@await Html.PartialAsync("_RmsShell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["LegalHoldsHeader"]</h5></div>
+        <div class="ibox-content">
+
+            @if (TempData["HoldMessage"] != null)
+            {
+                <div class="alert alert-success" role="status">@TempData["HoldMessage"]</div>
+            }
+            @if (TempData["HoldError"] != null)
+            {
+                <div class="alert alert-danger" role="alert">@TempData["HoldError"]</div>
+            }
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["LegalHoldsIntro"]</div>
+
+            <div class="rgw-toolbar">
+                <div class="rgw-toolbar-spacer"></div>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#hold-place"><i class="fa fa-lock"></i> @localizer["PlaceHold"]</button>
+            </div>
+
+            @if (Model.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-lock fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["NoHolds"]</h4>
+                    <p class="text-muted">@localizer["NoRowsHelp"]</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["HoldReference"]</th>
+                                <th>@localizer["HoldScope"]</th>
+                                <th>@localizer["HoldPeriod"]</th>
+                                <th>@localizer["State"]</th>
+                                <th class="rgw-row-actions">@localizer["Actions"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var hold in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @hold.ReferenceNumber
+                                        <small class="text-muted rgw-sub">@hold.Reason</small>
+                                    </td>
+                                    <td>
+                                        @(hold.RecordId ?? localizer["HoldAllMatching"].Value)
+                                        <small class="text-muted rgw-sub">@(hold.DefinitionKey ?? localizer["AllDefinitions"].Value)</small>
+                                    </td>
+                                    <td>
+                                        @(hold.PeriodStart?.ToString("u") ?? localizer["HoldAnyStart"].Value)
+                                        &mdash;
+                                        @(hold.PeriodEnd?.ToString("u") ?? localizer["HoldAnyEnd"].Value)
+                                    </td>
+                                    <td>
+                                        <span class="label @(hold.IsActive ? "label-danger" : "label-success")">@localizer[hold.IsActive ? "HoldActive" : "Released"]</span>
+                                        @if (hold.IsActive)
+                                        {
+                                            <small class="text-muted rgw-sub">@localizer["HoldPlacedBy"]: @hold.PlacedByUserId &middot; @hold.PlacedOn.ToString("u")</small>
+                                        }
+                                        else
+                                        {
+                                            <small class="text-muted rgw-sub">@localizer["HoldReleasedBy"]: @hold.ReleasedByUserId &middot; @hold.ReleasedOn?.ToString("u")</small>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        @if (hold.IsActive)
+                                        {
+                                            <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#hold-release-@hold.RmsRecordLegalHoldId">@localizer["ReleaseHold"]</button>
+                                        }
+                                    </td>
+                                </tr>
+                                @if (!string.IsNullOrWhiteSpace(hold.Notes) || !string.IsNullOrWhiteSpace(hold.ReleaseNotes))
+                                {
+                                    <tr>
+                                        <td colspan="5">
+                                            <div style="white-space:pre-wrap">@hold.Notes</div>
+                                            @if (!string.IsNullOrWhiteSpace(hold.ReleaseNotes))
+                                            {
+                                                <div class="text-muted" style="white-space:pre-wrap">@hold.ReleaseNotes</div>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @* ── Dialogs ─────────────────────────────────────────────────────── *@
+            <div class="modal fade rgw-modal" id="hold-place" tabindex="-1" role="dialog" aria-labelledby="hold-place-title">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="hold-place-title">@localizer["PlaceHold"]</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" asp-action="Place" asp-area="User" asp-controller="RecordLegalHolds">
+                                @Html.AntiForgeryToken()
+                                <div class="rgw-grid">
+                                    <div class="form-group">
+                                        <label for="hold-record">@localizer["HoldRecordId"]</label>
+                                        <input class="form-control" id="hold-record" name="RecordId" value="@ViewBag.RecordId" maxlength="36" />
+                                        <span class="help-block">@localizer["HoldRecordIdHelp"]</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hold-definition">@localizer["HoldDefinition"]</label>
+                                        <select class="form-control" id="hold-definition" name="DefinitionKey">
+                                            <option value="">@localizer["AllDefinitions"]</option>
+                                            @foreach (var key in RmsDefinitionKeys.LockedTypes.Keys)
+                                            {
+                                                <option value="@key">@key</option>
+                                            }
+                                            <option value="@RmsDefinitionKeys.NerisIncidentReport">@localizer["HoldNerisScope"]</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hold-start">@localizer["HoldPeriodStart"]</label>
+                                        <input class="form-control" id="hold-start" type="datetime-local" name="PeriodStart" />
+                                        <span class="help-block">@localizer["HoldScopeHelp"]</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hold-end">@localizer["HoldPeriodEnd"]</label>
+                                        <input class="form-control" id="hold-end" type="datetime-local" name="PeriodEnd" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hold-reason">@localizer["HoldReason"]</label>
+                                        <select class="form-control" id="hold-reason" name="Reason">
+                                            <option value="Litigation">@localizer["HoldReasonLitigation"]</option>
+                                            <option value="Investigation">@localizer["HoldReasonInvestigation"]</option>
+                                            <option value="Public records request">@localizer["HoldReasonRecordsRequest"]</option>
+                                            <option value="Other">@localizer["HoldReasonOther"]</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hold-reference">@localizer["HoldReference"]</label>
+                                        <input class="form-control" id="hold-reference" name="ReferenceNumber" required maxlength="100" />
+                                    </div>
+                                    <div class="form-group rgw-wide">
+                                        <label for="hold-notes">@localizer["HoldNotes"]</label>
+                                        <textarea class="form-control" id="hold-notes" name="Notes" rows="3" required maxlength="4000"></textarea>
+                                    </div>
+                                </div>
+                                <div class="rgw-wizard-actions">
+                                    <div class="rgw-wizard-spacer"></div>
+                                    <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                    <button class="btn btn-primary" type="submit">@localizer["PlaceHold"]</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @foreach (var hold in Model.Where(x => x.IsActive))
+            {
+                <div class="modal fade rgw-modal" id="hold-release-@hold.RmsRecordLegalHoldId" tabindex="-1" role="dialog" aria-labelledby="hold-release-@(hold.RmsRecordLegalHoldId)-title">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="hold-release-@(hold.RmsRecordLegalHoldId)-title">@localizer["ReleaseHold"] &middot; @hold.ReferenceNumber</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" asp-action="Release" asp-controller="RecordLegalHolds" asp-area="User">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@hold.RmsRecordLegalHoldId" />
+                                    <input type="hidden" name="expectedVersion" value="@hold.RowVersion" />
+                                    <div class="rgw-grid">
+                                        <div class="form-group rgw-wide">
+                                            <label for="release-reason-@hold.RmsRecordLegalHoldId">@localizer["ReleaseHoldReason"]</label>
+                                            <textarea class="form-control" id="release-reason-@hold.RmsRecordLegalHoldId" name="reason" rows="3" required maxlength="4000"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="rgw-wizard-actions">
+                                        <div class="rgw-wizard-spacer"></div>
+                                        <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                        <button class="btn btn-warning" type="submit">@localizer["ReleaseHold"]</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
 }

@@ -1,61 +1,227 @@
 @using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Records.RecordSubmissionView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@*
+    Submission history and recovery. The two recovery commands are consequential and both ask
+    for a written basis, so each opens in a dialog; the delivery history stays inline because
+    it is what the reader came to read.
+*@
+@functions {
+    string StatePill(RmsSubmissionState state) => state switch
+    {
+        RmsSubmissionState.Rejected or RmsSubmissionState.Failed => "label-danger",
+        _ => "label-info"
+    };
+}
 @{
-    ViewBag.Title = "Submission history and recovery";
     var submission = Model.Submission;
-    var canBind = submission.DestinationIdentity == null && submission.SentOn == null && submission.Attempts == 0 && submission.ExternalId == null && !submission.RequiresReconciliation && !submission.CreatePendingReceipt;
+    var canBind = submission.DestinationIdentity == null && submission.SentOn == null && submission.Attempts == 0
+        && submission.ExternalId == null && !submission.RequiresReconciliation && !submission.CreatePendingReceipt;
     var ambiguous = submission.RequiresReconciliation || submission.CreatePendingReceipt;
     var recoverable = ambiguous || submission.State == (int)RmsSubmissionState.Rejected || submission.State == (int)RmsSubmissionState.Failed;
     var reportController = submission.Destination == RmsSubmissionDestinations.NerisIncidentAnalysis ? "IncidentAnalysis" : "IncidentReports";
+    var canVerifyAbsence = Model.IsAdministrator && submission.ExternalId == null && recoverable;
+
+    ViewBag.Title = "Resgrid | " + localizer["SubmissionRecoveryHeader"];
+    ViewData["Title"] = localizer["SubmissionRecoveryHeader"].Value;
+    ViewData["Subtitle"] = localizer["SubmissionRecoveryIntro"].Value;
+    ViewData["ParentText"] = localizer["Submissions"].Value;
+    ViewData["ParentController"] = reportController;
+    ViewData["ParentAction"] = "Details";
+    ViewData["ParentId"] = submission.RecordId;
 }
+
+@await Html.PartialAsync("_RmsShell")
+
 <div class="wrapper wrapper-content">
-    <h2>Submission history and recovery</h2>
-    <p><a asp-controller="@reportController" asp-action="Details" asp-route-id="@submission.RecordId">Return to report</a></p>
-    @if (Model.Message != null) { <p class="alert alert-success" role="status">@Model.Message</p> }
-    @if (Model.Error != null) { <p class="alert alert-danger" role="alert">@Model.Error</p> }
-    <dl>
-        <dt>State</dt><dd>@((RmsSubmissionState)submission.State)</dd>
-        <dt>Destination</dt><dd>@submission.Destination · @submission.DestinationVersion</dd>
-        <dt>Filing identifier</dt><dd>@(submission.ExternalId ?? "No identifier recorded")</dd>
-        <dt>Attempts</dt><dd>@submission.Attempts / @submission.MaxAttempts</dd>
-        <dt>Latest issue</dt><dd>@submission.ErrorSummary</dd>
-    </dl>
-    <h3>Delivery and response history</h3>
-    <p>Times are UTC. Earlier responses remain available after rejection, retry and correction.</p>
-    @if (Model.Exchanges.Count == 0) { <p>No exchange history was recorded for this legacy submission. Its last stored response appears below.</p> }
-    @foreach (var exchange in Model.Exchanges.OrderBy(e => e.OccurredOn).ThenBy(e => e.RmsSubmissionExchangeId))
-    {
-        <details style="margin-bottom:12px">
-            <summary>@exchange.OccurredOn.ToString("u") — @exchange.Operation / @exchange.Stage · attempt @exchange.AttemptNumber</summary>
-            <p>Exchange @exchange.ExchangeId</p>
-            @if (exchange.OutcomeJson != null) { <pre style="white-space:pre-wrap;overflow-wrap:anywhere">@exchange.OutcomeJson</pre><p>Response checksum: @exchange.OutcomeChecksum</p> }
-        </details>
-    }
-    <details><summary>Exact queued payload</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">@submission.PayloadJson</pre><p>Payload checksum: @submission.PayloadChecksum</p></details>
-    @if (submission.ResponseJson != null) { <details><summary>Last stored destination response</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">@submission.ResponseJson</pre><p>Response checksum: @submission.ResponseChecksum</p></details> }
-    @if (canBind || ambiguous)
-    {
-        <h3>@(canBind ? "Bind an unsent submission" : "Verify an existing destination filing")</h3>
-        <p>@(canBind ? "Review the department's current NERIS entity and destination. Binding this unsent submission queues it for delivery." : "Locate the filing in the original destination. Its identifier is checked against the queued report before polling resumes.")</p>
-        <form method="post" asp-action="Reconcile">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="submissionId" value="@submission.RmsSubmissionId" /><input type="hidden" name="RowVersion" value="@submission.RowVersion" />
-            @if (!canBind) { <label for="external-id">Destination filing identifier</label><input id="external-id" name="ExternalId" class="form-control" value="@submission.ExternalId" maxlength="100" required /> }
-            <label for="receipt-reason">Reason</label><textarea id="receipt-reason" name="Reason" class="form-control" maxlength="2000" required></textarea>
-            <button type="submit" class="btn btn-primary">@(canBind ? "Bind and queue" : "Verify receipt")</button>
-        </form>
-    }
-    @if (Model.IsAdministrator && submission.ExternalId == null && recoverable)
-    {
-        <h3>Record externally verified absence of a filing</h3>
-        <p>Use only after the original destination or its support team confirms that this attempted filing was not created. An empty search result alone is insufficient. This records your verification and clears the recovery block; it sends nothing and does not schedule a retry.</p>
-        <form method="post" asp-action="Reconcile">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="submissionId" value="@submission.RmsSubmissionId" /><input type="hidden" name="RowVersion" value="@submission.RowVersion" />
-            <label for="verification-reference">Destination verification or support reference</label><input id="verification-reference" name="VerificationReference" class="form-control" maxlength="500" required />
-            <label for="absence-reason">What was verified, and by whom</label><textarea id="absence-reason" name="Reason" class="form-control" maxlength="2000" required></textarea>
-            <p><label><input type="checkbox" name="ConfirmedNotCreated" value="true" required /> I verified that the original destination did not create this filing.</label></p>
-            <button type="submit" class="btn btn-warning">Record verification without sending</button>
-        </form>
-    }
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["SubmissionRecoveryHeader"]</h5></div>
+        <div class="ibox-content">
+
+            @if (Model.Message != null)
+            {
+                <div class="alert alert-success" role="status">@Model.Message</div>
+            }
+            @if (Model.Error != null)
+            {
+                <div class="alert alert-danger" role="alert">@Model.Error</div>
+            }
+
+            <div class="rgw-toolbar">
+                <a class="btn btn-default btn-sm" asp-controller="@reportController" asp-action="Details" asp-route-id="@submission.RecordId"><i class="fa fa-arrow-left"></i> @localizer["ReturnToReport"]</a>
+                <div class="rgw-toolbar-spacer"></div>
+                @if (canBind || ambiguous)
+                {
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#submission-reconcile">
+                        <i class="fa fa-link"></i> @localizer[canBind ? "SubmissionBindHeader" : "SubmissionVerifyHeader"]
+                    </button>
+                }
+                @if (canVerifyAbsence)
+                {
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#submission-absence">
+                        <i class="fa fa-ban"></i> @localizer["SubmissionAbsenceHeader"]
+                    </button>
+                }
+            </div>
+
+            <p class="text-muted">
+                <span class="label @StatePill((RmsSubmissionState)submission.State)">@localizer["SubmissionState" + (RmsSubmissionState)submission.State]</span>
+                @submission.Destination &middot; @submission.DestinationVersion
+            </p>
+
+            <dl class="dl-horizontal">
+                <dt>@localizer["ExternalId"]</dt><dd>@(submission.ExternalId ?? localizer["SubmissionNoIdentifier"].Value)</dd>
+                <dt>@localizer["Attempts"]</dt><dd>@submission.Attempts / @submission.MaxAttempts</dd>
+                <dt>@localizer["SubmissionLatestIssue"]</dt><dd>@submission.ErrorSummary</dd>
+            </dl>
+
+            <div class="hr-line-dashed"></div>
+
+            <h3>@localizer["SubmissionExchangeHeader"]</h3>
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["SubmissionExchangeIntro"]</div>
+
+            @if (Model.Exchanges.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-exchange fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["SubmissionNoExchanges"]</h4>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["OccurredOn"]</th><th>@localizer["SubmissionOperation"]</th><th class="text-right">@localizer["Attempts"]</th><th>@localizer["SubmissionResponse"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var exchange in Model.Exchanges.OrderBy(e => e.OccurredOn).ThenBy(e => e.RmsSubmissionExchangeId))
+                            {
+                                <tr>
+                                    <td>@exchange.OccurredOn.ToString("u")</td>
+                                    <td>
+                                        @exchange.Operation / @exchange.Stage
+                                        <small class="text-muted rgw-sub">@exchange.ExchangeId</small>
+                                    </td>
+                                    <td class="text-right">@exchange.AttemptNumber</td>
+                                    <td>
+                                        @if (exchange.OutcomeJson != null)
+                                        {
+                                            <details>
+                                                <summary>@localizer["SubmissionResponse"]</summary>
+                                                <pre style="white-space:pre-wrap;overflow-wrap:anywhere">@exchange.OutcomeJson</pre>
+                                                <small class="text-muted">@localizer["Checksum"]: @exchange.OutcomeChecksum</small>
+                                            </details>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            <div class="panel panel-default">
+                <div class="panel-heading">@localizer["Payload"]</div>
+                <div class="panel-body">
+                    <pre style="white-space:pre-wrap;overflow-wrap:anywhere">@submission.PayloadJson</pre>
+                    <small class="text-muted">@localizer["Checksum"]: @submission.PayloadChecksum</small>
+                </div>
+            </div>
+
+            @if (submission.ResponseJson != null)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">@localizer["SubmissionLastResponseHeader"]</div>
+                    <div class="panel-body">
+                        <pre style="white-space:pre-wrap;overflow-wrap:anywhere">@submission.ResponseJson</pre>
+                        <small class="text-muted">@localizer["Checksum"]: @submission.ResponseChecksum</small>
+                    </div>
+                </div>
+            }
+
+            @* ── Dialogs ─────────────────────────────────────────────────────── *@
+            @if (canBind || ambiguous)
+            {
+                <div class="modal fade rgw-modal" id="submission-reconcile" tabindex="-1" role="dialog" aria-labelledby="submission-reconcile-title">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="submission-reconcile-title">@localizer[canBind ? "SubmissionBindHeader" : "SubmissionVerifyHeader"]</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-muted">@localizer[canBind ? "SubmissionBindIntro" : "SubmissionVerifyIntro"]</p>
+                                <form method="post" asp-action="Reconcile">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="submissionId" value="@submission.RmsSubmissionId" />
+                                    <input type="hidden" name="RowVersion" value="@submission.RowVersion" />
+                                    <div class="rgw-grid">
+                                        @if (!canBind)
+                                        {
+                                            <div class="form-group rgw-wide">
+                                                <label for="external-id">@localizer["ExternalId"]</label>
+                                                <input id="external-id" name="ExternalId" class="form-control" value="@submission.ExternalId" maxlength="100" required />
+                                            </div>
+                                        }
+                                        <div class="form-group rgw-wide">
+                                            <label for="receipt-reason">@localizer["Reason"]</label>
+                                            <textarea id="receipt-reason" name="Reason" class="form-control" rows="3" maxlength="2000" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="rgw-wizard-actions">
+                                        <div class="rgw-wizard-spacer"></div>
+                                        <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                        <button type="submit" class="btn btn-primary">@localizer[canBind ? "SubmissionBindAction" : "SubmissionVerifyAction"]</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (canVerifyAbsence)
+            {
+                <div class="modal fade rgw-modal" id="submission-absence" tabindex="-1" role="dialog" aria-labelledby="submission-absence-title">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="submission-absence-title">@localizer["SubmissionAbsenceHeader"]</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> @localizer["SubmissionAbsenceIntro"]</div>
+                                <form method="post" asp-action="Reconcile">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="submissionId" value="@submission.RmsSubmissionId" />
+                                    <input type="hidden" name="RowVersion" value="@submission.RowVersion" />
+                                    <div class="rgw-grid">
+                                        <div class="form-group rgw-wide">
+                                            <label for="verification-reference">@localizer["SubmissionVerificationReference"]</label>
+                                            <input id="verification-reference" name="VerificationReference" class="form-control" maxlength="500" required />
+                                        </div>
+                                        <div class="form-group rgw-wide">
+                                            <label for="absence-reason">@localizer["SubmissionAbsenceReason"]</label>
+                                            <textarea id="absence-reason" name="Reason" class="form-control" rows="3" maxlength="2000" required></textarea>
+                                        </div>
+                                        <div class="form-group rgw-wide">
+                                            <div class="checkbox"><label><input type="checkbox" name="ConfirmedNotCreated" value="true" required /> @localizer["SubmissionAbsenceConfirm"]</label></div>
+                                        </div>
+                                    </div>
+                                    <div class="rgw-wizard-actions">
+                                        <div class="rgw-wizard-spacer"></div>
+                                        <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                        <button type="submit" class="btn btn-warning">@localizer["SubmissionAbsenceAction"]</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

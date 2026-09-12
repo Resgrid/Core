@@ -1,11 +1,57 @@
 @model List<Resgrid.Model.RecordFieldDiff>
-@{ ViewBag.Title = "Compare report revisions"; }
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["DiffHeader"];
+    ViewData["Title"] = localizer["DiffHeader"].Value;
+    ViewData["Subtitle"] = localizer["DiffRevisionRange", ViewData["From"], ViewData["To"]].Value;
+}
+
+@await Html.PartialAsync("_RmsShell")
+
 <div class="wrapper wrapper-content">
-    <h2>Revision @ViewData["From"] to revision @ViewData["To"]</h2>
-    <p><a asp-action="PrintDiff" asp-route-id="@ViewData["RecordId"]" asp-route-kind="@ViewData["Kind"]" asp-route-from="@ViewData["FromId"]" asp-route-to="@ViewData["ToId"]">Print comparison as PDF</a></p>
-    @if ((bool?)ViewData["Withheld"] == true) { <p class="alert alert-info">Restricted values are withheld under your current permissions.</p> }
-    @if (Model.Count == 0) { <p>No visible content changed.</p> }
-    <table class="table table-bordered"><thead><tr><th>Field</th><th>Before</th><th>After</th></tr></thead><tbody>
-    @foreach (var change in Model) { <tr><th>@(change.FieldLabel ?? change.FieldKey)</th><td style="white-space:pre-wrap">@change.OldValue</td><td style="white-space:pre-wrap">@change.NewValue</td></tr> }
-    </tbody></table>
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["DiffRevisionRange", ViewData["From"], ViewData["To"]]</h5></div>
+        <div class="ibox-content">
+
+            <div class="rgw-toolbar">
+                <div class="rgw-toolbar-spacer"></div>
+                <a class="btn btn-default btn-sm" asp-action="PrintDiff" asp-route-id="@ViewData["RecordId"]" asp-route-kind="@ViewData["Kind"]" asp-route-from="@ViewData["FromId"]" asp-route-to="@ViewData["ToId"]"><i class="fa fa-print"></i> @localizer["DiffPrint"]</a>
+            </div>
+
+            @if ((bool?)ViewData["Withheld"] == true)
+            {
+                <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["Withheld"]</div>
+            }
+
+            @if (Model.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-files-o fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["NoChanges"]</h4>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered rgw-table">
+                        <thead><tr><th>@localizer["Field"]</th><th>@localizer["Before"]</th><th>@localizer["After"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var change in Model)
+                            {
+                                <tr>
+                                    <th>@(change.FieldLabel ?? change.FieldKey)</th>
+                                    <td style="white-space:pre-wrap">@change.OldValue</td>
+                                    <td style="white-space:pre-wrap">@change.NewValue</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

@@ -332,10 +332,10 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			var ids = InListValue(occupancyIds);
 			if (ids.Length == 0) return new Dictionary<string, int>(StringComparer.Ordinal);
-			var rows = await QueryAsync<(string OccupancyId, int Open)>(
-				$"SELECT {Col("RmsOccupancyId")} AS OccupancyId, COUNT(1) AS Open FROM {Tbl("RmsViolations")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsOccupancyId", "Ids")} AND {OpenStates} AND {Col("DeletedOn")} IS NULL GROUP BY {Col("RmsOccupancyId")}",
+			var rows = await QueryAsync<(string OccupancyId, int OpenCount)>(
+				$"SELECT {Col("RmsOccupancyId")} AS OccupancyId, COUNT(1) AS OpenCount FROM {Tbl("RmsViolations")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("RmsOccupancyId", "Ids")} AND {OpenStates} AND {Col("DeletedOn")} IS NULL GROUP BY {Col("RmsOccupancyId")}",
 				new { DepartmentId = departmentId, Ids = ids });
-			return rows.ToDictionary(r => r.OccupancyId, r => r.Open, StringComparer.Ordinal);
+			return rows.ToDictionary(r => r.OccupancyId, r => r.OpenCount, StringComparer.Ordinal);
 		}
 
 		public Task<IEnumerable<RmsViolation>> GetForRangeAsync(int departmentId, DateTime startUtc, DateTime endUtc, int take)

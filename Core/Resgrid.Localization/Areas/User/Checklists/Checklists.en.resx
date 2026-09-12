@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Some historical work-order states could not be reconstructed. The packet does not claim complete maintenance coverage.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Work-order evidence is limited to the reader’s current authorized scope.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>Protected data must be unlocked to continue.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>Build the checks your crews run, schedule them, and see what was done.</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Continue" xml:space="preserve"><value>Continue</value></data>
+  <data name="Review" xml:space="preserve"><value>Review</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Check the answers below, then save.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Fill in the highlighted fields before continuing.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Nothing here yet. Use the buttons above to create the first one.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>A checklist is the set of questions a crew answers. Publish one before it can be scheduled or run.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>Choose what this run is being carried out against.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>Excused checks stay on the record with the reason you give here.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>Retiring stops new runs and future scheduled checks. Existing history is kept.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>Checks are selected by their start time, not when they were completed.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>The call the packet is being assembled for.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>Name the schedule</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>What this schedule is called and what it runs against.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>When it runs</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>How often the check opens, and in which time zone those times are read.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>Who picks it up</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>Who is responsible for the check, and how long they have once it opens.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>Shown on the due list, so make it recognisable at a glance.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>How long the crew has to finish the check once it opens. After that it counts as missed.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>Automatic routing sends the check to whoever holds the target. Pick a person, role, group or unit to override that.</value></data>
 </root>

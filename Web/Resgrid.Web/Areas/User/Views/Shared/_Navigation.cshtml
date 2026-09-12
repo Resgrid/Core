@@ -81,15 +81,9 @@
 			}
 			@if (SettingsHelper.IsLogsEnabled() && recordsEnabled)
 			{
-				<li class="@Html.IsSelected(controller: "Records")">
-					<a asp-controller="Records" asp-action="Index" asp-route-area="User"><i class="fa fa-file"></i> <span class="nav-label" data-i18n="nav.records">@commonLocalizer["RecordsModule"]</span></a>
-				</li>
-				@if (await recordsAuthorization.HasPermissionAsync(ClaimsAuthorizationHelper.GetUserId(), ClaimsAuthorizationHelper.GetDepartmentId(), Resgrid.Model.PermissionTypes.ManageRecordLegalHold))
-				{
-					<li><a asp-controller="RecordLegalHolds" asp-action="Index" asp-route-area="User"><i class="fa fa-lock"></i> @commonLocalizer["RecordsLegalHoldsModule"]</a></li>
-				}
 				// RMS-5 prevention and investigation modules: each link only when its own flag is on (RMS plan section 4.3/4.4).
 				var navDepartmentId = ClaimsAuthorizationHelper.GetDepartmentId();
+				var legalHoldsOn = await recordsAuthorization.HasPermissionAsync(ClaimsAuthorizationHelper.GetUserId(), navDepartmentId, Resgrid.Model.PermissionTypes.ManageRecordLegalHold);
 				var preventionOccupancyOn = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionOccupancy, navDepartmentId);
 				var preventionInspectionsOn = preventionOccupancyOn && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionInspections, navDepartmentId);
 				var preventionHydrantsOn = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionHydrants, navDepartmentId);
@@ -97,34 +91,71 @@
 				var preventionCrrOn = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsPreventionCrr, navDepartmentId);
 				var investigationsOn = ClaimsAuthorizationHelper.CanViewRestrictedRecords() && await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsInvestigations, navDepartmentId);
 				var analyticsOn = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.RecordsAnalytics, navDepartmentId);
-				@if (preventionOccupancyOn)
-				{
-					<li class="@Html.IsSelected(controller: "RecordOccupancies")"><a asp-controller="RecordOccupancies" asp-action="Index" asp-route-area="User"><i class="fa fa-building-o"></i> @recordsLocalizer["Occupancies"]</a></li>
-				}
-				@if (preventionInspectionsOn)
-				{
-					<li class="@Html.IsSelected(controller: "RecordInspections")"><a asp-controller="RecordInspections" asp-action="Index" asp-route-area="User"><i class="fa fa-clipboard"></i> @recordsLocalizer["Inspections"]</a></li>
-				}
-				@if (preventionHydrantsOn)
-				{
-					<li class="@Html.IsSelected(controller: "RecordHydrants")"><a asp-controller="RecordHydrants" asp-action="Index" asp-route-area="User"><i class="fa fa-tint"></i> @recordsLocalizer["Hydrants"]</a></li>
-				}
-				@if (preventionPermitsOn)
-				{
-					<li class="@Html.IsSelected(controller: "RecordPermits")"><a asp-controller="RecordPermits" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text-o"></i> @recordsLocalizer["Permits"]</a></li>
-				}
-				@if (preventionCrrOn)
-				{
-					<li class="@Html.IsSelected(controller: "RecordCrr")"><a asp-controller="RecordCrr" asp-action="Index" asp-route-area="User"><i class="fa fa-bullhorn"></i> @recordsLocalizer["CrrActivities"]</a></li>
-				}
-				@if (investigationsOn)
-				{
-					<li class="@Html.IsSelected(controller: "RecordInvestigations")"><a asp-controller="RecordInvestigations" asp-action="Index" asp-route-area="User"><i class="fa fa-search"></i> @recordsLocalizer["Investigations"]</a></li>
-				}
-				@if (analyticsOn)
-				{
-					<li class="@Html.IsSelected(controller: "RecordsAnalytics")"><a asp-controller="RecordsAnalytics" asp-action="Index" asp-route-area="User"><i class="fa fa-bar-chart"></i> @recordsLocalizer["AnalyticsHeader"]</a></li>
-				}
+
+				// Records owns a lot of screens, so it is a collapsible group rather than a dozen
+				// top level entries. The group opens and highlights on any records page, including
+				// the ones reached from inside Records that have no link of their own.
+				var onRecordsPage = Html.IsController("Records", "RecordCrr", "RecordDefinitions", "RecordDeploymentConnectors",
+					"RecordDeployments", "RecordDocuments", "RecordEvidence", "RecordHydrants", "RecordInspections",
+					"RecordInvestigations", "RecordLegalHolds", "RecordOccupancies", "RecordPermits", "RecordSavedReports",
+					"RecordSubmissions", "RecordsAnalytics", "RecordsExportTemplates", "RecordsHealth", "RecordsInventory",
+					"RecordsQuality");
+
+				// The dashboard and the queue share the Records controller, so they are told apart by
+				// action. Drilling into a record (Details, Edit, New) keeps the queue highlighted.
+				var onRecordsDashboard = Html.IsController("Records")
+					&& string.Equals((string)ViewContext.RouteData.Values["action"], "Dashboard", StringComparison.OrdinalIgnoreCase);
+				var onRecordsQueue = Html.IsController("Records") && !onRecordsDashboard;
+
+				<li class="@(onRecordsPage ? "active mm-active" : null)">
+					<a href="#" aria-expanded="@(onRecordsPage ? "true" : "false")">
+						<i class="fa fa-file"></i>
+						<span class="nav-label" data-i18n="nav.records">@commonLocalizer["RecordsModule"]</span>
+						<span class="fa arrow"></span>
+					</a>
+					<ul class="nav nav-second-level">
+						<li class="@(onRecordsDashboard ? "active" : null)">
+							<a asp-controller="Records" asp-action="Dashboard" asp-route-area="User"><i class="fa fa-dashboard"></i> @recordsLocalizer["RecordsDashboard"]</a>
+						</li>
+						<li class="@(onRecordsQueue ? "active" : null)">
+							<a asp-controller="Records" asp-action="Index" asp-route-area="User"><i class="fa fa-list"></i> @commonLocalizer["RecordsAllModule"]</a>
+						</li>
+						@if (legalHoldsOn)
+						{
+							<li class="@Html.IsSelected(controller: "RecordLegalHolds")">
+								<a asp-controller="RecordLegalHolds" asp-action="Index" asp-route-area="User"><i class="fa fa-lock"></i> @commonLocalizer["RecordsLegalHoldsModule"]</a>
+							</li>
+						}
+						@if (preventionOccupancyOn)
+						{
+							<li class="@Html.IsSelected(controller: "RecordOccupancies")"><a asp-controller="RecordOccupancies" asp-action="Index" asp-route-area="User"><i class="fa fa-building-o"></i> @recordsLocalizer["Occupancies"]</a></li>
+						}
+						@if (preventionInspectionsOn)
+						{
+							<li class="@Html.IsSelected(controller: "RecordInspections")"><a asp-controller="RecordInspections" asp-action="Index" asp-route-area="User"><i class="fa fa-clipboard"></i> @recordsLocalizer["Inspections"]</a></li>
+						}
+						@if (preventionHydrantsOn)
+						{
+							<li class="@Html.IsSelected(controller: "RecordHydrants")"><a asp-controller="RecordHydrants" asp-action="Index" asp-route-area="User"><i class="fa fa-tint"></i> @recordsLocalizer["Hydrants"]</a></li>
+						}
+						@if (preventionPermitsOn)
+						{
+							<li class="@Html.IsSelected(controller: "RecordPermits")"><a asp-controller="RecordPermits" asp-action="Index" asp-route-area="User"><i class="fa fa-file-text-o"></i> @recordsLocalizer["Permits"]</a></li>
+						}
+						@if (preventionCrrOn)
+						{
+							<li class="@Html.IsSelected(controller: "RecordCrr")"><a asp-controller="RecordCrr" asp-action="Index" asp-route-area="User"><i class="fa fa-bullhorn"></i> @recordsLocalizer["CrrActivities"]</a></li>
+						}
+						@if (investigationsOn)
+						{
+							<li class="@Html.IsSelected(controller: "RecordInvestigations")"><a asp-controller="RecordInvestigations" asp-action="Index" asp-route-area="User"><i class="fa fa-search"></i> @recordsLocalizer["Investigations"]</a></li>
+						}
+						@if (analyticsOn)
+						{
+							<li class="@Html.IsSelected(controller: "RecordsAnalytics")"><a asp-controller="RecordsAnalytics" asp-action="Index" asp-route-area="User"><i class="fa fa-bar-chart"></i> @recordsLocalizer["AnalyticsHeader"]</a></li>
+						}
+					</ul>
+				</li>
 			}
 			else if (SettingsHelper.IsLogsEnabled())
 			{

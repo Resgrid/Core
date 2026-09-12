@@ -1,20 +1,49 @@
 @model Resgrid.Web.Areas.User.Models.Checklists.ChecklistEditView
 @using Newtonsoft.Json
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["EditChecklist"]; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-    <h2>@localizer["EditChecklist"]</h2><p>@localizer["DraftGuidance"]</p>
-    @await Html.PartialAsync("_Protection")
-    <div id="checklist-error" class="alert alert-danger" role="alert" hidden></div>
-    <form id="checklist-editor" class="checklist-form" asp-action="SaveDefinition" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="id" value="@Model.Id" /><input type="hidden" name="revision" value="@Model.Revision" /><input type="hidden" name="formJson" />
-        <div id="checklist-builder" data-assets-available="@Model.AssetsAvailable.ToString().ToLowerInvariant()"></div>
-        <button class="btn btn-primary" type="submit">@localizer["SaveDraft"]</button>
-        <a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
-    </form>
-    <script id="checklist-form-data" type="application/json">@Html.Raw(JsonConvert.SerializeObject(Model.Form, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
-</div></div></div>
+@*
+    The section and item builder is rendered by checklists.js into #checklist-builder, so this
+    view supplies the chrome and the form contract that script depends on.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["EditChecklist"];
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["EditChecklist"].Value;
+    ViewData["Subtitle"] = localizer["DraftGuidance"].Value;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["EditChecklist"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["DraftGuidance"]</div>
+            <div id="checklist-error" class="alert alert-danger" role="alert" hidden></div>
+
+            <form id="checklist-editor" class="checklist-form" asp-action="SaveDefinition" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <input type="hidden" name="revision" value="@Model.Revision" />
+                <input type="hidden" name="formJson" />
+                <div id="checklist-builder" data-assets-available="@Model.AssetsAvailable.ToString().ToLowerInvariant()"></div>
+                <div class="rgw-wizard-actions">
+                    <div class="rgw-wizard-spacer"></div>
+                    <a class="btn btn-white" asp-action="Index">@localizer["Close"]</a>
+                    <button class="btn btn-primary" type="submit">@localizer["SaveDraft"]</button>
+                </div>
+            </form>
+
+            <script id="checklist-form-data" type="application/json">@Html.Raw(JsonConvert.SerializeObject(Model.Form, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts {
     @await Html.PartialAsync("_ProtectionScripts")
     <script src="~/js/app/internal/checklists/checklists.js" asp-append-version="true"></script>

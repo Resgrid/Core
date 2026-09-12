@@ -28,7 +28,7 @@
 						<dt>@L["AnalyticsMembersTrained"]</dt><dd>@a.Training.MembersTrained</dd>
 						<dt>@L["AnalyticsHoursPerMember"]</dt><dd>@RmsAnalyticsDisplay.Number(a.Training.HoursPerMember)</dd>
 					</dl>
-					@await Html.PartialAsync("_AnalyticsCounts", a.Training.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "bar" }, { "ShowHours", true }, { "Take", 24 } })
+					@await Html.PartialAsync("_AnalyticsCounts", a.Training.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByMonth"].Value, ["Chart"] = "bar", ["ShowHours"] = true, ["Take"] = 24 })
 				</div></div>
 			</div>
 			<div class="col-md-6">
@@ -46,7 +46,7 @@
 							<dt>@L["AnalyticsCancelled"]</dt><dd>@i.Cancelled</dd>
 							<dt>@L["AnalyticsOpenNow"]</dt><dd>@i.OpenNow (@i.OverdueNow @L["Overdue"])</dd>
 						</dl>
-						@await Html.PartialAsync("_AnalyticsCounts", i.ByProgram, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByProgram"].Value } })
+						@await Html.PartialAsync("_AnalyticsCounts", i.ByProgram, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByProgram"].Value })
 					}
 				</div></div>
 				<div class="ibox"><div class="ibox-title"><h5>@L["Violations"]</h5></div><div class="ibox-content">
@@ -60,7 +60,7 @@
 							<dt>@L["AnalyticsDaysToCorrection"]</dt><dd>@RmsAnalyticsDisplay.Number(v.AverageDaysToCorrection)</dd>
 							<dt>@L["AnalyticsOpenNow"]</dt><dd>@v.OpenNow (@v.OverdueNow @L["Overdue"])</dd>
 						</dl>
-						@await Html.PartialAsync("_AnalyticsCounts", v.BySeverity, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsBySeverity"].Value } })
+						@await Html.PartialAsync("_AnalyticsCounts", v.BySeverity, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsBySeverity"].Value })
 					}
 				</div></div>
 			</div>
@@ -80,7 +80,7 @@
 							<dt>@L["AnalyticsActiveNow"]</dt><dd>@pm.ActiveNow</dd>
 							<dt>@L["AnalyticsDaysToIssue"]</dt><dd>@RmsAnalyticsDisplay.Number(pm.AverageDaysAppliedToIssued)</dd>
 						</dl>
-						@await Html.PartialAsync("_AnalyticsCounts", pm.ByType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByType"].Value } })
+						@await Html.PartialAsync("_AnalyticsCounts", pm.ByType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByType"].Value })
 					}
 				</div></div>
 			</div>
@@ -96,7 +96,7 @@
 							<dt>@L["AnalyticsTestedWithin12Months"]</dt><dd>@RmsAnalyticsDisplay.Percent(h.TestedWithin12MonthsPercent) (@h.TestedWithin12Months)</dd>
 							<dt>@L["AnalyticsFlowTests"]</dt><dd>@h.FlowTestsInWindow</dd>
 						</dl>
-						@await Html.PartialAsync("_AnalyticsCounts", h.ByFlowClass, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByFlowClass"].Value } })
+						@await Html.PartialAsync("_AnalyticsCounts", h.ByFlowClass, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByFlowClass"].Value })
 					}
 				</div></div>
 			</div>
@@ -113,10 +113,14 @@
 							<dt>@L["AnalyticsHazmat"]</dt><dd>@o.HazmatOnSite</dd>
 							<dt>@L["AnalyticsOpenViolations"]</dt><dd>@o.OpenViolations</dd>
 						</dl>
-						@await Html.PartialAsync("_AnalyticsCounts", o.ByType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByType"].Value } })
+						@await Html.PartialAsync("_AnalyticsCounts", o.ByType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByType"].Value })
 					}
 				</div></div>
 			</div>
 		</div>
 	}
 </div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

@@ -526,4 +526,137 @@
   <data name="WorkOrderPostingRequired" xml:space="preserve"><value>سجل هذه القطعة أو اعكسها من خلال أمر العمل المرتبط.</value></data>
   <data name="AssetSafetyHold" xml:space="preserve"><value>يمنع حظر سلامة الصيانة إعادة هذه المعدة إلى الخدمة.</value></data>
   <data name="ReadinessProRequired" xml:space="preserve"><value>يلزم Readiness Pro لأعمال الصيانة الجديدة.</value></data>
+  <data name="AdjustStock" xml:space="preserve"><value>تعديل المخزون</value></data>
+  <data name="Back" xml:space="preserve"><value>رجوع</value></data>
+  <data name="Category" xml:space="preserve"><value>الفئة</value></data>
+  <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Contents" xml:space="preserve"><value>المحتويات</value></data>
+  <data name="Continue" xml:space="preserve"><value>متابعة</value></data>
+  <data name="EditItem" xml:space="preserve"><value>تعديل الصنف</value></data>
+  <data name="Expires" xml:space="preserve"><value>تنتهي</value></data>
+  <data name="Filter" xml:space="preserve"><value>تصفية</value></data>
+  <data name="IssueEquipment" xml:space="preserve"><value>صرف معدات</value></data>
+  <data name="Item" xml:space="preserve"><value>الصنف</value></data>
+  <data name="NewCategory" xml:space="preserve"><value>فئة جديدة</value></data>
+  <data name="NewKit" xml:space="preserve"><value>طقم جديد</value></data>
+  <data name="NewLocation" xml:space="preserve"><value>موقع جديد</value></data>
+  <data name="NewLot" xml:space="preserve"><value>دفعة جديدة</value></data>
+  <data name="NewTransfer" xml:space="preserve"><value>نقل جديد</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>لا يوجد شيء هنا بعد. استخدم الأزرار أعلاه لإنشاء أول سجل.</value></data>
+  <data name="Outstanding" xml:space="preserve"><value>معلّق</value></data>
+  <data name="Quantity" xml:space="preserve"><value>الكمية</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>املأ الحقول المميزة قبل المتابعة.</value></data>
+  <data name="Review" xml:space="preserve"><value>مراجعة</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>راجع الإجابات أدناه ثم احفظ.</value></data>
+  <data name="Transaction" xml:space="preserve"><value>حركة</value></data>
+  <data name="Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="When" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="WorkspaceIntro" xml:space="preserve"><value>تتبّع ما تملكه إدارتك وأين يُحفظ ومن يحمله.</value></data>
+  <data name="M4PurchasingIntro" xml:space="preserve"><value>إدارة المورّدين وإنشاء أوامر الشراء ومعرفة قيمة مخزونك.</value></data>
+  <data name="M5OperationsIntro" xml:space="preserve"><value>نفّذ الجرد الفعلي وعالج التنبيهات واطبع تقارير المخزون.</value></data>
+  <data name="HelpOnHand" xml:space="preserve"><value>ما لديك الآن حسب الصنف والموقع. صفِّ حسب صنف أو مكان، ثم عدّل المخزون عند تغيّر الجرد.</value></data>
+  <data name="HelpItems" xml:space="preserve"><value>الأصناف هي مدخلات الفهرس وليست أشياء مادية. حدّد طريقة التتبّع قبل إضافة المخزون.</value></data>
+  <data name="HelpCategories" xml:space="preserve"><value>تجمّع الفئات الأصناف لتبقى القوائم والتقارير مقروءة. يمكن أن تندرج الفئة تحت فئة أعلى.</value></data>
+  <data name="HelpLocations" xml:space="preserve"><value>المواقع هي حيث يوجد المخزون: المحطات والمركبات والأفراد والحاويات أو رف داخل موقع آخر.</value></data>
+  <data name="HelpLots" xml:space="preserve"><value>الدفعة هي مجموعة من صنف واحد تشترك في رقم الدفعة وتاريخ الانتهاء والتكلفة.</value></data>
+  <data name="HelpAssets" xml:space="preserve"><value>الأصول هي معدات ذات أرقام تسلسلية فردية. لكل منها رقمه وحالته وسجله.</value></data>
+  <data name="HelpIssuances" xml:space="preserve"><value>معدات مصروفة حاليًا لشخص أو مركبة. سجّل الإرجاع عند عودتها.</value></data>
+  <data name="HelpKits" xml:space="preserve"><value>الطقم قائمة ثابتة من الأصناف تُصرف معًا، مثل بدلة الإطفاء أو حقيبة الإسعاف.</value></data>
+  <data name="HelpTransfers" xml:space="preserve"><value>انقل المخزون بين موقعين. يُسجَّل طرفا الحركة في السجل.</value></data>
+  <data name="HelpHistory" xml:space="preserve"><value>تُكتب كل حركة في سجل للإضافة فقط. صفِّ حسب الصنف أو الموقع لتدقيق تغيير.</value></data>
+  <data name="HelpAssetDetail" xml:space="preserve"><value>السجل الكامل لأصل واحد مع قوائم التحقق وأوامر العمل الخاصة به.</value></data>
+  <data name="HelpTransaction" xml:space="preserve"><value>قيد واحد في السجل معروض كما كُتب تمامًا.</value></data>
+  <data name="HelpUnitEquipment" xml:space="preserve"><value>كل ما هو مخصص حاليًا للمركبة المحددة.</value></data>
+  <data name="HelpPersonnelGear" xml:space="preserve"><value>كل ما هو مصروف حاليًا للشخص المحدد.</value></data>
+  <data name="HelpHolderLookup" xml:space="preserve"><value>ابحث عن كل ما بحوزة مركبة أو شخص.</value></data>
+  <data name="HelpLocationRename" xml:space="preserve"><value>يمكن تغيير الاسم فقط هنا. حُدِّد الموضع والنطاق عند الإنشاء.</value></data>
+  <data name="HelpAssetStatus" xml:space="preserve"><value>يؤدي تغيير الحالة إلى إنشاء قيد في السجل. استخدمه عند الإصلاح أو التلف أو الفقد أو الإحالة.</value></data>
+  <data name="HelpWitness" xml:space="preserve"><value>أدخل رقم الطلب الظاهر عند التسجيل ثم اشهد بما رأيت.</value></data>
+  <data name="M4HelpVendors" xml:space="preserve"><value>المورّدون الذين تشتري منهم. يرتبط كل منهم بجهة اتصال شركة وقد يحمل رقم حساب.</value></data>
+  <data name="M4HelpPurchaseOrders" xml:space="preserve"><value>أنشئ أمر شراء لدى مورّد ثم استلم عليه. يسجّل الاستلام المخزون ويثبّت التكلفة.</value></data>
+  <data name="M4HelpValuation" xml:space="preserve"><value>قيمة المخزون لديك بحسب التكلفة المسجّلة عند الاستلام.</value></data>
+  <data name="M5NoAlertsHelp" xml:space="preserve"><value>لا توجد تنبيهات مفتوحة. حدّث لإعادة فحص المستويات وتواريخ الانتهاء والإرجاعات المتأخرة.</value></data>
+  <data name="M5CountEnterHelp" xml:space="preserve"><value>أدخل ما جردته فعليًا لكل سطر. يتحدّث عمود الفرق بعد الحفظ.</value></data>
+  <data name="M5CountNameHelp" xml:space="preserve"><value>اسم يسهل التعرّف عليه لاحقًا، مثل «الجرد السنوي للمحطة 2».</value></data>
+  <data name="StepItemBasics" xml:space="preserve"><value>وصف الصنف</value></data>
+  <data name="StepItemTracking" xml:space="preserve"><value>طريقة التتبّع</value></data>
+  <data name="StepItemStock" xml:space="preserve"><value>مستويات المخزون والتكلفة</value></data>
+  <data name="StepLocationBasics" xml:space="preserve"><value>سمِّ الموقع</value></data>
+  <data name="StepLocationScope" xml:space="preserve"><value>أين يقع</value></data>
+  <data name="StepMovementWhat" xml:space="preserve"><value>ما الذي يتحرك</value></data>
+  <data name="StepMovementWhere" xml:space="preserve"><value>من وإلى</value></data>
+  <data name="StepMovementAmount" xml:space="preserve"><value>الكمية</value></data>
+  <data name="StepIssueWhat" xml:space="preserve"><value>ما الذي يُصرف</value></data>
+  <data name="StepIssueWho" xml:space="preserve"><value>من يستلمه</value></data>
+  <data name="StepIssueWhen" xml:space="preserve"><value>الإرجاع والملاحظات</value></data>
+  <data name="StepAssetItem" xml:space="preserve"><value>أي صنف</value></data>
+  <data name="StepAssetIdentity" xml:space="preserve"><value>الرقم التسلسلي والوسوم</value></data>
+  <data name="StepLotItem" xml:space="preserve"><value>أي صنف</value></data>
+  <data name="StepLotDetails" xml:space="preserve"><value>تفاصيل الدفعة</value></data>
+  <data name="StepKitBasics" xml:space="preserve"><value>سمِّ الطقم</value></data>
+  <data name="StepKitContents" xml:space="preserve"><value>محتويات الطقم</value></data>
+  <data name="M4StepOrderHeader" xml:space="preserve"><value>تفاصيل الطلب</value></data>
+  <data name="M4StepOrderLines" xml:space="preserve"><value>بنود الطلب</value></data>
+  <data name="M5StepCountBasics" xml:space="preserve"><value>سمِّ عملية الجرد</value></data>
+  <data name="M5StepCountScope" xml:space="preserve"><value>النطاق</value></data>
+  <data name="M5StepReportKind" xml:space="preserve"><value>اختر تقريرًا</value></data>
+  <data name="M5StepReportFilters" xml:space="preserve"><value>ضيّق النطاق</value></data>
+  <data name="HelpFieldAmount" xml:space="preserve"><value>كم وحدة، بوحدة قياس الصنف.</value></data>
+  <data name="HelpFieldAsset" xml:space="preserve"><value>للأصناف ذات الأرقام التسلسلية، اختر الوحدة المحدّدة.</value></data>
+  <data name="HelpFieldCategory" xml:space="preserve"><value>تجميع اختياري تستخدمه القوائم والتقارير.</value></data>
+  <data name="HelpFieldCode" xml:space="preserve"><value>رقم الصنف أو القطعة الخاص بك، إن وُجد.</value></data>
+  <data name="HelpFieldCountLocation" xml:space="preserve"><value>اتركه فارغًا لجرد كل شيء.</value></data>
+  <data name="HelpFieldCurrency" xml:space="preserve"><value>رمز عملة من ثلاثة أحرف، مثل USD أو EUR.</value></data>
+  <data name="HelpFieldDefaultLocation" xml:space="preserve"><value>يصل المخزون الجديد إلى هنا عند عدم اختيار موقع.</value></data>
+  <data name="HelpFieldExpectedReturn" xml:space="preserve"><value>تُعلَّم الإرجاعات المتأخرة في شاشة التنبيهات.</value></data>
+  <data name="HelpFieldExpiration" xml:space="preserve"><value>التاريخ الذي يصبح فيه المخزون غير صالح.</value></data>
+  <data name="HelpFieldFromLocation" xml:space="preserve"><value>من أين يخرج المخزون. اتركه فارغًا عند إدخال مخزون جديد.</value></data>
+  <data name="HelpFieldHolder" xml:space="preserve"><value>اختر شخصًا أو مركبة، وليس كليهما.</value></data>
+  <data name="HelpFieldIsActive" xml:space="preserve"><value>تبقى الأصناف غير النشطة في السجل لكن لا يمكن اختيارها لحركات جديدة.</value></data>
+  <data name="HelpFieldIsControlledSubstance" xml:space="preserve"><value>تتطلب الحركات شاهدًا ثانيًا وتُحفظ للتدقيق.</value></data>
+  <data name="HelpFieldIsKit" xml:space="preserve"><value>حدّده كحاوية طقم بدلاً من صنف يُخزّن بمفرده.</value></data>
+  <data name="HelpFieldLocationType" xml:space="preserve"><value>محطة أو مركبة أو شخص أو حاوية أو موقع فرعي داخل موقع آخر.</value></data>
+  <data name="HelpFieldLot" xml:space="preserve"><value>اختر الدفعة التي جاء منها المخزون إذا كان الصنف يُتتبَّع بالدفعات.</value></data>
+  <data name="HelpFieldMinimum" xml:space="preserve"><value>أطلق تنبيهًا عند انخفاض الرصيد عن هذا الحد.</value></data>
+  <data name="HelpFieldNote" xml:space="preserve"><value>سبب حدوث ذلك. تظهر الملاحظات في السجل والتقارير.</value></data>
+  <data name="HelpFieldParent" xml:space="preserve"><value>اختياري. أدرج هذا السجل ضمن سجل آخر.</value></data>
+  <data name="HelpFieldReorderPoint" xml:space="preserve"><value>اقترح إعادة الطلب عند بلوغ الرصيد هذا الحد.</value></data>
+  <data name="HelpFieldReportRange" xml:space="preserve"><value>تتجاهل تقارير اللقطة نطاق التاريخ.</value></data>
+  <data name="HelpFieldRequiresExpiration" xml:space="preserve"><value>اشترط تاريخ انتهاء ليظهر الصنف في تنبيهات الانتهاء.</value></data>
+  <data name="HelpFieldRequiresLotTracking" xml:space="preserve"><value>اشترط رقم دفعة عند كل استلام لهذا الصنف.</value></data>
+  <data name="HelpFieldReturnCondition" xml:space="preserve"><value>الحالة التي عادت بها المعدات.</value></data>
+  <data name="HelpFieldSerialNumber" xml:space="preserve"><value>الرقم التسلسلي للمصنّع. يجب أن يكون فريدًا لهذا الصنف.</value></data>
+  <data name="HelpFieldToLocation" xml:space="preserve"><value>إلى أين يذهب المخزون. اتركه فارغًا عند الاستهلاك أو الشطب.</value></data>
+  <data name="HelpFieldTrackingMode" xml:space="preserve"><value>السائب يحصي كمية. أما التسلسلي فيتتبّع كل وحدة على حدة برقمها وسجلها.</value></data>
+  <data name="HelpFieldUnitCost" xml:space="preserve"><value>تكلفة الوحدة الواحدة، تُستخدم للتقييم.</value></data>
+  <data name="HelpFieldUnitOfMeasure" xml:space="preserve"><value>كيف تُحصيه: قطعة، صندوق، لتر، متر.</value></data>
+  <data name="M4AccountNumberHelp" xml:space="preserve"><value>رقم الحساب الذي يعرفك به هذا المورّد.</value></data>
+  <data name="M4CompanyContactHelp" xml:space="preserve"><value>اختر جهة اتصال الشركة التي ينتمي إليها هذا المورّد.</value></data>
+  <data name="M4NewVendorHint" xml:space="preserve"><value>المورّد هو جهة اتصال شركة تشتري منها. أضف جهة الاتصال أولًا إن لم تكن موجودة.</value></data>
+  <data name="M4PurchaseOrderNumberHelp" xml:space="preserve"><value>مرجعك لهذا الطلب. يظهر في السجل عند استلام المخزون.</value></data>
+  <data name="M4StepOrderHeaderHint" xml:space="preserve"><value>ممّن تشتري، وبأي مرجع، وبأي عملة.</value></data>
+  <data name="M4StepOrderLinesHint" xml:space="preserve"><value>سطر لكل صنف. الكميات والتكاليف هنا هي أساس الاستلام.</value></data>
+  <data name="M5StepCountBasicsHint" xml:space="preserve"><value>يثبّت الجرد لقطة من مخزونك لمقارنتها بما على الرف.</value></data>
+  <data name="M5StepCountScopeHint" xml:space="preserve"><value>اجرد موقعًا واحدًا، أو اتركه فارغًا لجرد الإدارة كلها.</value></data>
+  <data name="M5StepReportKindHint" xml:space="preserve"><value>يحدّد التقرير أي المرشّحات في الخطوة التالية تنطبق.</value></data>
+  <data name="M5StepReportFiltersHint" xml:space="preserve"><value>اترك المرشّح فارغًا لتضمين كل شيء. المرشّحات غير المتاحة تظهر معطّلة.</value></data>
+  <data name="StepAssetItemHint" xml:space="preserve"><value>الأصل هو وحدة مادية من صنف. حدّد الصنف ومكان وجوده.</value></data>
+  <data name="StepAssetIdentityHint" xml:space="preserve"><value>كيف تُعرَّف هذه الوحدة عند أخذها أو مسحها ضوئيًا.</value></data>
+  <data name="StepIssueWhatHint" xml:space="preserve"><value>اختر الصنف والمكان الذي يخرج منه.</value></data>
+  <data name="StepIssueWhenHint" xml:space="preserve"><value>متى تتوقع إعادته، وما يستحق التسجيل عن التسليم.</value></data>
+  <data name="StepItemBasicsHint" xml:space="preserve"><value>ما سيراه الناس عند البحث عنه في قائمة.</value></data>
+  <data name="StepItemTrackingHint" xml:space="preserve"><value>تحدّد هذه الإجابات ما سيطلبه النظام لاحقًا، ويصعب تغييرها بعد وجود مخزون.</value></data>
+  <data name="StepItemStockHint" xml:space="preserve"><value>حدود اختيارية تُطلق تنبيهات نقص المخزون، إضافةً إلى التكلفة المستخدمة في التقييم.</value></data>
+  <data name="StepKitBasicsHint" xml:space="preserve"><value>تُصرف الأطقم كوحدة واحدة، فامنحه اسمًا يعرفه أفرادك.</value></data>
+  <data name="StepKitContentsHint" xml:space="preserve"><value>اذكر كل صنف يحتويه الطقم وكميته.</value></data>
+  <data name="StepKitIssueHint" xml:space="preserve"><value>أكّد أي وحدة مادية ومن أي رف يأتي كل جزء من الطقم.</value></data>
+  <data name="StepLocationBasicsHint" xml:space="preserve"><value>يظهر الاسم في كل قائمة تسأل عن مكان الشيء.</value></data>
+  <data name="StepLocationScopeHint" xml:space="preserve"><value>املأ الحقل المطابق للنوع الذي اخترته فقط، واترك البقية فارغة.</value></data>
+  <data name="StepLotDetailsHint" xml:space="preserve"><value>رقم الدفعة كما هو مطبوع على العبوة، مع تكلفتها وتاريخ انتهائها.</value></data>
+  <data name="StepLotItemHint" xml:space="preserve"><value>تنتمي الدفعات دائمًا إلى صنف واحد، فاختره أولًا.</value></data>
+  <data name="StepMovementWhatHint" xml:space="preserve"><value>يحدّد نوع الحركة أي الحقول أدناه سيستخدمها النظام.</value></data>
+  <data name="StepMovementWhereHint" xml:space="preserve"><value>الاستلام يحتاج وجهة فقط؛ والاستهلاك أو الشطب يحتاج مصدرًا فقط.</value></data>
+  <data name="StepMovementAmountHint" xml:space="preserve"><value>الكمية والسبب. كلاهما يُدرج في القيد الذي يُنشأ.</value></data>
+  <data name="StepReturnHint" xml:space="preserve"><value>حدّد الكمية المُعادة، وإلى أين ذهبت، وحالتها.</value></data>
+  <data name="Inactive" xml:space="preserve"><value>غير نشط</value></data>
 </root>

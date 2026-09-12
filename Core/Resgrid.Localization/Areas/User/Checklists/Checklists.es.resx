@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>No se pudieron reconstruir algunos estados históricos de las órdenes. El paquete no garantiza una cobertura completa del mantenimiento.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Las pruebas de las órdenes se limitan al ámbito autorizado actual del lector.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>Debe desbloquear los datos protegidos para continuar.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>Cree las comprobaciones que realiza su personal, prográmelas y vea qué se hizo.</value></data>
+  <data name="Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="Continue" xml:space="preserve"><value>Continuar</value></data>
+  <data name="Review" xml:space="preserve"><value>Revisar</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Revise las respuestas de abajo y guarde.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Complete los campos resaltados antes de continuar.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Aquí todavía no hay nada. Use los botones de arriba para crear el primero.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>Una lista de comprobación es el conjunto de preguntas que responde el personal. Publíquela antes de programarla o ejecutarla.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>Elija sobre qué se realiza esta ejecución.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>Las comprobaciones excusadas quedan registradas con el motivo que indique aquí.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>Retirarla impide nuevas ejecuciones y comprobaciones programadas futuras. El historial existente se conserva.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>Las comprobaciones se seleccionan por su hora de inicio, no por cuándo se completaron.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>El aviso para el que se prepara el paquete.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>Nombre la programación</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>Cómo se llama esta programación y sobre qué se ejecuta.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>Cuándo se ejecuta</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>Con qué frecuencia se abre la comprobación y en qué zona horaria se leen esas horas.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>Quién la asume</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>Quién es responsable de la comprobación y cuánto tiempo tiene desde que se abre.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>Aparece en la lista de pendientes, así que hágalo reconocible de un vistazo.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Cuánto tiempo tiene el personal para terminar la comprobación desde que se abre. Después cuenta como perdida.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>El enrutamiento automático envía la comprobación a quien tenga el objetivo. Elija persona, rol, grupo o unidad para anularlo.</value></data>
 </root>

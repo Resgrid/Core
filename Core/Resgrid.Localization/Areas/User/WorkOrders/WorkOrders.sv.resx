@@ -376,4 +376,25 @@
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Reglerna för arbetsorder ändrade</value></data>
 <data name="ResponseDueOn" xml:space="preserve"><value>Sista svarstid (UTC)</value></data>
 <data name="RepairDueOn" xml:space="preserve"><value>Sista reparationstid (UTC)</value></data>
+  <data name="WorkOrdersIntro" xml:space="preserve"><value>Skapa reparationer, följ vem som utför dem och se vad underhållet kostat.</value></data>
+  <data name="Close" xml:space="preserve"><value>Stäng</value></data>
+  <data name="Continue" xml:space="preserve"><value>Fortsätt</value></data>
+  <data name="Review" xml:space="preserve"><value>Granska</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Kontrollera uppgifterna nedan och spara sedan.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Fyll i de markerade fälten innan du fortsätter.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Inget här ännu. Använd knapparna ovan för att skapa den första.</value></data>
+  <data name="HelpWorkOrders" xml:space="preserve"><value>En arbetsorder är en reparation eller inspektion, från begäran till verifierad åtgärd.</value></data>
+  <data name="StepOrderDescribe" xml:space="preserve"><value>Beskriv arbetet</value></data>
+  <data name="StepOrderDescribeHint" xml:space="preserve"><value>Vad som behöver göras, hur brådskande det är och när det behövs.</value></data>
+  <data name="StepOrderTarget" xml:space="preserve"><value>Vad det gäller</value></data>
+  <data name="StepOrderTargetHint" xml:space="preserve"><value>Fordonet, stationen eller tillgången arbetet gäller, och var den finns.</value></data>
+  <data name="StepOrderCost" xml:space="preserve"><value>Kostnad och leverantör</value></data>
+  <data name="StepOrderCostHint" xml:space="preserve"><value>Vad arbetet väntas kosta, vilken budget det belastar och vem som utför det.</value></data>
+  <data name="StepOrderSafety" xml:space="preserve"><value>Säkerhet och rutin</value></data>
+  <data name="StepOrderSafetyHint" xml:space="preserve"><value>De tillstånd, frånskiljningar och kvalifikationer arbetet kräver, och stegen att följa.</value></data>
+  <data name="StepRecurrenceScheduleHint" xml:space="preserve"><value>Hur ofta arbetet återkommer och inom vilket fönster besättningarna kan utföra det.</value></data>
+  <data name="StepRecurrenceUsageHint" xml:space="preserve"><value>Valfria mätar- eller tillståndsutlösare som tidigarelägger arbetet när användningen kräver.</value></data>
+  <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Vem den skapade arbetsordern går till, och vem den eskaleras till om ingen tar den.</value></data>
+  <data name="HelpFieldDueOn" xml:space="preserve"><value>Styr förseningsmarkeringen och servicenivåklockan.</value></data>
+  <data name="HelpFieldSteps" xml:space="preserve"><value>Stegen teknikern arbetar igenom. Vissa statusbyten kräver att alla är klara.</value></data>
 </root>

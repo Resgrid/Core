@@ -695,7 +695,11 @@ AND NOT EXISTS (SELECT 1 FROM {Tbl("RmsRecordLegalHoldMembers")} m WHERE m.{Col(
 
 		public override async Task<DomainEventOutboxEntry> InsertAsync(DomainEventOutboxEntry entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
 		{
-			if (entity?.ProducerSubsystem != DomainEventProducers.Records) return await base.InsertAsync(entity, cancellationToken, firstLevelOnly);
+			// The live-content guard only makes sense when AggregateId names a Record. Records-subsystem events about
+			// definitions, disclosures, export templates, inspections, permits or scope-only legal holds carry their own
+			// aggregate id, which has no row in the Record tables and must not be reported as "missing or purged".
+			if (entity?.ProducerSubsystem != DomainEventProducers.Records || !DomainEventProducers.IsRecordContentAggregate(entity.AggregateType))
+				return await base.InsertAsync(entity, cancellationToken, firstLevelOnly);
 			var owns = UnitOfWork.Transaction == null;
 			UnitOfWork.CreateOrGetConnection();
 			try

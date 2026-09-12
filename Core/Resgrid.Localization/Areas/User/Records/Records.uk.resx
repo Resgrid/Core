@@ -2104,4 +2104,9 @@
   <data name="FileClassificationHelp" xml:space="preserve"><value>Стосується також назв і описів файлів, а не лише самого файлу.</value></data>
   <data name="ClassificationRestricted" xml:space="preserve"><value>Обмежено</value></data>
   <data name="ClassificationUnrestricted" xml:space="preserve"><value>Необмежений оперативний вміст</value></data>
+  <data name="ReportsMenu" xml:space="preserve"><value>Звіти</value></data>
+  <data name="ManageMenu" xml:space="preserve"><value>Керування</value></data>
+  <data name="ExportListHeader" xml:space="preserve"><value>Експортувати цей список</value></data>
+  <data name="MoreMenu" xml:space="preserve"><value>Більше</value></data>
+  <data name="InventoryUsage" xml:space="preserve"><value>Використання запасів</value></data>
 </root>

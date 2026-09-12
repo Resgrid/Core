@@ -48,7 +48,7 @@
         {
             <div class="form-group">
                 <label asp-for="DueOn">@localizer["DueOn"] (UTC)</label>
-                <input asp-for="DueOn" class="form-control" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm:ss.fffffff}" step="any" readonly="@(Model.Revision > 0)" />
+                <input asp-for="DueOn" class="form-control" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm:ss.fffffff}" readonly="@(Model.Revision > 0)" />
                 <span class="help-block">@localizer["HelpFieldDueOn"]</span>
             </div>
         }

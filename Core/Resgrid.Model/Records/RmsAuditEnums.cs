@@ -50,5 +50,20 @@ namespace Resgrid.Model
 	{
 		public const string Records = "Records";
 		public const string RecordsAggregate = "RmsOperationalRecord";
+		public const string IncidentReportAggregate = "RmsIncidentReport";
+		public const string IncidentAnalysisAggregate = "RmsIncidentAnalysis";
+		public const string LegalHoldAggregate = "RmsRecordLegalHold";
+
+		/// <summary>
+		/// The aggregate types whose AggregateId is a Record (operational record, incident report or incident analysis).
+		/// Only these are subject to the live-content guard when an outbox row is written: the guard locks the
+		/// owning Record row and refuses to write against a missing or purged Record. Every other Records-subsystem
+		/// aggregate (definitions, disclosures, export templates, inspections, permits, scope-only legal holds …) is
+		/// keyed by its own id and must not be looked up in the Record tables.
+		/// </summary>
+		public static bool IsRecordContentAggregate(string aggregateType) =>
+			string.Equals(aggregateType, RecordsAggregate, System.StringComparison.OrdinalIgnoreCase) ||
+			string.Equals(aggregateType, IncidentReportAggregate, System.StringComparison.OrdinalIgnoreCase) ||
+			string.Equals(aggregateType, IncidentAnalysisAggregate, System.StringComparison.OrdinalIgnoreCase);
 	}
 }

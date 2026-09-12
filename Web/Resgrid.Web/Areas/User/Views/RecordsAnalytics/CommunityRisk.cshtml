@@ -12,11 +12,11 @@
 	{
 		<div class="ibox"><div class="ibox-title"><h5>@L["AnalyticsIncidents"]</h5><span class="text-muted pull-right">@L["AnalyticsIncidentReports"]: @r.Incidents.IncidentReports · @L["AnalyticsRunRecords"]: @r.Incidents.RunRecords</span></div><div class="ibox-content">
 			<div class="row">
-				<div class="col-md-4">@await Html.PartialAsync("_AnalyticsCounts", r.Incidents.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "line" }, { "Take", 24 } })</div>
-				<div class="col-md-4">@await Html.PartialAsync("_AnalyticsCounts", r.Incidents.ByHourOfDay.Where(c => c.Count > 0).ToList(), new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByHour"].Value }, { "Chart", "bar" }, { "Take", 24 } })</div>
+				<div class="col-md-4">@await Html.PartialAsync("_AnalyticsCounts", r.Incidents.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByMonth"].Value, ["Chart"] = "line", ["Take"] = 24 })</div>
+				<div class="col-md-4">@await Html.PartialAsync("_AnalyticsCounts", r.Incidents.ByHourOfDay.Where(c => c.Count > 0).ToList(), new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByHour"].Value, ["Chart"] = "bar", ["Take"] = 24 })</div>
 				<div class="col-md-4">
-					@await Html.PartialAsync("_AnalyticsCounts", r.Incidents.ByIncidentType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByIncidentType"].Value } })
-					@await Html.PartialAsync("_AnalyticsCounts", r.Incidents.ByCallType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByCallType"].Value } })
+					@await Html.PartialAsync("_AnalyticsCounts", r.Incidents.ByIncidentType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByIncidentType"].Value })
+					@await Html.PartialAsync("_AnalyticsCounts", r.Incidents.ByCallType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByCallType"].Value })
 				</div>
 			</div>
 		</div></div>
@@ -32,8 +32,8 @@
 							<dt>@L["SmokeAlarmsInstalled"]</dt><dd>@r.Crr.SmokeAlarmsInstalled</dd>
 							<dt>@L["AnalyticsHours"]</dt><dd>@RmsAnalyticsDisplay.Hours(r.Crr.Hours)</dd>
 						</dl>
-						@await Html.PartialAsync("_AnalyticsCounts", r.Crr.ByKind, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByKind"].Value }, { "Chart", "doughnut" }, { "ShowHours", true } })
-						@await Html.PartialAsync("_AnalyticsCounts", r.Crr.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "ShowHours", true }, { "Take", 24 } })
+						@await Html.PartialAsync("_AnalyticsCounts", r.Crr.ByKind, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByKind"].Value, ["Chart"] = "doughnut", ["ShowHours"] = true })
+						@await Html.PartialAsync("_AnalyticsCounts", r.Crr.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByMonth"].Value, ["ShowHours"] = true, ["Take"] = 24 })
 					}
 				</div></div>
 			</div>
@@ -52,8 +52,8 @@
 							<dt>@L["AnalyticsReviewOverdue"]</dt><dd>@o.ReviewOverdue</dd>
 							@if (r.InspectionsEnabled) { <dt>@L["AnalyticsOpenViolations"]</dt><dd>@o.OpenViolations</dd> }
 						</dl>
-						@await Html.PartialAsync("_AnalyticsCounts", o.ByType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByType"].Value }, { "Chart", "doughnut" } })
-						@if (r.InspectionsEnabled) { @await Html.PartialAsync("_AnalyticsCounts", o.ViolationsBySeverity, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsOpenViolations"].Value + " - " + L["AnalyticsBySeverity"].Value } }) }
+						@await Html.PartialAsync("_AnalyticsCounts", o.ByType, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByType"].Value, ["Chart"] = "doughnut" })
+						@if (r.InspectionsEnabled) { @await Html.PartialAsync("_AnalyticsCounts", o.ViolationsBySeverity, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsOpenViolations"].Value + " - " + L["AnalyticsBySeverity"].Value }) }
 					}
 				</div></div>
 			</div>
@@ -67,10 +67,14 @@
 							<dt>@L["OutOfService"]</dt><dd class="@(r.Hydrants.OutOfService > 0 ? "text-danger" : "")">@r.Hydrants.OutOfService</dd>
 							<dt>@L["AnalyticsTestedWithin12Months"]</dt><dd>@RmsAnalyticsDisplay.Percent(r.Hydrants.TestedWithin12MonthsPercent)</dd>
 						</dl>
-						@await Html.PartialAsync("_AnalyticsCounts", r.Hydrants.ByFlowClass, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByFlowClass"].Value }, { "Chart", "doughnut" } })
+						@await Html.PartialAsync("_AnalyticsCounts", r.Hydrants.ByFlowClass, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByFlowClass"].Value, ["Chart"] = "doughnut" })
 					}
 				</div></div>
 			</div>
 		</div>
 	}
 </div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

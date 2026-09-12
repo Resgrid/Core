@@ -60,6 +60,9 @@ namespace Resgrid.Tests.Rms
 
 		private long _outboxSeed;
 
+		/// <summary>Enable the outbox live-content guard of the real repository (off by default so existing harnesses are unaffected).</summary>
+		public bool LiveContentGuard { get; set; }
+
 		public FakeRmsStore()
 		{
 			UnitOfWork.Setup(u => u.CommitChanges()).Callback(() => Commits++);
@@ -185,9 +188,17 @@ namespace Resgrid.Tests.Rms
 			AuditsRepo.Setup(r => r.InsertAsync(It.IsAny<RmsAccessAudit>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((RmsAccessAudit e, CancellationToken c, bool f) => { Audits.Add(e); return e; });
 
-			// Outbox
+			// Outbox. When LiveContentGuard is on, the fake mirrors DomainEventOutboxRepository.InsertAsync: a Records event whose
+			// aggregate type names a Record must point at a live operational record in this store, exactly like the real
+			// repository locks the Record row and refuses a missing or purged one. Non-record aggregates pass straight through.
 			OutboxRepo.Setup(r => r.InsertAsync(It.IsAny<DomainEventOutboxEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.ReturnsAsync((DomainEventOutboxEntry e, CancellationToken c, bool f) => { e.DomainEventOutboxId = ++_outboxSeed; Outbox.Add(e); return e; });
+				.ReturnsAsync((DomainEventOutboxEntry e, CancellationToken c, bool f) =>
+				{
+					if (LiveContentGuard && e.ProducerSubsystem == DomainEventProducers.Records && DomainEventProducers.IsRecordContentAggregate(e.AggregateType)
+						&& !Records.Any(x => x.DepartmentId == e.DepartmentId && x.RmsOperationalRecordId == e.AggregateId && x.PurgedOn == null && x.DeletedOn == null))
+						throw new InvalidOperationException("Content cannot be written to a missing or purged RMS record.");
+					e.DomainEventOutboxId = ++_outboxSeed; Outbox.Add(e); return e;
+				});
 			OutboxRepo.Setup(r => r.GetNextSequenceAsync(It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, string a) => Outbox.Where(x => x.DepartmentId == d && x.AggregateId == a).Select(x => x.Sequence).DefaultIfEmpty(0).Max() + 1);
 			OutboxRepo.Setup(r => r.ClaimByIdAsync(It.IsAny<long>(), It.IsAny<string>(), It.IsAny<TimeSpan>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))

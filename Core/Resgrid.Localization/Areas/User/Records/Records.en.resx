@@ -2104,4 +2104,9 @@
   <data name="FileClassificationHelp" xml:space="preserve"><value>Applies to the file names and descriptions as well as the file itself.</value></data>
   <data name="ClassificationRestricted" xml:space="preserve"><value>Restricted</value></data>
   <data name="ClassificationUnrestricted" xml:space="preserve"><value>Unrestricted operational content</value></data>
+  <data name="ReportsMenu" xml:space="preserve"><value>Reports</value></data>
+  <data name="ManageMenu" xml:space="preserve"><value>Manage</value></data>
+  <data name="ExportListHeader" xml:space="preserve"><value>Export this list</value></data>
+  <data name="MoreMenu" xml:space="preserve"><value>More</value></data>
+  <data name="InventoryUsage" xml:space="preserve"><value>Inventory usage</value></data>
 </root>

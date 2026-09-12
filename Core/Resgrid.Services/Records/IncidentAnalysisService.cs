@@ -26,7 +26,7 @@ namespace Resgrid.Services.Records
 	/// </summary>
 	public class IncidentAnalysisService : IIncidentAnalysisService
 	{
-		public const string AnalysisAggregate = "RmsIncidentAnalysis";
+		public const string AnalysisAggregate = DomainEventProducers.IncidentAnalysisAggregate;
 
 		private readonly IRmsIncidentAnalysesRepository _analyses;
 		private readonly IRmsIncidentReportsRepository _reports;

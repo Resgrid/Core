@@ -44,6 +44,12 @@
 /* Each module button in the page heading is its own POST form, which is block level. */
 .rgw-modules form { display: inline-block; margin-left: 5px; }
 
+/* The theme restates `.dropdown-menu { left: 0 }` after Bootstrap, which undoes
+   `.dropdown-menu-right`; a menu opened from the right edge of the heading would hang
+   off the page. Restated here at higher specificity for the heading only. */
+.top-page-buttons .dropdown-menu-right { left: auto; right: 0; }
+.top-page-buttons .dropdown-menu > li > a { white-space: nowrap; }
+
 /* -- Toolbar above a list ------------------------------------------------
    A row of actions, some of which are POST forms and so cannot sit in a btn-group. */
 .rgw-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 15px 0; }
@@ -136,6 +142,45 @@
 /* -- Modals --------------------------------------------------------------- */
 .rgw-modal .rgw-modal-message { display: none; }
 .rgw-modal .rgw-modal-message.rgw-visible { display: block; }
+
+/* -- Checklist builder ----------------------------------------------------
+   Sections and items are panels so the "Section 1" / "Item 1" caption sits inside
+   the block's own header bar rather than straddling a fieldset border. */
+.rgw-builder-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rgw-builder-heading .rgw-builder-title { flex: 1 1 auto; font-weight: 600; }
+.rgw-builder-heading .rgw-builder-actions { flex: 0 0 auto; white-space: nowrap; }
+.rgw-builder-heading .rgw-builder-actions .btn + .btn { margin-left: 4px; }
+
+.rgw-builder-section > .panel-heading { background: #f3f3f4; }
+.rgw-builder-item { background: #fcfcfd; }
+.rgw-builder-item > .panel-heading { background: #ffffff; }
+
+/* Builder labels are long enough to wrap, which would otherwise leave the controls in a
+   row sitting at different heights. Bottom aligning the cells lines the controls up. */
+.rgw-builder-item > .panel-body > .rgw-grid { align-items: end; }
+
+/* Toggles read as one block of choices rather than a column of lone checkboxes. */
+.rgw-builder-toggles { display: flex; flex-wrap: wrap; gap: 2px 24px; margin-bottom: 15px; }
+.rgw-builder-toggles .form-group { margin-bottom: 0; }
+.rgw-builder-toggles .checkbox { margin-top: 4px; margin-bottom: 4px; }
+
+/* -- Records analytics ----------------------------------------------------
+   The KPI tile, weekday/hour heat map and fixed height chart box used by the
+   records analytics screens. The heat-N class is chosen server side by
+   RmsAnalyticsDisplay.Heat, so these names are a contract with that helper. */
+.rms-kpi { text-align: center; padding: 10px 4px; }
+.rms-kpi .value { font-size: 26px; font-weight: 600; }
+.rms-kpi .label { color: #888; font-size: 12px; text-transform: uppercase; }
+
+.rms-heat { border-collapse: collapse; width: 100%; font-size: 10px; }
+.rms-heat td, .rms-heat th { border: 1px solid #eee; padding: 2px; text-align: center; width: 3.7%; }
+.rms-heat .heat-0 { background: #ffffff; color: #cccccc; }
+.rms-heat .heat-1 { background: #d9f3ee; }
+.rms-heat .heat-2 { background: #a7e2d5; }
+.rms-heat .heat-3 { background: #5fc9b2; }
+.rms-heat .heat-4 { background: #1ab394; color: #ffffff; }
+
+.rms-chart { position: relative; height: 240px; }
 
 /* -- Pager ---------------------------------------------------------------- */
 .rgw-pager { margin-top: 15px; display: flex; gap: 8px; align-items: center; }

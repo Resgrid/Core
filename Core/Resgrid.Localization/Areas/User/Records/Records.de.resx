@@ -2104,4 +2104,9 @@
   <data name="FileClassificationHelp" xml:space="preserve"><value>Gilt auch für Dateinamen und Beschreibungen, nicht nur für die Datei selbst.</value></data>
   <data name="ClassificationRestricted" xml:space="preserve"><value>Eingeschränkt</value></data>
   <data name="ClassificationUnrestricted" xml:space="preserve"><value>Uneingeschränkter Einsatzinhalt</value></data>
+  <data name="ReportsMenu" xml:space="preserve"><value>Berichte</value></data>
+  <data name="ManageMenu" xml:space="preserve"><value>Verwalten</value></data>
+  <data name="ExportListHeader" xml:space="preserve"><value>Diese Liste exportieren</value></data>
+  <data name="MoreMenu" xml:space="preserve"><value>Mehr</value></data>
+  <data name="InventoryUsage" xml:space="preserve"><value>Bestandsverbrauch</value></data>
 </root>

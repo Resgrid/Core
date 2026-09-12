@@ -88,6 +88,8 @@ namespace Resgrid.Tests.Rms
 
 			var aggregator = new Mock<IEventAggregator>();
 			aggregator.Setup(a => a.SendMessage(It.IsAny<DomainEventDispatchedEvent>())).Callback<DomainEventDispatchedEvent>(e => Published.Add(e));
+			// Definition, record and report events all go through the same outbox as production, guard included.
+			Store.LiveContentGuard = true;
 			Outbox = new DomainEventOutboxService(Store.OutboxRepo.Object, aggregator.Object);
 
 			Templates = new RecordTemplatePacksService(Defs.PacksRepo.Object, Defs.ProfilesRepo.Object);

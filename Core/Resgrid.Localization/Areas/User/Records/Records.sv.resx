@@ -2104,4 +2104,9 @@
   <data name="FileClassificationHelp" xml:space="preserve"><value>Gäller även filnamn och beskrivningar, inte bara själva filen.</value></data>
   <data name="ClassificationRestricted" xml:space="preserve"><value>Begränsad</value></data>
   <data name="ClassificationUnrestricted" xml:space="preserve"><value>Obegränsat operativt innehåll</value></data>
+  <data name="ReportsMenu" xml:space="preserve"><value>Rapporter</value></data>
+  <data name="ManageMenu" xml:space="preserve"><value>Hantera</value></data>
+  <data name="ExportListHeader" xml:space="preserve"><value>Exportera den här listan</value></data>
+  <data name="MoreMenu" xml:space="preserve"><value>Mer</value></data>
+  <data name="InventoryUsage" xml:space="preserve"><value>Lagerförbrukning</value></data>
 </root>

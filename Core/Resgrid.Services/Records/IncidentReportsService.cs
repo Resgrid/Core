@@ -27,7 +27,7 @@ namespace Resgrid.Services.Records
 	public class IncidentReportsService : IIncidentReportsService
 	{
 		public const string AttestationStatementVersion = "1";
-		public const string IncidentAggregate = "RmsIncidentReport";
+		public const string IncidentAggregate = DomainEventProducers.IncidentReportAggregate;
 		public const string DispatchCommentFactPrefix = "dispatch.comment.";
 		public const string NumberPrefix = "INC";
 

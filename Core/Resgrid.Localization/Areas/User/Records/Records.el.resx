@@ -2104,4 +2104,9 @@
   <data name="FileClassificationHelp" xml:space="preserve"><value>Ισχύει και για τα ονόματα και τις περιγραφές αρχείων, όχι μόνο για το αρχείο.</value></data>
   <data name="ClassificationRestricted" xml:space="preserve"><value>Περιορισμένο</value></data>
   <data name="ClassificationUnrestricted" xml:space="preserve"><value>Απεριόριστο επιχειρησιακό περιεχόμενο</value></data>
+  <data name="ReportsMenu" xml:space="preserve"><value>Αναφορές</value></data>
+  <data name="ManageMenu" xml:space="preserve"><value>Διαχείριση</value></data>
+  <data name="ExportListHeader" xml:space="preserve"><value>Εξαγωγή αυτής της λίστας</value></data>
+  <data name="MoreMenu" xml:space="preserve"><value>Περισσότερα</value></data>
+  <data name="InventoryUsage" xml:space="preserve"><value>Χρήση αποθεμάτων</value></data>
 </root>

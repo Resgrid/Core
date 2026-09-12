@@ -61,11 +61,15 @@
 				</div></div>
 			</div>
 			<div class="col-md-4">
-				@await Html.PartialAsync("_AnalyticsCounts", s.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "line" }, { "Take", 24 } })
+				@await Html.PartialAsync("_AnalyticsCounts", s.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByMonth"].Value, ["Chart"] = "line", ["Take"] = 24 })
 			</div>
 			<div class="col-md-4">
-				@await Html.PartialAsync("_AnalyticsCounts", s.ByDefinition, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ByDefinition"].Value }, { "Chart", "doughnut" }, { "ShowHours", true } })
+				@await Html.PartialAsync("_AnalyticsCounts", s.ByDefinition, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["ByDefinition"].Value, ["Chart"] = "doughnut", ["ShowHours"] = true })
 			</div>
 		</div>
 	}
 </div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

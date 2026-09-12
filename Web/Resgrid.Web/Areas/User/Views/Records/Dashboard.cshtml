@@ -27,7 +27,15 @@
 	}
 	@if (!Model.ModuleState.RecordsUsable)
 	{
-		<div class="alert alert-warning">@localizer["RecordsNotActivated"]</div>
+		<div class="alert alert-warning">
+			@localizer["NotActivatedNotice"]
+			@if (Model.IsDepartmentAdmin && Model.ModuleState.FlagEnabled)
+			{
+				<div class="m-t-sm">
+					<a class="btn btn-warning" asp-controller="Records" asp-action="Activate" asp-route-area="User"><i class="fa fa-power-off"></i> @localizer["ActivateHeader"]</a>
+				</div>
+			}
+		</div>
 	}
 
 	@if (d != null)

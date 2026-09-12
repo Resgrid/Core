@@ -530,7 +530,7 @@ INSERT WorkflowRunLogs (WorkflowRunLogId,WorkflowRunId,RenderedOutput,ActionResu
 			var connections = Connections(); using var unit = new UnitOfWork(connections);
 			var events = new DomainEventOutboxRepository(connections, new SqlServerConfiguration(), unit, WriteQueries());
 			var dispatched = await events.InsertAsync(new DomainEventOutboxEntry { DepartmentId = 11, ProducerSubsystem = DomainEventProducers.Records,
-				EventId = Guid.NewGuid().ToString(), EventName = "test.analysis", AggregateType = "IncidentAnalysis", AggregateId = analysis, Sequence = 1,
+				EventId = Guid.NewGuid().ToString(), EventName = "test.analysis", AggregateType = DomainEventProducers.IncidentAnalysisAggregate, AggregateId = analysis, Sequence = 1,
 				SchemaVersion = 1, PayloadJson = "private outbox content", OccurredOn = old, CreatedOn = old }, CancellationToken.None, true);
 			await events.MarkDispatchedAsync(dispatched.DomainEventOutboxId, old);
 			foreach (var recordId in new[] { id, analysis })
@@ -663,6 +663,30 @@ INSERT RmsRecordAttachments (RmsRecordAttachmentId,DepartmentId,ProtectionId,Rec
 			await transaction.CommitAsync();
 			(await attempt).Held.Should().BeTrue();
 			(await holder.ExecuteScalarAsync<DateTime?>("SELECT PurgedOn FROM RmsOperationalRecords WHERE RmsOperationalRecordId=@Id", new { Id = id })).Should().BeNull();
+		}
+
+		[Test]
+		public async Task Outbox_live_content_guard_applies_only_to_record_aggregates()
+		{
+			// A definition publish/retire event (or any other Records-subsystem aggregate that is not a Record) is keyed by
+			// its own id; the guard must not look that id up in the Record tables and report it as missing or purged.
+			var connections = Connections(); using var unit = new UnitOfWork(connections);
+			var events = new DomainEventOutboxRepository(connections, new SqlServerConfiguration(), unit, WriteQueries());
+			DomainEventOutboxEntry Entry(string aggregateType, string aggregateId) => new DomainEventOutboxEntry
+			{
+				DepartmentId = 11, ProducerSubsystem = DomainEventProducers.Records, EventId = Guid.NewGuid().ToString(), EventName = "test.aggregate",
+				AggregateType = aggregateType, AggregateId = aggregateId, Sequence = 1, SchemaVersion = 1, PayloadJson = "{}", OccurredOn = DateTime.UtcNow, CreatedOn = DateTime.UtcNow
+			};
+			foreach (var aggregateType in new[] { "RmsRecordDefinition", "RmsDisclosureRequest", "RmsExportTemplate", "RmsInspection", "RmsPermit", DomainEventProducers.LegalHoldAggregate })
+			{
+				var stored = await events.InsertAsync(Entry(aggregateType, Guid.NewGuid().ToString()), CancellationToken.None, true);
+				stored.DomainEventOutboxId.Should().BeGreaterThan(0, aggregateType + " is not a Record and must not be guarded");
+			}
+			foreach (var aggregateType in new[] { DomainEventProducers.RecordsAggregate, DomainEventProducers.IncidentReportAggregate, DomainEventProducers.IncidentAnalysisAggregate })
+			{
+				Func<Task> missing = () => events.InsertAsync(Entry(aggregateType, Guid.NewGuid().ToString()), CancellationToken.None, true);
+				(await missing.Should().ThrowAsync<InvalidOperationException>(aggregateType + " names a Record that does not exist")).Which.Message.Should().Contain("missing or purged");
+			}
 		}
 	}
 }

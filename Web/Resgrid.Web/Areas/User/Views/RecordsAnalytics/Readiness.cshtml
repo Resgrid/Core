@@ -104,8 +104,8 @@
 							<div class="col-xs-3 rms-kpi"><div class="value">@RmsAnalyticsDisplay.Number(wo.MeanTimeToRepairHours)</div><div class="label">@L["ReadinessMttr"]</div><small class="text-muted">@wo.RepairSamples @L["ReadinessRepairSamples"] · @wo.MissingRepairTimes @L["ReadinessMissingRepairTimes"]</small></div>
 						</div>
 						<div class="row">
-							<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", wo.OpenByPriority, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ReadinessOpenByPriority"].Value }, { "Chart", "doughnut" } })</div>
-							<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", wo.OpenByAge, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ReadinessOpenByAge"].Value }, { "Chart", "bar" } })</div>
+							<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", wo.OpenByPriority, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["ReadinessOpenByPriority"].Value, ["Chart"] = "doughnut" })</div>
+							<div class="col-md-6">@await Html.PartialAsync("_AnalyticsCounts", wo.OpenByAge, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["ReadinessOpenByAge"].Value, ["Chart"] = "bar" })</div>
 						</div>
 						@if (wo.Costs.Count > 0)
 						{
@@ -141,7 +141,7 @@
 							<dt>@L["AnalyticsExpired"]</dt><dd class="@(eq.Expired > 0 ? "text-danger" : "")">@eq.Expired · @L["ReadinessExpiringSoon"] @eq.ExpiringWithin30Days</dd>
 							<dt>@L["ReadinessIssuancesOutstanding"]</dt><dd>@eq.IssuancesOutstanding · @L["ReadinessOverdueReturns"] <span class="@(eq.IssuancesOverdueReturn > 0 ? "text-danger" : "")">@eq.IssuancesOverdueReturn</span></dd>
 						</dl>
-						@await Html.PartialAsync("_AnalyticsCounts", eq.ByStatus, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ReadinessByStatus"].Value }, { "Chart", "doughnut" } })
+						@await Html.PartialAsync("_AnalyticsCounts", eq.ByStatus, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["ReadinessByStatus"].Value, ["Chart"] = "doughnut" })
 						@if (eq.ByUnit.Count > 0)
 						{
 							<h5>@L["ByUnit"]</h5>
@@ -160,9 +160,13 @@
 						<div class="col-xs-4 rms-kpi"><div class="value">@r.Evidence.RecordsWithPacket / @r.Evidence.CallLinkedRecords</div><div class="label">@L["ReadinessRecordsWithPacket"]</div></div>
 						<div class="col-xs-4 rms-kpi"><div class="value">@RmsAnalyticsDisplay.Percent(r.Evidence.CoveragePercent)</div><div class="label">@L["ReadinessCoverage"]</div></div>
 					</div>
-					@await Html.PartialAsync("_AnalyticsCounts", r.Evidence.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "bar" }, { "Take", 24 } })
+					@await Html.PartialAsync("_AnalyticsCounts", r.Evidence.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByMonth"].Value, ["Chart"] = "bar", ["Take"] = 24 })
 				</div></div>
 			</div>
 		</div>
 	}
 </div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

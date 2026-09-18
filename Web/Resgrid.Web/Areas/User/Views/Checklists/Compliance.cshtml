@@ -1,36 +1,169 @@
 @model Resgrid.Model.Checklists.ChecklistComplianceSummary
 @using Resgrid.Model.Checklists
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["ChecklistComplianceReport"]; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-<h2>@localizer["ChecklistComplianceReport"]</h2><p>@localizer["ComplianceMethod"]</p><p>@localizer["AuthorizedScope"]</p>
-@await Html.PartialAsync("_Protection")
-<form class="checklist-form" asp-action="Compliance" method="post">
-    @Html.AntiForgeryToken()
-    <label for="from">@localizer["ReportFrom"] (UTC)</label><input id="from" name="FromUtc" type="date" value="@Model.FromUtc.ToString("yyyy-MM-dd")" required />
-    <label for="until">@localizer["ReportUntil"] (UTC)</label><input id="until" name="UntilUtc" type="date" value="@Model.UntilUtc.ToString("yyyy-MM-dd")" required />
-    <label for="target-type">@localizer["TargetType"]</label><select id="target-type" name="TargetType"><option value="">@localizer["AllTargets"]</option>
-    @foreach (var type in Enum.GetValues<ChecklistTargetType>()) { <option value="@((int)type)" selected="@(Model.TargetType == type)">@localizer[type.ToString()]</option> }
-    </select>
-    <button class="btn btn-primary" type="submit">@localizer["RefreshReport"]</button>
-    <button class="btn btn-default" type="submit" formaction="@Url.Action("ComplianceCsv")">@localizer["ExportCsv"]</button>
-    <button class="btn btn-default" type="submit" formaction="@Url.Action("ChecklistComplianceReport", "Reports")">@localizer["PrintReport"]</button>
-</form>
-@if (!Model.IsRedacted)
-{
-    <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Target"]</th><th>@localizer["TargetType"]</th><th>@localizer["ExpectedChecks"]</th><th>@localizer["CompletedChecks"]</th><th>@localizer["OnTimeChecks"]</th><th>@localizer["MissedChecks"]</th><th>@localizer["ExcusedChecks"]</th><th>@localizer["CompletionRate"]</th></tr></thead><tbody>
-    @foreach (var group in Model.Groups)
-    { <tr><td>@group.Target.Name</td><td>@localizer[group.Target.Type.ToString()]</td><td>@group.Expected</td><td>@group.Completed</td><td>@group.OnTime</td><td>@group.Missed</td><td>@group.Skipped</td><td>@(group.CompletionRate.HasValue ? group.CompletionRate.Value.ToString("0.##") + "%" : "—")</td></tr> }
-    </tbody></table></div>
-    <h3>@localizer["MissedTrend"]</h3>
-    <table class="table"><thead><tr><th>@localizer["Date"] (UTC)</th><th>@localizer["ExpectedChecks"]</th><th>@localizer["MissedChecks"]</th></tr></thead><tbody>
-    @foreach (var day in Model.Trend) { <tr><td>@day.DayUtc.ToString("yyyy-MM-dd")</td><td>@day.Expected</td><td><progress max="@day.Expected" value="@day.Missed" aria-label="@localizer["MissedChecks"]"></progress> @day.Missed</td></tr> }
-    </tbody></table>
-    @foreach (var source in Model.UnavailableSources) { <p>@localizer[source]</p> }
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ChecklistComplianceReport"];
+    ViewData["Tab"] = "Compliance";
+    ViewData["Title"] = localizer["ChecklistComplianceReport"].Value;
+    ViewData["Subtitle"] = localizer["AuthorizedScope"].Value;
+
+    var expected = Model.Groups.Sum(x => x.Expected);
+    var completed = Model.Groups.Sum(x => x.Completed);
+    var missed = Model.Groups.Sum(x => x.Missed);
+    var onTime = Model.Groups.Sum(x => x.OnTime);
 }
-<p>@localizer["ScheduledReportProtected"]</p>
-<a class="btn btn-default" asp-controller="Profile" asp-action="AddNewScheduledReport">@localizer["ScheduleReport"]</a>
-<a class="btn btn-default" asp-action="ReadinessPacket">@localizer["ReadinessPacketReport"]</a>
-<a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
-</div></div></div>
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["ChecklistComplianceReport"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["ComplianceMethod"]</div>
+
+            <div class="rgw-filter">
+                <form class="checklist-form" asp-action="Compliance" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="from">@localizer["ReportFrom"] (UTC)</label>
+                            <input class="form-control" id="from" name="FromUtc" type="date" value="@Model.FromUtc.ToString("yyyy-MM-dd")" required />
+                            <span class="help-block">@localizer["ReportRangeHint"]</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="until">@localizer["ReportUntil"] (UTC)</label>
+                            <input class="form-control" id="until" name="UntilUtc" type="date" value="@Model.UntilUtc.ToString("yyyy-MM-dd")" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="target-type">@localizer["TargetType"]</label>
+                            <select class="form-control" id="target-type" name="TargetType">
+                                <option value="">@localizer["AllTargets"]</option>
+                                @foreach (var type in Enum.GetValues<ChecklistTargetType>())
+                                {
+                                    <option value="@((int)type)" selected="@(Model.TargetType == type)">@localizer[type.ToString()]</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="rgw-filter-actions">
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-filter"></i> @localizer["RefreshReport"]</button>
+                        <button class="btn btn-default" type="submit" formaction="@Url.Action("ComplianceCsv")"><i class="fa fa-download"></i> @localizer["ExportCsv"]</button>
+                        <button class="btn btn-default" type="submit" formaction="@Url.Action("ChecklistComplianceReport", "Reports")"><i class="fa fa-print"></i> @localizer["PrintReport"]</button>
+                    </div>
+                </form>
+            </div>
+
+            @if (!Model.IsRedacted)
+            {
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="ibox"><div class="ibox-title"><h5>@localizer["ExpectedChecks"]</h5></div>
+                            <div class="ibox-content"><h1 class="no-margins">@expected</h1></div></div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="ibox"><div class="ibox-title"><h5>@localizer["CompletedChecks"]</h5></div>
+                            <div class="ibox-content"><h1 class="no-margins">@completed</h1><small>@localizer["OnTimeChecks"]: @onTime</small></div></div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="ibox"><div class="ibox-title"><h5>@localizer["MissedChecks"]</h5></div>
+                            <div class="ibox-content"><h1 class="no-margins @(missed > 0 ? "text-danger" : string.Empty)">@missed</h1></div></div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="ibox"><div class="ibox-title"><h5>@localizer["CompletionRate"]</h5></div>
+                            <div class="ibox-content"><h1 class="no-margins">@(expected > 0 ? (100m * completed / expected).ToString("0.##") + "%" : "—")</h1></div></div>
+                    </div>
+                </div>
+
+                if (Model.Groups.Count == 0)
+                {
+                    <div class="text-center m-t-lg m-b-lg">
+                        <i class="fa fa-bar-chart fa-3x text-muted"></i>
+                        <h4 class="m-t-sm">@localizer["NoResults"]</h4>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["Target"]</th>
+                                    <th>@localizer["TargetType"]</th>
+                                    <th class="text-right">@localizer["ExpectedChecks"]</th>
+                                    <th class="text-right">@localizer["CompletedChecks"]</th>
+                                    <th class="text-right">@localizer["OnTimeChecks"]</th>
+                                    <th class="text-right">@localizer["MissedChecks"]</th>
+                                    <th class="text-right">@localizer["ExcusedChecks"]</th>
+                                    <th class="text-right">@localizer["CompletionRate"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var group in Model.Groups)
+                                {
+                                    <tr>
+                                        <td>@group.Target.Name</td>
+                                        <td>@localizer[group.Target.Type.ToString()]</td>
+                                        <td class="text-right">@group.Expected</td>
+                                        <td class="text-right">@group.Completed</td>
+                                        <td class="text-right">@group.OnTime</td>
+                                        <td class="text-right">
+                                            @if (group.Missed > 0)
+                                            {
+                                                <span class="label label-danger">@group.Missed</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-success">0</span>
+                                            }
+                                        </td>
+                                        <td class="text-right">@group.Skipped</td>
+                                        <td class="text-right">@(group.CompletionRate.HasValue ? group.CompletionRate.Value.ToString("0.##") + "%" : "—")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>@localizer["MissedTrend"]</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["Date"] (UTC)</th><th class="text-right">@localizer["ExpectedChecks"]</th><th>@localizer["MissedChecks"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var day in Model.Trend)
+                                {
+                                    <tr>
+                                        <td>@day.DayUtc.ToString("yyyy-MM-dd")</td>
+                                        <td class="text-right">@day.Expected</td>
+                                        <td><progress max="@day.Expected" value="@day.Missed" aria-label="@localizer["MissedChecks"]"></progress> @day.Missed</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                foreach (var source in Model.UnavailableSources)
+                {
+                    <div class="alert alert-warning">@localizer[source]</div>
+                }
+            }
+
+            <div class="hr-line-dashed"></div>
+            <p class="text-muted">@localizer["ScheduledReportProtected"]</p>
+            <div class="rgw-toolbar">
+                <a class="btn btn-default btn-sm" asp-action="Index"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
+                <div class="rgw-toolbar-spacer"></div>
+                <a class="btn btn-default" asp-action="ReadinessPacket"><i class="fa fa-file-pdf-o"></i> @localizer["ReadinessPacketReport"]</a>
+                <a class="btn btn-default" asp-controller="Profile" asp-action="AddNewScheduledReport"><i class="fa fa-clock-o"></i> @localizer["ScheduleReport"]</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

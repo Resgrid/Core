@@ -1,0 +1,191 @@
+/* Shared workspace chrome for the module screens that use it (inventory, checklists).
+   Everything the INSPINIA theme already provides is used as-is: ibox, nav-tabs, label,
+   alert, panel, btn and the text/spacing helpers. This file only adds the handful of
+   things the theme has no component for -- the step wizard, the field grid, and the
+   rules that make a POST form behave like a tab or an inline table action. */
+
+/* -- Tabs -----------------------------------------------------------------
+   Tab navigation has to POST, because under Advanced Data Protection the reveal grant
+   rides on the form (see inventory-modern.js). These rules give the submit button the
+   same box the theme gives `.nav-tabs > li > a`, so the strip is indistinguishable from
+   every other tab strip in the application. */
+.nav-tabs > li > form { margin: 0; }
+.nav-tabs > li > form > button {
+    position: relative;
+    display: block;
+    padding: 14px 20px;
+    margin-right: 2px;
+    line-height: 1.42857143;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+    color: #a7b1c2;
+    font-weight: 600;
+}
+.nav-tabs > li > form > button:hover,
+.nav-tabs > li > form > button:focus { border-color: #eee #eee #ddd; background-color: #eee; color: #a7b1c2; }
+.nav-tabs > li.active > form > button,
+.nav-tabs > li.active > form > button:hover,
+.nav-tabs > li.active > form > button:focus {
+    background: none;
+    border-color: #dddddd #dddddd transparent;
+    border-bottom: #f3f3f4;
+    border-style: solid;
+    border-width: 1px;
+    color: #555555;
+    cursor: default;
+}
+.nav-tabs > li > form > button i { margin-right: 6px; }
+
+/* The theme spaces tab content through .tabs-container; these screens put the panel
+   straight into the ibox, so the strip needs the gap itself. */
+.ibox-content > .nav-tabs { margin-bottom: 20px; }
+
+/* Each module button in the page heading is its own POST form, which is block level. */
+.rgw-modules form { display: inline-block; margin-left: 5px; }
+
+/* The theme restates `.dropdown-menu { left: 0 }` after Bootstrap, which undoes
+   `.dropdown-menu-right`; a menu opened from the right edge of the heading would hang
+   off the page. Restated here at higher specificity for the heading only. */
+.top-page-buttons .dropdown-menu-right { left: auto; right: 0; }
+.top-page-buttons .dropdown-menu > li > a { white-space: nowrap; }
+
+/* -- Toolbar above a list ------------------------------------------------
+   A row of actions, some of which are POST forms and so cannot sit in a btn-group. */
+.rgw-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 15px 0; }
+.rgw-toolbar .rgw-toolbar-spacer { flex: 1 1 auto; }
+.rgw-toolbar form { margin: 0; }
+
+/* -- Filter block --------------------------------------------------------- */
+.rgw-filter { border: 1px solid #e7eaec; border-radius: 3px; padding: 15px 20px 5px 20px; margin: 0 0 20px 0; background: #f3f3f4; }
+.rgw-filter .rgw-filter-actions { padding-bottom: 15px; }
+.rgw-filter .rgw-filter-split { border-top: 1px solid #e7eaec; padding-top: 15px; }
+
+/* A filter has only two or three fields; without a cap they stretch the whole page. */
+.rgw-filter .rgw-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 340px)); }
+.rgw-lookup { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 340px)); gap: 0 20px; }
+.rgw-lookup > form { min-width: 0; }
+
+/* -- Field grid -----------------------------------------------------------
+   Bootstrap's row/col grid cannot flow an unknown number of form groups into as many
+   columns as will fit, so the form groups themselves are laid out here. */
+.rgw-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0 20px; }
+.rgw-grid > .form-group { min-width: 0; margin-bottom: 15px; }
+.rgw-grid > .form-group.rgw-wide { grid-column: 1 / -1; }
+.rgw-grid .checkbox { margin-top: 0; }
+
+/* -- Step wizard ---------------------------------------------------------- */
+.rgw-wizard .rgw-steps {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 0 20px 0;
+    padding: 0 0 15px 0;
+    border-bottom: 1px solid #e7eaec;
+    gap: 6px 22px;
+}
+.rgw-wizard .rgw-steps li { display: flex; align-items: center; color: #a7b1c2; }
+.rgw-wizard .rgw-steps .rgw-step-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    border-radius: 50%;
+    border: 1px solid #e7eaec;
+    background: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+}
+.rgw-wizard .rgw-steps li.done { color: #676a6c; }
+.rgw-wizard .rgw-steps li.done .rgw-step-number { border-color: #1ab394; background: #1ab394; color: #ffffff; }
+.rgw-wizard .rgw-steps li.current { color: #1ab394; font-weight: 600; }
+.rgw-wizard .rgw-steps li.current .rgw-step-number { border-color: #1ab394; color: #1ab394; }
+
+.rgw-wizard .rgw-step[hidden] { display: none !important; }
+.rgw-wizard .rgw-invalid > .form-control { border-color: #ed5565; }
+.rgw-wizard .rgw-step-error { color: #ed5565; margin: 0 0 15px 0; }
+
+.rgw-wizard-actions {
+    padding-top: 15px;
+    border-top: 1px solid #e7eaec;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.rgw-wizard-actions .rgw-wizard-spacer { flex: 1 1 auto; }
+
+/* Review step: a definition list that reads as label / answer pairs. */
+.rgw-review { margin: 0; }
+.rgw-review .rgw-review-row { display: flex; padding: 7px 0; border-bottom: 1px solid #f0f2f3; }
+.rgw-review .rgw-review-row:last-child { border-bottom: 0; }
+.rgw-review dt { flex: 0 0 45%; padding-right: 12px; }
+.rgw-review dd { flex: 1 1 auto; margin: 0; word-break: break-word; }
+
+/* -- Tables ---------------------------------------------------------------
+   Row actions are POST forms, which are block level by default. */
+.rgw-table > tbody > tr > td { vertical-align: middle; }
+.rgw-table small.rgw-sub { display: block; }
+.rgw-table .rgw-row-actions { white-space: nowrap; }
+.rgw-table .rgw-row-actions form { display: inline-block; margin: 0; }
+.rgw-table .rgw-row-actions .btn + .btn,
+.rgw-table .rgw-row-actions form + form,
+.rgw-table .rgw-row-actions .btn + form,
+.rgw-table .rgw-row-actions form + .btn { margin-left: 5px; }
+.rgw-flow i { color: #a7b1c2; margin: 0 6px; }
+
+/* -- Repeating line rows (kit contents, order lines, receipts) ------------- */
+.rgw-line > .panel-body { padding-bottom: 0; }
+.rgw-line-actions { padding-bottom: 15px; }
+
+/* -- Modals --------------------------------------------------------------- */
+.rgw-modal .rgw-modal-message { display: none; }
+.rgw-modal .rgw-modal-message.rgw-visible { display: block; }
+
+/* -- Checklist builder ----------------------------------------------------
+   Sections and items are panels so the "Section 1" / "Item 1" caption sits inside
+   the block's own header bar rather than straddling a fieldset border. */
+.rgw-builder-heading { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.rgw-builder-heading .rgw-builder-title { flex: 1 1 auto; font-weight: 600; }
+.rgw-builder-heading .rgw-builder-actions { flex: 0 0 auto; white-space: nowrap; }
+.rgw-builder-heading .rgw-builder-actions .btn + .btn { margin-left: 4px; }
+
+.rgw-builder-section > .panel-heading { background: #f3f3f4; }
+.rgw-builder-item { background: #fcfcfd; }
+.rgw-builder-item > .panel-heading { background: #ffffff; }
+
+/* Builder labels are long enough to wrap, which would otherwise leave the controls in a
+   row sitting at different heights. Bottom aligning the cells lines the controls up. */
+.rgw-builder-item > .panel-body > .rgw-grid { align-items: end; }
+
+/* Toggles read as one block of choices rather than a column of lone checkboxes. */
+.rgw-builder-toggles { display: flex; flex-wrap: wrap; gap: 2px 24px; margin-bottom: 15px; }
+.rgw-builder-toggles .form-group { margin-bottom: 0; }
+.rgw-builder-toggles .checkbox { margin-top: 4px; margin-bottom: 4px; }
+
+/* -- Records analytics ----------------------------------------------------
+   The KPI tile, weekday/hour heat map and fixed height chart box used by the
+   records analytics screens. The heat-N class is chosen server side by
+   RmsAnalyticsDisplay.Heat, so these names are a contract with that helper. */
+.rms-kpi { text-align: center; padding: 10px 4px; }
+.rms-kpi .value { font-size: 26px; font-weight: 600; }
+.rms-kpi .label { color: #888; font-size: 12px; text-transform: uppercase; }
+
+.rms-heat { border-collapse: collapse; width: 100%; font-size: 10px; }
+.rms-heat td, .rms-heat th { border: 1px solid #eee; padding: 2px; text-align: center; width: 3.7%; }
+.rms-heat .heat-0 { background: #ffffff; color: #cccccc; }
+.rms-heat .heat-1 { background: #d9f3ee; }
+.rms-heat .heat-2 { background: #a7e2d5; }
+.rms-heat .heat-3 { background: #5fc9b2; }
+.rms-heat .heat-4 { background: #1ab394; color: #ffffff; }
+
+.rms-chart { position: relative; height: 240px; }
+
+/* -- Pager ---------------------------------------------------------------- */
+.rgw-pager { margin-top: 15px; display: flex; gap: 8px; align-items: center; }
+.rgw-pager form { margin: 0; }
+
+@media (max-width: 767px) {
+    .top-page-buttons { float: none; padding: 0 15px 10px 15px; }
+}

@@ -1,35 +1,210 @@
 @model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderDetailView
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
-@{ var d = Model.Detail; var id = d.Order.Id; }
-@if (d.SourceChecklistCompletionId != null) { <p><a asp-controller="Checklists" asp-action="Run" asp-route-id="@d.SourceChecklistCompletionId">@localizer["SourceChecklist"]</a></p> }
-@if (d.RecurrenceId != null) { <p><a asp-action="Recurrence" asp-route-id="@d.RecurrenceId">@localizer["PreventiveMaintenance"]</a></p> }
-@if (d.OriginalDueOn.HasValue) { <p>@localizer["OriginalDue"]: @d.OriginalDueOn.Value.ToString("u")</p> }
-<h3>@localizer["SafetyHolds"]</h3><p>@localizer["HoldReleaseHelp"]</p>
-<table class="table"><thead><tr><th>@localizer["Target"]</th><th>@localizer["Reason"]</th><th>@localizer["Status"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
-@foreach (var entry in Model.Holds) {
-    var h = entry.Hold;
-    <tr><td>@localizer[h.UnitId.HasValue ? "Unit" : "Asset"]: @(h.UnitId?.ToString() ?? h.AssetId)</td><td>@entry.Content.Reason</td>
-    <td>@localizer[h.ReleasedOn.HasValue ? "ActivitySafetyReleased" : "ActivitySafetyHold"] @if (h.ReleasedOn.HasValue) { <span>· @localizer[h.StateRestored ? "StateRestored" : "StatePreserved"]</span><p>@entry.Content.ReleaseEvidence</p><p>@entry.Content.Qualification</p> }</td>
-    <td>@if (!h.ReleasedOn.HasValue && Model.CanRelease) {
-        <form class="work-order-form work-order-command" asp-action="ReleaseHold" method="post">@Html.AntiForgeryToken()
-        <input type="hidden" name="id" value="@id"/><input type="hidden" name="holdId" value="@h.Id"/><input type="hidden" name="Revision" value="@h.Revision"/>
-        <label>@localizer["ReleaseEvidence"]<textarea name="Evidence" class="form-control" maxlength="4000" required></textarea></label>
-        <label>@localizer["ReleaseQualification"]<input name="Qualification" class="form-control" maxlength="2000" required/></label>
-        <label><input type="checkbox" name="RestoreState" value="true"/> @localizer["RestoreIfUnchanged"]</label>
-        <button type="submit" class="btn btn-warning">@localizer["ReleaseHold"]</button></form>
-    }</td></tr>
+@*
+    Safety holds, plus the two commands that change what a work order is holding: placing a
+    hold and deferring the due date. Both ask for a reason, so both open in a dialog.
+*@
+@{
+    var d = Model.Detail;
+    var id = d.Order.Id;
+    var isOpen = d.Order.Status is not (WorkOrderStatus.Closed or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate);
+    var canHold = d.CanManage && isOpen && (d.Order.UnitId.HasValue || d.Order.AssetId != null);
+    var canDefer = d.CanManage && isOpen && d.Order.Status != WorkOrderStatus.Completed;
 }
-</tbody></table>
-@if (d.CanManage && d.Order.Status is not (WorkOrderStatus.Closed or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate)) {
-@if (d.Order.UnitId.HasValue || d.Order.AssetId != null) {
-<form class="work-order-form work-order-command" asp-action="Hold" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
-@if (d.Order.UnitId.HasValue) { <label><input type="checkbox" name="Unit" value="true"/> @localizer["HoldUnit"]</label> }
-@if (d.Order.AssetId != null) { <label><input type="checkbox" name="Asset" value="true"/> @localizer["HoldAsset"]</label> }
-<label>@localizer["Reason"]<textarea name="Reason" class="form-control" maxlength="4000" required></textarea></label><button type="submit" class="btn btn-warning">@localizer["AddHold"]</button></form>
+
+@if (d.SourceChecklistCompletionId != null || d.RecurrenceId != null || d.OriginalDueOn.HasValue)
+{
+    <p class="text-muted">
+        @if (d.SourceChecklistCompletionId != null)
+        {
+            <a asp-controller="Checklists" asp-action="Run" asp-route-id="@d.SourceChecklistCompletionId">@localizer["SourceChecklist"]</a>
+        }
+        @if (d.RecurrenceId != null)
+        {
+            <a asp-action="Recurrence" asp-route-id="@d.RecurrenceId">@localizer["PreventiveMaintenance"]</a>
+        }
+        @if (d.OriginalDueOn.HasValue)
+        {
+            <span>@localizer["OriginalDue"]: @d.OriginalDueOn.Value.ToString("u")</span>
+        }
+    </p>
 }
-@if (d.Order.Status != WorkOrderStatus.Completed) {
-<form class="work-order-form work-order-command" asp-action="Defer" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
-<label>@localizer["RevisedDue"] (UTC)<input type="datetime-local" name="DueOn" class="form-control" required/></label><label>@localizer["DeferralReason"]<textarea name="Reason" class="form-control" maxlength="4000" required></textarea></label><button type="submit" class="btn btn-default">@localizer["ApproveDeferral"]</button></form>
+
+<div class="rgw-toolbar">
+    <h3 class="m-t-none m-b-none">@localizer["SafetyHolds"]</h3>
+    <div class="rgw-toolbar-spacer"></div>
+    @if (canHold)
+    {
+        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#work-order-hold"><i class="fa fa-hand-paper-o"></i> @localizer["AddHold"]</button>
+    }
+    @if (canDefer)
+    {
+        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#work-order-defer"><i class="fa fa-clock-o"></i> @localizer["ApproveDeferral"]</button>
+    }
+</div>
+
+<div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HoldReleaseHelp"]</div>
+
+@if (Model.Holds.Count == 0)
+{
+    <p class="text-muted">@localizer["None"]</p>
 }
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped rgw-table">
+            <thead><tr><th>@localizer["Target"]</th><th>@localizer["Reason"]</th><th>@localizer["Status"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+            <tbody>
+                @foreach (var entry in Model.Holds)
+                {
+                    var h = entry.Hold;
+                    <tr>
+                        <td>@localizer[h.UnitId.HasValue ? "Unit" : "Asset"]: @(h.UnitId?.ToString() ?? h.AssetId)</td>
+                        <td>@entry.Content.Reason</td>
+                        <td>
+                            <span class="label @(h.ReleasedOn.HasValue ? "label-success" : "label-danger")">@localizer[h.ReleasedOn.HasValue ? "ActivitySafetyReleased" : "ActivitySafetyHold"]</span>
+                            @if (h.ReleasedOn.HasValue)
+                            {
+                                <span class="label">@localizer[h.StateRestored ? "StateRestored" : "StatePreserved"]</span>
+                                <small class="text-muted rgw-sub">@entry.Content.ReleaseEvidence</small>
+                                <small class="text-muted rgw-sub">@entry.Content.Qualification</small>
+                            }
+                        </td>
+                        <td class="rgw-row-actions">
+                            @if (!h.ReleasedOn.HasValue && Model.CanRelease)
+                            {
+                                <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#hold-release-@h.Id">@localizer["ReleaseHold"]</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (Model.CanRelease)
+{
+    foreach (var entry in Model.Holds.Where(x => !x.Hold.ReleasedOn.HasValue))
+    {
+        var h = entry.Hold;
+        <div class="modal fade rgw-modal" id="hold-release-@h.Id" tabindex="-1" role="dialog" aria-labelledby="hold-release-@(h.Id)-title">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="hold-release-@(h.Id)-title">@localizer["ReleaseHold"]</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-muted">@localizer["IndependentReleaseRequired"]</p>
+                        <form class="work-order-form work-order-command" asp-action="ReleaseHold" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@id" />
+                            <input type="hidden" name="holdId" value="@h.Id" />
+                            <input type="hidden" name="Revision" value="@h.Revision" />
+                            <div class="rgw-grid">
+                                <div class="form-group rgw-wide">
+                                    <label for="hold-evidence-@h.Id">@localizer["ReleaseEvidence"]</label>
+                                    <textarea id="hold-evidence-@h.Id" name="Evidence" class="form-control" rows="3" maxlength="4000" required></textarea>
+                                </div>
+                                <div class="form-group rgw-wide">
+                                    <label for="hold-qualification-@h.Id">@localizer["ReleaseQualification"]</label>
+                                    <input id="hold-qualification-@h.Id" name="Qualification" class="form-control" maxlength="2000" required />
+                                </div>
+                                <div class="form-group rgw-wide">
+                                    <div class="checkbox"><label><input type="checkbox" name="RestoreState" value="true" /> @localizer["RestoreIfUnchanged"]</label></div>
+                                </div>
+                            </div>
+                            <div class="rgw-wizard-actions">
+                                <div class="rgw-wizard-spacer"></div>
+                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                <button type="submit" class="btn btn-warning">@localizer["ReleaseHold"]</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@if (canHold)
+{
+    <div class="modal fade rgw-modal" id="work-order-hold" tabindex="-1" role="dialog" aria-labelledby="work-order-hold-title">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="work-order-hold-title">@localizer["AddHold"]</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="work-order-form work-order-command" asp-action="Hold" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@id" />
+                        <input type="hidden" name="Revision" value="@d.Order.Revision" />
+                        <div class="rgw-grid">
+                            @if (d.Order.UnitId.HasValue)
+                            {
+                                <div class="form-group">
+                                    <div class="checkbox"><label><input type="checkbox" name="Unit" value="true" /> @localizer["HoldUnit"]</label></div>
+                                </div>
+                            }
+                            @if (d.Order.AssetId != null)
+                            {
+                                <div class="form-group">
+                                    <div class="checkbox"><label><input type="checkbox" name="Asset" value="true" /> @localizer["HoldAsset"]</label></div>
+                                </div>
+                            }
+                            <div class="form-group rgw-wide">
+                                <label for="hold-reason">@localizer["Reason"]</label>
+                                <textarea id="hold-reason" name="Reason" class="form-control" rows="3" maxlength="4000" required></textarea>
+                            </div>
+                        </div>
+                        <div class="rgw-wizard-actions">
+                            <div class="rgw-wizard-spacer"></div>
+                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                            <button type="submit" class="btn btn-warning">@localizer["AddHold"]</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (canDefer)
+{
+    <div class="modal fade rgw-modal" id="work-order-defer" tabindex="-1" role="dialog" aria-labelledby="work-order-defer-title">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="work-order-defer-title">@localizer["ApproveDeferral"]</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="work-order-form work-order-command" asp-action="Defer" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@id" />
+                        <input type="hidden" name="Revision" value="@d.Order.Revision" />
+                        <div class="rgw-grid">
+                            <div class="form-group">
+                                <label for="defer-due">@localizer["RevisedDue"] (UTC)</label>
+                                <input id="defer-due" type="datetime-local" name="DueOn" class="form-control" required />
+                            </div>
+                            <div class="form-group rgw-wide">
+                                <label for="defer-reason">@localizer["DeferralReason"]</label>
+                                <textarea id="defer-reason" name="Reason" class="form-control" rows="3" maxlength="4000" required></textarea>
+                            </div>
+                        </div>
+                        <div class="rgw-wizard-actions">
+                            <div class="rgw-wizard-spacer"></div>
+                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                            <button type="submit" class="btn btn-primary">@localizer["ApproveDeferral"]</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 }

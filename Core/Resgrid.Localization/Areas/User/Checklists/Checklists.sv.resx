@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Vissa historiska tillstånd för arbetsorder kunde inte återskapas. Paketet garanterar inte fullständig underhållstäckning.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Arbetsorderbevisen begränsas till läsarens nuvarande behörighet.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>Skyddade data måste låsas upp för att fortsätta.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>Skapa de kontroller dina besättningar utför, schemalägg dem och se vad som gjorts.</value></data>
+  <data name="Close" xml:space="preserve"><value>Stäng</value></data>
+  <data name="Continue" xml:space="preserve"><value>Fortsätt</value></data>
+  <data name="Review" xml:space="preserve"><value>Granska</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Kontrollera uppgifterna nedan och spara sedan.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Fyll i de markerade fälten innan du fortsätter.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Inget här ännu. Använd knapparna ovan för att skapa den första.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>En checklista är de frågor en besättning svarar på. Publicera den innan den kan schemaläggas eller köras.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>Välj vad den här körningen gäller.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>Ursäktade kontroller står kvar i journalen med skälet du anger här.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>Utrangering stoppar nya körningar och framtida schemalagda kontroller. Befintlig historik behålls.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>Kontroller väljs utifrån sin starttid, inte när de slutfördes.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>Larmet som paketet sammanställs för.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>Namnge schemat</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>Vad schemat heter och vad det gäller.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>När det körs</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>Hur ofta kontrollen öppnas, och i vilken tidszon tiderna läses.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>Vem som tar den</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>Vem som ansvarar för kontrollen och hur lång tid de har när den öppnats.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>Visas i förfallolistan, så gör det igenkännbart vid en snabb blick.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Hur lång tid besättningen har på sig att slutföra kontrollen efter att den öppnats. Därefter räknas den som missad.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>Automatisk routning skickar kontrollen till den som innehar objektet. Välj person, roll, grupp eller fordon för att åsidosätta.</value></data>
 </root>

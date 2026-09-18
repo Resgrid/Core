@@ -1,33 +1,70 @@
 @model Resgrid.Model.Checklists.ChecklistTemplate
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + Model.Name; }
+@{
+    ViewBag.Title = "Resgrid | " + Model.Name;
+    ViewData["Tab"] = "Templates";
+    ViewData["Title"] = Model.Name;
+    ViewData["ParentText"] = localizer["Templates"].Value;
+    ViewData["ParentAction"] = "Templates";
+    ViewData["Subtitle"] = Model.Sector;
+}
 
-<div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-12"><h2>@Model.Name</h2><p>@Model.Sector</p></div>
-</div>
+@await Html.PartialAsync("_Shell")
+
 <div class="wrapper wrapper-content">
-	<div class="ibox"><div class="ibox-content">
-		<p>@Model.Description</p>@if (ClaimsAuthorizationHelper.CanManageChecklists()) { <p><a class="btn btn-primary" asp-action="New" asp-route-templateId="@Model.Id">@localizer["Use this template"]</a></p> }
-		<p>@localizer["Guidance"]</p>
-		@if (Model.RequiresIndependentWitness)
-		{
-			<p class="alert alert-info">@localizer["Witness"]</p>
-		}
-		@foreach (var checklistSection in Model.Sections)
-		{
-			<h3>@checklistSection.Name</h3>
-			<ul class="list-group">
-				@foreach (var item in checklistSection.Items)
-				{
-					<li class="list-group-item">
-						@item.Name
-						@if (item.Critical) { <span class="label label-danger">@localizer["Critical"]</span> }
-						@if (item.Required) { <span class="label label-default">@localizer["Required"]</span> }
-						@if (item.RequireNoteOnFail) { <p class="help-block">@localizer["FailNote"]</p> }
-					</li>
-				}
-			</ul>
-		}
-		<a asp-action="Templates" asp-controller="Checklists" asp-area="User" class="btn btn-default">@localizer["Back"]</a>
-	</div></div>
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@Model.Name</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+
+            <div class="rgw-toolbar">
+                <a asp-action="Templates" asp-controller="Checklists" asp-area="User" class="btn btn-default btn-sm"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
+                <div class="rgw-toolbar-spacer"></div>
+                @if (ClaimsAuthorizationHelper.CanManageChecklists())
+                {
+                    <a class="btn btn-primary" asp-action="New" asp-route-templateId="@Model.Id"><i class="fa fa-plus"></i> @localizer["Use this template"]</a>
+                }
+            </div>
+
+            <p><span class="label">@Model.Sector</span></p>
+            <p class="text-muted">@Model.Description</p>
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["Guidance"]</div>
+            @if (Model.RequiresIndependentWitness)
+            {
+                <div class="alert alert-warning"><i class="fa fa-user-plus"></i> @localizer["Witness"]</div>
+            }
+
+            @foreach (var checklistSection in Model.Sections)
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">@checklistSection.Name</div>
+                    <ul class="list-group">
+                        @foreach (var item in checklistSection.Items)
+                        {
+                            <li class="list-group-item">
+                                @item.Name
+                                @if (item.Critical)
+                                {
+                                    <span class="label label-danger">@localizer["Critical"]</span>
+                                }
+                                @if (item.Required)
+                                {
+                                    <span class="label">@localizer["Required"]</span>
+                                }
+                                @if (item.RequireNoteOnFail)
+                                {
+                                    <p class="help-block">@localizer["FailNote"]</p>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

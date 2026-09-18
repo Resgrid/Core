@@ -376,4 +376,25 @@
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Work order operations policy changed</value></data>
 <data name="ResponseDueOn" xml:space="preserve"><value>Response deadline (UTC)</value></data>
 <data name="RepairDueOn" xml:space="preserve"><value>Repair deadline (UTC)</value></data>
+  <data name="WorkOrdersIntro" xml:space="preserve"><value>Raise repairs, track who is doing them, and see what maintenance has cost.</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Continue" xml:space="preserve"><value>Continue</value></data>
+  <data name="Review" xml:space="preserve"><value>Review</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Check the answers below, then save.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Fill in the highlighted fields before continuing.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Nothing here yet. Use the buttons above to create the first one.</value></data>
+  <data name="HelpWorkOrders" xml:space="preserve"><value>A work order is one repair or inspection, from the request through to the verified fix.</value></data>
+  <data name="StepOrderDescribe" xml:space="preserve"><value>Describe the work</value></data>
+  <data name="StepOrderDescribeHint" xml:space="preserve"><value>What needs doing, how urgent it is, and when it is needed by.</value></data>
+  <data name="StepOrderTarget" xml:space="preserve"><value>What it is for</value></data>
+  <data name="StepOrderTargetHint" xml:space="preserve"><value>The apparatus, station or asset the work is against, and where to find it.</value></data>
+  <data name="StepOrderCost" xml:space="preserve"><value>Cost and vendor</value></data>
+  <data name="StepOrderCostHint" xml:space="preserve"><value>What the work is expected to cost, which budget it lands on, and who is doing it.</value></data>
+  <data name="StepOrderSafety" xml:space="preserve"><value>Safety and procedure</value></data>
+  <data name="StepOrderSafetyHint" xml:space="preserve"><value>The permits, isolations and qualifications the work needs, and the steps to follow.</value></data>
+  <data name="StepRecurrenceScheduleHint" xml:space="preserve"><value>How often the work comes around, and the window your crews can do it in.</value></data>
+  <data name="StepRecurrenceUsageHint" xml:space="preserve"><value>Optional meter or condition triggers that raise the work early when usage says so.</value></data>
+  <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Who the generated work order goes to, and who it escalates to if nobody picks it up.</value></data>
+  <data name="HelpFieldDueOn" xml:space="preserve"><value>Drives the overdue flag and the service level clock.</value></data>
+  <data name="HelpFieldSteps" xml:space="preserve"><value>The checks the technician works down. Some transitions require them all to be done.</value></data>
 </root>

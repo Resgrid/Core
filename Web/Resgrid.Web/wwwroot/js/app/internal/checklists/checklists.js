@@ -7,15 +7,36 @@
     const types = ['Pass / Fail', 'Yes / No', 'Checkbox', 'Numeric reading', 'Quantity', 'Free text', 'Select list', 'Date', 'Photo', 'Signature'];
     const categories = ['Start of shift', 'Unit check', 'Personal gear', 'Annual review', 'Facility', 'Safety audit', 'Equipment check', 'Other'];
     const el = (tag, text, parent) => { const node = document.createElement(tag); if (text != null) node.textContent = text; if (parent) parent.appendChild(node); return node; };
-    function button(parent, text, action) { const node = el('button', tr(text), parent); node.type = 'button'; node.className = 'btn btn-default btn-sm'; node.addEventListener('click', action); return node; }
-    function field(parent, label, object, key, type, choices) {
-        const box = el('div', null, parent); box.className = 'form-group';
-        const caption = el('label', tr(label), box); const id = 'checklist-field-' + crypto.randomUUID(); caption.htmlFor = id;
-        const input = el(choices ? 'select' : type === 'textarea' ? 'textarea' : 'input', null, box);
-        input.id = id; input.className = type === 'checkbox' ? '' : 'form-control';
-        if (choices) choices.forEach(choice => { const option = el('option', choice[2] === false ? choice[1] : tr(choice[1]), input); option.value = choice[0]; });
-        else if (type !== 'textarea') input.type = type || 'text';
-        if (type === 'number') input.step = 'any';
+    function button(parent, text, action, className) { const node = el('button', tr(text), parent); node.type = 'button'; node.className = className || 'btn btn-default btn-sm'; node.addEventListener('click', action); return node; }
+    // A titled block whose caption sits inside the block's own header bar.
+    function panel(parent, title, className) {
+        const box = el('div', null, parent); box.className = 'panel panel-default' + (className ? ' ' + className : '');
+        const heading = el('div', null, box); heading.className = 'panel-heading rgw-builder-heading';
+        el('span', title, heading).className = 'rgw-builder-title';
+        const actions = el('span', null, heading); actions.className = 'rgw-builder-actions';
+        const body = el('div', null, box); body.className = 'panel-body';
+        return { box, actions, body };
+    }
+    const grid = parent => { const node = el('div', null, parent); node.className = 'rgw-grid'; return node; };
+    function field(parent, label, object, key, type, choices, wide) {
+        const box = el('div', null, parent); box.className = 'form-group' + (wide ? ' rgw-wide' : '');
+        const id = 'checklist-field-' + crypto.randomUUID();
+        let input;
+        if (type === 'checkbox') {
+            // Bootstrap's checkbox wrapper indents the label text away from the box.
+            const wrapper = el('div', null, box); wrapper.className = 'checkbox';
+            const caption = el('label', null, wrapper); caption.htmlFor = id;
+            input = el('input', null, caption); input.type = 'checkbox';
+            el('span', ' ' + tr(label), caption);
+        } else {
+            const caption = el('label', tr(label), box); caption.htmlFor = id;
+            input = el(choices ? 'select' : type === 'textarea' ? 'textarea' : 'input', null, box);
+            input.className = 'form-control';
+            if (choices) choices.forEach(choice => { const option = el('option', choice[2] === false ? choice[1] : tr(choice[1]), input); option.value = choice[0]; });
+            else if (type !== 'textarea') input.type = type || 'text';
+            if (type === 'number') input.step = 'any';
+        }
+        input.id = id;
         if (type === 'checkbox') input.checked = !!object[key]; else input.value = object[key] == null ? '' : object[key];
         input.addEventListener('input', () => { object[key] = type === 'checkbox' ? input.checked : type === 'number' ? input.value === '' ? null : Number(input.value) : input.value; });
         return input;
@@ -56,53 +77,70 @@
         const freshItem = () => ({ Id: crypto.randomUUID(), Name: '', Type: 0, Required: true, Critical: false, AllowNotApplicable: false, RequireNoteOnFail: true, RequirePhotoOnFail: false, Weight: 1, PassingValue: 'true', Options: [] });
         function render() {
             root.replaceChildren();
-            field(root, 'Checklist name', model, 'Name').maxLength = 200;
-            field(root, 'Instructions (do not include patient data)', model, 'Instructions', 'textarea').maxLength = 10000;
-            field(root, 'Category', model, 'Category', 'number', categories.map((name, i) => [i, name]));
+            const settings = grid(root);
+            field(settings, 'Checklist name', model, 'Name').maxLength = 200;
+            field(settings, 'Category', model, 'Category', 'number', categories.map((name, i) => [i, name]));
             const targets = [[0, 'Department'], [1, 'Unit'], [2, 'Group / station'], [3, 'Personnel']];
             if (root.dataset.assetsAvailable === 'true' || model.TargetType === 5) targets.push([5, 'InventoryAsset']);
-            field(root, 'Target type', model, 'TargetType', 'number', targets).addEventListener('change', () => { model.Sections.forEach(section => section.Items.forEach(item => { if (model.TargetType !== 1 && model.TargetType !== 5) item.SetUnitStateOnFail = false; if (model.TargetType !== 5) item.HoldAssetOnFail = false; })); render(); });
-            const threshold = field(root, 'Passing score (%)', model, 'PassThreshold', 'number'); threshold.min = 0; threshold.max = 100;
-            field(root, 'Require reported location', model, 'RequireLocation', 'checkbox');
-            field(root, 'Require a different authenticated member to witness the submission', model, 'RequiresIndependentWitness', 'checkbox');
+            field(settings, 'Target type', model, 'TargetType', 'number', targets).addEventListener('change', () => { model.Sections.forEach(section => section.Items.forEach(item => { if (model.TargetType !== 1 && model.TargetType !== 5) item.SetUnitStateOnFail = false; if (model.TargetType !== 5) item.HoldAssetOnFail = false; })); render(); });
+            const threshold = field(settings, 'Passing score (%)', model, 'PassThreshold', 'number'); threshold.min = 0; threshold.max = 100;
+            field(settings, 'Instructions (do not include patient data)', model, 'Instructions', 'textarea', null, true).maxLength = 10000;
+            const definitionToggles = el('div', null, settings); definitionToggles.className = 'form-group rgw-wide rgw-builder-toggles';
+            field(definitionToggles, 'Require reported location', model, 'RequireLocation', 'checkbox');
+            field(definitionToggles, 'Require a different authenticated member to witness the submission', model, 'RequiresIndependentWitness', 'checkbox');
+
             const earlier = [];
             model.Sections.forEach((section, si) => {
-                const sectionBox = el('fieldset', null, root); sectionBox.className = 'well'; el('legend', format('Section {0}', si + 1), sectionBox);
-                field(sectionBox, 'Section name', section, 'Name').maxLength = 200;
-                button(sectionBox, 'Move section up', () => move(model.Sections, si, -1, render));
-                button(sectionBox, 'Move section down', () => move(model.Sections, si, 1, render));
-                button(sectionBox, 'Remove section', () => { if (confirm(tr('Remove this section and its items from the draft?'))) { model.Sections.splice(si, 1); render(); } });
+                const sectionPanel = panel(root, format('Section {0}', si + 1), 'rgw-builder-section');
+                button(sectionPanel.actions, 'Move section up', () => move(model.Sections, si, -1, render), 'btn btn-default btn-xs');
+                button(sectionPanel.actions, 'Move section down', () => move(model.Sections, si, 1, render), 'btn btn-default btn-xs');
+                button(sectionPanel.actions, 'Remove section', () => { if (confirm(tr('Remove this section and its items from the draft?'))) { model.Sections.splice(si, 1); render(); } }, 'btn btn-danger btn-xs');
+                const sectionBox = sectionPanel.body;
+                field(grid(sectionBox), 'Section name', section, 'Name', 'text', null, true).maxLength = 200;
                 section.Items.forEach((item, ii) => {
-                    const box = el('fieldset', null, sectionBox); box.className = 'panel panel-default'; box.style.padding = '15px';
-                    el('legend', format('Item {0}', ii + 1), box);
-                    field(box, 'Question / check', item, 'Name').maxLength = 300;
-                    field(box, 'Item instructions', item, 'Instructions', 'textarea').maxLength = 5000;
-                    field(box, 'Answer type', item, 'Type', 'number', types.map((name, i) => [i, name])).addEventListener('change', render);
-                    [['Required', 'Required'], ['Critical failure overrides the score', 'Critical'], ['Allow N/A with a reason', 'AllowNotApplicable'], ['Require a note on failure', 'RequireNoteOnFail'], ['Require a photo on failure', 'RequirePhotoOnFail']].forEach(pair => field(box, pair[0], item, pair[1], 'checkbox'));
-                    field(box, 'CreateWorkOrderOnFail', item, 'CreateWorkOrderOnFail', 'checkbox').addEventListener('change', () => { if (!item.CreateWorkOrderOnFail) { item.SetUnitStateOnFail = false; item.HoldAssetOnFail = false; } render(); });
+                    const itemPanel = panel(sectionBox, format('Item {0}', ii + 1), 'rgw-builder-item');
+                    button(itemPanel.actions, 'Move item up', () => move(section.Items, ii, -1, render), 'btn btn-default btn-xs');
+                    button(itemPanel.actions, 'Move item down', () => move(section.Items, ii, 1, render), 'btn btn-default btn-xs');
+                    button(itemPanel.actions, 'Remove item', () => { if (confirm(tr('Remove this item from the draft?'))) { section.Items.splice(ii, 1); render(); } }, 'btn btn-danger btn-xs');
+                    const box = itemPanel.body;
+                    const basics = grid(box);
+                    field(basics, 'Question / check', item, 'Name', 'text', null, true).maxLength = 300;
+                    field(basics, 'Answer type', item, 'Type', 'number', types.map((name, i) => [i, name])).addEventListener('change', render);
+                    const weight = field(basics, 'Score weight (0 excludes this item from the score)', item, 'Weight', 'number'); weight.min = 0; weight.max = 1000;
+                    field(basics, 'Item instructions', item, 'Instructions', 'textarea', null, true).maxLength = 5000;
+
+                    const toggles = el('div', null, box); toggles.className = 'rgw-builder-toggles';
+                    [['Required', 'Required'], ['Critical failure overrides the score', 'Critical'], ['Allow N/A with a reason', 'AllowNotApplicable'], ['Require a note on failure', 'RequireNoteOnFail'], ['Require a photo on failure', 'RequirePhotoOnFail']].forEach(pair => field(toggles, pair[0], item, pair[1], 'checkbox'));
+                    field(toggles, 'CreateWorkOrderOnFail', item, 'CreateWorkOrderOnFail', 'checkbox').addEventListener('change', () => { if (!item.CreateWorkOrderOnFail) { item.SetUnitStateOnFail = false; item.HoldAssetOnFail = false; } render(); });
+
                     if (item.CreateWorkOrderOnFail) {
                         if (item.WorkOrderPriority == null) item.WorkOrderPriority = 1;
-                        field(box, 'WorkOrderPriority', item, 'WorkOrderPriority', 'number', [[0, 'WorkOrderPriorityLow'], [1, 'WorkOrderPriorityNormal'], [2, 'WorkOrderPriorityHigh'], [3, 'WorkOrderPriorityEmergency']]);
-                        if (model.TargetType === 1 || model.TargetType === 5) field(box, 'SetUnitStateOnFail', item, 'SetUnitStateOnFail', 'checkbox');
-                        if (model.TargetType === 5) field(box, 'HoldAssetOnFail', item, 'HoldAssetOnFail', 'checkbox');
-                        el('p', tr('ReadinessFailureHelp'), box);
+                        const readiness = grid(box);
+                        field(readiness, 'WorkOrderPriority', item, 'WorkOrderPriority', 'number', [[0, 'WorkOrderPriorityLow'], [1, 'WorkOrderPriorityNormal'], [2, 'WorkOrderPriorityHigh'], [3, 'WorkOrderPriorityEmergency']]);
+                        const readinessToggles = el('div', null, readiness); readinessToggles.className = 'form-group rgw-builder-toggles';
+                        if (model.TargetType === 1 || model.TargetType === 5) field(readinessToggles, 'SetUnitStateOnFail', item, 'SetUnitStateOnFail', 'checkbox');
+                        if (model.TargetType === 5) field(readinessToggles, 'HoldAssetOnFail', item, 'HoldAssetOnFail', 'checkbox');
+                        el('p', tr('ReadinessFailureHelp'), box).className = 'help-block';
                     }
-                    const weight = field(box, 'Score weight (0 excludes this item from the score)', item, 'Weight', 'number'); weight.min = 0; weight.max = 1000;
-                    if (item.Type === 1 || item.Type === 2) field(box, 'Passing answer', item, 'PassingValue', 'text', [['true', 'Yes / checked'], ['false', 'No / unchecked']]);
+
+                    const answer = grid(box);
+                    if (item.Type === 1 || item.Type === 2) field(answer, 'Passing answer', item, 'PassingValue', 'text', [['true', 'Yes / checked'], ['false', 'No / unchecked']]);
                     if (item.Type === 3 || item.Type === 4) {
-                        field(box, 'Units', item, 'Units').maxLength = 50;
-                        field(box, 'Minimum passing value (optional if maximum is set)', item, 'Minimum', 'number');
-                        field(box, 'Maximum passing value (optional if minimum is set)', item, 'Maximum', 'number');
+                        field(answer, 'Units', item, 'Units').maxLength = 50;
+                        field(answer, 'Minimum passing value (optional if maximum is set)', item, 'Minimum', 'number');
+                        field(answer, 'Maximum passing value (optional if minimum is set)', item, 'Maximum', 'number');
                     }
                     if (item.Type === 6) {
                         const options = { Lines: (item.Options || []).join('\n') };
-                        field(box, 'Choices (one per line)', options, 'Lines', 'textarea').addEventListener('input', () => { item.Options = options.Lines.split('\n').map(value => value.trim()).filter(Boolean); });
-                        field(box, 'Exact passing choice', item, 'PassingValue');
+                        field(answer, 'Choices (one per line)', options, 'Lines', 'textarea', null, true).addEventListener('input', () => { item.Options = options.Lines.split('\n').map(value => value.trim()).filter(Boolean); });
+                        field(answer, 'Exact passing choice', item, 'PassingValue');
                     }
+
+                    const conditions = grid(box);
                     [['VisibleWhen', 'Show only when'], ['RequiredWhen', 'Also required when']].forEach(pair => {
                         if (item[pair[0]] && !earlier.some(source => source.Id === item[pair[0]].ItemId)) item[pair[0]] = null;
                         const value = { ItemId: item[pair[0]] ? item[pair[0]].ItemId : '' };
-                        field(box, pair[1], value, 'ItemId', 'text', [['', 'Always / no condition']].concat(earlier.map(i => [i.Id, i.Name || tr('Unnamed earlier item'), false]))).addEventListener('change', () => {
+                        field(conditions, pair[1], value, 'ItemId', 'text', [['', 'Always / no condition']].concat(earlier.map(i => [i.Id, i.Name || tr('Unnamed earlier item'), false]))).addEventListener('change', () => {
                             item[pair[0]] = value.ItemId ? { ItemId: value.ItemId, EqualsValue: '' } : null; render();
                         });
                         if (item[pair[0]]) {
@@ -111,17 +149,14 @@
                             if (source && source.Type === 0) choices = [['', 'Choose'], ['pass', 'Pass'], ['fail', 'Fail']];
                             if (source && (source.Type === 1 || source.Type === 2)) choices = [['', 'Choose'], ['true', source.Type === 1 ? 'Yes' : 'Checked'], ['false', source.Type === 1 ? 'No' : 'Unchecked']];
                             if (source && source.Type === 6) choices = [['', 'Choose']].concat((source.Options || []).map(option => [option, option, false]));
-                            field(box, 'Answer that activates this condition', item[pair[0]], 'EqualsValue', source && source.Type === 7 ? 'date' : 'text', choices);
+                            field(conditions, 'Answer that activates this condition', item[pair[0]], 'EqualsValue', source && source.Type === 7 ? 'date' : 'text', choices);
                         }
                     });
                     earlier.push(item);
-                    button(box, 'Move item up', () => move(section.Items, ii, -1, render));
-                    button(box, 'Move item down', () => move(section.Items, ii, 1, render));
-                    button(box, 'Remove item', () => { if (confirm(tr('Remove this item from the draft?'))) { section.Items.splice(ii, 1); render(); } });
                 });
-                button(sectionBox, 'Add item', () => { section.Items.push(freshItem()); render(); });
+                button(sectionBox, 'Add item', () => { section.Items.push(freshItem()); render(); }, 'btn btn-default');
             });
-            button(root, 'Add section', () => { model.Sections.push({ Id: crypto.randomUUID(), Name: '', Items: [freshItem()] }); render(); });
+            button(root, 'Add section', () => { model.Sections.push({ Id: crypto.randomUUID(), Name: '', Items: [freshItem()] }); render(); }, 'btn btn-primary');
         }
         render(); bindSave(form, () => { form.elements.formJson.value = JSON.stringify(model); });
     }

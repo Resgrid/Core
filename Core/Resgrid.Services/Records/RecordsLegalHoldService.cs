@@ -106,7 +106,9 @@ namespace Resgrid.Services.Records
 		private async Task<long> EnqueueAsync(RmsRecordLegalHold hold, WorkflowTriggerEventType trigger, CancellationToken cancellationToken)
 		{
 			object recordBlock = new { id = hold.RecordId, kind = (string)null, department_id = hold.DepartmentId };
-			var aggregateType = DomainEventProducers.RecordsAggregate;
+			// A scope-only hold (definition/date scope, no record) is its own aggregate: the outbox guard must not look its
+			// id up as a Record. Holds on a specific record keep the record as the aggregate so purge protection applies.
+			var aggregateType = hold.RecordId != null ? DomainEventProducers.RecordsAggregate : DomainEventProducers.LegalHoldAggregate;
 			if (hold.RecordId != null)
 			{
 				var record = await _records.GetByIdForDepartmentAsync(hold.DepartmentId, hold.RecordId);

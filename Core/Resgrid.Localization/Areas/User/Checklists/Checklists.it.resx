@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Non è stato possibile ricostruire alcuni stati storici degli ordini. Il pacchetto non garantisce una copertura completa della manutenzione.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Le prove degli ordini sono limitate all’ambito attualmente autorizzato del lettore.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>È necessario sbloccare i dati protetti per continuare.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>Crea i controlli che eseguono le tue squadre, pianificali e verifica cosa è stato fatto.</value></data>
+  <data name="Close" xml:space="preserve"><value>Chiudi</value></data>
+  <data name="Continue" xml:space="preserve"><value>Continua</value></data>
+  <data name="Review" xml:space="preserve"><value>Verifica</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Controlla le risposte qui sotto, poi salva.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Compila i campi evidenziati prima di continuare.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Non c'è ancora nulla. Usa i pulsanti sopra per creare il primo.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>Una checklist è l'insieme di domande a cui risponde una squadra. Pubblicala prima di pianificarla o eseguirla.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>Scegli su cosa viene svolta questa esecuzione.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>I controlli giustificati restano a registro con la motivazione indicata qui.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>La dismissione blocca nuove esecuzioni e i controlli futuri pianificati. Lo storico resta.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>I controlli sono selezionati per orario di inizio, non per quando sono stati completati.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>L'intervento per cui viene composto il pacchetto.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>Assegna un nome alla pianificazione</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>Come si chiama questa pianificazione e su cosa viene eseguita.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>Quando viene eseguita</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>Con quale frequenza si apre il controllo e in quale fuso orario si leggono quegli orari.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>Chi la prende in carico</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>Chi è responsabile del controllo e quanto tempo ha una volta aperto.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>Compare nell'elenco delle scadenze, quindi rendilo riconoscibile a colpo d'occhio.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Quanto tempo ha la squadra per completare il controllo dopo l'apertura. Oltre, risulta mancato.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>L'instradamento automatico invia il controllo a chi detiene il target. Scegli persona, ruolo, gruppo o mezzo per sovrascriverlo.</value></data>
 </root>

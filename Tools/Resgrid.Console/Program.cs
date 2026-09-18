@@ -111,6 +111,7 @@ namespace Resgrid.Console
 					services.AddKeyedTransient<ICommandService, NormalizePhoneNumbersCommand>("NormalizePhoneNumbersCommand");
 					services.AddKeyedTransient<ICommandService, OidcUpdateCommand>("OidcUpdateCommand");
 					services.AddKeyedTransient<ICommandService, SecurityRefreshCommand>("SecurityRefreshCommand");
+					services.AddKeyedTransient<ICommandService, FeatureFlagsCommand>("FeatureFlagsCommand");
 					services.AddKeyedTransient<ICommandService, HelpCommand>("HelpCommand");
 
 					services.AddHostedService<ApplicationHostedService>();

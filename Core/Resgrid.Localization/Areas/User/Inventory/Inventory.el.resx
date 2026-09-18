@@ -709,4 +709,137 @@
   <data name="WorkOrderPostingRequired" xml:space="preserve"><value>Καταχωρίστε ή αντιλογίστε το ανταλλακτικό μέσω της εντολής εργασίας του.</value></data>
   <data name="AssetSafetyHold" xml:space="preserve"><value>Δέσμευση ασφαλείας συντήρησης εμποδίζει την επαναφορά του εξοπλισμού.</value></data>
   <data name="ReadinessProRequired" xml:space="preserve"><value>Απαιτείται Readiness Pro για νέες εργασίες συντήρησης.</value></data>
+  <data name="AdjustStock" xml:space="preserve"><value>Προσαρμογή αποθέματος</value></data>
+  <data name="Back" xml:space="preserve"><value>Πίσω</value></data>
+  <data name="Category" xml:space="preserve"><value>Κατηγορία</value></data>
+  <data name="Close" xml:space="preserve"><value>Κλείσιμο</value></data>
+  <data name="Contents" xml:space="preserve"><value>Περιεχόμενα</value></data>
+  <data name="Continue" xml:space="preserve"><value>Συνέχεια</value></data>
+  <data name="EditItem" xml:space="preserve"><value>Επεξεργασία είδους</value></data>
+  <data name="Expires" xml:space="preserve"><value>Λήγει</value></data>
+  <data name="Filter" xml:space="preserve"><value>Φίλτρο</value></data>
+  <data name="IssueEquipment" xml:space="preserve"><value>Χρέωση εξοπλισμού</value></data>
+  <data name="Item" xml:space="preserve"><value>Είδος</value></data>
+  <data name="NewCategory" xml:space="preserve"><value>Νέα κατηγορία</value></data>
+  <data name="NewKit" xml:space="preserve"><value>Νέο κιτ</value></data>
+  <data name="NewLocation" xml:space="preserve"><value>Νέα τοποθεσία</value></data>
+  <data name="NewLot" xml:space="preserve"><value>Νέα παρτίδα</value></data>
+  <data name="NewTransfer" xml:space="preserve"><value>Νέα μεταφορά</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Δεν υπάρχει τίποτα ακόμη. Χρησιμοποιήστε τα κουμπιά παραπάνω για να δημιουργήσετε την πρώτη εγγραφή.</value></data>
+  <data name="Outstanding" xml:space="preserve"><value>Σε εκκρεμότητα</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Ποσότητα</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Συμπληρώστε τα επισημασμένα πεδία πριν συνεχίσετε.</value></data>
+  <data name="Review" xml:space="preserve"><value>Έλεγχος</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Ελέγξτε τις απαντήσεις παρακάτω και αποθηκεύστε.</value></data>
+  <data name="Transaction" xml:space="preserve"><value>Εγγραφή κίνησης</value></data>
+  <data name="Type" xml:space="preserve"><value>Τύπος</value></data>
+  <data name="When" xml:space="preserve"><value>Πότε</value></data>
+  <data name="WorkspaceIntro" xml:space="preserve"><value>Παρακολουθήστε τι κατέχει η υπηρεσία σας, πού φυλάσσεται και ποιος το έχει χρεωθεί.</value></data>
+  <data name="M4PurchasingIntro" xml:space="preserve"><value>Διαχειριστείτε προμηθευτές, δημιουργήστε παραγγελίες και δείτε την αξία του αποθέματος.</value></data>
+  <data name="M5OperationsIntro" xml:space="preserve"><value>Εκτελέστε φυσικές απογραφές, διαχειριστείτε ειδοποιήσεις και εκτυπώστε αναφορές.</value></data>
+  <data name="HelpOnHand" xml:space="preserve"><value>Τι έχετε αυτή τη στιγμή, ανά είδος και τοποθεσία. Φιλτράρετε ανά είδος ή χώρο και προσαρμόστε το απόθεμα όταν αλλάζει μια καταμέτρηση.</value></data>
+  <data name="HelpItems" xml:space="preserve"><value>Τα είδη είναι οι καταχωρίσεις καταλόγου, όχι φυσικά αντικείμενα. Αποφασίστε πώς παρακολουθείται καθένα πριν προσθέσετε απόθεμα.</value></data>
+  <data name="HelpCategories" xml:space="preserve"><value>Οι κατηγορίες ομαδοποιούν είδη ώστε λίστες και αναφορές να παραμένουν ευανάγνωστες. Μια κατηγορία μπορεί να ανήκει σε γονική κατηγορία.</value></data>
+  <data name="HelpLocations" xml:space="preserve"><value>Οι τοποθεσίες είναι όπου βρίσκεται το απόθεμα: σταθμοί, οχήματα, άτομα, περιέκτες ή ένα ράφι μέσα σε άλλη τοποθεσία.</value></data>
+  <data name="HelpLots" xml:space="preserve"><value>Μια παρτίδα είναι ένα σύνολο ενός είδους με κοινό αριθμό παρτίδας, ημερομηνία λήξης και κόστος.</value></data>
+  <data name="HelpAssets" xml:space="preserve"><value>Τα πάγια είναι εξοπλισμός με ατομικό σειριακό αριθμό. Το καθένα έχει δικό του αριθμό, κατάσταση και ιστορικό.</value></data>
+  <data name="HelpIssuances" xml:space="preserve"><value>Εξοπλισμός χρεωμένος αυτή τη στιγμή σε άτομο ή όχημα. Καταγράψτε την επιστροφή όταν γυρίσει.</value></data>
+  <data name="HelpKits" xml:space="preserve"><value>Ένα κιτ είναι μια σταθερή λίστα ειδών που χρεώνονται μαζί, όπως στολή επέμβασης ή σάκος διάσωσης.</value></data>
+  <data name="HelpTransfers" xml:space="preserve"><value>Μετακινήστε απόθεμα μεταξύ δύο τοποθεσιών. Και οι δύο πλευρές της κίνησης καταγράφονται.</value></data>
+  <data name="HelpHistory" xml:space="preserve"><value>Κάθε κίνηση καταγράφεται σε ημερολόγιο μόνο προσθήκης. Φιλτράρετε ανά είδος ή τοποθεσία για έλεγχο.</value></data>
+  <data name="HelpAssetDetail" xml:space="preserve"><value>Το πλήρες ιστορικό ενός παγίου, μαζί με τις λίστες ελέγχου και τις εντολές εργασίας.</value></data>
+  <data name="HelpTransaction" xml:space="preserve"><value>Μία εγγραφή ημερολογίου, όπως ακριβώς καταγράφηκε.</value></data>
+  <data name="HelpUnitEquipment" xml:space="preserve"><value>Ό,τι είναι αυτή τη στιγμή χρεωμένο στο επιλεγμένο όχημα.</value></data>
+  <data name="HelpPersonnelGear" xml:space="preserve"><value>Ό,τι είναι αυτή τη στιγμή χρεωμένο στο επιλεγμένο άτομο.</value></data>
+  <data name="HelpHolderLookup" xml:space="preserve"><value>Αναζητήστε ό,τι κατέχει ένα όχημα ή ένα άτομο.</value></data>
+  <data name="HelpLocationRename" xml:space="preserve"><value>Εδώ αλλάζει μόνο το όνομα. Η τοποθέτηση και το εύρος ορίστηκαν κατά τη δημιουργία.</value></data>
+  <data name="HelpAssetStatus" xml:space="preserve"><value>Η αλλαγή κατάστασης δημιουργεί εγγραφή. Χρησιμοποιήστε την σε επισκευή, ζημιά, απώλεια ή απόσυρση.</value></data>
+  <data name="HelpWitness" xml:space="preserve"><value>Εισαγάγετε τον αριθμό αιτήματος που εμφανίστηκε κατά την καταχώριση και βεβαιώστε τι είδατε.</value></data>
+  <data name="M4HelpVendors" xml:space="preserve"><value>Προμηθευτές από τους οποίους αγοράζετε. Καθένας συνδέεται με εταιρική επαφή και μπορεί να έχει αριθμό λογαριασμού.</value></data>
+  <data name="M4HelpPurchaseOrders" xml:space="preserve"><value>Δημιουργήστε παραγγελία σε προμηθευτή και μετά παραλάβετε. Η παραλαβή καταχωρεί το απόθεμα και το κόστος.</value></data>
+  <data name="M4HelpValuation" xml:space="preserve"><value>Η αξία του αποθέματος που έχετε, με βάση το κόστος που καταγράφηκε στην παραλαβή.</value></data>
+  <data name="M5NoAlertsHelp" xml:space="preserve"><value>Δεν υπάρχουν ανοιχτές ειδοποιήσεις. Ανανεώστε για νέο έλεγχο αποθεμάτων, λήξεων και εκπρόθεσμων επιστροφών.</value></data>
+  <data name="M5CountEnterHelp" xml:space="preserve"><value>Καταχωρίστε την πραγματική καταμέτρηση για κάθε γραμμή. Η στήλη απόκλισης ενημερώνεται μετά την αποθήκευση.</value></data>
+  <data name="M5CountNameHelp" xml:space="preserve"><value>Κάτι που θα αναγνωρίσετε αργότερα, π.χ. «Ετήσια απογραφή Σταθμού 2».</value></data>
+  <data name="StepItemBasics" xml:space="preserve"><value>Περιγράψτε το είδος</value></data>
+  <data name="StepItemTracking" xml:space="preserve"><value>Τρόπος παρακολούθησης</value></data>
+  <data name="StepItemStock" xml:space="preserve"><value>Επίπεδα αποθέματος και κόστος</value></data>
+  <data name="StepLocationBasics" xml:space="preserve"><value>Ονομάστε την τοποθεσία</value></data>
+  <data name="StepLocationScope" xml:space="preserve"><value>Πού ανήκει</value></data>
+  <data name="StepMovementWhat" xml:space="preserve"><value>Τι μετακινείται</value></data>
+  <data name="StepMovementWhere" xml:space="preserve"><value>Από και προς</value></data>
+  <data name="StepMovementAmount" xml:space="preserve"><value>Πόσο</value></data>
+  <data name="StepIssueWhat" xml:space="preserve"><value>Τι χρεώνεται</value></data>
+  <data name="StepIssueWho" xml:space="preserve"><value>Ποιος το παραλαμβάνει</value></data>
+  <data name="StepIssueWhen" xml:space="preserve"><value>Επιστροφή και σημειώσεις</value></data>
+  <data name="StepAssetItem" xml:space="preserve"><value>Ποιο είδος</value></data>
+  <data name="StepAssetIdentity" xml:space="preserve"><value>Σειριακός αριθμός και ετικέτες</value></data>
+  <data name="StepLotItem" xml:space="preserve"><value>Ποιο είδος</value></data>
+  <data name="StepLotDetails" xml:space="preserve"><value>Στοιχεία παρτίδας</value></data>
+  <data name="StepKitBasics" xml:space="preserve"><value>Ονομάστε το κιτ</value></data>
+  <data name="StepKitContents" xml:space="preserve"><value>Περιεχόμενο κιτ</value></data>
+  <data name="M4StepOrderHeader" xml:space="preserve"><value>Στοιχεία παραγγελίας</value></data>
+  <data name="M4StepOrderLines" xml:space="preserve"><value>Γραμμές παραγγελίας</value></data>
+  <data name="M5StepCountBasics" xml:space="preserve"><value>Ονομάστε την απογραφή</value></data>
+  <data name="M5StepCountScope" xml:space="preserve"><value>Εύρος</value></data>
+  <data name="M5StepReportKind" xml:space="preserve"><value>Επιλέξτε αναφορά</value></data>
+  <data name="M5StepReportFilters" xml:space="preserve"><value>Περιορίστε το</value></data>
+  <data name="HelpFieldAmount" xml:space="preserve"><value>Πόσες μονάδες, στη μονάδα μέτρησης του είδους.</value></data>
+  <data name="HelpFieldAsset" xml:space="preserve"><value>Για είδη με σειριακό αριθμό, επιλέξτε τη συγκεκριμένη μονάδα.</value></data>
+  <data name="HelpFieldCategory" xml:space="preserve"><value>Προαιρετική ομαδοποίηση για λίστες και αναφορές.</value></data>
+  <data name="HelpFieldCode" xml:space="preserve"><value>Ο δικός σας κωδικός είδους ή ανταλλακτικού, αν υπάρχει.</value></data>
+  <data name="HelpFieldCountLocation" xml:space="preserve"><value>Αφήστε το κενό για καταμέτρηση όλων.</value></data>
+  <data name="HelpFieldCurrency" xml:space="preserve"><value>Τριγράμματος κωδικός νομίσματος, π.χ. USD ή EUR.</value></data>
+  <data name="HelpFieldDefaultLocation" xml:space="preserve"><value>Το νέο απόθεμα καταλήγει εδώ όταν δεν επιλεγεί τοποθεσία.</value></data>
+  <data name="HelpFieldExpectedReturn" xml:space="preserve"><value>Οι εκπρόθεσμες επιστροφές επισημαίνονται στις ειδοποιήσεις.</value></data>
+  <data name="HelpFieldExpiration" xml:space="preserve"><value>Η ημερομηνία μετά την οποία το απόθεμα δεν είναι χρησιμοποιήσιμο.</value></data>
+  <data name="HelpFieldFromLocation" xml:space="preserve"><value>Από πού φεύγει το απόθεμα. Αφήστε κενό για εισαγωγή νέου αποθέματος.</value></data>
+  <data name="HelpFieldHolder" xml:space="preserve"><value>Επιλέξτε άτομο ή όχημα, όχι και τα δύο.</value></data>
+  <data name="HelpFieldIsActive" xml:space="preserve"><value>Τα ανενεργά είδη παραμένουν στο ιστορικό αλλά δεν επιλέγονται για νέες κινήσεις.</value></data>
+  <data name="HelpFieldIsControlledSubstance" xml:space="preserve"><value>Οι κινήσεις απαιτούν δεύτερο μάρτυρα και τηρούνται για έλεγχο.</value></data>
+  <data name="HelpFieldIsKit" xml:space="preserve"><value>Σημειώστε το ως περιέκτη κιτ αντί για είδος που αποθηκεύεται μόνο του.</value></data>
+  <data name="HelpFieldLocationType" xml:space="preserve"><value>Σταθμός, όχημα, άτομο, περιέκτης ή υπο-τοποθεσία άλλου χώρου.</value></data>
+  <data name="HelpFieldLot" xml:space="preserve"><value>Επιλέξτε την παρτίδα προέλευσης, αν το είδος παρακολουθείται ανά παρτίδα.</value></data>
+  <data name="HelpFieldMinimum" xml:space="preserve"><value>Δημιουργία ειδοποίησης όταν το απόθεμα πέσει κάτω από αυτό.</value></data>
+  <data name="HelpFieldNote" xml:space="preserve"><value>Γιατί συνέβη. Οι σημειώσεις εμφανίζονται στο ημερολόγιο και τις αναφορές.</value></data>
+  <data name="HelpFieldParent" xml:space="preserve"><value>Προαιρετικό. Ένθεση αυτής της εγγραφής κάτω από άλλη.</value></data>
+  <data name="HelpFieldReorderPoint" xml:space="preserve"><value>Πρόταση επαναπαραγγελίας όταν το απόθεμα φτάσει σε αυτό.</value></data>
+  <data name="HelpFieldReportRange" xml:space="preserve"><value>Οι αναφορές στιγμιότυπου αγνοούν το εύρος ημερομηνιών.</value></data>
+  <data name="HelpFieldRequiresExpiration" xml:space="preserve"><value>Απαίτηση ημερομηνίας λήξης ώστε το είδος να εμφανίζεται στις ειδοποιήσεις.</value></data>
+  <data name="HelpFieldRequiresLotTracking" xml:space="preserve"><value>Απαίτηση αριθμού παρτίδας σε κάθε παραλαβή του είδους.</value></data>
+  <data name="HelpFieldReturnCondition" xml:space="preserve"><value>Η κατάσταση στην οποία επέστρεψε ο εξοπλισμός.</value></data>
+  <data name="HelpFieldSerialNumber" xml:space="preserve"><value>Σειριακός αριθμός κατασκευαστή. Πρέπει να είναι μοναδικός για το είδος.</value></data>
+  <data name="HelpFieldToLocation" xml:space="preserve"><value>Πού πηγαίνει το απόθεμα. Αφήστε κενό σε ανάλωση ή διαγραφή.</value></data>
+  <data name="HelpFieldTrackingMode" xml:space="preserve"><value>Χύμα μετρά ποσότητα. Σειριακό παρακολουθεί κάθε μονάδα ξεχωριστά, με δικό της αριθμό και ιστορικό.</value></data>
+  <data name="HelpFieldUnitCost" xml:space="preserve"><value>Κόστος μίας μονάδας, για την αποτίμηση.</value></data>
+  <data name="HelpFieldUnitOfMeasure" xml:space="preserve"><value>Πώς το μετράτε: τεμάχιο, κιβώτιο, λίτρο, μέτρο.</value></data>
+  <data name="M4AccountNumberHelp" xml:space="preserve"><value>Ο λογαριασμός με τον οποίο σας γνωρίζει ο προμηθευτής.</value></data>
+  <data name="M4CompanyContactHelp" xml:space="preserve"><value>Επιλέξτε την εταιρική επαφή στην οποία ανήκει ο προμηθευτής.</value></data>
+  <data name="M4NewVendorHint" xml:space="preserve"><value>Ο προμηθευτής είναι εταιρική επαφή από την οποία αγοράζετε. Προσθέστε πρώτα την επαφή αν λείπει.</value></data>
+  <data name="M4PurchaseOrderNumberHelp" xml:space="preserve"><value>Η αναφορά σας για την παραγγελία. Εμφανίζεται στο ημερολόγιο κατά την παραλαβή.</value></data>
+  <data name="M4StepOrderHeaderHint" xml:space="preserve"><value>Από ποιον αγοράζετε, με ποια αναφορά και σε ποιο νόμισμα.</value></data>
+  <data name="M4StepOrderLinesHint" xml:space="preserve"><value>Μία γραμμή ανά είδος. Ποσότητες και κόστη εδώ αποτελούν τη βάση της παραλαβής.</value></data>
+  <data name="M5StepCountBasicsHint" xml:space="preserve"><value>Η απογραφή παγώνει ένα στιγμιότυπο του αποθέματος για σύγκριση με το ράφι.</value></data>
+  <data name="M5StepCountScopeHint" xml:space="preserve"><value>Καταμετρήστε μία τοποθεσία ή αφήστε κενό για όλη την υπηρεσία.</value></data>
+  <data name="M5StepReportKindHint" xml:space="preserve"><value>Η αναφορά καθορίζει ποια φίλτρα του επόμενου βήματος ισχύουν.</value></data>
+  <data name="M5StepReportFiltersHint" xml:space="preserve"><value>Αφήστε ένα φίλτρο κενό για να συμπεριληφθούν όλα. Τα μη διαθέσιμα φίλτρα είναι ανενεργά.</value></data>
+  <data name="StepAssetItemHint" xml:space="preserve"><value>Ένα πάγιο είναι μία φυσική μονάδα ενός είδους. Δηλώστε το είδος και πού θα βρίσκεται.</value></data>
+  <data name="StepAssetIdentityHint" xml:space="preserve"><value>Πώς αναγνωρίζεται αυτή η μονάδα όταν κάποιος την πάρει ή τη σαρώσει.</value></data>
+  <data name="StepIssueWhatHint" xml:space="preserve"><value>Επιλέξτε το είδος και τον χώρο από τον οποίο βγαίνει.</value></data>
+  <data name="StepIssueWhenHint" xml:space="preserve"><value>Πότε το περιμένετε πίσω και ό,τι αξίζει να καταγραφεί για την παράδοση.</value></data>
+  <data name="StepItemBasicsHint" xml:space="preserve"><value>Τι θα βλέπουν οι χρήστες όταν το αναζητούν σε μια λίστα.</value></data>
+  <data name="StepItemTrackingHint" xml:space="preserve"><value>Αυτές οι απαντήσεις καθορίζουν τι θα ζητήσει το σύστημα αργότερα και δύσκολα αλλάζουν όταν υπάρχει απόθεμα.</value></data>
+  <data name="StepItemStockHint" xml:space="preserve"><value>Προαιρετικά όρια που ενεργοποιούν ειδοποιήσεις χαμηλού αποθέματος και το κόστος αποτίμησης.</value></data>
+  <data name="StepKitBasicsHint" xml:space="preserve"><value>Τα κιτ χρεώνονται ολόκληρα, οπότε δώστε όνομα που θα αναγνωρίζουν τα πληρώματα.</value></data>
+  <data name="StepKitContentsHint" xml:space="preserve"><value>Απαριθμήστε κάθε είδος του κιτ και την ποσότητά του.</value></data>
+  <data name="StepKitIssueHint" xml:space="preserve"><value>Επιβεβαιώστε ποια φυσική μονάδα και από ποιο ράφι προέρχεται κάθε μέρος του κιτ.</value></data>
+  <data name="StepLocationBasicsHint" xml:space="preserve"><value>Το όνομα εμφανίζεται σε κάθε λίστα που ρωτά πού βρίσκεται κάτι.</value></data>
+  <data name="StepLocationScopeHint" xml:space="preserve"><value>Συμπληρώστε μόνο το πεδίο που ταιριάζει στον τύπο που επιλέξατε· αφήστε τα υπόλοιπα κενά.</value></data>
+  <data name="StepLotDetailsHint" xml:space="preserve"><value>Ο αριθμός παρτίδας όπως αναγράφεται στη συσκευασία, μαζί με κόστος και λήξη.</value></data>
+  <data name="StepLotItemHint" xml:space="preserve"><value>Οι παρτίδες ανήκουν πάντα σε ένα είδος, οπότε επιλέξτε το πρώτα.</value></data>
+  <data name="StepMovementWhatHint" xml:space="preserve"><value>Το είδος της κίνησης καθορίζει ποια από τα παρακάτω πεδία θα χρησιμοποιηθούν.</value></data>
+  <data name="StepMovementWhereHint" xml:space="preserve"><value>Η παραλαβή χρειάζεται μόνο προορισμό· η ανάλωση ή διαγραφή μόνο προέλευση.</value></data>
+  <data name="StepMovementAmountHint" xml:space="preserve"><value>Η ποσότητα και ο λόγος. Και τα δύο καταγράφονται στην εγγραφή που δημιουργείται.</value></data>
+  <data name="StepReturnHint" xml:space="preserve"><value>Δηλώστε πόσα επέστρεψαν, πού πήγαν και σε τι κατάσταση είναι.</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Ανενεργό</value></data>
 </root>

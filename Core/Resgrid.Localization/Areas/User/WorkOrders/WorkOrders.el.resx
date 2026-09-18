@@ -376,4 +376,25 @@
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Αλλαγή πολιτικής λειτουργιών εντολών εργασίας</value></data>
 <data name="ResponseDueOn" xml:space="preserve"><value>Προθεσμία απόκρισης (UTC)</value></data>
 <data name="RepairDueOn" xml:space="preserve"><value>Προθεσμία επισκευής (UTC)</value></data>
+  <data name="WorkOrdersIntro" xml:space="preserve"><value>Δημιουργήστε επισκευές, παρακολουθήστε ποιος τις εκτελεί και δείτε το κόστος συντήρησης.</value></data>
+  <data name="Close" xml:space="preserve"><value>Κλείσιμο</value></data>
+  <data name="Continue" xml:space="preserve"><value>Συνέχεια</value></data>
+  <data name="Review" xml:space="preserve"><value>Έλεγχος</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Ελέγξτε τις απαντήσεις παρακάτω και αποθηκεύστε.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Συμπληρώστε τα επισημασμένα πεδία πριν συνεχίσετε.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Δεν υπάρχει τίποτα ακόμη. Χρησιμοποιήστε τα κουμπιά παραπάνω για να δημιουργήσετε το πρώτο.</value></data>
+  <data name="HelpWorkOrders" xml:space="preserve"><value>Μια εντολή εργασίας είναι μία επισκευή ή επιθεώρηση, από το αίτημα έως την επαληθευμένη αποκατάσταση.</value></data>
+  <data name="StepOrderDescribe" xml:space="preserve"><value>Περιγράψτε την εργασία</value></data>
+  <data name="StepOrderDescribeHint" xml:space="preserve"><value>Τι πρέπει να γίνει, πόσο επείγον είναι και μέχρι πότε χρειάζεται.</value></data>
+  <data name="StepOrderTarget" xml:space="preserve"><value>Σε τι αφορά</value></data>
+  <data name="StepOrderTargetHint" xml:space="preserve"><value>Το όχημα, ο σταθμός ή το πάγιο που αφορά η εργασία, και πού βρίσκεται.</value></data>
+  <data name="StepOrderCost" xml:space="preserve"><value>Κόστος και προμηθευτής</value></data>
+  <data name="StepOrderCostHint" xml:space="preserve"><value>Πόσο αναμένεται να κοστίσει, σε ποιον προϋπολογισμό βαρύνει και ποιος το εκτελεί.</value></data>
+  <data name="StepOrderSafety" xml:space="preserve"><value>Ασφάλεια και διαδικασία</value></data>
+  <data name="StepOrderSafetyHint" xml:space="preserve"><value>Οι άδειες, οι απομονώσεις και τα προσόντα που απαιτεί η εργασία, και τα βήματα.</value></data>
+  <data name="StepRecurrenceScheduleHint" xml:space="preserve"><value>Πόσο συχνά επανέρχεται η εργασία και σε ποιο παράθυρο μπορεί να γίνει.</value></data>
+  <data name="StepRecurrenceUsageHint" xml:space="preserve"><value>Προαιρετικοί μετρητές ή συνθήκες που ενεργοποιούν νωρίτερα την εργασία ανάλογα με τη χρήση.</value></data>
+  <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Σε ποιον πηγαίνει η εντολή που δημιουργείται και σε ποιον κλιμακώνεται αν δεν την αναλάβει κανείς.</value></data>
+  <data name="HelpFieldDueOn" xml:space="preserve"><value>Καθορίζει την ένδειξη καθυστέρησης και το χρονόμετρο επιπέδου υπηρεσίας.</value></data>
+  <data name="HelpFieldSteps" xml:space="preserve"><value>Τα βήματα που ακολουθεί ο τεχνικός. Ορισμένες μεταβάσεις απαιτούν να ολοκληρωθούν όλα.</value></data>
 </root>

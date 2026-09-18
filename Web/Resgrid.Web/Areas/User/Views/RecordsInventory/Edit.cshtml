@@ -11,9 +11,18 @@
     var protectedForms = new System.Collections.Generic.List<string> { "#record-inventory-reopen", "#record-inventory-consume", "#record-inventory-evidence" };
     var correctionIndex = 0;
     var attachingConsumption = string.IsNullOrEmpty(Model.UsageId) && !string.IsNullOrWhiteSpace(Model.ExistingTransactionId);
+
+    ViewData["Title"] = inventoryLocalizer["RecordUsageTitle"].Value;
+    ViewData["Subtitle"] = inventoryLocalizer["RecordUsageHelp"].Value;
+    ViewData["ParentController"] = controller;
+    ViewData["ParentAction"] = "Details";
+    ViewData["ParentId"] = Model.RecordId;
 }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-title"><h2>@inventoryLocalizer["RecordUsageTitle"]</h2></div><div class="ibox-content">
-    <p>@inventoryLocalizer["RecordUsageHelp"]</p>
+
+@await Html.PartialAsync("_RmsShell")
+
+<div class="wrapper wrapper-content"><div class="ibox float-e-margins"><div class="ibox-title"><h5>@inventoryLocalizer["RecordUsageTitle"]</h5></div><div class="ibox-content">
+    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @inventoryLocalizer["RecordUsageHelp"]</div>
     @if (Model.ModernInventory) { <p>@inventoryLocalizer["RecordUsageWitnessHelp"]</p> }
     @if (!string.IsNullOrEmpty(Model.ErrorMessage)) { <div class="alert alert-info" role="status">@Model.ErrorMessage</div> }
     @if (Model.ProtectionEnforced) { @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = inventoryLocalizer["ProtectedDataRequired"].Value }) }

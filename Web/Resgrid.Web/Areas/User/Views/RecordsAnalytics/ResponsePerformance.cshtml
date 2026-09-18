@@ -32,15 +32,19 @@
 			}
 		</div></div>
 		<div class="row">
-			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsTimeRows", p.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByMonth"].Value }, { "Chart", "line" } })</div>
-			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsTimeRows", p.ByHourOfDay, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByHour"].Value }, { "Chart", "bar" } })</div>
+			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsTimeRows", p.ByMonth, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByMonth"].Value, ["Chart"] = "line" })</div>
+			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsTimeRows", p.ByHourOfDay, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByHour"].Value, ["Chart"] = "bar" })</div>
 		</div>
 		<div class="row">
-			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsTimeRows", p.ByUnit, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["ByUnit"].Value }, { "Chart", "none" } })</div>
+			<div class="col-md-6">@await Html.PartialAsync("_AnalyticsTimeRows", p.ByUnit, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["ByUnit"].Value, ["Chart"] = "none" })</div>
 			<div class="col-md-6">
-				@await Html.PartialAsync("_AnalyticsTimeRows", p.ByStationGroup, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsByStationGroup"].Value }, { "Chart", "none" } })
-				@await Html.PartialAsync("_AnalyticsTimeRows", p.BySource, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { { "Title", L["AnalyticsBySource"].Value }, { "Chart", "none" } })
+				@await Html.PartialAsync("_AnalyticsTimeRows", p.ByStationGroup, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsByStationGroup"].Value, ["Chart"] = "none" })
+				@await Html.PartialAsync("_AnalyticsTimeRows", p.BySource, new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["Title"] = L["AnalyticsBySource"].Value, ["Chart"] = "none" })
 			</div>
 		</div>
 	}
 </div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

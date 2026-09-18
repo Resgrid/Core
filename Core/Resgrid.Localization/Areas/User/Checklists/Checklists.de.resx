@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Einige historische Arbeitsauftragszustände konnten nicht rekonstruiert werden. Das Paket beansprucht keine vollständige Wartungsabdeckung.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Arbeitsauftragsnachweise sind auf den aktuell berechtigten Lesebereich beschränkt.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>Geschützte Daten müssen zum Fortfahren entsperrt werden.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>Erstellen Sie die Prüfungen Ihrer Einsatzkräfte, planen Sie sie und sehen Sie, was erledigt wurde.</value></data>
+  <data name="Close" xml:space="preserve"><value>Schließen</value></data>
+  <data name="Continue" xml:space="preserve"><value>Weiter</value></data>
+  <data name="Review" xml:space="preserve"><value>Prüfen</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Prüfen Sie die Angaben unten und speichern Sie dann.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Füllen Sie die hervorgehobenen Felder aus, bevor Sie fortfahren.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Hier ist noch nichts. Legen Sie über die Schaltflächen oben den ersten Eintrag an.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>Eine Checkliste ist die Fragenliste, die eine Einsatzkraft beantwortet. Veröffentlichen Sie sie, bevor sie geplant oder ausgeführt werden kann.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>Wählen Sie, worauf sich dieser Durchlauf bezieht.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>Entschuldigte Prüfungen bleiben mit der hier angegebenen Begründung im Nachweis.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>Das Ausmustern verhindert neue Durchläufe und künftige geplante Prüfungen. Vorhandene Historie bleibt erhalten.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>Prüfungen werden nach ihrem Startzeitpunkt ausgewählt, nicht nach dem Abschluss.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>Der Einsatz, für den das Paket zusammengestellt wird.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>Zeitplan benennen</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>Wie dieser Zeitplan heißt und worauf er sich bezieht.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>Wann er ausgeführt wird</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>Wie oft die Prüfung geöffnet wird und in welcher Zeitzone diese Zeiten gelten.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>Wer sie übernimmt</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>Wer für die Prüfung zuständig ist und wie viel Zeit nach dem Öffnen bleibt.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>Erscheint in der Fälligkeitsliste; wählen Sie einen auf einen Blick erkennbaren Namen.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Wie lange nach dem Öffnen Zeit für die Prüfung bleibt. Danach gilt sie als versäumt.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>Die automatische Zuweisung leitet die Prüfung an die zuständige Stelle. Wählen Sie Person, Rolle, Gruppe oder Fahrzeug, um dies zu übersteuern.</value></data>
 </root>

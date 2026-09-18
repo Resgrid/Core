@@ -1,71 +1,725 @@
 @model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderDetailView
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
-@{ var d = Model.Detail; var o = d.Order; var c = d.Input.Content; ViewBag.Title = "Resgrid | " + o.Number; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-@await Html.PartialAsync("_Protection")
-<div class="work-order-protected">
-<h2>@o.Number — @o.Title</h2><p>@localizer["Status" + o.Status] · @localizer["Priority" + o.Priority] · @localizer["DueOn"]: @o.DueOn?.ToString("u")</p>
-@if (!d.CanWrite) { <p class="alert alert-info">@localizer["ReadOnlyHistory"]</p> }
-<p style="white-space:pre-wrap">@c.Description</p><p>@c.LocationText</p>
-<p>@localizer["ReportedBy"]: @d.ReportedBy · @localizer["AssignedTo"]: @(Model.Choices.Users.FirstOrDefault(x => x.Id == o.AssignedToUserId)?.Name ?? Model.Choices.Roles.FirstOrDefault(x => x.Id == o.AssignedToRoleId?.ToString())?.Name ?? localizer["None"].Value)</p>
-<p>@localizer["Currency"]: @c.Currency · @localizer["EstimatedCost"]: @c.EstimatedCost · @localizer["ApprovedCost"]: @c.ApprovedCost · @localizer["CostCenter"]: @c.CostCenter</p>
-<p>@localizer["VendorDetails"]: @c.VendorDetails</p><p>@localizer["WarrantyReference"]: @c.WarrantyReference</p>
-<p><a asp-action="Operations" asp-route-id="@o.Id">@localizer["Operations"]</a></p>
-@if (c.SafetyCritical || c.HazardousWork) { <p class="alert alert-warning">@localizer[c.HazardousWork ? "HazardousWork" : "SafetyCritical"] — @localizer["SafetyNotice"]</p> }
-<dl><dt>@localizer["ProcedureReference"] / @localizer["ProcedureVersion"]</dt><dd>@c.ProcedureReference / @c.ProcedureVersion</dd><dt>@localizer["PermitReference"]</dt><dd>@c.PermitReference</dd><dt>@localizer["IsolationReference"]</dt><dd>@c.IsolationReference</dd><dt>@localizer["QualifiedPersonnel"]</dt><dd>@c.QualifiedPersonnel</dd></dl>
-@if (c.Steps.Count > 0) { <h3>@localizer["TaskSteps"]</h3><ol>@foreach (var step in c.Steps) { <li>@step.Text — @localizer[step.Completed ? "Done" : "Pending"]</li> }</ol> }
-@if (d.CompletedOn.HasValue) { <h3>@localizer["Resolution"]</h3><p>@c.Resolution</p><p>@localizer["Cause"]: @c.Cause</p> }
-@if (d.ClosedOn.HasValue) { <p>@localizer["VerificationEvidence"]: @c.VerificationEvidence</p><p>@localizer["VerifiedBy"]: @d.VerifiedBy · @d.ClosedOn?.ToString("u")</p> }
-@if (d.CanEdit) { <a class="btn btn-default" asp-action="Edit" asp-route-id="@o.Id">@localizer["EditWorkOrder"]</a> }
-<form class="work-order-form work-order-export" asp-action="Export" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><button type="submit" class="btn btn-default">@localizer["Export"]</button></form>
-@if (d.CanAccept) { <form class="work-order-form work-order-command" asp-action="Accept" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><button type="submit" class="btn btn-primary">@localizer["AcceptAssignment"]</button></form> }
-@if (d.CanManage && o.Status is WorkOrderStatus.Accepted or WorkOrderStatus.Assigned or WorkOrderStatus.InProgress or WorkOrderStatus.OnHold)
-{
-    <h3>@localizer["Assign"]</h3><form class="work-order-form work-order-command form-inline" asp-action="Assign" method="post">
-    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="Revision" value="@o.Revision"/>
-    <label>@localizer["User"] <select class="form-control work-order-user" name="UserId"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Users) { <option value="@x.Id">@x.Name</option> }</select></label>
-    <label>@localizer["Role"] <select class="form-control work-order-role" name="RoleId"><option value="">@localizer["None"]</option>@foreach (var x in Model.Choices.Roles) { <option value="@x.Id">@x.Name</option> }</select></label>
-    <button class="btn btn-primary" type="submit">@localizer["Assign"]</button></form>
+@functions {
+    string StatusPill(WorkOrderStatus status) => status switch
+    {
+        WorkOrderStatus.Requested => "label-info",
+        WorkOrderStatus.Accepted or WorkOrderStatus.Assigned => "label-primary",
+        WorkOrderStatus.InProgress or WorkOrderStatus.OnHold => "label-warning",
+        WorkOrderStatus.Completed or WorkOrderStatus.Closed => "label-success",
+        _ => "label-danger"
+    };
+
+    string PriorityPill(WorkOrderPriority priority) => priority switch
+    {
+        WorkOrderPriority.Emergency => "label-danger",
+        WorkOrderPriority.High => "label-warning",
+        _ => ""
+    };
 }
-@if (d.Transitions.Length > 0)
-{
-    <h3>@localizer["ChangeStatus"]</h3><form class="work-order-form work-order-command" asp-action="Transition" method="post">
-    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="Revision" value="@o.Revision"/>
-    <label>@localizer["Status"] <select class="form-control" name="Status">@foreach (var status in d.Transitions) { <option value="@((int)status)">@localizer["Status" + status]</option> }</select></label>
-    <div class="form-group"><label>@localizer["Reason"]<textarea class="form-control" name="Reason" maxlength="4000"></textarea></label></div>
-    <div class="form-group"><label>@localizer["DuplicateOf"]<input class="form-control" type="number" name="DuplicateOfId" min="1"/></label></div>
-    <div class="form-group"><label>@localizer["Resolution"]<textarea class="form-control" name="Resolution" maxlength="4000"></textarea></label></div>
-    <div class="form-group"><label>@localizer["Cause"]<textarea class="form-control" name="Cause" maxlength="4000"></textarea></label></div>
-    <div class="form-group"><label>@localizer["VerificationEvidence"]<textarea class="form-control" name="VerificationEvidence" maxlength="4000"></textarea></label></div>
-    <label><input type="checkbox" name="ConfirmTasksComplete" value="true"/> @localizer["ConfirmTasksComplete"]</label><button class="btn btn-primary" type="submit">@localizer["ChangeStatus"]</button></form>
+@{
+    var d = Model.Detail;
+    var o = d.Order;
+    var c = d.Input.Content;
+    ViewBag.Title = "Resgrid | " + o.Number;
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = o.Number + " — " + o.Title;
+    ViewData["CanWrite"] = d.CanWrite;
+
+    var assignedTo = Model.Choices.Users.FirstOrDefault(x => x.Id == o.AssignedToUserId)?.Name
+        ?? Model.Choices.Roles.FirstOrDefault(x => x.Id == o.AssignedToRoleId?.ToString())?.Name
+        ?? localizer["None"].Value;
+    var canComment = d.CanWrite
+        && o.Status is not (WorkOrderStatus.Closed or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate)
+        && (d.CanContribute || d.ReportedBy == User.Identity.Name || d.ReportedBy == Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetUserId());
+    var canUpload = d.CanContribute
+        || (d.CanWrite && o.Status == WorkOrderStatus.Requested && d.ReportedBy == Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetUserId());
 }
-@await Html.PartialAsync("_Maintenance", Model)
-<h3>@localizer["Activity"]</h3><ol>@foreach (var a in d.Activities) { <li><strong>@localizer["Activity" + a.Type]</strong> · @a.CreatedOn.ToString("u") · @a.UserId @if (a.NewStatus.HasValue) { <span>→ @localizer["Status" + (WorkOrderStatus)a.NewStatus.Value]</span> }<p style="white-space:pre-wrap">@a.Note</p>
-@if (a.AssignedToUserId != null || a.AssignedToRoleId.HasValue) { <p>@localizer["AssignedTo"]: @(a.AssignedToUserId ?? a.AssignedToRoleId.ToString())</p> }
-@if (a.RevisedDueOn.HasValue) { <p>@localizer["OriginalDue"]: @a.OriginalDueOn?.ToString("u") → @localizer["RevisedDue"]: @a.RevisedDueOn.Value.ToString("u")</p> }
-@if (a.Snapshot != null) { <details><summary>@localizer["Description"]: @a.Snapshot.Title</summary>
-<p>@a.Snapshot.Description</p><p>@localizer["Resolution"]: @a.Snapshot.Resolution</p><p>@localizer["Cause"]: @a.Snapshot.Cause</p>
-<p>@localizer["VerificationEvidence"]: @a.Snapshot.VerificationEvidence</p><p>@localizer["ProcedureReference"]: @a.Snapshot.ProcedureReference (@a.Snapshot.ProcedureVersion)</p>
-</details> }</li> }</ol>
-@if (d.CanWrite && o.Status is not (WorkOrderStatus.Closed or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate) && (d.CanContribute || d.ReportedBy == User.Identity.Name || d.ReportedBy == Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetUserId()))
-{
-    <form class="work-order-form work-order-command" asp-action="Comment" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><label>@localizer["Comment"]<textarea name="note" class="form-control" required maxlength="10000"></textarea></label><button class="btn btn-primary" type="submit">@localizer["AddComment"]</button></form>
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@o.Number — @o.Title</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="work-order-protected">
+                <div class="rgw-toolbar">
+                    <a class="btn btn-default btn-sm" asp-action="Index"><i class="fa fa-arrow-left"></i> @localizer["WorkOrders"]</a>
+                    <div class="rgw-toolbar-spacer"></div>
+                    @if (d.CanAccept)
+                    {
+                        <form class="work-order-form work-order-command" asp-action="Accept" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@o.Id" />
+                            <input type="hidden" name="revision" value="@o.Revision" />
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> @localizer["AcceptAssignment"]</button>
+                        </form>
+                    }
+                    @if (d.Transitions.Length > 0)
+                    {
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#work-order-transition"><i class="fa fa-exchange"></i> @localizer["ChangeStatus"]</button>
+                    }
+                    @if (d.CanManage && o.Status is WorkOrderStatus.Accepted or WorkOrderStatus.Assigned or WorkOrderStatus.InProgress or WorkOrderStatus.OnHold)
+                    {
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#work-order-assign"><i class="fa fa-user"></i> @localizer["Assign"]</button>
+                    }
+                    @if (d.CanEdit)
+                    {
+                        <a class="btn btn-default" asp-action="Edit" asp-route-id="@o.Id"><i class="fa fa-pencil"></i> @localizer["EditWorkOrder"]</a>
+                    }
+                    <a class="btn btn-default" asp-action="Operations" asp-route-id="@o.Id"><i class="fa fa-cogs"></i> @localizer["Operations"]</a>
+                    <form class="work-order-form work-order-export" asp-action="Export" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@o.Id" />
+                        <button type="submit" class="btn btn-default"><i class="fa fa-download"></i> @localizer["Export"]</button>
+                    </form>
+                </div>
+
+                <p class="text-muted">
+                    <span class="label @StatusPill(o.Status)">@localizer["Status" + o.Status]</span>
+                    <span class="label @PriorityPill(o.Priority)">@localizer["Priority" + o.Priority]</span>
+                    @localizer["DueOn"]: @o.DueOn?.ToString("u")
+                </p>
+
+                @if (!d.CanWrite)
+                {
+                    <div class="alert alert-info">@localizer["ReadOnlyHistory"]</div>
+                }
+                @if (c.SafetyCritical || c.HazardousWork)
+                {
+                    <div class="alert alert-warning">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        <strong>@localizer[c.HazardousWork ? "HazardousWork" : "SafetyCritical"]</strong> — @localizer["SafetyNotice"]
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(c.Description))
+                {
+                    <p style="white-space:pre-wrap">@c.Description</p>
+                }
+
+                <dl class="dl-horizontal">
+                    <dt>@localizer["LocationText"]</dt><dd>@c.LocationText</dd>
+                    <dt>@localizer["ReportedBy"]</dt><dd>@d.ReportedBy</dd>
+                    <dt>@localizer["AssignedTo"]</dt><dd>@assignedTo</dd>
+                    <dt>@localizer["Costs"]</dt><dd>@localizer["EstimatedCost"]: @c.EstimatedCost @c.Currency &middot; @localizer["ApprovedCost"]: @c.ApprovedCost &middot; @localizer["CostCenter"]: @c.CostCenter</dd>
+                    <dt>@localizer["VendorDetails"]</dt><dd>@c.VendorDetails</dd>
+                    <dt>@localizer["WarrantyReference"]</dt><dd>@c.WarrantyReference</dd>
+                    <dt>@localizer["ProcedureReference"]</dt><dd>@c.ProcedureReference / @c.ProcedureVersion</dd>
+                    <dt>@localizer["PermitReference"]</dt><dd>@c.PermitReference</dd>
+                    <dt>@localizer["IsolationReference"]</dt><dd>@c.IsolationReference</dd>
+                    <dt>@localizer["QualifiedPersonnel"]</dt><dd>@c.QualifiedPersonnel</dd>
+                </dl>
+
+                @if (c.Steps.Count > 0)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">@localizer["TaskSteps"]</div>
+                        <ul class="list-group">
+                            @foreach (var step in c.Steps)
+                            {
+                                <li class="list-group-item">
+                                    <span class="label @(step.Completed ? "label-success" : "")">@localizer[step.Completed ? "Done" : "Pending"]</span>
+                                    @step.Text
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @if (d.CompletedOn.HasValue)
+                {
+                    <div class="panel panel-default">
+                        <div class="panel-heading">@localizer["Resolution"]</div>
+                        <div class="panel-body">
+                            <p style="white-space:pre-wrap">@c.Resolution</p>
+                            <p class="text-muted">@localizer["Cause"]: @c.Cause</p>
+                            @if (d.ClosedOn.HasValue)
+                            {
+                                <p class="text-muted">@localizer["VerificationEvidence"]: @c.VerificationEvidence</p>
+                                <p class="text-muted">@localizer["VerifiedBy"]: @d.VerifiedBy &middot; @d.ClosedOn?.ToString("u")</p>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @await Html.PartialAsync("_Maintenance", Model)
+
+                <div class="hr-line-dashed"></div>
+
+                @* ── Labor ──────────────────────────────────────────────────────── *@
+                <div class="rgw-toolbar">
+                    <h3 class="m-t-none m-b-none">@localizer["Labor"]</h3>
+                    <div class="rgw-toolbar-spacer"></div>
+                    @if (d.CanContribute)
+                    {
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#work-order-labor"><i class="fa fa-plus"></i> @localizer["AddLabor"]</button>
+                    }
+                </div>
+                @if (d.Labor.Count == 0)
+                {
+                    <p class="text-muted">@localizer["None"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["User"]</th><th>@localizer["WorkDate"]</th><th class="text-right">@localizer["Hours"]</th><th class="text-right">@localizer["Rate"]</th><th>@localizer["Note"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var l in d.Labor)
+                                {
+                                    <tr>
+                                        <td>@l.UserId</td>
+                                        <td>@l.WorkDate.ToString("d")</td>
+                                        <td class="text-right">@l.Content.Hours</td>
+                                        <td class="text-right">@l.Content.RatePerHour @c.Currency</td>
+                                        <td>@l.Content.Note</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                @* ── Parts ──────────────────────────────────────────────────────── *@
+                <div class="rgw-toolbar">
+                    <h3 class="m-t-none m-b-none">@localizer["Parts"]</h3>
+                    <div class="rgw-toolbar-spacer"></div>
+                    @if (d.CanContribute)
+                    {
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#work-order-part"><i class="fa fa-plus"></i> @localizer["AddPart"]</button>
+                    }
+                </div>
+                @if (d.Parts.Count == 0)
+                {
+                    <p class="text-muted">@localizer["None"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["Description"]</th><th class="text-right">@localizer["Quantity"]</th><th class="text-right">@localizer["UnitCost"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var p in d.Parts)
+                                {
+                                    <tr>
+                                        <td>
+                                            @p.Content.Description
+                                            @if (p.InventoryItemId != null)
+                                            {
+                                                <small class="text-muted rgw-sub">
+                                                    <a asp-controller="Inventory" asp-action="Index" asp-route-tab="History" asp-route-itemId="@p.InventoryItemId">@localizer["InventoryParts"]</a>
+                                                    @p.InventoryTransactionId
+                                                </small>
+                                            }
+                                        </td>
+                                        <td class="text-right">@p.Content.Quantity</td>
+                                        <td class="text-right">@p.Content.UnitCost @(p.Content.Currency ?? c.Currency)</td>
+                                        <td class="rgw-row-actions">
+                                            @if (p.VoidedOn.HasValue)
+                                            {
+                                                <span class="label label-danger">@localizer["Voided"]</span>
+                                                <small class="text-muted rgw-sub">@p.Content.VoidReason</small>
+                                            }
+                                            else if (p.AwaitingWitness)
+                                            {
+                                                <span class="label label-warning">@localizer["InventoryWitnessPending"]</span>
+                                                <small class="text-muted rgw-sub">@p.InventoryWitnessRequestId</small>
+                                                @if (d.CanContribute)
+                                                {
+                                                    <button type="button" class="btn btn-xs btn-default" data-toggle="modal" data-target="#part-witness-@p.Id">@localizer["Cancel"]</button>
+                                                }
+                                            }
+                                            else if (p.Staged)
+                                            {
+                                                <a class="btn btn-xs btn-info" asp-action="Operations" asp-route-id="@o.Id">@localizer["PartsAllocation"]</a>
+                                            }
+                                            else if (d.CanContribute)
+                                            {
+                                                <button type="button" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#part-void-@p.Id">@localizer["Void"]</button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                @* ── Files ──────────────────────────────────────────────────────── *@
+                <div class="rgw-toolbar">
+                    <h3 class="m-t-none m-b-none">@localizer["Files"]</h3>
+                    <div class="rgw-toolbar-spacer"></div>
+                    @if (canUpload)
+                    {
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#work-order-upload"><i class="fa fa-upload"></i> @localizer["Upload"]</button>
+                    }
+                </div>
+                @if (d.Files.Count == 0)
+                {
+                    <p class="text-muted">@localizer["None"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["File"]</th><th class="text-right">@localizer["Quantity"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var f in d.Files)
+                                {
+                                    <tr>
+                                        <td><a class="work-order-evidence" asp-action="Evidence" asp-route-id="@f.Id">@f.Name</a></td>
+                                        <td class="text-right">@f.Size</td>
+                                        <td class="rgw-row-actions">
+                                            @if (f.WithdrawnOn.HasValue)
+                                            {
+                                                <span class="label">@localizer["Withdrawn"]</span>
+                                            }
+                                            else if (d.CanContribute)
+                                            {
+                                                <button type="button" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#file-withdraw-@f.Id">@localizer["Withdraw"]</button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                @* ── Activity ───────────────────────────────────────────────────── *@
+                <div class="rgw-toolbar">
+                    <h3 class="m-t-none m-b-none">@localizer["Activity"]</h3>
+                    <div class="rgw-toolbar-spacer"></div>
+                    @if (canComment)
+                    {
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#work-order-comment"><i class="fa fa-comment-o"></i> @localizer["AddComment"]</button>
+                    }
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["CreatedOn"]</th><th>@localizer["Activity"]</th><th>@localizer["User"]</th><th>@localizer["Note"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var a in d.Activities)
+                            {
+                                <tr>
+                                    <td>@a.CreatedOn.ToString("u")</td>
+                                    <td>
+                                        <span class="label">@localizer["Activity" + a.Type]</span>
+                                        @if (a.NewStatus.HasValue)
+                                        {
+                                            <span class="label @StatusPill((WorkOrderStatus)a.NewStatus.Value)">@localizer["Status" + (WorkOrderStatus)a.NewStatus.Value]</span>
+                                        }
+                                    </td>
+                                    <td>@a.UserId</td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(a.Note))
+                                        {
+                                            <div style="white-space:pre-wrap">@a.Note</div>
+                                        }
+                                        @if (a.AssignedToUserId != null || a.AssignedToRoleId.HasValue)
+                                        {
+                                            <small class="text-muted rgw-sub">@localizer["AssignedTo"]: @(a.AssignedToUserId ?? a.AssignedToRoleId.ToString())</small>
+                                        }
+                                        @if (a.RevisedDueOn.HasValue)
+                                        {
+                                            <small class="text-muted rgw-sub">@localizer["OriginalDue"]: @a.OriginalDueOn?.ToString("u") → @localizer["RevisedDue"]: @a.RevisedDueOn.Value.ToString("u")</small>
+                                        }
+                                        @if (a.Snapshot != null)
+                                        {
+                                            <details>
+                                                <summary>@localizer["Description"]: @a.Snapshot.Title</summary>
+                                                <p>@a.Snapshot.Description</p>
+                                                <p>@localizer["Resolution"]: @a.Snapshot.Resolution</p>
+                                                <p>@localizer["Cause"]: @a.Snapshot.Cause</p>
+                                                <p>@localizer["VerificationEvidence"]: @a.Snapshot.VerificationEvidence</p>
+                                                <p>@localizer["ProcedureReference"]: @a.Snapshot.ProcedureReference (@a.Snapshot.ProcedureVersion)</p>
+                                            </details>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @* ── Dialogs ────────────────────────────────────────────────────── *@
+                @if (d.Transitions.Length > 0)
+                {
+                    <div class="modal fade rgw-modal" id="work-order-transition" tabindex="-1" role="dialog" aria-labelledby="work-order-transition-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="work-order-transition-title">@localizer["ChangeStatus"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" asp-action="Transition" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@o.Id" />
+                                        <input type="hidden" name="Revision" value="@o.Revision" />
+                                        <div class="rgw-grid">
+                                            <div class="form-group">
+                                                <label for="transition-status">@localizer["Status"]</label>
+                                                <select class="form-control" id="transition-status" name="Status">
+                                                    @foreach (var status in d.Transitions)
+                                                    {
+                                                        <option value="@((int)status)">@localizer["Status" + status]</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="transition-duplicate">@localizer["DuplicateOf"]</label>
+                                                <input class="form-control" id="transition-duplicate" type="number" name="DuplicateOfId" min="1" />
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <label for="transition-reason">@localizer["Reason"]</label>
+                                                <textarea class="form-control" id="transition-reason" name="Reason" rows="2" maxlength="4000"></textarea>
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <label for="transition-resolution">@localizer["Resolution"]</label>
+                                                <textarea class="form-control" id="transition-resolution" name="Resolution" rows="2" maxlength="4000"></textarea>
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <label for="transition-cause">@localizer["Cause"]</label>
+                                                <textarea class="form-control" id="transition-cause" name="Cause" rows="2" maxlength="4000"></textarea>
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <label for="transition-evidence">@localizer["VerificationEvidence"]</label>
+                                                <textarea class="form-control" id="transition-evidence" name="VerificationEvidence" rows="2" maxlength="4000"></textarea>
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <div class="checkbox"><label><input type="checkbox" name="ConfirmTasksComplete" value="true" /> @localizer["ConfirmTasksComplete"]</label></div>
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["ChangeStatus"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (d.CanManage && o.Status is WorkOrderStatus.Accepted or WorkOrderStatus.Assigned or WorkOrderStatus.InProgress or WorkOrderStatus.OnHold)
+                {
+                    <div class="modal fade rgw-modal" id="work-order-assign" tabindex="-1" role="dialog" aria-labelledby="work-order-assign-title">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="work-order-assign-title">@localizer["Assign"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" asp-action="Assign" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@o.Id" />
+                                        <input type="hidden" name="Revision" value="@o.Revision" />
+                                        <div class="rgw-grid">
+                                            <div class="form-group">
+                                                <label for="assign-user">@localizer["User"]</label>
+                                                <select class="form-control work-order-user" id="assign-user" name="UserId">
+                                                    <option value="">@localizer["None"]</option>
+                                                    @foreach (var x in Model.Choices.Users)
+                                                    {
+                                                        <option value="@x.Id">@x.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="assign-role">@localizer["Role"]</label>
+                                                <select class="form-control work-order-role" id="assign-role" name="RoleId">
+                                                    <option value="">@localizer["None"]</option>
+                                                    @foreach (var x in Model.Choices.Roles)
+                                                    {
+                                                        <option value="@x.Id">@x.Name</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["Assign"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (canComment)
+                {
+                    <div class="modal fade rgw-modal" id="work-order-comment" tabindex="-1" role="dialog" aria-labelledby="work-order-comment-title">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="work-order-comment-title">@localizer["AddComment"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" asp-action="Comment" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@o.Id" />
+                                        <input type="hidden" name="revision" value="@o.Revision" />
+                                        <div class="rgw-grid">
+                                            <div class="form-group rgw-wide">
+                                                <label for="comment-note">@localizer["Comment"]</label>
+                                                <textarea id="comment-note" name="note" class="form-control" rows="3" required maxlength="10000"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["AddComment"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (d.CanContribute)
+                {
+                    <div class="modal fade rgw-modal" id="work-order-labor" tabindex="-1" role="dialog" aria-labelledby="work-order-labor-title">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="work-order-labor-title">@localizer["AddLabor"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" asp-action="Labor" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@o.Id" />
+                                        <input type="hidden" name="Revision" value="@o.Revision" />
+                                        <div class="rgw-grid">
+                                            @if (d.CanManage)
+                                            {
+                                                <div class="form-group">
+                                                    <label for="labor-user">@localizer["User"]</label>
+                                                    <select class="form-control" id="labor-user" name="UserId">
+                                                        <option value="">@localizer["CurrentUser"]</option>
+                                                        @foreach (var x in Model.Choices.Users)
+                                                        {
+                                                            <option value="@x.Id">@x.Name</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            }
+                                            <div class="form-group">
+                                                <label for="labor-date">@localizer["WorkDate"]</label>
+                                                <input class="form-control" id="labor-date" name="WorkDate" type="date" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="labor-hours">@localizer["Hours"]</label>
+                                                <input class="form-control" id="labor-hours" name="Content.Hours" type="number" step="0.01" min="0.01" max="24" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="labor-rate">@localizer["Rate"]</label>
+                                                <input class="form-control" id="labor-rate" name="Content.RatePerHour" type="number" step="0.01" min="0" />
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <label for="labor-note">@localizer["Note"]</label>
+                                                <input class="form-control" id="labor-note" name="Content.Note" maxlength="4000" />
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["AddLabor"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade rgw-modal" id="work-order-part" tabindex="-1" role="dialog" aria-labelledby="work-order-part-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="work-order-part-title">@localizer["AddPart"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" asp-action="Part" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@o.Id" />
+                                        <input type="hidden" name="Revision" value="@o.Revision" />
+                                        <div class="rgw-grid">
+                                            <div class="form-group rgw-wide">
+                                                <label for="part-description">@localizer["Description"]</label>
+                                                <input class="form-control" id="part-description" name="Content.Description" required maxlength="2000" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="part-quantity">@localizer["Quantity"]</label>
+                                                <input class="form-control" id="part-quantity" name="Content.Quantity" type="number" min="0.000001" step="0.000001" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="part-cost">@localizer["UnitCost"]</label>
+                                                <input class="form-control" id="part-cost" name="Content.UnitCost" type="number" min="0" step="0.01" />
+                                            </div>
+                                        </div>
+                                        @await Html.PartialAsync("_PartInventory")
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["AddPart"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @foreach (var p in d.Parts.Where(x => !x.VoidedOn.HasValue && x.AwaitingWitness))
+                    {
+                        <div class="modal fade rgw-modal" id="part-witness-@p.Id" tabindex="-1" role="dialog" aria-labelledby="part-witness-@(p.Id)-title">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="part-witness-@(p.Id)-title">@localizer["Cancel"] &middot; @p.Content.Description</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="work-order-form work-order-command" asp-action="CancelPartWitness" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@o.Id" />
+                                            <input type="hidden" name="revision" value="@o.Revision" />
+                                            <input type="hidden" name="partId" value="@p.Id" />
+                                            <div class="rgw-grid">
+                                                <div class="form-group rgw-wide">
+                                                    <label for="part-witness-reason-@p.Id">@localizer["Reason"]</label>
+                                                    <input class="form-control" id="part-witness-reason-@p.Id" name="reason" required maxlength="4000" />
+                                                </div>
+                                            </div>
+                                            <div class="rgw-wizard-actions">
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                <button class="btn btn-warning" type="submit">@localizer["Cancel"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @foreach (var p in d.Parts.Where(x => !x.VoidedOn.HasValue && !x.AwaitingWitness && !x.Staged))
+                    {
+                        <div class="modal fade rgw-modal" id="part-void-@p.Id" tabindex="-1" role="dialog" aria-labelledby="part-void-@(p.Id)-title">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="part-void-@(p.Id)-title">@localizer["Void"] &middot; @p.Content.Description</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="work-order-form work-order-command" asp-action="VoidPart" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@o.Id" />
+                                            <input type="hidden" name="revision" value="@o.Revision" />
+                                            <input type="hidden" name="partId" value="@p.Id" />
+                                            <div class="rgw-grid">
+                                                <div class="form-group rgw-wide">
+                                                    <label for="part-void-reason-@p.Id">@localizer["Reason"]</label>
+                                                    <input class="form-control" id="part-void-reason-@p.Id" name="reason" required maxlength="4000" />
+                                                </div>
+                                            </div>
+                                            <div class="rgw-wizard-actions">
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                <button class="btn btn-danger" type="submit">@localizer["Void"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @foreach (var f in d.Files.Where(x => !x.WithdrawnOn.HasValue))
+                    {
+                        <div class="modal fade rgw-modal" id="file-withdraw-@f.Id" tabindex="-1" role="dialog" aria-labelledby="file-withdraw-@(f.Id)-title">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="file-withdraw-@(f.Id)-title">@localizer["Withdraw"] &middot; @f.Name</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="work-order-form work-order-command" asp-action="WithdrawFile" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@o.Id" />
+                                            <input type="hidden" name="revision" value="@o.Revision" />
+                                            <input type="hidden" name="fileId" value="@f.Id" />
+                                            <div class="rgw-grid">
+                                                <div class="form-group rgw-wide">
+                                                    <label for="file-reason-@f.Id">@localizer["Reason"]</label>
+                                                    <input class="form-control" id="file-reason-@f.Id" name="reason" required maxlength="4000" />
+                                                </div>
+                                            </div>
+                                            <div class="rgw-wizard-actions">
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                <button class="btn btn-danger" type="submit">@localizer["Withdraw"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (canUpload)
+                {
+                    <div class="modal fade rgw-modal" id="work-order-upload" tabindex="-1" role="dialog" aria-labelledby="work-order-upload-title">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="work-order-upload-title">@localizer["Upload"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" asp-action="Upload" method="post" enctype="multipart/form-data">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@o.Id" />
+                                        <input type="hidden" name="revision" value="@o.Revision" />
+                                        <div class="rgw-grid">
+                                            <div class="form-group rgw-wide">
+                                                <label for="upload-file">@localizer["File"]</label>
+                                                <input class="form-control" id="upload-file" name="file" type="file" accept=".pdf,.png,.jpg,.jpeg" required />
+                                                <span class="help-block">@localizer["FileHelp"]</span>
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["Upload"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
 }
-<h3>@localizer["Labor"]</h3><table class="table"><thead><tr><th>@localizer["User"]</th><th>@localizer["WorkDate"]</th><th>@localizer["Hours"]</th><th>@localizer["Rate"]</th><th>@localizer["Note"]</th></tr></thead><tbody>@foreach (var l in d.Labor) { <tr><td>@l.UserId</td><td>@l.WorkDate.ToString("d")</td><td>@l.Content.Hours</td><td>@l.Content.RatePerHour @c.Currency</td><td>@l.Content.Note</td></tr> }</tbody></table>
-@if (d.CanContribute)
-{
-    <form class="work-order-form work-order-command form-inline" asp-action="Labor" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="Revision" value="@o.Revision"/>
-    @if (d.CanManage) { <label>@localizer["User"] <select class="form-control" name="UserId"><option value="">@localizer["CurrentUser"]</option>@foreach (var x in Model.Choices.Users) { <option value="@x.Id">@x.Name</option> }</select></label> }
-    <label>@localizer["WorkDate"] <input class="form-control" name="WorkDate" type="date" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required/></label><label>@localizer["Hours"] <input class="form-control" name="Content.Hours" type="number" step="0.01" min="0.01" max="24" required/></label>
-    <label>@localizer["Rate"] <input class="form-control" name="Content.RatePerHour" type="number" step="0.01" min="0"/></label><label>@localizer["Note"] <input class="form-control" name="Content.Note" maxlength="4000"/></label><button class="btn btn-primary" type="submit">@localizer["AddLabor"]</button></form>
-}
-<h3>@localizer["Parts"]</h3><table class="table"><thead><tr><th>@localizer["Description"]</th><th>@localizer["Quantity"]</th><th>@localizer["UnitCost"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
-@foreach (var p in d.Parts) { <tr><td>@p.Content.Description @if (p.InventoryItemId != null) { <p><a asp-controller="Inventory" asp-action="Index" asp-route-tab="History" asp-route-itemId="@p.InventoryItemId">@localizer["InventoryParts"]</a><code>@p.InventoryTransactionId</code></p> }</td><td>@p.Content.Quantity</td><td>@p.Content.UnitCost @(p.Content.Currency ?? c.Currency)</td><td>@if (p.VoidedOn.HasValue) { <span>@localizer["Voided"]: @p.Content.VoidReason</span> } else if (p.AwaitingWitness) { <span>@localizer["InventoryWitnessPending"]</span><code>@p.InventoryWitnessRequestId</code><a asp-controller="Inventory" asp-action="Index" asp-route-tab="History">@localizer["InventoryParts"]</a>
-@if (d.CanContribute) { <form class="work-order-form work-order-command" asp-action="CancelPartWitness" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><input type="hidden" name="partId" value="@p.Id"/><label>@localizer["Reason"]<input name="reason" required maxlength="4000"/></label><button class="btn btn-default" type="submit">@localizer["Cancel"]</button></form> } } else if (p.Staged) { <a asp-action="Operations" asp-route-id="@o.Id">@localizer["PartsAllocation"]</a> } else if (d.CanContribute) { <form class="work-order-form work-order-command" asp-action="VoidPart" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><input type="hidden" name="partId" value="@p.Id"/><label>@localizer["Reason"]<input name="reason" required maxlength="4000"/></label><button class="btn btn-default" type="submit">@localizer["Void"]</button></form> }</td></tr> }
-</tbody></table>
-@if (d.CanContribute) { <form class="work-order-form work-order-command form-inline" asp-action="Part" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="Revision" value="@o.Revision"/><label>@localizer["Description"] <input class="form-control" name="Content.Description" required maxlength="2000"/></label><label>@localizer["Quantity"] <input class="form-control" name="Content.Quantity" type="number" min="0.000001" step="0.000001" required/></label><label>@localizer["UnitCost"] <input class="form-control" name="Content.UnitCost" type="number" min="0" step="0.01"/></label>@await Html.PartialAsync("_PartInventory")<button class="btn btn-primary" type="submit">@localizer["AddPart"]</button></form> }
-<h3>@localizer["Files"]</h3><ul>@foreach (var f in d.Files) { <li><a class="work-order-evidence" asp-action="Evidence" asp-route-id="@f.Id">@f.Name</a> (@f.Size) @if (f.WithdrawnOn.HasValue) { <span>@localizer["Withdrawn"]</span> } else if (d.CanContribute) { <form class="work-order-form work-order-command" asp-action="WithdrawFile" method="post">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><input type="hidden" name="fileId" value="@f.Id"/><label>@localizer["Reason"]<input name="reason" required maxlength="4000"/></label><button class="btn btn-default" type="submit">@localizer["Withdraw"]</button></form> }</li> }</ul>
-@if (d.CanContribute || d.CanWrite && o.Status == WorkOrderStatus.Requested && d.ReportedBy == Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetUserId()) { <form class="work-order-form work-order-command" asp-action="Upload" method="post" enctype="multipart/form-data">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@o.Id"/><input type="hidden" name="revision" value="@o.Revision"/><label>@localizer["File"] <input name="file" type="file" accept=".pdf,.png,.jpg,.jpeg" required/></label><p>@localizer["FileHelp"]</p><button class="btn btn-primary" type="submit">@localizer["Upload"]</button></form> }
-</div></div></div></div>
 @section Scripts { @await Html.PartialAsync("_Scripts") }

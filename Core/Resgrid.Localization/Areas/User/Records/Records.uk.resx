@@ -1992,4 +1992,121 @@
   <data name="ReadinessUnits" xml:space="preserve"><value>Табло готовності підрозділів</value></data>
   <data name="ReadinessUnknownCosts" xml:space="preserve"><value>Рядки без ціни</value></data>
   <data name="ReadinessWorkOrders" xml:space="preserve"><value>Наряди на роботи</value></data>
+  <data name="LegalHoldsHeader" xml:space="preserve"><value>Утримання записів для збереження</value></data>
+  <data name="LegalHoldsIntro" xml:space="preserve"><value>Використовуйте утримання для судового спору, розслідування чи запиту на документи. Воно захищає також аналіз і докази; зняття розкриття його не скасовує.</value></data>
+  <data name="PlaceHold" xml:space="preserve"><value>Накласти утримання</value></data>
+  <data name="ReleaseHold" xml:space="preserve"><value>Зняти утримання</value></data>
+  <data name="ReleaseHoldReason" xml:space="preserve"><value>Повноваження та причина зняття збереження</value></data>
+  <data name="NoHolds" xml:space="preserve"><value>Утримань для збереження не накладено.</value></data>
+  <data name="HoldActive" xml:space="preserve"><value>Утримання діє</value></data>
+  <data name="HoldScope" xml:space="preserve"><value>Обсяг</value></data>
+  <data name="HoldPeriod" xml:space="preserve"><value>Період збереження</value></data>
+  <data name="HoldRecordId" xml:space="preserve"><value>Ідентифікатор конкретного запису</value></data>
+  <data name="HoldRecordIdHelp" xml:space="preserve"><value>Залиште порожнім, щоб утримати все, що відповідає визначенню та діапазону дат.</value></data>
+  <data name="HoldDefinition" xml:space="preserve"><value>Обсяг за визначенням</value></data>
+  <data name="HoldNerisScope" xml:space="preserve"><value>Подія та аналіз NERIS</value></data>
+  <data name="HoldScopeHelp" xml:space="preserve"><value>Для обсягу за визначенням залиште обидві дати порожніми, щоб зберегти всі. Час у UTC.</value></data>
+  <data name="HoldPeriodStart" xml:space="preserve"><value>Початок періоду (UTC)</value></data>
+  <data name="HoldPeriodEnd" xml:space="preserve"><value>Кінець періоду (UTC)</value></data>
+  <data name="HoldReason" xml:space="preserve"><value>Підстава утримання</value></data>
+  <data name="HoldReasonLitigation" xml:space="preserve"><value>Судовий спір</value></data>
+  <data name="HoldReasonInvestigation" xml:space="preserve"><value>Розслідування</value></data>
+  <data name="HoldReasonRecordsRequest" xml:space="preserve"><value>Запит на публічну інформацію</value></data>
+  <data name="HoldReasonOther" xml:space="preserve"><value>Інше</value></data>
+  <data name="HoldReference" xml:space="preserve"><value>Повноваження або номер справи</value></data>
+  <data name="HoldNotes" xml:space="preserve"><value>Інструкції зі збереження та підстава</value></data>
+  <data name="HoldAllMatching" xml:space="preserve"><value>Усі відповідні записи</value></data>
+  <data name="HoldAnyStart" xml:space="preserve"><value>Будь-який початок</value></data>
+  <data name="HoldAnyEnd" xml:space="preserve"><value>Будь-який кінець</value></data>
+  <data name="HoldPlacedBy" xml:space="preserve"><value>Накладено</value></data>
+  <data name="HoldReleasedBy" xml:space="preserve"><value>Знято</value></data>
+  <data name="Reason" xml:space="preserve"><value>Причина</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Тут ще нічого немає. Скористайтеся кнопками вище, щоб створити перший запис.</value></data>
+  <data name="PreviousPage" xml:space="preserve"><value>Попередня сторінка</value></data>
+  <data name="NextPage" xml:space="preserve"><value>Наступна сторінка</value></data>
+  <data name="ReturnToReport" xml:space="preserve"><value>Повернутися до звіту</value></data>
+  <data name="EvidenceManifestIntro" xml:space="preserve"><value>Збережений маніфест зберігає обрані вихідні дані та їхню контрольну суму. Чернеткові збори входять до підписаної редакції, а виправлення залишають попередні докази в історії.</value></data>
+  <data name="EvidenceWithheld" xml:space="preserve"><value>Обмежені докази приховано</value></data>
+  <data name="EvidenceCurrent" xml:space="preserve"><value>Поточне</value></data>
+  <data name="EvidenceDraft" xml:space="preserve"><value>Чернетковий збір</value></data>
+  <data name="EvidenceSignedRevision" xml:space="preserve"><value>Підписана редакція</value></data>
+  <data name="EvidenceSourceVersion" xml:space="preserve"><value>Версія джерела</value></data>
+  <data name="EvidenceDownloadManifest" xml:space="preserve"><value>Завантажити перевірений маніфест</value></data>
+  <data name="EvidenceLoadSource" xml:space="preserve"><value>Завантажити джерело</value></data>
+  <data name="EvidenceLoadMessages" xml:space="preserve"><value>Завантажити повідомлення</value></data>
+  <data name="EvidenceChannel" xml:space="preserve"><value>Канал події</value></data>
+  <data name="EvidenceChooseChannel" xml:space="preserve"><value>Оберіть канал</value></data>
+  <data name="EvidenceRestricted" xml:space="preserve"><value>потрібен обмежений доступ</value></data>
+  <data name="EvidenceUnavailableNotice" xml:space="preserve"><value>Для недоступного джерела докази не записуються.</value></data>
+  <data name="EvidenceCoverageStart" xml:space="preserve"><value>Початок охоплення (UTC)</value></data>
+  <data name="EvidenceCoverageEnd" xml:space="preserve"><value>Кінець охоплення (UTC)</value></data>
+  <data name="EvidenceValidityTime" xml:space="preserve"><value>Час події для чинності (UTC)</value></data>
+  <data name="EvidencePersonnel" xml:space="preserve"><value>Особовий склад</value></data>
+  <data name="EvidenceMessages" xml:space="preserve"><value>Повідомлення</value></data>
+  <data name="EvidenceNoChoices" xml:space="preserve"><value>На цій сторінці немає доступних елементів.</value></data>
+  <data name="EvidenceEdited" xml:space="preserve"><value>відредаговано</value></data>
+  <data name="EvidencePageWarning" xml:space="preserve"><value>Незібрані позначки на цій сторінці буде скинуто.</value></data>
+  <data name="EvidenceTrackingHelp" xml:space="preserve"><value>Оберіть щонайбільше 20 одиниць техніки та вікно до 24 годин. Вибирається до 24 позицій на одиницю; інші вікна фіксуйте окремо.</value></data>
+  <data name="EvidenceCertificationHelp" xml:space="preserve"><value>Оберіть осіб, чий статус кваліфікації належить до цього звіту. Номери сертифікатів і файли лишаються в Сертифікаціях.</value></data>
+  <data name="EvidenceRunCardHelp" xml:space="preserve"><value>Фіксує рішення про висилку, записані Run Cards для виклику цього звіту. Незаписане рішення відновити неможливо.</value></data>
+  <data name="EvidenceInventoryHelp" xml:space="preserve"><value>Оновлює докази для кожного зафіксованого використання запасів. Запас повторно не списується.</value></data>
+  <data name="EvidenceChatHelp" xml:space="preserve"><value>Оберіть повідомлення для збереження; відповіді в гілці включено. Кожна сторінка — окремий збір, тож зафіксуйте цю перед переходом далі. Тексти показано як текст.</value></data>
+  <data name="SubmissionRecoveryHeader" xml:space="preserve"><value>Історія надсилання та відновлення</value></data>
+  <data name="SubmissionRecoveryIntro" xml:space="preserve"><value>Кожна спроба доставки та відповідь призначення для цього подання, а також інструменти для узгодження невдалої.</value></data>
+  <data name="SubmissionNoIdentifier" xml:space="preserve"><value>Ідентифікатор не записано</value></data>
+  <data name="SubmissionLatestIssue" xml:space="preserve"><value>Остання проблема</value></data>
+  <data name="SubmissionExchangeHeader" xml:space="preserve"><value>Історія доставки та відповідей</value></data>
+  <data name="SubmissionExchangeIntro" xml:space="preserve"><value>Час у UTC. Попередні відповіді залишаються доступними після відмови, повтору та виправлення.</value></data>
+  <data name="SubmissionNoExchanges" xml:space="preserve"><value>Для цього застарілого подання історію обміну не записано.</value></data>
+  <data name="SubmissionOperation" xml:space="preserve"><value>Операція та етап</value></data>
+  <data name="SubmissionResponse" xml:space="preserve"><value>Відповідь призначення</value></data>
+  <data name="SubmissionLastResponseHeader" xml:space="preserve"><value>Остання збережена відповідь призначення</value></data>
+  <data name="SubmissionBindHeader" xml:space="preserve"><value>Прив'язати ненадіслане подання</value></data>
+  <data name="SubmissionBindIntro" xml:space="preserve"><value>Перевірте поточну сутність NERIS і призначення підрозділу. Прив'язка ставить подання в чергу на доставку.</value></data>
+  <data name="SubmissionBindAction" xml:space="preserve"><value>Прив'язати та поставити в чергу</value></data>
+  <data name="SubmissionVerifyHeader" xml:space="preserve"><value>Перевірити наявне подання в призначенні</value></data>
+  <data name="SubmissionVerifyIntro" xml:space="preserve"><value>Знайдіть подання в початковому призначенні. Його ідентифікатор звіряється зі звітом у черзі перед відновленням опитування.</value></data>
+  <data name="SubmissionVerifyAction" xml:space="preserve"><value>Підтвердити отримання</value></data>
+  <data name="SubmissionAbsenceHeader" xml:space="preserve"><value>Зафіксувати підтверджену відсутність подання</value></data>
+  <data name="SubmissionAbsenceIntro" xml:space="preserve"><value>Використовуйте лише після підтвердження призначенням або його підтримкою, що подання ніколи не створювалося; порожній результат пошуку недостатній. Це фіксує вашу перевірку та знімає блок. Нічого не надсилає й не планує повторів.</value></data>
+  <data name="SubmissionVerificationReference" xml:space="preserve"><value>Номер перевірки або звернення до підтримки призначення</value></data>
+  <data name="SubmissionAbsenceReason" xml:space="preserve"><value>Що перевірено і ким</value></data>
+  <data name="SubmissionAbsenceConfirm" xml:space="preserve"><value>Я перевірив, що початкове призначення не створювало цього подання.</value></data>
+  <data name="SubmissionAbsenceAction" xml:space="preserve"><value>Зафіксувати перевірку без надсилання</value></data>
+  <data name="SubmissionStateQueued" xml:space="preserve"><value>У черзі</value></data>
+  <data name="SubmissionStateInFlight" xml:space="preserve"><value>У дорозі</value></data>
+  <data name="SubmissionStateAccepted" xml:space="preserve"><value>Прийнято</value></data>
+  <data name="SubmissionStateRejected" xml:space="preserve"><value>Відхилено</value></data>
+  <data name="SubmissionStateFailed" xml:space="preserve"><value>Помилка</value></data>
+  <data name="SubmissionStateSuperseded" xml:space="preserve"><value>Замінено новішою редакцією</value></data>
+  <data name="SubmissionStateAwaitingDestination" xml:space="preserve"><value>Очікує розгляду призначенням</value></data>
+  <data name="NewRunCallHeader" xml:space="preserve"><value>Створити виклик для цього виїзду</value></data>
+  <data name="NewRunCallIntro" xml:space="preserve"><value>Зафіксуйте минулу подію та прив'яжіть її до цього виїзду. Виклик створюється закритим і нікого не висилає.</value></data>
+  <data name="NewRunCallName" xml:space="preserve"><value>Назва виклику</value></data>
+  <data name="NewRunCallOccurredOn" xml:space="preserve"><value>Сталося (місцевий час підрозділу)</value></data>
+  <data name="NewRunCallAddress" xml:space="preserve"><value>Адреса</value></data>
+  <data name="NewRunCallNature" xml:space="preserve"><value>Характер виклику</value></data>
+  <data name="NewRunCallAction" xml:space="preserve"><value>Створити та прив'язати виклик</value></data>
+  <data name="DiffRevisionRange" xml:space="preserve"><value>Редакція {0} у порівнянні з редакцією {1}</value></data>
+  <data name="DiffPrint" xml:space="preserve"><value>Друкувати порівняння як PDF</value></data>
+  <data name="CustomFieldsHeader" xml:space="preserve"><value>Власні поля підрозділу</value></data>
+  <data name="NewRunCallSaveFirst" xml:space="preserve"><value>Збережіть чернетку, щоб створити та прив'язати минулий виклик.</value></data>
+  <data name="ParticipantInclude" xml:space="preserve"><value>Включити</value></data>
+  <data name="ParticipantChoose" xml:space="preserve"><value>Оберіть учасника</value></data>
+  <data name="ParticipantLabel" xml:space="preserve"><value>Учасник</value></data>
+  <data name="ParticipantRoleLabel" xml:space="preserve"><value>Роль учасника</value></data>
+  <data name="ParticipantUnitLabel" xml:space="preserve"><value>Призначена техніка</value></data>
+  <data name="ParticipantNoUnit" xml:space="preserve"><value>Техніку не призначено</value></data>
+  <data name="ParticipantPreviousUnit" xml:space="preserve"><value>Раніше призначена техніка</value></data>
+  <data name="ParticipantAdd" xml:space="preserve"><value>Додати учасника</value></data>
+  <data name="ParticipantRoleFor" xml:space="preserve"><value>Роль для {0}</value></data>
+  <data name="FileClassification" xml:space="preserve"><value>Класифікація файлу</value></data>
+  <data name="FileClassificationHelp" xml:space="preserve"><value>Стосується також назв і описів файлів, а не лише самого файлу.</value></data>
+  <data name="ClassificationRestricted" xml:space="preserve"><value>Обмежено</value></data>
+  <data name="ClassificationUnrestricted" xml:space="preserve"><value>Необмежений оперативний вміст</value></data>
+  <data name="ReportsMenu" xml:space="preserve"><value>Звіти</value></data>
+  <data name="ManageMenu" xml:space="preserve"><value>Керування</value></data>
+  <data name="ExportListHeader" xml:space="preserve"><value>Експортувати цей список</value></data>
+  <data name="MoreMenu" xml:space="preserve"><value>Більше</value></data>
+  <data name="InventoryUsage" xml:space="preserve"><value>Використання запасів</value></data>
 </root>

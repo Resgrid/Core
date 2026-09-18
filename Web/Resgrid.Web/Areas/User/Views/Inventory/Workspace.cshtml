@@ -6,159 +6,1416 @@
 @using Resgrid.Model.Inventories
 @using Resgrid.Web.Areas.User.Models
 @using Resgrid.Web.Areas.User.Models.Inventory
+@using Resgrid.Web.Helpers
 @model InventoryWorkspaceView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
+@*
+    Catalog and stock. One tab per kind of record; every list is a table with columns that
+    suit that record, and every piece of data entry that needs more than two or three
+    answers is a step wizard in a modal rather than one long column of inputs.
+
+    All navigation and all commands are POSTs: under Advanced Data Protection the reveal
+    grant rides on those forms (see inventory-modern.js), so they must not become links.
+*@
 @functions {
-    IHtmlContent Field(string name, string label, object value = null, string type = "text", IEnumerable<SelectListItem> options = null) {
-        var wrap = new TagBuilder("div"); wrap.AddCssClass("form-group");
-        var caption = new TagBuilder("label"); var identity = "inv-" + Guid.NewGuid().ToString("N"); caption.Attributes["for"] = identity; caption.InnerHtml.Append(localizer[label].Value); wrap.InnerHtml.AppendHtml(caption);
-        var element = new TagBuilder(options == null ? "input" : "select"); element.AddCssClass("form-control"); element.Attributes["name"] = name; element.Attributes["id"] = identity;
-        var text = Convert.ToString(value, CultureInfo.InvariantCulture) ?? "";
-        if (options == null) { element.Attributes["type"] = type; element.Attributes["value"] = text; element.Attributes["maxlength"] = "16000"; if (type == "number") element.Attributes["step"] = "0.000001"; }
-        else foreach (var option in options) { var item = new TagBuilder("option"); item.Attributes["value"] = option.Value ?? ""; if ((option.Value ?? "") == text) item.Attributes["selected"] = "selected"; item.InnerHtml.Append(option.Text); element.InnerHtml.AppendHtml(item); }
-        wrap.InnerHtml.AppendHtml(element); return wrap;
-    }
-    IEnumerable<SelectListItem> Choice(IEnumerable<InventoryChoice> list) => new[] { new SelectListItem { Value = "", Text = "—" } }.Concat(list.Select(x => new SelectListItem { Value = x.Id, Text = x.Name }));
-    IEnumerable<SelectListItem> Codes(string prefix, params int[] values) => values.Select(x => new SelectListItem { Value = x.ToString(), Text = localizer[prefix + x].Value });
+    IHtmlContent Field(string name, string label, object value = null, string type = "text",
+        IEnumerable<SelectListItem> options = null, string help = null, bool required = false,
+        bool wide = false, int maxLength = 16000, string min = null, bool readOnly = false)
+        => WorkspaceFormHelper.Field(localizer, name, label, value, type, options, help, required, readOnly, wide, maxLength, null, min);
+
+    IHtmlContent Hide(string name, object value) => WorkspaceFormHelper.Hidden(name, value);
+
+    IEnumerable<SelectListItem> Choice(IEnumerable<InventoryChoice> list) => WorkspaceFormHelper.Choices(list.Select(x => (x.Id, x.Name)));
+
+    IEnumerable<SelectListItem> Codes(string prefix, params int[] values) => WorkspaceFormHelper.Codes(localizer, prefix, values);
+
+    string ItemName(string id) => Model.Items.FirstOrDefault(i => i.Id == id) is { } item
+        ? InventoryWorkspaceView.Details<InventoryItemContent>(item).Name
+        : id;
+
+    string LocationName(string id) => string.IsNullOrEmpty(id)
+        ? ""
+        : Model.Locations.FirstOrDefault(l => l.Id == id) is { } location
+            ? InventoryWorkspaceView.Details<InventoryLabel>(location).Name
+            : id;
+
+    string CategoryName(string id) => string.IsNullOrEmpty(id)
+        ? ""
+        : Model.Categories.FirstOrDefault(c => c.Id == id) is { } category
+            ? InventoryWorkspaceView.Details<InventoryLabel>(category).Name
+            : id;
+
+    // Theme label colours: in service reads well, anything sitting in a repair shop or
+    // written off should not. A bare "label" is the theme's neutral grey.
+    string AssetPill(int status) => status switch
+    {
+        0 => "label-success",
+        1 => "label-info",
+        2 or 3 => "label-warning",
+        4 or 5 or 6 => "label-danger",
+        _ => ""
+    };
+
+    string IssuancePill(int status) => status switch
+    {
+        0 => "label-warning",
+        1 => "label-success",
+        2 => "label-warning",
+        _ => "label-danger"
+    };
 }
 @{
     ViewBag.Title = "Resgrid | " + localizer["Inventory"];
     var protectedData = ViewBag.ProtectionEnforced == true;
+
     var itemOptions = Choice(Model.Items.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryItemContent>(x).Name }));
     var locationOptions = Choice(Model.Locations.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLabel>(x).Name }));
     var categoryOptions = Choice(Model.Categories.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLabel>(x).Name }));
     var assetOptions = Choice(Model.Assets.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryAssetContent>(x).SerialNumber + " · " + InventoryWorkspaceView.Details<InventoryAssetContent>(x).AssetTag }));
     var lotOptions = Choice(Model.Lots.Select(x => new InventoryChoice { Id = x.Id, Name = InventoryWorkspaceView.Details<InventoryLotContent>(x).LotNumber }));
     var vendorOptions = Choice(Model.Vendors.Select(x => new InventoryChoice { Id = x.Id, Name = Model.VendorContacts.FirstOrDefault(c => c.Id == x.ContactId)?.Name ?? x.ContactId }));
-    string ItemName(string id) => Model.Items.FirstOrDefault(i => i.Id == id) is { } item ? InventoryWorkspaceView.Details<InventoryItemContent>(item).Name : id;
-    string LocationName(string id) => Model.Locations.FirstOrDefault(i => i.Id == id) is { } location ? InventoryWorkspaceView.Details<InventoryLabel>(location).Name : id;
+
+    // Tab strip. Contextual views (a single asset, a single ledger entry, a holder's kit)
+    // are reached from a row and are not tabs of their own.
+    var tabs = new (string Key, string Icon)[]
+    {
+        ("OnHand", "fa-cubes"), ("Items", "fa-list-ul"), ("Categories", "fa-folder-open-o"),
+        ("Locations", "fa-map-marker"), ("Lots", "fa-barcode"), ("Assets", "fa-tag"),
+        ("Issuances", "fa-hand-paper-o"), ("Kits", "fa-briefcase"), ("Transfers", "fa-exchange"),
+        ("History", "fa-history")
+    };
+    var contextual = new[] { "AssetDetail", "Transaction", "UnitEquipment", "PersonnelGear" };
+    var isContextual = contextual.Contains(Model.Tab);
+
+    ViewData["Module"] = "Inventory";
+    ViewData["Intro"] = localizer["WorkspaceIntro"].Value;
 }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-title"><h2>@localizer["Inventory"]</h2></div><div class="ibox-content">
-    @if (ViewBag.ProtectionEnforced == true) { @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value }) }
-    <div id="inventory-message" class="alert alert-info" role="status" hidden></div>
-    <form id="inventory-page" asp-action="Reopen" method="post" class="inventory-navigation">
-        @Html.AntiForgeryToken()<input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="@Model.Page"/><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="unitId" value="@Model.UnitId"/><input type="hidden" name="userId" value="@Model.UserId"/><input type="hidden" name="itemId" value="@Model.ItemId"/><input type="hidden" name="locationId" value="@Model.LocationId"/>
-        @if (Model.Locked) { <button type="submit" class="btn btn-primary">@localizer["Unlock"]</button> }
-    </form>
-    @if (!Model.Locked && !Model.Migrated) {
-        <p>@localizer["InitializeDescription"]</p>
-        @if (Model.CanWrite) { <form asp-action="Initialize" method="post" class="inventory-command">@Html.AntiForgeryToken()<button type="submit" class="btn btn-primary">@localizer["Initialize"]</button></form> }
-    }
-    @if (!Model.Locked && Model.Migrated) {
-        <nav class="btn-toolbar" aria-label="@localizer["Inventory"]">
-        @foreach (var tab in new[] { "OnHand", "Items", "Categories", "Locations", "Lots", "Assets", "Issuances", "Kits", "Transfers", "History" }) {
-            <form asp-action="Reopen" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="@tab"/><input type="hidden" name="itemId" value="@Model.ItemId"/><input type="hidden" name="locationId" value="@Model.LocationId"/><button class="btn @(Model.Tab == tab ? "btn-primary" : "btn-default")" type="submit">@localizer[tab]</button></form>
-        }
-            <form asp-action="ReopenPurchasing" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<button class="btn btn-default" type="submit">@localizer["M4Purchasing"]</button></form>
-            <form asp-action="ReopenOperations" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<button class="btn btn-default" type="submit">@localizer["M5Operations"]</button></form>
-        </nav><hr/><h3>@localizer[Model.Tab]</h3>
-        @if (Model.ChoicesHaveMore) { <p class="alert alert-info">@localizer["MoreChoices"]</p> }
-        @if (Model.Tab is "OnHand" or "History") {
-            <form asp-action="@(protectedData ? "Reopen" : "Index")" method="@(protectedData ? "post" : "get")" class="@(protectedData ? "inventory-navigation" : "inventory-filter")">
-                @if (protectedData) { @Html.AntiForgeryToken() }
-                <input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="0"/>
-                @Field("itemId", "Items", Model.ItemId, options: itemOptions)@Field("locationId", "Location", Model.LocationId, options: locationOptions)
-                <button class="btn btn-default" type="submit">@localizer[Model.Tab == "History" ? "ViewHistory" : "OnHand"]</button>
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>@localizer[Model.Locked || !Model.Migrated ? "Inventory" : Model.Tab]</h5>
+        </div>
+        <div class="ibox-content">
+
+            @if (protectedData)
+            {
+                @await Html.PartialAsync("_AdpRevealBanner", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value })
+            }
+
+            <div id="inventory-message" class="alert alert-info" role="status" hidden></div>
+
+            @* Carries the current page position; commands re-submit it to refresh the screen. *@
+            <form id="inventory-page" asp-action="Reopen" method="post" class="inventory-navigation">
+                @Html.AntiForgeryToken()
+                @Hide("tab", Model.Tab)@Hide("page", Model.Page)@Hide("id", Model.Id)
+                @Hide("unitId", Model.UnitId)@Hide("userId", Model.UserId)
+                @Hide("itemId", Model.ItemId)@Hide("locationId", Model.LocationId)
+                @if (Model.Locked)
+                {
+                    <div class="text-center m-t-lg m-b-lg">
+                        <i class="fa fa-lock fa-3x text-muted"></i>
+                        <h4 class="m-t-sm">@localizer["ProtectedDataRequired"]</h4>
+                        <p>@commonLocalizer["AdpProtectedBannerDescription"]</p>
+                        <button type="submit" class="btn btn-primary m-t">@localizer["Unlock"]</button>
+                    </div>
+                }
             </form>
-        }
-        @if (Model.Tab == "OnHand") {
-            <form asp-action="Reopen" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="UnitEquipment"/>@Field("unitId", "Unit", null, options: Choice(Model.Units))<button class="btn btn-default" type="submit">@localizer["UnitEquipment"]</button></form>
-            <form asp-action="Reopen" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="PersonnelGear"/>@Field("userId", "Person", null, options: Choice(Model.People))<button class="btn btn-default" type="submit">@localizer["PersonnelGear"]</button></form>
-        }
-        <div class="table-responsive"><table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Location"]</th><th>@localizer["Amount"]</th><th>@localizer["Status"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
-        @foreach (var row in Model.Rows) {
-            var title = row switch { InventoryItem i => InventoryWorkspaceView.Details<InventoryItemContent>(i).Name, InventoryAsset a => ItemName(a.ItemId) + " · " + InventoryWorkspaceView.Details<InventoryAssetContent>(a).SerialNumber, InventoryStock s => ItemName(s.ItemId), InventoryIssuance i => ItemName(i.ItemId), InventoryLot l => InventoryWorkspaceView.Details<InventoryLotContent>(l).LotNumber, InventoryTransaction t => ItemName(t.ItemId) + " · " + localizer["Movement" + t.TransactionType].Value, _ => InventoryWorkspaceView.Details<InventoryLabel>(row).Name ?? row.Id };
-            var location = row switch { InventoryAsset a => LocationName(a.CurrentLocationId), InventoryStock s => LocationName(s.LocationId), InventoryIssuance i => LocationName(i.LocationId), InventoryTransaction t => LocationName(t.FromLocationId) + " → " + LocationName(t.ToLocationId), InventoryTransfer t => LocationName(t.FromLocationId) + " → " + LocationName(t.ToLocationId), _ => "" };
-            var amount = row switch { InventoryStock s => s.Quantity.ToString(CultureInfo.CurrentCulture), InventoryIssuance i => (i.Quantity - i.ReturnedQuantity).ToString(CultureInfo.CurrentCulture), InventoryTransaction t => t.Quantity.ToString(CultureInfo.CurrentCulture), _ => "" };
-            <tr><td>@title<small class="text-muted" style="display:block">@row.Id</small></td><td>@location</td><td>@amount</td><td>@(row is InventoryAsset asset ? localizer["Status" + asset.Status] : row is InventoryIssuance issued ? localizer["IssuanceStatus" + issued.Status] : "")</td><td>
-                @if (row is InventoryAsset) { <form asp-action="Reopen" method="post" class="inventory-navigation">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="AssetDetail"/><input type="hidden" name="id" value="@row.Id"/><button class="btn btn-default btn-xs" type="submit">@localizer["ViewHistory"]</button></form> }
-                @if (row is InventoryTransaction txn) { <time>@txn.OccurredOn.ToString("u")</time><details><summary>@localizer["Details"]</summary><p>@(InventoryWorkspaceView.Details<InventoryLabel>(txn).Note)</p><p>@localizer["Reference"]: @txn.ReferenceType / @txn.ReferenceId
-                @if (txn.ReferenceType == (int)InventoryReferenceType.WorkOrder && int.TryParse(txn.ReferenceId, out var orderId) && orderId > 0) { <a asp-controller="WorkOrders" asp-action="Detail" asp-route-id="@orderId">@localizer["Details"]</a> }
-                </p></details> }
-                @if (Model.CanWrite && Model.Tab is "Items" or "Categories" or "Locations" or "Kits") { <form asp-action="Archive" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="kind" value="@Model.Tab"/><input type="hidden" name="id" value="@row.Id"/><input type="hidden" name="revision" value="@row.Revision"/><button class="btn btn-default btn-xs" type="submit">@localizer["Archive"]</button></form> }
-                @if (Model.CanIssue && row is InventoryIssuance outstanding && outstanding.Status is 0 or 2) {
-                    <details><summary>@localizer["Return"]</summary><form asp-action="Return" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/><input type="hidden" name="IssuanceId" value="@row.Id"/><input type="hidden" name="Revision" value="@row.Revision"/>@Field("ToLocationId", "ToLocation", null, options: locationOptions)@Field("Quantity", "Amount", outstanding.Quantity - outstanding.ReturnedQuantity, "number")@Field("Condition", "Status", 0, options: Codes("Status", 0, 2, 3))@Field("Note", "Note")<button class="btn btn-primary" type="submit">@localizer["Return"]</button></form></details>
-                }
-                @if (Model.CanWrite && row is InventoryCategory category) {
-                    <details><summary>@localizer["Edit"]</summary><form asp-action="SaveCategory" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@category.Id"/><input type="hidden" name="revision" value="@category.Revision"/>@Field("name", "Name", InventoryWorkspaceView.Details<InventoryLabel>(category).Name)@Field("parentId", "Parent", category.ParentCategoryId, options: categoryOptions)<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form></details>
-                }
-                @if (Model.CanWrite && row is InventoryLocation place) {
-                    <details><summary>@localizer["Edit"]</summary><form asp-action="SaveLocation" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="Id" value="@place.Id"/><input type="hidden" name="Revision" value="@place.Revision"/><input type="hidden" name="Type" value="@place.LocationType"/><input type="hidden" name="GroupId" value="@place.GroupId"/><input type="hidden" name="UnitId" value="@place.UnitId"/><input type="hidden" name="UserId" value="@place.UserId"/><input type="hidden" name="ContainerAssetId" value="@place.ContainerAssetId"/><input type="hidden" name="ParentLocationId" value="@place.ParentLocationId"/><input type="hidden" name="IsDefault" value="@place.IsDefault.ToString().ToLowerInvariant()"/>@Field("Name", "Name", InventoryWorkspaceView.Details<InventoryLabel>(place).Name)<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form></details>
-                }
-                @if (Model.CanWrite && row is InventoryKit editableKit) {
-                    <details><summary>@localizer["Edit"]</summary><form asp-action="SaveKit" method="post" class="inventory-command inventory-kit">
-                    @Html.AntiForgeryToken()<input type="hidden" name="Id" value="@editableKit.Id"/><input type="hidden" name="Revision" value="@editableKit.Revision"/>@Field("Name", "Name", InventoryWorkspaceView.Details<InventoryLabel>(editableKit).Name)
-                    <div class="inventory-kit-lines">
-                    @{ var editLines = Model.KitContents.Where(k => k.KitId == editableKit.Id && !k.IsDeleted).ToList(); var editIndex = 0; }
-                    @foreach (var kitLine in editLines.DefaultIfEmpty(new InventoryKitItem { Quantity = 1 })) {
-                        var prefix = "Lines[" + editIndex++ + "].";
-                        <div class="inventory-kit-line">@Field(prefix + "ItemId", "Items", kitLine.ItemId, options: itemOptions)@Field(prefix + "Quantity", "Amount", kitLine.Quantity, "number")<button class="btn btn-default inventory-remove-line" type="button">@localizer["Archive"]</button></div>
+
+            @if (!Model.Locked && !Model.Migrated)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-cubes fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["Initialize"]</h4>
+                    <p>@localizer["InitializeDescription"]</p>
+                    @if (Model.CanWrite)
+                    {
+                        <form asp-action="Initialize" method="post" class="inventory-command m-t">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-primary">@localizer["Initialize"]</button>
+                        </form>
                     }
-                    </div><button class="btn btn-default inventory-add-line" type="button">@localizer["AddLine"]</button><button class="btn btn-primary" type="submit">@localizer["Save"]</button></form></details>
+                </div>
+            }
+
+            @if (!Model.Locked && Model.Migrated)
+            {
+                <ul class="nav nav-tabs" role="tablist" aria-label="@localizer["Inventory"]">
+                    @foreach (var tab in tabs)
+                    {
+                        <li class="nav-item @(Model.Tab == tab.Key ? "active" : null)">
+                            <form asp-action="Reopen" method="post" class="inventory-navigation">
+                                @Html.AntiForgeryToken()
+                                @Hide("tab", tab.Key)@Hide("itemId", Model.ItemId)@Hide("locationId", Model.LocationId)
+                                <button type="submit" aria-current="@(Model.Tab == tab.Key ? "page" : "false")">
+                                    <i class="fa @tab.Icon"></i> @localizer[tab.Key]
+                                </button>
+                            </form>
+                        </li>
+                    }
+                </ul>
+
+                @if (isContextual)
+                {
+                    @* Contextual views get a way back to the list they came from. *@
+                    <div class="rgw-toolbar">
+                        <form asp-action="Reopen" method="post" class="inventory-navigation">
+                            @Html.AntiForgeryToken()
+                            @Hide("tab", Model.Tab == "AssetDetail" ? "Assets" : Model.Tab == "Transaction" ? "History" : "OnHand")
+                            <button class="btn btn-default btn-sm" type="submit"><i class="fa fa-arrow-left"></i> @localizer["Back"]</button>
+                        </form>
+                    </div>
                 }
-                @if (Model.CanIssue && row is InventoryKit kit && Model.KitContents.Any(k => k.KitId == kit.Id && !k.IsDeleted)) {
-                    var kitLines = Model.KitContents.Where(k => k.KitId == kit.Id && !k.IsDeleted).ToList();
-                    var issueCount = kitLines.Sum(k => Model.Items.FirstOrDefault(i => i.Id == k.ItemId)?.TrackingMode == (int)InventoryTrackingMode.Serialized ? k.Quantity : 1);
-                    if (issueCount <= 100 && kitLines.All(k => Model.Items.Any(i => i.Id == k.ItemId))) {
-                        <details><summary>@localizer["Issue"]</summary><form asp-action="IssueKit" method="post" class="inventory-command inventory-kit-issue">@Html.AntiForgeryToken()<input type="hidden" name="KitId" value="@kit.Id"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>@Field("userId", "Person", null, options: Choice(Model.People))@Field("unitId", "Unit", null, options: Choice(Model.Units))
-                        @{ var lineIndex = 0; }
-                        @foreach (var kitLine in kitLines) {
-                            var serialized = Model.Items.First(i => i.Id == kitLine.ItemId).TrackingMode == (int)InventoryTrackingMode.Serialized;
-                            var quantity = serialized ? 1 : kitLine.Quantity;
-                            foreach (var component in Enumerable.Range(0, serialized ? (int)kitLine.Quantity : 1)) {
-                                var prefix = "Lines[" + lineIndex++ + "].";
-                                <fieldset><legend>@ItemName(kitLine.ItemId) @(serialized ? (component + 1).ToString(CultureInfo.CurrentCulture) : "")</legend><input type="hidden" name="@(prefix + "ItemId")" value="@kitLine.ItemId"/><input type="hidden" name="@(prefix + "Quantity")" value="@quantity.ToString(CultureInfo.InvariantCulture)"/><p>@localizer["Amount"]: @quantity.ToString(CultureInfo.CurrentCulture)</p>
-                                @if (serialized) { @Field(prefix + "AssetId", "AssetId", null, options: Choice(Model.Assets.Where(a => a.ItemId == kitLine.ItemId && a.Status == (int)InventoryAssetStatus.InService && a.CurrentLocationId != null).Select(a => new InventoryChoice { Id = a.Id, Name = InventoryWorkspaceView.Details<InventoryAssetContent>(a).SerialNumber + " · " + InventoryWorkspaceView.Details<InventoryAssetContent>(a).AssetTag }))) }
-                                @Field(prefix + "LotId", "LotId", null, options: Choice(Model.Lots.Where(l => l.ItemId == kitLine.ItemId).Select(l => new InventoryChoice { Id = l.Id, Name = InventoryWorkspaceView.Details<InventoryLotContent>(l).LotNumber })))@Field(prefix + "FromLocationId", "FromLocation", null, options: locationOptions)</fieldset>
+
+                @* Every tab opens with a sentence explaining what the records on it are for. *@
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i>@localizer["Help" + Model.Tab]
+                </div>
+
+                @if (Model.ChoicesHaveMore)
+                {
+                    <div class="alert alert-warning">@localizer["MoreChoices"]</div>
+                }
+
+                @* ── Filters and lookups ─────────────────────────────────────────── *@
+                @if (Model.Tab is "OnHand" or "History")
+                {
+                    <div class="rgw-filter">
+                        <form asp-action="@(protectedData ? "Reopen" : "Index")" method="@(protectedData ? "post" : "get")"
+                              class="@(protectedData ? "inventory-navigation" : "inventory-filter")">
+                            @if (protectedData)
+                            {
+                                @Html.AntiForgeryToken()
+                            }
+                            @Hide("tab", Model.Tab)@Hide("page", 0)
+                            <div class="rgw-grid">
+                                @Field("itemId", "Items", Model.ItemId, options: itemOptions)
+                                @Field("locationId", "Location", Model.LocationId, options: locationOptions)
+                            </div>
+                            <div class="rgw-filter-actions">
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-filter"></i> @localizer["Filter"]</button>
+                            </div>
+                        </form>
+
+                        @* The holder lookups share the filter panel so the tab opens with one
+                           block of controls rather than two competing grey boxes. *@
+                        @if (Model.Tab == "OnHand")
+                        {
+                            <div class="rgw-filter-split">
+                                <p class="text-muted m-b-sm">@localizer["HelpHolderLookup"]</p>
+                                <div class="rgw-lookup">
+                                    <form asp-action="Reopen" method="post" class="inventory-navigation">
+                                        @Html.AntiForgeryToken()
+                                        @Hide("tab", "UnitEquipment")
+                                        @Field("unitId", "Unit", null, options: Choice(Model.Units))
+                                        <div class="rgw-filter-actions">
+                                            <button class="btn btn-default" type="submit"><i class="fa fa-truck"></i> @localizer["UnitEquipment"]</button>
+                                        </div>
+                                    </form>
+                                    <form asp-action="Reopen" method="post" class="inventory-navigation">
+                                        @Html.AntiForgeryToken()
+                                        @Hide("tab", "PersonnelGear")
+                                        @Field("userId", "Person", null, options: Choice(Model.People))
+                                        <div class="rgw-filter-actions">
+                                            <button class="btn btn-default" type="submit"><i class="fa fa-user"></i> @localizer["PersonnelGear"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                @* ── Primary action for the current tab ──────────────── *@
+                // The toolbar only appears when this tab actually offers an action.
+                var hasActions = (Model.CanWrite && Model.Tab is "Items" or "Categories" or "Locations" or "Lots" or "Assets" or "Kits" or "OnHand" or "History")
+                    || (Model.CanTransfer && Model.Tab == "Transfers")
+                    || (Model.CanIssue && Model.Tab == "Issuances")
+                    || (Model.CanWitness && Model.Tab == "History")
+                    || (Model.CanWrite && Model.Tab == "AssetDetail" && Model.Rows.OfType<InventoryAsset>().Any());
+                @if (hasActions)
+                {
+                    <div class="rgw-toolbar">
+                        <div class="rgw-toolbar-spacer"></div>
+                        @if (Model.CanWrite && Model.Tab == "Items")
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#rgw-new-item"><i class="fa fa-plus"></i> @localizer["NewItem"]</button>
+                        }
+                        @if (Model.CanWrite && Model.Tab == "Categories")
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#rgw-new-category"><i class="fa fa-plus"></i> @localizer["NewCategory"]</button>
+                        }
+                        @if (Model.CanWrite && Model.Tab == "Locations")
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#rgw-new-location"><i class="fa fa-plus"></i> @localizer["NewLocation"]</button>
+                        }
+                        @if (Model.CanWrite && Model.Tab == "Lots")
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#rgw-new-lot"><i class="fa fa-plus"></i> @localizer["NewLot"]</button>
+                        }
+                        @if (Model.CanWrite && Model.Tab == "Assets")
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#rgw-new-asset"><i class="fa fa-plus"></i> @localizer["NewAsset"]</button>
+                        }
+                        @if (Model.CanWrite && Model.Tab == "Kits")
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#rgw-new-kit"><i class="fa fa-plus"></i> @localizer["NewKit"]</button>
+                        }
+                        @if (Model.CanWrite && Model.Tab == "OnHand")
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#rgw-post-movement"><i class="fa fa-sliders"></i> @localizer["AdjustStock"]</button>
+                        }
+                        @if (Model.CanTransfer && Model.Tab == "Transfers")
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#rgw-post-movement"><i class="fa fa-exchange"></i> @localizer["NewTransfer"]</button>
+                        }
+                        @if (Model.CanIssue && Model.Tab == "Issuances")
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#rgw-issue"><i class="fa fa-hand-paper-o"></i> @localizer["IssueEquipment"]</button>
+                        }
+                        @if (Model.Tab == "History")
+                        {
+                            @if (Model.CanWitness)
+                            {
+                                <button class="btn btn-default" type="button" data-toggle="modal" data-target="#rgw-witness"><i class="fa fa-check-square-o"></i> @localizer["Witness"]</button>
+                            }
+                            @if (Model.CanWrite)
+                            {
+                                <form asp-action="Rebuild" method="post" class="inventory-command">
+                                    @Html.AntiForgeryToken()
+                                    <button class="btn btn-default" type="submit"><i class="fa fa-refresh"></i> @localizer["Rebuild"]</button>
+                                </form>
                             }
                         }
-                        <button class="btn btn-primary" type="submit">@localizer["Issue"]</button></form></details>
-                    } else { <p class="text-muted">@localizer["UnableToComplete"]</p> }
+                        @if (Model.CanWrite && Model.Tab == "AssetDetail" && Model.Rows.OfType<InventoryAsset>().Any())
+                        {
+                            <button class="btn btn-default" type="button" data-toggle="modal" data-target="#rgw-asset-status"><i class="fa fa-flag"></i> @localizer["Status"]</button>
+                        }
+                    </div>
                 }
-            </td></tr>
-        }
-        </tbody></table></div>
-        @if (Model.Rows.Count == 0) { <p>@localizer["NoRows"]</p> }
-        @foreach (var nextPage in new[] { Model.Page - 1, Model.Page + 1 }.Where(p => p >= 0 && (p < Model.Page || Model.HasMore))) { <form asp-action="Reopen" method="post" class="inventory-navigation" style="display:inline-block">@Html.AntiForgeryToken()<input type="hidden" name="tab" value="@Model.Tab"/><input type="hidden" name="page" value="@nextPage"/><input type="hidden" name="id" value="@Model.Id"/><input type="hidden" name="unitId" value="@Model.UnitId"/><input type="hidden" name="userId" value="@Model.UserId"/><input type="hidden" name="itemId" value="@Model.ItemId"/><input type="hidden" name="locationId" value="@Model.LocationId"/><button class="btn btn-default" type="submit">@localizer[nextPage < Model.Page ? "Previous" : "Next"]</button></form> }
-        @if (Model.Tab == "AssetDetail") {
-            <p><a asp-controller="Checklists" asp-action="Index">@localizer["Checklists"]</a> · <a asp-controller="WorkOrders" asp-action="Index" asp-route-AssetId="@Model.Id">@localizer["WorkOrders"]</a></p>
-        }
-        @if (Model.CanWrite || Model.CanTransfer || Model.CanIssue || Model.CanWitness) {
-            <hr/>
-            @if (Model.CanWrite && Model.Tab == "Items") {
-                foreach (var item in new[] { new InventoryItem() }.Concat(Model.Rows.OfType<InventoryItem>())) {
-                    var details = InventoryWorkspaceView.Details<InventoryItemContent>(item); var isNew = !Model.Rows.Contains(item);
-                    <details><summary>@localizer[isNew ? "NewItem" : "Edit"] @details.Name</summary><form asp-action="SaveItem" method="post" class="inventory-command">
-                    @Html.AntiForgeryToken()<input type="hidden" name="Id" value="@(isNew ? null : item.Id)"/><input type="hidden" name="Revision" value="@item.Revision"/>
-                    @Field("Details.Name", "Name", details.Name)@Field("Details.Description", "Description", details.Description)@Field("Details.UnitOfMeasure", "UnitOfMeasure", details.UnitOfMeasure)@Field("Details.Code", "Code", details.Code)@Field("Details.Barcode", "Barcode", details.Barcode)
-                    @Field("CategoryId", "Categories", item.CategoryId, options: categoryOptions)@Field("TrackingMode", "TrackingMode", item.TrackingMode, options: Codes("Tracking", 0, 1))
-                    @foreach (var flag in new[] { ("IsKit", item.IsKit), ("RequiresLotTracking", item.RequiresLotTracking), ("RequiresExpiration", item.RequiresExpiration), ("IsControlledSubstance", item.IsControlledSubstance), ("IsActive", item.IsActive) }) { @Field(flag.Item1, flag.Item1, flag.Item2.ToString().ToLowerInvariant(), options: new[] { new SelectListItem { Value = "false", Text = localizer["No"] }, new SelectListItem { Value = "true", Text = localizer["Yes"] } }) }
-                    @Field("Details.MinLevel", "Minimum", details.MinLevel, "number")@Field("Details.ReorderPoint", "ReorderPoint", details.ReorderPoint, "number")@Field("Details.DefaultUnitCost", "UnitCost", details.DefaultUnitCost, "number")
-                    @Field("Details.CurrencyCode", "M4Currency", details.CurrencyCode)<p>@localizer["M4CurrencyHelp"]</p>
-                    <p>@localizer["M4AverageUnitCost"]: @(details.AverageUnitCost?.ToString(CultureInfo.CurrentCulture) ?? localizer["M4UnknownCost"].Value)</p>
-                    @if (Model.CanChooseVendors) { @Field("Details.PreferredVendorId", "M4PreferredVendor", details.PreferredVendorId, options: vendorOptions) }
-                    else { <input type="hidden" name="Details.PreferredVendorId" value="@details.PreferredVendorId"/> }
-                    <input type="hidden" name="Details.MaxLevel" value="@details.MaxLevel?.ToString(CultureInfo.InvariantCulture)"/><input type="hidden" name="Details.ReorderQuantity" value="@details.ReorderQuantity?.ToString(CultureInfo.InvariantCulture)"/><input type="hidden" name="Details.DeaSchedule" value="@details.DeaSchedule"/><input type="hidden" name="Details.DefaultExpirationDays" value="@details.DefaultExpirationDays"/>
-                    <button class="btn btn-primary" type="submit">@localizer["Save"]</button></form></details>
+
+                @* ── Lists ───────────────────────────────────────────────────────── *@
+                @if (Model.Rows.Count == 0)
+                {
+                    <div class="text-center m-t-lg m-b-lg">
+                        <i class="fa fa-inbox fa-3x text-muted"></i>
+                        <h4 class="m-t-sm">@localizer["NoRows"]</h4>
+                        <p>@localizer["NoRowsHelp"]</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            @switch (Model.Tab)
+                            {
+                                case "OnHand":
+                                case "UnitEquipment":
+                                    <thead><tr><th>@localizer["Item"]</th><th>@localizer["Location"]</th><th class="text-right">@localizer["Quantity"]</th><th>@localizer["Status"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var row in Model.Rows)
+                                        {
+                                            var stock = row as InventoryStock;
+                                            var held = row as InventoryAsset;
+                                            var content = held == null ? null : InventoryWorkspaceView.Details<InventoryAssetContent>(held);
+                                            <tr>
+                                                <td>
+                                                    @ItemName(stock?.ItemId ?? held?.ItemId)
+                                                    @if (content != null)
+                                                    {
+                                                        <small class="text-muted rgw-sub">@content.SerialNumber @content.AssetTag</small>
+                                                    }
+                                                </td>
+                                                <td>@LocationName(stock?.LocationId ?? held?.CurrentLocationId)</td>
+                                                <td class="text-right">@(stock != null ? stock.Quantity.ToString(CultureInfo.CurrentCulture) : "1")</td>
+                                                <td>
+                                                    @if (held != null)
+                                                    {
+                                                        <span class="label @AssetPill(held.Status)">@localizer["Status" + held.Status]</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+
+                                case "Items":
+                                    <thead><tr><th>@localizer["Name"]</th><th>@localizer["Code"]</th><th>@localizer["Category"]</th><th>@localizer["TrackingMode"]</th><th>@localizer["Status"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Rows.OfType<InventoryItem>())
+                                        {
+                                            var details = InventoryWorkspaceView.Details<InventoryItemContent>(item);
+                                            <tr>
+                                                <td>
+                                                    @details.Name
+                                                    @if (!string.IsNullOrEmpty(details.UnitOfMeasure))
+                                                    {
+                                                        <small class="text-muted rgw-sub">@details.UnitOfMeasure</small>
+                                                    }
+                                                </td>
+                                                <td>@details.Code</td>
+                                                <td>@CategoryName(item.CategoryId)</td>
+                                                <td>
+                                                    <span class="label">@localizer["Tracking" + item.TrackingMode]</span>
+                                                    @if (item.IsControlledSubstance)
+                                                    {
+                                                        <span class="label label-warning">@localizer["IsControlledSubstance"]</span>
+                                                    }
+                                                </td>
+                                                <td><span class="label @(item.IsActive ? "label-success" : "")">@localizer[item.IsActive ? "Active" : "Inactive"]</span></td>
+                                                <td class="rgw-row-actions">
+                                                    @if (Model.CanWrite)
+                                                    {
+                                                        <button class="btn btn-xs btn-primary" type="button" data-toggle="modal" data-target="#rgw-item-@item.Id">@localizer["Edit"]</button>
+                                                        <form asp-action="Archive" method="post" class="inventory-command">
+                                                            @Html.AntiForgeryToken()
+                                                            @Hide("kind", "Items")@Hide("id", item.Id)@Hide("revision", item.Revision)
+                                                            <button class="btn btn-xs btn-danger" type="submit">@localizer["Archive"]</button>
+                                                        </form>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+
+                                case "Categories":
+                                    <thead><tr><th>@localizer["Name"]</th><th>@localizer["Parent"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var category in Model.Rows.OfType<InventoryCategory>())
+                                        {
+                                            <tr>
+                                                <td>@(InventoryWorkspaceView.Details<InventoryLabel>(category).Name)</td>
+                                                <td>@CategoryName(category.ParentCategoryId)</td>
+                                                <td class="rgw-row-actions">
+                                                    @if (Model.CanWrite)
+                                                    {
+                                                        <button class="btn btn-xs btn-primary" type="button" data-toggle="modal" data-target="#rgw-category-@category.Id">@localizer["Edit"]</button>
+                                                        <form asp-action="Archive" method="post" class="inventory-command">
+                                                            @Html.AntiForgeryToken()
+                                                            @Hide("kind", "Categories")@Hide("id", category.Id)@Hide("revision", category.Revision)
+                                                            <button class="btn btn-xs btn-danger" type="submit">@localizer["Archive"]</button>
+                                                        </form>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+
+                                case "Locations":
+                                    <thead><tr><th>@localizer["Name"]</th><th>@localizer["Type"]</th><th>@localizer["Parent"]</th><th>@localizer["DefaultLocation"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var place in Model.Rows.OfType<InventoryLocation>())
+                                        {
+                                            <tr>
+                                                <td>@(InventoryWorkspaceView.Details<InventoryLabel>(place).Name)</td>
+                                                <td><span class="label">@localizer["LocationType" + place.LocationType]</span></td>
+                                                <td>@LocationName(place.ParentLocationId)</td>
+                                                <td>@(place.IsDefault ? localizer["Yes"].Value : "")</td>
+                                                <td class="rgw-row-actions">
+                                                    @if (Model.CanWrite)
+                                                    {
+                                                        <button class="btn btn-xs btn-primary" type="button" data-toggle="modal" data-target="#rgw-location-@place.Id">@localizer["Edit"]</button>
+                                                        <form asp-action="Archive" method="post" class="inventory-command">
+                                                            @Html.AntiForgeryToken()
+                                                            @Hide("kind", "Locations")@Hide("id", place.Id)@Hide("revision", place.Revision)
+                                                            <button class="btn btn-xs btn-danger" type="submit">@localizer["Archive"]</button>
+                                                        </form>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+
+                                case "Lots":
+                                    <thead><tr><th>@localizer["Batch"]</th><th>@localizer["Item"]</th><th>@localizer["Expires"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var lot in Model.Rows.OfType<InventoryLot>())
+                                        {
+                                            var expired = lot.ExpiresOn.HasValue && lot.ExpiresOn.Value < DateTime.UtcNow;
+                                            <tr>
+                                                <td>@(InventoryWorkspaceView.Details<InventoryLotContent>(lot).LotNumber)</td>
+                                                <td>@ItemName(lot.ItemId)</td>
+                                                <td>
+                                                    @if (lot.ExpiresOn.HasValue)
+                                                    {
+                                                        <span class="label @(expired ? "label-danger" : "label-success")">@lot.ExpiresOn.Value.ToString("d", CultureInfo.CurrentCulture)</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="label">@localizer["ForItemsNoExpiry"]</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+
+                                case "Assets":
+                                    <thead><tr><th>@localizer["SerialNumber"]</th><th>@localizer["Item"]</th><th>@localizer["Location"]</th><th>@localizer["Status"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var asset in Model.Rows.OfType<InventoryAsset>())
+                                        {
+                                            var content = InventoryWorkspaceView.Details<InventoryAssetContent>(asset);
+                                            <tr>
+                                                <td>
+                                                    @content.SerialNumber
+                                                    @if (!string.IsNullOrEmpty(content.AssetTag))
+                                                    {
+                                                        <small class="text-muted rgw-sub">@content.AssetTag</small>
+                                                    }
+                                                </td>
+                                                <td>@ItemName(asset.ItemId)</td>
+                                                <td>@LocationName(asset.CurrentLocationId)</td>
+                                                <td><span class="label @AssetPill(asset.Status)">@localizer["Status" + asset.Status]</span></td>
+                                                <td class="rgw-row-actions">
+                                                    <form asp-action="Reopen" method="post" class="inventory-navigation">
+                                                        @Html.AntiForgeryToken()
+                                                        @Hide("tab", "AssetDetail")@Hide("id", asset.Id)
+                                                        <button class="btn btn-xs btn-info" type="submit">@localizer["ViewHistory"]</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+
+                                case "Issuances":
+                                case "PersonnelGear":
+                                    <thead><tr><th>@localizer["Item"]</th><th>@localizer["Location"]</th><th class="text-right">@localizer["Outstanding"]</th><th>@localizer["ExpectedReturn"]</th><th>@localizer["Status"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var issued in Model.Rows.OfType<InventoryIssuance>())
+                                        {
+                                            var overdue = issued.ExpectedReturnOn.HasValue && issued.ExpectedReturnOn.Value < DateTime.UtcNow && issued.Status is 0 or 2;
+                                            <tr>
+                                                <td>@ItemName(issued.ItemId)</td>
+                                                <td>@LocationName(issued.LocationId)</td>
+                                                <td class="text-right">@((issued.Quantity - issued.ReturnedQuantity).ToString(CultureInfo.CurrentCulture))</td>
+                                                <td>
+                                                    @if (issued.ExpectedReturnOn.HasValue)
+                                                    {
+                                                        <span class="label @(overdue ? "label-danger" : "label-default")">@issued.ExpectedReturnOn.Value.ToString("d", CultureInfo.CurrentCulture)</span>
+                                                    }
+                                                </td>
+                                                <td><span class="label @IssuancePill(issued.Status)">@localizer["IssuanceStatus" + issued.Status]</span></td>
+                                                <td class="rgw-row-actions">
+                                                    @if (Model.CanIssue && issued.Status is 0 or 2)
+                                                    {
+                                                        <button class="btn btn-xs btn-primary" type="button" data-toggle="modal" data-target="#rgw-return-@issued.Id">@localizer["Return"]</button>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+
+                                case "Kits":
+                                    <thead><tr><th>@localizer["Name"]</th><th>@localizer["Contents"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var kit in Model.Rows.OfType<InventoryKit>())
+                                        {
+                                            var lines = Model.KitContents.Where(k => k.KitId == kit.Id && !k.IsDeleted).ToList();
+                                            var issueCount = lines.Sum(k => Model.Items.FirstOrDefault(i => i.Id == k.ItemId)?.TrackingMode == (int)InventoryTrackingMode.Serialized ? k.Quantity : 1);
+                                            var issuable = lines.Count > 0 && issueCount <= 100 && lines.All(k => Model.Items.Any(i => i.Id == k.ItemId));
+                                            <tr>
+                                                <td>@(InventoryWorkspaceView.Details<InventoryLabel>(kit).Name)</td>
+                                                <td>
+                                                    @if (lines.Count == 0)
+                                                    {
+                                                        <span class="label">@localizer["NoRows"]</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        @string.Join(", ", lines.Select(k => ItemName(k.ItemId) + " ×" + k.Quantity.ToString(CultureInfo.CurrentCulture)))
+                                                    }
+                                                </td>
+                                                <td class="rgw-row-actions">
+                                                    @if (Model.CanIssue && issuable)
+                                                    {
+                                                        <button class="btn btn-primary btn-xs" type="button" data-toggle="modal" data-target="#rgw-issue-kit-@kit.Id">@localizer["Issue"]</button>
+                                                    }
+                                                    else if (Model.CanIssue && lines.Count > 0)
+                                                    {
+                                                        <span class="label label-warning">@localizer["UnableToComplete"]</span>
+                                                    }
+                                                    @if (Model.CanWrite)
+                                                    {
+                                                        <button class="btn btn-xs btn-primary" type="button" data-toggle="modal" data-target="#rgw-kit-@kit.Id">@localizer["Edit"]</button>
+                                                        <form asp-action="Archive" method="post" class="inventory-command">
+                                                            @Html.AntiForgeryToken()
+                                                            @Hide("kind", "Kits")@Hide("id", kit.Id)@Hide("revision", kit.Revision)
+                                                            <button class="btn btn-xs btn-danger" type="submit">@localizer["Archive"]</button>
+                                                        </form>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+
+                                case "Transfers":
+                                    <thead><tr><th>@localizer["FromLocation"]</th><th>@localizer["ToLocation"]</th><th>@localizer["When"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var transfer in Model.Rows.OfType<InventoryTransfer>())
+                                        {
+                                            <tr>
+                                                <td>@LocationName(transfer.FromLocationId)</td>
+                                                <td>@LocationName(transfer.ToLocationId)</td>
+                                                <td><time datetime="@transfer.CreatedOn.ToString("u")">@transfer.CreatedOn.ToString("g", CultureInfo.CurrentCulture)</time></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+
+                                default:
+                                    @* History, AssetDetail and Transaction all show the ledger. *@
+                                    <thead><tr><th>@localizer["When"]</th><th>@localizer["Movement"]</th><th>@localizer["Item"]</th><th>@localizer["Location"]</th><th class="text-right">@localizer["Quantity"]</th><th>@localizer["Details"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var row in Model.Rows)
+                                        {
+                                            if (row is InventoryAsset header)
+                                            {
+                                                var content = InventoryWorkspaceView.Details<InventoryAssetContent>(header);
+                                                <tr>
+                                                    <td colspan="6">
+                                                        <h3 class="m-t-none">@ItemName(header.ItemId) · @content.SerialNumber</h3>
+                                                        <span class="label @AssetPill(header.Status)">@localizer["Status" + header.Status]</span>
+                                                        <span class="text-muted">@content.AssetTag &middot; @LocationName(header.CurrentLocationId)</span>
+                                                    </td>
+                                                </tr>
+                                                continue;
+                                            }
+
+                                            var txn = row as InventoryTransaction;
+                                            if (txn == null)
+                                            {
+                                                continue;
+                                            }
+                                            var note = InventoryWorkspaceView.Details<InventoryLabel>(txn).Note;
+                                            <tr>
+                                                <td><time datetime="@txn.OccurredOn.ToString("u")">@txn.OccurredOn.ToString("g", CultureInfo.CurrentCulture)</time></td>
+                                                <td><span class="label">@localizer["Movement" + txn.TransactionType]</span></td>
+                                                <td>@ItemName(txn.ItemId)</td>
+                                                <td class="rgw-flow">
+                                                    @LocationName(txn.FromLocationId)
+                                                    @if (!string.IsNullOrEmpty(txn.FromLocationId) && !string.IsNullOrEmpty(txn.ToLocationId))
+                                                    {
+                                                        <i class="fa fa-long-arrow-right"></i>
+                                                    }
+                                                    @LocationName(txn.ToLocationId)
+                                                </td>
+                                                <td class="text-right">@txn.Quantity.ToString(CultureInfo.CurrentCulture)</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(note))
+                                                    {
+                                                        <div>@note</div>
+                                                    }
+                                                    <small class="text-muted rgw-sub">@localizer["Reference"]: @txn.ReferenceType / @txn.ReferenceId</small>
+                                                    @if (txn.ReferenceType == (int)InventoryReferenceType.WorkOrder && int.TryParse(txn.ReferenceId, out var orderId) && orderId > 0)
+                                                    {
+                                                        <a asp-controller="WorkOrders" asp-action="Detail" asp-route-id="@orderId">@localizer["WorkOrders"]</a>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    break;
+                            }
+                        </table>
+                    </div>
+                }
+
+                @if (Model.Tab == "AssetDetail")
+                {
+                    <p class="m-t">
+                        <a asp-controller="Checklists" asp-action="Index">@localizer["Checklists"]</a> ·
+                        <a asp-controller="WorkOrders" asp-action="Index" asp-route-AssetId="@Model.Id">@localizer["WorkOrders"]</a>
+                    </p>
+                }
+
+                @if (Model.Page > 0 || Model.HasMore)
+                {
+                    <div class="rgw-pager">
+                        @foreach (var nextPage in new[] { Model.Page - 1, Model.Page + 1 }.Where(p => p >= 0 && (p < Model.Page || Model.HasMore)))
+                        {
+                            <form asp-action="Reopen" method="post" class="inventory-navigation">
+                                @Html.AntiForgeryToken()
+                                @Hide("tab", Model.Tab)@Hide("page", nextPage)@Hide("id", Model.Id)
+                                @Hide("unitId", Model.UnitId)@Hide("userId", Model.UserId)
+                                @Hide("itemId", Model.ItemId)@Hide("locationId", Model.LocationId)
+                                <button class="btn btn-default btn-sm" type="submit">
+                                    <i class="fa @(nextPage < Model.Page ? "fa-chevron-left" : "fa-chevron-right")"></i>
+                                    @localizer[nextPage < Model.Page ? "Previous" : "Next"]
+                                </button>
+                            </form>
+                        }
+                        <span class="text-muted">@(Model.Page + 1)</span>
+                    </div>
+                }
+
+                @* ── Wizards and dialogs ─────────────────────────────────────────── *@
+
+                @if (Model.CanWrite && Model.Tab == "Items")
+                {
+                    @* One dialog for a brand new item, plus one per item on the page. *@
+                    foreach (var item in new[] { new InventoryItem() }.Concat(Model.Rows.OfType<InventoryItem>()))
+                    {
+                        var details = InventoryWorkspaceView.Details<InventoryItemContent>(item);
+                        var isNew = !Model.Rows.Contains(item);
+                        var dialogId = isNew ? "rgw-new-item" : "rgw-item-" + item.Id;
+                        <div class="modal fade rgw-modal" id="@dialogId" tabindex="-1" role="dialog" aria-labelledby="@(dialogId)-title">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="@(dialogId)-title">@(isNew ? localizer["NewItem"].Value : localizer["EditItem"].Value + " · " + details.Name)</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert rgw-modal-message" role="status"></div>
+                                        <form asp-action="SaveItem" method="post" class="inventory-command rgw-wizard">
+                                            @Html.AntiForgeryToken()
+                                            @Hide("Id", isNew ? null : item.Id)@Hide("Revision", item.Revision)
+                                            @Hide("Details.MaxLevel", details.MaxLevel?.ToString(CultureInfo.InvariantCulture))
+                                            @Hide("Details.ReorderQuantity", details.ReorderQuantity?.ToString(CultureInfo.InvariantCulture))
+                                            @Hide("Details.DeaSchedule", details.DeaSchedule)
+                                            @Hide("Details.DefaultExpirationDays", details.DefaultExpirationDays)
+                                            @if (!Model.CanChooseVendors)
+                                            {
+                                                @Hide("Details.PreferredVendorId", details.PreferredVendorId)
+                                            }
+
+                                            <ol class="rgw-steps"></ol>
+
+                                            <div class="rgw-step" data-title="@localizer["StepItemBasics"]">
+                                                <h4>@localizer["StepItemBasics"]</h4>
+                                                <p class="text-muted">@localizer["StepItemBasicsHint"]</p>
+                                                <div class="rgw-grid">
+                                                    @Field("Details.Name", "Name", details.Name, required: true, maxLength: 250)
+                                                    @Field("Details.UnitOfMeasure", "UnitOfMeasure", details.UnitOfMeasure, help: "HelpFieldUnitOfMeasure", maxLength: 80)
+                                                    @Field("Details.Code", "Code", details.Code, help: "HelpFieldCode", maxLength: 80)
+                                                    @Field("Details.Barcode", "Barcode", details.Barcode, maxLength: 250)
+                                                    @Field("CategoryId", "Category", item.CategoryId, options: categoryOptions, help: "HelpFieldCategory")
+                                                    @Field("Details.Description", "Description", details.Description, "textarea", wide: true)
+                                                </div>
+                                            </div>
+
+                                            <div class="rgw-step" data-title="@localizer["StepItemTracking"]">
+                                                <h4>@localizer["StepItemTracking"]</h4>
+                                                <p class="text-muted">@localizer["StepItemTrackingHint"]</p>
+                                                <div class="rgw-grid">
+                                                    @Field("TrackingMode", "TrackingMode", item.TrackingMode, options: Codes("Tracking", 0, 1), help: "HelpFieldTrackingMode", wide: true)
+                                                    @Field("RequiresLotTracking", "RequiresLotTracking", item.RequiresLotTracking.ToString().ToLowerInvariant(), "checkbox", help: "HelpFieldRequiresLotTracking")
+                                                    @Field("RequiresExpiration", "RequiresExpiration", item.RequiresExpiration.ToString().ToLowerInvariant(), "checkbox", help: "HelpFieldRequiresExpiration")
+                                                    @Field("IsControlledSubstance", "IsControlledSubstance", item.IsControlledSubstance.ToString().ToLowerInvariant(), "checkbox", help: "HelpFieldIsControlledSubstance")
+                                                    @Field("IsKit", "IsKit", item.IsKit.ToString().ToLowerInvariant(), "checkbox", help: "HelpFieldIsKit")
+                                                    @Field("IsActive", "IsActive", item.IsActive.ToString().ToLowerInvariant(), "checkbox", help: "HelpFieldIsActive")
+                                                </div>
+                                            </div>
+
+                                            <div class="rgw-step" data-title="@localizer["StepItemStock"]">
+                                                <h4>@localizer["StepItemStock"]</h4>
+                                                <p class="text-muted">@localizer["StepItemStockHint"]</p>
+                                                <div class="rgw-grid">
+                                                    @Field("Details.MinLevel", "Minimum", details.MinLevel, "number", help: "HelpFieldMinimum", min: "0")
+                                                    @Field("Details.ReorderPoint", "ReorderPoint", details.ReorderPoint, "number", help: "HelpFieldReorderPoint", min: "0")
+                                                    @Field("Details.DefaultUnitCost", "UnitCost", details.DefaultUnitCost, "number", help: "HelpFieldUnitCost", min: "0")
+                                                    @Field("Details.CurrencyCode", "M4Currency", details.CurrencyCode, help: "HelpFieldCurrency", maxLength: 3)
+                                                    @if (Model.CanChooseVendors)
+                                                    {
+                                                        @Field("Details.PreferredVendorId", "M4PreferredVendor", details.PreferredVendorId, options: vendorOptions)
+                                                    }
+                                                </div>
+                                                <p class="text-muted">@localizer["M4AverageUnitCost"]: @(details.AverageUnitCost?.ToString(CultureInfo.CurrentCulture) ?? localizer["M4UnknownCost"].Value)</p>
+                                            </div>
+
+                                            <div class="rgw-step" data-title="@localizer["Review"]">
+                                                <h4>@localizer["Review"]</h4>
+                                                <p class="text-muted">@localizer["ReviewHint"]</p>
+                                                <dl class="rgw-review"></dl>
+                                            </div>
+
+                                            <div class="rgw-wizard-actions">
+                                                <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                                                <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["Save"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (Model.CanWrite && Model.Tab == "Categories")
+                {
+                    foreach (var category in new InventoryCategory[] { null }.Concat(Model.Rows.OfType<InventoryCategory>()))
+                    {
+                        var isNew = category == null;
+                        var dialogId = isNew ? "rgw-new-category" : "rgw-category-" + category.Id;
+                        var name = isNew ? null : InventoryWorkspaceView.Details<InventoryLabel>(category).Name;
+                        <div class="modal fade rgw-modal" id="@dialogId" tabindex="-1" role="dialog" aria-labelledby="@(dialogId)-title">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="@(dialogId)-title">@(isNew ? localizer["NewCategory"].Value : localizer["Edit"].Value + " · " + name)</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert rgw-modal-message" role="status"></div>
+                                        <p class="text-muted">@localizer["HelpCategories"]</p>
+                                        <form asp-action="SaveCategory" method="post" class="inventory-command">
+                                            @Html.AntiForgeryToken()
+                                            @if (!isNew)
+                                            {
+                                                @Hide("id", category.Id)@Hide("revision", category.Revision)
+                                            }
+                                            <div class="rgw-grid">
+                                                @Field("name", "Name", name, required: true, maxLength: 250, wide: true)
+                                                @Field("parentId", "Parent", isNew ? null : category.ParentCategoryId, options: categoryOptions, help: "HelpFieldParent", wide: true)
+                                            </div>
+                                            <div class="rgw-wizard-actions">
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (Model.CanWrite && Model.Tab == "Locations")
+                {
+                    @* New locations get the full wizard; editing an existing one only renames it,
+                       because the placement fields are carried through unchanged. *@
+                    <div class="modal fade rgw-modal" id="rgw-new-location" tabindex="-1" role="dialog" aria-labelledby="rgw-new-location-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="rgw-new-location-title">@localizer["NewLocation"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert rgw-modal-message" role="status"></div>
+                                    <form asp-action="SaveLocation" method="post" class="inventory-command rgw-wizard">
+                                        @Html.AntiForgeryToken()
+                                        <ol class="rgw-steps"></ol>
+
+                                        <div class="rgw-step" data-title="@localizer["StepLocationBasics"]">
+                                            <h4>@localizer["StepLocationBasics"]</h4>
+                                            <p class="text-muted">@localizer["StepLocationBasicsHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("Name", "Name", null, required: true, maxLength: 250)
+                                                @Field("Type", "LocationType", 0, options: Codes("LocationType", 0, 1, 2, 3, 4, 5), help: "HelpFieldLocationType")
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["StepLocationScope"]">
+                                            <h4>@localizer["StepLocationScope"]</h4>
+                                            <p class="text-muted">@localizer["StepLocationScopeHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("GroupId", "Station", null, options: Choice(Model.Groups))
+                                                @Field("UnitId", "Unit", null, options: Choice(Model.Units))
+                                                @Field("UserId", "Person", null, options: Choice(Model.People))
+                                                @Field("ContainerAssetId", "ContainerAsset", null, options: assetOptions)
+                                                @Field("ParentLocationId", "Parent", null, options: locationOptions, help: "HelpFieldParent")
+                                                @Field("IsDefault", "DefaultLocation", "false", "checkbox", help: "HelpFieldDefaultLocation")
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["Review"]">
+                                            <h4>@localizer["Review"]</h4>
+                                            <p class="text-muted">@localizer["ReviewHint"]</p>
+                                            <dl class="rgw-review"></dl>
+                                        </div>
+
+                                        <div class="rgw-wizard-actions">
+                                            <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                                            <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["Save"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    foreach (var place in Model.Rows.OfType<InventoryLocation>())
+                    {
+                        <div class="modal fade rgw-modal" id="rgw-location-@place.Id" tabindex="-1" role="dialog" aria-labelledby="rgw-location-@(place.Id)-title">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="rgw-location-@(place.Id)-title">@localizer["Edit"] · @(InventoryWorkspaceView.Details<InventoryLabel>(place).Name)</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert rgw-modal-message" role="status"></div>
+                                        <p class="text-muted">@localizer["HelpLocationRename"]</p>
+                                        <form asp-action="SaveLocation" method="post" class="inventory-command">
+                                            @Html.AntiForgeryToken()
+                                            @Hide("Id", place.Id)@Hide("Revision", place.Revision)@Hide("Type", place.LocationType)
+                                            @Hide("GroupId", place.GroupId)@Hide("UnitId", place.UnitId)@Hide("UserId", place.UserId)
+                                            @Hide("ContainerAssetId", place.ContainerAssetId)@Hide("ParentLocationId", place.ParentLocationId)
+                                            @Hide("IsDefault", place.IsDefault.ToString().ToLowerInvariant())
+                                            <div class="rgw-grid">
+                                                @Field("Name", "Name", InventoryWorkspaceView.Details<InventoryLabel>(place).Name, required: true, maxLength: 250, wide: true)
+                                            </div>
+                                            <div class="rgw-wizard-actions">
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (Model.CanWrite && Model.Tab == "Lots")
+                {
+                    <div class="modal fade rgw-modal" id="rgw-new-lot" tabindex="-1" role="dialog" aria-labelledby="rgw-new-lot-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="rgw-new-lot-title">@localizer["NewLot"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert rgw-modal-message" role="status"></div>
+                                    <form asp-action="CreateLot" method="post" class="inventory-command rgw-wizard">
+                                        @Html.AntiForgeryToken()
+                                        <ol class="rgw-steps"></ol>
+
+                                        <div class="rgw-step" data-title="@localizer["StepLotItem"]">
+                                            <h4>@localizer["StepLotItem"]</h4>
+                                            <p class="text-muted">@localizer["StepLotItemHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("itemId", "Items", null, options: itemOptions, required: true, wide: true)
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["StepLotDetails"]">
+                                            <h4>@localizer["StepLotDetails"]</h4>
+                                            <p class="text-muted">@localizer["StepLotDetailsHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("details.LotNumber", "Batch", null, required: true, maxLength: 250)
+                                                @Field("expiresOn", "Expiration", null, "date", help: "HelpFieldExpiration")
+                                                @Field("details.UnitCost", "UnitCost", null, "number", help: "HelpFieldUnitCost", min: "0")
+                                                @if (Model.CanChooseVendors)
+                                                {
+                                                    @Field("details.VendorId", "M4Supplier", null, options: vendorOptions)
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["Review"]">
+                                            <h4>@localizer["Review"]</h4>
+                                            <p class="text-muted">@localizer["ReviewHint"]</p>
+                                            <dl class="rgw-review"></dl>
+                                        </div>
+
+                                        <div class="rgw-wizard-actions">
+                                            <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                                            <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["Save"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.CanWrite && Model.Tab == "Assets")
+                {
+                    <div class="modal fade rgw-modal" id="rgw-new-asset" tabindex="-1" role="dialog" aria-labelledby="rgw-new-asset-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="rgw-new-asset-title">@localizer["NewAsset"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert rgw-modal-message" role="status"></div>
+                                    <form asp-action="CreateAsset" method="post" class="inventory-command rgw-wizard" data-inventory-create-asset="true">
+                                        @Html.AntiForgeryToken()
+                                        @Hide("RequestId", Guid.NewGuid().ToString("D"))
+                                        <ol class="rgw-steps"></ol>
+
+                                        <div class="rgw-step" data-title="@localizer["StepAssetItem"]">
+                                            <h4>@localizer["StepAssetItem"]</h4>
+                                            <p class="text-muted">@localizer["StepAssetItemHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("ItemId", "Items", null, options: itemOptions, required: true)
+                                                @Field("LocationId", "Location", null, options: locationOptions, required: true)
+                                                @Field("LotId", "LotId", null, options: lotOptions, help: "HelpFieldLot")
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["StepAssetIdentity"]">
+                                            <h4>@localizer["StepAssetIdentity"]</h4>
+                                            <p class="text-muted">@localizer["StepAssetIdentityHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("Details.SerialNumber", "SerialNumber", null, required: true, help: "HelpFieldSerialNumber", maxLength: 250)
+                                                @Field("Details.AssetTag", "AssetTag", null, maxLength: 250)
+                                                @Field("Details.Barcode", "Barcode", null, maxLength: 250)
+                                                @Field("Details.AcquisitionCost", "UnitCost", null, "number", help: "HelpFieldUnitCost", min: "0")
+                                                @Field("ExpiresOn", "Expiration", null, "date", help: "HelpFieldExpiration")
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["Review"]">
+                                            <h4>@localizer["Review"]</h4>
+                                            <p class="text-muted">@localizer["ReviewHint"]</p>
+                                            <dl class="rgw-review"></dl>
+                                        </div>
+
+                                        <div class="rgw-wizard-actions">
+                                            <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                                            <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["NewAsset"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if ((Model.CanWrite && Model.Tab == "OnHand") || (Model.CanTransfer && Model.Tab == "Transfers"))
+                {
+                    var isTransfer = Model.Tab == "Transfers";
+                    <div class="modal fade rgw-modal" id="rgw-post-movement" tabindex="-1" role="dialog" aria-labelledby="rgw-post-movement-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="rgw-post-movement-title">@localizer[isTransfer ? "NewTransfer" : "AdjustStock"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert rgw-modal-message" role="status"></div>
+                                    <form asp-action="@(isTransfer ? "Transfer" : "Post")" method="post" class="inventory-command rgw-wizard">
+                                        @Html.AntiForgeryToken()
+                                        @Hide("RequestId", Guid.NewGuid().ToString("D"))
+                                        <ol class="rgw-steps"></ol>
+
+                                        <div class="rgw-step" data-title="@localizer["StepMovementWhat"]">
+                                            <h4>@localizer["StepMovementWhat"]</h4>
+                                            <p class="text-muted">@localizer["StepMovementWhatHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("Lines[0].Type", "Movement", isTransfer ? 3 : 1, options: isTransfer ? Codes("Movement", 3) : Codes("Movement", 1, 2, 6, 8), help: "MovementHelp", wide: true)
+                                                @Field("Lines[0].ItemId", "Items", null, options: itemOptions, required: true)
+                                                @Field("Lines[0].AssetId", "AssetId", null, options: assetOptions, help: "HelpFieldAsset")
+                                                @Field("Lines[0].LotId", "LotId", null, options: lotOptions, help: "HelpFieldLot")
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["StepMovementWhere"]">
+                                            <h4>@localizer["StepMovementWhere"]</h4>
+                                            <p class="text-muted">@localizer["StepMovementWhereHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("Lines[0].FromLocationId", "FromLocation", null, options: locationOptions, help: "HelpFieldFromLocation")
+                                                @Field("Lines[0].ToLocationId", "ToLocation", null, options: locationOptions, help: "HelpFieldToLocation")
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["StepMovementAmount"]">
+                                            <h4>@localizer["StepMovementAmount"]</h4>
+                                            <p class="text-muted">@localizer["StepMovementAmountHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("Lines[0].Quantity", "Amount", null, "number", help: "HelpFieldAmount", required: true, min: "0")
+                                                @if (!isTransfer)
+                                                {
+                                                    @Field("Lines[0].UnitCost", "UnitCost", null, "number", help: "HelpFieldUnitCost", min: "0")
+                                                }
+                                                @Field("Lines[0].Note", "Note", null, "textarea", help: "HelpFieldNote", wide: true)
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["Review"]">
+                                            <h4>@localizer["Review"]</h4>
+                                            <p class="text-muted">@localizer["ReviewHint"]</p>
+                                            <dl class="rgw-review"></dl>
+                                        </div>
+
+                                        <div class="rgw-wizard-actions">
+                                            <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                                            <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["PostMovement"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.CanIssue && Model.Tab == "Issuances")
+                {
+                    <div class="modal fade rgw-modal" id="rgw-issue" tabindex="-1" role="dialog" aria-labelledby="rgw-issue-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="rgw-issue-title">@localizer["IssueEquipment"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert rgw-modal-message" role="status"></div>
+                                    <form asp-action="Issue" method="post" class="inventory-command rgw-wizard">
+                                        @Html.AntiForgeryToken()
+                                        @Hide("RequestId", Guid.NewGuid().ToString("D"))
+                                        <ol class="rgw-steps"></ol>
+
+                                        <div class="rgw-step" data-title="@localizer["StepIssueWhat"]">
+                                            <h4>@localizer["StepIssueWhat"]</h4>
+                                            <p class="text-muted">@localizer["StepIssueWhatHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("ItemId", "Items", null, options: itemOptions, required: true)
+                                                @Field("FromLocationId", "FromLocation", null, options: locationOptions, required: true, help: "HelpFieldFromLocation")
+                                                @Field("AssetId", "AssetId", null, options: assetOptions, help: "HelpFieldAsset")
+                                                @Field("LotId", "LotId", null, options: lotOptions, help: "HelpFieldLot")
+                                                @Field("Quantity", "Amount", null, "number", help: "HelpFieldAmount", required: true, min: "0")
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["StepIssueWho"]">
+                                            <h4>@localizer["StepIssueWho"]</h4>
+                                            <p class="text-muted">@localizer["HolderHelp"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("UserId", "Person", null, options: Choice(Model.People), help: "HelpFieldHolder")
+                                                @Field("UnitId", "Unit", null, options: Choice(Model.Units), help: "HelpFieldHolder")
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["StepIssueWhen"]">
+                                            <h4>@localizer["StepIssueWhen"]</h4>
+                                            <p class="text-muted">@localizer["StepIssueWhenHint"]</p>
+                                            <div class="rgw-grid">
+                                                @Field("ExpectedReturnOn", "ExpectedReturn", null, "date", help: "HelpFieldExpectedReturn")
+                                                @Field("Note", "Note", null, "textarea", help: "HelpFieldNote", wide: true)
+                                            </div>
+                                        </div>
+
+                                        <div class="rgw-step" data-title="@localizer["Review"]">
+                                            <h4>@localizer["Review"]</h4>
+                                            <p class="text-muted">@localizer["ReviewHint"]</p>
+                                            <dl class="rgw-review"></dl>
+                                        </div>
+
+                                        <div class="rgw-wizard-actions">
+                                            <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                                            <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["Issue"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.CanIssue && Model.Tab is "Issuances" or "PersonnelGear")
+                {
+                    foreach (var outstanding in Model.Rows.OfType<InventoryIssuance>().Where(x => x.Status is 0 or 2))
+                    {
+                        <div class="modal fade rgw-modal" id="rgw-return-@outstanding.Id" tabindex="-1" role="dialog" aria-labelledby="rgw-return-@(outstanding.Id)-title">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="rgw-return-@(outstanding.Id)-title">@localizer["Return"] · @ItemName(outstanding.ItemId)</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert rgw-modal-message" role="status"></div>
+                                        <p class="text-muted">@localizer["StepReturnHint"]</p>
+                                        <form asp-action="Return" method="post" class="inventory-command">
+                                            @Html.AntiForgeryToken()
+                                            @Hide("RequestId", Guid.NewGuid().ToString("D"))
+                                            @Hide("IssuanceId", outstanding.Id)@Hide("Revision", outstanding.Revision)
+                                            <div class="rgw-grid">
+                                                @Field("Quantity", "Amount", outstanding.Quantity - outstanding.ReturnedQuantity, "number", required: true, min: "0")
+                                                @Field("ToLocationId", "ToLocation", null, options: locationOptions, required: true, help: "HelpFieldToLocation")
+                                                @Field("Condition", "Status", 0, options: Codes("Status", 0, 2, 3), help: "HelpFieldReturnCondition")
+                                                @Field("Note", "Note", null, "textarea", help: "HelpFieldNote", wide: true)
+                                            </div>
+                                            <div class="rgw-wizard-actions">
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                <button type="submit" class="btn btn-primary">@localizer["Return"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (Model.Tab == "Kits")
+                {
+                    @if (Model.CanWrite)
+                    {
+                        @* New kit, then one editor per kit on the page. *@
+                        foreach (var kit in new InventoryKit[] { null }.Concat(Model.Rows.OfType<InventoryKit>()))
+                        {
+                            var isNew = kit == null;
+                            var dialogId = isNew ? "rgw-new-kit" : "rgw-kit-" + kit.Id;
+                            var kitName = isNew ? null : InventoryWorkspaceView.Details<InventoryLabel>(kit).Name;
+                            var editLines = isNew
+                                ? new List<InventoryKitItem>()
+                                : Model.KitContents.Where(k => k.KitId == kit.Id && !k.IsDeleted).ToList();
+                            <div class="modal fade rgw-modal" id="@dialogId" tabindex="-1" role="dialog" aria-labelledby="@(dialogId)-title">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="@(dialogId)-title">@(isNew ? localizer["NewKit"].Value : localizer["Edit"].Value + " · " + kitName)</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert rgw-modal-message" role="status"></div>
+                                            <form asp-action="SaveKit" method="post" class="inventory-command inventory-kit rgw-wizard">
+                                                @Html.AntiForgeryToken()
+                                                @if (!isNew)
+                                                {
+                                                    @Hide("Id", kit.Id)@Hide("Revision", kit.Revision)
+                                                }
+                                                <ol class="rgw-steps"></ol>
+
+                                                <div class="rgw-step" data-title="@localizer["StepKitBasics"]">
+                                                    <h4>@localizer["StepKitBasics"]</h4>
+                                                    <p class="text-muted">@localizer["StepKitBasicsHint"]</p>
+                                                    <div class="rgw-grid">
+                                                        @Field("Name", "Name", kitName, required: true, maxLength: 250, wide: true)
+                                                    </div>
+                                                </div>
+
+                                                <div class="rgw-step" data-title="@localizer["StepKitContents"]">
+                                                    <h4>@localizer["StepKitContents"]</h4>
+                                                    <p class="text-muted">@localizer["StepKitContentsHint"]</p>
+                                                    <div class="inventory-kit-lines">
+                                                        @{ var editIndex = 0; }
+                                                        @foreach (var kitLine in editLines.DefaultIfEmpty(new InventoryKitItem { Quantity = 1 }))
+                                                        {
+                                                            var prefix = "Lines[" + editIndex++ + "].";
+                                                            <div class="panel panel-default rgw-line inventory-kit-line">
+                                                                <div class="panel-heading">@localizer["Items"]</div>
+                                                                <div class="panel-body">
+                                                                <div class="rgw-grid">
+                                                                    @Field(prefix + "ItemId", "Items", kitLine.ItemId, options: itemOptions, required: true)
+                                                                    @Field(prefix + "Quantity", "Amount", kitLine.Quantity, "number", required: true, min: "0")
+                                                                </div>
+                                                                <div class="rgw-line-actions">
+                                                                    <button class="btn btn-xs btn-danger inventory-remove-line" type="button"><i class="fa fa-trash-o"></i> @localizer["M4RemoveLine"]</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        }
+                                                    </div>
+                                                    <button class="btn btn-default inventory-add-line" type="button"><i class="fa fa-plus"></i> @localizer["AddLine"]</button>
+                                                </div>
+
+                                                <div class="rgw-wizard-actions">
+                                                    <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                                                    <div class="rgw-wizard-spacer"></div>
+                                                    <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                    <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                                                    <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["Save"]</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                    @if (Model.CanIssue)
+                    {
+                        foreach (var kit in Model.Rows.OfType<InventoryKit>())
+                        {
+                            var kitLines = Model.KitContents.Where(k => k.KitId == kit.Id && !k.IsDeleted).ToList();
+                            var issueCount = kitLines.Sum(k => Model.Items.FirstOrDefault(i => i.Id == k.ItemId)?.TrackingMode == (int)InventoryTrackingMode.Serialized ? k.Quantity : 1);
+                            if (kitLines.Count == 0 || issueCount > 100 || kitLines.Any(k => Model.Items.All(i => i.Id != k.ItemId)))
+                            {
+                                continue;
+                            }
+                            <div class="modal fade rgw-modal" id="rgw-issue-kit-@kit.Id" tabindex="-1" role="dialog" aria-labelledby="rgw-issue-kit-@(kit.Id)-title">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" id="rgw-issue-kit-@(kit.Id)-title">@localizer["Issue"] · @(InventoryWorkspaceView.Details<InventoryLabel>(kit).Name)</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert rgw-modal-message" role="status"></div>
+                                            <form asp-action="IssueKit" method="post" class="inventory-command inventory-kit-issue rgw-wizard">
+                                                @Html.AntiForgeryToken()
+                                                @Hide("KitId", kit.Id)@Hide("RequestId", Guid.NewGuid().ToString("D"))
+                                                <ol class="rgw-steps"></ol>
+
+                                                <div class="rgw-step" data-title="@localizer["StepIssueWho"]">
+                                                    <h4>@localizer["StepIssueWho"]</h4>
+                                                    <p class="text-muted">@localizer["HolderHelp"]</p>
+                                                    <div class="rgw-grid">
+                                                        @Field("userId", "Person", null, options: Choice(Model.People), help: "HelpFieldHolder")
+                                                        @Field("unitId", "Unit", null, options: Choice(Model.Units), help: "HelpFieldHolder")
+                                                    </div>
+                                                </div>
+
+                                                <div class="rgw-step" data-title="@localizer["StepKitContents"]">
+                                                    <h4>@localizer["StepKitContents"]</h4>
+                                                    <p class="text-muted">@localizer["StepKitIssueHint"]</p>
+                                                    @{ var lineIndex = 0; }
+                                                    @foreach (var kitLine in kitLines)
+                                                    {
+                                                        var serialized = Model.Items.First(i => i.Id == kitLine.ItemId).TrackingMode == (int)InventoryTrackingMode.Serialized;
+                                                        var quantity = serialized ? 1 : kitLine.Quantity;
+                                                        foreach (var component in Enumerable.Range(0, serialized ? (int)kitLine.Quantity : 1))
+                                                        {
+                                                            var prefix = "Lines[" + lineIndex++ + "].";
+                                                            <div class="panel panel-default rgw-line">
+                                                                <div class="panel-heading">@ItemName(kitLine.ItemId) @(serialized ? "#" + (component + 1).ToString(CultureInfo.CurrentCulture) : "")</div>
+                                                                <div class="panel-body">
+                                                                @Hide(prefix + "ItemId", kitLine.ItemId)
+                                                                @Hide(prefix + "Quantity", quantity.ToString(CultureInfo.InvariantCulture))
+                                                                <p class="text-muted">@localizer["Amount"]: @quantity.ToString(CultureInfo.CurrentCulture)</p>
+                                                                <div class="rgw-grid">
+                                                                    @if (serialized)
+                                                                    {
+                                                                        @Field(prefix + "AssetId", "AssetId", null, required: true, help: "HelpFieldAsset",
+                                                                            options: Choice(Model.Assets
+                                                                                .Where(a => a.ItemId == kitLine.ItemId && a.Status == (int)InventoryAssetStatus.InService && a.CurrentLocationId != null)
+                                                                                .Select(a => new InventoryChoice { Id = a.Id, Name = InventoryWorkspaceView.Details<InventoryAssetContent>(a).SerialNumber + " · " + InventoryWorkspaceView.Details<InventoryAssetContent>(a).AssetTag })))
+                                                                    }
+                                                                    @Field(prefix + "LotId", "LotId", null, help: "HelpFieldLot",
+                                                                        options: Choice(Model.Lots
+                                                                            .Where(l => l.ItemId == kitLine.ItemId)
+                                                                            .Select(l => new InventoryChoice { Id = l.Id, Name = InventoryWorkspaceView.Details<InventoryLotContent>(l).LotNumber })))
+                                                                    @Field(prefix + "FromLocationId", "FromLocation", null, options: locationOptions, required: true, help: "HelpFieldFromLocation")
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        }
+                                                    }
+                                                </div>
+
+                                                <div class="rgw-wizard-actions">
+                                                    <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                                                    <div class="rgw-wizard-spacer"></div>
+                                                    <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                    <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                                                    <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["Issue"]</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+
+                @if (Model.CanWrite && Model.Tab == "AssetDetail" && Model.Rows.OfType<InventoryAsset>().FirstOrDefault() is { } current)
+                {
+                    <div class="modal fade rgw-modal" id="rgw-asset-status" tabindex="-1" role="dialog" aria-labelledby="rgw-asset-status-title">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="rgw-asset-status-title">@localizer["Status"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert rgw-modal-message" role="status"></div>
+                                    <p class="text-muted">@localizer["HelpAssetStatus"]</p>
+                                    <form asp-action="Status" method="post" class="inventory-command">
+                                        @Html.AntiForgeryToken()
+                                        @Hide("RequestId", Guid.NewGuid().ToString("D"))
+                                        @Hide("Lines[0].ItemId", current.ItemId)@Hide("Lines[0].AssetId", current.Id)
+                                        @Hide("Lines[0].LotId", current.LotId)@Hide("Lines[0].FromLocationId", current.CurrentLocationId)
+                                        @Hide("Lines[0].ExpectedAssetRevision", current.Revision)@Hide("Lines[0].Type", 9)
+                                        <div class="rgw-grid">
+                                            @Field("Lines[0].Status", "Status", current.Status, options: Codes("Status", 0, 2, 3, 4, 5, 6), wide: true)
+                                            @Field("Lines[0].Note", "Note", null, "textarea", help: "HelpFieldNote", wide: true)
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (Model.CanWitness && Model.Tab == "History")
+                {
+                    <div class="modal fade rgw-modal" id="rgw-witness" tabindex="-1" role="dialog" aria-labelledby="rgw-witness-title">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="rgw-witness-title">@localizer["Witness"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert rgw-modal-message" role="status"></div>
+                                    <p class="text-muted">@localizer["HelpWitness"]</p>
+                                    <form asp-action="Witness" method="post" class="inventory-command">
+                                        @Html.AntiForgeryToken()
+                                        <div class="rgw-grid">
+                                            @Field("requestId", "WitnessRequest", null, required: true, maxLength: 80, wide: true)
+                                            @Field("attestation", "Attestation", null, "textarea", wide: true)
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button type="submit" class="btn btn-primary">@localizer["Witness"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 }
             }
-            @if (Model.CanWrite && Model.Tab == "Categories") { <form asp-action="SaveCategory" method="post" class="inventory-command">@Html.AntiForgeryToken()@Field("name", "Name")@Field("parentId", "Parent", null, options: categoryOptions)<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
-            @if (Model.CanWrite && Model.Tab == "Locations") { <form asp-action="SaveLocation" method="post" class="inventory-command">@Html.AntiForgeryToken()@Field("Name", "Name")@Field("Type", "LocationType", 0, options: Codes("LocationType", 0, 1, 2, 3, 4, 5))@Field("GroupId", "Station", null, options: Choice(Model.Groups))@Field("UnitId", "Unit", null, options: Choice(Model.Units))@Field("UserId", "Person", null, options: Choice(Model.People))@Field("ContainerAssetId", "ContainerAsset", null, options: assetOptions)@Field("ParentLocationId", "Parent", null, options: locationOptions)@Field("IsDefault", "DefaultLocation", "false", options: new[] { new SelectListItem { Value = "false", Text = localizer["No"] }, new SelectListItem { Value = "true", Text = localizer["Yes"] } })<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
-            @if (Model.CanWrite && Model.Tab == "Lots") { <form asp-action="CreateLot" method="post" class="inventory-command">@Html.AntiForgeryToken()@Field("itemId", "Items", null, options: itemOptions)@Field("details.LotNumber", "Batch")@Field("expiresOn", "Expiration", null, "date")@Field("details.UnitCost", "UnitCost", null, "number")@if (Model.CanChooseVendors) { @Field("details.VendorId", "M4Supplier", options: vendorOptions) }<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
-            @if (Model.CanWrite && Model.Tab == "Assets") { <form asp-action="CreateAsset" method="post" class="inventory-command" data-inventory-create-asset="true">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>@Field("ItemId", "Items", null, options: itemOptions)@Field("LocationId", "Location", null, options: locationOptions)@Field("LotId", "LotId", null, options: lotOptions)@Field("Details.AcquisitionCost", "UnitCost", null, "number")@Field("Details.SerialNumber", "SerialNumber")@Field("Details.AssetTag", "AssetTag")@Field("Details.Barcode", "Barcode")@Field("ExpiresOn", "Expiration", null, "date")<button class="btn btn-primary" type="submit">@localizer["NewAsset"]</button></form> }
-            @if ((Model.CanWrite && Model.Tab == "OnHand") || (Model.CanTransfer && Model.Tab == "Transfers")) { <form asp-action="@(Model.Tab == "Transfers" ? "Transfer" : "Post")" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>@Field("Lines[0].Type", "Movement", Model.Tab == "Transfers" ? 3 : 1, options: Model.Tab == "Transfers" ? Codes("Movement", 3) : Codes("Movement", 1, 2, 6, 8))@Field("Lines[0].ItemId", "Items", null, options: itemOptions)@Field("Lines[0].AssetId", "AssetId", null, options: assetOptions)@Field("Lines[0].LotId", "LotId", null, options: lotOptions)@Field("Lines[0].FromLocationId", "FromLocation", null, options: locationOptions)@Field("Lines[0].ToLocationId", "ToLocation", null, options: locationOptions)@Field("Lines[0].Quantity", "Amount", null, "number")@if (Model.Tab == "OnHand") { @Field("Lines[0].UnitCost", "UnitCost", null, "number") }@Field("Lines[0].Note", "Note")<p>@localizer["MovementHelp"]</p><button class="btn btn-primary" type="submit">@localizer["PostMovement"]</button></form> }
-            @if (Model.CanIssue && Model.Tab == "Issuances") { <form asp-action="Issue" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>@Field("ItemId", "Items", null, options: itemOptions)@Field("AssetId", "AssetId", null, options: assetOptions)@Field("LotId", "LotId", null, options: lotOptions)@Field("FromLocationId", "FromLocation", null, options: locationOptions)@Field("Quantity", "Amount", null, "number")@Field("UserId", "Person", null, options: Choice(Model.People))@Field("UnitId", "Unit", null, options: Choice(Model.Units))@Field("ExpectedReturnOn", "ExpectedReturn", null, "date")@Field("Note", "Note")<p>@localizer["HolderHelp"]</p><button class="btn btn-primary" type="submit">@localizer["Issue"]</button></form> }
-            @if (Model.CanWrite && Model.Tab == "AssetDetail" && Model.Rows.OfType<InventoryAsset>().FirstOrDefault() is { } current) { <form asp-action="Status" method="post" class="inventory-command">@Html.AntiForgeryToken()<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/><input type="hidden" name="Lines[0].ItemId" value="@current.ItemId"/><input type="hidden" name="Lines[0].AssetId" value="@current.Id"/><input type="hidden" name="Lines[0].LotId" value="@current.LotId"/><input type="hidden" name="Lines[0].FromLocationId" value="@current.CurrentLocationId"/><input type="hidden" name="Lines[0].ExpectedAssetRevision" value="@current.Revision"/><input type="hidden" name="Lines[0].Type" value="9"/>@Field("Lines[0].Status", "Status", current.Status, options: Codes("Status", 0, 2, 3, 4, 5, 6))@Field("Lines[0].Note", "Note")<button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
-            @if (Model.CanWrite && Model.Tab == "Kits") { <form asp-action="SaveKit" method="post" class="inventory-command inventory-kit">@Html.AntiForgeryToken()@Field("Name", "Name")<div class="inventory-kit-lines"><div class="inventory-kit-line">@Field("Lines[0].ItemId", "Items", null, options: itemOptions)@Field("Lines[0].Quantity", "Amount", 1, "number")<button class="btn btn-default inventory-remove-line" type="button">@localizer["Archive"]</button></div></div><button class="btn btn-default inventory-add-line" type="button">@localizer["AddLine"]</button><button class="btn btn-primary" type="submit">@localizer["Save"]</button></form> }
-            @if (Model.Tab == "History") {
-                if (Model.CanWitness) { <form asp-action="Witness" method="post" class="inventory-command">@Html.AntiForgeryToken()@Field("requestId", "WitnessRequest")@Field("attestation", "Attestation")<button class="btn btn-primary" type="submit">@localizer["Witness"]</button></form> }
-                if (Model.CanWrite) { <form asp-action="Rebuild" method="post" class="inventory-command">@Html.AntiForgeryToken()<button class="btn btn-default" type="submit">@localizer["Rebuild"]</button></form> }
-            }
-        }
-    }
-</div></div></div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
+
 @section Scripts {
-<script id="inventory-settings" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { protectedData = ViewBag.ProtectionEnforced == true, grant = (string)ViewBag.ProtectedGrant, expiry = (DateTime?)ViewBag.GrantExpiresOn, index = Url.Action("Index"), failed = localizer["UnableToComplete"].Value, witness = localizer["WitnessPending"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
-<script src="~/js/app/internal/inventory/inventory-modern.js" asp-append-version="true"></script>
-@if (ViewBag.ProtectionEnforced == true) { @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value, GrantExpiresOnUtc = (DateTime?)ViewBag.GrantExpiresOn, BindForms = new List<string> { "form.inventory-navigation", "form.inventory-command" } }) }
+    <script id="inventory-settings" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { protectedData = ViewBag.ProtectionEnforced == true, grant = (string)ViewBag.ProtectedGrant, expiry = (DateTime?)ViewBag.GrantExpiresOn, index = Url.Action("Index"), failed = localizer["UnableToComplete"].Value, witness = localizer["WitnessPending"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+    <script id="workspace-settings" type="application/json">@Html.Raw(JsonConvert.SerializeObject(new { required = localizer["RequiredFieldsMissing"].Value, nothingEntered = localizer["NoRows"].Value, yes = localizer["Yes"].Value, no = localizer["No"].Value }, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+    <script src="~/js/app/internal/inventory/inventory-modern.js" asp-append-version="true"></script>
+    <script src="~/js/app/common/workspace/resgrid.common.workspace.js" asp-append-version="true"></script>
+    @if (ViewBag.ProtectionEnforced == true)
+    {
+        @await Html.PartialAsync("_AdpRevealScripts", new AdpRevealView { BannerTitle = localizer["ProtectedDataRequired"].Value, GrantExpiresOnUtc = (DateTime?)ViewBag.GrantExpiresOn, BindForms = new List<string> { "form.inventory-navigation", "form.inventory-command" } })
+    }
 }

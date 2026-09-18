@@ -376,4 +376,25 @@
 <data name="WorkOrderPolicyChanged" xml:space="preserve"><value>Правила операцій нарядів змінено</value></data>
 <data name="ResponseDueOn" xml:space="preserve"><value>Кінцевий термін реагування (UTC)</value></data>
 <data name="RepairDueOn" xml:space="preserve"><value>Кінцевий термін ремонту (UTC)</value></data>
+  <data name="WorkOrdersIntro" xml:space="preserve"><value>Створюйте ремонти, стежте за виконавцями та дивіться вартість обслуговування.</value></data>
+  <data name="Close" xml:space="preserve"><value>Закрити</value></data>
+  <data name="Continue" xml:space="preserve"><value>Продовжити</value></data>
+  <data name="Review" xml:space="preserve"><value>Перевірка</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Перевірте відповіді нижче та збережіть.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Заповніть підсвічені поля, перш ніж продовжити.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Тут ще нічого немає. Скористайтеся кнопками вище, щоб створити перший запис.</value></data>
+  <data name="HelpWorkOrders" xml:space="preserve"><value>Наряд — це один ремонт або огляд, від заявки до перевіреного усунення.</value></data>
+  <data name="StepOrderDescribe" xml:space="preserve"><value>Опишіть роботу</value></data>
+  <data name="StepOrderDescribeHint" xml:space="preserve"><value>Що потрібно зробити, наскільки терміново і до якого часу.</value></data>
+  <data name="StepOrderTarget" xml:space="preserve"><value>Чого це стосується</value></data>
+  <data name="StepOrderTargetHint" xml:space="preserve"><value>Техніка, частина або актив, якого стосується робота, і де його знайти.</value></data>
+  <data name="StepOrderCost" xml:space="preserve"><value>Вартість і постачальник</value></data>
+  <data name="StepOrderCostHint" xml:space="preserve"><value>Скільки очікувано коштуватиме, на який бюджет лягає і хто виконує.</value></data>
+  <data name="StepOrderSafety" xml:space="preserve"><value>Безпека та процедура</value></data>
+  <data name="StepOrderSafetyHint" xml:space="preserve"><value>Потрібні дозволи, від'єднання та кваліфікації, а також кроки виконання.</value></data>
+  <data name="StepRecurrenceScheduleHint" xml:space="preserve"><value>Як часто повторюється робота і в якому вікні її можна виконати.</value></data>
+  <data name="StepRecurrenceUsageHint" xml:space="preserve"><value>Необов'язкові тригери лічильника чи стану, що створюють роботу раніше за показниками.</value></data>
+  <data name="StepRecurrenceAssignmentHint" xml:space="preserve"><value>Кому надходить створений наряд і кому ескалюється, якщо ніхто його не взяв.</value></data>
+  <data name="HelpFieldDueOn" xml:space="preserve"><value>Визначає позначку прострочення та відлік рівня обслуговування.</value></data>
+  <data name="HelpFieldSteps" xml:space="preserve"><value>Кроки, які виконує технік. Деякі переходи вимагають завершення всіх.</value></data>
 </root>

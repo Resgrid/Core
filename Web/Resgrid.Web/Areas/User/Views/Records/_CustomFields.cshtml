@@ -2,6 +2,7 @@
 @using Newtonsoft.Json
 @model RecordUdfSection
 @inject Resgrid.Model.Services.IUdfRenderingService UdfRenderer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
 @if (Model != null)
 {
     var definition = new UdfDefinition { UdfDefinitionId = Model.DefinitionId, EntityType = (int)UdfEntityType.Record, Version = Model.ExtensionVersion };
@@ -9,7 +10,7 @@
     var values = Model.Fields.Select(e => new UdfFieldValue { UdfFieldId = e.Field.UdfFieldId, Value = e.Value }).ToList();
     // Drafts can be incomplete. The service applies the pinned requiredness at finalization.
     foreach (var field in fields) { if (field.IsRequired) field.Label += " (required before finalization)"; field.IsRequired = false; }
-    <section class="ibox rms-custom-fields"><div class="ibox-title"><h3>Department custom fields</h3></div><div class="ibox-content">
+    <section class="ibox rms-custom-fields"><div class="ibox-title"><h3>@localizer["CustomFieldsHeader"]</h3></div><div class="ibox-content">
         <p>Form version @Model.ExtensionVersion</p>
         <input type="hidden" name="CustomFields.DefinitionId" value="@Model.DefinitionId" />
         @Html.Raw(UdfRenderer.GenerateHtmlFormFields(definition, fields.Where(f => !f.IsReadOnly).ToList(), values))

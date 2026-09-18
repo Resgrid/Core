@@ -35,32 +35,54 @@
 		</ol>
 	</div>
 	<div class="col-sm-8">
-		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-			@if (Model.CanEdit && Model.IsEditable)
+		@{
+			// Lifecycle actions stay as buttons; the document formats and the side trips live in menus.
+			var editable = Model.CanEdit && Model.IsEditable;
+			var canExport = Model.CanExport && r.CurrentRevisionId != null;
+			var canAmend = Model.CanAmend && RmsLifecycle.CanTransition((RmsLifecyclePreset)r.LifecyclePreset, state, RmsRecordState.Amended) && r.AmendsRevisionId == null;
+			var amendmentOpen = r.AmendsRevisionId != null && Model.CanAmend;
+		}
+		<div class="btn-toolbar top-page-buttons" style="float:right;padding-right:15px;">
+			@if (editable)
 			{
-				<a class="btn btn-primary" id="adp-edit-link" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@commonLocalizer["Edit"]</a>
-				<a class="btn btn-default" asp-controller="RecordsInventory" asp-action="Edit" asp-route-area="User" asp-route-recordId="@r.RmsIncidentReportId" asp-route-kind="IncidentReport">Inventory usage</a>
-				<form method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Validate" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default">@(Model.SubmissionEnabled ? localizer["ValidateWithDestination"] : localizer["Validate"])</button></form>
+				<div class="btn-group">
+					<a class="btn btn-primary" id="adp-edit-link" asp-controller="IncidentReports" asp-action="Edit" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId"><i class="fa fa-pencil"></i> @commonLocalizer["Edit"]</a>
+				</div>
+				<form class="btn-group" method="post" asp-controller="IncidentReports" asp-action="Validate" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default"><i class="fa fa-check"></i> @(Model.SubmissionEnabled ? localizer["ValidateWithDestination"] : localizer["Validate"])</button></form>
 			}
 			@if (Model.CanSubmit && Model.CanQueueSubmission)
 			{
-				<form method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Submit" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-success"><i class="fa fa-cloud-upload"></i> @localizer["SubmitToNeris"]</button></form>
+				<form class="btn-group" method="post" asp-controller="IncidentReports" asp-action="Submit" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-success"><i class="fa fa-cloud-upload"></i> @localizer["SubmitToNeris"]</button></form>
 			}
-			@if (Model.CanAmend && RmsLifecycle.CanTransition((RmsLifecyclePreset)r.LifecyclePreset, state, RmsRecordState.Amended) && r.AmendsRevisionId == null)
+			@if (canAmend)
 			{
-				<form method="post" style="display:inline" asp-controller="IncidentReports" asp-action="Amend" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-warning">@localizer["Amend"]</button></form>
+				<form class="btn-group" method="post" asp-controller="IncidentReports" asp-action="Amend" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-warning">@localizer["Amend"]</button></form>
 			}
-			@if (r.AmendsRevisionId != null && Model.CanAmend)
+			@if (amendmentOpen)
 			{
-				<form method="post" style="display:inline" asp-controller="IncidentReports" asp-action="AbandonAmendment" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default">@localizer["AbandonAmendment"]</button></form>
+				<form class="btn-group" method="post" asp-controller="IncidentReports" asp-action="AbandonAmendment" asp-route-area="User" asp-route-id="@r.RmsIncidentReportId">@Html.AntiForgeryToken()<button type="submit" class="btn btn-default">@localizer["AbandonAmendment"]</button></form>
 			}
-			@if (Model.CanExport && r.CurrentRevisionId != null)
+			@if (canExport)
 			{
-				<a class="btn btn-info" asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="pdf"><i class="fa fa-print"></i> @localizer["Print"]</a>
-				<a class="btn btn-default" asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="json">JSON</a>
-				<a class="btn btn-default" asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="csv">CSV</a>
+				<div class="btn-group">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-download"></i> @localizer["Export"] <span class="caret"></span></button>
+					<ul class="dropdown-menu dropdown-menu-right">
+						<li><a asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="pdf"><i class="fa fa-print"></i> @localizer["Print"]</a></li>
+						<li><a asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="json"><i class="fa fa-file-code-o"></i> @localizer["ExportJson"]</a></li>
+						<li><a asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="csv"><i class="fa fa-file-text-o"></i> @localizer["ExportCsv"]</a></li>
+					</ul>
+				</div>
 			}
-			<a class="btn btn-default" asp-controller="IncidentReports" asp-action="NfirsLegacy" asp-route-area="User" asp-route-callId="@r.CallId" title="@localizer["NfirsLegacyIntro"]"><i class="fa fa-history"></i> @localizer["NfirsLegacyButton"]</a>
+			<div class="btn-group">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-ellipsis-h"></i> @localizer["MoreMenu"] <span class="caret"></span></button>
+				<ul class="dropdown-menu dropdown-menu-right">
+					@if (editable)
+					{
+						<li><a asp-controller="RecordsInventory" asp-action="Edit" asp-route-area="User" asp-route-recordId="@r.RmsIncidentReportId" asp-route-kind="IncidentReport"><i class="fa fa-cubes"></i> @localizer["InventoryUsage"]</a></li>
+					}
+					<li><a asp-controller="IncidentReports" asp-action="NfirsLegacy" asp-route-area="User" asp-route-callId="@r.CallId" title="@localizer["NfirsLegacyIntro"]"><i class="fa fa-history"></i> @localizer["NfirsLegacyButton"]</a></li>
+				</ul>
+			</div>
 		</div>
 	</div>
 </div>
@@ -715,6 +737,10 @@
 		</div>
 	</div>
 </div>
+
+@section Styles {
+	<link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 
 @section Scripts {
 	@if (isProtected)

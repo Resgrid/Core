@@ -770,4 +770,5 @@
     <value>Perfil del departamento</value>
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Retenciones de conservación de registros</value></data>
+  <data name="RecordsAllModule" xml:space="preserve"><value>Todos los registros</value></data>
 </root>

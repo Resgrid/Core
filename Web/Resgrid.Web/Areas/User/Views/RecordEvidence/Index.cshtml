@@ -1,40 +1,107 @@
 @using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Records.RecordEvidenceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
 @{
-	ViewBag.Title = "Resgrid | Supporting evidence";
-	var context = Model.Context;
-	var recordController = context.RecordKind == RmsRecordKind.IncidentReport ? "IncidentReports" : "Records";
+    var context = Model.Context;
+    var recordController = context.RecordKind == RmsRecordKind.IncidentReport ? "IncidentReports" : "Records";
+    ViewBag.Title = "Resgrid | " + localizer["Evidence"];
+    ViewData["Title"] = localizer["Evidence"].Value + " — " + context.RecordNumber;
+    ViewData["Subtitle"] = localizer["EvidenceIntro"].Value;
+    ViewData["ParentText"] = context.RecordNumber;
+    ViewData["ParentController"] = recordController;
+    ViewData["ParentAction"] = "Details";
+    ViewData["ParentId"] = context.RecordId;
 }
+
+@await Html.PartialAsync("_RmsShell")
+
 <div class="wrapper wrapper-content">
-	<h2>Supporting evidence — @context.RecordNumber</h2>
-	<p><a asp-controller="@recordController" asp-action="Details" asp-route-id="@context.RecordId">Return to report</a></p>
-	@if (!string.IsNullOrWhiteSpace(Model.Message)) { <div class="alert alert-info" role="status">@Model.Message</div> }
-	<p>Captured manifests preserve the selected source facts and their checksum. Draft captures become part of the signed revision. Corrections preserve earlier evidence in the history.</p>
-	@if (context.CanCapture)
-	{
-		<p><a class="btn btn-primary" asp-action="Select" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind">Select and capture evidence</a>
-		<a class="btn btn-default" asp-controller="RecordsInventory" asp-action="Edit" asp-route-recordId="@context.RecordId" asp-route-kind="@context.RecordKind">Record inventory usage</a></p>
-	}
-	@if (Model.Artifacts.Count == 0) { <p>No evidence on this page.</p> }
-	<nav aria-label="Evidence pages">
-		@if (Model.Page > 0) { <a asp-action="Index" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-page="@(Model.Page - 1)">Previous page</a> }
-		@if (Model.HasMore) { <a asp-action="Index" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-page="@(Model.Page + 1)">Next page</a> }
-	</nav>
-	@foreach (var artifact in Model.Artifacts)
-	{
-		<div class="ibox"><div class="ibox-content">
-			@if (artifact.Withheld)
-			{
-				<p><i class="fa fa-lock" aria-hidden="true"></i> Restricted evidence withheld.</p>
-			}
-			else
-			{
-				<h3>@artifact.Title</h3>
-				<p>@artifact.Reason</p>
-				<p>@artifact.Items source item(s) · captured @artifact.CapturedOn.ToString("yyyy-MM-dd HH:mm:ss") UTC · @(artifact.Superseded ? "Superseded" : "Current") · @(artifact.RevisionId == null ? "Draft" : "Signed revision: " + artifact.RevisionId)</p>
-				<p>Source version: <code style="overflow-wrap:anywhere">@artifact.SourceVersion</code><br />SHA-256: <code style="overflow-wrap:anywhere">@artifact.Checksum</code></p>
-				@if (context.CanExport) { <a class="btn btn-default" asp-action="Manifest" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-artifactId="@artifact.Id">Download verified manifest</a> }
-			}
-		</div></div>
-	}
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["Evidence"] &middot; @context.RecordNumber</h5></div>
+        <div class="ibox-content">
+
+            @if (!string.IsNullOrWhiteSpace(Model.Message))
+            {
+                <div class="alert alert-info" role="status">@Model.Message</div>
+            }
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["EvidenceManifestIntro"]</div>
+
+            <div class="rgw-toolbar">
+                <a class="btn btn-default btn-sm" asp-controller="@recordController" asp-action="Details" asp-route-id="@context.RecordId"><i class="fa fa-arrow-left"></i> @localizer["ReturnToReport"]</a>
+                <div class="rgw-toolbar-spacer"></div>
+                @if (context.CanCapture)
+                {
+                    <a class="btn btn-primary" asp-action="Select" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind"><i class="fa fa-plus"></i> @localizer["AddEvidence"]</a>
+                    <a class="btn btn-default" asp-controller="RecordsInventory" asp-action="Edit" asp-route-recordId="@context.RecordId" asp-route-kind="@context.RecordKind"><i class="fa fa-cubes"></i> @localizer["EvidenceInventoryUsage"]</a>
+                }
+            </div>
+
+            @if (Model.Artifacts.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-folder-open-o fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["NoEvidenceCaptured"]</h4>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var artifact in Model.Artifacts)
+                    {
+                        <div class="col-md-6">
+                            <div class="ibox">
+                                <div class="ibox-title">
+                                    <h5>@(artifact.Withheld ? localizer["EvidenceWithheld"].Value : artifact.Title)</h5>
+                                </div>
+                                <div class="ibox-content">
+                                    @if (artifact.Withheld)
+                                    {
+                                        <p class="text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["EvidenceWithheld"]</p>
+                                    }
+                                    else
+                                    {
+                                        <p>
+                                            <span class="label @(artifact.Superseded ? "" : "label-success")">@localizer[artifact.Superseded ? "Superseded" : "EvidenceCurrent"]</span>
+                                            <span class="label @(artifact.RevisionId == null ? "label-warning" : "label-primary")">@(artifact.RevisionId == null ? localizer["EvidenceDraft"].Value : localizer["EvidenceSignedRevision"].Value + " " + artifact.RevisionId)</span>
+                                        </p>
+                                        <p style="white-space:pre-wrap">@artifact.Reason</p>
+                                        <dl class="dl-horizontal">
+                                            <dt>@localizer["EvidenceItems"]</dt><dd>@artifact.Items</dd>
+                                            <dt>@localizer["CapturedOn"]</dt><dd>@artifact.CapturedOn.ToString("yyyy-MM-dd HH:mm:ss") UTC</dd>
+                                            <dt>@localizer["EvidenceSourceVersion"]</dt><dd><code style="overflow-wrap:anywhere">@artifact.SourceVersion</code></dd>
+                                            <dt>@localizer["Checksum"]</dt><dd><code style="overflow-wrap:anywhere">@artifact.Checksum</code></dd>
+                                        </dl>
+                                        @if (context.CanExport)
+                                        {
+                                            <a class="btn btn-default btn-sm" asp-action="Manifest" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-artifactId="@artifact.Id"><i class="fa fa-download"></i> @localizer["EvidenceDownloadManifest"]</a>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            @if (Model.Page > 0 || Model.HasMore)
+            {
+                <div class="rgw-pager">
+                    @if (Model.Page > 0)
+                    {
+                        <a class="btn btn-default btn-sm" asp-action="Index" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-page="@(Model.Page - 1)"><i class="fa fa-chevron-left"></i> @localizer["PreviousPage"]</a>
+                    }
+                    @if (Model.HasMore)
+                    {
+                        <a class="btn btn-default btn-sm" asp-action="Index" asp-route-recordId="@context.RecordId" asp-route-recordKind="@context.RecordKind" asp-route-page="@(Model.Page + 1)">@localizer["NextPage"] <i class="fa fa-chevron-right"></i></a>
+                    }
+                    <span class="text-muted">@(Model.Page + 1)</span>
+                </div>
+            }
+        </div>
+    </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

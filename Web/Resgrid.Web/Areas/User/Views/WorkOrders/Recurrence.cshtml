@@ -1,30 +1,198 @@
 @model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderRecurrenceDetailView
 @using Newtonsoft.Json.Linq
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
-@{ var row = Model.Detail.Schedule; var settings = Model.Detail.Settings; ViewBag.Title = "Resgrid | " + localizer["PreventiveMaintenance"]; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-@await Html.PartialAsync("_Protection")
-<div class="work-order-protected"><h2>@settings.Template.Content.Title</h2><p style="white-space:pre-wrap">@settings.Template.Content.Description</p>
-<p>@localizer["NextDue"]: @row.NextDueOn?.ToString("u") · @localizer[row.IsActive ? "Active" : "Paused"]</p>
-<p>@localizer["MeterBaseline"]: @row.MeterBaseline · @localizer["MeterValue"]: @row.LastMeterValue · @localizer["MeterEpoch"]: @row.MeterEpoch</p>
-<a class="btn btn-default" asp-action="Recurrences">@localizer["PreventiveMaintenance"]</a>
-@if (Model.CanWrite) { <a class="btn btn-default" asp-action="EditRecurrence" asp-route-id="@row.Id">@localizer["Edit"]</a> }
-@if (row.PendingWorkOrderId.HasValue) { <a class="btn btn-primary" asp-action="Detail" asp-route-id="@row.PendingWorkOrderId">@localizer["WorkOrders"]</a> }
-@if (Model.CanWrite && (row.MeterUnit != 0 || row.Condition != 0)) {
-<h3>@localizer["RecordReading"]</h3>
-<form class="work-order-form work-order-command" asp-action="Reading" method="post" data-destination="Recurrence">
-@Html.AntiForgeryToken()<input type="hidden" name="id" value="@row.Id"/><input type="hidden" name="Revision" value="@row.Revision"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>
-<label>@localizer["ObservedOn"] (UTC)<input name="ObservedOn" type="datetime-local" class="form-control" value="@DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm")" required/></label>
-@if (row.MeterUnit != 0) { <label>@localizer["MeterValue"]<input name="MeterValue" type="number" min="0" step="0.000001" class="form-control"/></label><label><input name="ResetMeter" type="checkbox" value="true"/> @localizer["ResetMeter"]</label> }
-@if (row.Condition != 0) { <label>@localizer["ConditionValue"] (@settings.ConditionUnit)<input name="ConditionValue" type="number" step="any" class="form-control"/></label> }
-<label>@localizer["ReadingSource"]<input name="Source" class="form-control" maxlength="1000" required/></label><label>@localizer["Reason"]<textarea name="Note" class="form-control" maxlength="4000"></textarea></label>
-<button type="submit" class="btn btn-primary">@localizer["RecordReading"]</button></form>
+@{
+    var row = Model.Detail.Schedule;
+    var settings = Model.Detail.Settings;
+    ViewBag.Title = "Resgrid | " + localizer["PreventiveMaintenance"];
+    ViewData["Tab"] = "Recurrences";
+    ViewData["Title"] = settings.Template.Content.Title;
+    ViewData["ParentText"] = localizer["PreventiveMaintenance"].Value;
+    ViewData["ParentAction"] = "Recurrences";
+    ViewData["CanWrite"] = Model.CanWrite;
+    var canRecord = Model.CanWrite && (row.MeterUnit != 0 || row.Condition != 0);
 }
-<h3>@localizer["Readings"]</h3><table class="table"><thead><tr><th>@localizer["ObservedOn"]</th><th>@localizer["MeterValue"]</th><th>@localizer["ConditionValue"]</th><th>@localizer["ReadingSource"]</th><th>@localizer["Note"]</th></tr></thead><tbody>
-@foreach (var reading in Model.Detail.Readings) { var c = JObject.Parse(reading.Content ?? "{}"); <tr><td>@reading.ObservedOn.ToString("u")</td><td>@c["MeterValue"]</td><td>@c["ConditionValue"]</td><td>@c["Source"]</td><td>@c["Note"]</td></tr> }
-</tbody></table>
-<h3>@localizer["Activity"]</h3><ol>@foreach (var change in Model.Detail.Changes) { var c = JObject.Parse(change.Content ?? "{}"); <li>@change.CreatedOn.ToString("u") · @localizer["MaintenanceChange" + change.ChangeType]<p>@c["Note"]</p><p>@change.OriginalDueOn?.ToString("u") → @change.RevisedDueOn?.ToString("u")</p></li> }</ol>
-@if (Model.Detail.HistoryPage > 0) { <a asp-action="Recurrence" asp-route-id="@row.Id" asp-route-historyPage="@(Model.Detail.HistoryPage - 1)">@localizer["Previous"]</a> }
-@if (Model.Detail.HasMoreHistory) { <a asp-action="Recurrence" asp-route-id="@row.Id" asp-route-historyPage="@(Model.Detail.HistoryPage + 1)">@localizer["Next"]</a> }
-</div></div></div></div>
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@settings.Template.Content.Title</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="work-order-protected">
+                <div class="rgw-toolbar">
+                    <a class="btn btn-default btn-sm" asp-action="Recurrences"><i class="fa fa-arrow-left"></i> @localizer["PreventiveMaintenance"]</a>
+                    <div class="rgw-toolbar-spacer"></div>
+                    @if (canRecord)
+                    {
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#recurrence-reading"><i class="fa fa-tachometer"></i> @localizer["RecordReading"]</button>
+                    }
+                    @if (Model.CanWrite)
+                    {
+                        <a class="btn btn-default" asp-action="EditRecurrence" asp-route-id="@row.Id"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+                    }
+                    @if (row.PendingWorkOrderId.HasValue)
+                    {
+                        <a class="btn btn-default" asp-action="Detail" asp-route-id="@row.PendingWorkOrderId"><i class="fa fa-wrench"></i> @localizer["WorkOrders"]</a>
+                    }
+                </div>
+
+                <p class="text-muted">
+                    <span class="label @(row.IsActive ? "label-success" : "label-warning")">@localizer[row.IsActive ? "Active" : "Paused"]</span>
+                    @localizer["NextDue"]: @row.NextDueOn?.ToString("u")
+                </p>
+                @if (!string.IsNullOrEmpty(settings.Template.Content.Description))
+                {
+                    <p style="white-space:pre-wrap">@settings.Template.Content.Description</p>
+                }
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="ibox"><div class="ibox-title"><h5>@localizer["MeterValue"]</h5></div>
+                            <div class="ibox-content"><h1 class="no-margins">@row.LastMeterValue</h1><small>@localizer["MeterBaseline"]: @row.MeterBaseline</small></div></div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="ibox"><div class="ibox-title"><h5>@localizer["MeterEpoch"]</h5></div>
+                            <div class="ibox-content"><h1 class="no-margins">@row.MeterEpoch</h1></div></div>
+                    </div>
+                </div>
+
+                <div class="hr-line-dashed"></div>
+
+                <h3>@localizer["Readings"]</h3>
+                @if (Model.Detail.Readings.Count == 0)
+                {
+                    <p class="text-muted">@localizer["None"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["ObservedOn"]</th><th class="text-right">@localizer["MeterValue"]</th><th class="text-right">@localizer["ConditionValue"]</th><th>@localizer["ReadingSource"]</th><th>@localizer["Note"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var reading in Model.Detail.Readings)
+                                {
+                                    var content = JObject.Parse(reading.Content ?? "{}");
+                                    <tr>
+                                        <td>@reading.ObservedOn.ToString("u")</td>
+                                        <td class="text-right">@content["MeterValue"]</td>
+                                        <td class="text-right">@content["ConditionValue"]</td>
+                                        <td>@content["Source"]</td>
+                                        <td>@content["Note"]</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                <h3>@localizer["Activity"]</h3>
+                @if (Model.Detail.Changes.Count == 0)
+                {
+                    <p class="text-muted">@localizer["None"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["CreatedOn"]</th><th>@localizer["Activity"]</th><th>@localizer["Note"]</th><th>@localizer["RevisedDue"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var change in Model.Detail.Changes)
+                                {
+                                    var content = JObject.Parse(change.Content ?? "{}");
+                                    <tr>
+                                        <td>@change.CreatedOn.ToString("u")</td>
+                                        <td><span class="label">@localizer["MaintenanceChange" + change.ChangeType]</span></td>
+                                        <td>@content["Note"]</td>
+                                        <td>@change.OriginalDueOn?.ToString("u") → @change.RevisedDueOn?.ToString("u")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                @if (Model.Detail.HistoryPage > 0 || Model.Detail.HasMoreHistory)
+                {
+                    <div class="rgw-pager">
+                        @if (Model.Detail.HistoryPage > 0)
+                        {
+                            <a class="btn btn-default btn-sm" asp-action="Recurrence" asp-route-id="@row.Id" asp-route-historyPage="@(Model.Detail.HistoryPage - 1)"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                        }
+                        @if (Model.Detail.HasMoreHistory)
+                        {
+                            <a class="btn btn-default btn-sm" asp-action="Recurrence" asp-route-id="@row.Id" asp-route-historyPage="@(Model.Detail.HistoryPage + 1)">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                        }
+                        <span class="text-muted">@(Model.Detail.HistoryPage + 1)</span>
+                    </div>
+                }
+
+                @if (canRecord)
+                {
+                    <div class="modal fade rgw-modal" id="recurrence-reading" tabindex="-1" role="dialog" aria-labelledby="recurrence-reading-title">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="recurrence-reading-title">@localizer["RecordReading"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" asp-action="Reading" method="post" data-destination="Recurrence">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@row.Id" />
+                                        <input type="hidden" name="Revision" value="@row.Revision" />
+                                        <input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")" />
+                                        <div class="rgw-grid">
+                                            <div class="form-group">
+                                                <label for="reading-observed">@localizer["ObservedOn"] (UTC)</label>
+                                                <input id="reading-observed" name="ObservedOn" type="datetime-local" class="form-control" value="@DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm")" required />
+                                            </div>
+                                            @if (row.MeterUnit != 0)
+                                            {
+                                                <div class="form-group">
+                                                    <label for="reading-meter">@localizer["MeterValue"]</label>
+                                                    <input id="reading-meter" name="MeterValue" type="number" min="0" step="0.000001" class="form-control" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="checkbox"><label><input name="ResetMeter" type="checkbox" value="true" /> @localizer["ResetMeter"]</label></div>
+                                                </div>
+                                            }
+                                            @if (row.Condition != 0)
+                                            {
+                                                <div class="form-group">
+                                                    <label for="reading-condition">@localizer["ConditionValue"] (@settings.ConditionUnit)</label>
+                                                    <input id="reading-condition" name="ConditionValue" type="number" step="any" class="form-control" />
+                                                </div>
+                                            }
+                                            <div class="form-group">
+                                                <label for="reading-source">@localizer["ReadingSource"]</label>
+                                                <input id="reading-source" name="Source" class="form-control" maxlength="1000" required />
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <label for="reading-note">@localizer["Reason"]</label>
+                                                <textarea id="reading-note" name="Note" class="form-control" rows="2" maxlength="4000"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                            <button type="submit" class="btn btn-primary">@localizer["RecordReading"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_Scripts") }

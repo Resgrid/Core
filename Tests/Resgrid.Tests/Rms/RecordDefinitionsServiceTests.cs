@@ -155,6 +155,56 @@ namespace Resgrid.Tests.Rms
 			await stale.Should().ThrowAsync<RecordConcurrencyException>();
 		}
 
+		/// <summary>
+		/// Regression: publishing a department definition created from a template failed with "Content cannot be written
+		/// to a missing or purged RMS record" because the Records outbox repository applied the live-content guard to every
+		/// Records event, including definition events whose aggregate id is the definition, not a Record. The harness
+		/// runs the same guard, so this test fails without the aggregate-type discrimination in DomainEventOutboxRepository.
+		/// </summary>
+		[Test]
+		public async Task Publish_and_retire_of_a_template_created_definition_pass_the_outbox_live_content_guard()
+		{
+			var aggregate = await _h.Definitions.CreateAsync(Dept, Admin, new RecordDefinitionCreateInput
+			{
+				DefinitionKey = "ops.security-patrol", Name = "Security Patrol Log", Category = "Security", TemplateKey = "template.security-patrol", JurisdictionProfileKey = "us"
+			});
+			aggregate.Draft.Should().NotBeNull();
+			(await _h.Definitions.ValidateAsync(Dept, RecordDefinitionsService.ToDraftInput(aggregate.Draft, aggregate.Definition))).IsValid.Should().BeTrue();
+
+			var published = await _h.PublishAsync("ops.security-patrol");
+			published.IsPublished.Should().BeTrue();
+			published.DefinitionKey.Should().Be("ops.security-patrol");
+			_h.Defs.Definitions.Single().CurrentPublishedVersion.Should().Be(1);
+			var publishedEvent = _h.Events(WorkflowTriggerEventType.RecordDefinitionPublished).Should().ContainSingle().Which;
+			publishedEvent.AggregateType.Should().Be(RecordDefinitionsService.DefinitionAggregate);
+			publishedEvent.AggregateId.Should().Be(aggregate.Definition.RmsRecordDefinitionId, "the definition, not a Record, is the aggregate");
+			DomainEventProducers.IsRecordContentAggregate(publishedEvent.AggregateType).Should().BeFalse();
+			_h.Published.Should().ContainSingle(e => e.EventName == WorkflowTriggerEventType.RecordDefinitionPublished.ToString());
+
+			var definition = _h.Defs.Definitions.Single();
+			var retired = await _h.Definitions.RetireAsync(Dept, Admin, "ops.security-patrol", definition.RowVersion, "Superseded by the v2 patrol log");
+			retired.IsRetired.Should().BeTrue();
+			_h.Events(WorkflowTriggerEventType.RecordDefinitionRetired).Should().ContainSingle().Which.AggregateType.Should().Be(RecordDefinitionsService.DefinitionAggregate);
+		}
+
+		[Test]
+		public async Task Outbox_guard_still_refuses_record_events_for_a_missing_record()
+		{
+			// The guard the definition test relies on is live in this harness: a Records event that names a Record which
+			// does not exist is refused, exactly as the repository does for a missing or purged row.
+			Func<Task> missing = () => _h.Outbox.EnqueueAsync(Dept, DomainEventProducers.Records, new DomainEventEnvelope
+			{
+				EventName = WorkflowTriggerEventType.RecordFinalized.ToString(), SchemaVersion = 1, AggregateType = DomainEventProducers.RecordsAggregate, AggregateId = "no-such-record", AggregateVersion = 1
+			});
+			(await missing.Should().ThrowAsync<InvalidOperationException>()).Which.Message.Should().Contain("missing or purged");
+
+			Func<Task> untyped = () => _h.Outbox.EnqueueAsync(Dept, DomainEventProducers.Records, new DomainEventEnvelope
+			{
+				EventName = WorkflowTriggerEventType.RecordDefinitionPublished.ToString(), SchemaVersion = 1, AggregateId = "def-1", AggregateVersion = 1
+			});
+			(await untyped.Should().ThrowAsync<ArgumentException>()).Which.Message.Should().Contain("AggregateType");
+		}
+
 		[Test]
 		public async Task Retire_marks_definition_and_versions_enqueues_114_and_blocks_new_drafts()
 		{

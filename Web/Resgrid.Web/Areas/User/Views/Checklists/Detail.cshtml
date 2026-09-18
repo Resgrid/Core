@@ -1,44 +1,205 @@
 @model Resgrid.Web.Areas.User.Models.Checklists.ChecklistDetailView
 @using Resgrid.Model.Checklists
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + Model.Definition.Form.Name; var definition = Model.Definition.Definition; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-    <h2>@Model.Definition.Form.Name</h2><p style="white-space: pre-wrap">@Model.Definition.Form.Instructions</p>
-    <p>@localizer["PublishedVersion"]: @definition.PublishedVersion · @(definition.Retired ? localizer["Retired"] : localizer["Active"])</p>
-    @await Html.PartialAsync("_Protection")
-    @if (Model.CanManage)
+@functions {
+    string RunPill(ChecklistRunState state) => state switch
     {
-        <p><a class="btn btn-default" asp-action="Edit" asp-route-id="@definition.Id">@localizer["EditDraft"]</a><a class="btn btn-default" asp-action="Schedules" asp-route-id="@definition.Id">@localizer["Schedules"]</a></p>
-        <form class="checklist-form" asp-action="Publish" method="post">
-            @Html.AntiForgeryToken()<input type="hidden" name="id" value="@definition.Id" /><input type="hidden" name="revision" value="@definition.Revision" />
-            <button class="btn btn-primary" type="submit">@localizer["PublishDraft"]</button><span class="help-block">@localizer["PublishGuidance"]</span>
-        </form>
-        <form class="checklist-form" asp-action="Retire" method="post">
-            @Html.AntiForgeryToken()<input type="hidden" name="id" value="@definition.Id" /><input type="hidden" name="revision" value="@definition.Revision" />
-            <button class="btn btn-warning" type="submit">@localizer["Retire"]</button>
-            @if (definition.PublishedVersion == 0) { <button class="btn btn-danger" type="submit" name="delete" value="true">@localizer["DeleteDraft"]</button> }
-        </form>
-    }
-    @if (Model.CanStart)
-    {
-        <hr /><form class="checklist-form" asp-action="Start" method="post">
-            @Html.AntiForgeryToken()<input type="hidden" name="id" value="@definition.Id" /><input type="hidden" name="completionId" value="@Guid.NewGuid().ToString()" />
-            <label for="targetId">@localizer["Target"]</label><select id="targetId" name="targetId" class="form-control" required>
-                <option value="">@localizer["SelectTarget"]</option>
-                @foreach (var target in Model.Targets) { <option value="@target.Id">@target.Name</option> }
-            </select><button class="btn btn-success" type="submit">@localizer["StartRun"]</button>
-        </form>
-    }
-    <hr /><h3>@localizer["History"]</h3>
-    <table class="table table-striped"><thead><tr><th>@localizer["Started"] (UTC)</th><th>@localizer["Target"]</th><th>@localizer["State"]</th><th>@localizer["Score"]</th><th>@localizer["Result"]</th></tr></thead><tbody>
-    @foreach (var entry in Model.History)
-    {
-        var run = entry.Completion;
-        <tr><td><a asp-action="Run" asp-route-id="@run.Id">@run.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")</a></td><td>@entry.TargetName</td><td>@localizer[((ChecklistRunState)run.State).ToString()]</td><td>@(run.Score.HasValue ? run.Score + "%" : "—")</td><td>@(run.SubmittedOn.HasValue ? run.Passed.HasValue ? run.Passed.Value ? localizer["Passed"] : localizer["Failed"] : "—" : localizer["Incomplete"])</td></tr>
-    }
-    </tbody></table>
-    @if (Model.Page > 0) { <a class="btn btn-default" asp-route-id="@definition.Id" asp-route-page="@(Model.Page - 1)">@localizer["Previous"]</a> }
-    @if (Model.HasMore) { <a class="btn btn-default" asp-route-id="@definition.Id" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a> }
-    <a class="btn btn-default" asp-action="Index">@localizer["Back"]</a>
-</div></div></div>
+        ChecklistRunState.InProgress => "label-warning",
+        ChecklistRunState.AwaitingWitness => "label-info",
+        _ => "label-success"
+    };
+}
+@{
+    ViewBag.Title = "Resgrid | " + Model.Definition.Form.Name;
+    var definition = Model.Definition.Definition;
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = Model.Definition.Form.Name;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@Model.Definition.Form.Name</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="rgw-toolbar">
+                <a class="btn btn-default btn-sm" asp-action="Index"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
+                <div class="rgw-toolbar-spacer"></div>
+                @if (Model.CanStart)
+                {
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#checklist-start"><i class="fa fa-play"></i> @localizer["StartRun"]</button>
+                }
+                @if (Model.CanManage)
+                {
+                    <a class="btn btn-default" asp-action="Edit" asp-route-id="@definition.Id"><i class="fa fa-pencil"></i> @localizer["EditDraft"]</a>
+                    <a class="btn btn-default" asp-action="Schedules" asp-route-id="@definition.Id"><i class="fa fa-calendar"></i> @localizer["Schedules"]</a>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#checklist-lifecycle"><i class="fa fa-cog"></i> @localizer["PublishDraft"]</button>
+                }
+            </div>
+
+            <p class="text-muted">
+                <span class="label @(definition.Retired ? "label-danger" : "label-success")">@(definition.Retired ? localizer["Retired"] : localizer["Active"])</span>
+                @localizer["PublishedVersion"]: @definition.PublishedVersion
+            </p>
+            @if (!string.IsNullOrEmpty(Model.Definition.Form.Instructions))
+            {
+                <p style="white-space: pre-wrap">@Model.Definition.Form.Instructions</p>
+            }
+
+            <div class="hr-line-dashed"></div>
+
+            <h3>@localizer["History"]</h3>
+            @if (Model.History.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-history fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["NoResults"]</h4>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Started"] (UTC)</th>
+                                <th>@localizer["Target"]</th>
+                                <th>@localizer["State"]</th>
+                                <th class="text-right">@localizer["Score"]</th>
+                                <th>@localizer["Result"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in Model.History)
+                            {
+                                var run = entry.Completion;
+                                var state = (ChecklistRunState)run.State;
+                                <tr>
+                                    <td><a asp-action="Run" asp-route-id="@run.Id">@run.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")</a></td>
+                                    <td>@entry.TargetName</td>
+                                    <td><span class="label @RunPill(state)">@localizer[state.ToString()]</span></td>
+                                    <td class="text-right">@(run.Score.HasValue ? run.Score + "%" : "—")</td>
+                                    <td>
+                                        @if (!run.SubmittedOn.HasValue)
+                                        {
+                                            <span class="label">@localizer["Incomplete"]</span>
+                                        }
+                                        else if (run.Passed == true)
+                                        {
+                                            <span class="label label-success">@localizer["Passed"]</span>
+                                        }
+                                        else if (run.Passed == false)
+                                        {
+                                            <span class="label label-danger">@localizer["Failed"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">—</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @if (Model.Page > 0 || Model.HasMore)
+            {
+                <div class="rgw-pager">
+                    @if (Model.Page > 0)
+                    {
+                        <a class="btn btn-default btn-sm" asp-route-id="@definition.Id" asp-route-page="@(Model.Page - 1)"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                    }
+                    @if (Model.HasMore)
+                    {
+                        <a class="btn btn-default btn-sm" asp-route-id="@definition.Id" asp-route-page="@(Model.Page + 1)">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                    }
+                    <span class="text-muted">@(Model.Page + 1)</span>
+                </div>
+            }
+
+            @if (Model.CanStart)
+            {
+                <div class="modal fade rgw-modal" id="checklist-start" tabindex="-1" role="dialog" aria-labelledby="checklist-start-title">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="checklist-start-title">@localizer["StartRun"]</h4>
+                            </div>
+                            <div class="modal-body">
+                                <p class="text-muted">@localizer["StartRunHint"]</p>
+                                <form class="checklist-form" asp-action="Start" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@definition.Id" />
+                                    <input type="hidden" name="completionId" value="@Guid.NewGuid().ToString()" />
+                                    <div class="rgw-grid">
+                                        <div class="form-group rgw-wide">
+                                            <label for="targetId">@localizer["Target"]</label>
+                                            <select id="targetId" name="targetId" class="form-control" required>
+                                                <option value="">@localizer["SelectTarget"]</option>
+                                                @foreach (var target in Model.Targets)
+                                                {
+                                                    <option value="@target.Id">@target.Name</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="rgw-wizard-actions">
+                                        <div class="rgw-wizard-spacer"></div>
+                                        <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                        <button class="btn btn-primary" type="submit">@localizer["StartRun"]</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @if (Model.CanManage)
+            {
+                <div class="modal fade rgw-modal" id="checklist-lifecycle" tabindex="-1" role="dialog" aria-labelledby="checklist-lifecycle-title">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Close"]"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="checklist-lifecycle-title">@localizer["PublishDraft"]</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form class="checklist-form" asp-action="Publish" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@definition.Id" />
+                                    <input type="hidden" name="revision" value="@definition.Revision" />
+                                    <p class="text-muted">@localizer["PublishGuidance"]</p>
+                                    <button class="btn btn-primary" type="submit">@localizer["PublishDraft"]</button>
+                                </form>
+                                <div class="hr-line-dashed"></div>
+                                <form class="checklist-form" asp-action="Retire" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@definition.Id" />
+                                    <input type="hidden" name="revision" value="@definition.Revision" />
+                                    <p class="text-muted">@localizer["RetireHint"]</p>
+                                    <button class="btn btn-warning" type="submit">@localizer["Retire"]</button>
+                                    @if (definition.PublishedVersion == 0)
+                                    {
+                                        <button class="btn btn-danger" type="submit" name="delete" value="true">@localizer["DeleteDraft"]</button>
+                                    }
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

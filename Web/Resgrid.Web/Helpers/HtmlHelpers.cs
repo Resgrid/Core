@@ -24,6 +24,22 @@ namespace Resgrid.Web
 					cssClass : String.Empty;
 		}
 
+		/// <summary>
+		/// True when the request is being handled by any of the named controllers. Used by the
+		/// sidebar to light up and expand a group when the user is on one of its pages, including
+		/// the pages inside the group that have no link of their own.
+		/// </summary>
+		public static bool IsController(this IHtmlHelper html, params string[] controllers)
+		{
+			string currentController = (string)html.ViewContext.RouteData.Values["controller"];
+
+			foreach (var controller in controllers)
+				if (String.Equals(controller, currentController, StringComparison.OrdinalIgnoreCase))
+					return true;
+
+			return false;
+		}
+
 		public static string PageClass(this IHtmlHelper htmlHelper)
 		{
 			string currentAction = (string) htmlHelper.ViewContext.RouteData.Values["action"];

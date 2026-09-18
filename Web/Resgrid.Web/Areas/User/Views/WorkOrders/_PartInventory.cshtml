@@ -1,9 +1,23 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@*
+    Inventory-backed part picker. The classes and data attributes are the contract
+    work-orders.js loads the choices with; only the layout around them changed.
+*@
 <fieldset class="work-order-inventory" data-url="@Url.Action("PartChoices")">
-<legend>@localizer["InventoryParts"]</legend><p>@localizer["InventoryPartsHelp"]</p>
-<input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>
-@foreach (var choice in new[] { ("item", "InventoryItemId", "InventoryItem"), ("location", "InventoryLocationId", "InventoryLocation"), ("lot", "InventoryLotId", "InventoryLot"), ("asset", "InventoryAssetId", "Asset") }) {
-<label>@localizer[choice.Item3]<select class="form-control inventory-part-choice" name="@choice.Item2" data-kind="@choice.Item1"><option value="">@localizer["None"]</option></select></label>
-<button type="button" class="btn btn-default inventory-part-load" data-kind="@choice.Item1" data-page="0">@localizer["LoadChoices"]</button>
-}
+    <legend>@localizer["InventoryParts"]</legend>
+    <p class="text-muted">@localizer["InventoryPartsHelp"]</p>
+    <input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")" />
+    <div class="rgw-grid">
+        @foreach (var choice in new[] { ("item", "InventoryItemId", "InventoryItem"), ("location", "InventoryLocationId", "InventoryLocation"), ("lot", "InventoryLotId", "InventoryLot"), ("asset", "InventoryAssetId", "Asset") })
+        {
+            var identity = "part-choice-" + choice.Item1;
+            <div class="form-group">
+                <label for="@identity">@localizer[choice.Item3]</label>
+                <select class="form-control inventory-part-choice" id="@identity" name="@choice.Item2" data-kind="@choice.Item1">
+                    <option value="">@localizer["None"]</option>
+                </select>
+                <button type="button" class="btn btn-default btn-xs m-t-xs inventory-part-load" data-kind="@choice.Item1" data-page="0">@localizer["LoadChoices"]</button>
+            </div>
+        }
+    </div>
 </fieldset>

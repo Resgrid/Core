@@ -1,20 +1,86 @@
 @model Resgrid.Web.Areas.User.Models.Checklists.ChecklistIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["Checklists"]; }
-<div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12"><h2>@localizer["Checklists"]</h2><p>@localizer["Free"]</p></div></div>
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-    @await Html.PartialAsync("_Protection")
-    <p><a class="btn btn-default" asp-action="Templates">@localizer["Templates"]</a><a class="btn btn-default" asp-action="Due">@localizer["DueChecks"]</a>
-    <a class="btn btn-default" asp-action="Compliance">@localizer["ChecklistComplianceReport"]</a>
-    @if (Model.CanManage) { <a class="btn btn-default" asp-action="Reminders">@localizer["ReminderSettings"]</a> <a class="btn btn-primary" asp-action="New">@localizer["NewChecklist"]</a> }</p>
-    @if (Model.Definitions.Count == 0) { <p>@localizer["NoDefinitions"]</p> }
-    <table class="table table-striped"><thead><tr><th>@localizer["Name"]</th><th>@localizer["Version"]</th><th>@localizer["State"]</th></tr></thead><tbody>
-    @foreach (var item in Model.Definitions)
-    {
-        <tr><td><a asp-action="Detail" asp-route-id="@item.Definition.Id">@item.Form.Name</a></td><td>@item.Definition.PublishedVersion</td><td>@(item.Definition.Retired ? localizer["Retired"] : item.Definition.PublishedVersion == 0 ? localizer["Draft"] : localizer["Published"])</td></tr>
-    }
-    </tbody></table>
-    @if (Model.Page > 0) { <a class="btn btn-default" asp-route-page="@(Model.Page - 1)">@localizer["Previous"]</a> }
-    @if (Model.HasMore) { <a class="btn btn-default" asp-route-page="@(Model.Page + 1)">@localizer["Next"]</a> }
-</div></div></div>
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Checklists"];
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["Checklists"].Value;
+    ViewData["Subtitle"] = localizer["ChecklistsIntro"].Value;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["Checklists"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpDefinitions"]</div>
+
+            @if (Model.CanManage)
+            {
+                <div class="rgw-toolbar">
+                    <div class="rgw-toolbar-spacer"></div>
+                    <a class="btn btn-primary" asp-action="New"><i class="fa fa-plus"></i> @localizer["NewChecklist"]</a>
+                </div>
+            }
+
+            @if (Model.Definitions.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-check-square-o fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["NoDefinitions"]</h4>
+                    <p class="text-muted">@localizer["NoRowsHelp"]</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["Name"]</th><th>@localizer["Version"]</th><th>@localizer["State"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var item in Model.Definitions)
+                            {
+                                var retired = item.Definition.Retired;
+                                var draft = item.Definition.PublishedVersion == 0;
+                                <tr>
+                                    <td>@item.Form.Name</td>
+                                    <td>@item.Definition.PublishedVersion</td>
+                                    <td>
+                                        <span class="label @(retired ? "label-danger" : draft ? "" : "label-success")">
+                                            @(retired ? localizer["Retired"] : draft ? localizer["Draft"] : localizer["Published"])
+                                        </span>
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs btn-info" asp-action="Detail" asp-route-id="@item.Definition.Id">@localizer["History"]</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @if (Model.Page > 0 || Model.HasMore)
+            {
+                <div class="rgw-pager">
+                    @if (Model.Page > 0)
+                    {
+                        <a class="btn btn-default btn-sm" asp-route-page="@(Model.Page - 1)"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                    }
+                    @if (Model.HasMore)
+                    {
+                        <a class="btn btn-default btn-sm" asp-route-page="@(Model.Page + 1)">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                    }
+                    <span class="text-muted">@(Model.Page + 1)</span>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

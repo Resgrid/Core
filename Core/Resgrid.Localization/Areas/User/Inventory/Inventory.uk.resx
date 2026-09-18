@@ -650,4 +650,137 @@
   <data name="WorkOrderPostingRequired" xml:space="preserve"><value>Проведіть або сторнуйте цю деталь через її наряд.</value></data>
   <data name="AssetSafetyHold" xml:space="preserve"><value>Блокування безпеки обслуговування перешкоджає поверненню обладнання в експлуатацію.</value></data>
   <data name="ReadinessProRequired" xml:space="preserve"><value>Для нових робіт з обслуговування потрібен Readiness Pro.</value></data>
+  <data name="AdjustStock" xml:space="preserve"><value>Скоригувати запас</value></data>
+  <data name="Back" xml:space="preserve"><value>Назад</value></data>
+  <data name="Category" xml:space="preserve"><value>Категорія</value></data>
+  <data name="Close" xml:space="preserve"><value>Закрити</value></data>
+  <data name="Contents" xml:space="preserve"><value>Вміст</value></data>
+  <data name="Continue" xml:space="preserve"><value>Продовжити</value></data>
+  <data name="EditItem" xml:space="preserve"><value>Редагувати позицію</value></data>
+  <data name="Expires" xml:space="preserve"><value>Спливає</value></data>
+  <data name="Filter" xml:space="preserve"><value>Фільтр</value></data>
+  <data name="IssueEquipment" xml:space="preserve"><value>Видати спорядження</value></data>
+  <data name="Item" xml:space="preserve"><value>Позиція</value></data>
+  <data name="NewCategory" xml:space="preserve"><value>Нова категорія</value></data>
+  <data name="NewKit" xml:space="preserve"><value>Новий комплект</value></data>
+  <data name="NewLocation" xml:space="preserve"><value>Нове розташування</value></data>
+  <data name="NewLot" xml:space="preserve"><value>Нова партія</value></data>
+  <data name="NewTransfer" xml:space="preserve"><value>Нове переміщення</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Тут ще нічого немає. Скористайтеся кнопками вище, щоб створити перший запис.</value></data>
+  <data name="Outstanding" xml:space="preserve"><value>Не повернено</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Кількість</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Заповніть підсвічені поля, перш ніж продовжити.</value></data>
+  <data name="Review" xml:space="preserve"><value>Перевірка</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Перевірте відповіді нижче та збережіть.</value></data>
+  <data name="Transaction" xml:space="preserve"><value>Запис журналу</value></data>
+  <data name="Type" xml:space="preserve"><value>Тип</value></data>
+  <data name="When" xml:space="preserve"><value>Коли</value></data>
+  <data name="WorkspaceIntro" xml:space="preserve"><value>Відстежуйте, що має ваш підрозділ, де це зберігається і хто це носить.</value></data>
+  <data name="M4PurchasingIntro" xml:space="preserve"><value>Керуйте постачальниками, створюйте замовлення та дивіться вартість запасів.</value></data>
+  <data name="M5OperationsIntro" xml:space="preserve"><value>Проводьте інвентаризації, опрацьовуйте сповіщення та друкуйте звіти.</value></data>
+  <data name="HelpOnHand" xml:space="preserve"><value>Що ви маєте зараз, за позицією та розташуванням. Відфільтруйте за позицією чи місцем і скоригуйте запас, якщо підрахунок змінився.</value></data>
+  <data name="HelpItems" xml:space="preserve"><value>Позиції — це записи каталогу, а не фізичні предмети. Визначте спосіб обліку, перш ніж додавати запас.</value></data>
+  <data name="HelpCategories" xml:space="preserve"><value>Категорії групують позиції, щоб списки та звіти залишалися зрозумілими. Категорія може належати до батьківської.</value></data>
+  <data name="HelpLocations" xml:space="preserve"><value>Розташування — це де зберігається запас: частини, техніка, люди, контейнери або полиця всередині іншого розташування.</value></data>
+  <data name="HelpLots" xml:space="preserve"><value>Партія — це набір однієї позиції зі спільним номером партії, терміном придатності та вартістю.</value></data>
+  <data name="HelpAssets" xml:space="preserve"><value>Активи — це обладнання з індивідуальним серійним номером. Кожен має власний номер, стан та історію.</value></data>
+  <data name="HelpIssuances" xml:space="preserve"><value>Спорядження, видане особі чи техніці. Зафіксуйте повернення, коли його здадуть.</value></data>
+  <data name="HelpKits" xml:space="preserve"><value>Комплект — це фіксований перелік позицій, які видають разом, як-от бойовий одяг або медична сумка.</value></data>
+  <data name="HelpTransfers" xml:space="preserve"><value>Переміщуйте запас між двома розташуваннями. Обидві сторони руху записуються до журналу.</value></data>
+  <data name="HelpHistory" xml:space="preserve"><value>Кожен рух записується до журналу лише з додаванням. Фільтруйте за позицією чи розташуванням для аудиту.</value></data>
+  <data name="HelpAssetDetail" xml:space="preserve"><value>Повна історія одного активу разом із чек-листами та нарядами.</value></data>
+  <data name="HelpTransaction" xml:space="preserve"><value>Один запис журналу, показаний точно так, як його зроблено.</value></data>
+  <data name="HelpUnitEquipment" xml:space="preserve"><value>Усе, що зараз закріплено за обраною технікою.</value></data>
+  <data name="HelpPersonnelGear" xml:space="preserve"><value>Усе, що зараз видано обраній особі.</value></data>
+  <data name="HelpHolderLookup" xml:space="preserve"><value>Перегляньте все, що закріплено за технікою чи особою.</value></data>
+  <data name="HelpLocationRename" xml:space="preserve"><value>Тут можна змінити лише назву. Розміщення та область визначено під час створення.</value></data>
+  <data name="HelpAssetStatus" xml:space="preserve"><value>Зміна стану створює запис у журналі. Використовуйте її при ремонті, пошкодженні, втраті чи списанні.</value></data>
+  <data name="HelpWitness" xml:space="preserve"><value>Введіть номер запиту, показаний під час проведення, і засвідчіть побачене.</value></data>
+  <data name="M4HelpVendors" xml:space="preserve"><value>Постачальники, у яких ви купуєте. Кожного пов'язано з контактом компанії та може мати номер рахунку.</value></data>
+  <data name="M4HelpPurchaseOrders" xml:space="preserve"><value>Створіть замовлення в постачальника, потім оприбуткуйте його. Оприбуткування проводить запас і фіксує вартість.</value></data>
+  <data name="M4HelpValuation" xml:space="preserve"><value>Вартість наявного запасу за собівартістю, зафіксованою під час оприбуткування.</value></data>
+  <data name="M5NoAlertsHelp" xml:space="preserve"><value>Немає відкритих сповіщень. Оновіть, щоб знову перевірити залишки, терміни придатності та прострочені повернення.</value></data>
+  <data name="M5CountEnterHelp" xml:space="preserve"><value>Введіть фактично підраховану кількість для кожного рядка. Стовпець розбіжності оновиться після збереження.</value></data>
+  <data name="M5CountNameHelp" xml:space="preserve"><value>Те, що ви впізнаєте згодом, наприклад «Річна інвентаризація частини 2».</value></data>
+  <data name="StepItemBasics" xml:space="preserve"><value>Опишіть позицію</value></data>
+  <data name="StepItemTracking" xml:space="preserve"><value>Спосіб обліку</value></data>
+  <data name="StepItemStock" xml:space="preserve"><value>Рівні запасу та вартість</value></data>
+  <data name="StepLocationBasics" xml:space="preserve"><value>Назвіть розташування</value></data>
+  <data name="StepLocationScope" xml:space="preserve"><value>Де воно розташоване</value></data>
+  <data name="StepMovementWhat" xml:space="preserve"><value>Що переміщується</value></data>
+  <data name="StepMovementWhere" xml:space="preserve"><value>Звідки й куди</value></data>
+  <data name="StepMovementAmount" xml:space="preserve"><value>Скільки</value></data>
+  <data name="StepIssueWhat" xml:space="preserve"><value>Що видається</value></data>
+  <data name="StepIssueWho" xml:space="preserve"><value>Хто його отримує</value></data>
+  <data name="StepIssueWhen" xml:space="preserve"><value>Повернення та примітки</value></data>
+  <data name="StepAssetItem" xml:space="preserve"><value>Яка позиція</value></data>
+  <data name="StepAssetIdentity" xml:space="preserve"><value>Серійний номер і мітки</value></data>
+  <data name="StepLotItem" xml:space="preserve"><value>Яка позиція</value></data>
+  <data name="StepLotDetails" xml:space="preserve"><value>Дані партії</value></data>
+  <data name="StepKitBasics" xml:space="preserve"><value>Назвіть комплект</value></data>
+  <data name="StepKitContents" xml:space="preserve"><value>Вміст комплекту</value></data>
+  <data name="M4StepOrderHeader" xml:space="preserve"><value>Дані замовлення</value></data>
+  <data name="M4StepOrderLines" xml:space="preserve"><value>Рядки замовлення</value></data>
+  <data name="M5StepCountBasics" xml:space="preserve"><value>Назвіть інвентаризацію</value></data>
+  <data name="M5StepCountScope" xml:space="preserve"><value>Обсяг</value></data>
+  <data name="M5StepReportKind" xml:space="preserve"><value>Оберіть звіт</value></data>
+  <data name="M5StepReportFilters" xml:space="preserve"><value>Звузьте вибірку</value></data>
+  <data name="HelpFieldAmount" xml:space="preserve"><value>Скільки одиниць, в одиниці виміру позиції.</value></data>
+  <data name="HelpFieldAsset" xml:space="preserve"><value>Для серіалізованих позицій оберіть конкретний примірник.</value></data>
+  <data name="HelpFieldCategory" xml:space="preserve"><value>Необов'язкове групування для списків і звітів.</value></data>
+  <data name="HelpFieldCode" xml:space="preserve"><value>Ваш власний номенклатурний номер, якщо він є.</value></data>
+  <data name="HelpFieldCountLocation" xml:space="preserve"><value>Залиште порожнім, щоб рахувати все.</value></data>
+  <data name="HelpFieldCurrency" xml:space="preserve"><value>Трилітерний код валюти, наприклад USD або EUR.</value></data>
+  <data name="HelpFieldDefaultLocation" xml:space="preserve"><value>Новий запас потрапляє сюди, якщо розташування не обрано.</value></data>
+  <data name="HelpFieldExpectedReturn" xml:space="preserve"><value>Прострочені повернення позначаються на екрані сповіщень.</value></data>
+  <data name="HelpFieldExpiration" xml:space="preserve"><value>Дата, після якої запас стає непридатним.</value></data>
+  <data name="HelpFieldFromLocation" xml:space="preserve"><value>Звідки вибуває запас. Залиште порожнім при надходженні нового.</value></data>
+  <data name="HelpFieldHolder" xml:space="preserve"><value>Оберіть особу або техніку, не обидва.</value></data>
+  <data name="HelpFieldIsActive" xml:space="preserve"><value>Неактивні позиції залишаються в історії, але їх не можна обрати для нових рухів.</value></data>
+  <data name="HelpFieldIsControlledSubstance" xml:space="preserve"><value>Рухи потребують свідка та зберігаються для аудиту.</value></data>
+  <data name="HelpFieldIsKit" xml:space="preserve"><value>Позначте як контейнер комплекту, а не окрему складську позицію.</value></data>
+  <data name="HelpFieldLocationType" xml:space="preserve"><value>Частина, техніка, особа, контейнер або підрозташування іншого місця.</value></data>
+  <data name="HelpFieldLot" xml:space="preserve"><value>Оберіть партію походження, якщо позиція обліковується партіями.</value></data>
+  <data name="HelpFieldMinimum" xml:space="preserve"><value>Створювати сповіщення, коли залишок падає нижче цього значення.</value></data>
+  <data name="HelpFieldNote" xml:space="preserve"><value>Чому це сталося. Примітки показуються в журналі та звітах.</value></data>
+  <data name="HelpFieldParent" xml:space="preserve"><value>Необов'язково. Вкладіть цей запис в інший.</value></data>
+  <data name="HelpFieldReorderPoint" xml:space="preserve"><value>Пропонувати дозамовлення, коли залишок досягне цього значення.</value></data>
+  <data name="HelpFieldReportRange" xml:space="preserve"><value>Звіти-зрізи ігнорують діапазон дат.</value></data>
+  <data name="HelpFieldRequiresExpiration" xml:space="preserve"><value>Вимагати термін придатності, щоб позиція потрапляла до сповіщень.</value></data>
+  <data name="HelpFieldRequiresLotTracking" xml:space="preserve"><value>Вимагати номер партії під час кожного оприбуткування.</value></data>
+  <data name="HelpFieldReturnCondition" xml:space="preserve"><value>Стан, у якому спорядження повернулося.</value></data>
+  <data name="HelpFieldSerialNumber" xml:space="preserve"><value>Серійний номер виробника. Має бути унікальним для цієї позиції.</value></data>
+  <data name="HelpFieldToLocation" xml:space="preserve"><value>Куди йде запас. Залиште порожнім при списанні чи використанні.</value></data>
+  <data name="HelpFieldTrackingMode" xml:space="preserve"><value>Насипний облік рахує кількість. Серіалізований відстежує кожну одиницю окремо з власним номером та історією.</value></data>
+  <data name="HelpFieldUnitCost" xml:space="preserve"><value>Вартість однієї одиниці, використовується для оцінки.</value></data>
+  <data name="HelpFieldUnitOfMeasure" xml:space="preserve"><value>Як ви рахуєте: штука, коробка, літр, метр.</value></data>
+  <data name="M4AccountNumberHelp" xml:space="preserve"><value>Номер рахунку, за яким вас знає цей постачальник.</value></data>
+  <data name="M4CompanyContactHelp" xml:space="preserve"><value>Оберіть контакт компанії, до якого належить цей постачальник.</value></data>
+  <data name="M4NewVendorHint" xml:space="preserve"><value>Постачальник — це контакт компанії, у якої ви купуєте. Спершу додайте контакт, якщо його немає.</value></data>
+  <data name="M4PurchaseOrderNumberHelp" xml:space="preserve"><value>Ваш номер цього замовлення. Він з'явиться в журналі під час оприбуткування.</value></data>
+  <data name="M4StepOrderHeaderHint" xml:space="preserve"><value>У кого купуєте, за яким номером і в якій валюті.</value></data>
+  <data name="M4StepOrderLinesHint" xml:space="preserve"><value>Один рядок на позицію. Кількості та вартості тут — основа для оприбуткування.</value></data>
+  <data name="M5StepCountBasicsHint" xml:space="preserve"><value>Інвентаризація фіксує зріз запасу, щоб порівняти його з тим, що на полиці.</value></data>
+  <data name="M5StepCountScopeHint" xml:space="preserve"><value>Порахуйте одне розташування або залиште порожнім для всього підрозділу.</value></data>
+  <data name="M5StepReportKindHint" xml:space="preserve"><value>Звіт визначає, які фільтри наступного кроку застосовуються.</value></data>
+  <data name="M5StepReportFiltersHint" xml:space="preserve"><value>Залиште фільтр порожнім, щоб включити все. Недоступні фільтри неактивні.</value></data>
+  <data name="StepAssetItemHint" xml:space="preserve"><value>Актив — це фізична одиниця позиції. Вкажіть позицію та де вона буде.</value></data>
+  <data name="StepAssetIdentityHint" xml:space="preserve"><value>Як ідентифікується ця одиниця, коли її беруть або сканують.</value></data>
+  <data name="StepIssueWhatHint" xml:space="preserve"><value>Оберіть позицію та місце, звідки її беруть.</value></data>
+  <data name="StepIssueWhenHint" xml:space="preserve"><value>Коли очікуєте повернення і що варто зафіксувати про передачу.</value></data>
+  <data name="StepItemBasicsHint" xml:space="preserve"><value>Те, що люди побачать, шукаючи це у списку.</value></data>
+  <data name="StepItemTrackingHint" xml:space="preserve"><value>Ці відповіді визначають, що система запитає далі, і їх важко змінити за наявності запасу.</value></data>
+  <data name="StepItemStockHint" xml:space="preserve"><value>Необов'язкові пороги для сповіщень про низький запас та вартість для оцінки.</value></data>
+  <data name="StepKitBasicsHint" xml:space="preserve"><value>Комплекти видають цілком, тож дайте назву, зрозумілу вашим підрозділам.</value></data>
+  <data name="StepKitContentsHint" xml:space="preserve"><value>Перелічіть кожну позицію комплекту та її кількість.</value></data>
+  <data name="StepKitIssueHint" xml:space="preserve"><value>Підтвердьте, який саме примірник і з якої полиці береться кожна частина комплекту.</value></data>
+  <data name="StepLocationBasicsHint" xml:space="preserve"><value>Назва з'являється в кожному списку, що запитує про місце.</value></data>
+  <data name="StepLocationScopeHint" xml:space="preserve"><value>Заповніть лише поле, що відповідає обраному типу; решту залиште порожньою.</value></data>
+  <data name="StepLotDetailsHint" xml:space="preserve"><value>Номер партії, надрукований на упаковці, а також вартість і термін придатності.</value></data>
+  <data name="StepLotItemHint" xml:space="preserve"><value>Партія завжди належить одній позиції, тож оберіть її спершу.</value></data>
+  <data name="StepMovementWhatHint" xml:space="preserve"><value>Тип руху визначає, які з наведених нижче полів буде використано.</value></data>
+  <data name="StepMovementWhereHint" xml:space="preserve"><value>Надходження потребує лише призначення; списання чи використання — лише джерела.</value></data>
+  <data name="StepMovementAmountHint" xml:space="preserve"><value>Кількість і причина. Обидва потраплять до створеного запису журналу.</value></data>
+  <data name="StepReturnHint" xml:space="preserve"><value>Вкажіть, скільки повернулося, куди це потрапило та в якому стані.</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Неактивний</value></data>
 </root>

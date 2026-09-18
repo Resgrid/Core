@@ -730,4 +730,5 @@
     <value>Abteilungsprofil</value>
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Aufbewahrungssperren für Akten</value></data>
+  <data name="RecordsAllModule" xml:space="preserve"><value>Alle Akten</value></data>
 </root>

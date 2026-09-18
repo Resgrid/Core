@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Δεν ήταν δυνατή η ανακατασκευή ορισμένων ιστορικών καταστάσεων εντολών. Το πακέτο δεν εγγυάται πλήρη κάλυψη συντήρησης.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Τα τεκμήρια εντολών περιορίζονται στο τρέχον εξουσιοδοτημένο πεδίο πρόσβασης του αναγνώστη.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>Τα προστατευμένα δεδομένα πρέπει να ξεκλειδωθούν για να συνεχίσετε.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>Δημιουργήστε τους ελέγχους που εκτελούν τα πληρώματα, προγραμματίστε τους και δείτε τι έγινε.</value></data>
+  <data name="Close" xml:space="preserve"><value>Κλείσιμο</value></data>
+  <data name="Continue" xml:space="preserve"><value>Συνέχεια</value></data>
+  <data name="Review" xml:space="preserve"><value>Έλεγχος</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Ελέγξτε τις απαντήσεις παρακάτω και αποθηκεύστε.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Συμπληρώστε τα επισημασμένα πεδία πριν συνεχίσετε.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Δεν υπάρχει τίποτα ακόμη. Χρησιμοποιήστε τα κουμπιά παραπάνω για να δημιουργήσετε το πρώτο.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>Μια λίστα ελέγχου είναι το σύνολο ερωτήσεων που απαντά ένα πλήρωμα. Δημοσιεύστε την πριν προγραμματιστεί ή εκτελεστεί.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>Επιλέξτε σε τι αφορά αυτή η εκτέλεση.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>Οι δικαιολογημένοι έλεγχοι παραμένουν στο αρχείο με τον λόγο που δίνετε εδώ.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>Η απόσυρση σταματά νέες εκτελέσεις και μελλοντικούς προγραμματισμένους ελέγχους. Το ιστορικό διατηρείται.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>Οι έλεγχοι επιλέγονται με βάση την ώρα έναρξης, όχι την ολοκλήρωση.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>Το συμβάν για το οποίο συντάσσεται ο φάκελος.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>Ονομάστε το πρόγραμμα</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>Πώς ονομάζεται αυτό το πρόγραμμα και σε τι αφορά.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>Πότε εκτελείται</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>Πόσο συχνά ανοίγει ο έλεγχος και σε ποια ζώνη ώρας διαβάζονται αυτές οι ώρες.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>Ποιος την αναλαμβάνει</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>Ποιος είναι υπεύθυνος για τον έλεγχο και πόσο χρόνο έχει από τη στιγμή που ανοίγει.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>Εμφανίζεται στη λίστα εκκρεμοτήτων, οπότε κάντε το αναγνωρίσιμο με μια ματιά.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Πόσο χρόνο έχει το πλήρωμα να ολοκληρώσει τον έλεγχο μετά το άνοιγμα. Μετά θεωρείται χαμένος.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>Η αυτόματη δρομολόγηση στέλνει τον έλεγχο σε όποιον κατέχει τον στόχο. Επιλέξτε άτομο, ρόλο, ομάδα ή όχημα για παράκαμψη.</value></data>
 </root>

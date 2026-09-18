@@ -1,19 +1,60 @@
 @model Resgrid.Model.Checklists.ChecklistRunView
 @using Newtonsoft.Json
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + Model.Form.Name; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-    <h2>@Model.Form.Name</h2><p>@Model.Target.Name · @localizer["Started"] @Model.Completion.CreatedOn.ToString("u")</p>
-    <p style="white-space: pre-wrap">@Model.Form.Instructions</p><p>@localizer["RunGuidance"]</p>
-    @await Html.PartialAsync("_Protection")
-    <div id="checklist-error" class="alert alert-danger" role="alert" hidden></div><div id="checklist-saved" class="alert alert-success" role="status" hidden></div>
-    <form id="checklist-run" class="checklist-form" asp-action="SaveRun" method="post" data-upload="@Url.Action("Upload")" data-remove="@Url.Action("RemoveFile")" data-evidence="@Url.Action("Evidence")">
-        @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.Completion.Id" /><input type="hidden" name="inputJson" />
-        <div id="checklist-answers"></div>
-        <button class="btn btn-default" type="submit" name="submit" value="false">@localizer["SaveProgress"]</button>
-        <button class="btn btn-primary" type="submit" name="submit" value="true">@localizer["SubmitRun"]</button>
-        <a class="btn btn-default" asp-action="Detail" asp-route-id="@Model.Completion.ParentId">@localizer["History"]</a>
-    </form>
-    <script id="checklist-run-data" type="application/json">@Html.Raw(JsonConvert.SerializeObject(Model, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
-</div></div></div>
-@section Scripts { @await Html.PartialAsync("_ProtectionScripts") <script src="~/js/app/internal/checklists/checklists.js" asp-append-version="true"></script> }
+@*
+    The answer sheet itself is rendered by checklists.js into #checklist-answers, so this view
+    only supplies the chrome, the guidance and the form contract that script depends on.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + Model.Form.Name;
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = Model.Form.Name;
+    ViewData["ParentText"] = localizer["History"].Value;
+    ViewData["ParentAction"] = "Detail";
+    ViewData["ParentId"] = Model.Completion.ParentId;
+    ViewData["Subtitle"] = Model.Target.Name;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@Model.Form.Name</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Protection")
+
+            <p class="text-muted">@Model.Target.Name &middot; @localizer["Started"] @Model.Completion.CreatedOn.ToString("u")</p>
+            @if (!string.IsNullOrEmpty(Model.Form.Instructions))
+            {
+                <p style="white-space: pre-wrap">@Model.Form.Instructions</p>
+            }
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["RunGuidance"]</div>
+
+            <div id="checklist-error" class="alert alert-danger" role="alert" hidden></div>
+            <div id="checklist-saved" class="alert alert-success" role="status" hidden></div>
+
+            <form id="checklist-run" class="checklist-form" asp-action="SaveRun" method="post" data-upload="@Url.Action("Upload")" data-remove="@Url.Action("RemoveFile")" data-evidence="@Url.Action("Evidence")">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Completion.Id" />
+                <input type="hidden" name="inputJson" />
+                <div id="checklist-answers"></div>
+                <div class="rgw-wizard-actions">
+                    <a class="btn btn-white" asp-action="Detail" asp-route-id="@Model.Completion.ParentId">@localizer["History"]</a>
+                    <div class="rgw-wizard-spacer"></div>
+                    <button class="btn btn-default" type="submit" name="submit" value="false"><i class="fa fa-save"></i> @localizer["SaveProgress"]</button>
+                    <button class="btn btn-primary" type="submit" name="submit" value="true">@localizer["SubmitRun"]</button>
+                </div>
+            </form>
+
+            <script id="checklist-run-data" type="application/json">@Html.Raw(JsonConvert.SerializeObject(Model, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }))</script>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    @await Html.PartialAsync("_ProtectionScripts")
+    <script src="~/js/app/internal/checklists/checklists.js" asp-append-version="true"></script>
+}

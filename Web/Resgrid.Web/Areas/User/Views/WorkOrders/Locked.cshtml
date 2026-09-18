@@ -1,14 +1,43 @@
 @model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderLockedView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["WorkOrders"]; ViewBag.ProtectionEnforced = true; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-    <h2>@localizer["WorkOrders"]</h2>
-    @await Html.PartialAsync("_Protection")
-    <form class="work-order-form" asp-action="Reopen" method="post">
-        @Html.AntiForgeryToken()<input type="hidden" name="destination" value="@Model.Page"/><input type="hidden" name="id" value="@Model.Id"/>
-        @if (Model.Page is "Reports" or "History" or "ExportCsv") { @await Html.PartialAsync("_ReportFields", Model.Query) }
-        else { @await Html.PartialAsync("_FilterFields", Model.Filter) }
-        <button class="btn btn-primary" type="submit">@localizer["Unlock"]</button>
-    </form>
-</div></div></div>
+@{
+    ViewBag.Title = "Resgrid | " + localizer["WorkOrders"];
+    ViewBag.ProtectionEnforced = true;
+    ViewData["Title"] = localizer["WorkOrders"].Value;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["WorkOrders"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Protection")
+
+            <form class="work-order-form" asp-action="Reopen" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="destination" value="@Model.Page" />
+                <input type="hidden" name="id" value="@Model.Id" />
+                @if (Model.Page is "Reports" or "History" or "ExportCsv")
+                {
+                    @await Html.PartialAsync("_ReportFields", Model.Query)
+                }
+                else
+                {
+                    @await Html.PartialAsync("_FilterFields", Model.Filter)
+                }
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-lock fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["ProtectedDataRequired"]</h4>
+                    <p class="text-muted">@commonLocalizer["AdpProtectedBannerDescription"]</p>
+                    <button class="btn btn-primary m-t" type="submit">@localizer["Unlock"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_Scripts") }

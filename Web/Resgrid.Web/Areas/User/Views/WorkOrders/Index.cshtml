@@ -1,33 +1,207 @@
 @model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderIndexView
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["WorkOrders"]; }
-<div class="row wrapper border-bottom white-bg page-heading"><div class="col-sm-12"><h2>@localizer["WorkOrders"]</h2><a class="btn btn-default" asp-action="Recurrences">@localizer["PreventiveMaintenance"]</a><p>Readiness Pro</p></div></div>
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-@await Html.PartialAsync("_Protection")
-<a class="btn btn-default" asp-action="Reports">@localizer["MaintenanceReports"]</a>
-<a class="btn btn-default" asp-action="History" asp-route-unitId="@Model.Filter.UnitId" asp-route-assetId="@Model.Filter.AssetId">@localizer["ServiceHistory"]</a>
-@if (Model.Orders.CanWrite) { <a class="btn btn-primary" asp-action="New">@localizer["NewWorkOrder"]</a> <a class="btn btn-default" asp-action="Bulk">@localizer["BulkOperations"]</a> <a class="btn btn-default" asp-action="Policy">@localizer["OperationsPolicy"]</a> }
-else { <p class="alert alert-info">@localizer["ReadOnlyHistory"] <a asp-controller="ReadinessProBilling" asp-action="Index">Readiness Pro</a></p> }
-<form method="post" asp-action="Reopen" class="form-inline work-order-form">
-    @Html.AntiForgeryToken()<input type="hidden" name="destination" value="Index"/>
-    <input type="hidden" name="ChecklistCompletionId" value="@Model.Filter.ChecklistCompletionId"/><label>@localizer["Status"] <select class="form-control" name="Status"><option value="">@localizer["All"]</option>@foreach (var s in Enum.GetValues<WorkOrderStatus>()) { <option value="@((int)s)" selected="@(Model.Filter.Status == s)">@localizer["Status" + s]</option> }</select></label>
-    <label>@localizer["Priority"] <select class="form-control" name="Priority"><option value="">@localizer["All"]</option>@foreach (var p in Enum.GetValues<WorkOrderPriority>()) { <option value="@((int)p)" selected="@(Model.Filter.Priority == p)">@localizer["Priority" + p]</option> }</select></label>
-    <label>@localizer["Unit"] <select class="form-control" name="UnitId"><option value="">@localizer["All"]</option>@foreach (var u in Model.Choices.Units) { <option value="@u.Id" selected="@(Model.Filter.UnitId?.ToString() == u.Id)">@u.Name</option> }</select></label>
-    <label>@localizer["Group"] <select class="form-control" name="GroupId"><option value="">@localizer["All"]</option>@foreach (var g in Model.Choices.Groups) { <option value="@g.Id" selected="@(Model.Filter.GroupId?.ToString() == g.Id)">@g.Name</option> }</select></label>
-    @if (Model.Choices.Assets.Count > 0) { <label>@localizer["Asset"] <select class="form-control" name="AssetId"><option value="">@localizer["All"]</option>@foreach (var a in Model.Choices.Assets) { <option value="@a.Id" selected="@(Model.Filter.AssetId == a.Id)">@a.Name</option> }</select></label> }
-    <label><input type="checkbox" name="AssignedToMe" value="true" checked="@Model.Filter.AssignedToMe"/> @localizer["AssignedToMe"]</label>
-    <button class="btn btn-default" type="submit">@localizer["Filter"]</button>
-</form>
-<div class="work-order-protected"><table class="table table-striped"><thead><tr><th>@localizer["Number"]</th><th>@localizer["Title"]</th><th>@localizer["Status"]</th><th>@localizer["Priority"]</th><th>@localizer["DueOn"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
-@foreach (var item in Model.Orders.Items) { <tr><td>@item.Number</td><td><a asp-action="Detail" asp-route-id="@item.Id">@item.Title</a></td><td>@localizer["Status" + item.Status]</td><td>@localizer["Priority" + item.Priority]</td><td>@item.DueOn?.ToString("u")</td><td>@if (item.QuickStatus.HasValue) {
-<form class="work-order-form work-order-command" asp-action="Transition" method="post">@Html.AntiForgeryToken()
-<input type="hidden" name="id" value="@item.Id"/><input type="hidden" name="Revision" value="@item.Revision"/><input type="hidden" name="Status" value="@((int)item.QuickStatus.Value)"/>
-<button class="btn btn-sm btn-default" type="submit">@localizer["Status" + item.QuickStatus.Value]</button></form>
-}</td></tr> }
-</tbody></table></div>
-@if (Model.Orders.Items.Count == 0) { <p>@localizer["NoWorkOrders"]</p> }
-@if (Model.Filter.Page > 0) { <a asp-action="Index" asp-route-page="@(Model.Filter.Page - 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-checklistCompletionId="@Model.Filter.ChecklistCompletionId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Previous"]</a> }
-@if (Model.Orders.HasMore) { <a asp-action="Index" asp-route-page="@(Model.Filter.Page + 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-checklistCompletionId="@Model.Filter.ChecklistCompletionId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Next"]</a> }
-</div></div></div>
+@functions {
+    string StatusPill(WorkOrderStatus status) => status switch
+    {
+        WorkOrderStatus.Requested => "label-info",
+        WorkOrderStatus.Accepted or WorkOrderStatus.Assigned => "label-primary",
+        WorkOrderStatus.InProgress => "label-warning",
+        WorkOrderStatus.OnHold => "label-warning",
+        WorkOrderStatus.Completed or WorkOrderStatus.Closed => "label-success",
+        _ => "label-danger"
+    };
+
+    string PriorityPill(WorkOrderPriority priority) => priority switch
+    {
+        WorkOrderPriority.Emergency => "label-danger",
+        WorkOrderPriority.High => "label-warning",
+        _ => ""
+    };
+}
+@{
+    ViewBag.Title = "Resgrid | " + localizer["WorkOrders"];
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["WorkOrders"].Value;
+    ViewData["Subtitle"] = localizer["WorkOrdersIntro"].Value;
+    ViewData["CanWrite"] = Model.Orders.CanWrite;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["WorkOrders"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["HelpWorkOrders"]</div>
+
+            @if (!Model.Orders.CanWrite)
+            {
+                <div class="alert alert-warning">
+                    @localizer["ReadOnlyHistory"]
+                    <a asp-controller="ReadinessProBilling" asp-action="Index">@localizer["ReadinessPro"]</a>
+                </div>
+            }
+
+            <div class="rgw-filter">
+                <form method="post" asp-action="Reopen" class="work-order-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="destination" value="Index" />
+                    <input type="hidden" name="ChecklistCompletionId" value="@Model.Filter.ChecklistCompletionId" />
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="filter-status">@localizer["Status"]</label>
+                            <select class="form-control" id="filter-status" name="Status">
+                                <option value="">@localizer["All"]</option>
+                                @foreach (var s in Enum.GetValues<WorkOrderStatus>())
+                                {
+                                    <option value="@((int)s)" selected="@(Model.Filter.Status == s)">@localizer["Status" + s]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-priority">@localizer["Priority"]</label>
+                            <select class="form-control" id="filter-priority" name="Priority">
+                                <option value="">@localizer["All"]</option>
+                                @foreach (var p in Enum.GetValues<WorkOrderPriority>())
+                                {
+                                    <option value="@((int)p)" selected="@(Model.Filter.Priority == p)">@localizer["Priority" + p]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-unit">@localizer["Unit"]</label>
+                            <select class="form-control" id="filter-unit" name="UnitId">
+                                <option value="">@localizer["All"]</option>
+                                @foreach (var u in Model.Choices.Units)
+                                {
+                                    <option value="@u.Id" selected="@(Model.Filter.UnitId?.ToString() == u.Id)">@u.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="filter-group">@localizer["Group"]</label>
+                            <select class="form-control" id="filter-group" name="GroupId">
+                                <option value="">@localizer["All"]</option>
+                                @foreach (var g in Model.Choices.Groups)
+                                {
+                                    <option value="@g.Id" selected="@(Model.Filter.GroupId?.ToString() == g.Id)">@g.Name</option>
+                                }
+                            </select>
+                        </div>
+                        @if (Model.Choices.Assets.Count > 0)
+                        {
+                            <div class="form-group">
+                                <label for="filter-asset">@localizer["Asset"]</label>
+                                <select class="form-control" id="filter-asset" name="AssetId">
+                                    <option value="">@localizer["All"]</option>
+                                    @foreach (var a in Model.Choices.Assets)
+                                    {
+                                        <option value="@a.Id" selected="@(Model.Filter.AssetId == a.Id)">@a.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <div class="checkbox"><label><input type="checkbox" name="AssignedToMe" value="true" checked="@Model.Filter.AssignedToMe" /> @localizer["AssignedToMe"]</label></div>
+                        </div>
+                    </div>
+                    <div class="rgw-filter-actions">
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-filter"></i> @localizer["Filter"]</button>
+                    </div>
+                </form>
+            </div>
+
+            @if (Model.Orders.CanWrite)
+            {
+                <div class="rgw-toolbar">
+                    <div class="rgw-toolbar-spacer"></div>
+                    <a class="btn btn-primary" asp-action="New"><i class="fa fa-plus"></i> @localizer["NewWorkOrder"]</a>
+                </div>
+            }
+
+            <div class="work-order-protected">
+                @if (Model.Orders.Items.Count == 0)
+                {
+                    <div class="text-center m-t-lg m-b-lg">
+                        <i class="fa fa-wrench fa-3x text-muted"></i>
+                        <h4 class="m-t-sm">@localizer["NoWorkOrders"]</h4>
+                        <p class="text-muted">@localizer["NoRowsHelp"]</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["Number"]</th>
+                                    <th>@localizer["Title"]</th>
+                                    <th>@localizer["Status"]</th>
+                                    <th>@localizer["Priority"]</th>
+                                    <th>@localizer["DueOn"]</th>
+                                    <th class="rgw-row-actions">@localizer["Actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Orders.Items)
+                                {
+                                    var overdue = item.DueOn.HasValue && item.DueOn.Value < DateTime.UtcNow
+                                        && item.Status is not (WorkOrderStatus.Closed or WorkOrderStatus.Cancelled or WorkOrderStatus.Rejected or WorkOrderStatus.Duplicate);
+                                    <tr>
+                                        <td>@item.Number</td>
+                                        <td><a asp-action="Detail" asp-route-id="@item.Id">@item.Title</a></td>
+                                        <td><span class="label @StatusPill(item.Status)">@localizer["Status" + item.Status]</span></td>
+                                        <td><span class="label @PriorityPill(item.Priority)">@localizer["Priority" + item.Priority]</span></td>
+                                        <td>
+                                            @if (item.DueOn.HasValue)
+                                            {
+                                                <span class="label @(overdue ? "label-danger" : "")">@item.DueOn.Value.ToString("yyyy-MM-dd HH:mm")</span>
+                                            }
+                                        </td>
+                                        <td class="rgw-row-actions">
+                                            @if (item.QuickStatus.HasValue)
+                                            {
+                                                <form class="work-order-form work-order-command" asp-action="Transition" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@item.Id" />
+                                                    <input type="hidden" name="Revision" value="@item.Revision" />
+                                                    <input type="hidden" name="Status" value="@((int)item.QuickStatus.Value)" />
+                                                    <button class="btn btn-xs btn-primary" type="submit">@localizer["Status" + item.QuickStatus.Value]</button>
+                                                </form>
+                                            }
+                                            <a class="btn btn-xs btn-info" asp-action="Detail" asp-route-id="@item.Id">@localizer["Edit"]</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                @if (Model.Filter.Page > 0 || Model.Orders.HasMore)
+                {
+                    <div class="rgw-pager">
+                        @if (Model.Filter.Page > 0)
+                        {
+                            <a class="btn btn-default btn-sm" asp-action="Index" asp-route-page="@(Model.Filter.Page - 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-checklistCompletionId="@Model.Filter.ChecklistCompletionId" asp-route-assignedToMe="@Model.Filter.AssignedToMe"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                        }
+                        @if (Model.Orders.HasMore)
+                        {
+                            <a class="btn btn-default btn-sm" asp-action="Index" asp-route-page="@(Model.Filter.Page + 1)" asp-route-status="@Model.Filter.Status" asp-route-priority="@Model.Filter.Priority" asp-route-unitId="@Model.Filter.UnitId" asp-route-groupId="@Model.Filter.GroupId" asp-route-assetId="@Model.Filter.AssetId" asp-route-checklistCompletionId="@Model.Filter.ChecklistCompletionId" asp-route-assignedToMe="@Model.Filter.AssignedToMe">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                        }
+                        <span class="text-muted">@(Model.Filter.Page + 1)</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_Scripts") }

@@ -1,31 +1,67 @@
 @model Resgrid.Web.Areas.User.Models.Checklists.ChecklistTemplatesView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["Templates"]; }
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Templates"];
+    ViewData["Tab"] = "Templates";
+    ViewData["Title"] = localizer["Templates"].Value;
+    ViewData["Subtitle"] = localizer["Free"].Value;
+}
 
-<div class="row wrapper border-bottom white-bg page-heading">
-	<div class="col-sm-12"><h2>@localizer["Templates"]</h2><p>@localizer["Free"]</p></div>
-</div>
+@await Html.PartialAsync("_Shell")
+
 <div class="wrapper wrapper-content">
-	<div class="ibox"><div class="ibox-content">
-		<p>@localizer["Guidance"]</p>
-		<form method="get" asp-action="Templates" asp-controller="Checklists" asp-area="User" class="form-inline m-b-md">
-			<label for="query">@localizer["SearchLabel"]</label>
-			<input id="query" name="query" value="@Model.Query" maxlength="256" class="form-control" type="search" />
-			<button type="submit" class="btn btn-primary">@localizer["Search"]</button>
-		</form>
-		@if (Model.Templates.Count == 0)
-		{
-			<p role="status">@localizer["NoResults"]</p>
-		}
-		@foreach (var template in Model.Templates)
-		{
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<h3>@template.Name <small>@template.Sector</small></h3>
-					<p>@template.Description</p>
-					<a asp-action="Template" asp-controller="Checklists" asp-area="User" asp-route-id="@template.Id" class="btn btn-default">@localizer["Preview"] <span class="sr-only">@template.Name</span></a>
-				</div>
-			</div>
-		}
-	</div></div>
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["Templates"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["Guidance"]</div>
+
+            <div class="rgw-filter">
+                <form method="get" asp-action="Templates" asp-controller="Checklists" asp-area="User">
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="query">@localizer["SearchLabel"]</label>
+                            <input id="query" name="query" value="@Model.Query" maxlength="256" class="form-control" type="search" />
+                        </div>
+                    </div>
+                    <div class="rgw-filter-actions">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> @localizer["Search"]</button>
+                    </div>
+                </form>
+            </div>
+
+            @if (Model.Templates.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg" role="status">
+                    <i class="fa fa-clone fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["NoResults"]</h4>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var template in Model.Templates)
+                    {
+                        <div class="col-lg-4 col-md-6">
+                            <div class="ibox">
+                                <div class="ibox-title"><h5>@template.Name</h5></div>
+                                <div class="ibox-content">
+                                    <p><span class="label">@template.Sector</span></p>
+                                    <p class="text-muted">@template.Description</p>
+                                    <a asp-action="Template" asp-controller="Checklists" asp-area="User" asp-route-id="@template.Id" class="btn btn-default btn-sm">
+                                        <i class="fa fa-eye"></i> @localizer["Preview"] <span class="sr-only">@template.Name</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}

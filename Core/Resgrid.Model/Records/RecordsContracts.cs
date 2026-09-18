@@ -1,26 +1,36 @@
 using System;
 using System.Collections.Generic;
+using ProtoBuf;
 
 namespace Resgrid.Model
 {
 	/// <summary>Records module state for one department (flag plus append-only cutover fact).</summary>
+	/// <remarks>Cached through ICacheProvider (RmsModuleState_{departmentId}), so it must be a protobuf contract.</remarks>
+	[ProtoContract]
 	public class RecordsModuleState
 	{
+		[ProtoMember(1)]
 		public int DepartmentId { get; set; }
 
 		/// <summary>Records.System evaluates on for this department.</summary>
+		[ProtoMember(2)]
 		public bool FlagEnabled { get; set; }
 
 		/// <summary>An RmsDepartmentCutover row exists.</summary>
+		[ProtoMember(3)]
 		public bool Activated { get; set; }
 
+		[ProtoMember(4)]
 		public DateTime? ActivatedOn { get; set; }
 
+		[ProtoMember(5)]
 		public int? CutoverId { get; set; }
 
+		[ProtoMember(6)]
 		public RmsDepartmentCutoverState? CutoverState { get; set; }
 
 		/// <summary>True when every legacy Log/UnitLog mutation must be denied (cutover active).</summary>
+		[ProtoMember(7)]
 		public bool LegacyWritesBlocked { get; set; }
 
 		/// <summary>Records routes are usable: flag on and cutover active.</summary>

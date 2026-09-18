@@ -2,6 +2,18 @@
     'use strict';
     const settings = JSON.parse(document.getElementById('inventory-settings').textContent);
     const message = document.getElementById('inventory-message');
+    // A command posted from inside a modal reports back inside that modal; the page
+    // level banner is only used for commands that live on the page itself.
+    function notify(form, body, kind) {
+        const dialog = form && form.closest('.modal-content');
+        const target = (dialog && dialog.querySelector('.rgw-modal-message')) || message;
+        target.textContent = body;
+        target.className = target === message
+            ? 'alert ' + (kind || 'alert-info')
+            : 'alert rgw-modal-message rgw-visible ' + (kind || 'alert-info');
+        target.hidden = false;
+        if (target.scrollIntoView) target.scrollIntoView({ block: 'nearest' });
+    }
     function hidden(form, name, value) {
         let field = form.querySelector('input[name="' + name + '"]');
         if (!field) { field = document.createElement('input'); field.type = 'hidden'; field.name = name; form.appendChild(field); }
@@ -28,11 +40,11 @@
             const result = await response.json();
             if (!response.ok) throw new Error(result.message || settings.failed);
             const pendingAsset = form.dataset.inventoryCreateAsset === 'true' && !(result.currentLocationId || result.CurrentLocationId);
-            if (result.awaitingWitness || result.AwaitingWitness || pendingAsset) { message.textContent = settings.witness + ' ' + form.querySelector('[name="RequestId"]').value; message.hidden = false; return; }
+            if (result.awaitingWitness || result.AwaitingWitness || pendingAsset) { notify(form, settings.witness + ' ' + form.querySelector('[name="RequestId"]').value, 'alert-warning'); return; }
             const page = document.getElementById('inventory-page');
             ['__ResgridProtectedGrant', '__ResgridProtectedGrantExpiresOn'].forEach(name => { const field = form.querySelector('[name="' + name + '"]'); if (field) hidden(page, name, field.value); });
             page.submit();
-        } catch (error) { message.textContent = error.message || settings.failed; message.hidden = false; }
+        } catch (error) { notify(form, error.message || settings.failed, 'alert-danger'); }
         finally { delete form.dataset.sending; }
     }));
     });

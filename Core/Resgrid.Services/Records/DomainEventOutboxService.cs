@@ -49,6 +49,9 @@ namespace Resgrid.Services.Records
 			if (envelope == null) throw new ArgumentNullException(nameof(envelope));
 			if (string.IsNullOrWhiteSpace(envelope.EventName)) throw new ArgumentException("EventName is required.", nameof(envelope));
 			if (string.IsNullOrWhiteSpace(envelope.AggregateId)) throw new ArgumentException("AggregateId is required.", nameof(envelope));
+			// The Records outbox repository decides whether to apply the live-content guard from the aggregate type, so a
+			// Records-subsystem event must always say what kind of aggregate its id names.
+			if (producerSubsystem == DomainEventProducers.Records && string.IsNullOrWhiteSpace(envelope.AggregateType)) throw new ArgumentException("AggregateType is required for Records events.", nameof(envelope));
 
 			var now = DateTime.UtcNow;
 			var entry = new DomainEventOutboxEntry

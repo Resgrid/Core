@@ -694,4 +694,26 @@
   <data name="HistoricalWorkOrdersUnavailable" xml:space="preserve"><value>Certains états historiques des ordres n’ont pas pu être reconstitués. Le dossier ne garantit pas une couverture complète de la maintenance.</value></data>
   <data name="RestrictedWorkOrders" xml:space="preserve"><value>Les preuves des ordres sont limitées au périmètre actuellement autorisé du lecteur.</value></data>
   <data name="ProtectedDataRequired" xml:space="preserve"><value>Les données protégées doivent être déverrouillées pour continuer.</value></data>
+  <data name="ChecklistsIntro" xml:space="preserve"><value>Créez les vérifications que réalisent vos équipes, planifiez-les et voyez ce qui a été fait.</value></data>
+  <data name="Close" xml:space="preserve"><value>Fermer</value></data>
+  <data name="Continue" xml:space="preserve"><value>Continuer</value></data>
+  <data name="Review" xml:space="preserve"><value>Vérifier</value></data>
+  <data name="ReviewHint" xml:space="preserve"><value>Vérifiez les réponses ci-dessous, puis enregistrez.</value></data>
+  <data name="RequiredFieldsMissing" xml:space="preserve"><value>Renseignez les champs en surbrillance avant de continuer.</value></data>
+  <data name="NoRowsHelp" xml:space="preserve"><value>Rien pour l'instant. Utilisez les boutons ci-dessus pour créer le premier.</value></data>
+  <data name="HelpDefinitions" xml:space="preserve"><value>Une liste de contrôle est l'ensemble des questions auxquelles répond une équipe. Publiez-la avant de la planifier ou de l'exécuter.</value></data>
+  <data name="StartRunHint" xml:space="preserve"><value>Choisissez sur quoi porte cette exécution.</value></data>
+  <data name="SkipHint" xml:space="preserve"><value>Les vérifications excusées restent au dossier avec le motif indiqué ici.</value></data>
+  <data name="RetireHint" xml:space="preserve"><value>La mise hors service empêche les nouvelles exécutions et les vérifications planifiées à venir. L'historique est conservé.</value></data>
+  <data name="ReportRangeHint" xml:space="preserve"><value>Les vérifications sont sélectionnées d'après leur heure de début, pas leur achèvement.</value></data>
+  <data name="HelpFieldCallId" xml:space="preserve"><value>L'intervention pour laquelle le dossier est constitué.</value></data>
+  <data name="StepScheduleBasics" xml:space="preserve"><value>Nommer la planification</value></data>
+  <data name="StepScheduleBasicsHint" xml:space="preserve"><value>Le nom de cette planification et ce sur quoi elle porte.</value></data>
+  <data name="StepScheduleTiming" xml:space="preserve"><value>Quand elle s'exécute</value></data>
+  <data name="StepScheduleTimingHint" xml:space="preserve"><value>À quelle fréquence la vérification s'ouvre, et dans quel fuseau horaire ces heures sont lues.</value></data>
+  <data name="StepScheduleAssignment" xml:space="preserve"><value>Qui la prend en charge</value></data>
+  <data name="StepScheduleAssignmentHint" xml:space="preserve"><value>Qui est responsable de la vérification, et de combien de temps il dispose une fois ouverte.</value></data>
+  <data name="HelpFieldScheduleName" xml:space="preserve"><value>Affiché dans la liste des échéances : rendez-le reconnaissable d'un coup d'œil.</value></data>
+  <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Le temps dont dispose l'équipe pour terminer la vérification après son ouverture. Passé ce délai, elle est manquée.</value></data>
+  <data name="HelpFieldAssignment" xml:space="preserve"><value>Le routage automatique envoie la vérification au détenteur de la cible. Choisissez une personne, un rôle, un groupe ou un engin pour l'outrepasser.</value></data>
 </root>

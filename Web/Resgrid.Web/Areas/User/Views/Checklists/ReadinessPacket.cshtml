@@ -1,20 +1,64 @@
 @model Resgrid.Model.Checklists.ReadinessEvidenceManifestV1
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["ReadinessPacketReport"]; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-<h2>@localizer["ReadinessPacketReport"]</h2><p>@localizer["PacketMethod"]</p>
-@await Html.PartialAsync("_Protection")
-<form class="checklist-form" asp-action="ReadinessPacket" method="post">
-    @Html.AntiForgeryToken()
-    <label for="call-id">@localizer["CallId"]</label><input id="call-id" type="number" name="callId" min="1" value="@ViewBag.CallId" required />
-    <label for="lookback">@localizer["LookbackDays"]</label><input id="lookback" type="number" name="lookbackDays" min="1" max="93" value="@(ViewBag.LookbackDays ?? 30)" required />
-    <button class="btn btn-primary" type="submit">@localizer["RefreshReport"]</button>
-    <button class="btn btn-default" type="submit" formaction="@Url.Action("ReadinessPacketDownload")">@localizer["DownloadPacket"]</button>
-</form>
-@if (Model != null)
-{
-    <iframe title="@localizer["ReadinessPacketReport"]" sandbox="" referrerpolicy="no-referrer" style="width:100%;height:700px;border:0" srcdoc="@Resgrid.Services.ChecklistReportDocuments.Packet(Model)"></iframe>
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ReadinessPacketReport"];
+    ViewData["Tab"] = "Compliance";
+    ViewData["Title"] = localizer["ReadinessPacketReport"].Value;
+    ViewData["Subtitle"] = localizer["PacketMethod"].Value;
 }
-<a class="btn btn-default" asp-action="Compliance">@localizer["Back"]</a>
-</div></div></div>
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["ReadinessPacketReport"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["PacketMethod"]</div>
+
+            <div class="rgw-filter">
+                <form class="checklist-form" asp-action="ReadinessPacket" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="call-id">@localizer["CallId"]</label>
+                            <input class="form-control" id="call-id" type="number" name="callId" min="1" value="@ViewBag.CallId" required />
+                            <span class="help-block">@localizer["HelpFieldCallId"]</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="lookback">@localizer["LookbackDays"]</label>
+                            <input class="form-control" id="lookback" type="number" name="lookbackDays" min="1" max="93" value="@(ViewBag.LookbackDays ?? 30)" required />
+                        </div>
+                    </div>
+                    <div class="rgw-filter-actions">
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-refresh"></i> @localizer["RefreshReport"]</button>
+                        <button class="btn btn-default" type="submit" formaction="@Url.Action("ReadinessPacketDownload")"><i class="fa fa-download"></i> @localizer["DownloadPacket"]</button>
+                    </div>
+                </form>
+            </div>
+
+            @if (Model != null)
+            {
+                <iframe title="@localizer["ReadinessPacketReport"]" sandbox="" referrerpolicy="no-referrer" style="width:100%;height:700px;border:0" srcdoc="@Resgrid.Services.ChecklistReportDocuments.Packet(Model)"></iframe>
+            }
+            else
+            {
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-file-pdf-o fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["NoResults"]</h4>
+                </div>
+            }
+
+            <div class="rgw-toolbar m-t">
+                <a class="btn btn-default btn-sm" asp-action="Compliance"><i class="fa fa-arrow-left"></i> @localizer["Back"]</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

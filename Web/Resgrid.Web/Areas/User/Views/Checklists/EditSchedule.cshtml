@@ -1,33 +1,196 @@
 @model Resgrid.Web.Areas.User.Models.Checklists.ChecklistScheduleEditView
 @using Resgrid.Model.Checklists
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["EditSchedule"]; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-    <h2>@localizer["EditSchedule"]</h2>
-    @await Html.PartialAsync("_Protection")
-    <form class="checklist-form" asp-action="SaveSchedule" method="post">
-        @Html.AntiForgeryToken()<input asp-for="Input.Id" type="hidden" /><input asp-for="Input.DefinitionId" type="hidden" /><input asp-for="Input.Revision" type="hidden" />
-        <div class="form-group"><label asp-for="Input.Name">@localizer["Name"]</label><input asp-for="Input.Name" class="form-control" maxlength="200" required /></div>
-        <div class="form-group"><label asp-for="Input.Notes">@localizer["ScheduleNotes"]</label><textarea asp-for="Input.Notes" class="form-control" maxlength="4000"></textarea></div>
-        <div class="form-group"><label asp-for="Input.TargetId">@localizer["Target"]</label><select asp-for="Input.TargetId" class="form-control" required><option value="">@localizer["SelectTarget"]</option>@foreach (var target in Model.Targets) { <option value="@target.Id">@target.Name</option> }</select></div>
-        <div class="form-group"><label asp-for="Input.Frequency">@localizer["Frequency"]</label><select asp-for="Input.Frequency" class="form-control">@foreach (var frequency in Enum.GetValues<ChecklistScheduleFrequency>().Where(f => f != ChecklistScheduleFrequency.OnDemand)) { <option value="@((int)frequency)">@localizer[frequency.ToString()]</option> }</select></div>
-        <div class="form-group"><label asp-for="Input.TimeZoneId">@localizer["TimeZone"]</label><select asp-for="Input.TimeZoneId" class="form-control">@if (!TimeZoneInfo.GetSystemTimeZones().Any(z => z.Id == Model.Input.TimeZoneId)) { <option value="@Model.Input.TimeZoneId">@Model.Input.TimeZoneId</option> }@foreach (var zone in TimeZoneInfo.GetSystemTimeZones()) { <option value="@zone.Id">@zone.Id</option> }</select><p class="help-block">@localizer["ScheduleTimeGuidance"]</p></div>
-        <div class="form-group"><label asp-for="Input.StartDate">@localizer["ScheduleStartDate"]</label><input asp-for="Input.StartDate" type="date" class="form-control" required min="2000-01-01" max="2200-12-31" /></div>
-        <div class="form-group"><label asp-for="Input.EndDate">@localizer["ScheduleEndDate"]</label><input asp-for="Input.EndDate" type="date" class="form-control" min="2000-01-01" max="2200-12-31" /></div>
-        <div class="form-group"><label asp-for="Input.TimesOfDay">@localizer["TimesOfDay"]</label><input asp-for="Input.TimesOfDay" class="form-control" required maxlength="54" placeholder="08:00, 20:00" /><p class="help-block">@localizer["TimesOfDayGuidance"]</p></div>
-        <fieldset><legend>@localizer["WeeklyDays"]</legend>@for (var day = 0; day < 7; day++) { <label class="checkbox-inline"><input type="checkbox" name="selectedWeekdays" value="@day" checked="@((Model.Input.Weekdays & (1 << day)) != 0)" />@System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetDayName((DayOfWeek)day)</label> }</fieldset>
-        <div class="form-group"><label asp-for="Input.DayOfMonth">@localizer["DayOfMonth"]</label><input asp-for="Input.DayOfMonth" class="form-control" type="number" min="1" max="31" required /></div>
-        <div class="form-group"><label asp-for="Input.MonthOfYear">@localizer["AnchorMonth"]</label><select asp-for="Input.MonthOfYear" class="form-control">@for (var month = 1; month <= 12; month++) { <option value="@month">@System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(month)</option> }</select><p class="help-block">@localizer["MonthGuidance"]</p></div>
-        <div class="form-group"><label asp-for="Input.WorkshiftId">@localizer["ScheduleWorkshift"]</label><select asp-for="Input.WorkshiftId" class="form-control"><option value="">@localizer["WorkshiftFallback"]</option>@foreach (var shift in Model.Workshifts) { <option value="@shift.Id">@shift.Name</option> }</select><p class="help-block">@localizer["WorkshiftGuidance"]</p></div>
-        <div class="form-group"><label asp-for="Input.WindowMinutes">@localizer["WindowMinutes"]</label><input asp-for="Input.WindowMinutes" class="form-control" type="number" min="1" max="10080" required /></div>
-        <div class="form-group"><label for="assignment">@localizer["Assignment"]</label><select id="assignment" name="assignment" class="form-control">
-            <option value="0:" selected="@(Model.Input.AssignmentType == 0)">@localizer["AssignmentAutomatic"]</option>
-            @if (Model.Input.AssignmentType != 0 && !Model.Assignments.Any(c => c.Type == Model.Input.AssignmentType && c.Id == Model.Input.AssignmentId)) { <option value="@Model.Input.AssignmentType:@Model.Input.AssignmentId" selected>@localizer["AssignmentUnavailable"]</option> }
-            @foreach (var choice in Model.Assignments) { <option value="@choice.Type:@choice.Id" selected="@(Model.Input.AssignmentType == choice.Type && Model.Input.AssignmentId == choice.Id)">@localizer["AssignmentType" + choice.Type]: @choice.Name</option> }
-        </select></div>
-        <div class="checkbox"><label><input asp-for="Input.IsActive" />@localizer["ScheduleEnabled"]</label></div>
-        <p>@localizer["ScheduleVersionGuidance"]</p>
-        <button class="btn btn-primary" type="submit">@localizer["SaveSchedule"]</button><a class="btn btn-default" asp-action="Schedules" asp-route-id="@Model.Input.DefinitionId">@localizer["Back"]</a>
-    </form>
-</div></div></div>
-@section Scripts { @await Html.PartialAsync("_ProtectionScripts") }
+@*
+    A schedule asks about fifteen things, so it is a step wizard: what it is called and what it
+    runs against, then when it fires, then who picks it up. The fields and their names are
+    unchanged, only the order they are asked in.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["EditSchedule"];
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["EditSchedule"].Value;
+    ViewData["ParentText"] = localizer["Schedules"].Value;
+    ViewData["ParentAction"] = "Schedules";
+    ViewData["ParentId"] = Model.Input.DefinitionId;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["EditSchedule"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Protection")
+
+            <form class="checklist-form rgw-wizard" asp-action="SaveSchedule" method="post">
+                @Html.AntiForgeryToken()
+                <input asp-for="Input.Id" type="hidden" />
+                <input asp-for="Input.DefinitionId" type="hidden" />
+                <input asp-for="Input.Revision" type="hidden" />
+
+                <ol class="rgw-steps"></ol>
+
+                <div class="rgw-step" data-title="@localizer["StepScheduleBasics"]">
+                    <h4>@localizer["StepScheduleBasics"]</h4>
+                    <p class="text-muted">@localizer["StepScheduleBasicsHint"]</p>
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label asp-for="Input.Name">@localizer["Name"]</label>
+                            <input asp-for="Input.Name" class="form-control" maxlength="200" required />
+                            <span class="help-block">@localizer["HelpFieldScheduleName"]</span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.TargetId">@localizer["Target"]</label>
+                            <select asp-for="Input.TargetId" class="form-control" required>
+                                <option value="">@localizer["SelectTarget"]</option>
+                                @foreach (var target in Model.Targets)
+                                {
+                                    <option value="@target.Id">@target.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group rgw-wide">
+                            <label asp-for="Input.Notes">@localizer["ScheduleNotes"]</label>
+                            <textarea asp-for="Input.Notes" class="form-control" rows="3" maxlength="4000"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["StepScheduleTiming"]">
+                    <h4>@localizer["StepScheduleTiming"]</h4>
+                    <p class="text-muted">@localizer["StepScheduleTimingHint"]</p>
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label asp-for="Input.Frequency">@localizer["Frequency"]</label>
+                            <select asp-for="Input.Frequency" class="form-control">
+                                @foreach (var frequency in Enum.GetValues<ChecklistScheduleFrequency>().Where(f => f != ChecklistScheduleFrequency.OnDemand))
+                                {
+                                    <option value="@((int)frequency)">@localizer[frequency.ToString()]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.TimeZoneId">@localizer["TimeZone"]</label>
+                            <select asp-for="Input.TimeZoneId" class="form-control">
+                                @if (!TimeZoneInfo.GetSystemTimeZones().Any(z => z.Id == Model.Input.TimeZoneId))
+                                {
+                                    <option value="@Model.Input.TimeZoneId">@Model.Input.TimeZoneId</option>
+                                }
+                                @foreach (var zone in TimeZoneInfo.GetSystemTimeZones())
+                                {
+                                    <option value="@zone.Id">@zone.Id</option>
+                                }
+                            </select>
+                            <span class="help-block">@localizer["ScheduleTimeGuidance"]</span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.StartDate">@localizer["ScheduleStartDate"]</label>
+                            <input asp-for="Input.StartDate" type="date" class="form-control" required min="2000-01-01" max="2200-12-31" />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.EndDate">@localizer["ScheduleEndDate"]</label>
+                            <input asp-for="Input.EndDate" type="date" class="form-control" min="2000-01-01" max="2200-12-31" />
+                        </div>
+                        <div class="form-group rgw-wide">
+                            <label asp-for="Input.TimesOfDay">@localizer["TimesOfDay"]</label>
+                            <input asp-for="Input.TimesOfDay" class="form-control" required maxlength="54" placeholder="08:00, 20:00" />
+                            <span class="help-block">@localizer["TimesOfDayGuidance"]</span>
+                        </div>
+                        <div class="form-group rgw-wide">
+                            <label>@localizer["WeeklyDays"]</label>
+                            <div>
+                                @for (var day = 0; day < 7; day++)
+                                {
+                                    <label class="checkbox-inline">
+                                        <input type="checkbox" name="selectedWeekdays" value="@day" data-review-skip="true" checked="@((Model.Input.Weekdays & (1 << day)) != 0)" />
+                                        @System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetDayName((DayOfWeek)day)
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.DayOfMonth">@localizer["DayOfMonth"]</label>
+                            <input asp-for="Input.DayOfMonth" class="form-control" type="number" min="1" max="31" required />
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.MonthOfYear">@localizer["AnchorMonth"]</label>
+                            <select asp-for="Input.MonthOfYear" class="form-control">
+                                @for (var month = 1; month <= 12; month++)
+                                {
+                                    <option value="@month">@System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(month)</option>
+                                }
+                            </select>
+                            <span class="help-block">@localizer["MonthGuidance"]</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["StepScheduleAssignment"]">
+                    <h4>@localizer["StepScheduleAssignment"]</h4>
+                    <p class="text-muted">@localizer["StepScheduleAssignmentHint"]</p>
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="assignment">@localizer["Assignment"]</label>
+                            <select id="assignment" name="assignment" class="form-control">
+                                <option value="0:" selected="@(Model.Input.AssignmentType == 0)">@localizer["AssignmentAutomatic"]</option>
+                                @if (Model.Input.AssignmentType != 0 && !Model.Assignments.Any(c => c.Type == Model.Input.AssignmentType && c.Id == Model.Input.AssignmentId))
+                                {
+                                    <option value="@Model.Input.AssignmentType:@Model.Input.AssignmentId" selected>@localizer["AssignmentUnavailable"]</option>
+                                }
+                                @foreach (var choice in Model.Assignments)
+                                {
+                                    <option value="@choice.Type:@choice.Id" selected="@(Model.Input.AssignmentType == choice.Type && Model.Input.AssignmentId == choice.Id)">@localizer["AssignmentType" + choice.Type]: @choice.Name</option>
+                                }
+                            </select>
+                            <span class="help-block">@localizer["HelpFieldAssignment"]</span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.WorkshiftId">@localizer["ScheduleWorkshift"]</label>
+                            <select asp-for="Input.WorkshiftId" class="form-control">
+                                <option value="">@localizer["WorkshiftFallback"]</option>
+                                @foreach (var shift in Model.Workshifts)
+                                {
+                                    <option value="@shift.Id">@shift.Name</option>
+                                }
+                            </select>
+                            <span class="help-block">@localizer["WorkshiftGuidance"]</span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.WindowMinutes">@localizer["WindowMinutes"]</label>
+                            <input asp-for="Input.WindowMinutes" class="form-control" type="number" min="1" max="10080" required />
+                            <span class="help-block">@localizer["HelpFieldWindowMinutes"]</span>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox"><label><input asp-for="Input.IsActive" /> @localizer["ScheduleEnabled"]</label></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["Review"]">
+                    <h4>@localizer["Review"]</h4>
+                    <p class="text-muted">@localizer["ReviewHint"]</p>
+                    <dl class="rgw-review"></dl>
+                    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["ScheduleVersionGuidance"]</div>
+                </div>
+
+                <div class="rgw-wizard-actions">
+                    <button type="button" class="btn btn-white rgw-step-prev">@localizer["Back"]</button>
+                    <div class="rgw-wizard-spacer"></div>
+                    <a class="btn btn-white" asp-action="Schedules" asp-route-id="@Model.Input.DefinitionId">@localizer["Close"]</a>
+                    <button type="button" class="btn btn-primary rgw-step-next">@localizer["Continue"]</button>
+                    <button type="submit" class="btn btn-primary rgw-step-submit">@localizer["SaveSchedule"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    @await Html.PartialAsync("_ProtectionScripts")
+    <script id="workspace-settings" type="application/json">@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new { required = localizer["RequiredFieldsMissing"].Value, nothingEntered = localizer["NoResults"].Value, yes = localizer["Yes"].Value, no = localizer["No"].Value }, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }))</script>
+    <script src="~/js/app/common/workspace/resgrid.common.workspace.js" asp-append-version="true"></script>
+}

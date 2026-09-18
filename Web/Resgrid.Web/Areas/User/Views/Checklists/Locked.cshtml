@@ -1,14 +1,35 @@
 @model Resgrid.Web.Areas.User.Models.Checklists.ChecklistLockedView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["Protected checklists"]; ViewBag.ProtectionEnforced = true; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-    <h2>@localizer["Unlock checklist data"]</h2>
-    <p>@localizer["Verify your identity to view the checklist, answers and evidence."]</p>
-    @await Html.PartialAsync("_Protection")
-    <form id="checklist-reopen" class="checklist-form" asp-action="Reopen" method="post">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="page" value="@Model.Page" /><input type="hidden" name="id" value="@Model.Id" />
-        <button class="btn btn-primary" type="submit">@localizer["Verify and open"]</button>
-    </form>
-</div></div></div>
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Protected checklists"];
+    ViewBag.ProtectionEnforced = true;
+    ViewData["Title"] = localizer["Protected checklists"].Value;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["Protected checklists"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Protection")
+
+            <form id="checklist-reopen" class="checklist-form" asp-action="Reopen" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="page" value="@Model.Page" />
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="text-center m-t-lg m-b-lg">
+                    <i class="fa fa-lock fa-3x text-muted"></i>
+                    <h4 class="m-t-sm">@localizer["Unlock checklist data"]</h4>
+                    <p class="text-muted">@localizer["Verify your identity to view the checklist, answers and evidence."]</p>
+                    <button class="btn btn-primary m-t" type="submit">@localizer["Verify and open"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_ProtectionScripts") }

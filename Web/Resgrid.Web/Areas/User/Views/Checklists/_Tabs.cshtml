@@ -1,0 +1,35 @@
+@using Resgrid.Web.Helpers
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> localizer
+@*
+    The module's tab strip. ViewData["Tab"] names the tab that owns the current screen, so a
+    sub page (a definition, a run, a schedule) still shows where in the module it sits.
+
+    These are plain links: unlike inventory, checklist navigation is GET, so the theme's own
+    nav-tabs markup works without any help.
+*@
+@{
+    var current = (string)ViewData["Tab"] ?? "Index";
+    var tabs = new List<(string Action, string Icon, string Label)>
+    {
+        ("Index", "fa-check-square-o", localizer["Checklists"].Value),
+        ("Due", "fa-clock-o", localizer["DueChecks"].Value),
+        ("Compliance", "fa-bar-chart", localizer["ChecklistComplianceReport"].Value),
+        ("Templates", "fa-clone", localizer["Templates"].Value)
+    };
+
+    if (ClaimsAuthorizationHelper.CanManageChecklists())
+    {
+        tabs.Add(("Reminders", "fa-bell-o", localizer["ReminderSettings"].Value));
+    }
+}
+<ul class="nav nav-tabs" role="tablist">
+    @foreach (var tab in tabs)
+    {
+        <li class="nav-item @(current == tab.Action ? "active" : null)">
+            <a asp-controller="Checklists" asp-action="@tab.Action" asp-route-area="User"
+               aria-current="@(current == tab.Action ? "page" : "false")">
+                <i class="fa @tab.Icon"></i> @tab.Label
+            </a>
+        </li>
+    }
+</ul>

@@ -1,55 +1,515 @@
 @model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderOperationsView
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
-@{ var d = Model.Detail; var id = d.Order.Id; var c = d.Input.Content; ViewBag.Title = "Resgrid | " + localizer["Operations"]; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-<h2>@localizer["Operations"]</h2><a asp-action="Detail" asp-route-id="@id">@d.Order.Number</a>
-@await Html.PartialAsync("_Protection")
-<div class="work-order-protected"><h3>@d.Order.Title</h3><div class="alert alert-danger work-order-error" hidden role="alert"></div>
-<dl><dt>@localizer["ResponseDue"]</dt><dd>@d.ResponseDueOn?.ToString("u")</dd><dt>@localizer["RepairDue"]</dt><dd>@d.RepairDueOn?.ToString("u")</dd><dt>@localizer["RespondedOn"]</dt><dd>@d.ResponseOn?.ToString("u")</dd></dl>
-<h3>@localizer["SpendingApprovals"]</h3>
-@if (c.Approval != null) { <p>@localizer["ApprovalState" + c.Approval.State]: @c.Approval.Amount @c.Approval.Currency</p><p>@c.Approval.Reason</p> }
-@if (d.CanContribute || d.CanEdit) {
-<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="RequestApproval">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
-<label>@localizer["ApprovalAmount"] (@c.Currency)<input class="form-control" name="Amount" type="number" min="0" max="100000000" step="0.01" required/></label><label>@localizer["Reason"]<textarea name="Reason" class="form-control" maxlength="4000" required></textarea></label><button class="btn btn-default" type="submit">@localizer["RequestApproval"]</button></form>
+@*
+    The operations desk for one work order: spending approvals, vendor charges and the parts
+    that were reserved, issued, consumed or returned. Every command that asks for a reason
+    opens in a dialog rather than sitting inline in a table cell.
+*@
+@{
+    var d = Model.Detail;
+    var id = d.Order.Id;
+    var c = d.Input.Content;
+    ViewBag.Title = "Resgrid | " + localizer["Operations"];
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["Operations"].Value;
+    ViewData["ParentText"] = d.Order.Number;
+    ViewData["ParentAction"] = "Detail";
+    ViewData["ParentId"] = id.ToString();
+    ViewData["CanWrite"] = d.CanWrite;
+    var staged = d.Parts.Where(p => p.Staged).ToList();
 }
-@if (d.CanManage && c.Approval?.State == WorkOrderApprovalState.Requested) {
-<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="DecideApproval">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
-<label>@localizer["Decision"]<select class="form-control" name="Approve"><option value="true">@localizer["ApproveSpending"]</option><option value="false">@localizer["RejectSpending"]</option></select></label><label>@localizer["Reason"]<textarea name="Reason" class="form-control" maxlength="4000" required></textarea></label><p>@localizer["IndependentApprovalHelp"]</p><button class="btn btn-primary" type="submit">@localizer["Save"]</button></form>
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["Operations"] &middot; @d.Order.Title</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="work-order-protected">
+                <div class="alert alert-danger work-order-error" hidden role="alert"></div>
+
+                <div class="rgw-toolbar">
+                    <a class="btn btn-default btn-sm" asp-action="Detail" asp-route-id="@id"><i class="fa fa-arrow-left"></i> @d.Order.Number</a>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="ibox"><div class="ibox-title"><h5>@localizer["ResponseDue"]</h5></div>
+                            <div class="ibox-content"><h3 class="no-margins">@d.ResponseDueOn?.ToString("u")</h3><small>@localizer["RespondedOn"]: @d.ResponseOn?.ToString("u")</small></div></div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="ibox"><div class="ibox-title"><h5>@localizer["RepairDue"]</h5></div>
+                            <div class="ibox-content"><h3 class="no-margins">@d.RepairDueOn?.ToString("u")</h3></div></div>
+                    </div>
+                </div>
+
+                @* ── Spending approvals ─────────────────────────────────────────── *@
+                <div class="rgw-toolbar">
+                    <h3 class="m-t-none m-b-none">@localizer["SpendingApprovals"]</h3>
+                    <div class="rgw-toolbar-spacer"></div>
+                    @if (d.CanContribute || d.CanEdit)
+                    {
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#approval-request"><i class="fa fa-paper-plane-o"></i> @localizer["RequestApproval"]</button>
+                    }
+                    @if (d.CanManage && c.Approval?.State == WorkOrderApprovalState.Requested)
+                    {
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#approval-decide"><i class="fa fa-gavel"></i> @localizer["Decision"]</button>
+                    }
+                </div>
+                @if (c.Approval != null)
+                {
+                    <p class="text-muted">
+                        <span class="label @(c.Approval.State == WorkOrderApprovalState.Approved ? "label-success" : c.Approval.State == WorkOrderApprovalState.Rejected ? "label-danger" : "label-warning")">@localizer["ApprovalState" + c.Approval.State]</span>
+                        @c.Approval.Amount @c.Approval.Currency &mdash; @c.Approval.Reason
+                    </p>
+                }
+                else
+                {
+                    <p class="text-muted">@localizer["ApprovalStateNone"]</p>
+                }
+
+                @* ── Vendor charges ─────────────────────────────────────────────── *@
+                <div class="rgw-toolbar">
+                    <h3 class="m-t-none m-b-none">@localizer["VendorCharges"]</h3>
+                    <div class="rgw-toolbar-spacer"></div>
+                    @if (d.CanContribute)
+                    {
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#vendor-charge"><i class="fa fa-plus"></i> @localizer["AddVendorCharge"]</button>
+                    }
+                </div>
+                @if (Model.VendorCharges.Count == 0)
+                {
+                    <p class="text-muted">@localizer["None"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["VendorDetails"]</th><th>@localizer["InvoiceReference"]</th><th>@localizer["Description"]</th><th class="text-right">@localizer["TotalCost"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var charge in Model.VendorCharges)
+                                {
+                                    <tr>
+                                        <td>@charge.Content.VendorName</td>
+                                        <td>@charge.Content.InvoiceReference</td>
+                                        <td>@charge.Content.Description</td>
+                                        <td class="text-right">
+                                            @charge.Content.Amount @charge.Content.Currency
+                                            @if (charge.VoidedOn.HasValue)
+                                            {
+                                                <span class="label label-danger">@localizer["Voided"]</span>
+                                            }
+                                        </td>
+                                        <td class="rgw-row-actions">
+                                            @if (d.CanContribute && d.CanManage && !charge.VoidedOn.HasValue)
+                                            {
+                                                <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#charge-void-@charge.Id">@localizer["VoidCharge"]</button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                @if (Model.VendorCharges.Count == 50)
+                {
+                    <div class="rgw-pager">
+                        <a class="btn btn-default btn-sm" asp-action="Operations" asp-route-id="@id" asp-route-vendorAfterId="@Model.VendorCharges.Last().Id">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                    </div>
+                }
+
+                @* ── Parts allocation ───────────────────────────────────────────── *@
+                <div class="rgw-toolbar">
+                    <h3 class="m-t-none m-b-none">@localizer["PartsAllocation"]</h3>
+                    <div class="rgw-toolbar-spacer"></div>
+                    @if (d.CanContribute)
+                    {
+                        <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#part-reserve"><i class="fa fa-plus"></i> @localizer["PartMovementReserve"]</button>
+                    }
+                </div>
+                <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["PartsAllocationHelp"]</div>
+                @if (staged.Count == 0)
+                {
+                    <p class="text-muted">@localizer["None"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["Description"]</th><th class="text-right">@localizer["ReservedParts"]</th><th class="text-right">@localizer["IssuedParts"]</th><th class="text-right">@localizer["ConsumedParts"]</th><th class="text-right">@localizer["ReturnedParts"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var part in staged)
+                                {
+                                    <tr>
+                                        <td>@part.Content.Description</td>
+                                        <td class="text-right">@part.ReservedQuantity</td>
+                                        <td class="text-right">@part.IssuedQuantity</td>
+                                        <td class="text-right">@part.ConsumedQuantity</td>
+                                        <td class="text-right">@part.ReturnedQuantity</td>
+                                        <td class="rgw-row-actions">
+                                            @if (d.CanContribute && (part.ReservedQuantity > 0 || part.IssuedQuantity > 0))
+                                            {
+                                                <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#part-move-@part.Id">@localizer["Actions"]</button>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                @* ── Part movements ─────────────────────────────────────────────── *@
+                <h3>@localizer["PartMovements"]</h3>
+                @if (Model.Movements.Count == 0)
+                {
+                    <p class="text-muted">@localizer["None"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead><tr><th>@localizer["Parts"]</th><th>@localizer["Actions"]</th><th class="text-right">@localizer["Quantity"]</th><th>@localizer["CreatedOn"]</th><th>@localizer["Status"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var movement in Model.Movements)
+                                {
+                                    var pending = !movement.Cancelled && movement.InventoryOperationId != null && movement.InventoryTransactionId == null;
+                                    <tr>
+                                        <td>@movement.PartId</td>
+                                        <td><span class="label">@localizer["PartMovement" + (WorkOrderPartMovementKind)movement.Kind]</span></td>
+                                        <td class="text-right">@movement.Quantity</td>
+                                        <td>@movement.CreatedOn.ToString("u")</td>
+                                        <td>
+                                            <span class="label @(movement.Cancelled ? "label-danger" : pending ? "label-warning" : "label-success")">
+                                                @localizer[movement.Cancelled ? "StatusCancelled" : pending ? "InventoryWitnessPending" : "Done"]
+                                            </span>
+                                            @if (pending)
+                                            {
+                                                <small class="text-muted rgw-sub">@movement.RequestId</small>
+                                                <a asp-controller="Inventory" asp-action="Index" asp-route-tab="History">@localizer["InventoryParts"]</a>
+                                                @if (d.CanContribute)
+                                                {
+                                                    <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#movement-cancel-@movement.Id">@localizer["Cancel"]</button>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                @if (Model.Movements.Count == 50)
+                {
+                    <div class="rgw-pager">
+                        <a class="btn btn-default btn-sm" asp-action="Operations" asp-route-id="@id" asp-route-movementAfterId="@Model.Movements.Last().Id">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                    </div>
+                }
+
+                @* ── Dialogs ────────────────────────────────────────────────────── *@
+                @if (d.CanContribute || d.CanEdit)
+                {
+                    <div class="modal fade rgw-modal" id="approval-request" tabindex="-1" role="dialog" aria-labelledby="approval-request-title">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="approval-request-title">@localizer["RequestApproval"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="RequestApproval">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@id" />
+                                        <input type="hidden" name="Revision" value="@d.Order.Revision" />
+                                        <div class="rgw-grid">
+                                            <div class="form-group">
+                                                <label for="approval-amount">@localizer["ApprovalAmount"] (@c.Currency)</label>
+                                                <input class="form-control" id="approval-amount" name="Amount" type="number" min="0" max="100000000" step="0.01" required />
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <label for="approval-reason">@localizer["Reason"]</label>
+                                                <textarea id="approval-reason" name="Reason" class="form-control" rows="3" maxlength="4000" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["RequestApproval"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (d.CanManage && c.Approval?.State == WorkOrderApprovalState.Requested)
+                {
+                    <div class="modal fade rgw-modal" id="approval-decide" tabindex="-1" role="dialog" aria-labelledby="approval-decide-title">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="approval-decide-title">@localizer["Decision"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="text-muted">@localizer["IndependentApprovalHelp"]</p>
+                                    <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="DecideApproval">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@id" />
+                                        <input type="hidden" name="Revision" value="@d.Order.Revision" />
+                                        <div class="rgw-grid">
+                                            <div class="form-group">
+                                                <label for="approval-decision">@localizer["Decision"]</label>
+                                                <select class="form-control" id="approval-decision" name="Approve">
+                                                    <option value="true">@localizer["ApproveSpending"]</option>
+                                                    <option value="false">@localizer["RejectSpending"]</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <label for="decision-reason">@localizer["Reason"]</label>
+                                                <textarea id="decision-reason" name="Reason" class="form-control" rows="3" maxlength="4000" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["Save"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (d.CanContribute)
+                {
+                    <div class="modal fade rgw-modal" id="vendor-charge" tabindex="-1" role="dialog" aria-labelledby="vendor-charge-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="vendor-charge-title">@localizer["AddVendorCharge"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="AddVendorCharge">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@id" />
+                                        <input type="hidden" name="Revision" value="@d.Order.Revision" />
+                                        <input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")" />
+                                        <div class="rgw-grid">
+                                            <div class="form-group">
+                                                <label for="charge-vendor">@localizer["VendorDetails"]</label>
+                                                <input id="charge-vendor" name="Content.VendorName" class="form-control" maxlength="200" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="charge-invoice">@localizer["InvoiceReference"]</label>
+                                                <input id="charge-invoice" name="Content.InvoiceReference" class="form-control" maxlength="200" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="charge-currency">@localizer["Currency"]</label>
+                                                <input id="charge-currency" name="Content.Currency" value="@c.Currency" class="form-control" pattern="[A-Z]{3}" maxlength="3" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="charge-amount">@localizer["TotalCost"]</label>
+                                                <input id="charge-amount" name="Content.Amount" class="form-control" type="number" min="0.01" max="100000000" step="0.01" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="charge-date">@localizer["ServiceDate"]</label>
+                                                <input id="charge-date" name="Content.ServiceDate" class="form-control" type="date" required />
+                                            </div>
+                                            <div class="form-group rgw-wide">
+                                                <label for="charge-description">@localizer["Description"]</label>
+                                                <textarea id="charge-description" name="Content.Description" class="form-control" rows="3" maxlength="4000" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["AddVendorCharge"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade rgw-modal" id="part-reserve" tabindex="-1" role="dialog" aria-labelledby="part-reserve-title">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="part-reserve-title">@localizer["PartMovementReserve"]</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="ReservePart">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@id" />
+                                        <input type="hidden" name="Revision" value="@d.Order.Revision" />
+                                        @await Html.PartialAsync("_PartInventory")
+                                        <div class="rgw-grid">
+                                            <div class="form-group rgw-wide">
+                                                <label for="reserve-description">@localizer["Description"]</label>
+                                                <input id="reserve-description" name="Content.Description" class="form-control" maxlength="2000" required />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="reserve-quantity">@localizer["Quantity"]</label>
+                                                <input id="reserve-quantity" name="Content.Quantity" class="form-control" type="number" min="0.000001" max="100000" step="0.000001" required />
+                                            </div>
+                                        </div>
+                                        <div class="rgw-wizard-actions">
+                                            <div class="rgw-wizard-spacer"></div>
+                                            <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                            <button class="btn btn-primary" type="submit">@localizer["PartMovementReserve"]</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @foreach (var part in staged.Where(p => p.ReservedQuantity > 0 || p.IssuedQuantity > 0))
+                    {
+                        <div class="modal fade rgw-modal" id="part-move-@part.Id" tabindex="-1" role="dialog" aria-labelledby="part-move-@(part.Id)-title">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="part-move-@(part.Id)-title">@localizer["PartMovements"] &middot; @part.Content.Description</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="MovePart">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@id" />
+                                            <input type="hidden" name="partId" value="@part.Id" />
+                                            <input type="hidden" name="Revision" value="@d.Order.Revision" />
+                                            <input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")" />
+                                            <div class="rgw-grid">
+                                                <div class="form-group">
+                                                    <label for="move-kind-@part.Id">@localizer["Actions"]</label>
+                                                    <select class="form-control" id="move-kind-@part.Id" name="Kind">
+                                                        @foreach (var kind in Enum.GetValues<WorkOrderPartMovementKind>().Where(k => k != WorkOrderPartMovementKind.Reserve))
+                                                        {
+                                                            <option value="@((int)kind)">@localizer["PartMovement" + kind]</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="move-quantity-@part.Id">@localizer["Quantity"]</label>
+                                                    <input id="move-quantity-@part.Id" name="Quantity" class="form-control" type="number" min="0.000001" max="100000" step="0.000001" required />
+                                                </div>
+                                                <div class="form-group rgw-wide">
+                                                    <label for="move-reason-@part.Id">@localizer["Reason"]</label>
+                                                    <input id="move-reason-@part.Id" name="Reason" class="form-control" maxlength="4000" required />
+                                                </div>
+                                            </div>
+                                            <fieldset class="work-order-inventory" data-url="@Url.Action("PartChoices")">
+                                                <div class="rgw-grid">
+                                                    <div class="form-group">
+                                                        <label for="move-location-@part.Id">@localizer["IssueLocation"]</label>
+                                                        <select id="move-location-@part.Id" name="LocationId" class="form-control inventory-part-choice" data-kind="location">
+                                                            <option value="">@localizer["None"]</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>&nbsp;</label>
+                                                        <div><button type="button" class="btn btn-default inventory-part-load" data-kind="location" data-page="0">@localizer["LoadChoices"]</button></div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                            <div class="rgw-wizard-actions">
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                                                <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @foreach (var movement in Model.Movements.Where(m => !m.Cancelled && m.InventoryOperationId != null && m.InventoryTransactionId == null))
+                    {
+                        <div class="modal fade rgw-modal" id="movement-cancel-@movement.Id" tabindex="-1" role="dialog" aria-labelledby="movement-cancel-@(movement.Id)-title">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="movement-cancel-@(movement.Id)-title">@localizer["Cancel"]</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="CancelPartMovement">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@id" />
+                                            <input type="hidden" name="movementId" value="@movement.Id" />
+                                            <input type="hidden" name="revision" value="@d.Order.Revision" />
+                                            <div class="rgw-grid">
+                                                <div class="form-group rgw-wide">
+                                                    <label for="movement-reason-@movement.Id">@localizer["Reason"]</label>
+                                                    <input class="form-control" id="movement-reason-@movement.Id" name="reason" maxlength="4000" required />
+                                                </div>
+                                            </div>
+                                            <div class="rgw-wizard-actions">
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                <button type="submit" class="btn btn-warning">@localizer["Cancel"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                @if (d.CanContribute && d.CanManage)
+                {
+                    foreach (var charge in Model.VendorCharges.Where(x => !x.VoidedOn.HasValue))
+                    {
+                        <div class="modal fade rgw-modal" id="charge-void-@charge.Id" tabindex="-1" role="dialog" aria-labelledby="charge-void-@(charge.Id)-title">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="@localizer["Cancel"]"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="charge-void-@(charge.Id)-title">@localizer["VoidCharge"] &middot; @charge.Content.VendorName</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="VoidVendorCharge">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@id" />
+                                            <input type="hidden" name="chargeId" value="@charge.Id" />
+                                            <input type="hidden" name="revision" value="@d.Order.Revision" />
+                                            <div class="rgw-grid">
+                                                <div class="form-group rgw-wide">
+                                                    <label for="charge-reason-@charge.Id">@localizer["Reason"]</label>
+                                                    <input id="charge-reason-@charge.Id" name="reason" class="form-control" maxlength="4000" required />
+                                                </div>
+                                            </div>
+                                            <div class="rgw-wizard-actions">
+                                                <div class="rgw-wizard-spacer"></div>
+                                                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Close"]</button>
+                                                <button class="btn btn-warning" type="submit">@localizer["VoidCharge"]</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
 }
-<h3>@localizer["VendorCharges"]</h3>
-<table class="table"><thead><tr><th>@localizer["VendorDetails"]</th><th>@localizer["InvoiceReference"]</th><th>@localizer["Description"]</th><th>@localizer["TotalCost"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
-@foreach (var charge in Model.VendorCharges) { <tr><td>@charge.Content.VendorName</td><td>@charge.Content.InvoiceReference</td><td>@charge.Content.Description</td><td>@charge.Content.Amount @charge.Content.Currency @if (charge.VoidedOn.HasValue) { <span>@localizer["Voided"]</span> }</td><td>@if (d.CanContribute && d.CanManage && !charge.VoidedOn.HasValue) { <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="VoidVendorCharge">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="chargeId" value="@charge.Id"/><input type="hidden" name="revision" value="@d.Order.Revision"/><input name="reason" class="form-control" aria-label="@localizer["Reason"]" maxlength="4000" required/><button class="btn btn-warning" type="submit">@localizer["VoidCharge"]</button></form> }</td></tr> }
-</tbody></table>
-@if (Model.VendorCharges.Count == 50) { <a asp-action="Operations" asp-route-id="@id" asp-route-vendorAfterId="@Model.VendorCharges.Last().Id">@localizer["Next"]</a> }
-@if (d.CanContribute) {
-<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="AddVendorCharge">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>
-<label>@localizer["VendorDetails"]<input name="Content.VendorName" class="form-control" maxlength="200" required/></label><label>@localizer["InvoiceReference"]<input name="Content.InvoiceReference" class="form-control" maxlength="200" required/></label>
-<label>@localizer["Description"]<textarea name="Content.Description" class="form-control" maxlength="4000" required></textarea></label>
-<label>@localizer["Currency"]<input name="Content.Currency" value="@c.Currency" class="form-control" pattern="[A-Z]{3}" maxlength="3" required/></label><label>@localizer["TotalCost"]<input name="Content.Amount" class="form-control" type="number" min="0.01" max="100000000" step="0.01" required/></label>
-<label>@localizer["ServiceDate"]<input name="Content.ServiceDate" class="form-control" type="date" required/></label><button class="btn btn-primary" type="submit">@localizer["AddVendorCharge"]</button></form>
-}
-<h3>@localizer["PartsAllocation"]</h3><p>@localizer["PartsAllocationHelp"]</p>
-<table class="table"><thead><tr><th>@localizer["Description"]</th><th>@localizer["ReservedParts"]</th><th>@localizer["IssuedParts"]</th><th>@localizer["ConsumedParts"]</th><th>@localizer["ReturnedParts"]</th><th>@localizer["Actions"]</th></tr></thead><tbody>
-@foreach (var part in d.Parts.Where(p => p.Staged)) { <tr><td>@part.Content.Description</td><td>@part.ReservedQuantity</td><td>@part.IssuedQuantity</td><td>@part.ConsumedQuantity</td><td>@part.ReturnedQuantity</td><td>
-@if (d.CanContribute && (part.ReservedQuantity > 0 || part.IssuedQuantity > 0)) {
-<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="MovePart">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="partId" value="@part.Id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/><input type="hidden" name="RequestId" value="@Guid.NewGuid().ToString("D")"/>
-<label>@localizer["Actions"]<select class="form-control" name="Kind">@foreach (var kind in Enum.GetValues<WorkOrderPartMovementKind>().Where(k => k != WorkOrderPartMovementKind.Reserve)) { <option value="@((int)kind)">@localizer["PartMovement" + kind]</option> }</select></label><label>@localizer["Quantity"]<input name="Quantity" class="form-control" type="number" min="0.000001" max="100000" step="0.000001" required/></label>
-<fieldset class="work-order-inventory" data-url="@Url.Action("PartChoices")"><label>@localizer["IssueLocation"]<select name="LocationId" class="form-control inventory-part-choice" data-kind="location"><option value="">@localizer["None"]</option></select></label><button type="button" class="btn btn-default inventory-part-load" data-kind="location" data-page="0">@localizer["LoadChoices"]</button></fieldset>
-<label>@localizer["Reason"]<input name="Reason" class="form-control" maxlength="4000" required/></label><button type="submit" class="btn btn-default">@localizer["Save"]</button></form>
-}
-</td></tr> }
-</tbody></table>
-@if (d.CanContribute) {
-<form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="ReservePart">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="Revision" value="@d.Order.Revision"/>
-@await Html.PartialAsync("_PartInventory")
-<label>@localizer["Description"]<input name="Content.Description" class="form-control" maxlength="2000" required/></label><label>@localizer["Quantity"]<input name="Content.Quantity" class="form-control" type="number" min="0.000001" max="100000" step="0.000001" required/></label><button type="submit" class="btn btn-primary">@localizer["PartMovementReserve"]</button></form>
-}
-<h3>@localizer["PartMovements"]</h3><table class="table"><thead><tr><th>@localizer["Parts"]</th><th>@localizer["Actions"]</th><th>@localizer["Quantity"]</th><th>@localizer["CreatedOn"]</th><th>@localizer["Status"]</th></tr></thead><tbody>
-@foreach (var movement in Model.Movements) { <tr><td>@movement.PartId</td><td>@localizer["PartMovement" + (WorkOrderPartMovementKind)movement.Kind]</td><td>@movement.Quantity</td><td>@movement.CreatedOn.ToString("u")</td><td>@localizer[movement.Cancelled ? "StatusCancelled" : movement.InventoryOperationId != null && movement.InventoryTransactionId == null ? "InventoryWitnessPending" : "Done"]
-@if (!movement.Cancelled && movement.InventoryOperationId != null && movement.InventoryTransactionId == null) { <code>@movement.RequestId</code><a asp-controller="Inventory" asp-action="Index" asp-route-tab="History">@localizer["InventoryParts"]</a> }
-@if (d.CanContribute && !movement.Cancelled && movement.InventoryOperationId != null && movement.InventoryTransactionId == null) { <form class="work-order-form work-order-command" data-destination="Operations" method="post" asp-action="CancelPartMovement">@Html.AntiForgeryToken()<input type="hidden" name="id" value="@id"/><input type="hidden" name="movementId" value="@movement.Id"/><input type="hidden" name="revision" value="@d.Order.Revision"/><input class="form-control" name="reason" aria-label="@localizer["Reason"]" maxlength="4000" required/><button type="submit" class="btn btn-warning">@localizer["Cancel"]</button></form> }
-</td></tr> }
-</tbody></table>@if (Model.Movements.Count == 50) { <a asp-action="Operations" asp-route-id="@id" asp-route-movementAfterId="@Model.Movements.Last().Id">@localizer["Next"]</a> }
-</div></div></div></div>
 @section Scripts { @await Html.PartialAsync("_Scripts") }

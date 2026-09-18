@@ -730,4 +730,5 @@
     <value>Profilo del dipartimento</value>
   </data>
   <data name="RecordsLegalHoldsModule" xml:space="preserve"><value>Blocchi di conservazione dei registri</value></data>
+  <data name="RecordsAllModule" xml:space="preserve"><value>Tutti i registri</value></data>
 </root>

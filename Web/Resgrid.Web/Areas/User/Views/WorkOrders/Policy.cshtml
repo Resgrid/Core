@@ -1,25 +1,128 @@
 @model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderPolicyView
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
-@{ ViewBag.Title = "Resgrid | " + localizer["OperationsPolicy"]; var p = Model.Input; }
-<div class="wrapper wrapper-content"><div class="ibox"><div class="ibox-content">
-<h2>@localizer["OperationsPolicy"]</h2><a asp-action="Index">@localizer["WorkOrders"]</a>
-@await Html.PartialAsync("_Protection")
-<div class="work-order-protected"><p>@localizer["PolicyHelp"]</p><div class="alert alert-danger work-order-error" hidden role="alert"></div>
-<form method="post" asp-action="SavePolicy" class="work-order-form work-order-command" data-destination="Policy">@Html.AntiForgeryToken()
-<input type="hidden" name="Revision" value="@p.Revision"/><fieldset disabled="@(!Model.CanWrite)">
-<legend>@localizer["SpendingApprovals"]</legend><label><input type="checkbox" name="ApprovalsEnabled" value="true" checked="@p.ApprovalsEnabled"/> @localizer["RequireSpendingApproval"]</label>
-<table class="table"><thead><tr><th>@localizer["Currency"]</th><th>@localizer["SpendingThreshold"]</th></tr></thead><tbody>
-@for (var i = 0; i < Math.Max(4, p.SpendingRules.Count + 1); i++) { var r = p.SpendingRules.ElementAtOrDefault(i); <tr><td><input name="SpendingRules[@i].Currency" value="@r?.Currency" class="form-control" maxlength="3" pattern="[A-Z]{3}" aria-label="@localizer["Currency"]"/></td><td><input name="SpendingRules[@i].Threshold" value="@((r?.Threshold ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture))" class="form-control" type="number" min="0" max="100000000" step="0.01" aria-label="@localizer["SpendingThreshold"]"/></td></tr> }
-</tbody></table>
-<h3>@localizer["BusinessCalendar"]</h3><p>@localizer["BusinessCalendarHelp"]</p>
-<label>@localizer["TimeZone"]<input name="Calendar.TimeZoneId" value="@p.Calendar.TimeZoneId" class="form-control" maxlength="100" required/></label>
-<fieldset><legend>@localizer["ServiceWeekdays"]</legend>@for (var d = 0; d < 7; d++) { var mask = 1 << d; <label><input type="checkbox" name="weekdays" value="@mask" checked="@((p.Calendar.Weekdays & mask) != 0)"/> @System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.DayNames[d]</label> }</fieldset>
-<label>@localizer["ServiceStart"]<input name="businessStart" class="form-control" type="time" value="@(TimeOnly.FromTimeSpan(TimeSpan.FromMinutes(p.Calendar.StartMinute)).ToString("HH:mm"))" required/></label>
-<label>@localizer["ServiceEnd"]<input name="businessEnd" class="form-control" type="time" value="@(TimeOnly.FromTimeSpan(TimeSpan.FromMinutes(p.Calendar.EndMinute % 1440)).ToString("HH:mm"))" required/></label>
-<label for="holidays">@localizer["Holidays"]</label><textarea id="holidays" class="form-control" name="holidays" rows="5">@string.Join("\n", p.Calendar.Holidays)</textarea>
-<table class="table"><thead><tr><th>@localizer["Priority"]</th><th>@localizer["ResponseMinutes"]</th><th>@localizer["RepairMinutes"]</th></tr></thead><tbody>
-@for (var i = 0; i < 4; i++) { var r = p.Calendar.Targets.SingleOrDefault(t => (int)t.Priority == i); <tr><th>@localizer["Priority" + (WorkOrderPriority)i]<input type="hidden" name="Calendar.Targets[@i].Priority" value="@i"/></th><td><input name="Calendar.Targets[@i].ResponseMinutes" class="form-control" type="number" min="0" max="525600" value="@(r?.ResponseMinutes ?? 0)" aria-label="@localizer["ResponseMinutes"]"/></td><td><input name="Calendar.Targets[@i].RepairMinutes" class="form-control" type="number" min="0" max="525600" value="@(r?.RepairMinutes ?? 0)" aria-label="@localizer["RepairMinutes"]"/></td></tr> }
-</tbody></table><button type="submit" class="btn btn-primary">@localizer["Save"]</button></fieldset></form>
-</div></div></div></div>
+@{
+    ViewBag.Title = "Resgrid | " + localizer["OperationsPolicy"];
+    var p = Model.Input;
+    ViewData["Tab"] = "Policy";
+    ViewData["Title"] = localizer["OperationsPolicy"].Value;
+    ViewData["Subtitle"] = localizer["PolicyHelp"].Value;
+    ViewData["CanWrite"] = true;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["OperationsPolicy"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["PolicyHelp"]</div>
+
+            <div class="work-order-protected">
+                <form method="post" asp-action="SavePolicy" class="work-order-form work-order-command" data-destination="Policy">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Revision" value="@p.Revision" />
+                    <fieldset disabled="@(!Model.CanWrite)">
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">@localizer["SpendingApprovals"]</div>
+                            <div class="panel-body">
+                                <div class="checkbox"><label><input type="checkbox" name="ApprovalsEnabled" value="true" checked="@p.ApprovalsEnabled" /> @localizer["RequireSpendingApproval"]</label></div>
+                                <div class="table-responsive">
+                                    <table class="table rgw-table">
+                                        <thead><tr><th>@localizer["Currency"]</th><th>@localizer["SpendingThreshold"]</th></tr></thead>
+                                        <tbody>
+                                            @for (var i = 0; i < Math.Max(4, p.SpendingRules.Count + 1); i++)
+                                            {
+                                                var r = p.SpendingRules.ElementAtOrDefault(i);
+                                                <tr>
+                                                    <td><input name="SpendingRules[@i].Currency" value="@r?.Currency" class="form-control" maxlength="3" pattern="[A-Z]{3}" aria-label="@localizer["Currency"]" /></td>
+                                                    <td><input name="SpendingRules[@i].Threshold" value="@((r?.Threshold ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture))" class="form-control" type="number" min="0" max="100000000" step="0.01" aria-label="@localizer["SpendingThreshold"]" /></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">@localizer["BusinessCalendar"]</div>
+                            <div class="panel-body">
+                                <p class="text-muted">@localizer["BusinessCalendarHelp"]</p>
+                                <div class="rgw-grid">
+                                    <div class="form-group">
+                                        <label for="policy-timezone">@localizer["TimeZone"]</label>
+                                        <input id="policy-timezone" name="Calendar.TimeZoneId" value="@p.Calendar.TimeZoneId" class="form-control" maxlength="100" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="policy-start">@localizer["ServiceStart"]</label>
+                                        <input id="policy-start" name="businessStart" class="form-control" type="time" value="@(TimeOnly.FromTimeSpan(TimeSpan.FromMinutes(p.Calendar.StartMinute)).ToString("HH:mm"))" required />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="policy-end">@localizer["ServiceEnd"]</label>
+                                        <input id="policy-end" name="businessEnd" class="form-control" type="time" value="@(TimeOnly.FromTimeSpan(TimeSpan.FromMinutes(p.Calendar.EndMinute % 1440)).ToString("HH:mm"))" required />
+                                    </div>
+                                    <div class="form-group rgw-wide">
+                                        <label>@localizer["ServiceWeekdays"]</label>
+                                        <div>
+                                            @for (var d = 0; d < 7; d++)
+                                            {
+                                                var mask = 1 << d;
+                                                <label class="checkbox-inline">
+                                                    <input type="checkbox" name="weekdays" value="@mask" checked="@((p.Calendar.Weekdays & mask) != 0)" />
+                                                    @System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.DayNames[d]
+                                                </label>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="form-group rgw-wide">
+                                        <label for="holidays">@localizer["Holidays"]</label>
+                                        <textarea id="holidays" class="form-control" name="holidays" rows="5">@string.Join("\n", p.Calendar.Holidays)</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">@localizer["ResponseDue"] / @localizer["RepairDue"]</div>
+                            <div class="table-responsive">
+                                <table class="table rgw-table">
+                                    <thead><tr><th>@localizer["Priority"]</th><th>@localizer["ResponseMinutes"]</th><th>@localizer["RepairMinutes"]</th></tr></thead>
+                                    <tbody>
+                                        @for (var i = 0; i < 4; i++)
+                                        {
+                                            var r = p.Calendar.Targets.SingleOrDefault(t => (int)t.Priority == i);
+                                            <tr>
+                                                <th>
+                                                    @localizer["Priority" + (WorkOrderPriority)i]
+                                                    <input type="hidden" name="Calendar.Targets[@i].Priority" value="@i" />
+                                                </th>
+                                                <td><input name="Calendar.Targets[@i].ResponseMinutes" class="form-control" type="number" min="0" max="525600" value="@(r?.ResponseMinutes ?? 0)" aria-label="@localizer["ResponseMinutes"]" /></td>
+                                                <td><input name="Calendar.Targets[@i].RepairMinutes" class="form-control" type="number" min="0" max="525600" value="@(r?.RepairMinutes ?? 0)" aria-label="@localizer["RepairMinutes"]" /></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="rgw-wizard-actions">
+                            <div class="rgw-wizard-spacer"></div>
+                            <a class="btn btn-white" asp-action="Index">@localizer["Cancel"]</a>
+                            <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+}
 @section Scripts { @await Html.PartialAsync("_Scripts") }

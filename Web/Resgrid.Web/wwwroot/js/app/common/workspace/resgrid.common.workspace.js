@@ -223,10 +223,16 @@
             var host = this;
             host.querySelectorAll('form.rgw-wizard').forEach(function (form) {
                 delete form.dataset.wizardStarted;
+                steps(form).forEach(clearErrors);
                 show(form, 0);
             });
+            // Hide through the same class notify() shows with; an inline display would
+            // outrank .rgw-visible and keep every later message in this modal invisible.
             var message = host.querySelector('.rgw-modal-message');
-            if (message) { message.style.display = 'none'; }
+            if (message) {
+                message.classList.remove('rgw-visible');
+                message.hidden = true;
+            }
             var focusable = host.querySelector('.rgw-step:not([hidden]) input:not([type=hidden]), .rgw-step:not([hidden]) select, .modal-body input:not([type=hidden]), .modal-body select');
             if (focusable) { focusable.focus(); }
         });

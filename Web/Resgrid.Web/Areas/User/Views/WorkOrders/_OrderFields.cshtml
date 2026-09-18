@@ -48,7 +48,19 @@
         {
             <div class="form-group">
                 <label asp-for="DueOn">@localizer["DueOn"] (UTC)</label>
-                <input asp-for="DueOn" class="form-control" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm:ss.fffffff}" readonly="@(Model.Revision > 0)" />
+                @if (Model.Revision > 0)
+                {
+                    @* A saved order changes its due date through a deferral, and the service rejects an
+                       edit whose DueOn differs from the stored value by even a tick. datetime-local
+                       cannot carry that precision (the browser blanks anything past milliseconds), so
+                       the exact value posts from a hidden field and the visible one is display only. *@
+                    <input type="hidden" name="@Html.NameFor(m => m.DueOn)" id="@(Html.IdFor(m => m.DueOn) + "_Value")" value="@Model.DueOn?.ToString("yyyy-MM-ddTHH:mm:ss.fffffff")" />
+                    <input class="form-control" id="@Html.IdFor(m => m.DueOn)" type="datetime-local" value="@Model.DueOn?.ToString("yyyy-MM-ddTHH:mm:ss")" step="1" readonly />
+                }
+                else
+                {
+                    <input asp-for="DueOn" class="form-control" type="datetime-local" asp-format="{0:yyyy-MM-ddTHH:mm:ss}" step="1" />
+                }
                 <span class="help-block">@localizer["HelpFieldDueOn"]</span>
             </div>
         }

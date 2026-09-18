@@ -3496,6 +3496,29 @@
         <member name="T:Resgrid.Web.Services.Controllers.v4.ScimUserResource">
             <summary>Minimal SCIM 2.0 User resource for inbound provisioning requests.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.SearchController">
+            <summary>
+            Unified Search (plan R4 Phase 2/3): one endpoint over the global index (calls, units, personnel, contacts,
+            messages, documents, notes), the RMS records index, and the system-functionality catalog. The department and
+            the caller's identity come from the token, never from the request. Each hit is re-checked against the entity's
+            own authorization rule; totals are null when any hit was dropped. Typeahead is the same query in prefix mode.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SearchController.Search(System.String,System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Full search. <paramref name="types"/> is a comma-separated list of entity types (Call, Unit, Personnel,
+            Contact, Message, Document, Note, Record, Action); omit for all.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SearchController.Typeahead(System.String,System.String,System.Int32,System.Threading.CancellationToken)">
+            <summary>Typeahead: prefix search on titles and identifiers, no records federation, small result list.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SearchController.Rebuild(System.Threading.CancellationToken)">
+            <summary>Department admins: flag the department's global index for a full projection + index rebuild on the next sweep (plan R4 Phase 3).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SearchController.Health">
+            <summary>Department admins: host and index health plus this department's index state.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.SecurityController">
             <summary>
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
@@ -11583,6 +11606,15 @@
             Can the API services talk to the cache
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.SearchEnabled">
+            <summary>Search host enabled in this process (SearchConfig.Enabled).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.SearchOnline">
+            <summary>A local reader is open for the global index (after a pull or a write).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.SearchIndexDocCount">
+            <summary>Documents in this process's copy of the global and records indexes.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.EstablishCommandInput">
             <summary>Input to establish command on a call.</summary>
         </member>
@@ -13620,6 +13652,21 @@
             <summary>
             Response Data
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Search.SearchResult">
+            <summary>Unified search response (plan R4 Phase 2). Shape follows Records/Search: availability and degradation are explicit, totals are null when they cannot be proven.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchResultData.Available">
+            <summary>False when Search.Unified is off for the department.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchResultData.Degraded">
+            <summary>True when the index could not serve; actions still return.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchResultData.TotalCount">
+            <summary>Authorized total, or null when a hit was dropped by per-entity authorization.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Search.SearchHitData.Url">
+            <summary>Relative web path; clients with native screens switch on EntityType/EntityId instead.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResult.Data">
             <summary>

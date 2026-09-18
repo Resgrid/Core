@@ -21,11 +21,13 @@ namespace Resgrid.Services
 		private readonly IMessageRecipientRepository _messageRecipientRepository;
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
+
 		public MessageService(IMessageRepository messageRepository, IPushService pushService,
 			ICommunicationService communicationService,
 			IQueueService queueService, IUserProfileService userProfileService,
 			IMessageRecipientRepository messageRecipientRepository,
-			Lazy<IProtectedWriteService> protectedWriteService)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_messageRepository = messageRepository;
 			_pushService = pushService;
@@ -34,6 +36,7 @@ namespace Resgrid.Services
 			_userProfileService = userProfileService;
 			_messageRecipientRepository = messageRecipientRepository;
 			_protectedWriteService = protectedWriteService;
+			_searchProjections = searchProjections;
 		}
 
 		public async Task<Message> GetMessageByIdAsync(int messageId)
@@ -90,6 +93,7 @@ namespace Resgrid.Services
 			if (protectedWrite.Changed || recipientChanged)
 				saved = await _messageRepository.SaveOrUpdateAsync(saved, cancellationToken);
 
+			if (_searchProjections != null) await _searchProjections.Value.ProjectMessageAsync(saved, cancellationToken);
 			return saved;
 		}
 

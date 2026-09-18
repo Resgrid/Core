@@ -16,6 +16,7 @@
     ViewData["ParentText"] = localizer["Evidence"].Value;
     ViewData["ParentController"] = "RecordEvidence";
     ViewData["ParentAction"] = "Index";
+    ViewData["ParentRouteValues"] = new Dictionary<string, string> { ["recordId"] = context.RecordId, ["recordKind"] = context.RecordKind.ToString() };
 
     string SourceGuidance() => selection.SourceKind switch
     {

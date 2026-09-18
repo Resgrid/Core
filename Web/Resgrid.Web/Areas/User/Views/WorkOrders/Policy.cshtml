@@ -7,7 +7,7 @@
     ViewData["Tab"] = "Policy";
     ViewData["Title"] = localizer["OperationsPolicy"].Value;
     ViewData["Subtitle"] = localizer["PolicyHelp"].Value;
-    ViewData["CanWrite"] = true;
+    ViewData["CanWrite"] = Model.CanWrite;
 }
 
 @await Html.PartialAsync("_Shell")

@@ -45,29 +45,40 @@ var resgrid;
                 autocomplete({
                     container: '#autocomplete',
                     placeholder: 'Search Resgrid',
-                    getSources() {
-                        return [{
-                            getItems({ query }) {
-                                const queryClean = query.replace(/ |-/g, '')
-                                if (!!queryClean) {
-                                    return fetch(resgrid.absoluteBaseUrl + `/User/Search/GetSearchResults?query=${queryClean}`)
-                                        .then(res => res.json())
-                                        .catch(console.log())
-                                }
-                            },
-                            onSelect: function (event) {
-                                window.location.assign(event.item.url);
-                            },
-                            templates: {
-                                item({ item, html }) {
-                                    return html`
-                                    <div><a href="${item.url}" style="text-decoration: none; color: inherit;">
-                                        <h4>${item.label}</h4>
-                                        <div>${item.summary}</div></a>
-                                    </div>`
-                                },
-                            },
-                        }];
+                    openOnFocus: true,
+                    getSources({ query }) {
+                        const q = (query || '').trim();
+                        // One round trip serves both sections: system functionality ("Actions") and entity hits.
+                        return fetch(resgrid.absoluteBaseUrl + '/User/Search/GetSearchResults?query=' + encodeURIComponent(q))
+                            .then(res => res.json())
+                            .then(items => {
+                                const groups = [];
+                                (items || []).forEach(item => {
+                                    const name = item.group || 'Results';
+                                    let g = groups.find(x => x.name === name);
+                                    if (!g) { g = { name: name, items: [] }; groups.push(g); }
+                                    g.items.push(item);
+                                });
+                                return groups.map(g => ({
+                                    sourceId: 'search-' + g.name.toLowerCase(),
+                                    getItems() { return g.items; },
+                                    getItemUrl({ item }) { return item.url; },
+                                    onSelect(event) { if (event.item && event.item.url) { window.location.assign(event.item.url); } },
+                                    templates: {
+                                        header({ html }) {
+                                            return html`<div class="aa-SourceHeader"><span class="aa-SourceHeaderTitle">${g.name === 'Actions' ? 'Go to' : g.name}</span><div class="aa-SourceHeaderLine"></div></div>`;
+                                        },
+                                        item({ item, html }) {
+                                            return html`
+                                            <div><a href="${item.url}" style="text-decoration: none; color: inherit;">
+                                                <h4>${item.label}</h4>
+                                                <div>${item.summary || ''}</div></a>
+                                            </div>`;
+                                        },
+                                    },
+                                }));
+                            })
+                            .catch(() => []);
                     },
                 });
             }

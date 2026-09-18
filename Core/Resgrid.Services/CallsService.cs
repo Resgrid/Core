@@ -5,6 +5,7 @@ using System.Net;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 using Resgrid.Model.Identity;
 using System.Text;
@@ -48,6 +49,8 @@ namespace Resgrid.Services
 		// (broker client) until a save actually needs it.
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
+
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
 			ICacheProvider cacheProvider, ICallNotesRepository callNotesRepository,
@@ -57,7 +60,7 @@ namespace Resgrid.Services
 			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService,
 			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository,
 			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository,
-			Lazy<IProtectedWriteService> protectedWriteService)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_protectedWriteService = protectedWriteService;
 			_callsRepository = callsRepository;
@@ -80,6 +83,7 @@ namespace Resgrid.Services
 			_callContactsRepository = callContactsRepository;
 			_indoorMapService = indoorMapService;
 			_callVideoFeedRepository = callVideoFeedRepository;
+			_searchProjections = searchProjections;
 		}
 
 		public async Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken))
@@ -237,6 +241,7 @@ namespace Resgrid.Services
 				}
 			}
 
+			if (_searchProjections != null) await _searchProjections.Value.ProjectCallAsync(savedCall, cancellationToken);
 			return savedCall;
 		}
 
@@ -342,7 +347,9 @@ namespace Resgrid.Services
 		public async Task<bool> DeleteCallByIdAsync(int callId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var call = await GetCallByIdAsync(callId);
-			return await _callsRepository.DeleteAsync(call, cancellationToken);
+			var deleted = await _callsRepository.DeleteAsync(call, cancellationToken);
+			if (deleted && call != null && _searchProjections != null) await _searchProjections.Value.RemoveAsync(call.DepartmentId, SearchEntityTypes.Call, call.CallId.ToString(), cancellationToken);
+			return deleted;
 		}
 
 		public async Task<Call> ReOpenCallByIdAsync(int callId, CancellationToken cancellationToken = default(CancellationToken))
@@ -354,7 +361,9 @@ namespace Resgrid.Services
 			call.ClosedOn = null;
 			call.CompletedNotes = null;
 
-			return await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
+			var softDeleted = await _callsRepository.SaveOrUpdateAsync(call, cancellationToken);
+			if (_searchProjections != null) await _searchProjections.Value.ProjectCallAsync(softDeleted, cancellationToken);
+			return softDeleted;
 		}
 
 		public async Task<Call> GetCallByIdAsync(int callId, bool bypassCache = true)

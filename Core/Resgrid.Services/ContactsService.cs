@@ -32,12 +32,14 @@ namespace Resgrid.Services
 		/// <summary>RMS-5: which system owns structure writes; lazy because Records depends on Contacts (RMS plan section 4.3).</summary>
 		private readonly Lazy<IContactPreplanOwnershipGate> _ownershipGate;
 
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
+
 		public ContactsService(IContactsRepository contactsRepository, IContactNotesRepository contactNotesRepository,
 			IContactCategoryRepository contactCategoryRepository,  IContactNoteTypesRepository contactNoteTypesRepository,
 			IContactAssociationsRepository contactAssociationsRepository, IContactPreplanRepository contactPreplanRepository,
 			IContactPreplanHazardRepository contactPreplanHazardRepository, IContactAttachmentRepository contactAttachmentRepository,
 			ICallsRepository callsRepository, ICallContactsRepository callContactsRepository,
-			IEventAggregator eventAggregator, Lazy<IProtectedWriteService> protectedWriteService, Lazy<IContactPreplanOwnershipGate> ownershipGate)
+			IEventAggregator eventAggregator, Lazy<IProtectedWriteService> protectedWriteService, Lazy<IContactPreplanOwnershipGate> ownershipGate, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_ownershipGate = ownershipGate;
 			_contactsRepository = contactsRepository;
@@ -52,6 +54,7 @@ namespace Resgrid.Services
 			_callContactsRepository = callContactsRepository;
 			_eventAggregator = eventAggregator;
 			_protectedWriteService = protectedWriteService;
+			_searchProjections = searchProjections;
 		}
 
 		public async Task<List<Contact>> GetAllContactsForDepartmentAsync(int departmentId)
@@ -114,6 +117,7 @@ namespace Resgrid.Services
 			if (protectedWrite.Changed || (existingContactForRestore != null && protectedWrite.Success))
 				savedContact = await _contactsRepository.SaveOrUpdateAsync(savedContact, cancellationToken);
 
+			if (_searchProjections != null) await _searchProjections.Value.ProjectContactAsync(savedContact, cancellationToken);
 			return savedContact;
 		}
 

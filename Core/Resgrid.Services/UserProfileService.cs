@@ -21,12 +21,15 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IChatbotIdentityRepository _chatbotIdentityRepository;
 
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
+
 		public UserProfileService(IUserProfilesRepository userProfileRepository, ICacheProvider cacheProvider,
-			IChatbotIdentityRepository chatbotIdentityRepository)
+			IChatbotIdentityRepository chatbotIdentityRepository, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_userProfileRepository = userProfileRepository;
 			_cacheProvider = cacheProvider;
 			_chatbotIdentityRepository = chatbotIdentityRepository;
+			_searchProjections = searchProjections;
 		}
 
 		public async Task<UserProfile> GetProfileByUserIdAsync(string userId, bool bypassCache = false)
@@ -137,6 +140,7 @@ namespace Resgrid.Services
 			ClearUserProfileFromCache(savedProfile.UserId);
 			ClearAllUserProfilesFromCache(DepartmentId);
 
+			if (_searchProjections != null && DepartmentId > 0) await _searchProjections.Value.ProjectPersonnelAsync(DepartmentId, savedProfile, null, null, cancellationToken);
 			return savedProfile;
 		}
 

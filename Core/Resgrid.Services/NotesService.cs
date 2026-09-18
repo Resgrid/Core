@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Repositories.DataRepository;
@@ -19,11 +21,14 @@ namespace Resgrid.Services
 		private readonly IEventAggregator _eventAggregator;
 		private readonly INoteCategoriesRepository _noteCategoriesRepository;
 
-		public NotesService(INotesRepository notesRepository, IEventAggregator eventAggregator, INoteCategoriesRepository noteCategoriesRepository)
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
+
+		public NotesService(INotesRepository notesRepository, IEventAggregator eventAggregator, INoteCategoriesRepository noteCategoriesRepository, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_notesRepository = notesRepository;
 			_eventAggregator = eventAggregator;
 			_noteCategoriesRepository = noteCategoriesRepository;
+			_searchProjections = searchProjections;
 		}
 
 		public async Task<List<Note>> GetAllNotesForDepartmentAsync(int departmentId)
@@ -45,6 +50,7 @@ namespace Resgrid.Services
 			var saved = await _notesRepository.SaveOrUpdateAsync(note, cancellationToken);
 			_eventAggregator.SendMessage<NoteAddedEvent>(new NoteAddedEvent() { DepartmentId = note.DepartmentId, Note = note });
 
+			if (_searchProjections != null) await _searchProjections.Value.ProjectNoteAsync(saved, cancellationToken);
 			return saved;
 		}
 
@@ -65,7 +71,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteAsync(Note note, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _notesRepository.DeleteAsync(note, cancellationToken);
+			var deleted = await _notesRepository.DeleteAsync(note, cancellationToken);
+			if (deleted && note != null && _searchProjections != null) await _searchProjections.Value.RemoveAsync(note.DepartmentId, SearchEntityTypes.Note, note.NoteId.ToString(), cancellationToken);
+			return deleted;
 		}
 
 		public async Task<List<Note>> GetNotesForDepartmentFilteredAsync(int departmentId, bool isAdmin)

@@ -506,6 +506,14 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				// Worker ID 70 (Identifier Allocation Registry section 4F, Unified Search): global search index maintenance. Same
+				// single-writer process as 44; no-op while SearchConfig.Enabled is off; departments enter lazily via their state row.
+				_logger.Log(LogLevel.Information, "Scheduling Search Index");
+				await Client.ScheduleAsync("Search Index",
+					new Commands.SearchIndexCommand(70),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
 				// Worker ID 41 (Identifier Allocation Registry section 3.3, RMS-2): NERIS submission sweep. Claims due
 				// submissions with a lease, talks to the destination outside any transaction, no-op while NerisConfig.Enabled is off.
 				_logger.Log(LogLevel.Information, "Scheduling Records Submission");

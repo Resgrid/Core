@@ -27,6 +27,11 @@
     ViewData["Title"] = o.Number + " — " + o.Title;
     ViewData["CanWrite"] = d.CanWrite;
 
+    // Labor, activity and reporter rows carry user ids; show the member's name when the
+    // choice list still knows them, and fall back to the id for someone who has since left.
+    string UserName(string userId) => Model.Choices.Users.FirstOrDefault(x => x.Id == userId)?.Name ?? userId;
+    string RoleName(int? roleId) => Model.Choices.Roles.FirstOrDefault(x => x.Id == roleId?.ToString())?.Name ?? roleId?.ToString();
+
     var assignedTo = Model.Choices.Users.FirstOrDefault(x => x.Id == o.AssignedToUserId)?.Name
         ?? Model.Choices.Roles.FirstOrDefault(x => x.Id == o.AssignedToRoleId?.ToString())?.Name
         ?? localizer["None"].Value;
@@ -104,7 +109,7 @@
 
                 <dl class="dl-horizontal">
                     <dt>@localizer["LocationText"]</dt><dd>@c.LocationText</dd>
-                    <dt>@localizer["ReportedBy"]</dt><dd>@d.ReportedBy</dd>
+                    <dt>@localizer["ReportedBy"]</dt><dd>@UserName(d.ReportedBy)</dd>
                     <dt>@localizer["AssignedTo"]</dt><dd>@assignedTo</dd>
                     <dt>@localizer["Costs"]</dt><dd>@localizer["EstimatedCost"]: @c.EstimatedCost @c.Currency &middot; @localizer["ApprovedCost"]: @c.ApprovedCost &middot; @localizer["CostCenter"]: @c.CostCenter</dd>
                     <dt>@localizer["VendorDetails"]</dt><dd>@c.VendorDetails</dd>
@@ -141,7 +146,7 @@
                             @if (d.ClosedOn.HasValue)
                             {
                                 <p class="text-muted">@localizer["VerificationEvidence"]: @c.VerificationEvidence</p>
-                                <p class="text-muted">@localizer["VerifiedBy"]: @d.VerifiedBy &middot; @d.ClosedOn?.ToString("u")</p>
+                                <p class="text-muted">@localizer["VerifiedBy"]: @UserName(d.VerifiedBy) &middot; @d.ClosedOn?.ToString("u")</p>
                             }
                         </div>
                     </div>
@@ -173,7 +178,7 @@
                                 @foreach (var l in d.Labor)
                                 {
                                     <tr>
-                                        <td>@l.UserId</td>
+                                        <td>@UserName(l.UserId)</td>
                                         <td>@l.WorkDate.ToString("d")</td>
                                         <td class="text-right">@l.Content.Hours</td>
                                         <td class="text-right">@l.Content.RatePerHour @c.Currency</td>
@@ -315,7 +320,7 @@
                                             <span class="label @StatusPill((WorkOrderStatus)a.NewStatus.Value)">@localizer["Status" + (WorkOrderStatus)a.NewStatus.Value]</span>
                                         }
                                     </td>
-                                    <td>@a.UserId</td>
+                                    <td>@UserName(a.UserId)</td>
                                     <td>
                                         @if (!string.IsNullOrEmpty(a.Note))
                                         {
@@ -323,7 +328,7 @@
                                         }
                                         @if (a.AssignedToUserId != null || a.AssignedToRoleId.HasValue)
                                         {
-                                            <small class="text-muted rgw-sub">@localizer["AssignedTo"]: @(a.AssignedToUserId ?? a.AssignedToRoleId.ToString())</small>
+                                            <small class="text-muted rgw-sub">@localizer["AssignedTo"]: @(a.AssignedToUserId != null ? UserName(a.AssignedToUserId) : RoleName(a.AssignedToRoleId))</small>
                                         }
                                         @if (a.RevisedDueOn.HasValue)
                                         {

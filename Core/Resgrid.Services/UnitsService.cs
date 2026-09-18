@@ -8,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -40,6 +41,8 @@ namespace Resgrid.Services
 		// Lazy: the Records cutover guard (RMS plan section 4.1) is consulted only on a legacy UnitLog write.
 		private readonly Lazy<IRecordsCutoverService> _recordsCutoverService;
 
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
+
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
@@ -47,7 +50,7 @@ namespace Resgrid.Services
 			IUnitLocationsDocRepository unitLocationsDocRepository, Lazy<IUnitLocationsMongoRepository> unitLocationsMongoRepository,
 			IUnitActiveRolesRepository unitActiveRolesRepository,
 			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService,
-			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService, IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null)
+			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService, IInventoryStore inventoryStore = null, Resgrid.Model.Repositories.Queries.IUnitOfWork inventoryUnitOfWork = null, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_recordsCutoverService = recordsCutoverService;
 			if ((inventoryStore == null) != (inventoryUnitOfWork == null))
@@ -71,6 +74,7 @@ namespace Resgrid.Services
 			_limitsService = limitsService;
 			_personnelRolesService = personnelRolesService;
 			_protectedWriteService = protectedWriteService;
+			_searchProjections = searchProjections;
 		}
 
 		public async Task<List<Unit>> GetAllAsync()
@@ -94,6 +98,7 @@ namespace Resgrid.Services
 			// from it and a re-stationed unit is filed under the wrong group until it is rebuilt.
 			SendUnitVisibilityRefresh(saved.DepartmentId);
 
+			if (_searchProjections != null) await _searchProjections.Value.ProjectUnitAsync(saved, cancellationToken);
 			return saved;
 		}
 
@@ -211,6 +216,7 @@ namespace Resgrid.Services
 
 				await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unit.UnitId, cancellationToken);
 				await _unitsRepository.DeleteAsync(unit, cancellationToken);
+				if (_searchProjections != null) await _searchProjections.Value.RemoveAsync(unit.DepartmentId, SearchEntityTypes.Unit, unit.UnitId.ToString(), cancellationToken);
 				await _limitsService.InvalidateDepartmentsEntityLimitsCache(unit.DepartmentId);
 
 				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });

@@ -19,10 +19,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IHealthService _healthService;
+		private readonly IGlobalSearchService _globalSearch;
+		private readonly IRecordsSearchService _recordsSearch;
 
-		public HealthController(IHealthService healthService)
+		public HealthController(IHealthService healthService, IGlobalSearchService globalSearch, IRecordsSearchService recordsSearch)
 		{
 			_healthService = healthService;
+			_globalSearch = globalSearch;
+			_recordsSearch = recordsSearch;
 		}
 		#endregion Members and Constructors
 
@@ -43,6 +47,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.Data.ApiVersion = "v4";
 				result.Data.SiteId = "0";
 				result.Data.CacheOnline = _healthService.IsCacheProviderConnected();
+
+				// Unified Search plan R2.11: host state for this process. Never fails the health call.
+				try
+				{
+					result.Data.SearchEnabled = Config.SearchConfig.Enabled;
+					if (Config.SearchConfig.Enabled)
+					{
+						var global = await _globalSearch.GetHealthAsync();
+						var records = await _recordsSearch.GetHealthAsync();
+						result.Data.SearchOnline = global.Online;
+						result.Data.SearchIndexDocCount = global.DocumentCount + records.DocumentCount;
+					}
+				}
+				catch (System.Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex, "Search health could not be read.");
+					result.Data.SearchOnline = false;
+				}
 
 				var dbTime = await _healthService.GetDatabaseTimestamp();
 

@@ -84,5 +84,8 @@ namespace Resgrid.Model
 
 		/// <summary>RMS-6 records analytics: response-performance, workload, executive, accreditation and community-risk dashboards over finalized Records. Depends on Records.System. Seeded off by M0187.</summary>
 		public const string RecordsAnalytics = "Records.Analytics";
+
+		/// <summary>Unified Search: cross-entity search over the global Lucene index plus the system-functionality command palette. Requires SearchConfig.Enabled in every process. Seeded off by M0208 (registry §4F).</summary>
+		public const string SearchUnified = "Search.Unified";
 	}
 }

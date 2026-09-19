@@ -319,6 +319,10 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<RmsAccessAuditsRepository>().As<IRmsAccessAuditsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsRecordSearchProjectionsRepository>().As<IRmsRecordSearchProjectionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsSearchIndexStatesRepository>().As<IRmsSearchIndexStatesRepository>().InstancePerLifetimeScope();
+			// Unified Search (plan R4 Phase 1b/2, M0208): projections, per-index state and the single-writer publish lease.
+			builder.RegisterType<SearchProjectionsRepository>().As<ISearchProjectionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<SearchIndexStatesRepository>().As<ISearchIndexStatesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<SearchIndexLeasesRepository>().As<ISearchIndexLeasesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsRecordGroupScopesRepository>().As<IRmsRecordGroupScopesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsRecordSharesRepository>().As<IRmsRecordSharesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsLegacyStatsRepository>().As<IRmsLegacyStatsRepository>().InstancePerLifetimeScope();

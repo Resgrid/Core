@@ -9,6 +9,7 @@ using Resgrid.Model.Custom;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Model.Identity;
@@ -44,11 +45,13 @@ namespace Resgrid.Services
 		private readonly ILimitsService _limitsService;
 
 
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
+
 		public DepartmentsService(IDepartmentsRepository departmentRepository, IDepartmentMembersRepository departmentMembersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentCallEmailsRepository departmentCallEmailsRepository,
 			IDepartmentCallPruningRepository departmentCallPruningRepository, ICacheProvider cacheProvider, IUsersService usersService,
 			IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileRepository, ILimitsService limitsService,
-			IEventAggregator eventAggregator, IIdentityRepository identityRepository, IDepartmentCallPruningRepository departmentCallPruningDapperRepository)
+			IEventAggregator eventAggregator, IIdentityRepository identityRepository, IDepartmentCallPruningRepository departmentCallPruningDapperRepository, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_departmentRepository = departmentRepository;
 			_departmentMembersRepository = departmentMembersRepository;
@@ -63,6 +66,7 @@ namespace Resgrid.Services
 			_identityRepository = identityRepository;
 			_departmentCallPruningDapperRepository = departmentCallPruningDapperRepository;
 			_limitsService = limitsService;
+			_searchProjections = searchProjections;
 		}
 		#endregion Private Members and Constructors
 
@@ -341,6 +345,7 @@ namespace Resgrid.Services
 			{
 				member.IsDeleted = true;
 				await _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+				if (_searchProjections != null) await _searchProjections.Value.RemoveAsync(departmentId, SearchEntityTypes.Personnel, userIdToDelete, cancellationToken);
 
 				var member2 = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userIdToDelete);
 
@@ -719,6 +724,7 @@ namespace Resgrid.Services
 		public async Task<DepartmentMember> SaveDepartmentMemberAsync(DepartmentMember departmentMember, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(departmentMember, cancellationToken);
+			if (_searchProjections != null && saved != null && (saved.IsDeleted || !saved.IsActive)) await _searchProjections.Value.RemoveAsync(saved.DepartmentId, SearchEntityTypes.Personnel, saved.UserId, cancellationToken);
 
 			InvalidateDepartmentMemberInCache(departmentMember.UserId, departmentMember.DepartmentId);
 			InvalidateDepartmentUserInCache(departmentMember.UserId, departmentMember.User);

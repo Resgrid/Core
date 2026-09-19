@@ -308,14 +308,13 @@ namespace Resgrid.Console.Commands
 			var value = GetValue(args, "Value");
 			var reason = GetValue(args, "Reason") ?? "Set from the Resgrid Console";
 
-			try
-			{
-				await featureToggleService.SetDepartmentOverrideAsync(key, departmentId.Value, enabled, value, reason, expiresOn, userId, cancellationToken);
-			}
-			catch (InvalidOperationException)
-			{
+			// Check the flag up front rather than mapping InvalidOperationException to "not found":
+			// the service also throws that for a transaction that is already open, and a
+			// persistence failure should surface as the error it is, not as a missing flag.
+			if (await featureToggleService.GetFlagByKeyAsync(key, bypassCache: true) == null)
 				return FlagNotFound(key);
-			}
+
+			await featureToggleService.SetDepartmentOverrideAsync(key, departmentId.Value, enabled, value, reason, expiresOn, userId, cancellationToken);
 
 			Write($"Override for '{key}' on department {departmentId.Value} ({department.Name}) is now {State(enabled)}{Expiry(expiresOn)}.");
 			await WriteEvaluationAsync(key, departmentId.Value, department.Name);

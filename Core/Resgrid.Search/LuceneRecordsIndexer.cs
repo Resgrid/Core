@@ -12,17 +12,25 @@ namespace Resgrid.Search
 {
 	/// <summary>
 	/// Write side of the records index: upsert by document key, delete by key or by department, explicit commit.
-	/// Holds no state of its own; the host owns the single writer.
+	/// Holds no state of its own; the host owns the single writer. Commit and erasure publish to the object store
+	/// under the database lease when one is configured (plan R7); tests construct it without a lease repository.
 	/// </summary>
 	public class LuceneRecordsIndexer : IRecordsSearchIndexer
 	{
 		private readonly LuceneRecordsIndexHost _host;
 		private readonly IRmsSearchWriteFence _fence;
+		private readonly ISearchIndexLeasesRepository _leases;
 
 		public LuceneRecordsIndexer(LuceneRecordsIndexHost host, IRmsSearchWriteFence fence)
+			: this(host, fence, null)
+		{
+		}
+
+		public LuceneRecordsIndexer(LuceneRecordsIndexHost host, IRmsSearchWriteFence fence, ISearchIndexLeasesRepository leases)
 		{
 			_host = host ?? throw new ArgumentNullException(nameof(host));
 			_fence = fence ?? throw new ArgumentNullException(nameof(fence));
+			_leases = leases;
 		}
 
 		public async Task<int> IndexAsync(IEnumerable<RecordsSearchDocumentSource> documents, CancellationToken cancellationToken = default)
@@ -73,16 +81,13 @@ namespace Resgrid.Search
 		public Task CommitAsync(CancellationToken cancellationToken = default)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
-			_host.Write(writer => { writer.Commit(); return 0; });
-			_host.MaybeRefresh();
-			return Task.CompletedTask;
+			return SearchIndexPublishCoordinator.CommitAndPublishAsync(_host, _leases, cancellationToken);
 		}
 
 		public Task ExpungeDeletesAsync(CancellationToken cancellationToken = default)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
-			_host.ExpungeDeletes();
-			return Task.CompletedTask;
+			return SearchIndexPublishCoordinator.ExpungeAndPublishAsync(_host, _leases, cancellationToken);
 		}
 
 		public Task<int> CountDocumentsAsync(int departmentId)

@@ -21,7 +21,7 @@
         tabs.Add(("Policy", "fa-sliders", localizer["OperationsPolicy"].Value));
     }
 }
-<ul class="nav nav-tabs" role="tablist">
+<ul class="nav nav-tabs">
     @foreach (var tab in tabs)
     {
         <li class="nav-item @(current == tab.Action ? "active" : null)">

@@ -8,6 +8,7 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Repositories.DataRepository;
@@ -22,15 +23,18 @@ namespace Resgrid.Services
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUnitOfWork _unitOfWork;
 
+		private readonly Lazy<ISearchProjectionService> _searchProjections;
+
 		public DocumentsService(IDocumentRepository documentRepository, IDocumentCategoriesRepository documentCategoriesRepository,
 			IEventAggregator eventAggregator, Lazy<IProtectedWriteService> protectedWriteService,
-			IUnitOfWork unitOfWork)
+			IUnitOfWork unitOfWork, Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_protectedWriteService = protectedWriteService;
 			_documentRepository = documentRepository;
 			_documentCategoriesRepository = documentCategoriesRepository;
 			_eventAggregator = eventAggregator;
 			_unitOfWork = unitOfWork;
+			_searchProjections = searchProjections;
 		}
 
 		public async Task<List<Document>> GetAllDocumentsByDepartmentIdAsync(int departmentId)
@@ -91,7 +95,9 @@ namespace Resgrid.Services
 				if (!preSaveWrite.Success)
 					throw new InvalidOperationException($"Protected write blocked ({preSaveWrite.Reason}); document {document.DocumentId} was NOT saved.");
 
-				return await _documentRepository.SaveOrUpdateAsync(document, cancellationToken);
+				var updated = await _documentRepository.SaveOrUpdateAsync(document, cancellationToken);
+				if (_searchProjections != null) await _searchProjections.Value.ProjectDocumentAsync(updated, cancellationToken);
+				return updated;
 			}
 
 			// An INSERT cannot be enveloped first: the AAD row key IS the identity pk, and only the
@@ -132,6 +138,7 @@ namespace Resgrid.Services
 
 				_unitOfWork.CommitChanges();
 
+				if (_searchProjections != null) await _searchProjections.Value.ProjectDocumentAsync(saved, cancellationToken);
 				return saved;
 			}
 			catch (Exception ex)
@@ -161,7 +168,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteDocumentAsync(Document document, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _documentRepository.DeleteAsync(document, cancellationToken);
+			var deleted = await _documentRepository.DeleteAsync(document, cancellationToken);
+			if (deleted && document != null && _searchProjections != null) await _searchProjections.Value.RemoveAsync(document.DepartmentId, SearchEntityTypes.Document, document.DocumentId.ToString(), cancellationToken);
+			return deleted;
 		}
 
 		public async Task<DocumentCategory> SaveDocumentCategoryAsync(DocumentCategory category, CancellationToken cancellationToken = default(CancellationToken))

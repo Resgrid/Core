@@ -13,7 +13,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public partial class ChecklistsController
 	{
 		[HttpGet, Authorize(Policy = ResgridResources.Checklist_Update)]
-		public async Task<IActionResult> Schedules(string id, int page = 0) => View("Schedules", new ChecklistSchedulesView { DefinitionId = id, Schedules = await _checklists.SchedulesAsync(Actor, id, page), Page = page, CanEdit = await ChecklistsEnabledAsync() });
+		public async Task<IActionResult> Schedules(string id, int page = 0)
+		{
+			var rows = await _checklists.SchedulesAsync(Actor, id, page, includeNext: true);
+			return View("Schedules", new ChecklistSchedulesView { DefinitionId = id, Schedules = rows.Take(50).ToList(), Page = page, HasMore = rows.Count > 50, CanEdit = await ChecklistsEnabledAsync() });
+		}
 		[HttpGet, Authorize(Policy = ResgridResources.Checklist_Update)]
 		public async Task<IActionResult> EditSchedule(string id = null, string definitionId = null)
 		{

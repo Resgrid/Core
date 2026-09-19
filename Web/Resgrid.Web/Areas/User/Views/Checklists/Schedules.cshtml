@@ -63,14 +63,20 @@
                 </div>
             }
 
-            <div class="rgw-pager">
-                @if (Model.Page > 0)
-                {
-                    <a class="btn btn-default btn-sm" asp-route-id="@Model.DefinitionId" asp-route-page="@(Model.Page - 1)"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
-                }
-                <a class="btn btn-default btn-sm" asp-route-id="@Model.DefinitionId" asp-route-page="@(Model.Page + 1)">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
-                <span class="text-muted">@(Model.Page + 1)</span>
-            </div>
+            @if (Model.Page > 0 || Model.HasMore)
+            {
+                <div class="rgw-pager">
+                    @if (Model.Page > 0)
+                    {
+                        <a class="btn btn-default btn-sm" asp-route-id="@Model.DefinitionId" asp-route-page="@(Model.Page - 1)"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                    }
+                    @if (Model.HasMore)
+                    {
+                        <a class="btn btn-default btn-sm" asp-route-id="@Model.DefinitionId" asp-route-page="@(Model.Page + 1)">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                    }
+                    <span class="text-muted">@(Model.Page + 1)</span>
+                </div>
+            }
         </div>
     </div>
 </div>

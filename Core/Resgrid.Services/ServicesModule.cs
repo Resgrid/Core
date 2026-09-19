@@ -281,6 +281,12 @@ namespace Resgrid.Services
 			builder.RegisterType<Records.RecordAttachmentUploadService>().As<IRecordAttachmentUploadService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsNotificationService>().As<IRecordsNotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<Records.RecordsSearchIndexMaintenanceService>().As<IRecordsSearchIndexMaintenanceService>().InstancePerLifetimeScope();
+			// Unified Search (plan R4 Phase 1b/2, worker 70): projections written from the entity services, the global
+			// index sweep, the unified endpoint and the system-functionality catalog.
+			builder.RegisterType<Search.SearchProjectionService>().As<ISearchProjectionService>().InstancePerLifetimeScope();
+			builder.RegisterType<Search.SearchIndexMaintenanceService>().As<ISearchIndexMaintenanceService>().InstancePerLifetimeScope();
+			builder.RegisterType<Search.SystemActionsService>().As<ISystemActionsService>().InstancePerLifetimeScope();
+			builder.RegisterType<Search.UnifiedSearchService>().As<IUnifiedSearchService>().InstancePerLifetimeScope();
 			// RMS-3: worker 42 (due-state evaluation, trigger 112 + notification 32) and worker 43 (retention,
 			// legal hold, attachment purge and the Pending-attachment rescan).
 			builder.RegisterType<Records.RecordsDueStateService>().As<IRecordsDueStateService>().InstancePerLifetimeScope();

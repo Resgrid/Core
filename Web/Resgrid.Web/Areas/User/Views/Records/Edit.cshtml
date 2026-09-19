@@ -228,11 +228,11 @@
 					<div class="ibox float-e-margins">
 						<div class="ibox-title"><h5>@localizer["Participants"]</h5></div>
 						<div class="ibox-content">
-							<table class="table table-condensed"><thead><tr><th>@localizer["Participants"]</th><th>@localizer["Unit"]</th><th>Role</th></tr></thead><tbody id="record-participant-rows">
+							<table class="table table-condensed"><thead><tr><th>@localizer["Participants"]</th><th>@localizer["Unit"]</th><th>@localizer["Role"]</th></tr></thead><tbody id="record-participant-rows">
 							@for (var i = 0; i < Model.ParticipantRows.Count; i++)
 							{
 								var participant = Model.ParticipantRows[i]; var name = Model.Personnel.FirstOrDefault(p => p.Value == participant.UserId)?.Text ?? participant.UserId;
-								<tr><td><label><input type="checkbox" asp-for="ParticipantRows[i].Selected" /> Include</label><select class="form-control input-sm" asp-for="ParticipantRows[i].UserId" asp-items="Model.Personnel" aria-label="@localizer["ParticipantLabel"]"><option value="">@localizer["ParticipantChoose"]</option>
+								<tr><td><label><input type="checkbox" asp-for="ParticipantRows[i].Selected" /> @localizer["ParticipantInclude"]</label><select class="form-control input-sm" asp-for="ParticipantRows[i].UserId" asp-items="Model.Personnel" aria-label="@localizer["ParticipantLabel"]"><option value="">@localizer["ParticipantChoose"]</option>
 								@if (!string.IsNullOrWhiteSpace(participant.UserId) && Model.Personnel.All(p => p.Value != participant.UserId)) { <option value="@participant.UserId">@name</option> }
 								</select></td>
 								<td><select class="form-control input-sm" asp-for="ParticipantRows[i].UnitId" asp-items="Model.AvailableUnits"><option value="">@localizer["ParticipantNoUnit"]</option>

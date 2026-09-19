@@ -67,6 +67,10 @@ namespace Resgrid.Services.Records
 					var generation = await ComputeGenerationAsync(cutover.DepartmentId);
 					var state = await _states.GetAsync(cutover.DepartmentId, RmsSearchIndexState.RecordsIndexName);
 					var needsRebuild = state == null || state.State != (int)RmsSearchIndexBuildState.Ready || !string.Equals(state.Generation, generation, StringComparison.Ordinal);
+					// Missing-index rule (Unified Search plan R7): a fresh pod, an empty bucket after first deploy, or a wiped
+					// cache leaves the state row Ready with N documents while the local index holds none for the department.
+					if (!needsRebuild && state.DocumentCount > 0 && await _indexer.CountDocumentsAsync(cutover.DepartmentId) == 0)
+						needsRebuild = true;
 
 					if (needsRebuild)
 					{

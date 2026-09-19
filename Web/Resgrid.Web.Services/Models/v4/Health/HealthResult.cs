@@ -48,5 +48,14 @@
 		/// Can the API services talk to the cache
 		/// </summary>
 		public bool CacheOnline { get; set; }
+
+		/// <summary>Search host enabled in this process (SearchConfig.Enabled).</summary>
+		public bool SearchEnabled { get; set; }
+
+		/// <summary>A local reader is open for the global index (after a pull or a write).</summary>
+		public bool SearchOnline { get; set; }
+
+		/// <summary>Documents in this process's copy of the global and records indexes.</summary>
+		public int SearchIndexDocCount { get; set; }
 	}
 }

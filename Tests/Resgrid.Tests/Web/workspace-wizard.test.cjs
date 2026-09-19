@@ -60,6 +60,41 @@ const markup = `
     </div>
 </form>`;
 
+// A wizard inside a Bootstrap modal, with the stand in for jQuery's delegated event binding
+// that the script uses to hear shown.bs.modal, and the workspace stylesheet rules that hide
+// and show the modal message.
+const modalMarkup = `
+<style>
+.rgw-modal .rgw-modal-message { display: none; }
+.rgw-modal .rgw-modal-message.rgw-visible { display: block; }
+</style>
+<script id="workspace-settings" type="application/json">{"required":"Fill in the highlighted fields."}</script>
+<script>
+window.jQuery = function (root) {
+    return { on: function (name, selector, handler) {
+        root.addEventListener(name, function (event) {
+            var host = event.target.closest(selector);
+            if (host) { handler.call(host, event); }
+        });
+    } };
+};
+</script>
+<div id="dialog" class="modal rgw-modal"><div class="modal-content"><div class="modal-body">
+    <div class="alert rgw-modal-message" role="status"></div>
+    <form class="rgw-wizard" method="post">
+        <ol class="rgw-steps"></ol>
+        <div class="rgw-step" data-title="What">
+            <div class="form-group"><label for="what">What</label><input id="what" name="What" required /></div>
+        </div>
+        <div class="rgw-step" data-title="Review"><dl class="rgw-review"></dl></div>
+        <div class="rgw-wizard-actions">
+            <button type="button" class="btn rgw-step-prev">Back</button>
+            <button type="button" class="btn rgw-step-next">Continue</button>
+            <button type="submit" class="btn rgw-step-submit">Save</button>
+        </div>
+    </form>
+</div></div></div>`;
+
 (async () => {
     const browser = await chromium.launch(require('./browser-launch.cjs').launchOptions());
     try {
@@ -139,7 +174,44 @@ const markup = `
         });
 
         assert.equal(result, 'ok');
-        console.log('Workspace wizard step navigation, review and submit guard passed.');
+
+        // Reopening a modal wizard starts it clean: the error the last attempt left on a step is
+        // gone, and the modal's message is hidden in a way notify() can undo by adding .rgw-visible
+        // (an inline display:none would outrank that class and swallow every later message).
+        const modalPage = await browser.newPage();
+        await modalPage.setContent(modalMarkup);
+        await modalPage.addScriptTag({ content: script });
+        const modalResult = await modalPage.evaluate(() => {
+            function check(condition, message) { if (!condition) throw new Error(message); }
+
+            const modal = document.getElementById('dialog');
+            const form = modal.querySelector('form');
+            const steps = Array.from(form.querySelectorAll('.rgw-step'));
+            const message = modal.querySelector('.rgw-modal-message');
+
+            form.querySelector('.rgw-step-next').click();
+            check(!steps[0].hidden && steps[0].querySelector('.rgw-step-error').hidden === false, 'The incomplete step did not report an error.');
+
+            message.textContent = 'Saved';
+            message.className = 'alert rgw-modal-message rgw-visible alert-info';
+            message.hidden = false;
+
+            modal.dispatchEvent(new Event('shown.bs.modal', { bubbles: true }));
+
+            check(!steps[0].hidden, 'Reopening did not return to the first step.');
+            check(steps[0].querySelector('.rgw-step-error').hidden === true, 'Reopening left the previous error on the step.');
+            check(!form.querySelector('.rgw-invalid'), 'Reopening left a field marked invalid.');
+            check(message.hidden === true && !message.classList.contains('rgw-visible'), 'Reopening did not hide the previous message.');
+            check(getComputedStyle(message).display === 'none', 'The previous message was still visible after reopening.');
+
+            message.className = 'alert rgw-modal-message rgw-visible alert-danger';
+            message.hidden = false;
+            check(getComputedStyle(message).display === 'block', 'A message shown after reopening stayed hidden.');
+            return 'ok';
+        });
+
+        assert.equal(modalResult, 'ok');
+        console.log('Workspace wizard step navigation, review, submit guard and modal reopen passed.');
     } finally {
         await browser.close();
     }

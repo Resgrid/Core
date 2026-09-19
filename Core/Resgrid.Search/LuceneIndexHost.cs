@@ -28,6 +28,7 @@ namespace Resgrid.Search
 	{
 		private const string ManifestFileName = "manifest.json";
 		private const string LockFileName = "write.lock";
+		private static readonly TimeSpan OrphanedTempAge = TimeSpan.FromHours(1);
 
 		private readonly object _sync = new object();
 		private readonly object _writerSyncGate = new object();
@@ -426,7 +427,10 @@ namespace Resgrid.Search
 			foreach (var existing in System.IO.Directory.EnumerateFiles(localPath))
 			{
 				var name = Path.GetFileName(existing);
-				if (wanted.ContainsKey(name) || string.Equals(name, LockFileName, StringComparison.OrdinalIgnoreCase) || name.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase))
+				if (wanted.ContainsKey(name) || string.Equals(name, LockFileName, StringComparison.OrdinalIgnoreCase))
+					continue;
+				// A .tmp still being written belongs to a concurrent pull; one left behind by a crashed process is garbage.
+				if (name.EndsWith(".tmp", StringComparison.OrdinalIgnoreCase) && DateTime.UtcNow - SafeLastWriteUtc(existing) < OrphanedTempAge)
 					continue;
 				try { File.Delete(existing); }
 				catch (Exception ex) { Logging.LogException(ex, $"Search index '{IndexName}': stale local file {name} could not be removed yet."); }
@@ -457,12 +461,21 @@ namespace Resgrid.Search
 			if (File.Exists(target) && new FileInfo(target).Length == length && !name.StartsWith("segments_", StringComparison.Ordinal))
 				return;
 
-			var tmp = target + ".tmp";
-			try { if (File.Exists(tmp)) File.Delete(tmp); } catch { }
-			await _store.DownloadFileAsync(IndexName, name, tmp, cancellationToken);
-			if (File.Exists(target))
-				File.Delete(target);
-			File.Move(tmp, target);
+			// PullAsync, the writer startup pull and the background pull share no gate, so two pulls can reach the same
+			// target: a per-download temp name keeps them from truncating each other's partial file, and the overwriting
+			// move publishes whichever finished last atomically.
+			var tmp = $"{target}.{Guid.NewGuid():N}.tmp";
+			try
+			{
+				await _store.DownloadFileAsync(IndexName, name, tmp, cancellationToken);
+				File.Move(tmp, target, overwrite: true);
+			}
+			catch
+			{
+				try { if (File.Exists(tmp)) File.Delete(tmp); }
+				catch (Exception cleanup) { Logging.LogException(cleanup, $"Search index '{IndexName}': partial download {Path.GetFileName(tmp)} could not be removed."); }
+				throw;
+			}
 		}
 
 		private void WipeLocalFiles(bool keepOpenHandles = false)
@@ -487,6 +500,11 @@ namespace Resgrid.Search
 		private static long SafeLength(string path)
 		{
 			try { return new FileInfo(path).Length; } catch { return 0; }
+		}
+
+		private static DateTime SafeLastWriteUtc(string path)
+		{
+			try { return File.GetLastWriteTimeUtc(path); } catch { return DateTime.UtcNow; }
 		}
 
 		private Directory OpenConfiguredDirectory()

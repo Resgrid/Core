@@ -1,0 +1,113 @@
+@model Resgrid.Web.Areas.User.Models.Invoicing.BillingSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["BillingSettings"];
+    ViewData["Tab"] = "Settings";
+    ViewData["Title"] = localizer["BillingSettings"].Value;
+    ViewData["Subtitle"] = localizer["BillingSettingsIntro"].Value;
+    var identity = Model.Identity;
+    var write = Model.CanWrite && Model.CanManage;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @if (Model.SaveSuccess)
+    {
+        <div class="alert alert-success">@localizer["Saved"]</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-danger">@Model.Message</div>
+    }
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["BillingSettings"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+
+            <ul class="nav nav-pills m-b-md">
+                <li class="active"><a data-toggle="tab" href="#identity">@localizer["BillingIdentity"]</a></li>
+                <li><a data-toggle="tab" href="#online">@localizer["OnlinePayments"]</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="identity">
+                    <p class="text-muted">@localizer["BillingIdentityIntro"]</p>
+                    <form method="post" asp-controller="Invoicing" asp-action="Settings" asp-route-area="User" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="LegalBusinessName">@localizer["LegalBusinessName"]</label>
+                            <div class="col-sm-6"><input type="text" class="form-control" id="LegalBusinessName" name="LegalBusinessName" value="@identity.LegalBusinessName" maxlength="250" disabled="@(!write)" /></div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <h4>@localizer["RemitTo"]</h4>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Address1">@localizer["Address"]</label>
+                            <div class="col-sm-6"><input type="text" class="form-control" id="Address1" name="Address1" value="@Model.RemitTo.Address1" maxlength="250" disabled="@(!write)" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="City">@localizer["City"]</label>
+                            <div class="col-sm-3"><input type="text" class="form-control" id="City" name="City" value="@Model.RemitTo.City" maxlength="100" disabled="@(!write)" /></div>
+                            <label class="col-sm-1 control-label" for="State">@localizer["State"]</label>
+                            <div class="col-sm-2"><input type="text" class="form-control" id="State" name="State" value="@Model.RemitTo.State" maxlength="100" disabled="@(!write)" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="PostalCode">@localizer["PostalCode"]</label>
+                            <div class="col-sm-2"><input type="text" class="form-control" id="PostalCode" name="PostalCode" value="@Model.RemitTo.PostalCode" maxlength="20" disabled="@(!write)" /></div>
+                            <label class="col-sm-1 control-label" for="Country">@localizer["Country"]</label>
+                            <div class="col-sm-3"><input type="text" class="form-control" id="Country" name="Country" value="@Model.RemitTo.Country" maxlength="100" disabled="@(!write)" /></div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <h4>@localizer["Registrations"]</h4>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="TaxRegistrationNumber">@localizer["TaxRegistrationNumber"]</label>
+                            <div class="col-sm-3"><input type="text" class="form-control" id="TaxRegistrationNumber" name="TaxRegistrationNumber" value="@identity.TaxRegistrationNumber" maxlength="100" disabled="@(!write)" /></div>
+                            <label class="col-sm-2 control-label" for="SecondaryTaxRegistrationNumber">@localizer["SecondaryTaxRegistrationNumber"]</label>
+                            <div class="col-sm-3"><input type="text" class="form-control" id="SecondaryTaxRegistrationNumber" name="SecondaryTaxRegistrationNumber" value="@identity.SecondaryTaxRegistrationNumber" maxlength="100" disabled="@(!write)" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="SamUei">@localizer["SamUei"]</label>
+                            <div class="col-sm-3"><input type="text" class="form-control" id="SamUei" name="SamUei" value="@identity.SamUei" maxlength="50" disabled="@(!write)" /></div>
+                            <label class="col-sm-2 control-label" for="CageCode">@localizer["CageCode"]</label>
+                            <div class="col-sm-3"><input type="text" class="form-control" id="CageCode" name="CageCode" value="@identity.CageCode" maxlength="50" disabled="@(!write)" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="WorkersCompAccountNumber">@localizer["WorkersCompAccountNumber"]</label>
+                            <div class="col-sm-3"><input type="text" class="form-control" id="WorkersCompAccountNumber" name="WorkersCompAccountNumber" value="@identity.WorkersCompAccountNumber" maxlength="100" disabled="@(!write)" /></div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="InvoiceFooterText">@localizer["InvoiceFooterText"]</label>
+                            <div class="col-sm-9"><textarea class="form-control" id="InvoiceFooterText" name="InvoiceFooterText" rows="3" maxlength="2000" disabled="@(!write)">@identity.InvoiceFooterText</textarea>
+                                <span class="help-block m-b-none">@localizer["InvoiceFooterHint"]</span></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="PayLinkExpiryDays">@localizer["PayLinkExpiryDays"]</label>
+                            <div class="col-sm-2"><input type="number" min="1" max="365" class="form-control" id="PayLinkExpiryDays" name="PayLinkExpiryDays" value="@identity.PayLinkExpiryDays" disabled="@(!write)" /></div>
+                            <div class="col-sm-4">
+                                <div class="checkbox"><label><input type="checkbox" name="ShowPayOnlineOnDocuments" value="true" checked="@identity.ShowPayOnlineOnDocuments" disabled="@(!write)" /> @localizer["ShowPayOnlineOnDocuments"]</label></div>
+                            </div>
+                        </div>
+                        @if (write)
+                        {
+                            <div class="form-group">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> @commonLocalizer["Save"]</button>
+                                </div>
+                            </div>
+                        }
+                    </form>
+                </div>
+                <div class="tab-pane" id="online">
+                    <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["OnlinePaymentsComingSoon"]</div>
+                    <dl class="dl-horizontal">
+                        <dt>@localizer["OnlinePaymentsCluster"]</dt>
+                        <dd>@(Model.OnlinePaymentsClusterEnabled ? localizer["Available"] : localizer["NotAvailableInRegion"])</dd>
+                        <dt>@localizer["OnlinePaymentsFlag"]</dt>
+                        <dd>@(Model.OnlinePaymentsFlagEnabled ? localizer["Enabled"] : localizer["Disabled"])</dd>
+                    </dl>
+                    <p class="text-muted">@localizer["OnlinePaymentsStripeNote"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -256,6 +256,10 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.RecordRestricted_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordRestricted, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.WorkOrder_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.WorkOrder_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WorkOrder, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Invoicing_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Invoicing, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Invoicing_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Invoicing, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Invoicing_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Invoicing, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Invoicing_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Invoicing, ResgridClaimTypes.Actions.Delete));
 				options.AddPolicy(ResgridResources.Checklist_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.ChecklistResults_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.RecordDefinition_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Update));

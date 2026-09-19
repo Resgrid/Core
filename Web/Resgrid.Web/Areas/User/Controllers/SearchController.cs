@@ -54,7 +54,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			catch (System.Exception ex)
 			{
-				Logging.LogException(ex, "Unified search failed for the command palette; returning system actions only.");
+				// The query text stays out of the log: it can name protected people, addresses and record numbers.
+				Logging.LogException(ex, $"Unified search failed for the command palette (department {DepartmentId}, user {UserId}, prefix query of {text.Length} chars); returning system actions only.");
 			}
 
 			List<SystemActionHit> actions;
@@ -118,6 +119,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						case SystemActionModules.Training: return SettingsHelper.IsTrainingEnabled();
 						case SystemActionModules.Inventory: return SettingsHelper.IsInventoryEnabled();
 						case SystemActionModules.Maintenance: return SettingsHelper.IsMaintenanceEnabled();
+						case SystemActionModules.BusinessOperations: return SettingsHelper.IsBusinessOperationsEnabled();
 						default: return true;
 					}
 				}

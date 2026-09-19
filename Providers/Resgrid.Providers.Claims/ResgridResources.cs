@@ -196,6 +196,10 @@ namespace Resgrid.Providers.Claims
 		public const string RecordRestricted_View = "RecordRestricted_View";
 		public const string WorkOrder_Update = "WorkOrder_Update";
 		public const string WorkOrder_View = "WorkOrder_View";
+		public const string Invoicing_View = "Invoicing_View";
+		public const string Invoicing_Create = "Invoicing_Create";
+		public const string Invoicing_Update = "Invoicing_Update";
+		public const string Invoicing_Delete = "Invoicing_Delete";
 		public const string Checklist_Update = "Checklist_Update";
 		public const string ChecklistResults_View = "ChecklistResults_View";
 		public const string RecordDefinition_Update = "RecordDefinition_Update";

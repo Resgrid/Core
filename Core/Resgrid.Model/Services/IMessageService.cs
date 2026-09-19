@@ -43,6 +43,14 @@ namespace Resgrid.Model.Services
 		Task<List<Message>> GetSentMessagesByUserIdAsync(string userId);
 
 		/// <summary>
+		/// Every non-deleted message a department owns, recipients attached, in one query. Backs the search
+		/// projection rebuild; not cached.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;List&lt;Message&gt;&gt;.</returns>
+		Task<List<Message>> GetAllMessagesForDepartmentAsync(int departmentId);
+
+		/// <summary>
 		/// Gets the unread messages count by user identifier asynchronous.
 		/// </summary>
 		/// <param name="userId">The user identifier.</param>

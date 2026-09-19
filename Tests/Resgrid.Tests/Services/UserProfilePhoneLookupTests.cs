@@ -26,7 +26,7 @@ namespace Resgrid.Tests.Services
 		{
 			_repository = new Mock<IUserProfilesRepository>();
 			_service = new UserProfileService(_repository.Object, new Mock<ICacheProvider>().Object,
-				new Mock<IChatbotIdentityRepository>().Object);
+				new Mock<IChatbotIdentityRepository>().Object, new Mock<IDepartmentMembersRepository>().Object);
 		}
 
 		[TestCase("+12015550123", "12015550123")]

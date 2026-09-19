@@ -450,6 +450,18 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> SendInvoiceAsync(EmailNotification email, int departmentId, string invoiceUrl, string payUrl, string invoiceLabel)
+		{
+			if (email == null || string.IsNullOrWhiteSpace(email.To) || email.AttachmentData == null)
+				return false;
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			var branding = await GetEmailBrandingAsync(departmentId);
+			return await _emailProvider.SendInvoiceMail(email.To, email.Subject, email.Body ?? string.Empty, DateTime.UtcNow.ToString("G") + " UTC",
+				invoiceLabel, email.AttachmentName, email.AttachmentData, invoiceUrl, payUrl, branding);
+		}
+
 		public async Task<bool> SendReportDeliveryAsync(EmailNotification email, int departmentId, string reportUrl, string reportName)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))

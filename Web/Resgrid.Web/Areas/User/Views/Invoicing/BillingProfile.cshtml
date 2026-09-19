@@ -1,0 +1,203 @@
+@model Resgrid.Web.Areas.User.Models.Invoicing.BillingProfileView
+@using Resgrid.Model.Invoicing
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    var contactName = Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(Model.Contact.Name);
+    ViewBag.Title = "Resgrid | " + localizer["BillingProfile"];
+    ViewData["Tab"] = "Index";
+    ViewData["Title"] = localizer["BillingProfile"].Value + ": " + contactName;
+    ViewData["Subtitle"] = localizer["BillingProfileIntro"].Value;
+    var profile = Model.Profile;
+    var isNew = string.IsNullOrWhiteSpace(profile.CustomerBillingProfileId);
+    var write = Model.CanWrite && Model.CanManage;
+    var components = Model.TaxComponents.Take(3).ToList();
+    while (components.Count < 3) { components.Add(new TaxComponent()); }
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @if (Model.SaveSuccess)
+    {
+        <div class="alert alert-success">@localizer["Saved"]</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-danger">@Model.Message</div>
+    }
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["BillingProfile"] &mdash; @contactName</h5>
+                    <div class="ibox-tools">
+                        <a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-xs btn-default"><i class="fa fa-address-book"></i> @localizer["OpenContact"]</a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    @if (isNew)
+                    {
+                        <div class="alert alert-info">@localizer["NoBillingProfileYet"]</div>
+                    }
+                    <form method="post" asp-controller="Invoicing" asp-action="BillingProfile" asp-route-area="User" class="form-horizontal" id="profileForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="ContactId" value="@Model.Contact.ContactId" />
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="BillingEmail">@localizer["BillingEmail"]</label>
+                            <div class="col-sm-6"><input type="email" class="form-control" id="BillingEmail" name="BillingEmail" value="@profile.BillingEmail" maxlength="250" disabled="@(!write)" />
+                                <span class="help-block m-b-none">@localizer["BillingEmailHint"]</span></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="TermsNetDays">@localizer["TermsNetDays"]</label>
+                            <div class="col-sm-2"><input type="number" min="0" max="365" class="form-control" id="TermsNetDays" name="TermsNetDays" value="@profile.TermsNetDays" disabled="@(!write)" /></div>
+                            <label class="col-sm-2 control-label" for="DefaultDiscountPercent">@localizer["DefaultDiscountPercent"]</label>
+                            <div class="col-sm-2"><input type="number" step="0.01" min="0" max="100" class="form-control" id="DefaultDiscountPercent" name="DefaultDiscountPercent" value="@(profile.DefaultDiscountPercent?.ToString(System.Globalization.CultureInfo.InvariantCulture))" disabled="@(!write)" /></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="DefaultRateCardId">@localizer["DefaultRateCard"]</label>
+                            <div class="col-sm-6">
+                                <select class="form-control" id="DefaultRateCardId" name="DefaultRateCardId" disabled="@(!write)">
+                                    <option value="">@localizer["UseDepartmentDefault"]</option>
+                                    @foreach (var card in Model.RateCards)
+                                    {
+                                        <option value="@card.RateCardId" selected="@(card.RateCardId == profile.DefaultRateCardId)">@card.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <div class="checkbox"><label><input type="checkbox" name="PurchaseOrderRequired" value="true" checked="@profile.PurchaseOrderRequired" disabled="@(!write)" /> @localizer["PurchaseOrderRequired"]</label></div>
+                                <div class="checkbox"><label><input type="checkbox" name="Active" value="true" checked="@profile.Active" disabled="@(!write)" /> @localizer["ActiveProfile"]</label></div>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <h4>@localizer["BillingAddress"]</h4>
+                        <div class="form-group">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <div class="checkbox"><label><input type="checkbox" id="UseContactMailingAddress" name="UseContactMailingAddress" value="true" checked="@profile.UseContactMailingAddress" disabled="@(!write)" /> @localizer["UseContactMailingAddress"]</label></div>
+                            </div>
+                        </div>
+                        <div id="billingAddress">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="Address1">@localizer["Address"]</label>
+                                <div class="col-sm-6"><input type="text" class="form-control" id="Address1" name="Address1" value="@Model.BillingAddress.Address1" maxlength="250" disabled="@(!write)" /></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="City">@localizer["City"]</label>
+                                <div class="col-sm-3"><input type="text" class="form-control" id="City" name="City" value="@Model.BillingAddress.City" maxlength="100" disabled="@(!write)" /></div>
+                                <label class="col-sm-1 control-label" for="State">@localizer["State"]</label>
+                                <div class="col-sm-2"><input type="text" class="form-control" id="State" name="State" value="@Model.BillingAddress.State" maxlength="100" disabled="@(!write)" /></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="PostalCode">@localizer["PostalCode"]</label>
+                                <div class="col-sm-2"><input type="text" class="form-control" id="PostalCode" name="PostalCode" value="@Model.BillingAddress.PostalCode" maxlength="20" disabled="@(!write)" /></div>
+                                <label class="col-sm-1 control-label" for="Country">@localizer["Country"]</label>
+                                <div class="col-sm-3"><input type="text" class="form-control" id="Country" name="Country" value="@Model.BillingAddress.Country" maxlength="100" disabled="@(!write)" /></div>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <h4>@localizer["Tax"]</h4>
+                        <div class="form-group">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <div class="checkbox"><label><input type="checkbox" id="TaxExempt" name="TaxExempt" value="true" checked="@profile.TaxExempt" disabled="@(!write)" /> @localizer["TaxExempt"]</label></div>
+                            </div>
+                        </div>
+                        <div id="taxFields">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="TaxRate">@localizer["TaxRate"]</label>
+                                <div class="col-sm-2"><input type="number" step="0.001" min="0" max="100" class="form-control" id="TaxRate" name="TaxRate" value="@(profile.TaxRate?.ToString(System.Globalization.CultureInfo.InvariantCulture))" disabled="@(!write)" /></div>
+                                <div class="col-sm-6"><span class="help-block m-b-none">@localizer["TaxRateHint"]</span></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@localizer["TaxComponents"]</label>
+                                <div class="col-sm-9">
+                                    <table class="table table-condensed m-b-xs">
+                                        <thead><tr><th>@localizer["Name"]</th><th>@localizer["RatePercent"]</th><th>@localizer["RegistrationNumber"]</th></tr></thead>
+                                        <tbody>
+                                            @for (var i = 0; i < 3; i++)
+                                            {
+                                                <tr>
+                                                    <td><input type="text" class="form-control input-sm" name="TaxName" value="@components[i].Name" maxlength="100" disabled="@(!write)" /></td>
+                                                    <td><input type="number" step="0.001" min="0" max="100" class="form-control input-sm" name="TaxPercent" value="@(string.IsNullOrWhiteSpace(components[i].Name) ? null : components[i].RatePercent.ToString(System.Globalization.CultureInfo.InvariantCulture))" disabled="@(!write)" /></td>
+                                                    <td><input type="text" class="form-control input-sm" name="TaxRegistration" value="@components[i].RegistrationNumber" maxlength="100" disabled="@(!write)" /></td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                    <span class="help-block m-b-none">@localizer["TaxComponentsHint"]</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" for="Notes">@localizer["Notes"]</label>
+                            <div class="col-sm-9"><textarea class="form-control" id="Notes" name="Notes" rows="3" maxlength="4000" disabled="@(!write)">@profile.Notes</textarea></div>
+                        </div>
+                        @if (write)
+                        {
+                            <div class="form-group">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <a asp-controller="Contacts" asp-action="View" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-white">@commonLocalizer["Cancel"]</a>
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> @commonLocalizer["Save"]</button>
+                                </div>
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["Invoices"]</h5>
+                    @if (write && !isNew && profile.Active)
+                    {
+                        <div class="ibox-tools"><a asp-controller="Invoicing" asp-action="New" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> @localizer["NewInvoice"]</a></div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    @if (Model.Invoices.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoInvoices"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-condensed table-hover m-b-none">
+                            <tbody>
+                                @foreach (var invoice in Model.Invoices.Take(25))
+                                {
+                                    <tr>
+                                        <td><a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@invoice.InvoiceId">#@invoice.InvoiceNumber</a></td>
+                                        <td>@await Html.PartialAsync("_Status", invoice.Status)</td>
+                                        <td class="text-right">@invoice.Balance.ToString("N2") @invoice.Currency</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (Model.Invoices.Count > 25)
+                        {
+                            <a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId">@localizer["AllInvoicesForCustomer"]</a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            function refresh() {
+                $('#billingAddress').toggle(!$('#UseContactMailingAddress').is(':checked'));
+                $('#taxFields').toggle(!$('#TaxExempt').is(':checked'));
+            }
+            $('#UseContactMailingAddress, #TaxExempt').on('change', refresh);
+            refresh();
+        });
+    </script>
+}

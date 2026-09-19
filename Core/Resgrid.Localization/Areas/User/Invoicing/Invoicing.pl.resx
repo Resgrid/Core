@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Invoicing" xml:space="preserve"><value>Fakturowanie</value></data>
+  <data name="ManageInvoicing" xml:space="preserve"><value>Zarządzaj fakturowaniem</value></data>
+  <data name="ViewInvoicing" xml:space="preserve"><value>Przeglądaj fakturowanie</value></data>
+  <data name="ManageInvoicingNote" xml:space="preserve"><value>Tworzenie, edycja, wysyłanie i anulowanie faktur, rejestrowanie płatności oraz zarządzanie cennikami i profilami rozliczeniowymi.</value></data>
+  <data name="ViewInvoicingNote" xml:space="preserve"><value>Przeglądanie faktur, wiekowania należności i plików PDF faktur.</value></data>
+  <data name="InvoiceCreated" xml:space="preserve"><value>Faktura utworzona</value></data>
+  <data name="InvoiceSent" xml:space="preserve"><value>Faktura wysłana</value></data>
+  <data name="InvoicePaymentRecorded" xml:space="preserve"><value>Płatność za fakturę zarejestrowana</value></data>
+  <data name="InvoicePaid" xml:space="preserve"><value>Faktura opłacona</value></data>
+  <data name="InvoiceOverdue" xml:space="preserve"><value>Faktura przeterminowana</value></data>
+  <data name="InvoiceVoided" xml:space="preserve"><value>Faktura anulowana</value></data>
+  <data name="InvoicePaymentRefunded" xml:space="preserve"><value>Płatność za fakturę zwrócona</value></data>
+  <data name="InvoicePaymentDisputed" xml:space="preserve"><value>Płatność za fakturę zakwestionowana</value></data>
+  <data name="Billing" xml:space="preserve"><value>Rozliczenia</value></data>
+  <data name="Invoices" xml:space="preserve"><value>Faktury</value></data>
+  <data name="InvoicesLower" xml:space="preserve"><value>faktur</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Faktura</value></data>
+  <data name="InvoicingIntro" xml:space="preserve"><value>Faktury klientów, płatności i należności.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Dodatek Business Operations nie jest aktywny dla tego oddziału. Istniejące faktury pozostają do odczytu; tworzenie lub zmiany wymagają aktywnego dodatku.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Fakturowanie, cenniki i profile rozliczeniowe. Strony wymagają też dodatku Business Operations.</value></data>
+  <data name="RateCards" xml:space="preserve"><value>Cenniki</value></data>
+  <data name="RateCard" xml:space="preserve"><value>Cennik</value></data>
+  <data name="RateCardsIntro" xml:space="preserve"><value>Stawki stosowane przy dodawaniu zgłoszeń do faktury.</value></data>
+  <data name="HelpRateCards" xml:space="preserve"><value>Cennik zawiera stawki: godzinowe dla jednostek lub personelu, ryczałt za zgłoszenie, opłaty stałe, kilometry i materiały. Oznacz jeden cennik jako domyślny; profil rozliczeniowy może wskazać inny.</value></data>
+  <data name="NewRateCard" xml:space="preserve"><value>Nowy cennik</value></data>
+  <data name="NoRateCards" xml:space="preserve"><value>Brak cenników.</value></data>
+  <data name="RateCardItems" xml:space="preserve"><value>Pozycje cennika</value></data>
+  <data name="RateCardItem" xml:space="preserve"><value>Pozycja cennika</value></data>
+  <data name="NewItem" xml:space="preserve"><value>Nowa pozycja</value></data>
+  <data name="NoRateCardItems" xml:space="preserve"><value>Ten cennik nie ma jeszcze pozycji.</value></data>
+  <data name="SaveCardBeforeItems" xml:space="preserve"><value>Zapisz cennik przed dodaniem pozycji.</value></data>
+  <data name="DefaultRateCardHint" xml:space="preserve"><value>Domyślny dla oddziału (używany, gdy klient nie ma przypiętego cennika)</value></data>
+  <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Usunąć ten cennik?</value></data>
+  <data name="DeleteItemConfirm" xml:space="preserve"><value>Usunąć tę pozycję?</value></data>
+  <data name="RateCardDeleted" xml:space="preserve"><value>Cennik usunięty.</value></data>
+  <data name="ItemType" xml:space="preserve"><value>Typ</value></data>
+  <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Godzinowo – czas jednostki na miejscu</value></data>
+  <data name="ItemTypeHourlyPersonnel" xml:space="preserve"><value>Godzinowo – czas personelu</value></data>
+  <data name="ItemTypeFlatPerCall" xml:space="preserve"><value>Ryczałt za zgłoszenie</value></data>
+  <data name="ItemTypeFixedFee" xml:space="preserve"><value>Opłata stała</value></data>
+  <data name="ItemTypeMileage" xml:space="preserve"><value>Kilometry</value></data>
+  <data name="ItemTypeMaterial" xml:space="preserve"><value>Materiał</value></data>
+  <data name="Rate" xml:space="preserve"><value>Stawka</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>Etykieta jednostki</value></data>
+  <data name="MinimumCharge" xml:space="preserve"><value>Opłata minimalna</value></data>
+  <data name="MinimumMinutes" xml:space="preserve"><value>Minimalna liczba minut</value></data>
+  <data name="RoundingMinutes" xml:space="preserve"><value>Zaokrąglaj do (minuty)</value></data>
+  <data name="Rounding" xml:space="preserve"><value>Zaokrąglanie</value></data>
+  <data name="Minimum" xml:space="preserve"><value>Min.</value></data>
+  <data name="RoundTo" xml:space="preserve"><value>zaokrąglij do</value></data>
+  <data name="UnitTypeFilter" xml:space="preserve"><value>Typ jednostki</value></data>
+  <data name="AnyUnitType" xml:space="preserve"><value>Dowolny typ jednostki</value></data>
+  <data name="ItemDescriptionHint" xml:space="preserve"><value>Drukowane w wierszu faktury; domyślnie nazwa pozycji.</value></data>
+  <data name="SortOrder" xml:space="preserve"><value>Kolejność</value></data>
+  <data name="Taxable" xml:space="preserve"><value>Opodatkowane</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktywny</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Nieaktywny</value></data>
+  <data name="Default" xml:space="preserve"><value>Domyślny</value></data>
+  <data name="Name" xml:space="preserve"><value>Nazwa</value></data>
+  <data name="Description" xml:space="preserve"><value>Opis</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edytuj</value></data>
+  <data name="Open" xml:space="preserve"><value>Otwórz</value></data>
+  <data name="Add" xml:space="preserve"><value>Dodaj</value></data>
+  <data name="Remove" xml:space="preserve"><value>Usuń</value></data>
+  <data name="All" xml:space="preserve"><value>Wszystkie</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtruj</value></data>
+  <data name="Loading" xml:space="preserve"><value>Ładowanie…</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Wersja robocza</value></data>
+  <data name="StatusSent" xml:space="preserve"><value>Wysłana</value></data>
+  <data name="StatusPartiallyPaid" xml:space="preserve"><value>Częściowo opłacona</value></data>
+  <data name="StatusPaid" xml:space="preserve"><value>Opłacona</value></data>
+  <data name="StatusOverdue" xml:space="preserve"><value>Przeterminowana</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>Anulowana</value></data>
+  <data name="Number" xml:space="preserve"><value>Numer</value></data>
+  <data name="Customer" xml:space="preserve"><value>Klient</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Wystawiono</value></data>
+  <data name="DueOn" xml:space="preserve"><value>Termin</value></data>
+  <data name="DueOnHint" xml:space="preserve"><value>Pozostaw puste, aby użyć warunków profilu: dni netto</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Wysłano</value></data>
+  <data name="VoidedOn" xml:space="preserve"><value>Anulowano</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>Data płatności</value></data>
+  <data name="Total" xml:space="preserve"><value>Razem</value></data>
+  <data name="Totals" xml:space="preserve"><value>Sumy</value></data>
+  <data name="SubTotal" xml:space="preserve"><value>Suma częściowa</value></data>
+  <data name="Discount" xml:space="preserve"><value>Rabat</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>Rabat %</value></data>
+  <data name="Tax" xml:space="preserve"><value>Podatek</value></data>
+  <data name="AmountPaid" xml:space="preserve"><value>Kwota zapłacona</value></data>
+  <data name="Balance" xml:space="preserve"><value>Saldo</value></data>
+  <data name="OutstandingBalance" xml:space="preserve"><value>Saldo należności</value></data>
+  <data name="OverdueBalance" xml:space="preserve"><value>Saldo przeterminowany</value></data>
+  <data name="NewInvoice" xml:space="preserve"><value>Nowa faktura</value></data>
+  <data name="NewInvoiceIntro" xml:space="preserve"><value>Wybierz klienta; wersja robocza pobiera warunki, rabat i cennik z profilu rozliczeniowego.</value></data>
+  <data name="SelectCustomer" xml:space="preserve"><value>Wybierz klienta…</value></data>
+  <data name="CustomersWithProfile" xml:space="preserve"><value>Klienci z profilem rozliczeniowym</value></data>
+  <data name="OtherContacts" xml:space="preserve"><value>Inne kontakty</value></data>
+  <data name="ProfileRequiredHint" xml:space="preserve"><value>Ten kontakt nie ma jeszcze profilu rozliczeniowego.</value></data>
+  <data name="SetUpBillingProfile" xml:space="preserve"><value>Skonfiguruj profil rozliczeniowy</value></data>
+  <data name="CustomerRequired" xml:space="preserve"><value>Wybierz klienta z aktywnym profilem rozliczeniowym.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Waluta</value></data>
+  <data name="CreateDraft" xml:space="preserve"><value>Utwórz wersję roboczą</value></data>
+  <data name="EditInvoiceIntro" xml:space="preserve"><value>Edytuj wersję roboczą, dodaj zgłoszenia z cennika, a następnie podejrzyj i wyślij.</value></data>
+  <data name="Notes" xml:space="preserve"><value>Uwagi</value></data>
+  <data name="Terms" xml:space="preserve"><value>Warunki</value></data>
+  <data name="LineItems" xml:space="preserve"><value>Pozycje</value></data>
+  <data name="NoLineItems" xml:space="preserve"><value>Brak pozycji.</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Ilość</value></data>
+  <data name="UnitRate" xml:space="preserve"><value>Stawka</value></data>
+  <data name="Amount" xml:space="preserve"><value>Kwota</value></data>
+  <data name="AddLine" xml:space="preserve"><value>Dodaj pozycję</value></data>
+  <data name="AddCall" xml:space="preserve"><value>Dodaj zgłoszenie</value></data>
+  <data name="AddCallIntro" xml:space="preserve"><value>Pozycje są generowane z cennika i czasu jednostek na miejscu; edytuj je przed zapisaniem.</value></data>
+  <data name="CallNumber" xml:space="preserve"><value>Nr zgłoszenia</value></data>
+  <data name="CallName" xml:space="preserve"><value>Zgłoszenie</value></data>
+  <data name="LoggedOn" xml:space="preserve"><value>Zarejestrowano</value></data>
+  <data name="NoCallsForCustomer" xml:space="preserve"><value>Brak zgłoszeń powiązanych z tym klientem.</value></data>
+  <data name="AlreadyInvoiced" xml:space="preserve"><value>Już na tej fakturze</value></data>
+  <data name="CallAdded" xml:space="preserve"><value>Dodano pozycje zgłoszenia. Zapisz fakturę, aby je zachować.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>Nie udało się wczytać danych.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Nie udało się zapisać zmiany.</value></data>
+  <data name="Saved" xml:space="preserve"><value>Zapisano.</value></data>
+  <data name="InvalidInput" xml:space="preserve"><value>Przesłane wartości są nieprawidłowe.</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>Nazwa jest wymagana.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Wymaga aktywnego dodatku Business Operations.</value></data>
+  <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Rabat i podatek są przeliczane przy zapisie.</value></data>
+  <data name="PreviewAndSend" xml:space="preserve"><value>Podgląd i wysyłka</value></data>
+  <data name="BackToInvoices" xml:space="preserve"><value>Wróć do faktur</value></data>
+  <data name="TermsNetDays" xml:space="preserve"><value>Warunki (dni netto)</value></data>
+  <data name="TaxExempt" xml:space="preserve"><value>Zwolniony z podatku</value></data>
+  <data name="TaxRate" xml:space="preserve"><value>Stawka podatku %</value></data>
+  <data name="BillingProfile" xml:space="preserve"><value>Profil rozliczeniowy</value></data>
+  <data name="BillingProfileIntro" xml:space="preserve"><value>Gdzie trafiają faktury, warunki płatności, podatki i cennik dla tego klienta.</value></data>
+  <data name="NoBillingProfileYet" xml:space="preserve"><value>Brak profilu rozliczeniowego. Zapisz go, aby zacząć fakturować ten kontakt.</value></data>
+  <data name="OpenContact" xml:space="preserve"><value>Otwórz kontakt</value></data>
+  <data name="BillingEmail" xml:space="preserve"><value>E-mail do faktur</value></data>
+  <data name="BillingEmailHint" xml:space="preserve"><value>Faktury są wysyłane na ten adres; domyślnie e-mail kontaktu.</value></data>
+  <data name="DefaultDiscountPercent" xml:space="preserve"><value>Domyślny rabat %</value></data>
+  <data name="DefaultRateCard" xml:space="preserve"><value>Cennik</value></data>
+  <data name="UseDepartmentDefault" xml:space="preserve"><value>Użyj domyślnego oddziału</value></data>
+  <data name="PurchaseOrderRequired" xml:space="preserve"><value>Numer zamówienia wymagany na fakturach</value></data>
+  <data name="ActiveProfile" xml:space="preserve"><value>Aktywny (można tworzyć nowe faktury)</value></data>
+  <data name="BillingAddress" xml:space="preserve"><value>Adres do faktur</value></data>
+  <data name="UseContactMailingAddress" xml:space="preserve"><value>Użyj adresu korespondencyjnego kontaktu</value></data>
+  <data name="Address" xml:space="preserve"><value>Adres</value></data>
+  <data name="City" xml:space="preserve"><value>Miasto</value></data>
+  <data name="State" xml:space="preserve"><value>Województwo</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Kod pocztowy</value></data>
+  <data name="Country" xml:space="preserve"><value>Kraj</value></data>
+  <data name="TaxRateHint" xml:space="preserve"><value>Stawka ryczałtowa dla pozycji opodatkowanych, gdy poniżej nie podano składników.</value></data>
+  <data name="TaxComponents" xml:space="preserve"><value>Składniki podatku</value></data>
+  <data name="TaxComponentsHint" xml:space="preserve"><value>Do trzech nazwanych podatków (np. GST i PST), każdy drukowany z własnym numerem rejestracji.</value></data>
+  <data name="RatePercent" xml:space="preserve"><value>Stawka %</value></data>
+  <data name="RegistrationNumber" xml:space="preserve"><value>Numer rejestracji</value></data>
+  <data name="AllInvoicesForCustomer" xml:space="preserve"><value>Wszystkie faktury tego klienta</value></data>
+  <data name="NoInvoices" xml:space="preserve"><value>Brak faktur.</value></data>
+  <data name="Payments" xml:space="preserve"><value>Płatności</value></data>
+  <data name="NoPayments" xml:space="preserve"><value>Brak zarejestrowanych płatności.</value></data>
+  <data name="Method" xml:space="preserve"><value>Metoda</value></data>
+  <data name="MethodCheck" xml:space="preserve"><value>Czek</value></data>
+  <data name="MethodCash" xml:space="preserve"><value>Gotówka</value></data>
+  <data name="MethodAch" xml:space="preserve"><value>Przelew / ACH</value></data>
+  <data name="MethodCardExternal" xml:space="preserve"><value>Karta (poza Resgrid)</value></data>
+  <data name="MethodOther" xml:space="preserve"><value>Inne</value></data>
+  <data name="MethodOnline" xml:space="preserve"><value>Online</value></data>
+  <data name="PaymentStatus" xml:space="preserve"><value>Status płatności</value></data>
+  <data name="PaymentStatusSucceeded" xml:space="preserve"><value>Zrealizowana</value></data>
+  <data name="PaymentStatusRefunded" xml:space="preserve"><value>Zwrócona</value></data>
+  <data name="PaymentStatusPartiallyRefunded" xml:space="preserve"><value>Częściowo zwrócona</value></data>
+  <data name="PaymentStatusDisputed" xml:space="preserve"><value>Zakwestionowana</value></data>
+  <data name="PaymentStatusDisputeLost" xml:space="preserve"><value>Spór przegrany</value></data>
+  <data name="Reference" xml:space="preserve"><value>Referencja</value></data>
+  <data name="Preview" xml:space="preserve"><value>Podgląd</value></data>
+  <data name="Actions" xml:space="preserve"><value>Akcje</value></data>
+  <data name="EditDraft" xml:space="preserve"><value>Edytuj wersję roboczą</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>Pobierz PDF</value></data>
+  <data name="SendInvoice" xml:space="preserve"><value>Wyślij fakturę</value></data>
+  <data name="ResendInvoice" xml:space="preserve"><value>Wyślij fakturę ponownie</value></data>
+  <data name="SendInvoiceIntro" xml:space="preserve"><value>Wysyła PDF faktury e-mailem do klienta i oznacza wersję roboczą jako wysłaną.</value></data>
+  <data name="SendTo" xml:space="preserve"><value>Wyślij do</value></data>
+  <data name="Send" xml:space="preserve"><value>Wyślij</value></data>
+  <data name="MarkSentWithoutEmail" xml:space="preserve"><value>Oznacz jako wysłaną (bez e-maila)</value></data>
+  <data name="MarkSentConfirm" xml:space="preserve"><value>Oznaczyć tę fakturę jako wysłaną bez wysyłania e-maila?</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>Zarejestruj płatność</value></data>
+  <data name="RecordPaymentIntro" xml:space="preserve"><value>Tylko płatności ręczne; płatności online są rejestrowane automatycznie.</value></data>
+  <data name="PaymentRecorded" xml:space="preserve"><value>Płatność zarejestrowana.</value></data>
+  <data name="VoidInvoice" xml:space="preserve"><value>Anuluj fakturę</value></data>
+  <data name="VoidInvoiceIntro" xml:space="preserve"><value>Anulowana faktura zachowuje numer i nie można jej edytować ani opłacić.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Powód</value></data>
+  <data name="InvoiceSentMessage" xml:space="preserve"><value>Faktura wysłana.</value></data>
+  <data name="InvoiceMarkedSent" xml:space="preserve"><value>Faktura oznaczona jako wysłana.</value></data>
+  <data name="InvoiceVoidedMessage" xml:space="preserve"><value>Faktura anulowana.</value></data>
+  <data name="PdfUnavailable" xml:space="preserve"><value>Nie można teraz wygenerować PDF.</value></data>
+  <data name="Aging" xml:space="preserve"><value>Wiekowanie</value></data>
+  <data name="AgingReport" xml:space="preserve"><value>Wiekowanie należności</value></data>
+  <data name="AgingIntro" xml:space="preserve"><value>Otwarte salda pogrupowane według przeterminowania.</value></data>
+  <data name="AsOf" xml:space="preserve"><value>Na dzień</value></data>
+  <data name="BucketCurrent" xml:space="preserve"><value>Bieżące</value></data>
+  <data name="DaysPastDue" xml:space="preserve"><value>dni po terminie</value></data>
+  <data name="NoOutstandingInvoices" xml:space="preserve"><value>Brak nieopłaconych faktur.</value></data>
+  <data name="BillingSettings" xml:space="preserve"><value>Ustawienia rozliczeń</value></data>
+  <data name="BillingSettingsIntro" xml:space="preserve"><value>Co faktury mówią o Twoim oddziale oraz opcje płatności online.</value></data>
+  <data name="BillingIdentity" xml:space="preserve"><value>Dane rozliczeniowe</value></data>
+  <data name="BillingIdentityIntro" xml:space="preserve"><value>Drukowane na każdej fakturze i PDF.</value></data>
+  <data name="LegalBusinessName" xml:space="preserve"><value>Nazwa prawna</value></data>
+  <data name="RemitTo" xml:space="preserve"><value>Adres do wpłat</value></data>
+  <data name="Registrations" xml:space="preserve"><value>Rejestracje</value></data>
+  <data name="TaxRegistrationNumber" xml:space="preserve"><value>Numer identyfikacji podatkowej</value></data>
+  <data name="SecondaryTaxRegistrationNumber" xml:space="preserve"><value>Dodatkowy numer podatkowy</value></data>
+  <data name="SamUei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="CageCode" xml:space="preserve"><value>Kod CAGE</value></data>
+  <data name="WorkersCompAccountNumber" xml:space="preserve"><value>Konto ubezpieczenia pracowniczego</value></data>
+  <data name="InvoiceFooterText" xml:space="preserve"><value>Stopka faktury</value></data>
+  <data name="InvoiceFooterHint" xml:space="preserve"><value>Instrukcje płatności, podziękowanie lub tekst prawny pod sumami.</value></data>
+  <data name="PayLinkExpiryDays" xml:space="preserve"><value>Ważność linku płatności (dni)</value></data>
+  <data name="ShowPayOnlineOnDocuments" xml:space="preserve"><value>Pokaż link „Zapłać online” na fakturach</value></data>
+  <data name="OnlinePayments" xml:space="preserve"><value>Płatności online</value></data>
+  <data name="OnlinePaymentsComingSoon" xml:space="preserve"><value>Pobieranie płatności online (Stripe) nie jest jeszcze dostępne. Faktury można opłacać czekiem, gotówką, przelewem lub kartą poza Resgrid i rejestrować ręcznie.</value></data>
+  <data name="OnlinePaymentsCluster" xml:space="preserve"><value>Dostępność w regionie</value></data>
+  <data name="OnlinePaymentsFlag" xml:space="preserve"><value>Flaga oddziału</value></data>
+  <data name="OnlinePaymentsStripeNote" xml:space="preserve"><value>Gdy będzie dostępne, oddział połączy własne konto Stripe; Resgrid nigdy nie przechowuje środków.</value></data>
+  <data name="Available" xml:space="preserve"><value>Dostępne</value></data>
+  <data name="NotAvailableInRegion" xml:space="preserve"><value>Niedostępne w tym regionie</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Włączone</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Wyłączone</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Dodatek Business Operations</value></data>
+  <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Miesięczny dodatek dla oddziałów, które fakturują klientów i zarządzają umowami. Tylko członek zarządzający oddziałem może go kupić lub anulować.</value></data>
+  <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Fakturowanie klientów, cenniki, płatności i wiekowanie należności</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Stawki wykonawców, umowy i odzyskiwanie kosztów (wkrótce)</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Dane płacowe i koszty operacyjne (wkrótce)</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Dodatek jest aktywny dla Twojego oddziału.</value></data>
+  <data name="Monthly" xml:space="preserve"><value>miesiąc</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Twój oddział nie ma jeszcze tego dodatku.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Opłacone do</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Odnowienie anulowane; dostęp trwa do końca opłaconego okresu.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Kup</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Anuluj odnowienie</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Anulować odnowienie Business Operations?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Rozliczenia są teraz niedostępne. Spróbuj ponownie później.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Zarządzaj subskrypcją</value></data>
+  <data name="ModuleSettings" xml:space="preserve"><value>Ustawienia modułów</value></data>
+  <data name="Links" xml:space="preserve"><value>Łącza</value></data>
+  <data name="invoicing_call_not_found" xml:space="preserve"><value>Nie znaleziono zgłoszenia.</value></data>
+  <data name="invoicing_contact_not_found" xml:space="preserve"><value>Nie znaleziono kontaktu.</value></data>
+  <data name="invoicing_invoice_has_no_lines" xml:space="preserve"><value>Dodaj co najmniej jedną pozycję przed wysłaniem.</value></data>
+  <data name="invoicing_invoice_has_payments_cannot_void" xml:space="preserve"><value>Nie można anulować faktury z płatnościami.</value></data>
+  <data name="invoicing_invoice_not_draft" xml:space="preserve"><value>Można edytować tylko wersję roboczą faktury.</value></data>
+  <data name="invoicing_invoice_not_found" xml:space="preserve"><value>Nie znaleziono faktury.</value></data>
+  <data name="invoicing_invoice_not_payable" xml:space="preserve"><value>Ta faktura nie może przyjąć płatności w obecnym stanie.</value></data>
+  <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>Nie można anulować opłaconej faktury.</value></data>
+  <data name="invoicing_invoice_void" xml:space="preserve"><value>Ta faktura jest anulowana.</value></data>
+  <data name="invoicing_no_recipient_email" xml:space="preserve"><value>Brak e-maila do faktur dla tego klienta.</value></data>
+  <data name="invoicing_payment_not_found" xml:space="preserve"><value>Nie znaleziono płatności.</value></data>
+  <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>Nie można wygenerować PDF faktury.</value></data>
+  <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Ten profil rozliczeniowy ma faktury i nie można go usunąć.</value></data>
+  <data name="invoicing_profile_required" xml:space="preserve"><value>Klient musi najpierw mieć aktywny profil rozliczeniowy.</value></data>
+  <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>Nie znaleziono cennika.</value></data>
+</root>

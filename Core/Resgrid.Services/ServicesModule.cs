@@ -31,6 +31,17 @@ namespace Resgrid.Services
 					var scope = context.Resolve<ILifetimeScope>();
 					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("readiness-billing-client"));
 				}).InstancePerLifetimeScope();
+			// Workforce & Business Operations plan Phase B (decision 42): add-on billing proxy and entitlement gate.
+			builder.Register(_ => new RestClient(new RestClientOptions(SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromSeconds(10) },
+				configureSerialization: serializer => serializer.UseNewtonsoftJson())).Named<RestClient>("business-operations-billing-client").SingleInstance();
+			builder.RegisterType<BusinessOperationsBillingService>().As<IBusinessOperationsBillingService>()
+				.WithParameter((parameter, _) => parameter.ParameterType == typeof(Func<RestClient>), (_, context) =>
+				{
+					var scope = context.Resolve<ILifetimeScope>();
+					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("business-operations-billing-client"));
+				}).InstancePerLifetimeScope();
+			builder.RegisterType<BusinessOperationsAccessService>().As<IBusinessOperationsAccessService>().InstancePerLifetimeScope();
+			builder.RegisterType<Invoicing.InvoicingService>().As<IInvoicingService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrdersService>().As<IWorkOrdersService>().As<IWorkOrderMaintenanceService>().As<IWorkOrderReportingService>().As<IWorkOrderOperationsService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderAuthorizationService>().As<IWorkOrderAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistsService>().As<IChecklistsService>().InstancePerLifetimeScope();
@@ -136,6 +147,9 @@ namespace Resgrid.Services
 			builder.RegisterType<DepartmentLinksService>().As<IDepartmentLinksService>().InstancePerLifetimeScope();
 			builder.RegisterType<ResourceOrdersService>().As<IResourceOrdersService>().InstancePerLifetimeScope();
 			builder.RegisterType<HealthService>().As<IHealthService>().InstancePerLifetimeScope();
+			// Workforce & Business Operations plan Phase B2 (scaffold 2026-09-18): webhook health read for the v4 Health endpoint.
+			builder.RegisterType<Invoicing.StripeConnectEndpointProbe>().As<IStripeConnectEndpointProbe>().SingleInstance();
+			builder.RegisterType<Invoicing.InvoicePaymentsService>().As<IInvoicePaymentsService>().InstancePerLifetimeScope();
 			builder.RegisterType<FirebaseService>().As<IFirebaseService>().InstancePerLifetimeScope();
 			builder.RegisterType<TemplatesService>().As<ITemplatesService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolsService>().As<IProtocolsService>().InstancePerLifetimeScope();

@@ -54,7 +54,26 @@ namespace Resgrid.Web.Mcp.Controllers
 			// Check API connectivity with real probe
 			result.ApiOnline = await ProbeApiConnectivityAsync();
 
+			// Relay the API's Stripe Connect webhook health (plan B2.5a). Only asked when the API answered the
+			// connectivity probe; never fails the health call and never needs a payment secret on this host.
+			result.Payments = result.ApiOnline
+				? await ProbeApiPaymentsHealthAsync()
+				: PaymentsWebhookHealthResult.Unavailable();
+
 			return Json(result);
+		}
+
+		private async Task<PaymentsWebhookHealthResult> ProbeApiPaymentsHealthAsync()
+		{
+			try
+			{
+				using var httpClient = _httpClientFactory.CreateClient("ResgridApi");
+				return await ApiHealthProbe.ReadPaymentsAsync(httpClient);
+			}
+			catch
+			{
+				return PaymentsWebhookHealthResult.Unavailable();
+			}
 		}
 
 		private async Task<bool> ProbeCacheConnectivityAsync()

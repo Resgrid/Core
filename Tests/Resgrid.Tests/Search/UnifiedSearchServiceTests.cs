@@ -23,6 +23,9 @@ namespace Resgrid.Tests.Search
 		private Mock<IAuthorizationService> _auth;
 		private Mock<ISearchIndexStatesRepository> _states;
 		private Mock<IRecordsSearchService> _recordsSearch;
+		private Mock<IRecordsAuthorizationService> _recordsAuth;
+		private Mock<IRecordsService> _records;
+		private Mock<IRecordsCutoverService> _cutover;
 		private UnifiedSearchService _service;
 		private bool _flagOn;
 		private GlobalSearchQuery _lastQuery;
@@ -54,9 +57,27 @@ namespace Resgrid.Tests.Search
 			_states = new Mock<ISearchIndexStatesRepository>();
 			_recordsSearch = new Mock<IRecordsSearchService>();
 			_recordsSearch.SetupGet(r => r.IsAvailable).Returns(false);
+			_recordsAuth = new Mock<IRecordsAuthorizationService>();
+			_records = new Mock<IRecordsService>();
+			_cutover = new Mock<IRecordsCutoverService>();
 
 			_service = new UnifiedSearchService(_global.Object, _actions.Object, _flags.Object, _auth.Object, _states.Object, _recordsSearch.Object,
-				new Mock<IRecordsAuthorizationService>().Object, new Mock<IRecordsService>().Object, new Mock<IRecordsCutoverService>().Object);
+				_recordsAuth.Object, _records.Object, _cutover.Object);
+		}
+
+		/// <summary>An activated Records module whose index answers with the given hits; every record is viewable and loadable.</summary>
+		private void RecordsAnswer(params RecordsSearchHit[] hits)
+		{
+			var recordSource = ((int)RmsSearchSourceType.Record).ToString();
+			_recordsSearch.SetupGet(r => r.IsAvailable).Returns(true);
+			_recordsSearch.Setup(r => r.SearchAsync(7, It.IsAny<RecordsSearchRequest>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new RecordsSearchResult { Hits = hits.ToList(), Total = hits.Length });
+			_cutover.Setup(c => c.GetModuleStateAsync(7, It.IsAny<bool>())).ReturnsAsync(new RecordsModuleState { DepartmentId = 7, FlagEnabled = true, Activated = true });
+			_recordsAuth.Setup(a => a.IsActiveMemberAsync("u1", 7)).ReturnsAsync(true);
+			_recordsAuth.Setup(a => a.IsGroupScopedAsync(7)).ReturnsAsync(false);
+			_recordsAuth.Setup(a => a.CanUserViewRecordAsync("u1", It.IsAny<string>(), 7)).ReturnsAsync(true);
+			_records.Setup(r => r.GetProjectionsByIdsAsync(7, It.IsAny<IEnumerable<string>>()))
+				.ReturnsAsync((int _, IEnumerable<string> ids) => ids.Select(id => new RmsRecordSearchProjection { RmsRecordSearchProjectionId = id, DepartmentId = 7, SourceType = int.Parse(recordSource), SourceId = id, RecordNumber = "R-" + id }).ToList());
 		}
 
 		private static SearchPrincipal Principal(params string[] claims) => new SearchPrincipal
@@ -107,6 +128,33 @@ namespace Resgrid.Tests.Search
 			var none = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one" }, Principal());
 			_lastQuery.Should().BeNull("no family is searchable without a view claim");
 			none.Hits.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Records_follow_the_index_hits_on_every_page()
+		{
+			var recordSource = ((int)RmsSearchSourceType.Record).ToString();
+			RecordsAnswer(new RecordsSearchHit { SourceType = recordSource, SourceId = "r1", Score = 1f });
+
+			var first = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one", Skip = 0, Take = 2 }, Principal("Call:View", "Record:View"));
+			first.Hits.Select(h => h.EntityId).Should().Equal("1", "2");
+
+			var second = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one", Skip = 2, Take = 2 }, Principal("Call:View", "Record:View"));
+			second.Hits.Select(h => h.EntityType).Should().Equal(SearchEntityTypes.Record);
+			second.Hits.Single().EntityId.Should().Be("r1");
+			second.Total.Should().Be(3);
+		}
+
+		[Test]
+		public async Task A_non_record_document_in_the_records_index_is_not_a_dropped_hit()
+		{
+			var recordSource = ((int)RmsSearchSourceType.Record).ToString();
+			var legacySource = ((int)RmsSearchSourceType.LegacyLog).ToString();
+			RecordsAnswer(new RecordsSearchHit { SourceType = recordSource, SourceId = "r1", Score = 2f }, new RecordsSearchHit { SourceType = legacySource, SourceId = "log-1", Score = 1f });
+
+			var result = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one", Take = 10 }, Principal("Call:View", "Record:View"));
+			result.Hits.Where(h => h.EntityType == SearchEntityTypes.Record).Select(h => h.EntityId).Should().Equal("r1");
+			result.Total.Should().NotBeNull("only record-source hits are judged for authorization");
 		}
 
 		[Test]

@@ -69,18 +69,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var requestedTypes = ParseTypes(types);
+			// The page metadata must describe the query that ran, so the clamped values feed both.
+			var effectiveSkip = Math.Max(0, skip);
+			var effectiveTake = Math.Max(1, Math.Min(MaxTake, take));
 			var unified = await _unifiedSearch.SearchAsync(new UnifiedSearchRequest
 			{
 				Text = query,
 				EntityTypes = requestedTypes,
-				Skip = Math.Max(0, skip),
-				Take = Math.Max(1, Math.Min(MaxTake, take)),
+				Skip = effectiveSkip,
+				Take = effectiveTake,
 				IncludeActions = requestedTypes == null || requestedTypes.Any(t => string.Equals(t, SearchEntityTypes.Action, StringComparison.OrdinalIgnoreCase)),
 				IncludeRecords = requestedTypes == null || requestedTypes.Any(t => string.Equals(t, SearchEntityTypes.Record, StringComparison.OrdinalIgnoreCase)),
 				Prefix = false
 			}, await BuildPrincipalAsync(), cancellationToken);
 
-			return Ok(Map(unified, skip, take));
+			return Ok(Map(unified, effectiveSkip, effectiveTake));
 		}
 
 		/// <summary>Typeahead: prefix search on titles and identifiers, no records federation, small result list.</summary>
@@ -94,18 +97,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			var requestedTypes = ParseTypes(types);
+			var effectiveTake = Math.Max(1, Math.Min(25, take));
 			var unified = await _unifiedSearch.SearchAsync(new UnifiedSearchRequest
 			{
 				Text = query ?? string.Empty,
 				EntityTypes = requestedTypes,
 				Skip = 0,
-				Take = Math.Max(1, Math.Min(25, take)),
+				Take = effectiveTake,
 				IncludeActions = requestedTypes == null || requestedTypes.Any(t => string.Equals(t, SearchEntityTypes.Action, StringComparison.OrdinalIgnoreCase)),
 				IncludeRecords = false,
 				Prefix = true
 			}, await BuildPrincipalAsync(), cancellationToken);
 
-			return Ok(Map(unified, 0, take));
+			return Ok(Map(unified, 0, effectiveTake));
 		}
 
 		/// <summary>Department admins: flag the department's global index for a full projection + index rebuild on the next sweep (plan R4 Phase 3).</summary>
@@ -213,6 +217,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						case SystemActionModules.Training: return !modules.TrainingDisabled;
 						case SystemActionModules.Inventory: return !modules.InventoryDisabled;
 						case SystemActionModules.Maintenance: return !modules.MaintenanceDisabled;
+						case SystemActionModules.BusinessOperations: return !modules.BusinessOperationsDisabled;
 						default: return true;
 					}
 				}

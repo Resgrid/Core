@@ -61,6 +61,16 @@ namespace Resgrid.Tests.Search
 		}
 
 		[Test]
+		public async Task An_unbounded_skip_yields_an_empty_page_instead_of_an_overflowed_window()
+		{
+			var result = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "structure fire", ViewerUserId = "u1", Skip = int.MaxValue, Take = 20 });
+
+			result.Available.Should().BeTrue();
+			result.Hits.Should().BeEmpty();
+			result.Total.Should().Be(1);
+		}
+
+		[Test]
 		public async Task Messages_are_visible_only_to_sender_or_recipient()
 		{
 			var recipient = await _search.SearchAsync(1, new GlobalSearchQuery { Text = "shift swap", ViewerUserId = "u1" });

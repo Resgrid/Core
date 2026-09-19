@@ -7,6 +7,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Search;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -126,6 +127,16 @@ namespace Resgrid.Services
 			return new List<Message>();
 		}
 
+		public async Task<List<Message>> GetAllMessagesForDepartmentAsync(int departmentId)
+		{
+			var items = await _messageRepository.GetMessagesByDepartmentIdAsync(departmentId);
+
+			if (items != null && items.Any())
+				return items.OrderByDescending(x => x.SentOn).ToList();
+
+			return new List<Message>();
+		}
+
 		public async Task<int> GetUnreadMessagesCountByUserIdAsync(string userId)
 		{
 			return await _messageRepository.GetUnreadMessageCountAsync(userId);
@@ -148,7 +159,30 @@ namespace Resgrid.Services
 
 		public async Task<bool> MarkMessagesAsDeletedAsync(string userId, List<string> messageIds, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _messageRepository.UpdateRecievedMessagesAsDeletedAsync(userId, messageIds);
+			var updated = await _messageRepository.UpdateRecievedMessagesAsDeletedAsync(userId, messageIds);
+
+			// The bulk update never passes through SaveMessageAsync, so the parents are re-projected here: the
+			// projection's participant list is what scopes the message to its viewers in the index, and a recipient
+			// who deleted it from their inbox would otherwise keep finding it until the next rebuild.
+			if (updated && _searchProjections != null && messageIds != null)
+			{
+				foreach (var id in messageIds.Select(v => int.TryParse(v, out var parsed) ? parsed : 0).Where(v => v > 0).Distinct())
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+					await ReprojectMessageAsync(id, cancellationToken);
+				}
+			}
+
+			return updated;
+		}
+
+		private async Task ReprojectMessageAsync(int messageId, CancellationToken cancellationToken)
+		{
+			if (_searchProjections == null || messageId <= 0)
+				return;
+			var parent = await GetMessageByIdAsync(messageId);
+			if (parent != null)
+				await _searchProjections.Value.ProjectMessageAsync(parent, cancellationToken);
 		}
 
 		public async Task<bool> MarkMessagesAsReadAsync(string userId, List<string> messageIds, CancellationToken cancellationToken = default(CancellationToken))
@@ -173,7 +207,9 @@ namespace Resgrid.Services
 			var message = await GetMessageRecipientByMessageAndUserAsync(messageId, userId);
 			message.IsDeleted = true;
 
-			return await SaveMessageRecipientAsync(message, cancellationToken);
+			var saved = await SaveMessageRecipientAsync(message, cancellationToken);
+			await ReprojectMessageAsync(messageId, cancellationToken);
+			return saved;
 		}
 
 		public async Task<bool> SendMessageAsync(Message message, string sendersName, int departmentId, bool broadcastSingle = true, CancellationToken cancellationToken = default(CancellationToken))
@@ -258,7 +294,9 @@ namespace Resgrid.Services
 					await _messageRecipientRepository.DeleteAsync(mr, cancellationToken);
 				}
 
-				await _messageRepository.DeleteAsync(m, cancellationToken);
+				var deleted = await _messageRepository.DeleteAsync(m, cancellationToken);
+				if (deleted && _searchProjections != null && m.DepartmentId.HasValue)
+					await _searchProjections.Value.RemoveAsync(m.DepartmentId.Value, SearchEntityTypes.Message, m.MessageId.ToString(), cancellationToken);
 			}
 
 			var messageRecipients = await _messageRecipientRepository.GetMessageRecipientByUserAsync(userId);

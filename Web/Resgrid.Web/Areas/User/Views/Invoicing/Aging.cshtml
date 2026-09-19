@@ -1,0 +1,67 @@
+@model Resgrid.Web.Areas.User.Models.Invoicing.InvoiceAgingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Aging"];
+    ViewData["Tab"] = "Aging";
+    ViewData["Title"] = localizer["AgingReport"].Value;
+    ViewData["Subtitle"] = localizer["AgingIntro"].Value;
+    var report = Model.Report;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["AgingReport"]</h5><div class="ibox-tools"><small>@localizer["AsOf"] @report.AsOfUtc.ToString("yyyy-MM-dd HH:mm") UTC</small></div></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Tabs")
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        @foreach (var bucket in report.Buckets)
+                        {
+                            <th class="text-center">@(bucket.Label == "Current" ? localizer["BucketCurrent"].Value : bucket.Label + " " + localizer["DaysPastDue"].Value)</th>
+                        }
+                        <th class="text-center">@localizer["Total"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        @foreach (var bucket in report.Buckets)
+                        {
+                            <td class="text-center">
+                                <h3 class="@(bucket.Label != "Current" && bucket.Balance > 0 ? "text-danger" : "")">@bucket.Balance.ToString("N2")</h3>
+                                <small>@bucket.Count @localizer["InvoicesLower"]</small>
+                            </td>
+                        }
+                        <td class="text-center"><h3>@report.TotalBalance.ToString("N2")</h3><small>@report.TotalCount @localizer["InvoicesLower"]</small></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            @foreach (var bucket in report.Buckets.Where(b => b.Invoices.Count > 0))
+            {
+                <h4 class="m-t-md">@(bucket.Label == "Current" ? localizer["BucketCurrent"].Value : bucket.Label + " " + localizer["DaysPastDue"].Value)</h4>
+                <table class="table table-condensed table-hover">
+                    <thead><tr><th>@localizer["Number"]</th><th>@localizer["Customer"]</th><th>@localizer["DueOn"]</th><th class="text-right">@localizer["Total"]</th><th class="text-right">@localizer["Balance"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var row in bucket.Invoices.OrderBy(x => x.DueOn))
+                        {
+                            <tr>
+                                <td><a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@row.InvoiceId">#@row.InvoiceNumber</a></td>
+                                <td>@(Model.ContactName(row.ContactId) ?? "—")</td>
+                                <td>@(row.DueOn?.ToString("yyyy-MM-dd") ?? "—")</td>
+                                <td class="text-right">@row.Total.ToString("N2")</td>
+                                <td class="text-right">@row.Balance.ToString("N2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            @if (report.TotalCount == 0)
+            {
+                <p class="text-muted">@localizer["NoOutstandingInvoices"]</p>
+            }
+        </div>
+    </div>
+</div>

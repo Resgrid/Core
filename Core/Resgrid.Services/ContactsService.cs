@@ -34,14 +34,22 @@ namespace Resgrid.Services
 
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
+		/// <summary>Optional (Lazy: Invoicing depends on Contacts) — the contact delete guard of the Workforce &amp; Business Operations plan (risk 6).</summary>
+		private readonly Lazy<IInvoicingService> _invoicing;
+
+		/// <summary>Thrown by <see cref="DeleteContactAsync"/> when the contact still has a billing profile with non-void invoices.</summary>
+		public const string HasOpenBillingReason = "contacts_has_open_billing";
+
 		public ContactsService(IContactsRepository contactsRepository, IContactNotesRepository contactNotesRepository,
 			IContactCategoryRepository contactCategoryRepository,  IContactNoteTypesRepository contactNoteTypesRepository,
 			IContactAssociationsRepository contactAssociationsRepository, IContactPreplanRepository contactPreplanRepository,
 			IContactPreplanHazardRepository contactPreplanHazardRepository, IContactAttachmentRepository contactAttachmentRepository,
 			ICallsRepository callsRepository, ICallContactsRepository callContactsRepository,
-			IEventAggregator eventAggregator, Lazy<IProtectedWriteService> protectedWriteService, Lazy<IContactPreplanOwnershipGate> ownershipGate, Lazy<ISearchProjectionService> searchProjections = null)
+			IEventAggregator eventAggregator, Lazy<IProtectedWriteService> protectedWriteService, Lazy<IContactPreplanOwnershipGate> ownershipGate, Lazy<ISearchProjectionService> searchProjections = null,
+			Lazy<IInvoicingService> invoicing = null)
 		{
 			_ownershipGate = ownershipGate;
+			_invoicing = invoicing;
 			_contactsRepository = contactsRepository;
 			_contactCategoryRepository = contactCategoryRepository;
 			_contactNotesRepository = contactNotesRepository;
@@ -227,6 +235,19 @@ namespace Resgrid.Services
 			var auditEvent = NewAuditEvent(departmentId, userId, AuditLogTypes.ContactRemoved, ipAddress, userAgent);
 
 			var contact = await _contactsRepository.GetByIdAsync(contactId);
+			if (contact == null)
+				return false;
+
+			// Workforce & Business Operations plan, risk 6: a contact with money hanging off it cannot be deleted.
+			// Resolved lazily so Contacts never hard-depends on Invoicing; a department without invoicing sees no change.
+			if (_invoicing != null && await _invoicing.Value.ContactHasOpenBillingAsync(contactId, departmentId))
+			{
+				auditEvent.Successful = false;
+				auditEvent.Before = contact.CloneJsonToString();
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				throw new InvalidOperationException(HasOpenBillingReason);
+			}
+
 			auditEvent.Before = contact.CloneJsonToString();
 
 			contact.IsDeleted = true;

@@ -16,6 +16,7 @@ namespace Resgrid.Repositories.DataRepository
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.RegisterType<ReadinessProBillingRepository>().As<IReadinessProBillingRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<BusinessOperationsBillingRepository>().As<IBusinessOperationsBillingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderRepository>().As<IWorkOrderRepository>().As<IWorkOrderMaintenanceRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistRepository>().As<IChecklistRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistReminderRepository>().As<IChecklistReminderRepository>().InstancePerLifetimeScope();
@@ -228,6 +229,16 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ContactPreplanRepository>().As<IContactPreplanRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactPreplanHazardRepository>().As<IContactPreplanHazardRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactAttachmentRepository>().As<IContactAttachmentRepository>().InstancePerLifetimeScope();
+
+			// Workforce & Business Operations plan Phase B (registry M0209–M0210): customer invoicing.
+			builder.RegisterType<CustomerBillingProfileRepository>().As<ICustomerBillingProfileRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RateCardRepository>().As<IRateCardRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RateCardItemRepository>().As<IRateCardItemRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InvoiceRepository>().As<IInvoiceRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InvoiceLineItemRepository>().As<IInvoiceLineItemRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InvoicePaymentRepository>().As<IInvoicePaymentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InvoiceNumberSequenceRepository>().As<IInvoiceNumberSequenceRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentBillingIdentityRepository>().As<IDepartmentBillingIdentityRepository>().InstancePerLifetimeScope();
 
 			// Indoor Maps Repositories
 			builder.RegisterType<IndoorMapsRepository>().As<IIndoorMapsRepository>().InstancePerLifetimeScope();

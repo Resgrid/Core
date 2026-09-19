@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Invoicing" xml:space="preserve"><value>Facturación</value></data>
+  <data name="ManageInvoicing" xml:space="preserve"><value>Gestionar facturación</value></data>
+  <data name="ViewInvoicing" xml:space="preserve"><value>Ver facturación</value></data>
+  <data name="ManageInvoicingNote" xml:space="preserve"><value>Crear, editar, enviar y anular facturas, registrar pagos y gestionar tarifas y perfiles de facturación.</value></data>
+  <data name="ViewInvoicingNote" xml:space="preserve"><value>Ver facturas, antigüedad de cuentas por cobrar y PDF de facturas.</value></data>
+  <data name="InvoiceCreated" xml:space="preserve"><value>Factura creada</value></data>
+  <data name="InvoiceSent" xml:space="preserve"><value>Factura enviada</value></data>
+  <data name="InvoicePaymentRecorded" xml:space="preserve"><value>Pago de factura registrado</value></data>
+  <data name="InvoicePaid" xml:space="preserve"><value>Factura pagada</value></data>
+  <data name="InvoiceOverdue" xml:space="preserve"><value>Factura vencida</value></data>
+  <data name="InvoiceVoided" xml:space="preserve"><value>Factura anulada</value></data>
+  <data name="InvoicePaymentRefunded" xml:space="preserve"><value>Pago de factura reembolsado</value></data>
+  <data name="InvoicePaymentDisputed" xml:space="preserve"><value>Pago de factura disputado</value></data>
+  <data name="Billing" xml:space="preserve"><value>Facturación</value></data>
+  <data name="Invoices" xml:space="preserve"><value>Facturas</value></data>
+  <data name="InvoicesLower" xml:space="preserve"><value>facturas</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Factura</value></data>
+  <data name="InvoicingIntro" xml:space="preserve"><value>Facturas de clientes, pagos y cuentas por cobrar.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>El complemento Business Operations no está activo para este departamento. Las facturas existentes siguen siendo legibles; crear o cambiar algo requiere un complemento activo.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Facturación, tarifas y perfiles de facturación. Las páginas también requieren el complemento Business Operations.</value></data>
+  <data name="RateCards" xml:space="preserve"><value>Tarifas</value></data>
+  <data name="RateCard" xml:space="preserve"><value>Tarifa</value></data>
+  <data name="RateCardsIntro" xml:space="preserve"><value>Tarifas aplicadas al añadir llamadas a una factura.</value></data>
+  <data name="HelpRateCards" xml:space="preserve"><value>Una tarifa enumera lo que cobra: tiempo por hora de unidades o personal, tarifas planas por llamada, cuotas fijas, kilometraje y materiales. Marque una como predeterminada; un perfil de facturación puede fijar otra.</value></data>
+  <data name="NewRateCard" xml:space="preserve"><value>Nueva tarifa</value></data>
+  <data name="NoRateCards" xml:space="preserve"><value>Aún no hay tarifas.</value></data>
+  <data name="RateCardItems" xml:space="preserve"><value>Elementos de la tarifa</value></data>
+  <data name="RateCardItem" xml:space="preserve"><value>Elemento de la tarifa</value></data>
+  <data name="NewItem" xml:space="preserve"><value>Nuevo elemento</value></data>
+  <data name="NoRateCardItems" xml:space="preserve"><value>Esta tarifa aún no tiene elementos.</value></data>
+  <data name="SaveCardBeforeItems" xml:space="preserve"><value>Guarde la tarifa antes de añadir elementos.</value></data>
+  <data name="DefaultRateCardHint" xml:space="preserve"><value>Predeterminada del departamento (se usa cuando el cliente no tiene tarifa fija)</value></data>
+  <data name="DeleteRateCardConfirm" xml:space="preserve"><value>¿Eliminar esta tarifa?</value></data>
+  <data name="DeleteItemConfirm" xml:space="preserve"><value>¿Eliminar este elemento?</value></data>
+  <data name="RateCardDeleted" xml:space="preserve"><value>Tarifa eliminada.</value></data>
+  <data name="ItemType" xml:space="preserve"><value>Tipo</value></data>
+  <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Por hora – tiempo de la unidad en el lugar</value></data>
+  <data name="ItemTypeHourlyPersonnel" xml:space="preserve"><value>Por hora – tiempo del personal</value></data>
+  <data name="ItemTypeFlatPerCall" xml:space="preserve"><value>Tarifa plana por llamada</value></data>
+  <data name="ItemTypeFixedFee" xml:space="preserve"><value>Cuota fija</value></data>
+  <data name="ItemTypeMileage" xml:space="preserve"><value>Kilometraje</value></data>
+  <data name="ItemTypeMaterial" xml:space="preserve"><value>Material</value></data>
+  <data name="Rate" xml:space="preserve"><value>Tarifa</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>Etiqueta de unidad</value></data>
+  <data name="MinimumCharge" xml:space="preserve"><value>Cargo mínimo</value></data>
+  <data name="MinimumMinutes" xml:space="preserve"><value>Minutos mínimos</value></data>
+  <data name="RoundingMinutes" xml:space="preserve"><value>Redondear a (minutos)</value></data>
+  <data name="Rounding" xml:space="preserve"><value>Redondeo</value></data>
+  <data name="Minimum" xml:space="preserve"><value>Mín.</value></data>
+  <data name="RoundTo" xml:space="preserve"><value>redondear a</value></data>
+  <data name="UnitTypeFilter" xml:space="preserve"><value>Tipo de unidad</value></data>
+  <data name="AnyUnitType" xml:space="preserve"><value>Cualquier tipo de unidad</value></data>
+  <data name="ItemDescriptionHint" xml:space="preserve"><value>Se imprime en la línea de la factura; por defecto el nombre del elemento.</value></data>
+  <data name="SortOrder" xml:space="preserve"><value>Orden</value></data>
+  <data name="Taxable" xml:space="preserve"><value>Imponible</value></data>
+  <data name="Active" xml:space="preserve"><value>Activo</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inactivo</value></data>
+  <data name="Default" xml:space="preserve"><value>Predeterminada</value></data>
+  <data name="Name" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Description" xml:space="preserve"><value>Descripción</value></data>
+  <data name="Edit" xml:space="preserve"><value>Editar</value></data>
+  <data name="Open" xml:space="preserve"><value>Abrir</value></data>
+  <data name="Add" xml:space="preserve"><value>Añadir</value></data>
+  <data name="Remove" xml:space="preserve"><value>Quitar</value></data>
+  <data name="All" xml:space="preserve"><value>Todas</value></data>
+  <data name="Filter" xml:space="preserve"><value>Filtrar</value></data>
+  <data name="Loading" xml:space="preserve"><value>Cargando…</value></data>
+  <data name="Status" xml:space="preserve"><value>Estado</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Borrador</value></data>
+  <data name="StatusSent" xml:space="preserve"><value>Enviada</value></data>
+  <data name="StatusPartiallyPaid" xml:space="preserve"><value>Pagada parcialmente</value></data>
+  <data name="StatusPaid" xml:space="preserve"><value>Pagada</value></data>
+  <data name="StatusOverdue" xml:space="preserve"><value>Vencida</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>Anulada</value></data>
+  <data name="Number" xml:space="preserve"><value>Número</value></data>
+  <data name="Customer" xml:space="preserve"><value>Cliente</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Emitida</value></data>
+  <data name="DueOn" xml:space="preserve"><value>Vencimiento</value></data>
+  <data name="DueOnHint" xml:space="preserve"><value>Déjelo vacío para usar los términos del perfil: días netos</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Enviada el</value></data>
+  <data name="VoidedOn" xml:space="preserve"><value>Anulada el</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>Pagada el</value></data>
+  <data name="Total" xml:space="preserve"><value>Total</value></data>
+  <data name="Totals" xml:space="preserve"><value>Totales</value></data>
+  <data name="SubTotal" xml:space="preserve"><value>Subtotal</value></data>
+  <data name="Discount" xml:space="preserve"><value>Descuento</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>Descuento %</value></data>
+  <data name="Tax" xml:space="preserve"><value>Impuesto</value></data>
+  <data name="AmountPaid" xml:space="preserve"><value>Importe pagado</value></data>
+  <data name="Balance" xml:space="preserve"><value>Saldo</value></data>
+  <data name="OutstandingBalance" xml:space="preserve"><value>Saldo pendiente</value></data>
+  <data name="OverdueBalance" xml:space="preserve"><value>Saldo vencido</value></data>
+  <data name="NewInvoice" xml:space="preserve"><value>Nueva factura</value></data>
+  <data name="NewInvoiceIntro" xml:space="preserve"><value>Elija el cliente; el borrador toma los términos, el descuento y la tarifa del perfil de facturación.</value></data>
+  <data name="SelectCustomer" xml:space="preserve"><value>Seleccione un cliente…</value></data>
+  <data name="CustomersWithProfile" xml:space="preserve"><value>Clientes con perfil de facturación</value></data>
+  <data name="OtherContacts" xml:space="preserve"><value>Otros contactos</value></data>
+  <data name="ProfileRequiredHint" xml:space="preserve"><value>Este contacto aún no tiene perfil de facturación.</value></data>
+  <data name="SetUpBillingProfile" xml:space="preserve"><value>Configurar perfil de facturación</value></data>
+  <data name="CustomerRequired" xml:space="preserve"><value>Elija un cliente con un perfil de facturación activo.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Moneda</value></data>
+  <data name="CreateDraft" xml:space="preserve"><value>Crear borrador</value></data>
+  <data name="EditInvoiceIntro" xml:space="preserve"><value>Edite el borrador, añada llamadas desde una tarifa y luego previsualice y envíe.</value></data>
+  <data name="Notes" xml:space="preserve"><value>Notas</value></data>
+  <data name="Terms" xml:space="preserve"><value>Condiciones</value></data>
+  <data name="LineItems" xml:space="preserve"><value>Líneas</value></data>
+  <data name="NoLineItems" xml:space="preserve"><value>Sin líneas.</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Cant.</value></data>
+  <data name="UnitRate" xml:space="preserve"><value>Tarifa</value></data>
+  <data name="Amount" xml:space="preserve"><value>Importe</value></data>
+  <data name="AddLine" xml:space="preserve"><value>Añadir línea</value></data>
+  <data name="AddCall" xml:space="preserve"><value>Añadir llamada</value></data>
+  <data name="AddCallIntro" xml:space="preserve"><value>Las líneas se generan a partir de la tarifa y el tiempo de las unidades en el lugar; edítelas antes de guardar.</value></data>
+  <data name="CallNumber" xml:space="preserve"><value>N.º de llamada</value></data>
+  <data name="CallName" xml:space="preserve"><value>Llamada</value></data>
+  <data name="LoggedOn" xml:space="preserve"><value>Registrada</value></data>
+  <data name="NoCallsForCustomer" xml:space="preserve"><value>No hay llamadas vinculadas a este cliente.</value></data>
+  <data name="AlreadyInvoiced" xml:space="preserve"><value>Ya en esta factura</value></data>
+  <data name="CallAdded" xml:space="preserve"><value>Líneas de la llamada añadidas. Guarde la factura para conservarlas.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>No se pudieron cargar los datos.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>No se pudo guardar el cambio.</value></data>
+  <data name="Saved" xml:space="preserve"><value>Guardado.</value></data>
+  <data name="InvalidInput" xml:space="preserve"><value>Los valores enviados no son válidos.</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>Se requiere un nombre.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Esto requiere un complemento Business Operations activo.</value></data>
+  <data name="TotalsUpdateOnSave" xml:space="preserve"><value>El descuento y el impuesto se recalculan al guardar.</value></data>
+  <data name="PreviewAndSend" xml:space="preserve"><value>Previsualizar y enviar</value></data>
+  <data name="BackToInvoices" xml:space="preserve"><value>Volver a las facturas</value></data>
+  <data name="TermsNetDays" xml:space="preserve"><value>Condiciones (días netos)</value></data>
+  <data name="TaxExempt" xml:space="preserve"><value>Exento de impuestos</value></data>
+  <data name="TaxRate" xml:space="preserve"><value>Tasa de impuesto %</value></data>
+  <data name="BillingProfile" xml:space="preserve"><value>Perfil de facturación</value></data>
+  <data name="BillingProfileIntro" xml:space="preserve"><value>Adónde van las facturas, los términos de pago, el tratamiento fiscal y la tarifa de este cliente.</value></data>
+  <data name="NoBillingProfileYet" xml:space="preserve"><value>Aún no hay perfil de facturación. Guarde uno para empezar a facturar a este contacto.</value></data>
+  <data name="OpenContact" xml:space="preserve"><value>Abrir contacto</value></data>
+  <data name="BillingEmail" xml:space="preserve"><value>Correo de facturación</value></data>
+  <data name="BillingEmailHint" xml:space="preserve"><value>Las facturas se envían aquí; por defecto el correo del contacto.</value></data>
+  <data name="DefaultDiscountPercent" xml:space="preserve"><value>Descuento predeterminado %</value></data>
+  <data name="DefaultRateCard" xml:space="preserve"><value>Tarifa</value></data>
+  <data name="UseDepartmentDefault" xml:space="preserve"><value>Usar la predeterminada del departamento</value></data>
+  <data name="PurchaseOrderRequired" xml:space="preserve"><value>Se requiere número de orden de compra en las facturas</value></data>
+  <data name="ActiveProfile" xml:space="preserve"><value>Activo (se pueden crear nuevas facturas)</value></data>
+  <data name="BillingAddress" xml:space="preserve"><value>Dirección de facturación</value></data>
+  <data name="UseContactMailingAddress" xml:space="preserve"><value>Usar la dirección postal del contacto</value></data>
+  <data name="Address" xml:space="preserve"><value>Dirección</value></data>
+  <data name="City" xml:space="preserve"><value>Ciudad</value></data>
+  <data name="State" xml:space="preserve"><value>Estado / provincia</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Código postal</value></data>
+  <data name="Country" xml:space="preserve"><value>País</value></data>
+  <data name="TaxRateHint" xml:space="preserve"><value>Tasa única aplicada a las líneas imponibles cuando no hay componentes abajo.</value></data>
+  <data name="TaxComponents" xml:space="preserve"><value>Componentes de impuesto</value></data>
+  <data name="TaxComponentsHint" xml:space="preserve"><value>Hasta tres impuestos con nombre (por ejemplo GST y PST), cada uno impreso con su número de registro.</value></data>
+  <data name="RatePercent" xml:space="preserve"><value>Tasa %</value></data>
+  <data name="RegistrationNumber" xml:space="preserve"><value>Número de registro</value></data>
+  <data name="AllInvoicesForCustomer" xml:space="preserve"><value>Todas las facturas de este cliente</value></data>
+  <data name="NoInvoices" xml:space="preserve"><value>Sin facturas.</value></data>
+  <data name="Payments" xml:space="preserve"><value>Pagos</value></data>
+  <data name="NoPayments" xml:space="preserve"><value>No hay pagos registrados.</value></data>
+  <data name="Method" xml:space="preserve"><value>Método</value></data>
+  <data name="MethodCheck" xml:space="preserve"><value>Cheque</value></data>
+  <data name="MethodCash" xml:space="preserve"><value>Efectivo</value></data>
+  <data name="MethodAch" xml:space="preserve"><value>Transferencia / ACH</value></data>
+  <data name="MethodCardExternal" xml:space="preserve"><value>Tarjeta (fuera de Resgrid)</value></data>
+  <data name="MethodOther" xml:space="preserve"><value>Otro</value></data>
+  <data name="MethodOnline" xml:space="preserve"><value>En línea</value></data>
+  <data name="PaymentStatus" xml:space="preserve"><value>Estado del pago</value></data>
+  <data name="PaymentStatusSucceeded" xml:space="preserve"><value>Correcto</value></data>
+  <data name="PaymentStatusRefunded" xml:space="preserve"><value>Reembolsado</value></data>
+  <data name="PaymentStatusPartiallyRefunded" xml:space="preserve"><value>Reembolsado parcialmente</value></data>
+  <data name="PaymentStatusDisputed" xml:space="preserve"><value>En disputa</value></data>
+  <data name="PaymentStatusDisputeLost" xml:space="preserve"><value>Disputa perdida</value></data>
+  <data name="Reference" xml:space="preserve"><value>Referencia</value></data>
+  <data name="Preview" xml:space="preserve"><value>Vista previa</value></data>
+  <data name="Actions" xml:space="preserve"><value>Acciones</value></data>
+  <data name="EditDraft" xml:space="preserve"><value>Editar borrador</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>Descargar PDF</value></data>
+  <data name="SendInvoice" xml:space="preserve"><value>Enviar factura</value></data>
+  <data name="ResendInvoice" xml:space="preserve"><value>Reenviar factura</value></data>
+  <data name="SendInvoiceIntro" xml:space="preserve"><value>Envía el PDF de la factura por correo al cliente y marca el borrador como enviado.</value></data>
+  <data name="SendTo" xml:space="preserve"><value>Enviar a</value></data>
+  <data name="Send" xml:space="preserve"><value>Enviar</value></data>
+  <data name="MarkSentWithoutEmail" xml:space="preserve"><value>Marcar como enviada (sin correo)</value></data>
+  <data name="MarkSentConfirm" xml:space="preserve"><value>¿Marcar esta factura como enviada sin enviarla por correo?</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>Registrar pago</value></data>
+  <data name="RecordPaymentIntro" xml:space="preserve"><value>Solo pagos manuales; los pagos en línea se registran automáticamente.</value></data>
+  <data name="PaymentRecorded" xml:space="preserve"><value>Pago registrado.</value></data>
+  <data name="VoidInvoice" xml:space="preserve"><value>Anular factura</value></data>
+  <data name="VoidInvoiceIntro" xml:space="preserve"><value>Una factura anulada conserva su número y no se puede editar ni pagar.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Motivo</value></data>
+  <data name="InvoiceSentMessage" xml:space="preserve"><value>Factura enviada.</value></data>
+  <data name="InvoiceMarkedSent" xml:space="preserve"><value>Factura marcada como enviada.</value></data>
+  <data name="InvoiceVoidedMessage" xml:space="preserve"><value>Factura anulada.</value></data>
+  <data name="PdfUnavailable" xml:space="preserve"><value>No se pudo generar el PDF en este momento.</value></data>
+  <data name="Aging" xml:space="preserve"><value>Antigüedad</value></data>
+  <data name="AgingReport" xml:space="preserve"><value>Antigüedad de cuentas por cobrar</value></data>
+  <data name="AgingIntro" xml:space="preserve"><value>Saldos abiertos agrupados según el tiempo vencido.</value></data>
+  <data name="AsOf" xml:space="preserve"><value>A fecha de</value></data>
+  <data name="BucketCurrent" xml:space="preserve"><value>Vigente</value></data>
+  <data name="DaysPastDue" xml:space="preserve"><value>días vencidos</value></data>
+  <data name="NoOutstandingInvoices" xml:space="preserve"><value>No hay facturas pendientes.</value></data>
+  <data name="BillingSettings" xml:space="preserve"><value>Configuración de facturación</value></data>
+  <data name="BillingSettingsIntro" xml:space="preserve"><value>Lo que sus facturas dicen sobre su departamento y las opciones de pago en línea.</value></data>
+  <data name="BillingIdentity" xml:space="preserve"><value>Identidad de facturación</value></data>
+  <data name="BillingIdentityIntro" xml:space="preserve"><value>Se imprime en cada factura y PDF.</value></data>
+  <data name="LegalBusinessName" xml:space="preserve"><value>Razón social</value></data>
+  <data name="RemitTo" xml:space="preserve"><value>Dirección de remisión</value></data>
+  <data name="Registrations" xml:space="preserve"><value>Registros</value></data>
+  <data name="TaxRegistrationNumber" xml:space="preserve"><value>Número de registro fiscal</value></data>
+  <data name="SecondaryTaxRegistrationNumber" xml:space="preserve"><value>Registro fiscal secundario</value></data>
+  <data name="SamUei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="CageCode" xml:space="preserve"><value>Código CAGE</value></data>
+  <data name="WorkersCompAccountNumber" xml:space="preserve"><value>Cuenta de compensación laboral</value></data>
+  <data name="InvoiceFooterText" xml:space="preserve"><value>Pie de la factura</value></data>
+  <data name="InvoiceFooterHint" xml:space="preserve"><value>Instrucciones de pago, agradecimiento o texto legal impreso bajo los totales.</value></data>
+  <data name="PayLinkExpiryDays" xml:space="preserve"><value>Caducidad del enlace de pago (días)</value></data>
+  <data name="ShowPayOnlineOnDocuments" xml:space="preserve"><value>Mostrar un enlace "Pagar en línea" en las facturas</value></data>
+  <data name="OnlinePayments" xml:space="preserve"><value>Pagos en línea</value></data>
+  <data name="OnlinePaymentsComingSoon" xml:space="preserve"><value>El cobro en línea (Stripe) aún no está disponible. Las facturas pueden pagarse con cheque, efectivo, transferencia o tarjeta fuera de Resgrid y registrarse manualmente.</value></data>
+  <data name="OnlinePaymentsCluster" xml:space="preserve"><value>Disponibilidad en la región</value></data>
+  <data name="OnlinePaymentsFlag" xml:space="preserve"><value>Indicador del departamento</value></data>
+  <data name="OnlinePaymentsStripeNote" xml:space="preserve"><value>Cuando esté disponible, su departamento conectará su propia cuenta de Stripe; Resgrid nunca retiene los fondos.</value></data>
+  <data name="Available" xml:space="preserve"><value>Disponible</value></data>
+  <data name="NotAvailableInRegion" xml:space="preserve"><value>No disponible en esta región</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Habilitado</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Deshabilitado</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Complemento Business Operations</value></data>
+  <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Un complemento mensual para departamentos que facturan a clientes y gestionan contratos. Solo el miembro administrador del departamento puede comprarlo o cancelarlo.</value></data>
+  <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Facturación de clientes, tarifas, pagos y antigüedad de cuentas por cobrar</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Tablas de tarifas de contratistas, contratos y recuperación de costes (próximamente)</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Datos de nómina y costes de campo (próximamente)</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>El complemento está activo para su departamento.</value></data>
+  <data name="Monthly" xml:space="preserve"><value>mes</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Su departamento aún no tiene este complemento.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Pagado hasta</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Renovación cancelada; el acceso continúa hasta el final del periodo pagado.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Comprar</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Cancelar renovación</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>¿Cancelar la renovación de Business Operations?</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>La facturación no está disponible en este momento. Inténtelo más tarde.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Gestionar suscripción</value></data>
+  <data name="ModuleSettings" xml:space="preserve"><value>Configuración de módulos</value></data>
+  <data name="Links" xml:space="preserve"><value>Enlaces</value></data>
+  <data name="invoicing_call_not_found" xml:space="preserve"><value>No se encontró la llamada.</value></data>
+  <data name="invoicing_contact_not_found" xml:space="preserve"><value>No se encontró el contacto.</value></data>
+  <data name="invoicing_invoice_has_no_lines" xml:space="preserve"><value>Añada al menos una línea antes de enviar.</value></data>
+  <data name="invoicing_invoice_has_payments_cannot_void" xml:space="preserve"><value>Una factura con pagos no se puede anular.</value></data>
+  <data name="invoicing_invoice_not_draft" xml:space="preserve"><value>Solo se puede editar un borrador de factura.</value></data>
+  <data name="invoicing_invoice_not_found" xml:space="preserve"><value>No se encontró la factura.</value></data>
+  <data name="invoicing_invoice_not_payable" xml:space="preserve"><value>Esta factura no puede recibir un pago en su estado actual.</value></data>
+  <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>Una factura pagada no se puede anular.</value></data>
+  <data name="invoicing_invoice_void" xml:space="preserve"><value>Esta factura está anulada.</value></data>
+  <data name="invoicing_no_recipient_email" xml:space="preserve"><value>No hay correo de facturación para este cliente.</value></data>
+  <data name="invoicing_payment_not_found" xml:space="preserve"><value>No se encontró el pago.</value></data>
+  <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>No se pudo generar el PDF de la factura.</value></data>
+  <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Este perfil de facturación tiene facturas y no se puede eliminar.</value></data>
+  <data name="invoicing_profile_required" xml:space="preserve"><value>El cliente necesita primero un perfil de facturación activo.</value></data>
+  <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>No se encontró la tarifa.</value></data>
+</root>

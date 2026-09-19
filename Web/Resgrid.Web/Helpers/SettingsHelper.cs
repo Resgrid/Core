@@ -93,6 +93,12 @@ namespace Resgrid.Web.Helpers
 			return !GetModuleSettings().MaintenanceDisabled;
 		}
 
+		/// <summary>Business Operations module switch (Workforce &amp; Business Operations plan, decision 42); the add-on entitlement is checked separately.</summary>
+		public static bool IsBusinessOperationsEnabled()
+		{
+			return !GetModuleSettings().BusinessOperationsDisabled;
+		}
+
 		public static ResolvedMapConfig GetDepartmentMapConfig(string key = null)
 		{
 			var requestedKey = string.IsNullOrWhiteSpace(key) ? InfoConfig.WebsiteKey : key;

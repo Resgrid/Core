@@ -221,6 +221,26 @@ namespace Resgrid.Model
 		ChecklistOccurrenceSkipped,
 ChecklistReminderSettingsUpdated,
 		WorkOrderChanged,
-		InventoryChanged
+		InventoryChanged,
+
+		// Workforce & Business Operations plan Phase B (customer invoicing). Append-only.
+		BillingProfileChanged,
+		RateCardChanged,
+		InvoiceCreated,
+		InvoiceUpdated,
+		InvoiceSent,
+		InvoiceVoided,
+		InvoicePaymentRecorded,
+		DepartmentBillingIdentityChanged,
+
+		// Phase B2 online payments.
+		PaymentConnectionConnected,
+		PaymentConnectionDisconnected,
+		PaymentConnectionRevoked,
+		PaymentConnectionActionRequired,
+		InvoicePaymentRequestCreated,
+		InvoicePaymentRefunded,
+		InvoicePaymentDisputed,
+		PaymentWebhookRejected
 	}
 }

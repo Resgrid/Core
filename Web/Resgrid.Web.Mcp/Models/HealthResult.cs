@@ -39,6 +39,12 @@
 		/// Is the MCP Server running
 		/// </summary>
 		public bool ServerRunning { get; set; }
+
+		/// <summary>
+		/// Stripe Connect webhook health relayed from the Resgrid API's v4 Health endpoint (plan B2.5a). Unavailable
+		/// when the API could not be read; the MCP server holds no payment configuration of its own.
+		/// </summary>
+		public PaymentsWebhookHealthResult Payments { get; set; } = PaymentsWebhookHealthResult.Unavailable();
 	}
 }
 

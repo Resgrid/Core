@@ -132,6 +132,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string MessageRecipientsTable { get; set; }
 		public string SelectInboxMessagesByUserQuery { get; set; }
 		public string SelectSentMessagesByUserQuery { get; set; }
+		public string SelectMessagesByDIdQuery { get; set; }
 		public string SelectUnreadMessageCountQuery { get; set; }
 		public string SelectMessageRecpByMessageUsQuery { get; set; }
 		public string SelectMessageRecpsByUserQuery { get; set; }

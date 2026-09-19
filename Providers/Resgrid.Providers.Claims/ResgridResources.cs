@@ -200,6 +200,11 @@ namespace Resgrid.Providers.Claims
 		public const string Invoicing_Create = "Invoicing_Create";
 		public const string Invoicing_Update = "Invoicing_Update";
 		public const string Invoicing_Delete = "Invoicing_Delete";
+		public const string Certifications_View = "Certifications_View";
+		public const string Certifications_Create = "Certifications_Create";
+		public const string Certifications_Update = "Certifications_Update";
+		public const string Certifications_Delete = "Certifications_Delete";
+		public const string Certifications_Setup = "Certifications_Setup";
 		public const string Checklist_Update = "Checklist_Update";
 		public const string ChecklistResults_View = "ChecklistResults_View";
 		public const string RecordDefinition_Update = "RecordDefinition_Update";

@@ -54,6 +54,32 @@ namespace Resgrid.Model
 		/// </summary>
 		public bool IsProtected { get; set; }
 
+		// ---- Phase D typed records (M0213, additive; plan D1.3). Routing metadata only: never cataloged for ADP,
+		// and the D1.7 evaluator reads nothing else off this row.
+
+		/// <summary>The catalog type; null for a legacy free-text record.</summary>
+		public int? DepartmentCertificationTypeId { get; set; }
+
+		/// <summary><see cref="PersonnelCertificationStatuses"/>.</summary>
+		public int Status { get; set; }
+
+		public DateTime? StatusChangedOn { get; set; }
+
+		public string StatusChangedByUserId { get; set; }
+
+		/// <summary>Why the status was last changed (suspension / revocation reason). Not a cataloged field.</summary>
+		public string StatusReason { get; set; }
+
+		public string VerifiedByUserId { get; set; }
+
+		public DateTime? VerifiedOn { get; set; }
+
+		public bool IsDeleted { get; set; }
+
+		[NotMapped]
+		[JsonIgnore]
+		public bool IsTyped => DepartmentCertificationTypeId.HasValue && DepartmentCertificationTypeId.Value > 0;
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -72,6 +98,6 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "User" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Department", "User", "IsTyped" };
 	}
 }

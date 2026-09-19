@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,10 +20,12 @@ namespace Resgrid.Services
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IUnitOfWork _unitOfWork;
+		// Lazy: the certification service evaluates role requirements and calls back here for members (plan D4).
+		private readonly Lazy<ICertificationService> _certifications;
 
 		public PersonnelRolesService(IPersonnelRolesRepository personnelRolesRepository, IPersonnelRoleUsersRepository personnelRoleUsersRepository,
 			ISubscriptionsService subscriptionsService, IDepartmentMembersRepository departmentMemberRepository,
-			IEventAggregator eventAggregator, IUnitOfWork unitOfWork)
+			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, Lazy<ICertificationService> certifications = null)
 		{
 			_personnelRolesRepository = personnelRolesRepository;
 			_personnelRoleUsersRepository = personnelRoleUsersRepository;
@@ -30,6 +33,46 @@ namespace Resgrid.Services
 			_departmentMemberRepository = departmentMemberRepository;
 			_eventAggregator = eventAggregator;
 			_unitOfWork = unitOfWork;
+			_certifications = certifications;
+		}
+
+		public async Task<RoleMembershipCheck> CheckRoleMembershipAsync(int departmentId, string userId, IEnumerable<int> roleIds)
+		{
+			var check = new RoleMembershipCheck();
+			var ids = (roleIds ?? Enumerable.Empty<int>()).Distinct().ToList();
+			if (_certifications == null || string.IsNullOrWhiteSpace(userId) || ids.Count == 0)
+				return check;
+
+			var settings = await _certifications.Value.GetCertificationSettingsAsync(departmentId);
+			check.EnforcementMode = settings?.EnforcementMode ?? 0;
+			if (check.EnforcementMode == (int)CertificationEnforcementModes.Off)
+				return check;
+
+			foreach (var roleId in ids)
+			{
+				var evaluation = await _certifications.Value.EvaluateUserForRoleAsync(departmentId, roleId, userId);
+				check.Evaluations.Add(evaluation);
+				if (evaluation.Qualified && evaluation.Violations.Count == 0)
+					continue;
+				if (!evaluation.Qualified && check.EnforcementMode == (int)CertificationEnforcementModes.Enforce)
+					check.Blocked.Add(evaluation);
+				else
+					check.Warnings.Add(evaluation);
+			}
+			return check;
+		}
+
+		private void AuditMembership(int departmentId, string actingUserId, AuditLogTypes type, string userId, int roleId, string roleName, string details = null)
+		{
+			_eventAggregator?.SendMessage<AuditEvent>(new AuditEvent
+			{
+				DepartmentId = departmentId,
+				UserId = actingUserId ?? "system",
+				Type = type,
+				Successful = true,
+				After = Newtonsoft.Json.JsonConvert.SerializeObject(new { userId, roleId, roleName, details }),
+				ServerName = Environment.MachineName
+			});
 		}
 
 		/// <summary>
@@ -78,9 +121,23 @@ namespace Resgrid.Services
 			return new List<PersonnelRole>();
 		}
 
-		public async Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null)
 		{
-			return await _personnelRolesRepository.SaveOrUpdateAsync(role, cancellationToken);
+			// Members carried on the role are cascaded by the repository; gate and audit them here (plan D4).
+			var incoming = role?.Users?.Where(u => u != null && !string.IsNullOrWhiteSpace(u.UserId)).Select(u => u.UserId).Distinct().ToList() ?? new List<string>();
+			var previous = role != null && role.PersonnelRoleId > 0 ? (await _personnelRoleUsersRepository.GetAllMembersOfRoleAsync(role.PersonnelRoleId))?.Select(m => m.UserId).ToHashSet() ?? new HashSet<string>() : new HashSet<string>();
+			var added = incoming.Where(u => !previous.Contains(u)).ToList();
+			foreach (var userId in added)
+			{
+				var check = await CheckRoleMembershipAsync(role.DepartmentId, userId, new[] { role.PersonnelRoleId });
+				if (check.IsBlocked)
+					throw new InvalidOperationException("certifications_role_requirements_unmet");
+			}
+
+			var saved = await _personnelRolesRepository.SaveOrUpdateAsync(role, cancellationToken);
+			foreach (var userId in added)
+				AuditMembership(role.DepartmentId, actingUserId, AuditLogTypes.RoleMemberAdded, userId, saved.PersonnelRoleId, saved.Name);
+			return saved;
 		}
 
 		public async Task<PersonnelRole> GetRoleByDepartmentAndNameAsync(int departmentId, string name)
@@ -126,6 +183,8 @@ namespace Resgrid.Services
 			foreach (var user in users)
 			{
 				await _personnelRoleUsersRepository.DeleteAsync(user, cancellationToken);
+				if (user != null && user.PersonnelRoleUserId > 0)
+					AuditMembership(user.DepartmentId, null, AuditLogTypes.RoleMemberRemoved, user.UserId, user.PersonnelRoleId, user.Role?.Name);
 			}
 
 			// A single call can span departments, so every department represented in the list needs a
@@ -180,25 +239,35 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SetRolesForUserAsync(int departmentId, string userId, string[] roleIds, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<bool> SetRolesForUserAsync(int departmentId, string userId, string[] roleIds, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null)
 		{
-			await RemoveUserFromAllRolesAsync(userId, departmentId, cancellationToken);
 			var roles = await GetAllRolesForDepartmentAsync(departmentId);
+			var wanted = (roleIds ?? Array.Empty<string>()).Select(r => int.TryParse(r, out var id) ? id : 0).Where(id => id > 0).Distinct()
+				.Select(id => roles.FirstOrDefault(x => x.PersonnelRoleId == id)).Where(r => r != null).ToList();
+			var current = (await _personnelRoleUsersRepository.GetAllRoleUsersForUserAsync(departmentId, userId))?.Select(m => m.PersonnelRoleId).ToHashSet() ?? new HashSet<int>();
 
-			foreach (var roleId in roleIds)
+			// Phase D4 backstop: roles the member is newly gaining are checked before anything is removed, so a refused
+			// change leaves the existing membership exactly as it was.
+			var gaining = wanted.Where(r => !current.Contains(r.PersonnelRoleId)).Select(r => r.PersonnelRoleId).ToList();
+			if (gaining.Count > 0 && (await CheckRoleMembershipAsync(departmentId, userId, gaining)).IsBlocked)
+				throw new InvalidOperationException("certifications_role_requirements_unmet");
+
+			await RemoveUserFromAllRolesAsync(userId, departmentId, cancellationToken);
+
+			foreach (var role in wanted)
 			{
-				var role = roles.FirstOrDefault(x => x.PersonnelRoleId == int.Parse(roleId));
+				var roleUser = new PersonnelRoleUser();
+				roleUser.UserId = userId;
+				roleUser.DepartmentId = departmentId;
+				roleUser.PersonnelRoleId = role.PersonnelRoleId;
 
-				if (role != null)
-				{
-					var roleUser = new PersonnelRoleUser();
-					roleUser.UserId = userId;
-					roleUser.DepartmentId = departmentId;
-					roleUser.PersonnelRoleId = role.PersonnelRoleId;
-
-					await _personnelRoleUsersRepository.InsertAsync(roleUser, cancellationToken);
-				}
+				await _personnelRoleUsersRepository.InsertAsync(roleUser, cancellationToken);
 			}
+
+			foreach (var role in wanted.Where(r => !current.Contains(r.PersonnelRoleId)))
+				AuditMembership(departmentId, actingUserId, AuditLogTypes.RoleMemberAdded, userId, role.PersonnelRoleId, role.Name);
+			foreach (var roleId in current.Where(id => wanted.All(r => r.PersonnelRoleId != id)))
+				AuditMembership(departmentId, actingUserId, AuditLogTypes.RoleMemberRemoved, userId, roleId, roles.FirstOrDefault(r => r.PersonnelRoleId == roleId)?.Name);
 
 			SendRoleVisibilityRefresh(departmentId);
 

@@ -165,7 +165,14 @@ ViewChecklistResults = 113,
 		/// <summary>Workforce &amp; Business Operations plan Phase B (registry 40): create/edit/send/void invoices, record payments, rate cards, billing profiles. Defaults to department administrators.</summary>
 		ManageInvoicing = 40,
 		/// <summary>Workforce &amp; Business Operations plan Phase B (registry 41): view invoices, aging and PDFs. Defaults to department administrators.</summary>
-		ViewInvoicing = 41
+		ViewInvoicing = 41,
+
+		/// <summary>Workforce &amp; Business Operations plan Phase D (registry 42): create/edit/delete/status/verify others' certification records and credits, and unit certification records. Defaults to department administrators.</summary>
+		ManageCertifications = 42,
+		/// <summary>Workforce &amp; Business Operations plan Phase D (registry 43): view others' certification records and the expiry dashboard; own records are always visible. Defaults to department administrators.</summary>
+		ViewCertifications = 43,
+		/// <summary>Workforce &amp; Business Operations plan Phase D (registry 44): certification types, role requirements and department certification settings. Defaults to department administrators.</summary>
+		ManageCertificationSetup = 44
 	}
 
 }

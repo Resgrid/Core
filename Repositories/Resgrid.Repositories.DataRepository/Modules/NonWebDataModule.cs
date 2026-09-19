@@ -24,6 +24,14 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<InvoiceLineItemRepository>().As<IInvoiceLineItemRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<InvoicePaymentRepository>().As<IInvoicePaymentRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<InvoiceNumberSequenceRepository>().As<IInvoiceNumberSequenceRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentPaymentConnectionRepository>().As<IDepartmentPaymentConnectionRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<InvoicePaymentRequestRepository>().As<IInvoicePaymentRequestRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PaymentProviderEventRepository>().As<IPaymentProviderEventRepository>().InstancePerLifetimeScope();
+			// Workforce & Business Operations plan Phase D (M0213-M0214): certification requirements, settings, credits, unit records.
+			builder.RegisterType<PersonnelRoleCertificationRequirementRepository>().As<IPersonnelRoleCertificationRequirementRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentCertificationSettingsRepository>().As<IDepartmentCertificationSettingsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<PersonnelCertificationCreditsRepository>().As<IPersonnelCertificationCreditsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitCertificationRepository>().As<IUnitCertificationRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentBillingIdentityRepository>().As<IDepartmentBillingIdentityRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderRepository>().As<IWorkOrderRepository>().As<IWorkOrderMaintenanceRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistRepository>().As<IChecklistRepository>().InstancePerLifetimeScope();

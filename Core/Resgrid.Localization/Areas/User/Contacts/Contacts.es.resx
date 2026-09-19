@@ -437,6 +437,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>Los planes previos de este departamento ahora se mantienen como ocupaciones en Registros. Esta página es de solo lectura; edite la ocupación en Registros.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Este contacto no se puede eliminar mientras tenga un perfil de facturación con facturas no anuladas. Anule o liquide primero las facturas.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Abrir ocupación</value>
   </data>

@@ -1,0 +1,98 @@
+@model Resgrid.Web.Areas.User.Models.Certifications.CertificationTypeEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@{
+    var title = Model.IsNew ? localizer["NewType"].Value : localizer["EditType"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Tab"] = "Types";
+    ViewData["Title"] = title;
+    var t = Model.Type;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@title</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-controller="Certifications" asp-action="EditType" asp-route-area="User" class="form-horizontal">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="DepartmentCertificationTypeId" value="@t.DepartmentCertificationTypeId" />
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="Name">@localizer["TypeName"]</label>
+                    <div class="col-sm-6"><input type="text" class="form-control" id="Name" name="Name" value="@t.Name" maxlength="100" required /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="Code">@localizer["TypeCode"]</label>
+                    <div class="col-sm-3"><input type="text" class="form-control" id="Code" name="Code" value="@t.Code" maxlength="50" readonly="@Model.CodeLocked" placeholder="@localizer["CodeAuto"]" />
+                        <span class="help-block m-b-none">@(Model.CodeLocked ? localizer["CodeLockedHint"] : localizer["CodeHint"])</span></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="Category">@localizer["Category"]</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="Category" name="Category">
+                            @foreach (Resgrid.Model.CertificationCategories category in Enum.GetValues(typeof(Resgrid.Model.CertificationCategories)))
+                            {
+                                <option value="@((int)category)" selected="@(t.Category == (int)category)">@localizer["Category" + category]</option>
+                            }
+                        </select>
+                    </div>
+                    <label class="col-sm-1 control-label" for="AppliesTo">@localizer["AppliesTo"]</label>
+                    <div class="col-sm-2">
+                        <select class="form-control" id="AppliesTo" name="AppliesTo" disabled="@Model.ScopeLocked">
+                            <option value="0" selected="@(t.AppliesTo == 0)">@localizer["AppliesToPerson"]</option>
+                            <option value="1" selected="@(t.AppliesTo == 1)">@localizer["AppliesToUnit"]</option>
+                        </select>
+                        @if (Model.ScopeLocked) { <input type="hidden" name="AppliesTo" value="@t.AppliesTo" /> }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="IssuingAuthority">@localizer["IssuingAuthority"]</label>
+                    <div class="col-sm-6"><input type="text" class="form-control" id="IssuingAuthority" name="IssuingAuthority" value="@t.IssuingAuthority" maxlength="200" /></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="Description">@localizer["Description"]</label>
+                    <div class="col-sm-6"><textarea class="form-control" id="Description" name="Description" rows="2" maxlength="2000">@t.Description</textarea></div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="DefaultValidityMonths">@localizer["DefaultValidityMonths"]</label>
+                    <div class="col-sm-2"><input type="number" class="form-control" id="DefaultValidityMonths" name="DefaultValidityMonths" value="@t.DefaultValidityMonths" min="1" max="600" /></div>
+                    <div class="col-sm-4">
+                        <div class="checkbox"><label><input type="checkbox" name="NeverExpires" value="true" checked="@t.NeverExpires" /> @localizer["NeverExpires"]</label></div>
+                    </div>
+                </div>
+                <div class="form-group person-only">
+                    <label class="col-sm-3 control-label" for="RenewalCreditHoursRequired">@localizer["RenewalCreditHoursRequired"]</label>
+                    <div class="col-sm-2"><input type="number" class="form-control" id="RenewalCreditHoursRequired" name="RenewalCreditHoursRequired" value="@t.RenewalCreditHoursRequired?.ToString(System.Globalization.CultureInfo.InvariantCulture)" min="0" step="0.5" /></div>
+                    <div class="col-sm-4">
+                        <div class="checkbox"><label><input type="checkbox" name="RequiresVerification" value="true" checked="@t.RequiresVerification" /> @localizer["RequiresVerification"]</label>
+                            <span class="help-block m-b-none">@localizer["RequiresVerificationHint"]</span></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-6">
+                        <div class="checkbox"><label><input type="checkbox" name="IsActive" value="true" checked="@t.IsActive" /> @localizer["Active"]</label></div>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-6">
+                        <a asp-controller="Certifications" asp-action="Types" asp-route-area="User" class="btn btn-white">@localizer["Cancel"]</a>
+                        <button type="submit" class="btn btn-primary">@localizer["Save"]</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            function scope() { $('.person-only').toggle($('#AppliesTo').val() === '0'); }
+            $('#AppliesTo').on('change', scope); scope();
+            $('input[name=NeverExpires]').on('change', function () { $('#DefaultValidityMonths').prop('disabled', this.checked); }).trigger('change');
+        });
+    </script>
+}

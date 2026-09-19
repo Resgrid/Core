@@ -1,0 +1,32 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@*
+    Page heading shared by every certification screen (Workforce & Business Operations plan, Phase D9).
+    ViewData["Title"] heading + last crumb (defaults to the module name); ViewData["Subtitle"] optional line under it.
+*@
+@{
+    var title = (string)ViewData["Title"] ?? localizer["Certifications"].Value;
+    var subtitle = (string)ViewData["Subtitle"];
+    var isRoot = string.Equals(title, localizer["Certifications"].Value, StringComparison.Ordinal);
+    var canView = ViewData["CertCanView"] as bool? ?? false;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            @if (isRoot || !canView)
+            {
+                <li class="active"><strong>@title</strong></li>
+            }
+            else
+            {
+                <li><a asp-controller="Certifications" asp-action="Index" asp-route-area="User">@localizer["Certifications"]</a></li>
+                <li class="active"><strong>@title</strong></li>
+            }
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+    </div>
+</div>

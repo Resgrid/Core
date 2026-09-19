@@ -51,8 +51,9 @@ namespace Resgrid.Web.Mcp.Infrastructure
 			{
 				root = JObject.Parse(json);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				Resgrid.Framework.Logging.LogException(ex, "MCP health: the API's Payments health payload could not be parsed.");
 				return PaymentsWebhookHealthResult.Unavailable();
 			}
 

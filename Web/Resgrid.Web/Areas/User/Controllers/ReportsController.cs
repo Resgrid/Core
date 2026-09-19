@@ -240,6 +240,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(await CreateCertificationsReportModel(DepartmentId));
 		}
 
+		/// <summary>Workforce &amp; Business Operations plan Phase D9: person × type and unit × type compliance matrices (ReportTypes.CertificationCompliance = 14). Value-free: names, types, statuses and dates only.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> CertificationComplianceReport()
+		{
+			return View(await CreateCertificationComplianceReportModel(DepartmentId));
+		}
+
+		private async Task<Resgrid.Web.Areas.User.Models.Certifications.CertificationComplianceReportView> CreateCertificationComplianceReportModel(int departmentId)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+			return new Resgrid.Web.Areas.User.Models.Certifications.CertificationComplianceReportView
+			{
+				Department = department,
+				RunOn = DateTime.UtcNow.TimeConverter(department),
+				Dashboard = await _certificationService.GetExpiryDashboardAsync(departmentId),
+				Settings = await _certificationService.GetCertificationSettingsAsync(departmentId)
+			};
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<IActionResult> LogReport(int logId)
@@ -584,6 +604,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else if (((ReportTypes)type) == ReportTypes.ShiftReadiness)
 			{
 				return View("UpcomingShiftReadinessReport", await UpcomingShiftReadinessReportModel(departmentId));
+			}
+			else if (((ReportTypes)type) == ReportTypes.CertificationCompliance)
+			{
+				return View("CertificationComplianceReport", await CreateCertificationComplianceReportModel(departmentId));
 			}
 
 			return new EmptyResult();

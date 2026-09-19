@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Certifications" xml:space="preserve"><value>Certificazioni</value></data>
+  <data name="ManageCertifications" xml:space="preserve"><value>Gestire le certificazioni</value></data>
+  <data name="ViewCertifications" xml:space="preserve"><value>Visualizzare le certificazioni</value></data>
+  <data name="ManageCertificationSetup" xml:space="preserve"><value>Gestire la configurazione delle certificazioni</value></data>
+  <data name="ManageCertificationsNote" xml:space="preserve"><value>Creare, modificare, sospendere, verificare ed eliminare i record di certificazione e i crediti di altri membri e i record di certificazione delle unità.</value></data>
+  <data name="ViewCertificationsNote" xml:space="preserve"><value>Visualizzare i record di certificazione di altri membri, le certificazioni delle unità e il cruscotto delle scadenze. Ogni membro vede sempre i propri record.</value></data>
+  <data name="ManageCertificationSetupNote" xml:space="preserve"><value>Gestire i tipi di certificazione, i requisiti dei ruoli e le impostazioni di certificazione del dipartimento.</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>Cruscotto</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>Chi possiede cosa, cosa sta per scadere e cosa è scaduto, per persone e unità.</value></data>
+  <data name="CertificationTypes" xml:space="preserve"><value>Tipi di certificazione</value></data>
+  <data name="Settings" xml:space="preserve"><value>Impostazioni</value></data>
+  <data name="ComplianceReport" xml:space="preserve"><value>Rapporto di conformità</value></data>
+  <data name="ComplianceReportDescription" xml:space="preserve"><value>Matrici stampabili persona × tipo e unità × tipo con lo stato di scadenza.</value></data>
+  <data name="ReportRunOn" xml:space="preserve"><value>Generato il {0}</value></data>
+  <data name="Saved" xml:space="preserve"><value>Salvato.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>La modifica non è stata salvata.</value></data>
+  <data name="Save" xml:space="preserve"><value>Salva</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Annulla</value></data>
+  <data name="Edit" xml:space="preserve"><value>Modifica</value></data>
+  <data name="Active" xml:space="preserve"><value>Attivo</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inattivo</value></data>
+  <data name="Description" xml:space="preserve"><value>Descrizione</value></data>
+  <data name="Notes" xml:space="preserve"><value>Note</value></data>
+  <data name="Status" xml:space="preserve"><value>Stato</value></data>
+  <data name="Date" xml:space="preserve"><value>Data</value></data>
+  <data name="Hours" xml:space="preserve"><value>Ore</value></data>
+  <data name="File" xml:space="preserve"><value>File</value></data>
+  <data name="FileHint" xml:space="preserve"><value>PDF, immagine o documento office, fino a 10 MB.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Motivo</value></data>
+  <data name="Number" xml:space="preserve"><value>Numero</value></data>
+  <data name="IssuedBy" xml:space="preserve"><value>Rilasciato da</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Rilasciato il</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Scade il</value></data>
+  <data name="ReceivedOn" xml:space="preserve"><value>Ricevuto il</value></data>
+  <data name="NeverExpires" xml:space="preserve"><value>Non scade mai</value></data>
+  <data name="DaysUntilExpiry" xml:space="preserve"><value>Giorni alla scadenza</value></data>
+  <data name="DaysLeft" xml:space="preserve"><value>{0} giorni rimanenti</value></data>
+  <data name="DaysAgo" xml:space="preserve"><value>{0} giorni fa</value></data>
+  <data name="Expired" xml:space="preserve"><value>Scaduto</value></data>
+  <data name="ExpiringWithin" xml:space="preserve"><value>In scadenza entro {0} giorni</value></data>
+  <data name="SuspendedOrRevoked" xml:space="preserve"><value>Sospeso o revocato</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Esporta CSV</value></data>
+  <data name="Scope" xml:space="preserve"><value>Ambito</value></data>
+  <data name="People" xml:space="preserve"><value>Persone</value></data>
+  <data name="Units" xml:space="preserve"><value>Unità</value></data>
+  <data name="Unit" xml:space="preserve"><value>Unità</value></data>
+  <data name="Member" xml:space="preserve"><value>Membro</value></data>
+  <data name="Category" xml:space="preserve"><value>Categoria</value></data>
+  <data name="AllCategories" xml:space="preserve"><value>Tutte le categorie</value></data>
+  <data name="Group" xml:space="preserve"><value>Gruppo</value></data>
+  <data name="AllGroups" xml:space="preserve"><value>Tutti i gruppi</value></data>
+  <data name="Role" xml:space="preserve"><value>Ruolo</value></data>
+  <data name="AllRoles" xml:space="preserve"><value>Tutti i ruoli</value></data>
+  <data name="NoTypesYet" xml:space="preserve"><value>Nessun tipo di certificazione ancora.</value></data>
+  <data name="NoRecordsYet" xml:space="preserve"><value>Nessun record di certificazione ancora.</value></data>
+  <data name="LegendValid" xml:space="preserve"><value>Valido</value></data>
+  <data name="LegendExpiring" xml:space="preserve"><value>In scadenza</value></data>
+  <data name="LegendExpired" xml:space="preserve"><value>Scaduto, sospeso o revocato</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Attivo</value></data>
+  <data name="StatusExpired" xml:space="preserve"><value>Scaduto</value></data>
+  <data name="StatusSuspended" xml:space="preserve"><value>Sospeso</value></data>
+  <data name="StatusRevoked" xml:space="preserve"><value>Revocato</value></data>
+  <data name="StatusPendingVerification" xml:space="preserve"><value>In attesa di verifica</value></data>
+  <data name="StatusTrainee" xml:space="preserve"><value>Tirocinante</value></data>
+  <data name="UnitStatusActive" xml:space="preserve"><value>Attivo</value></data>
+  <data name="UnitStatusExpired" xml:space="preserve"><value>Scaduto</value></data>
+  <data name="UnitStatusSuspended" xml:space="preserve"><value>Sospeso</value></data>
+  <data name="CategoryFire" xml:space="preserve"><value>Antincendio</value></data>
+  <data name="CategoryEMS" xml:space="preserve"><value>Soccorso sanitario</value></data>
+  <data name="CategorySAR" xml:space="preserve"><value>Ricerca e soccorso</value></data>
+  <data name="CategoryWildland" xml:space="preserve"><value>Incendi boschivi</value></data>
+  <data name="CategoryEmergencyManagement" xml:space="preserve"><value>Gestione delle emergenze</value></data>
+  <data name="CategoryIndustrial" xml:space="preserve"><value>Industriale</value></data>
+  <data name="CategorySecurity" xml:space="preserve"><value>Sicurezza</value></data>
+  <data name="CategoryMedical" xml:space="preserve"><value>Medico</value></data>
+  <data name="CategoryDriver" xml:space="preserve"><value>Autista</value></data>
+  <data name="CategoryVehicle" xml:space="preserve"><value>Veicolo</value></data>
+  <data name="CategoryOther" xml:space="preserve"><value>Altro</value></data>
+  <data name="TypesIntro" xml:space="preserve"><value>Il catalogo di certificazioni, licenze, ispezioni e permessi che il dipartimento monitora.</value></data>
+  <data name="HelpTypes" xml:space="preserve"><value>Un tipo ha un codice stabile, una categoria, un ambito (persona o unità), una validità predefinita e regole opzionali di verifica o ore di credito. Scegli quelli comuni dalla galleria dei modelli.</value></data>
+  <data name="HideInactive" xml:space="preserve"><value>Nascondi inattivi</value></data>
+  <data name="ShowInactive" xml:space="preserve"><value>Mostra inattivi</value></data>
+  <data name="TemplateGallery" xml:space="preserve"><value>Galleria dei modelli</value></data>
+  <data name="TemplateGalleryIntro" xml:space="preserve"><value>Credenziali comuni per antincendio, soccorso sanitario, ricerca e soccorso, incendi boschivi, gestione delle emergenze, industria, sicurezza, conducenti DOT e conformità dei veicoli. Ognuna diventa un tipo che il dipartimento possiede e può modificare.</value></data>
+  <data name="FilterTemplates" xml:space="preserve"><value>Filtra i modelli…</value></data>
+  <data name="AlreadyAdded" xml:space="preserve"><value>Già nel catalogo</value></data>
+  <data name="AddSelected" xml:space="preserve"><value>Aggiungi selezionati</value></data>
+  <data name="TemplatesSkipped" xml:space="preserve"><value>{0} aggiunti; saltati (già presenti o rifiutati): {1}</value></data>
+  <data name="NewType" xml:space="preserve"><value>Nuovo tipo</value></data>
+  <data name="EditType" xml:space="preserve"><value>Modifica tipo</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>Codice</value></data>
+  <data name="TypeName" xml:space="preserve"><value>Tipo</value></data>
+  <data name="AppliesTo" xml:space="preserve"><value>Si applica a</value></data>
+  <data name="AppliesToPerson" xml:space="preserve"><value>Persona</value></data>
+  <data name="AppliesToUnit" xml:space="preserve"><value>Unità</value></data>
+  <data name="Validity" xml:space="preserve"><value>Validità</value></data>
+  <data name="Months" xml:space="preserve"><value>{0} mesi</value></data>
+  <data name="Records" xml:space="preserve"><value>Record</value></data>
+  <data name="Requirements" xml:space="preserve"><value>Requisiti</value></data>
+  <data name="DeleteTypeConfirm" xml:space="preserve"><value>Eliminare questo tipo di certificazione?</value></data>
+  <data name="IssuingAuthority" xml:space="preserve"><value>Ente emittente</value></data>
+  <data name="CodeAuto" xml:space="preserve"><value>Derivato dal nome se vuoto</value></data>
+  <data name="CodeHint" xml:space="preserve"><value>Identificatore stabile usato da requisiti dei ruoli e integrazioni; lettere, cifre, punti e trattini.</value></data>
+  <data name="CodeLockedHint" xml:space="preserve"><value>Un requisito di ruolo fa riferimento a questo tipo, quindi il codice non può più cambiare.</value></data>
+  <data name="DefaultValidityMonths" xml:space="preserve"><value>Validità predefinita (mesi)</value></data>
+  <data name="RenewalCreditHoursRequired" xml:space="preserve"><value>Ore di credito per rinnovo</value></data>
+  <data name="RequiresVerification" xml:space="preserve"><value>Richiede la verifica di un supervisore</value></data>
+  <data name="RequiresVerificationHint" xml:space="preserve"><value>I nuovi record restano in attesa finché qualcuno con diritti di gestione non li approva.</value></data>
+  <data name="ManageTypedCatalog" xml:space="preserve"><value>Catalogo tipizzato e modelli</value></data>
+  <data name="CertificationSettings" xml:space="preserve"><value>Impostazioni certificazioni</value></data>
+  <data name="SettingsIntro" xml:space="preserve"><value>Come vengono applicati i requisiti dei ruoli e quando partono gli avvisi di scadenza.</value></data>
+  <data name="Enforcement" xml:space="preserve"><value>Applicazione</value></data>
+  <data name="EnforcementMode" xml:space="preserve"><value>Modalità di applicazione</value></data>
+  <data name="EnforcementOff" xml:space="preserve"><value>Disattivata – i requisiti sono solo informativi</value></data>
+  <data name="EnforcementWarnOnly" xml:space="preserve"><value>Solo avvisi – consenti le modifiche ai ruoli, mostra avvisi, notifica</value></data>
+  <data name="EnforcementEnforce" xml:space="preserve"><value>Applica – blocca le assegnazioni di ruolo non qualificate e rimuovi i membri dopo il periodo di tolleranza</value></data>
+  <data name="EnforcementHint" xml:space="preserve"><value>Applica rimuove i membri dai ruoli le cui certificazioni obbligatorie sono scadute; la rimozione viene registrata e il membro notificato.</value></data>
+  <data name="EnforceConfirm" xml:space="preserve"><value>Applica rimuoverà i membri dai ruoli al termine del periodo di tolleranza. Sono configurati {0} requisiti obbligatori. Continuare?</value></data>
+  <data name="certifications_enforce_confirm" xml:space="preserve"><value>Conferma il passaggio ad Applica prima di salvare.</value></data>
+  <data name="RoleRemovalGraceDays" xml:space="preserve"><value>Periodo di tolleranza (giorni)</value></data>
+  <data name="RoleRemovalGraceDaysHint" xml:space="preserve"><value>Giorni dopo la scadenza di una certificazione obbligatoria prima che il membro venga rimosso dal ruolo. Ogni requisito può sovrascriverlo.</value></data>
+  <data name="TreatPendingVerificationAsValid" xml:space="preserve"><value>Considera validi per i requisiti dei ruoli i record in attesa di verifica</value></data>
+  <data name="Notifications" xml:space="preserve"><value>Notifiche</value></data>
+  <data name="NotifyLeadDays" xml:space="preserve"><value>Notifica (giorni prima della scadenza)</value></data>
+  <data name="NotifyLeadDaysHint" xml:space="preserve"><value>Separati da virgola, ad es. 60,30,14,7,1. Un avviso per record per ogni giorno elencato.</value></data>
+  <data name="NotifyCertificationHolder" xml:space="preserve"><value>Notifica direttamente il titolare</value></data>
+  <data name="SendAdminDigest" xml:space="preserve"><value>Invia un riepilogo notturno agli amministratori del dipartimento</value></data>
+  <data name="NotificationsHint" xml:space="preserve"><value>I destinatari degli eventi Certificazione in scadenza / scaduta / Ruolo rimosso e Certificazione unità si configurano in</value></data>
+  <data name="NotificationSettings" xml:space="preserve"><value>Impostazioni di notifica</value></data>
+  <data name="RequiredCertifications" xml:space="preserve"><value>Certificazioni richieste</value></data>
+  <data name="RequiredCertificationsFor" xml:space="preserve"><value>Certificazioni richieste – {0}</value></data>
+  <data name="RoleRequirementsIntro" xml:space="preserve"><value>Quali tipi di certificazione un membro deve possedere per questo ruolo. Le righe con lo stesso numero di gruppo sono alternative; quelle obbligatorie bloccano o rimuovono in modalità Applica.</value></data>
+  <data name="BackToRoles" xml:space="preserve"><value>Torna ai ruoli</value></data>
+  <data name="EnforcementOffNotice" xml:space="preserve"><value>L'applicazione è disattivata: questi requisiti sono informativi finché un amministratore non attiva Solo avvisi o Applica in</value></data>
+  <data name="NoPersonTypes" xml:space="preserve"><value>Non esistono ancora tipi di certificazione per persone.</value></data>
+  <data name="Mandatory" xml:space="preserve"><value>Obbligatorio</value></data>
+  <data name="AnyOfGroup" xml:space="preserve"><value>Gruppo alternativo</value></data>
+  <data name="AnyOfGroupHint" xml:space="preserve"><value>Le righe con lo stesso numero di gruppo sono soddisfatte da una qualsiasi di esse (EMT o AEMT o Paramedico); lascia vuoto per un requisito autonomo.</value></data>
+  <data name="AllowTrainee" xml:space="preserve"><value>Consenti tirocinanti</value></data>
+  <data name="GraceOverride" xml:space="preserve"><value>Tolleranza specifica (giorni)</value></data>
+  <data name="AddRequirement" xml:space="preserve"><value>Aggiungi requisito</value></data>
+  <data name="MemberEligibility" xml:space="preserve"><value>Idoneità dei membri</value></data>
+  <data name="NoMembers" xml:space="preserve"><value>Questo ruolo non ha membri.</value></data>
+  <data name="MissingOrLapsed" xml:space="preserve"><value>Mancante o scaduto</value></data>
+  <data name="Qualified" xml:space="preserve"><value>Qualificato</value></data>
+  <data name="OptionalMissing" xml:space="preserve"><value>Opzionali mancanti</value></data>
+  <data name="NotQualified" xml:space="preserve"><value>Non qualificato</value></data>
+  <data name="RemovalDue" xml:space="preserve"><value>Rimozione il {0}</value></data>
+  <data name="RoleMembersBlocked" xml:space="preserve"><value>Questi membri non possiedono le certificazioni richieste da questo ruolo e non sono stati aggiunti: {0}</value></data>
+  <data name="RoleMembersWarned" xml:space="preserve"><value>Aggiunti con un avviso – certificazioni mancanti per questo ruolo: {0}</value></data>
+  <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Il membro è stato creato, ma uno o più ruoli non sono stati assegnati: non possiede le certificazioni richieste da quei ruoli.</value></data>
+  <data name="UnitCertifications" xml:space="preserve"><value>Certificazioni unità</value></data>
+  <data name="UnitCertificationsFor" xml:space="preserve"><value>Certificazioni e ispezioni – {0}</value></data>
+  <data name="UnitCertificationsIntro" xml:space="preserve"><value>Ispezioni, immatricolazione, assicurazione, permessi e certificati di prova con scadenza per questa unità.</value></data>
+  <data name="CertificationsAndInspections" xml:space="preserve"><value>Certificazioni e ispezioni</value></data>
+  <data name="BackToUnit" xml:space="preserve"><value>Torna all'unità</value></data>
+  <data name="AddRecord" xml:space="preserve"><value>Aggiungi record</value></data>
+  <data name="NoUnitTypes" xml:space="preserve"><value>Non esistono ancora tipi di certificazione per unità.</value></data>
+  <data name="UnitCertification" xml:space="preserve"><value>Certificazione unità</value></data>
+  <data name="Reinstate" xml:space="preserve"><value>Ripristina</value></data>
+  <data name="Suspend" xml:space="preserve"><value>Sospendi</value></data>
+  <data name="Revoke" xml:space="preserve"><value>Revoca</value></data>
+  <data name="DeleteRecordConfirm" xml:space="preserve"><value>Eliminare questo record?</value></data>
+  <data name="CertificationRecord" xml:space="preserve"><value>Record di certificazione</value></data>
+  <data name="ProtectedNotice" xml:space="preserve"><value>Questo record è protetto; i valori identificativi appaiono come REDACTED senza un permesso di rivelazione.</value></data>
+  <data name="Untyped" xml:space="preserve"><value>Senza tipo</value></data>
+  <data name="VerifiedBy" xml:space="preserve"><value>Verificato da</value></data>
+  <data name="VerifyRecord" xml:space="preserve"><value>Verifica</value></data>
+  <data name="Renew" xml:space="preserve"><value>Rinnova</value></data>
+  <data name="RenewHint" xml:space="preserve"><value>Imposta una nuova scadenza (e opzionalmente un nuovo numero), riattivando un record scaduto.</value></data>
+  <data name="NewExpiresOn" xml:space="preserve"><value>Nuova data di scadenza</value></data>
+  <data name="NewNumber" xml:space="preserve"><value>Nuovo numero</value></data>
+  <data name="KeepCurrent" xml:space="preserve"><value>Lascia vuoto per mantenere l'attuale</value></data>
+  <data name="MarkTrainee" xml:space="preserve"><value>Segna tirocinante</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Cambia stato</value></data>
+  <data name="Credits" xml:space="preserve"><value>Crediti di formazione continua</value></data>
+  <data name="AddCredit" xml:space="preserve"><value>Aggiungi credito</value></data>
+  <data name="CreditProgress" xml:space="preserve"><value>{0} di {1} ore verso il prossimo rinnovo</value></data>
+  <data name="CreditTotal" xml:space="preserve"><value>{0} ore registrate</value></data>
+  <data name="NoCredits" xml:space="preserve"><value>Nessun credito registrato.</value></data>
+  <data name="DeleteCreditConfirm" xml:space="preserve"><value>Eliminare questa voce di credito?</value></data>
+  <data name="CertificationExpiring" xml:space="preserve"><value>Certificazione in scadenza</value></data>
+  <data name="CertificationAdded" xml:space="preserve"><value>Certificazione aggiunta</value></data>
+  <data name="CertificationRenewed" xml:space="preserve"><value>Certificazione rinnovata</value></data>
+  <data name="CertificationExpired" xml:space="preserve"><value>Certificazione scaduta</value></data>
+  <data name="CertificationRoleRemoved" xml:space="preserve"><value>Ruolo rimosso per certificazione scaduta</value></data>
+  <data name="CertificationStatusChanged" xml:space="preserve"><value>Stato certificazione modificato</value></data>
+  <data name="UnitCertificationExpiring" xml:space="preserve"><value>Certificazione unità in scadenza</value></data>
+  <data name="UnitCertificationExpired" xml:space="preserve"><value>Certificazione unità scaduta</value></data>
+  <data name="certifications_type_in_use" xml:space="preserve"><value>Questo tipo è referenziato da un requisito di ruolo o da un record attivo e non può essere eliminato; disattivalo invece.</value></data>
+  <data name="certifications_type_not_found" xml:space="preserve"><value>Tipo di certificazione non trovato.</value></data>
+  <data name="certifications_type_scope" xml:space="preserve"><value>Quel tipo di certificazione si applica all'altro ambito (persona o unità).</value></data>
+  <data name="certifications_type_name_required" xml:space="preserve"><value>Un tipo ha bisogno di un nome.</value></data>
+  <data name="certifications_type_validity_invalid" xml:space="preserve"><value>La validità predefinita deve essere tra 1 e 600 mesi.</value></data>
+  <data name="certifications_type_credits_invalid" xml:space="preserve"><value>Le ore di credito non possono essere negative.</value></data>
+  <data name="certifications_type_code_taken" xml:space="preserve"><value>Un altro tipo in questo dipartimento usa già quel codice.</value></data>
+  <data name="certifications_type_code_locked" xml:space="preserve"><value>Il codice non può cambiare finché un requisito di ruolo fa riferimento a questo tipo.</value></data>
+  <data name="certifications_type_scope_locked" xml:space="preserve"><value>L'ambito non può cambiare una volta che esistono record di questo tipo.</value></data>
+  <data name="certifications_template_not_found" xml:space="preserve"><value>Modello non trovato.</value></data>
+  <data name="certifications_record_not_found" xml:space="preserve"><value>Record di certificazione non trovato.</value></data>
+  <data name="certifications_status_invalid" xml:space="preserve"><value>Quello stato non può essere impostato manualmente.</value></data>
+  <data name="certifications_not_pending" xml:space="preserve"><value>Solo un record in attesa di verifica può essere verificato.</value></data>
+  <data name="certifications_expiry_required" xml:space="preserve"><value>Questo tipo scade, quindi è richiesta una nuova data di scadenza.</value></data>
+  <data name="certifications_expiry_not_later" xml:space="preserve"><value>La nuova scadenza deve essere successiva a quella attuale.</value></data>
+  <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Le ore di credito devono essere maggiori di zero.</value></data>
+  <data name="certifications_credit_not_found" xml:space="preserve"><value>Voce di credito non trovata.</value></data>
+  <data name="certifications_unit_not_found" xml:space="preserve"><value>L'unità non è stata trovata in questo dipartimento.</value></data>
+  <data name="certifications_role_not_found" xml:space="preserve"><value>Il ruolo non è stato trovato in questo dipartimento.</value></data>
+  <data name="certifications_grace_invalid" xml:space="preserve"><value>I giorni di tolleranza devono essere tra 0 e 3650.</value></data>
+  <data name="certifications_enforcement_invalid" xml:space="preserve"><value>Modalità di applicazione sconosciuta.</value></data>
+  <data name="certifications_lead_days_invalid" xml:space="preserve"><value>I giorni di anticipo devono essere positivi e non superare un anno.</value></data>
+  <data name="certifications_protected_write_refused" xml:space="preserve"><value>I dati protetti di questo record non sono stati messi in sicurezza; la modifica non è stata salvata.</value></data>
+  <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Il membro non possiede le certificazioni richieste da questo ruolo.</value></data>
+  <data name="certifications_file_type" xml:space="preserve"><value>Questo tipo di file non può essere caricato.</value></data>
+  <data name="certifications_file_too_large" xml:space="preserve"><value>Il file supera i 10 MB.</value></data>
+</root>

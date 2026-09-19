@@ -260,6 +260,10 @@ namespace Resgrid.Services
 					break;
 
 				case WorkflowTriggerEventType.CertificationExpiring:
+				case WorkflowTriggerEventType.CertificationAdded:
+				case WorkflowTriggerEventType.CertificationRenewed:
+				case WorkflowTriggerEventType.CertificationExpired:
+				case WorkflowTriggerEventType.CertificationStatusChanged:
 					var cert = new ScriptObject();
 					cert["id"] = 701;
 					cert["name"] = "EMT-Basic";
@@ -267,10 +271,50 @@ namespace Resgrid.Services
 					cert["type"] = "EMS";
 					cert["area"] = "Emergency Medical";
 					cert["issued_by"] = "State EMS Authority";
-					cert["expires_on"] = DateTime.Today.AddDays(30);
+					cert["expires_on"] = eventType == WorkflowTriggerEventType.CertificationExpired ? DateTime.Today.AddDays(-1) : DateTime.Today.AddDays(30);
 					cert["received_on"] = DateTime.Today.AddYears(-2);
-					cert["days_until_expiry"] = 30;
+					cert["days_until_expiry"] = eventType == WorkflowTriggerEventType.CertificationExpired ? -1 : 30;
+					cert["type_code"] = "STATE-EMT";
+					cert["type_name"] = "State EMT License";
+					cert["status"] = eventType == WorkflowTriggerEventType.CertificationExpired ? 1 : 0;
+					cert["user_id"] = "sample-user-id";
+					if (eventType == WorkflowTriggerEventType.CertificationRenewed)
+						cert["previous_expires_on"] = DateTime.Today.AddDays(-5);
+					if (eventType == WorkflowTriggerEventType.CertificationStatusChanged)
+					{
+						cert["old_status"] = 0;
+						cert["new_status"] = 2;
+						cert["reason"] = "Pending investigation";
+					}
 					obj["certification"] = cert;
+					break;
+
+				case WorkflowTriggerEventType.CertificationRoleRemoved:
+					var removal = new ScriptObject();
+					removal["user_id"] = "sample-user-id";
+					removal["role_id"] = 12;
+					removal["role_name"] = "Paramedic";
+					removal["type_code"] = "NREMT-P";
+					removal["type_name"] = "NREMT Paramedic";
+					removal["expires_on"] = DateTime.Today.AddDays(-31);
+					removal["grace_deadline"] = DateTime.Today.AddDays(-1);
+					obj["removal"] = removal;
+					break;
+
+				case WorkflowTriggerEventType.UnitCertificationExpiring:
+				case WorkflowTriggerEventType.UnitCertificationExpired:
+					var unitCert = new ScriptObject();
+					unitCert["id"] = 901;
+					unitCert["unit_id"] = 3;
+					unitCert["unit_name"] = "Engine 1";
+					unitCert["type_code"] = "DOT-INSPECTION";
+					unitCert["type_name"] = "DOT Annual Vehicle Inspection";
+					unitCert["number"] = "INSP-2026-118";
+					unitCert["issued_on"] = DateTime.Today.AddMonths(-11);
+					unitCert["expires_on"] = eventType == WorkflowTriggerEventType.UnitCertificationExpired ? DateTime.Today.AddDays(-1) : DateTime.Today.AddDays(14);
+					unitCert["days_until_expiry"] = eventType == WorkflowTriggerEventType.UnitCertificationExpired ? -1 : 14;
+					unitCert["status"] = eventType == WorkflowTriggerEventType.UnitCertificationExpired ? 1 : 0;
+					obj["unit_certification"] = unitCert;
 					break;
 
 				case WorkflowTriggerEventType.FormSubmitted:

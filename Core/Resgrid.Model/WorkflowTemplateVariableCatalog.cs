@@ -395,7 +395,7 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.InvoicePaymentRefunded:
 				case WorkflowTriggerEventType.InvoicePaymentDisputed:
 					foreach (var pair in Invoicing.InvoiceWorkflowPayload.Variables)
-						list.Add(new TemplateVariableDescriptor("invoice." + pair.Variable, "Invoice " + pair.Variable.Replace('_', ' ') + (pair.Variable == "contact_name" ? "; REDACTED on a protected row" : ""),
+						list.Add(new TemplateVariableDescriptor("invoice." + pair.Variable, "Invoice " + pair.Variable.Replace('_', ' ') + (pair.Variable == "contact_name" ? "; REDACTED on a protected row" : pair.Variable == "pay_url" ? "; empty when online payment is not offered" : ""),
 							pair.Variable is "number" or "status" or "old_status" ? "int"
 							: pair.Variable is "sub_total" or "discount_amount" or "tax_amount" or "total" or "amount_paid" or "balance" or "payment_amount" ? "decimal"
 							: pair.Variable.EndsWith("_on", System.StringComparison.Ordinal) ? "datetime" : "string", false));
@@ -833,6 +833,10 @@ namespace Resgrid.Model
 					break;
 
 				case WorkflowTriggerEventType.CertificationExpiring:
+				case WorkflowTriggerEventType.CertificationAdded:
+				case WorkflowTriggerEventType.CertificationRenewed:
+				case WorkflowTriggerEventType.CertificationExpired:
+				case WorkflowTriggerEventType.CertificationStatusChanged:
 					list.AddRange(new[]
 					{
 						new TemplateVariableDescriptor("certification.id", "Certification ID", "int", false),
@@ -843,7 +847,51 @@ namespace Resgrid.Model
 						new TemplateVariableDescriptor("certification.issued_by", "Issuing authority", "string", false),
 						new TemplateVariableDescriptor("certification.expires_on", "Expiry date", "datetime", false),
 						new TemplateVariableDescriptor("certification.received_on", "Received date", "datetime", false),
-						new TemplateVariableDescriptor("certification.days_until_expiry", "Days until expiry", "int", false),
+						new TemplateVariableDescriptor("certification.days_until_expiry", "Days until expiry (negative once expired)", "int", false),
+						// Phase D typed catalog metadata (plan D7); empty for a legacy free-text record.
+						new TemplateVariableDescriptor("certification.type_code", "Catalog type code", "string", false),
+						new TemplateVariableDescriptor("certification.type_name", "Catalog type name", "string", false),
+						new TemplateVariableDescriptor("certification.status", "Record status (0 Active, 1 Expired, 2 Suspended, 3 Revoked, 4 PendingVerification, 5 Trainee)", "int", false),
+						new TemplateVariableDescriptor("certification.user_id", "Holder user ID", "string", false),
+					});
+					if (eventType == WorkflowTriggerEventType.CertificationRenewed)
+						list.Add(new TemplateVariableDescriptor("certification.previous_expires_on", "Expiry before the renewal", "datetime", false));
+					if (eventType == WorkflowTriggerEventType.CertificationStatusChanged)
+						list.AddRange(new[]
+						{
+							new TemplateVariableDescriptor("certification.old_status", "Status before the change", "int", false),
+							new TemplateVariableDescriptor("certification.new_status", "Status after the change", "int", false),
+							new TemplateVariableDescriptor("certification.reason", "Reason given for the change", "string", false),
+						});
+					break;
+
+				case WorkflowTriggerEventType.CertificationRoleRemoved:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("removal.user_id", "Removed member's user ID", "string", false),
+						new TemplateVariableDescriptor("removal.role_id", "Personnel role ID", "int", false),
+						new TemplateVariableDescriptor("removal.role_name", "Personnel role name", "string", false),
+						new TemplateVariableDescriptor("removal.type_code", "Failing certification type code", "string", false),
+						new TemplateVariableDescriptor("removal.type_name", "Failing certification type name", "string", false),
+						new TemplateVariableDescriptor("removal.expires_on", "Expiry of the lapsed record", "datetime", false),
+						new TemplateVariableDescriptor("removal.grace_deadline", "Date the grace period ended", "datetime", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.UnitCertificationExpiring:
+				case WorkflowTriggerEventType.UnitCertificationExpired:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("unit_certification.id", "Unit certification ID", "int", false),
+						new TemplateVariableDescriptor("unit_certification.unit_id", "Unit ID", "int", false),
+						new TemplateVariableDescriptor("unit_certification.unit_name", "Unit name", "string", false),
+						new TemplateVariableDescriptor("unit_certification.type_code", "Catalog type code", "string", false),
+						new TemplateVariableDescriptor("unit_certification.type_name", "Catalog type name", "string", false),
+						new TemplateVariableDescriptor("unit_certification.number", "Certificate / permit number (REDACTED on a protected row)", "string", false),
+						new TemplateVariableDescriptor("unit_certification.issued_on", "Issue date", "datetime", false),
+						new TemplateVariableDescriptor("unit_certification.expires_on", "Expiry date", "datetime", false),
+						new TemplateVariableDescriptor("unit_certification.days_until_expiry", "Days until expiry (negative once expired)", "int", false),
+						new TemplateVariableDescriptor("unit_certification.status", "Record status (0 Active, 1 Expired, 2 Suspended)", "int", false),
 					});
 					break;
 

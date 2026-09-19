@@ -33,6 +33,7 @@ namespace Resgrid.Services.Search
 		private const string Checklist = "Checklist";
 		private const string WorkOrder = "WorkOrder";
 		private const string Invoicing = "Invoicing";
+		private const string Certifications = "Certifications";
 		private const string Group = "Group";
 		private const string Protocols = "Protocols";
 		private const string Forms = "Forms";
@@ -144,6 +145,13 @@ namespace Resgrid.Services.Search
 			Nav("rate-cards", "Rate Cards", "Billing rates for units, personnel and fees", "/User/Invoicing/RateCards", new[] { "rates", "pricing", "hourly", "fees" }, Invoicing, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.CustomerInvoicing),
 			Nav("invoice-aging", "Accounts Receivable Aging", "Outstanding invoice balances by age", "/User/Invoicing/Aging", new[] { "aging", "overdue", "receivables", "outstanding" }, Invoicing, View, SystemActionModules.BusinessOperations, FeatureFlagKeys.CustomerInvoicing),
 			Act("billing-settings", "Billing Settings", "Legal name, remit-to address and tax registrations printed on invoices", "/User/Invoicing/Settings", SystemActionCategories.Manage, new[] { "remit to", "tax id", "vat", "invoice footer" }, Invoicing, Update, SystemActionModules.BusinessOperations, FeatureFlagKeys.CustomerInvoicing),
+			Act("online-payment-settings", "Online Payment Settings", "Connect your Stripe account to collect invoice payments online", "/User/Invoicing/Settings?tab=online", SystemActionCategories.Manage, new[] { "stripe", "pay online", "card", "ach", "payment link" }, Invoicing, Update, SystemActionModules.BusinessOperations, FeatureFlagKeys.OnlinePayments, adminOnly: true),
+
+			// Workforce & Business Operations plan, Phase D (certifications; free). Records are never projected (decision 41).
+			Nav("certification-dashboard", "Certification Dashboard", "Expiring and expired certifications for people and units", "/User/Certifications", new[] { "certification", "certs", "expiring", "expired", "license", "credential", "compliance", "dot inspection" }, Certifications, View),
+			Nav("certification-types", "Certification Types", "The department's certification catalog and template gallery", "/User/Certifications/Types", new[] { "certification", "catalog", "types", "nremt", "cdl", "nwcg", "template" }, Certifications, "Setup"),
+			Nav("certification-settings", "Certification Settings", "Enforcement mode, grace period and expiry notifications", "/User/Certifications/Settings", new[] { "certification", "enforcement", "grace", "expiry", "notifications" }, Certifications, "Setup"),
+			Nav("my-certifications", "My Certifications", "Your own certification records", "/User/Profile/Certifications", new[] { "my certifications", "my certs", "my licenses", "credentials" }),
 
 			// ---- Messaging / chat
 			Nav("inbox", "Inbox", "Your messages inbox", "/User/Messages/Inbox", new[] { "messages", "mail", "read" }, Messages, View, SystemActionModules.Messaging),

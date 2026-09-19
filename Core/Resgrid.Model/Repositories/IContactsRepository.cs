@@ -11,5 +11,7 @@ namespace Resgrid.Model.Repositories
 	public interface IContactsRepository : IRepository<Contact>
 	{
 		Task<IEnumerable<Contact>> GetContactsByCategoryIdAsync(int departmentId, string categoryId);
+		/// <summary>The department's contacts with the given ids in one query (deleted rows included; callers decide).</summary>
+		Task<IEnumerable<Contact>> GetContactsByIdsAsync(int departmentId, IEnumerable<string> contactIds);
 	}
 }

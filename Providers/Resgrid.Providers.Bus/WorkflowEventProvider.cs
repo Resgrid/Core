@@ -99,6 +99,14 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener<TrainingUpdatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.TrainingUpdated, e));
 			_eventAggregator.AddListener<InventoryAdjustedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.InventoryAdjusted, e));
 			_eventAggregator.AddListener<CertificationExpiringEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CertificationExpiring, e));
+			// Workforce & Business Operations plan Phase D (triggers 87-93).
+			_eventAggregator.AddListener<CertificationAddedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CertificationAdded, e));
+			_eventAggregator.AddListener<CertificationRenewedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CertificationRenewed, e));
+			_eventAggregator.AddListener<CertificationExpiredEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CertificationExpired, e));
+			_eventAggregator.AddListener<CertificationRoleRemovedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CertificationRoleRemoved, e));
+			_eventAggregator.AddListener<CertificationStatusChangedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CertificationStatusChanged, e));
+			_eventAggregator.AddListener<UnitCertificationExpiringEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.UnitCertificationExpiring, e));
+			_eventAggregator.AddListener<UnitCertificationExpiredEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.UnitCertificationExpired, e));
 			_eventAggregator.AddListener<FormSubmittedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.FormSubmitted, e));
 			_eventAggregator.AddListener<PersonnelRoleChangedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.PersonnelRoleChanged, e));
 			_eventAggregator.AddListener<GroupAddedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.GroupAdded, e));

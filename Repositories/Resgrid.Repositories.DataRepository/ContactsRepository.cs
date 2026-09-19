@@ -13,7 +13,7 @@ using Resgrid.Framework;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class ContactsRepository : RepositoryBase<Contact>, IContactsRepository
+	public class ContactsRepository : RmsRepositoryBase<Contact>, IContactsRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
@@ -69,6 +69,17 @@ namespace Resgrid.Repositories.DataRepository
 
 				throw;
 			}
+		}
+
+		public Task<IEnumerable<Contact>> GetContactsByIdsAsync(int departmentId, IEnumerable<string> contactIds)
+		{
+			var ids = InListValue(contactIds);
+			if (ids.Length == 0)
+				return Task.FromResult<IEnumerable<Contact>>(new List<Contact>());
+
+			return QueryAsync<Contact>(
+				$"SELECT * FROM {Tbl("Contacts")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("ContactId", "ContactIds")}",
+				new { DepartmentId = departmentId, ContactIds = ids });
 		}
 	}
 }

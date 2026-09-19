@@ -30,10 +30,15 @@ namespace Resgrid.Tests.Services
 			var web = Path.Combine(root, "Web", "Resgrid.Web", "Areas", "User");
 			var files = Directory.GetFiles(Path.Combine(web, "Views", "Invoicing"), "*.cshtml")
 				.Concat(Directory.GetFiles(Path.Combine(web, "Views", "BusinessOperationsBilling"), "*.cshtml"))
+				.Concat(Directory.GetFiles(Path.Combine(root, "Web", "Resgrid.Web", "Views", "Pay"), "*.cshtml"))
+				.Concat(Directory.GetFiles(Path.Combine(root, "Providers", "Resgrid.Providers.Payments"), "*.cs"))
 				.Concat(new[]
 				{
 					Path.Combine(web, "Controllers", "InvoicingController.cs"),
 					Path.Combine(web, "Controllers", "BusinessOperationsBillingController.cs"),
+					Path.Combine(root, "Web", "Resgrid.Web", "Controllers", "PayController.cs"),
+					Path.Combine(root, "Core", "Resgrid.Services", "Invoicing", "InvoicePaymentsService.cs"),
+					Path.Combine(root, "Core", "Resgrid.Services", "Invoicing", "InvoicingService.Protection.cs"),
 					Path.Combine(web, "Views", "Contacts", "View.cshtml"),
 					Path.Combine(web, "Views", "Department", "ModuleSettings.cshtml"),
 					Path.Combine(web, "Views", "Shared", "_Navigation.cshtml"),
@@ -47,7 +52,7 @@ namespace Resgrid.Tests.Services
 				var source = File.ReadAllText(file);
 				var pattern = file.EndsWith("View.cshtml") || file.EndsWith("ModuleSettings.cshtml") || file.EndsWith("_Navigation.cshtml")
 					? """invoicingLocalizer\["([^"]+)"\]"""
-					: """(?<![A-Za-z])localizer\["([^"]+)"\]|_strings\["([^"]+)"\]|Refused\(\d+, "([^"]+)"|InvalidOperationException\("(invoicing_[a-z_]+)""";
+					: """(?<![A-Za-z])localizer\["([^"]+)"\]|_strings\["([^"]+)"\]|Refused\(\d+, "([^"]+)"|InvalidOperationException\("((?:invoicing|payments)_[a-z_]+)"|"((?:payments|pay)_[a-z_]+)"(?!\s*=>)""";
 				foreach (Match match in Regex.Matches(source, pattern))
 					keys.Add(match.Groups.Cast<Group>().Skip(1).First(g => g.Success).Value);
 			}
@@ -57,6 +62,8 @@ namespace Resgrid.Tests.Services
 			foreach (var method in Enum.GetNames<InvoicePaymentMethods>()) keys.Add("Method" + method);
 			foreach (var state in Enum.GetNames<InvoicePaymentStatuses>()) keys.Add("PaymentStatus" + state);
 			foreach (var type in Enum.GetNames<RateCardItemTypes>()) keys.Add("ItemType" + type);
+			foreach (var state in Enum.GetNames<PaymentRequestStatuses>()) keys.Add("RequestStatus" + state);
+			foreach (var state in Enum.GetNames<PaymentConnectionStatuses>()) keys.Add("ConnectionStatus" + state);
 
 			var resources = Read(Path.Combine(ResourceDirectory(), "Invoicing.resx"));
 			keys.Except(resources.Keys).Should().BeEmpty("user interfaces and errors must not show untranslated resource identifiers");
@@ -65,10 +72,10 @@ namespace Resgrid.Tests.Services
 		// These values are the same in both languages; they are reviewed, not untranslated.
 		private static readonly Dictionary<string, string[]> SharedSpellings = new Dictionary<string, string[]>
 		{
-			["de"] = new[] { "Status", "Name", "Minimum", "Links", "ItemTypeMaterial" },
+			["de"] = new[] { "Status", "Name", "Minimum", "Links", "ItemTypeMaterial", "LiveMode", "SandboxMode" },
 			["es"] = new[] { "Total", "SubTotal", "ItemTypeMaterial" },
 			["fr"] = new[] { "Total", "Description", "Notes", "Actions", "ItemType", "Taxable", "Address", "Minimum" },
-			["it"] = new[] { "MethodOnline", "Minimum" },
+			["it"] = new[] { "MethodOnline", "Minimum", "LiveMode", "SandboxMode" },
 			["pl"] = new[] { "Status", "MethodOnline", "Minimum" },
 			["sv"] = new[] { "Status", "Default", "MethodCheck", "MethodOnline", "ItemTypeMaterial", "Links", "Minimum" },
 		};

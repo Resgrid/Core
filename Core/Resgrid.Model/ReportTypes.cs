@@ -15,6 +15,8 @@ namespace Resgrid.Model
 		InventoryTransferHistory = 10,
 		InventoryIssuance = 11,
 		InventoryValuation = 12,
-		ControlledSubstanceLog = 13
+		ControlledSubstanceLog = 13,
+		/// <summary>Workforce &amp; Business Operations plan Phase D (registry 14): person × type and unit × type certification compliance.</summary>
+		CertificationCompliance = 14
 	}
 }

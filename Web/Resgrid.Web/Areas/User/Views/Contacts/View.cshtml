@@ -25,6 +25,10 @@
     {
         <partial name="_AdpRevealBanner" model="adpReveal" />
     }
+    @if (!string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="alert alert-warning">@Model.Message</div>
+    }
     <div class="ibox">
         <div class="ibox-title">
             <h5><span data-adp-name>@Model.Contact.GetName()</span></h5>
@@ -65,7 +69,7 @@
                 {
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#billing" role="tab">
-                            <i class="fa fa-file-text-o"></i> @invoicingLocalizer["Billing"] <span class="badge">@(Model.Invoices?.Count ?? 0)</span>
+                            <i class="fa fa-file-text-o"></i> @invoicingLocalizer["Billing"] <span class="badge">@Model.InvoiceCount</span>
                         </a>
                     </li>
                 }
@@ -636,7 +640,7 @@
                                                 <table class="table table-condensed table-hover">
                                                     <thead><tr><th>@invoicingLocalizer["Number"]</th><th>@invoicingLocalizer["Status"]</th><th>@invoicingLocalizer["DueOn"]</th><th class="text-right">@invoicingLocalizer["Total"]</th><th class="text-right">@invoicingLocalizer["Balance"]</th></tr></thead>
                                                     <tbody>
-                                                        @foreach (var invoice in Model.Invoices.Take(25))
+                                                        @foreach (var invoice in Model.Invoices)
                                                         {
                                                             <tr>
                                                                 <td><a asp-controller="Invoicing" asp-action="View" asp-route-area="User" asp-route-id="@invoice.InvoiceId">#@invoice.InvoiceNumber</a></td>
@@ -648,6 +652,10 @@
                                                         }
                                                     </tbody>
                                                 </table>
+                                                @if (Model.InvoiceCount > Model.Invoices.Count)
+                                                {
+                                                    <p><a asp-controller="Invoicing" asp-action="Index" asp-route-area="User" asp-route-contactId="@Model.Contact.ContactId">@invoicingLocalizer["AllInvoicesForCustomer"] (@Model.InvoiceCount)</a></p>
+                                                }
                                             }
                                             @if (Model.BillingProfile != null && Model.BillingProfile.Active && ClaimsAuthorizationHelper.CanManageInvoicing())
                                             {

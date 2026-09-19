@@ -175,5 +175,22 @@ namespace Resgrid.Tests.Search
 			saved.State.Should().Be((int)SearchIndexBuildState.RebuildRequested);
 			saved.IndexName.Should().Be(SearchIndexNames.Global);
 		}
+		[Test]
+		public async Task A_records_only_page_past_the_first_twenty_still_returns_records()
+		{
+			var recordSource = ((int)RmsSearchSourceType.Record).ToString();
+			var pool = Enumerable.Range(1, 30).Select(i => new RecordsSearchHit { SourceType = recordSource, SourceId = "r" + i, RecordNumber = "R-" + i, Score = 30 - i }).ToList();
+			RecordsAnswer(pool.ToArray());
+			RecordsSearchRequest asked = null;
+			_recordsSearch.Setup(r => r.SearchAsync(7, It.IsAny<RecordsSearchRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((int _, RecordsSearchRequest q, CancellationToken __) => asked = q)
+				.ReturnsAsync((int _, RecordsSearchRequest q, CancellationToken __) => new RecordsSearchResult { Hits = pool.Take(q.Take).ToList(), Total = pool.Count });
+
+			var page = await _service.SearchAsync(new UnifiedSearchRequest { Text = "one", Skip = 22, Take = 2, EntityTypes = new List<string> { SearchEntityTypes.Record } }, Principal("Record:View"));
+
+			asked.Take.Should().BeGreaterThanOrEqualTo(24, "the federation must cover skip + take");
+			page.Hits.Select(h => h.EntityId).Should().Equal("r23", "r24");
+			page.Total.Should().Be(30);
+		}
 	}
 }

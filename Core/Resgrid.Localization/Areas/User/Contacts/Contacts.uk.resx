@@ -437,6 +437,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>Плани реагування цього підрозділу тепер ведуться як об'єкти в Записах. Ця сторінка лише для читання; редагуйте об'єкт у Записах.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Цей контакт не можна видалити, поки в нього є платіжний профіль із неанульованими рахунками. Спочатку анулюйте або оплатіть рахунки.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Відкрити об'єкт</value>
   </data>

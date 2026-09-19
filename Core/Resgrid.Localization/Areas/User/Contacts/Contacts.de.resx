@@ -437,6 +437,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>Einsatzpläne dieser Organisation werden jetzt als Objekte in den Berichten gepflegt. Diese Seite ist schreibgeschützt; bearbeiten Sie das Objekt unter Berichte.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Dieser Kontakt kann nicht gelöscht werden, solange er ein Abrechnungsprofil mit nicht stornierten Rechnungen hat. Stornieren oder begleichen Sie die Rechnungen zuerst.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Objekt öffnen</value>
   </data>

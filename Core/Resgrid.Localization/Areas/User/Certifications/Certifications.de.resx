@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Certifications" xml:space="preserve"><value>Zertifizierungen</value></data>
+  <data name="ManageCertifications" xml:space="preserve"><value>Zertifizierungen verwalten</value></data>
+  <data name="ViewCertifications" xml:space="preserve"><value>Zertifizierungen anzeigen</value></data>
+  <data name="ManageCertificationSetup" xml:space="preserve"><value>Zertifizierungseinrichtung verwalten</value></data>
+  <data name="ManageCertificationsNote" xml:space="preserve"><value>Zertifizierungsdatensätze und Fortbildungspunkte anderer Mitglieder sowie Einheitszertifizierungen anlegen, bearbeiten, aussetzen, bestätigen und löschen.</value></data>
+  <data name="ViewCertificationsNote" xml:space="preserve"><value>Zertifizierungsdatensätze anderer Mitglieder, Einheitszertifizierungen und das Ablauf-Dashboard anzeigen. Eigene Datensätze sind immer sichtbar.</value></data>
+  <data name="ManageCertificationSetupNote" xml:space="preserve"><value>Zertifizierungstypen, Rollenanforderungen und die Zertifizierungseinstellungen der Abteilung verwalten.</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>Übersicht</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>Wer was besitzt, was abläuft und was verfallen ist – für Personen und Einheiten.</value></data>
+  <data name="CertificationTypes" xml:space="preserve"><value>Zertifizierungstypen</value></data>
+  <data name="Settings" xml:space="preserve"><value>Einstellungen</value></data>
+  <data name="ComplianceReport" xml:space="preserve"><value>Compliance-Bericht</value></data>
+  <data name="ComplianceReportDescription" xml:space="preserve"><value>Druckbare Matrizen Person × Typ und Einheit × Typ mit Ablaufstatus.</value></data>
+  <data name="ReportRunOn" xml:space="preserve"><value>Erstellt am {0}</value></data>
+  <data name="Saved" xml:space="preserve"><value>Gespeichert.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Die Änderung konnte nicht gespeichert werden.</value></data>
+  <data name="Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Edit" xml:space="preserve"><value>Bearbeiten</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inaktiv</value></data>
+  <data name="Description" xml:space="preserve"><value>Beschreibung</value></data>
+  <data name="Notes" xml:space="preserve"><value>Notizen</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Date" xml:space="preserve"><value>Datum</value></data>
+  <data name="Hours" xml:space="preserve"><value>Stunden</value></data>
+  <data name="File" xml:space="preserve"><value>Datei</value></data>
+  <data name="FileHint" xml:space="preserve"><value>PDF, Bild oder Office-Dokument, bis zu 10 MB.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Grund</value></data>
+  <data name="Number" xml:space="preserve"><value>Nummer</value></data>
+  <data name="IssuedBy" xml:space="preserve"><value>Ausgestellt von</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Ausgestellt am</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Läuft ab am</value></data>
+  <data name="ReceivedOn" xml:space="preserve"><value>Erhalten am</value></data>
+  <data name="NeverExpires" xml:space="preserve"><value>Läuft nie ab</value></data>
+  <data name="DaysUntilExpiry" xml:space="preserve"><value>Tage bis Ablauf</value></data>
+  <data name="DaysLeft" xml:space="preserve"><value>noch {0} Tage</value></data>
+  <data name="DaysAgo" xml:space="preserve"><value>vor {0} Tagen</value></data>
+  <data name="Expired" xml:space="preserve"><value>Abgelaufen</value></data>
+  <data name="ExpiringWithin" xml:space="preserve"><value>Läuft in {0} Tagen ab</value></data>
+  <data name="SuspendedOrRevoked" xml:space="preserve"><value>Ausgesetzt oder entzogen</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>CSV exportieren</value></data>
+  <data name="Scope" xml:space="preserve"><value>Bereich</value></data>
+  <data name="People" xml:space="preserve"><value>Personen</value></data>
+  <data name="Units" xml:space="preserve"><value>Einheiten</value></data>
+  <data name="Unit" xml:space="preserve"><value>Einheit</value></data>
+  <data name="Member" xml:space="preserve"><value>Mitglied</value></data>
+  <data name="Category" xml:space="preserve"><value>Kategorie</value></data>
+  <data name="AllCategories" xml:space="preserve"><value>Alle Kategorien</value></data>
+  <data name="Group" xml:space="preserve"><value>Gruppe</value></data>
+  <data name="AllGroups" xml:space="preserve"><value>Alle Gruppen</value></data>
+  <data name="Role" xml:space="preserve"><value>Rolle</value></data>
+  <data name="AllRoles" xml:space="preserve"><value>Alle Rollen</value></data>
+  <data name="NoTypesYet" xml:space="preserve"><value>Noch keine Zertifizierungstypen.</value></data>
+  <data name="NoRecordsYet" xml:space="preserve"><value>Noch keine Zertifizierungsdatensätze.</value></data>
+  <data name="LegendValid" xml:space="preserve"><value>Gültig</value></data>
+  <data name="LegendExpiring" xml:space="preserve"><value>Läuft bald ab</value></data>
+  <data name="LegendExpired" xml:space="preserve"><value>Abgelaufen, ausgesetzt oder entzogen</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="StatusExpired" xml:space="preserve"><value>Abgelaufen</value></data>
+  <data name="StatusSuspended" xml:space="preserve"><value>Ausgesetzt</value></data>
+  <data name="StatusRevoked" xml:space="preserve"><value>Entzogen</value></data>
+  <data name="StatusPendingVerification" xml:space="preserve"><value>Bestätigung ausstehend</value></data>
+  <data name="StatusTrainee" xml:space="preserve"><value>In Ausbildung</value></data>
+  <data name="UnitStatusActive" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="UnitStatusExpired" xml:space="preserve"><value>Abgelaufen</value></data>
+  <data name="UnitStatusSuspended" xml:space="preserve"><value>Ausgesetzt</value></data>
+  <data name="CategoryFire" xml:space="preserve"><value>Feuerwehr</value></data>
+  <data name="CategoryEMS" xml:space="preserve"><value>Rettungsdienst</value></data>
+  <data name="CategorySAR" xml:space="preserve"><value>Such- und Rettungsdienst</value></data>
+  <data name="CategoryWildland" xml:space="preserve"><value>Vegetationsbrand</value></data>
+  <data name="CategoryEmergencyManagement" xml:space="preserve"><value>Katastrophenschutz</value></data>
+  <data name="CategoryIndustrial" xml:space="preserve"><value>Industrie</value></data>
+  <data name="CategorySecurity" xml:space="preserve"><value>Sicherheitsdienst</value></data>
+  <data name="CategoryMedical" xml:space="preserve"><value>Medizin</value></data>
+  <data name="CategoryDriver" xml:space="preserve"><value>Fahrer</value></data>
+  <data name="CategoryVehicle" xml:space="preserve"><value>Fahrzeug</value></data>
+  <data name="CategoryOther" xml:space="preserve"><value>Sonstige</value></data>
+  <data name="TypesIntro" xml:space="preserve"><value>Der Katalog der Zertifizierungen, Lizenzen, Prüfungen und Genehmigungen, die Ihre Abteilung verfolgt.</value></data>
+  <data name="HelpTypes" xml:space="preserve"><value>Ein Typ hat einen festen Code, eine Kategorie, einen Bereich (Person oder Einheit), eine Standardgültigkeit und optionale Bestätigungs- oder Fortbildungsregeln. Gängige Typen finden Sie in der Vorlagengalerie.</value></data>
+  <data name="HideInactive" xml:space="preserve"><value>Inaktive ausblenden</value></data>
+  <data name="ShowInactive" xml:space="preserve"><value>Inaktive anzeigen</value></data>
+  <data name="TemplateGallery" xml:space="preserve"><value>Vorlagengalerie</value></data>
+  <data name="TemplateGalleryIntro" xml:space="preserve"><value>Gängige Nachweise aus Feuerwehr, Rettungsdienst, SAR, Vegetationsbrand, Katastrophenschutz, Industrie, Sicherheitsdienst, DOT-Fahrer- und Fahrzeug-Compliance. Jeder wird zu einem Typ, den Ihre Abteilung besitzt und bearbeiten kann.</value></data>
+  <data name="FilterTemplates" xml:space="preserve"><value>Vorlagen filtern …</value></data>
+  <data name="AlreadyAdded" xml:space="preserve"><value>Bereits in Ihrem Katalog</value></data>
+  <data name="AddSelected" xml:space="preserve"><value>Ausgewählte hinzufügen</value></data>
+  <data name="TemplatesSkipped" xml:space="preserve"><value>{0} hinzugefügt; übersprungen (bereits vorhanden oder abgelehnt): {1}</value></data>
+  <data name="NewType" xml:space="preserve"><value>Neuer Typ</value></data>
+  <data name="EditType" xml:space="preserve"><value>Typ bearbeiten</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>Code</value></data>
+  <data name="TypeName" xml:space="preserve"><value>Typ</value></data>
+  <data name="AppliesTo" xml:space="preserve"><value>Gilt für</value></data>
+  <data name="AppliesToPerson" xml:space="preserve"><value>Person</value></data>
+  <data name="AppliesToUnit" xml:space="preserve"><value>Einheit</value></data>
+  <data name="Validity" xml:space="preserve"><value>Gültigkeit</value></data>
+  <data name="Months" xml:space="preserve"><value>{0} Monate</value></data>
+  <data name="Records" xml:space="preserve"><value>Datensätze</value></data>
+  <data name="Requirements" xml:space="preserve"><value>Anforderungen</value></data>
+  <data name="DeleteTypeConfirm" xml:space="preserve"><value>Diesen Zertifizierungstyp löschen?</value></data>
+  <data name="IssuingAuthority" xml:space="preserve"><value>Ausstellende Stelle</value></data>
+  <data name="CodeAuto" xml:space="preserve"><value>Wird bei Leerfeld aus dem Namen abgeleitet</value></data>
+  <data name="CodeHint" xml:space="preserve"><value>Fester Bezeichner für Rollenanforderungen und Integrationen; Buchstaben, Ziffern, Punkte und Bindestriche.</value></data>
+  <data name="CodeLockedHint" xml:space="preserve"><value>Eine Rollenanforderung verweist auf diesen Typ; der Code kann nicht mehr geändert werden.</value></data>
+  <data name="DefaultValidityMonths" xml:space="preserve"><value>Standardgültigkeit (Monate)</value></data>
+  <data name="RenewalCreditHoursRequired" xml:space="preserve"><value>Fortbildungsstunden pro Verlängerung</value></data>
+  <data name="RequiresVerification" xml:space="preserve"><value>Erfordert Bestätigung durch Vorgesetzte</value></data>
+  <data name="RequiresVerificationHint" xml:space="preserve"><value>Neue Datensätze bleiben ausstehend, bis jemand mit Verwaltungsrechten sie bestätigt.</value></data>
+  <data name="ManageTypedCatalog" xml:space="preserve"><value>Typisierter Katalog und Vorlagen</value></data>
+  <data name="CertificationSettings" xml:space="preserve"><value>Zertifizierungseinstellungen</value></data>
+  <data name="SettingsIntro" xml:space="preserve"><value>Wie Rollenanforderungen durchgesetzt werden und wann Ablaufhinweise verschickt werden.</value></data>
+  <data name="Enforcement" xml:space="preserve"><value>Durchsetzung</value></data>
+  <data name="EnforcementMode" xml:space="preserve"><value>Durchsetzungsmodus</value></data>
+  <data name="EnforcementOff" xml:space="preserve"><value>Aus – Anforderungen sind nur informativ</value></data>
+  <data name="EnforcementWarnOnly" xml:space="preserve"><value>Nur warnen – Rollenänderungen erlauben, Warnungen anzeigen, benachrichtigen</value></data>
+  <data name="EnforcementEnforce" xml:space="preserve"><value>Durchsetzen – unqualifizierte Rollenzuweisungen blockieren und Mitglieder nach der Nachfrist entfernen</value></data>
+  <data name="EnforcementHint" xml:space="preserve"><value>Durchsetzen entfernt Mitglieder aus Rollen, deren Pflichtzertifizierungen verfallen sind; die Entfernung wird protokolliert und das Mitglied benachrichtigt.</value></data>
+  <data name="EnforceConfirm" xml:space="preserve"><value>Durchsetzen entfernt Mitglieder aus Rollen, sobald ihre Nachfrist endet. {0} Pflichtanforderung(en) sind konfiguriert. Fortfahren?</value></data>
+  <data name="certifications_enforce_confirm" xml:space="preserve"><value>Bestätigen Sie den Wechsel zu „Durchsetzen“ vor dem Speichern.</value></data>
+  <data name="RoleRemovalGraceDays" xml:space="preserve"><value>Nachfrist (Tage)</value></data>
+  <data name="RoleRemovalGraceDaysHint" xml:space="preserve"><value>Tage nach Verfall einer Pflichtzertifizierung, bevor das Mitglied aus der Rolle entfernt wird. Jede Anforderung kann den Wert überschreiben.</value></data>
+  <data name="TreatPendingVerificationAsValid" xml:space="preserve"><value>Datensätze mit ausstehender Bestätigung für Rollenanforderungen als gültig behandeln</value></data>
+  <data name="Notifications" xml:space="preserve"><value>Benachrichtigungen</value></data>
+  <data name="NotifyLeadDays" xml:space="preserve"><value>Benachrichtigen (Tage vor Ablauf)</value></data>
+  <data name="NotifyLeadDaysHint" xml:space="preserve"><value>Kommagetrennt, z. B. 60,30,14,7,1. Ein Hinweis pro Datensatz und aufgeführtem Tag.</value></data>
+  <data name="NotifyCertificationHolder" xml:space="preserve"><value>Inhaber direkt benachrichtigen</value></data>
+  <data name="SendAdminDigest" xml:space="preserve"><value>Abteilungsadministratoren eine nächtliche Zusammenfassung senden</value></data>
+  <data name="NotificationsHint" xml:space="preserve"><value>Empfänger der Ereignisse „Zertifizierung läuft ab / abgelaufen / Rolle entfernt“ und „Einheitszertifizierung“ werden konfiguriert unter</value></data>
+  <data name="NotificationSettings" xml:space="preserve"><value>Benachrichtigungseinstellungen</value></data>
+  <data name="RequiredCertifications" xml:space="preserve"><value>Erforderliche Zertifizierungen</value></data>
+  <data name="RequiredCertificationsFor" xml:space="preserve"><value>Erforderliche Zertifizierungen – {0}</value></data>
+  <data name="RoleRequirementsIntro" xml:space="preserve"><value>Welche Zertifizierungstypen ein Mitglied für diese Rolle haben muss. Zeilen mit derselben Gruppennummer sind Alternativen; Pflichtzeilen blockieren oder entfernen im Modus „Durchsetzen“.</value></data>
+  <data name="BackToRoles" xml:space="preserve"><value>Zurück zu den Rollen</value></data>
+  <data name="EnforcementOffNotice" xml:space="preserve"><value>Die Durchsetzung ist aus: Diese Anforderungen sind nur informativ, bis ein Abteilungsadministrator „Nur warnen“ oder „Durchsetzen“ aktiviert unter</value></data>
+  <data name="NoPersonTypes" xml:space="preserve"><value>Es gibt noch keine personenbezogenen Zertifizierungstypen.</value></data>
+  <data name="Mandatory" xml:space="preserve"><value>Pflicht</value></data>
+  <data name="AnyOfGroup" xml:space="preserve"><value>Alternativgruppe</value></data>
+  <data name="AnyOfGroupHint" xml:space="preserve"><value>Zeilen mit derselben Gruppennummer werden durch eine beliebige davon erfüllt (EMT oder AEMT oder Paramedic); leer lassen für eine eigenständige Anforderung.</value></data>
+  <data name="AllowTrainee" xml:space="preserve"><value>Auszubildende zulassen</value></data>
+  <data name="GraceOverride" xml:space="preserve"><value>Nachfrist überschreiben (Tage)</value></data>
+  <data name="AddRequirement" xml:space="preserve"><value>Anforderung hinzufügen</value></data>
+  <data name="MemberEligibility" xml:space="preserve"><value>Eignung der Mitglieder</value></data>
+  <data name="NoMembers" xml:space="preserve"><value>Diese Rolle hat keine Mitglieder.</value></data>
+  <data name="MissingOrLapsed" xml:space="preserve"><value>Fehlend oder verfallen</value></data>
+  <data name="Qualified" xml:space="preserve"><value>Qualifiziert</value></data>
+  <data name="OptionalMissing" xml:space="preserve"><value>Optionale fehlen</value></data>
+  <data name="NotQualified" xml:space="preserve"><value>Nicht qualifiziert</value></data>
+  <data name="RemovalDue" xml:space="preserve"><value>Entfernung am {0}</value></data>
+  <data name="RoleMembersBlocked" xml:space="preserve"><value>Diese Mitglieder besitzen die für diese Rolle erforderlichen Zertifizierungen nicht und wurden nicht hinzugefügt: {0}</value></data>
+  <data name="RoleMembersWarned" xml:space="preserve"><value>Mit Warnung hinzugefügt – fehlende Zertifizierungen für diese Rolle: {0}</value></data>
+  <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Das Mitglied wurde angelegt, aber eine oder mehrere Rollen wurden nicht zugewiesen: Es fehlen die für diese Rollen erforderlichen Zertifizierungen.</value></data>
+  <data name="UnitCertifications" xml:space="preserve"><value>Einheitszertifizierungen</value></data>
+  <data name="UnitCertificationsFor" xml:space="preserve"><value>Zertifizierungen und Prüfungen – {0}</value></data>
+  <data name="UnitCertificationsIntro" xml:space="preserve"><value>Prüfungen, Zulassung, Versicherung, Genehmigungen und Prüfbescheinigungen mit Ablaufdatum für diese Einheit.</value></data>
+  <data name="CertificationsAndInspections" xml:space="preserve"><value>Zertifizierungen &amp; Prüfungen</value></data>
+  <data name="BackToUnit" xml:space="preserve"><value>Zurück zur Einheit</value></data>
+  <data name="AddRecord" xml:space="preserve"><value>Datensatz hinzufügen</value></data>
+  <data name="NoUnitTypes" xml:space="preserve"><value>Es gibt noch keine einheitenbezogenen Zertifizierungstypen.</value></data>
+  <data name="UnitCertification" xml:space="preserve"><value>Einheitszertifizierung</value></data>
+  <data name="Reinstate" xml:space="preserve"><value>Wieder aktivieren</value></data>
+  <data name="Suspend" xml:space="preserve"><value>Aussetzen</value></data>
+  <data name="Revoke" xml:space="preserve"><value>Entziehen</value></data>
+  <data name="DeleteRecordConfirm" xml:space="preserve"><value>Diesen Datensatz löschen?</value></data>
+  <data name="CertificationRecord" xml:space="preserve"><value>Zertifizierungsdatensatz</value></data>
+  <data name="ProtectedNotice" xml:space="preserve"><value>Dieser Datensatz ist geschützt; identifizierende Werte werden ohne Freigabe als REDACTED angezeigt.</value></data>
+  <data name="Untyped" xml:space="preserve"><value>Ohne Typ</value></data>
+  <data name="VerifiedBy" xml:space="preserve"><value>Bestätigt von</value></data>
+  <data name="VerifyRecord" xml:space="preserve"><value>Bestätigen</value></data>
+  <data name="Renew" xml:space="preserve"><value>Verlängern</value></data>
+  <data name="RenewHint" xml:space="preserve"><value>Setzt ein neues Ablaufdatum (und optional eine neue Nummer) und aktiviert einen abgelaufenen Datensatz erneut.</value></data>
+  <data name="NewExpiresOn" xml:space="preserve"><value>Neues Ablaufdatum</value></data>
+  <data name="NewNumber" xml:space="preserve"><value>Neue Nummer</value></data>
+  <data name="KeepCurrent" xml:space="preserve"><value>Leer lassen, um die aktuelle zu behalten</value></data>
+  <data name="MarkTrainee" xml:space="preserve"><value>Als Auszubildende markieren</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Status ändern</value></data>
+  <data name="Credits" xml:space="preserve"><value>Fortbildungspunkte</value></data>
+  <data name="AddCredit" xml:space="preserve"><value>Punkte hinzufügen</value></data>
+  <data name="CreditProgress" xml:space="preserve"><value>{0} von {1} Stunden bis zur nächsten Verlängerung</value></data>
+  <data name="CreditTotal" xml:space="preserve"><value>{0} Stunden erfasst</value></data>
+  <data name="NoCredits" xml:space="preserve"><value>Keine Punkte erfasst.</value></data>
+  <data name="DeleteCreditConfirm" xml:space="preserve"><value>Diesen Punkteeintrag löschen?</value></data>
+  <data name="CertificationExpiring" xml:space="preserve"><value>Zertifizierung läuft ab</value></data>
+  <data name="CertificationAdded" xml:space="preserve"><value>Zertifizierung hinzugefügt</value></data>
+  <data name="CertificationRenewed" xml:space="preserve"><value>Zertifizierung verlängert</value></data>
+  <data name="CertificationExpired" xml:space="preserve"><value>Zertifizierung abgelaufen</value></data>
+  <data name="CertificationRoleRemoved" xml:space="preserve"><value>Rolle wegen verfallener Zertifizierung entfernt</value></data>
+  <data name="CertificationStatusChanged" xml:space="preserve"><value>Zertifizierungsstatus geändert</value></data>
+  <data name="UnitCertificationExpiring" xml:space="preserve"><value>Einheitszertifizierung läuft ab</value></data>
+  <data name="UnitCertificationExpired" xml:space="preserve"><value>Einheitszertifizierung abgelaufen</value></data>
+  <data name="certifications_type_in_use" xml:space="preserve"><value>Auf diesen Typ verweist eine Rollenanforderung oder ein aktiver Datensatz; er kann nicht gelöscht werden. Deaktivieren Sie ihn stattdessen.</value></data>
+  <data name="certifications_type_not_found" xml:space="preserve"><value>Der Zertifizierungstyp wurde nicht gefunden.</value></data>
+  <data name="certifications_type_scope" xml:space="preserve"><value>Dieser Zertifizierungstyp gilt für den anderen Bereich (Person bzw. Einheit).</value></data>
+  <data name="certifications_type_name_required" xml:space="preserve"><value>Ein Typ benötigt einen Namen.</value></data>
+  <data name="certifications_type_validity_invalid" xml:space="preserve"><value>Die Standardgültigkeit muss zwischen 1 und 600 Monaten liegen.</value></data>
+  <data name="certifications_type_credits_invalid" xml:space="preserve"><value>Fortbildungsstunden dürfen nicht negativ sein.</value></data>
+  <data name="certifications_type_code_taken" xml:space="preserve"><value>Ein anderer Typ in dieser Abteilung verwendet diesen Code bereits.</value></data>
+  <data name="certifications_type_code_locked" xml:space="preserve"><value>Der Code kann nicht geändert werden, solange eine Rollenanforderung auf diesen Typ verweist.</value></data>
+  <data name="certifications_type_scope_locked" xml:space="preserve"><value>Der Bereich kann nicht geändert werden, sobald Datensätze dieses Typs existieren.</value></data>
+  <data name="certifications_template_not_found" xml:space="preserve"><value>Die Vorlage wurde nicht gefunden.</value></data>
+  <data name="certifications_record_not_found" xml:space="preserve"><value>Der Zertifizierungsdatensatz wurde nicht gefunden.</value></data>
+  <data name="certifications_status_invalid" xml:space="preserve"><value>Dieser Status kann nicht manuell gesetzt werden.</value></data>
+  <data name="certifications_not_pending" xml:space="preserve"><value>Nur ein Datensatz mit ausstehender Bestätigung kann bestätigt werden.</value></data>
+  <data name="certifications_expiry_required" xml:space="preserve"><value>Dieser Typ läuft ab, daher ist ein neues Ablaufdatum erforderlich.</value></data>
+  <data name="certifications_expiry_not_later" xml:space="preserve"><value>Das neue Ablaufdatum muss nach dem aktuellen liegen.</value></data>
+  <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Fortbildungsstunden müssen größer als null sein.</value></data>
+  <data name="certifications_credit_not_found" xml:space="preserve"><value>Der Punkteeintrag wurde nicht gefunden.</value></data>
+  <data name="certifications_unit_not_found" xml:space="preserve"><value>Die Einheit wurde in dieser Abteilung nicht gefunden.</value></data>
+  <data name="certifications_role_not_found" xml:space="preserve"><value>Die Rolle wurde in dieser Abteilung nicht gefunden.</value></data>
+  <data name="certifications_grace_invalid" xml:space="preserve"><value>Die Nachfrist muss zwischen 0 und 3650 Tagen liegen.</value></data>
+  <data name="certifications_enforcement_invalid" xml:space="preserve"><value>Unbekannter Durchsetzungsmodus.</value></data>
+  <data name="certifications_lead_days_invalid" xml:space="preserve"><value>Vorlauftage müssen positiv sein und höchstens ein Jahr betragen.</value></data>
+  <data name="certifications_protected_write_refused" xml:space="preserve"><value>Geschützte Daten dieses Datensatzes konnten nicht gesichert werden; die Änderung wurde nicht gespeichert.</value></data>
+  <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Das Mitglied besitzt die für diese Rolle erforderlichen Zertifizierungen nicht.</value></data>
+  <data name="certifications_file_type" xml:space="preserve"><value>Dieser Dateityp kann nicht hochgeladen werden.</value></data>
+  <data name="certifications_file_too_large" xml:space="preserve"><value>Die Datei ist größer als 10 MB.</value></data>
+</root>

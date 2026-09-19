@@ -115,5 +115,12 @@
   "WorkOrderApprovalChanged": 173,
   "WorkOrderSlaBreached": 174,
   "WorkOrderVendorChargeChanged": 175,
-  "WorkOrderPolicyChanged": 176
+  "WorkOrderPolicyChanged": 176,
+  "CertificationAdded": 87,
+  "CertificationRenewed": 88,
+  "CertificationExpired": 89,
+  "CertificationRoleRemoved": 90,
+  "CertificationStatusChanged": 91,
+  "UnitCertificationExpiring": 92,
+  "UnitCertificationExpired": 93
 }

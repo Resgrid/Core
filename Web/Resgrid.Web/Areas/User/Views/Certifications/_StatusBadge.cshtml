@@ -1,0 +1,16 @@
+@model int
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@{
+    var status = (Resgrid.Model.PersonnelCertificationStatuses)Model;
+    var css = status switch
+    {
+        Resgrid.Model.PersonnelCertificationStatuses.Active => "label-primary",
+        Resgrid.Model.PersonnelCertificationStatuses.Expired => "label-danger",
+        Resgrid.Model.PersonnelCertificationStatuses.Suspended => "label-warning",
+        Resgrid.Model.PersonnelCertificationStatuses.Revoked => "label-danger",
+        Resgrid.Model.PersonnelCertificationStatuses.PendingVerification => "label-info",
+        Resgrid.Model.PersonnelCertificationStatuses.Trainee => "label-default",
+        _ => "label-default"
+    };
+}
+<span class="label @css">@localizer["Status" + status]</span>

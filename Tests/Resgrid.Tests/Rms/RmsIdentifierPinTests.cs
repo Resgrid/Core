@@ -38,13 +38,16 @@ namespace Resgrid.Tests.Rms
 			Enum.IsDefined(typeof(PermissionTypes), 68).Should().BeFalse("68 is reserved for Unified Search's ManageSearchIndex, which is not authored yet");
 
 			// Inventory consumed its 47-49 reservation in P1-M1/M2; Contacts/Billing Phase B took 40-41 on 2026-09-18;
-			// 42-46 remain unauthored (Certifications 42-44, buffer 45-46).
+			// Certifications Phase D took 42-44 on 2026-09-19; 45-46 stay in the buffer.
 			((int)PermissionTypes.TransferInventory).Should().Be(47);
 			((int)PermissionTypes.IssueInventory).Should().Be(48);
 			((int)PermissionTypes.ManageControlledSubstances).Should().Be(49);
 			((int)PermissionTypes.ManageInvoicing).Should().Be(40);
 			((int)PermissionTypes.ViewInvoicing).Should().Be(41);
-			foreach (var value in Enumerable.Range(42, 5))
+			((int)PermissionTypes.ManageCertifications).Should().Be(42);
+			((int)PermissionTypes.ViewCertifications).Should().Be(43);
+			((int)PermissionTypes.ManageCertificationSetup).Should().Be(44);
+			foreach (var value in Enumerable.Range(45, 2))
 				Enum.IsDefined(typeof(PermissionTypes), value).Should().BeFalse($"PermissionTypes {value} is reserved for another plan");
 		}
 
@@ -72,8 +75,13 @@ namespace Resgrid.Tests.Rms
 			Enum.GetName(typeof(EventTypes), 32).Should().Be("RecordReviewOverdue");
 			Enum.GetName(typeof(EventTypes), 33).Should().Be("RecordSubmissionRejected");
 
-			foreach (var value in Enumerable.Range(25, 6))
-				Enum.IsDefined(typeof(EventTypes), value).Should().BeFalse($"EventTypes {value} belongs to Certifications or the buffer");
+			// Certifications (Phase D) authored 25-29 on 2026-09-19 (registry); 30 stays in the buffer.
+			Enum.GetName(typeof(EventTypes), 25).Should().Be("CertificationExpiring");
+			Enum.GetName(typeof(EventTypes), 26).Should().Be("CertificationExpired");
+			Enum.GetName(typeof(EventTypes), 27).Should().Be("CertificationRoleRemoved");
+			Enum.GetName(typeof(EventTypes), 28).Should().Be("UnitCertificationExpiring");
+			Enum.GetName(typeof(EventTypes), 29).Should().Be("UnitCertificationExpired");
+			Enum.IsDefined(typeof(EventTypes), 30).Should().BeFalse("EventTypes 30 is the buffer");
 		}
 
 		[Test]
@@ -115,7 +123,10 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.InvoiceVoided).Should().Be(57);
 			((int)WorkflowTriggerEventType.InvoicePaymentRefunded).Should().Be(94);
 			((int)WorkflowTriggerEventType.InvoicePaymentDisputed).Should().Be(95);
-			foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(52, 6)).Except(Enumerable.Range(58, 16)).Except(new[] { 94, 95 }))
+			// Certifications Phase D authored 87-93 on 2026-09-19 (registry).
+			((int)WorkflowTriggerEventType.CertificationAdded).Should().Be(87);
+			((int)WorkflowTriggerEventType.UnitCertificationExpired).Should().Be(93);
+			foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(52, 6)).Except(Enumerable.Range(58, 16)).Except(Enumerable.Range(87, 7)).Except(new[] { 94, 95 }))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");
 		}
 

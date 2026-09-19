@@ -40,7 +40,7 @@ namespace Resgrid.Model.Services
 		/// <param name="role">The role.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;PersonnelRole&gt;.</returns>
-		Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken));
+		Task<PersonnelRole> SaveRoleAsync(PersonnelRole role, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null);
 
 		/// <summary>
 		/// Gets the role by department and name asynchronous.
@@ -66,6 +66,14 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> DeleteRoleUsersAsync(List<PersonnelRoleUser> users, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Workforce &amp; Business Operations plan Phase D4: evaluates a member against each role's certification
+		/// requirements under the department's enforcement mode. Enforce lists blocked roles, WarnOnly lists warnings,
+		/// Off returns an empty check. Callers show the result before mutating membership; the mutation methods
+		/// re-run it as a backstop and throw certifications_role_requirements_unmet under Enforce.
+		/// </summary>
+		Task<RoleMembershipCheck> CheckRoleMembershipAsync(int departmentId, string userId, IEnumerable<int> roleIds);
 
 		/// <summary>
 		/// Gets the roles for user asynchronous.
@@ -101,7 +109,7 @@ namespace Resgrid.Model.Services
 		/// <param name="roleIds">The role ids.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> SetRolesForUserAsync(int departmentId, string userId, string[] roleIds, CancellationToken cancellationToken = default(CancellationToken));
+		Task<bool> SetRolesForUserAsync(int departmentId, string userId, string[] roleIds, CancellationToken cancellationToken = default(CancellationToken), string actingUserId = null);
 
 		/// <summary>
 		/// Gets all members of role asynchronous.
@@ -109,5 +117,20 @@ namespace Resgrid.Model.Services
 		/// <param name="roleId">The role identifier.</param>
 		/// <returns>Task&lt;List&lt;PersonnelRoleUser&gt;&gt;.</returns>
 		Task<List<PersonnelRoleUser>> GetAllMembersOfRoleAsync(int roleId);
+	}
+}
+
+namespace Resgrid.Model
+{
+	/// <summary>Outcome of a role-membership certification check (plan D4).</summary>
+	public sealed class RoleMembershipCheck
+	{
+		public int EnforcementMode { get; set; }
+		public List<RoleCertificationEvaluation> Evaluations { get; set; } = new List<RoleCertificationEvaluation>();
+		/// <summary>Roles the member may not join (Enforce and a mandatory requirement fails).</summary>
+		public List<RoleCertificationEvaluation> Blocked { get; set; } = new List<RoleCertificationEvaluation>();
+		/// <summary>Roles the member may join with a warning (WarnOnly, or optional requirements failing).</summary>
+		public List<RoleCertificationEvaluation> Warnings { get; set; } = new List<RoleCertificationEvaluation>();
+		public bool IsBlocked => Blocked.Count > 0;
 	}
 }

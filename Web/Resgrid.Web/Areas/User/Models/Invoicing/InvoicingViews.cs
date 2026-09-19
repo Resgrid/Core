@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Invoicing;
 using Resgrid.Model.Services;
@@ -25,9 +26,18 @@ namespace Resgrid.Web.Areas.User.Models.Invoicing
 		public int Page { get; set; }
 		public int PageSize { get; set; } = 50;
 		public int TotalCount { get; set; }
-		public decimal OutstandingBalance { get; set; }
-		public decimal OverdueBalance { get; set; }
+		/// <summary>Open balance per currency code; invoices may be issued in any supported currency, so unlike codes are never summed.</summary>
+		public IReadOnlyDictionary<string, decimal> OutstandingBalances { get; set; } = new Dictionary<string, decimal>();
+		public IReadOnlyDictionary<string, decimal> OverdueBalances { get; set; } = new Dictionary<string, decimal>();
 		public int OverdueCount { get; set; }
+
+		/// <summary>"1,234.00 USD / 950.00 EUR" one per line; "0.00" when nothing is open. Shared by the index cards and the aging table.</summary>
+		public static string FormatBalances(IReadOnlyDictionary<string, decimal> balances)
+		{
+			if (balances == null || balances.Count == 0)
+				return 0m.ToString("N2");
+			return string.Join(" / ", balances.OrderBy(b => b.Key, StringComparer.OrdinalIgnoreCase).Select(b => string.IsNullOrEmpty(b.Key) ? b.Value.ToString("N2") : b.Value.ToString("N2") + " " + b.Key));
+		}
 	}
 
 	public sealed class InvoiceNewView : InvoicingPageView
@@ -61,6 +71,12 @@ namespace Resgrid.Web.Areas.User.Models.Invoicing
 		public CustomerBillingProfile Profile { get; set; }
 		public string RenderedHtml { get; set; }
 		public string Message { get; set; }
+		/// <summary>Phase B2: null when the cluster does not offer payment collection at all (the section is absent).</summary>
+		public OnlinePaymentsStatus OnlinePayments { get; set; }
+		/// <summary>The shareable pay-page link, or null when online payment is not offered for this invoice right now.</summary>
+		public string PayUrl { get; set; }
+		public InvoicePaymentRequest OpenRequest { get; set; }
+		public IReadOnlyList<InvoicePaymentRequest> PaymentRequests { get; set; } = new List<InvoicePaymentRequest>();
 	}
 
 	public sealed class RateCardsView : InvoicingPageView
@@ -112,11 +128,22 @@ namespace Resgrid.Web.Areas.User.Models.Invoicing
 	{
 		public DepartmentBillingIdentity Identity { get; set; } = new DepartmentBillingIdentity();
 		public Address RemitTo { get; set; } = new Address();
-		/// <summary>Phase B2 placeholder state for the Online payments tab: the operator cluster switch and the department flag.</summary>
-		public bool OnlinePaymentsClusterEnabled { get; set; }
-		public bool OnlinePaymentsFlagEnabled { get; set; }
+		/// <summary>Phase B2: the department's online-payments posture (cluster switch, flag, connection, gates).</summary>
+		public OnlinePaymentsStatus OnlinePayments { get; set; } = new OnlinePaymentsStatus();
+		public bool OnlinePaymentsClusterEnabled => OnlinePayments?.AvailableInCluster == true;
+		public bool OnlinePaymentsFlagEnabled => OnlinePayments?.FlagEnabled == true;
+		/// <summary>"identity" or "online"; the online tab is requested by the action catalog and after a connect round-trip.</summary>
+		public string ActiveTab { get; set; } = "identity";
+		public bool IsDepartmentAdmin { get; set; }
 		public bool SaveSuccess { get; set; }
 		public string Message { get; set; }
+	}
+
+	public sealed class OnlinePaymentsInput
+	{
+		public bool OnlinePaymentsEnabled { get; set; }
+		/// <summary>Subset of "card", "us_bank_account".</summary>
+		public string[] AllowedPaymentMethods { get; set; } = new string[0];
 	}
 
 	public sealed class BillingSettingsInput

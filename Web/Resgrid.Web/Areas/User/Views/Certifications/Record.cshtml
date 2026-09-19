@@ -1,0 +1,205 @@
+@model Resgrid.Web.Areas.User.Models.Certifications.CertificationRecordView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CertificationRecord"];
+    ViewData["Tab"] = "Dashboard";
+    ViewData["Title"] = localizer["CertificationRecord"].Value;
+    var r = Model.Record;
+    var t = Model.Type;
+    var status = (Resgrid.Model.PersonnelCertificationStatuses)r.Status;
+    var canEdit = Model.IsSelf || Model.CanManage;
+    var required = t?.RenewalCreditHoursRequired;
+    var pct = required.HasValue && required.Value > 0 ? (int)Math.Min(100, Math.Round(Model.CreditHours / required.Value * 100)) : (int?)null;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content">
+    @await Html.PartialAsync("_Message", (Resgrid.Web.Areas.User.Models.Certifications.CertificationPageView)Model)
+    <div class="row">
+        <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Name)</h5>
+                    <div class="ibox-tools">
+                        @await Html.PartialAsync("_StatusBadge", r.Status)
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    @if (r.IsProtected)
+                    {
+                        <div class="alert alert-info"><i class="fa fa-lock"></i> @localizer["ProtectedNotice"]</div>
+                    }
+                    <dl class="dl-horizontal">
+                        <dt>@localizer["Member"]</dt><dd><a asp-controller="Profile" asp-action="Certifications" asp-route-area="User" asp-route-userId="@r.UserId">@Model.HolderName</a></dd>
+                        <dt>@localizer["TypeName"]</dt><dd>@(t != null ? $"{t.Type} ({t.Code})" : Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Type) ?? "—") @if (t == null) { <span class="label label-default">@localizer["Untyped"]</span> }</dd>
+                        <dt>@localizer["Number"]</dt><dd>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Number)</dd>
+                        <dt>@localizer["IssuedBy"]</dt><dd>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.IssuedBy)</dd>
+                        <dt>@localizer["ReceivedOn"]</dt><dd>@r.RecievedOn?.ToString("yyyy-MM-dd")</dd>
+                        <dt>@localizer["ExpiresOn"]</dt><dd>@(t?.NeverExpires == true ? localizer["NeverExpires"].Value : r.ExpiresOn?.ToString("yyyy-MM-dd") ?? "—")
+                            @if (Model.DaysUntilExpiry.HasValue) { <small class="@(Model.DaysUntilExpiry < 0 ? "text-danger" : Model.DaysUntilExpiry <= 60 ? "text-warning" : "text-muted")">(@string.Format(localizer[Model.DaysUntilExpiry < 0 ? "DaysAgo" : "DaysLeft"].Value, Math.Abs(Model.DaysUntilExpiry.Value)))</small> }</dd>
+                        @if (!string.IsNullOrWhiteSpace(r.StatusReason) && r.StatusReason != "expired")
+                        {
+                            <dt>@localizer["Reason"]</dt><dd>@r.StatusReason</dd>
+                        }
+                        @if (r.VerifiedOn.HasValue)
+                        {
+                            <dt>@localizer["VerifiedBy"]</dt><dd>@Model.VerifiedByName <small class="text-muted">@r.VerifiedOn.Value.ToString("yyyy-MM-dd")</small></dd>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(r.Filename))
+                        {
+                            <dt>@localizer["File"]</dt><dd><a asp-controller="Profile" asp-action="GetCertificationData" asp-route-area="User" asp-route-certId="@r.PersonnelCertificationId"><i class="fa fa-download"></i> @Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(r.Filename)</a></dd>
+                        }
+                    </dl>
+                    <div class="hr-line-dashed"></div>
+                    @if (canEdit)
+                    {
+                        <a asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" asp-route-certId="@r.PersonnelCertificationId" class="btn btn-sm btn-default"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+                        <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#renewModal"><i class="fa fa-refresh"></i> @localizer["Renew"]</button>
+                    }
+                    @if (Model.CanManage)
+                    {
+                        if (status == Resgrid.Model.PersonnelCertificationStatuses.PendingVerification)
+                        {
+                            <form method="post" asp-controller="Certifications" asp-action="Verify" asp-route-area="User" asp-route-id="@r.PersonnelCertificationId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> @localizer["VerifyRecord"]</button></form>
+                        }
+                        if (status == Resgrid.Model.PersonnelCertificationStatuses.Active || status == Resgrid.Model.PersonnelCertificationStatuses.Trainee)
+                        {
+                            <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#statusModal" data-status="2">@localizer["Suspend"]</button>
+                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#statusModal" data-status="3">@localizer["Revoke"]</button>
+                        }
+                        if (status == Resgrid.Model.PersonnelCertificationStatuses.Active)
+                        {
+                            <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#statusModal" data-status="5">@localizer["MarkTrainee"]</button>
+                        }
+                        if (status == Resgrid.Model.PersonnelCertificationStatuses.Suspended || status == Resgrid.Model.PersonnelCertificationStatuses.Revoked || status == Resgrid.Model.PersonnelCertificationStatuses.Trainee)
+                        {
+                            <button type="button" class="btn btn-sm btn-default" data-toggle="modal" data-target="#statusModal" data-status="0">@localizer["Reinstate"]</button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["Credits"]</h5>
+                    @if (canEdit && t?.IsUnitScoped != true)
+                    {
+                        <div class="ibox-tools"><button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#creditModal"><i class="fa fa-plus"></i> @localizer["AddCredit"]</button></div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    @if (required.HasValue)
+                    {
+                        <p>@string.Format(localizer["CreditProgress"].Value, Model.CreditHours.ToString("0.##"), required.Value.ToString("0.##"))</p>
+                        <div class="progress progress-small"><div class="progress-bar @(pct >= 100 ? "progress-bar-success" : null)" style="width: @(pct)%"></div></div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">@string.Format(localizer["CreditTotal"].Value, Model.CreditHours.ToString("0.##"))</p>
+                    }
+                    @if (Model.Credits.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoCredits"]</p>
+                    }
+                    else
+                    {
+                        <table class="table table-condensed">
+                            <thead><tr><th>@localizer["Date"]</th><th class="text-right">@localizer["Hours"]</th><th>@localizer["Category"]</th><th>@localizer["Description"]</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var c in Model.Credits)
+                                {
+                                    <tr>
+                                        <td>@c.CreditDate.ToString("yyyy-MM-dd")</td>
+                                        <td class="text-right">@c.Hours.ToString("0.##")</td>
+                                        <td>@c.Category</td>
+                                        <td>@Resgrid.Model.ProtectedDataEnvelope.SafeDisplay(c.Description) @if (!string.IsNullOrWhiteSpace(c.FileName)) { <a asp-controller="Certifications" asp-action="CreditFile" asp-route-area="User" asp-route-id="@c.PersonnelCertificationCreditId"><i class="fa fa-paperclip"></i></a> }</td>
+                                        <td class="text-right">
+                                            @if (Model.CanManage)
+                                            {
+                                                <form method="post" asp-controller="Certifications" asp-action="DeleteCredit" asp-route-area="User" asp-route-id="@c.PersonnelCertificationCreditId" style="display: inline;">@Html.AntiForgeryToken()<button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteCreditConfirm"]');"><i class="fa fa-trash"></i></button></form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (canEdit)
+{
+    <div class="modal fade" id="renewModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <form method="post" asp-controller="Certifications" asp-action="Renew" asp-route-area="User" asp-route-id="@r.PersonnelCertificationId">
+                @Html.AntiForgeryToken()
+                <div class="modal-content">
+                    <div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button><h4 class="modal-title">@localizer["Renew"]</h4></div>
+                    <div class="modal-body">
+                        <p class="text-muted small">@localizer["RenewHint"]</p>
+                        @if (t?.NeverExpires != true)
+                        {
+                            <div class="form-group"><label>@localizer["NewExpiresOn"]</label><input type="date" name="expiresOn" class="form-control" required value="@((r.ExpiresOn ?? DateTime.UtcNow.Date).AddMonths(t?.DefaultValidityMonths ?? 12).ToString("yyyy-MM-dd"))" /></div>
+                        }
+                        <div class="form-group"><label>@localizer["NewNumber"]</label><input type="text" name="number" class="form-control" maxlength="200" placeholder="@localizer["KeepCurrent"]" /></div>
+                    </div>
+                    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-primary">@localizer["Renew"]</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal fade" id="creditModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <form method="post" enctype="multipart/form-data" asp-controller="Certifications" asp-action="AddCredit" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="PersonnelCertificationId" value="@r.PersonnelCertificationId" />
+                <div class="modal-content">
+                    <div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button><h4 class="modal-title">@localizer["AddCredit"]</h4></div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-6"><div class="form-group"><label>@localizer["Date"]</label><input type="date" name="CreditDate" class="form-control" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" required /></div></div>
+                            <div class="col-sm-6"><div class="form-group"><label>@localizer["Hours"]</label><input type="number" name="Hours" class="form-control" min="0.25" step="0.25" required /></div></div>
+                        </div>
+                        <div class="form-group"><label>@localizer["Category"]</label><input type="text" name="Category" class="form-control" maxlength="100" /></div>
+                        <div class="form-group"><label>@localizer["Description"]</label><textarea name="Description" class="form-control" rows="2" maxlength="2000"></textarea></div>
+                        <div class="form-group"><label>@localizer["File"]</label><input type="file" name="fileToUpload" class="form-control" /><span class="help-block m-b-none">@localizer["FileHint"]</span></div>
+                    </div>
+                    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-primary">@localizer["Save"]</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+@if (Model.CanManage)
+{
+    <div class="modal fade" id="statusModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <form method="post" asp-controller="Certifications" asp-action="SetStatus" asp-route-area="User" asp-route-id="@r.PersonnelCertificationId">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="status" id="status-value" value="2" />
+                <div class="modal-content">
+                    <div class="modal-header"><button type="button" class="close" data-dismiss="modal"><span>&times;</span></button><h4 class="modal-title" id="status-title">@localizer["ChangeStatus"]</h4></div>
+                    <div class="modal-body"><div class="form-group"><label>@localizer["Reason"]</label><input type="text" name="reason" class="form-control" maxlength="500" /></div></div>
+                    <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Cancel"]</button><button type="submit" class="btn btn-primary">@localizer["Save"]</button></div>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('#statusModal').on('show.bs.modal', function (e) {
+                var b = $(e.relatedTarget);
+                $('#status-value').val(b.data('status'));
+                $('#status-title').text(b.text().trim());
+            });
+        });
+    </script>
+}

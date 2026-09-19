@@ -12,7 +12,10 @@ namespace Resgrid.Model.Services
 	{
 		public string Label { get; set; }
 		public int Count { get; set; }
+		/// <summary>Sum of every balance in the bucket regardless of currency; meaningful only when <see cref="BalancesByCurrency"/> has one entry.</summary>
 		public decimal Balance { get; set; }
+		/// <summary>The bucket's balance per currency code (invoices may be issued in any supported currency), ordered by code.</summary>
+		public SortedDictionary<string, decimal> BalancesByCurrency { get; set; } = new SortedDictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
 		public List<InvoiceAgingRow> Invoices { get; set; } = new List<InvoiceAgingRow>();
 	}
 
@@ -21,8 +24,18 @@ namespace Resgrid.Model.Services
 	{
 		public DateTime AsOfUtc { get; set; }
 		public List<InvoiceAgingBucket> Buckets { get; set; } = new List<InvoiceAgingBucket>();
+		/// <summary>Sum of every open balance regardless of currency; meaningful only when <see cref="BalancesByCurrency"/> has one entry.</summary>
 		public decimal TotalBalance { get; set; }
+		/// <summary>Open balance per currency code, ordered by code.</summary>
+		public SortedDictionary<string, decimal> BalancesByCurrency { get; set; } = new SortedDictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
 		public int TotalCount { get; set; }
+
+		/// <summary>Adds <paramref name="amount"/> to the <paramref name="currency"/> entry (a missing code files under an empty key).</summary>
+		public static void Accumulate(SortedDictionary<string, decimal> balances, string currency, decimal amount)
+		{
+			var key = string.IsNullOrWhiteSpace(currency) ? string.Empty : currency.Trim().ToUpperInvariant();
+			balances[key] = (balances.TryGetValue(key, out var current) ? current : 0m) + amount;
+		}
 	}
 
 	/// <summary>The department's Phase B invoicing surface (Workforce &amp; Business Operations plan, B4). Every mutation audits; lifecycle transitions publish their Workflow trigger through the domain outbox.</summary>
@@ -57,8 +70,10 @@ namespace Resgrid.Model.Services
 		Task<Invoice> CreateDraftInvoiceAsync(int departmentId, string contactId, string userId, string ipAddress, string userAgent, string currency = null, CancellationToken cancellationToken = default);
 		/// <summary>Draft-only edit of header fields (notes, terms, discount, due date, currency); totals are recomputed.</summary>
 		Task<Invoice> SaveInvoiceAsync(Invoice invoice, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
-		/// <summary>Replaces a draft's line items with the supplied list and recomputes totals.</summary>
+		/// <summary>Replaces a draft's line items with the supplied list (re-applying each rate card item's minimum charge) and recomputes totals, in one transaction.</summary>
 		Task<Invoice> SaveInvoiceLineItemsAsync(string invoiceId, int departmentId, List<InvoiceLineItem> lineItems, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>Header fields and line items of a draft saved atomically: <see cref="SaveInvoiceAsync"/> then <see cref="SaveInvoiceLineItemsAsync"/> in one transaction.</summary>
+		Task<Invoice> SaveDraftAsync(Invoice invoice, List<InvoiceLineItem> lineItems, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Editable draft lines for a call from a rate card: time on scene from unit states (plan decision 9), flat and fixed items. Nothing is saved.</summary>
 		Task<List<InvoiceLineItem>> GenerateLineItemsFromCallAsync(int callId, string rateCardId, int departmentId);
 		/// <summary>Appends the generated lines for a call to a draft invoice and recomputes totals.</summary>
@@ -72,6 +87,8 @@ namespace Resgrid.Model.Services
 		Task<InvoicePayment> RecordPaymentAsync(InvoicePayment payment, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Applies a refund (or lost dispute) to a recorded payment and re-derives the invoice's status and balance (Phase B2).</summary>
 		Task<InvoicePayment> ApplyPaymentRefundAsync(string invoicePaymentId, int departmentId, decimal refundedAmount, bool disputeLost, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
+		/// <summary>Card dispute lifecycle on an online payment (Phase B2): Opened flags the payment and publishes InvoicePaymentDisputed once; Won restores Succeeded; Lost zeroes the payment's effect (a refund in all but name) and re-derives the invoice.</summary>
+		Task<InvoicePayment> ApplyPaymentDisputeAsync(string invoicePaymentId, int departmentId, InvoiceDisputeStages stage, string userId, string ipAddress, string userAgent, CancellationToken cancellationToken = default);
 		/// <summary>Sent / PartiallyPaid invoices past DueOn become Overdue (the invoice maintenance worker's pass). Returns the number transitioned. <paramref name="departmentEnabled"/> lets the worker skip departments whose entitlement lapsed.</summary>
 		Task<int> MarkOverdueInvoicesAsync(DateTime asOfUtc, Func<int, Task<bool>> departmentEnabled = null, CancellationToken cancellationToken = default);
 		Task<InvoiceAgingReport> GetAccountsReceivableAgingAsync(int departmentId, DateTime? asOfUtc = null);

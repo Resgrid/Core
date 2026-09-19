@@ -648,8 +648,10 @@ namespace Resgrid.Providers.EmailProvider
 
 				return await _emailSender.Send(newEmail);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				// A send that cannot be composed or delivered is a failed send; the cause must still be on record.
+				Logging.LogException(ex);
 			}
 
 			return false;

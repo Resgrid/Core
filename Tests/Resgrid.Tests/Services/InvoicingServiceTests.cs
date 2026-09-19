@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ using Resgrid.Model.Events;
 using Resgrid.Model.Invoicing;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Services.Invoicing;
 
@@ -37,6 +39,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IEmailService> _email;
 		private Mock<IDepartmentsService> _departments;
 		private Mock<IAddressService> _addresses;
+		private FakeUnitOfWork _unitOfWork;
 		private List<DomainEventEnvelope> _published;
 		private List<AuditEvent> _audits;
 
@@ -60,6 +63,7 @@ namespace Resgrid.Tests.Services
 			_email = new Mock<IEmailService>();
 			_departments = new Mock<IDepartmentsService>();
 			_addresses = new Mock<IAddressService>();
+			_unitOfWork = new FakeUnitOfWork();
 			_departments.Setup(d => d.GetDepartmentByIdAsync(7, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = 7, Name = "Test County Fire" });
 			_pdf.Setup(p => p.ConvertHtmlToPdf(It.IsAny<string>())).Returns<string>(html => System.Text.Encoding.UTF8.GetBytes(html));
 			_email.Setup(e => e.SendInvoiceAsync(It.IsAny<EmailNotification>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(true);
@@ -83,7 +87,20 @@ namespace Resgrid.Tests.Services
 
 		private InvoicingService Build() => new InvoicingService(_profiles.Object, _rateCards.Object, _rateCardItems.Object, _invoices.Object,
 			_lineItems.Object, _payments.Object, _sequence.Object, _identities.Object, _contacts.Object, _calls.Object, _units.Object, _outbox.Object, _events.Object,
-			_pdf.Object, _email.Object, _departments.Object, _addresses.Object);
+			_pdf.Object, _email.Object, _departments.Object, _addresses.Object, _unitOfWork);
+
+		/// <summary>Counts the transaction lifecycle the service drives; a nested call must join the open transaction rather than open its own.</summary>
+		private sealed class FakeUnitOfWork : IUnitOfWork
+		{
+			public int Opened, Commits, Discards;
+			public DbTransaction Transaction { get; private set; }
+			public DbConnection Connection => null;
+			public DbConnection CreateOrGetConnection() { if (Transaction == null) { Opened++; Transaction = new Mock<DbTransaction>().Object; } return null; }
+			public Task<DbConnection> CreateOrGetConnectionAsync(CancellationToken cancellationToken = default) => Task.FromResult(CreateOrGetConnection());
+			public void CommitChanges() { Commits++; Transaction = null; }
+			public void DiscardChanges() { Discards++; Transaction = null; }
+			public void Dispose() { }
+		}
 
 		private static CustomerBillingProfile Profile(decimal? taxRate = null, string components = null, decimal? discount = null, bool taxExempt = false) =>
 			new CustomerBillingProfile { CustomerBillingProfileId = "profile-1", DepartmentId = 7, ContactId = "contact-1", Active = true, TermsNetDays = 30, TaxRate = taxRate, TaxComponentsJson = components, DefaultDiscountPercent = discount, TaxExempt = taxExempt };
@@ -516,6 +533,118 @@ namespace Resgrid.Tests.Services
 			((int)WorkflowTriggerEventType.InvoiceVoided).Should().Be(57);
 			((int)WorkflowTriggerEventType.InvoicePaymentRefunded).Should().Be(94);
 			((int)WorkflowTriggerEventType.InvoicePaymentDisputed).Should().Be(95);
+		}
+		// ---------------------------------------------------------------- PR #512 review: line-item save, payment idempotency, aging currencies
+
+		private Invoice DraftWithProfile()
+		{
+			var invoice = new Invoice { InvoiceId = "inv-1", DepartmentId = 7, Status = (int)InvoiceStatus.Draft, CustomerBillingProfileId = "profile-1", ContactId = "contact-1", Currency = "USD" };
+			var stored = new List<InvoiceLineItem>();
+			_invoices.Setup(r => r.GetByIdForDepartmentAsync("inv-1", 7)).ReturnsAsync(invoice);
+			_profiles.Setup(p => p.GetByIdForDepartmentAsync("profile-1", 7)).ReturnsAsync(Profile());
+			_payments.Setup(p => p.GetByInvoiceIdAsync("inv-1", 7)).ReturnsAsync(new List<InvoicePayment>());
+			_lineItems.Setup(l => l.DeleteByInvoiceIdAsync("inv-1", 7, It.IsAny<CancellationToken>())).Callback(() => stored.Clear()).ReturnsAsync(0);
+			_lineItems.Setup(l => l.GetByInvoiceIdAsync("inv-1", 7)).ReturnsAsync(() => stored.ToList());
+			_lineItems.Setup(r => r.SaveOrUpdateAsync(It.IsAny<InvoiceLineItem>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((InvoiceLineItem l, CancellationToken _, bool __) => { l.InvoiceLineItemId ??= Guid.NewGuid().ToString(); stored.Add(l); return l; });
+			return invoice;
+		}
+
+		[Test]
+		public async Task Saving_line_items_re_applies_the_rate_card_minimum_charge()
+		{
+			DraftWithProfile();
+			_rateCardItems.Setup(r => r.GetByIdForDepartmentAsync("item-1", 7)).ReturnsAsync(new RateCardItem { RateCardItemId = "item-1", DepartmentId = 7, Rate = 100m, MinimumCharge = 150m });
+
+			var saved = await Build().SaveInvoiceLineItemsAsync("inv-1", 7, new List<InvoiceLineItem>
+			{
+				new InvoiceLineItem { Description = "Engine, half an hour", RateCardItemId = "item-1", Quantity = 0.5m, UnitRate = 100m },
+				new InvoiceLineItem { Description = "Engine, two hours", RateCardItemId = "item-1", Quantity = 2m, UnitRate = 100m },
+				new InvoiceLineItem { Description = "Engine, nothing yet", RateCardItemId = "item-1", Quantity = 0m, UnitRate = 100m },
+				new InvoiceLineItem { Description = "Ad hoc", Quantity = 0.5m, UnitRate = 100m }
+			}, "user-1", null, null);
+
+			saved.LineItems.Select(l => l.Amount).Should().Equal(150m, 200m, 0m, 50m);
+			saved.SubTotal.Should().Be(400m);
+			_rateCardItems.Verify(r => r.GetByIdForDepartmentAsync("item-1", 7), Times.Once, "the minimum is looked up once per rate card item");
+		}
+
+		[Test]
+		public async Task Draft_save_commits_header_and_lines_as_one_transaction()
+		{
+			var invoice = DraftWithProfile();
+			var edit = new Invoice { InvoiceId = "inv-1", DepartmentId = 7, Notes = "net 30", Currency = "EUR", DiscountPercent = 0 };
+
+			var saved = await Build().SaveDraftAsync(edit, new List<InvoiceLineItem> { new InvoiceLineItem { Description = "Engine", Quantity = 1, UnitRate = 100m } }, "user-1", null, null);
+
+			saved.Notes.Should().Be("net 30");
+			saved.Currency.Should().Be("EUR");
+			saved.SubTotal.Should().Be(100m);
+			invoice.Notes.Should().Be("net 30");
+			_unitOfWork.Opened.Should().Be(1, "the line-item save joins the draft save's transaction");
+			_unitOfWork.Commits.Should().Be(1);
+			_unitOfWork.Discards.Should().Be(0);
+		}
+
+		[Test]
+		public async Task Draft_save_rolls_back_when_a_line_is_refused()
+		{
+			DraftWithProfile();
+			var edit = new Invoice { InvoiceId = "inv-1", DepartmentId = 7, Notes = "net 30", Currency = "USD" };
+
+			var act = async () => await Build().SaveDraftAsync(edit, new List<InvoiceLineItem> { new InvoiceLineItem { Description = " ", Quantity = 1, UnitRate = 100m } }, "user-1", null, null);
+
+			await act.Should().ThrowAsync<ArgumentException>();
+			_unitOfWork.Opened.Should().Be(1);
+			_unitOfWork.Commits.Should().Be(0);
+			_unitOfWork.Discards.Should().Be(1);
+		}
+
+		[Test]
+		public async Task A_gateway_transaction_recorded_under_another_department_is_a_conflict_not_a_replay()
+		{
+			SentInvoice(100m);
+			var elsewhere = new InvoicePayment { InvoicePaymentId = "pay-9", InvoiceId = "inv-9", DepartmentId = 9, Amount = 100m, Method = (int)InvoicePaymentMethods.Online, Provider = (int)PaymentProviders.Stripe, GatewayTransactionId = "pi_123" };
+			_payments.Setup(p => p.GetByGatewayTransactionIdAsync((int)PaymentProviders.Stripe, "pi_123")).ReturnsAsync(elsewhere);
+
+			var act = async () => await Build().RecordPaymentAsync(new InvoicePayment { InvoiceId = "inv-1", DepartmentId = 7, Amount = 100m, Method = (int)InvoicePaymentMethods.Online, Provider = (int)PaymentProviders.Stripe, GatewayTransactionId = "pi_123" }, null, null, null);
+
+			await act.Should().ThrowAsync<InvalidOperationException>().WithMessage("invoicing_payment_conflict");
+			_payments.Verify(r => r.SaveOrUpdateAsync(It.IsAny<InvoicePayment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_delivery_that_loses_the_insert_race_returns_the_winner_instead_of_a_second_payment()
+		{
+			SentInvoice(100m);
+			var winner = new InvoicePayment { InvoicePaymentId = "pay-1", InvoiceId = "inv-1", DepartmentId = 7, Amount = 100m, Method = (int)InvoicePaymentMethods.Online, Provider = (int)PaymentProviders.Stripe, GatewayTransactionId = "pi_123" };
+			var lookups = 0;
+			_payments.Setup(p => p.GetByGatewayTransactionIdAsync((int)PaymentProviders.Stripe, "pi_123")).ReturnsAsync(() => ++lookups == 1 ? null : winner);
+			_payments.Setup(r => r.SaveOrUpdateAsync(It.IsAny<InvoicePayment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ThrowsAsync(new Npgsql.PostgresException("duplicate key value violates unique constraint \"ux_invoicepayments_gateway\"", "ERROR", "ERROR", "23505"));
+
+			var result = await Build().RecordPaymentAsync(new InvoicePayment { InvoiceId = "inv-1", DepartmentId = 7, Amount = 100m, Method = (int)InvoicePaymentMethods.Online, Provider = (int)PaymentProviders.Stripe, GatewayTransactionId = "pi_123" }, null, null, null);
+
+			result.Should().BeSameAs(winner);
+			_published.Should().BeEmpty("the winning delivery already published the payment");
+		}
+
+		[Test]
+		public async Task Aging_keeps_balances_apart_per_currency()
+		{
+			var asOf = new DateTime(2026, 9, 19, 0, 0, 0, DateTimeKind.Utc);
+			_invoices.Setup(r => r.GetAgingDataAsync(7)).ReturnsAsync(new List<InvoiceAgingRow>
+			{
+				new InvoiceAgingRow { InvoiceId = "1", Currency = "USD", Total = 100, DueOn = asOf.AddDays(5) },
+				new InvoiceAgingRow { InvoiceId = "2", Currency = "EUR", Total = 80, DueOn = asOf.AddDays(-10) },
+				new InvoiceAgingRow { InvoiceId = "3", Currency = "usd", Total = 50, DueOn = asOf.AddDays(-10) }
+			});
+
+			var report = await Build().GetAccountsReceivableAgingAsync(7, asOf);
+
+			report.BalancesByCurrency.Should().Equal(new SortedDictionary<string, decimal> { ["EUR"] = 80m, ["USD"] = 150m });
+			report.Buckets.Single(b => b.Label == "1-30").BalancesByCurrency.Should().Equal(new SortedDictionary<string, decimal> { ["EUR"] = 80m, ["USD"] = 50m });
+			report.Buckets.Single(b => b.Label == "Current").BalancesByCurrency.Should().Equal(new SortedDictionary<string, decimal> { ["USD"] = 100m });
 		}
 	}
 }

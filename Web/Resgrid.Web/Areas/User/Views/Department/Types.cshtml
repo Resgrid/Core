@@ -1,5 +1,6 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Departments.DepartmentTypesView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.DepartmentTypes> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> certificationLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["DepartmentTypesHeader"];
 }
@@ -243,6 +244,7 @@
                     <h5>@localizer["CertificationTypesHeader"]</h5>
                     <div class="ibox-tools">
                         <div class="buttons-actions">
+                            <a class="btn btn-default" asp-controller="Certifications" asp-action="Types" asp-route-area="User"><i class="fa fa-certificate"></i> @certificationLocalizer["ManageTypedCatalog"]</a>
                             <a title="@localizer["NewCertificationTypeHeader"]" class="btn btn-success" href="@Url.Action("NewCertificationType", "Types", new { area = "User"})">@localizer["NewCertificationTypeHeader"]</a>
                         </div>
                     </div>
@@ -257,11 +259,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var c in Model.CertificationTypes)
+                                @foreach (var c in Model.CertificationTypes.Where(x => !x.IsDeleted))
                                 {
                                     <tr>
                                         <td>
-                                            @c.Type
+                                            @c.Type @if (!string.IsNullOrWhiteSpace(c.Code)) { <small class="text-muted">(@c.Code)</small> }
                                         </td>
 
                                         <td>

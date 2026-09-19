@@ -77,8 +77,13 @@ namespace Resgrid.Tests.Services
 					It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(ProtectedWriteResult.Allowed());
 
-			_contactsRepo.Setup(x => x.GetByIdAsync(ContactId)).ReturnsAsync(new Contact { ContactId = ContactId, DepartmentId = DepartmentId, ContactType = 1, CompanyName = "Main Street Mill" });
-			_contactsRepo.Setup(x => x.GetByIdAsync(OtherContactId)).ReturnsAsync(new Contact { ContactId = OtherContactId, DepartmentId = DepartmentId, ContactType = 0, FirstName = "Ada", LastName = "Lovelace" });
+			var mill = new Contact { ContactId = ContactId, DepartmentId = DepartmentId, ContactType = 1, CompanyName = "Main Street Mill" };
+			var ada = new Contact { ContactId = OtherContactId, DepartmentId = DepartmentId, ContactType = 0, FirstName = "Ada", LastName = "Lovelace" };
+			_contactsRepo.Setup(x => x.GetByIdAsync(ContactId)).ReturnsAsync(mill);
+			_contactsRepo.Setup(x => x.GetByIdAsync(OtherContactId)).ReturnsAsync(ada);
+			// The call-site composition loads its contacts in one query (PR #512 review).
+			_contactsRepo.Setup(x => x.GetContactsByIdsAsync(DepartmentId, It.IsAny<IEnumerable<string>>()))
+				.ReturnsAsync((int _, IEnumerable<string> ids) => new[] { mill, ada }.Where(c => ids.Contains(c.ContactId)).ToList());
 
 			_preplanRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<ContactPreplan>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync<ContactPreplan, CancellationToken, bool, IContactPreplanRepository, ContactPreplan>((p, _, __) =>

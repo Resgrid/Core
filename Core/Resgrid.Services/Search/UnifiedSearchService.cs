@@ -155,13 +155,17 @@ namespace Resgrid.Services.Search
 				}
 			}
 
+			// The records federation must reach as deep as the requested page can: the page is cut from index hits followed
+			// by record hits, so a fixed top-N of records would leave every page past N empty for a records-heavy query.
+			var skip = Math.Max(0, request.Skip);
+			var take = Math.Max(1, Math.Min(100, request.Take));
 			var recordHits = new List<UnifiedSearchHit>();
 			int? recordsTotal = 0;
 			if (request.IncludeRecords && !request.Prefix && WantsType(request.EntityTypes, SearchEntityTypes.Record))
 			{
 				try
 				{
-					(recordHits, recordsTotal) = await FederateRecordsAsync(text, principal, cancellationToken);
+					(recordHits, recordsTotal) = await FederateRecordsAsync(text, principal, Math.Min(Math.Min(skip, CandidateWindow) + take, CandidateWindow), cancellationToken);
 				}
 				catch (Exception ex)
 				{
@@ -172,8 +176,6 @@ namespace Resgrid.Services.Search
 
 			// One sequence, index hits then the records federation, paged as a whole: special-casing the first page
 			// dropped the Records family from every later page.
-			var skip = Math.Max(0, request.Skip);
-			var take = Math.Max(1, Math.Min(100, request.Take));
 			result.Hits = authorized.Concat(recordHits).Skip(skip).Take(take).ToList();
 			result.Truncated = truncated;
 
@@ -278,7 +280,7 @@ namespace Resgrid.Services.Search
 			};
 		}
 
-		private async Task<(List<UnifiedSearchHit> hits, int? total)> FederateRecordsAsync(string text, SearchPrincipal principal, CancellationToken cancellationToken)
+		private async Task<(List<UnifiedSearchHit> hits, int? total)> FederateRecordsAsync(string text, SearchPrincipal principal, int window, CancellationToken cancellationToken)
 		{
 			var hits = new List<UnifiedSearchHit>();
 			if (!principal.IsDepartmentAdmin && !principal.HasResourceClaim("Record", "View"))
@@ -301,7 +303,7 @@ namespace Resgrid.Services.Search
 				Text = text,
 				VisibleGroupIds = visibleGroups,
 				ViewerUserId = principal.UserId,
-				Take = 20
+				Take = Math.Max(1, window)
 			}, cancellationToken);
 			if (search == null || !search.Available)
 				return (hits, 0);

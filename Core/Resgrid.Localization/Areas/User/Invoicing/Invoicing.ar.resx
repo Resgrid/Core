@@ -39,6 +39,8 @@
   <data name="DefaultRateCardHint" xml:space="preserve"><value>افتراضي القسم (يُستخدم عندما لا يكون للعميل بطاقة أسعار مثبتة)</value></data>
   <data name="DeleteRateCardConfirm" xml:space="preserve"><value>هل تريد حذف بطاقة الأسعار هذه؟</value></data>
   <data name="DeleteItemConfirm" xml:space="preserve"><value>هل تريد حذف هذا العنصر؟</value></data>
+  <data name="DeleteRateCard" xml:space="preserve"><value>حذف بطاقة الأسعار</value></data>
+  <data name="DeleteItem" xml:space="preserve"><value>حذف العنصر</value></data>
   <data name="RateCardDeleted" xml:space="preserve"><value>تم حذف بطاقة الأسعار.</value></data>
   <data name="ItemType" xml:space="preserve"><value>النوع</value></data>
   <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>بالساعة – وقت الوحدة في الموقع</value></data>
@@ -257,9 +259,101 @@
   <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>لا يمكن إلغاء فاتورة مدفوعة.</value></data>
   <data name="invoicing_invoice_void" xml:space="preserve"><value>هذه الفاتورة ملغاة.</value></data>
   <data name="invoicing_no_recipient_email" xml:space="preserve"><value>لم يُحدد بريد إلكتروني للفوترة لهذا العميل.</value></data>
+  <data name="invoicing_email_not_sent" xml:space="preserve"><value>تعذّر إرسال البريد الإلكتروني للفاتورة. تحقق من العنوان وحاول مرة أخرى.</value></data>
+  <data name="invoicing_payment_conflict" xml:space="preserve"><value>هذه المعاملة لدى مزوّد الدفع مسجّلة بالفعل على فاتورة قسم آخر.</value></data>
   <data name="invoicing_payment_not_found" xml:space="preserve"><value>لم يتم العثور على الدفعة.</value></data>
   <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>تعذر إنشاء ملف PDF للفاتورة.</value></data>
   <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>ملف الفوترة هذا له فواتير ولا يمكن حذفه.</value></data>
   <data name="invoicing_profile_required" xml:space="preserve"><value>يحتاج العميل أولًا إلى ملف فوترة نشط.</value></data>
   <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>لم يتم العثور على بطاقة الأسعار.</value></data>
+  <data name="AdminRequired" xml:space="preserve"><value>يمكن لمسؤول القسم فقط القيام بذلك.</value></data>
+  <data name="OnlinePaymentsIntro" xml:space="preserve"><value>اسمح للعملاء بدفع الفواتير عبر الإنترنت من خلال حساب Stripe الخاص بك. تذهب الأموال مباشرة إلى حسابك؛ Resgrid لا تحتفظ بها أبدًا ولا تأخذ رسومًا ولا يمكنها رد المبالغ.</value></data>
+  <data name="YourStripeAccount" xml:space="preserve"><value>حساب Stripe الخاص بك</value></data>
+  <data name="NoConnectionYet" xml:space="preserve"><value>لم يتم ربط حساب Stripe بعد.</value></data>
+  <data name="ConnectStripe" xml:space="preserve"><value>الربط مع Stripe</value></data>
+  <data name="ReconnectStripe" xml:space="preserve"><value>إعادة الربط مع Stripe</value></data>
+  <data name="ConnectStripeIntro" xml:space="preserve"><value>ستسجل الدخول إلى Stripe وتسمح لـ Resgrid بإنشاء صفحات دفع في حسابك. تخزن Resgrid معرّف حسابك فقط، وليس بيانات اعتماد Stripe أبدًا.</value></data>
+  <data name="ConnectAdminOnly" xml:space="preserve"><value>يمكن لمسؤول القسم فقط ربط حساب Stripe أو فصله.</value></data>
+  <data name="ConnectedAccount" xml:space="preserve"><value>الحساب المرتبط</value></data>
+  <data name="BusinessName" xml:space="preserve"><value>اسم النشاط</value></data>
+  <data name="ConnectedOn" xml:space="preserve"><value>تاريخ الربط</value></data>
+  <data name="LastVerified" xml:space="preserve"><value>آخر تحقق</value></data>
+  <data name="Capabilities" xml:space="preserve"><value>الإمكانات</value></data>
+  <data name="LastError" xml:space="preserve"><value>آخر خطأ</value></data>
+  <data name="LiveMode" xml:space="preserve"><value>مباشر</value></data>
+  <data name="SandboxMode" xml:space="preserve"><value>تجريبي</value></data>
+  <data name="Disconnect" xml:space="preserve"><value>فصل</value></data>
+  <data name="DisconnectConfirm" xml:space="preserve"><value>هل تريد فصل حساب Stripe؟ ستتوقف روابط الدفع المفتوحة عن العمل ولا يمكن إنشاء روابط جديدة حتى يتم ربط حساب مرة أخرى.</value></data>
+  <data name="CollectionSettings" xml:space="preserve"><value>إعدادات التحصيل</value></data>
+  <data name="OnlinePaymentsEnabledLabel" xml:space="preserve"><value>تقديم الدفع عبر الإنترنت في الفواتير</value></data>
+  <data name="AllowedPaymentMethods" xml:space="preserve"><value>طرق الدفع المقبولة</value></data>
+  <data name="PaymentMethodCard" xml:space="preserve"><value>البطاقات والمحافظ</value></data>
+  <data name="PaymentMethodAch" xml:space="preserve"><value>الخصم البنكي (ACH، حسابات أمريكية)</value></data>
+  <data name="PaymentMethodsHint" xml:space="preserve"><value>يعتمد التوفر على ما يمكن لحساب Stripe الخاص بك قبوله؛ لا تُعرض طريقة لا يستطيع الحساب قبولها.</value></data>
+  <data name="PayLinksReady" xml:space="preserve"><value>روابط الدفع</value></data>
+  <data name="SuspendedByOperator" xml:space="preserve"><value>تحصيل المدفوعات عبر الإنترنت معلّق من قبل المشغّل في هذه المنطقة. يبقى الربط محفوظًا؛ لا تُعرض روابط دفع جديدة حتى يتم تفعيله مجددًا.</value></data>
+  <data name="OnlinePaymentsFlagOff" xml:space="preserve"><value>المدفوعات عبر الإنترنت غير مفعّلة بعد لقسمك. تواصل مع دعم Resgrid لتفعيلها.</value></data>
+  <data name="PaymentConnected" xml:space="preserve"><value>تم ربط حساب Stripe {0}. فعّل "تقديم الدفع عبر الإنترنت في الفواتير" لبدء تقديم روابط الدفع.</value></data>
+  <data name="PaymentDisconnected" xml:space="preserve"><value>تم فصل حساب Stripe.</value></data>
+  <data name="PayOnline" xml:space="preserve"><value>الدفع عبر الإنترنت</value></data>
+  <data name="PayLink" xml:space="preserve"><value>رابط الدفع</value></data>
+  <data name="PayLinkHint" xml:space="preserve"><value>شارك هذا الرابط مع العميل؛ يُطبع على الفاتورة ويُدرج في البريد الإلكتروني. يبقى الرابط صالحًا للمدة المحددة في إعدادات الفوترة.</value></data>
+  <data name="CopyLink" xml:space="preserve"><value>نسخ الرابط</value></data>
+  <data name="LinkCopied" xml:space="preserve"><value>تم نسخ الرابط.</value></data>
+  <data name="OpenRequest" xml:space="preserve"><value>طلب دفع مفتوح</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>ينتهي</value></data>
+  <data name="OpenPaymentRequest" xml:space="preserve"><value>فتح صفحة الدفع الآن</value></data>
+  <data name="RefreshPaymentRequest" xml:space="preserve"><value>تحديث صفحة الدفع</value></data>
+  <data name="PayLinkCreated" xml:space="preserve"><value>صفحة الدفع مفتوحة؛ يؤدي رابط الدفع إليها مباشرة الآن.</value></data>
+  <data name="PayOnlineNotOffered" xml:space="preserve"><value>الدفع عبر الإنترنت غير متاح لهذه الفاتورة حاليًا.</value></data>
+  <data name="Started" xml:space="preserve"><value>بدأت</value></data>
+  <data name="Fee" xml:space="preserve"><value>الرسوم</value></data>
+  <data name="Receipt" xml:space="preserve"><value>الإيصال</value></data>
+  <data name="RequestStatusCreated" xml:space="preserve"><value>تم الإنشاء</value></data>
+  <data name="RequestStatusOpened" xml:space="preserve"><value>بانتظار الدفع</value></data>
+  <data name="RequestStatusProcessing" xml:space="preserve"><value>الدفع قيد المعالجة (تسوية الخصم البنكي)</value></data>
+  <data name="RequestStatusCompleted" xml:space="preserve"><value>مدفوع</value></data>
+  <data name="RequestStatusExpired" xml:space="preserve"><value>منتهي</value></data>
+  <data name="RequestStatusCancelled" xml:space="preserve"><value>ملغى</value></data>
+  <data name="RequestStatusFailed" xml:space="preserve"><value>فشل</value></data>
+  <data name="RequestStatusUnknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="ConnectionStatusPending" xml:space="preserve"><value>قيد الانتظار</value></data>
+  <data name="ConnectionStatusConnected" xml:space="preserve"><value>مرتبط</value></data>
+  <data name="ConnectionStatusActionRequired" xml:space="preserve"><value>إجراء مطلوب في Stripe</value></data>
+  <data name="ConnectionStatusDisconnected" xml:space="preserve"><value>مفصول</value></data>
+  <data name="ConnectionStatusRevoked" xml:space="preserve"><value>تم إلغاء الوصول</value></data>
+  <data name="PayPageTitle" xml:space="preserve"><value>دفع الفاتورة</value></data>
+  <data name="AmountDue" xml:space="preserve"><value>المبلغ المستحق</value></data>
+  <data name="PayNow" xml:space="preserve"><value>ادفع</value></data>
+  <data name="PayPageIntro" xml:space="preserve"><value>تتم معالجة الدفع بواسطة Stripe نيابة عن {0}. تُدخل بيانات بطاقتك أو حسابك البنكي في صفحة Stripe الآمنة ولا تراها Resgrid أبدًا.</value></data>
+  <data name="ResumePayment" xml:space="preserve"><value>صفحة الدفع مفتوحة بالفعل لهذه الفاتورة؛ الدفع مرة أخرى يستأنفها.</value></data>
+  <data name="pay_link_invalid" xml:space="preserve"><value>رابط الدفع هذا غير صالح.</value></data>
+  <data name="pay_link_expired" xml:space="preserve"><value>انتهت صلاحية رابط الدفع هذا. يرجى طلب رابط جديد من القسم.</value></data>
+  <data name="pay_invoice_unavailable" xml:space="preserve"><value>لم تعد هذه الفاتورة متاحة للدفع.</value></data>
+  <data name="pay_invoice_paid" xml:space="preserve"><value>تم دفع هذه الفاتورة. شكرًا لك.</value></data>
+  <data name="pay_not_offered" xml:space="preserve"><value>الدفع عبر الإنترنت غير متاح لهذه الفاتورة. يرجى التواصل مع القسم لمعرفة طرق الدفع الأخرى.</value></data>
+  <data name="pay_processing" xml:space="preserve"><value>يجري تأكيد دفعة بنكية لهذه الفاتورة. لا حاجة لأي إجراء الآن.</value></data>
+  <data name="PayReturnTitle" xml:space="preserve"><value>شكرًا لك — يجري تأكيد دفعتك</value></data>
+  <data name="PayReturnText" xml:space="preserve"><value>سيرى القسم الدفعة بمجرد تأكيد Stripe لها، عادة خلال دقيقة؛ قد تستغرق المدفوعات البنكية بضعة أيام عمل. ستتلقى إيصال Stripe بالبريد الإلكتروني.</value></data>
+  <data name="PayCancelTitle" xml:space="preserve"><value>تم إلغاء الدفع</value></data>
+  <data name="PayCancelText" xml:space="preserve"><value>لم يتم خصم أي مبلغ. يمكنك العودة إلى هذه الصفحة والدفع متى كنت جاهزًا.</value></data>
+  <data name="BackToInvoice" xml:space="preserve"><value>العودة إلى الفاتورة</value></data>
+  <data name="TooManyRequests" xml:space="preserve"><value>طلبات كثيرة جدًا. يرجى الانتظار دقيقة ثم المحاولة مجددًا.</value></data>
+  <data name="payments_not_available_in_region" xml:space="preserve"><value>تحصيل المدفوعات عبر الإنترنت غير متاح في هذه المنطقة.</value></data>
+  <data name="payments_flag_off" xml:space="preserve"><value>المدفوعات عبر الإنترنت غير مفعّلة لهذا القسم.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>تتطلب المدفوعات عبر الإنترنت إضافة Business Operations نشطة.</value></data>
+  <data name="payments_not_enabled_for_department" xml:space="preserve"><value>الدفع عبر الإنترنت معطّل في إعدادات الفوترة الخاصة بك.</value></data>
+  <data name="payments_no_connection" xml:space="preserve"><value>لا يوجد حساب Stripe مرتبط.</value></data>
+  <data name="payments_connection_not_ready" xml:space="preserve"><value>لا يمكن لحساب Stripe المرتبط قبول الرسوم بعد. أكمل متطلبات Stripe وحاول مجددًا.</value></data>
+  <data name="payments_invoice_not_payable" xml:space="preserve"><value>لا يمكن دفع مسودة أو فاتورة ملغاة عبر الإنترنت.</value></data>
+  <data name="payments_invoice_paid" xml:space="preserve"><value>هذه الفاتورة مدفوعة بالفعل.</value></data>
+  <data name="payments_zero_balance" xml:space="preserve"><value>لا يوجد رصيد للتحصيل في هذه الفاتورة.</value></data>
+  <data name="payments_currency_mismatch" xml:space="preserve"><value>عملة الفاتورة ليست من العملات التي يسوّيها حساب Stripe المرتبط.</value></data>
+  <data name="payments_provider_unavailable" xml:space="preserve"><value>تعذر الوصول إلى Stripe الآن. يرجى المحاولة بعد قليل.</value></data>
+  <data name="payments_connect_failed" xml:space="preserve"><value>لم يُكمل Stripe عملية الربط. يرجى محاولة الربط مرة أخرى.</value></data>
+  <data name="payments_connect_declined" xml:space="preserve"><value>تم رفض الربط في Stripe. لم يتم تغيير أي شيء.</value></data>
+  <data name="payments_state_invalid" xml:space="preserve"><value>محاولة الربط هذه لم تعد صالحة. يرجى البدء من جديد من صفحة الإعدادات.</value></data>
+  <data name="payments_disabled" xml:space="preserve"><value>تحصيل المدفوعات عبر الإنترنت معطّل على هذا الخادم.</value></data>
+  <data name="payments_connection_revoked" xml:space="preserve"><value>يفيد Stripe بأن Resgrid لم يعد لديها وصول إلى هذا الحساب. اربطه مجددًا للمتابعة.</value></data>
+  <data name="invoicing_protected_write_refused" xml:space="preserve"><value>تعذر تأمين البيانات المحمية في هذا السجل، لذا لم يتم حفظ التغيير.</value></data>
 </root>

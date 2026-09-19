@@ -241,6 +241,26 @@ ChecklistReminderSettingsUpdated,
 		InvoicePaymentRequestCreated,
 		InvoicePaymentRefunded,
 		InvoicePaymentDisputed,
-		PaymentWebhookRejected
+		PaymentWebhookRejected,
+		InvoicePaymentRequestFailed,
+		InvoicePaymentRequestExpired,
+
+		// Workforce & Business Operations plan Phase D (certifications & role qualification). Append-only.
+		CertificationAdded,
+		CertificationUpdated,
+		CertificationRemoved,
+		CertificationStatusChanged,
+		CertificationVerified,
+		CertificationCreditAdded,
+		CertificationCreditRemoved,
+		RoleCertificationRequirementChanged,
+		DepartmentCertificationSettingsChanged,
+		RoleMemberAdded,
+		RoleMemberRemoved,
+		RoleMemberRemovedByCertification,
+		UnitCertificationAdded,
+		UnitCertificationUpdated,
+		UnitCertificationRemoved,
+		UnitCertificationStatusChanged
 	}
 }

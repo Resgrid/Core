@@ -260,6 +260,11 @@ namespace Resgrid.Web
 				options.AddPolicy(ResgridResources.Invoicing_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Invoicing, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Invoicing_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Invoicing, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Invoicing_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Invoicing, ResgridClaimTypes.Actions.Delete));
+				options.AddPolicy(ResgridResources.Certifications_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.Certifications_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.Certifications_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.Certifications_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Delete));
+				options.AddPolicy(ResgridResources.Certifications_Setup, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Setup));
 				options.AddPolicy(ResgridResources.Checklist_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.ChecklistResults_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.ChecklistResults, ResgridClaimTypes.Actions.View));
 				options.AddPolicy(ResgridResources.RecordDefinition_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.RecordDefinition, ResgridClaimTypes.Actions.Update));
@@ -570,6 +575,7 @@ namespace Resgrid.Web
 			builder.RegisterModule(new MessagingProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
+			builder.RegisterModule(new Resgrid.Providers.Payments.PaymentsProviderModule());
 			// ADP broker CLIENT only (no key material, no KMS route) — the wizard preflight probes
 			// broker health through it. The real KMS adapter module is broker-host-only.
 			builder.RegisterModule(new Resgrid.Providers.ProtectedData.ProtectedDataBrokerClientModule());

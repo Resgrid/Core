@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Certifications" xml:space="preserve"><value>Certifieringar</value></data>
+  <data name="ManageCertifications" xml:space="preserve"><value>Hantera certifieringar</value></data>
+  <data name="ViewCertifications" xml:space="preserve"><value>Visa certifieringar</value></data>
+  <data name="ManageCertificationSetup" xml:space="preserve"><value>Hantera certifieringsinställningar</value></data>
+  <data name="ManageCertificationsNote" xml:space="preserve"><value>Skapa, redigera, stänga av, verifiera och ta bort andra medlemmars certifieringsposter och poäng samt enheters certifieringsposter.</value></data>
+  <data name="ViewCertificationsNote" xml:space="preserve"><value>Visa andra medlemmars certifieringsposter, enhetscertifieringar och utgångspanelen. Medlemmar ser alltid sina egna poster.</value></data>
+  <data name="ManageCertificationSetupNote" xml:space="preserve"><value>Hantera certifieringstyper, rollkrav och avdelningens certifieringsinställningar.</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>Översikt</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>Vem som har vad, vad som går ut och vad som har gått ut, för personer och enheter.</value></data>
+  <data name="CertificationTypes" xml:space="preserve"><value>Certifieringstyper</value></data>
+  <data name="Settings" xml:space="preserve"><value>Inställningar</value></data>
+  <data name="ComplianceReport" xml:space="preserve"><value>Efterlevnadsrapport</value></data>
+  <data name="ComplianceReportDescription" xml:space="preserve"><value>Utskrivbara matriser person × typ och enhet × typ med utgångsstatus.</value></data>
+  <data name="ReportRunOn" xml:space="preserve"><value>Skapad {0}</value></data>
+  <data name="Saved" xml:space="preserve"><value>Sparat.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Ändringen kunde inte sparas.</value></data>
+  <data name="Save" xml:space="preserve"><value>Spara</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Avbryt</value></data>
+  <data name="Edit" xml:space="preserve"><value>Redigera</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inaktiv</value></data>
+  <data name="Description" xml:space="preserve"><value>Beskrivning</value></data>
+  <data name="Notes" xml:space="preserve"><value>Anteckningar</value></data>
+  <data name="Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Date" xml:space="preserve"><value>Datum</value></data>
+  <data name="Hours" xml:space="preserve"><value>Timmar</value></data>
+  <data name="File" xml:space="preserve"><value>Fil</value></data>
+  <data name="FileHint" xml:space="preserve"><value>PDF, bild eller kontorsdokument, upp till 10 MB.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Orsak</value></data>
+  <data name="Number" xml:space="preserve"><value>Nummer</value></data>
+  <data name="IssuedBy" xml:space="preserve"><value>Utfärdad av</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Utfärdad den</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Går ut den</value></data>
+  <data name="ReceivedOn" xml:space="preserve"><value>Mottagen den</value></data>
+  <data name="NeverExpires" xml:space="preserve"><value>Går aldrig ut</value></data>
+  <data name="DaysUntilExpiry" xml:space="preserve"><value>Dagar till utgång</value></data>
+  <data name="DaysLeft" xml:space="preserve"><value>{0} dagar kvar</value></data>
+  <data name="DaysAgo" xml:space="preserve"><value>för {0} dagar sedan</value></data>
+  <data name="Expired" xml:space="preserve"><value>Utgångna</value></data>
+  <data name="ExpiringWithin" xml:space="preserve"><value>Går ut inom {0} dagar</value></data>
+  <data name="SuspendedOrRevoked" xml:space="preserve"><value>Avstängda eller återkallade</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Exportera CSV</value></data>
+  <data name="Scope" xml:space="preserve"><value>Omfattning</value></data>
+  <data name="People" xml:space="preserve"><value>Personer</value></data>
+  <data name="Units" xml:space="preserve"><value>Enheter</value></data>
+  <data name="Unit" xml:space="preserve"><value>Enhet</value></data>
+  <data name="Member" xml:space="preserve"><value>Medlem</value></data>
+  <data name="Category" xml:space="preserve"><value>Kategori</value></data>
+  <data name="AllCategories" xml:space="preserve"><value>Alla kategorier</value></data>
+  <data name="Group" xml:space="preserve"><value>Grupp</value></data>
+  <data name="AllGroups" xml:space="preserve"><value>Alla grupper</value></data>
+  <data name="Role" xml:space="preserve"><value>Roll</value></data>
+  <data name="AllRoles" xml:space="preserve"><value>Alla roller</value></data>
+  <data name="NoTypesYet" xml:space="preserve"><value>Inga certifieringstyper ännu.</value></data>
+  <data name="NoRecordsYet" xml:space="preserve"><value>Inga certifieringsposter ännu.</value></data>
+  <data name="LegendValid" xml:space="preserve"><value>Giltig</value></data>
+  <data name="LegendExpiring" xml:space="preserve"><value>Går snart ut</value></data>
+  <data name="LegendExpired" xml:space="preserve"><value>Utgången, avstängd eller återkallad</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="StatusExpired" xml:space="preserve"><value>Utgången</value></data>
+  <data name="StatusSuspended" xml:space="preserve"><value>Avstängd</value></data>
+  <data name="StatusRevoked" xml:space="preserve"><value>Återkallad</value></data>
+  <data name="StatusPendingVerification" xml:space="preserve"><value>Väntar på verifiering</value></data>
+  <data name="StatusTrainee" xml:space="preserve"><value>Under utbildning</value></data>
+  <data name="UnitStatusActive" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="UnitStatusExpired" xml:space="preserve"><value>Utgången</value></data>
+  <data name="UnitStatusSuspended" xml:space="preserve"><value>Avstängd</value></data>
+  <data name="CategoryFire" xml:space="preserve"><value>Brand</value></data>
+  <data name="CategoryEMS" xml:space="preserve"><value>Ambulanssjukvård</value></data>
+  <data name="CategorySAR" xml:space="preserve"><value>Sök och räddning</value></data>
+  <data name="CategoryWildland" xml:space="preserve"><value>Skogsbrand</value></data>
+  <data name="CategoryEmergencyManagement" xml:space="preserve"><value>Krishantering</value></data>
+  <data name="CategoryIndustrial" xml:space="preserve"><value>Industri</value></data>
+  <data name="CategorySecurity" xml:space="preserve"><value>Säkerhet</value></data>
+  <data name="CategoryMedical" xml:space="preserve"><value>Medicin</value></data>
+  <data name="CategoryDriver" xml:space="preserve"><value>Förare</value></data>
+  <data name="CategoryVehicle" xml:space="preserve"><value>Fordon</value></data>
+  <data name="CategoryOther" xml:space="preserve"><value>Övrigt</value></data>
+  <data name="TypesIntro" xml:space="preserve"><value>Katalogen över certifieringar, licenser, besiktningar och tillstånd som avdelningen följer.</value></data>
+  <data name="HelpTypes" xml:space="preserve"><value>En typ har en fast kod, en kategori, en omfattning (person eller enhet), en standardgiltighet och valfria regler för verifiering eller poängtimmar. Välj vanliga typer från mallgalleriet.</value></data>
+  <data name="HideInactive" xml:space="preserve"><value>Dölj inaktiva</value></data>
+  <data name="ShowInactive" xml:space="preserve"><value>Visa inaktiva</value></data>
+  <data name="TemplateGallery" xml:space="preserve"><value>Mallgalleri</value></data>
+  <data name="TemplateGalleryIntro" xml:space="preserve"><value>Vanliga behörigheter inom brand, ambulans, sök och räddning, skogsbrand, krishantering, industri, säkerhet, DOT-förare och fordonsefterlevnad. Var och en blir en typ som avdelningen äger och kan redigera.</value></data>
+  <data name="FilterTemplates" xml:space="preserve"><value>Filtrera mallar…</value></data>
+  <data name="AlreadyAdded" xml:space="preserve"><value>Finns redan i katalogen</value></data>
+  <data name="AddSelected" xml:space="preserve"><value>Lägg till valda</value></data>
+  <data name="TemplatesSkipped" xml:space="preserve"><value>{0} tillagda; hoppade över (finns redan eller nekades): {1}</value></data>
+  <data name="NewType" xml:space="preserve"><value>Ny typ</value></data>
+  <data name="EditType" xml:space="preserve"><value>Redigera typ</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>Kod</value></data>
+  <data name="TypeName" xml:space="preserve"><value>Typ</value></data>
+  <data name="AppliesTo" xml:space="preserve"><value>Gäller för</value></data>
+  <data name="AppliesToPerson" xml:space="preserve"><value>Person</value></data>
+  <data name="AppliesToUnit" xml:space="preserve"><value>Enhet</value></data>
+  <data name="Validity" xml:space="preserve"><value>Giltighet</value></data>
+  <data name="Months" xml:space="preserve"><value>{0} månader</value></data>
+  <data name="Records" xml:space="preserve"><value>Poster</value></data>
+  <data name="Requirements" xml:space="preserve"><value>Krav</value></data>
+  <data name="DeleteTypeConfirm" xml:space="preserve"><value>Ta bort denna certifieringstyp?</value></data>
+  <data name="IssuingAuthority" xml:space="preserve"><value>Utfärdande myndighet</value></data>
+  <data name="CodeAuto" xml:space="preserve"><value>Härleds från namnet om tomt</value></data>
+  <data name="CodeHint" xml:space="preserve"><value>Fast identifierare som används av rollkrav och integrationer; bokstäver, siffror, punkter och bindestreck.</value></data>
+  <data name="CodeLockedHint" xml:space="preserve"><value>Ett rollkrav refererar till denna typ, så koden kan inte längre ändras.</value></data>
+  <data name="DefaultValidityMonths" xml:space="preserve"><value>Standardgiltighet (månader)</value></data>
+  <data name="RenewalCreditHoursRequired" xml:space="preserve"><value>Poängtimmar per förnyelse</value></data>
+  <data name="RequiresVerification" xml:space="preserve"><value>Kräver verifiering av arbetsledare</value></data>
+  <data name="RequiresVerificationHint" xml:space="preserve"><value>Nya poster förblir väntande tills någon med hanteringsrättigheter godkänner dem.</value></data>
+  <data name="ManageTypedCatalog" xml:space="preserve"><value>Typkatalog och mallar</value></data>
+  <data name="CertificationSettings" xml:space="preserve"><value>Certifieringsinställningar</value></data>
+  <data name="SettingsIntro" xml:space="preserve"><value>Hur rollkrav tillämpas och när utgångsaviseringar skickas.</value></data>
+  <data name="Enforcement" xml:space="preserve"><value>Tillämpning</value></data>
+  <data name="EnforcementMode" xml:space="preserve"><value>Tillämpningsläge</value></data>
+  <data name="EnforcementOff" xml:space="preserve"><value>Av – kraven är endast informativa</value></data>
+  <data name="EnforcementWarnOnly" xml:space="preserve"><value>Endast varna – tillåt rolländringar, visa varningar, avisera</value></data>
+  <data name="EnforcementEnforce" xml:space="preserve"><value>Tillämpa – blockera okvalificerade rolltilldelningar och ta bort medlemmar efter respittiden</value></data>
+  <data name="EnforcementHint" xml:space="preserve"><value>Tillämpa tar bort medlemmar från roller vars obligatoriska certifieringar gått ut; borttagningen loggas och medlemmen aviseras.</value></data>
+  <data name="EnforceConfirm" xml:space="preserve"><value>Tillämpa tar bort medlemmar från roller när deras respittid löper ut. {0} obligatoriska krav är konfigurerade. Fortsätt?</value></data>
+  <data name="certifications_enforce_confirm" xml:space="preserve"><value>Bekräfta bytet till Tillämpa innan du sparar.</value></data>
+  <data name="RoleRemovalGraceDays" xml:space="preserve"><value>Respittid (dagar)</value></data>
+  <data name="RoleRemovalGraceDaysHint" xml:space="preserve"><value>Dagar efter att en obligatorisk certifiering gått ut innan medlemmen tas bort från rollen. Varje krav kan åsidosätta det.</value></data>
+  <data name="TreatPendingVerificationAsValid" xml:space="preserve"><value>Behandla poster som väntar på verifiering som giltiga för rollkrav</value></data>
+  <data name="Notifications" xml:space="preserve"><value>Aviseringar</value></data>
+  <data name="NotifyLeadDays" xml:space="preserve"><value>Avisera (dagar före utgång)</value></data>
+  <data name="NotifyLeadDaysHint" xml:space="preserve"><value>Kommaseparerade, t.ex. 60,30,14,7,1. En avisering per post och listad dag.</value></data>
+  <data name="NotifyCertificationHolder" xml:space="preserve"><value>Avisera innehavaren direkt</value></data>
+  <data name="SendAdminDigest" xml:space="preserve"><value>Skicka avdelningsadministratörer en nattlig sammanfattning</value></data>
+  <data name="NotificationsHint" xml:space="preserve"><value>Mottagare för händelserna Certifiering går ut / utgången / Roll borttagen och Enhetscertifiering konfigureras under</value></data>
+  <data name="NotificationSettings" xml:space="preserve"><value>Aviseringsinställningar</value></data>
+  <data name="RequiredCertifications" xml:space="preserve"><value>Obligatoriska certifieringar</value></data>
+  <data name="RequiredCertificationsFor" xml:space="preserve"><value>Obligatoriska certifieringar – {0}</value></data>
+  <data name="RoleRequirementsIntro" xml:space="preserve"><value>Vilka certifieringstyper en medlem måste ha för denna roll. Rader med samma gruppnummer är alternativ; obligatoriska rader blockerar eller tar bort i läget Tillämpa.</value></data>
+  <data name="BackToRoles" xml:space="preserve"><value>Tillbaka till roller</value></data>
+  <data name="EnforcementOffNotice" xml:space="preserve"><value>Tillämpning är av: dessa krav är informativa tills en avdelningsadministratör slår på Endast varna eller Tillämpa under</value></data>
+  <data name="NoPersonTypes" xml:space="preserve"><value>Inga personcertifieringstyper finns ännu.</value></data>
+  <data name="Mandatory" xml:space="preserve"><value>Obligatorisk</value></data>
+  <data name="AnyOfGroup" xml:space="preserve"><value>Alternativgrupp</value></data>
+  <data name="AnyOfGroupHint" xml:space="preserve"><value>Rader med samma gruppnummer uppfylls av vilken som helst av dem (EMT eller AEMT eller Paramedic); lämna tomt för ett fristående krav.</value></data>
+  <data name="AllowTrainee" xml:space="preserve"><value>Tillåt under utbildning</value></data>
+  <data name="GraceOverride" xml:space="preserve"><value>Egen respittid (dagar)</value></data>
+  <data name="AddRequirement" xml:space="preserve"><value>Lägg till krav</value></data>
+  <data name="MemberEligibility" xml:space="preserve"><value>Medlemmars behörighet</value></data>
+  <data name="NoMembers" xml:space="preserve"><value>Denna roll har inga medlemmar.</value></data>
+  <data name="MissingOrLapsed" xml:space="preserve"><value>Saknas eller utgången</value></data>
+  <data name="Qualified" xml:space="preserve"><value>Kvalificerad</value></data>
+  <data name="OptionalMissing" xml:space="preserve"><value>Valfria saknas</value></data>
+  <data name="NotQualified" xml:space="preserve"><value>Ej kvalificerad</value></data>
+  <data name="RemovalDue" xml:space="preserve"><value>Borttagning {0}</value></data>
+  <data name="RoleMembersBlocked" xml:space="preserve"><value>Dessa medlemmar saknar certifieringarna rollen kräver och lades inte till: {0}</value></data>
+  <data name="RoleMembersWarned" xml:space="preserve"><value>Tillagda med en varning – saknade certifieringar för denna roll: {0}</value></data>
+  <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Medlemmen skapades, men en eller flera roller tilldelades inte: medlemmen saknar certifieringarna rollerna kräver.</value></data>
+  <data name="UnitCertifications" xml:space="preserve"><value>Enhetscertifieringar</value></data>
+  <data name="UnitCertificationsFor" xml:space="preserve"><value>Certifieringar och besiktningar – {0}</value></data>
+  <data name="UnitCertificationsIntro" xml:space="preserve"><value>Besiktningar, registrering, försäkring, tillstånd och provintyg med utgångsdatum för denna enhet.</value></data>
+  <data name="CertificationsAndInspections" xml:space="preserve"><value>Certifieringar och besiktningar</value></data>
+  <data name="BackToUnit" xml:space="preserve"><value>Tillbaka till enheten</value></data>
+  <data name="AddRecord" xml:space="preserve"><value>Lägg till post</value></data>
+  <data name="NoUnitTypes" xml:space="preserve"><value>Inga enhetscertifieringstyper finns ännu.</value></data>
+  <data name="UnitCertification" xml:space="preserve"><value>Enhetscertifiering</value></data>
+  <data name="Reinstate" xml:space="preserve"><value>Återinsätt</value></data>
+  <data name="Suspend" xml:space="preserve"><value>Stäng av</value></data>
+  <data name="Revoke" xml:space="preserve"><value>Återkalla</value></data>
+  <data name="DeleteRecordConfirm" xml:space="preserve"><value>Ta bort denna post?</value></data>
+  <data name="CertificationRecord" xml:space="preserve"><value>Certifieringspost</value></data>
+  <data name="ProtectedNotice" xml:space="preserve"><value>Denna post är skyddad; identifierande värden visas som REDACTED utan ett visningsmedgivande.</value></data>
+  <data name="Untyped" xml:space="preserve"><value>Utan typ</value></data>
+  <data name="VerifiedBy" xml:space="preserve"><value>Verifierad av</value></data>
+  <data name="VerifyRecord" xml:space="preserve"><value>Verifiera</value></data>
+  <data name="Renew" xml:space="preserve"><value>Förnya</value></data>
+  <data name="RenewHint" xml:space="preserve"><value>Anger ett nytt utgångsdatum (och eventuellt ett nytt nummer) och återaktiverar en utgången post.</value></data>
+  <data name="NewExpiresOn" xml:space="preserve"><value>Nytt utgångsdatum</value></data>
+  <data name="NewNumber" xml:space="preserve"><value>Nytt nummer</value></data>
+  <data name="KeepCurrent" xml:space="preserve"><value>Lämna tomt för att behålla nuvarande</value></data>
+  <data name="MarkTrainee" xml:space="preserve"><value>Markera under utbildning</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Ändra status</value></data>
+  <data name="Credits" xml:space="preserve"><value>Fortbildningspoäng</value></data>
+  <data name="AddCredit" xml:space="preserve"><value>Lägg till poäng</value></data>
+  <data name="CreditProgress" xml:space="preserve"><value>{0} av {1} timmar till nästa förnyelse</value></data>
+  <data name="CreditTotal" xml:space="preserve"><value>{0} timmar registrerade</value></data>
+  <data name="NoCredits" xml:space="preserve"><value>Inga poäng registrerade.</value></data>
+  <data name="DeleteCreditConfirm" xml:space="preserve"><value>Ta bort denna poängpost?</value></data>
+  <data name="CertificationExpiring" xml:space="preserve"><value>Certifiering går ut</value></data>
+  <data name="CertificationAdded" xml:space="preserve"><value>Certifiering tillagd</value></data>
+  <data name="CertificationRenewed" xml:space="preserve"><value>Certifiering förnyad</value></data>
+  <data name="CertificationExpired" xml:space="preserve"><value>Certifiering utgången</value></data>
+  <data name="CertificationRoleRemoved" xml:space="preserve"><value>Roll borttagen på grund av utgången certifiering</value></data>
+  <data name="CertificationStatusChanged" xml:space="preserve"><value>Certifieringsstatus ändrad</value></data>
+  <data name="UnitCertificationExpiring" xml:space="preserve"><value>Enhetscertifiering går ut</value></data>
+  <data name="UnitCertificationExpired" xml:space="preserve"><value>Enhetscertifiering utgången</value></data>
+  <data name="certifications_type_in_use" xml:space="preserve"><value>Denna typ refereras av ett rollkrav eller en aktiv post och kan inte tas bort; inaktivera den i stället.</value></data>
+  <data name="certifications_type_not_found" xml:space="preserve"><value>Certifieringstypen hittades inte.</value></data>
+  <data name="certifications_type_scope" xml:space="preserve"><value>Den certifieringstypen gäller den andra omfattningen (person eller enhet).</value></data>
+  <data name="certifications_type_name_required" xml:space="preserve"><value>En typ behöver ett namn.</value></data>
+  <data name="certifications_type_validity_invalid" xml:space="preserve"><value>Standardgiltigheten måste vara mellan 1 och 600 månader.</value></data>
+  <data name="certifications_type_credits_invalid" xml:space="preserve"><value>Poängtimmar kan inte vara negativa.</value></data>
+  <data name="certifications_type_code_taken" xml:space="preserve"><value>En annan typ i denna avdelning använder redan den koden.</value></data>
+  <data name="certifications_type_code_locked" xml:space="preserve"><value>Koden kan inte ändras medan ett rollkrav refererar till denna typ.</value></data>
+  <data name="certifications_type_scope_locked" xml:space="preserve"><value>Omfattningen kan inte ändras när poster av denna typ finns.</value></data>
+  <data name="certifications_template_not_found" xml:space="preserve"><value>Mallen hittades inte.</value></data>
+  <data name="certifications_record_not_found" xml:space="preserve"><value>Certifieringsposten hittades inte.</value></data>
+  <data name="certifications_status_invalid" xml:space="preserve"><value>Den statusen kan inte sättas manuellt.</value></data>
+  <data name="certifications_not_pending" xml:space="preserve"><value>Endast en post som väntar på verifiering kan verifieras.</value></data>
+  <data name="certifications_expiry_required" xml:space="preserve"><value>Denna typ går ut, så ett nytt utgångsdatum krävs.</value></data>
+  <data name="certifications_expiry_not_later" xml:space="preserve"><value>Det nya utgångsdatumet måste vara senare än det nuvarande.</value></data>
+  <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Poängtimmar måste vara större än noll.</value></data>
+  <data name="certifications_credit_not_found" xml:space="preserve"><value>Poängposten hittades inte.</value></data>
+  <data name="certifications_unit_not_found" xml:space="preserve"><value>Enheten hittades inte i denna avdelning.</value></data>
+  <data name="certifications_role_not_found" xml:space="preserve"><value>Rollen hittades inte i denna avdelning.</value></data>
+  <data name="certifications_grace_invalid" xml:space="preserve"><value>Respitdagar måste vara mellan 0 och 3650.</value></data>
+  <data name="certifications_enforcement_invalid" xml:space="preserve"><value>Okänt tillämpningsläge.</value></data>
+  <data name="certifications_lead_days_invalid" xml:space="preserve"><value>Framförhållningsdagar måste vara positiva och högst ett år.</value></data>
+  <data name="certifications_protected_write_refused" xml:space="preserve"><value>Skyddade uppgifter på denna post kunde inte säkras, så ändringen sparades inte.</value></data>
+  <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Medlemmen saknar certifieringarna rollen kräver.</value></data>
+  <data name="certifications_file_type" xml:space="preserve"><value>Den filtypen kan inte laddas upp.</value></data>
+  <data name="certifications_file_too_large" xml:space="preserve"><value>Filen är större än 10 MB.</value></data>
+</root>

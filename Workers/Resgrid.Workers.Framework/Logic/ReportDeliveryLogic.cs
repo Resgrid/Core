@@ -115,6 +115,9 @@ namespace Resgrid.Workers.Framework.Logic
 								case ReportTypes.ShiftReadiness:
 									reportUrl = $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Reports/UpcomingShiftReadinessReport";
 									break;
+								case ReportTypes.CertificationCompliance:
+									reportUrl = $"{SystemBehaviorConfig.ResgridBaseUrl}/User/Reports/CertificationComplianceReport";
+									break;
 							}
 
 							await _emailService.SendReportDeliveryAsync(systemNotificaiton, item.Department.DepartmentId, reportUrl, ((ReportTypes)int.Parse(item.ScheduledTask.Data)).ToString());

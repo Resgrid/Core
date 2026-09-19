@@ -104,6 +104,30 @@ namespace Resgrid.Services
 					Text("CallReferences", "Note")
 				}),
 
+				// Workforce & Business Operations plan, Phase B (ADP catalog 26): rows carry their own IsProtected marker.
+				AdpTableBinding.Direct("CustomerBillingProfiles", "CustomerBillingProfileId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("CustomerBillingProfiles", "BillingEmail")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				AdpTableBinding.Direct("Invoices", "InvoiceId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("Invoices", "SentToEmail"), Text("Invoices", "Notes")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				AdpTableBinding.Direct("InvoicePayments", "InvoicePaymentId", pkIsNumeric: false, "DepartmentId", new[]
+				{
+					Text("InvoicePayments", "PayerEmail"), Text("InvoicePayments", "Reference"), Text("InvoicePayments", "ReceiptUrl"), Text("InvoicePayments", "Notes")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
+				// Workforce & Business Operations plan, Phase D (ADP catalog 27): unit certification records and credit entries.
+				AdpTableBinding.Direct("UnitCertifications", "UnitCertificationId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("UnitCertifications", "Number"), Text("UnitCertifications", "IssuedBy"), Text("UnitCertifications", "Notes"), Text("UnitCertifications", "FileName"), Binary("UnitCertifications", "Data")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+				AdpTableBinding.Direct("PersonnelCertificationCredits", "PersonnelCertificationCreditId", pkIsNumeric: true, "DepartmentId", new[]
+				{
+					Text("PersonnelCertificationCredits", "Description"), Text("PersonnelCertificationCredits", "FileName"), Binary("PersonnelCertificationCredits", "Data")
+				}) with { ProtectedMarkerColumn = "IsProtected" },
+
 				AdpTableBinding.Direct("Contacts", "ContactId", pkIsNumeric: false, "DepartmentId", new[]
 				{
 					Text("Contacts", "FirstName"), Text("Contacts", "MiddleName"), Text("Contacts", "LastName"),

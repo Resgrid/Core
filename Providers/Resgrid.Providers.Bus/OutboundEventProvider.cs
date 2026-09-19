@@ -48,6 +48,12 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(shiftDaysAddedEventHandler);
 			_eventAggregator.AddListener(auditEventHandler);
 			_eventAggregator.AddListener(securityRefreshEventHandler);
+			// Workforce & Business Operations plan Phase D (notification EventTypes 25-29).
+			_eventAggregator.AddListener(certificationExpiringHandler);
+			_eventAggregator.AddListener(certificationExpiredHandler);
+			_eventAggregator.AddListener(certificationRoleRemovedHandler);
+			_eventAggregator.AddListener(unitCertificationExpiringHandler);
+			_eventAggregator.AddListener(unitCertificationExpiredHandler);
 
 			// Topics (SignalR Integration)
 			_eventAggregator.AddListener(personnelStatusChangedTopicHandler);
@@ -296,6 +302,62 @@ namespace Resgrid.Providers.Bus
 			nqi.Value = message.Item.CalendarItemId.ToString();
 
 			await _outboundQueueProvider.EnqueueNotification(nqi);
+		};
+
+		// Phase D certification notifications. Value carries the rendering facts (type name, expiry, days, subject) so
+		// the notification message never has to re-read a protected record; the holder / unit ride UserId / UnitId for
+		// group resolution (EventOptions.GroupEvents).
+		public static string CertValue(string typeName, DateTime? expiresOn, int days, string subject)
+			=> string.Join("|", (typeName ?? string.Empty).Replace("|", "/"), expiresOn?.ToString("yyyy-MM-dd") ?? string.Empty, days.ToString(System.Globalization.CultureInfo.InvariantCulture), (subject ?? string.Empty).Replace("|", "/"));
+
+		public Action<CertificationExpiringEvent> certificationExpiringHandler = async delegate (CertificationExpiringEvent message)
+		{
+			if (message?.Certification == null) return;
+			await _outboundQueueProvider.EnqueueNotification(new NotificationItem
+			{
+				Type = (int)EventTypes.CertificationExpiring, DepartmentId = message.DepartmentId, ItemId = message.Certification.PersonnelCertificationId,
+				UserId = message.Certification.UserId, Value = CertValue(message.TypeName, message.Certification.ExpiresOn, message.DaysUntilExpiry, null)
+			});
+		};
+
+		public Action<CertificationExpiredEvent> certificationExpiredHandler = async delegate (CertificationExpiredEvent message)
+		{
+			if (message?.Certification == null) return;
+			await _outboundQueueProvider.EnqueueNotification(new NotificationItem
+			{
+				Type = (int)EventTypes.CertificationExpired, DepartmentId = message.DepartmentId, ItemId = message.Certification.PersonnelCertificationId,
+				UserId = message.Certification.UserId, Value = CertValue(message.TypeName, message.Certification.ExpiresOn, 0, null)
+			});
+		};
+
+		public Action<CertificationRoleRemovedEvent> certificationRoleRemovedHandler = async delegate (CertificationRoleRemovedEvent message)
+		{
+			if (message == null) return;
+			await _outboundQueueProvider.EnqueueNotification(new NotificationItem
+			{
+				Type = (int)EventTypes.CertificationRoleRemoved, DepartmentId = message.DepartmentId, ItemId = message.PersonnelRoleId,
+				UserId = message.UserId, Value = CertValue(message.TypeName, message.ExpiresOn, 0, message.RoleName)
+			});
+		};
+
+		public Action<UnitCertificationExpiringEvent> unitCertificationExpiringHandler = async delegate (UnitCertificationExpiringEvent message)
+		{
+			if (message?.Certification == null) return;
+			await _outboundQueueProvider.EnqueueNotification(new NotificationItem
+			{
+				Type = (int)EventTypes.UnitCertificationExpiring, DepartmentId = message.DepartmentId, ItemId = message.Certification.UnitCertificationId,
+				UnitId = message.Certification.UnitId, Value = CertValue(message.TypeName, message.Certification.ExpiresOn, message.DaysUntilExpiry, message.UnitName)
+			});
+		};
+
+		public Action<UnitCertificationExpiredEvent> unitCertificationExpiredHandler = async delegate (UnitCertificationExpiredEvent message)
+		{
+			if (message?.Certification == null) return;
+			await _outboundQueueProvider.EnqueueNotification(new NotificationItem
+			{
+				Type = (int)EventTypes.UnitCertificationExpired, DepartmentId = message.DepartmentId, ItemId = message.Certification.UnitCertificationId,
+				UnitId = message.Certification.UnitId, Value = CertValue(message.TypeName, message.Certification.ExpiresOn, 0, message.UnitName)
+			});
 		};
 
 		public Action<CalendarEventAddedEvent> calendarEventAddedHandler = async delegate (CalendarEventAddedEvent message)

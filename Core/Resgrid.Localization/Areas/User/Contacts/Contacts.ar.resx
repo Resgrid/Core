@@ -486,6 +486,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>أصبحت الخطط المسبقة لهذه الإدارة تُدار الآن كمبانٍ في السجلات. هذه الصفحة للقراءة فقط؛ عدّل المبنى من السجلات.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>لا يمكن حذف جهة الاتصال هذه ما دام لديها ملف فوترة يحتوي على فواتير غير ملغاة. ألغِ الفواتير أو سوِّها أولاً.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>فتح المبنى</value>
   </data>

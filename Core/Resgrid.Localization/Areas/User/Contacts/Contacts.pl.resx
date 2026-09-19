@@ -437,6 +437,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>Plany operacyjne tej jednostki są teraz prowadzone jako obiekty w Rejestrach. Ta strona jest tylko do odczytu; edytuj obiekt w Rejestrach.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Nie można usunąć tego kontaktu, dopóki ma profil rozliczeniowy z nieanulowanymi fakturami. Najpierw anuluj lub rozlicz faktury.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Otwórz obiekt</value>
   </data>

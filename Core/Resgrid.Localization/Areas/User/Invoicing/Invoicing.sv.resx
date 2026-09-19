@@ -39,6 +39,8 @@
   <data name="DefaultRateCardHint" xml:space="preserve"><value>Avdelningens standard (används när kunden saknar vald prislista)</value></data>
   <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Ta bort denna prislista?</value></data>
   <data name="DeleteItemConfirm" xml:space="preserve"><value>Ta bort denna post?</value></data>
+  <data name="DeleteRateCard" xml:space="preserve"><value>Ta bort prislista</value></data>
+  <data name="DeleteItem" xml:space="preserve"><value>Ta bort post</value></data>
   <data name="RateCardDeleted" xml:space="preserve"><value>Prislistan togs bort.</value></data>
   <data name="ItemType" xml:space="preserve"><value>Typ</value></data>
   <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Per timme – enhetens tid på plats</value></data>
@@ -257,9 +259,101 @@
   <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>En betald faktura kan inte makuleras.</value></data>
   <data name="invoicing_invoice_void" xml:space="preserve"><value>Fakturan är makulerad.</value></data>
   <data name="invoicing_no_recipient_email" xml:space="preserve"><value>Ingen faktura-e-post är angiven för kunden.</value></data>
+  <data name="invoicing_email_not_sent" xml:space="preserve"><value>Faktura-e-posten kunde inte skickas. Kontrollera adressen och försök igen.</value></data>
+  <data name="invoicing_payment_conflict" xml:space="preserve"><value>Den här leverantörstransaktionen är redan registrerad på en annan avdelnings faktura.</value></data>
   <data name="invoicing_payment_not_found" xml:space="preserve"><value>Betalningen hittades inte.</value></data>
   <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>Faktura-PDF:en kunde inte skapas.</value></data>
   <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Faktureringsprofilen har fakturor och kan inte tas bort.</value></data>
   <data name="invoicing_profile_required" xml:space="preserve"><value>Kunden behöver först en aktiv faktureringsprofil.</value></data>
   <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>Prislistan hittades inte.</value></data>
+  <data name="AdminRequired" xml:space="preserve"><value>Endast en avdelningsadministratör kan göra detta.</value></data>
+  <data name="OnlinePaymentsIntro" xml:space="preserve"><value>Låt kunder betala fakturor online via ert eget Stripe-konto. Pengarna går direkt till ert konto; Resgrid håller dem aldrig, tar ingen avgift och kan inte återbetala.</value></data>
+  <data name="YourStripeAccount" xml:space="preserve"><value>Ert Stripe-konto</value></data>
+  <data name="NoConnectionYet" xml:space="preserve"><value>Inget Stripe-konto är anslutet ännu.</value></data>
+  <data name="ConnectStripe" xml:space="preserve"><value>Anslut med Stripe</value></data>
+  <data name="ReconnectStripe" xml:space="preserve"><value>Anslut igen med Stripe</value></data>
+  <data name="ConnectStripeIntro" xml:space="preserve"><value>Du loggar in på Stripe och låter Resgrid skapa betalsidor på ert konto. Resgrid sparar bara ert konto-id, aldrig era Stripe-uppgifter.</value></data>
+  <data name="ConnectAdminOnly" xml:space="preserve"><value>Endast avdelningsadministratören kan ansluta eller koppla från Stripe-kontot.</value></data>
+  <data name="ConnectedAccount" xml:space="preserve"><value>Anslutet konto</value></data>
+  <data name="BusinessName" xml:space="preserve"><value>Företagsnamn</value></data>
+  <data name="ConnectedOn" xml:space="preserve"><value>Ansluten den</value></data>
+  <data name="LastVerified" xml:space="preserve"><value>Senast verifierad</value></data>
+  <data name="Capabilities" xml:space="preserve"><value>Funktioner</value></data>
+  <data name="LastError" xml:space="preserve"><value>Senaste fel</value></data>
+  <data name="LiveMode" xml:space="preserve"><value>Skarpt läge</value></data>
+  <data name="SandboxMode" xml:space="preserve"><value>Sandlåda</value></data>
+  <data name="Disconnect" xml:space="preserve"><value>Koppla från</value></data>
+  <data name="DisconnectConfirm" xml:space="preserve"><value>Koppla från Stripe-kontot? Öppna betallänkar slutar fungera och nya kan inte skapas förrän ett konto ansluts igen.</value></data>
+  <data name="CollectionSettings" xml:space="preserve"><value>Inställningar för betalning</value></data>
+  <data name="OnlinePaymentsEnabledLabel" xml:space="preserve"><value>Erbjud onlinebetalning på fakturor</value></data>
+  <data name="AllowedPaymentMethods" xml:space="preserve"><value>Godkända betalsätt</value></data>
+  <data name="PaymentMethodCard" xml:space="preserve"><value>Kort och plånböcker</value></data>
+  <data name="PaymentMethodAch" xml:space="preserve"><value>Bankdebitering (ACH, amerikanska konton)</value></data>
+  <data name="PaymentMethodsHint" xml:space="preserve"><value>Tillgängligheten följer vad ert Stripe-konto kan ta emot; ett sätt kontot inte klarar erbjuds inte.</value></data>
+  <data name="PayLinksReady" xml:space="preserve"><value>Betallänkar</value></data>
+  <data name="SuspendedByOperator" xml:space="preserve"><value>Onlinebetalning är avstängd av operatören i denna region. Er anslutning behålls; inga nya betallänkar erbjuds förrän den aktiveras igen.</value></data>
+  <data name="OnlinePaymentsFlagOff" xml:space="preserve"><value>Onlinebetalningar är inte aktiverade för er avdelning ännu. Kontakta Resgrids support för att aktivera dem.</value></data>
+  <data name="PaymentConnected" xml:space="preserve"><value>Stripe-kontot {0} är anslutet. Slå på ”Erbjud onlinebetalning på fakturor” för att börja erbjuda betallänkar.</value></data>
+  <data name="PaymentDisconnected" xml:space="preserve"><value>Stripe-kontot kopplades från.</value></data>
+  <data name="PayOnline" xml:space="preserve"><value>Betala online</value></data>
+  <data name="PayLink" xml:space="preserve"><value>Betallänk</value></data>
+  <data name="PayLinkHint" xml:space="preserve"><value>Dela länken med kunden; den trycks på fakturan och ingår i e-posten. Länken gäller så länge som anges i faktureringsinställningarna.</value></data>
+  <data name="CopyLink" xml:space="preserve"><value>Kopiera länk</value></data>
+  <data name="LinkCopied" xml:space="preserve"><value>Länk kopierad.</value></data>
+  <data name="OpenRequest" xml:space="preserve"><value>Öppen betalningsbegäran</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Går ut</value></data>
+  <data name="OpenPaymentRequest" xml:space="preserve"><value>Öppna betalsidan nu</value></data>
+  <data name="RefreshPaymentRequest" xml:space="preserve"><value>Förnya betalsidan</value></data>
+  <data name="PayLinkCreated" xml:space="preserve"><value>Betalsidan är öppen; betallänken leder nu direkt dit.</value></data>
+  <data name="PayOnlineNotOffered" xml:space="preserve"><value>Onlinebetalning erbjuds inte för denna faktura just nu.</value></data>
+  <data name="Started" xml:space="preserve"><value>Startad</value></data>
+  <data name="Fee" xml:space="preserve"><value>Avgift</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Kvitto</value></data>
+  <data name="RequestStatusCreated" xml:space="preserve"><value>Skapad</value></data>
+  <data name="RequestStatusOpened" xml:space="preserve"><value>Väntar på betalning</value></data>
+  <data name="RequestStatusProcessing" xml:space="preserve"><value>Betalning pågår (bankdebitering behandlas)</value></data>
+  <data name="RequestStatusCompleted" xml:space="preserve"><value>Betald</value></data>
+  <data name="RequestStatusExpired" xml:space="preserve"><value>Utgången</value></data>
+  <data name="RequestStatusCancelled" xml:space="preserve"><value>Avbruten</value></data>
+  <data name="RequestStatusFailed" xml:space="preserve"><value>Misslyckad</value></data>
+  <data name="RequestStatusUnknown" xml:space="preserve"><value>Okänd</value></data>
+  <data name="ConnectionStatusPending" xml:space="preserve"><value>Väntande</value></data>
+  <data name="ConnectionStatusConnected" xml:space="preserve"><value>Ansluten</value></data>
+  <data name="ConnectionStatusActionRequired" xml:space="preserve"><value>Åtgärd krävs hos Stripe</value></data>
+  <data name="ConnectionStatusDisconnected" xml:space="preserve"><value>Frånkopplad</value></data>
+  <data name="ConnectionStatusRevoked" xml:space="preserve"><value>Åtkomst återkallad</value></data>
+  <data name="PayPageTitle" xml:space="preserve"><value>Betala faktura</value></data>
+  <data name="AmountDue" xml:space="preserve"><value>Belopp att betala</value></data>
+  <data name="PayNow" xml:space="preserve"><value>Betala</value></data>
+  <data name="PayPageIntro" xml:space="preserve"><value>Betalningen hanteras av Stripe för {0}. Kort- eller bankuppgifter anges på Stripes säkra sida och ses aldrig av Resgrid.</value></data>
+  <data name="ResumePayment" xml:space="preserve"><value>En betalsida är redan öppen för denna faktura; att betala igen återupptar den.</value></data>
+  <data name="pay_link_invalid" xml:space="preserve"><value>Denna betallänk är inte giltig.</value></data>
+  <data name="pay_link_expired" xml:space="preserve"><value>Denna betallänk har gått ut. Be avdelningen om en ny.</value></data>
+  <data name="pay_invoice_unavailable" xml:space="preserve"><value>Denna faktura är inte längre tillgänglig för betalning.</value></data>
+  <data name="pay_invoice_paid" xml:space="preserve"><value>Denna faktura är betald. Tack.</value></data>
+  <data name="pay_not_offered" xml:space="preserve"><value>Onlinebetalning är inte tillgänglig för denna faktura. Kontakta avdelningen för andra betalsätt.</value></data>
+  <data name="pay_processing" xml:space="preserve"><value>En bankbetalning för denna faktura bekräftas. Inget mer behövs just nu.</value></data>
+  <data name="PayReturnTitle" xml:space="preserve"><value>Tack – din betalning bekräftas</value></data>
+  <data name="PayReturnText" xml:space="preserve"><value>Avdelningen ser betalningen så snart Stripe bekräftar den, oftast inom en minut; bankbetalningar kan ta några bankdagar. Du får Stripes kvitto via e-post.</value></data>
+  <data name="PayCancelTitle" xml:space="preserve"><value>Betalning avbruten</value></data>
+  <data name="PayCancelText" xml:space="preserve"><value>Inget debiterades. Du kan komma tillbaka hit och betala när du vill.</value></data>
+  <data name="BackToInvoice" xml:space="preserve"><value>Tillbaka till fakturan</value></data>
+  <data name="TooManyRequests" xml:space="preserve"><value>För många förfrågningar. Vänta en minut och försök igen.</value></data>
+  <data name="payments_not_available_in_region" xml:space="preserve"><value>Onlinebetalning är inte tillgänglig i denna region.</value></data>
+  <data name="payments_flag_off" xml:space="preserve"><value>Onlinebetalningar är inte aktiverade för denna avdelning.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Onlinebetalningar kräver ett aktivt Business Operations-tillägg.</value></data>
+  <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Onlinebetalning är avstängd i era faktureringsinställningar.</value></data>
+  <data name="payments_no_connection" xml:space="preserve"><value>Inget Stripe-konto är anslutet.</value></data>
+  <data name="payments_connection_not_ready" xml:space="preserve"><value>Det anslutna Stripe-kontot kan inte ta emot betalningar ännu. Slutför Stripes krav och försök igen.</value></data>
+  <data name="payments_invoice_not_payable" xml:space="preserve"><value>Ett utkast eller en makulerad faktura kan inte betalas online.</value></data>
+  <data name="payments_invoice_paid" xml:space="preserve"><value>Denna faktura är redan betald.</value></data>
+  <data name="payments_zero_balance" xml:space="preserve"><value>Det finns inget saldo att ta betalt för på denna faktura.</value></data>
+  <data name="payments_currency_mismatch" xml:space="preserve"><value>Fakturans valuta avräknas inte av det anslutna Stripe-kontot.</value></data>
+  <data name="payments_provider_unavailable" xml:space="preserve"><value>Stripe kunde inte nås just nu. Försök igen om en stund.</value></data>
+  <data name="payments_connect_failed" xml:space="preserve"><value>Stripe slutförde inte anslutningen. Försök ansluta igen.</value></data>
+  <data name="payments_connect_declined" xml:space="preserve"><value>Anslutningen avböjdes hos Stripe. Inget ändrades.</value></data>
+  <data name="payments_state_invalid" xml:space="preserve"><value>Detta anslutningsförsök är inte längre giltigt. Börja om från inställningssidan.</value></data>
+  <data name="payments_disabled" xml:space="preserve"><value>Onlinebetalning är avstängd på denna server.</value></data>
+  <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe uppger att Resgrid inte längre har åtkomst till detta konto. Anslut det igen för att fortsätta.</value></data>
+  <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Skyddade uppgifter på denna post kunde inte säkras, så ändringen sparades inte.</value></data>
 </root>

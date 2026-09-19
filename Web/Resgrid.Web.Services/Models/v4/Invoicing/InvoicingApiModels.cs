@@ -122,4 +122,73 @@ namespace Resgrid.Web.Services.Models.v4.Invoicing
 		/// <summary>UTC; defaults to now.</summary>
 		public DateTime? PaidOn { get; set; }
 	}
+
+	// ---- Phase B2 online payments -------------------------------------------------------------------------------
+
+	public class OnlinePaymentsStatusResult : StandardApiResponseV4Base
+	{
+		public OnlinePaymentsStatusData Data { get; set; }
+	}
+
+	public class OnlinePaymentsStatusData
+	{
+		/// <summary>Payment collection is offered in this cluster (config switch and Payments.StripeConnect flag).</summary>
+		public bool AvailableInCluster { get; set; }
+		/// <summary>Invoicing.OnlinePayments evaluates true for the department.</summary>
+		public bool FlagEnabled { get; set; }
+		/// <summary>The department turned online payments on in its billing settings.</summary>
+		public bool EnabledByDepartment { get; set; }
+		/// <summary>A pay link can be created right now.</summary>
+		public bool CanCollect { get; set; }
+		/// <summary>The first failing gate (payments_*), or null.</summary>
+		public string BlockedReason { get; set; }
+		public string[] AllowedPaymentMethods { get; set; } = new string[0];
+		public PaymentConnectionData Connection { get; set; }
+	}
+
+	public class PaymentConnectionsResult : StandardApiResponseV4Base
+	{
+		public List<PaymentConnectionData> Data { get; set; } = new List<PaymentConnectionData>();
+	}
+
+	/// <summary>A connection as the apps may see it: masked account id, no secrets (plan B2.6).</summary>
+	public class PaymentConnectionData
+	{
+		public string DepartmentPaymentConnectionId { get; set; }
+		public int Provider { get; set; }
+		public string ProviderName { get; set; }
+		public int Status { get; set; }
+		public string StatusName { get; set; }
+		public int Environment { get; set; }
+		public string MaskedAccountId { get; set; }
+		public string DisplayName { get; set; }
+		public string Country { get; set; }
+		public string DefaultCurrency { get; set; }
+		public bool IsDefault { get; set; }
+		public DateTime ConnectedOn { get; set; }
+		public DateTime? LastVerifiedOn { get; set; }
+	}
+
+	public class CreatePaymentLinkInput
+	{
+		public string InvoiceId { get; set; }
+	}
+
+	public class PaymentLinkResult : StandardApiResponseV4Base
+	{
+		public PaymentLinkData Data { get; set; }
+	}
+
+	public class PaymentLinkData
+	{
+		public string InvoiceId { get; set; }
+		/// <summary>The stable Resgrid pay page for the invoice (share this; it survives provider session expiry).</summary>
+		public string PayUrl { get; set; }
+		public string InvoicePaymentRequestId { get; set; }
+		public int RequestStatus { get; set; }
+		public string RequestStatusName { get; set; }
+		public decimal Amount { get; set; }
+		public string Currency { get; set; }
+		public DateTime ExpiresOn { get; set; }
+	}
 }

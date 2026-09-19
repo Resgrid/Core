@@ -486,9 +486,65 @@ namespace Resgrid.Services
 				{
 					return await _departmentGroupsService.GetGroupByIdAsync(dynamicData.GroupId);
 				}
+				else if (notification.Type == EventTypes.CertificationExpiring || notification.Type == EventTypes.CertificationExpired || notification.Type == EventTypes.CertificationRoleRemoved)
+				{
+					// Phase D: the holder's group (plan D6 "notify the group admin the user is in").
+					if (!string.IsNullOrWhiteSpace(dynamicData.UserId))
+						return await _departmentGroupsService.GetGroupForUserAsync(dynamicData.UserId, notification.DepartmentId);
+				}
+				else if (notification.Type == EventTypes.UnitCertificationExpiring || notification.Type == EventTypes.UnitCertificationExpired)
+				{
+					// Phase D: the unit's station group.
+					var unit = dynamicData.UnitId > 0 ? await _unitsService.GetUnitByIdAsync(dynamicData.UnitId) : null;
+					if (unit?.StationGroupId > 0)
+						return await _departmentGroupsService.GetGroupByIdAsync(unit.StationGroupId.Value);
+				}
 			}
 
 			return null;
+		}
+
+		/// <summary>Phase D notification values are "{typeName}|{expiresOn yyyy-MM-dd}|{days}|{subject}" (OutboundEventProvider.CertValue).</summary>
+		public async Task<string> RenderCertificationMessageAsync(ProcessedNotification notification)
+		{
+			var parts = (notification.Value ?? string.Empty).Split('|');
+			var typeName = parts.Length > 0 && !string.IsNullOrWhiteSpace(parts[0]) ? parts[0] : "Certification";
+			var expires = parts.Length > 1 && DateTime.TryParseExact(parts[1], "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal, out var parsed) ? parsed.ToString("yyyy-MM-dd") : null;
+			var days = parts.Length > 2 && int.TryParse(parts[2], out var d) ? d : 0;
+			var subject = parts.Length > 3 ? parts[3] : string.Empty;
+			NotificationItem dynamicData = null;
+			try { dynamicData = string.IsNullOrWhiteSpace(notification.Data) ? null : ObjectSerialization.Deserialize<NotificationItem>(notification.Data); }
+			catch (Exception ex) { Logging.LogException(ex); }
+			string holder = null;
+			if (dynamicData != null && !string.IsNullOrWhiteSpace(dynamicData.UserId))
+			{
+				try
+				{
+					var profile = await _userProfileService.GetProfileByUserIdAsync(dynamicData.UserId);
+					holder = profile?.FullName?.AsFirstNameLastName;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+			holder = string.IsNullOrWhiteSpace(holder) ? "A member" : holder;
+			var on = expires != null ? $" on {expires}" : string.Empty;
+
+			switch (notification.Type)
+			{
+				case EventTypes.CertificationExpiring:
+					return $"{typeName} certification for {holder} expires in {days} day{(days == 1 ? "" : "s")}{on}";
+				case EventTypes.CertificationExpired:
+					return $"{typeName} certification for {holder} expired{on}";
+				case EventTypes.CertificationRoleRemoved:
+					return $"{holder} was removed from the {subject} role: required {typeName} certification lapsed{on}";
+				case EventTypes.UnitCertificationExpiring:
+					return $"{typeName} for unit {subject} expires in {days} day{(days == 1 ? "" : "s")}{on}";
+				case EventTypes.UnitCertificationExpired:
+					return $"{typeName} for unit {subject} expired{on}";
+			}
+			return string.Empty;
 		}
 
 		public async Task<bool> ValidateNotificationForProcessingAsync(ProcessedNotification notification, DepartmentNotification setting)
@@ -948,6 +1004,12 @@ namespace Resgrid.Services
 							return $"Calendar Event {calUpdatedEvent.Title} on {calUpdatedEvent.Start.TimeConverter(calUpdatedEventDepartment).ToShortDateString()} has changed";
 						else
 							return String.Empty;
+					case EventTypes.CertificationExpiring:
+					case EventTypes.CertificationExpired:
+					case EventTypes.CertificationRoleRemoved:
+					case EventTypes.UnitCertificationExpiring:
+					case EventTypes.UnitCertificationExpired:
+						return await RenderCertificationMessageAsync(notification);
 					default:
 						throw new ArgumentOutOfRangeException("type");
 				}

@@ -507,6 +507,7 @@
   <data name="PreplanRecordsOwnedNotice" xml:space="preserve">
     <value>Τα προσχέδια αυτής της υπηρεσίας διατηρούνται πλέον ως κτίρια στα Αρχεία. Η σελίδα είναι μόνο για ανάγνωση· επεξεργαστείτε το κτίριο στα Αρχεία.</value>
   </data>
+  <data name="ContactHasOpenBillingNotice" xml:space="preserve"><value>Αυτή η επαφή δεν μπορεί να διαγραφεί όσο έχει προφίλ χρέωσης με τιμολόγια που δεν έχουν ακυρωθεί. Ακυρώστε ή εξοφλήστε πρώτα τα τιμολόγια.</value></data>
   <data name="PreplanOpenOccupancy" xml:space="preserve">
     <value>Άνοιγμα κτιρίου</value>
   </data>

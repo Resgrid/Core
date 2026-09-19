@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -5,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services.Invoicing;
 using PaymentConnectConfig = Resgrid.Config.PaymentConnectConfig;
@@ -59,7 +61,11 @@ namespace Resgrid.Tests.Services
 			InvoicePaymentsService.ResetEndpointProbeCache();
 		}
 
-		private InvoicePaymentsService Build() => new InvoicePaymentsService(_toggles.Object, _probe.Object);
+		private InvoicePaymentsService Build() => new InvoicePaymentsService(_toggles.Object, _probe.Object, new Mock<IPaymentConnectProvider>().Object,
+			new Mock<IDepartmentPaymentConnectionRepository>().Object, new Mock<IInvoicePaymentRequestRepository>().Object, new Mock<IPaymentProviderEventRepository>().Object,
+			new Mock<IInvoiceRepository>().Object, new Mock<ICustomerBillingProfileRepository>().Object, new Mock<IInvoicePaymentRepository>().Object,
+			new Mock<IDepartmentBillingIdentityRepository>().Object, new Mock<IInvoicingService>().Object, new Mock<IBusinessOperationsAccessService>().Object,
+			new Mock<IDepartmentsService>().Object, new Mock<IEmailService>().Object, new Mock<ICacheProvider>().Object, new Mock<IEventAggregator>().Object);
 
 		private void ClusterFlag(bool? enabledGlobally, bool archived = false)
 		{
@@ -194,6 +200,29 @@ namespace Resgrid.Tests.Services
 
 			PaymentConnectConfig.PublicBaseUrl = "";
 			PaymentConnectConfig.GetWebhookUrl().Should().BeEmpty();
+		}
+		[Test]
+		public async Task A_failed_cluster_flag_read_is_reported_unhealthy_not_as_a_healthy_disabled_cluster()
+		{
+			_toggles.Setup(t => t.GetFlagByKeyAsync(FeatureFlagKeys.PaymentsStripeConnect, It.IsAny<bool>())).ThrowsAsync(new InvalidOperationException("flags unavailable"));
+
+			var health = await Build().GetWebhookHealthAsync();
+
+			health.Enabled.Should().BeTrue("configuration switches payment collection on in this process");
+			health.Healthy.Should().BeFalse("monitoring must see the failed check, not a normal disabled state");
+			health.EndpointRegistered.Should().BeNull();
+		}
+
+		[Test]
+		public async Task A_failed_health_read_on_a_configured_off_cluster_stays_disabled_and_healthy()
+		{
+			PaymentConnectConfig.Enabled = false;
+			_toggles.Setup(t => t.GetFlagByKeyAsync(FeatureFlagKeys.PaymentsStripeConnect, It.IsAny<bool>())).ThrowsAsync(new InvalidOperationException("flags unavailable"));
+
+			var health = await Build().GetWebhookHealthAsync();
+
+			health.Enabled.Should().BeFalse();
+			health.Healthy.Should().BeTrue();
 		}
 	}
 }

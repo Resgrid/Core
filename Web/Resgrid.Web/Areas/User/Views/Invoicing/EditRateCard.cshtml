@@ -100,7 +100,7 @@
                                                 <button type="button" class="btn btn-xs btn-default edit-item"><i class="fa fa-pencil"></i></button>
                                                 <form method="post" asp-controller="Invoicing" asp-action="DeleteRateCardItem" asp-route-area="User" asp-route-rateCardId="@card.RateCardId" asp-route-id="@item.RateCardItemId" style="display: inline;">
                                                     @Html.AntiForgeryToken()
-                                                    <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteItemConfirm"]');"><i class="fa fa-trash"></i></button>
+                                                    <button type="submit" class="btn btn-xs btn-danger" aria-label="@localizer["DeleteItem"]" title="@localizer["DeleteItem"]" onclick="return confirm('@localizer["DeleteItemConfirm"]');"><i class="fa fa-trash"></i></button>
                                                 </form>
                                             }
                                         </td>

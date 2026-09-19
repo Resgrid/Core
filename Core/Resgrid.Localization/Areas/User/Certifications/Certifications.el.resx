@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Certifications" xml:space="preserve"><value>Πιστοποιήσεις</value></data>
+  <data name="ManageCertifications" xml:space="preserve"><value>Διαχείριση πιστοποιήσεων</value></data>
+  <data name="ViewCertifications" xml:space="preserve"><value>Προβολή πιστοποιήσεων</value></data>
+  <data name="ManageCertificationSetup" xml:space="preserve"><value>Διαχείριση ρύθμισης πιστοποιήσεων</value></data>
+  <data name="ManageCertificationsNote" xml:space="preserve"><value>Δημιουργία, επεξεργασία, αναστολή, επαλήθευση και διαγραφή εγγραφών πιστοποίησης και μονάδων άλλων μελών, καθώς και εγγραφών πιστοποίησης μονάδων.</value></data>
+  <data name="ViewCertificationsNote" xml:space="preserve"><value>Προβολή εγγραφών πιστοποίησης άλλων μελών, πιστοποιήσεων μονάδων και του πίνακα λήξεων. Τα μέλη βλέπουν πάντα τις δικές τους εγγραφές.</value></data>
+  <data name="ManageCertificationSetupNote" xml:space="preserve"><value>Διαχείριση τύπων πιστοποίησης, απαιτήσεων ρόλων και ρυθμίσεων πιστοποίησης του τμήματος.</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>Πίνακας</value></data>
+  <data name="DashboardIntro" xml:space="preserve"><value>Ποιος κατέχει τι, τι λήγει και τι έχει λήξει, για άτομα και μονάδες.</value></data>
+  <data name="CertificationTypes" xml:space="preserve"><value>Τύποι πιστοποίησης</value></data>
+  <data name="Settings" xml:space="preserve"><value>Ρυθμίσεις</value></data>
+  <data name="ComplianceReport" xml:space="preserve"><value>Αναφορά συμμόρφωσης</value></data>
+  <data name="ComplianceReportDescription" xml:space="preserve"><value>Εκτυπώσιμοι πίνακες άτομο × τύπος και μονάδα × τύπος με κατάσταση λήξης.</value></data>
+  <data name="ReportRunOn" xml:space="preserve"><value>Δημιουργήθηκε στις {0}</value></data>
+  <data name="Saved" xml:space="preserve"><value>Αποθηκεύτηκε.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Η αλλαγή δεν ήταν δυνατό να αποθηκευτεί.</value></data>
+  <data name="Save" xml:space="preserve"><value>Αποθήκευση</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Ακύρωση</value></data>
+  <data name="Edit" xml:space="preserve"><value>Επεξεργασία</value></data>
+  <data name="Active" xml:space="preserve"><value>Ενεργό</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Ανενεργό</value></data>
+  <data name="Description" xml:space="preserve"><value>Περιγραφή</value></data>
+  <data name="Notes" xml:space="preserve"><value>Σημειώσεις</value></data>
+  <data name="Status" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="Date" xml:space="preserve"><value>Ημερομηνία</value></data>
+  <data name="Hours" xml:space="preserve"><value>Ώρες</value></data>
+  <data name="File" xml:space="preserve"><value>Αρχείο</value></data>
+  <data name="FileHint" xml:space="preserve"><value>PDF, εικόνα ή έγγραφο γραφείου, έως 10 MB.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Αιτία</value></data>
+  <data name="Number" xml:space="preserve"><value>Αριθμός</value></data>
+  <data name="IssuedBy" xml:space="preserve"><value>Εκδόθηκε από</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Ημερομηνία έκδοσης</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Λήγει στις</value></data>
+  <data name="ReceivedOn" xml:space="preserve"><value>Ελήφθη στις</value></data>
+  <data name="NeverExpires" xml:space="preserve"><value>Δεν λήγει ποτέ</value></data>
+  <data name="DaysUntilExpiry" xml:space="preserve"><value>Ημέρες έως τη λήξη</value></data>
+  <data name="DaysLeft" xml:space="preserve"><value>{0} ημέρες απομένουν</value></data>
+  <data name="DaysAgo" xml:space="preserve"><value>πριν από {0} ημέρες</value></data>
+  <data name="Expired" xml:space="preserve"><value>Ληγμένα</value></data>
+  <data name="ExpiringWithin" xml:space="preserve"><value>Λήγει εντός {0} ημερών</value></data>
+  <data name="SuspendedOrRevoked" xml:space="preserve"><value>Σε αναστολή ή ανακληθέντα</value></data>
+  <data name="ExportCsv" xml:space="preserve"><value>Εξαγωγή CSV</value></data>
+  <data name="Scope" xml:space="preserve"><value>Εύρος</value></data>
+  <data name="People" xml:space="preserve"><value>Άτομα</value></data>
+  <data name="Units" xml:space="preserve"><value>Μονάδες</value></data>
+  <data name="Unit" xml:space="preserve"><value>Μονάδα</value></data>
+  <data name="Member" xml:space="preserve"><value>Μέλος</value></data>
+  <data name="Category" xml:space="preserve"><value>Κατηγορία</value></data>
+  <data name="AllCategories" xml:space="preserve"><value>Όλες οι κατηγορίες</value></data>
+  <data name="Group" xml:space="preserve"><value>Ομάδα</value></data>
+  <data name="AllGroups" xml:space="preserve"><value>Όλες οι ομάδες</value></data>
+  <data name="Role" xml:space="preserve"><value>Ρόλος</value></data>
+  <data name="AllRoles" xml:space="preserve"><value>Όλοι οι ρόλοι</value></data>
+  <data name="NoTypesYet" xml:space="preserve"><value>Δεν υπάρχουν ακόμη τύποι πιστοποίησης.</value></data>
+  <data name="NoRecordsYet" xml:space="preserve"><value>Δεν υπάρχουν ακόμη εγγραφές πιστοποίησης.</value></data>
+  <data name="LegendValid" xml:space="preserve"><value>Έγκυρο</value></data>
+  <data name="LegendExpiring" xml:space="preserve"><value>Λήγει σύντομα</value></data>
+  <data name="LegendExpired" xml:space="preserve"><value>Ληγμένο, σε αναστολή ή ανακληθέν</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Ενεργό</value></data>
+  <data name="StatusExpired" xml:space="preserve"><value>Ληγμένο</value></data>
+  <data name="StatusSuspended" xml:space="preserve"><value>Σε αναστολή</value></data>
+  <data name="StatusRevoked" xml:space="preserve"><value>Ανακληθέν</value></data>
+  <data name="StatusPendingVerification" xml:space="preserve"><value>Εκκρεμεί επαλήθευση</value></data>
+  <data name="StatusTrainee" xml:space="preserve"><value>Εκπαιδευόμενος</value></data>
+  <data name="UnitStatusActive" xml:space="preserve"><value>Ενεργό</value></data>
+  <data name="UnitStatusExpired" xml:space="preserve"><value>Ληγμένο</value></data>
+  <data name="UnitStatusSuspended" xml:space="preserve"><value>Σε αναστολή</value></data>
+  <data name="CategoryFire" xml:space="preserve"><value>Πυροσβεστική</value></data>
+  <data name="CategoryEMS" xml:space="preserve"><value>Επείγουσα ιατρική</value></data>
+  <data name="CategorySAR" xml:space="preserve"><value>Έρευνα και διάσωση</value></data>
+  <data name="CategoryWildland" xml:space="preserve"><value>Δασικές πυρκαγιές</value></data>
+  <data name="CategoryEmergencyManagement" xml:space="preserve"><value>Διαχείριση εκτάκτων αναγκών</value></data>
+  <data name="CategoryIndustrial" xml:space="preserve"><value>Βιομηχανικό</value></data>
+  <data name="CategorySecurity" xml:space="preserve"><value>Ασφάλεια</value></data>
+  <data name="CategoryMedical" xml:space="preserve"><value>Ιατρικό</value></data>
+  <data name="CategoryDriver" xml:space="preserve"><value>Οδηγός</value></data>
+  <data name="CategoryVehicle" xml:space="preserve"><value>Όχημα</value></data>
+  <data name="CategoryOther" xml:space="preserve"><value>Άλλο</value></data>
+  <data name="TypesIntro" xml:space="preserve"><value>Ο κατάλογος πιστοποιήσεων, αδειών, επιθεωρήσεων και εγκρίσεων που παρακολουθεί το τμήμα σας.</value></data>
+  <data name="HelpTypes" xml:space="preserve"><value>Ένας τύπος έχει σταθερό κωδικό, κατηγορία, εύρος (άτομο ή μονάδα), προεπιλεγμένη ισχύ και προαιρετικούς κανόνες επαλήθευσης ή ωρών μονάδων. Επιλέξτε συνηθισμένους τύπους από τη συλλογή προτύπων.</value></data>
+  <data name="HideInactive" xml:space="preserve"><value>Απόκρυψη ανενεργών</value></data>
+  <data name="ShowInactive" xml:space="preserve"><value>Εμφάνιση ανενεργών</value></data>
+  <data name="TemplateGallery" xml:space="preserve"><value>Συλλογή προτύπων</value></data>
+  <data name="TemplateGalleryIntro" xml:space="preserve"><value>Συνηθισμένα διαπιστευτήρια για πυροσβεστική, επείγουσα ιατρική, έρευνα και διάσωση, δασικές πυρκαγιές, διαχείριση εκτάκτων αναγκών, βιομηχανία, ασφάλεια, οδηγούς DOT και συμμόρφωση οχημάτων. Καθένα γίνεται τύπος που κατέχει και μπορεί να επεξεργαστεί το τμήμα σας.</value></data>
+  <data name="FilterTemplates" xml:space="preserve"><value>Φιλτράρισμα προτύπων…</value></data>
+  <data name="AlreadyAdded" xml:space="preserve"><value>Ήδη στον κατάλογό σας</value></data>
+  <data name="AddSelected" xml:space="preserve"><value>Προσθήκη επιλεγμένων</value></data>
+  <data name="TemplatesSkipped" xml:space="preserve"><value>{0} προστέθηκαν· παραλείφθηκαν (υπάρχουν ήδη ή απορρίφθηκαν): {1}</value></data>
+  <data name="NewType" xml:space="preserve"><value>Νέος τύπος</value></data>
+  <data name="EditType" xml:space="preserve"><value>Επεξεργασία τύπου</value></data>
+  <data name="TypeCode" xml:space="preserve"><value>Κωδικός</value></data>
+  <data name="TypeName" xml:space="preserve"><value>Τύπος</value></data>
+  <data name="AppliesTo" xml:space="preserve"><value>Ισχύει για</value></data>
+  <data name="AppliesToPerson" xml:space="preserve"><value>Άτομο</value></data>
+  <data name="AppliesToUnit" xml:space="preserve"><value>Μονάδα</value></data>
+  <data name="Validity" xml:space="preserve"><value>Ισχύς</value></data>
+  <data name="Months" xml:space="preserve"><value>{0} μήνες</value></data>
+  <data name="Records" xml:space="preserve"><value>Εγγραφές</value></data>
+  <data name="Requirements" xml:space="preserve"><value>Απαιτήσεις</value></data>
+  <data name="DeleteTypeConfirm" xml:space="preserve"><value>Διαγραφή αυτού του τύπου πιστοποίησης;</value></data>
+  <data name="IssuingAuthority" xml:space="preserve"><value>Εκδούσα αρχή</value></data>
+  <data name="CodeAuto" xml:space="preserve"><value>Προκύπτει από το όνομα όταν είναι κενό</value></data>
+  <data name="CodeHint" xml:space="preserve"><value>Σταθερό αναγνωριστικό που χρησιμοποιείται από απαιτήσεις ρόλων και ενσωματώσεις· γράμματα, ψηφία, τελείες και παύλες.</value></data>
+  <data name="CodeLockedHint" xml:space="preserve"><value>Μια απαίτηση ρόλου αναφέρεται σε αυτόν τον τύπο, οπότε ο κωδικός του δεν μπορεί πλέον να αλλάξει.</value></data>
+  <data name="DefaultValidityMonths" xml:space="preserve"><value>Προεπιλεγμένη ισχύς (μήνες)</value></data>
+  <data name="RenewalCreditHoursRequired" xml:space="preserve"><value>Ώρες μονάδων ανά ανανέωση</value></data>
+  <data name="RequiresVerification" xml:space="preserve"><value>Απαιτεί επαλήθευση επόπτη</value></data>
+  <data name="RequiresVerificationHint" xml:space="preserve"><value>Οι νέες εγγραφές παραμένουν σε εκκρεμότητα μέχρι να τις εγκρίνει κάποιος με δικαιώματα διαχείρισης.</value></data>
+  <data name="ManageTypedCatalog" xml:space="preserve"><value>Κατάλογος τύπων και πρότυπα</value></data>
+  <data name="CertificationSettings" xml:space="preserve"><value>Ρυθμίσεις πιστοποιήσεων</value></data>
+  <data name="SettingsIntro" xml:space="preserve"><value>Πώς επιβάλλονται οι απαιτήσεις ρόλων και πότε αποστέλλονται οι ειδοποιήσεις λήξης.</value></data>
+  <data name="Enforcement" xml:space="preserve"><value>Επιβολή</value></data>
+  <data name="EnforcementMode" xml:space="preserve"><value>Λειτουργία επιβολής</value></data>
+  <data name="EnforcementOff" xml:space="preserve"><value>Ανενεργή – οι απαιτήσεις είναι μόνο ενημερωτικές</value></data>
+  <data name="EnforcementWarnOnly" xml:space="preserve"><value>Μόνο προειδοποίηση – επιτρέπονται αλλαγές ρόλων, εμφάνιση προειδοποιήσεων, ειδοποίηση</value></data>
+  <data name="EnforcementEnforce" xml:space="preserve"><value>Επιβολή – αποκλεισμός μη πιστοποιημένων αναθέσεων ρόλων και αφαίρεση μελών μετά την περίοδο χάριτος</value></data>
+  <data name="EnforcementHint" xml:space="preserve"><value>Η επιβολή αφαιρεί μέλη από ρόλους των οποίων οι υποχρεωτικές πιστοποιήσεις έληξαν· η αφαίρεση καταγράφεται και το μέλος ειδοποιείται.</value></data>
+  <data name="EnforceConfirm" xml:space="preserve"><value>Η επιβολή θα αφαιρέσει μέλη από ρόλους μόλις λήξει η περίοδος χάριτος. Έχουν ρυθμιστεί {0} υποχρεωτικές απαιτήσεις. Συνέχεια;</value></data>
+  <data name="certifications_enforce_confirm" xml:space="preserve"><value>Επιβεβαιώστε τη μετάβαση σε Επιβολή πριν την αποθήκευση.</value></data>
+  <data name="RoleRemovalGraceDays" xml:space="preserve"><value>Περίοδος χάριτος (ημέρες)</value></data>
+  <data name="RoleRemovalGraceDaysHint" xml:space="preserve"><value>Ημέρες μετά τη λήξη υποχρεωτικής πιστοποίησης πριν την αφαίρεση του μέλους από τον ρόλο. Κάθε απαίτηση μπορεί να το παρακάμψει.</value></data>
+  <data name="TreatPendingVerificationAsValid" xml:space="preserve"><value>Θεώρηση εγγραφών σε εκκρεμή επαλήθευση ως έγκυρων για απαιτήσεις ρόλων</value></data>
+  <data name="Notifications" xml:space="preserve"><value>Ειδοποιήσεις</value></data>
+  <data name="NotifyLeadDays" xml:space="preserve"><value>Ειδοποίηση (ημέρες πριν τη λήξη)</value></data>
+  <data name="NotifyLeadDaysHint" xml:space="preserve"><value>Διαχωρισμένα με κόμμα, π.χ. 60,30,14,7,1. Μία ειδοποίηση ανά εγγραφή ανά αναφερόμενη ημέρα.</value></data>
+  <data name="NotifyCertificationHolder" xml:space="preserve"><value>Άμεση ειδοποίηση του κατόχου</value></data>
+  <data name="SendAdminDigest" xml:space="preserve"><value>Αποστολή νυχτερινής σύνοψης στους διαχειριστές τμήματος</value></data>
+  <data name="NotificationsHint" xml:space="preserve"><value>Οι αποδέκτες των συμβάντων Πιστοποίηση λήγει / έληξε / Αφαίρεση ρόλου και Πιστοποίηση μονάδας ρυθμίζονται στις</value></data>
+  <data name="NotificationSettings" xml:space="preserve"><value>Ρυθμίσεις ειδοποιήσεων</value></data>
+  <data name="RequiredCertifications" xml:space="preserve"><value>Απαιτούμενες πιστοποιήσεις</value></data>
+  <data name="RequiredCertificationsFor" xml:space="preserve"><value>Απαιτούμενες πιστοποιήσεις – {0}</value></data>
+  <data name="RoleRequirementsIntro" xml:space="preserve"><value>Ποιους τύπους πιστοποίησης πρέπει να κατέχει ένα μέλος για αυτόν τον ρόλο. Γραμμές με ίδιο αριθμό ομάδας είναι εναλλακτικές· οι υποχρεωτικές αποκλείουν ή αφαιρούν στη λειτουργία Επιβολής.</value></data>
+  <data name="BackToRoles" xml:space="preserve"><value>Επιστροφή στους ρόλους</value></data>
+  <data name="EnforcementOffNotice" xml:space="preserve"><value>Η επιβολή είναι ανενεργή: αυτές οι απαιτήσεις είναι ενημερωτικές μέχρι ένας διαχειριστής τμήματος ενεργοποιήσει Μόνο προειδοποίηση ή Επιβολή στις</value></data>
+  <data name="NoPersonTypes" xml:space="preserve"><value>Δεν υπάρχουν ακόμη τύποι πιστοποίησης για άτομα.</value></data>
+  <data name="Mandatory" xml:space="preserve"><value>Υποχρεωτικό</value></data>
+  <data name="AnyOfGroup" xml:space="preserve"><value>Ομάδα εναλλακτικών</value></data>
+  <data name="AnyOfGroupHint" xml:space="preserve"><value>Οι γραμμές με τον ίδιο αριθμό ομάδας ικανοποιούνται από οποιαδήποτε από αυτές (EMT ή AEMT ή Paramedic)· αφήστε κενό για αυτόνομη απαίτηση.</value></data>
+  <data name="AllowTrainee" xml:space="preserve"><value>Επιτρέπονται εκπαιδευόμενοι</value></data>
+  <data name="GraceOverride" xml:space="preserve"><value>Ειδική περίοδος χάριτος (ημέρες)</value></data>
+  <data name="AddRequirement" xml:space="preserve"><value>Προσθήκη απαίτησης</value></data>
+  <data name="MemberEligibility" xml:space="preserve"><value>Επιλεξιμότητα μελών</value></data>
+  <data name="NoMembers" xml:space="preserve"><value>Αυτός ο ρόλος δεν έχει μέλη.</value></data>
+  <data name="MissingOrLapsed" xml:space="preserve"><value>Λείπει ή έληξε</value></data>
+  <data name="Qualified" xml:space="preserve"><value>Πιστοποιημένο</value></data>
+  <data name="OptionalMissing" xml:space="preserve"><value>Λείπουν προαιρετικές</value></data>
+  <data name="NotQualified" xml:space="preserve"><value>Μη πιστοποιημένο</value></data>
+  <data name="RemovalDue" xml:space="preserve"><value>Αφαίρεση στις {0}</value></data>
+  <data name="RoleMembersBlocked" xml:space="preserve"><value>Αυτά τα μέλη δεν κατέχουν τις πιστοποιήσεις που απαιτεί ο ρόλος και δεν προστέθηκαν: {0}</value></data>
+  <data name="RoleMembersWarned" xml:space="preserve"><value>Προστέθηκαν με προειδοποίηση – λείπουν πιστοποιήσεις για αυτόν τον ρόλο: {0}</value></data>
+  <data name="RoleAssignmentBlocked" xml:space="preserve"><value>Το μέλος δημιουργήθηκε, αλλά ένας ή περισσότεροι ρόλοι δεν ανατέθηκαν: δεν κατέχει τις πιστοποιήσεις που απαιτούν.</value></data>
+  <data name="UnitCertifications" xml:space="preserve"><value>Πιστοποιήσεις μονάδας</value></data>
+  <data name="UnitCertificationsFor" xml:space="preserve"><value>Πιστοποιήσεις και επιθεωρήσεις – {0}</value></data>
+  <data name="UnitCertificationsIntro" xml:space="preserve"><value>Επιθεωρήσεις, άδεια κυκλοφορίας, ασφάλιση, εγκρίσεις και πιστοποιητικά δοκιμών με λήξη για αυτή τη μονάδα.</value></data>
+  <data name="CertificationsAndInspections" xml:space="preserve"><value>Πιστοποιήσεις και επιθεωρήσεις</value></data>
+  <data name="BackToUnit" xml:space="preserve"><value>Επιστροφή στη μονάδα</value></data>
+  <data name="AddRecord" xml:space="preserve"><value>Προσθήκη εγγραφής</value></data>
+  <data name="NoUnitTypes" xml:space="preserve"><value>Δεν υπάρχουν ακόμη τύποι πιστοποίησης για μονάδες.</value></data>
+  <data name="UnitCertification" xml:space="preserve"><value>Πιστοποίηση μονάδας</value></data>
+  <data name="Reinstate" xml:space="preserve"><value>Επαναφορά</value></data>
+  <data name="Suspend" xml:space="preserve"><value>Αναστολή</value></data>
+  <data name="Revoke" xml:space="preserve"><value>Ανάκληση</value></data>
+  <data name="DeleteRecordConfirm" xml:space="preserve"><value>Διαγραφή αυτής της εγγραφής;</value></data>
+  <data name="CertificationRecord" xml:space="preserve"><value>Εγγραφή πιστοποίησης</value></data>
+  <data name="ProtectedNotice" xml:space="preserve"><value>Αυτή η εγγραφή είναι προστατευμένη· οι αναγνωριστικές τιμές εμφανίζονται ως REDACTED χωρίς άδεια αποκάλυψης.</value></data>
+  <data name="Untyped" xml:space="preserve"><value>Χωρίς τύπο</value></data>
+  <data name="VerifiedBy" xml:space="preserve"><value>Επαληθεύτηκε από</value></data>
+  <data name="VerifyRecord" xml:space="preserve"><value>Επαλήθευση</value></data>
+  <data name="Renew" xml:space="preserve"><value>Ανανέωση</value></data>
+  <data name="RenewHint" xml:space="preserve"><value>Ορίζει νέα λήξη (και προαιρετικά νέο αριθμό), επανενεργοποιώντας ληγμένη εγγραφή.</value></data>
+  <data name="NewExpiresOn" xml:space="preserve"><value>Νέα ημερομηνία λήξης</value></data>
+  <data name="NewNumber" xml:space="preserve"><value>Νέος αριθμός</value></data>
+  <data name="KeepCurrent" xml:space="preserve"><value>Αφήστε κενό για να διατηρηθεί ο τρέχων</value></data>
+  <data name="MarkTrainee" xml:space="preserve"><value>Σήμανση εκπαιδευόμενου</value></data>
+  <data name="ChangeStatus" xml:space="preserve"><value>Αλλαγή κατάστασης</value></data>
+  <data name="Credits" xml:space="preserve"><value>Μονάδες συνεχούς εκπαίδευσης</value></data>
+  <data name="AddCredit" xml:space="preserve"><value>Προσθήκη μονάδων</value></data>
+  <data name="CreditProgress" xml:space="preserve"><value>{0} από {1} ώρες για την επόμενη ανανέωση</value></data>
+  <data name="CreditTotal" xml:space="preserve"><value>{0} ώρες καταγράφηκαν</value></data>
+  <data name="NoCredits" xml:space="preserve"><value>Δεν καταγράφηκαν μονάδες.</value></data>
+  <data name="DeleteCreditConfirm" xml:space="preserve"><value>Διαγραφή αυτής της καταχώρισης μονάδων;</value></data>
+  <data name="CertificationExpiring" xml:space="preserve"><value>Πιστοποίηση προς λήξη</value></data>
+  <data name="CertificationAdded" xml:space="preserve"><value>Προστέθηκε πιστοποίηση</value></data>
+  <data name="CertificationRenewed" xml:space="preserve"><value>Πιστοποίηση ανανεώθηκε</value></data>
+  <data name="CertificationExpired" xml:space="preserve"><value>Πιστοποίηση έληξε</value></data>
+  <data name="CertificationRoleRemoved" xml:space="preserve"><value>Αφαίρεση ρόλου λόγω ληγμένης πιστοποίησης</value></data>
+  <data name="CertificationStatusChanged" xml:space="preserve"><value>Άλλαξε η κατάσταση πιστοποίησης</value></data>
+  <data name="UnitCertificationExpiring" xml:space="preserve"><value>Πιστοποίηση μονάδας προς λήξη</value></data>
+  <data name="UnitCertificationExpired" xml:space="preserve"><value>Πιστοποίηση μονάδας έληξε</value></data>
+  <data name="certifications_type_in_use" xml:space="preserve"><value>Σε αυτόν τον τύπο αναφέρεται απαίτηση ρόλου ή ενεργή εγγραφή και δεν μπορεί να διαγραφεί· απενεργοποιήστε τον.</value></data>
+  <data name="certifications_type_not_found" xml:space="preserve"><value>Ο τύπος πιστοποίησης δεν βρέθηκε.</value></data>
+  <data name="certifications_type_scope" xml:space="preserve"><value>Αυτός ο τύπος πιστοποίησης ισχύει για το άλλο εύρος (άτομο ή μονάδα).</value></data>
+  <data name="certifications_type_name_required" xml:space="preserve"><value>Ο τύπος χρειάζεται όνομα.</value></data>
+  <data name="certifications_type_validity_invalid" xml:space="preserve"><value>Η προεπιλεγμένη ισχύς πρέπει να είναι μεταξύ 1 και 600 μηνών.</value></data>
+  <data name="certifications_type_credits_invalid" xml:space="preserve"><value>Οι ώρες μονάδων δεν μπορούν να είναι αρνητικές.</value></data>
+  <data name="certifications_type_code_taken" xml:space="preserve"><value>Άλλος τύπος σε αυτό το τμήμα χρησιμοποιεί ήδη αυτόν τον κωδικό.</value></data>
+  <data name="certifications_type_code_locked" xml:space="preserve"><value>Ο κωδικός δεν μπορεί να αλλάξει όσο απαίτηση ρόλου αναφέρεται σε αυτόν τον τύπο.</value></data>
+  <data name="certifications_type_scope_locked" xml:space="preserve"><value>Το εύρος δεν μπορεί να αλλάξει αφού υπάρχουν εγγραφές αυτού του τύπου.</value></data>
+  <data name="certifications_template_not_found" xml:space="preserve"><value>Το πρότυπο δεν βρέθηκε.</value></data>
+  <data name="certifications_record_not_found" xml:space="preserve"><value>Η εγγραφή πιστοποίησης δεν βρέθηκε.</value></data>
+  <data name="certifications_status_invalid" xml:space="preserve"><value>Αυτή η κατάσταση δεν μπορεί να οριστεί χειροκίνητα.</value></data>
+  <data name="certifications_not_pending" xml:space="preserve"><value>Μόνο εγγραφή σε εκκρεμή επαλήθευση μπορεί να επαληθευτεί.</value></data>
+  <data name="certifications_expiry_required" xml:space="preserve"><value>Αυτός ο τύπος λήγει, οπότε απαιτείται νέα ημερομηνία λήξης.</value></data>
+  <data name="certifications_expiry_not_later" xml:space="preserve"><value>Η νέα λήξη πρέπει να είναι μεταγενέστερη της τρέχουσας.</value></data>
+  <data name="certifications_credit_hours_invalid" xml:space="preserve"><value>Οι ώρες μονάδων πρέπει να είναι μεγαλύτερες από μηδέν.</value></data>
+  <data name="certifications_credit_not_found" xml:space="preserve"><value>Η καταχώριση μονάδων δεν βρέθηκε.</value></data>
+  <data name="certifications_unit_not_found" xml:space="preserve"><value>Η μονάδα δεν βρέθηκε σε αυτό το τμήμα.</value></data>
+  <data name="certifications_role_not_found" xml:space="preserve"><value>Ο ρόλος δεν βρέθηκε σε αυτό το τμήμα.</value></data>
+  <data name="certifications_grace_invalid" xml:space="preserve"><value>Οι ημέρες χάριτος πρέπει να είναι μεταξύ 0 και 3650.</value></data>
+  <data name="certifications_enforcement_invalid" xml:space="preserve"><value>Άγνωστη λειτουργία επιβολής.</value></data>
+  <data name="certifications_lead_days_invalid" xml:space="preserve"><value>Οι ημέρες προειδοποίησης πρέπει να είναι θετικές και έως ένα έτος.</value></data>
+  <data name="certifications_protected_write_refused" xml:space="preserve"><value>Τα προστατευμένα δεδομένα αυτής της εγγραφής δεν ήταν δυνατό να ασφαλιστούν, οπότε η αλλαγή δεν αποθηκεύτηκε.</value></data>
+  <data name="certifications_role_requirements_unmet" xml:space="preserve"><value>Το μέλος δεν κατέχει τις πιστοποιήσεις που απαιτεί αυτός ο ρόλος.</value></data>
+  <data name="certifications_file_type" xml:space="preserve"><value>Αυτός ο τύπος αρχείου δεν μπορεί να μεταφορτωθεί.</value></data>
+  <data name="certifications_file_too_large" xml:space="preserve"><value>Το αρχείο είναι μεγαλύτερο από 10 MB.</value></data>
+</root>

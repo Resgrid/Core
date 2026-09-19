@@ -13,14 +13,25 @@ namespace Resgrid.Services.Invoicing
 	/// </summary>
 	public sealed class StripeConnectEndpointProbe : IStripeConnectEndpointProbe
 	{
+		/// <summary>
+		/// A health probe must answer quickly or not at all: Stripe.net's default transport waits 80 seconds and retries
+		/// twice, which would hold the anonymous v4 Health call whenever Stripe is slow. One shared transport, short
+		/// timeout, no retries; a timeout surfaces as an exception the caller records as an unknown result.
+		/// </summary>
+		private static readonly SystemNetHttpClient Transport = new SystemNetHttpClient(
+			new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(ProbeTimeoutSeconds) }, maxNetworkRetries: 0);
+
+		private const int ProbeTimeoutSeconds = 5;
+		private const int EndpointListLimit = 100;
+
 		public async Task<bool?> IsEndpointRegisteredAsync(string expectedUrl, bool liveMode, IReadOnlyCollection<string> requiredEvents)
 		{
 			if (string.IsNullOrWhiteSpace(Config.PaymentConnectConfig.StripeSecretKey) || string.IsNullOrWhiteSpace(expectedUrl))
 				return null;
 
-			var client = new StripeClient(Config.PaymentConnectConfig.StripeSecretKey);
+			var client = new StripeClient(Config.PaymentConnectConfig.StripeSecretKey, httpClient: Transport);
 			var service = new WebhookEndpointService(client);
-			var endpoints = await service.ListAsync(new WebhookEndpointListOptions { Limit = 100 });
+			var endpoints = await service.ListAsync(new WebhookEndpointListOptions { Limit = EndpointListLimit });
 
 			var expected = Normalize(expectedUrl);
 			foreach (var endpoint in endpoints)

@@ -40,6 +40,7 @@ namespace Resgrid.Model.Repositories
 		public string ContactId { get; set; }
 		public int Status { get; set; }
 		public DateTime? DueOn { get; set; }
+		public string Currency { get; set; }
 		public decimal Total { get; set; }
 		public decimal AmountPaid { get; set; }
 		public decimal Balance => Total - AmountPaid;

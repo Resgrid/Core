@@ -39,6 +39,8 @@
   <data name="DefaultRateCardHint" xml:space="preserve"><value>Domyślny dla oddziału (używany, gdy klient nie ma przypiętego cennika)</value></data>
   <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Usunąć ten cennik?</value></data>
   <data name="DeleteItemConfirm" xml:space="preserve"><value>Usunąć tę pozycję?</value></data>
+  <data name="DeleteRateCard" xml:space="preserve"><value>Usuń cennik</value></data>
+  <data name="DeleteItem" xml:space="preserve"><value>Usuń pozycję</value></data>
   <data name="RateCardDeleted" xml:space="preserve"><value>Cennik usunięty.</value></data>
   <data name="ItemType" xml:space="preserve"><value>Typ</value></data>
   <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Godzinowo – czas jednostki na miejscu</value></data>
@@ -257,9 +259,101 @@
   <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>Nie można anulować opłaconej faktury.</value></data>
   <data name="invoicing_invoice_void" xml:space="preserve"><value>Ta faktura jest anulowana.</value></data>
   <data name="invoicing_no_recipient_email" xml:space="preserve"><value>Brak e-maila do faktur dla tego klienta.</value></data>
+  <data name="invoicing_email_not_sent" xml:space="preserve"><value>Nie udało się wysłać e-maila z fakturą. Sprawdź adres i spróbuj ponownie.</value></data>
+  <data name="invoicing_payment_conflict" xml:space="preserve"><value>Ta transakcja operatora płatności jest już zapisana na fakturze innego oddziału.</value></data>
   <data name="invoicing_payment_not_found" xml:space="preserve"><value>Nie znaleziono płatności.</value></data>
   <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>Nie można wygenerować PDF faktury.</value></data>
   <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Ten profil rozliczeniowy ma faktury i nie można go usunąć.</value></data>
   <data name="invoicing_profile_required" xml:space="preserve"><value>Klient musi najpierw mieć aktywny profil rozliczeniowy.</value></data>
   <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>Nie znaleziono cennika.</value></data>
+  <data name="AdminRequired" xml:space="preserve"><value>Tylko administrator oddziału może to zrobić.</value></data>
+  <data name="OnlinePaymentsIntro" xml:space="preserve"><value>Pozwól klientom płacić faktury online przez własne konto Stripe. Pieniądze trafiają prosto na Twoje konto; Resgrid nigdy ich nie przechowuje, nie pobiera opłat i nie może zwracać.</value></data>
+  <data name="YourStripeAccount" xml:space="preserve"><value>Twoje konto Stripe</value></data>
+  <data name="NoConnectionYet" xml:space="preserve"><value>Nie połączono jeszcze konta Stripe.</value></data>
+  <data name="ConnectStripe" xml:space="preserve"><value>Połącz ze Stripe</value></data>
+  <data name="ReconnectStripe" xml:space="preserve"><value>Połącz ponownie ze Stripe</value></data>
+  <data name="ConnectStripeIntro" xml:space="preserve"><value>Zalogujesz się do Stripe i pozwolisz Resgrid tworzyć strony płatności na Twoim koncie. Resgrid przechowuje tylko identyfikator konta, nigdy dane logowania Stripe.</value></data>
+  <data name="ConnectAdminOnly" xml:space="preserve"><value>Tylko administrator oddziału może połączyć lub odłączyć konto Stripe.</value></data>
+  <data name="ConnectedAccount" xml:space="preserve"><value>Połączone konto</value></data>
+  <data name="BusinessName" xml:space="preserve"><value>Nazwa firmy</value></data>
+  <data name="ConnectedOn" xml:space="preserve"><value>Połączono</value></data>
+  <data name="LastVerified" xml:space="preserve"><value>Ostatnia weryfikacja</value></data>
+  <data name="Capabilities" xml:space="preserve"><value>Możliwości</value></data>
+  <data name="LastError" xml:space="preserve"><value>Ostatni błąd</value></data>
+  <data name="LiveMode" xml:space="preserve"><value>Produkcja</value></data>
+  <data name="SandboxMode" xml:space="preserve"><value>Testowe</value></data>
+  <data name="Disconnect" xml:space="preserve"><value>Odłącz</value></data>
+  <data name="DisconnectConfirm" xml:space="preserve"><value>Odłączyć konto Stripe? Otwarte linki płatności przestaną działać, a nowych nie można utworzyć do ponownego połączenia konta.</value></data>
+  <data name="CollectionSettings" xml:space="preserve"><value>Ustawienia pobierania płatności</value></data>
+  <data name="OnlinePaymentsEnabledLabel" xml:space="preserve"><value>Oferuj płatność online na fakturach</value></data>
+  <data name="AllowedPaymentMethods" xml:space="preserve"><value>Akceptowane metody płatności</value></data>
+  <data name="PaymentMethodCard" xml:space="preserve"><value>Karty i portfele</value></data>
+  <data name="PaymentMethodAch" xml:space="preserve"><value>Polecenie zapłaty (ACH, konta w USA)</value></data>
+  <data name="PaymentMethodsHint" xml:space="preserve"><value>Dostępność zależy od tego, co akceptuje Twoje konto Stripe; metoda, której konto nie obsługuje, nie jest oferowana.</value></data>
+  <data name="PayLinksReady" xml:space="preserve"><value>Linki płatności</value></data>
+  <data name="SuspendedByOperator" xml:space="preserve"><value>Pobieranie płatności online zostało zawieszone przez operatora w tym regionie. Połączenie jest zachowane; nowe linki płatności nie są oferowane do ponownego włączenia.</value></data>
+  <data name="OnlinePaymentsFlagOff" xml:space="preserve"><value>Płatności online nie są jeszcze włączone dla Twojego oddziału. Skontaktuj się z pomocą Resgrid, aby je włączyć.</value></data>
+  <data name="PaymentConnected" xml:space="preserve"><value>Konto Stripe {0} jest połączone. Włącz „Oferuj płatność online na fakturach”, aby zacząć oferować linki płatności.</value></data>
+  <data name="PaymentDisconnected" xml:space="preserve"><value>Konto Stripe zostało odłączone.</value></data>
+  <data name="PayOnline" xml:space="preserve"><value>Zapłać online</value></data>
+  <data name="PayLink" xml:space="preserve"><value>Link płatności</value></data>
+  <data name="PayLinkHint" xml:space="preserve"><value>Udostępnij ten link klientowi; jest drukowany na fakturze i dołączany do e-maila. Link pozostaje ważny przez okres ustawiony w ustawieniach rozliczeń.</value></data>
+  <data name="CopyLink" xml:space="preserve"><value>Kopiuj link</value></data>
+  <data name="LinkCopied" xml:space="preserve"><value>Skopiowano link.</value></data>
+  <data name="OpenRequest" xml:space="preserve"><value>Otwarte żądanie płatności</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Wygasa</value></data>
+  <data name="OpenPaymentRequest" xml:space="preserve"><value>Otwórz teraz stronę płatności</value></data>
+  <data name="RefreshPaymentRequest" xml:space="preserve"><value>Odśwież stronę płatności</value></data>
+  <data name="PayLinkCreated" xml:space="preserve"><value>Strona płatności jest otwarta; link płatności prowadzi teraz bezpośrednio do niej.</value></data>
+  <data name="PayOnlineNotOffered" xml:space="preserve"><value>Płatność online nie jest obecnie oferowana dla tej faktury.</value></data>
+  <data name="Started" xml:space="preserve"><value>Rozpoczęto</value></data>
+  <data name="Fee" xml:space="preserve"><value>Opłata</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Potwierdzenie</value></data>
+  <data name="RequestStatusCreated" xml:space="preserve"><value>Utworzone</value></data>
+  <data name="RequestStatusOpened" xml:space="preserve"><value>Oczekuje na płatność</value></data>
+  <data name="RequestStatusProcessing" xml:space="preserve"><value>Płatność w toku (rozliczanie polecenia zapłaty)</value></data>
+  <data name="RequestStatusCompleted" xml:space="preserve"><value>Opłacone</value></data>
+  <data name="RequestStatusExpired" xml:space="preserve"><value>Wygasłe</value></data>
+  <data name="RequestStatusCancelled" xml:space="preserve"><value>Anulowane</value></data>
+  <data name="RequestStatusFailed" xml:space="preserve"><value>Nieudane</value></data>
+  <data name="RequestStatusUnknown" xml:space="preserve"><value>Nieznane</value></data>
+  <data name="ConnectionStatusPending" xml:space="preserve"><value>Oczekujące</value></data>
+  <data name="ConnectionStatusConnected" xml:space="preserve"><value>Połączone</value></data>
+  <data name="ConnectionStatusActionRequired" xml:space="preserve"><value>Wymagane działanie w Stripe</value></data>
+  <data name="ConnectionStatusDisconnected" xml:space="preserve"><value>Odłączone</value></data>
+  <data name="ConnectionStatusRevoked" xml:space="preserve"><value>Dostęp cofnięty</value></data>
+  <data name="PayPageTitle" xml:space="preserve"><value>Zapłać fakturę</value></data>
+  <data name="AmountDue" xml:space="preserve"><value>Kwota do zapłaty</value></data>
+  <data name="PayNow" xml:space="preserve"><value>Zapłać</value></data>
+  <data name="PayPageIntro" xml:space="preserve"><value>Płatność jest realizowana przez Stripe w imieniu {0}. Dane karty lub konta wpisujesz na bezpiecznej stronie Stripe; Resgrid nigdy ich nie widzi.</value></data>
+  <data name="ResumePayment" xml:space="preserve"><value>Strona płatności dla tej faktury jest już otwarta; ponowna płatność ją wznawia.</value></data>
+  <data name="pay_link_invalid" xml:space="preserve"><value>Ten link płatności jest nieprawidłowy.</value></data>
+  <data name="pay_link_expired" xml:space="preserve"><value>Ten link płatności wygasł. Poproś oddział o nowy.</value></data>
+  <data name="pay_invoice_unavailable" xml:space="preserve"><value>Ta faktura nie jest już dostępna do zapłaty.</value></data>
+  <data name="pay_invoice_paid" xml:space="preserve"><value>Ta faktura została opłacona. Dziękujemy.</value></data>
+  <data name="pay_not_offered" xml:space="preserve"><value>Płatność online nie jest dostępna dla tej faktury. Skontaktuj się z oddziałem w sprawie innych sposobów płatności.</value></data>
+  <data name="pay_processing" xml:space="preserve"><value>Płatność bankowa za tę fakturę jest potwierdzana. Na razie nie trzeba nic robić.</value></data>
+  <data name="PayReturnTitle" xml:space="preserve"><value>Dziękujemy – Twoja płatność jest potwierdzana</value></data>
+  <data name="PayReturnText" xml:space="preserve"><value>Oddział zobaczy płatność, gdy tylko Stripe ją potwierdzi, zwykle w ciągu minuty; płatności bankowe mogą potrwać kilka dni roboczych. Potwierdzenie Stripe otrzymasz e-mailem.</value></data>
+  <data name="PayCancelTitle" xml:space="preserve"><value>Płatność anulowana</value></data>
+  <data name="PayCancelText" xml:space="preserve"><value>Nic nie zostało pobrane. Możesz wrócić na tę stronę i zapłacić w dowolnym momencie.</value></data>
+  <data name="BackToInvoice" xml:space="preserve"><value>Wróć do faktury</value></data>
+  <data name="TooManyRequests" xml:space="preserve"><value>Zbyt wiele żądań. Odczekaj minutę i spróbuj ponownie.</value></data>
+  <data name="payments_not_available_in_region" xml:space="preserve"><value>Pobieranie płatności online nie jest dostępne w tym regionie.</value></data>
+  <data name="payments_flag_off" xml:space="preserve"><value>Płatności online nie są włączone dla tego oddziału.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Płatności online wymagają aktywnego dodatku Business Operations.</value></data>
+  <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Płatność online jest wyłączona w ustawieniach rozliczeń.</value></data>
+  <data name="payments_no_connection" xml:space="preserve"><value>Nie połączono konta Stripe.</value></data>
+  <data name="payments_connection_not_ready" xml:space="preserve"><value>Połączone konto Stripe nie może jeszcze przyjmować obciążeń. Uzupełnij wymagania Stripe i spróbuj ponownie.</value></data>
+  <data name="payments_invoice_not_payable" xml:space="preserve"><value>Wersji roboczej ani anulowanej faktury nie można opłacić online.</value></data>
+  <data name="payments_invoice_paid" xml:space="preserve"><value>Ta faktura jest już opłacona.</value></data>
+  <data name="payments_zero_balance" xml:space="preserve"><value>Na tej fakturze nie ma salda do pobrania.</value></data>
+  <data name="payments_currency_mismatch" xml:space="preserve"><value>Waluta faktury nie jest rozliczana przez połączone konto Stripe.</value></data>
+  <data name="payments_provider_unavailable" xml:space="preserve"><value>Nie można teraz połączyć się ze Stripe. Spróbuj ponownie za chwilę.</value></data>
+  <data name="payments_connect_failed" xml:space="preserve"><value>Stripe nie zakończył połączenia. Spróbuj połączyć ponownie.</value></data>
+  <data name="payments_connect_declined" xml:space="preserve"><value>Połączenie zostało odrzucone w Stripe. Nic nie zmieniono.</value></data>
+  <data name="payments_state_invalid" xml:space="preserve"><value>Ta próba połączenia nie jest już ważna. Zacznij ponownie ze strony ustawień.</value></data>
+  <data name="payments_disabled" xml:space="preserve"><value>Pobieranie płatności online jest wyłączone na tym serwerze.</value></data>
+  <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe zgłasza, że Resgrid nie ma już dostępu do tego konta. Połącz je ponownie, aby wznowić.</value></data>
+  <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Nie udało się zabezpieczyć chronionych danych tego rekordu, więc zmiana nie została zapisana.</value></data>
 </root>

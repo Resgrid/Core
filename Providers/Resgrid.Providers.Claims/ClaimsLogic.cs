@@ -1670,7 +1670,7 @@ namespace Resgrid.Providers.Claims
 		{
 			AddClaimOnce(identity, ResgridClaimTypes.Resources.Record, ResgridClaimTypes.Actions.View);
 
-			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All))
+			foreach (var descriptor in RecordPermissionCatalog.All.Concat(ChecklistPermissionCatalog.All).Concat(WorkOrderPermissionCatalog.All).Concat(InvoicingPermissionCatalog.All).Concat(CertificationPermissionCatalog.All))
 			{
 				var grants = RecordClaimGrants(descriptor.Type);
 				if (grants.Length == 0)
@@ -1755,6 +1755,22 @@ namespace Resgrid.Providers.Claims
 					};
 				case PermissionTypes.ViewInvoicing:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Invoicing, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.ManageCertifications:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Create),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Update),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Delete),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View)
+					};
+				case PermissionTypes.ViewCertifications:
+					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View) };
+				case PermissionTypes.ManageCertificationSetup:
+					return new[]
+					{
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.Setup),
+						new RecordClaimGrant(ResgridClaimTypes.Resources.Certifications, ResgridClaimTypes.Actions.View)
+					};
 				case PermissionTypes.ManageChecklists:
 					return new[] { new RecordClaimGrant(ResgridClaimTypes.Resources.Checklist, ResgridClaimTypes.Actions.Update) };
 				case PermissionTypes.ViewChecklistResults:

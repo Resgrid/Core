@@ -42,14 +42,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUnitsService _units;
 		private readonly IAddressService _addresses;
 		private readonly IProtectedReadService _protectedRead;
+		private readonly IInvoicePaymentsService _payments;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> _strings;
 
 		private bool _canWrite;
 
 		public InvoicingController(IInvoicingService invoicing, IBusinessOperationsAccessService access, IFeatureToggleService flags, IContactsService contacts,
 			ICallsService calls, IUnitsService units, IAddressService addresses, IProtectedReadService protectedRead,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> strings)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> strings, IInvoicePaymentsService payments)
 		{
+			_payments = payments;
 			_invoicing = invoicing;
 			_access = access;
 			_flags = flags;
@@ -108,14 +110,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// <summary>Display names for the contacts referenced, resolved for Advanced Data Protection (REDACTED without a grant).</summary>
 		private async Task<Dictionary<string, string>> ContactNamesAsync(IEnumerable<string> contactIds)
 		{
+			// One query for the page's contacts rather than a lookup per invoice.
 			var names = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			var contacts = new List<Contact>();
-			foreach (var id in contactIds.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct(StringComparer.OrdinalIgnoreCase))
-			{
-				var contact = await _contacts.GetContactByIdAsync(id);
-				if (contact != null && contact.DepartmentId == DepartmentId)
-					contacts.Add(contact);
-			}
+			var contacts = (await _contacts.GetContactsByIdsAsync(DepartmentId, contactIds)).Values.ToList();
 			if (contacts.Count > 0)
 				await _protectedRead.ResolveContactsForReadAsync(DepartmentId, contacts, null, UserId);
 			foreach (var contact in contacts)
@@ -131,7 +128,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return contact != null && contact.DepartmentId == DepartmentId ? contact : null;
 		}
 
-		private static bool IsInvoicingError(Exception ex) => ex is InvalidOperationException && ex.Message.StartsWith("invoicing_", StringComparison.Ordinal);
+		/// <summary>The past-due buckets' balances folded per currency (never across currencies).</summary>
+		private static IReadOnlyDictionary<string, decimal> OverdueByCurrency(IEnumerable<InvoiceAgingBucket> buckets)
+		{
+			var balances = new SortedDictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
+			foreach (var bucket in buckets)
+				foreach (var pair in bucket.BalancesByCurrency)
+					InvoiceAgingReport.Accumulate(balances, pair.Key, pair.Value);
+			return balances;
+		}
+
+		private static bool IsInvoicingError(Exception ex) => ex is InvalidOperationException && (ex.Message.StartsWith("invoicing_", StringComparison.Ordinal) || ex.Message.StartsWith("payments_", StringComparison.Ordinal));
 
 		/// <summary>Service error codes (<c>invoicing_*</c>) map to resource keys of the same name so the page shows a translated message.</summary>
 		private string ErrorText(Exception ex)
@@ -162,8 +169,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Page = Math.Max(0, page),
 				PageSize = PageSize,
 				TotalCount = await _invoicing.CountInvoicesForDepartmentAsync(DepartmentId, filter),
-				OutstandingBalance = aging.TotalBalance,
-				OverdueBalance = overdue.Sum(b => b.Balance),
+				OutstandingBalances = aging.BalancesByCurrency,
+				OverdueBalances = OverdueByCurrency(overdue),
 				OverdueCount = overdue.Sum(b => b.Count),
 				ContactNames = await ContactNamesAsync(invoices.Select(x => x.ContactId))
 			});
@@ -267,7 +274,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				invoice.TermsText = input.TermsText;
 				if (Currencies.Contains(input.Currency ?? string.Empty))
 					invoice.Currency = input.Currency;
-				await _invoicing.SaveInvoiceAsync(invoice, UserId, Ip, UserAgent, cancellationToken);
 
 				var order = 0;
 				var lineItems = lines.Select(l => new InvoiceLineItem
@@ -283,7 +289,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Taxable = l.Taxable,
 					SortOrder = order++
 				}).ToList();
-				var saved = await _invoicing.SaveInvoiceLineItemsAsync(invoice.InvoiceId, DepartmentId, lineItems, UserId, Ip, UserAgent, cancellationToken);
+				var saved = await _invoicing.SaveDraftAsync(invoice, lineItems, UserId, Ip, UserAgent, cancellationToken);
 				return Json(new { id = saved.InvoiceId, subTotal = saved.SubTotal, discountAmount = saved.DiscountAmount, taxAmount = saved.TaxAmount, total = saved.Total, message = _strings["Saved"].Value });
 			}
 			catch (Exception ex) when (IsInvoicingError(ex))
@@ -307,8 +313,48 @@ namespace Resgrid.Web.Areas.User.Controllers
 				RenderedHtml = await _invoicing.RenderInvoiceHtmlAsync(id, DepartmentId),
 				ContactNames = await ContactNamesAsync(new[] { invoice.ContactId })
 			});
+			await LoadOnlinePaymentsAsync(model);
 			model.Message = TempData["InvoicingMessage"] as string;
 			return View("View", model);
+		}
+
+		/// <summary>Phase B2: the section is absent when the cluster does not offer payment collection; a fault degrades it, never the page.</summary>
+		private async Task LoadOnlinePaymentsAsync(InvoiceDetailView model)
+		{
+			try
+			{
+				var status = await _payments.GetStatusAsync(DepartmentId);
+				if (!status.AvailableInCluster && status.Connection == null)
+					return;
+				model.OnlinePayments = status;
+				model.PayUrl = await _payments.BuildPayPageUrlAsync(model.Invoice.InvoiceId, DepartmentId);
+				model.OpenRequest = await _payments.GetOpenRequestAsync(model.Invoice.InvoiceId, DepartmentId);
+				model.PaymentRequests = await _payments.GetRequestsAsync(model.Invoice.InvoiceId, DepartmentId);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex, $"Online payment state for invoice {model.Invoice.InvoiceId} could not be read.");
+			}
+		}
+
+		/// <summary>Phase B2: opens (or reuses) the invoice's hosted payment request so the pay link resolves to a live provider page.</summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Invoicing_Update)]
+		public async Task<IActionResult> CreatePayLink(string id, CancellationToken cancellationToken)
+		{
+			var invoice = await _invoicing.GetInvoiceByIdAsync(id, DepartmentId);
+			if (invoice == null)
+				return NotFound();
+			try
+			{
+				await _payments.CreatePaymentRequestAsync(id, DepartmentId, (int)PaymentRequestSources.Web, UserId, Ip, UserAgent, cancellationToken);
+				TempData["InvoicingMessage"] = _strings["PayLinkCreated"].Value;
+			}
+			catch (Exception ex) when (IsInvoicingError(ex))
+			{
+				TempData["InvoicingMessage"] = ErrorText(ex);
+			}
+			return RedirectToAction(nameof(View), new { id });
 		}
 
 		[HttpGet]
@@ -623,11 +669,111 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Identity = await _invoicing.GetDepartmentBillingIdentityAsync(DepartmentId) ?? new DepartmentBillingIdentity { DepartmentId = DepartmentId };
 			if (model.Identity.RemitToAddressId.HasValue)
 				model.RemitTo = await _addresses.GetAddressByIdAsync(model.Identity.RemitToAddressId.Value) ?? new Address();
-			model.OnlinePaymentsClusterEnabled = PaymentConnectConfig.Enabled && await _flags.IsEnabledAsync(FeatureFlagKeys.PaymentsStripeConnect, DepartmentId);
-			model.OnlinePaymentsFlagEnabled = await _flags.IsEnabledAsync(FeatureFlagKeys.OnlinePayments, DepartmentId);
+			try { model.OnlinePayments = await _payments.GetStatusAsync(DepartmentId); }
+			catch (Exception ex) { Resgrid.Framework.Logging.LogException(ex, "Online payments status could not be read for the settings page."); }
+			model.IsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+			model.ActiveTab = string.Equals(Request.Query["tab"], "online", StringComparison.OrdinalIgnoreCase) ? "online" : "identity";
 			model.Message = TempData["InvoicingMessage"] as string;
 			model.SaveSuccess = TempData["InvoicingSaved"] as bool? ?? false;
 			return View(model);
+		}
+
+		#endregion
+
+		#region Online payments (Phase B2)
+
+		private static readonly Dictionary<string, int> ProviderNames = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase) { ["stripe"] = (int)PaymentProviders.Stripe };
+
+		private IActionResult OnlineTab() => RedirectToAction(nameof(Settings), new { tab = "online" });
+
+		/// <summary>The department's own switch and allowed methods; the rest of the identity form is untouched.</summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Invoicing_Update)]
+		public async Task<IActionResult> SaveOnlinePayments(OnlinePaymentsInput input, CancellationToken cancellationToken)
+		{
+			var identity = await _invoicing.GetDepartmentBillingIdentityAsync(DepartmentId) ?? new DepartmentBillingIdentity { DepartmentId = DepartmentId };
+			var methods = (input?.AllowedPaymentMethods ?? new string[0]).Select(m => (m ?? string.Empty).Trim().ToLowerInvariant())
+				.Where(m => Resgrid.Services.Invoicing.InvoicePaymentsService.SupportedPaymentMethods.Contains(m)).Distinct().ToList();
+			identity.OnlinePaymentsEnabled = input?.OnlinePaymentsEnabled == true;
+			identity.AllowedPaymentMethodsCsv = methods.Count == 0 ? "card" : string.Join(",", methods);
+			try
+			{
+				await _invoicing.SaveDepartmentBillingIdentityAsync(identity, UserId, Ip, UserAgent, cancellationToken);
+				TempData["InvoicingSaved"] = true;
+			}
+			catch (Exception ex) when (IsInvoicingError(ex))
+			{
+				TempData["InvoicingMessage"] = ErrorText(ex);
+			}
+			return OnlineTab();
+		}
+
+		/// <summary>Starts the provider OAuth hand-off (department administrators only) and sends the browser to the provider.</summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Invoicing_Update)]
+		public async Task<IActionResult> BeginPaymentConnect(string provider)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Refused(403, "AdminRequired", nameof(Settings), new { tab = "online" });
+			if (string.IsNullOrWhiteSpace(provider) || !ProviderNames.TryGetValue(provider, out var providerId))
+				return Refused(400, "InvalidInput", nameof(Settings), new { tab = "online" });
+			try
+			{
+				var begin = await _payments.BeginConnectAsync(DepartmentId, providerId, UserId, Ip, UserAgent);
+				if (Uri.TryCreate(begin.AuthorizeUrl, UriKind.Absolute, out var url) && url.Scheme == Uri.UriSchemeHttps)
+					return Redirect(url.AbsoluteUri);
+				TempData["InvoicingMessage"] = _strings["payments_provider_unavailable"].Value;
+			}
+			catch (Exception ex) when (IsInvoicingError(ex))
+			{
+				TempData["InvoicingMessage"] = ErrorText(ex);
+			}
+			return OnlineTab();
+		}
+
+		/// <summary>Provider OAuth callback (/User/Invoicing/PaymentConnectCallback/stripe): validates the state, trusts nothing beyond the code, shows the outcome.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Invoicing_Update)]
+		public async Task<IActionResult> PaymentConnectCallback(string id, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Refused(403, "AdminRequired", nameof(Settings), new { tab = "online" });
+			if (string.IsNullOrWhiteSpace(id) || !ProviderNames.TryGetValue(id, out var providerId))
+				return Refused(400, "InvalidInput", nameof(Settings), new { tab = "online" });
+			if (!_canWrite)
+				return Refused(402, "AddonRequired", nameof(Settings), new { tab = "online" });
+
+			var parameters = Request.Query.Where(q => q.Key is "code" or "state" or "error" or "error_description" or "scope")
+				.ToDictionary(q => q.Key, q => q.Value.ToString(), StringComparer.OrdinalIgnoreCase);
+			try
+			{
+				var connection = await _payments.CompleteConnectAsync(DepartmentId, providerId, parameters, UserId, Ip, UserAgent, cancellationToken);
+				TempData["InvoicingMessage"] = string.Format(_strings["PaymentConnected"].Value, connection.DisplayName ?? connection.ExternalAccountId);
+			}
+			catch (Exception ex) when (IsInvoicingError(ex))
+			{
+				TempData["InvoicingMessage"] = ErrorText(ex);
+			}
+			return OnlineTab();
+		}
+
+		[HttpPost, ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Invoicing_Delete)]
+		public async Task<IActionResult> DisconnectPayment(string id, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Refused(403, "AdminRequired", nameof(Settings), new { tab = "online" });
+			try
+			{
+				if (!await _payments.DisconnectAsync(id, DepartmentId, UserId, Ip, UserAgent, cancellationToken))
+					return NotFound();
+				TempData["InvoicingMessage"] = _strings["PaymentDisconnected"].Value;
+			}
+			catch (Exception ex) when (IsInvoicingError(ex))
+			{
+				TempData["InvoicingMessage"] = ErrorText(ex);
+			}
+			return OnlineTab();
 		}
 
 		[HttpPost, ValidateAntiForgeryToken]

@@ -109,7 +109,12 @@
                                             }
                                         </td>
                                         <td>
-                                            @if (g.ExpiresOn.HasValue && g.ExpiresOn.Value <= DateTime.UtcNow.TimeConverter(Model.Department))
+                                            @if (g.Status != (int)Resgrid.Model.PersonnelCertificationStatuses.Active)
+                                            {
+                                                @* Phase D lifecycle status (worker-driven expiry, suspension, verification, trainee). *@
+                                                @await Html.PartialAsync("~/Areas/User/Views/Certifications/_StatusBadge.cshtml", g.Status)
+                                            }
+                                            else if (g.ExpiresOn.HasValue && g.ExpiresOn.Value <= DateTime.UtcNow.TimeConverter(Model.Department))
                                             {
                                                 <span class="label label-danger">@commonLocalizer["Expired"]</span>
                                             }
@@ -119,6 +124,7 @@
                                             }
                                         </td>
                                         <td>
+                                            <a class="btn btn-xs btn-default" asp-controller="Certifications" asp-action="Record" asp-route-area="User" asp-route-id="@g.PersonnelCertificationId"><i class="fa fa-info-circle"></i></a>
                                             <a class="btn btn-xs btn-danger" asp-controller="Profile" asp-action="DeleteCertification" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId" data-confirm="@localizer["CertificationDeleteWarning"]" rel="nofollow">@commonLocalizer["Delete"]</a>
                                             <a class="btn btn-xs btn-primary" asp-controller="Profile" asp-action="EditCertification" asp-route-area="User" asp-route-certId="@g.PersonnelCertificationId">Edit</a>
 

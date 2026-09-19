@@ -7,7 +7,9 @@ using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Helpers;
 using Resgrid.Framework;
@@ -54,7 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IDepartmentGroupsService departmentGroupsService, IRouteService routeService, IPhoneNumberProcesserProvider phoneNumberProcesser,
 			IProtectedReadService protectedReadService, IContactPreplanOwnershipGate preplanOwnership,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer,
-			IInvoicingService invoicingService = null, IFeatureToggleService featureToggleService = null)
+			IInvoicingService invoicingService, IFeatureToggleService featureToggleService)
 		{
 			_invoicingService = invoicingService;
 			_featureToggleService = featureToggleService;
@@ -180,12 +182,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.IsProtectedContact = protectedRead.IsProtected;
 
 			// Workforce & Business Operations plan, Phase B: the Billing tab mirrors the Invoicing controller's gate (flag + module + view claim).
-			if (_invoicingService != null && _featureToggleService != null && ClaimsAuthorizationHelper.CanViewInvoicing() && SettingsHelper.IsBusinessOperationsEnabled()
+			if (ClaimsAuthorizationHelper.CanViewInvoicing() && SettingsHelper.IsBusinessOperationsEnabled()
 				&& await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.CustomerInvoicing, DepartmentId))
 			{
+				// The tab shows the newest page only; the full history lives on the Invoicing pages.
+				var invoiceFilter = new InvoiceListFilter { ContactId = contactId, Skip = 0, Take = ViewContactView.InvoicesShown };
 				model.InvoicingAvailable = true;
 				model.BillingProfile = await _invoicingService.GetBillingProfileByContactIdAsync(contactId, DepartmentId);
-				model.Invoices = (await _invoicingService.GetInvoicesByContactIdAsync(contactId, DepartmentId) ?? new List<Resgrid.Model.Invoicing.Invoice>()).OrderByDescending(x => x.InvoiceNumber).ToList();
+				model.Invoices = await _invoicingService.GetInvoicesForDepartmentAsync(DepartmentId, invoiceFilter) ?? new List<Resgrid.Model.Invoicing.Invoice>();
+				model.InvoiceCount = await _invoicingService.CountInvoicesForDepartmentAsync(DepartmentId, invoiceFilter);
 			}
 
 			model.RouteStops = await _routeService.GetRouteStopsForContactAsync(contactId, DepartmentId) ?? new List<RouteStop>();
@@ -212,6 +217,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.UdfReadOnlyHtml = _udfRenderingService.GenerateReadOnlyHtml(udfDefinition, udfFields, filteredValues);
 			}
 
+			model.Message = TempData["ContactsMessage"] as string;
 			return View(model);
 		}
 
@@ -780,7 +786,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!(await _authorizationService.CanUserDeleteContactAsync(UserId, DepartmentId)))
 				return Unauthorized();
 
-			var result = await _contactsService.DeleteContactAsync(contactId, UserId, DepartmentId, IpAddressHelper.GetRequestIP(Request, true), $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+			try
+			{
+				await _contactsService.DeleteContactAsync(contactId, UserId, DepartmentId, IpAddressHelper.GetRequestIP(Request, true), $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
+			}
+			catch (InvalidOperationException ex) when (ex.Message == ContactsService.HasOpenBillingReason)
+			{
+				// Billing keeps the contact: say so on its page instead of failing the request.
+				TempData["ContactsMessage"] = _localizer["ContactHasOpenBillingNotice"].Value;
+				return RedirectToAction("View", "Contacts", new { Area = "User", contactId });
+			}
 
 			return RedirectToAction("Index", "Contacts", new { Area = "User" });
 		}

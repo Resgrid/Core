@@ -39,6 +39,8 @@
   <data name="DefaultRateCardHint" xml:space="preserve"><value>Типовий для підрозділу (коли клієнт не має закріпленого тарифу)</value></data>
   <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Видалити цей тариф?</value></data>
   <data name="DeleteItemConfirm" xml:space="preserve"><value>Видалити цю позицію?</value></data>
+  <data name="DeleteRateCard" xml:space="preserve"><value>Видалити тариф</value></data>
+  <data name="DeleteItem" xml:space="preserve"><value>Видалити позицію</value></data>
   <data name="RateCardDeleted" xml:space="preserve"><value>Тариф видалено.</value></data>
   <data name="ItemType" xml:space="preserve"><value>Тип</value></data>
   <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Погодинно – час підрозділу на місці</value></data>
@@ -257,9 +259,101 @@
   <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>Оплачений рахунок не можна анулювати.</value></data>
   <data name="invoicing_invoice_void" xml:space="preserve"><value>Цей рахунок анульовано.</value></data>
   <data name="invoicing_no_recipient_email" xml:space="preserve"><value>Для цього клієнта не вказано ел. пошту для рахунків.</value></data>
+  <data name="invoicing_email_not_sent" xml:space="preserve"><value>Не вдалося надіслати ел. лист із рахунком. Перевірте адресу та спробуйте ще раз.</value></data>
+  <data name="invoicing_payment_conflict" xml:space="preserve"><value>Цю транзакцію платіжного провайдера вже записано в рахунку іншого підрозділу.</value></data>
   <data name="invoicing_payment_not_found" xml:space="preserve"><value>Платіж не знайдено.</value></data>
   <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>Не вдалося створити PDF рахунку.</value></data>
   <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Цей профіль оплати має рахунки й не може бути видалений.</value></data>
   <data name="invoicing_profile_required" xml:space="preserve"><value>Клієнту спочатку потрібен активний профіль оплати.</value></data>
   <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>Тариф не знайдено.</value></data>
+  <data name="AdminRequired" xml:space="preserve"><value>Це може зробити лише адміністратор підрозділу.</value></data>
+  <data name="OnlinePaymentsIntro" xml:space="preserve"><value>Дозвольте клієнтам оплачувати рахунки онлайн через ваш власний рахунок Stripe. Гроші надходять прямо на ваш рахунок; Resgrid ніколи їх не утримує, не бере комісії й не може повертати.</value></data>
+  <data name="YourStripeAccount" xml:space="preserve"><value>Ваш рахунок Stripe</value></data>
+  <data name="NoConnectionYet" xml:space="preserve"><value>Рахунок Stripe ще не підключено.</value></data>
+  <data name="ConnectStripe" xml:space="preserve"><value>Підключити Stripe</value></data>
+  <data name="ReconnectStripe" xml:space="preserve"><value>Підключити Stripe знову</value></data>
+  <data name="ConnectStripeIntro" xml:space="preserve"><value>Ви увійдете в Stripe і дозволите Resgrid створювати сторінки оплати у вашому рахунку. Resgrid зберігає лише ідентифікатор рахунку, ніколи облікові дані Stripe.</value></data>
+  <data name="ConnectAdminOnly" xml:space="preserve"><value>Лише адміністратор підрозділу може підключити або відключити рахунок Stripe.</value></data>
+  <data name="ConnectedAccount" xml:space="preserve"><value>Підключений рахунок</value></data>
+  <data name="BusinessName" xml:space="preserve"><value>Назва бізнесу</value></data>
+  <data name="ConnectedOn" xml:space="preserve"><value>Підключено</value></data>
+  <data name="LastVerified" xml:space="preserve"><value>Остання перевірка</value></data>
+  <data name="Capabilities" xml:space="preserve"><value>Можливості</value></data>
+  <data name="LastError" xml:space="preserve"><value>Остання помилка</value></data>
+  <data name="LiveMode" xml:space="preserve"><value>Робочий режим</value></data>
+  <data name="SandboxMode" xml:space="preserve"><value>Тестовий режим</value></data>
+  <data name="Disconnect" xml:space="preserve"><value>Відключити</value></data>
+  <data name="DisconnectConfirm" xml:space="preserve"><value>Відключити рахунок Stripe? Відкриті посилання на оплату перестануть працювати, а нові не створюватимуться до повторного підключення.</value></data>
+  <data name="CollectionSettings" xml:space="preserve"><value>Налаштування збору платежів</value></data>
+  <data name="OnlinePaymentsEnabledLabel" xml:space="preserve"><value>Пропонувати онлайн-оплату на рахунках</value></data>
+  <data name="AllowedPaymentMethods" xml:space="preserve"><value>Прийнятні способи оплати</value></data>
+  <data name="PaymentMethodCard" xml:space="preserve"><value>Картки та гаманці</value></data>
+  <data name="PaymentMethodAch" xml:space="preserve"><value>Банківське списання (ACH, рахунки США)</value></data>
+  <data name="PaymentMethodsHint" xml:space="preserve"><value>Доступність залежить від того, що приймає ваш рахунок Stripe; спосіб, який рахунок не підтримує, не пропонується.</value></data>
+  <data name="PayLinksReady" xml:space="preserve"><value>Посилання на оплату</value></data>
+  <data name="SuspendedByOperator" xml:space="preserve"><value>Онлайн-збір платежів призупинено оператором у цьому регіоні. Ваше підключення збережено; нові посилання на оплату не пропонуються до повторного ввімкнення.</value></data>
+  <data name="OnlinePaymentsFlagOff" xml:space="preserve"><value>Онлайн-платежі ще не ввімкнено для вашого підрозділу. Зверніться до підтримки Resgrid, щоб їх увімкнути.</value></data>
+  <data name="PaymentConnected" xml:space="preserve"><value>Рахунок Stripe {0} підключено. Увімкніть «Пропонувати онлайн-оплату на рахунках», щоб пропонувати посилання на оплату.</value></data>
+  <data name="PaymentDisconnected" xml:space="preserve"><value>Рахунок Stripe відключено.</value></data>
+  <data name="PayOnline" xml:space="preserve"><value>Сплатити онлайн</value></data>
+  <data name="PayLink" xml:space="preserve"><value>Посилання на оплату</value></data>
+  <data name="PayLinkHint" xml:space="preserve"><value>Поділіться цим посиланням із клієнтом; воно друкується на рахунку та додається до листа. Посилання дійсне протягом терміну, заданого в налаштуваннях.</value></data>
+  <data name="CopyLink" xml:space="preserve"><value>Копіювати посилання</value></data>
+  <data name="LinkCopied" xml:space="preserve"><value>Посилання скопійовано.</value></data>
+  <data name="OpenRequest" xml:space="preserve"><value>Відкритий запит на оплату</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Спливає</value></data>
+  <data name="OpenPaymentRequest" xml:space="preserve"><value>Відкрити сторінку оплати зараз</value></data>
+  <data name="RefreshPaymentRequest" xml:space="preserve"><value>Оновити сторінку оплати</value></data>
+  <data name="PayLinkCreated" xml:space="preserve"><value>Сторінку оплати відкрито; посилання на оплату тепер веде прямо на неї.</value></data>
+  <data name="PayOnlineNotOffered" xml:space="preserve"><value>Онлайн-оплата для цього рахунку зараз не пропонується.</value></data>
+  <data name="Started" xml:space="preserve"><value>Розпочато</value></data>
+  <data name="Fee" xml:space="preserve"><value>Комісія</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Квитанція</value></data>
+  <data name="RequestStatusCreated" xml:space="preserve"><value>Створено</value></data>
+  <data name="RequestStatusOpened" xml:space="preserve"><value>Очікує оплати</value></data>
+  <data name="RequestStatusProcessing" xml:space="preserve"><value>Платіж в обробці (банківське списання)</value></data>
+  <data name="RequestStatusCompleted" xml:space="preserve"><value>Оплачено</value></data>
+  <data name="RequestStatusExpired" xml:space="preserve"><value>Спливло</value></data>
+  <data name="RequestStatusCancelled" xml:space="preserve"><value>Скасовано</value></data>
+  <data name="RequestStatusFailed" xml:space="preserve"><value>Не вдалося</value></data>
+  <data name="RequestStatusUnknown" xml:space="preserve"><value>Невідомо</value></data>
+  <data name="ConnectionStatusPending" xml:space="preserve"><value>Очікує</value></data>
+  <data name="ConnectionStatusConnected" xml:space="preserve"><value>Підключено</value></data>
+  <data name="ConnectionStatusActionRequired" xml:space="preserve"><value>Потрібна дія у Stripe</value></data>
+  <data name="ConnectionStatusDisconnected" xml:space="preserve"><value>Відключено</value></data>
+  <data name="ConnectionStatusRevoked" xml:space="preserve"><value>Доступ відкликано</value></data>
+  <data name="PayPageTitle" xml:space="preserve"><value>Сплатити рахунок</value></data>
+  <data name="AmountDue" xml:space="preserve"><value>Сума до сплати</value></data>
+  <data name="PayNow" xml:space="preserve"><value>Сплатити</value></data>
+  <data name="PayPageIntro" xml:space="preserve"><value>Платіж обробляє Stripe від імені {0}. Дані картки чи банку вводяться на захищеній сторінці Stripe, і Resgrid їх ніколи не бачить.</value></data>
+  <data name="ResumePayment" xml:space="preserve"><value>Сторінка оплати для цього рахунку вже відкрита; повторна оплата продовжить її.</value></data>
+  <data name="pay_link_invalid" xml:space="preserve"><value>Це посилання на оплату недійсне.</value></data>
+  <data name="pay_link_expired" xml:space="preserve"><value>Термін дії цього посилання минув. Попросіть підрозділ надати нове.</value></data>
+  <data name="pay_invoice_unavailable" xml:space="preserve"><value>Цей рахунок більше не доступний для оплати.</value></data>
+  <data name="pay_invoice_paid" xml:space="preserve"><value>Цей рахунок оплачено. Дякуємо.</value></data>
+  <data name="pay_not_offered" xml:space="preserve"><value>Онлайн-оплата недоступна для цього рахунку. Зверніться до підрозділу щодо інших способів оплати.</value></data>
+  <data name="pay_processing" xml:space="preserve"><value>Банківський платіж за цим рахунком підтверджується. Наразі нічого робити не потрібно.</value></data>
+  <data name="PayReturnTitle" xml:space="preserve"><value>Дякуємо — ваш платіж підтверджується</value></data>
+  <data name="PayReturnText" xml:space="preserve"><value>Підрозділ побачить платіж, щойно Stripe його підтвердить, зазвичай протягом хвилини; банківські платежі можуть тривати кілька робочих днів. Квитанцію Stripe ви отримаєте ел. поштою.</value></data>
+  <data name="PayCancelTitle" xml:space="preserve"><value>Оплату скасовано</value></data>
+  <data name="PayCancelText" xml:space="preserve"><value>Нічого не списано. Ви можете повернутися на цю сторінку та сплатити, коли будете готові.</value></data>
+  <data name="BackToInvoice" xml:space="preserve"><value>Назад до рахунку</value></data>
+  <data name="TooManyRequests" xml:space="preserve"><value>Забагато запитів. Зачекайте хвилину та спробуйте ще раз.</value></data>
+  <data name="payments_not_available_in_region" xml:space="preserve"><value>Онлайн-збір платежів недоступний у цьому регіоні.</value></data>
+  <data name="payments_flag_off" xml:space="preserve"><value>Онлайн-платежі не ввімкнено для цього підрозділу.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Онлайн-платежі потребують активного доповнення Business Operations.</value></data>
+  <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Онлайн-оплату вимкнено у ваших налаштуваннях виставлення рахунків.</value></data>
+  <data name="payments_no_connection" xml:space="preserve"><value>Рахунок Stripe не підключено.</value></data>
+  <data name="payments_connection_not_ready" xml:space="preserve"><value>Підключений рахунок Stripe ще не може приймати платежі. Виконайте вимоги Stripe і спробуйте знову.</value></data>
+  <data name="payments_invoice_not_payable" xml:space="preserve"><value>Чернетку або анульований рахунок не можна оплатити онлайн.</value></data>
+  <data name="payments_invoice_paid" xml:space="preserve"><value>Цей рахунок уже оплачено.</value></data>
+  <data name="payments_zero_balance" xml:space="preserve"><value>На цьому рахунку немає залишку для стягнення.</value></data>
+  <data name="payments_currency_mismatch" xml:space="preserve"><value>Валюта рахунку не підтримується підключеним рахунком Stripe.</value></data>
+  <data name="payments_provider_unavailable" xml:space="preserve"><value>Наразі не вдалося зв’язатися зі Stripe. Спробуйте за хвилину.</value></data>
+  <data name="payments_connect_failed" xml:space="preserve"><value>Stripe не завершив підключення. Спробуйте підключитися знову.</value></data>
+  <data name="payments_connect_declined" xml:space="preserve"><value>Підключення відхилено у Stripe. Нічого не змінено.</value></data>
+  <data name="payments_state_invalid" xml:space="preserve"><value>Ця спроба підключення більше не дійсна. Почніть знову зі сторінки налаштувань.</value></data>
+  <data name="payments_disabled" xml:space="preserve"><value>Онлайн-збір платежів вимкнено на цьому сервері.</value></data>
+  <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe повідомляє, що Resgrid більше не має доступу до цього рахунку. Підключіть його знову, щоб продовжити.</value></data>
+  <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Захищені дані цього запису не вдалося убезпечити, тому зміну не збережено.</value></data>
 </root>

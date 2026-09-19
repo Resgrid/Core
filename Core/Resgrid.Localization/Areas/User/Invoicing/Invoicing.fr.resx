@@ -39,6 +39,8 @@
   <data name="DefaultRateCardHint" xml:space="preserve"><value>Grille par défaut du service (utilisée quand le client n'en a pas d'imposée)</value></data>
   <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Supprimer cette grille tarifaire ?</value></data>
   <data name="DeleteItemConfirm" xml:space="preserve"><value>Supprimer cette ligne ?</value></data>
+  <data name="DeleteRateCard" xml:space="preserve"><value>Supprimer la grille tarifaire</value></data>
+  <data name="DeleteItem" xml:space="preserve"><value>Supprimer la ligne</value></data>
   <data name="RateCardDeleted" xml:space="preserve"><value>Grille tarifaire supprimée.</value></data>
   <data name="ItemType" xml:space="preserve"><value>Type</value></data>
   <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Horaire – temps de l'unité sur place</value></data>
@@ -257,9 +259,101 @@
   <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>Une facture payée ne peut pas être annulée.</value></data>
   <data name="invoicing_invoice_void" xml:space="preserve"><value>Cette facture est annulée.</value></data>
   <data name="invoicing_no_recipient_email" xml:space="preserve"><value>Aucun e-mail de facturation n'est défini pour ce client.</value></data>
+  <data name="invoicing_email_not_sent" xml:space="preserve"><value>L'e-mail de la facture n'a pas pu être envoyé. Vérifiez l'adresse et réessayez.</value></data>
+  <data name="invoicing_payment_conflict" xml:space="preserve"><value>Cette transaction du prestataire est déjà enregistrée sur la facture d'un autre service.</value></data>
   <data name="invoicing_payment_not_found" xml:space="preserve"><value>Le paiement est introuvable.</value></data>
   <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>Le PDF de la facture n'a pas pu être généré.</value></data>
   <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Ce profil de facturation a des factures et ne peut pas être supprimé.</value></data>
   <data name="invoicing_profile_required" xml:space="preserve"><value>Le client doit d'abord avoir un profil de facturation actif.</value></data>
   <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>La grille tarifaire est introuvable.</value></data>
+  <data name="AdminRequired" xml:space="preserve"><value>Seul un administrateur du service peut faire cela.</value></data>
+  <data name="OnlinePaymentsIntro" xml:space="preserve"><value>Laissez vos clients régler leurs factures en ligne via votre propre compte Stripe. L'argent arrive directement sur votre compte ; Resgrid ne le détient jamais, ne prélève aucun frais et ne peut pas rembourser.</value></data>
+  <data name="YourStripeAccount" xml:space="preserve"><value>Votre compte Stripe</value></data>
+  <data name="NoConnectionYet" xml:space="preserve"><value>Aucun compte Stripe n'est encore connecté.</value></data>
+  <data name="ConnectStripe" xml:space="preserve"><value>Connecter avec Stripe</value></data>
+  <data name="ReconnectStripe" xml:space="preserve"><value>Reconnecter avec Stripe</value></data>
+  <data name="ConnectStripeIntro" xml:space="preserve"><value>Vous vous connecterez à Stripe et autoriserez Resgrid à créer des pages de paiement sur votre compte. Resgrid ne conserve que l'identifiant de votre compte, jamais vos identifiants Stripe.</value></data>
+  <data name="ConnectAdminOnly" xml:space="preserve"><value>Seul l'administrateur du service peut connecter ou déconnecter le compte Stripe.</value></data>
+  <data name="ConnectedAccount" xml:space="preserve"><value>Compte connecté</value></data>
+  <data name="BusinessName" xml:space="preserve"><value>Nom de l'entreprise</value></data>
+  <data name="ConnectedOn" xml:space="preserve"><value>Connecté le</value></data>
+  <data name="LastVerified" xml:space="preserve"><value>Dernière vérification</value></data>
+  <data name="Capabilities" xml:space="preserve"><value>Capacités</value></data>
+  <data name="LastError" xml:space="preserve"><value>Dernière erreur</value></data>
+  <data name="LiveMode" xml:space="preserve"><value>Production</value></data>
+  <data name="SandboxMode" xml:space="preserve"><value>Bac à sable</value></data>
+  <data name="Disconnect" xml:space="preserve"><value>Déconnecter</value></data>
+  <data name="DisconnectConfirm" xml:space="preserve"><value>Déconnecter le compte Stripe ? Les liens de paiement ouverts cesseront de fonctionner et aucun nouveau ne pourra être créé avant une nouvelle connexion.</value></data>
+  <data name="CollectionSettings" xml:space="preserve"><value>Paramètres d'encaissement</value></data>
+  <data name="OnlinePaymentsEnabledLabel" xml:space="preserve"><value>Proposer le paiement en ligne sur les factures</value></data>
+  <data name="AllowedPaymentMethods" xml:space="preserve"><value>Modes de paiement acceptés</value></data>
+  <data name="PaymentMethodCard" xml:space="preserve"><value>Cartes et portefeuilles</value></data>
+  <data name="PaymentMethodAch" xml:space="preserve"><value>Prélèvement bancaire (ACH, comptes américains)</value></data>
+  <data name="PaymentMethodsHint" xml:space="preserve"><value>La disponibilité dépend de ce que votre compte Stripe accepte ; un mode que le compte ne peut pas recevoir n'est pas proposé.</value></data>
+  <data name="PayLinksReady" xml:space="preserve"><value>Liens de paiement</value></data>
+  <data name="SuspendedByOperator" xml:space="preserve"><value>L'encaissement en ligne est suspendu par l'opérateur dans cette région. Votre connexion est conservée ; aucun nouveau lien de paiement n'est proposé tant qu'il n'est pas réactivé.</value></data>
+  <data name="OnlinePaymentsFlagOff" xml:space="preserve"><value>Les paiements en ligne ne sont pas encore activés pour votre service. Contactez le support Resgrid pour les activer.</value></data>
+  <data name="PaymentConnected" xml:space="preserve"><value>Le compte Stripe {0} est connecté. Activez « Proposer le paiement en ligne sur les factures » pour proposer des liens de paiement.</value></data>
+  <data name="PaymentDisconnected" xml:space="preserve"><value>Le compte Stripe a été déconnecté.</value></data>
+  <data name="PayOnline" xml:space="preserve"><value>Payer en ligne</value></data>
+  <data name="PayLink" xml:space="preserve"><value>Lien de paiement</value></data>
+  <data name="PayLinkHint" xml:space="preserve"><value>Partagez ce lien avec le client ; il figure sur la facture et dans l'e-mail. Le lien reste valable pendant la durée définie dans les paramètres de facturation.</value></data>
+  <data name="CopyLink" xml:space="preserve"><value>Copier le lien</value></data>
+  <data name="LinkCopied" xml:space="preserve"><value>Lien copié.</value></data>
+  <data name="OpenRequest" xml:space="preserve"><value>Demande de paiement ouverte</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>Expire le</value></data>
+  <data name="OpenPaymentRequest" xml:space="preserve"><value>Ouvrir la page de paiement maintenant</value></data>
+  <data name="RefreshPaymentRequest" xml:space="preserve"><value>Renouveler la page de paiement</value></data>
+  <data name="PayLinkCreated" xml:space="preserve"><value>La page de paiement est ouverte ; le lien de paiement y mène directement.</value></data>
+  <data name="PayOnlineNotOffered" xml:space="preserve"><value>Le paiement en ligne n'est pas proposé pour cette facture pour le moment.</value></data>
+  <data name="Started" xml:space="preserve"><value>Démarrée</value></data>
+  <data name="Fee" xml:space="preserve"><value>Frais</value></data>
+  <data name="Receipt" xml:space="preserve"><value>Reçu</value></data>
+  <data name="RequestStatusCreated" xml:space="preserve"><value>Créée</value></data>
+  <data name="RequestStatusOpened" xml:space="preserve"><value>En attente de paiement</value></data>
+  <data name="RequestStatusProcessing" xml:space="preserve"><value>Paiement en cours (prélèvement en traitement)</value></data>
+  <data name="RequestStatusCompleted" xml:space="preserve"><value>Payée</value></data>
+  <data name="RequestStatusExpired" xml:space="preserve"><value>Expirée</value></data>
+  <data name="RequestStatusCancelled" xml:space="preserve"><value>Annulée</value></data>
+  <data name="RequestStatusFailed" xml:space="preserve"><value>Échouée</value></data>
+  <data name="RequestStatusUnknown" xml:space="preserve"><value>Inconnu</value></data>
+  <data name="ConnectionStatusPending" xml:space="preserve"><value>En attente</value></data>
+  <data name="ConnectionStatusConnected" xml:space="preserve"><value>Connecté</value></data>
+  <data name="ConnectionStatusActionRequired" xml:space="preserve"><value>Action requise chez Stripe</value></data>
+  <data name="ConnectionStatusDisconnected" xml:space="preserve"><value>Déconnecté</value></data>
+  <data name="ConnectionStatusRevoked" xml:space="preserve"><value>Accès révoqué</value></data>
+  <data name="PayPageTitle" xml:space="preserve"><value>Payer la facture</value></data>
+  <data name="AmountDue" xml:space="preserve"><value>Montant dû</value></data>
+  <data name="PayNow" xml:space="preserve"><value>Payer</value></data>
+  <data name="PayPageIntro" xml:space="preserve"><value>Le paiement est traité par Stripe pour le compte de {0}. Vos données de carte ou bancaires sont saisies sur la page sécurisée de Stripe et Resgrid ne les voit jamais.</value></data>
+  <data name="ResumePayment" xml:space="preserve"><value>Une page de paiement est déjà ouverte pour cette facture ; payer à nouveau la reprend.</value></data>
+  <data name="pay_link_invalid" xml:space="preserve"><value>Ce lien de paiement n'est pas valide.</value></data>
+  <data name="pay_link_expired" xml:space="preserve"><value>Ce lien de paiement a expiré. Demandez-en un nouveau au service.</value></data>
+  <data name="pay_invoice_unavailable" xml:space="preserve"><value>Cette facture n'est plus disponible au paiement.</value></data>
+  <data name="pay_invoice_paid" xml:space="preserve"><value>Cette facture a été réglée. Merci.</value></data>
+  <data name="pay_not_offered" xml:space="preserve"><value>Le paiement en ligne n'est pas disponible pour cette facture. Contactez le service pour d'autres moyens de paiement.</value></data>
+  <data name="pay_processing" xml:space="preserve"><value>Un paiement bancaire pour cette facture est en cours de confirmation. Aucune action n'est requise pour le moment.</value></data>
+  <data name="PayReturnTitle" xml:space="preserve"><value>Merci — votre paiement est en cours de confirmation</value></data>
+  <data name="PayReturnText" xml:space="preserve"><value>Le service verra le paiement dès que Stripe le confirmera, généralement en une minute ; les paiements bancaires peuvent prendre quelques jours ouvrés. Vous recevrez le reçu de Stripe par e-mail.</value></data>
+  <data name="PayCancelTitle" xml:space="preserve"><value>Paiement annulé</value></data>
+  <data name="PayCancelText" xml:space="preserve"><value>Aucun montant n'a été prélevé. Vous pouvez revenir sur cette page et payer quand vous le souhaitez.</value></data>
+  <data name="BackToInvoice" xml:space="preserve"><value>Retour à la facture</value></data>
+  <data name="TooManyRequests" xml:space="preserve"><value>Trop de requêtes. Patientez une minute puis réessayez.</value></data>
+  <data name="payments_not_available_in_region" xml:space="preserve"><value>L'encaissement en ligne n'est pas disponible dans cette région.</value></data>
+  <data name="payments_flag_off" xml:space="preserve"><value>Les paiements en ligne ne sont pas activés pour ce service.</value></data>
+  <data name="payments_addon_required" xml:space="preserve"><value>Les paiements en ligne nécessitent un module Business Operations actif.</value></data>
+  <data name="payments_not_enabled_for_department" xml:space="preserve"><value>Le paiement en ligne est désactivé dans vos paramètres de facturation.</value></data>
+  <data name="payments_no_connection" xml:space="preserve"><value>Aucun compte Stripe n'est connecté.</value></data>
+  <data name="payments_connection_not_ready" xml:space="preserve"><value>Le compte Stripe connecté ne peut pas encore encaisser. Complétez les exigences de Stripe et réessayez.</value></data>
+  <data name="payments_invoice_not_payable" xml:space="preserve"><value>Un brouillon ou une facture annulée ne peut pas être payé en ligne.</value></data>
+  <data name="payments_invoice_paid" xml:space="preserve"><value>Cette facture est déjà réglée.</value></data>
+  <data name="payments_zero_balance" xml:space="preserve"><value>Aucun solde à encaisser sur cette facture.</value></data>
+  <data name="payments_currency_mismatch" xml:space="preserve"><value>La devise de la facture n'est pas une devise réglée par le compte Stripe connecté.</value></data>
+  <data name="payments_provider_unavailable" xml:space="preserve"><value>Stripe est injoignable pour le moment. Réessayez dans un instant.</value></data>
+  <data name="payments_connect_failed" xml:space="preserve"><value>Stripe n'a pas finalisé la connexion. Veuillez réessayer.</value></data>
+  <data name="payments_connect_declined" xml:space="preserve"><value>La connexion a été refusée chez Stripe. Rien n'a été modifié.</value></data>
+  <data name="payments_state_invalid" xml:space="preserve"><value>Cette tentative de connexion n'est plus valide. Recommencez depuis la page des paramètres.</value></data>
+  <data name="payments_disabled" xml:space="preserve"><value>L'encaissement en ligne est désactivé sur ce serveur.</value></data>
+  <data name="payments_connection_revoked" xml:space="preserve"><value>Stripe indique que Resgrid n'a plus accès à ce compte. Reconnectez-le pour reprendre.</value></data>
+  <data name="invoicing_protected_write_refused" xml:space="preserve"><value>Les données protégées de cet enregistrement n'ont pas pu être sécurisées ; la modification n'a pas été enregistrée.</value></data>
 </root>

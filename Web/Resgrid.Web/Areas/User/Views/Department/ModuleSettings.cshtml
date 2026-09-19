@@ -1,6 +1,7 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Departments.DepartmentModulesSettingView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingLocalizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["DispatchSettingsModuleHeader"];
 }
@@ -221,6 +222,22 @@
                                             </label>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" for="BusinessOperationsEnabled">@invoicingLocalizer["BusinessOperations"]</label>
+                                <div class="col-sm-9">
+                                    <div class="switch">
+                                        <div class="onoffswitch">
+                                            <input type="checkbox" class="onoffswitch-checkbox" asp-for="BusinessOperationsEnabled">
+                                            <label class="onoffswitch-label" for="BusinessOperationsEnabled">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <span class="help-block m-b-none">@invoicingLocalizer["BusinessOperationsModuleNote"]</span>
                                 </div>
                             </div>
                             

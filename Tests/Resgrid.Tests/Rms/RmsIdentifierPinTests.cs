@@ -37,11 +37,14 @@ namespace Resgrid.Tests.Rms
 			// 68 is Unified Search's ManageSearchIndex; RMS-5 took 69 from the pool released on 2026-08-27.
 			Enum.IsDefined(typeof(PermissionTypes), 68).Should().BeFalse("68 is reserved for Unified Search's ManageSearchIndex, which is not authored yet");
 
-			// Inventory consumed its 47-49 reservation in P1-M1/M2; 40-46 remain unauthored.
+			// Inventory consumed its 47-49 reservation in P1-M1/M2; Contacts/Billing Phase B took 40-41 on 2026-09-18;
+			// 42-46 remain unauthored (Certifications 42-44, buffer 45-46).
 			((int)PermissionTypes.TransferInventory).Should().Be(47);
 			((int)PermissionTypes.IssueInventory).Should().Be(48);
 			((int)PermissionTypes.ManageControlledSubstances).Should().Be(49);
-			foreach (var value in Enumerable.Range(40, 7))
+			((int)PermissionTypes.ManageInvoicing).Should().Be(40);
+			((int)PermissionTypes.ViewInvoicing).Should().Be(41);
+			foreach (var value in Enumerable.Range(42, 5))
 				Enum.IsDefined(typeof(PermissionTypes), value).Should().BeFalse($"PermissionTypes {value} is reserved for another plan");
 		}
 
@@ -107,7 +110,12 @@ namespace Resgrid.Tests.Rms
 			((int)WorkflowTriggerEventType.InventoryPurchaseOrderReceived).Should().Be(65);
 			((int)WorkflowTriggerEventType.ControlledSubstanceRecorded).Should().Be(66);
 			((int)WorkflowTriggerEventType.InventoryReturnOverdue).Should().Be(166);
-            foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(58, 16)))
+			// Contacts/Billing Phase B authored 52-57 and, from the buffer, 94-95 on 2026-09-18 (registry).
+			((int)WorkflowTriggerEventType.InvoiceCreated).Should().Be(52);
+			((int)WorkflowTriggerEventType.InvoiceVoided).Should().Be(57);
+			((int)WorkflowTriggerEventType.InvoicePaymentRefunded).Should().Be(94);
+			((int)WorkflowTriggerEventType.InvoicePaymentDisputed).Should().Be(95);
+			foreach (var value in Enumerable.Range(52, 48).Except(Enumerable.Range(52, 6)).Except(Enumerable.Range(58, 16)).Except(new[] { 94, 95 }))
 				Enum.IsDefined(typeof(WorkflowTriggerEventType), value).Should().BeFalse($"WorkflowTriggerEventType {value} is reserved for another plan");
 		}
 

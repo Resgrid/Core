@@ -655,6 +655,51 @@ namespace Resgrid.Providers.EmailProvider
 			return false;
 		}
 
+		public async Task<bool> SendInvoiceMail(string email, string subject, string messageBody, string sentOn,
+			string invoiceLabel, string attachmentFilename, byte[] attachmentData, string invoiceUrl, string payUrl, DepartmentEmailBranding branding)
+		{
+			if (attachmentData == null || String.IsNullOrWhiteSpace(email))
+				return false;
+
+			var templateModel = new Dictionary<string, object>
+			{
+				{ "title", subject },
+				{ "invoice_label", invoiceLabel },
+				{ "body", HtmlToTextHelper.ConvertHtml(messageBody) },
+				{ "attachment_name", attachmentFilename },
+				{ "attachment_size", StringHelpers.GetSizeInMemory(attachmentData.LongLength) },
+				{ "attachment_type", "PDF" },
+				{ "invoice_links", String.IsNullOrWhiteSpace(invoiceUrl) ? Array.Empty<Dictionary<string, object>>() : new[] { new Dictionary<string, object> { { "url", invoiceUrl } } } },
+				{ "pay_links", String.IsNullOrWhiteSpace(payUrl) ? Array.Empty<Dictionary<string, object>>() : new[] { new Dictionary<string, object> { { "url", payUrl } } } },
+				{ "timestamp", sentOn }
+			};
+
+			AddDepartmentBranding(templateModel, branding);
+
+			try
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("InvoiceDelivery.html"));
+				var content = template(templateModel);
+
+				Email newEmail = new Email();
+				newEmail.HtmlBody = content;
+				newEmail.Sender = DONOTREPLY_EMAIL;
+				newEmail.To.Add(email);
+				newEmail.AttachmentName = attachmentFilename;
+				newEmail.AttachmentData = attachmentData;
+				newEmail.AttachmentContentType = "application/pdf";
+				newEmail.From = DONOTREPLY_EMAIL;
+				newEmail.Subject = subject;
+
+				return await _emailSender.Send(newEmail);
+			}
+			catch (Exception)
+			{
+			}
+
+			return false;
+		}
+
 		public async Task<bool> SendCommunicationTestMail(string email, CommunicationTestEmailContent content)
 		{
 			// The model is built before the try below, so without this a null content would throw past

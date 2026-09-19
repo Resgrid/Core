@@ -1,0 +1,28 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> localizer
+@*
+    The module's tab strip. ViewData["Tab"] names the tab that owns the current screen; the Settings tab only
+    shows to members holding the manage permission (the page itself is policy-gated).
+*@
+@{
+    var current = (string)ViewData["Tab"] ?? "Index";
+    var tabs = new List<(string Action, string Icon, string Label)>
+    {
+        ("Index", "fa-file-text-o", localizer["Invoices"].Value),
+        ("RateCards", "fa-tags", localizer["RateCards"].Value),
+        ("Aging", "fa-clock-o", localizer["Aging"].Value)
+    };
+    if (ClaimsAuthorizationHelper.CanManageInvoicing())
+    {
+        tabs.Add(("Settings", "fa-cog", localizer["BillingSettings"].Value));
+    }
+}
+<ul class="nav nav-tabs m-b-md">
+    @foreach (var tab in tabs)
+    {
+        <li class="nav-item @(current == tab.Action ? "active" : null)">
+            <a asp-controller="Invoicing" asp-action="@tab.Action" asp-route-area="User" aria-current="@(current == tab.Action ? "page" : "false")">
+                <i class="fa @tab.Icon"></i> @tab.Label
+            </a>
+        </li>
+    }
+</ul>

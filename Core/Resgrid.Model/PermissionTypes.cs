@@ -160,7 +160,12 @@ ViewChecklistResults = 113,
 		/// <summary>Issue and return department equipment. Defaults to the inventory adjustment permission.</summary>
 		IssueInventory = 48,
 		/// <summary>Record controlled-substance inventory transactions. Defaults to department administrators.</summary>
-		ManageControlledSubstances = 49
+		ManageControlledSubstances = 49,
+
+		/// <summary>Workforce &amp; Business Operations plan Phase B (registry 40): create/edit/send/void invoices, record payments, rate cards, billing profiles. Defaults to department administrators.</summary>
+		ManageInvoicing = 40,
+		/// <summary>Workforce &amp; Business Operations plan Phase B (registry 41): view invoices, aging and PDFs. Defaults to department administrators.</summary>
+		ViewInvoicing = 41
 	}
 
 }

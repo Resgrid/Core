@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Invoicing" xml:space="preserve"><value>Τιμολόγηση</value></data>
+  <data name="ManageInvoicing" xml:space="preserve"><value>Διαχείριση τιμολόγησης</value></data>
+  <data name="ViewInvoicing" xml:space="preserve"><value>Προβολή τιμολόγησης</value></data>
+  <data name="ManageInvoicingNote" xml:space="preserve"><value>Δημιουργία, επεξεργασία, αποστολή και ακύρωση τιμολογίων, καταχώριση πληρωμών και διαχείριση τιμοκαταλόγων και προφίλ χρέωσης.</value></data>
+  <data name="ViewInvoicingNote" xml:space="preserve"><value>Προβολή τιμολογίων, χρονολογικής ανάλυσης απαιτήσεων και PDF τιμολογίων.</value></data>
+  <data name="InvoiceCreated" xml:space="preserve"><value>Το τιμολόγιο δημιουργήθηκε</value></data>
+  <data name="InvoiceSent" xml:space="preserve"><value>Το τιμολόγιο στάλθηκε</value></data>
+  <data name="InvoicePaymentRecorded" xml:space="preserve"><value>Καταχωρίστηκε πληρωμή τιμολογίου</value></data>
+  <data name="InvoicePaid" xml:space="preserve"><value>Το τιμολόγιο πληρώθηκε</value></data>
+  <data name="InvoiceOverdue" xml:space="preserve"><value>Το τιμολόγιο είναι εκπρόθεσμο</value></data>
+  <data name="InvoiceVoided" xml:space="preserve"><value>Το τιμολόγιο ακυρώθηκε</value></data>
+  <data name="InvoicePaymentRefunded" xml:space="preserve"><value>Η πληρωμή τιμολογίου επιστράφηκε</value></data>
+  <data name="InvoicePaymentDisputed" xml:space="preserve"><value>Η πληρωμή τιμολογίου αμφισβητήθηκε</value></data>
+  <data name="Billing" xml:space="preserve"><value>Χρέωση</value></data>
+  <data name="Invoices" xml:space="preserve"><value>Τιμολόγια</value></data>
+  <data name="InvoicesLower" xml:space="preserve"><value>τιμολόγια</value></data>
+  <data name="Invoice" xml:space="preserve"><value>Τιμολόγιο</value></data>
+  <data name="InvoicingIntro" xml:space="preserve"><value>Τιμολόγια πελατών, πληρωμές και απαιτήσεις.</value></data>
+  <data name="ReadOnlyNotice" xml:space="preserve"><value>Το πρόσθετο Business Operations δεν είναι ενεργό για αυτό το τμήμα. Τα υπάρχοντα τιμολόγια παραμένουν αναγνώσιμα· η δημιουργία ή αλλαγή απαιτεί ενεργό πρόσθετο.</value></data>
+  <data name="BusinessOperations" xml:space="preserve"><value>Business Operations</value></data>
+  <data name="BusinessOperationsModuleNote" xml:space="preserve"><value>Τιμολόγηση, τιμοκατάλογοι και προφίλ χρέωσης. Οι σελίδες απαιτούν επίσης το πρόσθετο Business Operations.</value></data>
+  <data name="RateCards" xml:space="preserve"><value>Τιμοκατάλογοι</value></data>
+  <data name="RateCard" xml:space="preserve"><value>Τιμοκατάλογος</value></data>
+  <data name="RateCardsIntro" xml:space="preserve"><value>Χρεώσεις που εφαρμόζονται όταν κλήσεις προστίθενται σε τιμολόγιο.</value></data>
+  <data name="HelpRateCards" xml:space="preserve"><value>Ο τιμοκατάλογος ορίζει τις χρεώσεις: ωριαίος χρόνος μονάδων ή προσωπικού, κατ' αποκοπή ανά κλήση, πάγια, χιλιόμετρα και υλικά. Ορίστε έναν ως προεπιλογή· ένα προφίλ χρέωσης μπορεί να ορίσει άλλον.</value></data>
+  <data name="NewRateCard" xml:space="preserve"><value>Νέος τιμοκατάλογος</value></data>
+  <data name="NoRateCards" xml:space="preserve"><value>Δεν υπάρχουν ακόμη τιμοκατάλογοι.</value></data>
+  <data name="RateCardItems" xml:space="preserve"><value>Στοιχεία τιμοκαταλόγου</value></data>
+  <data name="RateCardItem" xml:space="preserve"><value>Στοιχείο τιμοκαταλόγου</value></data>
+  <data name="NewItem" xml:space="preserve"><value>Νέο στοιχείο</value></data>
+  <data name="NoRateCardItems" xml:space="preserve"><value>Αυτός ο τιμοκατάλογος δεν έχει ακόμη στοιχεία.</value></data>
+  <data name="SaveCardBeforeItems" xml:space="preserve"><value>Αποθηκεύστε τον τιμοκατάλογο πριν προσθέσετε στοιχεία.</value></data>
+  <data name="DefaultRateCardHint" xml:space="preserve"><value>Προεπιλογή τμήματος (όταν ο πελάτης δεν έχει ορισμένο τιμοκατάλογο)</value></data>
+  <data name="DeleteRateCardConfirm" xml:space="preserve"><value>Διαγραφή αυτού του τιμοκαταλόγου;</value></data>
+  <data name="DeleteItemConfirm" xml:space="preserve"><value>Διαγραφή αυτού του στοιχείου;</value></data>
+  <data name="RateCardDeleted" xml:space="preserve"><value>Ο τιμοκατάλογος διαγράφηκε.</value></data>
+  <data name="ItemType" xml:space="preserve"><value>Τύπος</value></data>
+  <data name="ItemTypeHourlyUnit" xml:space="preserve"><value>Ωριαία – χρόνος μονάδας επί τόπου</value></data>
+  <data name="ItemTypeHourlyPersonnel" xml:space="preserve"><value>Ωριαία – χρόνος προσωπικού</value></data>
+  <data name="ItemTypeFlatPerCall" xml:space="preserve"><value>Κατ' αποκοπή ανά κλήση</value></data>
+  <data name="ItemTypeFixedFee" xml:space="preserve"><value>Πάγιο</value></data>
+  <data name="ItemTypeMileage" xml:space="preserve"><value>Χιλιόμετρα</value></data>
+  <data name="ItemTypeMaterial" xml:space="preserve"><value>Υλικό</value></data>
+  <data name="Rate" xml:space="preserve"><value>Χρέωση</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>Ετικέτα μονάδας</value></data>
+  <data name="MinimumCharge" xml:space="preserve"><value>Ελάχιστη χρέωση</value></data>
+  <data name="MinimumMinutes" xml:space="preserve"><value>Ελάχιστα λεπτά</value></data>
+  <data name="RoundingMinutes" xml:space="preserve"><value>Στρογγυλοποίηση σε (λεπτά)</value></data>
+  <data name="Rounding" xml:space="preserve"><value>Στρογγυλοποίηση</value></data>
+  <data name="Minimum" xml:space="preserve"><value>Ελάχ.</value></data>
+  <data name="RoundTo" xml:space="preserve"><value>στρογγυλοποίηση σε</value></data>
+  <data name="UnitTypeFilter" xml:space="preserve"><value>Τύπος μονάδας</value></data>
+  <data name="AnyUnitType" xml:space="preserve"><value>Οποιοσδήποτε τύπος μονάδας</value></data>
+  <data name="ItemDescriptionHint" xml:space="preserve"><value>Εκτυπώνεται στη γραμμή τιμολογίου· προεπιλογή το όνομα του στοιχείου.</value></data>
+  <data name="SortOrder" xml:space="preserve"><value>Σειρά ταξινόμησης</value></data>
+  <data name="Taxable" xml:space="preserve"><value>Φορολογητέο</value></data>
+  <data name="Active" xml:space="preserve"><value>Ενεργό</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Ανενεργό</value></data>
+  <data name="Default" xml:space="preserve"><value>Προεπιλογή</value></data>
+  <data name="Name" xml:space="preserve"><value>Όνομα</value></data>
+  <data name="Description" xml:space="preserve"><value>Περιγραφή</value></data>
+  <data name="Edit" xml:space="preserve"><value>Επεξεργασία</value></data>
+  <data name="Open" xml:space="preserve"><value>Άνοιγμα</value></data>
+  <data name="Add" xml:space="preserve"><value>Προσθήκη</value></data>
+  <data name="Remove" xml:space="preserve"><value>Αφαίρεση</value></data>
+  <data name="All" xml:space="preserve"><value>Όλα</value></data>
+  <data name="Filter" xml:space="preserve"><value>Φίλτρο</value></data>
+  <data name="Loading" xml:space="preserve"><value>Φόρτωση…</value></data>
+  <data name="Status" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Πρόχειρο</value></data>
+  <data name="StatusSent" xml:space="preserve"><value>Απεσταλμένο</value></data>
+  <data name="StatusPartiallyPaid" xml:space="preserve"><value>Μερικώς εξοφλημένο</value></data>
+  <data name="StatusPaid" xml:space="preserve"><value>Εξοφλημένο</value></data>
+  <data name="StatusOverdue" xml:space="preserve"><value>Ληξιπρόθεσμο</value></data>
+  <data name="StatusVoid" xml:space="preserve"><value>Ακυρωμένο</value></data>
+  <data name="Number" xml:space="preserve"><value>Αριθμός</value></data>
+  <data name="Customer" xml:space="preserve"><value>Πελάτης</value></data>
+  <data name="IssuedOn" xml:space="preserve"><value>Εκδόθηκε</value></data>
+  <data name="DueOn" xml:space="preserve"><value>Λήξη</value></data>
+  <data name="DueOnHint" xml:space="preserve"><value>Αφήστε κενό για τους όρους του προφίλ: καθαρές ημέρες</value></data>
+  <data name="SentOn" xml:space="preserve"><value>Απεστάλη</value></data>
+  <data name="VoidedOn" xml:space="preserve"><value>Ακυρώθηκε</value></data>
+  <data name="PaidOn" xml:space="preserve"><value>Πληρώθηκε</value></data>
+  <data name="Total" xml:space="preserve"><value>Σύνολο</value></data>
+  <data name="Totals" xml:space="preserve"><value>Σύνολα</value></data>
+  <data name="SubTotal" xml:space="preserve"><value>Υποσύνολο</value></data>
+  <data name="Discount" xml:space="preserve"><value>Έκπτωση</value></data>
+  <data name="DiscountPercent" xml:space="preserve"><value>Έκπτωση %</value></data>
+  <data name="Tax" xml:space="preserve"><value>Φόρος</value></data>
+  <data name="AmountPaid" xml:space="preserve"><value>Ποσό που πληρώθηκε</value></data>
+  <data name="Balance" xml:space="preserve"><value>Υπόλοιπο</value></data>
+  <data name="OutstandingBalance" xml:space="preserve"><value>Ανεξόφλητο υπόλοιπο</value></data>
+  <data name="OverdueBalance" xml:space="preserve"><value>Ληξιπρόθεσμο υπόλοιπο</value></data>
+  <data name="NewInvoice" xml:space="preserve"><value>Νέο τιμολόγιο</value></data>
+  <data name="NewInvoiceIntro" xml:space="preserve"><value>Επιλέξτε πελάτη· το πρόχειρο παίρνει όρους, έκπτωση και τιμοκατάλογο από το προφίλ χρέωσης.</value></data>
+  <data name="SelectCustomer" xml:space="preserve"><value>Επιλέξτε πελάτη…</value></data>
+  <data name="CustomersWithProfile" xml:space="preserve"><value>Πελάτες με προφίλ χρέωσης</value></data>
+  <data name="OtherContacts" xml:space="preserve"><value>Άλλες επαφές</value></data>
+  <data name="ProfileRequiredHint" xml:space="preserve"><value>Αυτή η επαφή δεν έχει ακόμη προφίλ χρέωσης.</value></data>
+  <data name="SetUpBillingProfile" xml:space="preserve"><value>Ρύθμιση προφίλ χρέωσης</value></data>
+  <data name="CustomerRequired" xml:space="preserve"><value>Επιλέξτε πελάτη με ενεργό προφίλ χρέωσης.</value></data>
+  <data name="Currency" xml:space="preserve"><value>Νόμισμα</value></data>
+  <data name="CreateDraft" xml:space="preserve"><value>Δημιουργία πρόχειρου</value></data>
+  <data name="EditInvoiceIntro" xml:space="preserve"><value>Επεξεργαστείτε το πρόχειρο, προσθέστε κλήσεις από τιμοκατάλογο, μετά προεπισκόπηση και αποστολή.</value></data>
+  <data name="Notes" xml:space="preserve"><value>Σημειώσεις</value></data>
+  <data name="Terms" xml:space="preserve"><value>Όροι</value></data>
+  <data name="LineItems" xml:space="preserve"><value>Γραμμές</value></data>
+  <data name="NoLineItems" xml:space="preserve"><value>Δεν υπάρχουν γραμμές.</value></data>
+  <data name="Quantity" xml:space="preserve"><value>Ποσ.</value></data>
+  <data name="UnitRate" xml:space="preserve"><value>Χρέωση</value></data>
+  <data name="Amount" xml:space="preserve"><value>Ποσό</value></data>
+  <data name="AddLine" xml:space="preserve"><value>Προσθήκη γραμμής</value></data>
+  <data name="AddCall" xml:space="preserve"><value>Προσθήκη κλήσης</value></data>
+  <data name="AddCallIntro" xml:space="preserve"><value>Οι γραμμές παράγονται από τον τιμοκατάλογο και τον χρόνο των μονάδων επί τόπου· επεξεργαστείτε τις πριν την αποθήκευση.</value></data>
+  <data name="CallNumber" xml:space="preserve"><value>Αρ. κλήσης</value></data>
+  <data name="CallName" xml:space="preserve"><value>Κλήση</value></data>
+  <data name="LoggedOn" xml:space="preserve"><value>Καταγράφηκε</value></data>
+  <data name="NoCallsForCustomer" xml:space="preserve"><value>Δεν υπάρχουν κλήσεις συνδεδεμένες με αυτόν τον πελάτη.</value></data>
+  <data name="AlreadyInvoiced" xml:space="preserve"><value>Ήδη στο τιμολόγιο</value></data>
+  <data name="CallAdded" xml:space="preserve"><value>Οι γραμμές κλήσης προστέθηκαν. Αποθηκεύστε το τιμολόγιο για να διατηρηθούν.</value></data>
+  <data name="LoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση των δεδομένων.</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Η αλλαγή δεν ήταν δυνατό να αποθηκευτεί.</value></data>
+  <data name="Saved" xml:space="preserve"><value>Αποθηκεύτηκε.</value></data>
+  <data name="InvalidInput" xml:space="preserve"><value>Οι τιμές που υποβλήθηκαν δεν είναι έγκυρες.</value></data>
+  <data name="NameRequired" xml:space="preserve"><value>Απαιτείται όνομα.</value></data>
+  <data name="AddonRequired" xml:space="preserve"><value>Απαιτεί ενεργό πρόσθετο Business Operations.</value></data>
+  <data name="TotalsUpdateOnSave" xml:space="preserve"><value>Η έκπτωση και ο φόρος επανυπολογίζονται κατά την αποθήκευση.</value></data>
+  <data name="PreviewAndSend" xml:space="preserve"><value>Προεπισκόπηση &amp; αποστολή</value></data>
+  <data name="BackToInvoices" xml:space="preserve"><value>Επιστροφή στα τιμολόγια</value></data>
+  <data name="TermsNetDays" xml:space="preserve"><value>Όροι (καθαρές ημέρες)</value></data>
+  <data name="TaxExempt" xml:space="preserve"><value>Απαλλαγή φόρου</value></data>
+  <data name="TaxRate" xml:space="preserve"><value>Συντελεστής φόρου %</value></data>
+  <data name="BillingProfile" xml:space="preserve"><value>Προφίλ χρέωσης</value></data>
+  <data name="BillingProfileIntro" xml:space="preserve"><value>Πού πηγαίνουν τα τιμολόγια, οι όροι πληρωμής, η φορολογική μεταχείριση και ο τιμοκατάλογος του πελάτη.</value></data>
+  <data name="NoBillingProfileYet" xml:space="preserve"><value>Δεν υπάρχει ακόμη προφίλ χρέωσης. Αποθηκεύστε ένα για να τιμολογήσετε αυτή την επαφή.</value></data>
+  <data name="OpenContact" xml:space="preserve"><value>Άνοιγμα επαφής</value></data>
+  <data name="BillingEmail" xml:space="preserve"><value>E-mail χρέωσης</value></data>
+  <data name="BillingEmailHint" xml:space="preserve"><value>Τα τιμολόγια αποστέλλονται εδώ· προεπιλογή το e-mail της επαφής.</value></data>
+  <data name="DefaultDiscountPercent" xml:space="preserve"><value>Προεπιλεγμένη έκπτωση %</value></data>
+  <data name="DefaultRateCard" xml:space="preserve"><value>Τιμοκατάλογος</value></data>
+  <data name="UseDepartmentDefault" xml:space="preserve"><value>Χρήση προεπιλογής τμήματος</value></data>
+  <data name="PurchaseOrderRequired" xml:space="preserve"><value>Απαιτείται αριθμός παραγγελίας στα τιμολόγια</value></data>
+  <data name="ActiveProfile" xml:space="preserve"><value>Ενεργό (επιτρέπεται η δημιουργία νέων τιμολογίων)</value></data>
+  <data name="BillingAddress" xml:space="preserve"><value>Διεύθυνση χρέωσης</value></data>
+  <data name="UseContactMailingAddress" xml:space="preserve"><value>Χρήση ταχυδρομικής διεύθυνσης επαφής</value></data>
+  <data name="Address" xml:space="preserve"><value>Διεύθυνση</value></data>
+  <data name="City" xml:space="preserve"><value>Πόλη</value></data>
+  <data name="State" xml:space="preserve"><value>Πολιτεία / νομός</value></data>
+  <data name="PostalCode" xml:space="preserve"><value>Ταχυδρομικός κώδικας</value></data>
+  <data name="Country" xml:space="preserve"><value>Χώρα</value></data>
+  <data name="TaxRateHint" xml:space="preserve"><value>Ενιαίος συντελεστής στις φορολογητέες γραμμές όταν δεν ορίζονται συνιστώσες παρακάτω.</value></data>
+  <data name="TaxComponents" xml:space="preserve"><value>Συνιστώσες φόρου</value></data>
+  <data name="TaxComponentsHint" xml:space="preserve"><value>Έως τρεις ονομαστικοί φόροι (π.χ. GST και PST), καθένας με τον δικό του αριθμό μητρώου.</value></data>
+  <data name="RatePercent" xml:space="preserve"><value>Συντελεστής %</value></data>
+  <data name="RegistrationNumber" xml:space="preserve"><value>Αριθμός μητρώου</value></data>
+  <data name="AllInvoicesForCustomer" xml:space="preserve"><value>Όλα τα τιμολόγια αυτού του πελάτη</value></data>
+  <data name="NoInvoices" xml:space="preserve"><value>Δεν υπάρχουν τιμολόγια.</value></data>
+  <data name="Payments" xml:space="preserve"><value>Πληρωμές</value></data>
+  <data name="NoPayments" xml:space="preserve"><value>Δεν έχουν καταγραφεί πληρωμές.</value></data>
+  <data name="Method" xml:space="preserve"><value>Μέθοδος</value></data>
+  <data name="MethodCheck" xml:space="preserve"><value>Επιταγή</value></data>
+  <data name="MethodCash" xml:space="preserve"><value>Μετρητά</value></data>
+  <data name="MethodAch" xml:space="preserve"><value>Τραπεζική μεταφορά / ACH</value></data>
+  <data name="MethodCardExternal" xml:space="preserve"><value>Κάρτα (εκτός Resgrid)</value></data>
+  <data name="MethodOther" xml:space="preserve"><value>Άλλο</value></data>
+  <data name="MethodOnline" xml:space="preserve"><value>Διαδικτυακά</value></data>
+  <data name="PaymentStatus" xml:space="preserve"><value>Κατάσταση πληρωμής</value></data>
+  <data name="PaymentStatusSucceeded" xml:space="preserve"><value>Επιτυχής</value></data>
+  <data name="PaymentStatusRefunded" xml:space="preserve"><value>Επιστράφηκε</value></data>
+  <data name="PaymentStatusPartiallyRefunded" xml:space="preserve"><value>Μερικώς επιστράφηκε</value></data>
+  <data name="PaymentStatusDisputed" xml:space="preserve"><value>Αμφισβητούμενη</value></data>
+  <data name="PaymentStatusDisputeLost" xml:space="preserve"><value>Απώλεια αμφισβήτησης</value></data>
+  <data name="Reference" xml:space="preserve"><value>Αναφορά</value></data>
+  <data name="Preview" xml:space="preserve"><value>Προεπισκόπηση</value></data>
+  <data name="Actions" xml:space="preserve"><value>Ενέργειες</value></data>
+  <data name="EditDraft" xml:space="preserve"><value>Επεξεργασία πρόχειρου</value></data>
+  <data name="DownloadPdf" xml:space="preserve"><value>Λήψη PDF</value></data>
+  <data name="SendInvoice" xml:space="preserve"><value>Αποστολή τιμολογίου</value></data>
+  <data name="ResendInvoice" xml:space="preserve"><value>Επαναποστολή τιμολογίου</value></data>
+  <data name="SendInvoiceIntro" xml:space="preserve"><value>Στέλνει το PDF του τιμολογίου στον πελάτη με e-mail και σημειώνει το πρόχειρο ως απεσταλμένο.</value></data>
+  <data name="SendTo" xml:space="preserve"><value>Αποστολή σε</value></data>
+  <data name="Send" xml:space="preserve"><value>Αποστολή</value></data>
+  <data name="MarkSentWithoutEmail" xml:space="preserve"><value>Σήμανση ως απεσταλμένο (χωρίς e-mail)</value></data>
+  <data name="MarkSentConfirm" xml:space="preserve"><value>Σήμανση του τιμολογίου ως απεσταλμένο χωρίς αποστολή e-mail;</value></data>
+  <data name="RecordPayment" xml:space="preserve"><value>Καταγραφή πληρωμής</value></data>
+  <data name="RecordPaymentIntro" xml:space="preserve"><value>Μόνο χειροκίνητες πληρωμές· οι διαδικτυακές καταγράφονται αυτόματα.</value></data>
+  <data name="PaymentRecorded" xml:space="preserve"><value>Η πληρωμή καταγράφηκε.</value></data>
+  <data name="VoidInvoice" xml:space="preserve"><value>Ακύρωση τιμολογίου</value></data>
+  <data name="VoidInvoiceIntro" xml:space="preserve"><value>Το ακυρωμένο τιμολόγιο κρατά τον αριθμό του και δεν μπορεί να τροποποιηθεί ή να πληρωθεί.</value></data>
+  <data name="Reason" xml:space="preserve"><value>Αιτία</value></data>
+  <data name="InvoiceSentMessage" xml:space="preserve"><value>Το τιμολόγιο εστάλη.</value></data>
+  <data name="InvoiceMarkedSent" xml:space="preserve"><value>Το τιμολόγιο σημειώθηκε ως απεσταλμένο.</value></data>
+  <data name="InvoiceVoidedMessage" xml:space="preserve"><value>Το τιμολόγιο ακυρώθηκε.</value></data>
+  <data name="PdfUnavailable" xml:space="preserve"><value>Δεν ήταν δυνατή η δημιουργία του PDF αυτή τη στιγμή.</value></data>
+  <data name="Aging" xml:space="preserve"><value>Χρονολόγηση</value></data>
+  <data name="AgingReport" xml:space="preserve"><value>Χρονολόγηση απαιτήσεων</value></data>
+  <data name="AgingIntro" xml:space="preserve"><value>Ανοικτά υπόλοιπα ομαδοποιημένα κατά καθυστέρηση.</value></data>
+  <data name="AsOf" xml:space="preserve"><value>Έως</value></data>
+  <data name="BucketCurrent" xml:space="preserve"><value>Τρέχοντα</value></data>
+  <data name="DaysPastDue" xml:space="preserve"><value>ημέρες καθυστέρησης</value></data>
+  <data name="NoOutstandingInvoices" xml:space="preserve"><value>Δεν υπάρχουν ανεξόφλητα τιμολόγια.</value></data>
+  <data name="BillingSettings" xml:space="preserve"><value>Ρυθμίσεις χρέωσης</value></data>
+  <data name="BillingSettingsIntro" xml:space="preserve"><value>Τι λένε τα τιμολόγιά σας για το τμήμα σας, και επιλογές διαδικτυακής πληρωμής.</value></data>
+  <data name="BillingIdentity" xml:space="preserve"><value>Ταυτότητα χρέωσης</value></data>
+  <data name="BillingIdentityIntro" xml:space="preserve"><value>Εκτυπώνεται σε κάθε τιμολόγιο και PDF.</value></data>
+  <data name="LegalBusinessName" xml:space="preserve"><value>Νόμιμη επωνυμία</value></data>
+  <data name="RemitTo" xml:space="preserve"><value>Διεύθυνση αποστολής πληρωμών</value></data>
+  <data name="Registrations" xml:space="preserve"><value>Μητρώα</value></data>
+  <data name="TaxRegistrationNumber" xml:space="preserve"><value>ΑΦΜ</value></data>
+  <data name="SecondaryTaxRegistrationNumber" xml:space="preserve"><value>Δευτερεύον φορολογικό μητρώο</value></data>
+  <data name="SamUei" xml:space="preserve"><value>SAM UEI</value></data>
+  <data name="CageCode" xml:space="preserve"><value>Κωδικός CAGE</value></data>
+  <data name="WorkersCompAccountNumber" xml:space="preserve"><value>Λογαριασμός ασφάλισης εργαζομένων</value></data>
+  <data name="InvoiceFooterText" xml:space="preserve"><value>Υποσέλιδο τιμολογίου</value></data>
+  <data name="InvoiceFooterHint" xml:space="preserve"><value>Οδηγίες πληρωμής, ευχαριστίες ή νομικό κείμενο κάτω από τα σύνολα.</value></data>
+  <data name="PayLinkExpiryDays" xml:space="preserve"><value>Λήξη συνδέσμου πληρωμής (ημέρες)</value></data>
+  <data name="ShowPayOnlineOnDocuments" xml:space="preserve"><value>Εμφάνιση συνδέσμου «Πληρωμή online» στα τιμολόγια</value></data>
+  <data name="OnlinePayments" xml:space="preserve"><value>Διαδικτυακές πληρωμές</value></data>
+  <data name="OnlinePaymentsComingSoon" xml:space="preserve"><value>Η διαδικτυακή είσπραξη (Stripe) δεν είναι ακόμη διαθέσιμη. Τα τιμολόγια πληρώνονται με επιταγή, μετρητά, μεταφορά ή κάρτα εκτός Resgrid και καταγράφονται χειροκίνητα.</value></data>
+  <data name="OnlinePaymentsCluster" xml:space="preserve"><value>Διαθεσιμότητα περιοχής</value></data>
+  <data name="OnlinePaymentsFlag" xml:space="preserve"><value>Σημαία τμήματος</value></data>
+  <data name="OnlinePaymentsStripeNote" xml:space="preserve"><value>Όταν διατεθεί, το τμήμα συνδέει τον δικό του λογαριασμό Stripe· το Resgrid δεν κρατά ποτέ τα χρήματα.</value></data>
+  <data name="Available" xml:space="preserve"><value>Διαθέσιμο</value></data>
+  <data name="NotAvailableInRegion" xml:space="preserve"><value>Μη διαθέσιμο σε αυτή την περιοχή</value></data>
+  <data name="Enabled" xml:space="preserve"><value>Ενεργοποιημένο</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Απενεργοποιημένο</value></data>
+  <data name="BusinessOperationsAddon" xml:space="preserve"><value>Πρόσθετο Business Operations</value></data>
+  <data name="BusinessOperationsAddonIntro" xml:space="preserve"><value>Μηνιαίο πρόσθετο για τμήματα που τιμολογούν πελάτες και διαχειρίζονται συμβάσεις. Μόνο το διαχειριστικό μέλος του τμήματος μπορεί να το αγοράσει ή να το ακυρώσει.</value></data>
+  <data name="AddonFeatureInvoicing" xml:space="preserve"><value>Τιμολόγηση πελατών, τιμοκατάλογοι, πληρωμές και χρονολόγηση απαιτήσεων</value></data>
+  <data name="AddonFeatureContractorBilling" xml:space="preserve"><value>Τιμολόγια εργολάβων, συμβάσεις και ανάκτηση κόστους (σύντομα)</value></data>
+  <data name="AddonFeatureWorkforce" xml:space="preserve"><value>Δεδομένα μισθοδοσίας και κοστολόγηση πεδίου (σύντομα)</value></data>
+  <data name="AddonActive" xml:space="preserve"><value>Το πρόσθετο είναι ενεργό για το τμήμα σας.</value></data>
+  <data name="Monthly" xml:space="preserve"><value>μήνα</value></data>
+  <data name="CheckoutPending" xml:space="preserve"><value>Το τμήμα σας δεν διαθέτει ακόμη αυτό το πρόσθετο.</value></data>
+  <data name="PaidThrough" xml:space="preserve"><value>Πληρωμένο έως</value></data>
+  <data name="SubscriptionCancelled" xml:space="preserve"><value>Η ανανέωση ακυρώθηκε· η πρόσβαση συνεχίζεται μέχρι το τέλος της πληρωμένης περιόδου.</value></data>
+  <data name="Buy" xml:space="preserve"><value>Αγορά</value></data>
+  <data name="CancelSubscription" xml:space="preserve"><value>Ακύρωση ανανέωσης</value></data>
+  <data name="CancelSubscriptionConfirm" xml:space="preserve"><value>Ακύρωση της ανανέωσης Business Operations;</value></data>
+  <data name="BillingUnavailable" xml:space="preserve"><value>Η χρέωση δεν είναι διαθέσιμη αυτή τη στιγμή. Δοκιμάστε ξανά αργότερα.</value></data>
+  <data name="ManageSubscription" xml:space="preserve"><value>Διαχείριση συνδρομής</value></data>
+  <data name="ModuleSettings" xml:space="preserve"><value>Ρυθμίσεις ενοτήτων</value></data>
+  <data name="Links" xml:space="preserve"><value>Σύνδεσμοι</value></data>
+  <data name="invoicing_call_not_found" xml:space="preserve"><value>Η κλήση δεν βρέθηκε.</value></data>
+  <data name="invoicing_contact_not_found" xml:space="preserve"><value>Η επαφή δεν βρέθηκε.</value></data>
+  <data name="invoicing_invoice_has_no_lines" xml:space="preserve"><value>Προσθέστε τουλάχιστον μία γραμμή πριν την αποστολή.</value></data>
+  <data name="invoicing_invoice_has_payments_cannot_void" xml:space="preserve"><value>Τιμολόγιο με πληρωμές δεν μπορεί να ακυρωθεί.</value></data>
+  <data name="invoicing_invoice_not_draft" xml:space="preserve"><value>Μόνο πρόχειρο τιμολόγιο μπορεί να τροποποιηθεί.</value></data>
+  <data name="invoicing_invoice_not_found" xml:space="preserve"><value>Το τιμολόγιο δεν βρέθηκε.</value></data>
+  <data name="invoicing_invoice_not_payable" xml:space="preserve"><value>Το τιμολόγιο δεν δέχεται πληρωμή στην τρέχουσα κατάσταση.</value></data>
+  <data name="invoicing_invoice_paid_cannot_void" xml:space="preserve"><value>Εξοφλημένο τιμολόγιο δεν μπορεί να ακυρωθεί.</value></data>
+  <data name="invoicing_invoice_void" xml:space="preserve"><value>Το τιμολόγιο είναι ακυρωμένο.</value></data>
+  <data name="invoicing_no_recipient_email" xml:space="preserve"><value>Δεν έχει οριστεί e-mail χρέωσης για τον πελάτη.</value></data>
+  <data name="invoicing_payment_not_found" xml:space="preserve"><value>Η πληρωμή δεν βρέθηκε.</value></data>
+  <data name="invoicing_pdf_unavailable" xml:space="preserve"><value>Δεν ήταν δυνατή η δημιουργία του PDF τιμολογίου.</value></data>
+  <data name="invoicing_profile_has_invoices" xml:space="preserve"><value>Το προφίλ χρέωσης έχει τιμολόγια και δεν μπορεί να διαγραφεί.</value></data>
+  <data name="invoicing_profile_required" xml:space="preserve"><value>Ο πελάτης χρειάζεται πρώτα ενεργό προφίλ χρέωσης.</value></data>
+  <data name="invoicing_rate_card_not_found" xml:space="preserve"><value>Ο τιμοκατάλογος δεν βρέθηκε.</value></data>
+</root>

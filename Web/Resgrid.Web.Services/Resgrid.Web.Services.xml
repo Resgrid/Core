@@ -2348,6 +2348,29 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.InventoryController.GetLowStockItems(System.Int32)">
             <summary>Bulk items at/below their reorder point, using only stock locations this caller can view. Page is the catalog page.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.InvoicesController">
+            <summary>
+            Customer invoices (Workforce &amp; Business Operations plan, Phase B, B7). Read-mostly: list, detail, PDF, and
+            manual payment recording. Every endpoint except GetAccess answers 404 while the Invoicing.CustomerInvoicing
+            flag is off or the department holds no Business Operations add-on, so a client cannot tell a disabled
+            module from an absent one. Rate cards, billing profiles and drafting stay web-only in v1.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetAccess">
+            <summary>Whether invoicing is available to this department and what the add-on costs. Always answers.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetInvoices(System.Nullable{System.Int32},System.String,System.Int32,System.Int32)">
+            <summary>Invoices for the department, newest number first. Optional status filter (InvoiceStatus value) and contact filter.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetInvoice(System.String)">
+            <summary>One invoice with its line items and payments.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.GetInvoicePdf(System.String)">
+            <summary>The invoice as a PDF (application/pdf).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.InvoicesController.RecordPayment(Resgrid.Web.Services.Models.v4.Invoicing.RecordPaymentInput)">
+            <summary>Record a manual payment (check, cash, ACH, external card, other). Online payments arrive through the provider path only.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MappingController">
             <summary>
             Mapping operations
@@ -11615,6 +11638,49 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.SearchIndexDocCount">
             <summary>Documents in this process's copy of the global and records indexes.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsStripeConnectEnabled">
+            <summary>
+            Department-connected Stripe payment collection is enabled in this process (PaymentConnectConfig.Enabled and
+            the Payments.StripeConnect operator flag). False in a cluster where it is not offered; the other Payments
+            fields then hold their defaults and PaymentsWebhookHealthy is true.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsWebhookConfigured">
+            <summary>The platform key, the Connect webhook secret and the public base URL are all present. Booleans only; the URL and secret are never returned.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsWebhookEndpointRegistered">
+            <summary>
+            Stripe lists an enabled webhook endpoint at this cluster's webhook URL, in the configured live/test mode, whose
+            enabled events cover everything the receiver consumes. Null when the probe is disabled, skipped or Stripe could not be reached.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsWebhookLastReceivedOn">
+            <summary>UTC time the newest Connect webhook event was received, if any.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsWebhookLastAppliedOn">
+            <summary>UTC time the newest Connect webhook event was applied to an invoice, if any.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsWebhookStale">
+            <summary>Payment activity in the last seven days but no webhook event within PaymentConnectConfig.WebhookStaleAfterHours.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsWebhookRejectedLastHour">
+            <summary>Webhook events rejected in the last hour (bad signature, live-mode mismatch).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsWebhookFailedLastHour">
+            <summary>Webhook events that failed to apply in the last hour.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsOverdueOpenRequests">
+            <summary>Open payment requests that neither a webhook nor the invoice maintenance worker has resolved in time.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsLastReconcileOn">
+            <summary>UTC time of the invoice maintenance worker's last successful reconciliation pass, if any.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.PaymentsWebhookHealthy">
+            <summary>
+            The one-line verdict for uptime monitoring: disabled is healthy; enabled is healthy when configured, the
+            endpoint is not known to be missing, nothing is stale, nothing was rejected in the last hour and no request is overdue.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.EstablishCommandInput">
             <summary>Input to establish command on a call.</summary>
         </member>
@@ -11748,6 +11814,54 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Inventory.InventoryLowStockItem">
             <summary>Bulk stock visible to this caller, summed across authorized locations and lots.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Invoicing.InvoicingAccessResult">
+            <summary>Whether this department may use customer invoicing right now (flag and Business Operations entitlement) and what it costs.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoicingAccessData.FlagEnabled">
+            <summary>Invoicing.CustomerInvoicing is on for the department (operator rollout).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoicingAccessData.AddonActive">
+            <summary>The department holds an active Business Operations add-on.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoicingAccessData.InvoicingEnabled">
+            <summary>Both of the above: invoicing endpoints answer.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoicingAccessData.CanManage">
+            <summary>The caller may create, edit, send and void invoices and record payments.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoicesResult.TotalCount">
+            <summary>Total matching invoices for the filter (paging).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Invoicing.InvoiceResultData">
+            <summary>An invoice header. Money is decimal; the status is the InvoiceStatus value (Draft 0, Sent 1, PartiallyPaid 2, Paid 3, Overdue 4, Void 5).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoiceResultData.ContactName">
+            <summary>The contact's display name; REDACTED on a protected row.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoiceResultData.LineItems">
+            <summary>Populated by GetInvoice only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoiceResultData.Payments">
+            <summary>Populated by GetInvoice only.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoicePaymentData.Method">
+            <summary>InvoicePaymentMethods value (Check 0, Cash 1, Ach 2, CardExternal 3, Other 4, Online 5).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoicePaymentData.Status">
+            <summary>InvoicePaymentStatuses value (Succeeded 0, Refunded 1, PartiallyRefunded 2, Disputed 3, DisputeLost 4).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.InvoicePaymentData.PaymentMethodSummary">
+            <summary>Display-only summary such as "Visa •••• 4242"; never a card number.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Invoicing.RecordPaymentInput">
+            <summary>Record a manual payment against a Sent, PartiallyPaid or Overdue invoice.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.RecordPaymentInput.Method">
+            <summary>InvoicePaymentMethods value; Online (5) is reserved for the provider path and is refused here.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Invoicing.RecordPaymentInput.PaidOn">
+            <summary>UTC; defaults to now.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetCustomMapRegionsGeoJSONResult.GeoJson">
             <summary>

@@ -1,4 +1,4 @@
-﻿using ProtoBuf;
+using ProtoBuf;
 
 namespace Resgrid.Model
 {
@@ -64,5 +64,9 @@ namespace Resgrid.Model
 
 		[ProtoMember(23)]
 		public bool ChecklistsDisabled { get; set; }
+
+		/// <summary>Department switch for the Business Operations module (Workforce &amp; Business Operations plan). Next free tag after this is 25.</summary>
+		[ProtoMember(24)]
+		public bool BusinessOperationsDisabled { get; set; }
 	}
 }

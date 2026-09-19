@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using ProtoBuf;
 using Resgrid.Framework;
 using System;
@@ -42,9 +42,9 @@ namespace Resgrid.Model
 
 		public string GetExternalKey()
 		{
-			if (AddonType == (int)PlanAddonTypes.ReadinessPro)
+			if (AddonType == (int)PlanAddonTypes.ReadinessPro || AddonType == (int)PlanAddonTypes.BusinessOperations)
 			{
-				// Readiness Pro has separate live/test prices; never use a live price in test mode.
+				// Readiness Pro and Business Operations have separate live/test prices; never use a live price in test mode.
 				var priceId = Config.PaymentProviderConfig.IsTestMode ? TestExternalId : ExternalId;
 				return string.IsNullOrWhiteSpace(priceId) ? null : priceId.Trim();
 			}
@@ -80,9 +80,9 @@ namespace Resgrid.Model
 
 		public DateTime GetEndDateFromNow()
 		{
-			// Readiness Pro has its own monthly interval, even on an annual base plan.
+			// Readiness Pro and Business Operations have their own monthly interval, even on an annual base plan.
 			// Actual paid access uses the reconciled PaymentAddon interval, never this estimate.
-			if (AddonType == (int)PlanAddonTypes.ReadinessPro)
+			if (AddonType == (int)PlanAddonTypes.ReadinessPro || AddonType == (int)PlanAddonTypes.BusinessOperations)
 				return DateTime.UtcNow.AddMonths(1);
 
 			if (Plan != null)
@@ -114,6 +114,8 @@ namespace Resgrid.Model
 					return "Advanced Data Protection";
 				case PlanAddonTypes.ReadinessPro:
 					return "Readiness Pro";
+				case PlanAddonTypes.BusinessOperations:
+					return "Business Operations";
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

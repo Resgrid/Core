@@ -386,6 +386,21 @@ namespace Resgrid.Model
 
 			switch (eventType)
 			{
+				case WorkflowTriggerEventType.InvoiceCreated:
+				case WorkflowTriggerEventType.InvoiceSent:
+				case WorkflowTriggerEventType.InvoicePaymentRecorded:
+				case WorkflowTriggerEventType.InvoicePaid:
+				case WorkflowTriggerEventType.InvoiceOverdue:
+				case WorkflowTriggerEventType.InvoiceVoided:
+				case WorkflowTriggerEventType.InvoicePaymentRefunded:
+				case WorkflowTriggerEventType.InvoicePaymentDisputed:
+					foreach (var pair in Invoicing.InvoiceWorkflowPayload.Variables)
+						list.Add(new TemplateVariableDescriptor("invoice." + pair.Variable, "Invoice " + pair.Variable.Replace('_', ' ') + (pair.Variable == "contact_name" ? "; REDACTED on a protected row" : ""),
+							pair.Variable is "number" or "status" or "old_status" ? "int"
+							: pair.Variable is "sub_total" or "discount_amount" or "tax_amount" or "total" or "amount_paid" or "balance" or "payment_amount" ? "decimal"
+							: pair.Variable.EndsWith("_on", System.StringComparison.Ordinal) ? "datetime" : "string", false));
+					list.Add(new TemplateVariableDescriptor("invoice.url", "Authenticated invoice link", "string", false));
+					break;
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:

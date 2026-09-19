@@ -533,7 +533,11 @@ namespace Resgrid.Services
 				var saved = await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
 
 				if (saved != null)
+				{
 					touchedDepartmentIds.Add(saved.DepartmentId);
+					// Direct repository save: the projection carries the station group, so refresh it as SaveUnitAsync does.
+					if (_searchProjections != null) await _searchProjections.Value.ProjectUnitAsync(saved, cancellationToken);
+				}
 			}
 
 			// Un-stationing a unit moves it out of its station group's bucket in both unit matrices;

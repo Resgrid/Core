@@ -1,4 +1,5 @@
-﻿using Resgrid.Model;
+﻿using Resgrid.Framework;
+using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -20,15 +21,18 @@ namespace Resgrid.Services
 		private readonly IUserProfilesRepository _userProfileRepository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IChatbotIdentityRepository _chatbotIdentityRepository;
+		private readonly IDepartmentMembersRepository _departmentMembersRepository;
 
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
 		public UserProfileService(IUserProfilesRepository userProfileRepository, ICacheProvider cacheProvider,
-			IChatbotIdentityRepository chatbotIdentityRepository, Lazy<ISearchProjectionService> searchProjections = null)
+			IChatbotIdentityRepository chatbotIdentityRepository, IDepartmentMembersRepository departmentMembersRepository,
+			Lazy<ISearchProjectionService> searchProjections = null)
 		{
 			_userProfileRepository = userProfileRepository;
 			_cacheProvider = cacheProvider;
 			_chatbotIdentityRepository = chatbotIdentityRepository;
+			_departmentMembersRepository = departmentMembersRepository;
 			_searchProjections = searchProjections;
 		}
 
@@ -140,8 +144,37 @@ namespace Resgrid.Services
 			ClearUserProfileFromCache(savedProfile.UserId);
 			ClearAllUserProfilesFromCache(DepartmentId);
 
-			if (_searchProjections != null && DepartmentId > 0) await _searchProjections.Value.ProjectPersonnelAsync(DepartmentId, savedProfile, null, null, cancellationToken);
+			await ProjectProfileAsync(DepartmentId, savedProfile, cancellationToken);
 			return savedProfile;
+		}
+
+		/// <summary>
+		/// A profile row is shared by every department the user belongs to, so the personnel projection is refreshed in
+		/// each live membership (not deleted, disabled or hidden: the same rule DepartmentsService applies), otherwise
+		/// the other departments keep the old name until their next rebuild. The caller's department is the fallback
+		/// when the memberships cannot be read.
+		/// </summary>
+		private async Task ProjectProfileAsync(int callerDepartmentId, UserProfile savedProfile, CancellationToken cancellationToken)
+		{
+			if (_searchProjections == null || savedProfile == null || string.IsNullOrWhiteSpace(savedProfile.UserId))
+				return;
+
+			List<DepartmentMember> memberships = null;
+			try { memberships = (await _departmentMembersRepository.GetAllDepartmentMemberByUserIdAsync(savedProfile.UserId))?.ToList(); }
+			catch (Exception ex) { Logging.LogException(ex, $"Search projection for profile {savedProfile.UserId}: memberships could not be read; projecting the caller's department only."); }
+
+			if (memberships == null)
+			{
+				if (callerDepartmentId > 0)
+					await _searchProjections.Value.ProjectPersonnelAsync(callerDepartmentId, savedProfile, null, null, cancellationToken);
+				return;
+			}
+
+			foreach (var membership in memberships.Where(m => m != null && m.DepartmentId > 0 && !m.IsDeleted && !m.IsDisabled.GetValueOrDefault() && !m.IsHidden.GetValueOrDefault()))
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+				await _searchProjections.Value.ProjectPersonnelAsync(membership.DepartmentId, savedProfile, null, membership.IsActive, cancellationToken);
+			}
 		}
 
 		private async Task RemoveSmsChatbotIdentitiesAsync(string userId, CancellationToken cancellationToken)

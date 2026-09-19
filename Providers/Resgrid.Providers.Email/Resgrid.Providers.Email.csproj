@@ -28,6 +28,7 @@
     <EmbeddedResource Include="Template\Invitation.html" />
     <EmbeddedResource Include="Template\Receipt.html" />
     <EmbeddedResource Include="Template\ReportDelivery.html" />
+    <EmbeddedResource Include="Template\InvoiceDelivery.html" />
     <EmbeddedResource Include="Template\Message.html" />
 	<EmbeddedResource Include="Template\PasswordRecovery.html" />
 	<EmbeddedResource Include="Template\PasswordChangedByAdministrator.html" />

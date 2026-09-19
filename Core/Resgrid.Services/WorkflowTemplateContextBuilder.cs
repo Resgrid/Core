@@ -417,6 +417,23 @@ namespace Resgrid.Services
 					}
 					break;
 				}
+				case WorkflowTriggerEventType.InvoiceCreated:
+				case WorkflowTriggerEventType.InvoiceSent:
+				case WorkflowTriggerEventType.InvoicePaymentRecorded:
+				case WorkflowTriggerEventType.InvoicePaid:
+				case WorkflowTriggerEventType.InvoiceOverdue:
+				case WorkflowTriggerEventType.InvoiceVoided:
+				case WorkflowTriggerEventType.InvoicePaymentRefunded:
+				case WorkflowTriggerEventType.InvoicePaymentDisputed:
+				{
+					var invoiceEvent = TryDeserialize<RecordsWorkflowEvent>(eventPayloadJson);
+					var invoicePayload = invoiceEvent?.Payload ?? new JObject(); var invoice = new ScriptObject();
+					foreach (var pair in Resgrid.Model.Invoicing.InvoiceWorkflowPayload.Variables) invoice[pair.Variable] = ToScriptValue(invoicePayload[pair.Property]);
+					var invoiceId = invoicePayload["InvoiceId"]?.Type == JTokenType.String ? invoicePayload["InvoiceId"].Value<string>() : null;
+					invoice["url"] = $"{(Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/')}/User/Invoicing/View/{invoiceId}";
+					scriptObject["invoice"] = invoice;
+					break;
+				}
 				case WorkflowTriggerEventType.WorkOrderCreated:
 				case WorkflowTriggerEventType.WorkOrderStatusChanged:
 				case WorkflowTriggerEventType.WorkOrderAssigned:

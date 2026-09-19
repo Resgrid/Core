@@ -1,5 +1,6 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> inventoryStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> workOrderStrings
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Invoicing.Invoicing> invoicingStrings
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> checklistStrings
 @model Resgrid.Model.Workflow
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
@@ -7,7 +8,7 @@
     ViewData["Title"] = "Resgrid | " + localizer["EditWorkflowHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
     var credentialsJson = (string)(ViewBag.CredentialsJson ?? "[]");
-    var triggerEventTypeName = Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory(Model.TriggerEventType) ? inventoryStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.IsWorkOrder(Model.TriggerEventType) ? workOrderStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : Resgrid.Model.Checklists.ChecklistWorkflowPayload.IsChecklist((int)Model.TriggerEventType) ? checklistStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : (string)(ViewBag.TriggerEventTypeName ?? Model.TriggerEventType.ToString());
+    var triggerEventTypeName = Resgrid.Model.Invoicing.InvoiceWorkflowPayload.IsInvoice(Model.TriggerEventType) ? invoicingStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : Resgrid.Model.Inventories.InventoryWorkflowPayload.IsInventory(Model.TriggerEventType) ? inventoryStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : Resgrid.Model.WorkOrders.WorkOrderWorkflowPayload.IsWorkOrder(Model.TriggerEventType) ? workOrderStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : Resgrid.Model.Checklists.ChecklistWorkflowPayload.IsChecklist((int)Model.TriggerEventType) ? checklistStrings[((Resgrid.Model.WorkflowTriggerEventType)Model.TriggerEventType).ToString()].Value : (string)(ViewBag.TriggerEventTypeName ?? Model.TriggerEventType.ToString());
 }
 
 @section Styles {

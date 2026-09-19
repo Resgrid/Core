@@ -81,10 +81,14 @@ namespace Resgrid.Tests.Services
 		{
 			const string attack = "\"><script>alert('schedule-canary')</script><a onmouseover=\"attack";
 			var checklists = new Mock<IChecklistsService>();
-			checklists.Setup(s => s.SchedulesAsync(It.IsAny<ChecklistActor>(), attack, 1, false)).ReturnsAsync(new List<ChecklistScheduleView>
+			// The controller asks for one row past the page (includeNext) and renders Next only when it comes back, so
+			// 51 rows keep every pager link on the page; the extra rows are benign and add no untrusted links.
+			var rows = new List<ChecklistScheduleView>
 			{
 				new ChecklistScheduleView { Schedule = new ChecklistSchedule { Id = attack, TimeZoneId = attack, Frequency = 2 }, Content = new ChecklistScheduleContent { Name = attack } }
-			});
+			};
+			rows.AddRange(Enumerable.Range(1, 50).Select(i => new ChecklistScheduleView { Schedule = new ChecklistSchedule { Id = "benign-" + i, TimeZoneId = "UTC", Frequency = 2 }, Content = new ChecklistScheduleContent { Name = "Benign " + i } }));
+			checklists.Setup(s => s.SchedulesAsync(It.IsAny<ChecklistActor>(), attack, 1, true)).ReturnsAsync(rows);
 			_access.Setup(a => a.CanUseChecklistsAsync(77)).ReturnsAsync(canEdit);
 			var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
 			while (directory != null && !File.Exists(Path.Combine(directory.FullName, "Resgrid.sln"))) directory = directory.Parent;

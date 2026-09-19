@@ -21,12 +21,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IHealthService _healthService;
 		private readonly IGlobalSearchService _globalSearch;
 		private readonly IRecordsSearchService _recordsSearch;
+		private readonly IInvoicePaymentsService _invoicePayments;
 
-		public HealthController(IHealthService healthService, IGlobalSearchService globalSearch, IRecordsSearchService recordsSearch)
+		public HealthController(IHealthService healthService, IGlobalSearchService globalSearch, IRecordsSearchService recordsSearch, IInvoicePaymentsService invoicePayments)
 		{
 			_healthService = healthService;
 			_globalSearch = globalSearch;
 			_recordsSearch = recordsSearch;
+			_invoicePayments = invoicePayments;
 		}
 		#endregion Members and Constructors
 
@@ -64,6 +66,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					Resgrid.Framework.Logging.LogException(ex, "Search health could not be read.");
 					result.Data.SearchOnline = false;
+				}
+
+				// Workforce & Business Operations plan B2.5a: Stripe Connect webhook health for this process. Value-free
+				// (no URL, secret, account, department or invoice id — this endpoint is anonymous). Never fails the health call.
+				try
+				{
+					var payments = await _invoicePayments.GetWebhookHealthAsync();
+					result.Data.PaymentsStripeConnectEnabled = payments.Enabled;
+					result.Data.PaymentsWebhookConfigured = payments.WebhookConfigured;
+					result.Data.PaymentsWebhookEndpointRegistered = payments.EndpointRegistered;
+					result.Data.PaymentsWebhookLastReceivedOn = payments.LastEventReceivedOn;
+					result.Data.PaymentsWebhookLastAppliedOn = payments.LastEventAppliedOn;
+					result.Data.PaymentsWebhookStale = payments.Stale;
+					result.Data.PaymentsWebhookRejectedLastHour = payments.RejectedLastHour;
+					result.Data.PaymentsWebhookFailedLastHour = payments.FailedLastHour;
+					result.Data.PaymentsOverdueOpenRequests = payments.OverdueOpenRequests;
+					result.Data.PaymentsLastReconcileOn = payments.LastReconcileOn;
+					result.Data.PaymentsWebhookHealthy = payments.Healthy;
+				}
+				catch (System.Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex, "Payments webhook health could not be read.");
+					// Unknown state: only a cluster that has payment collection switched on is reported unhealthy.
+					result.Data.PaymentsStripeConnectEnabled = Config.PaymentConnectConfig.Enabled;
+					result.Data.PaymentsWebhookHealthy = !Config.PaymentConnectConfig.Enabled;
 				}
 
 				var dbTime = await _healthService.GetDatabaseTimestamp();
